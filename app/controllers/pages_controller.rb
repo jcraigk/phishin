@@ -1,4 +1,18 @@
 class PagesController < ApplicationController
-  def index
+
+  def years
   end
+  
+  def songs
+  end
+  
+  def cities
+  end
+
+  def venues
+  end
+  
+  def liked
+  end
+  
 end
