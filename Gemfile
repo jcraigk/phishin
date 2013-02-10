@@ -10,6 +10,8 @@ gem 'friendly_id'
 gem 'mp3info'
 gem 'pg_search'
 
+gem 'anjlab-bootstrap-rails', '>= 2.3', :require => 'bootstrap-rails'
+
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'

@@ -1,0 +1,522 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require_self
+ *= require twitter/bootstrap
+ *= require_tree .
+ */
+
+ html {
+     margin: 0;
+     padding: 0;
+     overflow-y: scroll;
+ }
+ a {
+   text-decoration: none;
+   color: black;
+ }
+ a:hover {
+   text-decoration: underline;
+ }
+
+ .likes_for_show a {
+   cursor: pointer;
+   float: right;
+   width: 20px;
+   height: 20px;
+   text-decoration: none;
+   background: url('icons-heart.png');
+   margin-top: 21px;
+   margin-left: 8px;
+ /*  border: 1px solid black;*/
+ }
+ .likes_for_show a:hover {
+   cursor: pointer;
+   background-position: -20px 0;
+   text-decoration: none !important;
+ }
+ .likes_for_show span {
+   float: right;
+   line-height: 66px;
+   color: #791419;
+   font-size: 24px;
+   font-family: 'Nothing You Could Do', cursive;
+ }
+
+ .likes_for_track {
+   position: absolute;
+   float: right;
+   margin-left: 700px;
+   line-height: 40px;
+   text-align: left;
+   width: 70px;
+ }
+ .likes_for_track a {
+   cursor: pointer;
+   float: left;
+   width: 15px;
+   height: 15px;
+   text-decoration: none;
+   background: url('icons-heart-small.png');
+   margin-top: 13px;
+   margin-right: 5px;
+ /*  border: 1px solid black;*/
+ }
+ .likes_for_track a:hover {
+   cursor: pointer;
+   background-position: -15px 0;
+   text-decoration: none !important;
+ }
+ .likes_for_track span {
+   float: left;
+   line-height: 42px;
+   color: #5f1014;
+   font-size: 15px;
+   font-family: 'Nothing You Could Do', cursive;
+ }
+
+ #page_header_mask {
+   position: fixed;
+   top: 0px;
+   width: 100%;
+   height: 180px;
+   z-index: 10;
+   background: #bababa; /* Old browsers */
+   background: -moz-linear-gradient(top, #bababa 0%, #ffffff 100%, #ffffff 100%, #ffffff 100%); /* FF3.6+ */
+   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bababa), color-stop(100%,#ffffff), color-stop(100%,#ffffff), color-stop(100%,#ffffff)); /* Chrome,Safari4+ */
+   background: -webkit-linear-gradient(top, #bababa 0%,#ffffff 100%,#ffffff 100%,#ffffff 100%); /* Chrome10+,Safari5.1+ */
+   background: -o-linear-gradient(top, #bababa 0%,#ffffff 100%,#ffffff 100%,#ffffff 100%); /* Opera 11.10+ */
+   background: -ms-linear-gradient(top, #bababa 0%,#ffffff 100%,#ffffff 100%,#ffffff 100%); /* IE10+ */
+   background: linear-gradient(to bottom, #bababa 0%,#ffffff 100%,#ffffff 100%,#ffffff 100%); /* W3C */
+   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bababa', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
+ /*  border: 1px solid orange;*/
+ }
+
+ #player_container {
+   margin: 0 auto;
+   width: 920px;
+   height: 80px;
+   margin-top: 6px;
+   border-radius: 8px;
+   border: 2px solid #555;
+   background-color: #5ab1ff;
+   padding: 10px;
+   vertical-align: middle;
+   background: url('brushed-metal2.jpg');
+ /*  border: 1px solid green;*/
+ }
+
+ #logo {
+   position: fixed;
+   height: 146px;
+   width: 146px;
+   margin-top: -34px;
+   margin-left: -56px;
+ }
+ #logo img {
+   border: 2px solid #ccc;
+   border-radius: 100px;
+   box-shadow: 4px 4px 20px #ccc;
+   width: 100%;
+   height: 100%;
+ }
+
+ #ajax_overlay {
+   padding-top: 200px;
+   text-align: center;
+   display: none;
+   position: absolute;
+   top: 120px;
+   bottom: 0%;
+   left: 0;
+   right: 0%;
+   background-color: #ddd;
+   z-index: 99;
+   opacity: 0.5;
+ }
+
+ #header_container {
+   margin: 0;
+   width: 100%;
+   position: fixed;
+   top: 116px;
+   height: 70px;
+   z-index: 20;
+ /*  border: 1px solid red;*/
+ }
+ #header {
+   margin: 0 auto;
+   width: 894px;
+   height: 50px;
+   border-top-left-radius: 8px;
+   border-top-right-radius: 8px;
+   border-left: 2px solid #555;
+   border-top: 2px solid #555;
+   border-right: 2px solid #555;
+   padding: 5px 26px 5px 20px;
+   margin-top: 3px;
+   vertical-align: bottom;
+   background: #ddd url('brushed-metal.jpg');
+   text-align: center;
+ /*    border: 1px solid red;*/
+ }
+ #header h1 {
+   float: left;
+   font-family: 'Rambla', sans-serif;
+   font-size: 35px;
+   line-height: 36px;
+   margin-left: 6px;
+   font-weight: 700;
+ }
+ #header h2 {
+   float: left;
+   font-family: 'Rambla', sans-serif;
+   font-size: 23px;
+   line-height: 45px;
+   margin-left: 16px;
+   font-weight: 400;
+ }
+ #header h3 {
+   float: right;
+   font-family: 'Rambla', sans-serif;
+   font-size: 23px;
+   line-height: 45px;
+   margin-left: 16px;
+   font-weight: 400;
+ }
+ .header_filter {
+ /*  border: 1px solid red;*/
+   margin-right: 200px;
+   margin-top: 10px;
+   float: right;
+   text-align: left;
+ }
+ #header_filter li {
+   text-align: left !important;
+ }
+ #header .likes_for_show {
+   float: right;
+   width: 150px;
+   height: 50px;
+   text-align: right;
+ }
+ #header .btn_context {
+   position: absolute;
+   margin-top: 18px;
+   margin-left: 650px;
+   text-align: left;
+ }
+ #header .content_tabs {
+   margin: 0 auto;
+   text-align: center;
+   margin-top: 10px;
+ }
+ #header .playlist_options {
+   position: absolute;
+   margin-top: 10px;
+   margin-left: 200px;
+ }
+
+ /************************/
+
+ #content {
+   margin: 0 auto;
+   width: 880px;
+   padding: 170px 20px 40px 40px;
+   border-bottom-left-radius: 10px;
+   border-bottom-right-radius: 10px;
+   border-left: 2px solid #555;
+   border-right: 2px solid #555;
+   border-bottom: 1px solid #555;
+ }
+
+ #content > h1 {
+   margin-top: 40px;
+   font-size: 37px;
+   font-family: 'Nothing You Could Do', cursive;
+ }
+ #content > h4 {
+   margin-left: 60px;
+ }
+ #content > h4 > a{
+   color: #5b6699;
+ }
+
+ .item_list {
+   color: #333;
+   margin-left: 9px;
+   margin-top: 12px;
+   list-style-type: none;
+ }
+ .item_list > li {
+   height: 36px;
+   border-radius: 8px;
+   padding: 8px 20px 8px 20px;
+ }
+ .item_list > li:nth-child(2n+1) {
+   background-color: #f8f8f8;
+ }
+ .item_list > li:hover {
+   cursor: pointer;
+   background-color: #fffbd0;
+ }
+ .item_list > li h2 {
+   font-family: 'Shanti', sans-serif;
+   line-height: 16px;
+   font-size: 24px;
+   float: left;
+   font-weight: normal;
+ /*  border: 1px solid black;*/
+ }
+ .item_list > li h3 {
+   font-family: 'Shanti', sans-serif;
+   line-height: 16px;
+   font-size: 17px;
+   float: right;
+   color: #555;
+   font-weight: normal;
+ }
+ .item_list > li h4 {
+   position: absolute;
+   font-family: 'Shanti', sans-serif;
+   line-height: 21px;
+   font-size: 19px;
+   color: #777;
+   font-weight: normal;
+   margin-left: 150px;
+ }
+ .item_list > li h4 a {
+   color: #777;
+ }
+ .item_list > li h5 {
+   position: absolute;
+   font-family: 'Shanti', sans-serif;
+   line-height: 21px;
+   font-size: 15px;
+   font-weight: normal;
+   margin-left: 380px;
+ }
+ .item_list > li h5 a {
+   color: #999;
+ }
+ .item_list > li h6 {
+   position: absolute;
+   font-family: 'Shanti', sans-serif;
+   line-height: 21px;
+   font-size: 15px;
+   font-weight: normal;
+   margin-left: 680px;
+ }
+ .item_list > li h6 a {
+   color: #999;
+ }
+ .item_list > li .btn_context {
+   display: none;
+   position: absolute;
+   margin-top: 5px;
+   margin-left: 600px;
+ }
+ .btn_context {
+   cursor: pointer;
+ }
+ .btn_context:hover {
+   cursor: pointer;
+ }
+
+ /************************/
+
+ #footer_container {
+   padding: 5px 20px 5px 20px;
+   text-align: center;
+   margin-top: 10px;
+   margin-bottom: 10px;
+ }
+ #footer_container p {
+   font-size: 12px;
+ }
+
+ /************************/
+
+ #userbox {
+   font-family: sans-serif;
+   float: right;
+   margin-right: 5px;
+ }
+
+ #player_title {
+   line-height: 40px;
+   padding: 0px;
+   position: fixed;
+   margin-top: -5px;
+   margin-left: 200px;
+   width: 600px;
+   text-align: center;
+   overflow: hidden;
+   font-family: 'Fjalla One', sans-serif;
+   font-size: 28px;
+ /*border: 1px solid black;*/
+ }
+ #player_detail {
+   /*  border: 1px solid black;*/
+   padding: 0px;
+   position: fixed;
+   margin-top: 58px;
+   margin-left: 300px;
+   width: 400px;
+   text-align: center;
+   overflow: hidden;
+   font-family: 'Rambla', sans-serif;
+   font-size: 13px;
+   font-weight: 400;
+ }
+ #player_controls {
+   position: fixed;
+   margin-left: 116px;
+   margin-top: 10px;
+ }
+ #player_controls > div {
+   float: left;
+   margin-right: 5px;
+ }
+ #control_previous, #control_next {
+   margin-top: 5px;
+ }
+ #control_previous {
+   -moz-transform: scaleX(-1);
+   -webkit-transform: scaleX(-1);
+   -o-transform: scaleX(-1);
+   transform: scaleX(-1);
+   -ms-filter: fliph; /*IE*/
+   filter: fliph; /*IE*/
+ }
+ #control_playpause {
+   margin-top: -13px;
+ }
+
+ #control_previous:hover, #control_next:hover, #control_playpause:hover {
+   cursor: pointer;
+ }
+
+ #scrubber_controls {
+   /*  border: 1px solid black;*/
+   position: fixed;
+   width: 380px;
+   height: 36px;
+   margin-top: 25px;
+   margin-left: 310px;
+   font-family: 'Rambla', sans-serif;
+ }
+ #scrubber_track {
+   position: fixed;
+   margin-top: 15px;
+   margin-left: 50px;
+   width: 280px;
+   background-color: #555;
+   height: 5px;
+   border-radius: 3px;
+   cursor: pointer;
+ }
+ #scrubber_knob {
+   z-index: 12;
+   position: fixed;
+   margin-top: 10px;
+   margin-left: 250px;
+   width: 13px;
+   height: 13px;
+   background-color: #ccc;
+   border-radius: 10px;
+   border: 1px solid black;
+ }
+ #scrubber_knob {
+   cursor: pointer;
+ }
+ #time_elapsed {
+   /*  border: 1px solid black;*/
+   width: 43px;
+   font-size: 12px;
+   line-height: 36px;
+   float: left;
+   text-align: right;
+   padding-right: 5px;
+ }
+ #time_remaining {
+   /*  border: 1px solid black;*/
+   width: 43px;
+   font-size: 12px;
+   line-height: 36px;
+   float: right;
+   text-align: left;
+   padding-left: 5px;
+ }
+ #playlist_controls {
+ /*  border: 1px solid black;*/
+   position: fixed;
+   margin-top: 30px;
+   margin-left: 700px;
+   width: 60px;
+   height: 40px;
+ }
+ .playlist_title {
+   float: left;
+   border: 1px solid red;
+ }
+ .playlist {
+   margin-top: 60px;
+ }
+ #playlist_header_controls {
+ /*  border: 1px solid black;*/
+   position: fixed;
+   margin-left: 450px;
+   margin-top: 10px;
+   text-align: left;
+ }
+ 
+ #era1 {
+   background-color: #7cb18b;
+   border-radius: 8px;
+   padding: 5px 10px 5px 10px;
+ }
+ #era2 {
+   background-color: #8fce9f;
+   border-radius: 8px;
+   padding: 5px 10px 5px 10px;
+ }
+ #era3 {
+   background-color: #9ee4af;
+   border-radius: 8px;
+   padding: 5px 10px 5px 10px;
+ }
+ .year_list {
+   list-style-type: none;
+   margin-left: 0px;
+   margin-top: 3px;
+   margin-bottom: 5px;
+ }
+ .year_list > li {
+   text-align: right;
+   font-family: 'Rambla', sans-serif;
+   font-size: 36px;
+   color: #333;
+   margin: 7px;
+   float: left;
+   width: 232px;
+   height: 36px;
+   border-radius: 8px;
+   padding: 8px 20px 8px 20px;
+   background-color: #f8f8f8;
+   line-height: 38px;
+ }
+ .year_list > li:hover {
+   cursor: pointer;
+   background-color: #fffbd0;
+ }
+ .year_list > li > a:hover {
+   text-decoration: none !important;
+ }
