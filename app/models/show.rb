@@ -1,32 +1,38 @@
 class Show < ActiveRecord::Base
+  
   attr_accessible :date, :location, :sbd, :remastered
-
-  belongs_to :tour
-  belongs_to :venue
-  has_many :tracks, :dependent => :destroy
-
-  scope :for_year, lambda { |year|
-    if year == '83-87'
-      where('date between ? and ?', 
-              Date.new(1983).beginning_of_year, 
-              Date.new(1987).end_of_year).order(:date)
-    else
-      date = Date.new(year.to_i)
-      where('date between ? and ?', 
-              date.beginning_of_year, 
-              date.end_of_year).order(:date)
-    end
-  }
-
-  validates_presence_of :date, :location
-
   extend FriendlyId
   friendly_id :date
 
+  has_many :tracks, :dependent => :destroy
+  belongs_to :tour
+  belongs_to :venue
+
+  validates_presence_of :date, :location
+
+  scope :during_year, lambda { |year|
+    date = Date.new(year.to_i)
+    where('date between ? and ?', 
+      date.beginning_of_year, 
+      date.end_of_year).order(:date)
+  }
+  scope :between_years, lambda { |year1, year2|
+    date1 = Date.new(year1.to_i)
+    date2 = Date.new(year2.to_i)
+    if date1 < date2
+      where('date between ? and ?', 
+        date1.beginning_of_year, 
+        date2.end_of_year).order('date')
+    else
+      where('date between ? and ?', 
+        date2.beginning_of_year, 
+        date1.end_of_year).order('date desc')
+    end
+  }
+
   def to_s
-    "#{date.strftime('%m-%d-%Y')} - #{location}" if date && location
+    "#{date.strftime('%m-%d-%Y')} - #{venue.location}"
   end
-  alias_method :title, :to_s # for rails admin
   
   def last_set
     tracks.select { |t| /^\d$/.match t.set }.map(&:set).sort.last

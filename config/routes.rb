@@ -1,6 +1,6 @@
 Phishin::Application.routes.draw do
     
-    root :to => 'pages#years'
+    root :to => 'pages#index'
     
     # Main browse pages
     match '/years' => 'pages#years'

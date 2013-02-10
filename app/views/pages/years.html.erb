@@ -6,7 +6,10 @@
   <div id="era3">
     <ul class="year_list">
       <% 2012.downto(2009) do |year|  %>
-        <li><%= link_to year.to_s, "/" + year.to_s %></li>
+      <li>
+        <h2><%=  pluralize(Show.during_year(year).size, 'show') %></h2>
+        <h1><%= link_to year.to_s, "/" + year.to_s %></h1>
+      </li>
       <% end %>
     </ul>
     <div style="clear: both;"></div>
@@ -16,7 +19,10 @@
   <div id="era2">
     <ul class="year_list">
       <% 2004.downto(2002) do |year|  %>
-        <li><%= link_to year.to_s, "/" + year.to_s %></li>
+      <li>
+        <h2><%= pluralize(Show.during_year(year).size, 'show') %></h2>
+        <h1><%= link_to year.to_s, "/" + year.to_s %></h1>
+      </li>
       <% end %>
     </ul>
     <div style="clear: both;"></div>
@@ -26,9 +32,15 @@
   <div id="era1">
     <ul class="year_list">
       <% 2000.downto(1988) do |year|  %>
-        <li><%= link_to year.to_s, "/" + year.to_s %></li>
+        <li>
+          <h2><%= pluralize(Show.during_year(year).size, 'show') %></h2>
+          <h1><%= link_to year.to_s, "/" + year.to_s %></h1>
+        </li>
       <% end %>
-      <li><%= link_to '1987 - 83', '/1987-83' %></li>
+      <li>
+        <h2><%= pluralize(Show.between_years('1983', '1987').size, 'show') %></h2>
+        <h1><%= link_to '1987 - 83', '/1983-1987' %></h1>
+      </li>
     </ul>
     <div style="clear: both;"></div>
   </div>

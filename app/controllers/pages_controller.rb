@@ -1,5 +1,9 @@
 class PagesController < ApplicationController
 
+  def index
+    redirect_to :years
+  end
+
   def years
   end
   
@@ -15,11 +19,28 @@ class PagesController < ApplicationController
   def liked
   end
   
+  # Try to match the global URL "glob" to an entity
   def glob
     g = params[:glob]
     
+    # Year?
+    if g.match(/^\d{4}$/)
+      if year g
+        @year = g
+        render :year_or_range
+      else
+        redirect_to :root
+      end
+    # Year range?
+    elsif years = g.match(/^(\d{4})-(\d{4})$/)
+      if year_range years[1], years[2]
+        @year = g
+        render :year_or_range
+      else
+        redirect_to :root
+      end
     # Show date?
-    if g.match(/^\d{4}\-\d{2}-\d{2}$/)
+    elsif g.match(/^\d{4}\-\d{2}-\d{2}$/)
       if show g
         render :show
       else
@@ -42,6 +63,16 @@ class PagesController < ApplicationController
   end
   
   private
+  
+  def year(year)
+    @shows = Show.during_year(year).includes(:tour).all
+    @shows
+  end
+  
+  def year_range(year1, year2)
+    @shows = Show.between_years(year1, year2).includes(:tour).all
+    @shows
+  end
   
   def show(date)
     # Ensure valid date before touching database

@@ -500,23 +500,38 @@
    margin-bottom: 5px;
  }
  .year_list > li {
-   text-align: right;
-   font-family: 'Rambla', sans-serif;
-   font-size: 36px;
    color: #333;
    margin: 7px;
    float: left;
    width: 232px;
    height: 36px;
    border-radius: 8px;
-   padding: 8px 20px 8px 20px;
+   padding: 8px 13px 8px 20px;
    background-color: #f8f8f8;
-   line-height: 38px;
+ }
+ .year_list > li > h1 {
+   float: right;
+   font-size: 36px;
+   line-height: 24px;
+   text-align: right;
+   font-family: 'Rambla', sans-serif;
+ }
+.year_list > li > h2 {
+   float: left;
+   font-size: 20px;
+   line-height: 30px;
+   text-align: right;
+   font-family: 'Rambla', sans-serif;
+   color: #999;
+   visibility: hidden;
  }
  .year_list > li:hover {
    cursor: pointer;
    background-color: #fffbd0;
  }
- .year_list > li > a:hover {
+ .year_list a {
+   color: #444;
+  }
+ .year_list a:hover {
    text-decoration: none !important;
  }

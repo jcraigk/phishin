@@ -20,3 +20,9 @@ end
 
 gem 'jquery-rails'
 gem 'resque', :require => "resque/server"
+
+group :development do
+  gem 'binding_of_caller'
+  gem 'meta_request'
+  gem 'better_errors'
+end

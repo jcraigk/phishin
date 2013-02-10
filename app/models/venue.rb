@@ -7,7 +7,7 @@ class Venue < ActiveRecord::Base
   friendly_id :name, :use => :slugged
   
   def location
-    "#{city}, #{state} #{country}"
+    country == "USA" ? "#{city}, #{state}" : "#{city}, #{state} #{country}"
   end
 
 end
