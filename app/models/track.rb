@@ -21,7 +21,7 @@ class Track < ActiveRecord::Base
   belongs_to :show
   
   default_scope order('position')
-  scope :chronological, order('shows.show_date ASC').joins(:show)
+  scope :chronological, order('shows.date ASC').joins(:show)
   
   include PgSearch
   pg_search_scope :kinda_matching,
@@ -85,8 +85,8 @@ class Track < ActiveRecord::Base
       # if tag
         tag.title = title
         tag.artist = "Phish"
-        tag.album = show.show_date.to_s + " " + set_album_abbreviation + " " + show.location
-        tag.year = show.show_date.strftime("%Y").to_i
+        tag.album = show.date.to_s + " " + set_album_abbreviation + " " + show.location
+        tag.year = show.date.strftime("%Y").to_i
         tag.track = position
         tag.genre = "Rock"
         # tag.comment = "Visit phishtracks.net for free Phish audio" //Doesn't seem to work

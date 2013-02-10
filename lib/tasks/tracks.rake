@@ -15,7 +15,7 @@ namespace :tracks do
     puts "Found #{tracks.size} Intros"
     tracks.each do |track|
       show = track.show
-      puts "Removing from #{show.show_date}"
+      puts "Removing from #{show.date}"
       track.destroy
       show.tracks.order(:position).each_with_index do |t, i|
         t.position = i + 1

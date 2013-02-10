@@ -12,10 +12,10 @@ namespace :sets do
 
     pnet = PNet.new api_key
     
-    # Show.where("show_date = ?", "1998-11-02").order(:show_date).all.each do |show|
-    Show.order(:show_date).all.each do |show|
+    # Show.where("date = ?", "1998-11-02").order(:date).all.each do |show|
+    Show.order(:date).all.each do |show|
     # show = Show.find(393)
-      setlist = Nokogiri::HTML(pnet.shows_setlists_get('showdate' => show.show_date)[0]["setlistdata"])
+      setlist = Nokogiri::HTML(pnet.shows_setlists_get('showdate' => show.date)[0]["setlistdata"])
       set_titles = setlist.css('span.pnetsetlabel').map(&:content)
       set_titles.each do |title|
         abbrev_title = case title
@@ -34,7 +34,7 @@ namespace :sets do
         song_titles.each do |song_title|
           tracks = Track.where("show_id = ?", show.id).kinda_matching(song_title).all
           tracks.each do |track|
-            puts "Seeking track #{track.title} on #{show.id} -> #{show.show_date} :: #{title}"
+            puts "Seeking track #{track.title} on #{show.id} -> #{show.date} :: #{title}"
             if track
               puts "Found"
               track.set = abbrev_title

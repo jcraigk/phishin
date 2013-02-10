@@ -50,7 +50,7 @@ ActiveRecord::Schema.define(:version => 20121202033002) do
   end
 
   create_table "shows", :force => true do |t|
-    t.date     "show_date"
+    t.date     "date"
     t.datetime "created_at",                    :null => false
     t.datetime "updated_at",                    :null => false
     t.string   "location"

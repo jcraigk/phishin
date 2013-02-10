@@ -68,7 +68,7 @@ namespace :venues do
         rows = Nokogiri::HTML(open(url)).css('#mainContent ul li')
         date_list = rows.collect { |row| Iconv.conv('utf-8', 'latin1', row.at_xpath('a[1]/text()').to_s.strip) }
         date_list.each do |date|
-          show = Show.where("show_date = ?", date).first
+          show = Show.where("date = ?", date).first
           if show
             num_shows_found += 1
             show.venue = venue

@@ -27,10 +27,10 @@ class ShowsInfo
     rows.each do |row|
       fields = row.children
       unless fields[IDX[:date]].content.blank? || fields[IDX[:link]].content.blank?
-        show_date = fields[IDX[:date]].content
-        puts "#{show_date} -- #{fields[IDX[:venue]].content} - #{fields[IDX[:city]].content}, #{fields[IDX[:state]].content}"
+        date = fields[IDX[:date]].content
+        puts "#{date} -- #{fields[IDX[:venue]].content} - #{fields[IDX[:city]].content}, #{fields[IDX[:state]].content}"
 
-        setlist = @pnet.shows_setlists_get('showdate' => format_date(show_date))[0];
+        setlist = @pnet.shows_setlists_get('showdate' => format_date(date))[0];
         songs = Nokogiri::HTML(setlist["setlistdata"]).css('p.pnetset > a').map(&:content)
 
         # Sometimes songs will be empty, returned from phish.net API.  Ex. 1993-08-21

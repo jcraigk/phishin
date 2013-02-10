@@ -57,8 +57,8 @@ namespace :shows do
       data.each do |show_data|
         unless show_data[1] == 0 or show_data[1] == "No Shows Found"
           total_shows[year] += 1
-          show_date = show_data["showdate"]
-          missing_list[year] << show_date unless Show.find_by_show_date(show_date)
+          date = show_data["showdate"]
+          missing_list[year] << date unless Show.find_by_date(date)
         end
       end
       num_missing = missing_list[year].size
