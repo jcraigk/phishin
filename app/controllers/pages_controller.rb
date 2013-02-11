@@ -9,6 +9,7 @@ class PagesController < ApplicationController
   end
   
   def songs
+    @songs = Song.order(:title)
   end
   
   def cities

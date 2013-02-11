@@ -1,5 +1,5 @@
 class Song < ActiveRecord::Base
-  attr_accessible :title, :songs_count
+  attr_accessible :title, :tracks_count
 
   has_and_belongs_to_many :tracks
   scope :random, lambda { |amt| where('tracks_count > 0').order('RANDOM()').limit(amt) }
@@ -18,4 +18,9 @@ class Song < ActiveRecord::Base
                       normalization: 16
                     }
                   }
+  
+  def title_letter
+    title[0,1]
+  end
+  
 end

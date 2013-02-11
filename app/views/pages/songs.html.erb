@@ -1,0 +1,51 @@
+<div id="header_container">
+  <div id="header">
+    <h1>Songs</h1>
+    <h3><%= pluralize @songs.size, 'song' %></h3>
+    <div class="header_filter">
+      <div class="btn-group">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
+          Sort Alphabetically
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="null">Sort Alphabetically</a></li>
+          <li><a href="null">Sort by Likes</a></li>
+          <li><a href="null">Sort by Performances</a></li>
+        </ul>
+      </div>
+      <form class="form-search">
+        <input type="text" class="input-medium search-query">
+        <button type="submit" class="btn">Search</button>
+      </form>
+    </div>
+  </div>
+</div>
+  
+<div id="content">
+  
+  <% letter = false %>
+  <% @songs.each do |song| %>
+    <% if song.title_letter.match(/\d/) %>
+      <% title = '1-9' %>
+    <% else %>
+      <% title = song.title_letter %>
+    <% end %>
+    <% if title != letter %>
+      <% if letter %>
+        </ul>
+      <% end %>
+      <% letter = title %>
+      <%= content_tag 'h1', title %>
+      <ul class="item_list">
+    <% end %>
+      <li>
+        <h2><a href="#"><%= raw(song.title) %></a></h2>
+        <h5><a href="#"><%= pluralize song.tracks_count, 'performance' %></a></h5>
+        <div class="likes_for_track"><a></a><span>2352</span></div>
+        <div style="clear: both;"></div>
+      </li>
+    <% end %>
+  </ul>
+
+</div>
