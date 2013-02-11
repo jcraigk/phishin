@@ -16,15 +16,16 @@
 //= require history
 //= require_tree .
 
-init = true
+page_init = true
 followLink = ($el) ->
-  init = false
-  console.log $el
+  page_init = false
+  # console.log $el
   History.pushState {href: $el.attr 'href'}, 'phish.in', $el.attr 'href'
   window.scrollTo 0, 0
 
 $ ->
   
+  ###############################################
   # Prepare history.js
   History = window.History
   return false if !History.enabled
@@ -33,41 +34,37 @@ $ ->
     History.log State.data, State.title, State.url
   History.Adapter.bind window, 'popstate', ->   
     state = window.History.getState()
-    console.log state
-    if state.data.href != undefined and !init
+    # console.log state
+    if state.data.href != undefined and !page_init
       $('#ajax_overlay').css 'visibility', 'visible'
-      $.ajax
-        url: state.data.href,
-        success: (response) ->
-          $('#page').html response
-          $('#ajax_overlay').css 'visibility', 'hidden'
-  
-  # Display number of shows when rolling over a year
-  $('.year_list li').hover(
-    -> $(this).find('h2').css 'visibility', 'visible'
-    -> $(this).find('h2').css 'visibility', 'hidden'
-  )
+      $('#page').load(state.data.href)
+      $('#ajax_overlay').css 'visibility', 'hidden'
 
-  # Handle clicking links
-  $('body').on 'click', 'a', ->
-    if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
-      followLink $(this)
-      false
+  # Click a link to load context via ajax
+  $(document).on 'click', 'a', ->
+    followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
+    false
+  ###############################################
   
-  # Show context buttons on item list rollovers
-  $('.item_list li').hover(
-    -> $(this).find('.btn_context').css 'visibility', 'visible'
-    -> $(this).find('.btn_context').css 'visibility', 'hidden'
-  )
-  
-  # Show context button on header rollover
-  $('#header').hover(
-    -> $(this).find('.btn_context').css 'visibility', 'visible'
-    -> $(this).find('.btn_context').css 'visibility', 'hidden'
-  )
-  
-  # Clicking a year button goes to that year
-  $('.year_list > li').on 'click', ->
-    $('#page').hide
-    $('#ajax_overlay').css 'visibility', 'visible'
+  # Rollover year to reveal number of shows
+  $(document).on 'mouseover', '.year_list > li', ->
+    $(this).find('h2').css 'visibility', 'visible'
+  $(document).on 'mouseout', '.year_list > li', ->
+    $(this).find('h2').css 'visibility', 'hidden'
+
+  # Rollover item list to reveal context button
+  $(document).on 'mouseover', '.item_list > li', ->
+    $(this).find('.btn_context').css 'visibility', 'visible'
+  $(document).on 'mouseout', '.item_list > li', ->
+    $(this).find('.btn_context').css 'visibility', 'hidden'
+
+  # Rollover header to reveal context button
+  $(document).on 'mouseover', '#header', ->
+    $(this).find('.btn_context').css 'visibility', 'visible'
+  $(document).on 'mouseout', '#header', ->
+    $(this).find('.btn_context').css 'visibility', 'hidden'
+    
+  #Click a year li to go to that year
+  $(document).on 'click', '.year_list > li', ->
     followLink $(this).find 'a'
+    
