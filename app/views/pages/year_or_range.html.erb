@@ -23,6 +23,10 @@
   
 <div id="content">
   
+  <% if @shows.empty? %>
+    <h1>No shows this year...</h1>
+  <% end %>
+  
   <% tour = false %>
   <% @shows.each do |show| %>
     <% if show.tour != tour %>
@@ -35,8 +39,8 @@
     <% end %>
       <li>
         <h2><%= show.date.strftime("%b %-d") %></h2>
-        <h4><a href="null"><%= show.venue.name %></a></h4>
-        <h5><a href="null"><%= show.venue.location %></a></h5>
+        <h4><a href="null"><%= raw(show.venue.name) %></a></h4>
+        <h5><a href="null"><%= raw(show.venue.location) %></a></h5>
         <div class="btn_context">
           <div class="btn-group">
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
