@@ -9,6 +9,7 @@ gem 'nokogiri'
 gem 'friendly_id'
 gem 'mp3info'
 gem 'pg_search'
+# gem 'historyjs-rails'
 
 gem 'anjlab-bootstrap-rails', '>= 2.3', :require => 'bootstrap-rails'
 

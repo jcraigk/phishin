@@ -52,7 +52,6 @@
 
  .likes_for_track {
    position: absolute;
-   float: right;
    margin-left: 700px;
    line-height: 40px;
    text-align: left;
@@ -131,7 +130,7 @@
  #ajax_overlay {
    padding-top: 200px;
    text-align: center;
-   display: none;
+   visibility: hidden;
    position: absolute;
    top: 120px;
    bottom: 0%;
@@ -208,9 +207,10 @@
    text-align: right;
  }
  #header .btn_context {
+   visibility: hidden;
    position: absolute;
-   margin-top: 18px;
-   margin-left: 650px;
+   margin-top: 13px;
+   margin-left: 700px;
    text-align: left;
  }
  #header .content_tabs {
@@ -287,10 +287,10 @@
    position: absolute;
    font-family: 'Shanti', sans-serif;
    line-height: 21px;
-   font-size: 19px;
+   font-size: 17px;
    color: #777;
    font-weight: normal;
-   margin-left: 150px;
+   margin-left: 115px;
  }
  .item_list > li h4 a {
    color: #777;
@@ -299,9 +299,9 @@
    position: absolute;
    font-family: 'Shanti', sans-serif;
    line-height: 21px;
-   font-size: 15px;
+   font-size: 14px;
    font-weight: normal;
-   margin-left: 380px;
+   margin-left: 420px;
  }
  .item_list > li h5 a {
    color: #999;
@@ -318,10 +318,12 @@
    color: #999;
  }
  .item_list > li .btn_context {
-   display: none;
+   visibility: hidden;
    position: absolute;
-   margin-top: 5px;
-   margin-left: 600px;
+   margin-left: 630px;
+   line-height: 40px;
+   text-align: left;
+   width: 70px;
  }
  .btn_context {
    cursor: pointer;

@@ -1,20 +1,22 @@
 <div id="header_container">
   <div id="header">
-    <h1>Dec 28, 2012</h1>
-    <h2><a href="null" onclick="alert('Loads this venue page');">Madison Square Garden</a></h2>
-    <h2><a href="null" onclick="alert('Loads this location page');">New York, NY</a></h2>
-          
-    <div class="btn-group btn_context">
-      <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-        <i class="icon-chevron-right"></i>
-      </a>
-      <ul class="dropdown-menu">
-        <li><a href="null"><i class="icon-chevron-right"></i>&nbsp;&nbsp;Go to Next Show</a></li>
-        <li><a href="null"><i class="icon-chevron-left"></i>&nbsp;&nbsp;Go to Previous Show</a></li>
-        <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-        <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3s</a></li>
-        <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-      </ul>
+    <%= content_tag :h1, @show.date.strftime("%b %-d, %Y")%>
+    <%= content_tag :h2, (link_to @show.venue.name, @show.venue.slug, alt: @show.venue.name) %>
+    <%= content_tag :h2, (link_to @show.venue.location, @show.venue.location, alt: @show.venue.location) %>
+    
+    <div class="btn_context">
+      <div class="btn-group">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
+          <i class="icon-chevron-right"></i>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="null"><i class="icon-chevron-right"></i>&nbsp;&nbsp;Go to Next Show</a></li>
+          <li><a href="null"><i class="icon-chevron-left"></i>&nbsp;&nbsp;Go to Previous Show</a></li>
+          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
+          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3s</a></li>
+          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
+        </ul>
+      </div>
     </div>
           
     <div class="likes_for_show"><a></a><span>153203</span></div>
@@ -22,340 +24,38 @@
 </div>
   
 <div id="content">
-      
-  <h1>Set #1</h1>
-  <ul class="item_list">
-    <li data-audio-url="/zphishmock/mp3/1.mp3">
-      <h2>Stealing Time from the Faulty Plan</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
+  
+  <% set = false %>
+  <% @show.tracks.each do |track| %>
+    <% if track.set != set %>
+      <% if set %>
         </ul>
+      <% end %>
+      <%= content_tag 'h1', track.set_name %>
+      <ul class="item_list">
+      <% set = track.set %>
+    <% end %>
+    <li data-audio-url="<%= track.file_url %>">
+      <%= content_tag :h2, track.title %>
+      <div class="btn_context">
+        <div class="btn-group">
+          <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
+            <i class="icon-chevron-right"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
+            <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
+            <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
+            <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
+            <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
+          </ul>
+        </div>
       </div>
-      <h3>6:08</h3>
+      <h3><%= track.duration_readable %></h3>
       <div class="likes_for_track"><a></a><span>2</span></div>
       <div style="clear: both;"></div>
     </li>
-    <li data-audio-url="/zphishmock/mp3/2.mp3">
-      <h2>The Moma Dance</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>8:23</h3>
-      <div class="likes_for_track"><a></a><span></span></div>
-      <div style="clear: both;"></div>
-    </li>
-    <li data-audio-url="/zphishmock/mp3/3.mp3">
-      <h2>Funky Bitch</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>7:14</h3>
-      <div class="likes_for_track"><a></a><span>4</span></div>
-      <div style="clear: both;"></div>
-    </li>
-    <li>
-      <h2>Army of One</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>5:03</h3>
-      <div class="likes_for_track"><a></a><span>105</span></div>
-      <div style="clear: both;"></div>
-    </li>
-    <li>
-      <h2>Tube</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>5:32</h3>
-      <div class="likes_for_track"><a></a><span>7</span></div>
-      <div style="clear: both;"></div>
-    </li>
-    <li>
-      <h2>Stash</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>11:49</h3>
-      <div class="likes_for_track"><a></a><span>21</span></div>
-      <div style="clear: both;"></div>
-    </li>
-    <li>
-      <h2>Nellie Kane</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>3:41</h3>
-      <div class="likes_for_track"><a></a><span>45</span></div>
-      <div style="clear: both;"></div>
-    </li>
-    <li>
-      <h2>Kill Devil Falls</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>8:58</h3>
-      <div class="likes_for_track"><a></a><span>23</span></div>
-      <div style="clear: both;"></div>
-    </li>
-    <li>
-      <h2>Free</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>8:00</h3>
-      <div class="likes_for_track"><a></a><span>568</span></div>
-      <div style="clear: both;"></div>
-    </li>
-    <li>
-      <h2>Wolfman's Brother</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>15:08</h3>
-      <div class="likes_for_track"><a></a><span>2352</span></div>
-      <div style="clear: both;"></div>
-    </li>
+  <% end %>
   </ul>
-  <h1>Set #2</h1>
-  <ul class="item_list">
-    <li>
-      <h2>Tweezer</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>20:09</h3>
-      <div class="likes_for_track"><a></a><span>53098</span></div>
-      <div style="clear: both;"></div>
-    </li>
-    <li>
-      <h2>Maze</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>12:26</h3>
-      <div class="likes_for_track"><a></a><span>1028</span></div>
-      <div style="clear: both;"></div>
-    </li>
-    <li>
-      <h2>Twist</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>9:49</h3>
-      <div class="likes_for_track"><a></a><span>875</span></div>
-      <div style="clear: both;"></div>
-    </li>
-    <li>
-      <h2>Theme From the Bottom</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>7:53</h3>
-      <div class="likes_for_track"><a></a><span>109</span></div>
-      <div style="clear: both;"></div>
-    </li>
-    <li>
-      <h2>Fluffhead</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>14:55</h3>
-      <div class="likes_for_track"><a></a><span>34</span></div>
-      <div style="clear: both;"></div>
-    </li>
-    <li>
-      <h2>David Bowie</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>17:19</h3>
-      <div class="likes_for_track"><a></a><span>648</span></div>
-      <div style="clear: both;"></div>
-    </li>
-
-
-  </ul>
-  <h1>Encore</h1>
-  <ul class="item_list">
-    <li>
-      <h2>Bouncing Around the Room</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>4:00</h3>
-      <div class="likes_for_track"><a></a><span>8</span></div>
-      <div style="clear: both;"></div>
-    </li>
-    <li>
-      <h2>Good Times Bad Times</h2>
-      <div class="btn-group btn_context">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-          <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-      <h3>6:28</h3>
-      <div class="likes_for_track"><a></a><span>3</span></div>
-      <div style="clear: both;"></div>
-    </li>
-  </ul>
+  
 </div>

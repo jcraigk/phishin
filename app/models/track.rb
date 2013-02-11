@@ -111,6 +111,10 @@ class Track < ActiveRecord::Base
   def slug
     songs.first.slug
   end
+  
+  def duration_readable
+    "%d:%02d" % [duration / 60000, duration % 60000 / 1000]
+  end
 
   protected
   

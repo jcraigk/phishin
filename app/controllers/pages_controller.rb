@@ -1,10 +1,11 @@
 class PagesController < ApplicationController
 
   def index
-    redirect_to :years
+    render_years_page
   end
 
   def years
+    render_years_page
   end
   
   def songs
@@ -27,7 +28,7 @@ class PagesController < ApplicationController
     if g.match(/^\d{4}$/)
       if year g
         @year = g
-        render :year_or_range
+        view = :year_or_range
       else
         redirect_to :root
       end
@@ -35,34 +36,40 @@ class PagesController < ApplicationController
     elsif years = g.match(/^(\d{4})-(\d{4})$/)
       if year_range years[1], years[2]
         @year = g
-        render :year_or_range
+        view = :year_or_range
       else
         redirect_to :root
       end
     # Show date?
     elsif g.match(/^\d{4}\-\d{2}-\d{2}$/)
       if show g
-        render :show
+        view = :show
       else
-        render :show_error
+        view = :show_error
       end
     else
       # Song?
       if song g
-        render :song
+        view = :song
       # City?
       elsif city g
-        render :city
+        view = :city
       # Venue?
       elsif venue g
-        render :venue
+        view = :venue
       else
         redirect_to :root
       end
     end
+    # Don't render layout if called via ajax
+    request.xhr? ? (render view, layout: false) : (render view)
   end
   
   private
+  
+  def render_years_page
+    request.xhr? ? (render :years, layout: false) : (render :years)
+  end
   
   def year(year)
     @shows = Show.during_year(year).includes(:tour).all
