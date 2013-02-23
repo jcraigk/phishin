@@ -64,7 +64,15 @@ $ ->
   $(document).on 'mouseout', '#header', ->
     $(this).find('.btn_context').css 'visibility', 'hidden'
     
-  #Click a year li to go to that year
+  # Follow links in .year_list
   $(document).on 'click', '.year_list > li', ->
     followLink $(this).find 'a'
+  
+  # Follow links in .show_list li
+  $(document).on 'click', '.show_list > li', ->
+    followLink $(this).children('h2').find 'a'
+  
+  # Follow links in .song_list li
+  $(document).on 'click', '.song_list > li', ->
+    followLink $(this).children('h2').find 'a'
     

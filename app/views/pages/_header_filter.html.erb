@@ -1,0 +1,13 @@
+<div class="header_filter">
+  <div class="btn-group">
+    <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
+      <%= current_title %>
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <% item_hash.each do |key, val| %>
+        <%= content_tag :li, link_to(key, val)%>
+      <% end %>
+    </ul>
+  </div>
+</div>

@@ -34,13 +34,13 @@
         </ul>
       <% end %>
       <%= content_tag 'h1', show.tour.name %>
-      <ul class="item_list">
+      <ul class="item_list show_list">
       <% tour = show.tour %>
     <% end %>
       <li>
-        <h2><%= show.date.strftime("%b %-d") %></h2>
-        <h4><a href="null"><%= raw(show.venue.name) %></a></h4>
-        <h5><a href="null"><%= raw(show.venue.location) %></a></h5>
+        <h2><a href="/<%= show.date %>"><%= show.date.strftime("%b %-d") %></a></h2>
+        <h4><a href="/<%= show.venue.slug %>"><%= show.venue.name %></a></h4>
+        <h5><a href="/cities"><%= show.venue.location %></a></h5>
         <div class="btn_context">
           <div class="btn-group">
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">

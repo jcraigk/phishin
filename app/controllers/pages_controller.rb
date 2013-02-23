@@ -9,7 +9,7 @@ class PagesController < ApplicationController
   end
   
   def songs
-    params[:sort] = 'performances' unless ['title', 'performances'].include? params[:sort]
+    params[:sort] = 'title' unless ['title', 'performances'].include? params[:sort]
     if params[:sort] == 'title'
       order_by = "title asc"
       @display_separators = true
