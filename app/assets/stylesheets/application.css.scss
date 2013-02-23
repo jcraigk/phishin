@@ -229,7 +229,7 @@
  #content {
    margin: 0 auto;
    width: 880px;
-   padding: 170px 20px 40px 40px;
+   padding: 190px 20px 40px 40px;
    border-bottom-left-radius: 10px;
    border-bottom-right-radius: 10px;
    border-left: 2px solid #555;
@@ -238,7 +238,7 @@
  }
 
  #content > h1 {
-   margin-top: 40px;
+   margin-top: 20px;
    font-size: 37px;
    font-family: 'Nothing You Could Do', cursive;
  }
@@ -283,6 +283,9 @@
    color: #555;
    font-weight: normal;
  }
+ .item_list > li h3.alt a {
+   color: black;
+ }
  .item_list > li h4 {
    position: absolute;
    font-family: 'Shanti', sans-serif;
@@ -306,6 +309,9 @@
  .item_list > li h5 a {
    color: #999;
  }
+// .item_list > li h5.alt {
+//   margin-left: 550px;
+// }
  .item_list > li h6 {
    position: absolute;
    font-family: 'Shanti', sans-serif;
@@ -537,3 +543,8 @@
  .year_list a:hover {
    text-decoration: none !important;
  }
+ 
+.alias_for {
+  font-size: 12px;
+  font-style: italic;
+}

@@ -4,6 +4,7 @@ class CreateSongs < ActiveRecord::Migration
       t.string        :title
       t.string        :slug
       t.integer       :tracks_count, :default => 0
+      t.integer       :alias_for
       t.timestamps
     end
     

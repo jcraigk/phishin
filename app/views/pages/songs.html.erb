@@ -5,47 +5,56 @@
     <div class="header_filter">
       <div class="btn-group">
         <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          Sort Alphabetically
+          <%= @sort_display %>
           <span class="caret"></span>
         </a>
         <ul class="dropdown-menu">
-          <li><a href="null">Sort Alphabetically</a></li>
-          <li><a href="null">Sort by Likes</a></li>
-          <li><a href="null">Sort by Performances</a></li>
+          <li><a href="?sort=title">Sort Alphabetically</a></li>
+          <li><a href="?sort=performances">Sort by Performances</a></li>
         </ul>
       </div>
-      <form class="form-search">
-        <input type="text" class="input-medium search-query">
-        <button type="submit" class="btn">Search</button>
-      </form>
     </div>
   </div>
 </div>
   
 <div id="content">
   
+  <% if !@display_separators %>
+    <ul class="item_list">
+  <% end %>
+  
   <% letter = false %>
-  <% @songs.each do |song| %>
-    <% if song.title_letter.match(/\d/) %>
-      <% title = '1-9' %>
-    <% else %>
-      <% title = song.title_letter %>
-    <% end %>
-    <% if title != letter %>
-      <% if letter %>
-        </ul>
+  <% for song in @songs %>
+  
+    <% if @display_separators %>
+      <% if song.title_letter.match(/\d/) %>
+        <% title = '1-9' %>
+      <% else %>
+        <% title = song.title_letter %>
       <% end %>
-      <% letter = title %>
-      <%= content_tag 'h1', title %>
-      <ul class="item_list">
+      <% if title != letter %>
+        <% if letter %>
+          </ul>
+        <% end %>
+        <% letter = title %>
+        <%= content_tag 'h1', title %>
+        <ul class="item_list">
+      <% end %>
     <% end %>
-      <li>
-        <h2><a href="#"><%= raw(song.title) %></a></h2>
-        <h5><a href="#"><%= pluralize song.tracks_count, 'performance' %></a></h5>
-        <div class="likes_for_track"><a></a><span>2352</span></div>
-        <div style="clear: both;"></div>
-      </li>
-    <% end %>
+    
+    <li>
+      <h2><a name="<%= song.slug %>"></a><a href="#"><%= raw(song.title) %></a></h2>
+      <h3 class="alt">
+        <% if song.aliased_song %>
+          <a href="#<%= song.aliased_song.slug %>" class="alias_for">alias for <%= raw(song.aliased_song.title) %></a></h5>
+        <% else %>
+          <a href="#"><%=  song.tracks_count %></a></h5>
+        <% end %>
+      </h3>
+      <div style="clear: both;"></div>
+    </li>
+  <% end %>
+  
   </ul>
 
 </div>

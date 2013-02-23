@@ -9,7 +9,18 @@ class PagesController < ApplicationController
   end
   
   def songs
-    @songs = Song.order(:title)
+    params[:sort] = 'performances' unless ['title', 'performances'].include? params[:sort]
+    if params[:sort] == 'title'
+      order_by = "title asc"
+      @display_separators = true
+      @sort_display = "Sort Alphabetically"
+    elsif params[:sort] == 'performances'
+      order_by = "tracks_count desc, title asc"
+      @display_separators = false
+      @sort_display = "Sort by Performances"
+    end
+    @songs = Song.relevant.order(order_by)
+    request.xhr? ? (render layout: false) : (render)
   end
   
   def cities
