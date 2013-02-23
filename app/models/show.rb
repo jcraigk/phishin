@@ -5,8 +5,8 @@ class Show < ActiveRecord::Base
   friendly_id :date
 
   has_many :tracks, :dependent => :destroy
-  belongs_to :tour
-  belongs_to :venue
+  belongs_to :tour, counter_cache: true
+  belongs_to :venue, counter_cache: true
 
   validates_presence_of :date, :location
 

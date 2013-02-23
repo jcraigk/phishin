@@ -10,6 +10,6 @@ Phishin::Application.routes.draw do
     match '/liked' => 'pages#liked'
     
     # Catch-all matcher for short URLs
-    match '/(:glob)' => 'pages#glob'
+    match '/(:glob(/:glob2(/:glob3)))' => 'pages#glob'
     
 end

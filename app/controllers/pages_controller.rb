@@ -27,6 +27,7 @@ class PagesController < ApplicationController
   end
 
   def venues
+    @venues = Venue.relevant
   end
   
   def liked
@@ -35,6 +36,7 @@ class PagesController < ApplicationController
   # Try to match the global URL "glob" to an entity
   def glob
     g = params[:glob]
+            # raise g
     
     # Year?
     if g.match(/^\d{4}$/)
@@ -105,7 +107,8 @@ class PagesController < ApplicationController
   end
   
   def song(slug)
-    @song = Song.where(slug: slug).includes(:tracks).first
+    @song = Song.where(slug: slug).first
+    @tracks = @song.tracks.includes({:show => :venue}, :songs).order('shows.date desc') if @song
     @song
   end
   

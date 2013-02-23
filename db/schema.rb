@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121202033002) do
+ActiveRecord::Schema.define(:version => 20130223222601) do
 
   create_table "albums", :force => true do |t|
     t.string   "name"
@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(:version => 20121202033002) do
     t.datetime "updated_at",                  :null => false
     t.string   "slug"
     t.integer  "tracks_count", :default => 0
+    t.integer  "alias_for"
   end
 
   create_table "songs_tracks", :force => true do |t|
@@ -81,8 +82,9 @@ ActiveRecord::Schema.define(:version => 20121202033002) do
     t.date     "starts_on"
     t.date     "ends_on"
     t.string   "slug"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
+    t.integer  "shows_count", :default => 0
   end
 
   add_index "tours", ["name"], :name => "index_tours_on_name"
@@ -109,8 +111,9 @@ ActiveRecord::Schema.define(:version => 20121202033002) do
     t.string   "state"
     t.string   "country"
     t.string   "slug"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
+    t.integer  "shows_count", :default => 0
   end
 
   add_index "venues", ["name"], :name => "index_venues_on_name"

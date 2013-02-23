@@ -20,7 +20,7 @@ class Track < ActiveRecord::Base
   has_many :section_markers, :dependent => :destroy
   belongs_to :show
   
-  default_scope order('position')
+  # default_scope order('position')
   scope :chronological, order('shows.date ASC').joins(:show)
   
   include PgSearch
@@ -51,6 +51,7 @@ class Track < ActiveRecord::Base
   # Return the full name of the set given the stored codes
   def set_name
     case set
+      when "S" then "Soundcheck"
       when "1" then "Set 1"
       when "2" then "Set 2"
       when "3" then "Set 3"

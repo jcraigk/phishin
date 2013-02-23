@@ -19,9 +19,7 @@ class Song < ActiveRecord::Base
                       normalization: 16
                     }
                   }
-  scope :relevant, -> {
-    where("tracks_count > 0 or alias_for IS NOT NULL")
-  }
+  scope :relevant, -> { where("tracks_count > 0 or alias_for IS NOT NULL") }
   
   def title_letter
     title[0,1]

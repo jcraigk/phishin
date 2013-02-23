@@ -37,7 +37,10 @@ $ ->
     # console.log state
     if state.data.href != undefined and !page_init
       $('#ajax_overlay').css 'visibility', 'visible'
-      $('#page').load(state.data.href)
+      $('#page').load(
+        state.data.href, (response, status, xhr) ->
+          alert("ERROR\n\n"+response) if status == 'error'
+      )
       $('#ajax_overlay').css 'visibility', 'hidden'
 
   # Click a link to load context via ajax
@@ -68,11 +71,8 @@ $ ->
   $(document).on 'click', '.year_list > li', ->
     followLink $(this).find 'a'
   
-  # Follow links in .show_list li
-  $(document).on 'click', '.show_list > li', ->
-    followLink $(this).children('h2').find 'a'
-  
-  # Follow links in .song_list li
-  $(document).on 'click', '.song_list > li', ->
-    followLink $(this).children('h2').find 'a'
+  # Follow h1>a links in .item_list.clickable > li
+  $(document).on 'click', '.item_list > li', ->
+    if $(this).parent('ul').hasClass 'clickable'
+      followLink $(this).children('h2').find 'a'
     

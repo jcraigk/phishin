@@ -9,10 +9,10 @@
 <div id="content">
   
   <% unless @display_separators %>
-    <ul class="item_list song_list">
+    <ul class="item_list clickable">
   <% end %>
   
-  <% letter = false %>
+  <% last_title = false %>
   <% for song in @songs %>
   
     <% if @display_separators %>
@@ -21,13 +21,13 @@
       <% else %>
         <% title = song.title_letter %>
       <% end %>
-      <% if title != letter %>
-        <% if letter %>
+      <% if title != last_title %>
+        <% if last_title %>
           </ul>
         <% end %>
-        <% letter = title %>
+        <% last_title = title %>
         <%= content_tag 'h1', title %>
-        <ul class="item_list song_list">
+        <ul class="item_list clickable">
       <% end %>
     <% end %>
     

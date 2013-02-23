@@ -2,22 +2,7 @@
   <div id="header">
     <h1>Year: <%= @year %></h1>
     <h3><%= pluralize(@shows.size, 'show') %></h3>
-    <div class="header_filter">
-      <div class="btn-group">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          Sort Chronologically
-          <span class="caret"></span>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null">Sort Chronologically</a></li>
-          <li><a href="null">Sort by Likes</a></li>
-          <li><a href="null">Sort by City</a></li>
-          <li><a href="null">Sort by State</a></li>
-          <li><a href="null">Sort by Venue</a></li>
-              
-        </ul>
-      </div>
-    </div>
+    <% #render partial: 'header_filter', locals: { current_title: 'Sort Chronologically', item_hash: {'Sort Chronologically' => '?sort=show_date', 'Sort by Likes' => '?sort=likes', 'Sort by City' => '?sort=city', 'Sort by State' => '?sort=state', 'Sort by Venue' => '?sort=venue'} } %>
   </div>
 </div>
   
@@ -34,27 +19,14 @@
         </ul>
       <% end %>
       <%= content_tag 'h1', show.tour.name %>
-      <ul class="item_list show_list">
+      <ul class="item_list clickable">
       <% tour = show.tour %>
     <% end %>
       <li>
         <h2><a href="/<%= show.date %>"><%= show.date.strftime("%b %-d") %></a></h2>
         <h4><a href="/<%= show.venue.slug %>"><%= show.venue.name %></a></h4>
         <h5><a href="/cities"><%= show.venue.location %></a></h5>
-        <div class="btn_context">
-          <div class="btn-group">
-            <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-              <i class="icon-chevron-right"></i>
-            </a>
-            <ul class="dropdown-menu">
-              <li><a href="<%= show.date %>"><i class="icon-arrow-right"></i>&nbsp;&nbsp;Go to show</a></li>
-              <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to playlist</a></li>
-              <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-              <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3s</a></li>
-              <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-            </ul>
-          </div>
-        </div>
+        <%= render partial: 'context_menu_for_show' %>
         <div class="likes_for_track"><a></a><span>2352</span></div>
         <div style="clear: both;"></div>
       </li>

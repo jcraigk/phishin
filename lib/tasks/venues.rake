@@ -1,5 +1,13 @@
 namespace :venues do
 
+  desc "Update shows_count cache"
+  task :update_shows_count => :environment do
+    Venue.all.each do |v|
+      puts "Here: #{v.shows.length}"
+      v.update_attributes(shows_count: v.shows.length)
+    end
+  end
+
   #########################################################
   # This task scrapes phish.net for venue information and associated shows
   # It updates or creates venues as necessary
