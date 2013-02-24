@@ -1,7 +1,7 @@
 <div id="header_container">
   <div id="header">
-    <h1>Songs</h1>
-    <h3><%= pluralize @songs.size, 'song' %></h3>
+    <%= content_tag :h1, "Songs" %>
+    <%= content_tag :h3, pluralize(@songs.size, 'song') %>
     <%= render partial: 'header_filter', locals: { current_title: @sort_display, item_hash: {'Sort Alphabetically' => '?sort=title', 'Sort by Performances' => '?sort=performances'} } %>
   </div>
 </div>
@@ -32,8 +32,8 @@
     <% end %>
     
     <li name="<%= song.slug %>">
-      <h2><%= link_to_song(song) %></h2>
-      <h3 class="alt"><%= performances_or_alias_link(song) %></h3>
+      <%= content_tag :h2, link_to_song(song) %>
+      <%= content_tag :h3, performances_or_alias_link(song), class: 'alt' %>
       <div style="clear: both;"></div>
     </li>
   <% end %>

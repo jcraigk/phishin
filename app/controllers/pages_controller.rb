@@ -1,11 +1,11 @@
 class PagesController < ApplicationController
   
   def legal_stuff
-    request.xhr? ? (render layout: false) : (render)
+    render layout: false if request.xhr?
   end
 
   def contact_us
-    request.xhr? ? (render layout: false) : (render)
+    render layout: false if request.xhr?
   end
   
 end

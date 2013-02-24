@@ -23,25 +23,24 @@ class ContentController < ApplicationController
       @sort_display = "Sort by Performances"
     end
     @songs = Song.relevant.order(order_by)
-    request.xhr? ? (render layout: false) : (render)
+    render layout: false if request.xhr?
   end
   
   def cities
+    render layout: false if request.xhr?
   end
 
   def venues
     @venues = Venue.relevant.order(:name)
+    render layout: false if request.xhr?
   end
   
   def liked
+    render layout: false if request.xhr?
   end
   
-  def legal_stuff
-    request.xhr? ? (render layout: false) : (render)
-  end
-
-  def contact_us
-    request.xhr? ? (render layout: false) : (render)
+  def playlist
+    render layout: false if request.xhr?
   end
   
   ###############################
@@ -88,7 +87,6 @@ class ContentController < ApplicationController
         redirect_to :root and return
       end
     end
-    # Don't render layout if called via ajax
     request.xhr? ? (render view, layout: false) : (render view)
   end
   
@@ -127,7 +125,7 @@ class ContentController < ApplicationController
   
   def venue(slug)
     @venue = Venue.where(slug: slug).includes(:shows).first
-    @shows = @venue.shows.order('date asc') if @venue
+    @shows = @venue.shows.order('date desc') if @venue
     @venue
   end
   

@@ -7,11 +7,11 @@ Phishin::Application.routes.draw do
     get '/contact-us' => 'pages#contact_us', as: 'contact_us'
     
     # Content pages
-    get '/years' => 'content#years'
-    get '/songs' => 'content#songs'
-    get '/cities' => 'content#cities'
-    get '/venues' => 'content#venues'
-    get '/liked' => 'content#liked'
+    get '/years' => 'content#years', as: 'years'
+    get '/songs' => 'content#songs', as: 'songs'
+    get '/cities' => 'content#cities', as: 'citites'
+    get '/venues' => 'content#venues', as: 'venues'
+    get '/liked' => 'content#liked', as: 'liked'
     get '/playlist' => 'content#playlist', as: 'playlist'
 
     # Catch-all matcher for short content URLs

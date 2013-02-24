@@ -1,13 +1,12 @@
 <div id="header_container">
   <div id="header">
-    <h1>Venues</h1>
-    <h3><%= pluralize @venues.size, 'venue' %></h3>
+    <%= content_tag :h1, "Venues" %>
+    <%= content_tag :h3, pluralize(@venues.size, 'venue') %>
     <% #render partial: 'header_filter', locals: { current_title: @sort_display, item_hash: {'Sort Alphabetically' => '?sort=title', 'Sort by Performances' => '?sort=performances'} } %>
   </div>
 </div>
   
 <div id="content">
-  
   
   <% last_title = false %>
   <% for venue in @venues %>
@@ -26,11 +25,10 @@
       <ul class="item_list clickable">
     <% end %>
 
-    
     <li>
-      <h2 class="alt"><%= link_to truncate(venue.name, length: 45), venue.slug %></h2>
-      <h3 class="alt"><%= venue.shows_count %></h3>
-      <h5><a href="/cities"><%= venue.location %></a></h5>
+      <%= content_tag :h2, link_to(truncate(venue.name, length: 45), venue.slug), class: 'alt' %>
+      <%= content_tag :h3, venue.shows_count, class: 'alt' %>
+      <%= content_tag :h5, link_to(venue.location, "/cities") %>
       <div style="clear: both;"></div>
     </li>
   <% end %>

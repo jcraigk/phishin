@@ -2,7 +2,7 @@
   <div id="header">
     <%= content_tag :h1, @show.date.strftime("%b %-d, %Y")%>
     <%= content_tag :h2, (link_to @show.venue.name, @show.venue.slug, alt: @show.venue.name) %>
-    <%= content_tag :h2, (link_to @show.venue.location, @show.venue.location, alt: @show.venue.location) %>
+    <%= content_tag :h2, (link_to @show.venue.location, "/cities", alt: @show.venue.location) %>
     <%= render partial: 'shared/context_menu_for_show', locals: {show: @show, viewing_this_show: true } %>
     <div class="likes_for_show"><a></a><span>153203</span></div>
   </div>
@@ -23,7 +23,7 @@
     <li data-audio-url="<%= track.file_url %>">
       <%= content_tag :h2, track.title %>
       <%= render partial: 'shared/context_menu_for_track' %>
-      <h3><%= track.duration_readable %></h3>
+      <%= content_tag :h3, track.duration_readable %>
       <div class="likes_for_track"><a></a><span>2</span></div>
       <div style="clear: both;"></div>
     </li>

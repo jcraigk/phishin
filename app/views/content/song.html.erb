@@ -1,7 +1,7 @@
 <div id="header_container">
   <div id="header">
-    <h1>Song: <%= @song.title %></h1>
-    <h3><%= pluralize @song.tracks.size, 'track' %></h3>
+    <%= content_tag :h1, "Song: #{@song.title}" %>
+    <%= content_tag :h3, pluralize(@song.tracks.size, 'track') %>
     <% #render partial: 'header_filter', locals: { current_title: 'Sort Chronologically', item_hash: {'Sort Chronologically' => '?sort=show_date', 'Sort by Likes' => '?sort=likes'} } %>
   </div>
 </div>
@@ -22,9 +22,9 @@
       <% end %>
 
     <li>
-      <h2><a href="/<%= "#{track.show.date}/#{track.songs.first.slug}" %>"><%= track.show.date.strftime("%b %-d") %></a></h2>
-      <h4><a href="/<%= track.show.venue.slug %>"><%= truncate(track.show.venue.name, length: 36) %></a></h4>
-      <h5><a href="/cities"><%= track.show.venue.location %></a></h5>
+      <%= content_tag :h2, link_to(track.show.date.strftime("%b %-d"), "/#{track.show.date}/#{track.songs.first.slug}") %>
+      <%= content_tag :h4, link_to(truncate(track.show.venue.name, length: 36), "/#{track.show.venue.slug}") %>
+      <%= content_tag :h5, link_to(track.show.venue.location, "/cities") %>
       <%= render partial: 'shared/context_menu_for_track' %>
       <div class="likes_for_track"><a></a><span>2352</span></div>
       <div style="clear: both;"></div>
