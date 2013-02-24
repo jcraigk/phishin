@@ -70,7 +70,7 @@ class ContentController < ApplicationController
       if show g
         view = :show
       else
-        view = :show_error
+        view = :show_not_found
       end
     else
       # Song?
