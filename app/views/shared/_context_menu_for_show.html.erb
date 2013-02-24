@@ -1,0 +1,16 @@
+<div class="btn_context">
+  <div class="btn-group">
+    <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
+      <i class="icon-chevron-right"></i>
+    </a>
+    <ul class="dropdown-menu">
+      <% unless viewing_this_show %>
+        <%= content_tag :li, link_to('<i class="icon-arrow-right"></i>&nbsp;&nbsp;Go to show'.html_safe, "/#{show.date}") %>
+      <% end %>
+      <%= content_tag :li, link_to('<i class="icon-share-alt"></i>&nbsp;&nbsp;Share'.html_safe, "null", class: 'share', data: { url: "/#{show.date}"}) %>
+      <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to playlist</a></li>
+      <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3s</a></li>
+      <!-- <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li> -->
+    </ul>
+  </div>
+</div>

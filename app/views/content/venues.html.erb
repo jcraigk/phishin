@@ -1,0 +1,40 @@
+<div id="header_container">
+  <div id="header">
+    <h1>Venues</h1>
+    <h3><%= pluralize @venues.size, 'venue' %></h3>
+    <% #render partial: 'header_filter', locals: { current_title: @sort_display, item_hash: {'Sort Alphabetically' => '?sort=title', 'Sort by Performances' => '?sort=performances'} } %>
+  </div>
+</div>
+  
+<div id="content">
+  
+  
+  <% last_title = false %>
+  <% for venue in @venues %>
+  
+    <% if venue.name_letter.match(/\d/) %>
+      <% title = '1-9' %>
+    <% else %>
+      <% title = venue.name_letter %>
+    <% end %>
+    <% if title != last_title %>
+      <% if last_title %>
+        </ul>
+      <% end %>
+      <% last_title = title %>
+      <%= content_tag 'h1', title %>
+      <ul class="item_list clickable">
+    <% end %>
+
+    
+    <li>
+      <h2 class="alt"><%= link_to truncate(venue.name, length: 45), venue.slug %></h2>
+      <h3 class="alt"><%= venue.shows_count %></h3>
+      <h5><a href="/cities"><%= venue.location %></a></h5>
+      <div style="clear: both;"></div>
+    </li>
+  <% end %>
+  
+  </ul>
+
+</div>

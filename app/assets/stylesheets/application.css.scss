@@ -279,6 +279,9 @@ a:hover {
   font-weight: normal;
 /*  border: 1px solid black;*/
 }
+.item_list > li h2.alt {
+  font-size: 20px;
+}
 .item_list > li h3 {
   font-family: 'Shanti', sans-serif;
   line-height: 16px;
@@ -387,6 +390,9 @@ a:hover {
   font-family: 'Rambla', sans-serif;
   font-size: 13px;
   font-weight: 400;
+}
+#player_detail a {
+  color: #333;
 }
 #player_controls {
   position: fixed;
@@ -554,4 +560,20 @@ a:hover {
 .alias_for {
   font-size: 12px;
   font-style: italic;
+}
+#share_modal_body {
+  margin: 0 auto;
+  font-size: 20px;
+  font-weight: bold;
+  background-color: #eee;
+  border-radius: 5px;
+  border: 1px solid #555;
+  padding-left: 10px;
+  padding-top: 10px;
+}
+#paragraph_content {
+  padding-top: 30px;
+}
+#footer_container a {
+  margin-left: 20px;
 }

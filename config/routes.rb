@@ -1,15 +1,20 @@
 Phishin::Application.routes.draw do
     
-    root :to => 'pages#index'
+    root :to => 'content#index'
     
-    # Main browse pages
-    match '/years' => 'pages#years'
-    match '/songs' => 'pages#songs'
-    match '/cities' => 'pages#cities'
-    match '/venues' => 'pages#venues'
-    match '/liked' => 'pages#liked'
+    # General Pages
+    get '/legal-stuff' => 'pages#legal_stuff', as: 'legal_stuff'
+    get '/contact-us' => 'pages#contact_us', as: 'contact_us'
     
-    # Catch-all matcher for short URLs
-    match '/(:glob(/:glob2(/:glob3)))' => 'pages#glob'
+    # Content pages
+    get '/years' => 'content#years'
+    get '/songs' => 'content#songs'
+    get '/cities' => 'content#cities'
+    get '/venues' => 'content#venues'
+    get '/liked' => 'content#liked'
+    get '/playlist' => 'content#playlist', as: 'playlist'
+
+    # Catch-all matcher for short content URLs
+    get '/(:glob(/:glob2(/:glob3)))' => 'content#glob'
     
 end

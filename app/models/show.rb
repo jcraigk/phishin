@@ -10,13 +10,13 @@ class Show < ActiveRecord::Base
 
   validates_presence_of :date, :location
 
-  scope :during_year, lambda { |year|
+  scope :during_year, ->(year) {
     date = Date.new(year.to_i)
     where('date between ? and ?', 
       date.beginning_of_year, 
       date.end_of_year).order(:date)
   }
-  scope :between_years, lambda { |year1, year2|
+  scope :between_years, ->(year1, year2) {
     date1 = Date.new(year1.to_i)
     date2 = Date.new(year2.to_i)
     if date1 < date2

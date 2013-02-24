@@ -3,22 +3,7 @@
     <%= content_tag :h1, @show.date.strftime("%b %-d, %Y")%>
     <%= content_tag :h2, (link_to @show.venue.name, @show.venue.slug, alt: @show.venue.name) %>
     <%= content_tag :h2, (link_to @show.venue.location, @show.venue.location, alt: @show.venue.location) %>
-    
-    <div class="btn_context">
-      <div class="btn-group">
-        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-          <i class="icon-chevron-right"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li><a href="null"><i class="icon-chevron-right"></i>&nbsp;&nbsp;Go to Next Show</a></li>
-          <li><a href="null"><i class="icon-chevron-left"></i>&nbsp;&nbsp;Go to Previous Show</a></li>
-          <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-          <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3s</a></li>
-          <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-        </ul>
-      </div>
-    </div>
-          
+    <%= render partial: 'shared/context_menu_for_show', locals: {show: @show, viewing_this_show: true } %>
     <div class="likes_for_show"><a></a><span>153203</span></div>
   </div>
 </div>
@@ -37,7 +22,7 @@
     <% end %>
     <li data-audio-url="<%= track.file_url %>">
       <%= content_tag :h2, track.title %>
-      <%= render partial: 'context_menu_for_show' %>
+      <%= render partial: 'shared/context_menu_for_track' %>
       <h3><%= track.duration_readable %></h3>
       <div class="likes_for_track"><a></a><span>2</span></div>
       <div style="clear: both;"></div>

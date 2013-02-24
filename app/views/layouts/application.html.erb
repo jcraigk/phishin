@@ -11,20 +11,11 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-
-  <div id="user_modal" class="modal hide fade">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-      <h3>Sign In / Sign Up</h3>
-    </div>
-    <div class="modal-body">
-      <p>...</p>
-    </div>
-    <div class="modal-footer">
-      <!-- <a href="null" class="btn">Close</a> -->
-      <a href="null" class="btn btn-primary">Submit</a>
-    </div>
-  </div>
+  
+  <div id="app_data" style="display: none;" data-base-url="http://phish.in"></div>
+  
+  <%= render partial: 'shared/user_modal' %>
+  <%= render partial: 'shared/share_modal' %>
   
   <div id="ajax_overlay">
     <%= image_tag 'ajax-loader.gif', alt: "Loading" %>
@@ -35,9 +26,7 @@
     <div id="player_container">
       
       <div id="logo">
-        <a href="/" data-title="phish.in">
-          <%= image_tag 'logo.png', alt: "Logo" %>
-        </a>
+        <%= link_to image_tag('logo.png', alt: "Logo"), root_path %>
       </div>
     
       <div id="player_controls">
@@ -70,7 +59,7 @@
       </div>
       
       <div id="playlist_controls">
-        <a href="/zphishmock/playlist.html" data-title="Playlist">
+        <a href="<%= playlist_path %>">
           <%= image_tag 'icon-playlist.png', alt: "Playlist Controls" %>
         </a>
       </div>
@@ -80,7 +69,7 @@
       </div>
       
       <div id="player_detail">
-        An asteroid crashed and nothing burned
+        <a href="/tube">An asteroid crashed and nothing burned</a>
       </div>
       
       <div id="userbox">
@@ -106,7 +95,11 @@
   </div>
   
   <div id="footer_container">
-    <p><a href="index.html">home</a> | <a href="legal.html">legal</a> | <a href="contact.html">contact</a></p>
+    <p>
+      <%= link_to 'home', root_path %>
+      <%= link_to 'legal', legal_stuff_path %>
+      <%= link_to 'contact', contact_us_path %>
+    </p>
   </div>
 
 </body>

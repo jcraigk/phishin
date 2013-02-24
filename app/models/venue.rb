@@ -11,5 +11,9 @@ class Venue < ActiveRecord::Base
   def location
     country == "USA" ? "#{city}, #{state}" : "#{city}, #{state} #{country}"
   end
+  
+  def name_letter
+    name[0,1]
+  end
 
 end

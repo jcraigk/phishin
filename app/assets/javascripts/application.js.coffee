@@ -75,4 +75,9 @@ $ ->
   $(document).on 'click', '.item_list > li', ->
     if $(this).parent('ul').hasClass 'clickable'
       followLink $(this).children('h2').find 'a'
+  
+  # Share links bring up
+  $(document).on 'click', '.share', ->
+    $('#share_modal_body').html("<p>"+$('#app_data').data('base-url')+$(this).data('url')+"</p>")
+    $('#share_modal').modal('show')
     
