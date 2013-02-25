@@ -86,7 +86,7 @@ class Track < ActiveRecord::Base
       # if tag
         tag.title = title
         tag.artist = "Phish"
-        tag.album = show.date.to_s + " " + set_album_abbreviation + " " + show.location
+        tag.album = show.date.to_s + " " + set_album_abbreviation + " " + show.venue.location
         tag.year = show.date.strftime("%Y").to_i
         tag.track = position
         tag.genre = "Rock"

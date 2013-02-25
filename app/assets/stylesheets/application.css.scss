@@ -51,11 +51,13 @@ a:hover {
 }
 
 .likes_for_track {
-  position: absolute;
-  margin-left: 700px;
+//  position: absolute;
+  float: left;
+  width: 70px;
+  height: 20px;
+  margin-left: 10px;
   line-height: 40px;
   text-align: left;
-  width: 70px;
 }
 .likes_for_track a {
   cursor: pointer;
@@ -88,6 +90,10 @@ a:hover {
   height: 180px;
   z-index: 0;
     background: -webkit-linear-gradient(top, #bababa 0%,#ffffff 100%,#ffffff 100%,#ffffff 100%); /* Chrome10+,Safari5.1+ */
+}
+
+#page {
+  z-index: -5;
 }
 
 #page_header {
@@ -278,10 +284,14 @@ a:hover {
   font-size: 24px;
   float: left;
   font-weight: normal;
-/*  border: 1px solid black;*/
+  width: 115px;
+//  border: 1px solid black;
 }
 .item_list > li h2.alt {
   font-size: 20px;
+}
+.item_list > li h2.track {
+  width: 600px;
 }
 .item_list > li h3 {
   font-family: 'Shanti', sans-serif;
@@ -295,24 +305,34 @@ a:hover {
   color: #555;
 }
 .item_list > li h4 {
-  position: absolute;
+//  position: absolute;
+  float: left;
+  width: 300px;
+  height: 20px;
+  overflow: hidden;
   font-family: 'Shanti', sans-serif;
   line-height: 21px;
   font-size: 17px;
   color: #777;
   font-weight: normal;
-  margin-left: 115px;
+  margin-left: 10px;
+//  border: 1px solid black;
 }
 .item_list > li h4 a {
   color: #777;
 }
 .item_list > li h5 {
-  position: absolute;
+//  position: absolute;
+  float: left;
+  width: 170px;
+  height: 20px;
+  overflow: hidden;
   font-family: 'Shanti', sans-serif;
   line-height: 21px;
   font-size: 14px;
   font-weight: normal;
-  margin-left: 420px;
+  margin-left: 10px;
+//    border: 1px solid black;
 }
 .item_list > li h5 a {
   color: #999;
@@ -333,11 +353,13 @@ a:hover {
 }
 .item_list > li .btn_context {
   visibility: hidden;
-  position: absolute;
-  margin-left: 630px;
+//  position: absolute;
+  float: left;
+  width: 70px;
+  height: 20px;
+  margin-left: 20px;
   line-height: 40px;
   text-align: left;
-  width: 70px;
 }
 .btn_context {
   cursor: pointer;

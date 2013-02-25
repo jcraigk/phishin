@@ -23,7 +23,7 @@
     <% end %>
     
     <li data-audio-url="<%= track.file_url %>">
-      <%= content_tag :h2, track.title %>
+      <%= content_tag :h2, track.title, class: 'track' %>
       <%= render partial: 'shared/context_menu_for_track' %>
       <%= content_tag :h3, track.duration_readable %>
       <div class="likes_for_track"><a></a><span>2</span></div>

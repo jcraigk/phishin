@@ -76,7 +76,7 @@
       </div>
       
       <div id="player_detail">
-        <a href="/tube">An asteroid crashed and nothing burned</a>
+        <%= link_to @random_song.lyrical_excerpt, "/#{@random_song.slug}" %>
       </div>
       
       <%= render partial: 'layouts/user_controls' %>

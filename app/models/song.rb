@@ -3,7 +3,7 @@ class Song < ActiveRecord::Base
 
   has_and_belongs_to_many :tracks
   
-  scope :random, lambda { |amt| where('tracks_count > 0').order('RANDOM()').limit(amt) }
+  scope :random, ->(amt) { where('tracks_count > 0').order('RANDOM()').limit(amt) }
 
   validates_presence_of :title
 
@@ -19,7 +19,8 @@ class Song < ActiveRecord::Base
                       normalization: 16
                     }
                   }
-  scope :relevant, -> { where("tracks_count > 0 or alias_for IS NOT NULL") }
+  scope :relevant, -> { where('tracks_count > 0 or alias_for IS NOT NULL') }
+  scope :random_lyrical_excerpt, -> { where('lyrical_excerpt IS NOT NULL').order('RANDOM()') }
   
   def title_letter
     title[0,1]
