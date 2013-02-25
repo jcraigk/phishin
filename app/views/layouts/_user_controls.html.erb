@@ -1,0 +1,20 @@
+<div id="userbox">
+  
+  <% if user_signed_in? %>
+    <div class="btn-group">
+      <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
+        <i class="icon-user"></i>&nbsp;&nbsp;<%= current_user.name %>
+        <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu">
+        <li><a href="null"><a href="<%= destroy_user_session_path %>"><i class="icon-off"></i>&nbsp;&nbsp;Logout</a></li>
+        <li><a href="null"><i class="icon-edit"></i>&nbsp;&nbsp;Edit Profile</a></li>
+        <li><a href="null"><i class="icon-heart"></i>&nbsp;&nbsp;My Likes</a></li>
+        
+      </ul>
+    </div>
+  <% else %>
+    <%= link_to "sign in", new_user_session_path, class: 'non-remote' %> |
+    <%= link_to "sign up", new_user_registration_path, class: 'non-remote' %>
+  <% end %>
+</div>

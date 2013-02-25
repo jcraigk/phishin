@@ -14,9 +14,9 @@
  */
 
 html {
-    margin: 0;
-    padding: 0;
-    overflow-y: scroll;
+  margin: 0;
+  padding: 0;
+  overflow-y: scroll;
 }
 a {
   text-decoration: none;
@@ -586,4 +586,20 @@ a:hover {
   z-index: 200;
   width: 200px;
   border: 1px solid black;
+}
+.instructions {
+  background-color: #eee;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #333;
+}
+#error_explanation {
+  background-color: #d61b2d;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #333;
+}
+#error_explanation h2 {
+  font-size: 17px;
+  line-height: 20px;
 }

@@ -13,8 +13,8 @@
 <body>
   
   <div id="feedback">
-    <p class="feedback_notice">NOTICE<%= notice %></p>
-    <p class="feedback_alert">ALERT<%= alert %></p>
+    <p class="feedback_notice"><%= notice %></p>
+    <p class="feedback_alert"><%= alert %></p>
   </div>
   
   <div id="app_data" style="display: none;" data-base-url="http://phish.in"></div>
@@ -77,18 +77,7 @@
         <a href="/tube">An asteroid crashed and nothing burned</a>
       </div>
       
-      <div id="userbox">
-        <div class="btn-group">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-            jcraigk
-            <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="null"><i class="icon-edit"></i>&nbsp;&nbsp;Edit Profile</a></li>
-            <li><a href="null"><i class="icon-heart"></i>&nbsp;&nbsp;My Likes</a></li>
-          </ul>
-        </div>
-      </div>
+      <%= render partial: 'layouts/user_controls' %>
       
     </div>
   </div>

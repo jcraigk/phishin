@@ -1,18 +1,30 @@
-<h2>Sign up</h2>
+<div id="header_container">
+  <div id="header">
+    <h1>Sign up</h1>
+  </div>
+</div>
 
-<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
-  <%= devise_error_messages! %>
+<div id="content">
+  <div id="paragraph_content">
+    
+    <p class="instructions"><strong>Note:</strong> You must provide a valid email address to confirm your account.  We will not share your contact information with anyone, nor will we send any unsolicited emails.</p>
 
-  <div><%= f.label :email %><br />
-  <%= f.email_field :email, :autofocus => true %></div>
+    <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
+      <%= devise_error_messages! %>
 
-  <div><%= f.label :password %><br />
-  <%= f.password_field :password %></div>
+      <div><%= f.label :email %><br />
+      <%= f.email_field :email, :autofocus => true %></div>
 
-  <div><%= f.label :password_confirmation %><br />
-  <%= f.password_field :password_confirmation %></div>
+      <div><%= f.label :password %><br />
+      <%= f.password_field :password %></div>
 
-  <div><%= f.submit "Sign up" %></div>
-<% end %>
+      <div><%= f.label :password_confirmation %><br />
+      <%= f.password_field :password_confirmation %></div>
 
-<%= render "devise/shared/links" %>
+      <div><%= f.submit "Sign up" %></div>
+    <% end %>
+
+    <%= render "devise/shared/links" %>
+
+  </div>
+</div>

@@ -45,8 +45,9 @@ $ ->
 
   # Click a link to load context via ajax
   $(document).on 'click', 'a', ->
-    followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
-    false
+    unless $(this).hasClass('non-remote')
+      followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
+      false
   ###############################################
   
   # Hide page-loaded feedback after a timeout
