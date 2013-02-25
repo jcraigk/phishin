@@ -7,9 +7,9 @@
         <span class="caret"></span>
       </a>
       <ul class="dropdown-menu">
-        <li><a href="null"><i class="icon-edit"></i>&nbsp;&nbsp;Edit Profile</a></li>
+        <%= content_tag :li, link_to('<i class="icon-edit"></i>&nbsp;&nbsp;Change Password'.html_safe, edit_user_registration_path) %>
         <li><a href="null"><i class="icon-heart"></i>&nbsp;&nbsp;My Likes</a></li>
-        <li><a href="null"><a href="<%= destroy_user_session_path %>"><i class="icon-off"></i>&nbsp;&nbsp;Logout</a></li>
+        <%= content_tag :li, link_to('<i class="icon-off"></i>&nbsp;&nbsp;Logout'.html_safe, destroy_user_session_path, method: :delete, class: 'non-remote') %>
       </ul>
     </div>
   <% else %>
