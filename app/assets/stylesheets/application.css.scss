@@ -81,21 +81,22 @@ a:hover {
   font-family: 'Nothing You Could Do', cursive;
 }
 
-#page_header_mask {
+#gradient_mask {
   position: fixed;
   top: 0px;
   width: 100%;
   height: 180px;
-  z-index: 10;
-  background: #bababa; /* Old browsers */
-  background: -moz-linear-gradient(top, #bababa 0%, #ffffff 100%, #ffffff 100%, #ffffff 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#bababa), color-stop(100%,#ffffff), color-stop(100%,#ffffff), color-stop(100%,#ffffff)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #bababa 0%,#ffffff 100%,#ffffff 100%,#ffffff 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #bababa 0%,#ffffff 100%,#ffffff 100%,#ffffff 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #bababa 0%,#ffffff 100%,#ffffff 100%,#ffffff 100%); /* IE10+ */
-  background: linear-gradient(to bottom, #bababa 0%,#ffffff 100%,#ffffff 100%,#ffffff 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bababa', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
-/*  border: 1px solid orange;*/
+  z-index: 0;
+    background: -webkit-linear-gradient(top, #bababa 0%,#ffffff 100%,#ffffff 100%,#ffffff 100%); /* Chrome10+,Safari5.1+ */
+}
+
+#page_header {
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  height: 100px;
+  z-index: 20;
+
 }
 
 #player_container {
@@ -147,7 +148,7 @@ a:hover {
   position: fixed;
   top: 116px;
   height: 70px;
-  z-index: 20;
+
 /*  border: 1px solid red;*/
 }
 #header {
