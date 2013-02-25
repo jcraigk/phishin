@@ -7,6 +7,11 @@
 <div id="content">
   <div id="paragraph_content">
 
+    <h3>Don't have an account?
+    <%= link_to "Sign up", new_user_registration_path, class: 'non-remote' %></h3>
+    
+    <h2>Sign in</h2>
+
     <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
       <div><%= f.label :email %><br />
       <%= f.email_field :email, :autofocus => true %></div>

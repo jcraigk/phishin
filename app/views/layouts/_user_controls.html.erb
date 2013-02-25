@@ -2,18 +2,17 @@
   
   <% if user_signed_in? %>
     <div class="btn-group">
-      <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
+      <a class="btn dropdown-toggle btn-round" data-toggle="dropdown" href="null">
         <i class="icon-user"></i>&nbsp;&nbsp;<%= current_user.name %>
         <span class="caret"></span>
       </a>
       <ul class="dropdown-menu">
-        <%= content_tag :li, link_to('<i class="icon-edit"></i>&nbsp;&nbsp;Change Password'.html_safe, edit_user_registration_path) %>
+        <%= content_tag :li, link_to('<i class="icon-edit"></i>&nbsp;&nbsp;Change Password'.html_safe, edit_user_registration_path, class: 'non-remote') %>
         <li><a href="null"><i class="icon-heart"></i>&nbsp;&nbsp;My Likes</a></li>
         <%= content_tag :li, link_to('<i class="icon-off"></i>&nbsp;&nbsp;Logout'.html_safe, destroy_user_session_path, method: :delete, class: 'non-remote') %>
       </ul>
     </div>
   <% else %>
-    <%= link_to "sign in", new_user_session_path, class: 'non-remote' %> |
-    <%= link_to "sign up", new_user_registration_path, class: 'non-remote' %>
+    <%= link_to "sign in", new_user_session_path, class: 'non-remote' %>
   <% end %>
 </div>

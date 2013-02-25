@@ -1,4 +1,16 @@
 namespace :tracks do
+  
+  desc "Find tracks that don't have valid show associations"
+  task :find_dangling => :environment do
+    track_list = []
+    tracks = Track.all
+    tracks.each do |track|
+      track_list << track unless track.show 
+    end
+    track_list.each do |track|
+      puts "#{track.title} :: #{track.id}"
+    end
+  end
 
   desc "Set default ID3 tags on all Tracks' audio_files"
   task :save_default_id3 => :environment do

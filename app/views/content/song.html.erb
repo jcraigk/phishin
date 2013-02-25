@@ -10,25 +10,29 @@
   
     <% last_title = false %>
     <% for track in @tracks %>
+    
+      <% if track.show %>
 
-      <% title = track.show.date.strftime("%Y") %>
-      <% if title != last_title %>
-        <% if last_title %>
-          </ul>
+        <% title = track.show.date.strftime("%Y") %>
+        <% if title != last_title %>
+          <% if last_title %>
+            </ul>
+          <% end %>
+          <% last_title = title %>
+          <%= content_tag 'h1', title %>
+          <ul class="item_list clickable">
         <% end %>
-        <% last_title = title %>
-        <%= content_tag 'h1', title %>
-        <ul class="item_list clickable">
-      <% end %>
 
-    <li>
-      <%= content_tag :h2, link_to(track.show.date.strftime("%b %-d"), "/#{track.show.date}/#{track.songs.first.slug}") %>
-      <%= content_tag :h4, link_to(truncate(track.show.venue.name, length: 36), "/#{track.show.venue.slug}") %>
-      <%= content_tag :h5, link_to(track.show.venue.location, "/cities") %>
-      <%= render partial: 'shared/context_menu_for_track' %>
-      <div class="likes_for_track"><a></a><span>2352</span></div>
-      <div style="clear: both;"></div>
-    </li>
+      <li>
+        <%= content_tag :h2, link_to(track.show.date.strftime("%b %-d"), "/#{track.show.date}/#{track.songs.first.slug}") %>
+        <%= content_tag :h4, link_to(truncate(track.show.venue.name, length: 36), "/#{track.show.venue.slug}") %>
+        <%= content_tag :h5, link_to(track.show.venue.location, "/cities") %>
+        <%= render partial: 'shared/context_menu_for_track' %>
+        <div class="likes_for_track"><a></a><span>2352</span></div>
+        <div style="clear: both;"></div>
+      </li>
+      
+    <% end %>
 
   <% end %>
   
