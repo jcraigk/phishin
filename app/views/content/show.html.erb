@@ -12,6 +12,7 @@
   
   <% set = false %>
   <% @show.tracks.each do |track| %>
+    
     <% if track.set != set %>
       <% if set %>
         </ul>
@@ -20,6 +21,7 @@
       <ul class="item_list">
       <% set = track.set %>
     <% end %>
+    
     <li data-audio-url="<%= track.file_url %>">
       <%= content_tag :h2, track.title %>
       <%= render partial: 'shared/context_menu_for_track' %>

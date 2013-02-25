@@ -12,6 +12,11 @@
 </head>
 <body>
   
+  <div id="feedback">
+    <p class="feedback_notice">NOTICE<%= notice %></p>
+    <p class="feedback_alert">ALERT<%= alert %></p>
+  </div>
+  
   <div id="app_data" style="display: none;" data-base-url="http://phish.in"></div>
   
   <%= render partial: 'shared/user_modal' %>

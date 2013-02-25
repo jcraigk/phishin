@@ -9,8 +9,9 @@ gem 'nokogiri'
 gem 'friendly_id'
 gem 'mp3info'
 gem 'pg_search'
-# gem 'historyjs-rails'
-
+gem 'jquery-rails'
+gem 'resque', :require => "resque/server"
+gem 'devise'
 gem 'anjlab-bootstrap-rails', '>= 2.3', :require => 'bootstrap-rails'
 
 group :assets do
@@ -18,9 +19,6 @@ group :assets do
   gem 'coffee-rails', '~> 3.2.1'
   gem 'uglifier', '>= 1.0.3'
 end
-
-gem 'jquery-rails'
-gem 'resque', :require => "resque/server"
 
 group :development do
   gem 'binding_of_caller'

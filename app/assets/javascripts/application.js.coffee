@@ -49,6 +49,13 @@ $ ->
     false
   ###############################################
   
+  # Hide page-loaded feedback after a timeout
+  setTimeout( ->
+    $('#feedback').hide('slide')
+  , 3000)
+  
+  ###############################################
+  
   # Rollover year to reveal number of shows
   $(document).on 'mouseover', '.year_list > li', ->
     $(this).find('h2').css 'visibility', 'visible'
