@@ -16,19 +16,38 @@
 //= require history
 //= require_tree .
 
+Ph = {}
+
+Ph.uniqueID = (length=8) ->
+  id = ""
+  id += Math.random().toString(36).substr(2) while id.length < length
+  id.substr 0, length
+
 handleFeedback = (feedback) ->
-  if feedback.alert
-    $('#feedback_alert').html('<i class="icon-exclamation-sign"></i> '+feedback.alert)
-    $('#feedback_alert').show('slide')
-    setTimeout( ->
-      $('#feedback_alert').hide('slide')
-    , 3000)
-  if feedback.notice
-    $('#feedback_notice').html('<i class="icon-ok"></i> '+feedback.notice) 
-    $('#feedback_notice').show('slide')
-    setTimeout( ->
-      $('#feedback_notice').hide('slide')
-    , 3000)
+  if feedback.type == 'notice'
+    css = 'feedback_notice'
+    icon = 'icon-ok'
+  else
+    css = 'feedback_alert'
+    icon = 'icon-exclamation-sign'
+  id = Ph.uniqueID()
+  $('#feedback').append("<p class=\"#{css}\" id=\"#{id}\"><i class=\"#{icon}\"></i> #{feedback.msg}</p>")
+  setTimeout( ->
+    $("##{id}").hide('slide')
+  , 3000)
+  
+  # if feedback.alert
+  #   $('#feedback_alert').html('<i class="icon-exclamation-sign"></i> '+feedback.alert)
+  #   $('#feedback_alert').show('slide')
+  #   setTimeout( ->
+  #     $('#feedback_alert').hide('slide')
+  #   , 3000)
+  # if feedback.notice
+  #   $('#feedback_notice').html('<i class="icon-ok"></i> '+feedback.notice) 
+  #   $('#feedback_notice').show('slide')
+  #   setTimeout( ->
+  #     $('#feedback_notice').hide('slide')
+  #   , 3000)
 
 page_init = true
 followLink = ($el) ->
@@ -102,10 +121,10 @@ $ ->
       success: (r) ->
         if r.success
           if r.liked then $el.addClass('liked') else $el.removeClass('liked')
-          handleFeedback({ 'notice': r.msg })
+          handleFeedback({ 'type': 'notice', 'msg': r.msg })
           $el.siblings('span').html(r.likes_count)
         else
-          handleFeedback({ 'alert': r.msg })
+          handleFeedback({ 'type': 'alert', 'msg': r.msg })
     })
   
   # Rollover year to reveal number of shows
