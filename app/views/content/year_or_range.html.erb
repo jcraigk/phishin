@@ -2,7 +2,7 @@
   <div id="header">
     <%= content_tag :h1, "Year: #{@year}" %>
     <%= content_tag :h3, pluralize(@shows.size, 'show') %>
-    <% #render partial: 'header_filter', locals: { current_title: 'Sort Chronologically', item_hash: {'Sort Chronologically' => '?sort=show_date', 'Sort by Likes' => '?sort=likes', 'Sort by City' => '?sort=city', 'Sort by State' => '?sort=state', 'Sort by Venue' => '?sort=venue'} } %>
+    <%= render partial: 'sort_filter', locals: { item_hash: {'Chronologically' => 'date', 'Likes' => 'likes'} } %>
   </div>
 </div>
   
@@ -10,18 +10,25 @@
   
   <% if @shows.empty? %>
     <h1>No shows this year...</h1>
-  <% end %>
+  <% else %>
   
-  <% tour = false %>
-  <% @shows.each_with_index do |show, idx| %>
-    <% if show.tour != tour %>
-      <% if tour %>
-        </ul>
-      <% end %>
-      <%= content_tag 'h1', show.tour.name %>
+    <% unless @display_separators %>
       <ul class="item_list clickable">
-      <% tour = show.tour %>
     <% end %>
+  
+    <% tour = false %>
+    <% @shows.each_with_index do |show, idx| %>
+  
+      <% if @display_separators %>
+        <% if show.tour != tour %>
+          <% if tour %>
+            </ul>
+          <% end %>
+          <%= content_tag 'h1', show.tour.name %>
+          <ul class="item_list clickable">
+          <% tour = show.tour %>
+        <% end %>
+      <% end %>
     
       <li>
         <%= content_tag :h2, link_to(show.date.strftime("%b %-d"), "/#{show.date}") %>
@@ -33,6 +40,7 @@
       </li>
       
     <% end %>
-  </ul>
+    </ul>
+  <% end %>
 
 </div>

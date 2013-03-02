@@ -15,7 +15,7 @@ class Show < ActiveRecord::Base
     date = Date.new(year.to_i)
     where('date between ? and ?', 
       date.beginning_of_year, 
-      date.end_of_year).order(:date)
+      date.end_of_year)
   }
   scope :between_years, ->(year1, year2) {
     date1 = Date.new(year1.to_i)
@@ -27,7 +27,7 @@ class Show < ActiveRecord::Base
     else
       where('date between ? and ?', 
         date2.beginning_of_year, 
-        date1.end_of_year).order('date desc')
+        date1.end_of_year)
     end
   }
 

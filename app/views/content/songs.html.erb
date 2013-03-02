@@ -1,12 +1,10 @@
-<div id="header_container">
-  <div id="header">
-    <%= content_tag :h1, "Songs" %>
-    <%= content_tag :h3, pluralize(@songs.size, 'song') %>
-    <%= render partial: 'header_filter', locals: { current_title: @sort_display, item_hash: {'Sort Alphabetically' => '?sort=title', 'Sort by Performances' => '?sort=performances'} } %>
-  </div>
-</div>
+<%= render 'index_header' %>
   
 <div id="content">
+  
+  <%= content_tag :h2, pluralize(@songs.size, 'Song'), class: 'for_content' %>
+  <%= render partial: 'sort_filter', locals: { item_hash: {'Alphabetically' => 'title', 'by Performances' => 'performances'} } %>
+  <div style="clear: both;"></div>
   
   <% unless @display_separators %>
     <ul class="item_list clickable">

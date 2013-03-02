@@ -1,13 +1,13 @@
 <div id="header_container">
   <div id="header">
     <h1>I'm gonna need to see some ID</h1>
-    <h3><%= link_to "Sign in", new_session_path(resource_name), class: 'non-remote' %></h3>
+    <!-- <h3><%= link_to "Sign in", new_session_path(resource_name), class: 'non-remote' %></h3> -->
   </div>
 </div>
 
 <div id="content">
     
-  <h1>Sign up</h1>
+  <h2>Sign up</h2>
 
   <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
     <%= devise_error_messages! %>

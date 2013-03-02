@@ -1,102 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>phish.in</title>
-  <link href='http://fonts.googleapis.com/css?family=Armata' rel='stylesheet' type='text/css'>
-  <link href='http://fonts.googleapis.com/css?family=Rambla:400,700' rel='stylesheet' type='text/css'>
-  <link href='http://fonts.googleapis.com/css?family=Fjalla+One' rel='stylesheet' type='text/css'>
-  <link href='http://fonts.googleapis.com/css?family=Nothing+You+Could+Do' rel='stylesheet' type='text/css'>
+  <title><%= APP_NAME %></title>
+  <link href='http://fonts.googleapis.com/css?family=Rambla:400,700|Armata|Fjalla+One|Nothing+You+Could+Do' rel='stylesheet' type='text/css'>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
   
-  <div id="feedback">
-    <p class="feedback_notice"><%= notice %></p>
-    <p class="feedback_alert"><%= alert %></p>
-  </div>
-  
-  <div id="app_data" style="display: none;" data-base-url="http://phish.in"></div>
-  
+  <%= render partial: 'layouts/data' %>
+  <%= render partial: 'layouts/feedback' %>
+  <%= render partial: 'layouts/ajax_overlay' %>
   <%= render partial: 'shared/user_modal' %>
   <%= render partial: 'shared/share_modal' %>
-  
-  <div id="ajax_overlay">
-    <%= image_tag 'ajax-loader.gif', alt: "Loading" %>
-  </div>
-  
-  <div id="gradient_mask"></div>
-  
-  <div id="page_header">
-    
-    <div id="player_container">
-      
-      <div id="logo">
-        <%= link_to image_tag('logo.png', alt: "Logo"), root_path %>
-      </div>
-    
-      <div id="player_controls">
-        <div id="control_previous">
-          <a href="null">
-            <%= image_tag 'btn-next-track.png', alt: "Previous Track" %>
-          </a>
-        </div>
-        <div id="control_playpause">
-          <a href="null">
-            <%= image_tag 'btn-play.png', alt: "Play" %>
-          </a>
-        </div>
-        <div id="control_next">
-          <a href="null">
-            <%= image_tag 'btn-next-track.png', alt: "Next Track" %>
-          </a>
-        </div>
-      </div>
-      
-      <div id="scrubber_controls">
-        <div id="time_elapsed">
-          3:23
-        </div>
-        <div id="scrubber_track">&nbsp;</div>
-        <div id="scrubber_knob">&nbsp;</div>
-        <div id="time_remaining">
-          -5:03
-        </div>
-      </div>
-      
-      <div id="playlist_controls">
-        <a href="<%= playlist_path %>">
-          <%= image_tag 'icon-playlist.png', alt: "Playlist Controls" %>
-        </a>
-      </div>
-      
-      <div id="player_title">
-        phish.in
-      </div>
-      
-      <div id="player_detail">
-        <%= link_to @random_song.lyrical_excerpt, "/#{@random_song.slug}" %>
-      </div>
-      
-      <%= render partial: 'layouts/user_controls' %>
-      
-    </div>
-  </div>
+  <%= render partial: 'layouts/page_header' %>
   
   <div id="page">
-    
     <%= yield %>
-    
   </div>
   
-  <div id="footer_container">
-    <p>
-      <%= link_to 'phish.in', root_path %>
-      <%= link_to 'legal', legal_stuff_path %>
-      <%= link_to 'contact', contact_us_path %>
-    </p>
-  </div>
+  <%= render partial: 'layouts/page_footer' %>
 
 </body>
 </html>

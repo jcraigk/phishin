@@ -16,11 +16,9 @@ class ContentController < ApplicationController
     if params[:sort] == 'title'
       order_by = "title asc"
       @display_separators = true
-      @sort_display = "Sort Alphabetically"
     elsif params[:sort] == 'performances'
       order_by = "tracks_count desc, title asc"
       @display_separators = false
-      @sort_display = "Sort by Performances"
     end
     @songs = Song.relevant.order(order_by)
     render layout: false if request.xhr?
@@ -31,14 +29,22 @@ class ContentController < ApplicationController
   end
 
   def venues
-    @venues = Venue.relevant.order(:name)
+    params[:sort] = 'name' unless ['name', 'performances'].include? params[:sort]
+    if params[:sort] == 'name'
+      order_by = "name asc"
+      @display_separators = true
+    elsif params[:sort] == 'performances'
+      order_by = "shows_count desc, name asc"
+      @display_separators = false
+    end
+    @venues = Venue.relevant.order(order_by)
     render layout: false if request.xhr?
   end
   
   def liked
-    @shows = Show.order('likes_count desc, date desc').limit(10)
+    @shows = Show.order('likes_count desc, date desc').limit(5)
     @shows_likes = @shows.map { |show| get_user_show_like(show) }
-    @tracks = Track.order('likes_count desc, title asc').limit(10)
+    @tracks = Track.order('likes_count desc, title asc').limit(5)
     @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
     render layout: false if request.xhr?
   end
@@ -101,14 +107,18 @@ class ContentController < ApplicationController
   end
   
   def year(year)
-    @shows = Show.during_year(year).includes(:tour).all
-    @shows_likes = @shows.map { |show| get_user_show_like(show) }
+    validate_sorting_for_year_or_range
+    if @shows = Show.during_year(year).includes(:tour, :venue).order(@order_by).all
+      @shows_likes = @shows.map { |show| get_user_show_like(show) }
+    end
     @shows
   end
   
   def year_range(year1, year2)
-    @shows = Show.between_years(year1, year2).includes(:tour).all
-    @shows_likes = @shows.map { |show| get_user_show_like(show) }
+    validate_sorting_for_year_or_range
+    if @shows = Show.between_years(year1, year2).includes(:tour, :venue).order(@order_by).all
+      @shows_likes = @shows.map { |show| get_user_show_like(show) }
+    end
     @shows
   end
   
@@ -119,23 +129,26 @@ class ContentController < ApplicationController
     rescue
        return false
     end
-    @show = Show.where(date: date).includes(:tracks).order('tracks.position asc').first
-    @show_like = get_user_show_like(@show)
-    @tracks_likes = @show.tracks.map { |track| get_user_track_like(track) }
+    if @show = Show.where(date: date).includes(:tracks).order('tracks.position asc').first
+      @show_like = get_user_show_like(@show)
+      @tracks_likes = @show.tracks.map { |track| get_user_track_like(track) }
+    end
     @show
   end
   
   def song(slug)
-    @song = Song.where(slug: slug).first
-    @tracks = @song.tracks.includes({:show => :venue}, :songs).order('shows.date desc') if @song
-    @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
+    if @song = Song.where(slug: slug).first
+      @tracks = @song.tracks.includes({:show => :venue}, :songs).order('shows.date desc')
+      @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
+    end
     @song
   end
   
   def venue(slug)
-    @venue = Venue.where(slug: slug).includes(:shows).first
-    @shows = @venue.shows.order('date desc') if @venue
-    @shows_likes = @shows.map { |show| get_user_show_like(show) }
+    if @venue = Venue.where(slug: slug).includes(:shows).first
+      @shows = @venue.shows.order('date desc')
+      @shows_likes = @shows.map { |show| get_user_show_like(show) }
+    end
     @venue
   end
   
@@ -149,7 +162,18 @@ class ContentController < ApplicationController
   end
   
   def get_user_track_like(track)
-    track.likes.where(user_id: current_user.id).first if track and current_user
+    track.likes.where(user_id: current_user.id).first if track and track.likes and current_user
+  end
+  
+  def validate_sorting_for_year_or_range
+    params[:sort] = 'date' unless ['date', 'likes'].include? params[:sort]
+    if params[:sort] == 'date'
+      @order_by = "date desc"
+      @display_separators = true
+    elsif params[:sort] == 'likes'
+      @order_by = "likes_count desc, date asc"
+      @display_separators = false
+    end
   end
   
 end

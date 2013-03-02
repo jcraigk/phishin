@@ -8,12 +8,10 @@
       </a>
       <ul class="dropdown-menu">
         <%= content_tag :li, link_to('<i class="icon-edit"></i>&nbsp;&nbsp;Change Password'.html_safe, edit_user_registration_path, class: 'non-remote') %>
-        <li><a href="null"><i class="icon-heart"></i>&nbsp;&nbsp;My Likes</a></li>
         <%= content_tag :li, link_to('<i class="icon-off"></i>&nbsp;&nbsp;Logout'.html_safe, destroy_user_session_path, method: :delete, class: 'non-remote') %>
       </ul>
     </div>
   <% else %>
-  <button type="button" class="btn btn-round"><%= link_to "sign in", new_user_session_path, class: 'non-remote' %></button>
-    
+    <%= link_to '<button type="button" class="btn btn-round">Sign in</button>'.html_safe, new_user_session_path, class: 'non-remote' %>
   <% end %>
 </div>

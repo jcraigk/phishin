@@ -41,7 +41,7 @@ page_init = true
 Ph.followLink = ($el) ->
   page_init = false
   # console.log $el
-  History.pushState {href: $el.attr 'href'}, 'phish.in', $el.attr 'href'
+  History.pushState {href: $el.attr 'href'}, $('#app_data').data('app-name'), $el.attr 'href'
   window.scrollTo 0, 0
 
 $ ->

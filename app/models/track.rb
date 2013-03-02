@@ -5,12 +5,11 @@ class Track < ActiveRecord::Base
   #########################
   # Attributes & Constants
   #########################
-  FILE_NAME_HASH_SECRET = "CROUOPQNDKUCBVYTQYQLUSKCOMJAQFEWXMEX"
   attr_accessible :show_id, :title, :position, :audio_file, :song_ids, :likes_count
 
   has_attached_file :audio_file,
-    :url => "/system/:class/:attachment/:id_partition/:style/:hash.:extension",
-    :hash_secret => FILE_NAME_HASH_SECRET
+    path: PAPERCLIP_BASE_DIR + "/:class/:attachment/:id_partition/:style/:hash.:extension",
+    hash_secret: PAPERCLIP_SECRET
 
   ########################
   # Associations & Scopes

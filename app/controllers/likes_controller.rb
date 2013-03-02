@@ -11,7 +11,7 @@ class LikesController < ApplicationController
           liked = false
           likes_count = likable.likes_count - 1
         else
-          blah = likable.likes.build(user_id: current_user.id).save!
+          likable.likes.build(user_id: current_user.id).save!
           liked = true
           likes_count = likable.likes_count + 1
         end

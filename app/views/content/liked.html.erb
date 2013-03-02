@@ -1,8 +1,11 @@
 <%= render 'index_header' %>
   
 <div id="content">
-      
-  <h1>Most Liked Shows</h1>
+  
+  <%= content_tag :h2, 'Top Shows', class: 'for_content' %>
+  <%= render partial: 'option_filter', locals: { title: 'Show all Likes', item_hash: {'Show all Likes' => '?show=all', 'Show my Likes' => '?show=mine'} } %>
+  <div style="clear: both;"></div>
+
   <ul class="item_list">
     <% @shows.each_with_index do |show, idx| %>
       <li>
@@ -15,15 +18,17 @@
       </li>
     <% end %>
   </ul>
-  <h4><a href="null">load 10 more... (coming soon)</a><h4>
+  <h4><a href="null">load 10 more... (coming soon)</a></h4>
   <br />
 
-  <h1>Most Liked Tracks</h1>
+  <%= content_tag :h2, 'Top Tracks', class: 'for_content' %>
+  <div style="clear: both;"></div>
+  
   <ul class="item_list">
     <% @tracks.each_with_index do |track, idx| %>
       <li>
         <%= content_tag :h2, track.title, class: 'wide' %>
-        <%= content_tag :h5, track.show.date.strftime("%-m/%-d/%y") %>
+        <%= content_tag :h5, link_to(track.show.date.strftime("%-m/%-d/%y"), "#{track.show.date}") %>
         <%= render partial: 'shared/context_menu_for_track' %>
         <%= content_tag :h3, track.duration_readable %>
         <%= likable(track, @tracks_likes[idx], 'small') %>
@@ -31,6 +36,6 @@
       </li>
     <% end %>
   </ul>
-  <h4><a href="null">load 10 more... (coming soon)</a><h4>
+  <h4><a href="null">load 10 more... (coming soon)</a></h4>
       
 </div>
