@@ -4,7 +4,7 @@
     <%= content_tag :h2, (link_to @show.venue.name, @show.venue.slug, alt: @show.venue.name) %>
     <%= content_tag :h2, (link_to @show.venue.location, "/cities", alt: @show.venue.location) %>
     <%= render partial: 'shared/context_menu_for_show', locals: {show: @show, viewing_this_show: true } %>
-    <%= likable(@show, @show_like) %>
+    <%= likable(@show, @show_like, 'large') %>
   </div>
 </div>
   
@@ -26,7 +26,7 @@
       <%= content_tag :h2, track.title, class: 'wide' %>
       <%= render partial: 'shared/context_menu_for_track' %>
       <%= content_tag :h3, track.duration_readable %>
-      <%= likable(track, nil) %>
+      <%= likable(track, nil, 'small') %>
       <div style="clear: both;"></div>
     </li>
   <% end %>

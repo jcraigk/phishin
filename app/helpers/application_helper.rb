@@ -17,12 +17,12 @@ module ApplicationHelper
     song.aliased_song ? (link_to "alias for #{song.aliased_song.title}", "#{song.aliased_song.slug}", class: :alias_for) : song.tracks_count
   end
   
-  def likable(likable, like)
+  def likable(likable, like, size)
     likable_name = likable.class.name.downcase
-    css = (like ? [:like_toggle, :liked] : [:like_toggle])
+    css = (like.present? ? [:like_toggle, :liked] : [:like_toggle])
     a = link_to '', 'null', data: { type: likable_name, id: likable.id}, class: css, title: "Click to Like or Unlike this #{likable_name}"
     span = content_tag :span, likable.likes_count, id: :blah
-    str = content_tag :div, a + span, class: "likes_for_#{likable_name}"
+    str = content_tag :div, a + span, class: "likes_#{size}"
     str.html_safe
   end
   

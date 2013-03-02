@@ -17,13 +17,13 @@ a:hover {
   text-decoration: underline;
 }
 
-.likes_for_show a.liked {
+.likes_large a.liked {
   background-position: -20px 0 !important;
 }
-.likes_for_track a.liked {
+.likes_small a.liked {
   background-position: -15px 0 !important;
 }
-.likes_for_show a {
+.likes_large a {
   cursor: pointer;
   float: right;
   width: 20px;
@@ -34,19 +34,19 @@ a:hover {
   margin-left: 8px;
 //  border: 1px solid black;
 }
-.likes_for_show a:hover {
+.likes_large a:hover {
   cursor: pointer;
   background-position: -40px 0 !important;
   text-decoration: none !important;
 }
-.likes_for_show span {
+.likes_large span {
   float: right;
   line-height: 66px;
   color: #791419;
   font-size: 24px;
   font-family: 'Nothing You Could Do', cursive;
 }
-.likes_for_track {
+.likes_small {
   float: left;
   width: 70px;
   height: 20px;
@@ -54,7 +54,7 @@ a:hover {
   line-height: 40px;
   text-align: left;
 }
-.likes_for_track a {
+.likes_small a {
   cursor: pointer;
   float: left;
   width: 15px;
@@ -65,12 +65,12 @@ a:hover {
   margin-right: 5px;
 //  border: 1px solid black;
 }
-.likes_for_track a:hover {
+.likes_small a:hover {
   cursor: pointer;
   background-position: -30px 0;
   text-decoration: none !important;
 }
-.likes_for_track span {
+.likes_small span {
   float: left;
   line-height: 42px;
   color: #5f1014;
@@ -193,7 +193,7 @@ a:hover {
 #header_filter li {
   text-align: left !important;
 }
-#header .likes_for_show {
+#header .likes_large {
   float: right;
   width: 150px;
   height: 50px;

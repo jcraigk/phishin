@@ -98,6 +98,7 @@ class ContentController < ApplicationController
   
   def year(year)
     @shows = Show.during_year(year).includes(:tour).all
+    @shows_likes = @shows.map { |show| get_user_show_like(show) }
     @shows
   end
   
@@ -114,7 +115,7 @@ class ContentController < ApplicationController
        return false
     end
     @show = Show.where(date: date).includes(:tracks).first
-    @show_like = @show.likes.where(user_id: current_user.id) if @show and current_user
+    @show_like = get_user_show_like(@show)
     @show
   end
   
@@ -134,5 +135,12 @@ class ContentController < ApplicationController
     #TODO
     false
   end
+  
+  def get_user_show_like(show)
+    show.likes.where(user_id: current_user.id).first if @show and current_user
+  end
+  
+  # def get_track_likes(track)
+  #   track.likes.where(current_user)
   
 end

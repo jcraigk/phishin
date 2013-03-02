@@ -70,11 +70,11 @@ $ ->
   ###############################################
   
   # Like tooltip
-  $('.likes_for_show a').tooltip({
+  $('.likes_large a').tooltip({
     placement: 'bottom',
     delay: { show: 500, hide: 0 }
   })
-  $('.likes_for_track > a').tooltip({
+  $('.likes_small > a').tooltip({
     delay: { show: 500, hide: 0 }
   })
   
