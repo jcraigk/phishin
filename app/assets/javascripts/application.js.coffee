@@ -16,6 +16,7 @@
 //= require history
 //= require_tree .
 
+# Generic namespace
 Ph = {}
 
 Ph.uniqueID = (length=8) ->
@@ -23,7 +24,7 @@ Ph.uniqueID = (length=8) ->
   id += Math.random().toString(36).substr(2) while id.length < length
   id.substr 0, length
 
-handleFeedback = (feedback) ->
+Ph.handleFeedback = (feedback) ->
   if feedback.type == 'notice'
     css = 'feedback_notice'
     icon = 'icon-ok'
@@ -35,22 +36,9 @@ handleFeedback = (feedback) ->
   setTimeout( ->
     $("##{id}").hide('slide')
   , 3000)
-  
-  # if feedback.alert
-  #   $('#feedback_alert').html('<i class="icon-exclamation-sign"></i> '+feedback.alert)
-  #   $('#feedback_alert').show('slide')
-  #   setTimeout( ->
-  #     $('#feedback_alert').hide('slide')
-  #   , 3000)
-  # if feedback.notice
-  #   $('#feedback_notice').html('<i class="icon-ok"></i> '+feedback.notice) 
-  #   $('#feedback_notice').show('slide')
-  #   setTimeout( ->
-  #     $('#feedback_notice').hide('slide')
-  #   , 3000)
 
 page_init = true
-followLink = ($el) ->
+Ph.followLink = ($el) ->
   page_init = false
   # console.log $el
   History.pushState {href: $el.attr 'href'}, 'phish.in', $el.attr 'href'
@@ -60,20 +48,20 @@ $ ->
   
   ###############################################
   # Handle feedback initial state on DOM load
-  if $('#feedback_notice').html() != ''
-    $('#feedback_notice').show('slide')
+  if $('.feedback_notice').html() != ''
+    $('.feedback_notice').show('slide')
     setTimeout( ->
-      $('#feedback_notice').hide('slide')
+      $('.feedback_notice').hide('slide')
     , 3000)
   else
-    $('#feedback_notice').hide();
-  if $('#feedback_alert').html() != ''
-    $('#feedback_alert').show('slide')
+    $('.feedback_notice').hide()
+  if $('.feedback_alert').html() != ''
+    $('.feedback_alert').show('slide')
     setTimeout( ->
-      $('#feedback_alert').hide('slide')
+      $('.feedback_alert').hide('slide')
     , 3000)
   else
-    $('#feedback_alert').hide();
+    $('.feedback_alert').hide()
   
   ###############################################
   # Prepare history.js
@@ -96,7 +84,7 @@ $ ->
   # Click a link to load context via ajax
   $(document).on 'click', 'a', ->
     unless $(this).hasClass('non-remote')
-      followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
+      Ph.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
       false
 
   ###############################################
@@ -121,11 +109,14 @@ $ ->
       success: (r) ->
         if r.success
           if r.liked then $el.addClass('liked') else $el.removeClass('liked')
-          handleFeedback({ 'type': 'notice', 'msg': r.msg })
+          Ph.handleFeedback({ 'type': 'notice', 'msg': r.msg })
           $el.siblings('span').html(r.likes_count)
         else
-          handleFeedback({ 'type': 'alert', 'msg': r.msg })
+          Ph.handleFeedback({ 'type': 'alert', 'msg': r.msg })
     })
+  
+  # User sign up / sign in tabs
+  $('#user_tabs a:last').tab('show');
   
   # Rollover year to reveal number of shows
   $(document).on 'mouseover', '.year_list > li', ->
@@ -147,12 +138,12 @@ $ ->
     
   # Follow links in .year_list
   $(document).on 'click', '.year_list > li', ->
-    followLink $(this).find 'a'
+    Ph.followLink $(this).find 'a'
   
   # Follow h1>a links in .item_list.clickable > li
   $(document).on 'click', '.item_list > li', ->
     if $(this).parent('ul').hasClass 'clickable'
-      followLink $(this).children('h2').find 'a'
+      Ph.followLink $(this).children('h2').find 'a'
   
   # Share links bring up
   $(document).on 'click', '.share', ->

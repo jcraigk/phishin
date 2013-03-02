@@ -4,27 +4,33 @@
       
   <h1>Most Liked Shows</h1>
   <ul class="item_list">
-    <li>
-      <h2>June 7</h2>
-      <h4><a href="null">DCU Center</a></h4><h5><a href="null">Worcester, MA</a></h5>
-      <div class="btn_context">
-        <div class="btn-group">
-          <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-            <i class="icon-chevron-right"></i>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="null"><i class="icon-arrow-right"></i>&nbsp;&nbsp;Go to show</a></li>
-            <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to playlist</a></li>
-            <li><a href="null"><i class="icon-share-alt"></i>&nbsp;&nbsp;Share</a></li>
-            <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3s</a></li>
-            <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="likes_small"><a></a><span>2352</span></div>
-      <div style="clear: both;"></div>
-    </li>
+    <% @shows.each_with_index do |show, idx| %>
+      <li>
+        <%= content_tag :h2, link_to(show.date.strftime("%-m/%-d/%y"), "/#{show.date}") %>
+        <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}") %>
+        <%= content_tag :h5, link_to(show.venue.location, "/cities") %>
+        <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
+        <%= likable(show, @shows_likes[idx], 'small') %>
+        <div style="clear: both;"></div>
+      </li>
+    <% end %>
   </ul>
-  <h4><a href="null">load 10 more...</a><h4>
+  <h4><a href="null">load 10 more... (coming soon)</a><h4>
+  <br />
+
+  <h1>Most Liked Tracks</h1>
+  <ul class="item_list">
+    <% @tracks.each_with_index do |track, idx| %>
+      <li>
+        <%= content_tag :h2, track.title, class: 'wide' %>
+        <%= content_tag :h5, track.show.date.strftime("%-m/%-d/%y") %>
+        <%= render partial: 'shared/context_menu_for_track' %>
+        <%= content_tag :h3, track.duration_readable %>
+        <%= likable(track, @tracks_likes[idx], 'small') %>
+        <div style="clear: both;"></div>
+      </li>
+    <% end %>
+  </ul>
+  <h4><a href="null">load 10 more... (coming soon)</a><h4>
       
 </div>

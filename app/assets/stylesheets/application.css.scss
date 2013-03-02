@@ -272,12 +272,15 @@ a:hover {
   font-size: 20px;
 }
 .item_list > li h2.wide {
-  width: 600px;
+  width: 440px;
+}
+.item_list > li h2.wider {
+  width: 580px;
 }
 .item_list > li h3 {
   font-family: 'Shanti', sans-serif;
   line-height: 16px;
-  font-size: 17px;
+  font-size: 19px;
   float: right;
   color: #555;
   font-weight: normal;
@@ -583,7 +586,6 @@ a:hover {
   font-weight: bold;
   font-size: 15px;
   color: #333;
-//  line-height: 30px;
 }
 .feedback_notice {
   background-color: #bbddb9;
@@ -612,4 +614,23 @@ a:hover {
 #error_explanation h2 {
   font-size: 17px;
   line-height: 20px;
+}
+#dont_have_account {
+  padding: 10px;
+  background: #ccc;
+  border: 1px solid #333;
+  border-radius: 5px;
+  float: right;
+}
+
+.field_label {
+  font-size: 18px;
+  float: left;
+  width: 150px;
+  text-align: right;
+  padding-right: 10px;
+}
+.strong {
+  font-size: 18px;
+  font-weight: bold;
 }

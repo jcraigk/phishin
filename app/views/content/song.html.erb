@@ -29,6 +29,7 @@
         <%= content_tag :h5, link_to(track.show.venue.location, "/cities") %>
         <%= render partial: 'shared/context_menu_for_track' %>
         <%= likable(track, @tracks_likes[idx], 'small') %>
+        <%= content_tag :h3, track.duration_readable %>
         <div style="clear: both;"></div>
       </li>
       

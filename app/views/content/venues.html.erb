@@ -26,11 +26,12 @@
     <% end %>
 
     <li>
-      <%= content_tag :h2, link_to(truncate(venue.name, length: 45), venue.slug), class: 'alt' %>
+      <%= content_tag :h2, link_to(truncate(venue.name, length: 45), venue.slug), class: 'wide' %>
       <%= content_tag :h3, venue.shows_count, class: 'alt' %>
       <%= content_tag :h5, link_to(venue.location, "/cities") %>
       <div style="clear: both;"></div>
     </li>
+            
   <% end %>
   
   </ul>

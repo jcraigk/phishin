@@ -1,32 +1,40 @@
 <div id="header_container">
   <div id="header">
-    <h1>Sign in</h1>
+    <h1>I'm gonna need to see some ID</h1>
+    <h3><%= link_to "Sign up", new_user_registration_path, class: 'non-remote' %></h3>
   </div>
 </div>
 
 <div id="content">
-  <div id="paragraph_content">
-
-    <h3>Don't have an account?
-    <%= link_to "Sign up", new_user_registration_path, class: 'non-remote' %></h3>
     
-    <h2>Sign in</h2>
+  <h1>Sign in</h1>
 
-    <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-      <div><%= f.label :email %><br />
-      <%= f.email_field :email, :autofocus => true %></div>
-
-      <div><%= f.label :password %><br />
-      <%= f.password_field :password %></div>
-
-      <% if devise_mapping.rememberable? -%>
-        <div><%= f.check_box :remember_me %> <%= f.label :remember_me %></div>
-      <% end -%>
-
-      <div><%= f.submit "Sign in" %></div>
-    <% end %>
-
-    <%= render "devise/shared/links" %>
+  <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
     
-  </div>
+    <br />
+    <div class="field_label">Username</div>
+    <div class="field_content"><%= f.email_field :email, :autofocus => true %></div>
+    <div style="clear: both;"></div>
+      
+    <div class="field_label">Password</div>
+    <div class="field_content"><%= f.password_field :password %></div>
+    <div style="clear: both;"></div>
+    
+    <% if devise_mapping.rememberable? -%>
+      <div class="field_label"><%= f.check_box :remember_me %></div>
+      <div class="field_content">Remember me</div>
+      <div style="clear: both;"></div>
+    <% end -%>
+    
+    <br />
+    
+    <div class="field_label"><%= f.submit "Sign in" %></div>
+    <div style="clear: both;"></div>
+
+  <% end %>
+
+  <br />
+  
+  <%= render "devise/shared/links" %>
+    
 </div>

@@ -23,7 +23,7 @@
     <% end %>
     
     <li class="liked" data-audio-url="<%= track.file_url %>">
-      <%= content_tag :h2, track.title, class: 'wide' %>
+      <%= content_tag :h2, track.title, class: 'wider' %>
       <%= render partial: 'shared/context_menu_for_track' %>
       <%= content_tag :h3, track.duration_readable %>
       <%= likable(track, @tracks_likes[idx], 'small') %>

@@ -15,7 +15,7 @@ class LikesController < ApplicationController
           liked = true
           likes_count = likable.likes_count + 1
         end
-        msg = "#{(liked ? 'Like' : 'Unlike')} Acknowledged"
+        msg = "#{(liked ? 'Like' : 'Unlike')} acknowledged"
         render :json => { success: true, msg: msg, liked: liked, likes_count: likes_count }
       else
         render :json => { success: false, msg: "Invalid likable object specified (#{params[:likable_type]})" }
@@ -32,7 +32,7 @@ class LikesController < ApplicationController
   end
   
   def find_likable
-    params[:likable_type] and params[:likable_id] ? params[:likable_type].classify.constantize.where(id: params[:likable_id]).first : nil
+    params[:likable_type].classify.constantize.where(id: params[:likable_id]).first if params[:likable_type] and params[:likable_id]
   end
   
 end
