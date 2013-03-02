@@ -6,7 +6,7 @@ class Track < ActiveRecord::Base
   # Attributes & Constants
   #########################
   FILE_NAME_HASH_SECRET = "CROUOPQNDKUCBVYTQYQLUSKCOMJAQFEWXMEX"
-  attr_accessible :show_id, :title, :position, :audio_file, :song_ids
+  attr_accessible :show_id, :title, :position, :audio_file, :song_ids, :likes_count
 
   has_attached_file :audio_file,
     :url => "/system/:class/:attachment/:id_partition/:style/:hash.:extension",
@@ -19,6 +19,7 @@ class Track < ActiveRecord::Base
   has_many :songs, :through => :songs_tracks
   has_many :section_markers, :dependent => :destroy
   belongs_to :show
+  has_many :likes, as: :likable
   
   # default_scope order('position')
   scope :chronological, order('shows.date ASC').joins(:show)

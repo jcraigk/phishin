@@ -4,14 +4,14 @@
     <%= content_tag :h2, (link_to @show.venue.name, @show.venue.slug, alt: @show.venue.name) %>
     <%= content_tag :h2, (link_to @show.venue.location, "/cities", alt: @show.venue.location) %>
     <%= render partial: 'shared/context_menu_for_show', locals: {show: @show, viewing_this_show: true } %>
-    <div class="likes_for_show"><a></a><span>153203</span></div>
+    <%= likable(@show, @show_like) %>
   </div>
 </div>
   
 <div id="content">
   
   <% set = false %>
-  <% @show.tracks.each do |track| %>
+  <% for track in @show.tracks %>
     
     <% if track.set != set %>
       <% if set %>
@@ -26,7 +26,7 @@
       <%= content_tag :h2, track.title, class: 'wide' %>
       <%= render partial: 'shared/context_menu_for_track' %>
       <%= content_tag :h3, track.duration_readable %>
-      <div class="likes_for_track"><a></a><span>2</span></div>
+      <%= likable(track, nil) %>
       <div style="clear: both;"></div>
     </li>
   <% end %>

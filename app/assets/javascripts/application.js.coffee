@@ -16,6 +16,15 @@
 //= require history
 //= require_tree .
 
+handleFeedback = (feedback) ->
+  $('#feedback_alert').html(feedback.alert) if feedback.alert
+  $('#feedback_notice').html(feedback.notice) if feedback.notice
+  if feedback.notice or feedback.alert
+    $('#feedback').show('slide')
+    setTimeout( ->
+      $('#feedback').hide('slide')
+    , 3000)
+
 page_init = true
 followLink = ($el) ->
   page_init = false
@@ -24,6 +33,15 @@ followLink = ($el) ->
   window.scrollTo 0, 0
 
 $ ->
+  
+  ###############################################
+  # Handle feedback initial state on DOM load
+  if $('#feedback_notice').html() != '' or $('#feedback_alert').html() != ''
+    setTimeout( ->
+      $('#feedback').hide('slide')
+    , 3000)
+  else
+    $('#feedback').hide()
   
   ###############################################
   # Prepare history.js
@@ -48,14 +66,34 @@ $ ->
     unless $(this).hasClass('non-remote')
       followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
       false
+
   ###############################################
   
-  # Hide page-loaded feedback after a timeout
-  setTimeout( ->
-    $('#feedback').hide('slide')
-  , 3000)
+  # Like tooltip
+  $('.likes_for_show a').tooltip({
+    placement: 'bottom',
+    delay: { show: 500, hide: 0 }
+  })
+  $('.likes_for_track > a').tooltip({
+    delay: { show: 500, hide: 0 }
+  })
   
-  ###############################################
+  # Click a like to submit to server
+  $(document).on 'click', '.like_toggle', ->
+    $el = $(this)
+    $.ajax({
+      type: 'post',
+      url: '/toggle_like',
+      data: { 'likable_type': $el.data('type'), 'likable_id': $el.data('id') }
+      dataType: 'json',
+      success: (r) ->
+        if r.success
+          if r.liked then $el.addClass('liked') else $el.removeClass('liked')
+          handleFeedback({ 'notice': r.msg })
+          $el.siblings('span').html(r.likes_count)
+        else
+          handleFeedback({ 'alert': r.msg })
+    })
   
   # Rollover year to reveal number of shows
   $(document).on 'mouseover', '.year_list > li', ->

@@ -114,6 +114,7 @@ class ContentController < ApplicationController
        return false
     end
     @show = Show.where(date: date).includes(:tracks).first
+    @show_like = @show.likes.where(user_id: current_user.id) if @show and current_user
     @show
   end
   

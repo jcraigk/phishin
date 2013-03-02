@@ -7,4 +7,8 @@ class ApplicationController < ActionController::Base
     @random_song = Song.random_lyrical_excerpt.first unless request.xhr?
   end
   
+  def require_xhr!
+    redirect_to :root and return unless request.xhr?
+  end
+  
 end

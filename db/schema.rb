@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130225044130) do
+ActiveRecord::Schema.define(:version => 20130302031026) do
 
   create_table "albums", :force => true do |t|
     t.string   "name"
@@ -27,6 +27,17 @@ ActiveRecord::Schema.define(:version => 20130225044130) do
   end
 
   add_index "albums", ["md5"], :name => "index_albums_on_md5"
+
+  create_table "likes", :force => true do |t|
+    t.string   "likable_type"
+    t.integer  "likable_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+  end
+
+  add_index "likes", ["likable_id"], :name => "index_likes_on_likable_id"
+  add_index "likes", ["likable_type"], :name => "index_likes_on_likable_type"
+  add_index "likes", ["user_id"], :name => "index_likes_on_user_id"
 
   create_table "rails_admin_histories", :force => true do |t|
     t.text     "message"
@@ -51,15 +62,17 @@ ActiveRecord::Schema.define(:version => 20130225044130) do
 
   create_table "shows", :force => true do |t|
     t.date     "date"
-    t.datetime "created_at",                    :null => false
-    t.datetime "updated_at",                    :null => false
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
     t.string   "location"
-    t.boolean  "remastered", :default => false
-    t.boolean  "sbd",        :default => false
+    t.boolean  "remastered",  :default => false
+    t.boolean  "sbd",         :default => false
     t.integer  "venue_id"
     t.integer  "tour_id"
+    t.integer  "likes_count", :default => 0
   end
 
+  add_index "shows", ["likes_count"], :name => "index_shows_on_likes_count"
   add_index "shows", ["tour_id"], :name => "index_shows_on_tour_id"
   add_index "shows", ["venue_id"], :name => "index_shows_on_venue_id"
 
@@ -95,15 +108,18 @@ ActiveRecord::Schema.define(:version => 20130225044130) do
     t.integer  "show_id"
     t.string   "title"
     t.integer  "position"
-    t.datetime "created_at",              :null => false
-    t.datetime "updated_at",              :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.string   "audio_file_file_name"
     t.string   "audio_file_content_type"
     t.integer  "audio_file_file_size"
     t.datetime "audio_file_updated_at"
     t.integer  "duration"
     t.string   "set"
+    t.integer  "likes_count",             :default => 0
   end
+
+  add_index "tracks", ["likes_count"], :name => "index_tracks_on_likes_count"
 
   create_table "users", :force => true do |t|
     t.string   "email",                  :default => "", :null => false

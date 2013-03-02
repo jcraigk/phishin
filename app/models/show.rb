@@ -1,12 +1,13 @@
 class Show < ActiveRecord::Base
   
-  attr_accessible :date, :location, :sbd, :remastered
+  attr_accessible :date, :location, :sbd, :remastered, :likes_count
   extend FriendlyId
   friendly_id :date
 
   has_many :tracks, :dependent => :destroy
   belongs_to :tour, counter_cache: true
   belongs_to :venue, counter_cache: true
+  has_many :likes, as: :likable
 
   validates_presence_of :date, :location
 

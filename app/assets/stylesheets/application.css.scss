@@ -17,6 +17,12 @@ a:hover {
   text-decoration: underline;
 }
 
+.likes_for_show a.liked {
+  background-position: -20px 0 !important;
+}
+.likes_for_track a.liked {
+  background-position: -15px 0 !important;
+}
 .likes_for_show a {
   cursor: pointer;
   float: right;
@@ -30,7 +36,7 @@ a:hover {
 }
 .likes_for_show a:hover {
   cursor: pointer;
-  background-position: -20px 0;
+  background-position: -40px 0 !important;
   text-decoration: none !important;
 }
 .likes_for_show span {
@@ -61,7 +67,7 @@ a:hover {
 }
 .likes_for_track a:hover {
   cursor: pointer;
-  background-position: -15px 0;
+  background-position: -30px 0;
   text-decoration: none !important;
 }
 .likes_for_track span {
