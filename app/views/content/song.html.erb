@@ -9,7 +9,7 @@
 <div id="content">
   
     <% last_title = false %>
-    <% for track in @tracks %>
+    <% @tracks.each_with_index do |track, idx| %>
     
       <% if track.show %>
 
@@ -28,7 +28,7 @@
         <%= content_tag :h4, link_to(truncate(track.show.venue.name, length: 36), "/#{track.show.venue.slug}") %>
         <%= content_tag :h5, link_to(track.show.venue.location, "/cities") %>
         <%= render partial: 'shared/context_menu_for_track' %>
-        <%= likable(nil) %>
+        <%= likable(track, @tracks_likes[idx], 'small') %>
         <div style="clear: both;"></div>
       </li>
       

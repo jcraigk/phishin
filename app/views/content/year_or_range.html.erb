@@ -25,7 +25,7 @@
     
       <li>
         <%= content_tag :h2, link_to(show.date.strftime("%b %-d"), "/#{show.date}") %>
-        <%= content_tag :h4, link_to(show.venue.name, "/#{show.venue.slug}") %>
+        <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}") %>
         <%= content_tag :h5, link_to(show.venue.location, "/cities") %>
         <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
         <%= likable(show, @shows_likes[idx], 'small') %>

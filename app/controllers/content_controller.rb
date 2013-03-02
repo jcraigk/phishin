@@ -104,6 +104,7 @@ class ContentController < ApplicationController
   
   def year_range(year1, year2)
     @shows = Show.between_years(year1, year2).includes(:tour).all
+    @shows_likes = @shows.map { |show| get_user_show_like(show) }
     @shows
   end
   
@@ -114,20 +115,23 @@ class ContentController < ApplicationController
     rescue
        return false
     end
-    @show = Show.where(date: date).includes(:tracks).first
+    @show = Show.where(date: date).includes(:tracks).order('tracks.position asc').first
     @show_like = get_user_show_like(@show)
+    @tracks_likes = @show.tracks.map { |track| get_user_track_like(track) }
     @show
   end
   
   def song(slug)
     @song = Song.where(slug: slug).first
     @tracks = @song.tracks.includes({:show => :venue}, :songs).order('shows.date desc') if @song
+    @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
     @song
   end
   
   def venue(slug)
     @venue = Venue.where(slug: slug).includes(:shows).first
     @shows = @venue.shows.order('date desc') if @venue
+    @shows_likes = @shows.map { |show| get_user_show_like(show) }
     @venue
   end
   
@@ -137,10 +141,11 @@ class ContentController < ApplicationController
   end
   
   def get_user_show_like(show)
-    show.likes.where(user_id: current_user.id).first if @show and current_user
+    show.likes.where(user_id: current_user.id).first if show and current_user
   end
   
-  # def get_track_likes(track)
-  #   track.likes.where(current_user)
+  def get_user_track_like(track)
+    track.likes.where(user_id: current_user.id).first if track and current_user
+  end
   
 end
