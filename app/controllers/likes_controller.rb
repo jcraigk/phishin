@@ -28,7 +28,7 @@ class LikesController < ApplicationController
   private
   
   def authorize_user!
-    render :json => { success: false, msg: 'You must be logged in to submit Likes' } and return unless current_user
+    render :json => { success: false, msg: 'You must be signed in to submit Likes' } and return unless current_user
   end
   
   def find_likable

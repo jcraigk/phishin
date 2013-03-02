@@ -577,12 +577,25 @@ a:hover {
 #feedback {
   position: fixed;
   left: 0;
-  padding: 10px;
-  border-radius: 5px;
-  background-color: #f5f07f;
+  margin: 10px;
   z-index: 200;
-  width: 200px;
-  border: 1px solid black;
+  width: 250px;
+  font-weight: bold;
+  font-size: 15px;
+  color: #333;
+//  line-height: 30px;
+}
+#feedback_notice {
+  background-color: #bbddb9;
+  border: 2px solid #349941;
+  border-radius: 5px;
+  padding: 5px;
+}
+#feedback_alert {
+  background-color: #dd8c91;
+  border: 2px solid #991c23;
+  border-radius: 5px;
+  padding: 5px;
 }
 .instructions {
   background-color: #eee;

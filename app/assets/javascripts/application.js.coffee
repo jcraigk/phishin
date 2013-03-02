@@ -17,12 +17,17 @@
 //= require_tree .
 
 handleFeedback = (feedback) ->
-  $('#feedback_alert').html(feedback.alert) if feedback.alert
-  $('#feedback_notice').html(feedback.notice) if feedback.notice
-  if feedback.notice or feedback.alert
-    $('#feedback').show('slide')
+  if feedback.alert
+    $('#feedback_alert').html('<i class="icon-exclamation-sign"></i> '+feedback.alert)
+    $('#feedback_alert').show('slide')
     setTimeout( ->
-      $('#feedback').hide('slide')
+      $('#feedback_alert').hide('slide')
+    , 3000)
+  if feedback.notice
+    $('#feedback_notice').html('<i class="icon-ok"></i> '+feedback.notice) 
+    $('#feedback_notice').show('slide')
+    setTimeout( ->
+      $('#feedback_notice').hide('slide')
     , 3000)
 
 page_init = true
@@ -36,12 +41,20 @@ $ ->
   
   ###############################################
   # Handle feedback initial state on DOM load
-  if $('#feedback_notice').html() != '' or $('#feedback_alert').html() != ''
+  if $('#feedback_notice').html() != ''
+    $('#feedback_notice').show('slide')
     setTimeout( ->
-      $('#feedback').hide('slide')
+      $('#feedback_notice').hide('slide')
     , 3000)
   else
-    $('#feedback').hide()
+    $('#feedback_notice').hide();
+  if $('#feedback_alert').html() != ''
+    $('#feedback_alert').show('slide')
+    setTimeout( ->
+      $('#feedback_alert').hide('slide')
+    , 3000)
+  else
+    $('#feedback_alert').hide();
   
   ###############################################
   # Prepare history.js
