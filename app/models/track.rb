@@ -5,18 +5,17 @@ class Track < ActiveRecord::Base
   #########################
   # Attributes & Constants
   #########################
-  attr_accessible :show_id, :title, :position, :audio_file, :song_ids, :likes_count
+  attr_accessible :show_id, :title, :position, :audio_file, :song_ids
 
   has_attached_file :audio_file,
-    path: PAPERCLIP_BASE_DIR + "/:class/:attachment/:id_partition/:style/:hash.:extension",
-    hash_secret: PAPERCLIP_SECRET
+    path: APP_CONTENT_PATH + "/:class/:attachment/:id_partition/:id.:extension"
 
   ########################
   # Associations & Scopes
   ########################
   has_many :songs_tracks, :dependent => :destroy
   has_many :songs, :through => :songs_tracks
-  has_many :section_markers, :dependent => :destroy
+  # has_many :section_markers, :dependent => :destroy
   belongs_to :show
   has_many :likes, as: :likable
   

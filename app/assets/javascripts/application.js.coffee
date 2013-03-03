@@ -86,6 +86,19 @@ $ ->
     unless $(this).hasClass('non-remote')
       Ph.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
       false
+    
+  $(document).on 'click', 'a.download', ->
+    $this = $(this)
+    $.ajax({
+      url: '/user-signed-in',
+      dataType: 'json',
+      success: (r) ->
+        if r.success
+          # Ph.handleFeedback({ 'type': 'notice', 'msg': 'Requesting download...' })
+          window.location = $this.data('url') if $this.data('url') != undefined
+        else
+          Ph.handleFeedback({ 'type': 'alert', 'msg': r.msg })
+    })
 
   ###############################################
   
@@ -100,17 +113,17 @@ $ ->
   
   # Click a like to submit to server
   $(document).on 'click', '.like_toggle', ->
-    $el = $(this)
+    $this = $(this)
     $.ajax({
       type: 'post',
-      url: '/toggle_like',
-      data: { 'likable_type': $el.data('type'), 'likable_id': $el.data('id') }
+      url: '/toggle-like',
+      data: { 'likable_type': $this.data('type'), 'likable_id': $this.data('id') }
       dataType: 'json',
       success: (r) ->
         if r.success
-          if r.liked then $el.addClass('liked') else $el.removeClass('liked')
+          if r.liked then $this.addClass('liked') else $this.removeClass('liked')
           Ph.handleFeedback({ 'type': 'notice', 'msg': r.msg })
-          $el.siblings('span').html(r.likes_count)
+          $this.siblings('span').html(r.likes_count)
         else
           Ph.handleFeedback({ 'type': 'alert', 'msg': r.msg })
     })

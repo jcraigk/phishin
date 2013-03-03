@@ -29,7 +29,7 @@
       <li>
         <%= content_tag :h2, track.title, class: 'wide' %>
         <%= content_tag :h5, link_to(track.show.date.strftime("%-m/%-d/%y"), "#{track.show.date}") %>
-        <%= render partial: 'shared/context_menu_for_track' %>
+        <%= render partial: 'shared/context_menu_for_track', locals: { track: track } %>
         <%= content_tag :h3, track.duration_readable %>
         <%= likable(track, @tracks_likes[idx], 'small') %>
         <div style="clear: both;"></div>

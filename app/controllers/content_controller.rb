@@ -41,7 +41,7 @@ class ContentController < ApplicationController
     render layout: false if request.xhr?
   end
   
-  def liked
+  def likes
     @shows = Show.order('likes_count desc, date desc').limit(5)
     @shows_likes = @shows.map { |show| get_user_show_like(show) }
     @tracks = Track.order('likes_count desc, title asc').limit(5)

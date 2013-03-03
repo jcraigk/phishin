@@ -39,27 +39,6 @@ ActiveRecord::Schema.define(:version => 20130302031026) do
   add_index "likes", ["likable_type"], :name => "index_likes_on_likable_type"
   add_index "likes", ["user_id"], :name => "index_likes_on_user_id"
 
-  create_table "rails_admin_histories", :force => true do |t|
-    t.text     "message"
-    t.string   "username"
-    t.integer  "item"
-    t.string   "table"
-    t.integer  "month",      :limit => 2
-    t.integer  "year",       :limit => 8
-    t.datetime "created_at",              :null => false
-    t.datetime "updated_at",              :null => false
-  end
-
-  add_index "rails_admin_histories", ["item", "table", "month", "year"], :name => "index_rails_admin_histories"
-
-  create_table "section_markers", :force => true do |t|
-    t.string   "title"
-    t.integer  "position"
-    t.integer  "track_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
   create_table "shows", :force => true do |t|
     t.date     "date"
     t.datetime "created_at",                     :null => false

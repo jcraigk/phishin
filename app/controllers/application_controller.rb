@@ -8,7 +8,11 @@ class ApplicationController < ActionController::Base
   end
   
   def require_xhr!
-    redirect_to :root and return unless request.xhr?
+    redirect_to(:root, alert: "You're doing it wrong") and return unless request.xhr?
+  end
+  
+  def is_user_signed_in
+    render :json => { success: user_signed_in?, msg: 'You must sign in to do that' }
   end
   
 end
