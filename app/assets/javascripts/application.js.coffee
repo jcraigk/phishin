@@ -62,10 +62,9 @@ Ph.requestAlbum = (request_url, first_call) ->
               else if r.status == 'Timeout'
                 $('#album_url').html("#{$('#app_data').data('base-url')}#{r.url}")
                 $('#album_timeout').show('slide')
-              setTimeout(
-                -> Ph.requestAlbum(request_url, false),
-                3000
-              )
+              setTimeout( ->
+                Ph.requestAlbum(request_url, false)
+              , 3000)
         })
       else
         Ph.handleFeedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
@@ -117,7 +116,6 @@ $ ->
       false
     
   # Click to download an individual track
-  # First ensure that the user is logged in via ajax request
   $(document).on 'click', 'a.download', ->
     data_url = $(this).data('url')
     $.ajax({
@@ -194,6 +192,6 @@ $ ->
   
   # Share links bring up
   $(document).on 'click', '.share', ->
-    $('#share_modal_body').html("<p>"+$('#app_data').data('base-url')+$(this).data('url')+"</p>")
+    $('#share_url').html("<p>"+$('#app_data').data('base-url')+$(this).data('url')+"</p>")
     $('#share_modal').modal('show')
     
