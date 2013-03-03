@@ -9,8 +9,7 @@
       <% end %>
       <%= content_tag :li, link_to('<i class="icon-share-alt"></i>&nbsp;&nbsp;Share'.html_safe, "null", class: 'share', data: { url: "/#{show.date}"}) %>
       <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to playlist</a></li>
-      <li><a href="null"><i class="icon-download"></i>&nbsp;&nbsp;Download MP3s</a></li>
-      <!-- <li><a href="null"><i class="icon-book"></i>&nbsp;&nbsp;Lookup @ phish.net</a></li> -->
+      <%= content_tag :li, link_to('<i class="icon-download"></i>&nbsp;&nbsp;Download MP3s'.html_safe, "null", data: { url: download_show_path(show.date) }, class: "download-album") %>
     </ul>
   </div>
 </div>

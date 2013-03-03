@@ -8,7 +8,7 @@ class Track < ActiveRecord::Base
   attr_accessible :show_id, :title, :position, :audio_file, :song_ids
 
   has_attached_file :audio_file,
-    path: APP_CONTENT_PATH + "/:class/:attachment/:id_partition/:id.:extension"
+    path: APP_CONTENT_PATH + ":class/:attachment/:id_partition/:id.:extension"
 
   ########################
   # Associations & Scopes

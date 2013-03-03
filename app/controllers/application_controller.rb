@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   end
   
   def is_user_signed_in
-    render :json => { success: user_signed_in?, msg: 'You must sign in to do that' }
+    render :json => { success: user_signed_in?, msg: "Hello" }
   end
   
 end

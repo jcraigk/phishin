@@ -44,6 +44,21 @@ Ph.followLink = ($el) ->
   History.pushState {href: $el.attr 'href'}, $('#app_data').data('app-name'), $el.attr 'href'
   window.scrollTo 0, 0
 
+Ph.requestAlbum = (request_url, first_call) ->
+  $.ajax({
+    url: request_url,
+    dataType: 'json',
+    success: (r) ->
+      if r.status == 'Ready'
+        $('#download_modal').modal('hide')
+        location.href = r.url
+      else
+        $("#download_modal").modal('show') if first_call
+        # requestAlbum_timeout = setTimeout(function() { Ph.requestAlbum(request_url, false) }, 3000)
+    error: (r) ->
+      alert("error with #{request_url}")
+  })
+
 $ ->
   
   ###############################################
@@ -87,18 +102,23 @@ $ ->
       Ph.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
       false
     
+  # Click to download an individual track
+  # First ensure that the user is logged in via ajax request
   $(document).on 'click', 'a.download', ->
-    $this = $(this)
+    data_url = $(this).data('url')
     $.ajax({
       url: '/user-signed-in',
-      dataType: 'json',
       success: (r) ->
         if r.success
-          # Ph.handleFeedback({ 'type': 'notice', 'msg': 'Requesting download...' })
-          window.location = $this.data('url') if $this.data('url') != undefined
+          location.href = data_url if data_url
         else
-          Ph.handleFeedback({ 'type': 'alert', 'msg': r.msg })
+          Ph.handleFeedback { 'type': 'alert', 'msg': 'You need to sign in' }
     })
+  
+  # Click to download a set of tracks
+  # First ensure that the user is logged in via ajax request
+  $(document).on 'click', 'a.download-album', ->
+    Ph.requestAlbum $(this).data('url'), true
 
   ###############################################
   

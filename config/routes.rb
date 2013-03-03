@@ -1,15 +1,15 @@
 Phishin::Application.routes.draw do
-
-  root :to => 'content#index'
   
+  root :to => 'content#index'
+
   # User stuff
   devise_for :users
   get     '/user-signed-in' => 'application#is_user_signed_in'
-  
-  # Resque
+
+  # Resque server
   mount Resque::Server, :at => "/resque"
 
-  # Static Pages
+  # Static pages
   get     '/legal-stuff' => 'pages#legal_stuff', as: 'legal_stuff'
   get     '/contact-us' => 'pages#contact_us', as: 'contact_us'
     
@@ -26,7 +26,8 @@ Phishin::Application.routes.draw do
   
   # Downloads
   get     '/download-track/:track_id' => 'downloads#download_track', as: 'download_track'
-  get     '/download-show/:show_id' => 'downloads#download_show', as: 'download_show'
+  get     '/download-show/:date' => 'downloads#request_download_show', as: 'download_show'
+  get     '/download-zip/:md5' => 'downloads#download_album', as: 'download_album'
   
   # Playlists
   # resources :playlists do

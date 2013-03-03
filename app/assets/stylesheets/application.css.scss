@@ -571,14 +571,8 @@ h2.for_content {
   font-style: italic;
 }
 #share_modal_body {
-  margin: 0 auto;
   font-size: 20px;
-  font-weight: bold;
-  background-color: #eee;
-  border-radius: 5px;
-  border: 1px solid #555;
-  padding-left: 10px;
-  padding-top: 10px;
+  padding: 20px;
 }
 #paragraph_content {
   padding-top: 30px;
@@ -642,4 +636,8 @@ h2.for_content {
 .strong {
   font-size: 18px;
   font-weight: bold;
+}
+#download_modal_body {
+  text-align: center;
+  padding: 30px;
 }
