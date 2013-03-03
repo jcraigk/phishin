@@ -641,3 +641,21 @@ h2.for_content {
   text-align: center;
   padding: 30px;
 }
+.note {
+  font-size: 12px;
+  font-style: italic;
+}
+#album_url {
+  padding: 8px;
+  border-radius: 5px;
+  background-color: #ccc;
+  border: 1px solid #333;
+  font-size: 12px;
+  font-weight: bold;
+}
+#album_timeout {
+  padding: 10px;
+  border-radius: 8px;
+  display: none;
+  background-color: #f4b5b5;
+}

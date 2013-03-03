@@ -6,8 +6,15 @@
   <div class="modal-body">
     <div id="download_modal_body">
       <%= image_tag "ajax-loader.gif", :alt => "loading" %><br /><br />
-      Please wait...<br />Your download will begin in less than a minute
+      <strong>Please wait...</strong>
       <br />
+      Your download will begin shortly
+      <br /><br /><br />
+      <div id="album_timeout">
+        <p><strong>It isn't nearly fast enough for you...</strong><br /><br />
+          You can use the following URL at a later time to retrieve your content:</p>
+        <div id="album_url"></div>
+      </div>
     </div>
   </div>
 </div>

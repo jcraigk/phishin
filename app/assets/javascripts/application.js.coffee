@@ -46,18 +46,32 @@ Ph.followLink = ($el) ->
 
 Ph.requestAlbum = (request_url, first_call) ->
   $.ajax({
-    url: request_url,
-    dataType: 'json',
+    url: '/user-signed-in',
     success: (r) ->
-      if r.status == 'Ready'
-        $('#download_modal').modal('hide')
-        location.href = r.url
+      if r.success
+        $.ajax({
+          url: request_url,
+          dataType: 'json',
+          success: (r) ->
+            if r.status == 'Ready'
+              $('#download_modal').modal('hide')
+              location.href = r.url
+            else
+              if first_call
+                $('#download_modal').modal('show')
+              else if r.status == 'Timeout'
+                $('#album_url').html("#{$('#app_data').data('base-url')}#{r.url}")
+                $('#album_timeout').show('slide')
+              setTimeout(
+                -> Ph.requestAlbum(request_url, false),
+                3000
+              )
+        })
       else
-        $("#download_modal").modal('show') if first_call
-        # requestAlbum_timeout = setTimeout(function() { Ph.requestAlbum(request_url, false) }, 3000)
-    error: (r) ->
-      alert("error with #{request_url}")
+        Ph.handleFeedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
   })
+  
+
 
 $ ->
   
@@ -112,7 +126,7 @@ $ ->
         if r.success
           location.href = data_url if data_url
         else
-          Ph.handleFeedback { 'type': 'alert', 'msg': 'You need to sign in' }
+          Ph.handleFeedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
     })
   
   # Click to download a set of tracks
