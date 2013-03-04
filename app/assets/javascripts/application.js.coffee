@@ -54,15 +54,21 @@ Ph.requestAlbum = (request_url, first_call) ->
           dataType: 'json',
           success: (r) ->
             if r.status == 'Ready'
+              clearTimeout(Ph.download_poller)
               $('#download_modal').modal('hide')
               location.href = r.url
+            else if r.status == 'Error'
+              clearTimeout(Ph.download_poller)
+              $('#download_modal').modal('hide')
+              Ph.handleFeedback { 'type': 'alert', 'msg': 'An error occurred while processing your request' }
             else
               if first_call
+                $('#album_timeout').hide()
                 $('#download_modal').modal('show')
               else if r.status == 'Timeout'
                 $('#album_url').html("#{$('#app_data').data('base-url')}#{r.url}")
                 $('#album_timeout').show('slide')
-              setTimeout( ->
+              Ph.download_poller = setTimeout( ->
                 Ph.requestAlbum(request_url, false)
               , 3000)
         })
@@ -114,6 +120,8 @@ $ ->
     unless $(this).hasClass('non-remote')
       Ph.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
       false
+
+  ###############################################
     
   # Click to download an individual track
   $(document).on 'click', 'a.download', ->
@@ -128,9 +136,12 @@ $ ->
     })
   
   # Click to download a set of tracks
-  # First ensure that the user is logged in via ajax request
   $(document).on 'click', 'a.download-album', ->
     Ph.requestAlbum $(this).data('url'), true
+    
+  # Stop polling server when download modal is hidden
+  $('#download_modal').on 'hidden', ->
+    clearTimeout(Ph.download_poller)
 
   ###############################################
   
@@ -143,7 +154,7 @@ $ ->
     delay: { show: 500, hide: 0 }
   })
   
-  # Click a like to submit to server
+  # Click a Like to submit to server
   $(document).on 'click', '.like_toggle', ->
     $this = $(this)
     $.ajax({
@@ -159,9 +170,6 @@ $ ->
         else
           Ph.handleFeedback({ 'type': 'alert', 'msg': r.msg })
     })
-  
-  # User sign up / sign in tabs
-  $('#user_tabs a:last').tab('show');
   
   # Rollover year to reveal number of shows
   $(document).on 'mouseover', '.year_list > li', ->
@@ -190,7 +198,7 @@ $ ->
     if $(this).parent('ul').hasClass 'clickable'
       Ph.followLink $(this).children('h2').find 'a'
   
-  # Share links bring up
+  # Share links bring up a modal to display a url
   $(document).on 'click', '.share', ->
     $('#share_url').html("<p>"+$('#app_data').data('base-url')+$(this).data('url')+"</p>")
     $('#share_modal').modal('show')

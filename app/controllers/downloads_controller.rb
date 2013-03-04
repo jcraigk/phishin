@@ -25,7 +25,7 @@ class DownloadsController < ApplicationController
       if album_tracks.any?
         render :json => album_status(album_tracks, album_name)
       else
-        render :json => { :status => "Invalid album request" }
+        render :json => { :status => "Invalid download request" }
       end
     else
       render :json => { :status => "Invalid show" }
@@ -34,11 +34,16 @@ class DownloadsController < ApplicationController
   
   # Provide a downloadable album that has already been created
   def download_album
-    album = Album.find_by_md5(params[:md5])
-    if album and album.completed_at and File.exists? album.zip_file.path
-      send_file album.zip_file.path, :type => album.zip_file.content_type, :disposition => "attachment", :filename => "Phish - #{album.name}", :length => album.zip_file.size
+    if album = Album.find_by_md5(params[:md5])
+      if album.completed_at and File.exists? album.zip_file.path
+        send_file album.zip_file.path, :type => album.zip_file.content_type, :disposition => "attachment", :filename => "Phish - #{album.name}", :length => album.zip_file.size
+      elsif album.error_at
+        render :text => "This download is not available because an error occurred while processing it"
+      else
+        render :text => "This download is still being processed...please try again later"
+      end
     else
-      render :text => "Invalid album request"
+      render :text => "Invalid download request"
     end
   end
 
@@ -57,6 +62,8 @@ class DownloadsController < ApplicationController
       album.update_attributes(:updated_at => Time.now)
       if album.completed_at
         status = 'Ready'
+      elsif album.error_at
+        status = 'Error'
       else
         # If the album is older than our timeout, provide error and alternate link
         if Time.now - album.created_at > ALBUM_TIMEOUT
