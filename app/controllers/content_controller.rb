@@ -97,7 +97,11 @@ class ContentController < ApplicationController
         redirect_to :root and return
       end
     end
-    request.xhr? ? (render view, layout: false) : (render view)
+    if @redirect
+      redirect_to @redirect and return
+    else
+      request.xhr? ? (render view, layout: false) : (render view)
+    end
   end
   
   private
@@ -138,8 +142,13 @@ class ContentController < ApplicationController
   
   def song(slug)
     if @song = Song.where(slug: slug).first
-      @tracks = @song.tracks.includes({:show => :venue}, :songs).order('shows.date desc')
-      @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
+      if @song.alias_for
+        aliased_song = Song.where(id: @song.alias_for).first
+        @redirect = "/#{aliased_song.slug}"
+      else
+        @tracks = @song.tracks.includes({:show => :venue}, :songs).order('shows.date desc')
+        @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
+      end
     end
     @song
   end
