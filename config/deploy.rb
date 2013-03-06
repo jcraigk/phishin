@@ -33,7 +33,7 @@ namespace :deploy do
   task :start do ; end
   task :stop do ; end
   task :restart do
-    run "#{try_sudo} mkdir #{deploy_to}current/tmp/"
+    run "#{try_sudo} mkdir -p #{deploy_to}current/tmp/"
     run "#{try_sudo} touch #{deploy_to}current/tmp/restart.txt"
   end
   after "deploy:restart" do
