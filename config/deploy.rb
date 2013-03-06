@@ -31,12 +31,12 @@ end
 namespace :deploy do
   task :start do ; end
   task :stop do ; end
-  task :restart, :roles => :app, :except => { :no_release => true } do
-    run "#{try_sudo} touch #{deploy_to}current/tmp/restart.txt"
-  end
-  after "deploy:restart" do
-    run "rm -rf #{release_path}.git"
-  end
+  # task :restart, :roles => :app, :except => { :no_release => true } do
+  #   run "#{try_sudo} touch #{deploy_to}current/tmp/restart.txt"
+  # end
+  # after "deploy:restart" do
+  #   run "rm -rf #{release_path}.git"
+  # end
   task :finalize_update do
     run "chmod -R g+w #{release_path}"
   end
