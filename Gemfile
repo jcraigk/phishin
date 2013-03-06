@@ -13,6 +13,7 @@ gem 'jquery-rails'
 gem 'resque', :require => "resque/server"
 gem 'devise'
 gem 'anjlab-bootstrap-rails', '>= 2.3', :require => 'bootstrap-rails'
+gem 'therubyracer'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
