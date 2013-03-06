@@ -12,6 +12,7 @@ set :staging_server,        "phish.in"
 set :use_sudo,              false
 
 # Cleanup and migrate
+after "deploy",             "deploy:restart"
 after "deploy",             "deploy:cleanup"
 after "deploy",             "deploy:migrate"
 after "deploy",             "deploy:assets"
@@ -31,12 +32,12 @@ end
 namespace :deploy do
   task :start do ; end
   task :stop do ; end
-  # task :restart, :roles => :app, :except => { :no_release => true } do
-  #   run "#{try_sudo} touch #{deploy_to}current/tmp/restart.txt"
-  # end
-  # after "deploy:restart" do
-  #   run "rm -rf #{release_path}.git"
-  # end
+  task :restart do
+    run "#{try_sudo} touch #{deploy_to}current/tmp/restart.txt"
+  end
+  after "deploy:restart" do
+    run "rm -rf #{release_path}.git"
+  end
   task :finalize_update do
     run "chmod -R g+w #{release_path}"
   end
