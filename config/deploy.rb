@@ -16,7 +16,6 @@ set :use_sudo,              false
 after "deploy",             "deploy:restart"
 after "deploy",             "deploy:cleanup"
 after "deploy",             "deploy:migrate"
-# after "deploy",             "deploy:assets"
 
 #########################################################
 
@@ -53,9 +52,5 @@ namespace :deploy do
     end
   end
   before "deploy", "deploy:check_revision"
-  
-  task :assets do
-    run "cd #{current_path} && bundle exec rake assets:precompile RAILS_ENV=#{rails_env}"
-  end
   
 end
