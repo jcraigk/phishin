@@ -2,7 +2,7 @@ namespace :tracks do
   
   # Rename mp3s from old paperclips names
   # Rename from hash to id, move up a directory (out of "/original")
-  desc "Rename mp3s"
+  desc "Rename mp3s pulled from phishtracks.net"
   def traverse_and_rename(path)
     require 'fileutils'
     Dir.glob("#{path}/*").each_with_object({}) do |f, h|
@@ -14,7 +14,7 @@ namespace :tracks do
           path_segments.pop
           new_filename = id.to_s + File.extname(f)
           new_path = path_segments.join("/") + "/" + new_filename
-          puts "Move #{File.basename(f)} => ../#{new_filename}"
+          # puts "Move #{File.basename(f)} => ../#{new_filename}"
           FileUtils.mv(f, new_path)
           FileUtils.rm_rf(old_path)
         end
@@ -23,8 +23,9 @@ namespace :tracks do
       end
     end
   end
-  task rename_audio_files: :environment do
-    traverse_and_rename "/var/www/app_content/phishin/tracks"
+  task rename_phishtracks_mp3s: :environment do
+    puts "this isn't needed anymore"
+    # traverse_and_rename "/var/www/app_content/phishin/tracks"
   end
   
   desc "Find tracks that don't have valid show associations"

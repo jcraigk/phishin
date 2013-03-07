@@ -1,3 +1,3 @@
 Resque::Server.use(Rack::Auth::Basic) do |user, password|
-  password == "phishyem"
+  password == "treyiswilson"
 end
