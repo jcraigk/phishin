@@ -2,7 +2,7 @@
 # Global constants (app-wide settings) #
 ########################################
 
-HTAUTH_USERNAME       = 'treyiswilson'                          # Temporary protection till release
+HTAUTH_USERNAME       = 'treyiswilson'
 HTAUTH_PASSWORD       = 'treyiswilson'
 
 APP_NAME              = "phish.in"                              # App name appears in page title, correspondence, etc
@@ -18,5 +18,5 @@ if Rails.env == 'development' || Rails.env == 'test'
 else
   APP_BASE_URL              = "http://phish.in"
   APP_CONTENT_PATH          = "/var/www/app_content/phishin/"
-  TMP_PATH                  = "/htdocs/app_content/phishin/tmp/"
+  TMP_PATH                  = "/var/www/app_content/phishin/tmp/"
 end
