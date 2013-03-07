@@ -2,6 +2,9 @@
 # Global constants (app-wide settings) #
 ########################################
 
+HTAUTH_USERNAME       = 'treyiswilson'
+HTAUTH_PASSWORD       = 'treyiswilson'
+
 APP_NAME              = "phish.in"                  # App name appears in page title, correspondence, etc
 APP_EMAIL             = "phish.in.music@gmail.com"  # Main contact email
 ALBUM_CACHE_MAX_SIZE  = 500.megabytes                # Maximum size of album attachment cache
