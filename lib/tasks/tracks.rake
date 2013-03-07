@@ -24,7 +24,9 @@ namespace :tracks do
     end
   end
   task rename_audio_files: :environment do
+    puts "traversing #{APP_CONTENT_PATH}tracks"
     traverse_and_rename "#{APP_CONTENT_PATH}tracks"
+    puts "done"
   end
   
   desc "Find tracks that don't have valid show associations"
