@@ -15,7 +15,7 @@ set :use_sudo,              false
 after "deploy",             "deploy:restart"
 after "deploy",             "deploy:cleanup"
 after "deploy",             "deploy:migrate"
-after "deploy",             "deploy:assets"
+# after "deploy",             "deploy:assets"
 
 #########################################################
 
