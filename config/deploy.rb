@@ -32,10 +32,10 @@ end
 namespace :deploy do
   task :start do ; end
   task :stop do ; end
-  task :restart do
-    run "#{try_sudo} mkdir -p #{deploy_to}current/tmp/"
-    run "#{try_sudo} touch #{deploy_to}current/tmp/restart.txt"
-  end
+  # task :restart do
+  #   run "#{try_sudo} mkdir -p #{deploy_to}current/tmp/"
+  #   run "#{try_sudo} touch #{deploy_to}current/tmp/restart.txt"
+  # end
   after "deploy:restart" do
     run "rm -rf #{release_path}.git"
   end
