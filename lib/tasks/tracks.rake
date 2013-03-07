@@ -24,7 +24,7 @@ namespace :tracks do
     end
   end
   task rename_audio_files: :environment do
-    traverse_and_rename '/htdocs/app_content/phishin/tracks'
+    traverse_and_rename "#{APP_CONTENT_PATH}tracks"
   end
   
   desc "Find tracks that don't have valid show associations"
