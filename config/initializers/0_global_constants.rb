@@ -17,6 +17,6 @@ if Rails.env == 'development' || Rails.env == 'test'
   TMP_PATH                  = "/htdocs/app_content/phishin/tmp/"
 else
   APP_BASE_URL              = "http://phish.in"
-  APP_CONTENT_PATH          = "/var/www/app_content/phishin"
+  APP_CONTENT_PATH          = "/var/www/app_content/phishin/"
   TMP_PATH                  = "/htdocs/app_content/phishin/tmp/"
 end
