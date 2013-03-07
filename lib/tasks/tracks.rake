@@ -10,7 +10,7 @@ namespace :tracks do
         old_path = File.dirname(f)
         path_segments = old_path.split("/")
         if (path_segments.last == "original")
-          id = Integer(path_segments[6] + path_segments[7] + path_segments[8], 10)
+          id = Integer(path_segments[7] + path_segments[8] + path_segments[9], 10)
           path_segments.pop
           new_filename = id.to_s + File.extname(f)
           new_path = path_segments.join("/") + "/" + new_filename
@@ -24,9 +24,7 @@ namespace :tracks do
     end
   end
   task rename_audio_files: :environment do
-    puts "traversing #{APP_CONTENT_PATH}tracks"
-    traverse_and_rename "#{APP_CONTENT_PATH}tracks"
-    puts "done"
+    traverse_and_rename "/var/www/app_content/phishin/tracks"
   end
   
   desc "Find tracks that don't have valid show associations"
