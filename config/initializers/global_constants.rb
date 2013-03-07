@@ -12,10 +12,12 @@ ALBUM_TIMEOUT         = 10.seconds                  # Time to wait for album cre
 
 if Rails.env == 'development' || Rails.env == 'test'
   APP_BASE_URL              = "http://localhost:3000"
+  APP_BASE_URL_SEGMENT      = "localhost:3000"
   APP_CONTENT_PATH          = "/htdocs/app_content/phishin/"
   TMP_PATH                  = "/htdocs/app_content/phishin/tmp/"
 else
   APP_BASE_URL              = "http://phish.in"
+  APP_BASE_URL_SEGMENT      = "phish.in"
   APP_CONTENT_PATH          = "/var/www/app_content/phishin"
   TMP_PATH                  = "/htdocs/app_content/phishin/tmp/"
 end
