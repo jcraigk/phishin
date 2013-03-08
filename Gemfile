@@ -1,7 +1,6 @@
 source 'https://rubygems.org'
 
 gem 'rails'
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
 gem 'taglib-ruby'
 gem 'pg'
 gem 'paperclip'
@@ -15,6 +14,7 @@ gem 'devise'
 gem 'anjlab-bootstrap-rails', '>= 2.3', :require => 'bootstrap-rails'
 gem 'therubyracer'
 gem 'jquery-ui-rails'
+gem 'soundmanager-rails'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
