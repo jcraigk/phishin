@@ -2,6 +2,8 @@
 # Global constants (app-wide settings) #
 ########################################
 
+  #QUEUE=* bundle exec rake resque:work RAILS_ENV=production BACKGROUND=yes
+
 HTAUTH_USERNAME       = 'treyiswilson'
 HTAUTH_PASSWORD       = 'treyiswilson'
 

@@ -2,6 +2,8 @@
 //= require jquery_ujs
 //= require twitter/bootstrap
 //= require history
+//= require jquery.ui.datepicker
+//= require jquery.ui.slider
 //= require_tree .
 
 # Generic namespace
@@ -132,6 +134,12 @@ $ ->
     clearTimeout(Ph.download_poller)
 
   ###############################################
+  
+  # Scrubber slider
+  $('#scrubber').slider({
+      animate: "fast",
+      range: "min"
+  })
   
   # Like tooltip
   $('.likes_large a').tooltip({
