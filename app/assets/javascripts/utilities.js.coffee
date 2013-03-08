@@ -36,33 +36,33 @@ class @Util
             url: request_url,
             dataType: 'json',
             success: (r) ->
-              if r.status == 'Ready'
-                clearTimeout(@download_poller)
-                @$download_modal.modal('hide')
-                location.href = r.url
-              else if r.status == 'Error'
-                clearTimeout(@download_poller)
-                @$download_modal.modal('hide')
-                that.handleFeedback { 'type': 'alert', 'msg': 'An error occurred while processing your request' }
-              else
-                if first_call
-                  clearTimeout(@download_poller)
-                  @$album_timeout .hide()
-                  @$download_modal.modal('show')
-                else if r.status == 'Timeout'
-                  $album_url.html("#{@$app_data.data('base-url')}#{r.url}")
-                  @$album_timeout .show('slide')
-                @download_poller = setTimeout( ->
-                  that.requestAlbum(request_url, false)
-                , 3000)
+              that._requestAlbumResponse(r, request_url, first_call)
           })
         else
-          alert(that)
           that.handleFeedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
     })
   
-  stopDownloadPoller: ->
-    clearTimeout @download_poller
+  _requestAlbumResponse: (r, request_url, first_call) ->
+    if r.status == 'Ready'
+      clearTimeout(@download_poller)
+      @$download_modal.modal('hide')
+      location.href = r.url
+    else if r.status == 'Error'
+      clearTimeout(@download_poller)
+      @$download_modal.modal('hide')
+      that.handleFeedback { 'type': 'alert', 'msg': 'An error occurred while processing your request' }
+    else
+      if first_call
+        clearTimeout(@download_poller)
+        @$album_timeout.hide()
+        @$download_modal.modal('show')
+      else if r.status == 'Timeout'
+        @$album_url.html("#{@$app_data.data('base-url')}#{r.url}")
+        @$album_timeout.show('slide')
+      that = this
+      @download_poller = setTimeout( ->
+        that.requestAlbum(request_url, false)
+      , 3000)
   
   _uniqueID: (length=8) ->
     id = ""

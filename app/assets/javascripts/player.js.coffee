@@ -1,4 +1,4 @@
-class Player
+class @Player
   
   constructor: ->
     @$scrubber = $ '#scrubber'

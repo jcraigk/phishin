@@ -67,10 +67,9 @@ $ ->
   # Element interactions
   ###############################################
   
-  # Scrubber slider (jQuery UI Slider)
+  # Scrubber (jQuery UI Slider)
   $('#scrubber').slider({
-      animate: "fast",
-      range: "min"
+    animate: 'fast'
   })
     
   # Click to download an individual track
