@@ -3,8 +3,9 @@
 //= require twitter/bootstrap
 //= require jquery.ui.slider
 //= require soundmanager
-//= require util
-//= require_tree .
+//= require history
+//= require utilities
+//= require player
 
 # Generic namespace
 Ph = {}
@@ -19,26 +20,10 @@ $ ->
   $alert          = $ '.feedback_alert'
   $ajax_overlay   = $ '#ajax_overlay'
   $page           = $ '#page'
-  
-  ###############################################
-  # Handle feedback initial state on DOM load
-  if $notice.html() != ''
-    $notice.show 'slide'
-    setTimeout( ->
-      $notice.hide 'slide'
-    , 3000)
-  else
-    $notice.hide()
-  if $alert.html() != ''
-    $falert.show 'slide'
-    setTimeout( ->
-      $alert.hide 'slide'
-    , 3000)
-  else
-    $alert.hide()
-  
+
   ###############################################
   # Prepare history.js
+  ###############################################
   History = window.History
   return false if !History.enabled
   History.Adapter.bind window, 'statechange', ->
@@ -59,8 +44,34 @@ $ ->
     unless $(this).hasClass('non-remote')
       Ph.Util.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
       false
+  
+  ###############################################
+  # Handle feedback on DOM load
+  ###############################################
+  if $notice.html() != ''
+    $notice.show 'slide'
+    setTimeout( ->
+      $notice.hide 'slide'
+    , 3000)
+  else
+    $notice.hide()
+  if $alert.html() != ''
+    $falert.show 'slide'
+    setTimeout( ->
+      $alert.hide 'slide'
+    , 3000)
+  else
+    $alert.hide()
 
   ###############################################
+  # Element interactions
+  ###############################################
+  
+  # Scrubber slider (jQuery UI Slider)
+  $('#scrubber').slider({
+      animate: "fast",
+      range: "min"
+  })
     
   # Click to download an individual track
   $(document).on 'click', 'a.download', ->
@@ -83,12 +94,6 @@ $ ->
     Ph.Util.StopDownloadPoller
 
   ###############################################
-  
-  # Scrubber slider (jQuery UI Slider)
-  $('#scrubber').slider({
-      animate: "fast",
-      range: "min"
-  })
   
   # Like tooltip
   $('.likes_large a').tooltip({

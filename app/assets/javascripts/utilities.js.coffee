@@ -1,4 +1,4 @@
-class Util
+class @Util
   
   constructor: ->
     @page_init          = true
