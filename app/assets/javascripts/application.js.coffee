@@ -69,8 +69,29 @@ $ ->
   
   # Scrubber (jQuery UI Slider)
   $('#scrubber').slider({
-    animate: 'fast'
+    animate: 'fast',
+    range: 'min'
   })
+  $('#volume_slider').slider({
+    animate: 'fast',
+    range: 'min',
+    max: 100,
+    value: 70
+  })
+  
+  # Loop / Randomize controls
+  $(document).on 'click', '#loop_checkbox', (e) ->
+    $(this).attr('checked', !$(this).attr('checked'))
+    e.stopPropagation()
+  $(document).on 'click', '#randomize_checkbox', (e) ->
+    $(this).attr('checked', !$(this).attr('checked'))
+    e.stopPropagation()
+    
+  # Toggle mute
+  $(document).on 'click', '#volume_icon', (e) ->
+    alert("TODO: toggle mute/last volume")
+    e.stopPropagation()
+
     
   # Click to download an individual track
   $(document).on 'click', 'a.download', ->

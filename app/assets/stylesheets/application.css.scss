@@ -21,26 +21,55 @@ a:hover {
 #scrubber.ui-slider {
   background-image: none !important; //Override jquery UI CSS
   height: 5px !important;
-  background-color: #777 !important;
+  background-color: #ccc !important;
   cursor: pointer !important;
-  width: 50px !important;
   position: fixed !important;
   margin-top: 14px !important;
   margin-left: 57px !important;
   width: 266px !important;
+  border-color: #333 !important;
 }
 #scrubber .ui-slider-handle {
   background-image: none !important; //Override jquery UI CSS
-  margin-top: -2px !important;
-  background-color: #ccc !important;
+  margin-top: 4px !important;
+  margin-left: -4px !important;
+  background-color: #333 !important;
   border-color: #333 !important;
-  border-radius: 10px !important;
-  width: 18px !important;
-  height: 18px !important;
+//  border-radius: 10px !important;
+  width: 5px !important;
+  height: 5px !important;
   cursor: pointer !important;
 }
 #scrubber .ui-slider-range {
-  background: #000 !important;
+  background-image: none !important;
+  background-color: #333 !important;
+}
+
+#volume_slider.ui-slider {
+  background-image: none !important; //Override jquery UI CSS
+  height: 5px !important;
+  background-color: #ccc !important;
+  cursor: pointer !important;
+  position: fixed !important;
+  margin-top: 6px !important;
+  margin-left: 48px !important;
+  width: 90px !important;
+  border-color: #333 !important;
+}
+#volume_slider .ui-slider-handle {
+  background-image: none !important; //Override jquery UI CSS
+  margin-top: 4px !important;
+  margin-left: -4px !important;
+  background-color: #333 !important;
+  border-color: #333 !important;
+//  border-radius: 10px !important;
+  width: 5px !important;
+  height: 5px !important;
+  cursor: pointer !important;
+}
+#volume_slider .ui-slider-range {
+  background-image: none !important;
+  background-color: #333 !important;
 }
 
 .likes_large a.liked {
@@ -513,13 +542,28 @@ h2.for_content {
   padding-left: 5px;
 //  border: 1px solid black;
 }
-#playlist_controls {
+#player_menu {
   position: fixed;
-  margin-top: 30px;
-  margin-left: 700px;
+  margin-top: 28px;
+  margin-left: 690px;
   width: 60px;
   height: 40px;
 //  border: 1px solid black;
+}
+#volume_icon {
+  float: left;
+  margin-left: 18px;
+  margin-top: 0px;
+  width: 22px;
+  height: 21px;
+  cursor: pointer;
+}
+#player_menu .nolink {
+  padding-left: 22px;
+}
+#player_menu .volume_li {
+  height: 30px;
+  margin-top: 10px;
 }
 .playlist_title {
   float: left;
@@ -528,13 +572,7 @@ h2.for_content {
 .playlist {
   margin-top: 60px;
 }
-#playlist_header_controls {
-  position: fixed;
-  margin-left: 450px;
-  margin-top: 10px;
-  text-align: left;
-//  border: 1px solid black;
-}
+
 #era1 {
   background-color: #8aadb1;
   border-radius: 8px;
