@@ -16,9 +16,9 @@ class @Util
       css = 'feedback_alert'
       icon = 'icon-exclamation-sign'
     id = this._uniqueID()
-    @$feedback.append("<p class=\"#{css}\" id=\"#{id}\"><i class=\"#{icon}\"></i> #{feedback.msg}</p>")
+    @$feedback.append "<p class=\"#{css}\" id=\"#{id}\"><i class=\"#{icon}\"></i> #{feedback.msg}</p>"
     setTimeout( ->
-      $("##{id}").hide('slide')
+      $("##{id}").hide 'slide'
     , 3000)
 
   followLink: ($el) ->
@@ -44,21 +44,21 @@ class @Util
   
   _requestAlbumResponse: (r, request_url, first_call) ->
     if r.status == 'Ready'
-      clearTimeout(@download_poller)
-      @$download_modal.modal('hide')
+      clearTimeout @download_poller
+      @$download_modal.modal 'hide'
       location.href = r.url
     else if r.status == 'Error'
-      clearTimeout(@download_poller)
-      @$download_modal.modal('hide')
+      clearTimeout @download_poller
+      @$download_modal.modal 'hide'
       that.handleFeedback { 'type': 'alert', 'msg': 'An error occurred while processing your request' }
     else
       if first_call
-        clearTimeout(@download_poller)
+        clearTimeout @download_poller
         @$album_timeout.hide()
-        @$download_modal.modal('show')
+        @$download_modal.modal 'show'
       else if r.status == 'Timeout'
-        @$album_url.html("#{@$app_data.data('base-url')}#{r.url}")
-        @$album_timeout.show('slide')
+        @$album_url.html "#{@$app_data.data('base-url')}#{r.url}"
+        @$album_timeout.show 'slide'
       that = this
       @download_poller = setTimeout( ->
         that.requestAlbum(request_url, false)
