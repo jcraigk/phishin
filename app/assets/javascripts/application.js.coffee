@@ -15,6 +15,7 @@ $ ->
   
   # Instantiate stuff
   Ph.Util = new Util
+  Ph.Player = new Player
   
   # Page elements
   $notice         = $ '.feedback_notice'
@@ -97,7 +98,9 @@ $ ->
     animate: 'fast',
     range: 'min',
     max: 100,
-    value: 70
+    value: 70,
+    change: ->
+      Ph.Player.volumeSliderUpdate $(this).slider('value')
   })
   
   # Loop / Randomize controls
@@ -110,10 +113,9 @@ $ ->
     
   # Toggle mute
   $(document).on 'click', '#volume_icon', (e) ->
-    alert("TODO: toggle mute/last volume")
+    Ph.Player.toggleMute()
     e.stopPropagation()
 
-    
   # Click to download an individual track
   $(document).on 'click', 'a.download', ->
     data_url = $(this).data('url')

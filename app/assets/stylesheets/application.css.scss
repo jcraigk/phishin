@@ -52,7 +52,7 @@ a:hover {
   cursor: pointer !important;
   position: fixed !important;
   margin-top: 6px !important;
-  margin-left: 48px !important;
+  margin-left: 50px !important;
   width: 90px !important;
   border-color: #333 !important;
 }
@@ -548,12 +548,18 @@ h2.for_content {
 //  border: 1px solid black;
 }
 #volume_icon {
+  padding: 0px 0px 0px 0px !important;
   float: left;
   margin-left: 18px;
   margin-top: 0px;
-  width: 22px;
+  width: 22px !important;
   height: 21px;
   cursor: pointer;
+  background: url('icons-volume.png');
+//  border: 1px solid black;
+}
+.muted {
+  background-position: -22px 0 !important;
 }
 #player_menu .nolink {
   padding-left: 22px;

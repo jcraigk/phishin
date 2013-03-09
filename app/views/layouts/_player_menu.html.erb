@@ -6,7 +6,7 @@
         <span class="caret"></span>
       </a>
       <ul class="dropdown-menu">
-        <%= content_tag :li, image_tag('icon-volume.png', alt: "Volume Controls", id: 'volume_icon') + content_tag(:div, nil, id: 'volume_slider'), class: 'volume_li' %>
+        <%= content_tag :li, link_to('', nil, id: 'volume_icon') + content_tag(:div, nil, id: 'volume_slider'), class: 'volume_li' %>
         <div style="clear: both;"></div>
         <%= content_tag :li, check_box_tag('loop_checkbox') + "&nbsp;&nbsp;Loop".html_safe, class: 'nolink' %>
         <%= content_tag :li, check_box_tag('randomize_checkbox') + "&nbsp;&nbsp;Randomize".html_safe, class: 'nolink' %>
