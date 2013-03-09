@@ -49,10 +49,6 @@ class ContentController < ApplicationController
     render layout: false if request.xhr?
   end
   
-  def playlist
-    render layout: false if request.xhr?
-  end
-  
   ###############################
   # Glob-matching
   ###############################

@@ -1,0 +1,29 @@
+<div id="header_container">
+  <div id="header">
+    <%= content_tag :h1, 'Current Playlist'%>
+    <%= content_tag :h2, pluralize(@tracks.size, 'track'), id: 'current_playlist_tracks_label' %>
+    <%= content_tag :h3, "#{duration_readable(@duration, 'letters')}", id: 'current_playlist_duration_label' %>
+  </div>
+</div>
+  
+<div id="content">
+  
+  <div id="paragraph_content">
+    <% unless @tracks %>
+      <p>This playlist is empty</p>
+    <% else %>
+      <ul class="item_list clickable" id="current_playlist">
+      <% @tracks.each_with_index do |track, idx| %>
+      <li data-track-id="<%= track.id %>" data-track-duration="<%= track.duration %>">
+        <%= content_tag :h2, "<i class=\"icon-resize-vertical\"></i> #{track.title}".html_safe, class: 'wide' %>
+        <%= content_tag :h5, link_to(track.show.date.strftime("%-m/%-d/%y"), "#{track.show.date}", class: 'large') %>
+        <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: true } %>
+        <%= content_tag :h3, track.duration_readable %>
+        <div style="clear: both;"></div>
+      </li>
+      <% end %>
+    </ul>
+    <% end %>
+  </div>
+  
+</div>

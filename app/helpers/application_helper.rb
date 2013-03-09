@@ -1,7 +1,31 @@
 module ApplicationHelper
-  
-  def duration_readable(ms)
-    "%d:%02d" % [ms / 60000, ms % 60000 / 1000]
+
+  def duration_readable(ms, style='colon')
+    x = ms / 1000
+    seconds = x % 60
+    x /= 60
+    minutes = x % 60
+    x /= 60
+    hours = x % 24
+    x /= 24
+    days = x
+    if style == 'letters'
+      if days > 0
+        "%dd %02dh %02dm" % [days, hours, minutes]
+      elsif hours > 0
+        "%dh %02dm" % [hours, minutes]
+      else
+        "%dm %02ds" % [minutes, seconds]
+      end
+    else
+      if days > 0
+        "%d:%02d:%02d" % [days, hours, minutes]
+      elsif hours > 0
+        "%d:%02d" % [hours, minutes]
+      else
+        "%d:%02d" % [minutes, seconds]
+      end
+    end
   end
 
   def index_nav_button(name, path, icon_css)

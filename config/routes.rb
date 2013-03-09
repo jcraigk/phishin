@@ -19,10 +19,13 @@ Phishin::Application.routes.draw do
   get     '/cities' => 'content#cities', as: 'cities'
   get     '/venues' => 'content#venues', as: 'venues'
   get     '/likes' => 'content#likes', as: 'likes'
-  get     '/playlist' => 'content#playlist', as: 'playlist'
   
   # Likes
   post    '/toggle-like' => 'likes#toggle_like', as: 'toggle_like'
+  
+  # Playlists
+  get     '/playlist' => 'playlists#playlist', as: 'playlist'
+  post    '/update-current-playlist' => 'playlists#update_current_playlist', as: 'update_current_playlist'
   
   # Downloads
   get     '/download-track/:track_id' => 'downloads#download_track', as: 'download_track'

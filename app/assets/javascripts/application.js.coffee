@@ -2,6 +2,7 @@
 //= require jquery_ujs
 //= require twitter/bootstrap
 //= require jquery.ui.slider
+//= require jquery.ui.sortable
 //= require soundmanager
 //= require history
 //= require utilities
@@ -33,12 +34,13 @@ $ ->
     state = window.History.getState()
     if state.data.href != undefined and !Ph.Util.page_init
       $ajax_overlay.css 'visibility', 'visible'
+      $page.html ''
       $page.load(
         state.data.href, (response, status, xhr) ->
           alert("ERROR\n\n"+response) if status == 'error'
+          $ajax_overlay.css 'visibility', 'hidden'
       )
-      $ajax_overlay.css 'visibility', 'hidden'
-
+      
   # Click a link to load context via ajax
   $(document).on 'click', 'a', ->
     unless $(this).hasClass('non-remote')
@@ -66,6 +68,25 @@ $ ->
   ###############################################
   # Element interactions
   ###############################################
+  
+  # Sortable playlist for DOM load
+  $('#current_playlist').sortable({
+    placeholder: "ui-state-highlight",
+    update: ->
+      Ph.Util.updateCurrentPlaylist('Track moved in playlist')
+  })
+  # Sortable playlist AJAX load
+  $(document).ajaxSuccess( ->
+    $('#current_playlist').sortable({
+      placeholder: "ui-state-highlight",
+      update: ->
+        Ph.Util.updateCurrentPlaylist('Track moved in playlist')
+    })
+  )
+  # Remove item from playlist
+  $(document).on 'click', '.playlist_remove_item', (e) ->
+    $(this).parents('li').remove()
+    Ph.Util.updateCurrentPlaylist('Track removed from playlist')
   
   # Scrubber (jQuery UI Slider)
   $('#scrubber').slider({

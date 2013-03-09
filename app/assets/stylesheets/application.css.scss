@@ -180,7 +180,7 @@ a:hover {
   height: 100%;
 }
 #ajax_overlay {
-  padding-top: 200px;
+  padding-top: 120px;
   text-align: center;
   visibility: hidden;
   position: absolute;
@@ -188,9 +188,9 @@ a:hover {
   bottom: 0%;
   left: 0;
   right: 0%;
-  background-color: #ddd;
+  background: transparent;
   z-index: 99;
-  opacity: 0.5;
+//  opacity: 0.8;
 }
 #header_container {
   margin: 0;
@@ -387,6 +387,9 @@ h2.for_content {
 }
 .item_list > li h5 a {
   color: #999;
+}
+.item_list > li h5 .large {
+  font-size: 17px;
 }
 .item_list > li h6 {
   position: absolute;

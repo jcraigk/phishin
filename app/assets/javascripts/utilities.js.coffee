@@ -42,6 +42,24 @@ class @Util
           that.handleFeedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
     })
   
+  updateCurrentPlaylist: (success_msg) ->
+    that = this
+    track_ids = []
+    duration = 0
+    $('#current_playlist > li').each( ->
+      track_ids.push $(this).data('track-id')
+      duration += parseInt($(this).data('track-duration'))
+    )
+    $.ajax({
+      url: '/update-current-playlist',
+      type: 'post',
+      data: { 'track_ids': track_ids },
+      success: (r) ->
+        that.handleFeedback { 'type': 'notice', 'msg': success_msg }
+        $('#current_playlist_tracks_label').html("#{track_ids.length} Tracks")
+        $('#current_playlist_duration_label').html(that._readableDuration(duration, 'letters'))
+    })
+  
   _requestAlbumResponse: (r, request_url, first_call) ->
     if r.status == 'Ready'
       clearTimeout @download_poller
@@ -68,3 +86,27 @@ class @Util
     id = ""
     id += Math.random().toString(36).substr(2) while id.length < length
     id.substr 0, length
+  
+  _readableDuration: (ms, style='colon') ->
+    x = Math.floor(ms / 1000)
+    seconds = x % 60
+    x = Math.floor(x / 60)
+    minutes = x % 60
+    x = Math.floor(x / 60)
+    hours = x % 24
+    x = Math.floor(x / 24)
+    days = x
+    if style == 'letters'
+      if days > 0
+        "#{days}d #{hours}h #{minutes}m #{seconds}s"
+      else if hours > 0
+        "#{hours}h #{minutes}m"
+      else
+        "#{minutes}m #{seconds}s"
+    else
+      if days > 0
+        "%d:%02d:%02d:%02d" % [days, hours, minutes, seconds]
+      else if hours > 0
+        "%d:%02d:%02d" % [hours, minutes, seconds]
+      else
+        "%d:%02d" % [minutes, seconds]

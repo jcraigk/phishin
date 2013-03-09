@@ -4,8 +4,12 @@
       <i class="icon-chevron-right"></i>
     </a>
     <ul class="dropdown-menu">
-      <li><a href="null"><i class="icon-play"></i>&nbsp;&nbsp;Play</a></li>
-      <li><a href="null"><i class="icon-list"></i>&nbsp;&nbsp;Add to Playlist</a></li>
+      <%= content_tag :li, link_to("<i class=\"icon-play\"></i>&nbsp;&nbsp;Play".html_safe, "null") %>
+      <% if playlist %>
+        <%= content_tag :li, link_to("<i class=\"icon-remove\"></i>&nbsp;&nbsp;Remove from Playlist".html_safe, "null", class: 'playlist_remove_item') %>
+      <% else %>
+        <%= content_tag :li, link_to("<i class=\"icon-list\"></i>&nbsp;&nbsp;Add to Playlist".html_safe, "null") %>
+      <% end %>
       <%= content_tag :li, link_to('<i class="icon-share-alt"></i>&nbsp;&nbsp;Share'.html_safe, "null", class: 'share', data: { url: "/#{track.show.date}/#{track.slug}"}) %>
       <%= content_tag :li, link_to('<i class="icon-download"></i>&nbsp;&nbsp;Download MP3'.html_safe, "null", data: { url: download_track_path(track) }, class: "download") %>
     </ul>
