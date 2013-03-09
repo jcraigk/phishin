@@ -5,6 +5,11 @@
  *= require_tree .
  */
 
+.testclass {
+  border-color: red !important;
+  color: red !important;
+}
+
 html {
   margin: 0;
   padding: 0;

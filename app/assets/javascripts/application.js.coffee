@@ -67,38 +67,56 @@ $ ->
     $alert.hide()
 
   ###############################################
-  # Element interactions
+  # DOM interactions
   ###############################################
   
-  # Sortable playlist for DOM load
+  # Sortable playlist DOM load
   $('#current_playlist').sortable({
     placeholder: "ui-state-highlight",
     update: ->
-      Ph.Util.updateCurrentPlaylist('Track moved in playlist')
+      Ph.Util.updateCurrentPlaylist 'Track moved in playlist'
   })
   # Sortable playlist AJAX load
   $(document).ajaxSuccess( ->
     $('#current_playlist').sortable({
       placeholder: "ui-state-highlight",
       update: ->
-        Ph.Util.updateCurrentPlaylist('Track moved in playlist')
+        Ph.Util.updateCurrentPlaylist 'Track moved in playlist'
     })
   )
+  
   # Remove item from playlist
   $(document).on 'click', '.playlist_remove_item', (e) ->
     $(this).parents('li').remove()
-    Ph.Util.updateCurrentPlaylist('Track removed from playlist')
+    Ph.Util.updateCurrentPlaylist 'Track removed from playlist'
   
-  # Scrubber (jQuery UI Slider)
+  ###############################################
+  
+  $(document).on 'click', '.playable_track', (e) ->
+    Ph.Player.playTrack $(this).data('id')
+  
+  $(document).on 'click', '.context_play_track', (e) ->
+    Ph.Player.playTrack $(this).data('id')
+
+  $(document).on 'click', '#playpause', (e) ->
+    Ph.Player.togglePlay()
+    
+  # Scrubber (jQuery UI slider)
   $('#scrubber').slider({
     animate: 'fast',
-    range: 'min'
+    range: 'min',
+    max: 100,
+    value: 0,
+    change: ->
+      Ph.Player.setSoundPosition $(this).slider('value')
   })
+  
+  # Volume slider (jQuery UI slider)
   $('#volume_slider').slider({
     animate: 'fast',
     range: 'min',
     max: 100,
-    value: 70,
+    value: 100,
     change: ->
       Ph.Player.volumeSliderUpdate $(this).slider('value')
   })
@@ -115,6 +133,8 @@ $ ->
   $(document).on 'click', '#volume_icon', (e) ->
     Ph.Player.toggleMute()
     e.stopPropagation()
+  
+  ###############################################
 
   # Click to download an individual track
   $(document).on 'click', 'a.download', ->

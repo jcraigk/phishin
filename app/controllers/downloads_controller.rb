@@ -1,6 +1,6 @@
 class DownloadsController < ApplicationController
   
-  before_filter :authorize_user!
+  before_filter :authorize_user!, except: :download_track
 
   # Provide a track as a downloadable MP3
   def download_track
@@ -8,7 +8,7 @@ class DownloadsController < ApplicationController
     redirect_to(:root, alert: 'The requested file could not be found') and return unless File.exists?(track.audio_file.path)
     send_file track.audio_file.path, :type => "audio/mpeg", :disposition => "attachment", :filename => "Phish #{track.show.date} #{track.title}.mp3", :length => File.size(track.audio_file.path)
   end
-  
+
   # Respond to an AJAX request to create/fetch an album
   def request_download_show
     if show = Show.where(date: params[:date]).first

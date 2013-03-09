@@ -22,7 +22,7 @@
       <% set = track.set %>
     <% end %>
     
-    <li class="liked" data-audio-url="<%= track.file_url %>">
+    <li class="playable_track" data-id="<%= track.id %>">
       <%= content_tag :h2, track.title, class: 'wider' %>
       <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false } %>
       <%= content_tag :h3, track.duration_readable %>
