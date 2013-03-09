@@ -11,17 +11,17 @@
     <div id="player_controls">
       <div id="control_previous">
         <a href="null">
-          <%= image_tag 'btn-next-track.png', alt: "Previous Track" %>
+          <button type="button" class="btn" id="previous"><i class="icon-backward"></i></button>
         </a>
       </div>
       <div id="control_playpause">
         <a href="null">
-          <%= image_tag 'btn-play.png', alt: "Play" %>
+          <button type="button" class="btn" id="playpause"><i class="icon-play"></i></button>
         </a>
       </div>
       <div id="control_next">
         <a href="null">
-          <%= image_tag 'btn-next-track.png', alt: "Next Track" %>
+          <button type="button" class="btn" id="next"><i class="icon-forward"></i></button>
         </a>
       </div>
     </div>
@@ -30,23 +30,14 @@
       <div id="time_elapsed">
         <!-- 3:23 -->
       </div>
-      <!-- <div id="scrubber_track">&nbsp;</div>
-      <div id="scrubber_knob">&nbsp;</div> -->
       <div id="scrubber"></div>
       <div id="time_remaining">
         <!-- -5:03 -->
       </div>
     </div>
       
-    <!-- <div id="playlist_controls">
-      <a href="<%= playlist_path %>">
-        <%= image_tag 'icon-playlist.png', alt: "Playlist Controls" %>
-      </a>
-    </div>
-    <div id="volume_controls">
-      <%= image_tag 'icon-volume.png', alt: "Volume Controls" %>
-    </div> -->
     <%= render partial: 'layouts/player_menu' %>
+    
     <div id="playlist_button">
       <a href="<%= playlist_path %>"><button type="button" class="btn"><i class="icon-list"></i></button></a>
     </div>

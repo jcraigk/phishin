@@ -478,24 +478,6 @@ h2.for_content {
   float: left;
   margin-right: 5px;
 }
-#control_previous, #control_next {
-  margin-top: 5px;
-}
-#control_previous {
-  -moz-transform: scaleX(-1);
-  -webkit-transform: scaleX(-1);
-  -o-transform: scaleX(-1);
-  transform: scaleX(-1);
-  -ms-filter: fliph; /*IE*/
-  filter: fliph; /*IE*/
-}
-#control_playpause {
-  margin-top: -13px;
-}
-
-#control_previous:hover, #control_next:hover, #control_playpause:hover {
-  cursor: pointer;
-}
 #scrubber_controls {
   position: fixed;
   width: 380px;
@@ -553,6 +535,10 @@ h2.for_content {
   height: 40px;
 //  border: 1px solid black;
 }
+#randomize_checkbox {
+  margin-bottom: 15px;
+  vertical-align: top;
+}
 #playlist_button {
   position: fixed;
   margin-top: 28px;
@@ -575,6 +561,18 @@ h2.for_content {
 #player_menu .volume_li {
   height: 30px;
   margin-top: 10px;
+}
+#playpause {
+  width: 85px;
+  height: 85px;
+  border-radius: 100px;
+  margin-top: -13px;
+}
+#next, #previous {
+  width: 45px;
+  height: 45px;
+  border-radius: 100px;
+  margin-top: 5px;
 }
 .playlist_title {
   float: left;
