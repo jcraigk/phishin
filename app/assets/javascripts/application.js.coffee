@@ -110,11 +110,11 @@ $ ->
   
   # Click the Previous button
   $(document).on 'click', '#previous', (e) ->
-    Ph.Player.previousButton()
+    Ph.Player.previousTrack()
 
   # Click the Next button
   $(document).on 'click', '#next', (e) ->
-    Ph.Player.nextButton()
+    Ph.Player.nextTrack()
     
   # Scrubber (jQuery UI slider)
   $('#scrubber').slider({
@@ -135,7 +135,7 @@ $ ->
     animate: 'fast',
     range: 'min',
     max: 100,
-    value: 80,
+    value: 100,
     slide: ->
       Ph.Player.updateVolumeSlider $(this).slider('value')
   })

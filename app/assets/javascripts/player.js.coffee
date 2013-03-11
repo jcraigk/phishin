@@ -2,7 +2,7 @@ class @Player
   
   constructor: ->
     # @track_list       = []
-    @default_volume   = 80
+    @default_volume   = 100
     @last_volume      = @default_volume
     @sm               = soundManager
     @sm_sound         = {}
@@ -100,7 +100,7 @@ class @Player
       else
          alert 'TODO: Select random show and play it from beginning'
   
-  previousButton: ->
+  previousTrack: ->
     that = this
     if @active_track
       if @sm_sound.position > 3000
@@ -117,7 +117,7 @@ class @Player
     else
       alert 'You need to make a playlist to use this button'
   
-  nextButton: ->
+  nextTrack: ->
     that = this
     if @active_track
       $.ajax({
@@ -132,7 +132,7 @@ class @Player
       alert 'You need to make a playlist to use this button'
 
   _handleSoundFinish: (track_id) ->
-    this.nextButton()
+    this.nextTrack()
   
   # Download a track or load from local if already exists via getSoundById
   _loadTrack: (track_id) ->
