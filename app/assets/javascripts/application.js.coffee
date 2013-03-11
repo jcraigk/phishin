@@ -99,7 +99,7 @@ $ ->
     Ph.Player.playTrack $(this).data('id')
 
   $(document).on 'click', '#playpause', (e) ->
-    Ph.Player.togglePlay()
+    Ph.Player.togglePause()
     
   # Scrubber (jQuery UI slider)
   $('#scrubber').slider({
@@ -111,6 +111,8 @@ $ ->
       Ph.Player.startScrubbing()
     stop: ->
       Ph.Player.stopScrubbing()
+    slide: ->
+      Ph.Player.moveScrubber()
   })
   
   # Volume slider (jQuery UI slider)
@@ -119,9 +121,11 @@ $ ->
     range: 'min',
     max: 100,
     value: 80,
-    change: ->
-      Ph.Player.volumeSliderUpdate $(this).slider('value')
+    slide: ->
+      Ph.Player.updateVolumeSlider $(this).slider('value')
   })
+  
+  $('#player_feedback').hide()
   
   # Loop / Randomize controls
   $(document).on 'click', '#loop_checkbox', (e) ->
