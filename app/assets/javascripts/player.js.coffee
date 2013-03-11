@@ -80,7 +80,13 @@ class @Player
       @active_track = track_id
     else
       alert('already playing')
-    
+  
+  resetPlaylist: (track_id) ->
+    $.ajax({
+      type: 'post'
+      url: '/reset-playlist',
+      data: { 'track_id': track_id }
+    })
   
   togglePause: ->
     if @sm_sound.paused
@@ -95,14 +101,36 @@ class @Player
          alert 'TODO: Select random show and play it from beginning'
   
   previousButton: ->
-    if @active_track and @sm_sound.position > 3000
-      @sm_sound.setPosition 0
+    that = this
+    if @active_track
+      if @sm_sound.position > 3000
+        @sm_sound.setPosition 0
+      else
+        $.ajax({
+          url: "/previous-track/#{@active_track}",
+          success: (r) ->
+            if r.success
+              that.playTrack(r.track_id)
+            else
+              alert(r.msg)
+        })
     else
-      alert 'Load previous track if it exists'
+      alert 'You need to make a playlist to use this button'
   
   nextButton: ->
-    alert 'Load next track if it exists'
-  
+    that = this
+    if @active_track
+      $.ajax({
+        url: "/next-track/#{@active_track}",
+        success: (r) ->
+          if r.success
+            that.playTrack(r.track_id)
+          else
+            alert(r.msg)
+      })
+    else
+      alert 'You need to make a playlist to use this button'
+
   _handleSoundFinish: (track_id) ->
     alert('done')
   
@@ -132,14 +160,9 @@ class @Player
     })
   
   _updatePlayerText: (r) ->
-    max = 26
-    if r.title.length > max
-      @$player_title.addClass('long_title')
-    else
-      @$player_title.removeClass('long_title')
-    # r.title = "#{r.title.substr(0, max)}..." 
+    if r.title.length > 26 then @$player_title.addClass('long_title') else @$player_title.removeClass('long_title')
     @$player_title.html(r.title)
-    @$player_detail.html("<a href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"#{r.city_url}\">#{r.city}</a>");
+    @$player_detail.html("<a href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.venue_url}\">#{r.venue}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.city_url}\">#{r.city}</a>");
   
   _syncPauseState: (playing=true) ->
     if playing
@@ -157,7 +180,7 @@ class @Player
     that = this
     @$feedback.show()
     percent_loaded = Math.floor((@sm_sound.bytesLoaded / @sm_sound.bytesTotal) * 100)
-    @$feedback.html("<i class=\"icon-download\"></i>#{percent_loaded}%")
+    @$feedback.html("<i class=\"icon-download\"></i> #{percent_loaded}%")
     if percent_loaded == 100
       @$feedback.addClass('done')
       feedback = @$feedback

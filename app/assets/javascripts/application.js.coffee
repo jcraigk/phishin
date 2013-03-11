@@ -96,10 +96,12 @@ $ ->
   
   # Click a track to play it
   $(document).on 'click', '.playable_track', (e) ->
+    Ph.Player.resetPlaylist $(this).data('id')
     Ph.Player.playTrack $(this).data('id')
   
   # Click Play in a context menu to play the track
   $(document).on 'click', '.context_play_track', (e) ->
+    Ph.Player.resetPlaylist $(this).data('id')
     Ph.Player.playTrack $(this).data('id')
 
   # Click the Play/Pause button
