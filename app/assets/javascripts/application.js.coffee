@@ -65,6 +65,8 @@ $ ->
     , 3000)
   else
     $alert.hide()
+  
+  $('#player_feedback').hide()
 
   ###############################################
   # DOM interactions
@@ -92,14 +94,25 @@ $ ->
   
   ###############################################
   
+  # Click a track to play it
   $(document).on 'click', '.playable_track', (e) ->
     Ph.Player.playTrack $(this).data('id')
   
+  # Click Play in a context menu to play the track
   $(document).on 'click', '.context_play_track', (e) ->
     Ph.Player.playTrack $(this).data('id')
 
+  # Click the Play/Pause button
   $(document).on 'click', '#playpause', (e) ->
     Ph.Player.togglePause()
+  
+  # Click the Previous button
+  $(document).on 'click', '#previous', (e) ->
+    Ph.Player.previousButton()
+
+  # Click the Next button
+  $(document).on 'click', '#next', (e) ->
+    Ph.Player.nextButton()
     
   # Scrubber (jQuery UI slider)
   $('#scrubber').slider({
@@ -124,8 +137,6 @@ $ ->
     slide: ->
       Ph.Player.updateVolumeSlider $(this).slider('value')
   })
-  
-  $('#player_feedback').hide()
   
   # Loop / Randomize controls
   $(document).on 'click', '#loop_checkbox', (e) ->

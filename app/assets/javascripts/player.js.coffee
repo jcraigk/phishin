@@ -16,6 +16,8 @@ class @Player
     @$time_elapsed    = $ '#time_elapsed'
     @$time_remaining  = $ '#time_remaining'
     @$feedback        = $ '#player_feedback'
+    @$player_title    = $ '#player_title'
+    @$player_detail   = $ '#player_detail'
 
   startScrubbing: ->
     @scrubbing = true
@@ -65,12 +67,16 @@ class @Player
     @sm.setVolume(@active_track, value)
   
   playTrack: (track_id) ->
+    that = this
     if track_id != @active_track
       this._loadTrack(track_id)
+      this._loadTrackInfo(track_id)
       this._fastFadeout(@active_track) if @active_track
-      # @sm.stop @active_track if @active_track
       this._syncPauseState()
-      @sm.play track_id
+      @sm.play track_id, {
+        onfinish: ->
+          that._handleSoundFinish track_id
+      }
       @active_track = track_id
     else
       alert('already playing')
@@ -86,7 +92,19 @@ class @Player
         this._syncPauseState(false)
         # @sm_sound.pause()
       else
-         alert 'what to play?'
+         alert 'TODO: Select random show and play it from beginning'
+  
+  previousButton: ->
+    if @active_track and @sm_sound.position > 3000
+      @sm_sound.setPosition 0
+    else
+      alert 'Load previous track if it exists'
+  
+  nextButton: ->
+    alert 'Load next track if it exists'
+  
+  _handleSoundFinish: (track_id) ->
+    alert('done')
   
   # Download a track or load from local if already exists via getSoundById
   _loadTrack: (track_id) ->
@@ -101,6 +119,27 @@ class @Player
           that._updatePlayerState()
       })
       @sm.setVolume(track_id, @last_volume)
+  
+  _loadTrackInfo: (track_id) ->
+    that = this
+    $.ajax({
+      url: "/track-info/#{track_id}",
+      success: (r) ->
+        if r.success
+          that._updatePlayerText(r)
+        else
+          that.handleFeedback { 'type': 'alert', 'msg': 'Error retrieving track info' }
+    })
+  
+  _updatePlayerText: (r) ->
+    max = 26
+    if r.title.length > max
+      @$player_title.addClass('long_title')
+    else
+      @$player_title.removeClass('long_title')
+    # r.title = "#{r.title.substr(0, max)}..." 
+    @$player_title.html(r.title)
+    @$player_detail.html("<a href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"#{r.city_url}\">#{r.city}</a>");
   
   _syncPauseState: (playing=true) ->
     if playing

@@ -23,9 +23,11 @@ Phishin::Application.routes.draw do
   # Likes
   post    '/toggle-like' => 'likes#toggle_like', as: 'toggle_like'
   
-  # Playlists
+  # Playlists / player
   get     '/playlist' => 'playlists#playlist', as: 'playlist'
   post    '/update-current-playlist' => 'playlists#update_current_playlist', as: 'update_current_playlist'
+  post    '/add-track' => 'playlists#add_track_to_playlist', as: 'add_track'
+  get     '/track-info/:track_id' => 'playlists#track_info', as: 'track_info'
   
   # Downloads
   get     '/download-track/:track_id' => 'downloads#download_track', as: 'download_track'

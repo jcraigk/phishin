@@ -17,4 +17,23 @@ class PlaylistsController < ApplicationController
     render json: { success: true, msg: session[:playlist] }
   end
   
+  def add_track_to_playlist
+  end
+  
+  def track_info
+    track = Track.where(id: params[:track_id]).includes(:show => :venue).first
+    if track
+      render json: {
+        success: true,
+        title: track.title,
+        show: "#{track.show.date} #{track.show.venue.name}",
+        show_url: "#{track.show.date}",
+        city: track.show.venue.location,
+        city_url: "/cities"
+      }
+    else
+      render json: { success: false }
+    end
+  end
+  
 end
