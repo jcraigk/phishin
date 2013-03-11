@@ -1,13 +1,11 @@
 <div id="player_menu">
-  
     <div class="btn-group">
       <a class="btn dropdown-toggle btn-round" data-toggle="dropdown" href="null">
         <i class="icon-cog"></i>
         <span class="caret"></span>
       </a>
       <ul class="dropdown-menu">
-        <%= content_tag :li, link_to('', nil, id: 'volume_icon') + content_tag(:div, nil, id: 'volume_slider'), class: 'volume_li' %>
-        <div style="clear: both;"></div>
+        <%= content_tag :li, link_to('', 'null', id: 'volume_icon') + content_tag(:div, nil, id: 'volume_slider'), class: 'volume_li' %>
         <%= content_tag :li, check_box_tag('loop_checkbox') + "&nbsp;&nbsp;Loop".html_safe, class: 'nolink' %>
         <%= content_tag :li, check_box_tag('randomize_checkbox') + "&nbsp;&nbsp;Randomize".html_safe, class: 'nolink' %>
       </ul>

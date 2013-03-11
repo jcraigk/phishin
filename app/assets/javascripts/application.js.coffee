@@ -5,7 +5,7 @@
 //= require jquery.ui.sortable
 //= require soundmanager
 //= require history
-//= require utilities
+//= require domhandler
 //= require player
 
 # Generic namespace
@@ -14,7 +14,7 @@ Ph = {}
 $ ->
   
   # Instantiate stuff
-  Ph.Util = new Util
+  Ph.Util = new DOMHandler
   Ph.Player = new Player
   
   # Page elements
@@ -107,8 +107,10 @@ $ ->
     range: 'min',
     max: 100,
     value: 0,
-    change: ->
-      Ph.Player.setSoundPosition $(this).slider('value')
+    start: ->
+      Ph.Player.startScrubbing()
+    stop: ->
+      Ph.Player.stopScrubbing()
   })
   
   # Volume slider (jQuery UI slider)
@@ -116,7 +118,7 @@ $ ->
     animate: 'fast',
     range: 'min',
     max: 100,
-    value: 100,
+    value: 80,
     change: ->
       Ph.Player.volumeSliderUpdate $(this).slider('value')
   })

@@ -1,15 +1,36 @@
 class @Player
   
   constructor: ->
+    # @track_list       = []
+    @last_volume      = 80
     @sm               = soundManager
     @active_track     = ''
+    @sm_sound         = {}
     @muted            = false
     @playing          = false
+    @scrubbing        = false
     @duration         = 0
     @$scrubber        = $ '#scrubber'
     @$volume_slider   = $ '#volume_slider'
     @$volume_icon     = $ '#volume_icon'
+    @$time_elapsed    = $ '#time_elapsed'
+    @$time_remaining  = $ '#time_remaining'
+    @scrubber_updater = null
+
+  startScrubbing: ->
+    @scrubbing = true
+    @$time_elapsed.addClass('scrubbing')
+    @$time_remaining.addClass('scrubbing')
   
+  stopScrubbing: ->
+    @scrubbing = false
+    @$time_elapsed.removeClass('scrubbing')
+    @$time_remaining.removeClass('scrubbing')
+    if @playing
+      @sm.setPosition(@active_track, (@$scrubber.slider('value') / 100) * @sm_sound.duration)
+    else
+      @$scrubber.slider('value', 0)
+      
   toggleMute: ->
     if @last_volume > 0
       if @muted
@@ -35,19 +56,23 @@ class @Player
       @muted = true
     @sm.setVolume(@active_track, value)
   
-  setSoundPosition: (value) ->
-    @sm.setPosition(@active_track, Math.floor((value * @duration) / 100))
-  
   playTrack: (track_id) ->
+    that = this
     unless @sm.getSoundById track_id
-      @sm.createSound({
+      @sm_sound = @sm.createSound({
         id: track_id,
-        url: "/download-track/#{track_id}"
+        url: "/download-track/#{track_id}",
+        whileplaying: ->
+          that._updatePlayerState()
       })
     @sm.stop @active_track if @active_track
-    @sm.play track_id
-    @active_track = track_id
-    @playing = true
+    if track_id != @active_track
+      @sm.play track_id
+      @active_track = track_id
+      @playing = true
+    else
+      @playing = false
+      @active_track = null
     this._syncState()
   
   togglePlay: ->
@@ -63,7 +88,36 @@ class @Player
     this._syncState()
   
   _syncState: ->
+    that = this
     if @playing
-      $('#playpause').addClass('testclass')
+      $('#playpause').addClass('playing')
     else
-      $('#playpause').removeClass('testclass')
+      $('#playpause').removeClass('playing')
+  
+  _updatePlayerState: ->
+    unless @scrubbing
+      value = (@sm_sound.position / @sm_sound.duration) * 100
+      @$scrubber.slider('value', value)
+    @$time_elapsed.html(this._readableDuration(@sm_sound.position))
+    @$time_remaining.html("-#{this._readableDuration(@sm_sound.duration - @sm_sound.position)}")
+
+  _readableDuration: (ms) ->
+    x = Math.floor(ms / 1000)
+    seconds = x % 60
+    seconds_with_zero = "#{if seconds < 10 then '0' else '' }#{seconds}"
+    x = Math.floor(x / 60)
+    minutes = x % 60
+    minutes_with_zero = "#{if minutes < 10 then '0' else '' }#{minutes}"
+    x = Math.floor(x / 60)
+    hours = x % 24
+    hours_with_zero = "#{if hours < 10 then '0' else '' }#{hours}"
+    x = Math.floor(x / 24)
+    days = x
+    if days > 0
+      "#{days}::#{hours}:#{minutes_with_zero}:#{seconds_with_zero}"
+    else if hours > 0
+      "#{hours}:#{minutes_with_zero}:#{seconds_with_zero}"
+    else
+      "#{minutes}:#{seconds_with_zero}"
+
+

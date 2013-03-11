@@ -1,4 +1,4 @@
-class @Util
+class @DOMHandler
   
   constructor: ->
     @page_init          = true
@@ -105,8 +105,8 @@ class @Util
         "#{minutes}m #{seconds}s"
     else
       if days > 0
-        "%d:%02d:%02d:%02d" % [days, hours, minutes, seconds]
+        "#{days}:#{hours}:#{minutes}:#{seconds}"
       else if hours > 0
-        "%d:%02d:%02d" % [hours, minutes, seconds]
+        "#{hours}:#{minutes}:#{seconds}"
       else
-        "%d:%02d" % [minutes, seconds]
+        "#{minutes}:#{seconds}"

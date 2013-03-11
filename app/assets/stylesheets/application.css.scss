@@ -5,11 +5,6 @@
  *= require_tree .
  */
 
-.testclass {
-  border-color: red !important;
-  color: red !important;
-}
-
 html {
   margin: 0;
   padding: 0;
@@ -483,6 +478,11 @@ h2.for_content {
   float: left;
   margin-right: 5px;
 }
+.playing {
+    box-shadow: 0px 0px 16px #990218 !important;
+  background-position: -85px 0 !important;
+}
+
 #scrubber_controls {
   position: fixed;
   width: 380px;
@@ -515,22 +515,25 @@ h2.for_content {
 //  cursor: pointer;
 //}
 #time_elapsed {
-  width: 43px;
+  margin-left: 30px;
+  width: 30px;
   font-size: 12px;
   line-height: 36px;
   float: left;
-  text-align: right;
+  text-align: left;
   padding-right: 5px;
 //  border: 1px solid black;
 }
 #time_remaining {
-  width: 43px;
+  width: 48px;
   font-size: 12px;
   line-height: 36px;
   float: right;
   text-align: left;
-  padding-left: 5px;
 //  border: 1px solid black;
+}
+.scrubbing {
+  color: red;
 }
 #player_menu {
   position: fixed;
@@ -578,12 +581,19 @@ h2.for_content {
   height: 85px;
   border-radius: 100px;
   margin-top: -13px;
+  background: white url('icons-playpause.png');
 }
 #next, #previous {
   width: 45px;
   height: 45px;
   border-radius: 100px;
   margin-top: 5px;
+}
+#previous {
+  background: white url('icon-previous.png');
+}
+#next {
+  background: white url('icon-next.png');
 }
 .playlist_title {
   float: left;
