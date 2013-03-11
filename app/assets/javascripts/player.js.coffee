@@ -132,7 +132,7 @@ class @Player
       alert 'You need to make a playlist to use this button'
 
   _handleSoundFinish: (track_id) ->
-    alert('done')
+    this.nextButton()
   
   # Download a track or load from local if already exists via getSoundById
   _loadTrack: (track_id) ->
