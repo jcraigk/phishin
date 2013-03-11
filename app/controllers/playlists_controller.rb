@@ -78,6 +78,7 @@ class PlaylistsController < ApplicationController
       render json: {
         success: true,
         title: track.title,
+        duration: track.duration,
         show: "#{track.show.date}",
         show_url: "#{track.show.date}",
         venue: "#{track.show.venue.name}",

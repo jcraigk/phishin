@@ -30,15 +30,15 @@ class @Player
     @$time_elapsed.removeClass('scrubbing')
     @$time_remaining.removeClass('scrubbing')
     if @active_track
-      @sm.setPosition(@active_track, (@$scrubber.slider('value') / 100) * @sm_sound.duration)
+      @sm.setPosition(@active_track, (@$scrubber.slider('value') / 100) * @duration)
     else
       @$scrubber.slider('value', 0)
   
   moveScrubber: ->
     if @scrubbing and @active_track
-      scrubber_position = (@$scrubber.slider('value') / 100) * @sm_sound.duration
+      scrubber_position = (@$scrubber.slider('value') / 100) * @duration
       @$time_elapsed.html(this._readableDuration(scrubber_position))
-      @$time_remaining.html("-#{this._readableDuration(@sm_sound.duration - scrubber_position)}")
+      @$time_remaining.html("-#{this._readableDuration(@duration - scrubber_position)}")
       
   toggleMute: ->
     if @last_volume > 0
@@ -154,12 +154,13 @@ class @Player
       url: "/track-info/#{track_id}",
       success: (r) ->
         if r.success
-          that._updatePlayerText(r)
+          that._updatePlayerDisplay(r)
         else
           that.handleFeedback { 'type': 'alert', 'msg': 'Error retrieving track info' }
     })
   
-  _updatePlayerText: (r) ->
+  _updatePlayerDisplay: (r) ->
+    @duration = r.duration
     if r.title.length > 26 then @$player_title.addClass('long_title') else @$player_title.removeClass('long_title')
     @$player_title.html(r.title)
     @$player_detail.html("<a href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.venue_url}\">#{r.venue}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.city_url}\">#{r.city}</a>");
@@ -172,9 +173,9 @@ class @Player
   
   _updatePlayerState: ->
     unless @scrubbing
-      @$scrubber.slider('value', (@sm_sound.position / @sm_sound.duration) * 100)
+      @$scrubber.slider('value', (@sm_sound.position / @duration) * 100)
       @$time_elapsed.html(this._readableDuration(@sm_sound.position))
-      @$time_remaining.html("-#{this._readableDuration(@sm_sound.duration - @sm_sound.position)}")
+      @$time_remaining.html("-#{this._readableDuration(@duration - @sm_sound.position)}")
   
   _updateLoadingState: (sm_sound) ->
     that = this
