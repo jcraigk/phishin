@@ -1,14 +1,12 @@
 class @Player
   
   constructor: ->
-    # @track_list       = []
-    @default_volume   = 100
-    @last_volume      = @default_volume
     @sm               = soundManager
     @sm_sound         = {}
     @active_track     = ''
     @muted            = false
     @scrubbing        = false
+    @last_volume      = 100
     @duration         = 0
     @$scrubber        = $ '#scrubber'
     @$volume_slider   = $ '#volume_slider'
@@ -72,7 +70,7 @@ class @Player
       this._loadTrack(track_id)
       this._loadTrackInfo(track_id)
       this._fastFadeout(@active_track) if @active_track
-      this._syncPauseState()
+      this._updatePauseState()
       @sm.play track_id, {
         onfinish: ->
           that._handleSoundFinish track_id
@@ -91,12 +89,11 @@ class @Player
   togglePause: ->
     if @sm_sound.paused
       @sm_sound.resume()
-      this._syncPauseState()
+      this._updatePauseState()
     else
       if @active_track
         this._fastFadeout(@active_track, true)
-        this._syncPauseState(false)
-        # @sm_sound.pause()
+        this._updatePauseState(false)
       else
          alert 'TODO: Select random show and play it from beginning'
   
@@ -165,7 +162,7 @@ class @Player
     @$player_title.html(r.title)
     @$player_detail.html("<a href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.venue_url}\">#{r.venue}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.city_url}\">#{r.city}</a>");
   
-  _syncPauseState: (playing=true) ->
+  _updatePauseState: (playing=true) ->
     if playing
       $('#playpause').addClass('playing')
     else
