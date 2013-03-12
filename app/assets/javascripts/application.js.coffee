@@ -22,6 +22,23 @@ $ ->
   $alert          = $ '.feedback_alert'
   $ajax_overlay   = $ '#ajax_overlay'
   $page           = $ '#page'
+  
+  ###############################################
+  # ON AJAX SUCCESS
+  ###############################################
+  $(document).ajaxSuccess( ->
+    
+    # Sortable playlist AJAX load
+    $('#current_playlist').sortable({
+      placeholder: "ui-state-highlight",
+      update: ->
+        Ph.DOM.updateCurrentPlaylist 'Track moved in playlist'
+    })
+    
+    # Highlight the currently playing track
+    Ph.Player.highlightActiveTrack()
+    
+  )
 
   ###############################################
   # Prepare history.js
@@ -46,6 +63,7 @@ $ ->
   $(document).on 'click', 'a', ->
     unless $(this).hasClass('non-remote')
       Ph.DOM.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
+      
       false
   
   ###############################################
@@ -78,14 +96,6 @@ $ ->
     update: ->
       Ph.DOM.updateCurrentPlaylist 'Track moved in playlist'
   })
-  # Sortable playlist AJAX load
-  $(document).ajaxSuccess( ->
-    $('#current_playlist').sortable({
-      placeholder: "ui-state-highlight",
-      update: ->
-        Ph.DOM.updateCurrentPlaylist 'Track moved in playlist'
-    })
-  )
   
   # Remove track from playlist
   $(document).on 'click', '.playlist_remove_track', (e) ->

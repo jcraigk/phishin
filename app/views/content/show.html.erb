@@ -11,7 +11,7 @@
 <div id="content">
   
   <% set = false %>
-  <% @show.tracks.each_with_index do |track, idx| %>
+  <% @tracks.each_with_index do |track, idx| %>
     
     <% if track.set != set %>
       <% if set %>
@@ -22,9 +22,9 @@
       <% set = track.set %>
     <% end %>
     
-    <li class="playable_track" data-id="<%= track.id %>">
+    <li class="playable_track" data-id="<%= track.id %>" data-anchor="<%= track.songs.first.slug %>">
       <%= content_tag :h2, track.title, class: 'wider' %>
-      <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false } %>
+      <%= render partial: 'shared/context_menu_for_track', locals: { track: track, show: @show, playlist: false } %>
       <%= content_tag :h3, track.duration_readable %>
       <%= likable(track, @tracks_likes[idx], 'small') %>
       <div style="clear: both;"></div>

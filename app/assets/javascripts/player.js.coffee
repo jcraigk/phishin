@@ -78,6 +78,7 @@ class @Player
           that._handleSoundFinish track_id
       }
       @active_track = track_id
+      this.highlightActiveTrack()
     else
       alert('already playing')
   
@@ -139,6 +140,12 @@ class @Player
         'title': @app_name,
         'duration': 0
       })
+  
+  highlightActiveTrack: ->
+    $('.playable_track').removeClass 'active_track'
+    $('.playable_track[data-id="'+@active_track+'"]').addClass 'active_track'
+    $('#current_playlist>li').removeClass 'active_track'
+    $('#current_playlist>li[data-track-id="'+@active_track+'"]').addClass 'active_track'
 
   _handleSoundFinish: (track_id) ->
     this.nextTrack()

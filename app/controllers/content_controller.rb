@@ -131,7 +131,8 @@ class ContentController < ApplicationController
     end
     if @show = Show.where(date: date).includes(:tracks).order('tracks.position asc').first
       @show_like = get_user_show_like(@show)
-      @tracks_likes = @show.tracks.map { |track| get_user_track_like(track) }
+      @tracks = @show.tracks.includes(:songs).order('position asc')
+      @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
     end
     @show
   end
