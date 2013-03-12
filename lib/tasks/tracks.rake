@@ -1,5 +1,35 @@
 namespace :tracks do
   
+  # Label sets
+  task label_null_sets: :environment do
+    tracks = Track.where("set IS NULL").order(:position)
+    unknown = 0
+    set = ''
+    for track in tracks
+      filename = track.audio_file_file_name
+      if filename[0..3] == "II-e"
+        set = 'E'
+      elsif filename[0..6] == "(Check)"
+        set = 'S'
+      elsif filename[0..2] == "III"
+        set = '3'
+      elsif filename[0..1] == "II"
+        set = '2'
+      elsif filename[0] == "I"
+        set = '1'
+      else
+        set = ''
+        unknown += 1
+      end
+      if set != ''
+        track.set = set
+        track.save
+      end
+      puts "#{track.id} :: #{track.show.date} #{track.title} :: #{set}"
+    end
+    puts "#{unknown} unknowns"
+  end
+  
   # Rename mp3s from old paperclips names
   # Rename from hash to id, move up a directory (out of "/original")
   desc "Rename mp3s pulled from phishtracks.net"
