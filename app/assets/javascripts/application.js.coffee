@@ -126,6 +126,22 @@ $ ->
   $(document).on 'click', '#clear_playlist', (e) ->
     Ph.Player.stopAndUnload()
   
+  # Playlist Option change
+  $(document).on 'change', '.playlist_option', (e) ->
+    $.ajax({
+      type: 'post',
+      url: '/submit-playlist-options',
+      data: {
+        'loop': $('#loop_checkbox').prop('checked'),
+        'randomize': $('#randomize_checkbox').prop('checked')
+      }
+      success: (r) ->
+        if r.success
+          Ph.DOM.handleFeedback { 'msg': 'Playlist options saved' }
+        else
+          Ph.DOM.handleFeedback { 'type': 'alert', 'msg': r.msg }
+    })
+  
   ###############################################
   
   # Click a track to play it

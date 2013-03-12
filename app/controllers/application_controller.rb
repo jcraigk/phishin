@@ -33,7 +33,9 @@ class ApplicationController < ActionController::Base
   end
   
   def setup_session
-    session[:playlist] ||= []
+    session[:playlist]    ||= []
+    session[:loop]        ||= false
+    session[:randomize]   ||= false
   end
   
 end

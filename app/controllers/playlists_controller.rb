@@ -47,44 +47,48 @@ class PlaylistsController < ApplicationController
   end
   
   def next_track_id
-    playlist = session['playlist']
+    playlist = session[:playlist]
     idx = false
     playlist.each_with_index { |track_id, i| idx = i if track_id.to_s == params[:track_id].to_s }
     if idx
-      if playlist.last.to_s == params[:track_id]
-        if session['loop']
-          next_track = playlist.first
-          render json: { success: true, track_id: next_track}
-        else
-          render json: { success: false, msg: 'End of playlist' }
-        end
+      if session[:randomize]
+        render json: { success: true, track_id: playlist.sample }
       else
-        next_track = playlist[idx+1]
-        render json: { success: true, track_id: next_track}
+        if playlist.last.to_s == params[:track_id]
+          if session[:loop]
+            render json: { success: true, track_id: playlist.first }
+          else
+            render json: { success: false, msg: 'End of playlist' }
+          end
+        else
+          render json: { success: true, track_id: playlist[idx+1] }
+        end
       end
     else
-      render json: { success: false, msg: 'track_id not in playlist'}
+      render json: { success: false, msg: 'track_id not in playlist' }
     end
   end
 
   def previous_track_id
-    playlist = session['playlist']
+    playlist = session[:playlist]
     idx = false
     playlist.each_with_index { |track_id, i| idx = i if track_id.to_s == params[:track_id] }
     if idx
-      if playlist.first.to_s == params[:track_id].to_s
-        if session['loop']
-          prev_track = playlist.last
-          render json: { success: true, track_id: prev_track}
-        else
-          render json: { success: false, msg: 'Beginning of playlist' }
-        end
+      if session[:randomize]
+        render json: { success: true, track_id: playlist.sample }
       else
-        prev_track = playlist[idx-1]
-        render json: { success: true, track_id: prev_track}
+        if playlist.first.to_s == params[:track_id].to_s
+          if session[:loop]
+            render json: { success: true, track_id: playlist.last }
+          else
+            render json: { success: false, msg: 'Beginning of playlist' }
+          end
+        else
+          render json: { success: true, track_id: playlist[idx-1] }
+        end
       end
     else
-      render json: { success: false, msg: 'track_id not in playlist'}
+      render json: { success: false, msg: 'track_id not in playlist' }
     end
   end
   
@@ -105,6 +109,13 @@ class PlaylistsController < ApplicationController
     else
       render json: { success: false }
     end
+  end
+  
+  def submit_playlist_options
+    params.reject! { |k,v| ! %w[randomize loop].include? k.to_s }
+    params[:loop] == "true" ? session[:loop] = true : session[:loop] = false
+    params[:randomize] == "true" ? session[:randomize] = true : session[:randomize] = false
+    render json: { success: true}
   end
   
 end

@@ -31,6 +31,7 @@ Phishin::Application.routes.draw do
   get     '/track-info/:track_id'         => 'playlists#track_info'
   get     '/next-track/:track_id'         => 'playlists#next_track_id'
   get     '/previous-track/:track_id'     => 'playlists#previous_track_id'
+  post    '/submit-playlist-options'      => 'playlists#submit_playlist_options'
   
   # Downloads
   get     '/download-track/:track_id'     => 'downloads#download_track', as: 'download_track'
