@@ -202,6 +202,7 @@ class @Player
     that = this
     @$feedback.show()
     percent_loaded = Math.floor((@sm_sound.bytesLoaded / @sm_sound.bytesTotal) * 100)
+    percent_loaded = 0 if isNaN(percent_loaded)
     @$feedback.html("<i class=\"icon-download\"></i> #{percent_loaded}%")
     if percent_loaded == 100
       @$feedback.addClass('done')
