@@ -13,7 +13,7 @@
   <% end %>
   
   <% last_title = false %>
-  <% for show in @shows %>
+  <% @shows.each_with_index do |show, idx| %>
 
     <% title = show.date.strftime("%Y") %>
     <% if title != last_title %>
@@ -30,7 +30,7 @@
         <%= content_tag :h4, link_to(show.venue.name, "/#{show.venue.slug}") %>
         <%= content_tag :h5, link_to(show.venue.location, "/cities") %>
         <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
-        <div class="likes_small"><a></a><span>2352</span></div>
+        <%= likable(show, @shows_likes[idx], 'small') %>
         <div style="clear: both;"></div>
       </li>
     <% end %>
