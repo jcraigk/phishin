@@ -9,12 +9,12 @@ class @DOMHandler
     @$album_url         = $ '#album_url'
   
   handleFeedback: (feedback) ->
-    if feedback.type == 'notice'
-      css = 'feedback_notice'
-      icon = 'icon-ok'
-    else
+    if feedback.type == 'alert'
       css = 'feedback_alert'
       icon = 'icon-exclamation-sign'
+    else
+      css = 'feedback_notice'
+      icon = 'icon-ok'
     id = this._uniqueID()
     @$feedback.append "<p class=\"#{css}\" id=\"#{id}\"><i class=\"#{icon}\"></i> #{feedback.msg}</p>"
     setTimeout( ->
@@ -55,7 +55,7 @@ class @DOMHandler
       type: 'post',
       data: { 'track_ids': track_ids },
       success: (r) ->
-        that.handleFeedback { 'type': 'notice', 'msg': success_msg }
+        that.handleFeedback { 'msg': success_msg }
         $('#current_playlist_tracks_label').html("#{track_ids.length} Tracks")
         $('#current_playlist_duration_label').html(that._readableDuration(duration, 'letters'))
     })

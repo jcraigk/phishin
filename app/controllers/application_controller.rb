@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   before_filter :random_lyrical_excerpt  # Pull lyrical excerpt unless XHR request
   before_filter :authenticate
   # before_filter :artificial_wait
+  before_filter :setup_session
   
   def random_lyrical_excerpt
     @random_song = Song.random_lyrical_excerpt.first unless request.xhr?
@@ -29,6 +30,10 @@ class ApplicationController < ActionController::Base
   
   def artificial_wait
     sleep 3.seconds
+  end
+  
+  def setup_session
+    session[:playlist] ||= []
   end
   
 end

@@ -3,13 +3,14 @@
     <%= content_tag :h1, 'Current Playlist'%>
     <%= content_tag :h2, pluralize(@num_tracks, 'track'), id: 'current_playlist_tracks_label' %>
     <%= content_tag :h3, "#{duration_readable(@duration, 'letters')}", id: 'current_playlist_duration_label' %>
+    <a href="/playlist?clear_playlist=1" id="clear_playlist"><button type="button" class="btn">Clear Playlist</button></a>
   </div>
 </div>
   
 <div id="content">
   
   <div id="paragraph_content">
-    <% unless @tracks %>
+    <% unless @tracks and @tracks.size > 0 %>
       <p>Your current playlist is empty.<br /><br />Tracks are automatically added when you play them.  You can also add tracks explicitly by using track context menus.</p>
     <% else %>
       <ul class="item_list clickable" id="current_playlist">

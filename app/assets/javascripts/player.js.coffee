@@ -8,6 +8,7 @@ class @Player
     @scrubbing        = false
     @last_volume      = 100
     @duration         = 0
+    @app_name         = $('#app_data').data('app-name')
     @$scrubber        = $ '#scrubber'
     @$volume_slider   = $ '#volume_slider'
     @$volume_icon     = $ '#volume_icon'
@@ -16,6 +17,7 @@ class @Player
     @$feedback        = $ '#player_feedback'
     @$player_title    = $ '#player_title'
     @$player_detail   = $ '#player_detail'
+
 
   startScrubbing: ->
     @scrubbing = true
@@ -127,6 +129,16 @@ class @Player
       })
     else
       alert 'You need to make a playlist to use this button'
+  
+  stopAndUnload: (track_id=0) ->
+    if @active_track == track_id or track_id == 0
+      this._fastFadeout(@active_track)
+      @sm_sound.unload()
+      @active_track = ''
+      this._updatePlayerDisplay({
+        'title': @app_name,
+        'duration': 0
+      })
 
   _handleSoundFinish: (track_id) ->
     this.nextTrack()
@@ -160,7 +172,12 @@ class @Player
     @duration = r.duration
     if r.title.length > 26 then @$player_title.addClass('long_title') else @$player_title.removeClass('long_title')
     @$player_title.html(r.title)
-    @$player_detail.html("<a href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.venue_url}\">#{r.venue}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.city_url}\">#{r.city}</a>");
+    if @duration == 0
+      @$player_detail.html("")
+      @$time_elapsed.html("")
+      @$time_remaining.html("")
+    else
+      @$player_detail.html("<a href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.venue_url}\">#{r.venue}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.city_url}\">#{r.city}</a>");
   
   _updatePauseState: (playing=true) ->
     if playing
@@ -169,7 +186,7 @@ class @Player
       $('#playpause').removeClass('playing')
   
   _updatePlayerState: ->
-    unless @scrubbing
+    unless @scrubbing or @duration == 0
       @$scrubber.slider('value', (@sm_sound.position / @duration) * 100)
       @$time_elapsed.html(this._readableDuration(@sm_sound.position))
       @$time_remaining.html("-#{this._readableDuration(@duration - @sm_sound.position)}")

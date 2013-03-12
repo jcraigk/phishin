@@ -14,7 +14,7 @@ Ph = {}
 $ ->
   
   # Instantiate stuff
-  Ph.Util = new DOMHandler
+  Ph.DOM = new DOMHandler
   Ph.Player = new Player
   
   # Page elements
@@ -33,7 +33,7 @@ $ ->
     History.log State.data, State.title, State.url
   History.Adapter.bind window, 'popstate', ->   
     state = window.History.getState()
-    if state.data.href != undefined and !Ph.Util.page_init
+    if state.data.href != undefined and !Ph.DOM.page_init
       $ajax_overlay.css 'visibility', 'visible'
       $page.html ''
       $page.load(
@@ -45,7 +45,7 @@ $ ->
   # Click a link to load context via ajax
   $(document).on 'click', 'a', ->
     unless $(this).hasClass('non-remote')
-      Ph.Util.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
+      Ph.DOM.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
       false
   
   ###############################################
@@ -76,21 +76,45 @@ $ ->
   $('#current_playlist').sortable({
     placeholder: "ui-state-highlight",
     update: ->
-      Ph.Util.updateCurrentPlaylist 'Track moved in playlist'
+      Ph.DOM.updateCurrentPlaylist 'Track moved in playlist'
   })
   # Sortable playlist AJAX load
   $(document).ajaxSuccess( ->
     $('#current_playlist').sortable({
       placeholder: "ui-state-highlight",
       update: ->
-        Ph.Util.updateCurrentPlaylist 'Track moved in playlist'
+        Ph.DOM.updateCurrentPlaylist 'Track moved in playlist'
     })
   )
   
-  # Remove item from playlist
-  $(document).on 'click', '.playlist_remove_item', (e) ->
+  # Remove track from playlist
+  $(document).on 'click', '.playlist_remove_track', (e) ->
+    track_id = $(this).parents('li').data('track-id')
     $(this).parents('li').remove()
-    Ph.Util.updateCurrentPlaylist 'Track removed from playlist'
+    if $('#current_playlist').children('li').size() == 0
+      Ph.DOM.followLink $('#clear_playlist')
+      Ph.Player.stopAndUnload()
+    else
+      Ph.DOM.updateCurrentPlaylist 'Track removed from playlist'
+      Ph.Player.stopAndUnload track_id
+  
+  # Add track to playlist
+  $(document).on 'click', '.playlist_add_track', (e) ->
+    track_id = $(this).data('id')
+    $.ajax({
+      type: 'post',
+      url: '/add-track',
+      data: { 'track_id': track_id}
+      success: (r) ->
+        if r.success
+          Ph.DOM.handleFeedback { 'msg': 'Track added to playlist' }
+        else
+          Ph.DOM.handleFeedback { 'type': 'alert', 'msg': r.msg }
+    })
+  
+  # Clear playlist should stop and unload current sound
+  $(document).on 'click', '#clear_playlist', (e) ->
+    Ph.Player.stopAndUnload()
   
   ###############################################
   
@@ -164,16 +188,16 @@ $ ->
         if r.success
           location.href = data_url if data_url
         else
-          Ph.Util.handleFeedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
+          Ph.DOM.handleFeedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
     })
   
   # Click to download a set of tracks
   $(document).on 'click', 'a.download-album', ->
-    Ph.Util.requestAlbum $(this).data('url'), true
+    Ph.DOM.requestAlbum $(this).data('url'), true
     
   # Stop polling server when download modal is hidden
   $('#download_modal').on 'hidden', ->
-    Ph.Util.StopDownloadPoller
+    Ph.DOM.StopDownloadPoller
 
   ###############################################
   
@@ -197,10 +221,10 @@ $ ->
       success: (r) ->
         if r.success
           if r.liked then $this.addClass('liked') else $this.removeClass('liked')
-          Ph.Util.handleFeedback({ 'type': 'notice', 'msg': r.msg })
+          Ph.DOM.handleFeedback({ 'msg': r.msg })
           $this.siblings('span').html(r.likes_count)
         else
-          Ph.Util.handleFeedback({ 'type': 'alert', 'msg': r.msg })
+          Ph.DOM.handleFeedback({ 'type': 'alert', 'msg': r.msg })
     })
   
   # Rollover year to reveal number of shows
@@ -223,12 +247,12 @@ $ ->
     
   # Follow links in .year_list
   $(document).on 'click', '.year_list > li', ->
-    Ph.Util.followLink $(this).find 'a'
+    Ph.DOM.followLink $(this).find 'a'
   
   # Follow h1>a links in .item_list.clickable > li
   $(document).on 'click', '.item_list > li', ->
     if $(this).parent('ul').hasClass 'clickable'
-      Ph.Util.followLink $(this).children('h2').find 'a'
+      Ph.DOM.followLink $(this).children('h2').find 'a'
   
   # Share links bring up a modal to display a url
   $(document).on 'click', '.share', ->

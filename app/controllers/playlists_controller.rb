@@ -1,15 +1,21 @@
 class PlaylistsController < ApplicationController
 
   def playlist
+    session[:playlist] = [] if params[:clear_playlist] == "1"
     @num_tracks = 0
     @duration = 0
-    if session['playlist']
-      tracks_by_id = Track.find(session['playlist']).index_by(&:id)
-      @tracks = session['playlist'].collect {|id| tracks_by_id[id] }
+    # raise session[:playlist].inspect
+    if session[:playlist]
+      tracks_by_id = Track.find(session[:playlist]).index_by(&:id)
+      @tracks = session[:playlist].collect {|id| tracks_by_id[id] }
       @num_tracks = @tracks.size
-      @duration = @tracks.map(&:duration).inject(0, &:+)
+      @duration = @tracks.map(&:duration).inject(0, &:+) if @num_tracks > 0
     end
     render layout: false if request.xhr?
+  end
+  
+  def clear_playlist
+    session[:playlist] = []
   end
   
   def reset_playlist
@@ -23,11 +29,21 @@ class PlaylistsController < ApplicationController
   end
   
   def update_current_playlist
-    session[:playlist] = params[:track_ids]
+    session[:playlist] = params[:track_ids].map {|id| Integer(id, 10)}
     render json: { success: true, msg: session[:playlist] }
   end
   
   def add_track_to_playlist
+    if session[:playlist].include? Integer(params[:track_id], 10)
+      render json: { success: false, msg: 'Track already in playlist'}
+    else
+      if track = Track.find(params[:track_id])
+        session[:playlist] << track.id
+        render json: { success: true }   
+      else
+        render json: { success: false, msg: 'Invalid track provided for playlist' }
+      end
+    end
   end
   
   def next_track_id
