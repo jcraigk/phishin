@@ -1,1 +1,1 @@
-<div id="app_data" style="display: none;" data-base-url="<%= APP_BASE_URL %>" data-app-name="<%= APP_NAME %>" data-anchor="<%= params[:anchor].downcase %>"></div>
+<div id="app_data" style="display: none;" data-base-url="<%= APP_BASE_URL %>" data-app-name="<%= APP_NAME %>" data-anchor="<%= params[:anchor].downcase if params[:anchor] %>"></div>
