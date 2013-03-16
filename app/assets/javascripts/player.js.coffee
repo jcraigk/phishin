@@ -161,6 +161,7 @@ class @Player
   
   # Download a track or load from local if already exists via getSoundById
   _preloadTrack: (track_id) ->
+    alert 'preload'
     that = this
     unless @sm.getSoundById track_id
       @sm.createSound({
