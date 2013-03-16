@@ -19,6 +19,8 @@ class Track < ActiveRecord::Base
   belongs_to :show
   has_many :likes, as: :likable
   
+  self.per_page = 10 # will_paginate default
+  
   # default_scope order('position')
   scope :chronological, order('shows.date ASC').joins(:show)
   

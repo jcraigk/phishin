@@ -15,6 +15,8 @@ gem 'anjlab-bootstrap-rails', '>= 2.3', :require => 'bootstrap-rails'
 gem 'therubyracer'
 gem 'jquery-ui-rails'
 gem 'soundmanager-rails'
+# gem 'will_paginate'
+gem 'bootstrap-will_paginate'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'

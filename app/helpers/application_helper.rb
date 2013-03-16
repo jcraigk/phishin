@@ -28,9 +28,9 @@ module ApplicationHelper
     end
   end
 
-  def index_nav_button(name, path, icon_css)
-    icon_css += " icon-white" if nav_active?(path)
-    link_to (content_tag 'button', "<i class=\"#{icon_css}\"></i> #{name}".html_safe, class: "btn #{current_nav_class(path)}"), path
+  def index_nav_button(name, path, icon_css, other_path='')
+    icon_css += " icon-white" if nav_active?(path) or nav_active?(other_path)
+    link_to (content_tag 'button', "<i class=\"#{icon_css}\"></i> #{name}".html_safe, class: "btn #{current_nav_class(path, other_path)}"), path
   end
   
   def link_to_song(song)
@@ -53,8 +53,8 @@ module ApplicationHelper
   
   private
   
-  def current_nav_class(path)
-    "btn-primary active" if nav_active?(path)
+  def current_nav_class(path, other_path)
+    "btn-primary active" if nav_active?(path) or nav_active?(other_path)
   end
   
   def nav_active?(path)

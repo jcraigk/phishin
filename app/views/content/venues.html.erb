@@ -3,7 +3,7 @@
 <div id="content">
   
   <%= content_tag :h2, pluralize(@venues.size, 'Venue'), class: 'for_content' %>
-  <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-align-left"></i> Alphabetically' => 'name', '<i class="icon-map-marker"></i> Times Played' => 'performances'} } %>
+  <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-text-height"></i> Alphabetically' => 'name', '<i class="icon-list"></i> Number of Shows' => 'performances'} } %>
   <div style="clear: both;"></div>
   
   <% unless @display_separators %>

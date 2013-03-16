@@ -285,6 +285,12 @@ h2.for_content {
   margin-top: 10px;
 }
 
+.like_tabs {
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 10px;
+}
+
 /************************/
 
 #content {
@@ -344,6 +350,9 @@ h2.for_content {
 }
 .item_list > li h2.wider {
   width: 580px;
+}
+.item_list > li h2.medium_width {
+  width: 380px;
 }
 .item_list > li h3 {
   font-family: 'Shanti', sans-serif;

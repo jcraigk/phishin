@@ -10,6 +10,8 @@ class Show < ActiveRecord::Base
   has_many :likes, as: :likable
 
   validates_presence_of :date, :location
+  
+  self.per_page = 10 # will_paginate default
 
   scope :during_year, ->(year) {
     date = Date.new(year.to_i)
@@ -38,4 +40,5 @@ class Show < ActiveRecord::Base
   def last_set
     tracks.select { |t| /^\d$/.match t.set }.map(&:set).sort.last
   end
+  
 end

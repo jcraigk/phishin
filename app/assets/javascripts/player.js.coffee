@@ -194,9 +194,13 @@ class @Player
   
   _updatePlayerState: ->
     unless @scrubbing or @duration == 0
-      @$scrubber.slider('value', (@sm_sound.position / @duration) * 100)
-      @$time_elapsed.html(this._readableDuration(@sm_sound.position))
-      @$time_remaining.html("-#{this._readableDuration(@duration - @sm_sound.position)}")
+      unless @duration == NaN or @sm_sound.position == NaN
+        @$scrubber.slider('value', (@sm_sound.position / @duration) * 100)
+        @$time_elapsed.html(this._readableDuration(@sm_sound.position))
+        @$time_remaining.html("-#{this._readableDuration(@duration - @sm_sound.position)}")
+      else
+        @$time_elapsed.html ""
+        @$time_remaining.html ""
   
   _updateLoadingState: (sm_sound) ->
     that = this
