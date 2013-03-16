@@ -126,8 +126,8 @@ class @Player
           success: (r) ->
             if r.success
               that.playTrack(r.track_id)
-            else
-              alert(r.msg)
+            # else
+            #   alert(r.msg)
         })
     else
       alert 'You need to make a playlist to use this button'
@@ -140,8 +140,8 @@ class @Player
         success: (r) ->
           if r.success
             that.playTrack(r.track_id)
-          else
-            alert(r.msg)
+          # else
+          #   alert(r.msg)
       })
     else
       alert 'You need to make a playlist to use this button'
@@ -217,8 +217,8 @@ class @Player
             success: (r) ->
               if r.success
                 that._preloadTrack(r.track_id)
-              else
-                alert(r.msg)
+              # else
+              #   alert(r.msg)
           })
           @preload_started = true
 
