@@ -20,6 +20,7 @@ Phishin::Application.routes.draw do
   get     '/venues'         => 'content#venues', as: 'venues'
   get     '/liked-shows'    => 'content#top_liked_shows', as: 'liked_shows'
   get     '/liked-tracks'   => 'content#top_liked_tracks', as: 'liked_tracks'
+  get     '/search'         => 'search#search', as: 'search'
   
   # Likes
   post    '/toggle-like'    => 'likes#toggle_like', as: 'toggle_like'

@@ -1,4 +1,4 @@
-<%= render 'index_header' %>
+<%= render 'shared/index_header' %>
   
 <div id="content">
   
@@ -10,8 +10,7 @@
     <div class="paging"><%= will_paginate @shows %></div>
   </div>
 
-
-  <ul class="item_list">
+  <ul class="item_list clickable">
     <% @shows.each_with_index do |show, idx| %>
       <li>
         <%= content_tag :h2, link_to(show.date.strftime("%-m/%-d/%y"), "/#{show.date}") %>
