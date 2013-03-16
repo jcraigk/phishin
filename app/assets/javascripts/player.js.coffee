@@ -3,7 +3,7 @@ class @Player
   constructor: ->
     @sm               = soundManager
     @sm_sound         = {}
-    @preload_time     = 4000
+    @preload_time     = 40000
     @preload_started  = false
     @active_track     = ''
     @muted            = false
