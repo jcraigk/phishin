@@ -10,12 +10,12 @@
 <div id="content">
   
   <div id="paragraph_content">
-    <% unless @tracks and @tracks.size > 0 %>
+    <% unless @num_tracks > 0 %>
       <p>Your current playlist is empty.<br /><br />Tracks are automatically added when you play them.  You can also add tracks explicitly by using track context menus.</p>
     <% else %>
-      <ul class="item_list clickable" id="current_playlist">
+      <ul class="item_list" id="current_playlist">
       <% @tracks.each_with_index do |track, idx| %>
-      <li data-track-id="<%= track.id %>" data-track-duration="<%= track.duration %>">
+      <li class="playable_track" data-id="<%= track.id %>" data-track-duration="<%= track.duration %>" data-anchor="<%= track.song_slug %>">
         <%= content_tag :h2, "<i class=\"icon-resize-vertical\"></i> #{track.title}".html_safe, class: 'wide' %>
         <%= content_tag :h5, link_to(track.show.date.strftime("%-m/%-d/%y"), "#{track.show.date}", class: 'large') %>
         <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: true, show: nil } %>

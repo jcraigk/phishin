@@ -99,7 +99,7 @@ $ ->
   
   # Remove track from playlist
   $(document).on 'click', '.playlist_remove_track', (e) ->
-    track_id = $(this).parents('li').data('track-id')
+    track_id = $(this).parents('li').data('id')
     $(this).parents('li').remove()
     if $('#current_playlist').children('li').size() == 0
       Ph.DOM.followLink $('#clear_playlist')
@@ -118,6 +118,20 @@ $ ->
       success: (r) ->
         if r.success
           Ph.DOM.handleFeedback { 'msg': 'Track added to playlist' }
+        else
+          Ph.DOM.handleFeedback { 'type': 'alert', 'msg': r.msg }
+    })
+  
+  # Add show to playlist
+  $(document).on 'click', '.playlist_add_show', (e) ->
+    show_id = $(this).data('id')
+    $.ajax({
+      type: 'post',
+      url: '/add-show',
+      data: { 'show_id': show_id}
+      success: (r) ->
+        if r.success
+          Ph.DOM.handleFeedback { 'msg': r.msg }
         else
           Ph.DOM.handleFeedback { 'type': 'alert', 'msg': r.msg }
     })

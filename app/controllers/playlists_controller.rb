@@ -5,11 +5,15 @@ class PlaylistsController < ApplicationController
     @num_tracks = 0
     @duration = 0
     # raise session[:playlist].inspect
-    if session[:playlist]
-      tracks_by_id = Track.find(session[:playlist]).index_by(&:id)
-      @tracks = session[:playlist].collect {|id| tracks_by_id[id] }
-      @num_tracks = @tracks.size
-      @duration = @tracks.map(&:duration).inject(0, &:+) if @num_tracks > 0
+    begin
+      if session[:playlist]
+        tracks_by_id = Track.find(session[:playlist]).index_by(&:id)
+        @tracks = session[:playlist].collect {|id| tracks_by_id[id] }
+        @num_tracks = @tracks.size
+        @duration = @tracks.map(&:duration).inject(0, &:+) if @num_tracks > 0
+      end
+    rescue
+      session[:playlist] = []
     end
     render layout: false if request.xhr?
   end
@@ -43,6 +47,25 @@ class PlaylistsController < ApplicationController
       else
         render json: { success: false, msg: 'Invalid track provided for playlist' }
       end
+    end
+  end
+
+  def add_show_to_playlist
+    if show = Show.where(id: params[:show_id]).includes(:tracks).order('tracks.position asc').first
+      track_list = show.tracks.map(&:id)
+      unique_list = []
+      track_list.each { |track_id| unique_list << track_id unless session[:playlist].include? track_id }
+        if unique_list.size == 0
+          render json: { success: false, msg: 'Tracks already in playlist' }
+        elsif unique_list != track_list
+          session[:playlist] += unique_list
+          render json: { success: true, msg: 'Some duplicate tracks not added' }
+        else
+          session[:playlist] += unique_list
+          render json: { success: true, msg: 'Tracks added to playlist' }
+        end
+    else
+      render json: { success: false, msg: 'Invalid show provided for playlist' }
     end
   end
   

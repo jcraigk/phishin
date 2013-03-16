@@ -145,7 +145,7 @@ class @Player
     $('.playable_track').removeClass 'active_track'
     $('.playable_track[data-id="'+@active_track+'"]').addClass 'active_track'
     $('#current_playlist>li').removeClass 'active_track'
-    $('#current_playlist>li[data-track-id="'+@active_track+'"]').addClass 'active_track'
+    $('#current_playlist>li[data-id="'+@active_track+'"]').addClass 'active_track'
 
   _handleSoundFinish: (track_id) ->
     this.nextTrack()

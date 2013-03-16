@@ -47,7 +47,7 @@ class @DOMHandler
     track_ids = []
     duration = 0
     $('#current_playlist > li').each( ->
-      track_ids.push $(this).data('track-id')
+      track_ids.push $(this).data('id')
       duration += parseInt($(this).data('track-duration'))
     )
     $.ajax({

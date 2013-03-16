@@ -28,6 +28,7 @@ Phishin::Application.routes.draw do
   post    '/reset-playlist/'              => 'playlists#reset_playlist'
   post    '/update-current-playlist'      => 'playlists#update_current_playlist'
   post    '/add-track'                    => 'playlists#add_track_to_playlist'
+  post    '/add-show'                     => 'playlists#add_show_to_playlist'
   get     '/track-info/:track_id'         => 'playlists#track_info'
   get     '/next-track/:track_id'         => 'playlists#next_track_id'
   get     '/previous-track/:track_id'     => 'playlists#previous_track_id'
