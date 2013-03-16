@@ -47,13 +47,13 @@ class @Player
       if @muted
         @$volume_slider.slider('value', @last_volume)
         @$volume_icon.removeClass 'muted'
-        # @sm.setVolume(@active_track, @last_volume) if @active_track
+        @sm.setVolume(@active_track, @last_volume) if @active_track
         @muted = false
       else
         @last_volume = @$volume_slider.slider 'value'
         @$volume_slider.slider('value', 0)
         @$volume_icon.addClass 'muted'
-        # @sm.setVolume(@active_track, 0) if @active_track
+        @sm.setVolume(@active_track, 0) if @active_track
         @muted = true
     else
       @last_volume = @$volume_slider.slider 'value'
@@ -81,6 +81,9 @@ class @Player
           whileplaying: ->
             that._updatePlayerState()
         })
+      if @muted
+        @sm.setVolume(track_id, 0)
+      else
         @sm.setVolume(track_id, @last_volume)
       this._loadTrackInfo(track_id)
       this._fastFadeout(@active_track) if @active_track
@@ -161,7 +164,6 @@ class @Player
   
   # Download a track or load from local if already exists via getSoundById
   _preloadTrack: (track_id) ->
-    alert 'preload'
     that = this
     unless @sm.getSoundById track_id
       @sm.createSound({
