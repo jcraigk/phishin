@@ -76,9 +76,8 @@ class @Player
         @sm_sound = @sm.createSound({
           id: track_id,
           url: "/download-track/#{track_id}",
-          autoplay: false,
           whileloading: ->
-            that._updateLoadingState()
+            that._updateLoadingState(track_id)
           whileplaying: ->
             that._updatePlayerState()
         })
@@ -167,12 +166,13 @@ class @Player
       @sm.createSound({
         id: track_id,
         url: "/download-track/#{track_id}",
-        autoplay: false,
+        autoLoad: true,
         whileloading: ->
-          that._updateLoadingState()
+          that._updateLoadingState(track_id)
         whileplaying: ->
           that._updatePlayerState()
       })
+      
       @sm.setVolume(track_id, @last_volume)
   
   _loadTrackInfo: (track_id) ->
@@ -213,7 +213,7 @@ class @Player
             url: "/next-track/#{@active_track}",
             success: (r) ->
               if r.success
-                that._loadTrack(r.track_id)
+                that._preloadTrack(r.track_id)
               else
                 alert(r.msg)
           })
@@ -230,8 +230,8 @@ class @Player
         @$time_elapsed.html ""
         @$time_remaining.html ""
   
-  _updateLoadingState: ->
-    if @active_track
+  _updateLoadingState: (track_id) ->
+    if @active_track == track_id
       that = this
       @$feedback.show()
       percent_loaded = Math.floor((@sm_sound.bytesLoaded / @sm_sound.bytesTotal) * 100)
