@@ -94,7 +94,7 @@ $ ->
     $('html,body').animate({scrollTop: $el.offset().top - 300}, 500)
     setTimeout( ->
       Ph.Player.playTrack $el.data('id')
-    , 1000)
+    , 500)
 
 
   ###############################################
