@@ -3,6 +3,8 @@ class @Player
   constructor: ->
     @sm               = soundManager
     @sm_sound         = {}
+    @preload_time     = 4000
+    @preload_started  = false
     @active_track     = ''
     @muted            = false
     @scrubbing        = false
@@ -69,13 +71,24 @@ class @Player
   playTrack: (track_id) ->
     that = this
     if track_id != @active_track
-      this._loadTrack(track_id)
+      @preload_started = false
+      unless @sm_sound = @sm.getSoundById track_id
+        @sm_sound = @sm.createSound({
+          id: track_id,
+          url: "/download-track/#{track_id}",
+          autoplay: false,
+          whileloading: ->
+            that._updateLoadingState()
+          whileplaying: ->
+            that._updatePlayerState()
+        })
+        @sm.setVolume(track_id, @last_volume)
       this._loadTrackInfo(track_id)
       this._fastFadeout(@active_track) if @active_track
       this._updatePauseState()
       @sm.play track_id, {
         onfinish: ->
-          that._handleSoundFinish track_id
+          that.nextTrack()
       }
       @active_track = track_id
       this.highlightActiveTrack()
@@ -146,19 +159,17 @@ class @Player
     $('.playable_track[data-id="'+@active_track+'"]').addClass 'active_track'
     $('#current_playlist>li').removeClass 'active_track'
     $('#current_playlist>li[data-id="'+@active_track+'"]').addClass 'active_track'
-
-  _handleSoundFinish: (track_id) ->
-    this.nextTrack()
   
   # Download a track or load from local if already exists via getSoundById
-  _loadTrack: (track_id) ->
+  _preloadTrack: (track_id) ->
     that = this
-    unless @sm_sound = @sm.getSoundById track_id
-      @sm_sound = @sm.createSound({
+    unless @sm.getSoundById track_id
+      @sm.createSound({
         id: track_id,
         url: "/download-track/#{track_id}",
+        autoplay: false,
         whileloading: ->
-          that._updateLoadingState(@sm_sound)
+          that._updateLoadingState()
         whileplaying: ->
           that._updatePlayerState()
       })
@@ -193,29 +204,47 @@ class @Player
       $('#playpause').removeClass('playing')
   
   _updatePlayerState: ->
+    that = this
     unless @scrubbing or @duration == 0
-      unless @duration == NaN or @sm_sound.position == NaN
+      unless isNaN(@duration) or isNaN(@sm_sound.position)
+        # Preload next track if we're close to the end of this one
+        if !@preload_started and @duration - @sm_sound.position <= @preload_time
+          $.ajax({
+            url: "/next-track/#{@active_track}",
+            success: (r) ->
+              if r.success
+                that._loadTrack(r.track_id)
+              else
+                alert(r.msg)
+          })
+          @preload_started = true
+
         @$scrubber.slider('value', (@sm_sound.position / @duration) * 100)
         @$time_elapsed.html(this._readableDuration(@sm_sound.position))
-        @$time_remaining.html("-#{this._readableDuration(@duration - @sm_sound.position)}")
+        remaining = @duration - @sm_sound.position
+        if remaining > 0
+          @$time_remaining.html "-#{this._readableDuration(remaining)}"
+        else
+          @$time_remaining.html ""  
       else
         @$time_elapsed.html ""
         @$time_remaining.html ""
   
-  _updateLoadingState: (sm_sound) ->
-    that = this
-    @$feedback.show()
-    percent_loaded = Math.floor((@sm_sound.bytesLoaded / @sm_sound.bytesTotal) * 100)
-    percent_loaded = 0 if isNaN(percent_loaded)
-    @$feedback.html("<i class=\"icon-download\"></i> #{percent_loaded}%")
-    if percent_loaded == 100
-      @$feedback.addClass('done')
-      feedback = @$feedback
-      setTimeout( ->
-        feedback.hide('fade')
-      , 2000)
-    else
-      @$feedback.removeClass('done')
+  _updateLoadingState: ->
+    if @active_track
+      that = this
+      @$feedback.show()
+      percent_loaded = Math.floor((@sm_sound.bytesLoaded / @sm_sound.bytesTotal) * 100)
+      percent_loaded = 0 if isNaN(percent_loaded)
+      @$feedback.html("<i class=\"icon-download\"></i> #{percent_loaded}%")
+      if percent_loaded == 100
+        @$feedback.addClass('done')
+        feedback = @$feedback
+        setTimeout( ->
+          feedback.hide('fade')
+        , 2000)
+      else
+        @$feedback.removeClass('done')
   
   _fastFadeout: (track_id, is_pause=false) ->
     that = this
