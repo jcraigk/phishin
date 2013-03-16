@@ -252,7 +252,7 @@ class @Player
   _fastFadeout: (track_id, is_pause=false) ->
     that = this
     sound = @sm.getSoundById(track_id)
-    if sound.muted or sound.volume == 0
+    if @muted or sound.volume == 0
       if is_pause
         sound.pause()
       else

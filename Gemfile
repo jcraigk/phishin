@@ -16,6 +16,7 @@ gem 'therubyracer'
 gem 'jquery-ui-rails'
 gem 'soundmanager-rails'
 gem 'bootstrap-will_paginate'
+gem 'jquery-smooth-scroll-rails'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'

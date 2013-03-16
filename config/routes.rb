@@ -41,14 +41,7 @@ Phishin::Application.routes.draw do
   get     '/download-show/:date'          => 'downloads#request_download_show', as: 'download_show'
   get     '/download/:md5'                => 'downloads#download_album', as: 'download_album'
   
-  # Playlists
-  # resources :playlists do
-  #   member do
-  #     get 'download'
-  #   end
-  # end
-  
   # Catch-all matcher for short content URLs
-  get     '/(:glob(/:glob2(/:glob3)))' => 'content#glob'
+  get     '/(:glob(/:anchor))' => 'content#glob'
     
 end
