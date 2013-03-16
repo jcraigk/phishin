@@ -90,11 +90,11 @@ $ ->
   # Scroll to and play page anchor provided in URL
   ###############################################
   if anchor_name = $('#app_data').data 'anchor'
-    $el = $('li[data-anchor='+anchor_name+']')
-    $('html,body').animate({scrollTop: $el.offset().top - 300}, 500)
-    setTimeout( ->
-      Ph.Player.playTrack $el.data('id')
-    , 500)
+    if $el = $('li[data-anchor='+anchor_name+']')
+      $('html,body').animate({scrollTop: $el.offset().top - 300}, 500)
+      setTimeout( ->
+        Ph.Player.playTrack $el.data('id')
+      , 500)
 
   ###############################################
   # DOM interactions
