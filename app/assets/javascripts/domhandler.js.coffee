@@ -58,7 +58,7 @@ class @DOMHandler
       success: (r) ->
         that.feedback { 'msg': success_msg }
         $('#current_playlist_tracks_label').html("#{track_ids.length} Tracks")
-        $('#current_playlist_duration_label').html(that._readableDuration(duration, 'letters'))
+        $('#current_playlist_duration_label').html(that.readableDuration(duration, 'letters'))
     })
   
   _requestAlbumResponse: (r, request_url, first_call) ->
@@ -88,26 +88,29 @@ class @DOMHandler
     id += Math.random().toString(36).substr(2) while id.length < length
     id.substr 0, length
   
-  _readableDuration: (ms, style='colon') ->
+  readableDuration: (ms, style='colon') ->
     x = Math.floor(ms / 1000)
     seconds = x % 60
+    seconds_with_zero = "#{if seconds < 10 then '0' else '' }#{seconds}"
     x = Math.floor(x / 60)
     minutes = x % 60
+    minutes_with_zero = "#{if minutes < 10 then '0' else '' }#{minutes}"
     x = Math.floor(x / 60)
     hours = x % 24
+    hours_with_zero = "#{if hours < 10 then '0' else '' }#{hours}"
     x = Math.floor(x / 24)
     days = x
     if style == 'letters'
       if days > 0
         "#{days}d #{hours}h #{minutes}m #{seconds}s"
       else if hours > 0
-        "#{hours}h #{minutes}m"
+        "#{hours}h #{minutes}m #{seconds}s"
       else
         "#{minutes}m #{seconds}s"
     else
       if days > 0
-        "#{days}:#{hours}:#{minutes}:#{seconds}"
+        "#{days}::#{hours}:#{minutes_with_zero}:#{seconds_with_zero}"
       else if hours > 0
-        "#{hours}:#{minutes}:#{seconds}"
+        "#{hours}:#{minutes_with_zero}:#{seconds_with_zero}"
       else
-        "#{minutes}:#{seconds}"
+        "#{minutes}:#{seconds_with_zero}"

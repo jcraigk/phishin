@@ -70,25 +70,30 @@ class PlaylistsController < ApplicationController
   end
   
   def next_track_id
-    playlist = session[:playlist]
-    idx = false
-    playlist.each_with_index { |track_id, i| idx = i if track_id.to_s == params[:track_id].to_s }
-    if idx
-      if session[:randomize]
-        render json: { success: true, track_id: playlist.sample }
-      else
-        if playlist.last.to_s == params[:track_id]
-          if session[:loop]
-            render json: { success: true, track_id: playlist.first }
-          else
-            render json: { success: false, msg: 'End of playlist' }
-          end
+    if session[:playlist].size > 0
+      playlist = session[:playlist]
+      idx = false
+      playlist.each_with_index { |track_id, i| idx = i if track_id.to_s == params[:track_id].to_s }
+      if idx
+        if session[:randomize]
+          render json: { success: true, track_id: playlist.sample }
         else
-          render json: { success: true, track_id: playlist[idx+1] }
+          if playlist.last.to_s == params[:track_id]
+            if session[:loop]
+              render json: { success: true, track_id: playlist.first }
+            else
+              render json: { success: false, msg: 'End of playlist' }
+            end
+          else
+            render json: { success: true, track_id: playlist[idx+1] }
+          end
         end
+      else
+        # If no valid track_id passed in, return first item in playlist
+        render json: { success: true, track_id: playlist.first }
       end
     else
-      render json: { success: false, msg: 'track_id not in playlist' }
+      render json: { success: false, msg: 'No current playlist' }
     end
   end
 

@@ -32,7 +32,7 @@ Phishin::Application.routes.draw do
   post    '/add-track'                    => 'playlists#add_track_to_playlist'
   post    '/add-show'                     => 'playlists#add_show_to_playlist'
   get     '/track-info/:track_id'         => 'playlists#track_info'
-  get     '/next-track/:track_id'         => 'playlists#next_track_id'
+  get     '/next-track(/:track_id)'         => 'playlists#next_track_id'
   get     '/previous-track/:track_id'     => 'playlists#previous_track_id'
   post    '/submit-playlist-options'      => 'playlists#submit_playlist_options'
   get     '/random-show'                  => 'playlists#random_show'

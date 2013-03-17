@@ -40,8 +40,8 @@ class @Player
   moveScrubber: ->
     if @scrubbing and @active_track
       scrubber_position = (@$scrubber.slider('value') / 100) * @duration
-      @$time_elapsed.html(this._readableDuration(scrubber_position))
-      @$time_remaining.html("-#{this._readableDuration(@duration - scrubber_position)}")
+      @$time_elapsed.html(@util.readableDuration(scrubber_position))
+      @$time_remaining.html("-#{@util.readableDuration(@duration - scrubber_position)}")
       
   toggleMute: ->
     if @last_volume > 0
@@ -106,18 +106,15 @@ class @Player
     })
   
   togglePause: ->
-    # alert "paused2? #{@sm_sound.paused}"
     if @sm_sound.paused
-      # alert 'hello1'
       @sm_sound.resume()
       this._updatePauseState()
     else
-      # alert 'hello2'
       if @active_track
         this._fastFadeout(@active_track, true)
         this._updatePauseState false
       else
-         this._playRandomShow()
+        this._playRandomShowOrPlaylist()
   
   previousTrack: ->
     that = this
@@ -172,17 +169,27 @@ class @Player
     $('#current_playlist>li').removeClass 'active_track'
     $('#current_playlist>li[data-id="'+@active_track+'"]').addClass 'active_track'
   
-  _playRandomShow: ->
+  _playRandomShowOrPlaylist: ->
     that = this
     util = @util
     $.ajax({
-      url: "/random-show",
+      url: "/next-track",
       success: (r) ->
         if r.success
-          util.feedback { 'msg': 'Playing random show...'}
-          util.navigateTo r.url
-          that.playTrack r.track_id
+          util.feedback { 'msg': 'Playing current playlist...'}
+          that.playTrack(r.track_id)
+        else
+          $.ajax({
+            url: "/random-show",
+            success: (r) ->
+              if r.success
+                util.feedback { 'msg': 'Playing random show...'}
+                util.navigateTo r.url
+                that.resetPlaylist r.track_id
+                that.playTrack r.track_id
+          })
     })
+
   
   _disengagePlayer: ->
     if @active_track
@@ -253,10 +260,10 @@ class @Player
           })
           @preload_started = true
         @$scrubber.slider('value', (@sm_sound.position / @duration) * 100)
-        @$time_elapsed.html(this._readableDuration(@sm_sound.position))
+        @$time_elapsed.html(@util.readableDuration(@sm_sound.position))
         remaining = @duration - @sm_sound.position
         if remaining > 0
-          @$time_remaining.html "-#{this._readableDuration(remaining)}"
+          @$time_remaining.html "-#{@util.readableDuration(remaining)}"
         else
           @$time_remaining.html ""  
       else
@@ -294,24 +301,3 @@ class @Player
       setTimeout( ->
         that._fastFadeout(track_id, is_pause)
       , 10)
-
-  _readableDuration: (ms) ->
-    x = Math.floor(ms / 1000)
-    seconds = x % 60
-    seconds_with_zero = "#{if seconds < 10 then '0' else '' }#{seconds}"
-    x = Math.floor(x / 60)
-    minutes = x % 60
-    minutes_with_zero = "#{if minutes < 10 then '0' else '' }#{minutes}"
-    x = Math.floor(x / 60)
-    hours = x % 24
-    hours_with_zero = "#{if hours < 10 then '0' else '' }#{hours}"
-    x = Math.floor(x / 24)
-    days = x
-    if days > 0
-      "#{days}::#{hours}:#{minutes_with_zero}:#{seconds_with_zero}"
-    else if hours > 0
-      "#{hours}:#{minutes_with_zero}:#{seconds_with_zero}"
-    else
-      "#{minutes}:#{seconds_with_zero}"
-
-
