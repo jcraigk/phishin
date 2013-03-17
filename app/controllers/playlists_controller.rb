@@ -128,7 +128,7 @@ class PlaylistsController < ApplicationController
         title: track.title,
         duration: track.duration,
         show: "#{track.show.date}",
-        show_url: "#{track.show.date}",
+        show_url: "/#{track.show.date}",
         venue: "#{track.show.venue.name}",
         venue_url: "/#{track.show.venue.slug}",
         city: track.show.venue.location,
