@@ -15,7 +15,7 @@ Ph = {}
 $ ->
   
   # Shun IE
-  alert 'IE!' unless history.pushState
+  window.location.href = '/browser-unsupported' unless history.pushState
   
   # Instantiate stuff
   Ph.Util         = new Util

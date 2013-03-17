@@ -8,4 +8,8 @@ class PagesController < ApplicationController
     render layout: false if request.xhr?
   end
   
+  def browser_unsupported
+    render layout: false
+  end
+  
 end
