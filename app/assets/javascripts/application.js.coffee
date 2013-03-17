@@ -100,14 +100,17 @@ $ ->
   $('#player_feedback').hide()
   
   ###############################################
-  # Scroll to and play page anchor provided in URL
+  # Auto-play or scroll to and play anchor
   ###############################################
-  if anchor_name = $('#app_data').data 'anchor'
+  if $('#app_data').data('autoplay') == true
+    Ph.Player.playTrack $('.playable_track').first().data('id')
+  else if anchor_name = $('#app_data').data 'anchor'
     if $el = $('li[data-anchor='+anchor_name+']')
       $('html,body').animate({scrollTop: $el.offset().top - 300}, 500)
       setTimeout( ->
         Ph.Player.playTrack $el.data('id')
       , 500)
+
 
   ###############################################
   # DOM interactions

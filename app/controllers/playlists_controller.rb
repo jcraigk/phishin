@@ -132,7 +132,7 @@ class PlaylistsController < ApplicationController
         venue: "#{track.show.venue.name}",
         venue_url: "/#{track.show.venue.slug}",
         city: track.show.venue.location,
-        city_url: "/cities"
+        city_url: "/map"
       }
     else
       render json: { success: false }

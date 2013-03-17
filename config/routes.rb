@@ -16,7 +16,7 @@ Phishin::Application.routes.draw do
   # Content pages
   get     '/years'          => 'content#years', as: 'years'
   get     '/songs'          => 'content#songs', as: 'songs'
-  get     '/cities'         => 'content#cities', as: 'cities'
+  get     '/map'            => 'content#map', as: 'map'
   get     '/venues'         => 'content#venues', as: 'venues'
   get     '/liked-shows'    => 'content#top_liked_shows', as: 'liked_shows'
   get     '/liked-tracks'   => 'content#top_liked_tracks', as: 'liked_tracks'

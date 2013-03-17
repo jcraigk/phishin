@@ -24,7 +24,7 @@ class ContentController < ApplicationController
     render layout: false if request.xhr?
   end
   
-  def cities
+  def map
     render layout: false if request.xhr?
   end
 
@@ -86,6 +86,7 @@ class ContentController < ApplicationController
     # Show?
     elsif g.match(/^\d{4}\-\d{2}-\d{2}$/)
       if show g
+        @autoplay = true
         view = :show
       else
         view = :show_not_found
