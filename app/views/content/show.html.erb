@@ -3,7 +3,7 @@
     <%= content_tag :h1, @show.date.strftime("%b %-d, %Y") %>
     <%= content_tag :h2, (link_to @show.venue.name.html_safe, @show.venue.slug, alt: @show.venue.name) %>
     <%= content_tag :h2, (link_to @show.venue.location, "/cities", alt: @show.venue.location) %>
-    <%= render partial: 'shared/context_menu_for_show', locals: {show: @show, viewing_this_show: true } %>
+    <%= render partial: 'shared/context_menu_for_show', locals: {show: @show, viewing_this_show: true, next_show: @next_show, previous_show: @previous_show } %>
     <%= likable(@show, @show_like, 'large') %>
   </div>
 </div>
