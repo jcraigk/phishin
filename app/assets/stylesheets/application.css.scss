@@ -224,6 +224,10 @@ a:hover {
   line-height: 36px;
   margin-left: 6px;
   font-weight: 700;
+  white-space: nowrap;
+}
+#header h1 a {
+  color: #333;
 }
 #header h2 {
   float: left;

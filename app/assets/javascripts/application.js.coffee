@@ -40,6 +40,7 @@ $ ->
     $('#search_date').datepicker({
       dateFormat: "yy-mm-dd",
       changeYear: true,
+      changeMonth: true,
       yearRange: '1987:2013',
       showOtherMonths: true,
       selectOtherMonths: true
@@ -116,6 +117,7 @@ $ ->
   $('#search_date').datepicker({
     dateFormat: "yy-mm-dd",
     changeYear: true,
+    changeMonth: true,
     yearRange: '1987:2013',
     showOtherMonths: true,
     selectOtherMonths: true

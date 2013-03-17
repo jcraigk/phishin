@@ -16,16 +16,33 @@
       <% unless @total_results and @total_results > 0 %>
         <p>Got a blank space where results should be</p>
       <% else %>
-        <% if @show %>
-          <h3>Matched 1 Show</h3>
-          <ul class="item_list clickable">
-            <li>
-              <%= content_tag :h2, link_to(@show.date.strftime("%b %-d"), "/#{@show.date}") %>
-              <%= content_tag :h4, link_to(@show.venue.name.html_safe, "/#{@show.venue.slug}") %>
-              <%= content_tag :h5, link_to(@show.venue.location, "/cities") %>
-              <div style="clear: both;"></div>
-            </li>
-          </ul>
+        <% if @show or @other_shows %>
+          <% if @show %>
+            <h3>Matched 1 Show Exactly</h3>
+            <ul class="item_list clickable">
+              <li>
+                <%= content_tag :h2, link_to(@show.date.strftime("%-m/%-d/%y"), "/#{@show.date}") %>
+                <%= content_tag :h4, link_to(@show.venue.name.html_safe, "/#{@show.venue.slug}") %>
+                <%= content_tag :h5, link_to(@show.venue.location, "/cities") %>
+                <div style="clear: both;"></div>
+              </li>
+            </ul>
+          <% else %>
+            <h3>No Exact Show Matches</h3>
+          <% end %>
+          <% if @other_shows %>
+            <h3>Matched <%= pluralize(@other_shows.size, 'Show') %> on this Day</h3>
+            <ul class="item_list clickable">
+              <% for show in @other_shows %>
+                <li>
+                  <%= content_tag :h2, link_to(show.date.strftime("%-m/%-d/%y"), "/#{show.date}") %>
+                  <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}") %>
+                  <%= content_tag :h5, link_to(show.venue.location, "/cities") %>
+                  <div style="clear: both;"></div>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
         <% else %>
           <% if @songs.size > 0 %>
             <h3>Matched <%= pluralize(@songs.size, 'Song') %></h3>

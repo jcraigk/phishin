@@ -59,19 +59,27 @@ class ContentController < ApplicationController
   def glob
     g = params[:glob]
     
+    # Day of Year?
+    if monthday = g.match(/^(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})$/i)
+      if day_of_year Date::MONTHNAMES.index(monthday[1].titleize), Integer(monthday[2], 10)
+        @title = "Day: #{monthday[1].titleize} #{Integer(monthday[2], 10)}"
+        view = :year_or_scope
+      else
+        view = :show_not_found
+      end
     # Year?
-    if g.match(/^\d{4}$/)
+    elsif g.match(/^\d{4}$/)
       if year g
-        @year = g
-        view = :year_or_range
+        @title = "Year: #{g}"
+        view = :year_or_scope
       else
         redirect_to :root
       end
     # Year range?
     elsif years = g.match(/^(\d{4})-(\d{4})$/)
       if year_range years[1], years[2]
-        @year = g
-        view = :year_or_range
+        @title = "Years: #{g}"
+        view = :year_or_scope
       else
         redirect_to :root
       end
@@ -110,8 +118,16 @@ class ContentController < ApplicationController
     request.xhr? ? (render :years, layout: false) : (render :years)
   end
   
+  def day_of_year(month, day)
+    validate_sorting_for_year_or_scope
+    if @shows = Show.where('extract(month from date) = ?', month).where('extract(day from date) = ?', day).order(@order_by).all
+      @shows_likes = @shows.map { |show| get_user_show_like(show) }
+    end
+    @shows
+  end
+  
   def year(year)
-    validate_sorting_for_year_or_range
+    validate_sorting_for_year_or_scope
     if @shows = Show.during_year(year).includes(:tour, :venue).order(@order_by).all
       @shows_likes = @shows.map { |show| get_user_show_like(show) }
     end
@@ -119,7 +135,7 @@ class ContentController < ApplicationController
   end
   
   def year_range(year1, year2)
-    validate_sorting_for_year_or_range
+    validate_sorting_for_year_or_scope
     if @shows = Show.between_years(year1, year2).includes(:tour, :venue).order(@order_by).all
       @shows_likes = @shows.map { |show| get_user_show_like(show) }
     end
@@ -177,7 +193,7 @@ class ContentController < ApplicationController
     track.likes.where(user_id: current_user.id).first if track and track.likes and current_user
   end
   
-  def validate_sorting_for_year_or_range
+  def validate_sorting_for_year_or_scope
     params[:sort] = 'date' unless ['date', 'likes'].include? params[:sort]
     if params[:sort] == 'date'
       @order_by = "date desc"

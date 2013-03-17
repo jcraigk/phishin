@@ -62,4 +62,10 @@ module ApplicationHelper
     current_page?(path) or (path == '/years' and request.fullpath == '/')
   end
   
+  def linked_show_date(show)
+    day_link = link_to show.date.strftime("%b %-d"), "/#{show.date.strftime("%B").downcase}-#{show.date.strftime("%-d")}"
+    year_link = link_to show.date.strftime("%Y"), "/#{show.date.strftime("%Y")}"
+    "#{day_link}, #{year_link}".html_safe
+  end
+  
 end
