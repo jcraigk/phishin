@@ -14,6 +14,9 @@ Ph = {}
 
 $ ->
   
+  # Shun IE
+  alert 'IE!' unless $.support.cssFloat
+  
   # Instantiate stuff
   Ph.Util         = new Util
   Ph.Player       = new Player(Ph.Util)
