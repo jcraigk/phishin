@@ -102,15 +102,14 @@ $ ->
   ###############################################
   # Auto-play or scroll to and play anchor
   ###############################################
-  if $('#app_data').data('autoplay') == true
-    Ph.Player.playTrack $('.playable_track').first().data('id')
-  else if anchor_name = $('#app_data').data 'anchor'
-    if $el = $('li[data-anchor='+anchor_name+']')
-      $('html,body').animate({scrollTop: $el.offset().top - 300}, 500)
-      setTimeout( ->
+  soundManager.onready( ->
+    if $('#app_data').data('autoplay') == true
+      Ph.Player.playTrack $('.playable_track').first().data('id')
+    else if anchor_name = $('#app_data').data 'anchor'
+      if $el = $('li[data-anchor='+anchor_name+']')
+        $('html,body').animate({scrollTop: $el.offset().top - 300}, 500)
         Ph.Player.playTrack $el.data('id')
-      , 500)
-
+  )
 
   ###############################################
   # DOM interactions
