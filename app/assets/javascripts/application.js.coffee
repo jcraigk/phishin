@@ -15,7 +15,7 @@ Ph = {}
 $ ->
   
   # Shun IE
-  alert 'IE!' unless $.support.cssFloat
+  alert 'IE!' unless history.pushState
   
   # Instantiate stuff
   Ph.Util         = new Util
