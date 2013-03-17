@@ -66,7 +66,6 @@ $ ->
   $(document).on 'click', 'a', ->
     unless $(this).hasClass('non-remote')
       Ph.Util.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
-      
       false
   
   ###############################################

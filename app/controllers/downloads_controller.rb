@@ -6,6 +6,7 @@ class DownloadsController < ApplicationController
   def download_track
     track = Track.find(params[:track_id])
     redirect_to(:root, alert: 'The requested file could not be found') and return unless File.exists?(track.audio_file.path)
+    log_this_request 'download'
     send_file track.audio_file.path, :type => "audio/mpeg", :disposition => "attachment", :filename => "Phish #{track.show.date} #{track.title}.mp3", :length => File.size(track.audio_file.path)
   end
   
@@ -13,6 +14,7 @@ class DownloadsController < ApplicationController
   def play_track
     track = Track.find(params[:track_id])
     redirect_to(:root) and return unless File.exists?(track.audio_file.path)
+    log_this_request 'play'
     send_file track.audio_file.path, :type => "audio/mpeg", :filename => "#{track.id}.mp3", :length => File.size(track.audio_file.path)
   end
 
@@ -95,6 +97,11 @@ class DownloadsController < ApplicationController
     tracks.each { |track| digest << track.audio_file.path }
     digest << album_name
     digest.to_s
+  end
+  
+  def log_this_request(type)
+    current_user_id = (current_user ? current_user.id : 0)
+    Request.create(track_id: params[:track_id], user_id: current_user_id, type: type, created_at: Time.now)
   end
 
 end
