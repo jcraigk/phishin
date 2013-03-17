@@ -1,14 +1,13 @@
 class @DOMHandler
   
   constructor: ->
-    @page_init          = true
     @$feedback          = $ '#feedback'
     @$app_data          = $ '#app_data'
     @$download_modal    = $ '#download_modal'
     @$album_timeout     = $ '#album_timeout'
     @$album_url         = $ '#album_url'
   
-  handleFeedback: (feedback) ->
+  feedback: (feedback) ->
     if feedback.type == 'alert'
       css = 'feedback_alert'
       icon = 'icon-exclamation-sign'
@@ -22,10 +21,12 @@ class @DOMHandler
     , 3000)
 
   followLink: ($el) ->
-    @page_init = false
-    History.pushState {href: $el.attr 'href'}, @$app_data.data('app-name'), $el.attr 'href'
+    this.navigateTo $el.attr('href')
+
+  navigateTo: (href) ->
+    History.pushState {href: href}, @$app_data.data('app-name'), href
     window.scrollTo 0, 0
-    
+
   requestAlbum: (request_url, first_call) ->
     that = this
     $.ajax({
@@ -39,7 +40,7 @@ class @DOMHandler
               that._requestAlbumResponse(r, request_url, first_call)
           })
         else
-          that.handleFeedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
+          that.feedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
     })
   
   updateCurrentPlaylist: (success_msg) ->
@@ -55,7 +56,7 @@ class @DOMHandler
       type: 'post',
       data: { 'track_ids': track_ids },
       success: (r) ->
-        that.handleFeedback { 'msg': success_msg }
+        that.feedback { 'msg': success_msg }
         $('#current_playlist_tracks_label').html("#{track_ids.length} Tracks")
         $('#current_playlist_duration_label').html(that._readableDuration(duration, 'letters'))
     })
@@ -68,7 +69,7 @@ class @DOMHandler
     else if r.status == 'Error'
       clearTimeout @download_poller
       @$download_modal.modal 'hide'
-      that.handleFeedback { 'type': 'alert', 'msg': 'An error occurred while processing your request' }
+      that.feedback { 'type': 'alert', 'msg': 'An error occurred while processing your request' }
     else
       if first_call
         clearTimeout @download_poller

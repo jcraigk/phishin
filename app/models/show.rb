@@ -32,6 +32,7 @@ class Show < ActiveRecord::Base
         date1.end_of_year)
     end
   }
+  scope :random, ->(amt=1) { order('RANDOM()').limit(amt) }
 
   def to_s
     "#{date.strftime('%m-%d-%Y')} - #{venue.location}"

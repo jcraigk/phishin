@@ -15,7 +15,7 @@ $ ->
   
   # Instantiate stuff
   Ph.DOM = new DOMHandler
-  Ph.Player = new Player
+  Ph.Player = new Player(Ph.DOM)
   
   # Page elements
   $notice         = $ '.feedback_notice'
@@ -127,9 +127,9 @@ $ ->
       data: { 'track_id': track_id}
       success: (r) ->
         if r.success
-          Ph.DOM.handleFeedback { 'msg': 'Track added to playlist' }
+          Ph.DOM.feedback { 'msg': 'Track added to playlist' }
         else
-          Ph.DOM.handleFeedback { 'type': 'alert', 'msg': r.msg }
+          Ph.DOM.feedback { 'type': 'alert', 'msg': r.msg }
     })
   
   # Add show to playlist
@@ -141,9 +141,9 @@ $ ->
       data: { 'show_id': show_id}
       success: (r) ->
         if r.success
-          Ph.DOM.handleFeedback { 'msg': r.msg }
+          Ph.DOM.feedback { 'msg': r.msg }
         else
-          Ph.DOM.handleFeedback { 'type': 'alert', 'msg': r.msg }
+          Ph.DOM.feedback { 'type': 'alert', 'msg': r.msg }
     })
   
   # Clear playlist should stop and unload current sound
@@ -161,9 +161,9 @@ $ ->
       }
       success: (r) ->
         if r.success
-          Ph.DOM.handleFeedback { 'msg': 'Playlist options saved' }
+          Ph.DOM.feedback { 'msg': 'Playlist options saved' }
         else
-          Ph.DOM.handleFeedback { 'type': 'alert', 'msg': r.msg }
+          Ph.DOM.feedback { 'type': 'alert', 'msg': r.msg }
     })
   
   ###############################################
@@ -238,7 +238,7 @@ $ ->
         if r.success
           location.href = data_url if data_url
         else
-          Ph.DOM.handleFeedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
+          Ph.DOM.feedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
     })
   
   # Click to download a set of tracks
@@ -271,10 +271,10 @@ $ ->
       success: (r) ->
         if r.success
           if r.liked then $this.addClass('liked') else $this.removeClass('liked')
-          Ph.DOM.handleFeedback({ 'msg': r.msg })
+          Ph.DOM.feedback({ 'msg': r.msg })
           $this.siblings('span').html(r.likes_count)
         else
-          Ph.DOM.handleFeedback({ 'type': 'alert', 'msg': r.msg })
+          Ph.DOM.feedback({ 'type': 'alert', 'msg': r.msg })
     })
   
   # Rollover year to reveal number of shows

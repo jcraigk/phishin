@@ -141,4 +141,14 @@ class PlaylistsController < ApplicationController
     render json: { success: true}
   end
   
+  def random_show
+    show = Show.random.first
+    first_track = show.tracks.order('position asc').first
+    render json: {
+      success: true,
+      url: show.date,
+      track_id: first_track.id
+    }
+  end
+  
 end

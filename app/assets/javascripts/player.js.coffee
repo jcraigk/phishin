@@ -1,6 +1,7 @@
 class @Player
   
-  constructor: ->
+  constructor: (util) ->
+    @util             = util
     @sm               = soundManager
     @sm_sound         = {}
     @preload_time     = 40000
@@ -11,6 +12,7 @@ class @Player
     @last_volume      = 100
     @duration         = 0
     @app_name         = $('#app_data').data('app-name')
+    @$playpause       = $ '#playpause'
     @$scrubber        = $ '#scrubber'
     @$volume_slider   = $ '#volume_slider'
     @$volume_icon     = $ '#volume_icon'
@@ -19,7 +21,6 @@ class @Player
     @$feedback        = $ '#player_feedback'
     @$player_title    = $ '#player_title'
     @$player_detail   = $ '#player_detail'
-
 
   startScrubbing: ->
     @scrubbing = true
@@ -105,15 +106,18 @@ class @Player
     })
   
   togglePause: ->
+    # alert "paused2? #{@sm_sound.paused}"
     if @sm_sound.paused
+      # alert 'hello1'
       @sm_sound.resume()
       this._updatePauseState()
     else
+      # alert 'hello2'
       if @active_track
         this._fastFadeout(@active_track, true)
-        this._updatePauseState(false)
+        this._updatePauseState false
       else
-         alert 'TODO: Select random show and play it from beginning'
+         this._playRandomShow()
   
   previousTrack: ->
     that = this
@@ -134,14 +138,16 @@ class @Player
   
   nextTrack: ->
     that = this
+    util = @util
     if @active_track
       $.ajax({
         url: "/next-track/#{@active_track}",
         success: (r) ->
           if r.success
             that.playTrack(r.track_id)
-          # else
-          #   alert(r.msg)
+          else
+            util.feedback { 'msg': 'End of playlist reached'}
+            that.stopAndUnload(@active_track)
       })
     else
       alert 'You need to make a playlist to use this button'
@@ -155,12 +161,37 @@ class @Player
         'title': @app_name,
         'duration': 0
       })
+      @$scrubber.slider('value', 0)
+      this._updatePauseState false
+      @$time_remaining.html ""
+      @$time_elapsed.html ""
   
   highlightActiveTrack: ->
     $('.playable_track').removeClass 'active_track'
     $('.playable_track[data-id="'+@active_track+'"]').addClass 'active_track'
     $('#current_playlist>li').removeClass 'active_track'
     $('#current_playlist>li[data-id="'+@active_track+'"]').addClass 'active_track'
+  
+  _playRandomShow: ->
+    that = this
+    util = @util
+    $.ajax({
+      url: "/random-show",
+      success: (r) ->
+        if r.success
+          util.feedback { 'msg': 'Playing random show...'}
+          util.navigateTo r.url
+          that.playTrack r.track_id
+    })
+  
+  _disengagePlayer: ->
+    if @active_track
+      # @sm.setPosition(@active_track, 200)
+      @sm_sound.play()
+      @sm_sound.pause()
+      # alert "paused? #{@sm_sound.paused}"
+    @$scrubber.slider('value', 0)
+    this._updatePauseState false
   
   # Download a track or load from local if already exists via getSoundById
   _preloadTrack: (track_id) ->
@@ -186,7 +217,7 @@ class @Player
         if r.success
           that._updatePlayerDisplay(r)
         else
-          that.handleFeedback { 'type': 'alert', 'msg': 'Error retrieving track info' }
+          @util.feedback { 'type': 'alert', 'msg': 'Error retrieving track info' }
     })
   
   _updatePlayerDisplay: (r) ->
@@ -202,9 +233,9 @@ class @Player
   
   _updatePauseState: (playing=true) ->
     if playing
-      $('#playpause').addClass('playing')
+      @$playpause.addClass 'playing'
     else
-      $('#playpause').removeClass('playing')
+      @$playpause.removeClass 'playing'
   
   _updatePlayerState: ->
     that = this
@@ -221,7 +252,6 @@ class @Player
               #   alert(r.msg)
           })
           @preload_started = true
-
         @$scrubber.slider('value', (@sm_sound.position / @duration) * 100)
         @$time_elapsed.html(this._readableDuration(@sm_sound.position))
         remaining = @duration - @sm_sound.position

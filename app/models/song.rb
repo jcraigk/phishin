@@ -3,7 +3,7 @@ class Song < ActiveRecord::Base
 
   has_and_belongs_to_many :tracks
   
-  scope :random, ->(amt) { where('tracks_count > 0').order('RANDOM()').limit(amt) }
+  scope :random, ->(amt=1) { where('tracks_count > 0').order('RANDOM()').limit(amt) }
 
   validates_presence_of :title
 
