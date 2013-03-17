@@ -5,7 +5,7 @@
 //= require jquery.ui.sortable
 //= require soundmanager
 //= require history
-//= require domhandler
+//= require util
 //= require player
 
 # Generic namespace
@@ -14,8 +14,8 @@ Ph = {}
 $ ->
   
   # Instantiate stuff
-  Ph.DOM = new DOMHandler
-  Ph.Player = new Player(Ph.DOM)
+  Ph.Util = new Util
+  Ph.Player = new Player(Ph.Util)
   
   # Page elements
   $notice         = $ '.feedback_notice'
@@ -32,7 +32,7 @@ $ ->
     $('#current_playlist').sortable({
       placeholder: "ui-state-highlight",
       update: ->
-        Ph.DOM.updateCurrentPlaylist 'Track moved in playlist'
+        Ph.Util.updateCurrentPlaylist 'Track moved in playlist'
     })
     
     # Highlight the currently playing track
@@ -50,19 +50,22 @@ $ ->
     History.log State.data, State.title, State.url
   History.Adapter.bind window, 'popstate', ->   
     state = window.History.getState()
-    if state.data.href != undefined and !Ph.DOM.page_init
+    if state.data.href != undefined and !Ph.Util.page_init
       $ajax_overlay.css 'visibility', 'visible'
       $page.html ''
       $page.load(
         state.data.href, (response, status, xhr) ->
+          Ph.DOM
           alert("ERROR\n\n"+response) if status == 'error'
           $ajax_overlay.css 'visibility', 'hidden'
       )
+      # Report href to Google Analytics
+      _gaq.push([ '_trackPageview', state.data.href ]); 
       
   # Click a link to load context via ajax
   $(document).on 'click', 'a', ->
     unless $(this).hasClass('non-remote')
-      Ph.DOM.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
+      Ph.Util.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
       
       false
   
@@ -104,7 +107,7 @@ $ ->
   $('#current_playlist').sortable({
     placeholder: "ui-state-highlight",
     update: ->
-      Ph.DOM.updateCurrentPlaylist 'Track moved in playlist'
+      Ph.Util.updateCurrentPlaylist 'Track moved in playlist'
   })
   
   # Remove track from playlist
@@ -112,10 +115,10 @@ $ ->
     track_id = $(this).parents('li').data('id')
     $(this).parents('li').remove()
     if $('#current_playlist').children('li').size() == 0
-      Ph.DOM.followLink $('#clear_playlist')
+      Ph.Util.followLink $('#clear_playlist')
       Ph.Player.stopAndUnload()
     else
-      Ph.DOM.updateCurrentPlaylist 'Track removed from playlist'
+      Ph.Util.updateCurrentPlaylist 'Track removed from playlist'
       Ph.Player.stopAndUnload track_id
   
   # Add track to playlist
@@ -127,9 +130,9 @@ $ ->
       data: { 'track_id': track_id}
       success: (r) ->
         if r.success
-          Ph.DOM.feedback { 'msg': 'Track added to playlist' }
+          Ph.Util.feedback { 'msg': 'Track added to playlist' }
         else
-          Ph.DOM.feedback { 'type': 'alert', 'msg': r.msg }
+          Ph.Util.feedback { 'type': 'alert', 'msg': r.msg }
     })
   
   # Add show to playlist
@@ -141,9 +144,9 @@ $ ->
       data: { 'show_id': show_id}
       success: (r) ->
         if r.success
-          Ph.DOM.feedback { 'msg': r.msg }
+          Ph.Util.feedback { 'msg': r.msg }
         else
-          Ph.DOM.feedback { 'type': 'alert', 'msg': r.msg }
+          Ph.Util.feedback { 'type': 'alert', 'msg': r.msg }
     })
   
   # Clear playlist should stop and unload current sound
@@ -161,9 +164,9 @@ $ ->
       }
       success: (r) ->
         if r.success
-          Ph.DOM.feedback { 'msg': 'Playlist options saved' }
+          Ph.Util.feedback { 'msg': 'Playlist options saved' }
         else
-          Ph.DOM.feedback { 'type': 'alert', 'msg': r.msg }
+          Ph.Util.feedback { 'type': 'alert', 'msg': r.msg }
     })
   
   ###############################################
@@ -238,16 +241,16 @@ $ ->
         if r.success
           location.href = data_url if data_url
         else
-          Ph.DOM.feedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
+          Ph.Util.feedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
     })
   
   # Click to download a set of tracks
   $(document).on 'click', 'a.download-album', ->
-    Ph.DOM.requestAlbum $(this).data('url'), true
+    Ph.Util.requestAlbum $(this).data('url'), true
     
   # Stop polling server when download modal is hidden
   $('#download_modal').on 'hidden', ->
-    Ph.DOM.StopDownloadPoller
+    Ph.Util.StopDownloadPoller
 
   ###############################################
   
@@ -271,10 +274,10 @@ $ ->
       success: (r) ->
         if r.success
           if r.liked then $this.addClass('liked') else $this.removeClass('liked')
-          Ph.DOM.feedback({ 'msg': r.msg })
+          Ph.Util.feedback({ 'msg': r.msg })
           $this.siblings('span').html(r.likes_count)
         else
-          Ph.DOM.feedback({ 'type': 'alert', 'msg': r.msg })
+          Ph.Util.feedback({ 'type': 'alert', 'msg': r.msg })
     })
   
   # Rollover year to reveal number of shows
@@ -297,12 +300,12 @@ $ ->
     
   # Follow links in .year_list
   $(document).on 'click', '.year_list > li', ->
-    Ph.DOM.followLink $(this).find 'a'
+    Ph.Util.followLink $(this).find 'a'
   
   # Follow h1>a links in .item_list.clickable > li
   $(document).on 'click', '.item_list > li', ->
     if $(this).parent('ul').hasClass 'clickable'
-      Ph.DOM.followLink $(this).children('h2').find 'a'
+      Ph.Util.followLink $(this).children('h2').find 'a'
   
   # Share links bring up a modal to display a url
   $(document).on 'click', '.share', ->

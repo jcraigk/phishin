@@ -1,6 +1,7 @@
-class @DOMHandler
+class @Util
   
   constructor: ->
+    @page_init          = true
     @$feedback          = $ '#feedback'
     @$app_data          = $ '#app_data'
     @$download_modal    = $ '#download_modal'
@@ -24,6 +25,7 @@ class @DOMHandler
     this.navigateTo $el.attr('href')
 
   navigateTo: (href) ->
+    @page_init = false
     History.pushState {href: href}, @$app_data.data('app-name'), href
     window.scrollTo 0, 0
 
