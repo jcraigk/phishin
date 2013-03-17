@@ -76,7 +76,7 @@ class @Player
       unless @sm_sound = @sm.getSoundById track_id
         @sm_sound = @sm.createSound({
           id: track_id,
-          url: "/download-track/#{track_id}",
+          url: "/play-track/#{track_id}",
           whileloading: ->
             that._updateLoadingState(track_id)
           whileplaying: ->
@@ -206,7 +206,7 @@ class @Player
     unless @sm.getSoundById track_id
       @sm.createSound({
         id: track_id,
-        url: "/download-track/#{track_id}",
+        url: "/play-track/#{track_id}",
         autoLoad: true,
         whileloading: ->
           that._updateLoadingState(track_id)

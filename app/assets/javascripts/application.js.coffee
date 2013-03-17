@@ -80,7 +80,7 @@ $ ->
   else
     $notice.hide()
   if $alert.html() != ''
-    $falert.show 'slide'
+    $alert.show 'slide'
     setTimeout( ->
       $alert.hide 'slide'
     , 3000)
