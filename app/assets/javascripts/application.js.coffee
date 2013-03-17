@@ -3,6 +3,7 @@
 //= require twitter/bootstrap
 //= require jquery.ui.slider
 //= require jquery.ui.sortable
+//= require jquery.ui.datepicker
 //= require soundmanager
 //= require history
 //= require util
@@ -14,8 +15,8 @@ Ph = {}
 $ ->
   
   # Instantiate stuff
-  Ph.Util = new Util
-  Ph.Player = new Player(Ph.Util)
+  Ph.Util         = new Util
+  Ph.Player       = new Player(Ph.Util)
   
   # Page elements
   $notice         = $ '.feedback_notice'
@@ -33,6 +34,15 @@ $ ->
       placeholder: "ui-state-highlight",
       update: ->
         Ph.Util.updateCurrentPlaylist 'Track moved in playlist'
+    })
+    
+    # Search datepicker
+    $('#search_date').datepicker({
+      dateFormat: "yy-mm-dd",
+      changeYear: true,
+      yearRange: '1987:2013',
+      showOtherMonths: true,
+      selectOtherMonths: true
     })
     
     # Highlight the currently playing track
@@ -100,6 +110,27 @@ $ ->
 
   ###############################################
   # DOM interactions
+  ###############################################
+  
+  # Search datepicker
+  $('#search_date').datepicker({
+    dateFormat: "yy-mm-dd",
+    changeYear: true,
+    yearRange: '1987:2013',
+    showOtherMonths: true,
+    selectOtherMonths: true
+  })
+  
+  # Focus => remove other value
+  $(document).on 'focus', '#search_term', (e) ->
+    $('#search_date').val ''
+  $(document).on 'focus', '#search_date', (e) ->
+    $('#search_term').val ''
+  
+  # Submit search
+  $(document).on 'click', '#search_submit', (e) ->
+    Ph.Util.navigateTo '/search?date='+$('#search_date').val()+'&term='+$('#search_term').val()
+
   ###############################################
   
   # Sortable playlist DOM load

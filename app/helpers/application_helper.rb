@@ -38,8 +38,9 @@ module ApplicationHelper
     link_to song.title, slug
   end
   
-  def performances_or_alias_link(song)
-    song.aliased_song ? (link_to "alias for #{song.aliased_song.title}", "#{song.aliased_song.slug}", class: :alias_for) : song.tracks_count
+  def performances_or_alias_link(song, display_title=false)
+    tracks_count = (display_title ? pluralize(song.tracks_count, 'track') : song.tracks_count)
+    song.aliased_song ? (link_to "alias for #{song.aliased_song.title}", "#{song.aliased_song.slug}", class: :alias_for) : tracks_count
   end
   
   def likable(likable, like, size)

@@ -2,6 +2,7 @@
  *= require_self
  *= require twitter/bootstrap
  *= require jquery.ui.slider
+ *= require jquery.ui.datepicker
  *= require_tree .
  */
 
@@ -441,6 +442,45 @@ h2.for_content {
   font-size: 12px;
 }
 
+#search_container {
+  margin: 0 auto;
+  margin-top: 20px;
+  text-align: center;
+  background-color: #eee;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'Rambla', sans-serif;
+}
+#search_container input {
+  margin-top: 10px;
+}
+#search_submit {
+  font-weight: bold;
+  font-family: 'Rambla', sans-serif;
+}
+#search_results {
+  margin: 0 auto;
+  margin-top: 20px;
+  text-align: left;
+  //background-color: #eee;
+//  border-radius: 5px;
+//  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'Rambla', sans-serif;
+}
+#search_results p {
+  margin-top: 10px;
+  text-align: center;
+  font-style: italic;
+}
+#search_results h3 {
+  margin-left: 18px;
+}
 /************************/
 
 #userbox {

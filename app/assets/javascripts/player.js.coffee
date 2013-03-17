@@ -190,17 +190,14 @@ class @Player
           })
     })
 
-  
   _disengagePlayer: ->
     if @active_track
-      # @sm.setPosition(@active_track, 200)
+      @sm.setPosition(@active_track, 0)
       @sm_sound.play()
       @sm_sound.pause()
-      # alert "paused? #{@sm_sound.paused}"
     @$scrubber.slider('value', 0)
     this._updatePauseState false
-  
-  # Download a track or load from local if already exists via getSoundById
+
   _preloadTrack: (track_id) ->
     that = this
     unless @sm.getSoundById track_id
@@ -213,7 +210,6 @@ class @Player
         whileplaying: ->
           that._updatePlayerState()
       })
-      
       @sm.setVolume(track_id, @last_volume)
   
   _loadTrackInfo: (track_id) ->
@@ -232,9 +228,9 @@ class @Player
     if r.title.length > 26 then @$player_title.addClass('long_title') else @$player_title.removeClass('long_title')
     @$player_title.html(r.title)
     if @duration == 0
-      @$player_detail.html("")
-      @$time_elapsed.html("")
-      @$time_remaining.html("")
+      @$player_detail.html ""
+      @$time_elapsed.html ""
+      @$time_remaining.html ""
     else
       @$player_detail.html("<a href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.venue_url}\">#{r.venue}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.city_url}\">#{r.city}</a>");
   
@@ -284,7 +280,7 @@ class @Player
           feedback.hide('fade')
         , 2000)
       else
-        @$feedback.removeClass('done')
+        @$feedback.removeClass 'done'
   
   _fastFadeout: (track_id, is_pause=false) ->
     that = this

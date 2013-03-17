@@ -2,6 +2,59 @@
 
 <div id="content">
   
-  <h1>Got a blank space where my search should be</h2>
+  <div id="search_container">
+    Search for &nbsp;
+    <input type="text" name="date" id="search_date" placeholder="a date" value="<%= params[:date] %>">
+    &nbsp;&nbsp;OR &nbsp;&nbsp;
+    <input type="text" name="date" id="search_term" placeholder="a term" value="<%= params[:term] %>">
+    &nbsp;&nbsp;
+    <button type="button" class="btn" id="search_submit">Search</button>
+  </div>
+  
+  <% if @results %>
+    <div id="search_results">
+      <% unless @total_results and @total_results > 0 %>
+        <p>Got a blank space where results should be</p>
+      <% else %>
+        <% if @show %>
+          <h3>Matched 1 Show</h3>
+          <ul class="item_list clickable">
+            <li>
+              <%= content_tag :h2, link_to(@show.date.strftime("%b %-d"), "/#{@show.date}") %>
+              <%= content_tag :h4, link_to(@show.venue.name.html_safe, "/#{@show.venue.slug}") %>
+              <%= content_tag :h5, link_to(@show.venue.location, "/cities") %>
+              <div style="clear: both;"></div>
+            </li>
+          </ul>
+        <% else %>
+          <% if @songs.size > 0 %>
+            <h3>Matched <%= pluralize(@songs.size, 'Song') %></h3>
+            <ul class="item_list clickable">
+            <% for song in @songs %>
+              <li name="<%= song.slug %>">
+                <%= content_tag :h2, link_to_song(song), class: 'wide' %>
+                <%= content_tag :h3, performances_or_alias_link(song, true), class: 'alt' %>
+                <div style="clear: both;"></div>
+              </li>
+            <% end %>
+            </ul>
+          <% end %>
+          <% if @venues.size > 0 %>
+            <h3>Matched <%= pluralize(@venues.size, 'Venue') %></h3>
+            <ul class="item_list clickable">
+              <% for venue in @venues %>
+                <li>
+                  <%= content_tag :h2, link_to(truncate(venue.name, length: 45), "/#{venue.slug}"), class: 'wide' %>
+                  <%= content_tag :h3, venue.shows_count, class: 'alt' %>
+                  <%= content_tag :h5, link_to(venue.location, "/cities") %>
+                  <div style="clear: both;"></div>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
   
 </div>
