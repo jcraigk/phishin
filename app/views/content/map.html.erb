@@ -1,31 +1,15 @@
-<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDYzzl_dLU5IX4t-rpVVRcA9YtrpPEivTk&sensor=false"></script>
-<script>
-function initialize() {
-  var mapProp = {
-    center: new google.maps.LatLng(51.508742,-0.120850),
-    zoom: 5,
-    mapTypeId: google.maps.MapTypeId.HYBRID
-  };
-  var map = new google.maps.Map(document.getElementById("google_map"), mapProp);
-  marker = new google.maps.Marker({
-    position: new google.maps.LatLng(51.508742,-0.120850),
-    map: map
-  })
-  infowindow = new google.maps.InfoWindow({
-    content: "Venue name here"
-  })
-}
-google.maps.event.addDomListener(window, 'load', initialize);
-</script>
-
 <%= render 'shared/index_header' %>
 
 <div id="content">
   
-  <%= content_tag :h2, 'Map (coming soon)', class: 'for_content' %>
-  <div style="clear: both;"></div>
-
+  <div id="map_search_container">
+    Find shows in &nbsp;&nbsp;
+    <input type="text" name="date" id="map_search_term" placeholder="city, state, or country" value="<%= params[:term] %>">
+    &nbsp;&nbsp;within &nbsp;
+    <input type="text" name="date" id="map_search_distance" value="<%= params[:distance] || 50 %>">&nbsp;&nbsp;miles &nbsp;
+    <button type="button" class="btn" id="map_search_submit">Search</button>
+  </div>
+  
   <div id="google_map"></div>
 
-      
 </div>

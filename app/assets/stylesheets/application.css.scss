@@ -486,6 +486,33 @@ h2.for_content {
 #search_results h3 {
   margin-left: 18px;
 }
+#map_search_container {
+  margin: 0 auto;
+  margin-top: 20px;
+  text-align: center;
+  background-color: #eee;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'Rambla', sans-serif;
+}
+#map_search_term {
+  margin-top: 10px;
+  width: 200px;
+}
+#map_search_distance {
+  margin-top: 10px;
+  width: 30px;
+}
+#map_search_submit {
+  margin-left: 20px;
+  font-weight: bold;
+  font-family: 'Rambla', sans-serif;
+}
+
 /************************/
 
 #userbox {

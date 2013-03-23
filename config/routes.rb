@@ -43,6 +43,9 @@ Phishin::Application.routes.draw do
   get     '/play-track/:track_id'         => 'downloads#play_track', as: 'play_track'
   get     '/download-show/:date'          => 'downloads#request_download_show', as: 'download_show'
   get     '/download/:md5'                => 'downloads#download_album', as: 'download_album'
+
+  # Map
+  get     '/map-search'                   => 'map#search', as: 'map_search'
   
   # Catch-all matcher for short content URLs
   get     '/(:glob(/:anchor))' => 'content#glob'

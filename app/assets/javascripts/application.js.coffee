@@ -8,6 +8,7 @@
 //= require history
 //= require util
 //= require player
+//= require map
 
 # Generic namespace
 Ph = {}
@@ -20,6 +21,7 @@ $ ->
   # Instantiate stuff
   Ph.Util         = new Util
   Ph.Player       = new Player(Ph.Util)
+  Ph.Map          = new Map(Ph.Util)
   
   # Page elements
   $notice         = $ '.feedback_notice'
@@ -31,6 +33,9 @@ $ ->
   # ON AJAX SUCCESS
   ###############################################
   $(document).ajaxSuccess( ->
+    
+    # Initialize Google Map
+    Ph.Map.init()
     
     # Sortable playlist AJAX load
     $('#current_playlist').sortable({
@@ -137,6 +142,10 @@ $ ->
   # Submit search
   $(document).on 'click', '#search_submit', (e) ->
     Ph.Util.navigateTo '/search?date='+$('#search_date').val()+'&term='+$('#search_term').val()
+
+  # Submit map search
+  $(document).on 'click', '#map_search_submit', (e) ->
+    Ph.Map.handleSearch($('#map_search_term').val(), $('#map_search_distance').val())
 
   ###############################################
   
