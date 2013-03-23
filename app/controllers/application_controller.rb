@@ -36,6 +36,7 @@ class ApplicationController < ActionController::Base
     session[:playlist]    ||= []
     session[:loop]        ||= false
     session[:randomize]   ||= false
+    params[:per_page]     ||= 10
   end
   
 end

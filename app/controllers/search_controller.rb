@@ -2,7 +2,7 @@ class SearchController < ApplicationController
 
   def search
     date = params[:date]
-    term = (params[:term] and params[:term].size > 3 ? params[:term].downcase : nil)
+    term = (params[:term] and params[:term].size >= 2 ? params[:term].downcase : nil)
     if date.present? or term.present?
       @results = true
       @total_results = 0
@@ -13,7 +13,9 @@ class SearchController < ApplicationController
         if term.present?
           @songs = Song.kinda_matching(term).order('title asc').all
           @venues = Venue.where('lower(name) LIKE ? OR lower(past_names) LIKE ? OR lower(city) LIKE ?', "%#{term}%", "%#{term}%", "%#{term}%").order('name asc').all
-          @total_results = @songs.size + @venues.size
+          # TODO Tours
+          @tours = Tour.where('lower(name) LIKE ?', "%#{term}%").order('name asc').all
+          @total_results = @songs.size + @venues.size + @tours.size
         end
       end
     else

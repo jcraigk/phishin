@@ -6,29 +6,10 @@
   <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-text-height"></i> Alphabetically' => 'title', '<i class="icon-list"></i> Number of Tracks' => 'performances'} } %>
   <div style="clear: both;"></div>
   
-  <% unless @display_separators %>
-    <ul class="item_list clickable">
-  <% end %>
+  <div class="paging centered"><%= will_paginate @songs %></div>
   
-  <% last_title = false %>
+  <ul class="item_list clickable">
   <% for song in @songs %>
-  
-    <% if @display_separators %>
-      <% if song.title_letter.match(/\d/) %>
-        <% title = '1-9' %>
-      <% else %>
-        <% title = song.title_letter %>
-      <% end %>
-      <% if title != last_title %>
-        <% if last_title %>
-          </ul>
-        <% end %>
-        <% last_title = title %>
-        <%= content_tag 'h1', title %>
-        <ul class="item_list clickable">
-      <% end %>
-    <% end %>
-    
     <li name="<%= song.slug %>">
       <%= content_tag :h2, link_to_song(song), class: 'wide' %>
       <%= content_tag :h3, performances_or_alias_link(song), class: 'alt' %>

@@ -15,12 +15,10 @@ class ContentController < ApplicationController
     params[:sort] = 'title' unless ['title', 'performances'].include? params[:sort]
     if params[:sort] == 'title'
       order_by = "title asc"
-      @display_separators = true
     elsif params[:sort] == 'performances'
       order_by = "tracks_count desc, title asc"
-      @display_separators = false
     end
-    @songs = Song.relevant.order(order_by)
+    @songs = Song.relevant.order(order_by).page(params[:page])
     render layout: false if request.xhr?
   end
   
@@ -32,12 +30,10 @@ class ContentController < ApplicationController
     params[:sort] = 'name' unless ['name', 'performances'].include? params[:sort]
     if params[:sort] == 'name'
       order_by = "name asc"
-      @display_separators = true
     elsif params[:sort] == 'performances'
       order_by = "shows_count desc, name asc"
-      @display_separators = false
     end
-    @venues = Venue.relevant.order(order_by)
+    @venues = Venue.relevant.order(order_by).page(params[:page])
     render layout: false if request.xhr?
   end
   
@@ -101,6 +97,10 @@ class ContentController < ApplicationController
       # Venue?
       elsif venue g
         view = :venue
+        # Tour?
+      elsif tour g
+        @title = @tour.name
+        view = :year_or_scope
       # Fall back to root
       else
         redirect_to :root and return
@@ -179,6 +179,14 @@ class ContentController < ApplicationController
       @shows_likes = @shows.map { |show| get_user_show_like(show) }
     end
     @venue
+  end
+
+  def tour(slug)
+    if @tour = Tour.where(slug: slug).includes(:shows).first
+      @shows = @tour.shows.order('date desc')
+      @shows_likes = @shows.map { |show| get_user_show_like(show) }
+    end
+    @tour
   end
   
   def city(slug)

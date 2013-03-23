@@ -6,38 +6,17 @@
   <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-text-height"></i> Alphabetically' => 'name', '<i class="icon-list"></i> Number of Shows' => 'performances'} } %>
   <div style="clear: both;"></div>
   
-  <% unless @display_separators %>
-    <ul class="item_list clickable">
-  <% end %>
+  <div class="paging centered"><%= will_paginate @venues %></div>
   
-  <% last_title = false %>
+  <ul class="item_list clickable">
   <% for venue in @venues %>
-  
-    <% if @display_separators %>
-      <% if venue.name_letter.match(/\d/) %>
-        <% title = '1-9' %>
-      <% else %>
-        <% title = venue.name_letter %>
-      <% end %>
-      <% if title != last_title %>
-        <% if last_title %>
-          </ul>
-        <% end %>
-        <% last_title = title %>
-        <%= content_tag 'h1', title %>
-        <ul class="item_list clickable">
-      <% end %>
-    <% end %>
-
     <li>
       <%= content_tag :h2, link_to(truncate(venue.name, length: 45), "/#{venue.slug}"), class: 'wide' %>
       <%= content_tag :h3, venue.shows_count, class: 'alt' %>
-      <%= content_tag :h5, link_to(venue.location, "/map") %>
+      <%= content_tag :h5, link_to(venue.location, "/map?term=#{venue.location}") %>
       <div style="clear: both;"></div>
-    </li>
-            
+    </li>   
   <% end %>
-  
   </ul>
 
 </div>
