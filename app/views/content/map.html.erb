@@ -1,12 +1,31 @@
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDYzzl_dLU5IX4t-rpVVRcA9YtrpPEivTk&sensor=false"></script>
+<script>
+function initialize() {
+  var mapProp = {
+    center: new google.maps.LatLng(51.508742,-0.120850),
+    zoom: 5,
+    mapTypeId: google.maps.MapTypeId.HYBRID
+  };
+  var map = new google.maps.Map(document.getElementById("google_map"), mapProp);
+  marker = new google.maps.Marker({
+    position: new google.maps.LatLng(51.508742,-0.120850),
+    map: map
+  })
+  infowindow = new google.maps.InfoWindow({
+    content: "Venue name here"
+  })
+}
+google.maps.event.addDomListener(window, 'load', initialize);
+</script>
+
 <%= render 'shared/index_header' %>
 
 <div id="content">
   
   <%= content_tag :h2, 'Map (coming soon)', class: 'for_content' %>
   <div style="clear: both;"></div>
-      
-  <br />
-  
-<iframe width="850" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=burlington,+vt&amp;aq=&amp;sll=44.278972,-72.438097&amp;sspn=0.003103,0.004823&amp;t=h&amp;ie=UTF8&amp;hq=&amp;hnear=Burlington,+Chittenden,+Vermont&amp;ll=44.471644,-73.217096&amp;spn=0.049489,0.077162&amp;z=14&amp;output=embed"></iframe><br /><small><a href="http://maps.google.com/maps?f=q&amp;source=embed&amp;hl=en&amp;geocode=&amp;q=burlington,+vt&amp;aq=&amp;sll=44.278972,-72.438097&amp;sspn=0.003103,0.004823&amp;t=h&amp;ie=UTF8&amp;hq=&amp;hnear=Burlington,+Chittenden,+Vermont&amp;ll=44.471644,-73.217096&amp;spn=0.049489,0.077162&amp;z=14" style="color:#0000FF;text-align:left">View Larger Map</a></small>
+
+  <div id="google_map"></div>
+
       
 </div>

@@ -31,7 +31,7 @@
             <h3>No Exact Show Matches</h3>
           <% end %>
           <% if @other_shows %>
-            <h3>Matched <%= pluralize(@other_shows.size, 'Show') %> on this Day</h3>
+            <h3>Matched <%= pluralize(@other_shows.size, 'Show') %> on this Day in History</h3>
             <ul class="item_list clickable">
               <% for show in @other_shows %>
                 <li>
