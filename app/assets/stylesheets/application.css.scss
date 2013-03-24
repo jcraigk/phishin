@@ -6,6 +6,20 @@
  *= require_tree .
  */
 
+#beta {
+  font-family: 'Nothing You Could Do', cursive;
+  color: red;
+  font-size: 50px;
+  position: fixed;
+  margin-top: -60px;
+  margin-left: 35px;
+  z-index: 10;
+  -webkit-transform: rotate(-30deg);
+  -moz-transform: rotate(-30deg);
+  -ms-transform: rotate(-30deg);
+  -o-transform: rotate(-30deg);
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}
 #google_map {
   width: 100%;
   height: 600px;
