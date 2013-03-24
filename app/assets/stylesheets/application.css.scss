@@ -5,19 +5,17 @@
  *= require jquery.ui.datepicker
  *= require_tree .
  */
-
-#beta {
-  font-family: 'Nothing You Could Do', cursive;
-  font-size: 50px;
-  position: fixed;
-  margin-top: -60px;
-  margin-left: 35px;
-  z-index: 10;
-  -webkit-transform: rotate(-30deg);
-  -moz-transform: rotate(-30deg);
-  -ms-transform: rotate(-30deg);
-  -o-transform: rotate(-30deg);
-  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+#home_msg {
+  margin: 0 auto;
+  font-family: 'Shanti', sans-serif;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 5px;
+  font-weight: bold;
+  background-color: #f9ffc8;
+  border: #998f4a 1px solid;
+  border-radius: 8px;
+  padding: 8px;
 }
 #google_map {
   width: 100%;
