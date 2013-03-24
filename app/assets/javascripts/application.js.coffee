@@ -35,7 +35,10 @@ $ ->
   ###############################################
   $(document).ajaxSuccess( (event, xhr, settings) ->
     if settings.url.substr(0,4) == '/map'
-      Ph.Map.init();
+      Ph.Map.initMap()
+      term = $('#map_search_term').val()
+      distance = $('#map_search_distance').val()
+      Ph.Map.handleSearch(term, distance) if term and distance
     else if settings.url.substr(0,9) == '/playlist'
       # Sortable playlist AJAX load
       $('#current_playlist').sortable({
@@ -56,11 +59,11 @@ $ ->
   History.Adapter.bind window, 'popstate', ->   
     state = window.History.getState()
     if state.data.href != undefined and !Ph.Util.page_init
+      # alert "Loading #{state.data.href}"
       $ajax_overlay.css 'visibility', 'visible'
       $page.html ''
       $page.load(
         state.data.href, (response, status, xhr) ->
-          Ph.DOM
           alert("ERROR\n\n"+response) if status == 'error'
           $ajax_overlay.css 'visibility', 'hidden'
       )
@@ -130,15 +133,15 @@ $ ->
   distance = $('#map_search_distance').val()
   Ph.Map.handleSearch(term, distance) if term and distance
   $(document).on 'click', '#map_search_submit', (e) ->
-    Ph.Map.handleSearch(term = $('#map_search_term').val(), $('#map_search_distance').val())
+    Ph.Util.navigateToRefreshMap()
   $(document).on 'keypress', '#map_search_term', (e) ->
-      Ph.Map.handleSearch(term = $('#map_search_term').val(), $('#map_search_distance').val()) if e.which == 13
+    Ph.Util.navigateToRefreshMap() if e.which == 13
   $(document).on 'keypress', '#map_search_distance', (e) ->
-      Ph.Map.handleSearch(term = $('#map_search_term').val(), $('#map_search_distance').val()) if e.which == 13
+    Ph.Util.navigateToRefreshMap() if e.which == 13
   $(document).on 'keypress', '#map_date_start', (e) ->
-      Ph.Map.handleSearch(term = $('#map_search_term').val(), $('#map_search_distance').val()) if e.which == 13
+    Ph.Util.navigateToRefreshMap() if e.which == 13
   $(document).on 'keypress', '#map_date_stop', (e) ->
-      Ph.Map.handleSearch(term = $('#map_search_term').val(), $('#map_search_distance').val()) if e.which == 13
+    Ph.Util.navigateToRefreshMap() if e.which == 13
 
   ###############################################
   

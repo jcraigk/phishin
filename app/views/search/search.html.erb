@@ -79,7 +79,7 @@ $(function() {
                 <li>
                   <%= content_tag :h2, link_to(highlight(truncate(venue.name, length: 45), params[:term]), "/#{venue.slug}"), class: 'wide' %>
                   <%= content_tag :h3, venue.shows_count, class: 'alt' %>
-                  <%= content_tag :h5, link_to(highlight(venue.location, params[:term]), "/map?term=#{venue.location}") %>
+                  <%= content_tag :h5, link_to(highlight(venue.location, params[:term]), "/map?term=#{CGI::escape(venue.location)}") %>
                   <div style="clear: both;"></div>
                 </li>
               <% end %>

@@ -1,6 +1,7 @@
 class @Map
   
   constructor: (util) ->
+    @init             = true
     @markers          = []
     @windows          = []
     @map              = {}
@@ -10,9 +11,9 @@ class @Map
     @default_lat      = 39.126864
     @default_lng      = -94.627411
     @green_icon       = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-    this.init()
+    this.initMap()
   
-  init: ->
+  initMap: ->
     if container = $("#google_map").get 0
       @map = new @google.maps.Map(container, {
         center: new @google.maps.LatLng(@default_lat, @default_lng),
@@ -45,6 +46,8 @@ class @Map
     lng = results[0].geometry.location.lng()
     this._createMarker(lat, lng, @green_icon)
     # Create circle for zoom level
+    @view_circle.setMap null if @init == false
+    @init = false
     @view_circle = new @google.maps.Circle({
       center: new @google.maps.LatLng(lat, lng),
       fillOpacity: 0,
