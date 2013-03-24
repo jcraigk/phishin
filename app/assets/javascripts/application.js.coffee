@@ -46,6 +46,7 @@ $ ->
         update: ->
           Ph.Util.updateCurrentPlaylist 'Track moved in playlist'
       })
+    Ph.Player.highlightActiveTrack() #TODO: this shouldn't happen every singl ajax success
   )
 
   ###############################################
