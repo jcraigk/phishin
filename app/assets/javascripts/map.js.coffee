@@ -24,7 +24,7 @@ class @Map
   handleSearch: (term, distance) ->
     that = this
     util = @util
-    distance = parseInt(distance)
+    distance = parseFloat(distance)
     if term and distance > 0
       geocoder = new @google.maps.Geocoder()
       geocoder.geocode({ 'address': term}, (results, status) ->
@@ -69,6 +69,7 @@ class @Map
   _drawVenueMarkers: (venues) ->
     for venue in venues
       html = "<h1><a href=\"/#{venue.slug}\">#{venue.name}</a></h1>"
+      html += "<h2><i>Formerly #{venue.past_names}</i></h2>" if venue.past_names
       html += "<h2>#{venue.location}</h2>"
       word = 'show'
       if venue.shows_count != 1

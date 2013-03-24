@@ -21,6 +21,7 @@ class @Player
     @$feedback        = $ '#player_feedback'
     @$player_title    = $ '#player_title'
     @$player_detail   = $ '#player_detail'
+    @$playlist_button = $ '#playlist_button .btn'
 
   startScrubbing: ->
     @scrubbing = true
@@ -237,8 +238,10 @@ class @Player
   _updatePauseState: (playing=true) ->
     if playing
       @$playpause.addClass 'playing'
+      @$playlist_button.addClass 'playing'
     else
       @$playpause.removeClass 'playing'
+      @$playlist_button.removeClass 'playing'
   
   _updatePlayerState: ->
     that = this

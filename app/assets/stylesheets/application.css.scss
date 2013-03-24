@@ -30,15 +30,16 @@
   max-width: none;
 }
 #google_map h1 {
-  margin-top: -10px;
   font-size: 17px;
+  line-height: 20px;
 }
 #google_map h2 {
-  margin-top: -30px;
+  margin-top: -8px;
   font-size: 14px;
+  line-height: 14px;
 }
 #google_map h3 {
-  margin-top: -20px;
+  margin-top: -10px;
   font-size: 13px;
 }
 #google_map ul {
@@ -918,4 +919,7 @@ h2.for_content {
 }
 .optional {
   color: #777;
+}
+.header_link {
+  font-size: 13px;
 }

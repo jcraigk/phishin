@@ -26,6 +26,7 @@ class Venue < ActiveRecord::Base
   def as_json(options={})
     {
       name: name,
+      past_names: past_names,
       latitude: latitude,
       longitude: longitude,
       shows_count: shows_count,
