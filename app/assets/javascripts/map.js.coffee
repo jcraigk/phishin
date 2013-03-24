@@ -10,8 +10,6 @@ class @Map
     @default_lat      = 39.126864
     @default_lng      = -94.627411
     @green_icon       = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-    @$date_start      = $ '#map_date_start'
-    @$date_stop       = $ '#map_date_stop'
     this.init()
   
   init: ->
@@ -21,8 +19,6 @@ class @Map
         zoom: 4,
         mapTypeId: @google.maps.MapTypeId.HYBRID
       })
-      
-      # this._createMarker(@default_lat, @default_lng, @green_icon)
   
   handleSearch: (term, distance) ->
     that = this
@@ -57,10 +53,9 @@ class @Map
       radius: this._milesToMeters(distance)
     })
     @map.fitBounds @view_circle.getBounds()
-    alert "/search-map?lat=#{lat}&lng=#{lng}&distance=#{distance}&date_start=#{@$date_start.val()}&date_stop=#{@$date_stop.val()}"
     # Fetch venues from server
     $.ajax({
-      url: "/search-map?lat=#{lat}&lng=#{lng}&distance=#{distance}&date_start=#{@$date_start.val()}&date_stop=#{@$date_stop.val()}",
+      url: "/search-map?lat=#{lat}&lng=#{lng}&distance=#{distance}&date_start=#{$('#map_date_start').val()}&date_stop=#{$('#map_date_stop').val()}",
       success: (r) ->
         if r.success
           that._drawVenueMarkers(r.venues)
@@ -70,7 +65,6 @@ class @Map
     
   _drawVenueMarkers: (venues) ->
     for venue in venues
-      alert "here for #{venue.name}"
       html = "<h1><a href=\"/#{venue.slug}\">#{venue.name}</a></h1>"
       html += "<h2>#{venue.location}</h2>"
       word = 'show'

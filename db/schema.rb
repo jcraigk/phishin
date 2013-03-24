@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130323013212) do
+ActiveRecord::Schema.define(:version => 20130324014414) do
 
   create_table "albums", :force => true do |t|
     t.string   "name"
@@ -39,6 +39,19 @@ ActiveRecord::Schema.define(:version => 20130323013212) do
   add_index "likes", ["likable_id"], :name => "index_likes_on_likable_id"
   add_index "likes", ["likable_type"], :name => "index_likes_on_likable_type"
   add_index "likes", ["user_id"], :name => "index_likes_on_user_id"
+
+  create_table "rails_admin_histories", :force => true do |t|
+    t.text     "message"
+    t.string   "username"
+    t.integer  "item"
+    t.string   "table"
+    t.integer  "month",      :limit => 2
+    t.integer  "year",       :limit => 8
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
+  end
+
+  add_index "rails_admin_histories", ["item", "table", "month", "year"], :name => "index_rails_admin_histories"
 
   create_table "requests", :force => true do |t|
     t.integer  "track_id"
@@ -138,11 +151,12 @@ ActiveRecord::Schema.define(:version => 20130323013212) do
     t.string   "state"
     t.string   "country"
     t.string   "slug"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
-    t.integer  "shows_count", :default => 0
+    t.datetime "created_at",                        :null => false
+    t.datetime "updated_at",                        :null => false
+    t.integer  "shows_count",    :default => 0
     t.float    "latitude"
     t.float    "longitude"
+    t.boolean  "vague_location", :default => false
   end
 
   add_index "venues", ["name"], :name => "index_venues_on_name"

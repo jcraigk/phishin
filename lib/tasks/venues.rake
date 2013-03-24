@@ -2,9 +2,11 @@ namespace :venues do
   
   desc "Find venues that have the same geocode"
   task :dupe_geocodes => :environment do
+    num = 0
     for venue in Venue.relevant.all
-      if other_venue = Venue.where('id != ? and latitude = ? and longitude = ?', venue.id, venue.latitude, venue.longitude).first
-        puts "Found #{other_venue.name} and #{venue.name}"
+      if other_venue = Venue.relevant.where('id != ? and latitude = ? and longitude = ?', venue.id, venue.latitude, venue.longitude).first
+        num += 1
+        puts "#{num}: #{other_venue.id} / #{venue.id} :: #{other_venue.address} (#{other_venue.shows_count}) / #{venue.address} (#{venue.shows_count})"
       end
     end
   end
@@ -42,8 +44,8 @@ namespace :venues do
 
   desc "Update shows_count cache"
   task :update_shows_count => :environment do
-    Venue.all.each do |v|
-      puts "Here: #{v.shows.size}"
+    Venue.all.each_with_index do |v, idx|
+      puts "#{idx}: #{v.shows.size}"
       v.update_attributes(shows_count: v.shows.size)
     end
   end

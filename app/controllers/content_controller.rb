@@ -23,7 +23,7 @@ class ContentController < ApplicationController
   end
   
   def map
-    params[:date_start] ||= '1983-12-02'
+    params[:date_start] ||= '1983-01-01'
     params[:date_stop] ||= Date.today.to_s
     render layout: false if request.xhr?
   end
