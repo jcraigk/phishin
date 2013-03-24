@@ -17,6 +17,7 @@ gem 'jquery-ui-rails'
 gem 'soundmanager-rails'
 gem 'bootstrap-will_paginate'
 gem 'jquery-smooth-scroll-rails'
+gem 'geocoder'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'

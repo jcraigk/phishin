@@ -1,3 +1,16 @@
+<script type="text/javascript" charset="utf-8">
+$(function() {
+  $('#search_date').datepicker({
+    dateFormat: "yy-mm-dd",
+    changeYear: true,
+    changeMonth: true,
+    yearRange: '1987:2013',
+    showOtherMonths: true,
+    selectOtherMonths: true
+  });
+})
+</script>
+
 <%= render 'shared/index_header' %>
 
 <div id="content">
@@ -52,7 +65,7 @@
             <ul class="item_list clickable">
             <% for song in @songs %>
               <li name="<%= song.slug %>">
-                <%= content_tag :h2, link_to_song(song), class: 'wide' %>
+                <%= content_tag :h2, link_to_song(song, params[:term]), class: 'wide' %>
                 <%= content_tag :h3, performances_or_alias_link(song, true), class: 'alt' %>
                 <div style="clear: both;"></div>
               </li>
@@ -64,9 +77,9 @@
             <ul class="item_list clickable">
               <% for venue in @venues %>
                 <li>
-                  <%= content_tag :h2, link_to(truncate(venue.name, length: 45), "/#{venue.slug}"), class: 'wide' %>
+                  <%= content_tag :h2, link_to(highlight(truncate(venue.name, length: 45), params[:term]), "/#{venue.slug}"), class: 'wide' %>
                   <%= content_tag :h3, venue.shows_count, class: 'alt' %>
-                  <%= content_tag :h5, link_to(venue.location, "/map?term=#{venue.location}") %>
+                  <%= content_tag :h5, link_to(highlight(venue.location, params[:term]), "/map?term=#{venue.location}") %>
                   <div style="clear: both;"></div>
                 </li>
               <% end %>
@@ -77,7 +90,7 @@
             <ul class="item_list clickable">
               <% for tour in @tours %>
                 <li>
-                  <%= content_tag :h2, link_to(truncate(tour.name, length: 45), "/#{tour.slug}"), class: 'wide' %>
+                  <%= content_tag :h2, link_to(highlight(truncate(tour.name, length: 45), params[:term]), "/#{tour.slug}"), class: 'wide' %>
                   <%= content_tag :h3, tour.shows_count, class: 'alt' %>
                   <div style="clear: both;"></div>
                 </li>

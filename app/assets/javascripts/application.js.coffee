@@ -17,6 +17,7 @@ $ ->
   
   # Shun IE
   window.location.href = '/browser-unsupported' unless history.pushState
+  # TODO Why do we need histroy?  Why not use History?
   
   # Instantiate stuff
   Ph.Util         = new Util
@@ -30,33 +31,18 @@ $ ->
   $page           = $ '#page'
   
   ###############################################
-  # ON AJAX SUCCESS
+  # Handle special page-based inits on AJAX navigation
   ###############################################
-  $(document).ajaxSuccess( ->
-    
-    # Initialize Google Map
-    Ph.Map.init()
-    
-    # Sortable playlist AJAX load
-    $('#current_playlist').sortable({
-      placeholder: "ui-state-highlight",
-      update: ->
-        Ph.Util.updateCurrentPlaylist 'Track moved in playlist'
-    })
-    
-    # Search datepicker
-    $('#search_date').datepicker({
-      dateFormat: "yy-mm-dd",
-      changeYear: true,
-      changeMonth: true,
-      yearRange: '1987:2013',
-      showOtherMonths: true,
-      selectOtherMonths: true
-    })
-    
-    # Highlight the currently playing track
-    Ph.Player.highlightActiveTrack()
-    
+  $(document).ajaxSuccess( (event, xhr, settings) ->
+    if settings.url.substr(0,4) == '/map'
+      Ph.Map.init();
+    else if settings.url.substr(0,9) == '/playlist'
+      # Sortable playlist AJAX load
+      $('#current_playlist').sortable({
+        placeholder: "ui-state-highlight",
+        update: ->
+          Ph.Util.updateCurrentPlaylist 'Track moved in playlist'
+      })
   )
 
   ###############################################
@@ -123,16 +109,6 @@ $ ->
   # DOM interactions
   ###############################################
   
-  # Search datepicker
-  $('#search_date').datepicker({
-    dateFormat: "yy-mm-dd",
-    changeYear: true,
-    changeMonth: true,
-    yearRange: '1987:2013',
-    showOtherMonths: true,
-    selectOtherMonths: true
-  })
-  
   # Focus => remove other value
   $(document).on 'focus', '#search_term', (e) ->
     $('#search_date').val ''
@@ -141,11 +117,28 @@ $ ->
   
   # Submit search
   $(document).on 'click', '#search_submit', (e) ->
-    Ph.Util.navigateTo '/search?date='+$('#search_date').val()+'&term='+$('#search_term').val()
+    Ph.Util.navigateTo '/search?date='+$('#search_date').val()+'&term='+encodeURI($('#search_term').val())
+  $(document).on 'keypress', '#search_date', (e) ->
+    Ph.Util.navigateTo '/search?date='+$('#search_date').val()+'&term='+encodeURI($('#search_term').val()) if e.which == 13
+  $(document).on 'keypress', '#search_term', (e) ->
+    Ph.Util.navigateTo '/search?date='+$('#search_date').val()+'&term='+encodeURI($('#search_term').val()) if e.which == 13
+    
+  ###############################################
 
   # Submit map search
+  term = $('#map_search_term').val()
+  distance = $('#map_search_distance').val()
+  Ph.Map.handleSearch(term, distance) if term and distance
   $(document).on 'click', '#map_search_submit', (e) ->
-    Ph.Map.handleSearch($('#map_search_term').val(), $('#map_search_distance').val())
+    Ph.Map.handleSearch(term = $('#map_search_term').val(), $('#map_search_distance').val())
+  $(document).on 'keypress', '#map_search_term', (e) ->
+      Ph.Map.handleSearch(term = $('#map_search_term').val(), $('#map_search_distance').val()) if e.which == 13
+  $(document).on 'keypress', '#map_search_distance', (e) ->
+      Ph.Map.handleSearch(term = $('#map_search_term').val(), $('#map_search_distance').val()) if e.which == 13
+  $(document).on 'keypress', '#map_date_start', (e) ->
+      Ph.Map.handleSearch(term = $('#map_search_term').val(), $('#map_search_distance').val()) if e.which == 13
+  $(document).on 'keypress', '#map_date_stop', (e) ->
+      Ph.Map.handleSearch(term = $('#map_search_term').val(), $('#map_search_distance').val()) if e.which == 13
 
   ###############################################
   

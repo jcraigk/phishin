@@ -7,8 +7,38 @@
  */
 
 #google_map {
- width: 100%;
- height: 600px;
+  width: 100%;
+  height: 600px;
+  font-family: 'Rambla', sans-serif;
+}
+#google_map label {
+  width: auto;
+  display:inline;
+}
+#google_map img {
+  max-width: none;
+}
+#google_map h1 {
+  margin-top: -10px;
+  font-size: 17px;
+}
+#google_map h2 {
+  margin-top: -30px;
+  font-size: 14px;
+}
+#google_map h3 {
+  margin-top: -10px;
+  font-size: 13px;
+}
+#google_map ul {
+  margin-top: -20px;
+  font-size: 13px;
+}
+#map_date_start {
+  width: 90px;
+}
+#map_date_stop {
+  width: 90px;
 }
 
 html {
@@ -505,7 +535,7 @@ h2.for_content {
 }
 #map_search_distance {
   margin-top: 10px;
-  width: 30px;
+  width: 40px;
 }
 #map_search_submit {
   margin-left: 20px;
@@ -871,4 +901,10 @@ h2.for_content {
 .centered {
   margin: 0 auto;
   text-align: center;
+}
+.highlight {
+  background-color: #fff938;
+}
+.optional {
+  color: #777;
 }

@@ -45,7 +45,7 @@ Phishin::Application.routes.draw do
   get     '/download/:md5'                => 'downloads#download_album', as: 'download_album'
 
   # Map
-  get     '/map-search'                   => 'map#search', as: 'map_search'
+  get     '/search-map'                   => 'map#search', as: 'map_search'
   
   # Catch-all matcher for short content URLs
   get     '/(:glob(/:anchor))' => 'content#glob'

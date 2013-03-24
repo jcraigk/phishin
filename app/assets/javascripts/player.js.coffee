@@ -131,7 +131,7 @@ class @Player
             #   alert(r.msg)
         })
     else
-      @util.feedback { 'msg': 'You need to make a playlist to use that button' }
+      @util.feedback { 'type': 'alert', 'msg': 'You need to make a playlist to use that button' }
   
   nextTrack: ->
     that = this
@@ -147,7 +147,7 @@ class @Player
             that.stopAndUnload(@active_track)
       })
     else
-      @util.feedback { 'msg': 'You need to make a playlist to use that button' }
+      @util.feedback { 'type': 'alert', 'msg': 'You need to make a playlist to use that button' }
   
   stopAndUnload: (track_id=0) ->
     if @active_track == track_id or track_id == 0

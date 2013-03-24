@@ -1,33 +1,44 @@
 namespace :venues do
   
-  desc "Get latitude/longitude from Google Geocoding API"
-  task :geocode => :environment do
-    require 'json'
-    require 'net/http'
-    require 'open-uri'
-    missing_count = 0
-    venues = Venue.relevant.where('vague_location = FALSE and (latitude IS NULL or longitude IS NULL)').order('id').all
-    for venue in venues
-      address = "#{URI.encode venue.name},#{URI.encode venue.location}"
-      url = "http://maps.googleapis.com/maps/api/geocode/json?address=#{address}&sensor=false"
-      # puts url
-      response = Net::HTTP.get_response(URI.parse(url))
-      results = JSON.parse(response.body)['results']
-      # If no/multiple results, will have to curate
-      if results.size == 0 or results.size > 1
-        puts "No/Multiple for #{venue.name} (#{venue.id})"
-        puts "#{address}"
-        missing_count += 1
-      else
-        latitude = results.first['geometry']['location']['lat']
-        longitude = results.first['geometry']['location']['lng']
-        venue.update_attributes(latitude: latitude, longitude: longitude)
-        puts "UPDATED: #{venue.name} (#{venue.id})"
+  desc "Find venues that have the same geocode"
+  task :dupe_geocodes => :environment do
+    for venue in Venue.relevant.all
+      if other_venue = Venue.where('id != ? and latitude = ? and longitude = ?', venue.id, venue.latitude, venue.longitude).first
+        puts "Found #{other_venue.name} and #{venue.name}"
       end
-      exit
     end
-    puts "#{missing_count} missing"
   end
+  
+  # Geocoder gem should be used instead of future geocoding
+  #
+  # desc "Get latitude/longitude from Google Geocoding API"
+  # task :geocode => :environment do
+  #   require 'json'
+  #   require 'net/http'
+  #   require 'open-uri'
+  #   missing_count = 0
+  #   venues = Venue.relevant.where('vague_location = FALSE and (latitude IS NULL or longitude IS NULL)').order('id').all
+  #   for venue in venues
+  #     address = "#{URI.encode venue.name},#{URI.encode venue.location}"
+  #     url = "http://maps.googleapis.com/maps/api/geocode/json?address=#{address}&sensor=false"
+  #     # puts url
+  #     response = Net::HTTP.get_response(URI.parse(url))
+  #     results = JSON.parse(response.body)['results']
+  #     # If no/multiple results, will have to curate
+  #     if results.size == 0 or results.size > 1
+  #       puts "No/Multiple for #{venue.name} (#{venue.id})"
+  #       puts "#{address}"
+  #       missing_count += 1
+  #     else
+  #       latitude = results.first['geometry']['location']['lat']
+  #       longitude = results.first['geometry']['location']['lng']
+  #       venue.update_attributes(latitude: latitude, longitude: longitude)
+  #       puts "UPDATED: #{venue.name} (#{venue.id})"
+  #     end
+  #     exit
+  #   end
+  #   puts "#{missing_count} missing"
+  # end
 
   desc "Update shows_count cache"
   task :update_shows_count => :environment do
