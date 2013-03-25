@@ -30,10 +30,10 @@ $(function() {
     <input type="text" name="date" id="map_search_distance" value="<%= params[:distance] || 50 %>">&nbsp;&nbsp;miles &nbsp;
     <button type="button" class="btn" id="map_search_submit">Search</button><br />    
     <span class="optional">
-      Within timeframe
-      <input type="text" name="date_start" id="map_date_start" placeholder="earliest" value="<%= params[:date_start] %>">
+      within timeframe
+      <input type="text" class="small_input" name="date_start" id="map_date_start" placeholder="earliest" value="<%= params[:date_start] %>">
       &nbsp;&nbsp;to &nbsp;
-      <input type="text" name="date_start" id="map_date_stop" placeholder="latest" value="<%= params[:date_stop] %>">
+      <input type="text" class="small_input" name="date_start" id="map_date_stop" placeholder="latest" value="<%= params[:date_stop] %>">
     </span>
   </div>
   

@@ -7,11 +7,11 @@ class SearchController < ApplicationController
       @results = true
       @total_results = 0
       if date.present?
-        @total_results += 1 if @show = Show.where(date: params[:date]).first
-        @total_results += @other_shows.size if @other_shows = Show.where('extract(month from date) = ?', params[:date][5..6]).where('extract(day from date) = ?', params[:date][8..9]).order('date desc').all
+        @total_results += 1 if @show = Show.where(date: params[:date]).includes(:venue).first
+        @total_results += @other_shows.size if @other_shows = Show.where('extract(month from date) = ?', params[:date][5..6]).where('extract(day from date) = ?', params[:date][8..9]).where('date != ?', params[:date]).includes(:venue).order('date desc').all
       else
         if term.present?
-          @songs = Song.kinda_matching(term).order('title asc').all
+          @songs = Song.where('lower(title) LIKE ?', "%#{term}%").order('title asc').all
           @venues = Venue.where('lower(name) LIKE ? OR lower(past_names) LIKE ? OR lower(city) LIKE ?', "%#{term}%", "%#{term}%", "%#{term}%").order('name asc').all
           # TODO Tours
           @tours = Tour.where('lower(name) LIKE ?', "%#{term}%").order('name asc').all

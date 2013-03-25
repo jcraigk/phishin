@@ -44,7 +44,7 @@ class @Map
     this._setCenter results[0].geometry.location
     lat = results[0].geometry.location.lat()
     lng = results[0].geometry.location.lng()
-    this._createMarker(lat, lng, @green_icon)
+    # this._createMarker(lat, lng, @green_icon)
     # Create circle for zoom level
     @view_circle.setMap null if @init == false
     @init = false

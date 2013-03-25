@@ -132,7 +132,7 @@ class PlaylistsController < ApplicationController
         venue: "#{track.show.venue.name}",
         venue_url: "/#{track.show.venue.slug}",
         city: track.show.venue.location,
-        city_url: "/map?term=#{track.show.venue.location}"
+        city_url: "/map?term=#{CGI::escape(track.show.venue.location)}"
       }
     else
       render json: { success: false }

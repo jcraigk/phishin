@@ -356,6 +356,11 @@ h2.for_content {
   font-size: 37px;
   font-family: 'Nothing You Could Do', cursive;
 }
+#content > h2 {
+  margin-top: 20px;
+  font-size: 28px;
+  font-family: 'Rambla', sans-serif;
+}
 #content > h4 {
   margin-left: 60px;
 }
@@ -919,7 +924,12 @@ h2.for_content {
 }
 .optional {
   color: #777;
+  font-size: 11px;
 }
-.header_link {
-  font-size: 13px;
+.small_input {
+  width: 70px !important;
+  padding: 3px !important;
+  height: 20px !important;
+  font-size: 11px !important;
+  color: #777 !important;
 }

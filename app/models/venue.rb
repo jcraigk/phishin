@@ -7,7 +7,6 @@ class Venue < ActiveRecord::Base
   friendly_id :name, :use => :slugged
   
   geocoded_by :address
-  after_validation :geocode
   
   scope :relevant, -> { where("shows_count > 0") }
   

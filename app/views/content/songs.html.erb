@@ -2,7 +2,7 @@
   
 <div id="content">
   
-  <%= content_tag :h2, pluralize(@songs.size, 'Song'), class: 'for_content' %>
+  <%= content_tag :h2, pluralize(@songs.total_entries, 'Song'), class: 'for_content' %>
   <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-text-height"></i> Alphabetically' => 'title', '<i class="icon-list"></i> Number of Tracks' => 'performances'} } %>
   <div style="clear: both;"></div>
   
