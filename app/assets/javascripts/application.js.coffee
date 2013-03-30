@@ -46,7 +46,7 @@ $ ->
         update: ->
           Ph.Util.updateCurrentPlaylist 'Track moved in playlist'
       })
-    Ph.Player.highlightActiveTrack() #TODO: this shouldn't happen every singl ajax success
+    Ph.Player.highlightActiveTrack() #TODO: this shouldn't happen every single ajax success, only on page refreshes
   )
 
   ###############################################
@@ -114,11 +114,13 @@ $ ->
   ###############################################
   
   $(document).on 'mouseover', '#player_title_container', (e) ->
-    $('#player_title').css('visibility', 'hidden')
-    $('#player_title_like').css('visibility', 'visible')
+    if $('#app_data').data('player-invoked')
+      $('#player_title').css 'display', 'none'
+      $('#player_likes_container').css 'display', 'inline-block'
   $(document).on 'mouseout', '#player_title_container', (e) ->
-    $('#player_title_like').css('visibility', 'hidden')
-    $('#player_title').css('visibility', 'visible')
+    if $('#app_data').data('player-invoked')
+      $('#player_likes_container').css 'display', 'none'
+      $('#player_title').css 'display', 'block'
 
   # Focus => remove other value
   $(document).on 'focus', '#search_term', (e) ->
@@ -323,9 +325,15 @@ $ ->
       dataType: 'json',
       success: (r) ->
         if r.success
-          if r.liked then $this.addClass('liked') else $this.removeClass('liked')
           Ph.Util.feedback({ 'msg': r.msg })
-          $this.siblings('span').html(r.likes_count)
+          if r.liked then $this.addClass('liked') else $this.removeClass('liked')
+          $this.siblings('span').html r.likes_count
+          # Update other instances of this track's Like controls
+          $('.like_toggle[data-type="track"]').each( ->
+            unless $this.data('id') != $(this).data('id') or $this.is $(this)
+              if r.liked then $(this).addClass('liked') else $(this).removeClass('liked')
+              $(this).siblings('span').html r.likes_count
+          )
         else
           Ph.Util.feedback({ 'type': 'alert', 'msg': r.msg })
     })

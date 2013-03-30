@@ -12,6 +12,7 @@ class @Player
     @last_volume      = 100
     @duration         = 0
     @app_name         = $('#app_data').data('app-name')
+    @$app_data        = $ '#app_data'
     @$playpause       = $ '#playpause'
     @$scrubber        = $ '#scrubber'
     @$volume_slider   = $ '#volume_slider'
@@ -22,6 +23,8 @@ class @Player
     @$player_title    = $ '#player_title'
     @$player_detail   = $ '#player_detail'
     @$playlist_button = $ '#playlist_button .btn'
+    @$likes_count     = $ '#player_likes_container > .likes_large > span'
+    @$likes_link      = $ '#player_likes_container > .likes_large > a'
 
   startScrubbing: ->
     @scrubbing = true
@@ -96,8 +99,9 @@ class @Player
       }
       @active_track = track_id
       this.highlightActiveTrack()
+      @$app_data.data 'player-invoked', true
     else
-      alert('already playing')
+      @util.feedback { 'msg': 'That is already the current track' }
   
   resetPlaylist: (track_id) ->
     $.ajax({
@@ -163,6 +167,7 @@ class @Player
       this._updatePauseState false
       @$time_remaining.html ""
       @$time_elapsed.html ""
+      @$app_data.data 'player-invoked', false
   
   highlightActiveTrack: ->
     $('.playable_track').removeClass 'active_track'
@@ -228,6 +233,12 @@ class @Player
     @duration = r.duration
     if r.title.length > 26 then @$player_title.addClass('long_title') else @$player_title.removeClass('long_title')
     @$player_title.html(r.title)
+    @$likes_count.html(r.likes_count)
+    @$likes_link.data('id', r.id)
+    if r.liked
+      @$likes_link.addClass 'liked'
+    else
+      @$likes_link.removeClass 'liked'
     if @duration == 0
       @$player_detail.html ""
       @$time_elapsed.html ""

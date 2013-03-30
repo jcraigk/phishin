@@ -151,6 +151,19 @@ a:hover {
   font-size: 24px;
   font-family: 'Nothing You Could Do', cursive;
 }
+#player_likes_container {
+  margin: 0 auto;
+//  border: 1px solid red;
+  text-align: center;
+  display: inline-block;
+  height: 40px;
+}
+#player_likes_container .likes_large a {
+  margin-top: 10px;
+}
+#player_likes_container .likes_large span {
+  line-height: 44px;
+}
 .likes_small {
   float: left;
   width: 70px;
@@ -204,7 +217,7 @@ a:hover {
   height: 80px;
   margin-top: 6px;
   border-radius: 8px;
-  border: 2px solid #555;
+  border: 1px solid #555;
   background-color: #5ab1ff;
   padding: 10px;
   vertical-align: middle;
@@ -596,7 +609,9 @@ h2.for_content {
   margin-top: -5px;
   margin-left: 300px;
   width: 410px;
-
+  height: 40px;
+//  border: 1px solid black;
+  text-align: center;
 }
 #player_title {
   line-height: 40px;
@@ -842,6 +857,7 @@ h2.for_content {
 }
 #footer_container a {
   margin-left: 20px;
+  color: #ddd;
 }
 #feedback {
   position: fixed;
