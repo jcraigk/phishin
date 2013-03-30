@@ -113,6 +113,13 @@ $ ->
   # DOM interactions
   ###############################################
   
+  $(document).on 'mouseover', '#player_title_container', (e) ->
+    $('#player_title').css('visibility', 'hidden')
+    $('#player_title_like').css('visibility', 'visible')
+  $(document).on 'mouseout', '#player_title_container', (e) ->
+    $('#player_title_like').css('visibility', 'hidden')
+    $('#player_title').css('visibility', 'visible')
+
   # Focus => remove other value
   $(document).on 'focus', '#search_term', (e) ->
     $('#search_date').val ''

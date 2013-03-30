@@ -116,10 +116,6 @@ class Track < ActiveRecord::Base
     "%d:%02d" % [duration / 60000, duration % 60000 / 1000]
   end
   
-  def song_slug
-    songs.first.slug
-  end
-  
   def generic_slug
     title.downcase.gsub(/[^a-z]/, ' ').strip.gsub(/\s+/, ' ').gsub(/\s/, '-')
   end

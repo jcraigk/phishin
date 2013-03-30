@@ -52,7 +52,9 @@
 #map_date_stop {
   width: 90px;
 }
-
+body {
+  background-color: #333 !important;
+}
 html {
   margin: 0;
   padding: 0;
@@ -170,7 +172,7 @@ a:hover {
 }
 .likes_small a:hover {
   cursor: pointer;
-  background-position: -30px 0;
+  background-position: -30px 0 !important;
   text-decoration: none !important;
 }
 .likes_small span {
@@ -258,6 +260,7 @@ a:hover {
   vertical-align: bottom;
   background: #ddd url('brushed-metal.jpg');
   text-align: center;
+  box-shadow: 0px 6px 20px #666;
 //  border: 1px solid red;
 }
 #header h1 {
@@ -350,6 +353,7 @@ h2.for_content {
   border-left: 2px solid #555;
   border-right: 2px solid #555;
   border-bottom: 1px solid #555;
+  background-color: #fff;
 }
 #content > h1 {
   margin-top: 20px;
@@ -586,13 +590,16 @@ h2.for_content {
   background-color: #b7f2af !important;
   box-shadow: 0px 0px 16px #3b995f !important;
 }
-#player_title {
-  line-height: 40px;
+#player_title_container {
   padding: 0px;
   position: fixed;
   margin-top: -5px;
   margin-left: 300px;
   width: 410px;
+
+}
+#player_title {
+  line-height: 40px;
   text-align: center;
   overflow: hidden;
   font-family: 'Fjalla One', sans-serif;
