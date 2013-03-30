@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130324014414) do
+ActiveRecord::Schema.define(:version => 20130330035726) do
 
   create_table "albums", :force => true do |t|
     t.string   "name"
@@ -102,6 +102,7 @@ ActiveRecord::Schema.define(:version => 20130324014414) do
   end
 
   add_index "tours", ["name"], :name => "index_tours_on_name"
+  add_index "tours", ["slug"], :name => "index_tours_on_slug", :unique => true
   add_index "tours", ["starts_on"], :name => "index_tours_on_starts_on"
 
   create_table "tracks", :force => true do |t|
@@ -117,9 +118,11 @@ ActiveRecord::Schema.define(:version => 20130324014414) do
     t.integer  "duration"
     t.string   "set"
     t.integer  "likes_count",             :default => 0
+    t.string   "slug"
   end
 
   add_index "tracks", ["likes_count"], :name => "index_tracks_on_likes_count"
+  add_index "tracks", ["slug"], :name => "index_tracks_on_slug"
 
   create_table "users", :force => true do |t|
     t.string   "email",                  :default => "", :null => false
@@ -160,5 +163,6 @@ ActiveRecord::Schema.define(:version => 20130324014414) do
   end
 
   add_index "venues", ["name"], :name => "index_venues_on_name"
+  add_index "venues", ["slug"], :name => "index_venues_on_slug", :unique => true
 
 end

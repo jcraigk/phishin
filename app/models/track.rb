@@ -49,6 +49,8 @@ class Track < ActiveRecord::Base
   before_validation :populate_song, :populate_position
   after_save :set_duration
   
+  def should_generate_new_friendly_id?; true; end
+  
   # Return the full name of the set given the stored codes
   def set_name
     case set
@@ -109,10 +111,6 @@ class Track < ActiveRecord::Base
   def file_url
     audio_file.to_s
   end
-
-  def slug
-    songs.first.slug
-  end
   
   def duration_readable
     "%d:%02d" % [duration / 60000, duration % 60000 / 1000]
@@ -120,6 +118,10 @@ class Track < ActiveRecord::Base
   
   def song_slug
     songs.first.slug
+  end
+  
+  def generic_slug
+    title.downcase.gsub(/[^a-z]/, ' ').strip.gsub(/\s+/, ' ').gsub(/\s/, '-')
   end
 
   protected
@@ -135,8 +137,8 @@ class Track < ActiveRecord::Base
 
   def populate_song
     if self.songs.empty?
-      sc = Song.where 'lower(title) = ?', self.title.downcase
-      self.songs << sc if sc
+      song = Song.where 'lower(title) = ?', self.title.downcase
+      self.songs << song if song
     end
   end
 

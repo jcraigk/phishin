@@ -1,5 +1,48 @@
 namespace :tracks do
   
+  # Create track slugs
+  task create_slugs: :environment do
+    Track.all.each do |track|
+      track.slug = track.generic_slug
+      track.save!
+      puts "#{track.title} :: #{track.generic_slug}"
+    end
+  end
+  
+  # Uniquify track slugs
+  task uniquify_track_slugs: :environment do
+    Show.order('date desc').each do |show|
+      puts "Working: #{show.date}"
+      tracks = show.tracks.order('position asc').all
+      # tracks = Track.where('show_id = 163').all
+      tracks.each do |track|
+        dupes = []
+        tracks.each { |track2| dupes << track2 if track.id != track2.id and track.slug == track2.slug }
+        if dupes.size > 0
+          num = 2
+          dupes.each do |track|
+            new_slug = "#{track.slug}-#{num}"
+            puts "converting #{track.slug} to #{new_slug}"
+            track.slug = new_slug
+            track.save!
+            num += 1
+          end
+        end
+      end
+    end
+  end
+  
+  # Tighten up positions
+  task tighten_positions: :environment do
+    Show.order('date desc').each do |show|
+      puts "Tightening: #{show.date}"
+      show.tracks.order('position asc').each_with_index do |track, idx|
+        # puts "#{idx+1} for #{track.title} (was #{track.position})"
+        track.update_attributes(position: (idx+1))
+      end
+    end
+  end
+  
   # Label sets
   task label_null_sets: :environment do
     tracks = Track.where("set IS NULL").order(:position)

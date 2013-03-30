@@ -37,7 +37,7 @@ $(function() {
               <li>
                 <%= content_tag :h2, link_to("<span class=\"highlight\">#{@show.date.strftime("%-m/%-d/%y")}</span>".html_safe, "/#{@show.date}") %>
                 <%= content_tag :h4, link_to(@show.venue.name.html_safe, "/#{@show.venue.slug}") %>
-                <%= content_tag :h5, link_to(@show.venue.location, "/map") %>
+                <%= content_tag :h5, link_to(@show.venue.location, "/map?term=#{CGI::escape(@show.venue.location)}") %>
                 <div style="clear: both;"></div>
               </li>
             </ul>
@@ -51,7 +51,7 @@ $(function() {
                 <li>
                   <%= content_tag :h2, link_to("<span class=\"highlight\">#{show.date.strftime("%-m/%-d")}</span>#{show.date.strftime("/%y")}".html_safe, "/#{show.date}") %>
                   <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}") %>
-                  <%= content_tag :h5, link_to(show.venue.location, "/map") %>
+                  <%= content_tag :h5, link_to(show.venue.location, "/map?term=#{CGI::escape(show.venue.location)}") %>
                   <div style="clear: both;"></div>
                 </li>
               <% end %>
