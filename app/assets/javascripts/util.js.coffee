@@ -14,7 +14,7 @@ class @Util
       icon = 'icon-exclamation-sign'
     else
       css = 'feedback_notice'
-      icon = 'icon-ok'
+      icon = 'icon-ok-sign'
     id = this._uniqueID()
     @$feedback.append "<p class=\"#{css}\" id=\"#{id}\"><i class=\"#{icon}\"></i> #{feedback.msg}</p>"
     setTimeout( ->

@@ -905,21 +905,21 @@ h2.for_content {
   margin: 5px;
   z-index: 200;
   width: 300px;
-  font-weight: bold;
-  font-size: 15px;
+  font-family: 'Rambla', sans-serif;
+  font-size: 16px;
   color: #333;
 }
 .feedback_notice {
-  background-color: #bbddb9;
-  border: 2px solid #349941;
+  background-color: #d0f7d0;
+  border: 2px solid #649976;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
   padding: 5px;
 }
 .feedback_alert {
-  background-color: #dd8c91;
-  border: 2px solid #991c23;
+  background-color: #ffc7c6;
+  border: 2px solid #994c65;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;

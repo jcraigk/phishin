@@ -25,6 +25,7 @@ class @Player
     @$playlist_button = $ '#playlist_button .btn'
     @$likes_count     = $ '#player_likes_container > .likes_large > span'
     @$likes_link      = $ '#player_likes_container > .likes_large > a'
+    @$feedback.hide()
   
   # Check for track anchor to scroll-to [and play]
   onReady: ->

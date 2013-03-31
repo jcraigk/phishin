@@ -25,24 +25,6 @@ $ ->
   $alert          = $ '.feedback_alert'
   $ajax_overlay   = $ '#ajax_overlay'
   $page           = $ '#page'
-  
-  ###############################################
-  # Handle special page-based inits on AJAX navigation
-  ###############################################
-  $(document).ajaxSuccess( (event, xhr, settings) ->
-    if settings.url.substr(0,4) == '/map'
-      Ph.Map.initMap()
-      term = $('#map_search_term').val()
-      distance = $('#map_search_distance').val()
-      Ph.Map.handleSearch(term, distance) if term and distance
-    else if settings.url.substr(0,9) == '/playlist'
-      # Sortable playlist AJAX load
-      $('#current_playlist').sortable({
-        placeholder: "ui-state-highlight",
-        update: ->
-          Ph.Util.updateCurrentPlaylist 'Track moved in playlist'
-      })
-  )
 
   ###############################################
   # Prepare history.js
@@ -70,9 +52,26 @@ $ ->
           if anchor = state.data.href.split("/")[2]
             $('#app_data').data('anchor', anchor)
             $('#app_data').data('autoplay', false)
+          
           # Process page-specific things
           Ph.Player.onReady() # For scrolling to and auto-playing a track
           Ph.Player.highlightActiveTrack() # For highlighting current track in a list
+          
+          # Map
+          if state.data.href.substr(0,4) == '/map'
+            Ph.Map.initMap()
+            term = $('#map_search_term').val()
+            distance = $('#map_search_distance').val()
+            Ph.Map.handleSearch(term, distance) if term and distance
+          
+          # Playlist
+          else if state.data.href.substr(0,9) == '/playlist'
+            # Sortable playlist AJAX load
+            $('#current_playlist').sortable({
+              placeholder: "ui-state-highlight",
+              update: ->
+                Ph.Util.updateCurrentPlaylist 'Track moved in playlist'
+            })
       )
       
   # Click a link to load context via ajax
@@ -81,28 +80,23 @@ $ ->
       Ph.Util.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
       false
   
-  # Shun IE
-  # window.location.href = '/browser-unsupported' unless history.pushState
-  
   ###############################################
   # Handle feedback on DOM load
   ###############################################
-  if $notice.html() != ''
+  if $notice and $notice.html() != ''
     $notice.show 'slide'
     setTimeout( ->
       $notice.hide 'slide'
     , 3000)
   else
     $notice.hide()
-  if $alert.html() != ''
+  if $alert and $alert.html() != ''
     $alert.show 'slide'
     setTimeout( ->
       $alert.hide 'slide'
     , 3000)
   else
     $alert.hide()
-  
-  $('#player_feedback').hide()
   
   ###############################################
   # Auto-play or scroll to and play anchor

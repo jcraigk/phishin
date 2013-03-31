@@ -1,4 +1,8 @@
 <div id="feedback">
-  <p class="feedback_notice"><%= notice.html_safe if notice%></p>
-  <p class="feedback_alert"><%= alert.html_safe if alert %></p>
+  <% if notice %>
+    <p class="feedback_notice"><%= notice.html_safe %></p>
+  <% end %>
+  <% if alert %>
+    <p class="feedback_alert"><%= alert.html_safe %></p>
+  <% end %>
 </div>
