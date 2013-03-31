@@ -6,7 +6,7 @@ class DownloadsController < ApplicationController
   def download_track
     track = Track.find(params[:track_id])
     redirect_to(:root, alert: 'The requested file could not be found') and return unless File.exists?(track.audio_file.path)
-    log_this_request 'download'
+    log_this_track_request 'download'
     send_file track.audio_file.path, :type => "audio/mpeg", :disposition => "attachment", :filename => "Phish #{track.show.date} #{track.title}.mp3", :length => File.size(track.audio_file.path)
   end
   
@@ -14,7 +14,7 @@ class DownloadsController < ApplicationController
   def play_track
     track = Track.find(params[:track_id])
     redirect_to(:root) and return unless File.exists?(track.audio_file.path)
-    log_this_request 'play'
+    log_this_track_request 'play'
     send_file track.audio_file.path, :type => "audio/mpeg", :filename => "#{track.id}.mp3", :length => File.size(track.audio_file.path)
   end
 
@@ -45,6 +45,7 @@ class DownloadsController < ApplicationController
   def download_album
     if album = Album.find_by_md5(params[:md5])
       if album.completed_at and File.exists? album.zip_file.path
+        log_this_album_request album, 'download'
         send_file album.zip_file.path, :type => album.zip_file.content_type, :disposition => "attachment", :filename => "Phish - #{album.name}", :length => album.zip_file.size
       elsif album.error_at
         render :text => "This download is not available because an error occurred while processing it"
@@ -86,6 +87,7 @@ class DownloadsController < ApplicationController
       album = Album.create(:name => album_name, :md5 => checksum, :is_custom_playlist => is_custom_playlist)
       # Create zipfile asynchronously using resque
       Resque.enqueue(AlbumCreator, album.id, tracks.map(&:id))
+      log_this_album_request album, 'request'
     end
     { :status => status, :url => download_album_path(album.md5) }
   end
@@ -99,9 +101,14 @@ class DownloadsController < ApplicationController
     digest.to_s
   end
   
-  def log_this_request(type)
+  def log_this_track_request(kind)
     current_user_id = (current_user ? current_user.id : 0)
-    Request.create(track_id: params[:track_id], user_id: current_user_id, type: type, created_at: Time.now)
+    TrackRequest.create(track_id: params[:track_id], user_id: current_user_id, kind: kind, created_at: Time.now)
+  end
+  
+  def log_this_album_request(album, kind)
+    current_user_id = (current_user ? current_user.id : 0)
+    AlbumRequest.create(album_id: album.id, user_id: current_user_id, name: album.name, md5: album.md5, kind: kind, created_at: Time.now)
   end
 
 end

@@ -11,7 +11,16 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130330035726) do
+ActiveRecord::Schema.define(:version => 20130331022752) do
+
+  create_table "album_requests", :force => true do |t|
+    t.integer  "album_id"
+    t.integer  "user_id"
+    t.string   "name"
+    t.string   "md5"
+    t.string   "kind"
+    t.datetime "created_at"
+  end
 
   create_table "albums", :force => true do |t|
     t.string   "name"
@@ -52,13 +61,6 @@ ActiveRecord::Schema.define(:version => 20130330035726) do
   end
 
   add_index "rails_admin_histories", ["item", "table", "month", "year"], :name => "index_rails_admin_histories"
-
-  create_table "requests", :force => true do |t|
-    t.integer  "track_id"
-    t.integer  "user_id"
-    t.string   "type"
-    t.datetime "created_at"
-  end
 
   create_table "shows", :force => true do |t|
     t.date     "date"
@@ -104,6 +106,13 @@ ActiveRecord::Schema.define(:version => 20130330035726) do
   add_index "tours", ["name"], :name => "index_tours_on_name"
   add_index "tours", ["slug"], :name => "index_tours_on_slug", :unique => true
   add_index "tours", ["starts_on"], :name => "index_tours_on_starts_on"
+
+  create_table "track_requests", :force => true do |t|
+    t.integer  "track_id"
+    t.integer  "user_id"
+    t.string   "type"
+    t.datetime "created_at"
+  end
 
   create_table "tracks", :force => true do |t|
     t.integer  "show_id"

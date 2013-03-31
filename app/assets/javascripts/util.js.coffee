@@ -79,7 +79,7 @@ class @Util
     else if r.status == 'Error'
       clearTimeout @download_poller
       @$download_modal.modal 'hide'
-      that.feedback { 'type': 'alert', 'msg': 'An error occurred while processing your request' }
+      this.feedback { 'type': 'alert', 'msg': 'An error occurred while processing your request' }
     else
       if first_call
         clearTimeout @download_poller
