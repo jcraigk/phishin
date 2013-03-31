@@ -46,7 +46,6 @@ $ ->
         update: ->
           Ph.Util.updateCurrentPlaylist 'Track moved in playlist'
       })
-    Ph.Player.highlightActiveTrack() #TODO: this shouldn't happen every single ajax success, only on page refreshes
   )
 
   ###############################################
@@ -57,7 +56,7 @@ $ ->
   History.Adapter.bind window, 'statechange', ->
     State = History.getState()
     History.log State.data, State.title, State.url
-  History.Adapter.bind window, 'popstate', ->   
+  History.Adapter.bind window, 'popstate', ->
     state = window.History.getState()
     if state.data.href != undefined and !Ph.Util.page_init
       # alert "Loading #{state.data.href}"
@@ -67,9 +66,18 @@ $ ->
         state.data.href, (response, status, xhr) ->
           alert("ERROR\n\n"+response) if status == 'error'
           $ajax_overlay.css 'visibility', 'hidden'
+          
+          # Report href to Google Analytics
+          _gaq.push([ '_trackPageview', state.data.href ]);
+          
+          # Auto-scroll and highlight track anchor if present
+          if anchor = state.data.href.split("/")[2]
+            $('#app_data').data('anchor', anchor)
+            $('#app_data').data('autoplay', false)
+          # Process page-specific things
+          Ph.Player.onReady() # For scrolling to and auto-playing a track
+          Ph.Player.highlightActiveTrack() # For highlighting current track in a list
       )
-      # Report href to Google Analytics
-      _gaq.push([ '_trackPageview', state.data.href ]); 
       
   # Click a link to load context via ajax
   $(document).on 'click', 'a', ->
@@ -101,26 +109,12 @@ $ ->
   # Auto-play or scroll to and play anchor
   ###############################################
   soundManager.onready( ->
-    if anchor_name = $('#app_data').data 'anchor'
-      if $el = $('li[data-anchor='+anchor_name+']')
-        $('html,body').animate({scrollTop: $el.offset().top - 300}, 500)
-        Ph.Player.playTrack $el.data('id')
-    else if $('#app_data').data('autoplay') == true
-      Ph.Player.playTrack $('.playable_track').first().data('id')
+    Ph.Player.onReady()
   )
 
   ###############################################
   # DOM interactions
   ###############################################
-  
-  $(document).on 'mouseover', '#player_title_container', (e) ->
-    if $('#app_data').data('player-invoked')
-      $('#player_title').css 'display', 'none'
-      $('#player_likes_container').css 'display', 'inline-block'
-  $(document).on 'mouseout', '#player_title_container', (e) ->
-    if $('#app_data').data('player-invoked')
-      $('#player_likes_container').css 'display', 'none'
-      $('#player_title').css 'display', 'block'
 
   # Focus => remove other value
   $(document).on 'focus', '#search_term', (e) ->
@@ -201,7 +195,7 @@ $ ->
           Ph.Util.feedback { 'type': 'alert', 'msg': r.msg }
     })
   
-  # Clear playlist should stop and unload current sound
+  # Clear playlist stops and unloads current sound
   $(document).on 'click', '#clear_playlist', (e) ->
     Ph.Player.stopAndUnload()
   
@@ -306,6 +300,16 @@ $ ->
 
   ###############################################
   
+  # Hover on player title to reveal Like toggle
+  $(document).on 'mouseover', '#player_title_container', (e) ->
+    if $('#app_data').data('player-invoked')
+      $('#player_title').css 'display', 'none'
+      $('#player_likes_container').css 'display', 'inline-block'
+  $(document).on 'mouseout', '#player_title_container', (e) ->
+    if $('#app_data').data('player-invoked')
+      $('#player_likes_container').css 'display', 'none'
+      $('#player_title').css 'display', 'block'
+  
   # Like tooltip
   $('.likes_large a').tooltip({
     placement: 'bottom',
@@ -361,9 +365,10 @@ $ ->
     Ph.Util.followLink $(this).find 'a'
   
   # Follow h1>a links in .item_list.clickable > li
-  $(document).on 'click', '.item_list > li', ->
+  $(document).on 'click', '.item_list > li', (e) ->
     if $(this).parent('ul').hasClass 'clickable'
-      Ph.Util.followLink $(this).children('h2').find 'a'
+      unless e.target.target and e.target.target == '_blank'
+        Ph.Util.followLink $(this).children('h2').find 'a'
   
   # Share links bring up a modal to display a url
   $(document).on 'click', '.share', ->

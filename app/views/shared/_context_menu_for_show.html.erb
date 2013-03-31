@@ -8,12 +8,13 @@
         <%= content_tag :li, link_to('<i class="icon-arrow-right"></i>&nbsp;&nbsp;Go to show'.html_safe, "/#{show.date}") %>
       <% end %>
       <%= content_tag :li, link_to('<i class="icon-share-alt"></i>&nbsp;&nbsp;Share'.html_safe, "null", class: 'share', data: { url: "/#{show.date}"}) %>
-        <%= content_tag :li, link_to("<i class=\"icon-list\"></i>&nbsp;&nbsp;Add to Playlist".html_safe, "null", class: 'playlist_add_show', data: { id: show.id }) %>
+      <%= content_tag :li, link_to("<i class=\"icon-list\"></i>&nbsp;&nbsp;Add to Playlist".html_safe, "null", class: 'playlist_add_show', data: { id: show.id }) %>
       <%= content_tag :li, link_to('<i class="icon-download"></i>&nbsp;&nbsp;Download MP3s'.html_safe, "null", data: { url: download_show_path(show.date) }, class: "download-album") %>
-    <% if viewing_this_show %>
-      <%= content_tag :li, link_to('<i class="icon-chevron-right"></i>&nbsp;&nbsp;Go to Next Show'.html_safe, "/#{next_show.date}") %>
-      <%= content_tag :li, link_to('<i class="icon-chevron-left"></i>&nbsp;&nbsp;Go to Previous Show'.html_safe, "/#{previous_show.date}") %>
-    <% end %>
+      <% if viewing_this_show %>
+        <%= content_tag :li, link_to('<i class="icon-chevron-right"></i>&nbsp;&nbsp;Go to Next Show'.html_safe, "/#{next_show.date}") %>
+        <%= content_tag :li, link_to('<i class="icon-chevron-left"></i>&nbsp;&nbsp;Go to Previous Show'.html_safe, "/#{previous_show.date}") %>
+      <% end %>
+      <%= content_tag :li, link_to('<i class="icon-hand-right"></i>&nbsp;&nbsp;Lookup at phish.net'.html_safe, "http://phish.net/setlists/?d=#{show.date}", class: 'non-remote', target: '_blank') %>
     </ul>
   </div>
 </div>

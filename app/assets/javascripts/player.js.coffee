@@ -25,6 +25,19 @@ class @Player
     @$playlist_button = $ '#playlist_button .btn'
     @$likes_count     = $ '#player_likes_container > .likes_large > span'
     @$likes_link      = $ '#player_likes_container > .likes_large > a'
+  
+  # Check for track anchor to scroll-to [and play]
+  onReady: ->
+    if anchor_name = $('#app_data').data 'anchor'
+      $el = $('li[data-anchor='+anchor_name+']')
+      if $el.get 0
+        $('html,body').animate({scrollTop: $el.offset().top - 300}, 500)
+        if $('#app_data').data('autoplay') == true
+          this.playTrack $el.data('id')
+        else
+          $el.addClass 'highlighted_track'
+    else if $('#app_data').data('autoplay') == true
+      this.playTrack $('.playable_track').first().data('id')
 
   startScrubbing: ->
     @scrubbing = true
@@ -172,6 +185,7 @@ class @Player
   
   highlightActiveTrack: ->
     $('.playable_track').removeClass 'active_track'
+    $('.playable_track[data-id="'+@active_track+'"]').removeClass 'highlighted_track'
     $('.playable_track[data-id="'+@active_track+'"]').addClass 'active_track'
     $('#current_playlist>li').removeClass 'active_track'
     $('#current_playlist>li[data-id="'+@active_track+'"]').addClass 'active_track'
@@ -233,6 +247,7 @@ class @Player
   _updatePlayerDisplay: (r) ->
     @duration = r.duration
     if r.title.length > 26 then @$player_title.addClass('long_title') else @$player_title.removeClass('long_title')
+    if r.title.length > 50 then r.title = r.title.substring(0, 47) + '...'
     @$player_title.html(r.title)
     @$likes_count.html(r.likes_count)
     @$likes_link.data('id', r.id)

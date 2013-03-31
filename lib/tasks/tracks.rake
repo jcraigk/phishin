@@ -1,6 +1,6 @@
 namespace :tracks do
   
-  # Create track slugs
+  # Create track slugs (then run uniquify_slugs below)
   task create_slugs: :environment do
     Track.all.each do |track|
       track.slug = track.generic_slug
@@ -10,7 +10,7 @@ namespace :tracks do
   end
   
   # Uniquify track slugs
-  task uniquify_track_slugs: :environment do
+  task uniquify_slugs: :environment do
     Show.order('date desc').each do |show|
       puts "Working: #{show.date}"
       tracks = show.tracks.order('position asc').all
