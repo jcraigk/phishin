@@ -5,6 +5,25 @@
  *= require jquery.ui.datepicker
  *= require_tree .
  */
+
+body {
+  background-color: #333 !important;
+}
+html {
+  margin: 0;
+  padding: 0;
+  overflow-y: scroll;
+}
+a {
+  text-decoration: none;
+  color: black;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/******************************/
+
 #home_msg {
   margin: 0 auto;
   font-family: 'Shanti', sans-serif;
@@ -14,9 +33,70 @@
   font-weight: bold;
   background-color: #f9ffc8;
   border: #998f4a 1px solid;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
   border-radius: 8px;
   padding: 8px;
 }
+
+/******************************/
+
+#scrubber.ui-slider {
+  background-image: none !important; //Override jquery UI CSS
+  height: 5px !important;
+  background-color: #ccc !important;
+  cursor: pointer !important;
+  position: fixed !important;
+  margin-top: 14px !important;
+  margin-left: 57px !important;
+  width: 266px !important;
+  border-color: #333 !important;
+}
+#scrubber .ui-slider-handle {
+  background-image: none !important; //Override jquery UI CSS
+  margin-top: 4px;
+  margin-left: -4px !important;
+  background-color: #333 !important;
+  border-color: #333 !important;
+  width: 5px !important;
+  height: 5px !important;
+  cursor: pointer !important;
+}
+#scrubber .ui-slider-range {
+  background-image: none !important;
+  background-color: #333 !important;
+}
+
+/******************************/
+
+#volume_slider.ui-slider {
+  background-image: none !important; //Override jquery UI CSS
+  height: 5px !important;
+  background-color: #ccc !important;
+  cursor: pointer !important;
+  position: fixed !important;
+  margin-top: 6px !important;
+  margin-left: 50px !important;
+  width: 90px !important;
+  border-color: #333 !important;
+}
+#volume_slider .ui-slider-handle {
+  background-image: none !important; //Override jquery UI CSS
+  margin-top: 4px !important;
+  margin-left: -4px !important;
+  background-color: #333 !important;
+  border-color: #333 !important;
+  width: 5px !important;
+  height: 5px !important;
+  cursor: pointer !important;
+}
+#volume_slider .ui-slider-range {
+  background-image: none !important;
+  background-color: #333 !important;
+}
+
+/******************************/
+
 #google_map {
   width: 100%;
   height: 600px;
@@ -52,75 +132,8 @@
 #map_date_stop {
   width: 90px;
 }
-body {
-  background-color: #333 !important;
-}
-html {
-  margin: 0;
-  padding: 0;
-  overflow-y: scroll;
-}
-a {
-  text-decoration: none;
-  color: black;
-}
-a:hover {
-  text-decoration: underline;
-}
 
-#scrubber.ui-slider {
-  background-image: none !important; //Override jquery UI CSS
-  height: 5px !important;
-  background-color: #ccc !important;
-  cursor: pointer !important;
-  position: fixed !important;
-  margin-top: 14px !important;
-  margin-left: 57px !important;
-  width: 266px !important;
-  border-color: #333 !important;
-}
-#scrubber .ui-slider-handle {
-  background-image: none !important; //Override jquery UI CSS
-  margin-top: 4px;
-  margin-left: -4px !important;
-  background-color: #333 !important;
-  border-color: #333 !important;
-//  border-radius: 10px !important;
-  width: 5px !important;
-  height: 5px !important;
-  cursor: pointer !important;
-}
-#scrubber .ui-slider-range {
-  background-image: none !important;
-  background-color: #333 !important;
-}
-
-#volume_slider.ui-slider {
-  background-image: none !important; //Override jquery UI CSS
-  height: 5px !important;
-  background-color: #ccc !important;
-  cursor: pointer !important;
-  position: fixed !important;
-  margin-top: 6px !important;
-  margin-left: 50px !important;
-  width: 90px !important;
-  border-color: #333 !important;
-}
-#volume_slider .ui-slider-handle {
-  background-image: none !important; //Override jquery UI CSS
-  margin-top: 4px !important;
-  margin-left: -4px !important;
-  background-color: #333 !important;
-  border-color: #333 !important;
-//  border-radius: 10px !important;
-  width: 5px !important;
-  height: 5px !important;
-  cursor: pointer !important;
-}
-#volume_slider .ui-slider-range {
-  background-image: none !important;
-  background-color: #333 !important;
-}
+/******************************/
 
 .likes_large a.liked {
   background-position: -20px 0 !important;
@@ -195,6 +208,9 @@ a:hover {
   font-size: 15px;
   font-family: 'Nothing You Could Do', cursive;
 }
+
+/******************************/
+
 #gradient_mask {
   position: fixed;
   top: 0px;
@@ -216,6 +232,8 @@ a:hover {
   width: 920px;
   height: 80px;
   margin-top: 6px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
   border-radius: 8px;
   border: 1px solid #555;
   background-color: #5ab1ff;
@@ -233,7 +251,11 @@ a:hover {
 }
 #logo img {
   border: 1px solid black;
+  -moz-border-radius: 100px;
+  -webkit-border-radius: 100px;
   border-radius: 100px;
+  -moz-box-shadow: 4px 4px 10px #333;
+  -webkit-box-shadow: 4px 4px 10px #333;
   box-shadow: 4px 4px 10px #333;
   width: 100%;
   height: 100%;
@@ -263,7 +285,11 @@ a:hover {
   margin: 0 auto;
   width: 894px;
   height: 50px;
+  -webkit-border-top-left-radius: 8px;
+  -moz-border-radius-topleft: 8px;
   border-top-left-radius: 8px;
+  -webkit-border-top-right-radius: 8px;
+  -moz-border-radius-topright: 8px;
   border-top-right-radius: 8px;
   border-left: 2px solid #555;
   border-top: 2px solid #555;
@@ -273,7 +299,9 @@ a:hover {
   vertical-align: bottom;
   background: #ddd url('brushed-metal.jpg');
   text-align: center;
-  box-shadow: 0px 6px 10px -2px #999;
+  -moz-box-shadow: 0 6px 10px -2px #999;
+  -webkit-box-shadow: 0 6px 10px -2px #999;
+  box-shadow: 0 6px 10px -2px #999;
 //  border: 1px solid red;
 }
 #header h1 {
@@ -361,7 +389,11 @@ h2.for_content {
   margin: 0 auto;
   width: 880px;
   padding: 190px 20px 40px 40px;
+  -webkit-border-bottom-left-radius: 10px;
+  -moz-border-radius-bottomleft: 10px;
   border-bottom-left-radius: 10px;
+  -webkit-border-bottom-right-radius: 10px;
+  -moz-border-radius-bottomright: 10px;
   border-bottom-right-radius: 10px;
   border-left: 2px solid #555;
   border-right: 2px solid #555;
@@ -393,6 +425,8 @@ h2.for_content {
 }
 .item_list > li {
   height: 36px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
   border-radius: 8px;
   padding: 8px 20px 8px 20px;
 }
@@ -496,6 +530,8 @@ h2.for_content {
   cursor: pointer;
 }
 .btn-round {
+  -moz-border-radius: 30px !important;
+  -webkit-border-radius: 30px !important;
   border-radius: 30px !important;
 }
 
@@ -516,6 +552,8 @@ h2.for_content {
   margin-top: 20px;
   text-align: center;
   background-color: #eee;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
   border-radius: 5px;
   border: 1px solid #ccc;
   padding: 10px;
@@ -534,9 +572,6 @@ h2.for_content {
   margin: 0 auto;
   margin-top: 20px;
   text-align: left;
-  //background-color: #eee;
-//  border-radius: 5px;
-//  border: 1px solid #ccc;
   padding: 10px;
   font-size: 14px;
   font-weight: bold;
@@ -555,7 +590,11 @@ h2.for_content {
   margin-top: 20px;
   text-align: center;
   background-color: #eee;
+  -webkit-border-top-left-radius: 5px;
+  -moz-border-radius-topleft: 5px;
   border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -moz-border-radius-topright: 5px;
   border-top-right-radius: 5px;
   border: 1px solid #ccc;
   padding: 10px;
@@ -590,18 +629,21 @@ h2.for_content {
   float: right;
   margin-right: 5px;
   text-align: center;
-//  border: 1px solid red;
   background-color: #edf2b5;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
   border-radius: 10px;
   padding: 2px 5px 2px 5px;
   font-size: 12px;
   font-weight: bold;
   color: #333;
-//  display: none;
+//  border: 1px solid red;
 }
 .done {
   background-color: #b7f2af !important;
-  box-shadow: 0px 0px 16px #3b995f !important;
+  -moz-box-shadow: 0 0 16px #3b995f !important;
+  -webkit-box-shadow: 0 0 16px #3b995f !important;
+  box-shadow: 0 0 16px #3b995f !important;
 }
 #player_title_container {
   padding: 0px;
@@ -610,8 +652,8 @@ h2.for_content {
   margin-left: 300px;
   width: 410px;
   height: 40px;
-//  border: 1px solid black;
   text-align: center;
+//  border: 1px solid black;
 }
 #player_title {
   line-height: 40px;
@@ -650,14 +692,20 @@ h2.for_content {
   margin-right: 5px;
 }
 .playing {
-  box-shadow: 0px 0px 16px #3b995f !important;
+  -moz-box-shadow: 0 0 16px #3b995f !important;
+  -webkit-box-shadow: 0 0 16px #3b995f !important;
+  box-shadow: 0 0 16px #3b995f !important;
   background-position: -85px 0 !important;
 }
 .active_track {
-  box-shadow: 0px 0px 16px #3b995f !important;
+  -moz-box-shadow: 0 0 16px #3b995f !important;
+  -webkit-box-shadow: 0 0 16px #3b995f !important;
+  box-shadow: 0 0 16px #3b995f !important;
 }
 .highlighted_track {
-  box-shadow: 0px 0px 16px #1756de !important;
+  -moz-box-shadow: 0 0 16px #1756de !important;
+  -webkit-box-shadow: 0 0 16px #1756de !important;
+  box-shadow: 0 0 16px #1756de !important;
 }
 
 #scrubber_controls {
@@ -734,6 +782,8 @@ h2.for_content {
 #playpause {
   width: 85px;
   height: 85px;
+  -moz-border-radius: 100px;
+  -webkit-border-radius: 100px;
   border-radius: 100px;
   margin-top: -13px;
   background: white url('icons-playpause.png');
@@ -741,6 +791,8 @@ h2.for_content {
 #next, #previous {
   width: 45px;
   height: 45px;
+  -moz-border-radius: 100px;
+  -webkit-border-radius: 100px;
   border-radius: 100px;
   margin-top: 5px;
 }
@@ -762,18 +814,24 @@ h2.for_content {
 
 #era1 {
   background-color: #8aadb1;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
   border-radius: 8px;
   padding: 5px 10px 5px 10px;
   margin-bottom: 40px;
 }
 #era2 {
   background-color: #98bfc5;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
   border-radius: 8px;
   padding: 5px 10px 5px 10px;
   margin-bottom: 40px;
 }
 #era3 {
   background-color: #aedae2;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
   border-radius: 8px;
   padding: 5px 10px 5px 10px;
   margin-bottom: 40px;
@@ -790,6 +848,8 @@ h2.for_content {
   float: left;
   width: 232px;
   height: 36px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
   border-radius: 8px;
   padding: 8px 13px 8px 20px;
   background-color: #f8f8f8;
@@ -825,6 +885,8 @@ h2.for_content {
   font-style: italic;
 }
 #share_url {
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
   border-radius: 8px;
   background-color: #ccc;
   border: 1px solid #333;
@@ -850,24 +912,32 @@ h2.for_content {
 .feedback_notice {
   background-color: #bbddb9;
   border: 2px solid #349941;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
   border-radius: 5px;
   padding: 5px;
 }
 .feedback_alert {
   background-color: #dd8c91;
   border: 2px solid #991c23;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
   border-radius: 5px;
   padding: 5px;
 }
 .instructions {
   background-color: #eee;
   padding: 10px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
   border-radius: 5px;
   border: 1px solid #333;
 }
 #error_explanation {
   background-color: #d61b2d;
   padding: 10px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
   border-radius: 5px;
   border: 1px solid #333;
 }
@@ -879,6 +949,8 @@ h2.for_content {
   padding: 10px;
   background: #ccc;
   border: 1px solid #333;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
   border-radius: 5px;
   float: right;
 }
@@ -904,6 +976,8 @@ h2.for_content {
 }
 #album_url {
   padding: 8px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
   border-radius: 5px;
   background-color: #ccc;
   border: 1px solid #333;
@@ -912,6 +986,8 @@ h2.for_content {
 }
 #album_timeout {
   padding: 10px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
   border-radius: 8px;
   display: none;
   background-color: #f4b5b5;
