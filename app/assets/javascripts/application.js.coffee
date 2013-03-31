@@ -15,6 +15,8 @@ Ph = {}
 
 $ ->
   
+  window.location.href = '/mobile-unsupported' if/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
+  
   # Instantiate stuff
   Ph.Util         = new Util
   Ph.Player       = new Player(Ph.Util)

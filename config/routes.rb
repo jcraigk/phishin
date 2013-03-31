@@ -15,6 +15,7 @@ Phishin::Application.routes.draw do
   get     '/legal-stuff'                  => 'pages#legal_stuff', as: 'legal_stuff'
   get     '/contact-us'                   => 'pages#contact_us', as: 'contact_us'
   get     '/browser-unsupported'          => 'pages#browser_unsupported', as: 'browser_unsupported'
+  get     '/mobile-unsupported'           => 'pages#mobile_unsupported', as: 'mobile_unsupported'
     
   # Content pages
   get     '/years'          => 'content#years', as: 'years'
