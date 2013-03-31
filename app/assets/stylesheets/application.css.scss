@@ -81,7 +81,7 @@ a:hover {
 }
 #scrubber .ui-slider-handle {
   background-image: none !important; //Override jquery UI CSS
-  margin-top: 4px !important;
+  margin-top: 4px;
   margin-left: -4px !important;
   background-color: #333 !important;
   border-color: #333 !important;
@@ -669,28 +669,6 @@ h2.for_content {
   font-family: 'Rambla', sans-serif;
 //  border: 1px solid black;
 }
-//#scrubber_track {
-//  position: fixed;
-//  margin-top: 15px;
-//  margin-left: 50px;
-//  width: 280px;
-//  background-color: #555;
-//  height: 5px;
-//  border-radius: 3px;
-//  cursor: pointer;
-//}
-//#scrubber_knob {
-//  z-index: 12;
-//  position: fixed;
-//  margin-top: 10px;
-//  margin-left: 250px;
-//  width: 13px;
-//  height: 13px;
-//  background-color: #ccc;
-//  border-radius: 10px;
-//  border: 1px solid black;
-//  cursor: pointer;
-//}
 #time_elapsed {
   margin-left: 30px;
   width: 30px;

@@ -15,10 +15,6 @@ Ph = {}
 
 $ ->
   
-  # Shun IE
-  window.location.href = '/browser-unsupported' unless history.pushState
-  # TODO Why do we need histroy?  Why not use History?
-  
   # Instantiate stuff
   Ph.Util         = new Util
   Ph.Player       = new Player(Ph.Util)
@@ -84,6 +80,9 @@ $ ->
     unless $(this).hasClass('non-remote')
       Ph.Util.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
       false
+  
+  # Shun IE
+  # window.location.href = '/browser-unsupported' unless history.pushState
   
   ###############################################
   # Handle feedback on DOM load
@@ -245,6 +244,10 @@ $ ->
     range: 'min',
     max: 100,
     value: 0,
+    create: ->
+      # Fix knob in Safari (offset vertically by 1 px)
+      if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1)
+        $('#scrubber .ui-slider-handle').css('margin-top', '3px')
     start: ->
       Ph.Player.startScrubbing()
     stop: ->
