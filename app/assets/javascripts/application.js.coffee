@@ -257,7 +257,7 @@ $ ->
       Ph.Player.stopScrubbing()
     slide: ->
       Ph.Player.moveScrubber()
-  })
+  }).slider('disable')
   
   # Volume slider (jQuery UI slider)
   $('#volume_slider').slider({

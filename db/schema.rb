@@ -110,7 +110,7 @@ ActiveRecord::Schema.define(:version => 20130331022752) do
   create_table "track_requests", :force => true do |t|
     t.integer  "track_id"
     t.integer  "user_id"
-    t.string   "type"
+    t.string   "kind"
     t.datetime "created_at"
   end
 

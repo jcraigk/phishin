@@ -156,14 +156,15 @@ class @Player
   
   stopAndUnload: (track_id=0) ->
     if @active_track == track_id or track_id == 0
-      this._fastFadeout(@active_track)
+      this._fastFadeout @active_track
       @sm_sound.unload()
       @active_track = ''
       this._updatePlayerDisplay({
         'title': @app_name,
         'duration': 0
       })
-      @$scrubber.slider('value', 0)
+      @$scrubber.slider 'value', 0
+      @$scrubber.slider 'disable'
       this._updatePauseState false
       @$time_remaining.html ""
       @$time_elapsed.html ""
@@ -198,10 +199,10 @@ class @Player
 
   _disengagePlayer: ->
     if @active_track
-      @sm.setPosition(@active_track, 0)
+      @sm.setPosition @active_track, 0
       @sm_sound.play()
       @sm_sound.pause()
-    @$scrubber.slider('value', 0)
+    @$scrubber.slider 'value', 0
     this._updatePauseState false
 
   _preloadTrack: (track_id) ->
@@ -288,12 +289,14 @@ class @Player
       percent_loaded = 0 if isNaN(percent_loaded)
       @$feedback.html("<i class=\"icon-download\"></i> #{percent_loaded}%")
       if percent_loaded == 100
-        @$feedback.addClass('done')
+        @$scrubber.slider 'enable'
+        @$feedback.addClass 'done'
         feedback = @$feedback
         setTimeout( ->
-          feedback.hide('fade')
+          feedback.hide 'fade'
         , 2000)
       else
+        @$scrubber.slider 'disable'
         @$feedback.removeClass 'done'
   
   _fastFadeout: (track_id, is_pause=false) ->
