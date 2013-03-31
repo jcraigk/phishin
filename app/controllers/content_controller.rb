@@ -163,12 +163,13 @@ class ContentController < ApplicationController
   end
   
   def song(slug)
+    params[:per_page] = 50
     if @song = Song.where(slug: slug).first
       if @song.alias_for
         aliased_song = Song.where(id: @song.alias_for).first
         @redirect = "/#{aliased_song.slug}"
       else
-        @tracks = @song.tracks.includes({:show => :venue}, :songs).order('shows.date desc')
+        @tracks = @song.tracks.includes({:show => :venue}, :songs).order('shows.date desc').paginate(page: params[:page], per_page: params[:per_page])
         @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
       end
     end
@@ -205,10 +206,11 @@ class ContentController < ApplicationController
   end
   
   def validate_sorting_for_year_or_scope
-    params[:sort] = 'date' unless ['date', 'likes'].include? params[:sort]
-    if params[:sort] == 'date'
-      @order_by = "date desc"
+    params[:sort] = 'date desc' unless ['date desc', 'date asc', 'likes'].include? params[:sort]
+    if params[:sort] == 'date asc' or params[:sort] == 'date desc'
+      @order_by = params[:sort]
       @display_separators = true
+      # raise @order_by
     elsif params[:sort] == 'likes'
       @order_by = "likes_count desc, date asc"
       @display_separators = false

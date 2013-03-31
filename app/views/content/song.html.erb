@@ -8,6 +8,10 @@
   
 <div id="content">
   
+    <div class="centered">
+      <%= will_paginate(@tracks) %>
+    </div>
+  
     <% last_title = false %>
     <% @tracks.each_with_index do |track, idx| %>
     
@@ -38,5 +42,9 @@
   <% end %>
   
   </ul>
+  
+  <div class="centered">
+    <%= will_paginate(@tracks) %>
+  </div>
 
 </div>
