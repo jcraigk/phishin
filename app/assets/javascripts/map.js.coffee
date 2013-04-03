@@ -1,12 +1,12 @@
 class @Map
   
-  constructor: (util) ->
+  constructor: ->
     @init             = true
     @markers          = []
     @windows          = []
     @map              = {}
     @view_circle      = {}
-    @util             = util
+    @util             = Ph.Util
     @google           = google
     @default_lat      = 39.126864
     @default_lng      = -94.627411

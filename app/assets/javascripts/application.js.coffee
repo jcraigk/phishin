@@ -11,7 +11,7 @@
 //= require map
 
 # Generic namespace
-Ph = {}
+@Ph = {}
 
 $ ->
   
@@ -19,8 +19,8 @@ $ ->
   
   # Instantiate stuff
   Ph.Util         = new Util
-  Ph.Player       = new Player(Ph.Util)
-  Ph.Map          = new Map(Ph.Util)
+  Ph.Player       = new Player
+  Ph.Map          = new Map
   
   # Page elements
   $notice         = $ '.feedback_notice'

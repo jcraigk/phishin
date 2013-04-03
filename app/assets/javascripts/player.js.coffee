@@ -1,7 +1,7 @@
 class @Player
   
-  constructor: (util) ->
-    @util             = util
+  constructor: ->
+    @util             = Ph.Util
     @sm               = soundManager
     @sm_sound         = {}
     @preload_time     = 40000
