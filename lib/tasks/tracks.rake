@@ -4,8 +4,14 @@ namespace :tracks do
   task create_slugs: :environment do
     Track.all.each do |track|
       track.slug = track.generic_slug
+      # handle abbreviations
+      track.slug.gsub!(/hold\-your\-head\-up/, 'hyhu')
+      track.slug.gsub!(/the\-man\-who\-stepped\-into\-yesterday/, 'tmwsiy')
+      track.slug.gsub!(/she\-caught\-the\-katy\-and\-left\-me\-a\-mule\-to\-ride/, 'she-caught-the-katy')
+      track.slug.gsub!(/mcgrupp\-and\-the\-watchful\-hosemasters/, 'mcgrupp')
+      track.slug.gsub!(/big\-black\-furry\-creature\-from\-mars/, 'bbfcfm')
       track.save!
-      puts "#{track.title} :: #{track.generic_slug}"
+      puts "#{track.title} :: #{track.slug}"
     end
   end
   
@@ -16,6 +22,7 @@ namespace :tracks do
       tracks = show.tracks.order('position asc').all
       # tracks = Track.where('show_id = 163').all
       tracks.each do |track|
+        track.save!
         dupes = []
         tracks.each { |track2| dupes << track2 if track.id != track2.id and track.slug == track2.slug }
         if dupes.size > 0

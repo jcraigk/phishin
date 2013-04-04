@@ -9,26 +9,28 @@
     
   <h2>Sign up</h2>
 
-  <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
-    <%= devise_error_messages! %>
+  <div id="new_user_container">
+    <%= form_for resource, :as => resource_name, :url => registration_path(resource_name) do |f| %>
+      <%= devise_error_messages! %>
       
-    <br />
-    <div class="field_label">Email</div>
-    <div class="field_content"><%= f.email_field :email, :autofocus => true %></div>
-    <div style="clear: both;"></div>
+      <br />
+      <div class="field_label">Email</div>
+      <div class="field_content"><%= f.email_field :email, :autofocus => true %></div>
+      <div style="clear: both;"></div>
       
-    <div class="field_label">Password</div>
-    <div class="field_content"><%= f.password_field :password %></div>
-    <div style="clear: both;"></div>
+      <div class="field_label">Password</div>
+      <div class="field_content"><%= f.password_field :password %></div>
+      <div style="clear: both;"></div>
     
-    <div class="field_label">Confirm Password</div>
-    <div class="field_content"><%= f.password_field :password_confirmation %></div>
-    <div style="clear: both;"></div>
+      <div class="field_label">Confirm Password</div>
+      <div class="field_content"><%= f.password_field :password_confirmation %></div>
+      <div style="clear: both;"></div>
       
-    <div class="field_label"><%= f.submit "Sign up" %></div>
-    <div style="clear: both;"></div>
+      <div class="field_label"><%= f.submit "Sign up", id: 'new_user_submit_btn' %></div>
+      <div style="clear: both;"></div>
 
-  <% end %>
+    <% end %>
+  </div>
 
   <%= render "devise/shared/links" %>
 
