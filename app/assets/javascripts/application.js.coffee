@@ -52,8 +52,8 @@ $ ->
           
           # Auto-scroll and highlight track anchor if present
           if anchor = state.data.href.split("/")[2]
-            $('#app_data').data('anchor', anchor)
-            $('#app_data').data('autoplay', false)
+            $('body').data('anchor', anchor)
+            $('body').data('autoplay', false)
           
           # Process page-specific things
           Ph.Player.onReady() # For scrolling to and auto-playing a track
@@ -301,11 +301,11 @@ $ ->
   
   # Hover on player title to reveal Like toggle
   $(document).on 'mouseover', '#player_title_container', (e) ->
-    if $('#app_data').data('player-invoked')
+    if $('body').data('player-invoked')
       $('#player_title').css 'display', 'none'
       $('#player_likes_container').css 'display', 'inline-block'
   $(document).on 'mouseout', '#player_title_container', (e) ->
-    if $('#app_data').data('player-invoked')
+    if $('body').data('player-invoked')
       $('#player_likes_container').css 'display', 'none'
       $('#player_title').css 'display', 'block'
   
@@ -371,6 +371,6 @@ $ ->
   
   # Share links bring up a modal to display a url
   $(document).on 'click', '.share', ->
-    $('#share_url').html("<p>"+$('#app_data').data('base-url')+$(this).data('url')+"</p>")
+    $('#share_url').html("<p>"+$('body').data('base-url')+$(this).data('url')+"</p>")
     $('#share_modal').modal('show')
     

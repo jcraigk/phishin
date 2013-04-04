@@ -3,7 +3,6 @@ class @Util
   constructor: ->
     @page_init          = true
     @$feedback          = $ '#feedback'
-    @$app_data          = $ '#app_data'
     @$download_modal    = $ '#download_modal'
     @$album_timeout     = $ '#album_timeout'
     @$album_url         = $ '#album_url'
@@ -27,7 +26,7 @@ class @Util
   navigateTo: (href) ->
     # alert "adding #{href}"
     @page_init = false
-    History.pushState {href: href}, @$app_data.data('app-name'), href
+    History.pushState {href: href}, $('body').data('app-name'), href
     window.scrollTo 0, 0
   
   navigateToRefreshMap: ->
@@ -84,7 +83,7 @@ class @Util
         @$album_timeout.hide()
         @$download_modal.modal 'show'
       else if r.status == 'Timeout'
-        @$album_url.html "#{@$app_data.data('base-url')}#{r.url}"
+        @$album_url.html "#{$('body').data('base-url')}#{r.url}"
         @$album_timeout.show 'slide'
       @download_poller = setTimeout( =>
         this.requestAlbum(request_url, false)

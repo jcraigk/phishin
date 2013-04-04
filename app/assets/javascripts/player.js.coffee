@@ -11,8 +11,7 @@ class @Player
     @scrubbing        = false
     @last_volume      = 100
     @duration         = 0
-    @app_name         = $('#app_data').data('app-name')
-    @$app_data        = $ '#app_data'
+    @app_name         = $('body').data('app-name')
     @$playpause       = $ '#playpause'
     @$scrubber        = $ '#scrubber'
     @$volume_slider   = $ '#volume_slider'
@@ -29,15 +28,15 @@ class @Player
   
   # Check for track anchor to scroll-to [and play]
   onReady: ->
-    if anchor_name = $('#app_data').data 'anchor'
+    if anchor_name = $('body').data 'anchor'
       $el = $('li[data-anchor='+anchor_name+']')
       if $el.get 0
         $('html,body').animate({scrollTop: $el.offset().top - 300}, 500)
-        if $('#app_data').data('autoplay') == true
+        if $('body').data('autoplay') == true
           this.playTrack $el.data('id')
         else
           $el.addClass 'highlighted_track'
-    else if $('#app_data').data('autoplay') == true
+    else if $('body').data('autoplay') == true
       this.playTrack $('.playable_track').first().data('id')
 
   startScrubbing: ->
@@ -111,7 +110,7 @@ class @Player
       }
       @active_track = track_id
       this.highlightActiveTrack()
-      @$app_data.data 'player-invoked', true
+      $('body').data 'player-invoked', true
     else
       @util.feedback { 'msg': 'That is already the current track' }
   
@@ -174,7 +173,7 @@ class @Player
       this._updatePauseState false
       @$time_remaining.html ""
       @$time_elapsed.html ""
-      @$app_data.data 'player-invoked', false
+      $('body').data 'player-invoked', false
   
   highlightActiveTrack: ->
     $('.playable_track').removeClass 'active_track'

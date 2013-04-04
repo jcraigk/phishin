@@ -9,9 +9,8 @@
   <%= render partial: 'layouts/google_analytics' %>
   <%= csrf_meta_tags %>
 </head>
-<body>
+<body data-base-url="<%= APP_BASE_URL %>" data-app-name="<%= APP_NAME %>" data-anchor="<%= params[:anchor].downcase if params[:anchor] %>" data-autoplay="<%= @autoplay if @autoplay %>" data-player-invoked="false">
 
-  <%= render partial: 'layouts/data' %>
   <%= render partial: 'layouts/feedback' %>
   <%= render partial: 'layouts/ajax_overlay' %>
   <%= render partial: 'shared/user_modal' %>
