@@ -6,7 +6,7 @@ class @Map
     @windows          = []
     @map              = {}
     @view_circle      = {}
-    @util             = Ph.Util
+    @util             = App.Util
     @google           = google
     @default_lat      = 39.126864
     @default_lng      = -94.627411
