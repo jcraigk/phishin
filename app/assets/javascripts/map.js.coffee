@@ -22,24 +22,20 @@ class @Map
       })
   
   handleSearch: (term, distance) ->
-    that = this
-    util = @util
     distance = parseFloat(distance)
     if term and distance > 0
       geocoder = new @google.maps.Geocoder()
-      geocoder.geocode({ 'address': term}, (results, status) ->
+      geocoder.geocode({ 'address': term}, (results, status) =>
         if status == @google.maps.GeocoderStatus.OK
-          that._geocodeSuccess(results, distance)
+          this._geocodeSuccess(results, distance)
         else
           # util.feedback { 'type': 'alert', 'msg': "Geocode was not successful because: #{status}" }
-          util.feedback { 'type': 'alert', 'msg': "Google Maps returned no results" }
+          @util.feedback { 'type': 'alert', 'msg': "Google Maps returned no results" }
       )
     else
       @util.feedback { 'type': 'alert', 'msg': 'Provide a term and a distance'}
   
   _geocodeSuccess: (results, distance) ->
-    that = this
-    util = @util
     this._clearAllMarkers()
     this._setCenter results[0].geometry.location
     lat = results[0].geometry.location.lat()
@@ -59,11 +55,11 @@ class @Map
     # Fetch venues from server
     $.ajax({
       url: "/search-map?lat=#{lat}&lng=#{lng}&distance=#{distance}&date_start=#{$('#map_date_start').val()}&date_stop=#{$('#map_date_stop').val()}",
-      success: (r) ->
+      success: (r) =>
         if r.success
-          that._drawVenueMarkers(r.venues)
+          this._drawVenueMarkers(r.venues)
         else
-          util.feedback { 'type': 'alert', 'msg': 'No shows match your criteria'}
+          @util.feedback { 'type': 'alert', 'msg': 'No shows match your criteria'}
     })
     
   _drawVenueMarkers: (venues) ->

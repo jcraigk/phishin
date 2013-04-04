@@ -78,7 +78,6 @@ class @Player
       @last_volume = @$volume_slider.slider 'value'
   
   updateVolumeSlider: (value) ->
-    that = this
     if @muted and value > 0
       @$volume_icon.removeClass 'muted'
       @muted = false
@@ -88,17 +87,16 @@ class @Player
     @sm.setVolume(@active_track, value)
   
   playTrack: (track_id) ->
-    that = this
     if track_id != @active_track
       @preload_started = false
       unless @sm_sound = @sm.getSoundById track_id
         @sm_sound = @sm.createSound({
           id: track_id,
           url: "/play-track/#{track_id}",
-          whileloading: ->
-            that._updateLoadingState(track_id)
-          whileplaying: ->
-            that._updatePlayerState()
+          whileloading: =>
+            this._updateLoadingState(track_id)
+          whileplaying: =>
+            this._updatePlayerState()
         })
       if @muted
         @sm.setVolume(track_id, 0)
@@ -108,8 +106,8 @@ class @Player
       this._fastFadeout(@active_track) if @active_track
       this._updatePauseState()
       @sm.play track_id, {
-        onfinish: ->
-          that.nextTrack()
+        onfinish: =>
+          this.nextTrack()
       }
       @active_track = track_id
       this.highlightActiveTrack()
@@ -136,34 +134,28 @@ class @Player
         this._playRandomShowOrPlaylist()
   
   previousTrack: ->
-    that = this
     if @active_track
       if @sm_sound.position > 3000
         @sm_sound.setPosition 0
       else
         $.ajax({
           url: "/previous-track/#{@active_track}",
-          success: (r) ->
-            if r.success
-              that.playTrack(r.track_id)
-            # else
-            #   alert(r.msg)
+          success: (r) =>
+            this.playTrack(r.track_id) if r.success
         })
     else
       @util.feedback { 'type': 'alert', 'msg': 'You need to make a playlist to use that button' }
   
   nextTrack: ->
-    that = this
-    util = @util
     if @active_track
       $.ajax({
         url: "/next-track/#{@active_track}",
-        success: (r) ->
+        success: (r) =>
           if r.success
-            that.playTrack(r.track_id)
+            this.playTrack(r.track_id)
           else
-            util.feedback { 'msg': 'End of playlist reached'}
-            that.stopAndUnload(@active_track)
+            @util.feedback { 'msg': 'End of playlist reached'}
+            this.stopAndUnload(@active_track)
       })
     else
       @util.feedback { 'type': 'alert', 'msg': 'You need to make a playlist to use that button' }
@@ -192,23 +184,21 @@ class @Player
     $('#current_playlist>li[data-id="'+@active_track+'"]').addClass 'active_track'
   
   _playRandomShowOrPlaylist: ->
-    that = this
-    util = @util
     $.ajax({
       url: "/next-track",
-      success: (r) ->
+      success: (r) =>
         if r.success
-          util.feedback { 'msg': 'Playing current playlist...'}
-          that.playTrack(r.track_id)
+          @util.feedback { 'msg': 'Playing current playlist...'}
+          this.playTrack(r.track_id)
         else
           $.ajax({
             url: "/random-show",
-            success: (r) ->
+            success: (r) =>
               if r.success
-                util.feedback { 'msg': 'Playing random show...'}
-                util.navigateTo r.url
-                that.resetPlaylist r.track_id
-                that.playTrack r.track_id
+                @util.feedback { 'msg': 'Playing random show...'}
+                @util.navigateTo r.url
+                this.resetPlaylist r.track_id
+                this.playTrack r.track_id
           })
     })
 
@@ -221,26 +211,24 @@ class @Player
     this._updatePauseState false
 
   _preloadTrack: (track_id) ->
-    that = this
     unless @sm.getSoundById track_id
       @sm.createSound({
         id: track_id,
         url: "/play-track/#{track_id}",
         autoLoad: true,
-        whileloading: ->
-          that._updateLoadingState(track_id)
-        whileplaying: ->
-          that._updatePlayerState()
+        whileloading: =>
+          this._updateLoadingState(track_id)
+        whileplaying: =>
+          this._updatePlayerState()
       })
       @sm.setVolume(track_id, @last_volume)
   
   _loadTrackInfo: (track_id) ->
-    that = this
     $.ajax({
       url: "/track-info/#{track_id}",
-      success: (r) ->
+      success: (r) =>
         if r.success
-          that._updatePlayerDisplay(r)
+          this._updatePlayerDisplay(r)
         else
           @util.feedback { 'type': 'alert', 'msg': 'Error retrieving track info' }
     })
@@ -272,16 +260,15 @@ class @Player
       @$playlist_button.removeClass 'playing'
   
   _updatePlayerState: ->
-    that = this
     unless @scrubbing or @duration == 0
       unless isNaN(@duration) or isNaN(@sm_sound.position)
         # Preload next track if we're close to the end of this one
         if !@preload_started and @duration - @sm_sound.position <= @preload_time
           $.ajax({
             url: "/next-track/#{@active_track}",
-            success: (r) ->
+            success: (r) =>
               if r.success
-                that._preloadTrack(r.track_id)
+                this._preloadTrack(r.track_id)
               # else
               #   alert(r.msg)
           })
@@ -299,7 +286,6 @@ class @Player
   
   _updateLoadingState: (track_id) ->
     if @active_track == track_id
-      that = this
       @$feedback.show()
       percent_loaded = Math.floor((@sm_sound.bytesLoaded / @sm_sound.bytesTotal) * 100)
       percent_loaded = 0 if isNaN(percent_loaded)
@@ -316,7 +302,6 @@ class @Player
         @$feedback.removeClass 'done'
   
   _fastFadeout: (track_id, is_pause=false) ->
-    that = this
     sound = @sm.getSoundById(track_id)
     if @muted or sound.volume == 0
       if is_pause
@@ -327,6 +312,6 @@ class @Player
     else
       if sound.volume < 10 then delta = 1 else delta = 3
       @sm.setVolume(track_id, sound.volume - delta)
-      setTimeout( ->
-        that._fastFadeout(track_id, is_pause)
+      setTimeout( =>
+        this._fastFadeout(track_id, is_pause)
       , 10)

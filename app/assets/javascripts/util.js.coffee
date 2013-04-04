@@ -38,23 +38,21 @@ class @Util
     this.navigateTo(url)
 
   requestAlbum: (request_url, first_call) ->
-    that = this
     $.ajax({
       url: '/user-signed-in',
-      success: (r) ->
+      success: (r) =>
         if r.success
           $.ajax({
             url: request_url,
             dataType: 'json',
-            success: (r) ->
-              that._requestAlbumResponse(r, request_url, first_call)
+            success: (r) =>
+              this._requestAlbumResponse(r, request_url, first_call)
           })
         else
-          that.feedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
+          this.feedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
     })
   
   updateCurrentPlaylist: (success_msg) ->
-    that = this
     track_ids = []
     duration = 0
     $('#current_playlist > li').each( ->
@@ -65,10 +63,10 @@ class @Util
       url: '/update-current-playlist',
       type: 'post',
       data: { 'track_ids': track_ids },
-      success: (r) ->
-        that.feedback { 'msg': success_msg }
+      success: (r) =>
+        this.feedback { 'msg': success_msg }
         $('#current_playlist_tracks_label').html("#{track_ids.length} Tracks")
-        $('#current_playlist_duration_label').html(that.readableDuration(duration, 'letters'))
+        $('#current_playlist_duration_label').html(this.readableDuration(duration, 'letters'))
     })
   
   _requestAlbumResponse: (r, request_url, first_call) ->
@@ -88,9 +86,8 @@ class @Util
       else if r.status == 'Timeout'
         @$album_url.html "#{@$app_data.data('base-url')}#{r.url}"
         @$album_timeout.show 'slide'
-      that = this
-      @download_poller = setTimeout( ->
-        that.requestAlbum(request_url, false)
+      @download_poller = setTimeout( =>
+        this.requestAlbum(request_url, false)
       , 3000)
   
   _uniqueID: (length=8) ->
