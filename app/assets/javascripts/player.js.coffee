@@ -37,7 +37,7 @@ class @Player
         else
           $el.addClass 'highlighted_track'
     else if $('body').data('autoplay') == true
-      this.playTrack $('.playable_track').first().data('id')
+      this.playTrack track_id if track_id = $('.playable_track').first().data('id')
 
   startScrubbing: ->
     @scrubbing = true
