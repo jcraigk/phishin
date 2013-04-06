@@ -11,8 +11,8 @@ module Phishin
 
     def initialize(link_from_sprdsht, date)
       # Selenium::WebDriver::Chrome.path = '/usr/bin/google-chrome'
-      # @driver = Selenium::WebDriver.for(:remote, :url => "http://69.181.78.200:4444/wd/hub")
-      @driver = Selenium::WebDriver.for :chrome
+      @driver = Selenium::WebDriver.for(:remote, :url => "http://localhost:4444/wd/hub")
+      # @driver = Selenium::WebDriver.for :chrome
       @date = Date.strptime date, '%Y-%m-%d'
       @driver.navigate.to link_from_sprdsht
     end
