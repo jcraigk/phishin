@@ -9,7 +9,7 @@ class Show < ActiveRecord::Base
   belongs_to :venue, counter_cache: true
   has_many :likes, as: :likable
 
-  validates_presence_of :date, :location
+  validates :date, presence: true
   
   self.per_page = 10 # will_paginate default
 
