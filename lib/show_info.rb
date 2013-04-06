@@ -7,10 +7,10 @@ class ShowInfo
 
   attr_reader :songs, :pnet
 
-  def initialize(date) # date should be in the form "2/28/1993"
+  def initialize(date) # date should be in the form "1993-2-28"
     @pnet  = PNet.new PNET_API_KEY
     @songs = {}
-    @data  = @pnet.shows_setlists_get('showdate' => format_date(date))[0];
+    @data  = @pnet.shows_setlists_get('showdate' => date)[0];
     songs  = Nokogiri::HTML(@data["setlistdata"]).css('p.pnetset > a').map(&:content)
 
     raise "Invalid date" if songs.empty?
@@ -28,14 +28,6 @@ class ShowInfo
   def location
     last_part = @data['state'].blank? ? @data['country'] : @data['state']
     "#{@data['venue']} - #{@data['city']}, #{last_part}"
-  end
-
-  private
-
-  def format_date(date)
-    puts "DATE: #{date}"
-    month, day, year = date.split('/')
-    "%d-%02d-%02d" % [year, month, day]
   end
 
 end
