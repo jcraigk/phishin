@@ -11,7 +11,7 @@ module Phishin
 
     def initialize(link_from_sprdsht, date)
       # Selenium::WebDriver::Firefox::Binary.path='/usr/bin/firefox/firefox-bin'
-      @driver = Selenium::WebDriver.for :firefox
+      @driver = Selenium::WebDriver.for :chrome
       @date = Date.strptime date, '%Y-%m-%d'
       @driver.navigate.to link_from_sprdsht
     end
