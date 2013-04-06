@@ -11,7 +11,7 @@ module Phishin
 
     def initialize(link_from_sprdsht, date)
       @driver = Selenium::WebDriver.for :firefox
-      @date = Date.strptime date, '%m/%d/%Y'
+      @date = Date.strptime date, '%Y-%m-%d'
       @driver.navigate.to link_from_sprdsht
     end
 
@@ -71,7 +71,7 @@ module Phishin
     end
 
     def download_url(url, part=0)
-      fname  = date.strftime("%-m-%-d-%Y") + (part != 0 ? ".#{part}" : '') + ".rar"
+      fname  = date.strftime("%Y-%-m-%-d") + (part != 0 ? ".#{part}" : '') + ".rar"
       f      = open("#{fname}", "wb")
       uri    = URI(url)
       http   = Net::HTTP.new uri.host, uri.port
