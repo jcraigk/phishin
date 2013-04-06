@@ -69,7 +69,7 @@ module Phishin
     def screenshot
       filename = random_filename
       @driver.save_screenshot "#{SCREENSHOTS_DIR}/#{filename}"
-      "#{Rails.application.routes.url_helpers.root_url}screenshots/#{filename}"
+      "#{APP_BASE_URL}/screenshots/#{filename}"
     end
 
     def download_url(url, part=0)
