@@ -1,11 +1,10 @@
 require_relative '../config/environment'
 require 'readline'
 
-module StreamPhish
+module Phishin
   class Downloader
     SHOW_LINKS_CSS = '#main_files_container ol li > a'
     SCREENSHOTS_DIR = "#{Rails.root}/public/screenshots"
-    # SCREENSHOTS_DIR = "/var/streamphish/public/screenshots"
 
     attr_reader :driver
     attr_accessor :date
@@ -45,7 +44,6 @@ module StreamPhish
 
     def show_links
       wait.until { @driver.find_element(:css => SHOW_LINKS_CSS) }
-
       @driver.find_elements(:css => SHOW_LINKS_CSS).map{|e| e['href']}
     end
 
@@ -122,7 +120,7 @@ if __FILE__ == $0
     puts "Need 2 args"
   else
     puts "Making downloader..."
-    d = StreamPhish::Downloader.new ARGV[0], ARGV[1]
+    d = Phishin::Downloader.new ARGV[0], ARGV[1]
     puts "Downloading files..."
     d.download_files
   end

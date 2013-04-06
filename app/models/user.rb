@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable, :confirmable
   
-  validates :username, presence: true, uniqueness: true, format: { with: /[A-Za-z0-9_]/, message: ': only letters, numbers, and underscores are allowed' }
+  validates :username, presence: true, uniqueness: true, format: { with: /[A-Za-z0-9_]/, message: 'may contain only letters, numbers, and underscores' }
   
   # Setup accessible (or protected) attributes for your model
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username
