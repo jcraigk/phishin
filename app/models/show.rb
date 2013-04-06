@@ -37,7 +37,8 @@ class Show < ActiveRecord::Base
   scope :random, ->(amt=1) { order('RANDOM()').limit(amt) }
 
   def to_s
-    "#{date.strftime('%m-%d-%Y')} - #{venue.location}"
+    # "#{date.strftime('%m-%d-%Y')} - #{venue.location}"
+    "#{date}"
   end
   
   def last_set
