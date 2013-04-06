@@ -12,6 +12,8 @@ class Show < ActiveRecord::Base
   validates :date, presence: true
   
   self.per_page = 10 # will_paginate default
+  
+  scope :avail, -> { where('missing = FALSE') }
 
   scope :during_year, ->(year) {
     date = Date.new(year.to_i)

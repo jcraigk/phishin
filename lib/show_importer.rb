@@ -13,8 +13,8 @@ module ShowImporter
       puts "Analyzing filenames..."
       @fm    = FilenameMatcher.new date
 
-      @show = Show.where(:date => Date.strptime(date, '%m/%d/%Y')).first || \
-              Show.new(:location => @show_info.location, :date => Date.strptime(date, '%m/%d/%Y'))
+      @show = Show.where(:date => date).first || \
+              Show.new(:location => @show_info.location, :date => date)
 
       @songs = []
       populate_songs
