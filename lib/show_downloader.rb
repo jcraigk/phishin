@@ -10,6 +10,7 @@ module Phishin
     attr_accessor :date
 
     def initialize(link_from_sprdsht, date)
+      Selenium::WebDriver::Firefox::Binary.path='/usr/bin/firefox/firefox-bin'
       @driver = Selenium::WebDriver.for :firefox
       @date = Date.strptime date, '%Y-%m-%d'
       @driver.navigate.to link_from_sprdsht
