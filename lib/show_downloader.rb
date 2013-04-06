@@ -36,7 +36,7 @@ module Phishin
 
       wait.until { show_link }
 
-      puts "Attempting to download..."
+      puts "Downloading..."
       download_url @_show_link['href'], part
     end
 
@@ -84,7 +84,7 @@ module Phishin
             puts resp.class
             break
           end
-          puts "downloading to #{f.path}!"
+          puts "Creating => #{f.path}!"
           resp.read_body { |segment| f.write segment }
         end
       ensure
@@ -121,9 +121,9 @@ if __FILE__ == $0
   if ARGV.length < 2
     puts "Need 2 args"
   else
-    puts "Making downloader..."
+    puts "Initializing..."
     d = Phishin::Downloader.new ARGV[0], ARGV[1]
-    puts "Downloading files..."
+    puts "Accessing content..."
     d.download_files
   end
 end
