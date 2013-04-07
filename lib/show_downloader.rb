@@ -24,6 +24,7 @@ module Phishin
                     @driver.find_element(:id => 'recaptcha_response_field') rescue \
                       nil
       if @_captcha
+        @driver.execute_script "$('#helpContainer').html('')"
         @driver.execute_script "$('button.btn.secondary.cancelBtn').click()"
         puts screenshot
         if @_captcha.tag_name == 'select'
