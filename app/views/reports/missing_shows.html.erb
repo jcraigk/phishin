@@ -12,7 +12,7 @@
   <ul class="item_list">
   <% for show in @missing_shows %>
     <li>
-      <%= content_tag :h2, link_to(show.date, "/#{show.date}"), class: 'wider' %>
+      <%= content_tag :h2, link_to('<i class="icon-hand-right"></i>&nbsp;&nbsp;Lookup at phish.net'.html_safe, "http://phish.net/setlists/?d=#{show.date}", class: 'non-remote', target: '_blank'), class: 'wider' %>
       <%= content_tag :h3, show.admin_notes, class: 'admin_notes' %>
     </li>
   <% end %>
