@@ -13,7 +13,7 @@ module ShowImporter
       @show_info = ShowInfo.new date
       
       puts "Finding venue..."
-      @venue = Venue.where('past_names LIKE "%?%" AND city = ?', @show_info.venue_name, @show_info.venue_city).first unless @venue = Venue.where(name: @show_info.venue_name, city: @show_info.venue_city).first
+      @venue = Venue.where('past_names LIKE ? AND city = ?', "%#{@show_info.venue_name}%", @show_info.venue_city).first unless @venue = Venue.where(name: @show_info.venue_name, city: @show_info.venue_city).first
       puts "Venue #{@show_info.venue_name} / #{@show_info.venue_city} not found!" and exit \
         unless @venue
       
