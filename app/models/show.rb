@@ -15,7 +15,7 @@ class Show < ActiveRecord::Base
   
   scope :avail, -> { where('missing = FALSE') }
 
-  scope :during_year, -> (year) {
+  scope :during_year, ->(year) {
     date = Date.new(year.to_i)
     where('date between ? and ?', 
       date.beginning_of_year, 
