@@ -84,7 +84,7 @@ module Phishin
             puts resp.class
             break
           end
-          puts "Creating => #{f.path}!"
+          puts "Creating => #{f.path}"
           resp.read_body { |segment| f.write segment }
         end
       ensure
@@ -119,7 +119,7 @@ end
 
 if __FILE__ == $0
   if ARGV.length < 2
-    puts "Need 2 args"
+    puts "Need 2 args: URL YYYY-MM-DD"
   else
     puts "Initializing..."
     d = Phishin::Downloader.new ARGV[0], ARGV[1]

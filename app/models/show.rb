@@ -1,6 +1,6 @@
 class Show < ActiveRecord::Base
   
-  attr_accessible :date, :location, :sbd, :remastered, :likes_count
+  attr_accessible :date, :location, :sbd, :remastered, :likes_count, :venue_id
   extend FriendlyId
   friendly_id :date
 
@@ -37,8 +37,8 @@ class Show < ActiveRecord::Base
   scope :random, ->(amt=1) { order('RANDOM()').limit(amt) }
 
   def to_s
-    # "#{date.strftime('%m-%d-%Y')} - #{venue.location}"
-    "#{date}"
+    "#{date.strftime('%Y-%d-%m')} - #{venue.name} - #{venue.location}"
+    # "#{date}"
   end
   
   def last_set

@@ -5,7 +5,7 @@ class Track < ActiveRecord::Base
   #########################
   # Attributes & Constants
   #########################
-  attr_accessible :show_id, :title, :position, :audio_file, :song_ids
+  attr_accessible :show_id, :title, :position, :audio_file, :song_ids, :set, :slug
 
   has_attached_file :audio_file,
     path: APP_CONTENT_PATH + ":class/:attachment/:id_partition/:id.:extension"

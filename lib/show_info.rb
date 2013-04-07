@@ -24,10 +24,13 @@ class ShowInfo
   def [](pos)
     @songs[pos]
   end
-
-  def location
-    last_part = @data['state'].blank? ? @data['country'] : @data['state']
-    "#{@data['venue']} - #{@data['city']}, #{last_part}"
+  
+  def venue_name
+    @data['venue']
+  end
+  
+  def venue_city
+    @data['city']
   end
 
 end
