@@ -1,6 +1,6 @@
 class Show < ActiveRecord::Base
   
-  attr_accessible :date, :location, :sbd, :remastered, :likes_count, :venue_id
+  attr_accessible :date, :sbd, :remastered, :likes_count, :venue_id
   extend FriendlyId
   friendly_id :date
 

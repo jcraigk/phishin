@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130407050657) do
+ActiveRecord::Schema.define(:version => 20130407215439) do
 
   create_table "album_requests", :force => true do |t|
     t.integer  "album_id"
@@ -66,7 +66,6 @@ ActiveRecord::Schema.define(:version => 20130407050657) do
     t.date     "date"
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
-    t.string   "location"
     t.boolean  "remastered",  :default => false
     t.boolean  "sbd",         :default => false
     t.integer  "venue_id"
