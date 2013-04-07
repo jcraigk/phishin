@@ -58,7 +58,10 @@ namespace :shows do
         unless show_data[1] == 0 or show_data[1] == "No Shows Found"
           total_shows[year] += 1
           date = show_data["showdate"]
-          missing_list[year] << date unless Show.find_by_date(date)
+          unless Show.find_by_date(date)
+            missing_list[year] << date
+            # Show.create(date: date)
+          end
         end
       end
       num_missing = missing_list[year].size

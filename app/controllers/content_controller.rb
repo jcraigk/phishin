@@ -11,11 +11,6 @@ class ContentController < ApplicationController
     render_years_page
   end
   
-  def report
-    @shows = Show.order('date asc').all
-    @percent_complete = (@shows.reject {|s| s.missing }.size / @shows.size) * 100
-  end
-  
   def songs
     params[:sort] = 'title' unless ['title', 'performances'].include? params[:sort]
     if params[:sort] == 'title'
@@ -157,7 +152,7 @@ class ContentController < ApplicationController
     rescue
        return false
     end
-    if @show = Show.avail.where(date: date).includes(:tracks).order('tracks.position asc').first
+    if @show = Show.where(date: date).includes(:tracks).order('tracks.position asc').first
       @show_like = get_user_show_like(@show)
       @tracks = @show.tracks.includes(:songs).order('position asc')
       @tracks_likes = @tracks.map { |track| get_user_track_like(track) }

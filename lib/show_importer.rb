@@ -19,8 +19,12 @@ module ShowImporter
       puts "Analyzing filenames..."
       @fm = FilenameMatcher.new date
 
-      puts "Show for #{date} already exists!" and exit if @show = Show.where(:date => date).first
-      @show = Show.new(:date => date, venue_id: @venue.id)
+      if @show = Show.where(:date => date).first
+        puts "Show for #{date} already imported!" and exit if !@show.missing
+        @show.venue_id = @venue.id
+      else
+        @show = Show.new(:date => date, venue_id: @venue.id)
+      end
 
       @tracks = []
       populate_tracks

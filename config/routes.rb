@@ -16,8 +16,11 @@ Phishin::Application.routes.draw do
   get     '/contact-us'                   => 'pages#contact_us', as: 'contact_us'
   get     '/browser-unsupported'          => 'pages#browser_unsupported', as: 'browser_unsupported'
   get     '/mobile-unsupported'           => 'pages#mobile_unsupported', as: 'mobile_unsupported'
+
+  # Reports
+  get     '/missing-shows'                => 'reports#missing_shows', as: 'missing_shows'
     
-  # Content pages
+  # Content navigation pages
   get     '/years'                        => 'content#years', as: 'years'
   get     '/songs'                        => 'content#songs', as: 'songs'
   get     '/map'                          => 'content#map', as: 'map'
@@ -25,8 +28,7 @@ Phishin::Application.routes.draw do
   get     '/liked-shows'                  => 'content#top_liked_shows', as: 'liked_shows'
   get     '/liked-tracks'                 => 'content#top_liked_tracks', as: 'liked_tracks'
   get     '/search'                       => 'search#search', as: 'search'
-  get     '/content-report'               => 'content#report', as: 'content_report'
-  
+
   # Likes
   post    '/toggle-like'                  => 'likes#toggle_like', as: 'toggle_like'
   
