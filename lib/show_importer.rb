@@ -14,17 +14,16 @@ module ShowImporter
       
       puts "Finding venue..."
       @venue = Venue.where('past_names LIKE ? AND city = ?', "%#{@show_info.venue_name}%", @show_info.venue_city).first unless @venue = Venue.where(name: @show_info.venue_name, city: @show_info.venue_city).first
-      puts "Venue #{@show_info.venue_name} / #{@show_info.venue_city} not found!" and exit \
-        unless @venue
+      venue_id = 0 unless @venue
       
       puts "Analyzing filenames..."
       @fm = FilenameMatcher.new date
 
       if @show = Show.where(:date => date).first
         puts "Show for #{date} already imported!" and exit if !@show.missing
-        @show.venue_id = @venue.id
+        @show.venue_id = venue_id
       else
-        @show = Show.new(:date => date, venue_id: @venue.id)
+        @show = Show.new(:date => date, venue_id: venue_id)
       end
 
       @tracks = []
@@ -163,7 +162,7 @@ module ShowImporter
         @si = ShowImporter.new(date)
         main_menu
         puts "\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, (s)ave: "
-        while line = Readline.readline('#=> ', true)
+        while line = Readline.readline('> ', true)
           pos = line.to_i
           if pos > 0
             edit_for_pos(pos)
