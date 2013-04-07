@@ -12,19 +12,18 @@ module ShowImporter
       puts "Fetching show info..."
       @show_info = ShowInfo.new date
       
-      puts "Finding venue..."
-      @venue = Venue.where('past_names LIKE ? AND city = ?', "%#{@show_info.venue_name}%", @show_info.venue_city).first unless @venue = Venue.where(name: @show_info.venue_name, city: @show_info.venue_city).first
-      venue_id = 0 unless @venue
-      
       puts "Analyzing filenames..."
       @fm = FilenameMatcher.new date
 
       if @show = Show.where(:date => date).first
         puts "Show for #{date} already imported!" and exit if !@show.missing
-        @show.venue_id = venue_id
       else
-        @show = Show.new(:date => date, venue_id: venue_id)
+        @show = Show.new(:date => date)
       end
+      
+      puts "Finding venue..."
+      @venue = Venue.where('past_names LIKE ? AND city = ?', "%#{@show_info.venue_name}%", @show_info.venue_city).first unless @venue = Venue.where(name: @show_info.venue_name, city: @show_info.venue_city).first
+      @show.venue = @venue if @venue
 
       @tracks = []
       populate_tracks

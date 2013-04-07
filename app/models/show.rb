@@ -40,7 +40,7 @@ class Show < ActiveRecord::Base
     if venue
       "#{date.strftime('%Y-%m-%d')} - #{venue.name} - #{venue.location}"
     else
-      "#{date.strftime('%Y-%m-%d')} - NULL VENUE"
+      "#{date.strftime('%Y-%m-%d')} - NULL VENUE!"
     end
   end
   
