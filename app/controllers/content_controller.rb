@@ -11,6 +11,11 @@ class ContentController < ApplicationController
     render_years_page
   end
   
+  def report
+    @shows = Show.order('date asc').all
+    @percent_complete = (@shows.reject {|s| s.missing }.size / @shows.size) * 100
+  end
+  
   def songs
     params[:sort] = 'title' unless ['title', 'performances'].include? params[:sort]
     if params[:sort] == 'title'

@@ -10,6 +10,10 @@
   
 <div id="content">
   
+  <% if @show.incomplete? %>
+    <div class="incomplete_show">This show is incomplete</div>
+  <% end %>
+  
   <% set = false %>
   <% @tracks.each_with_index do |track, idx| %>
     

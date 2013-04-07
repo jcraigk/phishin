@@ -1010,3 +1010,21 @@ h2.for_content {
   font-size: 11px !important;
   color: #777 !important;
 }
+.incomplete_show {
+  margin-top: 10px;
+  border-radius: 5px;
+  background-color: #be383c;
+  border: 1px solid black;
+  color: white;
+  font-family: 'Rambla', sans-serif;
+  font-size: 17px;
+  text-align: center;
+  padding: 5px;
+}
+.incomplete_show a {
+  color: #ccc;
+  text-decoration: underline;
+}
+.incomplete_show a:hover {
+  color: #ccc;
+}

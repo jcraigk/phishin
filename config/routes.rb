@@ -18,16 +18,17 @@ Phishin::Application.routes.draw do
   get     '/mobile-unsupported'           => 'pages#mobile_unsupported', as: 'mobile_unsupported'
     
   # Content pages
-  get     '/years'          => 'content#years', as: 'years'
-  get     '/songs'          => 'content#songs', as: 'songs'
-  get     '/map'            => 'content#map', as: 'map'
-  get     '/venues'         => 'content#venues', as: 'venues'
-  get     '/liked-shows'    => 'content#top_liked_shows', as: 'liked_shows'
-  get     '/liked-tracks'   => 'content#top_liked_tracks', as: 'liked_tracks'
-  get     '/search'         => 'search#search', as: 'search'
+  get     '/years'                        => 'content#years', as: 'years'
+  get     '/songs'                        => 'content#songs', as: 'songs'
+  get     '/map'                          => 'content#map', as: 'map'
+  get     '/venues'                       => 'content#venues', as: 'venues'
+  get     '/liked-shows'                  => 'content#top_liked_shows', as: 'liked_shows'
+  get     '/liked-tracks'                 => 'content#top_liked_tracks', as: 'liked_tracks'
+  get     '/search'                       => 'search#search', as: 'search'
+  get     '/content-report'               => 'content#report', as: 'content_report'
   
   # Likes
-  post    '/toggle-like'    => 'likes#toggle_like', as: 'toggle_like'
+  post    '/toggle-like'                  => 'likes#toggle_like', as: 'toggle_like'
   
   # Playlists / player
   get     '/playlist'                     => 'playlists#playlist', as: 'playlist'
