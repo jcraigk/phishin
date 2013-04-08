@@ -100,7 +100,7 @@ module ShowImporter
     end
     
     def generic_slug(title)
-      title.downcase.gsub(/'/, '').gsub(/[^a-z0-9]/, ' ').strip.gsub(/\s+/, ' ').gsub(/\s/, '-')
+      title ? title.downcase.gsub(/'/, '').gsub(/[^a-z0-9]/, ' ').strip.gsub(/\s+/, ' ').gsub(/\s/, '-') : ''
     end
 
     def get_set_from_filename(filename)
