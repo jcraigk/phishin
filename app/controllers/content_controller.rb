@@ -82,7 +82,7 @@ class ContentController < ApplicationController
         redirect_to :root
       end
     # Show?
-    elsif g.match(/^\d{4}\-\d{2}-\d{2}$/)
+    elsif g.match(/^\d{4}\-\d{1,2}-\d{1,2}$/)
       if show g
         @autoplay = true
         view = :show
