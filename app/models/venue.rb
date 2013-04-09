@@ -12,6 +12,7 @@ class Venue < ActiveRecord::Base
   
   def location
     country == "USA" ? "#{city}, #{state}" : "#{city}, #{state} #{country}"
+    country.gsub(/\s+/, ' ')
   end
   
   def address
