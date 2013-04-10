@@ -106,6 +106,7 @@ class @Util
         (((parseInt matches[1]) * 60) + (parseInt matches[2])) * 1000
       else
         this.feedback { 'type': 'alert', 'msg': "Invalid start time provided (#{time})" }
+        0
   
   _requestAlbumResponse: (r, request_url, first_call) ->
     if r.status == 'Ready'
