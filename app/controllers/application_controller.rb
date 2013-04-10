@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   
   before_filter :random_lyrical_excerpt  # Pull lyrical excerpt unless XHR request
   before_filter :authenticate
-  before_filter :artificial_wait
+  before_filter :artificial_wait if Rails.env == "development"
   before_filter :setup_session
   
   def random_lyrical_excerpt
