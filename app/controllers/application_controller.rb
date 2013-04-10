@@ -37,6 +37,7 @@ class ApplicationController < ActionController::Base
     session[:loop]        ||= false
     session[:randomize]   ||= false
     params[:per_page]     ||= 10
+    params[:t]            ||= 0
   end
   
 end

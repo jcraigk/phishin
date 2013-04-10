@@ -12,6 +12,7 @@ class @Player
     @last_volume      = 100
     @duration         = 0
     @app_name         = $('body').data('app-name')
+    @time_marker      = @util.timeToMS $('body').data('time-marker')
     @$playpause       = $ '#playpause'
     @$scrubber        = $ '#scrubber'
     @$volume_slider   = $ '#volume_slider'
@@ -33,11 +34,11 @@ class @Player
       if $el.get 0
         $('html,body').animate({scrollTop: $el.offset().top - 300}, 500)
         if $('body').data('autoplay') == true
-          this.playTrack $el.data('id')
+          this.playTrack($el.data('id'), @time_marker)
         else
           $el.addClass 'highlighted_track'
     else if $('body').data('autoplay') == true
-      this.playTrack track_id if track_id = $('.playable_track').first().data('id')
+      this.playTrack(track_id, @time_marker) if track_id = $('.playable_track').first().data('id')
 
   startScrubbing: ->
     @scrubbing = true
@@ -85,7 +86,8 @@ class @Player
       @muted = true
     @sm.setVolume(@active_track, value)
   
-  playTrack: (track_id) ->
+  playTrack: (track_id, time_marker=0) ->
+    if time_marker > 0 then @sm.defaultOptions = { from: time_marker } else @sm.defaultOptions = { from: 0 }
     if track_id != @active_track
       @preload_started = false
       unless @sm_sound = @sm.getSoundById track_id
@@ -108,6 +110,7 @@ class @Player
         onfinish: =>
           this.nextTrack()
       }
+      @sm_sound.setPosition 0 if time_marker == 0
       @active_track = track_id
       this.highlightActiveTrack()
       $('body').data 'player-invoked', true

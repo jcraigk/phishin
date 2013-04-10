@@ -67,6 +67,44 @@ class @Util
         $('#current_playlist_tracks_label').html("#{track_ids.length} Tracks")
         $('#current_playlist_duration_label').html(this.readableDuration(duration, 'letters'))
     })
+    
+  readableDuration: (ms, style='colon') ->
+    x = Math.floor(ms / 1000)
+    seconds = x % 60
+    seconds_with_zero = "#{if seconds < 10 then '0' else '' }#{seconds}"
+    x = Math.floor(x / 60)
+    minutes = x % 60
+    minutes_with_zero = "#{if minutes < 10 then '0' else '' }#{minutes}"
+    x = Math.floor(x / 60)
+    hours = x % 24
+    hours_with_zero = "#{if hours < 10 then '0' else '' }#{hours}"
+    x = Math.floor(x / 24)
+    days = x
+    if style == 'letters'
+      if days > 0
+        "#{days}d #{hours}h #{minutes}m #{seconds}s"
+      else if hours > 0
+        "#{hours}h #{minutes}m #{seconds}s"
+      else
+        "#{minutes}m #{seconds}s"
+    else
+      if days > 0
+        "#{days}::#{hours}:#{minutes_with_zero}:#{seconds_with_zero}"
+      else if hours > 0
+        "#{hours}:#{minutes_with_zero}:#{seconds_with_zero}"
+      else
+        "#{minutes}:#{seconds_with_zero}"
+  
+  timeToMS: (time) ->
+    if time.match /^\d+$/  # It's already in ms
+      time
+    else
+      if matches = time.match /^(\d+)m(\d+)s$/
+        (((parseInt matches[1]) * 60) + (parseInt matches[2])) * 1000
+      else if matches = time.match /^(\d+):(\d+)$/
+        (((parseInt matches[1]) * 60) + (parseInt matches[2])) * 1000
+      else
+        this.feedback { 'type': 'alert', 'msg': "Invalid start time provided (#{time})" }
   
   _requestAlbumResponse: (r, request_url, first_call) ->
     if r.status == 'Ready'
@@ -94,29 +132,4 @@ class @Util
     id += Math.random().toString(36).substr(2) while id.length < length
     id.substr 0, length
   
-  readableDuration: (ms, style='colon') ->
-    x = Math.floor(ms / 1000)
-    seconds = x % 60
-    seconds_with_zero = "#{if seconds < 10 then '0' else '' }#{seconds}"
-    x = Math.floor(x / 60)
-    minutes = x % 60
-    minutes_with_zero = "#{if minutes < 10 then '0' else '' }#{minutes}"
-    x = Math.floor(x / 60)
-    hours = x % 24
-    hours_with_zero = "#{if hours < 10 then '0' else '' }#{hours}"
-    x = Math.floor(x / 24)
-    days = x
-    if style == 'letters'
-      if days > 0
-        "#{days}d #{hours}h #{minutes}m #{seconds}s"
-      else if hours > 0
-        "#{hours}h #{minutes}m #{seconds}s"
-      else
-        "#{minutes}m #{seconds}s"
-    else
-      if days > 0
-        "#{days}::#{hours}:#{minutes_with_zero}:#{seconds_with_zero}"
-      else if hours > 0
-        "#{hours}:#{minutes_with_zero}:#{seconds_with_zero}"
-      else
-        "#{minutes}:#{seconds_with_zero}"
+
