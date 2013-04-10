@@ -12,7 +12,7 @@
   <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
     
     <br />
-    <div class="field_label">Username</div>
+    <div class="field_label">Email</div>
     <div class="field_content"><%= f.email_field :email, :autofocus => true %></div>
     <div style="clear: both;"></div>
       
@@ -21,14 +21,14 @@
     <div style="clear: both;"></div>
     
     <% if devise_mapping.rememberable? -%>
-      <div class="field_label"><%= f.check_box :remember_me %></div>
+      <div class="field_label field_label_alt"><%= f.check_box :remember_me %></div>
       <div class="field_content">Remember me</div>
       <div style="clear: both;"></div>
     <% end -%>
     
     <br />
     
-    <div class="field_label"><%= f.submit "Sign in" %></div>
+    <div class="field_label"><%= f.submit "Sign in", class: 'btn btn-large' %></div>
     <div style="clear: both;"></div>
 
   <% end %>

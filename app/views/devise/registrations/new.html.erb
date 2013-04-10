@@ -16,10 +16,12 @@
       <br />
       <div class="field_label">Email</div>
       <div class="field_content"><%= f.email_field :email, :autofocus => true %></div>
+      <div class="field_note">Required for account confirmation</div>
       <div style="clear: both;"></div>
 
       <div class="field_label">Username</div>
       <div class="field_content"><%= f.text_field :username %></div>
+      <div class="field_note">A nickname to identify yourself to others</div>
       <div style="clear: both;"></div>
       
       <div class="field_label">Password</div>
@@ -30,7 +32,7 @@
       <div class="field_content"><%= f.password_field :password_confirmation %></div>
       <div style="clear: both;"></div>
       
-      <div class="field_label"><%= f.submit "Sign up", id: 'new_user_submit_btn' %></div>
+      <div class="field_label"><%= f.submit "Sign up", id: 'new_user_submit_btn', class: 'btn btn-large' %></div>
       <div style="clear: both;"></div>
 
     <% end %>
