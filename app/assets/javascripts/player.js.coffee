@@ -111,7 +111,6 @@ class @Player
       @active_track = track_id
       this._updatePauseState()
       this.highlightActiveTrack()
-      $('body').data 'player-invoked', true
     else
       @util.feedback { 'msg': 'That is already the current track' }
   
@@ -189,6 +188,7 @@ class @Player
       onfinish: =>
         this.nextTrack()
     }
+    $('body').data 'player-invoked', true
   
   _playRandomShowOrPlaylist: ->
     $.ajax({
@@ -293,9 +293,6 @@ class @Player
   
   _updateLoadingState: (track_id) ->
     if @active_track == track_id
-      if @time_marker > 0 and @sm_sound.duration > (@time_marker + 1000)
-        this._loadInfoAndPlay(track_id)
-        @time_marker = 0
       @$feedback.show()
       percent_loaded = Math.floor((@sm_sound.bytesLoaded / @sm_sound.bytesTotal) * 100)
       percent_loaded = 0 if isNaN(percent_loaded)
@@ -303,6 +300,9 @@ class @Player
       if percent_loaded == 100
         @$scrubber.slider 'enable'
         @$feedback.addClass 'done'
+        if @time_marker > 0
+          this._loadInfoAndPlay(track_id)
+          @time_marker = 0
         feedback = @$feedback
         setTimeout( ->
           feedback.hide 'fade'

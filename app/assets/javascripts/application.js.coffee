@@ -111,6 +111,7 @@ $ ->
   # DOM interactions
   ###############################################
   
+  # Submit new user
   $(document).on 'submit', '#new_user', (e) ->
     $('#new_user_container').fadeTo('fast', 0.5)
     $('#new_user_submit_btn').val('Processing...')
