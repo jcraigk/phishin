@@ -87,7 +87,7 @@ class @Player
     @sm.setVolume(@active_track, value)
   
   playTrack: (track_id, time_marker=0) ->
-    if time_marker > 0 then @sm.defaultOptions = { from: time_marker } else @sm.defaultOptions = { from: 0 }
+    # if time_marker > 0 then @sm.defaultOptions = { from: time_marker } else @sm.defaultOptions = { from: 0 }
     if track_id != @active_track
       @preload_started = false
       unless @sm_sound = @sm.getSoundById track_id
@@ -110,7 +110,6 @@ class @Player
         onfinish: =>
           this.nextTrack()
       }
-      # @sm_sound.setPosition 0 if time_marker == 0
       @active_track = track_id
       this.highlightActiveTrack()
       $('body').data 'player-invoked', true
