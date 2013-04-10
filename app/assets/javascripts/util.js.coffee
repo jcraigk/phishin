@@ -100,6 +100,8 @@ class @Util
     if time.match /^\d+$/  # It's already in ms
       time
     else
+      if matches = time.match /^(\d+)s$/
+        (parseInt matches[1]) * 1000
       if matches = time.match /^(\d+)m(\d+)s$/
         (((parseInt matches[1]) * 60) + (parseInt matches[2])) * 1000
       else if matches = time.match /^(\d+):(\d+)$/

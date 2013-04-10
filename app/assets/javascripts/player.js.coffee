@@ -87,7 +87,7 @@ class @Player
     @sm.setVolume(@active_track, value)
   
   playTrack: (track_id, time_marker=0) ->
-    if time_marker > 0 then @sm.defaultOptions = { from: time_marker, autoLoad: true } else @sm.defaultOptions = { from: null }
+    if time_marker > 0 then @sm.defaultOptions = { from: time_marker, stream: false } else @sm.defaultOptions = { from: null, stream: true }
     if track_id != @active_track
       @preload_started = false
       unless @sm_sound = @sm.getSoundById track_id
@@ -106,11 +106,10 @@ class @Player
       this._loadTrackInfo(track_id)
       this._fastFadeout(@active_track) if @active_track
       this._updatePauseState()
-      if time_marker == 0
-        @sm.play track_id, {
-          onfinish: =>
-            this.nextTrack()
-        }
+      @sm.play track_id, {
+        onfinish: =>
+          this.nextTrack()
+      }
       @active_track = track_id
       this.highlightActiveTrack()
       $('body').data 'player-invoked', true
