@@ -96,6 +96,7 @@ class @Util
         "#{minutes}:#{seconds_with_zero}"
   
   timeToMS: (time) ->
+    time = "#{time}"
     if time.match /^\d+$/  # It's already in ms
       time
     else
