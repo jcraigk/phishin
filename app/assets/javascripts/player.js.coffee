@@ -38,7 +38,7 @@ class @Player
         else
           $el.addClass 'highlighted_track'
     else if $('body').data('autoplay') == true
-      this.playTrack(track_id, @time_marker) if track_id = $('.playable_track').first().data('id')
+      this.playTrack track_id if track_id = $('.playable_track').first().data('id')
 
   startScrubbing: ->
     @scrubbing = true
@@ -87,7 +87,7 @@ class @Player
     @sm.setVolume(@active_track, value)
   
   playTrack: (track_id, time_marker=0) ->
-    if time_marker > 0 then @sm.defaultOptions = { from: time_marker } else @sm.defaultOptions = { from: null }
+    if time_marker > 0 then @sm.defaultOptions = { from: time_marker, autoLoad: true } else @sm.defaultOptions = { from: null }
     if track_id != @active_track
       @preload_started = false
       unless @sm_sound = @sm.getSoundById track_id
