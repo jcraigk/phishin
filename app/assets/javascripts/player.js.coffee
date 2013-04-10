@@ -87,7 +87,7 @@ class @Player
     @sm.setVolume(@active_track, value)
   
   playTrack: (track_id, time_marker=0) ->
-    if time_marker > 0 then @sm.defaultOptions = { from: time_marker } else @sm.defaultOptions = { from: null, stream: true }
+    if time_marker > 0 then @sm.defaultOptions = { from: time_marker, autoLoad: true } else @sm.defaultOptions = { from: null, stream: true }
     if track_id != @active_track
       @preload_started = false
       unless @sm_sound = @sm.getSoundById track_id
@@ -106,14 +106,10 @@ class @Player
       if time_marker > 0
         @$player_title.html 'Loading...'
       else
-        this._loadTrackInfo(track_id)
+        this._loadInfoAndPlay(track_id)
       this._fastFadeout(@active_track) if @active_track
-      this._updatePauseState()
-      @sm.play track_id, {
-        onfinish: =>
-          this.nextTrack()
-      }
       @active_track = track_id
+      this._updatePauseState()
       this.highlightActiveTrack()
       $('body').data 'player-invoked', true
     else
@@ -186,6 +182,13 @@ class @Player
     $('.playable_track[data-id="'+@active_track+'"]').addClass 'active_track'
     $('#current_playlist>li').removeClass 'active_track'
     $('#current_playlist>li[data-id="'+@active_track+'"]').addClass 'active_track'
+
+  _loadInfoAndPlay: (track_id) ->
+    this._loadTrackInfo(track_id)
+    @sm.play track_id, {
+      onfinish: =>
+        this.nextTrack()
+    }
   
   _playRandomShowOrPlaylist: ->
     $.ajax({
@@ -234,7 +237,7 @@ class @Player
         if r.success
           this._updatePlayerDisplay(r)
         else
-          @util.feedback { 'type': 'alert', 'msg': 'Error retrieving track info' }
+          @util.feedback { 'type': 'alert', 'msg': "Error retrieving track info (#{track_id})" }
     })
   
   _updatePlayerDisplay: (r) ->
@@ -297,7 +300,9 @@ class @Player
       if percent_loaded == 100
         @$scrubber.slider 'enable'
         @$feedback.addClass 'done'
-        this._loadTrackInfo(track_id) if @time_marker > 0
+        if @time_marker > 0
+          this._loadInfoAndPlay(track_id)
+          @time_marker = 0
         feedback = @$feedback
         setTimeout( ->
           feedback.hide 'fade'
