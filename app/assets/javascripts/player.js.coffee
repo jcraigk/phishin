@@ -87,7 +87,7 @@ class @Player
     @sm.setVolume(@active_track, value)
   
   playTrack: (track_id, time_marker=0) ->
-    if time_marker > 0 then @sm.defaultOptions = { from: time_marker } else @sm.defaultOptions = { from: null }
+    if time_marker > 0 then @sm.defaultOptions = { from: time_marker, autoPlay: false } else @sm.defaultOptions = { from: null, autoPlay: true }
     if track_id != @active_track
       @preload_started = false
       unless @sm_sound = @sm.getSoundById track_id
