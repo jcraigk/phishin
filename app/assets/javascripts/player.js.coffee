@@ -103,7 +103,10 @@ class @Player
         @sm.setVolume(track_id, 0)
       else
         @sm.setVolume(track_id, @last_volume)
-      this._loadTrackInfo(track_id)
+      if time_marker > 0
+        @$player_title.html 'Loading...'
+      else
+        this._loadTrackInfo(track_id)
       this._fastFadeout(@active_track) if @active_track
       this._updatePauseState()
       @sm.play track_id, {
@@ -294,6 +297,7 @@ class @Player
       if percent_loaded == 100
         @$scrubber.slider 'enable'
         @$feedback.addClass 'done'
+        this._loadTrackInfo(track_id) if @time_marker > 0
         feedback = @$feedback
         setTimeout( ->
           feedback.hide 'fade'
