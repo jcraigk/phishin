@@ -110,7 +110,7 @@ class @Player
         onfinish: =>
           this.nextTrack()
       }
-      @sm_sound.setPosition 0 if time_marker == 0
+      # @sm_sound.setPosition 0 if time_marker == 0
       @active_track = track_id
       this.highlightActiveTrack()
       $('body').data 'player-invoked', true
