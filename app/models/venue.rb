@@ -11,8 +11,7 @@ class Venue < ActiveRecord::Base
   scope :relevant, -> { where("shows_count > 0") }
   
   def location
-    country == "USA" ? "#{city}, #{state}" : "#{city}, #{state} #{country}"
-    country.gsub(/\s+/, ' ')
+    (country == "USA" ? "#{city}, #{state}" : "#{city}, #{state} #{country}").gsub(/\s+/, ' ')
   end
   
   def address
