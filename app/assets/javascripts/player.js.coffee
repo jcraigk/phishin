@@ -112,7 +112,7 @@ class @Player
       this._updatePauseState()
       this.highlightActiveTrack()
     else
-      @util.feedback { 'msg': 'That is already the current track' }
+      @util.feedback { notice: 'That is already the current track' }
   
   resetPlaylist: (track_id) ->
     $.ajax({
@@ -143,7 +143,7 @@ class @Player
             this.playTrack(r.track_id) if r.success
         })
     else
-      @util.feedback { 'type': 'alert', 'msg': 'You need to make a playlist to use that button' }
+      @util.feedback { alert: 'You need to make a playlist to use that button' }
   
   nextTrack: ->
     if @active_track
@@ -153,11 +153,11 @@ class @Player
           if r.success
             this.playTrack(r.track_id)
           else
-            @util.feedback { 'msg': 'End of playlist reached'}
+            @util.feedback { notice: 'End of playlist reached'}
             this.stopAndUnload(@active_track)
       })
     else
-      @util.feedback { 'type': 'alert', 'msg': 'You need to make a playlist to use that button' }
+      @util.feedback { alert: 'You need to make a playlist to use that button' }
   
   stopAndUnload: (track_id=0) ->
     if @active_track == track_id or track_id == 0
@@ -195,14 +195,14 @@ class @Player
       url: "/next-track",
       success: (r) =>
         if r.success
-          @util.feedback { 'msg': 'Playing current playlist...'}
+          @util.feedback { notice: 'Playing current playlist...'}
           this.playTrack(r.track_id)
         else
           $.ajax({
             url: "/random-show",
             success: (r) =>
               if r.success
-                @util.feedback { 'msg': 'Playing random show...'}
+                @util.feedback { notice: 'Playing random show...'}
                 @util.navigateTo r.url
                 this.resetPlaylist r.track_id
                 this.playTrack r.track_id
@@ -237,7 +237,7 @@ class @Player
         if r.success
           this._updatePlayerDisplay(r)
         else
-          @util.feedback { 'type': 'alert', 'msg': "Error retrieving track info (#{track_id})" }
+          @util.feedback { alert: "Error retrieving track info (#{track_id})" }
     })
   
   _updatePlayerDisplay: (r) ->

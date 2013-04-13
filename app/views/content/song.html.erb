@@ -9,7 +9,7 @@
 <div id="content">
   
     <div class="centered">
-      <%= will_paginate(@tracks) %>
+      <%= will_paginate_simple @tracks %>
     </div>
   
     <% last_title = false %>
@@ -44,7 +44,7 @@
   </ul>
   
   <div class="centered">
-    <%= will_paginate(@tracks) %>
+    <%= will_paginate_simple @tracks %>
   </div>
 
 </div>

@@ -8,14 +8,16 @@ class @Util
     @$album_url         = $ '#album_url'
   
   feedback: (feedback) ->
-    if feedback.type == 'alert'
+    if feedback.alert
+      msg = feedback.alert
       css = 'feedback_alert'
       icon = 'icon-exclamation-sign'
     else
+      msg = feedback.notice
       css = 'feedback_notice'
       icon = 'icon-ok-sign'
     id = this._uniqueID()
-    @$feedback.append "<p class=\"#{css}\" id=\"#{id}\"><i class=\"#{icon}\"></i> #{feedback.msg}</p>"
+    @$feedback.append "<p class=\"#{css}\" id=\"#{id}\"><i class=\"#{icon}\"></i> #{msg}</p>"
     setTimeout( ->
       $("##{id}").hide 'slide'
     , 3000)
@@ -48,7 +50,7 @@ class @Util
               this._requestAlbumResponse(r, request_url, first_call)
           })
         else
-          this.feedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
+          this.feedback { alert: 'You must sign in to download MP3s' }
     })
   
   updateCurrentPlaylist: (success_msg) ->
@@ -63,9 +65,9 @@ class @Util
       type: 'post',
       data: { 'track_ids': track_ids },
       success: (r) =>
-        this.feedback { 'msg': success_msg }
-        $('#current_playlist_tracks_label').html("#{track_ids.length} Tracks")
-        $('#current_playlist_duration_label').html(this.readableDuration(duration, 'letters'))
+        this.feedback { notice: success_msg }
+        $('#current_playlist_tracks_label').html "#{track_ids.length} Tracks"
+        $('#current_playlist_duration_label').html this.readableDuration(duration, 'letters')
     })
     
   readableDuration: (ms, style='colon') ->
@@ -107,7 +109,7 @@ class @Util
       else if matches = time.match /^(\d+):(\d+)$/
         (((parseInt matches[1]) * 60) + (parseInt matches[2])) * 1000
       else
-        this.feedback { 'type': 'alert', 'msg': "Invalid start time provided (#{time})" }
+        this.feedback { alert: "Invalid start time provided (#{time})" }
         0
   
   _requestAlbumResponse: (r, request_url, first_call) ->
@@ -118,7 +120,7 @@ class @Util
     else if r.status == 'Error'
       clearTimeout @download_poller
       @$download_modal.modal 'hide'
-      this.feedback { 'type': 'alert', 'msg': 'An error occurred while processing your request' }
+      this.feedback { alert: 'An error occurred while processing your request' }
     else
       if first_call
         clearTimeout @download_poller

@@ -181,9 +181,9 @@ $ ->
       data: { 'track_id': track_id}
       success: (r) ->
         if r.success
-          App.Util.feedback { 'msg': 'Track added to playlist' }
+          App.Util.feedback { msg: 'Track added to playlist' }
         else
-          App.Util.feedback { 'type': 'alert', 'msg': r.msg }
+          App.Util.feedback { type: 'alert', msg: r.msg }
     })
   
   # Add show to playlist
@@ -195,9 +195,9 @@ $ ->
       data: { 'show_id': show_id}
       success: (r) ->
         if r.success
-          App.Util.feedback { 'msg': r.msg }
+          App.Util.feedback { msg: r.msg }
         else
-          App.Util.feedback { 'type': 'alert', 'msg': r.msg }
+          App.Util.feedback { type: 'alert', msg: r.msg }
     })
   
   # Clear playlist stops and unloads current sound
@@ -215,9 +215,9 @@ $ ->
       }
       success: (r) ->
         if r.success
-          App.Util.feedback { 'msg': 'Playlist options saved' }
+          App.Util.feedback { msg: 'Playlist options saved' }
         else
-          App.Util.feedback { 'type': 'alert', 'msg': r.msg }
+          App.Util.feedback { type: 'alert', msg: r.msg }
     })
   
   ###############################################
@@ -296,7 +296,7 @@ $ ->
         if r.success
           location.href = data_url if data_url
         else
-          App.Util.feedback { 'type': 'alert', 'msg': 'You must sign in to download MP3s' }
+          App.Util.feedback { alert: 'You must sign in to download MP3s' }
     })
   
   # Click to download a set of tracks
@@ -338,7 +338,7 @@ $ ->
       dataType: 'json',
       success: (r) ->
         if r.success
-          App.Util.feedback({ 'msg': r.msg })
+          App.Util.feedback({ msg: r.msg })
           if r.liked then $this.addClass('liked') else $this.removeClass('liked')
           $this.siblings('span').html r.likes_count
           # Update other instances of this track's Like controls
@@ -348,7 +348,7 @@ $ ->
               $(this).siblings('span').html r.likes_count
           )
         else
-          App.Util.feedback({ 'type': 'alert', 'msg': r.msg })
+          App.Util.feedback({ type: 'alert', msg: r.msg })
     })
   
   # Rollover year to reveal number of shows

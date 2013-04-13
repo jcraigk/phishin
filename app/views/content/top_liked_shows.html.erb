@@ -7,7 +7,7 @@
       <%= link_to content_tag(:button, 'Top Shows', class: 'btn btn-medium btn-primary active'), liked_shows_path %>
       <%= link_to content_tag(:button, 'Top Tracks', class: 'btn btn-medium'), liked_tracks_path %>
     </div>
-    <div class="paging"><%= will_paginate @shows %></div>
+    <%= will_paginate_simple @shows %>
   </div>
 
   <ul class="item_list clickable">

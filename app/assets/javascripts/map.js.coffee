@@ -29,11 +29,11 @@ class @Map
         if status == @google.maps.GeocoderStatus.OK
           this._geocodeSuccess(results, distance)
         else
-          # util.feedback { 'type': 'alert', 'msg': "Geocode was not successful because: #{status}" }
-          @util.feedback { 'type': 'alert', 'msg': "Google Maps returned no results" }
+          # util.feedback { alert: "Geocode was not successful because: #{status}" }
+          @util.feedback { alert: "Google Maps returned no results" }
       )
     else
-      @util.feedback { 'type': 'alert', 'msg': 'Provide a term and a distance'}
+      @util.feedback { alert: 'Provide a term and a distance'}
   
   _geocodeSuccess: (results, distance) ->
     this._clearAllMarkers()
@@ -59,7 +59,7 @@ class @Map
         if r.success
           this._drawVenueMarkers(r.venues)
         else
-          @util.feedback { 'type': 'alert', 'msg': 'No shows match your criteria'}
+          @util.feedback { alert: 'No shows match your criteria'}
     })
     
   _drawVenueMarkers: (venues) ->
