@@ -52,10 +52,8 @@ $ ->
           
           # Auto-scroll and highlight track anchor if present
           if anchor = state.data.href.split("/")[2]
-            $('body').data('anchor', anchor)
-            $('body').data('autoplay', false)
-          
-          # Process page-specific things
+            $('body').attr 'data-anchor', anchor
+            $('body').attr 'data-autoplay', 'false'
           App.Player.onReady() # For scrolling to and auto-playing a track
           App.Player.highlightActiveTrack() # For highlighting current track in a list
           

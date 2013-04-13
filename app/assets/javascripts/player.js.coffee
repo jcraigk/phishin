@@ -29,15 +29,15 @@ class @Player
   
   # Check for track anchor to scroll-to [and play]
   onReady: ->
-    if anchor_name = $('body').data 'anchor'
-      $el = $ 'li[data-anchor='+anchor_name+']'
-      if $el.get 0
+    if anchor_name = $('body').attr 'data-anchor'
+      if $('li[data-anchor='+anchor_name+']').length > 0
+        $el = $('li[data-anchor='+anchor_name+']').first()
         $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
-        if $('body').data 'autoplay' is true
+        if $('body').attr('data-autoplay') is 'true'
           this.playTrack $el.data('id'), @time_marker
         else
           $el.addClass 'highlighted_track'
-    else if $('body').data('autoplay') is true
+    else if $('body').attr('data-autoplay') is 'true'
       this.playTrack track_id if track_id = $('.playable_track').first().data 'id'
 
   startScrubbing: ->
@@ -133,7 +133,12 @@ class @Player
         this._fastFadeout @active_track, true
         this._updatePauseState false
       else
-        this._playRandomShowOrPlaylist()
+        if anchor_name = $('body').attr('data-anchor')
+          if $('li[data-anchor='+anchor_name+']').length > 0
+            $el = $('li[data-anchor='+anchor_name+']').first()
+            this.playTrack $el.data('id')
+        else
+          this._playRandomShowOrPlaylist()
   
   previousTrack: ->
     if @active_track
@@ -179,11 +184,12 @@ class @Player
       $('body').data 'player-invoked', false
   
   highlightActiveTrack: ->
-    $('.playable_track').removeClass 'active_track'
-    $('.playable_track[data-id="'+@active_track+'"]').removeClass 'highlighted_track'
-    $('.playable_track[data-id="'+@active_track+'"]').addClass 'active_track'
-    $('#current_playlist>li').removeClass 'active_track'
-    $('#current_playlist>li[data-id="'+@active_track+'"]').addClass 'active_track'
+    if @active_track
+      $('.playable_track').removeClass 'active_track'
+      $('.playable_track[data-id="'+@active_track+'"]').removeClass 'highlighted_track'
+      $('.playable_track[data-id="'+@active_track+'"]').addClass 'active_track'
+      $('#current_playlist>li').removeClass 'active_track'
+      $('#current_playlist>li[data-id="'+@active_track+'"]').addClass 'active_track'
 
   _loadInfoAndPlay: (track_id, time_marker) ->
     this._loadTrackInfo track_id

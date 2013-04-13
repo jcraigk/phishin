@@ -151,11 +151,11 @@ class PlaylistsController < ApplicationController
   end
   
   def random_show
-    show = Show.random.first
+    show = Show.avail.random.first
     first_track = show.tracks.order('position asc').first
     render json: {
       success: true,
-      url: show.date,
+      url: "/#{show.date}",
       track_id: first_track.id
     }
   end
