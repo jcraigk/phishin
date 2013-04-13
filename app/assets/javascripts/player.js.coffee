@@ -11,7 +11,7 @@ class @Player
     @scrubbing        = false
     @last_volume      = 100
     @duration         = 0
-    @app_name         = $('body').data('app-name')
+    @app_name         = $('body').data 'app-name'
     @time_marker      = @util.timeToMS $('body').data('time-marker')
     @$playpause       = $ '#playpause'
     @$scrubber        = $ '#scrubber'
@@ -30,49 +30,49 @@ class @Player
   # Check for track anchor to scroll-to [and play]
   onReady: ->
     if anchor_name = $('body').data 'anchor'
-      $el = $('li[data-anchor='+anchor_name+']')
+      $el = $ 'li[data-anchor='+anchor_name+']'
       if $el.get 0
-        $('html,body').animate({scrollTop: $el.offset().top - 300}, 500)
-        if $('body').data('autoplay') == true
-          this.playTrack($el.data('id'), @time_marker)
+        $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
+        if $('body').data 'autoplay' is true
+          this.playTrack $el.data('id'), @time_marker
         else
           $el.addClass 'highlighted_track'
-    else if $('body').data('autoplay') == true
-      this.playTrack track_id if track_id = $('.playable_track').first().data('id')
+    else if $('body').data('autoplay') is true
+      this.playTrack track_id if track_id = $('.playable_track').first().data 'id'
 
   startScrubbing: ->
     @scrubbing = true
-    @$time_elapsed.addClass('scrubbing')
-    @$time_remaining.addClass('scrubbing')
+    @$time_elapsed.addClass 'scrubbing'
+    @$time_remaining.addClass 'scrubbing'
     this.moveScrubber()
   
   stopScrubbing: ->
     @scrubbing = false
-    @$time_elapsed.removeClass('scrubbing')
-    @$time_remaining.removeClass('scrubbing')
+    @$time_elapsed.removeClass 'scrubbing'
+    @$time_remaining.removeClass 'scrubbing'
     if @active_track
-      @sm.setPosition(@active_track, (@$scrubber.slider('value') / 100) * @duration)
+      @sm.setPosition @active_track, (@$scrubber.slider('value') / 100) * @duration
     else
-      @$scrubber.slider('value', 0)
+      @$scrubber.slider 'value', 0
   
   moveScrubber: ->
     if @scrubbing and @active_track
       scrubber_position = (@$scrubber.slider('value') / 100) * @duration
-      @$time_elapsed.html(@util.readableDuration(scrubber_position))
-      @$time_remaining.html("-#{@util.readableDuration(@duration - scrubber_position)}")
+      @$time_elapsed.html @util.readableDuration(scrubber_position)
+      @$time_remaining.html "-#{@util.readableDuration(@duration - scrubber_position)}"
       
   toggleMute: ->
     if @last_volume > 0
       if @muted
-        @$volume_slider.slider('value', @last_volume)
+        @$volume_slider.slider 'value', @last_volume
         @$volume_icon.removeClass 'muted'
-        @sm.setVolume(@active_track, @last_volume) if @active_track
+        @sm.setVolume @active_track, @last_volume if @active_track
         @muted = false
       else
         @last_volume = @$volume_slider.slider 'value'
-        @$volume_slider.slider('value', 0)
+        @$volume_slider.slider 'value', 0
         @$volume_icon.addClass 'muted'
-        @sm.setVolume(@active_track, 0) if @active_track
+        @sm.setVolume @active_track, 0 if @active_track
         @muted = true
     else
       @last_volume = @$volume_slider.slider 'value'
@@ -81,33 +81,33 @@ class @Player
     if @muted and value > 0
       @$volume_icon.removeClass 'muted'
       @muted = false
-    else if !@muted and value == 0
+    else if !@muted and value is 0
       @$volume_icon.addClass 'muted'
       @muted = true
-    @sm.setVolume(@active_track, value)
+    @sm.setVolume @active_track, value
   
   playTrack: (track_id, time_marker=0) ->
-    if time_marker > 0 then @sm.defaultOptions = { from: time_marker, autoLoad: true } else @sm.defaultOptions = { from: null, stream: true }
     if track_id != @active_track
       @preload_started = false
       unless @sm_sound = @sm.getSoundById track_id
         @sm_sound = @sm.createSound({
           id: track_id,
           url: "/play-track/#{track_id}",
+          autoLoad: true if time_marker > 0,
           whileloading: =>
-            this._updateLoadingState(track_id)
+            this._updateLoadingState track_id
           whileplaying: =>
             this._updatePlayerState()
         })
       if @muted
-        @sm.setVolume(track_id, 0)
+        @sm.setVolume track_id, 0
       else
-        @sm.setVolume(track_id, @last_volume)
+        @sm.setVolume track_id, @last_volume
       if time_marker > 0
         @$player_title.html 'Loading...'
       else
-        this._loadInfoAndPlay(track_id)
-      this._fastFadeout(@active_track) if @active_track
+        this._loadInfoAndPlay track_id, 0
+      this._fastFadeout @active_track if @active_track
       @active_track = track_id
       this._updatePauseState()
       this.highlightActiveTrack()
@@ -127,7 +127,7 @@ class @Player
       this._updatePauseState()
     else
       if @active_track
-        this._fastFadeout(@active_track, true)
+        this._fastFadeout @active_track, true
         this._updatePauseState false
       else
         this._playRandomShowOrPlaylist()
@@ -140,7 +140,7 @@ class @Player
         $.ajax({
           url: "/previous-track/#{@active_track}",
           success: (r) =>
-            this.playTrack(r.track_id) if r.success
+            this.playTrack r.track_id if r.success
         })
     else
       @util.feedback { alert: 'You need to make a playlist to use that button' }
@@ -151,28 +151,28 @@ class @Player
         url: "/next-track/#{@active_track}",
         success: (r) =>
           if r.success
-            this.playTrack(r.track_id)
+            this.playTrack r.track_id
           else
             @util.feedback { notice: 'End of playlist reached'}
-            this.stopAndUnload(@active_track)
+            this.stopAndUnload @active_track
       })
     else
       @util.feedback { alert: 'You need to make a playlist to use that button' }
   
   stopAndUnload: (track_id=0) ->
-    if @active_track == track_id or track_id == 0
+    if @active_track is track_id or track_id is 0
       this._fastFadeout @active_track
       @sm_sound.unload()
       @active_track = ''
       this._updatePlayerDisplay({
-        'title': @app_name,
-        'duration': 0
+        title: @app_name,
+        duration: 0
       })
       @$scrubber.slider 'value', 0
       @$scrubber.slider 'disable'
       this._updatePauseState false
-      @$time_remaining.html ""
-      @$time_elapsed.html ""
+      @$time_remaining.html ''
+      @$time_elapsed.html ''
       $('body').data 'player-invoked', false
   
   highlightActiveTrack: ->
@@ -182,12 +182,10 @@ class @Player
     $('#current_playlist>li').removeClass 'active_track'
     $('#current_playlist>li[data-id="'+@active_track+'"]').addClass 'active_track'
 
-  _loadInfoAndPlay: (track_id) ->
-    this._loadTrackInfo(track_id)
-    @sm.play track_id, {
-      onfinish: =>
-        this.nextTrack()
-    }
+  _loadInfoAndPlay: (track_id, time_marker) ->
+    this._loadTrackInfo track_id
+    @sm.setPosition track_id, time_marker
+    @sm.play track_id, { onfinish: => this.nextTrack() }
     $('body').data 'player-invoked', true
   
   _playRandomShowOrPlaylist: ->
@@ -196,7 +194,7 @@ class @Player
       success: (r) =>
         if r.success
           @util.feedback { notice: 'Playing current playlist...'}
-          this.playTrack(r.track_id)
+          this.playTrack r.track_id
         else
           $.ajax({
             url: "/random-show",
@@ -224,39 +222,39 @@ class @Player
         url: "/play-track/#{track_id}",
         autoLoad: true,
         whileloading: =>
-          this._updateLoadingState(track_id)
+          this._updateLoadingState track_id
         whileplaying: =>
           this._updatePlayerState()
       })
-      @sm.setVolume(track_id, @last_volume)
+      @sm.setVolume track_id, @last_volume
   
   _loadTrackInfo: (track_id) ->
     $.ajax({
       url: "/track-info/#{track_id}",
       success: (r) =>
         if r.success
-          this._updatePlayerDisplay(r)
+          this._updatePlayerDisplay r
         else
           @util.feedback { alert: "Error retrieving track info (#{track_id})" }
     })
   
   _updatePlayerDisplay: (r) ->
     @duration = r.duration
-    if r.title.length > 26 then @$player_title.addClass('long_title') else @$player_title.removeClass('long_title')
+    if r.title.length > 26 then @$player_title.addClass 'long_title' else @$player_title.removeClass 'long_title'
     if r.title.length > 50 then r.title = r.title.substring(0, 47) + '...'
-    @$player_title.html(r.title)
-    @$likes_count.html(r.likes_count)
-    @$likes_link.data('id', r.id)
+    @$player_title.html r.title
+    @$likes_count.html r.likes_count
+    @$likes_link.data 'id', r.id
     if r.liked
       @$likes_link.addClass 'liked'
     else
       @$likes_link.removeClass 'liked'
-    if @duration == 0
-      @$player_detail.html ""
-      @$time_elapsed.html ""
-      @$time_remaining.html ""
+    if @duration is 0
+      @$player_detail.html ''
+      @$time_elapsed.html ''
+      @$time_remaining.html ''
     else
-      @$player_detail.html("<a href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.venue_url}\">#{r.venue}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.city_url}\">#{r.city}</a>");
+      @$player_detail.html "<a href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.venue_url}\">#{r.venue}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.city_url}\">#{r.city}</a>"
   
   _updatePauseState: (playing=true) ->
     if playing
@@ -267,42 +265,39 @@ class @Player
       @$playlist_button.removeClass 'playing'
   
   _updatePlayerState: ->
-    unless @scrubbing or @duration == 0
-      unless isNaN(@duration) or isNaN(@sm_sound.position)
+    unless @scrubbing or @duration is 0
+      unless isNaN @duration or isNaN @sm_sound.position
         # Preload next track if we're close to the end of this one
         if !@preload_started and @duration - @sm_sound.position <= @preload_time
           $.ajax({
             url: "/next-track/#{@active_track}",
             success: (r) =>
-              if r.success
-                this._preloadTrack(r.track_id)
-              # else
-              #   alert(r.msg)
+              this._preloadTrack(r.track_id) if r.success
           })
           @preload_started = true
-        @$scrubber.slider('value', (@sm_sound.position / @duration) * 100)
-        @$time_elapsed.html(@util.readableDuration(@sm_sound.position))
+        @$scrubber.slider 'value', (@sm_sound.position / @duration) * 100
+        @$time_elapsed.html @util.readableDuration(@sm_sound.position)
         remaining = @duration - @sm_sound.position
         if remaining > 0
           @$time_remaining.html "-#{@util.readableDuration(remaining)}"
         else
-          @$time_remaining.html ""  
+          @$time_remaining.html ''
       else
-        @$time_elapsed.html ""
-        @$time_remaining.html ""
+        @$time_elapsed.html ''
+        @$time_remaining.html ''
   
   _updateLoadingState: (track_id) ->
-    if @active_track == track_id
+    if @active_track is track_id
       @$feedback.show()
-      percent_loaded = Math.floor((@sm_sound.bytesLoaded / @sm_sound.bytesTotal) * 100)
+      percent_loaded = Math.floor (@sm_sound.bytesLoaded / @sm_sound.bytesTotal) * 100
       percent_loaded = 0 if isNaN(percent_loaded)
       @$feedback.html("<i class=\"icon-download\"></i> #{percent_loaded}%")
-      if percent_loaded == 100
+      if @time_marker > 0 and @sm_sound.duration > @time_marker + 1000
+        this._loadInfoAndPlay track_id, @time_marker
+        @time_marker = 0
+      if percent_loaded is 100
         @$scrubber.slider 'enable'
         @$feedback.addClass 'done'
-        if @time_marker > 0
-          this._loadInfoAndPlay(track_id)
-          @time_marker = 0
         feedback = @$feedback
         setTimeout( ->
           feedback.hide 'fade'
@@ -312,16 +307,16 @@ class @Player
         @$feedback.removeClass 'done'
   
   _fastFadeout: (track_id, is_pause=false) ->
-    sound = @sm.getSoundById(track_id)
-    if @muted or sound.volume == 0
+    sound = @sm.getSoundById track_id
+    if @muted or sound.volume is 0
       if is_pause
         sound.pause()
       else
         sound.stop()
-      @sm.setVolume(track_id, @$volume_slider.slider('value'))
+      @sm.setVolume track_id, @$volume_slider.slider('value')
     else
       if sound.volume < 10 then delta = 1 else delta = 3
-      @sm.setVolume(track_id, sound.volume - delta)
+      @sm.setVolume track_id, sound.volume - delta
       setTimeout( =>
-        this._fastFadeout(track_id, is_pause)
+        this._fastFadeout track_id, is_pause
       , 10)

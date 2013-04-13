@@ -26,9 +26,8 @@ class @Util
     this.navigateTo $el.attr('href')
 
   navigateTo: (href) ->
-    # alert "adding #{href}"
     @page_init = false
-    History.pushState {href: href}, $('body').data('app-name'), href
+    History.pushState {href: href}, $('body').data 'app-name', href
     window.scrollTo 0, 0
   
   navigateToRefreshMap: ->
@@ -47,7 +46,7 @@ class @Util
             url: request_url,
             dataType: 'json',
             success: (r) =>
-              this._requestAlbumResponse(r, request_url, first_call)
+              this._requestAlbumResponse r, request_url, first_call
           })
         else
           this.feedback { alert: 'You must sign in to download MP3s' }
@@ -58,7 +57,7 @@ class @Util
     duration = 0
     $('#current_playlist > li').each( ->
       track_ids.push $(this).data('id')
-      duration += parseInt($(this).data('track-duration'))
+      duration += parseInt $(this).data('track-duration')
     )
     $.ajax({
       url: '/update-current-playlist',
@@ -82,7 +81,7 @@ class @Util
     hours_with_zero = "#{if hours < 10 then '0' else '' }#{hours}"
     x = Math.floor(x / 24)
     days = x
-    if style == 'letters'
+    if style is 'letters'
       if days > 0
         "#{days}d #{hours}h #{minutes}m #{seconds}s"
       else if hours > 0
@@ -102,9 +101,11 @@ class @Util
     if time.match /^\d+$/  # It's already in ms
       time
     else
-      if matches = time.match /^(\d+)s$/
+      if matches = time.match /^(\d+)m$/
+        (parseInt matches[1]) * 60 * 1000
+      else if matches = time.match /^(\d+)s$/
         (parseInt matches[1]) * 1000
-      if matches = time.match /^(\d+)m(\d+)s$/
+      else if matches = time.match /^(\d+)m(\d+)s$/
         (((parseInt matches[1]) * 60) + (parseInt matches[2])) * 1000
       else if matches = time.match /^(\d+):(\d+)$/
         (((parseInt matches[1]) * 60) + (parseInt matches[2])) * 1000
@@ -113,11 +114,11 @@ class @Util
         0
   
   _requestAlbumResponse: (r, request_url, first_call) ->
-    if r.status == 'Ready'
+    if r.status is 'Ready'
       clearTimeout @download_poller
       @$download_modal.modal 'hide'
       location.href = r.url
-    else if r.status == 'Error'
+    else if r.status is 'Error'
       clearTimeout @download_poller
       @$download_modal.modal 'hide'
       this.feedback { alert: 'An error occurred while processing your request' }
@@ -126,7 +127,7 @@ class @Util
         clearTimeout @download_poller
         @$album_timeout.hide()
         @$download_modal.modal 'show'
-      else if r.status == 'Timeout'
+      else if r.status is 'Timeout'
         @$album_url.html "#{$('body').data('base-url')}#{r.url}"
         @$album_timeout.show 'slide'
       @download_poller = setTimeout( =>
@@ -135,7 +136,7 @@ class @Util
   
   _uniqueID: (length=8) ->
     id = ""
-    id += Math.random().toString(36).substr(2) while id.length < length
+    id += Math.random().toString(36).substr 2 while id.length < length
     id.substr 0, length
   
 
