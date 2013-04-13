@@ -110,6 +110,7 @@ class @Player
         this._loadInfoAndPlay track_id, 0
       this._fastFadeout @active_track if @active_track
       @active_track = track_id
+      @$feedback.hide()
       this._updateLoadingState track_id
       this._updatePauseState()
       this.highlightActiveTrack()
