@@ -698,14 +698,28 @@ h2.for_content {
   background-position: -85px 0 !important;
 }
 .active_track {
-  -moz-box-shadow: 0 0 16px #3b995f !important;
-  -webkit-box-shadow: 0 0 16px #3b995f !important;
-  box-shadow: 0 0 16px #3b995f !important;
+  -webkit-animation: pulsate-green 1.5s infinite alternate linear !important; 
+  -moz-animation: pulsate-green 1.5s infinite alternate linear !important;
 }
 .highlighted_track {
-  -moz-box-shadow: 0 0 16px #1756de !important;
-  -webkit-box-shadow: 0 0 16px #1756de !important;
-  box-shadow: 0 0 16px #1756de !important;
+  -webkit-animation: pulsate-blue 1.5s infinite alternate linear !important; 
+  -moz-animation: pulsate-blue 1.5s infinite alternate linear !important;
+}
+@-webkit-keyframes pulsate-green {
+    0%   { background: #e9ffe3; } 
+    100%  { background: #b4ffac; }
+}
+@-moz-keyframes pulstate-green {
+  0%   { background: #e9ffe3; } 
+  100%  { background: #b4ffac; }
+}
+@-webkit-keyframes pulsate-blue {
+    0%   { background: #eafffd; } 
+    100%  { background: #b2ecff; }
+}
+@-moz-keyframes pulstate-blue {
+  0%   { background: #e9ffe3; } 
+  100%  { background: #b4ffac; }
 }
 
 #scrubber_controls {
