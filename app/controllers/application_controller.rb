@@ -1,10 +1,13 @@
 class ApplicationController < ActionController::Base
+  
+  include ApplicationHelper
   protect_from_forgery
   
   before_filter :random_lyrical_excerpt  # Pull lyrical excerpt unless XHR request
   before_filter :authenticate
   # before_filter :artificial_wait if Rails.env == "development"
   before_filter :setup_session
+  before_filter :require_xhr
   
   def random_lyrical_excerpt
     @random_song = Song.random_lyrical_excerpt.first unless request.xhr?
@@ -38,6 +41,12 @@ class ApplicationController < ActionController::Base
     session[:randomize]   ||= false
     params[:per_page]     ||= 10
     params[:t]            ||= 0
+  end
+  
+  def require_xhr
+    unless request.xhr? or xhr_exempt_controller
+      render 'layouts/application', layout: false and return
+    end
   end
   
 end

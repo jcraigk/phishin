@@ -7,6 +7,7 @@ class @Player
     @preload_time     = 40000
     @preload_started  = false
     @active_track     = ''
+    @invoked          = false
     @muted            = false
     @scrubbing        = false
     @last_volume      = 100
@@ -27,13 +28,16 @@ class @Player
     @$likes_link      = $ '#player_likes_container > .likes_large > a'
     @$feedback.hide()
   
+  invoked: ->
+    @invoked
+  
   # Check for track anchor to scroll-to [and play]
   onReady: ->
     unless this._handleAutoPlayTrack()
-      if $('body').attr('data-autoplay') is 'true'
-        track_id = $('.playable_track').first().data 'id'
-        this.resetPlaylist track_id
-        this.playTrack track_id if track_id
+      if track_id = $('.playable_track').first().data 'id'
+        if not @invoked
+          this.resetPlaylist track_id
+          this.playTrack track_id if track_id
 
   startScrubbing: ->
     @scrubbing = true
@@ -171,7 +175,7 @@ class @Player
       this._updatePauseState false
       @$time_remaining.html ''
       @$time_elapsed.html ''
-      $('body').data 'player-invoked', false
+      @invoked = false
   
   highlightActiveTrack: ->
     if @active_track
@@ -185,8 +189,7 @@ class @Player
     this._loadTrackInfo track_id
     @sm.setPosition track_id, time_marker
     @sm.play track_id, { onfinish: => this.nextTrack() }
-    $('body').attr 'data-autoplay', 'false'
-    $('body').attr 'data-player-invoked', true
+    @invoked = true
 
   _handleAutoPlayTrack: ->
     if anchor_name = $('body').attr 'data-anchor'
@@ -194,13 +197,12 @@ class @Player
       if $col.length > 0
         $el = $col.first()
         $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
-        if $('body').attr('data-autoplay') is 'true'
+        if not @invoked
           track_id = $el.data 'id'
           this.resetPlaylist track_id
           this.playTrack track_id, @time_marker
         else
           $el.addClass 'highlighted_track'
-          $('body').attr 'data-autoplay', 'true'
         true
       else
         false

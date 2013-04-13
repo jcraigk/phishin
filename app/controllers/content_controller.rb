@@ -84,7 +84,6 @@ class ContentController < ApplicationController
     # Show?
     elsif g.match(/^\d{4}\-\d{1,2}-\d{1,2}$/)
       if show g
-        @autoplay = true
         view = :show
       else
         view = :show_not_found
