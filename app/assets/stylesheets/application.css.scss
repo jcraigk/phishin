@@ -25,11 +25,10 @@ a:hover {
 /******************************/
 
 #home_msg {
-  margin: 0 auto;
+  display: inline;
   font-family: 'Shanti', sans-serif;
   font-size: 12px;
   text-align: center;
-  margin-top: 5px;
   font-weight: bold;
   background-color: #f9ffc8;
   border: #998f4a 1px solid;
@@ -1067,4 +1066,9 @@ h2.for_content {
   margin-top: 15px;
   font-size: 30px;
   font-family: 'Rambla';
+}
+#twitter_follow_button {
+  float: right;
+  margin-top: 12px;
+  margin-right: -7px;
 }
