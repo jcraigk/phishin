@@ -99,8 +99,6 @@ class @Player
           whileplaying: =>
             this._updatePlayerState()
         })
-      else
-        this._updateLoadingState track_id
       if @muted
         @sm.setVolume track_id, 0
       else
@@ -112,6 +110,7 @@ class @Player
         this._loadInfoAndPlay track_id, 0
       this._fastFadeout @active_track if @active_track
       @active_track = track_id
+      this._updateLoadingState track_id
       this._updatePauseState()
       this.highlightActiveTrack()
     else
