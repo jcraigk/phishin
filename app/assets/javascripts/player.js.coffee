@@ -297,6 +297,10 @@ class @Player
         this._loadInfoAndPlay track_id, @time_marker
         @time_marker = 0
       if percent_loaded is 100
+        if @time_marker > 0
+          @$player_title.addClass 'long_title'
+          @$player_title.html 'Time marker out of range...'
+          @time_marker = 0
         @$scrubber.slider 'enable'
         @$feedback.addClass 'done'
         feedback = @$feedback
