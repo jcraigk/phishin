@@ -89,7 +89,6 @@ class @Player
   playTrack: (track_id, time_marker=0) ->
     if track_id != @active_track
       @preload_started = false
-      @$feedback.hide 'fade'
       unless @sm_sound = @sm.getSoundById track_id
         @sm_sound = @sm.createSound({
           id: track_id,
@@ -100,6 +99,8 @@ class @Player
           whileplaying: =>
             this._updatePlayerState()
         })
+      else
+        this._updateLoadingState track_id
       if @muted
         @sm.setVolume track_id, 0
       else
