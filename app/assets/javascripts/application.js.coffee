@@ -48,12 +48,12 @@ $ ->
           $ajax_overlay.css 'visibility', 'hidden'
           
           # Report href to Google Analytics
-          _gaq.push [ '_trackPageview', state.data.href ]
+          _gaq.push([ '_trackPageview', state.data.href ]);
           
           # Auto-scroll and highlight track anchor if present
           if anchor = state.data.href.split("/")[2]
-            $('body').data 'anchor', anchor
-            $('body').data 'autoplay', false
+            $('body').data('anchor', anchor)
+            $('body').data('autoplay', false)
           
           # Process page-specific things
           App.Player.onReady() # For scrolling to and auto-playing a track
@@ -64,7 +64,7 @@ $ ->
             App.Map.initMap()
             term = $('#map_search_term').val()
             distance = $('#map_search_distance').val()
-            App.Map.handleSearch term, distance if term and distance
+            App.Map.handleSearch(term, distance) if term and distance
           
           # Playlist
           else if state.data.href.substr(0,9) is '/playlist'
@@ -79,7 +79,7 @@ $ ->
   # Click a link to load context via ajax
   $(document).on 'click', 'a', ->
     unless $(this).hasClass('non-remote')
-      App.Util.followLink $(this) if $(this).attr 'href' != "#" and $(this).attr 'href' != 'null'
+      App.Util.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
       false
   
   ###############################################
@@ -118,8 +118,8 @@ $ ->
   
   # Submit new user
   $(document).on 'submit', '#new_user', (e) ->
-    $('#new_user_container').fadeTo 'fast', 0.5
-    $('#new_user_submit_btn').val 'Processing...'
+    $('#new_user_container').fadeTo('fast', 0.5)
+    $('#new_user_submit_btn').val('Processing...')
 
   # Focus => remove other value
   $(document).on 'focus', '#search_term', (e) ->
@@ -129,18 +129,18 @@ $ ->
   
   # Submit search
   $(document).on 'click', '#search_submit', (e) ->
-    App.Util.navigateTo '/search?date='+$('#search_date').val()+'&term='+encodeURI $('#search_term').val()
+    App.Util.navigateTo '/search?date='+$('#search_date').val()+'&term='+encodeURI($('#search_term').val())
   $(document).on 'keypress', '#search_date', (e) ->
-    App.Util.navigateTo '/search?date='+$('#search_date').val()+'&term='+encodeURI $('#search_term').val() if e.which is 13
+    App.Util.navigateTo '/search?date='+$('#search_date').val()+'&term='+encodeURI($('#search_term').val()) if e.which is 13
   $(document).on 'keypress', '#search_term', (e) ->
-    App.Util.navigateTo '/search?date='+$('#search_date').val()+'&term='+encodeURI $('#search_term').val() if e.which is 13
+    App.Util.navigateTo '/search?date='+$('#search_date').val()+'&term='+encodeURI($('#search_term').val()) if e.which is 13
     
   ###############################################
 
   # Submit map search
   term = $('#map_search_term').val()
   distance = $('#map_search_distance').val()
-  App.Map.handleSearch term, distance if term and distance
+  App.Map.handleSearch(term, distance) if term and distance
   $(document).on 'click', '#map_search_submit', (e) ->
     App.Util.navigateToRefreshMap()
   $(document).on 'keypress', '#map_search_term', (e) ->
@@ -163,7 +163,7 @@ $ ->
   
   # Remove track from playlist
   $(document).on 'click', '.playlist_remove_track', (e) ->
-    track_id = $(this).parents('li').data 'id'
+    track_id = $(this).parents('li').data('id')
     $(this).parents('li').remove()
     if $('#current_playlist').children('li').size() is 0
       App.Util.followLink $('#clear_playlist')
@@ -174,7 +174,7 @@ $ ->
   
   # Add track to playlist
   $(document).on 'click', '.playlist_add_track', (e) ->
-    track_id = $(this).data 'id'
+    track_id = $(this).data('id')
     $.ajax({
       type: 'post',
       url: '/add-track',
@@ -188,7 +188,7 @@ $ ->
   
   # Add show to playlist
   $(document).on 'click', '.playlist_add_show', (e) ->
-    show_id = $(this).data 'id'
+    show_id = $(this).data('id')
     $.ajax({
       type: 'post',
       url: '/add-show',
@@ -224,13 +224,13 @@ $ ->
   
   # Click a track to play it
   $(document).on 'click', '.playable_track', (e) ->
-    App.Player.resetPlaylist $(this).data 'id'
-    App.Player.playTrack $(this).data 'id'
+    App.Player.resetPlaylist $(this).data('id')
+    App.Player.playTrack $(this).data('id')
   
   # Click Play in a context menu to play the track
   $(document).on 'click', '.context_play_track', (e) ->
-    App.Player.resetPlaylist $(this).data 'id'
-    App.Player.playTrack $(this).data 'id'
+    App.Player.resetPlaylist $(this).data('id')
+    App.Player.playTrack $(this).data('id')
 
   # Click the Play/Pause button
   $(document).on 'click', '#playpause', (e) ->
@@ -251,7 +251,7 @@ $ ->
     max: 100,
     value: 0,
     create: ->
-      # Offset knob in Safari (vertically by 1 px)
+      # Fix knob in Safari (offset vertically by 1 px)
       if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') is -1)
         $('#scrubber .ui-slider-handle').css('margin-top', '3px')
     start: ->
@@ -269,15 +269,15 @@ $ ->
     max: 100,
     value: 100,
     slide: ->
-      App.Player.updateVolumeSlider $(this).slider 'value'
+      App.Player.updateVolumeSlider $(this).slider('value')
   })
   
   # Loop / Randomize controls
   $(document).on 'click', '#loop_checkbox', (e) ->
-    $(this).attr 'checked', !$(this).attr('checked')
+    $(this).attr('checked', !$(this).attr('checked'))
     e.stopPropagation()
   $(document).on 'click', '#randomize_checkbox', (e) ->
-    $(this).attr 'checked', !$(this).attr('checked')
+    $(this).attr('checked', !$(this).attr('checked'))
     e.stopPropagation()
     
   # Toggle mute
@@ -339,12 +339,12 @@ $ ->
       success: (r) ->
         if r.success
           App.Util.feedback({ msg: r.msg })
-          if r.liked then $this.addClass 'liked' else $this.removeClass 'liked'
+          if r.liked then $this.addClass('liked') else $this.removeClass('liked')
           $this.siblings('span').html r.likes_count
           # Update other instances of this track's Like controls
           $('.like_toggle[data-type="track"]').each( ->
-            unless $this.data 'id' != $(this).data 'id' or $this.is $(this)
-              if r.liked then $(this).addClass 'liked' else $(this).removeClass 'liked'
+            unless $this.data('id') != $(this).data('id') or $this.is $(this)
+              if r.liked then $(this).addClass('liked') else $(this).removeClass('liked')
               $(this).siblings('span').html r.likes_count
           )
         else
@@ -381,6 +381,6 @@ $ ->
   
   # Share links bring up a modal to display a url
   $(document).on 'click', '.share', ->
-    $('#share_url').html "<p>"+$('body').data('base-url')+$(this).data('url')+"</p>"
-    $('#share_modal').modal 'show'
+    $('#share_url').html("<p>"+$('body').data('base-url')+$(this).data('url')+"</p>")
+    $('#share_modal').modal('show')
     

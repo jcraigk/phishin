@@ -27,15 +27,15 @@ class @Util
 
   navigateTo: (href) ->
     @page_init = false
-    History.pushState {href: href}, $('body').data 'app-name', href
+    History.pushState {href: href}, $('body').data('app-name'), href
     window.scrollTo 0, 0
   
   navigateToRefreshMap: ->
-    url = "/map?term=#{$('#map_search_term').val().replace(/\s/g, '+')}"
+    url = "/map?term=#{$('#map_search_term').val().replace /\s/g, '+' }"
     url += "&distance=#{$('#map_search_distance').val()}"
     url += "&date_start=#{$('#map_date_start').val()}"
     url += "&date_stop=#{$('#map_date_stop').val()}"
-    this.navigateTo(url)
+    this.navigateTo url
 
   requestAlbum: (request_url, first_call) ->
     $.ajax({
