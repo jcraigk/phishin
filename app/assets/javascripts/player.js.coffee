@@ -28,9 +28,6 @@ class @Player
     @$likes_link      = $ '#player_likes_container > .likes_large > a'
     @$feedback.hide()
   
-  invoked: ->
-    @invoked
-  
   # Check for track anchor to scroll-to [and play]
   onReady: ->
     unless this._handleAutoPlayTrack()
