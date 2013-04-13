@@ -29,19 +29,11 @@ class @Player
   
   # Check for track anchor to scroll-to [and play]
   onReady: ->
-    if anchor_name = $('body').attr 'data-anchor'
-      if $('li[data-anchor='+anchor_name+']').length > 0
-        $el = $('li[data-anchor='+anchor_name+']').first()
-        $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
-        if $('body').attr('data-autoplay') is 'true'
-          this.resetPlaylist $el.data('id')
-          this.playTrack $el.data('id'), @time_marker
-        else
-          $el.addClass 'highlighted_track'
-    else if $('body').attr('data-autoplay') is 'true'
-      track_id = $('.playable_track').first().data 'id'
-      this.resetPlaylist track_id
-      this.playTrack track_id if track_id
+    unless this._handleAutoPlayTrack()
+      if $('body').attr('data-autoplay') is 'true'
+        track_id = $('.playable_track').first().data 'id'
+        this.resetPlaylist track_id
+        this.playTrack track_id if track_id
 
   startScrubbing: ->
     @scrubbing = true
@@ -136,14 +128,7 @@ class @Player
         this._fastFadeout @active_track, true
         this._updatePauseState false
       else
-        if anchor_name = $('body').attr('data-anchor')
-          if $('li[data-anchor='+anchor_name+']').length > 0
-            $el = $('li[data-anchor='+anchor_name+']').first()
-            track_id = $el.data('id')
-            this.resetPlaylist track_id
-            this.playTrack track_id
-        else
-          this._playRandomShowOrPlaylist()
+        this._playRandomShowOrPlaylist() unless this._handleAutoPlayTrack()
   
   previousTrack: ->
     if @active_track
@@ -201,6 +186,25 @@ class @Player
     @sm.setPosition track_id, time_marker
     @sm.play track_id, { onfinish: => this.nextTrack() }
     $('body').data 'player-invoked', true
+
+  _handleAutoPlayTrack: ->
+    if anchor_name = $('body').attr 'data-anchor'
+      $col = $ 'li[data-anchor='+anchor_name+']'
+      if $col.length > 0
+        $el = $col.first()
+        $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
+        if $('body').attr('data-autoplay') is 'true'
+          track_id = $el.data 'id'
+          this.resetPlaylist track_id
+          this.playTrack track_id, @time_marker
+        else
+          $el.addClass 'highlighted_track'
+          $('body').attr 'data-autoplay', 'true'
+        true
+      else
+        false
+    else
+      false
   
   _playRandomShowOrPlaylist: ->
     $.ajax({
