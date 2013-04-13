@@ -290,7 +290,6 @@ class @Player
   
   _updateLoadingState: (track_id) ->
     if @active_track is track_id
-      @$feedback.show()
       percent_loaded = Math.floor (@sm_sound.bytesLoaded / @sm_sound.bytesTotal) * 100
       percent_loaded = 0 if isNaN(percent_loaded)
       @$feedback.html "<i class=\"icon-download\"></i> #{percent_loaded}%"
@@ -308,6 +307,7 @@ class @Player
           @$feedback.hide 'fade'
         , 2000)
       else
+        @$feedback.show()
         @$scrubber.slider 'disable'
         @$feedback.removeClass 'done'
   
