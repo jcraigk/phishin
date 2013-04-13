@@ -34,11 +34,14 @@ class @Player
         $el = $('li[data-anchor='+anchor_name+']').first()
         $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
         if $('body').attr('data-autoplay') is 'true'
+          this.resetPlaylist $el.data('id')
           this.playTrack $el.data('id'), @time_marker
         else
           $el.addClass 'highlighted_track'
     else if $('body').attr('data-autoplay') is 'true'
-      this.playTrack track_id if track_id = $('.playable_track').first().data 'id'
+      track_id = $('.playable_track').first().data 'id'
+      this.resetPlaylist track_id
+      this.playTrack track_id if track_id
 
   startScrubbing: ->
     @scrubbing = true
@@ -115,7 +118,7 @@ class @Player
       this._updatePauseState()
       this.highlightActiveTrack()
     else
-      @util.feedback { notice: 'That is already the current track' }
+      # @util.feedback { notice: 'That is already the current track' }
   
   resetPlaylist: (track_id) ->
     $.ajax({
@@ -136,7 +139,9 @@ class @Player
         if anchor_name = $('body').attr('data-anchor')
           if $('li[data-anchor='+anchor_name+']').length > 0
             $el = $('li[data-anchor='+anchor_name+']').first()
-            this.playTrack $el.data('id')
+            track_id = $el.data('id')
+            this.resetPlaylist track_id
+            this.playTrack track_id
         else
           this._playRandomShowOrPlaylist()
   
