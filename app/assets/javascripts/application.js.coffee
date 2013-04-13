@@ -391,5 +391,9 @@ $ ->
   # Share links bring up a modal to display a url
   $(document).on 'click', '.share', ->
     $('#share_url').html("<p>"+$('body').data('base-url')+$(this).data('url')+"</p>")
+    if $(this).hasClass('share_track')
+      $('#share_track_tips').show()
+    else
+      $('#share_track_tips').hide()
     $('#share_modal').modal('show')
     

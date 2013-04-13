@@ -10,7 +10,7 @@
       <% else %>
         <%= content_tag :li, link_to("<i class=\"icon-list\"></i>&nbsp;&nbsp;Add to Playlist".html_safe, "null", class: 'playlist_add_track', data: { id: track.id }) %>
       <% end %>
-      <%= content_tag :li, link_to('<i class="icon-share-alt"></i>&nbsp;&nbsp;Share'.html_safe, "null", class: 'share', data: { url: "/#{show ? show.date : track.show.date}/#{track.slug}"}) %>
+      <%= content_tag :li, link_to('<i class="icon-share-alt"></i>&nbsp;&nbsp;Share'.html_safe, "null", class: 'share share_track', data: { url: "/#{show ? show.date : track.show.date}/#{track.slug}"}) %>
       <%= content_tag :li, link_to('<i class="icon-download"></i>&nbsp;&nbsp;Download MP3'.html_safe, "null", data: { url: download_track_path(track) }, class: "download") %>
       <%= content_tag :li, link_to('<i class="icon-book"></i>&nbsp;&nbsp;This song...'.html_safe, "/#{track.songs.first.slug}") %>
     </ul>

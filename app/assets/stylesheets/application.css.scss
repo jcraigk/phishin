@@ -912,6 +912,17 @@ h2.for_content {
   font-size: 18px;
   font-weight: bold;
 }
+#share_track_tips {
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+  border-radius: 8px;
+  background-color: #eee;
+  border: 1px solid #333;
+  padding: 10px;
+  padding-bottom: 10px;
+  font-size: 14px;
+  margin-top: 10px;
+}
 #footer_container a {
   margin-left: 20px;
   color: #ddd;
