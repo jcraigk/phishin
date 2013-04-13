@@ -89,6 +89,7 @@ class @Player
   playTrack: (track_id, time_marker=0) ->
     if track_id != @active_track
       @preload_started = false
+      @$feedback.hide 'fade'
       unless @sm_sound = @sm.getSoundById track_id
         @sm_sound = @sm.createSound({
           id: track_id,
@@ -292,7 +293,7 @@ class @Player
       @$feedback.show()
       percent_loaded = Math.floor (@sm_sound.bytesLoaded / @sm_sound.bytesTotal) * 100
       percent_loaded = 0 if isNaN(percent_loaded)
-      @$feedback.html("<i class=\"icon-download\"></i> #{percent_loaded}%")
+      @$feedback.html "<i class=\"icon-download\"></i> #{percent_loaded}%"
       if 0 < @time_marker < @sm_sound.duration
         this._loadInfoAndPlay track_id, @time_marker
         @time_marker = 0
@@ -303,9 +304,8 @@ class @Player
           @time_marker = 0
         @$scrubber.slider 'enable'
         @$feedback.addClass 'done'
-        feedback = @$feedback
-        setTimeout( ->
-          feedback.hide 'fade'
+        setTimeout( =>
+          @$feedback.hide 'fade'
         , 2000)
       else
         @$scrubber.slider 'disable'
