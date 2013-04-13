@@ -39,7 +39,6 @@ $ ->
   History.Adapter.bind window, 'popstate', ->
     state = window.History.getState()
     if state.data.href != undefined and !App.Util.page_init
-      # alert "Loading #{state.data.href}"
       $ajax_overlay.css 'visibility', 'visible'
       $page.html ''
       $page.load(
@@ -55,7 +54,6 @@ $ ->
             $('body').attr 'data-anchor', anchor
           else
             $('body').attr 'data-anchor', ''
-          $('body').attr 'data-autoplay', 'false'
           App.Player.onReady() # For scrolling to and auto-playing a track
           App.Player.highlightActiveTrack() # For highlighting current track in a list
           
@@ -75,12 +73,14 @@ $ ->
                 App.Util.updateCurrentPlaylist 'Track moved in playlist'
             })
       )
-      
-  # Click a link to load context via ajax
-  $(document).on 'click', 'a', ->
-    unless $(this).hasClass('non-remote')
-      App.Util.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
-      false
+
+  ###############################################
+  # Reload initial page for history's sake if not a devise route
+  ###############################################
+  path_segment = window.location.pathname.split('/')[1]
+  if path_segment isnt 'users'
+    $page.html ''
+    App.Util.navigateTo(window.location.pathname)
   
   ###############################################
   # Handle feedback on DOM load
@@ -110,6 +110,12 @@ $ ->
   ###############################################
   # DOM interactions
   ###############################################
+  
+  # Click a link to load page via ajax
+  $(document).on 'click', 'a', ->
+    unless $(this).hasClass('non-remote')
+      App.Util.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
+      false
   
   # Close dropdown menu after clicking link within
   # Following causes issues with subsequent usage of that dropdown

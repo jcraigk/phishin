@@ -185,7 +185,8 @@ class @Player
     this._loadTrackInfo track_id
     @sm.setPosition track_id, time_marker
     @sm.play track_id, { onfinish: => this.nextTrack() }
-    $('body').data 'player-invoked', true
+    $('body').attr 'data-autoplay', 'false'
+    $('body').attr 'data-player-invoked', true
 
   _handleAutoPlayTrack: ->
     if anchor_name = $('body').attr 'data-anchor'
