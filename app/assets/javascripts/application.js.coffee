@@ -344,11 +344,11 @@ $ ->
           # Update other instances of this track's Like controls
           $('.like_toggle[data-type="track"]').each( ->
             unless $this.data('id') != $(this).data('id') or $this.is $(this)
-              if r.liked then $(this).addClass('liked') else $(this).removeClass('liked')
+              if r.liked then $(this).addClass 'liked' else $(this).removeClass 'liked'
               $(this).siblings('span').html r.likes_count
           )
         else
-          App.Util.feedback({ type: 'alert', msg: r.msg })
+          App.Util.feedback { alert: r.msg }
     })
   
   # Rollover year to reveal number of shows

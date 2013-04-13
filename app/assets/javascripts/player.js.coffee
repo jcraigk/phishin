@@ -105,6 +105,7 @@ class @Player
         @sm.setVolume track_id, @last_volume
       if time_marker > 0
         @$player_title.html 'Loading...'
+        @$player_detail.html ''
       else
         this._loadInfoAndPlay track_id, 0
       this._fastFadeout @active_track if @active_track
