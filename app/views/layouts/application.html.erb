@@ -9,7 +9,7 @@
   <%= render partial: 'layouts/google_analytics' %>
   <%= csrf_meta_tags %>
 </head>
-<body data-base-url="<%= APP_BASE_URL %>" data-app-name="<%= APP_NAME %>" data-anchor="<%= params[:anchor].downcase if params[:anchor] %>" data-time-marker="<%=  params[:t] if params[:t] %>">
+<body data-base-url="<%= APP_BASE_URL %>" data-app-name="<%= APP_NAME %>" data-anchor="<%= params[:anchor].downcase if params[:anchor] %>" data-time-marker="<%= params[:t] if params[:t] %>">
 
   <%= render partial: 'layouts/feedback' %>
   <%= render partial: 'layouts/ajax_overlay' %>

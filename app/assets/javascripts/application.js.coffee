@@ -46,6 +46,9 @@ $ ->
           alert("ERROR\n\n"+response) if status is 'error'
           $ajax_overlay.css 'visibility', 'hidden'
           
+          # Re-render twitter button(s)
+          twttr.widgets.load() if twttr?
+                    
           # Report href to Google Analytics
           _gaq.push([ '_trackPageview', state.data.href ]);
           
