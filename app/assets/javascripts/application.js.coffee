@@ -190,9 +190,9 @@ $ ->
       data: { 'track_id': track_id}
       success: (r) ->
         if r.success
-          App.Util.feedback { msg: 'Track added to playlist' }
+          App.Util.feedback { notice: 'Track added to playlist' }
         else
-          App.Util.feedback { type: 'alert', msg: r.msg }
+          App.Util.feedback { alert: r.msg }
     })
   
   # Add show to playlist
@@ -204,9 +204,9 @@ $ ->
       data: { 'show_id': show_id}
       success: (r) ->
         if r.success
-          App.Util.feedback { msg: r.msg }
+          App.Util.feedback { notice: r.msg }
         else
-          App.Util.feedback { type: 'alert', msg: r.msg }
+          App.Util.feedback { alert: r.msg }
     })
   
   # Clear playlist stops and unloads current sound
@@ -224,9 +224,9 @@ $ ->
       }
       success: (r) ->
         if r.success
-          App.Util.feedback { msg: 'Playlist options saved' }
+          App.Util.feedback { notice: 'Playlist options saved' }
         else
-          App.Util.feedback { type: 'alert', msg: r.msg }
+          App.Util.feedback { alert: r.msg }
     })
   
   ###############################################
@@ -347,7 +347,7 @@ $ ->
       dataType: 'json',
       success: (r) ->
         if r.success
-          App.Util.feedback({ msg: r.msg })
+          App.Util.feedback({ notice: r.msg })
           if r.liked then $this.addClass('liked') else $this.removeClass('liked')
           $this.siblings('span').html r.likes_count
           # Update other instances of this track's Like controls
