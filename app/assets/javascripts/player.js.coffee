@@ -293,7 +293,7 @@ class @Player
       percent_loaded = Math.floor (@sm_sound.bytesLoaded / @sm_sound.bytesTotal) * 100
       percent_loaded = 0 if isNaN(percent_loaded)
       @$feedback.html("<i class=\"icon-download\"></i> #{percent_loaded}%")
-      if @time_marker > 0 and @sm_sound.duration > @time_marker
+      if 0 < @time_marker < @sm_sound.duration
         this._loadInfoAndPlay track_id, @time_marker
         @time_marker = 0
       if percent_loaded is 100
