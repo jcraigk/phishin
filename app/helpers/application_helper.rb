@@ -75,7 +75,7 @@ module ApplicationHelper
   
   def xhr_exempt_controller
     devise_controllers = %w(sessions registrations confirmations passwords unlocks omniauth_callbacks)
-    special_controllers = %w(downloads)
+    special_controllers = %w(downloads pages)
     exempt_controllers = devise_controllers + special_controllers
     exempt_controllers.include? controller_name
   end

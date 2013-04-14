@@ -40,7 +40,7 @@ class ContentController < ApplicationController
   end
   
   def top_liked_shows
-    @shows = Show.avail.where('likes_count > 0').order('likes_count desc, date desc').page(params[:page])
+    @shows = Show.avail.where('likes_count > 0').order('likes_count desc, date desc').limit(1000).page(params[:page])
     @shows_likes = @shows.map { |show| get_user_show_like(show) }
     render layout: false if request.xhr?
   end
