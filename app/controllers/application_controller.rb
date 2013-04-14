@@ -3,10 +3,11 @@ class ApplicationController < ActionController::Base
   include ApplicationHelper
   protect_from_forgery
   
+  # before_filter :artificial_wait if Rails.env == "development"
   before_filter :random_lyrical_excerpt  # Pull lyrical excerpt unless XHR request
   before_filter :authenticate
-  # before_filter :artificial_wait if Rails.env == "development"
   before_filter :setup_session
+  before_filter :mobile_unsupported
   before_filter :require_xhr
   
   def random_lyrical_excerpt
@@ -41,6 +42,12 @@ class ApplicationController < ActionController::Base
     session[:randomize]   ||= false
     params[:per_page]     ||= 10
     params[:t]            ||= 0
+  end
+  
+  def mobile_unsupported
+    if request.env["HTTP_USER_AGENT"] =~ /Android|webOS|iPhone|iPad|iPod|BlackBerry/i
+      redirect_to mobile_unsupported_path and return
+    end
   end
   
   def require_xhr
