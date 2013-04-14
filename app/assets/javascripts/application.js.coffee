@@ -9,6 +9,7 @@
 //= require util
 //= require player
 //= require map
+//= require spin.min
 
 # Generic namespace
 @App = {}
@@ -343,12 +344,22 @@ $ ->
   # Click a Like to submit to server
   $(document).on 'click', '.like_toggle', ->
     $this = $(this)
+    if $(this).parents('#player_likes_container').length > 0
+      className = 'spinner_likes_title'
+    else
+      if $(this).parent().hasClass('likes_small')
+        className = 'spinner_likes_small'
+      else if $(this).parent().hasClass('likes_large')
+        className = 'spinner_likes_large'
+    spinner = App.Util.newSpinner className
+    $(this).parent().append spinner.el
     $.ajax({
       type: 'post',
       url: '/toggle-like',
       data: { 'likable_type': $this.data('type'), 'likable_id': $this.data('id') }
       dataType: 'json',
       success: (r) ->
+        spinner.stop()
         if r.success
           App.Util.feedback({ notice: r.msg })
           if r.liked then $this.addClass('liked') else $this.removeClass('liked')

@@ -113,6 +113,21 @@ class @Util
         this.feedback { alert: "Invalid start time provided (#{time})" }
         0
   
+  newSpinner: (className = 'spinner_likes_small') ->
+    new Spinner({
+      lines: 9,
+      length: 4,
+      width: 2,
+      radius: 3,
+      corners: 1.0,
+      rotate: 0,
+      direction: -1,
+      color: '#000',
+      speed: 1.0,
+      trail: 50,
+      className: className
+    }).spin()
+  
   _requestAlbumResponse: (r, request_url, first_call) ->
     if r.status is 'Ready'
       clearTimeout @download_poller

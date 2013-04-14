@@ -142,7 +142,7 @@ a:hover {
   background-position: -20px 0 !important;
 }
 .likes_small a.liked {
-  background-position: -15px 0 !important;
+  background-position: -16px 0 !important;
 }
 .likes_large a {
   cursor: pointer;
@@ -191,8 +191,8 @@ a:hover {
 .likes_small a {
   cursor: pointer;
   float: left;
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   text-decoration: none;
   background: url('icons-heart-small.png');
   margin-top: 13px;
@@ -201,7 +201,7 @@ a:hover {
 }
 .likes_small a:hover {
   cursor: pointer;
-  background-position: -30px 0 !important;
+  background-position: -32px 0 !important;
   text-decoration: none !important;
 }
 .likes_small span {
@@ -211,6 +211,20 @@ a:hover {
   font-size: 15px;
   font-family: 'Nothing You Could Do', cursive;
 }
+
+.spinner_likes_small {
+  left: -15px;
+  top: 21px;
+}
+.spinner_likes_large {
+  left: 162px;
+  top: 30px;
+}
+.spinner_likes_title {
+  left: 54px;
+  top: 20px;
+}
+
 
 /******************************/
 

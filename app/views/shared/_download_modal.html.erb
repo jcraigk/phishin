@@ -5,7 +5,8 @@
   </div>
   <div class="modal-body">
     <div id="download_modal_body">
-      <%= image_tag "ajax-loader-inverse.gif", :alt => "loading" %><br /><br />
+      <div id="spinnerbox"></div>
+      <br /><br />
       <strong>Please wait...</strong>
       <br />
       Your download will begin shortly
@@ -18,3 +19,18 @@
     </div>
   </div>
 </div>
+<script type="text/javascript" charset="utf-8">
+new Spinner({
+  lines: 13,
+  length: 12,
+  width: 7,
+  radius: 15,
+  corners: 1.0,
+  rotate: 0,
+  direction: -1,
+  color: '#000',
+  speed: 1.0,
+  trail: 50,
+  left: 195
+}).spin($('#spinnerbox').get(0));
+</script>

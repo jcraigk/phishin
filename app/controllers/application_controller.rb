@@ -32,7 +32,7 @@ class ApplicationController < ActionController::Base
   end
   
   def artificial_wait
-    sleep 2.seconds
+    sleep 1.second
   end
   
   def setup_session
