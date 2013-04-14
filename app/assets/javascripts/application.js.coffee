@@ -53,8 +53,9 @@ $ ->
           _gaq.push([ '_trackPageview', state.data.href ]);
           
           # Auto-scroll and highlight track anchor if present
-          if anchor = state.data.href.split("/")[2]
-            $('body').attr 'data-anchor', anchor
+          if path = state.data.href.split("/")[2]
+            match = /^(.+)\?(.+)$/.exec(path)
+            $('body').attr 'data-anchor', match[1]
           else
             $('body').attr 'data-anchor', ''
           App.Player.onReady() # For scrolling to and auto-playing a track
@@ -78,12 +79,14 @@ $ ->
       )
 
   ###############################################
-  # Reload initial page for history's sake if not a devise route
+  # Load initial page if not an exempt route
   ###############################################
   path_segment = window.location.pathname.split('/')[1]
   if path_segment isnt 'users'
     $page.html ''
-    App.Util.navigateTo(window.location.pathname)
+    match = /^http:\/\/(.+)$/.exec(window.location)
+    href = match[1].substr(match[1].indexOf('/'), match[1].length - 1)
+    App.Util.navigateTo(href)
   
   ###############################################
   # Handle feedback on DOM load
