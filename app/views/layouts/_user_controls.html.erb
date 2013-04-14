@@ -2,8 +2,8 @@
   
   <% if user_signed_in? %>
     <div class="btn-group">
-      <a class="btn dropdown-toggle btn-round" data-toggle="dropdown" href="null">
-        <!-- <i class="icon-user"></i>&nbsp;&nbsp; --><%= current_user.username %>
+      <a class="btn dropdown-toggle btn-round btn-mini btn-inverse" data-toggle="dropdown" href="null">
+        &nbsp;<%= current_user.username %>
         <span class="caret"></span>
       </a>
       <ul class="dropdown-menu">
