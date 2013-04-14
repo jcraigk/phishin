@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130407215439) do
+ActiveRecord::Schema.define(:version => 20130414231746) do
 
   create_table "album_requests", :force => true do |t|
     t.integer  "album_id"
@@ -166,12 +166,12 @@ ActiveRecord::Schema.define(:version => 20130407215439) do
     t.string   "state"
     t.string   "country"
     t.string   "slug"
-    t.datetime "created_at",                        :null => false
-    t.datetime "updated_at",                        :null => false
-    t.integer  "shows_count",    :default => 0
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
+    t.integer  "shows_count", :default => 0
     t.float    "latitude"
     t.float    "longitude"
-    t.boolean  "vague_location", :default => false
+    t.string   "abbrev"
   end
 
   add_index "venues", ["name"], :name => "index_venues_on_name"

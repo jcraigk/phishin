@@ -12,7 +12,7 @@ class SearchController < ApplicationController
       else
         if term.present?
           @songs = Song.where('lower(title) LIKE ?', "%#{term}%").order('title asc').all
-          @venues = Venue.where('lower(name) LIKE ? OR lower(past_names) LIKE ? OR lower(city) LIKE ?', "%#{term}%", "%#{term}%", "%#{term}%").order('name asc').all
+          @venues = Venue.where('lower(name) LIKE ? OR lower(abbrev) LIKE ? OR lower(past_names) LIKE ? OR lower(city) LIKE ?', "%#{term}%", "%#{term}%", "%#{term}%", "%#{term}%").order('name asc').all
           # TODO Tours
           @tours = Tour.where('lower(name) LIKE ?', "%#{term}%").order('name asc').all
           @total_results = @songs.size + @venues.size + @tours.size

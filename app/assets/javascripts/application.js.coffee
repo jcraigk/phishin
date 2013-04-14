@@ -128,7 +128,9 @@ $ ->
   # Close dropdown menu after clicking link within
   # Following causes issues with subsequent usage of that dropdown
   # $(document).on 'click', '.dropdown-menu a', (e) ->
-  #   $(this).parents('.dropdown-menu').dropdown('toggle')
+    # $(this).parents('.dropdown-menu').dropdown().toggle()
+    # $(this).parents('.dropdown-menu').css('left', -3000)
+    # $(this).parents('.dropdown-menu').css('top', -3000)
   
   # Submit new user
   $(document).on 'submit', '#new_user', (e) ->

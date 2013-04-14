@@ -4,9 +4,9 @@ class PlaylistsController < ApplicationController
     session[:playlist] = [] if params[:clear_playlist] == "1"
     @num_tracks = 0
     @duration = 0
-    # raise session[:playlist].inspect
     begin
       if session[:playlist]
+        session[:playlist] = session[:playlist].take(100)
         tracks_by_id = Track.find(session[:playlist]).index_by(&:id)
         @tracks = session[:playlist].collect {|id| tracks_by_id[id] }
         @num_tracks = @tracks.size
@@ -34,6 +34,7 @@ class PlaylistsController < ApplicationController
   
   def update_current_playlist
     session[:playlist] = params[:track_ids].map {|id| Integer(id, 10)}
+    session[:playlist] = session[:playlist].take(100)
     render json: { success: true, msg: session[:playlist] }
   end
   
@@ -41,7 +42,9 @@ class PlaylistsController < ApplicationController
     if session[:playlist].include? Integer(params[:track_id], 10)
       render json: { success: false, msg: 'Track already in playlist'}
     else
-      if track = Track.find(params[:track_id])
+      if session[:playlist].size > 99
+        render json: { success: false, msg: 'Playlists are limited to 100 tracks' }
+      elsif track = Track.find(params[:track_id])
         session[:playlist] << track.id
         render json: { success: true }   
       else
@@ -55,6 +58,9 @@ class PlaylistsController < ApplicationController
       track_list = show.tracks.map(&:id)
       unique_list = []
       track_list.each { |track_id| unique_list << track_id unless session[:playlist].include? track_id }
+      if session[:playlist].size + unique_list.size > 99
+        render json: { success: false, msg: 'Playlists are limited to 100 tracks' }
+      else
         if unique_list.size == 0
           render json: { success: false, msg: 'Tracks already in playlist' }
         elsif unique_list != track_list
@@ -64,6 +70,7 @@ class PlaylistsController < ApplicationController
           session[:playlist] += unique_list
           render json: { success: true, msg: 'Tracks added to playlist' }
         end
+      end
     else
       render json: { success: false, msg: 'Invalid show provided for playlist' }
     end

@@ -10,6 +10,10 @@ class Venue < ActiveRecord::Base
   
   scope :relevant, -> { where("shows_count > 0") }
   
+  def name_and_abbrev
+    abbrev ? "#{name} (#{abbrev})" : name
+  end
+  
   def location
     (country == "USA" ? "#{city}, #{state}" : "#{city}, #{state} #{country}").gsub(/\s+/, ' ')
   end

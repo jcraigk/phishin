@@ -19,7 +19,7 @@ namespace :venues do
   #   require 'net/http'
   #   require 'open-uri'
   #   missing_count = 0
-  #   venues = Venue.relevant.where('vague_location = FALSE and (latitude IS NULL or longitude IS NULL)').order('id').all
+  #   venues = Venue.relevant.where('latitude IS NULL or longitude IS NULL').order('id').all
   #   for venue in venues
   #     address = "#{URI.encode venue.name},#{URI.encode venue.location}"
   #     url = "http://maps.googleapis.com/maps/api/geocode/json?address=#{address}&sensor=false"
