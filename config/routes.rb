@@ -14,8 +14,10 @@ Phishin::Application.routes.draw do
   # Static pages
   get     '/legal-stuff'                  => 'pages#legal_stuff', as: 'legal_stuff'
   get     '/contact-us'                   => 'pages#contact_us', as: 'contact_us'
-  get     '/browser-unsupported'          => 'pages#browser_unsupported', as: 'browser_unsupported'
-  get     '/mobile-unsupported'           => 'pages#mobile_unsupported', as: 'mobile_unsupported'
+
+  # Error pages
+  get     '/browser-unsupported'          => 'errors#browser_unsupported', as: 'browser_unsupported'
+  get     '/mobile-unsupported'           => 'errors#mobile_unsupported', as: 'mobile_unsupported'
 
   # Reports
   get     '/missing-shows'                => 'reports#missing_shows', as: 'missing_shows'
