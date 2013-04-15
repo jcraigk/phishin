@@ -33,7 +33,6 @@ class Venue < ActiveRecord::Base
       latitude: latitude,
       longitude: longitude,
       shows_count: shows_count,
-      vague_location: vague_location,
       location: location,
       slug: slug,
       show_dates: shows.order('date desc').all.map(&:date)
