@@ -4,10 +4,9 @@
   
   <div style="text-align: center;">
     <div class="btn-group like_tabs">
-      <%= link_to content_tag(:button, 'Top Shows', class: 'btn btn-medium btn-primary active'), liked_shows_path %>
-      <%= link_to content_tag(:button, 'Top Tracks', class: 'btn btn-medium'), liked_tracks_path %>
+      <%= link_to content_tag(:button, 'Top 50 Shows', class: 'btn btn-medium btn-primary active'), liked_shows_path %>
+      <%= link_to content_tag(:button, 'Top 50 Tracks', class: 'btn btn-medium'), liked_tracks_path %>
     </div>
-    <%= will_paginate_simple @shows %>
   </div>
 
   <ul class="item_list clickable">
@@ -18,6 +17,7 @@
         <%= content_tag :h5, link_to(show.venue.location, "/map?term=#{CGI::escape(show.venue.location)}") %>
         <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
         <%= likable(show, @shows_likes[idx], 'small') %>
+        <%= content_tag :h3, "<strong>##{idx+1}</strong>".html_safe, class: 'alt' %>
         <div style="clear: both;"></div>
       </li>
     <% end %>

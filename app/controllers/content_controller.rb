@@ -40,13 +40,13 @@ class ContentController < ApplicationController
   end
   
   def top_liked_shows
-    @shows = Show.avail.where('likes_count > 0').order('likes_count desc, date desc').limit(1000).page(params[:page])
+    @shows = Show.avail.where('likes_count > 0').order('likes_count desc, date desc').limit(50)
     @shows_likes = @shows.map { |show| get_user_show_like(show) }
     render layout: false if request.xhr?
   end
   
   def top_liked_tracks
-    @tracks = Track.where('likes_count > 0').order('likes_count desc, title asc').page(params[:page])
+    @tracks = Track.where('likes_count > 0').order('likes_count desc, title asc').limit(50)
     @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
     render layout: false if request.xhr?
   end
