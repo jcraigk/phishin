@@ -12,7 +12,7 @@
   <ul class="item_list">
     <% @tracks.each_with_index do |track, idx| %>
     <li class="playable_track" data-id="<%= track.id %>">
-      <%= content_tag :h2, "<strong>##{idx+1}</strong>&nbsp;&nbsp;".html_safe + link_to(track.title, "/#{track.show.date}/#{track.slug}"), class: 'medium_width' %>
+      <%= content_tag :h2, "<strong>#{idx+1}</strong>&nbsp;&nbsp;".html_safe + link_to(track.title, "/#{track.show.date}/#{track.slug}"), class: 'medium_width' %>
       <%= content_tag :h5, link_to(track.show.date.strftime("%-m/%-d/%y"), "/#{track.show.date}"), class: 'large' %>
       <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil } %>
       <%= likable(track, @tracks_likes[idx], 'small') %>

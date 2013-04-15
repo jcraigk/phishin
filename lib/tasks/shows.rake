@@ -1,4 +1,19 @@
 namespace :shows do 
+  
+  desc "Set shows.duration based on sum of all tracks"
+  task :calc_duration => :environment do
+    Show.order('date desc').all.each do |show|
+      tracks = show.tracks
+      if tracks.present?
+        duration = show.tracks.map(&:duration).inject(0, &:+)
+        show.duration = duration
+        show.save
+        puts "#{show.date}: #{duration}"
+      end
+    end
+  end
+  
+  # Get info about each show from the spreadsheet
   task :get_shows_info => :environment do
     require 'open-uri'
 
@@ -26,6 +41,7 @@ namespace :shows do
     end
   end
 
+  # Get songs from pnet api
   task :get_songs => :environment do
     require 'pnet'
     api_key = '448345A7B7688DDE43D0'
@@ -74,19 +90,6 @@ namespace :shows do
     total_shows.each {|y, num| overall_total_shows += num }
     percent = (overall_total_shows > 0 ? (total_missing.to_f / overall_total_shows.to_f) * 100.0 : 0)
     puts "TOTAL: missing #{total_missing} of #{overall_total_shows} (#{percent.round}%)"
-
   end
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
 end

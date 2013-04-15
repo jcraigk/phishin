@@ -2,7 +2,7 @@
   <div id="header">
     <%= content_tag :h1, @title %>
     <%= content_tag :h3, pluralize(@shows.size, 'show') %>
-    <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Chronological' => 'date desc', '<i class="icon-time"></i> Chronological' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes'} } %>
+    <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Chronological' => 'date desc', '<i class="icon-time"></i> Chronological' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes',  '<i class="icon-forward"></i> Duration' => 'duration'} } %>
   </div>
 </div>
   
@@ -31,11 +31,12 @@
       <% end %>
     
       <li>
-        <%= content_tag :h2, link_to(show.date.strftime("%b %-d"), "/#{show.date}") %>
+        <%= content_tag :h2, link_to_show(show, @display_separators) %>
         <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}") %>
         <%= content_tag :h5, link_to(show.venue.location, "/map?term=#{CGI::escape(show.venue.location)}") %>
         <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
         <%= likable(show, @shows_likes[idx], 'small') %>
+        <%= content_tag :span, "#{show.duration_readable}", class: 'show_duration_small' %>
         <div style="clear: both;"></div>
       </li>
       

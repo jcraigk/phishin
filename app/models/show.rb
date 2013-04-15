@@ -48,4 +48,8 @@ class Show < ActiveRecord::Base
     tracks.select { |t| /^\d$/.match t.set }.map(&:set).sort.last
   end
   
+  def duration_readable
+    "#{duration / 3600000}h #{(duration % 3600000) / 60000}m"
+  end
+  
 end

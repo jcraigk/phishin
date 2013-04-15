@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130414231746) do
+ActiveRecord::Schema.define(:version => 20130415030315) do
 
   create_table "album_requests", :force => true do |t|
     t.integer  "album_id"
@@ -74,8 +74,11 @@ ActiveRecord::Schema.define(:version => 20130414231746) do
     t.boolean  "incomplete",  :default => false
     t.boolean  "missing",     :default => true
     t.text     "admin_notes"
+    t.integer  "duration",    :default => 0,     :null => false
   end
 
+  add_index "shows", ["date"], :name => "index_shows_on_date"
+  add_index "shows", ["duration"], :name => "index_shows_on_duration"
   add_index "shows", ["likes_count"], :name => "index_shows_on_likes_count"
   add_index "shows", ["tour_id"], :name => "index_shows_on_tour_id"
   add_index "shows", ["venue_id"], :name => "index_shows_on_venue_id"

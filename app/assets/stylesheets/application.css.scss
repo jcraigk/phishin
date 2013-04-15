@@ -188,6 +188,7 @@ a:hover {
   margin-left: 10px;
   line-height: 40px;
   text-align: left;
+//  border: 1px solid red;
 }
 .likes_small a {
   cursor: pointer;
@@ -343,6 +344,37 @@ a:hover {
   margin-left: 16px;
   font-weight: 400;
 }
+#header h2.small {
+  font-size: 16px;
+  line-height: 48px;
+}
+.show_duration {
+  float: right;
+  font-family: 'Rambla', sans-serif;
+  margin-top: 16px;
+  margin-right: -5px;
+  margin-left: 24px;
+  font-size: 15px;
+  background-color: #666;
+  color: white;
+  border-radius: 5px;
+  padding: 5px;
+  line-height: 15px;
+  font-weight: 400;
+}
+.show_duration_small {
+  float: right;
+  font-family: 'Rambla', sans-serif;
+  margin-top: 8px;
+  margin-right: -10px;
+  font-size: 12px;
+  background-color: #666;
+  color: white;
+  border-radius: 5px;
+  padding: 5px;
+  line-height: 14px;
+  font-weight: 400;
+}
 #header h2 a {
   color: #333;
 }
@@ -476,6 +508,9 @@ h2.for_content {
 }
 .item_list > li h2.medium_width {
   width: 380px;
+}
+.item_list > li h2.extra_width {
+  width: 150px;
 }
 .item_list > li h3 {
   font-family: 'Shanti', sans-serif;

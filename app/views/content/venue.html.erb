@@ -2,7 +2,7 @@
   <div id="header">
     <h1><%= "Venue: #{@venue.name.html_safe}" %> &nbsp;&nbsp;<a href="/map?term=<%= @venue.latitude %>,<%= @venue.longitude %>&amp;distance=.2"><button type="button" class="btn"><i class="icon-globe"></i></button></a></h1>
     <%= content_tag :h3, pluralize(@venue.shows_count, 'show') %>
-    <% #render partial: 'header_filter', locals: { current_title: 'Sort Chronologically', item_hash: {'Sort Chronologically' => '?sort=show_date', 'Sort by Likes' => '?sort=likes', 'Sort by City' => '?sort=city', 'Sort by State' => '?sort=state', 'Sort by Venue' => '?sort=venue'} } %>
+    <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Chronological' => 'date desc', '<i class="icon-time"></i> Chronological' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes',  '<i class="icon-forward"></i> Duration' => 'duration'} } %>
     
   </div>
 </div>
@@ -13,25 +13,32 @@
     <h1>No shows at this venue...</h1>
   <% end %>
   
+  <% unless @display_separators %>
+    <ul class="item_list clickable">
+  <% end %>
+  
   <% last_title = false %>
   <% @shows.each_with_index do |show, idx| %>
 
-    <% title = show.date.strftime("%Y") %>
-    <% if title != last_title %>
-      <% if last_title %>
-        </ul>
+    <% if @display_separators %>
+      <% title = show.date.strftime("%Y") %>
+      <% if title != last_title %>
+        <% if last_title %>
+          </ul>
+        <% end %>
+        <% last_title = title %>
+        <%= content_tag 'h1', title %>
+        <ul class="item_list clickable">
       <% end %>
-      <% last_title = title %>
-      <%= content_tag 'h1', title %>
-      <ul class="item_list clickable">
     <% end %>
 
       <li>
-        <%= content_tag :h2, link_to(show.date.strftime("%b %-d"), "/#{show.date}") %>
+        <%= content_tag :h2, link_to_show(show, @display_separators) %>
         <%= content_tag :h4, link_to(show.venue.name, "/#{show.venue.slug}") %>
         <%= content_tag :h5, link_to(show.venue.location, "/map?term=#{CGI::escape(show.venue.location)}") %>
         <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
         <%= likable(show, @shows_likes[idx], 'small') %>
+        <%= content_tag :span, "#{show.duration_readable}", class: 'show_duration_small' %>
         <div style="clear: both;"></div>
       </li>
     <% end %>

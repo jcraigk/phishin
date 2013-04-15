@@ -12,12 +12,12 @@
   <ul class="item_list clickable">
     <% @shows.each_with_index do |show, idx| %>
       <li>
-        <%= content_tag :h2, link_to(show.date.strftime("%-m/%-d/%y"), "/#{show.date}") %>
+        <%= content_tag :h2, "<strong>#{idx+1}&nbsp;&nbsp;</strong>".html_safe + link_to("#{show.date.strftime("%-m/%-d/%y")}", "/#{show.date}"), class: 'extra_width' %>
         <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}") %>
         <%= content_tag :h5, link_to(show.venue.location, "/map?term=#{CGI::escape(show.venue.location)}") %>
         <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
         <%= likable(show, @shows_likes[idx], 'small') %>
-        <%= content_tag :h3, "<strong>##{idx+1}</strong>".html_safe, class: 'alt' %>
+        <%= content_tag :span, "#{show.duration_readable}", class: 'show_duration_small' %>
         <div style="clear: both;"></div>
       </li>
     <% end %>

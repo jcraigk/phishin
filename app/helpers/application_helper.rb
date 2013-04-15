@@ -57,6 +57,15 @@ module ApplicationHelper
     str.html_safe
   end
   
+  def link_to_show(show, show_abbrev=true)
+    link_name = show_link_title(show, show_abbrev)
+    link_to(link_name, "/#{show.date}")
+  end
+  
+  def show_link_title(show, show_abbrev=true)
+    show_abbrev ? show.date.strftime("%b %-d") : show.date.strftime("%-m/%-d/%y")
+  end
+  
   private
   
   def current_nav_class(path, other_path)

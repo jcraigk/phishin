@@ -177,8 +177,9 @@ class ContentController < ApplicationController
   end
   
   def venue(slug)
+    validate_sorting_for_year_or_scope
     if @venue = Venue.where(slug: slug).includes(:shows).first
-      @shows = @venue.shows.order('date desc')
+      @shows = @venue.shows.order(@order_by)
       @shows_likes = @shows.map { |show| get_user_show_like(show) }
     end
     @venue
@@ -206,12 +207,15 @@ class ContentController < ApplicationController
   end
   
   def validate_sorting_for_year_or_scope
-    params[:sort] = 'date desc' unless ['date desc', 'date asc', 'likes'].include? params[:sort]
+    params[:sort] = 'date desc' unless ['date desc', 'date asc', 'likes', 'duration'].include? params[:sort]
     if params[:sort] == 'date asc' or params[:sort] == 'date desc'
       @order_by = params[:sort]
       @display_separators = true
     elsif params[:sort] == 'likes'
       @order_by = "likes_count desc, date desc"
+      @display_separators = false
+    elsif params[:sort] == 'duration'
+      @order_by = "shows.duration desc, date desc"
       @display_separators = false
     end
   end
@@ -225,7 +229,7 @@ class ContentController < ApplicationController
       @order_by = "tracks.likes_count desc, shows.date desc"
       @display_separators = false
     elsif params[:sort] == 'duration'
-      @order_by = "duration desc, shows.date desc"
+      @order_by = "tracks.duration desc, shows.date desc"
       @display_separators = false
     end
   end

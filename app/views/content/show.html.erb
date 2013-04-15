@@ -2,8 +2,9 @@
   <div id="header">
     <%= content_tag :h1, linked_show_date(@show) %>
     <% unless @show.missing? %>
-      <%= content_tag :h2, (link_to truncate(@show.venue.name.html_safe, length: 40), "/#{@show.venue.slug}", alt: @show.venue.name) %>
-      <%= content_tag :h2, (link_to @show.venue.location, "/map?term=#{CGI::escape(@show.venue.location)}", alt: @show.venue.location) %>
+      <%= content_tag :h2, (link_to truncate(@show.venue.name.html_safe, length: 40), "/#{@show.venue.slug}") %>
+      <%= content_tag :h2, (link_to @show.venue.location, "/map?term=#{CGI::escape(@show.venue.location)}"), class: 'small' %>
+      <%= content_tag :span, "<i class=\"icon-time icon-white\"></i> #{@show.duration_readable}".html_safe, class: 'show_duration' %>
       <%= render partial: 'shared/context_menu_for_show', locals: {show: @show, viewing_this_show: true, next_show: @next_show, previous_show: @previous_show } %>
       <%= likable(@show, @show_like, 'large') %>
     <% end %>
