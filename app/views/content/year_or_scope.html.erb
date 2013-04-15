@@ -2,7 +2,7 @@
   <div id="header">
     <%= content_tag :h1, @title %>
     <%= content_tag :h3, pluralize(@shows.size, 'show') %>
-    <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Backwards down the # line' => 'date desc', '<i class="icon-time"></i> Forward up the # line' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes'} } %>
+    <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Chronological' => 'date desc', '<i class="icon-time"></i> Chronological' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes'} } %>
   </div>
 </div>
   

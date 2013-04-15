@@ -2,7 +2,7 @@
   <div id="header">
     <%= content_tag :h1, "Song: #{@song.title}" %>
     <%= content_tag :h3, pluralize(@song.tracks.size, 'track') %>
-    <% #render partial: 'header_filter', locals: { current_title: 'Sort Chronologically', item_hash: {'Sort Chronologically' => '?sort=show_date', 'Sort by Likes' => '?sort=likes'} } %>
+    <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Chronological' => 'date desc', '<i class="icon-time"></i> Chronological' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes', '<i class="icon-forward"></i> Duration' => 'duration'} } %>
   </div>
 </div>
   
@@ -12,19 +12,25 @@
       <%= will_paginate_simple @tracks %>
     </div>
   
+    <% unless @display_separators %>
+      <ul class="item_list clickable">
+    <% end %>
+  
     <% last_title = false %>
     <% @tracks.each_with_index do |track, idx| %>
     
       <% if track.show %>
 
-        <% title = track.show.date.strftime("%Y") %>
-        <% if title != last_title %>
-          <% if last_title %>
-            </ul>
+        <% if @display_separators %>
+          <% title = track.show.date.strftime("%Y") %>
+          <% if title != last_title %>
+            <% if last_title %>
+              </ul>
+            <% end %>
+            <% last_title = title %>
+            <%= content_tag 'h1', title %>
+            <ul class="item_list clickable">
           <% end %>
-          <% last_title = title %>
-          <%= content_tag 'h1', title %>
-          <ul class="item_list clickable">
         <% end %>
 
       <li>

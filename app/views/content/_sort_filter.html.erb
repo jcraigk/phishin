@@ -6,7 +6,8 @@
     </a>
     <ul class="dropdown-menu">
       <% item_hash.each do |key, val| %>
-        <%= content_tag :li, link_to(key.html_safe, "?sort=#{CGI::escape(val)}")%>
+        <% link = params[:sort] == val ? "<strong>#{key}</strong>" : key %>
+        <%= content_tag :li, link_to(link.html_safe, "?sort=#{CGI::escape(val)}")%>
       <% end %>
     </ul>
   </div>
