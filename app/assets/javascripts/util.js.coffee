@@ -99,6 +99,9 @@ class @Util
         this.feedback { alert: "Invalid start time provided (#{time})" }
         0
   
+  stringToSlug: (str) ->
+    str.toLowerCase().trim().replace(/[^a-z0-9\-\s]/g, '').replace(/[\s]/g, '-')
+  
   newSpinner: (className = 'spinner_likes_small') ->
     new Spinner({
       lines: 9,

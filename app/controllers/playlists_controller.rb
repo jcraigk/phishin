@@ -14,7 +14,28 @@ class PlaylistsController < ApplicationController
     rescue
       session[:playlist] = []
     end
+    @saved_playlists = Playlist.where(user_id: current_user.id).order('name') if current_user
     render layout: false if request.xhr?
+  end
+  
+  def save_playlist
+    if !current_user
+      render json: { success: false, msg: 'You must be logged in to save playlists' }
+    elsif params[:name].empty? or params[:slug].empty? or !params[:slug].match(/^[a-z0-9\-]$/) or params[:name].size > 50 or params[:slug].size > 50
+      render json: { success: false, msg: 'Invalid Name or URL provided' }
+    elsif playlist = Playlist.where(name: params[:name], user_id: current_user.id).first
+      render json: { success: false, msg: 'You already have a playlist with that name' }
+    elsif playlist = Playlist.where(slug: params[:slug]).first
+      render json: { success: false, msg: 'That URL has already been taken' }
+    elsif session[:playlist].size < 2
+      render json: { success: false, msg: 'Playlist must contain at least 2 tracks' }
+    else
+      playlist = Playlist.create(user_id: current_user.id, name: params[:name], slug: params[:slug])
+      session[:playlist].each_with_index do |track, idx|
+        PlaylistTrack.create(playlist_id: playlist.id, track_id: track.id, position: idx)
+      end
+      render json: { success: true, msg: 'Playlist saved'}  
+    end
   end
   
   def clear_playlist

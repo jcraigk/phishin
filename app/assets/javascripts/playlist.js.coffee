@@ -3,6 +3,7 @@ class @Playlist
   constructor: ->
     @Util                 = App.Util
     @$playlist_btn        = $ '#playlist_button .btn'
+    @$save_playlist_modal = $ '#save_playlist_modal'
     this._getPlaylist()
     
   updatePlaylist: (success_msg) ->
@@ -40,7 +41,20 @@ class @Playlist
        $('#current_playlist').html ''
        $('#empty_playlist_msg').css 'visibility', 'visible'
        @Util.feedback { notice: 'Playlist is now empty' }
-       #todo provide "this playlist is empty" feedback
+    })
+  
+  savePlaylist: (name, slug) ->
+    @$save_playlist_modal.modal('hide')
+    $.ajax({
+     url: '/save-playlist',
+     type: 'post',
+     data: { name: name, slug: slug }
+     success: (r) =>
+       if r.success
+         #todo: update display name of playlist
+         @Util.feedback { notice: 'Playlist saved'}
+       else
+         @Util.feedback { alert: r.msg }
     })
   
   _getPlaylist: ->

@@ -1,7 +1,7 @@
 <div id="header_container">
   <div id="header">
     <%= content_tag :h1, 'Current Playlist'%>
-    <%= content_tag :h2, pluralize(@num_tracks, 'track'), id: 'current_playlist_tracks_label' %>
+    <%= content_tag :h2, pluralize(@num_tracks, 'track'), id: 'current_playlist_tracks_label', class: 'floating' %>
     <%= content_tag :span, "<i class=\"icon-time icon-white\"></i> #{duration_readable(@duration, 'letters')}".html_safe, id: 'current_playlist_duration_label', class: 'show_duration' %>
   </div>
 </div>
@@ -9,11 +9,35 @@
 <div id="content">
   
   <div class="row">
-    <button type="button" class="btn" id="clear_playlist_btn">Clear Playlist</button>
+    <div class="span3">
+    </div>
+    <div class="span2 span2-alt">
+      <button type="button" class="btn" id="clear_playlist_btn"><i class="icon-remove-circle"></i> Clear</button>
+    </div>
+    <div class="span2 span2-alt">
+      <button type="button" class="btn" id="save_playlist_btn"><i class="icon-file"></i> Save</button>
+    </div>
+    <div class="span2 span2-alt">
+      <div class="btn-group">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
+          <i class="icon-folder-open"></i> Load
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <% if @saved_playlists and @saved_playlists.size > 0 %>
+            <% for playlist in @saved_playlists %>
+              <%= content_tag :li, link_to(playlist.name, "#") %>
+            <% end %>
+          <% else %>
+            <%= content_tag :li, link_to("(No saved playlists)", "#") %>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+    <div class="span2 span2-alt">
+      <button type="button" class="btn" id="share_playlist_btn"><i class="icon-share"></i> Share</button>
+    </div>
   </div>
-  <div style="clear: both;"></div>
-  <br /><br /><br />
-  
   
     <p>&nbsp;</p>
     
@@ -22,6 +46,7 @@
   <% unless @num_tracks > 0 %>
     <p>Your current playlist is empty.<br /><br />Tracks are automatically added when you play them.  You can also add tracks explicitly by using track context menus.</p>
   <% else %>
+  
   <ul class="item_list" id="current_playlist">
   <% @tracks.each_with_index do |track, idx| %>
     <li class="playable_track" data-id="<%= track.id %>" data-track-duration="<%= track.duration %>">

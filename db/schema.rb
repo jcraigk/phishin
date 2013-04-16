@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130415030315) do
+ActiveRecord::Schema.define(:version => 20130416030421) do
 
   create_table "album_requests", :force => true do |t|
     t.integer  "album_id"
@@ -48,6 +48,28 @@ ActiveRecord::Schema.define(:version => 20130415030315) do
   add_index "likes", ["likable_id"], :name => "index_likes_on_likable_id"
   add_index "likes", ["likable_type"], :name => "index_likes_on_likable_type"
   add_index "likes", ["user_id"], :name => "index_likes_on_user_id"
+
+  create_table "playlists", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "name"
+    t.string   "slug"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "playlists", ["name"], :name => "index_playlists_on_name"
+  add_index "playlists", ["slug"], :name => "index_playlists_on_slug"
+  add_index "playlists", ["user_id"], :name => "index_playlists_on_user_id"
+
+  create_table "playlists_tracks", :force => true do |t|
+    t.integer "playlist_id"
+    t.integer "track_id"
+    t.integer "position"
+  end
+
+  add_index "playlists_tracks", ["playlist_id"], :name => "index_playlists_tracks_on_playlist_id"
+  add_index "playlists_tracks", ["position"], :name => "index_playlists_tracks_on_position"
+  add_index "playlists_tracks", ["track_id"], :name => "index_playlists_tracks_on_track_id"
 
   create_table "rails_admin_histories", :force => true do |t|
     t.text     "message"

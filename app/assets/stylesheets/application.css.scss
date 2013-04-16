@@ -344,6 +344,9 @@ a:hover {
   margin-left: 16px;
   font-weight: 400;
 }
+#header h2.floating {
+  margin-left: 220px;
+}
 #header h2.small {
   font-size: 16px;
   line-height: 48px;
@@ -1154,4 +1157,7 @@ h2.for_content {
 .beta {
   color: #c70204;
   font-weight: bold;
+}
+.span2-alt {
+  width: 90px !important;
 }

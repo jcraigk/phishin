@@ -31,12 +31,16 @@ Phishin::Application.routes.draw do
   get     '/liked-tracks'                 => 'content#top_liked_tracks', as: 'liked_tracks'
   get     '/search'                       => 'search#search', as: 'search'
 
+  # Map
+  get     '/search-map'                   => 'map#search', as: 'map_search'
+
   # Likes
   post    '/toggle-like'                  => 'likes#toggle_like', as: 'toggle_like'
   
   # Playlists / player
   get     '/playlist'                     => 'playlists#playlist', as: 'playlist'
   get     '/get-playlist'                 => 'playlists#get_playlist', as: 'get_playlist'
+  post    '/save-playlist'                => 'playlists#save_playlist', as: 'save_playlist'
   post    '/reset-playlist/'              => 'playlists#reset_playlist'
   post    '/clear-playlist/'              => 'playlists#clear_playlist'
   post    '/update-current-playlist'      => 'playlists#update_current_playlist'
@@ -53,9 +57,6 @@ Phishin::Application.routes.draw do
   get     '/play-track/:track_id'         => 'downloads#play_track', as: 'play_track'
   get     '/download-show/:date'          => 'downloads#request_download_show', as: 'download_show'
   get     '/download/:md5'                => 'downloads#download_album', as: 'download_album'
-
-  # Map
-  get     '/search-map'                   => 'map#search', as: 'map_search'
   
   # Catch-all matcher for short content URLs
   get     '/(:glob(/:anchor))' => 'content#glob'
