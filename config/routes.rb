@@ -36,7 +36,9 @@ Phishin::Application.routes.draw do
   
   # Playlists / player
   get     '/playlist'                     => 'playlists#playlist', as: 'playlist'
+  get     '/get-playlist'                 => 'playlists#get_playlist', as: 'get_playlist'
   post    '/reset-playlist/'              => 'playlists#reset_playlist'
+  post    '/clear-playlist/'              => 'playlists#clear_playlist'
   post    '/update-current-playlist'      => 'playlists#update_current_playlist'
   post    '/add-track'                    => 'playlists#add_track_to_playlist'
   post    '/add-show'                     => 'playlists#add_show_to_playlist'

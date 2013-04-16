@@ -8,6 +8,7 @@
 //= require history
 //= require util
 //= require player
+//= require playlist
 //= require map
 //= require spin.min
 
@@ -21,6 +22,7 @@ $ ->
   
   # Instantiate stuff
   App.Util         = new Util
+  App.Playlist     = new Playlist
   App.Player       = new Player
   App.Map          = new Map
   
@@ -76,7 +78,7 @@ $ ->
             $('#current_playlist').sortable({
               placeholder: "ui-state-highlight",
               update: ->
-                App.Util.updateCurrentPlaylist 'Track moved in playlist'
+                App.Playlist.updatePlaylist 'Track moved in playlist'
             })
       )
 
@@ -174,19 +176,24 @@ $ ->
   $('#current_playlist').sortable({
     placeholder: "ui-state-highlight",
     update: ->
-      App.Util.updateCurrentPlaylist 'Track moved in playlist'
+      App.Playlist.updatePlaylist 'Track moved in playlist'
   })
+  
+  # Clear playlist
+  $(document).on 'click', '#clear_playlist_btn', (e) ->
+    App.Playlist.clearPlaylist()
+    App.Player.stopAndUnload()
   
   # Remove track from playlist
   $(document).on 'click', '.playlist_remove_track', (e) ->
     track_id = $(this).parents('li').data('id')
     $(this).parents('li').remove()
     if $('#current_playlist').children('li').size() is 0
-      App.Util.followLink $('#clear_playlist')
+      App.Playlist.clearPlaylist()
       App.Player.stopAndUnload()
     else
-      App.Util.updateCurrentPlaylist 'Track removed from playlist'
-      App.Player.stopAndUnload track_id
+      App.Playlist.updatePlaylist 'Track removed from playlist'
+      App.Player.stopAndUnload()
   
   # Add track to playlist
   $(document).on 'click', '.playlist_add_track', (e) ->
@@ -216,10 +223,6 @@ $ ->
           App.Util.feedback { alert: r.msg }
     })
   
-  # Clear playlist stops and unloads current sound
-  $(document).on 'click', '#clear_playlist', (e) ->
-    App.Player.stopAndUnload()
-  
   # Playlist Option change
   $(document).on 'change', '.playlist_option', (e) ->
     $.ajax({
@@ -240,12 +243,12 @@ $ ->
   
   # Click a track to play it
   $(document).on 'click', '.playable_track', (e) ->
-    App.Player.resetPlaylist $(this).data('id')
+    App.Playlist.resetPlaylist $(this).data('id')
     App.Player.playTrack $(this).data('id')
   
   # Click Play in a context menu to play the track
   $(document).on 'click', '.context_play_track', (e) ->
-    App.Player.resetPlaylist $(this).data('id')
+    App.Playlist.resetPlaylist $(this).data('id')
     App.Player.playTrack $(this).data('id')
 
   # Click the Play/Pause button
@@ -383,11 +386,13 @@ $ ->
   $(document).on 'mouseout', '.year_list > li', ->
     $(this).find('h2').css 'visibility', 'hidden'
 
-  # Rollover item list to reveal context button
+  # Rollover item list to reveal context button and drag arrows (if present)
   $(document).on 'mouseover', '.item_list > li', ->
     $(this).find('.btn_context').css 'visibility', 'visible'
+    $(this).find('.drag_arrows_vertical').css 'visibility', 'visible'
   $(document).on 'mouseout', '.item_list > li', ->
     $(this).find('.btn_context').css 'visibility', 'hidden'
+    $(this).find('.drag_arrows_vertical').css 'visibility', 'hidden'
 
   # Rollover header to reveal context button
   $(document).on 'mouseover', '#header', ->

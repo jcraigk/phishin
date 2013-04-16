@@ -1,7 +1,8 @@
 class @Player
   
   constructor: ->
-    @util             = App.Util
+    @Util             = App.Util
+    @Playlist         = App.Playlist
     @sm               = soundManager
     @sm_sound         = {}
     @preload_time     = 40000
@@ -13,7 +14,7 @@ class @Player
     @last_volume      = 100
     @duration         = 0
     @app_name         = $('body').data 'app-name'
-    @time_marker      = @util.timeToMS $('body').data('time-marker')
+    @time_marker      = @Util.timeToMS $('body').data('time-marker')
     @$playpause       = $ '#playpause'
     @$scrubber        = $ '#scrubber'
     @$volume_slider   = $ '#volume_slider'
@@ -23,7 +24,6 @@ class @Player
     @$feedback        = $ '#player_feedback'
     @$player_title    = $ '#player_title'
     @$player_detail   = $ '#player_detail'
-    @$playlist_button = $ '#playlist_button .btn'
     @$likes_count     = $ '#player_likes_container > .likes_large > span'
     @$likes_link      = $ '#player_likes_container > .likes_large > a'
     @$feedback.hide()
@@ -33,7 +33,7 @@ class @Player
     unless this._handleAutoPlayTrack()
       if track_id = $('.playable_track').first().data 'id'
         if not @invoked
-          this.resetPlaylist track_id
+          @Playlist.resetPlaylist track_id
           this.playTrack track_id if track_id
 
   startScrubbing: ->
@@ -54,8 +54,8 @@ class @Player
   moveScrubber: ->
     if @scrubbing and @active_track
       scrubber_position = (@$scrubber.slider('value') / 100) * @duration
-      @$time_elapsed.html @util.readableDuration(scrubber_position)
-      @$time_remaining.html "-#{@util.readableDuration(@duration - scrubber_position)}"
+      @$time_elapsed.html @Util.readableDuration(scrubber_position)
+      @$time_remaining.html "-#{@Util.readableDuration(@duration - scrubber_position)}"
       
   toggleMute: ->
     if @last_volume > 0
@@ -111,14 +111,7 @@ class @Player
       this._updatePauseState()
       this.highlightActiveTrack()
     else
-      # @util.feedback { notice: 'That is already the current track' }
-  
-  resetPlaylist: (track_id) ->
-    $.ajax({
-      type: 'post'
-      url: '/reset-playlist',
-      data: { 'track_id': track_id }
-    })
+      # @Util.feedback { notice: 'That is already the current track' }
   
   togglePause: ->
     if @sm_sound.paused
@@ -142,7 +135,7 @@ class @Player
             this.playTrack r.track_id if r.success
         })
     else
-      @util.feedback { alert: 'You need to make a playlist to use that button' }
+      @Util.feedback { alert: 'You need to make a playlist to use that button' }
   
   nextTrack: ->
     if @active_track
@@ -152,27 +145,26 @@ class @Player
           if r.success
             this.playTrack r.track_id
           else
-            @util.feedback { notice: 'End of playlist reached'}
-            this.stopAndUnload @active_track
+            @Util.feedback { notice: 'End of playlist reached'}
+            this.stopAndUnload()
       })
     else
-      @util.feedback { alert: 'You need to make a playlist to use that button' }
+      @Util.feedback { alert: 'You need to make a playlist to use that button' }
   
-  stopAndUnload: (track_id=0) ->
-    if @active_track is track_id or track_id is 0
-      this._fastFadeout @active_track
-      @sm_sound.unload()
-      @active_track = ''
-      this._updatePlayerDisplay({
-        title: @app_name,
-        duration: 0
-      })
-      @$scrubber.slider 'value', 0
-      @$scrubber.slider 'disable'
-      this._updatePauseState false
-      @$time_remaining.html ''
-      @$time_elapsed.html ''
-      @invoked = false
+  stopAndUnload: ->
+    this._fastFadeout @active_track
+    @sm_sound.unload()
+    @active_track = ''
+    this._updatePlayerDisplay({
+      title: @app_name,
+      duration: 0
+    })
+    @$scrubber.slider 'value', 0
+    @$scrubber.slider 'disable'
+    this._updatePauseState false
+    @$time_remaining.html ''
+    @$time_elapsed.html ''
+    @invoked = false
   
   highlightActiveTrack: ->
     if @active_track
@@ -196,7 +188,7 @@ class @Player
         $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
         if not @invoked
           track_id = $el.data 'id'
-          this.resetPlaylist track_id
+          @Playlist.resetPlaylist track_id
           this.playTrack track_id, @time_marker
         else
           $el.addClass 'highlighted_track'
@@ -211,16 +203,16 @@ class @Player
       url: "/next-track",
       success: (r) =>
         if r.success
-          @util.feedback { notice: 'Playing current playlist...'}
+          @Util.feedback { notice: 'Playing current playlist...'}
           this.playTrack r.track_id
         else
           $.ajax({
             url: "/random-show",
             success: (r) =>
               if r.success
-                @util.feedback { notice: 'Playing random show...'}
-                @util.navigateTo r.url
-                this.resetPlaylist r.track_id
+                @Util.feedback { notice: 'Playing random show...'}
+                @Util.navigateTo r.url
+                @Playlist.resetPlaylist r.track_id
                 this.playTrack r.track_id
           })
     })
@@ -253,7 +245,7 @@ class @Player
         if r.success
           this._updatePlayerDisplay r
         else
-          @util.feedback { alert: "Error retrieving track info (#{track_id})" }
+          @Util.feedback { alert: "Error retrieving track info (#{track_id})" }
     })
   
   _updatePlayerDisplay: (r) ->
@@ -277,10 +269,8 @@ class @Player
   _updatePauseState: (playing=true) ->
     if playing
       @$playpause.addClass 'playing'
-      @$playlist_button.addClass 'playing'
     else
       @$playpause.removeClass 'playing'
-      @$playlist_button.removeClass 'playing'
   
   _updatePlayerState: ->
     unless @scrubbing or @duration is 0
@@ -294,10 +284,10 @@ class @Player
           })
           @preload_started = true
         @$scrubber.slider 'value', (@sm_sound.position / @duration) * 100
-        @$time_elapsed.html @util.readableDuration(@sm_sound.position)
+        @$time_elapsed.html @Util.readableDuration(@sm_sound.position)
         remaining = @duration - @sm_sound.position
         if remaining > 0
-          @$time_remaining.html "-#{@util.readableDuration(remaining)}"
+          @$time_remaining.html "-#{@Util.readableDuration(remaining)}"
         else
           @$time_remaining.html ''
       else

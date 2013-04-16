@@ -1,7 +1,6 @@
 class PlaylistsController < ApplicationController
 
   def playlist
-    session[:playlist] = [] if params[:clear_playlist] == "1"
     @num_tracks = 0
     @duration = 0
     begin
@@ -20,6 +19,7 @@ class PlaylistsController < ApplicationController
   
   def clear_playlist
     session[:playlist] = []
+    render json: { success: true }
   end
   
   def reset_playlist
@@ -165,6 +165,10 @@ class PlaylistsController < ApplicationController
       url: "/#{show.date}",
       track_id: first_track.id
     }
+  end
+  
+  def get_playlist
+    render json: { playlist: session[:playlist] }
   end
   
 end

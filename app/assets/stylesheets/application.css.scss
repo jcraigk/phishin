@@ -488,6 +488,14 @@ h2.for_content {
   cursor: pointer;
   background-color: #fffbd0;
 }
+.item_list > li > .drag_arrows_vertical {
+  visibility: hidden;
+  float: left;
+  width: 15px;
+  margin-left: -30px;
+  margin-top: 5px;
+//  border: 1px solid red;
+}
 .item_list > li h2 {
   font-family: 'Shanti', sans-serif;
   line-height: 16px;
@@ -499,6 +507,16 @@ h2.for_content {
 }
 .item_list > li h2.alt {
   font-size: 20px;
+}
+.item_list > li h2.position_num {
+  font-weight: bold;
+  font-size: 20px;
+  text-align: right;
+  width: 50px;
+  margin-right: 20px;
+  line-height: 18px;
+  margin-left: -30px;
+//  border: 1px solid red;
 }
 .item_list > li h2.wide {
   width: 440px;

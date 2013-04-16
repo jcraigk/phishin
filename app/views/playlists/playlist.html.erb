@@ -2,21 +2,32 @@
   <div id="header">
     <%= content_tag :h1, 'Current Playlist'%>
     <%= content_tag :h2, pluralize(@num_tracks, 'track'), id: 'current_playlist_tracks_label' %>
-    <%= content_tag :h3, "#{duration_readable(@duration, 'letters')}", id: 'current_playlist_duration_label' %>
-    <a href="/playlist?clear_playlist=1" id="clear_playlist"><button type="button" class="btn">Clear Playlist</button></a>
+    <%= content_tag :span, "<i class=\"icon-time icon-white\"></i> #{duration_readable(@duration, 'letters')}".html_safe, id: 'current_playlist_duration_label', class: 'show_duration' %>
   </div>
 </div>
   
 <div id="content">
   
-  <% unless @num_tracks > 0 %>
+  <div class="row">
+    <button type="button" class="btn" id="clear_playlist_btn">Clear Playlist</button>
+  </div>
+  <div style="clear: both;"></div>
+  <br /><br /><br />
+  
+  
     <p>&nbsp;</p>
+    
+    <p id="empty_playlist_msg" style="visibility: hidden;">Your current playlist is empty.<br /><br />Tracks are automatically added when you play them.  You can also add tracks explicitly by using track context menus.</p>
+  
+  <% unless @num_tracks > 0 %>
     <p>Your current playlist is empty.<br /><br />Tracks are automatically added when you play them.  You can also add tracks explicitly by using track context menus.</p>
   <% else %>
-    <ul class="item_list" id="current_playlist">
-    <% @tracks.each_with_index do |track, idx| %>
+  <ul class="item_list" id="current_playlist">
+  <% @tracks.each_with_index do |track, idx| %>
     <li class="playable_track" data-id="<%= track.id %>" data-track-duration="<%= track.duration %>">
-      <%= content_tag :h2, "<i class=\"icon-resize-vertical\"></i> #{track.title}".html_safe, class: 'wide' %>
+      <%= content_tag :h2, "#{idx+1}", class: 'position_num' %>
+      <%= content_tag :h2, "#{track.title}".html_safe, class: 'wide' %>
+      <%= content_tag :div, "<i class=\"icon-resize-vertical\"></i>".html_safe, class: "drag_arrows_vertical"  %>
       <%= content_tag :h5, link_to(track.show.date.strftime("%-m/%-d/%y"), "#{track.show.date}", class: 'large') %>
       <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: true, show: nil } %>
       <%= content_tag :h3, track.duration_readable %>

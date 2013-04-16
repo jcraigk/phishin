@@ -51,25 +51,8 @@ class @Util
         else
           this.feedback { alert: 'You must sign in to download MP3s' }
     })
-  
-  updateCurrentPlaylist: (success_msg) ->
-    track_ids = []
-    duration = 0
-    $('#current_playlist > li').each( ->
-      track_ids.push $(this).data('id')
-      duration += parseInt $(this).data('track-duration')
-    )
-    $.ajax({
-      url: '/update-current-playlist',
-      type: 'post',
-      data: { 'track_ids': track_ids },
-      success: (r) =>
-        this.feedback { notice: success_msg }
-        $('#current_playlist_tracks_label').html "#{track_ids.length} Tracks"
-        $('#current_playlist_duration_label').html this.readableDuration(duration, 'letters')
-    })
     
-  readableDuration: (ms, style='colon') ->
+  readableDuration: (ms, style='colon', include_seconds=false) ->
     x = Math.floor(ms / 1000)
     seconds = x % 60
     seconds_with_zero = "#{if seconds < 10 then '0' else '' }#{seconds}"
@@ -85,7 +68,10 @@ class @Util
       if days > 0
         "#{days}d #{hours}h #{minutes}m #{seconds}s"
       else if hours > 0
-        "#{hours}h #{minutes}m #{seconds}s"
+        if include_seconds
+          "#{hours}h #{minutes}m #{seconds}s"
+        else
+          "#{hours}h #{minutes}m"
       else
         "#{minutes}m #{seconds}s"
     else

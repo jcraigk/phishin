@@ -8,11 +8,12 @@
       <%= link_to content_tag(:button, 'Top 50 Tracks', class: 'btn btn-medium'), liked_tracks_path %>
     </div>
   </div>
-
+  
   <ul class="item_list clickable">
     <% @shows.each_with_index do |show, idx| %>
       <li>
-        <%= content_tag :h2, "<strong>#{idx+1}&nbsp;&nbsp;</strong>".html_safe + link_to("#{show.date.strftime("%-m/%-d/%y")}", "/#{show.date}"), class: 'extra_width' %>
+        <%= content_tag :h2, "#{idx+1}", class: 'position_num' %>
+        <%= content_tag :h2, link_to("#{show.date.strftime("%-m/%-d/%y")}", "/#{show.date}"), class: 'extra_width' %>
         <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}") %>
         <%= content_tag :h5, link_to(show.venue.location, "/map?term=#{CGI::escape(show.venue.location)}") %>
         <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
