@@ -74,6 +74,8 @@ $ ->
           
           # Playlist
           else if state.data.href.substr(0,9) is '/playlist'
+            # Initialize the playlist display
+            App.Playlist.initPlaylist()
             # Sortable playlist AJAX load
             $('#current_playlist').sortable({
               placeholder: "ui-state-highlight",

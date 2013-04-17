@@ -1,10 +1,21 @@
 class @Playlist
 
   constructor: ->
-    @Util                 = App.Util
-    @$playlist_btn        = $ '#playlist_button .btn'
-    @$save_playlist_modal = $ '#save_playlist_modal'
-    this._getPlaylist()
+    @Util                   = App.Util
+    @$playlist_btn          = $ '#playlist_button .btn'
+    @$save_playlist_modal   = $ '#save_playlist_modal'
+  
+  initPlaylist: ->
+    $.ajax({
+      url: '/get-playlist',
+      success: (r) =>
+        if r.playlist.length > 0
+          @$playlist_btn.addClass 'playing'
+          $('#empty_playlist_msg').hide()
+        else
+          @$playlist_btn.removeClass 'playing'
+          $('#empty_playlist_msg').show()
+    })
     
   updatePlaylist: (success_msg) ->
     track_ids = []
@@ -39,7 +50,7 @@ class @Playlist
      success: (r) =>
        @$playlist_btn.removeClass 'playing'
        $('#current_playlist').html ''
-       $('#empty_playlist_msg').css 'visibility', 'visible'
+       $('#empty_playlist_msg').show()
        @Util.feedback { notice: 'Playlist is now empty' }
     })
   
@@ -51,16 +62,9 @@ class @Playlist
      data: { name: name, slug: slug }
      success: (r) =>
        if r.success
-         #todo: update display name of playlist
+         #todo: update details (name, slug, etc) of playlist
          @Util.feedback { notice: 'Playlist saved'}
        else
          @Util.feedback { alert: r.msg }
-    })
-  
-  _getPlaylist: ->
-    $.ajax({
-      url: '/get-playlist',
-      success: (r) =>
-        @$playlist_btn.addClass 'playing' if r.playlist.length > 0
     })
     

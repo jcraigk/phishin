@@ -11,7 +11,6 @@ class @Map
     @default_lat      = 39.126864
     @default_lng      = -94.627411
     @green_icon       = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-    this.initMap()
   
   initMap: ->
     if container = $("#google_map").get 0

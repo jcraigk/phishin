@@ -38,14 +38,13 @@
       <button type="button" class="btn" id="share_playlist_btn"><i class="icon-share"></i> Share</button>
     </div>
   </div>
-  
-    <p>&nbsp;</p>
     
-    <p id="empty_playlist_msg" style="visibility: hidden;">Your current playlist is empty.<br /><br />Tracks are automatically added when you play them.  You can also add tracks explicitly by using track context menus.</p>
-  
-  <% unless @num_tracks > 0 %>
-    <p>Your current playlist is empty.<br /><br />Tracks are automatically added when you play them.  You can also add tracks explicitly by using track context menus.</p>
-  <% else %>
+  <div id="empty_playlist_msg" style="display: none;"><strong>Your current playlist is empty.</strong>
+    <br /><br />
+    When you play a track within the site, your current playlist will reflect the selected track's show.  You can also add tracks explicitly by using track context menus.
+    <br /><br />
+    If you sign in, you can also save and share your playlist creations.
+  </div>
   
   <ul class="item_list" id="current_playlist">
   <% @tracks.each_with_index do |track, idx| %>
@@ -60,6 +59,5 @@
     </li>
     <% end %>
   </ul>
-  <% end %>
   
 </div>
