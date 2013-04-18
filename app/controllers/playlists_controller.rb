@@ -19,22 +19,51 @@ class PlaylistsController < ApplicationController
   end
   
   def save_playlist
-    if !current_user
-      render json: { success: false, msg: 'You must be logged in to save playlists' }
-    elsif params[:name].empty? or params[:slug].empty? or !params[:slug].match(/^[a-z0-9\-]$/) or params[:name].size > 50 or params[:slug].size > 50
-      render json: { success: false, msg: 'Invalid Name or URL provided' }
-    elsif playlist = Playlist.where(name: params[:name], user_id: current_user.id).first
-      render json: { success: false, msg: 'You already have a playlist with that name' }
-    elsif playlist = Playlist.where(slug: params[:slug]).first
-      render json: { success: false, msg: 'That URL has already been taken' }
-    elsif session[:playlist].size < 2
-      render json: { success: false, msg: 'Playlist must contain at least 2 tracks' }
+    success = false
+    if ['new', 'existing'].include? params[:action]
+      action = params[:action]
     else
+      action = 'new'
+    end
+    # TODO Could we do the following with validations more cleanly?
+    if !current_user
+      msg = 'You must be logged in to save playlists'
+    elsif !params[:name] or !params[:slug] or params[:name].empty? or params[:slug].empty?
+      msg = 'You must provide a name and URL for this playlist'
+    elsif !params[:name].match(/^.{5,50}$/)
+      msg = 'Name must be between 5 and 50 characters'
+    elsif !params[:slug].match(/^[a-z0-9\-]{5,50}$/)
+      msg = 'URL must be between 5 and 50 lowercase letters, numbers, or dashes'
+    elsif playlist = Playlist.where(name: params[:name], user_id: current_user.id).first
+      msg = 'You already have a playlist with that name; choose another'
+    elsif playlist = Playlist.where(slug: params[:slug]).first
+      msg = 'That URL has already been taken; choose another'
+    elsif session[:playlist].size < 2
+      msg = 'Saved playlists must contain at least 2 tracks'
+    elsif action == 'new'
       playlist = Playlist.create(user_id: current_user.id, name: params[:name], slug: params[:slug])
-      session[:playlist].each_with_index do |track, idx|
-        PlaylistTrack.create(playlist_id: playlist.id, track_id: track.id, position: idx)
-      end
-      render json: { success: true, msg: 'Playlist saved'}  
+      create_playlist_tracks(playlist.id)
+      success = true
+      msg = 'Playlist created'
+    elsif playlist = Playlist.where(user_id: current_user.id, id: params[:id]).first
+      Playlist.update_attributes(name: params[:name], slug: params[:slug])
+      playlist.tracks.each { |track| track.destroy }
+      create_playlist_tracks(playlist.id)
+      success = true
+      msg = 'Playlist updated'
+    else
+      msg = 'Existing playlist not found'
+    end
+    if success
+      render json: {
+        success: true,
+        msg: msg,
+        id: playlist.id,
+        name: playlist.name,
+        slug: playlist.slug
+      }  
+    else
+      render json: { success: false, msg: msg }
     end
   end
   
@@ -190,6 +219,23 @@ class PlaylistsController < ApplicationController
   
   def get_playlist
     render json: { playlist: session[:playlist] }
+  end
+  
+  def get_saved_playlists
+    if current_user
+      playlists = Playlist.where(user_id: current_user.id).order('name asc').all
+      render json: {success: true, playlists: playlists.to_json(except: [:user_id, :created_at, :updated_at]) }
+    else
+      render json: { success: false }
+    end
+  end
+  
+  private
+  
+  def create_playlist_tracks(playlist_id)
+    session[:playlist].each_with_index do |track_id, idx|
+      PlaylistTrack.create(playlist_id: playlist_id, track_id: track_id, position: idx+1)
+    end
   end
   
 end

@@ -6,7 +6,7 @@ class CreatePlaylists < ActiveRecord::Migration
       t.string :slug
       t.timestamps
     end
-    create_table :playlists_tracks do |t|
+    create_table :playlist_tracks do |t|
       t.integer :playlist_id
       t.integer :track_id
       t.integer :position
@@ -14,8 +14,8 @@ class CreatePlaylists < ActiveRecord::Migration
     add_index :playlists, :user_id
     add_index :playlists, :name
     add_index :playlists, :slug
-    add_index :playlists_tracks, :playlist_id
-    add_index :playlists_tracks, :track_id
-    add_index :playlists_tracks, :position
+    add_index :playlist_tracks, :playlist_id
+    add_index :playlist_tracks, :track_id
+    add_index :playlist_tracks, :position
   end
 end

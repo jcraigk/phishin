@@ -1,6 +1,6 @@
 class Playlist < ActiveRecord::Base
   
-  attr_accessible :name, :slug
+  attr_accessible :name, :slug, :user_id
 
   has_many :tracks
   belongs_to :user

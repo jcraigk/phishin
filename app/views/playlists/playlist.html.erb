@@ -8,6 +8,8 @@
   
 <div id="content">
   
+  <div id="playlist_data" data-id="<%= session[:playlist_id] %>" data-name="<%= session[:playlist_name] %>" data-slug="<%= session[:playlist_slug] %>" data-author="<%= session[:playlist_author] %>">
+  
   <div class="row">
     <div class="span3">
     </div>
@@ -23,7 +25,7 @@
           <i class="icon-folder-open"></i> Load
           <span class="caret"></span>
         </a>
-        <ul class="dropdown-menu">
+        <ul class="dropdown-menu" id="load_playlist_list">
           <% if @saved_playlists and @saved_playlists.size > 0 %>
             <% for playlist in @saved_playlists %>
               <%= content_tag :li, link_to(playlist.name, "#") %>
@@ -38,12 +40,18 @@
       <button type="button" class="btn" id="share_playlist_btn"><i class="icon-share"></i> Share</button>
     </div>
   </div>
+  
+  <div id="playlist_info" style="display: none;">
+    ID: <%= session[:playlist_id] %><br />
+    Name: <%= session[:playlist_name] %><br />
+    Slug: <%= session[:playlist_slug] %>
+  </div>
     
   <div id="empty_playlist_msg" style="display: none;"><strong>Your current playlist is empty.</strong>
     <br /><br />
-    When you play a track within the site, your current playlist will reflect the selected track's show.  You can also add tracks explicitly by using track context menus.
+    When you play a track from a show, your current playlist will be updated to reflect that show.  You can also add tracks individually by using track context menus.
     <br /><br />
-    If you sign in, you can also save and share your playlist creations.
+    When signed in, you can save and share your playlists.
   </div>
   
   <ul class="item_list" id="current_playlist">

@@ -6,7 +6,8 @@ class ApplicationController < ActionController::Base
   # before_filter :artificial_wait if Rails.env == "development"
   before_filter :random_lyrical_excerpt  # Pull lyrical excerpt unless XHR request
   before_filter :authenticate
-  before_filter :setup_session
+  before_filter :init_session
+  before_filter :init_params
   before_filter :mobile_unsupported
   before_filter :require_xhr
   
@@ -36,12 +37,19 @@ class ApplicationController < ActionController::Base
     sleep 1.second
   end
   
-  def setup_session
-    session[:playlist]    ||= []
-    session[:loop]        ||= false
-    session[:randomize]   ||= false
-    params[:per_page]     ||= 10
-    params[:t]            ||= 0
+  def init_session
+    session[:playlist]        ||= []
+    session[:playlist_id]     ||= 0
+    session[:playlist_name]   ||= ''
+    session[:playlist_slug]   ||= ''
+    session[:playlist_author] ||= ''
+    session[:loop]            ||= false
+    session[:randomize]       ||= false
+  end
+  
+  def init_params
+    params[:per_page]         ||= 10
+    params[:t]                ||= 0
   end
   
   def mobile_unsupported

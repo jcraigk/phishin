@@ -177,14 +177,13 @@ $ ->
   
   $(document).on 'blur', '#playlist_name_input', (e) ->
     $('#playlist_slug_input').val App.Util.stringToSlug($(this).val())
-  
   $(document).on 'click', '#save_playlist_btn', (e) ->
-    $('#save_playlist_modal').modal('show')
+    App.Playlist.handleSavePlaylistModal()
+  $(document).on 'click', '#save_playlist_submit', (e) ->
+    App.Playlist.savePlaylist()
   
   $(document).on 'click', '#save_playlist_submit', (e) ->
-    name = $('#playlist_name_input').val()
-    slug = $('#playlist_slug_input').val()
-    App.Playlist.savePlaylist name, slug
+    App.Playlist.savePlaylist
     
   # Sortable playlist DOM load
   $('#current_playlist').sortable({

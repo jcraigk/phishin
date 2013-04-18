@@ -3,7 +3,13 @@ class @Playlist
   constructor: ->
     @Util                   = App.Util
     @$playlist_btn          = $ '#playlist_button .btn'
-    @$save_playlist_modal   = $ '#save_playlist_modal'
+    @$save_modal            = $ '#save_playlist_modal'
+    @$save_action_dropdown  = $ '#save_action_dropdown'
+    @$save_action_new       = $ '#save_action_new'
+    @$save_action_existing  = $ '#save_action_existing'
+    @$playlist_name_input   = $ '#playlist_name_input'
+    @$playlist_slug_input   = $ '#playlist_slug_input'
+    console.log @$save_action_dropdwon
   
   initPlaylist: ->
     $.ajax({
@@ -54,17 +60,50 @@ class @Playlist
        @Util.feedback { notice: 'Playlist is now empty' }
     })
   
-  savePlaylist: (name, slug) ->
-    @$save_playlist_modal.modal('hide')
+  handleSavePlaylistModal: ->
+    if name = $('#playlist_data').attr 'data-name'
+      @$save_action_existing.attr 'disabled', false
+      @$playlist_name_input.val name
+      @$playlist_slug_input.val $('#playlist_data').attr 'data-slug'
+    else
+      @$save_action_existing.attr 'disabled', true
+      @$playlist_name_input.val ''
+      @$playlist_slug_input.val ''
+    @$save_modal.modal 'show'
+  
+  savePlaylist: ->
+    @$save_modal.modal 'hide'
     $.ajax({
      url: '/save-playlist',
      type: 'post',
-     data: { name: name, slug: slug }
+     data: {
+       id:      $('#playlist_data').attr('data-id'),
+       name:    @$playlist_name_input.val(),
+       slug:    @$playlist_slug_input.val(),
+       action:  @$save_action_dropdown.val()
+     }
      success: (r) =>
        if r.success
-         #todo: update details (name, slug, etc) of playlist
+         #todo: update visual details (name, slug, etc) of playlist
+         $('#playlist_data').attr 'data-id', r.id
+         $('#playlist_data').attr 'data-name', r.name
+         $('#playlist_data').attr 'data-slug', r.slug
+         $('#playlist_data').show()
+         this._refreshPlaylistDropdown()
          @Util.feedback { notice: 'Playlist saved'}
        else
          @Util.feedback { alert: r.msg }
+    })
+  
+  _refreshPlaylistDropdown: ->
+    $list = $('#load_playlist_list')
+    $list.empty()
+    $.ajax({
+     url: '/get-saved-playlists',
+     success: (r) =>
+       if r.success
+         console.log r
+         for p in JSON.parse(r.playlists)
+           $list.append "<li><a href=\"/play/#{p.slug}\">#{p.name}</a></li>"
     })
     
