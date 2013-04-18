@@ -2,7 +2,6 @@ class @Player
   
   constructor: ->
     @Util             = App.Util
-    @Playlist         = App.Playlist
     @sm               = soundManager
     @sm_sound         = {}
     @preload_time     = 40000
@@ -15,6 +14,7 @@ class @Player
     @duration         = 0
     @app_name         = $('body').data 'app-name'
     @time_marker      = @Util.timeToMS $('body').data('time-marker')
+    @$playlist_btn    = $ '#playlist_button .btn'
     @$playpause       = $ '#playpause'
     @$scrubber        = $ '#scrubber'
     @$volume_slider   = $ '#volume_slider'
@@ -33,7 +33,7 @@ class @Player
     unless this._handleAutoPlayTrack()
       if track_id = $('.playable_track').first().data 'id'
         if not @invoked
-          @Playlist.resetPlaylist track_id
+          this.resetCurrentPlaylist track_id
           this.playTrack track_id if track_id
 
   startScrubbing: ->
@@ -174,6 +174,14 @@ class @Player
       $('#current_playlist>li').removeClass 'active_track'
       $('#current_playlist>li[data-id="'+@active_track+'"]').addClass 'active_track'
 
+  resetCurrentPlaylist: (track_id) ->
+    $.ajax({
+      type: 'post'
+      url: '/reset-playlist',
+      data: { 'track_id': track_id }
+    })
+    @$playlist_btn.addClass 'playing'
+
   _loadInfoAndPlay: (track_id, time_marker) ->
     this._loadTrackInfo track_id
     @sm.setPosition track_id, time_marker
@@ -188,7 +196,7 @@ class @Player
         $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
         if not @invoked
           track_id = $el.data 'id'
-          @Playlist.resetPlaylist track_id
+          this.resetCurrentPlaylist track_id
           this.playTrack track_id, @time_marker
         else
           $el.addClass 'highlighted_track'
@@ -212,7 +220,7 @@ class @Player
               if r.success
                 @Util.feedback { notice: 'Playing random show...'}
                 @Util.navigateTo r.url
-                @Playlist.resetPlaylist r.track_id
+                this.resetCurrentPlaylist r.track_id
                 this.playTrack r.track_id
           })
     })

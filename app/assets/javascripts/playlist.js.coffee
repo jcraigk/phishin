@@ -2,6 +2,7 @@ class @Playlist
 
   constructor: ->
     @Util                   = App.Util
+    @Player                 = App.Player
     @$playlist_btn          = $ '#playlist_button .btn'
     @$save_modal            = $ '#save_playlist_modal'
     @$save_action_dropdown  = $ '#save_action_dropdown'
@@ -41,21 +42,15 @@ class @Playlist
         $('#current_playlist_duration_label').html "<i class=\"icon-time icon-white\"></i>  #{@Util.readableDuration(duration, 'letters')}"
     })
   
-  resetPlaylist: (track_id) ->
-    $.ajax({
-      type: 'post'
-      url: '/reset-playlist',
-      data: { 'track_id': track_id }
-    })
-    @$playlist_btn.addClass 'playing'
-  
   clearPlaylist: ->
     $.ajax({
      url: '/clear-playlist',
      type: 'post',
      success: (r) =>
+       @Player.stopAndUnload()
        @$playlist_btn.removeClass 'playing'
        $('#current_playlist').html ''
+       $('#playlist_info').hide()
        $('#empty_playlist_msg').show()
        @Util.feedback { notice: 'Playlist is now empty' }
     })
@@ -91,6 +86,21 @@ class @Playlist
          $('#playlist_data').show()
          this._refreshPlaylistDropdown()
          @Util.feedback { notice: 'Playlist saved'}
+       else
+         @Util.feedback { alert: r.msg }
+    })
+  
+  deletePlaylist: (id) ->
+    $.ajax({
+     url: '/delete-playlist',
+     type: 'post',
+     data: {
+       id: $('#playlist_data').attr('data-id'),
+     }
+     success: (r) =>
+       if r.success
+         this.clearPlaylist()
+         this._refreshPlaylistDropdown()
        else
          @Util.feedback { alert: r.msg }
     })

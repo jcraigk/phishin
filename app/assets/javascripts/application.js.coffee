@@ -22,8 +22,8 @@ $ ->
   
   # Instantiate stuff
   App.Util         = new Util
-  App.Playlist     = new Playlist
   App.Player       = new Player
+  App.Playlist     = new Playlist
   App.Map          = new Map
   
   # Page elements
@@ -195,7 +195,6 @@ $ ->
   # Clear playlist
   $(document).on 'click', '#clear_playlist_btn', (e) ->
     App.Playlist.clearPlaylist()
-    App.Player.stopAndUnload()
   
   # Remove track from playlist
   $(document).on 'click', '.playlist_remove_track', (e) ->
