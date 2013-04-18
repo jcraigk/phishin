@@ -101,6 +101,7 @@ class @Playlist
        if r.success
          this.clearPlaylist()
          this._refreshPlaylistDropdown()
+         @Util.feedback { notice: 'Playlist deleted' }
        else
          @Util.feedback { alert: r.msg }
     })

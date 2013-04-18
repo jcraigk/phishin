@@ -45,6 +45,9 @@
     ID: <%= session[:playlist_id] %><br />
     Name: <%= session[:playlist_name] %><br />
     Slug: <%= session[:playlist_slug] %>
+    <% if current_user and current_user.id == session[:playlist_id] %>
+      <button type="button" class="btn btn-danger" id="delete_playlist_btn"><i class="icon-remove"></i> Delete Playlist</button>
+    <% end %>
   </div>
     
   <div id="empty_playlist_msg" style="display: none;"><strong>Your current playlist is empty.</strong>

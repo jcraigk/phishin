@@ -183,7 +183,9 @@ $ ->
     App.Playlist.savePlaylist()
   
   $(document).on 'click', '#save_playlist_submit', (e) ->
-    App.Playlist.savePlaylist
+    App.Playlist.savePlaylist()
+  $(document).on 'click', '#delete_playlist_btn', (e) ->
+    App.Playlist.deletePlaylist()
     
   # Sortable playlist DOM load
   $('#current_playlist').sortable({
