@@ -1,10 +1,4 @@
-<div id="header_container">
-  <div id="header">
-    <h1>Forgot your password?</h1>
-  </div>
-</div>
-
-<div id="content">
+<div id="content" class="noheader">
 
     <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f| %>
       <%= devise_error_messages! %>

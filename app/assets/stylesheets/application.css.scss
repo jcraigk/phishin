@@ -45,7 +45,7 @@ a:hover {
 
 #global_nav {
   margin-top: 56px;
-  margin-left: 100px;
+  margin-left: 120px;
   position: absolute;
 //  border: 1px solid red;
 }
@@ -705,8 +705,8 @@ h2.for_content {
 #userbox {
   font-family: sans-serif;
   float: right;
-  margin-right: -8px;
-  margin-top: -5px;
+  margin-right: 20px;
+  margin-top: -7px;
 }
 #player_feedback {
   width: 50px;
@@ -734,7 +734,7 @@ h2.for_content {
   padding: 0px;
   position: fixed;
   margin-top: -5px;
-  margin-left: 80px;
+  margin-left: 100px;
   width: 410px;
   height: 40px;
   text-align: center;
@@ -755,7 +755,7 @@ h2.for_content {
   padding: 0px;
   position: fixed;
   margin-top: 55px;
-  margin-left: 80px;
+  margin-left: 100px;
   width: 400px;
   text-align: center;
   overflow: hidden;
@@ -785,6 +785,9 @@ h2.for_content {
 .playlist_active {
   border: 1px solid red !important;
   background-color: #ccc !important;
+  -moz-box-shadow: 0 0 16px #3b995f !important;
+  -webkit-box-shadow: 0 0 16px #3b995f !important;
+  box-shadow: 0 0 16px #3b995f !important;
 }
 .active_track {
   -webkit-animation: pulsate-green 1.5s infinite alternate linear !important; 
@@ -816,12 +819,12 @@ h2.for_content {
   width: 380px;
   height: 36px;
   margin-top: 25px;
-  margin-left: 90px;
+  margin-left: 110px;
   font-family: 'Rambla', sans-serif;
 //  border: 1px solid black;
 }
 #time_elapsed {
-  margin-left: 30px;
+  margin-left: 26px;
   width: 30px;
   font-size: 12px;
   line-height: 36px;
@@ -844,7 +847,7 @@ h2.for_content {
 #player_menu {
   position: fixed;
   margin-top: 28px;
-  margin-left: 450px;
+  margin-left: 470px;
   width: 60px;
   height: 40px;
 //  border: 1px solid black;
@@ -859,7 +862,7 @@ h2.for_content {
 #playlist_button {
   position: fixed;
   margin-top: 28px;
-  margin-left: 480px;
+  margin-left: 510px;
   width: 60px;
   height: 40px;
 //  border: 1px solid black;
@@ -869,8 +872,8 @@ h2.for_content {
 }
 #search_button {
   position: fixed;
-  margin-top: 28px;
-  margin-left: 510px;
+  margin-top: -7px;
+  margin-left: 888px;
 }
 #volume_icon {
   padding: 0px 0px 0px 0px !important;
