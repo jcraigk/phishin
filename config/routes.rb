@@ -12,30 +12,30 @@ Phishin::Application.routes.draw do
   mount Resque::Server, at: "/resque"
 
   # Static pages
-  get     '/legal-stuff'                  => 'pages#legal_stuff', as: 'legal_stuff'
-  get     '/contact-us'                   => 'pages#contact_us', as: 'contact_us'
+  get     '/legal-stuff'                  => 'pages#legal_stuff',                   as: 'legal_stuff'
+  get     '/contact-us'                   => 'pages#contact_us',                    as: 'contact_us'
 
   # Error pages
-  get     '/browser-unsupported'          => 'errors#browser_unsupported', as: 'browser_unsupported'
-  get     '/mobile-unsupported'           => 'errors#mobile_unsupported', as: 'mobile_unsupported'
+  get     '/browser-unsupported'          => 'errors#browser_unsupported',          as: 'browser_unsupported'
+  get     '/mobile-unsupported'           => 'errors#mobile_unsupported',           as: 'mobile_unsupported'
 
   # Reports
-  get     '/missing-shows'                => 'reports#missing_shows', as: 'missing_shows'
+  get     '/missing-shows'                => 'reports#missing_shows',               as: 'missing_shows'
     
   # Content navigation pages
-  get     '/years'                        => 'content#years', as: 'years'
-  get     '/songs'                        => 'content#songs', as: 'songs'
-  get     '/map'                          => 'content#map', as: 'map'
-  get     '/venues'                       => 'content#venues', as: 'venues'
-  get     '/liked-shows'                  => 'content#top_liked_shows', as: 'liked_shows'
-  get     '/liked-tracks'                 => 'content#top_liked_tracks', as: 'liked_tracks'
-  get     '/search'                       => 'search#search', as: 'search'
+  get     '/years'                        => 'content#years',                       as: 'years'
+  get     '/songs'                        => 'content#songs',                       as: 'songs'
+  get     '/map'                          => 'content#map',                         as: 'map'
+  get     '/venues'                       => 'content#venues',                      as: 'venues'
+  get     '/top-shows'                    => 'content#top_liked_shows',             as: 'liked_shows'
+  get     '/top-tracks'                   => 'content#top_liked_tracks',            as: 'liked_tracks'
+  get     '/search'                       => 'search#search',                       as: 'search'
 
   # Map
-  get     '/search-map'                   => 'map#search', as: 'map_search'
+  get     '/search-map'                   => 'map#search',                          as: 'map_search'
 
   # Likes
-  post    '/toggle-like'                  => 'likes#toggle_like', as: 'toggle_like'
+  post    '/toggle-like'                  => 'likes#toggle_like',                   as: 'toggle_like'
   
   # Playlists / player
   get     '/playlist'                     => 'playlists#playlist'
@@ -56,10 +56,10 @@ Phishin::Application.routes.draw do
   get     '/random-show'                  => 'playlists#random_show'
   
   # Downloads
-  get     '/download-track/:track_id'     => 'downloads#download_track', as: 'download_track'
-  get     '/play-track/:track_id'         => 'downloads#play_track', as: 'play_track'
-  get     '/download-show/:date'          => 'downloads#request_download_show', as: 'download_show'
-  get     '/download/:md5'                => 'downloads#download_album', as: 'download_album'
+  get     '/download-track/:track_id'     => 'downloads#download_track',            as: 'download_track'
+  get     '/play-track/:track_id'         => 'downloads#play_track',                as: 'play_track'
+  get     '/download-show/:date'          => 'downloads#request_download_show',     as: 'download_show'
+  get     '/download/:md5'                => 'downloads#download_album',            as: 'download_album'
   
   # Catch-all matcher for short content URLs
   get     '/(:glob(/:anchor))' => 'content#glob'

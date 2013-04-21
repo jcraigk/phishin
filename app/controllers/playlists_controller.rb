@@ -49,10 +49,14 @@ class PlaylistsController < ApplicationController
     elsif session[:playlist].size < 2
       msg = 'Saved playlists must contain at least 2 tracks'
     elsif save_action == 'new'
-      playlist = Playlist.create(user_id: current_user.id, name: params[:name], slug: params[:slug])
-      create_playlist_tracks(playlist.id)
-      success = true
-      msg = 'Playlist created'
+      if Playlist.where(user_id: current_user.id).all.size >= 10
+        msg = 'Sorry, each user is limited to 10 playlists'
+      else
+        playlist = Playlist.create(user_id: current_user.id, name: params[:name], slug: params[:slug])
+        create_playlist_tracks(playlist.id)
+        success = true
+        msg = 'Playlist created'
+      end
     elsif playlist = Playlist.where(user_id: current_user.id, id: params[:id]).first
       playlist.update_attributes(name: params[:name], slug: params[:slug])
       playlist.tracks.each { |track| track.destroy }

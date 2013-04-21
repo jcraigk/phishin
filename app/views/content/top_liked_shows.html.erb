@@ -1,13 +1,12 @@
-<%= render 'shared/index_header' %>
+<div id="content" class="noheader">
   
-<div id="content">
-  
-  <div style="text-align: center;">
+  <div class="centered">
     <div class="btn-group like_tabs">
       <%= link_to content_tag(:button, 'Top 50 Shows', class: 'btn btn-medium btn-primary active'), liked_shows_path %>
       <%= link_to content_tag(:button, 'Top 50 Tracks', class: 'btn btn-medium'), liked_tracks_path %>
     </div>
   </div>
+  <br />
   
   <ul class="item_list clickable">
     <% @shows.each_with_index do |show, idx| %>

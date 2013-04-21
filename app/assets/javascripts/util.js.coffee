@@ -29,6 +29,7 @@ class @Util
     @page_init = false
     History.pushState {href: href}, $('body').data('app-name'), href
     window.scrollTo 0, 0
+    this._handleGlobalNavHighlight(href)
   
   navigateToRefreshMap: ->
     url = "/map?term=#{$('#map_search_term').val().replace /\s/g, '+' }"
@@ -116,6 +117,13 @@ class @Util
       trail: 50,
       className: className
     }).spin()
+  
+  _handleGlobalNavHighlight: (href) ->
+    $global_nav_links = $('#global_nav .label')
+    $global_nav_links.removeClass('active')
+    $global_nav_links.each( ->
+      $(this).addClass('active') if href is $(this).parent().attr('href')
+    )
   
   _requestAlbumResponse: (r, request_url, first_call) ->
     if r.status is 'Ready'

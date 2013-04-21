@@ -31,10 +31,9 @@ module ApplicationHelper
       end
     end
   end
-
-  def index_nav_button(name, path, icon_css, other_path='')
-    icon_css += " icon-white" if nav_active?(path) or nav_active?(other_path)
-    link_to (content_tag 'button', "<i class=\"#{icon_css}\"></i> #{name}".html_safe, class: "btn #{current_nav_class(path, other_path)}"), path
+  
+  def nav_button(name, path, other_path='')
+    link_to (content_tag :span, name, class: "label"), path
   end
   
   def link_to_song(song, term=nil)
@@ -67,14 +66,6 @@ module ApplicationHelper
   end
   
   private
-  
-  def current_nav_class(path, other_path)
-    "btn-primary active" if nav_active?(path) or nav_active?(other_path)
-  end
-  
-  def nav_active?(path)
-    current_page?(path) or (path == '/years' and request.fullpath == '/')
-  end
   
   def linked_show_date(show)
     day_link = link_to show.date.strftime("%b %-d"), "/#{show.date.strftime("%B").downcase}-#{show.date.strftime("%-d")}"

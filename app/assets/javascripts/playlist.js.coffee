@@ -154,7 +154,7 @@ class @Playlist
          $('#playlist_data').attr 'data-id', r.id
          $('#playlist_data').attr 'data-name', r.name
          $('#playlist_data').attr 'data-slug', r.slug
-         $('#playlist_data').show()
+         $('#playlist_title').html "Playlist: #{r.name}"
          this._refreshPlaylistDropdown()
          @Util.feedback { notice: r.msg }
        else

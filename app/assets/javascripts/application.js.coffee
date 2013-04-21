@@ -196,12 +196,12 @@ $ ->
   
   # Click a track to play it
   $(document).on 'click', '.playable_track', (e) ->
-    App.Playlist.resetPlaylist $(this).data('id')
+    App.Player.setCurrentPlaylist $(this).data('id')
     App.Player.playTrack $(this).data('id')
   
   # Click Play in a context menu to play the track
   $(document).on 'click', '.context_play_track', (e) ->
-    App.Playlist.resetPlaylist $(this).data('id')
+    App.Player.setCurrentPlaylist $(this).data('id')
     App.Player.playTrack $(this).data('id')
 
   # Click the Play/Pause button
