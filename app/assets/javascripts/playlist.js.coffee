@@ -23,7 +23,7 @@ class @Playlist
           @$playlist_btn.removeClass 'playing'
           $('#empty_playlist_msg').show()
     })
-    # Sortable playlist AJAX load
+    # Sortable playlist
     $('#current_playlist').sortable({
       placeholder: "ui-state-highlight",
       update: =>
@@ -48,6 +48,55 @@ class @Playlist
         @Util.feedback { notice: success_msg }
     })
   
+  addTrackToPlaylist: (track_id) ->
+    $.ajax({
+      type: 'post',
+      url: '/add-track',
+      data: { 'track_id': track_id}
+      success: (r) =>
+        if r.success
+          this.initPlaylist()
+          @Util.feedback { notice: 'Track added to playlist' }
+        else
+          @Util.feedback { alert: r.msg }
+    })
+  
+  addShowToPlaylist: (show_id) ->
+    $.ajax({
+      type: 'post',
+      url: '/add-show',
+      data: { 'show_id': show_id}
+      success: (r) =>
+        if r.success
+          this.initPlaylist()
+          @Util.feedback { notice: r.msg }
+        else
+          @Util.feedback { alert: r.msg }
+    })
+  
+  removeTrackFromPlaylist: (track_id) ->
+    if $('#current_playlist').children('li').size() is 0
+      this.clearPlaylist()
+      @Player.stopAndUnload()
+    else
+      this.updatePlaylist 'Track removed from playlist'
+      @Player.stopAndUnload()
+  
+  handleOptionChange: ->
+    $.ajax({
+      type: 'post',
+      url: '/submit-playlist-options',
+      data: {
+        'loop': $('#loop_checkbox').prop('checked'),
+        'randomize': $('#randomize_checkbox').prop('checked')
+      }
+      success: (r) =>
+        if r.success
+          @Util.feedback { notice: 'Playlist options saved' }
+        else
+          @Util.feedback { alert: r.msg }
+    })
+
   clearPlaylist: ->
     $.ajax({
      url: '/clear-playlist',
@@ -60,6 +109,7 @@ class @Playlist
        $('#playlist_data').attr 'data-slug', ''
        $('#playlist_data').attr 'data-user-id', ''
        $('#playlist_data').attr 'data-user-name', ''
+       $('#delete_playlist_btn').hide()
        $('#current_playlist').html ''
        $('#playlist_title').html 'Current Playlist'
        this._updatePlaylistStats()
@@ -67,7 +117,7 @@ class @Playlist
        @Util.feedback { notice: 'Playlist is now empty' }
     })
   
-  handleSavePlaylistModal: ->
+  handleSaveModal: ->
     if name = $('#playlist_data').attr 'data-name'
       @$save_action_existing.attr 'disabled', false
       @$playlist_name_input.val name
@@ -78,6 +128,15 @@ class @Playlist
       @$playlist_slug_input.val ''
     @$save_modal.modal 'show'
   
+  handleShareModal: ->
+    if $('#playlist_data').attr('data-id') is "0"
+      url = "You must first save a playlist to share it..."
+    else
+      url = "#{$('body').data('base-url')}/play/#{$('#playlist_data').attr('data-slug')}"
+    $('#share_url').html("<p>#{url}</p>")
+    $('#share_track_tips').hide()
+    $('#share_modal').modal('show')
+  
   savePlaylist: ->
     @$save_modal.modal 'hide'
     $.ajax({
@@ -87,7 +146,7 @@ class @Playlist
        id:      $('#playlist_data').attr('data-id'),
        name:    @$playlist_name_input.val(),
        slug:    @$playlist_slug_input.val(),
-       action:  @$save_action_dropdown.val()
+       save_action:  @$save_action_dropdown.val()
      }
      success: (r) =>
        if r.success
@@ -97,7 +156,7 @@ class @Playlist
          $('#playlist_data').attr 'data-slug', r.slug
          $('#playlist_data').show()
          this._refreshPlaylistDropdown()
-         @Util.feedback { notice: 'Playlist saved'}
+         @Util.feedback { notice: r.msg }
        else
          @Util.feedback { alert: r.msg }
     })
@@ -130,7 +189,11 @@ class @Playlist
      success: (r) =>
        if r.success
          console.log r
-         for p in JSON.parse(r.playlists)
-           $list.append "<li><a href=\"/play/#{p.slug}\">#{p.name}</a></li>"
+         playlists = JSON.parse(r.playlists)
+         if playlists.length > 0
+           for p in playlists
+             $list.append "<li><a href=\"/play/#{p.slug}\"><i class=\"icon-list\"></i> #{p.name}</a></li>"
+         else
+           $list.append "<li><a href=\"#\">(No saved playlists)</a></li>"
     })
     

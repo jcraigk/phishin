@@ -168,83 +168,29 @@ $ ->
   ###############################################
   
   
-  # Share links bring up a modal to display a url
+  # Playlist stuff
   $(document).on 'click', '#share_playlist_btn', ->
-    $('#share_url').html("<p>#{$('body').data('base-url')}/play/#{$('#playlist_data').attr('data-slug')}</p>")
-    $('#share_track_tips').hide()
-    $('#share_modal').modal('show')
-    
+    App.Playlist.handleShareModal()
   $(document).on 'blur', '#playlist_name_input', (e) ->
     $('#playlist_slug_input').val App.Util.stringToSlug($(this).val())
   $(document).on 'click', '#save_playlist_btn', (e) ->
-    App.Playlist.handleSavePlaylistModal()
-  $(document).on 'click', '#save_playlist_submit', (e) ->
-    App.Playlist.savePlaylist()
-  
+    App.Playlist.handleSaveModal()
   $(document).on 'click', '#save_playlist_submit', (e) ->
     App.Playlist.savePlaylist()
   $(document).on 'click', '#delete_playlist_btn', (e) ->
     if confirm 'Are you sure you want to permanently delete this playlist?'
       App.Playlist.deletePlaylist()
-  
-  # Clear playlist
   $(document).on 'click', '#clear_playlist_btn', (e) ->
     App.Playlist.clearPlaylist()
-  
-  # Remove track from playlist
-  $(document).on 'click', '.playlist_remove_track', (e) ->
-    track_id = $(this).parents('li').data('id')
-    $(this).parents('li').remove()
-    if $('#current_playlist').children('li').size() is 0
-      App.Playlist.clearPlaylist()
-      App.Player.stopAndUnload()
-    else
-      App.Playlist.updatePlaylist 'Track removed from playlist'
-      App.Player.stopAndUnload()
-  
-  # Add track to playlist
   $(document).on 'click', '.playlist_add_track', (e) ->
-    track_id = $(this).data('id')
-    $.ajax({
-      type: 'post',
-      url: '/add-track',
-      data: { 'track_id': track_id}
-      success: (r) ->
-        if r.success
-          App.Util.feedback { notice: 'Track added to playlist' }
-        else
-          App.Util.feedback { alert: r.msg }
-    })
-  
-  # Add show to playlist
+    App.Playlist.addTrackToPlaylist $(this).data('id')
   $(document).on 'click', '.playlist_add_show', (e) ->
-    show_id = $(this).data('id')
-    $.ajax({
-      type: 'post',
-      url: '/add-show',
-      data: { 'show_id': show_id}
-      success: (r) ->
-        if r.success
-          App.Util.feedback { notice: r.msg }
-        else
-          App.Util.feedback { alert: r.msg }
-    })
-  
-  # Playlist Option change
+    App.Playlist.addShowToPlaylist $(this).data('id')
+  $(document).on 'click', '.playlist_remove_track', (e) ->
+    $(this).parents('li').remove()
+    App.Playlist.removeTrackFromPlaylist $(this).parents('li').data('id')
   $(document).on 'change', '.playlist_option', (e) ->
-    $.ajax({
-      type: 'post',
-      url: '/submit-playlist-options',
-      data: {
-        'loop': $('#loop_checkbox').prop('checked'),
-        'randomize': $('#randomize_checkbox').prop('checked')
-      }
-      success: (r) ->
-        if r.success
-          App.Util.feedback { notice: 'Playlist options saved' }
-        else
-          App.Util.feedback { alert: r.msg }
-    })
+    App.Playlist.handleOptionChange()
   
   ###############################################
   

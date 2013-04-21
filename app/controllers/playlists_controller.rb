@@ -28,10 +28,10 @@ class PlaylistsController < ApplicationController
   
   def save_playlist
     success = false
-    if ['new', 'existing'].include? params[:action]
-      action = params[:action]
+    if ['new', 'existing'].include? params[:save_action]
+      save_action = params[:save_action]
     else
-      action = 'new'
+      save_action = 'new'
     end
     # TODO Could we do the following with validations more cleanly?
     if !current_user
@@ -42,19 +42,19 @@ class PlaylistsController < ApplicationController
       msg = 'Name must be between 5 and 50 characters'
     elsif !params[:slug].match(/^[a-z0-9\-]{5,50}$/)
       msg = 'URL must be between 5 and 50 lowercase letters, numbers, or dashes'
-    elsif playlist = Playlist.where(name: params[:name], user_id: current_user.id).first
+    elsif playlist = Playlist.where(name: params[:name], user_id: current_user.id).where('id <> ?', params[:id]).first
       msg = 'You already have a playlist with that name; choose another'
-    elsif playlist = Playlist.where(slug: params[:slug]).first
+    elsif playlist = Playlist.where(slug: params[:slug]).where('id <> ?', params[:id]).first
       msg = 'That URL has already been taken; choose another'
     elsif session[:playlist].size < 2
       msg = 'Saved playlists must contain at least 2 tracks'
-    elsif action == 'new'
+    elsif save_action == 'new'
       playlist = Playlist.create(user_id: current_user.id, name: params[:name], slug: params[:slug])
       create_playlist_tracks(playlist.id)
       success = true
       msg = 'Playlist created'
     elsif playlist = Playlist.where(user_id: current_user.id, id: params[:id]).first
-      Playlist.update_attributes(name: params[:name], slug: params[:slug])
+      playlist.update_attributes(name: params[:name], slug: params[:slug])
       playlist.tracks.each { |track| track.destroy }
       create_playlist_tracks(playlist.id)
       success = true

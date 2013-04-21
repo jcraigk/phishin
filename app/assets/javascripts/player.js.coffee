@@ -85,7 +85,7 @@ class @Player
   playTrack: (track_id, time_marker=0) ->
     if track_id != @active_track
       @preload_started = false
-      unless @sm_sound = @sm.getSoundById track_id
+      unless track_id and @sm_sound = @sm.getSoundById track_id
         @sm_sound = @sm.createSound({
           id: track_id,
           url: "/play-track/#{track_id}",
@@ -153,7 +153,7 @@ class @Player
   
   stopAndUnload: ->
     this._fastFadeout @active_track
-    @sm_sound.unload()
+    @sm_sound.unload() if @sm_sound.loaded
     @active_track = ''
     this._updatePlayerDisplay({
       title: @app_name,
@@ -234,7 +234,7 @@ class @Player
     this._updatePauseState false
 
   _preloadTrack: (track_id) ->
-    unless @sm.getSoundById track_id
+    unless track_id and @sm.getSoundById track_id
       @sm.createSound({
         id: track_id,
         url: "/play-track/#{track_id}",
@@ -326,16 +326,16 @@ class @Player
         @$feedback.removeClass 'done'
   
   _fastFadeout: (track_id, is_pause=false) ->
-    sound = @sm.getSoundById track_id
-    if @muted or sound.volume is 0
-      if is_pause
-        sound.pause()
+    if track_id and sound = @sm.getSoundById track_id
+      if @muted or sound.volume is 0
+        if is_pause
+          sound.pause()
+        else
+          sound.stop()
+        @sm.setVolume track_id, @$volume_slider.slider('value')
       else
-        sound.stop()
-      @sm.setVolume track_id, @$volume_slider.slider('value')
-    else
-      if sound.volume < 10 then delta = 1 else delta = 3
-      @sm.setVolume track_id, sound.volume - delta
-      setTimeout( =>
-        this._fastFadeout track_id, is_pause
-      , 10)
+        if sound.volume < 10 then delta = 1 else delta = 3
+        @sm.setVolume track_id, sound.volume - delta
+        setTimeout( =>
+          this._fastFadeout track_id, is_pause
+        , 10)
