@@ -168,6 +168,12 @@ $ ->
   ###############################################
   
   
+  # Share links bring up a modal to display a url
+  $(document).on 'click', '#share_playlist_btn', ->
+    $('#share_url').html("<p>#{$('body').data('base-url')}/play/#{$('#playlist_data').attr('data-slug')}</p>")
+    $('#share_track_tips').hide()
+    $('#share_modal').modal('show')
+    
   $(document).on 'blur', '#playlist_name_input', (e) ->
     $('#playlist_slug_input').val App.Util.stringToSlug($(this).val())
   $(document).on 'click', '#save_playlist_btn', (e) ->
@@ -178,14 +184,8 @@ $ ->
   $(document).on 'click', '#save_playlist_submit', (e) ->
     App.Playlist.savePlaylist()
   $(document).on 'click', '#delete_playlist_btn', (e) ->
-    App.Playlist.deletePlaylist()
-    
-  # Sortable playlist DOM load
-  # $('#current_playlist').sortable({
-  #   placeholder: "ui-state-highlight",
-  #   update: ->
-  #     App.Playlist.updatePlaylist 'Track moved in playlist'
-  # })
+    if confirm 'Are you sure you want to permanently delete this playlist?'
+      App.Playlist.deletePlaylist()
   
   # Clear playlist
   $(document).on 'click', '#clear_playlist_btn', (e) ->

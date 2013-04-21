@@ -38,13 +38,14 @@ class ApplicationController < ActionController::Base
   end
   
   def init_session
-    session[:playlist]        ||= []
-    session[:playlist_id]     ||= 0
-    session[:playlist_name]   ||= ''
-    session[:playlist_slug]   ||= ''
-    session[:playlist_author] ||= ''
-    session[:loop]            ||= false
-    session[:randomize]       ||= false
+    session[:playlist]            ||= []
+    session[:playlist_id]         ||= 0
+    session[:playlist_name]       ||= ''
+    session[:playlist_slug]       ||= ''
+    session[:playlist_user_id]    ||= ''
+    session[:playlist_user_name]  ||= ''
+    session[:loop]                ||= false
+    session[:randomize]           ||= false
   end
   
   def init_params

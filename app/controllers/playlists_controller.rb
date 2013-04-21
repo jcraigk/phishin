@@ -8,7 +8,8 @@ class PlaylistsController < ApplicationController
       session[:playlist_id] = playlist.id
       session[:playlist_name] = playlist.name
       session[:playlist_slug] = playlist.slug
-      session[:playlist_author] = playlist.user.username
+      session[:playlist_user_id] = playlist.user.id
+      session[:playlist_user_name] = playlist.user.username
     end
     begin
       if session[:playlist]
@@ -71,6 +72,15 @@ class PlaylistsController < ApplicationController
       }  
     else
       render json: { success: false, msg: msg }
+    end
+  end
+  
+  def delete_playlist
+    if current_user and params[:id] and playlist = Playlist.where(id: params[:id], user_id: current_user.id).first
+      playlist.destroy
+      render json: { success: true }
+    else
+      render json: { success: false, msg: 'Invalid delete request' }
     end
   end
   
@@ -254,7 +264,8 @@ class PlaylistsController < ApplicationController
     session[:playlist_id] = 0
     session[:playlist_name] = ''
     session[:playlist_slug] = ''
-    session[:playlist_author] = ''
+    session[:playlist_user_id] = ''
+    session[:playlist_user_name] = ''
   end
   
 end

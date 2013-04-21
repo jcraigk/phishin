@@ -4,6 +4,6 @@ class Tour < ActiveRecord::Base
   has_many :shows
   
   extend FriendlyId
-  friendly_id :name, :use => :slugged
+  friendly_id :name, use: :slugged
 
 end

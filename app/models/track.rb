@@ -13,9 +13,8 @@ class Track < ActiveRecord::Base
   ########################
   # Associations & Scopes
   ########################
-  has_many :songs_tracks, :dependent => :destroy
-  has_many :songs, :through => :songs_tracks
-  # has_many :section_markers, :dependent => :destroy
+  has_many :songs_tracks, dependent: :destroy
+  has_many :songs, through: :songs_tracks
   belongs_to :show
   has_many :likes, as: :likable
   

@@ -2,7 +2,7 @@
   
   <% if user_signed_in? %>
     <div class="btn-group">
-      <a class="btn dropdown-toggle btn-round btn-mini btn-inverse" data-toggle="dropdown" href="null">
+      <a class="btn dropdown-toggle btn_invisible" data-toggle="dropdown" href="null">
         &nbsp;<%= current_user.username %>
         <span class="caret"></span>
       </a>
@@ -12,6 +12,6 @@
       </ul>
     </div>
   <% else %>
-    <%= link_to '<button type="button" class="btn btn-round btn-mini btn-inverse">Sign in</button>'.html_safe, new_user_session_path, class: 'non-remote' %>
+    <%= link_to '<button type="button" class="btn btn_invisible">Sign in</button>'.html_safe, new_user_session_path, class: 'non-remote' %>
   <% end %>
 </div>

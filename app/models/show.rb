@@ -4,7 +4,7 @@ class Show < ActiveRecord::Base
   extend FriendlyId
   friendly_id :date
 
-  has_many :tracks, :dependent => :destroy
+  has_many :tracks, dependent: :destroy
   belongs_to :tour, counter_cache: true
   belongs_to :venue, counter_cache: true
   has_many :likes, as: :likable

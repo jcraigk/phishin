@@ -48,10 +48,6 @@ class @Playlist
         @Util.feedback { notice: success_msg }
     })
   
-  _updatePlaylistStats: (num_tracks=0, duration=0) ->
-    $('#current_playlist_tracks_label').html "#{num_tracks} Tracks"
-    $('#current_playlist_duration_label').html "<i class=\"icon-time icon-white\"></i>  #{@Util.readableDuration(duration, 'letters')}"
-  
   clearPlaylist: ->
     $.ajax({
      url: '/clear-playlist',
@@ -62,11 +58,11 @@ class @Playlist
        $('#playlist_data').attr 'data-id', 0
        $('#playlist_data').attr 'data-name', ''
        $('#playlist_data').attr 'data-slug', ''
-       $('#playlist_data').attr 'data-author', ''
+       $('#playlist_data').attr 'data-user-id', ''
+       $('#playlist_data').attr 'data-user-name', ''
        $('#current_playlist').html ''
        $('#playlist_title').html 'Current Playlist'
        this._updatePlaylistStats()
-       $('#playlist_info').hide()
        $('#empty_playlist_msg').show()
        @Util.feedback { notice: 'Playlist is now empty' }
     })
@@ -121,6 +117,10 @@ class @Playlist
        else
          @Util.feedback { alert: r.msg }
     })
+  
+  _updatePlaylistStats: (num_tracks=0, duration=0) ->
+    $('#current_playlist_tracks_label').html "#{num_tracks} Tracks"
+    $('#current_playlist_duration_label').html "<i class=\"icon-time icon-white\"></i>  #{@Util.readableDuration(duration, 'letters')}"
   
   _refreshPlaylistDropdown: ->
     $list = $('#load_playlist_list')
