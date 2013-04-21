@@ -26,18 +26,19 @@
       
     <div id="scrubber_controls">
       <div id="time_elapsed">
-        <!-- 3:23 -->
       </div>
       <div id="scrubber"></div>
       <div id="time_remaining">
-        <!-- -5:03 -->
       </div>
     </div>
       
     <%= render partial: 'layouts/player_menu' %>
     
     <div id="playlist_button">
-      <a href="<%= playlist_path %>"><button type="button" class="btn"><i class="icon-list"></i></button></a>
+      <a href="<%= playlist_path %>"><button type="button" class="btn btn_invisible"><i class="icon-list"></i></button></a>
+    </div>
+    <div id="search_button">
+      <a href="<%= search_path %>"><button type="button" class="btn btn_invisible"><i class="icon-search"></i></button></a>
     </div>
       
     <div id="player_title_container">
@@ -52,7 +53,7 @@
     </div>
       
     <div id="player_detail">
-      <% #link_to @random_song.lyrical_excerpt, "/#{@random_song.slug}" %>
+      <%= link_to @random_song.lyrical_excerpt, "/#{@random_song.slug}" %>
     </div>
       
     <%= render partial: 'layouts/user_controls' %>

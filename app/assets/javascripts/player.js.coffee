@@ -180,7 +180,7 @@ class @Player
       url: '/reset-playlist',
       data: { 'track_id': track_id }
     })
-    @$playlist_btn.addClass 'playing'
+    @$playlist_btn.addClass 'playlist_active'
 
   _loadInfoAndPlay: (track_id, time_marker) ->
     this._loadTrackInfo track_id

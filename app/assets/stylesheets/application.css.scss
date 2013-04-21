@@ -45,12 +45,12 @@ a:hover {
 
 #global_nav {
   margin-top: 56px;
-  margin-left: 146px;
+  margin-left: 110px;
   position: absolute;
 //  border: 1px solid red;
 }
 #global_nav .label {
-  margin-left: 15px;
+  margin-left: 18px;
 }
 #global_nav .label:hover {
   background-color: #acdbea;
@@ -58,7 +58,6 @@ a:hover {
 #global_nav .active {
   background-color: #609eea;
 }
-
 
 /******************************/
 
@@ -334,7 +333,7 @@ a:hover {
 #header h1 {
   float: left;
   font-family: 'Rambla', sans-serif;
-  font-size: 35px;
+  font-size: 28px;
   line-height: 36px;
   margin-left: 6px;
   font-weight: 700;
@@ -735,7 +734,7 @@ h2.for_content {
   padding: 0px;
   position: fixed;
   margin-top: -5px;
-  margin-left: 140px;
+  margin-left: 80px;
   width: 410px;
   height: 40px;
   text-align: center;
@@ -756,7 +755,7 @@ h2.for_content {
   padding: 0px;
   position: fixed;
   margin-top: 55px;
-  margin-left: 160px;
+  margin-left: 80px;
   width: 400px;
   text-align: center;
   overflow: hidden;
@@ -770,7 +769,7 @@ h2.for_content {
 }
 #player_controls {
   position: fixed;
-  margin-left: 660px;
+  margin-left: 620px;
   margin-top: 20px;
 }
 #player_controls > div {
@@ -782,6 +781,10 @@ h2.for_content {
   -webkit-box-shadow: 0 0 16px #3b995f !important;
   box-shadow: 0 0 16px #3b995f !important;
   background-position: -85px 0 !important;
+}
+.playlist_active {
+  border: 1px solid red !important;
+  background-color: #ccc !important;
 }
 .active_track {
   -webkit-animation: pulsate-green 1.5s infinite alternate linear !important; 
@@ -813,7 +816,7 @@ h2.for_content {
   width: 380px;
   height: 36px;
   margin-top: 25px;
-  margin-left: 150px;
+  margin-left: 90px;
   font-family: 'Rambla', sans-serif;
 //  border: 1px solid black;
 }
@@ -840,11 +843,14 @@ h2.for_content {
 }
 #player_menu {
   position: fixed;
-  margin-top: 26px;
-  margin-left: 120px;
+  margin-top: 28px;
+  margin-left: 440px;
   width: 60px;
   height: 40px;
 //  border: 1px solid black;
+}
+#player_menu * {
+  box-shadow: none;
 }
 #randomize_checkbox {
   margin-bottom: 15px;
@@ -853,10 +859,18 @@ h2.for_content {
 #playlist_button {
   position: fixed;
   margin-top: 28px;
-  margin-left: 530px;
+  margin-left: 470px;
   width: 60px;
   height: 40px;
 //  border: 1px solid black;
+}
+#playlist_button * {
+  box-shadow: none;
+}
+#search_button {
+  position: fixed;
+  margin-top: 28px;
+  margin-left: 500px;
 }
 #volume_icon {
   padding: 0px 0px 0px 0px !important;
@@ -1184,6 +1198,7 @@ h2.for_content {
 .btn_invisible {
   border: none !important;
   background: none !important;
+  box-shadow: none;
 }
 #load_playlist_list {
   text-align: left;

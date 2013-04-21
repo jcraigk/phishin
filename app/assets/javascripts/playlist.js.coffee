@@ -17,10 +17,10 @@ class @Playlist
       url: '/get-playlist',
       success: (r) =>
         if r.playlist.length > 0
-          @$playlist_btn.addClass 'playing'
+          @$playlist_btn.addClass 'playlist_active'
           $('#empty_playlist_msg').hide()
         else
-          @$playlist_btn.removeClass 'playing'
+          @$playlist_btn.removeClass 'playlist_active'
           $('#empty_playlist_msg').show()
     })
     # Sortable playlist
@@ -103,7 +103,7 @@ class @Playlist
      type: 'post',
      success: (r) =>
        @Player.stopAndUnload()
-       @$playlist_btn.removeClass 'playing'
+       @$playlist_btn.removeClass 'playlist_active'
        $('#playlist_data').attr 'data-id', 0
        $('#playlist_data').attr 'data-name', ''
        $('#playlist_data').attr 'data-slug', ''
