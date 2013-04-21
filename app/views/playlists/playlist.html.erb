@@ -1,8 +1,8 @@
 <div id="header_container">
   <div id="header">
-    <%= content_tag :h1, 'Current Playlist'%>
-    <%= content_tag :h2, pluralize(@num_tracks, 'track'), id: 'current_playlist_tracks_label', class: 'floating' %>
+    <%= content_tag :h1, (session[:playlist_id] > 0 ? "Playlist: #{session[:playlist_name]}" : 'Current Playlist'), id: 'playlist_title' %>
     <%= content_tag :span, "<i class=\"icon-time icon-white\"></i> #{duration_readable(@duration, 'letters')}".html_safe, id: 'current_playlist_duration_label', class: 'show_duration' %>
+    <%= content_tag :h3, pluralize(@num_tracks, 'track'), id: 'current_playlist_tracks_label' %>
   </div>
 </div>
   
@@ -26,13 +26,6 @@
           <span class="caret"></span>
         </a>
         <ul class="dropdown-menu" id="load_playlist_list">
-          <% if @saved_playlists and @saved_playlists.size > 0 %>
-            <% for playlist in @saved_playlists %>
-              <%= content_tag :li, link_to(playlist.name, "#") %>
-            <% end %>
-          <% else %>
-            <%= content_tag :li, link_to("(No saved playlists)", "#") %>
-          <% end %>
         </ul>
       </div>
     </div>
@@ -41,10 +34,9 @@
     </div>
   </div>
   
-  <div id="playlist_info" style="display: none;">
+  <div id="playlist_info">
     ID: <%= session[:playlist_id] %><br />
     Name: <%= session[:playlist_name] %><br />
-    Slug: <%= session[:playlist_slug] %>
     <% if current_user and current_user.id == session[:playlist_id] %>
       <button type="button" class="btn btn-danger" id="delete_playlist_btn"><i class="icon-remove"></i> Delete Playlist</button>
     <% end %>

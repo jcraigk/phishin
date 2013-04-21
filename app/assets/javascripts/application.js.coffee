@@ -57,7 +57,7 @@ $ ->
           _gaq.push([ '_trackPageview', state.data.href ]);
           
           # Auto-scroll and highlight track anchor if present
-          if path = state.data.href.split("/")[2]
+          if state.data.href.substr(0,6) is not '/play/' and path = state.data.href.split("/")[2]
             match = /^(.+)\?(.+)$/.exec(path)
             $('body').attr 'data-anchor', match[1]
           else
@@ -73,15 +73,8 @@ $ ->
             App.Map.handleSearch(term, distance) if term and distance
           
           # Playlist
-          else if state.data.href.substr(0,9) is '/playlist'
-            # Initialize the playlist display
+          else if state.data.href.substr(0,9) is '/playlist' or state.data.href.substr(0,6) is '/play/'
             App.Playlist.initPlaylist()
-            # Sortable playlist AJAX load
-            $('#current_playlist').sortable({
-              placeholder: "ui-state-highlight",
-              update: ->
-                App.Playlist.updatePlaylist 'Track moved in playlist'
-            })
       )
 
   ###############################################
@@ -188,11 +181,11 @@ $ ->
     App.Playlist.deletePlaylist()
     
   # Sortable playlist DOM load
-  $('#current_playlist').sortable({
-    placeholder: "ui-state-highlight",
-    update: ->
-      App.Playlist.updatePlaylist 'Track moved in playlist'
-  })
+  # $('#current_playlist').sortable({
+  #   placeholder: "ui-state-highlight",
+  #   update: ->
+  #     App.Playlist.updatePlaylist 'Track moved in playlist'
+  # })
   
   # Clear playlist
   $(document).on 'click', '#clear_playlist_btn', (e) ->

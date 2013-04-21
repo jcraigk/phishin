@@ -33,7 +33,7 @@ class @Player
     unless this._handleAutoPlayTrack()
       if track_id = $('.playable_track').first().data 'id'
         if not @invoked
-          this.resetCurrentPlaylist track_id
+          this.setCurrentPlaylist track_id
           this.playTrack track_id if track_id
 
   startScrubbing: ->
@@ -174,7 +174,7 @@ class @Player
       $('#current_playlist>li').removeClass 'active_track'
       $('#current_playlist>li[data-id="'+@active_track+'"]').addClass 'active_track'
 
-  resetCurrentPlaylist: (track_id) ->
+  setCurrentPlaylist: (track_id) ->
     $.ajax({
       type: 'post'
       url: '/reset-playlist',
@@ -196,7 +196,7 @@ class @Player
         $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
         if not @invoked
           track_id = $el.data 'id'
-          this.resetCurrentPlaylist track_id
+          this.setCurrentPlaylist track_id
           this.playTrack track_id, @time_marker
         else
           $el.addClass 'highlighted_track'
@@ -220,7 +220,7 @@ class @Player
               if r.success
                 @Util.feedback { notice: 'Playing random show...'}
                 @Util.navigateTo r.url
-                this.resetCurrentPlaylist r.track_id
+                this.setCurrentPlaylist r.track_id
                 this.playTrack r.track_id
           })
     })

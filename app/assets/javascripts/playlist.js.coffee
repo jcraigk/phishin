@@ -23,6 +23,13 @@ class @Playlist
           @$playlist_btn.removeClass 'playing'
           $('#empty_playlist_msg').show()
     })
+    # Sortable playlist AJAX load
+    $('#current_playlist').sortable({
+      placeholder: "ui-state-highlight",
+      update: =>
+        this.updatePlaylist 'Track moved in playlist'
+    })
+    this._refreshPlaylistDropdown()
     
   updatePlaylist: (success_msg) ->
     track_ids = []
@@ -37,10 +44,13 @@ class @Playlist
       type: 'post',
       data: { 'track_ids': track_ids },
       success: (r) =>
+        this._updatePlaylistStats(track_ids.length, duration)
         @Util.feedback { notice: success_msg }
-        $('#current_playlist_tracks_label').html "#{track_ids.length} Tracks"
-        $('#current_playlist_duration_label').html "<i class=\"icon-time icon-white\"></i>  #{@Util.readableDuration(duration, 'letters')}"
     })
+  
+  _updatePlaylistStats: (num_tracks=0, duration=0) ->
+    $('#current_playlist_tracks_label').html "#{num_tracks} Tracks"
+    $('#current_playlist_duration_label').html "<i class=\"icon-time icon-white\"></i>  #{@Util.readableDuration(duration, 'letters')}"
   
   clearPlaylist: ->
     $.ajax({
@@ -49,7 +59,13 @@ class @Playlist
      success: (r) =>
        @Player.stopAndUnload()
        @$playlist_btn.removeClass 'playing'
+       $('#playlist_data').attr 'data-id', 0
+       $('#playlist_data').attr 'data-name', ''
+       $('#playlist_data').attr 'data-slug', ''
+       $('#playlist_data').attr 'data-author', ''
        $('#current_playlist').html ''
+       $('#playlist_title').html 'Current Playlist'
+       this._updatePlaylistStats()
        $('#playlist_info').hide()
        $('#empty_playlist_msg').show()
        @Util.feedback { notice: 'Playlist is now empty' }

@@ -3,6 +3,13 @@ class PlaylistsController < ApplicationController
   def playlist
     @num_tracks = 0
     @duration = 0
+    if params[:slug] and playlist = Playlist.where(slug: params[:slug]).first
+      session[:playlist] = playlist.tracks.order('position').all.map(&:id)
+      session[:playlist_id] = playlist.id
+      session[:playlist_name] = playlist.name
+      session[:playlist_slug] = playlist.slug
+      session[:playlist_author] = playlist.user.username
+    end
     begin
       if session[:playlist]
         session[:playlist] = session[:playlist].take(100)
@@ -68,11 +75,13 @@ class PlaylistsController < ApplicationController
   end
   
   def clear_playlist
+    clear_saved_playlist
     session[:playlist] = []
     render json: { success: true }
   end
   
   def reset_playlist
+    clear_saved_playlist
     if track = Track.where(id: params[:track_id]).first
       tracks = Track.where(show_id: track.show_id).order(:position).all
       session[:playlist] = tracks.map(&:id)
@@ -83,12 +92,14 @@ class PlaylistsController < ApplicationController
   end
   
   def update_current_playlist
+    clear_saved_playlist
     session[:playlist] = params[:track_ids].map {|id| Integer(id, 10)}
     session[:playlist] = session[:playlist].take(100)
     render json: { success: true, msg: session[:playlist] }
   end
   
   def add_track_to_playlist
+    clear_saved_playlist
     if session[:playlist].include? Integer(params[:track_id], 10)
       render json: { success: false, msg: 'Track already in playlist'}
     else
@@ -104,6 +115,7 @@ class PlaylistsController < ApplicationController
   end
 
   def add_show_to_playlist
+    clear_saved_playlist
     if show = Show.where(id: params[:show_id]).includes(:tracks).order('tracks.position asc').first
       track_list = show.tracks.map(&:id)
       unique_list = []
@@ -236,6 +248,13 @@ class PlaylistsController < ApplicationController
     session[:playlist].each_with_index do |track_id, idx|
       PlaylistTrack.create(playlist_id: playlist_id, track_id: track_id, position: idx+1)
     end
+  end
+  
+  def clear_saved_playlist
+    session[:playlist_id] = 0
+    session[:playlist_name] = ''
+    session[:playlist_slug] = ''
+    session[:playlist_author] = ''
   end
   
 end
