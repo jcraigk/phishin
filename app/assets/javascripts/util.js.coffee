@@ -119,7 +119,7 @@ class @Util
     }).spin()
   
   _handleGlobalNavHighlight: (href) ->
-    $global_nav_links = $('#global_nav .label')
+    $global_nav_links = $('#global_nav .badge')
     $global_nav_links.removeClass('active')
     $global_nav_links.each( ->
       $(this).addClass('active') if href is $(this).parent().attr('href')

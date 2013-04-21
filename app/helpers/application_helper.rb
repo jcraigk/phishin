@@ -33,7 +33,7 @@ module ApplicationHelper
   end
   
   def nav_button(name, path, other_path='')
-    link_to (content_tag :span, name, class: "label"), path
+    link_to (content_tag :span, name, class: 'badge'), path
   end
   
   def link_to_song(song, term=nil)

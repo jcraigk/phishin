@@ -49,10 +49,10 @@ a:hover {
   position: absolute;
 //  border: 1px solid red;
 }
-#global_nav .label {
-  margin-left: 21px;
+#global_nav .badge {
+  margin-left: 13px;
 }
-#global_nav .label:hover {
+#global_nav .badge:hover {
   background-color: #acdbea;
 }
 #global_nav .active {
@@ -961,9 +961,9 @@ h2.for_content {
 }
 .year_list > li {
   color: #333;
-  margin: 7px;
+  margin: 8px;
   float: left;
-  width: 232px;
+  width: 237px;
   height: 36px;
   -moz-border-radius: 8px;
   -webkit-border-radius: 8px;
