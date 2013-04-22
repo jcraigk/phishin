@@ -118,6 +118,9 @@ class @Util
       className: className
     }).spin()
   
+  truncate: (string, length=30) ->
+    if string.length > length then string.substring(0, Math.min(length, string.length)) + '...' else string
+  
   _handleGlobalNavHighlight: (href) ->
     $global_nav_links = $('#global_nav .badge')
     $global_nav_links.removeClass('active')
@@ -150,5 +153,3 @@ class @Util
     id = ""
     id += Math.random().toString(36).substr 2 while id.length < length
     id.substr 0, length
-  
-

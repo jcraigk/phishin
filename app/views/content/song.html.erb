@@ -46,19 +46,9 @@
         <%= likable(track, @tracks_likes[idx], 'small') %>
         <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil } %>
         <div style="clear: both;"></div>
-
-        
-        
       </li>
-      
     <% end %>
-
   <% end %>
-  
   </ul>
-  
-  <div class="centered">
-    <%= will_paginate_simple @tracks %>
-  </div>
 
 </div>
