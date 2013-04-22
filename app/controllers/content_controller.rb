@@ -92,9 +92,6 @@ class ContentController < ApplicationController
       # Song?
       if song g
         view = :song
-      # City?
-      elsif city g
-        view = :city
       # Venue?
       elsif venue g
         view = :venue
@@ -122,7 +119,7 @@ class ContentController < ApplicationController
   
   def day_of_year(month, day)
     validate_sorting_for_year_or_scope
-    if @shows = Show.avail.where('extract(month from date) = ?', month).where('extract(day from date) = ?', day).order(@order_by).all
+    if @shows = Show.avail.where('extract(month from date) = ?', month).where('extract(day from date) = ?', day).includes(:tour, :venue, :tags).order(@order_by).all
       @shows_likes = @shows.map { |show| get_user_show_like(show) }
     end
     @shows
@@ -130,7 +127,7 @@ class ContentController < ApplicationController
   
   def year(year)
     validate_sorting_for_year_or_scope
-    if @shows = Show.avail.during_year(year).includes(:tour, :venue).order(@order_by).all
+    if @shows = Show.avail.during_year(year).includes(:tour, :venue, :tags).order(@order_by).all
       @shows_likes = @shows.map { |show| get_user_show_like(show) }
     end
     @shows
@@ -138,7 +135,7 @@ class ContentController < ApplicationController
   
   def year_range(year1, year2)
     validate_sorting_for_year_or_scope
-    if @shows = Show.avail.between_years(year1, year2).includes(:tour, :venue).order(@order_by).all
+    if @shows = Show.avail.between_years(year1, year2).includes(:tour, :venue, :tags).order(@order_by).all
       @shows_likes = @shows.map { |show| get_user_show_like(show) }
     end
     @shows
@@ -153,7 +150,7 @@ class ContentController < ApplicationController
     end
     if @show = Show.where(date: date).includes(:tracks).order('tracks.position asc').first
       @show_like = get_user_show_like(@show)
-      @tracks = @show.tracks.includes(:songs).order('position asc')
+      @tracks = @show.tracks.includes(:songs, :tags).order('position asc')
       @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
       @next_show = Show.avail.order('date asc').first unless @next_show = Show.avail.where('date > ?', @show.date).order('date asc').first
       @previous_show = Show.avail.order('date desc').first unless @previous_show = Show.avail.where('date < ?', @show.date).order('date desc').first
@@ -179,7 +176,7 @@ class ContentController < ApplicationController
   def venue(slug)
     validate_sorting_for_year_or_scope
     if @venue = Venue.where(slug: slug).includes(:shows).first
-      @shows = @venue.shows.order(@order_by)
+      @shows = @venue.shows.includes(:tags).order(@order_by)
       @shows_likes = @shows.map { |show| get_user_show_like(show) }
     end
     @venue
@@ -187,16 +184,13 @@ class ContentController < ApplicationController
 
   def tour(slug)
     if @tour = Tour.where(slug: slug).includes(:shows).first
-      @shows = @tour.shows.order('date desc')
+      @shows = @tour.shows.includes(:tags).order('date desc')
       @shows_likes = @shows.map { |show| get_user_show_like(show) }
     end
     @tour
   end
   
-  def city(slug)
-    #TODO
-    false
-  end
+  private
   
   def get_user_show_like(show)
     show.likes.where(user_id: current_user.id).first if show and current_user

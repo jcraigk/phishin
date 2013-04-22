@@ -34,10 +34,15 @@
       <% end %>
     
       <li class="playable_track" data-id="<%= track.id %>" data-anchor="<%= track.slug %>">
+        <% track.tags.each do |tag| %>
+          <%= content_tag :span, tag.name, class: 'label track_tag', style: "background-color: #{tag.color}" %>
+        <% end %>
         <%= content_tag :h2, truncate(track.title, length: 45), class: 'wider' %>
-        <%= render partial: 'shared/context_menu_for_track', locals: { track: track, show: @show, playlist: false } %>
+        
+        
         <%= content_tag :h3, track.duration_readable %>
         <%= likable(track, @tracks_likes[idx], 'small') %>
+        <%= render partial: 'shared/context_menu_for_track', locals: { track: track, show: @show, playlist: false } %>
         <div style="clear: both;"></div>
       </li>
     <% end %>

@@ -23,6 +23,23 @@ a:hover {
   text-decoration: underline;
 }
 
+.track_tag {
+  float: left;
+  margin-top: 10px;
+  font-size: 10px !important;
+  margin-right: 10px;
+}
+
+.show_tag_container {
+  float: right;
+  margin-top: 10px;
+  width: 40px;
+}
+.show_tag {
+  float: right;
+  font-size: 10px !important;
+}
+
 /******************************/
 
 #home_msg {
@@ -45,12 +62,12 @@ a:hover {
 
 #global_nav {
   margin-top: 56px;
-  margin-left: 120px;
+  margin-left: 142px;
   position: absolute;
 //  border: 1px solid red;
 }
 #global_nav .badge {
-  margin-left: 13px;
+  margin-left: 20px;
 }
 #global_nav .badge:hover {
   background-color: #acdbea;
@@ -198,9 +215,10 @@ a:hover {
   line-height: 44px;
 }
 .likes_small {
-  float: left;
+  float: right;
   width: 70px;
   height: 20px;
+  margin-top: 11px;
   margin-left: 10px;
   line-height: 40px;
   text-align: left;
@@ -213,7 +231,6 @@ a:hover {
   height: 16px;
   text-decoration: none;
   background: url('icons-heart-small.png');
-  margin-top: 13px;
   margin-right: 5px;
 //  border: 1px solid black;
 }
@@ -224,7 +241,7 @@ a:hover {
 }
 .likes_small span {
   float: left;
-  line-height: 42px;
+  line-height: 16px;
   color: #5f1014;
   font-size: 15px;
   font-family: 'Nothing You Could Do', cursive;
@@ -383,6 +400,7 @@ a:hover {
   padding: 5px;
   line-height: 14px;
   font-weight: 400;
+  width: 80px;
 }
 #header h2 a {
   color: #333;
@@ -448,7 +466,7 @@ h2.for_content {
 #content {
   margin: 0 auto;
   width: 880px;
-  padding: 200px 20px 40px 40px;
+  padding: 190px 20px 40px 40px;
   -webkit-border-bottom-left-radius: 10px;
   -moz-border-radius-bottomleft: 10px;
   border-bottom-left-radius: 10px;
@@ -534,7 +552,8 @@ h2.for_content {
   width: 440px;
 }
 .item_list > li h2.wider {
-  width: 580px;
+  width: 550px;
+//  border: 1px solid red;
 }
 .item_list > li h2.medium_width {
   width: 380px;
@@ -549,6 +568,12 @@ h2.for_content {
   float: right;
   color: #555;
   font-weight: normal;
+  width: 60px;
+  text-align: right;
+//  border: 1px solid red;
+}
+.item_list > li h3.alt {
+  width: 200px;
 }
 .item_list > li h3.alt a {
   color: #555;
@@ -600,7 +625,7 @@ h2.for_content {
 }
 .item_list > li .btn_context {
   visibility: hidden;
-  float: left;
+  float: right;
   width: 70px;
   height: 20px;
   margin-left: 20px;

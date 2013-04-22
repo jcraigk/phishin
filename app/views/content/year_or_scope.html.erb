@@ -34,9 +34,14 @@
         <%= content_tag :h2, link_to_show(show, @display_separators) %>
         <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}") %>
         <%= content_tag :h5, link_to(show.venue.location, "/map?term=#{CGI::escape(show.venue.location)}") %>
-        <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
+        <span class="show_tag_container">
+          <% show.tags.each do |tag| %>
+            <%= content_tag :span, tag.name, class: 'label show_tag', style: "background-color: #{tag.color}" %>
+          <% end %>
+        </span>
+        <% #content_tag :span, "#{show.duration_readable}", class: 'show_duration_small' %>
         <%= likable(show, @shows_likes[idx], 'small') %>
-        <%= content_tag :span, "#{show.duration_readable}", class: 'show_duration_small' %>
+        <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
         <div style="clear: both;"></div>
       </li>
       

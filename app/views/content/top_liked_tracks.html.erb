@@ -14,9 +14,9 @@
       <%= content_tag :h2, "#{idx+1}", class: 'position_num' %>
       <%= content_tag :h2, link_to(track.title, "/#{track.show.date}/#{track.slug}"), class: 'medium_width' %>
       <%= content_tag :h5, link_to(track.show.date.strftime("%-m/%-d/%y"), "/#{track.show.date}"), class: 'large' %>
-      <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil } %>
-      <%= likable(track, @tracks_likes[idx], 'small') %>
       <%= content_tag :h3, track.duration_readable %>
+      <%= likable(track, @tracks_likes[idx], 'small') %>
+      <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil } %>
       <div style="clear: both;"></div>
     <% end %>
   </ul>

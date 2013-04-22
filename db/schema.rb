@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130416030421) do
+ActiveRecord::Schema.define(:version => 20130421233021) do
 
   create_table "album_requests", :force => true do |t|
     t.integer  "album_id"
@@ -84,6 +84,15 @@ ActiveRecord::Schema.define(:version => 20130416030421) do
 
   add_index "rails_admin_histories", ["item", "table", "month", "year"], :name => "index_rails_admin_histories"
 
+  create_table "show_tags", :force => true do |t|
+    t.integer  "show_id"
+    t.integer  "tag_id"
+    t.datetime "created_at"
+  end
+
+  add_index "show_tags", ["show_id"], :name => "index_show_tags_on_show_id"
+  add_index "show_tags", ["tag_id"], :name => "index_show_tags_on_tag_id"
+
   create_table "shows", :force => true do |t|
     t.date     "date"
     t.datetime "created_at",                     :null => false
@@ -120,6 +129,16 @@ ActiveRecord::Schema.define(:version => 20130416030421) do
     t.integer "track_id"
   end
 
+  create_table "tags", :force => true do |t|
+    t.string   "name"
+    t.string   "color"
+    t.text     "description"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "tags", ["name"], :name => "index_tags_on_name"
+
   create_table "tours", :force => true do |t|
     t.string   "name"
     t.date     "starts_on"
@@ -140,6 +159,15 @@ ActiveRecord::Schema.define(:version => 20130416030421) do
     t.string   "kind"
     t.datetime "created_at"
   end
+
+  create_table "track_tags", :force => true do |t|
+    t.integer  "track_id"
+    t.integer  "tag_id"
+    t.datetime "created_at"
+  end
+
+  add_index "track_tags", ["tag_id"], :name => "index_track_tags_on_tag_id"
+  add_index "track_tags", ["track_id"], :name => "index_track_tags_on_track_id"
 
   create_table "tracks", :force => true do |t|
     t.integer  "show_id"

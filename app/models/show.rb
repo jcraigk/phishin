@@ -8,6 +8,8 @@ class Show < ActiveRecord::Base
   belongs_to :tour, counter_cache: true
   belongs_to :venue, counter_cache: true
   has_many :likes, as: :likable
+  has_many :show_tags, dependent: :destroy
+  has_many :tags, through: :show_tags
 
   validates :date, presence: true
   
@@ -49,7 +51,12 @@ class Show < ActiveRecord::Base
   end
   
   def duration_readable
-    "#{duration / 3600000}h #{(duration % 3600000) / 60000}m"
+    hours = duration / 3600000
+    if hours > 0
+      "#{duration / 3600000}h #{(duration % 3600000) / 60000}m"
+    else
+      "#{(duration % 3600000) / 60000}m"
+    end
   end
   
 end
