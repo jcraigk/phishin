@@ -72,7 +72,7 @@ class @Util
         if include_seconds
           "#{hours}h #{minutes}m #{seconds}s"
         else
-          "#{hours}h #{minutes}m"
+          "#{hours}h #{minutes}min"
       else
         "#{minutes}m #{seconds}s"
     else

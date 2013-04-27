@@ -27,11 +27,11 @@ class Show < ActiveRecord::Base
     date1 = Date.new(year1.to_i)
     date2 = Date.new(year2.to_i)
     if date1 < date2
-      where('date between ? and ?', 
+      where('date between ? and ?',
         date1.beginning_of_year, 
         date2.end_of_year).order('date')
     else
-      where('date between ? and ?', 
+      where('date between ? and ?',
         date2.beginning_of_year, 
         date1.end_of_year)
     end
@@ -53,9 +53,9 @@ class Show < ActiveRecord::Base
   def duration_readable
     hours = duration / 3600000
     if hours > 0
-      "#{duration / 3600000}h #{(duration % 3600000) / 60000}m"
+      "#{duration / 3600000}h #{(duration % 3600000) / 60000}min"
     else
-      "#{(duration % 3600000) / 60000}m"
+      "#{(duration % 3600000) / 60000}min"
     end
   end
   
