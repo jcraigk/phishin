@@ -14,7 +14,6 @@ class @Playlist
   
   initPlaylist: ->
     this._getPlaylist()
-    # Sortable playlist
     $('#current_playlist').sortable({
       placeholder: "ui-state-highlight",
       update: =>
