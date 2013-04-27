@@ -122,11 +122,19 @@ class @Util
     if string.length > length then string.substring(0, length) + '...' else string
   
   _handleGlobalNavHighlight: (href) ->
-    $global_nav_links = $('#global_nav .badge')
-    $global_nav_links.removeClass('active')
-    $global_nav_links.each( ->
-      $(this).addClass('active') if href is $(this).parent().attr('href')
+    $nav_links = $('#global_nav .badge')
+    $nav_links.removeClass('active')
+    that = this
+    $nav_links.each( ->
+      this_base_href = that._findMatch $(this).parent().attr('href')
+      this_alt_href = that._findMatch $(this).parent().attr('data-alt-href')
+      base_href = that._findMatch href
+      $(this).addClass('active') if this_base_href is base_href or (this_alt_href and (this_alt_href is base_href))
     )
+  
+  _findMatch: (href) ->
+    match = /^([^\?]+)\??(.+)?$/.exec(href.split("/")[1])
+    match[1] if match
   
   _requestAlbumResponse: (r, request_url, first_call) ->
     if r.status is 'Ready'
