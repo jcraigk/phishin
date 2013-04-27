@@ -1,5 +1,7 @@
 class @Util
   
+  historyScrollStates: [] # Need to store scroll states outside history.js based on the way that library works
+  
   constructor: ->
     @page_init          = true
     @$feedback          = $ '#feedback'
@@ -27,12 +29,8 @@ class @Util
 
   navigateTo: (href) ->
     @page_init = false
-    # idx = History.savedStates.length - 1
-    # History.savedStates[idx].data.scroll = $('body').scrollTop() # Set last scroll position
-    # alert "setting idx #{idx} to #{$('body').scrollTop()}"
+    this.historyScrollStates[History.savedStates[History.savedStates.length-1].id] = $('body').scrollTop()
     History.pushState { href: href, scroll: 0 }, $('body').data('app-name'), href
-    # alert 'pushed state'
-    # window.scrollTo 0, 0
     this._handleGlobalNavHighlight(href)
   
   navigateToRefreshMap: ->

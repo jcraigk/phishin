@@ -37,14 +37,8 @@ $ ->
   ###############################################
   History = window.History
   return false if !History.enabled
-  # History.Adapter.bind window, 'statechange', ->
-  #   State = History.getState()
-    # History.log State.data, State.title, State.url
   History.Adapter.bind window, 'popstate', ->
     state = window.History.getState()
-    # console.log window.History.savedStates
-    # alert 'popping'
-    # console.log History.savedStates
     if state.data.href != undefined and !App.Util.page_init
       $ajax_overlay.css 'visibility', 'visible'
       $page.html ''
@@ -53,8 +47,8 @@ $ ->
           alert("ERROR\n\n"+response) if status is 'error'
           $ajax_overlay.css 'visibility', 'hidden'
           
-          # Scroll to proper position
-          window.scrollTo 0, state.data.scroll
+          # Scroll to proper position (not currently working)
+          window.scrollTo 0, App.Util.historyScrollStates[state.id] if App.Util.historyScrollStates[state.id]
           
           # Re-render twitter button(s)
           twttr.widgets.load() if twttr?
