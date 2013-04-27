@@ -10,7 +10,7 @@ class @Playlist
     @$save_action_existing  = $ '#save_action_existing'
     @$playlist_name_input   = $ '#playlist_name_input'
     @$playlist_slug_input   = $ '#playlist_slug_input'
-    console.log @$save_action_dropdwon
+    this.initPlaylist()
   
   initPlaylist: ->
     $.ajax({
