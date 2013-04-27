@@ -10,19 +10,10 @@ class @Playlist
     @$save_action_existing  = $ '#save_action_existing'
     @$playlist_name_input   = $ '#playlist_name_input'
     @$playlist_slug_input   = $ '#playlist_slug_input'
-    this.initPlaylist()
+    this._getPlaylist()
   
   initPlaylist: ->
-    $.ajax({
-      url: '/get-playlist',
-      success: (r) =>
-        if r.playlist.length > 0
-          @$playlist_btn.addClass 'playlist_active'
-          $('#empty_playlist_msg').hide()
-        else
-          @$playlist_btn.removeClass 'playlist_active'
-          $('#empty_playlist_msg').show()
-    })
+    this._getPlaylist()
     # Sortable playlist
     $('#current_playlist').sortable({
       placeholder: "ui-state-highlight",
@@ -177,6 +168,18 @@ class @Playlist
          @Util.feedback { alert: r.msg }
     })
   
+  _getPlaylist: ->
+    $.ajax({
+      url: '/get-playlist',
+      success: (r) =>
+        if r.playlist.length > 0
+          @$playlist_btn.addClass 'playlist_active'
+          $('#empty_playlist_msg').hide()
+        else
+          @$playlist_btn.removeClass 'playlist_active'
+          $('#empty_playlist_msg').show()
+    })
+  
   _updatePlaylistStats: (num_tracks=0, duration=0) ->
     $('#current_playlist_tracks_label').html "#{num_tracks} Tracks"
     $('#current_playlist_duration_label').html "<i class=\"icon-time icon-white\"></i>  #{@Util.readableDuration(duration, 'letters')}"
@@ -188,7 +191,6 @@ class @Playlist
      url: '/get-saved-playlists',
      success: (r) =>
        if r.success
-         console.log r
          playlists = JSON.parse(r.playlists)
          if playlists.length > 0
            for p in playlists
