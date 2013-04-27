@@ -45,7 +45,7 @@
     <% @tracks.each_with_index do |track, idx| %>
       <li class="playable_track" data-id="<%= track.id %>" data-track-duration="<%= track.duration %>">
         <%= content_tag :h2, "#{idx+1}", class: 'position_num' %>
-        <%= content_tag :h2, "#{track.title}".html_safe, class: 'wide' %>
+        <%= content_tag :h2, track_title_with_tags(track), class: 'wide' %>
         <%= content_tag :div, "<i class=\"icon-resize-vertical\"></i>".html_safe, class: "drag_arrows_vertical"  %>
         <%= content_tag :h5, link_to(track.show.date.strftime("%-m/%-d/%y"), "#{track.show.date}", class: 'large') %>
         <%= content_tag :h3, track.duration_readable %>

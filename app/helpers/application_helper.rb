@@ -80,4 +80,13 @@ module ApplicationHelper
     exempt_controllers.include? controller_name
   end
   
+  def track_title_with_tags(track)
+    str = ''
+    track.tags.each do |tag|
+      str += content_tag :span, tag.name, class: 'label track_tag', style: "background-color: #{tag.color}"
+    end
+    str += truncate(track.title, length: 45)
+    str.html_safe
+ end
+  
 end
