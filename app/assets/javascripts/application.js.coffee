@@ -57,8 +57,8 @@ $ ->
           _gaq.push([ '_trackPageview', state.data.href ]);
           
           # Auto-scroll and highlight track anchor if present
-          if state.data.href.substr(0,6) is not '/play/' and path = state.data.href.split("/")[2]
-            match = /^(.+)\?(.+)$/.exec(path)
+          if state.data.href.substr(0,6) != '/play/' and path = state.data.href.split("/")[2]
+            match = /^(.+)\??(.+)?$/.exec(path)
             $('body').attr 'data-anchor', match[1]
           else
             $('body').attr 'data-anchor', ''

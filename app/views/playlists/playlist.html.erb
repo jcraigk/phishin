@@ -48,8 +48,8 @@
         <%= content_tag :h2, "#{track.title}".html_safe, class: 'wide' %>
         <%= content_tag :div, "<i class=\"icon-resize-vertical\"></i>".html_safe, class: "drag_arrows_vertical"  %>
         <%= content_tag :h5, link_to(track.show.date.strftime("%-m/%-d/%y"), "#{track.show.date}", class: 'large') %>
-        <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: true, show: nil } %>
         <%= content_tag :h3, track.duration_readable %>
+        <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: true, show: nil } %>
         <div style="clear: both;"></div>
       </li>
     <% end %>

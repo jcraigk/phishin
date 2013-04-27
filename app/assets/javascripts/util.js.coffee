@@ -119,7 +119,7 @@ class @Util
     }).spin()
   
   truncate: (string, length=30) ->
-    if string.length > length then string.substring(0, Math.min(length, string.length)) + '...' else string
+    if string.length > length then string.substring(0, length) + '...' else string
   
   _handleGlobalNavHighlight: (href) ->
     $global_nav_links = $('#global_nav .badge')
