@@ -20,7 +20,7 @@ $ ->
   # MOBILE NOT SUPPORTED
   window.location.href = '/mobile-unsupported' if/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
   
-  # Instantiate stuff
+  # Instantiate classes
   App.Util         = new Util
   App.Player       = new Player
   App.Playlist     = new Playlist
@@ -88,7 +88,7 @@ $ ->
     App.Util.navigateTo(href)
   
   ###############################################
-  # Handle feedback on DOM load
+  # Handle feedback on DOM load (for Devise)
   ###############################################
   if $notice and $notice.html() != ''
     $notice.show 'slide'
@@ -128,13 +128,17 @@ $ ->
     # $(this).parents('.dropdown-menu').dropdown().toggle()
     # $(this).parents('.dropdown-menu').css('left', -3000)
     # $(this).parents('.dropdown-menu').css('top', -3000)
+
+  ###############################################
   
   # Submit new user
   $(document).on 'submit', '#new_user', (e) ->
     $('#new_user_container').fadeTo('fast', 0.5)
     $('#new_user_submit_btn').val('Processing...')
+    
+  ###############################################
 
-  # Focus => remove other value
+  # Search focus -> remove other value
   $(document).on 'focus', '#search_term', (e) ->
     $('#search_date').val ''
   $(document).on 'focus', '#search_date', (e) ->
@@ -166,7 +170,6 @@ $ ->
     App.Util.navigateToRefreshMap() if e.which is 13
 
   ###############################################
-  
   
   # Playlist stuff
   $(document).on 'click', '#share_playlist_btn', ->
@@ -332,6 +335,8 @@ $ ->
         else
           App.Util.feedback { alert: r.msg }
     })
+  
+  ###############################################
   
   # Rollover year to reveal number of shows
   $(document).on 'mouseover', '.year_list > li', ->

@@ -31,7 +31,7 @@ class @Util
     @page_init = false
     this.historyScrollStates[History.savedStates[History.savedStates.length-1].id] = $('body').scrollTop()
     History.pushState { href: href, scroll: 0 }, $('body').data('app-name'), href
-    this._handleGlobalNavHighlight(href)
+    this._handleGlobalNavHighlight href
   
   navigateToRefreshMap: ->
     url = "/map?term=#{$('#map_search_term').val().replace /\s/g, '+' }"
