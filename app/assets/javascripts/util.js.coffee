@@ -127,9 +127,10 @@ class @Util
     that = this
     $nav_links.each( ->
       this_base_href = that._findMatch $(this).parent().attr('href')
-      this_alt_href = that._findMatch $(this).parent().attr('data-alt-href')
+      this_alt_href = $(this).parent().attr('data-alt-href')
+      this_alt_base_href = that._findMatch this_alt_href
       base_href = that._findMatch href
-      $(this).addClass('active') if this_base_href is base_href or (this_alt_href and (this_alt_href is base_href))
+      $(this).addClass('active') if this_alt_href is href or this_base_href is base_href or (this_alt_base_href and (this_alt_base_href is base_href))
     )
   
   _findMatch: (href) ->
