@@ -27,8 +27,12 @@ class @Util
 
   navigateTo: (href) ->
     @page_init = false
-    History.pushState {href: href}, $('body').data('app-name'), href
-    window.scrollTo 0, 0
+    # idx = History.savedStates.length - 1
+    # History.savedStates[idx].data.scroll = $('body').scrollTop() # Set last scroll position
+    # alert "setting idx #{idx} to #{$('body').scrollTop()}"
+    History.pushState { href: href, scroll: 0 }, $('body').data('app-name'), href
+    # alert 'pushed state'
+    # window.scrollTo 0, 0
     this._handleGlobalNavHighlight(href)
   
   navigateToRefreshMap: ->

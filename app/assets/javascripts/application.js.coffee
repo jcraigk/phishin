@@ -5,7 +5,7 @@
 //= require jquery.ui.sortable
 //= require jquery.ui.datepicker
 //= require soundmanager
-//= require history
+//= require history.min
 //= require util
 //= require player
 //= require playlist
@@ -37,11 +37,14 @@ $ ->
   ###############################################
   History = window.History
   return false if !History.enabled
-  History.Adapter.bind window, 'statechange', ->
-    State = History.getState()
-    History.log State.data, State.title, State.url
+  # History.Adapter.bind window, 'statechange', ->
+  #   State = History.getState()
+    # History.log State.data, State.title, State.url
   History.Adapter.bind window, 'popstate', ->
     state = window.History.getState()
+    # console.log window.History.savedStates
+    # alert 'popping'
+    # console.log History.savedStates
     if state.data.href != undefined and !App.Util.page_init
       $ajax_overlay.css 'visibility', 'visible'
       $page.html ''
@@ -49,6 +52,9 @@ $ ->
         state.data.href, (response, status, xhr) ->
           alert("ERROR\n\n"+response) if status is 'error'
           $ajax_overlay.css 'visibility', 'hidden'
+          
+          # Scroll to proper position
+          window.scrollTo 0, state.data.scroll
           
           # Re-render twitter button(s)
           twttr.widgets.load() if twttr?
