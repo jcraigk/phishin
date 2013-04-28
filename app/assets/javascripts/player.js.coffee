@@ -30,6 +30,12 @@ class @Player
   
   # Check for track anchor to scroll-to [and play]
   onReady: ->
+    @$scrubber.slider 'enable'
+    @sm.setup
+      useHTML5Audio: true
+      preferFlash: false
+      flashVersion: 9
+      debugMode: false
     unless this._handleAutoPlayTrack()
       if track_id = $('.playable_track').first().data 'id'
         if not @invoked
@@ -315,14 +321,14 @@ class @Player
           @$player_title.addClass 'long_title'
           @$player_title.html 'Time marker out of range...'
           @time_marker = 0
-        @$scrubber.slider 'enable'
+        # @$scrubber.slider 'enable'
         @$feedback.addClass 'done'
         setTimeout( =>
           @$feedback.hide 'fade'
         , 2000)
       else
         @$feedback.show()
-        @$scrubber.slider 'disable'
+        # @$scrubber.slider 'disable'
         @$feedback.removeClass 'done'
   
   _fastFadeout: (track_id, is_pause=false) ->
