@@ -45,7 +45,7 @@ namespace :deploy do
     run "chmod -R g+w #{release_path}"
   end
   task :link_audio do
-    run "ln -s #{audio_path} #{release_path}/audio
+    run "ln -s #{audio_path} #{release_path}/audio"
   end
 
   # Make sure local git is in sync with remote
