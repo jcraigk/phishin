@@ -304,24 +304,24 @@ class @Player
     if @active_track is track_id
       percent_loaded = Math.floor (@sm_sound.bytesLoaded / @sm_sound.bytesTotal) * 100
       percent_loaded = 0 if isNaN(percent_loaded)
-      @$feedback.html "<i class=\"icon-download\"></i> #{percent_loaded}%"
+      # @$feedback.html "<i class=\"icon-download\"></i> #{percent_loaded}%"
       if 0 < @time_marker < @sm_sound.duration
         this._loadInfoAndPlay track_id, @time_marker
         @time_marker = 0
       if percent_loaded is 100
         if @time_marker > 0
           @$player_title.addClass 'long_title'
-          @$player_title.html 'Time marker out of range...'
+          @$player_title.html 'Marker out of range...'
           @time_marker = 0
         # @$scrubber.slider 'enable'
-        @$feedback.addClass 'done'
-        setTimeout( =>
-          @$feedback.hide 'fade'
-        , 2000)
+        # @$feedback.addClass 'done'
+        # setTimeout( =>
+          # @$feedback.hide 'fade'
+        # , 2000)
       else
-        @$feedback.show()
+        # @$feedback.show()
         # @$scrubber.slider 'disable'
-        @$feedback.removeClass 'done'
+        # @$feedback.removeClass 'done'
   
   _fastFadeout: (track_id, is_pause=false) ->
     if track_id and sound = @sm.getSoundById track_id
