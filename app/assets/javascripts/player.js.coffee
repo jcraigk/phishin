@@ -94,9 +94,7 @@ class @Player
       unless track_id and @sm_sound = @sm.getSoundById track_id
         @sm_sound = @sm.createSound
           id: track_id
-          url: "/play-track/#{track_id}"
-          # autoPlay: false
-          # stream: false
+          url: this._trackIDtoURL track_id
           whileloading: =>
             this._updateLoadingState track_id
           whileplaying: =>
@@ -241,15 +239,14 @@ class @Player
 
   _preloadTrack: (track_id) ->
     unless track_id and @sm.getSoundById track_id
-      @sm.createSound({
-        id: track_id,
-        url: "/play-track/#{track_id}",
-        autoLoad: true,
+      @sm.createSound
+        id: track_id
+        url: this._trackIDtoURL track_id
+        autoLoad: true
         whileloading: =>
           this._updateLoadingState track_id
         whileplaying: =>
           this._updatePlayerState()
-      })
       @sm.setVolume track_id, @last_volume
   
   _loadTrackInfo: (track_id) ->
@@ -345,3 +342,10 @@ class @Player
         setTimeout( =>
           this._fastFadeout track_id, is_pause
         , 10)
+  
+  _trackIDtoURL: (track_id) ->
+    str = track_id.toString()
+    str = '0' + str for i in [0..(8-str.length)] by 1
+    "/audio/#{str[0..2]}/#{str[3..5]}/#{str[6..9]}/#{track_id}.mp3"
+    
+    

@@ -10,13 +10,15 @@ class DownloadsController < ApplicationController
     send_file track.audio_file.path, :type => "audio/mpeg", :disposition => "attachment", :filename => "Phish #{track.show.date} #{track.title}.mp3", :length => File.size(track.audio_file.path)
   end
   
+  # FOLLOWING DISCONTINUED BECAUSE IT DOESN'T SUPPORT 206 Partial Content
+  # NEEDED BY SOUNDMANAGER2 HTML5AUDIO
   # Provide a track as a playable MP3 to SoundManager
-  def play_track
-    track = Track.find(params[:track_id])
-    redirect_to(:root) and return unless File.exists?(track.audio_file.path)
-    log_this_track_request 'play'
-    send_file track.audio_file.path, :type => "audio/mpeg", :filename => "#{track.id}.mp3", :length => File.size(track.audio_file.path)
-  end
+  # def play_track
+  #   track = Track.find(params[:track_id])
+  #   redirect_to(:root) and return unless File.exists?(track.audio_file.path)
+  #   log_this_track_request 'play'
+  #   send_file track.audio_file.path, :type => "audio/mpeg", :filename => "#{track.id}.mp3", :length => File.size(track.audio_file.path)
+  # end
 
   # Respond to an AJAX request to create/fetch an album
   def request_download_show
