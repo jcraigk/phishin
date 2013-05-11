@@ -48,12 +48,7 @@ class @Player
     @$time_elapsed.removeClass 'scrubbing'
     @$time_remaining.removeClass 'scrubbing'
     if @active_track
-      console.log "setting position to #{Math.round((@$scrubber.slider('value') / 100) * @duration)}"
-      # @sm_sound.stop()
-      # alert Math.round(((@$scrubber.slider('value') / 100) * @duration))
       @sm_sound.setPosition Math.round((@$scrubber.slider('value') / 100) * @duration)
-      # @sm.setPosition @active_track, Math.round(((@$scrubber.slider('value') / 100) * @duration))
-      # @sm_sound.play()
     else
       @$scrubber.slider 'value', 0
   
