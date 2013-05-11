@@ -4,7 +4,7 @@
 //= require jquery.ui.slider
 //= require jquery.ui.sortable
 //= require jquery.ui.datepicker
-//= require soundmanager
+//= require soundmanager2-jsmin
 //= require history.min
 //= require util
 //= require player
@@ -18,7 +18,7 @@
 $ ->
   
   # MOBILE NOT SUPPORTED
-  window.location.href = '/mobile-unsupported' if/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
+  # window.location.href = '/mobile-unsupported' if/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
   
   # Instantiate classes
   App.Util         = new Util
@@ -58,7 +58,7 @@ $ ->
           
           # Auto-scroll and highlight track anchor if present
           if state.data.href.substr(0,6) != '/play/' and path = state.data.href.split("/")[2]
-            match = /^(.+)\??(.+)?$/.exec(path)
+            match = /^([^\?]+)\??(.+)?$/.exec(path)
             $('body').attr 'data-anchor', match[1]
           else
             $('body').attr 'data-anchor', ''
@@ -108,6 +108,11 @@ $ ->
   ###############################################
   # Auto-play or scroll to and play anchor
   ###############################################
+  soundManager.setup
+    url: '/assets/'
+    useHTML5Audio: true
+    preferFlash: false
+    debugMode: true
   soundManager.onready( ->
     App.Player.onReady()
   )

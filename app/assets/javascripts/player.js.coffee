@@ -31,11 +31,6 @@ class @Player
   # Check for track anchor to scroll-to [and play]
   onReady: ->
     @$scrubber.slider 'enable'
-    @sm.setup
-      useHTML5Audio: true
-      preferFlash: false
-      flashVersion: 9
-      debugMode: false
     unless this._handleAutoPlayTrack()
       if track_id = $('.playable_track').first().data 'id'
         if not @invoked
@@ -53,7 +48,12 @@ class @Player
     @$time_elapsed.removeClass 'scrubbing'
     @$time_remaining.removeClass 'scrubbing'
     if @active_track
-      @sm.setPosition @active_track, (@$scrubber.slider('value') / 100) * @duration
+      console.log "setting position to #{Math.round((@$scrubber.slider('value') / 100) * @duration)}"
+      # @sm_sound.stop()
+      # alert Math.round(((@$scrubber.slider('value') / 100) * @duration))
+      @sm_sound.setPosition Math.round((@$scrubber.slider('value') / 100) * @duration)
+      # @sm.setPosition @active_track, Math.round(((@$scrubber.slider('value') / 100) * @duration))
+      # @sm_sound.play()
     else
       @$scrubber.slider 'value', 0
   
@@ -92,15 +92,15 @@ class @Player
     if track_id != @active_track
       @preload_started = false
       unless track_id and @sm_sound = @sm.getSoundById track_id
-        @sm_sound = @sm.createSound({
-          id: track_id,
-          url: "/play-track/#{track_id}",
-          autoLoad: true if time_marker > 0,
+        @sm_sound = @sm.createSound
+          id: track_id
+          url: "/play-track/#{track_id}"
+          # autoPlay: false
+          # stream: false
           whileloading: =>
             this._updateLoadingState track_id
           whileplaying: =>
             this._updatePlayerState()
-        })
       if @muted
         @sm.setVolume track_id, 0
       else

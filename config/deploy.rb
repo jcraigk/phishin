@@ -11,11 +11,13 @@ set :deploy_to,             "/var/www/html.phish.in/"
 set :production_server,     "phish.in"
 set :staging_server,        "phish.in"
 set :use_sudo,              false
+set :audio_path,            "/var/www/app_content/phishin/tracks/audio_files/"
 
 # Cleanup and migrate
 after "deploy",             "deploy:restart"
 after "deploy",             "deploy:cleanup"
 after "deploy",             "deploy:migrate"
+after "deploy",             "deploy:link_audio"
 
 #########################################################
 
@@ -41,6 +43,9 @@ namespace :deploy do
   end
   task :finalize_update do
     run "chmod -R g+w #{release_path}"
+  end
+  task :link_audio do
+    run "ln -s #{audio_path} #{release_path}/audio
   end
 
   # Make sure local git is in sync with remote

@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   before_filter :authenticate
   before_filter :init_session
   before_filter :init_params
-  before_filter :mobile_unsupported
+  # before_filter :mobile_unsupported
   before_filter :require_xhr
   
   def random_lyrical_excerpt
