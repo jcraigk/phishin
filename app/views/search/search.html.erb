@@ -14,10 +14,7 @@ $(function() {
 <div id="content" class="noheader">
   
   <div id="search_container">
-    Search for &nbsp;
-    <input type="text" name="date" id="search_date" placeholder="a date" value="<%= params[:date] %>">
-    &nbsp;&nbsp;or &nbsp;&nbsp;
-    <input type="text" name="date" id="search_term" placeholder="a term" value="<%= params[:term] %>">
+    <input type="text" name="date" id="search_term" placeholder="term or date" value="<%= params[:term] %>">
     &nbsp;&nbsp;
     <button type="button" class="btn" id="search_submit">Search</button>
   </div>
@@ -30,7 +27,7 @@ $(function() {
       
         <% if @show or @other_shows %>
           <% if @show %>
-            <h3>Matched 1 Show Exactly</h3>
+            <h3>Matched 1 Date Exactly</h3>
             <ul class="item_list clickable">
               <li>
                 <%= content_tag :h2, link_to("<span class=\"highlight\">#{@show.date.strftime("%-m/%-d/%y")}</span>".html_safe, "/#{@show.date}") %>
@@ -40,10 +37,10 @@ $(function() {
               </li>
             </ul>
           <% else %>
-            <h5><i>No Exact Show Matches</i></h5>
+            <h5><i>No Exact Date Matches</i></h5>
           <% end %>
           <% if @other_shows %>
-            <h3>Matched <%= pluralize(@other_shows.size, 'Show') %> on this Day in History</h3>
+            <h3>Matched <%= pluralize(@other_shows.size, 'Dates') %> on this Day in History</h3>
             <ul class="item_list clickable">
               <% for show in @other_shows %>
                 <li>
