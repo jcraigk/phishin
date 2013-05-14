@@ -1,7 +1,41 @@
 namespace :shows do
   
+  desc "Find mis-labeled sets on tracks"
+  task sets: :environment do
+    show_list = []
+    Show.order('date desc').all.each do |show|
+    # show = Show.where(date: '1990-05-04').first
+      set_list = show.tracks.order('position').all.map(&:set)
+      set_list.map! do |set|
+        case set
+        when 'S'
+          0
+        when 'E'
+          4
+        when 'E2'
+          5
+        when 'E3'
+          6
+        else
+          set.to_i
+        end
+      end
+      if set_list.present?
+        set_list.each_with_index do |set, idx|
+          if set_list[idx+1] and set > set_list[idx+1]
+            show_list << show
+            break
+          end
+        end
+      end
+    end
+    show_list.each do |show|
+      puts "Check: #{show.date}"
+    end
+  end
+  
   desc "Apply SBD tags to shows"
-  task :apply_sbd_tags => :environment do
+  task apply_sbd_tags: :environment do
     # dates = %w(2011-5-26 2011-6-30)
     # dates = %w(2010-3-15 2009-10-29)
     # dates = %w(2002-12-14 2002-12-19)
@@ -44,7 +78,7 @@ namespace :shows do
   end
   
   desc "Set shows.duration based on sum of all tracks"
-  task :calc_duration => :environment do
+  task calc_duration: :environment do
     Show.order('date desc').all.each do |show|
       tracks = show.tracks
       if tracks.present?
@@ -57,7 +91,7 @@ namespace :shows do
   end
   
   # Get info about each show from the spreadsheet
-  task :get_shows_info => :environment do
+  task get_shows_info: :environment do
     require 'open-uri'
 
     SHOW_LIST_URL = 'https://spreadsheets.google.com/spreadsheet/pub?key=0AjeIQ6qQvexzcDhXS2twUC1US3BPMVZuUWdjZmY2RVE&gid=15'
@@ -85,7 +119,7 @@ namespace :shows do
   end
 
   # Get songs from pnet api
-  task :get_songs => :environment do
+  task get_songs: :environment do
     require 'pnet'
     api_key = '448345A7B7688DDE43D0'
 
@@ -99,7 +133,7 @@ namespace :shows do
   end
   
   desc "Using phish.net, get list of shows we don't currently have audio for"
-  task :missing_report => :environment do
+  task missing_report: :environment do
     require 'open-uri'
     require 'nokogiri'
     require_relative '../pnet'
