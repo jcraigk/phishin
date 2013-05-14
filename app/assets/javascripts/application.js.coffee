@@ -50,8 +50,8 @@ $ ->
           # Scroll to proper position (not currently working)
           window.scrollTo 0, App.Util.historyScrollStates[state.id] if App.Util.historyScrollStates[state.id]
           
-          # Re-render twitter button(s)
-          twttr.widgets.load() if twttr?
+          # Tooltips
+          $('[title]').tooltip()
                     
           # Report href to Google Analytics
           _gaq.push([ '_trackPageview', state.data.href ]);

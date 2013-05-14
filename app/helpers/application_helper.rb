@@ -81,11 +81,16 @@ module ApplicationHelper
   end
   
   def track_title_with_tags(track)
+    max_len = 45
     str = ''
     track.tags.each do |tag|
       str += content_tag :span, tag.name, class: 'label track_tag', style: "background-color: #{tag.color}"
     end
-    str += truncate(track.title, length: 45)
+    if track.title.size > max_len
+      str += content_tag :span, truncate(track.title, length: max_len), data: { toggle: 'tooltip'}, title: track.title
+    else
+      str += track.title
+    end
     str.html_safe
  end
   

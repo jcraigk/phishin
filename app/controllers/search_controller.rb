@@ -30,7 +30,6 @@ class SearchController < ApplicationController
        Date.parse str
        true
     rescue
-      raise 
        false
     end
   end
