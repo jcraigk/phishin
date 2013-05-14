@@ -203,29 +203,6 @@ class PlaylistsController < ApplicationController
     end
   end
   
-  def track_info
-    track = Track.where(id: params[:track_id]).includes(:show => :venue).first
-    liked = (current_user and track.likes.where(user_id: current_user.id).first ? true : false)
-    if track
-      render json: {
-        success: true,
-        id: track.id,
-        title: track.title,
-        duration: track.duration,
-        show: "#{track.show.date}",
-        show_url: "/#{track.show.date}",
-        venue: "#{track.show.venue.name}",
-        venue_url: "/#{track.show.venue.slug}",
-        city: track.show.venue.location,
-        city_url: "/map?term=#{CGI::escape(track.show.venue.location)}",
-        likes_count: track.likes_count,
-        liked: liked
-      }
-    else
-      render json: { success: false }
-    end
-  end
-  
   def submit_playlist_options
     params.reject! { |k,v| ! %w[randomize loop].include? k.to_s }
     params[:loop] == "true" ? session[:loop] = true : session[:loop] = false

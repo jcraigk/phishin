@@ -1,6 +1,30 @@
 class DownloadsController < ApplicationController
   
   before_filter :authorize_user!, except: :play_track
+  
+  def track_info
+    track = Track.where(id: params[:track_id]).includes(:show => :venue).first
+    liked = (current_user and track.likes.where(user_id: current_user.id).first ? true : false)
+    if track
+      log_this_track_request 'play'
+      render json: {
+        success: true,
+        id: track.id,
+        title: track.title,
+        duration: track.duration,
+        show: "#{track.show.date}",
+        show_url: "/#{track.show.date}",
+        venue: "#{track.show.venue.name}",
+        venue_url: "/#{track.show.venue.slug}",
+        city: track.show.venue.location,
+        city_url: "/map?term=#{CGI::escape(track.show.venue.location)}",
+        likes_count: track.likes_count,
+        liked: liked
+      }
+    else
+      render json: { success: false }
+    end
+  end
 
   # Provide a track as a downloadable MP3
   def download_track
