@@ -158,13 +158,22 @@ class @Player
     @$time_elapsed.html ''
     @invoked = false
   
-  highlightActiveTrack: ->
+  highlightActiveTrack: (scroll_to_track=false)->
     if @active_track
+      $track = $('.playable_track[data-id="'+@active_track+'"]')
+      $playlist_track = $('#current_playlist>li[data-id="'+@active_track+'"]')
       $('.playable_track').removeClass 'active_track'
-      $('.playable_track[data-id="'+@active_track+'"]').removeClass 'highlighted_track'
-      $('.playable_track[data-id="'+@active_track+'"]').addClass 'active_track'
+      $track.removeClass 'highlighted_track'
+      $track.addClass 'active_track'
       $('#current_playlist>li').removeClass 'active_track'
-      $('#current_playlist>li[data-id="'+@active_track+'"]').addClass 'active_track'
+      $playlist_track.addClass 'active_track'
+      if scroll_to_track
+        if $track.length > 0
+          $el = $track.first()
+        else if $playlist_track.length > 0
+          $el = $playlist_track.first()
+        if $el
+          $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
 
   setCurrentPlaylist: (track_id) ->
     $.ajax

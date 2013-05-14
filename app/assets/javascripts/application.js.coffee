@@ -63,7 +63,7 @@ $ ->
           else
             $('body').attr 'data-anchor', ''
           App.Player.onReady() # For scrolling to and auto-playing a track
-          App.Player.highlightActiveTrack() # For highlighting current track in a list
+          App.Player.highlightActiveTrack(true) # For highlighting current track in a list, scrollTo = true
           
           # Map
           if state.data.href.substr(0,4) is '/map'
@@ -231,9 +231,12 @@ $ ->
     max: 100,
     value: 0,
     create: ->
-      # Fix knob in Safari (offset vertically by 1 px)
+      # Fix knob in Safari and Firefox/Mac (offset vertically by 1 px)
       if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') is -1)
         $('#scrubber .ui-slider-handle').css('margin-top', '3px')
+      else if (navigator.userAgent.indexOf('Firefox') != -1 && navigator.userAgent.indexOf('Chrome') is -1)
+        $('#scrubber .ui-slider-handle').css('margin-top', '4px')
+      else
     start: ->
       App.Player.startScrubbing()
     stop: ->
