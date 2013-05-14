@@ -98,11 +98,7 @@ class @Player
         @sm.setVolume track_id, 0
       else
         @sm.setVolume track_id, @last_volume
-      if time_marker > 0
-        @$player_title.html 'Loading...'
-        @$player_detail.html ''
-      else
-        this._loadInfoAndPlay track_id, 0
+      this._loadInfoAndPlay track_id, 0
       this._fastFadeout @active_track if @active_track
       @active_track = track_id
       @$feedback.hide()
@@ -128,25 +124,23 @@ class @Player
       if @sm_sound.position > 3000
         @sm_sound.setPosition 0
       else
-        $.ajax({
-          url: "/previous-track/#{@active_track}",
+        $.ajax
+          url: "/previous-track/#{@active_track}"
           success: (r) =>
             this.playTrack r.track_id if r.success
-        })
     else
       @Util.feedback { alert: 'You need to make a playlist to use that button' }
   
   nextTrack: ->
     if @active_track
-      $.ajax({
-        url: "/next-track/#{@active_track}",
+      $.ajax
+        url: "/next-track/#{@active_track}"
         success: (r) =>
           if r.success
             this.playTrack r.track_id
           else
             @Util.feedback { notice: 'End of playlist reached'}
             this.stopAndUnload()
-      })
     else
       @Util.feedback { alert: 'You need to make a playlist to use that button' }
   
@@ -154,10 +148,9 @@ class @Player
     this._fastFadeout @active_track
     @sm_sound.unload() if @sm_sound.loaded
     @active_track = ''
-    this._updatePlayerDisplay({
+    this._updatePlayerDisplay
       title: @app_name,
       duration: 0
-    })
     @$scrubber.slider 'value', 0
     @$scrubber.slider 'disable'
     this._updatePauseState false
@@ -174,11 +167,10 @@ class @Player
       $('#current_playlist>li[data-id="'+@active_track+'"]').addClass 'active_track'
 
   setCurrentPlaylist: (track_id) ->
-    $.ajax({
+    $.ajax
       type: 'post'
-      url: '/reset-playlist',
+      url: '/reset-playlist'
       data: { 'track_id': track_id }
-    })
     @$playlist_btn.addClass 'playlist_active'
 
   _loadInfoAndPlay: (track_id, time_marker) ->
@@ -206,23 +198,21 @@ class @Player
       false
   
   _playRandomShowOrPlaylist: ->
-    $.ajax({
-      url: "/next-track",
+    $.ajax
+      url: "/next-track"
       success: (r) =>
         if r.success
           @Util.feedback { notice: 'Playing current playlist...'}
           this.playTrack r.track_id
         else
-          $.ajax({
-            url: "/random-show",
+          $.ajax
+            url: "/random-show"
             success: (r) =>
               if r.success
                 @Util.feedback { notice: 'Playing random show...'}
                 @Util.navigateTo r.url
                 this.setCurrentPlaylist r.track_id
                 this.playTrack r.track_id
-          })
-    })
 
   _disengagePlayer: ->
     if @active_track
@@ -245,14 +235,13 @@ class @Player
       @sm.setVolume track_id, @last_volume
   
   _loadTrackInfo: (track_id) ->
-    $.ajax({
+    $.ajax
       url: "/track-info/#{track_id}",
       success: (r) =>
         if r.success
           this._updatePlayerDisplay r
         else
-          @Util.feedback { alert: "Error retrieving track info (#{track_id})" }
-    })
+          @Util.feedback { alert: "Error retrieving track info" }
   
   _updatePlayerDisplay: (r) ->
     @duration = r.duration
@@ -283,11 +272,10 @@ class @Player
       unless isNaN @duration or isNaN @sm_sound.position
         # Preload next track if we're close to the end of this one
         if !@preload_started and @duration - @sm_sound.position <= @preload_time
-          $.ajax({
-            url: "/next-track/#{@active_track}",
+          $.ajax
+            url: "/next-track/#{@active_track}"
             success: (r) =>
               this._preloadTrack(r.track_id) if r.success
-          })
           @preload_started = true
         @$scrubber.slider 'value', (@sm_sound.position / @duration) * 100
         @$time_elapsed.html @Util.readableDuration(@sm_sound.position)
@@ -304,7 +292,6 @@ class @Player
     if @active_track is track_id
       percent_loaded = Math.floor (@sm_sound.bytesLoaded / @sm_sound.bytesTotal) * 100
       percent_loaded = 0 if isNaN(percent_loaded)
-      # @$feedback.html "<i class=\"icon-download\"></i> #{percent_loaded}%"
       if 0 < @time_marker < @sm_sound.duration
         this._loadInfoAndPlay track_id, @time_marker
         @time_marker = 0
@@ -313,15 +300,6 @@ class @Player
           @$player_title.addClass 'long_title'
           @$player_title.html 'Marker out of range...'
           @time_marker = 0
-        # @$scrubber.slider 'enable'
-        # @$feedback.addClass 'done'
-        # setTimeout( =>
-          # @$feedback.hide 'fade'
-        # , 2000)
-      else
-        # @$feedback.show()
-        # @$scrubber.slider 'disable'
-        # @$feedback.removeClass 'done'
   
   _fastFadeout: (track_id, is_pause=false) ->
     if track_id and sound = @sm.getSoundById track_id
