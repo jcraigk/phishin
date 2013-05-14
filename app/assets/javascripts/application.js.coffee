@@ -4,7 +4,7 @@
 //= require jquery.ui.slider
 //= require jquery.ui.sortable
 //= require jquery.ui.datepicker
-//= require soundmanager2-jsmin
+//= require soundmanager
 //= require history.min
 //= require util
 //= require player

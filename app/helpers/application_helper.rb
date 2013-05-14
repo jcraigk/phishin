@@ -87,7 +87,7 @@ module ApplicationHelper
       str += content_tag :span, tag.name, class: 'label track_tag', style: "background-color: #{tag.color}"
     end
     if track.title.size > max_len
-      str += content_tag :span, truncate(track.title, length: max_len), data: { toggle: 'tooltip'}, title: track.title
+      str += content_tag :span, truncate(track.title, length: max_len), data: { toggle: 'tooltip' }, title: track.title
     else
       str += track.title
     end
