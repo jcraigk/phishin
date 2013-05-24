@@ -2,7 +2,7 @@
 # Global constants (app-wide settings) #
 ########################################
 
-  #QUEUE=* bundle exec rake resque:work RAILS_ENV=production BACKGROUND=yes
+# QUEUE=* bundle exec rake resque:work RAILS_ENV=production BACKGROUND=yes
 
 HTAUTH_USERNAME       = 'treyiswilson'
 HTAUTH_PASSWORD       = 'treyiswilson'
@@ -13,6 +13,8 @@ DEVISE_EMAIL_FROM     = "phish.in' <noreply@phish.in>"          # From address f
 
 ALBUM_CACHE_MAX_SIZE  = 50.gigabytes                            # Maximum size of album attachment cache
 ALBUM_TIMEOUT         = 10.seconds                              # Time to wait for album creation before telling user
+
+FIRST_CHAR_LIST       = ['#'] + ('A'..'Z').to_a
 
 if Rails.env == 'development' || Rails.env == 'test'
   APP_BASE_URL              = "http://localhost:3000"

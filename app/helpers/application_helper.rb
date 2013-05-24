@@ -1,5 +1,13 @@
 module ApplicationHelper
   
+  def first_char_links(base_url)
+    str = ''
+    FIRST_CHAR_ARRAY.each do |char|
+      link_to char, "#{base_url}?char=#{char}"
+    end
+    str.html_safe
+  end
+  
   def will_paginate_simple(collection)
     will_paginate collection, inner_window: 2, outer_window: 0, previous_label: '<i class="icon-chevron-left"></i>', next_label: '<i class="icon-chevron-right"></i>', params: [:per_page, :t]
   end

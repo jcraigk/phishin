@@ -59,7 +59,7 @@ class FilenameMatcher
   def scrub_filename(filename)
     if filename =~ /mike/i
       "Mike's Song"
-    elsif filename =~ /\d HYHU( -)?.mp3$/
+    elsif filename =~ /\d postgres( -)?.mp3$/
       "Hold Your Head Up"
     elsif filename =~ /Freebird.mp3/
       "Free Bird"

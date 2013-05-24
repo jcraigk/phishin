@@ -5,7 +5,7 @@ namespace :tracks do
     Track.all.each do |track|
       track.slug = track.generic_slug
       # handle abbreviations
-      track.slug.gsub!(/hold\-your\-head\-up/, 'hyhu')
+      track.slug.gsub!(/hold\-your\-head\-up/, 'postgres')
       track.slug.gsub!(/the\-man\-who\-stepped\-into\-yesterday/, 'tmwsiy')
       track.slug.gsub!(/she\-caught\-the\-katy\-and\-left\-me\-a\-mule\-to\-ride/, 'she-caught-the-katy')
       track.slug.gsub!(/mcgrupp\-and\-the\-watchful\-hosemasters/, 'mcgrupp')

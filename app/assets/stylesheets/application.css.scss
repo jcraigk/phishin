@@ -59,14 +59,17 @@ a:hover {
   text-align: center;
   margin-bottom: -15px;
 }
-
 #global_nav {
-  margin-top: 56px;
-  margin-left: 172px;
-  position: absolute;
-//  border: 1px solid red;
+  height: 30px;
+  border-bottom: 1px solid #555;
+  border-top: 1px solid #555;
+  vertical-align: middle;
+  background: url('brushed-metal2.jpg');
+  text-align: center;
+  padding-top: 5px;
 }
 #global_nav .badge {
+  margin-top: -5px;
   margin-left: 20px;
 }
 #global_nav .badge:hover {
@@ -269,15 +272,13 @@ a:hover {
   height: 100px;
   z-index: 20;
 }
-#player_container {
+#header_content_container {
   margin: 0 auto;
-  width: 920px;
+  width: 940px;
+}
+#player_container {
   height: 100px;
-  margin-top: 0px;
-//  -moz-border-radius: 8px;
-//  -webkit-border-radius: 8px;
-//  border-radius: 8px;
-  border: 1px solid #555;
+//  border: 1px solid #555;
   background-color: #5ab1ff;
   padding: 10px;
   vertical-align: middle;
