@@ -1,6 +1,6 @@
 module ApplicationHelper
   
-  def sort_songs_links(item_hash)
+  def sort_songs_and_venues_links(item_hash)
     str = ''
     item_hash.each do |key, val|
       link = params[:sort] == val ? "<strong>#{key}</strong>" : key
@@ -11,8 +11,8 @@ module ApplicationHelper
   
   def first_char_links(base_url)
     str = ''
-    FIRST_CHAR_LIST.each do |char|
-      css = "char_link #{params[:char] == char ? " active" : ""}"
+    FIRST_CHAR_LIST.each_with_index do |char, i|
+      css = "char_link #{(params[:char] == char or (params[:char].nil? and i == 0)) ? " active" : ""}"
       str += link_to char, "#{base_url}?char=#{CGI::escape(char)}", class: css
     end
     str.html_safe

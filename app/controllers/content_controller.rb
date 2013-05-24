@@ -17,20 +17,15 @@ class ContentController < ApplicationController
     render layout: false if request.xhr?
   end
   
+  def venues
+    char = params[:char] || FIRST_CHAR_LIST.first
+    @venues = Venue.relevant.name_starting_with(char).order(venues_order_by)
+    render layout: false if request.xhr?
+  end
+  
   def map
     params[:date_start] ||= '1983-01-01'
     params[:date_stop] ||= Date.today.to_s
-    render layout: false if request.xhr?
-  end
-
-  def venues
-    params[:sort] = 'name' unless ['name', 'performances'].include? params[:sort]
-    if params[:sort] == 'name'
-      order_by = "name asc"
-    elsif params[:sort] == 'performances'
-      order_by = "shows_count desc, name asc"
-    end
-    @venues = Venue.relevant.order(order_by).page(params[:page])
     render layout: false if request.xhr?
   end
   
@@ -230,6 +225,17 @@ class ContentController < ApplicationController
     elsif params[:sort] == 'performances'
       order_by = "tracks_count desc, title asc"
     end
+    order_by
+  end
+  
+  def venues_order_by
+    params[:sort] = 'name' unless ['name', 'performances'].include? params[:sort]
+    if params[:sort] == 'name'
+      order_by = "name asc"
+    elsif params[:sort] == 'performances'
+      order_by = "shows_count desc, name asc"
+    end
+    order_by
   end
   
 end

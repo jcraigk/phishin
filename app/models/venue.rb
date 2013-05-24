@@ -9,6 +9,7 @@ class Venue < ActiveRecord::Base
   geocoded_by :address
   
   scope :relevant, -> { where("shows_count > 0") }
+  scope :name_starting_with, ->(char) { where("name SIMILAR TO ?", "#{char == '#' ? '[0-9]' : char}%") }
   
   def name_and_abbrev
     abbrev ? "#{name} (#{abbrev})" : name

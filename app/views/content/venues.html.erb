@@ -1,14 +1,20 @@
-<div id="content" class="noheader">
+<div id="sub_nav_container">
+  <div id="sub_nav">
+    <%= first_char_links(venues_path) %>
+  </div>
+</div>
+
+<div id="content">
   
   <div class="row">
     <div class="span3">
-      <%= content_tag :h2, pluralize(@venues.total_entries, 'Venue'), class: 'for_content' %>
+      <%= content_tag :h2, pluralize(@venues.size, 'Venue'), class: 'for_content' %>
     </div>
     <div class="span6">
-      <%= will_paginate_simple @venues %>
+      <%# will_paginate_simple @venues %>
     </div>
     <div class="span2">
-      <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-text-height"></i> Alphabetically' => 'name', '<i class="icon-list"></i> Number of Shows' => 'performances'} } %>
+      <%= render partial: 'sort_songs_and_venues_filter', locals: { item_hash: {'<i class="icon-text-height"></i> Alphabetically' => 'name', '<i class="icon-list"></i> Number of Shows' => 'performances'} } %>
     </div>
   </div>
   
