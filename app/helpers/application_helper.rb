@@ -12,7 +12,8 @@ module ApplicationHelper
   def first_char_links(base_url)
     str = ''
     FIRST_CHAR_LIST.each do |char|
-      str += link_to char, "#{base_url}?char=#{CGI::escape(char)}", class: 'char_link'
+      css = "char_link #{params[:char] == char ? " active" : ""}"
+      str += link_to char, "#{base_url}?char=#{CGI::escape(char)}", class: css
     end
     str.html_safe
   end
