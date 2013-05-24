@@ -154,8 +154,8 @@ class @Player
     @$scrubber.slider 'value', 0
     @$scrubber.slider 'disable'
     this._updatePauseState false
-    @$time_remaining.html ''
-    @$time_elapsed.html ''
+    @$time_remaining.html '0:00'
+    @$time_elapsed.html '0:00'
     @invoked = false
   
   highlightActiveTrack: (scroll_to_track=false)->
@@ -265,8 +265,8 @@ class @Player
       @$likes_link.removeClass 'liked'
     if @duration is 0
       @$player_detail.html ''
-      @$time_elapsed.html ''
-      @$time_remaining.html ''
+      @$time_elapsed.html '0:00'
+      @$time_remaining.html '0:00'
     else
       @$player_detail.html "<a href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.venue_url}\">#{@Util.truncate(r.venue)}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.city_url}\">#{r.city}</a>"
   
@@ -292,10 +292,10 @@ class @Player
         if remaining > 0
           @$time_remaining.html "-#{@Util.readableDuration(remaining)}"
         else
-          @$time_remaining.html ''
+          @$time_remaining.html '0:00'
       else
-        @$time_elapsed.html ''
-        @$time_remaining.html ''
+        @$time_elapsed.html '0:00'
+        @$time_remaining.html '0:00'
   
   _updateLoadingState: (track_id) ->
     if @active_track is track_id
