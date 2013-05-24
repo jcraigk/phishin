@@ -12,13 +12,8 @@ class ContentController < ApplicationController
   end
   
   def songs
-    params[:sort] = 'title' unless ['title', 'performances'].include? params[:sort]
-    if params[:sort] == 'title'
-      order_by = "title asc"
-    elsif params[:sort] == 'performances'
-      order_by = "tracks_count desc, title asc"
-    end
-    @songs = Song.relevant.order(order_by).page(params[:page])
+    char = params[:char] || FIRST_CHAR_LIST.first
+    @songs = Song.relevant.title_starting_with(char).order(songs_order_by)
     render layout: false if request.xhr?
   end
   
@@ -225,6 +220,15 @@ class ContentController < ApplicationController
     elsif params[:sort] == 'duration'
       @order_by = "tracks.duration desc, shows.date desc"
       @display_separators = false
+    end
+  end
+  
+  def songs_order_by
+    params[:sort] = 'title' unless ['title', 'performances'].include? params[:sort]
+    if params[:sort] == 'title'
+      order_by = "title asc"
+    elsif params[:sort] == 'performances'
+      order_by = "tracks_count desc, title asc"
     end
   end
   

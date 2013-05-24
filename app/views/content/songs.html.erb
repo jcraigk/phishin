@@ -1,14 +1,20 @@
+<div id="sub_nav_container">
+  <div id="sub_nav">
+    <%= first_char_links('/songs') %>
+  </div>
+</div>
+
 <div id="content" class="noheader">
   
   <div class="row">
     <div class="span3">
-      <%= content_tag :h2, pluralize(@songs.total_entries, 'Song'), class: 'for_content' %>
+      <%= content_tag :h2, pluralize(@songs.size, 'Song'), class: 'for_content' %>
     </div>
     <div class="span6">
-      <%= will_paginate_simple @songs %>
+      <%# will_paginate_simple @songs %>
     </div>
     <div class="span2">
-      <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-text-height"></i> Alphabetically' => 'title', '<i class="icon-list"></i> Number of Tracks' => 'performances'} } %>
+      <%= render partial: 'sort_songs_filter' %>
     </div>
   </div>
   

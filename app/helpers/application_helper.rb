@@ -1,9 +1,18 @@
 module ApplicationHelper
   
+  def sort_songs_links(item_hash)
+    str = ''
+    item_hash.each do |key, val|
+      link = params[:sort] == val ? "<strong>#{key}</strong>" : key
+      str += content_tag :li, link_to(link.html_safe, "?char=#{params[:char]}&sort=#{CGI::escape(val)}")
+    end
+    str.html_safe
+  end
+  
   def first_char_links(base_url)
     str = ''
-    FIRST_CHAR_ARRAY.each do |char|
-      link_to char, "#{base_url}?char=#{char}"
+    FIRST_CHAR_LIST.each do |char|
+      str += link_to char, "#{base_url}?char=#{CGI::escape(char)}", class: 'char_link'
     end
     str.html_safe
   end
@@ -52,7 +61,7 @@ module ApplicationHelper
   
   def performances_or_alias_link(song, display_title=false)
     tracks_count = (display_title ? song.tracks_count : song.tracks_count)
-    song.aliased_song ? (link_to "alias for #{song.aliased_song.title}", "#{song.aliased_song.slug}", class: :alias_for) : tracks_count
+    song.aliased_song ? (link_to "alias for #{song.aliased_song.title}", "#{song.aliased_song.slug}", class: :alias_for) : pluralize(tracks_count, 'track')
   end
   
   def likable(likable, like, size)

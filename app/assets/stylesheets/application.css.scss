@@ -464,6 +464,24 @@ h2.for_content {
 
 /************************/
 
+#sub_nav_container {
+  position: fixed;
+  top: 159px;
+  width: 100%;
+  z-index: 20;
+//  background-color: green;
+}
+#sub_nav {
+  margin: 0 auto;
+  width: 940px;
+  background-color: gray;
+  height: 25px;
+  padding-top: 5px;
+  text-align: center;
+  background: url('brushed-metal2.jpg');
+  border-bottom: 1px solid black;
+}
+
 #content {
   margin: 0 auto;
   width: 880px;
@@ -480,7 +498,7 @@ h2.for_content {
   background-color: #fff;
 }
 #content.noheader {
-  padding-top: 160px !important;
+  padding-top: 190px !important;
 }
 #content > h1 {
   margin-top: 20px;
@@ -1232,4 +1250,8 @@ color: #8fbedb;
 }
 #load_playlist_list {
   text-align: left;
+}
+
+.char_link {
+  margin-left: 10px;
 }
