@@ -51,7 +51,7 @@ $ ->
           window.scrollTo 0, App.Util.historyScrollStates[state.id] if App.Util.historyScrollStates[state.id]
           
           # Tooltips
-          $('[title]').tooltip()
+          # $('[title]').tooltip()
                     
           # Report href to Google Analytics
           _gaq.push([ '_trackPageview', state.data.href ]);
@@ -293,13 +293,13 @@ $ ->
       $('#player_title').css 'display', 'block'
   
   # Like tooltip
-  $('.likes_large a').tooltip({
-    placement: 'bottom',
-    delay: { show: 500, hide: 0 }
-  })
-  $('.likes_small > a').tooltip({
-    delay: { show: 500, hide: 0 }
-  })
+  # $('.likes_large a').tooltip({
+  #   placement: 'bottom',
+  #   delay: { show: 500, hide: 0 }
+  # })
+  # $('.likes_small > a').tooltip({
+  #   delay: { show: 500, hide: 0 }
+  # })
   
   # Click a Like to submit to server
   $(document).on 'click', '.like_toggle', ->
@@ -335,12 +335,6 @@ $ ->
     })
   
   ###############################################
-  
-  # Rollover year to reveal number of shows
-  $(document).on 'mouseover', '.year_list > li', ->
-    $(this).find('h2').css 'visibility', 'visible'
-  $(document).on 'mouseout', '.year_list > li', ->
-    $(this).find('h2').css 'visibility', 'hidden'
 
   # Rollover item list to reveal context button and drag arrows (if present)
   $(document).on 'mouseover', '.item_list > li', ->
@@ -349,16 +343,6 @@ $ ->
   $(document).on 'mouseout', '.item_list > li', ->
     $(this).find('.btn_context').css 'visibility', 'hidden'
     $(this).find('.drag_arrows_vertical').css 'visibility', 'hidden'
-
-  # Rollover header to reveal context button
-  $(document).on 'mouseover', '#header', ->
-    $(this).find('.btn_context').css 'visibility', 'visible'
-  $(document).on 'mouseout', '#header', ->
-    $(this).find('.btn_context').css 'visibility', 'hidden'
-    
-  # Follow links in .year_list
-  $(document).on 'click', '.year_list > li', ->
-    App.Util.followLink $(this).find 'a'
   
   # Follow h1>a links in .item_list.clickable > li
   $(document).on 'click', '.item_list > li', (e) ->

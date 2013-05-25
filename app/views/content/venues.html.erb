@@ -7,7 +7,7 @@
 <div id="content">
   
   <div id="title_box">
-    <%= content_tag :h2, pluralize(@venues.size, 'Venue'), class: 'for_content' %>
+    <%= content_tag :h2, pluralize(@venues.size, 'Venue') %>
     <%= render partial: 'sort_songs_and_venues_filter', locals: { item_hash: {'<i class="icon-text-height"></i> Alphabetically' => 'name', '<i class="icon-list"></i> Number of Shows' => 'performances'} } %>
   </div>
 

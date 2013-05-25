@@ -1,46 +1,51 @@
 <div id="content" class="noheader">
   
   <div id="title_box">
-    <%= content_tag :h1, 'Phish' %>
-    <%= content_tag :h3, 'Shows: [x]' %>
-    <%= content_tag :h3, 'Songs: [x]' %>
-    <%= content_tag :h3, 'Tracks: [x]' %>
-    <%= content_tag :h3, 'Hours of Music: [x]' %>
+    <%= content_tag :h1, 'PHISH' %>
+    <%= content_tag :h2, 'Available Content' %>
+    <%= content_tag :h3, "Shows: #{number_with_delimiter(Show.avail.count)}" %>
+    <%= content_tag :h3, "Songs: #{number_with_delimiter(Song.relevant.count)}" %>
+    <%= content_tag :h3, "Tracks: #{number_with_delimiter(Track.count)}" %>
+    <%= content_tag :h3, 'Hours of Music: >3,200' %>
   </div>
   
   <div id="content_box">
       
     <h1>3.0 Era</h1>
-    <ul class="item_list">
+    <ul class="item_list clickable">
       <% 2012.downto(2009) do |year|  %>
       <li>
         <%= content_tag :h2, link_to(year, "/#{year}") %>
-        <%= content_tag :h3, pluralize(Show.avail.during_year(year).size, 'show') %>
+        <%= content_tag :h3, pluralize(Show.avail.during_year(year).size, 'show'), class: 'alt' %>
+        <div style="clear: both;"></div>
       </li>
       <% end %>
     </ul>
       
     <h1>2.0 Era</h2>
-    <ul class="item_list">
+    <ul class="item_list clickable">
       <% 2004.downto(2002) do |year|  %>
       <li>
         <%= content_tag :h2, link_to(year, "/#{year}") %>
-        <%= content_tag :h3, pluralize(Show.avail.during_year(year).size, 'show') %>
+        <%= content_tag :h3, pluralize(Show.avail.during_year(year).size, 'show'), class: 'alt' %>
+        <div style="clear: both;"></div>
       </li>
       <% end %>
     </ul>
       
     <h1>1.0 Era</h1>
-    <ul class="item_list">
+    <ul class="item_list clickable">
       <% 2000.downto(1988) do |year|  %>
         <li>
           <%= content_tag :h2, link_to(year, "/#{year}") %>
-          <%= content_tag :h3, pluralize(Show.avail.during_year(year).size, 'show') %>
+          <%= content_tag :h3, pluralize(Show.avail.during_year(year).size, 'show'), class: 'alt' %>
+          <div style="clear: both;"></div>
         </li>
       <% end %>
       <li>
         <%= content_tag :h2, link_to('1987 - 83', '/1983-1987') %>
-        <%= content_tag :h3, pluralize(Show.avail.between_years('1983', '1987').size, 'show') %>
+        <%= content_tag :h3, pluralize(Show.avail.between_years('1983', '1987').size, 'show'), class: 'alt' %>
+        <div style="clear: both;"></div>
       </li>
     </ul>
     
