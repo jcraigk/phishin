@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130421233021) do
+ActiveRecord::Schema.define(:version => 20130525010829) do
 
   create_table "album_requests", :force => true do |t|
     t.integer  "album_id"
@@ -48,6 +48,14 @@ ActiveRecord::Schema.define(:version => 20130421233021) do
   add_index "likes", ["likable_id"], :name => "index_likes_on_likable_id"
   add_index "likes", ["likable_type"], :name => "index_likes_on_likable_type"
   add_index "likes", ["user_id"], :name => "index_likes_on_user_id"
+
+  create_table "playlist_bookmarks", :force => true do |t|
+    t.integer "user_id"
+    t.integer "playlist_id"
+  end
+
+  add_index "playlist_bookmarks", ["playlist_id"], :name => "index_playlist_bookmarks_on_playlist_id"
+  add_index "playlist_bookmarks", ["user_id"], :name => "index_playlist_bookmarks_on_user_id"
 
   create_table "playlist_tracks", :force => true do |t|
     t.integer "playlist_id"

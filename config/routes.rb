@@ -27,8 +27,8 @@ Phishin::Application.routes.draw do
   get     '/songs'                        => 'content#songs',                       as: 'songs'
   get     '/map'                          => 'content#map',                         as: 'map'
   get     '/venues'                       => 'content#venues',                      as: 'venues'
-  get     '/top-shows'                    => 'content#top_liked_shows',             as: 'liked_shows'
-  get     '/top-tracks'                   => 'content#top_liked_tracks',            as: 'liked_tracks'
+  get     '/top-shows'                    => 'content#top_liked_shows',             as: 'top_shows'
+  get     '/top-tracks'                   => 'content#top_liked_tracks',            as: 'top_tracks'
   get     '/search'                       => 'search#search',                       as: 'search'
 
   # Map
@@ -38,7 +38,8 @@ Phishin::Application.routes.draw do
   post    '/toggle-like'                  => 'likes#toggle_like',                   as: 'toggle_like'
   
   # Playlists / player
-  get     '/playlist'                     => 'playlists#playlist'
+  get     '/playlist'                     => 'playlists#playlist',                  as: 'active_playlist'
+  get     '/playlists'                    => 'playlists#playlists',                 as: 'playlists'
   get     '/play/:slug'                   => 'playlists#playlist'
   get     '/get-playlist'                 => 'playlists#get_playlist'
   get     '/get-saved-playlists'          => 'playlists#get_saved_playlists'

@@ -1,12 +1,11 @@
-<div id="content" class="noheader">
-
-  <div style="text-align: center;">
-    <div class="btn-group like_tabs">
-      <%= link_to content_tag(:button, 'Top 50 Shows', class: 'btn btn-medium'), liked_shows_path %>
-      <%= link_to content_tag(:button, 'Top 50 Tracks', class: 'btn btn-medium btn-primary active'), liked_tracks_path %>
-    </div>
+<div id="sub_nav_container">
+  <div id="sub_nav">
+    <%= link_to 'Top Shows', top_shows_path %>
+    <%= link_to 'Top Tracks', top_tracks_path %>
   </div>
-  <br />
+</div>
+
+<div id="content">
   
   <ul class="item_list">
     <% @tracks.each_with_index do |track, idx| %>
