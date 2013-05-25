@@ -8,7 +8,7 @@
 <div id="content">
   
   <div id="title_box">
-    <%= content_tag :h1, 'Top 40 Tracks' %>
+    <%= content_tag :h2, 'Top 40 Tracks' %>
   </div>
   
   <div id="content_box">  
@@ -17,10 +17,12 @@
       <li class="playable_track" data-id="<%= track.id %>">
         <%= content_tag :h2, "#{idx+1}", class: 'position_num' %>
         <%= content_tag :h2, link_to(track.title, "/#{track.show.date}/#{track.slug}"), class: 'medium_width' %>
-        <%= content_tag :h5, link_to(track.show.date.strftime("%-m/%-d/%y"), "/#{track.show.date}"), class: 'large' %>
+        <%= content_tag :h5, link_to(track.show.date.strftime("%-m/%-d/%y"), "/#{track.show.date}"), class: 'narrow' %>
+        
         <%= content_tag :h3, track.duration_readable %>
         <%= likable(track, @tracks_likes[idx], 'small') %>
         <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil } %>
+        
         <div style="clear: both;"></div>
       <% end %>
     </ul>

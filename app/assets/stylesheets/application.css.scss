@@ -37,8 +37,8 @@ a:hover {
 
 .show_tag_container {
   float: right;
-  margin-top: 10px;
-  width: 40px;
+  margin-top: 0px;
+  width: 30px;
 }
 .show_tag {
   float: right;
@@ -223,13 +223,14 @@ a:hover {
 }
 .likes_small {
   float: right;
-  width: 70px;
-  height: 20px;
-  margin-top: 11px;
+  width: 60px;
+  height: 14px;
+  margin-top: 0px;
   margin-left: 10px;
-  line-height: 40px;
+  line-height: 14px;
   text-align: left;
-//  border: 1px solid red;
+  border: 1px solid red;
+  overflow: hidden;
 }
 .likes_small a {
   cursor: pointer;
@@ -337,17 +338,6 @@ a:hover {
   background: #878787;
   text-align: center;
 }
-#title_box h1 {
-  margin-top: 0px;
-  font-size: 28px;
-  line-height: 28px;
-  color: $text_gray;
-}
-#title_box h3 {
-  font-size: 18px;
-  line-height: 18px;
-  color: $text_gray;
-}
 #content_box > h1 {
   margin-top: -5px !important;
   font-size: 28px;
@@ -450,17 +440,22 @@ a:hover {
 #title_box h1 {
   line-height: 24px;
   font-size: 28px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  margin-top: 0px;
+  color: $text_gray;
 }
 #title_box h2 {
   margin-top: 0px;
-  line-height: 22px;
+  line-height: 16px;
   font-size: 22px;
+  font-weight: normal;
   color: $text_gray;
 }
 #title_box h3 {
   line-height: 12px;
   font-size: 17px;
+  font-weight: normal;
+  color: $text_gray;
 }
 #content_box {
   float: right;
@@ -514,7 +509,7 @@ a:hover {
 //  border: 1px solid red;
 }
 .item_list > li h2 {
-  line-height: 12px;
+  line-height: 18px;
   height: 16px;
   overflow: hidden;
   font-size: 16px;
@@ -524,7 +519,7 @@ a:hover {
   margin-top: 0px;
   border: 1px solid $text_gray;
 }
-.item_list > li h2 > a {
+.item_list > li  > a {
   color: gray;
 }
 .item_list > li h2.alt {
@@ -534,10 +529,9 @@ a:hover {
   font-weight: bold;
   font-size: 20px;
   text-align: right;
-  width: 50px;
-  margin-right: 20px;
+  width: 20px;
+  margin-right: 10px;
   line-height: 18px;
-  margin-left: -30px;
 //  border: 1px solid red;
 }
 .item_list > li h2.wide {
@@ -554,33 +548,37 @@ a:hover {
   width: 120px;
 }
 .item_list > li h3 {
-  margin-top: 2px;
-  line-height: 10px;
-  font-size: 14px;
+  margin-top: 0px;
+  line-height: 14px;
+  font-size: 16px;
   float: right;
   color: #555;
   font-weight: normal;
-  width: 60px;
+  width: 40px;
   text-align: right;
   border: 1px solid red;
+  height: 14px;
 }
 .item_list > li h3.alt {
-  width: 150px;
+  width: 200px;
+  overflow: hidden;
 }
 .item_list > li h3.alt a {
-  color: #555;
+  color: $text_gray;
+  line-height: 10px;
 }
 .item_list > li h4 {
   font-size: 14px;
   line-height: 14px;
   float: left;
-  width: 170px;
+  width: 280px;
   margin-top: 0px;
   overflow: hidden;
   color: $text_gray;
   font-weight: normal;
   margin-left: 10px;
   border: 1px solid black;
+  white-space: nowrap;
 }
 .item_list > li h4 a {
   color: #777;
@@ -588,7 +586,7 @@ a:hover {
 .item_list > li h5 {
   float: left;
   font-size: 14px;
-  line-height: 14px;
+  line-height: 18px;
   width: 150px;
   height: 16px;
   overflow: hidden;
@@ -603,6 +601,10 @@ a:hover {
 .item_list > li h5.large {
   font-size: 18px;
 }
+.item_list > li h5.narrow {
+  font-size: 16px;
+  width: 80px;
+}
 .item_list > li h6 {
   position: absolute;
   line-height: 21px;
@@ -615,10 +617,10 @@ a:hover {
 .item_list > li .btn_context {
   visibility: hidden;
   float: right;
-  width: 70px;
-  height: 20px;
-  margin-left: 20px;
-  line-height: 40px;
+  width: 40px;
+  height: 14px;
+  margin-left: 15px;
+  line-height: 20px;
   text-align: left;
 }
 .btn_context {
@@ -628,6 +630,8 @@ a:hover {
   cursor: pointer;
 }
 .btn-round {
+  height: 10px !important;
+  width: 10px !important;
   -moz-border-radius: 30px !important;
   -webkit-border-radius: 30px !important;
   border-radius: 30px !important;

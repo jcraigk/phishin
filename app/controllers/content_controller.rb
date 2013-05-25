@@ -12,14 +12,12 @@ class ContentController < ApplicationController
   end
   
   def songs
-    params[:char] ||= FIRST_CHAR_LIST.first
-    @songs = Song.relevant.title_starting_with(params[:char]).order(songs_order_by)
+    @songs = Song.relevant.title_starting_with(char_param).order(songs_order_by)
     render layout: false if request.xhr?
   end
   
   def venues
-    params[:char] ||= FIRST_CHAR_LIST.first
-    @venues = Venue.relevant.name_starting_with(params[:char]).order(venues_order_by)
+    @venues = Venue.relevant.name_starting_with(char_param).order(venues_order_by)
     render layout: false if request.xhr?
   end
   
@@ -236,6 +234,10 @@ class ContentController < ApplicationController
       order_by = "shows_count desc, name asc"
     end
     order_by
+  end
+  
+  def char_param
+    params[:char] = (FIRST_CHAR_LIST.include?(params[:char]) ? params[:char] : FIRST_CHAR_LIST.first)
   end
   
 end
