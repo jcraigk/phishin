@@ -2,7 +2,8 @@
   
   <div id="title_box">
     <%= content_tag :h1, 'PHISH' %>
-    <%= content_tag :h2, 'Available Content' %>
+    <br />
+    <%= content_tag :h2, 'AVAILABLE CONTENT' %>
     <%= content_tag :h3, "Shows: #{number_with_delimiter(Show.avail.count)}" %>
     <%= content_tag :h3, "Tracks: #{number_with_delimiter(Track.count)}" %>
     <%= content_tag :h3, "Songs: #{number_with_delimiter(Song.relevant.count)}" %>

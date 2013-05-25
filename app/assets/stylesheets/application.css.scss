@@ -7,6 +7,7 @@
  */
 
 $text_gray: #6d6f71;
+$highlight: #7eb8c7;
 
 * {
   font-family: 'Archivo Narrow', sans-serif;
@@ -70,10 +71,12 @@ a:hover {
   text-align: center;
   padding-top: 6px;
   background-color: #cdcfd0;
+
 }
 #global_nav a {
   color: #6e7073;
-  margin-left: 20px;
+  margin-left: 26px;
+//  border: 1px solid green;
 }
 #global_nav a:hover {
   text-decoration: none;
@@ -202,7 +205,7 @@ a:hover {
   text-decoration: none !important;
 }
 .likes_large span {
-  float: right;
+//  float: right;
   line-height: 66px;
   color: #791419;
   font-size: 24px;
@@ -224,7 +227,7 @@ a:hover {
 .likes_small {
   float: right;
   width: 60px;
-  height: 14px;
+  height: 16px;
   margin-top: 0px;
   margin-left: 10px;
   line-height: 14px;
@@ -342,13 +345,18 @@ a:hover {
   margin-top: -5px !important;
   font-size: 28px;
   line-height: 30px;
-  margin-left: 6px;
   white-space: nowrap;
 }
 #content_box > h2 {
   font-size: 22px;
-  line-height: 45px;
-  margin-left: 16px;
+  line-height: 14px;
+  margin-bottom: 20px;
+  margin-top: 5px !important;
+}
+#content_box > h3 {
+  font-size: 20px;
+  margin-top: -8px !important;
+  margin-bottom: 20px;
 }
 #header h2.floating {
   margin-left: 220px;
@@ -358,17 +366,8 @@ a:hover {
   line-height: 48px;
 }
 .show_duration {
-  float: right;
-  margin-top: 16px;
-  margin-right: -5px;
-  margin-left: 24px;
   font-size: 15px;
-  background-color: #666;
-  color: white;
-  border-radius: 5px;
-  padding: 5px;
   line-height: 15px;
-  font-weight: 400;
 }
 .show_duration_small {
   float: right;
@@ -446,8 +445,8 @@ a:hover {
 }
 #title_box h2 {
   margin-top: 0px;
-  line-height: 16px;
-  font-size: 22px;
+  line-height: 14px !important;
+  font-size: 18px;
   font-weight: normal;
   color: $text_gray;
 }
@@ -504,12 +503,11 @@ a:hover {
   visibility: hidden;
   float: left;
   width: 15px;
-  margin-left: -30px;
-  margin-top: 5px;
+  margin-top: -2px;
 //  border: 1px solid red;
 }
 .item_list > li h2 {
-  line-height: 18px;
+  line-height: 16px;
   height: 16px;
   overflow: hidden;
   font-size: 16px;
@@ -519,19 +517,13 @@ a:hover {
   margin-top: 0px;
   border: 1px solid $text_gray;
 }
-.item_list > li  > a {
-  color: gray;
-}
-.item_list > li h2.alt {
-  font-size: 20px;
-}
 .item_list > li h2.position_num {
   font-weight: bold;
-  font-size: 20px;
+  font-size: 16px;
   text-align: right;
   width: 20px;
   margin-right: 10px;
-  line-height: 18px;
+  line-height: 16px;
 //  border: 1px solid red;
 }
 .item_list > li h2.wide {
@@ -541,12 +533,9 @@ a:hover {
   width: 280px;
 //  border: 1px solid red;
 }
-//.item_list > li h2.extra_width {
-//  width: 120px;
-//}
 .item_list > li h3 {
   margin-top: 0px;
-  line-height: 14px;
+  line-height: 16px;
   font-size: 16px;
   float: right;
   color: #555;
@@ -554,11 +543,15 @@ a:hover {
   width: 40px;
   text-align: right;
   border: 1px solid red;
-  height: 14px;
+  height: 16px;
+  overflow: hidden;
 }
 .item_list > li h3.alt {
-  width: 200px;
-  overflow: hidden;
+  width: 150px;
+
+}
+.item_list > li h3.wide {
+  width: 250px;
 }
 .item_list > li h3.alt a {
   color: $text_gray;
@@ -566,7 +559,7 @@ a:hover {
 }
 .item_list > li h4 {
   font-size: 14px;
-  line-height: 14px;
+  line-height: 16px;
   float: left;
   width: 280px;
   margin-top: 0px;
@@ -586,7 +579,7 @@ a:hover {
 .item_list > li h5 {
   float: left;
   font-size: 14px;
-  line-height: 18px;
+  line-height: 16px;
   width: 150px;
   height: 16px;
   overflow: hidden;
@@ -618,7 +611,7 @@ a:hover {
   visibility: hidden;
   float: right;
   width: 40px;
-  height: 14px;
+//  height: 14px;
   margin-left: 15px;
   line-height: 20px;
   text-align: left;
@@ -630,11 +623,21 @@ a:hover {
   cursor: pointer;
 }
 .btn-round {
+  margin-top: -1px;
   height: 10px !important;
   width: 10px !important;
   -moz-border-radius: 30px !important;
   -webkit-border-radius: 30px !important;
   border-radius: 30px !important;
+}
+
+.dropdown-menu {
+ margin-top: -6px !important;
+}
+.dropdown-menu li > a:hover, .dropdown-menu li > a:focus, .dropdown-submenu:hover > a {
+  background-image: none !important;
+  background-color: $highlight !important;
+  color: white !important;
 }
 
 /************************/
@@ -647,45 +650,6 @@ a:hover {
 }
 #footer_container p {
   font-size: 12px;
-}
-
-//#search_container {
-//  margin: 0 auto;
-//  margin-top: 20px;
-//  text-align: center;
-//  background-color: #eee;
-//  -moz-border-radius: 5px;
-//  -webkit-border-radius: 5px;
-//  border-radius: 5px;
-//  border: 1px solid #ccc;
-//  padding: 10px;
-//  font-size: 14px;
-//  font-weight: bold;
-//  font-family: 'Rambla', sans-serif;
-//}
-//#search_container input {
-//  margin-top: 10px;
-//}
-//#search_submit {
-//  font-weight: bold;
-//  font-family: 'Rambla', sans-serif;
-//}
-#search_results {
-  margin: 0 auto;
-//  margin-top: 20px;
-  text-align: left;
-  padding: 10px;
-  font-size: 14px;
-  font-weight: bold;
-//  font-family: 'Rambla', sans-serif;
-}
-#search_results p {
-  margin-top: 10px;
-  text-align: center;
-  font-style: italic;
-}
-#search_results h3 {
-  margin-left: 18px;
 }
 #map_search_container {
   margin: 0 auto;
@@ -757,7 +721,6 @@ a:hover {
   line-height: 40px;
   text-align: center;
   overflow: hidden;
-//  font-family: 'Fjalla One', sans-serif;
   font-size: 28px;
 //  border: 1px solid black;
 }
@@ -772,7 +735,6 @@ a:hover {
   width: 400px;
   text-align: center;
   overflow: hidden;
-//  font-family: 'Rambla', sans-serif;
   font-size: 13px;
   font-weight: 400;
 //  border: 1px solid black;
@@ -794,7 +756,7 @@ color: #8fbedb;
   -moz-box-shadow: 0 0 16px #3b995f !important;
   -webkit-box-shadow: 0 0 16px #3b995f !important;
   box-shadow: 0 0 16px #3b995f !important;
-  background-position: -85px 0 !important;
+  background-position: -75px 0 !important;
 }
 .playlist_active {
   border: 1px solid red !important;
@@ -834,7 +796,6 @@ color: #8fbedb;
   height: 36px;
   margin-top: 28px;
   margin-left: 150px;
-//  font-family: 'Rambla', sans-serif;
 //  border: 1px solid black;
 }
 #time_elapsed {
@@ -884,11 +845,6 @@ color: #8fbedb;
 #playlist_button * {
   box-shadow: none;
 }
-//#search_button {
-//  position: fixed;
-//  margin-top: -7px;
-//  margin-left: 888px;
-//}
 #volume_icon {
   padding: 0px 0px 0px 0px !important;
   float: left;
@@ -1160,12 +1116,12 @@ color: #8fbedb;
 
 #search_box {
   margin-right: 200px;
-  margin-left: 0px;
-  margin-top: -2px;
+  margin-left: -180px;
+  margin-top: -1px;
   float: right;
   height: 20px;
   width: 110px;
-  border: 1px solid black;
+  border: 1px solid $text_gray;
   border-radius: 5px;
   text-align: left;
   padding: none;
@@ -1179,14 +1135,11 @@ color: #8fbedb;
   font-size: 12px;
   padding: 0px !important;
 }
-#search_term:hover {
+#search_term:focus {
   border: none;
   box-shadow: none;
 }
 #search_box .icon {
   margin-top: -2px;
   margin-left: 5px;
-}
-.clear {
-  clear: both;
 }

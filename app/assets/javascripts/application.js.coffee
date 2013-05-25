@@ -145,7 +145,10 @@ $ ->
 
   # Submit search
   $(document).on 'keypress', '#search_term', (e) ->
-    App.Util.navigateTo '/search?term='+encodeURI($('#search_term').val()) if e.which is 13
+    if e.which is 13
+      App.Util.navigateTo '/search?term='+encodeURI($('#search_term').val()) 
+      $(this).val ''
+      $(this).blur()
     
   ###############################################
 
