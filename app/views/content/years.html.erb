@@ -12,7 +12,7 @@
     <ul class="year_list">
       <% 2012.downto(2009) do |year|  %>
       <li>
-        <%= content_tag :h2, pluralize(Show.during_year(year).size, 'show') %>
+        <%= content_tag :h2, pluralize(Show.avail.during_year(year).size, 'show') %>
         <%= content_tag :h1, link_to(year, "/#{year}") %>
       </li>
       <% end %>
@@ -25,7 +25,7 @@
     <ul class="year_list">
       <% 2004.downto(2002) do |year|  %>
       <li>
-        <%= content_tag :h2, pluralize(Show.during_year(year).size, 'show') %>
+        <%= content_tag :h2, pluralize(Show.avail.during_year(year).size, 'show') %>
         <%= content_tag :h1, link_to(year, "/#{year}") %>
       </li>
       <% end %>
@@ -38,12 +38,12 @@
     <ul class="year_list">
       <% 2000.downto(1988) do |year|  %>
         <li>
-          <%= content_tag :h2, pluralize(Show.during_year(year).size, 'show') %>
+          <%= content_tag :h2, pluralize(Show.avail.during_year(year).size, 'show') %>
           <%= content_tag :h1, link_to(year, "/#{year}") %>
         </li>
       <% end %>
       <li>
-        <%= content_tag :h2, pluralize(Show.between_years('1983', '1987').size, 'show') %>
+        <%= content_tag :h2, pluralize(Show.avail.between_years('1983', '1987').size, 'show') %>
         <%= content_tag :h1, link_to('1987 - 83', '/1983-1987') %>
       </li>
     </ul>

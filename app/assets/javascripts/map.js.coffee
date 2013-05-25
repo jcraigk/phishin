@@ -48,13 +48,16 @@ class @Map
       map: @map,
       radius: this._milesToMeters distance
     })
-    @map.fitBounds @view_circle.getBounds()
     # Fetch venues from server
     $.ajax({
       url: "/search-map?lat=#{lat}&lng=#{lng}&distance=#{distance}&date_start=#{$('#map_date_start').val()}&date_stop=#{$('#map_date_stop').val()}",
       success: (r) =>
         if r.success
           this._drawVenueMarkers r.venues
+          bounds = new google.maps.LatLngBounds()
+          for venue in r.venues
+            bounds.extend(new google.maps.LatLng(venue.latitude, venue.longitude))
+          @map.fitBounds bounds
         else
           @util.feedback { alert: 'No shows match your criteria'}
     })
