@@ -31,4 +31,8 @@ class Song < ActiveRecord::Base
     Song.where(id: alias_for).first if alias_for
   end
   
+  def is_alias?
+    !alias_for.nil?
+  end
+  
 end

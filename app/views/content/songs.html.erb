@@ -8,7 +8,7 @@
   
   <div class="row">
     <div class="span3">
-      <%= content_tag :h2, pluralize(@songs.size, 'Song'), class: 'for_content' %>
+      <%= content_tag :h2, pluralize(@songs.reject { |song| song.is_alias? }.size, 'Song'), class: 'for_content' %>
     </div>
     <div class="span6">
       <%# will_paginate_simple @songs %>
