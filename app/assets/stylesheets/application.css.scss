@@ -753,7 +753,6 @@ h2.for_content {
 #userbox {
   font-family: sans-serif;
   float: right;
-  margin-right: 20px;
   margin-top: -7px;
 }
 #player_feedback {
@@ -919,11 +918,11 @@ color: #8fbedb;
 #playlist_button * {
   box-shadow: none;
 }
-#search_button {
-  position: fixed;
-  margin-top: -7px;
-  margin-left: 888px;
-}
+//#search_button {
+//  position: fixed;
+//  margin-top: -7px;
+//  margin-left: 888px;
+//}
 #volume_icon {
   padding: 0px 0px 0px 0px !important;
   float: left;
@@ -1258,4 +1257,35 @@ color: #8fbedb;
 
 .char_link {
   margin-left: 10px;
+}
+
+/************************/
+
+#search_box {
+  margin-right: 200px;
+  margin-left: 0px;
+  float: right;
+  height: 20px;
+  width: 110px;
+  border: 1px solid black;
+  border-radius: 5px;
+  text-align: left;
+  padding: none;
+}
+#search_term {
+  background: transparent;
+  margin-top: 1px;
+  border: none;
+  width: 80px;
+  height: 18px !important;
+  font-size: 12px;
+  padding: 0px !important;
+}
+#search_term:hover {
+  border: none;
+  box-shadow: none;
+}
+#search_box .icon {
+  margin-top: -2px;
+  margin-left: 5px;
 }

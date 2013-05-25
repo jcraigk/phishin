@@ -143,19 +143,9 @@ $ ->
     
   ###############################################
 
-  # Search focus -> remove other value
-  $(document).on 'focus', '#search_term', (e) ->
-    $('#search_date').val ''
-  $(document).on 'focus', '#search_date', (e) ->
-    $('#search_term').val ''
-  
   # Submit search
-  $(document).on 'click', '#search_submit', (e) ->
-    App.Util.navigateTo '/search?date='+$('#search_date').val()+'&term='+encodeURI($('#search_term').val())
-  $(document).on 'keypress', '#search_date', (e) ->
-    App.Util.navigateTo '/search?date='+$('#search_date').val()+'&term='+encodeURI($('#search_term').val()) if e.which is 13
   $(document).on 'keypress', '#search_term', (e) ->
-    App.Util.navigateTo '/search?date='+$('#search_date').val()+'&term='+encodeURI($('#search_term').val()) if e.which is 13
+    App.Util.navigateTo '/search?term='+encodeURI($('#search_term').val()) if e.which is 13
     
   ###############################################
 

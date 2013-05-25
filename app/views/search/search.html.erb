@@ -1,11 +1,5 @@
 <div id="content" class="noheader">
   
-  <div id="search_container">
-    <input type="text" name="date" id="search_term" placeholder="term or date" value="<%= params[:term] %>">
-    &nbsp;&nbsp;
-    <button type="button" class="btn" id="search_submit">Search</button>
-  </div>
-  
   <% if @results %>
     <div id="search_results">
       <% unless @total_results and @total_results > 0 %>
@@ -60,7 +54,7 @@
               <% for venue in @venues %>
                 <li>
                   <%= content_tag :h2, link_to(highlight(truncate(venue.name_and_abbrev, length: 45), params[:term]), "/#{venue.slug}"), class: 'medium_width' %>
-                  <%= content_tag :h3, venue.shows_count, class: 'alt' %>
+                  <%= content_tag :h3, pluralize(venue.shows_count, 'show'), class: 'alt' %>
                   <%= content_tag :h5, link_to(highlight(venue.location, params[:term]), "/map?term=#{CGI::escape(venue.location)}") %>
                   <div style="clear: both;"></div>
                 </li>
@@ -73,7 +67,7 @@
               <% for tour in @tours %>
                 <li>
                   <%= content_tag :h2, link_to(highlight(truncate(tour.name, length: 45), params[:term]), "/#{tour.slug}"), class: 'wide' %>
-                  <%= content_tag :h3, tour.shows_count, class: 'alt' %>
+                  <%= content_tag :h3, pluralize(tour.shows_count, 'show'), class: 'alt' %>
                   <div style="clear: both;"></div>
                 </li>
               <% end %>

@@ -4,5 +4,8 @@
   <%= nav_button('Venues', venues_path) %>
   <%= nav_button('Map', '/map?term=america&distance=1600') %>
   <%= nav_button('Top 50', liked_shows_path, liked_tracks_path) %>
-  <% #nav_button('Search', search_path) %>
+  <div id="search_box">
+    <i class="icon icon-search"></i>
+    <input type="text" name="term" id="search_term" value="<%= params[:term] %>">
+  </div>
 </div>
