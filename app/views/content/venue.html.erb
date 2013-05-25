@@ -41,7 +41,6 @@
               <%= content_tag :span, tag.name, class: 'label show_tag', style: "background-color: #{tag.color}" %>
             <% end %>
           </span>
-          <% #content_tag :span, "#{show.duration_readable}", class: 'show_duration_small' %>
           <%= likable(show, @shows_likes[idx], 'small') %>
           <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
           <div style="clear: both;"></div>
@@ -51,5 +50,6 @@
   </div>
   
   <div style="clear: both;"></div>
+  <br /><br />
 
 </div>

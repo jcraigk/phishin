@@ -124,12 +124,12 @@ class @Util
     if string.length > length then string.substring(0, length) + '...' else string
   
   _handleGlobalNavHighlight: (href) ->
-    $nav_links = $('#global_nav .badge')
+    $nav_links = $('#global_nav .global_link')
     $nav_links.removeClass('active')
     that = this
     $nav_links.each( ->
-      this_base_href = that._findMatch $(this).parent().attr('href')
-      this_alt_href = $(this).parent().attr('data-alt-href')
+      this_base_href = that._findMatch $(this).attr('href')
+      this_alt_href = $(this).attr('data-alt-href')
       this_alt_base_href = that._findMatch this_alt_href
       base_href = that._findMatch href
       $(this).addClass('active') if this_alt_href is href or this_base_href is base_href or (this_alt_base_href and (this_alt_base_href is base_href))

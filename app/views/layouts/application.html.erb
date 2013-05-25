@@ -2,7 +2,7 @@
 <html>
 <head>
   <title><%= APP_NAME %></title>
-  <link href='http://fonts.googleapis.com/css?family=Rambla:400,700|Armata|Fjalla+One|Nothing+You+Could+Do' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Archivo+Narrow:400,700' rel='stylesheet' type='text/css'>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDYzzl_dLU5IX4t-rpVVRcA9YtrpPEivTk&sensor=false"></script>
   <%= javascript_include_tag "application" %>
@@ -21,7 +21,6 @@
   <div id="page">
     <%= yield if xhr_exempt_controller %>
   </div>
-  
   
   <%= render partial: 'layouts/page_footer' %>
 

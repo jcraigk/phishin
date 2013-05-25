@@ -4,9 +4,8 @@
     <%= content_tag :h1, 'PHISH' %>
     <%= content_tag :h2, 'Available Content' %>
     <%= content_tag :h3, "Shows: #{number_with_delimiter(Show.avail.count)}" %>
-    <%= content_tag :h3, "Songs: #{number_with_delimiter(Song.relevant.count)}" %>
     <%= content_tag :h3, "Tracks: #{number_with_delimiter(Track.count)}" %>
-    <%= content_tag :h3, 'Hours of Music: >3,200' %>
+    <%= content_tag :h3, "Songs: #{number_with_delimiter(Song.relevant.count)}" %>
   </div>
   
   <div id="content_box">

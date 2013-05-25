@@ -6,9 +6,14 @@
  *= require_tree .
  */
 
+$text_gray: #6d6f71;
+
+* {
+  font-family: 'Archivo Narrow', sans-serif;
+}
 body {
-  background-color: #333 !important;
-//  background: url('fishman-donut.png') repeat fixed;
+  background-color: #fff !important;
+  
 }
 html {
   margin: 0;
@@ -17,7 +22,7 @@ html {
 }
 a {
   text-decoration: none;
-  color: black;
+  color: $text_gray !important;
 }
 a:hover {
   text-decoration: underline;
@@ -44,7 +49,6 @@ a:hover {
 
 #home_msg {
   display: inline;
-  font-family: 'Shanti', sans-serif;
   font-size: 12px;
   text-align: center;
   font-weight: bold;
@@ -60,24 +64,23 @@ a:hover {
   margin-bottom: -15px;
 }
 #global_nav {
+  font-size: 14px;
   height: 25px;
-//  border-bottom: 1px solid #555;
-//  border-top: 1px solid #555;
   vertical-align: middle;
-//  background: url('brushed-metal2.jpg');
   text-align: center;
-  padding-top: 3px;
+  padding-top: 6px;
   background-color: #cdcfd0;
 }
-#global_nav .badge {
-  margin-top: -5px;
+#global_nav a {
+  color: #6e7073;
   margin-left: 20px;
 }
-#global_nav .badge:hover {
-  background-color: #acdbea;
+#global_nav a:hover {
+  text-decoration: none;
 }
 #global_nav .active {
-  background-color: #609eea;
+  font-weight: bold;
+  color: black !important;
 }
 
 /******************************/
@@ -141,7 +144,7 @@ a:hover {
 #google_map {
   width: 100%;
   height: 600px;
-  font-family: 'Rambla', sans-serif;
+//  font-family: 'Rambla', sans-serif;
 }
 #google_map label {
   width: auto;
@@ -279,11 +282,9 @@ a:hover {
 }
 #player_container {
   height: 90px;
-//  border: 1px solid #555;
   background-color: #e6e7e8;
   padding: 10px;
   vertical-align: middle;
-//  background: url('brushed-metal2.jpg');
 //  border: 1px solid green;
 }
 #logo {
@@ -315,7 +316,6 @@ a:hover {
   right: 0%;
   background: transparent;
   z-index: 99;
-//  opacity: 0.8;
 }
 #header_container {
   margin: 0;
@@ -329,53 +329,36 @@ a:hover {
   margin: 0 auto;
   width: 894px;
   height: 50px;
-//  -webkit-border-top-left-radius: 8px;
-//  -moz-border-radius-topleft: 8px;
-//  border-top-left-radius: 8px;
-//  -webkit-border-top-right-radius: 8px;
-//  -moz-border-radius-topright: 8px;
-//  border-top-right-radius: 8px;
   border-left: 2px solid #555;
-//  border-top: 1px solid #555;
   border-right: 2px solid #555;
   padding: 0px 26px 5px 20px;
   margin-top: -3px;
   vertical-align: bottom;
-//  background: #ddd url('brushed-metal.jpg');
   background: #878787;
   text-align: center;
-//  -moz-box-shadow: 0 6px 10px -2px #999;
-//  -webkit-box-shadow: 0 6px 10px -2px #999;
-//  box-shadow: 0 6px 10px -2px #999;
-//  border: 1px solid red;
 }
 #title_box h1 {
-  font-family: 'Rambla', sans-serif;
+  margin-top: 0px;
   font-size: 28px;
   line-height: 28px;
+  color: $text_gray;
 }
 #title_box h3 {
-  font-family: 'Rambla', sans-serif;
   font-size: 18px;
   line-height: 18px;
+  color: $text_gray;
 }
 #content_box > h1 {
-  font-family: 'Rambla', sans-serif;
+  margin-top: -5px !important;
   font-size: 28px;
-  line-height: 40px;
+  line-height: 30px;
   margin-left: 6px;
-  font-weight: 700;
   white-space: nowrap;
 }
-#header h1 a {
-  color: #333;
-}
 #content_box > h2 {
-  font-family: 'Rambla', sans-serif;
   font-size: 22px;
   line-height: 45px;
   margin-left: 16px;
-  font-weight: 400;
 }
 #header h2.floating {
   margin-left: 220px;
@@ -386,7 +369,6 @@ a:hover {
 }
 .show_duration {
   float: right;
-  font-family: 'Rambla', sans-serif;
   margin-top: 16px;
   margin-right: -5px;
   margin-left: 24px;
@@ -400,7 +382,6 @@ a:hover {
 }
 .show_duration_small {
   float: right;
-  font-family: 'Rambla', sans-serif;
   margin-top: 8px;
   margin-right: -10px;
   font-size: 12px;
@@ -421,7 +402,7 @@ a:hover {
 
 #sub_nav_container {
   position: fixed;
-  top: 138px;
+  top: 141px;
   width: 100%;
   z-index: 20;
 //  background-color: green;
@@ -431,72 +412,74 @@ a:hover {
   width: 940px;
   background-color: gray;
   height: 23px;
-  padding-top: 5px;
+  padding-top: 4px;
   text-align: center;
-//  background: url('brushed-metal2.jpg');
   background-color: #d9dbdc;
 //  border-bottom: 1px solid black;
 }
-#sub_nav .active {
+#sub_nav a {
+  color: #6e7073;
+  margin-top: -5px;
+  margin-left: 20px;
+}
+#sub_nav a:hover {
+  text-decoration: none;
+}
+#sub_nav a.active {
   font-weight: bold;
-  color: red;
+  color: black !important;
 }
 
 #content {
   margin: 0 auto;
   width: 900px;
-  padding: 170px 20px 40px 20px;
+  padding: 185px 20px 40px 20px;
   -webkit-border-bottom-left-radius: 10px;
   -moz-border-radius-bottomleft: 10px;
   border-bottom-left-radius: 10px;
   -webkit-border-bottom-right-radius: 10px;
   -moz-border-radius-bottomright: 10px;
   border-bottom-right-radius: 10px;
-  border-left: 2px solid #555;
-  border-right: 2px solid #555;
-  border-bottom: 1px solid #555;
   background-color: #e6e7e8;
 }
 #title_box {
   position: fixed;
   width: 200px;
-//  border: 1px solid red;
+  border: 1px solid red;
 }
 #title_box h1 {
   line-height: 24px;
   font-size: 28px;
   margin-bottom: 30px;
-  font-family: 'Rambla', sans-serif;
 }
 #title_box h2 {
-  line-height: 24px;
+  margin-top: 0px;
+  line-height: 22px;
   font-size: 22px;
-  font-family: 'Rambla', sans-serif;
+  color: $text_gray;
 }
 #title_box h3 {
   line-height: 12px;
   font-size: 17px;
-  font-family: 'Rambla', sans-serif;
 }
 #content_box {
   float: right;
   width: 680px;
-//  border: 1px solid green;
+  border: 1px solid green;
 }
 #content.noheader {
   padding-top: 160px !important;
 }
 #content_box > h1 {
-  margin-top: 10px;
-  line-height: 24px;
+  margin-top: 0px;
+  line-height: 30px;
   font-size: 22px;
-  font-family: 'Rambla', sans-serif;
+  color: $text_gray;
   border-bottom: 1px solid gray;
 }
 #content_box > h2 {
   margin-top: 20px;
   font-size: 24px;
-  font-family: 'Rambla', sans-serif;
 }
 #content_box > h4 {
   margin-left: 60px;
@@ -507,23 +490,20 @@ a:hover {
 .item_list {
   color: #333;
   margin-left: 0px;
-  margin-top: 12px;
-  margin-bottom: 40px;
+  margin-top: -5px;
+  margin-bottom: 20px;
   list-style-type: none;
 }
 .item_list > li {
-  height: 14px;
   -moz-border-radius: 8px;
   -webkit-border-radius: 8px;
   border-radius: 8px;
-  padding: 8px 20px 8px 20px;
-}
-.item_list > li:nth-child(2n+1) {
-  background-color: #f8f8f8;
+  padding: 5px 20px 0px 20px;
+  height: 23px;
 }
 .item_list > li:hover {
   cursor: pointer;
-  background-color: #fffbd0;
+  background-color: #fff;
 }
 .item_list > li > .drag_arrows_vertical {
   visibility: hidden;
@@ -534,14 +514,18 @@ a:hover {
 //  border: 1px solid red;
 }
 .item_list > li h2 {
-  font-family: 'Shanti', sans-serif;
-  line-height: 10px;
-  margin-top: 2px;
-  font-size: 18px;
+  line-height: 12px;
+  height: 16px;
+  overflow: hidden;
+  font-size: 16px;
   float: left;
   font-weight: normal;
-  width: 115px;
-//  border: 1px solid black;
+  width: 140px;
+  margin-top: 0px;
+  border: 1px solid $text_gray;
+}
+.item_list > li h2 > a {
+  color: gray;
 }
 .item_list > li h2.alt {
   font-size: 20px;
@@ -557,21 +541,20 @@ a:hover {
 //  border: 1px solid red;
 }
 .item_list > li h2.wide {
-  width: 440px;
+  width: 220px;
 }
 .item_list > li h2.wider {
-  width: 550px;
+  width: 300px;
 //  border: 1px solid red;
 }
 .item_list > li h2.medium_width {
-  width: 380px;
+  width: 280px;
 }
 .item_list > li h2.extra_width {
-  width: 150px;
+  width: 120px;
 }
 .item_list > li h3 {
   margin-top: 2px;
-  font-family: 'Shanti', sans-serif;
   line-height: 10px;
   font-size: 14px;
   float: right;
@@ -579,41 +562,40 @@ a:hover {
   font-weight: normal;
   width: 60px;
   text-align: right;
-//  border: 1px solid red;
+  border: 1px solid red;
 }
 .item_list > li h3.alt {
-  width: 200px;
+  width: 150px;
 }
 .item_list > li h3.alt a {
   color: #555;
 }
 .item_list > li h4 {
+  font-size: 14px;
+  line-height: 14px;
   float: left;
-  width: 300px;
-  height: 20px;
+  width: 170px;
+  margin-top: 0px;
   overflow: hidden;
-  font-family: 'Shanti', sans-serif;
-  line-height: 21px;
-  font-size: 17px;
-  color: #777;
+  color: $text_gray;
   font-weight: normal;
   margin-left: 10px;
-//  border: 1px solid black;
+  border: 1px solid black;
 }
 .item_list > li h4 a {
   color: #777;
 }
 .item_list > li h5 {
   float: left;
-  width: 170px;
-  height: 20px;
-  overflow: hidden;
-  font-family: 'Shanti', sans-serif;
-  line-height: 21px;
   font-size: 14px;
-  font-weight: normal;
+  line-height: 14px;
+  width: 150px;
+  height: 16px;
+  overflow: hidden;
   margin-left: 10px;
-//    border: 1px solid black;
+  margin-top: 0px;
+  border: 1px solid blue;
+  font-weight: normal;
 }
 .item_list > li h5 a {
   color: #999;
@@ -623,10 +605,8 @@ a:hover {
 }
 .item_list > li h6 {
   position: absolute;
-  font-family: 'Shanti', sans-serif;
   line-height: 21px;
   font-size: 15px;
-  font-weight: normal;
   margin-left: 680px;
 }
 .item_list > li h6 a {
@@ -693,7 +673,7 @@ a:hover {
   padding: 10px;
   font-size: 14px;
   font-weight: bold;
-  font-family: 'Rambla', sans-serif;
+//  font-family: 'Rambla', sans-serif;
 }
 #search_results p {
   margin-top: 10px;
@@ -714,7 +694,7 @@ a:hover {
   padding: 10px;
   font-size: 14px;
   font-weight: bold;
-  font-family: 'Rambla', sans-serif;
+//  font-family: 'Rambla', sans-serif;
 }
 #map_search_term {
   margin-top: 5px;
@@ -726,7 +706,7 @@ a:hover {
 #map_search_submit {
   width: 150px;
   font-weight: bold;
-  font-family: 'Rambla', sans-serif;
+//  font-family: 'Rambla', sans-serif;
   margin-bottom: 20px;
 }
 
@@ -762,7 +742,7 @@ a:hover {
 #player_title_container {
   padding: 0px;
   position: fixed;
-  margin-top: 0px;
+  margin-top: -5px;
   margin-left: 140px;
   width: 410px;
   height: 40px;
@@ -773,7 +753,7 @@ a:hover {
   line-height: 40px;
   text-align: center;
   overflow: hidden;
-  font-family: 'Fjalla One', sans-serif;
+//  font-family: 'Fjalla One', sans-serif;
   font-size: 28px;
 //  border: 1px solid black;
 }
@@ -783,12 +763,12 @@ a:hover {
 #player_detail {
   padding: 0px;
   position: fixed;
-  margin-top: 70px;
+  margin-top: 64px;
   margin-left: 140px;
   width: 400px;
   text-align: center;
   overflow: hidden;
-  font-family: 'Rambla', sans-serif;
+//  font-family: 'Rambla', sans-serif;
   font-size: 13px;
   font-weight: 400;
 //  border: 1px solid black;
@@ -848,9 +828,9 @@ color: #8fbedb;
   position: fixed;
   width: 380px;
   height: 36px;
-  margin-top: 33px;
+  margin-top: 28px;
   margin-left: 150px;
-  font-family: 'Rambla', sans-serif;
+//  font-family: 'Rambla', sans-serif;
 //  border: 1px solid black;
 }
 #time_elapsed {
@@ -876,7 +856,7 @@ color: #8fbedb;
 }
 #player_menu {
   position: fixed;
-  margin-top: 36px;
+  margin-top: 31px;
   margin-left: 135px;
   width: 60px;
   height: 40px;
@@ -891,7 +871,7 @@ color: #8fbedb;
 }
 #playlist_button {
   position: fixed;
-  margin-top: 36px;
+  margin-top: 31px;
   margin-left: 525px;
   width: 60px;
   height: 40px;
@@ -927,12 +907,12 @@ color: #8fbedb;
   margin-top: 10px;
 }
 #playpause {
-  width: 85px;
-  height: 85px;
+  width: 75px;
+  height: 75px;
   -moz-border-radius: 100px;
   -webkit-border-radius: 100px;
   border-radius: 100px;
-  margin-top: -13px;
+  margin-top: -16px;
   background: white url('icons-playpause.png');
 }
 #next, #previous {
@@ -941,7 +921,7 @@ color: #8fbedb;
   -moz-border-radius: 100px;
   -webkit-border-radius: 100px;
   border-radius: 100px;
-  margin-top: 5px;
+  margin-top: 0px;
 }
 #previous {
   background: white url('icon-previous.png');
@@ -995,7 +975,7 @@ color: #8fbedb;
   margin: 5px;
   z-index: 200;
   width: 300px;
-  font-family: 'Rambla', sans-serif;
+//  font-family: 'Rambla', sans-serif;
   font-size: 16px;
   color: #333;
 }
@@ -1123,7 +1103,7 @@ color: #8fbedb;
   background-color: #ffcfd3;
   border: 1px solid black;
   color: #2a2a2a;
-  font-family: 'Rambla', sans-serif;
+//  font-family: 'Rambla', sans-serif;
   font-size: 17px;
   text-align: center;
   padding: 5px;
@@ -1142,7 +1122,7 @@ color: #8fbedb;
 .row h2 {
   margin-top: 15px;
   font-size: 30px;
-  font-family: 'Rambla';
+//  font-family: 'Rambla';
 }
 .beta {
   color: #c70204;
@@ -1152,7 +1132,7 @@ color: #8fbedb;
   width: 90px !important;
 }
 #empty_playlist_msg {
-  font-family: 'Rambla';
+//  font-family: 'Rambla';
   font-size: 16px;
   padding: 10px;
   background-color: #eee;
