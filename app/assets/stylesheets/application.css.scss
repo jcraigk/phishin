@@ -538,15 +538,12 @@ a:hover {
   width: 220px;
 }
 .item_list > li h2.wider {
-  width: 300px;
+  width: 280px;
 //  border: 1px solid red;
 }
-.item_list > li h2.medium_width {
-  width: 280px;
-}
-.item_list > li h2.extra_width {
-  width: 120px;
-}
+//.item_list > li h2.extra_width {
+//  width: 120px;
+//}
 .item_list > li h3 {
   margin-top: 0px;
   line-height: 14px;
@@ -579,6 +576,9 @@ a:hover {
   margin-left: 10px;
   border: 1px solid black;
   white-space: nowrap;
+}
+.item_list > li h4.narrow {
+  width: 180px;
 }
 .item_list > li h4 a {
   color: #777;

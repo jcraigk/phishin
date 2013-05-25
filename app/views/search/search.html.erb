@@ -53,7 +53,7 @@
             <ul class="item_list clickable">
               <% for venue in @venues %>
                 <li>
-                  <%= content_tag :h2, link_to(highlight(truncate(venue.name_and_abbrev, length: 45), params[:term]), "/#{venue.slug}"), class: 'medium_width' %>
+                  <%= content_tag :h2, link_to(highlight(truncate(venue.name_and_abbrev, length: 45), params[:term]), "/#{venue.slug}"), class: 'wider' %>
                   <%= content_tag :h3, pluralize(venue.shows_count, 'show'), class: 'alt' %>
                   <%= content_tag :h5, link_to(highlight(venue.location, params[:term]), "/map?term=#{CGI::escape(venue.location)}") %>
                   <div style="clear: both;"></div>

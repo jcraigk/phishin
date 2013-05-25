@@ -31,7 +31,7 @@
     
         <li>
           <%= content_tag :h2, link_to_show(show, @display_separators) %>
-          <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}") %>
+          <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}"), class: 'narrow' %>
           <%= content_tag :h5, link_to(show.venue.location, "/map?term=#{CGI::escape(show.venue.location)}") %>
           <span class="show_tag_container">
             <% show.tags.each do |tag| %>
