@@ -488,8 +488,8 @@ h2.for_content {
 
 #content {
   margin: 0 auto;
-  width: 880px;
-  padding: 190px 20px 40px 40px;
+  width: 900px;
+  padding: 210px 20px 40px 20px;
   -webkit-border-bottom-left-radius: 10px;
   -moz-border-radius-bottomleft: 10px;
   border-bottom-left-radius: 10px;
@@ -501,8 +501,18 @@ h2.for_content {
   border-bottom: 1px solid #555;
   background-color: #fff;
 }
+#title_box {
+  position: fixed;
+  width: 200px;
+  border: 1px solid red;
+}
+#content_box {
+  float: right;
+  width: 680px;
+  border: 1px solid green;
+}
 #content.noheader {
-  padding-top: 190px !important;
+  padding-top: 170px !important;
 }
 #content > h1 {
   margin-top: 20px;
@@ -719,15 +729,11 @@ h2.for_content {
 }
 #map_search_container {
   margin: 0 auto;
-  margin-top: 20px;
   text-align: center;
   background-color: #eee;
-  -webkit-border-top-left-radius: 5px;
-  -moz-border-radius-topleft: 5px;
-  border-top-left-radius: 5px;
-  -webkit-border-top-right-radius: 5px;
-  -moz-border-radius-topright: 5px;
-  border-top-right-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
   border: 1px solid #ccc;
   padding: 10px;
   font-size: 14px;
@@ -735,17 +741,17 @@ h2.for_content {
   font-family: 'Rambla', sans-serif;
 }
 #map_search_term {
-  margin-top: 10px;
-  width: 200px;
+  margin-top: 5px;
+  width: 140px;
 }
 #map_search_distance {
-  margin-top: 10px;
   width: 40px;
 }
 #map_search_submit {
-  margin-left: 20px;
+  width: 150px;
   font-weight: bold;
   font-family: 'Rambla', sans-serif;
+  margin-bottom: 20px;
 }
 
 /************************/
@@ -1238,7 +1244,6 @@ color: #8fbedb;
   width: 90px !important;
 }
 #empty_playlist_msg {
-  margin-top: 30px;
   font-family: 'Rambla';
   font-size: 16px;
   padding: 10px;
@@ -1288,4 +1293,7 @@ color: #8fbedb;
 #search_box .icon {
   margin-top: -2px;
   margin-left: 5px;
+}
+.clear {
+  clear: both;
 }

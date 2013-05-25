@@ -38,8 +38,8 @@ Phishin::Application.routes.draw do
   post    '/toggle-like'                  => 'likes#toggle_like',                   as: 'toggle_like'
   
   # Playlists / player
-  get     '/playlist'                     => 'playlists#playlist',                  as: 'active_playlist'
-  get     '/playlists'                    => 'playlists#playlists',                 as: 'playlists'
+  get     '/playlist'                     => 'playlists#active_playlist',           as: 'active_playlist'
+  get     '/playlists'                    => 'playlists#saved_playlists',           as: 'saved_playlists'
   get     '/play/:slug'                   => 'playlists#playlist'
   get     '/get-playlist'                 => 'playlists#get_playlist'
   get     '/get-saved-playlists'          => 'playlists#get_saved_playlists'

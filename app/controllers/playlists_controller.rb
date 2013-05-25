@@ -1,6 +1,9 @@
 class PlaylistsController < ApplicationController
 
-  def playlist
+  def saved_playlists
+  end
+
+  def active_playlist
     @num_tracks = 0
     @duration = 0
     if params[:slug] and playlist = Playlist.where(slug: params[:slug]).first

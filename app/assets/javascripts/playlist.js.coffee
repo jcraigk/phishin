@@ -19,7 +19,7 @@ class @Playlist
       update: =>
         this.updatePlaylist 'Track moved in playlist'
     })
-    this._refreshPlaylistDropdown()
+    # this._refreshPlaylistDropdown()
     
   updatePlaylist: (success_msg) ->
     track_ids = []
@@ -145,7 +145,7 @@ class @Playlist
          $('#playlist_data').attr 'data-name', r.name
          $('#playlist_data').attr 'data-slug', r.slug
          $('#playlist_title').html "Playlist: #{r.name}"
-         this._refreshPlaylistDropdown()
+         # this._refreshPlaylistDropdown()
          @Util.feedback { notice: r.msg }
        else
          @Util.feedback { alert: r.msg }
@@ -161,7 +161,7 @@ class @Playlist
      success: (r) =>
        if r.success
          this.clearPlaylist()
-         this._refreshPlaylistDropdown()
+         # this._refreshPlaylistDropdown()
          @Util.feedback { notice: 'Playlist deleted' }
        else
          @Util.feedback { alert: r.msg }
@@ -180,21 +180,21 @@ class @Playlist
     })
   
   _updatePlaylistStats: (num_tracks=0, duration=0) ->
-    $('#current_playlist_tracks_label').html "#{num_tracks} Tracks"
-    $('#current_playlist_duration_label').html "<i class=\"icon-time icon-white\"></i>  #{@Util.readableDuration(duration, 'letters')}"
+    $('#active_playlist_tracks_label').html "#{num_tracks} Tracks"
+    $('#active_playlist_duration_label').html "<i class=\"icon-time icon-white\"></i>  #{@Util.readableDuration(duration, 'letters')}"
   
-  _refreshPlaylistDropdown: ->
-    $list = $('#load_playlist_list')
-    $list.empty()
-    $.ajax({
-     url: '/get-saved-playlists',
-     success: (r) =>
-       if r.success
-         playlists = JSON.parse(r.playlists)
-         if playlists.length > 0
-           for p in playlists
-             $list.append "<li><a href=\"/play/#{p.slug}\"><i class=\"icon-list\"></i> #{p.name}</a></li>"
-         else
-           $list.append "<li><a href=\"#\">(No saved playlists)</a></li>"
-    })
+  # _refreshPlaylistDropdown: ->
+  #   $list = $('#load_playlist_list')
+  #   $list.empty()
+  #   $.ajax({
+  #    url: '/get-saved-playlists',
+  #    success: (r) =>
+  #      if r.success
+  #        playlists = JSON.parse(r.playlists)
+  #        if playlists.length > 0
+  #          for p in playlists
+  #            $list.append "<li><a href=\"/play/#{p.slug}\"><i class=\"icon-list\"></i> #{p.name}</a></li>"
+  #        else
+  #          $list.append "<li><a href=\"#\">(No saved playlists)</a></li>"
+  #   })
     
