@@ -43,7 +43,7 @@ namespace :venues do
   # end
 
   desc "Update shows_count cache"
-  task :update_shows_count => :environment do
+  task :sync_shows_count => :environment do
     Venue.all.each_with_index do |v, idx|
       puts "#{idx}: #{v.shows.size}"
       v.update_attributes(shows_count: v.shows.size)

@@ -1,10 +1,10 @@
 namespace :tours do
   
   desc "Update shows_count cache"
-  task :update_shows_count => :environment do
+  task :sync_shows_count => :environment do
     Tour.all.each do |t|
       puts "Here: #{t.shows.length}"
-      t.update_attributes(shows_count: t.shows.length)
+      t.update_attributes(shows_count: t.shows.size)
     end
   end
 
