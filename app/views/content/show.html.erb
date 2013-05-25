@@ -1,5 +1,6 @@
-<div id="header_container">
-  <div id="header">
+<div id="content" class="noheader">
+  
+  <div id="title_box">
     <%= content_tag :h1, linked_show_date(@show) %>
     <% unless @show.missing? %>
       <%= content_tag :h2, (link_to truncate(@show.venue.name.html_safe, length: 40), "/#{@show.venue.slug}") %>
@@ -9,40 +10,42 @@
       <%= likable(@show, @show_like, 'large') %>
     <% end %>
   </div>
-</div>
   
-<div id="content">
+  <div id="content_box">
   
-  <% if @show.missing? %>
-    <div class="incomplete_show">Sorry, this show is missing</div>
-  <% else %>
+    <% if @show.missing? %>
+      <div class="incomplete_show">Sorry, this show is missing</div>
+    <% else %>
   
-    <% if @show.incomplete? %>
-      <div class="incomplete_show">This show is incomplete</div>
-    <% end %>
-  
-    <% set = false %>
-    <% @tracks.each_with_index do |track, idx| %>
-    
-      <% if track.set != set %>
-        <% if set %>
-          </ul>
-        <% end %>
-        <%= content_tag 'h1', track.set_name %>
-        <ul class="item_list">
-        <% set = track.set %>
+      <% if @show.incomplete? %>
+        <div class="incomplete_show">This show is incomplete</div>
       <% end %>
-    
-      <li class="playable_track" data-id="<%= track.id %>" data-anchor="<%= track.slug %>">
-        <%= content_tag :h2, track_title_with_tags(track), class: 'wider' %>
-        <%= content_tag :h3, track.duration_readable %>
-        <%= likable(track, @tracks_likes[idx], 'small') %>
-        <%= render partial: 'shared/context_menu_for_track', locals: { track: track, show: @show, playlist: false } %>
-        <div style="clear: both;"></div>
-      </li>
-    <% end %>
-    </ul>
   
-  <% end %>
+      <% set = false %>
+      <% @tracks.each_with_index do |track, idx| %>
+    
+        <% if track.set != set %>
+          <% if set %>
+            </ul>
+          <% end %>
+          <%= content_tag 'h1', track.set_name %>
+          <ul class="item_list">
+          <% set = track.set %>
+        <% end %>
+    
+        <li class="playable_track" data-id="<%= track.id %>" data-anchor="<%= track.slug %>">
+          <%= content_tag :h2, track_title_with_tags(track), class: 'wider' %>
+          <%= content_tag :h3, track.duration_readable %>
+          <%= likable(track, @tracks_likes[idx], 'small') %>
+          <%= render partial: 'shared/context_menu_for_track', locals: { track: track, show: @show, playlist: false } %>
+          <div style="clear: both;"></div>
+        </li>
+      <% end %>
+      </ul>
+  
+    <% end %>
+  </div>
+  
+  <div style="clear: both;"></div>
   
 </div>

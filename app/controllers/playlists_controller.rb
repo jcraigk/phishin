@@ -179,7 +179,7 @@ class PlaylistsController < ApplicationController
         render json: { success: true, track_id: playlist.first }
       end
     else
-      render json: { success: false, msg: 'No current playlist' }
+      render json: { success: false, msg: 'No active playlist' }
     end
   end
 

@@ -348,6 +348,16 @@ a:hover {
 //  box-shadow: 0 6px 10px -2px #999;
 //  border: 1px solid red;
 }
+#title_box h1 {
+  font-family: 'Rambla', sans-serif;
+  font-size: 28px;
+  line-height: 28px;
+}
+#title_box h3 {
+  font-family: 'Rambla', sans-serif;
+  font-size: 18px;
+  line-height: 18px;
+}
 #header h1 {
   float: left;
   font-family: 'Rambla', sans-serif;
@@ -504,15 +514,15 @@ h2.for_content {
 #title_box {
   position: fixed;
   width: 200px;
-  border: 1px solid red;
+//  border: 1px solid red;
 }
 #content_box {
   float: right;
   width: 680px;
-  border: 1px solid green;
+//  border: 1px solid green;
 }
 #content.noheader {
-  padding-top: 170px !important;
+  padding-top: 180px !important;
 }
 #content > h1 {
   margin-top: 20px;
@@ -807,7 +817,7 @@ h2.for_content {
 #player_detail {
   padding: 0px;
   position: fixed;
-  margin-top: 68px;
+  margin-top: 70px;
   margin-left: 140px;
   width: 400px;
   text-align: center;

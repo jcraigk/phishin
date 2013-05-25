@@ -1,16 +1,13 @@
-<div id="header_container">
-  <div id="header">
+<div id="content" class="noheader">
+  
+  <div id="title_box">
     <%= content_tag :h1, "Song: #{@song.title}" %>
     <%= content_tag :h3, pluralize(@song.tracks.size, 'track') %>
     <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Chronological' => 'date desc', '<i class="icon-time"></i> Chronological' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes', '<i class="icon-forward"></i> Duration' => 'duration'} } %>
+    <%= will_paginate_simple @tracks %>
   </div>
-</div>
   
-<div id="content">
-  
-    <div class="centered">
-      <%= will_paginate_simple @tracks %>
-    </div>
+  <div id="content_box">
   
     <% unless @display_separators %>
       <ul class="item_list clickable">
@@ -33,22 +30,25 @@
           <% end %>
         <% end %>
 
-      <li>
-        <%= content_tag :h2, link_to(show_link_title(track.show, @display_separators), "/#{track.show.date}/#{track.slug}") %>
-        <%= content_tag :h4, link_to(truncate(track.show.venue.name.html_safe, length: 36), "/#{track.show.venue.slug}") %>
-        <%= content_tag :h5, link_to(track.show.venue.location, "/map?term=#{CGI::escape(track.show.venue.location)}") %>
-        <span class="show_tag_container">
-          <% track.show.tags.each do |tag| %>
-            <%= content_tag :span, tag.name, class: 'label show_tag', style: "background-color: #{tag.color}" %>
-          <% end %>
-        </span>
-        <% #content_tag :h3, track.duration_readable %>
-        <%= likable(track, @tracks_likes[idx], 'small') %>
-        <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil } %>
-        <div style="clear: both;"></div>
-      </li>
+        <li>
+          <%= content_tag :h2, link_to(show_link_title(track.show, @display_separators), "/#{track.show.date}/#{track.slug}") %>
+          <%= content_tag :h4, link_to(truncate(track.show.venue.name.html_safe, length: 36), "/#{track.show.venue.slug}") %>
+          <%= content_tag :h5, link_to(track.show.venue.location, "/map?term=#{CGI::escape(track.show.venue.location)}") %>
+          <span class="show_tag_container">
+            <% track.show.tags.each do |tag| %>
+              <%= content_tag :span, tag.name, class: 'label show_tag', style: "background-color: #{tag.color}" %>
+            <% end %>
+          </span>
+          <% #content_tag :h3, track.duration_readable %>
+          <%= likable(track, @tracks_likes[idx], 'small') %>
+          <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil } %>
+          <div style="clear: both;"></div>
+        </li>
+      <% end %>
     <% end %>
-  <% end %>
-  </ul>
+    </ul>
+  </div>
+  
+  <div style="clear: both;"></div>
 
 </div>

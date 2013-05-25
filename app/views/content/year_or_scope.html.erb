@@ -1,52 +1,54 @@
-<div id="header_container">
-  <div id="header">
+<div id="content" class="noheader">
+  
+  <div id="title_box">
     <%= content_tag :h1, @title %>
     <%= content_tag :h3, pluralize(@shows.size, 'show') %>
     <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Chronological' => 'date desc', '<i class="icon-time"></i> Chronological' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes',  '<i class="icon-forward"></i> Duration' => 'duration'} } %>
   </div>
-</div>
   
-<div id="content">
+  <div id="content_box">
+    <% if @shows.empty? %>
+      <h2>Got a blank space where shows should be...</h2>
+    <% else %>
   
-  <% if @shows.empty? %>
-    <h2>Got a blank space where shows should be...</h2>
-  <% else %>
-  
-    <% unless @display_separators %>
-      <ul class="item_list clickable">
-    <% end %>
-  
-    <% tour = false %>
-    <% @shows.each_with_index do |show, idx| %>
-  
-      <% if @display_separators %>
-        <% if show.tour != tour %>
-          <% if tour %>
-            </ul>
-          <% end %>
-          <%= content_tag 'h1', show.tour.name %>
-          <ul class="item_list clickable">
-          <% tour = show.tour %>
-        <% end %>
+      <% unless @display_separators %>
+        <ul class="item_list clickable">
       <% end %>
-    
-      <li>
-        <%= content_tag :h2, link_to_show(show, @display_separators) %>
-        <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}") %>
-        <%= content_tag :h5, link_to(show.venue.location, "/map?term=#{CGI::escape(show.venue.location)}") %>
-        <span class="show_tag_container">
-          <% show.tags.each do |tag| %>
-            <%= content_tag :span, tag.name, class: 'label show_tag', style: "background-color: #{tag.color}" %>
+  
+      <% tour = false %>
+      <% @shows.each_with_index do |show, idx| %>
+  
+        <% if @display_separators %>
+          <% if show.tour != tour %>
+            <% if tour %>
+              </ul>
+            <% end %>
+            <%= content_tag 'h1', show.tour.name %>
+            <ul class="item_list clickable">
+            <% tour = show.tour %>
           <% end %>
-        </span>
-        <% #content_tag :span, "#{show.duration_readable}", class: 'show_duration_small' %>
-        <%= likable(show, @shows_likes[idx], 'small') %>
-        <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
-        <div style="clear: both;"></div>
-      </li>
+        <% end %>
+    
+        <li>
+          <%= content_tag :h2, link_to_show(show, @display_separators) %>
+          <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}") %>
+          <%= content_tag :h5, link_to(show.venue.location, "/map?term=#{CGI::escape(show.venue.location)}") %>
+          <span class="show_tag_container">
+            <% show.tags.each do |tag| %>
+              <%= content_tag :span, tag.name, class: 'label show_tag', style: "background-color: #{tag.color}" %>
+            <% end %>
+          </span>
+          <% #content_tag :span, "#{show.duration_readable}", class: 'show_duration_small' %>
+          <%= likable(show, @shows_likes[idx], 'small') %>
+          <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
+          <div style="clear: both;"></div>
+        </li>
       
+      <% end %>
+      </ul>
     <% end %>
-    </ul>
-  <% end %>
+  </div>
+  
+  <div style="clear: both;"></div>
 
 </div>

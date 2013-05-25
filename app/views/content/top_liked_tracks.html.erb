@@ -1,23 +1,31 @@
 <div id="sub_nav_container">
   <div id="sub_nav">
-    <%= link_to 'Top Shows', top_shows_path %>
-    <%= link_to 'Top Tracks', top_tracks_path %>
+    <%= link_to 'Shows', top_shows_path %>
+    <%= link_to 'Tracks', top_tracks_path %>
   </div>
 </div>
 
 <div id="content">
   
-  <ul class="item_list">
-    <% @tracks.each_with_index do |track, idx| %>
-    <li class="playable_track" data-id="<%= track.id %>">
-      <%= content_tag :h2, "#{idx+1}", class: 'position_num' %>
-      <%= content_tag :h2, link_to(track.title, "/#{track.show.date}/#{track.slug}"), class: 'medium_width' %>
-      <%= content_tag :h5, link_to(track.show.date.strftime("%-m/%-d/%y"), "/#{track.show.date}"), class: 'large' %>
-      <%= content_tag :h3, track.duration_readable %>
-      <%= likable(track, @tracks_likes[idx], 'small') %>
-      <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil } %>
-      <div style="clear: both;"></div>
-    <% end %>
-  </ul>
+  <div id="title_box">
+    <%= content_tag :h1, 'Top 40 Tracks' %>
+  </div>
+  
+  <div id="content_box">  
+    <ul class="item_list">
+      <% @tracks.each_with_index do |track, idx| %>
+      <li class="playable_track" data-id="<%= track.id %>">
+        <%= content_tag :h2, "#{idx+1}", class: 'position_num' %>
+        <%= content_tag :h2, link_to(track.title, "/#{track.show.date}/#{track.slug}"), class: 'medium_width' %>
+        <%= content_tag :h5, link_to(track.show.date.strftime("%-m/%-d/%y"), "/#{track.show.date}"), class: 'large' %>
+        <%= content_tag :h3, track.duration_readable %>
+        <%= likable(track, @tracks_likes[idx], 'small') %>
+        <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil } %>
+        <div style="clear: both;"></div>
+      <% end %>
+    </ul>
+  </div>
+  
+  <div style="clear: both;"></div>
 
 </div>

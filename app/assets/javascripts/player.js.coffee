@@ -211,7 +211,7 @@ class @Player
       url: "/next-track"
       success: (r) =>
         if r.success
-          @Util.feedback { notice: 'Playing current playlist...'}
+          @Util.feedback { notice: 'Playing active playlist...'}
           this.playTrack r.track_id
         else
           $.ajax

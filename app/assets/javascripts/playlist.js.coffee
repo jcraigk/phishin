@@ -101,7 +101,7 @@ class @Playlist
        $('#playlist_data').attr 'data-user-name', ''
        $('#delete_playlist_btn').hide()
        $('#current_playlist').html ''
-       $('#playlist_title').html 'Current Playlist'
+       $('#playlist_title').html 'Active Playlist'
        this._updatePlaylistStats()
        $('#empty_playlist_msg').show()
        @Util.feedback { notice: 'Playlist is now empty' }

@@ -6,27 +6,24 @@
 
 <div id="content">
   
-  <div class="row">
-    <div class="span3">
-      <%= content_tag :h2, pluralize(@venues.size, 'Venue'), class: 'for_content' %>
-    </div>
-    <div class="span6">
-      <%# will_paginate_simple @venues %>
-    </div>
-    <div class="span2">
-      <%= render partial: 'sort_songs_and_venues_filter', locals: { item_hash: {'<i class="icon-text-height"></i> Alphabetically' => 'name', '<i class="icon-list"></i> Number of Shows' => 'performances'} } %>
-    </div>
+  <div id="title_box">
+    <%= content_tag :h2, pluralize(@venues.size, 'Venue'), class: 'for_content' %>
+    <%= render partial: 'sort_songs_and_venues_filter', locals: { item_hash: {'<i class="icon-text-height"></i> Alphabetically' => 'name', '<i class="icon-list"></i> Number of Shows' => 'performances'} } %>
+  </div>
+
+  <div id="content_box">
+    <ul class="item_list clickable">
+    <% for venue in @venues %>
+      <li>
+        <%= content_tag :h2, link_to(truncate(venue.name, length: 45), "/#{venue.slug}"), class: 'wide' %>
+        <%= content_tag :h3, venue.shows_count, class: 'alt' %>
+        <%= content_tag :h5, link_to(venue.location, "/map?term=#{CGI::escape(venue.location)}") %>
+        <div style="clear: both;"></div>
+      </li>   
+    <% end %>
+    </ul>
   </div>
   
-  <ul class="item_list clickable">
-  <% for venue in @venues %>
-    <li>
-      <%= content_tag :h2, link_to(truncate(venue.name, length: 45), "/#{venue.slug}"), class: 'wide' %>
-      <%= content_tag :h3, venue.shows_count, class: 'alt' %>
-      <%= content_tag :h5, link_to(venue.location, "/map?term=#{CGI::escape(venue.location)}") %>
-      <div style="clear: both;"></div>
-    </li>   
-  <% end %>
-  </ul>
+  <div style="clear: both;"></div>
 
 </div>

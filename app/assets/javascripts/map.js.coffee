@@ -54,10 +54,13 @@ class @Map
       success: (r) =>
         if r.success
           this._drawVenueMarkers r.venues
-          bounds = new google.maps.LatLngBounds()
-          for venue in r.venues
-            bounds.extend(new google.maps.LatLng(venue.latitude, venue.longitude))
-          @map.fitBounds bounds
+          if r.venues[1]
+            bounds = new google.maps.LatLngBounds()
+            for venue in r.venues
+              bounds.extend(new google.maps.LatLng(venue.latitude, venue.longitude))
+            @map.fitBounds bounds
+          else
+            @map.fitBounds @view_circle.getBounds()
         else
           @util.feedback { alert: 'No shows match your criteria'}
     })
