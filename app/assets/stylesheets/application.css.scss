@@ -431,6 +431,7 @@ a:hover {
   -moz-border-radius-bottomright: 10px;
   border-bottom-right-radius: 10px;
   background-color: #e6e7e8;
+  min-height: 450px;
 }
 #title_box {
   position: fixed;
@@ -446,17 +447,19 @@ a:hover {
 }
 #title_box h2 {
   margin-top: 0px;
-  line-height: 14px !important;
+  margin-bottom: 20px;
+  line-height: 18px !important;
   font-size: 18px;
   font-weight: normal;
   color: $text_gray;
 //  border: 1px solid black;
 }
 #title_box h3 {
-  line-height: 12px;
+  line-height: 10px;
   font-size: 16px;
   font-weight: normal;
   color: $text_gray;
+//  margin-bottom: -3px;
 }
 #content_box {
   float: right;
@@ -601,7 +604,6 @@ a:hover {
   font-size: 18px;
 }
 .item_list > li h5.narrow {
-  font-size: 16px;
   width: 100px;
 }
 .item_list > li h6 {

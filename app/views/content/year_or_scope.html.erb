@@ -31,8 +31,8 @@
     
         <li>
           <%= content_tag :h2, link_to_show(show, @display_separators) %>
-          <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}"), class: 'narrow' %>
-          <%= content_tag :h5, link_to(show.venue.location, "/map?term=#{CGI::escape(show.venue.location)}"), class: 'narrow' %>
+          <%= content_tag :h4, link_to(truncate(show.venue.name, length: 32), "/#{show.venue.slug}"), class: 'narrow' %>
+          <%= content_tag :h5, link_to(show.venue.location, "/map?term=#{CGI::escape(show.venue.location)}") %>
 
           <% #content_tag :span, "#{show.duration_readable}", class: 'show_duration_small' %>
           <%= likable(show, @shows_likes[idx], 'small') %>
