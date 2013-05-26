@@ -1,12 +1,14 @@
-<div class="btn-group">
-  <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
-    Sort
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu">
-    <% item_hash.each do |key, val| %>
-      <% link = params[:sort] == val ? "<strong>#{key}</strong>" : key %>
-      <%= content_tag :li, link_to(link.html_safe, "?sort=#{CGI::escape(val)}")%>
-    <% end %>
-  </ul>
-</div>
+<h3>Sort:
+  <div class="btn-group">
+    <a class="btn dropdown-toggle btn-sort" data-toggle="dropdown" href="null">
+      Sort
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <% item_hash.each do |key, val| %>
+        <% link = params[:sort] == val ? "<strong>#{key}</strong>" : key %>
+        <%= content_tag :li, link_to(link.html_safe, "?sort=#{CGI::escape(val)}")%>
+      <% end %>
+    </ul>
+  </div>
+</h3>

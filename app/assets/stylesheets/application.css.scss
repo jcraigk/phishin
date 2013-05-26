@@ -78,9 +78,9 @@ a:hover {
   margin-left: 26px;
 //  border: 1px solid green;
 }
-#global_nav a:hover {
-  text-decoration: none;
-}
+//#global_nav a:hover {
+//  text-decoration: none;
+//}
 #global_nav .active {
   font-weight: bold;
   color: black !important;
@@ -418,9 +418,9 @@ a:hover {
   margin-top: -5px;
   margin-left: 20px;
 }
-#sub_nav a:hover {
-  text-decoration: none;
-}
+//#sub_nav a:hover {
+//  text-decoration: none;
+//}
 #sub_nav a.active {
   font-weight: bold;
   color: black !important;
@@ -494,7 +494,7 @@ a:hover {
   color: #5b6699;
 }
 .item_list {
-  color: #333;
+//  color: #333;
   margin-left: 0px;
   margin-top: -5px;
   margin-bottom: 20px;
@@ -528,6 +528,7 @@ a:hover {
   width: 120px;
   margin-top: 0px;
   white-space: nowrap;
+  color: $text_gray !important;
 //  border: 1px solid black;
 }
 .item_list > li h2.position_num {
@@ -551,7 +552,7 @@ a:hover {
   line-height: 16px;
   font-size: 16px;
   float: right;
-  color: #555;
+//  color: #555;
   font-weight: normal;
   width: 40px;
   text-align: right;
@@ -559,6 +560,7 @@ a:hover {
   height: 16px;
   overflow: hidden;
   white-space: nowrap;
+  color: $text_gray !important;
 }
 .item_list > li h3.alt {
   width: 150px;
@@ -568,7 +570,7 @@ a:hover {
   width: 250px;
 }
 .item_list > li h3.alt a {
-  color: $text_gray;
+//  color: $text_gray;
   line-height: 10px;
 }
 .item_list > li h4 {
@@ -578,7 +580,7 @@ a:hover {
   width: 280px;
   margin-top: 0px;
   overflow: hidden;
-  color: $text_gray;
+  color: $text_gray !important;
   font-weight: normal;
   margin-left: 10px;
 //  border: 1px solid black;
@@ -599,6 +601,7 @@ a:hover {
   margin-top: 0px;
 //  border: 1px solid blue;
   font-weight: normal;
+  color: $text_gray !important;
 }
 .item_list > li h5.narrow {
   width: 100px;
@@ -638,6 +641,12 @@ a:hover {
   border-radius: 30px !important;
 //  background-image: none !important;
 //  background-color: $highlight !important;
+}
+.btn-sort {
+  height: 18px !important;
+  -moz-border-radius: 30px !important;
+  -webkit-border-radius: 30px !important;
+  border-radius: 30px !important;
 }
 
 .dropdown-menu {

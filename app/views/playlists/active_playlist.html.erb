@@ -11,7 +11,8 @@
   <div id="playlist_data" data-id="<%= session[:playlist_id] %>" data-name="<%= session[:playlist_name] %>" data-slug="<%= session[:playlist_slug] %>" data-user-id="<%= session[:playlist_user_id] %>" data-user-name="<%= session[:playlist_user_name] %>"></div>
   
   <div id="title_box">
-    <%= content_tag :h1, (session[:playlist_id] > 0 ? "Playlist: #{session[:playlist_name]}" : 'Active Playlist'), id: 'playlist_title' %>
+    <%= content_tag :h1, (session[:playlist_id] > 0 ? session[:playlist_name] : '(Untitled Playlist)'), id: 'playlist_title' %>
+    <%= content_tag :h3, "What: a Playlist" %>
     <%= content_tag :h3, "Tracks: #{@num_tracks}", id: 'active_playlist_tracks_label' %>
     <%= content_tag :h3, "Length: #{duration_readable(@duration, 'letters')}", id: 'current_playlist_duration_label' %>
     <br /><br />
