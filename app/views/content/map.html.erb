@@ -14,7 +14,8 @@ $(function() {
     changeMonth: true,
     yearRange: '1983:2013',
     showOtherMonths: true,
-    selectOtherMonths: true
+    selectOtherMonths: true,
+    
   });
 })
 </script>
@@ -24,9 +25,9 @@ $(function() {
   <div id="title_box">
     <div id="map_search_container">
       Find shows near &nbsp;&nbsp;
-      <input type="text" name="date" id="map_search_term" placeholder="place or zipcode" value="<%= params[:term] %>">
+      <input type="text" id="map_search_term" placeholder="place or zipcode" value="<%= params[:term] %>">
       &nbsp;&nbsp;within &nbsp;
-      <input type="text" name="date" id="map_search_distance" value="<%= params[:distance] || 50 %>">&nbsp;&nbsp;miles &nbsp;
+      <input type="text" id="map_search_distance" value="<%= params[:distance] || 50 %>">&nbsp;&nbsp;miles &nbsp;
       <button type="button" class="btn" id="map_search_submit">Search</button><br />    
       <span class="optional">
         within timeframe<br />

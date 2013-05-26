@@ -12,8 +12,8 @@
   
   <div id="title_box">
     <%= content_tag :h1, (session[:playlist_id] > 0 ? "Playlist: #{session[:playlist_name]}" : 'Active Playlist'), id: 'playlist_title' %>
-    <%= content_tag :h2, "Tracks: #{@num_tracks}", id: 'active_playlist_tracks_label' %>
-    <%= content_tag :h2, "Length: #{duration_readable(@duration, 'letters')}", id: 'current_playlist_duration_label' %>
+    <%= content_tag :h3, "Tracks: #{@num_tracks}", id: 'active_playlist_tracks_label' %>
+    <%= content_tag :h3, "Length: #{duration_readable(@duration, 'letters')}", id: 'current_playlist_duration_label' %>
     <br /><br />
     <button type="button" class="btn btn-info" id="clear_playlist_btn"><i class="icon-eject icon-white"></i> Empty Playlist</button><br />
     <% if user_signed_in? %>
@@ -41,7 +41,7 @@
         <li class="playable_track" data-id="<%= track.id %>" data-track-duration="<%= track.duration %>">
           <%= content_tag :h2, "#{idx+1}", class: 'position_num' %>
           <%= content_tag :h2, track_title_with_tags(track), class: 'wide' %>
-          <%= content_tag :h5, link_to(track.show.date.strftime("%-m/%-d/%y"), "#{track.show.date}", class: 'large') %>
+          <%= content_tag :h5, link_to(track.show.date.strftime("%-m/%-d/%y"), "#{track.show.date}") %>
           <%= content_tag :div, "<i class=\"icon-resize-vertical\"></i>".html_safe, class: "drag_arrows_vertical"  %>
           <%= content_tag :h3, track.duration_readable %>
           <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: true, show: nil } %>

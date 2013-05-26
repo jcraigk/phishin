@@ -3,8 +3,9 @@
   <div id="title_box">
     <%= content_tag :h1, linked_show_date(@show) %>
     <% unless @show.missing? %>
-      <%= content_tag :h2, (link_to @show.venue.name.html_safe, "/#{@show.venue.slug}") %>
-      <%= content_tag :h3, "Location: #{(link_to @show.venue.location, "/map?term=#{CGI::escape(@show.venue.location)}")}".html_safe, class: 'small' %>
+      <%= content_tag :h3, "What: a Performance" %>
+      <%= content_tag :h3, "Venue: #{(link_to @show.venue.name.html_safe, "/#{@show.venue.slug}")}".html_safe %>
+      <%= content_tag :h3, "Location: #{(link_to @show.venue.location, "/map?term=#{CGI::escape(@show.venue.location)}")}".html_safe %>
       <%= content_tag :h3, "Length: #{duration_readable(@show.duration, 'letters')}" %>
       <%= likable(@show, @show_like, 'large') %>
       <div style="clear: both;"></div>

@@ -48,7 +48,8 @@ class ContentController < ApplicationController
     # Day of Year?
     if monthday = g.match(/^(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})$/i)
       if day_of_year Date::MONTHNAMES.index(monthday[1].titleize), Integer(monthday[2], 10)
-        @title = "Day: #{monthday[1].titleize} #{Integer(monthday[2], 10)}"
+        @title = "#{monthday[1].titleize} #{Integer(monthday[2], 10)}"
+        @what_title = "a Day of the Year"
         view = :year_or_scope
       else
         view = :show_not_found
@@ -56,7 +57,8 @@ class ContentController < ApplicationController
     # Year?
     elsif g.match(/^\d{4}$/)
       if year g
-        @title = "Year: #{g}"
+        @title = g
+        @what_title = "a Year"
         view = :year_or_scope
       else
         redirect_to :root
@@ -64,7 +66,8 @@ class ContentController < ApplicationController
     # Year range?
     elsif years = g.match(/^(\d{4})-(\d{4})$/)
       if year_range years[1], years[2]
-        @title = "Years: #{g}"
+        @title = "#{$1} - #{$2}"
+        @what_title = "a Year Range"
         view = :year_or_scope
       else
         redirect_to :root
@@ -86,6 +89,7 @@ class ContentController < ApplicationController
         # Tour?
       elsif tour g
         @title = @tour.name
+        @what_title = "a Tour"
         view = :year_or_scope
       # Fall back to root
       else

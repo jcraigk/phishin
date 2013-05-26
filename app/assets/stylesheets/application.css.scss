@@ -10,7 +10,7 @@ $text_gray: #6d6f71;
 $highlight: #7eb8c7;
 
 * {
-  font-family: 'Archivo Narrow', sans-serif;
+  font-family: 'Archivo Narrow', sans-serif !important;
 }
 body {
   background-color: #fff !important;
@@ -144,10 +144,16 @@ a:hover {
 
 /******************************/
 
+.ui-datepicker { 
+  margin-top: 0px !important;
+}
 #google_map {
   width: 100%;
   height: 600px;
 //  font-family: 'Rambla', sans-serif;
+}
+#google_map a {
+  color: black !important;
 }
 #google_map label {
   width: auto;
@@ -157,21 +163,21 @@ a:hover {
   max-width: none;
 }
 #google_map h1 {
-  font-size: 17px;
+  font-size: 18px;
   line-height: 20px;
 }
 #google_map h2 {
   margin-top: -8px;
-  font-size: 14px;
-  line-height: 14px;
+  font-size: 16px;
+  line-height: 16px;
 }
 #google_map h3 {
   margin-top: -10px;
-  font-size: 13px;
+  font-size: 14px;
 }
 #google_map ul {
   margin-top: -20px;
-  font-size: 13px;
+  font-size: 15px;
 }
 #map_date_start {
   width: 90px;
@@ -210,7 +216,7 @@ a:hover {
   line-height: 66px;
   color: #791419;
   font-size: 24px;
-  font-family: 'Nothing You Could Do', cursive;
+  font-family: 'Nothing You Could Do', cursive !important;
 }
 #player_likes_container {
   margin: 0 auto;
@@ -256,7 +262,7 @@ a:hover {
   line-height: 16px;
   color: #5f1014;
   font-size: 15px;
-  font-family: 'Nothing You Could Do', cursive;
+  font-family: 'Nothing You Could Do', cursive !important;
 }
 
 .spinner_likes_small {
@@ -359,30 +365,30 @@ a:hover {
   margin-top: -8px !important;
   margin-bottom: 20px;
 }
-#header h2.floating {
-  margin-left: 220px;
-}
-#header h2.small {
-  font-size: 16px;
-  line-height: 48px;
-}
-.show_duration {
-  font-size: 15px;
-  line-height: 15px;
-}
-.show_duration_small {
-  float: right;
-  margin-top: 8px;
-  margin-right: -10px;
-  font-size: 12px;
-  background-color: #666;
-  color: white;
-  border-radius: 5px;
-  padding: 5px;
-  line-height: 14px;
-  font-weight: 400;
-  width: 80px;
-}
+//#header h2.floating {
+//  margin-left: 220px;
+//}
+//#header h2.small {
+//  font-size: 16px;
+//  line-height: 48px;
+//}
+//.show_duration {
+//  font-size: 15px;
+//  line-height: 15px;
+//}
+//.show_duration_small {
+//  float: right;
+//  margin-top: 8px;
+//  margin-right: -10px;
+//  font-size: 12px;
+//  background-color: #666;
+//  color: white;
+//  border-radius: 5px;
+//  padding: 5px;
+//  line-height: 14px;
+//  font-weight: 400;
+//  width: 80px;
+//}
 #clear_playlist {
   position: absolute;
   margin-top: 10px;
@@ -455,7 +461,7 @@ a:hover {
 //  border: 1px solid black;
 }
 #title_box h3 {
-  line-height: 10px;
+  line-height: 16px;
   font-size: 16px;
   font-weight: normal;
   color: $text_gray;
@@ -581,9 +587,6 @@ a:hover {
 .item_list > li h4.narrow {
   width: 180px;
 }
-.item_list > li h4 a {
-  color: #777;
-}
 .item_list > li h5 {
   float: left;
   font-size: 14px;
@@ -597,26 +600,20 @@ a:hover {
 //  border: 1px solid blue;
   font-weight: normal;
 }
-.item_list > li h5 a {
-  color: #999;
-}
-.item_list > li h5.large {
-  font-size: 18px;
-}
 .item_list > li h5.narrow {
   width: 100px;
 }
-.item_list > li h6 {
-  position: absolute;
-  line-height: 21px;
-  font-size: 15px;
-  margin-left: 680px;
-  white-space: nowrap;
-  overflow: hidden;
-}
-.item_list > li h6 a {
-  color: #999;
-}
+//.item_list > li h6 {
+//  position: absolute;
+//  line-height: 21px;
+//  font-size: 15px;
+//  margin-left: 680px;
+//  white-space: nowrap;
+//  overflow: hidden;
+//}
+//.item_list > li h6 a {
+//  color: #999;
+//}
 .item_list > li .btn_context {
   visibility: hidden;
   float: right;
@@ -1063,14 +1060,15 @@ color: #8fbedb;
   font-size: 11px;
 }
 .small_input {
-  width: 70px !important;
+  width: 50px !important;
   padding: 3px !important;
-  height: 20px !important;
-  font-size: 11px !important;
+  height: 18px !important;
+  font-size: 12px !important;
   color: #777 !important;
 }
 .incomplete_show {
   margin-top: 10px;
+  margin-bottom: 10px;
   border-radius: 5px;
   background-color: #ffcfd3;
   border: 1px solid black;

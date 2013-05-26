@@ -1,8 +1,9 @@
 <div id="content" class="noheader">
   
   <div id="title_box">
-    <%= content_tag :h1, "Song: #{@song.title}" %>
-    <%= content_tag :h2, pluralize(@song.tracks.size, 'track') %>
+    <%= content_tag :h1, @song.title %>
+    <%= content_tag :h3, "What: a Song" %>
+    <%= content_tag :h3, "Tracks: #{@song.tracks.size}" %>
     <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Chronological' => 'date desc', '<i class="icon-time"></i> Chronological' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes', '<i class="icon-forward"></i> Duration' => 'duration'} } %>
     <%= will_paginate_simple @tracks %>
   </div>
