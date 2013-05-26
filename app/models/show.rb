@@ -50,13 +50,4 @@ class Show < ActiveRecord::Base
     tracks.select { |t| /^\d$/.match t.set }.map(&:set).sort.last
   end
   
-  def duration_readable
-    hours = duration / 3600000
-    if hours > 0
-      "#{duration / 3600000}h #{(duration % 3600000) / 60000}min"
-    else
-      "#{(duration % 3600000) / 60000}min"
-    end
-  end
-  
 end

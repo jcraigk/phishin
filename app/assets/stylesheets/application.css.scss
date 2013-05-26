@@ -190,13 +190,14 @@ a:hover {
 }
 .likes_large a {
   cursor: pointer;
-  float: right;
+  float: left;
   width: 20px;
   height: 20px;
   text-decoration: none;
   background: url('icons-heart.png');
   margin-top: 21px;
-  margin-left: 8px;
+  margin-right: 8px;
+  margin-bottom: 0px;
 //  border: 1px solid black;
 }
 .likes_large a:hover {
@@ -205,7 +206,7 @@ a:hover {
   text-decoration: none !important;
 }
 .likes_large span {
-//  float: right;
+  float: left;
   line-height: 66px;
   color: #791419;
   font-size: 24px;
@@ -232,7 +233,7 @@ a:hover {
   margin-left: 10px;
   line-height: 14px;
   text-align: left;
-  border: 1px solid red;
+//  border: 1px solid red;
   overflow: hidden;
 }
 .likes_small a {
@@ -434,11 +435,11 @@ a:hover {
 #title_box {
   position: fixed;
   width: 200px;
-  border: 1px solid red;
+//  border: 1px solid red;
 }
 #title_box h1 {
   line-height: 24px;
-  font-size: 28px;
+  font-size: 24px;
   margin-bottom: 20px;
   margin-top: 0px;
   color: $text_gray;
@@ -449,17 +450,19 @@ a:hover {
   font-size: 18px;
   font-weight: normal;
   color: $text_gray;
+//  border: 1px solid black;
 }
 #title_box h3 {
   line-height: 12px;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: normal;
   color: $text_gray;
 }
 #content_box {
   float: right;
   width: 680px;
-  border: 1px solid green;
+  padding-top: 5px;
+//  border: 1px solid green;
 }
 #content.noheader {
   padding-top: 160px !important;
@@ -507,15 +510,16 @@ a:hover {
 //  border: 1px solid red;
 }
 .item_list > li h2 {
-  line-height: 16px;
+  line-height: 14px;
   height: 16px;
   overflow: hidden;
   font-size: 16px;
   float: left;
   font-weight: normal;
-  width: 140px;
+  width: 120px;
   margin-top: 0px;
-  border: 1px solid $text_gray;
+  white-space: nowrap;
+//  border: 1px solid black;
 }
 .item_list > li h2.position_num {
   font-weight: bold;
@@ -542,9 +546,10 @@ a:hover {
   font-weight: normal;
   width: 40px;
   text-align: right;
-  border: 1px solid red;
+//  border: 1px solid red;
   height: 16px;
   overflow: hidden;
+  white-space: nowrap;
 }
 .item_list > li h3.alt {
   width: 150px;
@@ -567,7 +572,7 @@ a:hover {
   color: $text_gray;
   font-weight: normal;
   margin-left: 10px;
-  border: 1px solid black;
+//  border: 1px solid black;
   white-space: nowrap;
 }
 .item_list > li h4.narrow {
@@ -583,9 +588,10 @@ a:hover {
   width: 150px;
   height: 16px;
   overflow: hidden;
+  white-space: nowrap;
   margin-left: 10px;
   margin-top: 0px;
-  border: 1px solid blue;
+//  border: 1px solid blue;
   font-weight: normal;
 }
 .item_list > li h5 a {
@@ -596,13 +602,15 @@ a:hover {
 }
 .item_list > li h5.narrow {
   font-size: 16px;
-  width: 80px;
+  width: 100px;
 }
 .item_list > li h6 {
   position: absolute;
   line-height: 21px;
   font-size: 15px;
   margin-left: 680px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .item_list > li h6 a {
   color: #999;
@@ -629,6 +637,8 @@ a:hover {
   -moz-border-radius: 30px !important;
   -webkit-border-radius: 30px !important;
   border-radius: 30px !important;
+//  background-image: none !important;
+//  background-color: $highlight !important;
 }
 
 .dropdown-menu {
@@ -1079,18 +1089,18 @@ color: #8fbedb;
   font-size: 14px !important;
   font-style: italic;
 }
-.row h2 {
-  margin-top: 15px;
-  font-size: 30px;
-//  font-family: 'Rambla';
-}
-.beta {
-  color: #c70204;
-  font-weight: bold;
-}
-.span2-alt {
-  width: 90px !important;
-}
+//.row h2 {
+//  margin-top: 15px;
+//  font-size: 30px;
+////  font-family: 'Rambla';
+//}
+//.beta {
+//  color: #c70204;
+//  font-weight: bold;
+//}
+//.span2-alt {
+//  width: 90px !important;
+//}
 #empty_playlist_msg {
 //  font-family: 'Rambla';
   font-size: 16px;

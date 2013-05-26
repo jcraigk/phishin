@@ -1,6 +1,6 @@
 class SearchController < ApplicationController
 
-  def search
+  def results
     term = params[:term] ||= ''
     if term.present?
       @results = true

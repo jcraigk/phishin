@@ -33,11 +33,11 @@ module ApplicationHelper
     days = x
     if style == 'letters'
       if days > 0
-        "%dd %02dh %02dmin" % [days, hours, minutes]
+        "%dd %02dh %02dm" % [days, hours, minutes]
       elsif hours > 0
-        "%dh %02dmin" % [hours, minutes]
+        "%dh %02dm" % [hours, minutes]
       else
-        "%dmin %02ds" % [minutes, seconds]
+        "%dm %02ds" % [minutes, seconds]
       end
     else
       if days > 0

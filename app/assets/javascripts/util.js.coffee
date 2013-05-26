@@ -69,14 +69,14 @@ class @Util
     days = x
     if style is 'letters'
       if days > 0
-        "#{days}d #{hours}h #{minutes}min #{seconds}s"
+        "#{days}d #{hours}h #{minutes}m #{seconds}s"
       else if hours > 0
         if include_seconds
-          "#{hours}h #{minutes}min #{seconds}s"
+          "#{hours}h #{minutes}m #{seconds}s"
         else
-          "#{hours}h #{minutes}min"
+          "#{hours}h #{minutes}m"
       else
-        "#{minutes}min #{seconds}s"
+        "#{minutes}m #{seconds}s"
     else
       if days > 0
         "#{days}::#{hours}:#{minutes_with_zero}:#{seconds_with_zero}"
