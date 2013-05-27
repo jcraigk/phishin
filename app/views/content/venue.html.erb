@@ -2,7 +2,7 @@
   
   <div id="title_box">
     <%= content_tag :h1, @venue.name %>
-    <%= content_tag :h3, "What: a Venue" %>
+    <%# content_tag :h3, "What: a Venue" %>
     <%= content_tag :h3, "Location: #{link_to(@venue.location, "/map?term=#{@venue.latitude},#{@venue.longitude}&amp;distance=.2")}".html_safe %>
     <%= content_tag :h3, "Shows: #{@venue.shows_count}" %>
     <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Chronological' => 'date desc', '<i class="icon-time"></i> Chronological' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes',  '<i class="icon-forward"></i> Duration' => 'duration'} } %>

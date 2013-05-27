@@ -1,8 +1,5 @@
 class PlaylistsController < ApplicationController
 
-  def saved_playlists
-  end
-
   def active_playlist
     @num_tracks = 0
     @duration = 0
@@ -26,6 +23,19 @@ class PlaylistsController < ApplicationController
       session[:playlist] = []
     end
     @saved_playlists = Playlist.where(user_id: current_user.id).order('name') if current_user
+    render layout: false if request.xhr?
+  end
+  
+  def saved_playlists
+    if current_user
+      bookmarked_ids = PlaylistBookmark.where(user_id: current_user.id).all.map(&:id)
+      if bookmarked_ids.size > 0
+        @playlists = Playlist.where("user_id = ? OR id IN ?", current_user.id, bookmarked_ids)
+      else
+        @playlists = Playlist.where(user_id: current_user.id)
+      end
+      @playlists.page(params[:page])
+    end
     render layout: false if request.xhr?
   end
   
@@ -108,7 +118,7 @@ class PlaylistsController < ApplicationController
     end
   end
   
-  def update_current_playlist
+  def update_active_playlist
     clear_saved_playlist
     session[:playlist] = params[:track_ids].map {|id| Integer(id, 10)}
     session[:playlist] = session[:playlist].take(100)
@@ -225,15 +235,6 @@ class PlaylistsController < ApplicationController
   
   def get_playlist
     render json: { playlist: session[:playlist] }
-  end
-  
-  def get_saved_playlists
-    if current_user
-      playlists = Playlist.where(user_id: current_user.id).order('name asc').all
-      render json: {success: true, playlists: playlists.to_json(except: [:user_id, :created_at, :updated_at]) }
-    else
-      render json: { success: false }
-    end
   end
   
   private

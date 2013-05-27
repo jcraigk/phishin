@@ -9,6 +9,10 @@
 $text_gray: #6d6f71;
 $highlight: #7eb8c7;
 
+.btn {
+  margin-bottom: 10px !important;
+}
+
 * {
   font-family: 'Archivo Narrow', sans-serif !important;
 }
@@ -516,7 +520,7 @@ a:hover {
   float: left;
   width: 15px;
   margin-top: -2px;
-//  border: 1px solid red;
+  border: 1px solid red;
 }
 .item_list > li h2 {
   line-height: 14px;
@@ -533,11 +537,11 @@ a:hover {
 }
 .item_list > li h2.position_num {
   font-weight: bold;
-  font-size: 16px;
+  font-size: 15px;
   text-align: right;
   width: 20px;
   margin-right: 10px;
-  line-height: 16px;
+  line-height: 15px;
 //  border: 1px solid red;
 }
 .item_list > li h2.wide {
@@ -552,15 +556,14 @@ a:hover {
   line-height: 16px;
   font-size: 16px;
   float: right;
-//  color: #555;
   font-weight: normal;
   width: 40px;
   text-align: right;
-//  border: 1px solid red;
   height: 16px;
   overflow: hidden;
   white-space: nowrap;
   color: $text_gray !important;
+//  border: 1px solid red;
 }
 .item_list > li h3.alt {
   width: 150px;
@@ -591,7 +594,7 @@ a:hover {
 }
 .item_list > li h5 {
   float: left;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 16px;
   width: 150px;
   height: 16px;
@@ -623,7 +626,7 @@ a:hover {
   width: 40px;
 //  height: 14px;
   margin-left: 15px;
-  line-height: 20px;
+  line-height: 10px;
   text-align: left;
 }
 .btn_context {
@@ -634,7 +637,7 @@ a:hover {
 }
 .btn-round {
   margin-top: -1px;
-  height: 10px !important;
+  height: 8px !important;
   width: 10px !important;
   -moz-border-radius: 30px !important;
   -webkit-border-radius: 30px !important;
@@ -650,7 +653,7 @@ a:hover {
 }
 
 .dropdown-menu {
- margin-top: -6px !important;
+ margin-top: -10px !important;
 }
 .dropdown-menu li > a:hover, .dropdown-menu li > a:focus, .dropdown-submenu:hover > a {
   background-image: none !important;
@@ -702,6 +705,9 @@ a:hover {
   font-family: sans-serif;
   float: right;
   margin-top: -7px;
+}
+#userbox .btn-group .btn {
+  font-size: 16px !important;
 }
 #player_feedback {
   width: 50px;

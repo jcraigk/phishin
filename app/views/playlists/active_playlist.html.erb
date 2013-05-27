@@ -1,10 +1,9 @@
 <div id="sub_nav_container">
   <div id="sub_nav">
-    <%= link_to 'Active Playlist', active_playlist_path, class: 'active' %>
-    <%= link_to 'Saved Playlists', saved_playlists_path %>
+    <%= link_to 'Active', active_playlist_path, class: 'active' %>
+    <%= link_to 'Saved', saved_playlists_path %>
   </div>
 </div>
-
 
 <div id="content">
   
@@ -12,11 +11,10 @@
   
   <div id="title_box">
     <%= content_tag :h1, (session[:playlist_id] > 0 ? session[:playlist_name] : '(Untitled Playlist)'), id: 'playlist_title' %>
-    <%= content_tag :h3, "What: a Playlist" %>
     <%= content_tag :h3, "Tracks: #{@num_tracks}", id: 'active_playlist_tracks_label' %>
-    <%= content_tag :h3, "Length: #{duration_readable(@duration, 'letters')}", id: 'current_playlist_duration_label' %>
-    <br /><br />
-    <button type="button" class="btn btn-info" id="clear_playlist_btn"><i class="icon-eject icon-white"></i> Empty Playlist</button><br />
+    <%= content_tag :h3, "Length: #{duration_readable(@duration, 'letters')}", id: 'active_playlist_duration_label' %>
+    <br />
+    <button type="button" class="btn" id="clear_playlist_btn"><i class="icon-eject"></i> Empty</button><br />
     <% if user_signed_in? %>
       <button type="button" class="btn" id="save_playlist_btn"><i class="icon-file"></i> Save</button><br />
       <button type="button" class="btn" id="share_playlist_btn"><i class="icon-share"></i> Share</button>
@@ -36,13 +34,13 @@
       When signed in, you can save and share your custom playlists.
     </div>
   
-    <ul class="item_list" id="current_playlist">
+    <ul class="item_list" id="active_playlist">
     <% if @tracks %>
       <% @tracks.each_with_index do |track, idx| %>
         <li class="playable_track" data-id="<%= track.id %>" data-track-duration="<%= track.duration %>">
           <%= content_tag :h2, "#{idx+1}", class: 'position_num' %>
           <%= content_tag :h2, track_title_with_tags(track), class: 'wide' %>
-          <%= content_tag :h5, link_to(track.show.date.strftime("%-m/%-d/%y"), "#{track.show.date}") %>
+          <%= content_tag :h5, link_to(track.show.date.strftime("%-m.%-d.%y"), "#{track.show.date}") %>
           <%= content_tag :div, "<i class=\"icon-resize-vertical\"></i>".html_safe, class: "drag_arrows_vertical"  %>
           <%= content_tag :h3, track.duration_readable %>
           <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: true, show: nil } %>

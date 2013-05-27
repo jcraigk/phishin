@@ -1,0 +1,37 @@
+<div id="sub_nav_container">
+  <div id="sub_nav">
+    <%= link_to 'Active', active_playlist_path %>
+    <%= link_to 'Saved', saved_playlists_path, class: 'active' %>
+  </div>
+</div>
+
+<div id="content">
+  
+  <div id="title_box">
+    <%= content_tag :h1, 'Saved Playlists' %>
+    <%= content_tag :h3, "Display: [coming]" %>
+    <%= content_tag :h3, "Sort by: [coming]" %>
+  </div>
+  
+  <div id="content_box">
+    
+    <% if !current_user %>
+      <p>You must sign in to manage saved playlists</p>
+    <% else %>
+      <ul class="item_list">
+        <% for playlist in @playlists %>
+          <li>
+            <%= content_tag :h2, playlist.name, class: 'wider' %>
+            <%= content_tag :h3, playlist.duration %>
+            <%= content_tag :h4, playlist.user.username %>
+            <%= render partial: 'shared/context_menu_for_playlist', locals: { playlist: playlist } %>
+            <div style="clear: both;"></div>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  </div>
+  
+  <div style="clear: both;"></div>
+  
+</div>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130525010829) do
+ActiveRecord::Schema.define(:version => 20130526053130) do
 
   create_table "album_requests", :force => true do |t|
     t.integer  "album_id"
@@ -71,10 +71,12 @@ ActiveRecord::Schema.define(:version => 20130525010829) do
     t.integer  "user_id"
     t.string   "name"
     t.string   "slug"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
+    t.integer  "duration",   :default => 0
   end
 
+  add_index "playlists", ["duration"], :name => "index_playlists_on_duration"
   add_index "playlists", ["name"], :name => "index_playlists_on_name"
   add_index "playlists", ["slug"], :name => "index_playlists_on_slug"
   add_index "playlists", ["user_id"], :name => "index_playlists_on_user_id"

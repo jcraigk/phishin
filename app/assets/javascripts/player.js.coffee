@@ -161,11 +161,11 @@ class @Player
   highlightActiveTrack: (scroll_to_track=false)->
     if @active_track
       $track = $('.playable_track[data-id="'+@active_track+'"]')
-      $playlist_track = $('#current_playlist>li[data-id="'+@active_track+'"]')
+      $playlist_track = $('#active_playlist>li[data-id="'+@active_track+'"]')
       $('.playable_track').removeClass 'active_track'
       $track.removeClass 'highlighted_track'
       $track.addClass 'active_track'
-      $('#current_playlist>li').removeClass 'active_track'
+      $('#active_playlist>li').removeClass 'active_track'
       $playlist_track.addClass 'active_track'
       if scroll_to_track
         if $track.length > 0

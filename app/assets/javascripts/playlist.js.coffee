@@ -14,7 +14,7 @@ class @Playlist
   
   initPlaylist: ->
     this._getPlaylist()
-    $('#current_playlist').sortable({
+    $('#active_playlist').sortable({
       placeholder: "ui-state-highlight",
       update: =>
         this.updatePlaylist 'Track moved in playlist'
@@ -24,7 +24,7 @@ class @Playlist
   updatePlaylist: (success_msg) ->
     track_ids = []
     duration = 0
-    $('#current_playlist > li').each( (idx, el) ->
+    $('#active_playlist > li').each( (idx, el) ->
       track_ids.push $(this).data('id')
       duration += parseInt $(this).data('track-duration')
       $(this).find('.position_num').html "#{idx+1}"
@@ -65,7 +65,7 @@ class @Playlist
     })
   
   removeTrackFromPlaylist: (track_id) ->
-    if $('#current_playlist').children('li').size() is 0
+    if $('#active_playlist').children('li').size() is 0
       this.clearPlaylist()
       @Player.stopAndUnload()
     else
@@ -100,7 +100,7 @@ class @Playlist
        $('#playlist_data').attr 'data-user-id', ''
        $('#playlist_data').attr 'data-user-name', ''
        $('#delete_playlist_btn').hide()
-       $('#current_playlist').html ''
+       $('#active_playlist').html ''
        $('#playlist_title').html 'Active Playlist'
        this._updatePlaylistStats()
        $('#empty_playlist_msg').show()
@@ -180,8 +180,8 @@ class @Playlist
     })
   
   _updatePlaylistStats: (num_tracks=0, duration=0) ->
-    $('#active_playlist_tracks_label').html "#{num_tracks} Tracks"
-    $('#active_playlist_duration_label').html "<i class=\"icon-time icon-white\"></i>  #{@Util.readableDuration(duration, 'letters')}"
+    $('#active_playlist_tracks_label').html "Tracks: #{num_tracks}"
+    $('#active_playlist_duration_label').html "Length: #{@Util.readableDuration(duration, 'letters')}"
   
   # _refreshPlaylistDropdown: ->
   #   $list = $('#load_playlist_list')

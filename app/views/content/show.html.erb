@@ -3,7 +3,7 @@
   <div id="title_box">
     <%= content_tag :h1, linked_show_date(@show) %>
     <% unless @show.missing? %>
-      <%= content_tag :h3, "What: a Show" %>
+      <%# content_tag :h3, "What: a Show" %>
       <%= content_tag :h3, "Venue: #{(link_to @show.venue.name.html_safe, "/#{@show.venue.slug}")}".html_safe %>
       <%= content_tag :h3, "Location: #{(link_to @show.venue.location, "/map?term=#{CGI::escape(@show.venue.location)}")}".html_safe %>
       <%= content_tag :h3, "Length: #{duration_readable(@show.duration, 'letters')}" %>
@@ -36,7 +36,7 @@
         <% end %>
     
         <li class="playable_track" data-id="<%= track.id %>" data-anchor="<%= track.slug %>">
-          <%= content_tag :h2, track_title_with_tags(track), class: 'wider' %>
+          <%= content_tag :h2, track_title_with_tags(track), class: 'wide' %>
           <%= content_tag :h3, track.duration_readable %>
           <%= likable(track, @tracks_likes[idx], 'small') %>
           <%= render partial: 'shared/context_menu_for_track', locals: { track: track, show: @show, playlist: false } %>
