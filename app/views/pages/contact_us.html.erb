@@ -1,25 +1,23 @@
 <div id="content" class="noheader">
   
-  <h1>Contact</h1>
-  <br />
-
-  <p>I woke up one morning in November<br />
-  And I realized I love you<br />
-  It's not your headlights in front<br />
-  Your tailpipe, or the skylight above you<br />
-  It's the way you cling to the road<br />
-  When the wind tries to shove you<br />
-  I'd never go driving away<br />
-  And come back home without you</p>
+  <div id="title_box">
+    <h1>Contact</h1>
+  </div>
   
-  <br />
-  
-  <%= render partial: 'shared/twitter_follow_button' %>
-  
-  <br />
-  <br />
-  
-  <p><strong>What's up? <a href="mailto:<%= APP_EMAIL %>" class="non-remote" target="_blank"><%= APP_EMAIL %></a></strong></p>
-
+  <div id="content_box">
+    <p class="large">I woke up one morning in November<br />
+    And I realized I love you<br />
+    It's not your headlights in front<br />
+    Your tailpipe, or the skylight above you<br />
+    It's the way you cling to the road<br />
+    When the wind tries to shove you<br />
+    I'd never go driving away<br />
+    And come back home without you</p>
+    
+    <br />
+    
+    <p class="large"><a href="mailto:<%= APP_EMAIL %>" class="non-remote" target="_blank"><%= APP_EMAIL %></a></p>
+    <%= render partial: 'shared/twitter_follow_button' %>
+  </div>
     
 </div>

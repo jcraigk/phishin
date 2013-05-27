@@ -1,17 +1,26 @@
 <div id="content" class="noheader">
+  
+  <div id="title_box">
+    Resend Confirmation
+  </div>
+  
+  <div id="content_box">
 
-  <%= form_for(resource, :as => resource_name, :url => confirmation_path(resource_name), :html => { :method => :post }) do |f| %>
-    <%= devise_error_messages! %>
+    <%= form_for(resource, :as => resource_name, :url => confirmation_path(resource_name), :html => { :method => :post }) do |f| %>
+      <%= devise_error_messages! %>
     
-    <br />
-    <div class="field_label">Email</div>
-    <div class="field_content"><%= f.email_field :email, :autofocus => true %></div>
-    <div style="clear: both;"></div>
+      <br />
+      <div class="field_label">Email</div>
+      <div class="field_content"><%= f.email_field :email, :autofocus => true %></div>
+      <div style="clear: both;"></div>
 
-    <br />
-    <div class="field_label"><%= f.submit "Resend confirmation instructions" %></div>
-    <div style="clear: both;"></div>
+      <br />
+      <div class="field_label"><%= f.submit "Resend confirmation instructions" %></div>
+      <div style="clear: both;"></div>
 
-  <% end %>
+    <% end %>
+  </div>
+  
+    <div style="clear: both;"></div>
 
 </div>

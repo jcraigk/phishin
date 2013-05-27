@@ -8,6 +8,7 @@
 
 $text_gray: #6d6f71;
 $highlight: #7eb8c7;
+$emphasis: #000;
 
 .btn {
   margin-bottom: 10px !important;
@@ -31,6 +32,14 @@ a {
 }
 a:hover {
   text-decoration: underline;
+}
+
+p.large {
+  font-size: 18px;
+}
+
+#error_explanation {
+  background-color: #f2c4b5 !important;
 }
 
 .track_tag {
@@ -526,7 +535,7 @@ a:hover {
   line-height: 14px;
   height: 16px;
   overflow: hidden;
-  font-size: 16px;
+  font-size: 15px;
   float: left;
   font-weight: normal;
   width: 120px;
@@ -538,10 +547,10 @@ a:hover {
 .item_list > li h2.position_num {
   font-weight: bold;
   font-size: 15px;
+  line-height: 15px;
   text-align: right;
   width: 20px;
   margin-right: 10px;
-  line-height: 15px;
 //  border: 1px solid red;
 }
 .item_list > li h2.wide {
@@ -553,8 +562,8 @@ a:hover {
 }
 .item_list > li h3 {
   margin-top: 0px;
-  line-height: 16px;
-  font-size: 16px;
+  font-size: 15px;
+  line-height: 15px;
   float: right;
   font-weight: normal;
   width: 40px;
@@ -577,8 +586,8 @@ a:hover {
   line-height: 10px;
 }
 .item_list > li h4 {
-  font-size: 14px;
-  line-height: 16px;
+  font-size: 15px;
+  line-height: 15px;
   float: left;
   width: 280px;
   margin-top: 0px;
@@ -594,8 +603,8 @@ a:hover {
 }
 .item_list > li h5 {
   float: left;
-  font-size: 16px;
-  line-height: 16px;
+  font-size: 15px;
+  line-height: 15px;
   width: 150px;
   height: 16px;
   overflow: hidden;
@@ -708,6 +717,8 @@ a:hover {
 }
 #userbox .btn-group .btn {
   font-size: 16px !important;
+  box-shadow: none !important;
+  color: $emphasis !important;
 }
 #player_feedback {
   width: 50px;

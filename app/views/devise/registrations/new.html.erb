@@ -1,8 +1,11 @@
 <div id="content" class="noheader">
-    
-  <h2>Sign up</h2>
+  
+  <div id="title_box">
+    <h1>Sign Up</h1>
+  </div>
 
-  <div id="new_user_container">
+  <div id="content_box">
+
     <%= form_for resource, :as => resource_name, :url => registration_path(resource_name) do |f| %>
       <%= devise_error_messages! %>
       
@@ -14,7 +17,7 @@
 
       <div class="field_label">Username</div>
       <div class="field_content"><%= f.text_field :username %></div>
-      <div class="field_note">A nickname to identify yourself to others</div>
+      <div class="field_note">A unique nickname to identify yourself to others</div>
       <div style="clear: both;"></div>
       
       <div class="field_label">Password</div>
@@ -29,8 +32,10 @@
       <div style="clear: both;"></div>
 
     <% end %>
+    
+    <%= render "devise/shared/links" %>
   </div>
 
-  <%= render "devise/shared/links" %>
+  <div style="clear: both;"></div>
 
 </div>

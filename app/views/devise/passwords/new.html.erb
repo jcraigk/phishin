@@ -1,5 +1,10 @@
 <div id="content" class="noheader">
+  
+  <div id="title_box">
+    <h1>Reset a Password</h1>
+  </div>
 
+  <div id="content_box">
     <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f| %>
       <%= devise_error_messages! %>
       
@@ -13,5 +18,8 @@
       <div style="clear: both;"></div>
 
     <% end %>
+  </div>
+  
+  <div style="clear: both;"></div>
   
 </div>

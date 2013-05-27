@@ -1,28 +1,30 @@
-<div id="header_container">
-  <div id="header">
-    <h1>Change your password</h1>
+<div id="content" class="noheader">
+  
+  <div id="title_box">
+    <h1>Reset a Password</h1>
   </div>
-</div>
 
-<div id="content">
+  <div id="content_box">
+    <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put }) do |f| %>
+      <%= devise_error_messages! %>
+      <%= f.hidden_field :reset_password_token %>
+    
+      <br />
+      <div class="field_label">New Password</div>
+      <div class="field_content"><%= f.password_field :password, :autofocus => true %></div>
+      <div style="clear: both;"></div>
+    
+      <div class="field_label">Confirm Password</div>
+      <div class="field_content"><%= f.password_field :password_confirmation %></div>
+      <div style="clear: both;"></div>
+    
+      <br />
+      <div class="field_label"><%= f.submit "Change My Password" %></div>
+      <div style="clear: both;"></div>
 
-  <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put }) do |f| %>
-    <%= devise_error_messages! %>
-    <%= f.hidden_field :reset_password_token %>
-    
-    <br />
-    <div class="field_label">New Password</div>
-    <div class="field_content"><%= f.password_field :password, :autofocus => true %></div>
-    <div style="clear: both;"></div>
-    
-    <div class="field_label">Confirm Password</div>
-    <div class="field_content"><%= f.password_field :password_confirmation %></div>
-    <div style="clear: both;"></div>
-    
-    <br />
-    <div class="field_label"><%= f.submit "Change My Password" %></div>
-    <div style="clear: both;"></div>
-
-  <% end %>
+    <% end %>
+  </div>
+  
+  <div style="clear: both;"></div>
     
 </div>

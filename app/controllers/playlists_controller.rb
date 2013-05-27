@@ -62,18 +62,18 @@ class PlaylistsController < ApplicationController
     elsif session[:playlist].size < 2
       msg = 'Saved playlists must contain at least 2 tracks'
     elsif save_action == 'new'
-      if Playlist.where(user_id: current_user.id).all.size >= 10
-        msg = 'Sorry, each user is limited to 10 playlists'
+      if Playlist.where(user_id: current_user.id).all.size >= MAX_PLAYLISTS_PER_USER
+        msg = "Sorry, each user is limited to #{MAX_PLAYLISTS_PER_USER} playlists"
       else
         playlist = Playlist.create(user_id: current_user.id, name: params[:name], slug: params[:slug])
-        create_playlist_tracks(playlist.id)
+        create_playlist_tracks(playlist)
         success = true
         msg = 'Playlist created'
       end
     elsif playlist = Playlist.where(user_id: current_user.id, id: params[:id]).first
       playlist.update_attributes(name: params[:name], slug: params[:slug])
       playlist.tracks.each { |track| track.destroy }
-      create_playlist_tracks(playlist.id)
+      create_playlist_tracks(playlist)
       success = true
       msg = 'Playlist updated'
     else
@@ -239,10 +239,11 @@ class PlaylistsController < ApplicationController
   
   private
   
-  def create_playlist_tracks(playlist_id)
+  def create_playlist_tracks(playlist)
     session[:playlist].each_with_index do |track_id, idx|
-      PlaylistTrack.create(playlist_id: playlist_id, track_id: track_id, position: idx+1)
+      PlaylistTrack.create(playlist_id: playlist.id, track_id: track_id, position: idx+1)
     end
+    playlist.update_attributes(duration: playlist.tracks.map(&:duration).inject(0, &:+))
   end
   
   def clear_saved_playlist

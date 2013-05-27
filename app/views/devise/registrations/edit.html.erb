@@ -1,35 +1,35 @@
-<div id="header_container">
-  <div id="header">
-    <h1>Edit <%= resource_name.to_s.humanize %></h1>
+<div id="content" class="noheader">
+  
+  <div id="title_box">
+    <h1>Change Password</h1>
   </div>
-</div>
 
-<div id="content">
-    
-  <h2>Change Password</h2>
+  <div id="content_box">
+    <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
+      <%= devise_error_messages! %>
 
-  <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
-    <%= devise_error_messages! %>
-
-    <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
-      <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+      <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+        <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
+      <% end %>
+      
+      <br />
+      <div class="field_label">New Password</div>
+      <div class="field_content"><%= f.password_field :password, :autocomplete => "off" %></div>
+      <div style="clear: both;"></div>
+      
+      <div class="field_label">Confirm Password</div>
+      <div class="field_content"><%= f.password_field :password_confirmation %></div>
+      <div style="clear: both;"></div>
+      
+      <div class="field_label">Current Password</div>
+      <div class="field_content"><%= f.password_field :current_password %> * needed to authorize you</div>
+      <div style="clear: both;"></div>
+      
+      <div class="field_label"><%= f.submit "Change Password" %></div>
+      <div style="clear: both;"></div>
     <% end %>
-      
-    <br />
-    <div class="field_label">New Password</div>
-    <div class="field_content"><%= f.password_field :password, :autocomplete => "off" %></div>
+  </div>
+  
     <div style="clear: both;"></div>
-      
-    <div class="field_label">Confirm Password</div>
-    <div class="field_content"><%= f.password_field :password_confirmation %></div>
-    <div style="clear: both;"></div>
-      
-    <div class="field_label">Current Password</div>
-    <div class="field_content"><%= f.password_field :current_password %> * needed to authorize you</div>
-    <div style="clear: both;"></div>
-      
-    <div class="field_label"><%= f.submit "Change Password" %></div>
-    <div style="clear: both;"></div>
-  <% end %>
   
 </div>
