@@ -158,7 +158,7 @@ class ContentController < ApplicationController
         aliased_song = Song.where(id: @song.alias_for).first
         @redirect = "/#{aliased_song.slug}"
       else
-        @tracks = @song.tracks.includes({:show => :venue}, :songs).order(@order_by).paginate(page: params[:page], per_page: 20)
+        @tracks = @song.tracks.includes({:show => :venue}, :songs).order(@order_by).page(page: params[:page])
         @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
       end
     end

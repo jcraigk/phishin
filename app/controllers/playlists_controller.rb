@@ -10,6 +10,11 @@ class PlaylistsController < ApplicationController
       session[:playlist_slug] = playlist.slug
       session[:playlist_user_id] = playlist.user.id
       session[:playlist_user_name] = playlist.user.username
+      if current_user and bookmark = PlaylistBookmark.where(playlist_id: playlist.id, user_id: current_user.id).first
+        session[:playlist_is_bookmarked] = true
+      else
+        session[:playlist_is_bookmarked] = false
+      end
     end
     begin
       if session[:playlist]
@@ -92,12 +97,28 @@ class PlaylistsController < ApplicationController
     end
   end
   
-  def delete_playlist
+  def destroy_playlist_or_bookmark
     if current_user and params[:id] and playlist = Playlist.where(id: params[:id], user_id: current_user.id).first
       playlist.destroy
-      render json: { success: true }
+      render json: { success: true, msg: 'Playlist deleted' }
+    elsif current_user and params[:id] and bookmark = PlaylistBookmark.where(playlist_id: params[:id], user_id: current_user.id).first
+      bookmark.destroy
+      render json: { success: true, msg: 'Playlist unbookmarked' }
     else
       render json: { success: false, msg: 'Invalid delete request' }
+    end
+  end
+  
+  def bookmark_playlist
+    if current_user and params[:playlist_id]
+      if bookmark = PlaylistBookmark.where(playlist_id: params[:playlist_id], user_id: current_user.id)
+        render json: { success: false, msg: 'Playlist already bookmarked' }
+      else
+        PlaylistBookmark.create(playlist_id: params[:playlist_id], user_id: current_user.id)
+        render json: { success: true, msg: 'Playlist bookmarked' }
+      end
+    else
+      render json: { success: false, msg: 'You must be logged in to bookmark a playlist' }
     end
   end
   
@@ -247,11 +268,13 @@ class PlaylistsController < ApplicationController
   end
   
   def clear_saved_playlist
+    session[:playlist] = []
     session[:playlist_id] = 0
     session[:playlist_name] = ''
     session[:playlist_slug] = ''
     session[:playlist_user_id] = ''
     session[:playlist_user_name] = ''
+    session[:playlist_is_bookmarked] = false
   end
   
 end

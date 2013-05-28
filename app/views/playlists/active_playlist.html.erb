@@ -17,10 +17,15 @@
     <button type="button" class="btn" id="clear_playlist_btn"><i class="icon-eject"></i> Empty</button><br />
     <% if user_signed_in? %>
       <button type="button" class="btn" id="save_playlist_btn"><i class="icon-file"></i> Save</button><br />
-      <button type="button" class="btn" id="share_playlist_btn"><i class="icon-share"></i> Share</button>
-      <% if current_user and current_user.id == session[:playlist_user_id] %>
-        &nbsp;&nbsp;
-        <button type="button" class="btn btn-danger" id="delete_playlist_btn"><i class="icon-remove icon-white"></i> Delete</button>
+      <button type="button" class="btn" id="share_playlist_btn"><i class="icon-share"></i> Share</button><br />
+      <% if current_user.id == session[:playlist_user_id] %>
+        <button type="button" class="btn" id="delete_playlist_btn"><i class="icon-remove"></i> Delete</button>
+      <% else %>
+        <% if session[:playlist_is_bookmarked] %>
+          <button type="button" class="btn" id="delete_playlist_btn"><i class="icon-remove"></i> Unbookmark</button>
+        <% else %>
+          <button type="button" class="btn" id="bookmark_playlist_btn"><i class="icon-bookmark"></i> Bookmark</button>
+        <% end %>
       <% end %>
     <% end %>
   </div>
@@ -55,5 +60,4 @@
   <div style="clear: both;"></div>
   
 </div>
-<div style="clear: both;"></div>
 

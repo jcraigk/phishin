@@ -181,8 +181,11 @@ $ ->
   $(document).on 'click', '#delete_playlist_btn', (e) ->
     if confirm 'Are you sure you want to permanently delete this playlist?'
       App.Playlist.deletePlaylist()
+  $(document).on 'click', '#bookmark_playlist_btn', (e) ->
+    App.Playlist.bookmarkPlaylist()
   $(document).on 'click', '#clear_playlist_btn', (e) ->
-    App.Playlist.clearPlaylist()
+    if confirm 'Are you sure you want to clear out your active playlist?'
+      App.Playlist.clearPlaylist()
   $(document).on 'click', '.playlist_add_track', (e) ->
     App.Playlist.addTrackToPlaylist $(this).data('id')
   $(document).on 'click', '.playlist_add_show', (e) ->

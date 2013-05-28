@@ -101,10 +101,22 @@ class @Playlist
        $('#playlist_data').attr 'data-user-name', ''
        $('#delete_playlist_btn').hide()
        $('#active_playlist').html ''
-       $('#playlist_title').html 'Active Playlist'
+       $('#playlist_title').html '(Untitled Playlist)'
        this._updatePlaylistStats()
        $('#empty_playlist_msg').show()
        @Util.feedback { notice: 'Playlist is now empty' }
+    })
+
+  bookmarkPlaylist: (playlist_id) ->
+    $.ajax({
+      type: 'post',
+      url: '/bookmark-playlist',
+      data: { 'playlist_id': playlist_id}
+      success: (r) =>
+        if r.success
+          @Util.feedback { notice: 'Playlist bookmarked' }
+        else
+          @Util.feedback { alert: r.msg }
     })
   
   handleSaveModal: ->
@@ -161,8 +173,7 @@ class @Playlist
      success: (r) =>
        if r.success
          this.clearPlaylist()
-         # this._refreshPlaylistDropdown()
-         @Util.feedback { notice: 'Playlist deleted' }
+         @Util.feedback { notice: r.msg }
        else
          @Util.feedback { alert: r.msg }
     })
@@ -182,19 +193,4 @@ class @Playlist
   _updatePlaylistStats: (num_tracks=0, duration=0) ->
     $('#active_playlist_tracks_label').html "Tracks: #{num_tracks}"
     $('#active_playlist_duration_label').html "Length: #{@Util.readableDuration(duration, 'letters')}"
-  
-  # _refreshPlaylistDropdown: ->
-  #   $list = $('#load_playlist_list')
-  #   $list.empty()
-  #   $.ajax({
-  #    url: '/get-saved-playlists',
-  #    success: (r) =>
-  #      if r.success
-  #        playlists = JSON.parse(r.playlists)
-  #        if playlists.length > 0
-  #          for p in playlists
-  #            $list.append "<li><a href=\"/play/#{p.slug}\"><i class=\"icon-list\"></i> #{p.name}</a></li>"
-  #        else
-  #          $list.append "<li><a href=\"#\">(No saved playlists)</a></li>"
-  #   })
     

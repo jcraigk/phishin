@@ -49,7 +49,7 @@ class ApplicationController < ActionController::Base
   end
   
   def init_params
-    params[:per_page]         ||= 10
+    params[:per_page]         ||= 20
     params[:t]                ||= 0
   end
   

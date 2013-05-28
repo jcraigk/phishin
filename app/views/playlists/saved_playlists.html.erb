@@ -18,12 +18,12 @@
     <% if !current_user %>
       <p>You must sign in to manage saved playlists</p>
     <% else %>
-      <ul class="item_list">
+      <ul class="item_list clickable">
         <% for playlist in @playlists %>
           <li>
-            <%= content_tag :h2, playlist.name, class: 'wider' %>
+            <%= content_tag :h2, link_to(playlist.name, "/play/#{playlist.slug}"), class: 'wider' %>
             <%= content_tag :h3, playlist.duration %>
-            <%= content_tag :h4, playlist.user.username %>
+            <%= content_tag :h4, playlist.user.username, class: 'narrow' %>
             <%= render partial: 'shared/context_menu_for_playlist', locals: { playlist: playlist } %>
             <div style="clear: both;"></div>
           </li>

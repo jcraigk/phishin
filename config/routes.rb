@@ -39,11 +39,12 @@ Phishin::Application.routes.draw do
   
   # Playlists / player
   get     '/playlist'                     => 'playlists#active_playlist',           as: 'active_playlist'
+  get     '/play/:slug'                   => 'playlists#active_playlist',           as: 'activate_playlist'
   get     '/playlists'                    => 'playlists#saved_playlists',           as: 'saved_playlists'
-  get     '/play/:slug'                   => 'playlists#playlist'
   get     '/get-playlist'                 => 'playlists#get_playlist'
   post    '/save-playlist'                => 'playlists#save_playlist'
-  post    '/delete-playlist'              => 'playlists#delete_playlist'
+  post    '/bookmark-playlist'            => 'playlists#bookmark_playlist'
+  post    '/delete-playlist'              => 'playlists#destroy_playlist_or_bookmark'
   post    '/reset-playlist/'              => 'playlists#reset_playlist'
   post    '/clear-playlist/'              => 'playlists#clear_playlist'
   post    '/update-current-playlist'      => 'playlists#update_active_playlist'
