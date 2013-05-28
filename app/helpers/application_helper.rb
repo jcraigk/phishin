@@ -41,11 +41,11 @@ module ApplicationHelper
       end
     else
       if days > 0
-        "%d:%02d:%02d" % [days, hours, minutes]
+        "%d:%02d:%02d:%02d" % [days, hours, minutes, seconds]
       elsif hours > 0
-        "%d:%02d" % [hours, minutes]
+        "%d:%02d:%02d" % [hours, minutes, seconds]
       else
-        "%d:%02d" % [minutes, seconds]
+        "%d:%02d:%02d" % [minutes, seconds]
       end
     end
   end

@@ -9,20 +9,23 @@
   
   <div id="title_box">
     <%= content_tag :h1, 'Saved Playlists' %>
-    <%= content_tag :h3, "Display: [coming]" %>
-    <%= content_tag :h3, "Sort by: [coming]" %>
+    <% if user_signed_in? %>
+      <%= content_tag :h3, "Lists: #{number_with_delimiter(@playlists.size)}" %>
+      <%= content_tag :h3, "Display: [coming]" %>
+      <%= content_tag :h3, "Sort by: [coming]" %>
+    <% end %>
   </div>
   
   <div id="content_box">
     
-    <% if !current_user %>
+    <% if !user_signed_in? %>
       <p>You must sign in to manage saved playlists</p>
     <% else %>
       <ul class="item_list clickable">
         <% for playlist in @playlists %>
           <li>
             <%= content_tag :h2, link_to(playlist.name, "/play/#{playlist.slug}"), class: 'wider' %>
-            <%= content_tag :h3, playlist.duration %>
+            <%= content_tag :h3, duration_readable(playlist.duration) %>
             <%= content_tag :h4, playlist.user.username, class: 'narrow' %>
             <%= render partial: 'shared/context_menu_for_playlist', locals: { playlist: playlist } %>
             <div style="clear: both;"></div>

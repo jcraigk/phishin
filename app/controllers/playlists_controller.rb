@@ -4,7 +4,10 @@ class PlaylistsController < ApplicationController
     @num_tracks = 0
     @duration = 0
     if params[:slug] and playlist = Playlist.where(slug: params[:slug]).first
+      # tracks = tracks.order('playlist_tracks.position').all
+      # raise playlist.inspect
       session[:playlist] = playlist.tracks.order('position').all.map(&:id)
+      # raise session[:playlist].inspect
       session[:playlist_id] = playlist.id
       session[:playlist_name] = playlist.name
       session[:playlist_slug] = playlist.slug
@@ -16,16 +19,13 @@ class PlaylistsController < ApplicationController
         session[:playlist_is_bookmarked] = false
       end
     end
-    begin
-      if session[:playlist]
-        session[:playlist] = session[:playlist].take(100)
-        tracks_by_id = Track.find(session[:playlist]).index_by(&:id)
-        @tracks = session[:playlist].collect {|id| tracks_by_id[id] }
-        @num_tracks = @tracks.size
-        @duration = @tracks.map(&:duration).inject(0, &:+) if @num_tracks > 0
-      end
-    rescue
-      session[:playlist] = []
+    # raise session[:playlist].inspect
+    if session[:playlist]
+      session[:playlist] = session[:playlist].take(100)
+      tracks_by_id = Track.find(session[:playlist]).index_by(&:id)
+      @tracks = session[:playlist].collect {|id| tracks_by_id[id] }
+      @num_tracks = @tracks.size
+      @duration = @tracks.map(&:duration).inject(0, &:+) if @num_tracks > 0
     end
     @saved_playlists = Playlist.where(user_id: current_user.id).order('name') if current_user
     render layout: false if request.xhr?
@@ -60,9 +60,7 @@ class PlaylistsController < ApplicationController
       msg = 'Name must be between 5 and 50 characters'
     elsif !params[:slug].match(/^[a-z0-9\-]{5,50}$/)
       msg = 'URL must be between 5 and 50 lowercase letters, numbers, or dashes'
-    elsif playlist = Playlist.where(name: params[:name], user_id: current_user.id).where('id <> ?', params[:id]).first
-      msg = 'You already have a playlist with that name; choose another'
-    elsif playlist = Playlist.where(slug: params[:slug]).where('id <> ?', params[:id]).first
+    elsif playlist = Playlist.where(slug: params[:slug], user_id: current_user.id).where('id != ?', params[:id]).first
       msg = 'That URL has already been taken; choose another'
     elsif session[:playlist].size < 2
       msg = 'Saved playlists must contain at least 2 tracks'
@@ -73,16 +71,16 @@ class PlaylistsController < ApplicationController
         playlist = Playlist.create(user_id: current_user.id, name: params[:name], slug: params[:slug])
         create_playlist_tracks(playlist)
         success = true
-        msg = 'Playlist created'
+        msg = 'Playlist saved'
       end
     elsif playlist = Playlist.where(user_id: current_user.id, id: params[:id]).first
       playlist.update_attributes(name: params[:name], slug: params[:slug])
-      playlist.tracks.each { |track| track.destroy }
+      playlist.tracks.map(&:destroy)
       create_playlist_tracks(playlist)
       success = true
-      msg = 'Playlist updated'
+      msg = 'Playlist saved'
     else
-      msg = 'Existing playlist not found'
+      msg = 'Playlist not found'
     end
     if success
       render json: {

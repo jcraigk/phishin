@@ -10,6 +10,9 @@
   <div id="title_box">
     <%= content_tag :h1, 'Top 40 Tracks' %>
     <%# content_tag :h3, 'What: Based on Likes' %>
+    <% if !user_signed_in? %>
+      <p class="instructions">Contribute by signing up and Liking your favorite tracks</p>
+    <% end %>
   </div>
   
   <div id="content_box">  

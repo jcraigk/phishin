@@ -9,6 +9,7 @@
 $text_gray: #6d6f71;
 $highlight: #7eb8c7;
 $emphasis: #000;
+$alert: #2a2a2a;
 
 .btn {
   margin-bottom: 10px !important;
@@ -566,7 +567,7 @@ p.large {
   line-height: 15px;
   float: right;
   font-weight: normal;
-  width: 40px;
+  width: 50px;
   text-align: right;
   height: 16px;
   overflow: hidden;
@@ -1110,12 +1111,11 @@ color: #8fbedb;
   color: #777 !important;
 }
 .incomplete_show {
-  margin-top: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
   background-color: #ffcfd3;
   border: 1px solid black;
-  color: #2a2a2a;
+  color: $alert;
 //  font-family: 'Rambla', sans-serif;
   font-size: 17px;
   text-align: center;
