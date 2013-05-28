@@ -151,14 +151,13 @@ class ContentController < ApplicationController
   end
   
   def song(slug)
-    params[:per_page] = 50
     validate_sorting_for_song
     if @song = Song.where(slug: slug).first
       if @song.alias_for
         aliased_song = Song.where(id: @song.alias_for).first
         @redirect = "/#{aliased_song.slug}"
       else
-        @tracks = @song.tracks.includes({:show => :venue}, :songs).order(@order_by).page(page: params[:page])
+        @tracks = @song.tracks.includes({:show => :venue}, :songs).order(@order_by).page(params[:page])
         @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
       end
     end

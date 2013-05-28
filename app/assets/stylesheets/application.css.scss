@@ -727,6 +727,12 @@ p.large {
   margin-right: 10px;
   font-size: 18px;
 }
+.filter_menu {
+  display: inline;
+  width: 120px;
+  height: 20px;
+  margin-top: 7px;
+}
 
 #userbox {
   font-family: sans-serif;
@@ -737,6 +743,8 @@ p.large {
   font-size: 16px !important;
   box-shadow: none !important;
   color: $emphasis !important;
+  border: none !important;
+//  border: 1px solid red !important;
 }
 #player_feedback {
   width: 50px;
@@ -1132,19 +1140,7 @@ color: #8fbedb;
   font-size: 14px !important;
   font-style: italic;
 }
-//.row h2 {
-//  margin-top: 15px;
-//  font-size: 30px;
-////  font-family: 'Rambla';
-//}
-//.beta {
-//  color: #c70204;
-//  font-weight: bold;
-//}
-//.span2-alt {
-//  width: 90px !important;
-//}
-#empty_playlist_msg {
+.callout_box {
 //  font-family: 'Rambla';
   font-size: 16px;
   padding: 10px;

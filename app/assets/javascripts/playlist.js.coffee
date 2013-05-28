@@ -87,7 +87,7 @@ class @Playlist
           @Util.feedback { alert: r.msg }
     })
 
-  clearPlaylist: ->
+  clearPlaylist: (supress_feedback=true)->
     $.ajax({
      url: '/clear-playlist',
      type: 'post',
@@ -104,7 +104,7 @@ class @Playlist
        $('#playlist_title').html '(Untitled Playlist)'
        this._updatePlaylistStats()
        $('#empty_playlist_msg').show()
-       @Util.feedback { notice: 'Playlist is now empty' }
+       if provide_feedback then @Util.feedback { notice: 'Actve Playlist is now empty' }
     })
 
   bookmarkPlaylist: (playlist_id) ->
@@ -156,7 +156,7 @@ class @Playlist
          $('#playlist_data').attr 'data-id', r.id
          $('#playlist_data').attr 'data-name', r.name
          $('#playlist_data').attr 'data-slug', r.slug
-         $('#playlist_title').html "Playlist: #{r.name}"
+         $('#playlist_title').html r.name
          # this._refreshPlaylistDropdown()
          @Util.feedback { notice: r.msg }
        else
@@ -172,7 +172,7 @@ class @Playlist
      }
      success: (r) =>
        if r.success
-         this.clearPlaylist()
+         this.clearPlaylist false
          @Util.feedback { notice: r.msg }
        else
          @Util.feedback { alert: r.msg }

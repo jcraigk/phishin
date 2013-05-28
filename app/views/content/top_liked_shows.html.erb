@@ -20,7 +20,7 @@
       <% @shows.each_with_index do |show, idx| %>
         <li>
           <%= content_tag :h2, "#{idx+1}", class: 'position_num' %>
-          <%= content_tag :h2, link_to("#{show.date.strftime("%-m.%-d.%y")}", "/#{show.date}") %>
+          <%= content_tag :h2, link_to("#{show.date.strftime("%Y.%m.%d")}", "/#{show.date}") %>
           <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}") %>
           <% #content_tag :h5, link_to(show.venue.location, "/map?term=#{CGI::escape(show.venue.location)}") %>
 

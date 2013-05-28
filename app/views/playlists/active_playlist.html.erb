@@ -32,7 +32,7 @@
   
   <div id="content_box">
     
-    <div id="empty_playlist_msg" style="display: none;"><strong>Your active playlist is empty.</strong>
+    <div id="empty_playlist_msg" class="callout_box" style="display: none;"><strong>Your active playlist is empty.</strong>
       <br /><br />
       When you play a track from a show, your active playlist will be updated to reflect that show.  You can also add tracks individually by using track context menus.
       <br /><br />
@@ -45,7 +45,7 @@
         <li class="playable_track" data-id="<%= track.id %>" data-track-duration="<%= track.duration %>">
           <%= content_tag :h2, "#{idx+1}", class: 'position_num' %>
           <%= content_tag :h2, track_title_with_tags(track), class: 'wide' %>
-          <%= content_tag :h5, link_to(track.show.date.strftime("%-m.%-d.%y"), "#{track.show.date}") %>
+          <%= content_tag :h5, link_to(track.show.date.strftime("%Y.%m.%d"), "#{track.show.date}") %>
           <%= content_tag :div, "<i class=\"icon-resize-vertical\"></i>".html_safe, class: "drag_arrows_vertical"  %>
           <%= content_tag :h3, track.duration_readable %>
           <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: true, show: nil } %>
