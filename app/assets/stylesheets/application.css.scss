@@ -710,6 +710,23 @@ p.large {
 
 /************************/
 
+.paging {
+  margin: 0 auto;
+  text-align: right;
+  padding-right: 50px;
+  margin-top: 8px;
+}
+.pagination {
+  float: right;
+}
+.page_title {
+  color: $text_gray;
+  float: right;
+  padding-top: 25px;
+  margin-right: 10px;
+  font-size: 18px;
+}
+
 #userbox {
   font-family: sans-serif;
   float: right;
