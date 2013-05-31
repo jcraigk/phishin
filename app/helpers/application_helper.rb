@@ -9,7 +9,7 @@ module ApplicationHelper
     str.html_safe
   end
   
-  def first_char_links(base_url)
+  def first_char_links(base_url, current_item=nil)
     str = ''
     FIRST_CHAR_LIST.each_with_index do |char, i|
       css = "char_link #{(params[:char] == char or (params[:char].nil? and i == 0)) ? " active" : ""}"
