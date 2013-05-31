@@ -1,12 +1,33 @@
-<div id="global_nav">
-  <%= nav_button('Years', years_path, root_path) %>
-  <%= nav_button('Venues', venues_path) %>
-  <%= nav_button('Songs', songs_path) %>
-  <%= nav_button('Map', '/map?term=Burlington%20VT&distance=250') %>
-  <%= nav_button('Top 40', top_shows_path, top_tracks_path) %>
-  <%= nav_button('Playlists', active_playlist_path, saved_playlists_path) %>
-  <div id="search_box">
-    <i class="icon icon-search"></i>
-    <input type="text" name="term" id="search_term" value="<%= params[:term] %>">
+<div id="global_nav_container">
+  <div id="global_nav">
+    <%= nav_button('Years', years_path, root_path) %>
+    <%= nav_button('Venues', venues_path) %>
+    <%= nav_button('Songs', songs_path) %>
+    <%= nav_button('Map', '/map?term=Burlington%20VT&distance=250') %>
+    <%= nav_button('Top 40', top_shows_path, top_tracks_path) %>
+    <%= nav_button('Playlists', active_playlist_path, saved_playlists_path) %>
+    <div id="search_box">
+      <i class="icon icon-search"></i>
+      <input type="text" name="term" id="search_term" value="<%= params[:term] %>">
+    </div>
+  </div>
+</div>
+<div id="sub_nav_container">
+  <div id="sub_nav">
+    <% if params[:controller] == 'content' %>
+      <% if params[:action] == 'yeras' or params[:action] == 'year' %>
+        years...
+      <% elsif params[:action] == 'venues' or params[:action] == 'venue' %>
+        <%= first_char_links(venues_path, @venue) %>
+      <% elsif params[:action] == 'songs' or params[:action] == 'song' %>
+        <%= first_char_links(songs_path, @song) %>
+      <% elsif params[:action] == 'top_liked_shows' %>
+        <%= link_to 'Shows', top_shows_path, class: 'active' %>
+        <%= link_to 'Tracks', top_tracks_path %>
+      <% elsif params[:action] == 'top_liked_tracks' %>
+        <%= link_to 'Shows', top_shows_path %>
+        <%= link_to 'Tracks', top_tracks_path, class: 'active' %>
+      <% end %>
+    <% end %>
   </div>
 </div>
