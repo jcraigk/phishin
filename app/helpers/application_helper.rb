@@ -50,8 +50,30 @@ module ApplicationHelper
     end
   end
   
-  def nav_button(name, path, other_path='')
-    link_to name, path, data: { 'alt-href' => other_path }, class: 'global_link'
+  def global_nav_links
+    nav_items = {
+      'Years' => [years_path, ['years', 'year']],
+      'Venues' => [venues_path, ['venues', 'venue']],
+      'Songs' => [songs_path, ['songs', 'song']],
+      'Map' => ['/map?map_term=Burlington%20VT&distance=250', ['map']],
+      'Likes' => [top_shows_path, ['top_liked_shows', 'top_liked_tracks']],
+      'Playlists' => [active_playlist_path, ['active_playlist', 'saved_playlists']]
+    }
+    x = 100
+    x_step = 80
+    str = ''
+    nav_items.each do |name, action_list|
+      css = ''
+      css = 'active' if action_list[1].include?(params[:action]) or action_list[1].include?(@controller_action)
+      str += content_tag :div, (link_to name, action_list[0], class: "global_link #{css}"), class: 'link_container', style: "margin-left: #{x}px;"
+      if css == 'active'
+        pos = x + 20
+        str += content_tag :div, nil, class: 'nav_indicator', style: "margin-left: #{pos}px;"
+        str += content_tag :div, nil, class: 'nav_indicator2', style: "margin-left: #{pos}px;"
+      end
+      x += x_step
+    end
+    str.html_safe
   end
   
   def link_to_song(song, term=nil)
