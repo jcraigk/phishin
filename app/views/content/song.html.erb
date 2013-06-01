@@ -7,7 +7,7 @@
     <%= content_tag :div, nil, class: 'hr' %>
     <%= content_tag :h2, "Total Tracks: #{@song.tracks.size}" %>
     <%= content_tag :div, nil, class: 'hr' %>
-    <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Chronological' => 'date desc', '<i class="icon-time"></i> Chronological' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes', '<i class="icon-forward"></i> Duration' => 'duration'} } %>
+    <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Date' => 'date desc', '<i class="icon-time"></i> Date' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes', '<i class="icon-forward"></i> Duration' => 'duration'} } %>
     <%= content_tag :div, nil, class: 'hr' %>
     <%= link_to('<i class="icon-chevron-left"></i>&nbsp;&nbsp;Previous Song'.html_safe, "/#{@previous_song.slug}") %>
     <div style="clear: both;"></div>
@@ -40,15 +40,15 @@
         <li>
           <%= content_tag :h2, link_to(show_link_title(track.show, @display_separators), "/#{track.show.date}/#{track.slug}") %>
           <%= content_tag :h4, link_to(truncate(track.show.venue.name.html_safe, length: 32), "/#{track.show.venue.slug}"), class: 'narrow' %>
-          <%= content_tag :h5, link_to(track.show.venue.location, "/map?map_term=#{CGI::escape(track.show.venue.location)}") %>
-          <% #content_tag :h3, track.duration_readable %>
+          <%# content_tag :h5, link_to(track.show.venue.location, "/map?map_term=#{CGI::escape(track.show.venue.location)}") %>
           <%= likable(track, @tracks_likes[idx], 'small') %>
+          <%= content_tag :h3, duration_readable(track.show.duration, 'letters') %>
           <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil } %>
-          <span class="show_tag_container">
-            <% track.show.tags.each do |tag| %>
-              <%= content_tag :span, tag.name, class: 'label show_tag', style: "background-color: #{tag.color}" %>
-            <% end %>
-          </span>
+          <!-- <span class="show_tag_container">
+            <%# track.show.tags.each do |tag| %>
+              <%# content_tag :span, tag.name, class: 'label show_tag', style: "background-color: #{tag.color}" %>
+            <%# end %>
+          </span> -->
           <div style="clear: both;"></div>
         </li>
       <% end %>
