@@ -423,13 +423,13 @@ p.large {
 #sub_nav {
   margin: 0 auto;
   width: 940px;
-  background-color: gray;
+  background-color: $sub_nav_gray;
   height: 21px;
   text-align: center;
   background-color: $sub_nav_gray;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  border-bottom: 10px solid $background_gray;
+//  border-bottom: 10px solid $background_gray;
 //  border-bottom: 1px solid black;
 }
 #sub_nav a {
@@ -440,6 +440,12 @@ p.large {
 #sub_nav a.active {
   font-weight: bold;
   color: black !important;
+}
+#content_buffer {
+  margin: 0 auto;
+  width: 940px;
+  height: 15px;
+  background-color: $background_gray;
 }
 
 #content {
