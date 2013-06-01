@@ -9,11 +9,92 @@ module ApplicationHelper
     str.html_safe
   end
   
-  def first_char_links(base_url, current_item=nil)
+  def first_char_sub_links(base_url, current_item=nil)
     str = ''
     FIRST_CHAR_LIST.each_with_index do |char, i|
-      css = "char_link #{(params[:char] == char or (params[:char].nil? and i == 0)) ? " active" : ""}"
+      css = 'char_link'
+      css += ' active' if params[:char] == char or 
+        (params[:char].nil? and current_item.nil? and i == 0) or 
+        (current_item and defined?(current_item.title) and current_item.title[0] == char) or
+        (current_item and defined?(current_item.name) and current_item.name[0] == char)
       str += link_to char, "#{base_url}?char=#{CGI::escape(char)}", class: css
+    end
+    str.html_safe
+  end
+  
+  def top_liked_sub_links
+    nav_items = {
+      'Top Shows' => [top_shows_path, ['top_liked_shows']],
+      'Top Tracks' => [top_tracks_path, ['top_liked_tracks']],
+    }
+    str = ''
+    nav_items.each do |name, properties|
+      css = ''
+      css = 'active' if properties[1].include?(params[:action])
+      str += link_to name, properties[0], class: css
+    end
+    str.html_safe
+  end
+  
+  def playlists_sub_links
+    nav_items = {
+      'Active' => [active_playlist_path, ['active_playlist']],
+      'Saved' => [saved_playlists_path, ['saved_playlists']],
+    }
+    str = ''
+    nav_items.each do |name, properties|
+      css = ''
+      css = 'active' if properties[1].include?(params[:action])
+      str += link_to name, properties[0], class: css
+    end
+    str.html_safe
+  end
+  
+  def years_sub_links
+    years = [
+      [
+        '12' => [['2012'], '2012'],
+        '11' => [['2011'], '2011'],
+        '10' => [['2010'], '2010'],
+        '09' => [['2009'], '2009']
+      ],
+      [
+        '04' => [['2004'], '2004'],
+        '03' => [['2003'], '2003'],
+        '02' => [['2002'], '2002'],
+      ],
+      [
+        '00' => [['2000'], '2004'],
+        '99' => [['1999'], '1999'],
+        '98' => [['1998'], '1998'],
+        '97' => [['1997'], '1997'],
+        '96' => [['1996'], '1996'],
+        '95' => [['1995'], '1995'],
+        '94' => [['1994'], '1994'],
+        '93' => [['1993'], '1993'],
+        '92' => [['1992'], '1992'],
+        '91' => [['1991'], '1991'],
+        '90' => [['1990'], '1990'],
+        '89' => [['1989'], '1989'],
+        '88' => [['1988'], '1988'],
+        '87-83' => [['1987', '1986', '1985', '1984', '1987 - 1983'], '1987-1983'],
+      ]
+    ]
+    str = ''
+    years.each do |year_group|
+      year_group.each do |year_hash|
+        i = 0
+        year_hash.each do |name, properties|
+          style = ''
+          style = 'margin-right: 26px' if i + 1 == year_hash.size
+          css = ''
+          css = 'active' if properties[0].include?(@title)
+          # raise @title.inspect
+          str += link_to name, "/#{properties[1]}", class: css, style: style
+          i += 1
+        end
+        
+      end
     end
     str.html_safe
   end
@@ -59,13 +140,13 @@ module ApplicationHelper
       'Likes' => [top_shows_path, ['top_liked_shows', 'top_liked_tracks']],
       'Playlists' => [active_playlist_path, ['active_playlist', 'saved_playlists']]
     }
-    x = 100
-    x_step = 80
+    x = 176
+    x_step = 70
     str = ''
-    nav_items.each do |name, action_list|
+    nav_items.each do |name, properties|
       css = ''
-      css = 'active' if action_list[1].include?(params[:action]) or action_list[1].include?(@controller_action)
-      str += content_tag :div, (link_to name, action_list[0], class: "global_link #{css}"), class: 'link_container', style: "margin-left: #{x}px;"
+      css = 'active' if properties[1].include?(params[:action]) or properties[1].include?(@controller_action)
+      str += content_tag :div, (link_to name, properties[0], class: "global_link #{css}"), class: 'link_container', style: "margin-left: #{x}px;"
       if css == 'active'
         pos = x + 20
         str += content_tag :div, nil, class: 'nav_indicator', style: "margin-left: #{pos}px;"

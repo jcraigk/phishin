@@ -33,7 +33,7 @@ class @Util
     History.pushState { href: href, scroll: 0 }, $('body').data('app-name'), href
   
   navigateToRefreshMap: ->
-    url = "/map?term=#{$('#map_search_term').val().replace /\s/g, '+' }"
+    url = "/map?map_term=#{$('#map_search_term').val().replace /\s/g, '+' }"
     url += "&distance=#{$('#map_search_distance').val()}"
     url += "&date_start=#{$('#map_date_start').val()}"
     url += "&date_stop=#{$('#map_date_stop').val()}"

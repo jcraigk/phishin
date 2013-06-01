@@ -8,19 +8,17 @@
   </div>
   <div id="sub_nav">
     <% if params[:controller] == 'content' %>
-      <% if params[:action] == 'yeras' or params[:action] == 'year' %>
-        years...
-      <% elsif params[:action] == 'venues' or params[:action] == 'venue' %>
-        <%= first_char_links(venues_path, @venue) %>
-      <% elsif params[:action] == 'songs' or params[:action] == 'song' %>
-        <%= first_char_links(songs_path, @song) %>
-      <% elsif params[:action] == 'top_liked_shows' %>
-        <%= link_to 'Shows', top_shows_path, class: 'active' %>
-        <%= link_to 'Tracks', top_tracks_path %>
-      <% elsif params[:action] == 'top_liked_tracks' %>
-        <%= link_to 'Shows', top_shows_path %>
-        <%= link_to 'Tracks', top_tracks_path, class: 'active' %>
+      <% if @controller_action == 'year' or @controller_action == 'year_range' %>
+        <%= years_sub_links %>
+      <% elsif params[:action] == 'venues' or @controller_action == 'venue' %>
+        <%= first_char_sub_links(venues_path, @venue) %>
+      <% elsif params[:action] == 'songs' or @controller_action  == 'song' %>
+        <%= first_char_sub_links(songs_path, @song) %>
+      <% elsif params[:action] == 'top_liked_shows' or params[:action] == 'top_liked_tracks' %>
+        <%= top_liked_sub_links %>
       <% end %>
+    <% elsif params[:action] == 'active_playlist' or params[:action] == 'saved_playlists' %>
+      <%= playlists_sub_links %>
     <% end %>
   </div>
 </div>

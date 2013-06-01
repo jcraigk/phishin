@@ -429,6 +429,7 @@ p.large {
   background-color: $sub_nav_gray;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
+  border-bottom: 10px solid $background_gray;
 //  border-bottom: 1px solid black;
 }
 #sub_nav a {
@@ -444,7 +445,7 @@ p.large {
 #content {
   margin: 0 auto;
   width: 900px;
-  padding: 190px 20px 40px 20px;
+  padding: 185px 20px 40px 20px;
   -webkit-border-bottom-left-radius: 10px;
   -moz-border-radius-bottomleft: 10px;
   border-bottom-left-radius: 10px;
@@ -1139,12 +1140,12 @@ color: #8fbedb;
 
 #footer {
   width: 940px;
-  background-color: $global_nav_gray;
+  background-color: $sub_nav_gray;
   margin: 0 auto;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+  border-radius: 8px;
   text-align: center;
   padding: 5px;
+  margin-bottom: 20px;
 }
 #footer a {
   margin-right: 20px;

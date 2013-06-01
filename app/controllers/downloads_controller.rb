@@ -17,7 +17,7 @@ class DownloadsController < ApplicationController
         venue: "#{track.show.venue.name}",
         venue_url: "/#{track.show.venue.slug}",
         city: track.show.venue.location,
-        city_url: "/map?term=#{CGI::escape(track.show.venue.location)}",
+        city_url: "/map?map_term=#{CGI::escape(track.show.venue.location)}",
         likes_count: track.likes_count,
         liked: liked
       }

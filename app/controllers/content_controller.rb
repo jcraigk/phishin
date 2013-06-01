@@ -67,7 +67,7 @@ class ContentController < ApplicationController
       if year_range years[1], years[2]
         @title = "#{$1} - #{$2}"
         view = :year_or_scope
-        @controller_action = 'years'
+        @controller_action = 'year_range'
       else
         redirect_to :root
       end

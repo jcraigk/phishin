@@ -5,7 +5,7 @@
   <div id="title_box">
     <%= content_tag :h1, @venue.name %>
     <%# content_tag :h3, "What: a Venue" %>
-    <%= content_tag :h3, "Location: #{link_to(@venue.location, "/map?term=#{@venue.latitude},#{@venue.longitude}&amp;distance=.2")}".html_safe %>
+    <%= content_tag :h3, "Location: #{link_to(@venue.location, "/map?map_term=#{@venue.latitude},#{@venue.longitude}&amp;distance=.2")}".html_safe %>
     <%= content_tag :h3, "Shows: #{@venue.shows_count}" %>
     <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Chronological' => 'date desc', '<i class="icon-time"></i> Chronological' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes',  '<i class="icon-forward"></i> Duration' => 'duration'} } %>
   </div>
@@ -38,7 +38,7 @@
         <li>
           <%= content_tag :h2, link_to_show(show, @display_separators) %>
           <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}"), class: 'narrow' %>
-          <%= content_tag :h5, link_to(show.venue.location, "/map?term=#{CGI::escape(show.venue.location)}") %>
+          <%= content_tag :h5, link_to(show.venue.location, "/map?map_term=#{CGI::escape(show.venue.location)}") %>
           <span class="show_tag_container">
             <% show.tags.each do |tag| %>
               <%= content_tag :span, tag.name, class: 'label show_tag', style: "background-color: #{tag.color}" %>
