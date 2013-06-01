@@ -113,10 +113,6 @@ class Track < ActiveRecord::Base
     audio_file.to_s
   end
   
-  def duration_readable
-    "%d:%02d" % [duration / 60000, duration % 60000 / 1000]
-  end
-  
   def generic_slug
     title.downcase.gsub(/'/, '').gsub(/[^a-z0-9]/, ' ').strip.gsub(/\s+/, ' ').gsub(/\s/, '-')
   end

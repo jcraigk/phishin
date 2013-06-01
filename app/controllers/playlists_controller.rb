@@ -24,6 +24,7 @@ class PlaylistsController < ApplicationController
       session[:playlist] = session[:playlist].take(100)
       tracks_by_id = Track.find(session[:playlist]).index_by(&:id)
       @tracks = session[:playlist].collect {|id| tracks_by_id[id] }
+      @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
       @num_tracks = @tracks.size
       @duration = @tracks.map(&:duration).inject(0, &:+) if @num_tracks > 0
     end

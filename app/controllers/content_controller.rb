@@ -212,10 +212,6 @@ class ContentController < ApplicationController
     show.likes.where(user_id: current_user.id).first if show and current_user
   end
   
-  def get_user_track_like(track)
-    track.likes.where(user_id: current_user.id).first if track and track.likes and current_user
-  end
-  
   def validate_sorting_for_year_or_scope
     params[:sort] = 'date desc' unless ['date desc', 'date asc', 'likes', 'duration'].include? params[:sort]
     if params[:sort] == 'date asc' or params[:sort] == 'date desc'

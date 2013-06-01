@@ -130,7 +130,7 @@ module ApplicationHelper
       elsif hours > 0
         "%d:%02d:%02d" % [hours, minutes, seconds]
       else
-        "%d:%02d:%02d" % [minutes, seconds]
+        "%02d:%02d" % [minutes, seconds]
       end
     end
   end

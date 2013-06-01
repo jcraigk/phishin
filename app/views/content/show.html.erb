@@ -45,7 +45,7 @@
     
         <li class="playable_track" data-id="<%= track.id %>" data-anchor="<%= track.slug %>">
           <%= content_tag :h2, track_title_with_tags(track), class: 'wide' %>
-          <%= content_tag :h3, track.duration_readable %>
+          <%= content_tag :h3, duration_readable(track.duration) %>
           <%= likable(track, @tracks_likes[idx], 'small') %>
           <%= render partial: 'shared/context_menu_for_track', locals: { track: track, show: @show, playlist: false } %>
           <div style="clear: both;"></div>

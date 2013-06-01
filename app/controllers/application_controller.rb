@@ -26,7 +26,11 @@ class ApplicationController < ActionController::Base
     render :json => { success: user_signed_in?, msg: "Hello" }
   end
   
-  protected
+  def get_user_track_like(track)
+    track.likes.where(user_id: current_user.id).first if track and track.likes and current_user
+  end
+  
+  private
   
   def authenticate
     if Rails.env == 'production'
