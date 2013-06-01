@@ -12,7 +12,10 @@ class ApplicationController < ActionController::Base
   before_filter :require_xhr
   
   def random_lyrical_excerpt
-    @random_song = Song.random_lyrical_excerpt.first unless request.xhr?
+    unless request.xhr?
+      @random_song = Song.random_lyrical_excerpt.first
+      # raise @random_song.inspect
+    end
   end
   
   def require_xhr!

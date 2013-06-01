@@ -28,8 +28,8 @@ module ApplicationHelper
     nav_items = {
       'Top 40 Shows' => [top_shows_path, ['top_liked_shows']],
       'Top 40 Tracks' => [top_tracks_path, ['top_liked_tracks']],
-      'My Liked Shows' => [my_liked_shows_path, ['top_liked_tracks']],
-      'My Liked Tracks' => [my_liked_tracks_path, ['top_liked_tracks']],
+      'My Liked Shows' => [my_liked_shows_path, ['my_liked_shows']],
+      'My Liked Tracks' => [my_liked_tracks_path, ['my_liked_tracks']],
     }
     str = ''
     nav_items.each do |name, properties|

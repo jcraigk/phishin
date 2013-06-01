@@ -14,10 +14,10 @@
         <%= first_char_sub_links(venues_path, @venue) %>
       <% elsif params[:action] == 'songs' or @controller_action  == 'song' %>
         <%= first_char_sub_links(songs_path, @song) %>
-      <% elsif params[:action] == 'top_liked_shows' or params[:action] == 'top_liked_tracks' %>
+      <% elsif %w(top_liked_shows top_liked_tracks my_liked_shows my_liked_tracks).include?(params[:action]) %>
         <%= top_liked_sub_links %>
       <% end %>
-    <% elsif params[:action] == 'active_playlist' or params[:action] == 'saved_playlists' %>
+    <% elsif %w(active_playlist saved_playlists).include?(params[:action]) %>
       <%= playlists_sub_links %>
     <% end %>
   </div>

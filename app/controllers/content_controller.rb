@@ -41,10 +41,22 @@ class ContentController < ApplicationController
   
   def my_liked_shows
     if current_user
-      @likes = Like.where(likable_type: 'Show', user_id: current_user.id ).includes(:shows).order('shows.date').page(params[:page])
-      render layout: false if request.xhr?
+      show_ids = Like.where(likable_type: 'Show', user_id: current_user.id).all.map(&:id)
+      @shows = Show.where(id: show_ids).order('date desc').page(params[:page])
+      @shows_likes = @shows.map { |show| get_user_show_like(show) }
     end
+    render layout: false if request.xhr?
   end
+  
+  def my_liked_tracks
+    if current_user
+      track_ids = Like.where(likable_type: 'Track', user_id: current_user.id).all.map(&:id)
+      @tracks = Track.where(id: track_ids).order('title asc').page(params[:page])
+      @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
+    end
+    render layout: false if request.xhr?
+  end
+
   
   ###############################
   # Glob-matching

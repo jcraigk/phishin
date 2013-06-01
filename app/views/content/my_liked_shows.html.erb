@@ -1,0 +1,46 @@
+<%= render partial: 'layouts/global_nav' %>
+
+<div id="content">
+  
+  <div id="title_box">
+    <%= content_tag :h1, 'My Favorite Shows' %>
+    <%= content_tag :div, nil, class: 'hr' %>
+    <h3>A list of all shows you've Liked</h3>
+  </div>
+  
+  <div id="content_box">
+    <% if !user_signed_in? %>
+      <p class="instructions">Sign in and click heart icons to Like your favorite shows</div>
+    <% elsif @shows %>
+      <ul class="item_list clickable">
+        <% @shows.each_with_index do |show, idx| %>
+          <li>
+            <%= content_tag :h2, link_to("#{show.date.strftime("%Y.%m.%d")}", "/#{show.date}") %>
+            <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}"), class: 'narrow' %>
+            <%= content_tag :h5, link_to(show.venue.location, "/map?map_term=#{CGI::escape(show.venue.location)}"), class: 'narrow' %>
+            <%= likable(show, @shows_likes[idx], 'small') %>
+            <%= content_tag :h3, "#{duration_readable(show.duration)}", class: 'narrow' %>
+            <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
+            <span class="show_tag_container">
+              <% show.tags.each do |tag| %>
+                <%= content_tag :span, tag.name, class: 'label show_tag', style: "background-color: #{tag.color}" %>
+              <% end %>
+            </span>
+            <div style="clear: both;"></div>
+          </li>
+        <% end %>
+      </ul>
+      <% if @shows.total_pages > 1 %>
+        <div class="paging">
+          <%= will_paginate_simple @shows %>
+          <span class="page_title">Page:</span>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="instructions">Click heart icons to Like your favorite shows</div>
+    <% end %>
+  </div>
+      
+  <div style="clear: both;"></div>
+      
+</div>
