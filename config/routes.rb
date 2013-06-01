@@ -29,6 +29,8 @@ Phishin::Application.routes.draw do
   get     '/venues'                       => 'content#venues',                      as: 'venues'
   get     '/top-shows'                    => 'content#top_liked_shows',             as: 'top_shows'
   get     '/top-tracks'                   => 'content#top_liked_tracks',            as: 'top_tracks'
+  get     '/my-liked-shows'               => 'content#my_liked_shows',              as: 'my_liked_shows'
+  get     '/my-liked-tracks'              => 'content#my_liked_tracks',             as: 'my_liked_tracks'
   get     '/search'                       => 'search#results',                      as: 'search'
 
   # Map

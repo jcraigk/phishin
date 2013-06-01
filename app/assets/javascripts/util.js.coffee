@@ -122,6 +122,9 @@ class @Util
   truncate: (string, length=30) ->
     if string.length > length then string.substring(0, length) + '...' else string
   
+  showHTMLError: (str) ->
+    $('body').append "<div id=\"system_error\">#{str}</div>"
+  
   _findMatch: (href) ->
     match = /^([^\?]+)\??(.+)?$/.exec(href.split("/")[1])
     match[1] if match

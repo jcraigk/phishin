@@ -9,7 +9,9 @@
     <%= content_tag :div, nil, class: 'hr' %>
     <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Chronological' => 'date desc', '<i class="icon-time"></i> Chronological' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes', '<i class="icon-forward"></i> Duration' => 'duration'} } %>
     <%= content_tag :div, nil, class: 'hr' %>
-    prev/next
+    <%= link_to('<i class="icon-chevron-left"></i>&nbsp;&nbsp;Previous Song'.html_safe, "/#{@previous_song.slug}") %>
+    <div style="clear: both;"></div>
+    <%= link_to('<i class="icon-chevron-right"></i>&nbsp;&nbsp;Next Song'.html_safe, "/#{@next_song.slug}") %>
   </div>
   
   <div id="content_box">

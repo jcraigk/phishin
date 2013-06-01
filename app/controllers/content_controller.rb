@@ -39,6 +39,13 @@ class ContentController < ApplicationController
     render layout: false if request.xhr?
   end
   
+  def my_liked_shows
+    if current_user
+      @likes = Like.where(likable_type: 'Show', user_id: current_user.id ).includes(:shows).order('shows.date').page(params[:page])
+      render layout: false if request.xhr?
+    end
+  end
+  
   ###############################
   # Glob-matching
   ###############################
@@ -159,6 +166,8 @@ class ContentController < ApplicationController
         @redirect = "/#{aliased_song.slug}"
       else
         @tracks = @song.tracks.includes({:show => :venue}, :songs).order(@order_by).page(params[:page])
+        @next_song = Song.relevant.order('title asc').first unless @next_song = Song.relevant.where('title > ?', @song.title).order('title asc').first
+        @previous_song = Song.relevant.order('title desc').first unless @previous_song = Song.relevant.where('title < ?', @song.title).order('title desc').first
         @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
       end
     end
@@ -170,8 +179,8 @@ class ContentController < ApplicationController
     if @venue = Venue.where(slug: slug).includes(:shows).first
       @shows = @venue.shows.includes(:tags).order(@order_by)
       @shows_likes = @shows.map { |show| get_user_show_like(show) }
-      @next_venue = Venue.relevant.order('name asc').first unless @next_venue = Venue.where('name > ?', @venue.name).order('name asc').first
-      @previous_venue = Venue.relevant.order('name desc').first unless @previous_venue = Venue.where('name < ?', @venue.name).order('name desc').first
+      @next_venue = Venue.relevant.order('name asc').first unless @next_venue = Venue.relevant.where('name > ?', @venue.name).order('name asc').first
+      @previous_venue = Venue.relevant.order('name desc').first unless @previous_venue = Venue.relevant.where('name < ?', @venue.name).order('name desc').first
     end
     @display_separators = false
     @venue

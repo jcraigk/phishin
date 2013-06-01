@@ -13,6 +13,7 @@ $alert: #2a2a2a;
 $background_gray: #e7e7e8;
 $global_nav_gray: #cdcfd0;
 $sub_nav_gray: #d9dbdc;
+$alert_background: #ffc7c6;
 
 .btn {
   margin-bottom: 10px !important;
@@ -66,6 +67,15 @@ p.large {
   width: 100%;
   border-bottom: 1px solid $text_gray;
   margin-bottom: 25px;
+}
+
+#system_error {
+  background-color: $alert_background;
+  width: 600px;
+  padding-top: 100px !important;
+  margin: 0 auto;
+  padding: 10px;
+  border: 1px solid black;
 }
 
 /******************************/
@@ -990,7 +1000,7 @@ color: #8fbedb;
   padding: 5px;
 }
 .feedback_alert {
-  background-color: #ffc7c6;
+  background-color: $alert_background;
   border: 2px solid #994c65;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
