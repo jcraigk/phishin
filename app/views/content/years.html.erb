@@ -3,7 +3,10 @@
 <div id="content">
   
   <div id="title_box">
-    <%= content_tag :h1, "phish.in'" %>
+    <%= content_tag :h1, "WELCOME TO PHISH.IN'", class: 'large' %>
+    <%= content_tag :div, nil, class: 'hr' %>
+    <%= content_tag :h2, "An archive of live Phish audio" %>
+    <%= content_tag :div, nil, class: 'hr' %>
     <%= content_tag :h3, "Hours of Music: 3,250" %>
     <%= content_tag :h3, "Shows: #{number_with_delimiter(Show.avail.count)}" %>
     <%= content_tag :h3, "Tracks: #{number_with_delimiter(Track.count)}" %>

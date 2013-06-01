@@ -170,7 +170,10 @@ class ContentController < ApplicationController
     if @venue = Venue.where(slug: slug).includes(:shows).first
       @shows = @venue.shows.includes(:tags).order(@order_by)
       @shows_likes = @shows.map { |show| get_user_show_like(show) }
+      @next_venue = Venue.relevant.order('name asc').first unless @next_venue = Venue.where('name > ?', @venue.name).order('name asc').first
+      @previous_venue = Venue.relevant.order('name desc').first unless @previous_venue = Venue.where('name < ?', @venue.name).order('name desc').first
     end
+    @display_separators = false
     @venue
   end
 
@@ -199,10 +202,10 @@ class ContentController < ApplicationController
       @display_separators = true
     elsif params[:sort] == 'likes'
       @order_by = "likes_count desc, date desc"
-      @display_separators = false
+      # @display_separators = false
     elsif params[:sort] == 'duration'
       @order_by = "shows.duration desc, date desc"
-      @display_separators = false
+      # @display_separators = false
     end
   end
   
@@ -210,13 +213,13 @@ class ContentController < ApplicationController
     params[:sort] = 'date desc' unless ['date desc', 'date asc', 'likes', 'duration'].include? params[:sort]
     if params[:sort] == 'date asc' or params[:sort] == 'date desc'
       @order_by = params[:sort].gsub(/date/, 'shows.date')
-      @display_separators = true
+      # @display_separators = true
     elsif params[:sort] == 'likes'
       @order_by = "tracks.likes_count desc, shows.date desc"
-      @display_separators = false
+      # @display_separators = false
     elsif params[:sort] == 'duration'
       @order_by = "tracks.duration desc, shows.date desc"
-      @display_separators = false
+      # @display_separators = false
     end
   end
   

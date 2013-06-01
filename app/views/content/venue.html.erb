@@ -4,10 +4,15 @@
   
   <div id="title_box">
     <%= content_tag :h1, @venue.name %>
-    <%# content_tag :h3, "What: a Venue" %>
-    <%= content_tag :h3, "Location: #{link_to(@venue.location, "/map?map_term=#{@venue.latitude},#{@venue.longitude}&amp;distance=.2")}".html_safe %>
-    <%= content_tag :h3, "Shows: #{@venue.shows_count}" %>
+    <%= content_tag :h2, link_to(@venue.location, "/map?map_term=#{@venue.latitude},#{@venue.longitude}&amp;distance=.2") %>
+    <%= content_tag :div, nil, class: 'hr' %>
+    <%= content_tag :h3, "Shows played here: #{@venue.shows_count}" %>
+    <%= content_tag :div, nil, class: 'hr' %>
     <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Chronological' => 'date desc', '<i class="icon-time"></i> Chronological' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes',  '<i class="icon-forward"></i> Duration' => 'duration'} } %>
+    <%= content_tag :div, nil, class: 'hr' %>
+    <%= link_to('<i class="icon-chevron-right"></i>&nbsp;&nbsp;Next Venue'.html_safe, "/#{@next_venue.slug}") %>
+    <div style="clear: both;"></div>
+    <%= link_to('<i class="icon-chevron-left"></i>&nbsp;&nbsp;Previous Venue'.html_safe, "/#{@previous_venue.slug}") %>
   </div>
   
   <div id="content_box">
@@ -15,7 +20,7 @@
     <% if @shows.empty? %>
       <h1>No shows at this venue...</h1>
     <% end %>
-  
+
     <% unless @display_separators %>
       <ul class="item_list clickable">
     <% end %>

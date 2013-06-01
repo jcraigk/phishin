@@ -15,6 +15,8 @@ module ApplicationHelper
       css = 'char_link'
       css += ' active' if params[:char] == char or 
         (params[:char].nil? and current_item.nil? and i == 0) or 
+        (char == '#' and defined?(current_item.name) and current_item.name[0] =~ /\d/) or
+        (char == '#' and defined?(current_item.title) and current_item.title[0] =~ /\d/) or
         (current_item and defined?(current_item.title) and current_item.title[0] == char) or
         (current_item and defined?(current_item.name) and current_item.name[0] == char)
       str += link_to char, "#{base_url}?char=#{CGI::escape(char)}", class: css
@@ -24,8 +26,8 @@ module ApplicationHelper
   
   def top_liked_sub_links
     nav_items = {
-      'Top Shows' => [top_shows_path, ['top_liked_shows']],
-      'Top Tracks' => [top_tracks_path, ['top_liked_tracks']],
+      'Top 40 Shows' => [top_shows_path, ['top_liked_shows']],
+      'Top 40 Tracks' => [top_tracks_path, ['top_liked_tracks']],
     }
     str = ''
     nav_items.each do |name, properties|
@@ -183,7 +185,7 @@ module ApplicationHelper
   end
   
   def show_link_title(show, show_abbrev=true)
-    show_abbrev ? show.date.strftime("%b %-d") : show.date.strftime("%-m.%-d.%y")
+    show_abbrev ? show.date.strftime("%b %-d") : show.date.strftime("%Y.%-m.%-d")
   end
   
   private

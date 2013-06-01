@@ -62,6 +62,11 @@ p.large {
   float: right;
   font-size: 10px !important;
 }
+.hr {
+  width: 100%;
+  border-bottom: 1px solid $text_gray;
+  margin-bottom: 25px;
+}
 
 /******************************/
 
@@ -193,10 +198,8 @@ p.large {
   height: 20px;
   text-decoration: none;
   background: url('icons-heart.png');
-  margin-top: 21px;
   margin-right: 8px;
-  margin-bottom: 0px;
-//  border: 1px solid black;
+  margin-bottom: 10px;
 }
 .likes_large a:hover {
   cursor: pointer;
@@ -205,7 +208,7 @@ p.large {
 }
 .likes_large span {
   float: left;
-  line-height: 66px;
+  line-height: 24px;
   color: #791419;
   font-size: 24px;
   font-family: 'Nothing You Could Do', cursive !important;
@@ -473,6 +476,10 @@ p.large {
   margin-top: 0px;
   color: $text_gray;
 }
+#title_box h1.large {
+  line-height: 30px;
+  font-size: 30px;
+}
 #title_box h2 {
   margin-top: 0px;
   margin-bottom: 20px;
@@ -480,14 +487,14 @@ p.large {
   font-size: 18px;
   font-weight: normal;
   color: $text_gray;
+//  font-style: italic;
 //  border: 1px solid black;
 }
 #title_box h3 {
-  line-height: 16px;
+  line-height: 20px;
   font-size: 16px;
   font-weight: normal;
   color: $text_gray;
-//  margin-bottom: -3px;
 }
 #content_box {
   float: right;
@@ -665,19 +672,12 @@ p.large {
 
 /************************/
 
-
-
 #map_search_container {
   margin: 0 auto;
   text-align: center;
-  background-color: #eee;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  padding: 10px;
   font-size: 14px;
   font-weight: bold;
+  margin-top: 10px;
 //  font-family: 'Rambla', sans-serif;
 }
 #map_search_term {

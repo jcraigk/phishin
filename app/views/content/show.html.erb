@@ -5,13 +5,19 @@
   <div id="title_box">
     <%= content_tag :h1, linked_show_date(@show) %>
     <% unless @show.missing? %>
-      <%# content_tag :h3, "What: a Show" %>
-      <%= content_tag :h3, "Venue: #{(link_to @show.venue.name.html_safe, "/#{@show.venue.slug}")}".html_safe %>
-      <%= content_tag :h3, "Location: #{(link_to @show.venue.location, "/map?map_term=#{CGI::escape(@show.venue.location)}")}".html_safe %>
-      <%= content_tag :h3, "Length: #{duration_readable(@show.duration, 'letters')}" %>
+      <%= content_tag :h2, (link_to @show.venue.name.html_safe, "/#{@show.venue.slug}") %>
+      <%= content_tag :h2, (link_to @show.venue.location, "/map?map_term=#{CGI::escape(@show.venue.location)}") %>
+      <%= content_tag :div, nil, class: 'hr' %>
+      <%= content_tag :h2, "Length: #{duration_readable(@show.duration, 'letters')}" %>
+      <%= content_tag :div, nil, class: 'hr' %>
       <%= likable(@show, @show_like, 'large') %>
       <div style="clear: both;"></div>
       <%= render partial: 'shared/context_menu_for_show', locals: {show: @show, viewing_this_show: true, next_show: @next_show, previous_show: @previous_show } %>
+      (tags)
+      <%= content_tag :div, nil, class: 'hr' %>
+      <%= link_to('<i class="icon-chevron-right"></i>&nbsp;&nbsp;Next Show'.html_safe, "/#{@next_show.date}") %>
+      <div style="clear: both;"></div>
+      <%= link_to('<i class="icon-chevron-left"></i>&nbsp;&nbsp;Previous Show'.html_safe, "/#{@previous_show.date}") %>
     <% end %>
   </div>
   

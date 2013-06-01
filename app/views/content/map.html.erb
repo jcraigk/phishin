@@ -26,8 +26,8 @@ $(function() {
   
   <div id="title_box">
     <div id="map_search_container">
-      Find shows near &nbsp;&nbsp;
-      <input type="text" id="map_search_term" placeholder="place or zipcode" value="<%= params[:map_term] %>">
+      <h1>Find shows near:</h1>
+      <input type="text" id="map_search_term" placeholder="place or zipcode" value="<%= params[:map_term] %>"><br />
       &nbsp;&nbsp;within &nbsp;
       <input type="text" id="map_search_distance" value="<%= params[:distance] || 50 %>">&nbsp;&nbsp;miles &nbsp;
       <button type="button" class="btn" id="map_search_submit">Search</button><br />    

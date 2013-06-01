@@ -4,9 +4,12 @@
   
   <div id="title_box">
     <%= content_tag :h1, @title %>
-    <%# content_tag :h3, "What: #{@what_title}" %>
-    <%= content_tag :h3, "Shows: #{@shows.size}" %>
+    <%= content_tag :div, nil, class: 'hr' %>
+    <%= content_tag :h2, "Shows: #{@shows.size}" %>
+    <%= content_tag :div, nil, class: 'hr' %>
     <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Chronological' => 'date desc', '<i class="icon-time"></i> Chronological' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes',  '<i class="icon-forward"></i> Duration' => 'duration'} } %>
+    <%= content_tag :div, nil, class: 'hr' %>
+    prev/next
   </div>
   
   <div id="content_box">

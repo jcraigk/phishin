@@ -4,8 +4,10 @@
   
   <div id="title_box">
     <%= content_tag :h1, 'Top 40 Tracks' %>
-    <%# content_tag :h3, 'What: Based on Likes' %>
+    <%= content_tag :div, nil, class: 'hr' %>
+    <h3>An aggregated list of the most-liked tracks from all users of Phish.in’</h3>
     <% if !user_signed_in? %>
+      <%= content_tag :div, nil, class: 'hr' %>
       <p class="instructions">Contribute by signing up and Liking your favorite tracks</p>
     <% end %>
   </div>
