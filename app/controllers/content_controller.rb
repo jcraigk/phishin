@@ -42,7 +42,7 @@ class ContentController < ApplicationController
   def my_liked_shows
     if current_user
       show_ids = Like.where(likable_type: 'Show', user_id: current_user.id).all.map(&:id)
-      @shows = Show.where(id: show_ids).order('date desc').page(params[:page])
+      @shows = Show.where(id: show_ids).order('date desc').paginate(page: params[:page], per_page: 20)
       @shows_likes = @shows.map { |show| get_user_show_like(show) }
     end
     render layout: false if request.xhr?
@@ -51,7 +51,7 @@ class ContentController < ApplicationController
   def my_liked_tracks
     if current_user
       track_ids = Like.where(likable_type: 'Track', user_id: current_user.id).all.map(&:id)
-      @tracks = Track.where(id: track_ids).order('title asc').page(params[:page])
+      @tracks = Track.where(id: track_ids).order('title asc').paginate(page: params[:page], per_page: 20)
       @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
     end
     render layout: false if request.xhr?
@@ -178,7 +178,7 @@ class ContentController < ApplicationController
         aliased_song = Song.where(id: @song.alias_for).first
         @redirect = "/#{aliased_song.slug}"
       else
-        @tracks = @song.tracks.includes({:show => :venue}, :songs).order(@order_by).page(params[:page])
+        @tracks = @song.tracks.includes({:show => :venue}, :songs).order(@order_by).paginate(page: params[:page], per_page: 20)
         @next_song = Song.relevant.order('title asc').first unless @next_song = Song.relevant.where('title > ?', @song.title).order('title asc').first
         @previous_song = Song.relevant.order('title desc').first unless @previous_song = Song.relevant.where('title < ?', @song.title).order('title desc').first
         @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
