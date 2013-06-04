@@ -733,8 +733,9 @@ p.large {
   color: $text_gray;
   float: right;
   padding-top: 25px;
-  margin-right: 10px;
-  font-size: 18px;
+  margin-right: -10px;
+  font-size: 17px;
+  line-height: 16px;
 }
 .filter_menu {
   display: inline;
@@ -1209,4 +1210,49 @@ color: #8fbedb;
 #search_box .icon {
   margin-top: -2px;
   margin-left: 5px;
+}
+
+/************************/
+
+.pagination {
+  margin-top: 4px !important;
+  background: transparent !important;
+  border: 1px solid #e5e5e5 !important;
+  text-align: center !important;
+  padding: 1em !important;
+  cursor: default !important;
+  box-shadow: none !important;
+  font-size: 16px !important;
+}
+.pagination ul {
+  box-shadow: none !important;
+}
+.pagination a, .pagination span {
+  box-shadow: none !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0.2em 0.3em !important;
+}
+.pagination .disabled {
+  color: #aaaaaa !important;
+}
+//.pagination .active {
+//  font-style: normal !important;
+//  font-weight: bold !important;
+//  background-color: #bebebe !important;
+//  display: inline-block !important;
+//  width: 1.4em !important;
+//  height: 1.4em !important;
+//  line-height: 1.5 !important;
+//}
+.pagination a {
+  text-decoration: none !important;
+  color: $text_gray !important;
+}
+.pagination .active a {
+  color: black !important;
+  font-weight: bold !important;
+}
+.pagination a:hover, .pagination a:focus {
+  text-decoration: underline !important;
 }
