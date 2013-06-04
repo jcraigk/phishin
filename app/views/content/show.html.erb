@@ -23,6 +23,7 @@
   
   <div id="content_box">
   
+    <% track_num = 1 %>
     <% if @show.missing? %>
       <div class="incomplete_show">Sorry, this show is missing</div>
     <% else %>
@@ -41,12 +42,16 @@
           <%= content_tag 'h1', track.set_name %>
           <ul class="item_list">
           <% set = track.set %>
+          <% track_num = 1 %>
+        <% else %>
+          <% track_num += 1 %>
         <% end %>
     
         <li class="playable_track" data-id="<%= track.id %>" data-anchor="<%= track.slug %>">
+          <%= content_tag :h2, track_num, class: 'position_num' %>
           <%= content_tag :h2, track_title_with_tags(track), class: 'wide' %>
-          <%= content_tag :h3, duration_readable(track.duration) %>
           <%= likable(track, @tracks_likes[idx], 'small') %>
+          <%= content_tag :h3, duration_readable(track.duration) %>
           <%= render partial: 'shared/context_menu_for_track', locals: { track: track, show: @show, playlist: false } %>
           <div style="clear: both;"></div>
         </li>
