@@ -7,9 +7,13 @@
     <%= content_tag :div, nil, class: 'hr' %>
     <%= content_tag :h2, "Shows: #{@shows.size}" %>
     <%= content_tag :div, nil, class: 'hr' %>
-    <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Chronological' => 'date desc', '<i class="icon-time"></i> Chronological' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes',  '<i class="icon-forward"></i> Duration' => 'duration'} } %>
-    <%= content_tag :div, nil, class: 'hr' %>
-    prev/next
+    <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Date' => 'date desc', '<i class="icon-time"></i> Date' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes',  '<i class="icon-play-circle"></i> Duration' => 'duration'} } %>
+    <%# if @viewing_single_year %>
+      <%# content_tag :div, nil, class: 'hr' %>
+      <%# link_to('<i class="icon-chevron-left"></i>&nbsp;&nbsp;Previous Year'.html_safe, "/#{@title.to_i - 1}") %>
+      <!-- <div style="clear: both;"></div> -->
+      <%# link_to('<i class="icon-chevron-right"></i>&nbsp;&nbsp;Next Year'.html_safe, "/#{@title.to_i + 1}") %>
+    <%# end %>
   </div>
   
   <div id="content_box">

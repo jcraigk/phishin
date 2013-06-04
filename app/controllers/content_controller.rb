@@ -142,6 +142,7 @@ class ContentController < ApplicationController
     if @shows = Show.avail.during_year(year).includes(:tour, :venue, :tags).order(@order_by).all
       @shows_likes = @shows.map { |show| get_user_show_like(show) }
     end
+    # @viewing_single_year = true
     @shows
   end
   

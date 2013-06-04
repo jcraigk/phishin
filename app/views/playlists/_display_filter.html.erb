@@ -1,26 +1,28 @@
 <% 
 hash = {
-  'Display All' => 'all',
-  'Only Mine' => 'mine',
-  "Only Phriends'" => 'phriends'
+  '<i class="icon icon-globe"></i> All' => 'all',
+  '<i class="icon icon-user"></i> Only Mine' => 'mine',
+  '<i class="icon icon-bookmark"></i> Only Phriends\'' => 'phriends'
 }
 %>
-<div class="btn-group">
-  <a class="btn dropdown-toggle btn-sort" data-toggle="dropdown" href="null">
-    <%
-    hash.each do |key, val|
-      if params[:filter] == val or !params[:filter]
-        %><%= key %><%
-        break
+<h3>Display: 
+  <div class="btn-group">
+    <a class="btn dropdown-toggle btn-sort" data-toggle="dropdown" href="null">
+      <%
+      hash.each do |key, val|
+        if params[:filter] == val or !params[:filter]
+          %><%= key.html_safe %><%
+          break
+        end
       end
-    end
-    %>
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu">
-    <% hash.each do |key, val| %>
-      <% link = (params[:filter] == val or !params[:filter]) ? "<strong>#{key}</strong>" : key %>
-      <%= content_tag :li, link_to(link.html_safe, "?filter=#{CGI::escape(val)}")%>
-    <% end %>
-  </ul>
-</div>
+      %>
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      <% hash.each do |key, val| %>
+        <% link = (params[:filter] == val or !params[:filter]) ? "<strong>#{key}</strong>".html_safe : key %>
+        <%= content_tag :li, link_to(link.html_safe, "?filter=#{CGI::escape(val)}")%>
+      <% end %>
+    </ul>
+  </div>
+</h3>
