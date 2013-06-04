@@ -664,7 +664,17 @@ p.large {
   -moz-border-radius: 30px !important;
   -webkit-border-radius: 30px !important;
   border-radius: 30px !important;
+  line-height: 6px !important;
+  font-weight: bold !important;
+  padding-left: 14px !important;
+  font-size: 17px !important;
+//  margin-top: -5px !important;
+//  padding: none !important;
+//  background-image: url('icon-next.png') !important;
 }
+//btn-round:hover {
+//  background-position: 0 0 !important;
+//}
 .btn-sort {
   height: 18px !important;
   -moz-border-radius: 30px !important;
