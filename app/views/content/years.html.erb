@@ -7,10 +7,10 @@
     <%= content_tag :div, nil, class: 'hr' %>
     <%= content_tag :h2, "An archive of live Phish audio" %>
     <%= content_tag :div, nil, class: 'hr' %>
-    <%= content_tag :h3, "Hours of Music: 3,250" %>
     <%= content_tag :h3, "Shows: #{number_with_delimiter(Show.avail.count)}" %>
-    <%= content_tag :h3, "Tracks: #{number_with_delimiter(Track.count)}" %>
     <%= content_tag :h3, "Songs: #{number_with_delimiter(Song.relevant.count)}" %>
+    <%= content_tag :h3, "Tracks: #{number_with_delimiter(Track.count)}" %>
+    <%= content_tag :h3, "Hours of Music: 3,250" %>
   </div>
   
   <div id="content_box">

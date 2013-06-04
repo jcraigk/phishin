@@ -13,7 +13,11 @@
       <%= likable(@show, @show_like, 'large') %>
       <div style="clear: both;"></div>
       <%= render partial: 'shared/context_menu_for_show', locals: {show: @show, viewing_this_show: true, next_show: @next_show, previous_show: @previous_show } %>
-      (tags)
+      <h3>
+        <% @show.tags.each do |tag| %>
+          <%= content_tag :span, tag.name, class: 'label', style: "background-color: #{tag.color}" %>
+        <% end %>
+      </h3>
       <%= content_tag :div, nil, class: 'hr' %>
       <%= link_to('<i class="icon-chevron-left"></i>&nbsp;&nbsp;Previous Show'.html_safe, "/#{@previous_show.date}") %>
       <div style="clear: both;"></div>
