@@ -114,7 +114,7 @@ class Track < ActiveRecord::Base
   end
   
   def generic_slug
-    title.downcase.gsub(/'/, '').gsub(/[^a-z0-9]/, ' ').strip.gsub(/\s+/, ' ').gsub(/\s/, '-')
+    title.downcase.gsub(/\'/, '').gsub(/[^a-z0-9]/, ' ').strip.gsub(/\s+/, ' ').gsub(/\s/, '-')
   end
 
   protected
