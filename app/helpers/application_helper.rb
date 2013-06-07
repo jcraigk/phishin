@@ -141,7 +141,7 @@ module ApplicationHelper
       'Venues' => [venues_path, ['venues', 'venue']],
       'Songs' => [songs_path, ['songs', 'song']],
       'Map' => ['/map?map_term=Burlington%20VT&distance=250', ['map']],
-      'Likes' => [top_shows_path, ['top_liked_shows', 'top_liked_tracks']],
+      'Likes' => [top_shows_path, ['top_liked_shows', 'top_liked_tracks', 'my_liked_shows', 'my_liked_tracks']],
       'Playlists' => [active_playlist_path, ['active_playlist', 'saved_playlists']]
     }
     x = 176

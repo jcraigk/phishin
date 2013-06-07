@@ -225,6 +225,7 @@ p.large {
   color: #791419;
   font-size: 24px;
   font-family: 'Nothing You Could Do', cursive !important;
+  overflow: hidden;
 }
 #player_likes_container {
   margin: 0 auto;
@@ -241,7 +242,7 @@ p.large {
 }
 .likes_small {
   float: right;
-  width: 60px;
+  width: 50px;
   height: 16px;
   margin-top: 0px;
   margin-left: 20px;
@@ -271,6 +272,7 @@ p.large {
   color: #5f1014;
   font-size: 15px;
   font-family: 'Nothing You Could Do', cursive !important;
+  overflow: hidden;
 }
 
 .spinner_likes_small {
@@ -719,16 +721,6 @@ p.large {
 }
 
 /************************/
-
-.paging {
-  margin: 0 auto;
-  text-align: right;
-  padding-right: 50px;
-  margin-top: 8px;
-}
-.pagination {
-  float: right;
-}
 .page_title {
   color: $text_gray;
   float: right;
