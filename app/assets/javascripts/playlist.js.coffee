@@ -132,7 +132,7 @@ class @Playlist
   
   handleShareModal: ->
     if $('#playlist_data').attr('data-id') is "0"
-      url = "You must first save a playlist to share it..."
+      url = "You must first save a playlist to share it."
     else
       url = "#{$('body').data('base-url')}/play/#{$('#playlist_data').attr('data-slug')}"
     $('#share_url').html("<p>#{url}</p>")

@@ -6,18 +6,7 @@ class PlaylistsController < ApplicationController
     if params[:slug] and playlist = Playlist.where(slug: params[:slug]).first
       # tracks = tracks.order('playlist_tracks.position').all
       # raise playlist.inspect
-      session[:playlist] = playlist.tracks.order('position').all.map(&:id)
-      # raise session[:playlist].inspect
-      session[:playlist_id] = playlist.id
-      session[:playlist_name] = playlist.name
-      session[:playlist_slug] = playlist.slug
-      session[:playlist_user_id] = playlist.user.id
-      session[:playlist_user_name] = playlist.user.username
-      if current_user and bookmark = PlaylistBookmark.where(playlist_id: playlist.id, user_id: current_user.id).first
-        session[:playlist_is_bookmarked] = true
-      else
-        session[:playlist_is_bookmarked] = false
-      end
+      activate_playlist(playlist)
     end
     # raise session[:playlist].inspect
     if session[:playlist]
@@ -71,6 +60,7 @@ class PlaylistsController < ApplicationController
       else
         playlist = Playlist.create(user_id: current_user.id, name: params[:name], slug: params[:slug])
         create_playlist_tracks(playlist)
+        activate_playlist(playlist)
         success = true
         msg = 'Playlist saved'
       end
@@ -78,6 +68,7 @@ class PlaylistsController < ApplicationController
       playlist.update_attributes(name: params[:name], slug: params[:slug])
       playlist.tracks.map(&:destroy)
       create_playlist_tracks(playlist)
+      activate_playlist(playlist)
       success = true
       msg = 'Playlist saved'
     else
@@ -264,6 +255,21 @@ class PlaylistsController < ApplicationController
       PlaylistTrack.create(playlist_id: playlist.id, track_id: track_id, position: idx+1)
     end
     playlist.update_attributes(duration: playlist.tracks.map(&:duration).inject(0, &:+))
+  end
+  
+  def activate_playlist(playlist)
+    session[:playlist] = playlist.tracks.order('position').all.map(&:id)
+    # raise session[:playlist].inspect
+    session[:playlist_id] = playlist.id
+    session[:playlist_name] = playlist.name
+    session[:playlist_slug] = playlist.slug
+    session[:playlist_user_id] = playlist.user.id
+    session[:playlist_user_name] = playlist.user.username
+    if current_user and bookmark = PlaylistBookmark.where(playlist_id: playlist.id, user_id: current_user.id).first
+      session[:playlist_is_bookmarked] = true
+    else
+      session[:playlist_is_bookmarked] = false
+    end
   end
   
   def clear_saved_playlist

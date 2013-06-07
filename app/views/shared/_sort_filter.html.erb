@@ -2,7 +2,7 @@
   <div class="btn-group">
     <a class="btn dropdown-toggle btn-sort" data-toggle="dropdown" href="null">
       <% item_hash.each_with_index do |(key, val), i| %>
-        <% if params[:sort] == val or (i == 0 and params[:sort].empty?) %>
+        <% if params[:sort] and params[:sort] == val or (i == 0 and (!params[:sort] or params[:sort].empty?)) %>
           <%= key.html_safe %>
         <% end %>
       <% end %>

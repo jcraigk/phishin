@@ -7,7 +7,7 @@
     <%= content_tag :div, nil, class: 'hr' %>
     <%= content_tag :h2, "Shows: #{@shows.size}" %>
     <%= content_tag :div, nil, class: 'hr' %>
-    <%= render partial: 'sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Date' => 'date desc', '<i class="icon-time"></i> Date' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes',  '<i class="icon-play-circle"></i> Duration' => 'duration'} } %>
+    <%= render partial: 'shared/sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Date' => 'date desc', '<i class="icon-time"></i> Date' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes',  '<i class="icon-play-circle"></i> Duration' => 'duration'} } %>
     <%# if @viewing_single_year %>
       <%# content_tag :div, nil, class: 'hr' %>
       <%# link_to('<i class="icon-chevron-left"></i>&nbsp;&nbsp;Previous Year'.html_safe, "/#{@title.to_i - 1}") %>
