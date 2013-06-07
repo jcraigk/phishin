@@ -44,19 +44,21 @@ class PlaylistsController < ApplicationController
     # TODO Could we do the following with validations more cleanly?
     if !current_user
       msg = 'You must be logged in to save playlists'
+    elsif session[:playlist].size < 2
+      msg = 'Saved playlists must contain at least 2 tracks'
     elsif !params[:name] or !params[:slug] or params[:name].empty? or params[:slug].empty?
       msg = 'You must provide a name and URL for this playlist'
     elsif !params[:name].match(/^.{5,50}$/)
       msg = 'Name must be between 5 and 50 characters'
     elsif !params[:slug].match(/^[a-z0-9\-]{5,50}$/)
       msg = 'URL must be between 5 and 50 lowercase letters, numbers, or dashes'
-    elsif playlist = Playlist.where(slug: params[:slug], user_id: current_user.id).where('id != ?', params[:id]).first
-      msg = 'That URL has already been taken; choose another'
-    elsif session[:playlist].size < 2
-      msg = 'Saved playlists must contain at least 2 tracks'
     elsif save_action == 'new'
       if Playlist.where(user_id: current_user.id).all.size >= MAX_PLAYLISTS_PER_USER
         msg = "Sorry, each user is limited to #{MAX_PLAYLISTS_PER_USER} playlists"
+      elsif Playlist.where(name: params[:name], user_id: current_user.id).first
+        msg = 'That name has already been taken; choose another'
+      elsif Playlist.where(slug: params[:slug]).first
+        msg = 'That URL has already been taken; choose another'
       else
         playlist = Playlist.create(user_id: current_user.id, name: params[:name], slug: params[:slug])
         create_playlist_tracks(playlist)

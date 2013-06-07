@@ -145,9 +145,9 @@ class @Playlist
      url: '/save-playlist',
      type: 'post',
      data: {
-       id:      $('#playlist_data').attr('data-id'),
-       name:    @$playlist_name_input.val(),
-       slug:    @$playlist_slug_input.val(),
+       id:      $('#playlist_data').attr('data-id')
+       name:    @$playlist_name_input.val()
+       slug:    @$playlist_slug_input.val()
        save_action:  @$save_action_dropdown.val()
      }
      success: (r) =>

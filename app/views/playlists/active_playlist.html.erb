@@ -9,7 +9,7 @@
     <%= content_tag :h3, "Tracks: #{@num_tracks}", id: 'active_playlist_tracks_label' %>
     <%= content_tag :h3, "Length: #{duration_readable(@duration, 'letters')}", id: 'active_playlist_duration_label' %>
     <br />
-    <button type="button" class="btn" id="clear_playlist_btn"><i class="icon-eject"></i> Empty</button><br />
+    <button type="button" class="btn" id="clear_playlist_btn"><i class="icon-eject"></i> Clear</button><br />
     <% if user_signed_in? %>
       <button type="button" class="btn" id="share_playlist_btn"><i class="icon-share"></i> Share</button><br />
       <button type="button" class="btn" id="save_playlist_btn"><i class="icon-file"></i> Save</button><br />
