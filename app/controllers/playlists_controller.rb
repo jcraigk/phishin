@@ -24,12 +24,14 @@ class PlaylistsController < ApplicationController
   def saved_playlists
     if current_user
       bookmarked_ids = PlaylistBookmark.where(user_id: current_user.id).all.map(&:id)
-      if bookmarked_ids.size > 0
-        @playlists = Playlist.where("user_id = ? OR id IN ?", current_user.id, bookmarked_ids)
-      else
+      if params[:filter] == 'phriends'
+        @playlists = Playlist.where(id: bookmarked_ids)
+      elsif params[:filter] == 'mine'
         @playlists = Playlist.where(user_id: current_user.id)
+      else
+        @playlists = Playlist.where("user_id = ? OR id IN (?)", current_user.id, bookmarked_ids)
       end
-      @playlists.page(params[:page])
+      @playlists.includes(:user).order(order_by_for_saved_playlists).page(params[:page])
     end
     render layout: false if request.xhr?
   end
@@ -251,6 +253,17 @@ class PlaylistsController < ApplicationController
   end
   
   private
+  
+  def order_by_for_saved_playlists
+    params[:sort] = 'name' unless ['name', 'duration', 'username'].include? params[:sort]
+    if params[:sort] == 'name' or params[:sort] == 'duration'
+      order_by = params[:sort]
+    elsif params[:sort] == 'username'
+      order_by = 'users.username'
+    end
+    order_by += ', name'
+  end
+  
   
   def create_playlist_tracks(playlist)
     session[:playlist].each_with_index do |track_id, idx|

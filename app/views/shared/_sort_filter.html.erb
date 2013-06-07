@@ -1,17 +1,22 @@
 <h3>Sort by&nbsp;
   <div class="btn-group">
     <a class="btn dropdown-toggle btn-sort" data-toggle="dropdown" href="null">
-      <% item_hash.each_with_index do |(key, val), i| %>
-        <% if params[:sort] and params[:sort] == val or (i == 0 and (!params[:sort] or params[:sort].empty?)) %>
-          <%= key.html_safe %>
-        <% end %>
-      <% end %>
+      <%
+      item_hash.each do |key, val|
+        if params[:sort] == val or !params[:sort] or params[:sort].empty?
+          %><%= key.html_safe %><%
+          break
+        end
+      end
+      %>
       <span class="caret"></span>
     </a>
     <ul class="dropdown-menu">
       <% item_hash.each do |key, val| %>
         <% link = params[:sort] == val ? "<strong>#{key}</strong>" : key %>
-        <%= content_tag :li, link_to(link.html_safe, "?sort=#{CGI::escape(val)}")%>
+        <% param_str = "?sort=#{CGI::escape(val)}" %>
+        <% param_str += "&filter=#{params[:filter]}" if params[:filter] %>
+        <%= content_tag :li, link_to(link.html_safe, param_str)%>
       <% end %>
     </ul>
   </div>

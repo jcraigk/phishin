@@ -222,7 +222,7 @@ class ContentController < ApplicationController
       @order_by = "likes_count desc, date desc"
       # @display_separators = false
     elsif params[:sort] == 'duration'
-      @order_by = "shows.duration desc, date desc"
+      @order_by = "shows.duration, date desc"
       # @display_separators = false
     end
   end
@@ -236,7 +236,7 @@ class ContentController < ApplicationController
       @order_by = "tracks.likes_count desc, shows.date desc"
       # @display_separators = false
     elsif params[:sort] == 'duration'
-      @order_by = "tracks.duration desc, shows.date desc"
+      @order_by = "tracks.duration, shows.date desc"
       # @display_separators = false
     end
   end
