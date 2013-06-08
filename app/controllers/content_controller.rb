@@ -44,7 +44,7 @@ class ContentController < ApplicationController
   ###############################
   def glob
     g = params[:glob]
-    
+
     # Day of Year?
     if monthday = g.match(/^(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})$/i)
       if day_of_year Date::MONTHNAMES.index(monthday[1].titleize), Integer(monthday[2], 10)
@@ -72,7 +72,7 @@ class ContentController < ApplicationController
         redirect_to :root
       end
     # Show?
-    elsif g.match(/^\d{4}\-\d{1,2}-\d{1,2}$/)
+    elsif g.match(/^\d{4}(\-|\.)\d{1,2}(\-|\.)\d{1,2}$/)
       if show g
         view = :show
       else
@@ -136,6 +136,7 @@ class ContentController < ApplicationController
   end
   
   def show(date)
+    date = "#{$1}-#{$2}-#{$3}" if date =~ /^(\d{4})\.(\d{1,2})\.(\d{1,2})$/ # convert 2012.12.31 to 2012-12-31
     # Ensure valid date before touching database
     begin
        Date.parse(date)

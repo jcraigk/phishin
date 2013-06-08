@@ -65,6 +65,6 @@ Phishin::Application.routes.draw do
   get     '/download/:md5'                => 'downloads#download_album',            as: 'download_album'
   
   # Catch-all matcher for short content URLs
-  get     '/(:glob(/:anchor))' => 'content#glob'
+  get     '/(:glob(/:anchor))' => 'content#glob', constraints: { :glob => /[^\/]+/ }
     
 end

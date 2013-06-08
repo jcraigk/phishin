@@ -157,8 +157,8 @@ module ApplicationHelper
   def global_nav_links
     nav_items = {
       'Years' => [years_path, ['years', 'year']],
-      'Venues' => [venues_path, ['venues', 'venue']],
       'Songs' => [songs_path, ['songs', 'song']],
+      'Venues' => [venues_path, ['venues', 'venue']],
       'Map' => ['/map?map_term=Burlington%20VT&distance=250', ['map']],
       'Top 40' => [top_shows_path, ['top_liked_shows', 'top_liked_tracks']],
       'Playlists' => [active_playlist_path, ['active_playlist', 'saved_playlists']],
