@@ -30,6 +30,12 @@ class ApplicationController < ActionController::Base
     track.likes.where(user_id: current_user.id).first if track and track.likes and current_user
   end
   
+  protected
+  
+  def get_user_show_like(show)
+    show.likes.where(user_id: current_user.id).first if show and current_user
+  end
+  
   private
   
   def authenticate

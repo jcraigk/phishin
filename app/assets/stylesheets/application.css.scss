@@ -736,30 +736,6 @@ p.large {
   height: 20px;
   margin-top: 7px;
 }
-
-#userbox {
-//  font-family: sans-serif;
-  float: right;
-//  margin-top: -7px;
-text-align: right;
-margin-right: -110px;
-margin-top: 2px;
-color: black;
-}
-#userbox .btn-group {
-  box-shadow: none !important;
-  border: none !important;
-//  border: 1px solid red !important;
-  margin-top: -3px;
-  margin-right: -10px;
-  text-align: left;
-}
-#userbox a {
-  font-size: 14px !important;
-  color: black !important;
-  font-weight: bold !important;
-  box-shadow: none !important;
-}
 #player_feedback {
   width: 50px;
   margin-top: 52px;
@@ -775,12 +751,6 @@ color: black;
   font-weight: bold;
   color: #333;
 //  border: 1px solid red;
-}
-.done {
-  background-color: #b7f2af !important;
-  -moz-box-shadow: 0 0 16px #3b995f !important;
-  -webkit-box-shadow: 0 0 16px #3b995f !important;
-  box-shadow: 0 0 16px #3b995f !important;
 }
 #player_title_container {
   padding: 0px;

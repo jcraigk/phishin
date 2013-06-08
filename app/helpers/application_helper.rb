@@ -27,15 +27,34 @@ module ApplicationHelper
   def top_liked_sub_links
     nav_items = {
       'Top 40 Shows' => [top_shows_path, ['top_liked_shows']],
-      'Top 40 Tracks' => [top_tracks_path, ['top_liked_tracks']],
-      'My Liked Shows' => [my_liked_shows_path, ['my_liked_shows']],
-      'My Liked Tracks' => [my_liked_tracks_path, ['my_liked_tracks']],
+      'Top 40 Tracks' => [top_tracks_path, ['top_liked_tracks']]
     }
     str = ''
     nav_items.each do |name, properties|
       css = ''
       css = 'active' if properties[1].include?(params[:action])
       str += link_to name, properties[0], class: css
+    end
+    str.html_safe
+  end
+  
+  def user_sub_links
+    nav_items = {
+      'My Shows' => [my_shows_path, false, ['my_shows']],
+      'My Tracks' => [my_tracks_path, false, ['my_tracks']],
+      'Change Password' => [edit_user_registration_path, true, ['edit']],
+      'Logout' => [destroy_user_session_path, true, ['nothing']]
+    }
+    str = ''
+    nav_items.each do |name, properties|
+      css = ''
+      css = 'active' if properties[2].include?(params[:action])
+      css += ' non-remote' if properties[1]
+      if name == 'Logout'
+        str += link_to name, properties[0], class: css, method: :delete
+      else
+        str += link_to name, properties[0], class: css
+      end
     end
     str.html_safe
   end
@@ -141,8 +160,9 @@ module ApplicationHelper
       'Venues' => [venues_path, ['venues', 'venue']],
       'Songs' => [songs_path, ['songs', 'song']],
       'Map' => ['/map?map_term=Burlington%20VT&distance=250', ['map']],
-      'Likes' => [top_shows_path, ['top_liked_shows', 'top_liked_tracks', 'my_liked_shows', 'my_liked_tracks']],
-      'Playlists' => [active_playlist_path, ['active_playlist', 'saved_playlists']]
+      'Top 40' => [top_shows_path, ['top_liked_shows', 'top_liked_tracks']],
+      'Playlists' => [active_playlist_path, ['active_playlist', 'saved_playlists']],
+      'userbox' => [nil, ['my_shows', 'my_tracks']]
     }
     x = 176
     x_step = 70
@@ -150,6 +170,17 @@ module ApplicationHelper
     nav_items.each do |name, properties|
       css = ''
       css = 'active' if properties[1].include?(params[:action]) or properties[1].include?(@controller_action)
+      if name == 'userbox'
+        x = 850
+        if user_signed_in?
+          properties[0] = my_shows_path
+          name = current_user.username
+        else
+          properties[0] = new_user_session_path
+          name = 'Sign in'
+          css += ' non-remote'
+        end
+      end
       str += content_tag :div, (link_to name, properties[0], class: "global_link #{css}"), class: 'link_container', style: "margin-left: #{x}px;"
       if css == 'active'
         pos = x + 20

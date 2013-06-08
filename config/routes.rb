@@ -6,7 +6,9 @@ Phishin::Application.routes.draw do
 
   # User stuff
   devise_for :users
-  get '/user-signed-in' => 'application#is_user_signed_in'
+  get     '/user-signed-in'               => 'application#is_user_signed_in'
+  get     '/my-shows'                     => 'my#my_shows',                         as: 'my_shows'
+  get     '/my-tracks'                    => 'my#my_tracks',                        as: 'my_tracks'
 
   # Resque server
   mount Resque::Server, at: "/resque"
@@ -29,8 +31,6 @@ Phishin::Application.routes.draw do
   get     '/venues'                       => 'content#venues',                      as: 'venues'
   get     '/top-shows'                    => 'content#top_liked_shows',             as: 'top_shows'
   get     '/top-tracks'                   => 'content#top_liked_tracks',            as: 'top_tracks'
-  get     '/my-liked-shows'               => 'content#my_liked_shows',              as: 'my_liked_shows'
-  get     '/my-liked-tracks'              => 'content#my_liked_tracks',             as: 'my_liked_tracks'
   get     '/search'                       => 'search#results',                      as: 'search'
 
   # Map

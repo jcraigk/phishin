@@ -39,25 +39,6 @@ class ContentController < ApplicationController
     render layout: false if request.xhr?
   end
   
-  def my_liked_shows
-    if current_user
-      show_ids = Like.where(likable_type: 'Show', user_id: current_user.id).all.map(&:id)
-      @shows = Show.where(id: show_ids).order('date desc').paginate(page: params[:page], per_page: 20)
-      @shows_likes = @shows.map { |show| get_user_show_like(show) }
-    end
-    render layout: false if request.xhr?
-  end
-  
-  def my_liked_tracks
-    if current_user
-      track_ids = Like.where(likable_type: 'Track', user_id: current_user.id).all.map(&:id)
-      @tracks = Track.where(id: track_ids).order('title asc').paginate(page: params[:page], per_page: 20)
-      @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
-    end
-    render layout: false if request.xhr?
-  end
-
-  
   ###############################
   # Glob-matching
   ###############################
@@ -208,10 +189,6 @@ class ContentController < ApplicationController
   end
   
   private
-  
-  def get_user_show_like(show)
-    show.likes.where(user_id: current_user.id).first if show and current_user
-  end
   
   def validate_sorting_for_year_or_scope
     params[:sort] = 'date desc' unless ['date desc', 'date asc', 'likes', 'duration'].include? params[:sort]
