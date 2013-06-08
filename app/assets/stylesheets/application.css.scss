@@ -69,6 +69,7 @@ p.large {
 .hr {
   width: 100%;
   border-bottom: 1px solid $text_gray;
+  margin-top: 25px;
   margin-bottom: 25px;
 }
 
@@ -488,7 +489,6 @@ p.large {
 #title_box h1 {
   line-height: 24px;
   font-size: 24px;
-  margin-bottom: 20px;
   margin-top: 0px;
   color: $text_gray;
 }
@@ -498,9 +498,8 @@ p.large {
 }
 #title_box h2 {
   margin-top: 0px;
-  margin-bottom: 20px;
-  line-height: 18px !important;
-  font-size: 18px;
+  line-height: 14px !important;
+  font-size: 17px;
   font-weight: normal;
   color: $text_gray;
 //  font-style: italic;
@@ -508,7 +507,7 @@ p.large {
 }
 #title_box h3 {
   line-height: 20px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: normal;
   color: $text_gray;
 }
@@ -722,14 +721,6 @@ p.large {
 }
 
 /************************/
-.page_title {
-  color: $text_gray;
-  float: right;
-  padding-top: 25px;
-  margin-right: -10px;
-  font-size: 17px;
-  line-height: 16px;
-}
 .filter_menu {
   display: inline;
   width: 120px;
@@ -771,6 +762,9 @@ p.large {
 }
 #player_title.long_title {
   font-size: 18px;
+}
+.player_title_dimmed {
+  color: $text_gray;
 }
 #player_detail {
   padding: 0px;

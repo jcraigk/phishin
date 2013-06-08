@@ -7,8 +7,7 @@
     <% unless @show.missing? %>
       <%= content_tag :h2, (link_to @show.venue.name.html_safe, "/#{@show.venue.slug}") %>
       <%= content_tag :h2, (link_to @show.venue.location, "/map?map_term=#{CGI::escape(@show.venue.location)}&amp;distance=5") %>
-      <%= content_tag :div, nil, class: 'hr' %>
-      <%= content_tag :h2, "Length: #{duration_readable(@show.duration, 'letters')}" %>
+      <%= content_tag :h2, duration_readable(@show.duration, 'letters') %>
       <%= content_tag :div, nil, class: 'hr' %>
       <%= likable(@show, @show_like, 'large') %>
       <div style="clear: both;"></div>

@@ -218,7 +218,7 @@ module ApplicationHelper
   end
   
   def show_link_title(show, show_abbrev=true)
-    show_abbrev ? show.date.strftime("%b %-d") : show.date.strftime("%Y.%-m.%-d")
+    show_abbrev ? show.date.strftime("%b %-d") : show.date.strftime("%Y.%m.%d")
   end
   
   private
