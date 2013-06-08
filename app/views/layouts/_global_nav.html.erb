@@ -5,6 +5,7 @@
       <i class="icon icon-search"></i>
       <input type="text" name="term" id="search_term" value="<%= params[:term] %>">
     </div>
+    <%= render partial: 'layouts/user_controls' %>
   </div>
   <div id="sub_nav">
     <% if params[:controller] == 'content' %>

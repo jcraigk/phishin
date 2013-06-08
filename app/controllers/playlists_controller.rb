@@ -3,12 +3,14 @@ class PlaylistsController < ApplicationController
   def active_playlist
     @num_tracks = 0
     @duration = 0
-    if params[:slug] and playlist = Playlist.where(slug: params[:slug]).first
-      # tracks = tracks.order('playlist_tracks.position').all
-      # raise playlist.inspect
-      activate_playlist(playlist)
+    @invalid_playlist_slug = false
+    if params[:slug]
+      if playlist = Playlist.where(slug: params[:slug]).first
+        activate_playlist(playlist)
+      else
+        @invalid_playlist_slug = true
+      end
     end
-    # raise session[:playlist].inspect
     if session[:playlist]
       session[:playlist] = session[:playlist].take(100)
       tracks_by_id = Track.find(session[:playlist]).index_by(&:id)

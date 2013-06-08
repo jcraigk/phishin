@@ -31,7 +31,8 @@ $ ->
   $alert          = $ '.feedback_alert'
   $ajax_overlay   = $ '#ajax_overlay'
   $page           = $ '#page'
-  $footer         = $ '#footer'
+  # $footer         = $ '#footer'
+  # $footer.css 'visibility', 'visible' # to prevent it appearing at the top before content loads
 
   ###############################################
   # Prepare history.js
@@ -42,14 +43,12 @@ $ ->
     state = window.History.getState()
     if state.data.href != undefined and !App.Util.page_init
       $ajax_overlay.css 'visibility', 'visible'
-      $footer.css 'visibility', 'hidden'
       $page.html ''
       $page.load(
         state.data.href, (response, status, xhr) ->
           # App.Util.showHTMLError("ERROR\n\n"+response) if status is 'error'
           alert("ERROR\n\n"+response) if status is 'error'
           $ajax_overlay.css 'visibility', 'hidden'
-          $footer.css 'visibility', 'visible'
           
           # Scroll to proper position (not currently working)
           window.scrollTo 0, App.Util.historyScrollStates[state.id] if App.Util.historyScrollStates[state.id]

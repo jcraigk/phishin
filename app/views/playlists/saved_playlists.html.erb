@@ -14,9 +14,7 @@
   <div id="content_box">
     
     <% if !user_signed_in? %>
-      <div class="callout_box">
-        <p>You must sign in to manage saved playlists</p>
-      </div>
+      <div class="callout_box">You must sign in to manage saved playlists</div>
     <% else %>
       <ul class="item_list clickable">
         <% for playlist in @playlists %>

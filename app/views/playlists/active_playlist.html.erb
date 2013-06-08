@@ -10,10 +10,9 @@
     <%= content_tag :h3, "Length: #{duration_readable(@duration, 'letters')}", id: 'active_playlist_duration_label' %>
     <br />
     <button type="button" class="btn" id="clear_playlist_btn"><i class="icon-eject"></i> Clear</button><br />
+    <button type="button" class="btn" id="share_playlist_btn"><i class="icon-share"></i> Share</button><br />
+    <button type="button" class="btn" id="save_playlist_btn"><i class="icon-file"></i> Save</button><br />
     <% if user_signed_in? %>
-      <button type="button" class="btn" id="share_playlist_btn"><i class="icon-share"></i> Share</button><br />
-      <button type="button" class="btn" id="save_playlist_btn"><i class="icon-file"></i> Save</button><br />
-      <%# raise session.inspect %>
       <% if session[:playlist_id] and session[:playlist_id] > 0 %>
         <% if current_user.id == session[:playlist_user_id] %>
           <button type="button" class="btn" id="delete_playlist_btn"><i class="icon-remove"></i> Delete</button>
@@ -26,12 +25,16 @@
         <% end %>
       <% end %>
     <% else %>
-    <br />
-      <%= content_tag :p, "#{link_to "Sign in", new_user_session_path, class: 'non-remote'} to save and share playlists".html_safe, class: 'instructions' %>
+    <!-- <br /> -->
+      <%# content_tag :p, "#{link_to "Sign in", new_user_session_path, class: 'non-remote'} to save and share playlists".html_safe, class: 'instructions' %>
     <% end %>
   </div>
   
   <div id="content_box">
+    
+    <% if @invalid_playlist_slug %>
+      <div class="incomplete_show">Invalid playlist URL provided</div>
+    <% end %>
     
     <div id="empty_playlist_msg" class="callout_box" style="display: none;"><strong>Your active playlist is empty.</strong>
       <br /><br />
