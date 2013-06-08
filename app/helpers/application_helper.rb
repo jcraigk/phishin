@@ -162,7 +162,7 @@ module ApplicationHelper
       'Map' => ['/map?map_term=Burlington%20VT&distance=250', ['map']],
       'Top 40' => [top_shows_path, ['top_liked_shows', 'top_liked_tracks']],
       'Playlists' => [active_playlist_path, ['active_playlist', 'saved_playlists']],
-      'userbox' => [nil, ['my_shows', 'my_tracks']]
+      'userbox' => [nil, ['my_shows', 'my_tracks', 'edit']]
     }
     x = 176
     x_step = 70

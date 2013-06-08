@@ -315,7 +315,7 @@ p.large {
   height: 90px;
   width: 90px;
   margin-top: -5px;
-  margin-left: 20px;
+  margin-left: 35px;
 }
 #logo img {
   border: 1px solid black;
@@ -406,7 +406,7 @@ p.large {
   text-align: center;
   width: 60px;
   position: fixed;  
-  margin-top: 5px;
+  margin-top: 6px;
   height: 14px;
   line-height: 12px;
 //  border: 1px solid green;
@@ -498,10 +498,11 @@ p.large {
 }
 #title_box h2 {
   margin-top: 0px;
-  line-height: 14px !important;
+  line-height: 18px !important;
   font-size: 17px;
   font-weight: normal;
   color: $text_gray;
+  margin-bottom: 6px;
 //  font-style: italic;
 //  border: 1px solid black;
 }
