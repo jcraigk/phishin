@@ -56,7 +56,7 @@ class ApplicationController < ActionController::Base
     session[:playlist_name]       ||= ''
     session[:playlist_slug]       ||= ''
     session[:playlist_user_id]    ||= ''
-    session[:playlist_user_name]  ||= ''
+    session[:playlist_username]  ||= ''
     session[:loop]                ||= false
     session[:randomize]           ||= false
   end

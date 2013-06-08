@@ -12,7 +12,7 @@ class DownloadsController < ApplicationController
         id: track.id,
         title: track.title,
         duration: track.duration,
-        show: "#{track.show.date}",
+        show: "#{track.show.date.strftime("%Y.%-m.%-d")}",
         show_url: "/#{track.show.date}",
         venue: "#{track.show.venue.name}",
         venue_url: "/#{track.show.venue.slug}",

@@ -98,7 +98,7 @@ class @Playlist
        $('#playlist_data').attr 'data-name', ''
        $('#playlist_data').attr 'data-slug', ''
        $('#playlist_data').attr 'data-user-id', ''
-       $('#playlist_data').attr 'data-user-name', ''
+       $('#playlist_data').attr 'data-username', ''
        $('#delete_playlist_btn').hide()
        $('#active_playlist').html ''
        $('#playlist_title').html '(Untitled Playlist)'

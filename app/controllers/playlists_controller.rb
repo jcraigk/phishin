@@ -281,7 +281,7 @@ class PlaylistsController < ApplicationController
     session[:playlist_name] = playlist.name
     session[:playlist_slug] = playlist.slug
     session[:playlist_user_id] = playlist.user.id
-    session[:playlist_user_name] = playlist.user.username
+    session[:playlist_username] = playlist.user.username
     if current_user and bookmark = PlaylistBookmark.where(playlist_id: playlist.id, user_id: current_user.id).first
       session[:playlist_is_bookmarked] = true
     else
@@ -295,7 +295,7 @@ class PlaylistsController < ApplicationController
     session[:playlist_name] = ''
     session[:playlist_slug] = ''
     session[:playlist_user_id] = ''
-    session[:playlist_user_name] = ''
+    session[:playlist_username] = ''
     session[:playlist_is_bookmarked] = false
   end
   
