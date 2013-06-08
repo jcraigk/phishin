@@ -171,7 +171,7 @@ module ApplicationHelper
       css = ''
       css = 'active' if properties[1].include?(params[:action]) or properties[1].include?(@controller_action)
       if name == 'userbox'
-        x = 850
+        x = 750
         if user_signed_in?
           properties[0] = my_shows_path
           name = current_user.username
