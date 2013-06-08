@@ -9,18 +9,18 @@
     <%= content_tag :h3, "Tracks: #{@num_tracks}", id: 'active_playlist_tracks_label' %>
     <%= content_tag :h3, "Length: #{duration_readable(@duration, 'letters')}", id: 'active_playlist_duration_label' %>
     <br />
-    <button type="button" class="btn" id="clear_playlist_btn"><i class="icon-eject"></i> Clear</button><br />
-    <button type="button" class="btn" id="share_playlist_btn"><i class="icon-share"></i> Share</button><br />
-    <button type="button" class="btn" id="save_playlist_btn"><i class="icon-file"></i> Save</button><br />
+    <button type="button" class="btn" id="clear_playlist_btn"><i class="icon-eject"></i> CLEAR</button><br />
+    <button type="button" class="btn" id="share_playlist_btn"><i class="icon-share"></i> SHARE</button><br />
+    <button type="button" class="btn" id="save_playlist_btn"><i class="icon-file"></i> SAVE</button><br />
     <% if user_signed_in? %>
       <% if session[:playlist_id] and session[:playlist_id] > 0 %>
         <% if current_user.id == session[:playlist_user_id] %>
-          <button type="button" class="btn" id="delete_playlist_btn"><i class="icon-remove"></i> Delete</button>
+          <button type="button" class="btn" id="delete_playlist_btn"><i class="icon-remove"></i> DELETE</button>
         <% else %>
           <% if session[:playlist_is_bookmarked] %>
-            <button type="button" class="btn" id="delete_playlist_btn"><i class="icon-remove"></i> Unbookmark</button>
+            <button type="button" class="btn" id="delete_playlist_btn"><i class="icon-remove"></i> UNBOOKMARK</button>
           <% else %>
-            <button type="button" class="btn" id="bookmark_playlist_btn"><i class="icon-bookmark"></i> Bookmark</button>
+            <button type="button" class="btn" id="bookmark_playlist_btn"><i class="icon-bookmark"></i> BOOKMARK</button>
           <% end %>
         <% end %>
       <% end %>

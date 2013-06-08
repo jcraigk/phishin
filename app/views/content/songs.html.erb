@@ -7,7 +7,7 @@
     <%= content_tag :div, nil, class: 'hr' %>
     <%= content_tag :h2, "Total Songs: #{@songs.reject { |song| song.is_alias? }.size}" %>
     <%= content_tag :div, nil, class: 'hr' %>
-    <%= render partial: 'sort_songs_and_venues_filter', locals: { item_hash: {'<i class="icon-text-height"></i> Alphabetically' => 'title', '<i class="icon-list"></i> Number of Tracks' => 'performances'} } %>
+    <%= render partial: 'sort_songs_and_venues_filter', locals: { item_hash: {'<i class="icon-text-height"></i> Title' => 'title', '<i class="icon-list"></i> Number of Tracks' => 'performances'} } %>
   </div>
   
   <div id="content_box">

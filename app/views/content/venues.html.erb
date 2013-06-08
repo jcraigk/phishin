@@ -7,7 +7,7 @@
     <%= content_tag :div, nil, class: 'hr' %>
     <%= content_tag :h2, "Total Venues: #{@venues.size}" %>
     <%= content_tag :div, nil, class: 'hr' %>
-    <%= render partial: 'sort_songs_and_venues_filter', locals: { item_hash: {'<i class="icon-text-height"></i> Alphabetically' => 'name', '<i class="icon-list"></i> Number of Shows' => 'performances'} } %>
+    <%= render partial: 'sort_songs_and_venues_filter', locals: { item_hash: {'<i class="icon-text-height"></i> Name' => 'name', '<i class="icon-list"></i> Number of Shows' => 'performances'} } %>
   </div>
 
   <div id="content_box">

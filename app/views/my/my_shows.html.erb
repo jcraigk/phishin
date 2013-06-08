@@ -6,6 +6,8 @@
     <%= content_tag :h1, 'My Shows' %>
     <%= content_tag :div, nil, class: 'hr' %>
     <h3>A list of all shows you've Liked</h3>
+    <%= content_tag :div, nil, class: 'hr' %>
+    <%= render partial: 'shared/sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Date' => 'date desc', '<i class="icon-time"></i> Date' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes', '<i class="icon-forward"></i> Duration' => 'duration'} } %>
   </div>
   
   <div id="content_box">
