@@ -14,14 +14,18 @@
     <br />
     <button type="button" class="btn" id="clear_playlist_btn"><i class="icon-eject"></i> CLEAR</button><br />
     <button type="button" class="btn" id="share_playlist_btn"><i class="icon-share"></i> SHARE</button><br />
-    <button type="button" class="btn" id="save_playlist_btn"><i class="icon-file"></i> SAVE</button><br />
+    <% if user_signed_in? and session[:playlist_user_id] != current_user.id %>
+      <button type="button" class="btn" id="duplicate_playlist_btn"><i class="icon-file"></i> DUPLICATE</button><br />
+    <% else %>
+      <button type="button" class="btn" id="save_playlist_btn"><i class="icon-file"></i> SAVE</button><br />
+    <% end %>
     <% if user_signed_in? %>
       <% if session[:playlist_id] and session[:playlist_id] > 0 %>
         <% if current_user.id == session[:playlist_user_id] %>
           <button type="button" class="btn" id="delete_playlist_btn"><i class="icon-remove"></i> DELETE</button>
         <% else %>
           <% if session[:playlist_is_bookmarked] %>
-            <button type="button" class="btn" id="delete_playlist_btn"><i class="icon-remove"></i> UNBOOKMARK</button>
+            <button type="button" class="btn" id="unbookmark_playlist_btn"><i class="icon-remove"></i> UNBOOKMARK</button>
           <% else %>
             <button type="button" class="btn" id="bookmark_playlist_btn"><i class="icon-bookmark"></i> BOOKMARK</button>
           <% end %>
@@ -52,7 +56,7 @@
         <li class="playable_track" data-id="<%= track.id %>" data-track-duration="<%= track.duration %>">
           <%= content_tag :h2, "#{idx+1}", class: 'position_num' %>
           <%= content_tag :h2, track_title_with_tags(track), class: 'wider' %>
-          <%= content_tag :h5, link_to(track.show.date.strftime("%Y.%m.%d"), "#{track.show.date}"), class: 'narrow' %>
+          <%= content_tag :h5, link_to(track.show.date.strftime("%Y.%m.%d"), "/#{track.show.date}"), class: 'narrow' %>
           <%# content_tag :h5, link_to(track.show.venue.location, "/map?map_term=#{CGI::escape(track.show.venue.location)}") %>
           <%= content_tag :div, "<i class=\"icon-resize-vertical\"></i>".html_safe, class: "drag_arrows_vertical"  %>
           <%= likable(track, @tracks_likes[idx], 'small') %>

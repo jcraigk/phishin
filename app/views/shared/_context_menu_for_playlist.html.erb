@@ -8,11 +8,11 @@
       <%= content_tag :li, link_to("<i class=\"icon-play\"></i>&nbsp;&nbsp;Activate".html_safe, "/play/#{playlist.slug}") %>
       <%= content_tag :li, link_to('<i class="icon-share-alt"></i>&nbsp;&nbsp;Share'.html_safe, "null", class: 'share', data: { url: "/play/#{playlist.slug}"}) %>
       <%# content_tag :li, link_to('<i class="icon-download"></i>&nbsp;&nbsp;Download MP3s'.html_safe, "null", data: { url: download_playlist_path(playlist) }, class: "download-album") %>
-      <% if current_user.id == playlist.id %>
-        <%= content_tag :li, link_to('<i class="icon-remove"></i>&nbsp;&nbsp;Delete'.html_safe, "null") %>
-      <% else %>
-        <%= content_tag :li, link_to('<i class="icon-remove"></i>&nbsp;&nbsp;Unbookmark'.html_safe, "null") %>
-      <% end %>
+      <%# if current_user.id == playlist.id %>
+        <%# content_tag :li, link_to('<i class="icon-remove"></i>&nbsp;&nbsp;Delete'.html_safe, "null") %>
+      <%# else %>
+        <%# content_tag :li, link_to('<i class="icon-remove"></i>&nbsp;&nbsp;Unbookmark'.html_safe, "null") %>
+      <%# end %>
     </ul>
   </div>
 </div>

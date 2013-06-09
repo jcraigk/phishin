@@ -107,14 +107,26 @@ class @Playlist
        if provide_feedback then @Util.feedback { notice: 'Actve Playlist is now empty' }
     })
 
-  bookmarkPlaylist: (playlist_id) ->
+  bookmarkPlaylist: ->
     $.ajax({
       type: 'post',
       url: '/bookmark-playlist',
-      data: { 'playlist_id': playlist_id}
+      data: { 'id': $('#playlist_data').attr 'data-id' }
       success: (r) =>
         if r.success
           @Util.feedback { notice: 'Playlist bookmarked' }
+        else
+          @Util.feedback { alert: r.msg }
+    })
+  
+  unbookmarkPlaylist: ->
+    $.ajax({
+      type: 'post',
+      url: '/unbookmark-playlist',
+      data: { 'id': $('#playlist_data').attr 'data-id' }
+      success: (r) =>
+        if r.success
+          @Util.feedback { notice: 'Playlist unbookmarked' }
         else
           @Util.feedback { alert: r.msg }
     })
@@ -130,6 +142,12 @@ class @Playlist
       @$playlist_slug_input.val ''
     @$save_modal.modal 'show'
   
+  handleDuplicateModal: ->
+    @$save_action_existing.attr 'disabled', true
+    @$playlist_name_input.val ''
+    @$playlist_slug_input.val ''
+    @$save_modal.modal 'show'
+  
   handleShareModal: ->
     if $('#playlist_data').attr('data-id') is "0"
       url = "You must first save a playlist to share it."
@@ -141,6 +159,9 @@ class @Playlist
   
   savePlaylist: ->
     @$save_modal.modal 'hide'
+    $('#duplicate_playlist_btn').hide()
+    $('#unbookmark_playlist_btn').hide()
+    $('#bookmark_playlist_btn').hide()
     $.ajax({
      url: '/save-playlist',
      type: 'post',

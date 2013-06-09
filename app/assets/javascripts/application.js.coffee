@@ -179,6 +179,8 @@ $ ->
     $('#playlist_slug_input').val App.Util.stringToSlug($(this).val())
   $(document).on 'click', '#save_playlist_btn', (e) ->
     App.Playlist.handleSaveModal()
+  $(document).on 'click', '#duplicate_playlist_btn', (e) ->
+    App.Playlist.handleDuplicateModal()
   $(document).on 'click', '#save_playlist_submit', (e) ->
     App.Playlist.savePlaylist()
   $(document).on 'click', '#delete_playlist_btn', (e) ->
@@ -186,6 +188,10 @@ $ ->
       App.Playlist.deletePlaylist()
   $(document).on 'click', '#bookmark_playlist_btn', (e) ->
     App.Playlist.bookmarkPlaylist()
+    $('#bookmark_playlist_btn').hide()
+  $(document).on 'click', '#unbookmark_playlist_btn', (e) ->
+    App.Playlist.unbookmarkPlaylist()
+    $('#unbookmark_playlist_btn').hide()
   $(document).on 'click', '#clear_playlist_btn', (e) ->
     if confirm 'Are you sure you want to clear out your active playlist?'
       App.Playlist.clearPlaylist()

@@ -25,7 +25,7 @@ class PlaylistsController < ApplicationController
   
   def saved_playlists
     if current_user
-      bookmarked_ids = PlaylistBookmark.where(user_id: current_user.id).all.map(&:id)
+      bookmarked_ids = PlaylistBookmark.where(user_id: current_user.id).all.map(&:playlist_id)
       if params[:filter] == 'phriends'
         @playlists = Playlist.where(id: bookmarked_ids)
       elsif params[:filter] == 'mine'
@@ -93,28 +93,34 @@ class PlaylistsController < ApplicationController
     end
   end
   
-  def destroy_playlist_or_bookmark
+  def destroy_playlist
     if current_user and params[:id] and playlist = Playlist.where(id: params[:id], user_id: current_user.id).first
       playlist.destroy
       render json: { success: true, msg: 'Playlist deleted' }
-    elsif current_user and params[:id] and bookmark = PlaylistBookmark.where(playlist_id: params[:id], user_id: current_user.id).first
-      bookmark.destroy
-      render json: { success: true, msg: 'Playlist unbookmarked' }
     else
       render json: { success: false, msg: 'Invalid delete request' }
     end
   end
   
   def bookmark_playlist
-    if current_user and params[:playlist_id]
-      if bookmark = PlaylistBookmark.where(playlist_id: params[:playlist_id], user_id: current_user.id)
+    if current_user and params[:id]
+      if bookmark = PlaylistBookmark.where(playlist_id: params[:id], user_id: current_user.id).first
         render json: { success: false, msg: 'Playlist already bookmarked' }
       else
-        PlaylistBookmark.create(playlist_id: params[:playlist_id], user_id: current_user.id)
+        PlaylistBookmark.create(playlist_id: params[:id], user_id: current_user.id)
         render json: { success: true, msg: 'Playlist bookmarked' }
       end
     else
-      render json: { success: false, msg: 'You must be logged in to bookmark a playlist' }
+      render json: { success: false, msg: "here: #{params[:id]}" }
+    end
+  end
+  
+  def unbookmark_playlist
+    if current_user and params[:id] and bookmark = PlaylistBookmark.where(playlist_id: params[:id], user_id: current_user.id).first
+      bookmark.destroy
+      render json: { success: true, msg: 'Playlist unbookmarked' }
+    else
+      render json: { success: false, msg: 'Playlist not bookmarked' }
     end
   end
   
