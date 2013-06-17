@@ -14,17 +14,19 @@ $background_gray: #e7e7e8;
 $global_nav_gray: #cdcfd0;
 $sub_nav_gray: #d9dbdc;
 $alert_background: #ffc7c6;
+$gray_50: #808080;
+$gray_70: #4d4d4d;
+$gray_80: #333333;
 
 .btn {
   margin-bottom: 10px !important;
 }
 
 * {
-  font-family: 'Archivo Narrow', sans-serif !important;
+  font-family: 'Open Sans Condensed', sans-serif !important;
 }
 body {
   background-color: $background_gray !important;
-  
 }
 html {
   margin: 0;
@@ -200,16 +202,16 @@ p.large {
 /******************************/
 
 .likes_large a.liked {
-  background-position: -20px 0 !important;
+  background-position: -16px 0 !important;
 }
 .likes_small a.liked {
-  background-position: -16px 0 !important;
+  background-position: -14px 0 !important;
 }
 .likes_large a {
   cursor: pointer;
   float: left;
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   text-decoration: none;
   background: url('icons-heart.png');
   margin-right: 8px;
@@ -217,7 +219,7 @@ p.large {
 }
 .likes_large a:hover {
   cursor: pointer;
-  background-position: -40px 0 !important;
+  background-position: -32px 0 !important;
   text-decoration: none !important;
 }
 .likes_large span {
@@ -244,7 +246,7 @@ p.large {
 .likes_small {
   float: right;
   width: 50px;
-  height: 16px;
+  height: 14px;
   margin-top: 0px;
   margin-left: 20px;
   line-height: 14px;
@@ -255,8 +257,8 @@ p.large {
 .likes_small a {
   cursor: pointer;
   float: left;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px !important;
   text-decoration: none;
   background: url('icons-heart-small.png');
   margin-right: 5px;
@@ -264,7 +266,7 @@ p.large {
 }
 .likes_small a:hover {
   cursor: pointer;
-  background-position: -32px 0 !important;
+  background-position: -28px 0 !important;
   text-decoration: none !important;
 }
 .likes_small span {
@@ -393,7 +395,8 @@ p.large {
 #global_nav {
   width: 940px;
   margin: 0 auto;
-  font-size: 14px;
+  font-size: 16px;
+  color: $gray_70;
   height: 30px;
   vertical-align: middle;
   padding-top: 6px;
@@ -401,15 +404,16 @@ p.large {
   border-bottom: 2px solid $background_gray;
   border-top-right-radius: 8px;
   border-top-left-radius: 8px;
-}
-#global_nav .link_container {
-  text-align: center;
-  width: 60px;
-  position: fixed;  
-  margin-top: 6px;
-  height: 14px;
-  line-height: 12px;
-//  border: 1px solid green;
+  
+  .link_container {
+    text-align: center;
+    width: 60px;
+    position: fixed;  
+    margin-top: 6px;
+    height: 14px;
+    line-height: 12px;
+  //  border: 1px solid green;
+  }
 }
 .nav_indicator {
   text-align: center;
@@ -494,176 +498,176 @@ p.large {
   position: fixed;
   width: 200px;
 //  border: 1px solid red;
+
+  h1 {
+    line-height: 24px;
+    font-size: 24px;
+    color: $gray_70;
+    font-weight: bold;
+    margin-top: 0px;
+    
+    &.large {
+      line-height: 30px;
+      font-size: 30px;
+    }
+  }
+  h2 {
+    margin-top: 0px;
+    line-height: 18px !important;
+    font-size: 17px;
+    color: $gray_70;
+    font-weight: bold;
+    color: $text_gray;
+    margin-bottom: 6px;
+  //  font-style: italic;
+  //  border: 1px solid black;
+  }
+  h3 {
+    line-height: 20px;
+    font-size: 15px;
+    font-weight: normal;
+    color: $text_gray;
+  }
+  
 }
-#title_box h1 {
-  line-height: 24px;
-  font-size: 24px;
-  margin-top: 0px;
-  color: $text_gray;
-}
-#title_box h1.large {
-  line-height: 30px;
-  font-size: 30px;
-}
-#title_box h2 {
-  margin-top: 0px;
-  line-height: 18px !important;
-  font-size: 17px;
-  font-weight: normal;
-  color: $text_gray;
-  margin-bottom: 6px;
-//  font-style: italic;
-//  border: 1px solid black;
-}
-#title_box h3 {
-  line-height: 20px;
-  font-size: 15px;
-  font-weight: normal;
-  color: $text_gray;
-}
+
 #content_box {
   float: right;
   width: 680px;
   padding-top: 5px;
 //  border: 1px solid green;
-}
-#content_box > h1 {
-  margin-top: 0px;
-  line-height: 30px;
-  font-size: 22px;
-  color: $text_gray;
-  border-bottom: 1px solid gray;
-}
-#content_box > h2 {
-  margin-top: 20px;
-  font-size: 24px;
-}
-#content_box > h4 {
-  margin-left: 60px;
-}
-#content_box > h4 > a{
-  color: #5b6699;
+
+  &>h1 {
+    margin-top: 0px;
+    line-height: 30px;
+    font-size: 20px;
+    color: $gray_80;
+    border-bottom: 1px solid $gray_80;
+  }
+  &>h2 {
+    margin-top: 20px;
+    font-size: 24px;
+  }
+  &>h4 {
+    margin-left: 60px;
+    
+    &>a {
+      color: #5b6699;
+    }
+  }
+
 }
 .item_list {
-//  color: #333;
   margin-left: 0px;
   margin-top: -5px;
   margin-bottom: 20px;
   list-style-type: none;
-}
-.item_list > li {
-  -moz-border-radius: 8px;
-  -webkit-border-radius: 8px;
-  border-radius: 8px;
-  padding: 5px 20px 0px 20px;
-  height: 23px;
-}
-.item_list > li:hover {
-  cursor: pointer;
-  background-color: #fff;
-}
-.item_list > li > .drag_arrows_vertical {
-  visibility: hidden;
-  float: left;
-  width: 15px;
-  margin-top: -2px;
-//  border: 1px solid red;
-}
-.item_list > li h2 {
-  line-height: 14px;
-  height: 16px;
-  overflow: hidden;
-  font-size: 15px;
-  float: left;
-  font-weight: normal;
-  width: 120px;
-  margin-top: 0px;
-  white-space: nowrap;
-  color: $text_gray !important;
-//  border: 1px solid black;
-}
-.item_list > li h2.position_num {
-  font-weight: bold;
-  font-size: 15px;
-  line-height: 15px;
-  text-align: right;
-  width: 20px;
-  margin-right: 10px;
-//  border: 1px solid red;
-}
-.item_list > li h2.wide {
-  width: 220px;
-}
-.item_list > li h2.wider {
-  width: 280px;
-//  border: 1px solid red;
-}
-.item_list > li h3 {
-  margin-top: 0px;
-  font-size: 15px;
-  line-height: 15px;
-  float: right;
-  font-weight: normal;
-  width: 50px;
-  text-align: right;
-  height: 16px;
-  overflow: hidden;
-  white-space: nowrap;
-  color: $text_gray !important;
-//  border: 1px solid red;
-}
-.item_list > li h3.alt {
-  width: 150px;
-
-}
-.item_list > li h3.wide {
-  width: 250px;
-}
-.item_list > li h3.alt a {
-//  color: $text_gray;
-  line-height: 10px;
-}
-.item_list > li h4 {
-  font-size: 15px;
-  line-height: 15px;
-  float: left;
-  width: 280px;
-  margin-top: 0px;
-  overflow: hidden;
-  color: $text_gray !important;
-  font-weight: normal;
-  margin-left: 10px;
-  white-space: nowrap;
-//  border: 1px solid black;
-}
-.item_list > li h4.narrow {
-  width: 180px;
-}
-.item_list > li h5 {
-  float: left;
-  font-size: 15px;
-  line-height: 15px;
-  width: 150px;
-  height: 16px;
-  overflow: hidden;
-  white-space: nowrap;
-  margin-left: 10px;
-  margin-top: 0px;
-  font-weight: normal;
-  color: $text_gray !important;
-//  border: 1px solid blue;
-}
-.item_list > li h5.narrow {
-  width: 100px;
-}
-.item_list > li .btn_context {
-  visibility: hidden;
-  float: right;
-  width: 40px;
-//  height: 14px;
-  margin-left: 15px;
-  line-height: 10px;
-  text-align: left;
+  
+  li {
+    font-size: 16px;
+    color: $gray_80;
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+    padding: 5px 20px 0px 20px;
+    height: 30px;
+    
+    &:hover {
+      cursor: pointer;
+      background-color: #fff;
+    }
+    
+    .drag_arrows_vertical {
+      visibility: hidden;
+      float: left;
+      width: 15px;
+      margin-top: -2px;
+    //  border: 1px solid red;
+    }
+    
+    * {
+      height: 24px;
+      line-height: 24px;
+      font-size: 16px;
+      font-weight: normal;
+      overflow: hidden;
+      margin-top: 0px !important;
+      margin-bottom: 0px !important;
+      white-space: nowrap;
+    }
+      
+    
+    h2 {
+      float: left;
+      width: 120px;
+//      border: 1px solid red;
+    
+      &.position_num {
+//        font-weight: bold;
+        text-align: right;
+        width: 20px;
+        margin-right: 10px;
+      //  border: 1px solid red;
+      }
+      &.wide {
+        width: 220px;
+      }
+      &.wider {
+        width: 280px;
+      }
+    }
+    
+    h3 {
+      float: right;
+      width: 50px;
+      text-align: right;
+//      border: 1px solid red;
+    
+      &.alt {
+        width: 150px;
+        
+        a {
+          line-height: 10px;
+        }
+      }
+      &.wide {
+        width: 250px;
+      }
+    }
+    
+    h4 {
+      float: left;
+      width: 280px;
+      margin-left: 20px !important;
+//      border: 1px solid black;
+    
+      &.narrow {
+        width: 180px;
+      }
+    }
+    
+    h5 {
+      float: left;
+      width: 150px;
+      margin-left: 10px;
+    //  border: 1px solid blue;
+    
+      &.narrow {
+        width: 100px;
+      }
+    }
+    
+    .btn_context {
+      visibility: hidden;
+      float: right;
+      width: 40px;
+    //  height: 14px;
+      margin-left: 15px;
+      line-height: 10px;
+      text-align: left;
+    }
+    
+  }
 }
 .btn_context {
   cursor: pointer;
@@ -764,10 +768,11 @@ p.large {
 //  border: 1px solid black;
 }
 #player_title {
+  font-size: 20px;
+  color: $gray_70;
   line-height: 40px;
   text-align: center;
   overflow: hidden;
-  font-size: 28px;
 //  border: 1px solid black;
 }
 #player_title.long_title {
@@ -784,10 +789,10 @@ p.large {
   width: 400px;
   text-align: center;
   overflow: hidden;
-  font-size: 13px;
-  font-weight: 400;
+  font-size: 15px;
+  color: $gray_70;
 //  border: 1px solid black;
-color: #8fbedb;
+
 }
 #player_detail a {
   color: #333;
@@ -805,7 +810,7 @@ color: #8fbedb;
   -moz-box-shadow: 0 0 16px #3b995f !important;
   -webkit-box-shadow: 0 0 16px #3b995f !important;
   box-shadow: 0 0 16px #3b995f !important;
-  background-position: -75px 0 !important;
+  background-position: -65px 0 !important;
 }
 .playlist_active {
   border: 1px solid red !important;
@@ -848,9 +853,10 @@ color: #8fbedb;
 //  border: 1px solid black;
 }
 #time_elapsed {
+  font-size: 11px;
+  color: $gray_70;
   margin-left: 26px;
   width: 30px;
-  font-size: 12px;
   line-height: 36px;
   float: left;
   text-align: left;
@@ -858,8 +864,9 @@ color: #8fbedb;
 //  border: 1px solid black;
 }
 #time_remaining {
+  font-size: 11px;
+  color: $gray_70;
   width: 48px;
-  font-size: 12px;
   line-height: 36px;
   float: right;
   text-align: left;
@@ -916,8 +923,8 @@ color: #8fbedb;
   margin-top: 10px;
 }
 #playpause {
-  width: 75px;
-  height: 75px;
+  width: 65px;
+  height: 65px;
   -moz-border-radius: 100px;
   -webkit-border-radius: 100px;
   border-radius: 100px;
@@ -925,8 +932,8 @@ color: #8fbedb;
   background: white url('icons-playpause.png');
 }
 #next, #previous {
-  width: 45px;
-  height: 45px;
+  width: 34px;
+  height: 34px;
   -moz-border-radius: 100px;
   -webkit-border-radius: 100px;
   border-radius: 100px;

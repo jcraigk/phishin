@@ -51,7 +51,7 @@
         <% end %>
     
         <li class="playable_track" data-id="<%= track.id %>" data-anchor="<%= track.slug %>">
-          <%= content_tag :h2, track_num, class: 'position_num' %>
+          <%= content_tag :h2, "#{track_num}.", class: 'position_num' %>
           <%= content_tag :h2, track_title_with_tags(track), class: 'wide' %>
           <%= likable(track, @tracks_likes[idx], 'small') %>
           <%= content_tag :h3, duration_readable(track.duration) %>
