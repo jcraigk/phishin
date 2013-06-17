@@ -156,7 +156,7 @@ module ApplicationHelper
   
   def global_nav_links
     nav_items = {
-      'userbox' => [nil, ['my_shows', 'my_tracks', 'edit'], 0],
+      'userbox' => [nil, ['my_shows', 'my_tracks', 'edit'], 10],
       'Years' => [years_path, ['years', 'year'], 300],
       'Songs' => [songs_path, ['songs', 'song'], 355],
       'Venues' => [venues_path, ['venues', 'venue'], 412],
