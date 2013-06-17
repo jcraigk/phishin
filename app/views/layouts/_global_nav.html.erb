@@ -17,12 +17,18 @@
       <% elsif params[:action] == 'songs' or @controller_action  == 'song' %>
         <%= first_char_sub_links(songs_path, @song) %>
       <% elsif %w(top_liked_shows top_liked_tracks).include?(params[:action]) %>
-        <%= top_liked_sub_links %>
+        <div id="top_liked_subnav_container">
+          <%= top_liked_sub_links %>
+        </div>
       <% end %>
     <% elsif %w(active_playlist saved_playlists).include?(params[:action]) %>
+    <div id="playlist_subnav_container">
       <%= playlists_sub_links %>
+    </div>
     <% elsif params[:controller] == 'my' or params[:controller] == 'devise/registrations' %>
-      <%= user_sub_links %>
+      <div id="user_subnav_container">
+        <%= user_sub_links %>
+      </div>
     <% end %>
   </div>
   <div id="content_buffer"></div>

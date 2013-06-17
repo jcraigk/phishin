@@ -467,6 +467,15 @@ p.large {
   height: 15px;
   background-color: $background_gray;
 }
+#user_subnav_container {
+  text-align: left;
+}
+#playlist_subnav_container {
+  margin-left: 250px;
+}
+#top_liked_subnav_container {
+  margin-left: 122px;
+}
 
 #content {
   margin: 0 auto;
@@ -1152,8 +1161,7 @@ color: #8fbedb;
 }
 
 #search_box {
-  margin-right: 217px;
-  margin-left: -180px;
+  margin-right: 20px;
   margin-top: 1px;
   float: right;
   height: 20px;

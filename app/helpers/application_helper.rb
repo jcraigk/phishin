@@ -156,22 +156,19 @@ module ApplicationHelper
   
   def global_nav_links
     nav_items = {
-      'Years' => [years_path, ['years', 'year']],
-      'Songs' => [songs_path, ['songs', 'song']],
-      'Venues' => [venues_path, ['venues', 'venue']],
-      'Map' => ['/map?map_term=Burlington%20VT&distance=250', ['map']],
-      'Top 40' => [top_shows_path, ['top_liked_shows', 'top_liked_tracks']],
-      'Playlists' => [active_playlist_path, ['active_playlist', 'saved_playlists']],
-      'userbox' => [nil, ['my_shows', 'my_tracks', 'edit']]
+      'userbox' => [nil, ['my_shows', 'my_tracks', 'edit'], 0],
+      'Years' => [years_path, ['years', 'year'], 300],
+      'Songs' => [songs_path, ['songs', 'song'], 355],
+      'Venues' => [venues_path, ['venues', 'venue'], 412],
+      'Map' => ['/map?map_term=Burlington%20VT&distance=250', ['map'], 465],
+      'Top 40' => [top_shows_path, ['top_liked_shows', 'top_liked_tracks'], 513],
+      'Playlists' => [active_playlist_path, ['active_playlist', 'saved_playlists'], 576]
     }
-    x = 176
-    x_step = 70
     str = ''
     nav_items.each do |name, properties|
       css = ''
       css = 'active' if properties[1].include?(params[:action]) or properties[1].include?(@controller_action)
       if name == 'userbox'
-        x = 750
         if user_signed_in?
           properties[0] = my_shows_path
           name = current_user.username
@@ -181,13 +178,13 @@ module ApplicationHelper
           css += ' non-remote'
         end
       end
+      x = properties[2]
       str += content_tag :div, (link_to name, properties[0], class: "global_link #{css}"), class: 'link_container', style: "margin-left: #{x}px;"
       if css == 'active'
         pos = x + 20
         str += content_tag :div, nil, class: 'nav_indicator', style: "margin-left: #{pos}px;"
         str += content_tag :div, nil, class: 'nav_indicator2', style: "margin-left: #{pos}px;"
       end
-      x += x_step
     end
     str.html_safe
   end
