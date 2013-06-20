@@ -2,7 +2,7 @@
   <div id="global_nav">
     <%= global_nav_links %>
     <div id="search_box">
-      <i class="icon icon-search"></i>
+      <%= image_tag 'icon-search.png', alt: 'search icon' %>
       <input type="text" name="term" id="search_term" value="<%= params[:term] %>">
     </div>
     <%# render partial: 'layouts/user_controls' %>

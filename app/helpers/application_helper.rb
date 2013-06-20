@@ -157,12 +157,12 @@ module ApplicationHelper
   def global_nav_links
     nav_items = {
       'userbox' => [nil, ['my_shows', 'my_tracks', 'edit'], 10],
-      'Years' => [years_path, ['years', 'year'], 300],
-      'Songs' => [songs_path, ['songs', 'song'], 355],
-      'Venues' => [venues_path, ['venues', 'venue'], 412],
-      'Map' => ['/map?map_term=Burlington%20VT&distance=250', ['map'], 465],
-      'Top 40' => [top_shows_path, ['top_liked_shows', 'top_liked_tracks'], 513],
-      'Playlists' => [active_playlist_path, ['active_playlist', 'saved_playlists'], 576]
+      'Years' => [years_path, ['years', 'year'], 283],
+      'Venues' => [venues_path, ['venues', 'venue'], 347],
+      'Songs' => [songs_path, ['songs', 'song'], 410],
+      'Map' => ['/map?map_term=Burlington%20VT&distance=10', ['map'], 468],
+      'Top 40' => [top_shows_path, ['top_liked_shows', 'top_liked_tracks'], 524],
+      'Playlists' => [active_playlist_path, ['active_playlist', 'saved_playlists'], 590]
     }
     str = ''
     nav_items.each do |name, properties|
@@ -235,15 +235,17 @@ module ApplicationHelper
   
   def track_title_with_tags(track)
     max_len = 45
-    str = ''
+    str = '<div class="track_tag_container">'
     track.tags.each do |tag|
       str += content_tag :span, tag.name, class: 'label track_tag', style: "background-color: #{tag.color}"
     end
+    str += "</div>"
     if track.title.size > max_len
       str += content_tag :span, truncate(track.title, length: max_len), data: { toggle: 'tooltip' }, title: track.title
     else
       str += track.title
     end
+    
     str.html_safe
  end
   

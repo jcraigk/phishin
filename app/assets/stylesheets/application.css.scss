@@ -11,12 +11,19 @@ $highlight: #7eb8c7;
 $emphasis: #000;
 $alert: #2a2a2a;
 $background_gray: #e7e7e8;
-$global_nav_gray: #cdcfd0;
+$global_nav_gray: #c7c8ca;
 $sub_nav_gray: #d9dbdc;
 $alert_background: #ffc7c6;
-$gray_50: #808080;
-$gray_70: #4d4d4d;
-$gray_80: #333333;
+$gray_50: #999999;
+$gray_70: #666666;
+$gray_80: #4d4d4d;
+$btn_border: #9da5aa;
+//$btn_active_bg_top: #d3eefd;
+//$btn_active_bg_bottom: #8ed8f8;
+$btn_bg_top: #fefefe;
+$btn_bg_bottom: #d3d4d6;
+$likes_blue: #6ccff6;
+$hr_gray: #cececf;
 
 .btn {
   margin-bottom: 10px !important;
@@ -44,33 +51,47 @@ a:hover {
 p.large {
   font-size: 18px;
 }
+input {
+  font-weight: bold !important;
+  color: $gray_70 !important;
+}
 
 #error_explanation {
   background-color: #f2c4b5 !important;
 }
+.track_tag_container {
+  padding-top: 5px;
+  float: left;
+//  border: 1px solid red;
+}
 
 .track_tag {
+//  margin-top: 5px;
+  height: 11px !important;
   float: left;
-  margin-top: -2px;
+  margin-top: 15px !important;
   font-size: 10px !important;
   margin-right: 10px;
   border-radius: 5px !important;
-  line-height: 16px !important;
+  line-height: 10px !important;
 }
 
 .show_tag_container {
+  height: 15px !important;
+  padding-top: 6px;
   float: right;
-  margin-top: 0px;
   width: 30px;
 //  border: 1px solid red;
 }
 .show_tag {
+  height: 10px !important;
+  line-height: 10px !important;
   float: right;
   font-size: 10px !important;
 }
 .hr {
   width: 100%;
-  border-bottom: 1px solid $text_gray;
+  border-bottom: 1px solid $hr_gray;
   margin-top: 25px;
   margin-bottom: 25px;
 }
@@ -109,7 +130,7 @@ p.large {
   position: fixed !important;
   margin-top: 14px !important;
   margin-left: 57px !important;
-  width: 336px !important;
+  width: 280px !important;
   border-color: #333 !important;
 }
 #scrubber .ui-slider-handle {
@@ -225,7 +246,7 @@ p.large {
 .likes_large span {
   float: left;
   line-height: 24px;
-  color: #791419;
+  color: $likes_blue;
   font-size: 24px;
   font-family: 'Nothing You Could Do', cursive !important;
   overflow: hidden;
@@ -272,7 +293,7 @@ p.large {
 .likes_small span {
   float: left;
   line-height: 16px;
-  color: #5f1014;
+  color: $likes_blue;
   font-size: 15px;
   font-family: 'Nothing You Could Do', cursive !important;
   overflow: hidden;
@@ -361,23 +382,25 @@ p.large {
   background: #878787;
   text-align: center;
 }
-#content_box > h1 {
-  margin-top: -5px !important;
-  font-size: 28px;
-  line-height: 30px;
-  white-space: nowrap;
-}
-#content_box > h2 {
-  font-size: 22px;
-  line-height: 14px;
-  margin-bottom: 20px;
-  margin-top: 5px !important;
-}
-#content_box > h3 {
-  font-size: 20px;
-  margin-top: -8px !important;
-  margin-bottom: 20px;
-}
+//#content_box > h1 {
+//  margin-top: -5px !important;
+//  font-size: 20px;
+//  line-height: 20px;
+//  white-space: nowrap;
+//  color: $gray_80;
+//  border: 1px solid red;
+//}
+//#content_box > h2 {
+//  font-size: 22px;
+//  line-height: 14px;
+//  margin-bottom: 20px;
+//  margin-top: 5px !important;
+//}
+//#content_box > h3 {
+//  font-size: 20px;
+//  margin-top: -8px !important;
+//  margin-bottom: 20px;
+//}
 #clear_playlist {
   position: absolute;
   margin-top: 10px;
@@ -419,32 +442,31 @@ p.large {
   text-align: center;
   position: fixed;
   z-index: 20;
-  margin-top: 20px;
+  margin-top: 22px;
 	width: 0; 
 	height: 0; 
-	border-left: 10px solid transparent;
-	border-right: 10px solid transparent;
-	border-bottom: 10px solid $background_gray;
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+	border-bottom: 8px solid $background_gray;
 }
 .nav_indicator2 {
   text-align: center;
   position: fixed;
   z-index: 21;
-  margin-top: 23px;
+  margin-top: 25px;
 	width: 0; 
 	height: 0; 
-	border-left: 10px solid transparent;
-	border-right: 10px solid transparent;
-	border-bottom: 10px solid $sub_nav_gray;
-}
-#global_nav a {
-  color: #6e7073;
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent;
+	border-bottom: 8px solid $sub_nav_gray;
 }
 #global_nav .active {
   font-weight: bold;
   color: black !important;
 }
 #sub_nav {
+  color: $gray_70;
+  font-size: 13px;
   margin: 0 auto;
   width: 940px;
   background-color: $sub_nav_gray;
@@ -475,10 +497,10 @@ p.large {
   text-align: left;
 }
 #playlist_subnav_container {
-  margin-left: 250px;
+  margin-left: 271px;
 }
 #top_liked_subnav_container {
-  margin-left: 122px;
+  margin-left: 127px;
 }
 
 #content {
@@ -495,8 +517,9 @@ p.large {
   min-height: 450px;
 }
 #title_box {
+  margin-left: 10px;
   position: fixed;
-  width: 200px;
+  width: 190px;
 //  border: 1px solid red;
 
   h1 {
@@ -507,8 +530,8 @@ p.large {
     margin-top: 0px;
     
     &.large {
-      line-height: 30px;
-      font-size: 30px;
+      line-height: 26px;
+      font-size: 26px;
     }
   }
   h2 {
@@ -517,14 +540,13 @@ p.large {
     font-size: 17px;
     color: $gray_70;
     font-weight: bold;
-    color: $text_gray;
     margin-bottom: 6px;
   //  font-style: italic;
   //  border: 1px solid black;
   }
   h3 {
     line-height: 20px;
-    font-size: 15px;
+    font-size: 17px;
     font-weight: normal;
     color: $text_gray;
   }
@@ -533,16 +555,19 @@ p.large {
 
 #content_box {
   float: right;
-  width: 680px;
+  width: 630px;
   padding-top: 5px;
 //  border: 1px solid green;
+  margin-right: 20px;
 
   &>h1 {
-    margin-top: 0px;
+    margin-top: -5px !important;
+    margin-bottom: 15px;
+    font-weight: normal;
     line-height: 30px;
     font-size: 20px;
     color: $gray_80;
-    border-bottom: 1px solid $gray_80;
+    border-bottom: 1px solid $hr_gray;
   }
   &>h2 {
     margin-top: 20px;
@@ -569,7 +594,7 @@ p.large {
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
     border-radius: 8px;
-    padding: 5px 20px 0px 20px;
+    padding: 5px 10px 0px 10px;
     height: 30px;
     
     &:hover {
@@ -605,8 +630,9 @@ p.large {
       &.position_num {
 //        font-weight: bold;
         text-align: right;
-        width: 20px;
+        width: 28px;
         margin-right: 10px;
+        overflow: hidden;
       //  border: 1px solid red;
       }
       &.wide {
@@ -665,6 +691,7 @@ p.large {
       margin-left: 15px;
       line-height: 10px;
       text-align: left;
+      margin-top: -2px !important;
     }
     
   }
@@ -760,8 +787,7 @@ p.large {
 #player_title_container {
   padding: 0px;
   position: fixed;
-  margin-top: -5px;
-  margin-left: 175px;
+  margin-left: 258px;
   width: 410px;
   height: 40px;
   text-align: center;
@@ -784,8 +810,8 @@ p.large {
 #player_detail {
   padding: 0px;
   position: fixed;
-  margin-top: 64px;
-  margin-left: 175px;
+  margin-top: 56px;
+  margin-left: 257px;
   width: 400px;
   text-align: center;
   overflow: hidden;
@@ -799,17 +825,17 @@ p.large {
 }
 #player_controls {
   position: fixed;
-  margin-left: 700px;
-  margin-top: 20px;
+  margin-left: 762px;
+  margin-top: 27px;
 }
 #player_controls > div {
   float: left;
   margin-right: 5px;
 }
 .playing {
-  -moz-box-shadow: 0 0 16px #3b995f !important;
-  -webkit-box-shadow: 0 0 16px #3b995f !important;
-  box-shadow: 0 0 16px #3b995f !important;
+//  -moz-box-shadow: 0 0 16px #3b995f !important;
+//  -webkit-box-shadow: 0 0 16px #3b995f !important;
+//  box-shadow: 0 0 16px #3b995f !important;
   background-position: -65px 0 !important;
 }
 .playlist_active {
@@ -846,16 +872,16 @@ p.large {
 
 #scrubber_controls {
   position: fixed;
-  width: 450px;
+  width: 400px;
   height: 36px;
   margin-top: 28px;
-  margin-left: 150px;
+  margin-left: 260px;
 //  border: 1px solid black;
 }
 #time_elapsed {
   font-size: 11px;
   color: $gray_70;
-  margin-left: 26px;
+  margin-left: 30px;
   width: 30px;
   line-height: 36px;
   float: left;
@@ -893,7 +919,7 @@ p.large {
 #playlist_button {
   position: fixed;
   margin-top: 31px;
-  margin-left: 620px;
+  margin-left: 660px;
   width: 60px;
   height: 40px;
 //  border: 1px solid black;
@@ -923,6 +949,7 @@ p.large {
   margin-top: 10px;
 }
 #playpause {
+  border: 1px solid $btn_border;
   width: 65px;
   height: 65px;
   -moz-border-radius: 100px;
@@ -932,6 +959,7 @@ p.large {
   background: white url('icons-playpause.png');
 }
 #next, #previous {
+  border: 1px solid $btn_border;
   width: 34px;
   height: 34px;
   -moz-border-radius: 100px;
@@ -1171,29 +1199,33 @@ p.large {
   margin-right: 20px;
   margin-top: 1px;
   float: right;
-  height: 20px;
-  width: 110px;
-  border: 1px solid $text_gray;
+  height: 21px;
+  width: 118px;
+  border: 1px solid $btn_border;
   border-radius: 5px;
   text-align: left;
   padding: none;
+  background-color: #d1d2d4 !important;
+  
+  img {
+    margin-left: 5px;
+    margin-top: -8px;
+  }
 }
 #search_term {
   background: transparent;
-  margin-top: 1px;
   border: none;
-  width: 80px;
+  width: 70px;
   height: 18px !important;
-  font-size: 12px;
+  font-size: 16px;
+  line-height: 10px;
   padding: 0px !important;
+  margin-left: 5px;
+  margin-top: -1px;
 }
 #search_term:focus {
   border: none;
   box-shadow: none;
-}
-#search_box .icon {
-  margin-top: -2px;
-  margin-left: 5px;
 }
 
 /************************/
