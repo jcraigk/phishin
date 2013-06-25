@@ -37,7 +37,7 @@ class AlbumCreator
             # tag.artist = "Phish"
             # tag.year = track.show.date.strftime("%Y").to_i
             # tag.genre = "Rock"
-            # tag.comment = "Visit phishtracks.net for free Phish audio"
+            # tag.comment = "Visit phish.in for free Phish audio"
             # Add cover art
             # apic = TagLib::ID3v2::AttachedPictureFrame.new
             # apic.mime_type = "image/jpeg"

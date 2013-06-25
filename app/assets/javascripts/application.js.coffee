@@ -333,6 +333,7 @@ $ ->
         className = 'spinner_likes_large'
     spinner = App.Util.newSpinner className
     $(this).parent().append spinner.el
+    console.log $(this).parent()
     $.ajax({
       type: 'post',
       url: '/toggle-like',

@@ -94,7 +94,7 @@ class Track < ActiveRecord::Base
         tag.year = show.date.strftime("%Y").to_i
         tag.track = position
         tag.genre = "Rock"
-        # tag.comment = "Visit phishtracks.net for free Phish audio" //Doesn't seem to work
+        # tag.comment = "Visit phish.in for free Phish audio" //Doesn't seem to work
         # Add cover art
         # TODO turn this back on when we have decent site art
         # apic = TagLib::ID3v2::AttachedPictureFrame.new
