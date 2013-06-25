@@ -21,7 +21,7 @@ $ ->
   window.location.href = '/mobile-unsupported' if /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
 
   # IE NOT SUPPORTED
-  window.location.href = '/browser-unsupported' if window.isIE
+  window.location.href = '/browser-unsupported' if eval "/*@cc_on!@*/!1" # only IE can execute this
   
   # Instantiate classes
   App.Util         = new Util
