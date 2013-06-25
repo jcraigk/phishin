@@ -123,7 +123,7 @@ module ApplicationHelper
   end
   
   def will_paginate_simple(collection)
-    will_paginate collection, inner_window: 2, outer_window: 0, previous_label: '<i class="icon-chevron-left"></i>', next_label: '<i class="icon-chevron-right"></i>', params: [:per_page, :t]
+    will_paginate collection, inner_window: 2, outer_window: 0, previous_label: '<<', next_label: '>>', params: [:per_page, :t]
   end
 
   def duration_readable(ms, style='colon')
