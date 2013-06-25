@@ -17,7 +17,7 @@
       <% @tracks.each_with_index do |track, idx| %>
       <li class="playable_track" data-id="<%= track.id %>">
         <%= content_tag :h2, "#{idx+1}.", class: 'position_num' %>
-        <%= content_tag :h2, link_to(truncate(track.title, length: 44), "/#{track.show.date}/#{track.slug}"), class: 'wider' %>
+        <%= content_tag :h2, link_to(truncate(track.title, length: 44), "/#{track.show.date}/#{track.slug}"), class: 'wide' %>
         <%= content_tag :h5, link_to(track.show.date.strftime("%Y.%m.%d"), "/#{track.show.date}"), class: 'narrow' %>
         <%= likable(track, @tracks_likes[idx], 'small') %>
         <%= content_tag :h3, duration_readable(track.duration) %>

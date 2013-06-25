@@ -119,7 +119,7 @@ class @Util
       className: className
     }).spin()
   
-  truncate: (string, length=30) ->
+  truncate: (string, length=40) ->
     if string.length > length then string.substring(0, length) + '...' else string
   
   showHTMLError: (str) ->

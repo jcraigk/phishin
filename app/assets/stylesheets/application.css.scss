@@ -92,8 +92,17 @@ input {
 .hr {
   width: 100%;
   border-bottom: 1px solid $hr_gray;
-  margin-top: 25px;
-  margin-bottom: 25px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+.next_item_link {
+  float: right;
+  position: relative;
+  top: -20px;
+}
+#search_results_container {
+  position: relative;
+  top: -17px;
 }
 
 #system_error {
@@ -231,6 +240,8 @@ input {
 .likes_large a {
   cursor: pointer;
   float: left;
+  position: relative;
+  top: 3px;
   width: 16px;
   height: 16px;
   text-decoration: none;
@@ -278,6 +289,8 @@ input {
 .likes_small a {
   cursor: pointer;
   float: left;
+  position: relative;
+  top: 4px;
   width: 14px;
   height: 14px !important;
   text-decoration: none;
@@ -335,10 +348,10 @@ input {
 }
 #logo {
   position: fixed;
-  height: 90px;
-  width: 90px;
-  margin-top: -5px;
-  margin-left: 35px;
+  height: 75px;
+  width: 75px;
+  margin-top: 5px;
+  margin-left: 50px;
 }
 #logo img {
   border: 1px solid black;
@@ -557,7 +570,7 @@ input {
   float: right;
   width: 630px;
   padding-top: 5px;
-//  border: 1px solid green;
+  //border: 1px solid green;
   margin-right: 20px;
 
   &>h1 {
@@ -624,7 +637,7 @@ input {
     
     h2 {
       float: left;
-      width: 120px;
+      width: 80px;
 //      border: 1px solid red;
     
       &.position_num {
@@ -633,13 +646,16 @@ input {
         width: 28px;
         margin-right: 10px;
         overflow: hidden;
-      //  border: 1px solid red;
+//        border: 1px solid red;
       }
-      &.wide {
+      &.widish {
         width: 220px;
       }
+      &.wide {
+        width: 240px;
+      }
       &.wider {
-        width: 280px;
+        width: 290px;
       }
     }
     
@@ -650,7 +666,7 @@ input {
 //      border: 1px solid red;
     
       &.alt {
-        width: 150px;
+        width: 120px;
         
         a {
           line-height: 10px;
@@ -664,11 +680,11 @@ input {
     h4 {
       float: left;
       width: 280px;
-      margin-left: 20px !important;
+      margin-left: 10px !important;
 //      border: 1px solid black;
     
       &.narrow {
-        width: 180px;
+        width: 190px;
       }
     }
     
@@ -676,10 +692,10 @@ input {
       float: left;
       width: 150px;
       margin-left: 10px;
-    //  border: 1px solid blue;
+//      border: 1px solid blue;
     
       &.narrow {
-        width: 100px;
+        width: 120px;
       }
     }
     
@@ -688,6 +704,7 @@ input {
       float: right;
       width: 40px;
     //  height: 14px;
+      margin-right: 20px;
       margin-left: 15px;
       line-height: 10px;
       text-align: left;
@@ -701,6 +718,11 @@ input {
 }
 .btn_context:hover {
   cursor: pointer;
+}
+.btn_context_for_show {
+  float: right;
+  position: relative;
+  top: -20px;
 }
 .btn-round {
   margin-top: -1px;
@@ -745,6 +767,10 @@ input {
   font-size: 14px;
   font-weight: bold;
   margin-top: 10px;
+  &>input {
+    font-weight: normal !important;
+    font-size: 16px;
+  }
 //  font-family: 'Rambla', sans-serif;
 }
 #map_search_term {
@@ -833,17 +859,7 @@ input {
   margin-right: 5px;
 }
 .playing {
-//  -moz-box-shadow: 0 0 16px #3b995f !important;
-//  -webkit-box-shadow: 0 0 16px #3b995f !important;
-//  box-shadow: 0 0 16px #3b995f !important;
   background-position: -65px 0 !important;
-}
-.playlist_active {
-  border: 1px solid red !important;
-  background-color: #ccc !important;
-  -moz-box-shadow: 0 0 16px #3b995f !important;
-  -webkit-box-shadow: 0 0 16px #3b995f !important;
-  box-shadow: 0 0 16px #3b995f !important;
 }
 .active_track {
   -webkit-animation: pulsate-green 1.5s infinite alternate linear !important; 
@@ -918,15 +934,18 @@ input {
 }
 #playlist_button {
   position: fixed;
-  margin-top: 31px;
-  margin-left: 660px;
-  width: 60px;
-  height: 40px;
+  margin-top: 40px;
+  margin-left: 644px;
+  width: 17px;
+  height: 12px;
+  cursor: pointer;
 //  border: 1px solid black;
+  background: url('icons-playlist.png');
 }
-#playlist_button * {
-  box-shadow: none;
+.playlist_active {
+  background-position: -17px 0 !important;
 }
+
 #volume_icon {
   padding: 0px 0px 0px 0px !important;
   float: left;
@@ -1217,11 +1236,11 @@ input {
   border: none;
   width: 70px;
   height: 18px !important;
-  font-size: 16px;
-  line-height: 10px;
+  font-size: 15px;
+  line-height: 18px;
   padding: 0px !important;
   margin-left: 5px;
-  margin-top: -1px;
+  font-weight: normal !important;
 }
 #search_term:focus {
   border: none;

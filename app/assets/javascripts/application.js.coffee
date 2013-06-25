@@ -18,7 +18,10 @@
 $ ->
   
   # MOBILE NOT SUPPORTED
-  # window.location.href = '/mobile-unsupported' if/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
+  window.location.href = '/mobile-unsupported' if /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
+
+  # IE NOT SUPPORTED
+  window.location.href = '/browser-unsupported' if window.iSIE
   
   # Instantiate classes
   App.Util         = new Util
@@ -173,6 +176,8 @@ $ ->
   ###############################################
   
   # Playlist stuff
+  $(document).on 'click', '#playlist_button', ->
+    App.Util.navigateTo $(this).data('url')
   $(document).on 'click', '#share_playlist_btn', ->
     App.Playlist.handleShareModal()
   $(document).on 'blur', '#playlist_name_input', (e) ->

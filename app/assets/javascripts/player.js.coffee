@@ -14,7 +14,7 @@ class @Player
     @duration         = 0
     @app_name         = $('body').data 'app-name'
     @time_marker      = @Util.timeToMS $('body').data('time-marker')
-    @$playlist_btn    = $ '#playlist_button .btn'
+    @$playlist_btn    = $ '#playlist_button'
     @$playpause       = $ '#playpause'
     @$scrubber        = $ '#scrubber'
     @$volume_slider   = $ '#volume_slider'

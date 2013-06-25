@@ -1,8 +1,7 @@
 <div class="btn_context">
   <div class="btn-group">
     <a class="btn dropdown-toggle btn-round" data-toggle="dropdown" href="null">
-      <!-- <i class="icon-chevron-right"></i> -->
-      &gt;
+      <%= image_tag 'icon-context.png', alt: 'Icon: context menu' %>
     </a>
     <ul class="dropdown-menu">
       <%= content_tag :li, link_to("<i class=\"icon-play\"></i>&nbsp;&nbsp;Play".html_safe, "null", class: 'context_play_track', data: { id: track.id }) %>

@@ -3,7 +3,7 @@ class @Playlist
   constructor: ->
     @Util                   = App.Util
     @Player                 = App.Player
-    @$playlist_btn          = $ '#playlist_button .btn'
+    @$playlist_btn          = $ '#playlist_button'
     @$save_modal            = $ '#save_playlist_modal'
     @$save_action_dropdown  = $ '#save_action_dropdown'
     @$save_action_new       = $ '#save_action_new'

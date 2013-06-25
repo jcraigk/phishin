@@ -34,9 +34,7 @@
   
   <%# render partial: 'layouts/player_menu' %>
 
-  <div id="playlist_button">
-    <a href="<%= active_playlist_path %>"><button type="button" class="btn btn_invisible"><i class="icon-list"></i></button></a>
-  </div>
+  <div id="playlist_button" data-url="<%= active_playlist_path %>"></div>
   
   <div id="player_title_container">
     <div id="player_title">

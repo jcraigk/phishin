@@ -18,9 +18,9 @@
         <% end %>
       </h3>
       <%= content_tag :div, nil, class: 'hr' %>
-      <%= link_to('<i class="icon-chevron-left"></i>&nbsp;&nbsp;Previous Show'.html_safe, "/#{@previous_show.date}") %>
+      <%= link_to('<< Previous Show'.html_safe, "/#{@previous_show.date}") %>
       <div style="clear: both;"></div>
-      <%= link_to('<i class="icon-chevron-right"></i>&nbsp;&nbsp;Next Show'.html_safe, "/#{@next_show.date}") %>
+      <%= link_to('Next Show >>'.html_safe, "/#{@next_show.date}", class: 'next_item_link') %>
     <% end %>
   </div>
   
@@ -52,7 +52,7 @@
     
         <li class="playable_track" data-id="<%= track.id %>" data-anchor="<%= track.slug %>">
           <%= content_tag :h2, "#{track_num}.", class: 'position_num' %>
-          <%= content_tag :h2, track_title_with_tags(track), class: 'wide' %>
+          <%= content_tag :h2, track_title_with_tags(track), class: 'wider' %>
           <%= likable(track, @tracks_likes[idx], 'small') %>
           <%= content_tag :h3, duration_readable(track.duration) %>
           <%= render partial: 'shared/context_menu_for_track', locals: { track: track, show: @show, playlist: false } %>
