@@ -149,7 +149,6 @@ class PlaylistsController < ApplicationController
   end
   
   def add_track_to_playlist
-    clear_saved_playlist
     if session[:playlist].include? Integer(params[:track_id], 10)
       render json: { success: false, msg: 'Track already in playlist'}
     else
