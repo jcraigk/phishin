@@ -181,7 +181,7 @@ module ApplicationHelper
       end
       x = properties[2]
       str += content_tag :div, (link_to name, properties[0], class: "global_link #{css}"), class: 'link_container', style: "margin-left: #{x}px;"
-      if css == 'active'
+      if css =~ /active/
         pos = x + 20
         str += content_tag :div, nil, class: 'nav_indicator', style: "margin-left: #{pos}px;"
         str += content_tag :div, nil, class: 'nav_indicator2', style: "margin-left: #{pos}px;"
