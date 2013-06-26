@@ -10,7 +10,7 @@ $text_gray: #6d6f71;
 $highlight: #7eb8c7;
 $emphasis: #000;
 $alert: #2a2a2a;
-$background_gray: #e7e7e8;
+$background_gray: #f2f3f5;
 $global_nav_gray: #c7c8ca;
 $sub_nav_gray: #d9dbdc;
 $alert_background: #ffc7c6;
@@ -24,11 +24,18 @@ $btn_bg_top: #fefefe;
 $btn_bg_bottom: #d3d4d6;
 $likes_blue: #6ccff6;
 $hr_gray: #cececf;
+$nav_highlight: #5f5f5f;
+$highlight1: #00baf2;
+$highlight2: #91e1f2;
+$highlight3: #cbebf2;
 
 .btn {
   margin-bottom: 10px !important;
 }
-
+.icon-resize-vertical {
+  position: relative;
+  top: 6px;
+}
 * {
   font-family: 'Open Sans Condensed', sans-serif !important;
 }
@@ -45,11 +52,13 @@ a {
   color: $text_gray !important;
 }
 a:hover {
-  text-decoration: underline;
+  text-decoration: none !important;
+  color: $highlight1 !important;
 }
 
 p.large {
   font-size: 18px;
+  line-height: 26px;
 }
 input {
   font-weight: bold !important;
@@ -121,6 +130,12 @@ input {
   border: 1px solid black;
 }
 
+.user_control {
+  font-family: 'Noto Serif', cursive !important;
+  font-size: 13px;
+  font-style: italic;
+}
+
 /******************************/
 
 #home_msg {
@@ -147,7 +162,7 @@ input {
   margin-top: 14px !important;
   margin-left: 57px !important;
   width: 280px !important;
-  border-color: #333 !important;
+  border-color: $btn_border !important;
 }
 #scrubber .ui-slider-handle {
   background-image: none !important; //Override jquery UI CSS
@@ -263,10 +278,11 @@ input {
 }
 .likes_large span {
   float: left;
-  line-height: 24px;
-  color: $likes_blue;
-  font-size: 24px;
-  font-family: 'Nothing You Could Do', cursive !important;
+  line-height: 22px;
+  color: $gray_50;
+  font-size: 17px;
+  font-family: 'Noto Serif', cursive !important;
+  font-style: italic;
   overflow: hidden;
 }
 #player_likes_container {
@@ -314,12 +330,11 @@ input {
 }
 .likes_small span {
   float: left;
-//  position: relative;
-//  top: 3px;
-  line-height: 16px;
-  color: $likes_blue;
-  font-size: 15px;
-  font-family: 'Nothing You Could Do', cursive !important;
+  line-height: 15px;
+  color: $gray_50;
+  font-size: 12px !important;
+  font-family: 'Noto Serif', cursive !important;
+  font-style: italic;
   overflow: hidden;
 }
 
@@ -352,7 +367,7 @@ input {
 }
 #player_container {
   height: 90px;
-  background-color: #e6e7e8;
+  background-color: $background_gray;
   padding: 10px;
   vertical-align: middle;
 //  border: 1px solid green;
@@ -467,7 +482,7 @@ input {
 }
 #global_nav .active {
   font-weight: bold;
-  color: black !important;
+  color: $nav_highlight !important;
 }
 #sub_nav {
   color: $gray_70;
@@ -490,7 +505,7 @@ input {
 }
 #sub_nav a.active {
   font-weight: bold;
-  color: black !important;
+  color: $nav_highlight !important;
 }
 #content_buffer {
   margin: 0 auto;
@@ -518,7 +533,7 @@ input {
   -webkit-border-bottom-right-radius: 10px;
   -moz-border-radius-bottomright: 10px;
   border-bottom-right-radius: 10px;
-  background-color: #e6e7e8;
+  background-color: $background_gray;
   min-height: 450px;
 }
 #title_box {
@@ -730,7 +745,7 @@ input {
 .btn_context_for_show {
   float: right;
   position: relative;
-  top: -20px;
+  top: -22px;
 }
 .btn-round {
   margin-top: -1px;
@@ -864,28 +879,28 @@ input {
   background-position: -65px 0 !important;
 }
 .active_track {
-  -webkit-animation: pulsate-green 1.5s infinite alternate linear !important; 
-  -moz-animation: pulsate-green 1.5s infinite alternate linear !important;
+  -webkit-animation: pulsate-highlight2 1.5s infinite alternate linear !important; 
+  -moz-animation: pulsate-highlight2 1.5s infinite alternate linear !important;
 }
 .highlighted_track {
-  -webkit-animation: pulsate-blue 1.5s infinite alternate linear !important; 
-  -moz-animation: pulsate-blue 1.5s infinite alternate linear !important;
+  -webkit-animation: pulsate-highlight2 1.5s infinite alternate linear !important; 
+  -moz-animation: pulsate-highlight2 1.5s infinite alternate linear !important;
 }
-@-webkit-keyframes pulsate-green {
-    0%   { background: #e9ffe3; } 
-    100%  { background: #b4ffac; }
+@-webkit-keyframes pulsate-highlight2 {
+    0%   { background: $background_gray; } 
+    100%  { background: $highlight2; }
 }
-@-moz-keyframes pulstate-green {
-  0%   { background: #e9ffe3; } 
-  100%  { background: #b4ffac; }
+@-moz-keyframes pulstate-highlight2 {
+  0%   { background: $background_gray; } 
+  100%  { background: $highlight2; }
 }
-@-webkit-keyframes pulsate-blue {
-    0%   { background: #eafffd; } 
-    100%  { background: #b2ecff; }
+@-webkit-keyframes pulsate-highlight2 {
+    0%   { background: $background_gray; } 
+    100%  { background: $highlight2; }
 }
-@-moz-keyframes pulstate-blue {
-  0%   { background: #e9ffe3; } 
-  100%  { background: #b4ffac; }
+@-moz-keyframes pulstate-highlight2 {
+  0%   { background: $background_gray; } 
+  100%  { background: $highlight2; }
 }
 
 #scrubber_controls {
@@ -1254,11 +1269,9 @@ input {
 }
 
 /************************/
-
 .pagination {
   margin-top: 4px !important;
   background: transparent !important;
-  border: 1px solid #e5e5e5 !important;
   text-align: center !important;
   padding: 1em !important;
   cursor: default !important;
@@ -1291,7 +1304,7 @@ input {
   color: $text_gray !important;
 }
 .pagination .active a {
-  color: black !important;
+  color: $nav_highlight !important;
   font-weight: bold !important;
 }
 .pagination a:hover, .pagination a:focus {

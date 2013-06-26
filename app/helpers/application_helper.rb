@@ -156,7 +156,7 @@ module ApplicationHelper
   
   def global_nav_links
     nav_items = {
-      'userbox' => [nil, ['my_shows', 'my_tracks', 'edit'], 10],
+      'userbox' => [nil, ['my_shows', 'my_tracks', 'edit'], 14],
       'Years' => [years_path, ['years', 'year'], 283],
       'Venues' => [venues_path, ['venues', 'venue'], 347],
       'Songs' => [songs_path, ['songs', 'song'], 410],
@@ -169,6 +169,7 @@ module ApplicationHelper
       css = ''
       css = 'active' if properties[1].include?(params[:action]) or properties[1].include?(@controller_action)
       if name == 'userbox'
+        css += ' user_control'
         if user_signed_in?
           properties[0] = my_shows_path
           name = current_user.username
