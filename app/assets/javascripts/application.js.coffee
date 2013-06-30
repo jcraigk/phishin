@@ -22,6 +22,8 @@ $ ->
 
   # IE NOT SUPPORTED
   window.location.href = '/browser-unsupported' if eval "/*@cc_on!@*/!1" # only IE can execute this
+  # FIREFIX NOT SUPPORTED
+  window.location.href = '/browser-unsupported' if /Firefox[\/\s](\d+\.\d+)/.test navigator.userAgent
   
   # Instantiate classes
   App.Util         = new Util
