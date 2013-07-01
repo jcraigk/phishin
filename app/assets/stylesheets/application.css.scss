@@ -36,6 +36,9 @@ $highlight3: #cbebf2;
   position: relative;
   top: 6px;
 }
+.beta {
+  color: #e26b6b !important;
+}
 * {
   font-family: 'Open Sans Condensed', sans-serif !important;
 }
@@ -131,8 +134,10 @@ input {
 }
 
 .user_control {
-  font-family: 'Noto Serif', cursive !important;
-  font-size: 13px;
+  position: relative;
+  top: -1px;
+  font-family: 'Marck Script', cursive !important;
+  font-size: 16px;
   font-style: italic;
 }
 
@@ -268,7 +273,7 @@ input {
   height: 16px;
   text-decoration: none;
   background: url('icons-heart.png');
-  margin-right: 8px;
+  margin-right: 4px;
   margin-bottom: 10px;
 }
 .likes_large a:hover {
@@ -277,11 +282,12 @@ input {
   text-decoration: none !important;
 }
 .likes_large span {
+  width: 45px;
   float: left;
   line-height: 22px;
   color: $gray_50;
   font-size: 17px;
-  font-family: 'Noto Serif', cursive !important;
+  font-family: 'Marck Script', cursive !important;
   font-style: italic;
   overflow: hidden;
 }
@@ -320,7 +326,7 @@ input {
   height: 14px !important;
   text-decoration: none;
   background: url('icons-heart-small.png');
-  margin-right: 5px;
+  margin-right: 3px;
 //  border: 1px solid black;
 }
 .likes_small a:hover {
@@ -329,11 +335,12 @@ input {
   text-decoration: none !important;
 }
 .likes_small span {
+  width: 30px;
   float: left;
   line-height: 15px;
   color: $gray_50;
-  font-size: 12px !important;
-  font-family: 'Noto Serif', cursive !important;
+  font-size: 14px !important;
+  font-family: 'Marck Script', cursive !important;
   font-style: italic;
   overflow: hidden;
 }
@@ -569,6 +576,11 @@ input {
     font-size: 17px;
     font-weight: normal;
     color: $text_gray;
+    
+    .btn-group {
+      position: relative;
+      top: 4px;
+    }
   }
   
 }
@@ -733,6 +745,8 @@ input {
       }
       
       img {
+        position: relative;
+        top: 1px;
         width: 300px !important;
         height: auto !important;
         height: 24px;

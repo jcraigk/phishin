@@ -2,7 +2,7 @@ Phishin::Application.routes.draw do
   
   # mount RailsAdmin::Engine => '/admin', :as => 'rails_admin'
 
-  root :to => 'content#index'
+  root :to => 'content#years'
 
   # User stuff
   devise_for :users

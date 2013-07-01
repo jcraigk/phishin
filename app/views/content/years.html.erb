@@ -1,7 +1,7 @@
 <%= render partial: 'layouts/global_nav' %>
 
 <div id="content">
-  
+
   <div id="title_box">
     <%= content_tag :h1, "WELCOME TO PHISH.IN'", class: 'large' %>
     <%= content_tag :div, nil, class: 'hr' %>
@@ -11,10 +11,12 @@
     <%= content_tag :h3, "Songs: #{number_with_delimiter(Song.relevant.count)}" %>
     <%= content_tag :h3, "Tracks: #{number_with_delimiter(Track.count)}" %>
     <%= content_tag :h3, "Hours of Music: 3,250" %>
+    <%= content_tag :div, nil, class: 'hr' %>
+    <%= content_tag :h3, "This site is in BETA; expect bugs.  It will improve gradually.", class: 'beta' %>
   </div>
-  
+
   <div id="content_box">
-      
+    
     <h1>3.0 Era</h1>
     <ul class="item_list clickable">
       <% 2012.downto(2009) do |year|  %>
@@ -27,7 +29,7 @@
       </li>
       <% end %>
     </ul>
-      
+    
     <h1>2.0 Era</h2>
     <ul class="item_list clickable">
       <% 2004.downto(2002) do |year|  %>
@@ -60,9 +62,9 @@
         <div style="clear: both;"></div>
       </li>
     </ul>
-    
+  
   </div>
-      
+    
   <div style="clear: both;"></div>
-      
+    
 </div>

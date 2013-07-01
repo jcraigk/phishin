@@ -20,6 +20,7 @@ gem 'jquery-smooth-scroll-rails'
 gem 'geocoder'
 # gem 'rails_admin'
 gem 'selenium-webdriver'
+gem 'dalli'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'

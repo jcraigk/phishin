@@ -1,11 +1,12 @@
 class ContentController < ApplicationController
+  
+  caches_action :years, expires_in: CACHE_TTL
+  caches_action :songs, expires_in: CACHE_TTL, :cache_path => Proc.new {|c| c.request.url }
+  caches_action :venues, expires_in: CACHE_TTL, :cache_path => Proc.new {|c| c.request.url }
 
   ###############################
   # Hard-coded actions
   ###############################
-  def index
-    render_years_page
-  end
 
   def years
     render_years_page
@@ -40,7 +41,7 @@ class ContentController < ApplicationController
   end
   
   ###############################
-  # Glob-matching
+  # Glob matching
   ###############################
   def glob
     g = params[:glob]

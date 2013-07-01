@@ -14,6 +14,8 @@ DEVISE_EMAIL_FROM           = "phish.in' <noreply@phish.in>"          # From add
 ALBUM_CACHE_MAX_SIZE        = 50.gigabytes                            # Maximum size of album attachment cache
 ALBUM_TIMEOUT               = 10.seconds                              # Time to wait for album creation before telling user
 
+CACHE_TTL                   = 30.seconds
+
 FIRST_CHAR_LIST             = ('A'..'Z').to_a + ['#']                 # Characters to include in A..B..C.. links
 MAX_PLAYLISTS_PER_USER      = 20                                      # Max number of playlists a user may create
 
