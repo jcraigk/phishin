@@ -32,4 +32,5 @@ group :development do
   gem 'binding_of_caller'
   gem 'meta_request'
   gem 'better_errors'
+  gem 'rack-mini-profiler'
 end
