@@ -16,6 +16,7 @@
 
 # Ignore OS X DS_Store
 .DS_Store
+**/.DS_Store
 
 # Ignore symlink to audio
 /public/audio

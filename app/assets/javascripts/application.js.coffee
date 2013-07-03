@@ -23,7 +23,7 @@ $ ->
   # IE NOT SUPPORTED
   window.location.href = '/browser-unsupported' if eval "/*@cc_on!@*/!1" # only IE can execute this
   # FIREFIX NOT SUPPORTED
-  window.location.href = '/browser-unsupported' if /Firefox[\/\s](\d+\.\d+)/.test navigator.userAgent
+  # window.location.href = '/browser-unsupported' if /Firefox[\/\s](\d+\.\d+)/.test navigator.userAgent
   
   # Instantiate classes
   App.Util         = new Util
@@ -36,22 +36,17 @@ $ ->
   $alert          = $ '.feedback_alert'
   $ajax_overlay   = $ '#ajax_overlay'
   $page           = $ '#page'
-  # $footer         = $ '#footer'
-  # $footer.css 'visibility', 'visible' # to prevent it appearing at the top before content loads
-
-  ###############################################
-  # Prepare history.js
-  ###############################################
-  History = window.History
-  return false if !History.enabled
-  History.Adapter.bind window, 'popstate', ->
+  
+  handleHistory = ->
     state = window.History.getState()
     if state.data.href != undefined and !App.Util.page_init
       $ajax_overlay.css 'visibility', 'visible'
       $page.html ''
       $page.load(
         state.data.href, (response, status, xhr) ->
-          # App.Util.showHTMLError("ERROR\n\n"+response) if status is 'error'
+          # App.Util.showHTMLError(xhr.status + " " + xhr.statusText)
+          App.Util.showHTMLError("ERROR\n\n"+response.substring(0, 100)) if status is 'error'
+          
           alert("ERROR\n\n"+response) if status is 'error'
           $ajax_overlay.css 'visibility', 'hidden'
           
@@ -86,6 +81,14 @@ $ ->
       )
 
   ###############################################
+  # Prepare history.js
+  ###############################################
+  History = window.History
+  return false if !History.enabled
+  History.Adapter.bind window, 'statechange', ->
+    handleHistory()
+
+  ###############################################
   # Load initial page if not an exempt route
   ###############################################
   path_segment = window.location.pathname.split('/')[1]
@@ -94,6 +97,7 @@ $ ->
     match = /^http:\/\/(.+)$/.exec(window.location)
     href = match[1].substr(match[1].indexOf('/'), match[1].length - 1)
     App.Util.navigateTo(href)
+    handleHistory()  # Need to call this explicitly on page load (to keep Firefox in the mix)
   
   ###############################################
   # Handle feedback on DOM load (for Devise)
