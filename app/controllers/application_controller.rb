@@ -72,7 +72,6 @@ class ApplicationController < ActionController::Base
   end
   
   def require_xhr
-    # raise params.inspect
     unless request.xhr? or xhr_exempt_controller
       render 'layouts/application', layout: false and return
     end

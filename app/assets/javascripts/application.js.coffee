@@ -22,8 +22,11 @@ $ ->
 
   # IE NOT SUPPORTED
   window.location.href = '/browser-unsupported' if eval "/*@cc_on!@*/!1" # only IE can execute this
-  # FIREFIX NOT SUPPORTED
-  # window.location.href = '/browser-unsupported' if /Firefox[\/\s](\d+\.\d+)/.test navigator.userAgent
+  
+  # MAC FIREFIX NOT SUPPORTED
+  window.location.href = '/browser-unsupported' if /Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent) and /Mac/.test(navigator.userAgent)
+  
+  #########################################
   
   # Instantiate classes
   App.Util         = new Util
@@ -31,11 +34,17 @@ $ ->
   App.Playlist     = new Playlist
   App.Map          = new Map
   
+  #########################################
+  
   # Page elements
   $notice         = $ '.feedback_notice'
   $alert          = $ '.feedback_alert'
   $ajax_overlay   = $ '#ajax_overlay'
   $page           = $ '#page'
+  
+  #########################################
+  
+  # Helpers
   
   handleHistory = ->
     state = window.History.getState()
