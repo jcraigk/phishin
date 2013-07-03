@@ -47,6 +47,7 @@ $ ->
   # Helpers
   
   handleHistory = ->
+    alert 'fire'
     state = window.History.getState()
     if state.data.href != undefined and !App.Util.page_init
       $ajax_overlay.css 'visibility', 'visible'
