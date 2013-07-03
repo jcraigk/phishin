@@ -47,7 +47,7 @@ $ ->
   # Helpers
   
   handleHistory = ->
-    alert 'fire'
+    # alert 'fire'
     state = window.History.getState()
     if state.data.href != undefined and !App.Util.page_init
       $ajax_overlay.css 'visibility', 'visible'
@@ -75,6 +75,9 @@ $ ->
             $('body').attr 'data-anchor', match[1]
           else
             $('body').attr 'data-anchor', ''
+          # soundManager.onready( ->
+          #   App.Player.onReady()
+          # )
           App.Player.onReady() # For scrolling to and auto-playing a track
           App.Player.highlightActiveTrack(true) # For highlighting current track in a list, scrollTo = true
           

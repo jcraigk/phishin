@@ -187,6 +187,7 @@ class @Player
     @sm.setPosition track_id, time_marker
     @sm.play track_id, { onfinish: => this.nextTrack() }
     @invoked = true
+      
 
   _handleAutoPlayTrack: ->
     if anchor_name = $('body').attr 'data-anchor'
@@ -302,7 +303,7 @@ class @Player
       percent_loaded = Math.floor (@sm_sound.bytesLoaded / @sm_sound.bytesTotal) * 100
       percent_loaded = 0 if isNaN(percent_loaded)
       if 0 < @time_marker < @sm_sound.duration
-        this._loadInfoAndPlay track_id, @time_marker
+        @sm.setPosition track_id, @time_marker
         @time_marker = 0
       if percent_loaded is 100
         if @time_marker > 0
