@@ -17,37 +17,42 @@
 
 $ ->
   
+  ###############################################
+  # UNSUPPORTED CLIENTS
+  ###############################################
+  
   # MOBILE NOT SUPPORTED
   window.location.href = '/mobile-unsupported' if /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
 
   # IE NOT SUPPORTED
   window.location.href = '/browser-unsupported' if eval "/*@cc_on!@*/!1" # only IE can execute this
   
-  # MAC FIREFIX NOT SUPPORTED
+  # MAC/FIREFIX NOT SUPPORTED
   window.location.href = '/browser-unsupported' if /Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent) and /Mac/.test(navigator.userAgent)
   
-  #########################################
-  
-  # Instantiate classes
+  ###############################################
+  # Init
+  ###############################################
+
   App.Util         = new Util
   App.Player       = new Player
   App.Playlist     = new Playlist
   App.Map          = new Map
   
-  #########################################
-  
-  # Page elements
+  ###############################################
+  # Assignments
+  ###############################################
+
   $notice         = $ '.feedback_notice'
   $alert          = $ '.feedback_alert'
   $ajax_overlay   = $ '#ajax_overlay'
   $page           = $ '#page'
   
-  #########################################
-  
+  ###############################################
   # Helpers
+  ###############################################
   
   handleHistory = ->
-    # alert 'fire'
     state = window.History.getState()
     if state.data.href != undefined and !App.Util.page_init
       $ajax_overlay.css 'visibility', 'visible'
