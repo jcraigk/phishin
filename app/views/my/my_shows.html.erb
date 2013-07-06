@@ -13,7 +13,7 @@
   <div id="content_box">
     <% if !user_signed_in? %>
       <p class="instructions">Sign in and click heart icons to Like your favorite shows</div>
-    <% elsif @shows %>
+    <% elsif @shows and @shows.size > 0 %>
       <ul class="item_list clickable">
         <% @shows.each_with_index do |show, idx| %>
           <li>
