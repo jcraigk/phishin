@@ -7,6 +7,10 @@
   </div>
 
   <div id="content_box">
+    
+    <div class="instructions">
+      After signing up, you will be sent an email with further instructions.  You need that email in order to confirm your account, so make sure you enter a valid email address.  We won't share your info with anyone, except maybe Mike if he's wearing a scarf when he asks.
+    </div>
 
     <%= form_for resource, :as => resource_name, :url => registration_path(resource_name) do |f| %>
       <%= devise_error_messages! %>
