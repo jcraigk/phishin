@@ -373,7 +373,7 @@ input {
   width: 940px;
 }
 #player_container {
-  height: 90px;
+  height: 140px;
   background-color: $background_gray;
   padding: 10px;
   vertical-align: middle;
@@ -381,21 +381,8 @@ input {
 }
 #logo {
   position: fixed;
-  height: 75px;
-  width: 75px;
-  margin-top: 5px;
-  margin-left: 50px;
-}
-#logo img {
-  border: 1px solid black;
-  -moz-border-radius: 100px;
-  -webkit-border-radius: 100px;
-  border-radius: 100px;
-  -moz-box-shadow: 4px 4px 10px #333;
-  -webkit-box-shadow: 4px 4px 10px #333;
-  box-shadow: 4px 4px 10px #333;
-  width: 100%;
-  height: 100%;
+  margin-top: 35px;
+  margin-left: 5px;
 }
 #ajax_overlay {
   text-align: center;
@@ -437,7 +424,7 @@ input {
 
 #global_nav_container {
   position: fixed;
-  top: 110px;
+  top: 140px;
   width: 100%;
   z-index: 20;
 //  border: 1px solid red;
@@ -533,7 +520,7 @@ input {
 #content {
   margin: 0 auto;
   width: 900px;
-  padding: 185px 20px 40px 20px;
+  padding: 215px 20px 40px 20px;
   -webkit-border-bottom-left-radius: 10px;
   -moz-border-radius-bottomleft: 10px;
   border-bottom-left-radius: 10px;
@@ -879,7 +866,7 @@ input {
 #player_detail {
   padding: 0px;
   position: fixed;
-  margin-top: 56px;
+  margin-top: 71px;
   margin-left: 257px;
   width: 400px;
   text-align: center;
@@ -895,7 +882,7 @@ input {
 #player_controls {
   position: fixed;
   margin-left: 762px;
-  margin-top: 27px;
+  margin-top: 42px;
 }
 #player_controls > div {
   float: left;
@@ -933,7 +920,7 @@ input {
   position: fixed;
   width: 400px;
   height: 36px;
-  margin-top: 28px;
+  margin-top: 42px;
   margin-left: 260px;
 //  border: 1px solid black;
 }
@@ -977,7 +964,7 @@ input {
 }
 #playlist_button {
   position: fixed;
-  margin-top: 40px;
+  margin-top: 55px;
   margin-left: 644px;
   width: 17px;
   height: 12px;
