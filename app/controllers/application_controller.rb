@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   
   # before_filter :artificial_wait if Rails.env == "development"
   before_filter :random_lyrical_excerpt  # Pull lyrical excerpt unless XHR request
-  before_filter :authenticate
+  # before_filter :authenticate_by_htpasswd
   before_filter :init_session
   before_filter :init_params
   # before_filter :mobile_unsupported
@@ -38,7 +38,7 @@ class ApplicationController < ActionController::Base
   
   private
   
-  def authenticate
+  def authenticate_by_htpasswd
     if Rails.env == 'production'
       authenticate_or_request_with_http_basic do |username, password|
         username == HTAUTH_USERNAME and password == HTAUTH_PASSWORD

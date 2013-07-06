@@ -19,7 +19,7 @@
     
     <h1>3.0 Era</h1>
     <ul class="item_list clickable">
-      <% 2012.downto(2009) do |year|  %>
+      <% 2013.downto(2009) do |year|  %>
       <li>
         <% shows = Show.avail.during_year(year).includes(:venue) %>
         <%= content_tag :h2, link_to(year, "/#{year}"), class: 'wider' %>
