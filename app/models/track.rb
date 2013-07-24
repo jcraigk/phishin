@@ -86,7 +86,7 @@ class Track < ActiveRecord::Base
   def save_default_id3_tags
     TagLib::MPEG::File.open(audio_file.path) do |file|
       # Set basic ID3 tags
-      tag = file.id3v2_tag
+      tag = file.id3v2_tag(true)
       # if tag
         tag.title = title
         tag.artist = "Phish"
