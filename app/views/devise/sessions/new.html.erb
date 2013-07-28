@@ -7,6 +7,11 @@
   </div>
 
   <div id="content_box">
+    
+    <div class="instructions">
+      Don't have an account? &nbsp;&nbsp;<%= link_to "Sign up now!", new_registration_path(resource_name), class: 'non-remote strong' %>
+    </div>
+    
     <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
     
       <br />
