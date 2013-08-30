@@ -6,23 +6,23 @@
 //= require jquery.ui.datepicker
 //= require soundmanager
 //= require history.min
-//= require util
-//= require player
-//= require playlist
-//= require map
+//= require classes/util
+//= require classes/player
+//= require classes/playlist
+//= require classes/map
 //= require spin.min
 
 # Generic namespace
 @App = {}
 
 $ ->
-  
+
   ###############################################
   # UNSUPPORTED CLIENTS
   ###############################################
   
   # MOBILE NOT SUPPORTED
-  window.location.href = '/mobile-unsupported' if /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
+  # window.location.href = '/mobile-unsupported' if /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
 
   # IE NOT SUPPORTED
   window.location.href = '/browser-unsupported' if eval "/*@cc_on!@*/!1" # only IE can execute this
