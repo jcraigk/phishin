@@ -22,7 +22,7 @@ $ ->
   ###############################################
   
   # MOBILE NOT SUPPORTED
-  # window.location.href = '/mobile-unsupported' if /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
+  window.location.href = '/mobile-unsupported' if /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
 
   # IE NOT SUPPORTED
   window.location.href = '/browser-unsupported' if eval "/*@cc_on!@*/!1" # only IE can execute this
