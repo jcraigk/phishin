@@ -16,7 +16,7 @@ set :audio_path,            "/var/www/app_content/phishin/tracks/audio_files/"
 
 before "deploy",            "deploy:check_revision"
 
-before "deploy",             "deploy:link_database_yml"
+after "deploy",             "deploy:link_database_yml"
 after "deploy",             "deploy:migrate"
 after "deploy",             "deploy:link_audio"
 after "deploy",             "deploy:restart"
@@ -34,11 +34,11 @@ task :staging do
   set :server_name, staging_server
 end
 
+before "deploy:assets:precompile" do
+  run "ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
+end
+
 namespace :deploy do
-  
-  task :link_database_yml, roles: :app do
-    run "ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
-  end
   
   task :start do ; end
   task :stop do ; end
