@@ -113,7 +113,6 @@ module ApplicationHelper
           style = 'margin-right: 26px' if i + 1 == year_hash.size
           css = ''
           css = 'active' if properties[0].include?(@title)
-          # raise @title.inspect
           str += link_to name, "/#{properties[1]}", class: css, style: style
           i += 1
         end

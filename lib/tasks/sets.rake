@@ -51,7 +51,6 @@ namespace :sets do
       show.tracks.each do |track|
         unlabeled_tracks << track.title if !track.set
       end
-      # raise unlabeled_tracks.inspect
     end
   end
 

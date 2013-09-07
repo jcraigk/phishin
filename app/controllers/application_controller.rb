@@ -14,7 +14,6 @@ class ApplicationController < ActionController::Base
   def random_lyrical_excerpt
     unless request.xhr?
       @random_song = Song.random_lyrical_excerpt.first
-      # raise @random_song.inspect
     end
   end
   

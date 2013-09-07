@@ -22,7 +22,6 @@ class Track < ActiveRecord::Base
   
   self.per_page = 10 # will_paginate default
   
-  # default_scope order('position')
   scope :chronological, order('shows.date ASC').joins(:show)
   
   include PgSearch
@@ -68,7 +67,7 @@ class Track < ActiveRecord::Base
   end
   
   # Return the set abbreviation (livephish.com style)
-  # Roman numerals; encores are part of last set
+  # Roman numerals; encores are part of final set
   def set_album_abbreviation
     # Encores
     if /^E[\d]*$/.match(set)
@@ -94,7 +93,7 @@ class Track < ActiveRecord::Base
         tag.year = show.date.strftime("%Y").to_i
         tag.track = position
         tag.genre = "Rock"
-        # tag.comment = "Visit phish.in for free Phish audio" //Doesn't seem to work
+        # tag.comment = "Visit phish.in for free Phish audio" # Doesn't seem to work
         # Add cover art
         # TODO turn this back on when we have decent site art
         # apic = TagLib::ID3v2::AttachedPictureFrame.new

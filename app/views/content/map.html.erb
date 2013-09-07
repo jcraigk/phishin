@@ -1,25 +1,3 @@
-<script type="text/javascript" charset="utf-8">
-$(function() {
-  $('#map_date_start').datepicker({
-    dateFormat: "yy-mm-dd",
-    changeYear: true,
-    changeMonth: true,
-    yearRange: '1983:2013',
-    showOtherMonths: true,
-    selectOtherMonths: true
-  });
-  $('#map_date_stop').datepicker({
-    dateFormat: "yy-mm-dd",
-    changeYear: true,
-    changeMonth: true,
-    yearRange: '1983:2013',
-    showOtherMonths: true,
-    selectOtherMonths: true,
-    
-  });
-})
-</script>
-
 <%= render partial: 'layouts/global_nav' %>
 
 <div id="content">
@@ -49,3 +27,25 @@ $(function() {
   <div style="clear: both;"></div>
 
 </div>
+
+<script type="text/javascript" charset="utf-8">
+$(function() {
+  $('#map_date_start').datepicker({
+    dateFormat: "yy-mm-dd",
+    changeYear: true,
+    changeMonth: true,
+    yearRange: '1983:2013',
+    showOtherMonths: true,
+    selectOtherMonths: true
+  });
+  $('#map_date_stop').datepicker({
+    dateFormat: "yy-mm-dd",
+    changeYear: true,
+    changeMonth: true,
+    yearRange: '1983:2013',
+    showOtherMonths: true,
+    selectOtherMonths: true,
+    
+  });
+})
+</script>
