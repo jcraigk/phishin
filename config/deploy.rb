@@ -13,10 +13,13 @@ set :staging_server,        "phish.in"
 set :use_sudo,              false
 set :audio_path,            "/var/www/app_content/phishin/tracks/audio_files/"
 
-# Cleanup and migrate
+
+before "deploy",            "deploy:check_revision"
+
 after "deploy",             "deploy:restart"
 after "deploy",             "deploy:cleanup"
 after "deploy",             "deploy:migrate"
+after "deploy",             "deploy:link_database_yml"
 after "deploy",             "deploy:link_audio"
 
 #########################################################
@@ -49,13 +52,16 @@ namespace :deploy do
   end
 
   # Make sure local git is in sync with remote
-  task :check_revision, :roles => :web do
+  task :check_revision, roles: :web do
     unless `git rev-parse HEAD` == `git rev-parse origin/master`
       puts "WARNING: HEAD is not the same as origin/master"
       puts "Run `git push` to sync changes."
       exit
     end
   end
-  before "deploy", "deploy:check_revision"
+  
+  task :link_database_yml, roles: :app do
+    run "ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
+  end
   
 end
