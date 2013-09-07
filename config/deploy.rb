@@ -16,7 +16,6 @@ set :audio_path,            "/var/www/app_content/phishin/tracks/audio_files/"
 
 before "deploy",            "deploy:check_revision"
 
-after "deploy",             "deploy:link_database_yml"
 after "deploy",             "deploy:migrate"
 after "deploy",             "deploy:link_audio"
 after "deploy",             "deploy:restart"
