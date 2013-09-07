@@ -1,0 +1,15 @@
+development:
+  adapter: postgresql
+  encoding: unicode
+  database: phishin_dev
+  pool: 5
+  username: # your db username here
+  password: # your db pass here
+
+test:
+  adapter: postgresql
+  encoding: unicode
+  database: phishin_test
+  pool: 5
+  username: # your db username here
+  password: # your db pass here
