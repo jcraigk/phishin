@@ -61,7 +61,7 @@ namespace :deploy do
   end
   
   task :link_database_yml, roles: :app do
-    run "ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
+    run "ln -nfs #{release_path}/config/database.yml #{deploy_to}/shared/config/database.yml"
   end
   
 end
