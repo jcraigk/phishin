@@ -14,7 +14,10 @@ set :use_sudo,              false
 set :audio_path,            "/var/www/app_content/phishin/tracks/audio_files/"
 
 
+
 before "deploy",            "deploy:check_revision"
+
+after "deploy:update_code", "deploy::symlink_database_yml"
 
 after "deploy",             "deploy:migrate"
 after "deploy",             "deploy:link_audio"
@@ -31,10 +34,6 @@ end
 task :staging do
   server staging_server, :web, :app, :db, primary: true
   set :server_name, staging_server
-end
-
-before "deploy:assets:precompile" do
-  run "ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
 end
 
 namespace :deploy do
@@ -62,6 +61,10 @@ namespace :deploy do
       puts "Run `git push` to sync changes."
       exit
     end
+  end
+  
+  task :symlink_database_yml, roles: :app do
+    run "ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
   end
   
 end
