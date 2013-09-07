@@ -25,12 +25,12 @@ after "deploy",             "deploy:cleanup"
 #########################################################
 
 task :live do
-  server production_server, :app, :web, :db, :primary => true
+  server production_server, :app, :web, :db, primary: true
   set :server_name, production_server
 end
 
 task :staging do
-  server staging_server, :web, :app, :db, :primary => true
+  server staging_server, :web, :app, :db, primary: true
   set :server_name, staging_server
 end
 
@@ -59,9 +59,9 @@ namespace :deploy do
       exit
     end
   end
-  
-  task :link_database_yml, roles: :app do
-    run "ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
-  end
+  # 
+  # task :link_database_yml, roles: :app do
+  #   run "ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
+  # end
   
 end
