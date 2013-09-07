@@ -20,3 +20,6 @@
 
 # Ignore symlink to audio
 /public/audio
+
+# Ignore database.yml
+/config/database.yml
