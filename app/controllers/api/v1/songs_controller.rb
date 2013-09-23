@@ -17,7 +17,8 @@ module Api
             title: track.title,
             duration: track.duration,
             position: track.position,
-            set: track.set
+            set: track.set,
+            show_id: track.show_id
           }
         end
         respond_with_success data

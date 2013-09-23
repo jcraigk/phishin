@@ -2,7 +2,11 @@ Phishin::Application.routes.draw do
   
   namespace :api do
     namespace :v1 do
-      resources :venues, only: [:index, :show]
+      resources :venues, only: [:index, :show] do
+        member do
+          get :shows, to: 'venues#shows'
+        end
+      end
       resources :shows, only: [:index, :show] do
         member do
           get :tracks, to: 'shows#tracks'
