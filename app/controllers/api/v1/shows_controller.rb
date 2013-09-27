@@ -7,7 +7,7 @@ module Api
       end
 
       def show
-        if data = Show.where(id: params[:id]).includes(:venue, :tracks).first
+        if data = Show.where(id: params[:id]).includes(:venue, :tracks, :tags).first
           respond_with_success data
         else
           respond_with_failure 'Show not found'

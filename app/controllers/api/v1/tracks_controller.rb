@@ -7,11 +7,7 @@ module Api
       end
 
       def show
-        respond_with_success Track.where(id: params[:id]).first
-      end
-      
-      def songs
-        respond_with_success Track.where(id: params[:id]).first.songs
+        respond_with_success Track.where(id: params[:id]).includes(:tags).first
       end
 
     end
