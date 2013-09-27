@@ -18,7 +18,7 @@ module Api
         total_entries = data.respond_to?(:total_entries) ? data.total_entries : 1
         total_pages = data.respond_to?(:total_pages) ? data.total_pages : 1
         page = data.respond_to?(:current_page) ? data.current_page : 1
-        respond_with success: true, total_entries: total_entries, total_pages: total_pages, page: page, data: data 
+        respond_with success: true, total_entries: total_entries, total_pages: total_pages, page: page, data: data_as_json(data)
       end
       
       def respond_with_failure(message=nil)
@@ -35,6 +35,10 @@ module Api
         attributes = obj.new.attributes
         default_attr ||= attributes.first
         attributes.keys.include?(params[:sort_attr]) ? params[:sort_attr] : default_attr
+      end
+      
+      def data_as_json(data)
+        data.respond_to?(:as_json_api) ? data.try(:as_json_api) : data.try(:as_json)
       end
   
     end

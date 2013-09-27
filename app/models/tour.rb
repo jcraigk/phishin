@@ -5,5 +5,24 @@ class Tour < ActiveRecord::Base
   
   extend FriendlyId
   friendly_id :name, use: :slugged
+  
+  def as_json
+    {
+      id: id,
+      name: name,
+      shows_count: shows_count,
+      slug: slug
+    }
+  end
+  
+  def as_json_api
+    {
+      id: id,
+      name: name,
+      shows_count: shows_count,
+      slug: slug,
+      shows: shows.sort_by {|s| s.date }.as_json
+    }
+  end
 
 end

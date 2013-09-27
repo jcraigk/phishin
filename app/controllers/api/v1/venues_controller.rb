@@ -7,17 +7,7 @@ module Api
       end
 
       def show
-        respond_with_success Venue.where(id: params[:id]).first
-      end
-      
-      def shows
-        data = get_data_for(Venue.where(id: params[:id]).first.shows).map do |show|
-          {
-            id: show.id,
-            date: show.date
-          }
-        end
-        respond_with_success data
+        respond_with_success Venue.where(id: params[:id]).includes(:shows).first
       end
 
     end

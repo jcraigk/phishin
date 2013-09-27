@@ -116,6 +116,32 @@ class Track < ActiveRecord::Base
     title.downcase.gsub(/\'/, '').gsub(/[^a-z0-9]/, ' ').strip.gsub(/\s+/, ' ').gsub(/\s/, '-')
   end
 
+  def as_json
+    {
+      id: id,
+      title: title,
+      position: position,
+      duration: duration,
+      set: set,
+      likes_count: likes_count,
+      slug: slug,
+      song_ids: songs.map(&:id)
+    }
+  end
+  
+  def as_json_api
+    {
+      id: id,
+      title: title,
+      position: position,
+      duration: duration,
+      set: set,
+      likes_count: likes_count,
+      slug: slug,
+      songs: songs.as_json
+    }
+  end
+
   protected
   
   def set_duration

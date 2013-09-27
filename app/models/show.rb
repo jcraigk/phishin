@@ -50,4 +50,34 @@ class Show < ActiveRecord::Base
     tracks.select { |t| /^\d$/.match t.set }.map(&:set).sort.last
   end
   
+  def as_json
+    {
+      id: id,
+      date: date,
+      duration: duration,
+      incomplete: incomplete,
+      missing: missing,
+      sbd: sbd,
+      remastered: remastered,
+      tour_id: tour_id,
+      venue_id: venue_id,
+      likes_count: likes_count
+    }
+  end
+  
+  def as_json_api
+    {
+      id: id,
+      date: date,
+      duration: duration,
+      incomplete: incomplete,
+      missing: missing,
+      sbd: sbd,
+      remastered: remastered,
+      tour_id: tour_id,
+      venue: venue.as_json,
+      tracks: tracks.as_json.sort_by {|t| t[:position] }
+    }
+  end
+  
 end

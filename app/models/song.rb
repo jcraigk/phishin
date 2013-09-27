@@ -35,4 +35,25 @@ class Song < ActiveRecord::Base
     !alias_for.nil?
   end
   
+  def as_json
+    {
+      id: id,
+      title: title,
+      alias_for: alias_for,
+      tracks_count: tracks_count,
+      slug: slug,
+      track_ids: tracks.map(&:id)
+    }
+  end
+  
+  def as_json_api
+    {
+      id: id,
+      title: title,
+      alias_for: alias_for,
+      tracks_count: tracks_count,
+      slug: slug,
+      track: tracks.sort_by {|t| t.show_id }.as_json
+    }
+  end
 end

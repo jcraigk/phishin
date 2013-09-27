@@ -27,8 +27,23 @@ class Venue < ActiveRecord::Base
     name[0,1]
   end
   
-  def as_json(options={})
+  def as_json
     {
+      id: id,
+      name: name,
+      past_names: past_names,
+      latitude: latitude,
+      longitude: longitude,
+      shows_count: shows_count,
+      location: location,
+      slug: slug
+    }
+  end
+  
+  def as_json_api
+    my_shows = shows.as_json.sort_by {|s| s[:date] }
+    {
+      id: id,
       name: name,
       past_names: past_names,
       latitude: latitude,
@@ -36,7 +51,8 @@ class Venue < ActiveRecord::Base
       shows_count: shows_count,
       location: location,
       slug: slug,
-      show_dates: shows.order('date desc').all.map(&:date)
+      show_dates: my_shows.map {|s| s[:date] },
+      show_ids: my_shows.map {|s| s[:id] }
     }
   end
 
