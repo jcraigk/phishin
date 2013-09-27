@@ -74,7 +74,7 @@ class Show < ActiveRecord::Base
       missing: missing,
       sbd: sbd,
       remastered: remastered,
-      tags: tags.as_json,
+      tags: tags.map(&:name).as_json,
       tour_id: tour_id,
       venue: venue.as_json,
       tracks: tracks.as_json.sort_by {|t| t[:position] }

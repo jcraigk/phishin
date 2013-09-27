@@ -143,7 +143,7 @@ class Track < ActiveRecord::Base
       set: set,
       likes_count: likes_count,
       slug: slug,
-      tags: tags.as_json,
+      tags: tags.map(&:name).as_json,
       mp3: mp3_url,
       songs: songs.as_json
     }
