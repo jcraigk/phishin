@@ -41,8 +41,7 @@ class Song < ActiveRecord::Base
       title: title,
       alias_for: alias_for,
       tracks_count: tracks_count,
-      slug: slug,
-      track_ids: tracks.map(&:id)
+      slug: slug
     }
   end
   

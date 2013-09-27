@@ -115,6 +115,10 @@ class Track < ActiveRecord::Base
   def generic_slug
     title.downcase.gsub(/\'/, '').gsub(/[^a-z0-9]/, ' ').strip.gsub(/\s+/, ' ').gsub(/\s/, '-')
   end
+  
+  def mp3_url
+    APP_BASE_URL + '/audio/' + sprintf('%09d', id).scan(/.{3}/).join('/') + "/#{id}.mp3"
+  end
 
   def as_json
     {
@@ -125,6 +129,7 @@ class Track < ActiveRecord::Base
       set: set,
       likes_count: likes_count,
       slug: slug,
+      mp3: mp3_url,
       song_ids: songs.map(&:id)
     }
   end
@@ -138,6 +143,7 @@ class Track < ActiveRecord::Base
       set: set,
       likes_count: likes_count,
       slug: slug,
+      mp3: mp3_url,
       songs: songs.as_json
     }
   end
