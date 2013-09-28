@@ -1,8 +1,8 @@
 class ContentController < ApplicationController
   
-  caches_action :years, expires_in: CACHE_TTL
-  caches_action :songs, expires_in: CACHE_TTL, :cache_path => Proc.new {|c| c.request.url }
-  caches_action :venues, expires_in: CACHE_TTL, :cache_path => Proc.new {|c| c.request.url }
+  # caches_action :years, expires_in: CACHE_TTL
+  # caches_action :songs, expires_in: CACHE_TTL, :cache_path => Proc.new {|c| c.request.url }
+  # caches_action :venues, expires_in: CACHE_TTL, :cache_path => Proc.new {|c| c.request.url }
 
   ###############################
   # Hard-coded actions

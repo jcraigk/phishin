@@ -16,55 +16,24 @@
   </div>
 
   <div id="content_box">
-    
-    <h1>3.0 Era</h1>
-    <ul class="item_list clickable">
-      <% 2013.downto(2009) do |year|  %>
-      <li>
-        <% shows = Show.avail.during_year(year).includes(:venue) %>
-        <%= content_tag :h2, link_to(year, "/#{year}"), class: 'wider' %>
-        <%= content_tag :h4, pluralize(shows.map(&:venue).uniq.size, 'venue'), class: 'narrow' %>
-        <%= content_tag :h3, pluralize(shows.size, 'show'), class: 'alt' %>
-        <div style="clear: both;"></div>
-      </li>
-      <% end %>
-    </ul>
-    
-    <h1>2.0 Era</h2>
-    <ul class="item_list clickable">
-      <% 2004.downto(2002) do |year|  %>
-      <li>
-        <% shows = Show.avail.during_year(year).includes(:venue) %>
-        <%= content_tag :h2, link_to(year, "/#{year}"), class: 'wider' %>
-        <%= content_tag :h4, pluralize(shows.map(&:venue).uniq.size, 'venue'), class: 'narrow' %>
-        <%= content_tag :h3, pluralize(shows.size, 'show'), class: 'alt' %>
-        <div style="clear: both;"></div>
-      </li>
-      <% end %>
-    </ul>
 
-    <h1>1.0 Era</h1>
-    <ul class="item_list clickable">
-      <% 2000.downto(1988) do |year|  %>
-        <li>
-          <% shows = Show.avail.during_year(year).includes(:venue) %>
-          <%= content_tag :h2, link_to(year, "/#{year}"), class: 'wider' %>
-          <%= content_tag :h4, pluralize(shows.map(&:venue).uniq.size, 'venue'), class: 'narrow' %>
-          <%= content_tag :h3, pluralize(shows.size, 'show'), class: 'alt' %>
-          <div style="clear: both;"></div>
-        </li>
-      <% end %>
-      <li>
-        <% shows = Show.avail.between_years('1983', '1987').includes(:venue) %>
-        <%= content_tag :h2, link_to('1987 - 83', '/1983-1987'), class: 'wider' %>
-        <%= content_tag :h4, pluralize(shows.map(&:venue).uniq.size, 'venue'), class: 'narrow' %>
-        <%= content_tag :h3, pluralize(shows.size, 'show'), class: 'alt' %>
-        <div style="clear: both;"></div>
-      </li>
-    </ul>
-  
+    <% Hash[ERAS.to_a.reverse].each do |era, years| %>
+      <h1><%= era %> Era</h1>
+      <ul class="item_list clickable">
+        <% years.reverse.each do |year| %>
+          <li>
+            <% shows = (year == '1983-1987' ? Show.avail.between_years('1983', '1987').includes(:venue) : Show.avail.during_year(year).includes(:venue)) %>
+            <%= content_tag :h2, link_to(year, "/#{year}"), class: 'wider' %>
+            <%= content_tag :h4, pluralize(shows.map(&:venue).uniq.size, 'venue'), class: 'narrow' %>
+            <%= content_tag :h3, pluralize(shows.size, 'show'), class: 'alt' %>
+            <div style="clear: both;"></div>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+
   </div>
-    
+
   <div style="clear: both;"></div>
-    
+
 </div>

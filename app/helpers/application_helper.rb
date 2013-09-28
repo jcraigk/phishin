@@ -74,49 +74,14 @@ module ApplicationHelper
   end
   
   def years_sub_links
-    years = [
-      [
-        '13' => [['2013'], '2013'],
-        '12' => [['2012'], '2012'],
-        '11' => [['2011'], '2011'],
-        '10' => [['2010'], '2010'],
-        '09' => [['2009'], '2009']
-      ],
-      [
-        '04' => [['2004'], '2004'],
-        '03' => [['2003'], '2003'],
-        '02' => [['2002'], '2002'],
-      ],
-      [
-        '00' => [['2000'], '2000'],
-        '99' => [['1999'], '1999'],
-        '98' => [['1998'], '1998'],
-        '97' => [['1997'], '1997'],
-        '96' => [['1996'], '1996'],
-        '95' => [['1995'], '1995'],
-        '94' => [['1994'], '1994'],
-        '93' => [['1993'], '1993'],
-        '92' => [['1992'], '1992'],
-        '91' => [['1991'], '1991'],
-        '90' => [['1990'], '1990'],
-        '89' => [['1989'], '1989'],
-        '88' => [['1988'], '1988'],
-        '87-83' => [['1987', '1986', '1985', '1984', '1987 - 1983'], '1987-1983'],
-      ]
-    ]
     str = ''
-    years.each do |year_group|
-      year_group.each do |year_hash|
-        i = 0
-        year_hash.each do |name, properties|
-          style = ''
-          style = 'margin-right: 26px' if i + 1 == year_hash.size
-          css = ''
-          css = 'active' if properties[0].include?(@title)
-          str += link_to name, "/#{properties[1]}", class: css, style: style
-          i += 1
-        end
-        
+    Hash[ERAS.to_a.reverse].each do |era, years|
+      years.reverse.each_with_index do |year, i|
+        style = ''
+        style = 'margin-right: 26px' if i + 1 == years.size
+        css = ''
+        css = 'active' if year == @title
+        str += link_to (year == '1983-1987' ? '83-87' : year[2..3]), "/#{year}", class: css, style: style
       end
     end
     str.html_safe
