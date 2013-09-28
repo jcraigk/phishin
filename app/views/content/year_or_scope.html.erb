@@ -47,7 +47,7 @@
           <% else %>
             <%= content_tag :h4, link_to(truncate(show.venue.name, length: 35), "/#{show.venue.slug}"), class: 'narrow' %>
           <% end %>
-          <%#content_tag :h5, link_to(truncate(show.venue.location, length: 16), "/map?map_term=#{CGI::escape(show.venue.location)}"), class: 'narrower' %>
+          <%= content_tag :h5, link_to(truncate(show.venue.location, length: 16), "/map?map_term=#{CGI::escape(show.venue.location)}"), class: 'narrower' %>
           <% #content_tag :span, "#{show.duration_readable}", class: 'show_duration_small' %>
           <%= likable(show, @shows_likes[idx], 'small') %>
           <%= content_tag :h3, duration_readable(show.duration, 'letters') %>
