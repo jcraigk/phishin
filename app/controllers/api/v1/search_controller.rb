@@ -1,8 +1,8 @@
 module Api
   module V1
-    class SearchApiController < ApiController
+    class SearchController < ApiController
       
-      include SearchLogic
+      # include SearchLogic
 
       def show
         term = params[:id]
