@@ -51,7 +51,7 @@ class Show < ActiveRecord::Base
   end
   
   def as_json
-    {
+    hash = {
       id: id,
       date: date,
       duration: duration,
@@ -63,6 +63,10 @@ class Show < ActiveRecord::Base
       venue_id: venue_id,
       likes_count: likes_count
     }
+    hash.merge(
+      venue_name: venue.name,
+      location: venue.location
+    ) if venue
   end
   
   def as_json_api
