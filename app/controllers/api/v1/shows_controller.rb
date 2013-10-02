@@ -3,7 +3,7 @@ module Api
     class ShowsController < ApiController
 
       def index
-        respond_with_success get_data_for(Show)
+        respond_with_success get_data_for(Show.avail)
       end
 
       def show
