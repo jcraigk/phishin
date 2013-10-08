@@ -12,6 +12,8 @@ Phishin::Application.routes.draw do
       resources :songs,   only: [:index, :show]
       resources :search,  only: [:show]
       
+      get 'show-on-date/(:date)', to: 'shows#on_date'
+      
     end
   end
 end

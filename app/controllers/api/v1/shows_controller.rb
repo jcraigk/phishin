@@ -13,6 +13,15 @@ module Api
           respond_with_failure 'Show not found'
         end
       end
+      
+      def on_date
+        begin
+          Date.parse(params[:date])
+          respond_with_success Show.where(date: params[:date]).includes(:venue, :tracks, :tags).first
+        rescue
+          respond_with_failure 'Invalid date'
+        end
+      end
 
     end
   end
