@@ -11,6 +11,8 @@ class Tour < ActiveRecord::Base
       id: id,
       name: name,
       shows_count: shows_count,
+      starts_on: starts_on,
+      ends_on: ends_on,
       slug: slug
     }
   end
@@ -21,6 +23,8 @@ class Tour < ActiveRecord::Base
       name: name,
       shows_count: shows_count,
       slug: slug,
+      starts_on: starts_on,
+      ends_on: ends_on,
       shows: shows.sort_by {|s| s.date }.as_json
     }
   end
