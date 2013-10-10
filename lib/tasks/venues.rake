@@ -43,10 +43,11 @@ namespace :venues do
   # end
 
   desc "Update shows_count cache"
-  task :sync_shows_count => :environment do
-    Venue.all.each_with_index do |v, idx|
-      puts "#{idx}: #{v.shows.size}"
-      v.update_attributes(shows_count: v.shows.size)
+  task sync_shows_count: :environment do
+    Venue.all.each do |venue, idx|
+      shows_count = Show.avail.where(venue_id: venue.id).count
+      puts "#{venue.id}: #{shows_count}"
+      venue.update_attributes(shows_count: shows_count)
     end
   end
 
