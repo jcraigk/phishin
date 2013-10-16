@@ -10,8 +10,8 @@ Phishin::Application.routes.draw do
       resources :shows,   only: [:index, :show]
       resources :tracks,  only: [:index, :show]
       resources :songs,   only: [:index, :show]
-      resources :search,  only: [:show]
       
+      get 'search/(:term)',       to: 'search_api#index'
       get 'show-on-date/(:date)', to: 'shows#on_date'
       
     end
