@@ -1,7 +1,6 @@
 module Api
   module V1
     class SearchController < ApiController
-      
 
       def index
         term = params[:term]
@@ -18,27 +17,23 @@ module Api
       def search(term)
         if is_date? term
           date = parse_date term
-          total_results += 1 if show = Show.avail.where(date: date).includes(:venue).first
-          total_results += other_shows.size if other_shows = Show.avail.where('extract(month from date) = ?', date[5..6]).where('extract(day from date) = ?', date[8..9]).where('date != ?', date).includes(:venue).order('date desc').all
+          total_results = 0
+          show = Show.avail.where(date: date).includes(:venue).first
+          other_shows = Show.avail.where('extract(month from date) = ?', date[5..6]).where('extract(day from date) = ?', date[8..9]).where('date != ?', date).includes(:venue).order('date desc').all
         else
           songs = Song.relevant.where('lower(title) LIKE ?', "%#{term}%").order('title asc').all
           venues = Venue.relevant.where('lower(name) LIKE ? OR lower(abbrev) LIKE ? OR lower(past_names) LIKE ? OR lower(city) LIKE ? OR lower(state) LIKE ? OR lower(country) LIKE ?', "%#{term}%", "%#{term}%", "%#{term}%", "%#{term}%", "%#{term}%", "%#{term}%").order('name asc').all
-          # TODO Tours
           tours = Tour.where('lower(name) LIKE ?', "%#{term}%").order('name asc').all
-          total_results = songs.size + venues.size + tours.size
         end
         ret = {
           show: show,
           other_shows: other_shows,
           songs: songs,
           venues: venues,
-          tours: tours,
-          total_results: total_results
+          tours: tours
         }
       end
 
-      #todo this is duplicated code with normal search_controller...refactor into concern
-      
       def is_date?(str)
         return true if str =~ /^(\d{1,2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,4})$/ or str =~ /^(\d{4})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})$/
         begin
