@@ -15,6 +15,7 @@ module Api
       
       #todo this duplicates functionality of search_controller...should be refactored into concern
       def search(term)
+        term.downcase!
         if is_date? term
           date = parse_date term
           total_results = 0

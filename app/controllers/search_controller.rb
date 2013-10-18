@@ -1,7 +1,7 @@
 class SearchController < ApplicationController
 
   def results
-    term = params[:term] ||= ''
+    term = params[:term].downcase ||= ''
     if term.present?
       @results = true
       @total_results = 0
