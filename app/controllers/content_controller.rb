@@ -156,7 +156,7 @@ class ContentController < ApplicationController
   
   def song(slug)
     validate_sorting_for_song
-    if @song = Song.where(slug: slug).first
+    if @song = Song.where(slug: slug.downcase).first
       if @song.alias_for
         aliased_song = Song.where(id: @song.alias_for).first
         @redirect = "/#{aliased_song.slug}"
@@ -172,7 +172,7 @@ class ContentController < ApplicationController
   
   def venue(slug)
     validate_sorting_for_year_or_scope
-    if @venue = Venue.where(slug: slug).includes(:shows).first
+    if @venue = Venue.where(slug: slug.downcase).includes(:shows).first
       @shows = @venue.shows.includes(:tags).order(@order_by)
       @shows_likes = @shows.map { |show| get_user_show_like(show) }
       @next_venue = Venue.relevant.order('name asc').first unless @next_venue = Venue.relevant.where('name > ?', @venue.name).order('name asc').first
@@ -183,7 +183,7 @@ class ContentController < ApplicationController
   end
 
   def tour(slug)
-    if @tour = Tour.where(slug: slug).includes(:shows).first
+    if @tour = Tour.where(slug: slug.downcase).includes(:shows).first
       @shows = @tour.shows.includes(:tags).order('date desc')
       @shows_likes = @shows.map { |show| get_user_show_like(show) }
     end

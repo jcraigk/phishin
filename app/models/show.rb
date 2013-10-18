@@ -29,7 +29,7 @@ class Show < ActiveRecord::Base
     if date1 < date2
       where('date between ? and ?',
         date1.beginning_of_year,
-        date2.end_of_year).order('date')
+        date2.end_of_year)
     else
       where('date between ? and ?',
         date2.beginning_of_year,
