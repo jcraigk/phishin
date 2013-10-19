@@ -13,6 +13,7 @@ Phishin::Application.routes.draw do
       
       get 'search/(:term)',       to: 'search#index'
       get 'show-on-date/(:date)', to: 'shows#on_date'
+      get 'random-show',          to: 'shows#random'
       
     end
   end

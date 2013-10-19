@@ -22,6 +22,10 @@ module Api
           respond_with_failure 'Invalid date'
         end
       end
+      
+      def random
+        respond_with_success Show.random.includes(:venue, :tracks, :tags)
+      end
 
     end
   end
