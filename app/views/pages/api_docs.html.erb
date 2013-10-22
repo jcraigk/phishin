@@ -1,0 +1,199 @@
+<%= render partial: 'layouts/global_nav' %>
+
+<div id="content">
+  
+  <div id="title_box">
+    <h1>API Documentation</h1>
+    <div class="hr"></div>
+    <h3>Phish.in provides a JSON API for programmatic access to content</h3>
+    <div class="hr"></div>
+    <h3>V1 is the only current version</h3>
+  </div>
+  
+  <div id="content_box">
+    
+    <h2 class="content-header">Requests</h2>
+    <p>All requests must be in the form of <span class="api-command-inline">HTTP GET</span> and must include the <span class="api-command-inline">Accept: application/json</span> header</p>
+    
+    <h2>Responses</h2>
+    
+    <p>Responses to successful requests look like this:</p> 
+    
+    <pre>
+{
+  "success": true,
+  "total_entries": #,
+  "total_pages": #,
+  "page": #,
+  "data": [response content]
+}</pre>
+
+    <p>Responses to failed calls look like this:</p>
+    
+    <pre>
+{ 
+  success: false,
+  message: "Something went wrong!"
+}</pre>
+    
+    <h2>Parameters</h2>
+    
+    <p>Most routes accept the following optional parameters:</p>
+    
+    <ul class="api-list">
+      <li><span class="api-command-inline">sort_attr</span> Which attribute to sort on (Ex: "date", "name")</li>
+      <li><span class="api-command-inline">sort_dir</span> Which direction to sort in (asc|desc)</li>
+      <li><span class="api-command-inline">per_page</span> How many results to list per page (default: 20)</li>
+      <li><span class="api-command-inline">page</span> Which page of results to display (default: 1)</li>
+    </ul>
+    
+    <h2>Endpoints</h2>
+    
+    <span class="">All endpoints can be reached by using the full address of http://phish.in/api/v1 followed by one of these routes:</span>
+    
+    <span class="api-command">GET /eras</span>
+    <span class="api-doc">Returns all Eras and the Years that belong to each</span>
+    
+    <span class="api-command">GET /eras/:era</span>
+    <span class="api-doc">Returns Years contained within the specified Era</span>
+  
+    <span class="api-command">GET /years</span>
+    <span class="api-doc">Returns a list of all Years</span>
+  
+    <span class="api-command">GET /years/:year</span>
+    <span class="api-doc">Returns a list of Shows (basic data) for the given Year</span>
+
+    <span class="api-command">GET /songs</span>
+    <span class="api-doc">Returns a list of all Songs</span>
+
+    <span class="api-command">GET /songs/:id</span>
+    <span class="api-doc">Returns Song metadata for given ID as well as a list of Tracks that contain performances of the Song</span>
+  
+    <span class="api-command">GET /tours</span>
+    <span class="api-doc">Returns a list of all Tours</span>
+
+    <span class="api-command">GET /tours/:id</span>
+    <span class="api-doc">Returns Tour metadata for given ID as well as a list of Shows that occurred within the Tour</span>
+
+    <span class="api-command">GET /venues</span>
+    <span class="api-doc">Returns a list of all Venues</span>
+
+    <span class="api-command">GET /venues/:id</span>
+    <span class="api-doc">Returns Venue metadata for given ID as well as a list of Shows (ids, dates) that occurred at the Venue</span>
+
+    <span class="api-command">GET /shows</span>
+    <span class="api-doc">Returns a list of all Shows</span>
+
+    <span class="api-command">GET /shows/:id</span>
+    <span class="api-doc">Returns Show metadata for given ID as well as a list of Tracks belonging to the Show</span>
+
+    <span class="api-command">GET /tracks</span>
+    <span class="api-doc">Returns a list of all Tracks</span>
+
+    <span class="api-command">GET /tracks/:id</span>
+    <span class="api-doc">Returns Track metadata for given ID</span>
+    
+    <span class="api-command">GET /search/:term</span>
+    <span class="api-doc">Returns search results based on term.  If term resembles a date, "show" and "other_shows" (taking place on that day in history) will be returned.  Otherwise, lists of "venues" and "songs" will be returned.</span>
+    
+    <h2>Examples</h2>
+    
+    <p>[1] Making this request:</p>
+    
+    <span class="api-command">GET http://phish.in/api/v1/songs/40</span>
+    
+    <p>will result in this response:</p>
+    
+    <pre>
+{
+  "success": true,
+  "total_entries": 1,
+  "total_pages": 1,
+  "page": 1,
+  "data": {
+    "id": 40,
+    "title": "Any Colour You Like",
+    "alias_for": null,
+    "tracks_count": 1,
+    "slug": "any-colour-you-like",
+    "tracks": [
+      {
+        "id": 17963,
+        "title": "Any Colour You Like",
+        "duration": 211696,
+        "show_id": 904,
+        "show_date": "1998-11-02",
+        "set": "2",
+        "position": 20,
+        "likes_count": 0,
+        "slug": "any-colour-you-like",
+        "mp3": "http://phish.in/audio/000/017/963/17963.mp3"
+      }
+    ]
+  } 
+}</pre>
+
+    <p>[2] Requesting "the 3 most recent shows": </p>
+    
+    <span class="api-command">GET http://phish.in/api/v1/shows.json?per_page=3&page=1&sort_attr=date&sort_dir=desc</span>
+    
+    <p>will result in this response:</p>
+    
+    <pre>
+{
+  "success": true,
+  "total_entries": 1381,
+  "total_pages": 461,
+  "page": 1,
+  "data": [
+  {
+    "id": 1682,
+    "date": "2013-10-20",
+    "duration": 10149825,
+    "incomplete": false,
+    "missing": false,
+    "sbd": false,
+    "remastered": false,
+    "tour_id": 89,
+    "venue_id": 303,
+    "likes_count": 0,
+    "venue_name": "Hampton Coliseum",
+    "location": "Hampton, VA"
+  },
+  {
+    "id": 1681,
+    "date": "2013-10-19",
+    "duration": 9908611,
+    "incomplete": false,
+    "missing": false,
+    "sbd": false,
+    "remastered": false,
+    "tour_id": 89,
+    "venue_id": 303,
+    "likes_count": 0,
+    "venue_name": "Hampton Coliseum",
+    "location": "Hampton, VA"
+  },
+  {
+    "id": 1680,
+    "date": "2013-10-18",
+    "duration": 11043212,
+    "incomplete": false,
+    "missing": false,
+    "sbd": false,
+    "remastered": false,
+    "tour_id": 89,
+    "venue_id": 303,
+    "likes_count": 0,
+    "venue_name": "Hampton Coliseum",
+    "location": "Hampton, VA"
+  }
+  ]
+}</pre>
+      
+    
+  </div>
+  
+  <div style="clear: both;"></div>
+    
+</div>

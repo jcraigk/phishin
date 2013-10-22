@@ -14,6 +14,7 @@ Phishin::Application.routes.draw do
   # Static pages
   get     '/legal-stuff'                  => 'pages#legal_stuff',                   as: 'legal_stuff'
   get     '/contact-us'                   => 'pages#contact_us',                    as: 'contact_us'
+  get     '/api-docs'                     => 'pages#api_docs',                      as: 'api_docs'
 
   # Error pages
   get     '/browser-unsupported'          => 'errors#browser_unsupported',          as: 'browser_unsupported'

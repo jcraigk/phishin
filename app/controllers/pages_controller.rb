@@ -8,4 +8,8 @@ class PagesController < ApplicationController
     render layout: false if request.xhr?
   end
   
+  def api_docs
+    render layout: false if request.xhr?
+  end
+  
 end
