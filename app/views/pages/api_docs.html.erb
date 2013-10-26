@@ -66,20 +66,29 @@
     <span class="api-command">GET /songs</span>
     <span class="api-doc">Returns a list of all Songs</span>
 
-    <span class="api-command">GET /songs/:id</span>
-    <span class="api-doc">Returns Song metadata for given ID as well as a list of Tracks that contain performances of the Song</span>
+    <span class="api-command">
+      GET /songs/:id<br />
+      GET /songs/:slug
+    </span>
+    <span class="api-doc">Returns Song metadata for given ID (or slug) as well as a list of Tracks that contain performances of the Song</span>
   
     <span class="api-command">GET /tours</span>
     <span class="api-doc">Returns a list of all Tours</span>
 
-    <span class="api-command">GET /tours/:id</span>
-    <span class="api-doc">Returns Tour metadata for given ID as well as a list of Shows that occurred within the Tour</span>
+    <span class="api-command">
+      GET /tours/:id<br />
+      GET /tours/:slug
+    </span>
+    <span class="api-doc">Returns Tour metadata for given ID (or slug) as well as a list of Shows that occurred within the Tour</span>
 
     <span class="api-command">GET /venues</span>
     <span class="api-doc">Returns a list of all Venues</span>
 
-    <span class="api-command">GET /venues/:id</span>
-    <span class="api-doc">Returns Venue metadata for given ID as well as a list of Shows (ids, dates) that occurred at the Venue</span>
+    <span class="api-command">
+      GET /venues/:id<br />
+      GET /venues/:slug
+    </span>
+    <span class="api-doc">Returns Venue metadata for given ID (or slug) as well as a list of Shows (ids, dates) that occurred at the Venue</span>
 
     <span class="api-command">GET /shows</span>
     <span class="api-doc">Returns a list of all Shows</span>

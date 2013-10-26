@@ -7,7 +7,8 @@ module Api
       end
 
       def show
-        respond_with_success Venue.where(id: params[:id]).includes(:shows).first
+        venue = Venue.where(slug: params[:id]).includes(:shows).first unless venue = Venue.where(id: params[:id]).includes(:shows).first
+        respond_with_success venue
       end
 
     end

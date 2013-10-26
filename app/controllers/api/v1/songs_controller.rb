@@ -7,7 +7,8 @@ module Api
       end
 
       def show
-        respond_with_success Song.where(id: params[:id]).first
+        show = Song.where(slug: params[:id]).first unless show = Song.where(id: params[:id]).first
+        respond_with_success show
       end
 
     end
