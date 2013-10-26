@@ -137,6 +137,7 @@ class Track < ActiveRecord::Base
   def as_json_api
     {
       id: id,
+      show_id: show_id,
       title: title,
       position: position,
       duration: duration,
