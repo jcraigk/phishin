@@ -111,7 +111,7 @@ class PlaylistsController < ApplicationController
         render json: { success: true, msg: 'Playlist bookmarked' }
       end
     else
-      render json: { success: false, msg: "here: #{params[:id]}" }
+      render json: { success: false, msg: "Error fetching ID #{params[:id]}" }
     end
   end
   
