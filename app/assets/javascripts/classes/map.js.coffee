@@ -74,8 +74,8 @@ class @Map
       if venue.shows_count != 1
         word += 's'
       html += "<h3>#{venue.shows_count} #{word}:</h3><ul>"
-      for date in venue.show_dates
-        html += "<li><a href=\"/#{date}\">#{date}</a></li>"
+      for show in venue.shows
+        html += "<li><a href=\"/#{show.date}\">#{show.date}</a></li>"
       html += "</ul>"
       this._createMarker venue.latitude, venue.longitude, null, html
   

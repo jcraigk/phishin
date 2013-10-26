@@ -8,11 +8,12 @@ class MapController < ApplicationController
       venues = Venue.near([params[:lat], params[:lng]], params[:distance])
       for venue in venues
         shows = Show.where('venue_id = ? and date >= ? and date <= ?', venue.id, params[:date_start], params[:date_stop]).all
+        venue = venue.as_json
         if shows.size > 0
-          venue.shows = shows
+          venue[:shows] = shows.as_json
           venues_with_shows << venue
         end
-      end
+      end      
       render json: {success: true, venues: venues_with_shows}
     else
       render json: { success: false, msg: 'No results matched your criteria'}
