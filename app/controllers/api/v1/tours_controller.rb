@@ -7,7 +7,8 @@ module Api
       end
 
       def show
-        respond_with_success Tour.where(id: params[:id]).includes(:shows).first
+        tour = Tour.where(id: params[:id]).includes(:shows).first unless tour = Tour.where(id: params[:id]).includes(:shows).first
+        respond_with_success tour
       end
 
     end

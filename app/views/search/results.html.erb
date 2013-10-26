@@ -33,7 +33,7 @@
             <ul class="item_list clickable">
               <% for show in @other_shows %>
                 <li>
-                  <%= content_tag :h2, link_to("<span class=\"highlight\">#{show.date.strftime("%Y.%m.%d")}</span>#{show.date.strftime("/%y")}".html_safe, "/#{show.date}") %>
+                  <%= content_tag :h2, link_to("<span class=\"highlight\">#{show.date.strftime("%Y.%m.%d")}</span>".html_safe, "/#{show.date}") %>
                   <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}") %>
                   <%= content_tag :h5, link_to(show.venue.location, "/map?map_term=#{CGI::escape(show.venue.location)}") %>
                   <div style="clear: both;"></div>
