@@ -28,7 +28,7 @@ module Api
       end
       
       def random
-        respond_with_success Show.random.includes(:venue, :tracks, :tags).first
+        respond_with_success Show.avail.random.includes(:venue, :tracks, :tags).first
       end
 
     end
