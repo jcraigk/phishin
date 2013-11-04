@@ -22,7 +22,7 @@ namespace :tracks do
       tracks = show.tracks.order('position asc').all
       # tracks = Track.where('show_id = 163').all
       tracks.each do |track|
-        track.save!
+        # track.save!
         dupes = []
         tracks.each { |track2| dupes << track2 if track.id != track2.id and track.slug == track2.slug }
         if dupes.size > 0
