@@ -113,7 +113,14 @@ class Track < ActiveRecord::Base
   end
   
   def generic_slug
-    title.downcase.gsub(/\'/, '').gsub(/[^a-z0-9]/, ' ').strip.gsub(/\s+/, ' ').gsub(/\s/, '-')
+    slug = title.downcase.gsub(/\'/, '').gsub(/[^a-z0-9]/, ' ').strip.gsub(/\s+/, ' ').gsub(/\s/, '-')
+    # handle abbreviations
+    slug.gsub!(/hold\-your\-head\-up/, 'hyhu')
+    slug.gsub!(/the\-man\-who\-stepped\-into\-yesterday/, 'tmwsiy')
+    slug.gsub!(/she\-caught\-the\-katy\-and\-left\-me\-a\-mule\-to\-ride/, 'she-caught-the-katy')
+    slug.gsub!(/mcgrupp\-and\-the\-watchful\-hosemasters/, 'mcgrupp')
+    slug.gsub!(/big\-black\-furry\-creature\-from\-mars/, 'bbfcfm')
+    slug
   end
   
   def mp3_url

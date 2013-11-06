@@ -4,12 +4,6 @@ namespace :tracks do
   task create_slugs: :environment do
     Track.all.each do |track|
       slug = track.generic_slug
-      # handle abbreviations
-      slug.gsub!(/hold\-your\-head\-up/, 'postgres')
-      slug.gsub!(/the\-man\-who\-stepped\-into\-yesterday/, 'tmwsiy')
-      slug.gsub!(/she\-caught\-the\-katy\-and\-left\-me\-a\-mule\-to\-ride/, 'she-caught-the-katy')
-      slug.gsub!(/mcgrupp\-and\-the\-watchful\-hosemasters/, 'mcgrupp')
-      slug.gsub!(/big\-black\-furry\-creature\-from\-mars/, 'bbfcfm')
       track.update_attributes(slug: slug)
       puts "#{track.id} :: #{track.title} :: #{track.slug}"
     end
