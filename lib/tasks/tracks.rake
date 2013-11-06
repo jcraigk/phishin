@@ -3,15 +3,15 @@ namespace :tracks do
   # Create track slugs (then run uniquify_slugs below)
   task create_slugs: :environment do
     Track.all.each do |track|
-      track.slug = track.generic_slug
+      slug = track.generic_slug
       # handle abbreviations
-      track.slug.gsub!(/hold\-your\-head\-up/, 'postgres')
-      track.slug.gsub!(/the\-man\-who\-stepped\-into\-yesterday/, 'tmwsiy')
-      track.slug.gsub!(/she\-caught\-the\-katy\-and\-left\-me\-a\-mule\-to\-ride/, 'she-caught-the-katy')
-      track.slug.gsub!(/mcgrupp\-and\-the\-watchful\-hosemasters/, 'mcgrupp')
-      track.slug.gsub!(/big\-black\-furry\-creature\-from\-mars/, 'bbfcfm')
-      track.save!
-      puts "#{track.title} :: #{track.slug}"
+      slug.gsub!(/hold\-your\-head\-up/, 'postgres')
+      slug.gsub!(/the\-man\-who\-stepped\-into\-yesterday/, 'tmwsiy')
+      slug.gsub!(/she\-caught\-the\-katy\-and\-left\-me\-a\-mule\-to\-ride/, 'she-caught-the-katy')
+      slug.gsub!(/mcgrupp\-and\-the\-watchful\-hosemasters/, 'mcgrupp')
+      slug.gsub!(/big\-black\-furry\-creature\-from\-mars/, 'bbfcfm')
+      track.update_attributes(slug: slug)
+      puts "#{track.id} :: #{track.title} :: #{track.slug}"
     end
   end
   
