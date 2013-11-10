@@ -4,8 +4,10 @@
 //= require jquery.ui.slider
 //= require jquery.ui.sortable
 //= require jquery.ui.datepicker
+//= require jquery.cookie
 //= require soundmanager
 //= require history.min
+//= require classes/detector
 //= require classes/util
 //= require classes/player
 //= require classes/playlist
@@ -16,24 +18,12 @@
 @App = {}
 
 $ ->
-
-  ###############################################
-  # UNSUPPORTED CLIENTS
-  ###############################################
-  
-  # MOBILE NOT SUPPORTED
-  # window.location.href = '/mobile-unsupported' if /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
-
-  # IE NOT SUPPORTED
-  window.location.href = '/browser-unsupported' if eval "/*@cc_on!@*/!1" # only IE can execute this
-  
-  # MAC/FIREFIX NOT SUPPORTED
-  window.location.href = '/browser-unsupported' if /Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent) and /Mac/.test(navigator.userAgent)
   
   ###############################################
   # Init
   ###############################################
 
+  App.Detector     = new Detector
   App.Util         = new Util
   App.Player       = new Player
   App.Playlist     = new Playlist

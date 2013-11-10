@@ -18,9 +18,9 @@ gem 'soundmanager-rails'
 gem 'bootstrap-will_paginate'
 gem 'jquery-smooth-scroll-rails'
 gem 'geocoder'
-# gem 'rails_admin'
 gem 'selenium-webdriver'
 gem 'dalli'
+gem 'jquery-cookie-rails'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
