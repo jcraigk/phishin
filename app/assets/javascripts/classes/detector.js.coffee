@@ -22,14 +22,33 @@ class @Detector
       if $.cookie('appInstalled') is 'true'
         msg = 'Recommended: do you want to enjoy this content using the Phish On Demand app?'
       else
-        msg = 'Phish On Demand is an app that lets you enjoy Phish.in content on your iOS device.  Install it?'
+        msg = 'Phish On Demand is an app that lets you enjoy Phish.in content on your iOS device. Install it?'
       if confirm msg
         loadedAt = +new Date
         setTimeout( ->
           alert 'Something went wrong' if +new Date - loadedAt < 2000
         , 1000);
-        #todo handle specific routes as described at http://alecgorge.com/phish/launch.html
-        window.location = 'phishod:///';
+        
+        urlParts = window.location.pathname[1...].split '/'
+        time     = window.location.search[3...-1].split 'm'
+        phishUrl = '/'
+
+        if urlParts[0] is ''
+          urlParts = []
+
+        if time[0] is ''
+          time = []
+
+        if urlParts.length >= 1
+          phishUrl += urlParts[0]
+
+        if urlParts.length >= 2
+          phishUrl += '/' + $('.playable_track').first().data('id')
+
+          if time.length > 0
+            phishUrl += '/' + time.join('/')
+
+        window.location = 'phishod://' + phishUrl;
         $.cookie('appInstalled', 'true', { expires: 365 * 10 })
       else
         $.cookie('appInstalled', 'false', { expires: 365 * 10 })

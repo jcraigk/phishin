@@ -23,7 +23,9 @@ $ ->
   # Init
   ###############################################
 
-  App.Detector     = new Detector
+  # delay Detector creation until the body is
+  # loaded in and the track ID can be detected
+  App.Detector     = null
   App.Util         = new Util
   App.Player       = new Player
   App.Playlist     = new Playlist
@@ -75,6 +77,8 @@ $ ->
           # )
           App.Player.onReady() # For scrolling to and auto-playing a track
           App.Player.highlightActiveTrack(true) # For highlighting current track in a list, scrollTo = true
+
+          App.Detector = new Detector
           
           # Map
           if state.data.href.substr(0,4) is '/map'
