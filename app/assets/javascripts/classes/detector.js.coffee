@@ -29,26 +29,19 @@ class @Detector
           alert 'Something went wrong' if +new Date - loadedAt < 2000
         , 1000);
         
+        # Convert web path to PhishOD path
         urlParts = window.location.pathname[1...].split '/'
         time     = window.location.search[3...-1].split 'm'
-        phishUrl = '/'
-
-        if urlParts[0] is ''
-          urlParts = []
-
-        if time[0] is ''
-          time = []
-
-        if urlParts.length >= 1
-          phishUrl += urlParts[0]
-
+        path = '/'
+        urlParts = [] if urlParts[0] is ''
+        time = [] if time[0] is ''
+        path += urlParts[0] if urlParts.length >= 1
         if urlParts.length >= 2
-          phishUrl += '/' + $('.playable_track').first().data('id')
-
-          if time.length > 0
-            phishUrl += '/' + time.join('/')
-
-        window.location = 'phishod://' + phishUrl;
+          path += '/' + $('.playable_track').first().attr('data-id')
+          path += '/' + time.join('/') if time.length > 0
+        alert('phishod://' + path)
+        window.location = 'phishod://' + path;
+        
         $.cookie('appInstalled', 'true', { expires: 365 * 10 })
       else
         $.cookie('appInstalled', 'false', { expires: 365 * 10 })

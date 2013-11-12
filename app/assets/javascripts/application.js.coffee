@@ -23,9 +23,7 @@ $ ->
   # Init
   ###############################################
 
-  # delay Detector creation until the body is
-  # loaded in and the track ID can be detected
-  App.Detector     = null
+  App.Detector     = null       # delay Detector creation until body load (PhishOD track ID detection)
   App.Util         = new Util
   App.Player       = new Player
   App.Playlist     = new Playlist
