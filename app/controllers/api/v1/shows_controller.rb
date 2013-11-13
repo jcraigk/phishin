@@ -4,7 +4,7 @@ module Api
       
       caches_action :index, expires_in: CACHE_TTL
       caches_action :show, expires_in: CACHE_TTL
-      caches_action :on_date, expires_in: CACHE_TTL
+      # caches_action :on_date, expires_in: CACHE_TTL
 
       def index
         respond_with_success get_data_for(Show.avail)
@@ -12,6 +12,8 @@ module Api
 
       def show
         if data = Show.where(id: params[:id]).includes(:venue, :tracks, :tags).first
+          respond_with_success data
+        elsif data = Show.where(date: params[:id]).includes(:venue, :tracks, :tags).first
           respond_with_success data
         else
           respond_with_failure 'Show not found'
