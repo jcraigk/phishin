@@ -11,12 +11,18 @@ module Api
       end
 
       def show
-        if data = Show.where(id: params[:id]).includes(:venue, :tracks, :tags).first
-          respond_with_success data
-        elsif data = Show.where(date: params[:id]).includes(:venue, :tracks, :tags).first
-          respond_with_success data
+        if params[:id] =~ /\d{4}-\d{2}-\d{2}/
+          if data = Show.where(date: params[:id]).includes(:venue, :tracks, :tags).first
+            respond_with_success data
+          else
+            respond_with_failure 'Show date not found'
+          end
         else
-          respond_with_failure 'Show not found'
+          if data = Show.where(id: params[:id]).includes(:venue, :tracks, :tags).first
+            respond_with_success data
+          else
+            respond_with_failure 'Show ID not found'
+          end
         end
       end
       
