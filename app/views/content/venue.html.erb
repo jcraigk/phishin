@@ -6,6 +6,9 @@
     <%= content_tag :h1, @venue.name %>
     <%= content_tag :h2, link_to(@venue.location, "/map?map_term=#{@venue.latitude},#{@venue.longitude}&amp;distance=.5") %>
     <%= content_tag :h2, "Shows hosted: #{@venue.shows_count}" %>
+    <% if @venue.past_names %>
+      <%= content_tag :h2, "Past name(s): #{@venue.past_names}", class: 'venue_past_names' %>
+    <% end %>
     <%= content_tag :div, nil, class: 'hr' %>
     <%= render partial: 'shared/sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Date' => 'date desc', '<i class="icon-time"></i> Date' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes',  '<i class="icon-forward"></i> Duration' => 'duration'} } %>
     <%= content_tag :div, nil, class: 'hr' %>

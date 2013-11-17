@@ -27,6 +27,23 @@ $highlight1: #00baf2;
 $highlight2: #91e1f2;
 $highlight3: #cbebf2;
 
+@-webkit-keyframes pulsate-highlight2 {
+    0%   { background: $background_gray; } 
+    100%  { background: $highlight2; }
+}
+@-moz-keyframes pulstate-highlight2 {
+  0%   { background: $background_gray; } 
+  100%  { background: $highlight2; }
+}
+@-webkit-keyframes pulsate-highlight2 {
+    0%   { background: $background_gray; } 
+    100%  { background: $highlight2; }
+}
+@-moz-keyframes pulstate-highlight2 {
+  0%   { background: $background_gray; } 
+  100%  { background: $highlight2; }
+}
+
 * {
   font-family: 'Open Sans Condensed', sans-serif !important;
 }
@@ -162,22 +179,6 @@ html {
     .highlighted_track {
       -webkit-animation: pulsate-highlight2 1.5s infinite alternate linear !important; 
       -moz-animation: pulsate-highlight2 1.5s infinite alternate linear !important;
-    }
-    @-webkit-keyframes pulsate-highlight2 {
-        0%   { background: $background_gray; } 
-        100%  { background: $highlight2; }
-    }
-    @-moz-keyframes pulstate-highlight2 {
-      0%   { background: $background_gray; } 
-      100%  { background: $highlight2; }
-    }
-    @-webkit-keyframes pulsate-highlight2 {
-        0%   { background: $background_gray; } 
-        100%  { background: $highlight2; }
-    }
-    @-moz-keyframes pulstate-highlight2 {
-      0%   { background: $background_gray; } 
-      100%  { background: $highlight2; }
     }
 
     .alias_for {
@@ -977,6 +978,10 @@ html {
       color: $gray_70;
       font-weight: bold;
       margin-bottom: 6px;
+
+      &.venue_past_names {
+        font-style: italic;
+      }
     }
     h3 {
       line-height: 20px;
