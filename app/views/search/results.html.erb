@@ -11,7 +11,13 @@
     <% if @results %>
       <% unless @total_results and @total_results > 0 %>
         <h2>Got a blank space where results should be...</h2>
-        <h3>(nothing matched your search term)</h3>
+        <ul>
+          <li>If searching for a date, enter it like "12/31/95" or "1995-12-31"</li>
+          <li>If searching for a day of the year (like Halloween), search for an instance like "10/31/94"</li>
+          <li>If searching for a venue, enter part of its name (or past names) or location like "msg" or "new york"</li>
+          <li>If searching for a song, enter all or part of its name like "also sprach" or "birdwatcher"</li>
+          <li>If searching for a tour, enter all or part of its name like "summer" or "1995"</li>
+        </ul>
       <% else %>
     
         <% if @show or @other_shows %>

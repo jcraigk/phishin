@@ -12,7 +12,6 @@ class SearchController < ApplicationController
       else
         @songs = Song.relevant.where('lower(title) LIKE ?', "%#{term}%").order('title asc').all
         @venues = Venue.relevant.where('lower(name) LIKE ? OR lower(abbrev) LIKE ? OR lower(past_names) LIKE ? OR lower(city) LIKE ? OR lower(state) LIKE ? OR lower(country) LIKE ?', "%#{term}%", "%#{term}%", "%#{term}%", "%#{term}%", "%#{term}%", "%#{term}%").order('name asc').all
-        # TODO Tours
         @tours = Tour.where('lower(name) LIKE ?', "%#{term}%").order('name asc').all
         @total_results = @songs.size + @venues.size + @tours.size
       end
@@ -26,12 +25,12 @@ class SearchController < ApplicationController
   
   def is_date?(str)
     return true if str =~ /^(\d{1,2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,4})$/ or str =~ /^(\d{4})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})$/
-    begin
-       Date.parse str
-       true
-    rescue
-       false
-    end
+    # begin
+    #    Date.parse str
+    #    true
+    # rescue
+    #    false
+    # end
   end
   
   def parse_date(str)
