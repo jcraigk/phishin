@@ -305,6 +305,7 @@ html {
   background-color: $background_gray;
   height: 199px;
   position: fixed;
+  z-index: 10;
 
   #header_content_container {
     margin: 0 auto;
@@ -671,6 +672,7 @@ html {
     background-color: $sub_nav_gray;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
+    margin-top: 1px;
     
     a {
       color: #6e7073;
@@ -913,8 +915,7 @@ html {
   }
   .track_tag_container {
     float: left;
-    position: relative;
-    top: -10px;
+    margin-top: -10px;
   }
   .track_tag {
     height: 11px !important;
