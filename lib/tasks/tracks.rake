@@ -1,6 +1,6 @@
 namespace :tracks do
   
-  # Create track slugs (then run uniquify_slugs below)
+  desc "Generate generic slugs on all tracks"
   task create_slugs: :environment do
     Track.all.each do |track|
       slug = track.generic_slug
@@ -9,7 +9,7 @@ namespace :tracks do
     end
   end
   
-  # Uniquify track slugs
+  desc "Ensure tracks have unique slugs within each show"
   task uniquify_slugs: :environment do
     Show.order('date desc').each do |show|
       puts "Working: #{show.date}"
@@ -33,7 +33,25 @@ namespace :tracks do
     end
   end
   
-  # Tighten up positions
+  desc "Check for position gaps in each show, searching for missing tracks"
+  task find_missing: :environment do
+    show_list = []
+    Show.order('date desc').each do |show|
+      show.tracks.order('position').each_with_index do |track, i|
+        if i + 1 != track.position
+          show_list << show.date
+          break
+        end
+      end 
+    end
+    if show_list.count > 0
+      puts "#{show_list.count} shows contain track gaps: #{show_list.join(',')}" 
+    else
+      puts "No track gaps found"
+    end
+  end
+  
+  desc "Tighten up track positions within each show"
   task tighten_positions: :environment do
     Show.order('date desc').each do |show|
       puts "Tightening: #{show.date}"
@@ -44,7 +62,7 @@ namespace :tracks do
     end
   end
   
-  # Label sets
+  desc "Apply proper labels to track with NULL set property"
   task label_null_sets: :environment do
     tracks = Track.where("set IS NULL").order(:position)
     unknown = 0
@@ -76,7 +94,7 @@ namespace :tracks do
   
   # Rename mp3s from old paperclips names
   # Rename from hash to id, move up a directory (out of "/original")
-  desc "Rename mp3s pulled from phishtracks.net"
+  desc "Rename mp3s pulled from phishtracks"
   def traverse_and_rename(path)
     require 'fileutils'
     Dir.glob("#{path}/*").each_with_object({}) do |f, h|
