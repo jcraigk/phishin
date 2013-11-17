@@ -4,15 +4,16 @@
 
   <div id="title_box">
     <%= content_tag :h1, "WELCOME TO PHISH.IN'", class: 'large' %>
+    <%= content_tag :p, "An archive of live Phish audio", class: 'strong' %>
     <%= content_tag :div, nil, class: 'hr' %>
-    <%= content_tag :h2, "An archive of live Phish audio" %>
+    <%= render partial: "shared/app_phishod" %>
     <%= content_tag :div, nil, class: 'hr' %>
     <%= content_tag :h3, "Shows: #{number_with_delimiter(Show.avail.count)}" %>
-    <%= content_tag :h3, "Songs: #{number_with_delimiter(Song.relevant.count)}" %>
+    <%# content_tag :h3, "Songs: #{number_with_delimiter(Song.relevant.count)}" %>
     <%= content_tag :h3, "Tracks: #{number_with_delimiter(Track.count)}" %>
     <%= content_tag :h3, "Hours of Music: 3,260" %>
     <%= content_tag :div, nil, class: 'hr' %>
-    <%= content_tag :h3, "This site is in BETA; expect bugs.  It will improve gradually.", class: 'beta' %>
+    <%= content_tag :h3, "This site is in beta; expect bugs.  It will improve gradually.", class: 'beta' %>
   </div>
 
   <div id="content_box">

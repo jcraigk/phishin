@@ -64,13 +64,24 @@ html {
       text-decoration: none !important;
       color: $highlight1 !important;
     }
-    p.large {
-      font-size: 18px;
-      line-height: 26px;
+    p {
+      &.large {
+        font-size: 18px;
+        line-height: 26px;
+      }
+      &.strong {
+        color: $gray_70;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 0px;
+      }
     }
     input {
       font-weight: bold !important;
       color: $gray_70 !important;
+    }
+    .strong {
+      font-weight: bold !important;
     }
     
     #ajax_overlay {
@@ -992,6 +1003,23 @@ html {
       .btn-group {
         position: relative;
         top: 4px;
+      }
+    }
+    #app_callout {
+      * {
+        float: left;
+      }
+      img {
+        width: 50px;
+        margin-right: 10px;
+      }
+      h2 {
+        width: 129px;
+        margin-top: 6px;
+      }
+      p {
+        margin-top: 5px;
+        margin-bottom: 0px;
       }
     }
     #map_search_container {
