@@ -1227,8 +1227,14 @@ html {
 /*********************************************************************************/
 /*********************************************************************************/
 
-//@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
-//
-//
-//  
-//}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+  #page_header {
+    position: absolute !important;
+  }
+  #global_nav_container {
+    position: absolute !important;
+  }
+  #content #title_box {
+    position: absolute !important;
+  }
+}
