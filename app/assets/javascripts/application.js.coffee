@@ -143,6 +143,10 @@ $ ->
   # DOM interactions
   ###############################################
   
+  # Click Phish On Demand app callout
+  $(document).on 'click', '#phishod_callout', ->
+    window.location = 'https://itunes.apple.com/us/app/phish-on-demand-all-phish/id672139018'
+  
   # Click a link to load page via ajax
   $(document).on 'click', 'a', ->
     unless $(this).hasClass('non-remote')

@@ -39,7 +39,7 @@ class @Detector
         if urlParts.length >= 2
           path += '/' + $('.playable_track').first().attr('data-id')
           path += '/' + time.join('/') if time.length > 0
-        alert('phishod://' + path)
+        # alert('phishod://' + path)
         window.location = 'phishod://' + path;
         
         $.cookie('appInstalled', 'true', { expires: 365 * 10 })

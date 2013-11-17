@@ -1005,9 +1005,10 @@ html {
         top: 4px;
       }
     }
-    #app_callout {
+    .app_callout {
       * {
         float: left;
+        cursor: pointer;
       }
       img {
         width: 50px;
