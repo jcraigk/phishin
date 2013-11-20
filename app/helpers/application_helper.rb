@@ -200,7 +200,7 @@ module ApplicationHelper
   end
   
   def track_title_with_tags(track)
-    max_len = 40
+    max_len = 70
     str = '<div class="track_tag_container">'
     track.tags.each do |tag|
       str += content_tag :span, tag.name, class: 'label track_tag', style: "background-color: #{tag.color}"
