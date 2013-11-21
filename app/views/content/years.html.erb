@@ -3,17 +3,17 @@
 <div id="content">
 
   <div id="title_box">
-    <%= content_tag :h1, "WELCOME TO PHISH.IN'", class: 'large' %>
-    <%= content_tag :p, "An archive of live Phish audio", class: 'strong' %>
+    
+    <%# content_tag :div, nil, class: 'hr' %>
+    <%= content_tag :p, "LIVE PHISH AUDIO ARCHIVE", class: 'strong' %>
+    <%= content_tag :h3, "#{number_with_delimiter(Show.avail.count)} shows" %>
+    <%# content_tag :h3, "Songs: #{number_with_delimiter(Song.relevant.count)}" %>
+    <%# content_tag :h3, "Tracks: #{number_with_delimiter(Track.count)}" %>
+    <%= content_tag :h3, "3,280 hours of music" %>
     <%= content_tag :div, nil, class: 'hr' %>
     <%= render partial: "shared/app_phishod" %>
     <%= content_tag :div, nil, class: 'hr' %>
-    <%= content_tag :h3, "Shows: #{number_with_delimiter(Show.avail.count)}" %>
-    <%# content_tag :h3, "Songs: #{number_with_delimiter(Song.relevant.count)}" %>
-    <%= content_tag :h3, "Tracks: #{number_with_delimiter(Track.count)}" %>
-    <%= content_tag :h3, "Hours of Music: 3,260" %>
-    <%= content_tag :div, nil, class: 'hr' %>
-    <%= content_tag :h3, "This site is in beta; expect bugs.  It will improve gradually.", class: 'beta' %>
+    <%= content_tag :h3, "Android developer wanted!", class: 'beta' %>
   </div>
 
   <div id="content_box">

@@ -140,7 +140,7 @@ module ApplicationHelper
           name = current_user.username
         else
           properties[0] = new_user_session_path
-          name = 'Sign in'
+          name = 'Sign up!'
           css += ' non-remote'
         end
       end

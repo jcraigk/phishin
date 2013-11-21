@@ -551,8 +551,12 @@ html {
   }
   #logo {
     position: absolute;
-    margin-top: 34px;
-    margin-left: 21px;
+    margin-top: 31px;
+    margin-left: 20px;
+    
+    p {
+      margin-top: 10px;
+    }
   }
   #header {
     margin: 0 auto;
@@ -592,7 +596,13 @@ html {
     border-bottom: 2px solid $background_gray;
     border-top-right-radius: 8px;
     border-top-left-radius: 8px;
-
+    
+    .user_control {
+      font-size: 18px;
+      font-style: italic;
+      position: relative;
+      left: 10px;
+    }
     .link_container {
       text-align: center;
       width: 60px;
@@ -958,13 +968,6 @@ html {
       color: $gray_80;
     }
   }
-  .user_control {
-    position: relative;
-    top: -1px;
-    font-family: 'Marck Script', cursive !important;
-    font-size: 16px;
-    font-style: italic;
-  }
   
   #title_box {
     margin-left: 10px;
@@ -1017,7 +1020,10 @@ html {
       }
       h2 {
         width: 129px;
-        margin-top: 6px;
+        margin-top: 7px;
+      }
+      h3 {
+        margin-top: -4px;
       }
       p {
         margin-top: 5px;
