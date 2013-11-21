@@ -129,6 +129,39 @@ html {
       position: relative;
       top: 140px;
     }
+    .likes_large {
+      a {
+        cursor: pointer;
+        float: left;
+        position: relative;
+        top: 3px;
+        width: 16px;
+        height: 16px;
+        text-decoration: none;
+        background: url('icons-heart.png');
+        margin-right: 4px;
+        margin-bottom: 10px;
+    
+        &:hover {
+          cursor: pointer;
+          background-position: -32px 0 !important;
+          text-decoration: none !important;
+        }
+        &.liked {
+          background-position: -16px 0 !important;
+        }
+      }
+      span {
+        width: 45px;
+        float: left;
+        line-height: 22px;
+        color: $gray_50;
+        font-size: 17px;
+        font-family: 'Marck Script', cursive !important;
+        font-style: italic;
+        overflow: hidden;
+      }
+    }
     #footer {
       width: 940px;
       background-color: $sub_nav_gray;
@@ -770,39 +803,6 @@ html {
   .admin_notes {
     font-size: 14px !important;
     font-style: italic;
-  }
-  .likes_large {
-    a {
-      cursor: pointer;
-      float: left;
-      position: relative;
-      top: 3px;
-      width: 16px;
-      height: 16px;
-      text-decoration: none;
-      background: url('icons-heart.png');
-      margin-right: 4px;
-      margin-bottom: 10px;
-    
-      &:hover {
-        cursor: pointer;
-        background-position: -32px 0 !important;
-        text-decoration: none !important;
-      }
-      &.liked {
-        background-position: -16px 0 !important;
-      }
-    }
-    span {
-      width: 45px;
-      float: left;
-      line-height: 22px;
-      color: $gray_50;
-      font-size: 17px;
-      font-family: 'Marck Script', cursive !important;
-      font-style: italic;
-      overflow: hidden;
-    }
   }
   #player_likes_container {
     margin: 0 auto;
