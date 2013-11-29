@@ -6,7 +6,7 @@ module Api
       caches_action :show, expires_in: CACHE_TTL
 
       def index
-        respond_with_success get_data_for(Song)
+        respond_with_success get_data_for(Song.relevant)
       end
 
       def show
