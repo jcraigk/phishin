@@ -35,6 +35,7 @@ namespace :tracks do
   
   desc "Check for position gaps in each show, searching for missing tracks"
   task find_missing: :environment do
+    # Track gaps
     show_list = []
     Show.order('date desc').each do |show|
       show.tracks.order('position').each_with_index do |track, i|
@@ -48,6 +49,17 @@ namespace :tracks do
       puts "#{show_list.count} shows contain track gaps: #{show_list.join(',')}" 
     else
       puts "No track gaps found"
+    end
+    # Shows with no tracks
+    show_list = []
+    Show.where(missing: false).order('date desc').each do |show|
+      tracks = show.tracks.all
+      show_list << show.date if tracks.size == 0
+    end
+    if show_list.count > 0
+      puts "#{show_list.count} shows contain no tracks: #{show_list.join(',')}" 
+    else
+      puts "No trackless shows found"
     end
   end
   
