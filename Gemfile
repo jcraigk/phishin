@@ -9,9 +9,9 @@ gem 'friendly_id'
 gem 'mp3info'
 gem 'pg_search'
 gem 'jquery-rails'
-gem 'resque', :require => "resque/server"
+gem 'resque', require: "resque/server"
 gem 'devise'
-gem 'anjlab-bootstrap-rails', '>= 2.3', :require => 'bootstrap-rails'
+gem 'anjlab-bootstrap-rails', '>= 2.3', require: 'bootstrap-rails'
 gem 'therubyracer'
 gem 'jquery-ui-rails'
 gem 'soundmanager-rails'
@@ -21,6 +21,7 @@ gem 'geocoder'
 gem 'selenium-webdriver'
 gem 'dalli'
 gem 'jquery-cookie-rails'
+gem 'newrelic_rpm'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.3'
