@@ -800,6 +800,16 @@ html {
       color: #ccc;
     }
   }
+  .admin_notes_container {
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background-color: #daf0d8;
+    border: 1px solid black;
+    color: $alert;
+    font-size: 17px;
+    text-align: center;
+    padding: 5px;
+  }
   .admin_notes {
     font-size: 14px !important;
     font-style: italic;

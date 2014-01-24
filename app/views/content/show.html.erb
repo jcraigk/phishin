@@ -34,6 +34,10 @@
       <% if @show.incomplete? %>
         <div class="incomplete_show">This show is incomplete</div>
       <% end %>
+
+      <% if @show.admin_notes.present? %>
+        <div class="admin_notes_container"><%= @show.admin_notes %></div>
+      <% end %>
   
       <% set = false %>
       <% @tracks.each_with_index do |track, idx| %>
