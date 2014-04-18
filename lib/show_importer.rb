@@ -26,7 +26,7 @@ module ShowImporter
       venue = Venue.where('past_names LIKE ? AND city = ?', "%#{@show_info.venue_name}%", @show_info.venue_city).first unless venue
       unless venue
         puts "No venue matched! Enter Venue ID:"
-        venue = Venue.find(gets.chomp.to_i)
+        venue = Venue.find(STDIN.gets.chomp.to_i)
       end
       @show.venue = venue
 
