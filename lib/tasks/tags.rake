@@ -6,7 +6,7 @@ namespace :tags do
     TrackTag.all.each do |track_tag|
       unless track = Track.where(id: track_tag.track_id).first
         num_orphans += 1
-        # track_tag.destroy
+        track_tag.destroy
       end
     end
     puts "Total orphaned TrackTags destroyed: #{num_orphans}"
@@ -18,7 +18,7 @@ namespace :tags do
     ShowTag.all.each do |show_tag|
       unless track = Track.where(id: show_tag.show_id).first
         num_orphans += 1
-        # track_tag.destroy
+        track_tag.destroy
       end
     end
     puts "Total orphaned ShowTags destroyed: #{num_orphans}"

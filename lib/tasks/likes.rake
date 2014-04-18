@@ -7,12 +7,12 @@ namespace :likes do
       if like.likable_type == 'Track'
         unless track = Track.where(id: like.likable_id).first
           num_orphans += 1
-          # like.destroy
+          like.destroy
         end
       elsif like.likable_type == 'Show'
         unless show = Show.where(id: like.likable_id).first
           num_orphans += 1
-          # like.destroy
+          like.destroy
         end
       end
     end
