@@ -18,7 +18,7 @@ class Track < ActiveRecord::Base
   has_many :songs_tracks, dependent: :destroy
   has_many :songs, through: :songs_tracks
   belongs_to :show
-  has_many :likes, as: :likable
+  has_many :likes, as: :likable, dependent: :destroy
   has_many :track_tags, dependent: :destroy
   has_many :tags, through: :track_tags
   
