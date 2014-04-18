@@ -2,6 +2,8 @@ class Track < ActiveRecord::Base
   
   require 'taglib'
 
+  # before_destroy :prevent_destruction
+
   #########################
   # Attributes & Constants
   #########################
@@ -198,6 +200,11 @@ class Track < ActiveRecord::Base
       when "4" then "IV"
       else ""
     end
+  end
+
+  # Do not allow tracks to be destroyed
+  def prevent_destruction
+    false
   end
   
 end

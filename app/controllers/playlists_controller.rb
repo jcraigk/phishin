@@ -72,7 +72,7 @@ class PlaylistsController < ApplicationController
       end
     elsif playlist = Playlist.where(user_id: current_user.id, id: params[:id]).first
       playlist.update_attributes(name: params[:name], slug: params[:slug])
-      playlist.tracks.map(&:destroy)
+      playlist.playlist_tracks.map(&:destroy)
       create_playlist_tracks(playlist)
       activate_playlist(playlist)
       success = true
