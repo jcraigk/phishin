@@ -23,7 +23,11 @@ module ShowImporter
       
       puts "Finding venue..."
       @venue = Venue.where('past_names LIKE ? AND city = ?', "%#{@show_info.venue_name}%", @show_info.venue_city).first unless @venue = Venue.where(name: @show_info.venue_name, city: @show_info.venue_city).first
-      @show.venue = @venue if @venue
+      if @venue
+        @show.venue = @venue 
+      else
+        raise "Error: #{@show_info.venue_name} not found!"
+      end
 
       @tracks = []
       populate_tracks
