@@ -1111,6 +1111,7 @@ html {
     width: 630px;
     padding-top: 5px;
     margin-right: 20px;
+    position: relative;
 
     & > h1 {
       margin-top: -5px !important;
@@ -1131,6 +1132,11 @@ html {
       &>a {
         color: #5b6699;
       }
+    }
+    .set_duration {
+      position: absolute;
+      margin-top: -39px;
+      margin-left: 514px;
     }
     .callout_box {
       font-size: 16px;

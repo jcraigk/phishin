@@ -47,6 +47,7 @@
             </ul>
           <% end %>
           <%= content_tag 'h1', track.set_name %>
+          <%= content_tag 'span', duration_readable(@set_durations[track.set], 'letters'), class: 'set_duration' %>
           <ul class="item_list">
           <% set = track.set %>
           <% track_num = 1 %>

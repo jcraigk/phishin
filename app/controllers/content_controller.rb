@@ -147,6 +147,10 @@ class ContentController < ApplicationController
     if @show = Show.where(date: date).includes(:tracks).order('tracks.position asc').first
       @show_like = get_user_show_like(@show)
       @tracks = @show.tracks.includes(:songs, :tags).order('position asc')
+      @set_durations = {}
+      @tracks.group_by(&:set).each do |set, tracks|
+        @set_durations[set] = tracks.map(&:duration).inject(0, &:+)
+      end
       @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
       @next_show = Show.avail.order('date asc').first unless @next_show = Show.avail.where('date > ?', @show.date).order('date asc').first
       @previous_show = Show.avail.order('date desc').first unless @previous_show = Show.avail.where('date < ?', @show.date).order('date desc').first

@@ -124,7 +124,7 @@ class @Util
     if string.length > length then string.substring(0, length) + '...' else string
   
   showHTMLError: (str) ->
-    $('body').append "<div id=\"system_error\">#{str}</div>"
+    $('body').append "<div id=\"system_error\">#{str.replace(/(\r\n|\n|\r)/gm,"<br />")}</div>"
   
   _findMatch: (href) ->
     match = /^([^\?]+)\??(.+)?$/.exec(href.split("/")[1])
