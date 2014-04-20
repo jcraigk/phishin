@@ -45,7 +45,7 @@ class PlaylistsController < ApplicationController
     else
       save_action = 'new'
     end
-    # TODO Could we do the following with validations more cleanly?
+    # TODO Could we do the following with AR validations more cleanly?
     if !current_user
       msg = 'You must be logged in to save playlists'
     elsif session[:playlist].size < 2

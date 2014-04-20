@@ -35,9 +35,10 @@ class @Player
     @$scrubber.slider 'enable'
     unless @playlist_mode or this._handleAutoPlayTrack()
       if track_id = $('.playable_track').first().data 'id'
-        if not @invoked
-          this.setCurrentPlaylist track_id
-          this.playTrack track_id if track_id
+        unless @invoked
+          path_segment = window.location.pathname.split('/')[1]
+          this.setCurrentPlaylist track_id if path_segment isnt 'playlist'
+          this.playTrack track_id 
 
   togglePlaylistMode: ->
     if @playlist_mode
