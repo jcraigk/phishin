@@ -33,7 +33,7 @@ namespace :tags do
       '1985-05-03' => '',
       '1985-10-17' => '',
       '1985-10-30' => '',
-      # '1985-11-19' => '',
+      '1985-11-14' => '',
       '1985-11-23' => '',
       '1986-04-15' => '',
       '1986-10-15' => '',
@@ -423,11 +423,10 @@ namespace :tags do
         else
           show.tags << sbd_tag
           tracks.each {|track| track.tags << sbd_tag }
-          puts "SBD added to #{date}"
+          puts "SBD tags added to #{date}"
         end
       end
     end
   end
-
 
 end
