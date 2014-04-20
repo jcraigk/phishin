@@ -252,10 +252,12 @@ html {
     .highlighted_track {
       -webkit-animation: pulsate-highlight 1.5s infinite alternate linear !important; 
       -moz-animation: pulsate-highlight 1.5s infinite alternate linear !important;
+      animation: pulsate-highlight 1.5s infinite alternate linear !important;
     }
     .active_track {
       -webkit-animation: pulsate-highlight2 1.5s infinite alternate linear !important; 
       -moz-animation: pulsate-highlight2 1.5s infinite alternate linear !important;
+      animation: pulsate-highlight2 1.5s infinite alternate linear !important;
     }
     .alias_for {
       font-size: 12px;
