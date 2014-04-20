@@ -10,10 +10,10 @@ class ShowInfo
   def initialize(date) # date should be in the form "1993-2-28"
     @pnet  = PNet.new PNET_API_KEY
     @songs = {}
-    @data  = @pnet.shows_setlists_get('showdate' => date)[0];
-    songs  = Nokogiri::HTML(@data["setlistdata"]).css('p.pnetset > a').map(&:content)
+    @data  = @pnet.shows_setlists_get('showdate' => date)[0] rescue {}
+    songs  = Nokogiri::HTML(@data["setlistdata"]).css('p.pnetset > a').map(&:content) rescue []
 
-    raise "Invalid date" if songs.empty?
+    # raise "Invalid date" if songs.empty?
 
     # Sometimes songs will be empty, returned from phish.net API.  Ex. 1993-08-21
     songs.each_with_index do |song, i|
