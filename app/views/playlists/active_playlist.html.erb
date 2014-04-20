@@ -12,22 +12,21 @@
     <%= content_tag :h3, "Tracks: #{@num_tracks}", id: 'active_playlist_tracks_label' %>
     <%= content_tag :h3, "Length: #{duration_readable(@duration, 'letters')}", id: 'active_playlist_duration_label' %>
     <br />
-    <button type="button" class="btn" id="clear_playlist_btn"><i class="icon-eject"></i> CLEAR</button><br />
-    <button type="button" class="btn" id="share_playlist_btn"><i class="icon-share"></i> SHARE</button><br />
-    <% if user_signed_in? and session[:playlist_user_id] != current_user.id %>
-      <button type="button" class="btn" id="duplicate_playlist_btn"><i class="icon-file"></i> DUPLICATE</button><br />
-    <% else %>
-      <button type="button" class="btn" id="save_playlist_btn"><i class="icon-file"></i> SAVE</button><br />
-    <% end %>
     <% if user_signed_in? %>
+      <button type="button" class="btn" id="playlist_mode_btn"><i class="icon-edit"></i> <span id="playlist_mode_label">EDIT</span></button><br />
+      <% if session[:playlist_user_id] != current_user.id %>
+        <button type="button" class="btn" id="duplicate_playlist_btn"><i class="icon-file"></i> DUPLICATE</button><br />
+      <% else %>
+        <button type="button" class="btn" id="save_playlist_btn"><i class="icon-file"></i> SAVE</button><br />
+      <% end %>
       <% if session[:playlist_id] and session[:playlist_id] > 0 %>
         <% if current_user.id == session[:playlist_user_id] %>
-          <button type="button" class="btn" id="delete_playlist_btn"><i class="icon-remove"></i> DELETE</button>
+          <button type="button" class="btn" id="delete_playlist_btn"><i class="icon-remove"></i> DELETE</button><br />
         <% else %>
           <% if session[:playlist_is_bookmarked] %>
-            <button type="button" class="btn" id="unbookmark_playlist_btn"><i class="icon-remove"></i> UNBOOKMARK</button>
+            <button type="button" class="btn" id="unbookmark_playlist_btn"><i class="icon-remove"></i> UNBOOKMARK</button><br />
           <% else %>
-            <button type="button" class="btn" id="bookmark_playlist_btn"><i class="icon-bookmark"></i> BOOKMARK</button>
+            <button type="button" class="btn" id="bookmark_playlist_btn"><i class="icon-bookmark"></i> BOOKMARK</button><br />
           <% end %>
         <% end %>
       <% end %>
@@ -35,6 +34,8 @@
     <!-- <br /> -->
       <%# content_tag :p, "#{link_to "Sign in", new_user_session_path, class: 'non-remote'} to save and share playlists".html_safe, class: 'instructions' %>
     <% end %>
+    <button type="button" class="btn" id="clear_playlist_btn"><i class="icon-eject"></i> EMPTY</button><br />
+    <button type="button" class="btn" id="share_playlist_btn"><i class="icon-share"></i> SHARE</button><br />
   </div>
   
   <div id="content_box">
@@ -45,9 +46,7 @@
     
     <div id="empty_playlist_msg" class="callout_box" style="display: none;"><strong>Your active playlist is empty.</strong>
       <br /><br />
-      When you play a track from a show, your active playlist will be updated to reflect that show.  You can also add tracks individually by using track context menus.
-      <br /><br />
-      When signed in, you can save and share your custom playlists.
+      You can create a custom playlist by clicking the EDIT button on the left. When signed in, you can save and share your custom playlists.
     </div>
   
     <ul class="item_list" id="active_playlist">

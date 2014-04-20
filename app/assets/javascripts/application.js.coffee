@@ -70,15 +70,13 @@ $ ->
             $('body').attr 'data-anchor', match[1]
           else
             $('body').attr 'data-anchor', ''
-          # soundManager.onready( ->
-          #   App.Player.onReady()
-          # )
           App.Player.onReady() # For scrolling to and auto-playing a track
           App.Player.highlightActiveTrack(true) # For highlighting current track in a list, scrollTo = true
 
+          # For detecting browsers/platforms
           App.Detector = new Detector
           
-          # Map
+          # Google Map
           if state.data.href.substr(0,4) is '/map'
             App.Map.initMap()
             term = $('#map_search_term').val()
@@ -148,7 +146,7 @@ $ ->
     window.location = 'https://itunes.apple.com/us/app/phish-on-demand-all-phish/id672139018'
   
   # Click a link to load page via ajax
-  $(document).on 'click', 'a', ->
+  .on 'click', 'a', ->
     unless $(this).hasClass('non-remote')
       App.Util.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
       false
@@ -163,14 +161,14 @@ $ ->
   ###############################################
   
   # Submit new user
-  $(document).on 'submit', '#new_user', (e) ->
+  .on 'submit', '#new_user', (e) ->
     $('#new_user_container').fadeTo('fast', 0.5)
     $('#new_user_submit_btn').val('Processing...')
     
   ###############################################
 
   # Submit search
-  $(document).on 'keypress', '#search_term', (e) ->
+  .on 'keypress', '#search_term', (e) ->
     if e.which is 13
       App.Util.navigateTo '/search?term='+encodeURI($('#search_term').val()) 
       $(this).val ''
@@ -182,76 +180,84 @@ $ ->
   term = $('#map_search_term').val()
   distance = $('#map_search_distance').val()
   App.Map.handleSearch(term, distance) if term and distance
-  $(document).on 'click', '#map_search_submit', (e) ->
+  .on 'click', '#map_search_submit', (e) ->
     App.Util.navigateToRefreshMap()
-  $(document).on 'keypress', '#map_search_term', (e) ->
+  .on 'keypress', '#map_search_term', (e) ->
     App.Util.navigateToRefreshMap() if e.which is 13
-  $(document).on 'keypress', '#map_search_distance', (e) ->
+  .on 'keypress', '#map_search_distance', (e) ->
     App.Util.navigateToRefreshMap() if e.which is 13
-  $(document).on 'keypress', '#map_date_start', (e) ->
+  .on 'keypress', '#map_date_start', (e) ->
     App.Util.navigateToRefreshMap() if e.which is 13
-  $(document).on 'keypress', '#map_date_stop', (e) ->
+  .on 'keypress', '#map_date_stop', (e) ->
     App.Util.navigateToRefreshMap() if e.which is 13
 
   ###############################################
   
   # Playlist stuff
-  $(document).on 'click', '#playlist_button', ->
+  $(document)
+  .on 'click', '#playlist_mode_btn', (e) ->
+    App.Player.togglePlaylistMode()
+  .on 'click', '#playlist_button', ->
     App.Util.navigateTo $(this).data('url')
-  $(document).on 'click', '#share_playlist_btn', ->
+  .on 'click', '#share_playlist_btn', ->
     App.Playlist.handleShareModal()
-  $(document).on 'blur', '#playlist_name_input', (e) ->
+  .on 'blur', '#playlist_name_input', (e) ->
     $('#playlist_slug_input').val App.Util.stringToSlug($(this).val())
-  $(document).on 'click', '#save_playlist_btn', (e) ->
+  .on 'click', '#save_playlist_btn', (e) ->
     App.Playlist.handleSaveModal()
-  $(document).on 'click', '#duplicate_playlist_btn', (e) ->
+  .on 'click', '#duplicate_playlist_btn', (e) ->
     App.Playlist.handleDuplicateModal()
-  $(document).on 'click', '#save_playlist_submit', (e) ->
+  .on 'click', '#save_playlist_submit', (e) ->
     App.Playlist.savePlaylist()
-  $(document).on 'click', '#delete_playlist_btn', (e) ->
+  .on 'click', '#delete_playlist_btn', (e) ->
     if confirm 'Are you sure you want to permanently delete this playlist?'
       App.Playlist.deletePlaylist()
-  $(document).on 'click', '#bookmark_playlist_btn', (e) ->
+  .on 'click', '#bookmark_playlist_btn', (e) ->
     App.Playlist.bookmarkPlaylist()
     $('#bookmark_playlist_btn').hide()
-  $(document).on 'click', '#unbookmark_playlist_btn', (e) ->
+  .on 'click', '#unbookmark_playlist_btn', (e) ->
     App.Playlist.unbookmarkPlaylist()
     $('#unbookmark_playlist_btn').hide()
-  $(document).on 'click', '#clear_playlist_btn', (e) ->
-    if confirm 'Are you sure you want to clear out your active playlist?'
-      App.Playlist.clearPlaylist()
-  $(document).on 'click', '.playlist_add_track', (e) ->
+  .on 'click', '#clear_playlist_btn', (e) ->
+    if confirm 'Are you sure you want to remove all tracks from your active playlist?'
+      App.Playlist.clearPlaylist false
+  .on 'click', '.playlist_add_track', (e) ->
     App.Playlist.addTrackToPlaylist $(this).data('id')
-  $(document).on 'click', '.playlist_add_show', (e) ->
+  .on 'click', '.playlist_add_show', (e) ->
     App.Playlist.addShowToPlaylist $(this).data('id')
-  $(document).on 'click', '.playlist_remove_track', (e) ->
+  .on 'click', '.playlist_remove_track', (e) ->
     $(this).parents('li').remove()
     App.Playlist.removeTrackFromPlaylist $(this).parents('li').data('id')
-  $(document).on 'change', '.playlist_option', (e) ->
+  .on 'change', '.playlist_option', (e) ->
     App.Playlist.handleOptionChange()
   
   ###############################################
   
   # Click a track to play it
-  $(document).on 'click', '.playable_track', (e) ->
-    App.Player.setCurrentPlaylist $(this).data('id')
-    App.Player.playTrack $(this).data('id')
+  .on 'click', '.playable_track', (e) ->
+    clicked_from_playlist = $(this).parents('#active_playlist').length > 0
+    if App.Player.playlist_mode and !clicked_from_playlist
+      App.Playlist.addTrackToPlaylist $(this).data('id')
+    else
+      App.Player.playTrack $(this).data('id')
+      unless clicked_from_playlist
+        App.Player.setCurrentPlaylist $(this).data('id')
   
   # Click Play in a context menu to play the track
-  $(document).on 'click', '.context_play_track', (e) ->
+  .on 'click', '.context_play_track', (e) ->
     App.Player.setCurrentPlaylist $(this).data('id')
     App.Player.playTrack $(this).data('id')
 
   # Click the Play/Pause button
-  $(document).on 'click', '#playpause', (e) ->
+  .on 'click', '#playpause', (e) ->
     App.Player.togglePause()
   
   # Click the Previous button
-  $(document).on 'click', '#previous', (e) ->
+  .on 'click', '#previous', (e) ->
     App.Player.previousTrack()
 
   # Click the Next button
-  $(document).on 'click', '#next', (e) ->
+  .on 'click', '#next', (e) ->
     App.Player.nextTrack()
     
   # Scrubber (jQuery UI slider)
@@ -289,19 +295,19 @@ $ ->
   $(document).on 'click', '#loop_checkbox', (e) ->
     $(this).attr('checked', !$(this).attr('checked'))
     e.stopPropagation()
-  $(document).on 'click', '#randomize_checkbox', (e) ->
+  .on 'click', '#randomize_checkbox', (e) ->
     $(this).attr('checked', !$(this).attr('checked'))
     e.stopPropagation()
     
   # Toggle mute
-  $(document).on 'click', '#volume_icon', (e) ->
+  .on 'click', '#volume_icon', (e) ->
     App.Player.toggleMute()
     e.stopPropagation()
   
   ###############################################
 
   # Click to download an individual track
-  $(document).on 'click', 'a.download', ->
+  .on 'click', 'a.download', ->
     data_url = $(this).data('url')
     $.ajax({
       url: '/user-signed-in',
@@ -313,7 +319,7 @@ $ ->
     })
   
   # Click to download a set of tracks
-  $(document).on 'click', 'a.download-album', ->
+  .on 'click', 'a.download-album', ->
     App.Util.requestAlbum $(this).data('url'), true
     
   # Stop polling server when download modal is hidden
@@ -327,7 +333,7 @@ $ ->
     if App.Player.invoked
       $('#player_title').css 'display', 'none'
       $('#player_likes_container').css 'display', 'inline-block'
-  $(document).on 'mouseout', '#player_title_container', (e) ->
+  .on 'mouseout', '#player_title_container', (e) ->
     if App.Player.invoked
       $('#player_likes_container').css 'display', 'none'
       $('#player_title').css 'display', 'block'
@@ -377,21 +383,21 @@ $ ->
   ###############################################
 
   # Rollover item list to reveal context button and drag arrows (if present)
-  $(document).on 'mouseover', '.item_list > li', ->
+  .on 'mouseover', '.item_list > li', ->
     $(this).find('.btn_context').css 'visibility', 'visible'
     $(this).find('.drag_arrows_vertical').css 'visibility', 'visible'
-  $(document).on 'mouseout', '.item_list > li', ->
+  .on 'mouseout', '.item_list > li', ->
     $(this).find('.btn_context').css 'visibility', 'hidden'
     $(this).find('.drag_arrows_vertical').css 'visibility', 'hidden'
   
   # Follow h1>a links in .item_list.clickable > li
-  $(document).on 'click', '.item_list > li', (e) ->
+  .on 'click', '.item_list > li', (e) ->
     if $(this).parent('ul').hasClass 'clickable'
       unless e.target.target and e.target.target is '_blank'
         App.Util.followLink $(this).children('h2').find 'a'
   
   # Share links bring up a modal to display a url
-  $(document).on 'click', '.share', ->
+  .on 'click', '.share', ->
     $('#share_url').html("<p>"+$('body').data('base-url')+$(this).data('url')+"</p>")
     if $(this).hasClass('share_track')
       $('#share_track_tips').show()

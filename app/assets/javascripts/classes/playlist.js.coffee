@@ -104,7 +104,7 @@ class @Playlist
        $('#playlist_title').html '(Untitled Playlist)'
        this._updatePlaylistStats()
        $('#empty_playlist_msg').show()
-       if provide_feedback then @Util.feedback { notice: 'Actve Playlist is now empty' }
+       unless supress_feedback then @Util.feedback { notice: 'Actve Playlist is now empty' }
     })
 
   bookmarkPlaylist: ->
@@ -193,7 +193,7 @@ class @Playlist
      }
      success: (r) =>
        if r.success
-         this.clearPlaylist false
+         this.clearPlaylist()
          @Util.feedback { notice: r.msg }
        else
          @Util.feedback { alert: r.msg }

@@ -12,6 +12,7 @@ class @Player
     @scrubbing        = false
     @last_volume      = 100
     @duration         = 0
+    @playlist_mode    = false
     @app_name         = $('body').data 'app-name'
     @time_marker      = @Util.timeToMS $('body').data('time-marker')
     @$playlist_btn    = $ '#playlist_button'
@@ -30,12 +31,28 @@ class @Player
   
   # Check for track anchor to scroll-to [and play]
   onReady: ->
+    this._updatePlaylistMode()
     @$scrubber.slider 'enable'
-    unless this._handleAutoPlayTrack()
+    unless @playlist_mode or this._handleAutoPlayTrack()
       if track_id = $('.playable_track').first().data 'id'
         if not @invoked
           this.setCurrentPlaylist track_id
           this.playTrack track_id if track_id
+
+  togglePlaylistMode: ->
+    if @playlist_mode
+      @playlist_mode = false
+    else if confirm 'You are about to enter Playlist Edit Mode.  In this mode, any track you click will be added to the end of your active playlist.  This playlist can then be saved and shared.  Are you sure you want to continue?'
+          @playlist_mode = true
+    this._updatePlaylistMode()
+
+  _updatePlaylistMode: ->
+    if @playlist_mode
+      $('#playlist_mode_notice').show()
+      $('#playlist_mode_label').html 'DONE EDITING'
+    else
+      $('#playlist_mode_notice').hide()
+      $('#playlist_mode_label').html 'EDIT'
 
   startScrubbing: ->
     @scrubbing = true
@@ -117,7 +134,7 @@ class @Player
         this._updatePlayButton false
         @sm_sound.togglePause()
       else
-        this._playRandomShowOrPlaylist() unless this._handleAutoPlayTrack()
+        this._playRandomShowOrPlaylist()
   
   previousTrack: ->
     if @active_track
@@ -208,6 +225,7 @@ class @Player
       false
   
   _playRandomShowOrPlaylist: ->
+    alert 'hello'
     $.ajax
       url: "/next-track"
       success: (r) =>

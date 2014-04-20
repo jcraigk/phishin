@@ -616,6 +616,19 @@ html {
       }
     }
   }
+  #playlist_mode_notice {
+    display: none;
+    position: absolute;
+    left: 573px;
+    top: 105px;
+    border-radius: 5px;
+    background-color: #d0f7d0;
+    border: 1px solid #649976;
+    color: $alert;
+    font-size: 16px;
+    text-align: center;
+    padding: 3px;
+  }
   #logo {
     position: absolute;
     margin-top: 31px;
@@ -783,7 +796,21 @@ html {
 }
 
 /******************************/
+#player_likes_container {
+  margin: 0 auto;
+  text-align: center;
+  display: inline-block;
+  height: 40px;
 
+  .likes_large {
+    a {
+      margin-top: 10px;
+    }
+    span {
+      line-height: 44px;
+    }
+  }
+}
 #content {
   margin: 0 auto;
   width: 900px;
@@ -847,21 +874,6 @@ html {
   .admin_notes {
     font-size: 14px !important;
     font-style: italic;
-  }
-  #player_likes_container {
-    margin: 0 auto;
-    text-align: center;
-    display: inline-block;
-    height: 40px;
-  
-    .likes_large {
-      a {
-        margin-top: 10px;
-      }
-      span {
-        line-height: 44px;
-      }
-    }
   }
   .likes_small {
     float: right;
