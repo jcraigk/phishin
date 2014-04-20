@@ -109,12 +109,13 @@ class @Player
       # @Util.feedback { notice: 'That is already the current track' }
   
   togglePause: ->
-    @sm_sound.togglePause()
     if @sm_sound.paused
-      this._updatePlayButton false
+      this._updatePlayButton()
+      @sm_sound.togglePause()
     else
       if @active_track
-        this._updatePlayButton()
+        this._updatePlayButton false
+        @sm_sound.togglePause()
       else
         this._playRandomShowOrPlaylist() unless this._handleAutoPlayTrack()
   
