@@ -12,9 +12,12 @@
     <%= content_tag :h3, "Tracks: #{@num_tracks}", id: 'active_playlist_tracks_label' %>
     <%= content_tag :h3, "Length: #{duration_readable(@duration, 'letters')}", id: 'active_playlist_duration_label' %>
     <br />
+    <% unless user_signed_in? %>
+      <p class="instructions"><%= link_to 'Sign in', new_user_session_path %> to create and share custom playlists!</p>
+    <% end %>
+    <button type="button" class="btn btn-success" id="playlist_mode_btn"><i class="icon-white icon-edit"></i> <span id="playlist_mode_label">EDIT</span></button><br />
     <% if user_signed_in? %>
-      <button type="button" class="btn" id="playlist_mode_btn"><i class="icon-edit"></i> <span id="playlist_mode_label">EDIT</span></button><br />
-      <% if session[:playlist_user_id] != current_user.id %>
+      <% if session[:playlist_id] and session[:playlist_id] > 0 and session[:playlist_user_id] != current_user.id %>
         <button type="button" class="btn" id="duplicate_playlist_btn"><i class="icon-file"></i> DUPLICATE</button><br />
       <% else %>
         <button type="button" class="btn" id="save_playlist_btn"><i class="icon-file"></i> SAVE</button><br />

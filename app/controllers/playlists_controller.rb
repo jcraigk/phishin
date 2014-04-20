@@ -15,7 +15,7 @@ class PlaylistsController < ApplicationController
       session[:playlist] = session[:playlist].take(100)
       tracks_by_id = Track.find(session[:playlist]).index_by(&:id)
       @tracks = session[:playlist].collect {|id| tracks_by_id[id] }
-      @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
+      @tracks_likes = @tracks.map {|track| get_user_track_like(track) }
       @num_tracks = @tracks.size
       @duration = @tracks.map(&:duration).inject(0, &:+) if @num_tracks > 0
     end
@@ -280,8 +280,7 @@ class PlaylistsController < ApplicationController
   end
   
   def activate_playlist(playlist)
-    session[:playlist] = playlist.tracks.order('position').all.map(&:id)
-    # raise session[:playlist].inspect
+    session[:playlist] = playlist.playlist_tracks.order('position').all.map(&:track_id)
     session[:playlist_id] = playlist.id
     session[:playlist_name] = playlist.name
     session[:playlist_slug] = playlist.slug
