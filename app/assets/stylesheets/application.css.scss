@@ -26,12 +26,29 @@ $nav_highlight: #5f5f5f;
 $highlight1: #00baf2;
 $highlight2: #91e1f2;
 $highlight3: #cbebf2;
+$highlight4: #fff494;
 
+@-webkit-keyframes pulsate-highlight {
+    0%   { background: $background_gray; } 
+    100%  { background: $highlight4; }
+}
+@-moz-keyframes pulsate-highlight {
+  0%   { background: $background_gray; } 
+  100%  { background: $highlight4; }
+}
+@-webkit-keyframes pulsate-highlight {
+    0%   { background: $background_gray; } 
+    100%  { background: $highlight4; }
+}
+@-moz-keyframes pulsate-highlight {
+  0%   { background: $background_gray; } 
+  100%  { background: $highlight4; }
+}
 @-webkit-keyframes pulsate-highlight2 {
     0%   { background: $background_gray; } 
     100%  { background: $highlight2; }
 }
-@-moz-keyframes pulstate-highlight2 {
+@-moz-keyframes pulsate-highlight2 {
   0%   { background: $background_gray; } 
   100%  { background: $highlight2; }
 }
@@ -39,7 +56,7 @@ $highlight3: #cbebf2;
     0%   { background: $background_gray; } 
     100%  { background: $highlight2; }
 }
-@-moz-keyframes pulstate-highlight2 {
+@-moz-keyframes pulsate-highlight2 {
   0%   { background: $background_gray; } 
   100%  { background: $highlight2; }
 }
@@ -216,15 +233,14 @@ html {
       height: 20px;
       margin-top: 7px;
     }
+    .highlighted_track {
+      -webkit-animation: pulsate-highlight 1.5s infinite alternate linear !important; 
+      -moz-animation: pulsate-highlight 1.5s infinite alternate linear !important;
+    }
     .active_track {
       -webkit-animation: pulsate-highlight2 1.5s infinite alternate linear !important; 
       -moz-animation: pulsate-highlight2 1.5s infinite alternate linear !important;
     }
-    .highlighted_track {
-      -webkit-animation: pulsate-highlight2 1.5s infinite alternate linear !important; 
-      -moz-animation: pulsate-highlight2 1.5s infinite alternate linear !important;
-    }
-
     .alias_for {
       font-size: 12px;
       font-style: italic;
