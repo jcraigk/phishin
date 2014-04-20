@@ -399,8 +399,8 @@ namespace :tags do
       '2011-05-26' => '',
       '2011-06-30' => ''
     }
-    ShowTag.all.map(&:destroy)
-    TrackTag.all.map(&:destroy)
+    # ShowTag.all.map(&:destroy)
+    # TrackTag.all.map(&:destroy)
 
     sbd_tag = Tag.where(name: 'SBD').first
 
@@ -421,8 +421,8 @@ namespace :tags do
         unless tracks
           raise "Tracks not found for show! #{date}"
         else
-          show.tags << sbd_tag
-          tracks.each {|track| track.tags << sbd_tag }
+          # show.tags << sbd_tag
+          # tracks.each {|track| track.tags << sbd_tag }
           puts "SBD tags added to #{date}"
         end
       end
