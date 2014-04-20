@@ -26,11 +26,11 @@ class ShowInfo
   end
   
   def venue_name
-    @data['venue']
+    @data['venue'] rescue 'Unknown Venue'
   end
   
   def venue_city
-    @data['city']
+    @data['city'] rescue 'Unknown City'
   end
 
 end
