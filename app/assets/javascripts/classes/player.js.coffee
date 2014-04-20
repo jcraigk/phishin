@@ -103,19 +103,18 @@ class @Player
       @active_track = track_id
       @$feedback.hide()
       this._updateLoadingState track_id
-      this._updatePauseState()
+      this._updatePlayButton()
       this.highlightActiveTrack()
     else
       # @Util.feedback { notice: 'That is already the current track' }
   
   togglePause: ->
+    @sm_sound.togglePause()
     if @sm_sound.paused
-      @sm_sound.resume()
-      this._updatePauseState()
+      this._updatePlayButton false
     else
       if @active_track
-        this._fastFadeout @active_track, true
-        this._updatePauseState false
+        this._updatePlayButton()
       else
         this._playRandomShowOrPlaylist() unless this._handleAutoPlayTrack()
   
@@ -153,7 +152,7 @@ class @Player
       duration: 0
     @$scrubber.slider 'value', 0
     @$scrubber.slider 'disable'
-    this._updatePauseState false
+    this._updatePlayButton false
     @$time_remaining.html '0:00'
     @$time_elapsed.html '0:00'
     @invoked = false
@@ -230,7 +229,7 @@ class @Player
       @sm_sound.play()
       @sm_sound.pause()
     @$scrubber.slider 'value', 0
-    this._updatePauseState false
+    this._updatePlayButton false
 
   _preloadTrack: (track_id) ->
     unless track_id and @sm.getSoundById track_id
@@ -271,7 +270,7 @@ class @Player
     else
       @$player_detail.html "<a href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.venue_url}\">#{@Util.truncate(r.venue)}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.city_url}\">#{r.city}</a>"
   
-  _updatePauseState: (playing=true) ->
+  _updatePlayButton: (playing=true) ->
     if playing
       @$playpause.addClass 'playing'
     else
@@ -311,19 +310,16 @@ class @Player
           @$player_title.html 'Marker out of range...'
           @time_marker = 0
   
-  _fastFadeout: (track_id, is_pause=false) ->
+  _fastFadeout: (track_id) ->
     if track_id and sound = @sm.getSoundById track_id
       if @muted or sound.volume is 0
-        if is_pause
-          sound.pause()
-        else
-          sound.stop()
+        sound.stop()
         @sm.setVolume track_id, @$volume_slider.slider('value')
       else
         if sound.volume < 10 then delta = 1 else delta = 3
         @sm.setVolume track_id, sound.volume - delta
         setTimeout( =>
-          this._fastFadeout track_id, is_pause
+          this._fastFadeout track_id
         , 10)
   
   _trackIDtoURL: (track_id) ->
