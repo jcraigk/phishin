@@ -2,7 +2,7 @@ class Track < ActiveRecord::Base
   
   require 'taglib'
 
-  # before_destroy :prevent_destruction
+  before_destroy :prevent_destruction
 
   #########################
   # Attributes & Constants
