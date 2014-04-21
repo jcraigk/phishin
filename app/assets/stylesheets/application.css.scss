@@ -1241,6 +1241,9 @@ html {
         &.wide {
           width: 240px;
         }
+        &.wide-350 {
+          width: 350px;
+        }
         &.wider {
           width: 290px;
         }
@@ -1271,6 +1274,9 @@ html {
   
         &.narrow {
           width: 190px;
+        }
+        &.narrow-100 {
+          width: 100px;
         }
       }
       h5 {

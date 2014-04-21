@@ -19,9 +19,9 @@
       <ul class="item_list clickable">
         <% for playlist in @playlists %>
           <li>
-            <%= content_tag :h2, link_to(playlist.name, "/play/#{playlist.slug}"), class: 'wide' %>
+            <%= content_tag :h2, link_to(playlist.name, "/play/#{playlist.slug}", class: 'non-remote'), class: 'wide-350' %>
             <%= content_tag :h3, duration_readable(playlist.duration, 'letters') %>
-            <%= content_tag :h4, "by #{playlist.user.username}", class: 'narrow' %>
+            <%= content_tag :h4, "by #{playlist.user.username}", class: 'narrow-100' %>
             <%= render partial: 'shared/context_menu_for_playlist', locals: { playlist: playlist } %>
             <div style="clear: both;"></div>
           </li>

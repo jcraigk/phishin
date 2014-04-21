@@ -390,11 +390,15 @@ $ ->
     $(this).find('.btn_context').css 'visibility', 'hidden'
     $(this).find('.drag_arrows_vertical').css 'visibility', 'hidden'
   
-  # Follow h1>a links in .item_list.clickable > li
+  # Follow h2>a links in .item_list.clickable > li
   .on 'click', '.item_list > li', (e) ->
     if $(this).parent('ul').hasClass 'clickable'
       unless e.target.target and e.target.target is '_blank'
-        App.Util.followLink $(this).children('h2').find 'a'
+        $link = $(this).children('h2').find 'a'
+        if $link.hasClass('non-remote')
+          location.href = $link.attr('href')
+        else
+          App.Util.followLink $link
   
   # Share links bring up a modal to display a url
   .on 'click', '.share', ->
