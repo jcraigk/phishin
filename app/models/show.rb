@@ -5,8 +5,8 @@ class Show < ActiveRecord::Base
   friendly_id :date
 
   has_many :tracks, dependent: :destroy
-  belongs_to :tour#, counter_cache: true
-  belongs_to :venue#, counter_cache: true #off by 1 on venue id722 so turned it off and use rake venues:sync_shows_count instead
+  belongs_to :tour, counter_cache: true #todo verify this is working
+  belongs_to :venue, counter_cache: true #todo verify this is working
   has_many :likes, as: :likable, dependent: :destroy
   has_many :show_tags, dependent: :destroy
   has_many :tags, through: :show_tags
