@@ -15,7 +15,9 @@
         <button type="button" class="btn" id="previous"></button>
       </a>
     </div>
-    <div id="playpause_tooltip" title="Click to play a random show!"></div>
+    <% unless session[:playlist] and session[:playlist].present? %>
+      <div id="playpause_tooltip" title="Click to play a random show!"></div>
+    <% end %>
     <div id="control_playpause">
       <a href="null">
         <button type="button" class="btn" id="playpause"></button>
