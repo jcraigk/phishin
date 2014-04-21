@@ -231,9 +231,6 @@ $ ->
     App.Playlist.handleOptionChange()
   
   ###############################################
-
-  # Play button tooltip
-  $('#playpause_tooltip').tooltip({trigger: 'manual'}).tooltip('show')
   
   # Click a track to play it
   .on 'click', '.playable_track', (e) ->
@@ -305,6 +302,9 @@ $ ->
   .on 'click', '#volume_icon', (e) ->
     App.Player.toggleMute()
     e.stopPropagation()
+
+  # Play button tooltip
+  $('#playpause_tooltip').tooltip({trigger: 'manual'}).tooltip('show')
   
   ###############################################
 
