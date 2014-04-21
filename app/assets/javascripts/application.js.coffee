@@ -6,7 +6,7 @@
 //= require jquery.ui.datepicker
 //= require jquery.cookie
 //= require soundmanager
-//= require history.min
+//= require native.history
 //= require classes/detector
 //= require classes/util
 //= require classes/player
@@ -309,13 +309,15 @@ $ ->
   ###############################################
 
   # Click to download an individual track
-  .on 'click', 'a.download', ->
+  # Set an iFrame's src to not interrupt playback
+  $(document).on 'click', 'a.download', ->
     data_url = $(this).data('url')
     $.ajax({
       url: '/user-signed-in',
       success: (r) ->
         if r.success
-          location.href = data_url if data_url
+          if data_url
+            $('#download_iframe').attr('src', data_url)
         else
           App.Util.feedback { alert: 'You must sign in to download MP3s' }
     })
