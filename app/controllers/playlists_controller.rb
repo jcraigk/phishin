@@ -254,6 +254,20 @@ class PlaylistsController < ApplicationController
       track_id: first_track.id
     }
   end
+
+  def random_song_track
+    if song = Song.where(id: params[:song_id]).first
+      track = song.tracks.all.sample
+      show = Show.where(id: track.show_id).first
+    else
+      render json: { success: false, msg: 'Invalid song_id'}
+    end
+    render json: {
+      success: true,
+      url: "/#{show.date}",
+      track_id: track.id
+    }
+  end
   
   def get_playlist
     render json: { playlist: session[:playlist] }

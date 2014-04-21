@@ -201,6 +201,15 @@ class @Player
       data: { 'track_id': track_id }
     @$playlist_btn.addClass 'playlist_active'
 
+  playRandomSongTrack: (song_id) ->
+    $.ajax
+      url: "/random-song-track/#{song_id}"
+      success: (r) =>
+        if r.success
+          @Util.navigateTo r.url
+          this.setCurrentPlaylist r.track_id
+          this.playTrack r.track_id
+
   _loadInfoAndPlay: (track_id, time_marker) ->
     this._loadTrackInfo track_id
     @sm.setPosition track_id, time_marker
