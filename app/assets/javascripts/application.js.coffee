@@ -60,7 +60,6 @@ $ ->
           
           # Tooltips
           $('a[title]').tooltip()
-          $('#control_playpause').tooltip({trigger: 'manual'}).tooltip('show')
                     
           # Report href to Google Analytics
           _gaq.push([ '_trackPageview', state.data.href ]);
@@ -232,6 +231,9 @@ $ ->
     App.Playlist.handleOptionChange()
   
   ###############################################
+
+  # Play button tooltip
+  $('#playpause_tooltip').tooltip({trigger: 'manual'}).tooltip('show')
   
   # Click a track to play it
   .on 'click', '.playable_track', (e) ->

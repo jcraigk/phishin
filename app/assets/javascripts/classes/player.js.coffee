@@ -349,6 +349,6 @@ class @Player
     "/audio/#{str[0..2]}/#{str[3..5]}/#{str[6..9]}/#{track_id}.mp3"
 
   _hidePlayTooltip: ->
-    $('#control_playpause').tooltip('destroy')
+    $('#playpause_tooltip').tooltip('destroy')
     
     

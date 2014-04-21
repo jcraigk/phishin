@@ -587,6 +587,11 @@ html {
         float: left;
         margin-right: 5px;
       }
+      #playpause_tooltip {
+        position: relative;
+        top: 15px;
+        left: 47px;
+      }
       #playpause {
         border: 1px solid $btn_border;
         width: 65px;
