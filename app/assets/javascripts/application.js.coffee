@@ -59,7 +59,8 @@ $ ->
           window.scrollTo 0, App.Util.historyScrollStates[state.id] if App.Util.historyScrollStates[state.id]
           
           # Tooltips
-          # $('[title]').tooltip()
+          $('a[title]').tooltip()
+          $('#control_playpause').tooltip({trigger: 'manual'}).tooltip('show')
                     
           # Report href to Google Analytics
           _gaq.push([ '_trackPageview', state.data.href ]);
@@ -133,9 +134,8 @@ $ ->
     useHTML5Audio: true
     preferFlash: false
     debugMode: true
-  soundManager.onready( ->
+  soundManager.onready ->
     App.Player.onReady()
-  )
 
   ###############################################
   # DOM interactions
@@ -339,13 +339,15 @@ $ ->
       $('#player_title').css 'display', 'block'
   
   # Like tooltip
-  # $('.likes_large a').tooltip({
-  #   placement: 'bottom',
-  #   delay: { show: 500, hide: 0 }
-  # })
-  # $('.likes_small > a').tooltip({
-  #   delay: { show: 500, hide: 0 }
-  # })
+  $('.likes_large a').tooltip
+    placement: 'bottom',
+    delay:
+      show: 500
+      hide: 0
+  $('.likes_small > a').tooltip
+    delay:
+      show: 500
+      hide: 0
   
   # Click a Like to submit to server
   $(document).on 'click', '.like_toggle', ->

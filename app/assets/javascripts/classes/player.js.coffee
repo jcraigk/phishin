@@ -105,6 +105,7 @@ class @Player
     if track_id != @active_track
       @preload_started = false
       unless track_id and @sm_sound = @sm.getSoundById track_id
+        this._hidePlayTooltip()
         @sm_sound = @sm.createSound
           id: track_id
           url: this._trackIDtoURL track_id
@@ -226,7 +227,6 @@ class @Player
       false
   
   _playRandomShowOrPlaylist: ->
-    alert 'hello'
     $.ajax
       url: "/next-track"
       success: (r) =>
@@ -253,6 +253,7 @@ class @Player
 
   _preloadTrack: (track_id) ->
     unless track_id and @sm.getSoundById track_id
+      this._hidePlayTooltip()
       @sm.createSound
         id: track_id
         url: this._trackIDtoURL track_id
@@ -346,5 +347,8 @@ class @Player
     str = track_id.toString()
     str = '0' + str for i in [0..(8-str.length)] by 1
     "/audio/#{str[0..2]}/#{str[3..5]}/#{str[6..9]}/#{track_id}.mp3"
+
+  _hidePlayTooltip: ->
+    $('#control_playpause').tooltip('destroy')
     
     
