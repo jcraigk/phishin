@@ -1,5 +1,18 @@
 namespace :tags do
 
+  desc "Sync RMSTR tags with remaster flags on each show"
+  task :sync_rmstr_with_flag => :environment do
+    tag = Tag.where(name: 'RMSTR').first
+
+    Show.includes(:tags).all.each {|show| show.tags.delete(tag) }
+
+    Show.where(remastered: true).includes(:tracks).all.each do |show|
+      show.tags << tag
+      show.tracks.each {|track| track.tags << tag }
+      puts "RMSTR tags added to #{show.date}"
+    end
+  end
+
   desc "Find and destroy orphan TrackTags"
   task :destroy_orphan_track_tags => :environment do
     num_orphans = 0
