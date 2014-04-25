@@ -7,7 +7,7 @@
   <div id="title_box">
     <%= content_tag :h1, (session[:playlist_id] > 0 ? session[:playlist_name] : '(Untitled Playlist)'), id: 'playlist_title' %>
     <% if session[:playlist_id] > 0 %>
-      <%= content_tag :h3, "Curator: #{session[:playlist_username]}" %>
+      <%= content_tag :h3, "Author: #{session[:playlist_username]}" %>
     <% end %>
     <%= content_tag :h3, "Tracks: #{@num_tracks}", id: 'active_playlist_tracks_label' %>
     <%= content_tag :h3, "Length: #{duration_readable(@duration, 'letters')}", id: 'active_playlist_duration_label' %>
