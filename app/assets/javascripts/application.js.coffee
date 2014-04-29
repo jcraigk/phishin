@@ -244,8 +244,13 @@ $ ->
   
   # Click Play in a context menu to play the track
   .on 'click', '.context_play_track', (e) ->
-    App.Player.setCurrentPlaylist $(this).data('id')
-    App.Player.playTrack $(this).data('id')
+    clicked_from_playlist = $(this).parents('#active_playlist').length > 0
+    if App.Player.playlist_mode and !clicked_from_playlist
+      App.Playlist.addTrackToPlaylist $(this).data('id')
+    else
+      App.Player.playTrack $(this).data('id')
+      unless clicked_from_playlist
+        App.Player.setCurrentPlaylist $(this).data('id')
 
   # Click the Play/Pause button
   .on 'click', '#playpause', (e) ->

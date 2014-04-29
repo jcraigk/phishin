@@ -37,7 +37,7 @@ class @Player
       if track_id = $('.playable_track').first().data 'id'
         unless @invoked
           path_segment = window.location.pathname.split('/')[1]
-          this.setCurrentPlaylist track_id if path_segment isnt 'playlist'
+          this.setCurrentPlaylist track_id if path_segment isnt 'playlist' and path_segment isnt 'play'
           this.playTrack track_id 
 
   togglePlaylistMode: ->
