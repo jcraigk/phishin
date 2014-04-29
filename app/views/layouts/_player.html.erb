@@ -1,5 +1,21 @@
 <div id="player_container">
 
+  <div id="user_controls">
+    <% if user_signed_in? %>
+      <div class="btn-group">
+        <a class="btn dropdown-toggle" data-toggle="dropdown" href="null">
+          <%= current_user.username %>
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <%= user_dropdown_links %>
+        </ul>
+      </div>
+    <% else %>
+      <%= link_to 'Sign in!', new_user_session_path, id: 'sign_in_link', class: 'non-remote' %>
+    <% end %>
+  </div>
+
   <div id="playlist_mode_notice">
     PLAYLIST EDIT MODE
   </div>
@@ -58,7 +74,7 @@
   </div>
   
   <div id="player_detail">
-    <%= link_to @random_song.lyrical_excerpt, "/#{@random_song.slug}" %>
+    <%= link_to @random_song.lyrical_excerpt, "/#{@random_song.slug}" rescue nil %>
   </div>
 
   <div style="clear: both;"></div>

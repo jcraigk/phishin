@@ -58,6 +58,26 @@ module ApplicationHelper
     end
     str.html_safe
   end
+
+  def user_dropdown_links
+    nav_items = {
+      'My Shows' => [my_shows_path, false, ['my_shows']],
+      'My Tracks' => [my_tracks_path, false, ['my_tracks']],
+      'Change Password' => [edit_user_registration_path, true, ['edit']],
+      'Logout' => [destroy_user_session_path, true, ['nothing']]
+    }
+    str = ''
+    nav_items.each do |name, properties|
+      str += '<li>'
+      if name == 'Logout'
+        str += link_to name, properties[0], method: :delete, class: 'non-remote'
+      else
+        str += link_to name, properties[0], class: 'non-remote'
+      end
+      str += '</li>'
+    end
+    str.html_safe
+  end
   
   def playlists_sub_links
     nav_items = {
@@ -121,7 +141,7 @@ module ApplicationHelper
   
   def global_nav_links
     nav_items = {
-      'userbox' => [nil, ['my_shows', 'my_tracks', 'edit'], 14],
+      # 'userbox' => [nil, ['my_shows', 'my_tracks', 'edit'], 14],
       'Years' => [years_path, ['years', 'year'], 283],
       'Venues' => [venues_path, ['venues', 'venue'], 347],
       'Songs' => [songs_path, ['songs', 'song'], 410],

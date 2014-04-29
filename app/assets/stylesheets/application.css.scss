@@ -370,12 +370,11 @@ html {
 /******************************/
 
 #page_header {
-  height: 100px;
+  height: 140px;
   width: 100%;
   background-color: $background_gray;
-  height: 199px;
   position: fixed;
-  z-index: 10;
+  z-index: 30;
 
   #header_content_container {
     margin: 0 auto;
@@ -385,7 +384,18 @@ html {
     height: 140px;
     padding: 10px;
     vertical-align: middle;
-    
+
+    #user_controls {
+      position: absolute;
+      top: 143px;
+      left: 179px;
+
+      #sign_in_link {
+        font-size: 18px;
+        font-style: italic;
+        line-height: 32px;
+      }
+    }
     #player_menu {
       position: absolute;
       margin-top: 31px;
@@ -698,6 +708,7 @@ html {
       margin-top: 6px;
       height: 14px;
       line-height: 12px;
+      white-space: nowrap;
     }
     #search_box {
       margin-right: 20px;

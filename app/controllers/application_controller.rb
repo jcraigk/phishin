@@ -12,9 +12,7 @@ class ApplicationController < ActionController::Base
   before_filter :require_xhr
   
   def random_lyrical_excerpt
-    unless request.xhr?
-      @random_song = Song.random_lyrical_excerpt.first
-    end
+    @random_song = Song.random_lyrical_excerpt.first unless request.xhr?
   end
   
   def require_xhr!
@@ -22,7 +20,7 @@ class ApplicationController < ActionController::Base
   end
   
   def is_user_signed_in
-    render :json => { success: user_signed_in?, msg: "Hello" }
+    render json: { success: user_signed_in?, msg: "Hello" }
   end
   
   def get_user_track_like(track)

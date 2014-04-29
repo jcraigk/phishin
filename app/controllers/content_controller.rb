@@ -1,5 +1,5 @@
 class ContentController < ApplicationController
-  
+
   caches_action :years, expires_in: CACHE_TTL
   caches_action :songs, expires_in: CACHE_TTL, cache_path: Proc.new {|c| c.request.url }
   caches_action :venues, expires_in: CACHE_TTL, cache_path: Proc.new {|c| c.request.url }
@@ -9,7 +9,7 @@ class ContentController < ApplicationController
   ###############################
 
   def years
-    render_years_page
+    request.xhr? ? (render :years, layout: false) : (render :years)
   end
   
   def songs
@@ -106,10 +106,6 @@ class ContentController < ApplicationController
   end
   
   private
-  
-  def render_years_page
-    request.xhr? ? (render :years, layout: false) : (render :years)
-  end
   
   def day_of_year(month, day)
     validate_sorting_for_year_or_scope
