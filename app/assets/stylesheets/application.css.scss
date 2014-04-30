@@ -384,11 +384,12 @@ html {
     height: 140px;
     padding: 10px;
     vertical-align: middle;
+    position: relative;
 
     #user_controls {
       position: absolute;
       top: 143px;
-      left: 181px;
+      left: 29px;
 
       #sign_in_link {
         font-size: 18px;
