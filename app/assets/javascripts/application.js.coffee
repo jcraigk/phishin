@@ -13,6 +13,7 @@
 //= require classes/playlist
 //= require classes/map
 //= require spin.min
+//= require_tree .
 
 # Generic namespace
 @App = {}
