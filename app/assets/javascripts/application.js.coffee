@@ -4,7 +4,7 @@
 //= require jquery.ui.sortable
 //= require jquery.ui.datepicker
 //= require jquery.cookie
-//= require bootstrap
+//= require twitter/bootstrap
 //= require soundmanager
 //= require native.history
 //= require classes/detector
