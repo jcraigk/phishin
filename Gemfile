@@ -11,7 +11,10 @@ gem 'pg_search'
 gem 'jquery-rails'
 gem 'resque', require: "resque/server"
 gem 'devise'
-gem 'anjlab-bootstrap-rails', '>= 2.3', require: 'bootstrap-rails'
+gem 'sprockets-rails', '=2.0.0.backport1'
+gem 'sprockets', '=2.2.2.backport2'
+gem 'sass-rails', github: 'guilleiguaran/sass-rails', branch: 'backport'
+gem 'bootstrap-sass', '~> 3.1.1'
 gem 'therubyracer'
 gem 'jquery-ui-rails'
 gem 'soundmanager-rails'
@@ -24,7 +27,6 @@ gem 'jquery-cookie-rails'
 gem 'newrelic_rpm'
 
 group :assets do
-  gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'
   gem 'uglifier', '>= 1.0.3'
 end
