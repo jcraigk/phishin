@@ -167,6 +167,10 @@ $ ->
     
   ###############################################
 
+  # Click search box to focus on textbox
+  .on 'click', '#search_box', (e) ->
+    $('#search_term').focus()
+
   # Submit search
   .on 'keypress', '#search_term', (e) ->
     if e.which is 13

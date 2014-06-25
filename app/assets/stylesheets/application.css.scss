@@ -728,7 +728,8 @@ html {
       }
       #search_term {
         background: transparent;
-        border: none;
+        border: none !important;
+        box-shadow: none !important;
         width: 70px;
         height: 18px !important;
         font-size: 15px;
@@ -738,8 +739,8 @@ html {
         font-weight: normal !important;
   
         &:focus {
-          border: none;
-          box-shadow: none;
+          border: none !important;
+          box-shadow: none !important;
         }
       }
     }
