@@ -369,7 +369,7 @@ html {
 /******************************/
 
 #page_header {
-  height: 140px;
+  height: 120px;
   width: 100%;
   background-color: $background_gray;
   position: fixed;
@@ -380,14 +380,13 @@ html {
     width: 940px;    
   }
   #player_container {
-    height: 140px;
-    padding: 10px;
+    height: 120px;
     vertical-align: middle;
     position: relative;
 
     #user_controls {
       position: absolute;
-      top: 143px;
+      top: 123px;
       left: 29px;
 
       #sign_in_link {
@@ -681,7 +680,7 @@ html {
 
 #global_nav_container {
   position: fixed;
-  top: 140px;
+  top: 120px;
   width: 100%;
   z-index: 20;
 
@@ -714,6 +713,7 @@ html {
       white-space: nowrap;
     }
     #search_box {
+      position: relative;
       margin-right: 20px;
       margin-top: 1px;
       float: right;
@@ -724,6 +724,7 @@ html {
       text-align: left;
       padding: none;
       background-color: #d1d2d4 !important;
+      cursor: pointer;
 
       img {
         margin-left: 5px;
@@ -840,7 +841,7 @@ html {
 #content {
   margin: 0 auto;
   width: 900px;
-  padding: 215px 20px 40px 20px;
+  padding: 195px 20px 40px 20px;
 //  -webkit-border-bottom-left-radius: 10px;
 //  -moz-border-radius-bottomleft: 10px;
 //  border-bottom-left-radius: 10px;
