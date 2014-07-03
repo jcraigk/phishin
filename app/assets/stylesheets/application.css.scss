@@ -840,8 +840,8 @@ html {
 }
 #content {
   margin: 0 auto;
-  width: 900px;
-  padding: 195px 20px 40px 20px;
+  width: 920px;
+  padding: 195px 20px 40px 0px;
 //  -webkit-border-bottom-left-radius: 10px;
 //  -moz-border-radius-bottomleft: 10px;
 //  border-bottom-left-radius: 10px;
@@ -1053,9 +1053,11 @@ html {
   }
   
   #title_box {
-    margin-left: 10px;
     position: fixed;
     width: 190px;
+    background-color: $sub_nav_gray;
+    padding: 20px 20px 10px 20px;
+    border-radius: 10px;
 
     h1 {
       line-height: 24px;
@@ -1147,9 +1149,7 @@ html {
 
   #content_box {
     float: right;
-    width: 630px;
-    padding-top: 5px;
-    margin-right: 20px;
+    width: 670px;
     position: relative;
 
     & > h1 {
@@ -1229,7 +1229,7 @@ html {
       -moz-border-radius: 8px;
       -webkit-border-radius: 8px;
       border-radius: 8px;
-      padding: 5px 10px 0px 10px;
+      padding: 5px 0px 0px 10px;
       height: 30px;
   
       &:hover {
@@ -1299,8 +1299,8 @@ html {
         width: 280px;
         margin-left: 10px !important;
   
-        &.narrow {
-          width: 190px;
+        &  {
+          width: 210px;
         }
         &.narrow-100 {
           width: 100px;
