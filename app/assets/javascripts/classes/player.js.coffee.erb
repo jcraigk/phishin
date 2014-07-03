@@ -368,8 +368,9 @@ class @Player
 
   _initStatsAPI: ->
     PhishTracksStats.setup
-      testMode: ->
-        unless '<%= Rails.env %>' is 'production' then true else false
+      testMode: false
+      # testMode: ->
+      #   unless '<%= Rails.env %>' is 'production' then true else false
       auth: 'MDI5NDQ0NDQ1MzYxZjkxMzUzODliOGEwNGYyYjA3M2U6'
 
   _createStatsAPIEvent: (r) ->
