@@ -13,9 +13,6 @@ class @Detector
     # Suggest PhishOD on iOS
     else if /(iPhone|iPad|iPod)/g.test(navigator.userAgent)
       @iOS()
-      
-    # MOBILE NOT SUPPORTED
-    # window.location.href = '/mobile-unsupported' if /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
 
   iOS: ->
     unless $.cookie('appInstalled') and $.cookie('appInstalled') is 'false'

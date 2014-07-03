@@ -605,30 +605,33 @@ html {
         top: 15px;
         left: 47px;
       }
-      #playpause {
+      #control_playpause {
         border: 1px solid $btn_border;
-        width: 65px;
-        height: 65px;
+        width: 63px;
+        height: 63px;
         -moz-border-radius: 100px;
         -webkit-border-radius: 100px;
         border-radius: 100px;
         margin-top: -16px;
+        margin-left: 5px;
         background: white url('icons-playpause.png');
+        cursor: pointer;
       }
-      #next, #previous {
+      #control_next, #control_previous {
         border: 1px solid $btn_border;
-        width: 34px;
-        height: 34px;
+        width: 32px;
+        height: 32px;
         -moz-border-radius: 100px;
         -webkit-border-radius: 100px;
         border-radius: 100px;
         margin-top: 0px;
+        cursor: pointer;
       }
-      #previous {
+      #control_previous {
         background: white url('icon-previous.png');
         margin-right: 2px;
       }
-      #next {
+      #control_next {
         background: white url('icon-next.png');
         margin-left: 2px;
       }
@@ -771,6 +774,10 @@ html {
     font-weight: bold;
     color: $nav_highlight !important;
   }
+  .divider {
+    height: 1px;
+    background-color: $background_gray;
+  }
   #sub_nav {
     color: $gray_70;
     font-size: 13px;
@@ -782,7 +789,6 @@ html {
     background-color: $sub_nav_gray;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
-    margin-top: 1px;
     
     a {
       color: #6e7073;

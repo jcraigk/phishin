@@ -13,6 +13,7 @@
 //= require classes/playlist
 //= require classes/map
 //= require spin.min
+//= require phishtracks-stats-0.0.3
 //= require_tree .
 
 # Generic namespace
@@ -258,15 +259,15 @@ $ ->
         App.Player.setCurrentPlaylist $(this).data('id')
 
   # Click the Play/Pause button
-  .on 'click', '#playpause', (e) ->
+  .on 'click', '#control_playpause', (e) ->
     App.Player.togglePause()
   
   # Click the Previous button
-  .on 'click', '#previous', (e) ->
+  .on 'click', '#control_previous', (e) ->
     App.Player.previousTrack()
 
   # Click the Next button
-  .on 'click', '#next', (e) ->
+  .on 'click', '#control_next', (e) ->
     App.Player.nextTrack()
     
   # Scrubber (jQuery UI slider)

@@ -16,7 +16,7 @@ class @Player
     @app_name         = $('body').data 'app-name'
     @time_marker      = @Util.timeToMS $('body').data('time-marker')
     @$playlist_btn    = $ '#playlist_button'
-    @$playpause       = $ '#playpause'
+    @$playpause       = $ '#control_playpause'
     @$scrubber        = $ '#scrubber'
     @$volume_slider   = $ '#volume_slider'
     @$volume_icon     = $ '#volume_icon'
@@ -28,6 +28,13 @@ class @Player
     @$likes_count     = $ '#player_likes_container > .likes_large > span'
     @$likes_link      = $ '#player_likes_container > .likes_large > a'
     @$feedback.hide()
+    # this.initPhishTracksStats()
+
+  initPhishTracksStats: ->
+    PhishTracksStats.setup
+      testMode: ->
+        unless '<%= Rails.env %>' is 'production' then true else false
+      auth: 'MDI5NDQ0NDQ1MzYxZjkxMzUzODliOGEwNGYyYjA3M2U6'
   
   # Check for track anchor to scroll-to [and play]
   onReady: ->
@@ -38,7 +45,7 @@ class @Player
         unless @invoked
           path_segment = window.location.pathname.split('/')[1]
           this.setCurrentPlaylist track_id if path_segment isnt 'playlist' and path_segment isnt 'play'
-          this.playTrack track_id 
+          this.playTrack track_id
 
   togglePlaylistMode: ->
     if @playlist_mode
@@ -113,6 +120,16 @@ class @Player
             this._updateLoadingState track_id
           whileplaying: =>
             this._updatePlayerState()
+
+        # Post 'listen' event to PhishTracksStats at 80% played
+        # pos = parseInt(@sm_sound.duration * 0.8)
+        # @sm.clearOnPosition @sm_sound.id, pos
+        # @sm_sound.onPosition pos, (eventPosition) =>
+        #   PhishTracksStats.postPlay { event: 'listen', track_id: @sm_sound.id }, (data) ->
+        #     console.log "Listen event for Track ID #{@sm_sound.id} posted to PhishTracksStats"
+        #   , (data) ->
+        #     console.error(data)
+
       if @muted
         @sm.setVolume track_id, 0
       else
@@ -148,7 +165,7 @@ class @Player
           success: (r) =>
             this.playTrack r.track_id if r.success
     else
-      @Util.feedback { alert: 'You need to make a playlist to use that button' }
+      @Util.feedback { alert: 'You need an active playlist to use that button' }
   
   nextTrack: ->
     if @active_track
@@ -161,7 +178,7 @@ class @Player
             @Util.feedback { notice: 'End of playlist reached'}
             this.stopAndUnload()
     else
-      @Util.feedback { alert: 'You need to make a playlist to use that button' }
+      @Util.feedback { alert: 'You need an active playlist to use that button' }
   
   stopAndUnload: ->
     this._fastFadeout @active_track
