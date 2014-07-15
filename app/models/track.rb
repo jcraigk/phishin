@@ -3,7 +3,7 @@ class Track < ActiveRecord::Base
   require 'taglib'
   require 'mp3info'
 
-  before_destroy :prevent_destruction
+  # before_destroy :prevent_destruction
 
   #########################
   # Attributes & Constants
