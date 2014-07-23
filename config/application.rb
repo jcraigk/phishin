@@ -11,14 +11,6 @@ end
 
 module Phishin
   class Application < Rails::Application
-
-    # Fix for Devise missing translations
-    config.before_configuration do
-      I18n.locale = :en
-      I18n.load_path += Dir[Rails.root.join('config', 'locales', 'devise.en.yml').to_s]
-      I18n.reload!
-    end
-
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
@@ -40,9 +32,10 @@ module Phishin
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     # config.time_zone = 'Central Time (US & Canada)'
 
+    config.i18n.enforce_available_locales = true
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
-    # config.i18n.default_locale = :de
+    config.i18n.default_locale = :en
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"
