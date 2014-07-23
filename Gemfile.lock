@@ -207,7 +207,7 @@ DEPENDENCIES
   bootstrap-will_paginate
   coffee-rails (~> 3.2.1)
   dalli
-  devise (= 3.2.3)
+  devise
   friendly_id
   geocoder
   jquery-cookie-rails
