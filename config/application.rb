@@ -13,7 +13,7 @@ module Phishin
   class Application < Rails::Application
 
     # Fix for Devise missing translations
-    config.before_eager_load do
+    config.before_configuration do
       I18n.locale = :en
       I18n.load_path += Dir[Rails.root.join('config', 'locales', 'devise.en.yml').to_s]
       I18n.reload!
