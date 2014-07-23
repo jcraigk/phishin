@@ -16,6 +16,8 @@ en:
       timeout: "Your session expired, please sign in again to continue"
       unauthenticated: "You need to sign in or sign up before continuing"
       unconfirmed: "You have to confirm your account before continuing"
+        user:
+          invalid: "Invalid email or password"
     mailer:
       confirmation_instructions: 
         subject: "Confirmation instructions"
