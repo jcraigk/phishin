@@ -10,7 +10,7 @@ gem 'ruby-mp3info'
 gem 'pg_search'
 gem 'jquery-rails'
 gem 'resque', require: "resque/server"
-gem 'devise'
+gem 'devise', '3.2.3'
 gem 'twitter-bootstrap-rails'
 gem 'therubyracer'
 gem 'jquery-ui-rails'
