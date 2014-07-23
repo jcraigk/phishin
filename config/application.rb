@@ -11,6 +11,14 @@ end
 
 module Phishin
   class Application < Rails::Application
+
+    # Fix for Devise missing translations
+    config.before_eager_load do
+      I18n.locale = :en
+      I18n.load_path += Dir[Rails.root.join('config', 'locales', 'devise.en.yml').to_s]
+      I18n.reload!
+    end
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
