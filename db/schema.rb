@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130526053130) do
+ActiveRecord::Schema.define(:version => 20140801220314) do
 
   create_table "album_requests", :force => true do |t|
     t.integer  "album_id"
@@ -116,6 +116,7 @@ ActiveRecord::Schema.define(:version => 20130526053130) do
     t.boolean  "missing",     :default => true
     t.text     "admin_notes"
     t.integer  "duration",    :default => 0,     :null => false
+    t.text     "taper_notes"
   end
 
   add_index "shows", ["date"], :name => "index_shows_on_date"
