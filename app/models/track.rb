@@ -50,7 +50,7 @@ class Track < ActiveRecord::Base
   # Callbacks
   ############
   before_validation :populate_song, :populate_position
-  # after_save :set_duration
+  after_save :set_duration
   
   def should_generate_new_friendly_id?; true; end
   
