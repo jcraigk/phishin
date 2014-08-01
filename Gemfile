@@ -6,7 +6,7 @@ gem 'pg'
 gem 'paperclip'
 gem 'nokogiri'
 gem 'friendly_id'
-gem 'ruby-mp3info'
+gem 'mp3info'
 gem 'pg_search'
 gem 'jquery-rails'
 gem 'resque', require: "resque/server"
