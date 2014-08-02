@@ -9,5 +9,15 @@ class Playlist < ActiveRecord::Base
 
   validates :name, presence: true
   validates :slug, presence: true
+
+  def as_json_api
+    {
+      slug: slug,
+      name: name,
+      duration: duration,
+      tracks: tracks.as_json.sort_by {|t| t[:position] }
+    }
+  end
+
   
 end

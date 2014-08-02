@@ -61,7 +61,8 @@ class Show < ActiveRecord::Base
       remastered: remastered,
       tour_id: tour_id,
       venue_id: venue_id,
-      likes_count: likes_count
+      likes_count: likes_count,
+      taper_notes: taper_notes
     }
     hash.merge(
       venue_name: venue.name,
@@ -81,6 +82,7 @@ class Show < ActiveRecord::Base
       tags: tags.map(&:name).as_json,
       tour_id: tour_id,
       venue: venue.as_json,
+      taper_notes: taper_notes,
       tracks: tracks.as_json.sort_by {|t| t[:position] }
     }
   end

@@ -429,4 +429,3 @@ $ ->
   # Play random song track
   .on 'click', '#random_song_track_btn', (e) ->
     App.Player.playRandomSongTrack $(this).data('song-id')
-    
