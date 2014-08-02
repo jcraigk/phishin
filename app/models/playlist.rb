@@ -15,7 +15,7 @@ class Playlist < ActiveRecord::Base
       slug: slug,
       name: name,
       duration: duration,
-      tracks: tracks.as_json.sort_by {|t| t[:position] }
+      tracks: tracks.map(&:as_json_for_playlist_api).sort_by {|t| t[:position] }
     }
   end
 

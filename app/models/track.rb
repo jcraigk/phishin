@@ -162,6 +162,24 @@ class Track < ActiveRecord::Base
     }
   end
 
+  def as_json_for_playlist_api
+    {
+      id: id,
+      show_id: show_id,
+      show_date: show.date,
+      title: title,
+      position: position,
+      duration: duration,
+      set: set,
+      set_name: set_name,
+      likes_count: likes_count,
+      slug: slug,
+      tags: tags.map(&:name).as_json,
+      mp3: mp3_url,
+      songs: songs.as_json
+    }
+  end
+
   protected
   
   def set_duration
