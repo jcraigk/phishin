@@ -160,7 +160,7 @@ namespace :shows do
       if txtfile =~ /ph(.+).txt/
         if show = Show.where(date: $1).first
           file = File.open(txtfile, "rb")
-          show.taper_notes = file.read
+          show.taper_notes = file.read.encode!('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
           show.save
           p "Importing taper_notes for #{$1}"
         end
