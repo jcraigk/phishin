@@ -16,6 +16,7 @@ class Show < ActiveRecord::Base
   self.per_page = 10 # will_paginate default
   
   scope :avail, -> { where('missing = FALSE') }
+  scope :tagged_with, ->(tag) { includes(:tags).where('tags.name = ?', tag) }
 
   scope :during_year, ->(year) {
     date = Date.new(year.to_i)

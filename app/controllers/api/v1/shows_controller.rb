@@ -7,7 +7,9 @@ module Api
       caches_action :on_date, cache_path: Proc.new { |c| c.params }, expires_in: CACHE_TTL
 
       def index
-        respond_with_success get_data_for(Show.avail)
+        show = Show.avail
+        show = show.tagged_with(params[:tag]) if params[:tag]
+        respond_with_success get_data_for(show)
       end
 
       def show

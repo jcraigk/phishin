@@ -6,7 +6,9 @@ module Api
       caches_action :show, cache_path: Proc.new { |c| c.params }, expires_in: CACHE_TTL
       
       def index
-        respond_with_success get_data_for(Track)
+        tracks = Track.scoped
+        tracks = tracks.tagged_with(params[:tag]) if params[:tag]
+        respond_with_success get_data_for(tracks)
       end
 
       def show

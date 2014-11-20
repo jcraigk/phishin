@@ -25,7 +25,8 @@ class Track < ActiveRecord::Base
   
   self.per_page = 10 # will_paginate default
   
-  scope :chronological, order('shows.date ASC').joins(:show)
+  scope :chronological, -> { order('shows.date ASC').joins(:show) }
+  scope :tagged_with, ->(tag) { includes(:tags).where('tags.name = ?', tag) }
   
   include PgSearch
   pg_search_scope :kinda_matching,
