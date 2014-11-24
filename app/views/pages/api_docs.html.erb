@@ -47,7 +47,14 @@
       <li><span class="api-command-inline">sort_dir</span> Which direction to sort in (asc|desc)</li>
       <li><span class="api-command-inline">per_page</span> How many results to list per page (default: 20)</li>
       <li><span class="api-command-inline">page</span> Which page of results to display (default: 1)</li>
+      <li><span class="api-command-inline">tag</span> Tracks  (default: none)</li>
     </ul>
+
+    <p>A few routes also accept the following optional parameters:</p>
+    <ul class="api-list">
+      <li><span class="api-command-inline">tag</span> [/tracks and /shows] Return only results that have the specified tag (Example: /shows?tag=SBD)</li>
+    </ul>
+
     
     <h2>Endpoints</h2>
     
@@ -101,6 +108,9 @@
   
     <span class="api-command">GET /show-on-date/:date</span>
     <span class="api-doc">Returns Show metadata for given date as well as Venue metadata and a list of Tracks belonging to the Show</span>
+
+    <span class="api-command">GET /shows-on-day-of-year/:day</span>
+    <span class="api-doc">Returns Show metadata for given day (eg 'october-31' or '10-31') as well as Venue metadata and a list of Tracks belonging to each Show.</span>
   
     <span class="api-command">GET /random-show</span>
     <span class="api-doc">Returns metadata for a randomly selected Show as well as Venue metadata and a list of Tracks belonging to the Show</span>

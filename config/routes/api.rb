@@ -14,6 +14,7 @@ Phishin::Application.routes.draw do
       
       get 'search/:term',                   to: 'search#index'
       get 'show-on-date/:date',             to: 'shows#on_date'
+      get 'shows-on-day-of-year/:day',      to: 'shows#on_day_of_year'
       get 'random-show',                    to: 'shows#random'
       
     end
