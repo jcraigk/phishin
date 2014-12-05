@@ -21,6 +21,6 @@ task :restart do
   end
 end
 
-after 'deploy:updating', :link_database_yml
+after 'deploy:updated', :link_database_yml
 after 'deploy', :link_audio
 after 'deploy', :restart
