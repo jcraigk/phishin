@@ -6,12 +6,12 @@ set :audio_path,            '/var/www/app_content/phishin/tracks/audio_files'
 
 desc 'Create symlink to database.yml'
 task :link_database_yml do
-  run "ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
+  execute "ln -nfs #{deploy_to}/shared/config/database.yml #{release_path}/config/database.yml"
 end
 
 desc 'Create symlink to audio content folder'
 task :link_audio do
-  run "ln -s #{audio_path} #{release_path}/public/audio"
+  execute "ln -s #{audio_path} #{release_path}/public/audio"
 end
 
 desc 'Restart application'
