@@ -1,0 +1,1 @@
+server 'www.phish.in', user: 'jcraigk', roles: %w{web app db}

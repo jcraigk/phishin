@@ -9,7 +9,7 @@ gem 'friendly_id'
 gem 'ruby-mp3info'
 gem 'pg_search'
 gem 'jquery-rails'
-gem 'resque', require: "resque/server"
+gem 'resque', require: 'resque/server'
 gem 'devise'
 gem 'twitter-bootstrap-rails'
 gem 'therubyracer'
@@ -22,6 +22,10 @@ gem 'selenium-webdriver'
 gem 'dalli'
 gem 'jquery-cookie-rails'
 gem 'newrelic_rpm'
+
+gem 'capistrano'
+gem 'capistrano-rails'
+gem 'capistrano-bundler'
 
 group :assets do
   gem 'coffee-rails', '~> 3.2.1'
