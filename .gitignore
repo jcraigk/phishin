@@ -23,3 +23,6 @@
 
 # Ignore database.yml
 /config/database.yml
+
+# Ignore .ruby-version
+.ruby-version
