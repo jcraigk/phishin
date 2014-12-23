@@ -16,12 +16,13 @@ class Track < ActiveRecord::Base
   ########################
   # Associations & Scopes
   ########################
+  belongs_to :show
   has_many :songs_tracks, dependent: :destroy
   has_many :songs, through: :songs_tracks
-  belongs_to :show
   has_many :likes, as: :likable, dependent: :destroy
   has_many :track_tags, dependent: :destroy
   has_many :tags, through: :track_tags
+  has_many :playlist_tracks, dependent: :destroy
   
   self.per_page = 10 # will_paginate default
   
