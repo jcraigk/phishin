@@ -77,7 +77,9 @@ module ShowImporter
           t.save_default_id3_tags
           begin
             duration += t.duration
-          rescue; end
+          rescue
+            p "Duration error on #{t}"
+          end
         end
       end
       @show.update_attributes(duration: duration)
