@@ -75,11 +75,11 @@ module ShowImporter
           t.audio_file = File.new("#{@fm.s_dir}/#{t.filename}")
           t.save
           t.save_default_id3_tags
-          begin
-            duration += t.duration
-          rescue
-            p "Duration error on #{t}"
-          end
+          # begin
+          #   duration += t.duration
+          # rescue
+          #   p "Duration error on #{t}"
+          # end
         end
       end
       @show.update_attributes(duration: duration)

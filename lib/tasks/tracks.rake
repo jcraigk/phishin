@@ -14,9 +14,7 @@ namespace :tracks do
     Show.order('date desc').each do |show|
       puts "Working: #{show.date}"
       tracks = show.tracks.order('position asc').all
-      # tracks = Track.where('show_id = 163').all
       tracks.each do |track|
-        # track.save!
         dupes = []
         tracks.each { |track2| dupes << track2 if track.id != track2.id and track.slug == track2.slug }
         if dupes.size > 0
