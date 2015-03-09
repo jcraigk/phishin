@@ -36,13 +36,16 @@ module Api
       end
 
       def is_date?(str)
-        return true if str =~ /^(\d{1,2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,4})$/ or str =~ /^(\d{4})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})$/
-        # begin
-        #    Date.parse str
-        #    true
-        # rescue
-        #    false
-        # end
+        if str =~ /^(\d{1,2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,4})$/ or str =~ /^(\d{4})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})$/
+          begin
+            Date.parse str
+            return true
+          rescue
+            return false
+          end
+        else
+          return false
+        end
       end
 
       def parse_date(str)
