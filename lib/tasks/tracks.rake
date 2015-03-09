@@ -166,5 +166,15 @@ namespace :tracks do
       end
     end
   end
+
+  desc "Identify tracks that point to nonexistent shows"
+  task find_orphans: :environment do
+    show_ids = []
+    Track.all.each do |t|
+      show_ids << t.show_id if t.show.nil? and show_ids.include?(t.show_id)
+    end
+    puts "Complete: #{show_ids.size} orphans found"
+    puts show_ids
+  end
     
 end
