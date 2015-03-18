@@ -3,6 +3,8 @@ module Api
     class ApiController < ActionController::Base
       
       # http_basic_authenticate_with name: "dhh", password: "secret"
+      before_filter :cors_preflight_check
+      after_filter :cors_set_access_control_headers
   
       respond_to :json
   
@@ -40,7 +42,26 @@ module Api
       def data_as_json(data)
         data.respond_to?(:as_json_api) ? data.try(:as_json_api) : data.try(:as_json)
       end
-  
+
+      private
+
+      def cors_preflight_check
+        if request.method == :options
+          headers['Access-Control-Allow-Origin'] = '*'
+          headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS'
+          headers['Access-Control-Allow-Headers'] = '*'
+          headers['Access-Control-Max-Age'] = '1728000'
+          render text: '', content_type: 'text/plain'
+        end
+      end
+
+      def cors_set_access_control_headers
+        headers['Access-Control-Allow-Origin'] = '*'
+        headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
+        headers['Access-Control-Request-Method'] = '*'
+        headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+        headers['Access-Control-Max-Age'] = '1728000'
+      end
     end
   end
 end
