@@ -4,8 +4,8 @@ namespace :tours do
   task sync_shows_count: :environment do
     Tour.order('starts_on').all.each do |t|
       shows = t.shows
-      puts "#{t.name} :: #{shows.size}"
-      t.update_attributes(shows_count: shows.size)
+      puts "#{t.name} :: #{shows.length}"
+      t.update_attributes(shows_count: shows.length)
     end
   end
   
