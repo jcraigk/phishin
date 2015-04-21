@@ -30,6 +30,18 @@ namespace :tracks do
       end
     end
   end
+
+  desc "Check for the same file being used for second occurrence of song within a show"
+  task find_dupe_filenames: :environment do
+    show_list = []
+    Show.find_each do |show|
+      filenames = show.tracks.map(&:audio_file_file_name)
+      dupe = filenames.detect {|f| filenames.count(f) > 1 }
+      show_list << "#{show.date} :: #{dupe}" if dupe
+    end
+    puts "#{show_list.size} shows found with dupes"
+    puts show_list.join("\n")
+  end
   
   desc "Check for position gaps in each show, searching for missing tracks"
   task find_missing: :environment do
