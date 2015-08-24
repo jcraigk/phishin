@@ -17,6 +17,8 @@ Phishin::Application.routes.draw do
       get 'shows-on-day-of-year/:day',      to: 'shows#on_day_of_year'
       get 'random-show',                    to: 'shows#random'
       
+      get 'users/:username',                to: 'users#show'
+      get 'users/:username/playlists',      to: 'users#playlists'
     end
   end
 end
