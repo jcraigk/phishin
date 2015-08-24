@@ -26,6 +26,7 @@ gem 'newrelic_rpm'
 gem 'capistrano'
 gem 'capistrano-rails'
 gem 'capistrano-bundler'
+gem 'capistrano-passenger'
 
 group :assets do
   gem 'coffee-rails', '~> 3.2.1'
