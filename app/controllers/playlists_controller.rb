@@ -13,6 +13,7 @@ class PlaylistsController < ApplicationController
     end
     if session[:playlist]
       session[:playlist] = session[:playlist].take(100)
+      session[:playlist_shuffled] = session[:playlist].shuffle
       tracks_by_id = Track.find(session[:playlist]).index_by(&:id)
       @tracks = session[:playlist].collect {|id| tracks_by_id[id] }
       @tracks_likes = @tracks.map {|track| get_user_track_like(track) }
@@ -127,6 +128,7 @@ class PlaylistsController < ApplicationController
   def clear_playlist
     clear_saved_playlist
     session[:playlist] = []
+    session[:playlist_shuffled] = []
     render json: { success: true }
   end
   
@@ -135,6 +137,7 @@ class PlaylistsController < ApplicationController
     if track = Track.where(id: params[:track_id]).first
       tracks = Track.where(show_id: track.show_id).order(:position).all
       session[:playlist] = tracks.map(&:id)
+      session[:playlist_shuffled] = session[:playlist].shuffle
       render json: { success: true }
     else
       render json: { success: false }
@@ -145,6 +148,7 @@ class PlaylistsController < ApplicationController
     clear_saved_playlist
     session[:playlist] = params[:track_ids].map {|id| Integer(id, 10)}
     session[:playlist] = session[:playlist].take(100)
+    session[:playlist_shuffled] = session[:playlist].shuffle
     render json: { success: true, msg: session[:playlist] }
   end
   
@@ -189,22 +193,19 @@ class PlaylistsController < ApplicationController
   
   def next_track_id
     if session[:playlist].size > 0
-      playlist = session[:playlist]
+      playlist = session[:shuffle] ? session[:playlist_shuffled] : session[:playlist]
       idx = false
-      playlist.each_with_index { |track_id, i| idx = i if track_id.to_s == params[:track_id].to_s }
+      playlist.each_with_index {|track_id, i| idx = i if track_id.to_s == params[:track_id].to_s }
       if idx
-        if session[:randomize]
-          render json: { success: true, track_id: playlist.sample }
-        else
-          if playlist.last.to_s == params[:track_id]
-            if session[:loop]
-              render json: { success: true, track_id: playlist.first }
-            else
-              render json: { success: false, msg: 'End of playlist' }
-            end
+        if playlist.last.to_s == params[:track_id]
+          if session[:loop]
+            render json: { success: true, track_id: playlist.first }
           else
-            render json: { success: true, track_id: playlist[idx+1] }
+            raise playlist.inspect
+            render json: { success: false, msg: 'End of playlist' }
           end
+        else
+          render json: { success: true, track_id: playlist[idx+1] }
         end
       else
         # If no valid track_id passed in, return first item in playlist
@@ -216,13 +217,11 @@ class PlaylistsController < ApplicationController
   end
 
   def previous_track_id
-    playlist = session[:playlist]
-    idx = false
-    playlist.each_with_index { |track_id, i| idx = i if track_id.to_s == params[:track_id] }
-    if idx
-      if session[:randomize]
-        render json: { success: true, track_id: playlist.sample }
-      else
+    if session[:playlist].size > 0
+      playlist = session[:shuffle] ? session[:playlist_shuffled] : session[:playlist]
+      idx = false
+      playlist.each_with_index {|track_id, i| idx = i if track_id.to_s == params[:track_id].to_s }
+      if idx
         if playlist.first.to_s == params[:track_id].to_s
           if session[:loop]
             render json: { success: true, track_id: playlist.last }
@@ -232,17 +231,34 @@ class PlaylistsController < ApplicationController
         else
           render json: { success: true, track_id: playlist[idx-1] }
         end
+      else
+        render json: { success: false, msg: 'track_id not in playlist' }
       end
     else
-      render json: { success: false, msg: 'track_id not in playlist' }
+      render json: { success: false, msg: 'No active playlist' }
     end
   end
   
-  def submit_playlist_options
-    params.reject! { |k,v| ! %w[randomize loop].include? k.to_s }
-    params[:loop] == "true" ? session[:loop] = true : session[:loop] = false
-    params[:randomize] == "true" ? session[:randomize] = true : session[:randomize] = false
-    render json: { success: true}
+  def submit_playback_loop
+    if params[:loop] == "true"
+      session[:loop] = true
+      msg = 'Playback looping enabled'
+    else
+      session[:loop] = false
+      msg = 'Playback looping disabled'
+    end
+    render json: { success: true, msg: msg }
+  end
+
+  def submit_playback_shuffle
+    if params[:shuffle] == "true"
+      session[:shuffle] = true
+      msg = 'Playback shuffling enabled'
+    else
+      session[:shuffle] = false
+      msg = 'Playback shuffling disabled'
+    end
+    render json: { success: true, msg: msg }
   end
   
   def random_show
@@ -295,6 +311,7 @@ class PlaylistsController < ApplicationController
   
   def activate_playlist(playlist)
     session[:playlist] = playlist.playlist_tracks.order('position').all.map(&:track_id)
+    session[:playlist_shuffled] = session[:playlist].shuffle
     session[:playlist_id] = playlist.id
     session[:playlist_name] = playlist.name
     session[:playlist_slug] = playlist.slug
@@ -309,6 +326,7 @@ class PlaylistsController < ApplicationController
   
   def clear_saved_playlist
     session[:playlist] = []
+    session[:playlist_shuffled] = []
     session[:playlist_id] = 0
     session[:playlist_name] = ''
     session[:playlist_slug] = ''

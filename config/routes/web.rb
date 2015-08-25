@@ -54,7 +54,8 @@ Phishin::Application.routes.draw do
   post    '/add-show'                     => 'playlists#add_show_to_playlist'
   get     '/next-track(/:track_id)'       => 'playlists#next_track_id'
   get     '/previous-track/:track_id'     => 'playlists#previous_track_id'
-  post    '/submit-playlist-options'      => 'playlists#submit_playlist_options'
+  post    '/submit-playback-loop'         => 'playlists#submit_playback_loop'
+  post    '/submit-playback-shuffle'         => 'playlists#submit_playback_shuffle'
   get     '/random-show'                  => 'playlists#random_show'
   get     '/random-song-track/:song_id'   => 'playlists#random_song_track'
   

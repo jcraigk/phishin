@@ -72,17 +72,30 @@ class @Playlist
       this.updatePlaylist 'Track removed from playlist'
       @Player.stopAndUnload()
   
-  handleOptionChange: ->
+  handlePlaybackLoopChange: ->
     $.ajax({
       type: 'post',
-      url: '/submit-playlist-options',
+      url: '/submit-playback-loop',
       data: {
-        'loop': $('#loop_checkbox').prop('checked'),
-        'randomize': $('#randomize_checkbox').prop('checked')
+        'loop': $('#loop_checkbox').prop('checked')
       }
       success: (r) =>
         if r.success
-          @Util.feedback { notice: 'Playlist options saved' }
+          @Util.feedback { notice: r.msg }
+        else
+          @Util.feedback { alert: r.msg }
+    })
+
+  handlePlaybackShuffleChange: ->
+    $.ajax({
+      type: 'post',
+      url: '/submit-playback-shuffle',
+      data: {
+        'shuffle': $('#shuffle_checkbox').prop('checked')
+      }
+      success: (r) =>
+        if r.success
+          @Util.feedback { notice: r.msg }
         else
           @Util.feedback { alert: r.msg }
     })

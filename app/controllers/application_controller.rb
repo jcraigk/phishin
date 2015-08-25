@@ -49,17 +49,18 @@ class ApplicationController < ActionController::Base
   
   def init_session
     session[:playlist]            ||= []
+    session[:playlist_shuffled]   ||= []
     session[:playlist_id]         ||= 0
     session[:playlist_name]       ||= ''
     session[:playlist_slug]       ||= ''
     session[:playlist_user_id]    ||= ''
-    session[:playlist_username]  ||= ''
+    session[:playlist_username]   ||= ''
     session[:loop]                ||= false
-    session[:randomize]           ||= false
+    session[:shuffle]             ||= false
   end
   
   def init_params
-    params[:t]                ||= 0
+    params[:t] ||= 0
   end
   
   def mobile_unsupported

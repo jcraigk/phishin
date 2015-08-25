@@ -400,8 +400,8 @@ html {
     }
     #player_menu {
       position: absolute;
-      margin-top: 31px;
-      margin-left: 135px;
+      margin-top: 46px;
+      margin-left: 655px;
       width: 60px;
       height: 40px;
 
@@ -415,8 +415,13 @@ html {
         height: 30px;
         margin-top: 10px;
       }
+      .dropdown-menu {
+        box-shadow: 5px 5px 5px 0px rgba(189,189,189,0.48);
+        margin-top: 2px !important;
+        margin-left: 14px !important;
+      }
     }
-    #randomize_checkbox {
+    #shuffle_checkbox {
       margin-bottom: 15px;
       vertical-align: top;
     }
@@ -605,7 +610,7 @@ html {
       #playpause_tooltip {
         position: relative;
         top: 15px;
-        left: 47px;
+        left: 53px;
       }
       #control_playpause {
         border: 1px solid $btn_border;

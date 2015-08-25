@@ -233,8 +233,10 @@ $ ->
   .on 'click', '.playlist_remove_track', (e) ->
     $(this).parents('li').remove()
     App.Playlist.removeTrackFromPlaylist $(this).parents('li').data('id')
-  .on 'change', '.playlist_option', (e) ->
-    App.Playlist.handleOptionChange()
+  .on 'change', '.playback_loop', (e) ->
+    App.Playlist.handlePlaybackLoopChange()
+  .on 'change', '.playback_shuffle', (e) ->
+    App.Playlist.handlePlaybackShuffleChange()
   
   ###############################################
   
@@ -301,11 +303,11 @@ $ ->
       App.Player.updateVolumeSlider $(this).slider('value')
   })
   
-  # Loop / Randomize controls
+  # Loop / Shuffle controls
   $(document).on 'click', '#loop_checkbox', (e) ->
     $(this).attr('checked', !$(this).attr('checked'))
     e.stopPropagation()
-  .on 'click', '#randomize_checkbox', (e) ->
+  .on 'click', '#shuffle_checkbox', (e) ->
     $(this).attr('checked', !$(this).attr('checked'))
     e.stopPropagation()
     

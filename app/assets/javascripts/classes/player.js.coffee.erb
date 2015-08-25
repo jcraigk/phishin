@@ -141,29 +141,23 @@ class @Player
         this._playRandomShowOrPlaylist()
   
   previousTrack: ->
-    if @active_track
-      if @sm_sound.position > 3000
-        @sm_sound.setPosition 0
-      else
-        $.ajax
-          url: "/previous-track/#{@active_track}"
-          success: (r) =>
-            this.playTrack r.track_id if r.success
+    if @sm_sound.position > 3000
+      @sm_sound.setPosition 0
     else
-      @Util.feedback { alert: 'You need an active playlist to use that button' }
+      $.ajax
+        url: "/previous-track/#{@active_track}"
+        success: (r) =>
+          this.playTrack r.track_id if r.success
   
   nextTrack: ->
-    if @active_track
-      $.ajax
-        url: "/next-track/#{@active_track}"
-        success: (r) =>
-          if r.success
-            this.playTrack r.track_id
-          else
-            @Util.feedback { notice: 'End of playlist reached'}
-            this.stopAndUnload()
-    else
-      @Util.feedback { alert: 'You need an active playlist to use that button' }
+    $.ajax
+      url: "/next-track/#{@active_track}"
+      success: (r) =>
+        if r.success
+          this.playTrack r.track_id
+        else
+          @Util.feedback { alert: r.msg }
+          this.stopAndUnload()
   
   stopAndUnload: ->
     this._fastFadeout @active_track
