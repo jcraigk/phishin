@@ -59,6 +59,19 @@ module Api
         headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization, range'
         headers['Access-Control-Max-Age'] = '1728000'
       end
+
+      # https://gist.github.com/josevalim/fb706b1e933ef01e4fb6
+      def authenticate_user_from_token!
+        user_email  = params[:user][:email].presence
+        user        = user_email && User.find_by_email(user_email)
+
+        if user && Devise.secure_compare(user.authentication_token, params[:user][:auth_token])
+          sign_in('user', user)
+        else
+          render json: { success: false, message: 'Invalid email or auth_token' }
+        end
+      end
+
     end
   end
 end

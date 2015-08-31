@@ -55,7 +55,7 @@ Phishin::Application.routes.draw do
   get     '/next-track(/:track_id)'       => 'playlists#next_track_id'
   get     '/previous-track/:track_id'     => 'playlists#previous_track_id'
   post    '/submit-playback-loop'         => 'playlists#submit_playback_loop'
-  post    '/submit-playback-shuffle'         => 'playlists#submit_playback_shuffle'
+  post    '/submit-playback-shuffle'      => 'playlists#submit_playback_shuffle'
   get     '/random-show'                  => 'playlists#random_show'
   get     '/random-song-track/:song_id'   => 'playlists#random_song_track'
   
@@ -67,6 +67,6 @@ Phishin::Application.routes.draw do
   get     '/download/:md5'                => 'downloads#download_album',            as: 'download_album'
   
   # Catch-all matcher for short content URLs
-  get     '/(:glob(/:anchor))' => 'content#glob', constraints: { :glob => /[^\/]+/ }
+  get     '/(:glob(/:anchor))' => 'content#glob', constraints: { glob: /[^\/]+/ }
     
 end
