@@ -7,7 +7,8 @@ module Api
       def create
         user = User.new(params[:user])
         if user.save
-          render json:  { success: true, email: user.email }, status: 201
+          user.generate_authentication_token!
+          render json:  { success: true, email: user.email, auth_token: user.authentication_token }, status: 201
           return
         else
           warden.custom_failure!
