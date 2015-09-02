@@ -12,7 +12,7 @@ class Album < ActiveRecord::Base
   
   def self.cache_used
     cache_size = 0
-    self.completed.all.each { |album| cache_size += album.zip_file.size }
+    self.completed.all.each {|album| cache_size += album.zip_file.size }
     cache_size
   end
   

@@ -35,7 +35,7 @@ module ShowImporter
     end
 
     def pp_list
-      @tracks.sort{ |a,b| a.pos <=> b.pos }.each do |track|
+      @tracks.sort {|a,b| a.pos <=> b.pos }.each do |track|
         puts track
       end
     end
@@ -49,17 +49,17 @@ module ShowImporter
       receiving.merge_track(assimilating)
       @tracks.delete assimilating
 
-      @tracks.each { |track| track.decr_pos if track.pos > pos }
+      @tracks.each {|track| track.decr_pos if track.pos > pos }
     end
 
     def insert_before(pos)
-      @tracks.each { |track| track.incr_pos if track.pos >= pos }
+      @tracks.each {|track| track.incr_pos if track.pos >= pos }
       @tracks.insert pos, TrackProxy.new(pos)
     end
 
     def delete(pos)
-      @tracks.delete_if { |track| track.pos == pos }
-      @tracks.each { |track| track.decr_pos if track.pos > pos }
+      @tracks.delete_if {|track| track.pos == pos }
+      @tracks.each {|track| track.decr_pos if track.pos > pos }
     end
 
     def get_track(pos)
@@ -90,7 +90,7 @@ module ShowImporter
     def populate_tracks
       matches = @fm.matches.dup
       @show_info.songs.each do |pos, song_title|
-        fn_match = matches.find{ |k,v| !v.nil? && v.title == song_title }
+        fn_match = matches.find {|k,v| !v.nil? && v.title == song_title }
         if fn_match
           @tracks << TrackProxy.new(pos, song_title, fn_match[0], fn_match[1])
           matches.delete(fn_match[0])
@@ -140,7 +140,7 @@ module ShowImporter
     def to_s
       (!valid? ? '* ' : '  ') + 
       ("%2d. [%1s] %-30.30s     %-30.30s     " % [pos, @_track.set, @_track.title, @filename]) + 
-      @_track.songs.map{ |song| "(%-3d) %-20.20s" % [song.id, song.title] }.join('   ')
+      @_track.songs.map {|song| "(%-3d) %-20.20s" % [song.id, song.title] }.join('   ')
     end
 
     def pos
@@ -157,7 +157,7 @@ module ShowImporter
 
     def merge_track(track)
       @_track.title += " > #{track.title}"
-      @_track.songs << track.songs.reject{ |s| @_track.songs.include?(s) }
+      @_track.songs << track.songs.reject {|s| @_track.songs.include?(s) }
       @filename = track.filename if @filename.nil? && !track.filename.nil?
     end
 

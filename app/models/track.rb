@@ -105,7 +105,7 @@ class Track < ActiveRecord::Base
         # apic.mime_type = "image/jpeg"
         # apic.description = "Cover"
         # apic.type = TagLib::ID3v2::AttachedPictureFrame::FrontCover
-        # apic.picture = File.open(Rails.root.to_s + '/app/assets/images/cover_generic.jpg', 'rb') { |f| f.read }
+        # apic.picture = File.open(Rails.root.to_s + '/app/assets/images/cover_generic.jpg', 'rb') {|f| f.read }
         # tag.add_frame(apic)
         # Save
         file.save
@@ -150,7 +150,8 @@ class Track < ActiveRecord::Base
   def as_json_api
     {
       id: id,
-      show_id: show_id,
+      show_id: show.id,
+      show_date: show.date,
       title: title,
       position: position,
       duration: duration,
@@ -160,7 +161,7 @@ class Track < ActiveRecord::Base
       slug: slug,
       tags: tags.map(&:name).as_json,
       mp3: mp3_url,
-      songs: songs.as_json
+      song_ids: songs.map(&:id)
     }
   end
 

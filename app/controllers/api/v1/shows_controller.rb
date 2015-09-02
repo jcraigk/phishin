@@ -2,10 +2,10 @@ module Api
   module V1
     class ShowsController < ApiController
       
-      caches_action :index, cache_path: Proc.new { |c| c.params }, expires_in: CACHE_TTL
-      caches_action :show, cache_path: Proc.new { |c| c.params }, expires_in: CACHE_TTL
-      caches_action :on_date, cache_path: Proc.new { |c| c.params }, expires_in: CACHE_TTL
-      caches_action :on_day_of_year, cache_path: Proc.new { |c| c.params }, expires_in: CACHE_TTL
+      caches_action :index,           cache_path: Proc.new {|c| c.params }, expires_in: CACHE_TTL
+      caches_action :show,            cache_path: Proc.new {|c| c.params }, expires_in: CACHE_TTL
+      caches_action :on_date,         cache_path: Proc.new {|c| c.params }, expires_in: CACHE_TTL
+      caches_action :on_day_of_year,  cache_path: Proc.new {|c| c.params }, expires_in: CACHE_TTL
 
       def index
         show = Show.avail

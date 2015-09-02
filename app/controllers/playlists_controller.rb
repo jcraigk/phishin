@@ -172,7 +172,7 @@ class PlaylistsController < ApplicationController
     if show = Show.where(id: params[:show_id]).includes(:tracks).order('tracks.position asc').first
       track_list = show.tracks.map(&:id)
       unique_list = []
-      track_list.each { |track_id| unique_list << track_id unless session[:playlist].include? track_id }
+      track_list.each {|track_id| unique_list << track_id unless session[:playlist].include? track_id }
       if session[:playlist].size + unique_list.size > 99
         render json: { success: false, msg: 'Playlists are limited to 100 tracks' }
       else
@@ -300,7 +300,6 @@ class PlaylistsController < ApplicationController
     end
     order_by += ', name'
   end
-  
   
   def create_playlist_tracks(playlist)
     session[:playlist].each_with_index do |track_id, idx|

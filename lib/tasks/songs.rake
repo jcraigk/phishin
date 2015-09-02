@@ -40,7 +40,7 @@ namespace :songs do
 
     dir_path = scrub_dir_path ENV['dir']
 
-    entries = Dir.entries(dir_path).reject{ |e| e == '.' || e == '..' }
+    entries = Dir.entries(dir_path).reject {|e| e == '.' || e == '..' }
     entries.each do |filename|
       sfilename = scrub_filename(filename)
       found = Song.kinda_matching(sfilename).first

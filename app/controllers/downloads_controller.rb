@@ -33,16 +33,6 @@ class DownloadsController < ApplicationController
     log_this_track_request 'download'
     send_file track.audio_file.path, :type => "audio/mpeg", :disposition => "attachment", :filename => "Phish #{track.show.date} #{track.title}.mp3", :length => File.size(track.audio_file.path)
   end
-  
-  # FOLLOWING DISCONTINUED BECAUSE IT DOESN'T SUPPORT 206 Partial Content
-  # NEEDED BY SOUNDMANAGER2 HTML5AUDIO
-  # Provide a track as a playable MP3 to SoundManager
-  # def play_track
-  #   track = Track.find(params[:track_id])
-  #   redirect_to(:root) and return unless File.exists?(track.audio_file.path)
-  #   log_this_track_request 'play'
-  #   send_file track.audio_file.path, :type => "audio/mpeg", :filename => "#{track.id}.mp3", :length => File.size(track.audio_file.path)
-  # end
 
   # Respond to an AJAX request to create/fetch an album
   def request_download_show
@@ -51,8 +41,8 @@ class DownloadsController < ApplicationController
       # Prune away tracks if specific set is being called
       if params[:set].present? and show.tracks.map(&:set).include? params[:set]
         # If the last set of the show is being requested, include encore tracks
-        album_tracks.reject! { |track| /^E\d?$/.match track.set } unless show.last_set == params[:set].to_i
-        album_tracks.reject! { |track| /^\d$/.match track.set and track.set != params[:set] }
+        album_tracks.reject! {|track| /^E\d?$/.match track.set } unless show.last_set == params[:set].to_i
+        album_tracks.reject! {|track| /^\d$/.match track.set and track.set != params[:set] }
         album_name = "#{show.date.to_s} #{album_tracks.first.set_name}" if album_tracks.any?
       else
         album_name = show.date.to_s
@@ -122,7 +112,7 @@ class DownloadsController < ApplicationController
   # Album_name will differentiate two identical playlists with different names (for unique id3 tagging)
   def album_checksum(tracks, album_name)
     digest = Digest::MD5.new()
-    tracks.each { |track| digest << track.audio_file.path }
+    tracks.each {|track| digest << track.audio_file.path }
     digest << album_name
     digest.to_s
   end

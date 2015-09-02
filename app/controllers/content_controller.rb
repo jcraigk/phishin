@@ -1,8 +1,8 @@
 class ContentController < ApplicationController
 
-  caches_action :years, expires_in: CACHE_TTL
-  caches_action :songs, expires_in: CACHE_TTL, cache_path: Proc.new {|c| c.request.url }
-  caches_action :venues, expires_in: CACHE_TTL, cache_path: Proc.new {|c| c.request.url }
+  caches_action :years,  expires_in: CACHE_TTL
+  caches_action :songs,  cache_path: Proc.new {|c| c.request.url }, expires_in: CACHE_TTL
+  caches_action :venues, cache_path: Proc.new {|c| c.request.url }, expires_in: CACHE_TTL
 
   ###############################
   # Hard-coded actions
@@ -30,13 +30,13 @@ class ContentController < ApplicationController
   
   def top_liked_shows
     @shows = Show.avail.where('likes_count > 0').order('likes_count desc, date desc').limit(40)
-    @shows_likes = @shows.map { |show| get_user_show_like(show) }
+    @shows_likes = @shows.map {|show| get_user_show_like(show) }
     render layout: false if request.xhr?
   end
   
   def top_liked_tracks
     @tracks = Track.where('likes_count > 0').order('likes_count desc, title asc').limit(40)
-    @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
+    @tracks_likes = @tracks.map {|track| get_user_track_like(track) }
     render layout: false if request.xhr?
   end
   
@@ -110,7 +110,7 @@ class ContentController < ApplicationController
   def day_of_year(month, day)
     validate_sorting_for_year_or_scope
     if @shows = Show.avail.where('extract(month from date) = ?', month).where('extract(day from date) = ?', day).includes(:tour, :venue, :tags).order(@order_by).all
-      @shows_likes = @shows.map { |show| get_user_show_like(show) }
+      @shows_likes = @shows.map {|show| get_user_show_like(show) }
     end
     @shows
   end
@@ -118,7 +118,7 @@ class ContentController < ApplicationController
   def year(year)
     validate_sorting_for_year_or_scope
     if @shows = Show.avail.during_year(year).includes(:tour, :venue, :tags).order(@order_by).all
-      @shows_likes = @shows.map { |show| get_user_show_like(show) }
+      @shows_likes = @shows.map {|show| get_user_show_like(show) }
     end
     # @viewing_single_year = true
     @shows
@@ -127,7 +127,7 @@ class ContentController < ApplicationController
   def year_range(year1, year2)
     validate_sorting_for_year_or_scope
     if @shows = Show.avail.between_years(year1, year2).includes(:tour, :venue, :tags).order(@order_by).all
-      @shows_likes = @shows.map { |show| get_user_show_like(show) }
+      @shows_likes = @shows.map {|show| get_user_show_like(show) }
     end
     @shows
   end
@@ -147,7 +147,7 @@ class ContentController < ApplicationController
       @tracks.group_by(&:set).each do |set, tracks|
         @set_durations[set] = tracks.map(&:duration).inject(0, &:+)
       end
-      @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
+      @tracks_likes = @tracks.map {|track| get_user_track_like(track) }
       @next_show = Show.avail.order('date asc').first unless @next_show = Show.avail.where('date > ?', @show.date).order('date asc').first
       @previous_show = Show.avail.order('date desc').first unless @previous_show = Show.avail.where('date < ?', @show.date).order('date desc').first
     end
@@ -164,7 +164,7 @@ class ContentController < ApplicationController
         @tracks = @song.tracks.includes({:show => :venue}, :songs).order(@order_by).paginate(page: params[:page], per_page: 20)
         @next_song = Song.relevant.order('title asc').first unless @next_song = Song.relevant.where('title > ?', @song.title).order('title asc').first
         @previous_song = Song.relevant.order('title desc').first unless @previous_song = Song.relevant.where('title < ?', @song.title).order('title desc').first
-        @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
+        @tracks_likes = @tracks.map {|track| get_user_track_like(track) }
       end
     end
     @song
@@ -174,7 +174,7 @@ class ContentController < ApplicationController
     validate_sorting_for_year_or_scope
     if @venue = Venue.where(slug: slug.downcase).includes(:shows).first
       @shows = @venue.shows.includes(:tags).order(@order_by)
-      @shows_likes = @shows.map { |show| get_user_show_like(show) }
+      @shows_likes = @shows.map {|show| get_user_show_like(show) }
       @next_venue = Venue.relevant.order('name asc').first unless @next_venue = Venue.relevant.where('name > ?', @venue.name).order('name asc').first
       @previous_venue = Venue.relevant.order('name desc').first unless @previous_venue = Venue.relevant.where('name < ?', @venue.name).order('name desc').first
     end
@@ -185,7 +185,7 @@ class ContentController < ApplicationController
   def tour(slug)
     if @tour = Tour.where(slug: slug.downcase).includes(:shows).first
       @shows = @tour.shows.includes(:tags).order('date desc')
-      @shows_likes = @shows.map { |show| get_user_show_like(show) }
+      @shows_likes = @shows.map {|show| get_user_show_like(show) }
     end
     @tour
   end

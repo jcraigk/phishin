@@ -2,8 +2,9 @@ module Api
   module V1
     class ApiController < ActionController::Base
       
+      before_filter :attempt_user_authorization!
       before_filter :cors_preflight_check
-      after_filter :cors_set_access_control_headers
+      after_filter  :cors_set_access_control_headers
   
       protected
       
@@ -17,7 +18,19 @@ module Api
         total_entries = data.respond_to?(:total_entries) ? data.total_entries : 1
         total_pages = data.respond_to?(:total_pages) ? data.total_pages : 1
         page = data.respond_to?(:current_page) ? data.current_page : 1
-        render json: { success: true, total_entries: total_entries, total_pages: total_pages, page: page, data: data_as_json(data) }, content_type: 'application/json'
+        render json: { 
+          success: true,
+          total_entries: total_entries,
+          total_pages: total_pages,
+          page: page,
+          data: data_as_json(data)
+        }, content_type: 'application/json'
+      end
+
+      def respond_with_success_simple(message=nil)
+        response = { success: true }
+        response.merge!({ message: message }) if message.present?
+        render json: response
       end
       
       def respond_with_failure(message=nil)
@@ -25,7 +38,7 @@ module Api
       end
       
       def configure_page_params
-        params[:page] ||= 1
+        params[:page]     ||= 1
         params[:per_page] ||= 20
       end
   
@@ -60,15 +73,21 @@ module Api
         headers['Access-Control-Max-Age'] = '1728000'
       end
 
+      def attempt_user_authorization!
+        authenticate_user_from_token! if params[:user].present? and params[:user][:email].present? and params[:user][:auth_token].present?
+      end
+
       # https://gist.github.com/josevalim/fb706b1e933ef01e4fb6
       def authenticate_user_from_token!
-        user_email  = params[:user][:email].presence
-        user        = user_email && User.find_by_email(user_email)
+        unless current_user
+          user_email  = params[:user][:email].presence
+          user        = user_email && User.find_by_email(user_email)
 
-        if user && Devise.secure_compare(user.authentication_token, params[:user][:auth_token])
-          sign_in('user', user)
-        else
-          render json: { success: false, message: 'Invalid email or auth_token' }
+          if user && Devise.secure_compare(user.authentication_token, params[:user][:auth_token])
+            sign_in('user', user)
+          else
+            render json: { success: false, message: 'Invalid email or auth_token' }
+          end
         end
       end
 

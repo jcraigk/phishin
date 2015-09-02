@@ -2,8 +2,8 @@ module Api
   module V1
     class ErasController < ApiController
       
-      caches_action :index, cache_path: Proc.new { |c| c.params }, expires_in: CACHE_TTL
-      caches_action :show, cache_path: Proc.new { |c| c.params }, expires_in: CACHE_TTL
+      caches_action :index, cache_path: Proc.new {|c| c.params }, expires_in: CACHE_TTL
+      caches_action :show,  cache_path: Proc.new {|c| c.params }, expires_in: CACHE_TTL
 
       def index
         respond_with_success(ERAS)

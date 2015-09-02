@@ -79,7 +79,7 @@ namespace :tours do
         puts "#{i+1} of #{tour_list.size} :: Scraping #{url}"
         tour = Tour.where("name = ?", v[:name]).first
         rows = Nokogiri::HTML(open(url)).css('#mainContent ul li')
-        date_list = rows.collect { |row| Iconv.conv('utf-8', 'latin1', row.at_xpath('a[1]/text()').to_s.strip) }
+        date_list = rows.collect {|row| Iconv.conv('utf-8', 'latin1', row.at_xpath('a[1]/text()').to_s.strip) }
         date_list.each do |date|
           show = Show.where("date = ?", date).first
           if show

@@ -86,7 +86,7 @@ module Phishin
             break
           end
           puts "Creating => #{f.path}"
-          resp.read_body { |segment| f.write segment }
+          resp.read_body {|segment| f.write segment }
         end
       ensure
         f.close

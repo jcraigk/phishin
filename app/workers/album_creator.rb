@@ -10,7 +10,7 @@ class AlbumCreator
     all_files_present = true
     album = Album.find(album_id)
     tracks = []
-    track_ids.each { |id| tracks << Track.find(id) }
+    track_ids.each {|id| tracks << Track.find(id) }
     tmpdir = "#{TMP_PATH}album_#{album.md5}/"
     # FileUtils.rm_rf tmpdir
     Dir.mkdir tmpdir
@@ -43,7 +43,7 @@ class AlbumCreator
             # apic.mime_type = "image/jpeg"
             # apic.description = "Cover"
             # apic.type = TagLib::ID3v2::AttachedPictureFrame::FrontCover
-            # apic.picture = File.open(Rails.root.to_s + '/app/assets/images/cover_generic.jpg', 'rb') { |f| f.read }
+            # apic.picture = File.open(Rails.root.to_s + '/app/assets/images/cover_generic.jpg', 'rb') {|f| f.read }
             # tag.add_frame(apic)
         
             # Save
@@ -60,7 +60,7 @@ class AlbumCreator
         
       # Remove existing albums if not enough free space in cache for new uncompressed album
       new_album_size = 0
-      tracks.map { |track| new_album_size += track.audio_file.size}
+      tracks.map {|track| new_album_size += track.audio_file.size}
       while ALBUM_CACHE_MAX_SIZE - Album.cache_used < new_album_size do
         Album.completed.order(:updated_at).first.destroy
       end

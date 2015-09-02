@@ -48,7 +48,7 @@ class Show < ActiveRecord::Base
   end
   
   def last_set
-    tracks.select { |t| /^\d$/.match t.set }.map(&:set).sort.last
+    tracks.select {|t| /^\d$/.match t.set }.map(&:set).sort.last
   end
   
   def as_json
@@ -84,6 +84,7 @@ class Show < ActiveRecord::Base
       tour_id: tour_id,
       venue: venue.as_json,
       taper_notes: taper_notes,
+      likes_count: likes_count,
       tracks: tracks.as_json.sort_by {|t| t[:position] }
     }
   end

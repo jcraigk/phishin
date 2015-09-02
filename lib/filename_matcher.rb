@@ -9,7 +9,7 @@ class FilenameMatcher
     end
 
     @matches  = {}
-    filenames = Dir.entries(@s_dir).reject{ |e| e == '.' || e == '..' || e =~ /.txt$/ }
+    filenames = Dir.entries(@s_dir).reject {|e| e == '.' || e == '..' || e =~ /.txt$/ }
 
     filenames.each do |filename|
       s_filename = scrub_filename filename

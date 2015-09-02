@@ -21,7 +21,7 @@ class PlaylistTrack < ActiveRecord::Base
       slug: track.slug,
       tags: track.tags.map(&:name).as_json,
       mp3: track.mp3_url,
-      songs: track.songs.as_json
+      song_ids: track.songs.map(&:id)
     }
   end
   

@@ -16,19 +16,19 @@ class LikesController < ApplicationController
           likes_count = likable.likes_count + 1
         end
         msg = "#{(liked ? 'Like' : 'Unlike')} acknowledged"
-        render :json => { success: true, msg: msg, liked: liked, likes_count: likes_count }
+        render json: { success: true, msg: msg, liked: liked, likes_count: likes_count }
       else
-        render :json => { success: false, msg: "Invalid likable object specified (#{params[:likable_type]})" }
+        render json: { success: false, msg: "Invalid likable object specified (#{params[:likable_type]})" }
       end
     rescue
-      render :json => { success: false, msg: 'Error while acknowledging like' }
+      render json: { success: false, msg: 'Error while acknowledging like' }
     end
   end
   
   private
   
   def authorize_user!
-    render :json => { success: false, msg: 'You must be signed in to submit Likes' } and return unless current_user
+    render json: { success: false, msg: 'You must be signed in to submit Likes' } and return unless current_user
   end
   
   def find_likable

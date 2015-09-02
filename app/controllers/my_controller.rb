@@ -5,7 +5,7 @@ class MyController < ApplicationController
     if current_user
       show_ids = Like.where(likable_type: 'Show', user_id: current_user.id).all.map(&:likable_id)
       @shows = Show.where(id: show_ids).includes(:tracks).order(@order_by).paginate(page: params[:page], per_page: 20)
-      @shows_likes = @shows.map { |show| get_user_show_like(show) }
+      @shows_likes = @shows.map {|show| get_user_show_like(show) }
     end
     render layout: false if request.xhr?
   end
@@ -14,7 +14,7 @@ class MyController < ApplicationController
     if current_user
       track_ids = Like.where(likable_type: 'Track', user_id: current_user.id).all.map(&:likable_id)
       @tracks = Track.where(id: track_ids).includes(:show).order('title asc').paginate(page: params[:page], per_page: 20)
-      @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
+      @tracks_likes = @tracks.map {|track| get_user_track_like(track) }
     end
     render layout: false if request.xhr?
   end
