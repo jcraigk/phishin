@@ -88,7 +88,7 @@ html {
   body {
     background-color: $background_gray !important;
     
-    a, p, h1, h2, h3, h4, h5 {
+    a, p, span, h1, h2, h3, h4, h5, input {
       font-family: 'Open Sans Condensed', sans-serif;
     }
 
@@ -573,6 +573,7 @@ html {
       width: 410px;
       height: 40px;
       text-align: center;
+      font-family: 'Open Sans Condensed', sans-serif;
   
       #player_title {
         font-size: 20px;
@@ -1009,6 +1010,7 @@ html {
   }
   .btn {
     margin-bottom: 10px !important;
+    font-family: 'Open Sans Condensed', sans-serif;
   }
   .icon-resize-vertical {
     position: relative;
@@ -1072,6 +1074,7 @@ html {
     background-color: $sub_nav_gray;
     padding: 20px 20px 10px 20px;
     border-radius: 10px;
+    font-family: 'Open Sans Condensed', sans-serif;
 
     h1 {
       line-height: 24px;
@@ -1165,6 +1168,7 @@ html {
     float: right;
     width: 670px;
     position: relative;
+    font-family: 'Open Sans Condensed', sans-serif;
 
     & > h1 {
       margin-top: -5px !important;
