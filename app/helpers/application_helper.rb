@@ -236,7 +236,7 @@ module ApplicationHelper
   end
 
    def taper_notes_or_missing(show)
-     show.taper_notes.present? ? show.taper_notes.html_safe : 'No taper notes present for this show'.html_safe
+     show.taper_notes.present? ? CGI.escapeHTML(show.taper_notes) : 'No taper notes present for this show'.html_safe
    end
   
 end
