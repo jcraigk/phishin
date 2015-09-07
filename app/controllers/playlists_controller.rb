@@ -201,7 +201,6 @@ class PlaylistsController < ApplicationController
           if session[:loop]
             render json: { success: true, track_id: playlist.first }
           else
-            raise playlist.inspect
             render json: { success: false, msg: 'End of playlist' }
           end
         else
