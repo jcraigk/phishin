@@ -431,3 +431,9 @@ $ ->
   # Play random song track
   .on 'click', '#random_song_track_btn', (e) ->
     App.Player.playRandomSongTrack $(this).data('song-id')
+
+  # Taper Notes link opens a modal
+  .on 'click', '.show_taper_notes', ->
+    $('#taper_notes_content').html($(this).data('taper-notes'))
+    $('#taper_notes_date').html $(this).data('show-date')
+    $('#taper_notes_modal').modal('show')

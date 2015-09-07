@@ -76,9 +76,6 @@ $highlight4: #fff494;
   100%  { background: $highlight2; }
 }
 
-* {
-  font-family: 'Open Sans Condensed', sans-serif !important;
-}
 #download_iframe {
   display: none;
 }
@@ -91,6 +88,10 @@ html {
   body {
     background-color: $background_gray !important;
     
+    a, p, h1, h2, h3, h4, h5 {
+      font-family: 'Open Sans Condensed', sans-serif;
+    }
+
     a {
       text-decoration: none;
       color: $text_gray !important;
@@ -166,6 +167,11 @@ html {
       border: 1px solid black;
       position: relative;
       top: 140px;
+    }
+    .show_taper_notes {
+      cursor: pointer;
+      align: center;
+      text-indent: 0px;
     }
     .likes_large {
       a {

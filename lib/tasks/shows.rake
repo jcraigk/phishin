@@ -167,5 +167,18 @@ namespace :shows do
       end
     end
   end
+
+  desc "Eliminate blank lines in taper notes content"
+  task fix_taper_notes: :environment do
+    Show.all.each do |show|
+      if show.taper_notes
+        fixed_str = show.taper_notes.gsub(/\n\n/, "\n")
+        if show.taper_notes != fixed_str
+          show.taper_notes = fixed_str
+          show.save
+        end
+      end
+    end
+  end
   
 end

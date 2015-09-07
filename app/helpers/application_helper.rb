@@ -233,6 +233,10 @@ module ApplicationHelper
     end
     
     str.html_safe
- end
+  end
+
+   def taper_notes_or_missing(show)
+     show.taper_notes.present? ? show.taper_notes.html_safe : 'No taper notes present for this show'.html_safe
+   end
   
 end

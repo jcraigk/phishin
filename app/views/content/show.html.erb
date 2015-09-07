@@ -8,16 +8,18 @@
       <%= content_tag :h2, (link_to @show.venue.name.html_safe, "/#{@show.venue.slug}") %>
       <%= content_tag :h2, (link_to @show.venue.location, "/map?map_term=#{CGI::escape(@show.venue.location)}&amp;distance=5") %>
       <%= content_tag :h2, duration_readable(@show.duration, 'letters') %>
+      <%= link_to 'Taper Notes', '#', class: 'show_taper_notes', data: { 'show-date' => @show.date.to_s, 'taper-notes' => taper_notes_or_missing(@show) } %>
       <%= content_tag :div, nil, class: 'hr' %>
       <%= likable(@show, @show_like, 'large') %>
       <div style="clear: both;"></div>
-      <%= render partial: 'shared/context_menu_for_show', locals: {show: @show, viewing_this_show: true, next_show: @next_show, previous_show: @previous_show } %>
+      <%= render partial: 'shared/context_menu_for_show', locals: { show: @show, viewing_this_show: true, next_show: @next_show, previous_show: @previous_show } %>
       <h3>
         <% @show.tags.each do |tag| %>
           <%= content_tag :span, tag.name, class: 'label', style: "background-color: #{tag.color}" %>
         <% end %>
       </h3>
       <%= content_tag :div, nil, class: 'hr' %>
+      <div style="clear: both;"></div>
       <%= link_to('<< Previous Show'.html_safe, "/#{@previous_show.date}") %>
       <div style="clear: both;"></div>
       <%= link_to('Next Show >>'.html_safe, "/#{@next_show.date}", class: 'next_item_link') %>
