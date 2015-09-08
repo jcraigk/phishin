@@ -9,7 +9,7 @@ namespace :phishnet do
 
     tag = Tag.where(name: 'Jamcharts').first
 
-    uri = URI.parse("https://api.phish.net/api.js?api=2.0&method=pnet.jamcharts.all&apikey=448345A7B7688DDE43D0")
+    uri = URI.parse("http://api.phish.net/api.js?api=2.0&method=pnet.jamcharts.all&apikey=448345A7B7688DDE43D0")
     response = Net::HTTP.get_response(uri)
     json = JSON[response.body]
     json.each do |item|
