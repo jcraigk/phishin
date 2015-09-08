@@ -6,7 +6,7 @@ class DownloadsController < ApplicationController
     track = Track.where(id: params[:track_id]).includes(:show => :venue).first
     liked = (current_user and track.likes.where(user_id: current_user.id).first ? true : false)
     if track
-      log_this_track_request 'play'
+      # log_track_request 'play'
       render json: {
         success: true,
         id: track.id,
@@ -30,7 +30,7 @@ class DownloadsController < ApplicationController
   def download_track
     track = Track.find(params[:track_id])
     redirect_to(:root, alert: 'The requested file could not be found') and return unless File.exists?(track.audio_file.path)
-    log_this_track_request 'download'
+    # log_track_request 'download'
     send_file track.audio_file.path, :type => "audio/mpeg", :disposition => "attachment", :filename => "Phish #{track.show.date} #{track.title}.mp3", :length => File.size(track.audio_file.path)
   end
 
@@ -117,7 +117,7 @@ class DownloadsController < ApplicationController
     digest.to_s
   end
   
-  def log_this_track_request(kind)
+  def log_track_request(kind)
     current_user_id = (current_user ? current_user.id : 0)
     TrackRequest.create(track_id: params[:track_id], user_id: current_user_id, kind: kind, created_at: Time.now)
   end
