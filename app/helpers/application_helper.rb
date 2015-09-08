@@ -221,9 +221,9 @@ module ApplicationHelper
   
   def track_title_with_tags(track)
     max_len = 70
-    str = '<div class="track_tag_container">'
-    track.tags.each do |tag|
-      str += content_tag :span, tag.name, class: 'label track_tag', style: "background-color: #{tag.color}"
+    str = '<div class="track_tag_container_inline">'
+    track.tags.sort_by {|tag| tag.priority }.each do |tag|
+      str += content_tag :span, tag.name, class: 'label track_tag', style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color};"
     end
     str += "</div>"
     if track.title.size > max_len
@@ -241,6 +241,41 @@ module ApplicationHelper
 
   def pluralize_with_delimiter(count, word)
     "#{number_with_delimiter(count)} #{word.pluralize(count)}".html_safe
+  end
+
+  def display_tags(tags, short=false, css_class='show_tag_container')
+    str  = "<span class=\"#{css_class}\">"
+    tags.sort_by! {|tag| tag.priority }
+    if short
+      if tags.size > 0
+
+        tag = tags.first
+        str += content_tag :span, tag.name, class: 'label show_tag', style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color}"
+        if tags.size > 1
+          # str += "<span class=\"tags_plus\">+#{tags.size-1}</span>"
+          str += "<span class=\"tags_plus\">...</span>"
+        else
+          str += "<span class=\"tags_plus\" style=\"visibility: hidden;\">...</span>"
+        end
+      end
+    else
+      tags.each do |tag|
+        str += content_tag :span, tag.name, class: 'label show_tag', style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color}"
+      end
+    end
+    str += '</span>'
+    str.html_safe
+  end
+
+  private
+
+  def contrasting_color(color)
+    color_str = color.clone
+    color_str[0] = ''
+    rgb_hex = color_str.scan(/../)
+    sum = 0
+    rgb_hex.each {|hex| sum += hex.hex }
+    sum > 382 ? '#555555' : '#ffffff'
   end
   
 end

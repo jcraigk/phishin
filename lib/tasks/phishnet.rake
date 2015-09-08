@@ -18,14 +18,16 @@ namespace :phishnet do
       show.tracks.each do |track|
         if track.title.include? item['song']
           track_matched = true
-          unless track.tags.include? tag
+          unless track.tags.include?(tag)
             track.tags << tag
             track.save
             pp "#{show.date} => #{track.title} (track id #{track.id})"
           end
         end
       end
-      unless track_matched
+      if track_matched
+        show.tags << tag unless show.tags.include?(tag)
+      else
         if show.missing or show.incomplete
           missing_shows << show.date
         else

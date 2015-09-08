@@ -23,11 +23,7 @@
             <%= likable(show, @shows_likes[idx], 'small') %>
             <%= content_tag :h3, "#{duration_readable(show.duration, 'letters')}", class: 'narrow' %>
             <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
-            <!-- <span class="show_tag_container">
-              <%# show.tags.each do |tag| %>
-                <%# content_tag :span, tag.name, class: 'label show_tag', style: "background-color: #{tag.color}" %>
-              <%# end %>
-            </span> -->
+            <%= display_tags(show.tags, true) %>
             <div style="clear: both;"></div>
           </li>
         <% end %>

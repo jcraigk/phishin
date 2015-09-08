@@ -19,7 +19,7 @@ class PlaylistTrack < ActiveRecord::Base
       set_name: track.set_name,
       likes_count: track.likes_count,
       slug: track.slug,
-      tags: track.tags.map(&:name).as_json,
+      tags: track.tags.sort_by {|tag| tag.priority }.map(&:name).as_json,
       mp3: track.mp3_url,
       song_ids: track.songs.map(&:id)
     }

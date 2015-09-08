@@ -8,12 +8,6 @@
     <%= content_tag :h2, "Shows: #{@shows.size}" %>
     <%= content_tag :div, nil, class: 'hr' %>
     <%= render partial: 'shared/sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Date' => 'date desc', '<i class="icon-time"></i> Date' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes',  '<i class="icon-play-circle"></i> Duration' => 'duration'} } %>
-    <%# if @viewing_single_year %>
-      <%# content_tag :div, nil, class: 'hr' %>
-      <%# link_to('<i class="icon-chevron-left"></i>&nbsp;&nbsp;Previous Year'.html_safe, "/#{@title.to_i - 1}") %>
-      <!-- <div style="clear: both;"></div> -->
-      <%# link_to('<i class="icon-chevron-right"></i>&nbsp;&nbsp;Next Year'.html_safe, "/#{@title.to_i + 1}") %>
-    <%# end %>
   </div>
   
   <div id="content_box">
@@ -45,18 +39,15 @@
           <% if show.venue.nil? %>
             <%= content_tag :h4, 'ERROR!' %>
           <% else %>
-            <%= content_tag :h4, link_to(truncate(show.venue.name, length: 35), "/#{show.venue.slug}"), class: 'narrow' %>
+            <%= content_tag :h4, link_to(truncate(show.venue.name, length: 45), "/#{show.venue.slug}"), class: 'small-font' %>
           <% end %>
-          <%= content_tag :h5, link_to(truncate(show.venue.location, length: 16), "/map?map_term=#{CGI::escape(show.venue.location)}"), class: 'narrower' %>
+          <%= content_tag :h5, link_to(truncate(show.venue.location, length: 16), "/map?map_term=#{CGI::escape(show.venue.location)}"), class: 'narrower small-font' %>
+          <%= display_tags(show.tags, true, 'tag_container_small') %>
           <% #content_tag :span, "#{show.duration_readable}", class: 'show_duration_small' %>
           <%= likable(show, @shows_likes[idx], 'small') %>
           <%= content_tag :h3, duration_readable(show.duration, 'letters') %>
           <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
-          <span class="show_tag_container">
-            <% show.tags.each do |tag| %>
-              <%= content_tag :span, tag.name, class: 'label show_tag', style: "background-color: #{tag.color}" %>
-            <% end %>
-          </span>
+          
           <div style="clear: both;"></div>
         </li>
       

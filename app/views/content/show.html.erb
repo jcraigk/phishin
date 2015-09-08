@@ -7,17 +7,16 @@
     <% unless @show.missing? %>
       <%= content_tag :h2, (link_to @show.venue.name.html_safe, "/#{@show.venue.slug}") %>
       <%= content_tag :h2, (link_to @show.venue.location, "/map?map_term=#{CGI::escape(@show.venue.location)}&amp;distance=5") %>
-      <%= content_tag :h2, duration_readable(@show.duration, 'letters') %>
-      <%= link_to 'Taper Notes', '#', class: 'show_taper_notes', data: { 'show-date' => @show.date.to_s, 'taper-notes' => taper_notes_or_missing(@show) } %>
+      <%= content_tag :span, duration_readable(@show.duration, 'letters'), class: 'show_duration' %>
+      <% if @show.taper_notes.present? %>
+         <span class="show_duration">&nbsp;&nbsp;&bull;&nbsp;&nbsp;</span>
+        <%= link_to 'Taper Notes', '#', class: 'show_taper_notes', data: { 'show-date' => @show.date.to_s, 'taper-notes' => taper_notes_or_missing(@show) } %>
+      <% end %>
       <%= content_tag :div, nil, class: 'hr' %>
       <%= likable(@show, @show_like, 'large') %>
       <div style="clear: both;"></div>
       <%= render partial: 'shared/context_menu_for_show', locals: { show: @show, viewing_this_show: true, next_show: @next_show, previous_show: @previous_show } %>
-      <h3>
-        <% @show.tags.each do |tag| %>
-          <%= content_tag :span, tag.name, class: 'label', style: "background-color: #{tag.color}" %>
-        <% end %>
-      </h3>
+      <%= display_tags(@show.tags, false, 'show_tag_container_title') %>
       <%= content_tag :div, nil, class: 'hr' %>
       <div style="clear: both;"></div>
       <%= link_to('<< Previous Show'.html_safe, "/#{@previous_show.date}") %>
@@ -59,10 +58,12 @@
     
         <li class="playable_track" data-id="<%= track.id %>" data-anchor="<%= track.slug %>">
           <%= content_tag :h2, "#{track_num}.", class: 'position_num' %>
-          <%= content_tag :h2, track_title_with_tags(track), class: 'widest' %>
+          <%= content_tag :h2, track.title, class: 'wide' %>
+          <%= content_tag :h2, display_tags(track.tags, false, 'track_tag_container'), class: 'wide-180' %>
           <%= likable(track, @tracks_likes[idx], 'small') %>
           <%= content_tag :h3, duration_readable(track.duration) %>
           <%= render partial: 'shared/context_menu_for_track', locals: { track: track, show: @show, playlist: false } %>
+          
           <div style="clear: both;"></div>
         </li>
       <% end %>

@@ -168,6 +168,9 @@ html {
       position: relative;
       top: 140px;
     }
+    .show_duration {
+      color: $text_gray !important;
+    }
     .show_taper_notes {
       cursor: pointer;
       align: center;
@@ -1023,36 +1026,72 @@ html {
   .ui-datepicker { 
     margin-top: 0px !important;
   }
-  .track_tag_container {
+  .track_tag_container_inline {
     float: left;
     margin-top: -10px;
+    margin-right: 5px;
   }
   .track_tag {
-    height: 11px !important;
+    height: 10px !important;
     float: left;
     margin-top: 15px !important;
     font-size: 10px !important;
-    margin-right: 10px;
-    border-radius: 5px !important;
+    margin-right: 2px;
     line-height: 10px !important;
   }
   .show_tag_container {
     height: 15px !important;
     padding-top: 6px;
     float: right;
-    width: 30px;
+    width: 120px;
+    overflow: hidden;
+  }
+  .tag_container_small {
+    height: 15px !important;
+    padding-top: 6px;
+    float: left;
+    width: 70px;
+    overflow: hidden;
+  }
+  .show_tag_container_title {
+    margin-top: 4px !important;
+    margin-bottom: 30px !important;
+    display: block;
+    
+    .show_tag {
+      float: left;
+    }
   }
   .show_tag {
     height: 10px !important;
     line-height: 10px !important;
-    float: right;
+    float: left;
     font-size: 10px !important;
+    margin-right: 5px;
+    margin-bottom: 1px;
+  }
+  .tags_plus {
+    float: left;
+    position: relative;
+    top: -3px;
+    left: -4px;
+  }
+  .track_tag_container {
+    height: 15px !important;
+    padding-top: 6px;
+    float: right;
+    width: 200px;
+    overflow: hidden;
+
+    .show_tag {
+      float: right;
+    }
   }
   .hr {
     width: 100%;
     border-bottom: 1px solid $hr_gray;
-    margin-top: 15px;
-    margin-bottom: 15px;
+    margin-top: 10px;
+    margin-bottom: 5px;
   }
   .next_item_link {
     float: right;
@@ -1194,7 +1233,7 @@ html {
     .set_duration {
       position: absolute;
       margin-top: -39px;
-      margin-left: 514px;
+      margin-left: 574px;
     }
     .callout_box {
       font-size: 16px;
@@ -1280,20 +1319,23 @@ html {
           margin-right: 10px;
           overflow: hidden;
         }
-        &.widish {
+        &.wide-180 {
+          width: 180px;
+        }
+        &.wide-220 {
           width: 220px;
         }
         &.wide {
           width: 240px;
-        }
-        &.wide-350 {
-          width: 350px;
         }
         &.wider {
           width: 290px;
         }
         &.widest {
           width: 320px;
+        }
+        &.wide-350 {
+          width: 350px;
         }
       }
       h3 {
@@ -1330,12 +1372,18 @@ html {
         width: 150px;
         margin-left: 10px;
   
+        &.width-200 {
+          width: 200px;
+        }
         &.narrow {
           width: 120px;
         }
         &.narrower {
           width: 85px;
         }
+      }
+      .small-font {
+        font-size: 14px;
       }
       .btn_context {
         font-size: 14px !Important;

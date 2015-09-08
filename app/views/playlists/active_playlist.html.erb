@@ -56,11 +56,11 @@
     <% if @tracks %>
       <% @tracks.each_with_index do |track, idx| %>
         <li class="playable_track" data-id="<%= track.id %>" data-track-duration="<%= track.duration %>">
-          <%= content_tag :h2, "#{idx+1}.", class: 'position_num' %>
-          <%= content_tag :h2, track_title_with_tags(track), class: 'widish' %>
-          <%= content_tag :h5, link_to(track.show.date.strftime("%Y.%m.%d"), "/#{track.show.date}"), class: 'narrow' %>
-          <%# content_tag :h5, link_to(track.show.venue.location, "/map?map_term=#{CGI::escape(track.show.venue.location)}") %>
           <%= content_tag :div, "<i class=\"icon-resize-vertical\"></i>".html_safe, class: "drag_arrows_vertical"  %>
+          <%= content_tag :h2, "#{idx+1}.", class: 'position_num' %>
+          <%= content_tag :h2, track.title, class: 'wide' %>
+          <%= content_tag :h5, link_to(track.show.date.strftime("%Y.%m.%d"), "/#{track.show.date}"), class: 'narrower' %>
+          <%= display_tags(track.tags, true, 'tag_container_small') %>
           <%= likable(track, @tracks_likes[idx], 'small') %>
           <%= content_tag :h3, duration_readable(track.duration) %>
           <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: true, show: nil } %>

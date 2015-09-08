@@ -1,7 +1,7 @@
 namespace :tags do
 
-  desc "Sync RMSTR tags with remaster flags on each show"
-  task sync_rmstr_with_flag: :environment do
+  desc "Sync Remaster tags with RMSTR flags on each show"
+  task sync_remaster_with_flag: :environment do
     tag = Tag.where(name: 'RMSTR').first
 
     Show.where(remastered: true).includes(:tracks).all.each do |show|

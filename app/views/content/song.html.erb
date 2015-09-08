@@ -40,16 +40,12 @@
 
         <li>
           <%= content_tag :h2, link_to(show_link_title(track.show, @display_separators), "/#{track.show.date}/#{track.slug}") %>
-          <%= content_tag :h4, link_to(truncate(track.show.venue.name.html_safe, length: 30), "/#{track.show.venue.slug}"), class: 'narrow' %>
-          <%= content_tag :h5, link_to(track.show.venue.location, "/map?map_term=#{CGI::escape(track.show.venue.location)}"), class: 'narrow' %>
+          <%= content_tag :h2, link_to(truncate(track.show.venue.name.html_safe, length: 30), "/#{track.show.venue.slug}"), class: 'wide-180' %>
+          <%= content_tag :h5, link_to(truncate(track.show.venue.location, length: 20), "/map?map_term=#{CGI::escape(track.show.venue.location)}"), class: 'narrow' %>
           <%= likable(track, @tracks_likes[idx], 'small') %>
           <%= content_tag :h3, duration_readable(track.duration) %>
           <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil } %>
-          <!-- <span class="show_tag_container">
-            <%# track.show.tags.each do |tag| %>
-              <%# content_tag :span, tag.name, class: 'label show_tag', style: "background-color: #{tag.color}" %>
-            <%# end %>
-          </span> -->
+          <%= display_tags(track.tags, true, 'tag_container_small') %>
           <div style="clear: both;"></div>
         </li>
       <% end %>
