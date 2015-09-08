@@ -235,8 +235,12 @@ module ApplicationHelper
     str.html_safe
   end
 
-   def taper_notes_or_missing(show)
-     show.taper_notes.present? ? CGI.escapeHTML(show.taper_notes) : 'No taper notes present for this show'.html_safe
-   end
+  def taper_notes_or_missing(show)
+    show.taper_notes.present? ? CGI.escapeHTML(show.taper_notes) : 'No taper notes present for this show'.html_safe
+  end
+
+  def pluralize_with_delimiter(count, word)
+    "#{number_with_delimiter(count)} #{word.pluralize(count)}".html_safe
+  end
   
 end

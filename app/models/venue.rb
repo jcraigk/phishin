@@ -12,7 +12,7 @@ class Venue < ActiveRecord::Base
   scope :name_starting_with, ->(char) { where("name SIMILAR TO ?", "#{char == '#' ? '[0-9]' : char}%") }
   
   def name_and_abbrev
-    abbrev ? "#{name} (#{abbrev})" : name
+    abbrev.present? ? "#{name} (#{abbrev})" : name
   end
   
   def location

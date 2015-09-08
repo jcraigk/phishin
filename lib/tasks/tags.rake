@@ -1,20 +1,18 @@
 namespace :tags do
 
   desc "Sync RMSTR tags with remaster flags on each show"
-  task :sync_rmstr_with_flag => :environment do
+  task sync_rmstr_with_flag: :environment do
     tag = Tag.where(name: 'RMSTR').first
 
-    Show.includes(:tags).all.each {|show| show.tags.delete(tag) }
-
     Show.where(remastered: true).includes(:tracks).all.each do |show|
-      show.tags << tag
-      show.tracks.each {|track| track.tags << tag }
+      show.tags << tag unless show.tags.include?(tag)
+      show.tracks.each {|track| track.tags << tag unless track.tags.include?(tag) }
       puts "RMSTR tags added to #{show.date}"
     end
   end
 
   desc "Find and destroy orphan TrackTags"
-  task :destroy_orphan_track_tags => :environment do
+  task destroy_orphan_track_tags: :environment do
     num_orphans = 0
     TrackTag.all.each do |track_tag|
       unless track = Track.where(id: track_tag.track_id).first
@@ -26,7 +24,7 @@ namespace :tags do
   end
 
   desc "Find and destroy orphan ShowTags"
-  task :destroy_orphan_show_tags => :environment do
+  task destroy_orphan_show_tags: :environment do
     num_orphans = 0
     ShowTag.all.each do |show_tag|
       unless track = Track.where(id: show_tag.show_id).first
@@ -38,7 +36,7 @@ namespace :tags do
   end
 
   desc "Sync SBD tags on shows and tracks"
-  task :sync_sbd => :environment do
+  task sync_sbd: :environment do
     dates = {
       '1983-12-02' => '',
       '1984-12-01' => '',
@@ -439,6 +437,16 @@ namespace :tags do
           puts "SBD tags added to #{date}"
         end
       end
+    end
+  end
+
+  desc "Sync track_counts and show_counts on each tag"
+  task sync_counts: :environment do
+    Tag.all.each do |tag|
+      tag.shows_count  = ShowTag.where(tag_id: tag.id).all.size
+      tag.tracks_count = TrackTag.where(tag_id: tag.id).all.size
+      tag.save
+      puts "Tag #{tag.name} => shows: #{tag.shows_count}, tracks: #{tag.tracks_count}"
     end
   end
 
