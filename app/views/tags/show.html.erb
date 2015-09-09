@@ -1,0 +1,73 @@
+<%= render partial: 'layouts/global_nav' %>
+
+<div id="content">
+  
+  <div id="title_box">
+    <%= tag_label(@tag, 'large_tag_label') %>
+    <div style="clear: both;"></div>
+
+    <div class="btn-group">
+      <button class="btn<% if params[:entity] == 'show' %> active<% end %>">
+        <%= link_to "Shows: #{number_with_delimiter(@tag.shows_count)}", tag_path(name: params[:name], sort: params[:sort], entity: 'show') %>
+      </button>
+      <button class="btn<% if params[:entity] == 'track' %> active<% end %>">
+        <%= link_to "Tracks: #{number_with_delimiter(@tag.tracks_count)}", tag_path(name: params[:name], sort: params[:sort], entity: 'track') %>
+      </button>
+    </div>
+
+    <%= content_tag :div, nil, class: 'hr' %>
+
+    <%= render partial: 'shared/sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Date' => 'date desc', '<i class="icon-time"></i> Date' => 'date', '<i class="icon-heart"></i> Likes' => 'likes', '<i class="icon-play-circle"></i> Duration' => 'duration'} } %>
+
+  </div>
+  
+  <div id="content_box">
+
+  <ul class="item_list">
+    <ul class="item_list clickable">
+
+      <% if @shows %>
+
+        <% @shows.each_with_index do |show, idx| %>
+          <li>
+            <%= content_tag :h2, link_to("#{show.date.strftime("%Y.%m.%d")}", "/#{show.date}") %>
+            <%= content_tag :h2, link_to(truncate(show.venue.name.html_safe, length: 35), "/#{show.venue.slug}"), class: 'wide-180' %>
+            <%= content_tag :h5, link_to(show.venue.location, "/map?map_term=#{CGI::escape(show.venue.location)}"), class: 'narrow' %>
+            <%= likable(show, @shows_likes[idx], 'small') %>
+            <%= content_tag :h3, duration_readable(show.duration, 'letters') %>
+            <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
+            <%= display_tags(show.tags, true, 'tag_container_small') %>
+
+            <div style="clear: both;"></div>
+          </li>
+        <% end %>
+
+      <% else %>
+
+        <% @tracks.each_with_index do |track, idx| %>
+          <li class="playable_track" data-id="<%= track.id %>">
+            <%= content_tag :h2, link_to(truncate(track.title, length: 44), "/#{track.show.date}/#{track.slug}"), class: 'wide' %>
+            <%= content_tag :h5, link_to(track.show.date.strftime("%Y.%m.%d"), "/#{track.show.date}"), class: 'narrow' %>
+            <%= display_tags(track.tags, true, 'tag_container_small') %>
+            <%= likable(track, @tracks_likes[idx], 'small') %>
+            <%= content_tag :h3, duration_readable(track.duration) %>
+            <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil } %>
+            <div style="clear: both;"></div>
+          </li>
+        <% end %>
+
+      <% end %>
+
+    </ul>
+
+    <% if @entities.total_pages > 1 %>
+      <div class="paging">
+        <%= will_paginate_simple @entities %>
+      </div>
+    <% end %>
+    
+  </div>
+  
+  <div style="clear: both;"></div>
+
+</div>

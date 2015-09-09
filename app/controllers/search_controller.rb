@@ -10,10 +10,12 @@ class SearchController < ApplicationController
         @total_results += 1 if @show = Show.avail.where(date: date).includes(:venue).first
         @total_results += @other_shows.size if @other_shows = Show.avail.where('extract(month from date) = ?', date[5..6]).where('extract(day from date) = ?', date[8..9]).where('date != ?', date).includes(:venue).order('date desc').all
       else
-        @songs = Song.relevant.where('lower(title) LIKE ?', "%#{term}%").order('title asc').all
-        @venues = Venue.relevant.where('lower(name) LIKE ? OR lower(abbrev) LIKE ? OR lower(past_names) LIKE ? OR lower(city) LIKE ? OR lower(state) LIKE ? OR lower(country) LIKE ?', "%#{term}%", "%#{term}%", "%#{term}%", "%#{term}%", "%#{term}%", "%#{term}%").order('name asc').all
-        @tours = Tour.where('lower(name) LIKE ?', "%#{term}%").order('name asc').all
-        @total_results = @songs.size + @venues.size + @tours.size
+        t = "%#{term}%"
+        @songs = Song.relevant.where('lower(title) LIKE ?', t).order('title asc').all
+        @venues = Venue.relevant.where('lower(name) LIKE ? OR lower(abbrev) LIKE ? OR lower(past_names) LIKE ? OR lower(city) LIKE ? OR lower(state) LIKE ? OR lower(country) LIKE ?', t, t, t, t, t, t).order('name asc').all
+        @tours = Tour.where('lower(name) LIKE ?', t).order('name asc').all
+        @tags = Tag.where('lower(name) LIKE ? OR lower(description) LIKE ?', t, t).order('name asc').all
+        @total_results = @songs.size + @venues.size + @tours.size + @tags.size
       end
     else
       @results = false

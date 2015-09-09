@@ -22,14 +22,13 @@
 
   <div id="logo">
     <%= link_to image_tag('logo-text.png', alt: "Logo"), root_path %>
-    <%# content_tag :p, "An archive of live Phish audio", class: 'strong' %>
   </div>
 
   <div id="player_controls">
     <div id="control_previous"></div>
-    <% unless session[:playlist] and session[:playlist].present? %>
-      <div id="playpause_tooltip" title="Click to play a random show!"></div>
-    <% end %>
+    <%# unless session[:playlist] and session[:playlist].present? %>
+      <!-- <div id="playpause_tooltip" title="Click to play a random show!"></div> -->
+    <%# end %>
     <div id="control_playpause"></div>
     <div id="control_next"></div>
   </div>

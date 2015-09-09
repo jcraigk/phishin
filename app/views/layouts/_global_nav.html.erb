@@ -21,13 +21,9 @@
         </div>
       <% end %>
     <% elsif %w(active_playlist saved_playlists).include?(params[:action]) %>
-    <div id="playlist_subnav_container">
-      <%= playlists_sub_links %>
-    </div>
-    <%# elsif params[:controller] == 'my' or params[:controller] == 'devise/registrations' %>
-<!--       <div id="user_subnav_container">
-        <%# user_sub_links %>
-      </div> -->
+      <div id="playlist_subnav_container">
+        <%= playlists_sub_links %>
+      </div>
     <% end %>
   </div>
   <div id="content_buffer"></div>

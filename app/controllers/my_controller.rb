@@ -23,25 +23,27 @@ class MyController < ApplicationController
   
   def validate_sorting_for_my_shows
     params[:sort] = 'date desc' unless ['date desc', 'date asc', 'title', 'likes', 'duration'].include? params[:sort]
-    if params[:sort] == 'show.date asc' or params[:sort] == 'show.date desc'
-      @order_by = params[:sort]
-    elsif params[:sort] == 'title'
-      @order_by = "title desc, show.date desc"
-    elsif params[:sort] == 'likes'
-      @order_by = "likes_count desc, show.date desc"
-    elsif params[:sort] == 'duration'
-      @order_by = "duration, show.date desc"
+    case params[:sort]
+      when 'show.date asc', 'show.date desc'
+        @order_by = params[:sort]
+      when 'title'
+        @order_by = "title desc, show.date desc"
+      when 'likes'
+        @order_by = "likes_count desc, show.date desc"
+      when 'duration'
+        @order_by = "duration, show.date desc"
     end
   end
   
   def validate_sorting_for_my_tracks
     params[:sort] = 'date desc' unless ['date desc', 'date asc', 'likes', 'duration'].include? params[:sort]
-    if params[:sort] == 'date asc' or params[:sort] == 'date desc'
-      @order_by = params[:sort]
-    elsif params[:sort] == 'likes'
-      @order_by = "likes_count desc, date desc"
-    elsif params[:sort] == 'duration'
-      @order_by = "duration, date desc"
+    case params[:sort]
+      when 'date asc', 'date desc'
+        @order_by = params[:sort]
+      when 'likes'
+        @order_by = "likes_count desc, date desc"
+      when 'duration'
+        @order_by = "duration, date desc"
     end
   end
   

@@ -31,6 +31,8 @@ Phishin::Application.routes.draw do
   get     '/top-shows'                    => 'content#top_liked_shows',             as: 'top_shows'
   get     '/top-tracks'                   => 'content#top_liked_tracks',            as: 'top_tracks'
   get     '/search'                       => 'search#results',                      as: 'search'
+  get     '/tags'                         => 'tags#index',                          as: 'tags'
+  get     '/tags/:name'                   => 'tags#show',                           as: 'tag'
 
   # Map
   get     '/search-map'                   => 'map#search',                          as: 'map_search'

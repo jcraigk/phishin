@@ -8,6 +8,15 @@ module ApplicationHelper
     end
     str.html_safe
   end
+
+  def sort_tags_links(item_hash)
+    str = ''
+    item_hash.each do |key, val|
+      link = params[:sort] == val ? "<strong>#{key}</strong>" : key
+      str += content_tag :li, link_to(link.html_safe, "?sort=#{CGI::escape(val)}")
+    end
+    str.html_safe
+  end
   
   def first_char_sub_links(base_url, current_item=nil)
     str = ''
@@ -142,17 +151,18 @@ module ApplicationHelper
   def global_nav_links
     nav_items = {
       # 'userbox' => [nil, ['my_shows', 'my_tracks', 'edit'], 14],
-      'Years' => [years_path, ['years', 'year'], 283],
-      'Venues' => [venues_path, ['venues', 'venue'], 347],
-      'Songs' => [songs_path, ['songs', 'song'], 410],
-      'Map' => ['/map?map_term=Burlington%20VT&distance=10', ['map'], 468],
-      'Top 40' => [top_shows_path, ['top_liked_shows', 'top_liked_tracks'], 524],
-      'Playlists' => [active_playlist_path, ['active_playlist', 'saved_playlists'], 590]
+      'Years' => [years_path, ['years', 'year'], 263],
+      'Venues' => [venues_path, ['venues', 'venue'], 327],
+      'Songs' => [songs_path, ['songs', 'song'], 390],
+      'Map' => ['/map?map_term=Burlington%20VT&distance=10', ['map'], 448],
+      'Top 40' => [top_shows_path, ['top_liked_shows', 'top_liked_tracks'], 504],
+      'Playlists' => [active_playlist_path, ['active_playlist', 'saved_playlists'], 570],
+      'Tags' => [tags_path, ['index', 'show'], 630]
     }
     str = ''
     nav_items.each do |name, properties|
       css = ''
-      css = 'active' if properties[1].include?(params[:action]) or properties[1].include?(@controller_action)
+      css = 'active' unless ([params[:action], @controller_action] & properties[1]).empty?
       if name == 'userbox'
         css += ' user_control'
         if user_signed_in?
@@ -248,11 +258,9 @@ module ApplicationHelper
     tags.sort_by! {|tag| tag.priority }
     if short
       if tags.size > 0
-
         tag = tags.first
-        str += content_tag :span, tag.name, class: 'label show_tag', style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color}"
+        str += tag_label(tag)
         if tags.size > 1
-          # str += "<span class=\"tags_plus\">+#{tags.size-1}</span>"
           str += "<span class=\"tags_plus\">...</span>"
         else
           str += "<span class=\"tags_plus\" style=\"visibility: hidden;\">...</span>"
@@ -260,11 +268,19 @@ module ApplicationHelper
       end
     else
       tags.each do |tag|
-        str += content_tag :span, tag.name, class: 'label show_tag', style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color}"
+        str += link_to tag_path(name: tag.name.downcase) do
+          content_tag :span, tag.name, class: 'label tag_label', style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color}"
+        end
       end
     end
     str += '</span>'
     str.html_safe
+  end
+
+  def tag_label(tag, css_class='')
+    link_to tag_path(name: tag.name.downcase) do
+      content_tag :span, tag.name, class: "label tag_label #{css_class}", style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color}"
+    end
   end
 
   private

@@ -24,7 +24,7 @@ class ContentController < ApplicationController
   
   def map
     params[:date_start] ||= '1983-01-01'
-    params[:date_stop] ||= Date.today.to_s
+    params[:date_stop]  ||= Date.today.to_s
     render layout: false if request.xhr?
   end
   
@@ -161,7 +161,7 @@ class ContentController < ApplicationController
         aliased_song = Song.where(id: @song.alias_for).first
         @redirect = "/#{aliased_song.slug}"
       else
-        @tracks = @song.tracks.includes({:show => :venue}, :songs).order(@order_by).paginate(page: params[:page], per_page: 20)
+        @tracks = @song.tracks.includes({ show: :venue }, :songs).order(@order_by).paginate(page: params[:page], per_page: 20)
         @next_song = Song.relevant.order('title asc').first unless @next_song = Song.relevant.where('title > ?', @song.title).order('title asc').first
         @previous_song = Song.relevant.order('title desc').first unless @previous_song = Song.relevant.where('title < ?', @song.title).order('title desc').first
         @tracks_likes = @tracks.map {|track| get_user_track_like(track) }

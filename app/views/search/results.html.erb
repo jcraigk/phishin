@@ -17,9 +17,10 @@
           <li>If searching for a venue, enter part of its name (or past names) or location like "msg" or "new york"</li>
           <li>If searching for a song, enter all or part of its name like "also sprach" or "birdwatcher"</li>
           <li>If searching for a tour, enter all or part of its name like "summer" or "1995"</li>
+          <li>If searching for a tag, enter all or part of its name or description like "sbd" or "soundboard"</li>
         </ul>
       <% else %>
-    
+
         <% if @show or @other_shows %>
           <% if @show %>
             <h2>Matched 1 Date Exactly</h2>
@@ -34,6 +35,7 @@
           <% else %>
             <h3><i>No Exact Date Matches</i></h3>
           <% end %>
+
           <% if @other_shows %>
             <h2>Matched <%= pluralize(@other_shows.size, 'Dates') %> on this Day in History</h2>
             <ul class="item_list clickable">
@@ -51,7 +53,7 @@
         <% else %>
       
           <% if @songs.size > 0 %>
-            <h2>Matched <%= pluralize(@songs.size, 'Song') %></h2>
+            <h2>Matched <%= pluralize_with_delimiter(@songs.size, 'Song') %></h2>
             <ul class="item_list clickable">
             <% for song in @songs %>
               <li name="<%= song.slug %>">
@@ -62,6 +64,7 @@
             <% end %>
             </ul>
           <% end %>
+
           <% if @venues.size > 0 %>
             <h2>Matched <%= pluralize(@venues.size, 'Venue') %></h2>
             <ul class="item_list clickable">
@@ -76,6 +79,7 @@
               <% end %>
             </ul>
           <% end %>
+
           <% if @tours.size > 0 %>
             <h2>Matched <%= pluralize(@tours.size, 'Tour') %></h2>
             <ul class="item_list clickable">
@@ -83,6 +87,20 @@
                 <li>
                   <%= content_tag :h2, link_to(highlight(truncate(tour.name, length: 45), params[:term]), "/#{tour.slug}"), class: 'wide' %>
                   <%= content_tag :h3, pluralize(tour.shows_count, 'show'), class: 'alt' %>
+                  <div style="clear: both;"></div>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+
+          <% if @tags.size > 0 %>
+            <h2>Matched <%= pluralize(@tags.size, 'Tag') %></h2>
+            <ul class="item_list clickable">
+              <% for tag in @tags %>
+                <li>
+                  <%= content_tag :h2, link_to(highlight(truncate(tag.name, length: 45), params[:term]), "/tags/#{tag.name.downcase}"), class: 'wide' %>
+                  <%= content_tag :h3, pluralize_with_delimiter(tag.tracks_count, 'Track'), class: 'alt' %>
+                  <%= content_tag :h3, pluralize_with_delimiter(tag.shows_count, 'Show'), class: 'alt' %>
                   <div style="clear: both;"></div>
                 </li>
               <% end %>

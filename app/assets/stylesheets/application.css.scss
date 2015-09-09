@@ -1047,7 +1047,6 @@ html {
     overflow: hidden;
   }
   .tag_container_small {
-    height: 15px !important;
     padding-top: 6px;
     float: left;
     width: 70px;
@@ -1058,17 +1057,21 @@ html {
     margin-bottom: 30px !important;
     display: block;
     
-    .show_tag {
+    .tag_label {
       float: left;
     }
   }
-  .show_tag {
+  .tag_label {
     height: 10px !important;
     line-height: 10px !important;
     float: left;
     font-size: 10px !important;
     margin-right: 5px;
     margin-bottom: 1px;
+
+    &:hover {
+      background-color: $highlight1 !important;
+    }
   }
   .tags_plus {
     float: left;
@@ -1076,14 +1079,17 @@ html {
     top: -3px;
     left: -4px;
   }
+  .large_tag_label {
+    font-size: 20px !important;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
   .track_tag_container {
     height: 15px !important;
-    padding-top: 6px;
     float: right;
     width: 200px;
-    overflow: hidden;
 
-    .show_tag {
+    .tag_label {
       float: right;
     }
   }
