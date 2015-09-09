@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails'
+gem 'rails', '3.2.22'
 gem 'taglib-ruby'
 gem 'pg'
 gem 'paperclip'
@@ -35,8 +35,5 @@ group :assets do
 end
 
 group :development do
-  gem 'binding_of_caller'
-  gem 'meta_request'
-  gem 'better_errors'
   gem 'rack-mini-profiler'
 end
