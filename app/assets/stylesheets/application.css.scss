@@ -76,6 +76,31 @@ $highlight4: #fff494;
   100%  { background: $highlight2; }
 }
 
+@-webkit-keyframes pulsate-highlight3 {
+    0%   { color: $text_gray; } 
+    100%  { color: $highlight2; }
+}
+@-moz-keyframes pulsate-highlight3 {
+  0%   { color: $text_gray; } 
+  100%  { color: $highlight2; }
+}
+@keyframes pulsate-highlight3 {
+  0%   { color: $text_gray; } 
+  100%  { color: $highlight2; }
+}
+@-webkit-keyframes pulsate-highlight3 {
+    0%   { color: $text_gray; } 
+    100%  { color: $highlight2; }
+}
+@-moz-keyframes pulsate-highlight3 {
+  0%   { color: $text_gray; } 
+  100%  { color: $highlight2; }
+}
+@keyframes pulsate-highlight3 {
+  0%   { color: $text_gray; } 
+  100%  { color: $highlight2; }
+}
+
 #download_iframe {
   display: none;
 }
@@ -580,9 +605,9 @@ html {
       font-family: 'Open Sans Condensed', sans-serif;
   
       #player_title {
-        font-size: 20px;
+        font-size: 28px;
         color: $gray_70;
-        line-height: 40px;
+        line-height: 48px;
         text-align: center;
         overflow: hidden;
 
@@ -607,6 +632,11 @@ html {
   
       a {
         color: #333;
+      }
+      .show_date {
+        -webkit-animation: pulsate-highlight3 1.5s infinite alternate linear !important; 
+        -moz-animation: pulsate-highlight3 1.5s infinite alternate linear !important;
+        animation: pulsate-highlight3 1.5s infinite alternate linear !important;
       }
     }
     #player_controls {
@@ -850,10 +880,10 @@ html {
 
   .likes_large {
     a {
-      margin-top: 10px;
+      margin-top: 20px;
     }
     span {
-      line-height: 44px;
+      line-height: 64px;
     }
   }
 }
