@@ -157,7 +157,7 @@ module ApplicationHelper
       'Map' => ['/map?map_term=Burlington%20VT&distance=10', ['map'], 448],
       'Top 40' => [top_shows_path, ['top_liked_shows', 'top_liked_tracks'], 504],
       'Playlists' => [active_playlist_path, ['active_playlist', 'saved_playlists'], 570],
-      'Tags' => [tags_path, ['index', 'show'], 630]
+      'Tags' => [tags_path, ['index', 'selected_tag'], 630]
     }
     str = ''
     nav_items.each do |name, properties|
@@ -282,8 +282,6 @@ module ApplicationHelper
       content_tag :span, tag.name, class: "label tag_label #{css_class}", style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color}"
     end
   end
-
-  private
 
   def contrasting_color(color)
     color_str = color.clone

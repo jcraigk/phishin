@@ -8,7 +8,7 @@ class TagsController < ApplicationController
     render layout: false if request.xhr?
   end
 
-  def show
+  def selected_tag
     @tag = Tag.where('lower(name) = ?', params[:name].downcase).first
 
     unless @tag
