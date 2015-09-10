@@ -27,78 +27,54 @@ $highlight2: #91e1f2;
 $highlight3: #cbebf2;
 $highlight4: #fff494;
 
-@-webkit-keyframes pulsate-highlight {
-    0%   { background: $background_gray; } 
-    100%  { background: $highlight4; }
-}
-@-moz-keyframes pulsate-highlight {
-  0%   { background: $background_gray; } 
-  100%  { background: $highlight4; }
-}
-@keyframes pulsate-highlight {
-  0%   { background: $background_gray; } 
-  100%  { background: $highlight4; }
-}
-@-webkit-keyframes pulsate-highlight {
-    0%   { background: $background_gray; } 
-    100%  { background: $highlight4; }
-}
-@-moz-keyframes pulsate-highlight {
-  0%   { background: $background_gray; } 
-  100%  { background: $highlight4; }
-}
-@keyframes pulsate-highlight {
-  0%   { background: $background_gray; } 
-  100%  { background: $highlight4; }
-}
-@-webkit-keyframes pulsate-highlight2 {
-    0%   { background: $background_gray; } 
-    100%  { background: $highlight2; }
-}
-@-moz-keyframes pulsate-highlight2 {
-  0%   { background: $background_gray; } 
-  100%  { background: $highlight2; }
-}
-@keyframes pulsate-highlight2 {
-  0%   { background: $background_gray; } 
-  100%  { background: $highlight2; }
-}
-@-webkit-keyframes pulsate-highlight2 {
-    0%   { background: $background_gray; } 
-    100%  { background: $highlight2; }
-}
-@-moz-keyframes pulsate-highlight2 {
-  0%   { background: $background_gray; } 
-  100%  { background: $highlight2; }
-}
-@keyframes pulsate-highlight2 {
-  0%   { background: $background_gray; } 
-  100%  { background: $highlight2; }
-}
 
-@-webkit-keyframes pulsate-highlight3 {
-    0%   { color: $text_gray; } 
-    100%  { color: $highlight2; }
+@-webkit-keyframes pulsate-highlight {
+    0%   { background: $background_gray; } 
+    100%  { background: $highlight4; }
 }
-@-moz-keyframes pulsate-highlight3 {
-  0%   { color: $text_gray; } 
-  100%  { color: $highlight2; }
+@-moz-keyframes pulsate-highlight {
+  0%   { background: $background_gray; } 
+  100%  { background: $highlight4; }
 }
-@keyframes pulsate-highlight3 {
-  0%   { color: $text_gray; } 
-  100%  { color: $highlight2; }
+@keyframes pulsate-highlight {
+  0%   { background: $background_gray; } 
+  100%  { background: $highlight4; }
 }
-@-webkit-keyframes pulsate-highlight3 {
-    0%   { color: $text_gray; } 
-    100%  { color: $highlight2; }
+@-webkit-keyframes pulsate-highlight {
+    0%   { background: $background_gray; } 
+    100%  { background: $highlight4; }
 }
-@-moz-keyframes pulsate-highlight3 {
-  0%   { color: $text_gray; } 
-  100%  { color: $highlight2; }
+@-moz-keyframes pulsate-highlight {
+  0%   { background: $background_gray; } 
+  100%  { background: $highlight4; }
 }
-@keyframes pulsate-highlight3 {
-  0%   { color: $text_gray; } 
-  100%  { color: $highlight2; }
+@keyframes pulsate-highlight {
+  0%   { background: $background_gray; } 
+  100%  { background: $highlight4; }
+}
+@-webkit-keyframes pulsate-highlight2 {
+    0%   { background: $background_gray; } 
+    100%  { background: $highlight2; }
+}
+@-moz-keyframes pulsate-highlight2 {
+  0%   { background: $background_gray; } 
+  100%  { background: $highlight2; }
+}
+@keyframes pulsate-highlight2 {
+  0%   { background: $background_gray; } 
+  100%  { background: $highlight2; }
+}
+@-webkit-keyframes pulsate-highlight2 {
+    0%   { background: $background_gray; } 
+    100%  { background: $highlight2; }
+}
+@-moz-keyframes pulsate-highlight2 {
+  0%   { background: $background_gray; } 
+  100%  { background: $highlight2; }
+}
+@keyframes pulsate-highlight2 {
+  0%   { background: $background_gray; } 
+  100%  { background: $highlight2; }
 }
 
 #download_iframe {
@@ -124,6 +100,15 @@ html {
     a:hover {
       text-decoration: none !important;
       color: $highlight1 !important;
+    }
+    .track_title {
+      a {
+        text-decoration: none !important;
+
+        &:hover {
+          text-decoration: none !important;
+        }
+      }
     }
     p {
       &.large {
@@ -632,11 +617,6 @@ html {
   
       a {
         color: #333;
-      }
-      .show_date {
-        -webkit-animation: pulsate-highlight3 1.5s infinite alternate linear !important; 
-        -moz-animation: pulsate-highlight3 1.5s infinite alternate linear !important;
-        animation: pulsate-highlight3 1.5s infinite alternate linear !important;
       }
     }
     #player_controls {

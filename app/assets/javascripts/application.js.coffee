@@ -249,6 +249,17 @@ $ ->
       App.Player.playTrack $(this).data('id')
       unless clicked_from_playlist
         App.Player.setCurrentPlaylist $(this).data('id')
+
+  # Click a track title to play it (for iOS devices requiring a link)
+  .on 'click', '.track_title a', (e) ->
+    clicked_from_playlist = $(this).parents('#active_playlist').length > 0
+    id = $(this).parents('.playable_track').data('id')
+    if App.Player.playlist_mode and !clicked_from_playlist
+      App.Playlist.addTrackToPlaylist id
+    else
+      App.Player.playTrack id
+      unless clicked_from_playlist
+        App.Player.setCurrentPlaylist id
   
   # Click Play in a context menu to play the track
   .on 'click', '.context_play_track', (e) ->
