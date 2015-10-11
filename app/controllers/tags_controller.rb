@@ -20,12 +20,12 @@ class TagsController < ApplicationController
       case params[:entity]
         when 'show'
           tag_ids = ShowTag.where(tag_id: @tag.id).map(&:show_id)
-          @shows = Show.where(id: tag_ids).includes(:venue).order(shows_order_by).paginate(page: params[:page], per_page: 20)
+          @shows = Show.where(id: tag_ids).includes(:venue, :tags).order(shows_order_by).paginate(page: params[:page], per_page: 20)
           @shows_likes = @shows.map {|show| get_user_show_like(show) }
           @entities = @shows
         when 'track'
           tag_ids = TrackTag.where(tag_id: @tag.id).map(&:track_id)
-          @tracks = Track.where(id: tag_ids).includes(:show).order(tracks_order_by).paginate(page: params[:page], per_page: 20)
+          @tracks = Track.where(id: tag_ids).includes(:show, :tags).order(tracks_order_by).paginate(page: params[:page], per_page: 20)
           @tracks_likes = @tracks.map {|track| get_user_track_like(track) }
           @entities = @tracks
       end

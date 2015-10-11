@@ -10,7 +10,7 @@ module Api
       end
 
       def show
-        venue = Venue.where(slug: params[:id]).includes(:shows).first unless venue = Venue.where(id: params[:id]).includes(:shows).first
+        venue = Venue.where(slug: params[:id]).first unless venue = Venue.where(id: params[:id]).first
         respond_with_success venue
       end
 

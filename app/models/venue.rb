@@ -41,7 +41,7 @@ class Venue < ActiveRecord::Base
   end
   
   def as_json_api
-    my_shows = shows.as_json.sort_by {|s| s[:date] }
+    my_shows = Show.where(venue_id: self.id).order('date')
     {
       id: id,
       name: name,
@@ -51,8 +51,8 @@ class Venue < ActiveRecord::Base
       shows_count: shows_count,
       location: location,
       slug: slug,
-      show_dates: my_shows.map {|s| s[:date] },
-      show_ids: my_shows.map {|s| s[:id] }
+      show_dates: my_shows.map(&:date),
+      show_ids: my_shows.map(&:id)
     }
   end
 

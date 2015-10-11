@@ -10,7 +10,7 @@ module Api
       end
 
       def show
-        show = Song.where(slug: params[:id]).first unless show = Song.where(id: params[:id]).first
+        show = Song.where(slug: params[:id]).includes(tracks: :show).first unless show = Song.where(id: params[:id]).includes(tracks: :show).first
         respond_with_success show
       end
 

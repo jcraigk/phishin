@@ -29,13 +29,13 @@ class ContentController < ApplicationController
   end
   
   def top_liked_shows
-    @shows = Show.avail.where('likes_count > 0').order('likes_count desc, date desc').limit(40)
+    @shows = Show.avail.where('likes_count > 0').includes(:venue, :tags).order('likes_count desc, date desc').limit(40)
     @shows_likes = @shows.map {|show| get_user_show_like(show) }
     render layout: false if request.xhr?
   end
   
   def top_liked_tracks
-    @tracks = Track.where('likes_count > 0').order('likes_count desc, title asc').limit(40)
+    @tracks = Track.where('likes_count > 0').includes(:show, :tags).order('likes_count desc, title asc').limit(40)
     @tracks_likes = @tracks.map {|track| get_user_track_like(track) }
     render layout: false if request.xhr?
   end
@@ -161,7 +161,7 @@ class ContentController < ApplicationController
         aliased_song = Song.where(id: @song.alias_for).first
         @redirect = "/#{aliased_song.slug}"
       else
-        @tracks = @song.tracks.includes({ show: :venue }, :songs).order(@order_by).paginate(page: params[:page], per_page: 20)
+        @tracks = @song.tracks.includes({ show: :venue }, :songs, :tags).order(@order_by).paginate(page: params[:page], per_page: 20)
         @next_song = Song.relevant.order('title asc').first unless @next_song = Song.relevant.where('title > ?', @song.title).order('title asc').first
         @previous_song = Song.relevant.order('title desc').first unless @previous_song = Song.relevant.where('title < ?', @song.title).order('title desc').first
         @tracks_likes = @tracks.map {|track| get_user_track_like(track) }
@@ -172,7 +172,7 @@ class ContentController < ApplicationController
   
   def venue(slug)
     validate_sorting_for_year_or_scope
-    if @venue = Venue.where(slug: slug.downcase).includes(:shows).first
+    if @venue = Venue.where(slug: slug.downcase).first
       @shows = @venue.shows.includes(:tags).order(@order_by)
       @shows_likes = @shows.map {|show| get_user_show_like(show) }
       @next_venue = Venue.relevant.order('name asc').first unless @next_venue = Venue.relevant.where('name > ?', @venue.name).order('name asc').first

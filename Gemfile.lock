@@ -35,6 +35,9 @@ GEM
     bootstrap-will_paginate (0.0.10)
       will_paginate
     builder (3.0.4)
+    bullet (4.14.7)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.9.0)
     capistrano (3.4.0)
       i18n
       rake (>= 10.0.0)
@@ -202,6 +205,7 @@ GEM
     uglifier (2.7.2)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
+    uniform_notifier (1.9.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
     warden (1.2.3)
@@ -215,6 +219,7 @@ PLATFORMS
 DEPENDENCIES
   airbrussh
   bootstrap-will_paginate
+  bullet
   capistrano
   capistrano-bundler
   capistrano-passenger

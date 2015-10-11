@@ -14,7 +14,7 @@ class PlaylistsController < ApplicationController
     if session[:playlist]
       session[:playlist] = session[:playlist].take(100)
       session[:playlist_shuffled] = session[:playlist].shuffle
-      tracks_by_id = Track.find(session[:playlist]).index_by(&:id)
+      tracks_by_id = Track.where(id: session[:playlist]).includes(:show, :tags).index_by(&:id)
       @tracks = session[:playlist].collect {|id| tracks_by_id[id] }
       @tracks_likes = @tracks.map {|track| get_user_track_like(track) }
       @num_tracks = @tracks.size

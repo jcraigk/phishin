@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150908220110) do
+ActiveRecord::Schema.define(:version => 20151011195314) do
 
   create_table "album_requests", :force => true do |t|
     t.integer  "album_id"
@@ -117,6 +117,7 @@ ActiveRecord::Schema.define(:version => 20150908220110) do
     t.text     "admin_notes"
     t.integer  "duration",    :default => 0,     :null => false
     t.text     "taper_notes"
+    t.integer  "tags_count",  :default => 0
   end
 
   add_index "shows", ["date"], :name => "index_shows_on_date"
@@ -197,6 +198,7 @@ ActiveRecord::Schema.define(:version => 20150908220110) do
     t.string   "set"
     t.integer  "likes_count",             :default => 0
     t.string   "slug"
+    t.integer  "tags_count",              :default => 0
   end
 
   add_index "tracks", ["likes_count"], :name => "index_tracks_on_likes_count"
