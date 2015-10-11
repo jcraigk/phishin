@@ -28,6 +28,8 @@ GEM
     activesupport (3.2.22)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
+    airbrussh (0.7.0)
+      sshkit (>= 1.6.1, != 1.7.0)
     arel (3.0.3)
     bcrypt (3.1.10)
     bootstrap-will_paginate (0.0.10)
@@ -211,6 +213,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  airbrussh
   bootstrap-will_paginate
   capistrano
   capistrano-bundler

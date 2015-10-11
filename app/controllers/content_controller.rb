@@ -9,7 +9,7 @@ class ContentController < ApplicationController
   ###############################
 
   def years
-    request.xhr? ? (render :years, layout: false) : (render :years)
+    render layout: false if request.xhr?
   end
   
   def songs
