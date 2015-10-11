@@ -1,8 +1,8 @@
 class ShowTag < ActiveRecord::Base
   attr_accessible :show_id, :tag_id, :created_at
 
-  belongs_to :show, counter_cache: true
-  belongs_to :tag, counter_cache: true
+  belongs_to :show, counter_cache: :tags_count
+  belongs_to :tag
 
   after_create  :increment_tag_count
   after_destroy :decrement_tag_count
