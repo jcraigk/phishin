@@ -184,9 +184,11 @@ class Track < ActiveRecord::Base
   end
 
   def save_duration
-    Mp3Info.open audio_file.path do |mp3|
-      self.duration = (mp3.length * 1000).round
-      save
+    unless self.duration # this won't record the correct duration if we're uploading a new file
+      Mp3Info.open audio_file.path do |mp3|
+        self.duration = (mp3.length * 1000).round
+        save
+      end
     end
   end
 
