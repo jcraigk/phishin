@@ -52,7 +52,7 @@ class Track < ActiveRecord::Base
   # Callbacks
   ############
   before_validation :populate_song, :populate_position
-  after_save :set_duration
+  after_save :save_duration
   
   def should_generate_new_friendly_id?; true; end
   
@@ -183,9 +183,7 @@ class Track < ActiveRecord::Base
     }
   end
 
-  protected
-  
-  def set_duration
+  def save_duration
     unless self.duration # this won't record the correct duration if we're uploading a new file
       Mp3Info.open audio_file.path do |mp3|
         self.duration = (mp3.length * 1000).round
@@ -193,6 +191,8 @@ class Track < ActiveRecord::Base
       end
     end
   end
+
+  protected
 
   def populate_song
     if self.songs.empty?

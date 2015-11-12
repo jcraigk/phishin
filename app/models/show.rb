@@ -88,5 +88,11 @@ class Show < ActiveRecord::Base
       tracks: tracks.as_json.sort_by {|t| t[:position] }
     }
   end
-  
+
+  def save_duration
+    duration = 0
+    self.tracks.each {|t| duration += t.duration }
+    self.duration = duration
+    self.save
+  end
 end
