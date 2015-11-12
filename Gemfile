@@ -29,6 +29,8 @@ gem 'capistrano-bundler'
 gem 'capistrano-passenger'
 gem 'airbrussh', require: false
 
+gem 'test-unit'
+
 group :assets do
   gem 'coffee-rails', '~> 3.2.1'
   gem 'uglifier', '>= 1.0.3'

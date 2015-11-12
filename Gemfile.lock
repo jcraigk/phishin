@@ -119,6 +119,7 @@ GEM
       activesupport (>= 3.1)
       arel
     polyglot (0.3.5)
+    power_assert (0.2.6)
     rack (1.4.7)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -187,6 +188,8 @@ GEM
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
     taglib-ruby (0.7.0)
+    test-unit (3.1.5)
+      power_assert
     therubyracer (0.12.2)
       libv8 (~> 3.16.14.0)
       ref
@@ -246,6 +249,10 @@ DEPENDENCIES
   selenium-webdriver
   soundmanager-rails
   taglib-ruby
+  test-unit
   therubyracer
   twitter-bootstrap-rails
   uglifier (>= 1.0.3)
+
+BUNDLED WITH
+   1.10.6
