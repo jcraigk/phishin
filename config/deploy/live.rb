@@ -5,3 +5,6 @@ set :deploy_to,     '/var/www/apps/phishin'
 set :audio_path,    '/var/www/app_content/phishin/tracks/audio_files'
 set :linked_files,  %w(config/database.yml)
 set :tmp_dir,       '/home/jcraigk/tmp'
+
+after 'deploy:publishing', 'link_audio'
+after 'deploy:finished', 'restart_passenger'
