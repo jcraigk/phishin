@@ -1,5 +1,5 @@
 Phishin::Application.routes.draw do
-  
+
   namespace :api do
     namespace :v1 do
 
@@ -12,6 +12,7 @@ Phishin::Application.routes.draw do
       resources :shows,       only: [:index, :show]
       resources :tracks,      only: [:index, :show]
       resources :songs,       only: [:index, :show]
+      resources :playlists,   only: [:show]
 
       namespace :playlists do
         get    'details'
@@ -28,7 +29,7 @@ Phishin::Application.routes.draw do
       namespace :likes do
         get  'top_shows'
         get  'top_tracks'
-        
+
         # Auth required
         get  'user_likes'
         post 'like'
