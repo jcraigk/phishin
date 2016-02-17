@@ -3,15 +3,15 @@ require_relative 'show_info'
 require_relative 'filename_matcher'
 
 module ShowImporter
-  
+
   class ShowImporter
     attr_reader :show, :fm, :songs
 
     def initialize(date)
-      
+
       puts "Fetching show info..."
       @show_info = ShowInfo.new date
-      
+
       puts "Analyzing filenames..."
       @fm = FilenameMatcher.new date
 
@@ -20,7 +20,7 @@ module ShowImporter
       else
         @show = Show.new(:date => date)
       end
-      
+
       puts "Finding venue..."
       @venue = Venue.where(name: @show_info.venue_name, city: @show_info.venue_city).first
       @venue = Venue.where('past_names LIKE ? AND city = ?', "%#{@show_info.venue_name}%", @show_info.venue_city).first unless @venue
@@ -73,7 +73,7 @@ module ShowImporter
         if t.valid?
           t.show = @show
           t.audio_file = File.new("#{@fm.s_dir}/#{t.filename}")
-          t.save
+          t.save!
           t.save_default_id3_tags
           begin
             duration += t.duration
@@ -111,7 +111,7 @@ module ShowImporter
       @_track.songs << song unless song.nil?
       @filename = filename
     end
-    
+
     def generic_slug(title)
       title ? title.downcase.gsub(/'/, '').gsub(/[^a-z0-9]/, ' ').strip.gsub(/\s+/, ' ').gsub(/\s/, '-') : ''
     end
@@ -138,8 +138,8 @@ module ShowImporter
     end
 
     def to_s
-      (!valid? ? '* ' : '  ') + 
-      ("%2d. [%1s] %-30.30s     %-30.30s     " % [pos, @_track.set, @_track.title, @filename]) + 
+      (!valid? ? '* ' : '  ') +
+      ("%2d. [%1s] %-30.30s     %-30.30s     " % [pos, @_track.set, @_track.title, @filename]) +
       @_track.songs.map {|song| "(%-3d) %-20.20s" % [song.id, song.title] }.join('   ')
     end
 
@@ -203,7 +203,7 @@ module ShowImporter
     def print_filenames
       filenames = @si.fm.matches.keys
 
-      filenames.each_with_index do |fn, i| 
+      filenames.each_with_index do |fn, i|
         puts "%2d. %s" % [i + 1, fn]
       end
       filenames
@@ -273,7 +273,7 @@ module ShowImporter
       end
       puts
     end
-    
+
     def update_set_for_pos(pos)
       puts "Enter new set abbrev [S,1,2,3,E,E2,E3]:"
       while line = Readline.readline('#=> ', true)
