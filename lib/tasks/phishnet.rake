@@ -8,6 +8,7 @@ namespace :phishnet do
     missing_shows = []
 
     tag = Tag.where(name: 'Jamcharts').first
+    songs = Song.all
 
     uri = URI.parse("http://api.phish.net/api.js?api=2.0&method=pnet.jamcharts.all&apikey=448345A7B7688DDE43D0")
     json = JSON[Net::HTTP.get_response(uri).body]
@@ -21,13 +22,14 @@ namespace :phishnet do
       if show = Show.where(date: item['showdate']).includes(:tracks).first
         track_matched = false
         show.tracks.each do |track|
-          if track.title.include? item['song']
-            track_matched = true
-            unless track.tags.include?(tag)
-              track.tags << tag
-              track.save
-              puts "#{show.date} => #{track.title} (track id #{track.id}) FROM #{item}"
-              puts ""
+          if song = songs.detect { |s| s.title == item['song'] }
+            if SongsTrack.where(song_id: song.id, track_id: track.id).first
+              track_matched = true
+              unless track.tags.include?(tag)
+                track.tags << tag
+                track.save
+                puts "#{show.date} => #{track.title} (track id #{track.id})"
+              end
             end
           end
         end
