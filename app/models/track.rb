@@ -1,5 +1,5 @@
 class Track < ActiveRecord::Base
-  
+
   require 'taglib'
   require 'mp3info'
 
@@ -23,15 +23,15 @@ class Track < ActiveRecord::Base
   has_many :track_tags, dependent: :destroy
   has_many :tags, through: :track_tags
   has_many :playlist_tracks, dependent: :destroy
-  
+
   self.per_page = 10 # will_paginate default
-  
+
   scope :chronological, -> { order('shows.date ASC').joins(:show) }
   scope :tagged_with, ->(tag) { includes(:tags).where('tags.name = ?', tag) }
-  
+
   include PgSearch
   pg_search_scope :kinda_matching,
-                  :against => :title, 
+                  :against => :title,
                   :using => {
                     tsearch: {
                       any_word: false,
@@ -53,9 +53,9 @@ class Track < ActiveRecord::Base
   ############
   before_validation :populate_song, :populate_position
   after_save :save_duration
-  
+
   def should_generate_new_friendly_id?; true; end
-  
+
   # Return the full name of the set given the stored codes
   def set_name
     case set
@@ -70,7 +70,7 @@ class Track < ActiveRecord::Base
       else "Unknown set"
     end
   end
-  
+
   # Return the set abbreviation (livephish.com style)
   # Roman numerals; encores are part of final set
   def set_album_abbreviation
@@ -84,7 +84,7 @@ class Track < ActiveRecord::Base
       ""
     end
   end
-  
+
   # Configure default ID3 tags on the track's audio_file (livephish.com style)
   # Assume track order is in context of entire show
   def save_default_id3_tags
@@ -116,7 +116,7 @@ class Track < ActiveRecord::Base
   def file_url
     audio_file.to_s
   end
-  
+
   def generic_slug
     slug = title.downcase.gsub(/\'/, '').gsub(/[^a-z0-9]/, ' ').strip.gsub(/\s+/, ' ').gsub(/\s/, '-')
     # handle abbreviations
@@ -127,7 +127,7 @@ class Track < ActiveRecord::Base
     slug.gsub!(/big\-black\-furry\-creature\-from\-mars/, 'bbfcfm')
     slug
   end
-  
+
   def mp3_url
     APP_BASE_URL + '/audio/' + sprintf('%09d', id).scan(/.{3}/).join('/') + "/#{id}.mp3"
   end
@@ -146,7 +146,7 @@ class Track < ActiveRecord::Base
       song_ids: songs.map(&:id)
     }
   end
-  
+
   def as_json_api
     {
       id: id,
@@ -195,10 +195,11 @@ class Track < ActiveRecord::Base
   protected
 
   def populate_song
-    if self.songs.empty?
+    if songs.empty?
       song = Song.where 'lower(title) = ?', self.title.downcase
       self.songs << song if song
     end
+  rescue
   end
 
   def populate_position
@@ -212,8 +213,9 @@ class Track < ActiveRecord::Base
 
   def require_at_least_one_song
     errors.add(:songs, "Please add at least one song") if songs.empty?
+  rescue
   end
-  
+
   def romanize(number)
     case number
       when "1" then "I"
@@ -228,5 +230,5 @@ class Track < ActiveRecord::Base
   def prevent_destruction
     false
   end
-  
+
 end
