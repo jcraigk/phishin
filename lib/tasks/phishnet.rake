@@ -26,7 +26,8 @@ namespace :phishnet do
             unless track.tags.include?(tag)
               track.tags << tag
               track.save
-              puts "#{show.date} => #{track.title} (track id #{track.id})"
+              puts "#{show.date} => #{track.title} (track id #{track.id}) FROM #{item}"
+              puts ""
             end
           end
         end
