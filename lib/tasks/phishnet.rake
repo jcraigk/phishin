@@ -22,7 +22,7 @@ namespace :phishnet do
       if show = Show.where(date: item['showdate']).includes(:tracks).first
         track_matched = false
         show.tracks.each do |track|
-          if song = songs.detect { |s| s.title == item['song'] }
+          if song = songs.detect { |s| s.title.downcase == item['song'].downcase }
             if SongsTrack.where(song_id: song.id, track_id: track.id).first
               track_matched = true
               unless track.tags.include?(tag)
