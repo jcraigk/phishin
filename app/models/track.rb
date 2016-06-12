@@ -1,21 +1,12 @@
+require 'taglib'
+require 'mp3info'
+
 class Track < ActiveRecord::Base
-
-  require 'taglib'
-  require 'mp3info'
-
-  # before_destroy :prevent_destruction
-
-  #########################
-  # Attributes & Constants
-  #########################
   attr_accessible :show_id, :title, :position, :audio_file, :song_ids, :set, :slug
 
   has_attached_file :audio_file,
     path: APP_CONTENT_PATH + ":class/:attachment/:id_partition/:id.:extension"
 
-  ########################
-  # Associations & Scopes
-  ########################
   belongs_to :show
   has_many :songs_tracks, dependent: :destroy
   has_many :songs, through: :songs_tracks
@@ -39,18 +30,12 @@ class Track < ActiveRecord::Base
                     }
                   }
 
-  ##############
-  # Validations
-  ##############
   validates_attachment :audio_file, :presence => true,
     :content_type => {:content_type => ['application/mp3', 'application/x-mp3', 'audio/mpeg', 'audio/mp3']}
   validates_presence_of :show, :title, :position
   validates_uniqueness_of :position, :scope => :show_id
   validate :require_at_least_one_song
 
-  ############
-  # Callbacks
-  ############
   before_validation :populate_song, :populate_position
   after_save :save_duration
 
@@ -161,7 +146,8 @@ class Track < ActiveRecord::Base
       slug: slug,
       tags: tags.map(&:name).as_json,
       mp3: mp3_url,
-      song_ids: songs.map(&:id)
+      song_ids: songs.map(&:id),
+      last_modified: updated_at
     }
   end
 
@@ -179,7 +165,8 @@ class Track < ActiveRecord::Base
       slug: slug,
       tags: tags.map(&:name).as_json,
       mp3: mp3_url,
-      songs: songs.as_json
+      songs: songs.as_json,
+      last_modified: updated_at
     }
   end
 

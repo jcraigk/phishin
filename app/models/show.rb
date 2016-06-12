@@ -1,5 +1,4 @@
 class Show < ActiveRecord::Base
-  
   attr_accessible :date, :sbd, :remastered, :likes_count, :venue_id, :duration
   extend FriendlyId
   friendly_id :date
@@ -12,9 +11,9 @@ class Show < ActiveRecord::Base
   has_many :tags, through: :show_tags
 
   validates :date, presence: true
-  
+
   self.per_page = 10 # will_paginate default
-  
+
   scope :avail, -> { where('missing = FALSE') }
   scope :tagged_with, ->(tag) { includes(:tags).where('tags.name = ?', tag) }
 
@@ -46,11 +45,11 @@ class Show < ActiveRecord::Base
       "#{date.strftime('%Y-%m-%d')} - NULL VENUE!"
     end
   end
-  
+
   def last_set
     tracks.select {|t| /^\d$/.match t.set }.map(&:set).sort.last
   end
-  
+
   def as_json
     hash = {
       id: id,
@@ -63,14 +62,15 @@ class Show < ActiveRecord::Base
       tour_id: tour_id,
       venue_id: venue_id,
       likes_count: likes_count,
-      taper_notes: taper_notes
+      taper_notes: taper_notes,
+      last_modified: updated_at
     }
     hash.merge(
       venue_name: venue.name,
       location: venue.location
     ) if venue
   end
-  
+
   def as_json_api
     {
       id: id,
@@ -85,14 +85,15 @@ class Show < ActiveRecord::Base
       venue: venue.as_json,
       taper_notes: taper_notes,
       likes_count: likes_count,
-      tracks: tracks.as_json.sort_by {|t| t[:position] }
+      tracks: tracks.sort_by(&:position).as_json,
+      last_modified: updated_at
     }
   end
 
   def save_duration
     duration = 0
-    self.tracks.each {|t| duration += t.duration }
+    tracks.each { |t| duration += t.duration }
     self.duration = duration
-    self.save
+    save
   end
 end

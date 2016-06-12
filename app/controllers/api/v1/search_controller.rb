@@ -10,9 +10,9 @@ module Api
           respond_with_failure('Enter a term')
         end
       end
-      
+
       private
-      
+
       #todo this duplicates functionality of search_controller...should be refactored into concern
       def search(term)
         term.downcase!

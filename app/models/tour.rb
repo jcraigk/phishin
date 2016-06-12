@@ -1,11 +1,11 @@
 class Tour < ActiveRecord::Base
   attr_accessible :name, :slug, :starts_on, :ends_on, :shows_count
-  
+
   has_many :shows
-  
+
   extend FriendlyId
   friendly_id :name, use: :slugged
-  
+
   def as_json
     {
       id: id,
@@ -16,7 +16,7 @@ class Tour < ActiveRecord::Base
       slug: slug
     }
   end
-  
+
   def as_json_api
     {
       id: id,
@@ -25,8 +25,8 @@ class Tour < ActiveRecord::Base
       slug: slug,
       starts_on: starts_on,
       ends_on: ends_on,
-      shows: shows.sort_by {|s| s.date }.as_json
+      shows: shows.sort_by(&:date).as_json,
+      last_modified: updated_at
     }
   end
-
 end

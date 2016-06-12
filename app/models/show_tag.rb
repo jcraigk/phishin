@@ -10,10 +10,10 @@ class ShowTag < ActiveRecord::Base
   private
 
   def increment_tag_count
-    Tag.increment_counter('shows_count', self.tag_id)
+    Tag.increment_counter('shows_count', tag_id)
   end
 
   def decrement_tag_count
-    Tag.decrement_counter('shows_count', self.tag_id)
+    Tag.decrement_counter('shows_count', tag_id)
   end
 end

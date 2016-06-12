@@ -232,7 +232,7 @@ module ApplicationHelper
   def track_title_with_tags(track)
     max_len = 70
     str = '<div class="track_tag_container_inline">'
-    track.tags.sort_by {|tag| tag.priority }.each do |tag|
+    track.tags.sort_by(&:priority).each do |tag|
       str += content_tag :span, tag.name, class: 'label track_tag', style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color};"
     end
     str += "</div>"

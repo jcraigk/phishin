@@ -1,5 +1,4 @@
 class Playlist < ActiveRecord::Base
-  
   attr_accessible :name, :slug, :user_id, :duration
 
   has_many :playlist_tracks, dependent: :destroy
@@ -15,7 +14,8 @@ class Playlist < ActiveRecord::Base
       slug: slug,
       name: name,
       duration: duration,
-      tracks: playlist_tracks.order(:position).map(&:as_json_for_api)
+      tracks: playlist_tracks.order(:position).map(&:as_json_for_api),
+      last_modified: updated_at
     }
   end
 
@@ -24,7 +24,8 @@ class Playlist < ActiveRecord::Base
       slug: slug,
       name: name,
       duration: duration,
-      track_count: playlist_tracks.size
+      track_count: playlist_tracks.size,
+      last_modified: updated_at
     }
-  end 
+  end
 end

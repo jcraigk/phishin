@@ -1,7 +1,7 @@
 module Api
   module V1
     class ShowsController < ApiController
-      
+
       caches_action :index,           cache_path: Proc.new {|c| c.params }, expires_in: CACHE_TTL
       caches_action :show,            cache_path: Proc.new {|c| c.params }, expires_in: CACHE_TTL
       caches_action :on_date,         cache_path: Proc.new {|c| c.params }, expires_in: CACHE_TTL
@@ -28,7 +28,7 @@ module Api
           end
         end
       end
-      
+
       def on_date
         begin
           Date.parse(params[:date])
@@ -49,7 +49,7 @@ module Api
         day = Integer(monthday[2], 10)
         respond_with_success Show.avail.where('extract(month from date) = ?', month).where('extract(day from date) = ?', day).paginate(page: params[:page], per_page: params[:per_page])
       end
-      
+
       def random
         respond_with_success Show.avail.random.includes(:venue, { tracks: :songs }, :tags).first
       end
