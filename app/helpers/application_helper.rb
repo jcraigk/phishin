@@ -1,5 +1,5 @@
 module ApplicationHelper
-  
+
   def sort_songs_and_venues_links(item_hash)
     str = ''
     item_hash.each do |key, val|
@@ -17,7 +17,7 @@ module ApplicationHelper
     end
     str.html_safe
   end
-  
+
   def first_char_sub_links(base_url, current_item=nil)
     str = ''
     FIRST_CHAR_LIST.each_with_index do |char, i|
@@ -32,7 +32,7 @@ module ApplicationHelper
     end
     str.html_safe
   end
-  
+
   def top_liked_sub_links
     nav_items = {
       'Top 40 Shows' => [top_shows_path, ['top_liked_shows']],
@@ -46,7 +46,7 @@ module ApplicationHelper
     end
     str.html_safe
   end
-  
+
   def user_sub_links
     nav_items = {
       'My Shows' => [my_shows_path, false, ['my_shows']],
@@ -87,7 +87,7 @@ module ApplicationHelper
     end
     str.html_safe
   end
-  
+
   def playlists_sub_links
     nav_items = {
       'Active' => [active_playlist_path, ['active_playlist']],
@@ -101,7 +101,7 @@ module ApplicationHelper
     end
     str.html_safe
   end
-  
+
   def years_sub_links
     str = ''
     Hash[ERAS.to_a.reverse].each do |era, years|
@@ -115,7 +115,7 @@ module ApplicationHelper
     end
     str.html_safe
   end
-  
+
   def will_paginate_simple(collection)
     will_paginate collection, inner_window: 2, outer_window: 0, previous_label: '<<', next_label: '>>', params: [:per_page, :t]
   end
@@ -147,7 +147,7 @@ module ApplicationHelper
       end
     end
   end
-  
+
   def global_nav_links
     nav_items = {
       # 'userbox' => [nil, ['my_shows', 'my_tracks', 'edit'], 14],
@@ -184,18 +184,18 @@ module ApplicationHelper
     end
     str.html_safe
   end
-  
+
   def link_to_song(song, term=nil)
     slug = song.aliased_song ? "/#{song.aliased_song.slug}" : "/#{song.slug}"
     title = (term ? highlight(song.title, term) : song.title)
     link_to title, slug
   end
-  
+
   def performances_or_alias_link(song, display_title=false)
     tracks_count = (display_title ? song.tracks_count : song.tracks_count)
     song.aliased_song ? (link_to "alias for #{song.aliased_song.title}", "#{song.aliased_song.slug}", class: :alias_for) : pluralize(tracks_count, 'track')
   end
-  
+
   def likable(likable, like, size)
     likable_name = likable.class.name.downcase
     css = (like.present? ? [:like_toggle, :liked] : [:like_toggle])
@@ -204,31 +204,31 @@ module ApplicationHelper
     str = content_tag :div, a + span, class: "likes_#{size}"
     str.html_safe
   end
-  
+
   def link_to_show(show, show_abbrev=true)
     link_name = show_link_title(show, show_abbrev)
     link_to(link_name, "/#{show.date}")
   end
-  
+
   def show_link_title(show, show_abbrev=true)
     show_abbrev ? show.date.strftime("%b %-d") : show.date.strftime("%Y.%m.%d")
   end
-  
+
   private
-  
+
   def linked_show_date(show)
     day_link = link_to show.date.strftime("%b %-d"), "/#{show.date.strftime("%B").downcase}-#{show.date.strftime("%-d")}"
     year_link = link_to show.date.strftime("%Y"), "/#{show.date.strftime("%Y")}"
     "#{day_link}, #{year_link}".html_safe
   end
-  
+
   def xhr_exempt_controller
     devise_controllers = %w(sessions registrations confirmations passwords unlocks omniauth_callbacks)
     special_controllers = %w(downloads errors)
     exempt_controllers = devise_controllers + special_controllers
     exempt_controllers.include? controller_name
   end
-  
+
   def track_title_with_tags(track)
     max_len = 70
     str = '<div class="track_tag_container_inline">'
@@ -241,7 +241,7 @@ module ApplicationHelper
     else
       str += track.title
     end
-    
+
     str.html_safe
   end
 
@@ -257,10 +257,10 @@ module ApplicationHelper
     str  = "<span class=\"#{css_class}\">"
     tags.sort_by! {|tag| tag.priority }
     if short
-      if tags.size > 0
+      if tags.count > 0
         tag = tags.first
         str += tag_label(tag)
-        if tags.size > 1
+        if tags.count > 1
           str += "<span class=\"tags_plus\">...</span>"
         else
           str += "<span class=\"tags_plus\" style=\"visibility: hidden;\">...</span>"
@@ -291,5 +291,4 @@ module ApplicationHelper
     rgb_hex.each {|hex| sum += hex.hex }
     sum > 382 ? '#555555' : '#ffffff'
   end
-  
 end

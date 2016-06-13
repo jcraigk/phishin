@@ -1,7 +1,7 @@
 <%= render partial: 'layouts/global_nav' %>
 
 <div id="content">
-  
+
   <div id="title_box">
     <%= content_tag :h1, @title %>
     <%= content_tag :div, nil, class: 'hr' %>
@@ -9,20 +9,20 @@
     <%= content_tag :div, nil, class: 'hr' %>
     <%= render partial: 'shared/sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Date' => 'date desc', '<i class="icon-time"></i> Date' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes',  '<i class="icon-play-circle"></i> Duration' => 'duration'} } %>
   </div>
-  
+
   <div id="content_box">
     <% if @shows.empty? %>
       <h2>Got a blank space where shows should be...</h2>
       <h3>(no shows found)</h3>
     <% else %>
-  
+
       <% unless @display_separators %>
         <ul class="item_list clickable">
       <% end %>
-  
+
       <% tour = false %>
       <% @shows.each_with_index do |show, idx| %>
-  
+
         <% if @display_separators %>
           <% if show.tour != tour %>
             <% if tour %>
@@ -33,7 +33,7 @@
             <% tour = show.tour %>
           <% end %>
         <% end %>
-    
+
         <li>
           <%= content_tag :h2, link_to_show(show, @display_separators) %>
           <% if show.venue.nil? %>
@@ -47,15 +47,15 @@
           <%= likable(show, @shows_likes[idx], 'small') %>
           <%= content_tag :h3, duration_readable(show.duration, 'letters') %>
           <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
-          
+
           <div style="clear: both;"></div>
         </li>
-      
+
       <% end %>
       </ul>
     <% end %>
   </div>
-  
+
   <div style="clear: both;"></div>
 
 </div>
