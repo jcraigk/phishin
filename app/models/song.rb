@@ -41,7 +41,8 @@ class Song < ActiveRecord::Base
       title: title,
       alias_for: alias_for,
       tracks_count: tracks_count,
-      slug: slug
+      slug: slug,
+      updated_t: updated_at
     }
   end
 
@@ -52,7 +53,7 @@ class Song < ActiveRecord::Base
       alias_for: alias_for,
       tracks_count: tracks_count,
       slug: slug,
-      last_modified: updated_at,
+      updated_at: updated_at,
       tracks: tracks.sort_by { |t| t.show.date }.map do |t|
         {
           id: t.id,

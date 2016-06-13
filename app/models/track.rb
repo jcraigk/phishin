@@ -128,7 +128,8 @@ class Track < ActiveRecord::Base
       likes_count: likes_count,
       slug: slug,
       mp3: mp3_url,
-      song_ids: songs.map(&:id)
+      song_ids: songs.map(&:id),
+      updated_at: updated_at
     }
   end
 
@@ -147,7 +148,7 @@ class Track < ActiveRecord::Base
       tags: tags.map(&:name).as_json,
       mp3: mp3_url,
       song_ids: songs.map(&:id),
-      last_modified: updated_at
+      updated_at: updated_at
     }
   end
 
@@ -166,7 +167,7 @@ class Track < ActiveRecord::Base
       tags: tags.map(&:name).as_json,
       mp3: mp3_url,
       songs: songs.as_json,
-      last_modified: updated_at
+      updated_at: updated_at
     }
   end
 

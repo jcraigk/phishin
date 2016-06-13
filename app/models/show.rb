@@ -63,7 +63,7 @@ class Show < ActiveRecord::Base
       venue_id: venue_id,
       likes_count: likes_count,
       taper_notes: taper_notes,
-      last_modified: updated_at
+      updated_at: updated_at
     }
     hash.merge(
       venue_name: venue.name,
@@ -86,7 +86,7 @@ class Show < ActiveRecord::Base
       taper_notes: taper_notes,
       likes_count: likes_count,
       tracks: tracks.sort_by(&:position).as_json,
-      last_modified: updated_at
+      updated_at: updated_at
     }
   end
 

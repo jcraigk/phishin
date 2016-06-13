@@ -8,7 +8,7 @@ class Tag < ActiveRecord::Base
       id: id,
       name: name,
       description: description,
-      last_modified: updated_at
+      updated_at: updated_at
     }
   end
 end

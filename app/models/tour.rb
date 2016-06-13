@@ -13,7 +13,8 @@ class Tour < ActiveRecord::Base
       shows_count: shows_count,
       starts_on: starts_on,
       ends_on: ends_on,
-      slug: slug
+      slug: slug,
+      updated_at: updated_at
     }
   end
 
@@ -26,7 +27,7 @@ class Tour < ActiveRecord::Base
       starts_on: starts_on,
       ends_on: ends_on,
       shows: shows.sort_by(&:date).as_json,
-      last_modified: updated_at
+      updated_at: updated_at
     }
   end
 end

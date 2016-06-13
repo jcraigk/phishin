@@ -21,7 +21,7 @@ class PlaylistTrack < ActiveRecord::Base
       tags: track.tags.sort_by(&:priority).map(&:name).as_json,
       mp3: track.mp3_url,
       song_ids: track.songs.map(&:id),
-      last_modified: updated_at
+      updated_at: updated_at
     }
   end
 end

@@ -15,7 +15,7 @@ class Playlist < ActiveRecord::Base
       name: name,
       duration: duration,
       tracks: playlist_tracks.order(:position).map(&:as_json_for_api),
-      last_modified: updated_at
+      updated_at: updated_at
     }
   end
 
@@ -25,7 +25,7 @@ class Playlist < ActiveRecord::Base
       name: name,
       duration: duration,
       track_count: playlist_tracks.size,
-      last_modified: updated_at
+      updated_at: updated_at
     }
   end
 end

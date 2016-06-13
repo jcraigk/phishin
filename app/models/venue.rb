@@ -36,7 +36,8 @@ class Venue < ActiveRecord::Base
       longitude: longitude,
       shows_count: shows_count,
       location: location,
-      slug: slug
+      slug: slug,
+      updated_at: updated_at
     }
   end
 
@@ -53,7 +54,7 @@ class Venue < ActiveRecord::Base
       slug: slug,
       show_dates: my_shows.map(&:date),
       show_ids: my_shows.map(&:id),
-      last_modified: updated_at
+      updated_at: updated_at
     }
   end
 
