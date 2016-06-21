@@ -42,7 +42,7 @@ class Song < ActiveRecord::Base
       alias_for: alias_for,
       tracks_count: tracks_count,
       slug: slug,
-      updated_t: updated_at
+      updated_at: updated_at
     }
   end
 
