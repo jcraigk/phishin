@@ -30,8 +30,9 @@ class Track < ActiveRecord::Base
                     }
                   }
 
-  validates_attachment :audio_file, presence: true#,
-    # content_type: { content_type: ['application/mp3', 'application/x-mp3', 'audio/mpeg', 'audio/mp3'] }
+  # validates_attachment :audio_file, presence: true,
+  #   content_type: { content_type: ['application/mp3', 'application/x-mp3', 'audio/mpeg', 'audio/mp3'] }
+  do_not_validate_attachment_file_type :audio_file
   validates_presence_of :show, :title, :position
   validates_uniqueness_of :position, scope: :show_id
   validate :require_at_least_one_song
