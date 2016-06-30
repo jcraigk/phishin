@@ -22,18 +22,18 @@ class Track < ActiveRecord::Base
 
   include PgSearch
   pg_search_scope :kinda_matching,
-                  :against => :title,
-                  :using => {
+                  against: :title,
+                  using: {
                     tsearch: {
                       any_word: false,
                       normalization: 16
                     }
                   }
 
-  validates_attachment :audio_file, :presence => true,
-    :content_type => {:content_type => ['application/mp3', 'application/x-mp3', 'audio/mpeg', 'audio/mp3']}
+  validates_attachment :audio_file, presence: true#,
+    # content_type: { content_type: ['application/mp3', 'application/x-mp3', 'audio/mpeg', 'audio/mp3'] }
   validates_presence_of :show, :title, :position
-  validates_uniqueness_of :position, :scope => :show_id
+  validates_uniqueness_of :position, scope: :show_id
   validate :require_at_least_one_song
 
   before_validation :populate_song, :populate_position
