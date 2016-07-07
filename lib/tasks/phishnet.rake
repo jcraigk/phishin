@@ -14,8 +14,8 @@ namespace :phishnet do
     json = JSON[Net::HTTP.get_response(uri).body]
 
     # Remove all current tags
-    ShowTag.where(tag_id: tag.id).all.map(&:destroy)
-    TrackTag.where(tag_id: tag.id).all.map(&:destroy)
+    # ShowTag.where(tag_id: tag.id).all.map(&:destroy)
+    # TrackTag.where(tag_id: tag.id).all.map(&:destroy)
 
     # Add missing tags for each entry
     json.each do |item|
