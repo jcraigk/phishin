@@ -11,35 +11,35 @@ class ContentController < ApplicationController
   def years
     render layout: false if request.xhr?
   end
-  
+
   def songs
     @songs = Song.relevant.title_starting_with(char_param).order(songs_order_by)
     render layout: false if request.xhr?
   end
-  
+
   def venues
     @venues = Venue.relevant.name_starting_with(char_param).order(venues_order_by)
     render layout: false if request.xhr?
   end
-  
+
   def map
     params[:date_start] ||= '1983-01-01'
     params[:date_stop]  ||= Date.today.to_s
     render layout: false if request.xhr?
   end
-  
+
   def top_liked_shows
     @shows = Show.avail.where('likes_count > 0').includes(:venue, :tags).order('likes_count desc, date desc').limit(40)
     @shows_likes = @shows.map {|show| get_user_show_like(show) }
     render layout: false if request.xhr?
   end
-  
+
   def top_liked_tracks
     @tracks = Track.where('likes_count > 0').includes(:show, :tags).order('likes_count desc, title asc').limit(40)
     @tracks_likes = @tracks.map {|track| get_user_track_like(track) }
     render layout: false if request.xhr?
   end
-  
+
   ###############################
   # Glob matching
   ###############################
@@ -104,9 +104,9 @@ class ContentController < ApplicationController
       request.xhr? ? (render view, layout: false) : (render view)
     end
   end
-  
+
   private
-  
+
   def day_of_year(month, day)
     validate_sorting_for_year_or_scope
     if @shows = Show.avail.where('extract(month from date) = ?', month).where('extract(day from date) = ?', day).includes(:tour, :venue, :tags).order(@order_by).all
@@ -114,7 +114,7 @@ class ContentController < ApplicationController
     end
     @shows
   end
-  
+
   def year(year)
     validate_sorting_for_year_or_scope
     if @shows = Show.avail.during_year(year).includes(:tour, :venue, :tags).order(@order_by).all
@@ -123,7 +123,7 @@ class ContentController < ApplicationController
     # @viewing_single_year = true
     @shows
   end
-  
+
   def year_range(year1, year2)
     validate_sorting_for_year_or_scope
     if @shows = Show.avail.between_years(year1, year2).includes(:tour, :venue, :tags).order(@order_by).all
@@ -131,7 +131,7 @@ class ContentController < ApplicationController
     end
     @shows
   end
-  
+
   def show(date)
     date = "#{$1}-#{$2}-#{$3}" if date =~ /^(\d{4})\.(\d{1,2})\.(\d{1,2})$/ # convert 2012.12.31 to 2012-12-31
     # Ensure valid date before touching database
@@ -153,7 +153,7 @@ class ContentController < ApplicationController
     end
     @show
   end
-  
+
   def song(slug)
     validate_sorting_for_song
     if @song = Song.where(slug: slug.downcase).first
@@ -169,7 +169,7 @@ class ContentController < ApplicationController
     end
     @song
   end
-  
+
   def venue(slug)
     validate_sorting_for_year_or_scope
     if @venue = Venue.where(slug: slug.downcase).first
@@ -189,9 +189,7 @@ class ContentController < ApplicationController
     end
     @tour
   end
-  
-  private
-  
+
   def validate_sorting_for_year_or_scope
     params[:sort] = 'date desc' unless ['date desc', 'date asc', 'likes', 'duration'].include? params[:sort]
     if params[:sort] == 'date asc' or params[:sort] == 'date desc'
@@ -205,7 +203,7 @@ class ContentController < ApplicationController
       # @display_separators = false
     end
   end
-  
+
   def validate_sorting_for_song
     params[:sort] = 'date desc' unless ['date desc', 'date asc', 'likes', 'duration'].include? params[:sort]
     if params[:sort] == 'date asc' or params[:sort] == 'date desc'
@@ -219,7 +217,7 @@ class ContentController < ApplicationController
       # @display_separators = false
     end
   end
-  
+
   def songs_order_by
     params[:sort] = 'title' unless ['title', 'performances'].include? params[:sort]
     if params[:sort] == 'title'
@@ -229,7 +227,7 @@ class ContentController < ApplicationController
     end
     order_by
   end
-  
+
   def venues_order_by
     params[:sort] = 'name' unless ['name', 'performances'].include? params[:sort]
     if params[:sort] == 'name'
@@ -239,9 +237,8 @@ class ContentController < ApplicationController
     end
     order_by
   end
-  
+
   def char_param
     params[:char] = (FIRST_CHAR_LIST.include?(params[:char]) ? params[:char] : FIRST_CHAR_LIST.first)
   end
-  
 end

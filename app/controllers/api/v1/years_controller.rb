@@ -6,7 +6,20 @@ module Api
       caches_action :show,  cache_path: Proc.new {|c| c.params }, expires_in: CACHE_TTL
 
       def index
-        respond_with_success(ERAS.values.flatten)
+        eras = ERAS.values.flatten
+
+        # Include show_count for each era if include_show_counts present
+        if params[:include_show_counts].present?
+          eras = eras.each_with_object([]) do |era, list|
+            shows = (era == '1983-1987' ? Show.avail.between_years('1983', '1987') : Show.avail.during_year(era))
+            list << {
+              date: era,
+              show_count: shows.count
+            }
+          end
+        end
+
+        respond_with_success(eras)
       end
 
       def show
