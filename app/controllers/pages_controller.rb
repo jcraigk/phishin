@@ -1,5 +1,4 @@
 class PagesController < ApplicationController
-  
   def legal_stuff
     render layout: false if request.xhr?
   end
@@ -7,9 +6,8 @@ class PagesController < ApplicationController
   def contact_us
     render layout: false if request.xhr?
   end
-  
+
   def api_docs
     render layout: false if request.xhr?
   end
-  
 end

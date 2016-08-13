@@ -29,51 +29,51 @@ $highlight4: #fff494;
 
 
 @-webkit-keyframes pulsate-highlight {
-    0%   { background: $background_gray; } 
+    0%   { background: $background_gray; }
     100%  { background: $highlight4; }
 }
 @-moz-keyframes pulsate-highlight {
-  0%   { background: $background_gray; } 
+  0%   { background: $background_gray; }
   100%  { background: $highlight4; }
 }
 @keyframes pulsate-highlight {
-  0%   { background: $background_gray; } 
+  0%   { background: $background_gray; }
   100%  { background: $highlight4; }
 }
 @-webkit-keyframes pulsate-highlight {
-    0%   { background: $background_gray; } 
+    0%   { background: $background_gray; }
     100%  { background: $highlight4; }
 }
 @-moz-keyframes pulsate-highlight {
-  0%   { background: $background_gray; } 
+  0%   { background: $background_gray; }
   100%  { background: $highlight4; }
 }
 @keyframes pulsate-highlight {
-  0%   { background: $background_gray; } 
+  0%   { background: $background_gray; }
   100%  { background: $highlight4; }
 }
 @-webkit-keyframes pulsate-highlight2 {
-    0%   { background: $background_gray; } 
+    0%   { background: $background_gray; }
     100%  { background: $highlight2; }
 }
 @-moz-keyframes pulsate-highlight2 {
-  0%   { background: $background_gray; } 
+  0%   { background: $background_gray; }
   100%  { background: $highlight2; }
 }
 @keyframes pulsate-highlight2 {
-  0%   { background: $background_gray; } 
+  0%   { background: $background_gray; }
   100%  { background: $highlight2; }
 }
 @-webkit-keyframes pulsate-highlight2 {
-    0%   { background: $background_gray; } 
+    0%   { background: $background_gray; }
     100%  { background: $highlight2; }
 }
 @-moz-keyframes pulsate-highlight2 {
-  0%   { background: $background_gray; } 
+  0%   { background: $background_gray; }
   100%  { background: $highlight2; }
 }
 @keyframes pulsate-highlight2 {
-  0%   { background: $background_gray; } 
+  0%   { background: $background_gray; }
   100%  { background: $highlight2; }
 }
 
@@ -85,10 +85,10 @@ html {
   margin: 0;
   padding: 0;
   overflow-y: scroll;
-  
+
   body {
     background-color: $background_gray !important;
-    
+
     a, p, span, h1, h2, h3, h4, h5, input {
       font-family: 'Open Sans Condensed', sans-serif;
     }
@@ -132,7 +132,7 @@ html {
     .bluelink {
       color: #51A9C9 !important;
     }
-    
+
     #ajax_overlay {
       text-align: center;
       visibility: hidden;
@@ -151,7 +151,7 @@ html {
       width: 300px;
       font-size: 16px;
       color: #333;
-  
+
       .feedback_notice {
         background-color: #d0f7d0;
         border: 2px solid #649976;
@@ -198,7 +198,7 @@ html {
         background: url('icons-heart.png');
         margin-right: 4px;
         margin-bottom: 10px;
-    
+
         &:hover {
           cursor: pointer;
           background-position: -32px 0 !important;
@@ -227,7 +227,7 @@ html {
       text-align: center;
       padding: 5px;
       margin-bottom: 20px;
-  
+
       a {
         margin-right: 20px;
       }
@@ -274,12 +274,12 @@ html {
       margin-top: 7px;
     }
     .highlighted_track {
-      -webkit-animation: pulsate-highlight 1.5s infinite alternate linear !important; 
+      -webkit-animation: pulsate-highlight 1.5s infinite alternate linear !important;
       -moz-animation: pulsate-highlight 1.5s infinite alternate linear !important;
       animation: pulsate-highlight 1.5s infinite alternate linear !important;
     }
     .active_track {
-      -webkit-animation: pulsate-highlight2 1.5s infinite alternate linear !important; 
+      -webkit-animation: pulsate-highlight2 1.5s infinite alternate linear !important;
       -moz-animation: pulsate-highlight2 1.5s infinite alternate linear !important;
       animation: pulsate-highlight2 1.5s infinite alternate linear !important;
     }
@@ -399,7 +399,7 @@ html {
 
   #header_content_container {
     margin: 0 auto;
-    width: 940px;    
+    width: 940px;
   }
   #player_container {
     height: 120px;
@@ -474,7 +474,7 @@ html {
       height: 36px;
       margin-top: 42px;
       margin-left: 260px;
-      
+
       //#volume_slider {
       //  &.ui-slider {
       //    background-image: none !important; //Override jquery UI CSS
@@ -588,7 +588,7 @@ html {
       height: 40px;
       text-align: center;
       font-family: 'Open Sans Condensed', sans-serif;
-  
+
       #player_title {
         font-size: 28px;
         color: $gray_70;
@@ -614,7 +614,7 @@ html {
       overflow: hidden;
       font-size: 15px;
       color: $gray_70;
-  
+
       a {
         color: #333;
       }
@@ -623,7 +623,7 @@ html {
       position: absolute;
       margin-left: 773px;
       margin-top: 42px;
-  
+
       & > div {
         float: left;
         margin-right: 5px;
@@ -682,7 +682,7 @@ html {
     position: absolute;
     margin-top: 31px;
     margin-left: 20px;
-    
+
     img {
       opacity: 0.9;
     }
@@ -725,7 +725,7 @@ html {
     border-bottom: 1px solid $background_gray;
     border-top-right-radius: 8px;
     border-top-left-radius: 8px;
-    
+
     .user_control {
       font-size: 18px;
       font-style: italic;
@@ -735,7 +735,7 @@ html {
     .link_container {
       text-align: center;
       width: 60px;
-      position: absolute;  
+      position: absolute;
       margin-top: 6px;
       height: 14px;
       line-height: 12px;
@@ -770,7 +770,7 @@ html {
         padding: 0px !important;
         margin-left: 5px;
         font-weight: normal !important;
-  
+
         &:focus {
           border: none !important;
           box-shadow: none !important;
@@ -783,8 +783,8 @@ html {
     position: absolute;
     z-index: 20;
     margin-top: 22px;
-    width: 0; 
-    height: 0; 
+    width: 0;
+    height: 0;
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
     border-bottom: 8px solid $background_gray;
@@ -794,8 +794,8 @@ html {
     position: absolute;
     z-index: 21;
     margin-top: 25px;
-    width: 0; 
-    height: 0; 
+    width: 0;
+    height: 0;
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
     border-bottom: 8px solid $sub_nav_gray;
@@ -819,12 +819,12 @@ html {
     background-color: $sub_nav_gray;
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
-    
+
     a {
       color: #6e7073;
       margin-top: -5px;
       margin-left: 20px;
-      
+
       &.active {
         font-weight: bold;
         color: $nav_highlight !important;
@@ -879,7 +879,7 @@ html {
 //  border-bottom-right-radius: 10px;
 //  background-color: $background_gray;
   min-height: 450px;
-  
+
   .centered {
     margin: 0 auto;
     text-align: center;
@@ -908,7 +908,7 @@ html {
     font-size: 17px;
     text-align: center;
     padding: 5px;
-  
+
     a {
       color: #ccc;
       text-decoration: underline;
@@ -941,7 +941,7 @@ html {
     line-height: 14px;
     text-align: left;
     overflow: hidden;
-  
+
     a {
       cursor: pointer;
       float: left;
@@ -950,7 +950,7 @@ html {
       text-decoration: none;
       background: url('icons-heart-small.png');
       margin-right: 3px;
-    
+
       &:hover {
         cursor: pointer;
         background-position: -28px 0 !important;
@@ -994,6 +994,16 @@ html {
     border: 1px dashed #ccc;
     padding: 5px;
     font-size: 16px;
+    background-color: white;
+  }
+  .api-command-inline {
+    margin: 10px 0px 10px 0px;
+    display: inline-block;
+    border-radius: 3px;
+    border: 1px dashed #ccc;
+    padding: 5px;
+    font-size: 16px;
+    background-color: white;
   }
   .api-header {
     margin: 10px 0px 10px 0px;
@@ -1007,20 +1017,15 @@ html {
     display: block;
     margin: 0px 0px 30px 15px;
   }
-  .api-command-inline {
-    margin: 10px 0px 10px 0px;
-    display: inline-block;
-    border-radius: 3px;
-    border: 1px dashed #ccc;
-    padding: 5px;
-    font-size: 16px;
-  }
   .api-list {
     list-style: none;
-  
+
     .api-command-inline {
       margin-right: 10px;
     }
+  }
+  pre {
+    background-color: white;
   }
   .btn {
     margin-bottom: 10px !important;
@@ -1033,7 +1038,7 @@ html {
   .beta {
     color: #e26b6b !important;
   }
-  .ui-datepicker { 
+  .ui-datepicker {
     margin-top: 0px !important;
   }
   .track_tag_container_inline {
@@ -1066,7 +1071,7 @@ html {
     margin-top: 4px !important;
     margin-bottom: 30px !important;
     display: block;
-    
+
     .tag_label {
       float: left;
     }
@@ -1124,7 +1129,7 @@ html {
       color: $gray_80;
     }
   }
-  
+
   #title_box {
     position: fixed;
     width: 190px;
@@ -1139,7 +1144,7 @@ html {
       color: $gray_70;
       font-weight: bold;
       margin-top: 0px;
-  
+
       &.large {
         line-height: 26px;
         font-size: 26px;
@@ -1162,7 +1167,7 @@ html {
       font-size: 17px;
       font-weight: normal;
       color: $text_gray;
-  
+
       .btn-group {
         position: relative;
         top: 4px;
@@ -1195,7 +1200,7 @@ html {
       font-size: 14px;
       font-weight: bold;
       margin-top: 10px;
-  
+
       & > input {
         font-weight: normal !important;
         font-size: 16px;
@@ -1242,7 +1247,7 @@ html {
     }
     & > h4 {
       margin-left: 60px;
-  
+
       &>a {
         color: #5b6699;
       }
@@ -1263,7 +1268,7 @@ html {
     #google_map {
       width: 100%;
       height: 600px;
-  
+
       a {
         color: black !important;
       }
@@ -1306,7 +1311,7 @@ html {
       border-radius: 8px;
       padding: 5px 0px 0px 10px;
       height: 30px;
-  
+
       &:hover {
         cursor: pointer;
         background-color: #fff;
@@ -1330,7 +1335,7 @@ html {
       h2 {
         float: left;
         width: 80px;
-  
+
         &.position_num {
           text-align: right;
           width: 28px;
@@ -1360,11 +1365,11 @@ html {
         float: right;
         width: 50px;
         text-align: right;
-  
+
         &.alt {
           width: 120px;
           margin-right: 10px;
-      
+
           a {
             line-height: 10px;
           }
@@ -1377,7 +1382,7 @@ html {
         float: left;
         width: 280px;
         margin-left: 10px !important;
-  
+
         &  {
           width: 210px;
         }
@@ -1389,7 +1394,7 @@ html {
         float: left;
         width: 150px;
         margin-left: 10px;
-  
+
         &.width-200 {
           width: 200px;
         }
@@ -1416,7 +1421,7 @@ html {
         visibility: hidden;
         position: relative;
         top: 7px;
-    
+
         a {
           line-height: 0px !important;
         }
