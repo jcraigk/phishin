@@ -20,7 +20,7 @@
 @App = {}
 
 $ ->
-  
+
   ###############################################
   # Init
   ###############################################
@@ -30,7 +30,7 @@ $ ->
   App.Player       = new Player
   App.Playlist     = new Playlist
   App.Map          = new Map
-  
+
   ###############################################
   # Assignments
   ###############################################
@@ -39,11 +39,11 @@ $ ->
   $alert          = $ '.feedback_alert'
   $ajax_overlay   = $ '#ajax_overlay'
   $page           = $ '#page'
-  
+
   ###############################################
   # Helpers
   ###############################################
-  
+
   handleHistory = ->
     state = window.History.getState()
     if state.data.href != undefined and !App.Util.page_init
@@ -53,19 +53,19 @@ $ ->
         state.data.href, (response, status, xhr) ->
           # App.Util.showHTMLError(xhr.status + " " + xhr.statusText)
           App.Util.showHTMLError("ERROR\n\n"+response) if status is 'error'
-          
+
           # alert("ERROR\n\n"+response) if status is 'error'
           $ajax_overlay.css 'visibility', 'hidden'
-          
+
           # Scroll to proper position (not currently working)
           window.scrollTo 0, App.Util.historyScrollStates[state.id] if App.Util.historyScrollStates[state.id]
-          
+
           # Tooltips
           $('a[title]').tooltip()
-                    
+
           # Report href to Google Analytics
           _gaq.push([ '_trackPageview', state.data.href ]);
-          
+
           # Auto-scroll and highlight track anchor if present
           if state.data.href.substr(0,6) != '/play/' and path = state.data.href.split("/")[2]
             match = /^([^\?]+)\??(.+)?$/.exec(path)
@@ -77,14 +77,14 @@ $ ->
 
           # For detecting browsers/platforms
           App.Detector = new Detector
-          
+
           # Google Map
           if state.data.href.substr(0,4) is '/map'
             App.Map.initMap()
             term = $('#map_search_term').val()
             distance = $('#map_search_distance').val()
             App.Map.handleSearch(term, distance) if term and distance
-          
+
           # Playlist
           else if state.data.href.substr(0,9) is '/playlist' or state.data.href.substr(0,6) is '/play/'
             App.Playlist.initPlaylist()
@@ -108,7 +108,7 @@ $ ->
     href = match[1].substr(match[1].indexOf('/'), match[1].length - 1)
     App.Util.navigateTo(href)
     handleHistory()  # Need to call this explicitly on page load (to keep Firefox in the mix)
-  
+
   ###############################################
   # Handle feedback on DOM load (for Devise)
   ###############################################
@@ -126,7 +126,7 @@ $ ->
     , 3000)
   else
     $alert.hide()
-  
+
   ###############################################
   # Auto-play or scroll to and play anchor
   ###############################################
@@ -141,17 +141,21 @@ $ ->
   ###############################################
   # DOM interactions
   ###############################################
-  
+
   # Click Phish On Demand app callout
   $(document).on 'click', '#phishod_callout', ->
     window.location = 'https://itunes.apple.com/us/app/phish-on-demand-all-phish/id672139018'
-  
+
+  # Click RoboPhish app callout
+  $(document).on 'click', '#robophish_callout', ->
+    window.location = 'https://play.google.com/store/apps/details?id=com.bayapps.android.robophish&hl=en'
+
   # Click a link to load page via ajax
   .on 'click', 'a', ->
     unless $(this).hasClass('non-remote')
       App.Util.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
       false
-  
+
   # Close dropdown menu after clicking link within
   # Following causes issues with subsequent usage of that dropdown
   # $(document).on 'click', '.dropdown-menu a', (e) ->
@@ -160,12 +164,12 @@ $ ->
     # $(this).parents('.dropdown-menu').css('top', -3000)
 
   ###############################################
-  
+
   # Submit new user
   .on 'submit', '#new_user', (e) ->
     $('#new_user_container').fadeTo('fast', 0.5)
     $('#new_user_submit_btn').val('Processing...')
-    
+
   ###############################################
 
   # Click search box to focus on textbox
@@ -175,10 +179,10 @@ $ ->
   # Submit search
   .on 'keypress', '#search_term', (e) ->
     if e.which is 13
-      App.Util.navigateTo '/search?term='+encodeURI($('#search_term').val()) 
+      App.Util.navigateTo '/search?term='+encodeURI($('#search_term').val())
       $(this).val ''
       $(this).blur()
-    
+
   ###############################################
 
   # Submit map search
@@ -197,7 +201,7 @@ $ ->
     App.Util.navigateToRefreshMap() if e.which is 13
 
   ###############################################
-  
+
   # Playlist stuff
   $(document)
   .on 'click', '#playlist_mode_btn', (e) ->
@@ -237,9 +241,9 @@ $ ->
     App.Playlist.handlePlaybackLoopChange()
   .on 'change', '.playback_shuffle', (e) ->
     App.Playlist.handlePlaybackShuffleChange()
-  
+
   ###############################################
-  
+
   # Click a track to play it
   .on 'click', '.playable_track', (e) ->
     clicked_from_playlist = $(this).parents('#active_playlist').length > 0
@@ -260,7 +264,7 @@ $ ->
       App.Player.playTrack id
       unless clicked_from_playlist
         App.Player.setCurrentPlaylist id
-  
+
   # Click Play in a context menu to play the track
   .on 'click', '.context_play_track', (e) ->
     clicked_from_playlist = $(this).parents('#active_playlist').length > 0
@@ -274,7 +278,7 @@ $ ->
   # Click the Play/Pause button
   .on 'click', '#control_playpause', (e) ->
     App.Player.togglePause()
-  
+
   # Click the Previous button
   .on 'click', '#control_previous', (e) ->
     App.Player.previousTrack()
@@ -282,7 +286,7 @@ $ ->
   # Click the Next button
   .on 'click', '#control_next', (e) ->
     App.Player.nextTrack()
-    
+
   # Scrubber (jQuery UI slider)
   $('#scrubber').slider({
     animate: 'fast',
@@ -303,7 +307,7 @@ $ ->
     slide: ->
       App.Player.moveScrubber()
   }).slider('disable')
-  
+
   # Volume slider (jQuery UI slider)
   $('#volume_slider').slider({
     animate: 'fast',
@@ -313,7 +317,7 @@ $ ->
     slide: ->
       App.Player.updateVolumeSlider $(this).slider('value')
   })
-  
+
   # Loop / Shuffle controls
   $(document).on 'click', '#loop_checkbox', (e) ->
     $(this).attr('checked', !$(this).attr('checked'))
@@ -321,7 +325,7 @@ $ ->
   .on 'click', '#shuffle_checkbox', (e) ->
     $(this).attr('checked', !$(this).attr('checked'))
     e.stopPropagation()
-    
+
   # Toggle mute
   .on 'click', '#volume_icon', (e) ->
     App.Player.toggleMute()
@@ -329,7 +333,7 @@ $ ->
 
   # Play button tooltip
   $('#playpause_tooltip').tooltip({trigger: 'manual'}).tooltip('show')
-  
+
   ###############################################
 
   # Click to download an individual track
@@ -345,17 +349,17 @@ $ ->
         else
           App.Util.feedback { alert: 'You must sign in to download MP3s' }
     })
-  
+
   # Click to download a set of tracks
   .on 'click', 'a.download-album', ->
     App.Util.requestAlbum $(this).data('url'), true
-    
+
   # Stop polling server when download modal is hidden
   $('#download_modal').on 'hidden', ->
     App.Util.StopDownloadPoller
 
   ###############################################
-  
+
   # Hover on player title to reveal Like toggle
   $(document).on 'mouseover', '#player_title_container', (e) ->
     if App.Player.invoked
@@ -365,7 +369,7 @@ $ ->
     if App.Player.invoked
       $('#player_likes_container').css 'display', 'none'
       $('#player_title').css 'display', 'block'
-  
+
   # Like tooltip
   $('.likes_large a').tooltip
     placement: 'bottom',
@@ -376,7 +380,7 @@ $ ->
     delay:
       show: 500
       hide: 0
-  
+
   # Click a Like to submit to server
   $(document).on 'click', '.like_toggle', ->
     $this = $(this)
@@ -409,7 +413,7 @@ $ ->
         else
           App.Util.feedback { alert: r.msg }
     })
-  
+
   ###############################################
 
   # Rollover item list to reveal context button and drag arrows (if present)
@@ -419,7 +423,7 @@ $ ->
   .on 'mouseout', '.item_list > li', ->
     $(this).find('.btn_context').css 'visibility', 'hidden'
     $(this).find('.drag_arrows_vertical').css 'visibility', 'hidden'
-  
+
   # Follow h2>a links in .item_list.clickable > li
   .on 'click', '.item_list > li', (e) ->
     if $(this).parent('ul').hasClass 'clickable'
@@ -429,7 +433,7 @@ $ ->
           location.href = $link.attr('href')
         else
           App.Util.followLink $link
-  
+
   # Share links bring up a modal to display a url
   .on 'click', '.share', ->
     $('#share_url').html("<p>"+$('body').data('base-url')+$(this).data('url')+"</p>")

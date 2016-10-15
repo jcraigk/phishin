@@ -1,8 +1,8 @@
 class @Detector
-  
+
   constructor: ->
     @detectPlatform()
-  
+
   detectPlatform: ->
     # Mac/Firefox not supported
     if /Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent) and /Mac/.test(navigator.userAgent)
@@ -25,7 +25,7 @@ class @Detector
         setTimeout( ->
           alert 'Something went wrong' if +new Date - loadedAt < 2000
         , 1000);
-        
+
         # Convert web path to PhishOD path
         urlParts = window.location.pathname[1...].split '/'
         time     = window.location.search[3...-1].split 'm'
@@ -38,10 +38,10 @@ class @Detector
           path += '/' + time.join('/') if time.length > 0
         # alert('phishod://' + path)
         window.location = 'phishod://' + path;
-        
+
         $.cookie('appInstalled', 'true', { expires: 365 * 10 })
       else
         $.cookie('appInstalled', 'false', { expires: 365 * 10 })
-  
+
   unsupportedBrowser: ->
     window.location.href = '/browser-unsupported'
