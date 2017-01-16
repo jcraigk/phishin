@@ -1,14 +1,14 @@
 <%= render partial: 'layouts/global_nav' %>
 
 <div id="content">
-  
+
   <div id="title_box">
     <div id="map_search_container">
       <h1>Find shows near:</h1>
       <input type="text" id="map_search_term" placeholder="place or zipcode" value="<%= params[:map_term] %>"><br />
       &nbsp;&nbsp;within &nbsp;
       <input type="text" id="map_search_distance" value="<%= params[:distance] || 50 %>">&nbsp;&nbsp;miles &nbsp;
-      <br />    
+      <br />
       <span class="optional">
         within timeframe<br />
         <input type="text" class="small_input" name="date_start" id="map_date_start" placeholder="earliest" value="<%= params[:date_start] %>">
@@ -19,11 +19,11 @@
       <button type="button" class="btn" id="map_search_submit">SEARCH</button>
     </div>
   </div>
-  
+
   <div id="content_box">
     <div id="google_map"></div>
   </div>
-  
+
   <div style="clear: both;"></div>
 
 </div>
@@ -34,7 +34,7 @@ $(function() {
     dateFormat: "yy-mm-dd",
     changeYear: true,
     changeMonth: true,
-    yearRange: '1983:2016',
+    yearRange: '1983:2017',
     showOtherMonths: true,
     selectOtherMonths: true
   });
@@ -42,10 +42,9 @@ $(function() {
     dateFormat: "yy-mm-dd",
     changeYear: true,
     changeMonth: true,
-    yearRange: '1983:2016',
+    yearRange: '1983:2017',
     showOtherMonths: true,
-    selectOtherMonths: true,
-    
+    selectOtherMonths: true
   });
 })
 </script>
