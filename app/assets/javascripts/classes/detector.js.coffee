@@ -4,11 +4,7 @@ class @Detector
     @detectPlatform()
 
   detectPlatform: ->
-    # Mac/Firefox not supported
-    if /Firefox[\/\s](\d+\.\d+)/.test(navigator.userAgent) and /Mac/.test(navigator.userAgent)
-      @unsupportedBrowser()
-    # IE not supported
-    else if eval "/*@cc_on!@*/!1" # only IE can execute this
+    if eval "/*@cc_on!@*/!1" # only IE can execute this
       @unsupportedBrowser()
     # Suggest PhishOD on iOS
     else if /(iPhone|iPad|iPod)/g.test(navigator.userAgent)
