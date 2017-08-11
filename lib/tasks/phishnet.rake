@@ -26,7 +26,8 @@ namespace :phishnet do
       track_matched = false
       show.tracks.each do |track|
         song = songs.find do |s|
-          s.title.casecmp(item['song']) > -1 || s.alt_title.casecmp(item['song']) > -1
+          s.title.casecmp(item['song']) > -1 ||
+            (!s.alt_title.nil? && s.alt_title.casecmp(item['song']) > -1)
         end
         next if song.nil?
 
@@ -37,8 +38,8 @@ namespace :phishnet do
 
         next if track.tags.include?(tag)
 
-        # track.tags << tag
-        # track.save
+        track.tags << tag
+        track.save
         puts "#{show.date} => #{track.title} (track id #{track.id})"
       end
 

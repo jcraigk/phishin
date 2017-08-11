@@ -3,7 +3,6 @@ AllCops:
     - bin/**/*
     - config/**/*
     - db/**/*
-    - lib/**/*
     - spec/**/*
     - vendor/**/*
 Documentation:
