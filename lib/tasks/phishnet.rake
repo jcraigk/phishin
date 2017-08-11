@@ -14,10 +14,6 @@ namespace :phishnet do
     uri = URI.parse(PHISHNET_URI)
     json = JSON[Net::HTTP.get_response(uri).body]
 
-    # Remove all current tags
-    # ShowTag.where(tag_id: tag.id).all.map(&:destroy)
-    # TrackTag.where(tag_id: tag.id).all.map(&:destroy)
-
     # Add missing tags for each entry
     json.each do |item|
       show = Show.where(date: item['showdate']).includes(:tracks).first
@@ -33,14 +29,13 @@ namespace :phishnet do
 
         st = SongsTrack.where(song_id: song.id, track_id: track.id).first
         next if st.nil?
-
-        track_matched = true
-
         next if track.tags.include?(tag)
 
         track.tags << tag
         track.save
         puts "#{show.date} => #{track.title} (track id #{track.id})"
+
+        track_matched = true
       end
 
       if track_matched
