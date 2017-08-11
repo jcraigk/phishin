@@ -17,7 +17,7 @@ gem 'jquery-ui-rails', '5.0.5'
 gem 'newrelic_rpm'
 gem 'nokogiri'
 gem 'paperclip'
-gem 'pg'
+gem 'pg', '0.20'
 gem 'pg_search'
 gem 'pry'
 gem 'rails', '3.2.22.5'
@@ -27,7 +27,7 @@ gem 'selenium-webdriver'
 gem 'soundmanager-rails'
 gem 'taglib-ruby'
 gem 'therubyracer'
-gem 'twitter-bootstrap-rails'
+gem 'twitter-bootstrap-rails', '2.2.8'
 
 group :assets do
   gem 'coffee-rails', '~> 3.2.1'
@@ -36,6 +36,6 @@ group :assets do
 end
 
 group :development do
-  gem 'bullet'
+  gem 'bullet', '~> 4.14'
   gem 'rack-mini-profiler'
 end

@@ -35,9 +35,9 @@ GEM
     bootstrap-will_paginate (1.0.0)
       will_paginate
     builder (3.0.4)
-    bullet (5.6.1)
+    bullet (4.14.7)
       activesupport (>= 3.0.0)
-      uniform_notifier (~> 1.10.0)
+      uniform_notifier (~> 1.9.0)
     capistrano (3.9.0)
       airbrussh (>= 1.0.0)
       i18n
@@ -64,7 +64,6 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
-    commonjs (0.2.7)
     dalli (2.7.6)
     devise (3.5.10)
       bcrypt (~> 3.0)
@@ -92,11 +91,6 @@ GEM
     jquery-ui-rails (5.0.5)
       railties (>= 3.2.16)
     json (1.8.6)
-    less (2.6.0)
-      commonjs (~> 0.2.7)
-    less-rails (2.6.0)
-      actionpack (>= 3.1)
-      less (~> 2.6.0)
     libv8 (3.16.14.19)
     mail (2.5.5)
       mime-types (~> 1.16)
@@ -120,7 +114,7 @@ GEM
       cocaine (~> 0.5.5)
       mime-types
       mimemagic (= 0.3.0)
-    pg (0.21.0)
+    pg (0.20.0)
     pg_search (1.0.6)
       activerecord (>= 3.1)
       activesupport (>= 3.1)
@@ -212,15 +206,15 @@ GEM
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
-    twitter-bootstrap-rails (3.2.2)
+    twitter-bootstrap-rails (2.2.8)
       actionpack (>= 3.1)
-      execjs (>= 2.2.2, >= 2.2)
-      less-rails (>= 2.5.0)
+      execjs
+      rails (>= 3.1)
       railties (>= 3.1)
     tzinfo (0.3.53)
     uglifier (3.2.0)
       execjs (>= 0.3.0, < 3)
-    uniform_notifier (1.10.0)
+    uniform_notifier (1.9.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
     warden (1.2.7)
@@ -233,7 +227,7 @@ PLATFORMS
 DEPENDENCIES
   airbrussh
   bootstrap-will_paginate
-  bullet
+  bullet (~> 4.14)
   capistrano
   capistrano-bundler
   capistrano-passenger
@@ -250,7 +244,7 @@ DEPENDENCIES
   newrelic_rpm
   nokogiri
   paperclip
-  pg
+  pg (= 0.20)
   pg_search
   pry
   rack-mini-profiler
@@ -262,7 +256,7 @@ DEPENDENCIES
   soundmanager-rails
   taglib-ruby
   therubyracer
-  twitter-bootstrap-rails
+  twitter-bootstrap-rails (= 2.2.8)
   uglifier (>= 1.0.3)
 
 BUNDLED WITH
