@@ -22,8 +22,8 @@ module ApplicationHelper
     str = ''
     FIRST_CHAR_LIST.each_with_index do |char, i|
       css = 'char_link'
-      css += ' active' if params[:char] == char or 
-        (params[:char].nil? and current_item.nil? and i == 0) or 
+      css += ' active' if params[:char] == char or
+        (params[:char].nil? and current_item.nil? and i == 0) or
         (char == '#' and defined?(current_item.name) and current_item.name[0] =~ /\d/) or
         (char == '#' and defined?(current_item.title) and current_item.title[0] =~ /\d/) or
         (current_item and defined?(current_item.title) and current_item.title[0] == char) or
@@ -117,7 +117,17 @@ module ApplicationHelper
   end
 
   def will_paginate_simple(collection)
-    will_paginate collection, inner_window: 2, outer_window: 0, previous_label: '<<', next_label: '>>', params: [:per_page, :t]
+    will_paginate(
+      collection,
+      inner_window: 2,
+      outer_window: 0,
+      previous_label: '<<',
+      next_label: '>>',
+      params: {
+        per_page: params[:per_page],
+        t: params[:t]
+      }
+    )
   end
 
   def duration_readable(ms, style='colon')
