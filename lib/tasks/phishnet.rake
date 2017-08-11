@@ -29,13 +29,13 @@ namespace :phishnet do
 
         st = SongsTrack.where(song_id: song.id, track_id: track.id).first
         next if st.nil?
+        track_matched = true
+
         next if track.tags.include?(tag)
 
         track.tags << tag
         track.save
         puts "#{show.date} => #{track.title} (track id #{track.id})"
-
-        track_matched = true
       end
 
       if track_matched
