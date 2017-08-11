@@ -1,0 +1,16 @@
+AllCops:
+  Exclude:
+    - bin/**/*
+    - config/**/*
+    - db/**/*
+    - lib/**/*
+    - spec/**/*
+    - vendor/**/*
+Documentation:
+  Enabled: false
+Metrics/LineLength:
+  Max: 120
+Metrics/MethodLength:
+  Max: 15
+Metrics/ClassLength:
+  Max: 250

@@ -1,4 +1,4 @@
-class AddSongFileFieldToTrack < ActiveRecord::Migration
+class AddAudioFileFieldToTrack < ActiveRecord::Migration
   def up
     add_attachment :tracks, :audio_file
   end

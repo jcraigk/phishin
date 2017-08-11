@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20151011195314) do
+ActiveRecord::Schema.define(:version => 20170811053628) do
 
   create_table "album_requests", :force => true do |t|
     t.integer  "album_id"
@@ -105,10 +105,10 @@ ActiveRecord::Schema.define(:version => 20151011195314) do
 
   create_table "shows", :force => true do |t|
     t.date     "date"
-    t.datetime "created_at",                     :null => false
-    t.datetime "updated_at",                     :null => false
     t.boolean  "remastered",  :default => false
     t.boolean  "sbd",         :default => false
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
     t.integer  "venue_id"
     t.integer  "tour_id"
     t.integer  "likes_count", :default => 0
@@ -128,18 +128,25 @@ ActiveRecord::Schema.define(:version => 20151011195314) do
 
   create_table "songs", :force => true do |t|
     t.string   "title"
-    t.datetime "created_at",                     :null => false
-    t.datetime "updated_at",                     :null => false
     t.string   "slug"
     t.integer  "tracks_count",    :default => 0
     t.integer  "alias_for"
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
     t.string   "lyrical_excerpt"
+    t.string   "alt_title"
   end
+
+  add_index "songs", ["alt_title"], :name => "index_songs_on_alt_title"
+  add_index "songs", ["title"], :name => "index_songs_on_title"
 
   create_table "songs_tracks", :force => true do |t|
     t.integer "song_id"
     t.integer "track_id"
   end
+
+  add_index "songs_tracks", ["song_id"], :name => "index_songs_tracks_on_song_id"
+  add_index "songs_tracks", ["track_id"], :name => "index_songs_tracks_on_track_id"
 
   create_table "tags", :force => true do |t|
     t.string   "name"
@@ -188,13 +195,13 @@ ActiveRecord::Schema.define(:version => 20151011195314) do
     t.integer  "show_id"
     t.string   "title"
     t.integer  "position"
+    t.integer  "duration"
     t.datetime "created_at",                             :null => false
     t.datetime "updated_at",                             :null => false
     t.string   "audio_file_file_name"
     t.string   "audio_file_content_type"
     t.integer  "audio_file_file_size"
     t.datetime "audio_file_updated_at"
-    t.integer  "duration"
     t.string   "set"
     t.integer  "likes_count",             :default => 0
     t.string   "slug"
@@ -202,6 +209,7 @@ ActiveRecord::Schema.define(:version => 20151011195314) do
   end
 
   add_index "tracks", ["likes_count"], :name => "index_tracks_on_likes_count"
+  add_index "tracks", ["show_id"], :name => "index_tracks_on_show_id"
   add_index "tracks", ["slug"], :name => "index_tracks_on_slug"
 
   create_table "users", :force => true do |t|

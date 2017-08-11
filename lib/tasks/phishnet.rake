@@ -25,7 +25,9 @@ namespace :phishnet do
 
       track_matched = false
       show.tracks.each do |track|
-        song = songs.find { |s| s.title.casecmp(item['song']) > -1 }
+        song = songs.find do |s|
+          s.title.casecmp(item['song']) > -1 || s.alt_title.casecmp(item['song']) > -1
+        end
         next if song.nil?
 
         st = SongsTrack.where(song_id: song.id, track_id: track.id).first
