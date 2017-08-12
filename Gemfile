@@ -26,6 +26,7 @@ gem 'ruby-mp3info'
 gem 'selenium-webdriver'
 gem 'soundmanager-rails'
 gem 'taglib-ruby'
+gem 'test-unit'
 gem 'therubyracer'
 gem 'twitter-bootstrap-rails', '2.2.8'
 
