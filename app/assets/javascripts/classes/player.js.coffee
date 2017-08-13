@@ -1,5 +1,5 @@
 class @Player
-  
+
   constructor: ->
     @Util             = App.Util
     @sm               = soundManager
@@ -29,7 +29,7 @@ class @Player
     @$likes_link      = $ '#player_likes_container > .likes_large > a'
     @$feedback.hide()
     this._initStatsAPI()
-  
+
   # Check for track anchor to scroll-to [and play]
   onReady: ->
     this._updatePlaylistMode()
@@ -44,7 +44,7 @@ class @Player
           if /(iPhone|iPad|iPod)/g.test(navigator.userAgent)
             this.togglePause()
             alert 'Touch the Play button to begin playback. Your browser does not support auto-play.'
-            
+
 
   togglePlaylistMode: ->
     if @playlist_mode
@@ -66,7 +66,7 @@ class @Player
     @$time_elapsed.addClass 'scrubbing'
     @$time_remaining.addClass 'scrubbing'
     this.moveScrubber()
-  
+
   stopScrubbing: ->
     @scrubbing = false
     @$time_elapsed.removeClass 'scrubbing'
@@ -75,13 +75,13 @@ class @Player
       @sm_sound.setPosition Math.round((@$scrubber.slider('value') / 100) * @duration)
     else
       @$scrubber.slider 'value', 0
-  
+
   moveScrubber: ->
     if @scrubbing and @active_track
       scrubber_position = (@$scrubber.slider('value') / 100) * @duration
       @$time_elapsed.html @Util.readableDuration(scrubber_position)
       @$time_remaining.html "-#{@Util.readableDuration(@duration - scrubber_position)}"
-      
+
   toggleMute: ->
     if @last_volume > 0
       if @muted
@@ -97,7 +97,7 @@ class @Player
         @muted = true
     else
       @last_volume = @$volume_slider.slider 'value'
-  
+
   updateVolumeSlider: (value) ->
     if @muted and value > 0
       @$volume_icon.removeClass 'muted'
@@ -106,7 +106,7 @@ class @Player
       @$volume_icon.addClass 'muted'
       @muted = true
     @sm.setVolume @active_track, value
-  
+
   playTrack: (track_id, time_marker=0) ->
     if track_id != @active_track
       @preload_started = false
@@ -133,7 +133,7 @@ class @Player
       this.highlightActiveTrack()
     else
       # @Util.feedback { notice: 'That is already the current track' }
-  
+
   togglePause: ->
     if @sm_sound.paused
       this._updatePlayButton()
@@ -144,7 +144,7 @@ class @Player
         @sm_sound.togglePause()
       else
         this._playRandomShowOrPlaylist()
-  
+
   previousTrack: ->
     if @sm_sound.position > 3000
       @sm_sound.setPosition 0
@@ -153,7 +153,7 @@ class @Player
         url: "/previous-track/#{@active_track}"
         success: (r) =>
           this.playTrack r.track_id if r.success
-  
+
   nextTrack: ->
     $.ajax
       url: "/next-track/#{@active_track}"
@@ -163,7 +163,7 @@ class @Player
         else
           @Util.feedback { alert: r.msg }
           this.stopAndUnload()
-  
+
   stopAndUnload: ->
     this._fastFadeout @active_track
     @sm_sound.unload() if @sm_sound.loaded
@@ -177,7 +177,7 @@ class @Player
     @$time_remaining.html '0:00'
     @$time_elapsed.html '0:00'
     @invoked = false
-  
+
   highlightActiveTrack: (scroll_to_track=false)->
     if @active_track
       $track = $('.playable_track[data-id="'+@active_track+'"]')
@@ -234,7 +234,7 @@ class @Player
         false
     else
       false
-  
+
   _playRandomShowOrPlaylist: ->
     $.ajax
       url: "/next-track"
@@ -272,7 +272,7 @@ class @Player
         whileplaying: =>
           this._updatePlayerState()
       @sm.setVolume track_id, @last_volume
-  
+
   _loadTrackInfo: (track_id) ->
     $.ajax
       url: "/track-info/#{track_id}",
@@ -282,7 +282,7 @@ class @Player
           this._createStatsAPIEvent r
         else
           @Util.feedback { alert: "Error retrieving track info" }
-  
+
   _updatePlayerDisplay: (r) ->
     @duration = r.duration
     if r.title.length > 26 then @$player_title.addClass 'long_title' else @$player_title.removeClass 'long_title'
@@ -300,13 +300,13 @@ class @Player
       @$time_remaining.html '0:00'
     else
       @$player_detail.html "<a class=\"show_date\" href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.venue_url}\">#{@Util.truncate(r.venue)}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.city_url}\">#{r.city}</a>"
-  
+
   _updatePlayButton: (playing=true) ->
     if playing
       @$playpause.addClass 'playing'
     else
       @$playpause.removeClass 'playing'
-  
+
   _updatePlayerState: ->
     unless @scrubbing or @duration is 0
       unless isNaN @duration or isNaN @sm_sound.position
@@ -327,7 +327,7 @@ class @Player
       else
         @$time_elapsed.html '0:00'
         @$time_remaining.html '0:00'
-  
+
   _updateLoadingState: (track_id) ->
     if @active_track is track_id
       percent_loaded = Math.floor (@sm_sound.bytesLoaded / @sm_sound.bytesTotal) * 100
@@ -340,7 +340,7 @@ class @Player
           @$player_title.addClass 'long_title'
           @$player_title.html 'Marker out of range...'
           @time_marker = 0
-  
+
   _fastFadeout: (track_id) ->
     if track_id and sound = @sm.getSoundById track_id
       if @muted or sound.volume is 0
@@ -352,7 +352,7 @@ class @Player
         setTimeout( =>
           this._fastFadeout track_id
         , 10)
-  
+
   _trackIDtoURL: (track_id) ->
     str = track_id.toString()
     str = '0' + str for i in [0..(8-str.length)] by 1
@@ -368,18 +368,17 @@ class @Player
   _initStatsAPI: ->
     PhishTracksStats.setup
       testMode: false
-      # testMode: ->
-      #   unless '<%= Rails.env %>' is 'production' then true else false
       auth: 'MDI5NDQ0NDQ1MzYxZjkxMzUzODliOGEwNGYyYjA3M2U6'
 
   _createStatsAPIEvent: (r) ->
     # Post 'listen' event to PhishTracksStats at 80% played
     pos = parseInt(r.duration * 0.8)
     @sm.clearOnPosition r.id, pos
-    @sm_sound.onPosition pos, (eventPosition) =>
-      PhishTracksStats.postPlay { streaming_site: 'phishin', event: 'listen', track_id: r.id }, (data) =>
-        console.log "Listen event for Track ID #{r.id} posted to PhishTracksStats"
-      , (data) ->
-        console.error(data)
-    
-    
+    try
+      @sm_sound.onPosition pos, (eventPosition) =>
+        PhishTracksStats.postPlay { streaming_site: 'phishin', event: 'listen', track_id: r.id }, (data) =>
+          console.log "Listen event for Track ID #{r.id} posted to PhishTracksStats"
+        , (data) ->
+          console.error(data)
+    catch
+      console.error('_createStatsAPIEvent() call failed')
