@@ -5,11 +5,11 @@ require_relative 'show_info'
 require_relative 'track_proxy'
 require_relative 'cli'
 
-if __FILE__ == $0
-  if ARGV.length < 1
+if __FILE__ == $PROGRAM_NAME
+  if ARGV.empty?
     puts 'Need date'
     exit
   end
-  
+
   ShowImporter::Cli.new
 end

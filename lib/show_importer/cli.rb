@@ -28,12 +28,12 @@ module ShowImporter
     end
 
     def edit_for_pos(pos)
-      help_str = 'Combine (u)p, Choose (s)ong, Choose (f)ile, Change s(e)t, Change (t)itle'
+      help_str = 'Combine (u)p, (S)ong, (F)ile, S(e)t, (T)itle, (M)ain menu'
       puts @si.get_track(pos).to_s
       puts help_str
 
       while line = Readline.readline('#=> ', false)
-        case line
+        case line.downcase
         when 'u'
           puts "Combining up (#{pos}) #{@si.get_track(pos).title} into (#{pos - 1}) #{@si.get_track(pos - 1).title}"
           @si.combine_up(pos)
@@ -49,6 +49,9 @@ module ShowImporter
         when '?'
           puts @si.get_track(pos).to_s
           puts help_str
+        when 'm'
+          main_menu
+          break
         end
       end
 
