@@ -1,7 +1,6 @@
 class TagsController < ApplicationController
-
-  caches_action :index, cache_path: Proc.new {|c| c.request.url }, expires_in: CACHE_TTL
-  caches_action :show,  cache_path: Proc.new {|c| c.request.url }, expires_in: CACHE_TTL
+  caches_action :index, cache_path: proc { |c| c.request.url }, expires_in: CACHE_TTL
+  caches_action :show,  cache_path: proc { |c| c.request.url }, expires_in: CACHE_TTL
 
   def index
     @tags = Tag.order(tags_order_by).all
@@ -11,7 +10,7 @@ class TagsController < ApplicationController
   def selected_tag
     @tag = Tag.where('lower(name) = ?', params[:name].downcase).first
 
-    unless @tag
+    if @tag.nil?
       view = 'tag_not_found'
     else
       view = 'show'
@@ -80,5 +79,4 @@ class TagsController < ApplicationController
     end
     order_by
   end
-
 end

@@ -1,5 +1,5 @@
 class MyController < ApplicationController
-  
+
   def my_shows
     validate_sorting_for_my_shows
     if current_user
@@ -9,7 +9,7 @@ class MyController < ApplicationController
     end
     render layout: false if request.xhr?
   end
-  
+
   def my_tracks
     if current_user
       track_ids = Like.where(likable_type: 'Track', user_id: current_user.id).all.map(&:likable_id)
@@ -18,9 +18,9 @@ class MyController < ApplicationController
     end
     render layout: false if request.xhr?
   end
-  
+
   private
-  
+
   def validate_sorting_for_my_shows
     params[:sort] = 'date desc' unless ['date desc', 'date asc', 'title', 'likes', 'duration'].include? params[:sort]
     case params[:sort]
@@ -34,7 +34,7 @@ class MyController < ApplicationController
         @order_by = "duration, show.date desc"
     end
   end
-  
+
   def validate_sorting_for_my_tracks
     params[:sort] = 'date desc' unless ['date desc', 'date asc', 'likes', 'duration'].include? params[:sort]
     case params[:sort]
@@ -46,5 +46,4 @@ class MyController < ApplicationController
         @order_by = "duration, date desc"
     end
   end
-  
 end

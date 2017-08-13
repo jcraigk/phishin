@@ -1,5 +1,4 @@
 class SearchController < ApplicationController
-
   def results
     term = params[:term].downcase ||= ''
     if term.present?
@@ -22,9 +21,9 @@ class SearchController < ApplicationController
     end
     render layout: false if request.xhr?
   end
-  
+
   private
-  
+
   def is_date?(str)
     if str =~ /^(\d{1,2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,4})$/ or str =~ /^(\d{4})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})$/
       begin
@@ -37,7 +36,7 @@ class SearchController < ApplicationController
       return false
     end
   end
-  
+
   def parse_date(str)
     # handle 2-digit year as in 3/11/90
     if str =~ /^(\d{1,2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})$/
@@ -47,5 +46,4 @@ class SearchController < ApplicationController
     end
     Date.parse(str).strftime("%Y-%m-%d")
   end
-
 end

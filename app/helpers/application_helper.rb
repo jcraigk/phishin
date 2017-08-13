@@ -1,5 +1,4 @@
 module ApplicationHelper
-
   def sort_songs_and_venues_links(item_hash)
     str = ''
     item_hash.each do |key, val|
