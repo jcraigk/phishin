@@ -5,7 +5,7 @@
 //= require jquery-ui/datepicker
 //= require jquery.cookie
 //= require twitter/bootstrap
-//= require soundmanager
+//= require soundmanager2
 //= require native.history
 //= require classes/detector
 //= require classes/util
