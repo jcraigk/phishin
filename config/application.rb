@@ -17,7 +17,7 @@ module Phishin
 
     # Custom directories with classes and modules you want to be autoloadable.
     # config.autoload_paths += %W(#{config.root}/extras)
-    
+
     # Autoload routes
     config.paths['config/routes'].concat Dir[Rails.root.join('config/routes/*.rb')]
 
@@ -63,6 +63,11 @@ module Phishin
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
+    config.assets.precompile += %w(
+      soundmanager2.swf
+      soundmanager2_flash9.swf
+    )
+
     # Send Devise email through gmail
     # ActionMailer::Base.smtp_settings = {
     #   :address                => 'smtp.gmail.com',
@@ -73,6 +78,6 @@ module Phishin
     #   :authentication         => 'plain',
     #   :enable_starttls_auto   => true
     # }
-      
+
   end
 end

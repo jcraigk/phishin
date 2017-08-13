@@ -19,7 +19,7 @@ CACHE_TTL                   = 10.minutes
 FIRST_CHAR_LIST             = ('A'..'Z').to_a + ['#']                 # Characters to include in A..B..C.. links
 MAX_PLAYLISTS_PER_USER      = 20                                      # Max number of playlists a user may create
 
-if Rails.env == 'development' || Rails.env == 'test'
+if %w(development test).include?(Rails.env)
   APP_BASE_URL              = "http://localhost:3000"
   APP_CONTENT_PATH          = "/htdocs/app_content/phishin/"
   TMP_PATH                  = "/htdocs/app_content/phishin/tmp/"

@@ -374,11 +374,9 @@ class @Player
     # Post 'listen' event to PhishTracksStats at 80% played
     pos = parseInt(r.duration * 0.8)
     @sm.clearOnPosition r.id, pos
-    try
-      @sm_sound.onPosition pos, (eventPosition) =>
-        PhishTracksStats.postPlay { streaming_site: 'phishin', event: 'listen', track_id: r.id }, (data) =>
-          console.log "Listen event for Track ID #{r.id} posted to PhishTracksStats"
-        , (data) ->
-          console.error(data)
-    catch
-      console.error('_createStatsAPIEvent() call failed')
+    @sm_sound.onPosition pos, (eventPosition) =>
+      PhishTracksStats.postPlay { streaming_site: 'phishin', event: 'listen', track_id: r.id }, (data) =>
+        console.log "Listen event for Track ID #{r.id} posted to PhishTracksStats"
+      , (data) ->
+        console.error(data)
+

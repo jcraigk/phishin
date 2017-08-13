@@ -1,11 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'airbrussh', require: false
 gem 'bootstrap-will_paginate'
-gem 'capistrano'
-gem 'capistrano-bundler'
-gem 'capistrano-passenger'
-gem 'capistrano-rails'
 gem 'dalli'
 gem 'devise'
 gem 'friendly_id'
@@ -24,7 +19,7 @@ gem 'rails', '3.2.22.5'
 gem 'resque', require: 'resque/server'
 gem 'ruby-mp3info'
 gem 'selenium-webdriver'
-gem 'soundmanager-rails'
+gem 'soundmanager2-rails'
 gem 'taglib-ruby'
 gem 'test-unit'
 gem 'therubyracer'
@@ -37,6 +32,11 @@ group :assets do
 end
 
 group :development do
+  gem 'airbrussh', require: false
   gem 'bullet', '~> 4.14'
+  gem 'capistrano'
+  gem 'capistrano-bundler'
+  gem 'capistrano-passenger'
+  gem 'capistrano-rails'
   gem 'rack-mini-profiler'
 end
