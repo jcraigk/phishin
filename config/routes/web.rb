@@ -17,7 +17,6 @@ Phishin::Application.routes.draw do
 
   # Error pages
   get '/browser-unsupported' => 'errors#browser_unsupported', as: 'browser_unsupported'
-  get '/mobile-unsupported' => 'errors#mobile_unsupported', as: 'mobile_unsupported'
 
   # Reports
   get '/missing-shows' => 'reports#missing_shows', as: 'missing_shows'
@@ -43,7 +42,7 @@ Phishin::Application.routes.draw do
   get '/playlist' => 'playlists#active_playlist', as: 'active_playlist'
   get '/play/:slug' => 'playlists#active_playlist', as: 'activate_playlist'
   get '/playlists'  => 'playlists#saved_playlists', as: 'saved_playlists'
-  get '/get-playlist' => 'playlists#get_playlist'
+  get '/get-playlist' => 'playlists#playlist'
   post '/save-playlist' => 'playlists#save_playlist'
   post '/bookmark-playlist' => 'playlists#bookmark_playlist'
   post '/unbookmark-playlist' => 'playlists#unbookmark_playlist'

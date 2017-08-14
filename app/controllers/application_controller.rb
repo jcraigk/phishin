@@ -34,6 +34,10 @@ class ApplicationController < ActionController::Base
     show.likes.where(user_id: current_user.id).first
   end
 
+  def render_xhr_without_layout
+    render layout: false if request.xhr?
+  end
+
   private
 
   def authenticate_by_htpasswd

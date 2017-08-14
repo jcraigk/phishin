@@ -28,10 +28,19 @@ module ShowImporter
     end
 
     def edit_for_pos(pos)
-      help_str = 'Combine (u)p, (S)ong, (F)ile, S(e)t, (T)itle, (M)ain menu'
       puts @si.get_track(pos).to_s
       puts help_str
 
+      process_pos(pos)
+
+      puts
+    end
+
+    def help_str
+      @help_str ||= 'Combine (u)p, (S)ong, (F)ile, S(e)t, (T)itle, (M)ain menu'
+    end
+
+    def process_pos(pos)
       while line = Readline.readline('#=> ', false)
         case line.downcase
         when 'u'
@@ -54,8 +63,6 @@ module ShowImporter
           break
         end
       end
-
-      puts
     end
 
     def insert_new_track

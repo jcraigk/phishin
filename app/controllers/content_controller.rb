@@ -1,6 +1,6 @@
 class ContentController < ApplicationController
-  caches_action :years,  expires_in: CACHE_TTL
-  caches_action :songs,  cache_path: proc { |c| c.request.url }, expires_in: CACHE_TTL
+  caches_action :years, expires_in: CACHE_TTL
+  caches_action :songs, cache_path: proc { |c| c.request.url }, expires_in: CACHE_TTL
   caches_action :venues, cache_path: proc { |c| c.request.url }, expires_in: CACHE_TTL
 
   ###############################
@@ -8,35 +8,35 @@ class ContentController < ApplicationController
   ###############################
 
   def years
-    render layout: false if request.xhr?
+    render_xhr_without_layout
   end
 
   def songs
     @songs = Song.relevant.title_starting_with(char_param).order(songs_order_by)
-    render layout: false if request.xhr?
+    render_xhr_without_layout
   end
 
   def venues
     @venues = Venue.relevant.name_starting_with(char_param).order(venues_order_by)
-    render layout: false if request.xhr?
+    render_xhr_without_layout
   end
 
   def map
     params[:date_start] ||= '1983-01-01'
     params[:date_stop]  ||= Date.today.to_s
-    render layout: false if request.xhr?
+    render_xhr_without_layout
   end
 
   def top_liked_shows
     @shows = Show.avail.where('likes_count > 0').includes(:venue, :tags).order('likes_count desc, date desc').limit(40)
     @shows_likes = @shows.map { |show| get_user_show_like(show) }
-    render layout: false if request.xhr?
+    render_xhr_without_layout
   end
 
   def top_liked_tracks
     @tracks = Track.where('likes_count > 0').includes(:show, :tags).order('likes_count desc, title asc').limit(40)
     @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
-    render layout: false if request.xhr?
+    render_xhr_without_layout
   end
 
   ###############################
@@ -46,7 +46,10 @@ class ContentController < ApplicationController
     g = params[:glob]
 
     # Day of Year?
-    if monthday = g.match(/^(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})$/i)
+    monthday = g.match(
+      /^(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})$/i
+    )
+    if monthday.present?
       if day_of_year(Date::MONTHNAMES.index(monthday[1].titleize), Integer(monthday[2], 10))
         @title = "#{monthday[1].titleize} #{Integer(monthday[2], 10)}"
         view = :year_or_scope
@@ -64,8 +67,9 @@ class ContentController < ApplicationController
       end
     # Year range?
     elsif years = g.match(/^(\d{4})-(\d{4})$/)
-      if year_range years[1], years[2]
-        @title = "#{$1} - #{$2}"
+      if year_range(years[1], years[2])
+        matches = Regexp.last_match
+        @title = "#{matches[1]} - #{matches[2]}"
         view = :year_or_scope
         @controller_action = 'year_range'
       else
@@ -129,13 +133,14 @@ class ContentController < ApplicationController
                  .includes(:tour, :venue, :tags)
                  .order(@order_by)
                  .all
-    @shows_likes = @shows.map {|show| get_user_show_like(show) }
+    @shows_likes = @shows.map { |show| get_user_show_like(show) }
     @shows
   end
 
   def show(date)
     # convert 2012.12.31 to 2012-12-31
-    date = "#{$1}-#{$2}-#{$3}" if date =~ /^(\d{4})\.(\d{1,2})\.(\d{1,2})$/
+    matches = Regexp.last_match
+    date = "#{matches[1]}-#{matches[2]}-#{matches[3]}" if date =~ /^(\d{4})\.(\d{1,2})\.(\d{1,2})$/
 
     # Ensure valid date before touching database
     begin

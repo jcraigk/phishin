@@ -1,13 +1,13 @@
 class PagesController < ApplicationController
   def legal_stuff
-    render layout: false if request.xhr?
+    render_xhr_without_layout
   end
 
   def contact_us
-    render layout: false if request.xhr?
+    render_xhr_without_layout
   end
 
   def api_docs
-    render layout: false if request.xhr?
+    render_xhr_without_layout
   end
 end

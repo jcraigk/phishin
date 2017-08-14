@@ -21,7 +21,7 @@
   </div>
 
   <div id="logo">
-    <%= link_to image_tag('logo-text.png', alt: "Logo"), root_path %>
+    <%= link_to image_tag('logo-text-donut.png', alt: "Logo"), root_path %>
   </div>
 
   <div id="player_controls">
@@ -32,7 +32,7 @@
     <div id="control_playpause"></div>
     <div id="control_next"></div>
   </div>
-  
+
   <div id="scrubber_controls">
     <div id="time_elapsed">
       0:00
@@ -42,13 +42,13 @@
       0:00
     </div>
   </div>
-  
+
   <div id="player_feedback"></div>
-  
+
   <%= render partial: 'layouts/player_menu' %>
 
   <div id="playlist_button" data-url="<%= active_playlist_path %>"></div>
-  
+
   <div id="player_title_container">
     <div id="player_title">
       <%# content_tag :div, APP_NAME, class: 'player_title_dimmed' %>
@@ -59,11 +59,11 @@
       </div>
     </div>
   </div>
-  
+
   <div id="player_detail">
     <%= link_to @random_song.lyrical_excerpt, "/#{@random_song.slug}" rescue nil %>
   </div>
 
   <div style="clear: both;"></div>
-  
+
 </div>
