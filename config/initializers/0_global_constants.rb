@@ -24,7 +24,7 @@ if %w(development test).include?(Rails.env)
   APP_CONTENT_PATH          = "/htdocs/app_content/phishin/"
   TMP_PATH                  = "/htdocs/app_content/phishin/tmp/"
 else
-  APP_BASE_URL              = "http://phish.in"
+  APP_BASE_URL              = "https://phish.in"
   APP_CONTENT_PATH          = "/var/www/app_content/phishin/"
   TMP_PATH                  = "/var/www/app_content/phishin/tmp/"
 end
