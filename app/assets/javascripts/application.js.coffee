@@ -105,7 +105,7 @@ $ ->
   if path_segment isnt 'users'
     $page.html ''
     match = /^(http|https):\/\/(.+)$/.exec(window.location)
-    href = match[1].substr(match[1].indexOf('/'), match[1].length - 1)
+    href = match[2].substr(match[2].indexOf('/'), match[2].length - 1)
     App.Util.navigateTo(href)
     handleHistory()  # Need to call this explicitly on page load (to keep Firefox in the mix)
 
