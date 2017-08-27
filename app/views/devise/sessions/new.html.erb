@@ -1,46 +1,46 @@
 <%= render partial: 'layouts/global_nav' %>
 
 <div id="content">
-  
+
   <div id="title_box">
     <h1>Sign In</h1>
   </div>
 
   <div id="content_box">
-    
+
     <div class="instructions">
       Don't have an account? &nbsp;&nbsp;<%= link_to "Sign up now!", new_registration_path(resource_name), class: 'non-remote strong' %>
     </div>
-    
+
     <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-    
+
       <br />
       <div class="field_label">Email</div>
       <div class="field_content"><%= f.email_field :email, :autofocus => true %></div>
       <div style="clear: both;"></div>
-      
+
       <div class="field_label">Password</div>
       <div class="field_content"><%= f.password_field :password %></div>
       <div style="clear: both;"></div>
-    
+
       <% if devise_mapping.rememberable? -%>
         <div class="field_label field_label_alt"><%= f.check_box :remember_me %></div>
-        <div class="field_content">Remember me</div>
+        <div class="field_content"><label for="user_remember_me">Remember me</div>
         <div style="clear: both;"></div>
       <% end -%>
-    
+
       <br />
-    
+
       <div class="field_label"><%= f.submit "SIGN IN".html_safe, class: 'btn' %></div>
       <div style="clear: both;"></div>
 
     <% end %>
 
     <br />
-  
+
     <%= render "devise/shared/links" %>
   </div>
-  
+
   <div style="clear: both;"></div>
-    
+
 </div>
