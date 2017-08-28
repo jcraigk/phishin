@@ -5,8 +5,7 @@ class PlaylistsController < ApplicationController
     @invalid_playlist_slug = false
 
     if params[:slug]
-      playlist = Playlist.where(slug: params[:slug]).first
-      if playlist.present?
+      if (playlist = Playlist.where(slug: params[:slug]).first)
         activate_playlist(playlist)
       else
         @invalid_playlist_slug = true
@@ -108,7 +107,7 @@ class PlaylistsController < ApplicationController
 
   def bookmark_playlist
     if current_user && params[:id].present?
-      if (bookmark = PlaylistBookmark.where(playlist_id: params[:id], user_id: current_user.id).first)
+      if PlaylistBookmark.where(playlist_id: params[:id], user_id: current_user.id).first.present?
         render json: { success: false, msg: 'Playlist already bookmarked' }
         return
       end
@@ -310,7 +309,7 @@ class PlaylistsController < ApplicationController
   end
 
   def activate_playlist(playlist)
-    session.merge(
+    session.merge!(
       playlist: playlist.playlist_tracks.order('position').all.map(&:track_id),
       playlist_shuffled: session[:playlist].shuffle,
       playlist_id: playlist.id,
@@ -319,6 +318,7 @@ class PlaylistsController < ApplicationController
       playlist_user_id: playlist.user.id,
       playlist_username: playlist.user.username
     )
+
     retrieve_bookmark(playlist) if current_user
   end
 
@@ -328,7 +328,7 @@ class PlaylistsController < ApplicationController
   end
 
   def clear_saved_playlist
-    session.merge(
+    session.merge!(
       playlist: [],
       playlist_shuffled: [],
       playlist_id: 0,
