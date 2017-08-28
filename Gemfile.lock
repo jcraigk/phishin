@@ -38,6 +38,7 @@ GEM
     bullet (4.14.7)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.9.0)
+    byebug (9.0.6)
     capistrano (3.9.0)
       airbrussh (>= 1.0.0)
       i18n
@@ -231,6 +232,7 @@ DEPENDENCIES
   airbrussh
   bootstrap-will_paginate
   bullet (~> 4.14)
+  byebug
   capistrano
   capistrano-bundler
   capistrano-passenger
@@ -262,6 +264,9 @@ DEPENDENCIES
   therubyracer
   twitter-bootstrap-rails (= 2.2.8)
   uglifier (>= 1.0.3)
+
+RUBY VERSION
+   ruby 2.2.3p173
 
 BUNDLED WITH
    1.13.6

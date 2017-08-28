@@ -319,10 +319,10 @@ class PlaylistsController < ApplicationController
       playlist_user_id: playlist.user.id,
       playlist_username: playlist.user.username
     )
-    retrieve_bookmark if current_user
+    retrieve_bookmark(playlist) if current_user
   end
 
-  def retrieve_bookmark
+  def retrieve_bookmark(playlist)
     bookmark = PlaylistBookmark.where(playlist_id: playlist.id, user_id: current_user.id).first
     session[:playlist_is_bookmarked] = bookmark.present?
   end

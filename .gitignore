@@ -6,3 +6,4 @@
 /public/audio
 /config/database.yml
 /import
+.byebug_history

@@ -35,6 +35,7 @@ end
 group :development do
   gem 'airbrussh', require: false
   gem 'bullet', '~> 4.14'
+  gem 'byebug'
   gem 'capistrano'
   gem 'capistrano-bundler'
   gem 'capistrano-passenger'
