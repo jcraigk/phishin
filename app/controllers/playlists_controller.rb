@@ -309,7 +309,7 @@ class PlaylistsController < ApplicationController
   end
 
   def activate_playlist(playlist)
-    session.merge!(
+    session.update(
       playlist: playlist.playlist_tracks.order('position').all.map(&:track_id),
       playlist_shuffled: session[:playlist].shuffle,
       playlist_id: playlist.id,
@@ -328,7 +328,7 @@ class PlaylistsController < ApplicationController
   end
 
   def clear_saved_playlist
-    session.merge!(
+    session.update(
       playlist: [],
       playlist_shuffled: [],
       playlist_id: 0,
