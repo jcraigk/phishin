@@ -86,8 +86,8 @@ module ShowImporter
       while line = Readline.readline('#=> ', true)
         matched = @si.fm.find_match(line, exact: true)
         if matched
-          puts "Found \"#{match.title}\".  Adding Song."
-          @si.get_track(pos).songs << match
+          puts "Found \"#{matched.title}\".  Adding Song."
+          @si.get_track(pos).songs << matched
         end
         break
       end
