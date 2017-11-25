@@ -30,7 +30,7 @@ To setup a fresh development environment, do the following:
 
 3. Run `bundle install` to install all gem dependencies.
 
-4. Create a fresh empty database by running `bundle exec rake db:create`.
+4. Create a fresh empty database by running `bundle exec rake db:create` followed by `bundle exec rake db:schema:load`.
 
 5. Copy the `config/database.yml.example` to `config/database.yml` and enter the appropriate configuration for your local PostgreSQL databases (bot)
 
