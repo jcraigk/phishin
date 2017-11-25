@@ -24,17 +24,19 @@ You can always refer to the [Rails Guides](http://guides.rubyonrails.org/) if yo
 
 To setup a fresh development environment, do the following:
 
-Clone this git repo into a local folder.
+1. Clone this git repo into a local folder.
 
-Navigate to the project's path on your machine.  If you do not have the correct version of Ruby available, rvm will prompt you to install it.
+2. Navigate to the project's path on your machine.  If you do not have the correct version of Ruby available, rvm will prompt you to install it.
 
-Run `bundle install` to install all gem dependencies.
+3. Run `bundle install` to install all gem dependencies.
 
-You can create a fresh empty development database by running `bundle exec rake db:create` and you can create a fresh test database by running `RAILS_ENV=test bundle exec rake db:create`.
+4. Create a fresh empty database by running `bundle exec rake db:create`.
 
-Copy the `config/database.yml.example` to `config/database.yml` and enter the appropriate configuration for your local PostgreSQL database.
+5. Copy the `config/database.yml.example` to `config/database.yml` and enter the appropriate configuration for your local PostgreSQL databases (bot)
 
-Now you should be able to launch the app locally by running `rails s`.  Open your browser and direct it to `http://localhost:3000`, which should serve the root path of the app.
+6. Launch the app locally by running `rails s`.
+
+7. Open your browser and direct it to `http://localhost:3000`.
 
 You can invoke a local Rails Console by running `rails c`.
 
