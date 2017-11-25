@@ -1,7 +1,0 @@
-== Phish.in'
-
-Phish.in' is a web-based archive of legal live audio recordings of the rock band Phish.
-
-Ruby on Rails and PostgreSQL are used on the server side.  There's a web frontend (http://phish.in) and a JSON API (http://phish.in/api-docs).  The web frontend utilizes soundmanager2 as the playback engine.
-
-All audio is currently in MP3 format.  More formats may be made available at a later time.
