@@ -24,7 +24,7 @@ You can always refer to the [Rails Guides](http://guides.rubyonrails.org/) if yo
 
 To setup a fresh development environment, do the following:
 
-1. Clone this git repo into a local folder.
+1. Clone this git repo into a localfolder.
 
 2. Navigate to the project's path on your machine.  If you do not have the correct version of Ruby available, rvm will prompt you to install it.
 
