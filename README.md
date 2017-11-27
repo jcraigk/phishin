@@ -20,9 +20,9 @@ You will need the following on your machine in order to develop against this pro
 You can download an installer from the [PostgreSQL website](https://www.postgresql.org/download/) or use [Docker](https://www.docker.com/) to virtualize the service.  Version 10 is recommended.
 
 ### Rails Setup
-You can always refer to the [Rails Guides](http://guides.rubyonrails.org/) if you want detailed information about how to run and develop Rails projects.  Note that Phish.in is currently running on an outdated version of Rails, v3.2.  An upgrade is planned in the future.
+You may refer to the [Rails Guides](http://guides.rubyonrails.org/) if you want detailed information about how to run and develop Rails projects.  Note that Phish.in is currently running Rails v3.2, which is outdated.  An upgrade is planned in the future.
 
-To setup a fresh development environment, do the following:
+To setup a fresh development environment:
 
 1. Clone this git repo into a local folder.
 
@@ -30,15 +30,18 @@ To setup a fresh development environment, do the following:
 
 3. Run `bundle install` to install all gem dependencies.
 
-4. Create a fresh empty database by running `bundle exec rake db:create` followed by `bundle exec rake db:schema:load`.
+4. Download the [data/audio seed file](https://www.dropbox.com/s/mxkevdsz4m40ji6/phishin_for_devs.zip?dl=1) and unzip it.  This file contains a full set of data from Nov 2017 minus all users.  It also includes all mp3 audio files for the last Baker's Dozen show 2017-08-06.
 
-5. Copy the `config/database.yml.example` to `config/database.yml` and enter the appropriate configuration for your local PostgreSQL databases (bot)
+5. Place the `tracks` folder on your local hard drive and set its location using the `APP_CONTENT_PATH` constant in the file `initializers/app_constants.rb`.
 
-6. Launch the app locally by running `rails s`.
+6. Copy the `config/database.yml.example` to `config/database.yml` and enter the appropriate configuration for your local PostgreSQL database.
 
-7. Open your browser and direct it to `http://localhost:3000`.
+7. Create a fresh empty database by running `bundle exec rake db:create`.
 
-You can invoke a local Rails Console by running `rails c`.
+8. Import the seed data by running `psql phishin_dev < phishin_for_devs.sql`.
 
-**TODO:** Provide seed data and/or a skeleton database (excluding or obfuscating user details).
+9. Launch the app locally by running `rails s`.
 
+10. Open your browser and direct it to `http://localhost:3000/2017-08-06`.  You should be able to play the full show.
+
+11. Create a new user via the Rails console (`rails c`).  See [Devise documentation](https://github.com/plataformatec/devise) for details.  Note that you must `confirm!` the user after creating it.
