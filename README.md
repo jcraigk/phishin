@@ -36,8 +36,8 @@ To setup a fresh development environment:
 
 5. Place the `tracks` folder on your local hard drive and set its location using the `APP_CONTENT_PATH` constant in the file `initializers/app_constants.rb`.
 
-6. Create a symlink from `tracks` folder to `public/audio`:
-`ln -s ~/Downloads/phishin_for_devs/tracks public/audio`
+6. Create a symlink from `tracks/audio_files` folder to `public/audio`:
+`ln -s ~/Downloads/phishin_for_devs/tracks/audio_files public/audio`
 
 7. Copy the `config/database.yml.example` to `config/database.yml` and enter the appropriate configuration for your local PostgreSQL database.
 
