@@ -30,18 +30,23 @@ To setup a fresh development environment:
 
 3. Run `bundle install` to install all gem dependencies.
 
+*Note: 'taglib-ruby' requires the taglib C++ library `brew install taglib`
+
 4. Download the [data/audio seed file](https://www.dropbox.com/s/mxkevdsz4m40ji6/phishin_for_devs.zip?dl=1) and unzip it.  This file contains a full set of data from Nov 2017 minus all users.  It also includes all mp3 audio files for the last Baker's Dozen show 2017-08-06.
 
 5. Place the `tracks` folder on your local hard drive and set its location using the `APP_CONTENT_PATH` constant in the file `initializers/app_constants.rb`.
 
-6. Copy the `config/database.yml.example` to `config/database.yml` and enter the appropriate configuration for your local PostgreSQL database.
+6. Create a symlink from `tracks` folder to `public/audio`:
+`ln -s ~/Downloads/phishin_for_devs/tracks public/audio`
 
-7. Create a fresh empty database by running `bundle exec rake db:create`.
+7. Copy the `config/database.yml.example` to `config/database.yml` and enter the appropriate configuration for your local PostgreSQL database.
 
-8. Import the seed data by running `psql phishin_dev < phishin_for_devs.sql`.
+8. Create a fresh empty database by running `bundle exec rake db:create`.
 
-9. Launch the app locally by running `rails s`.
+9. Import the seed data by running `psql phishin_dev < phishin_for_devs.sql`.
 
-10. Open your browser and direct it to `http://localhost:3000/2017-08-06`.  You should be able to play the full show.
+10. Launch the app locally by running `rails s`.
 
-11. Create a new user via the Rails console (`rails c`).  See [Devise documentation](https://github.com/plataformatec/devise) for details.  Note that you must `confirm!` the user after creating it.
+11. Open your browser and direct it to `http://localhost:3000/2017-08-06`.  You should be able to play the full show.
+
+12. Create a new user via the Rails console (`rails c`).  See [Devise documentation](https://github.com/plataformatec/devise) for details.  Note that you must `confirm!` the user after creating it.
