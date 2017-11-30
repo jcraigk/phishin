@@ -61,7 +61,7 @@ Phishin::Application.routes.draw do
 
   # Downloads
   get '/track-info/:track_id' => 'downloads#track_info', as: 'track_info'
-  get '/play-track/:track_id' => 'downloads#play_track', as: 'play_track'
+  get '/tracker/audio/:track_id' => 'downloads#tracker'
   get '/download-track/:track_id' => 'downloads#download_track', as: 'download_track'
   get '/download-show/:date' => 'downloads#request_download_show', as: 'download_show'
   get '/download/:md5' => 'downloads#download_album', as: 'download_album'

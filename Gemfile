@@ -26,6 +26,8 @@ gem 'test-unit'
 gem 'therubyracer'
 gem 'twitter-bootstrap-rails', '2.2.8'
 
+gem 'rack-rewrite', '~> 1.5.0'
+
 group :assets do
   gem 'coffee-rails', '~> 3.2.1'
   gem 'sass-rails'

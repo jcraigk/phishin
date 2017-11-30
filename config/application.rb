@@ -79,5 +79,11 @@ module Phishin
     #   :enable_starttls_auto   => true
     # }
 
+    before_assets_load = Rails.env.production? ? Rack::Lock : ActionDispatch::Static
+    
+    config.middleware.insert_before(before_assets_load, Rack::Rewrite) do
+      r301 %r{/audio/\w{3}/\w{3}/\w{3}/(.*?).mp3}, '/tracker/audio/$1'
+    end
+
   end
 end
