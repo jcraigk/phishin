@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170811053628) do
+ActiveRecord::Schema.define(:version => 20171130170435) do
 
   create_table "album_requests", :force => true do |t|
     t.integer  "album_id"
@@ -206,6 +206,7 @@ ActiveRecord::Schema.define(:version => 20170811053628) do
     t.integer  "likes_count",             :default => 0
     t.string   "slug"
     t.integer  "tags_count",              :default => 0
+    t.integer  "play_count",              :default => 0
   end
 
   add_index "tracks", ["likes_count"], :name => "index_tracks_on_likes_count"

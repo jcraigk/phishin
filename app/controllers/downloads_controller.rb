@@ -1,5 +1,5 @@
 class DownloadsController < ApplicationController
-  before_filter :authorize_user!, except: :play_track
+  before_filter :authorize_user!, except: :tracker
 
   def track_info
     track = Track.where(id: params[:track_id]).includes(show: :venue).first
@@ -17,13 +17,32 @@ class DownloadsController < ApplicationController
         city: track.show.venue.location,
         city_url: "/map?map_term=#{CGI.escape(track.show.venue.location)}",
         likes_count: track.likes_count,
-        liked: liked
+        liked: liked,
+        play_count: track.play_count
       }
     else
       render json: { success: false }
     end
   end
 
+  def tracker
+    if track = find_track_mp3(params[:track_id])
+      track.play_count += 1
+      track.save
+    else
+      render :file => "#{Rails.root}/public/404.html",  :status => 404 
+      return
+    end
+    
+    send_file(
+      track.audio_file.path,
+      type: 'audio/mpeg',
+      disposition: 'inline',
+      filename: "Phish #{track.show.date} #{track.title}.mp3",
+      length: File.size(track.audio_file.path)
+    )
+  end
+     
   # Provide a track as a downloadable MP3
   def download_track
     track = Track.find(params[:track_id])
@@ -92,6 +111,16 @@ class DownloadsController < ApplicationController
   def authorize_user!
     return if current_user || request.xhr?
     redirect_to :root, alert: 'You must be signed in to download tracks'
+  end
+
+  def find_track_mp3(track_id)
+    begin
+      track = Track.find(params[:track_id])
+      return nil unless File.exist?(track.audio_file.path)
+    rescue ActiveRecord::RecordNotFound
+      nil
+    end
+    track
   end
 
   # Check the status of album creation, spawning a new job if required
