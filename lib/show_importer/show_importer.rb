@@ -16,10 +16,7 @@ module ShowImporter
       @fm = FilenameMatcher.new(date)
 
       @show = Show.where(date: date).first
-      if @show.present?
-        puts "Show for #{date} already imported!"
-        exit
-      end
+      puts "Warning: #{date} already imported!" if @show.present?
       @show = Show.new(date: date)
 
       puts 'Finding venue...'
