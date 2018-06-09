@@ -1,6 +1,7 @@
+# frozen_string_literal: true
 class TagsController < ApplicationController
-  caches_action :index, cache_path: proc { |c| c.request.url }, expires_in: CACHE_TTL
-  caches_action :show,  cache_path: proc { |c| c.request.url }, expires_in: CACHE_TTL
+  caches_action :index, expires_in: CACHE_TTL
+  caches_action :show, expires_in: CACHE_TTL
 
   def index
     @tags = Tag.order(tags_order_by).all

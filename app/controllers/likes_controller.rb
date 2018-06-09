@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class LikesController < ApplicationController
   before_filter :authorize_user!
   before_filter :require_xhr!

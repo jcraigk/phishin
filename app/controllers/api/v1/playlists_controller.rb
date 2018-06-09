@@ -1,11 +1,10 @@
 module Api
   module V1
     class PlaylistsController < ApiController
-
       before_filter :authenticate_user_from_token!, except: [:show]
 
-      caches_action :show, cache_path: Proc.new { |c| c.params }, expires_in: CACHE_TTL
-      caches_action :details, cache_path: Proc.new {|c| c.params }, expires_in: CACHE_TTL
+      caches_action :show, expires_in: CACHE_TTL
+      caches_action :details, expires_in: CACHE_TTL
 
       def show
         playlist = Playlist.where(slug: params[:id]).first

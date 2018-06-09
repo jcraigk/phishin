@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 class ContentController < ApplicationController
   caches_action :years, expires_in: CACHE_TTL
-  caches_action :songs, cache_path: proc { |c| c.request.url }, expires_in: CACHE_TTL
-  caches_action :venues, cache_path: proc { |c| c.request.url }, expires_in: CACHE_TTL
+  caches_action :songs, expires_in: CACHE_TTL
+  caches_action :venues, expires_in: CACHE_TTL
 
   ###############################
   # Hard-coded actions

@@ -1,6 +1,5 @@
-class TrackTag < ActiveRecord::Base
-  attr_accessible :track_id, :tag_id, :created_at
-
+# frozen_string_literal: true
+class TrackTag < ApplicationRecord
   belongs_to :track, counter_cache: :tags_count
   belongs_to :tag
 

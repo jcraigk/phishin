@@ -1,6 +1,5 @@
-class Playlist < ActiveRecord::Base
-  attr_accessible :name, :slug, :user_id, :duration
-
+# frozen_string_literal: true
+class Playlist < ApplicationRecord
   has_many :playlist_tracks, dependent: :destroy
   has_many :tracks, through: :playlist_tracks
   has_many :playlist_bookmarks, dependent: :destroy

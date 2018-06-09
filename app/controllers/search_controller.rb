@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class SearchController < ApplicationController
   def results
     term = params[:term].downcase ||= ''
@@ -8,13 +9,14 @@ class SearchController < ApplicationController
         date = parse_date term
         @show = Show.avail.where(date: date).includes(:venue).first
         @total_results += 1 if @show.present?
-        @other_shows = Show.avail
-                           .where('extract(month from date) = ?', date[5..6])
-                           .where('extract(day from date) = ?', date[8..9])
-                           .where('date != ?', date)
-                           .includes(:venue)
-                           .order('date desc')
-                           .all
+        @other_shows =
+          Show.avail
+              .where('extract(month from date) = ?', date[5..6])
+              .where('extract(day from date) = ?', date[8..9])
+              .where('date != ?', date)
+              .includes(:venue)
+              .order('date desc')
+              .all
         @total_results += @other_shows.size if @other_shows.present?
       else
         t = "%#{term}%"

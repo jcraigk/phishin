@@ -1,6 +1,5 @@
-class Tour < ActiveRecord::Base
-  attr_accessible :name, :slug, :starts_on, :ends_on, :shows_count
-
+# frozen_string_literal: true
+class Tour < ApplicationRecord
   has_many :shows
 
   extend FriendlyId

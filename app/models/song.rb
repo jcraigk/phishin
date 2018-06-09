@@ -1,9 +1,6 @@
-class Song < ActiveRecord::Base
-  attr_accessible :title, :tracks_count
-
+# frozen_string_literal: true
+class Song < ApplicationRecord
   has_and_belongs_to_many :tracks
-
-  scope :random, ->(amt=1) { where('tracks_count > 0').order('RANDOM()').limit(amt) }
 
   validates_presence_of :title
 
@@ -11,14 +8,17 @@ class Song < ActiveRecord::Base
   friendly_id :title, use: :slugged
 
   include PgSearch
-  pg_search_scope :kinda_matching,
-                  against: :title,
-                  using: {
-                    tsearch: {
-                      any_word: true,
-                      normalization: 16
-                    }
-                  }
+  pg_search_scope(
+    :kinda_matching,
+    against: :title,
+    using: {
+      tsearch: {
+        any_word: true,
+        normalization: 16
+      }
+    }
+  )
+
   scope :relevant, -> { where('tracks_count > 0 or alias_for IS NOT NULL') }
   scope :title_starting_with, ->(char) { where('title SIMILAR TO ?', "#{char == '#' ? '[0-9]' : char}%") }
 
@@ -35,7 +35,7 @@ class Song < ActiveRecord::Base
   end
 
   def alias?
-    !alias_for.nil?
+    alias_for.present?
   end
 
   def as_json

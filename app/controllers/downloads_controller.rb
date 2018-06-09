@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class DownloadsController < ApplicationController
   before_filter :authorize_user!, except: :play_track
 

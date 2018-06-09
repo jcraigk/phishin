@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class MapController < ApplicationController
   def search
     params[:date_start] ||= Show.order('date asc').first.date

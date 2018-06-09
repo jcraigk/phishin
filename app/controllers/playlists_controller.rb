@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class PlaylistsController < ApplicationController
   def active_playlist
     @num_tracks = 0

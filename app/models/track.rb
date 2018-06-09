@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 require 'mp3info'
 
-class Track < ActiveRecord::Base
-  attr_accessible :show_id, :title, :position, :audio_file, :song_ids, :set, :slug
-
+class Track < ApplicationRecord
   has_attached_file :audio_file,
     path: APP_CONTENT_PATH + ":class/:attachment/:id_partition/:id.:extension"
 

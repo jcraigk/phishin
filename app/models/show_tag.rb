@@ -1,6 +1,5 @@
-class ShowTag < ActiveRecord::Base
-  attr_accessible :show_id, :tag_id, :created_at
-
+# frozen_string_literal: true
+class ShowTag < ApplicationRecord
   belongs_to :show, counter_cache: :tags_count
   belongs_to :tag
 

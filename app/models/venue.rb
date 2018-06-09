@@ -1,6 +1,5 @@
-class Venue < ActiveRecord::Base
-  attr_accessible :name, :past_names, :city, :state, :country, :shows_count, :latitude, :longitude
-
+# frozen_string_literal: true
+class Venue < ApplicationRecord
   has_many :shows
 
   extend FriendlyId

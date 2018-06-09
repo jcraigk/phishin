@@ -1,6 +1,5 @@
-class AlbumRequest < ActiveRecord::Base
-  attr_accessible :album_id, :user_id, :name, :md5, :kind, :created_at
-
+# frozen_string_literal: true
+class AlbumRequest < ApplicationRecord
   has_one :user
   has_one :album
 end

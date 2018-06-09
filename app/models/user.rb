@@ -1,6 +1,5 @@
-class User < ActiveRecord::Base
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :username
-
+# frozen_string_literal: true
+class User < ApplicationRecord
   has_many :playlists, dependent: :destroy
   has_many :playlist_bookmarks, dependent: :destroy
   has_many :likes, dependent: :destroy

@@ -1,12 +1,12 @@
 module Api
   module V1
     class LikesController < ApiController
-      
+
       before_filter :authenticate_user_from_token!, except: [:top_shows, :top_tracks]
 
-      caches_action :top_tracks, cache_path: Proc.new {|c| c.params }, expires_in: CACHE_TTL
-      caches_action :top_shows,  cache_path: Proc.new {|c| c.params }, expires_in: CACHE_TTL
-      
+      caches_action :top_tracks, expires_in: CACHE_TTL
+      caches_action :top_shows, expires_in: CACHE_TTL
+
       # Return all likes for current user
       def user_likes
         likes       = Like.where(user_id: current_user.id).all
@@ -64,7 +64,7 @@ module Api
       def find_likable
         params[:likable_type].classify.constantize.where(id: params[:likable_id]).first if params[:likable_type] and params[:likable_id]
       end
-      
+
     end
   end
 end
