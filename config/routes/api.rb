@@ -1,17 +1,17 @@
+# frozen_string_literal: true
 Phishin::Application.routes.draw do
   namespace :api do
     namespace :v1 do
-
       devise_for :users
 
-      resources :eras,      only: [:index, :show]
-      resources :years,     only: [:index, :show]
-      resources :tours,     only: [:index, :show]
-      resources :venues,    only: [:index, :show]
-      resources :shows,     only: [:index, :show]
-      resources :tracks,    only: [:index, :show]
-      resources :songs,     only: [:index, :show]
-      resources :playlists, only: [:show]
+      resources :eras,      only: %i[index show]
+      resources :years,     only: %i[index show]
+      resources :tours,     only: %i[index show]
+      resources :venues,    only: %i[index show]
+      resources :shows,     only: %i[index show]
+      resources :tracks,    only: %i[index show]
+      resources :songs,     only: %i[index show]
+      resources :playlists, only: %i[show]
 
       namespace :playlists do
         get    'details'

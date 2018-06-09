@@ -1,14 +1,12 @@
+# frozen_string_literal: true
 Phishin::Application.routes.draw do
-  root :to => 'content#years'
+  root to: 'content#years'
 
-  # User stuff
+  # Users
   devise_for :users
-  get '/user-signed-in' => 'application#is_user_signed_in'
+  get '/user-signed-in' => 'application#user_signed_in?'
   get '/my-shows' => 'my#my_shows', as: 'my_shows'
   get '/my-tracks' => 'my#my_tracks', as: 'my_tracks'
-
-  # Resque server
-  mount Resque::Server, at: '/resque'
 
   # Static pages
   get '/legal-stuff' => 'pages#legal_stuff', as: 'legal_stuff'
@@ -49,7 +47,7 @@ Phishin::Application.routes.draw do
   post '/delete-playlist' => 'playlists#destroy_playlist'
   post '/reset-playlist/' => 'playlists#reset_playlist'
   post '/clear-playlist/' => 'playlists#clear_playlist'
-  post '/update-current-playlist'  => 'playlists#update_active_playlist'
+  post '/update-current-playlist' => 'playlists#update_active_playlist'
   post '/add-track' => 'playlists#add_track_to_playlist'
   post '/add-show' => 'playlists#add_show_to_playlist'
   get '/next-track(/:track_id)' => 'playlists#next_track_id'
@@ -67,5 +65,5 @@ Phishin::Application.routes.draw do
   get '/download/:md5' => 'downloads#download_album', as: 'download_album'
 
   # Catch-all matcher for short content URLs
-  get '/(:glob(/:anchor))' => 'content#glob', constraints: { glob: /[^\/]+/ }
+  get '/(:glob(/:anchor))' => 'content#glob', constraints: { glob: %r{[^\/]+} }
 end

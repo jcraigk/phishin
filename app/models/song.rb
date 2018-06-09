@@ -20,18 +20,21 @@ class Song < ActiveRecord::Base
                     }
                   }
   scope :relevant, -> { where('tracks_count > 0 or alias_for IS NOT NULL') }
-  scope :random_lyrical_excerpt, -> { where('lyrical_excerpt IS NOT NULL').order('RANDOM()') }
-  scope :title_starting_with, ->(char) { where("title SIMILAR TO ?", "#{char == '#' ? '[0-9]' : char}%") }
+  scope :title_starting_with, ->(char) { where('title SIMILAR TO ?', "#{char == '#' ? '[0-9]' : char}%") }
+
+  def random_lyrical_excerpt
+    where('lyrical_excerpt IS NOT NULL').order('RAND()').limit(1)
+  end
 
   def title_letter
-    title[0,1]
+    title[0, 1]
   end
 
   def aliased_song
     Song.where(id: alias_for).first if alias_for
   end
 
-  def is_alias?
+  def alias?
     !alias_for.nil?
   end
 

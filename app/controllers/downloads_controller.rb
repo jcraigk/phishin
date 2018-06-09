@@ -113,7 +113,7 @@ class DownloadsController < ApplicationController
       status = 'Enqueuing'
       album = Album.create(name: album_name, md5: checksum, is_custom_playlist: is_custom_playlist)
       # Create zipfile asynchronously using resque
-      Resque.enqueue(AlbumCreator, album.id, tracks.map(&:id))
+      # Resque.enqueue(AlbumCreator, album.id, tracks.map(&:id))
       log_this_album_request album, 'request'
     end
 
