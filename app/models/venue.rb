@@ -6,8 +6,6 @@ class Venue < ActiveRecord::Base
   extend FriendlyId
   friendly_id :name, :use => :slugged
 
-  geocoded_by :address
-
   scope :relevant, -> { where("shows_count > 0") }
   scope :name_starting_with, ->(char) { where("name SIMILAR TO ?", "#{char == '#' ? '[0-9]' : char}%") }
 
@@ -24,7 +22,7 @@ class Venue < ActiveRecord::Base
   end
 
   def name_letter
-    name[0,1]
+    name[0, 1]
   end
 
   def as_json

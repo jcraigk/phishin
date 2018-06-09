@@ -1,4 +1,4 @@
-require 'taglib'
+# frozen_string_literal: true
 require 'mp3info'
 
 class Track < ActiveRecord::Base
@@ -71,36 +71,28 @@ class Track < ActiveRecord::Base
     end
   end
 
-  # Configure default ID3 tags on the track's audio_file (livephish.com style)
-  # Assume track order is in context of entire show
   def save_default_id3_tags
-    TagLib::MPEG::File.open(audio_file.path) do |file|
-      # Set basic ID3 tags
-      tag = file.id3v2_tag(true)
-      # if tag
-        tag.title = title
-        tag.artist = "Phish"
-        tag.album = show.date.to_s + " " + set_album_abbreviation + " " + show.venue.location
-        tag.year = show.date.strftime("%Y").to_i
-        tag.track = position
-        tag.genre = "Rock"
-        # tag.comment = "Visit phish.in for free Phish audio" # Doesn't seem to work
-        # Add cover art
-        # TODO turn this back on when we have decent site art
-        # apic = TagLib::ID3v2::AttachedPictureFrame.new
-        # apic.mime_type = "image/jpeg"
-        # apic.description = "Cover"
-        # apic.type = TagLib::ID3v2::AttachedPictureFrame::FrontCover
-        # apic.picture = File.open(Rails.root.to_s + '/app/assets/images/cover_generic.jpg', 'rb') {|f| f.read }
-        # tag.add_frame(apic)
-        # Save
-        file.save
-      # end
-    end
-  end
+    Mp3Info.open(audio_file.path) do |mp3|
+      mp3.tag.title = title
+      mp3.tag.artist = 'Phish'
+      mp3.tag.album = "#{show.date} #{set_album_abbreviation} #{show.venue.location}"
+      mp3.tag.year = show.date.strftime('%Y').to_i
+      mp3.tag.track = position
+      mp3.tag.genre = 'Rock'
+      mp3.tag.comment = 'Visit phish.in for free Phish audio'
 
-  def file_url
-    audio_file.to_s
+      mp3.tag2.title = title
+      mp3.tag2.artist = 'Phish'
+      mp3.tag2.album = "#{show.date} #{set_album_abbreviation} #{show.venue.location}"
+      mp3.tag2.year = show.date.strftime('%Y').to_i
+      mp3.tag2.track = position
+      mp3.tag2.genre = 'Rock'
+      mp3.tag2.comment = 'Visit phish.in for free Phish audio'
+
+      # TODO: Add cover art using id3v2?
+      # mp3.tag2.remove_pictures
+      # mp3.tag2.add_picture(file.read)
+    end
   end
 
   def generic_slug

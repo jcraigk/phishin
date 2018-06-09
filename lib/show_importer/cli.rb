@@ -106,7 +106,7 @@ module ShowImporter
     end
 
     def update_set_for_pos(pos)
-      puts 'Enter new set abbrev [S,1,2,3,E,E2,E3]:'
+      puts 'Enter new set abbrev [S,1,2,3,4,E,E2,E3]:'
       while line = Readline.readline('#=> ', true)
         @si.get_track(pos).set = line
         break
