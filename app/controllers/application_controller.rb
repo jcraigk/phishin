@@ -3,11 +3,11 @@ class ApplicationController < ActionController::Base
   include ApplicationHelper
   protect_from_forgery
 
-  # before_filter :artificial_wait if Rails.env.development?
-  before_filter :random_lyrical_excerpt
-  before_filter :init_session
-  before_filter :init_params
-  before_filter :require_xhr
+  # before_action :artificial_wait if Rails.env.development?
+  before_action :random_lyrical_excerpt
+  before_action :init_session
+  before_action :init_params
+  before_action :require_xhr
 
   def random_lyrical_excerpt
     return unless request.xhr?

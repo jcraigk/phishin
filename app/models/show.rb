@@ -17,7 +17,7 @@ class Show < ApplicationRecord
   scope :avail, -> { where('missing = FALSE') }
   scope :tagged_with, ->(tag) { includes(:tags).where('tags.name = ?', tag) }
 
-  scope :during_year, lambda(year) {
+  scope :during_year, lambda { |year|
     date = Date.new(year.to_i)
     where(
       'date between ? and ?',
@@ -25,7 +25,7 @@ class Show < ApplicationRecord
       date.end_of_year
     )
   }
-  scope :between_years, lambda(year1, year2) {
+  scope :between_years, lambda { |year1, year2|
     date1 = Date.new(year1.to_i)
     date2 = Date.new(year2.to_i)
     if date1 < date2
@@ -53,7 +53,7 @@ class Show < ApplicationRecord
   end
 
   def last_set
-    tracks.select {|t| /^\d$/.match t.set }.map(&:set).sort.last
+    tracks.select { |t| /^\d$/.match t.set }.map(&:set).max
   end
 
   def as_json
@@ -71,10 +71,12 @@ class Show < ApplicationRecord
       taper_notes: taper_notes,
       updated_at: updated_at
     }
+    return hash unless venue
+
     hash.merge(
       venue_name: venue.name,
       location: venue.location
-    ) if venue
+    )
   end
 
   def as_json_api
@@ -97,9 +99,10 @@ class Show < ApplicationRecord
   end
 
   def save_duration
-    duration = 0
-    tracks.each { |t| duration += t.duration }
-    self.duration = duration
-    save
+    update(duration: track_duration_sum)
+  end
+
+  def track_duration_sum
+    tracks.inject(0) { |duration, t| duration + t.duration }
   end
 end

@@ -1,4 +1,5 @@
-Phishin::Application.configure do
+# frozen_string_literal: true
+Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
   # Code is not reloaded between requests
@@ -43,6 +44,8 @@ Phishin::Application.configure do
   # config.cache_store = :mem_cache_store
   config.cache_store = :dalli_store
 
+  config.eager_load = true
+
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
 
@@ -62,10 +65,5 @@ Phishin::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
-  # Log the query plan for queries taking more than this (works
-  # with SQLite, MySQL, and PostgreSQL)
-  # config.active_record.auto_explain_threshold_in_seconds = 0.5
-
   config.action_mailer.default_url_options = { :host => 'phish.in' }
-
 end

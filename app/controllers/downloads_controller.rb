@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class DownloadsController < ApplicationController
-  before_filter :authorize_user!, except: :play_track
+  before_action :authorize_user!, except: :play_track
 
   def track_info
     track = Track.where(id: params[:track_id]).includes(show: :venue).first

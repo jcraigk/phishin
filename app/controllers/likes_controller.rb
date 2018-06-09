@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 class LikesController < ApplicationController
-  before_filter :authorize_user!
-  before_filter :require_xhr!
+  before_action :authorize_user!
+  before_action :require_xhr!
 
   def toggle_like
     if (likable = find_likable)
