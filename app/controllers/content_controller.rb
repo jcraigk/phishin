@@ -13,12 +13,18 @@ class ContentController < ApplicationController
   end
 
   def songs
-    @songs = Song.relevant.title_starting_with(char_param).order(songs_order_by)
+    @songs =
+      Song.relevant
+          .title_starting_with(char_param)
+          .order(songs_order_by)
     render_xhr_without_layout
   end
 
   def venues
-    @venues = Venue.relevant.name_starting_with(char_param).order(venues_order_by)
+    @venues =
+      Venue.relevant
+           .name_starting_with(char_param)
+           .order(venues_order_by)
     render_xhr_without_layout
   end
 
@@ -29,13 +35,22 @@ class ContentController < ApplicationController
   end
 
   def top_liked_shows
-    @shows = Show.avail.where('likes_count > 0').includes(:venue, :tags).order('likes_count desc, date desc').limit(40)
+    @shows =
+      Show.avail
+          .where('likes_count > 0')
+          .includes(:venue, :tags)
+          .order('likes_count desc, date desc')
+          .limit(40)
     @shows_likes = @shows.map { |show| get_user_show_like(show) }
     render_xhr_without_layout
   end
 
   def top_liked_tracks
-    @tracks = Track.where('likes_count > 0').includes(:show, :tags).order('likes_count desc, title asc').limit(40)
+    @tracks =
+      Track.where('likes_count > 0')
+           .includes(:show, :tags)
+           .order('likes_count desc, title asc')
+           .limit(40)
     @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
     render_xhr_without_layout
   end
@@ -58,7 +73,7 @@ class ContentController < ApplicationController
         view = :show_not_found
       end
     # Year?
-    elsif g =~ /^\d{4}$/
+    elsif /^\d{4}$/.match?(g)
       if year g
         @title = g
         @controller_action = 'year'
@@ -67,9 +82,9 @@ class ContentController < ApplicationController
         redirect_to :root
       end
     # Year range?
-    elsif years = g.match(/^(\d{4})-(\d{4})$/)
-      if year_range(years[1], years[2])
-        matches = Regexp.last_match
+    elsif g =~ /^(\d{4})-(\d{4})$/
+      matches = Regexp.last_match
+      if year_range(matches[1], matches[2])
         @title = "#{matches[1]} - #{matches[2]}"
         view = :year_or_scope
         @controller_action = 'year_range'
@@ -77,7 +92,7 @@ class ContentController < ApplicationController
         redirect_to :root
       end
     # Show?
-    elsif g =~ /^\d{4}(\-|\.)\d{1,2}(\-|\.)\d{1,2}$/
+    elsif /^\d{4}(\-|\.)\d{1,2}(\-|\.)\d{1,2}$/.match?(g)
       view = show(g) ? :show : :show_not_found
       @controller_action = 'show'
     # Song?
@@ -146,7 +161,7 @@ class ContentController < ApplicationController
     # Ensure valid date before touching database
     begin
       Date.parse(date)
-    rescue
+    rescue ArgumentError
       return false
     end
 

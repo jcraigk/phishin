@@ -9,6 +9,8 @@ class ApplicationController < ActionController::Base
   before_action :init_params
   before_action :require_xhr
 
+  protected
+
   def random_lyrical_excerpt
     return unless request.xhr?
     @random_song = Song.random_lyrical_excerpt
@@ -19,16 +21,10 @@ class ApplicationController < ActionController::Base
     redirect_to(:root, alert: "You're doing it wrong (XHR required)")
   end
 
-  def user_signed_in?
-    render json: { success: user_signed_in?, msg: 'Hello' }
-  end
-
   def get_user_track_like(track)
     return unless track&.likes && current_user
     track.likes.where(user_id: current_user.id).first
   end
-
-  protected
 
   def get_user_show_like(show)
     return unless show && current_user

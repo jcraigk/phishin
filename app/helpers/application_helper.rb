@@ -262,23 +262,26 @@ module ApplicationHelper
     "#{number_with_delimiter(count)} #{word.pluralize(count)}".html_safe
   end
 
-  def display_tags(tags, short=false, css_class='show_tag_container')
-    str  = "<span class=\"#{css_class}\">"
-    tags.sort_by! {|tag| tag.priority }
+  def display_tags(tags, short = false, css_class = 'show_tag_container')
+    str = "<span class=\"#{css_class}\">"
+    tags.order(priority: :asc)
     if short
-      if tags.count > 0
+      if (count = tags.count).positive?
         tag = tags.first
         str += tag_label(tag)
-        if tags.count > 1
-          str += "<span class=\"tags_plus\">...</span>"
-        else
-          str += "<span class=\"tags_plus\" style=\"visibility: hidden;\">...</span>"
-        end
+        str += '<span class="tags_plus"'
+        str += ' style="visibility: hidden;"' if count > 1
+        str += '>...</span>'
       end
     else
-      tags.each do |tag|
-        str += link_to tag_path(name: tag.name.downcase) do
-          content_tag :span, tag.name, class: 'label tag_label', style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color}"
+      tags.each do |t|
+        str += link_to tag_path(name: t.name.downcase) do
+          content_tag(
+            :span,
+            t.name,
+            class: 'label tag_label',
+            style: "color: #{contrasting_color(t.color)}; background-color: #{t.color}"
+          )
         end
       end
     end
@@ -286,7 +289,7 @@ module ApplicationHelper
     str.html_safe
   end
 
-  def tag_label(tag, css_class='')
+  def tag_label(tag, css_class = '')
     link_to tag_path(name: tag.name.downcase) do
       content_tag :span, tag.name, class: "label tag_label #{css_class}", style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color}"
     end
@@ -297,7 +300,7 @@ module ApplicationHelper
     color_str[0] = ''
     rgb_hex = color_str.scan(/../)
     sum = 0
-    rgb_hex.each {|hex| sum += hex.hex }
+    rgb_hex.each { |hex| sum += hex.hex }
     sum > 382 ? '#555555' : '#ffffff'
   end
 end
