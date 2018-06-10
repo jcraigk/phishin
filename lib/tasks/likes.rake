@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 namespace :likes do
   desc 'Find and destroy orphan Likes'
   task destroy_orphans: :environment do

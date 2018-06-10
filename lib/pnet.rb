@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'net/http'
 require 'net/https'
 require 'json'
@@ -53,8 +54,8 @@ class PNet
   end
 
   # Call any method with pnet.remote_method_name(:option1 => val1, :option2 => val2)
-  def method_missing(m, *args, &block)
-    action = "pnet_#{m}".tr('_', '.')
+  def method_missing(method, *args, &_block)
+    action = "pnet_#{method}".tr('_', '.')
     opts = args.first || {}
     opts['method'] = action
     perform_action(opts)

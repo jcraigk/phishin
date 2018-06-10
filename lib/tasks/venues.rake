@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 namespace :venues do
   desc 'Find venues that have the same geocode'
   task dupe_geocodes: :environment do

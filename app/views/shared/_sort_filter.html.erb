@@ -14,13 +14,13 @@
     <ul class="dropdown-menu">
       <% item_hash.each do |key, val| %>
         <% link = params[:sort] == val ? "<strong>#{key}</strong>" : key %>
-        <% param_str = "?sort=#{CGI::escape(val)}" %>
+        <% param_str = "?sort=#{CGI.escape(val)}" %>
         <% params.each do |k,v| %>
           <% unless %w(controller action name t sort).include?(k) %>
             <% param_str += "&#{k}=#{v}" if v.present? %>
           <% end %>
         <% end %>
-        
+
         <%= content_tag :li, link_to(link.html_safe, param_str)%>
       <% end %>
     </ul>

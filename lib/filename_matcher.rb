@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class FilenameMatcher
   attr_reader :matches, :s_dir
 
@@ -52,9 +53,9 @@ class FilenameMatcher
     @matches.values.select(&:nil?).empty?
   end
 
-  def find_match(q, opts = {})
-    return Song.where('lower(title) = ?', q.downcase).first if opts[:exact]
-    Song.kinda_matching(q).first
+  def find_match(term, opts = {})
+    return Song.where('lower(title) = ?', term.downcase).first if opts[:exact]
+    Song.kinda_matching(term).first
   end
 
   private
@@ -64,11 +65,11 @@ class FilenameMatcher
   end
 
   def scrub_filename(filename)
-    if filename =~ /mike/i
+    if /mike/i.match?(filename)
       "Mike's Song"
-    elsif filename =~ /\d postgres( -)?.mp3$/
+    elsif /\d postgres( -)?.mp3$/.match?(filename)
       'Hold Your Head Up'
-    elsif filename =~ /Freebird.mp3/
+    elsif /Freebird.mp3/.match?(filename)
       'Free Bird'
     else
       filename

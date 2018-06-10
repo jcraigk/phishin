@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 namespace :songs do
   desc 'Sync song.tracks_count'
   task sync_tracks_count: :environment do

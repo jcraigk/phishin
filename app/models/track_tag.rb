@@ -9,10 +9,10 @@ class TrackTag < ApplicationRecord
   private
 
   def increment_tag_count
-    Tag.increment_counter('tracks_count', self.tag_id)
+    Tag.increment_counter('tracks_count', tag_id)
   end
 
   def decrement_tag_count
-    Tag.decrement_counter('tracks_count', self.tag_id)
+    Tag.decrement_counter('tracks_count', tag_id)
   end
 end

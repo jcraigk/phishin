@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 namespace :tags do
   desc 'Sync Remaster tags with RMSTR flags on each show'
   task sync_remaster_with_flag: :environment do

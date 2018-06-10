@@ -1,11 +1,11 @@
 <%= render partial: 'layouts/global_nav' %>
 
 <div id="content">
-  
+
   <div id="title_box">
     <%= content_tag :h1, "Search: '#{params[:term]}'" %>
   </div>
-  
+
   <div id="content_box">
     <div id="search_results_container">
     <% if @results %>
@@ -28,7 +28,7 @@
               <li>
                 <%= content_tag :h2, link_to("<span class=\"highlight\">#{@show.date.strftime("%Y.%m.%d")}</span>".html_safe, "/#{@show.date}") %>
                 <%= content_tag :h4, link_to(@show.venue.name.html_safe, "/#{@show.venue.slug}") %>
-                <%= content_tag :h5, link_to(@show.venue.location, "/map?map_term=#{CGI::escape(@show.venue.location)}") %>
+                <%= content_tag :h5, link_to(@show.venue.location, "/map?map_term=#{CGI.escape(@show.venue.location)}") %>
                 <div style="clear: both;"></div>
               </li>
             </ul>
@@ -43,15 +43,15 @@
                 <li>
                   <%= content_tag :h2, link_to("<span class=\"highlight\">#{show.date.strftime("%Y.%m.%d")}</span>".html_safe, "/#{show.date}") %>
                   <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}") %>
-                  <%= content_tag :h5, link_to(show.venue.location, "/map?map_term=#{CGI::escape(show.venue.location)}") %>
+                  <%= content_tag :h5, link_to(show.venue.location, "/map?map_term=#{CGI.escape(show.venue.location)}") %>
                   <div style="clear: both;"></div>
                 </li>
               <% end %>
             </ul>
           <% end %>
-        
+
         <% else %>
-      
+
           <% if @songs.size > 0 %>
             <h2>Matched <%= pluralize_with_delimiter(@songs.size, 'Song') %></h2>
             <ul class="item_list clickable">
@@ -71,8 +71,8 @@
               <% for venue in @venues %>
                 <li>
                   <%= content_tag :h2, link_to(highlight(truncate(venue.name_and_abbrev, length: 45), params[:term]), "/#{venue.slug}"), class: 'wider' %>
-                  
-                  <%= content_tag :h5, link_to(highlight(venue.location, params[:term]), "/map?map_term=#{CGI::escape(venue.location)}") %>
+
+                  <%= content_tag :h5, link_to(highlight(venue.location, params[:term]), "/map?map_term=#{CGI.escape(venue.location)}") %>
                   <%= content_tag :h3, pluralize(venue.shows_count, 'show'), class: 'alt' %>
                   <div style="clear: both;"></div>
                 </li>
@@ -106,13 +106,13 @@
               <% end %>
             </ul>
           <% end %>
-        
+
         <% end %>
       <% end %>
     <% end %>
     </div>
   </div>
-  
+
   <div style="clear: both;"></div>
-  
+
 </div>

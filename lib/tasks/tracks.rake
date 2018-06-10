@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 namespace :tracks do
   desc 'Generate generic slugs on all tracks'
   task create_slugs: :environment do

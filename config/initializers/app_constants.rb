@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 APP_NAME = "phish.in'"
 APP_EMAIL = 'phish.in.music@gmail.com'
 DEVISE_EMAIL_FROM = "phish.in' <noreply@phish.in>"

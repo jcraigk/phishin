@@ -1,7 +1,7 @@
 <%= render partial: 'layouts/global_nav' %>
 
 <div id="content">
-  
+
   <div id="title_box">
     <%= content_tag :h1, @song.title %>
     <%= content_tag :h2, "Total Tracks: #{@song.tracks.size}" %>
@@ -14,16 +14,16 @@
     <%= content_tag :div, nil, class: 'hr' %>
     <button type="button" class="btn" id="random_song_track_btn" data-song-id="<%= @song.id %>"><i class="icon icon-play"></i> Play Random Version</button><br />
   </div>
-  
+
   <div id="content_box">
-  
+
     <% unless @display_separators %>
       <ul class="item_list clickable">
     <% end %>
-  
+
     <% last_title = false %>
     <% @tracks.each_with_index do |track, idx| %>
-    
+
       <% if track.show %>
 
         <% if @display_separators %>
@@ -41,7 +41,7 @@
         <li>
           <%= content_tag :h2, link_to(show_link_title(track.show, @display_separators), "/#{track.show.date}/#{track.slug}") %>
           <%= content_tag :h2, link_to(truncate(track.show.venue.name.html_safe, length: 30), "/#{track.show.venue.slug}"), class: 'wide-180' %>
-          <%= content_tag :h5, link_to(truncate(track.show.venue.location, length: 20), "/map?map_term=#{CGI::escape(track.show.venue.location)}"), class: 'narrow' %>
+          <%= content_tag :h5, link_to(truncate(track.show.venue.location, length: 20), "/map?map_term=#{CGI.escape(track.show.venue.location)}"), class: 'narrow' %>
           <%= likable(track, @tracks_likes[idx], 'small') %>
           <%= content_tag :h3, duration_readable(track.duration) %>
           <%= render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil } %>
@@ -51,15 +51,15 @@
       <% end %>
     <% end %>
     </ul>
-    
+
     <% if @tracks.total_pages > 1 %>
       <div class="paging">
         <%= will_paginate_simple @tracks %>
       </div>
     <% end %>
-    
+
   </div>
-  
+
   <div style="clear: both;"></div>
 
 </div>

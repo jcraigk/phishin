@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'pnet'
 
 namespace :sets do

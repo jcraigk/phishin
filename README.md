@@ -10,17 +10,21 @@ All audio is currently in MP3 format.  More formats may be made available at a l
 ## Developer setup
 
 You will need the following on your machine in order to develop against this project:
+
  - Ruby programming language
  - PostgreSQL relational database
 
 ### Installing Ruby
+
 [rvm](https://rvm.io/) is recommended for Ruby version management.  Once rvm is installed, if you navigate into a ruby project's folder, rvm will automatically detect the Ruby version via the `Gemfile` and invoke the appropriate version of Ruby.
 
 ### Installing PostgreSQL
+
 You can download an installer from the [PostgreSQL website](https://www.postgresql.org/download/) or use [Docker](https://www.docker.com/) to virtualize the service.  Version 10 is recommended.
 
 ### Rails Setup
-You may refer to the [Rails Guides](http://guides.rubyonrails.org/) if you want detailed information about how to run and develop Rails projects.  Note that Phish.in is currently running Rails v3.2, which is outdated.  An upgrade is planned in the future.
+
+You may refer to the [Rails Guides](http://guides.rubyonrails.org/) if you want detailed information about how to run and develop Rails projects.  Note that Phish.in is currently running Rails v5.2.
 
 To setup a fresh development environment:
 
@@ -29,8 +33,6 @@ To setup a fresh development environment:
 2. Navigate to the project's path on your machine.  If you do not have the correct version of Ruby available, rvm will prompt you to install it.
 
 3. Run `bundle install` to install all gem dependencies.
-
-*Note: 'taglib-ruby' requires the taglib C++ library `brew install taglib`
 
 4. Download the [data/audio seed file](https://www.dropbox.com/s/mxkevdsz4m40ji6/phishin_for_devs.zip?dl=1) and unzip it.  This file contains a full set of data from Nov 2017 minus all users.  It also includes all mp3 audio files for the last Baker's Dozen show 2017-08-06.
 

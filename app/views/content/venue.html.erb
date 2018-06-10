@@ -1,7 +1,7 @@
 <%= render partial: 'layouts/global_nav' %>
 
 <div id="content">
-  
+
   <div id="title_box">
     <%= content_tag :h1, @venue.name %>
     <%= content_tag :h2, link_to(@venue.location, "/map?map_term=#{@venue.latitude},#{@venue.longitude}&amp;distance=.5") %>
@@ -15,11 +15,11 @@
     <%= link_to('<< Previous Venue'.html_safe, "/#{@previous_venue.slug}") %>
     <div style="clear: both;"></div>
     <%= link_to('Next Venue >>'.html_safe, "/#{@next_venue.slug}", class: 'next_item_link') %>
-    
+
   </div>
-  
+
   <div id="content_box">
-  
+
     <% if @shows.empty? %>
       <h1>No shows at this venue...</h1>
     <% end %>
@@ -27,7 +27,7 @@
     <% unless @display_separators %>
       <ul class="item_list clickable">
     <% end %>
-  
+
     <% last_title = false %>
     <% @shows.each_with_index do |show, idx| %>
 
@@ -46,7 +46,7 @@
         <li>
           <%= content_tag :h2, link_to_show(show, @display_separators) %>
           <%= content_tag :h2, link_to(truncate(show.venue.name.html_safe, length: 35), "/#{show.venue.slug}"), class: 'wide-180' %>
-          <%= content_tag :h5, link_to(show.venue.location, "/map?map_term=#{CGI::escape(show.venue.location)}"), class: 'narrow' %>
+          <%= content_tag :h5, link_to(show.venue.location, "/map?map_term=#{CGI.escape(show.venue.location)}"), class: 'narrow' %>
           <%= likable(show, @shows_likes[idx], 'small') %>
           <%= content_tag :h3, duration_readable(show.duration, 'letters') %>
           <%= render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false } %>
@@ -56,7 +56,7 @@
       <% end %>
     </ul>
   </div>
-  
+
   <div style="clear: both;"></div>
   <br /><br />
 

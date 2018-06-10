@@ -1,5 +1,6 @@
-set :application,   'phishin'
-set :repo_url,      'git@github.com:jcraigk/phishin.git'
+# frozen_string_literal: true
+set :application, 'phishin'
+set :repo_url, 'git@github.com:jcraigk/phishin.git'
 
 desc 'Create symlink to audio content folder'
 task :link_audio do

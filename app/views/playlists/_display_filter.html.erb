@@ -1,4 +1,4 @@
-<% 
+<%
 hash = {
   '<i class="icon icon-globe"></i> All' => 'all',
   '<i class="icon icon-user"></i> Only Mine' => 'mine',
@@ -21,7 +21,7 @@ hash = {
     <ul class="dropdown-menu">
       <% hash.each_with_index do |(key, val), i| %>
         <% link = (params[:filter] == val or (i == 1 and !params[:filter])) ? "<strong>#{key}</strong>".html_safe : key %>
-        <% param_str = "/playlists?filter=#{CGI::escape(val)}" %>
+        <% param_str = "/playlists?filter=#{CGI.escape(val)}" %>
         <% param_str += "&sort=#{params[:sort]}" if params[:sort] %>
         <%= content_tag :li, link_to(link.html_safe, param_str)%>
       <% end %>
