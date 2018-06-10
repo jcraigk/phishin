@@ -1,10 +1,12 @@
 AllCops:
+  TargetRubyVersion: 2.5.1
   Exclude:
     - bin/**/*
     - config/**/*
     - db/**/*
     - spec/**/*
     - vendor/**/*
+  DisplayCopNames: true
 Documentation:
   Enabled: false
 Metrics/LineLength:
@@ -13,5 +15,13 @@ Metrics/MethodLength:
   Max: 15
 Metrics/ClassLength:
   Max: 250
+Layout/EmptyLineAfterMagicComment:
+  Enabled: false
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
 Style/EmptyMethod:
   EnforcedStyle: expanded
+Metrics/BlockLength:
+  Enabled: true
+  Exclude:
+    - spec/**/*

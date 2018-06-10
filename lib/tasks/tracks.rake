@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 namespace :tracks do
   desc 'Generate generic slugs on all tracks'
   task create_slugs: :environment do
-    Track.all.each do |track|
+    Track.find_each do |track|
       slug = track.generic_slug
       track.update_attributes(slug: slug)
       puts "#{track.id} :: #{track.title} :: #{track.slug}"
@@ -57,7 +58,7 @@ namespace :tracks do
         end
       end
     end
-    if show_list.count > 0
+    if show_list.count.positive?
       puts "#{show_list.count} shows contain track gaps: #{show_list.join(',')}"
     else
       puts 'No track gaps found'
@@ -68,7 +69,7 @@ namespace :tracks do
       tracks = show.tracks.all
       show_list << show.date unless tracks.any?
     end
-    if show_list.count > 0
+    if show_list.count.positive?
       puts "#{show_list.count} shows contain no tracks: #{show_list.join(',')}"
     else
       puts 'No trackless shows found'
@@ -141,7 +142,7 @@ namespace :tracks do
   desc 'Identify tracks that point to nonexistent shows'
   task find_orphans: :environment do
     show_ids = []
-    Track.all.each do |t|
+    Track.find_each do |t|
       next unless t.show.nil? && !show_ids.include?(t.show_id)
       show_ids << t.show_id
     end

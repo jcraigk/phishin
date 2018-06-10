@@ -1,6 +1,5 @@
-class TrackTag < ActiveRecord::Base
-  attr_accessible :track_id, :tag_id, :created_at
-
+# frozen_string_literal: true
+class TrackTag < ApplicationRecord
   belongs_to :track, counter_cache: :tags_count
   belongs_to :tag
 
@@ -10,10 +9,10 @@ class TrackTag < ActiveRecord::Base
   private
 
   def increment_tag_count
-    Tag.increment_counter('tracks_count', self.tag_id)
+    Tag.increment_counter('tracks_count', tag_id)
   end
 
   def decrement_tag_count
-    Tag.decrement_counter('tracks_count', self.tag_id)
+    Tag.decrement_counter('tracks_count', tag_id)
   end
 end

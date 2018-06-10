@@ -1,11 +1,11 @@
-require 'taglib'
-require 'mp3info'
+# frozen_string_literal: true
+require 'mp3info' # TODO: Needed?
 
-class Track < ActiveRecord::Base
-  attr_accessible :show_id, :title, :position, :audio_file, :song_ids, :set, :slug
-
-  has_attached_file :audio_file,
-    path: APP_CONTENT_PATH + ":class/:attachment/:id_partition/:id.:extension"
+class Track < ApplicationRecord
+  has_attached_file(
+    :audio_file,
+    path: "#{APP_CONTENT_PATH}:class/:attachment/:id_partition/:id.:extension"
+  )
 
   belongs_to :show
   has_many :songs_tracks, dependent: :destroy
@@ -21,14 +21,16 @@ class Track < ActiveRecord::Base
   scope :tagged_with, ->(tag) { includes(:tags).where('tags.name = ?', tag) }
 
   include PgSearch
-  pg_search_scope :kinda_matching,
-                  against: :title,
-                  using: {
-                    tsearch: {
-                      any_word: false,
-                      normalization: 16
-                    }
-                  }
+  pg_search_scope(
+    :kinda_matching,
+    against: :title,
+    using: {
+      tsearch: {
+        any_word: false,
+        normalization: 16
+      }
+    }
+  )
 
   # validates_attachment :audio_file, presence: true,
   #   content_type: { content_type: ['application/mp3', 'application/x-mp3', 'audio/mpeg', 'audio/mp3'] }
@@ -40,72 +42,56 @@ class Track < ActiveRecord::Base
   before_validation :populate_song, :populate_position
   after_save :save_duration
 
-  def should_generate_new_friendly_id?; true; end
-
-  # Return the full name of the set given the stored codes
   def set_name
-    case set
-      when "S" then "Soundcheck"
-      when "1" then "Set 1"
-      when "2" then "Set 2"
-      when "3" then "Set 3"
-      when "4" then "Set 4"
-      when "E" then "Encore"
-      when "E2" then "Encore 2"
-      when "E3" then "Encore 3"
-      else "Unknown set"
-    end
+    set_names[set] || 'Unknown set'
   end
 
   # Return the set abbreviation (livephish.com style)
   # Roman numerals; encores are part of final set
   def set_album_abbreviation
     # Encores
-    if /^E[\d]*$/.match(set)
-      romanize show.last_set
+    if /^E[\d]*$/.match?(set)
+      roman_numerals[show.last_set]
     # Numbered sets
-    elsif /^\d$/.match(set)
-      romanize set
+    elsif /^\d$/.match?(set)
+      roman_numerals[set]
     else
-      ""
+      ''
     end
   end
 
-  # Configure default ID3 tags on the track's audio_file (livephish.com style)
-  # Assume track order is in context of entire show
   def save_default_id3_tags
-    TagLib::MPEG::File.open(audio_file.path) do |file|
-      # Set basic ID3 tags
-      tag = file.id3v2_tag(true)
-      # if tag
-        tag.title = title
-        tag.artist = "Phish"
-        tag.album = show.date.to_s + " " + set_album_abbreviation + " " + show.venue.location
-        tag.year = show.date.strftime("%Y").to_i
-        tag.track = position
-        tag.genre = "Rock"
-        # tag.comment = "Visit phish.in for free Phish audio" # Doesn't seem to work
-        # Add cover art
-        # TODO turn this back on when we have decent site art
-        # apic = TagLib::ID3v2::AttachedPictureFrame.new
-        # apic.mime_type = "image/jpeg"
-        # apic.description = "Cover"
-        # apic.type = TagLib::ID3v2::AttachedPictureFrame::FrontCover
-        # apic.picture = File.open(Rails.root.to_s + '/app/assets/images/cover_generic.jpg', 'rb') {|f| f.read }
-        # tag.add_frame(apic)
-        # Save
-        file.save
-      # end
-    end
-  end
+    Mp3Info.open(audio_file.path) do |mp3|
+      mp3.tag.title = title
+      mp3.tag.artist = 'Phish'
+      mp3.tag.album = "#{show.date} #{set_album_abbreviation} #{show.venue.location}"
+      mp3.tag.year = show.date.strftime('%Y').to_i
+      mp3.tag.track = position
+      mp3.tag.genre = 'Rock'
+      mp3.tag.comment = 'Visit phish.in for free Phish audio'
 
-  def file_url
-    audio_file.to_s
+      mp3.tag2.title = title
+      mp3.tag2.artist = 'Phish'
+      mp3.tag2.album = "#{show.date} #{set_album_abbreviation} #{show.venue.location}"
+      mp3.tag2.year = show.date.strftime('%Y').to_i
+      mp3.tag2.track = position
+      mp3.tag2.genre = 'Rock'
+      mp3.tag2.comment = 'Visit phish.in for free Phish audio'
+
+      # TODO: Add cover art using id3v2?
+      # mp3.tag2.remove_pictures
+      # mp3.tag2.add_picture(file.read)
+    end
   end
 
   def generic_slug
-    slug = title.downcase.gsub(/\'/, '').gsub(/[^a-z0-9]/, ' ').strip.gsub(/\s+/, ' ').gsub(/\s/, '-')
-    # handle abbreviations
+    slug = title.downcase
+                .delete(/\'/)
+                .gsub(/[^a-z0-9]/, ' ')
+                .strip
+                .gsub(/\s+/, ' ')
+                .gsub(/\s/, '-')
+    # Song title abbreviations
     slug.gsub!(/hold\-your\-head\-up/, 'hyhu')
     slug.gsub!(/the\-man\-who\-stepped\-into\-yesterday/, 'tmwsiy')
     slug.gsub!(/she\-caught\-the\-katy\-and\-left\-me\-a\-mule\-to\-ride/, 'she-caught-the-katy')
@@ -115,7 +101,11 @@ class Track < ActiveRecord::Base
   end
 
   def mp3_url
-    APP_BASE_URL + '/audio/' + sprintf('%09d', id).scan(/.{3}/).join('/') + "/#{id}.mp3"
+    APP_BASE_URL +
+      '/audio/' +
+      format('%<id>09d', id: id)
+      .scan(/.{3}/)
+      .join('/') + "/#{id}.mp3"
   end
 
   def as_json
@@ -173,51 +163,52 @@ class Track < ActiveRecord::Base
   end
 
   def save_duration
-    unless self.duration # this won't record the correct duration if we're uploading a new file
-      Mp3Info.open audio_file.path do |mp3|
-        self.duration = (mp3.length * 1000).round
-        save
-      end
+    return if duration.positive?
+    Mp3Info.open(audio_file.path) do |mp3|
+      update(duration: (mp3.length * 1000).round)
     end
   end
 
   protected
 
   def populate_song
-    if songs.empty?
-      song = Song.where 'lower(title) = ?', self.title.downcase
-      self.songs << song if song
-    end
-  rescue
+    return unless songs.any?
+    song = Song.where('lower(title) = ?', title.downcase)
+    songs << song if song
   end
 
   def populate_position
-    # If we don't have a position and there is at least 1 previous song in the show
-    if !self.position && !(last_song = Track.where(:show_id => show.id).last).nil?
-      self.position = last_song.position + 1
-    elsif !self.position
-      self.position = 1
-    end
+    return if position.positive?
+    last_song = Track.where(show_id: show.id).last
+    self.position = last_song ? last_song.position + 1 : 1
   end
 
   def require_at_least_one_song
-    errors.add(:songs, "Please add at least one song") if songs.empty?
-  rescue
+    return unless songs.any?
+    errors.add(:songs, 'Please add at least one song')
   end
 
-  def romanize(number)
-    case number
-      when "1" then "I"
-      when "2" then "II"
-      when "3" then "III"
-      when "4" then "IV"
-      else ""
-    end
+  private
+
+  def roman_numerals
+    {
+      '1' => 'I',
+      '2' => 'II',
+      '3' => 'III',
+      '4' => 'IV'
+    }
   end
 
-  # Do not allow tracks to be destroyed
-  def prevent_destruction
-    false
+  def set_names
+    {
+      'S' => 'Soundcheck',
+      '1' => 'Set 1',
+      '2' => 'Set 2',
+      '3' => 'Set 3',
+      '4' => 'Set 4',
+      'E' => 'Encore',
+      'E2' => 'Encore 2',
+      'E3' => 'Encore 3'
+    }
   end
-
 end

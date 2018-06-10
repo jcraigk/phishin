@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class PagesController < ApplicationController
   def legal_stuff
     render_xhr_without_layout

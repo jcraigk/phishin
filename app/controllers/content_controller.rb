@@ -1,7 +1,8 @@
+# frozen_string_literal: true
 class ContentController < ApplicationController
   caches_action :years, expires_in: CACHE_TTL
-  caches_action :songs, cache_path: proc { |c| c.request.url }, expires_in: CACHE_TTL
-  caches_action :venues, cache_path: proc { |c| c.request.url }, expires_in: CACHE_TTL
+  caches_action :songs, expires_in: CACHE_TTL
+  caches_action :venues, expires_in: CACHE_TTL
 
   ###############################
   # Hard-coded actions
@@ -12,12 +13,18 @@ class ContentController < ApplicationController
   end
 
   def songs
-    @songs = Song.relevant.title_starting_with(char_param).order(songs_order_by)
+    @songs =
+      Song.relevant
+          .title_starting_with(char_param)
+          .order(songs_order_by)
     render_xhr_without_layout
   end
 
   def venues
-    @venues = Venue.relevant.name_starting_with(char_param).order(venues_order_by)
+    @venues =
+      Venue.relevant
+           .name_starting_with(char_param)
+           .order(venues_order_by)
     render_xhr_without_layout
   end
 
@@ -28,13 +35,22 @@ class ContentController < ApplicationController
   end
 
   def top_liked_shows
-    @shows = Show.avail.where('likes_count > 0').includes(:venue, :tags).order('likes_count desc, date desc').limit(40)
+    @shows =
+      Show.avail
+          .where('likes_count > 0')
+          .includes(:venue, :tags)
+          .order('likes_count desc, date desc')
+          .limit(40)
     @shows_likes = @shows.map { |show| get_user_show_like(show) }
     render_xhr_without_layout
   end
 
   def top_liked_tracks
-    @tracks = Track.where('likes_count > 0').includes(:show, :tags).order('likes_count desc, title asc').limit(40)
+    @tracks =
+      Track.where('likes_count > 0')
+           .includes(:show, :tags)
+           .order('likes_count desc, title asc')
+           .limit(40)
     @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
     render_xhr_without_layout
   end
@@ -57,7 +73,7 @@ class ContentController < ApplicationController
         view = :show_not_found
       end
     # Year?
-    elsif g =~ /^\d{4}$/
+    elsif /^\d{4}$/.match?(g)
       if year g
         @title = g
         @controller_action = 'year'
@@ -66,9 +82,9 @@ class ContentController < ApplicationController
         redirect_to :root
       end
     # Year range?
-    elsif years = g.match(/^(\d{4})-(\d{4})$/)
-      if year_range(years[1], years[2])
-        matches = Regexp.last_match
+    elsif g =~ /^(\d{4})-(\d{4})$/
+      matches = Regexp.last_match
+      if year_range(matches[1], matches[2])
         @title = "#{matches[1]} - #{matches[2]}"
         view = :year_or_scope
         @controller_action = 'year_range'
@@ -76,7 +92,7 @@ class ContentController < ApplicationController
         redirect_to :root
       end
     # Show?
-    elsif g =~ /^\d{4}(\-|\.)\d{1,2}(\-|\.)\d{1,2}$/
+    elsif /^\d{4}(\-|\.)\d{1,2}(\-|\.)\d{1,2}$/.match?(g)
       view = show(g) ? :show : :show_not_found
       @controller_action = 'show'
     # Song?
@@ -87,7 +103,7 @@ class ContentController < ApplicationController
     elsif venue(g)
       view = :venue
       @controller_action = 'venue'
-      # Tour?
+    # Tour?
     elsif tour(g)
       @title = @tour.name
       view = :year_or_scope
@@ -105,8 +121,7 @@ class ContentController < ApplicationController
   def day_of_year(month, day)
     validate_sorting_for_year_or_scope
     @shows = Show.avail
-                 .where('extract(month from date) = ?', month)
-                 .where('extract(day from date) = ?', day)
+                 .on_day_of_year(month, day)
                  .includes(:tour, :venue, :tags)
                  .order(@order_by)
                  .all
@@ -145,26 +160,56 @@ class ContentController < ApplicationController
     # Ensure valid date before touching database
     begin
       Date.parse(date)
-    rescue
+    rescue ArgumentError
       return false
     end
 
-    @show = Show.where(date: date).includes(:tracks).order('tracks.position asc').first
+    @show =
+      Show.where(date: date)
+          .includes(:tracks)
+          .order('tracks.position asc')
+          .first
     if @show.present?
       @show_like = get_user_show_like(@show)
-      @tracks = @show.tracks.includes(:songs, :tags).order('position asc')
+      @tracks =
+        @show.tracks
+             .includes(:songs, :tags)
+             .order(position: :asc)
       @set_durations = {}
       @tracks.group_by(&:set).each do |set, tracks|
         @set_durations[set] = tracks.map(&:duration).inject(0, &:+)
       end
       @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
-      @next_show = Show.avail.where('date > ?', @show.date).order('date asc').first
-      @next_show = Show.avail.order('date asc').first if @next_show.nil?
-      @previous_show = Show.avail.where('date < ?', @show.date).order('date desc').first
-      @previous_show = Show.avail.order('date desc').first if @previous_show.nil?
+
+      set_next_show
+      set_previous_show
     end
 
     @show
+  end
+
+  def set_next_show
+    @next_show =
+      Show.avail
+          .where('date > ?', @show.date)
+          .order(date: :asc)
+          .first
+    @next_show ||=
+      Show.avail
+          .order(date: :asc)
+          .first
+  end
+
+  def set_previous_show
+    @previous_show =
+      Show.avail
+          .where('date < ?', @show.date)
+          .order(date: :desc)
+          .first
+    @previous_show ||=
+      Show.avail
+          .order('date desc')
+          .first if @previous_show.nil?
   end
 
   def song(slug)

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'net/http'
 require 'uri'
 
@@ -10,7 +11,7 @@ namespace :phishnet do
     tag = Tag.where(name: 'Jamcharts').first
     songs = Song.all
 
-    PHISHNET_URI = 'http://api.phish.net/api.js?api=2.0&method=pnet.jamcharts.all&apikey=448345A7B7688DDE43D0'.freeze
+    PHISHNET_URI = 'http://api.phish.net/api.js?api=2.0&method=pnet.jamcharts.all&apikey=448345A7B7688DDE43D0'
     uri = URI.parse(PHISHNET_URI)
     json = JSON[Net::HTTP.get_response(uri).body]
 

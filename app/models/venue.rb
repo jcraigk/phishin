@@ -1,22 +1,25 @@
-class Venue < ActiveRecord::Base
-  attr_accessible :name, :past_names, :city, :state, :country, :shows_count, :latitude, :longitude
-
+# frozen_string_literal: true
+class Venue < ApplicationRecord
   has_many :shows
 
   extend FriendlyId
-  friendly_id :name, :use => :slugged
+  friendly_id :name, use: :slugged
 
-  geocoded_by :address
-
-  scope :relevant, -> { where("shows_count > 0") }
-  scope :name_starting_with, ->(char) { where("name SIMILAR TO ?", "#{char == '#' ? '[0-9]' : char}%") }
+  scope :relevant, -> { where('shows_count > 0') }
+  scope :name_starting_with, ->(char) { where('name SIMILAR TO ?', "#{char == '#' ? '[0-9]' : char}%") }
 
   def name_and_abbrev
     abbrev.present? ? "#{name} (#{abbrev})" : name
   end
 
   def location
-    (country == "USA" ? "#{city}, #{state}" : "#{city}, #{state} #{country}").gsub(/\s+/, ' ')
+    loc =
+      if country == 'USA'
+        "#{city}, #{state}"
+      else
+        "#{city}, #{state} #{country}"
+      end
+    loc.gsub(/\s+/, ' ')
   end
 
   def address
@@ -24,7 +27,7 @@ class Venue < ActiveRecord::Base
   end
 
   def name_letter
-    name[0,1]
+    name[0, 1]
   end
 
   def as_json
@@ -42,7 +45,6 @@ class Venue < ActiveRecord::Base
   end
 
   def as_json_api
-    my_shows = Show.where(venue_id: self.id).order('date')
     {
       id: id,
       name: name,
@@ -58,4 +60,9 @@ class Venue < ActiveRecord::Base
     }
   end
 
+  private
+
+  def my_shows
+    @my_shows ||= shows.order('date').all
+  end
 end

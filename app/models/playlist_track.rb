@@ -1,6 +1,5 @@
-class PlaylistTrack < ActiveRecord::Base
-  attr_accessible :playlist_id, :track_id, :position
-
+# frozen_string_literal: true
+class PlaylistTrack < ApplicationRecord
   belongs_to :playlist
   belongs_to :track
 

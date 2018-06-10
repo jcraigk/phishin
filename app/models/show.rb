@@ -1,11 +1,8 @@
-class Show < ActiveRecord::Base
-  attr_accessible :date, :sbd, :remastered, :likes_count, :venue_id, :duration
-  extend FriendlyId
-  friendly_id :date
-
-  has_many :tracks, dependent: :destroy
+# frozen_string_literal: true
+class Show < ApplicationRecord
   belongs_to :tour, counter_cache: true
   belongs_to :venue, counter_cache: true
+  has_many :tracks, dependent: :destroy
   has_many :likes, as: :likable, dependent: :destroy
   has_many :show_tags, dependent: :destroy
   has_many :tags, through: :show_tags
@@ -14,29 +11,42 @@ class Show < ActiveRecord::Base
 
   self.per_page = 10 # will_paginate default
 
+  extend FriendlyId
+  friendly_id :date
+
   scope :avail, -> { where('missing = FALSE') }
   scope :tagged_with, ->(tag) { includes(:tags).where('tags.name = ?', tag) }
 
-  scope :during_year, ->(year) {
+  scope :during_year, lambda { |year|
     date = Date.new(year.to_i)
-    where('date between ? and ?',
+    where(
+      'date between ? and ?',
       date.beginning_of_year,
-      date.end_of_year)
+      date.end_of_year
+    )
   }
-  scope :between_years, ->(year1, year2) {
+  scope :between_years, lambda { |year1, year2|
     date1 = Date.new(year1.to_i)
     date2 = Date.new(year2.to_i)
     if date1 < date2
-      where('date between ? and ?',
+      where(
+        'date between ? and ?',
         date1.beginning_of_year,
-        date2.end_of_year)
+        date2.end_of_year
+      )
     else
-      where('date between ? and ?',
+      where(
+        'date between ? and ?',
         date2.beginning_of_year,
-        date1.end_of_year)
+        date1.end_of_year
+      )
     end
   }
-  scope :random, ->(amt=1) { order('RANDOM()').limit(amt) }
+  scope :on_day_of_year, lambda { |month, day|
+    where('extract(month from date) = ?', month)
+      .where('extract(day from date) = ?', day)
+  }
+  scope :random, ->(amt = 1) { order('RAND()').limit(amt) }
 
   def to_s
     if venue
@@ -47,7 +57,7 @@ class Show < ActiveRecord::Base
   end
 
   def last_set
-    tracks.select {|t| /^\d$/.match t.set }.map(&:set).sort.last
+    tracks.select { |t| /^\d$/.match t.set }.map(&:set).max
   end
 
   def as_json
@@ -65,10 +75,12 @@ class Show < ActiveRecord::Base
       taper_notes: taper_notes,
       updated_at: updated_at
     }
+    return hash unless venue
+
     hash.merge(
       venue_name: venue.name,
       location: venue.location
-    ) if venue
+    )
   end
 
   def as_json_api
@@ -91,9 +103,6 @@ class Show < ActiveRecord::Base
   end
 
   def save_duration
-    duration = 0
-    tracks.each { |t| duration += t.duration }
-    self.duration = duration
-    save
+    update(duration: tracks.map(&:duration).inject(0, &:+))
   end
 end

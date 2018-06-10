@@ -1,33 +1,41 @@
+# frozen_string_literal: true
 module ApplicationHelper
   def sort_songs_and_venues_links(item_hash)
     str = ''
-    item_hash.each do |key, val|
-      link = params[:sort] == val ? "<strong>#{key}</strong>" : key
-      str += content_tag :li, link_to(link.html_safe, "?char=#{params[:char]}&sort=#{CGI::escape(val)}")
+    item_hash.each do |k, v|
+      link = params[:sort] == v ? "<strong>#{k}</strong>" : k
+      str += content_tag(
+        :li,
+        link_to(
+          link.html_safe,
+          "?char=#{params[:char]}&sort=#{CGI.escape(v)}"
+        )
+      )
     end
     str.html_safe
   end
 
   def sort_tags_links(item_hash)
     str = ''
-    item_hash.each do |key, val|
-      link = params[:sort] == val ? "<strong>#{key}</strong>" : key
-      str += content_tag :li, link_to(link.html_safe, "?sort=#{CGI::escape(val)}")
+    item_hash.each do |k, v|
+      link = params[:sort] == v ? "<strong>#{k}</strong>" : k
+      str += content_tag :li, link_to(link.html_safe, "?sort=#{CGI.escape(v)}")
     end
     str.html_safe
   end
 
-  def first_char_sub_links(base_url, current_item=nil)
+  def first_char_sub_links(base_url, current_item = nil)
     str = ''
     FIRST_CHAR_LIST.each_with_index do |char, i|
       css = 'char_link'
-      css += ' active' if params[:char] == char or
-        (params[:char].nil? and current_item.nil? and i == 0) or
-        (char == '#' and defined?(current_item.name) and current_item.name[0] =~ /\d/) or
-        (char == '#' and defined?(current_item.title) and current_item.title[0] =~ /\d/) or
-        (current_item and defined?(current_item.title) and current_item.title[0] == char) or
-        (current_item and defined?(current_item.name) and current_item.name[0] == char)
-      str += link_to char, "#{base_url}?char=#{CGI::escape(char)}", class: css
+      css += ' active' if
+        params[:char] == char ||
+        (params[:char].nil? && current_item.nil? && i.zero?) ||
+        (char == '#' && defined?(current_item.name) && current_item.name[0] =~ /\d/) ||
+        (char == '#' && defined?(current_item.title) && current_item.title[0] =~ /\d/) ||
+        (current_item && defined?(current_item.title) && current_item.title[0] == char) ||
+        (current_item && defined?(current_item.name) && current_item.name[0] == char)
+      str += link_to char, "#{base_url}?char=#{CGI.escape(char)}", class: css
     end
     str.html_safe
   end
@@ -38,10 +46,10 @@ module ApplicationHelper
       'Top 40 Tracks' => [top_tracks_path, ['top_liked_tracks']]
     }
     str = ''
-    nav_items.each do |name, properties|
+    nav_items.each do |name, props|
       css = ''
-      css = 'active' if properties[1].include?(params[:action])
-      str += link_to name, properties[0], class: css
+      css = 'active' if props[1].include?(params[:action])
+      str += link_to name, props[0], class: css
     end
     str.html_safe
   end
@@ -54,15 +62,16 @@ module ApplicationHelper
       'Logout' => [destroy_user_session_path, true, ['nothing']]
     }
     str = ''
-    nav_items.each do |name, properties|
+    nav_items.each do |name, props|
       css = ''
-      css = 'active' if properties[2].include?(params[:action])
-      css += ' non-remote' if properties[1]
-      if name == 'Logout'
-        str += link_to name, properties[0], class: css, method: :delete
-      else
-        str += link_to name, properties[0], class: css
-      end
+      css = 'active' if props[2].include?(params[:action])
+      css += ' non-remote' if props[1]
+      str +=
+        if name == 'Logout'
+          link_to(name, props[0], class: css, method: :delete)
+        else
+          link_to(name, props[0], class: css)
+        end
     end
     str.html_safe
   end
@@ -75,13 +84,14 @@ module ApplicationHelper
       'Logout' => [destroy_user_session_path, true, ['nothing']]
     }
     str = ''
-    nav_items.each do |name, properties|
+    nav_items.each do |name, props|
       str += '<li>'
-      if name == 'Logout'
-        str += link_to name, properties[0], method: :delete, class: 'non-remote'
-      else
-        str += link_to name, properties[0], class: 'non-remote'
-      end
+      str +=
+        if name == 'Logout'
+          link_to(name, props[0], method: :delete, class: 'non-remote')
+        else
+          link_to(name, props[0], class: 'non-remote')
+        end
       str += '</li>'
     end
     str.html_safe
@@ -90,20 +100,20 @@ module ApplicationHelper
   def playlists_sub_links
     nav_items = {
       'Active' => [active_playlist_path, ['active_playlist']],
-      'Saved' => [saved_playlists_path, ['saved_playlists']],
+      'Saved' => [saved_playlists_path, ['saved_playlists']]
     }
     str = ''
-    nav_items.each do |name, properties|
+    nav_items.each do |name, props|
       css = ''
-      css = 'active' if properties[1].include?(params[:action])
-      str += link_to name, properties[0], class: css
+      css = 'active' if props[1].include?(params[:action])
+      str += link_to name, props[0], class: css
     end
     str.html_safe
   end
 
   def years_sub_links
     str = ''
-    Hash[ERAS.to_a.reverse].each do |era, years|
+    Hash[ERAS.to_a.reverse].each do |_era, years|
       years.reverse.each_with_index do |year, i|
         style = ''
         style = 'margin-right: 26px' if i + 1 == years.size
@@ -129,8 +139,8 @@ module ApplicationHelper
     )
   end
 
-  def duration_readable(ms, style='colon')
-    x = ms / 1000
+  def duration_readable(milliseconds, style = 'colon')
+    x = milliseconds / 1000
     seconds = x % 60
     x /= 60
     minutes = x % 60
@@ -139,117 +149,176 @@ module ApplicationHelper
     x /= 24
     days = x
     if style == 'letters'
-      if days > 0
-        "%dd %dh %dm" % [days, hours, minutes]
-      elsif hours > 0
-        "%dh %dm" % [hours, minutes]
+      if days.positive?
+        format(
+          '%<days>dd %<hours>dh %<minutes>dm',
+          days: days,
+          hours: hours,
+          minute: minutes
+        )
+      elsif hours.positive?
+        format(
+          '%<hours>dh %<minutes>dm',
+          hours: hours,
+          minutes: minutes
+        )
       else
-        "%dm %ds" % [minutes, seconds]
+        format(
+          '%<minutes>dm %<seconds>ds',
+          minutes: minutes,
+          seconds: seconds
+        )
       end
+    elsif days.positive?
+      format(
+        '%<days>d:%<hours>02d:%<minutes>02d:%<seconds>02d',
+        days: days,
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds
+      )
+    elsif hours.positive?
+      format(
+        '%<hours>d:%<minutes>02d:%<seconds>02d',
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds
+      )
     else
-      if days > 0
-        "%d:%02d:%02d:%02d" % [days, hours, minutes, seconds]
-      elsif hours > 0
-        "%d:%02d:%02d" % [hours, minutes, seconds]
-      else
-        "%d:%02d" % [minutes, seconds]
-      end
+      format(
+        '%<minutes>d:%<seconds>02d',
+        minutes: minutes,
+        seconds: seconds
+      )
     end
   end
 
   def global_nav_links
-    nav_items = {
-      # 'userbox' => [nil, ['my_shows', 'my_tracks', 'edit'], 14],
-      'Years' => [years_path, ['years', 'year'], 263],
-      'Venues' => [venues_path, ['venues', 'venue'], 327],
-      'Songs' => [songs_path, ['songs', 'song'], 390],
-      'Map' => ['/map?map_term=Burlington%20VT&distance=10', ['map'], 448],
-      'Top 40' => [top_shows_path, ['top_liked_shows', 'top_liked_tracks'], 504],
-      'Playlists' => [active_playlist_path, ['active_playlist', 'saved_playlists'], 570],
-      'Tags' => [tags_path, ['index', 'selected_tag'], 630]
-    }
     str = ''
-    nav_items.each do |name, properties|
+    global_nav_items.each do |name, props|
       css = ''
-      css = 'active' unless ([params[:action], @controller_action] & properties[1]).empty?
+      css = 'active' unless ([params[:action], @controller_action] & props[1]).empty?
       if name == 'userbox'
         css += ' user_control'
         if user_signed_in?
-          properties[0] = my_shows_path
+          props[0] = my_shows_path
           name = current_user.username
         else
-          properties[0] = new_user_session_path
+          props[0] = new_user_session_path
           name = 'Sign up!'
           css += ' non-remote'
         end
       end
-      x = properties[2]
-      str += content_tag :div, (link_to name, properties[0], class: "global_link #{css}"), class: 'link_container', style: "margin-left: #{x}px;"
-      if css =~ /active/
-        pos = x + 20
-        str += content_tag :div, nil, class: 'nav_indicator', style: "margin-left: #{pos}px;"
-        str += content_tag :div, nil, class: 'nav_indicator2', style: "margin-left: #{pos}px;"
-      end
+      x = props[2]
+      str +=
+        content_tag(
+          :div,
+          link_to(name, props.first, class: "global_link #{css}"),
+          class: 'link_container',
+          style: "margin-left: #{x}px;"
+        )
+      next unless /active/.match?(css)
+      pos = x + 20
+      str += content_tag(:div, nil, class: 'nav_indicator', style: "margin-left: #{pos}px;")
+      str += content_tag(:div, nil, class: 'nav_indicator2', style: "margin-left: #{pos}px;")
     end
     str.html_safe
   end
 
-  def link_to_song(song, term=nil)
+  def link_to_song(song, term = nil)
     slug = song.aliased_song ? "/#{song.aliased_song.slug}" : "/#{song.slug}"
     title = (term ? highlight(song.title, term) : song.title)
     link_to title, slug
   end
 
-  def performances_or_alias_link(song, display_title=false)
-    tracks_count = (display_title ? song.tracks_count : song.tracks_count)
-    song.aliased_song ? (link_to "alias for #{song.aliased_song.title}", "#{song.aliased_song.slug}", class: :alias_for) : pluralize(tracks_count, 'track')
+  def performances_or_alias_link(song)
+    return pluralize(song.tracks_count, 'track') unless song.aliased_song
+    link_to("alias for #{song.aliased_song.title}", song.aliased_song.slug, class: :alias_for)
   end
 
   def likable(likable, like, size)
     likable_name = likable.class.name.downcase
-    css = (like.present? ? [:like_toggle, :liked] : [:like_toggle])
-    a = link_to '', 'null', data: { type: likable_name, id: likable.id}, class: css, title: "Click to Like or Unlike this #{likable_name}"
-    span = content_tag :span, likable.likes_count
-    str = content_tag :div, a + span, class: "likes_#{size}"
+    css = like.present? ? %i[like_toggle liked] : %i[like_toggle]
+    a = link_to(
+      '',
+      'null',
+      data: {
+        type: likable_name,
+        id: likable.id
+      },
+      class: css,
+      title: "Click to Like or Unlike this #{likable_name}"
+    )
+    span = content_tag(:span, likable.likes_count)
+    str = content_tag(:div, a + span, class: "likes_#{size}")
     str.html_safe
   end
 
-  def link_to_show(show, show_abbrev=true)
+  def link_to_show(show, show_abbrev = true)
     link_name = show_link_title(show, show_abbrev)
     link_to(link_name, "/#{show.date}")
   end
 
-  def show_link_title(show, show_abbrev=true)
-    show_abbrev ? show.date.strftime("%b %-d") : show.date.strftime("%Y.%m.%d")
+  def show_link_title(show, show_abbrev = true)
+    show_abbrev ? show.date.strftime('%b %-d') : show.date.strftime('%Y.%m.%d')
   end
 
   private
 
   def linked_show_date(show)
-    day_link = link_to show.date.strftime("%b %-d"), "/#{show.date.strftime("%B").downcase}-#{show.date.strftime("%-d")}"
-    year_link = link_to show.date.strftime("%Y"), "/#{show.date.strftime("%Y")}"
+    day_link = link_to(
+      show.date.strftime('%b %-d'),
+      "/#{show.date.strftime('%B').downcase}-#{show.date.strftime('%-d')}"
+    )
+    year_link = link_to(
+      show.date.strftime('%Y'),
+      "/#{show.date.strftime('%Y')}"
+    )
     "#{day_link}, #{year_link}".html_safe
   end
 
   def xhr_exempt_controller
-    devise_controllers = %w(sessions registrations confirmations passwords unlocks omniauth_callbacks)
-    special_controllers = %w(downloads errors)
-    exempt_controllers = devise_controllers + special_controllers
-    exempt_controllers.include? controller_name
+    exempt_controllers.include?(controller_name)
+  end
+
+  def devise_controllers
+    %w[
+      sessions registrations confirmations
+      passwords unlocks omniauth_callbacks
+    ]
+  end
+
+  def special_controllers
+    %w[downloads errors]
+  end
+
+  def exempt_controllers
+    devise_controllers + special_controllers
   end
 
   def track_title_with_tags(track)
     max_len = 70
     str = '<div class="track_tag_container_inline">'
     track.tags.sort_by(&:priority).each do |tag|
-      str += content_tag :span, tag.name, class: 'label track_tag', style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color};"
+      str += content_tag(
+        :span,
+        tag.name,
+        class: 'label track_tag',
+        style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color};"
+      )
     end
-    str += "</div>"
-    if track.title.size > max_len
-      str += content_tag :span, truncate(track.title, length: max_len), data: { toggle: 'tooltip' }, title: track.title
-    else
-      str += track.title
-    end
+    str += '</div>'
+    str +=
+      if track.title.size > max_len
+        content_tag(
+          :span,
+          truncate(track.title, length: max_len),
+          data: { toggle: 'tooltip' },
+          title: track.title
+        )
+      else
+        track.title
+      end
 
     str.html_safe
   end
@@ -262,23 +331,26 @@ module ApplicationHelper
     "#{number_with_delimiter(count)} #{word.pluralize(count)}".html_safe
   end
 
-  def display_tags(tags, short=false, css_class='show_tag_container')
-    str  = "<span class=\"#{css_class}\">"
-    tags.sort_by! {|tag| tag.priority }
+  def display_tags(tags, short = false, css_class = 'show_tag_container')
+    str = "<span class=\"#{css_class}\">"
+    tags.order(priority: :asc)
     if short
-      if tags.count > 0
+      if (count = tags.count).positive?
         tag = tags.first
         str += tag_label(tag)
-        if tags.count > 1
-          str += "<span class=\"tags_plus\">...</span>"
-        else
-          str += "<span class=\"tags_plus\" style=\"visibility: hidden;\">...</span>"
-        end
+        str += '<span class="tags_plus"'
+        str += ' style="visibility: hidden;"' if count > 1
+        str += '>...</span>'
       end
     else
-      tags.each do |tag|
-        str += link_to tag_path(name: tag.name.downcase) do
-          content_tag :span, tag.name, class: 'label tag_label', style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color}"
+      tags.each do |t|
+        str += link_to tag_path(name: t.name.downcase) do
+          content_tag(
+            :span,
+            t.name,
+            class: 'label tag_label',
+            style: "color: #{contrasting_color(t.color)}; background-color: #{t.color}"
+          )
         end
       end
     end
@@ -286,9 +358,14 @@ module ApplicationHelper
     str.html_safe
   end
 
-  def tag_label(tag, css_class='')
+  def tag_label(tag, css_class = '')
     link_to tag_path(name: tag.name.downcase) do
-      content_tag :span, tag.name, class: "label tag_label #{css_class}", style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color}"
+      content_tag(
+        :span,
+        tag.name,
+        class: "label tag_label #{css_class}",
+        style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color}"
+      )
     end
   end
 
@@ -297,7 +374,23 @@ module ApplicationHelper
     color_str[0] = ''
     rgb_hex = color_str.scan(/../)
     sum = 0
-    rgb_hex.each {|hex| sum += hex.hex }
+    rgb_hex.each { |hex| sum += hex.hex }
     sum > 382 ? '#555555' : '#ffffff'
+  end
+
+  def global_nav_items
+    {
+      'Years' => [years_path, %w[years year], 263],
+      'Venues' => [venues_path, %w[venues venue], 327],
+      'Songs' => [songs_path, %w[songs song], 390],
+      'Map' => [default_map_path, %w[map], 448],
+      'Top 40' => [top_shows_path, %w[top_liked_shows top_liked_tracks], 504],
+      'Playlists' => [active_playlist_path, %w[active_playlist saved_playlists], 570],
+      'Tags' => [tags_path, %w[index selected_tag], 630]
+    }
+  end
+
+  def default_map_path
+    '/map?map_term=Burlington%20VT&distance=10'
   end
 end

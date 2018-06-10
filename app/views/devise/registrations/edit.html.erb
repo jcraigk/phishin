@@ -1,39 +1,39 @@
 <%= render partial: 'layouts/global_nav' %>
 
 <div id="content">
-  
+
   <div id="title_box">
     <h1>Change Password</h1>
   </div>
 
   <div id="content_box">
-    <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
       <%= devise_error_messages! %>
 
       <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
         <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
       <% end %>
-      
+
       <br />
       <div class="field_label">New Password</div>
       <div class="field_content"><%= f.password_field :password, :autocomplete => "off" %></div>
       <div style="clear: both;"></div>
-      
+
       <div class="field_label">Confirm Password</div>
       <div class="field_content"><%= f.password_field :password_confirmation %></div>
       <div style="clear: both;"></div>
-      
+
       <div class="field_label">Current Password</div>
       <div class="field_content"><%= f.password_field :current_password %></div>
       <div class="field_note">needed to authorize you</div>
       <div style="clear: both;"></div>
-      
+
       <br />
       <div class="field_label"><%= f.submit "CHANGE PASSWORD", class: 'btn' %></div>
       <div style="clear: both;"></div>
     <% end %>
   </div>
-  
+
     <div style="clear: both;"></div>
-  
+
 </div>

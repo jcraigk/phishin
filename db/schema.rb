@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -9,250 +8,233 @@
 # from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
-# It's strongly recommended to check this file into your version control system.
+# It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20170811053628) do
+ActiveRecord::Schema.define(version: 2017_08_11_053628) do
 
-  create_table "album_requests", :force => true do |t|
-    t.integer  "album_id"
-    t.integer  "user_id"
-    t.string   "name"
-    t.string   "md5"
-    t.string   "kind"
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "album_requests", id: :serial, force: :cascade do |t|
+    t.integer "album_id"
+    t.integer "user_id"
+    t.string "name", limit: 255
+    t.string "md5", limit: 255
+    t.string "kind", limit: 255
     t.datetime "created_at"
   end
 
-  create_table "albums", :force => true do |t|
-    t.string   "name"
-    t.string   "md5"
-    t.boolean  "is_custom_playlist",    :default => false
+  create_table "albums", id: :serial, force: :cascade do |t|
+    t.string "name", limit: 255
+    t.string "md5", limit: 255
+    t.boolean "is_custom_playlist", default: false
     t.datetime "completed_at"
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
-    t.string   "zip_file_file_name"
-    t.string   "zip_file_content_type"
-    t.integer  "zip_file_file_size"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "zip_file_file_name", limit: 255
+    t.string "zip_file_content_type", limit: 255
+    t.integer "zip_file_file_size"
     t.datetime "zip_file_updated_at"
     t.datetime "error_at"
+    t.index ["md5"], name: "index_albums_on_md5"
   end
 
-  add_index "albums", ["md5"], :name => "index_albums_on_md5"
-
-  create_table "likes", :force => true do |t|
-    t.string   "likable_type"
-    t.integer  "likable_id"
-    t.integer  "user_id"
+  create_table "likes", id: :serial, force: :cascade do |t|
+    t.string "likable_type", limit: 255
+    t.integer "likable_id"
+    t.integer "user_id"
     t.datetime "created_at"
+    t.index ["likable_id"], name: "index_likes_on_likable_id"
+    t.index ["likable_type"], name: "index_likes_on_likable_type"
+    t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
-  add_index "likes", ["likable_id"], :name => "index_likes_on_likable_id"
-  add_index "likes", ["likable_type"], :name => "index_likes_on_likable_type"
-  add_index "likes", ["user_id"], :name => "index_likes_on_user_id"
-
-  create_table "playlist_bookmarks", :force => true do |t|
+  create_table "playlist_bookmarks", id: :serial, force: :cascade do |t|
     t.integer "user_id"
     t.integer "playlist_id"
+    t.index ["playlist_id"], name: "index_playlist_bookmarks_on_playlist_id"
+    t.index ["user_id"], name: "index_playlist_bookmarks_on_user_id"
   end
 
-  add_index "playlist_bookmarks", ["playlist_id"], :name => "index_playlist_bookmarks_on_playlist_id"
-  add_index "playlist_bookmarks", ["user_id"], :name => "index_playlist_bookmarks_on_user_id"
-
-  create_table "playlist_tracks", :force => true do |t|
+  create_table "playlist_tracks", id: :serial, force: :cascade do |t|
     t.integer "playlist_id"
     t.integer "track_id"
     t.integer "position"
+    t.index ["playlist_id"], name: "index_playlist_tracks_on_playlist_id"
+    t.index ["position"], name: "index_playlist_tracks_on_position"
+    t.index ["track_id"], name: "index_playlist_tracks_on_track_id"
   end
 
-  add_index "playlist_tracks", ["playlist_id"], :name => "index_playlist_tracks_on_playlist_id"
-  add_index "playlist_tracks", ["position"], :name => "index_playlist_tracks_on_position"
-  add_index "playlist_tracks", ["track_id"], :name => "index_playlist_tracks_on_track_id"
-
-  create_table "playlists", :force => true do |t|
-    t.integer  "user_id"
-    t.string   "name"
-    t.string   "slug"
-    t.datetime "created_at",                :null => false
-    t.datetime "updated_at",                :null => false
-    t.integer  "duration",   :default => 0
+  create_table "playlists", id: :serial, force: :cascade do |t|
+    t.integer "user_id"
+    t.string "name", limit: 255
+    t.string "slug", limit: 255
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "duration", default: 0
+    t.index ["duration"], name: "index_playlists_on_duration"
+    t.index ["name"], name: "index_playlists_on_name"
+    t.index ["slug"], name: "index_playlists_on_slug"
+    t.index ["user_id"], name: "index_playlists_on_user_id"
   end
 
-  add_index "playlists", ["duration"], :name => "index_playlists_on_duration"
-  add_index "playlists", ["name"], :name => "index_playlists_on_name"
-  add_index "playlists", ["slug"], :name => "index_playlists_on_slug"
-  add_index "playlists", ["user_id"], :name => "index_playlists_on_user_id"
-
-  create_table "rails_admin_histories", :force => true do |t|
-    t.text     "message"
-    t.string   "username"
-    t.integer  "item"
-    t.string   "table"
-    t.integer  "month",      :limit => 2
-    t.integer  "year",       :limit => 8
-    t.datetime "created_at",              :null => false
-    t.datetime "updated_at",              :null => false
+  create_table "rails_admin_histories", id: :serial, force: :cascade do |t|
+    t.text "message"
+    t.string "username", limit: 255
+    t.integer "item"
+    t.string "table", limit: 255
+    t.integer "month", limit: 2
+    t.bigint "year"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item", "table", "month", "year"], name: "index_rails_admin_histories"
   end
 
-  add_index "rails_admin_histories", ["item", "table", "month", "year"], :name => "index_rails_admin_histories"
-
-  create_table "show_tags", :force => true do |t|
-    t.integer  "show_id"
-    t.integer  "tag_id"
+  create_table "show_tags", id: :serial, force: :cascade do |t|
+    t.integer "show_id"
+    t.integer "tag_id"
     t.datetime "created_at"
+    t.index ["show_id"], name: "index_show_tags_on_show_id"
+    t.index ["tag_id"], name: "index_show_tags_on_tag_id"
   end
 
-  add_index "show_tags", ["show_id"], :name => "index_show_tags_on_show_id"
-  add_index "show_tags", ["tag_id"], :name => "index_show_tags_on_tag_id"
-
-  create_table "shows", :force => true do |t|
-    t.date     "date"
-    t.boolean  "remastered",  :default => false
-    t.boolean  "sbd",         :default => false
-    t.datetime "created_at",                     :null => false
-    t.datetime "updated_at",                     :null => false
-    t.integer  "venue_id"
-    t.integer  "tour_id"
-    t.integer  "likes_count", :default => 0
-    t.boolean  "incomplete",  :default => false
-    t.boolean  "missing",     :default => true
-    t.text     "admin_notes"
-    t.integer  "duration",    :default => 0,     :null => false
-    t.text     "taper_notes"
-    t.integer  "tags_count",  :default => 0
+  create_table "shows", id: :serial, force: :cascade do |t|
+    t.date "date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "remastered", default: false
+    t.boolean "sbd", default: false
+    t.integer "venue_id"
+    t.integer "tour_id"
+    t.integer "likes_count", default: 0
+    t.boolean "incomplete", default: false
+    t.boolean "missing", default: true
+    t.text "admin_notes"
+    t.integer "duration", default: 0, null: false
+    t.text "taper_notes"
+    t.integer "tags_count", default: 0
+    t.index ["date"], name: "index_shows_on_date"
+    t.index ["duration"], name: "index_shows_on_duration"
+    t.index ["likes_count"], name: "index_shows_on_likes_count"
+    t.index ["tour_id"], name: "index_shows_on_tour_id"
+    t.index ["venue_id"], name: "index_shows_on_venue_id"
   end
 
-  add_index "shows", ["date"], :name => "index_shows_on_date"
-  add_index "shows", ["duration"], :name => "index_shows_on_duration"
-  add_index "shows", ["likes_count"], :name => "index_shows_on_likes_count"
-  add_index "shows", ["tour_id"], :name => "index_shows_on_tour_id"
-  add_index "shows", ["venue_id"], :name => "index_shows_on_venue_id"
-
-  create_table "songs", :force => true do |t|
-    t.string   "title"
-    t.string   "slug"
-    t.integer  "tracks_count",    :default => 0
-    t.integer  "alias_for"
-    t.datetime "created_at",                     :null => false
-    t.datetime "updated_at",                     :null => false
-    t.string   "lyrical_excerpt"
-    t.string   "alt_title"
+  create_table "songs", id: :serial, force: :cascade do |t|
+    t.string "title", limit: 255
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "slug", limit: 255
+    t.integer "tracks_count", default: 0
+    t.integer "alias_for"
+    t.string "lyrical_excerpt", limit: 255
+    t.string "alt_title", limit: 255
+    t.index ["alt_title"], name: "index_songs_on_alt_title"
   end
 
-  add_index "songs", ["alt_title"], :name => "index_songs_on_alt_title"
-  add_index "songs", ["title"], :name => "index_songs_on_title"
-
-  create_table "songs_tracks", :force => true do |t|
+  create_table "songs_tracks", id: :serial, force: :cascade do |t|
     t.integer "song_id"
     t.integer "track_id"
   end
 
-  add_index "songs_tracks", ["song_id"], :name => "index_songs_tracks_on_song_id"
-  add_index "songs_tracks", ["track_id"], :name => "index_songs_tracks_on_track_id"
-
-  create_table "tags", :force => true do |t|
-    t.string   "name"
-    t.string   "color"
-    t.text     "description"
-    t.datetime "created_at",                  :null => false
-    t.datetime "updated_at",                  :null => false
-    t.integer  "shows_count",  :default => 0
-    t.integer  "tracks_count", :default => 0
-    t.integer  "priority",     :default => 0
+  create_table "tags", id: :serial, force: :cascade do |t|
+    t.string "name", limit: 255
+    t.string "color", limit: 255
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "shows_count", default: 0
+    t.integer "tracks_count", default: 0
+    t.integer "priority", default: 0
+    t.index ["name"], name: "index_tags_on_name"
   end
 
-  add_index "tags", ["name"], :name => "index_tags_on_name"
-
-  create_table "tours", :force => true do |t|
-    t.string   "name"
-    t.date     "starts_on"
-    t.date     "ends_on"
-    t.string   "slug"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
-    t.integer  "shows_count", :default => 0
+  create_table "tours", id: :serial, force: :cascade do |t|
+    t.string "name", limit: 255
+    t.date "starts_on"
+    t.date "ends_on"
+    t.string "slug", limit: 255
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "shows_count", default: 0
+    t.index ["name"], name: "index_tours_on_name"
+    t.index ["slug"], name: "index_tours_on_slug", unique: true
+    t.index ["starts_on"], name: "index_tours_on_starts_on"
   end
 
-  add_index "tours", ["name"], :name => "index_tours_on_name"
-  add_index "tours", ["slug"], :name => "index_tours_on_slug", :unique => true
-  add_index "tours", ["starts_on"], :name => "index_tours_on_starts_on"
-
-  create_table "track_requests", :force => true do |t|
-    t.integer  "track_id"
-    t.integer  "user_id"
-    t.string   "kind"
+  create_table "track_requests", id: :serial, force: :cascade do |t|
+    t.integer "track_id"
+    t.integer "user_id"
+    t.string "kind", limit: 255
     t.datetime "created_at"
   end
 
-  create_table "track_tags", :force => true do |t|
-    t.integer  "track_id"
-    t.integer  "tag_id"
+  create_table "track_tags", id: :serial, force: :cascade do |t|
+    t.integer "track_id"
+    t.integer "tag_id"
     t.datetime "created_at"
+    t.index ["tag_id"], name: "index_track_tags_on_tag_id"
+    t.index ["track_id"], name: "index_track_tags_on_track_id"
   end
 
-  add_index "track_tags", ["tag_id"], :name => "index_track_tags_on_tag_id"
-  add_index "track_tags", ["track_id"], :name => "index_track_tags_on_track_id"
-
-  create_table "tracks", :force => true do |t|
-    t.integer  "show_id"
-    t.string   "title"
-    t.integer  "position"
-    t.integer  "duration"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
-    t.string   "audio_file_file_name"
-    t.string   "audio_file_content_type"
-    t.integer  "audio_file_file_size"
+  create_table "tracks", id: :serial, force: :cascade do |t|
+    t.integer "show_id"
+    t.string "title", limit: 255
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "audio_file_file_name", limit: 255
+    t.string "audio_file_content_type", limit: 255
+    t.integer "audio_file_file_size"
     t.datetime "audio_file_updated_at"
-    t.string   "set"
-    t.integer  "likes_count",             :default => 0
-    t.string   "slug"
-    t.integer  "tags_count",              :default => 0
+    t.integer "duration"
+    t.string "set", limit: 255
+    t.integer "likes_count", default: 0
+    t.string "slug", limit: 255
+    t.integer "tags_count", default: 0
+    t.index ["likes_count"], name: "index_tracks_on_likes_count"
+    t.index ["slug"], name: "index_tracks_on_slug"
   end
 
-  add_index "tracks", ["likes_count"], :name => "index_tracks_on_likes_count"
-  add_index "tracks", ["show_id"], :name => "index_tracks_on_show_id"
-  add_index "tracks", ["slug"], :name => "index_tracks_on_slug"
-
-  create_table "users", :force => true do |t|
-    t.string   "email",                  :default => "", :null => false
-    t.string   "encrypted_password",     :default => "", :null => false
-    t.string   "reset_password_token"
+  create_table "users", id: :serial, force: :cascade do |t|
+    t.string "email", limit: 255, default: "", null: false
+    t.string "encrypted_password", limit: 255, default: "", null: false
+    t.string "reset_password_token", limit: 255
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          :default => 0
+    t.integer "sign_in_count", default: 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip"
-    t.string   "last_sign_in_ip"
-    t.string   "confirmation_token"
+    t.string "current_sign_in_ip", limit: 255
+    t.string "last_sign_in_ip", limit: 255
+    t.string "confirmation_token", limit: 255
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
-    t.string   "unconfirmed_email"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
-    t.string   "username",               :default => "", :null => false
-    t.string   "authentication_token"
+    t.string "unconfirmed_email", limit: 255
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "username", limit: 255, default: "", null: false
+    t.string "authentication_token", limit: 255
+    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
-  add_index "users", ["email"], :name => "index_users_on_email", :unique => true
-  add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
-
-  create_table "venues", :force => true do |t|
-    t.string   "name"
-    t.string   "past_names"
-    t.string   "city"
-    t.string   "state"
-    t.string   "country"
-    t.string   "slug"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
-    t.integer  "shows_count", :default => 0
-    t.float    "latitude"
-    t.float    "longitude"
-    t.string   "abbrev"
+  create_table "venues", id: :serial, force: :cascade do |t|
+    t.string "name", limit: 255
+    t.string "past_names", limit: 255
+    t.string "city", limit: 255
+    t.string "state", limit: 255
+    t.string "country", limit: 255
+    t.string "slug", limit: 255
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "shows_count", default: 0
+    t.float "latitude"
+    t.float "longitude"
+    t.string "abbrev", limit: 255
+    t.index ["name"], name: "index_venues_on_name"
+    t.index ["slug"], name: "index_venues_on_slug", unique: true
   end
-
-  add_index "venues", ["name"], :name => "index_venues_on_name"
-  add_index "venues", ["slug"], :name => "index_venues_on_slug", :unique => true
 
 end

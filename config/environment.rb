@@ -1,5 +1,3 @@
-# Load the rails application
-require File.expand_path('../application', __FILE__)
-
-# Initialize the rails application
-Phishin::Application.initialize!
+# frozen_string_literal: true
+require_relative 'application'
+Rails.application.initialize!
