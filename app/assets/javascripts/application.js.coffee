@@ -1,8 +1,8 @@
 //= require jquery
 //= require jquery_ujs
-//= require jquery-ui/widgets/slider
-//= require jquery-ui/widgets/sortable
-//= require jquery-ui/widgets/datepicker
+//= require jquery-ui/slider
+//= require jquery-ui/sortable
+//= require jquery-ui/datepicker
 //= require jquery.cookie
 //= require twitter/bootstrap
 //= require soundmanager2
@@ -155,13 +155,6 @@ $ ->
     unless $(this).hasClass('non-remote')
       App.Util.followLink $(this) if $(this).attr('href') != "#" and $(this).attr('href') != 'null'
       false
-
-  # Close dropdown menu after clicking link within
-  # Following causes issues with subsequent usage of that dropdown
-  # $(document).on 'click', '.dropdown-menu a', (e) ->
-    # $(this).parents('.dropdown-menu').dropdown().toggle()
-    # $(this).parents('.dropdown-menu').css('left', -3000)
-    # $(this).parents('.dropdown-menu').css('top', -3000)
 
   ###############################################
 
@@ -404,8 +397,9 @@ $ ->
           App.Util.feedback({ notice: r.msg })
           if r.liked then $this.addClass('liked') else $this.removeClass('liked')
           $this.siblings('span').html r.likes_count
+          console.log(r.likes_count)
           # Update other instances of this track's Like controls
-          $('.like_toggle[data-type="track"]').each( ->
+          $('.like_toggle[data-type="track"]').each(->
             unless $this.data('id') != $(this).data('id') or $this.is $(this)
               if r.liked then $(this).addClass 'liked' else $(this).removeClass 'liked'
               $(this).siblings('span').html r.likes_count

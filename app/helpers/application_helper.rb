@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module ApplicationHelper
   def sort_songs_and_venues_links(item_hash)
     str = ''
@@ -207,35 +208,62 @@ module ApplicationHelper
 
   def likable(likable, like, size)
     likable_name = likable.class.name.downcase
-    css = (like.present? ? [:like_toggle, :liked] : [:like_toggle])
-    a = link_to '', 'null', data: { type: likable_name, id: likable.id}, class: css, title: "Click to Like or Unlike this #{likable_name}"
-    span = content_tag :span, likable.likes_count
-    str = content_tag :div, a + span, class: "likes_#{size}"
+    css = like.present? ? %i[like_toggle liked] : %i[like_toggle]
+    a = link_to(
+      '',
+      'null',
+      data: {
+        type: likable_name,
+        id: likable.id
+      },
+      class: css,
+      title: "Click to Like or Unlike this #{likable_name}"
+    )
+    span = content_tag(:span, likable.likes_count)
+    str = content_tag(:div, a + span, class: "likes_#{size}")
     str.html_safe
   end
 
-  def link_to_show(show, show_abbrev=true)
+  def link_to_show(show, show_abbrev = true)
     link_name = show_link_title(show, show_abbrev)
     link_to(link_name, "/#{show.date}")
   end
 
-  def show_link_title(show, show_abbrev=true)
-    show_abbrev ? show.date.strftime("%b %-d") : show.date.strftime("%Y.%m.%d")
+  def show_link_title(show, show_abbrev = true)
+    show_abbrev ? show.date.strftime('%b %-d') : show.date.strftime('%Y.%m.%d')
   end
 
   private
 
   def linked_show_date(show)
-    day_link = link_to show.date.strftime("%b %-d"), "/#{show.date.strftime("%B").downcase}-#{show.date.strftime("%-d")}"
-    year_link = link_to show.date.strftime("%Y"), "/#{show.date.strftime("%Y")}"
+    day_link = link_to(
+      show.date.strftime('%b %-d'),
+      "/#{show.date.strftime('%B').downcase}-#{show.date.strftime('%-d')}"
+    )
+    year_link = link_to(
+      show.date.strftime('%Y'),
+      "/#{show.date.strftime('%Y')}"
+    )
     "#{day_link}, #{year_link}".html_safe
   end
 
   def xhr_exempt_controller
-    devise_controllers = %w(sessions registrations confirmations passwords unlocks omniauth_callbacks)
-    special_controllers = %w(downloads errors)
-    exempt_controllers = devise_controllers + special_controllers
-    exempt_controllers.include? controller_name
+    exempt_controllers.include?(controller_name)
+  end
+
+  def devise_controllers
+    %w[
+      sessions registrations confirmations
+      passwords unlocks omniauth_callbacks
+    ]
+  end
+
+  def special_controllers
+    %w[downloads errors]
+  end
+
+  def exempt_controllers
+    devise_controllers + special_controllers
   end
 
   def track_title_with_tags(track)
