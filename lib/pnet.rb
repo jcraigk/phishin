@@ -6,7 +6,7 @@ require 'openssl'
 require 'pp'
 
 class PNet
-  BASE_URL = 'https://api.phish.net/endpoint.php'.freeze
+  BASE_URL = 'https://api.phish.net/endpoint.php'
 
   def initialize(api_key)
     @options = {

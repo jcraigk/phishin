@@ -1,5 +1,4 @@
-require 'taglib'
-
+# frozen_string_literal: true
 class AlbumCreator
   @queue = :albums_queue
 
@@ -20,35 +19,35 @@ class AlbumCreator
         all_files_present = false
       elsif all_files_present
         FileUtils.cp track.audio_file.path, tmpfile_path
-        TagLib::MPEG::File.open(tmpfile_path) do |file|
-          # Set basic ID3 tags
-          tag = file.id3v2_tag
-          if tag
-            # Add the date/set to the song title if the album is a custom playlist
-            if album.is_custom_playlist
-              tag.title = "#{track.title} (#{track.show.date} #{track.set_album_abbreviation})"
-              tag.album = album.name
-            end
-            tag.track = i + 1
+        # TagLib::MPEG::File.open(tmpfile_path) do |file|
+        #   # Set basic ID3 tags
+        #   tag = file.id3v2_tag
+        #   if tag
+        #     # Add the date/set to the song title if the album is a custom playlist
+        #     if album.is_custom_playlist
+        #       tag.title = "#{track.title} (#{track.show.date} #{track.set_album_abbreviation})"
+        #       tag.album = album.name
+        #     end
+        #     tag.track = i + 1
 
-            # Commented out => don't change the defaults (as set by rake tracks:save_default_id3)
-            # tag.title = track.title
-            # tag.artist = "Phish"
-            # tag.year = track.show.date.strftime("%Y").to_i
-            # tag.genre = "Rock"
-            # tag.comment = "Visit phish.in for free Phish audio"
-            # Add cover art
-            # apic = TagLib::ID3v2::AttachedPictureFrame.new
-            # apic.mime_type = "image/jpeg"
-            # apic.description = "Cover"
-            # apic.type = TagLib::ID3v2::AttachedPictureFrame::FrontCover
-            # apic.picture = File.open(Rails.root.to_s + '/app/assets/images/cover_generic.jpg', 'rb') {|f| f.read }
-            # tag.add_frame(apic)
+        #     # Commented out => don't change the defaults (as set by rake tracks:save_default_id3)
+        #     # tag.title = track.title
+        #     # tag.artist = "Phish"
+        #     # tag.year = track.show.date.strftime("%Y").to_i
+        #     # tag.genre = "Rock"
+        #     # tag.comment = "Visit phish.in for free Phish audio"
+        #     # Add cover art
+        #     # apic = TagLib::ID3v2::AttachedPictureFrame.new
+        #     # apic.mime_type = "image/jpeg"
+        #     # apic.description = "Cover"
+        #     # apic.type = TagLib::ID3v2::AttachedPictureFrame::FrontCover
+        #     # apic.picture = File.open(Rails.root.to_s + '/app/assets/images/cover_generic.jpg', 'rb') {|f| f.read }
+        #     # tag.add_frame(apic)
 
-            # Save
-            file.save
-          end
-        end
+        #     # Save
+        #     file.save
+        #   end
+        # end
       end
     end
 
@@ -56,9 +55,7 @@ class AlbumCreator
       # Remove existing albums if not enough free space in cache for new uncompressed album
       new_album_size = 0
       tracks.map { |track| new_album_size += track.audio_file.size }
-      while ALBUM_CACHE_MAX_SIZE - Album.cache_used < new_album_size
-        Album.completed.order(:updated_at).first.destroy
-      end
+      Album.completed.order(:updated_at).first.destroy while ALBUM_CACHE_MAX_SIZE - Album.cache_used < new_album_size
 
       # Create zipfile in working directory and apply as paperclip attachment to album
       tmpfile = "#{tmpdir}#{album.md5}.zip"

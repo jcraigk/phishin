@@ -5,9 +5,9 @@ require_relative '../pnet'
 
 namespace :shows do
   desc 'Find mis-labeled sets on tracks'
-  task sets: :environment do
+  task mislabeled_sets: :environment do
     show_list = []
-    Show.order('date desc').all.each do |show|
+    Show.order('date desc').find_each do |show|
       set_list = show.tracks.order('position').all.map(&:set)
       set_list.map! do |set|
         case set
@@ -29,11 +29,12 @@ namespace :shows do
     show_list.each do |show|
       puts "Check: #{show.date}"
     end
+    puts "No issues found" if show_list.empty?
   end
 
   desc 'Apply SBD tags to shows'
   task apply_sbd_tags: :environment do
-    dates = %w(2014-06-24)
+    dates = %w[2014-06-24]
     dates.each do |date|
       show = Show.where(date: date).first
       next if show.nil?
@@ -61,73 +62,12 @@ namespace :shows do
     end
   end
 
-  desc 'Set shows.duration based on sum of all tracks'
-  task calc_duration: :environment do
-    Show.order('date desc').all.each do |show|
-      next unless show.tracks.any?
-
-      duration = show.tracks.map(&:duration).inject(0, &:+)
-      show.duration = duration
-      show.save
-      puts "#{show.date}: #{duration}"
-    end
-  end
-
-  desc 'Get songs from pnet api'
-  task get_songs: :environment do
-    require 'pnet'
-    API_KEY = '448345A7B7688DDE43D0'.freeze
-    pnet = PNet.new(API_KEY)
-
-    setlist = pnet.shows_setlists_get('showdate' => ENV['date'])[0]
-    songs = Nokogiri::HTML(setlist['setlistdata']).css('p.pnetset > a').map(&:content)
-
-    songs.each_with_index do |song, i|
-      p "#{i + 1}. #{song}"
-    end
-  end
-
-  desc "Using phish.net, get list of shows we don't currently have audio for"
-  task missing_report: :environment do
-    API_KEY = '448345A7B7688DDE43D0'.freeze
-    pnet = PNet.new(API_KEY)
-
-    total_shows = {}
-    missing_list = {}
-    (1983..Time.now.year).each do |year|
-      total_shows[year] = 0
-      missing_list[year] = []
-      data = pnet.shows_query('year' => year)
-      data.each do |show_data|
-        next if show_data[1].zero? || show_data[1] == 'No Shows Found'
-        total_shows[year] += 1
-        date = show_data['showdate']
-        unless Show.find_by_date(date)
-          missing_list[year] << date
-          # Show.create(date: date)
-        end
-      end
-      num_missing = missing_list[year].size
-      percent = (total_shows[year] > 0 ? (num_missing.to_f / total_shows[year].to_f) * 100.0 : 0)
-      puts "#{year}: missing #{num_missing} of #{total_shows[year]} (#{percent.round}%)"
-    end
-    total_missing = 0
-    missing_list.each { |_, a| total_missing += a.size }
-    overall_total_shows = 0
-    total_shows.each { |_, num| overall_total_shows += num }
-    percent = (overall_total_shows > 0 ? (total_missing.to_f / overall_total_shows.to_f) * 100.0 : 0)
-    puts "TOTAL: missing #{total_missing} of #{overall_total_shows} (#{percent.round}%)"
-  end
-
   desc 'Eliminate blank lines in taper notes content'
   task fix_taper_notes: :environment do
-    Show.all.each do |show|
+    Show.find_each do |show|
       next unless show.taper_notes
       fixed_str = show.taper_notes.gsub(/\n\n/, "\n")
-      if show.taper_notes != fixed_str
-        show.taper_notes = fixed_str
-        show.save
-      end
+      show.update(taper_notes: fixed_str)
     end
   end
 end

@@ -79,8 +79,9 @@ class ShowImporter::ShowImporter
       t.save_default_id3_tags
       begin
         duration += t.duration
-      rescue
-        p 'Duration error on #{t}'
+      rescue => e
+        puts e
+        p "Duration error on #{t}"
       end
     end
     @show.update_attributes(duration: duration)

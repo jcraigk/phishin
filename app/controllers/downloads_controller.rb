@@ -3,8 +3,6 @@ class DownloadsController < ApplicationController
   before_action :authorize_user!, except: :play_track
 
   def track_info
-    track = Track.where(id: params[:track_id]).includes(show: :venue).first
-    liked = current_user && track.likes.where(user_id: current_user.id).first ? true : false
     if track
       render json: {
         success: true,
@@ -82,13 +80,25 @@ class DownloadsController < ApplicationController
       else
         render text: 'This download is still being processed...please try again later'
       end
-      return
     else
       render text: 'Invalid download request'
     end
   end
 
   private
+
+  def track
+    @track ||=
+      Track.where(id: params[:track_id])
+           .includes(show: :venue)
+           .first
+  end
+
+  def liked
+    @liked ||=
+      current_user &&
+      track.likes.where(user_id: current_user.id).first.present?
+  end
 
   def authorize_user!
     return if current_user || request.xhr?

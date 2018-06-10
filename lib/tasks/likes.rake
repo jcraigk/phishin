@@ -3,7 +3,7 @@ namespace :likes do
   desc 'Find and destroy orphan Likes'
   task destroy_orphans: :environment do
     num_orphans = 0
-    Like.all.each do |like|
+    Like.find_each do |like|
       if like.likable_type == 'Track'
         next if Track.where(id: like.likable_id).first
         num_orphans += 1

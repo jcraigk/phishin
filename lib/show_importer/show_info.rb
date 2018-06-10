@@ -4,7 +4,7 @@ require 'nokogiri'
 require_relative '../pnet'
 
 class ShowInfo
-  PNET_API_KEY = '448345A7B7688DDE43D0'.freeze
+  PNET_API_KEY = '448345A7B7688DDE43D0'
 
   attr_reader :songs, :pnet
 

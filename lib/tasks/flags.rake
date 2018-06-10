@@ -6,7 +6,7 @@ namespace :flags do
 
     Show.all.map { |show| show.update_attributes(sbd: false) }
 
-    Show.includes(:tags).all.each do |show|
+    Show.includes(:tags).find_each do |show|
       show.update_attributes(sbd: true) if show.tags.include?(tag)
     end
   end

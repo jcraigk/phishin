@@ -22,7 +22,7 @@ class ShowImporter::Cli
     filenames = @si.fm.matches.keys
 
     filenames.each_with_index do |fn, i|
-      puts format('%2d. %s', i + 1, fn)
+      puts format('%2<idx>d. %<fn>s', idx: i + 1, fn: fn)
     end
     filenames
   end
@@ -41,7 +41,7 @@ class ShowImporter::Cli
   end
 
   def process_pos(pos)
-    while line = Readline.readline('#=> ', false)
+    while (line = Readline.readline('#=> ', false))
       case line.downcase
       when 'u'
         puts "Combining up (#{pos}) #{@si.get_track(pos).title} into (#{pos - 1}) #{@si.get_track(pos - 1).title}"
@@ -67,7 +67,7 @@ class ShowImporter::Cli
 
   def insert_new_track
     puts 'Before track #:'
-    while line = Readline.readline('#=> ', true)
+    while (line = Readline.readline('#=> ', true))
       @si.insert_before(line.to_i)
       break
     end
@@ -75,7 +75,7 @@ class ShowImporter::Cli
 
   def delete_track
     puts 'Delete track #:'
-    while line = Readline.readline('#=> ', true)
+    while (line = Readline.readline('#=> ', true))
       @si.delete(line.to_i)
       break
     end
@@ -83,7 +83,7 @@ class ShowImporter::Cli
 
   def update_song_for_pos(pos)
     puts 'Enter exact song title:'
-    while line = Readline.readline('#=> ', true)
+    while (line = Readline.readline('#=> ', true))
       matched = @si.fm.find_match(line, exact: true)
       if matched
         puts "Found \"#{matched.title}\".  Adding Song."
@@ -97,7 +97,7 @@ class ShowImporter::Cli
 
   def update_title_for_pos(pos)
     puts 'Enter new title:'
-    while line = Readline.readline('#=> ', true)
+    while (line = Readline.readline('#=> ', true))
       @si.get_track(pos).title = line
       break
     end
@@ -107,7 +107,7 @@ class ShowImporter::Cli
 
   def update_set_for_pos(pos)
     puts 'Enter new set abbrev [S,1,2,3,4,E,E2,E3]:'
-    while line = Readline.readline('#=> ', true)
+    while (line = Readline.readline('#=> ', true))
       @si.get_track(pos).set = line
       break
     end
@@ -118,9 +118,9 @@ class ShowImporter::Cli
   def update_file_for_pos(pos)
     puts 'Choose a file:'
     filenames = print_filenames
-    while line = Readline.readline("1-#{filenames.length} > ")
+    while (line = Readline.readline("1-#{filenames.length} > "))
       choice = line.to_i
-      next unless choice > 0
+      next unless choice.positive?
       new_filename = filenames[choice - 1]
       puts "Updating filename to '#{new_filename}'"
       @si.get_track(pos).filename = new_filename
@@ -133,14 +133,14 @@ class ShowImporter::Cli
   private
 
   def repl
-    while line = Readline.readline('> ', true)
+    while (line = Readline.readline('> ', true))
       process(line)
     end
   end
 
   def process(line)
     pos = line.to_i
-    return edit_for_pos(pos) if pos > 0
+    return edit_for_pos(pos) if pos.positive?
 
     menu_branch(line)
   end

@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require File.expand_path('boot', __DIR__)
+require File.expand_path('boot', __dir__)
 require 'rails/all'
 
 Bundler.require(*Rails.groups) if defined?(Bundler)

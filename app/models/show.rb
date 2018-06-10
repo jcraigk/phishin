@@ -42,6 +42,10 @@ class Show < ApplicationRecord
       )
     end
   }
+  scope :on_day_of_year, lambda { |month, day|
+    where('extract(month from date) = ?', month)
+      .where('extract(day from date) = ?', day)
+  }
   scope :random, ->(amt = 1) { order('RAND()').limit(amt) }
 
   def to_s
@@ -99,10 +103,6 @@ class Show < ApplicationRecord
   end
 
   def save_duration
-    update(duration: track_duration_sum)
-  end
-
-  def track_duration_sum
-    tracks.inject(0) { |duration, t| duration + t.duration }
+    update(duration: tracks.map(&:duration).inject(0, &:+))
   end
 end
