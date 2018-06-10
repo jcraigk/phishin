@@ -1,42 +1,40 @@
 # frozen_string_literal: true
-class Api::V1::PlaylistsController < ApiController
+class Api::V1::PlaylistsController < Api::V1::ApiController
   before_action :authenticate_user_from_token!, except: [:show]
 
   caches_action :show, expires_in: CACHE_TTL
   caches_action :details, expires_in: CACHE_TTL
 
   def show
-    playlist = Playlist.where(slug: params[:id]).first
     respond_with_success playlist
   end
 
   def details
-    playlist = Playlist.where(id: params[:id].to_i).first
-    playlist = Playlist.where(slug: params[:slug]).first unless playlist
-    if playlist
-      respond_with_success(playlist.as_json_api)
-    else
-      respond_with_failure('Playlist not found')
-    end
+    return respond_with_success(playlist.as_json_api) if playlist
+    respond_with_failure 'Playlist not found'
   end
 
   def user_playlists
-    playlists = Playlist.where(user_id: current_user.id).all
-    respond_with_success playlists.map(&:as_json_api_basic)
+    respond_with_success user_playlists.map(&:as_json_api_basic)
   end
 
   def user_bookmarks
-    bookmarks = PlaylistBookmark.where(user_id: current_user.id).all
-    render json: { success: true, playlist_ids: bookmarks.map(&:playlist_id) }
+    render json: {
+      success: true,
+      playlist_ids: user_bookmarks.map(&:playlist_id)
+    }
   end
 
   # Bookmark a playlist
   # Requires :id
   def bookmark
-    if bookmark = PlaylistBookmark.where(playlist_id: params[:id], user_id: current_user.id).first
+    if user_bookmark.present?
       respond_with_failure 'Playlist already bookmarked'
-    elsif playlist = Playlist.where(id: params[:id]).first
-      PlaylistBookmark.create(playlist_id: params[:id], user_id: current_user.id)
+    elsif playlist.present?
+      PlaylistBookmark.create(
+        playlist_id: params[:id],
+        user_id: current_user.id
+      )
       respond_with_success_simple 'Playlist bookmarked'
     else
       respond_with_failure 'Invalid request'
@@ -46,12 +44,12 @@ class Api::V1::PlaylistsController < ApiController
   # Unbookmark a playlist
   # Requires :id
   def unbookmark
-    if bookmark = PlaylistBookmark.where(playlist_id: params[:id], user_id: current_user.id).first
+    if user_bookmark.present?
       bookmark.destroy
-      respond_with_success_simple 'Playlist unbookmarked'
-    else
-      respond_with_failure 'Playlist not bookmarked'
+      return respond_with_success_simple 'Playlist unbookmarked'
     end
+
+    respond_with_failure 'Playlist not bookmarked'
   end
 
   # Create/update custom playlist
@@ -95,20 +93,54 @@ class Api::V1::PlaylistsController < ApiController
   # Destroy custom playlist
   # Requires :id
   def destroy
-    if playlist = Playlist.where(id: params[:id], user_id: current_user.id).first
+    if playlist.present?
       playlist.destroy
-      respond_with_success_simple 'Playlist destroyed'
-    else
-      respond_with_failure 'Playlist not found or not owned by current user'
+      return respond_with_success_simple 'Playlist destroyed'
     end
+
+    respond_with_failure 'Playlist not found'
   end
 
   private
 
+  def playlist
+    @playlist ||=
+      Playlist.where(id: params[:id])
+              .or.where(slug: params[:id])
+              .first
+  end
+
+  def user_playlists
+    @user_playlists ||= Playlist.where(user_id: current_user.id)
+  end
+
+  def user_bookmarks
+    @user_bookmarks ||= PlaylistBookmark.where(user_id: current_user.id)
+  end
+
+  def user_bookmark
+    @user_bookmark ||=
+      PlaylistBookmark.where(
+        playlist_id: params[:id],
+        user_id: current_user.id
+      ).first
+  end
+
   def create_playlist_tracks(playlist)
-    params[:track_ids].take(100).each_with_index do |track_id, idx|
-      PlaylistTrack.create(playlist_id: playlist.id, track_id: track_id, position: idx+1)
-    end
-    playlist.update_attributes(duration: playlist.tracks.map(&:duration).inject(0, &:+))
+    params[:track_ids]
+      .take(100)
+      .each_with_index do |track_id, idx|
+        PlaylistTrack.create(
+          playlist_id: playlist.id,
+          track_id: track_id,
+          position: idx + 1
+        )
+      end
+
+    playlist.update(duration: playlist_duration(playlist))
+  end
+
+  def playlist_duration(playlist)
+    playlist.tracks.map(&:duration).inject(0, &:+)
   end
 end

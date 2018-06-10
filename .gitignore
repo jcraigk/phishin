@@ -7,3 +7,4 @@
 /config/database.yml
 /import
 .byebug_history
+/.capistrano

@@ -1,24 +1,24 @@
 # frozen_string_literal: true
-class Api::V1::LikesController < ApiController
-  before_action :authenticate_user_from_token!, except: [:top_shows, :top_tracks]
+class Api::V1::LikesController < Api::V1::ApiController
+  before_action :authenticate_user_from_token!, except: %i[top_shows top_tracks]
 
   caches_action :top_tracks, expires_in: CACHE_TTL
   caches_action :top_shows, expires_in: CACHE_TTL
 
   # Return all likes for current user
   def user_likes
-    likes       = Like.where(user_id: current_user.id).all
-    show_likes  = likes.select {|like| like.likable_type == 'Show' }.map(&:likable_id)
-    track_likes = likes.select {|like| like.likable_type == 'Track' }.map(&:likable_id)
-    respond_with_success_simple({ show_ids: show_likes, track_ids: track_likes })
+    respond_with_success_simple(
+      show_ids: show_likes,
+      track_ids: track_likes
+    )
   end
 
   # Submit a like for a show or track
   # Requires :likable_type, :likable_id
   def like
-    if params[:likable_type] and [:likable_id]
+    if params[:likable_type] && params[:likable_id]
       likable = find_likable
-      if like = likable.likes.where(user_id: current_user.id).first
+      if likable.likes.where(user_id: current_user.id).first
         respond_with_failure 'Entity already liked by current user'
       else
         likable.likes.build(user_id: current_user.id).save!
@@ -32,9 +32,9 @@ class Api::V1::LikesController < ApiController
   # Submit an unlike for a show or track
   # Requires :likable_type, :likable_id
   def unlike
-    if params[:likable_type] and [:likable_id]
+    if params[:likable_type] && params[:likable_id]
       likable = find_likable
-      if like = likable.likes.where(user_id: current_user.id).first
+      if (like = likable.likes.where(user_id: current_user.id).first)
         like.destroy
         respond_with_success_simple
       else
@@ -47,7 +47,6 @@ class Api::V1::LikesController < ApiController
 
   # Return list of most liked shows overall
   def top_shows
-    shows = Show.avail.where('likes_count > 0').order('likes_count desc, date desc').limit(40)
     respond_with_success shows
   end
 
@@ -59,7 +58,35 @@ class Api::V1::LikesController < ApiController
 
   private
 
+  def shows
+    Show.avail
+        .where('likes_count > 0')
+        .order(likes_count: :desc, date: :desc)
+        .limit(40)
+  end
+
+  def likes
+    @likes ||= Like.where(user_id: current_user.id).all
+  end
+
+  def show_likes
+    @likes
+      .select { |like| like.likable_type == 'Show' }
+      .map(&:likable_id)
+  end
+
+  def track_likes
+    @likes
+      .select { |like| like.likable_type == 'Track' }
+      .map(&:likable_id)
+  end
+
   def find_likable
-    params[:likable_type].classify.constantize.where(id: params[:likable_id]).first if params[:likable_type] and params[:likable_id]
+    return unless params[:likable_type] && params[:likable_id]
+    params[:likable_type]
+      .classify
+      .constantize
+      .where(id: params[:likable_id])
+      .first
   end
 end
