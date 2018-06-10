@@ -4,6 +4,11 @@ ruby '2.5.1'
 
 gem 'actionpack-action_caching'
 gem 'bootstrap-will_paginate'
+gem 'capistrano'
+gem 'capistrano-bundler'
+gem 'capistrano-passenger'
+gem 'capistrano-rails'
+gem 'capistrano-rvm'
 gem 'coffee-rails'
 gem 'dalli'
 gem 'devise'
@@ -24,12 +29,8 @@ gem 'twitter-bootstrap-rails', '2.2.8'
 gem 'uglifier'
 
 group :development do
-  gem 'airbrussh', require: false
+  gem 'airbrussh'
   gem 'bootsnap'
-  gem 'capistrano'
-  gem 'capistrano-bundler'
-  gem 'capistrano-passenger'
-  gem 'capistrano-rails'
   gem 'pry'
   gem 'web-console'
 end
