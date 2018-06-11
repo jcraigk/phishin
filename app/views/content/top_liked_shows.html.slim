@@ -1,0 +1,28 @@
+= render partial: 'layouts/global_nav'
+
+#content
+  #title_box
+    = content_tag :h1, 'Top 40 Shows'
+    = content_tag :div, nil, class: 'hr'
+
+    h3 An aggregated list of the most-Liked shows from all users of Phish.in’
+    - if !user_signed_in?
+      = content_tag :div, nil, class: 'hr'
+      p.instructions Contribute by signing up and Liking your favorite shows
+
+  #content_box
+    ul.item_list.clickable
+      - @shows.each_with_index do |show, idx|
+        li
+          = content_tag :h2, "#{idx+1}.", class: 'position_num'
+          = content_tag :h2, link_to("#{show.date.strftime("%Y.%m.%d")}", "/#{show.date}")
+          = content_tag :h4, link_to(truncate(show.venue.name, length: 30).html_safe, "/#{show.venue.slug}"), class: 'narrow'
+          - # content_tag :h5, link_to(show.venue.location, "/map?map_term=#{CGI.escape(show.venue.location)}"), class: 'narrow'
+          = likable(show, @shows_likes[idx], 'small')
+          = content_tag :h3, "#{duration_readable(show.duration, 'letters')}", class: 'narrow'
+          = render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false }
+          = display_tags(show.tags, true)
+
+          div style='clear: both;'
+
+  div style='clear: both;'

@@ -1,0 +1,53 @@
+= render partial: 'layouts/global_nav'
+
+#content
+  #title_box
+    = content_tag :h1, linked_show_date(@show)
+    - unless @show.missing?
+      = content_tag :h2, link_to(@show.venue.name.html_safe, "/#{@show.venue.slug}")
+      = content_tag :h2, link_to(@show.venue.location, "/map?map_term=#{CGI.escape(@show.venue.location)}&distance=5")
+      = content_tag :span, duration_readable(@show.duration, 'letters'), class: 'show_duration'
+      - if @show.taper_notes.present?
+        span.show_duration •  
+        = link_to 'Taper Notes', '#', class: 'show_taper_notes', data: { 'show-date' => @show.date.to_s, 'taper-notes' => taper_notes_or_missing(@show) }
+      = content_tag :div, nil, class: 'hr'
+      = likable(@show, @show_like, 'large')
+      div style='clear: both;'
+
+      = render partial: 'shared/context_menu_for_show', locals: { show: @show, viewing_this_show: true, next_show: @next_show, previous_show: @previous_show }
+      = display_tags(@show.tags, false, 'show_tag_container_title')
+      = content_tag :div, nil, class: 'hr'
+      div style='clear: both;'
+      = link_to('<< Previous Show'.html_safe, "/#{@previous_show.date}")
+      div style='clear: both;'
+      = link_to('Next Show >>'.html_safe, "/#{@next_show.date}", class: 'next_item_link')
+
+  #content_box
+    - track_num = 1
+    - if @show.missing?
+      .incomplete_show Sorry, this show is missing
+    - else
+      - if @show.incomplete?
+        .incomplete_show This show is incomplete
+      - if @show.admin_notes.present?
+        .admin_notes_container = @show.admin_notes
+      - set = false
+      - @tracks.each_with_index do |track, idx|
+        - if track.set != set
+          = content_tag 'h1', track.set_name
+          = content_tag 'span', duration_readable(@set_durations[track.set], 'letters'), class: 'set_duration'
+          ul.item_list
+            - set = track.set
+            - track_num = 1
+        - else
+          - track_num += 1
+        li class='playable_track' data-id=track.id data-anchor=track.slug
+          = content_tag :h2, "#{track_num}.", class: 'position_num'
+          = content_tag :h2, link_to(track.title, '#'), class: 'wide track_title'
+          = content_tag :h2, display_tags(track.tags, false, 'track_tag_container'), class: 'wide-180'
+          = likable(track, @tracks_likes[idx], 'small')
+          = content_tag :h3, duration_readable(track.duration)
+          = render partial: 'shared/context_menu_for_track', locals: { track: track, show: @show, playlist: false }
+          div style='clear: both;'
+
+  div style='clear: both;'

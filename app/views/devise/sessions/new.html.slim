@@ -1,0 +1,36 @@
+= render partial: 'layouts/global_nav'
+
+#content
+  #title_box
+    h1 Sign In
+
+  #content_box
+    .instructions
+      | Don't have an account?   
+      = link_to 'Sign up now!', new_registration_path(resource_name), class: 'non-remote strong'
+
+    = form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
+
+      br
+      .field_label Email
+      .field_content = f.email_field :email, :autofocus => true
+      div style='clear: both;'
+
+      .field_label Password
+      .field_content = f.password_field :password
+      div style='clear: both;'
+
+      - if devise_mapping.rememberable?
+        .field_label.field_label_alt = f.check_box :remember_me
+        .field_content
+          label for='user_remember_me' Remember me
+        div style='clear: both;'
+
+      br
+      .field_label = f.submit 'SIGN IN'.html_safe, class: 'btn'
+      div style='clear: both;'
+
+    br
+    = render 'devise/shared/links'
+
+  div style='clear: both;'

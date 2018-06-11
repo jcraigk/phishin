@@ -1,0 +1,20 @@
+= render partial: 'layouts/global_nav'
+
+#content
+  #title_box Resend Confirmation
+  #content_box
+    = form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f|
+
+      = devise_error_messages!
+
+      br
+      .field_label Email
+      .field_content = f.email_field :email, :autofocus => true
+      div style='clear: bloth;'
+
+      br
+      .field_label = f.submit "RESEND CONFIRMATION INSTRUCTIONS", class: 'btn'
+
+      div style='clear: bloth;'
+
+  div style='clear: bloth;'
