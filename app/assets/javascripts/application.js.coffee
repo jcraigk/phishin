@@ -176,13 +176,12 @@ $ ->
       $(this).val ''
       $(this).blur()
 
-  ###############################################
 
-  # Submit map search
-  term = $('#map_search_term').val()
-  distance = $('#map_search_distance').val()
-  App.Map.handleSearch(term, distance) if term and distance
+  ###############################################
+  # Map controls
+
   .on 'click', '#map_search_submit', (e) ->
+    console.log 'dinky stink'
     App.Util.navigateToRefreshMap()
   .on 'keypress', '#map_search_term', (e) ->
     App.Util.navigateToRefreshMap() if e.which is 13
@@ -192,6 +191,11 @@ $ ->
     App.Util.navigateToRefreshMap() if e.which is 13
   .on 'keypress', '#map_date_stop', (e) ->
     App.Util.navigateToRefreshMap() if e.which is 13
+
+  # Submit map search
+  term = $('#map_search_term').val()
+  distance = $('#map_search_distance').val()
+  App.Map.handleSearch(term, distance) if term and distance
 
   ###############################################
 
