@@ -58,7 +58,7 @@
             <% for song in @songs %>
               <li name="<%= song.slug %>">
                 <%= content_tag :h2, link_to_song(song, params[:term]), class: 'wide' %>
-                <%= content_tag :h3, performances_or_alias_link(song, true), class: 'alt' %>
+                <%= content_tag :h3, performances_or_alias_link(song), class: 'alt' %>
                 <div style="clear: both;"></div>
               </li>
             <% end %>
