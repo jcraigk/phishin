@@ -93,6 +93,7 @@ GEM
     ffi (1.9.25)
     friendly_id (5.2.4)
       activerecord (>= 4.0.0)
+    geocoder (1.4.9)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
     i18n (1.0.1)
@@ -248,6 +249,7 @@ DEPENDENCIES
   dalli
   devise
   friendly_id
+  geocoder
   jquery-rails
   jquery-ui-rails (= 5.0.5)
   newrelic_rpm
