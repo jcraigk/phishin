@@ -8,105 +8,87 @@
 
   <div id="content_box">
     <div id="search_results_container">
-    <% if @results %>
-      <% unless @total_results and @total_results > 0 %>
-        <h2>Got a blank space where results should be...</h2>
-        <ul>
-          <li>If searching for a date, enter it like "12/31/95" or "1995-12-31"</li>
-          <li>If searching for a day of the year (like Halloween), search for an instance like "10/31/94"</li>
-          <li>If searching for a venue, enter part of its name (or past names) or location like "msg" or "new york"</li>
-          <li>If searching for a song, enter all or part of its name like "also sprach" or "birdwatcher"</li>
-          <li>If searching for a tour, enter all or part of its name like "summer" or "1995"</li>
-          <li>If searching for a tag, enter all or part of its name or description like "sbd" or "soundboard"</li>
-        </ul>
-      <% else %>
-
-        <% if @show or @other_shows %>
-          <% if @show %>
-            <h2>Matched 1 Date Exactly</h2>
-            <ul class="item_list clickable">
-              <li>
-                <%= content_tag :h2, link_to("<span class=\"highlight\">#{@show.date.strftime("%Y.%m.%d")}</span>".html_safe, "/#{@show.date}") %>
-                <%= content_tag :h4, link_to(@show.venue.name.html_safe, "/#{@show.venue.slug}") %>
-                <%= content_tag :h5, link_to(@show.venue.location, "/map?map_term=#{CGI.escape(@show.venue.location)}") %>
-                <div style="clear: both;"></div>
-              </li>
-            </ul>
-          <% else %>
-            <h3><i>No Exact Date Matches</i></h3>
-          <% end %>
-
-          <% if @other_shows %>
-            <h2>Matched <%= pluralize(@other_shows.size, 'Dates') %> on this Day in History</h2>
-            <ul class="item_list clickable">
-              <% for show in @other_shows %>
-                <li>
-                  <%= content_tag :h2, link_to("<span class=\"highlight\">#{show.date.strftime("%Y.%m.%d")}</span>".html_safe, "/#{show.date}") %>
-                  <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}") %>
-                  <%= content_tag :h5, link_to(show.venue.location, "/map?map_term=#{CGI.escape(show.venue.location)}") %>
-                  <div style="clear: both;"></div>
-                </li>
-              <% end %>
-            </ul>
-          <% end %>
-
+    <% if @total_results.zero? %>
+      <h2>Got a blank space where results should be...</h2>
+      <ul>
+        <li>If searching for a date, enter it like "12/31/95" or "1995-12-31"</li>
+        <li>If searching for a day of the year (like Halloween), search for an instance like "10/31/94"</li>
+        <li>If searching for a venue, enter part of its name (or past names) or location like "msg" or "new york"</li>
+        <li>If searching for a song, enter all or part of its name like "also sprach" or "birdwatcher"</li>
+        <li>If searching for a tour, enter all or part of its name like "summer" or "1995"</li>
+        <li>If searching for a tag, enter all or part of its name or description like "sbd" or "soundboard"</li>
+      </ul>
+    <% else %>
+      <% if @show or @other_shows %>
+        <% if @show %>
+          <h2>Matched 1 Date Exactly</h2>
+          <ul class="item_list clickable">
+            <li>
+              <%= content_tag :h2, link_to("<span class=\"highlight\">#{@show.date.strftime("%Y.%m.%d")}</span>".html_safe, "/#{@show.date}") %>
+              <%= content_tag :h4, link_to(@show.venue.name.html_safe, "/#{@show.venue.slug}") %>
+              <%= content_tag :h5, link_to(@show.venue.location, "/map?map_term=#{CGI.escape(@show.venue.location)}") %>
+              <div style="clear: both;"></div>
+            </li>
+          </ul>
         <% else %>
+          <h3><i>No Exact Date Matches</i></h3>
+        <% end %>
 
-          <% if @songs.size > 0 %>
-            <h2>Matched <%= pluralize_with_delimiter(@songs.size, 'Song') %></h2>
-            <ul class="item_list clickable">
-            <% for song in @songs %>
-              <li name="<%= song.slug %>">
-                <%= content_tag :h2, link_to_song(song, params[:term]), class: 'wide' %>
-                <%= content_tag :h3, performances_or_alias_link(song), class: 'alt' %>
+        <% if @other_shows %>
+          <h2>Matched <%= pluralize(@other_shows.size, 'Dates') %> on this Day in History</h2>
+          <ul class="item_list clickable">
+            <% for show in @other_shows %>
+              <li>
+                <%= content_tag :h2, link_to("<span class=\"highlight\">#{show.date.strftime("%Y.%m.%d")}</span>".html_safe, "/#{show.date}") %>
+                <%= content_tag :h4, link_to(show.venue.name.html_safe, "/#{show.venue.slug}") %>
+                <%= content_tag :h5, link_to(show.venue.location, "/map?map_term=#{CGI.escape(show.venue.location)}") %>
                 <div style="clear: both;"></div>
               </li>
             <% end %>
-            </ul>
+          </ul>
+        <% end %>
+
+      <% else %>
+
+        <% if @songs.size > 0 %>
+          <h2>Matched <%= pluralize_with_delimiter(@songs.size, 'Song') %></h2>
+          <ul class="item_list clickable">
+          <% for song in @songs %>
+            <li name="<%= song.slug %>">
+              <%= content_tag :h2, link_to_song(song, params[:term]), class: 'wide' %>
+              <%= content_tag :h3, performances_or_alias_link(song), class: 'alt' %>
+              <div style="clear: both;"></div>
+            </li>
           <% end %>
+          </ul>
+        <% end %>
 
-          <% if @venues.size > 0 %>
-            <h2>Matched <%= pluralize(@venues.size, 'Venue') %></h2>
-            <ul class="item_list clickable">
-              <% for venue in @venues %>
-                <li>
-                  <%= content_tag :h2, link_to(highlight(truncate(venue.name_and_abbrev, length: 45), params[:term]), "/#{venue.slug}"), class: 'wider' %>
+        <% if @venues.size > 0 %>
+          <h2>Matched <%= pluralize(@venues.size, 'Venue') %></h2>
+          <ul class="item_list clickable">
+            <% for venue in @venues %>
+              <li>
+                <%= content_tag :h2, link_to(highlight(truncate(venue.name_and_abbrev, length: 45), params[:term]), "/#{venue.slug}"), class: 'wider' %>
 
-                  <%= content_tag :h5, link_to(highlight(venue.location, params[:term]), "/map?map_term=#{CGI.escape(venue.location)}") %>
-                  <%= content_tag :h3, pluralize(venue.shows_count, 'show'), class: 'alt' %>
-                  <div style="clear: both;"></div>
-                </li>
-              <% end %>
-            </ul>
-          <% end %>
+                <%= content_tag :h5, link_to(highlight(venue.location, params[:term]), "/map?map_term=#{CGI.escape(venue.location)}") %>
+                <%= content_tag :h3, pluralize(venue.shows_count, 'show'), class: 'alt' %>
+                <div style="clear: both;"></div>
+              </li>
+            <% end %>
+          </ul>
+        <% end %>
 
-          <% if @tours.size > 0 %>
-            <h2>Matched <%= pluralize(@tours.size, 'Tour') %></h2>
-            <ul class="item_list clickable">
-              <% for tour in @tours %>
-                <li>
-                  <%= content_tag :h2, link_to(highlight(truncate(tour.name, length: 45), params[:term]), "/#{tour.slug}"), class: 'wide' %>
-                  <%= content_tag :h3, pluralize(tour.shows_count, 'show'), class: 'alt' %>
-                  <div style="clear: both;"></div>
-                </li>
-              <% end %>
-            </ul>
-          <% end %>
-
-          <% if @tags.size > 0 %>
-            <h2>Matched <%= pluralize(@tags.size, 'Tag') %></h2>
-            <ul class="item_list clickable">
-              <% for tag in @tags %>
-                <li>
-                  <%= content_tag :h2, link_to(highlight(truncate(tag.name, length: 45), params[:term]), "/tags/#{tag.name.downcase}"), class: 'wide' %>
-                  <%= content_tag :h3, pluralize_with_delimiter(tag.tracks_count, 'Track'), class: 'alt' %>
-                  <%= content_tag :h3, pluralize_with_delimiter(tag.shows_count, 'Show'), class: 'alt' %>
-                  <div style="clear: both;"></div>
-                </li>
-              <% end %>
-            </ul>
-          <% end %>
-
+        <% if @tours.size > 0 %>
+          <h2>Matched <%= pluralize(@tours.size, 'Tour') %></h2>
+          <ul class="item_list clickable">
+            <% for tour in @tours %>
+              <li>
+                <%= content_tag :h2, link_to(highlight(truncate(tour.name, length: 45), params[:term]), "/#{tour.slug}"), class: 'wide' %>
+                <%= content_tag :h3, pluralize(tour.shows_count, 'show'), class: 'alt' %>
+                <div style="clear: both;"></div>
+              </li>
+            <% end %>
+          </ul>
         <% end %>
       <% end %>
     <% end %>
