@@ -106,7 +106,7 @@ class Api::V1::PlaylistsController < Api::V1::ApiController
   def playlist
     @playlist ||=
       Playlist.where(id: params[:id])
-              .or.where(slug: params[:id])
+              .or(Playlist.where(slug: params[:id]))
               .first
   end
 

@@ -9,7 +9,7 @@ class Api::V1::SongsController < Api::V1::ApiController
 
   def show
     show = Song.where(id: params[:id])
-               .or.where(slug: params[:id])
+               .or(Song.where(slug: params[:id]))
                .includes(tracks: :show)
                .first
     respond_with_success show

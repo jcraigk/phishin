@@ -9,7 +9,7 @@ class Api::V1::ToursController < Api::V1::ApiController
 
   def show
     tour = Tour.where(slug: params[:id])
-               .or.where(id: params[:id])
+               .or(Tour.where(id: params[:id]))
                .includes(:shows).first
     respond_with_success tour
   end

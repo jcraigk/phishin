@@ -9,7 +9,7 @@ class Api::V1::VenuesController < Api::V1::ApiController
 
   def show
     venue = Venue.where(slug: params[:id])
-                 .or.where(id: params[:id])
+                 .or(Venue.where(id: params[:id]))
                  .first
     respond_with_success venue
   end
