@@ -7,13 +7,13 @@
   #content_box
     .instructions
       | Don't have an account?   
-      = link_to 'Sign up now!', new_registration_path(resource_name), class: 'non-remote strong'
+      a.non-remote.strong< href=new_registration_path(resource_name) Sign up now!
 
     = form_for(resource, as: resource_name, url: session_path(resource_name)) do |f|
 
       br
       .field_label Email
-      .field_content = f.email_field :email, :autofocus => true
+      .field_content = f.email_field :email, autofocus: true
       = clear_both
 
       .field_label Password
@@ -27,7 +27,7 @@
         = clear_both
 
       br
-      .field_label = f.submit 'SIGN IN'.html_safe, class: 'btn'
+      .field_label = f.submit 'SIGN IN', class: 'btn'
       = clear_both
 
     br

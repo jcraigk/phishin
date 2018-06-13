@@ -2,5 +2,11 @@
   .btn-group
     a.btn.dropdown-toggle.btn-round data-toggle='dropdown' href='null' = image_tag 'icon-context.png', alt: 'Icon: context menu'
     ul.dropdown-menu
-      li = link_to("<i class=\"icon-play\"></i>  Activate".html_safe, "/play/#{playlist.slug}")
-      li = link_to('<i class="icon-share-alt"></i>  Share'.html_safe, "null", class: 'share', data: { url: "/play/#{playlist.slug}"})
+      li
+        a href="/play/#{playlist.slug}"
+          i.icon-play
+          |  Activate
+      li
+        a.share href='null' data-url="/play/#{playlist.slug}"
+          i.icon-share-alt
+          |  Share

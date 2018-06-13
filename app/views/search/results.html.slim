@@ -20,9 +20,13 @@
             h2 Matched 1 Date Exactly
             ul.item_list.clickable
               li
-                h2 = link_to("<span class=\"highlight\">#{@show.date.strftime("%Y.%m.%d")}</span>".html_safe, "/#{@show.date}")
-                h4 = link_to(@show.venue.name.html_safe, "/#{@show.venue.slug}")
-                h5 = link_to(@show.venue.location, "/map?map_term=#{CGI.escape(@show.venue.location)}")
+                h2
+                  a href="/#{@show.date}"
+                    span.highlight = @show.date.strftime('%Y.%m.%d')
+                h4
+                  a href="/#{@show.venue.slug}" = @show.venue.name
+                h5
+                  a href="/map?map_term=#{CGI.escape(@show.venue.location)}" = @show.venue.location
                 = clear_both
 
           - else
@@ -34,9 +38,13 @@
             ul.item_list.clickable
               - @other_shows.each do |show|
                 li
-                  h2 = link_to("<span class=\"highlight\">#{show.date.strftime("%Y.%m.%d")}</span>".html_safe, "/#{show.date}")
-                  h4 = link_to(show.venue.name.html_safe, "/#{show.venue.slug}")
-                  h5 = link_to(show.venue.location, "/map?map_term=#{CGI.escape(show.venue.location)}")
+                  h2
+                    a href="/#{show.date}"
+                      span.highlight = show.date.strftime('%Y.%m.%d')
+                  h4
+                    a href="/#{show.venue.slug}" = show.venue.name.html_safe
+                  h5
+                    a href="/map?map_term=#{CGI.escape(show.venue.location)}" = show.venue.location
                   = clear_both
 
         - if @songs.any?
@@ -53,8 +61,10 @@
           ul.item_list.clickable
             - @venues.each do |venue|
               li
-                h2.wider = link_to(highlight(truncate(venue.name_and_abbrev, length: 45), params[:term]), "/#{venue.slug}")
-                h5 = link_to(highlight(venue.location, params[:term]), "/map?map_term=#{CGI.escape(venue.location)}")
+                h2.wider
+                  a href="/#{venue.slug}" = highlight(truncate(venue.name_and_abbrev, length: 45)
+                h5
+                  a href="/map?map_term=#{CGI.escape(venue.location)}" = highlight(venue.location, params[:term])
                 h3.alt = pluralize(venue.shows_count, 'show')
                 = clear_both
 
@@ -63,7 +73,8 @@
           ul.item_list.clickable
             - @tours.each do |tour|
               li
-                h2.wide = link_to(highlight(truncate(tour.name, length: 45), params[:term]), "/#{tour.slug}")
+                h2.wide
+                  a href="/#{tour.slug}" = highlight(truncate(tour.name, length: 45), params[:term])
                 h3.alt = pluralize(tour.shows_count, 'show')
                 = clear_both
 

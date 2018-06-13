@@ -2,9 +2,7 @@ h3
   | Sort by 
   .btn-group
     a.btn.dropdown-toggle data-toggle='dropdown' href='null'
-      - item_hash.each_with_index do |(key, val), i|
-        - if params[:sort] == val || (i == 0 && params[:sort].empty?)
-          = key.html_safe
-      span.caret
+      = sort_songs_title(item_hash)
+      span.caret<
     ul.dropdown-menu
       = sort_songs_and_venues_links(item_hash)

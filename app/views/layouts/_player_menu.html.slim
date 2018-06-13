@@ -3,6 +3,5 @@
     a.btn.dropdown-toggle.btn-round.btn_invisible data-toggle='dropdown' href='null'
       i.icon-cog
     ul.dropdown-menu
-      - # content_tag :li, link_to('', 'null', id: 'volume_icon') + content_tag(:div, nil, id: 'volume_slider'), class: 'volume_li'
-      = content_tag :li, check_box_tag('loop_checkbox', 1, session[:loop], class: 'playback_loop') + '  Loop'.html_safe, class: 'nolink'
-      = content_tag :li, check_box_tag('shuffle_checkbox', 1, session[:shuffle], class: 'playback_shuffle') + '  Shuffle'.html_safe, class: 'nolink'
+      li.nolink = check_box_tag('loop_checkbox', 1, session[:loop], class: 'playback_loop') + ' Loop'
+      li.nolink = check_box_tag('shuffle_checkbox', 1, session[:shuffle], class: 'playback_shuffle') + ' Shuffle'

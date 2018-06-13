@@ -11,15 +11,18 @@
     - if params[:controller] == 'content'
       - if @controller_action == 'year' or @controller_action == 'year_range'
         = years_sub_links
+
       - elsif params[:action] == 'venues' or @controller_action == 'venue'
         = first_char_sub_links(venues_path, @venue)
+
       - elsif params[:action] == 'songs' or @controller_action  == 'song'
         = first_char_sub_links(songs_path, @song)
+
       - elsif %w(top_liked_shows top_liked_tracks).include?(params[:action])
         #top_liked_subnav_container
           = top_liked_sub_links
-    - elsif %w(active_playlist saved_playlists).include?(params[:action])
-      #playlist_subnav_container
-        = playlists_sub_links
+
+    - elsif %w[active_playlist saved_playlists].include?(params[:action])
+      #playlist_subnav_container = playlists_sub_links
 
   #content_buffer

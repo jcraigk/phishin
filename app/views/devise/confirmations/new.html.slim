@@ -9,12 +9,12 @@
 
       br
       .field_label Email
-      .field_content = f.email_field :email, :autofocus => true
-      div style='clear: bloth;'
+      .field_content = f.email_field :email, autofocus: true
+      = clear_both
 
       br
-      .field_label = f.submit "RESEND CONFIRMATION INSTRUCTIONS", class: 'btn'
+      .field_label = f.submit 'RESEND CONFIRMATION INSTRUCTIONS', class: 'btn'
 
-      div style='clear: bloth;'
+      = clear_both
 
-  div style='clear: bloth;'
+  = clear_both

@@ -67,28 +67,6 @@ module ApplicationHelper
     str.html_safe
   end
 
-  def user_sub_links
-    nav_items = {
-      'My Shows' => [my_shows_path, false, ['my_shows']],
-      'My Tracks' => [my_tracks_path, false, ['my_tracks']],
-      'Change Password' => [edit_user_registration_path, true, ['edit']],
-      'Logout' => [destroy_user_session_path, true, ['nothing']]
-    }
-    str = ''
-    nav_items.each do |name, props|
-      css = ''
-      css = 'active' if props[2].include?(params[:action])
-      css += ' non-remote' if props[1]
-      str +=
-        if name == 'Logout'
-          link_to(name, props[0], class: css, method: :delete)
-        else
-          link_to(name, props[0], class: css)
-        end
-    end
-    str.html_safe
-  end
-
   def user_dropdown_links
     nav_items = {
       'My Shows' => [my_shows_path, false, ['my_shows']],
@@ -467,5 +445,12 @@ module ApplicationHelper
     end
 
     str.html_safe
+  end
+
+  def sort_songs_title(items)
+    items.each_with_index do |(key, val), i|
+      return key.html_safe if (i.zero? && params[:sort].empty?) ||
+                              params[:sort] == val
+    end
   end
 end

@@ -1,35 +1,46 @@
 #player_container
   #user_controls
+
     - if user_signed_in?
       .btn-group
         a.btn.dropdown-toggle data-toggle='dropdown' href='null'
           = current_user.username
           span.caret<
         ul.dropdown-menu = user_dropdown_links
+
     - else
-      = link_to 'Sign in', new_user_session_path, id: 'sign_in_link', class: 'non-remote'
+      a#sign_in_link.non-remote href=new_user_session_path Sign in
+
   #playlist_mode_notice PLAYLIST EDIT MODE
-  #logo = link_to image_tag('logo-text.png', alt: 'Logo'), root_path
+
+  #logo
+    a href=root_path = image_tag('logo-text.png', alt: 'Logo')
+
   #player_controls
     #control_previous
     #control_playpause
     #control_next
+
   #scrubber_controls
     #time_elapsed 0:00
     #scrubber
     #time_remaining 0:00
+
   #player_feedback
+
   = render partial: 'layouts/player_menu'
+
   #playlist_button data-url=active_playlist_path
 
-#player_title_container
-  #player_title
-  #player_likes_container style='display: none;'
-    .likes_large
-      a.like_toggle href='null' data-id='0' data-type='track' title='Click to Like or Unlike the current track'
-      span 0
-#player_detail
-  - if @random_song
-    = link_to @random_song.lyrical_excerpt, "/#{@random_song.slug}"
+  #player_title_container
+    #player_title
+    #player_likes_container style='display: none;'
+      .likes_large
+        a.like_toggle href='null' data-id='0' data-type='track' title='Click to Like or Unlike the current track'
+          span 0
 
-= clear_both
+  #player_detail
+    - if @random_song
+      = link_to @random_song.lyrical_excerpt, "/#{@random_song.slug}"
+
+  = clear_both

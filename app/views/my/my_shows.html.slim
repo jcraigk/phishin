@@ -2,29 +2,34 @@
 
 #content
   #title_box
-    = content_tag :h1, 'My Shows'
-    = content_tag :div, nil, class: 'hr'
+    h1 My Shows
+    .hr
     h3 A list of all shows you've Liked
-    = content_tag :div, nil, class: 'hr'
-    = render partial: 'shared/sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Date' => 'date desc', '<i class="icon-time"></i> Date' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes', '<i class="icon-forward"></i> Duration' => 'duration'} }
+    .hr
+    = render partial: 'shared/sort_filter', locals: {
+      item_hash: my_shows_sort_items }
 
   #content_box
     - if !user_signed_in?
       p.instructions Sign in and click heart icons to Like your favorite shows
-    - elsif @shows && @shows.size > 0
+
+    - elsif @shows.any?
       ul.item_list.clickable
         - @shows.each_with_index do |show, idx|
           li
-            = content_tag :h2, link_to_show(show, @display_separators)
-            = content_tag :h4, link_to(truncate(show.venue.name, length: 45), "/#{show.venue.slug}"), class: 'small-font'
-            = content_tag :h5, link_to(truncate(show.venue.location, length: 16), "/map?map_term=#{CGI.escape(show.venue.location)}"), class: 'narrower small-font'
+            h2 = link_to_show(show, @display_separators)
+            h4.small-font
+              a.href="/#{show.venue.slug}" = truncate(show.venue.name, length: 45)
+            h5.narrower.small-font
+              a.href="/map?map_term=#{CGI.escape(show.venue.location)}" = truncate(show.venue.location, length: 16)
             = display_tags(show.tags, true, 'tag_container_small')
             = likable(show, @shows_likes[idx], 'small')
-            = content_tag :h3, duration_readable(show.duration, 'letters')
+            h3 = duration_readable(show.duration, 'letters')
             = render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false }
 
       - if @shows.total_pages > 1
         .paging = will_paginate_simple @shows
+
     - else
       p.instructions Click heart icons to Like your favorite shows
 

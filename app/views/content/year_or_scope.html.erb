@@ -7,7 +7,7 @@
     <%= content_tag :div, nil, class: 'hr' %>
     <%= content_tag :h2, "Shows: #{@shows.size}" %>
     <%= content_tag :div, nil, class: 'hr' %>
-    <%= render partial: 'shared/sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Date' => 'date desc', '<i class="icon-time"></i> Date' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes',  '<i class="icon-play-circle"></i> Duration' => 'duration'} } %>
+    <%= render partial: 'shared/sort_filter', locals: { item_hash: year_or_scope_sort_items } %>
   </div>
 
   <div id="content_box">

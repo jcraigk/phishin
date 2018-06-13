@@ -3,8 +3,19 @@
     a.btn.dropdown-toggle.btn-round data-toggle='dropdown' href='null' = image_tag 'icon-context.png', alt: 'Icon: context menu'
     ul.dropdown-menu
       - unless viewing_this_show
-        li = link_to('<i class="icon-arrow-right"></i>  Go to show'.html_safe, "/#{show.date}")
-      li = link_to("<i class=\"icon-plus-sign\"></i>  Add to Playlist".html_safe, "null", class: 'playlist_add_show', data: { id: show.id })
-      li = link_to('<i class="icon-share-alt"></i>  Share'.html_safe, 'null', class: 'share', data: { url: "/#{show.date}"})
-      - #li = link_to('<i class="icon-download"></i>  Download MP3s'.html_safe, "null", data: { url: download_show_path(show.date) }, class: 'download-album')
-      li = link_to('<i class="icon-search"></i>  Lookup at phish.net'.html_safe, "http://phish.net/setlists/?d=#{show.date}", class: 'non-remote', target: '_blank')
+        li
+          a href="/#{show.date}"
+            i.icon-arrow-right
+            |  Go to show
+      li
+        a.playlist_add_show href='null' data-id=show.id
+          i.icon-plus-sign
+          |  Add to Playlist
+      li
+        a.share href='null' data-url="/#{show.date}"
+          i.icon-share-alt
+          |  Share
+      li
+        a.non-remote target='_blank' href="http://phish.net/setlists/?d=#{show.date}"
+          i.icon-search
+          |  Lookup at phish.net

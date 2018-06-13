@@ -11,11 +11,11 @@
 
       br
       .field_label Email
-      .field_content = f.email_field :email, :autofocus => true
+      .field_content = f.email_field :email, autofocus: true
       = clear_both
 
       br
-      .field_label = f.submit "SEND PASSWORD RESET INSTRUCTIONS", class: 'btn'
+      .field_label = f.submit 'SEND PASSWORD RESET INSTRUCTIONS', class: 'btn'
 
       = clear_both
 

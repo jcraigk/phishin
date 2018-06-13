@@ -2,24 +2,27 @@
 
 #content
   #title_box
-    = content_tag :h1, 'Top 40 Tracks'
-    = content_tag :div, nil, class: 'hr'
+    h1 Top 40 Tracks
+    .hr
 
     h3 An aggregated list of the most-Liked tracks from all users of Phish.in’
+
     - if !user_signed_in?
-      = content_tag :div, nil, class: 'hr'
+      .hr
       p.instructions Contribute by signing up and Liking your favorite tracks
 
   #content_box
     ul.item_list
       - @tracks.each_with_index do |track, idx|
         li class="playable_track" data-id= track.id
-          = content_tag :h2, "#{idx+1}.", class: 'position_num'
-          = content_tag :h5, link_to(truncate(track.title, length: 44), "/#{track.show.date}/#{track.slug}"), class: 'width-200'
-          = content_tag :h5, link_to(track.show.date.strftime("%Y.%m.%d"), "/#{track.show.date}"), class: 'narrow'
+          h2.position_num = idx + 1
+          h5.width-200
+            a href="/#{track.show.date}/#{track.slug}" = truncate(track.title, length: 44)
+          h5.narrow
+            a href="/#{track.show.date}" = track.show.date.strftime('%Y.%m.%d')
           = display_tags(track.tags, true, 'tag_container_small')
           = likable(track, @tracks_likes[idx], 'small')
-          = content_tag :h3, duration_readable(track.duration)
+          h3 = duration_readable(track.duration)
           = render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil }
         = clear_both
 

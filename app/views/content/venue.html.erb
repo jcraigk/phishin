@@ -10,7 +10,7 @@
       <%= content_tag :h2, "Past name(s): #{@venue.past_names}", class: 'venue_past_names' %>
     <% end %>
     <%= content_tag :div, nil, class: 'hr' %>
-    <%= render partial: 'shared/sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Date' => 'date desc', '<i class="icon-time"></i> Date' => 'date asc', '<i class="icon-heart"></i> Likes' => 'likes',  '<i class="icon-forward"></i> Duration' => 'duration'} } %>
+    <%= render partial: 'shared/sort_filter', locals: { item_hash: venue_sort_items } %>
     <%= content_tag :div, nil, class: 'hr' %>
     <%= link_to('<< Previous Venue'.html_safe, "/#{@previous_venue.slug}") %>
     <div style="clear: both;"></div>

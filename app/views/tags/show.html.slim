@@ -7,18 +7,16 @@
 
     .btn-group
       button.btn class=(params[:entity] == 'show' ? 'active' : '')
-      = link_to "Shows: #{number_with_delimiter(@tag.shows_count)}", tag_path(name: params[:name], sort: params[:sort], entity: 'show')
+        = link_to "Shows: #{number_with_delimiter(@tag.shows_count)}", tag_path(name: params[:name], sort: params[:sort], entity: 'show')
       button.btn class=(params[:entity] == 'track' ? 'active' : '')
-      = link_to "Tracks: #{number_with_delimiter(@tag.tracks_count)}", tag_path(name: params[:name], sort: params[:sort], entity: 'track')
+        = link_to "Tracks: #{number_with_delimiter(@tag.tracks_count)}", tag_path(name: params[:name], sort: params[:sort], entity: 'track')
     .hr
 
-    = render partial: 'shared/sort_filter', locals: { item_hash: {'<i class="icon-time"></i> Reverse Date' => 'date desc', '<i class="icon-time"></i> Date' => 'date', '<i class="icon-heart"></i> Likes' => 'likes', '<i class="icon-play-circle"></i> Duration' => 'duration'} }
+    = render partial: 'shared/sort_filter', locals: { item_hash: show_sort_items }
 
   #content_box
-    ul.item_list
-
     ul.item_list.clickable
-      - if @shows
+      - if @shows.present?
         - @shows.each_with_index do |show, idx|
           li
             h2
@@ -36,15 +34,15 @@
       - else
         - @tracks.each_with_index do |track, idx|
           li.playable_track data-id=track.id
-          h2.wide
-            a href="/#{track.show.date}/#{track.slug}" = truncate(track.title, length: 44)
-          h5.narrow
-            a href="/#{track.show.date}" = track.show.date.strftime('%Y.%m.%d')
-          = display_tags(track.tags, true, 'tag_container_small')
-          = likable(track, @tracks_likes[idx], 'small')
-          h3 = duration_readable(track.duration)
-          = render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil }
-          = clear_both
+            h2.wide
+              a href="/#{track.show.date}/#{track.slug}" = truncate(track.title, length: 44)
+            h5.narrow
+              a href="/#{track.show.date}" = track.show.date.strftime('%Y.%m.%d')
+            = display_tags(track.tags, true, 'tag_container_small')
+            = likable(track, @tracks_likes[idx], 'small')
+            h3 = duration_readable(track.duration)
+            = render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil }
+            = clear_both
 
     - if @entities.total_pages > 1
       .paging

@@ -2,17 +2,18 @@
 
 #content
   #title_box
-    = content_tag :h1, "'#{params[:char]}' Songs"
-    = content_tag :h2, "Total Songs: #{@songs.reject {|song| song.alias? }.size}"
-    = content_tag :div, nil, class: 'hr'
-    = render partial: 'sort_songs_and_venues_filter', locals: { item_hash: { '<i class="icon-text-height"></i> Title' => 'title', '<i class="icon-list"></i> Number of Tracks' => 'performances' } }
+    h1 '#{params[:char]}' Songs
+    h2 Total Songs: #{@songs.reject {|song| song.alias? }.size}"
+    .hr
+
+    = render partial: 'sort_songs_and_venues_filter', locals: { item_hash: songs_and_venues_sort_items }
 
   #content_box
     ul.item_list.clickable
-      - for song in @songs
+      - @songs.each do |song|
         li name=song.slug
-          = content_tag :h2, link_to_song(song), class: 'wider'
-          = content_tag :h3, performances_or_alias_link(song), class: 'wide'
+          h2.wider = link_to_song(song)
+          h3.wide = performances_or_alias_link(song)
           = clear_both
 
   = clear_both
