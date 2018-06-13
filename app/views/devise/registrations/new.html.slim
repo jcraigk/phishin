@@ -14,24 +14,24 @@
       br
       .field_label Username
       .field_content = f.text_field :username
-      div style='clear: both;'
+      = clear_both
 
       .field_label Email
       .field_content = f.email_field :email, :autofocus => true
       .field_note Required for account confirmation
-      div style='clear: both;'
+      = clear_both
 
       .field_label Password
       .field_content = f.password_field :password
-      div style='clear: both;'
+      = clear_both
 
       .field_label Confirm Password
       .field_content = f.password_field :password_confirmation
-      div style='clear: both;'
+      = clear_both
 
       .field_label = f.submit 'SIGN UP', id: 'new_user_submit_btn', class: 'btn'
-      div style='clear: both;'
+      = clear_both
 
     = render 'devise/shared/links'
 
-  div style='clear: both;'
+  = clear_both

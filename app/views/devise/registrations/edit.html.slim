@@ -17,20 +17,20 @@
       br
       .field_label New Password
       .field_content = f.password_field :password, :autocomplete => "off"
-      div style='clear: both;'
+      = clear_both
 
       .field_label Confirm Password
       .field_content = f.password_field :password_confirmation
-      div style='clear: both;'
+      = clear_both
 
       .field_label Current Password
       .field_content = f.password_field :current_password
       .field_note needed to authorize you
-      div style='clear: both;'
+      = clear_both
 
       br
       .field_label = f.submit 'CHANGE PASSWORD', class: 'btn'
 
-      div style='clear: both;'
+      = clear_both
 
-  div style='clear: both;'
+  = clear_both

@@ -25,6 +25,6 @@
             = content_tag :h2, link_to(year, "/#{year}"), class: 'wider'
             = content_tag :h4, pluralize(shows.map(&:venue).uniq.size, 'venue'), class: 'narrow'
             = content_tag :h3, pluralize(shows.size, 'show'), class: 'alt'
-            div style='clear: both;'
+            = clear_both
 
-  div style='clear: both;'
+  = clear_both

@@ -14,23 +14,23 @@
       br
       .field_label Email
       .field_content = f.email_field :email, :autofocus => true
-      div style='clear: both;'
+      = clear_both
 
       .field_label Password
       .field_content = f.password_field :password
-      div style='clear: both;'
+      = clear_both
 
       - if devise_mapping.rememberable?
         .field_label.field_label_alt = f.check_box :remember_me
         .field_content
           label for='user_remember_me' Remember me
-        div style='clear: both;'
+        = clear_both
 
       br
       .field_label = f.submit 'SIGN IN'.html_safe, class: 'btn'
-      div style='clear: both;'
+      = clear_both
 
     br
     = render 'devise/shared/links'
 
-  div style='clear: both;'
+  = clear_both

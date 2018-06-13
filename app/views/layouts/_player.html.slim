@@ -4,7 +4,7 @@
       .btn-group
         a.btn.dropdown-toggle data-toggle='dropdown' href='null'
           = current_user.username
-          span.caret
+          span.caret<
         ul.dropdown-menu = user_dropdown_links
     - else
       = link_to 'Sign in', new_user_session_path, id: 'sign_in_link', class: 'non-remote'
@@ -32,4 +32,4 @@
   - if @random_song
     = link_to @random_song.lyrical_excerpt, "/#{@random_song.slug}"
 
-div style='clear: both;'
+= clear_both

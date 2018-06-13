@@ -1,4 +1,5 @@
 = render partial: 'layouts/global_nav'
+
 #content
   #title_box
     = content_tag :h1, 'Saved Playlists'
@@ -6,17 +7,18 @@
       = content_tag :h3, "Lists: #{number_with_delimiter(@playlists.size)}"
       = render partial: 'display_filter'
       = render partial: 'shared/sort_filter', locals: { item_hash: {'<i class="icon-text-height"></i> Name' => 'name', '<i class="icon-time"></i> Duration' => 'duration', '<i class="icon-user"></i> Author' => 'username'} }
+
   #content_box
     - if !user_signed_in?
-      .callout_box
-        | You must sign in to manage saved playlists
+      .callout_box You must sign in to manage saved playlists
     - else
       ul.item_list.clickable
-        - for playlist in @playlists
+        - @playlists.each do |playlist|
           li
             = content_tag :h2, link_to(playlist.name, "/play/#{playlist.slug}", class: 'non-remote'), class: 'wide-350'
             = content_tag :h3, duration_readable(playlist.duration, 'letters')
             = content_tag :h4, "by #{playlist.user.username}", class: 'narrow-100'
             = render partial: 'shared/context_menu_for_playlist', locals: { playlist: playlist }
-            div[style="clear: both;"]
-  div[style="clear: both;"]
+            = clear_both
+
+  = clear_both

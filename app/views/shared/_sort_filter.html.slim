@@ -1,0 +1,8 @@
+h3
+  | Sort by 
+  .btn-group
+    a.btn.dropdown-toggle data-toggle='dropdown' href='null'
+      = sort_filter_link_title(item_hash)
+      span.caret<
+    ul.dropdown-menu
+      = sort_filter(item_hash)

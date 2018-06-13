@@ -14,6 +14,6 @@
           = content_tag :h2, link_to(truncate(venue.name, length: 45), "/#{venue.slug}"), class: 'wider'
           = content_tag :h5, link_to(venue.location, "/map?map_term=#{venue.latitude},#{venue.longitude}&distance=.5")
           = content_tag :h3, pluralize(venue.shows_count, 'show'), class: 'alt'
-          div style='clear: both;'
+          = clear_both
 
-  div style='clear: both;'
+  = clear_both

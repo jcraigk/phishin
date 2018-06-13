@@ -164,28 +164,28 @@ class ContentController < ApplicationController
       return false
     end
 
-    @show =
-      Show.where(date: date)
-          .includes(:tracks)
-          .order('tracks.position asc')
-          .first
-    if @show.present?
-      @show_like = get_user_show_like(@show)
-      @tracks =
-        @show.tracks
-             .includes(:songs, :tags)
-             .order(position: :asc)
-      @set_durations = {}
-      @tracks.group_by(&:set).each do |set, tracks|
-        @set_durations[set] = tracks.map(&:duration).inject(0, &:+)
-      end
-      @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
+    @show = Show.where(date: date)
+                .includes(tracks: %i[songs tags])
+                .order('tracks.position asc')
+                .first
+    return false unless @show.present?
 
-      set_next_show
-      set_previous_show
+    @sets = {}
+    tracks = @show.tracks
+    tracks.group_by(&:set_name)
+          .each do |set, track_list|
+      @sets[set] = {
+        duration: track_list.map(&:duration).inject(0, &:+),
+        tracks: track_list,
+        track_likes: track_list.map { |t| get_user_track_like(t) }
+      }
     end
+    @show_like = get_user_show_like(@show)
 
-    @show
+    set_next_show
+    set_previous_show
+
+    true
   end
 
   def set_next_show

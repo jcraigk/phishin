@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 module ApplicationHelper
+  def clear_both
+    content_tag :div, '', style: 'clear: both;'
+  end
+
   def sort_songs_and_venues_links(item_hash)
     str = ''
     item_hash.each do |k, v|
@@ -431,5 +435,28 @@ module ApplicationHelper
     else
       key
     end
+  end
+
+  def sort_filter_link_title(items)
+    items.each do |k, v|
+      return k.html_safe if params[:sort] == v || params[:sort].blank?
+    end
+  end
+
+  def sort_filter(items)
+    str = ''
+    items.each do |k, v|
+      link = params[:sort] == v ? "<strong>#{k}</strong>" : k
+      param_str = "?sort=#{CGI.escape(v)}"
+      params.each do |key, val|
+        unless %w[controller action name t sort].include?(key)
+          param_str += "&#{key}=#{val}" if val.present?
+        end
+      end
+
+      str += content_tag :li, link_to(link.html_safe, param_str)
+    end
+
+    str.html_safe
   end
 end

@@ -21,11 +21,11 @@
           = likable(track, @tracks_likes[idx], 'small')
           = content_tag :h3, duration_readable(track.duration)
           = render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil }
-          div style='clear: both;'
+          = clear_both
 
       - if @tracks.total_pages > 1
         .paging = will_paginate_simple @tracks
     - else
       p.instructions Click heart icons to Like your favorite tracks
 
-div style='clear: both;'
+= clear_both

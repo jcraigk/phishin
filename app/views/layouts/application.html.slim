@@ -3,7 +3,7 @@ html
   head
     title = APP_NAME
     link href='https://fonts.googleapis.com/css?family=Marck+Script|Open+Sans+Condensed:300,700|Molle' rel='stylesheet' type='text/css'
-    = stylesheet_link_tag 'application', media: 'all'
+    = stylesheet_link_tag 'application', media: :all
     script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDYzzl_dLU5IX4t-rpVVRcA9YtrpPEivTk&sensor=false'
     = javascript_include_tag 'application'
     = render partial: 'layouts/google_analytics'
@@ -11,14 +11,16 @@ html
 
   body data-base-url=APP_BASE_URL data-app-name=APP_NAME data-anchor=params[:anchor]&.downcase data-time-marker=params[:t]
 
-  = render partial: 'layouts/feedback'
-  = render partial: 'layouts/ajax_overlay'
-  = render partial: 'shared/share_modal'
-  = render partial: 'shared/taper_notes_modal'
-  = render partial: 'shared/save_playlist_modal'
-  = render partial: 'shared/download_modal'
-  = render partial: 'layouts/page_header'
-  #page = yield if xhr_exempt_controller
-  = render partial: 'layouts/page_footer'
+    = render partial: 'layouts/feedback'
+    = render partial: 'layouts/ajax_overlay'
+    = render partial: 'shared/share_modal'
+    = render partial: 'shared/taper_notes_modal'
+    = render partial: 'shared/save_playlist_modal'
+    = render partial: 'shared/download_modal'
+    = render partial: 'layouts/page_header'
 
-  iframe#download_iframe src=''
+    #page = yield if xhr_exempt_controller
+
+    = render partial: 'layouts/page_footer'
+
+    iframe#download_iframe src=''
