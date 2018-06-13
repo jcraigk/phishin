@@ -4,6 +4,10 @@ module ApplicationHelper
     content_tag :div, '', style: 'clear: both;'
   end
 
+  def total_hours_of_music
+    (Show.avail.map(&:duration).inject(0, &:+) / 3_600_000).round
+  end
+
   def sort_songs_and_venues_links(item_hash)
     str = ''
     item_hash.each do |k, v|

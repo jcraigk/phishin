@@ -2,9 +2,9 @@
 
 #content
   #title_box
-    h2 LIVE PHISH AUDIO STREAMS'
-    h3 #{number_with_delimiter(Show.avail.count, delimeter: ',')} shows
-    h3 3,815 hours of music
+    h2 LIVE PHISH AUDIO STREAMS
+    h3 #{number_with_delimiter(Show.avail.count)} shows
+    h3 #{number_with_delimiter(total_hours_of_music)} hours of music
     .hr
     = render partial: 'shared/native_apps'
 

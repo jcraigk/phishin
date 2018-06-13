@@ -9,20 +9,22 @@
     h2 API Wrappers
 
     | Javascript:
-    a href='https://github.com/lholmquist/phishin-js'
+    a< href='https://github.com/lholmquist/phishin-js'
       span.bluelink phishin-js by lhomlquist
 
   #content_box
     h2.content-header Requests
-    p All requests must be in the form of
-      span.api-command-inline HTTP GET
-      | and must include the
-      span.api-command-inline Accept: application/json
-      | header
+    p
+      | All requests must be in the form of
+      span.api-command-inline< HTTP GET
+      |  and must include the
+      span.api-command-inline< Accept: application/json
+      |  header
     h2 Responses
-    p Responses will include the header
-      span.api-command-inline Content-Type: application/json
-      | and should be parsed as JSON.
+    p
+      | Responses will include the header
+      span.api-command-inline< Content-Type: application/json
+      |  and should be parsed as JSON.
     p Responses to successful requests look like this:
     pre
       | { "success": true, "total_entries": #, "total_pages": #, "page": #, "data": [response content] }
@@ -58,11 +60,12 @@
     span.api-command GET /eras/:era
     span.api-doc Returns Years contained within the specified Era
     span.api-command GET /years
-    span.api-doc  Returns a list of all Years.
+    span.api-doc
+      | Returns a list of all Years.
       br
       | Add
-      span.api-command-inline ?include_show_counts=true
-      | for a more detailed response.
+      span.api-command-inline< = '?include_show_counts=true'
+      |  for a more detailed response.
     span.api-command GET /years/:year
     span.api-doc Returns a list of Shows (basic data) for the given Year
     span.api-command GET /songs
@@ -102,7 +105,7 @@
     span.api-command GET /tracks/:id
     span.api-doc Returns Track metadata for given ID
     span.api-command GET /search/:term
-    span.api-doc Returns search results based on term. If term resembles a date, "show" and "other_shows" (taking place on that day in history) will be returned. Otherwise, lists of "venues" and "songs" will be returned.
+    span.api-doc Returns search results based on term grouped by entity.
     span.api-command GET /playlists/:slug
     span.api-doc Returns Playlist metadata for given slug and a list of Tracks belonging to the Playlist
 

@@ -2,7 +2,7 @@
 
 #content
   #title_box
-    h2 All Tags (#{number_with_delimiter(Tag.count, delimeter: ',')} total)
+    h2 All Tags (#{number_with_delimiter(Tag.count)} total)
     = render partial: 'sort_tags_filter', locals: { item_hash: tag_sort_items }
     .hr
     p Tags are used to mark certain Shows and Tracks with special meaning. For example, the "SBD" tag means that the audio is sourced from the Soundboard rather than a microphone in the audience.

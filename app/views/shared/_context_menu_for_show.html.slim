@@ -1,6 +1,7 @@
 .btn_context class=(viewing_this_show ? 'btn_context_for_show' : '')
   .btn-group
-    a.btn.dropdown-toggle.btn-round data-toggle='dropdown' href='null' = image_tag 'icon-context.png', alt: 'Icon: context menu'
+    a.btn.dropdown-toggle.btn-round data-toggle='dropdown' href='null'
+      = image_tag 'icon-context.png', alt: 'Icon: context menu'
     ul.dropdown-menu
       - unless viewing_this_show
         li

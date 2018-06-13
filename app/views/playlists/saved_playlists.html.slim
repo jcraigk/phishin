@@ -2,9 +2,9 @@
 
 #content
   #title_box
-    = content_tag :h1, 'Saved Playlists'
+    h1 Saved Playlists
     - if user_signed_in?
-      = content_tag :h3, "Lists: #{number_with_delimiter(@playlists.size)}"
+      h3 Lists: #{number_with_delimiter(@playlists.size)}
       = render partial: 'display_filter'
       = render partial: 'shared/sort_filter', locals: { item_hash: saved_playlist_sort_items }
 
@@ -15,9 +15,10 @@
       ul.item_list.clickable
         - @playlists.each do |playlist|
           li
-            = content_tag :h2, link_to(playlist.name, "/play/#{playlist.slug}", class: 'non-remote'), class: 'wide-350'
-            = content_tag :h3, duration_readable(playlist.duration, 'letters')
-            = content_tag :h4, "by #{playlist.user.username}", class: 'narrow-100'
+            h2.wide-350
+              a.non-remote href="/play/#{playlist.slug}" = playlist.name
+            h3 = duration_readable(playlist.duration, 'letters')
+            h4.narrow-100 by #{playlist.user.username}
             = render partial: 'shared/context_menu_for_playlist', locals: { playlist: playlist }
             = clear_both
 

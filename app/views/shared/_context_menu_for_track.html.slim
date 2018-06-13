@@ -24,10 +24,6 @@
         a.share.share_track href='null' data-url="/#{show ? show.date : track.show.date}/#{track.slug}"
           i.icon-share-alt
           |  Share
-      -# li
-      -#   a.download href='null' data-url=download_track_path(track)
-      -#    i.icon-download
-      -#    |  Download MP3
       li
         a href="/#{track.songs.first.slug}"
           i.icon-book

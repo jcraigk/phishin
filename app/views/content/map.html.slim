@@ -14,8 +14,8 @@
         | within timeframe
         br
         input type='text' class='small_input' name='date_start' id='map_date_start' placeholder='earliest' value=params[:date_start]
-        | to
-        input type='text' class='small_input' name='date_start' id='map_date_stop' placeholder='latest' value=params[:date_stop]
+        |  to
+        input< type='text' class='small_input' name='date_start' id='map_date_stop' placeholder='latest' value=params[:date_stop]
       br
       br
       button#map_search_submit.btn type='button' SEARCH
