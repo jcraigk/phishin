@@ -48,7 +48,7 @@
                 h2.position_num = idx + 1
                 h2.wide.track_title = link_to(track.title, '#')
                 h2.wide-180 = display_tags(track.tags, false, 'track_tag_container')
-                = likable(track, props[:track_likes][idx], 'small')
+                = likable(track, props[:likes][idx], 'small')
                 h3 = duration_readable(track.duration)
                 = render partial: 'shared/context_menu_for_track', locals: { track: track, show: @show, playlist: false }
                 = clear_both
