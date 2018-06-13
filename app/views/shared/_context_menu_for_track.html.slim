@@ -1,0 +1,30 @@
+.btn_context
+  .btn-group
+    a.btn.dropdown-toggle.btn-round data-toggle='dropdown' href='null'
+      = image_tag 'icon-context.png', alt: 'Icon: context menu'
+    ul.dropdown-menu
+      li
+        a.context_play_track href='null' data-id=track.id
+          i.icon-play
+          |  Play
+
+      - if playlist
+        li
+          a.playlist_remove_track href='null'
+            i.icon-remove
+            |  Remove from Playlist
+
+      - else
+        li
+          a.playlist_add_track href='null' data-id=track.id
+            i.icon-plus-sign
+            |  Add to Playlist
+
+      li
+        a.share.share_track href='null' data-url="/#{show ? show.date : track.show.date}/#{track.slug}"
+          i.icon-share-alt
+          |  Share
+      li
+        a href="/#{track.songs.first.slug}"
+          i.icon-book
+          |  This song...

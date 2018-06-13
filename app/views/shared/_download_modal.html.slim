@@ -1,0 +1,37 @@
+#download_modal.modal.hide.fade
+  .modal-header
+    button.close type='button' data-dismiss='modal' aria-hidden='true' ×
+    h3 Requesting download...
+  .modal-body
+    #download_modal_body
+      #spinnerbox
+      br
+      br
+      strong Please wait...
+      br
+      | Your download will begin shortly
+      br
+      br
+      br
+      #album_timeout
+        p
+          strong It isn't nearly fast enough for you...
+          br
+          br
+          | You can use the following URL at a later time to retrieve your content:
+        #album_url
+
+javascript:
+  new Spinner({
+    lines: 13,
+    length: 12,
+    width: 7,
+    radius: 15,
+    corners: 1.0,
+    rotate: 0,
+    direction: -1,
+    color: '#000',
+    speed: 1.0,
+    trail: 50,
+    left: 195
+  }).spin($('#spinnerbox').get(0));

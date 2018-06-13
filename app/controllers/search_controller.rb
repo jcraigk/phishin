@@ -4,7 +4,7 @@ class SearchController < ApplicationController
     if params[:term].present?
       results = SearchService.new(params[:term]).results
 
-      @show = results[:show] || []
+      @show = results[:show] || nil
       @other_shows = results[:other_shows] || []
       @songs = results[:songs] || []
       @venues = results[:venues] || []

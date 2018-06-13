@@ -1,0 +1,21 @@
+= render partial: 'layouts/global_nav'
+
+#content
+  #title_box
+    h1 '#{params[:char]}' Venues
+    h2 Total Venues: #{@venues.size}
+    .hr
+    = render partial: 'sort_songs_and_venues_filter', locals: { item_hash: venues_sort_items }
+
+  #content_box
+    ul.item_list.clickable
+      - @venues.each do |venue|
+        li
+          h2.wider
+            a href="/#{venue.slug}" = truncate(venue.name, length: 45)
+          h5
+            a href="/map?map_term=#{venue.latitude},#{venue.longitude}&distance=.5" = venue.location
+          h3.alt = pluralize(venue.shows_count, 'show')
+          = clear_both
+
+  = clear_both

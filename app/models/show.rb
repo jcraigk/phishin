@@ -48,6 +48,8 @@ class Show < ApplicationRecord
   }
   scope :random, ->(amt = 1) { order('RAND()').limit(amt) }
 
+  delegate :name, to: :tour, prefix: true
+
   def to_s
     if venue
       "#{date.strftime('%Y-%m-%d')} - #{venue.name} - #{venue.location}"

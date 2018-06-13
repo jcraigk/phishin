@@ -1,0 +1,34 @@
+= render partial: 'layouts/global_nav'
+
+#content
+  #title_box
+    h1 = @title
+    .hr
+    h2 Shows: #{@shows.size}
+    .hr
+    = render partial: 'shared/sort_filter', locals: { item_hash: year_or_scope_sort_items }
+
+  #content_box
+    - if @shows.empty?
+      h2 Got a blank space where shows should be...
+      h3 (no shows found)
+
+    - else
+      - @sections.each do |tour_name, props|
+        h1 = tour_name
+        ul.item_list.clickable
+          - props[:shows].each_with_index do |show, idx|
+            li
+              h2 = link_to_show(show, false)
+              h4.small-font
+                a href="/#{show.venue.slug}" = truncate(show.venue.name, length: 45)
+              h5.narrower.small-font
+                a href="/map?map_term=#{CGI.escape(show.venue.location)}" = truncate(show.venue.location, length: 16)
+              = display_tags(show.tags, true, 'tag_container_small')
+              = likable(show, props[:likes][idx], 'small')
+              h3 = duration_readable(show.duration, 'letters')
+              = render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false }
+              = clear_both
+
+  = clear_both
+

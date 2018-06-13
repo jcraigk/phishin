@@ -1,0 +1,35 @@
+= render partial: 'layouts/global_nav'
+
+#content
+  #title_box
+    h1 Change Password
+
+  #content_box
+    = form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f|
+
+      = devise_error_messages!
+
+      - if devise_mapping.confirmable? && resource.pending_reconfirmation?
+        div
+          | Currently waiting confirmation for:
+          = resource.unconfirmed_email
+
+      br
+      .field_label New Password
+      .field_content = f.password_field :password, autocomplete: 'off'
+      = clear_both
+
+      .field_label Confirm Password
+      .field_content = f.password_field :password_confirmation
+      = clear_both
+
+      .field_label Current Password
+      .field_content = f.password_field :current_password
+      .field_note needed to authorize you
+      = clear_both
+
+      br
+      .field_label = f.submit 'CHANGE PASSWORD', class: 'btn'
+      = clear_both
+
+  = clear_both

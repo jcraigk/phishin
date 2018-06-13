@@ -1,0 +1,29 @@
+= render partial: 'layouts/global_nav'
+
+#content
+  #title_box
+    h1 Reset a Password
+
+  #content_box
+    = form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f|
+
+      = devise_error_messages!
+
+      = f.hidden_field :reset_password_token
+
+      br
+      .field_label New Password
+      .field_content = f.password_field :password, autofocus: true
+      = clear_both
+
+      .field_label Confirm Password
+      .field_content = f.password_field :password_confirmation
+      = clear_both
+
+      br
+      .field_label
+        = f.submit 'Change My Password'
+
+      = clear_both
+
+  = clear_both

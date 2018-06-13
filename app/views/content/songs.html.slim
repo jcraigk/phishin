@@ -1,0 +1,21 @@
+= render partial: 'layouts/global_nav'
+
+#content
+  #title_box
+    h1 '#{params[:char]}' Songs
+    h2 Total Songs: #{@songs.reject {|song| song.alias? }.size}"
+    .hr
+
+    = render partial: 'sort_songs_and_venues_filter', locals: { item_hash: songs_and_venues_sort_items }
+
+  #content_box
+    ul.item_list.clickable
+      - @songs.each do |song|
+        li name=song.slug
+          h2.wider = link_to_song(song)
+          h3.wide = performances_or_alias_link(song)
+          = clear_both
+
+  = clear_both
+
+= clear_both

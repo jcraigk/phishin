@@ -1,0 +1,29 @@
+= render partial: 'layouts/global_nav'
+
+#content
+  #title_box
+    h1 Top 40 Shows
+    .hr
+
+    h3 An aggregated list of the most-Liked shows from all users of Phish.in’
+
+    - if !user_signed_in?
+      .hr
+      p.instructions Contribute by signing up and Liking your favorite shows
+
+  #content_box
+    ul.item_list.clickable
+      - @shows.each_with_index do |show, idx|
+        li
+          h2.position_num = idx + 1
+          h2
+            a href="/#{show.date}" = show.date.strftime('%Y.%m.%d')
+          h4.narrow
+            a href="/#{show.venue.slug}" = truncate(show.venue.name, length: 30)
+          = likable(show, @shows_likes[idx], 'small')
+          h3.narrow = duration_readable(show.duration, 'letters')
+          = render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false }
+          = display_tags(show.tags, true)
+          = clear_both
+
+  = clear_both

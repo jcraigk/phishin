@@ -1,0 +1,34 @@
+= render partial: 'layouts/global_nav'
+
+#content
+  #title_box
+    h1 My Tracks
+    .hr
+    h3 A list of all tracks you've Liked
+    .hr
+    = render partial: 'shared/sort_filter', locals: { item_hash: my_tracks_sort_items }
+
+  #content_box
+    - if !user_signed_in?
+      p.instructions Sign in and click heart icons to Like your favorite tracks
+
+    - elsif @tracks.any?
+      ul.item_list
+        - @tracks.each_with_index do |track, idx|
+          li.playable_track data-id=track.id
+            h2.wide
+              a href="/#{track.show.date}/#{track.slug}" = truncate(track.title, length: 44)
+            h5
+              a.narrow href="/#{track.show.date}" = track.show.date.strftime('%Y.%m.%d')
+            = likable(track, @tracks_likes[idx], 'small')
+            h3 = duration_readable(track.duration)
+            = render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil }
+            = clear_both
+
+      - if @tracks.total_pages > 1
+        .paging = will_paginate_simple @tracks
+
+    - else
+      p.instructions Click heart icons to Like your favorite tracks
+
+  = clear_both

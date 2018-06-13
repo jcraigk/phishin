@@ -1,0 +1,25 @@
+= render partial: 'layouts/global_nav'
+
+#content
+  #title_box
+    h2 LIVE PHISH AUDIO STREAMS
+    h3 #{number_with_delimiter(Show.avail.count)} shows
+    h3 #{number_with_delimiter(total_hours_of_music)} hours of music
+    .hr
+    = render partial: 'shared/native_apps'
+
+  #content_box
+    - Hash[ERAS.to_a.reverse].each do |era, years|
+      h1
+        = era
+        |  Era
+      ul.item_list.clickable
+        - years.reverse.each do |year|
+          li
+            h2.wider
+              a href="/#{year}" = year
+            h4.narrow = pluralize(shows_for_year(year).map(&:venue).uniq.size, 'venue')
+            h3.alt = pluralize(shows_for_year(year).size, 'show')
+            = clear_both
+
+  = clear_both

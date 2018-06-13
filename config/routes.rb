@@ -16,9 +16,6 @@ Rails.application.routes.draw do
   # Error pages
   get '/browser-unsupported' => 'errors#browser_unsupported', as: 'browser_unsupported'
 
-  # Reports
-  get '/missing-shows' => 'reports#missing_shows', as: 'missing_shows'
-
   # Content navigation pages
   get '/years' => 'content#years', as: 'years'
   get '/songs' => 'content#songs', as: 'songs'

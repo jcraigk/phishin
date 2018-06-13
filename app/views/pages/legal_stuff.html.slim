@@ -1,0 +1,16 @@
+= render partial: 'layouts/global_nav'
+
+#content
+  #title_box
+    h1 Legal Stuff
+  #content_box
+    p.large
+      | This site complies with Phish's official taping policy as described at
+      a.non-remote< href='http://phish.com/#/faq/taping-guidelines' target='_blank' http://phish.com/#/faq/taping-guidelines
+      | .
+    p.large
+      | If you know any of the material on this site to be in violation of Phish's policy, please send an email to
+      a.non-remote< href="mailto:#{APP_EMAIL}" target='_blank' = APP_EMAIL
+      | .
+
+  = clear_both

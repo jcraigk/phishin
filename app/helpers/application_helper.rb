@@ -1,5 +1,21 @@
 # frozen_string_literal: true
 module ApplicationHelper
+  def clear_both
+    content_tag :div, '', style: 'clear: both;'
+  end
+
+  def shows_for_year(year)
+    if year == '1983-1987'
+      Show.avail.between_years('1983', '1987').includes(:venue)
+    else
+      Show.avail.during_year(year).includes(:venue)
+    end
+  end
+
+  def total_hours_of_music
+    (Show.avail.map(&:duration).inject(0, &:+) / 3_600_000).round
+  end
+
   def sort_songs_and_venues_links(item_hash)
     str = ''
     item_hash.each do |k, v|
@@ -13,6 +29,15 @@ module ApplicationHelper
       )
     end
     str.html_safe
+  end
+
+  def sort_tags_title(item_hash)
+    item_hash.each_with_index do |(key, val), idx|
+      if (idx.zero? && params[:filter].blank?) ||
+         params[:filter] == val
+        return "<strong>#{key}</strong>".html_safe
+      end
+    end
   end
 
   def sort_tags_links(item_hash)
@@ -50,28 +75,6 @@ module ApplicationHelper
       css = ''
       css = 'active' if props[1].include?(params[:action])
       str += link_to name, props[0], class: css
-    end
-    str.html_safe
-  end
-
-  def user_sub_links
-    nav_items = {
-      'My Shows' => [my_shows_path, false, ['my_shows']],
-      'My Tracks' => [my_tracks_path, false, ['my_tracks']],
-      'Change Password' => [edit_user_registration_path, true, ['edit']],
-      'Logout' => [destroy_user_session_path, true, ['nothing']]
-    }
-    str = ''
-    nav_items.each do |name, props|
-      css = ''
-      css = 'active' if props[2].include?(params[:action])
-      css += ' non-remote' if props[1]
-      str +=
-        if name == 'Logout'
-          link_to(name, props[0], class: css, method: :delete)
-        else
-          link_to(name, props[0], class: css)
-        end
     end
     str.html_safe
   end
@@ -392,5 +395,74 @@ module ApplicationHelper
 
   def default_map_path
     '/map?map_term=Burlington%20VT&distance=10'
+  end
+
+  def playlist_filter_hash
+    {
+      '<i class="icon icon-globe"></i> All' => 'all',
+      '<i class="icon icon-user"></i> Only Mine' => 'mine',
+      '<i class="icon icon-bookmark"></i> Only Phriends\'' => 'phriends'
+    }
+  end
+
+  def playlist_filters
+    str = ''
+    playlist_filter_hash.each_with_index do |(key, val), idx|
+      str += playlist_filter_link(key, val, idx)
+    end
+
+    str.html_safe
+  end
+
+  def selected_playlist_filter
+    playlist_filter_hash.each do |k, v|
+      return k.html_safe if params[:filter].blank? || params[:filter] == v
+    end
+  end
+
+  def playlist_filter_link(key, val, idx)
+    link = playlist_filter_link_title(key, val, idx)
+    param_str = "/playlists?filter=#{CGI.escape(val)}"
+    param_str += "&sort=#{params[:sort]}" if params[:sort]
+    content_tag(:li, link_to(link.html_safe, param_str))
+  end
+
+  def playlist_filter_link_title(key, val, idx)
+    if (idx.zero? && params[:filter].blank?) ||
+       params[:filter] == val
+      "<strong>#{key}</strong>".html_safe
+    else
+      key
+    end
+  end
+
+  def sort_filter_link_title(items)
+    items.each do |k, v|
+      return k.html_safe if params[:sort] == v || params[:sort].blank?
+    end
+  end
+
+  def sort_filter(items)
+    str = ''
+    items.each do |k, v|
+      link = params[:sort] == v ? "<strong>#{k}</strong>" : k
+      param_str = "?sort=#{CGI.escape(v)}"
+      params.each do |key, val|
+        unless %w[controller action name t sort].include?(key)
+          param_str += "&#{key}=#{val}" if val.present?
+        end
+      end
+
+      str += content_tag :li, link_to(link.html_safe, param_str)
+    end
+
+    str.html_safe
+  end
+
+  def sort_songs_title(items)
+    items.each_with_index do |(key, val), i|
+      return key.html_safe if (i.zero? && params[:sort].empty?) ||
+                              params[:sort] == val
+    end
   end
 end
