@@ -1,0 +1,27 @@
+= render partial: 'layouts/global_nav'
+
+#content
+  #title_box
+    h1 Contact
+  #content_box
+    p.large
+      | I woke up one morning in November
+      br
+      |  And I realized I love you
+      br
+      |  It's not your client in front
+      br
+      |  Your models, or the web stack above you
+      br
+      |  It's the way you cling to the code
+      br
+      |  When users try to shove you
+      br
+      |  I'd never go browsing away
+      br
+      |  And come back home without you
+    br
+    p.large
+      a.non-remote href="mailto:#{APP_EMAIL}" target='_blank' = APP_EMAIL
+
+    = render partial: 'shared/twitter_follow_button'
