@@ -226,9 +226,9 @@ class ContentController < ApplicationController
                        .order(@order_by)
                        .paginate(page: params[:page], per_page: 20)
         @next_song = Song.relevant.where('title > ?', @song.title).order('title asc').first
-        @next_song = Song.relevant.order('title asc').first @next_song.nil?
+        @next_song ||= Song.relevant.order('title asc').first
         @previous_song = Song.relevant.where('title < ?', @song.title).order('title desc').first
-        @previous_song = Song.relevant.order('title desc').first if @previous_song.nil?
+        @previous_song ||= Song.relevant.order('title desc').first
         @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
       end
     end
