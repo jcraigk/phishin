@@ -6,7 +6,7 @@
     <%= content_tag :h1, @song.title %>
     <%= content_tag :h2, "Total Tracks: #{@song.tracks.size}" %>
     <%= content_tag :div, nil, class: 'hr' %>
-    <%= render partial: 'shared/sort_filter', locals: { item_hash: song_sort_items } } %>
+    <%= render partial: 'shared/sort_filter', locals: { item_hash: song_sort_items } %>
     <%= content_tag :div, nil, class: 'hr' %>
     <%= link_to('<< Previous Song'.html_safe, "/#{@previous_song.slug}") %>
     <div style="clear: both;"></div>

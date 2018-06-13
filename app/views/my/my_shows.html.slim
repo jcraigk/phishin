@@ -6,8 +6,7 @@
     .hr
     h3 A list of all shows you've Liked
     .hr
-    = render partial: 'shared/sort_filter', locals: {
-      item_hash: my_shows_sort_items }
+    = render partial: 'shared/sort_filter', locals: { item_hash: my_shows_sort_items }
 
   #content_box
     - if !user_signed_in?
@@ -19,9 +18,9 @@
           li
             h2 = link_to_show(show, @display_separators)
             h4.small-font
-              a.href="/#{show.venue.slug}" = truncate(show.venue.name, length: 45)
+              a href="/#{show.venue.slug}" = truncate(show.venue.name, length: 45)
             h5.narrower.small-font
-              a.href="/map?map_term=#{CGI.escape(show.venue.location)}" = truncate(show.venue.location, length: 16)
+              a href="/map?map_term=#{CGI.escape(show.venue.location)}" = truncate(show.venue.location, length: 16)
             = display_tags(show.tags, true, 'tag_container_small')
             = likable(show, @shows_likes[idx], 'small')
             h3 = duration_readable(show.duration, 'letters')
