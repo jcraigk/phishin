@@ -19,6 +19,15 @@ module ApplicationHelper
     str.html_safe
   end
 
+  def sort_tags_title(item_hash)
+    item_hash.each_with_index do |(key, val), idx|
+      if (idx.zero? && params[:filter].blank?) ||
+         params[:filter] == val
+        return "<strong>#{key}</strong>".html_safe
+      end
+    end
+  end
+
   def sort_tags_links(item_hash)
     str = ''
     item_hash.each do |k, v|
