@@ -3,19 +3,19 @@
     = global_nav_links
     #search_box
       = image_tag 'icon-search.png', alt: 'search icon'
-      input type='text' name='term' id='search_term' value=params[:term]
+      input#search_term type='text' name='term' value=params[:term]
 
   .divider
 
   #sub_nav
     - if params[:controller] == 'content'
-      - if @controller_action == 'year' or @controller_action == 'year_range'
+      - if @controller_action == 'year' || @controller_action == 'year_range'
         = years_sub_links
 
-      - elsif params[:action] == 'venues' or @controller_action == 'venue'
+      - elsif params[:action] == 'venues' || @controller_action == 'venue'
         = first_char_sub_links(venues_path, @venue)
 
-      - elsif params[:action] == 'songs' or @controller_action  == 'song'
+      - elsif params[:action] == 'songs' || @controller_action  == 'song'
         = first_char_sub_links(songs_path, @song)
 
       - elsif %w(top_liked_shows top_liked_tracks).include?(params[:action])

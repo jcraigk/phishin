@@ -14,7 +14,7 @@
   #content_box
     ul.item_list
       - @tracks.each_with_index do |track, idx|
-        li class="playable_track" data-id= track.id
+        li.playable_track data-id=track.id
           h2.position_num = idx + 1
           h5.width-200
             a href="/#{track.show.date}/#{track.slug}" = truncate(track.title, length: 44)

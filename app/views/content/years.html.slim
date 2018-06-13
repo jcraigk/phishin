@@ -16,10 +16,10 @@
       ul.item_list.clickable
         - years.reverse.each do |year|
           li
-            - shows = (year == '1983-1987' ? Show.avail.between_years('1983', '1987').includes(:venue) : Show.avail.during_year(year).includes(:venue))
-            = content_tag :h2, link_to(year, "/#{year}"), class: 'wider'
-            = content_tag :h4, pluralize(shows.map(&:venue).uniq.size, 'venue'), class: 'narrow'
-            = content_tag :h3, pluralize(shows.size, 'show'), class: 'alt'
+            h2.wider
+              a href="/#{year}" = year
+            h4.narrow = pluralize(shows_for_year(year).map(&:venue).uniq.size, 'venue')
+            h3.alt = pluralize(shows_for_year(year).size, 'show')
             = clear_both
 
   = clear_both

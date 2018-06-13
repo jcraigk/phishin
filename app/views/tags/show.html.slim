@@ -45,7 +45,6 @@
             = clear_both
 
     - if @entities.total_pages > 1
-      .paging
-        = will_paginate_simple(@entities)
+      .paging = will_paginate_simple(@entities)
 
   = clear_both

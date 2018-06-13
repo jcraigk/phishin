@@ -5,11 +5,14 @@
     h2
       a href="/map?map_term=#{@venue.latitude},#{@venue.longitude}&distance=.5" = @venue.location
     h2 Shows hosted: #{@venue.shows_count}
+
     - if @venue.past_names.present?
       h2.venue_past_names Past name(s): #{@venue.past_names}
     .hr
+
     = render partial: 'shared/sort_filter', locals: { item_hash: venue_sort_items }
     .hr
+
     = link_to('<< Previous Venue'.html_safe, "/#{@previous_venue.slug}")
     = clear_both
     = link_to('Next Venue >>'.html_safe, "/#{@next_venue.slug}", class: 'next_item_link')
@@ -34,5 +37,3 @@
             = clear_both
 
   = clear_both
-  br
-  br

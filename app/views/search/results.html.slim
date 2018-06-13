@@ -1,7 +1,8 @@
 = render partial: 'layouts/global_nav'
 
 #content
-  #title_box = content_tag :h1, "Search: '#{params[:term]}'"
+  #title_box
+    h1 Search: '#{params[:term]}'
   #content_box
     #search_results_container
       - if @total_results.zero?
