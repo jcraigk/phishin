@@ -55,9 +55,9 @@ class PlaylistsController < ApplicationController
       msg = 'Saved playlists must contain at least 2 tracks'
     elsif params[:name].empty? || params[:slug].empty? || params[:name].empty? || params[:slug].empty?
       msg = 'You must provide a name and URL for this playlist'
-    elsif !params[:name].match(/^.{5,50}$/)
+    elsif !params[:name].match(/\A.{5,50}\z/)
       msg = 'Name must be between 5 and 50 characters'
-    elsif !params[:slug].match(/^[a-z0-9\-]{5,50}$/)
+    elsif !params[:slug].match(/\A[a-z0-9\-]{5,50}\z/)
       msg = 'URL must be between 5 and 50 lowercase letters, numbers, or dashes'
     elsif save_action == 'new'
       if Playlist.where(user_id: current_user.id).all.size >= MAX_PLAYLISTS_PER_USER

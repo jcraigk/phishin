@@ -48,12 +48,12 @@ class Track < ApplicationRecord
 
   # Return the set abbreviation (livephish.com style)
   # Roman numerals; encores are part of final set
-  def set_album_abbreviation
+  def set_abbrev
     # Encores
-    if /^E[\d]*$/.match?(set)
+    if /\AE[\d]*\z/.match?(set)
       roman_numerals[show.last_set]
     # Numbered sets
-    elsif /^\d$/.match?(set)
+    elsif /\A\d\z/.match?(set)
       roman_numerals[set]
     else
       ''
@@ -62,21 +62,25 @@ class Track < ApplicationRecord
 
   def save_default_id3_tags
     Mp3Info.open(audio_file.path) do |mp3|
+      comment = 'Visit phish.in for free Phish audio'
+      year = show.date.strftime('%Y').to_i
+      band = 'Phish'
+
       mp3.tag.title = title
-      mp3.tag.artist = 'Phish'
-      mp3.tag.album = "#{show.date} #{set_album_abbreviation} #{show.venue.location}"
-      mp3.tag.year = show.date.strftime('%Y').to_i
+      mp3.tag.artist = band
+      mp3.tag.album = album_name
+      mp3.tag.year = year
       mp3.tag.track = position
-      mp3.tag.genre = 'Rock'
-      mp3.tag.comment = 'Visit phish.in for free Phish audio'
+      mp3.tag.genre = 17 # 'Rock'
+      mp3.tag.comment = comment
 
       mp3.tag2.title = title
-      mp3.tag2.artist = 'Phish'
-      mp3.tag2.album = "#{show.date} #{set_album_abbreviation} #{show.venue.location}"
-      mp3.tag2.year = show.date.strftime('%Y').to_i
+      mp3.tag2.artist = band
+      mp3.tag2.album = album_name
+      mp3.tag2.year = year
       mp3.tag2.track = position
       mp3.tag2.genre = 'Rock'
-      mp3.tag2.comment = 'Visit phish.in for free Phish audio'
+      mp3.tag2.comment = comment
 
       # TODO: Add cover art using id3v2?
       # mp3.tag2.remove_pictures
@@ -163,13 +167,13 @@ class Track < ApplicationRecord
   end
 
   def save_duration
-    return if duration.positive?
+    return if duration&.positive?
     Mp3Info.open(audio_file.path) do |mp3|
       update(duration: (mp3.length * 1000).round)
     end
   end
 
-  protected
+  private
 
   def populate_song
     return unless songs.any?
@@ -184,11 +188,13 @@ class Track < ApplicationRecord
   end
 
   def require_at_least_one_song
-    return unless songs.any?
+    return if songs.any?
     errors.add(:songs, 'Please add at least one song')
   end
 
-  private
+  def album_name
+    "#{show.date} #{set_abbrev} #{show.venue.location}"
+  end
 
   def roman_numerals
     {

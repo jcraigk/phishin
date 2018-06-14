@@ -61,9 +61,9 @@ class Api::V1::PlaylistsController < Api::V1::ApiController
         respond_with_failure 'Saved playlists must contain at least 2 tracks'
       elsif !params[:name].present? or !params[:slug].present?
         respond_with_failure 'You must provide a name and URL for this playlist'
-      elsif !params[:name].match(/^.{5,50}$/)
+      elsif !params[:name].match(/\A.{5,50}\z/)
         respond_with_failure 'Name must be between 5 and 50 characters'
-      elsif !params[:slug].match(/^[a-z0-9\-]{5,50}$/)
+      elsif !params[:slug].match(/\A[a-z0-9\-]{5,50}\z/)
         respond_with_failure 'URL must be between 5 and 50 lowercase letters, numbers, or dashes'
       elsif params[:id].present?
         if playlist = Playlist.where(user_id: current_user.id, id: params[:id]).first

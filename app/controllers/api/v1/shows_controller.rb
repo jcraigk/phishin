@@ -37,9 +37,9 @@ class Api::V1::ShowsController < Api::V1::ApiController
   end
 
   def on_day_of_year
-    if monthday = params[:day].match(/^(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})$/i)
+    if monthday = params[:day].match(/\A(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})\z/i)
       month = Date::MONTHNAMES.index(monthday[1].titleize)
-    elsif monthday = params[:day].match(/^(\d{1,2})-(\d{1,2})$/i)
+    elsif monthday = params[:day].match(/\A(\d{1,2})-(\d{1,2})\z/i)
       month = monthday[1].to_i
     else
       respond_with_failure 'Invalid day'

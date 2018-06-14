@@ -1,25 +1,21 @@
 # frozen_string_literal: true
-require 'readline' # TODO: is this needed?
-
 class ShowImporter::Cli
-  def initialize
-    ARGV.each do |date|
-      @si = ShowImporter.new(date)
+  def initialize(date)
+    @orch = ShowImporter::Orchestrator.new(date)
 
-      main_menu
-      puts "\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, (s)ave: "
+    main_menu
+    puts "\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, (s)ave: "
 
-      repl
-    end
+    repl
   end
 
   def main_menu
-    puts "\n#{@si.show}\n\n"
-    @si.pp_list
+    puts "\n#{@orch.show}\n\n"
+    @orch.pp_list
   end
 
   def print_filenames
-    filenames = @si.fm.matches.keys
+    filenames = @orch.fm.matches.keys
 
     filenames.each_with_index do |fn, i|
       puts format('%2<idx>d. %<fn>s', idx: i + 1, fn: fn)
@@ -28,7 +24,7 @@ class ShowImporter::Cli
   end
 
   def edit_for_pos(pos)
-    puts @si.get_track(pos).to_s
+    puts @orch.get_track(pos).to_s
     puts help_str
 
     process_pos(pos)
@@ -44,8 +40,8 @@ class ShowImporter::Cli
     while (line = Readline.readline('#=> ', false))
       case line.downcase
       when 'u'
-        puts "Combining up (#{pos}) #{@si.get_track(pos).title} into (#{pos - 1}) #{@si.get_track(pos - 1).title}"
-        @si.combine_up(pos)
+        puts "Combining up (#{pos}) #{@orch.get_track(pos).title} into (#{pos - 1}) #{@orch.get_track(pos - 1).title}"
+        @orch.combine_up(pos)
         break
       when 's'
         update_song_for_pos(pos)
@@ -56,7 +52,7 @@ class ShowImporter::Cli
       when 't'
         update_title_for_pos(pos)
       when '?'
-        puts @si.get_track(pos).to_s
+        puts @orch.get_track(pos).to_s
         puts help_str
       when 'm'
         main_menu
@@ -68,7 +64,7 @@ class ShowImporter::Cli
   def insert_new_track
     puts 'Before track #:'
     while (line = Readline.readline('#=> ', true))
-      @si.insert_before(line.to_i)
+      @orch.insert_before(line.to_i)
       break
     end
   end
@@ -76,7 +72,7 @@ class ShowImporter::Cli
   def delete_track
     puts 'Delete track #:'
     while (line = Readline.readline('#=> ', true))
-      @si.delete(line.to_i)
+      @orch.delete(line.to_i)
       break
     end
   end
@@ -84,10 +80,11 @@ class ShowImporter::Cli
   def update_song_for_pos(pos)
     puts 'Enter exact song title:'
     while (line = Readline.readline('#=> ', true))
-      matched = @si.fm.find_match(line, exact: true)
+      matched = @orch.fm.find_match(line, exact: true)
       if matched
         puts "Found \"#{matched.title}\".  Adding Song."
-        @si.get_track(pos).songs << matched
+        @orch.get_track(pos).songs << matched
+        puts "Adding #{matched} to pos #{pos}"
       end
       break
     end
@@ -98,7 +95,7 @@ class ShowImporter::Cli
   def update_title_for_pos(pos)
     puts 'Enter new title:'
     while (line = Readline.readline('#=> ', true))
-      @si.get_track(pos).title = line
+      @orch.get_track(pos).title = line
       break
     end
 
@@ -108,7 +105,7 @@ class ShowImporter::Cli
   def update_set_for_pos(pos)
     puts 'Enter new set abbrev [S,1,2,3,4,E,E2,E3]:'
     while (line = Readline.readline('#=> ', true))
-      @si.get_track(pos).set = line
+      @orch.get_track(pos).set = line
       break
     end
 
@@ -123,7 +120,7 @@ class ShowImporter::Cli
       next unless choice.positive?
       new_filename = filenames[choice - 1]
       puts "Updating filename to '#{new_filename}'"
-      @si.get_track(pos).filename = new_filename
+      @orch.get_track(pos).filename = new_filename
       break
     end
 
@@ -157,7 +154,7 @@ class ShowImporter::Cli
       delete_track
     when 's'
       puts 'Saving...'
-      @si.save
+      @orch.save
       exit
     end
   end

@@ -1,10 +1,10 @@
 # frozen_string_literal: true
-class FilenameMatcher
+class ShowImporter::FilenameMatcher
   attr_reader :matches, :s_dir
 
   def initialize(dir)
-    @s_dir = scrub_dir_path(dir)
-    unless File.directory? @s_dir
+    @s_dir = dir
+    unless File.directory?(@s_dir)
       puts "TRIED: #{@s_dir}"
       raise 'Must provide a valid directory path'
     end
@@ -26,7 +26,7 @@ class FilenameMatcher
   def filenames
     @filenames ||= begin
       Dir.entries(@s_dir).reject do |e|
-        e == '.' || e == '..' || e =~ /.txt$/
+        e == '.' || e == '..' || e =~ /.txt\z/
       end
     end
   end
@@ -67,14 +67,14 @@ class FilenameMatcher
   def scrub_filename(filename)
     if /mike/i.match?(filename)
       "Mike's Song"
-    elsif /\d postgres( -)?.mp3$/.match?(filename)
+    elsif /\d postgres( -)?.mp3\z/.match?(filename)
       'Hold Your Head Up'
     elsif /Freebird.mp3/.match?(filename)
       'Free Bird'
     else
       filename
         .gsub('.mp3', '')
-        .gsub(/^II?/, '')
+        .gsub(/\AII?/, '')
         .tr('_', ' ')
     end
   end

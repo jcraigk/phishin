@@ -59,7 +59,7 @@ class Show < ApplicationRecord
   end
 
   def last_set
-    tracks.select { |t| /^\d$/.match t.set }.map(&:set).max
+    tracks.select { |t| /\A\d\z/.match t.set }.map(&:set).max
   end
 
   def as_json
