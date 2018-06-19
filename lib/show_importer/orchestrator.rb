@@ -1,33 +1,48 @@
 # frozen_string_literal: true
 class ShowImporter::Orchestrator
-  attr_reader :show, :fm, :songs
+  attr_reader :show, :fm, :songs, :date
 
   def initialize(date)
+    @date = date
+
     puts 'Fetching show info...'
     @show_info = ShowImporter::ShowInfo.new(date)
 
-    puts 'Analyzing filenames...'
-    @fm = ShowImporter::FilenameMatcher.new("#{IMPORT_DIR}/#{date}")
+    analyze_filenames
 
     @show = Show.where(date: date).first
-    puts "Warning: #{date} already imported!" if @show.present?
-    @show = Show.new(date: date)
+    return if @show.present?
 
+    binding.pry
+
+    @show = Show.new(date: date)
+    @venue = find_venue
+    assign_venue
+    populate_tracks
+  end
+
+  def analyze_filenames
+    puts 'Analyzing filenames...'
+    @fm = ShowImporter::FilenameMatcher.new("#{IMPORT_DIR}/#{date}")
+  end
+
+  def find_venue
     puts 'Finding venue...'
-    @venue = Venue.where(name: @show_info.venue_name, city: @show_info.venue_city).first
-    @venue ||= Venue.where(
+    venue = Venue.where(name: @show_info.venue_name, city: @show_info.venue_city).first
+    return veneu if venue.present?
+    Venue.where(
       'past_names LIKE ? AND city = ?',
       "%#{@show_info.venue_name}%",
       @show_info.venue_city
     ).first
+  end
+
+  def assign_venue
     unless @venue.present?
       puts 'No venue matched! Enter Venue ID:'
       @venue = Venue.find(STDIN.gets.chomp.to_i)
     end
     @show.venue = @venue
-
-    @tracks = []
-    populate_tracks
   end
 
   def pp_list
@@ -84,6 +99,7 @@ class ShowImporter::Orchestrator
   private
 
   def populate_tracks
+    @tracks = []
     matches = @fm.matches.dup
     @show_info.songs.each do |pos, song_title|
       fn_match = matches.find { |_k, v| !v.nil? && v.title == song_title }

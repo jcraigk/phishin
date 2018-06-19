@@ -1,11 +1,5 @@
 # frozen_string_literal: true
-require 'net/http'
-require 'net/https'
-require 'json'
-require 'openssl'
-require 'pp'
-
-class PNet
+class ShowImporter::PNet
   BASE_URL = 'https://api.phish.net/endpoint.php'
 
   def initialize(api_key)

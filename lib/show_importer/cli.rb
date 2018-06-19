@@ -3,10 +3,13 @@ class ShowImporter::Cli
   def initialize(date)
     @orch = ShowImporter::Orchestrator.new(date)
 
-    main_menu
-    puts "\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, (s)ave: "
-
-    repl
+    if @orch.show.present?
+      puts 'do the thing'
+    else
+      main_menu
+      puts "\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, (s)ave: "
+      repl
+    end
   end
 
   def main_menu

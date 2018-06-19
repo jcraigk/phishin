@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 require 'open-uri'
 require 'nokogiri'
-require_relative '../pnet'
 
 class ShowImporter::ShowInfo
   PNET_API_KEY = '448345A7B7688DDE43D0'
@@ -9,12 +8,29 @@ class ShowImporter::ShowInfo
   attr_reader :songs, :pnet
 
   def initialize(date)
-    @pnet = PNet.new(PNET_API_KEY)
-    @songs = {}
-    @data = @pnet.shows_setlists_get('showdate' => date)[0] rescue {}
-    songs = Nokogiri::HTML(@data['setlistdata']).css('p.pnetset > a').map(&:content) rescue []
+    @pnet = ShowImporter::PNet.new(PNET_API_KEY)
+    @data = parse_data(date)
+    songs = parse_songs
     raise 'Invalid date' if songs.empty?
-    songs.each_with_index { |song, i| @songs[i + 1] = song }
+
+    @songs = []
+    songs.each_with_index do |song, i|
+      @songs[i + 1] = song
+    end
+  end
+
+  def parse_data(date)
+    @pnet.shows_setlists_get('showdate' => date)[0]
+  rescue NoMethodError
+    {}
+  end
+
+  def parse_songs
+    Nokogiri.HTML(@data['setlistdata'])
+            .css('p.pnetset > a')
+            .map(&:content)
+  rescue NoMethodError
+    []
   end
 
   def [](pos)
@@ -22,10 +38,14 @@ class ShowImporter::ShowInfo
   end
 
   def venue_name
-    @data['venue'] rescue 'Unknown Venue'
+    @data['venue']
+  rescue NoMethodError
+    'Unknown Venue'
   end
 
   def venue_city
-    @data['city'] rescue 'Unknown City'
+    @data['city']
+  rescue NoMethodError
+    'Unknown City'
   end
 end
