@@ -96,6 +96,7 @@ GEM
     geocoder (1.4.9)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
+    highline (1.7.10)
     i18n (1.0.1)
       concurrent-ruby (~> 1.0)
     jquery-rails (4.3.3)
@@ -254,6 +255,7 @@ DEPENDENCIES
   devise
   friendly_id
   geocoder
+  highline
   jquery-rails
   jquery-ui-rails (= 5.0.5)
   newrelic_rpm
@@ -277,4 +279,4 @@ RUBY VERSION
    ruby 2.5.1p57
 
 BUNDLED WITH
-   1.16.1
+   1.16.2

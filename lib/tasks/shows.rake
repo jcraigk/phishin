@@ -9,11 +9,15 @@ namespace :shows do
         /\A\d{4}\-\d{2}\-\d{2}\z/.match?(entry)
     end
 
+    next puts "No shows found in #{IMPORT_DIR}" unless dates.any?
+
+    puts "#{dates.size} show folders found"
     dates.each do |date|
+      puts '========================'
+      puts " PROCESSING #{date}"
+      puts '========================'
       ShowImporter::Cli.new(date)
     end
-
-    puts "No shows found in #{IMPORT_DIR}"
   end
 
   desc 'Find mis-labeled sets on tracks'
