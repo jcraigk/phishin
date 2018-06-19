@@ -2,7 +2,7 @@
 namespace :shows do
   desc 'Import a show'
   task import: :environment do
-    require_relative '../show_importer/show_importer'
+    require_relative '../show_importer'
 
     dates = Dir.entries(IMPORT_DIR).select do |entry|
       File.directory?(File.join(IMPORT_DIR, entry)) &&

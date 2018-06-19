@@ -3,8 +3,8 @@ class ShowImporter::Cli
   def initialize(date)
     @orch = ShowImporter::Orchestrator.new(date)
 
-    if @orch.show.present?
-      puts 'do the thing'
+    if @orch.show_found
+      ShowImporter::TrackReplacer.new(date)
     else
       main_menu
       puts "\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, (s)ave: "

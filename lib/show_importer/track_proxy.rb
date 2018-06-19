@@ -2,11 +2,15 @@
 class ShowImporter::TrackProxy
   attr_accessor :filename
 
-  def initialize(pos = nil, title = nil, filename = nil, song = nil)
+  def initialize(
+    pos = nil,
+    title = nil,
+    filename = nil,
+    song = nil
+  )
     @_track = Track.new(position: pos, title: title, set: get_set_from_filename(filename), slug: generic_slug(title))
     song ||= Song.find_by_title(title)
     @_track.songs << song unless song.nil?
-    puts "B putting #{song.title} into #{@_track.title}"
     @filename = filename
   end
 
@@ -66,11 +70,5 @@ class ShowImporter::TrackProxy
   def method_missing(method, *args, &_block)
     return @_track.send(method, *args) if @_track.respond_to?(method)
     super
-  # rescue => e
-  #   binding.pry
   end
-
-  # def respond_to_missing?(method)
-  #   @_track.respond_to?(method)
-  # end
 end

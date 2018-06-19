@@ -26,7 +26,7 @@ class Track < ApplicationRecord
     against: :title,
     using: {
       tsearch: {
-        any_word: false,
+        any_word: true,
         normalization: 16
       }
     }

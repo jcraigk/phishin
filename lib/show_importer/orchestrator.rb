@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class ShowImporter::Orchestrator
-  attr_reader :show, :fm, :songs, :date
+  attr_reader :show, :fm, :songs, :date, :show_found
 
   def initialize(date)
     @date = date
@@ -11,9 +11,7 @@ class ShowImporter::Orchestrator
     analyze_filenames
 
     @show = Show.where(date: date).first
-    return if @show.present?
-
-    binding.pry
+    return if (@show_found = @show.present?)
 
     @show = Show.new(date: date)
     @venue = find_venue
@@ -29,7 +27,7 @@ class ShowImporter::Orchestrator
   def find_venue
     puts 'Finding venue...'
     venue = Venue.where(name: @show_info.venue_name, city: @show_info.venue_city).first
-    return veneu if venue.present?
+    return venue if venue.present?
     Venue.where(
       'past_names LIKE ? AND city = ?',
       "%#{@show_info.venue_name}%",

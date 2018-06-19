@@ -13,7 +13,7 @@ class ShowImporter::ShowInfo
     songs = parse_songs
     raise 'Invalid date' if songs.empty?
 
-    @songs = []
+    @songs = {}
     songs.each_with_index do |song, i|
       @songs[i + 1] = song
     end
