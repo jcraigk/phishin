@@ -167,7 +167,6 @@ class Track < ApplicationRecord
   end
 
   def save_duration
-    return if duration&.positive?
     Mp3Info.open(audio_file.path) do |mp3|
       update(duration: (mp3.length * 1000).round)
     end

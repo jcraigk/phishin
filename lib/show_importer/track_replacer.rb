@@ -35,6 +35,7 @@ class ShowImporter::TrackReplacer
       track.save
       puts "#{track.position}. #{track.title} (#{track.id}) replaced with `#{filename}`"
     end
+    show.save_duration
   end
 
   def ensure_tracks_present
