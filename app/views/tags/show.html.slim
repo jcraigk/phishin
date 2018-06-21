@@ -4,6 +4,7 @@
   #title_box
     = tag_label(@tag, 'large_tag_label')
     = clear_both
+    p = @tag.description
 
     .btn-group
       button.btn class=(params[:entity] == 'show' ? 'active' : '')
