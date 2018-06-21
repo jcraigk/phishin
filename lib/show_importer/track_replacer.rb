@@ -2,22 +2,24 @@
 require 'highline'
 
 class ShowImporter::TrackReplacer
-  attr_reader :date, :dir, :tracks
+  attr_reader :date, :dir, :track_hash, :show
 
   def initialize(date)
     @date = date
+    @show = Show.where(date: date).first
 
     puts 'Show already imported!'
-    @tracks = match_files_to_tracks
+    @track_hash = match_files_to_tracks
     ensure_tracks_present
+    ensure_all_tracks_matched
     cli = HighLine.new
     answer = cli.ask "Proceed with track replacement? [Y/n]"
     replace_audio_on_tracks if answer == 'Y'
   end
 
   def match_files_to_tracks
-    filenames.each_with_object({}) do |filename, tracks|
-      tracks[filename] =
+    filenames.each_with_object({}) do |filename, track_hash|
+      track_hash[filename] =
         Track.where(show_id: show.id)
              .kinda_matching(scrub_filename(filename))
              .first
@@ -27,7 +29,7 @@ class ShowImporter::TrackReplacer
   private
 
   def replace_audio_on_tracks
-    tracks.sort.each do |filename, track|
+    track_hash.sort.each do |filename, track|
       full_path = "#{IMPORT_DIR}/#{date}/#{filename}"
       track.audio_file = File.open(full_path, 'rb')
       track.save
@@ -36,13 +38,21 @@ class ShowImporter::TrackReplacer
   end
 
   def ensure_tracks_present
-    return unless any_tracks_nil?
-    puts tracks.inspect
-    raise "Could not match all files to tracks!"
+    return unless nil_tracks.any?
+    raise "Not all files matched: #{nil_tracks.keys}"
   end
 
-  def any_tracks_nil?
-    tracks.values.include?(nil)
+  def nil_tracks
+    track_hash.select { |_k, v| v.nil? }
+  end
+
+  def ensure_all_tracks_matched
+    return if unmatched_tracks.empty?
+    raise "Not all tracks matched: #{unmatched_tracks}"
+  end
+
+  def unmatched_tracks
+    @unmatched_tracks ||= show.track_ids - track_hash.values.map(&:id)
   end
 
   def scrub_filename(filename)
@@ -71,7 +81,7 @@ class ShowImporter::TrackReplacer
   def filenames
     @filenames ||=
       Dir.entries(dir).reject do |e|
-        e == '.' || e == '..' || e =~ /.txt\z/
+        e == '.' || e == '..' || e =~ /.txt\z/ || e == '.DS_Store'
       end
   end
 end
