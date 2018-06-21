@@ -40,7 +40,7 @@ class Track < ApplicationRecord
   validate :require_at_least_one_song
 
   before_validation :populate_song, :populate_position
-  after_save :save_duration
+  after_create :save_duration
 
   def set_name
     set_names[set] || 'Unknown set'

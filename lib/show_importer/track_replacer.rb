@@ -33,6 +33,7 @@ class ShowImporter::TrackReplacer
       full_path = "#{IMPORT_DIR}/#{date}/#{filename}"
       track.audio_file = File.open(full_path, 'rb')
       track.save
+      track.save_duration
       puts "#{track.position}. #{track.title} (#{track.id}) replaced with `#{filename}`"
     end
     show.save_duration
