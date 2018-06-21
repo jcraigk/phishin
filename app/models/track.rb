@@ -192,7 +192,7 @@ class Track < ApplicationRecord
   end
 
   def album_name
-    "#{show.date} #{set_abbrev} #{show.venue.location}"
+    "#{show.date} #{show.venue.location}"
   end
 
   def roman_numerals

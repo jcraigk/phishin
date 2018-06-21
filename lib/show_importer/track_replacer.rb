@@ -34,6 +34,7 @@ class ShowImporter::TrackReplacer
       track.audio_file = File.open(full_path, 'rb')
       track.save
       track.save_duration
+      track.save_default_id3_tags
       puts "#{track.position}. #{track.title} (#{track.id}) replaced with `#{filename}`"
     end
     show.save_duration
