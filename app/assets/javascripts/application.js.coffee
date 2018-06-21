@@ -449,3 +449,16 @@ $ ->
     $('#taper_notes_content').html($(this).data('taper-notes'))
     $('#taper_notes_date').html $(this).data('show-date')
     $('#taper_notes_modal').modal('show')
+
+  # Keyboard shortcuts
+  $(window).keydown (e) ->
+    switch e.keyCode
+      when 32 # Spacebar
+        App.Player.togglePause()
+        e.preventDefault()
+      when 37 # <-
+        App.Player.previousTrack()
+        e.preventDefault()
+      when 39 # ->
+        App.Player.nextTrack()
+        e.preventDefault()
