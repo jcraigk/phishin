@@ -62,7 +62,7 @@ class Track < ApplicationRecord
 
   def save_default_id3_tags
     Mp3Info.open(audio_file.path) do |mp3|
-      comment = 'Visit phish.in for free Phish audio'
+      comments = 'Visit http://phish.in for free Phish audio'
       year = show.date.strftime('%Y').to_i
       band = 'Phish'
 
@@ -72,7 +72,7 @@ class Track < ApplicationRecord
       mp3.tag.year = year
       mp3.tag.track = position
       mp3.tag.genre = 17 # 'Rock'
-      mp3.tag.comment = comment
+      mp3.tag.comments = comments
 
       mp3.tag2.title = title
       mp3.tag2.artist = band
@@ -80,7 +80,7 @@ class Track < ApplicationRecord
       mp3.tag2.year = year
       mp3.tag2.track = position
       mp3.tag2.genre = 'Rock'
-      mp3.tag2.comment = comment
+      mp3.tag2.comments = comments
 
       # TODO: Add cover art using id3v2?
       # mp3.tag2.remove_pictures
