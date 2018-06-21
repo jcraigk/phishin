@@ -12,7 +12,8 @@
       span.show_duration = duration_readable(@show.duration, 'letters')
 
       - if @show.taper_notes.present?
-        span.show_duration •  
+        span.show_duration
+        |  •&nbsp;
         = link_to 'Taper Notes', '#', class: 'show_taper_notes', data: { 'show-date' => @show.date.to_s, 'taper-notes' => taper_notes_or_missing(@show) }
       .hr
 

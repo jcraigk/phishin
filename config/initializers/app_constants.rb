@@ -25,3 +25,5 @@ ERAS = {
   '2.0' => (2002..2004).map(&:to_s),
   '3.0' => (2009..2017).map(&:to_s)
 }.freeze
+
+IMPORT_DIR = "#{Rails.root}/import"

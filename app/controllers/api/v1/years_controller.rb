@@ -21,9 +21,9 @@ class Api::V1::YearsController < Api::V1::ApiController
   end
 
   def show
-    if params[:id].match /^(\d{4})-(\d+{4})$/
+    if params[:id].match /\A(\d{4})-(\d+{4})\z/
       shows = Show.avail.between_years($1, $2).includes(:venue).order('date asc')
-    elsif params[:id].match /^(\d){4}$/
+    elsif params[:id].match /\A(\d){4}\z/
       shows = Show.avail.during_year(params[:id]).includes(:venue).order('date asc')
     else
       return respond_with_failure('Invalid year or year range')

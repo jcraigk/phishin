@@ -1,9 +1,25 @@
 # frozen_string_literal: true
-require 'open-uri'
-require 'nokogiri'
-require_relative '../pnet'
-
 namespace :shows do
+  desc 'Import a show'
+  task import: :environment do
+    require_relative '../show_importer'
+
+    dates = Dir.entries(IMPORT_DIR).select do |entry|
+      File.directory?(File.join(IMPORT_DIR, entry)) &&
+        /\A\d{4}\-\d{2}\-\d{2}\z/.match?(entry)
+    end
+
+    next puts "No shows found in #{IMPORT_DIR}" unless dates.any?
+
+    puts "#{dates.size} show folders found"
+    dates.each do |date|
+      puts '========================'
+      puts " PROCESSING #{date}"
+      puts '========================'
+      ShowImporter::Cli.new(date)
+    end
+  end
+
   desc 'Find mis-labeled sets on tracks'
   task mislabeled_sets: :environment do
     show_list = []

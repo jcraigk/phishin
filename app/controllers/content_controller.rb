@@ -3,6 +3,7 @@ class ContentController < ApplicationController
   caches_action :years, expires_in: CACHE_TTL
   caches_action :songs, expires_in: CACHE_TTL
   caches_action :venues, expires_in: CACHE_TTL
+  # TODO: Should we cache glob here too?
 
   ###############################
   # Hard-coded actions
@@ -63,7 +64,7 @@ class ContentController < ApplicationController
 
     # Day of Year?
     monthday = g.match(
-      /^(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})$/i
+      /\A(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})\z/i
     )
     if monthday.present?
       if day_of_year(Date::MONTHNAMES.index(monthday[1].titleize), Integer(monthday[2], 10))
@@ -73,7 +74,7 @@ class ContentController < ApplicationController
         view = :show_not_found
       end
     # Year?
-    elsif /^\d{4}$/.match?(g)
+    elsif /\A\d{4}\z/.match?(g)
       if year g
         @title = g
         @controller_action = 'year'
@@ -82,7 +83,7 @@ class ContentController < ApplicationController
         redirect_to :root
       end
     # Year range?
-    elsif g =~ /^(\d{4})-(\d{4})$/
+    elsif g =~ /\A(\d{4})-(\d{4})\z/
       matches = Regexp.last_match
       if year_range(matches[1], matches[2])
         @title = "#{matches[1]} - #{matches[2]}"
@@ -92,7 +93,7 @@ class ContentController < ApplicationController
         redirect_to :root
       end
     # Show?
-    elsif /^\d{4}(\-|\.)\d{1,2}(\-|\.)\d{1,2}$/.match?(g)
+    elsif /\A\d{4}(\-|\.)\d{1,2}(\-|\.)\d{1,2}\z/.match?(g)
       view = show(g) ? :show : :show_not_found
       @controller_action = 'show'
     # Song?
@@ -172,7 +173,7 @@ class ContentController < ApplicationController
   def show(date)
     # convert 2012.12.31 to 2012-12-31
     matches = Regexp.last_match
-    date = "#{matches[1]}-#{matches[2]}-#{matches[3]}" if date =~ /^(\d{4})\.(\d{1,2})\.(\d{1,2})$/
+    date = "#{matches[1]}-#{matches[2]}-#{matches[3]}" if date =~ /\A(\d{4})\.(\d{1,2})\.(\d{1,2})\z/
 
     # Ensure valid date before touching database
     begin

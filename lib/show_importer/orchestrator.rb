@@ -1,39 +1,46 @@
 # frozen_string_literal: true
-require_relative '../../config/environment'
-require_relative '../filename_matcher'
-require_relative 'show_info'
-require_relative 'track_proxy'
-require_relative 'cli'
-
-class ShowImporter::ShowImporter
-  attr_reader :show, :fm, :songs
+class ShowImporter::Orchestrator
+  attr_reader :show, :fm, :songs, :date, :show_found
 
   def initialize(date)
-    puts 'Fetching show info...'
-    @show_info = ShowInfo.new(date)
+    @date = date
 
-    puts 'Analyzing filenames...'
-    @fm = FilenameMatcher.new(date)
+    puts 'Fetching show info...'
+    @show_info = ShowImporter::ShowInfo.new(date)
+
+    analyze_filenames
 
     @show = Show.where(date: date).first
-    puts "Warning: #{date} already imported!" if @show.present?
-    @show = Show.new(date: date)
+    return if (@show_found = @show.present?)
 
+    @show = Show.new(date: date)
+    @venue = find_venue
+    assign_venue
+    populate_tracks
+  end
+
+  def analyze_filenames
+    puts 'Analyzing filenames...'
+    @fm = ShowImporter::FilenameMatcher.new("#{IMPORT_DIR}/#{date}")
+  end
+
+  def find_venue
     puts 'Finding venue...'
-    @venue = Venue.where(name: @show_info.venue_name, city: @show_info.venue_city).first
-    @venue ||= Venue.where(
+    venue = Venue.where(name: @show_info.venue_name, city: @show_info.venue_city).first
+    return venue if venue.present?
+    Venue.where(
       'past_names LIKE ? AND city = ?',
       "%#{@show_info.venue_name}%",
       @show_info.venue_city
     ).first
+  end
+
+  def assign_venue
     unless @venue.present?
       puts 'No venue matched! Enter Venue ID:'
       @venue = Venue.find(STDIN.gets.chomp.to_i)
     end
     @show.venue = @venue
-
-    @tracks = []
-    populate_tracks
   end
 
   def pp_list
@@ -56,7 +63,7 @@ class ShowImporter::ShowImporter
 
   def insert_before(pos)
     @tracks.each { |track| track.incr_pos if track.pos >= pos }
-    @tracks.insert pos, TrackProxy.new(pos)
+    @tracks.insert pos, ShowImporter::TrackProxy.new(pos)
   end
 
   def delete(pos)
@@ -90,14 +97,15 @@ class ShowImporter::ShowImporter
   private
 
   def populate_tracks
+    @tracks = []
     matches = @fm.matches.dup
     @show_info.songs.each do |pos, song_title|
       fn_match = matches.find { |_k, v| !v.nil? && v.title == song_title }
       if fn_match
-        @tracks << TrackProxy.new(pos, song_title, fn_match[0], fn_match[1])
+        @tracks << ShowImporter::TrackProxy.new(pos, song_title, fn_match[0], fn_match[1])
         matches.delete(fn_match[0])
       else
-        @tracks << TrackProxy.new(pos, song_title)
+        @tracks << ShowImporter::TrackProxy.new(pos, song_title)
       end
     end
   end

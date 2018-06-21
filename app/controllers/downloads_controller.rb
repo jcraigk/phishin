@@ -47,8 +47,8 @@ class DownloadsController < ApplicationController
       # Prune away tracks if specific set is being called
       if params[:set].present? && show.tracks.map(&:set).include?(params[:set])
         # If the last set of the show is being requested, include encore tracks
-        album_tracks.reject! { |track| /^E\d?$/.match track.set } unless show.last_set == params[:set].to_i
-        album_tracks.reject! { |track| /^\d$/.match track.set && track.set != params[:set] }
+        album_tracks.reject! { |track| /\AE\d?\z/.match track.set } unless show.last_set == params[:set].to_i
+        album_tracks.reject! { |track| /\A\d\z/.match track.set && track.set != params[:set] }
         album_name = "#{show.date} #{album_tracks.first.set_name}" if album_tracks.any?
       else
         album_name = show.date.to_s
