@@ -23,7 +23,7 @@ class Song < ApplicationRecord
   scope :title_starting_with, ->(char) { where('title SIMILAR TO ?', "#{char == '#' ? '[0-9]' : char}%") }
 
   def self.random_lyrical_excerpt
-    where('lyrical_excerpt IS NOT NULL').order('RAND()').limit(1)
+    where('lyrical_excerpt IS NOT NULL').order('RANDOM()').limit(1)
   end
 
   def title_letter

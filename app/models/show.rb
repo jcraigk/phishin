@@ -46,7 +46,7 @@ class Show < ApplicationRecord
     where('extract(month from date) = ?', month)
       .where('extract(day from date) = ?', day)
   }
-  scope :random, ->(amt = 1) { order('RAND()').limit(amt) }
+  scope :random, ->(amt = 1) { order('RANDOM()').limit(amt) }
 
   delegate :name, to: :tour, prefix: true
 
