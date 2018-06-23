@@ -38,7 +38,8 @@ class @Player
       if track_id = $('.playable_track').first().data 'id'
         unless @invoked
           path_segment = window.location.pathname.split('/')[1]
-          this.setCurrentPlaylist track_id if path_segment isnt 'playlist' and path_segment isnt 'play'
+          if path_segment isnt 'playlist' and path_segment isnt 'play'
+            this.setCurrentPlaylist track_id
           this.playTrack track_id
           # iOS doesn't allow auto-play
           if /(iPhone|iPad|iPod)/g.test(navigator.userAgent)
