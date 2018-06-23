@@ -39,8 +39,7 @@ class @Player
         unless @invoked
           path_segment = window.location.pathname.split('/')[1]
           if path_segment isnt 'playlist' and path_segment isnt 'play'
-            this.setCurrentPlaylist track_id
-          this.playTrack track_id
+            this.setCurrentPlaylist track_id, true
           # iOS doesn't allow auto-play
           if /(iPhone|iPad|iPod)/g.test(navigator.userAgent)
             this.togglePause()
@@ -198,11 +197,14 @@ class @Player
         if $el
           $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
 
-  setCurrentPlaylist: (track_id) ->
+  setCurrentPlaylist: (track_id, play_track = false) ->
     $.ajax
       type: 'post'
       url: '/reset-playlist'
       data: { 'track_id': track_id }
+      success: (r) =>
+        if play_track
+          this.playTrack track_id
     @$playlist_btn.addClass 'playlist_active'
 
   playRandomSongTrack: (song_id) ->
