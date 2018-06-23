@@ -4,7 +4,7 @@ class MyController < ApplicationController
     return unless current_user
 
     validate_sorting_for_my_shows
-    show_ids = Like.where(likable_type: 'Show', user_id: current_user.id).all.map(&:likable_id)
+    show_ids = Like.where(likable_type: 'Show', user: current_user).map(&:likable_id)
     @shows = Show.where(id: show_ids).includes(:tracks).order(@order_by).paginate(page: params[:page], per_page: 20)
     @shows_likes = @shows.map { |show| get_user_show_like(show) }
 
@@ -14,7 +14,7 @@ class MyController < ApplicationController
   def my_tracks
     return unless current_user
 
-    track_ids = Like.where(likable_type: 'Track', user_id: current_user.id).all.map(&:likable_id)
+    track_ids = Like.where(likable_type: 'Track', user: current_user).map(&:likable_id)
     @tracks = Track.where(id: track_ids).includes(:show).order('title asc').paginate(page: params[:page], per_page: 20)
     @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
 

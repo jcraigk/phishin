@@ -15,13 +15,13 @@ class Api::V1::PlaylistsController < Api::V1::ApiController
   end
 
   def user_playlists
-    respond_with_success user_playlists.map(&:as_json_api_basic)
+    respond_with_success this_user_playlists.map(&:as_json_api_basic)
   end
 
   def user_bookmarks
     render json: {
       success: true,
-      playlist_ids: user_bookmarks.map(&:playlist_id)
+      playlist_ids: this_user_bookmarks.map(&:playlist_id)
     }
   end
 
@@ -33,7 +33,7 @@ class Api::V1::PlaylistsController < Api::V1::ApiController
     elsif playlist.present?
       PlaylistBookmark.create(
         playlist_id: params[:id],
-        user_id: current_user.id
+        user: current_user
       )
       respond_with_success_simple 'Playlist bookmarked'
     else
@@ -66,7 +66,7 @@ class Api::V1::PlaylistsController < Api::V1::ApiController
       elsif !params[:slug].match(/\A[a-z0-9\-]{5,50}\z/)
         respond_with_failure 'URL must be between 5 and 50 lowercase letters, numbers, or dashes'
       elsif params[:id].present?
-        if playlist = Playlist.where(user_id: current_user.id, id: params[:id]).first
+        if playlist = Playlist.where(user: current_user, id: params[:id]).first
           playlist.update_attributes(name: params[:name], slug: params[:slug])
           playlist.playlist_tracks.map(&:destroy)
           create_playlist_tracks(playlist)
@@ -74,14 +74,14 @@ class Api::V1::PlaylistsController < Api::V1::ApiController
         else
           respond_with_failure 'Playlist not found or not owned by user'
         end
-      elsif Playlist.where(user_id: current_user.id).all.size >= MAX_PLAYLISTS_PER_USER
+      elsif Playlist.where(user: current_user).count >= MAX_PLAYLISTS_PER_USER
         respond_with_failure "Each user is limited to #{MAX_PLAYLISTS_PER_USER} playlists"
-      elsif Playlist.where(name: params[:name], user_id: current_user.id).first
+      elsif Playlist.where(name: params[:name], user: current_user).first
         respond_with_failure 'That name has already been taken; choose another'
       elsif Playlist.where(slug: params[:slug]).first
         respond_with_failure 'That slug has already been taken; choose another'
       else
-        playlist = Playlist.create(user_id: current_user.id, name: params[:name], slug: params[:slug])
+        playlist = Playlist.create(user: current_user, name: params[:name], slug: params[:slug])
         create_playlist_tracks(playlist)
         render json: { success: true, playlist_id: playlist.id }
       end
@@ -110,19 +110,19 @@ class Api::V1::PlaylistsController < Api::V1::ApiController
               .first
   end
 
-  def user_playlists
-    @user_playlists ||= Playlist.where(user_id: current_user.id)
+  def this_user_playlists
+    @user_playlists ||= Playlist.where(user: current_user)
   end
 
-  def user_bookmarks
-    @user_bookmarks ||= PlaylistBookmark.where(user_id: current_user.id)
+  def this_user_bookmarks
+    @user_bookmarks ||= PlaylistBookmark.where(user: current_user)
   end
 
   def user_bookmark
     @user_bookmark ||=
       PlaylistBookmark.where(
         playlist_id: params[:id],
-        user_id: current_user.id
+        user: current_user
       ).first
   end
 

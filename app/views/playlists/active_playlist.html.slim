@@ -7,7 +7,7 @@
     h1.playlist_title = session[:playlist_id] > 0 ? session[:playlist_name] : '(Untitled Playlist)'
     - if session[:playlist_id] > 0
       h3 Author: #{session[:playlist_username]}
-    h3#active_playlist_tracks_label Tracks: #{@num_tracks}
+    h3#active_playlist_tracks_label Tracks: #{@tracks.size}
     h3#active_playlist_duration_label Length: #{duration_readable(@duration, 'letters')}
     br
 

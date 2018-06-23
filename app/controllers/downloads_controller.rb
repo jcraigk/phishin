@@ -97,7 +97,7 @@ class DownloadsController < ApplicationController
   def liked
     @liked ||=
       current_user &&
-      track.likes.where(user_id: current_user.id).first.present?
+      track.likes.where(user: current_user).first.present?
   end
 
   def authorize_user!
