@@ -23,12 +23,12 @@ class ApplicationController < ActionController::Base
 
   def get_user_track_like(track)
     return unless track&.likes && current_user
-    track.likes.where(user_id: current_user.id).first
+    track.likes.where(user: current_user).first
   end
 
   def get_user_show_like(show)
     return unless show && current_user
-    show.likes.where(user_id: current_user.id).first
+    show.likes.where(user: current_user).first
   end
 
   def render_xhr_without_layout

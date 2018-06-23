@@ -18,10 +18,10 @@ class Api::V1::LikesController < Api::V1::ApiController
   def like
     if params[:likable_type] && params[:likable_id]
       likable = find_likable
-      if likable.likes.where(user_id: current_user.id).first
+      if likable.likes.where(user: current_user).first
         respond_with_failure 'Entity already liked by current user'
       else
-        likable.likes.build(user_id: current_user.id).save!
+        likable.likes.build(user: current_user).save!
         respond_with_success_simple
       end
     else
@@ -34,7 +34,7 @@ class Api::V1::LikesController < Api::V1::ApiController
   def unlike
     if params[:likable_type] && params[:likable_id]
       likable = find_likable
-      if (like = likable.likes.where(user_id: current_user.id).first)
+      if (like = likable.likes.where(user: current_user).first)
         like.destroy
         respond_with_success_simple
       else
@@ -66,7 +66,7 @@ class Api::V1::LikesController < Api::V1::ApiController
   end
 
   def likes
-    @likes ||= Like.where(user_id: current_user.id).all
+    @likes ||= Like.where(user: current_user).all
   end
 
   def show_likes

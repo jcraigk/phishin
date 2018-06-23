@@ -5,11 +5,11 @@ class LikesController < ApplicationController
 
   def toggle_like
     if (likable = find_likable)
-      if (like = likable.likes.where(user_id: current_user.id).first)
+      if (like = likable.likes.where(user: current_user).first)
         like.destroy
         liked = false
       else
-        likable.likes.build(user_id: current_user.id).save!
+        likable.likes.build(user: current_user).save!
         liked = true
       end
       msg = "#{(liked ? 'Like' : 'Unlike')} acknowledged"

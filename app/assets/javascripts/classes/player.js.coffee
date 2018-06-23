@@ -152,7 +152,10 @@ class @Player
       $.ajax
         url: "/previous-track/#{@active_track}"
         success: (r) =>
-          this.playTrack r.track_id if r.success
+          if r.success
+            this.playTrack r.track_id
+          else
+            @Util.feedback { alert: r.msg }
 
   nextTrack: ->
     $.ajax
@@ -162,7 +165,6 @@ class @Player
           this.playTrack r.track_id
         else
           @Util.feedback { alert: r.msg }
-          this.stopAndUnload()
 
   stopAndUnload: ->
     this._fastFadeout @active_track
