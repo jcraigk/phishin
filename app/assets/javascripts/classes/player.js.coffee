@@ -38,8 +38,8 @@ class @Player
       if track_id = $('.playable_track').first().data 'id'
         unless @invoked
           path_segment = window.location.pathname.split('/')[1]
-          this.playTrack track_id
           this.setCurrentPlaylist track_id if path_segment isnt 'playlist' and path_segment isnt 'play'
+          this.playTrack track_id
           # iOS doesn't allow auto-play
           if /(iPhone|iPad|iPod)/g.test(navigator.userAgent)
             this.togglePause()
@@ -202,6 +202,8 @@ class @Player
       type: 'post'
       url: '/reset-playlist'
       data: { 'track_id': track_id }
+      success: (r) =>
+        console.log(r.playlist)
     @$playlist_btn.addClass 'playlist_active'
 
   playRandomSongTrack: (song_id) ->

@@ -149,7 +149,7 @@ class PlaylistsController < ApplicationController
       success = true
     end
 
-    render json: { success: success }
+    render json: { success: success, playlist: session[:playlist] }
   end
 
   def update_active_playlist
