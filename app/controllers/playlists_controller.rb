@@ -191,6 +191,8 @@ class PlaylistsController < ApplicationController
   end
 
   def next_track_id
+    session[:playlist] = params[:playlist].split(',').map(&:to_i) if params[:playlist].present?
+
     if session[:playlist].empty?
       render json: { success: false, msg: 'No active playlist' }
       return
@@ -212,6 +214,8 @@ class PlaylistsController < ApplicationController
   end
 
   def previous_track_id
+    session[:playlist] = params[:playlist].split(',').map(&:to_i) if params[:playlist].present?
+
     if session[:playlist].empty?
       render json: { success: false, msg: 'No active playlist' }
       return

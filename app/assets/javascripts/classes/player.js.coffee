@@ -13,6 +13,7 @@ class @Player
     @last_volume      = 100
     @duration         = 0
     @playlist_mode    = false
+    @playlist         = []
     @app_name         = $('body').data 'app-name'
     @time_marker      = @Util.timeToMS $('body').data('time-marker')
     @$playlist_btn    = $ '#playlist_button'
@@ -150,7 +151,7 @@ class @Player
       @sm_sound.setPosition 0
     else
       $.ajax
-        url: "/previous-track/#{@active_track}"
+        url: "/previous-track/#{@active_track}?playlist=#{@playlist}"
         success: (r) =>
           if r.success
             this.playTrack r.track_id
@@ -159,7 +160,7 @@ class @Player
 
   nextTrack: ->
     $.ajax
-      url: "/next-track/#{@active_track}"
+      url: "/next-track/#{@active_track}?playlist=#{@playlist}"
       success: (r) =>
         if r.success
           this.playTrack r.track_id
@@ -202,6 +203,8 @@ class @Player
       type: 'post'
       url: '/reset-playlist'
       data: { 'track_id': track_id }
+      success: (r) =>
+        @playlist = r.playlist
     @$playlist_btn.addClass 'playlist_active'
 
   playRandomSongTrack: (song_id) ->
@@ -252,7 +255,7 @@ class @Player
                 @Util.feedback { notice: 'Playing random show...'}
                 @Util.navigateTo r.url
                 this.setCurrentPlaylist r.track_id
-                this.playTrack r.track_id
+                # this.playTrack r.track_id
 
   _disengagePlayer: ->
     if @active_track
