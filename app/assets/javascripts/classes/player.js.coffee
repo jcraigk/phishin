@@ -203,7 +203,7 @@ class @Player
       url: '/reset-playlist'
       data: { 'track_id': track_id }
       success: (r) =>
-        console.log(r.playlist)
+        alert(r.playlist)
     @$playlist_btn.addClass 'playlist_active'
 
   playRandomSongTrack: (song_id) ->
