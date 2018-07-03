@@ -8,8 +8,13 @@ class ApplicationController < ActionController::Base
   before_action :init_session
   before_action :init_params
   before_action :require_xhr
+  before_action :permitted_params, if: :devise_controller?
 
   protected
+
+  def permitted_params
+    devise_parameter_sanitizer.permit(:sign_up, keys: %i[username])
+  end
 
   def random_lyrical_excerpt
     return unless request.xhr?
