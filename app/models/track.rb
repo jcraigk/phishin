@@ -1,10 +1,10 @@
 # frozen_string_literal: true
-require 'mp3info' # TODO: Needed?
+require 'mp3info'
 
 class Track < ApplicationRecord
   has_attached_file(
     :audio_file,
-    path: "#{APP_CONTENT_PATH}:class/:attachment/:id_partition/:id.:extension"
+    path: "#{APP_CONTENT_PATH}/:class/:attachment/:id_partition/:id.:extension"
   )
 
   belongs_to :show
@@ -40,7 +40,7 @@ class Track < ApplicationRecord
   validate :require_at_least_one_song
 
   before_validation :populate_song, :populate_position
-  after_create :save_duration
+  after_commit :save_duration, on: :create
 
   def set_name
     set_names[set] || 'Unknown set'
@@ -168,7 +168,7 @@ class Track < ApplicationRecord
 
   def save_duration
     Mp3Info.open(audio_file.path) do |mp3|
-      update(duration: (mp3.length * 1000).round)
+      update_column(:duration, (mp3.length * 1000).round)
     end
   end
 

@@ -9,7 +9,7 @@ class AlbumCreator
     album = Album.find(album_id)
     tracks = []
     track_ids.each { |id| tracks << Track.find(id) }
-    tmpdir = "#{TMP_PATH}album_#{album.md5}/"
+    # tmpdir = "#{TMP_PATH}album_#{album.md5}/"
     # FileUtils.rm_rf tmpdir
     Dir.mkdir tmpdir
     tracks.each_with_index do |track, i|

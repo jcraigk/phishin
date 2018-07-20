@@ -2,7 +2,7 @@
 class Album < ApplicationRecord
   has_attached_file(
     :zip_file,
-    path: APP_CONTENT_PATH + ':class/cache/:id.:extension'
+    path: "#{APP_CONTENT_PATH}/:class/cache/:id.:extension"
   )
 
   scope :completed, -> { where('completed_at IS NOT NULL') }
