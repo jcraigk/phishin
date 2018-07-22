@@ -25,6 +25,10 @@
           i.icon-share-alt
           |  Share
       li
+        a.download href='null' data-url=download_track_path(track)
+          i.icon-download
+          |  Download MP3
+      li
         a href="/#{track.songs.first.slug}"
           i.icon-book
           |  This song...
