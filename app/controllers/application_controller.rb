@@ -10,6 +10,10 @@ class ApplicationController < ActionController::Base
   before_action :require_xhr
   before_action :permitted_params, if: :devise_controller?
 
+  def user_signed_in
+    render json: { success: user_signed_in? }
+  end
+
   protected
 
   def permitted_params

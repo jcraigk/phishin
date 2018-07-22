@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   # Users
   devise_for :users
-  get '/user-signed-in' => 'application#user_signed_in?'
+  get '/user-signed-in' => 'application#user_signed_in'
   get '/my-shows' => 'my#my_shows', as: 'my_shows'
   get '/my-tracks' => 'my#my_tracks', as: 'my_tracks'
 
