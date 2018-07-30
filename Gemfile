@@ -24,6 +24,7 @@ gem 'pg', '0.21.0'
 gem 'pg_search'
 gem 'rails', '5.2.0'
 gem 'ruby-mp3info'
+gem 'ruby-progressbar'
 gem 'sass-rails'
 gem 'slim'
 gem 'soundmanager2-rails'
@@ -35,7 +36,6 @@ group :development do
   gem 'airbrussh'
   gem 'bootsnap'
   gem 'pry'
-  gem 'ruby-progressbar'
   gem 'web-console'
 end
 
