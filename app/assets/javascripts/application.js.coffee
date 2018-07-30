@@ -452,6 +452,8 @@ $ ->
 
   # Keyboard shortcuts
   $(window).keydown (e) ->
+    target = e.target.tagName.toLowerCase()
+    return if target == 'input' || target == 'textarea'
     switch e.keyCode
       when 32 # Spacebar
         App.Player.togglePause()
