@@ -160,7 +160,6 @@ class ShowImporter::Cli
     when 's'
       puts 'Saving...'
       orch.save
-      exit
     end
   end
 end
