@@ -35,6 +35,7 @@ group :development do
   gem 'airbrussh'
   gem 'bootsnap'
   gem 'pry'
+  gem 'ruby-progressbar'
   gem 'web-console'
 end
 

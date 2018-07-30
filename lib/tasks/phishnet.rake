@@ -1,6 +1,4 @@
 # frozen_string_literal: true
-require 'net/http'
-require 'uri'
 
 namespace :phishnet do
   desc 'Sync jamcharts data'
@@ -13,13 +11,20 @@ namespace :phishnet do
 
     PHISHNET_URI = 'http://api.phish.net/api.js?api=2.0&method=pnet.jamcharts.all&apikey=448345A7B7688DDE43D0'
     uri = URI.parse(PHISHNET_URI)
+    puts 'Fetching Jamcharts data from Phish.net API...'
     json = JSON[Net::HTTP.get_response(uri).body]
+
+    pbar = ProgressBar.create(
+      total: json.size,
+      format: '%a %B %c/%C %p%% %E'
+    )
 
     # Add missing tags for each entry
     json.each do |item|
+      pbar.increment
+
       show = Show.where(date: item['showdate']).includes(:tracks).first
       next missing_shows << item['showdate'] if show.nil?
-
       track_matched = false
       show.tracks.order('position').each do |track|
         song = songs.find do |s|
@@ -47,6 +52,8 @@ namespace :phishnet do
         invalid_items << "#{item['showdate']} - #{item['song']}"
       end
     end
+
+    pbar.finish
 
     puts "#{missing_shows.size} missing shows:\n" + missing_shows.join(', ')
     puts "#{invalid_items.size} invalid recs:\n" + invalid_items.join("\n")
