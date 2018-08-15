@@ -157,7 +157,7 @@ module ApplicationHelper
           '%<days>dd %<hours>dh %<minutes>dm',
           days: days,
           hours: hours,
-          minute: minutes
+          minutes: minutes
         )
       elsif hours.positive?
         format(
