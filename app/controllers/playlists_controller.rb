@@ -36,9 +36,10 @@ class PlaylistsController < ApplicationController
         else
           Playlist.where('user_id = ? OR id IN (?)', current_user.id, bookmarked_ids)
         end
-      @playlists.includes(:user)
-                .order(order_by_for_saved_playlists)
-                .page(params[:page])
+      @playlists =
+        @playlists.includes(:user)
+                  .order(order_by_for_saved_playlists)
+                  .page(params[:page])
     end
 
     render layout: false if request.xhr?
@@ -290,17 +291,8 @@ class PlaylistsController < ApplicationController
   private
 
   def order_by_for_saved_playlists
-    params[:sort] = 'name' unless params[:sort].in?(%w[name duration username])
-
-    order_by =
-      if %w[name duration].include?(params[:sort])
-        params[:sort]
-      elsif params[:sort] == 'username'
-        'users.username'
-      end
-    order_by += ', name'
-
-    order_by
+    params[:sort] = 'name' unless params[:sort].in?(%w[name duration])
+    params[:sort] + ' asc'
   end
 
   def create_playlist_tracks(playlist)

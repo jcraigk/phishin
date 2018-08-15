@@ -80,8 +80,7 @@ module SortHelper
   def saved_playlist_sort_items
     {
       '<i class="icon-text-height"></i> Name' => 'name',
-      '<i class="icon-time"></i> Duration' => 'duration',
-      '<i class="icon-user"></i> Author' => 'username'
+      '<i class="icon-time"></i> Duration' => 'duration'
     }
   end
 end
