@@ -11,7 +11,7 @@ COPY Gemfile Gemfile.lock ./
 RUN bundle install
 COPY . .
 
-# Symlink audio path to Rails public folder
+# Symlink audio file storage to Rails public folder
 RUN ln -s /content/tracks/audio_files ./public/audio
 
 EXPOSE 3000

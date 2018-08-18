@@ -10,13 +10,13 @@ CACHE_TTL = 10.minutes
 FIRST_CHAR_LIST = ('A'..'Z').to_a + ['#']
 MAX_PLAYLISTS_PER_USER = 20
 
+APP_CONTENT_PATH = '/content'
+
 if Rails.env.in?(%w[development test])
   APP_BASE_URL = 'http://localhost:3000'
-  APP_CONTENT_PATH = '/content'
   IMPORT_DIR = '/htdocs/phishin/audio_import'
 else
   APP_BASE_URL = 'https://phish.in'
-  APP_CONTENT_PATH = '/var/www/app_content/phishin'
   IMPORT_DIR = '/home/jcraigk/audio_import/'
 end
 
