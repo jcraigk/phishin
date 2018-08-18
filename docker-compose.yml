@@ -1,4 +1,5 @@
 version: '3'
+
 services:
   app:
     build: .
@@ -6,21 +7,20 @@ services:
     ports:
       - 80:3000
     volumes:
-      - .:/app
-      - /htdocs/app_content/phishin:/content
+      - /private/var/app_content/phishin:/content
     tty: true
     stdin_open: true
   pg:
-    image: postgres:10.4
+    image: postgres:10.5
     volumes:
       - pg_data:/var/lib/postgresql/data
-      # - ./sql:/docker-entrypoint-initdb.d
     environment:
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=phishin
+      - POSTGRES_DB=postgres
   adminer:
     image: adminer
     ports:
       - 81:8080
+
 volumes:
   pg_data:

@@ -1,4 +1,4 @@
-.PHONY : build ci clean services spec start stop up
+.PHONY : build clean services spec start stop up
 
 all : build up
 

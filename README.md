@@ -1,54 +1,39 @@
 Phish.in'
 ---------
 
-Phish.in' is a web-based archive containing legal live audio recordings of the musical group Phish.
+Phish.in' is a web-based archive containing legal live audio recordings of the Rock band Phish.
 
-Ruby on Rails and PostgreSQL are used on the server side.  There's a web frontend (http://phish.in) and a public JSON API (http://phish.in/api-docs).  The web frontend utilizes soundmanager2 as the audio playback engine.
+Ruby on Rails and PostgreSQL are used on the server side.  There's a web frontend (http://phish.in) and a public REST-ish API (http://phish.in/api-docs).  The web frontend utilizes soundmanager2 as the audio playback engine.
 
 All audio is currently in MP3 format.  More formats may be made available at a later time.
 
 ## Developer setup
 
-You will need the following on your machine in order to develop against this project:
+1. Install [Docker](https://www.docker.com/).
 
- - Ruby programming language
- - PostgreSQL relational database
+2. From the repo folder, build and start the containers.
 
-### Installing Ruby
+```bash
+make build
+make start
+```
 
-[rvm](https://rvm.io/) is recommended for Ruby version management.  Once rvm is installed, if you navigate into a ruby project's folder, rvm will automatically detect the Ruby version via the `Gemfile` and invoke the appropriate version of Ruby.
+3. Download the [data/audio seed file](https://www.dropbox.com/s/mxkevdsz4m40ji6/phishin_for_devs.zip?dl=1) and unzip it.  This file contains a full set of data from Nov 2017 with user data purged.  It also includes all mp3 audio files for the last Baker's Dozen show (2017-08-06).
 
-### Installing PostgreSQL
+```bash
+# Copy the SQL dump into PG container and run it
+docker cp /path/to/phishin_for_devs.sql phishin_pg_1:/docker-entrypoint-initdb.d/dump.sql
+docker exec -u postgres phishin_pg_1 psql phishin postgres -f docker-entrypoint-initdb.d/dump.sql
+```
 
-You can download an installer from the [PostgreSQL website](https://www.postgresql.org/download/) or use [Docker](https://www.docker.com/) to virtualize the service.  Version 10 is recommended.
+4. Copy the `config/database.yml.example` to `config/database.yml`.
 
-### Rails Setup
+5. Place the `tracks` folder on your local drive and set its location in `docker-compose.yml` (default is `/private/var/app_content/phishin`).
 
-You may refer to the [Rails Guides](http://guides.rubyonrails.org/) if you want detailed information about how to run and develop Rails projects.  Note that Phish.in is currently running Rails v5.2.
+Open your browser and direct it to `http://localhost/2017-08-06`.  You should be able to play the full show through the browser.
 
-To setup a fresh development environment:
+## Maintenance
 
-1. Clone this git repo into a local folder.
+You can create a new user via the Rails console (`rails c`).  See [Devise documentation](https://github.com/plataformatec/devise) for details.  Note that you must `confirm!` the user after creating it.
 
-2. Navigate to the project's path on your machine.  If you do not have the correct version of Ruby available, rvm will prompt you to install it.
-
-3. Run `bundle install` to install all gem dependencies.
-
-4. Download the [data/audio seed file](https://www.dropbox.com/s/mxkevdsz4m40ji6/phishin_for_devs.zip?dl=1) and unzip it.  This file contains a full set of data from Nov 2017 minus all users.  It also includes all mp3 audio files for the last Baker's Dozen show 2017-08-06.
-
-5. Place the `tracks` folder on your local hard drive and set its location using the `APP_CONTENT_PATH` constant in the file `initializers/app_constants.rb`.
-
-6. Create a symlink from `tracks/audio_files` folder to `public/audio`:
-`ln -s ~/Downloads/phishin_for_devs/tracks/audio_files public/audio`
-
-7. Copy the `config/database.yml.example` to `config/database.yml` and enter the appropriate configuration for your local PostgreSQL database.
-
-8. Create a fresh empty database by running `bundle exec rake db:create`.
-
-9. Import the seed data by running `psql phishin_dev < phishin_for_devs.sql`.
-
-10. Launch the app locally by running `rails s`.
-
-11. Open your browser and direct it to `http://localhost:3000/2017-08-06`.  You should be able to play the full show.
-
-12. Create a new user via the Rails console (`rails c`).  See [Devise documentation](https://github.com/plataformatec/devise) for details.  Note that you must `confirm!` the user after creating it.
+You can use [Adminer](https://www.adminer.org/) to interact with Postgres using a GUI.  Visit `http://localhost:81` and select `PostgreSQL` in the System dropdown menu.  Server is `pg`, username/pass are both `postgres`, db name is `phishin`.

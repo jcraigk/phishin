@@ -1,11 +1,9 @@
-/.bundle
-/log/*.log
-/tmp
+.bundle
+.capistrano
 .DS_Store
 **/.DS_Store
-/public/audio
-/config/database.yml
-/import
-.byebug_history
-/.capistrano
+
 /audio_import
+/log
+/public/audio
+/tmp

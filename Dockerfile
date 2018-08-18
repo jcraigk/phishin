@@ -1,8 +1,8 @@
 FROM ruby:2.5.1
 RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
-RUN mkdir /app
-WORKDIR /app
-COPY Gemfile /app/Gemfile
-COPY Gemfile.lock /app/Gemfile.lock
+WORKDIR .
+COPY Gemfile Gemfile.lock ./
 RUN bundle install
-COPY . /app
+COPY . .
+RUN ln -s /content/tracks/audio_files ./public/audio
+EXPOSE 3000
