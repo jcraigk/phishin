@@ -1,15 +1,8 @@
-default: &default
-  adapter: postgresql
-  encoding: unicode
-  pool: <%= ENV['RAILS_MAX_THREADS'] || 5 %>
-  host: pg
-  username: <%= ENV['DB_USERNAME'] || 'postgres' %>
-  password: <%= ENV['DB_PASSWORD'] || 'postgres' %>
-
 development:
-  <<: *default
-  database: phishin
+  url: <%= ENV['DATABASE_URL'] %>
 
 test:
-  <<: *default
-  database: phishin_test
+  url: <%= ENV['DATABASE_URL'] %>
+
+production:
+  url: <%= ENV['DATABASE_URL'] %>

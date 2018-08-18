@@ -10,6 +10,8 @@ services:
       - /private/var/app_content/phishin:/content
     tty: true
     stdin_open: true
+    env_file:
+      - .env
   pg:
     image: postgres:10.5
     volumes:
