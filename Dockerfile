@@ -14,4 +14,6 @@ COPY . .
 # Symlink audio file storage to Rails public folder
 RUN ln -s /content/tracks/audio_files ./public/audio
 
+CMD ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
+
 EXPOSE 3000
