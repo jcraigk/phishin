@@ -11,14 +11,14 @@ FIRST_CHAR_LIST = ('A'..'Z').to_a + ['#']
 MAX_PLAYLISTS_PER_USER = 20
 
 APP_CONTENT_PATH = '/content'
+IMPORT_DIR = APP_CONTENT_PATH + '/import'
 
-if Rails.env.in?(%w[development test])
-  APP_BASE_URL = 'http://localhost:3000'
-  IMPORT_DIR = '/htdocs/phishin/audio_import'
-else
-  APP_BASE_URL = 'https://phish.in'
-  IMPORT_DIR = '/home/jcraigk/audio_import/'
-end
+APP_BASE_URL =
+  if Rails.env.in?(%w[development test])
+    'http://localhost'
+  else
+    'https://phish.in'
+  end
 
 ERAS = {
   '1.0' => %w[1983-1987] + (1988..2000).map(&:to_s),

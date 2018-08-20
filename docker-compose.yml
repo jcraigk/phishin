@@ -3,15 +3,14 @@ version: '3'
 services:
   app:
     build: .
-    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     ports:
-      - 80:3000
+      - 80:80
     volumes:
       - /private/var/app_content/phishin:/content
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@pg/phishin?pool=5
     tty: true
     stdin_open: true
-    env_file:
-      - .env
   pg:
     image: postgres:10.5
     volumes:

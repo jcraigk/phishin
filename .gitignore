@@ -1,9 +1,7 @@
 .bundle
-.capistrano
 .DS_Store
-**/.DS_Store
 
-/audio_import
 /log
-/public/audio
 /tmp
+
+/public/audio
