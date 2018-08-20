@@ -5,7 +5,7 @@ Phish.in' is a web-based archive containing legal live audio recordings of the R
 
 Ruby on Rails and PostgreSQL are used on the server side.  There's a web frontend (http://phish.in) and a public REST-ish API (http://phish.in/api-docs).  The web frontend utilizes soundmanager2 as the audio playback engine.
 
-All audio is currently in MP3 format.  More formats may be made available at a later time.
+All audio is currently in MP3 format; more formats may be made available at a later time.  Files are currently served directly from the web server and cached via CloudFlare CDN.
 
 ## Developer setup
 
@@ -26,11 +26,34 @@ docker cp /path/to/phishin_for_devs.sql phishin_pg_1:/docker-entrypoint-initdb.d
 docker exec -u postgres phishin_pg_1 psql phishin postgres -f docker-entrypoint-initdb.d/dump.sql
 ```
 
-4. Copy the `config/database.yml.example` to `config/database.yml`.
-
 5. Place the `tracks` folder on your local drive and set its location in `docker-compose.yml` (default is `/private/var/app_content/phishin`).
 
 Open your browser and direct it to `http://localhost/2017-08-06`.  You should be able to play the full show through the browser.
+
+## Importing Audio
+
+To import a new show or replace an existing one, name the MP3s according to the import format (`I 01 Harry Hood.mp3`) and place them in a folder named by date (`2018-08-12`).  Place this folder in `/content/import` (as seen from the app container) and run the following command from within the container (`docker exec -it <container> /bin/bash`):
+
+```bash
+rails shows:import
+```
+
+Use the interactive CLI to execute the import, then go to the `rails console`:
+
+```ruby
+show = Show.last
+show.tour = Tour.find_by(name: '<tour name>')
+show.missing = false
+show.taper_notes = "<paste taper notes>"
+show.save
+```
+
+Go to `https://phish.in/<date>` to verify the upload.  You may also want to run:
+
+```bash
+rails tracks:uniquify_slugs
+rails phishnet:sync_jamcharts
+```
 
 ## Maintenance
 
