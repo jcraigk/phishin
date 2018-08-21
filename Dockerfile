@@ -12,4 +12,4 @@ COPY . .
 RUN ln -s /content/tracks/audio_files ./public/audio
 
 EXPOSE 80
-CMD rails s -p 80 -b 0.0.0.0
+CMD bundle exec puma -b tcp://0.0.0.0:80

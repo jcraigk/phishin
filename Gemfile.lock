@@ -129,6 +129,7 @@ GEM
     pry (0.11.3)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
+    puma (3.12.0)
     rack (2.0.5)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -244,6 +245,7 @@ DEPENDENCIES
   pg (= 0.21.0)
   pg_search
   pry
+  puma
   rails (= 5.2.1)
   ruby-mp3info
   ruby-progressbar
