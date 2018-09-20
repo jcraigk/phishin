@@ -19,7 +19,7 @@ class Venue < ApplicationRecord
       if country == 'USA'
         "#{city}, #{state}"
       else
-        "#{city}, #{state} #{country}"
+        "#{city}, #{state}, #{country}"
       end
     loc.gsub(/\s+/, ' ')
   end
