@@ -53,7 +53,11 @@ class Api::V1::ApiController < ActionController::Base
   end
 
   def data_as_json(data)
-    data.respond_to?(:as_json_api) ? data.try(:as_json_api) : data.try(:as_json)
+    if data.is_a?(Enumerable)
+      data.first.respond_to?(:as_json_api) ? data.map(&:as_json_api) : data.map(&:as_json)
+    else
+      data.respond_to?(:as_json_api) ? data.as_json_api : data.as_json
+    end
   end
 
   private
