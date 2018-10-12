@@ -8,10 +8,7 @@ class Api::V1::ErasController < Api::V1::ApiController
   end
 
   def show
-    if params[:id].to_i.in?([1, 2, 3])
-      return respond_with_success(ERAS["#{params[:id]}.0"])
-    end
-
+    return respond_with_success(ERAS["#{params[:id]}.0"]) if params[:id].to_i.in?([1, 2, 3])
     respond_with_failure 'Invalid era'
   end
 end
