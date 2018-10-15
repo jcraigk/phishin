@@ -99,7 +99,7 @@ class Show < ApplicationRecord
       venue: venue.as_json,
       taper_notes: taper_notes,
       likes_count: likes_count,
-      tracks: tracks.sort_by(&:position).as_json,
+      tracks: tracks.sort_by(&:position).map(&:as_json_api),
       updated_at: updated_at
     }
   end

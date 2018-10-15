@@ -147,25 +147,6 @@ class Track < ApplicationRecord
     }
   end
 
-  def as_json_for_playlist_api
-    {
-      id: id,
-      show_id: show_id,
-      show_date: show.date,
-      title: title,
-      position: position,
-      duration: duration,
-      set: set,
-      set_name: set_name,
-      likes_count: likes_count,
-      slug: slug,
-      tags: tags.map(&:name).as_json,
-      mp3: mp3_url,
-      songs: songs.as_json,
-      updated_at: updated_at
-    }
-  end
-
   def save_duration
     Mp3Info.open(audio_file.path) do |mp3|
       update_column(:duration, (mp3.length * 1000).round)
