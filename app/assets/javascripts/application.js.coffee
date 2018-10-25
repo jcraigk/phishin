@@ -25,7 +25,7 @@ $ ->
   # Init
   ###############################################
 
-  App.Detector     = null       # delay Detector creation until body load (PhishOD track ID detection)
+  App.Detector     = null       # delay Detector creation until body load (Relisten track ID detection)
   App.Util         = new Util
   App.Player       = new Player
   App.Playlist     = new Playlist
@@ -143,8 +143,8 @@ $ ->
   ###############################################
 
   # Click Phish On Demand app callout
-  $(document).on 'click', '#phishod_callout', ->
-    window.location = 'https://itunes.apple.com/us/app/phish-on-demand-all-phish/id672139018'
+  $(document).on 'click', '#relisten_callout', ->
+    window.location = 'https://itunes.apple.com/us/app/relisten-all-live-music/id715886886'
 
   # Click RoboPhish app callout
   $(document).on 'click', '#robophish_callout', ->
