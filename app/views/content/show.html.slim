@@ -20,7 +20,7 @@
       = likable(@show, @show_like, 'large')
       = clear_both
       = render partial: 'shared/context_menu_for_show', locals: { show: @show, viewing_this_show: true, next_show: @next_show, previous_show: @previous_show }
-      = display_tags(@show.tags, false, 'show_tag_container_title')
+      = display_tags(@show.tags.sort_by(&:priority), false, 'show_tag_container_title')
       .hr
 
       = clear_both
@@ -48,7 +48,7 @@
               li.playable_track data-id=track.id data-anchor=track.slug
                 h2.position_num = idx + 1
                 h2.wide.track_title = link_to(track.title, '#')
-                h2.wide-180 = display_tags(track.tags, false, 'track_tag_container')
+                h2.wide-180 = display_tags(track.tags.sort_by(&:priority), false, 'track_tag_container')
                 = likable(track, props[:likes][idx], 'small')
                 h3 = duration_readable(track.duration)
                 = render partial: 'shared/context_menu_for_track', locals: { track: track, show: @show, playlist: false }

@@ -94,7 +94,7 @@ class Show < ApplicationRecord
       missing: missing,
       sbd: sbd,
       remastered: remastered,
-      tags: tags.map(&:name).as_json,
+      tags: tags.sort_by(&:priority).map(&:name).as_json,
       tour_id: tour_id,
       venue: venue.as_json,
       taper_notes: taper_notes,

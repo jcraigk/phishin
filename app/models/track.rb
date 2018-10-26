@@ -140,7 +140,7 @@ class Track < ApplicationRecord
       set_name: set_name,
       likes_count: likes_count,
       slug: slug,
-      tags: tags.map(&:name).as_json,
+      tags: tags.sort_by(&:priority).map(&:name).as_json,
       mp3: mp3_url,
       song_ids: songs.map(&:id),
       updated_at: updated_at

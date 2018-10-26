@@ -336,7 +336,6 @@ module ApplicationHelper
 
   def display_tags(tags, short = false, css_class = 'show_tag_container')
     str = "<span class=\"#{css_class}\">"
-    tags.order(priority: :asc)
     if short
       if (count = tags.count).positive?
         tag = tags.first

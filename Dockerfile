@@ -11,5 +11,5 @@ COPY . .
 # Symlink audio files to Rails public folder
 RUN ln -s /content/tracks/audio_files ./public/audio
 
-EXPOSE 80
-CMD bundle exec puma -b tcp://0.0.0.0:80
+EXPOSE 3000
+CMD bundle exec puma -b tcp://0.0.0.0:3000
