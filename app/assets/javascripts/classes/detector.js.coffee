@@ -7,8 +7,9 @@ class @Detector
     if eval "/*@cc_on!@*/!1" # only IE can execute this
       @unsupportedBrowser()
     # Suggest Relisten on iOS
-    else if /(iPhone|iPad|iPod)/g.test(navigator.userAgent)
-      @iOS()
+    # (pending custom URL scheme setup in iOS app)
+    # else if /(iPhone|iPad|iPod)/g.test(navigator.userAgent)
+    #   @iOS()
 
   iOS: ->
     unless $.cookie('appInstalled') and $.cookie('appInstalled') is 'false'
