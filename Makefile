@@ -25,3 +25,7 @@ stop:
 
 up : services
 	docker-compose up
+
+restart :
+	docker-compose stop
+	docker-compose up -d

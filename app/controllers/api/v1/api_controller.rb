@@ -3,8 +3,13 @@ class Api::V1::ApiController < ActionController::Base
   before_action :attempt_user_authorization!
   before_action :cors_preflight_check
   after_action :cors_set_access_control_headers
+  after_action :set_json_content_type
 
   protected
+
+  def set_json_content_type
+    response.set_header('Content-Type', 'application/json')
+  end
 
   def get_data_for(model)
     configure_page_params
