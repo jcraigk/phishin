@@ -37,11 +37,16 @@ namespace :phishnet do
         next if st.nil?
         track_matched = true
 
-        next if track.tags.include?(tag)
+        tt = TrackTag.find_by(track: track, tag: tag)
+        next if tt&.notes == item['jamchart_description']
 
-        track.tags << tag
-        track.save
-        puts "#{show.date} => #{track.title} (track id #{track.id})"
+        if tt.present?
+          tt.update(notes: item['jamchart_description'])
+        else
+          TrackTag.create(track: track, tag: tag, notes: item['jamchart_description'])
+        end
+
+        puts "#{show.date} => #{track.title} (#{track.id})"
       end
 
       if track_matched

@@ -17,6 +17,8 @@ Metrics/ClassLength:
   Max: 250
 Layout/EmptyLineAfterMagicComment:
   Enabled: false
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
 Style/EmptyMethod:
