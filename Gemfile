@@ -7,6 +7,7 @@ gem 'bootstrap-will_paginate'
 gem 'coffee-rails'
 gem 'dalli'
 gem 'devise'
+gem 'dotenv-rails', require: false
 gem 'friendly_id'
 gem 'geocoder'
 gem 'highline'

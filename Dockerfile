@@ -1,9 +1,16 @@
 FROM ruby:2.5.1
 
+ARG APP_NAME=phishin
+
+ENV APP_NAME=${APP_NAME} \
+    INSTALL_PATH=/${APP_NAME} \
+    IN_DOCKER=true
+
 RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
 
 # Bundle install, copy app
-WORKDIR .
+WORKDIR $INSTALL_PATH
+
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
 COPY . .
