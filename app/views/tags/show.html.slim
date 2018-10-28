@@ -17,33 +17,39 @@
 
   #content_box
     ul.item_list.clickable
-      - if @shows.present?
-        - @shows.each_with_index do |show, idx|
-          li
-            h2
-              a href="/#{show.date}" = show.date.strftime('%Y.%m.%d')
-            h2.wide-180
-              a href="/#{show.venue.slug}" = truncate(show.venue.name, length: 35)
-            h5.narrow
-              a href="/map?map_term=#{CGI.escape(show.venue.location)}" = show.venue.location
-            = likable(show, @shows_likes[idx], 'small')
-            h3 = duration_readable(show.duration, 'letters')
-            = render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false }
-            = display_tags(show.tags, true, 'tag_container_small')
-            = clear_both
+      - if @mode == 'show'
+        - if @shows.any?
+          - @shows.each_with_index do |show, idx|
+            li
+              h2
+                a href="/#{show.date}" = show.date.strftime('%Y.%m.%d')
+              h2.wide-180
+                a href="/#{show.venue.slug}" = truncate(show.venue.name, length: 35)
+              h5.narrow
+                a href="/map?map_term=#{CGI.escape(show.venue.location)}" = show.venue.location
+              = likable(show, @shows_likes[idx], 'small')
+              h3 = duration_readable(show.duration, 'letters')
+              = render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false }
+              = display_tag_instances(show.show_tags, true, 'tag_container_small')
+              = clear_both
+        - else
+          .alert_container Selected tag is not associated with any shows
 
       - else
-        - @tracks.each_with_index do |track, idx|
-          li.playable_track data-id=track.id
-            h2.wide
-              a href="/#{track.show.date}/#{track.slug}" = truncate(track.title, length: 44)
-            h5.narrow
-              a href="/#{track.show.date}" = track.show.date.strftime('%Y.%m.%d')
-            = display_tags(track.tags, true, 'tag_container_small')
-            = likable(track, @tracks_likes[idx], 'small')
-            h3 = duration_readable(track.duration)
-            = render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil }
-            = clear_both
+        - if @tracks.any?
+          - @tracks.each_with_index do |track, idx|
+            li.playable_track data-id=track.id
+              h2.wide
+                a href="/#{track.show.date}/#{track.slug}" = truncate(track.title, length: 44)
+              h5.narrow
+                a href="/#{track.show.date}" = track.show.date.strftime('%Y.%m.%d')
+              = display_tag_instances(track.track_tags, true, 'tag_container_small')
+              = likable(track, @tracks_likes[idx], 'small')
+              h3 = duration_readable(track.duration)
+              = render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil }
+              = clear_both
+        - else
+          .alert_container Selected tag is not associated with any tracks
 
     - if @entities.total_pages > 1
       .paging = will_paginate_simple(@entities)

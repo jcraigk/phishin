@@ -299,33 +299,6 @@ module ApplicationHelper
     devise_controllers + special_controllers
   end
 
-  def track_title_with_tags(track)
-    max_len = 70
-    str = '<div class="track_tag_container_inline">'
-    track.tags.sort_by(&:priority).each do |tag|
-      str += content_tag(
-        :span,
-        tag.name,
-        class: 'label track_tag',
-        style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color};"
-      )
-    end
-    str += '</div>'
-    str +=
-      if track.title.size > max_len
-        content_tag(
-          :span,
-          truncate(track.title, length: max_len),
-          data: { toggle: 'tooltip' },
-          title: track.title
-        )
-      else
-        track.title
-      end
-
-    str.html_safe
-  end
-
   def taper_notes_or_missing(show)
     show.taper_notes.present? ? CGI.escapeHTML(show.taper_notes) : 'No taper notes present for this show'.html_safe
   end
@@ -334,30 +307,31 @@ module ApplicationHelper
     "#{number_with_delimiter(count)} #{word.pluralize(count)}".html_safe
   end
 
-  def display_tags(tags, short = false, css_class = 'show_tag_container')
+  def display_tag_instances(tag_instances, short = false, css_class = 'show_tag_container')
     str = "<span class=\"#{css_class}\">"
     if short
-      if (count = tags.count).positive?
-        tag = tags.first
-        str += tag_label(tag)
-        str += '<span class="tags_plus"'
-        str += ' style="visibility: hidden;"' if count > 1
-        str += '>...</span>'
+      if (count = tag_instances.count).positive?
+        tag_instance = tag_instances.first
+        str += tag_instance_label(tag_instance)
+        str += '<span class="tags_plus">...</span>' if count > 1
       end
     else
-      tags.each do |t|
-        str += link_to tag_path(name: t.name.downcase) do
-          content_tag(
-            :span,
-            t.name,
-            class: 'label tag_label',
-            style: "color: #{contrasting_color(t.color)}; background-color: #{t.color}"
-          )
-        end
-      end
+      tag_instances.each { |t| str += tag_instance_label(t) }
     end
     str += '</span>'
     str.html_safe
+  end
+
+  def tag_instance_label(tag_instance, css_class = '')
+    link_to tag_path(name: tag_instance.tag.name.downcase) do
+      content_tag(
+        :span,
+        tag_instance.tag.name,
+        class: "label tag_label #{css_class}",
+        title: tag_instance.notes,
+        style: "color: #{contrasting_color(tag_instance.tag.color)}; background-color: #{tag_instance.tag.color}"
+      )
+    end.html_safe
   end
 
   def tag_label(tag, css_class = '')
