@@ -62,8 +62,8 @@
           ul.item_list.clickable
             - @venues.each do |venue|
               li
-                h2.wider
-                  a href="/#{venue.slug}" = highlight(truncate(venue.name_and_abbrev, length: 45), params[:term])
+                h2.wide-350
+                  a href="/#{venue.slug}" = highlight(venue.long_name, params[:term])
                 h5
                   a href="/map?map_term=#{CGI.escape(venue.location)}" = highlight(venue.location, params[:term])
                 h3.alt = pluralize(venue.shows_count, 'show')

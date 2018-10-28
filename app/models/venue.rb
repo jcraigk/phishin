@@ -10,8 +10,10 @@ class Venue < ApplicationRecord
   scope :relevant, -> { where('shows_count > 0') }
   scope :name_starting_with, ->(char) { where('name SIMILAR TO ?', "#{char == '#' ? '[0-9]' : char}%") }
 
-  def name_and_abbrev
-    abbrev.present? ? "#{name} (#{abbrev})" : name
+  def long_name
+    str = abbrev.present? ? "#{name} (#{abbrev})" : name
+    str += " (aka #{past_names})" if past_names.present?
+    str
   end
 
   def location
