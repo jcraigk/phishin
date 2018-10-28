@@ -7,12 +7,17 @@ services:
       - 3000:3000
     volumes:
       - /private/var/app_content/phishin:/content
+      - .:/phishin
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@pg/phishin?pool=5
+    env_file:
+      - .env
     tty: true
     stdin_open: true
   pg:
     image: postgres:10.5
+    ports:
+      - 5432:5432
     volumes:
       - pg_data:/var/lib/postgresql/data
     environment:

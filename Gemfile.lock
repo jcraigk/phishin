@@ -72,6 +72,10 @@ GEM
       railties (>= 4.1.0, < 6.0)
       responders
       warden (~> 1.2.3)
+    dotenv (2.5.0)
+    dotenv-rails (2.5.0)
+      dotenv (= 2.5.0)
+      railties (>= 3.2, < 6.0)
     erubi (1.7.1)
     execjs (2.7.0)
     ffi (1.9.25)
@@ -234,6 +238,7 @@ DEPENDENCIES
   coffee-rails
   dalli
   devise
+  dotenv-rails
   friendly_id
   geocoder
   highline
@@ -259,7 +264,7 @@ DEPENDENCIES
   web-console
 
 RUBY VERSION
-   ruby 2.5.1p57
+   ruby 2.5.3p105
 
 BUNDLED WITH
-   1.16.3
+   1.17.1

@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.5.1
+  TargetRubyVersion: 2.5.3
   Exclude:
     - bin/**/*
     - config/**/*
@@ -16,6 +16,8 @@ Metrics/MethodLength:
 Metrics/ClassLength:
   Max: 250
 Layout/EmptyLineAfterMagicComment:
+  Enabled: false
+Layout/EmptyLineAfterGuardClause:
   Enabled: false
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact

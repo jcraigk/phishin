@@ -10,14 +10,14 @@ class TagsController < ApplicationController
 
   def selected_tag
     @tag = Tag.where('lower(name) = ?', params[:name].downcase).first
-
     if @tag.nil?
       view = 'tag_not_found'
     else
       view = 'show'
-      params[:entity] = 'show' unless %w(show track).include? params[:entity]
+      @mode = params[:entity]
+      @mode = 'show' unless %w[show track].include?(@mode)
 
-      case params[:entity]
+      case @mode
       when 'show'
         tag_ids = ShowTag.where(tag_id: @tag.id).map(&:show_id)
         @shows = Show.where(id: tag_ids)

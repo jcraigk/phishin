@@ -19,7 +19,7 @@ class Api::V1::ApiController < ActionController::Base
          .all
   end
 
-  def respond_with_success(data)
+  def respond_with_success(data, opts = {})
     total_entries = data.respond_to?(:total_entries) ? data.total_entries : 1
     total_pages = data.respond_to?(:total_pages) ? data.total_pages : 1
     page = data.respond_to?(:current_page) ? data.current_page : 1
@@ -28,7 +28,7 @@ class Api::V1::ApiController < ActionController::Base
       total_entries: total_entries,
       total_pages: total_pages,
       page: page,
-      data: data_as_json(data)
+      data: data_as_json(data, opts)
     }, content_type: 'application/json'
   end
 
@@ -57,9 +57,15 @@ class Api::V1::ApiController < ActionController::Base
     attrs.key?(params[:sort_attr]) ? params[:sort_attr] : default_attr
   end
 
-  def data_as_json(data)
+  def data_as_json(data, opts = {})
     if data.is_a?(Enumerable) && !data.is_a?(Hash)
-      data.first.respond_to?(:as_json_api) ? data.map(&:as_json_api) : data.map(&:as_json)
+      if opts[:serialize_method].present?
+        data.map { |d| d.send(opts[:serialize_method]) }
+      else
+        data.first.respond_to?(:as_json_api) ? data.map(&:as_json_api) : data.map(&:as_json)
+      end
+    elsif opts[:serialize_method].present?
+      data.send(opts[:serialize_method])
     else
       data.respond_to?(:as_json_api) ? data.as_json_api : data.as_json
     end

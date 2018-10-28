@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2017_08_11_053628) do
+ActiveRecord::Schema.define(version: 2018_10_27_220035) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,6 +94,8 @@ ActiveRecord::Schema.define(version: 2017_08_11_053628) do
     t.integer "show_id"
     t.integer "tag_id"
     t.datetime "created_at"
+    t.text "notes"
+    t.index ["notes"], name: "index_show_tags_on_notes"
     t.index ["show_id"], name: "index_show_tags_on_show_id"
     t.index ["tag_id"], name: "index_show_tags_on_tag_id"
   end
@@ -173,6 +175,8 @@ ActiveRecord::Schema.define(version: 2017_08_11_053628) do
     t.integer "track_id"
     t.integer "tag_id"
     t.datetime "created_at"
+    t.text "notes"
+    t.index ["notes"], name: "index_track_tags_on_notes"
     t.index ["tag_id"], name: "index_track_tags_on_tag_id"
     t.index ["track_id"], name: "index_track_tags_on_track_id"
   end

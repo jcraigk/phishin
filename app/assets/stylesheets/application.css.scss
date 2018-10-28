@@ -931,6 +931,16 @@ html {
     font-size: 14px !important;
     font-style: italic;
   }
+  .alert_container {
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background-color: #ffcfd3;
+    border: 1px solid black;
+    color: $alert;
+    font-size: 17px;
+    text-align: center;
+    padding: 5px;
+  }
   .likes_small {
     float: right;
     padding-top: 5px;
