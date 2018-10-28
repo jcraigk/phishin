@@ -7,7 +7,7 @@
       input#map_search_term type='text' placeholder='place or zipcode' value=(params[:map_term])
       br
       | within
-      input#map_search_distance type='text' value=params[:distance]
+      input#map_search_distance type='text' value=(params[:distance] || 50)
       | miles  
       br
       span.optional
