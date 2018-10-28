@@ -5,7 +5,6 @@ ruby '2.5.3'
 gem 'actionpack-action_caching'
 gem 'bootstrap-will_paginate'
 gem 'coffee-rails'
-gem 'dalli'
 gem 'devise'
 gem 'dotenv-rails', require: false
 gem 'friendly_id'
