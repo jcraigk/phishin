@@ -13,4 +13,15 @@ class Tag < ApplicationRecord
       updated_at: updated_at
     }
   end
+
+  def as_json_api
+    {
+      id: id,
+      name: name,
+      description: description,
+      updated_at: updated_at,
+      shows: show_tags,
+      tracks: track_tags
+    }
+  end
 end

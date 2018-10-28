@@ -5,7 +5,7 @@ class PlaylistTrack < ApplicationRecord
 
   validates :position, numericality: true
 
-  def as_json_for_api
+  def as_json_api
     {
       position: position,
       id: track_id,

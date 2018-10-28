@@ -13,7 +13,7 @@ class Playlist < ApplicationRecord
       slug: slug,
       name: name,
       duration: duration,
-      tracks: playlist_tracks.order(:position).map(&:as_json_for_api),
+      tracks: playlist_tracks.order(:position).map(&:as_json_api),
       updated_at: updated_at
     }
   end

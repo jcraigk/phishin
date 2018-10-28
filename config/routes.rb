@@ -77,6 +77,7 @@ Rails.application.routes.draw do
       resources :shows,     only: %i[index show]
       resources :tracks,    only: %i[index show]
       resources :songs,     only: %i[index show]
+      resources :tags,      only: %i[index show]
       resources :playlists, only: %i[show]
 
       namespace :playlists do
