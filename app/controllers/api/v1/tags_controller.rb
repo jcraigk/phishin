@@ -8,7 +8,8 @@ class Api::V1::TagsController < Api::V1::ApiController
   end
 
   def show
-    tag = Tag.where(name: params[:id]).or(Tag.where(id: params[:id]))
+    tag = Tag.where(slug: params[:id])
+             .or(Tag.where(id: params[:id]))
     respond_with_success tag
   end
 end

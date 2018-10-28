@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_27_220035) do
+ActiveRecord::Schema.define(version: 2018_10_28_213134) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -148,7 +148,11 @@ ActiveRecord::Schema.define(version: 2018_10_27_220035) do
     t.integer "shows_count", default: 0
     t.integer "tracks_count", default: 0
     t.integer "priority", default: 0
+    t.string "slug"
+    t.index ["description"], name: "index_tags_on_description"
     t.index ["name"], name: "index_tags_on_name"
+    t.index ["priority"], name: "index_tags_on_priority"
+    t.index ["slug"], name: "index_tags_on_slug"
   end
 
   create_table "tours", id: :serial, force: :cascade do |t|

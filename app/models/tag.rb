@@ -5,10 +5,14 @@ class Tag < ApplicationRecord
   has_many :track_tags
   has_many :tracks, through: :track_tags
 
+  extend FriendlyId
+  friendly_id :name
+
   def as_json
     {
       id: id,
       name: name,
+      slug: slug,
       description: description,
       updated_at: updated_at
     }
@@ -18,6 +22,7 @@ class Tag < ApplicationRecord
     {
       id: id,
       name: name,
+      slug: slug,
       description: description,
       updated_at: updated_at,
       shows: show_tags,
