@@ -308,6 +308,7 @@ module ApplicationHelper
   end
 
   def display_tag_instances(tag_instances, short = false, css_class = 'show_tag_container')
+    tag_instances = tag_instances.sort_by { |tag_instance| tag_instance.tag.priority }
     str = "<span class=\"#{css_class}\">"
     if short
       if (count = tag_instances.count).positive?
