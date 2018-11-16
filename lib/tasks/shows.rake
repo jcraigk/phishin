@@ -7,9 +7,10 @@ namespace :shows do
     file = ENV['FILE']
     song_id = ENV['SONG_ID']
     title = ENV['TITLE']
+    set = ENV['SET']
 
-    raise 'Invalid options!' unless date && position && file && song_id && title
-    raise 'Invalid file!' unless File.exists?(file)
+    raise 'Invalid options!' unless date && position && file && song_id && title && set
+    raise 'Invalid file!' unless File.exist?(file)
 
     # Shift all tracks above position up one
     show = Show.find_by(date: date)
@@ -26,7 +27,8 @@ namespace :shows do
       title: title,
       songs: [Song.find(song_id)],
       audio_file: File.new(file, 'r'),
-      position: position
+      position: position,
+      set: set
     )
 
     # Update show duration
