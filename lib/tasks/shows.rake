@@ -1,5 +1,37 @@
 # frozen_string_literal: true
 namespace :shows do
+  desc 'Insert a track into a show at given position'
+  task insert_track: :environment do
+    date = ENV['DATE']
+    position = ENV['POSITION']
+    file = ENV['FILE']
+    song_id = ENV['SONG_ID']
+    title = ENV['TITLE']
+
+    # Shift all tracks above position up one
+    show = Show.find_by(date: date)
+    show.tracks
+        .where('position >= ?', position)
+        .order(position: :desc)
+        .each do |track|
+          track.update(position: track.position + 1)
+        end
+
+    # Insert new track
+    t = Track.create(
+      show: show,
+      title: title,
+      songs: [Song.find(song_id)],
+      audio_file: File.new(file, 'r'),
+      position: position
+    )
+
+    # Update show duration
+    show.save_duration
+
+    puts 'Track inserted'
+  end
+
   desc 'Import a show'
   task import: :environment do
     require_relative '../show_importer'
