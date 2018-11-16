@@ -8,7 +8,8 @@ namespace :shows do
     song_id = ENV['SONG_ID']
     title = ENV['TITLE']
 
-    raise 'Invalid options' unless date && position && file && song_id && title
+    raise 'Invalid options!' unless date && position && file && song_id && title
+    raise 'Invalid file!' unless File.exists?(file)
 
     # Shift all tracks above position up one
     show = Show.find_by(date: date)
