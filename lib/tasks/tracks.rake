@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 namespace :tracks do
-  desc 'Generate generic slugs on all tracks'
-  task create_slugs: :environment do
-    Track.find_each do |track|
+  desc 'Generate missing slugs'
+  task missing_slugs: :environment do
+    Track.where('slug IS NULL OR slug = ?', '').find_each do |track|
       slug = track.generic_slug
       track.update_attributes(slug: slug)
       puts "#{track.id} :: #{track.title} :: #{track.slug}"

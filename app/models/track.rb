@@ -90,7 +90,7 @@ class Track < ApplicationRecord
 
   def generic_slug
     slug = title.downcase
-                .delete(/\'/)
+                .delete("'")
                 .gsub(/[^a-z0-9]/, ' ')
                 .strip
                 .gsub(/\s+/, ' ')
