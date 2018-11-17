@@ -17,6 +17,3 @@ test:
   min_messages: error
   variables:
     statement_timeout: 90s
-
-production:
-  url: <%= ENV['DATABASE_URL'] %>
