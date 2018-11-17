@@ -5,16 +5,13 @@ namespace :shows do
     date = ENV['DATE']
     position = ENV['POSITION']
     file = ENV['FILE']
-    song_id = ENV['SONG_ID']
     title = ENV['TITLE']
+    song_id = ENV['SONG_ID'] || Song.find_by!(title: title).id
     set = ENV['SET']
     sbd = ENV['SBD'].present?
 
     raise 'Invalid options!' unless date && position && file && song_id && title && set
     raise 'Invalid file!' unless File.exist?(file)
-
-    # Infer song by title if no song_id given
-    song_id = Song.find_by!(title: title).id if song_id.blank?
 
     # Shift all tracks above position up one
     show = Show.find_by(date: date)
