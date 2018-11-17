@@ -8,6 +8,7 @@ namespace :shows do
     song_id = ENV['SONG_ID']
     title = ENV['TITLE']
     set = ENV['SET']
+    sbd = ENV['SBD'].present?
 
     raise 'Invalid options!' unless date && position && file && song_id && title && set
     raise 'Invalid file!' unless File.exist?(file)
@@ -30,6 +31,9 @@ namespace :shows do
       position: position,
       set: set
     )
+
+    # Add SBD tag if option provided
+    t.tags << Tag.find_by(name: 'SBD') if sbd
 
     # Update show duration
     show.save_duration
