@@ -1,8 +1,22 @@
+default: &default
+  adapter: postgresql
+  username: postgres
+  password: postgres
+  host: localhost
+  port: 5432
+  encoding: unicode
+
 development:
-  url: <%= ENV['DATABASE_URL'] %>
+  <<: *default
+  database: phishin_development
+  min_messages: warning
 
 test:
-  url: <%= ENV['DATABASE_URL'] %>
+  <<: *default
+  database: phishin_test
+  min_messages: error
+  variables:
+    statement_timeout: 90s
 
 production:
   url: <%= ENV['DATABASE_URL'] %>

@@ -3,9 +3,6 @@ APP_NAME = "phish.in'"
 APP_EMAIL = 'phish.in.music@gmail.com'
 DEVISE_EMAIL_FROM = "phish.in' <noreply@phish.in>"
 
-ALBUM_CACHE_MAX_SIZE = 50.gigabytes
-ALBUM_TIMEOUT = 10.seconds
-
 CACHE_TTL = 10.minutes
 FIRST_CHAR_LIST = ('A'..'Z').to_a + ['#']
 MAX_PLAYLISTS_PER_USER = 20

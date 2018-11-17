@@ -29,13 +29,11 @@ gem 'therubyracer'
 gem 'twitter-bootstrap-rails', '2.2.8'
 gem 'uglifier'
 
-group :development do
-  gem 'airbrussh'
-  gem 'bootsnap'
+group :development, :test do
+  gem 'factory_bot_rails'
+  gem 'faker'
   gem 'pry'
-  gem 'web-console'
-end
-
-group :test do
-  gem 'test-unit'
+  gem 'rubocop'
+  gem 'rspec-rails'
+  gem 'shoulda-matchers'
 end

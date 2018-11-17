@@ -2,42 +2,17 @@
 namespace :shows do
   desc 'Insert a track into a show at given position'
   task insert_track: :environment do
-    date = ENV['DATE']
-    position = ENV['POSITION']
-    file = ENV['FILE']
-    title = ENV['TITLE']
-    song_id = ENV['SONG_ID'] || Song.find_by!(title: title).id
-    set = ENV['SET']
-    sbd = ENV['SBD'].present?
+    opts = {
+      date: ENV['DATE'],
+      position: ENV['POSITION'],
+      file: ENV['FILE'],
+      title: ENV['TITLE'],
+      song_id: ENV['SONG_ID'],
+      set: ENV['SET'],
+      is_sbd: ENV['SBD'].present?
+    }
 
-    raise 'Invalid options!' unless date && position && file && song_id && title && set
-    raise 'Invalid file!' unless File.exist?(file)
-
-    # Shift all tracks above position up one
-    show = Show.find_by(date: date)
-    show.tracks
-        .where('position >= ?', position)
-        .order(position: :desc)
-        .each do |track|
-          track.update(position: track.position + 1)
-        end
-
-    # Insert new track
-    t = Track.create(
-      show: show,
-      title: title,
-      songs: [Song.find(song_id)],
-      audio_file: File.new(file, 'r'),
-      position: position,
-      set: set
-    )
-
-    # Add SBD tag if option provided
-    t.tags << Tag.find_by(name: 'SBD') if sbd
-
-    # Update show duration
-    show.save_duration
-
+    TrackInsertionService.new(opts).call
     puts 'Track inserted'
   end
 

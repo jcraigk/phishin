@@ -54,12 +54,10 @@ Rails.application.routes.draw do
   get '/random-show' => 'playlists#random_show'
   get '/random-song-track/:song_id' => 'playlists#random_song_track'
 
-  # Downloads
+  # Track downloads
   get '/track-info/:track_id' => 'downloads#track_info', as: 'track_info'
   get '/play-track/:track_id' => 'downloads#play_track', as: 'play_track'
   get '/download-track/:track_id' => 'downloads#download_track', as: 'download_track'
-  get '/download-show/:date' => 'downloads#request_download_show', as: 'download_show'
-  get '/download/:md5' => 'downloads#download_album', as: 'download_album'
 
   # Catch-all matcher for short content URLs
   get '/(:glob(/:anchor))' => 'content#glob', constraints: { glob: %r{[^\/]+} }

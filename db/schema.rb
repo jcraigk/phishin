@@ -10,34 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_10_28_213134) do
+ActiveRecord::Schema.define(version: 2018_11_17_192618) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "album_requests", id: :serial, force: :cascade do |t|
-    t.integer "album_id"
-    t.integer "user_id"
-    t.string "name", limit: 255
-    t.string "md5", limit: 255
-    t.string "kind", limit: 255
-    t.datetime "created_at"
-  end
-
-  create_table "albums", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 255
-    t.string "md5", limit: 255
-    t.boolean "is_custom_playlist", default: false
-    t.datetime "completed_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "zip_file_file_name", limit: 255
-    t.string "zip_file_content_type", limit: 255
-    t.integer "zip_file_file_size"
-    t.datetime "zip_file_updated_at"
-    t.datetime "error_at"
-    t.index ["md5"], name: "index_albums_on_md5"
-  end
 
   create_table "likes", id: :serial, force: :cascade do |t|
     t.string "likable_type", limit: 255

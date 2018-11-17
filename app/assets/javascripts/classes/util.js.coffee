@@ -1,14 +1,11 @@
 class @Util
-  
+
   historyScrollStates: [] # Need to store scroll states outside history.js based on the way that library works
-  
+
   constructor: ->
     @page_init          = true
     @$feedback          = $ '#feedback'
-    @$download_modal    = $ '#download_modal'
-    @$album_timeout     = $ '#album_timeout'
-    @$album_url         = $ '#album_url'
-  
+
   feedback: (feedback) ->
     if feedback.alert
       msg = feedback.alert
@@ -32,7 +29,7 @@ class @Util
     this.historyScrollStates[History.savedStates[History.savedStates.length-1].id] = $('body').scrollTop()
     History.pushState { href: href, scroll: 0 }, $('body').data('app-name'), href
     # alert "Done: navigateTo #{href}"
-  
+
   navigateToRefreshMap: ->
     url = "/map?map_term=#{$('#map_search_term').val().replace /\s/g, '+' }"
     url += "&distance=#{$('#map_search_distance').val()}"
@@ -40,21 +37,6 @@ class @Util
     url += "&date_stop=#{$('#map_date_stop').val()}"
     this.navigateTo url
 
-  requestAlbum: (request_url, first_call) ->
-    $.ajax({
-      url: '/user-signed-in',
-      success: (r) =>
-        if r.success
-          $.ajax({
-            url: request_url,
-            dataType: 'json',
-            success: (r) =>
-              this._requestAlbumResponse r, request_url, first_call
-          })
-        else
-          this.feedback { alert: 'You must sign in to download MP3s' }
-    })
-    
   readableDuration: (ms, style='colon', include_seconds=false) ->
     x = Math.floor(ms / 1000)
     seconds = x % 60
@@ -84,7 +66,7 @@ class @Util
         "#{hours}:#{minutes_with_zero}:#{seconds_with_zero}"
       else
         "#{minutes}:#{seconds_with_zero}"
-  
+
   timeToMS: (time) ->
     time = "#{time}"
     if time.match /^\d+$/  # It's already in ms
@@ -101,10 +83,10 @@ class @Util
       else
         this.feedback { alert: "Invalid start time provided (#{time})" }
         0
-  
+
   stringToSlug: (str) ->
     str.toLowerCase().trim().replace(/[^a-z0-9\-\s]/g, '').replace(/[\s]/g, '-')
-  
+
   newSpinner: (className = 'spinner_likes_small') ->
     new Spinner({
       lines: 9,
@@ -119,38 +101,17 @@ class @Util
       trail: 50,
       className: className
     }).spin()
-  
+
   truncate: (string, length=40) ->
     if string.length > length then string.substring(0, length) + '...' else string
-  
+
   showHTMLError: (str) ->
     $('body').append "<div id=\"system_error\">#{str.replace(/(\r\n|\n|\r)/gm,"<br />")}</div>"
-  
+
   _findMatch: (href) ->
     match = /^([^\?]+)\??(.+)?$/.exec(href.split("/")[1])
     match[1] if match
-  
-  _requestAlbumResponse: (r, request_url, first_call) ->
-    if r.status is 'Ready'
-      clearTimeout @download_poller
-      @$download_modal.modal 'hide'
-      location.href = r.url
-    else if r.status is 'Error'
-      clearTimeout @download_poller
-      @$download_modal.modal 'hide'
-      this.feedback { alert: 'An error occurred while processing your request' }
-    else
-      if first_call
-        clearTimeout @download_poller
-        @$album_timeout.hide()
-        @$download_modal.modal 'show'
-      else if r.status is 'Timeout'
-        @$album_url.html "#{$('body').data('base-url')}#{r.url}"
-        @$album_timeout.show 'slide'
-      @download_poller = setTimeout( =>
-        this.requestAlbum(request_url, false)
-      , 3000)
-  
+
   _uniqueID: (length=8) ->
     id = ""
     id += Math.random().toString(36).substr 2 while id.length < length

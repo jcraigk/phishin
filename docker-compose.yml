@@ -8,10 +8,6 @@ services:
     volumes:
       - /private/var/app_content/phishin:/content
       - .:/phishin
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@pg/phishin?pool=5
-    env_file:
-      - .env
     tty: true
     stdin_open: true
   pg:

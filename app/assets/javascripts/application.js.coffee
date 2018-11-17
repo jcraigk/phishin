@@ -346,14 +346,6 @@ $ ->
           App.Util.feedback { alert: 'You must sign in to download MP3s' }
     })
 
-  # Click to download a set of tracks
-  .on 'click', 'a.download-album', ->
-    App.Util.requestAlbum $(this).data('url'), true
-
-  # Stop polling server when download modal is hidden
-  $('#download_modal').on 'hidden', ->
-    App.Util.StopDownloadPoller
-
   ###############################################
 
   # Hover on player title to reveal Like toggle
