@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_17_192618) do
+ActiveRecord::Schema.define(version: 2018_11_17_234052) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -142,13 +142,6 @@ ActiveRecord::Schema.define(version: 2018_11_17_192618) do
     t.index ["name"], name: "index_tours_on_name"
     t.index ["slug"], name: "index_tours_on_slug", unique: true
     t.index ["starts_on"], name: "index_tours_on_starts_on"
-  end
-
-  create_table "track_requests", id: :serial, force: :cascade do |t|
-    t.integer "track_id"
-    t.integer "user_id"
-    t.string "kind", limit: 255
-    t.datetime "created_at"
   end
 
   create_table "track_tags", id: :serial, force: :cascade do |t|

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :user do
-    sequence(:username) { |n| "username#{n}" }
+    username { Faker::Internet.username }
     email { Faker::Internet.email }
-    password { 'password' }
-    password_confirmation { 'password' }
+    password { Faker::Internet.password }
+    password_confirmation { Faker::Internet.password }
   end
 end

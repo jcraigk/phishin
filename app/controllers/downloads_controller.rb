@@ -59,9 +59,4 @@ class DownloadsController < ApplicationController
     return if current_user || request.xhr?
     redirect_to :root, alert: 'You must be signed in to download tracks'
   end
-
-  def log_track_request(kind)
-    current_user_id = (current_user ? current_user.id : 0)
-    TrackRequest.create(track_id: params[:track_id], user_id: current_user_id, kind: kind, created_at: Time.now)
-  end
 end
