@@ -20,14 +20,20 @@ class Song < ApplicationRecord
   )
 
   scope :relevant, -> { where('tracks_count > 0 or alias_for IS NOT NULL') }
-  scope :title_starting_with, ->(char) { where('title SIMILAR TO ?', "#{char == '#' ? '[0-9]' : char}%") }
-
-  def self.random_lyrical_excerpt
-    where('lyrical_excerpt IS NOT NULL').order('RANDOM()').limit(1)
-  end
+  scope :title_starting_with, lambda { |char|
+    where(
+      'title SIMILAR TO ?',
+      "#{if char == '#'
+           '[0-9]'
+         else
+           '(' + char.downcase + '|' + char.upcase + ')'
+         end}%"
+    )
+  }
+  scope :with_lyrical_excerpt, -> { where.not(lyrical_excerpt: nil) }
 
   def aliased_song
-    Song.where(id: alias_for).first if alias_for
+    Song.where(id: alias_for).first
   end
 
   def alias?

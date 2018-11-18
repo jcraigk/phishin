@@ -3,8 +3,7 @@ class ApplicationController < ActionController::Base
   include ApplicationHelper
   protect_from_forgery
 
-  # before_action :artificial_wait if Rails.env.development?
-  before_action :random_lyrical_excerpt
+  before_action :random_song_with_lyrical_excerpt
   before_action :init_session
   before_action :init_params
   before_action :require_xhr
@@ -20,9 +19,9 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:sign_up, keys: %i[username])
   end
 
-  def random_lyrical_excerpt
+  def random_song_with_lyrical_excerpt
     return unless request.xhr?
-    @random_song = Song.random_lyrical_excerpt
+    @random_song = Song.with_lyrical_excerpt.sample
   end
 
   def require_xhr!
