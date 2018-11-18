@@ -2,10 +2,10 @@
 class Song < ApplicationRecord
   has_and_belongs_to_many :tracks
 
-  validates_presence_of :title
-
   extend FriendlyId
   friendly_id :title, use: :slugged
+
+  validates_presence_of :title
 
   include PgSearch
   pg_search_scope(
@@ -24,10 +24,6 @@ class Song < ApplicationRecord
 
   def self.random_lyrical_excerpt
     where('lyrical_excerpt IS NOT NULL').order('RANDOM()').limit(1)
-  end
-
-  def title_letter
-    title[0, 1]
   end
 
   def aliased_song

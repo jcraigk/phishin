@@ -7,15 +7,13 @@ class Show < ApplicationRecord
   has_many :show_tags, dependent: :destroy
   has_many :tags, through: :show_tags
 
-  validates :date, presence: true
-
-  self.per_page = 10 # will_paginate default
-
   extend FriendlyId
   friendly_id :date
 
-  scope :avail, -> { where('missing = FALSE') }
-  scope :tagged_with, ->(tag) { includes(:tags).where('tags.name = ?', tag) }
+  validates :date, presence: true
+
+  scope :avail, -> { where(missing: false) }
+  scope :tagged_with, ->(tag_name) { includes(:tags).where(tags: { name: tag_name }) }
 
   scope :during_year, lambda { |year|
     date = Date.new(year.to_i)
@@ -46,24 +44,15 @@ class Show < ApplicationRecord
     where('extract(month from date) = ?', month)
       .where('extract(day from date) = ?', day)
   }
-  scope :random, ->(amt = 1) { order('RANDOM()').limit(amt) }
 
   delegate :name, to: :tour, prefix: true
 
-  def to_s
-    if venue
-      "#{date.strftime('%Y-%m-%d')} - #{venue.name} - #{venue.location}"
-    else
-      "#{date.strftime('%Y-%m-%d')} - NULL VENUE!"
-    end
-  end
-
-  def last_set
-    tracks.select { |t| /\A\d\z/.match t.set }.map(&:set).max
+  def save_duration
+    update(duration: tracks.map(&:duration).inject(0, &:+))
   end
 
   def as_json
-    hash = {
+    {
       id: id,
       date: date,
       duration: duration,
@@ -75,14 +64,10 @@ class Show < ApplicationRecord
       venue_id: venue_id,
       likes_count: likes_count,
       taper_notes: taper_notes,
-      updated_at: updated_at
+      updated_at: updated_at,
+      venue_name: venue&.name,
+      location: venue&.location
     }
-    return hash unless venue
-
-    hash.merge(
-      venue_name: venue.name,
-      location: venue.location
-    )
   end
 
   def as_json_api
@@ -102,9 +87,5 @@ class Show < ApplicationRecord
       tracks: tracks.sort_by(&:position).map(&:as_json_api),
       updated_at: updated_at
     }
-  end
-
-  def save_duration
-    update(duration: tracks.map(&:duration).inject(0, &:+))
   end
 end

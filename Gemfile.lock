@@ -62,6 +62,7 @@ GEM
     concurrent-ruby (1.0.5)
     crass (1.0.4)
     dalli (2.7.9)
+    database_cleaner (1.7.0)
     devise (4.5.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -259,6 +260,7 @@ DEPENDENCIES
   bootstrap-will_paginate
   coffee-rails
   dalli
+  database_cleaner
   devise
   dotenv-rails
   factory_bot_rails

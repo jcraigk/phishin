@@ -30,10 +30,14 @@ gem 'twitter-bootstrap-rails', '2.2.8'
 gem 'uglifier'
 
 group :development, :test do
-  gem 'factory_bot_rails'
-  gem 'faker'
   gem 'pry'
   gem 'rubocop'
+end
+
+group :test do
+  gem 'database_cleaner'
+  gem 'factory_bot_rails'
+  gem 'faker'
   gem 'rspec-rails'
   gem 'shoulda-matchers'
 end

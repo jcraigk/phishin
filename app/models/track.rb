@@ -49,20 +49,6 @@ class Track < ApplicationRecord
     set_names[set] || 'Unknown set'
   end
 
-  # Return the set abbreviation (livephish.com style)
-  # Roman numerals; encores are part of final set
-  def set_abbrev
-    # Encores
-    if /\AE[\d]*\z/.match?(set)
-      roman_numerals[show.last_set]
-    # Numbered sets
-    elsif /\A\d\z/.match?(set)
-      roman_numerals[set]
-    else
-      ''
-    end
-  end
-
   def save_default_id3_tags
     Mp3Info.open(audio_file.path) do |mp3|
       comments = 'Visit http://phish.in for free Phish audio'
@@ -177,15 +163,6 @@ class Track < ApplicationRecord
 
   def album_name
     "#{show.date} #{show.venue.location}"
-  end
-
-  def roman_numerals
-    {
-      '1' => 'I',
-      '2' => 'II',
-      '3' => 'III',
-      '4' => 'IV'
-    }
   end
 
   def set_names
