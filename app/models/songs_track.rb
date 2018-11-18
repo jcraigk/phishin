@@ -3,11 +3,16 @@ class SongsTrack < ApplicationRecord
   belongs_to :track
   belongs_to :song
 
-  after_create do
+  after_commit :increment_song_tracks_count, on: :create
+  after_commit :decrement_song_tracks_count, on: :destroy
+
+  private
+
+  def increment_song_tracks_count
     Song.find(song_id).increment!(:tracks_count)
   end
 
-  after_destroy do
+  def decrement_song_tracks_count
     Song.find(song_id).decrement!(:tracks_count)
   end
 end
