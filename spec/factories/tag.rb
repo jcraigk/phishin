@@ -7,11 +7,11 @@ FactoryBot.define do
     sequence(:priority)
 
     trait :with_tracks do
-      tracks { build_list(:track, 5) }
+      tracks { build_list(:track, 2) }
     end
 
-    trait :for_show do
-      shows { build_list(:show, 5) }
+    trait :with_shows do
+      shows { build_list(:show, 2) }
     end
   end
 end
