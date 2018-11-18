@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :user do
-    username { Faker::Internet.username }
+    username { (0...10).map { ('a'..'z').to_a[rand(26)] }.join }
     email { Faker::Internet.email }
-    password { Faker::Internet.password }
-    password_confirmation { Faker::Internet.password }
+    password { 'password' }
+    password_confirmation { 'password' }
   end
 end

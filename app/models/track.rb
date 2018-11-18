@@ -15,6 +15,9 @@ class Track < ApplicationRecord
   has_many :tags, through: :track_tags
   has_many :playlist_tracks, dependent: :destroy
 
+  extend FriendlyId
+  friendly_id :title, use: :slugged
+
   self.per_page = 10 # will_paginate default
 
   scope :chronological, -> { order('shows.date ASC').joins(:show) }
