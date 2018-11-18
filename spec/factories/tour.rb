@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :tour do
-    name { "#{Faker::Date.between(30.years.ago, Date.today)} Tour" }
+    name { "#{Faker::Vehicle.year} Tour" }
     starts_on { Faker::Date.between(30.years.ago, Date.today) }
     ends_on { Faker::Date.between(30.years.ago, Date.today) }
 

@@ -5,7 +5,7 @@ FactoryBot.define do
     city { Faker::Address.city }
     state { Faker::Address.state }
     country { Faker::Address.country }
-    longitude { Faker::Address.latitude }
+    latitude { Faker::Address.latitude }
     longitude { Faker::Address.longitude }
 
     trait :with_shows do

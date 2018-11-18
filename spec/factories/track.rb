@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :track do
-    title { Faker::GratefulDead.song }
-    songs { FactoryBot.create_list(:song, 2) }
-    sequence(:position)
-    audio_file { fixture_file_upload(Rails.root.join('spec', 'support', 'test.mp3'), 'audio/mp3') }
+    title { Faker::Book.title }
+    songs { [FactoryBot.create(:song)] }
     set { '1' }
+    sequence(:position, 1)
+    audio_file { Rack::Test::UploadedFile.new('spec/support/test.mp3', 'audio/mp3') }
+
+    show
 
     trait :with_likes do
       likes { FactoryBot.create_list(:likes, 5) }

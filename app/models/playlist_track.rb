@@ -3,7 +3,7 @@ class PlaylistTrack < ApplicationRecord
   belongs_to :playlist
   belongs_to :track
 
-  validates :position, numericality: true
+  # validates :position, numericality: true
 
   def as_json_api
     {

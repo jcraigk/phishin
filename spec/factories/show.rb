@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :show do
+    date { Faker::Date.between(30.years.ago, Date.today) }
+    missing { false }
+    taper_notes { Faker::Lorem.paragraph }
+
     tour
     venue
 
