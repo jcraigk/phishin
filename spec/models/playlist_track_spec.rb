@@ -2,12 +2,12 @@
 require 'rails_helper'
 
 RSpec.describe PlaylistTrack do
-  subject { FactoryBot.build(:playlist_track) }
+  subject { build(:playlist_track) }
 
   it { is_expected.to belong_to(:playlist) }
   it { is_expected.to belong_to(:track) }
 
-  # it { is_expected.to validate_numericality_of(:position) }
+  it { is_expected.to validate_numericality_of(:position).only_integer }
 
   context 'serialization' do
     it 'provides #as_json_api' do

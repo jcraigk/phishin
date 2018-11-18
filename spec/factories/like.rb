@@ -4,11 +4,11 @@ FactoryBot.define do
     user
 
     trait :for_track do
-      likable { FactoryBot.create(:track) }
+      likable { build(:track) }
     end
 
     trait :for_show do
-      likable { FactoryBot.create(:show) }
+      likable { build(:show) }
     end
   end
 end

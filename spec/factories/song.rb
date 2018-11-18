@@ -4,7 +4,7 @@ FactoryBot.define do
     title { Faker::Book.title }
 
     trait :with_tracks do
-      tracks { FactoryBot.create_list(:track, 5) }
+      tracks { build_list(:track, 5) }
     end
   end
 end

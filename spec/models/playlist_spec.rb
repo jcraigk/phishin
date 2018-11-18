@@ -2,7 +2,7 @@
 require 'rails_helper'
 
 RSpec.describe Playlist do
-  subject { described_class.new }
+  subject { build(:playlist, :with_tracks) }
 
   it { is_expected.to have_many(:tracks) }
   it { is_expected.to have_many(:playlist_tracks) }

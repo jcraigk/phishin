@@ -9,15 +9,15 @@ FactoryBot.define do
     venue
 
     trait :with_tracks do
-      tracks { FactoryBot.create_list(:track, 5) }
+      tracks { build_list(:track, 5) }
     end
 
     trait :with_likes do
-      likes { FactoryBot.create_list(:like, 5) }
+      likes { build_list(:like, 5) }
     end
 
     trait :with_tags do
-      tags { FactoryBot.create_list(:tag, 5) }
+      tags { build_list(:tag, 5) }
     end
   end
 end
