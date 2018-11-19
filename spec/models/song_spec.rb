@@ -20,9 +20,9 @@ RSpec.describe Song do
     it { is_expected.to be_a(PgSearch) }
 
     it 'returns expected results' do
-      expect(described_class.kinda_matching('Wolfman').all).to eq([song1])
-      expect(described_class.kinda_matching('Wolf').all).to eq([song2])
-      expect(described_class.kinda_matching('Tube').all).to match_array([song3, song4])
+      expect(described_class.kinda_matching('Wolfman')).to eq([song1])
+      expect(described_class.kinda_matching('Wolf')).to eq([song2])
+      expect(described_class.kinda_matching('Tube')).to match_array([song3, song4])
     end
   end
 
@@ -43,8 +43,8 @@ RSpec.describe Song do
       let!(:num_song) { create(:song, title: '555') }
 
       it 'returns expected objects' do
-        expect(described_class.title_starting_with('a').all).to eq([a_song])
-        expect(described_class.title_starting_with('#').all).to eq([num_song])
+        expect(described_class.title_starting_with('a')).to eq([a_song])
+        expect(described_class.title_starting_with('#')).to eq([num_song])
       end
     end
 

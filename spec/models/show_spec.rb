@@ -22,27 +22,7 @@ RSpec.describe Show do
       let!(:show2) { create(:show) }
 
       it 'returns expected objects' do
-        expect(described_class.avail.all).to eq([show1])
-      end
-    end
-
-    context '#tagged_with' do
-      let!(:shows) { create_list(:show, 2) }
-      let(:tag) { create(:tag) }
-
-      before { shows.first.tags << tag }
-
-      it 'returns expected objects' do
-        expect(described_class.tagged_with(tag.name).all).to eq([shows.first])
-      end
-    end
-
-    context '#during_year' do
-      let!(:show1) { create(:show, date: '2014-10-31') }
-      let!(:show2) { create(:show, date: '2015-01-01') }
-
-      it 'returns expected objects' do
-        expect(described_class.during_year(2014).all).to eq([show1])
+        expect(described_class.avail).to eq([show1])
       end
     end
 
@@ -53,7 +33,16 @@ RSpec.describe Show do
       let!(:show4) { create(:show, date: '2017-01-01') }
 
       it 'returns expected objects' do
-        expect(described_class.between_years(2014, 2015).all).to eq([show1, show2])
+        expect(described_class.between_years(2014, 2015)).to eq([show1, show2])
+      end
+    end
+
+    context '#during_year' do
+      let!(:show1) { create(:show, date: '2014-10-31') }
+      let!(:show2) { create(:show, date: '2015-01-01') }
+
+      it 'returns expected objects' do
+        expect(described_class.during_year(2014)).to eq([show1])
       end
     end
 
@@ -62,7 +51,28 @@ RSpec.describe Show do
       let!(:show2) { create(:show, date: '2018-01-01') }
 
       it 'returns expected object' do
-        expect(described_class.on_day_of_year(10, 31).all).to eq([show1])
+        expect(described_class.on_day_of_year(10, 31)).to eq([show1])
+      end
+    end
+
+    context '#random' do
+      let(:mock_subject) { spy(described_class) }
+
+      xit 'makes expected calls' do
+        expect(described_class).to receive(:order).with('RANDOM()').and_return(mock_subject)
+        expect(mock_subject).to receive(:limit).with(2)
+        described_class.random
+      end
+    end
+
+    context '#tagged_with' do
+      let!(:shows) { create_list(:show, 2) }
+      let(:tag) { create(:tag) }
+
+      before { shows.first.tags << tag }
+
+      it 'returns expected objects' do
+        expect(described_class.tagged_with(tag.name)).to eq([shows.first])
       end
     end
   end

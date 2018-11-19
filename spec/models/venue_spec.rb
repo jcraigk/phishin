@@ -29,8 +29,8 @@ RSpec.describe Venue do
       let!(:num_venue) { create(:venue, name: '13x13 Club') }
 
       it 'returns expected objects' do
-        expect(described_class.name_starting_with('a').all).to eq([a_venue])
-        expect(described_class.name_starting_with('#').all).to eq([num_venue])
+        expect(described_class.name_starting_with('a')).to eq([a_venue])
+        expect(described_class.name_starting_with('#')).to eq([num_venue])
       end
     end
   end

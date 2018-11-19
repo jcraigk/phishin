@@ -5,7 +5,7 @@ FactoryBot.define do
     songs { [build(:song)] }
     set { '1' }
     sequence(:position, 1)
-    audio_file { Rack::Test::UploadedFile.new('spec/support/test.mp3', 'audio/mp3') }
+    audio_file { Rack::Test::UploadedFile.new('spec/fixtures/test.mp3', 'audio/mp3') }
 
     show
 

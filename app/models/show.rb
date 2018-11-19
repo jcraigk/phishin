@@ -13,16 +13,6 @@ class Show < ApplicationRecord
   validates :date, presence: true
 
   scope :avail, -> { where(missing: false) }
-  scope :tagged_with, ->(tag_name) { joins(:tags).where(tags: { name: tag_name }) }
-
-  scope :during_year, lambda { |year|
-    date = Date.new(year.to_i)
-    where(
-      'date between ? and ?',
-      date.beginning_of_year,
-      date.end_of_year
-    )
-  }
   scope :between_years, lambda { |year1, year2|
     date1 = Date.new(year1.to_i)
     date2 = Date.new(year2.to_i)
@@ -40,10 +30,20 @@ class Show < ApplicationRecord
       )
     end
   }
+  scope :during_year, lambda { |year|
+    date = Date.new(year.to_i)
+    where(
+      'date between ? and ?',
+      date.beginning_of_year,
+      date.end_of_year
+    )
+  }
   scope :on_day_of_year, lambda { |month, day|
     where('extract(month from date) = ?', month)
       .where('extract(day from date) = ?', day)
   }
+  scope :random, ->(amt = 1) { order('RANDOM()').limit(amt) }
+  scope :tagged_with, ->(tag_name) { joins(:tags).where(tags: { name: tag_name }) }
 
   delegate :name, to: :tour, prefix: true
 

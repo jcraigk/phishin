@@ -27,9 +27,9 @@ RSpec.describe Track do
     it { is_expected.to be_a(PgSearch) }
 
     it 'returns expected results' do
-      expect(described_class.kinda_matching('Wolfman').all).to eq([track1])
-      expect(described_class.kinda_matching('Wolf').all).to eq([track2])
-      expect(described_class.kinda_matching('Tube').all).to match_array([track3, track4])
+      expect(described_class.kinda_matching('Wolfman')).to eq([track1])
+      expect(described_class.kinda_matching('Wolf')).to eq([track2])
+      expect(described_class.kinda_matching('Tube')).to match_array([track3, track4])
     end
   end
 
@@ -38,8 +38,13 @@ RSpec.describe Track do
   it { is_expected.to validate_presence_of(:position) }
   it { is_expected.to validate_uniqueness_of(:position).scoped_to(:show_id) }
 
-  # TODO: ensure validation of at least one song present
-  # it { is_expected.to validate_length_of(:songs).is_at_least(1) }
+  it 'validates >= 1 song associated' do
+    subject.validate
+    expect(subject.errors.keys).not_to include(:songs)
+    subject.songs = []
+    subject.validate
+    expect(subject.errors.keys).to include(:songs)
+  end
 
   context 'scopes' do
     context '#chronological', :timecop do
@@ -48,7 +53,7 @@ RSpec.describe Track do
       let!(:track3) { create(:track, show: create(:show, date: 2.years.ago)) }
 
       it 'returns expected objects' do
-        expect(described_class.chronological.all).to eq([track2, track3, track1])
+        expect(described_class.chronological).to eq([track2, track3, track1])
       end
     end
 
@@ -59,7 +64,7 @@ RSpec.describe Track do
       before { tracks.first.tags << tag }
 
       it 'returns expected objects' do
-        expect(described_class.tagged_with(tag.name).all).to eq([tracks.first])
+        expect(described_class.tagged_with(tag.name)).to eq([tracks.first])
       end
     end
   end

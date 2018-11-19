@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
 
   def random_song_with_lyrical_excerpt
     return unless request.xhr?
-    @random_song = Song.with_lyrical_excerpt.sample
+    @random_song = Song.random_with_lyrical_excerpt
   end
 
   def require_xhr!

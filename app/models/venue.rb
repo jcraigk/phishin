@@ -65,9 +65,15 @@ class Venue < ApplicationRecord
       state: state,
       country: country,
       slug: slug,
-      show_dates: shows.order(date: :asc).map(&:date),
-      show_ids: shows.order(date: :asc).map(&:id),
+      show_dates: shows_played_here.map(&:date),
+      show_ids: shows_played_here.map(&:id),
       updated_at: updated_at
     }
+  end
+
+  private
+
+  def shows_played_here
+    @shows_played_here ||= shows.order('date').all
   end
 end
