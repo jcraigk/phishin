@@ -5,16 +5,11 @@ class Api::V1::ApiController < ActionController::Base
 
   protected
 
-  def set_json_content_type
-    response.set_header('Content-Type', 'application/json')
-  end
-
-  def get_data_for(model)
+  def get_data_for(relation)
     configure_page_params
-    configure_sort_params(model)
-    model.order("#{params[:sort_attr]} #{params[:sort_dir]}")
-         .paginate(page: params[:page], per_page: params[:per_page])
-         .all
+    relation.order(sort_str(relation))
+            .paginate(page: params[:page], per_page: params[:per_page])
+            .all
   end
 
   def respond_with_success(data, opts = {})
@@ -27,7 +22,7 @@ class Api::V1::ApiController < ActionController::Base
       total_pages: total_pages,
       page: page,
       data: data_as_json(data, opts)
-    }, content_type: 'application/json'
+    }
   end
 
   def respond_with_success_simple(message = nil)
@@ -40,20 +35,10 @@ class Api::V1::ApiController < ActionController::Base
     render json: {
       success: false,
       message: message
-    }, content_type: 'application/json'
+    }
   end
 
-  def configure_page_params
-    params[:page]     ||= 1
-    params[:per_page] ||= 20
-  end
-
-  def configure_sort_params(obj, default_attr = nil)
-    %w[asc desc].include?(params[:sort_attr]) ? params[:sort_attr] : 'desc'
-    attrs = obj.new.attributes
-    default_attr ||= attrs.first
-    attrs.key?(params[:sort_attr]) ? params[:sort_attr] : default_attr
-  end
+  private
 
   def data_as_json(data, opts = {})
     if data.is_a?(Enumerable) && !data.is_a?(Hash)
@@ -69,7 +54,27 @@ class Api::V1::ApiController < ActionController::Base
     end
   end
 
-  private
+  def set_json_content_type
+    response.set_header('Content-Type', 'application/json')
+  end
+
+  def configure_page_params
+    params[:page] ||= 1
+    params[:per_page] ||= 20
+  end
+
+  def sort_str(relation)
+    return nil unless params[:sort_attr] && params[:sort_dir]
+    "#{sort_attr(relation)} #{sort_dir}"
+  end
+
+  def sort_attr(relation)
+    params[:sort_attr].in?(relation.klass.new.attributes) ? params[:sort_attr] : 'id'
+  end
+
+  def sort_dir
+    params[:sort_dir].in?(%w[asc desc]) ? params[:sort_dir] : 'desc'
+  end
 
   def attempt_user_authorization!
     return unless params[:user].present? &&

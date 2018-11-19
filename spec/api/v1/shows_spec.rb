@@ -31,7 +31,7 @@ describe Api::V1::ShowsController do
   end
 
   describe 'show' do
-    let(:show) { create(:show, :with_tracks, :with_tags, :with_likes) }
+    let(:show) { create(:show) }
     subject { get("/api/v1/shows/#{show.id}") }
 
     it 'returns the expected data' do
@@ -40,7 +40,7 @@ describe Api::V1::ShowsController do
         total_entries: 1,
         total_pages: 1,
         page: 1,
-        data: [show.as_json_api]
+        data: show.as_json_api
       )
     end
   end

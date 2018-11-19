@@ -77,12 +77,12 @@ RSpec.describe Venue do
         id: subject.id,
         name: subject.name,
         past_names: subject.past_names,
-        latitude: subject.latitude,
-        longitude: subject.longitude,
+        latitude: subject.latitude.round(6),
+        longitude: subject.longitude.round(6),
         shows_count: subject.shows_count,
         location: subject.location,
         slug: subject.slug,
-        updated_at: subject.updated_at
+        updated_at: subject.updated_at.to_s
       )
     end
 
@@ -91,8 +91,8 @@ RSpec.describe Venue do
         id: subject.id,
         name: subject.name,
         past_names: subject.past_names,
-        latitude: subject.latitude,
-        longitude: subject.longitude,
+        latitude: subject.latitude.round(6),
+        longitude: subject.longitude.round(6),
         shows_count: subject.shows_count,
         location: subject.location,
         city: subject.city,
@@ -101,7 +101,7 @@ RSpec.describe Venue do
         slug: subject.slug,
         show_dates: subject.shows.order(date: :asc).map(&:date),
         show_ids: subject.shows.order(date: :asc).map(&:id),
-        updated_at: subject.updated_at
+        updated_at: subject.updated_at.to_s
       )
     end
   end
