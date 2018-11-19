@@ -18,13 +18,13 @@ RSpec.describe Track do
     expect(subject.slug).to eq('bathtub-gin')
   end
 
-  it { is_expected.to be_a(PgSearch) }
-
   context 'PgSearch kinda_matching title' do
     let!(:track1) { create(:track, title: 'Wolfman\'s Brother') }
     let!(:track2) { create(:track, title: 'Dire Wolf') }
     let!(:track3) { create(:track, title: 'Tube') }
     let!(:track4) { create(:track, title: 'First Tube') }
+
+    it { is_expected.to be_a(PgSearch) }
 
     it 'returns expected results' do
       expect(described_class.kinda_matching('Wolfman').all).to eq([track1])
