@@ -13,7 +13,7 @@ class Show < ApplicationRecord
   validates :date, presence: true
 
   scope :avail, -> { where(missing: false) }
-  scope :tagged_with, ->(tag_name) { includes(:tags).where(tags: { name: tag_name }) }
+  scope :tagged_with, ->(tag_name) { joins(:tags).where(tags: { name: tag_name }) }
 
   scope :during_year, lambda { |year|
     date = Date.new(year.to_i)
