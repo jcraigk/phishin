@@ -4,7 +4,7 @@ require 'rails_helper'
 describe Api::V1::ShowsController do
   include Rack::Test::Methods
 
-  let(:json) { JSON[subject.body].deep_symbolize_keys }
+  let(:json_data) { JSON[subject.body].deep_symbolize_keys[:data] }
 
   describe 'index' do
     subject { get('/api/v1/shows') }
@@ -20,13 +20,7 @@ describe Api::V1::ShowsController do
     end
 
     it 'returns the expected data' do
-      expect(json).to eq(
-        success: true,
-        total_entries: 3,
-        total_pages: 1,
-        page: 1,
-        data: shows.map(&:as_json_api)
-      )
+      expect(json_data).to eq(shows.map(&:as_json_api))
     end
   end
 
@@ -35,13 +29,7 @@ describe Api::V1::ShowsController do
     subject { get("/api/v1/shows/#{show.id}") }
 
     it 'returns the expected data' do
-      expect(json).to eq(
-        success: true,
-        total_entries: 1,
-        total_pages: 1,
-        page: 1,
-        data: show.as_json_api
-      )
+      expect(json_data).to eq(show.as_json_api)
     end
   end
 end

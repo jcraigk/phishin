@@ -10,7 +10,9 @@ FactoryBot.define do
     show
 
     trait :with_likes do
-      likes { build_list(:likes, 5) }
+      # after(:build) do |track|
+      #   track.likes = build_list(:like, 5, likable: track)
+      # end
     end
   end
 end

@@ -4,19 +4,13 @@ require 'rails_helper'
 describe Api::V1::ErasController do
   include Rack::Test::Methods
 
-  let(:json) { JSON[subject.body].symbolize_keys }
+  let(:json_data) { JSON[subject.body].symbolize_keys[:data] }
 
   describe 'index' do
     subject { get('/api/v1/eras') }
 
     it 'returns the expected data' do
-      expect(json).to eq(
-        success: true,
-        total_entries: 1,
-        total_pages: 1,
-        page: 1,
-        data: ERAS
-      )
+      expect(json_data).to eq(ERAS)
     end
   end
 
@@ -25,13 +19,7 @@ describe Api::V1::ErasController do
     subject { get("/api/v1/eras/#{era}") }
 
     it 'returns the expected data' do
-      expect(json).to eq(
-        success: true,
-        total_entries: 1,
-        total_pages: 1,
-        page: 1,
-        data: ERAS[era]
-      )
+      expect(json_data).to eq(ERAS[era])
     end
   end
 end
