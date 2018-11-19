@@ -8,10 +8,20 @@ class Venue < ApplicationRecord
   geocoded_by :address
 
   scope :relevant, -> { where('shows_count > 0') }
-  scope :name_starting_with, ->(char) { where('name SIMILAR TO ?', "#{char == '#' ? '[0-9]' : char}%") }
+  scope :name_starting_with, lambda { |char|
+    where(
+      'name SIMILAR TO ?',
+      "#{if char == '#'
+           '[0-9]'
+         else
+           '(' + char.downcase + '|' + char.upcase + ')'
+         end}%"
+    )
+  }
 
   def long_name
-    str = abbrev.present? ? "#{name} (#{abbrev})" : name
+    str = name
+    str += " (#{abbrev})" if abbrev.present?
     str += " (aka #{past_names})" if past_names.present?
     str
   end
@@ -26,14 +36,6 @@ class Venue < ApplicationRecord
         "#{city}, #{country}"
       end
     loc.gsub(/\s+/, ' ')
-  end
-
-  def address
-    "#{name}, #{location}"
-  end
-
-  def name_letter
-    name[0, 1]
   end
 
   def as_json
@@ -63,15 +65,15 @@ class Venue < ApplicationRecord
       state: state,
       country: country,
       slug: slug,
-      show_dates: my_shows.map(&:date),
-      show_ids: my_shows.map(&:id),
+      show_dates: shows_played_here.map(&:date),
+      show_ids: shows_played_here.map(&:id),
       updated_at: updated_at
     }
   end
 
   private
 
-  def my_shows
-    @my_shows ||= shows.order('date').all
+  def shows_played_here
+    @shows_played_here ||= shows.order('date').all
   end
 end

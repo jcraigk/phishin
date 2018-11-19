@@ -49,6 +49,15 @@ class Api::V1::ShowsController < Api::V1::ApiController
   end
 
   def random
-    respond_with_success Show.avail.random.includes(:venue, { tracks: :songs }, :tags).first
+    respond_with_success random_show
+  end
+
+  private
+
+  def random_show
+    Show.includes(:venue, { tracks: :songs }, :tags)
+        .avail
+        .random
+        .first
   end
 end

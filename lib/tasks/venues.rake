@@ -4,20 +4,18 @@ namespace :venues do
   task dupe_geocodes: :environment do
     num = 0
     Venue.relevant.each do |venue|
-      other_venue = Venue
-                    .relevant
-                    .where(
-                      'id != ? and latitude = ? and longitude = ?',
-                      venue.id,
-                      venue.latitude,
-                      venue.longitude
-                    ).first
+      other_venue =
+        Venue.relevant
+             .where(
+               'id != ? and latitude = ? and longitude = ?',
+               venue.id,
+               venue.latitude,
+               venue.longitude
+             ).first
       next if other_venue.nil?
 
       num += 1
-      puts "#{num}: #{other_venue.id} / #{venue.id} :: " \
-           "#{other_venue.address} (#{other_venue.shows_count}) " \
-           "/ #{venue.address} (#{venue.shows_count})"
+      puts "#{num}: #{other_venue.id} / #{venue.id}"
     end
   end
 

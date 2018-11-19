@@ -7,24 +7,12 @@ class Show < ApplicationRecord
   has_many :show_tags, dependent: :destroy
   has_many :tags, through: :show_tags
 
-  validates :date, presence: true
-
-  self.per_page = 10 # will_paginate default
-
   extend FriendlyId
   friendly_id :date
 
-  scope :avail, -> { where('missing = FALSE') }
-  scope :tagged_with, ->(tag) { includes(:tags).where('tags.name = ?', tag) }
+  validates :date, presence: true
 
-  scope :during_year, lambda { |year|
-    date = Date.new(year.to_i)
-    where(
-      'date between ? and ?',
-      date.beginning_of_year,
-      date.end_of_year
-    )
-  }
+  scope :avail, -> { where(missing: false) }
   scope :between_years, lambda { |year1, year2|
     date1 = Date.new(year1.to_i)
     date2 = Date.new(year2.to_i)
@@ -42,28 +30,29 @@ class Show < ApplicationRecord
       )
     end
   }
+  scope :during_year, lambda { |year|
+    date = Date.new(year.to_i)
+    where(
+      'date between ? and ?',
+      date.beginning_of_year,
+      date.end_of_year
+    )
+  }
   scope :on_day_of_year, lambda { |month, day|
     where('extract(month from date) = ?', month)
       .where('extract(day from date) = ?', day)
   }
   scope :random, ->(amt = 1) { order('RANDOM()').limit(amt) }
+  scope :tagged_with, ->(tag_name) { joins(:tags).where(tags: { name: tag_name }) }
 
   delegate :name, to: :tour, prefix: true
 
-  def to_s
-    if venue
-      "#{date.strftime('%Y-%m-%d')} - #{venue.name} - #{venue.location}"
-    else
-      "#{date.strftime('%Y-%m-%d')} - NULL VENUE!"
-    end
-  end
-
-  def last_set
-    tracks.select { |t| /\A\d\z/.match t.set }.map(&:set).max
+  def save_duration
+    update(duration: tracks.map(&:duration).inject(0, &:+))
   end
 
   def as_json
-    hash = {
+    {
       id: id,
       date: date,
       duration: duration,
@@ -75,14 +64,10 @@ class Show < ApplicationRecord
       venue_id: venue_id,
       likes_count: likes_count,
       taper_notes: taper_notes,
-      updated_at: updated_at
+      updated_at: updated_at,
+      venue_name: venue&.name,
+      location: venue&.location
     }
-    return hash unless venue
-
-    hash.merge(
-      venue_name: venue.name,
-      location: venue.location
-    )
   end
 
   def as_json_api
@@ -102,9 +87,5 @@ class Show < ApplicationRecord
       tracks: tracks.sort_by(&:position).map(&:as_json_api),
       updated_at: updated_at
     }
-  end
-
-  def save_duration
-    update(duration: tracks.map(&:duration).inject(0, &:+))
   end
 end

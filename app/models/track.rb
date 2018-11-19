@@ -2,11 +2,6 @@
 require 'mp3info'
 
 class Track < ApplicationRecord
-  has_attached_file(
-    :audio_file,
-    path: "#{APP_CONTENT_PATH}/:class/:attachment/:id_partition/:id.:extension"
-  )
-
   belongs_to :show
   has_many :songs_tracks, dependent: :destroy
   has_many :songs, through: :songs_tracks
@@ -15,10 +10,13 @@ class Track < ApplicationRecord
   has_many :tags, through: :track_tags
   has_many :playlist_tracks, dependent: :destroy
 
-  self.per_page = 10 # will_paginate default
+  has_attached_file(
+    :audio_file,
+    path: "#{APP_CONTENT_PATH}/:class/:attachment/:id_partition/:id.:extension"
+  )
 
-  scope :chronological, -> { order('shows.date ASC').joins(:show) }
-  scope :tagged_with, ->(tag) { includes(:tags).where('tags.name = ?', tag) }
+  extend FriendlyId
+  friendly_id :title, use: :slugged
 
   include PgSearch
   pg_search_scope(
@@ -32,32 +30,21 @@ class Track < ApplicationRecord
     }
   )
 
+  # TODO: fix validation
   # validates_attachment :audio_file, presence: true,
   #   content_type: { content_type: ['application/mp3', 'application/x-mp3', 'audio/mpeg', 'audio/mp3'] }
   do_not_validate_attachment_file_type :audio_file
   validates_presence_of :show, :title, :position
   validates_uniqueness_of :position, scope: :show_id
-  validate :require_at_least_one_song
+  validates :songs, length: { minimum: 1 }
 
-  before_validation :populate_song, :populate_position
   after_commit :save_duration, on: :create
 
-  def set_name
-    set_names[set] || 'Unknown set'
-  end
+  scope :chronological, -> { joins(:show).order('shows.date') }
+  scope :tagged_with, ->(tag_name) { joins(:tags).where(tags: { name: tag_name }) }
 
-  # Return the set abbreviation (livephish.com style)
-  # Roman numerals; encores are part of final set
-  def set_abbrev
-    # Encores
-    if /\AE[\d]*\z/.match?(set)
-      roman_numerals[show.last_set]
-    # Numbered sets
-    elsif /\A\d\z/.match?(set)
-      roman_numerals[set]
-    else
-      ''
-    end
+  def set_name
+    set_names[set] || 'Unknown Set'
   end
 
   def save_default_id3_tags
@@ -65,6 +52,7 @@ class Track < ApplicationRecord
       comments = 'Visit http://phish.in for free Phish audio'
       year = show.date.strftime('%Y').to_i
       band = 'Phish'
+      album_name = "#{show.date} #{show.venue.location}"
 
       mp3.tag.title = title
       mp3.tag.artist = band
@@ -82,7 +70,7 @@ class Track < ApplicationRecord
       mp3.tag2.genre = 'Rock'
       mp3.tag2.comments = comments
 
-      # TODO: Add cover art using id3v2?
+      # TODO: Add cover art using id3v2? or strip it be default?
       # mp3.tag2.remove_pictures
       # mp3.tag2.add_picture(file.read)
     end
@@ -110,6 +98,12 @@ class Track < ApplicationRecord
       format('%<id>09d', id: id)
       .scan(/.{3}/)
       .join('/') + "/#{id}.mp3"
+  end
+
+  def save_duration
+    Mp3Info.open(audio_file.path) do |mp3|
+      update_column(:duration, (mp3.length * 1000).round)
+    end
   end
 
   def as_json
@@ -147,43 +141,7 @@ class Track < ApplicationRecord
     }
   end
 
-  def save_duration
-    Mp3Info.open(audio_file.path) do |mp3|
-      update_column(:duration, (mp3.length * 1000).round)
-    end
-  end
-
   private
-
-  def populate_song
-    return unless songs.any?
-    song = Song.where('lower(title) = ?', title.downcase)
-    songs << song if song
-  end
-
-  def populate_position
-    return if position.positive?
-    last_song = Track.where(show_id: show.id).last
-    self.position = last_song ? last_song.position + 1 : 1
-  end
-
-  def require_at_least_one_song
-    return if songs.any?
-    errors.add(:songs, 'Please add at least one song')
-  end
-
-  def album_name
-    "#{show.date} #{show.venue.location}"
-  end
-
-  def roman_numerals
-    {
-      '1' => 'I',
-      '2' => 'II',
-      '3' => 'III',
-      '4' => 'IV'
-    }
-  end
 
   def set_names
     {

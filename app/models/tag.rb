@@ -6,7 +6,7 @@ class Tag < ApplicationRecord
   has_many :tracks, through: :track_tags
 
   extend FriendlyId
-  friendly_id :name
+  friendly_id :name, use: :slugged
 
   def as_json
     {

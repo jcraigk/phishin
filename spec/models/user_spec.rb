@@ -2,7 +2,7 @@
 require 'rails_helper'
 
 describe User do
-  subject { User.new }
+  subject { build(:user) }
 
   it { is_expected.to be_an(ApplicationRecord) }
 

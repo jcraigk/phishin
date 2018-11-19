@@ -2,10 +2,10 @@
 class Song < ApplicationRecord
   has_and_belongs_to_many :tracks
 
-  validates_presence_of :title
-
   extend FriendlyId
   friendly_id :title, use: :slugged
+
+  validates_presence_of :title
 
   include PgSearch
   pg_search_scope(
@@ -20,18 +20,24 @@ class Song < ApplicationRecord
   )
 
   scope :relevant, -> { where('tracks_count > 0 or alias_for IS NOT NULL') }
-  scope :title_starting_with, ->(char) { where('title SIMILAR TO ?', "#{char == '#' ? '[0-9]' : char}%") }
+  scope :title_starting_with, lambda { |char|
+    where(
+      'title SIMILAR TO ?',
+      "#{if char == '#'
+           '[0-9]'
+         else
+           '(' + char.downcase + '|' + char.upcase + ')'
+         end}%"
+    )
+  }
+  scope :with_lyrical_excerpt, -> { where.not(lyrical_excerpt: nil) }
 
-  def self.random_lyrical_excerpt
-    where('lyrical_excerpt IS NOT NULL').order('RANDOM()').limit(1)
-  end
-
-  def title_letter
-    title[0, 1]
+  def self.random_with_lyrical_excerpt
+    where('lyrical_excerpt IS NOT NULL').order('RANDOM()').first
   end
 
   def aliased_song
-    Song.where(id: alias_for).first if alias_for
+    Song.where(id: alias_for).first
   end
 
   def alias?
