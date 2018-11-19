@@ -12,7 +12,7 @@ RSpec.describe Tour do
   end
 
   context 'serialization' do
-    subject { build(:tour, :with_shows) }
+    subject { create(:tour, :with_shows) }
 
     it 'provides #as_json' do
       expect(subject.as_json).to eq(

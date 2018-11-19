@@ -11,7 +11,7 @@ describe Api::V1::TracksController do
     let!(:tracks) { create_list(:track, 3, :with_likes) }
 
     it 'returns the expected data' do
-      expect(json_data).to eq(tracks.map(&:as_json_api))
+      expect(json_data).to match_array(tracks.map(&:as_json_api))
     end
   end
 

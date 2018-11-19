@@ -13,23 +13,28 @@ RSpec.describe Playlist do
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:slug) }
 
-  it 'provides #as_json_api' do
-    expect(subject.as_json_api).to eq(
-      slug: subject.slug,
-      name: subject.name,
-      duration: subject.duration,
-      tracks: subject.playlist_tracks.order(:position).map(&:as_json_api),
-      updated_at: subject.updated_at
-    )
-  end
+  context 'serialization' do
+    subject { create(:playlist, :with_tracks) }
 
-  it 'provides #as_json_api_basic' do
-    expect(subject.as_json_api_basic).to eq(
-      slug: subject.slug,
-      name: subject.name,
-      duration: subject.duration,
-      track_count: subject.playlist_tracks.size,
-      updated_at: subject.updated_at
-    )
+    it 'provides #as_json_api' do
+      binding.pry
+      expect(subject.as_json_api).to eq(
+        slug: subject.slug,
+        name: subject.name,
+        duration: subject.duration,
+        tracks: subject.playlist_tracks.order(:position).map(&:as_json_api),
+        updated_at: subject.updated_at.to_s
+      )
+    end
+
+    it 'provides #as_json_api_basic' do
+      expect(subject.as_json_api_basic).to eq(
+        slug: subject.slug,
+        name: subject.name,
+        duration: subject.duration,
+        track_count: subject.playlist_tracks.size,
+        updated_at: subject.updated_at.to_s
+      )
+    end
   end
 end

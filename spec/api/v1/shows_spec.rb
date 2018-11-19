@@ -20,7 +20,7 @@ describe Api::V1::ShowsController do
     end
 
     it 'returns the expected data' do
-      expect(json_data).to eq(shows.map(&:as_json_api))
+      expect(json_data).to match_array(shows.map(&:as_json_api))
     end
   end
 

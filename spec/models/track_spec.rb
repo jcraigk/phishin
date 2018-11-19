@@ -128,7 +128,7 @@ RSpec.describe Track do
   end
 
   context 'serialization' do
-    before { subject.save }
+    subject { create(:track) }
 
     it 'provides #as_json' do
       expect(subject.as_json).to eq(

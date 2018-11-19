@@ -11,7 +11,7 @@ describe Api::V1::ToursController do
     let!(:tours) { create_list(:tour, 3, :with_shows) }
 
     it 'returns the expected data' do
-      expect(json_data).to eq(tours.map(&:as_json_api))
+      expect(json_data).to match_array(tours.map(&:as_json_api))
     end
   end
 
