@@ -19,14 +19,14 @@ class Api::V1::LikesController < Api::V1::ApiController
     if params[:likable_type] && params[:likable_id]
       likable = find_likable
       if likable.likes.where(user: current_user).first
-        respond_with_failure 'Entity already liked by current user'
-      else
-        likable.likes.build(user: current_user).save!
-        respond_with_success_simple
+        return respond_with_failure 'Entity already liked by current user'
       end
-    else
-      respond_with_failure 'Invalid request'
+
+      likable.likes.build(user: current_user).save!
+      return respond_with_success_simple
     end
+
+    respond_with_failure 'Invalid request'
   end
 
   # Submit an unlike for a show or track
@@ -83,7 +83,8 @@ class Api::V1::LikesController < Api::V1::ApiController
 
   def find_likable
     return unless params[:likable_type] && params[:likable_id]
-    params[:likable_type]
+    return unless (likable_type = params[:likable_type]).in?(%w[Show Track])
+    likable_type
       .classify
       .constantize
       .where(id: params[:likable_id])

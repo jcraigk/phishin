@@ -54,7 +54,7 @@ class Show < ApplicationRecord
   def as_json
     {
       id: id,
-      date: date,
+      date: date.to_s,
       duration: duration,
       incomplete: incomplete,
       missing: missing,
@@ -64,7 +64,7 @@ class Show < ApplicationRecord
       venue_id: venue_id,
       likes_count: likes_count,
       taper_notes: taper_notes,
-      updated_at: updated_at,
+      updated_at: updated_at.to_s,
       venue_name: venue&.name,
       location: venue&.location
     }
@@ -73,7 +73,7 @@ class Show < ApplicationRecord
   def as_json_api
     {
       id: id,
-      date: date,
+      date: date.to_s,
       duration: duration,
       incomplete: incomplete,
       missing: missing,
@@ -85,7 +85,7 @@ class Show < ApplicationRecord
       taper_notes: taper_notes,
       likes_count: likes_count,
       tracks: tracks.sort_by(&:position).map(&:as_json_api),
-      updated_at: updated_at
+      updated_at: updated_at.to_s
     }
   end
 end

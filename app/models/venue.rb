@@ -43,12 +43,12 @@ class Venue < ApplicationRecord
       id: id,
       name: name,
       past_names: past_names,
-      latitude: latitude,
-      longitude: longitude,
+      latitude: latitude.round(13),
+      longitude: longitude.round(13),
       shows_count: shows_count,
       location: location,
       slug: slug,
-      updated_at: updated_at
+      updated_at: updated_at.to_s
     }
   end
 
@@ -57,8 +57,8 @@ class Venue < ApplicationRecord
       id: id,
       name: name,
       past_names: past_names,
-      latitude: latitude,
-      longitude: longitude,
+      latitude: latitude.round(13),
+      longitude: longitude.round(13),
       shows_count: shows_count,
       location: location,
       city: city,
@@ -67,13 +67,13 @@ class Venue < ApplicationRecord
       slug: slug,
       show_dates: shows_played_here.map(&:date),
       show_ids: shows_played_here.map(&:id),
-      updated_at: updated_at
+      updated_at: updated_at.to_s
     }
   end
 
   private
 
   def shows_played_here
-    @shows_played_here ||= shows.order('date').all
+    @shows_played_here ||= shows.order(date: :asc).all
   end
 end
