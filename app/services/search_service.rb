@@ -7,8 +7,8 @@ class SearchService
     @term = term
   end
 
-  def results
-    if (date = DateParserService.new(term).parse)
+  def call
+    if (date = DateParserService.new(term).call)
       show =
         Show.avail
             .where(date: date)

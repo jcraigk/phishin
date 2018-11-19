@@ -8,6 +8,6 @@ class Api::V1::SearchController < Api::V1::ApiController
   private
 
   def search_results
-    SearchService.new(params[:term]).results
+    SearchService.new(params[:term]).call
   end
 end

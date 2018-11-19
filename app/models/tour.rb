@@ -10,10 +10,10 @@ class Tour < ApplicationRecord
       id: id,
       name: name,
       shows_count: shows_count,
-      starts_on: starts_on,
-      ends_on: ends_on,
+      starts_on: starts_on.to_s,
+      ends_on: ends_on.to_s,
       slug: slug,
-      updated_at: updated_at
+      updated_at: updated_at.to_s
     }
   end
 
@@ -23,10 +23,10 @@ class Tour < ApplicationRecord
       name: name,
       shows_count: shows_count,
       slug: slug,
-      starts_on: starts_on,
-      ends_on: ends_on,
+      starts_on: starts_on.to_s,
+      ends_on: ends_on.to_s,
       shows: shows.sort_by(&:date).as_json,
-      updated_at: updated_at
+      updated_at: updated_at.to_s
     }
   end
 end
