@@ -7,7 +7,7 @@ FactoryBot.define do
 
     trait :with_shows do
       after(:build) do |tour|
-        tour.shows = build_list(:show, 5, tour: tour)
+        create_list(:show, 5, tour: tour)
       end
     end
   end

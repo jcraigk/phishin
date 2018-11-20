@@ -9,7 +9,9 @@ FactoryBot.define do
     longitude { Faker::Address.longitude }
 
     trait :with_shows do
-      shows { build_list(:show, 5) }
+      after(:build) do |venue|
+        create_list(:show, 5, venue: venue)
+      end
     end
   end
 end

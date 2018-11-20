@@ -10,7 +10,7 @@ FactoryBot.define do
 
     trait :with_tracks do
       after(:build) do |show|
-        show.tracks = build_list(:track, 5, show: show)
+        create_list(:track, 5, show: show)
       end
     end
 

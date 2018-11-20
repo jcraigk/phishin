@@ -11,13 +11,13 @@ FactoryBot.define do
 
     trait :with_likes do
       after(:build) do |track|
-        track.likes = build_list(:like, 5, likable: track)
+        create_list(:like, 5, likable: track)
       end
     end
 
     trait :with_tags do
       after(:build) do |track|
-        track.tags = build_list(:tag, 2, tracks: track)
+        create_list(:tag, 2, tracks: track)
       end
     end
   end

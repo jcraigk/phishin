@@ -67,7 +67,7 @@ class Venue < ApplicationRecord
       state: state,
       country: country,
       slug: slug,
-      show_dates: shows_played_here.map(&:date),
+      show_dates: shows_played_here.map(&:date).map(&:to_s),
       show_ids: shows_played_here.map(&:id),
       updated_at: updated_at.to_s
     }

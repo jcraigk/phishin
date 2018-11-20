@@ -3,6 +3,8 @@ class Api::V1::ApiController < ActionController::Base
   before_action :attempt_user_authorization!
   after_action :set_json_content_type
 
+  rescue_from ActiveRecord::RecordNotFound, with: :respond_with_404
+
   protected
 
   def get_data_for(relation)
@@ -36,6 +38,13 @@ class Api::V1::ApiController < ActionController::Base
       success: false,
       message: message
     }, status: 400
+  end
+
+  def respond_with_404
+    render json: {
+      success: false,
+      message: 'Record not found'
+    }, status: 404
   end
 
   private
