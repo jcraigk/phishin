@@ -18,8 +18,8 @@ RSpec.describe Show do
 
   context 'scopes' do
     context '#avail' do
-      let!(:show1) { create(:show, missing: false) }
-      let!(:show2) { create(:show) }
+      let!(:show1) { create(:show) }
+      let!(:show2) { create(:show, missing: true) }
 
       it 'returns expected objects' do
         expect(described_class.avail).to eq([show1])

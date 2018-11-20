@@ -35,7 +35,7 @@ class Api::V1::ApiController < ActionController::Base
     render json: {
       success: false,
       message: message
-    }
+    }, status: 400
   end
 
   private

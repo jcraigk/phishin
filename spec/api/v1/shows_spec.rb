@@ -14,8 +14,7 @@ describe Api::V1::ShowsController do
         3,
         :with_tracks,
         :with_tags,
-        :with_likes,
-        missing: false
+        :with_likes
       )
     end
 
