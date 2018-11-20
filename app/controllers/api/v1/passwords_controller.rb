@@ -15,6 +15,6 @@ class Api::V1::PasswordsController < DeviseController
   private
 
   def user
-    @user ||= User.where(email: params[:user][:email]).first
+    @user ||= User.find_by(email: params[:user][:email])
   end
 end

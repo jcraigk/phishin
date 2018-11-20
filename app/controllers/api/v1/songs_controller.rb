@@ -8,10 +8,6 @@ class Api::V1::SongsController < Api::V1::ApiController
   end
 
   def show
-    song = Song.where(id: params[:id])
-               .or(Song.where(slug: params[:id]))
-               .includes(tracks: :show)
-               .first
-    respond_with_success song
+    respond_with_success Song.includes(tracks: :show).friendly.find(params[:id])
   end
 end
