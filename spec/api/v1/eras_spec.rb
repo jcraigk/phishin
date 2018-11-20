@@ -9,7 +9,7 @@ describe Api::V1::ErasController do
   describe 'index' do
     subject { get('/api/v1/eras') }
 
-    it 'returns the expected data' do
+    it 'responds with expected data' do
       expect(json_data).to eq(ERAS)
     end
   end
@@ -18,7 +18,7 @@ describe Api::V1::ErasController do
     let(:era) { '3.0' }
     subject { get("/api/v1/eras/#{era}") }
 
-    it 'returns the expected data' do
+    it 'responds with expected data' do
       expect(json_data).to eq(ERAS[era])
     end
   end

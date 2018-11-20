@@ -5,7 +5,7 @@ class Song < ApplicationRecord
   extend FriendlyId
   friendly_id :title, use: :slugged
 
-  validates_presence_of :title
+  validates :title, presence: true
 
   include PgSearch
   pg_search_scope(

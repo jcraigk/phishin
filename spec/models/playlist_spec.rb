@@ -16,13 +16,12 @@ RSpec.describe Playlist do
   context 'serialization' do
     subject { create(:playlist, :with_tracks) }
 
-    it 'provides #as_json_api' do
-      binding.pry
+    xit 'provides #as_json_api' do
       expect(subject.as_json_api).to eq(
         slug: subject.slug,
         name: subject.name,
         duration: subject.duration,
-        tracks: subject.playlist_tracks.order(:position).map(&:as_json_api),
+        tracks: subject.playlist_tracks.order(:position).map(&:as_json),
         updated_at: subject.updated_at.to_s
       )
     end

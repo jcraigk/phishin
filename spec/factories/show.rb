@@ -9,7 +9,9 @@ FactoryBot.define do
     venue
 
     trait :with_tracks do
-      tracks { build_list(:track, 5) }
+      after(:build) do |show|
+        show.tracks = build_list(:track, 5, show: show)
+      end
     end
 
     trait :with_likes do

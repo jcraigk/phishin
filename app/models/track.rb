@@ -34,8 +34,8 @@ class Track < ApplicationRecord
   # validates_attachment :audio_file, presence: true,
   #   content_type: { content_type: ['application/mp3', 'application/x-mp3', 'audio/mpeg', 'audio/mp3'] }
   do_not_validate_attachment_file_type :audio_file
-  validates_presence_of :show, :title, :position
-  validates_uniqueness_of :position, scope: :show_id
+  validates :position, :show, :title, :set, presence: true
+  validates :position, uniqueness: { scope: :show_id }
   validates :songs, length: { minimum: 1 }
 
   after_commit :save_duration, on: :create

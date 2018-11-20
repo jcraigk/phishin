@@ -6,6 +6,10 @@ RSpec.describe Venue do
 
   it { is_expected.to have_many(:shows) }
 
+  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:city) }
+  it { is_expected.to validate_presence_of(:country) }
+
   it 'generates a slug from name (friendly_id)' do
     subject.save
     expect(subject.slug).to eq('madison-square-garden')

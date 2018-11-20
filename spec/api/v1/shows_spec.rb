@@ -7,18 +7,10 @@ describe Api::V1::ShowsController do
   let(:json_data) { JSON[subject.body].deep_symbolize_keys[:data] }
 
   describe 'index' do
+    let!(:shows) { create_list(:show, 3, :with_tracks, :with_tags, :with_likes) }
     subject { get('/api/v1/shows') }
-    let!(:shows) do
-      create_list(
-        :show,
-        3,
-        :with_tracks,
-        :with_tags,
-        :with_likes
-      )
-    end
 
-    it 'returns the expected data' do
+    it 'responds with expected data' do
       expect(json_data).to match_array(shows.map(&:as_json_api))
     end
   end
@@ -27,7 +19,7 @@ describe Api::V1::ShowsController do
     let(:show) { create(:show) }
     subject { get("/api/v1/shows/#{show.id}") }
 
-    it 'returns the expected data' do
+    it 'responds with expected data' do
       expect(json_data).to eq(show.as_json_api)
     end
   end

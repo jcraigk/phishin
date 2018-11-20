@@ -8,6 +8,7 @@ class User < ApplicationRecord
 
   validates(
     :username,
+    presence: true,
     uniqueness: true,
     format: {
       with: /\A[A-Za-z0-9_]{4,15}\z/,

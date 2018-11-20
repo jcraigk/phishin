@@ -5,6 +5,9 @@ class Tag < ApplicationRecord
   has_many :track_tags
   has_many :tracks, through: :track_tags
 
+  validates :name, :color, :priority, presence: true
+  validates :priority, uniqueness: true
+
   extend FriendlyId
   friendly_id :name, use: :slugged
 

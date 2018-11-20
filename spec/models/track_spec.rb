@@ -36,6 +36,7 @@ RSpec.describe Track do
   it { is_expected.to validate_presence_of(:show) }
   it { is_expected.to validate_presence_of(:title) }
   it { is_expected.to validate_presence_of(:position) }
+  it { is_expected.to validate_presence_of(:set) }
   it { is_expected.to validate_uniqueness_of(:position).scoped_to(:show_id) }
 
   it 'validates >= 1 song associated' do

@@ -6,6 +6,10 @@ RSpec.describe Tour do
 
   it { is_expected.to have_many(:shows) }
 
+  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:starts_on) }
+  it { is_expected.to validate_presence_of(:ends_on) }
+
   it 'generates a slug from name (friendly_id)' do
     subject.save
     expect(subject.slug).to eq('1996-summer-tour')
