@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 class SearchService
   attr_reader :term
 
@@ -24,14 +23,14 @@ class SearchService
       songs =
         Song.relevant
             .where('title ILIKE ?', "%#{term}%")
-            .order('title asc')
+            .order(title: :asc)
       venues =
         Venue.relevant
              .where(venue_where_str, term: "%#{term}%")
-             .order('name asc')
+             .order(name: :asc)
       tours =
         Tour.where('name ILIKE ?', "%#{term}%")
-            .order('name asc')
+            .order(name: :asc)
     end
     {
       show: show,

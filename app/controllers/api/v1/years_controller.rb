@@ -4,25 +4,31 @@ class Api::V1::YearsController < Api::V1::ApiController
   caches_action :show, cache_path: proc { |c| c.params }, expires_in: CACHE_TTL
 
   def index
-    respond_with_success(all_eras_with_show_counts)
+    respond_with_success(requested_year_data)
   end
 
   def show
     return respond_with_success(shows_that_year) if requested_years
-    respond_with_failure('Invalid year or year range')
+    respond_with_failure 'Invalid year or year range'
   end
 
   private
 
-  def all_eras_with_show_counts
-    ERAS.values
-        .flatten
-        .each_with_object([]) do |era, response|
-      response << {
+  def requested_year_data
+    params[:include_show_counts] ? eras_with_show_counts : year_list
+  end
+
+  def eras_with_show_counts
+    year_list.each_with_object([]) do |era, list|
+      list << {
         date: era,
         show_count: shows_for_era(era).count
       }
     end
+  end
+
+  def year_list
+    ERAS.values.flatten
   end
 
   def shows_for_era(era)

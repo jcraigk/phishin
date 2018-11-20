@@ -52,7 +52,11 @@ class Api::V1::LikesController < Api::V1::ApiController
 
   # Return list of most liked tracks overall
   def top_tracks
-    tracks = Track.where('likes_count > 0').order('likes_count desc, title asc').includes(:show).limit(40)
+    tracks =
+      Track.where('likes_count > 0')
+           .order(likes_count: :desc, title: :asc)
+           .includes(:show)
+           .limit(40)
     respond_with_success tracks.map(&:as_json_api)
   end
 

@@ -1,15 +1,19 @@
 # frozen_string_literal: true
 class MapController < ApplicationController
   def search
-    params[:date_start] ||= Show.order('date asc').first.date
-    params[:date_stop] ||= Show.order('date desc').first.date
+    params[:date_start] ||= Show.order(date: :asc).first.date
+    params[:date_stop] ||= Show.order(date: :desc).first.date
     if params[:lat].present? && params[:lng].present? && params[:distance].present?
       venues_with_shows = []
       venues = Venue.near([params[:lat], params[:lng]], params[:distance])
       venues.each do |venue|
-        shows = Show.where(
-          'venue_id = ? and date >= ? and date <= ?', venue.id, params[:date_start], params[:date_stop]
-        ).order('date desc').all
+        shows =
+          Show.where(
+            'venue_id = ? and date >= ? and date <= ?',
+            venue.id,
+            params[:date_start],
+            params[:date_stop]
+          ).order(date: :desc).all
         venue = venue.as_json
         if shows.any?
           venue[:shows] = shows.map(&:as_json)

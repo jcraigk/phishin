@@ -11,19 +11,31 @@ describe Api::V1::YearsController do
     let!(:show1) { create(:show, date: '1986-01-01') }
     let!(:show2) { create(:show, date: '1987-01-01') }
     let!(:show3) { create(:show, date: '1988-06-01') }
-    let(:expected_data) do
-      data =
-        ERAS.values
-            .flatten
-            .map { |e| { date: e, show_count: 0 } }
-      data[0] = { date: '1983-1987', show_count: 2 }
-      data[1] = { date: '1988', show_count: 1 }
-      data
-    end
-    subject { get('/api/v1/years') }
 
-    it 'responds with expected data' do
-      expect(json_data).to match_array(expected_data)
+    context 'without params' do
+      let(:expected_data) { ERAS.values.flatten }
+      subject { get('/api/v1/years') }
+
+      it 'responds with expected data' do
+        expect(json_data).to match_array(expected_data)
+      end
+    end
+
+    context 'with include_show_counts params' do
+      let(:expected_data) do
+        data =
+          ERAS.values
+              .flatten
+              .map { |e| { date: e, show_count: 0 } }
+        data[0] = { date: '1983-1987', show_count: 2 }
+        data[1] = { date: '1988', show_count: 1 }
+        data
+      end
+      subject { get('/api/v1/years?include_show_counts=true') }
+
+      it 'responds with expected data' do
+        expect(json_data).to match_array(expected_data)
+      end
     end
   end
 
