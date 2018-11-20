@@ -9,6 +9,6 @@ class Api::V1::TracksController < Api::V1::ApiController
   end
 
   def show
-    respond_with_success Track.where(id: params[:id]).includes(:tags).first
+    respond_with_success Track.includes(:tags).find_by!(id: params[:id])
   end
 end
