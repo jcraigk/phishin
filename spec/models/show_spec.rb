@@ -56,12 +56,7 @@ RSpec.describe Show do
     end
 
     context '#random' do
-      let(:mock_subject) { spy(described_class) }
-
-      xit 'makes expected calls' do
-        expect(described_class).to receive(:order).with('RANDOM()').and_return(mock_subject)
-        expect(mock_subject).to receive(:limit).with(2)
-        described_class.random
+      xit 'returns random record' do
       end
     end
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-describe Api::V1::ErasController do
+describe Api::V1::PlaylistsController do
   include Rack::Test::Methods
 
   let(:json_data) { JSON[subject.body].deep_symbolize_keys[:data] }

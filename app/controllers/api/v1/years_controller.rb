@@ -45,11 +45,16 @@ class Api::V1::YearsController < Api::V1::ApiController
   end
 
   def requested_years
-    @requested_years =
-      if params[:id] =~ /\A(\d{4})-(\d+{4})\z/
-        [Regexp.last_match[1], Regexp.last_match[2]]
-      elsif params[:id].match?(/\A\d{4}\z/)
-        [params[:id], params[:id]]
-      end
+    @requested_years = years_from_range || years_from_single
+  end
+
+  def years_from_single
+    return unless params[:id].match?(/\A\d{4}\z/)
+    [params[:id], params[:id]]
+  end
+
+  def years_from_range
+    return unless params[:id] =~ /\A(\d{4})-(\d+{4})\z/
+    [Regexp.last_match[1], Regexp.last_match[2]]
   end
 end

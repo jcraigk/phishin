@@ -40,12 +40,17 @@ class Api::V1::ShowsController < Api::V1::ApiController
   end
 
   def month_and_day_from_params
-    @month_and_day_from_params ||=
-      if params[:day] =~ long_form_regex
-        [month_num(Regexp.last_match[1]), Regexp.last_match[2]]
-      elsif params[:day] =~ short_form_regex
-        [Regexp.last_match[1], Regexp.last_match[2]]
-      end
+    @month_and_day_from_params ||= month_day_from_longform || month_day_from_shortform
+  end
+
+  def month_day_from_longform
+    return unless params[:day] =~ long_form_regex
+    [month_num_from_name(Regexp.last_match[1]), Regexp.last_match[2]]
+  end
+
+  def month_day_from_shortform
+    return unless params[:day] =~ short_form_regex
+    [Regexp.last_match[1], Regexp.last_match[2]]
   end
 
   def month_num_from_name(name)
