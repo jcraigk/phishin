@@ -12,40 +12,17 @@ class Api::V1::ShowsController < Api::V1::ApiController
   end
 
   def show
-    if params[:id] =~ /\d{4}-\d{2}-\d{2}/
-      if data = Show.where(date: params[:id]).includes(:venue, { tracks: :songs }, :tags).first
-        respond_with_success data
-      else
-        respond_with_404
-      end
-    else
-      if data = Show.where(id: params[:id]).includes(:venue, { tracks: :songs }, :tags).first
-        respond_with_success data
-      else
-        respond_with_404
-      end
-    end
+    return respond_with_success(show_on_date) if show_id_is_date?
+    respond_with_success show_scope.find(params[:id])
   end
 
   def on_date
-    begin
-      Date.parse(params[:date])
-      respond_with_success Show.where(date: params[:date]).includes(:venue, { tracks: :songs }, :tags).first
-    rescue
-      respond_with_404
-    end
+    respond_with_success show_on_date
   end
 
   def on_day_of_year
-    if monthday = params[:day].match(/\A(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})\z/i)
-      month = Date::MONTHNAMES.index(monthday[1].titleize)
-    elsif monthday = params[:day].match(/\A(\d{1,2})-(\d{1,2})\z/i)
-      month = monthday[1].to_i
-    else
-      respond_with_404
-    end
-    day = Integer(monthday[2], 10)
-    respond_with_success Show.avail.where('extract(month from date) = ?', month).where('extract(day from date) = ?', day).paginate(page: params[:page], per_page: params[:per_page])
+    return respond_with_404 unless month_and_day_from_params
+    respond_with_success shows_on_day
   end
 
   def random
@@ -53,6 +30,42 @@ class Api::V1::ShowsController < Api::V1::ApiController
   end
 
   private
+
+  def month_param
+    month_and_day_from_params&.first
+  end
+
+  def day_param
+    month_and_day_from_params&.second
+  end
+
+  def month_and_day_from_params
+    @month_and_day_from_params ||=
+      if params[:day] =~
+         /\A(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})\z/i
+        [Date::MONTHNAMES.index(Regexp.last_match[1].titleize), Regexp.last_match[2]]
+      elsif params[:day] =~ /\A(\d{1,2})-(\d{1,2})\z/i
+        [Regexp.last_match[1], Regexp.last_match[2]]
+      end
+  end
+
+  def shows_on_day
+    Show.avail
+        .where('extract(month from date) = ?', month_param)
+        .where('extract(day from date) = ?', day_param)
+  end
+
+  def show_scope
+    Show.includes(:venue, { tracks: :songs }, :tags)
+  end
+
+  def show_id_is_date?
+    params[:id] =~ /\d{4}-\d{2}-\d{2}/
+  end
+
+  def show_on_date
+    @show_on_date ||= show_scope.find_by!(date: params[:id] || params[:date])
+  end
 
   def random_show
     Show.includes(:venue, { tracks: :songs }, :tags)
