@@ -16,13 +16,13 @@ class Api::V1::ShowsController < Api::V1::ApiController
       if data = Show.where(date: params[:id]).includes(:venue, { tracks: :songs }, :tags).first
         respond_with_success data
       else
-        respond_with_failure 'Show date not found'
+        respond_with_404
       end
     else
       if data = Show.where(id: params[:id]).includes(:venue, { tracks: :songs }, :tags).first
         respond_with_success data
       else
-        respond_with_failure 'Show ID not found'
+        respond_with_404
       end
     end
   end
@@ -32,7 +32,7 @@ class Api::V1::ShowsController < Api::V1::ApiController
       Date.parse(params[:date])
       respond_with_success Show.where(date: params[:date]).includes(:venue, { tracks: :songs }, :tags).first
     rescue
-      respond_with_failure 'Invalid date'
+      respond_with_404
     end
   end
 
@@ -42,7 +42,7 @@ class Api::V1::ShowsController < Api::V1::ApiController
     elsif monthday = params[:day].match(/\A(\d{1,2})-(\d{1,2})\z/i)
       month = monthday[1].to_i
     else
-      respond_with_failure 'Invalid day'
+      respond_with_404
     end
     day = Integer(monthday[2], 10)
     respond_with_success Show.avail.where('extract(month from date) = ?', month).where('extract(day from date) = ?', day).paginate(page: params[:page], per_page: params[:per_page])

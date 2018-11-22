@@ -9,7 +9,7 @@ class Api::V1::YearsController < Api::V1::ApiController
 
   def show
     return respond_with_success(shows_that_year) if requested_years
-    respond_with_failure 'Invalid year or year range'
+    respond_with_404
   end
 
   private

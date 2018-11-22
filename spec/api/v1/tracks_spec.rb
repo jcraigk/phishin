@@ -42,15 +42,9 @@ describe Api::V1::TracksController do
     end
 
     context 'with invalid id param' do
-      subject { get("/api/v1/tracks/nonexistent-track") }
+      subject { get('/api/v1/tracks/nonexistent-track') }
 
-      it 'responds with error' do
-        expect(subject.status).to eq(404)
-        expect(json).to eq(
-          success: false,
-          message: 'Record not found'
-        )
-      end
+      include_examples 'responds with 404'
     end
   end
 end

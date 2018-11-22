@@ -62,7 +62,6 @@ Rails.application.routes.draw do
   # Catch-all matcher for short content URLs
   get '/(:glob(/:anchor))' => 'content#glob', constraints: { glob: %r{[^\/]+} }
 
-  ##############################################
   # API Routes
   namespace :api do
     namespace :v1 do
@@ -77,28 +76,6 @@ Rails.application.routes.draw do
       resources :songs,     only: %i[index show]
       resources :tags,      only: %i[index show]
       resources :playlists, only: %i[show]
-
-      namespace :playlists do
-        get    'details'
-
-        # Auth required
-        get    'user_playlists'
-        post   'save'
-        delete 'destroy'
-        get    'user_bookmarks'
-        post   'bookmark'
-        post   'unbookmark'
-      end
-
-      namespace :likes do
-        get  'top_shows'
-        get  'top_tracks'
-
-        # Auth required
-        get  'user_likes'
-        post 'like'
-        post 'unlike'
-      end
 
       # Misc
       get 'search/:term',              to: 'search#index'

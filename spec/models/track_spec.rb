@@ -13,9 +13,18 @@ RSpec.describe Track do
 
   it { is_expected.to have_attached_file(:audio_file) }
 
-  it 'generates a slug from title (friendly_id)' do
-    subject.save
-    expect(subject.slug).to eq('bathtub-gin')
+  context 'friendly_id slugs' do
+    let(:show) { create(:show) }
+    let(:other_tracks) { create_list(:track, 2, title: 'Bathtub Gin', show: show) }
+
+    it 'generates a slug from title (friendly_id), scoped to show' do
+      subject.save
+      expect(subject.slug).to eq('bathtub-gin')
+      expect(other_tracks.first.slug).to eq('bathtub-gin')
+      expect(other_tracks.second.slug).to match(
+        /\Abathtub-gin-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/
+      )
+    end
   end
 
   context 'PgSearch kinda_matching title' do

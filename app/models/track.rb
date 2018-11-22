@@ -16,7 +16,7 @@ class Track < ApplicationRecord
   )
 
   extend FriendlyId
-  friendly_id :title, use: :slugged
+  friendly_id :title, use: :scoped, scope: :show
 
   include PgSearch
   pg_search_scope(

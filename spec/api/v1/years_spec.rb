@@ -65,17 +65,10 @@ describe Api::V1::YearsController do
       end
     end
 
-    # TODO: write api error matcher
     context 'when providing invalid input' do
       subject { get('/api/v1/years/bobweaver') }
 
-      it 'returns error' do
-        expect(subject.status).to eq(400)
-        expect(json).to eq(
-          success: false,
-          message: 'Invalid year or year range'
-        )
-      end
+      include_examples 'responds with 404'
     end
   end
 end

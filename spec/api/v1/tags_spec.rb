@@ -16,11 +16,19 @@ describe Api::V1::TagsController do
   end
 
   describe 'show' do
-    let(:tag) { create(:tag, :with_tracks, :with_shows) }
-    subject { get("/api/v1/tags/#{tag.id}") }
+    context 'with valid id param' do
+      let(:tag) { create(:tag, :with_tracks, :with_shows) }
+      subject { get("/api/v1/tags/#{tag.id}") }
 
-    it 'responds with expected data' do
-      expect(json_data).to eq([tag.as_json_api])
+      it 'responds with expected data' do
+        expect(json_data).to eq(tag.as_json_api)
+      end
+    end
+
+    context 'with invalid id param' do
+      subject { get('/api/v1/tags/nonexistent-tour') }
+
+      include_examples 'responds with 404'
     end
   end
 end

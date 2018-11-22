@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 class Api::V1::ApiController < ActionController::Base
-  before_action :attempt_user_authorization!
   after_action :set_json_content_type
 
   rescue_from ActiveRecord::RecordNotFound, with: :respond_with_404
@@ -25,19 +24,6 @@ class Api::V1::ApiController < ActionController::Base
       page: page,
       data: data_as_json(data, opts)
     }
-  end
-
-  def respond_with_success_simple(message = nil)
-    response = { success: true }
-    response[:message] = message if message.present?
-    render json: response
-  end
-
-  def respond_with_failure(message = nil)
-    render json: {
-      success: false,
-      message: message
-    }, status: 400
   end
 
   def respond_with_404
@@ -83,30 +69,5 @@ class Api::V1::ApiController < ActionController::Base
 
   def sort_dir
     params[:sort_dir].in?(%w[asc desc]) ? params[:sort_dir] : 'desc'
-  end
-
-  def attempt_user_authorization!
-    return unless params[:user].present? &&
-                  params[:user][:email].present? &&
-                  params[:user][:auth_token].present?
-    authenticate_user_from_token!
-  end
-
-  # https://gist.github.com/josevalim/fb706b1e933ef01e4fb6
-  def authenticate_user_from_token!
-    return if current_user
-
-    user_email = params[:user][:email].presence
-    user = user_email && User.find_by_email(user_email)
-    return sign_in('user', user) if user && secure_compare
-
-    render json: { success: false, message: 'Invalid email or auth_token' }
-  end
-
-  def secure_compare
-    Devise.secure_compare(
-      user.authentication_token,
-      params[:user][:auth_token]
-    )
   end
 end

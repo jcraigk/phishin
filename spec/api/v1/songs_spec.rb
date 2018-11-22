@@ -38,13 +38,7 @@ describe Api::V1::SongsController do
     context 'when requesting invalid song' do
       subject { get("/api/v1/songs/nonexistent-song") }
 
-      it 'responds with error' do
-        expect(subject.status).to eq(404)
-        expect(json).to eq(
-          success: false,
-          message: 'Record not found'
-        )
-      end
+      include_examples 'responds with 404'
     end
   end
 end

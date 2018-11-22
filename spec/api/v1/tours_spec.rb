@@ -16,11 +16,19 @@ describe Api::V1::ToursController do
   end
 
   describe 'show' do
-    let(:tour) { create(:tour) }
-    subject { get("/api/v1/tours/#{tour.id}") }
+    context 'with valid id param' do
+      let(:tour) { create(:tour) }
+      subject { get("/api/v1/tours/#{tour.id}") }
 
-    it 'responds with expected data' do
-      expect(json_data).to eq(tour.as_json_api)
+      it 'responds with expected data' do
+        expect(json_data).to eq(tour.as_json_api)
+      end
+    end
+
+    context 'with invalid id param' do
+      subject { get('/api/v1/tours/nonexistent-tour') }
+
+      include_examples 'responds with 404'
     end
   end
 end

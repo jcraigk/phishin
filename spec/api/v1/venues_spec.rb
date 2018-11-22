@@ -36,15 +36,9 @@ describe Api::V1::VenuesController do
     end
 
     context 'when requesting invalid venue' do
-      subject { get("/api/v1/venues/nonexistent-venue") }
+      subject { get('/api/v1/venues/nonexistent-venue') }
 
-      it 'responds with error' do
-        expect(subject.status).to eq(404)
-        expect(json).to eq(
-          success: false,
-          message: 'Record not found'
-        )
-      end
+      include_examples 'responds with 404'
     end
   end
 end
