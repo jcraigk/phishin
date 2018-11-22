@@ -37,15 +37,19 @@ class Api::V1::ApiController < ActionController::Base
 
   def data_as_json(data, opts = {})
     if data.is_a?(Enumerable) && !data.is_a?(Hash)
-      if opts[:serialize_method].present?
-        data.map { |d| d.send(opts[:serialize_method]) }
-      else
-        data.first.respond_to?(:as_json_api) ? data.map(&:as_json_api) : data.map(&:as_json)
-      end
+      serialize_collection(data, opts)
     elsif opts[:serialize_method].present?
       data.send(opts[:serialize_method])
     else
       data.respond_to?(:as_json_api) ? data.as_json_api : data.as_json
+    end
+  end
+
+  def serialize_collection(data, opts)
+    if opts[:serialize_method].present?
+      data.map { |d| d.send(opts[:serialize_method]) }
+    else
+      data.first.respond_to?(:as_json_api) ? data.map(&:as_json_api) : data.map(&:as_json)
     end
   end
 

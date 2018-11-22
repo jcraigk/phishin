@@ -41,12 +41,23 @@ class Api::V1::ShowsController < Api::V1::ApiController
 
   def month_and_day_from_params
     @month_and_day_from_params ||=
-      if params[:day] =~
-         /\A(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})\z/i
-        [Date::MONTHNAMES.index(Regexp.last_match[1].titleize), Regexp.last_match[2]]
-      elsif params[:day] =~ /\A(\d{1,2})-(\d{1,2})\z/i
+      if params[:day] =~ long_form_regex
+        [month_num(Regexp.last_match[1]), Regexp.last_match[2]]
+      elsif params[:day] =~ short_form_regex
         [Regexp.last_match[1], Regexp.last_match[2]]
       end
+  end
+
+  def month_num_from_name(name)
+    Date::MONTHNAMES.index(name.titleize)
+  end
+
+  def long_form_regex
+    /\A(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})\z/i
+  end
+
+  def short_form_regex
+    /\A(\d{1,2})-(\d{1,2})\z/i
   end
 
   def shows_on_day
