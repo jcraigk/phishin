@@ -18,8 +18,8 @@
           li
             h2.wider
               a href="/#{year}" = year
-            h4.narrow = pluralize(shows_for_year(year).map(&:venue).uniq.size, 'venue')
-            h3.alt = pluralize(shows_for_year(year).size, 'show')
+            h4.narrow = pluralize(@shows[year].map(&:venue).uniq.size, 'venue')
+            h3.alt = pluralize(@shows[year].size, 'show')
             = clear_both
 
   = clear_both

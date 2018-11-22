@@ -4,14 +4,6 @@ module ApplicationHelper
     content_tag :div, '', style: 'clear: both;'
   end
 
-  def shows_for_year(year)
-    if year == '1983-1987'
-      Show.avail.between_years('1983', '1987').includes(:venue)
-    else
-      Show.avail.during_year(year).includes(:venue)
-    end
-  end
-
   def total_hours_of_music
     (Show.avail.map(&:duration).inject(0, &:+) / 3_600_000).round
   end

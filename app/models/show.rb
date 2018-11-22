@@ -26,7 +26,7 @@ class Show < ApplicationRecord
     where('extract(month from date) = ?', month)
       .where('extract(day from date) = ?', day)
   }
-  scope :random, ->(amt = 1) { order('RANDOM()').limit(amt) }
+  scope :random, ->(amt = 1) { order(Arel.sql('RANDOM()')).limit(amt) }
   scope :tagged_with, ->(tag_name) { joins(:tags).where(tags: { name: tag_name }) }
 
   delegate :name, to: :tour, prefix: true
