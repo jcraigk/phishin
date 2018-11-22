@@ -5,5 +5,9 @@ FactoryBot.define do
     email { Faker::Internet.email }
     password { 'password' }
     password_confirmation { 'password' }
+
+    trait :with_likes do
+      likes { create_list(:like, 3) }
+    end
   end
 end

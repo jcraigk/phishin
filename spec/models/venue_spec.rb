@@ -6,6 +6,10 @@ RSpec.describe Venue do
 
   it { is_expected.to have_many(:shows) }
 
+  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:city) }
+  it { is_expected.to validate_presence_of(:country) }
+
   it 'generates a slug from name (friendly_id)' do
     subject.save
     expect(subject.slug).to eq('madison-square-garden')
@@ -77,12 +81,12 @@ RSpec.describe Venue do
         id: subject.id,
         name: subject.name,
         past_names: subject.past_names,
-        latitude: subject.latitude,
-        longitude: subject.longitude,
+        latitude: subject.latitude.round(6),
+        longitude: subject.longitude.round(6),
         shows_count: subject.shows_count,
         location: subject.location,
         slug: subject.slug,
-        updated_at: subject.updated_at
+        updated_at: subject.updated_at.to_s
       )
     end
 
@@ -91,17 +95,17 @@ RSpec.describe Venue do
         id: subject.id,
         name: subject.name,
         past_names: subject.past_names,
-        latitude: subject.latitude,
-        longitude: subject.longitude,
+        latitude: subject.latitude.round(6),
+        longitude: subject.longitude.round(6),
         shows_count: subject.shows_count,
         location: subject.location,
         city: subject.city,
         state: subject.state,
         country: subject.country,
         slug: subject.slug,
-        show_dates: subject.shows.order(date: :asc).map(&:date),
+        show_dates: subject.shows.order(date: :asc).map(&:date).map(&:to_s),
         show_ids: subject.shows.order(date: :asc).map(&:id),
-        updated_at: subject.updated_at
+        updated_at: subject.updated_at.to_s
       )
     end
   end

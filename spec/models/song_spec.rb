@@ -82,7 +82,7 @@ RSpec.describe Song do
         alias_for: subject.alias_for,
         tracks_count: subject.tracks_count,
         slug: subject.slug,
-        updated_at: subject.updated_at
+        updated_at: subject.updated_at.to_s
       )
     end
 
@@ -93,14 +93,14 @@ RSpec.describe Song do
         alias_for: subject.alias_for,
         tracks_count: subject.tracks_count,
         slug: subject.slug,
-        updated_at: subject.updated_at,
+        updated_at: subject.updated_at.to_s,
         tracks: subject.tracks.sort_by { |t| t.show.date }.map do |t|
           {
             id: t.id,
             title: t.title,
             duration: t.duration,
             show_id: t.show.id,
-            show_date: t.show.date,
+            show_date: t.show.date.to_s,
             set: t.set,
             position: t.position,
             likes_count: t.likes_count,

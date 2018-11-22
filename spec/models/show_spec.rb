@@ -18,8 +18,8 @@ RSpec.describe Show do
 
   context 'scopes' do
     context '#avail' do
-      let!(:show1) { create(:show, missing: false) }
-      let!(:show2) { create(:show) }
+      let!(:show1) { create(:show) }
+      let!(:show2) { create(:show, missing: true) }
 
       it 'returns expected objects' do
         expect(described_class.avail).to eq([show1])
@@ -56,12 +56,7 @@ RSpec.describe Show do
     end
 
     context '#random' do
-      let(:mock_subject) { spy(described_class) }
-
-      xit 'makes expected calls' do
-        expect(described_class).to receive(:order).with('RANDOM()').and_return(mock_subject)
-        expect(mock_subject).to receive(:limit).with(2)
-        described_class.random
+      xit 'returns random record' do
       end
     end
 
@@ -92,7 +87,7 @@ RSpec.describe Show do
     it 'provides #as_json' do
       expect(subject.as_json).to eq(
         id: subject.id,
-        date: subject.date,
+        date: subject.date.to_s,
         duration: subject.duration,
         incomplete: subject.incomplete,
         missing: subject.missing,
@@ -102,7 +97,7 @@ RSpec.describe Show do
         venue_id: subject.venue_id,
         likes_count: subject.likes_count,
         taper_notes: subject.taper_notes,
-        updated_at: subject.updated_at,
+        updated_at: subject.updated_at.to_s,
         venue_name: subject.venue&.name,
         location: subject.venue&.location
       )
@@ -111,7 +106,7 @@ RSpec.describe Show do
     it 'provides #as_json_api' do
       expect(subject.as_json_api).to eq(
         id: subject.id,
-        date: subject.date,
+        date: subject.date.to_s,
         duration: subject.duration,
         incomplete: subject.incomplete,
         missing: subject.missing,
@@ -123,7 +118,7 @@ RSpec.describe Show do
         taper_notes: subject.taper_notes,
         likes_count: subject.likes_count,
         tracks: subject.tracks.sort_by(&:position).map(&:as_json_api),
-        updated_at: subject.updated_at
+        updated_at: subject.updated_at.to_s
       )
     end
   end

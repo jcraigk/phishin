@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_17_234052) do
+ActiveRecord::Schema.define(version: 2018_11_20_044655) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,18 +52,6 @@ ActiveRecord::Schema.define(version: 2018_11_17_234052) do
     t.index ["name"], name: "index_playlists_on_name"
     t.index ["slug"], name: "index_playlists_on_slug"
     t.index ["user_id"], name: "index_playlists_on_user_id"
-  end
-
-  create_table "rails_admin_histories", id: :serial, force: :cascade do |t|
-    t.text "message"
-    t.string "username", limit: 255
-    t.integer "item"
-    t.string "table", limit: 255
-    t.integer "month", limit: 2
-    t.bigint "year"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["item", "table", "month", "year"], name: "index_rails_admin_histories"
   end
 
   create_table "show_tags", id: :serial, force: :cascade do |t|

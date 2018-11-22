@@ -13,9 +13,18 @@ RSpec.describe Track do
 
   it { is_expected.to have_attached_file(:audio_file) }
 
-  it 'generates a slug from title (friendly_id)' do
-    subject.save
-    expect(subject.slug).to eq('bathtub-gin')
+  context 'friendly_id slugs' do
+    let(:show) { create(:show) }
+    let(:other_tracks) { create_list(:track, 2, title: 'Bathtub Gin', show: show) }
+
+    it 'generates a slug from title (friendly_id), scoped to show' do
+      subject.save
+      expect(subject.slug).to eq('bathtub-gin')
+      expect(other_tracks.first.slug).to eq('bathtub-gin')
+      expect(other_tracks.second.slug).to match(
+        /\Abathtub-gin-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/
+      )
+    end
   end
 
   context 'PgSearch kinda_matching title' do
@@ -36,6 +45,7 @@ RSpec.describe Track do
   it { is_expected.to validate_presence_of(:show) }
   it { is_expected.to validate_presence_of(:title) }
   it { is_expected.to validate_presence_of(:position) }
+  it { is_expected.to validate_presence_of(:set) }
   it { is_expected.to validate_uniqueness_of(:position).scoped_to(:show_id) }
 
   it 'validates >= 1 song associated' do
@@ -128,7 +138,7 @@ RSpec.describe Track do
   end
 
   context 'serialization' do
-    before { subject.save }
+    subject { create(:track) }
 
     it 'provides #as_json' do
       expect(subject.as_json).to eq(
@@ -142,7 +152,7 @@ RSpec.describe Track do
         slug: subject.slug,
         mp3: subject.mp3_url,
         song_ids: subject.songs.map(&:id),
-        updated_at: subject.updated_at
+        updated_at: subject.updated_at.to_s
       )
     end
 
@@ -150,7 +160,7 @@ RSpec.describe Track do
       expect(subject.as_json_api).to eq(
         id: subject.id,
         show_id: subject.show.id,
-        show_date: subject.show.date,
+        show_date: subject.show.date.to_s,
         title: subject.title,
         position: subject.position,
         duration: subject.duration,
@@ -161,7 +171,7 @@ RSpec.describe Track do
         tags: subject.tags.sort_by(&:priority).map(&:name).as_json,
         mp3: subject.mp3_url,
         song_ids: subject.songs.map(&:id),
-        updated_at: subject.updated_at
+        updated_at: subject.updated_at.to_s
       )
     end
   end

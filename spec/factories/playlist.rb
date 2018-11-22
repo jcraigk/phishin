@@ -7,7 +7,9 @@ FactoryBot.define do
     user
 
     trait :with_tracks do
-      tracks { build_list(:track, 5) }
+      after(:build) do |playlist|
+        create_list(:playlist_track, 2, playlist: playlist)
+      end
     end
   end
 end

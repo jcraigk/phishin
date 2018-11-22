@@ -6,7 +6,7 @@ class DateParserService
     @str = str
   end
 
-  def parse
+  def call
     year, month, day = nil
     # handle 2-digit year as in 3/11/90
     if str =~ %r{\A(\d{1,2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})\z}

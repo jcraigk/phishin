@@ -5,6 +5,9 @@ class Tag < ApplicationRecord
   has_many :track_tags
   has_many :tracks, through: :track_tags
 
+  validates :name, :color, :priority, presence: true
+  validates :priority, uniqueness: true
+
   extend FriendlyId
   friendly_id :name, use: :slugged
 
@@ -14,7 +17,7 @@ class Tag < ApplicationRecord
       name: name,
       slug: slug,
       description: description,
-      updated_at: updated_at
+      updated_at: updated_at.to_s
     }
   end
 
@@ -24,9 +27,9 @@ class Tag < ApplicationRecord
       name: name,
       slug: slug,
       description: description,
-      updated_at: updated_at,
-      shows: show_tags,
-      tracks: track_tags
+      updated_at: updated_at.to_s,
+      show_ids: shows.map(&:id),
+      track_ids: tracks.map(&:id)
     }
   end
 end

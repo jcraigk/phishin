@@ -7,6 +7,8 @@ class Venue < ApplicationRecord
 
   geocoded_by :address
 
+  validates :name, :city, :country, presence: true
+
   scope :relevant, -> { where('shows_count > 0') }
   scope :name_starting_with, lambda { |char|
     where(
@@ -43,12 +45,12 @@ class Venue < ApplicationRecord
       id: id,
       name: name,
       past_names: past_names,
-      latitude: latitude,
-      longitude: longitude,
+      latitude: latitude.round(6),
+      longitude: longitude.round(6),
       shows_count: shows_count,
       location: location,
       slug: slug,
-      updated_at: updated_at
+      updated_at: updated_at.to_s
     }
   end
 
@@ -57,23 +59,23 @@ class Venue < ApplicationRecord
       id: id,
       name: name,
       past_names: past_names,
-      latitude: latitude,
-      longitude: longitude,
+      latitude: latitude.round(6),
+      longitude: longitude.round(6),
       shows_count: shows_count,
       location: location,
       city: city,
       state: state,
       country: country,
       slug: slug,
-      show_dates: shows_played_here.map(&:date),
+      show_dates: shows_played_here.map(&:date).map(&:to_s),
       show_ids: shows_played_here.map(&:id),
-      updated_at: updated_at
+      updated_at: updated_at.to_s
     }
   end
 
   private
 
   def shows_played_here
-    @shows_played_here ||= shows.order('date').all
+    @shows_played_here ||= shows.order(date: :asc).all
   end
 end

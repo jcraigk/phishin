@@ -40,7 +40,7 @@ class ContentController < ApplicationController
       Show.avail
           .where('likes_count > 0')
           .includes(:venue, :tags)
-          .order('likes_count desc, date desc')
+          .order(likes_count: :desc, date: :desc)
           .limit(40)
     @shows_likes = @shows.map { |show| get_user_show_like(show) }
     render_xhr_without_layout
@@ -50,7 +50,7 @@ class ContentController < ApplicationController
     @tracks =
       Track.where('likes_count > 0')
            .includes(:show, :tags)
-           .order('likes_count desc, title asc')
+           .order(likes_count: :desc, title: :asc)
            .limit(40)
     @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
     render_xhr_without_layout
@@ -225,7 +225,7 @@ class ContentController < ApplicationController
           .first
     @previous_show ||=
       Show.avail
-          .order('date desc')
+          .order(date: :desc)
           .first if @previous_show.nil?
   end
 
@@ -243,10 +243,10 @@ class ContentController < ApplicationController
                      .includes({ show: :venue }, :songs, :tags)
                      .order(@order_by)
                      .paginate(page: params[:page], per_page: 20)
-      @next_song = Song.relevant.where('title > ?', @song.title).order('title asc').first
-      @next_song ||= Song.relevant.order('title asc').first
-      @previous_song = Song.relevant.where('title < ?', @song.title).order('title desc').first
-      @previous_song ||= Song.relevant.order('title desc').first
+      @next_song = Song.relevant.where('title > ?', @song.title).order(title: :asc).first
+      @next_song ||= Song.relevant.order(title: :asc).first
+      @previous_song = Song.relevant.where('title < ?', @song.title).order(title: :desc).first
+      @previous_song ||= Song.relevant.order(title: :desc).first
       @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
     end
 
@@ -261,10 +261,10 @@ class ContentController < ApplicationController
 
     @shows = @venue.shows.includes(:tags).order(@order_by)
     @shows_likes = @shows.map { |show| get_user_show_like(show) }
-    @next_venue = Venue.relevant.where('name > ?', @venue.name).order('name asc').first
-    @next_venue = Venue.relevant.order('name asc').first if @next_venue.nil?
-    @previous_venue = Venue.relevant.where('name < ?', @venue.name).order('name desc').first
-    @previous_venue = Venue.relevant.order('name desc').first if @previous_venue.nil?
+    @next_venue = Venue.relevant.where('name > ?', @venue.name).order(name: :asc).first
+    @next_venue = Venue.relevant.order(name: :asc).first if @next_venue.nil?
+    @previous_venue = Venue.relevant.where('name < ?', @venue.name).order(name: :desc).first
+    @previous_venue = Venue.relevant.order(name: :desc).first if @previous_venue.nil?
 
     true
   end
@@ -273,7 +273,7 @@ class ContentController < ApplicationController
     @tour = Tour.where(slug: slug.downcase).includes(:shows).first
     return false unless @tour.present?
 
-    @shows = @tour.shows.includes(:tags).order('date desc')
+    @shows = @tour.shows.includes(:tags).order(date: :desc)
     @shows_likes = @shows.map { |show| get_user_show_like(show) }
 
     true

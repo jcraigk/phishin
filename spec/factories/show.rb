@@ -2,14 +2,16 @@
 FactoryBot.define do
   factory :show do
     date { Faker::Date.between(30.years.ago, Date.today) }
-    missing { true }
+    missing { false }
     taper_notes { Faker::Lorem.paragraph }
 
     tour
     venue
 
     trait :with_tracks do
-      tracks { build_list(:track, 5) }
+      after(:build) do |show|
+        create_list(:track, 5, show: show)
+      end
     end
 
     trait :with_likes do

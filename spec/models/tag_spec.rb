@@ -9,13 +9,18 @@ RSpec.describe Tag do
   it { is_expected.to have_many(:track_tags) }
   it { is_expected.to have_many(:tracks).through(:track_tags) }
 
+  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:color) }
+  it { is_expected.to validate_presence_of(:priority) }
+  it { is_expected.to validate_uniqueness_of(:priority) }
+
   it 'generates a slug from name (friendly_id)' do
     subject.save
     expect(subject.slug).to eq('musical-tease')
   end
 
   context 'serialization' do
-    subject { build(:tag, :with_tracks, :with_shows) }
+    subject { create(:tag, :with_tracks, :with_shows) }
 
     it 'provides #as_json' do
       expect(subject.as_json).to eq(
@@ -23,7 +28,7 @@ RSpec.describe Tag do
         name: subject.name,
         slug: subject.slug,
         description: subject.description,
-        updated_at: subject.updated_at
+        updated_at: subject.updated_at.to_s
       )
     end
 
@@ -33,9 +38,9 @@ RSpec.describe Tag do
         name: subject.name,
         slug: subject.slug,
         description: subject.description,
-        updated_at: subject.updated_at,
-        shows: subject.show_tags,
-        tracks: subject.track_tags
+        updated_at: subject.updated_at.to_s,
+        show_ids: subject.shows.map(&:id),
+        track_ids: subject.tracks.map(&:id)
       )
     end
   end
