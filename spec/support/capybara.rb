@@ -4,6 +4,8 @@ require 'capybara/rspec'
 require 'capybara-screenshot/rspec'
 require 'selenium/webdriver'
 
+Capybara.server = :puma, { Silent: true }
+
 if ENV['IN_DOCKER']
   Capybara.register_driver :remote_chrome do |app|
     Capybara::Selenium::Driver.new(
@@ -37,7 +39,7 @@ Capybara.register_driver :rack_test do |app|
 end
 
 Capybara.configure do |config|
-  config.default_max_wait_time = 30
+  config.default_max_wait_time = 2
   config.default_driver = :rack_test
   if ENV['IN_DOCKER']
     config.javascript_driver = :remote_chrome

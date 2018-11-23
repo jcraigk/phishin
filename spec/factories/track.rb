@@ -11,7 +11,7 @@ FactoryBot.define do
 
     trait :with_likes do
       after(:build) do |track|
-        create_list(:like, 5, likable: track)
+        create_list(:like, 2, likable: track)
       end
     end
 

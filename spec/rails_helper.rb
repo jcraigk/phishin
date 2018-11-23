@@ -26,4 +26,5 @@ RSpec.configure do |config|
     Timecop.return
   end
   config.include Paperclip::Shoulda::Matchers
+  config.include FeatureHelpers
 end
