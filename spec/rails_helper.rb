@@ -24,6 +24,7 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   config.after(:each) do
     Timecop.return
+    Faker::UniqueGenerator.clear
   end
   config.include Paperclip::Shoulda::Matchers
   config.include FeatureHelpers

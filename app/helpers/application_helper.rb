@@ -328,14 +328,12 @@ module ApplicationHelper
   end
 
   def tag_label(tag, css_class = '')
-    link_to tag_path(name: tag.name.downcase) do
-      content_tag(
-        :span,
-        tag.name,
-        class: "label tag_label #{css_class}",
-        style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color}"
-      )
-    end
+    content_tag(
+      :span,
+      tag.name,
+      class: "label tag_label #{css_class}",
+      style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color}"
+    )
   end
 
   def contrasting_color(color)

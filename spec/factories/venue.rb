@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :venue do
-    name { Faker::Address.community }
+    name { Faker::Address.unique.community }
     city { Faker::Address.city }
     state { Faker::Address.state }
     country { Faker::Address.country }

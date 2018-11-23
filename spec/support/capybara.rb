@@ -5,6 +5,7 @@ require 'capybara-screenshot/rspec'
 require 'selenium/webdriver'
 
 Capybara.server = :puma, { Silent: true }
+Capybara.raise_server_errors = false
 
 if ENV['IN_DOCKER']
   Capybara.register_driver :remote_chrome do |app|

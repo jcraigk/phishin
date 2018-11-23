@@ -12,6 +12,7 @@ RSpec.describe Tag do
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:color) }
   it { is_expected.to validate_presence_of(:priority) }
+  it { is_expected.to validate_uniqueness_of(:name) }
   it { is_expected.to validate_uniqueness_of(:priority) }
 
   it 'generates a slug from name (friendly_id)' do

@@ -12,11 +12,11 @@
       - @tags.each do |tag|
         li
           h2
-            a href="/tags/#{tag.name.downcase}?entity=track"
+            a href="/tags/#{URI.encode(tag.name.downcase)}?entity=track"
               .tag_container_small = tag_label(tag)
           h2.wider.small-font = truncate(tag.description, length: 70)
-          h3.alt = pluralize_with_delimiter(tag.tracks_count, 'Track')
-          h3 = pluralize_with_delimiter(tag.shows_count, 'Show')
+          h3.alt = pluralize_with_delimiter(tag.tracks_count, 'track')
+          h3.alt = pluralize_with_delimiter(tag.shows_count, 'show')
           = clear_both
 
   = clear_both
