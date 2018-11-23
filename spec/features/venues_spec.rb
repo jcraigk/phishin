@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Venues page', :js do
+feature 'Venues', :js do
   given(:venues) { create_list(:venue, 30, :with_shows) }
   given(:a_name) { 'Alpine Valley Music Theater' }
   given(:g_name) { 'Great Woods' }

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Tags page', :js do
+feature 'Tags', :js do
   given!(:tags) { create_list(:tag, 3, :with_tracks, :with_shows) }
   given(:tag) { tags.first }
 

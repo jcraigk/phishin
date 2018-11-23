@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Songs page', :js do
+feature 'Songs', :js do
   given(:songs) { create_list(:song, 30, :with_tracks) }
   given(:a_title) { 'Alaska' }
   given(:g_title) { 'Grind' }

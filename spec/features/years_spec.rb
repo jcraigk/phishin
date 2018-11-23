@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Homepage', :js do
+feature 'Years', :js do
   given(:venue) { create(:venue) }
+  given(:most_recent_year) { ERAS.values.flatten.last }
   given!(:shows) do
-    [1983, ERAS.values.flatten.last].each_with_object([]) do |year, shows|
+    [1983, most_recent_year].each_with_object([]) do |year, shows|
       (1..3).each do |day|
         shows << create(:show, venue: venue, date: "#{year}-01-#{day}")
       end
@@ -15,7 +16,7 @@ feature 'Homepage', :js do
     shows.last.update(venue: create(:venue))
   end
 
-  scenario 'visit front page' do
+  scenario 'visit root path' do
     visit root_path
 
     # Top section
@@ -68,5 +69,15 @@ feature 'Homepage', :js do
       expect(years[10].text).to eq('0 shows')
       expect(years.last.text).to eq('3 shows')
     end
+
+    # Click most recent year
+    click_link(most_recent_year)
+
+    within('#title_box') do
+      expect_content(most_recent_year, 'Shows: 3')
+    end
+
+    items = page.all('ul.item_list li')
+    expect(items.size).to eq(3)
   end
 end
