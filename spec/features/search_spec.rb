@@ -11,7 +11,6 @@ feature 'Search', :js do
   given(:date) { '1995-10-31' }
   given!(:show) { create(:show, date: date) }
 
-
   scenario 'visit Playlists page' do
     visit root_path
 

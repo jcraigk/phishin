@@ -13,13 +13,7 @@ feature 'Show', :js do
     visit show.date
 
     within('#title_box') do
-      expect_content(
-        show.venue.name,
-        'Taper Notes',
-        show.tags.first.name,
-        'Next Show',
-        'Previous Show'
-      )
+      expect_content(show.venue.name, 'Taper Notes', show.tags.first.name, 'Next Show', 'Previous Show')
     end
 
     # Main content
