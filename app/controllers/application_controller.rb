@@ -34,6 +34,7 @@ class ApplicationController < ActionController::Base
     track.likes.where(user: current_user).first
   end
 
+  # TODO: clean this up - it's called in N+1 fashion
   def get_user_show_like(show)
     return unless show && current_user
     show.likes.where(user: current_user).first

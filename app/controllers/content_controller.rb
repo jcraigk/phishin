@@ -3,7 +3,7 @@ class ContentController < ApplicationController
   caches_action :years, expires_in: CACHE_TTL
   caches_action :songs, expires_in: CACHE_TTL
   caches_action :venues, expires_in: CACHE_TTL
-  # TODO: Should we cache glob here too?
+  # TODO: Should we cache ambiguous_slug here too?
 
   ###############################
   # Hard-coded actions
@@ -60,11 +60,8 @@ class ContentController < ApplicationController
     render_xhr_without_layout
   end
 
-  ###############################
-  # Glob matching
-  ###############################
-  def glob
-    g = params[:glob]
+  def ambiguous_slug
+    g = params[:slug]
 
     # Day of Year?
     monthday = g.match(
@@ -80,7 +77,7 @@ class ContentController < ApplicationController
     # Year?
     elsif /\A\d{4}\z/.match?(g)
       if year g
-        @title = g
+        @title = "Year: #{g}"
         @controller_action = 'year'
         view = :year_or_scope
       else
@@ -90,7 +87,7 @@ class ContentController < ApplicationController
     elsif g =~ /\A(\d{4})-(\d{4})\z/
       matches = Regexp.last_match
       if year_range(matches[1], matches[2])
-        @title = "#{matches[1]} - #{matches[2]}"
+        @title = "Years: #{matches[1]}-#{matches[2]}"
         view = :year_or_scope
         @controller_action = 'year_range'
       else
@@ -285,6 +282,7 @@ class ContentController < ApplicationController
 
     @shows = @tour.shows.includes(:tags).order(date: :desc)
     @shows_likes = @shows.map { |show| get_user_show_like(show) }
+    @sections = { @tour.name => { shows: @shows, likes: [] } }
 
     true
   end

@@ -20,7 +20,7 @@ Layout/EmptyLineAfterMagicComment:
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
 Style/ClassAndModuleChildren:
-  EnforcedStyle: compact
+  Enabled: false
 Style/EmptyMethod:
   EnforcedStyle: expanded
 Metrics/BlockLength:

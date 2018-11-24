@@ -13,9 +13,6 @@ Rails.application.routes.draw do
   get '/contact-us' => 'pages#contact_us', as: 'contact_us'
   get '/api-docs' => 'pages#api_docs', as: 'api_docs'
 
-  # Error pages
-  get '/browser-unsupported' => 'errors#browser_unsupported', as: 'browser_unsupported'
-
   # Content navigation pages
   get '/years' => 'content#years', as: 'years'
   get '/songs' => 'content#songs', as: 'songs'
@@ -60,7 +57,7 @@ Rails.application.routes.draw do
   get '/download-track/:track_id' => 'downloads#download_track', as: 'download_track'
 
   # Catch-all matcher for short content URLs
-  get '/(:glob(/:anchor))' => 'content#glob', constraints: { glob: %r{[^\/]+} }
+  get '/(:slug(/:anchor))' => 'content#ambiguous_slug', constraints: { glob: %r{[^\/]+} }
 
   # API Routes
   namespace :api do
