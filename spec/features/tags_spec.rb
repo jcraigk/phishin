@@ -30,9 +30,16 @@ feature 'Tags', :js do
     items = page.all('ul.item_list li')
     expect(items.count).to eq(tag.tracks.count)
 
+    # Click Shows button
     click_button("Shows: #{tag.shows.count}")
 
     items = page.all('ul.item_list li')
     expect(items.count).to eq(tag.shows.count)
+
+    # Click first show date
+    within('#content_box') do
+      first('ul.item_list li a').click
+    end
+    expect(page.current_path).to match(/\d{4}-\d{2}-\d{2}/)
   end
 end

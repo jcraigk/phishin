@@ -27,7 +27,20 @@ feature 'Show', :js do
       expect_content('Set 1')
     end
 
-    # TODO: Test show dropdown menu
-    # TODO: Test track dropdown menu
+    track_items = page.all('.playable_track')
+    expect(track_items.count).to eq(show.tracks.count)
+
+    # Show context dropdown
+    first('.show-context-dropdown').click
+    within('.show-context-dropdown') do
+      expect_content('Add to playlist', 'Share', 'Lookup at phish.net')
+    end
+
+    # Track context dropdown
+    first('.playable_track').hover
+    first('.track-context-dropdown').click
+    within('.track-context-dropdown') do
+      expect_content('Play', 'Add to playlist', 'Share', 'Download MP3', 'This song...')
+    end
   end
 end

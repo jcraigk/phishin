@@ -28,8 +28,8 @@ class Tag < ApplicationRecord
       slug: slug,
       description: description,
       updated_at: updated_at.to_s,
-      show_ids: shows.map(&:id),
-      track_ids: tracks.map(&:id)
+      show_ids: shows.sort_by(&:id).map(&:id),
+      track_ids: tracks.sort_by(&:id).map(&:id)
     }
   end
 end

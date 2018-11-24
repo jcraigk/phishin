@@ -3,8 +3,8 @@ require 'rails_helper'
 
 feature 'Songs', :js do
   given(:songs) { create_list(:song, 30, :with_tracks) }
-  given(:a_title) { 'Alaska' }
-  given(:g_title) { 'Grind' }
+  given(:a_title) { 'A laska' }
+  given(:g_title) { 'G rind' }
   given(:a_title_count) { songs.select { |v| v.title.start_with?('A') }.size }
   given(:g_title_count) { songs.select { |v| v.title.start_with?('G') }.size }
 
@@ -28,7 +28,7 @@ feature 'Songs', :js do
       expect_content(a_title)
     end
 
-    # Click on 'G'
+    # Click on sub nav 'G'
     within('#sub_nav') do
       click_link('G')
     end
@@ -40,5 +40,9 @@ feature 'Songs', :js do
     within('#content_box') do
       expect_content(g_title)
     end
+
+    # Click on first song
+    first('ul.item_list li').click
+    expect(page).to have_current_path("/#{songs.second.slug}")
   end
 end

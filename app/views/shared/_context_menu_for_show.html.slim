@@ -1,4 +1,4 @@
-.btn_context class=(viewing_this_show ? 'btn_context_for_show' : '')
+.btn_context.show-context-dropdown class=(viewing_this_show ? 'btn_context_for_show' : '')
   .btn-group
     a.btn.dropdown-toggle.btn-round data-toggle='dropdown' href='null'
       = image_tag 'icon-context.png', alt: 'Icon: context menu'
@@ -11,7 +11,7 @@
       li
         a.playlist_add_show href='null' data-id=show.id
           i.icon-plus-sign
-          |  Add to Playlist
+          |  Add to playlist
       li
         a.share href='null' data-url="/#{show.date}"
           i.icon-share-alt
