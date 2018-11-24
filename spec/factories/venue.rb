@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :venue do
-    name { Faker::Address.community }
+    name { "Venue #{Faker::Address.unique.community}" }
     city { Faker::Address.city }
     state { Faker::Address.state }
     country { Faker::Address.country }
@@ -10,7 +10,7 @@ FactoryBot.define do
 
     trait :with_shows do
       after(:build) do |venue|
-        create_list(:show, 5, venue: venue)
+        create_list(:show, 2, venue: venue)
       end
     end
   end

@@ -4,14 +4,6 @@ module ApplicationHelper
     content_tag :div, '', style: 'clear: both;'
   end
 
-  def shows_for_year(year)
-    if year == '1983-1987'
-      Show.avail.between_years('1983', '1987').includes(:venue)
-    else
-      Show.avail.during_year(year).includes(:venue)
-    end
-  end
-
   def total_hours_of_music
     (Show.avail.map(&:duration).inject(0, &:+) / 3_600_000).round
   end
@@ -336,14 +328,12 @@ module ApplicationHelper
   end
 
   def tag_label(tag, css_class = '')
-    link_to tag_path(name: tag.name.downcase) do
-      content_tag(
-        :span,
-        tag.name,
-        class: "label tag_label #{css_class}",
-        style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color}"
-      )
-    end
+    content_tag(
+      :span,
+      tag.name,
+      class: "label tag_label #{css_class}",
+      style: "color: #{contrasting_color(tag.color)}; background-color: #{tag.color}"
+    )
   end
 
   def contrasting_color(color)

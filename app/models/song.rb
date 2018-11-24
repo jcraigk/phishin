@@ -33,7 +33,7 @@ class Song < ApplicationRecord
   scope :with_lyrical_excerpt, -> { where.not(lyrical_excerpt: nil) }
 
   def self.random_with_lyrical_excerpt
-    where('lyrical_excerpt IS NOT NULL').order('RANDOM()').first
+    where.not(lyrical_excerpt: nil).order(Arel.sql('RANDOM()')).first
   end
 
   def aliased_song

@@ -10,6 +10,10 @@ class ContentController < ApplicationController
   ###############################
 
   def years
+    @shows =
+      ERAS.values.flatten.each_with_object({}) do |year, shows|
+        shows[year] = shows_for_year(year)
+      end
     render_xhr_without_layout
   end
 
@@ -118,6 +122,12 @@ class ContentController < ApplicationController
   end
 
   private
+
+  def shows_for_year(year)
+    shows = Show.avail.includes(:venue)
+    return shows.between_years('1983', '1987') if year == '1983-1987'
+    shows.during_year(year)
+  end
 
   def day_of_year(month, day)
     validate_sorting_for_year_or_scope
