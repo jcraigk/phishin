@@ -37,9 +37,12 @@ feature 'Tags', :js do
     expect(items.count).to eq(tag.shows.count)
 
     # Click first show date
-    within('#content_box') do
-      first('ul.item_list li a').click
-    end
+    first('ul.item_list li a').click
     expect(page.current_path).to match(/\d{4}-\d{2}-\d{2}/)
+
+    # Back, then click location
+    page.evaluate_script('window.history.back()')
+    page.all('ul.item_list li a')[2].click
+    expect(page.current_path).to eq('/map')
   end
 end

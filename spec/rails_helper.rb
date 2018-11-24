@@ -25,7 +25,9 @@ RSpec.configure do |config|
   config.after(:each) do
     Timecop.return
     Faker::UniqueGenerator.clear
+    Warden.test_reset!
   end
   config.include Paperclip::Shoulda::Matchers
   config.include FeatureHelpers
+  config.include Warden::Test::Helpers
 end

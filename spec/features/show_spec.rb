@@ -25,6 +25,7 @@ feature 'Show', :js do
     # Main content
     within('#content_box') do
       expect_content('Set 1')
+      expect_content(*show.tracks.map(&:title))
     end
 
     track_items = page.all('.playable_track')

@@ -36,6 +36,7 @@ end
 
 group :test do
   gem 'capybara', require: false
+  gem 'capybara-email', require: false
   gem 'capybara-screenshot', require: false
   gem 'database_cleaner'
   gem 'factory_bot_rails'
