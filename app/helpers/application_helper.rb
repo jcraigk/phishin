@@ -41,36 +41,6 @@ module ApplicationHelper
     str.html_safe
   end
 
-  def first_char_sub_links(base_url, current_item = nil)
-    str = ''
-    FIRST_CHAR_LIST.each_with_index do |char, i|
-      css = 'char_link'
-      css += ' active' if
-        params[:char] == char ||
-        (params[:char].nil? && current_item.nil? && i.zero?) ||
-        (char == '#' && defined?(current_item.name) && current_item.name[0] =~ /\d/) ||
-        (char == '#' && defined?(current_item.title) && current_item.title[0] =~ /\d/) ||
-        (current_item && defined?(current_item.title) && current_item.title[0] == char) ||
-        (current_item && defined?(current_item.name) && current_item.name[0] == char)
-      str += link_to char, "#{base_url}?char=#{CGI.escape(char)}", class: css
-    end
-    str.html_safe
-  end
-
-  def top_liked_sub_links
-    nav_items = {
-      'Top 40 Shows' => [top_shows_path, ['top_liked_shows']],
-      'Top 40 Tracks' => [top_tracks_path, ['top_liked_tracks']]
-    }
-    str = ''
-    nav_items.each do |name, props|
-      css = ''
-      css = 'active' if props[1].include?(params[:action])
-      str += link_to name, props[0], class: css
-    end
-    str.html_safe
-  end
-
   def user_dropdown_links
     nav_items = {
       'My Shows' => [my_shows_path, false, ['my_shows']],
@@ -113,7 +83,7 @@ module ApplicationHelper
         style = ''
         style = 'margin-right: 26px' if i + 1 == years.size
         css = ''
-        css = 'active' if year == @title
+        css = 'active' if year == params[:slug]
         str += link_to (year == '1983-1987' ? '83-87' : year[2..3]), "/#{year}", class: css, style: style
       end
     end
@@ -186,38 +156,6 @@ module ApplicationHelper
         seconds: seconds
       )
     end
-  end
-
-  def global_nav_links
-    str = ''
-    global_nav_items.each do |name, props|
-      css = ''
-      css = 'active' unless ([params[:action], @controller_action] & props[1]).empty?
-      if name == 'userbox'
-        css += ' user_control'
-        if user_signed_in?
-          props[0] = my_shows_path
-          name = current_user.username
-        else
-          props[0] = new_user_session_path
-          name = 'Sign up!'
-          css += ' non-remote'
-        end
-      end
-      x = props[2]
-      str +=
-        content_tag(
-          :div,
-          link_to(name, props.first, class: "global_link #{css}"),
-          class: 'link_container',
-          style: "margin-left: #{x}px;"
-        )
-      next unless /active/.match?(css)
-      pos = x + 20
-      str += content_tag(:div, nil, class: 'nav_indicator', style: "margin-left: #{pos}px;")
-      str += content_tag(:div, nil, class: 'nav_indicator2', style: "margin-left: #{pos}px;")
-    end
-    str.html_safe
   end
 
   def link_to_song(song, term = nil)
@@ -343,18 +281,6 @@ module ApplicationHelper
     sum = 0
     rgb_hex.each { |hex| sum += hex.hex }
     sum > 382 ? '#555555' : '#ffffff'
-  end
-
-  def global_nav_items
-    {
-      'Years' => [years_path, %w[years year], 263],
-      'Venues' => [venues_path, %w[venues venue], 327],
-      'Songs' => [songs_path, %w[songs song], 390],
-      'Map' => [default_map_path, %w[map], 448],
-      'Top 40' => [top_shows_path, %w[top_liked_shows top_liked_tracks], 504],
-      'Playlists' => [active_playlist_path, %w[active_playlist saved_playlists], 570],
-      'Tags' => [tags_path, %w[index selected_tag], 630]
-    }
   end
 
   def default_map_path

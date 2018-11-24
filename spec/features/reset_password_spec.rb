@@ -7,7 +7,7 @@ feature 'Reset Password', :js do
   given(:new_password) { 'Tr3yIsj3dI2' }
   given(:user) { create(:user, password: password, password_confirmation: password) }
 
-  scenario 'user enters email, receives message, and changes password' do
+  xscenario 'user enters email, receives message, and changes password' do
     visit new_user_session_path
 
     click_link('Forgot your password?')

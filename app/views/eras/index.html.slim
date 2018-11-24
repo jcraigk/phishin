@@ -3,6 +3,8 @@
 #content
   #title_box
     h2 LIVE PHISH AUDIO STREAMS
+    h3 #{number_with_delimiter(Show.avail.count)} shows
+    h3 #{number_with_delimiter(total_hours_of_music)} hours of music
     br
     = render partial: 'shared/native_apps'
     = clear_both

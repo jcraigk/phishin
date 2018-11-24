@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 Rails.application.routes.draw do
-  root to: 'content#years'
+  root to: 'eras#index'
 
   # Users
   devise_for :users
@@ -14,12 +14,12 @@ Rails.application.routes.draw do
   get '/api-docs' => 'pages#api_docs', as: 'api_docs'
 
   # Content navigation pages
-  get '/years' => 'content#years', as: 'years'
-  get '/songs' => 'content#songs', as: 'songs'
-  get '/map' => 'content#map', as: 'map'
-  get '/venues' => 'content#venues', as: 'venues'
-  get '/top-shows' => 'content#top_liked_shows', as: 'top_shows'
-  get '/top-tracks' => 'content#top_liked_tracks', as: 'top_tracks'
+  get '/years' => 'eras#index', as: 'eras'
+  get '/songs' => 'songs#index', as: 'songs'
+  get '/map' => 'map#index', as: 'map'
+  get '/venues' => 'venues#index', as: 'venues'
+  get '/top-shows' => 'top_shows#index', as: 'top_shows'
+  get '/top-tracks' => 'top_tracks#index', as: 'top_tracks'
   get '/search' => 'search#results', as: 'search'
   get '/tags' => 'tags#index', as: 'tags'
   get '/tags/:name' => 'tags#selected_tag', as: 'tag'
@@ -51,13 +51,13 @@ Rails.application.routes.draw do
   get '/random-show' => 'playlists#random_show'
   get '/random-song-track/:song_id' => 'playlists#random_song_track'
 
-  # Track downloads
+  # Track info/download
   get '/track-info/:track_id' => 'downloads#track_info', as: 'track_info'
   get '/play-track/:track_id' => 'downloads#play_track', as: 'play_track'
   get '/download-track/:track_id' => 'downloads#download_track', as: 'download_track'
 
-  # Catch-all matcher for short content URLs
-  get '/(:slug(/:anchor))' => 'content#ambiguous_slug', constraints: { glob: %r{[^\/]+} }
+  # Catch-all matcher for ambiguous content slugs
+  get '/(:slug(/:anchor))' => 'ambiguous_slug#resolve', constraints: { glob: %r{[^\/]+} }
 
   # API Routes
   namespace :api do
