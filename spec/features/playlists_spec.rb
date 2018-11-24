@@ -36,14 +36,17 @@ feature 'Playlists', :js do
         expect_content('Saved Playlists')
       end
 
-
       within('#content_box') do
         expect_content('You must sign in to manage saved playlists')
       end
     end
   end
 
-  # TODO
   context 'when logged in' do
+    xscenario 'editing and saving a playlist' do
+    end
+
+    xscenario 'accessing a previously saved playlist' do
+    end
   end
 end
