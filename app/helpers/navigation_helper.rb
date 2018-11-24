@@ -53,10 +53,10 @@ module NavigationHelper
       css += ' active' if
         params[:char] == char ||
         (params[:char].nil? && current_item.nil? && i.zero?) ||
-        (char == '#' && defined?(current_item.name) && current_item.name[0] =~ /\d/) ||
-        (char == '#' && defined?(current_item.title) && current_item.title[0] =~ /\d/) ||
-        (current_item && defined?(current_item.title) && current_item.title[0] == char) ||
-        (current_item && defined?(current_item.name) && current_item.name[0] == char)
+        (char == '#' && current_item.try(:name)&.first =~ /\d/) ||
+        (char == '#' && current_item.try(:title)&.first =~ /\d/) ||
+        (current_item.try(:name)&.first == char) ||
+        (current_item.try(:title)&.first == char)
       str += link_to char, "#{base_url}?char=#{CGI.escape(char)}", class: css
     end
     str.html_safe
@@ -72,6 +72,69 @@ module NavigationHelper
       'Playlists' => [active_playlist_path, %w[playlists], 570],
       'Tags' => [tags_path, %w[tags], 630]
     }
+  end
+
+  def user_dropdown_links
+    nav_items = {
+      'My Shows' => [my_shows_path, false, ['my_shows']],
+      'My Tracks' => [my_tracks_path, false, ['my_tracks']],
+      'Change Password' => [edit_user_registration_path, true, ['edit']],
+      'Logout' => [destroy_user_session_path, true, ['nothing']]
+    }
+    str = ''
+    nav_items.each do |name, props|
+      str += '<li>'
+      str +=
+        if name == 'Logout'
+          link_to(name, props[0], method: :delete, class: 'non-remote')
+        else
+          link_to(name, props[0], class: 'non-remote')
+        end
+      str += '</li>'
+    end
+    str.html_safe
+  end
+
+  def playlists_sub_links
+    nav_items = {
+      'Active' => [active_playlist_path, ['active_playlist']],
+      'Saved' => [saved_playlists_path, ['saved_playlists']]
+    }
+    str = ''
+    nav_items.each do |name, props|
+      css = ''
+      css = 'active' if props[1].include?(params[:action])
+      str += link_to name, props[0], class: css
+    end
+    str.html_safe
+  end
+
+  def years_sub_links
+    str = ''
+    Hash[ERAS.to_a.reverse].each do |_era, years|
+      years.reverse.each_with_index do |year, i|
+        style = ''
+        style = 'margin-right: 26px' if i + 1 == years.size
+        css = ''
+        css = 'active' if year == params[:slug]
+        str += link_to (year == '1983-1987' ? '83-87' : year[2..3]), "/#{year}", class: css, style: style
+      end
+    end
+    str.html_safe
+  end
+
+  def will_paginate_simple(collection)
+    will_paginate(
+      collection,
+      inner_window: 2,
+      outer_window: 0,
+      previous_label: '<<',
+      next_label: '>>',
+      params: {
+        per_page: params[:per_page],
+        t: params[:t]
+      }
+    )
   end
 
   def year_context?

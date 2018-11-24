@@ -40,6 +40,7 @@ class ApplicationController < ActionController::Base
     redirect_to(:root, alert: "You're doing it wrong (XHR required)")
   end
 
+  # TODO: clean this up - it's called in N+1 fashion
   def get_user_track_like(track)
     return unless track&.likes && current_user
     track.likes.find_by(user: current_user)
