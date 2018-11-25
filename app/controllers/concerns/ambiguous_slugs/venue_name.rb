@@ -6,7 +6,6 @@ module AmbiguousSlugs::VenueName
 
     @shows = @venue.shows.includes(:tags).order(@order_by)
     @shows_likes = user_likes_for_shows(@shows)
-    @shows_likes = []
     @next_venue = Venue.relevant.where('name > ?', @venue.name).order(name: :asc).first
     @next_venue = Venue.relevant.order(name: :asc).first if @next_venue.nil?
     @previous_venue = Venue.relevant.where('name < ?', @venue.name).order(name: :desc).first

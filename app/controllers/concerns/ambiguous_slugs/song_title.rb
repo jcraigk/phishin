@@ -20,7 +20,6 @@ module AmbiguousSlugs::SongTitle
       @previous_song = Song.relevant.where('title < ?', @song.title).order(title: :desc).first
       @previous_song ||= Song.relevant.order(title: :desc).first
       @tracks_likes = user_likes_for_tracks(@tracks)
-      @tracks_likes = []
     end
 
     @view = 'songs/show'

@@ -25,7 +25,6 @@ class TagsController < ApplicationController
                      .order(shows_order_by)
                      .paginate(page: params[:page], per_page: 20)
         @shows_likes = user_likes_for_shows(@shows)
-        @shows_likes = []
         @entities = @shows
       when 'track'
         tag_ids = TrackTag.where(tag_id: @tag.id).map(&:track_id)
@@ -34,7 +33,6 @@ class TagsController < ApplicationController
                        .order(tracks_order_by)
                        .paginate(page: params[:page], per_page: 20)
         @tracks_likes = user_likes_for_tracks(@tracks)
-        @tracks_likes = []
         @entities = @tracks
       end
     end
