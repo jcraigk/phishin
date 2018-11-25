@@ -24,7 +24,7 @@ class TagsController < ApplicationController
                      .includes(:venue, :tags)
                      .order(shows_order_by)
                      .paginate(page: params[:page], per_page: 20)
-        # @shows_likes = @shows.map { |show| get_user_show_like(show) }
+        @shows_likes = get_user_likes_for_shows(@shows)
         @shows_likes = []
         @entities = @shows
       when 'track'
@@ -33,7 +33,7 @@ class TagsController < ApplicationController
                        .includes(:show, :tags)
                        .order(tracks_order_by)
                        .paginate(page: params[:page], per_page: 20)
-        # @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
+        @tracks_likes = get_user_likes_for_tracks(@tracks)
         @tracks_likes = []
         @entities = @tracks
       end

@@ -15,11 +15,10 @@ module AmbiguousSlugAsShow
       @sets[set] = {
         duration: track_list.map(&:duration).inject(0, &:+),
         tracks: track_list,
-        # likes: track_list.map { |t| get_user_track_like(t) }
-        likes: []
+        likes: get_user_likes_for_tracks(track_list)
       }
     end
-    # @show_like = get_user_show_like(@show)
+    @show_like = get_user_likes_for_shows([@show])
     @show_like = nil
 
     set_next_show
@@ -29,8 +28,6 @@ module AmbiguousSlugAsShow
     render layout: false if request.xhr?
 
   end
-
-  private
 
   def set_next_show
     @next_show =

@@ -3,7 +3,7 @@ module AmbiguousSlugs::SongTitle
   def slug_as_song
     slug = params[:slug]
 
-    validate_sorting
+    validate_song_sorting
 
     return false unless (@song = Song.find_by(slug: slug))
 
@@ -19,7 +19,7 @@ module AmbiguousSlugs::SongTitle
       @next_song ||= Song.relevant.order(title: :asc).first
       @previous_song = Song.relevant.where('title < ?', @song.title).order(title: :desc).first
       @previous_song ||= Song.relevant.order(title: :desc).first
-      # @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
+      @tracks_likes = get_user_likes_for_tracks(@tracks)
       @tracks_likes = []
     end
 
@@ -29,9 +29,7 @@ module AmbiguousSlugs::SongTitle
     true
   end
 
-  private
-
-  def validate_sorting
+  def validate_song_sorting
     params[:sort] = 'date desc' unless params[:sort].in?(['date desc', 'date asc', 'likes', 'duration'])
     @order_by =
       if params[:sort].in?(['date asc', 'date desc'])

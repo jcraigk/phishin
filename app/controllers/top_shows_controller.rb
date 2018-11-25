@@ -9,7 +9,7 @@ class TopShowsController < ApplicationController
           .includes(:venue, :tags)
           .order(likes_count: :desc, date: :desc)
           .limit(40)
-    # @shows_likes = @shows.map { |show| get_user_show_like(show) }
+    @shows_likes = get_user_likes_for_shows(@shows)
     @shows_likes = []
     render_xhr_without_layout
   end

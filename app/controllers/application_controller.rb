@@ -11,10 +11,6 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
 
-  def slug
-    params[:slug]
-  end
-
   def user_signed_in
     render json: { success: user_signed_in? }
   end
@@ -40,16 +36,20 @@ class ApplicationController < ActionController::Base
     redirect_to(:root, alert: "You're doing it wrong (XHR required)")
   end
 
-  # TODO: clean this up - it's called in N+1 fashion
-  def get_user_track_like(track)
-    return unless track&.likes && current_user
-    track.likes.find_by(user: current_user)
+  def get_user_likes_for_tracks(tracks)
+    return unless current_user && tracks
+    likes = Like.where(user: current_user, likable: tracks)
+    tracks.map do |t|
+      (like = likes.find { |l| l.likable == t }) ? like : nil
+    end
   end
 
-  # TODO: clean this up - it's called in N+1 fashion
-  def get_user_show_like(show)
-    return unless show && current_user
-    show.likes.find_by(user: current_user)
+  def get_user_likes_for_shows(shows)
+    return unless current_user && shows
+    likes = Like.where(user: current_user, likable: shows)
+    shows.map do |s|
+      (like = likes.find { |l| l.likable == s }) ? like : nil
+    end
   end
 
   def render_xhr_without_layout
