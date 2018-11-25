@@ -1,32 +1,41 @@
 # frozen_string_literal: true
 class DateParserService
-  attr_reader :str
+  attr_reader :str, :date_parts
 
   def initialize(str)
     @str = str
   end
 
   def call
-    year, month, day = nil
-    # handle 2-digit year as in 3/11/90
-    if str =~ %r{\A(\d{1,2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})\z}
-      year = Regexp.last_match[5]
-      zero = (year.size == 1 ? '0' : '')
-      year = (year.to_i > 70 ? "19#{zero}#{year}" : "20#{zero}#{year}")
-      month = Regexp.last_match[1]
-      day = Regexp.last_match[3]
-    elsif str =~ %r{\A(\d{1,2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,4})\z}
-      year = Regexp.last_match[5]
-      month = Regexp.last_match[1]
-      day = Regexp.last_match[3]
-    elsif str =~ %r{\A(\d{4})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})\z}
-      year = Regexp.last_match[1]
-      month = Regexp.last_match[3]
-      day = Regexp.last_match[5]
-    else
-      return false
-    end
+    return false unless str_matches_short_date? ||
+                        str_matches_year_at_end? ||
+                        str_matches_db_date?
+    Date.parse(date_parts.join('-')).strftime('%Y-%m-%d')
+  end
 
-    Date.parse([year, month, day].join('-')).strftime('%Y-%m-%d')
+  private
+
+  # 10/31/95, 10-31-95
+  def str_matches_short_date?
+    return false unless str =~ %r{\A(\d{1,2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})\z}
+    r = Regexp.last_match
+    year = r[5]
+    zero = (year.size == 1 ? '0' : '')
+    year = (year.to_i > 70 ? "19#{zero}#{year}" : "20#{zero}#{year}")
+    @date_parts = [year, r[1], r[3]]
+  end
+
+  # 10-31-1995, 10/31/1995
+  def str_matches_year_at_end?
+    return unless str =~ %r{\A(\d{1,2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,4})\z}
+    r = Regexp.last_match
+    @date_parts = [r[5], r[1], [3]]
+  end
+
+  # 1995-10-31
+  def str_matches_db_date?
+    return unless str =~ %r{\A(\d{4})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})\z}
+    r = Regexp.last_match
+    @date_parts = [r[1], r[3], [5]]
   end
 end

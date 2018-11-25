@@ -9,11 +9,18 @@ class ApplicationController < ActionController::Base
   before_action :require_xhr
   before_action :permitted_params, if: :devise_controller?
 
+  rescue_from ActiveRecord::RecordNotFound, with: :render_404
+
   def user_signed_in
     render json: { success: user_signed_in? }
   end
 
   protected
+
+  def render_404
+    view = 'errors/404'
+    request.xhr? ? render(view, layout: false) : render(view)
+  end
 
   def permitted_params
     devise_parameter_sanitizer.permit(:sign_up, keys: %i[username])
@@ -29,18 +36,41 @@ class ApplicationController < ActionController::Base
     redirect_to(:root, alert: "You're doing it wrong (XHR required)")
   end
 
-  def get_user_track_like(track)
-    return unless track&.likes && current_user
-    track.likes.where(user: current_user).first
+  def user_likes_for_tracks(tracks)
+    return [] unless current_user && tracks
+    likes = Like.where(user: current_user, likable: tracks)
+    tracks.map do |t|
+      (like = likes.find { |l| l.likable == t }) ? like : nil
+    end
   end
 
-  def get_user_show_like(show)
-    return unless show && current_user
-    show.likes.where(user: current_user).first
+  def user_likes_for_shows(shows)
+    return [] unless current_user && shows
+    likes = Like.where(user: current_user, likable: shows)
+    shows.map do |s|
+      (like = likes.find { |l| l.likable == s }) ? like : nil
+    end
   end
 
   def render_xhr_without_layout
     render layout: false if request.xhr?
+  end
+
+  def char_param
+    c = params[:char]
+    params[:char] = c.in?(FIRST_CHAR_LIST) ? c : FIRST_CHAR_LIST.first
+  end
+
+  def validate_sorting_for_shows
+    params[:sort] = 'date desc' unless params[:sort].in?(['date desc', 'date asc', 'likes', 'duration'])
+    @order_by =
+      if params[:sort].in?(['date asc', 'date desc'])
+        params[:sort]
+      elsif params[:sort] == 'likes'
+        'likes_count desc, date desc'
+      elsif params[:sort] == 'duration'
+        'shows.duration, date desc'
+      end
   end
 
   private

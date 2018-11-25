@@ -15,7 +15,10 @@ RSpec.describe Venue do
     expect(subject.slug).to eq('madison-square-garden')
   end
 
-  # TODO: test `geocoded_by :address`
+  # geocoded_by :address
+  it 'responds to geocode' do
+    expect(subject).to respond_to(:geocode)
+  end
 
   context 'scopes' do
     context '#relevant' do

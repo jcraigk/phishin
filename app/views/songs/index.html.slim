@@ -6,7 +6,7 @@
     h2 Total Songs: #{@songs.reject { |song| song.alias? }.size}"
     .hr
 
-    = render partial: 'sort_songs_and_venues_filter', locals: { item_hash: songs_and_venues_sort_items }
+    = render partial: 'shared/sort_songs_and_venues_filter', locals: { item_hash: songs_and_venues_sort_items }
 
   #content_box
     ul.item_list.clickable

@@ -3,7 +3,7 @@
 #content
   #title_box
     h1 = @song.title
-    h2 Total Tracks: #{@song.tracks.size}
+    h2 Total tracks: #{@song.tracks.size}
     .hr
 
     = render partial: 'shared/sort_filter', locals: { item_hash: song_sort_items }

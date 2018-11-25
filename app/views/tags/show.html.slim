@@ -8,9 +8,9 @@
 
     .btn-group
       button.btn class=(params[:entity] == 'show' ? 'active' : '')
-        = link_to "Shows: #{number_with_delimiter(@tag.shows_count)}", tag_path(name: params[:name], sort: params[:sort], entity: 'show')
+        = link_to "Shows: #{number_with_delimiter(@tag.shows_count)}", tag_path(entity: 'show')
       button.btn class=(params[:entity] == 'track' ? 'active' : '')
-        = link_to "Tracks: #{number_with_delimiter(@tag.tracks_count)}", tag_path(name: params[:name], sort: params[:sort], entity: 'track')
+        = link_to "Tracks: #{number_with_delimiter(@tag.tracks_count)}", tag_path(entity: 'track')
     .hr
 
     = render partial: 'shared/sort_filter', locals: { item_hash: show_sort_items }

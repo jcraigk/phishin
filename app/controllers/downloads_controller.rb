@@ -23,7 +23,6 @@ class DownloadsController < ApplicationController
     end
   end
 
-  # Provide a track as a downloadable MP3
   def download_track
     track = Track.find(params[:track_id])
     unless File.exist?(track.audio_file.path)

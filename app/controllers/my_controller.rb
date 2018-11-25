@@ -6,7 +6,7 @@ class MyController < ApplicationController
 
     show_ids = Like.where(likable_type: 'Show', user: current_user).map(&:likable_id)
     @shows = Show.where(id: show_ids).includes(:tracks).order(@order_by).paginate(page: params[:page], per_page: 20)
-    @shows_likes = @shows.map { |show| get_user_show_like(show) }
+    @shows_likes = user_likes_for_shows(@shows)
 
     render_xhr_without_layout
   end
@@ -17,7 +17,7 @@ class MyController < ApplicationController
 
     track_ids = Like.where(likable_type: 'Track', user: current_user).map(&:likable_id)
     @tracks = Track.where(id: track_ids).includes(:show).order(@order_by).paginate(page: params[:page], per_page: 20)
-    @tracks_likes = @tracks.map { |track| get_user_track_like(track) }
+    @tracks_likes = user_likes_for_tracks([@tracks])
 
     render_xhr_without_layout
   end
@@ -25,7 +25,7 @@ class MyController < ApplicationController
   private
 
   def validate_sorting_for_my_shows
-    params[:sort] = 'date desc' unless ['date desc', 'date asc', 'title', 'likes', 'duration'].include?(params[:sort])
+    params[:sort] = 'date desc' unless params[:sort].in?(['date desc', 'date asc', 'title', 'likes', 'duration'])
     @order_by =
       case params[:sort]
       when 'date asc', 'date desc'
@@ -40,7 +40,7 @@ class MyController < ApplicationController
   end
 
   def validate_sorting_for_my_tracks
-    params[:sort] = 'shows.date desc' unless ['title', 'shows.date desc', 'shows.date asc', 'likes', 'duration'].include?(params[:sort])
+    params[:sort] = 'shows.date desc' unless params[:sort].in?(['title', 'shows.date desc', 'shows.date asc', 'likes', 'duration'])
     @order_by =
       case params[:sort]
       when 'title'
