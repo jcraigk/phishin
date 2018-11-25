@@ -6,7 +6,7 @@ class MyController < ApplicationController
 
     show_ids = Like.where(likable_type: 'Show', user: current_user).map(&:likable_id)
     @shows = Show.where(id: show_ids).includes(:tracks).order(@order_by).paginate(page: params[:page], per_page: 20)
-    @shows_likes = get_user_likes_for_shows(@shows)
+    @shows_likes = user_likes_for_shows(@shows)
     @shows_likes = []
 
     render_xhr_without_layout
@@ -18,7 +18,7 @@ class MyController < ApplicationController
 
     track_ids = Like.where(likable_type: 'Track', user: current_user).map(&:likable_id)
     @tracks = Track.where(id: track_ids).includes(:show).order(@order_by).paginate(page: params[:page], per_page: 20)
-    @tracks_likes = get_user_likes_for_tracks([@tracks])
+    @tracks_likes = user_likes_for_tracks([@tracks])
     @tracks_likes = []
 
     render_xhr_without_layout

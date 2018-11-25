@@ -36,16 +36,16 @@ class ApplicationController < ActionController::Base
     redirect_to(:root, alert: "You're doing it wrong (XHR required)")
   end
 
-  def get_user_likes_for_tracks(tracks)
-    return unless current_user && tracks
+  def user_likes_for_tracks(tracks)
+    return [] unless current_user && tracks
     likes = Like.where(user: current_user, likable: tracks)
     tracks.map do |t|
       (like = likes.find { |l| l.likable == t }) ? like : nil
     end
   end
 
-  def get_user_likes_for_shows(shows)
-    return unless current_user && shows
+  def user_likes_for_shows(shows)
+    return [] unless current_user && shows
     likes = Like.where(user: current_user, likable: shows)
     shows.map do |s|
       (like = likes.find { |l| l.likable == s }) ? like : nil

@@ -15,7 +15,7 @@ module AmbiguousSlugs::YearRange
     @shows.group_by(&:tour_name).each do |tour, show_list|
       @sections[tour] = {
         shows: show_list,
-        likes: get_user_likes_for_shows(show_list)
+        likes: user_likes_for_shows(show_list)
       }
     end
 

@@ -16,10 +16,10 @@ module AmbiguousSlugs::Date
       @sets[set] = {
         duration: track_list.map(&:duration).inject(0, &:+),
         tracks: track_list,
-        likes: get_user_likes_for_tracks(track_list)
+        likes: user_likes_for_tracks(track_list)
       }
     end
-    @show_like = get_user_likes_for_shows([@show])
+    @show_like = user_likes_for_shows([@show])
     @show_like = nil
 
     set_next_show

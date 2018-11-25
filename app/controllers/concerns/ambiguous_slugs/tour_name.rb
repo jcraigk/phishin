@@ -5,7 +5,7 @@ module AmbiguousSlugs::TourName
     return false unless (@tour = Tour.includes(shows: :tags).find_by(slug: slug))
 
     @shows = @tour.shows.sort_by(&:date).reverse
-    @shows_likes = get_user_likes_for_shows(@shows)
+    @shows_likes = user_likes_for_shows(@shows)
     @sections = { @tour.name => { shows: @shows, likes: @shows_likes } }
 
     @title = @tour.name
