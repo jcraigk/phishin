@@ -9,9 +9,9 @@ Rails.application.routes.draw do
   get '/my-tracks' => 'my#my_tracks', as: 'my_tracks'
 
   # Static pages
-  get '/legal-stuff' => 'pages#legal_stuff', as: 'legal_stuff'
-  get '/contact-us' => 'pages#contact_us', as: 'contact_us'
-  get '/api-docs' => 'pages#api_docs', as: 'api_docs'
+  get '/legal-stuff' => 'static_pages#legal_stuff', as: 'legal_stuff'
+  get '/contact-us' => 'static_pages#contact_us', as: 'contact_us'
+  get '/api-docs' => 'static_pages#api_docs', as: 'api_docs'
 
   # Content navigation pages
   get '/years' => 'eras#index', as: 'eras'

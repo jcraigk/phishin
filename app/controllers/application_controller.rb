@@ -61,10 +61,10 @@ class ApplicationController < ActionController::Base
     params[:char] = c.in?(FIRST_CHAR_LIST) ? c : FIRST_CHAR_LIST.first
   end
 
-  def validate_sorting_for_year_or_scope
+  def validate_sorting_for_shows
     params[:sort] = 'date desc' unless params[:sort].in?(['date desc', 'date asc', 'likes', 'duration'])
     @order_by =
-      if ['date asc', 'date desc'].include?(params[:sort])
+      if params[:sort].in?(['date asc', 'date desc'])
         params[:sort]
       elsif params[:sort] == 'likes'
         'likes_count desc, date desc'

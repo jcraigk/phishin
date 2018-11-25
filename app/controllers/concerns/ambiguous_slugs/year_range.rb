@@ -4,7 +4,7 @@ module AmbiguousSlugs::YearRange
     slug = params[:slug]
     return false unless slug =~ /\A(\d{4})-(\d{4})\z/
 
-    validate_sorting_for_year_or_scope
+    validate_sorting_for_shows
 
     r = Regexp.last_match
     @shows = Show.avail

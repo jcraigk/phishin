@@ -4,7 +4,7 @@ module AmbiguousSlugs::Year
     slug = params[:slug]
     return false unless /\A\d{4}\z/.match?(slug)
 
-    validate_sorting_for_year_or_scope
+    validate_sorting_for_shows
     @shows = Show.avail
                  .during_year(slug)
                  .includes(:tour, :venue, :tags)

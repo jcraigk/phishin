@@ -6,7 +6,7 @@ module AmbiguousSlugs::DayOfYear
       /\A(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})\z/i
     )
 
-    validate_sorting_for_year_or_scope
+    validate_sorting_for_shows
 
     r = Regexp.last_match
     month_name = r[1].titleize

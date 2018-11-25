@@ -6,7 +6,6 @@ class ErasController < ApplicationController
     @shows = years.each_with_object({}) do |year, shows|
       shows[year] = shows_for_year(year)
     end
-
     render_xhr_without_layout
   end
 

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Years', :js do
+feature 'Homepage', :js do
   given(:venue) { create(:venue) }
   given(:most_recent_year) { ERAS.values.flatten.last }
   given!(:shows) do
@@ -69,6 +69,8 @@ feature 'Years', :js do
       expect(years[10].text).to eq('0 shows')
       expect(years.last.text).to eq('3 shows')
     end
+
+    # TODO: Ensure footer links
 
     # Click most recent year
     click_link(most_recent_year)

@@ -2,8 +2,6 @@
 module AmbiguousSlugs::VenueName
   def slug_as_venue
     slug = params[:slug]
-    validate_sorting_for_year_or_scope
-
     return false unless (@venue = Venue.find_by(slug: slug.downcase))
 
     @shows = @venue.shows.includes(:tags).order(@order_by)
