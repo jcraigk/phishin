@@ -1,38 +1,51 @@
 # frozen_string_literal: true
 module Ambiguity::Date
   def slug_as_date
-    slug = params[:slug]
-    return false unless slug =~ /\A\d{4}(\-|\.)\d{1,2}(\-|\.)\d{1,2}\z/
+    return false unless date_from_slug.present?
 
-    # 2012.12.31 => 2012-12-31
-    r = Regexp.last_match
-    slug = "#{r[1]}-#{r[2]}-#{r[3]}" if slug =~ /\A(\d{4})\.(\d{1,2})\.(\d{1,2})\z/
-
-    @show = Show.includes(tracks: %i[songs tags]).find_by!(date: slug)
-
-    @sets = {}
-    tracks = @show.tracks.sort_by(&:position)
-    tracks.group_by(&:set_name).each do |set, track_list|
-      @sets[set] = {
-        duration: track_list.map(&:duration).inject(0, &:+),
-        tracks: track_list,
-        likes: user_likes_for_tracks(track_list)
-      }
-    end
-    @show_like = user_likes_for_shows([@show])
-    @show_like = nil
-
-    set_next_show
-    set_previous_show
-
-    @view = 'shows/show'
+    fetch_show_on_date(date_from_slug)
+    hydrate_page_for_date
 
     true
   end
 
   private
 
-  def set_next_show
+  def hydrate_page_for_date
+    @sets = compose_sets
+    @show_like = user_likes_for_shows([@show]).first
+    @view = 'shows/show'
+
+    hydrate_next_show
+    hydrate_previous_show
+  end
+
+  def tracks_on_date
+    @tracks_on_date ||= @show.tracks.sort_by(&:position)
+  end
+
+  def compose_sets
+    tracks_on_date.group_by(&:set_name)
+                  .each_with_object({}) do |(set, tracks), sets|
+      sets[set] = {
+        duration: tracks.map(&:duration).inject(0, &:+),
+        tracks: tracks,
+        likes: user_likes_for_tracks(tracks)
+      }
+    end
+  end
+
+  def fetch_show_on_date(date)
+    @show = Show.includes(tracks: %i[songs tags]).find_by!(date: date)
+  end
+
+  def date_from_slug
+    return false unless current_slug =~ /\A\d{4}(\-|\.)\d{1,2}(\-|\.)\d{1,2}\z/
+    return current_slug.tr('-', '.') if current_slug =~ /\A(\d{4})\.(\d{1,2})\.(\d{1,2})\z/
+    current_slug
+  end
+
+  def hydrate_next_show
     @next_show =
       Show.avail
           .where('date > ?', @show.date)
@@ -43,7 +56,7 @@ module Ambiguity::Date
           .first
   end
 
-  def set_previous_show
+  def hydrate_previous_show
     @previous_show =
       Show.avail
           .where('date < ?', @show.date)
