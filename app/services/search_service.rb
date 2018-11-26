@@ -34,7 +34,7 @@ class SearchService
   end
 
   def shows_on_day_of_year
-    return if term_is_date?
+    return unless term_is_date?
     Show.avail
         .on_day_of_year(date[5..6], date[8..9])
         .where('date != ?', date)

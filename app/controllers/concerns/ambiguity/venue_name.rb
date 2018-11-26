@@ -1,19 +1,46 @@
 # frozen_string_literal: true
 module Ambiguity::VenueName
   def slug_as_venue
-    slug = params[:slug]
-    return false unless (@venue = Venue.find_by(slug: slug.downcase))
+    return false unless venue.present?
 
-    @shows = @venue.shows.includes(:tags).order(@order_by)
-    @shows_likes = user_likes_for_shows(@shows)
-    @next_venue = Venue.relevant.where('name > ?', @venue.name).order(name: :asc).first
-    @next_venue = Venue.relevant.order(name: :asc).first if @next_venue.nil?
-    @previous_venue = Venue.relevant.where('name < ?', @venue.name).order(name: :desc).first
-    @previous_venue = Venue.relevant.order(name: :desc).first if @previous_venue.nil?
-
-    @view = 'venues/show'
-    @ambiguous_controller = 'venues'
+    hydrate_venue_page
 
     true
+  end
+
+  private
+
+  def venue
+    @venue ||= Venue.find_by(slug: current_slug)
+  end
+
+  def hydrate_venue_page
+    @shows = venue.shows.includes(:tags).order(@order_by)
+    @shows_likes = user_likes_for_shows(@shows)
+    @previous_venue = prev_venue
+    @next_venue = next_venue
+
+    @view = 'venues/show'
+    @ambiguity_controller = 'venues'
+  end
+
+  def prev_venue
+    Venue.relevant
+         .where('name < ?', venue.name)
+         .order(name: :desc)
+         .first ||
+      Venue.relevant
+           .order(name: :desc)
+           .first
+  end
+
+  def next_venue
+    Venue.relevant
+         .where('name > ?', venue.name)
+         .order(name: :asc)
+         .first ||
+      Venue.relevant
+           .order(name: :asc)
+           .first
   end
 end

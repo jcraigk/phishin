@@ -4,7 +4,7 @@ module NavigationHelper
     str = ''
     global_nav_items.each do |name, props|
       css = ''
-      css = 'active' if (@ambiguous_controller || params[:controller]).in?(props[1])
+      css = 'active' if (@ambiguity_controller || params[:controller]).in?(props[1])
       if name == 'userbox'
         css += ' user_control'
         if user_signed_in?
@@ -138,15 +138,15 @@ module NavigationHelper
   end
 
   def year_context?
-    params[:controller] == 'years' || @ambiguous_controller == 'years'
+    params[:controller] == 'years' || @ambiguity_controller == 'years'
   end
 
   def venue_context?
-    params[:controller] == 'venues' || @ambiguous_controller == 'venues'
+    params[:controller] == 'venues' || @ambiguity_controller == 'venues'
   end
 
   def song_context?
-    params[:controller] == 'songs' || @ambiguous_controller == 'songs'
+    params[:controller] == 'songs' || @ambiguity_controller == 'songs'
   end
 
   def top_liked_context?
