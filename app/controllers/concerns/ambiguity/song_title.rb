@@ -59,7 +59,8 @@ module Ambiguity::SongTitle
 
   # TODO: This is broken :(
   def validate_song_sorting
-    params[:sort] = 'date desc' unless params[:sort].in?(['date desc', 'date asc', 'likes', 'duration'])
+    params[:sort] = 'date desc' unless
+      params[:sort].in?(['date desc', 'date asc', 'likes', 'duration'])
     @order_by =
       if params[:sort].in?(['date asc', 'date desc'])
         params[:sort].gsub(/date/, 'shows.date')

@@ -170,13 +170,20 @@ html {
       }
     }
     #system_error {
-      background-color: $alert_background;
       width: 600px;
       margin: 0 auto;
-      padding: 10px;
-      border: 1px solid black;
       position: relative;
       top: 140px;
+
+      .error_box {
+        background-color: $alert_background;
+        font-family: 'Open Sans Condensed', sans-serif;
+        font-size: 26px;
+        line-height: 30px;
+        padding: 20px;
+        border-radius: 5px;
+        border: 1px solid black;
+      }
     }
     .show_duration {
       color: $text_gray !important;
