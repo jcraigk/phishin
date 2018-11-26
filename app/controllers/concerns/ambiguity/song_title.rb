@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-module AmbiguousSlugs::SongTitle
+module Ambiguity::SongTitle
   def slug_as_song
     slug = params[:slug]
 

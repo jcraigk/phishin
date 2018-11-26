@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-module AmbiguousSlugs::YearRange
+module Ambiguity::YearRange
   def slug_as_year_range
     slug = params[:slug]
     return false unless slug =~ /\A(\d{4})-(\d{4})\z/

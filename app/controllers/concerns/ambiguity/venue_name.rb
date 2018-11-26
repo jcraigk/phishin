@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-module AmbiguousSlugs::VenueName
+module Ambiguity::VenueName
   def slug_as_venue
     slug = params[:slug]
     return false unless (@venue = Venue.find_by(slug: slug.downcase))

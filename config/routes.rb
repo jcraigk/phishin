@@ -57,7 +57,7 @@ Rails.application.routes.draw do
   get '/download-track/:track_id' => 'downloads#download_track', as: 'download_track'
 
   # Catch-all matcher for ambiguous content slugs
-  get '/(:slug(/:anchor))' => 'ambiguous_slug#resolve', constraints: { glob: %r{[^\/]+} }
+  get '/(:slug(/:anchor))' => 'ambiguity#resolve', constraints: { glob: %r{[^\/]+} }
 
   # API Routes
   namespace :api do

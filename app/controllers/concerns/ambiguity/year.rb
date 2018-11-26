@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-module AmbiguousSlugs::Year
+module Ambiguity::Year
   def slug_as_year
     slug = params[:slug]
     return false unless /\A\d{4}\z/.match?(slug)

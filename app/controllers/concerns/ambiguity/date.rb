@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-module AmbiguousSlugs::Date
+module Ambiguity::Date
   def slug_as_date
     slug = params[:slug]
     return false unless slug =~ /\A\d{4}(\-|\.)\d{1,2}(\-|\.)\d{1,2}\z/

@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-module AmbiguousSlugs::TourName
+module Ambiguity::TourName
   def slug_as_tour
     slug = params[:slug]
     return false unless (@tour = Tour.includes(shows: :tags).find_by(slug: slug))

@@ -7,34 +7,9 @@ class SearchService
   end
 
   def call
-    if (date = DateParserService.new(term).call)
-      show =
-        Show.avail
-            .where(date: date)
-            .includes(:venue)
-            .first
-      other_shows =
-        Show.avail
-            .on_day_of_year(date[5..6], date[8..9])
-            .where('date != ?', date)
-            .includes(:venue)
-            .order(date: :desc)
-    else
-      songs =
-        Song.relevant
-            .where('title ILIKE ?', "%#{term}%")
-            .order(title: :asc)
-      venues =
-        Venue.relevant
-             .where(venue_where_str, term: "%#{term}%")
-             .order(name: :asc)
-      tours =
-        Tour.where('name ILIKE ?', "%#{term}%")
-            .order(name: :asc)
-    end
     {
-      show: show,
-      other_shows: other_shows,
+      show: show_on_date,
+      other_shows: shows_on_day_of_year,
       songs: songs,
       venues: venues,
       tours: tours
@@ -42,6 +17,50 @@ class SearchService
   end
 
   private
+
+  def date
+    @date ||= DateParserService.new(term).call
+  end
+
+  def term_is_date?
+    date.present?
+  end
+
+  def show_on_date
+    return unless term_is_date?
+    Show.avail
+        .includes(:venue)
+        .find_by(date: date)
+  end
+
+  def shows_on_day_of_year
+    return if term_is_date?
+    Show.avail
+        .on_day_of_year(date[5..6], date[8..9])
+        .where('date != ?', date)
+        .includes(:venue)
+        .order(date: :desc)
+  end
+
+  def songs
+    return if term_is_date?
+    Song.relevant
+        .where('title ILIKE ?', "%#{term}%")
+        .order(title: :asc)
+  end
+
+  def venues
+    return if term_is_date?
+    Venue.relevant
+         .where(venue_where_str, term: "%#{term}%")
+         .order(name: :asc)
+  end
+
+  def tours
+    return if term_is_date?
+    Tour.where('name ILIKE ?', "%#{term}%")
+        .order(name: :asc)
+  end
 
   def venue_where_str
     'name ILIKE :term OR abbrev ILIKE :term ' \

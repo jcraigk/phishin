@@ -56,7 +56,11 @@ class TrackInsertionService
   end
 
   def ensure_valid_options
-    raise 'Invalid options!' unless date && position && file && song_id && title && set
+    raise 'Invalid options!' unless all_options_present?
+  end
+
+  def all_options_present?
+    date && position && file && song_id && title && set
   end
 
   def ensure_records_present

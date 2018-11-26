@@ -1,12 +1,12 @@
 # frozen_string_literal: true
-class AmbiguousSlugController < ApplicationController
-  include AmbiguousSlugs::Date
-  include AmbiguousSlugs::DayOfYear
-  include AmbiguousSlugs::Year
-  include AmbiguousSlugs::YearRange
-  include AmbiguousSlugs::SongTitle
-  include AmbiguousSlugs::VenueName
-  include AmbiguousSlugs::TourName
+class AmbiguityController < ApplicationController
+  include Ambiguity::Date
+  include Ambiguity::DayOfYear
+  include Ambiguity::Year
+  include Ambiguity::YearRange
+  include Ambiguity::SongTitle
+  include Ambiguity::VenueName
+  include Ambiguity::TourName
 
   caches_action :resolve, expires_in: CACHE_TTL
 
