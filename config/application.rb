@@ -10,5 +10,7 @@ module Phishin
       soundmanager2.swf
       soundmanager2_flash9.swf
     ]
+
+    config.action_controller.permit_all_parameters = true
   end
 end
