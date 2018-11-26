@@ -48,32 +48,7 @@ class Track < ApplicationRecord
   end
 
   def save_default_id3_tags
-    Mp3Info.open(audio_file.path) do |mp3|
-      comments = 'Visit http://phish.in for free Phish audio'
-      year = show.date.strftime('%Y').to_i
-      band = 'Phish'
-      album_name = "#{show.date} #{show.venue.location}"
-
-      mp3.tag.title = title
-      mp3.tag.artist = band
-      mp3.tag.album = album_name
-      mp3.tag.year = year
-      mp3.tag.track = position
-      mp3.tag.genre = 17 # 'Rock'
-      mp3.tag.comments = comments
-
-      mp3.tag2.title = title
-      mp3.tag2.artist = band
-      mp3.tag2.album = album_name
-      mp3.tag2.year = year
-      mp3.tag2.track = position
-      mp3.tag2.genre = 'Rock'
-      mp3.tag2.comments = comments
-
-      # TODO: Add cover art using id3v2? or strip it be default?
-      # mp3.tag2.remove_pictures
-      # mp3.tag2.add_picture(file.read)
-    end
+    Mp3DefaultTagger.new(self).call
   end
 
   def generic_slug
@@ -122,7 +97,7 @@ class Track < ApplicationRecord
     }
   end
 
-  def as_json_api
+  def as_json_api # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     {
       id: id,
       show_id: show.id,

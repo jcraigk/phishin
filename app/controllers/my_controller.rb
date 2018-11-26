@@ -25,7 +25,8 @@ class MyController < ApplicationController
   private
 
   def validate_sorting_for_my_shows
-    params[:sort] = 'date desc' unless params[:sort].in?(['date desc', 'date asc', 'title', 'likes', 'duration'])
+    params[:sort] = 'date desc' unless
+      params[:sort].in?(['date desc', 'date asc', 'title', 'likes', 'duration'])
     @order_by =
       case params[:sort]
       when 'date asc', 'date desc'
@@ -40,7 +41,8 @@ class MyController < ApplicationController
   end
 
   def validate_sorting_for_my_tracks
-    params[:sort] = 'shows.date desc' unless params[:sort].in?(['title', 'shows.date desc', 'shows.date asc', 'likes', 'duration'])
+    params[:sort] = 'shows.date desc' unless
+      params[:sort].in?(['title', 'shows.date desc', 'shows.date asc', 'likes', 'duration'])
     @order_by =
       case params[:sort]
       when 'title'

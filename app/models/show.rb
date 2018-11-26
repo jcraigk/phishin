@@ -35,7 +35,7 @@ class Show < ApplicationRecord
     update(duration: tracks.map(&:duration).inject(0, &:+))
   end
 
-  def as_json
+  def as_json # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     {
       id: id,
       date: date.to_s,
@@ -54,7 +54,7 @@ class Show < ApplicationRecord
     }
   end
 
-  def as_json_api
+  def as_json_api # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     {
       id: id,
       date: date.to_s,

@@ -51,10 +51,8 @@ $ ->
       $page.html ''
       $page.load(
         state.data.href, (response, status, xhr) ->
-          # App.Util.showHTMLError(xhr.status + " " + xhr.statusText)
-          App.Util.showHTMLError("ERROR\n\n"+response) if status is 'error'
+          App.Util.showHTMLError(response) if status is 'error'
 
-          # alert("ERROR\n\n"+response) if status is 'error'
           $ajax_overlay.css 'visibility', 'hidden'
 
           # Scroll to proper position (not currently working)

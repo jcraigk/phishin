@@ -4,62 +4,12 @@ module ApplicationHelper
     content_tag(:div, '', style: 'clear: both;')
   end
 
-  def total_hours_of_music
-    (Show.avail.map(&:duration).inject(0, &:+) / 3_600_000).round
+  def duration_readable(milliseconds, style = 'colon')
+    DurationFormatter.new(milliseconds, style).call
   end
 
-  def duration_readable(milliseconds, style = 'colon')
-    x = milliseconds / 1000
-    seconds = x % 60
-    x /= 60
-    minutes = x % 60
-    x /= 60
-    hours = x % 24
-    x /= 24
-    days = x
-    if style == 'letters'
-      if days.positive?
-        format(
-          '%<days>dd %<hours>dh %<minutes>dm',
-          days: days,
-          hours: hours,
-          minutes: minutes
-        )
-      elsif hours.positive?
-        format(
-          '%<hours>dh %<minutes>dm',
-          hours: hours,
-          minutes: minutes
-        )
-      else
-        format(
-          '%<minutes>dm %<seconds>ds',
-          minutes: minutes,
-          seconds: seconds
-        )
-      end
-    elsif days.positive?
-      format(
-        '%<days>d:%<hours>02d:%<minutes>02d:%<seconds>02d',
-        days: days,
-        hours: hours,
-        minutes: minutes,
-        seconds: seconds
-      )
-    elsif hours.positive?
-      format(
-        '%<hours>d:%<minutes>02d:%<seconds>02d',
-        hours: hours,
-        minutes: minutes,
-        seconds: seconds
-      )
-    else
-      format(
-        '%<minutes>d:%<seconds>02d',
-        minutes: minutes,
-        seconds: seconds
-      )
-    end
+  def total_hours_of_music
+    (Show.avail.map(&:duration).inject(0, &:+) / 3_600_000).round
   end
 
   def link_to_song(song, term = nil)

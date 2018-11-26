@@ -2,7 +2,7 @@
 require 'highline'
 
 class ShowImporter::TrackReplacer
-  attr_reader :date, :dir, :track_hash, :show
+  attr_reader :date, :track_hash
 
   def initialize(date)
     @date = date
@@ -13,7 +13,7 @@ class ShowImporter::TrackReplacer
     ensure_tracks_present
     ensure_all_tracks_matched
     cli = HighLine.new
-    answer = cli.ask "Proceed with track replacement? [Y/n]"
+    answer = cli.ask 'Proceed with track replacement? [Y/n]'
     replace_audio_on_tracks if answer == 'Y'
   end
 

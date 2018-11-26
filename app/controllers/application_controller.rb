@@ -73,6 +73,10 @@ class ApplicationController < ActionController::Base
       end
   end
 
+  def current_slug
+    params[:slug]
+  end
+
   private
 
   def artificial_wait

@@ -18,8 +18,7 @@ module AmbiguousSlugAsShow
         likes: user_likes_for_tracks(track_list)
       }
     end
-    @show_like = user_likes_for_shows([@show])
-    @show_like = nil
+    @show_like = user_likes_for_shows([@show]).first
 
     set_next_show
     set_previous_show
