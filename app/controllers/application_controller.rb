@@ -11,10 +11,6 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
 
-  def user_signed_in
-    render json: { success: user_signed_in? }
-  end
-
   protected
 
   def render_404

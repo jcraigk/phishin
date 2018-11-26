@@ -333,16 +333,7 @@ $ ->
   # Click to download an individual track
   # Set an iFrame's src to not interrupt playback
   $(document).on 'click', 'a.download', ->
-    data_url = $(this).data('url')
-    $.ajax({
-      url: '/user-signed-in',
-      success: (r) ->
-        if r.success
-          if data_url
-            $('#download_iframe').attr('src', data_url)
-        else
-          App.Util.feedback { alert: 'You must sign in to download MP3s' }
-    })
+    $('#download_iframe').attr('src', data_url)
 
   ###############################################
 

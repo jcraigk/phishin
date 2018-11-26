@@ -40,7 +40,7 @@ class Api::V1::YearsController < Api::V1::ApiController
     @shows_that_year =
       Show.avail
           .between_years(*requested_years)
-          .includes(:venue)
+          .includes(:venue, :tags, tracks: %i[songs tags])
           .order(date: :asc)
   end
 
