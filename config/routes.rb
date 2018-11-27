@@ -20,8 +20,7 @@ Rails.application.routes.draw do
   get '/top-shows' => 'top_shows#index', as: 'top_shows'
   get '/top-tracks' => 'top_tracks#index', as: 'top_tracks'
   get '/search' => 'search#results', as: 'search'
-  get '/tags' => 'tags#index', as: 'tags'
-  get '/tags/:name' => 'tags#selected_tag', as: 'tag'
+  resources :tags, only: %i[index show]
 
   # Map
   get '/search-map' => 'map#search', as: 'map_search'

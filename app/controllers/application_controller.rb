@@ -11,12 +11,13 @@ class ApplicationController < ActionController::Base
 
   protected
 
-  def render_xhr_without_layout
+  def render_xhr_without_layout(view = nil)
+    return (request.xhr? ? (render view, layout: false) : (render view)) if view
     render layout: false if request.xhr?
   end
 
   def render_404
-    render 'errors/404'
+    render_xhr_without_layout('errors/404')
   end
 
   def permitted_params

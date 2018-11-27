@@ -2,10 +2,7 @@
 module Ambiguity::SongTitle
   def slug_as_song
     return false unless song.present?
-
-    validate_song_sorting
     hydrate_song_or_redirect
-
     true
   end
 
@@ -55,19 +52,5 @@ module Ambiguity::SongTitle
 
   def song
     @song ||= Song.find_by(slug: current_slug)
-  end
-
-  # TODO: This is broken :(
-  def validate_song_sorting
-    params[:sort] = 'date desc' unless
-      params[:sort].in?(['date desc', 'date asc', 'likes', 'duration'])
-    @order_by =
-      if params[:sort].in?(['date asc', 'date desc'])
-        params[:sort].gsub(/date/, 'shows.date')
-      elsif params[:sort] == 'likes'
-        'tracks.likes_count desc, shows.date desc'
-      elsif params[:sort] == 'duration'
-        'tracks.duration, shows.date desc'
-      end
   end
 end

@@ -5,73 +5,79 @@ class TagsController < ApplicationController
 
   def index
     @tags = Tag.order(tags_order_by).all
-    render layout: false if request.xhr?
+    render_xhr_without_layout
   end
 
-  def selected_tag
-    @tag = Tag.where('lower(name) = ?', params[:name].downcase).first
-    if @tag.nil?
-      view = 'tag_not_found'
-    else
-      view = 'show'
-      @mode = params[:entity]
-      @mode = 'show' unless %w[show track].include?(@mode)
-
-      case @mode
-      when 'show'
-        tag_ids = ShowTag.where(tag_id: @tag.id).map(&:show_id)
-        @shows = Show.where(id: tag_ids)
-                     .includes(:venue, :tags)
-                     .order(shows_order_by)
-                     .paginate(page: params[:page], per_page: 20)
-        @shows_likes = user_likes_for_shows(@shows)
-        @entities = @shows
-      when 'track'
-        tag_ids = TrackTag.where(tag_id: @tag.id).map(&:track_id)
-        @tracks = Track.where(id: tag_ids)
-                       .includes(:show, :tags)
-                       .order(tracks_order_by)
-                       .paginate(page: params[:page], per_page: 20)
-        @tracks_likes = user_likes_for_tracks(@tracks)
-        @entities = @tracks
-      end
+  def show
+    case mode
+    when 'show'
+      @shows = fetch_shows
+      @shows_likes = user_likes_for_shows(@shows)
+    when 'track'
+      @tracks = fetch_tracks
+      @tracks_likes = user_likes_for_tracks(@tracks)
     end
 
-    request.xhr? ? (render view, layout: false) : (render view)
+    render_xhr_without_layout
   end
 
   private
 
+  def mode
+    @mode ||= params[:entity].in?(%w[show track]) ? params[:entity] : 'show'
+  end
+
+  def tag
+    @tag ||= Tag.friendly.find(params[:id])
+  end
+
+  def fetch_shows
+    tag.shows
+       .includes(:venue, :tags)
+       .order(shows_order_by)
+       .paginate(page: params[:page], per_page: 20)
+  end
+
+  def fetch_tracks
+    tag.tracks
+       .includes(:show, :tags)
+       .order(tracks_order_by)
+       .paginate(page: params[:page], per_page: 20)
+  end
+
   def tags_order_by
-    params[:sort] = 'name' unless %w(name shows_count tracks_count).include?(params[:sort])
+    params[:sort] = 'name' unless
+      params[:sort].in?(%w[name shows_count tracks_count])
 
     case params[:sort]
     when 'name'
-      'name asc'
+      { name: :asc }
     when 'shows_count'
-      'shows_count desc, name asc'
+      { shows_count: :desc, name: :asc }
     when 'tracks_count'
-      'tracks_count desc, name asc'
+      { tracks_count: :desc, name: :asc }
     end
   end
 
   def shows_order_by
-    params[:sort] = 'date desc' unless ['date desc', 'date', 'likes', 'duration'].include?(params[:sort])
+    params[:sort] = 'date desc' unless
+      params[:sort].in?(['date desc', 'date', 'likes', 'duration'])
 
     case params[:sort]
     when 'date desc'
-      'date desc'
+      { date: :desc }
     when 'date'
-      'date asc'
+      { date: :asc }
     when 'likes'
-      'likes_count desc'
+      { likes_count: :desc }
     when 'duration'
-      'duration desc'
+      { duration: :desc }
     end
   end
 
   def tracks_order_by
-    params[:sort] = 'date desc' unless ['date desc', 'date', 'likes', 'duration'].include?(params[:sort])
+    params[:sort] = 'date desc' unless
+      ['date desc', 'date', 'likes', 'duration'].include?(params[:sort])
 
     case params[:sort]
     when 'date desc'
@@ -79,9 +85,9 @@ class TagsController < ApplicationController
     when 'date'
       'shows.date asc'
     when 'likes'
-      'likes_count desc'
+      { likes_count: :desc }
     when 'duration'
-      'duration desc'
+      { duration: :desc }
     end
   end
 end
