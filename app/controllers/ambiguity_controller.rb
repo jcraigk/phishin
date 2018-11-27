@@ -21,6 +21,10 @@ class AmbiguityController < ApplicationController
 
   private
 
+  def current_slug
+    params[:slug]
+  end
+
   def slug_matches_entity?
     slug_matches_timeframe? || slug_matches_object?
   end

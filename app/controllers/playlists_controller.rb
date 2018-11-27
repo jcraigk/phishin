@@ -22,7 +22,7 @@ class PlaylistsController < ApplicationController
 
     @saved_playlists = Playlist.where(user: current_user).order(name: :asc) if current_user
 
-    render layout: false if request.xhr?
+    render_xhr_without_layout
   end
 
   def saved_playlists
@@ -42,7 +42,7 @@ class PlaylistsController < ApplicationController
                   .page(params[:page])
     end
 
-    render layout: false if request.xhr?
+    render_xhr_without_layout
   end
 
   def save_playlist
@@ -324,18 +324,5 @@ class PlaylistsController < ApplicationController
   def retrieve_bookmark(playlist)
     bookmark = PlaylistBookmark.where(playlist_id: playlist.id, user: current_user).first
     session[:playlist_is_bookmarked] = bookmark.present?
-  end
-
-  def clear_saved_playlist
-    session.update(
-      playlist: [],
-      playlist_shuffled: [],
-      playlist_id: 0,
-      playlist_name: '',
-      playlist_slug: '',
-      playlist_user_id: '',
-      playlist_username: '',
-      playlist_is_bookmarked: false
-    )
   end
 end

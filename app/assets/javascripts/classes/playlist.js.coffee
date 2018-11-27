@@ -11,7 +11,7 @@ class @Playlist
     @$playlist_name_input   = $ '#playlist_name_input'
     @$playlist_slug_input   = $ '#playlist_slug_input'
     this._getPlaylist()
-  
+
   initPlaylist: ->
     this._getPlaylist()
     $('#active_playlist').sortable({
@@ -20,7 +20,7 @@ class @Playlist
         this.updatePlaylist 'Track moved in playlist'
     })
     # this._refreshPlaylistDropdown()
-    
+
   updatePlaylist: (success_msg) ->
     track_ids = []
     duration = 0
@@ -37,7 +37,7 @@ class @Playlist
         this._updatePlaylistStats(track_ids.length, duration)
         @Util.feedback { notice: success_msg }
     })
-  
+
   addTrackToPlaylist: (track_id) ->
     $.ajax({
       type: 'post',
@@ -50,7 +50,7 @@ class @Playlist
         else
           @Util.feedback { alert: r.msg }
     })
-  
+
   addShowToPlaylist: (show_id) ->
     $.ajax({
       type: 'post',
@@ -63,7 +63,7 @@ class @Playlist
         else
           @Util.feedback { alert: r.msg }
     })
-  
+
   removeTrackFromPlaylist: (track_id) ->
     if $('#active_playlist').children('li').size() is 0
       this.clearPlaylist()
@@ -71,7 +71,7 @@ class @Playlist
     else
       this.updatePlaylist 'Track removed from playlist'
       @Player.stopAndUnload()
-  
+
   handlePlaybackLoopChange: ->
     $.ajax({
       type: 'post',
@@ -131,7 +131,7 @@ class @Playlist
         else
           @Util.feedback { alert: r.msg }
     })
-  
+
   unbookmarkPlaylist: ->
     $.ajax({
       type: 'post',
@@ -143,7 +143,7 @@ class @Playlist
         else
           @Util.feedback { alert: r.msg }
     })
-  
+
   handleSaveModal: ->
     if name = $('#playlist_data').attr 'data-name'
       @$save_action_existing.attr 'disabled', false
@@ -154,13 +154,13 @@ class @Playlist
       @$playlist_name_input.val ''
       @$playlist_slug_input.val ''
     @$save_modal.modal 'show'
-  
+
   handleDuplicateModal: ->
     @$save_action_existing.attr 'disabled', true
     @$playlist_name_input.val ''
     @$playlist_slug_input.val ''
     @$save_modal.modal 'show'
-  
+
   handleShareModal: ->
     if $('#playlist_data').attr('data-id') is "0"
       url = "You must first save a playlist to share it."
@@ -169,7 +169,7 @@ class @Playlist
     $('#share_url').html("<p>#{url}</p>")
     $('#share_track_tips').hide()
     $('#share_modal').modal('show')
-  
+
   savePlaylist: ->
     @$save_modal.modal 'hide'
     $('#duplicate_playlist_btn').hide()
@@ -196,7 +196,7 @@ class @Playlist
        else
          @Util.feedback { alert: r.msg }
     })
-  
+
   deletePlaylist: (id) ->
     $.ajax({
      url: '/delete-playlist',
@@ -211,20 +211,19 @@ class @Playlist
        else
          @Util.feedback { alert: r.msg }
     })
-  
+
   _getPlaylist: ->
     $.ajax({
       url: '/get-playlist',
       success: (r) =>
-        if r.playlist.length > 0
+        if r.playlist && r.playlist.length > 0
           @$playlist_btn.addClass 'playlist_active'
           $('#empty_playlist_msg').hide()
         else
           @$playlist_btn.removeClass 'playlist_active'
           $('#empty_playlist_msg').show()
     })
-  
+
   _updatePlaylistStats: (num_tracks=0, duration=0) ->
     $('#active_playlist_tracks_label').html "Tracks: #{num_tracks}"
     $('#active_playlist_duration_label').html "Length: #{@Util.readableDuration(duration, 'letters')}"
-    

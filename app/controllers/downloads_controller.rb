@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 class DownloadsController < ApplicationController
   def track_info
-    render render json: { success: false } unless track
+    return render json: { success: false } unless track
     render json: {
       success: true,
       id: track.id,
@@ -19,8 +19,7 @@ class DownloadsController < ApplicationController
   end
 
   def download_track
-    return redirect_to(:root, alert: 'The file could not be found') unless File.exist?(track.audio_file.path)
-
+    return redirect_to(:root, alert: 'The file could not be found') file_exists?
     send_file(
       track.audio_file.path,
       type: 'audio/mpeg',
@@ -31,6 +30,10 @@ class DownloadsController < ApplicationController
   end
 
   private
+
+  def file_exists?
+    File.exist?(track.audio_file.path)
+  end
 
   def track
     @track ||=

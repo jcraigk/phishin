@@ -9,7 +9,7 @@ html
     = render partial: 'layouts/google_analytics'
     = csrf_meta_tags
 
-  body data-base-url=APP_BASE_URL data-app-name=APP_NAME data-anchor=params[:anchor]&.downcase data-time-marker=params[:t]
+  body data-base-url=APP_BASE_URL data-app-name=APP_NAME data-anchor=params[:anchor]&.downcase data-time-marker=(params[:t] || 0)
 
     = render partial: 'layouts/feedback'
     = render partial: 'layouts/ajax_overlay'

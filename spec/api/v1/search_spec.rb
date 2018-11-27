@@ -14,7 +14,7 @@ describe Api::V1::SearchController do
     it 'responds with expected results' do
       expect(json_data).to eq(
         show: nil,
-        other_shows: nil,
+        other_shows: [],
         songs: [],
         venues: [],
         tours: [
