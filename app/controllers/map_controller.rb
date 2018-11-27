@@ -7,30 +7,37 @@ class MapController < ApplicationController
   end
 
   def search
+    init_date_params
+    return render json: { success: true, venues: relevant_venues } if all_params_present?
+    render json: { success: false, msg: 'No search criteria provided' }
+  end
+
+  private
+
+  def all_params_present?
+    params[:lat] && params[:lng] && params[:distance]
+  end
+
+  def init_date_params
     params[:date_start] ||= Show.order(date: :asc).first.date
     params[:date_stop] ||= Show.order(date: :desc).first.date
-    if params[:lat].present? && params[:lng].present? && params[:distance].present?
-      venues_with_shows = []
-      venues = Venue.near([params[:lat], params[:lng]], params[:distance])
-      venues.each do |venue|
-        shows =
-          Show.where(
-            'venue_id = ? and date >= ? and date <= ?',
-            venue.id,
-            params[:date_start],
-            params[:date_stop]
-          ).order(date: :desc).all
-        venue = venue.as_json
-        if shows.any?
-          venue[:shows] = shows.map(&:as_json)
-          venues_with_shows << venue
-        end
-      end
+  end
 
-      render json: { success: true, venues: venues_with_shows }
-      return
+  def relevant_venues
+    venues.each_with_object([]) do |venue, relevant_venues|
+      shows = relevant_shows_for(venue)
+      next unless shows.any?
+      relevant_venues << venue.as_json.merge(shows: shows.map(&:as_json))
     end
+  end
 
-    render json: { success: false, msg: 'No results matched your criteria' }
+  def venues
+    @venues ||= Venue.near([params[:lat], params[:lng]], params[:distance]).includes(:shows)
+  end
+
+  def relevant_shows_for(venue)
+    venue.shows.select do |show|
+      show.date >= Time.parse(params[:date_start]) && show.date <= Time.parse(params[:date_stop])
+    end.sort_by(&:date).reverse
   end
 end

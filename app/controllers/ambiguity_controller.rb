@@ -21,6 +21,23 @@ class AmbiguityController < ApplicationController
 
   private
 
+  def validate_sorting_for_shows
+    params[:sort] = 'date desc' unless
+      params[:sort].in?(['date desc', 'date asc', 'likes', 'duration'])
+    order_by_for_shows
+  end
+
+  def order_by_for_shows
+    @order_by =
+      if params[:sort].in?(['date asc', 'date desc'])
+        params[:sort]
+      elsif params[:sort] == 'likes'
+        { likes_count: :desc, date: :desc }
+      elsif params[:sort] == 'duration'
+        'shows.duration desc, date desc'
+      end
+  end
+
   def current_slug
     params[:slug]
   end

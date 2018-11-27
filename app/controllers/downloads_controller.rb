@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class DownloadsController < ApplicationController
-  def track_info
+  def track_info # rubocop:disable Metrics/AbcSize
     return render json: { success: false } unless track
     render json: {
       success: true,
@@ -19,7 +19,13 @@ class DownloadsController < ApplicationController
   end
 
   def download_track
-    return redirect_to(:root, alert: 'The file could not be found') file_exists?
+    raise ActiveRecord::RecordNotFound unless file_exists?
+    send_audio_file
+  end
+
+  private
+
+  def send_audio_file
     send_file(
       track.audio_file.path,
       type: 'audio/mpeg',
@@ -28,8 +34,6 @@ class DownloadsController < ApplicationController
       length: File.size(track.audio_file.path)
     )
   end
-
-  private
 
   def file_exists?
     File.exist?(track.audio_file.path)

@@ -3,7 +3,7 @@ class DurationFormatter
   attr_reader :duration, :seconds, :minutes, :hours, :days, :style
 
   def initialize(duration, style = nil)
-    @duration = duration
+    @duration = duration || 0
     @style = style.in?(%w[colon letters]) ? style : 'colon'
   end
 

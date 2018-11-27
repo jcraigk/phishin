@@ -50,18 +50,6 @@ class ApplicationController < ActionController::Base
     params[:char] = c.in?(FIRST_CHAR_LIST) ? c : FIRST_CHAR_LIST.first
   end
 
-  def validate_sorting_for_shows
-    params[:sort] = 'date desc' unless params[:sort].in?(['date desc', 'date asc', 'likes', 'duration'])
-    @order_by =
-      if params[:sort].in?(['date asc', 'date desc'])
-        params[:sort]
-      elsif params[:sort] == 'likes'
-        'likes_count desc, date desc'
-      elsif params[:sort] == 'duration'
-        'shows.duration, date desc'
-      end
-  end
-
   private
 
   def request_is_ajax?

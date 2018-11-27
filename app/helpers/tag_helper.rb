@@ -17,7 +17,7 @@ module TagHelper
   end
 
   def tag_instance_label(tag_instance, css_class = '')
-    link_to tag_path(name: tag_instance.tag.name.downcase) do
+    link_to tag_path(tag_instance.tag.name.downcase) do
       content_tag(
         :span,
         tag_instance.tag.name,
