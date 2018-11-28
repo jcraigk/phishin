@@ -23,7 +23,7 @@ class PlaylistsController < ApplicationController
     success = false
     save_action = params[:save_action].in?(%w[new existing]) ? params[:save_action] : 'new'
 
-    # TODO: Could we do the following with AR validations more cleanly?
+    # TODO: convert to AR validations
     if !current_user
       msg = 'You must be logged in to save playlists'
     elsif session[:playlist].size < 2
@@ -157,7 +157,7 @@ class PlaylistsController < ApplicationController
   end
 
   def next_track_id
-    return unless init_session_playlist
+    return render_json_failure('No active playlist') unless init_session_playlist
 
     if playlist_track_ids.last == params[:track_id].to_i
       if session[:loop]
@@ -173,7 +173,7 @@ class PlaylistsController < ApplicationController
   end
 
   def previous_track_id
-    return unless init_session_playlist
+    return render_json_failure('No active playlist') unless init_session_playlist
 
     if playlist_track_ids.first == params[:track_id].to_i
       if session[:loop]
@@ -189,8 +189,7 @@ class PlaylistsController < ApplicationController
   end
 
   def init_session_playlist
-    session[:playlist] = params[:playlist].split(',').map(&:to_i) if params[:playlist].present?
-    render_json_failure('No active playlist') if session[:playlist].empty?
+    return session[:playlist] = params[:playlist].split(',').map(&:to_i) if params[:playlist].present?
     false
   end
 
