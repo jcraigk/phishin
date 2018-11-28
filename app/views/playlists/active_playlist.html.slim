@@ -4,10 +4,10 @@
   #playlist_data data-id=session[:playlist_id] data-name=session[:playlist_name] data-slug=session[:playlist_slug] data-user-id=session[:playlist_user_id] data-username=session[:playlist_username]
 
   #title_box
-    h1.playlist_title = session[:playlist_name] || '(Untitled Playlist)'
-    - if session[:playlist_id]
+    h1.playlist_title = session[:playlist_id] > 0 ? session[:playlist_name] : '(Untitled Playlist)'
+    - if session[:playlist_id] > 0
       h3 Author: #{session[:playlist_username]}
-    h3#active_playlist_tracks_label Tracks: #{@tracks&.size || 0}
+    h3#active_playlist_tracks_label Tracks: #{@tracks.size}
     h3#active_playlist_duration_label Length: #{duration_readable(@duration, 'letters')}
     br
 
@@ -22,7 +22,7 @@
     br
 
     - if user_signed_in?
-      - if session[:playlist_id] && session[:playlist_user_id] != current_user.id
+      - if session[:playlist_id] && session[:playlist_id] > 0 && session[:playlist_user_id] != current_user.id
         button#duplicate_playlist_btn.btn type='button'
           i.icon-file
           |  DUPLICATE
@@ -34,7 +34,7 @@
           |  SAVE
         br
 
-      - if session[:playlist_id]
+      - if session[:playlist_id] && session[:playlist_id] > 0
         - if current_user.id == session[:playlist_user_id]
           button#delete_playlist_btn.btn type='button'
             i.icon-remove
@@ -65,6 +65,8 @@
     br
 
   #content_box
+    - if @invalid_playlist_slug
+      .incomplete_show Invalid playlist URL provided
     #empty_playlist_msg.callout_box style='display: none;'
       strong Your active playlist is empty.
       br
