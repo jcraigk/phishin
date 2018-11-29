@@ -335,6 +335,9 @@ $ ->
   $(document).on 'click', 'a.download', ->
     $('#download_iframe').attr('src', data_url)
 
+  $(document).on 'click', 'a.download', ->
+    $('#download_iframe').attr('src', $(this).data('url'))
+
   ###############################################
 
   # Hover on player title to reveal Like toggle
