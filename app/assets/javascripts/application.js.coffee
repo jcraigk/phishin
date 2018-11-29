@@ -333,9 +333,6 @@ $ ->
   # Click to download an individual track
   # Set an iFrame's src to not interrupt playback
   $(document).on 'click', 'a.download', ->
-    $('#download_iframe').attr('src', data_url)
-
-  $(document).on 'click', 'a.download', ->
     $('#download_iframe').attr('src', $(this).data('url'))
 
   ###############################################
