@@ -43,7 +43,38 @@ feature 'Playlists', :js do
   end
 
   context 'when logged in' do
-    xscenario 'editing and saving a playlist' do
+    given(:user) { create(:user) }
+    given!(:show) { create(:show, :with_tracks, date: "#{ERAS.values.flatten.last}-01-01") }
+
+    before { login_as(user) }
+
+    scenario 'editing and saving a playlist' do
+      visit active_playlist_path
+
+      # Click EDIT PLAYLIST
+      accept_confirm do
+        click_button('EDIT PLAYLIST')
+      end
+      expect_content('PLAYLIST EDIT MODE')
+
+      # Go to show, click on first three tracks
+      # visit "/#{show.date}"
+      click_link('Years')
+      first('ul.item_list li').click
+      track_items = page.all('ul.item_list li')
+      track_items[0].click
+      track_items[1].click
+      track_items[2].click
+      expect_content('Track added to playlist')
+
+      # Return to playlist, ensure tracks are there
+      visit active_playlist_path
+      track_items = page.all('.playable_track')
+      expect(track_items.size).to eq(3)
+
+      # Click DONE EDITING
+      click_button('DONE EDITING')
+      expect(page).not_to have_content('PLAYLIST EDIT MODE')
     end
 
     xscenario 'accessing a previously saved playlist' do

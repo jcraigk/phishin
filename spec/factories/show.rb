@@ -10,12 +10,12 @@ FactoryBot.define do
 
     trait :with_tracks do
       after(:build) do |show|
-        create_list(:track, 2, show: show)
+        create_list(:track, 3, show: show)
       end
     end
 
     trait :with_likes do
-      likes { build_list(:like, 2) }
+      likes { build_list(:like, 3) }
     end
 
     trait :with_tags do
