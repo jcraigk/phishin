@@ -13,4 +13,7 @@ feature 'Player controls', :js do
 
   xscenario 'playlist icon' do
   end
+
+  xscenario 'gear icon (loop/shuffle)' do
+  end
 end

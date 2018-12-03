@@ -59,11 +59,13 @@ feature 'Show', :js do
           first('.like_toggle').click
         end
         expect_content('Like acknowledged')
+        # TODO: ensure number increments
 
         within('#title_box') do
           first('.like_toggle').click
         end
         expect_content('Unlike acknowledged')
+        # TODO: ensure number decrements
 
         within('#title_box') do
           first('.like_toggle').click
@@ -79,6 +81,7 @@ feature 'Show', :js do
           first('.like_toggle').click
         end
         expect_content('Like acknowledged')
+        # TODO: ensure number increments
 
         visit my_tracks_path
         expect_content(show.tracks.first.title)

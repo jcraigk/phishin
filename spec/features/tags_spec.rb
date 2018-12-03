@@ -19,7 +19,7 @@ feature 'Tags', :js do
     create_list(:track, 7, tags: [tag3])
   end
 
-  scenario 'visit Tags page, select a show' do
+  scenario 'visit Tags page, select tag, select a show' do
     visit tags_path
 
     within('#title_box') do
@@ -35,6 +35,7 @@ feature 'Tags', :js do
     items = page.all('ul.item_list li')
     expect(items.count).to eq(tags.count)
 
+    # Click first tag
     click_link(tag1.name)
 
     within('#title_box') do
@@ -55,7 +56,7 @@ feature 'Tags', :js do
     expect(page.current_path).to match(/\d{4}-\d{2}-\d{2}/)
   end
 
-  scenario 'Tag sorting' do
+  scenario 'sorting' do
     visit tags_path
 
     # Default sort by Name
