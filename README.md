@@ -60,37 +60,3 @@ rails phishnet:sync_jamcharts
 You can create a new user via the Rails console (`rails c`).  See [Devise documentation](https://github.com/plataformatec/devise) for details.  Note that you must `confirm!` the user after creating it.
 
 You can use [Adminer](https://www.adminer.org/) to interact with Postgres using a GUI.  Visit `http://localhost:81` and select `PostgreSQL` in the System dropdown menu.  Server is `pg`, username/pass are both `postgres`, db name is `phishin`.
-
-## Miscellaneous
-
-CORS config for nginx:
-
-```
-if ($request_method = 'OPTIONS') {
-  add_header 'Access-Control-Allow-Origin' '*';
-  add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, HEAD';
-
-  # Custom headers and headers various browsers *should* be OK with but aren't
-  add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
-
-  # Pre-flight info is valid for 20 days
-  add_header 'Access-Control-Max-Age' 1728000;
-  add_header 'Content-Type' 'text/plain; charset=utf-8';
-  add_header 'Content-Length' 0;
-  return 204;
-}
-
-if ($request_method = 'POST') {
-  add_header 'Access-Control-Allow-Origin' '*';
-  add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, HEAD';
-  add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
-  add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
-}
-
-if ($request_method = 'GET') {
-  add_header 'Access-Control-Allow-Origin' '*';
-  add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, HEAD';
-  add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
-  add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
-}
-```
