@@ -17,8 +17,8 @@ module SortHelper
 
   def sort_tags_title(item_hash)
     item_hash.each_with_index do |(key, val), idx|
-      if (idx.zero? && params[:filter].blank?) ||
-         params[:filter] == val
+      if (idx.zero? && params[:sort].blank?) ||
+         params[:sort] == val
         return "<strong>#{key}</strong>".html_safe
       end
     end
@@ -85,8 +85,8 @@ module SortHelper
   def tag_sort_items
     {
       '<i class="icon-text-height"></i> Name' => 'name',
-      '<i class="icon-list"></i> Number of Tracks' => 'tracks_count',
-      '<i class="icon-list"></i> Number of Shows' => 'shows_count'
+      '<i class="icon-list"></i> Track Count' => 'tracks_count',
+      '<i class="icon-list"></i> Show Count' => 'shows_count'
     }
   end
 
@@ -111,7 +111,7 @@ module SortHelper
   def songs_and_venues_sort_items
     {
       '<i class="icon-text-height"></i> Title' => 'title',
-      '<i class="icon-list"></i> Number of Tracks' => 'performances'
+      '<i class="icon-list"></i> Track Count' => 'performances'
     }
   end
 
@@ -127,7 +127,7 @@ module SortHelper
   def venues_sort_items
     {
       '<i class="icon-text-height"></i> Name' => 'name',
-      '<i class="icon-list"></i> Number of Shows' => 'performances'
+      '<i class="icon-list"></i> Show Count' => 'performances'
     }
   end
 

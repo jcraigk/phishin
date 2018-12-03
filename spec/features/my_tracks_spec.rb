@@ -33,5 +33,8 @@ feature 'My Tracks', :js do
       first('ul.item_list li a').click
       expect(page.current_path).to match(/\d{4}-\d{2}-\d{2}/)
     end
+
+    xscenario 'sorting' do
+    end
   end
 end

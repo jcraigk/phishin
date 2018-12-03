@@ -62,8 +62,7 @@ feature 'Tags', :js do
     within('#title_box') do
       expect_content('Sort by', 'Name')
     end
-    expect(tag1.name).to appear_before(tag2.name)
-    expect(tag2.name).to appear_before(tag3.name)
+    expect_content_in_order([tag1, tag2, tag3].map(&:name))
 
     # Sort by Track Count
     within('#title_box') do
@@ -71,8 +70,7 @@ feature 'Tags', :js do
       click_link('Track Count')
       expect_content('Sort by', 'Track Count')
     end
-    expect(tag3.name).to appear_before(tag1.name)
-    expect(tag1.name).to appear_before(tag2.name)
+    expect_content_in_order([tag3, tag1, tag2].map(&:name))
 
     # Sort by Show Count
     within('#title_box') do
@@ -80,7 +78,6 @@ feature 'Tags', :js do
       click_link('Show Count')
       expect_content('Sort by', 'Show Count')
     end
-    expect(tag2.name).to appear_before(tag1.name)
-    expect(tag1.name).to appear_before(tag3.name)
+    expect_content_in_order([tag2, tag1, tag3].map(&:name))
   end
 end
