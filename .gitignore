@@ -1,4 +1,5 @@
 .bundle
+.env
 .DS_Store
 
 /coverage

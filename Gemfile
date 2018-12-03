@@ -30,6 +30,7 @@ gem 'twitter-bootstrap-rails', '2.2.8'
 gem 'uglifier'
 
 group :development, :test do
+  gem 'dotenv-rails'
   gem 'pry'
   gem 'rubocop'
 end
