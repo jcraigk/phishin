@@ -38,4 +38,51 @@ feature 'Show', :js do
       expect_content('Play', 'Add to playlist', 'Share', 'Download MP3', 'This song...')
     end
   end
+
+  context 'liking' do
+    scenario 'when not logged in' do
+      visit show.date
+      within('#title_box') do
+        first('.like_toggle').click
+      end
+      expect_content('You must be signed in to submit Likes')
+    end
+
+    context 'when logged in' do
+      before do
+        login_as(create(:user))
+        visit show.date
+      end
+
+      scenario 'liking/unliking the show' do
+        within('#title_box') do
+          first('.like_toggle').click
+        end
+        expect_content('Like acknowledged')
+
+        within('#title_box') do
+          first('.like_toggle').click
+        end
+        expect_content('Unlike acknowledged')
+
+        within('#title_box') do
+          first('.like_toggle').click
+        end
+        expect_content('Like acknowledged')
+
+        visit my_shows_path
+        expect_content(show.venue.name) # TODO: look for date (matcher?)
+      end
+
+      scenario 'liking/unliking a track' do
+        within('#content_box') do
+          first('.like_toggle').click
+        end
+        expect_content('Like acknowledged')
+
+        visit my_tracks_path
+        expect_content(show.tracks.first.title)
+      end
+    end
+  end
 end
