@@ -58,9 +58,9 @@ feature 'Playlists', :js do
       expect_content('PLAYLIST EDIT MODE')
 
       # Go to show, click on first three tracks
-      # visit "/#{show.date}"
       click_link('Years')
       first('ul.item_list li').click
+      first('ul.item_list li a').click
       track_items = page.all('ul.item_list li')
       track_items[0].click
       track_items[1].click
@@ -68,16 +68,22 @@ feature 'Playlists', :js do
       expect_content('Track added to playlist')
 
       # Return to playlist, ensure tracks are there
-      visit active_playlist_path
+      within('#global_nav') do
+        click_link('Playlists')
+      end
       track_items = page.all('.playable_track')
       expect(track_items.size).to eq(3)
+      expect_content_in_order(show.tracks)
 
       # Click DONE EDITING
       click_button('DONE EDITING')
       expect(page).not_to have_content('PLAYLIST EDIT MODE')
     end
 
-    xscenario 'accessing a previously saved playlist' do
+    xscenario 'reordering a playlist' do
+    end
+
+    xscenario 'opening a saved playlist' do
     end
   end
 end
