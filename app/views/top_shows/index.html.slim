@@ -17,7 +17,7 @@
         li
           h2.position_num = idx + 1
           h2
-            a href="/#{show.date}" = show.date.strftime('%Y.%m.%d')
+            a href="/#{show.date}" = show.date_with_dots
           h4.narrow
             a href="/#{show.venue.slug}" = truncate(show.venue.name, length: 30)
           = likable(show, @shows_likes[idx], 'small')

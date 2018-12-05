@@ -35,6 +35,10 @@ class Show < ApplicationRecord
     update(duration: tracks.map(&:duration).inject(0, &:+))
   end
 
+  def date_with_dots
+    date.strftime('%Y.%m.%d')
+  end
+
   def as_json # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     {
       id: id,

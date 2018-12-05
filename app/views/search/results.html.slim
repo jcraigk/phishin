@@ -23,7 +23,7 @@
               li
                 h2
                   a href="/#{@show.date}"
-                    span.highlight = @show.date.strftime('%Y.%m.%d')
+                    span.highlight = @show.date_with_dots
                 h4
                   a href="/#{@show.venue.slug}" = @show.venue.name
                 h5
@@ -41,7 +41,7 @@
                 li
                   h2
                     a href="/#{show.date}"
-                      span.highlight = show.date.strftime('%Y.%m.%d')
+                      span.highlight = show.date_with_dots
                   h4
                     a href="/#{show.venue.slug}" = show.venue.name.html_safe
                   h5
