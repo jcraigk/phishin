@@ -5,12 +5,12 @@ feature 'Song page', :js do
   given(:song) { create(:song) }
   given!(:tracks) { create_list(:track, 3, songs: [song]) }
   given(:titles_by_date) { tracks.sort_by { |t| t.show.date }.map(&:title) }
-  given(:titles_by_duration) { tracks.sort_by { |t| t.duration }.map(&:title) }
   given(:titles_by_likes) { tracks.sort_by { |t| t.likes_count }.map(&:title) }
+  given(:titles_by_duration) { tracks.sort_by { |t| t.duration }.map(&:title) }
 
   before do
     tracks.each_with_index do |track, idx|
-      track.update(duration: track.duration + idx*10)
+      track.update(duration: track.duration + idx * 10)
       track.likes = create_list(:like, 10 - idx, likable: track)
     end
   end
