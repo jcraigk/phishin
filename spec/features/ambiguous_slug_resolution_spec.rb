@@ -90,7 +90,7 @@ feature 'Ambiguous Slug Resolution', :js do
     visit "/#{venue.slug}"
 
     within('#title_box') do
-      expect_content(venue.name, venue.location, "Shows hosted: #{venue.shows.size}")
+      expect_content(venue.name, venue.location, "Shows: #{venue.shows.size}")
     end
 
     items = page.all('ul.item_list li')
