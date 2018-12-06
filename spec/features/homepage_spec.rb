@@ -70,7 +70,9 @@ feature 'Homepage', :js do
       expect(years.last.text).to eq('3 shows')
     end
 
-    # TODO: Ensure footer links
+    within('#footer') do
+      expect_content("phish.in'", 'legal', 'contact', 'api')
+    end
 
     # Click most recent year
     click_link(most_recent_year)

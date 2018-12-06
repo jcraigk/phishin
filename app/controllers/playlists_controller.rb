@@ -182,10 +182,10 @@ class PlaylistsController < ApplicationController
   def add_show_to_playlist
     clear_saved_playlist
 
-    if (show = Show.where(id: params[:show_id]).includes(:tracks).order('tracks.position asc'))
+    if (show = Show.find_by(id: params[:show_id]))
 
-      session[:playlist] += show.tracks.map(&:id)
-      session[:playlist].uniq!.take(100)
+      session[:playlist] += show.tracks.sort_by(&:position).map(&:id)
+      session[:playlist] = session[:playlist].uniq.take(100)
 
       render json: { success: true, msg: 'Tracks added to playlist' }
     else

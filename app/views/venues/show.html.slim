@@ -4,7 +4,7 @@
     h1 = @venue.name
     h2
       a href="/map?map_term=#{@venue.latitude},#{@venue.longitude}&distance=.5" = @venue.location
-    h2 Shows hosted: #{@venue.shows_count}
+    h2 Shows: #{@venue.shows_count}
 
     - if @venue.past_names.present?
       h2.venue_past_names Past name(s): #{@venue.past_names}

@@ -7,7 +7,7 @@ class DownloadsController < ApplicationController
       id: track.id,
       title: track.title,
       duration: track.duration,
-      show: track.show.date.strftime('%Y.%m.%d').to_s,
+      show: track.show.date_with_dots,
       show_url: "/#{track.show.date}",
       venue: track.show.venue.name.to_s,
       venue_url: "/#{track.show.venue.slug}",

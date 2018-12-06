@@ -80,10 +80,18 @@ feature 'Playlists', :js do
       expect(page).not_to have_content('PLAYLIST EDIT MODE')
     end
 
-    xscenario 'reordering a playlist' do
-    end
+    context 'with saved playlist' do
+      given!(:playlist) { create(:playlist, :with_tracks, user: user) }
 
-    xscenario 'opening a saved playlist' do
+      scenario 'opening a saved playlist' do
+        visit saved_playlists_path
+
+        click_link(playlist.name)
+        expect(page).to have_current_path("/play/#{playlist.slug}")
+      end
+
+      xscenario 'reordering a playlist' do
+      end
     end
   end
 end

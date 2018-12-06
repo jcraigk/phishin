@@ -82,7 +82,7 @@
             h2.position_num = idx + 1
             h2.wide = track.title
             h5.narrower
-              a href="/#{track.show.date}" = track.show.date.strftime('%Y.%m.%d')
+              a href="/#{track.show.date}" = track.show.date_with_dots
             = display_tag_instances(track.track_tags, true, 'tag_container_small')
             = likable(track, @tracks_likes[idx], 'small')
             h3 = duration_readable(track.duration)

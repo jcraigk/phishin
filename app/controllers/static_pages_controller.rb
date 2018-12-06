@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 class StaticPagesController < ApplicationController
-  def legal_stuff
+  def legal
     render_xhr_without_layout
   end
 
-  def contact_us
+  def contact
     render_xhr_without_layout
   end
 

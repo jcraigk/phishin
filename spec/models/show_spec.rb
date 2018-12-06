@@ -72,6 +72,10 @@ RSpec.describe Show do
     end
   end
 
+  it 'provides #date_with_dots' do
+    expect(subject.date_with_dots).to eq(subject.date.strftime('%Y.%m.%d'))
+  end
+
   context '#save_duration' do
     let(:track_sum) { subject.tracks.map(&:duration).inject(0, &:+) }
     subject { create(:show, :with_tracks) }

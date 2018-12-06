@@ -2,7 +2,9 @@
 require 'rails_helper'
 
 feature 'Show', :js do
-  given(:show) { create(:show, :with_tracks, :with_likes, :with_tags) }
+  given!(:show) { create(:show, :with_tracks, :with_likes, :with_tags, date: '2018-01-01') }
+  given!(:show2) { create(:show, date: '2018-01-02') }
+  given!(:show3) { create(:show, date: '2018-01-03') }
   given(:track) { show.tracks.first }
 
   before do
@@ -39,6 +41,30 @@ feature 'Show', :js do
     end
   end
 
+  scenario 'clicking previous/next buttons' do
+    visit show2.date
+
+    within('#title_box') do
+      click_link('<< Previous Show')
+    end
+    expect(page).to have_current_path("/#{show.date}")
+
+    within('#title_box') do
+      click_link('<< Previous Show')
+    end
+    expect(page).to have_current_path("/#{show3.date}")
+
+    within('#title_box') do
+      click_link('Next Show >>')
+    end
+    expect(page).to have_current_path("/#{show.date}")
+
+    within('#title_box') do
+      click_link('Next Show >>')
+    end
+    expect(page).to have_current_path("/#{show2.date}")
+  end
+
   context 'liking' do
     scenario 'when not logged in' do
       visit show.date
@@ -59,11 +85,13 @@ feature 'Show', :js do
           first('.like_toggle').click
         end
         expect_content('Like acknowledged')
+        # TODO: ensure number increments
 
         within('#title_box') do
           first('.like_toggle').click
         end
         expect_content('Unlike acknowledged')
+        # TODO: ensure number decrements
 
         within('#title_box') do
           first('.like_toggle').click
@@ -79,6 +107,7 @@ feature 'Show', :js do
           first('.like_toggle').click
         end
         expect_content('Like acknowledged')
+        # TODO: ensure number increments
 
         visit my_tracks_path
         expect_content(show.tracks.first.title)
