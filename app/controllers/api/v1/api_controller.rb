@@ -10,7 +10,6 @@ class Api::V1::ApiController < ActionController::Base
     configure_page_params
     relation.order(sort_str(relation))
             .paginate(page: params[:page], per_page: params[:per_page])
-            .all
   end
 
   def respond_with_success(data, opts = {})

@@ -5,7 +5,7 @@ class TopTracksController < ApplicationController
   def index
     @tracks =
       Track.where('likes_count > 0')
-           .includes(:show, :tags)
+           .includes(:show, track_tags: :tag)
            .order(likes_count: :desc, title: :asc)
            .limit(40)
     @tracks_likes = user_likes_for_tracks(@tracks)

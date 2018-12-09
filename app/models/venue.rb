@@ -76,6 +76,6 @@ class Venue < ApplicationRecord
   private
 
   def shows_played_here
-    @shows_played_here ||= shows.order(date: :asc).all
+    @shows_played_here ||= shows.order(date: :asc)
   end
 end

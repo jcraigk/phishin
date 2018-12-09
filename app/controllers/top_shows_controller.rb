@@ -6,7 +6,7 @@ class TopShowsController < ApplicationController
     @shows =
       Show.avail
           .where('likes_count > 0')
-          .includes(:venue, :tags)
+          .includes(:venue, show_tags: :tag)
           .order(likes_count: :desc, date: :desc)
           .limit(40)
     @shows_likes = user_likes_for_shows(@shows)
