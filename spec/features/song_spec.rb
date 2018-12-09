@@ -17,4 +17,7 @@ describe 'Song page', :js do
 
     expect_track_sorting_controls(tracks)
   end
+
+  xit 'play random version' do
+  end
 end

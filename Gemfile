@@ -40,10 +40,12 @@ group :test do
   gem 'capybara', require: false
   gem 'capybara-email', require: false
   gem 'capybara-screenshot', require: false
+  gem 'chromedriver-helper'
   gem 'database_cleaner'
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'rspec-rails'
+  gem 'rspec_junit_formatter'
   gem 'selenium-webdriver'
   gem 'shoulda-matchers'
   gem 'simplecov', require: false

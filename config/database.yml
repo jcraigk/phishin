@@ -2,7 +2,7 @@ default: &default
   adapter: postgresql
   username: postgres
   password: postgres
-  host: localhost
+  host: <%= ENV['DB_HOST'] || 'pg' %>
   port: 5432
   encoding: unicode
 
