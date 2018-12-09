@@ -2,12 +2,12 @@
 require 'rails_helper'
 require 'capybara/email/rspec'
 
-feature 'Reset Password', :js do
-  given(:password) { 'Tr3yIsj3dI' }
-  given(:new_password) { 'Tr3yIsj3dI2' }
-  given(:user) { create(:user, password: password, password_confirmation: password) }
+describe 'Reset Password', :js do
+  let(:password) { 'Tr3yIsj3dI' }
+  let(:new_password) { 'Tr3yIsj3dI2' }
+  let(:user) { create(:user, password: password, password_confirmation: password) }
 
-  xscenario 'user enters email, receives message, and changes password' do
+  xit 'user enters email, receives message, and changes password' do
     visit new_user_session_path
 
     click_link('Forgot your password?')
@@ -20,7 +20,7 @@ feature 'Reset Password', :js do
     # Open the email, click link
     open_email(user.email)
     current_email.find('a').click
-    expect(current_path).to eq(edit_user_password_path)
+    expect(page).to have_current_path(edit_user_password_path)
 
     # User enters a new password, twice
     fill_in('user[password]', with: new_password)
@@ -31,7 +31,7 @@ feature 'Reset Password', :js do
     expect(user.reload.valid_password?(new_password)).to eq(true)
 
     # User is signed in and redirected to root path
-    expect(current_path).to eq(root_path)
+    expect(page).to have_current_path(root_path)
     expect(page).to have_content('Your password has been changed successfully. You are now signed in.')
   end
 end

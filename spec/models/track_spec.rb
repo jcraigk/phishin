@@ -13,7 +13,7 @@ RSpec.describe Track do
 
   it { is_expected.to have_attached_file(:audio_file) }
 
-  context 'friendly_id slugs' do
+  context 'with friendly_id slugs' do
     let(:show) { create(:show) }
     let(:other_tracks) { create_list(:track, 2, title: 'Bathtub Gin', show: show) }
 
@@ -27,7 +27,7 @@ RSpec.describe Track do
     end
   end
 
-  context 'PgSearch kinda_matching title' do
+  context 'with PgSearch kinda_matching title' do
     let!(:track1) { create(:track, title: 'Wolfman\'s Brother') }
     let!(:track2) { create(:track, title: 'Dire Wolf') }
     let!(:track3) { create(:track, title: 'Tube') }

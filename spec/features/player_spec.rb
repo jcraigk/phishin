@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Player controls', :js do
-  given(:show) { create(:show, :with_tracks) }
+describe 'Player controls', :js do
+  let(:show) { create(:show, :with_tracks) }
 
   before { login_as create(:user) }
 
-  scenario 'hovering over track title and liking' do
+  it 'hovering over track title and liking' do
     visit show.date
 
     # First track should auto-play
@@ -40,7 +40,7 @@ feature 'Player controls', :js do
     end
   end
 
-  scenario 'click links below scrubber' do
+  it 'click links below scrubber' do
     visit show.date
 
     within('#player_detail') do
@@ -59,7 +59,7 @@ feature 'Player controls', :js do
     expect(page).to have_current_path("/#{show.date}")
   end
 
-  scenario 'next/previous' do
+  it 'next/previous' do
     visit show.date
 
     within('#player_title_container') do
@@ -82,14 +82,14 @@ feature 'Player controls', :js do
     end
   end
 
-  scenario 'playlist icon' do
+  it 'playlist icon' do
     visit root_path
 
     find('#playlist_button').click
     expect(page).to have_current_path(active_playlist_path)
   end
 
-  scenario 'gear icon (loop/shuffle)' do
+  it 'gear icon (loop/shuffle)' do
     visit root_path
 
     # Click gear icon

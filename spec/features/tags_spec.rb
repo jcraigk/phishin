@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Tags', :js do
-  given(:tag_names) { %w[Awesome Boppin Cool]}
-  given!(:tags) do
+describe 'Tags', :js do
+  let(:tag_names) { %w[Awesome Boppin Cool] }
+  let!(:tags) do
     tag_names.each_with_object([]) do |name, tags|
       tags << create(:tag, :with_tracks, :with_shows, name: name)
     end
   end
-  given(:tag1) { tags.first }
-  given(:tag2) { tags.second }
-  given(:tag3) { tags.third }
+  let(:tag1) { tags.first }
+  let(:tag2) { tags.second }
+  let(:tag3) { tags.third }
 
   before do
     create_list(:show, 2, tags: [tag1])
@@ -19,7 +19,7 @@ feature 'Tags', :js do
     create_list(:track, 7, tags: [tag3])
   end
 
-  scenario 'visit Tags page, select tag, select a show' do
+  it 'visit Tags page, select tag, select a show' do
     visit tags_path
 
     within('#title_box') do
@@ -56,7 +56,7 @@ feature 'Tags', :js do
     expect(page.current_path).to match(/\d{4}-\d{2}-\d{2}/)
   end
 
-  scenario 'sorting' do
+  it 'sorting' do
     visit tags_path
 
     # Default sort by Name

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Track Context Menues', :js do
-  given(:show) { create(:show, :with_tracks) }
-  given(:track) { show.tracks.first }
+describe 'Track Context Menues', :js do
+  let(:show) { create(:show, :with_tracks) }
+  let(:track) { show.tracks.first }
 
-  scenario 'add to playlist, this song' do
+  it 'add to playlist, this song' do
     visit show.date
 
     first('.playable_track').hover
@@ -21,7 +21,7 @@ feature 'Track Context Menues', :js do
     expect(page).to have_current_path("/#{show.tracks.first.songs.first.slug}")
   end
 
-  scenario 'share' do
+  it 'share' do
     visit show.date
 
     first('.playable_track').hover

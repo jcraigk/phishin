@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Playlists', :js do
+describe 'Playlists', :js do
   context 'when not logged in' do
-    scenario 'visit Playlists page' do
+    it 'visit Playlists page' do
       visit active_playlist_path
 
       # Active Playlist
@@ -43,12 +43,12 @@ feature 'Playlists', :js do
   end
 
   context 'when logged in' do
-    given(:user) { create(:user) }
-    given!(:show) { create(:show, :with_tracks, date: "#{ERAS.values.flatten.last}-01-01") }
+    let(:user) { create(:user) }
+    let!(:show) { create(:show, :with_tracks, date: "#{ERAS.values.flatten.last}-01-01") }
 
     before { login_as(user) }
 
-    scenario 'editing and saving a playlist' do
+    it 'editing and saving a playlist' do
       visit active_playlist_path
 
       # Click EDIT PLAYLIST
@@ -81,16 +81,16 @@ feature 'Playlists', :js do
     end
 
     context 'with saved playlist' do
-      given!(:playlist) { create(:playlist, :with_tracks, user: user) }
+      let!(:playlist) { create(:playlist, :with_tracks, user: user) }
 
-      scenario 'opening a saved playlist' do
+      it 'opening a saved playlist' do
         visit saved_playlists_path
 
         click_link(playlist.name)
         expect(page).to have_current_path("/play/#{playlist.slug}")
       end
 
-      xscenario 'reordering a playlist' do
+      xit 'reordering a playlist' do
       end
     end
   end

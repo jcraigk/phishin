@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Year spec', :js do
-  given(:shows) { create_list(:show, 3) }
+describe 'Year spec', :js do
+  let(:shows) { create_list(:show, 3) }
 
   before do
     shows.each_with_index do |show, idx|
@@ -14,7 +14,7 @@ feature 'Year spec', :js do
     end
   end
 
-  scenario 'visit Year path; sorting, liking' do
+  it 'visit Year path; sorting, liking' do
     visit '/2018'
 
     within('#title_box') do

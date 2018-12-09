@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Tag page', :js do
-  given(:tag) { create(:tag) }
+describe 'Tag page', :js do
+  let(:tag) { create(:tag) }
 
   context 'shows' do
-    given(:shows) { create_list(:show, 3, tags: [tag]) }
+    let(:shows) { create_list(:show, 3, tags: [tag]) }
 
     before do
       shows.each_with_index do |show, idx|
@@ -14,7 +14,7 @@ feature 'Tag page', :js do
       end
     end
 
-    scenario 'sorting' do
+    it 'sorting' do
       visit tag_path(tag)
       click_button('Shows: 3')
 
@@ -23,7 +23,7 @@ feature 'Tag page', :js do
   end
 
   context 'tracks' do
-    given(:tracks) { create_list(:track, 3, tags: [tag]) }
+    let(:tracks) { create_list(:track, 3, tags: [tag]) }
 
     before do
       tracks.each_with_index do |track, idx|
@@ -32,7 +32,7 @@ feature 'Tag page', :js do
       end
     end
 
-    scenario 'sorting' do
+    it 'sorting' do
       visit tag_path(tag)
       click_button('Tracks: 3')
 

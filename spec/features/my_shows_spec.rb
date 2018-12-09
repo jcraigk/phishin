@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'My Shows', :js do
-  given(:user) { create(:user) }
-  given(:shows) { create_list(:show, 3) }
+describe 'My Shows', :js do
+  let(:user) { create(:user) }
+  let(:shows) { create_list(:show, 3) }
 
   before do
     shows.each_with_index do |show, idx|
@@ -15,7 +15,7 @@ feature 'My Shows', :js do
     login_as(user)
   end
 
-  scenario 'click My Shows, display/sorting of shows' do
+  it 'click My Shows, display/sorting of shows' do
     visit root_path
 
     find('#user_controls').click

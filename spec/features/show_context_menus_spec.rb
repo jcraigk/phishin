@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Show Context Menus', :js do
-  given(:show) { create(:show, :with_tracks) }
-  given(:track) { show.tracks.first }
+describe 'Show Context Menus', :js do
+  let(:show) { create(:show, :with_tracks) }
+  let(:track) { show.tracks.first }
 
-  scenario 'use the show dropdown' do
+  it 'use the show dropdown' do
     visit show.date
 
     first('.show-context-dropdown').click

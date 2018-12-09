@@ -1,16 +1,17 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'User Sessions', :js do
-  given(:username) { 'harryhood420' }
-  given(:email) { 'email@example.com' }
-  given(:password) { 'Tr3yIsj3dI' }
-  given!(:user) do
+describe 'User Sessions', :js do
+  let(:username) { 'harryhood420' }
+  let(:email) { 'email@example.com' }
+  let(:password) { 'Tr3yIsj3dI' }
+
+  before do
     create(:user, username: username, email: email, password: password, password_confirmation: password)
   end
 
   context 'with valid data' do
-    scenario 'user signs in' do
+    it 'user signs in' do
       visit root_path
 
       click_link('Sign in')
@@ -31,7 +32,7 @@ feature 'User Sessions', :js do
   end
 
   context 'with invalid data' do
-    scenario 'user signs up with valid data' do
+    it 'user signs up with valid data' do
       visit new_user_session_path
 
       fill_in('user[email]', with: email)

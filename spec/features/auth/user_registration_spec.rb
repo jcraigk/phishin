@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'User Registration', :js do
+describe 'User Registration', :js do
   context 'with valid data' do
-    given(:username) { 'harryhood420' }
-    given(:email) { 'email@example.com' }
-    given(:password) { 'Tr3yIsj3dI' }
+    let(:username) { 'harryhood420' }
+    let(:email) { 'email@example.com' }
+    let(:password) { 'Tr3yIsj3dI' }
 
-    scenario 'user signs up' do
+    it 'user signs up' do
       visit root_path
 
       click_link('Sign in')
@@ -25,11 +25,11 @@ feature 'User Registration', :js do
   end
 
   context 'with invalid data' do
-    given(:username) { 'h' }
-    given(:email) { 'email@example.com' }
-    given(:password) { 'a' }
+    let(:username) { 'h' }
+    let(:email) { 'email@example.com' }
+    let(:password) { 'a' }
 
-    scenario 'user attempts signup' do
+    it 'user attempts signup' do
       visit new_user_registration_path
 
       fill_in('user[username]', with: username)

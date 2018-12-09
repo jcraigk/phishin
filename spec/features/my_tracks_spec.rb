@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'My Tracks', :js do
-  given(:user) { create(:user) }
-  given(:tracks) { create_list(:track, 3) }
+describe 'My Tracks', :js do
+  let(:user) { create(:user) }
+  let(:tracks) { create_list(:track, 3) }
 
   before do
     tracks.each_with_index do |track, idx|
@@ -15,7 +15,7 @@ feature 'My Tracks', :js do
     login_as(user)
   end
 
-  scenario 'click My Tracks, display/sorting of tracks' do
+  it 'click My Tracks, display/sorting of tracks' do
     visit root_path
 
     find('#user_controls').click

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Change Password', :js do
-  given(:password) { 'Tr3yIsj3dI' }
-  given(:user) { create(:user, password: password, password_confirmation: password) }
+describe 'Change Password', :js do
+  let(:password) { 'Tr3yIsj3dI' }
+  let(:user) { create(:user, password: password, password_confirmation: password) }
 
   before { login_as(user) }
 
-  scenario 'click Change Password from user dropdown' do
+  it 'click Change Password from user dropdown' do
     visit root_path
 
     find('#user_controls').click
@@ -17,9 +17,9 @@ feature 'Change Password', :js do
   end
 
   context 'with invalid data' do
-    given(:new_password) { 'new' }
+    let(:new_password) { 'new' }
 
-    scenario 'errors are displayed, password is not changed' do
+    it 'errors are displayed, password is not changed' do
       visit edit_user_registration_path
 
       fill_in('user[password]', with: new_password)
@@ -38,9 +38,9 @@ feature 'Change Password', :js do
   end
 
   context 'with valid data' do
-    given(:new_password) { 'newpassword' }
+    let(:new_password) { 'newpassword' }
 
-    scenario 'errors are displayed, password is not changed' do
+    it 'errors are displayed, password is not changed' do
       visit edit_user_registration_path
 
       fill_in('user[password]', with: new_password)

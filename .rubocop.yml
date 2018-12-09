@@ -5,8 +5,6 @@ AllCops:
   Exclude:
     - bin/**/*
     - config/**/*
-    - db/**/*
-    - spec/**/*
     - vendor/**/*
   DisplayCopNames: true
 Documentation:

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Venues page', :js do
-  scenario 'visit Venues page' do
+describe 'Venues page', :js do
+  it 'visit Venues page' do
     visit map_path
 
     within('#title_box') do

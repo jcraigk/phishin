@@ -1,17 +1,20 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Search', :js do
-  given(:term) { 'hood' }
-  given!(:song1) { create(:song, :with_tracks, title: 'Harry Hood') }
-  given!(:song2) { create(:song, :with_tracks, title: 'Antelope') }
-  given!(:venue1) { create(:venue, :with_shows, name: 'Hood Amphitheater') }
-  given!(:venue2) { create(:venue, :with_shows, city: 'Hoodtown') }
-  given!(:tour) { create(:tour, :with_shows, name: '1993 Hoodlum Tour') }
-  given(:date) { '1995-10-31' }
-  given!(:show) { create(:show, date: date) }
+describe 'Search', :js do
+  let(:term) { 'hood' }
+  let(:date) { '1995-10-31' }
 
-  scenario 'visit Playlists page' do
+  before do
+    create(:song, :with_tracks, title: 'Harry Hood')
+    create(:song, :with_tracks, title: 'Antelope')
+    create(:venue, :with_shows, name: 'Hood Amphitheater')
+    create(:venue, :with_shows, city: 'Hoodtown')
+    create(:tour, :with_shows, name: '1993 Hoodlum Tour')
+    create(:show, date: date)
+  end
+
+  it 'visit Playlists page' do
     visit root_path
 
     # Word-based search

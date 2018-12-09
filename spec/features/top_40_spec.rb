@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Top 40', :js do
-  given!(:shows) { create_list(:show, 42, :with_likes) }
-  given!(:tracks) { create_list(:track, 42, :with_likes) }
+describe 'Top 40', :js do
+  before do
+    create_list(:show, 42, :with_likes)
+    create_list(:track, 42, :with_likes)
+  end
 
-  scenario 'visit Top 40 page' do
+  it 'visit Top 40 page' do
     visit top_shows_path
 
     # Top 40 Shows

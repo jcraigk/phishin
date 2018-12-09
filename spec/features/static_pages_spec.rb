@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Static pages', :js do
-  scenario 'visit Legal page' do
+describe 'Static pages', :js do
+  it 'visit Legal page' do
     visit '/legal'
 
     within('#title_box') do
@@ -14,7 +14,7 @@ feature 'Static pages', :js do
     end
   end
 
-  scenario 'visit Contact page' do
+  it 'visit Contact page' do
     visit '/contact'
 
     within('#title_box') do
@@ -26,7 +26,7 @@ feature 'Static pages', :js do
     end
   end
 
-  scenario 'visit API Docs page' do
+  it 'visit API Docs page' do
     visit '/api-docs'
 
     within('#title_box') do

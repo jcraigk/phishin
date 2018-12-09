@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Ambiguous slug resolution', :js do
-  given!(:show1) { create(:show, date: '1995-10-31', tour: tour, venue: venue) }
-  given!(:show2) { create(:show, date: '1998-10-31', tour: tour, venue: venue) }
-  given!(:show3) { create(:show, date: '2014-10-31', tour: tour) }
-  given!(:show4) { create(:show, :with_tracks, date: '2014-11-02', tour: tour) }
-  given!(:song) { create(:song, title: 'Alumni Blues') }
-  given!(:venue) { create(:venue, name: 'Madison Square Garden') }
-  given!(:tour) { create(:tour, name: 'Magical Myster Tour') }
+describe 'Ambiguous slug resolution', :js do
+  let!(:show1) { create(:show, date: '1995-10-31', tour: tour, venue: venue) }
+  let!(:show2) { create(:show, date: '1998-10-31', tour: tour, venue: venue) }
+  let!(:show3) { create(:show, date: '2014-10-31', tour: tour) }
+  let!(:show4) { create(:show, :with_tracks, date: '2014-11-02', tour: tour) }
+  let!(:song) { create(:song, title: 'Alumni Blues') }
+  let!(:venue) { create(:venue, name: 'Madison Square Garden') }
+  let!(:tour) { create(:tour, name: 'Magical Myster Tour') }
 
-  scenario 'day of year' do
+  it 'day of year' do
     visit '/october-31'
 
     within('#title_box') do
@@ -28,7 +28,7 @@ feature 'Ambiguous slug resolution', :js do
     expect(page).to have_current_path("/#{show3.date}")
   end
 
-  scenario 'year' do
+  it 'year' do
     visit '/2014'
 
     within('#title_box') do
@@ -46,7 +46,7 @@ feature 'Ambiguous slug resolution', :js do
     expect(page).to have_current_path("/#{show4.date}")
   end
 
-  scenario 'year range' do
+  it 'year range' do
     visit '/1998-2014'
 
     within('#title_box') do
@@ -64,7 +64,7 @@ feature 'Ambiguous slug resolution', :js do
     expect(page).to have_current_path("/#{show4.date}")
   end
 
-  scenario 'date' do
+  it 'date' do
     visit '/2014-11-02'
 
     within('#title_box') do
@@ -75,7 +75,7 @@ feature 'Ambiguous slug resolution', :js do
     expect(items.size).to eq(show4.tracks.size)
   end
 
-  scenario 'song' do
+  it 'song' do
     visit "/#{song.slug}"
 
     within('#title_box') do
@@ -86,7 +86,7 @@ feature 'Ambiguous slug resolution', :js do
     expect(items.size).to eq(song.tracks.size)
   end
 
-  scenario 'venue' do
+  it 'venue' do
     visit "/#{venue.slug}"
 
     within('#title_box') do
@@ -97,7 +97,7 @@ feature 'Ambiguous slug resolution', :js do
     expect(items.size).to eq(venue.shows.size)
   end
 
-  scenario 'tour' do
+  it 'tour' do
     visit "/#{tour.slug}"
 
     within('#title_box') do
