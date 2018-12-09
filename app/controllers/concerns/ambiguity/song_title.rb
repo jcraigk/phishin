@@ -20,7 +20,7 @@ module Ambiguity::SongTitle
     @ambiguity_controller = 'songs'
     @tracks =
       @song.tracks
-           .includes({ show: :venue }, :songs, { track_tags: :tag })
+           .includes({ show: :venue }, :songs, track_tags: :tag)
            .order(@order_by)
            .paginate(page: params[:page], per_page: 20)
     @tracks_likes = user_likes_for_tracks(@tracks)

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class AddGeocodingToVenues < ActiveRecord::Migration
   def change
     add_column :venues, :latitude, :float

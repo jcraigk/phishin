@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class CreateTrackRequest < ActiveRecord::Migration
   def change
     create_table :track_requests do |t|

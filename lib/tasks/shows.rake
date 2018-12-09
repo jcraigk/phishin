@@ -61,7 +61,7 @@ namespace :shows do
     show_list.each do |show|
       puts "Check: #{show.date}"
     end
-    puts "No issues found" if show_list.empty?
+    puts 'No issues found' if show_list.empty?
   end
 
   desc 'Apply SBD tags to shows'

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class CreateTracks < ActiveRecord::Migration
   def change
     create_table :tracks do |t|
@@ -7,7 +8,7 @@ class CreateTracks < ActiveRecord::Migration
       t.integer     :duration
       t.timestamps
     end
-    
+
     add_index :tracks, :show_id
   end
 end
