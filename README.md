@@ -32,7 +32,7 @@ Open your browser and direct it to `http://localhost/2017-08-06`.  You should be
 
 ## Importing Audio
 
-To import a new show or replace an existing one, name the MP3s according to the import format (`I 01 Harry Hood.mp3`) and place them in a folder named by date (`2018-08-12`).  Place this folder in `/content/import` (as seen from the app container) and run the following command from within the container (`docker exec -it <container> /bin/bash`):
+To import a new show or replace an existing one, name the MP3s according to the import format (`I 01 Harry Hood.mp3`) and place them in a folder named by date (`2018-08-12`).  Place this folder in `/content/import` (as seen from the app container) and run the following command from within the container (`docker-compose exec app bash`):
 
 ```bash
 rails shows:import
