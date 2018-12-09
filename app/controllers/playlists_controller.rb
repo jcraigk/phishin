@@ -276,7 +276,7 @@ class PlaylistsController < ApplicationController
   def render_good_playlist(playlist)
     render json: {
       success: true,
-      msg: msg,
+      msg: 'Playlist saved',
       id: playlist.id,
       name: playlist.name,
       slug: playlist.slug
