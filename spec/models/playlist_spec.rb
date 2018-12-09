@@ -2,7 +2,7 @@
 require 'rails_helper'
 
 RSpec.describe Playlist do
-  subject { build(:playlist, :with_tracks) }
+  subject { build(:playlist) }
 
   it { is_expected.to have_many(:tracks) }
   it { is_expected.to have_many(:playlist_tracks) }
@@ -12,27 +12,33 @@ RSpec.describe Playlist do
 
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:slug) }
+  it { is_expected.to validate_uniqueness_of(:name) }
+  it { is_expected.to validate_uniqueness_of(:slug) }
+  it { is_expected.to allow_values('Harpu', 'This is a longer name').for(:name) }
+  it { is_expected.not_to allow_value('H', 'this is a longer name this is a longer name this is a').for(:name) }
+  it { is_expected.to allow_values('harpu', 'this-is-a-longer-name').for(:slug) }
+  it { is_expected.not_to allow_value('h', 'this-is-a-longer-name-this-is-a-longer-name-this-is-a').for(:slug) }
 
-  context 'serialization' do
-    subject { create(:playlist, :with_tracks) }
+  describe 'serialization' do
+    let(:playlist) { create(:playlist) }
 
     it 'provides #as_json_api' do
-      expect(subject.as_json_api).to eq(
-        slug: subject.slug,
-        name: subject.name,
-        duration: subject.duration,
-        tracks: subject.playlist_tracks.order(:position).map(&:track).map(&:as_json_api),
-        updated_at: subject.updated_at.to_s
+      expect(playlist.as_json_api).to eq(
+        slug: playlist.slug,
+        name: playlist.name,
+        duration: playlist.duration,
+        tracks: playlist.playlist_tracks.order(:position).map(&:track).map(&:as_json_api),
+        updated_at: playlist.updated_at.to_s
       )
     end
 
     it 'provides #as_json_api_basic' do
-      expect(subject.as_json_api_basic).to eq(
-        slug: subject.slug,
-        name: subject.name,
-        duration: subject.duration,
-        track_count: subject.playlist_tracks.size,
-        updated_at: subject.updated_at.to_s
+      expect(playlist.as_json_api_basic).to eq(
+        slug: playlist.slug,
+        name: playlist.name,
+        duration: playlist.duration,
+        track_count: playlist.playlist_tracks.size,
+        updated_at: playlist.updated_at.to_s
       )
     end
   end

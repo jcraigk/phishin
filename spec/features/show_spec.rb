@@ -65,7 +65,7 @@ describe 'Show', :js do
     expect(page).to have_current_path("/#{show2.date}")
   end
 
-  context 'liking' do
+  describe 'liking' do
     it 'when not logged in' do
       visit show.date
       within('#title_box') do

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 class PlaylistsController < ApplicationController
   before_action :init_session_playlist
+  before_action :authenticate_user!,
+                only: %i[save_playlist destroy_playlist bookmark_playlist unbookmark_playlist]
 
   def active_playlist
     @num_tracks = 0
@@ -42,62 +44,37 @@ class PlaylistsController < ApplicationController
         @playlists.includes(:user)
                   .order(order_by_for_saved_playlists)
                   .page(params[:page])
+    else
+      @playlists = []
     end
 
     render layout: false if request.xhr?
   end
 
   def save_playlist
-    success = false
     save_action = params[:save_action].in?(%w[new existing]) ? params[:save_action] : 'new'
 
-    # TODO: Could we do the following with AR validations more cleanly?
-    if !current_user
-      msg = 'You must be logged in to save playlists'
-    elsif session[:playlist].size < 2
-      msg = 'Saved playlists must contain at least 2 tracks'
-    elsif params[:name].empty? || params[:slug].empty? || params[:name].empty? || params[:slug].empty?
-      msg = 'You must provide a name and URL for this playlist'
-    elsif !params[:name].match(/\A.{5,50}\z/)
-      msg = 'Name must be between 5 and 50 characters'
-    elsif !params[:slug].match(/\A[a-z0-9\-]{5,50}\z/)
-      msg = 'URL must be between 5 and 50 lowercase letters, numbers, or dashes'
-    elsif save_action == 'new'
+    if save_action == 'new'
       if Playlist.where(user: current_user).count >= MAX_PLAYLISTS_PER_USER
-        msg = "Sorry, each user is limited to #{MAX_PLAYLISTS_PER_USER} playlists"
-      elsif Playlist.where(name: params[:name], user: current_user).first
-        msg = 'That name has already been taken; choose another'
-      elsif Playlist.where(slug: params[:slug]).first
-        msg = 'That URL has already been taken; choose another'
-      else
-        playlist = Playlist.create(user: current_user, name: params[:name], slug: params[:slug])
-        create_playlist_tracks(playlist)
-        activate_saved_playlist(playlist)
-        success = true
-        msg = 'Playlist saved'
+        return render(
+          json: {
+            success: false,
+            msg: "Sorry, each user is limited to #{MAX_PLAYLISTS_PER_USER} playlists"
+          }
+        )
       end
-    elsif (playlist = Playlist.where(user: current_user, id: params[:id]).first)
-      playlist.update_attributes(name: params[:name], slug: params[:slug])
-      playlist.playlist_tracks.map(&:destroy)
-      create_playlist_tracks(playlist)
-      activate_saved_playlist(playlist)
-      success = true
-      msg = 'Playlist saved'
+
+      playlist = Playlist.create(user: current_user, name: params[:name], slug: params[:slug])
+      return render_bad_playlist(playlist) unless playlist.valid?
     else
-      msg = 'Playlist not found'
+      playlist = Playlist.find_by!(user: current_user, id: params[:id])
+      playlist.update(name: params[:name], slug: params[:slug])
+      return render_bad_playlist(playlist) unless playlist.valid?
+      playlist.playlist_tracks.map(&:destroy)
     end
 
-    if success
-      render json: {
-        success: true,
-        msg: msg,
-        id: playlist.id,
-        name: playlist.name,
-        slug: playlist.slug
-      }
-    else
-      render json: { success: false, msg: msg }
-    end
+    refresh_playlist(playlist)
+    render_good_playlist(playlist)
   end
 
   def destroy_playlist
@@ -291,6 +268,25 @@ class PlaylistsController < ApplicationController
   end
 
   private
+
+  def render_bad_playlist(playlist)
+    render json: { success: false, msg: playlist.errors.full_messages.join(', ') }
+  end
+
+  def render_good_playlist(playlist)
+    render json: {
+      success: true,
+      msg: msg,
+      id: playlist.id,
+      name: playlist.name,
+      slug: playlist.slug
+    }
+  end
+
+  def refresh_playlist(playlist)
+    create_playlist_tracks(playlist)
+    activate_saved_playlist(playlist)
+  end
 
   def order_by_for_saved_playlists
     params[:sort] = 'name' unless params[:sort].in?(%w[name duration])
