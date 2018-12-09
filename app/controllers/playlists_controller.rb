@@ -16,7 +16,7 @@ class PlaylistsController < ApplicationController
     end
 
     if session[:playlist]
-      tracks_by_id = Track.where(id: session[:playlist]).includes(:show, :tags).index_by(&:id)
+      tracks_by_id = Track.where(id: session[:playlist]).includes(:show, track_tags: :tag).index_by(&:id)
       @tracks = session[:playlist].map { |id| tracks_by_id[id] }
       @tracks_likes = user_likes_for_tracks(@tracks)
       @duration = @tracks.map(&:duration).inject(0, &:+)

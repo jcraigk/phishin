@@ -22,9 +22,9 @@ module Ambiguity::DayOfYear
     @shows =
       Show.avail
           .on_day_of_year(month, day)
-          .includes(:tour, :venue, :tags)
+          .includes(:tour, :venue, show_tags: :tag)
           .order(@order_by)
-    raise ActiveRecord::RecordNotFound unless @shows.all.any?
+    raise ActiveRecord::RecordNotFound unless @shows.any?
   end
 
   def day_of_year_sections
