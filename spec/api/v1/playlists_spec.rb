@@ -8,8 +8,9 @@ describe Api::V1::PlaylistsController do
 
   describe 'show' do
     context 'with valid id param' do
-      let(:playlist) { create(:playlist, :with_tracks) }
       subject { get("/api/v1/playlists/#{playlist.slug}") }
+
+      let(:playlist) { create(:playlist, :with_tracks) }
 
       it 'responds with expected data' do
         expect(json_data).to eq(playlist.as_json_api)

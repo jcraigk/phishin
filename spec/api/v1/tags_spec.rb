@@ -7,8 +7,9 @@ describe Api::V1::TagsController do
   let(:json_data) { JSON[subject.body].deep_symbolize_keys[:data] }
 
   describe 'index' do
-    let!(:tags) { create_list(:tag, 3) }
     subject { get('/api/v1/tags') }
+
+    let!(:tags) { create_list(:tag, 3) }
 
     it 'responds with expected data' do
       expect(json_data).to match_array(tags.map(&:as_json))
@@ -17,8 +18,9 @@ describe Api::V1::TagsController do
 
   describe 'show' do
     context 'with valid id param' do
-      let(:tag) { create(:tag, :with_tracks, :with_shows) }
       subject { get("/api/v1/tags/#{tag.id}") }
+
+      let(:tag) { create(:tag, :with_tracks, :with_shows) }
 
       it 'responds with expected data' do
         expect(json_data).to eq(tag.as_json_api)

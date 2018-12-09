@@ -7,8 +7,9 @@ describe Api::V1::ToursController do
   let(:json_data) { JSON[subject.body].deep_symbolize_keys[:data] }
 
   describe 'index' do
-    let!(:tours) { create_list(:tour, 3, :with_shows) }
     subject { get('/api/v1/tours') }
+
+    let!(:tours) { create_list(:tour, 3, :with_shows) }
 
     it 'responds with expected data' do
       expect(json_data).to match_array(tours.map(&:as_json_api))
@@ -17,8 +18,9 @@ describe Api::V1::ToursController do
 
   describe 'show' do
     context 'with valid id param' do
-      let(:tour) { create(:tour) }
       subject { get("/api/v1/tours/#{tour.id}") }
+
+      let(:tour) { create(:tour) }
 
       it 'responds with expected data' do
         expect(json_data).to eq(tour.as_json_api)

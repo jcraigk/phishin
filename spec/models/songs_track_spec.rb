@@ -8,8 +8,9 @@ RSpec.describe SongsTrack do
   it { is_expected.to belong_to(:track) }
 
   context 'callbacks' do
-    let(:song) { build(:song) }
     subject { build(:songs_track, song: song) }
+
+    let(:song) { build(:song) }
 
     it 'increments song track count on save' do
       subject.save
@@ -22,5 +23,4 @@ RSpec.describe SongsTrack do
       expect(song.reload.tracks_count).to eq(0)
     end
   end
-
 end

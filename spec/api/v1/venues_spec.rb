@@ -8,8 +8,9 @@ describe Api::V1::VenuesController do
   let(:json_data) { json[:data] }
 
   describe 'index' do
-    let!(:venues) { create_list(:venue, 3, :with_shows) }
     subject { get('/api/v1/venues') }
+
+    let!(:venues) { create_list(:venue, 3, :with_shows) }
 
     it 'responds with expected data' do
       expect(json_data).to match_array(venues.map(&:as_json_api))

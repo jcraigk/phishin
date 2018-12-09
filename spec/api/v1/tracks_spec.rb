@@ -19,8 +19,9 @@ describe Api::V1::TracksController do
     end
 
     context 'when providing tag param' do
-      let(:tag) { create(:tag) }
       subject { get("/api/v1/tracks?tag=#{tag.name}") }
+
+      let(:tag) { create(:tag) }
 
       before { tracks.first.tags << tag }
 

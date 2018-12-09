@@ -1,24 +1,24 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Venues', :js do
-  given!(:a_venue) { create(:venue, :with_shows, name: 'Alpine Valley Music Theater') }
-  given(:names) { ['Eagles Ballroom', 'Earlham College', 'Eastbrook Theatre'] }
-  given!(:e_venues) do
+describe 'Venues', :js do
+  let!(:a_venue) { create(:venue, :with_shows, name: 'Alpine Valley Music Theater') }
+  let(:names) { ['Eagles Ballroom', 'Earlham College', 'Eastbrook Theatre'] }
+  let!(:e_venues) do
     names.each_with_object([]) do |name, venues|
       venues << create(:venue, :with_shows, name: name)
     end
   end
-  given(:venue1) { e_venues.first }
-  given(:venue2) { e_venues.second }
-  given(:venue3) { e_venues.third }
+  let(:venue1) { e_venues.first }
+  let(:venue2) { e_venues.second }
+  let(:venue3) { e_venues.third }
 
   before do
     create_list(:show, 2, venue: venue1)
     create_list(:show, 3, venue: venue3)
   end
 
-  scenario 'visit Venues page' do
+  it 'visit Venues page' do
     visit venues_path
 
     within('#title_box') do
@@ -51,7 +51,7 @@ feature 'Venues', :js do
     expect(page).to have_current_path("/#{e_venues.first.slug}")
   end
 
-  scenario 'Venue sorting' do
+  it 'Venue sorting' do
     visit venues_path(char: 'E')
 
     expect_content_in_order('Eagles', 'Earlham')

@@ -8,8 +8,9 @@ describe Api::V1::SongsController do
   let(:json_data) { json[:data] }
 
   describe 'index' do
-    let!(:songs) { create_list(:song, 3, :with_tracks) }
     subject { get('/api/v1/songs') }
+
+    let!(:songs) { create_list(:song, 3, :with_tracks) }
 
     it 'responds with expected data' do
       expect(json_data).to match_array(songs.map(&:as_json))
@@ -36,7 +37,7 @@ describe Api::V1::SongsController do
     end
 
     context 'when requesting invalid song' do
-      subject { get("/api/v1/songs/nonexistent-song") }
+      subject { get('/api/v1/songs/nonexistent-song') }
 
       include_examples 'responds with 404'
     end

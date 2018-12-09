@@ -1,24 +1,24 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Songs', :js do
-  given!(:a_song) { create(:song, :with_tracks, title: 'A Apolitical Blues') }
-  given(:titles) { ['Garden Party', 'Gettin Jiggy', 'Ghost'] }
-  given!(:g_songs) do
+describe 'Songs', :js do
+  let!(:a_song) { create(:song, :with_tracks, title: 'A Apolitical Blues') }
+  let(:titles) { ['Garden Party', 'Gettin Jiggy', 'Ghost'] }
+  let!(:g_songs) do
     titles.each_with_object([]) do |title, songs|
       songs << create(:song, :with_tracks, title: title)
     end
   end
-  given(:song1) { g_songs.first }
-  given(:song2) { g_songs.second }
-  given(:song3) { g_songs.third }
+  let(:song1) { g_songs.first }
+  let(:song2) { g_songs.second }
+  let(:song3) { g_songs.third }
 
   before do
     create_list(:track, 2, songs: [g_songs.first])
     create_list(:track, 3, songs: [g_songs.second])
   end
 
-  scenario 'visit Songs page' do
+  it 'visit Songs page' do
     visit songs_path
 
     within('#title_box') do
@@ -51,7 +51,7 @@ feature 'Songs', :js do
     expect(page).to have_current_path("/#{g_songs.first.slug}")
   end
 
-  scenario 'Song sorting' do
+  it 'Song sorting' do
     visit songs_path(char: 'G')
 
     # Default sort by Title

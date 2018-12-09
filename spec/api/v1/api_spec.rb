@@ -8,8 +8,9 @@ describe Api::V1::ApiController do
   let(:path) { '/api/v1/tags' }
 
   describe 'paging' do
-    let!(:tags) { create_list(:tag, 50) }
     subject { get(path) }
+
+    let!(:tags) { create_list(:tag, 50) }
 
     context 'without params' do
       it 'responds with expected data' do

@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Show', :js do
-  given!(:show) { create(:show, :with_tracks, :with_likes, :with_tags, date: '2018-01-01') }
-  given!(:show2) { create(:show, date: '2018-01-02') }
-  given!(:show3) { create(:show, date: '2018-01-03') }
-  given(:track) { show.tracks.first }
+describe 'Show', :js do
+  let!(:show) { create(:show, :with_tracks, :with_tags, date: '2018-01-01') }
+  let!(:show2) { create(:show, date: '2018-01-02') }
+  let!(:show3) { create(:show, date: '2018-01-03') }
+  let(:track) { show.tracks.first }
 
   before do
     track.tags << create(:tag)
   end
 
-  scenario 'visit show page' do
+  it 'visit show page' do
     visit show.date
 
     within('#title_box') do
@@ -41,7 +41,7 @@ feature 'Show', :js do
     end
   end
 
-  scenario 'clicking previous/next buttons' do
+  it 'clicking previous/next buttons' do
     visit show2.date
 
     within('#title_box') do
@@ -66,7 +66,7 @@ feature 'Show', :js do
   end
 
   context 'liking' do
-    scenario 'when not logged in' do
+    it 'when not logged in' do
       visit show.date
       within('#title_box') do
         first('.like_toggle').click
@@ -80,18 +80,22 @@ feature 'Show', :js do
         visit show.date
       end
 
-      scenario 'liking/unliking the show' do
+      it 'liking/unliking the show' do
         within('#title_box') do
           first('.like_toggle').click
         end
         expect_content('Like acknowledged')
-        # TODO: ensure number increments
+        within('#title_box .likes_large span') do
+          expect_content('1')
+        end
 
         within('#title_box') do
           first('.like_toggle').click
         end
         expect_content('Unlike acknowledged')
-        # TODO: ensure number decrements
+        within('#title_box .likes_large span') do
+          expect_content('0')
+        end
 
         within('#title_box') do
           first('.like_toggle').click
@@ -99,15 +103,17 @@ feature 'Show', :js do
         expect_content('Like acknowledged')
 
         visit my_shows_path
-        expect_content(show.venue.name) # TODO: look for date (matcher?)
+        expect_content(show.date_with_dots, show.venue.name)
       end
 
-      scenario 'liking/unliking a track' do
+      it 'liking/unliking a track' do
         within('#content_box') do
           first('.like_toggle').click
         end
         expect_content('Like acknowledged')
-        # TODO: ensure number increments
+        within('#content_box') do
+          expect(first('.likes_small span').text).to eq('1')
+        end
 
         visit my_tracks_path
         expect_content(show.tracks.first.title)

@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Year spec', :js do
-  given!(:shows) { create_list(:show, 3) }
-  given(:dates_by_date) { shows.sort_by(&:date).map(&:date_with_dots) }
-  given(:dates_by_likes) { shows.sort_by(&:likes_count).map(&:date_with_dots) }
-  given(:dates_by_duration) { shows.sort_by(&:duration).map(&:date_with_dots) }
+describe 'Year spec', :js do
+  let(:shows) { create_list(:show, 3) }
 
   before do
     shows.each_with_index do |show, idx|
@@ -13,40 +10,17 @@ feature 'Year spec', :js do
         duration: show.duration + idx * 10,
         date: "2018-01-#{idx + 1}"
       )
-      show.likes = create_list(:like, 10 - idx, likable: show)
+      create_list(:like, 10 - idx, likable: show)
     end
   end
 
-  scenario 'visit Year path; sorting, liking' do
+  it 'visit Year path; sorting, liking' do
     visit '/2018'
 
     within('#title_box') do
-      expect_content('Shows: 3', 'Sort by', 'Reverse Date')
+      expect_content('Shows: 3')
     end
-    expect_content_in_order(dates_by_date.reverse)
 
-    # Sort by Date
-    # within('#title_box') do
-    #   first('.dropdown-toggle').click
-    #   click_link('Date')
-    #   expect_content('Sort by', 'Date')
-    # end
-    # expect_content_in_order(dates_by_date)
-
-    # Sort by Likes
-    within('#title_box') do
-      first('.dropdown-toggle').click
-      click_link('Likes')
-      expect_content('Sort by', 'Likes')
-    end
-    expect_content_in_order(dates_by_likes)
-
-    # Sort by Duration
-    within('#title_box') do
-      first('.dropdown-toggle').click
-      click_link('Duration')
-      expect_content('Sort by', 'Duration')
-    end
-    expect_content_in_order(dates_by_duration)
+    expect_show_sorting_controls(shows)
   end
 end

@@ -14,7 +14,7 @@ RSpec.describe Show do
 
   it { is_expected.to validate_presence_of(:date) }
 
-  it { should delegate_method(:name).to(:tour).with_prefix }
+  it { is_expected.to delegate_method(:name).to(:tour).with_prefix }
 
   context 'scopes' do
     context '#avail' do
@@ -77,8 +77,9 @@ RSpec.describe Show do
   end
 
   context '#save_duration' do
-    let(:track_sum) { subject.tracks.map(&:duration).inject(0, &:+) }
     subject { create(:show, :with_tracks) }
+
+    let(:track_sum) { subject.tracks.map(&:duration).inject(0, &:+) }
 
     it 'updates the duration with the sum of all tracks' do
       expect(subject.duration).not_to eq(track_sum)
