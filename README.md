@@ -1,5 +1,6 @@
-Phish.in'
----------
+[![Maintainability](https://api.codeclimate.com/v1/badges/fe9b48d7b87315f38be9/maintainability)](https://codeclimate.com/github/jcraigk/phishin/maintainability)
+
+![Phish.in' Logo](https://i.imgur.com/Zmj586L.jpg)
 
 Phish.in' is a web-based archive containing legal live audio recordings of the Rock band Phish.
 
