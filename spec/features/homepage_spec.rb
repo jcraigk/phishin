@@ -21,15 +21,10 @@ feature 'Homepage', :js do
 
     # Top section
     within('#page_header') do
-      # Sign in
       within('#player_container #user_controls') do
         expect_content('Sign in')
       end
-
-      # Logo
       expect_css('#logo')
-
-      # Player controls
       within('#player_controls') do
         expect_css('#control_previous', '#control_playpause', '#control_next')
       end

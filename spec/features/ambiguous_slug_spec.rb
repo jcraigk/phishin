@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-feature 'Ambiguous Slug Resolution', :js do
+feature 'Ambiguous slug resolution', :js do
   given!(:show1) { create(:show, date: '1995-10-31', tour: tour, venue: venue) }
   given!(:show2) { create(:show, date: '1998-10-31', tour: tour, venue: venue) }
   given!(:show3) { create(:show, date: '2014-10-31', tour: tour) }
