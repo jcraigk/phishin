@@ -86,7 +86,7 @@ class ShowImporter::Orchestrator
       t.save_default_id3_tags
       begin
         duration += t.duration
-      rescue => e
+      rescue StandardError => e
         puts e
         p "Duration error on #{t}"
       end

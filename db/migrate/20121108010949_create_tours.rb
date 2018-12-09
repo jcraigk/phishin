@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class CreateTours < ActiveRecord::Migration
   def change
     create_table :tours do |t|
@@ -7,7 +8,7 @@ class CreateTours < ActiveRecord::Migration
       t.string      :slug
       t.timestamps
     end
-    
+
     add_index :tours, :name
     add_index :tours, :starts_on
   end

@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 namespace :phishnet do
   desc 'Sync jamcharts data'
   task sync_jamcharts: :environment do
@@ -43,7 +42,11 @@ namespace :phishnet do
         if tt.present?
           tt.update(notes: item['jamchart_description'])
         else
-          TrackTag.create(track: track, tag: tag, notes: item['jamchart_description'])
+          TrackTag.create(
+            track: track,
+            tag: tag,
+            notes: item['jamchart_description']
+          )
         end
 
         puts "#{show.date} => #{track.title} (#{track.id})"

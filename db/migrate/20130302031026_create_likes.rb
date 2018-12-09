@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class CreateLikes < ActiveRecord::Migration
   def change
     create_table :likes do |t|
@@ -9,7 +10,7 @@ class CreateLikes < ActiveRecord::Migration
 
     add_column :tracks, :likes_count, :integer, default: 0
     add_column :shows, :likes_count, :integer, default: 0
-    
+
     add_index :likes, :likable_id
     add_index :likes, :likable_type
     add_index :likes, :user_id

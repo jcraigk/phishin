@@ -4,7 +4,7 @@ class ShowImporter::PNet
 
   def initialize(api_key)
     @options = {
-      'api'    => '2.0',
+      'api' => '2.0',
       'apikey' => api_key,
       'format' => 'json'
     }
@@ -17,14 +17,14 @@ class ShowImporter::PNet
     request.set_form_data(@options.merge(opts))
     http = Net::HTTP.new(url.host, url.port)
     http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE # Comodo certs still need extra cert chain?
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
     res = http.start { |ht| ht.request(request) }
     case res
     when Net::HTTPSuccess
       begin
         return JSON::Parser.new(res.body).parse
-      rescue
+      rescue StandardError
         raise 'Server or Parse Error'
       end
     else
@@ -47,7 +47,6 @@ class ShowImporter::PNet
     @options.delete('authkey')
   end
 
-  # Call any method with pnet.remote_method_name(:option1 => val1, :option2 => val2)
   def method_missing(method, *args, &_block)
     action = "pnet_#{method}".tr('_', '.')
     opts = args.first || {}

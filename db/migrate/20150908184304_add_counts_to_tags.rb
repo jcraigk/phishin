@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class AddCountsToTags < ActiveRecord::Migration
   def change
     add_column :tags, :shows_count, :integer, default: 0

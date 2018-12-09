@@ -5,25 +5,16 @@ AllCops:
   Exclude:
     - bin/**/*
     - config/**/*
+    - db/migrate/*
+    - db/schema.rb
+    - spec/support/**/*
     - vendor/**/*
-  DisplayCopNames: true
+
 Documentation:
   Enabled: false
-Metrics/LineLength:
-  Max: 120
-Metrics/MethodLength:
-  Max: 15
-Metrics/ClassLength:
-  Max: 250
 Layout/EmptyLineAfterMagicComment:
   Enabled: false
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false
-Style/EmptyMethod:
-  EnforcedStyle: expanded
-Metrics/BlockLength:
-  Enabled: true
-  Exclude:
-    - spec/**/*
