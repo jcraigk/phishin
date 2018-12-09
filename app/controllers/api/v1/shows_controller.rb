@@ -6,7 +6,7 @@ class Api::V1::ShowsController < Api::V1::ApiController
   caches_action :on_day_of_year, cache_path: proc { |c| c.params }, expires_in: CACHE_TTL
 
   def index
-    show = Show.avail.includes(:venue)
+    show = Show.avail.includes(:venue, :tags, tracks: %i[songs tags])
     show = show.tagged_with(params[:tag]) if params[:tag]
     respond_with_success get_data_for(show)
   end
@@ -66,13 +66,12 @@ class Api::V1::ShowsController < Api::V1::ApiController
   end
 
   def shows_on_day
-    Show.avail
-        .where('extract(month from date) = ?', month_param)
-        .where('extract(day from date) = ?', day_param)
+    show_scope.where('extract(month from date) = ?', month_param)
+              .where('extract(day from date) = ?', day_param)
   end
 
   def show_scope
-    Show.includes(:venue, { tracks: :songs }, :tags)
+    Show.avail.includes(:venue, :tags, tracks: %i[songs tags])
   end
 
   def show_id_is_date?
@@ -84,9 +83,6 @@ class Api::V1::ShowsController < Api::V1::ApiController
   end
 
   def random_show
-    Show.includes(:venue, { tracks: :songs }, :tags)
-        .avail
-        .random
-        .first
+    show_scope.random.first
   end
 end

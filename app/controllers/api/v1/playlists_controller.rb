@@ -13,6 +13,7 @@ class Api::V1::PlaylistsController < Api::V1::ApiController
     @playlist ||=
       Playlist.where(id: params[:id])
               .or(Playlist.where(slug: params[:id]))
+              .includes(:tracks)
               .first
   end
 end
