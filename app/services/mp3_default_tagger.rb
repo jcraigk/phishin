@@ -16,13 +16,8 @@ class Mp3DefaultTagger
     Mp3Info.open(track.audio_file.path) do |mp3|
       hydrate_tags(mp3)
       hydrate_v2_tags(mp3)
-      # add_cover_art # TODO: Add cover art using id3v2? or strip it be default?
+      mp3.tag2.remove_pictures
     end
-  end
-
-  def add_cover_art
-    mp3.tag2.remove_pictures
-    mp3.tag2.add_picture('...')
   end
 
   def hydrate_tags(mp3)

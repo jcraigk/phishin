@@ -30,9 +30,6 @@ class Track < ApplicationRecord
     }
   )
 
-  # TODO: fix validation
-  # validates_attachment :audio_file, presence: true,
-  #   content_type: { content_type: ['application/mp3', 'application/x-mp3', 'audio/mpeg', 'audio/mp3'] }
   do_not_validate_attachment_file_type :audio_file
   validates :position, :show, :title, :set, presence: true
   validates :position, uniqueness: { scope: :show_id }

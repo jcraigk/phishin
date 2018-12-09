@@ -19,7 +19,6 @@ class @Playlist
       update: =>
         this.updatePlaylist 'Track moved in playlist'
     })
-    # this._refreshPlaylistDropdown()
 
   updatePlaylist: (success_msg) ->
     track_ids = []
@@ -179,19 +178,17 @@ class @Playlist
      url: '/save-playlist',
      type: 'post',
      data: {
-       id:      $('#playlist_data').attr('data-id')
-       name:    @$playlist_name_input.val()
-       slug:    @$playlist_slug_input.val()
+       id: $('#playlist_data').attr('data-id')
+       name: @$playlist_name_input.val()
+       slug: @$playlist_slug_input.val()
        save_action:  @$save_action_dropdown.val()
      }
      success: (r) =>
        if r.success
-         #todo: update visual details (name, slug, etc) of playlist
          $('#playlist_data').attr 'data-id', r.id
          $('#playlist_data').attr 'data-name', r.name
          $('#playlist_data').attr 'data-slug', r.slug
          $('#playlist_title').html r.name
-         # this._refreshPlaylistDropdown()
          @Util.feedback { notice: r.msg }
        else
          @Util.feedback { alert: r.msg }
