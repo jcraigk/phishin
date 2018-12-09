@@ -13,8 +13,9 @@ describe Api::V1::YearsController do
     let!(:show3) { create(:show, date: '1988-06-01') }
 
     context 'without params' do
-      let(:expected_data) { ERAS.values.flatten }
       subject { get('/api/v1/years') }
+
+      let(:expected_data) { ERAS.values.flatten }
 
       it 'responds with expected data' do
         expect(json_data).to match_array(expected_data)
@@ -22,6 +23,8 @@ describe Api::V1::YearsController do
     end
 
     context 'with include_show_counts params' do
+      subject { get('/api/v1/years?include_show_counts=true') }
+
       let(:expected_data) do
         data =
           ERAS.values
@@ -31,7 +34,6 @@ describe Api::V1::YearsController do
         data[1] = { date: '1988', show_count: 1 }
         data
       end
-      subject { get('/api/v1/years?include_show_counts=true') }
 
       it 'responds with expected data' do
         expect(json_data).to match_array(expected_data)
@@ -48,8 +50,9 @@ describe Api::V1::YearsController do
     let!(:show4) { create(:show, date: '1995-01-01') }
 
     context 'when providing a single year' do
-      let(:expected_shows) { [show1, show2].map(&:as_json_api) }
       subject { get("/api/v1/years/#{year1}") }
+
+      let(:expected_shows) { [show1, show2].map(&:as_json_api) }
 
       it 'responds with expected data' do
         expect(json_data).to eq(expected_shows)
@@ -57,8 +60,9 @@ describe Api::V1::YearsController do
     end
 
     context 'when providing a year range' do
-      let(:expected_shows) { [show1, show2, show3].map(&:as_json_api) }
       subject { get("/api/v1/years/#{year1}-#{year2}") }
+
+      let(:expected_shows) { [show1, show2, show3].map(&:as_json_api) }
 
       it 'responds with expected data' do
         expect(json_data).to match_array(expected_shows)

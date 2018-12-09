@@ -7,8 +7,9 @@ describe Api::V1::ShowsController do
   let(:json_data) { JSON[subject.body].deep_symbolize_keys[:data] }
 
   describe 'index' do
-    let!(:shows) { create_list(:show, 3, :with_tracks, :with_tags, :with_likes) }
     subject { get('/api/v1/shows') }
+
+    let!(:shows) { create_list(:show, 3, :with_tracks, :with_tags, :with_likes) }
 
     it 'responds with expected data' do
       expect(json_data).to match_array(shows.map(&:as_json_api))
@@ -17,8 +18,9 @@ describe Api::V1::ShowsController do
 
   describe 'show' do
     context 'with valid id param' do
-      let(:show) { create(:show) }
       subject { get("/api/v1/shows/#{show.id}") }
+
+      let(:show) { create(:show) }
 
       it 'responds with expected data' do
         expect(json_data).to eq(show.as_json_api)
@@ -26,8 +28,9 @@ describe Api::V1::ShowsController do
     end
 
     context 'with valid date param' do
-      let(:show) { create(:show) }
       subject { get("/api/v1/shows/#{show.date}") }
+
+      let(:show) { create(:show) }
 
       it 'responds with expected data' do
         expect(json_data).to eq(show.as_json_api)
@@ -43,8 +46,9 @@ describe Api::V1::ShowsController do
 
   describe 'show-on-date/:date' do
     context 'with valid date param' do
-      let(:show) { create(:show) }
       subject { get("/api/v1/show-on-date/#{show.date}") }
+
+      let(:show) { create(:show) }
 
       it 'responds with expected data' do
         expect(json_data).to eq(show.as_json_api)
@@ -52,8 +56,9 @@ describe Api::V1::ShowsController do
     end
 
     context 'with invalid date param' do
-      let(:show) { create(:show) }
       subject { get("/api/v1/show-on-date/#{show.date - 1.day}") }
+
+      let(:show) { create(:show) }
 
       include_examples 'responds with 404'
     end

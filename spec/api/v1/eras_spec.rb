@@ -16,8 +16,9 @@ describe Api::V1::ErasController do
 
   describe 'show' do
     context 'with valid id param' do
-      let(:era) { '3.0' }
       subject { get("/api/v1/eras/#{era}") }
+
+      let(:era) { '3.0' }
 
       it 'responds with expected data' do
         expect(json_data).to eq(ERAS[era])

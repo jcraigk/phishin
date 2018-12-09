@@ -108,8 +108,8 @@ RSpec.describe Track do
     expect(subject.set_name).to eq('Encore 3')
   end
 
-  context 'mp3 tagging' do
-    # TODO: test save_default_id3_tags
+  xit 'mp3 tagging' do
+    # save_default_id3_tags
   end
 
   context '#generic_slug' do

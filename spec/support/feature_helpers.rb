@@ -18,7 +18,7 @@ module FeatureHelpers
 
   def expect_content_in_order(*args)
     args[0..-2].each_with_index do |c, idx|
-      expect(c).to appear_before(args[idx+1])
+      expect(c).to appear_before(args[idx + 1])
     end
   end
 

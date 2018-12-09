@@ -22,7 +22,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!
-  config.after(:each) do
+  config.after do
     Timecop.return
     Faker::UniqueGenerator.clear
     Warden.test_reset!
