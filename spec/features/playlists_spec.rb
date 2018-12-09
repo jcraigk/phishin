@@ -48,7 +48,7 @@ describe 'Playlists', :js do
 
     before { login_as(user) }
 
-    it 'editing and saving a playlist' do
+    it 'editing' do
       visit active_playlist_path
 
       # Click EDIT PLAYLIST
@@ -80,8 +80,11 @@ describe 'Playlists', :js do
       expect(page).not_to have_content('PLAYLIST EDIT MODE')
     end
 
+    xit 'saving (including invalid name/slug, no tracks)' do
+    end
+
     context 'with saved playlist' do
-      let!(:playlist) { create(:playlist, :with_tracks, user: user) }
+      let!(:playlist) { create(:playlist, user: user) }
 
       it 'opening a saved playlist' do
         visit saved_playlists_path
