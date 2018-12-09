@@ -1,3 +1,6 @@
+[![codecov](https://codecov.io/gh/jcraigk/phishin/branch/master/graph/badge.svg)](https://codecov.io/gh/jcraigk/phishin)
+[![Maintainability](https://api.codeclimate.com/v1/badges/fe9b48d7b87315f38be9/maintainability)](https://codeclimate.com/github/jcraigk/phishin/maintainability)
+
 Phish.in'
 ---------
 
