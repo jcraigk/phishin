@@ -6,22 +6,11 @@ jobs:
       docker_layer_caching: true
     steps:
       - checkout
-      - run:
-          name: Generate .env file for CI
-          command: echo RAILS_MASTER_KEY=${RAILS_MASTER_KEY} >> .env.local
-      - run: bundle exec rake db:create db:schema:load
-      - run: bundle exec rake assets:precompile
-      - run:
-          name: Start services
-          command: make services
-      - run:
-          name: Run specs
-          command: docker-compose run --rm app rspec --format progress --format RspecJunitFormatter -o tmp/rspec/rspec.xml --profile -- spec/[abcdeghijklmnopqrstuvwxyz]*/**/*_spec.rb
-      - store_test_results:
-          path: tmp/rspec
-      - store_artifacts:
-          path: tmp/rspec
-          destination: rspec
+      - run: echo RAILS_MASTER_KEY=${RAILS_MASTER_KEY} >> .env.local
+      - run: make start
+      - run: docker-compose exec app bundle exec rake db:create db:schema:load
+      - run: docker-compose exec app bundle exec rake assets:precompile
+      - run: make spec
 
   capybara:
     machine:
