@@ -9,7 +9,8 @@ jobs:
       - run:
           name: Generate .env file for CI
           command: echo RAILS_MASTER_KEY=${RAILS_MASTER_KEY} >> .env.local
-      - run: make build
+      - run: bundle exec rake db:create db:schema:load
+      - run: bundle exec rake assets:precompile
       - run:
           name: Start services
           command: make services
