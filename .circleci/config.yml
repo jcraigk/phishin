@@ -1,6 +1,7 @@
 version: 2
+
 jobs:
-  build:
+  rspec:
     machine:
       docker_layer_caching: true
     steps:
@@ -8,20 +9,47 @@ jobs:
       - run:
           name: Generate .env file for CI
           command: echo RAILS_MASTER_KEY=${RAILS_MASTER_KEY} >> .env.local
-      - run: docker-compose pull
       - run: make build
-      - run: make start
-      - run: docker-compose exec app bundle exec rake db:create db:schema:load
-      - run: docker-compose exec app bundle exec rake assets:precompile
-      - run: docker-compose exec app bundle exec rspec --format progress --format RspecJunitFormatter -o tmp/rspec/rspec.xml --profile 10
+      - run:
+          name: Start services
+          command: make services
+      - run:
+          name: Run specs
+          command: docker-compose run --rm app rspec --format progress --format RspecJunitFormatter -o tmp/rspec/rspec.xml --profile -- spec/[abcdeghijklmnopqrstuvwxyz]*/**/*_spec.rb
       - store_test_results:
           path: tmp/rspec
       - store_artifacts:
           path: tmp/rspec
           destination: rspec
 
+  capybara:
+    machine:
+      docker_layer_caching: true
+    steps:
+      - checkout
+      - run:
+          name: Generate .env file for CI
+          command: echo RAILS_MASTER_KEY=${RAILS_MASTER_KEY} >> .env.local
+      - run: make build
+      - run:
+          name: Start services
+          command: make services
+      - run:
+          name: Run specs
+          command: docker-compose run --rm app rspec --format progress --format RspecJunitFormatter -o tmp/rspec/rspec.xml --profile -- spec/features/**/*_spec.rb
+      - store_test_results:
+          path: tmp/rspec
+      - store_artifacts:
+          path: tmp/rspec
+          destination: rspec
+      - store_artifacts:
+          path: tmp/capybara
+          destination: screenshots
+
+
 workflows:
   version: 2
   pipeline:
     jobs:
-      - build
+      - rspec
+      - capybara
