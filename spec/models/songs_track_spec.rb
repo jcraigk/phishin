@@ -7,19 +7,21 @@ RSpec.describe SongsTrack do
   it { is_expected.to belong_to(:song) }
   it { is_expected.to belong_to(:track) }
 
-  context 'callbacks' do
-    subject { build(:songs_track, song: song) }
+  it { is_expected.to validate_uniqueness_of(:song).scoped_to(:track_id) }
+
+  describe 'callbacks' do
+    subject(:songs_track) { build(:songs_track, song: song) }
 
     let(:song) { build(:song) }
 
     it 'increments song track count on save' do
-      subject.save
+      songs_track.save
       expect(song.reload.tracks_count).to eq(1)
     end
 
     it 'decrements song track count on save' do
-      subject.save
-      subject.destroy
+      songs_track.save
+      songs_track.destroy
       expect(song.reload.tracks_count).to eq(0)
     end
   end

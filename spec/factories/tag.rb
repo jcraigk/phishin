@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :tag do
-    name { "Tag #{Faker::Book.unique.title}" }
+    name { "Tag #{Faker::Book.unique.title}"[0..50] }
     color { Faker::Color.hex_color }
     description { Faker::Lorem.sentence }
     sequence(:priority)
