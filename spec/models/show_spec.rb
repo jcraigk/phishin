@@ -13,6 +13,7 @@ RSpec.describe Show do
   it { is_expected.to have_many(:tags) }
 
   it { is_expected.to validate_presence_of(:date) }
+  it { is_expected.to validate_uniqueness_of(:date) }
 
   it { is_expected.to delegate_method(:name).to(:tour).with_prefix }
 

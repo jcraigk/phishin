@@ -11,6 +11,7 @@ class Show < ApplicationRecord
   friendly_id :date
 
   validates :date, presence: true
+  validates :date, uniqueness: true
 
   scope :avail, -> { where(missing: false) }
   scope :between_years, lambda { |year1, year2|

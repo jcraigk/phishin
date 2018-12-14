@@ -80,7 +80,7 @@ ActiveRecord::Schema.define(version: 2018_12_14_080858) do
     t.integer "duration", default: 0, null: false
     t.text "taper_notes"
     t.integer "tags_count", default: 0
-    t.index ["date"], name: "index_shows_on_date"
+    t.index ["date"], name: "index_shows_on_date", unique: true
     t.index ["duration"], name: "index_shows_on_duration"
     t.index ["likes_count"], name: "index_shows_on_likes_count"
     t.index ["tour_id"], name: "index_shows_on_tour_id"
