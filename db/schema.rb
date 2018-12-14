@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_20_044655) do
+ActiveRecord::Schema.define(version: 2018_12_14_071912) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,14 +43,14 @@ ActiveRecord::Schema.define(version: 2018_11_20_044655) do
 
   create_table "playlists", id: :serial, force: :cascade do |t|
     t.integer "user_id"
-    t.string "name", limit: 255
+    t.string "name", limit: 255, null: false
     t.string "slug", limit: 255
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "duration", default: 0
     t.index ["duration"], name: "index_playlists_on_duration"
-    t.index ["name"], name: "index_playlists_on_name"
-    t.index ["slug"], name: "index_playlists_on_slug"
+    t.index ["name"], name: "index_playlists_on_name", unique: true
+    t.index ["slug"], name: "index_playlists_on_slug", unique: true
     t.index ["user_id"], name: "index_playlists_on_user_id"
   end
 
@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(version: 2018_11_20_044655) do
     t.text "notes"
     t.index ["notes"], name: "index_show_tags_on_notes"
     t.index ["show_id"], name: "index_show_tags_on_show_id"
+    t.index ["tag_id", "show_id"], name: "index_show_tags_on_tag_id_and_show_id", unique: true
     t.index ["tag_id"], name: "index_show_tags_on_tag_id"
   end
 
@@ -101,6 +102,9 @@ ActiveRecord::Schema.define(version: 2018_11_20_044655) do
   create_table "songs_tracks", id: :serial, force: :cascade do |t|
     t.integer "song_id"
     t.integer "track_id"
+    t.index ["song_id"], name: "index_songs_tracks_on_song_id"
+    t.index ["track_id", "song_id"], name: "index_songs_tracks_on_track_id_and_song_id", unique: true
+    t.index ["track_id"], name: "index_songs_tracks_on_track_id"
   end
 
   create_table "tags", id: :serial, force: :cascade do |t|
@@ -114,8 +118,8 @@ ActiveRecord::Schema.define(version: 2018_11_20_044655) do
     t.integer "priority", default: 0
     t.string "slug"
     t.index ["description"], name: "index_tags_on_description"
-    t.index ["name"], name: "index_tags_on_name"
-    t.index ["priority"], name: "index_tags_on_priority"
+    t.index ["name"], name: "index_tags_on_name", unique: true
+    t.index ["priority"], name: "index_tags_on_priority", unique: true
     t.index ["slug"], name: "index_tags_on_slug"
   end
 
@@ -138,6 +142,7 @@ ActiveRecord::Schema.define(version: 2018_11_20_044655) do
     t.datetime "created_at"
     t.text "notes"
     t.index ["notes"], name: "index_track_tags_on_notes"
+    t.index ["tag_id", "track_id"], name: "index_track_tags_on_tag_id_and_track_id", unique: true
     t.index ["tag_id"], name: "index_track_tags_on_tag_id"
     t.index ["track_id"], name: "index_track_tags_on_track_id"
   end
@@ -158,6 +163,8 @@ ActiveRecord::Schema.define(version: 2018_11_20_044655) do
     t.string "slug", limit: 255
     t.integer "tags_count", default: 0
     t.index ["likes_count"], name: "index_tracks_on_likes_count"
+    t.index ["show_id", "position"], name: "index_tracks_on_show_id_and_position", unique: true
+    t.index ["show_id"], name: "index_tracks_on_show_id"
     t.index ["slug"], name: "index_tracks_on_slug"
   end
 
@@ -183,6 +190,7 @@ ActiveRecord::Schema.define(version: 2018_11_20_044655) do
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["username"], name: "index_users_on_username", unique: true
   end
 
   create_table "venues", id: :serial, force: :cascade do |t|
