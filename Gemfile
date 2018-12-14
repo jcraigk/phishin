@@ -30,6 +30,7 @@ gem 'twitter-bootstrap-rails', '2.2.8'
 gem 'uglifier'
 
 group :development, :test do
+  gem 'active_record_doctor'
   gem 'bullet'
   gem 'pry'
   gem 'rubocop'

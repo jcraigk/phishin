@@ -26,6 +26,9 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
+    active_record_doctor (1.6.0)
+      activerecord (>= 4.2)
+      railties (>= 4.2)
     activejob (5.2.2)
       activesupport (= 5.2.2)
       globalid (>= 0.3.6)
@@ -299,6 +302,7 @@ PLATFORMS
 
 DEPENDENCIES
   actionpack-action_caching
+  active_record_doctor
   bootstrap-will_paginate
   bullet
   capybara

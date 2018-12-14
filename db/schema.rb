@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_20_044655) do
+ActiveRecord::Schema.define(version: 2018_12_13_215523) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -101,6 +101,8 @@ ActiveRecord::Schema.define(version: 2018_11_20_044655) do
   create_table "songs_tracks", id: :serial, force: :cascade do |t|
     t.integer "song_id"
     t.integer "track_id"
+    t.index ["song_id"], name: "index_songs_tracks_on_song_id"
+    t.index ["track_id"], name: "index_songs_tracks_on_track_id"
   end
 
   create_table "tags", id: :serial, force: :cascade do |t|
@@ -158,6 +160,7 @@ ActiveRecord::Schema.define(version: 2018_11_20_044655) do
     t.string "slug", limit: 255
     t.integer "tags_count", default: 0
     t.index ["likes_count"], name: "index_tracks_on_likes_count"
+    t.index ["show_id"], name: "index_tracks_on_show_id"
     t.index ["slug"], name: "index_tracks_on_slug"
   end
 
