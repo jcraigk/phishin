@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# TODO: remove this file
 namespace :dupes do
   desc 'Find and destroy dupes'
   task dupes: :environment do
