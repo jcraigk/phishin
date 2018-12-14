@@ -1,2 +1,0 @@
-songs_tracks song_id track_id
-tracks show_id
