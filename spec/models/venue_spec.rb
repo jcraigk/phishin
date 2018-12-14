@@ -5,6 +5,7 @@ RSpec.describe Venue do
   subject { build(:venue, name: 'Madison Square Garden') }
 
   it { is_expected.to have_many(:shows) }
+  it { is_expected.to have_many(:venue_renames).dependent(:destroy) }
 
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:city) }

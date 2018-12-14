@@ -14,11 +14,5 @@ FactoryBot.define do
         create_list(:like, 2, likable: track)
       end
     end
-
-    trait :with_tags do
-      after(:build) do |track|
-        create_list(:track_tag, 2, track: track, tag: create(:tag))
-      end
-    end
   end
 end
