@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_17_070430) do
+ActiveRecord::Schema.define(version: 2018_12_17_073256) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -75,7 +75,6 @@ ActiveRecord::Schema.define(version: 2018_12_17_070430) do
     t.integer "tour_id"
     t.integer "likes_count", default: 0
     t.boolean "incomplete", default: false
-    t.boolean "missing", default: true
     t.text "admin_notes"
     t.integer "duration", default: 0, null: false
     t.text "taper_notes"
@@ -132,9 +131,10 @@ ActiveRecord::Schema.define(version: 2018_12_17_070430) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "shows_count", default: 0
-    t.index ["name"], name: "index_tours_on_name"
+    t.index ["ends_on"], name: "index_tours_on_ends_on", unique: true
+    t.index ["name"], name: "index_tours_on_name", unique: true
     t.index ["slug"], name: "index_tours_on_slug", unique: true
-    t.index ["starts_on"], name: "index_tours_on_starts_on"
+    t.index ["starts_on"], name: "index_tours_on_starts_on", unique: true
   end
 
   create_table "track_tags", id: :serial, force: :cascade do |t|

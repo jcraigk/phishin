@@ -50,7 +50,7 @@ namespace :tracks do
   task find_missing: :environment do
     # Track gaps
     show_list = []
-    Show.order('date desc').each do |show|
+    Show.order(date: :desc).each do |show|
       show.tracks.order('position').each_with_index do |track, i|
         if i + 1 != track.position
           show_list << show.date
@@ -65,7 +65,7 @@ namespace :tracks do
     end
     # Shows with no tracks
     show_list = []
-    Show.where(missing: false).order('date desc').each do |show|
+    Show.published.order(date: :desc).each do |show|
       tracks = show.tracks.all
       show_list << show.date unless tracks.any?
     end
@@ -80,7 +80,7 @@ namespace :tracks do
   task tighten_positions: :environment do
     Show.order('date desc').each do |show|
       puts "Tightening: #{show.date}"
-      show.tracks.order('position asc').each_with_index do |track, idx|
+      show.tracks.order(position: :asc).each_with_index do |track, idx|
         track.update_attributes(position: idx + 1)
       end
     end

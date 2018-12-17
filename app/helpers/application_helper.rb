@@ -9,7 +9,7 @@ module ApplicationHelper
   end
 
   def total_hours_of_music
-    (Show.avail.map(&:duration).inject(0, &:+) / 3_600_000).round
+    (Show.published.map(&:duration).inject(0, &:+) / 3_600_000).round
   end
 
   def link_to_song(song, term = nil)
@@ -72,7 +72,7 @@ module ApplicationHelper
     )
   end
 
-  def taper_notes_or_missing(show)
+  def taper_notes_for(show)
     show.taper_notes.present? ? CGI.escapeHTML(show.taper_notes) : 'No taper notes present for this show'.html_safe
   end
 

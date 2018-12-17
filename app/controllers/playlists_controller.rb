@@ -240,7 +240,7 @@ class PlaylistsController < ApplicationController
   end
 
   def random_show
-    show = Show.avail.random.first
+    show = Show.published.random.first
     render json: {
       success: true,
       url: "/#{show.date}",

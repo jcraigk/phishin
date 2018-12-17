@@ -42,11 +42,11 @@ rails shows:import
 Use the interactive CLI to execute the import, then go to the `rails console`:
 
 ```ruby
-show = Show.last
-show.tour = Tour.find_by(name: '<tour name>')
-show.missing = false
-show.taper_notes = "<paste taper notes>"
-show.save
+Show.last.update(
+  tour: Tour.find_by(name: "<tour name>"),
+  taper_notes: "<paste taper notes>",
+  published: true
+)
 ```
 
 Go to `https://phish.in/<date>` to verify the upload.  You may also want to run:
