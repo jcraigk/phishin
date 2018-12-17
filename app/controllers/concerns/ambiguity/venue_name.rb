@@ -3,6 +3,7 @@ module Ambiguity::VenueName
   def slug_as_venue
     return false unless venue.present?
 
+    validate_sorting_for_shows
     hydrate_venue_page
 
     true

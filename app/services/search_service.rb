@@ -51,9 +51,11 @@ class SearchService
 
   def venues
     return [] if term_is_date?
-    Venue.relevant
+    Venue.left_outer_joins(:venue_renames)
+         .relevant
          .where(venue_where_str, term: "%#{term}%")
          .order(name: :asc)
+         .uniq
   end
 
   def tours
@@ -63,8 +65,9 @@ class SearchService
   end
 
   def venue_where_str
-    'name ILIKE :term OR abbrev ILIKE :term ' \
-    'OR past_names ILIKE :term OR city ILIKE :term ' \
-    'OR state ILIKE :term OR country ILIKE :term'
+    'venues.name ILIKE :term OR venues.abbrev ILIKE :term ' \
+    'OR venue_renames.name ILIKE :term ' \
+    'OR venues.city ILIKE :term OR venues.state ILIKE :term ' \
+    'OR venues.country ILIKE :term '
   end
 end

@@ -8,7 +8,11 @@ describe Api::V1::TracksController do
   let(:json_data) { json[:data] }
 
   describe 'index' do
-    let!(:tracks) { create_list(:track, 3, :with_likes, :with_tags) }
+    let!(:tracks) { create_list(:track, 3, :with_likes) }
+
+    before do
+      tracks.each { |t| t.tags = create_list(:tag, 3) }
+    end
 
     context 'without params' do
       subject { get('/api/v1/tracks') }

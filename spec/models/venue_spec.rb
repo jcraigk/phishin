@@ -2,26 +2,43 @@
 require 'rails_helper'
 
 RSpec.describe Venue do
-  subject { build(:venue, name: 'Madison Square Garden') }
+  subject(:venue) { build(:venue, name: 'Madison Square Garden') }
 
   it { is_expected.to have_many(:shows) }
+  it { is_expected.to have_many(:venue_renames).dependent(:destroy) }
 
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:city) }
   it { is_expected.to validate_presence_of(:country) }
 
+  describe '#should_generate_new_friendly_id' do
+    before { venue.update(name: 'New Name') }
+
+    it 'generates a new slug' do
+      expect(venue.reload.slug).to eq('new-name')
+    end
+  end
+
   it 'generates a slug from name (friendly_id)' do
-    subject.save
-    expect(subject.slug).to eq('madison-square-garden')
+    venue.save
+    expect(venue.slug).to eq('madison-square-garden')
   end
 
   # geocoded_by :address
   it 'responds to geocode' do
-    expect(subject).to respond_to(:geocode)
+    expect(venue).to respond_to(:geocode)
   end
 
-  context 'scopes' do
-    context '#relevant' do
+  define '#name_on_date' do
+    let!(:venue_rename) { create(:venue_rename, venue: venue, renamed_on: '2018-01-01') }
+
+    it 'returns the expected name' do
+      expect(venue.name_on_date('2018-02-01')).to eq(venue_rename.name)
+    end
+  end
+
+  define 'scopes' do
+    define '#relevant' do
       let!(:venues_with_shows) { create_list(:venue, 2, :with_shows) }
       let!(:irrelevant_venue) { create(:venue) }
 
@@ -30,7 +47,7 @@ RSpec.describe Venue do
       end
     end
 
-    context '#name_starting_with' do
+    define '#name_starting_with' do
       let!(:a_venue) { create(:venue, name: 'Allstate Arena') }
       let!(:b_venue) { create(:venue, name: 'BlueCross Arena') }
       let!(:num_venue) { create(:venue, name: '13x13 Club') }
@@ -42,22 +59,17 @@ RSpec.describe Venue do
     end
   end
 
-  context '#long_name' do
-    subject do
-      build(
-        :venue,
-        name: 'Madison Square Garden',
-        abbrev: 'MSG',
-        past_names: 'The Dump'
-      )
-    end
+  define '#long_name' do
+    subject { build(:venue, name: 'Madison Square Garden', abbrev: 'MSG') }
+
+    let!(:venue_rename) { create(:venue_rename, name: 'The Dump', venue: subject) }
 
     it 'returns long name' do
       expect(subject.long_name).to eq('Madison Square Garden (MSG) (aka The Dump)')
     end
   end
 
-  context '#location' do
+  define '#location' do
     subject do
       build(
         :venue,
@@ -76,14 +88,14 @@ RSpec.describe Venue do
     end
   end
 
-  context 'serialization' do
+  context 'when serializing' do
     subject { create(:venue, :with_shows) }
 
     it 'provides #as_json' do
       expect(subject.as_json).to eq(
         id: subject.id,
         name: subject.name,
-        past_names: subject.past_names,
+        other_names: subject.other_names,
         latitude: subject.latitude.round(6),
         longitude: subject.longitude.round(6),
         shows_count: subject.shows_count,
@@ -97,7 +109,7 @@ RSpec.describe Venue do
       expect(subject.as_json_api).to eq(
         id: subject.id,
         name: subject.name,
-        past_names: subject.past_names,
+        other_names: subject.other_names,
         latitude: subject.latitude.round(6),
         longitude: subject.longitude.round(6),
         shows_count: subject.shows_count,

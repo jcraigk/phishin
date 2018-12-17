@@ -11,6 +11,7 @@ class Show < ApplicationRecord
   friendly_id :date
 
   validates :date, presence: true
+  validates :date, uniqueness: true
 
   scope :avail, -> { where(missing: false) }
   scope :between_years, lambda { |year1, year2|
@@ -39,6 +40,10 @@ class Show < ApplicationRecord
     date.strftime('%Y.%m.%d')
   end
 
+  def venue_name
+    venue.name_on_date(date)
+  end
+
   def as_json # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     {
       id: id,
@@ -53,7 +58,7 @@ class Show < ApplicationRecord
       likes_count: likes_count,
       taper_notes: taper_notes,
       updated_at: updated_at.to_s,
-      venue_name: venue&.name,
+      venue_name: venue_name,
       location: venue&.location
     }
   end
@@ -70,6 +75,7 @@ class Show < ApplicationRecord
       tags: tags.sort_by(&:priority).map(&:name).as_json,
       tour_id: tour_id,
       venue: venue.as_json,
+      venue_name: venue_name,
       taper_notes: taper_notes,
       likes_count: likes_count,
       tracks: tracks.sort_by(&:position).map(&:as_json_api),

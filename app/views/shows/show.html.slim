@@ -6,7 +6,7 @@
 
     - unless @show.missing?
       h2
-        a href="/#{@show.venue.slug}" = @show.venue.name
+        a href="/#{@show.venue.slug}" = @show.venue_name
       h2
         a href="/map?map_term=#{CGI.escape(@show.venue.location)}&distance=5" = @show.venue.location
       span.show_duration = duration_readable(@show.duration, 'letters')

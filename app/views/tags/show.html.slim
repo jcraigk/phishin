@@ -24,7 +24,7 @@
               h2
                 a href="/#{show.date}" = show.date_with_dots
               h2.wide-180
-                a href="/#{show.venue.slug}" = truncate(show.venue.name, length: 35)
+                a href="/#{show.venue.slug}" = truncate(show.venue_name, length: 35)
               h5.narrow
                 a href="/map?map_term=#{CGI.escape(show.venue.location)}" = show.venue.location
               = likable(show, @shows_likes[idx], 'small')

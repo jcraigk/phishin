@@ -3,11 +3,13 @@
   #title_box
     h1 = @venue.name
     h2
-      a href="/map?map_term=#{@venue.latitude},#{@venue.longitude}&distance=.5" = @venue.location
+      a href="/map?map_term=#{@venue.latitude},#{@venue.longitude}&amp;distance=.5" = @venue.location
     h2 Shows: #{@venue.shows_count}
-
-    - if @venue.past_names.present?
-      h2.venue_past_names Past name(s): #{@venue.past_names}
+    - if @venue.other_names.any?
+      h3.other_names
+        | Also known as:
+        <br>
+        = @venue.other_names.join('<br>').html_safe
     .hr
 
     = render partial: 'shared/sort_filter', locals: { item_hash: venue_sort_items }
@@ -27,7 +29,7 @@
           li
             h2 = link_to_show(show, false)
             h2.wide-180
-              a href="/#{show.venue.slug}" = truncate(show.venue.name.html_safe, length: 35)
+              a href="/#{show.venue.slug}" = truncate(show.venue_name, length: 35)
             h5.narrow
               a href="/map?map_term=#{CGI.escape(show.venue.location)}" = show.venue.location
             = likable(show, @shows_likes[idx], 'small')
