@@ -13,6 +13,8 @@ class Show < ApplicationRecord
   validates :date, presence: true
   validates :date, uniqueness: true
 
+  default_scope { where(published: true) }
+
   scope :between_years, lambda { |year1, year2|
     date1 = Date.new(year1.to_i).beginning_of_year
     date2 = Date.new(year2.to_i).end_of_year
@@ -26,7 +28,6 @@ class Show < ApplicationRecord
     where('extract(month from date) = ?', month)
       .where('extract(day from date) = ?', day)
   }
-  scope :published, -> { where(published: true) }
   scope :random, ->(amt = 1) { order(Arel.sql('RANDOM()')).limit(amt) }
   scope :tagged_with, ->(tag_name) { joins(:tags).where(tags: { name: tag_name }) }
 

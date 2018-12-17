@@ -11,7 +11,7 @@ namespace :tracks do
 
   desc 'Ensure tracks have unique slugs within each show'
   task uniquify_slugs: :environment do
-    Show.order('date desc').each do |show|
+    Show.unscoped.order('date desc').each do |show|
       puts "Working: #{show.date}"
       tracks = show.tracks.order('position asc').all
       tracks.each do |track|
@@ -37,7 +37,7 @@ namespace :tracks do
   desc 'Check for the same file being used for second occurrence of song within a show'
   task find_dupe_filenames: :environment do
     show_list = []
-    Show.find_each do |show|
+    Show.unscoped.find_each do |show|
       filenames = show.tracks.map(&:audio_file_file_name)
       dupe = filenames.find { |f| filenames.count(f) > 1 }
       show_list << "#{show.date} :: #{dupe}" if dupe
@@ -50,7 +50,7 @@ namespace :tracks do
   task find_missing: :environment do
     # Track gaps
     show_list = []
-    Show.order(date: :desc).each do |show|
+    Show.unscoped.order(date: :desc).each do |show|
       show.tracks.order('position').each_with_index do |track, i|
         if i + 1 != track.position
           show_list << show.date
@@ -65,7 +65,7 @@ namespace :tracks do
     end
     # Shows with no tracks
     show_list = []
-    Show.published.order(date: :desc).each do |show|
+    Show.unscoped.order(date: :desc).each do |show|
       tracks = show.tracks.all
       show_list << show.date unless tracks.any?
     end
@@ -78,7 +78,7 @@ namespace :tracks do
 
   desc 'Tighten up track positions within each show'
   task tighten_positions: :environment do
-    Show.order('date desc').each do |show|
+    Show.unscoped.order('date desc').each do |show|
       puts "Tightening: #{show.date}"
       show.tracks.order(position: :asc).each_with_index do |track, idx|
         track.update_attributes(position: idx + 1)
@@ -128,25 +128,5 @@ namespace :tracks do
     track_list.each do |track|
       puts "#{track.title} :: #{track.id}"
     end
-  end
-
-  desc "Set default ID3 tags on all Tracks' audio_files"
-  task save_default_id3: :environment do
-    tracks = Track.all
-    tracks.each_with_index do |track, i|
-      p "#{i + 1} of #{tracks.size} (#{track.title} - id #{track.id})"
-      track.save_default_id3_tags
-    end
-  end
-
-  desc 'Identify tracks that point to nonexistent shows'
-  task find_orphans: :environment do
-    show_ids = []
-    Track.find_each do |t|
-      next unless t.show.nil? && !show_ids.include?(t.show_id)
-      show_ids << t.show_id
-    end
-    puts "Complete: #{show_ids.size} orphans found"
-    puts show_ids
   end
 end

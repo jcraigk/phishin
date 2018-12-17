@@ -28,15 +28,12 @@ class SearchService
 
   def show_on_date
     return unless term_is_date?
-    Show.published
-        .includes(:venue)
-        .find_by(date: date)
+    Show.includes(:venue).find_by(date: date)
   end
 
   def shows_on_day_of_year
     return [] unless term_is_date?
-    Show.published
-        .on_day_of_year(date[5..6], date[8..9])
+    Show.on_day_of_year(date[5..6], date[8..9])
         .where('date != ?', date)
         .includes(:venue)
         .order(date: :desc)

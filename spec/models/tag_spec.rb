@@ -2,7 +2,7 @@
 require 'rails_helper'
 
 RSpec.describe Tag do
-  subject { build(:tag, name: 'Musical Tease') }
+  subject { create(:tag, name: 'Musical Tease') }
 
   it { is_expected.to have_many(:show_tags) }
   it { is_expected.to have_many(:shows).through(:show_tags) }

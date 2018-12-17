@@ -240,7 +240,7 @@ class PlaylistsController < ApplicationController
   end
 
   def random_show
-    show = Show.published.random.first
+    show = Show.random.first
     render json: {
       success: true,
       url: "/#{show.date}",
@@ -251,7 +251,7 @@ class PlaylistsController < ApplicationController
   def random_song_track
     if (song = Song.where(id: params[:song_id]).first)
       track = song.tracks.sample
-      show = Show.where(id: track.show_id).first
+      show = Show.find_by(id: track.show_id)
 
       render json: {
         success: true,

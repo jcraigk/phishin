@@ -2,7 +2,7 @@
 require 'rails_helper'
 
 RSpec.describe Tour do
-  subject { build(:tour, name: '1996 Summer Tour') }
+  subject { create(:tour, name: '1996 Summer Tour') }
 
   it { is_expected.to have_many(:shows) }
 

@@ -2,13 +2,16 @@
 require 'rails_helper'
 
 RSpec.describe Song do
-  subject { build(:song, title: 'First Tube') }
+  subject { create(:song, title: 'Bathtub Gin') }
 
   it { is_expected.to have_and_belong_to_many(:tracks) }
 
+  it { is_expected.to validate_presence_of(:title) }
+  it { is_expected.to validate_uniqueness_of(:title) }
+
   it 'generates a slug from title (friendly_id)' do
     subject.save
-    expect(subject.slug).to eq('first-tube')
+    expect(subject.slug).to eq('bathtub-gin')
   end
 
   context 'PgSearch kinda_matching title' do

@@ -2,7 +2,7 @@
 require 'rails_helper'
 
 RSpec.describe Track do
-  subject { build(:track, title: 'Bathtub Gin') }
+  subject { create(:track, title: 'Bathtub Gin') }
 
   it { is_expected.to have_many(:songs_tracks).dependent(:destroy) }
   it { is_expected.to have_many(:songs).through(:songs_tracks) }

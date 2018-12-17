@@ -48,22 +48,18 @@ module Ambiguity::Date
   end
 
   def previous_show
-    Show.published
-        .where('date < ?', @show.date)
+    Show.where('date < ?', @show.date)
         .order(date: :desc)
         .first ||
-      Show.published
-          .order(date: :desc)
+      Show.order(date: :desc)
           .first
   end
 
   def next_show
-    Show.published
-        .where('date > ?', @show.date)
+    Show.where('date > ?', @show.date)
         .order(date: :asc)
         .first ||
-      Show.published
-          .order(date: :asc)
+      Show.order(date: :asc)
           .first
   end
 end

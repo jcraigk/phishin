@@ -10,7 +10,7 @@ class ShowImporter::Orchestrator
 
     analyze_filenames
 
-    @show = Show.find_by(date: date)
+    @show = Show.unscoped.find_by(date: date)
     return if (@show_found = @show.present?)
 
     @show = Show.new(date: date)

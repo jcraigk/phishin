@@ -1,18 +1,5 @@
 # frozen_string_literal: true
 namespace :tags do
-  desc 'Sync Remaster tags with RMSTR flags on each show'
-  task sync_remaster_with_flag: :environment do
-    tag = Tag.where(name: 'RMSTR').first
-
-    Show.where(remastered: true).includes(:tracks).find_each do |show|
-      show.tags << tag unless show.tags.include?(tag)
-      show.tracks.each do |track|
-        track.tags << tag unless track.tags.include?(tag)
-      end
-      puts "RMSTR tags added to #{show.date}"
-    end
-  end
-
   desc 'Find and destroy orphan TrackTags'
   task destroy_orphan_track_tags: :environment do
     num_orphans = 0

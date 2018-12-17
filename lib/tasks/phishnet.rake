@@ -22,13 +22,12 @@ namespace :phishnet do
     json.each do |item|
       pbar.increment
 
-      show = Show.where(date: item['showdate']).includes(:tracks).first
+      show = Show.unscoped.includes(:tracks).find_by(date: item['showdate'])
       next missing_shows << item['showdate'] if show.nil?
       track_matched = false
       show.tracks.order('position').each do |track|
         song = songs.find do |s|
-          s.title.casecmp(item['song']).zero? ||
-            (!s.alt_title.nil? && s.alt_title.casecmp(item['song']).zero?)
+          s.title.casecmp(item['song']).zero?
         end
         next if song.nil?
 

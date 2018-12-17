@@ -17,6 +17,16 @@ RSpec.describe Show do
 
   it { is_expected.to delegate_method(:name).to(:tour).with_prefix }
 
+  define 'default scope' do
+    let!(:show1) { create(:show, published: false) }
+    let!(:show2) { create(:show, published: true) }
+    let!(:show3) { create(:show, published: true) }
+
+    it 'returns published shows' do
+      expect(described_class.scoped).to eq([show2, show3])
+    end
+  end
+
   define 'scopes' do
     define '#published' do
       let!(:show1) { create(:show) }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_17_073256) do
+ActiveRecord::Schema.define(version: 2018_12_17_082339) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -44,7 +44,7 @@ ActiveRecord::Schema.define(version: 2018_12_17_073256) do
   create_table "playlists", id: :serial, force: :cascade do |t|
     t.integer "user_id"
     t.string "name", limit: 255, null: false
-    t.string "slug", limit: 255
+    t.string "slug", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "duration", default: 0
@@ -88,10 +88,10 @@ ActiveRecord::Schema.define(version: 2018_12_17_073256) do
   end
 
   create_table "songs", id: :serial, force: :cascade do |t|
-    t.string "title", limit: 255
+    t.string "title", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "slug", limit: 255
+    t.string "slug", limit: 255, null: false
     t.integer "tracks_count", default: 0
     t.integer "alias_for"
     t.string "lyrical_excerpt", limit: 255
@@ -116,7 +116,7 @@ ActiveRecord::Schema.define(version: 2018_12_17_073256) do
     t.integer "shows_count", default: 0
     t.integer "tracks_count", default: 0
     t.integer "priority", default: 0
-    t.string "slug"
+    t.string "slug", null: false
     t.index ["description"], name: "index_tags_on_description"
     t.index ["name"], name: "index_tags_on_name", unique: true
     t.index ["priority"], name: "index_tags_on_priority", unique: true
@@ -127,7 +127,7 @@ ActiveRecord::Schema.define(version: 2018_12_17_073256) do
     t.string "name", limit: 255
     t.date "starts_on"
     t.date "ends_on"
-    t.string "slug", limit: 255
+    t.string "slug", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "shows_count", default: 0
@@ -152,7 +152,7 @@ ActiveRecord::Schema.define(version: 2018_12_17_073256) do
 
   create_table "tracks", id: :serial, force: :cascade do |t|
     t.integer "show_id"
-    t.string "title", limit: 255
+    t.string "title", limit: 255, null: false
     t.integer "position"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -161,13 +161,13 @@ ActiveRecord::Schema.define(version: 2018_12_17_073256) do
     t.integer "audio_file_file_size"
     t.datetime "audio_file_updated_at"
     t.integer "duration"
-    t.string "set", limit: 255
+    t.string "set", limit: 255, null: false
     t.integer "likes_count", default: 0
-    t.string "slug", limit: 255
+    t.string "slug", limit: 255, null: false
     t.integer "tags_count", default: 0
     t.index ["likes_count"], name: "index_tracks_on_likes_count"
     t.index ["show_id", "position"], name: "index_tracks_on_show_id_and_position", unique: true
-    t.index ["show_id"], name: "index_tracks_on_show_id"
+    t.index ["show_id", "slug"], name: "index_tracks_on_show_id_and_slug", unique: true
     t.index ["slug"], name: "index_tracks_on_slug"
   end
 
@@ -205,18 +205,18 @@ ActiveRecord::Schema.define(version: 2018_12_17_073256) do
   end
 
   create_table "venues", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 255
-    t.string "city", limit: 255
-    t.string "state", limit: 255
-    t.string "country", limit: 255
-    t.string "slug", limit: 255
+    t.string "name", limit: 255, null: false
+    t.string "city", limit: 255, null: false
+    t.string "state", limit: 255, null: false
+    t.string "country", limit: 255, null: false
+    t.string "slug", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "shows_count", default: 0
     t.float "latitude"
     t.float "longitude"
     t.string "abbrev", limit: 255
-    t.index ["name"], name: "index_venues_on_name"
+    t.index ["name", "city"], name: "index_venues_on_name_and_city", unique: true
     t.index ["slug"], name: "index_venues_on_slug", unique: true
   end
 

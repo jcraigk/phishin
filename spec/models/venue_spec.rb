@@ -2,12 +2,13 @@
 require 'rails_helper'
 
 RSpec.describe Venue do
-  subject(:venue) { build(:venue, name: 'Madison Square Garden') }
+  subject(:venue) { create(:venue, name: 'Madison Square Garden') }
 
   it { is_expected.to have_many(:shows) }
   it { is_expected.to have_many(:venue_renames).dependent(:destroy) }
 
   it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_uniqueness_of(:name).scoped_to(:city) }
   it { is_expected.to validate_presence_of(:city) }
   it { is_expected.to validate_presence_of(:country) }
 

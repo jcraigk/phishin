@@ -32,14 +32,13 @@ class Api::V1::YearsController < Api::V1::ApiController
   end
 
   def shows_for_era(era)
-    return Show.published.during_year(era) unless era == '1983-1987'
-    Show.published.between_years('1983', '1987')
+    return Show.during_year(era) unless era == '1983-1987'
+    Show.between_years('1983', '1987')
   end
 
   def shows_that_year
     @shows_that_year =
-      Show.published
-          .between_years(*requested_years)
+      Show.between_years(*requested_years)
           .includes(:venue, :tags, tracks: %i[songs tags])
           .order(date: :asc)
   end
