@@ -17,8 +17,8 @@ RSpec.describe Show do
 
   it { is_expected.to delegate_method(:name).to(:tour).with_prefix }
 
-  context 'scopes' do
-    context '#avail' do
+  define 'scopes' do
+    define '#avail' do
       let!(:show1) { create(:show) }
       let!(:show2) { create(:show, missing: true) }
 
@@ -27,7 +27,7 @@ RSpec.describe Show do
       end
     end
 
-    context '#between_years' do
+    define '#between_years' do
       let!(:show1) { create(:show, date: '2014-10-31') }
       let!(:show2) { create(:show, date: '2015-01-01') }
       let!(:show3) { create(:show, date: '2016-01-01') }
@@ -38,7 +38,7 @@ RSpec.describe Show do
       end
     end
 
-    context '#during_year' do
+    define '#during_year' do
       let!(:show1) { create(:show, date: '2014-10-31') }
       let!(:show2) { create(:show, date: '2015-01-01') }
 
@@ -47,7 +47,7 @@ RSpec.describe Show do
       end
     end
 
-    context '#on_day_of_year' do
+    define '#on_day_of_year' do
       let!(:show1) { create(:show, date: '2018-10-31') }
       let!(:show2) { create(:show, date: '2018-01-01') }
 
@@ -56,12 +56,12 @@ RSpec.describe Show do
       end
     end
 
-    context '#random' do
+    define '#random' do
       xit 'returns random record' do
       end
     end
 
-    context '#tagged_with' do
+    define '#tagged_with' do
       let!(:shows) { create_list(:show, 2) }
       let(:tag) { create(:tag) }
 
@@ -70,6 +70,16 @@ RSpec.describe Show do
       it 'returns expected objects' do
         expect(described_class.tagged_with(tag.name)).to eq([shows.first])
       end
+    end
+  end
+
+  define '#venue_name' do
+    subject(:show) { create(:show, date: '2018-02-01') }
+
+    let!(:venue_rename) { create(:venue_rename, venue: show.venue, renamed_on: '2018-01-01') }
+
+    it 'provides the current name' do
+      expect(show.venue_name).to eq(venue_rename.name)
     end
   end
 
@@ -121,6 +131,7 @@ RSpec.describe Show do
         tags: subject.tags.sort_by(&:priority).map(&:name).as_json,
         tour_id: subject.tour_id,
         venue: subject.venue.as_json,
+        venue_name: subject.venue_name,
         taper_notes: subject.taper_notes,
         likes_count: subject.likes_count,
         tracks: subject.tracks.sort_by(&:position).map(&:as_json_api),

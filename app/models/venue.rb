@@ -22,11 +22,34 @@ class Venue < ApplicationRecord
     )
   }
 
+  def should_generate_new_friendly_id?
+    will_save_change_to_attribute?(:name) || super
+  end
+
+  def name_on_date(date)
+    venue_renames.where('renamed_on <= ?', date)
+                 .order(renamed_on: :desc)
+                 .first
+                 &.name || name
+  end
+
   def long_name
     str = name
     str += " (#{abbrev})" if abbrev.present?
-    str += " (aka #{past_names})" if past_names.present?
+    str += " (aka #{other_names_str})" if other_names.any?
     str
+  end
+
+  def other_names
+    @other_names ||=
+      venue_renames.order(renamed_on: :asc)
+                   .each_with_object([]) do |rename, other_names|
+        other_names << rename.name
+      end
+  end
+
+  def other_names_str
+    other_names.join(', ')
   end
 
   def location
@@ -41,12 +64,12 @@ class Venue < ApplicationRecord
     loc.gsub(/\s+/, ' ')
   end
 
-  def as_json
+  def as_json # rubocop:disable Metrics/MethodLength
     {
       id: id,
       slug: slug,
       name: name,
-      past_names: past_names,
+      other_names: other_names,
       latitude: latitude.round(6),
       longitude: longitude.round(6),
       shows_count: shows_count,
@@ -60,7 +83,7 @@ class Venue < ApplicationRecord
       id: id,
       slug: slug,
       name: name,
-      past_names: past_names,
+      other_names: other_names,
       latitude: latitude.round(6),
       longitude: longitude.round(6),
       location: location,

@@ -1174,10 +1174,6 @@ html {
       color: $gray_70;
       font-weight: bold;
       margin-bottom: 6px;
-
-      &.venue_past_names {
-        font-style: italic;
-      }
     }
     h3 {
       line-height: 20px;
@@ -1188,6 +1184,10 @@ html {
       .btn-group {
         position: relative;
         top: 4px;
+      }
+
+      &.other_names {
+        font-size: 18px;
       }
     }
     .app_callout {

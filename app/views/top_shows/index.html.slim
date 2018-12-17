@@ -19,7 +19,7 @@
           h2
             a href="/#{show.date}" = show.date_with_dots
           h4.narrow
-            a href="/#{show.venue.slug}" = truncate(show.venue.name, length: 30)
+            a href="/#{show.venue.slug}" = truncate(show.venue_name, length: 30)
           = likable(show, @shows_likes[idx], 'small')
           h3.narrow = duration_readable(show.duration, 'letters')
           = render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false }

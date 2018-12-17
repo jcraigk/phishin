@@ -26,13 +26,14 @@ class ShowImporter::Orchestrator
 
   def find_venue
     puts 'Finding venue...'
-    venue = Venue.where(name: @show_info.venue_name, city: @show_info.venue_city).first
-    return venue if venue.present?
-    Venue.where(
-      'past_names LIKE ? AND city = ?',
-      "%#{@show_info.venue_name}%",
-      @show_info.venue_city
-    ).first
+    Venue.left_outer_joins(:venue_renames)
+         .where(
+           '(name = ? OR venue_renames.name = ?) AND name = ?',
+           @show_info.venue_name,
+           @show_info.venue_name,
+           @show_info.venue_city
+         )
+         .first
   end
 
   def assign_venue

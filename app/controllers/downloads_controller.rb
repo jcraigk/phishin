@@ -9,7 +9,7 @@ class DownloadsController < ApplicationController
       duration: track.duration,
       show: track.show.date_with_dots,
       show_url: "/#{track.show.date}",
-      venue: track.show.venue.name.to_s,
+      venue: track.show.venue_name,
       venue_url: "/#{track.show.venue.slug}",
       city: track.show.venue.location,
       city_url: "/map?map_term=#{CGI.escape(track.show.venue.location)}",
