@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_17_065408) do
+ActiveRecord::Schema.define(version: 2018_12_17_070430) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(version: 2018_12_17_065408) do
     t.integer "duration", default: 0, null: false
     t.text "taper_notes"
     t.integer "tags_count", default: 0
+    t.boolean "published", default: false, null: false
     t.index ["date"], name: "index_shows_on_date", unique: true
     t.index ["duration"], name: "index_shows_on_duration"
     t.index ["likes_count"], name: "index_shows_on_likes_count"
