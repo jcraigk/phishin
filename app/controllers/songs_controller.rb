@@ -3,10 +3,7 @@ class SongsController < ApplicationController
   caches_action :index, expires_in: CACHE_TTL
 
   def index
-    @songs =
-      Song.relevant
-          .title_starting_with(char_param)
-          .order(order_by)
+    @songs = Song.title_starting_with(char_param).order(order_by)
     render_xhr_without_layout
   end
 

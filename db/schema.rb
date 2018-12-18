@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_17_082339) do
+ActiveRecord::Schema.define(version: 2018_12_18_030951) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,7 +37,7 @@ ActiveRecord::Schema.define(version: 2018_12_17_082339) do
     t.integer "track_id"
     t.integer "position"
     t.index ["playlist_id"], name: "index_playlist_tracks_on_playlist_id"
-    t.index ["position"], name: "index_playlist_tracks_on_position"
+    t.index ["position", "playlist_id"], name: "index_playlist_tracks_on_position_and_playlist_id", unique: true
     t.index ["track_id"], name: "index_playlist_tracks_on_track_id"
   end
 
@@ -62,7 +62,6 @@ ActiveRecord::Schema.define(version: 2018_12_17_082339) do
     t.index ["notes"], name: "index_show_tags_on_notes"
     t.index ["show_id"], name: "index_show_tags_on_show_id"
     t.index ["tag_id", "show_id"], name: "index_show_tags_on_tag_id_and_show_id", unique: true
-    t.index ["tag_id"], name: "index_show_tags_on_tag_id"
   end
 
   create_table "shows", id: :serial, force: :cascade do |t|
@@ -95,8 +94,6 @@ ActiveRecord::Schema.define(version: 2018_12_17_082339) do
     t.integer "tracks_count", default: 0
     t.integer "alias_for"
     t.string "lyrical_excerpt", limit: 255
-    t.string "alt_title", limit: 255
-    t.index ["alt_title"], name: "index_songs_on_alt_title"
   end
 
   create_table "songs_tracks", id: :serial, force: :cascade do |t|

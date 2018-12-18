@@ -41,15 +41,12 @@ class SearchService
 
   def songs
     return [] if term_is_date?
-    Song.relevant
-        .where('title ILIKE ?', "%#{term}%")
-        .order(title: :asc)
+    Song.where('title ILIKE ?', "%#{term}%").order(title: :asc)
   end
 
   def venues
     return [] if term_is_date?
     Venue.left_outer_joins(:venue_renames)
-         .relevant
          .where(venue_where_str, term: "%#{term}%")
          .order(name: :asc)
          .uniq
@@ -57,8 +54,7 @@ class SearchService
 
   def tours
     return [] if term_is_date?
-    Tour.where('name ILIKE ?', "%#{term}%")
-        .order(name: :asc)
+    Tour.where('name ILIKE ?', "%#{term}%").order(name: :asc)
   end
 
   def venue_where_str

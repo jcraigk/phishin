@@ -8,4 +8,5 @@ RSpec.describe PlaylistTrack do
   it { is_expected.to belong_to(:track) }
 
   it { is_expected.to validate_numericality_of(:position).only_integer }
+  it { is_expected.to validate_uniqueness_of(:position).scoped_to(:playlist_id) }
 end
