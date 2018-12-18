@@ -9,6 +9,7 @@ describe 'Show', :js do
 
   before do
     track.tags << create(:tag)
+    track.songs << create(:song)
   end
 
   it 'visit show page' do
@@ -37,7 +38,7 @@ describe 'Show', :js do
     first('.playable_track').hover
     first('.track-context-dropdown').click
     within('.track-context-dropdown') do
-      expect_content('Play', 'Add to playlist', 'Share', 'Download MP3', 'This song...')
+      expect_content('Play', 'Add to playlist', 'Share', 'Download MP3', track.songs.first.title, track.songs.second.title)
     end
   end
 
