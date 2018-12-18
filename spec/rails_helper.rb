@@ -30,4 +30,5 @@ RSpec.configure do |config|
   config.include Paperclip::Shoulda::Matchers
   config.include FeatureHelpers
   config.include Warden::Test::Helpers
+  config.include AuthHelper, type: :request
 end

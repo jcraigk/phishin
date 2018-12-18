@@ -7,8 +7,16 @@ describe Api::V1::ApiController do
   let(:json) { JSON[subject.body].deep_symbolize_keys }
   let(:path) { '/api/v1/tags' }
 
+  context 'with no authorization header' do
+    subject { get path, headers: nil }
+
+    xit 'returns a 401' do
+      expect(subject.status).to eq(401)
+    end
+  end
+
   describe 'paging' do
-    subject { get(path) }
+    subject { get path, {}, auth_header }
 
     let!(:tags) { create_list(:tag, 50) }
 
@@ -25,7 +33,7 @@ describe Api::V1::ApiController do
     end
 
     context 'with page param' do
-      subject { get("#{path}?page=2") }
+      subject { get "#{path}?page=2", {}, auth_header }
 
       it 'responds with expected data' do
         expect(json).to eq(

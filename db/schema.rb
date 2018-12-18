@@ -10,10 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_18_030951) do
+ActiveRecord::Schema.define(version: 2018_12_18_053555) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "api_keys", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email", null: false
+    t.string "key", null: false
+    t.datetime "revoked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_api_keys_on_email", unique: true
+    t.index ["key"], name: "index_api_keys_on_key", unique: true
+    t.index ["name"], name: "index_api_keys_on_name", unique: true
+  end
 
   create_table "likes", id: :serial, force: :cascade do |t|
     t.string "likable_type", limit: 255

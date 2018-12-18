@@ -7,7 +7,7 @@ describe Api::V1::ToursController do
   let(:json_data) { JSON[subject.body].deep_symbolize_keys[:data] }
 
   describe 'index' do
-    subject { get('/api/v1/tours') }
+    subject { get('/api/v1/tours', {}, auth_header) }
 
     let!(:tours) { create_list(:tour, 3, :with_shows) }
 
@@ -18,7 +18,7 @@ describe Api::V1::ToursController do
 
   describe 'show' do
     context 'with valid id param' do
-      subject { get("/api/v1/tours/#{tour.id}") }
+      subject { get("/api/v1/tours/#{tour.id}", {}, auth_header) }
 
       let(:tour) { create(:tour) }
 
@@ -28,7 +28,7 @@ describe Api::V1::ToursController do
     end
 
     context 'with invalid id param' do
-      subject { get('/api/v1/tours/nonexistent-tour') }
+      subject { get('/api/v1/tours/nonexistent-tour', {}, auth_header) }
 
       include_examples 'responds with 404'
     end

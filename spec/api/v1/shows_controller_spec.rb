@@ -7,7 +7,7 @@ describe Api::V1::ShowsController do
   let(:json_data) { JSON[subject.body].deep_symbolize_keys[:data] }
 
   describe 'index' do
-    subject { get('/api/v1/shows') }
+    subject { get('/api/v1/shows', {}, auth_header) }
 
     let!(:shows) { create_list(:show, 3, :with_tracks, :with_tags, :with_likes) }
 
@@ -18,7 +18,7 @@ describe Api::V1::ShowsController do
 
   describe 'show' do
     context 'with valid id param' do
-      subject { get("/api/v1/shows/#{show.id}") }
+      subject { get("/api/v1/shows/#{show.id}", {}, auth_header) }
 
       let(:show) { create(:show) }
 
@@ -28,7 +28,7 @@ describe Api::V1::ShowsController do
     end
 
     context 'with valid date param' do
-      subject { get("/api/v1/shows/#{show.date}") }
+      subject { get("/api/v1/shows/#{show.date}", {}, auth_header) }
 
       let(:show) { create(:show) }
 
@@ -38,7 +38,7 @@ describe Api::V1::ShowsController do
     end
 
     context 'with invalid id param' do
-      subject { get('/api/v1/shows/nonexistent-show') }
+      subject { get('/api/v1/shows/nonexistent-show', {}, auth_header) }
 
       include_examples 'responds with 404'
     end
@@ -46,7 +46,7 @@ describe Api::V1::ShowsController do
 
   describe 'show-on-date/:date' do
     context 'with valid date param' do
-      subject { get("/api/v1/show-on-date/#{show.date}") }
+      subject { get("/api/v1/show-on-date/#{show.date}", {}, auth_header) }
 
       let(:show) { create(:show) }
 
@@ -56,7 +56,7 @@ describe Api::V1::ShowsController do
     end
 
     context 'with invalid date param' do
-      subject { get("/api/v1/show-on-date/#{show.date - 1.day}") }
+      subject { get("/api/v1/show-on-date/#{show.date - 1.day}", {}, auth_header) }
 
       let(:show) { create(:show) }
 
@@ -64,7 +64,7 @@ describe Api::V1::ShowsController do
     end
 
     context 'with invalid param' do
-      subject { get('/api/v1/show-on-date/invalid-date') }
+      subject { get('/api/v1/show-on-date/invalid-date', {}, auth_header) }
 
       include_examples 'responds with 404'
     end
@@ -74,7 +74,7 @@ describe Api::V1::ShowsController do
     let!(:show) { create(:show, date: '1995-10-31') }
 
     context 'with valid long form date' do
-      subject { get('/api/v1/shows-on-day-of-year/october-31') }
+      subject { get('/api/v1/shows-on-day-of-year/october-31', {}, auth_header) }
 
       it 'responds with expected data' do
         expect(json_data).to eq([show.as_json_api])
@@ -82,7 +82,7 @@ describe Api::V1::ShowsController do
     end
 
     context 'with valid short form date' do
-      subject { get('/api/v1/shows-on-day-of-year/10-31') }
+      subject { get('/api/v1/shows-on-day-of-year/10-31', {}, auth_header) }
 
       it 'responds with expected data' do
         expect(json_data).to eq([show.as_json_api])
@@ -90,7 +90,7 @@ describe Api::V1::ShowsController do
     end
 
     context 'with invalid param' do
-      subject { get('/api/v1/shows-on-day-of-year/invalid-day') }
+      subject { get('/api/v1/shows-on-day-of-year/invalid-day', {}, auth_header) }
 
       include_examples 'responds with 404'
     end

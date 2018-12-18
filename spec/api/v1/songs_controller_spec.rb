@@ -8,7 +8,7 @@ describe Api::V1::SongsController do
   let(:json_data) { json[:data] }
 
   describe 'index' do
-    subject { get('/api/v1/songs') }
+    subject { get('/api/v1/songs', {}, auth_header) }
 
     let!(:songs) { create_list(:song, 3, :with_tracks) }
 
@@ -21,7 +21,7 @@ describe Api::V1::SongsController do
     let(:song) { create(:song) }
 
     context 'when requesting by id' do
-      subject { get("/api/v1/songs/#{song.id}") }
+      subject { get("/api/v1/songs/#{song.id}", {}, auth_header) }
 
       it 'responds with expected data' do
         expect(json_data).to eq(song.as_json_api)
@@ -29,7 +29,7 @@ describe Api::V1::SongsController do
     end
 
     context 'when requesting by slug' do
-      subject { get("/api/v1/songs/#{song.slug}") }
+      subject { get("/api/v1/songs/#{song.slug}", {}, auth_header) }
 
       it 'responds with expected data' do
         expect(json_data).to eq(song.as_json_api)
@@ -37,7 +37,7 @@ describe Api::V1::SongsController do
     end
 
     context 'when requesting invalid song' do
-      subject { get('/api/v1/songs/nonexistent-song') }
+      subject { get('/api/v1/songs/nonexistent-song', {}, auth_header) }
 
       include_examples 'responds with 404'
     end

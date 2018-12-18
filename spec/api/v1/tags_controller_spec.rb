@@ -7,7 +7,7 @@ describe Api::V1::TagsController do
   let(:json_data) { JSON[subject.body].deep_symbolize_keys[:data] }
 
   describe 'index' do
-    subject { get('/api/v1/tags') }
+    subject { get('/api/v1/tags', {}, auth_header) }
 
     let!(:tags) { create_list(:tag, 3) }
 
@@ -18,7 +18,7 @@ describe Api::V1::TagsController do
 
   describe 'show' do
     context 'with valid id param' do
-      subject { get("/api/v1/tags/#{tag.id}") }
+      subject { get("/api/v1/tags/#{tag.id}", {}, auth_header) }
 
       let(:tag) { create(:tag, :with_tracks, :with_shows) }
 
@@ -28,7 +28,7 @@ describe Api::V1::TagsController do
     end
 
     context 'with invalid id param' do
-      subject { get('/api/v1/tags/nonexistent-tour') }
+      subject { get('/api/v1/tags/nonexistent-tour', {}, auth_header) }
 
       include_examples 'responds with 404'
     end
