@@ -30,16 +30,6 @@ RSpec.describe Song do
   end
 
   context 'scopes' do
-    context '#relevant' do
-      let!(:songs_with_tracks) { create_list(:song, 2, :with_tracks) }
-      let!(:song_with_alias) { create(:song, alias_for: songs_with_tracks.first.id) }
-      let!(:irrelevant_song) { create(:song) }
-
-      it 'returns expected objects' do
-        expect(described_class.relevant).to match_array(songs_with_tracks + [song_with_alias])
-      end
-    end
-
     context '#title_starting_with' do
       let!(:a_song) { create(:song, title: 'Access Me') }
       let!(:b_song) { create(:song, title: 'Bathtub Gin') }

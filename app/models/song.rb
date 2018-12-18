@@ -19,7 +19,6 @@ class Song < ApplicationRecord
     }
   )
 
-  scope :relevant, -> { where('tracks_count > 0 or alias_for IS NOT NULL') }
   scope :title_starting_with, lambda { |char|
     where(
       'title SIMILAR TO ?',

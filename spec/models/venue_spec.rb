@@ -39,15 +39,6 @@ RSpec.describe Venue do
   end
 
   define 'scopes' do
-    define '#relevant' do
-      let!(:venues_with_shows) { create_list(:venue, 2, :with_shows) }
-      let!(:irrelevant_venue) { create(:venue) }
-
-      it 'returns expected objects' do
-        expect(described_class.relevant).to match_array(venues_with_shows)
-      end
-    end
-
     define '#name_starting_with' do
       let!(:a_venue) { create(:venue, name: 'Allstate Arena') }
       let!(:b_venue) { create(:venue, name: 'BlueCross Arena') }

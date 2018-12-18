@@ -27,23 +27,17 @@ module Ambiguity::SongTitle
   end
 
   def previous_song
-    Song.relevant
-        .where('title < ?', @song.title)
+    Song.where('title < ?', @song.title)
         .order(title: :desc)
         .first ||
-      Song.relevant
-          .order(title: :desc)
-          .first
+      Song.order(title: :desc).first
   end
 
   def next_song
-    Song.relevant
-        .where('title > ?', @song.title)
+    Song.where('title > ?', @song.title)
         .order(title: :asc)
         .first ||
-      Song.relevant
-          .order(title: :asc)
-          .first
+      Song.order(title: :asc).first
   end
 
   def aliased_song

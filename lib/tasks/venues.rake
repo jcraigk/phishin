@@ -3,10 +3,9 @@ namespace :venues do
   desc 'Find venues that have the same geocode'
   task dupe_geocodes: :environment do
     num = 0
-    Venue.relevant.each do |venue|
+    Venue.find_each do |venue|
       other_venue =
-        Venue.relevant
-             .where(
+        Venue.where(
                'id != ? and latitude = ? and longitude = ?',
                venue.id,
                venue.latitude,
@@ -24,7 +23,7 @@ namespace :venues do
     Venue.find_each do |venue|
       shows_count = Show.unscoped.where(venue_id: venue.id).count
       puts "#{venue.id}: #{shows_count}"
-      venue.update_attributes(shows_count: shows_count)
+      venue.update(shows_count: shows_count)
     end
   end
 end

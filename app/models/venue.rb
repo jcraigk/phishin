@@ -12,7 +12,6 @@ class Venue < ApplicationRecord
   validates :country, presence: true
   validates :name, presence: true, uniqueness: { scope: :city }
 
-  scope :relevant, -> { where('shows_count > 0') }
   scope :name_starting_with, lambda { |char|
     where(
       'name SIMILAR TO ?',
