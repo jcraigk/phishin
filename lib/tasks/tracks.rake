@@ -11,7 +11,7 @@ namespace :tracks do
 
   desc 'Ensure tracks have unique slugs within each show'
   task uniquify_slugs: :environment do
-    Show.unscoped.order('date desc').each do |show|
+    Show.unscoped.order(date: :desc).each do |show|
       puts "Working: #{show.date}"
       tracks = show.tracks.order('position asc').all
       tracks.each do |track|
@@ -78,7 +78,7 @@ namespace :tracks do
 
   desc 'Tighten up track positions within each show'
   task tighten_positions: :environment do
-    Show.unscoped.order('date desc').each do |show|
+    Show.unscoped.order(date: :desc).each do |show|
       puts "Tightening: #{show.date}"
       show.tracks.order(position: :asc).each_with_index do |track, idx|
         track.update_attributes(position: idx + 1)
