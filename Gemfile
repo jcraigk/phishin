@@ -30,8 +30,10 @@ gem 'twitter-bootstrap-rails', '2.2.8'
 gem 'uglifier'
 
 group :development, :test do
+  gem 'awesome_print'
   gem 'bullet'
-  gem 'pry'
+  gem 'pry-byebug'
+  gem 'pry-rails'
   gem 'rubocop'
   gem 'rubocop-rspec'
 end

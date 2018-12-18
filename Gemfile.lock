@@ -48,6 +48,7 @@ GEM
       public_suffix (>= 2.0.2, < 4.0)
     arel (9.0.0)
     ast (2.4.0)
+    awesome_print (1.8.0)
     bcrypt (3.1.12)
     bootstrap-will_paginate (1.0.0)
       will_paginate
@@ -55,6 +56,7 @@ GEM
     bullet (5.9.0)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
+    byebug (10.0.2)
     capybara (3.12.0)
       addressable
       mini_mime (>= 0.1.3)
@@ -163,6 +165,11 @@ GEM
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
+    pry-byebug (3.6.0)
+      byebug (~> 10.0)
+      pry (~> 0.10)
+    pry-rails (0.3.8)
+      pry (>= 0.10.4)
     public_suffix (3.0.3)
     puma (3.12.0)
     rack (2.0.6)
@@ -299,6 +306,7 @@ PLATFORMS
 
 DEPENDENCIES
   actionpack-action_caching
+  awesome_print
   bootstrap-will_paginate
   bullet
   capybara
@@ -321,7 +329,8 @@ DEPENDENCIES
   paperclip
   pg (= 0.21.0)
   pg_search
-  pry
+  pry-byebug
+  pry-rails
   puma
   rails
   rspec-rails

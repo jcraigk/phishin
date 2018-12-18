@@ -13,7 +13,8 @@ class Show < ApplicationRecord
   validates :date, presence: true
   validates :date, uniqueness: true
 
-  scope :avail, -> { where(missing: false) }
+  default_scope { where(published: true) }
+
   scope :between_years, lambda { |year1, year2|
     date1 = Date.new(year1.to_i).beginning_of_year
     date2 = Date.new(year2.to_i).end_of_year
@@ -50,7 +51,6 @@ class Show < ApplicationRecord
       date: date.to_s,
       duration: duration,
       incomplete: incomplete,
-      missing: missing,
       sbd: sbd,
       remastered: remastered,
       tour_id: tour_id,
@@ -69,7 +69,6 @@ class Show < ApplicationRecord
       date: date.to_s,
       duration: duration,
       incomplete: incomplete,
-      missing: missing,
       sbd: sbd,
       remastered: remastered,
       tags: tags.sort_by(&:priority).map(&:name).as_json,

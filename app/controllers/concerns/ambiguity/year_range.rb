@@ -30,8 +30,7 @@ module Ambiguity::YearRange
   end
 
   def shows_during_year_range
-    Show.avail
-        .between_years(year1, year2)
+    Show.between_years(year1, year2)
         .includes(:tour, :venue, :tags)
         .order(@order_by)
   end

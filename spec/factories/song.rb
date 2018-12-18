@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :song do
-    title { "Song #{Faker::Book.title}"[0..50] }
+    title { "Song #{Faker::Book.unique.title}"[0..50] }
     alias_for { nil }
 
     trait :with_tracks do

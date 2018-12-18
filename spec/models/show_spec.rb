@@ -17,13 +17,23 @@ RSpec.describe Show do
 
   it { is_expected.to delegate_method(:name).to(:tour).with_prefix }
 
+  define 'default scope' do
+    let!(:show1) { create(:show, published: false) }
+    let!(:show2) { create(:show, published: true) }
+    let!(:show3) { create(:show, published: true) }
+
+    it 'returns published shows' do
+      expect(described_class.scoped).to eq([show2, show3])
+    end
+  end
+
   define 'scopes' do
-    define '#avail' do
+    define '#published' do
       let!(:show1) { create(:show) }
-      let!(:show2) { create(:show, missing: true) }
+      let!(:show2) { create(:show, published: true) }
 
       it 'returns expected objects' do
-        expect(described_class.avail).to eq([show1])
+        expect(described_class.published).to eq([show2])
       end
     end
 
@@ -106,7 +116,6 @@ RSpec.describe Show do
         date: subject.date.to_s,
         duration: subject.duration,
         incomplete: subject.incomplete,
-        missing: subject.missing,
         sbd: subject.sbd,
         remastered: subject.remastered,
         tour_id: subject.tour_id,
@@ -125,7 +134,6 @@ RSpec.describe Show do
         date: subject.date.to_s,
         duration: subject.duration,
         incomplete: subject.incomplete,
-        missing: subject.missing,
         sbd: subject.sbd,
         remastered: subject.remastered,
         tags: subject.tags.sort_by(&:priority).map(&:name).as_json,

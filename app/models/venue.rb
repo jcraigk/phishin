@@ -8,7 +8,9 @@ class Venue < ApplicationRecord
 
   geocoded_by :address
 
-  validates :name, :city, :country, presence: true
+  validates :city, presence: true
+  validates :country, presence: true
+  validates :name, presence: true, uniqueness: { scope: :city }
 
   scope :relevant, -> { where('shows_count > 0') }
   scope :name_starting_with, lambda { |char|

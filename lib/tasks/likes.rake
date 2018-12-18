@@ -5,11 +5,11 @@ namespace :likes do
     num_orphans = 0
     Like.find_each do |like|
       if like.likable_type == 'Track'
-        next if Track.where(id: like.likable_id).first
+        next if Track.find_by(id: like.likable_id)
         num_orphans += 1
         like.destroy
       elsif like.likable_type == 'Show'
-        next if Show.where(id: like.likable_id).first
+        next if Show.unscoped.find_by(id: like.likable_id)
         num_orphans += 1
         like.destroy
       end

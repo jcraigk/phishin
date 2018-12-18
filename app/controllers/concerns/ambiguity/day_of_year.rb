@@ -20,8 +20,7 @@ module Ambiguity::DayOfYear
 
   def fetch_shows_on_day_of_year
     @shows =
-      Show.avail
-          .on_day_of_year(month, day)
+      Show.on_day_of_year(month, day)
           .includes(:tour, :venue, show_tags: :tag)
           .order(@order_by)
     raise ActiveRecord::RecordNotFound unless @shows.any?

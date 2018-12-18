@@ -2,13 +2,16 @@
 require 'rails_helper'
 
 RSpec.describe Tour do
-  subject { build(:tour, name: '1996 Summer Tour') }
+  subject { create(:tour, name: '1996 Summer Tour') }
 
   it { is_expected.to have_many(:shows) }
 
   it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_uniqueness_of(:name) }
   it { is_expected.to validate_presence_of(:starts_on) }
+  it { is_expected.to validate_uniqueness_of(:starts_on) }
   it { is_expected.to validate_presence_of(:ends_on) }
+  it { is_expected.to validate_uniqueness_of(:ends_on) }
 
   it 'generates a slug from name (friendly_id)' do
     subject.save

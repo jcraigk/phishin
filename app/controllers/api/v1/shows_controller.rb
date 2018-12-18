@@ -6,7 +6,7 @@ class Api::V1::ShowsController < Api::V1::ApiController
   caches_action :on_day_of_year, cache_path: proc { |c| c.params }, expires_in: CACHE_TTL
 
   def index
-    show = Show.avail.includes(:venue, :tags, tracks: %i[songs tags])
+    show = Show.includes(:venue, :tags, tracks: %i[songs tags])
     show = show.tagged_with(params[:tag]) if params[:tag]
     respond_with_success get_data_for(show)
   end
@@ -71,7 +71,7 @@ class Api::V1::ShowsController < Api::V1::ApiController
   end
 
   def show_scope
-    Show.avail.includes(:venue, :tags, tracks: %i[songs tags])
+    Show.includes(:venue, :tags, tracks: %i[songs tags])
   end
 
   def show_id_is_date?

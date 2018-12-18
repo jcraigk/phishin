@@ -22,7 +22,7 @@ namespace :venues do
   desc 'Update shows_count cache'
   task sync_shows_count: :environment do
     Venue.find_each do |venue|
-      shows_count = Show.avail.where(venue_id: venue.id).count
+      shows_count = Show.unscoped.where(venue_id: venue.id).count
       puts "#{venue.id}: #{shows_count}"
       venue.update_attributes(shows_count: shows_count)
     end

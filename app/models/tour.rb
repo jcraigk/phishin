@@ -5,7 +5,9 @@ class Tour < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: :slugged
 
-  validates :name, :starts_on, :ends_on, presence: true
+  validates :name, presence: true, uniqueness: true
+  validates :starts_on, presence: true, uniqueness: true
+  validates :ends_on, presence: true, uniqueness: true
 
   def as_json
     {

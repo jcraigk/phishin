@@ -6,7 +6,7 @@ class ShowImporter::TrackReplacer
 
   def initialize(date)
     @date = date
-    @show = Show.where(date: date).first
+    @show = Show.unscoped.find_by(date: date)
 
     puts 'Show already imported!'
     @track_hash = match_files_to_tracks
@@ -74,7 +74,7 @@ class ShowImporter::TrackReplacer
   end
 
   def show
-    @show ||= Show.where(date: date).first
+    @show ||= Show.unscoped.find_by(date: date)
   end
 
   def dir
