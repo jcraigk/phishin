@@ -3,15 +3,6 @@ require 'nokogiri'
 require 'open-uri'
 
 namespace :tours do
-  desc 'Update shows_count cache'
-  task sync_shows_count: :environment do
-    Tour.order('starts_on').find_each do |t|
-      shows = t.shows
-      puts "#{t.name} :: #{shows.length}"
-      t.update_attributes(shows_count: shows.length)
-    end
-  end
-
   desc 'Set starts_on and ends_on based on available shows'
   task calculate_start_and_end: :environment do
     Tour.find_each do |t|
