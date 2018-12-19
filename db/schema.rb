@@ -77,7 +77,7 @@ ActiveRecord::Schema.define(version: 2018_12_18_053555) do
   end
 
   create_table "shows", id: :serial, force: :cascade do |t|
-    t.date "date"
+    t.date "date", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "remastered", default: false
@@ -106,6 +106,8 @@ ActiveRecord::Schema.define(version: 2018_12_18_053555) do
     t.integer "tracks_count", default: 0
     t.integer "alias_for"
     t.string "lyrical_excerpt", limit: 255
+    t.index ["slug"], name: "index_songs_on_slug", unique: true
+    t.index ["title"], name: "index_songs_on_title", unique: true
   end
 
   create_table "songs_tracks", id: :serial, force: :cascade do |t|
@@ -117,25 +119,25 @@ ActiveRecord::Schema.define(version: 2018_12_18_053555) do
   end
 
   create_table "tags", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 255
-    t.string "color", limit: 255
+    t.string "name", limit: 255, null: false
+    t.string "color", limit: 255, null: false
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "shows_count", default: 0
     t.integer "tracks_count", default: 0
-    t.integer "priority", default: 0
+    t.integer "priority", default: 0, null: false
     t.string "slug", null: false
     t.index ["description"], name: "index_tags_on_description"
     t.index ["name"], name: "index_tags_on_name", unique: true
     t.index ["priority"], name: "index_tags_on_priority", unique: true
-    t.index ["slug"], name: "index_tags_on_slug"
+    t.index ["slug"], name: "index_tags_on_slug", unique: true
   end
 
   create_table "tours", id: :serial, force: :cascade do |t|
-    t.string "name", limit: 255
-    t.date "starts_on"
-    t.date "ends_on"
+    t.string "name", limit: 255, null: false
+    t.date "starts_on", null: false
+    t.date "ends_on", null: false
     t.string "slug", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -162,7 +164,7 @@ ActiveRecord::Schema.define(version: 2018_12_18_053555) do
   create_table "tracks", id: :serial, force: :cascade do |t|
     t.integer "show_id"
     t.string "title", limit: 255, null: false
-    t.integer "position"
+    t.integer "position", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "audio_file_file_name", limit: 255
