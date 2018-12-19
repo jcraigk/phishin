@@ -38,7 +38,7 @@ module Ambiguity::Date
   end
 
   def fetch_show_on_date(date)
-    @show = Show.includes(tracks: [:songs, { track_tags: :tag }]).find_by!(date: date)
+    @show = Show.includes(:venue, tracks: [:songs, { track_tags: :tag }]).find_by!(date: date)
   end
 
   def date_from_slug

@@ -19,7 +19,7 @@ module Ambiguity::Year
 
   def shows_during_year
     Show.during_year(current_slug)
-        .includes(:tour, :venue, :show_tags)
+        .includes(:tour, show_tags: :tag, venue: :venue_renames)
         .order(@order_by)
   end
 

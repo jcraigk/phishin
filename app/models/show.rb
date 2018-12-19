@@ -21,8 +21,7 @@ class Show < ApplicationRecord
     where(date: date1..date2)
   }
   scope :during_year, lambda { |year|
-    date = Date.new(year.to_i)
-    where(date: date.beginning_of_year..date.end_of_year)
+    where("date_part('year', date) = ?", year)
   }
   scope :on_day_of_year, lambda { |month, day|
     where('extract(month from date) = ?', month)
@@ -42,7 +41,11 @@ class Show < ApplicationRecord
   end
 
   def venue_name
-    venue.name_on_date(date)
+    venue.venue_renames
+         .sort_by(&:renamed_on)
+         .reverse
+         .find { |rename| rename.renamed_on <= date }
+         &.name || venue.name
   end
 
   def as_json # rubocop:disable Metrics/AbcSize, Metrics/MethodLength

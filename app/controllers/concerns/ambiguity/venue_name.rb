@@ -12,11 +12,11 @@ module Ambiguity::VenueName
   private
 
   def venue
-    @venue ||= Venue.find_by(slug: current_slug)
+    @venue ||= Venue.includes(:venue_renames).find_by(slug: current_slug)
   end
 
   def hydrate_venue_page
-    @shows = venue.shows.includes(:show_tags).order(@order_by)
+    @shows = venue.shows.includes(show_tags: :tag).order(@order_by)
     @shows_likes = user_likes_for_shows(@shows)
     @previous_venue = prev_venue
     @next_venue = next_venue

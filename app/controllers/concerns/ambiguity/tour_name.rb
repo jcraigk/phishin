@@ -11,7 +11,9 @@ module Ambiguity::TourName
   private
 
   def tour
-    @tour ||= Tour.includes(shows: :tags).find_by(slug: current_slug)
+    @tour ||=
+      Tour.includes(shows: [venue: :venue_renames, show_tags: :tag])
+          .find_by(slug: current_slug)
   end
 
   def hydrate_tour_page
