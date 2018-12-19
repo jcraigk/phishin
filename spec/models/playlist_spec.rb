@@ -28,7 +28,7 @@ RSpec.describe Playlist do
         name: playlist.name,
         duration: playlist.duration,
         tracks: playlist.playlist_tracks.order(:position).map(&:track).map(&:as_json_api),
-        updated_at: playlist.updated_at.to_s
+        updated_at: playlist.updated_at.iso8601
       )
     end
 
@@ -38,7 +38,7 @@ RSpec.describe Playlist do
         name: playlist.name,
         duration: playlist.duration,
         track_count: playlist.playlist_tracks.size,
-        updated_at: playlist.updated_at.to_s
+        updated_at: playlist.updated_at.iso8601
       )
     end
   end

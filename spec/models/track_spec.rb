@@ -152,7 +152,7 @@ RSpec.describe Track do
         slug: subject.slug,
         mp3: subject.mp3_url,
         song_ids: subject.songs.map(&:id),
-        updated_at: subject.updated_at.to_s
+        updated_at: subject.updated_at.iso8601
       )
     end
 
@@ -160,7 +160,7 @@ RSpec.describe Track do
       expect(subject.as_json_api).to eq(
         id: subject.id,
         show_id: subject.show.id,
-        show_date: subject.show.date.to_s,
+        show_date: subject.show.date.iso8601,
         title: subject.title,
         position: subject.position,
         duration: subject.duration,
@@ -171,7 +171,7 @@ RSpec.describe Track do
         tags: subject.tags.sort_by(&:priority).map(&:name).as_json,
         mp3: subject.mp3_url,
         song_ids: subject.songs.map(&:id),
-        updated_at: subject.updated_at.to_s
+        updated_at: subject.updated_at.iso8601
       )
     end
   end

@@ -90,7 +90,7 @@ class Track < ApplicationRecord
       slug: slug,
       mp3: mp3_url,
       song_ids: songs.map(&:id),
-      updated_at: updated_at.to_s
+      updated_at: updated_at.iso8601
     }
   end
 
@@ -98,7 +98,7 @@ class Track < ApplicationRecord
     {
       id: id,
       show_id: show.id,
-      show_date: show.date.to_s,
+      show_date: show.date.iso8601,
       title: title,
       position: position,
       duration: duration,
@@ -109,7 +109,7 @@ class Track < ApplicationRecord
       tags: tags.sort_by(&:priority).map(&:name).as_json,
       mp3: mp3_url,
       song_ids: songs.map(&:id),
-      updated_at: updated_at.to_s
+      updated_at: updated_at.iso8601
     }
   end
 
