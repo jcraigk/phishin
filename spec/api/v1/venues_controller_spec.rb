@@ -8,7 +8,7 @@ describe Api::V1::VenuesController do
   let(:json_data) { json[:data] }
 
   describe 'index' do
-    subject { get('/api/v1/venues') }
+    subject { get('/api/v1/venues', {}, auth_header) }
 
     let!(:venues) { create_list(:venue, 3, :with_shows) }
 
@@ -21,7 +21,7 @@ describe Api::V1::VenuesController do
     let(:venue) { create(:venue) }
 
     context 'when requesting by id' do
-      subject { get("/api/v1/venues/#{venue.id}") }
+      subject { get("/api/v1/venues/#{venue.id}", {}, auth_header) }
 
       it 'responds with expected data' do
         expect(json_data).to eq(venue.as_json_api)
@@ -29,7 +29,7 @@ describe Api::V1::VenuesController do
     end
 
     context 'when requesting by slug' do
-      subject { get("/api/v1/venues/#{venue.slug}") }
+      subject { get("/api/v1/venues/#{venue.slug}", {}, auth_header) }
 
       it 'responds with expected data' do
         expect(json_data).to eq(venue.as_json_api)
@@ -37,7 +37,7 @@ describe Api::V1::VenuesController do
     end
 
     context 'when requesting invalid venue' do
-      subject { get('/api/v1/venues/nonexistent-venue') }
+      subject { get('/api/v1/venues/nonexistent-venue', {}, auth_header) }
 
       include_examples 'responds with 404'
     end

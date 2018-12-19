@@ -7,7 +7,7 @@ describe Api::V1::SearchController do
   let(:json_data) { JSON[subject.body].deep_symbolize_keys[:data] }
 
   describe 'show' do
-    subject { get("/api/v1/search/#{term}") }
+    subject { get("/api/v1/search/#{term}", {}, auth_header) }
 
     let!(:term) { 'fall' }
     let!(:tour) { create(:tour, name: '1995 Fall Tour') }

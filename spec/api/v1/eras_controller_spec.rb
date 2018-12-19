@@ -7,7 +7,7 @@ describe Api::V1::ErasController do
   let(:json_data) { JSON[subject.body].symbolize_keys[:data] }
 
   describe 'index' do
-    subject { get('/api/v1/eras') }
+    subject { get('/api/v1/eras', {}, auth_header) }
 
     it 'responds with expected data' do
       expect(json_data).to eq(ERAS)
@@ -16,7 +16,7 @@ describe Api::V1::ErasController do
 
   describe 'show' do
     context 'with valid id param' do
-      subject { get("/api/v1/eras/#{era}") }
+      subject { get("/api/v1/eras/#{era}", {}, auth_header) }
 
       let(:era) { '3.0' }
 
@@ -26,7 +26,7 @@ describe Api::V1::ErasController do
     end
 
     context 'with invalid id param' do
-      subject { get('/api/v1/eras/nonexistent-era') }
+      subject { get('/api/v1/eras/nonexistent-era', {}, auth_header) }
 
       include_examples 'responds with 404'
     end

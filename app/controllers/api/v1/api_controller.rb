@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 class Api::V1::ApiController < ActionController::Base
+  include ApiAuth
+
+  # before_action :require_auth!
   after_action :set_json_content_type
 
   rescue_from ActiveRecord::RecordNotFound, with: :respond_with_404

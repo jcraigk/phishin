@@ -15,7 +15,7 @@ describe Api::V1::TracksController do
     end
 
     context 'without params' do
-      subject { get('/api/v1/tracks') }
+      subject { get('/api/v1/tracks', {}, auth_header) }
 
       it 'responds with expected data' do
         expect(json_data).to match_array(tracks.map(&:as_json_api))
@@ -23,7 +23,7 @@ describe Api::V1::TracksController do
     end
 
     context 'when providing tag param' do
-      subject { get("/api/v1/tracks?tag=#{tag.name}") }
+      subject { get("/api/v1/tracks?tag=#{tag.name}", {}, auth_header) }
 
       let(:tag) { create(:tag) }
 
@@ -39,7 +39,7 @@ describe Api::V1::TracksController do
     let(:track) { create(:track) }
 
     context 'with valid id param' do
-      subject { get("/api/v1/tracks/#{track.id}") }
+      subject { get("/api/v1/tracks/#{track.id}", {}, auth_header) }
 
       it 'responds with expected data' do
         expect(json_data).to eq(track.as_json_api)
@@ -47,7 +47,7 @@ describe Api::V1::TracksController do
     end
 
     context 'with invalid id param' do
-      subject { get('/api/v1/tracks/nonexistent-track') }
+      subject { get('/api/v1/tracks/nonexistent-track', {}, auth_header) }
 
       include_examples 'responds with 404'
     end

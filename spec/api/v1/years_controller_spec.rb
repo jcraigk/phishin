@@ -13,7 +13,7 @@ describe Api::V1::YearsController do
     let!(:show3) { create(:show, date: '1988-06-01') }
 
     context 'without params' do
-      subject { get('/api/v1/years') }
+      subject { get('/api/v1/years', {}, auth_header) }
 
       let(:expected_data) { ERAS.values.flatten }
 
@@ -23,7 +23,7 @@ describe Api::V1::YearsController do
     end
 
     context 'with include_show_counts params' do
-      subject { get('/api/v1/years?include_show_counts=true') }
+      subject { get('/api/v1/years?include_show_counts=true', {}, auth_header) }
 
       let(:expected_data) do
         data =
@@ -50,7 +50,7 @@ describe Api::V1::YearsController do
     let!(:show4) { create(:show, date: '1995-01-01') }
 
     context 'when providing a single year' do
-      subject { get("/api/v1/years/#{year1}") }
+      subject { get("/api/v1/years/#{year1}", {}, auth_header) }
 
       let(:expected_shows) { [show1, show2].map(&:as_json_api) }
 
@@ -60,7 +60,7 @@ describe Api::V1::YearsController do
     end
 
     context 'when providing a year range' do
-      subject { get("/api/v1/years/#{year1}-#{year2}") }
+      subject { get("/api/v1/years/#{year1}-#{year2}", {}, auth_header) }
 
       let(:expected_shows) { [show1, show2, show3].map(&:as_json_api) }
 
@@ -70,7 +70,7 @@ describe Api::V1::YearsController do
     end
 
     context 'when providing invalid input' do
-      subject { get('/api/v1/years/bobweaver') }
+      subject { get('/api/v1/years/bobweaver', {}, auth_header) }
 
       include_examples 'responds with 404'
     end

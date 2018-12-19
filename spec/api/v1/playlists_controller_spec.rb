@@ -8,7 +8,7 @@ describe Api::V1::PlaylistsController do
 
   describe 'show' do
     context 'with valid id param' do
-      subject { get("/api/v1/playlists/#{playlist.slug}") }
+      subject { get("/api/v1/playlists/#{playlist.slug}", {}, auth_header) }
 
       let(:playlist) { create(:playlist) }
 
@@ -18,7 +18,7 @@ describe Api::V1::PlaylistsController do
     end
 
     context 'with invalid id param' do
-      subject { get('/api/v1/playlists/nonexistent-playlist') }
+      subject { get('/api/v1/playlists/nonexistent-playlist', {}, auth_header) }
 
       include_examples 'responds with 404'
     end
