@@ -19,13 +19,13 @@
       span.api-command-inline< HTTP GET
       |  and must include the
       span.api-command-inline< Accept: application/json
-      |  header as well as an authorization header like
+      |  header as well as a bearer auth header:
       span.api-command-inline
-        | Authorization => Bearer &lt;your_api_key&gt;
-      | .
+        | Authorization: Bearer &lt;your_api_key&gt;
     p.strong
       | API keys can be requested via the&nbsp;
       a href='/contact' contact page
+      | .
     h2 Responses
     p
       | Responses will include the header
