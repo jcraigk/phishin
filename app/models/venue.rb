@@ -75,7 +75,7 @@ class Venue < ApplicationRecord
       longitude: longitude.round(6),
       shows_count: shows_count,
       location: location,
-      updated_at: updated_at.to_s
+      updated_at: updated_at.iso8601
     }
   end
 
@@ -92,9 +92,9 @@ class Venue < ApplicationRecord
       state: state,
       country: country,
       shows_count: shows_count,
-      show_dates: shows_played_here.map(&:date).map(&:to_s),
+      show_dates: shows_played_here.map(&:date).map(&:iso8601),
       show_ids: shows_played_here.map(&:id),
-      updated_at: updated_at.to_s
+      updated_at: updated_at.iso8601
     }
   end
 

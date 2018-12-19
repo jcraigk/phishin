@@ -23,10 +23,10 @@ describe Api::V1::SearchController do
             id: tour.id,
             name: tour.name,
             shows_count: tour.shows_count,
-            starts_on: tour.starts_on.to_s,
-            ends_on: tour.ends_on.to_s,
+            starts_on: tour.starts_on.iso8601,
+            ends_on: tour.ends_on.iso8601,
             slug: tour.slug,
-            updated_at: tour.updated_at.to_s
+            updated_at: tour.updated_at.iso8601
           }
         ]
       )

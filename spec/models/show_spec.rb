@@ -2,7 +2,7 @@
 require 'rails_helper'
 
 RSpec.describe Show do
-  subject { build(:show) }
+  subject { create(:show) }
 
   it { is_expected.to belong_to(:tour) }
   it { is_expected.to belong_to(:venue) }
@@ -27,7 +27,7 @@ RSpec.describe Show do
     end
   end
 
-  define 'scopes' do
+  describe 'scopes' do
     define '#published' do
       let!(:show1) { create(:show) }
       let!(:show2) { create(:show, published: true) }
@@ -37,7 +37,7 @@ RSpec.describe Show do
       end
     end
 
-    define '#between_years' do
+    describe '#between_years' do
       let!(:show1) { create(:show, date: '2014-10-31') }
       let!(:show2) { create(:show, date: '2015-01-01') }
       let!(:show3) { create(:show, date: '2016-01-01') }
@@ -48,7 +48,7 @@ RSpec.describe Show do
       end
     end
 
-    define '#during_year' do
+    describe '#during_year' do
       let!(:show1) { create(:show, date: '2014-10-31') }
       let!(:show2) { create(:show, date: '2015-01-01') }
 
@@ -109,11 +109,11 @@ RSpec.describe Show do
     end
   end
 
-  context 'serialization' do
+  describe 'serialization' do
     it 'provides #as_json' do
       expect(subject.as_json).to eq(
         id: subject.id,
-        date: subject.date.to_s,
+        date: subject.date.iso8601,
         duration: subject.duration,
         incomplete: subject.incomplete,
         sbd: subject.sbd,
@@ -122,7 +122,7 @@ RSpec.describe Show do
         venue_id: subject.venue_id,
         likes_count: subject.likes_count,
         taper_notes: subject.taper_notes,
-        updated_at: subject.updated_at.to_s,
+        updated_at: subject.updated_at.iso8601,
         venue_name: subject.venue&.name,
         location: subject.venue&.location
       )
@@ -131,7 +131,7 @@ RSpec.describe Show do
     it 'provides #as_json_api' do
       expect(subject.as_json_api).to eq(
         id: subject.id,
-        date: subject.date.to_s,
+        date: subject.date.iso8601,
         duration: subject.duration,
         incomplete: subject.incomplete,
         sbd: subject.sbd,
@@ -143,7 +143,7 @@ RSpec.describe Show do
         taper_notes: subject.taper_notes,
         likes_count: subject.likes_count,
         tracks: subject.tracks.sort_by(&:position).map(&:as_json_api),
-        updated_at: subject.updated_at.to_s
+        updated_at: subject.updated_at.iso8601
       )
     end
   end

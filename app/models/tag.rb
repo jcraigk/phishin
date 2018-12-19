@@ -17,7 +17,7 @@ class Tag < ApplicationRecord
       name: name,
       slug: slug,
       description: description,
-      updated_at: updated_at.to_s
+      updated_at: updated_at.iso8601
     }
   end
 
@@ -27,7 +27,7 @@ class Tag < ApplicationRecord
       name: name,
       slug: slug,
       description: description,
-      updated_at: updated_at.to_s,
+      updated_at: updated_at.iso8601,
       show_ids: shows.sort_by(&:id).map(&:id),
       track_ids: tracks.sort_by(&:id).map(&:id)
     }

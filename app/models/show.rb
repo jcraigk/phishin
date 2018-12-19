@@ -51,7 +51,7 @@ class Show < ApplicationRecord
   def as_json # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     {
       id: id,
-      date: date.to_s,
+      date: date.iso8601,
       duration: duration,
       incomplete: incomplete,
       sbd: sbd,
@@ -60,7 +60,7 @@ class Show < ApplicationRecord
       venue_id: venue_id,
       likes_count: likes_count,
       taper_notes: taper_notes,
-      updated_at: updated_at.to_s,
+      updated_at: updated_at.iso8601,
       venue_name: venue_name,
       location: venue&.location
     }
@@ -69,7 +69,7 @@ class Show < ApplicationRecord
   def as_json_api # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     {
       id: id,
-      date: date.to_s,
+      date: date.iso8601,
       duration: duration,
       incomplete: incomplete,
       sbd: sbd,
@@ -81,7 +81,7 @@ class Show < ApplicationRecord
       taper_notes: taper_notes,
       likes_count: likes_count,
       tracks: tracks.sort_by(&:position).map(&:as_json_api),
-      updated_at: updated_at.to_s
+      updated_at: updated_at.iso8601
     }
   end
 end

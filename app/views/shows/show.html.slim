@@ -6,7 +6,7 @@
     h2
       a href="/#{@show.venue.slug}" = @show.venue_name
     h2
-      a href="/map?map_term=#{CGI.escape(@show.venue.location)}&distance=5" = @show.venue.location
+      a href="/map?map_term=#{CGI.escape(@show.venue.location)}&amp;distance=5" = @show.venue.location
     span.show_duration = duration_readable(@show.duration, 'letters')
 
     - if @show.taper_notes.present?

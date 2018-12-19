@@ -26,10 +26,10 @@ RSpec.describe Tour do
         id: subject.id,
         name: subject.name,
         shows_count: subject.shows_count,
-        starts_on: subject.starts_on.to_s,
-        ends_on: subject.ends_on.to_s,
+        starts_on: subject.starts_on.iso8601,
+        ends_on: subject.ends_on.iso8601,
         slug: subject.slug,
-        updated_at: subject.updated_at.to_s
+        updated_at: subject.updated_at.iso8601
       )
     end
 
@@ -39,10 +39,10 @@ RSpec.describe Tour do
         name: subject.name,
         shows_count: subject.shows_count,
         slug: subject.slug,
-        starts_on: subject.starts_on.to_s,
-        ends_on: subject.ends_on.to_s,
+        starts_on: subject.starts_on.iso8601,
+        ends_on: subject.ends_on.iso8601,
         shows: subject.shows.sort_by(&:date).as_json,
-        updated_at: subject.updated_at.to_s
+        updated_at: subject.updated_at.iso8601
       )
     end
   end

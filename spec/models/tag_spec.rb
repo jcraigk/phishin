@@ -29,7 +29,7 @@ RSpec.describe Tag do
         name: subject.name,
         slug: subject.slug,
         description: subject.description,
-        updated_at: subject.updated_at.to_s
+        updated_at: subject.updated_at.iso8601
       )
     end
 
@@ -39,7 +39,7 @@ RSpec.describe Tag do
         name: subject.name,
         slug: subject.slug,
         description: subject.description,
-        updated_at: subject.updated_at.to_s,
+        updated_at: subject.updated_at.iso8601,
         show_ids: subject.shows.sort_by(&:id).map(&:id),
         track_ids: subject.tracks.sort_by(&:id).map(&:id)
       )

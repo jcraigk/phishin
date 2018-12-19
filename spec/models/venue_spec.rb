@@ -93,7 +93,7 @@ RSpec.describe Venue do
         shows_count: subject.shows_count,
         location: subject.location,
         slug: subject.slug,
-        updated_at: subject.updated_at.to_s
+        updated_at: subject.updated_at.iso8601
       )
     end
 
@@ -110,9 +110,9 @@ RSpec.describe Venue do
         state: subject.state,
         country: subject.country,
         slug: subject.slug,
-        show_dates: subject.shows.order(date: :asc).map(&:date).map(&:to_s),
+        show_dates: subject.shows.order(date: :asc).map(&:date).map(&:iso8601),
         show_ids: subject.shows.order(date: :asc).map(&:id),
-        updated_at: subject.updated_at.to_s
+        updated_at: subject.updated_at.iso8601
       )
     end
   end
