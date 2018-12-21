@@ -30,16 +30,8 @@ RSpec.describe Venue do
     expect(venue).to respond_to(:geocode)
   end
 
-  define '#name_on_date' do
-    let!(:venue_rename) { create(:venue_rename, venue: venue, renamed_on: '2018-01-01') }
-
-    it 'returns the expected name' do
-      expect(venue.name_on_date('2018-02-01')).to eq(venue_rename.name)
-    end
-  end
-
-  define 'scopes' do
-    define '#name_starting_with' do
+  describe 'scopes' do
+    describe '#name_starting_with' do
       let!(:a_venue) { create(:venue, name: 'Allstate Arena') }
       let!(:b_venue) { create(:venue, name: 'BlueCross Arena') }
       let!(:num_venue) { create(:venue, name: '13x13 Club') }
@@ -51,7 +43,7 @@ RSpec.describe Venue do
     end
   end
 
-  define '#long_name' do
+  describe '#long_name' do
     subject { build(:venue, name: 'Madison Square Garden', abbrev: 'MSG') }
 
     let!(:venue_rename) { create(:venue_rename, name: 'The Dump', venue: subject) }
@@ -61,7 +53,7 @@ RSpec.describe Venue do
     end
   end
 
-  define '#location' do
+  describe '#location' do
     subject do
       build(
         :venue,
