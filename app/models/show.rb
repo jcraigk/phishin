@@ -10,8 +10,9 @@ class Show < ApplicationRecord
   extend FriendlyId
   friendly_id :date
 
-  validates :date, presence: true
-  validates :date, uniqueness: true
+  validates :date, presence: true, uniqueness: true
+
+  before_validation :cache_venue_name
 
   default_scope { where(published: true) }
 
@@ -38,14 +39,6 @@ class Show < ApplicationRecord
 
   def date_with_dots
     date.strftime('%Y.%m.%d')
-  end
-
-  def venue_name
-    venue.venue_renames
-         .sort_by(&:renamed_on)
-         .reverse
-         .find { |rename| rename.renamed_on <= date }
-         &.name || venue.name
   end
 
   def as_json # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -83,5 +76,17 @@ class Show < ApplicationRecord
       tracks: tracks.sort_by(&:position).map(&:as_json_api),
       updated_at: updated_at.iso8601
     }
+  end
+
+  private
+
+  def cache_venue_name
+    return if venue_name.present?
+    self.venue_name =
+      venue.venue_renames
+           .where('renamed_on <= ?', date)
+           .order(renamed_on: :desc)
+           .first
+           &.name || venue.name
   end
 end

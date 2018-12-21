@@ -27,13 +27,6 @@ class Venue < ApplicationRecord
     will_save_change_to_attribute?(:name) || super
   end
 
-  def name_on_date(date)
-    venue_renames.where('renamed_on <= ?', date)
-                 .order(renamed_on: :desc)
-                 .first
-                 &.name || name
-  end
-
   def long_name
     str = name
     str += " (#{abbrev})" if abbrev.present?

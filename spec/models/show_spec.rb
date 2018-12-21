@@ -17,23 +17,36 @@ RSpec.describe Show do
 
   it { is_expected.to delegate_method(:name).to(:tour).with_prefix }
 
-  define 'default scope' do
-    let!(:show1) { create(:show, published: false) }
-    let!(:show2) { create(:show, published: true) }
-    let!(:show3) { create(:show, published: true) }
+  describe '#cache_venue_name' do
+    let(:venue) { create(:venue) }
+    let(:date) { '2018-01-01' }
+    let(:show) { build(:show, venue: venue, date: date) }
 
-    it 'returns published shows' do
-      expect(described_class.scoped).to eq([show2, show3])
+    context 'when there are no venue renames' do
+      it 'caches the venue name before validation' do
+        show.validate
+        expect(show.venue_name).to eq(venue.name)
+      end
+    end
+
+    context 'when there is a venue rename in the past' do
+      let!(:venue_rename) { create(:venue_rename, venue: venue, renamed_on: Date.parse('2018-01-01') - 1.day) }
+
+      it 'caches the latest venue rename before validation' do
+        show.validate
+        expect(show.venue_name).to eq(venue_rename.name)
+      end
     end
   end
 
   describe 'scopes' do
-    define '#published' do
-      let!(:show1) { create(:show) }
+    describe 'default scope' do
+      let!(:show1) { create(:show, published: false) }
       let!(:show2) { create(:show, published: true) }
+      let!(:show3) { create(:show, published: true) }
 
-      it 'returns expected objects' do
-        expect(described_class.published).to eq([show2])
+      it 'returns published shows' do
+        expect(described_class.order(date: :asc)).to match_array([show2, show3])
       end
     end
 
@@ -57,7 +70,7 @@ RSpec.describe Show do
       end
     end
 
-    define '#on_day_of_year' do
+    describe '#on_day_of_year' do
       let!(:show1) { create(:show, date: '2018-10-31') }
       let!(:show2) { create(:show, date: '2018-01-01') }
 
@@ -66,12 +79,12 @@ RSpec.describe Show do
       end
     end
 
-    define '#random' do
+    describe '#random' do
       xit 'returns random record' do
       end
     end
 
-    define '#tagged_with' do
+    describe '#tagged_with' do
       let!(:shows) { create_list(:show, 2) }
       let(:tag) { create(:tag) }
 
@@ -80,16 +93,6 @@ RSpec.describe Show do
       it 'returns expected objects' do
         expect(described_class.tagged_with(tag.name)).to eq([shows.first])
       end
-    end
-  end
-
-  define '#venue_name' do
-    subject(:show) { create(:show, date: '2018-02-01') }
-
-    let!(:venue_rename) { create(:venue_rename, venue: show.venue, renamed_on: '2018-01-01') }
-
-    it 'provides the current name' do
-      expect(show.venue_name).to eq(venue_rename.name)
     end
   end
 
