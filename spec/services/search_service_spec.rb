@@ -30,15 +30,18 @@ RSpec.describe SearchService do
         songs: [],
         venues: [],
         tours: [],
-        tags: [],
-        show_tags: [],
-        track_tags: []
+        tags: [tag],
+        show_tags: [show_tag],
+        track_tags: [track_tag]
       }
     end
     let!(:show1) { create(:show, date: date) }
     let!(:show2) { create(:show, date: date - 1.year) }
     let!(:show3) { create(:show, date: date - 2.years) }
     let!(:show4) { create(:show, date: date - 1.day) }
+    let!(:tag) { create(:tag, name: "Date #{term}") }
+    let!(:show_tag) { create(:show_tag, notes: "... blah #{term} ...") }
+    let!(:track_tag) { create(:track_tag, notes: "... blah blah #{term} blah..") }
 
     include_examples 'expected results'
   end
@@ -53,13 +56,15 @@ RSpec.describe SearchService do
         venues: [venue1, venue3],
         tours: [tour3, tour1],
         tags: [tag2, tag1],
-        show_tags: [],
-        track_tags: []
+        show_tags: [show_tag],
+        track_tags: [track_tag]
       }
     end
     let!(:tag1) { create(:tag, name: 'Hood Tag') }
     let!(:tag2) { create(:tag, name: 'All Hood') }
     let!(:tag3) { create(:tag, name: 'Something Else') }
+    let!(:show_tag) { create(:show_tag, notes: "... blah #{term} ...") }
+    let!(:track_tag) { create(:track_tag, notes: "... blah blah #{term} blah..") }
     let!(:song1) { create(:song, title: 'Harry Hood') }
     let!(:song2) { create(:song, title: 'Hoodenstein') }
     let!(:song3) { create(:song, title: 'Bathtub Gin') }

@@ -86,20 +86,17 @@ class SearchService
   end
 
   def tags
-    return [] if term_is_date?
     Tag.where('name ILIKE :term OR description ILIKE :term', term: "%#{term}%")
        .order(name: :asc)
   end
 
   def show_tags
-    return [] if term_is_date?
     ShowTag.includes(:tag, :show)
            .where('notes ILIKE ?', "%#{term}%")
            .order('tags.name, shows.date')
   end
 
   def track_tags
-    return [] if term_is_date?
     TrackTag.includes(:tag, track: :show)
             .where('notes ILIKE ?', "%#{term}%")
             .order('tags.name, shows.date, tracks.position')

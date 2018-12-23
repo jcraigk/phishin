@@ -23,7 +23,8 @@ module TagHelper
         tag_instance.tag.name,
         class: "label tag_label #{css_class}",
         title: tag_instance.notes,
-        style: "color: #{contrasting_color(tag_instance.tag.color)}; background-color: #{tag_instance.tag.color}"
+        style: "color: #{contrasting_color(tag_instance.tag.color)}; " \
+               "background-color: #{tag_instance.tag.color}"
       )
     end.html_safe
   end
