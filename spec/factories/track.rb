@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :track do
-    title { Faker::Book.title[0..50] }
+    title { Faker::Book.title[0..49] }
     songs { [build(:song)] }
     set { '1' }
     sequence(:position, 1)

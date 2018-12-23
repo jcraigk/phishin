@@ -44,10 +44,11 @@ describe Api::V1::YearsController do
   describe 'show' do
     let(:year1) { 1999 }
     let(:year2) { 2000 }
-    let!(:show1) { create(:show, date: "#{year1}-01-01") }
-    let!(:show2) { create(:show, date: "#{year1}-02-01") }
-    let!(:show3) { create(:show, date: "#{year2}-01-01") }
-    let!(:show4) { create(:show, date: '1995-01-01') }
+    let(:tour) { create(:tour, starts_on: '1990-01-01', ends_on: '2000-12-31') }
+    let!(:show1) { create(:show, date: "#{year1}-01-01", tour: tour) }
+    let!(:show2) { create(:show, date: "#{year1}-02-01", tour: tour) }
+    let!(:show3) { create(:show, date: "#{year2}-01-01", tour: tour) }
+    let!(:show4) { create(:show, date: '1995-01-01', tour: tour) }
 
     context 'when providing a single year' do
       subject { get("/api/v1/years/#{year1}", {}, auth_header) }

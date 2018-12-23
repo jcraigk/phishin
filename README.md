@@ -2,7 +2,7 @@
 
 ![Phish.in' Logo](https://i.imgur.com/Zmj586L.jpg)
 
-Phish.in' is a web-based archive containing legal live audio recordings of the Rock band Phish.
+Phish.in' is a web-based archive containing legal live audio recordings of the improvisational rock band Phish.
 
 Ruby on Rails and PostgreSQL are used on the server side.  There's a web frontend (http://phish.in) and a public REST-ish API (http://phish.in/api-docs).  The web frontend utilizes soundmanager2 as the audio playback engine.
 

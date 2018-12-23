@@ -84,7 +84,7 @@ class ShowImporter::Orchestrator
       t.show = @show
       t.audio_file = File.new("#{@fm.s_dir}/#{t.filename}")
       t.save!
-      t.save_default_id3_tags
+      t.apply_id3_tags
       begin
         duration += t.duration
       rescue StandardError => e

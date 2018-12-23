@@ -6,7 +6,7 @@
     .hr
     h3 A list of all shows you've Liked
     .hr
-    = render partial: 'shared/sort_filter', locals: { item_hash: my_shows_sort_items }
+    = render partial: 'shared/sort_filter', locals: { item_hash: show_sort_items }
 
   #content_box
     - if !user_signed_in?

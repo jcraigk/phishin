@@ -1,6 +1,4 @@
 # frozen_string_literal: true
-require 'mp3info'
-
 class Track < ApplicationRecord
   belongs_to :show
   has_many :songs_tracks, dependent: :destroy
@@ -44,17 +42,18 @@ class Track < ApplicationRecord
     set_names[set] || 'Unknown Set'
   end
 
-  def save_default_id3_tags
-    Mp3DefaultTagger.new(self).call
+  def apply_id3_tags
+    Id3Tagger.new(self).call
   end
 
   def generic_slug
-    slug = title.downcase
-                .delete("'")
-                .gsub(/[^a-z0-9]/, ' ')
-                .strip
-                .gsub(/\s+/, ' ')
-                .gsub(/\s/, '-')
+    slug =
+      title.downcase
+           .delete("'")
+           .gsub(/[^a-z0-9]/, ' ')
+           .strip
+           .gsub(/\s+/, ' ')
+           .gsub(/\s/, '-')
     # Song title abbreviations
     slug.gsub!(/hold\-your\-head\-up/, 'hyhu')
     slug.gsub!(/the\-man\-who\-stepped\-into\-yesterday/, 'tmwsiy')
@@ -73,9 +72,7 @@ class Track < ApplicationRecord
   end
 
   def save_duration
-    Mp3Info.open(audio_file.path) do |mp3|
-      update_column(:duration, (mp3.length * 1000).round)
-    end
+    update_column(:duration, Mp3DurationQuery.new(self.audio_file.path).call)
   end
 
   def as_json

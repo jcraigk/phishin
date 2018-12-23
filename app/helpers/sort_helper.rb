@@ -37,6 +37,7 @@ module SortHelper
     items.each do |k, v|
       return k.html_safe if params[:sort] == v || params[:sort].blank?
     end
+    items.first.first.html_safe
   end
 
   def sort_filter(items)
@@ -63,33 +64,6 @@ module SortHelper
     end
   end
 
-  def my_shows_sort_items
-    {
-      '<i class="icon-time"></i> Reverse Date' => 'date desc',
-      '<i class="icon-time"></i> Date' => 'date asc',
-      '<i class="icon-heart"></i> Likes' => 'likes',
-      '<i class="icon-forward"></i> Duration' => 'duration'
-    }
-  end
-
-  def my_tracks_sort_items
-    {
-      '<i class="icon-time"></i> Title' => 'title',
-      '<i class="icon-time"></i> Reverse Date' => 'shows.date desc',
-      '<i class="icon-time"></i> Date' => 'shows.date asc',
-      '<i class="icon-heart"></i> Likes' => 'likes',
-      '<i class="icon-forward"></i> Duration' => 'duration'
-    }
-  end
-
-  def tag_sort_items
-    {
-      '<i class="icon-text-height"></i> Name' => 'name',
-      '<i class="icon-list"></i> Track Count' => 'tracks_count',
-      '<i class="icon-list"></i> Show Count' => 'shows_count'
-    }
-  end
-
   def show_sort_items
     {
       '<i class="icon-time"></i> Reverse Date' => 'date desc',
@@ -99,10 +73,14 @@ module SortHelper
     }
   end
 
-  def song_sort_items
+  def my_track_sort_items
+    { '<i class="icon-time"></i> Title' => 'title' }.merge(track_sort_items)
+  end
+
+  def track_sort_items
     {
-      '<i class="icon-time"></i> Reverse Date' => 'date desc',
-      '<i class="icon-time"></i> Date' => 'date asc',
+      '<i class="icon-time"></i> Reverse Date' => 'shows.date desc',
+      '<i class="icon-time"></i> Date' => 'shows.date asc',
       '<i class="icon-heart"></i> Likes' => 'likes',
       '<i class="icon-forward"></i> Duration' => 'duration'
     }
@@ -115,12 +93,11 @@ module SortHelper
     }
   end
 
-  def venue_sort_items
+  def tag_sort_items
     {
-      '<i class="icon-time"></i> Reverse Date' => 'date desc',
-      '<i class="icon-time"></i> Date' => 'date asc',
-      '<i class="icon-heart"></i> Likes' => 'likes',
-      '<i class="icon-forward"></i> Duration' => 'duration'
+      '<i class="icon-text-height"></i> Name' => 'name',
+      '<i class="icon-list"></i> Track Count' => 'tracks_count',
+      '<i class="icon-list"></i> Show Count' => 'shows_count'
     }
   end
 
@@ -128,15 +105,6 @@ module SortHelper
     {
       '<i class="icon-text-height"></i> Name' => 'name',
       '<i class="icon-list"></i> Show Count' => 'performances'
-    }
-  end
-
-  def year_or_scope_sort_items
-    {
-      '<i class="icon-time"></i> Reverse Date' => 'date desc',
-      '<i class="icon-time"></i> Date' => 'date asc',
-      '<i class="icon-heart"></i> Likes' => 'likes',
-      '<i class="icon-play-circle"></i> Duration' => 'duration'
     }
   end
 

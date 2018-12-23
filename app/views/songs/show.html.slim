@@ -6,7 +6,7 @@
     h2 Total tracks: #{@song.tracks.size}
     .hr
 
-    = render partial: 'shared/sort_filter', locals: { item_hash: song_sort_items }
+    = render partial: 'shared/sort_filter', locals: { item_hash: track_sort_items }
     .hr
 
     = link_to('<< Previous Song'.html_safe, "/#{@previous_song.slug}")

@@ -2,7 +2,10 @@
 module Ambiguity::SongTitle
   def slug_as_song
     return false unless song.present?
+
+    validate_sorting_for_tracks
     hydrate_song_or_redirect
+
     true
   end
 

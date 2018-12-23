@@ -6,7 +6,7 @@
     .hr
     h2 Shows: #{@shows.size}
     .hr
-    = render partial: 'shared/sort_filter', locals: { item_hash: year_or_scope_sort_items }
+    = render partial: 'shared/sort_filter', locals: { item_hash: show_sort_items }
 
   #content_box
     - if @shows.empty?
