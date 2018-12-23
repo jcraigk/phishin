@@ -1,0 +1,7 @@
+h2 Matched #{pluralize_with_delimiter(@songs.size, 'Song')}
+ul.item_list.clickable
+  - @songs.each do |song|
+    li name=song.slug
+      h2.wide = link_to_song(song, params[:term])
+      h3.alt = performances_or_alias_link(song)
+      = clear_both

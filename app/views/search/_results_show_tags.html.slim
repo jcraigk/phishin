@@ -1,0 +1,9 @@
+h2 Matched #{pluralize(@show_tags.size, 'Show Tag Note')}
+ul.item_list.clickable
+  - @show_tags.each do |show_tag|
+    li
+      h2
+        a href="/#{show_tag.show.date}" = tag_label(show_tag.tag)
+      h2 = show_tag.show.date_with_dots
+      h2.wide-350 = highlight(truncate(show_tag.notes, length: 45), params[:term])
+      = clear_both

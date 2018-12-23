@@ -1,25 +1,23 @@
 # frozen_string_literal: true
 class SearchController < ApplicationController
   def results
-    assign_vars_from_results
-    calculate_totals
+    perform_search
     render_xhr_without_layout
   end
 
   private
 
-  def raw_results
-    @raw_results ||= SearchService.new(params[:term]).call
+  def perform_search
+    return error unless search_results
+    search_results.each { |k, v| instance_variable_set("@#{k}", v) }
+    @any_results = search_results.values.find(&:present?)
   end
 
-  def assign_vars_from_results
-    %i[exact_show other_shows songs venues tours].each do |var_name|
-      instance_variable_set("@#{var_name}", raw_results[var_name])
-    end
+  def search_results
+    @search_results ||= SearchService.new(params[:term]).call
   end
 
-  def calculate_totals
-    @total_results = @other_shows.size + @songs.size + @venues.size + @tours.size
-    @total_results += 1 if @show.present?
+  def error
+    @error = I18n.t('search.term_too_short', min_length: MIN_SEARCH_TERM_LENGTH)
   end
 end

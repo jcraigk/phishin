@@ -1,0 +1,11 @@
+h2 Matched 1 Date Exactly
+ul.item_list.clickable
+  li
+    h2
+      a href="/#{@exact_show.date}"
+        span.highlight = @exact_show.date_with_dots
+    h4
+      a href="/#{@exact_show.venue.slug}" = @exact_show.venue_name
+    h5
+      a href="/map?map_term=#{CGI.escape(@exact_show.venue.location)}" = @exact_show.venue.location
+    = clear_both

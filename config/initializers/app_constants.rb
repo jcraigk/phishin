@@ -6,6 +6,7 @@ DEVISE_EMAIL_FROM = "phish.in' <noreply@phish.in>"
 CACHE_TTL = 10.minutes
 FIRST_CHAR_LIST = ('A'..'Z').to_a + ['#']
 MAX_PLAYLISTS_PER_USER = 20
+MIN_SEARCH_TERM_LENGTH = 3
 
 APP_CONTENT_PATH = Rails.env.test? ? "#{Rails.root}/tmp/content" : '/content'
 IMPORT_DIR = APP_CONTENT_PATH + '/import'
