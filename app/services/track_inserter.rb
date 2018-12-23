@@ -7,7 +7,7 @@ class TrackInserter
     @position = opts[:position].to_i
     @file = opts[:file]
     @title = opts[:title]
-    @song_id = opts[:song_id] || Song.find_by!(title: title).id
+    @song_id = opts[:song_id] || Song.find_by(title: title)&.id
     @set = opts[:set]
     @is_sbd = opts[:is_sbd]
 
