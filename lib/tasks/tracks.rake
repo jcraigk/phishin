@@ -101,4 +101,20 @@ namespace :tracks do
       puts "#{track.title} :: #{track.id}"
     end
   end
+
+  desc "Apply ID3 tags to entire MP3 library"
+  task apply_id3: :environment do
+    relation = Track.unscoped.order(id: :asc)
+    pbar = ProgressBar.create(
+      total: relation.size,
+      format: '%a %B %c/%C %p%% %E'
+    )
+
+    relation.find_each do |track|
+      track.apply_id3_tags
+      pbar.increment
+    end
+
+    pbar.finish
+  end
 end
