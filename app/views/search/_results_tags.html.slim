@@ -1,0 +1,9 @@
+h2 Matched #{pluralize(@tags.size, 'Tag')}
+ul.item_list.clickable
+  - @tags.each do |tag|
+    li
+      h2
+        a href="/#{tag.slug}" = highlight(tag.name, params[:term])
+      h2.wide = highlight(truncate(tag.description, length: 45), params[:term])
+      h3.alt = pluralize(tag.shows_count, 'show')
+      = clear_both

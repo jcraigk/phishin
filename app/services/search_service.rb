@@ -7,19 +7,36 @@ class SearchService
   end
 
   def call
-    {
-      show: show_on_date,
-      other_shows: shows_on_day_of_year,
-      songs: songs,
-      venues: venues,
-      tours: tours
-    }
+    return {} unless term&.size.to_i >= MIN_SEARCH_TERM_SIZE
+    search_results
   end
 
   private
 
+  def search_results
+    date_results.merge(text_results)
+  end
+
+  def date_results
+    {
+      exact_show: show_on_date,
+      other_shows: shows_on_day_of_year
+    }
+  end
+
+  def text_results
+    {
+      songs: songs,
+      venues: venues,
+      tours: tours,
+      tags: tags,
+      show_tags: show_tags,
+      track_tags: track_tags
+    }
+  end
+
   def date
-    @date ||= DateParserService.new(term).call
+    @date ||= DateParser.new(term).call
   end
 
   def term_is_date?
@@ -62,5 +79,25 @@ class SearchService
     'OR venue_renames.name ILIKE :term ' \
     'OR venues.city ILIKE :term OR venues.state ILIKE :term ' \
     'OR venues.country ILIKE :term '
+  end
+
+  def tags
+    return [] if term_is_date?
+    Tag.where('name ILIKE :term OR description ILIKE :term', term: "%#{term}%")
+       .order(name: :asc)
+  end
+
+  def show_tags
+    return [] if term_is_date?
+    ShowTag.includes(:tag, :show)
+           .where('notes ILIKE ?', "%#{term}%")
+           .order('tags.name, shows.date')
+  end
+
+  def track_tags
+    return [] if term_is_date?
+    TrackTag.includes(:tag, track: :show)
+            .where('notes ILIKE ?', "%#{term}%")
+            .order('tags.name, shows.date, tracks.position')
   end
 end

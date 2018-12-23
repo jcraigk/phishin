@@ -93,4 +93,15 @@ module FeatureHelpers
     end
     expect_content_in_order(dates_by_duration)
   end
+
+  def enter_search_term(term)
+    visit root_path
+
+    fill_in('term', with: term)
+    find('#search_term').native.send_keys(:return)
+
+    within('#title_box') do
+      expect_content("Search: '#{term}'")
+    end
+  end
 end

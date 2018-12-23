@@ -1,0 +1,12 @@
+h2 Matched #{pluralize(@other_shows.size, 'Day')} in History
+ul.item_list.clickable
+  - @other_shows.each do |show|
+    li
+      h2
+        a href="/#{show.date}"
+          span.highlight = show.date_with_dots
+      h4
+        a href="/#{show.venue.slug}" = show.venue_name
+      h5
+        a href="/map?map_term=#{CGI.escape(show.venue.location)}" = show.venue.location
+      = clear_both

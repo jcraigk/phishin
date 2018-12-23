@@ -1,4 +1,6 @@
 require: rubocop-rspec
+RSpec/LetSetup:
+  Enabled: false
 
 AllCops:
   TargetRubyVersion: 2.5.3

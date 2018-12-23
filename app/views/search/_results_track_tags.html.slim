@@ -1,0 +1,10 @@
+h2 Matched #{pluralize(@track_tags.size, 'Track Tag Note')}
+ul.item_list.clickable
+  - @track_tags.each do |track_tag|
+    li
+      h2
+        a href="/#{track_tag.tag.slug}" = track_tag.tag.name
+      h2 = track_tag.track.show.date_with_dots
+      h2 = track_tag.track.title
+      h2.wide = highlight(truncate(track_tag.notes, length: 45), params[:term])
+      = clear_both

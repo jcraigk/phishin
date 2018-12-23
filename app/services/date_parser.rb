@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-class DateParserService
+class DateParser
   attr_reader :str, :date_parts
 
   def initialize(str)
@@ -27,15 +27,15 @@ class DateParserService
 
   # 10-31-1995, 10/31/1995
   def str_matches_year_at_end?
-    return unless str =~ %r{\A(\d{1,2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,4})\z}
+    return false unless str =~ %r{\A(\d{1,2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,4})\z}
     r = Regexp.last_match
-    @date_parts = [r[5], r[1], [3]]
+    @date_parts = [r[5], r[1], r[3]]
   end
 
   # 1995-10-31
   def str_matches_db_date?
-    return unless str =~ %r{\A(\d{4})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})\z}
+    return false unless str =~ %r{\A(\d{4})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})\z}
     r = Regexp.last_match
-    @date_parts = [r[1], r[3], [5]]
+    @date_parts = [r[1], r[3], r[5]]
   end
 end
