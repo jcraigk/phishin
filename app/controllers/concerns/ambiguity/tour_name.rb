@@ -3,6 +3,7 @@ module Ambiguity::TourName
   def slug_as_tour
     return false unless tour.present?
 
+    validate_sorting_for_shows
     hydrate_tour_page
 
     true

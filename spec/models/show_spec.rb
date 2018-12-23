@@ -2,7 +2,7 @@
 require 'rails_helper'
 
 RSpec.describe Show do
-  subject { create(:show) }
+  subject(:show) { create(:show) }
 
   it { is_expected.to belong_to(:tour) }
   it { is_expected.to belong_to(:venue) }
@@ -97,56 +97,56 @@ RSpec.describe Show do
   end
 
   it 'provides #date_with_dots' do
-    expect(subject.date_with_dots).to eq(subject.date.strftime('%Y.%m.%d'))
+    expect(show.date_with_dots).to eq(show.date.strftime('%Y.%m.%d'))
   end
 
   context '#save_duration' do
-    subject { create(:show, :with_tracks) }
+    subject(:show) { create(:show, :with_tracks) }
 
-    let(:track_sum) { subject.tracks.map(&:duration).inject(0, &:+) }
+    let(:track_sum) { show.tracks.map(&:duration).inject(0, &:+) }
 
     it 'updates the duration with the sum of all tracks' do
-      expect(subject.duration).not_to eq(track_sum)
-      subject.save_duration
-      expect(subject.duration).to eq(track_sum)
+      expect(show.duration).not_to eq(track_sum)
+      show.save_duration
+      expect(show.duration).to eq(track_sum)
     end
   end
 
   describe 'serialization' do
     it 'provides #as_json' do
-      expect(subject.as_json).to eq(
-        id: subject.id,
-        date: subject.date.iso8601,
-        duration: subject.duration,
-        incomplete: subject.incomplete,
-        sbd: subject.sbd,
-        remastered: subject.remastered,
-        tour_id: subject.tour_id,
-        venue_id: subject.venue_id,
-        likes_count: subject.likes_count,
-        taper_notes: subject.taper_notes,
-        updated_at: subject.updated_at.iso8601,
-        venue_name: subject.venue&.name,
-        location: subject.venue&.location
+      expect(show.as_json).to eq(
+        id: show.id,
+        date: show.date.iso8601,
+        duration: show.duration,
+        incomplete: show.incomplete,
+        sbd: show.sbd,
+        remastered: show.remastered,
+        tour_id: show.tour_id,
+        venue_id: show.venue_id,
+        likes_count: show.likes_count,
+        taper_notes: show.taper_notes,
+        updated_at: show.updated_at.iso8601,
+        venue_name: show.venue&.name,
+        location: show.venue&.location
       )
     end
 
     it 'provides #as_json_api' do
-      expect(subject.as_json_api).to eq(
-        id: subject.id,
-        date: subject.date.iso8601,
-        duration: subject.duration,
-        incomplete: subject.incomplete,
-        sbd: subject.sbd,
-        remastered: subject.remastered,
-        tags: subject.tags.sort_by(&:priority).map(&:name).as_json,
-        tour_id: subject.tour_id,
-        venue: subject.venue.as_json,
-        venue_name: subject.venue_name,
-        taper_notes: subject.taper_notes,
-        likes_count: subject.likes_count,
-        tracks: subject.tracks.sort_by(&:position).map(&:as_json_api),
-        updated_at: subject.updated_at.iso8601
+      expect(show.as_json_api).to eq(
+        id: show.id,
+        date: show.date.iso8601,
+        duration: show.duration,
+        incomplete: show.incomplete,
+        sbd: show.sbd,
+        remastered: show.remastered,
+        tags: show.tags.sort_by(&:priority).map(&:name).as_json,
+        tour_id: show.tour_id,
+        venue: show.venue.as_json,
+        venue_name: show.venue_name,
+        taper_notes: show.taper_notes,
+        likes_count: show.likes_count,
+        tracks: show.tracks.sort_by(&:position).map(&:as_json_api),
+        updated_at: show.updated_at.iso8601
       )
     end
   end

@@ -12,7 +12,7 @@
         = @venue.other_names.join('<br>').html_safe
     .hr
 
-    = render partial: 'shared/sort_filter', locals: { item_hash: venue_sort_items }
+    = render partial: 'shared/sort_filter', locals: { item_hash: show_sort_items }
     .hr
 
     = link_to('<< Previous Venue'.html_safe, "/#{@previous_venue.slug}")
