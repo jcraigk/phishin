@@ -50,8 +50,11 @@ namespace :tracks do
   task find_missing: :environment do
     # Track gaps
     show_list = []
-    Show.unscoped.order(date: :desc).each do |show|
-      show.tracks.order('position').each_with_index do |track, i|
+    Show.unscoped
+        .includes(:tracks)
+        .order(date: :desc)
+        .find_each do |show|
+      show.tracks.sort_by(&:position).each_with_index do |track, i|
         if i + 1 != track.position
           show_list << show.date
           break
@@ -65,9 +68,11 @@ namespace :tracks do
     end
     # Shows with no tracks
     show_list = []
-    Show.unscoped.order(date: :desc).each do |show|
-      tracks = show.tracks.all
-      show_list << show.date unless tracks.any?
+    Show.unscoped
+        .includes(:tracks)
+        .order(date: :desc)
+        .find_each do |show|
+      show_list << show.date unless show.tracks.any?
     end
     if show_list.count.positive?
       puts "#{show_list.count} shows contain no tracks: #{show_list.join(',')}"
