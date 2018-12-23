@@ -4,7 +4,7 @@ module ApplicationHelper
     content_tag(:div, '', style: 'clear: both;')
   end
 
-  def duration_readable(milliseconds, style = 'colon')
+  def duration_readable(milliseconds, style = 'colons')
     DurationFormatter.new(milliseconds, style).call
   end
 

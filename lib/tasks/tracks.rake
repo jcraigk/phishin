@@ -81,49 +81,16 @@ namespace :tracks do
     Show.unscoped.order(date: :desc).each do |show|
       puts "Tightening: #{show.date}"
       show.tracks.order(position: :asc).each_with_index do |track, idx|
-        track.update_attributes(position: idx + 1)
+        track.update(position: idx + 1)
       end
     end
-  end
-
-  desc 'Apply proper labels to track with NULL set property'
-  task label_null_sets: :environment do
-    tracks = Track.where('set IS NULL').order(:position)
-    unknown = 0
-    set = ''
-    tracks.each do |track|
-      filename = track.audio_file_file_name
-      set =
-        if filename[0..3] == 'II-e'
-          'E'
-        elsif filename[0..6] == '(Check)'
-          'S'
-        elsif filename[0..2] == 'III'
-          '3'
-        elsif filename[0..1] == 'II'
-          '2'
-        elsif filename[0] == 'I'
-          '1'
-        else
-          ''
-        end
-      if set != ''
-        track.set = set
-        track.save
-      else
-        unknown += 1
-      end
-      puts "#{track.id} :: #{track.show.date} #{track.title} :: #{set}"
-    end
-    puts "#{unknown} unknowns"
   end
 
   desc "Find tracks that don't have valid show associations"
   task find_dangling: :environment do
     track_list = []
-    tracks = Track.all
-    tracks.each do |track|
-      track_list << track unless track.show
+    Track.unscoped.find_each do |track|
+      track_list << track unless track.show.present?
     end
     track_list.each do |track|
       puts "#{track.title} :: #{track.id}"

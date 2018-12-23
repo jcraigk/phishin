@@ -4,7 +4,7 @@ class DurationFormatter
 
   def initialize(duration, style = nil)
     @duration = duration || 0
-    @style = style.in?(%w[colon letters]) ? style : 'colon'
+    @style = style.in?(%w[colons letters]) ? style : 'colons'
   end
 
   def call
@@ -24,7 +24,7 @@ class DurationFormatter
 
   def format_with_letters
     if days.positive?
-      lettered_days_hours_mins
+      lettered_days_hours_mins_seconds
     elsif hours.positive?
       lettered_hours_mins
     else
@@ -42,12 +42,13 @@ class DurationFormatter
     end
   end
 
-  def lettered_days_hours_mins
+  def lettered_days_hours_mins_seconds
     format(
-      '%<days>dd %<hours>dh %<minutes>dm',
+      '%<days>dd %<hours>dh %<minutes>dm %<seconds>ds',
       days: days,
       hours: hours,
-      minutes: minutes
+      minutes: minutes,
+      seconds: seconds
     )
   end
 

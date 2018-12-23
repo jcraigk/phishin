@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-class TrackInsertionService
+class TrackInserter
   attr_reader :date, :position, :file, :title, :song_id, :set, :is_sbd, :track
 
   def initialize(opts = {})
