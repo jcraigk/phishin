@@ -1,6 +1,4 @@
 require: rubocop-rspec
-RSpec/LetSetup:
-  Enabled: false
 
 AllCops:
   TargetRubyVersion: 2.5.3
@@ -22,3 +20,8 @@ Style/ClassAndModuleChildren:
   Enabled: false
 Metrics/LineLength:
   Max: 100
+
+RSpec/LetSetup:
+  Enabled: false
+RSpec/MultipleExpectations:
+  Enabled: false

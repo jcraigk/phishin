@@ -2,7 +2,7 @@
 require 'rails_helper'
 
 RSpec.describe Track do
-  subject { create(:track, title: 'Bathtub Gin') }
+  subject(:track) { create(:track, title: 'Bathtub Gin') }
 
   it { is_expected.to have_many(:songs_tracks).dependent(:destroy) }
   it { is_expected.to have_many(:songs).through(:songs_tracks) }
@@ -13,13 +13,14 @@ RSpec.describe Track do
 
   it { is_expected.to have_attached_file(:audio_file) }
 
-  context 'with friendly_id slugs' do
+  describe 'friendly_id slugging' do
     let(:show) { create(:show) }
     let(:other_tracks) { create_list(:track, 2, title: 'Bathtub Gin', show: show) }
 
+    before { track.save }
+
     it 'generates a slug from title (friendly_id), scoped to show' do
-      subject.save
-      expect(subject.slug).to eq('bathtub-gin')
+      expect(track.slug).to eq('bathtub-gin')
       expect(other_tracks.first.slug).to eq('bathtub-gin')
       expect(other_tracks.second.slug).to match(
         /\Abathtub-gin-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/
@@ -27,7 +28,7 @@ RSpec.describe Track do
     end
   end
 
-  context 'with PgSearch kinda_matching title' do
+  describe 'PgSearch kinda_matching title' do
     let!(:track1) { create(:track, title: 'Wolfman\'s Brother') }
     let!(:track2) { create(:track, title: 'Dire Wolf') }
     let!(:track3) { create(:track, title: 'Tube') }
@@ -49,15 +50,15 @@ RSpec.describe Track do
   it { is_expected.to validate_uniqueness_of(:position).scoped_to(:show_id) }
 
   it 'validates >= 1 song associated' do
-    subject.validate
-    expect(subject.errors.keys).not_to include(:songs)
-    subject.songs = []
-    subject.validate
-    expect(subject.errors.keys).to include(:songs)
+    track.validate
+    expect(track.errors.keys).not_to include(:songs)
+    track.songs = []
+    track.validate
+    expect(track.errors.keys).to include(:songs)
   end
 
-  context 'scopes' do
-    context '#chronological', :timecop do
+  describe 'scopes' do
+    describe '#chronological', :timecop do
       let!(:track1) { create(:track, show: create(:show, date: 1.year.ago)) }
       let!(:track2) { create(:track, show: create(:show, date: 3.years.ago)) }
       let!(:track3) { create(:track, show: create(:show, date: 2.years.ago)) }
@@ -67,7 +68,7 @@ RSpec.describe Track do
       end
     end
 
-    context '#tagged_with' do
+    describe '#tagged_with' do
       let!(:tracks) { create_list(:track, 2) }
       let(:tag) { create(:tag) }
 
@@ -79,99 +80,110 @@ RSpec.describe Track do
     end
   end
 
-  context 'on create #save_duration' do
-    before { subject.save }
+  context 'when creating the record' do
+    before { track.save }
 
-    it 'updates the duration with that of the audio_file' do
-      expect(subject.duration).to eq(2_011)
+    it 'updates the duration with that of audio_file' do
+      expect(track.duration).to eq(2_011)
     end
   end
 
   it 'provides #set_name' do
-    subject.set = nil
-    expect(subject.set_name).to eq('Unknown Set')
-    subject.set = 'S'
-    expect(subject.set_name).to eq('Soundcheck')
-    subject.set = 1
-    expect(subject.set_name).to eq('Set 1')
-    subject.set = 2
-    expect(subject.set_name).to eq('Set 2')
-    subject.set = 3
-    expect(subject.set_name).to eq('Set 3')
-    subject.set = 4
-    expect(subject.set_name).to eq('Set 4')
-    subject.set = 'E'
-    expect(subject.set_name).to eq('Encore')
-    subject.set = 'E2'
-    expect(subject.set_name).to eq('Encore 2')
-    subject.set = 'E3'
-    expect(subject.set_name).to eq('Encore 3')
+    track.set = nil
+    expect(track.set_name).to eq('Unknown Set')
+    track.set = 'S'
+    expect(track.set_name).to eq('Soundcheck')
+    track.set = 1
+    expect(track.set_name).to eq('Set 1')
+    track.set = 2
+    expect(track.set_name).to eq('Set 2')
+    track.set = 3
+    expect(track.set_name).to eq('Set 3')
+    track.set = 4
+    expect(track.set_name).to eq('Set 4')
+    track.set = 'E'
+    expect(track.set_name).to eq('Encore')
+    track.set = 'E2'
+    expect(track.set_name).to eq('Encore 2')
+    track.set = 'E3'
+    expect(track.set_name).to eq('Encore 3')
   end
 
-  xit 'mp3 tagging' do
-    # save_default_id3_tags
+  describe 'ID3 tagging' do
+    let(:mock_tagger) { instance_double(Id3Tagger) }
+
+    before do
+      allow(Id3Tagger).to receive(:new).and_return(mock_tagger)
+      allow(mock_tagger).to receive(:call).and_return(true)
+      track.apply_id3_tags
+    end
+
+    it 'calls Id3Tagger' do
+      expect(Id3Tagger).to have_received(:new).with(track)
+      expect(mock_tagger).to have_received(:call)
+    end
   end
 
-  context '#generic_slug' do
+  describe '#generic_slug' do
     it 'slugifies the title' do
-      subject.title = '<>=Bathtub !!Gin<>'
-      expect(subject.generic_slug).to eq('bathtub-gin')
+      track.title = '<>=Bathtub !!Gin<>'
+      expect(track.generic_slug).to eq('bathtub-gin')
     end
 
     it 'shortens long titles according to prescriptive rules' do
-      subject.title = 'Hold Your Head Up'
-      expect(subject.generic_slug).to eq('hyhu')
-      subject.title = 'The Man Who Stepped Into Yesterday'
-      expect(subject.generic_slug).to eq('tmwsiy')
-      subject.title = 'She Caught the Katy and Left Me a Mule to Ride'
-      expect(subject.generic_slug).to eq('she-caught-the-katy')
-      subject.title = 'McGrupp and the Watchful Hosemasters'
-      expect(subject.generic_slug).to eq('mcgrupp')
-      subject.title = 'Big Black Furry Creature from Mars'
-      expect(subject.generic_slug).to eq('bbfcfm')
+      track.title = 'Hold Your Head Up'
+      expect(track.generic_slug).to eq('hyhu')
+      track.title = 'The Man Who Stepped Into Yesterday'
+      expect(track.generic_slug).to eq('tmwsiy')
+      track.title = 'She Caught the Katy and Left Me a Mule to Ride'
+      expect(track.generic_slug).to eq('she-caught-the-katy')
+      track.title = 'McGrupp and the Watchful Hosemasters'
+      expect(track.generic_slug).to eq('mcgrupp')
+      track.title = 'Big Black Furry Creature from Mars'
+      expect(track.generic_slug).to eq('bbfcfm')
     end
   end
 
   it 'provides #mp3_url' do
-    subject.id = 123_456_789
-    expect(subject.mp3_url).to eq('http://localhost/audio/123/456/789/123456789.mp3')
+    track.id = 123_456_789
+    expect(track.mp3_url).to eq('http://localhost/audio/123/456/789/123456789.mp3')
   end
 
-  context 'serialization' do
+  describe 'serialization' do
     subject { create(:track) }
 
     it 'provides #as_json' do
-      expect(subject.as_json).to eq(
-        id: subject.id,
-        title: subject.title,
-        position: subject.position,
-        duration: subject.duration,
-        set: subject.set,
-        set_name: subject.set_name,
-        likes_count: subject.likes_count,
-        slug: subject.slug,
-        mp3: subject.mp3_url,
-        song_ids: subject.songs.map(&:id),
-        updated_at: subject.updated_at.iso8601
+      expect(track.as_json).to eq(
+        id: track.id,
+        title: track.title,
+        position: track.position,
+        duration: track.duration,
+        set: track.set,
+        set_name: track.set_name,
+        likes_count: track.likes_count,
+        slug: track.slug,
+        mp3: track.mp3_url,
+        song_ids: track.songs.map(&:id),
+        updated_at: track.updated_at.iso8601
       )
     end
 
     it 'provides #as_json_api' do
-      expect(subject.as_json_api).to eq(
-        id: subject.id,
-        show_id: subject.show.id,
-        show_date: subject.show.date.iso8601,
-        title: subject.title,
-        position: subject.position,
-        duration: subject.duration,
-        set: subject.set,
-        set_name: subject.set_name,
-        likes_count: subject.likes_count,
-        slug: subject.slug,
-        tags: subject.tags.sort_by(&:priority).map(&:name).as_json,
-        mp3: subject.mp3_url,
-        song_ids: subject.songs.map(&:id),
-        updated_at: subject.updated_at.iso8601
+      expect(track.as_json_api).to eq(
+        id: track.id,
+        show_id: track.show.id,
+        show_date: track.show.date.iso8601,
+        title: track.title,
+        position: track.position,
+        duration: track.duration,
+        set: track.set,
+        set_name: track.set_name,
+        likes_count: track.likes_count,
+        slug: track.slug,
+        tags: track.tags.sort_by(&:priority).map(&:name).as_json,
+        mp3: track.mp3_url,
+        song_ids: track.songs.map(&:id),
+        updated_at: track.updated_at.iso8601
       )
     end
   end

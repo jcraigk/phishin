@@ -4,12 +4,6 @@ require 'rails_helper'
 RSpec.describe TrackInserter do
   subject(:service) { described_class.new(opts) }
 
-  let(:opts) { nil }
-  let(:show) { create(:show, tracks: [track1, track2, track3]) }
-  let(:track1) { create(:track) }
-  let(:track2) { create(:track) }
-  let(:track3) { create(:track) }
-  let(:song) { create(:song) }
   let(:opts) do
     {
       date: date,
@@ -21,16 +15,15 @@ RSpec.describe TrackInserter do
       is_sbd: true
     }
   end
+  let(:show) { create(:show) }
+  let!(:track1) { create(:track, show: show, position: 1) }
+  let!(:track2) { create(:track, show: show, position: 2) }
+  let!(:track3) { create(:track, show: show, position: 3) }
+  let(:song) { create(:song) }
   let(:file) { "#{Rails.root}/spec/fixtures/test.mp3" }
   let(:date) { show.date }
   let(:song_id) { song.id }
   let(:title) { 'New Track' }
-
-  shared_examples 'successful parse' do
-    it 'returns formatted date' do
-      expect(service.call).to eq(formatted_date)
-    end
-  end
 
   context 'with invalid options' do
     let(:opts) { { invalid: 'options' } }
