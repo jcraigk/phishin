@@ -3,15 +3,19 @@ class SearchService
   attr_reader :term
 
   def initialize(term)
-    @term = term
+    @term = term || ''
   end
 
   def call
-    return {} unless term&.size.to_i >= MIN_SEARCH_TERM_SIZE
+    return if term_too_short?
     search_results
   end
 
   private
+
+  def term_too_short?
+    term.size.to_i < MIN_SEARCH_TERM_LENGTH
+  end
 
   def search_results
     date_results.merge(text_results)

@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 class Api::V1::SearchController < Api::V1::ApiController
   def index
-    return respond_with_invalid_term unless valid_search_term?
-    respond_with_success SearchService.new(params[:term]).call
+    return respond_with_invalid_term unless results
+    respond_with_success results
   end
 
   private
 
-  def valid_search_term?
-    params[:term]&.size.to_i >= MIN_SEARCH_TERM_SIZE
+  def results
+    @results ||= SearchService.new(params[:term]).call
   end
 
   def respond_with_invalid_term
     render json: {
       success: false,
-      message: "Search term must be at least #{MIN_SEARCH_TERM_SIZE} characters long"
+      message: I18n.t('search.term_too_short', min_length: MIN_SEARCH_TERM_LENGTH)
     }, status: 400
   end
 end

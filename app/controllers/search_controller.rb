@@ -8,13 +8,16 @@ class SearchController < ApplicationController
   private
 
   def perform_search
-    return @error = 'Search term must be at least 3 characters long' if search_term_too_short?
-    results = SearchService.new(params[:term]).call
-    results.each { |k, v| instance_variable_set("@#{k}", v) }
-    @any_results = results.values.find(&:present?)
+    return error unless search_results
+    search_results.each { |k, v| instance_variable_set("@#{k}", v) }
+    @any_results = search_results.values.find(&:present?)
   end
 
-  def search_term_too_short?
-    params[:term]&.size.to_i < MIN_SEARCH_TERM_SIZE
+  def search_results
+    @search_results ||= SearchService.new(params[:term]).call
+  end
+
+  def error
+    @error = I18n.t('search.term_too_short', min_length: MIN_SEARCH_TERM_LENGTH)
   end
 end

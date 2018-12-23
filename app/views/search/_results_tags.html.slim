@@ -3,7 +3,7 @@ ul.item_list.clickable
   - @tags.each do |tag|
     li
       h2
-        a href="/#{tag.slug}" = highlight(tag.name, params[:term])
+        a href="/#{tag.slug}" = tag_label(tag)
       h2.wide = highlight(truncate(tag.description, length: 45), params[:term])
       h3.alt = pluralize(tag.shows_count, 'show')
       = clear_both

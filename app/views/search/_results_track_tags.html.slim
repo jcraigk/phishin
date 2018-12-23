@@ -3,8 +3,8 @@ ul.item_list.clickable
   - @track_tags.each do |track_tag|
     li
       h2
-        a href="/#{track_tag.tag.slug}" = track_tag.tag.name
+        a href="/#{track_tag.track.show.date}/#{track_tag.track.slug}" = tag_label(track_tag.tag)
       h2 = track_tag.track.show.date_with_dots
       h2 = track_tag.track.title
-      h2.wide = highlight(truncate(track_tag.notes, length: 45), params[:term])
+      h2.wide-350 = highlight(track_tag.notes, params[:term])
       = clear_both

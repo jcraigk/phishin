@@ -16,7 +16,7 @@ RSpec.describe SearchService do
     let(:term) { 'a' }
 
     it 'returns empty hash' do
-      expect(service.call).to eq({})
+      expect(service.call).to eq(nil)
     end
   end
 
