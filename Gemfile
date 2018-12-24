@@ -10,6 +10,7 @@ gem 'devise'
 gem 'dotenv-rails', require: false
 gem 'friendly_id'
 gem 'geocoder'
+gem 'google-api-client'
 gem 'highline'
 gem 'jquery-rails'
 gem 'jquery-ui-rails', '5.0.5'
