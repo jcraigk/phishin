@@ -38,7 +38,7 @@ RSpec.describe Show do
       end
 
       it 'caches the latest venue rename before validation' do
-        expect(show.venue_name).to eq(venue_rename.name)
+        expect(show.venue_name).to eq(rename)
       end
     end
   end

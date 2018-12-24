@@ -90,6 +90,8 @@ class ShowImporter::Orchestrator
         puts e
         p "Duration error on #{t}"
       end
+
+      print '.'
     end
     @show.update_attributes(duration: duration)
   end

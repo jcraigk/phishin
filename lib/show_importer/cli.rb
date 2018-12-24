@@ -158,7 +158,7 @@ class ShowImporter::Cli
     when 'd'
       delete_track
     when 's'
-      puts 'Saving...'
+      print 'Saving'
       orch.save
     end
   end

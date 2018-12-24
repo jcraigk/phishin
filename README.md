@@ -49,12 +49,7 @@ Show.last.update(
 )
 ```
 
-Go to `https://phish.in/<date>` to verify the upload.  You may also want to run:
-
-```bash
-rails tracks:uniquify_slugs
-rails phishnet:sync_jamcharts
-```
+Go to `https://phish.in/<date>` to verify the import.
 
 ## Maintenance
 
