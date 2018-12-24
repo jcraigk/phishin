@@ -20,11 +20,11 @@ html
     = render partial: 'layouts/ajax_overlay'
     = render partial: 'shared/taper_notes_modal'
     = render partial: 'shared/save_playlist_modal'
+    = render partial: 'shared/clipboard'
     = render partial: 'layouts/page_header'
 
     #page = yield if xhr_exempt_controller
 
     = render partial: 'layouts/page_footer'
 
-    input type='text' id='clipboard-text'
     iframe#download_iframe src=''

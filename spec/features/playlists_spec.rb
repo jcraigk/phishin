@@ -18,9 +18,6 @@ describe 'Playlists', :js do
         within('#clear_playlist_btn') do
           expect_content('EMPTY')
         end
-        within('#share_playlist_btn') do
-          expect_content('SHARE')
-        end
       end
 
       within('#content_box') do

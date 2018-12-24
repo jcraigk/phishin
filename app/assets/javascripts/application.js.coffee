@@ -202,8 +202,6 @@ $ ->
     App.Player.togglePlaylistMode()
   .on 'click', '#playlist_button', ->
     App.Util.navigateTo $(this).data('url')
-  .on 'click', '#share_playlist_btn', ->
-    App.Util.copyToClipboard("#{$('body').data('base-url')}/play/#{$('#playlist_data').attr('data-slug')}")
   .on 'blur', '#playlist_name_input', (e) ->
     $('#playlist_slug_input').val App.Util.stringToSlug($(this).val())
   .on 'click', '#save_playlist_btn', (e) ->

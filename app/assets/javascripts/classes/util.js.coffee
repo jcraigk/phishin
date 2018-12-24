@@ -109,7 +109,7 @@ class @Util
     $('body').append "<div id=\"system_error\">#{str.replace(/(\r\n|\n|\r)/gm,"<br />")}</div>"
 
   copyToClipboard: (text) ->
-    el = $('#clipboard-text')
+    el = $('#clipboard')
     el.val(text)
     el.select()
     document.execCommand('copy')
