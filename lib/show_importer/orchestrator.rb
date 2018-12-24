@@ -28,10 +28,9 @@ class ShowImporter::Orchestrator
     puts 'Finding venue...'
     Venue.left_outer_joins(:venue_renames)
          .where(
-           '(name = ? OR venue_renames.name = ?) AND name = ?',
-           @show_info.venue_name,
-           @show_info.venue_name,
-           @show_info.venue_city
+           '(venues.name = :name OR venue_renames.name = :name) AND city = :city',
+           name: @show_info.venue_name,
+           city: @show_info.venue_city
          )
          .first
   end
