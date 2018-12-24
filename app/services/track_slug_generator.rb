@@ -37,6 +37,7 @@ class TrackSlugGenerator
     @sluggified_title ||=
       track.title
            .downcase
+           .delete("'")
            .gsub(/[^a-z0-9]/, ' ')
            .strip
            .gsub(/\s+/, '-')

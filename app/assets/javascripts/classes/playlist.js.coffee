@@ -160,15 +160,6 @@ class @Playlist
     @$playlist_slug_input.val ''
     @$save_modal.modal 'show'
 
-  handleShareModal: ->
-    if $('#playlist_data').attr('data-id') is "0"
-      url = "You must first save a playlist to share it."
-    else
-      url = "#{$('body').data('base-url')}/play/#{$('#playlist_data').attr('data-slug')}"
-    $('#share_url').html("<p>#{url}</p>")
-    $('#share_track_tips').hide()
-    $('#share_modal').modal('show')
-
   savePlaylist: ->
     @$save_modal.modal 'hide'
     $('#duplicate_playlist_btn').hide()

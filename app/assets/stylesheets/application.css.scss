@@ -294,28 +294,6 @@ html {
       font-size: 12px;
       font-style: italic;
     }
-    #share_url {
-      -moz-border-radius: 8px;
-      -webkit-border-radius: 8px;
-      border-radius: 8px;
-      background-color: #ccc;
-      border: 1px solid #333;
-      padding: 20px;
-      padding-bottom: 10px;
-      font-size: 18px;
-      font-weight: bold;
-    }
-    #share_track_tips {
-      -moz-border-radius: 8px;
-      -webkit-border-radius: 8px;
-      border-radius: 8px;
-      background-color: #eee;
-      border: 1px solid #333;
-      padding: 10px;
-      padding-bottom: 10px;
-      font-size: 14px;
-      margin-top: 10px;
-    }
     .instructions {
       background-color: #eee;
       padding: 10px;
@@ -392,6 +370,11 @@ html {
       font-size: 18px;
       font-weight: bold;
     }
+  }
+  #text-copy {
+    position: absolute;
+    top: -100px;
+    left: -100px;
   }
 }
 

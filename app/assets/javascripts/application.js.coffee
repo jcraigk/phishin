@@ -203,7 +203,7 @@ $ ->
   .on 'click', '#playlist_button', ->
     App.Util.navigateTo $(this).data('url')
   .on 'click', '#share_playlist_btn', ->
-    App.Playlist.handleShareModal()
+    App.Util.copyToClipboard("#{$('body').data('base-url')}/play/#{$('#playlist_data').attr('data-slug')}")
   .on 'blur', '#playlist_name_input', (e) ->
     $('#playlist_slug_input').val App.Util.stringToSlug($(this).val())
   .on 'click', '#save_playlist_btn', (e) ->
@@ -412,14 +412,9 @@ $ ->
         else
           App.Util.followLink $link
 
-  # Share links bring up a modal to display a url
+  # Share links copy the share link to clipboard
   .on 'click', '.share', ->
-    $('#share_url').html("<p>"+$('body').data('base-url')+$(this).data('url')+"</p>")
-    if $(this).hasClass('share_track')
-      $('#share_track_tips').show()
-    else
-      $('#share_track_tips').hide()
-    $('#share_modal').modal('show')
+    App.Util.copyToClipboard($('body').data('base-url')+$(this).data('url'))
 
   # Play random song track
   .on 'click', '#random_song_track_btn', (e) ->

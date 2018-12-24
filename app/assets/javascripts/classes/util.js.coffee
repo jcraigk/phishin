@@ -108,6 +108,13 @@ class @Util
   showHTMLError: (str) ->
     $('body').append "<div id=\"system_error\">#{str.replace(/(\r\n|\n|\r)/gm,"<br />")}</div>"
 
+  copyToClipboard: (text) ->
+    el = $('#clipboard-text')
+    el.val(text)
+    el.select()
+    document.execCommand('copy')
+    App.Util.feedback({ notice: 'Link copied to clipboard' })
+
   _findMatch: (href) ->
     match = /^([^\?]+)\??(.+)?$/.exec(href.split("/")[1])
     match[1] if match
