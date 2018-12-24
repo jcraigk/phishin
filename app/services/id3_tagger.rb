@@ -65,6 +65,6 @@ class Id3Tagger
   end
 
   def album
-    @album ||= "#{show.date} #{show.venue.location}"
+    @album ||= "#{show.date} #{show.venue_name}"
   end
 end
