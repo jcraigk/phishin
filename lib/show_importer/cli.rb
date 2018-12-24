@@ -15,7 +15,7 @@ class ShowImporter::Cli
   end
 
   def main_menu
-    puts "\n#{orch.show}\n\n"
+    puts "\n#{orch.show.date} - #{orch.show.venue.name} - #{orch.show.venue.location}\n\n"
     orch.pp_list
   end
 
@@ -89,7 +89,7 @@ class ShowImporter::Cli
       if matched
         puts "Found \"#{matched.title}\".  Adding Song."
         orch.get_track(pos).songs << matched
-        puts "Adding #{matched} to pos #{pos}"
+        puts "Adding #{matched.title} to pos #{pos}"
       end
       break
     end
@@ -136,14 +136,13 @@ class ShowImporter::Cli
 
   def repl
     while (line = Readline.readline('> ', true))
-      process(line)
+      break unless process(line)
     end
   end
 
   def process(line)
     pos = line.to_i
     return edit_for_pos(pos) if pos.positive?
-
     menu_branch(line)
   end
 
@@ -158,8 +157,8 @@ class ShowImporter::Cli
     when 'd'
       delete_track
     when 's'
-      print 'Saving'
       orch.save
+      false
     end
   end
 end
