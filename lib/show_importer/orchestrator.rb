@@ -13,7 +13,7 @@ class ShowImporter::Orchestrator
     @show = Show.unscoped.find_by(date: date)
     return if (@show_found = @show.present?)
 
-    @show = Show.new(date: date)
+    @show = Show.new(date: date, published: false)
     @venue = find_venue
     assign_venue
     populate_tracks
@@ -28,10 +28,9 @@ class ShowImporter::Orchestrator
     puts 'Finding venue...'
     Venue.left_outer_joins(:venue_renames)
          .where(
-           '(name = ? OR venue_renames.name = ?) AND name = ?',
-           @show_info.venue_name,
-           @show_info.venue_name,
-           @show_info.venue_city
+           '(venues.name = :name OR venue_renames.name = :name) AND city = :city',
+           name: @show_info.venue_name,
+           city: @show_info.venue_city
          )
          .first
   end
@@ -77,22 +76,18 @@ class ShowImporter::Orchestrator
   end
 
   def save
+    print 'Saving'
     @show.save
-    duration = 0
-    @tracks.each do |t|
-      next unless t.valid?
-      t.show = @show
-      t.audio_file = File.new("#{@fm.s_dir}/#{t.filename}")
-      t.save!
-      t.apply_id3_tags
-      begin
-        duration += t.duration
-      rescue StandardError => e
-        puts e
-        p "Duration error on #{t}"
-      end
+    @tracks.each do |track|
+      next puts "\nInvalid track! (#{track.title})" unless track.valid?
+      track.show = @show
+      track.audio_file = File.new("#{@fm.s_dir}/#{track.filename}")
+      track.save!
+      track.apply_id3_tags
+      print '.'
     end
-    @show.update_attributes(duration: duration)
+    @show.save_duration
+    puts "\n#{@show.date} show imported successfully"
   end
 
   private

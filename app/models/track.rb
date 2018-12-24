@@ -13,9 +13,6 @@ class Track < ApplicationRecord
     path: "#{APP_CONTENT_PATH}/:class/:attachment/:id_partition/:id.:extension"
   )
 
-  extend FriendlyId
-  friendly_id :title, use: :scoped, scope: :show
-
   include PgSearch
   pg_search_scope(
     :kinda_matching,
@@ -33,6 +30,7 @@ class Track < ApplicationRecord
   validates :position, uniqueness: { scope: :show_id }
   validates :songs, length: { minimum: 1 }
 
+  before_validation :generate_slug
   after_commit :save_duration, on: :create
 
   scope :chronological, -> { joins(:show).order('shows.date') }
@@ -46,21 +44,9 @@ class Track < ApplicationRecord
     Id3Tagger.new(self).call
   end
 
-  def generic_slug
-    slug =
-      title.downcase
-           .delete("'")
-           .gsub(/[^a-z0-9]/, ' ')
-           .strip
-           .gsub(/\s+/, ' ')
-           .gsub(/\s/, '-')
-    # Song title abbreviations
-    slug.gsub!(/hold\-your\-head\-up/, 'hyhu')
-    slug.gsub!(/the\-man\-who\-stepped\-into\-yesterday/, 'tmwsiy')
-    slug.gsub!(/she\-caught\-the\-katy\-and\-left\-me\-a\-mule\-to\-ride/, 'she-caught-the-katy')
-    slug.gsub!(/mcgrupp\-and\-the\-watchful\-hosemasters/, 'mcgrupp')
-    slug.gsub!(/big\-black\-furry\-creature\-from\-mars/, 'bbfcfm')
-    slug
+  def generate_slug
+    return if slug.present?
+    self.slug = TrackSlugGenerator.new(self).call
   end
 
   def mp3_url

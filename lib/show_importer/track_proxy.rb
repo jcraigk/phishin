@@ -8,14 +8,10 @@ class ShowImporter::TrackProxy
     filename = nil,
     song = nil
   )
-    @_track = Track.new(position: pos, title: title, set: get_set_from_filename(filename), slug: generic_slug(title))
+    @_track = Track.new(position: pos, title: title, set: get_set_from_filename(filename))
     song ||= Song.find_by_title(title)
     @_track.songs << song unless song.nil?
     @filename = filename
-  end
-
-  def generic_slug(title)
-    title ? title.downcase.delete("'").gsub(/[^a-z0-9]/, ' ').strip.gsub(/\s+/, ' ').gsub(/\s/, '-') : ''
   end
 
   def get_set_from_filename(filename)

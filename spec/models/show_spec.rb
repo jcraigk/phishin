@@ -30,11 +30,15 @@ RSpec.describe Show do
     end
 
     context 'when there is a venue rename in the past' do
-      let!(:venue_rename) { create(:venue_rename, venue: venue, renamed_on: Date.parse('2018-01-01') - 1.day) }
+      let(:rename) { 'Venue New Name' }
+
+      before do
+        create(:venue_rename, venue: venue, renamed_on: Date.parse('2018-01-01') - 1.day, name: rename)
+        show.validate
+      end
 
       it 'caches the latest venue rename before validation' do
-        show.validate
-        expect(show.venue_name).to eq(venue_rename.name)
+        expect(show.venue_name).to eq(rename)
       end
     end
   end
@@ -100,7 +104,7 @@ RSpec.describe Show do
     expect(show.date_with_dots).to eq(show.date.strftime('%Y.%m.%d'))
   end
 
-  context '#save_duration' do
+  describe '#save_duration' do
     subject(:show) { create(:show, :with_tracks) }
 
     let(:track_sum) { show.tracks.map(&:duration).inject(0, &:+) }

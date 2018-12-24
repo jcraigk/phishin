@@ -13,18 +13,20 @@ RSpec.describe Track do
 
   it { is_expected.to have_attached_file(:audio_file) }
 
-  describe 'friendly_id slugging' do
-    let(:show) { create(:show) }
-    let(:other_tracks) { create_list(:track, 2, title: 'Bathtub Gin', show: show) }
+  describe 'slug generation' do
+    let(:slug) { 'new-slug' }
+    let(:mock_generator) { instance_double(TrackSlugGenerator) }
 
-    before { track.save }
+    before do
+      allow(TrackSlugGenerator).to receive(:new).and_return(mock_generator)
+      allow(mock_generator).to receive(:call).and_return(slug)
+      track.save
+    end
 
-    it 'generates a slug from title (friendly_id), scoped to show' do
-      expect(track.slug).to eq('bathtub-gin')
-      expect(other_tracks.first.slug).to eq('bathtub-gin')
-      expect(other_tracks.second.slug).to match(
-        /\Abathtub-gin-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\z/
-      )
+    it 'assigns slug from TrackSlugGenerator' do
+      expect(TrackSlugGenerator).to have_received(:new).with(track)
+      expect(mock_generator).to have_received(:call)
+      expect(track.slug).to eq(slug)
     end
   end
 
@@ -121,26 +123,6 @@ RSpec.describe Track do
     it 'calls Id3Tagger' do
       expect(Id3Tagger).to have_received(:new).with(track)
       expect(mock_tagger).to have_received(:call)
-    end
-  end
-
-  describe '#generic_slug' do
-    it 'slugifies the title' do
-      track.title = '<>=Bathtub !!Gin<>'
-      expect(track.generic_slug).to eq('bathtub-gin')
-    end
-
-    it 'shortens long titles according to prescriptive rules' do
-      track.title = 'Hold Your Head Up'
-      expect(track.generic_slug).to eq('hyhu')
-      track.title = 'The Man Who Stepped Into Yesterday'
-      expect(track.generic_slug).to eq('tmwsiy')
-      track.title = 'She Caught the Katy and Left Me a Mule to Ride'
-      expect(track.generic_slug).to eq('she-caught-the-katy')
-      track.title = 'McGrupp and the Watchful Hosemasters'
-      expect(track.generic_slug).to eq('mcgrupp')
-      track.title = 'Big Black Furry Creature from Mars'
-      expect(track.generic_slug).to eq('bbfcfm')
     end
   end
 

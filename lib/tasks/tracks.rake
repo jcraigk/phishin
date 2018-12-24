@@ -1,39 +1,5 @@
 # frozen_string_literal: true
 namespace :tracks do
-  desc 'Generate missing slugs'
-  task missing_slugs: :environment do
-    Track.where('slug IS NULL OR slug = ?', '').find_each do |track|
-      slug = track.generic_slug
-      track.update_attributes(slug: slug)
-      puts "#{track.id} :: #{track.title} :: #{track.slug}"
-    end
-  end
-
-  desc 'Ensure tracks have unique slugs within each show'
-  task uniquify_slugs: :environment do
-    Show.unscoped.order(date: :desc).each do |show|
-      puts "Working: #{show.date}"
-      tracks = show.tracks.order('position asc').all
-      tracks.each do |track|
-        dupes = []
-        tracks.each do |track2|
-          next unless track.id != track2.id && track.slug == track2.slug
-          dupes << track2
-        end
-        next unless dupes.any?
-
-        num = 2
-        dupes.each do |dupe_track|
-          new_slug = "#{dupe_track.slug}-#{num}"
-          puts "converting #{dupe_track.slug} to #{new_slug}"
-          dupe_track.slug = new_slug
-          dupe_track.save!
-          num += 1
-        end
-      end
-    end
-  end
-
   desc 'Check for the same file being used for second occurrence of song within a show'
   task find_dupe_filenames: :environment do
     show_list = []
@@ -100,5 +66,21 @@ namespace :tracks do
     track_list.each do |track|
       puts "#{track.title} :: #{track.id}"
     end
+  end
+
+  desc "Apply ID3 tags to entire MP3 library"
+  task apply_id3: :environment do
+    relation = Track.unscoped.order(id: :asc)
+    pbar = ProgressBar.create(
+      total: relation.size,
+      format: '%a %B %c/%C %p%% %E'
+    )
+
+    relation.find_each do |track|
+      track.apply_id3_tags
+      pbar.increment
+    end
+
+    pbar.finish
   end
 end
