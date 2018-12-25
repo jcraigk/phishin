@@ -3,8 +3,8 @@ class GoogleSpreadsheetFetcher
   attr_reader :spreadsheet_id, :range
 
   OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'
-  CREDENTIALS_PATH = "#{Rails.root}/tmp/credentials.json"
-  TOKEN_PATH = "#{Rails.root}/tmp/token.yml"
+  CREDENTIALS_PATH = "#{Rails.root}/tmp/tagit/credentials.json"
+  TOKEN_PATH = "#{Rails.root}/tmp/tagit/token.yml"
 
   def initialize(spreadsheet_id, range)
     @spreadsheet_id = spreadsheet_id
@@ -12,16 +12,11 @@ class GoogleSpreadsheetFetcher
   end
 
   def call
-    authorize_client
+    service.authorization = authorize
     fetch_data
   end
 
   private
-
-  def authorize_client
-    service.client_options.application_name = 'Phish.in Tag.in Project'
-    service.authorization = authorize
-  end
 
   def fetch_data
     column_headers = response.shift
@@ -45,26 +40,18 @@ class GoogleSpreadsheetFetcher
   def authorizer
     @authorizer ||=
       Google::Auth::UserAuthorizer.new(
-        client_id,
+        Google::Auth::ClientId.from_file(CREDENTIALS_PATH),
         Google::Apis::SheetsV4::AUTH_SPREADSHEETS_READONLY,
-        token_store
+        Google::Auth::Stores::FileTokenStore.new(file: TOKEN_PATH)
       )
   end
 
-  def token_store
-    @token_store ||= Google::Auth::Stores::FileTokenStore.new(file: TOKEN_PATH)
-  end
-
-  def client_id
-    @client_id ||= Google::Auth::ClientId.from_file(CREDENTIALS_PATH)
+  def credentials
+    authorizer.get_credentials(user_id)
   end
 
   def user_id
     'default'
-  end
-
-  def credentials
-    @credentials ||= authorizer.get_credentials(user_id)
   end
 
   ##
@@ -74,15 +61,15 @@ class GoogleSpreadsheetFetcher
   #
   # @return [Google::Auth::UserRefreshCredentials] OAuth2 credentials
   def authorize
-    if credentials.nil?
-      url = authorizer.get_authorization_url(base_url: OOB_URI)
-      puts 'Open the following URL in the browser and enter the ' \
-           "resulting code after authorization:\n" + url
-      code = STDIN.gets
-      credentials = authorizer.get_and_store_credentials_from_code(
-        user_id: user_id, code: code, base_url: OOB_URI
-      )
-    end
-    credentials
+    return credentials if credentials
+    url = authorizer.get_authorization_url(base_url: OOB_URI)
+    puts 'Open the following URL in the browser and enter the ' \
+         "resulting code after authorization:\n" + url
+    code = STDIN.gets
+    authorizer.get_and_store_credentials_from_code(
+      user_id: user_id,
+      code: code,
+      base_url: OOB_URI
+    )
   end
 end

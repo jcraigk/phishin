@@ -4,20 +4,23 @@ require 'googleauth'
 require 'googleauth/stores/file_token_store'
 require 'fileutils'
 
-namespace :tags do
+namespace :tagit do
   desc 'Sync data from remote spreadsheet'
-  task sync_remote: :environment do
+  task sync: :environment do
     TAGS = [
       'Acapella',
       'Acoustic'
-    ]
-    spreadsheet_id = '1WZtJYSHvt0DSYeUtzM5h0U5c90DN9Or7ckkJD-ds-rM'
-    range = 'A1:B4'
+    ].freeze
+    SPREADSHEET_ID = '1WZtJYSHvt0DSYeUtzM5h0U5c90DN9Or7ckkJD-ds-rM'
 
-    data = GoogleSpreadsheetFetcher.new(spreadsheet_id, range).call
+    TAGS.each do |tag_name|
+      puts '========================'
+      puts " Syncing Tag: #{tag_name}"
+      puts '========================'
 
-    binding.pry
-
-    TagSyncService.new(data).call
+      range = "#{tag_name}!A1:D50"
+      data = GoogleSpreadsheetFetcher.new(SPREADSHEET_ID, range).call
+      TrackTagSyncService.new(tag_name, data).call
+    end
   end
 end
