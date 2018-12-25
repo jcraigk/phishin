@@ -77,7 +77,7 @@ RSpec.describe Track do
       before { tracks.first.tags << tag }
 
       it 'returns expected objects' do
-        expect(described_class.tagged_with(tag.name)).to eq([tracks.first])
+        expect(described_class.tagged_with(tag.slug)).to eq([tracks.first])
       end
     end
   end

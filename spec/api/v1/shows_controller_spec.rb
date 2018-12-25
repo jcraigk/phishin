@@ -7,12 +7,26 @@ describe Api::V1::ShowsController do
   let(:json_data) { JSON[subject.body].deep_symbolize_keys[:data] }
 
   describe 'index' do
-    subject { get('/api/v1/shows', {}, auth_header) }
-
     let!(:shows) { create_list(:show, 3, :with_tracks, :with_tags, :with_likes) }
 
-    it 'responds with expected data' do
-      expect(json_data).to match_array(shows.map(&:as_json_api))
+    context 'without params' do
+      subject { get('/api/v1/shows', {}, auth_header) }
+
+      it 'responds with expected data' do
+        expect(json_data).to match_array(shows.map(&:as_json_api))
+      end
+    end
+
+    context 'when providing tag param' do
+      subject { get("/api/v1/shows?tag=#{tag.slug}", {}, auth_header) }
+
+      let(:tag) { create(:tag) }
+
+      before { shows.first.tags = [tag] }
+
+      it 'responds with expected data' do
+        expect(json_data).to eq([shows.first.reload.as_json_api])
+      end
     end
   end
 

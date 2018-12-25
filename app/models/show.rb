@@ -29,7 +29,7 @@ class Show < ApplicationRecord
       .where('extract(day from date) = ?', day)
   }
   scope :random, ->(amt = 1) { order(Arel.sql('RANDOM()')).limit(amt) }
-  scope :tagged_with, ->(tag_name) { joins(:tags).where(tags: { name: tag_name }) }
+  scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
 
   delegate :name, to: :tour, prefix: true
 

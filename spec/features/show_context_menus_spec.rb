@@ -16,7 +16,6 @@ describe 'Show Context Menus', :js do
     expect_content('Tracks added to playlist')
 
     click_link('Share')
-    expect_content('Copypasta...')
-    first('.close').click
+    expect_content('Link copied to clipboard')
   end
 end

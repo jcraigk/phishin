@@ -34,7 +34,7 @@ class Track < ApplicationRecord
   after_commit :save_duration, on: :create
 
   scope :chronological, -> { joins(:show).order('shows.date') }
-  scope :tagged_with, ->(tag_name) { joins(:tags).where(tags: { name: tag_name }) }
+  scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
 
   def set_name
     set_names[set] || 'Unknown Set'

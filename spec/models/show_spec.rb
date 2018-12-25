@@ -95,7 +95,7 @@ RSpec.describe Show do
       before { shows.first.tags << tag }
 
       it 'returns expected objects' do
-        expect(described_class.tagged_with(tag.name)).to eq([shows.first])
+        expect(described_class.tagged_with(tag.slug)).to eq([shows.first])
       end
     end
   end

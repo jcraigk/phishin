@@ -23,7 +23,7 @@ describe Api::V1::TracksController do
     end
 
     context 'when providing tag param' do
-      subject { get("/api/v1/tracks?tag=#{tag.name}", {}, auth_header) }
+      subject { get("/api/v1/tracks?tag=#{tag.slug}", {}, auth_header) }
 
       let(:tag) { create(:tag) }
 

@@ -4,8 +4,8 @@ class Api::V1::TracksController < Api::V1::ApiController
   caches_action :show, cache_path: proc { |c| c.params }, expires_in: CACHE_TTL
 
   def index
-    rel = params[:tag] ? Track.tagged_with(params[:tag]) : track_scope
-    respond_with_success get_data_for(rel)
+    tracks = params[:tag] ? Track.tagged_with(params[:tag]) : track_scope
+    respond_with_success get_data_for(tracks)
   end
 
   def show

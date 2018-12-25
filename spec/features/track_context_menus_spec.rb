@@ -33,7 +33,6 @@ describe 'Track Context Menues', :js do
     within('.track-context-dropdown') do
       click_link('Share')
     end
-    expect_content('Copypasta...')
-    first('.close').click
+    expect_content('Link copied to clipboard')
   end
 end
