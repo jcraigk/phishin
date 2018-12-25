@@ -9,16 +9,22 @@ html
     = render partial: 'layouts/google_analytics'
     = csrf_meta_tags
 
-  body data-base-url=APP_BASE_URL data-app-name=APP_NAME data-anchor=params[:anchor]&.downcase data-time-marker=(params[:t] || 0)
+    body[
+      data-base-url=APP_BASE_URL
+      data-app-name=APP_NAME
+      data-anchor=params[:anchor]&.downcase
+      data-time-marker=(params[:t] || 0)
+    ]
 
     = render partial: 'layouts/feedback'
     = render partial: 'layouts/ajax_overlay'
-    = render partial: 'shared/share_modal'
     = render partial: 'shared/taper_notes_modal'
     = render partial: 'shared/save_playlist_modal'
+    = render partial: 'shared/clipboard'
     = render partial: 'layouts/page_header'
 
     #page = yield if xhr_exempt_controller
 
     = render partial: 'layouts/page_footer'
+
     iframe#download_iframe src=''

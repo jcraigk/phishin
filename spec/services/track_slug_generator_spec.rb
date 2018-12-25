@@ -6,18 +6,18 @@ RSpec.describe TrackSlugGenerator do
 
   let(:show) { create(:show) }
   let(:track) { build(:track, show: show, title: title) }
-  let(:title) { 'Tweezer Reprise' }
+  let(:title) { "I Didn't Know" }
 
   context 'when title is not a specific long name' do
     before do
-      create(:track, show: show, title: title, slug: 'tweezer-reprise')
-      create(:track, show: show, title: title, slug: 'tweezer-reprise-2')
+      create(:track, show: show, title: title, slug: 'i-didnt-know')
+      create(:track, show: show, title: title, slug: 'i-didnt-know-2')
       create(:track, show: show, title: 'Bathtub Gin', slug: 'bathtub-gin')
       create(:track, show: show, title: 'Prince Caspian', slug: 'prince-caspian')
     end
 
     it 'returns a unique slug with expected suffix' do
-      expect(service.call).to eq('tweezer-reprise-3')
+      expect(service.call).to eq('i-didnt-know-3')
     end
   end
 
