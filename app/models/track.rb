@@ -37,7 +37,7 @@ class Track < ApplicationRecord
   scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
 
   def set_name
-    set_names[set] || 'Unknown Set'
+    SET_NAMES[set] || 'Unknown Set'
   end
 
   def apply_id3_tags
@@ -58,7 +58,7 @@ class Track < ApplicationRecord
   end
 
   def save_duration
-    update_column(:duration, Mp3DurationQuery.new(self.audio_file.path).call)
+    update_column(:duration, Mp3DurationQuery.new(audio_file.path).call)
   end
 
   def as_json
@@ -77,7 +77,7 @@ class Track < ApplicationRecord
     }
   end
 
-  def as_json_api # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  def as_json_api
     {
       id: id,
       show_id: show.id,
@@ -93,21 +93,6 @@ class Track < ApplicationRecord
       mp3: mp3_url,
       song_ids: songs.map(&:id),
       updated_at: updated_at.iso8601
-    }
-  end
-
-  private
-
-  def set_names
-    {
-      'S' => 'Soundcheck',
-      '1' => 'Set 1',
-      '2' => 'Set 2',
-      '3' => 'Set 3',
-      '4' => 'Set 4',
-      'E' => 'Encore',
-      'E2' => 'Encore 2',
-      'E3' => 'Encore 3'
     }
   end
 end

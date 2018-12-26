@@ -83,4 +83,8 @@ module ApplicationHelper
   def default_map_path
     '/map?map_term=Burlington%20VT&distance=10'
   end
+
+  def slug_for_set(set)
+    set.downcase.tr(' ', '-')
+  end
 end

@@ -39,7 +39,7 @@
 
         ul.item_list
           - props[:tracks].each_with_index do |track, idx|
-            li.playable_track data-id=track.id data-anchor=track.slug
+            li.playable_track data-id=track.id data-track-anchor=track.slug data-section-anchor=slug_for_set(set)
               h2.position_num = idx + 1
               h2.wide.track_title = link_to(track.title, '#')
               h2.wide-180 = display_tag_instances(track.track_tags, false, 'track_tag_container')

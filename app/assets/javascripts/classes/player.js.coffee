@@ -224,7 +224,8 @@ class @Player
 
   _handleAutoPlayTrack: ->
     if anchor_name = $('body').attr 'data-anchor'
-      $col = $ 'li[data-anchor='+anchor_name+']'
+      $col = $('li[data-track-anchor='+anchor_name+']')
+      $col = $('li[data-section-anchor='+anchor_name+']') if $col.length == 0
       if $col.length > 0
         $el = $col.first()
         $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
