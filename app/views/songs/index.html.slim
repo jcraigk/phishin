@@ -13,6 +13,7 @@
       - @songs.each do |song|
         li name=song.slug
           h2.wider = link_to_song(song)
+          h2 = song.original? ? 'Original' : 'Cover'
           h3.wide = performances_or_alias_link(song)
           = clear_both
 

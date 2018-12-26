@@ -3,6 +3,11 @@
 #content
   #title_box
     h1 = @song.title
+    h2
+      - if @song.original?
+        | (Original composition)
+      - else
+        | (A cover song)
     h2 Total tracks: #{@song.tracks.size}
     .hr
 

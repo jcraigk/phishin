@@ -8,6 +8,8 @@ Ruby on Rails and PostgreSQL are used on the server side.  There's a web fronten
 
 All audio is currently in MP3 format; more formats may be made available at a later time.  Files are currently served directly from the web server and cached via CloudFlare CDN.
 
+Join the [Discord](https://discord.gg/KZWFsNN) to discuss curation and development.
+
 ## Developer setup
 
 1. Install [Docker](https://www.docker.com/).
