@@ -23,3 +23,14 @@ ERAS = {
   '2.0' => (2002..2004).map(&:to_s),
   '3.0' => (2009..2018).map(&:to_s)
 }.freeze
+
+SET_NAMES = {
+  'S' => 'Soundcheck',
+  '1' => 'Set 1',
+  '2' => 'Set 2',
+  '3' => 'Set 3',
+  '4' => 'Set 4',
+  'E' => 'Encore',
+  'E2' => 'Encore 2',
+  'E3' => 'Encore 3'
+}.freeze
