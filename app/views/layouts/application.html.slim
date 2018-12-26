@@ -4,9 +4,8 @@ html
     title = APP_NAME
     link href='https://fonts.googleapis.com/css?family=Marck+Script|Open+Sans+Condensed:300,700|Molle' rel='stylesheet' type='text/css'
     = stylesheet_link_tag 'application', media: :all
-    script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDYzzl_dLU5IX4t-rpVVRcA9YtrpPEivTk&callback=initMap'
+    script src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDYzzl_dLU5IX4t-rpVVRcA9YtrpPEivTk'
     = javascript_include_tag 'application'
-    = render partial: 'layouts/google_analytics'
     = csrf_meta_tags
 
     body[
