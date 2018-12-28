@@ -4,6 +4,8 @@ require 'rails_helper'
 RSpec.describe Tour do
   subject { create(:tour, name: '1996 Summer Tour') }
 
+  it { is_expected.to be_an(ApplicationRecord) }
+
   it { is_expected.to have_many(:shows) }
 
   it { is_expected.to validate_presence_of(:name) }

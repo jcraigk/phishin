@@ -4,6 +4,8 @@ require 'rails_helper'
 RSpec.describe Tag do
   subject { create(:tag, name: 'Musical Tease') }
 
+  it { is_expected.to be_an(ApplicationRecord) }
+
   it { is_expected.to have_many(:show_tags) }
   it { is_expected.to have_many(:shows).through(:show_tags) }
   it { is_expected.to have_many(:track_tags) }

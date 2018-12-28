@@ -4,6 +4,8 @@ require 'rails_helper'
 RSpec.describe Show do
   subject(:show) { create(:show) }
 
+  it { is_expected.to be_an(ApplicationRecord) }
+
   it { is_expected.to belong_to(:tour) }
   it { is_expected.to belong_to(:venue) }
 

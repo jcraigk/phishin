@@ -4,6 +4,8 @@ require 'rails_helper'
 RSpec.describe Playlist do
   subject { build(:playlist) }
 
+  it { is_expected.to be_an(ApplicationRecord) }
+
   it { is_expected.to have_many(:tracks) }
   it { is_expected.to have_many(:playlist_tracks) }
   it { is_expected.to have_many(:playlist_bookmarks) }

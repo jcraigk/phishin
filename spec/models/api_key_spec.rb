@@ -4,7 +4,9 @@ require 'rails_helper'
 RSpec.describe ApiKey, type: :model do
   subject { build(:api_key) }
 
-  context 'attributes' do
+  it { is_expected.to be_an(ApplicationRecord) }
+
+  describe 'attributes' do
     subject { described_class.attribute_names.map(&:to_sym) }
     it { is_expected.to include :id }
     it { is_expected.to include :name }
