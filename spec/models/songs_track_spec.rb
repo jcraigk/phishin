@@ -4,6 +4,8 @@ require 'rails_helper'
 RSpec.describe SongsTrack do
   subject { build(:songs_track) }
 
+  it { is_expected.to be_an(ApplicationRecord) }
+
   it { is_expected.to belong_to(:song) }
   it { is_expected.to belong_to(:track) }
 

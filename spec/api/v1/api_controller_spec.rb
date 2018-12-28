@@ -15,6 +15,15 @@ describe Api::V1::ApiController do
     end
   end
 
+  describe 'api request logging' do
+    subject { get path, {}, auth_header }
+
+    xit 'creates an ApiRequest' do
+      expect(ApiRequest).to receive(:create)
+      expect(subject.status).to eq(200)
+    end
+  end
+
   describe 'paging' do
     subject { get path, {}, auth_header }
 

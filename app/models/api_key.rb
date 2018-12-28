@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 class ApiKey < ApplicationRecord
+  has_many :api_requests
+
   scope :revoked, -> { where.not(revoked_at: nil) }
   scope :not_revoked, -> { where(revoked_at: nil) }
   scope :active, -> { not_revoked }

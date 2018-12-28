@@ -4,6 +4,8 @@ require 'rails_helper'
 RSpec.describe Venue do
   subject(:venue) { create(:venue, name: 'Madison Square Garden') }
 
+  it { is_expected.to be_an(ApplicationRecord) }
+
   it { is_expected.to have_many(:shows) }
   it { is_expected.to have_many(:venue_renames).dependent(:destroy) }
 

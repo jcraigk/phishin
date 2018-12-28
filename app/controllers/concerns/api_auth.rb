@@ -1,16 +1,23 @@
 # frozen_string_literal: true
 module ApiAuth
-  def require_auth!
-    return missing_key unless provided_key
-    valid_key = ApiKey.active.find_by(key: provided_key)
-    return invalid_key unless valid_key
+  def require_auth
+    return missing_key unless key_from_header
+    return invalid_key unless active_api_key
+  end
+
+  def save_api_request
+    return unless active_api_key
+    ApiRequest.create(api_key: active_api_key, path: request.fullpath)
   end
 
   private
 
-  def provided_key
-    return nil unless auth_header
-    @provided_key ||= auth_header.sub('Bearer ', '')
+  def active_api_key
+    ApiKey.active.find_by(key: key_from_header)
+  end
+
+  def key_from_header
+    @key_from_header ||= request.authorization.to_s.sub('Bearer ', '')
   end
 
   def missing_key

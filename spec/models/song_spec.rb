@@ -4,6 +4,8 @@ require 'rails_helper'
 RSpec.describe Song do
   subject { create(:song, title: 'Bathtub Gin') }
 
+  it { is_expected.to be_an(ApplicationRecord) }
+
   it { is_expected.to have_and_belong_to_many(:tracks) }
 
   it { is_expected.to validate_presence_of(:title) }
