@@ -43,4 +43,10 @@ javascript:
       showOtherMonths: true,
       selectOtherMonths: true
     });
+
+    var latlng = new google.maps.LatLng(39.305, -76.617);
+    var map = new google.maps.Map(document.getElementById('google_map'), {
+      center: latlng,
+      zoom: 12
+    });
   })

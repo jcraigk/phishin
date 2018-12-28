@@ -11,7 +11,6 @@
 //= require classes/util
 //= require classes/player
 //= require classes/playlist
-//= require classes/map
 //= require spin.min
 //= require phishtracks-stats-0.0.3
 //= require_tree .
@@ -29,7 +28,7 @@ $ ->
   App.Util         = new Util
   App.Player       = new Player
   App.Playlist     = new Playlist
-  App.Map          = new Map
+  # App.Map          = new Map
 
   ###############################################
   # Assignments
@@ -75,10 +74,10 @@ $ ->
 
           # Google Map
           if state.data.href.substr(0,4) is '/map'
-            App.Map.initMap()
-            term = $('#map_search_term').val()
-            distance = $('#map_search_distance').val()
-            App.Map.handleSearch(term, distance) if term and distance
+            # App.Map.initMap()
+            # term = $('#map_search_term').val()
+            # distance = $('#map_search_distance').val()
+            # App.Map.handleSearch(term, distance) if term and distance
 
           # Playlist
           else if state.data.href.substr(0,9) is '/playlist' or state.data.href.substr(0,6) is '/play/'
@@ -185,11 +184,6 @@ $ ->
     App.Util.navigateToRefreshMap() if e.which is 13
   .on 'keypress', '#map_date_stop', (e) ->
     App.Util.navigateToRefreshMap() if e.which is 13
-
-  # Submit map search
-  term = $('#map_search_term').val()
-  distance = $('#map_search_distance').val()
-  App.Map.handleSearch(term, distance) if term and distance
 
   ###############################################
 
