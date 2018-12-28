@@ -18,13 +18,12 @@ namespace :shows do
 
   desc 'Import a show'
   task import: :environment do
-    require_relative '../show_importer'
+    require "#{Rails.root}/app/services/show_importer/show_importer"
 
     dates = Dir.entries(IMPORT_DIR).select do |entry|
       File.directory?(File.join(IMPORT_DIR, entry)) &&
         /\A\d{4}\-\d{2}\-\d{2}\z/.match?(entry)
     end
-
     next puts "No shows found in #{IMPORT_DIR}" unless dates.any?
 
     puts "#{dates.size} show folders found"

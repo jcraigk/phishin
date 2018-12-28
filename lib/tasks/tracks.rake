@@ -68,7 +68,7 @@ namespace :tracks do
     end
   end
 
-  desc "Apply ID3 tags to entire MP3 library"
+  desc 'Apply ID3 tags to entire MP3 library'
   task apply_id3: :environment do
     relation = Track.unscoped.order(id: :asc)
     pbar = ProgressBar.create(
