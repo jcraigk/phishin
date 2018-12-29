@@ -9,7 +9,6 @@ class ShowImporter::Cli
       ShowImporter::TrackReplacer.new(date)
     else
       main_menu
-      puts "\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, (s)ave: "
       repl
     end
   end
@@ -17,6 +16,7 @@ class ShowImporter::Cli
   def main_menu
     puts "\n#{orch.show.date} - #{orch.show.venue.name} - #{orch.show.venue.location}\n\n"
     orch.pp_list
+    puts "\n\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, (s)ave: "
   end
 
   def print_filenames
@@ -136,7 +136,7 @@ class ShowImporter::Cli
 
   def repl
     while (line = Readline.readline('> ', true))
-      break unless process(line)
+      process(line)
     end
   end
 
@@ -158,7 +158,6 @@ class ShowImporter::Cli
       delete_track
     when 's'
       orch.save
-      false
     end
   end
 end
