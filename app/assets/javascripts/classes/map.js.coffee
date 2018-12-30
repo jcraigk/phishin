@@ -7,25 +7,24 @@ class @Map
     @map              = {}
     @view_circle      = {}
     @util             = App.Util
-    @google           = google
     @default_lat      = 39.126864
     @default_lng      = -94.627411
     @green_icon       = 'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
 
   initMap: ->
-    if container = $("#google_map").get 0
-      @map = new @google.maps.Map(container, {
-        center: new @google.maps.LatLng(@default_lat, @default_lng),
+    if container = $('#google_map').get(0)
+      @map = new google.maps.Map(container, {
+        center: new google.maps.LatLng(@default_lat, @default_lng),
         zoom: 4,
-        mapTypeId: @google.maps.MapTypeId.HYBRID
+        mapTypeId: google.maps.MapTypeId.HYBRID
       })
 
   handleSearch: (term, distance) ->
     distance = parseFloat distance
     if term and distance > 0
-      geocoder = new @google.maps.Geocoder()
+      geocoder = new google.maps.Geocoder()
       geocoder.geocode({ 'address': term}, (results, status) =>
-        if status is @google.maps.GeocoderStatus.OK
+        if status is google.maps.GeocoderStatus.OK
           this._geocodeSuccess results, distance
         else
           # util.feedback { alert: "Geocode was not successful because: #{status}" }
@@ -41,8 +40,8 @@ class @Map
     lng = results[0].geometry.location.lng()
     @view_circle.setMap null if @init is false
     @init = false
-    @view_circle = new @google.maps.Circle({
-      center: new @google.maps.LatLng(lat, lng),
+    @view_circle = new google.maps.Circle({
+      center: new google.maps.LatLng(lat, lng),
       fillOpacity: 0,
       strokeOpacity:1,
       map: @map,
@@ -84,16 +83,16 @@ class @Map
 
   _createMarker: (lat, lng, icon=null, infoWindowContent) ->
     windows = @windows
-    marker = new @google.maps.Marker({
-      position: new @google.maps.LatLng(lat, lng),
+    marker = new google.maps.Marker({
+      position: new google.maps.LatLng(lat, lng),
       map: @map,
       icon: icon
     })
-    window = new @google.maps.InfoWindow({
+    window = new google.maps.InfoWindow({
       content: infoWindowContent,
       maxWidth: 600
     })
-    @google.maps.event.addListener(marker, 'click', ->
+    google.maps.event.addListener(marker, 'click', ->
       for win in windows
         win.close()
       window.open @map, marker
