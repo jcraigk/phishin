@@ -36,6 +36,10 @@ class Track < ApplicationRecord
   scope :chronological, -> { joins(:show).order('shows.date') }
   scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
 
+  def url
+    "https://phish.in/#{show.date.to_s(:db)}/#{slug}"
+  end
+
   def set_name
     SET_NAMES[set] || 'Unknown Set'
   end

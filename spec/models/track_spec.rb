@@ -53,6 +53,10 @@ RSpec.describe Track do
   it { is_expected.to validate_presence_of(:set) }
   it { is_expected.to validate_uniqueness_of(:position).scoped_to(:show_id) }
 
+  it 'provides #url' do
+    expect(track.url).to eq("#{APP_BASE_URL}/#{track.show.date.to_s(:db)}/#{track.slug}")
+  end
+
   it 'validates >= 1 song associated' do
     track.validate
     expect(track.errors.keys).not_to include(:songs)
