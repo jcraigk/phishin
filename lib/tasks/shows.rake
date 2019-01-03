@@ -34,4 +34,26 @@ namespace :shows do
       ShowImporter::Cli.new(date)
     end
   end
+
+  desc 'Find shows with a single set'
+  task single_set: :environment do
+    relation = Show.unscoped.includes(:tracks).order(date: :asc)
+    pbar = ProgressBar.create(
+      total: relation.size,
+      format: '%a %B %c/%C %p%% %E'
+    )
+
+    dates = {}
+    relation.find_each do |show|
+      sets = show.tracks.map(&:set).uniq
+      dates[show.date.to_s(:db)] = sets.first if sets.size < 2
+      pbar.increment
+    end
+
+    pbar.finish
+    puts "Found #{dates.size} shows"
+    dates.each do |k, v|
+      puts "#{k} #{v}"
+    end
+  end
 end
