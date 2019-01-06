@@ -58,3 +58,8 @@ Go to `https://phish.in/<date>` to verify the import.
 You can create a new user via the Rails console (`rails c`).  See [Devise documentation](https://github.com/plataformatec/devise) for details.
 
 You can use [Adminer](https://www.adminer.org/) to interact with Postgres using a GUI.  Visit `http://localhost:81` and select `PostgreSQL` in the System dropdown menu.  Server is `pg`, username/pass are both `postgres`, db name is `phishin`.
+
+## Contributions
+
+Layout and graphic design by Mark Craig.
+Logo design by Justin Craig-Kuhn.
