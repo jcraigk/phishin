@@ -11,4 +11,8 @@ class StaticPagesController < ApplicationController
   def api_docs
     render_xhr_without_layout
   end
+
+  def tagin_project
+    render_xhr_without_layout
+  end
 end

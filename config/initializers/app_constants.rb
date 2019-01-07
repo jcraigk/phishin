@@ -34,3 +34,20 @@ SET_NAMES = {
   'E2' => 'Encore 2',
   'E3' => 'Encore 3'
 }.freeze
+
+TAGIN_TAG_NAMES = [
+  'Acapella',
+  'Acoustic',
+  'Alternate Instrument',
+  'Banter',
+  'Crowd Interaction',
+  'Famous Jam',
+  'Guest',
+  'Narration',
+  'Notable Segue',
+  'Review Medley',
+  'Rig Mode',
+  'Samples',
+  'Secret Language',
+  'Tease'
+].freeze
