@@ -1,0 +1,156 @@
+= render partial: 'layouts/global_nav'
+
+#content
+  #title_box
+    h1 Tag.in' Project
+    .hr
+    h3 A crowd-sourced effort to objectively highlight notable segments of audio content on Phish.in'
+
+  #content_box.tagin_project
+    h2 Introduction
+
+    p This site provides access to live legal Phish recordings.  The goal is to maintain a comprehensive archive of live performances curated by the community through cooperative effort.
+    p
+      ' Content is searchable/discoverable based on available metadata, such as performance date, song title, venue name, etc.  Additinally, a limited set of Tags have been manually applied:
+      a href="https://phish.in/tags/sbd" SBD
+      ' ,
+      a href="https://phish.in/tags/rmster" RMSTR
+      ' , and
+      a href="https://phish.in/tags/jamcharts" Jamcharts
+      | .
+
+    p To further expand discoverability of content, we are proposing a crowd-sourced effort to apply an expanded set of pre-selected Tags to the content:
+
+    ul
+      - TAGIN_TAG_NAMES.each do |name|
+        li = name
+
+    p
+      ' See the
+      a href='https://docs.google.com/spreadsheets/d/1WZtJYSHvt0DSYeUtzM5h0U5c90DN9Or7ckkJD-ds-rM' Master Tag.in Spreadsheet
+      | &nbsp;for examples.  Note this list is subject to change as the project continues.
+
+    h2 A Note on Objectivity
+
+    p Perception of music is highly subjective but many of its elements can be objectively identified.  The curated set of Tags above focuses on objective classification rather than subjective interpretation.  Some of the Tags, such as "Famous Jam" and "Notable Segue" will introduce some subjectivity, in which case the admins of Phish.in will make the final determination as to its inclusion.  Each tag will have its own set of conventions for ensuring that tagging remains as consistent as possible (see below for details).
+
+    h2 Contributing
+
+    p
+      ' To contribute, please join the Phish.in Discord at
+      a href='https://discord.gg/KZWFsNN' https://discord.gg/KZWFsNN
+      ' &nbsp;and check out the #tagging channel.  Write access to the
+      a href='https://docs.google.com/spreadsheets/d/1WZtJYSHvt0DSYeUtzM5h0U5c90DN9Or7ckkJD-ds-rM' Master Tag.in Spreadsheet
+      | &nbsp;will be provided to those expressing a genuine interest in the project.
+
+    h2 Instructions for Contributors
+
+    p
+      i Note: If you notice any issues with content during your listening (track labeling, audio quality, etc) please enter it in the CONTENT ISSUES tab on the spreadsheet.
+
+    ol
+      li
+        ' Open the
+        a href='https://docs.google.com/spreadsheets/d/1WZtJYSHvt0DSYeUtzM5h0U5c90DN9Or7ckkJD-ds-rM' Master Tag.in Spreadsheet
+      li Familiarize yourself with each Tag by clicking the workbook tabs at the bottom of the screen (also see specific Tag Conventions below)
+      li Listen to audio content at https://phish.in
+      li When you notice a taggable moment, pause the playback (spacebar or button in upper-right)
+      li Roll the mouse cursor over the track in question and click on the context menu (down arrow) that appears
+      li Click "Share" in the dropdown menu (URL will be copied to clipboard)
+      li Return to the spreadsheet and select the appropriate workbook for the Tag you want to add
+      li Select "Edit > Find and replace..." and search for existing URL to ensure it has not already been tagged
+      li If it has already been tagged, verify the metadata, make any corrections, and add +1 to Verified column
+      li If it has not been tagged, paste the URL into the URL column
+      li If the tag applies only to a section of the track, add start/stop timestamps.  If it starts at the beginning of the track, the start time can be omitted.  Same for stop timestamp.  Certain Tags will lend themselves more to timestamps than others ("Tease", for example, should always have start/stop timestamps, while "Alternate Version" will never have timestamps).
+      li Add text to Notes field, adhering to established conventions within each Tag (see below).
+
+    h2 Tag Conventions
+
+    h2 Acapella
+    ul
+      li All pure Acapella song performances (Sweet Adeline, The Birdwatcher, Star Spangled Banner, etc)
+      li NOT INCLUDED: Short written acapella sections of longer compositions, such as "steam dream" section of Split Open and Melt
+
+    h2 Acoustic
+    ul
+      li Anytime Trey uses an acoustic guitar
+      li Acoustic sets (such as Festival 8 afternoon set)
+
+    h2 Alternate Instrument
+    ul
+      li Anytime a band member plays an instrument not considered their primary rig
+      li Marimba Lumina (usually Fish or Trey)
+      li Trey's mini percussion/synth rig
+      li Kasvot Vaxt set due to custom gear, mostl notable Page's white synth rig
+      li Frankenstein - Page on keytar
+      li Fish on Electrolux
+
+    h2 Alternate Version
+    ul
+      li Slow Llama is probably the most prominent example
+      li If other good examples can't be identified, this tag may be cut from the list
+
+    h2 Banter
+    ul
+      li Anytime a band member says something to the crowd or another band member that does not fit into Narration or Secret Language classifications (see below)
+      li Start/stop times should be provided
+      li All spoken words should be transcribed into the Notes field
+
+    h2 Crowd Interaction
+    ul
+      li "Woo"s
+      li Anytime a crowd member is brought onstage even if they don't speak
+      li Random interactions: "Fuck You" from 1991-10-31 Wait, for example
+
+    h2 Famous Jam
+    ul
+      li Well-known named performances of songs like Prague Ghost, Tahoe Tweezer, etc
+
+    h2 Guest
+    ul
+      li Anytime another musician joins the band onstage
+      li Name of artist(s) should be included in the Notes field
+
+    h2 Narration
+    ul
+      li Any spoken word related to storytelling
+      li Most notably Gamehendge narration, but also Harpua, etc
+      li All spoken words should be transcribed into the Notes field
+
+    h2 Notable Segue
+    ul
+      li Phish performs segues frequently and they are subjectively perceived (Trey pulls the "rip cord" and it gets labeled with ">" on some setlists, which is arguably incorrect labeling).
+      li These should be the most notable segues in the band's history
+      li The total occurrences should be capped at 50 or so to ensure only the most notable ones are tagged
+      li Some segues may be split across multiple tracks, in which case multiple Segue Tag instances will need to be created.  The first one should have no stop timestamp and the second one should have no start timestamp to indicate a continuation across tracks.
+
+    h2 Review Medley
+    ul
+      li When at least 3 songs played recently are teased in a single jam
+
+    h2 Rig Mode
+    ul
+      li Refers to a "mode" of one of the band member's rigs.  This could get over-tagged since Trey and Page are constantly switching up their sounds during the course of a performance.  Conserative tagging is encourage so only the most notable (rare) modes are highlighted.
+      li For Trey, refers to his idomatic pedal usage, such as "Whale Call"
+      li For Page, refers to different keyboards/combos such as Piano/Clav, Rhodes, and synths
+      li More feedback is needed from gear heads...
+
+    h2 Samples
+    ul
+      li Anytime Page uses a sample from Haunted House or Kasvot sets, for example
+      li Intro to 1995-10-31 set 2 ocean sounds played through PA, for example
+      li If many samples appear in a single track ("Your trip is short"), a single tag can be applied to the whole track with no start/stop times.  If a single sample appears in the middle of a longer jam, start/stop times probably make sense there.
+
+    h2 Secret Language
+    ul
+      li Anytime instructions are provided by Trey (or should those go in Banter above?)
+      li Anytime the secret language is invoked by a band member such as Simpsons Theme
+      li Question: also tag Crowd Interaction when response is clear?
+
+    h2 Tease
+    ul
+      li The band members love to reference other works during improvisations and it would be interesting to identify as many of these instances as possible.
+      li Some tracks may have many Tease instances, in which case each should have its own entry with start/stop times and Notes field
+      li Put the name of the teased work in the Notes field ("Streets of Cairo" for example)
+
+  = clear_both
