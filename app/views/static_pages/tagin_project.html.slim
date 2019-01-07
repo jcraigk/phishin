@@ -7,11 +7,10 @@
     h3 A crowd-sourced effort to objectively highlight notable segments of audio content on Phish.in'
 
   #content_box.tagin_project
-    h2 Introduction
+    h2 Overview
 
-    p This site provides access to live legal Phish recordings.  The goal is to maintain a comprehensive archive of live performances curated by the community through cooperative effort.
     p
-      ' Content is searchable/discoverable based on available metadata, such as performance date, song title, venue name, etc.  Additinally, a limited set of Tags have been manually applied:
+      ' This site provides access to live legal Phish audio recordings.  Its goal is to maintain a highly available and comprehensive archive of live performances curated by the community through cooperative effort. Content is discoverable based on available metadata, such as performance date, song title, venue name, etc.  Additinally, a limited set of Tags have been manually applied:
       a href="https://phish.in/tags/sbd" SBD
       ' ,
       a href="https://phish.in/tags/rmster" RMSTR
@@ -19,7 +18,7 @@
       a href="https://phish.in/tags/jamcharts" Jamcharts
       | .
 
-    p To further expand discoverability of content, we are proposing a crowd-sourced effort to apply an expanded set of pre-selected Tags to the content:
+    p To further expand discoverability of content, we are proposing a crowd-sourced effort to apply an expanded set of pre-selected Tags:
 
     ul
       - TAGIN_TAG_NAMES.each do |name|
@@ -28,11 +27,11 @@
     p
       ' See the
       a href='https://docs.google.com/spreadsheets/d/1WZtJYSHvt0DSYeUtzM5h0U5c90DN9Or7ckkJD-ds-rM' Master Tag.in Spreadsheet
-      | &nbsp;for examples.  Note this list is subject to change as the project continues.
+      | &nbsp;for examples.  Note this list is subject to change as the project develops.
 
     h2 A Note on Objectivity
 
-    p Perception of music is highly subjective but many of its elements can be objectively identified.  The curated set of Tags above focuses on objective classification rather than subjective interpretation.  Some of the Tags, such as "Famous Jam" and "Notable Segue" will introduce some subjectivity, in which case the admins of Phish.in will make the final determination as to its inclusion.  Each tag will have its own set of conventions for ensuring that tagging remains as consistent as possible (see below for details).
+    p The curated set of Tags above focuses on objective classification rather than subjective interpretation.  Some of the Tags, such as "Famous Jam" and "Notable Segue" will introduce some subjectivity, in which case the admins of Phish.in will make the final determination as to its inclusion.  Each tag has its own set of conventions for promoting consistency (see below).
 
     h2 Contributing
 
@@ -61,15 +60,20 @@
       li Select "Edit > Find and replace..." and search for existing URL to ensure it has not already been tagged
       li If it has already been tagged, verify the metadata, make any corrections, and add +1 to Verified column
       li If it has not been tagged, paste the URL into the URL column
-      li If the tag applies only to a section of the track, add start/stop timestamps.  If it starts at the beginning of the track, the start time can be omitted.  Same for stop timestamp.  Certain Tags will lend themselves more to timestamps than others ("Tease", for example, should always have start/stop timestamps, while "Alternate Version" will never have timestamps).
+      li If the tag applies only to a section of the track, add start/stop timestamps.  If it starts at the beginning of the track, the start time can be omitted; same for stop timestamp.  Certain Tags will lend themselves more to timestamps than others ("Tease", for example, should always have start/stop timestamps).
       li Add text to Notes field, adhering to established conventions within each Tag (see below).
 
     h2 Tag Conventions
 
+    p Each Tag entry in the spreadsheet consists of a URL (pointing to the track the Tag is associated with) and optionally has Starts At, Ends At, and Notes fields.  If a Tag applies to the entire track, then Starts At and Ends at should be ommitted.  If the tag refers to the first half of the track, omit the Strats At value but enter the Ends At value; same for the second half accordingly.  The Notes field should contain details about that Tag instance.
+
+    p Below we outline conventions for each Tag; these are subject to change as the project develops.
+
     h2 Acapella
     ul
-      li All pure Acapella song performances (Sweet Adeline, The Birdwatcher, Star Spangled Banner, etc)
-      li NOT INCLUDED: Short written acapella sections of longer compositions, such as "steam dream" section of Split Open and Melt
+      li Includes typical Acapella song performances (Sweet Adeline, The Birdwatcher, Star Spangled Banner, etc)
+      li Question: should composed "steam dream" section of Split Open and Melt be included?
+      li Question: should pure vocal jams at end of YEM be included?
 
     h2 Acoustic
     ul
@@ -83,17 +87,12 @@
       li Trey's mini percussion/synth rig
       li Kasvot Vaxt set due to custom gear, mostl notable Page's white synth rig
       li Frankenstein - Page on keytar
-      li Fish on Electrolux
-
-    h2 Alternate Version
-    ul
-      li Slow Llama is probably the most prominent example
-      li If other good examples can't be identified, this tag may be cut from the list
+      li Fish vaccuum solo
 
     h2 Banter
     ul
       li Anytime a band member says something to the crowd or another band member that does not fit into Narration or Secret Language classifications (see below)
-      li Start/stop times should be provided
+      li Starts At/Ends At should be provided
       li All spoken words should be transcribed into the Notes field
 
     h2 Crowd Interaction
@@ -127,6 +126,7 @@
     h2 Review Medley
     ul
       li When at least 3 songs played recently are teased in a single jam
+      li Create an entry for each individual timestamped Tease as well (see Tease tag below)
 
     h2 Rig Mode
     ul
@@ -139,7 +139,7 @@
     ul
       li Anytime Page uses a sample from Haunted House or Kasvot sets, for example
       li Intro to 1995-10-31 set 2 ocean sounds played through PA, for example
-      li If many samples appear in a single track ("Your trip is short"), a single tag can be applied to the whole track with no start/stop times.  If a single sample appears in the middle of a longer jam, start/stop times probably make sense there.
+      li If many samples appear in a single track ("Your trip is short"), a single tag can be applied to the whole track with no timestamps.  If a single sample appears in the middle of a longer jam, timestamps probably make sense there.
 
     h2 Secret Language
     ul
@@ -150,7 +150,7 @@
     h2 Tease
     ul
       li The band members love to reference other works during improvisations and it would be interesting to identify as many of these instances as possible.
-      li Some tracks may have many Tease instances, in which case each should have its own entry with start/stop times and Notes field
+      li Some tracks may have many Tease instances, in which case each should have its own entry with timestamps and Notes field
       li Put the name of the teased work in the Notes field ("Streets of Cairo" for example)
 
   = clear_both

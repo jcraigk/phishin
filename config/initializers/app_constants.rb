@@ -39,7 +39,6 @@ TAGIN_TAG_NAMES = [
   'Acapella',
   'Acoustic',
   'Alternate Instrument',
-  'Alternate Version',
   'Banter',
   'Crowd Interaction',
   'Famous Jam',
