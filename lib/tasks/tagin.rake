@@ -84,12 +84,13 @@ namespace :tagin do
   task gamehendge: :environment do
     tag = Tag.find_by(name: 'Gamehendge')
     show_data = {
-      '1988-03-12' => 'First known live Gamehendge',
-      '1993-03-22' => 'An attentive crowd is rewarded with a live Gamehendge out of It\'s Ice',
-      '1994-06-26' => 'Live Gamehendge part of the show known as GameHoist',
-      '1994-07-08' => 'Live Gamehendge at Great Woods'
+      '1988-03-12' => 'First live Gamehendge',
+      '1991-10-13' => 'Second live Gamehendge',
+      '1993-03-22' => 'Third live Gamehendge',
+      '1994-06-26' => 'Fourth live Gamehendge',
+      '1994-07-08' => 'Fifth live Gamehendge'
     }
-    blacklist_track_ids = [7818, 7828, 5968, 5969, 5986, 5987, 5988]
+    blacklist_track_ids = [7818, 7828, 10079, 10080, 10081, 10094, 10095, 10096, 5968, 5969, 5986, 5987, 5988]
 
     # Clear existing
     ShowTag.where(tag_id: tag.id).destroy_all
@@ -109,5 +110,14 @@ namespace :tagin do
         puts track.url
       end
     end
+  end
+
+  desc 'Pull data from remote narration spreadsheet'
+  task narration: :environment do
+    SPREADSHEET_ID = '10boHKbXnR7V5qFCUc7rtDVBrFg-jmgoOWQLcLRWdz6o'
+
+    range = 'Narration Chart!A1:E200'
+    data = GoogleSpreadsheetFetcher.new(SPREADSHEET_ID, range).call
+    binding.pry # TODO
   end
 end
