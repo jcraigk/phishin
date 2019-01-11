@@ -44,7 +44,6 @@ class JamchartsImporter
     jamcharts_as_json.each do |item|
       show = find_show_by_date(item['showdate'])
       next @missing_shows << item['showdate'] unless show
-
       handle_item(item, show)
       pbar.increment
     end
@@ -89,12 +88,8 @@ class JamchartsImporter
           notes: item['jamchart_description']
         )
       end
-    end
 
-    if show.incomplete
-      @missing_shows << show.date
-    else
-      @invalid_items << "#{item['showdate']} - #{item['song']}"
+      @invalid_items << "#{item['showdate']} - #{item['song']}" unless track_matched
     end
   end
 end

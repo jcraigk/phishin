@@ -79,4 +79,35 @@ namespace :tagin do
       end
     end
   end
+
+  desc 'Apply Gamehendge tag to shows and tracks'
+  task gamehendge: :environment do
+    tag = Tag.find_by(name: 'Gamehendge')
+    show_data = {
+      '1988-03-12' => 'First known live Gamehendge',
+      '1993-03-22' => 'An attentive crowd is rewarded with a live Gamehendge out of It\'s Ice',
+      '1994-06-26' => 'Live Gamehendge part of the show known as GameHoist',
+      '1994-07-08' => 'Live Gamehendge at Great Woods'
+    }
+    blacklist_track_ids = [7818, 7828, 5968, 5969, 5986, 5987, 5988]
+
+    # Clear existing
+    ShowTag.where(tag_id: tag.id).destroy_all
+    TrackTag.where(tag_id: tag.id).destroy_all
+
+    # Apply show and track tags
+    show_data.each do |date, notes|
+      show = Show.find_by(date: date)
+      ShowTag.create(show: show, tag: tag, notes: notes)
+      set = date == '1993-03-22' ? '2' : '1'
+      Track.where(show_id: show.id, set: set)
+           .where
+           .not(id: blacklist_track_ids)
+           .order(position: :asc)
+           .each do |track|
+        TrackTag.create(track: track, tag: tag, notes: notes)
+        puts track.url
+      end
+    end
+  end
 end
