@@ -15,7 +15,7 @@
 
     - else
       - @sections.each do |tour_name, props|
-        h1 = tour_name
+        h1 = "#{tour_name} (#{pluralize(props[:shows].size, 'show')})"
         ul.item_list.clickable
           - props[:shows].each_with_index do |show, idx|
             li
