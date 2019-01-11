@@ -52,7 +52,7 @@ namespace :tagin do
       '1996-10-31' => 'Remain In Light by Talking Heads',
       '1998-10-31' => 'Loaded by The Velvet Underground ',
       '1998-11-02' => 'Dark Side of the Moon by Pink Floyd',
-      '2009-10-31' => 'Exile on Main St. by Rolling Stones',
+      '2009-10-31' => 'Exile on Main St. by The Rolling Stones',
       '2010-10-31' => 'Waiting for Columbus by Little Feat',
       '2014-10-31' => 'Chilling, Thrilling Sounds of the Haunted House by Disneyland/Phish',
       '2016-10-31' => 'The Rise and Fall of Ziggy Stardust and the Spiders From Mars by David Bowie',
