@@ -9,7 +9,7 @@ class TagsController < ApplicationController
   end
 
   def show
-    case mode
+    case context
     when 'show'
       @shows = fetch_shows
       @shows_likes = user_likes_for_shows(@shows)
@@ -23,8 +23,8 @@ class TagsController < ApplicationController
 
   private
 
-  def mode
-    @mode ||= params[:entity].in?(%w[show track]) ? params[:entity] : 'show'
+  def context
+    @context ||= params[:entity].in?(%w[show track]) ? params[:entity] : 'show'
   end
 
   def tag
