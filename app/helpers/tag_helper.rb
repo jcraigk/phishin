@@ -17,15 +17,15 @@ module TagHelper
   end
 
   def tag_instance_label(tag_instance, css_class = '')
-    link_to tag_path(tag_instance.tag.name.downcase) do
+    link_to tag_path(tag_instance.tag.slug) do
       content_tag(
         :span,
         tag_instance.tag.name,
         class: "label tag_label #{css_class}",
         title: tag_instance.notes,
-        style: "color: #fff; background-color: #{tag_instance.tag.color}"
+        style: "background-color: #{tag_instance.tag.color}"
       )
-    end.html_safe
+    end
   end
 
   def tag_label(tag, css_class = '')
@@ -33,16 +33,7 @@ module TagHelper
       :span,
       tag.name,
       class: "label tag_label #{css_class}",
-      style: "color: #fff; background-color: #{tag.color}"
+      style: "background-color: #{tag.color}"
     )
-  end
-
-  def contrasting_color(color)
-    color_str = color.clone
-    color_str[0] = ''
-    rgb_hex = color_str.scan(/../)
-    sum = 0
-    rgb_hex.each { |hex| sum += hex.hex }
-    sum > 382 ? '#555555' : '#ffffff'
   end
 end

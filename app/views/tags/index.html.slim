@@ -12,7 +12,7 @@
       - @tags.each do |tag|
         li
           h2
-            a href="/tags/#{URI.encode(tag.slug)}?entity=track"
+            a href="/tags/#{tag.slug}?entity=track"
               .tag_container_small = tag_label(tag)
           h2.wider.small-font = truncate(tag.description, length: 70)
           h3.alt = pluralize_with_delimiter(tag.tracks_count, 'track')
