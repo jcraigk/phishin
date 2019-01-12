@@ -18,11 +18,11 @@ describe 'Static pages', :js do
     visit '/contact'
 
     within('#title_box') do
-      expect_content('Contact')
+      expect_content('Contact', 'I woke up one morning in November')
     end
 
     within('#content_box') do
-      expect_content('I woke up one morning in November')
+      expect_content('Bug', 'Talk', 'Contact')
     end
   end
 

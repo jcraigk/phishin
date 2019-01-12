@@ -1,31 +1,36 @@
 # frozen_string_literal: true
 module TagHelper
-  def display_tag_instances(tag_instances, short = false, css_class = 'show_tag_container')
-    tag_instances = tag_instances.sort_by { |tag_instance| tag_instance.tag.priority }
+  def display_tag_instances(
+    tag_instances,
+    short = false,
+    css_class = 'show_tag_container',
+    context = 'show'
+  )
+    tag_instances = tag_instances.sort_by { |t| t.tag.priority }
     str = "<span class=\"#{css_class}\">"
     if short
       if (count = tag_instances.count).positive?
-        tag_instance = tag_instances.first
-        str += tag_instance_label(tag_instance)
+        t = tag_instances.first
+        str += tag_instance_label(t, context)
         str += '<span class="tags_plus">...</span>' if count > 1
       end
     else
-      tag_instances.each { |t| str += tag_instance_label(t) }
+      tag_instances.each { |ti| str += tag_instance_label(ti, context) }
     end
     str += '</span>'
     str.html_safe
   end
 
-  def tag_instance_label(tag_instance, css_class = '')
-    link_to tag_path(tag_instance.tag.name.downcase) do
+  def tag_instance_label(tag_instance, context = 'show')
+    link_to tag_path(tag_instance.tag.slug, entity: context) do
       content_tag(
         :span,
         tag_instance.tag.name,
-        class: "label tag_label #{css_class}",
+        class: 'label tag_label',
         title: tag_instance.notes,
-        style: "color: #fff; background-color: #{tag_instance.tag.color}"
+        style: "background-color: #{tag_instance.tag.color}"
       )
-    end.html_safe
+    end
   end
 
   def tag_label(tag, css_class = '')
@@ -33,16 +38,7 @@ module TagHelper
       :span,
       tag.name,
       class: "label tag_label #{css_class}",
-      style: "color: #fff; background-color: #{tag.color}"
+      style: "background-color: #{tag.color}"
     )
-  end
-
-  def contrasting_color(color)
-    color_str = color.clone
-    color_str[0] = ''
-    rgb_hex = color_str.scan(/../)
-    sum = 0
-    rgb_hex.each { |hex| sum += hex.hex }
-    sum > 382 ? '#555555' : '#ffffff'
   end
 end

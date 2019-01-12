@@ -9,7 +9,7 @@ class TagsController < ApplicationController
   end
 
   def show
-    case mode
+    case context
     when 'show'
       @shows = fetch_shows
       @shows_likes = user_likes_for_shows(@shows)
@@ -23,8 +23,8 @@ class TagsController < ApplicationController
 
   private
 
-  def mode
-    @mode ||= params[:entity].in?(%w[show track]) ? params[:entity] : 'show'
+  def context
+    @context ||= params[:entity].in?(%w[show track]) ? params[:entity] : 'show'
   end
 
   def tag
@@ -67,7 +67,7 @@ class TagsController < ApplicationController
     when 'date desc'
       { date: :desc }
     when 'date'
-      { date: :asc }
+      { date: :asc  }
     when 'likes'
       { likes_count: :desc }
     when 'duration'
@@ -81,9 +81,9 @@ class TagsController < ApplicationController
 
     case params[:sort]
     when 'date desc'
-      'shows.date desc'
+      'shows.date desc, tracks.position asc'
     when 'date'
-      'shows.date asc'
+      'shows.date asc, tracks.position asc'
     when 'likes'
       { likes_count: :desc }
     when 'duration'

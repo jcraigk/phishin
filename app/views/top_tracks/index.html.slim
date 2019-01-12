@@ -20,7 +20,7 @@
             a href="/#{track.show.date}/#{track.slug}" = truncate(track.title, length: 44)
           h5.narrow
             a href="/#{track.show.date}" = track.show.date_with_dots
-          = display_tag_instances(track.track_tags, true, 'tag_container_small')
+          = display_tag_instances(track.track_tags, true, 'tag_container_small', 'track')
           = likable(track, @tracks_likes[idx], 'small')
           h3 = duration_readable(track.duration)
           = render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil }

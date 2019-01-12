@@ -48,7 +48,7 @@ group :test do
   gem 'faker'
   gem 'rspec-rails'
   gem 'selenium-webdriver'
-  gem 'shoulda-matchers'
+  gem 'shoulda-matchers', '4.0.0.rc1'
   gem 'simplecov', require: false
   gem 'timecop'
 end

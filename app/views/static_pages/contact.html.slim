@@ -3,16 +3,7 @@
 #content
   #title_box
     h1 Contact
-  #content_box
-    h2 Bug! Don't feed it.
-    p.large This project is open source.
-    p.large
-      ' If you notice a bug, please file an issue on GitHub:
-      a href='https://github.com/jcraigk/phishin/issues' https://github.com/jcraigk/phishin/issues
-    p.large If you are a developer, please feel free to submit a pull request.
-
-    h2 Contact
-    p.large
+    p
       | I woke up one morning in November
       br
       | And I realized I love you
@@ -28,10 +19,23 @@
       | I'd never go browsing away
       br
       | And come back home without you
-    br
-    p.large
-      a.non-remote href="mailto:#{APP_EMAIL}" target='_blank' = APP_EMAIL
 
+  #content_box
+    h2 Bug
+    p.large This project is open source.
+    p.large
+      ' If you notice a bug, please file an issue on GitHub:
+      a.non-remote.underline href='https://github.com/jcraigk/phishin/issues' https://github.com/jcraigk/phishin/issues
+    p.large If you are a developer, please feel free to submit a pull request.
+
+    h2 Talk
+    p.large
+      ' Join the discussion on Discord:
+      a.non-remote.underline href='https://discord.gg/KZWFsNN' https://discord.gg/KZWFsNN
+
+    h2 Contact
+    p.large
+      a.non-remote.underline href="mailto:#{APP_EMAIL}" target='_blank' = APP_EMAIL
     = render partial: 'shared/twitter_follow_button'
 
   = clear_both

@@ -39,19 +39,24 @@ describe 'Tags', :js do
     click_link(tag1.name)
 
     within('#title_box') do
-      expect_content(tag1.name, tag1.description, "Shows: #{tag1.shows.count}", "Tracks: #{tag1.tracks.count}")
+      expect_content(
+        tag1.name,
+        tag1.description,
+        "Shows: #{tag1.shows.count}",
+        "Tracks: #{tag1.tracks.count}"
+      )
     end
-
-    items = page.all('ul.item_list li')
-    expect(items.count).to eq(tag1.tracks.count)
-
-    # Click Shows button
-    click_button("Shows: #{tag1.shows.count}")
 
     items = page.all('ul.item_list li')
     expect(items.count).to eq(tag1.shows.count)
 
-    # Click first show date
+    # Click Shows button
+    click_button("Tracks: #{tag1.tracks.count}")
+
+    items = page.all('ul.item_list li')
+    expect(items.count).to eq(tag1.tracks.count)
+
+    # Click first track
     first('ul.item_list li a').click
     expect(page.current_path).to match(/\d{4}-\d{2}-\d{2}/)
   end
