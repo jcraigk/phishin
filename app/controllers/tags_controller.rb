@@ -67,7 +67,7 @@ class TagsController < ApplicationController
     when 'date desc'
       { date: :desc }
     when 'date'
-      { date: :asc }
+      { date: :asc  }
     when 'likes'
       { likes_count: :desc }
     when 'duration'
@@ -81,9 +81,9 @@ class TagsController < ApplicationController
 
     case params[:sort]
     when 'date desc'
-      'shows.date desc'
+      'shows.date desc, tracks.position asc'
     when 'date'
-      'shows.date asc'
+      'shows.date asc, tracks.position asc'
     when 'likes'
       { likes_count: :desc }
     when 'duration'
