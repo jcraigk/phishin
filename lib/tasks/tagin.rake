@@ -122,10 +122,27 @@ namespace :tagin do
 
   desc 'Pull data from remote narration spreadsheet'
   task narration: :environment do
+    require 'csv'
+
     SPREADSHEET_ID = '10boHKbXnR7V5qFCUc7rtDVBrFg-jmgoOWQLcLRWdz6o'
 
     range = 'Narration Chart!A1:E200'
     data = GoogleSpreadsheetFetcher.new(SPREADSHEET_ID, range).call
-    binding.pry # TODO
+
+    csv_data =
+      data.map do |d|
+        date = d['date']
+        title = d['song']
+        show = Show.find_by(date: date)
+        track = Track.find_by(show: show, title: title)
+        next puts "Track not found: #{date} / #{title}" unless show && track
+        [track.url, '', '', d['summary']]
+      end.compact
+
+    CSV.open("#{Rails.root}/narration.csv", 'w') do |csv|
+      csv_data.each do |d|
+        csv << d
+      end
+    end
   end
 end
