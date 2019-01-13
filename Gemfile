@@ -30,13 +30,17 @@ gem 'therubyracer'
 gem 'twitter-bootstrap-rails', '2.2.8'
 gem 'uglifier'
 
-group :development, :test do
-  gem 'awesome_print'
+group :development do
   gem 'bullet'
-  gem 'pry-byebug'
-  gem 'pry-rails'
+  gem 'httparty'
   gem 'rubocop'
   gem 'rubocop-rspec'
+end
+
+group :development, :test do
+  gem 'awesome_print'
+  gem 'pry-byebug'
+  gem 'pry-rails'
 end
 
 group :test do

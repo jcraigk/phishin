@@ -36,12 +36,12 @@ SET_NAMES = {
 }.freeze
 
 TAGIN_TAG_NAMES = [
-  'Acapella',
+  'A Capella',
   'Acoustic',
   'Alternate Instrument',
   'Banter',
   'Crowd Interaction',
-  'Famous Jam',
+  'Famous',
   'Guest',
   'Narration',
   'Notable Segue',

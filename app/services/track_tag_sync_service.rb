@@ -41,7 +41,8 @@ class TrackTagSyncService
         track: track,
         starts_at_second: seconds_or_nil(row['Starts At']),
         ends_at_second: seconds_or_nil(row['Ends At']),
-        notes: row['Notes']
+        notes: row['Notes'],
+        transcript: row['Transcript']
       ).id
   end
 
