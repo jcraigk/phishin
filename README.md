@@ -61,5 +61,8 @@ You can use [Adminer](https://www.adminer.org/) to interact with Postgres using 
 
 ## Contributions
 
+Forked from [StreamPhish](https://github.com/jeffplang/streamphish/) by Jeff Lang.
+
 Layout and graphic design by Mark Craig.
+
 Logo design by Justin Craig-Kuhn.
