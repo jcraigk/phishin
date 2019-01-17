@@ -17,12 +17,14 @@ namespace :tagin do
       range = "#{tag_name}!A1:E50"
       data = GoogleSpreadsheetFetcher.new(SPREADSHEET_ID, range).call
 
+      # TODO: sanitize quotes and other nasties from transcripts
+
       # Pull in transcript text from URL (expects raw text in response.body)
-      if data.first['Transcript Link'].present?
-        data.each do |d|
-          d['Transcript'] = HTTParty.get(d['Transcript Link']).body
-        end
-      end
+      # if data.first['Transcript Link'].present?
+      #   data.each do |d|
+      #     d['Transcript'] = HTTParty.get(d['Transcript Link']).body
+      #   end
+      # end
 
       TrackTagSyncService.new(tag_name, data).call
     end
