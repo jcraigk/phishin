@@ -1,14 +1,15 @@
 # frozen_string_literal: true
 class GoogleSpreadsheetFetcher
-  attr_reader :spreadsheet_id, :range
+  attr_reader :spreadsheet_id, :range, :has_headers
 
   OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'
   CREDENTIALS_PATH = "#{Rails.root}/tmp/tagit/credentials.json"
   TOKEN_PATH = "#{Rails.root}/tmp/tagit/token.yml"
 
-  def initialize(spreadsheet_id, range)
+  def initialize(spreadsheet_id, range, opts = {})
     @spreadsheet_id = spreadsheet_id
     @range = range
+    @has_headers = opts[:headers]
   end
 
   def call
@@ -19,6 +20,7 @@ class GoogleSpreadsheetFetcher
   private
 
   def fetch_data
+    return response unless has_headers
     column_headers = response.shift
     response.map do |row|
       {}.tap do |hash|
