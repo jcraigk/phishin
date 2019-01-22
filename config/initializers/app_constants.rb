@@ -12,7 +12,7 @@ APP_CONTENT_PATH = Rails.env.test? ? "#{Rails.root}/tmp/content" : '/content'
 IMPORT_DIR = APP_CONTENT_PATH + '/import'
 
 APP_BASE_URL =
-  if Rails.env.in?(%w[development test])
+  if Rails.env.in?(%w[ test])
     'http://localhost'
   else
     'https://phish.in'
@@ -38,15 +38,15 @@ SET_NAMES = {
 TAGIN_TAG_NAMES = [
   'A Capella',
   'Acoustic',
-  'Alternate Instrument',
+  'Alt Lyric',
+  'Alt Rig',
+  'Alt Version',
   'Banter',
   'Crowd Interaction',
-  'Famous',
+  'Famous Jam',
   'Guest',
   'Narration',
   'Notable Segue',
-  'Review Medley',
-  'Rig Mode',
   'Samples',
   'Secret Language',
   'Tease'

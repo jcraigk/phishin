@@ -6,20 +6,15 @@ namespace :phishnet do
     JamchartsImporter.new(ENV['PNET_API_KEY']).call
   end
 
+  desc 'Syncs Debut/Phish Debut tags and outputs CSV for Guest/Alt Rig'
   task setlist_tags: :environment do
     relation = Show.unscoped.order(date: :asc)
 
-    # rig_tag = Tag.find_by(name: 'Alternate Rig')
-    # TrackTag.where(tag: rig_tag).destroy_all
-
-    # guest_tag = Tag.find_by(name: 'Guest')
-    # TrackTag.where(tag: guest_tag).destroy_all
-
     debut_tag = Tag.find_by(name: 'Debut')
-    TrackTag.where(tag: debut_tag).destroy_all
-
     phish_debut_tag = Tag.find_by(name: 'Phish Debut')
-    TrackTag.where(tag: phish_debut_tag).destroy_all
+
+    csv_guest = []
+    csv_alt_rig = []
 
     pbar = ProgressBar.create(total: relation.count, format: '%a %B %c/%C %p%% %E')
 
@@ -40,14 +35,6 @@ namespace :phishnet do
         text = note['title']
         title = note.previous_sibling.content
 
-        tag = nil
-        if text.downcase.include?('phish debut')
-          tag = phish_debut_tag
-        elsif text.downcase.include?('debut')
-          tag = debut_tag
-        end
-        next unless tag
-
         track =
           Track.where(show: show)
                .where(
@@ -58,12 +45,50 @@ namespace :phishnet do
                  "%> #{title} >%",
                  "#{title}, %"
                ).first
-        next puts "Missing: #{date} #{title}" unless track
+        # next puts "Missing: #{date} #{title}" unless track
+        next unless track
 
-        TrackTag.create(track: track, tag: tag)
+        text.split(';').each do |txt|
+          downtxt = txt.downcase
+
+          tag = nil
+          notes = nil
+          if downtxt.include?('phish debut')
+            tag = phish_debut_tag
+          elsif downtxt.include?('debut')
+            tag = debut_tag
+          elsif downtxt.include?('guest') || downtxt =~ /\son\s/
+            if ['fish on', 'page on', 'trey on', 'mike on'].any? { |words| downtxt.include?(words) }
+              csv_alt_rig << [track.url, '', '', txt.strip, 'Imported from Phish.net setlist API']
+            elsif !downtxt.include?('based on')
+              csv_guest << [track.url, '', '', txt.strip, 'Imported from Phish.net setlist API']
+            end
+          end
+          next unless tag
+
+          if ENV['CREATE_TAGS'] == 'true'
+            if (tt = TrackTag.find_by(track: track, tag: tag))
+              tt.update(notes: notes)
+            else
+              TrackTag.create(track: track, tag: tag, notes: notes)
+            end
+          end
+        end
       end
 
       pbar.increment
+    end
+
+    CSV.open("#{Rails.root}/tmp/guest.csv", 'w') do |csv|
+      csv_guest.each do |d|
+        csv << d
+      end
+    end
+
+    CSV.open("#{Rails.root}/tmp/alt_rig.csv", 'w') do |csv|
+      csv_alt_rig.each do |d|
+        csv << d
+      end
     end
 
     pbar.finish
