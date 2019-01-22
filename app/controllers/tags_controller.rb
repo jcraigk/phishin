@@ -24,7 +24,14 @@ class TagsController < ApplicationController
   private
 
   def context
-    @context ||= params[:entity].in?(%w[show track]) ? params[:entity] : 'show'
+    @context ||=
+      if params[:entity].in?(%w[show track])
+        params[:entity]
+      elsif ShowTag.where(tag: tag).count.positive?
+        'show'
+      else
+        'track'
+      end
   end
 
   def tag
