@@ -12,6 +12,7 @@ gem 'friendly_id'
 gem 'geocoder'
 gem 'google-api-client'
 gem 'highline'
+gem 'httparty'
 gem 'jquery-rails'
 gem 'jquery-ui-rails', '5.0.5'
 gem 'newrelic_rpm'
@@ -32,7 +33,6 @@ gem 'uglifier'
 
 group :development do
   gem 'bullet'
-  gem 'httparty'
   gem 'rubocop'
   gem 'rubocop-rspec'
 end
