@@ -3,12 +3,10 @@ require 'open-uri'
 require 'nokogiri'
 
 class ShowImporter::ShowInfo
-  PNET_API_KEY = '448345A7B7688DDE43D0'
-
   attr_reader :songs, :pnet
 
   def initialize(date)
-    @pnet = ShowImporter::PNet.new(PNET_API_KEY)
+    @pnet = ShowImporter::PNet.new(ENV['PNET_API_KEY'])
     @data = parse_data(date)
     songs = parse_songs
     raise 'Invalid date' if songs.empty?
