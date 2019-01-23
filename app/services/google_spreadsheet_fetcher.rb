@@ -9,7 +9,7 @@ class GoogleSpreadsheetFetcher
   def initialize(spreadsheet_id, range, opts = {})
     @spreadsheet_id = spreadsheet_id
     @range = range
-    @has_headers = opts[:headers]
+    @has_headers = opts[:headers] || true
   end
 
   def call

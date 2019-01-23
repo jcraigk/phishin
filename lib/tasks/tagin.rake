@@ -124,6 +124,10 @@ namespace :tagin do
   end
 
   desc 'Pull data from remote narration spreadsheet'
+  # Track not found: 1989-08-26 / Fly Famous Mockingbird (incomplete show)
+  # Track not found: 1990-04-04 / Rhombus Narration (narration not present this show)
+  # Track not found: 1991-11-10 / Llama (no recording)
+  # Track not found: 1992-04-04 / Harpua (incomplete show)
   task narration: :environment do
     SPREADSHEET_ID = '10boHKbXnR7V5qFCUc7rtDVBrFg-jmgoOWQLcLRWdz6o'
     SPREADSHEET_RANGE = 'Narration Chart!A1:E200'
@@ -136,7 +140,7 @@ namespace :tagin do
         title = d['song']
         show = Show.find_by(date: date)
         track = Track.find_by(show: show, title: title)
-        next puts "Track not found: #{date} / #{title}" unless show && track
+        next puts "Track not found: #{date} / #{title} :: #{d['summary']}" unless show && track
         [track.url, '', '', d['summary']]
       end.compact
 
