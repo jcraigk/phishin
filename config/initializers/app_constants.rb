@@ -35,19 +35,19 @@ SET_NAMES = {
   'E3' => 'Encore 3'
 }.freeze
 
-TAGIN_TAG_NAMES = [
-  'A Capella',
-  'Acoustic',
-  'Alt Lyric',
-  'Alt Rig',
-  'Alt Version',
-  'Banter',
-  'Crowd Interaction',
-  'Famous Jam',
-  'Guest',
-  'Narration',
-  'Notable Segue',
-  'Samples',
-  'Secret Language',
-  'Tease'
-].freeze
+TAGIN_TAGS = {
+  'A Capella' => 'Sung without accompaniment',
+  'Acoustic' => 'Played on acoustic instruments',
+  'Alt Lyric' => 'Non-standard or keyword lyircs',
+  'Alt Rig' => 'Band member uses different gear',
+  'Alt Version' => 'Non-standrd variation on a song',
+  # 'Banter' => 'Band members having a chat',
+  # 'Crowd Interaction' => 'Crowd interacting with band or music',
+  # 'Famous Jam' => 'Jams so famous they're named',
+  'Guest' => 'Other artists join the band onstage',
+  'Narration' => 'Spoken word including narrative',
+  # 'Notable Segue' => 'Transitions worth hearing',
+  # 'Samples' => 'Audio samples used in performance',
+  # 'Secret Language' => 'Secret language instructions and invocations',
+  'Tease' => 'Brief musical references'
+}.freeze

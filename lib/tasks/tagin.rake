@@ -10,13 +10,13 @@ namespace :tagin do
   task sync: :environment do
     SPREADSHEET_ID = '1WZtJYSHvt0DSYeUtzM5h0U5c90DN9Or7ckkJD-ds-rM'
 
-    TAGIN_TAG_NAMES.each do |tag_name|
+    TAGIN_TAGS.each do |tag_name, _desc|
       puts '========================'
       puts " Syncing Tag: #{tag_name}"
       puts '========================'
 
-      range = "#{tag_name}!A1:E50"
-      data = GoogleSpreadsheetFetcher.new(SPREADSHEET_ID, range).call
+      range = "#{tag_name}!A1:G5000"
+      data = GoogleSpreadsheetFetcher.new(SPREADSHEET_ID, range, headers: true).call
 
       # TODO: sanitize quotes and other nasties from transcripts
 

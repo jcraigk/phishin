@@ -47,7 +47,7 @@ class TrackTagSyncService
   end
 
   def seconds_or_nil(str)
-    return if str.empty?
+    return if str.nil? || str.empty?
     min, sec = str.split(':')
     min.to_i * 60 + sec.to_i
   end
