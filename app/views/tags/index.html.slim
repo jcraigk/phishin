@@ -2,21 +2,30 @@
 
 #content
   #title_box
-    h2 All Tags (#{number_with_delimiter(Tag.count)} total)
-    = render partial: 'sort_tags_filter', locals: { item_hash: tag_sort_items }
+    h1 All Tags (#{number_with_delimiter(Tag.count)} total)
     .hr
-    p Tags are used to mark certain Shows and Tracks with special meaning. For example, the "SBD" tag means that the audio is sourced from the Soundboard rather than a microphone in the audience.
+    p Tags are used to annotate and highlight content.
+    p
+      ' The tag associations seen here have been pulled from various
+      a> href="https://phish.net" Phish.net
+      ' projects as well as crowd sourcing through the
+      a href="/tagin-project" Tag.in Project
+      | .
+
 
   #content_box
-    ul.item_list.clickable
-      - @tags.each do |tag|
-        li
-          h2
-            a href="/tags/#{tag.slug}"
-              .tag_container_small = tag_label(tag)
-          h2.wider.small-font = truncate(tag.description, length: 70)
-          h3.alt = pluralize_with_delimiter(tag.tracks_count, 'track')
-          h3.alt = pluralize_with_delimiter(tag.shows_count, 'show')
-          = clear_both
+    - @tag_groups.each do |group_name, tags|
+      h1 = group_name
+
+      ul.item_list.clickable
+        - tags.each do |tag|
+          li
+            h2
+              a href="/tags/#{tag.slug}"
+                .tag_container_small = tag_label(tag)
+            h2.wider.small-font = truncate(tag.description, length: 70)
+            h3.alt = pluralize_with_delimiter(tag.tracks_count, 'track')
+            h3.alt = pluralize_with_delimiter(tag.shows_count, 'show')
+            = clear_both
 
   = clear_both

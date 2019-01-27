@@ -4,7 +4,7 @@ class TagsController < ApplicationController
   caches_action :show, expires_in: CACHE_TTL
 
   def index
-    @tags = Tag.order(tags_order_by)
+    @tag_groups = Tag.order(tags_order_by).group_by(&:group).sort
     render_xhr_without_layout
   end
 

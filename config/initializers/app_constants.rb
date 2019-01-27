@@ -36,18 +36,18 @@ SET_NAMES = {
 }.freeze
 
 TAGIN_TAGS = {
-  'A Capella' => 'Sung without accompaniment',
+  'A Cappella' => 'Sung without accompaniment',
   'Acoustic' => 'Played on acoustic instruments',
-  'Alt Lyric' => 'Non-standard or keyword lyircs',
-  'Alt Rig' => 'Band member uses different gear',
-  'Alt Version' => 'Non-standrd variation on a song',
+  'Alt Lyric' => 'Atypical lyrics or keyword section',
+  'Alt Rig' => 'Band member using atypical gear',
+  'Alt Version' => 'Atypical variation on a song',
   # 'Banter' => 'Band members having a chat',
   # 'Crowd Interaction' => 'Crowd interacting with band or music',
   # 'Famous Jam' => 'Jams so famous they're named',
-  'Guest' => 'Other artists join the band onstage',
-  'Narration' => 'Spoken word including narrative',
+  'Guest' => 'Other artists joining the band',
+  'Narration' => 'Narrative spoken word',
   # 'Notable Segue' => 'Transitions worth hearing',
   # 'Samples' => 'Audio samples used in performance',
   # 'Secret Language' => 'Secret language instructions and invocations',
-  'Tease' => 'Brief musical references'
+  'Tease' => 'Transient musical reference'
 }.freeze
