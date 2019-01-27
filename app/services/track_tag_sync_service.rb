@@ -34,7 +34,7 @@ class TrackTagSyncService
   end
 
   def create_track_tag(row)
-    puts "Creating #{row['URL']}"
+    puts "#{tag.name}: #{row['URL']}"
     @created_ids <<
       TrackTag.create(
         tag: tag,
