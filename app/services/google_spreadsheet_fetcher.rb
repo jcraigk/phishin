@@ -3,8 +3,8 @@ class GoogleSpreadsheetFetcher
   attr_reader :spreadsheet_id, :range, :has_headers
 
   OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'
-  CREDENTIALS_PATH = "#{Rails.root}/tmp/tagit/credentials.json"
-  TOKEN_PATH = "#{Rails.root}/tmp/tagit/token.yml"
+  CREDENTIALS_PATH = "#{Rails.root}/tmp/tagin/credentials.json"
+  TOKEN_PATH = "#{Rails.root}/tmp/tagin/token.yml"
 
   def initialize(spreadsheet_id, range, opts = {})
     @spreadsheet_id = spreadsheet_id

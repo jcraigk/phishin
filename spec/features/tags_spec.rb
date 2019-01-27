@@ -60,30 +60,4 @@ describe 'Tags', :js do
     first('ul.item_list li a').click
     expect(page.current_path).to match(/\d{4}-\d{2}-\d{2}/)
   end
-
-  it 'sorting' do
-    visit tags_path
-
-    # Default sort by Name
-    within('#title_box') do
-      expect_content('Sort by', 'Name')
-    end
-    expect_content_in_order([tag1, tag2, tag3].map(&:name))
-
-    # Sort by Track Count
-    within('#title_box') do
-      first('.btn-group').click
-      click_link('Track Count')
-      expect_content('Sort by', 'Track Count')
-    end
-    expect_content_in_order([tag3, tag1, tag2].map(&:name))
-
-    # Sort by Show Count
-    within('#title_box') do
-      first('.btn-group').click
-      click_link('Show Count')
-      expect_content('Sort by', 'Show Count')
-    end
-    expect_content_in_order([tag2, tag1, tag3].map(&:name))
-  end
 end
