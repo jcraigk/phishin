@@ -23,7 +23,7 @@
           = likable(show, @shows_likes[idx], 'small')
           h3.narrow = duration_readable(show.duration, 'letters')
           = render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false }
-          = display_tag_instances(show.show_tags, true)
+          = display_tag_instances(show.show_tags)
           = clear_both
 
   = clear_both

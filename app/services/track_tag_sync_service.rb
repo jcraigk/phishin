@@ -3,11 +3,12 @@ require 'csv'
 
 class TrackTagSyncService
   attr_reader :tag, :data
-  attr_reader :track, :created_ids, :updated_ids
+  attr_reader :track, :created_ids, :updated_ids, :dupes
 
   def initialize(tag_name, data)
     @data = data
     @tag = Tag.find_by!(name: tag_name)
+    @dupes = []
   end
 
   def call
@@ -15,6 +16,13 @@ class TrackTagSyncService
     destroy_existing_track_tags
     sync_track_tags
     # create_csv_for_extra_track_tags
+
+    if dupes.any?
+      puts
+      puts 'DUPES:'
+      puts dupes
+    end
+
     puts "#{created_ids.size} tags synced"
   end
 
@@ -34,9 +42,15 @@ class TrackTagSyncService
   end
 
   def create_track_tag(row)
-    puts "#{tag.name}: #{row['URL']}"
+    if TrackTag.find_by(tag: tag, track: track)
+      print '*'
+      @dupes << row['URL']
+    else
+      print '.'
+    end
+
     @created_ids <<
-      TrackTag.create(
+      TrackTag.create!(
         tag: tag,
         track: track,
         starts_at_second: seconds_or_nil(row['Starts At']),

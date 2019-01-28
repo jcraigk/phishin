@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_27_220532) do
+ActiveRecord::Schema.define(version: 2019_01_28_032845) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -168,7 +168,6 @@ ActiveRecord::Schema.define(version: 2019_01_27_220532) do
     t.integer "ends_at_second"
     t.text "transcript"
     t.index ["notes"], name: "index_track_tags_on_notes"
-    t.index ["tag_id", "track_id"], name: "index_track_tags_on_tag_id_and_track_id", unique: true
     t.index ["tag_id"], name: "index_track_tags_on_tag_id"
     t.index ["track_id"], name: "index_track_tags_on_track_id"
   end

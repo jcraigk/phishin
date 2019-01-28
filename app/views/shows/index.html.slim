@@ -24,7 +24,7 @@
                 a href="/#{show.venue.slug}" = truncate(show.venue_name, length: 45)
               h5.narrower.small-font
                 a href="/map?map_term=#{CGI.escape(show.venue.location)}" = truncate(show.venue.location, length: 16)
-              = display_tag_instances(show.show_tags, true, 'tag_container_small')
+              = display_tag_instances(show.show_tags, 'tag_container_small')
               = likable(show, props[:likes][idx], 'small')
               h3 = duration_readable(show.duration, 'letters')
               = render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false }
