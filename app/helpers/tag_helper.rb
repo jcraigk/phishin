@@ -27,8 +27,9 @@ module TagHelper
         :span,
         tag_instance.tag.name,
         class: 'label tag_label',
-        title: tag_instance.notes,
-        style: "background-color: #{tag_instance.tag.color}"
+        title: title_for_tag_instance(tag_instance),
+        style: "background-color: #{tag_instance.tag.color}",
+        data: { html: true }
       )
     end
   end
@@ -40,5 +41,30 @@ module TagHelper
       class: "label tag_label #{css_class}",
       style: "background-color: #{tag.color}"
     )
+  end
+
+  def title_for_tag_instance(t)
+    title = ''
+
+    if t.try(:starts_at_second)&.present?
+      title += "Starts at #{tag_timestamp(t&.starts_at_second)}<br><br>"
+    end
+    if t.try(:ends_at_second)&.present?
+      title += "Ends at #{tag_timestamp(t&.ends_at_second)}<br><br>"
+    end
+    title += "#{t.notes}<br><br>" if t.notes.present?
+    if t.try(:transcript)&.present?
+      title += "-TRANSCRIPT-<br> #{sanitized_transcript(t.transcript)}"
+    end
+
+    title
+  end
+
+  def sanitized_transcript(transcript)
+    transcript.gsub("\n", '<br>')
+  end
+
+  def tag_timestamp(timestamp)
+    duration_readable(timestamp * 1000, 'colons')
   end
 end

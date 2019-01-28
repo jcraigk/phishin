@@ -60,6 +60,7 @@ $ ->
 
           # Tooltips
           $('a[title]').tooltip()
+          $('.tag_label[title]').tooltip()
 
           # Auto-scroll and highlight track anchor if present
           if state.data.href.substr(0,6) != '/play/' and path = state.data.href.split("/")[2]
