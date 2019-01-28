@@ -59,7 +59,7 @@ module TagHelper
         title += "<br><br>-TRANSCRIPT-<br> #{wrapped_str(t.transcript)}"
       end
 
-      title += '<br><br>-------------------<br><br>' unless idx == tag_instances.size - 1
+      title += '<br>-------------------<br>' unless idx == tag_instances.size - 1
     end
 
     title

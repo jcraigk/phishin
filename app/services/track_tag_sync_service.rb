@@ -38,7 +38,12 @@ class TrackTagSyncService
   def sync_track_tags
     data.each do |row|
       @track = find_track_by_url(row['URL'])
-      existing = TrackTag.find_by(tag: tag, track: track)
+      existing =
+        if tag.name == 'Tease'
+          TrackTag.find_by(tag: tag, track: track, notes: row['Notes'])
+        else
+          TrackTag.find_by(tag: tag, track: track)
+        end
       existing ? update_track_tag(existing, row) : create_track_tag(row)
     end
   end
