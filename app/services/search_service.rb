@@ -88,17 +88,20 @@ class SearchService
   def tags
     Tag.where('name ILIKE :term OR description ILIKE :term', term: "%#{term}%")
        .order(name: :asc)
+
   end
 
   def show_tags
     ShowTag.includes(:tag, :show)
            .where('notes ILIKE ?', "%#{term}%")
            .order('tags.name, shows.date')
+           .limit(200)
   end
 
   def track_tags
     TrackTag.includes(:tag, track: :show)
             .where('notes ILIKE ?', "%#{term}%")
             .order('tags.name, shows.date, tracks.position')
+            .limit(200)
   end
 end
