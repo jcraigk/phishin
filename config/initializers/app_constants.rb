@@ -46,7 +46,7 @@ TAGIN_TAGS = {
   # 'Famous' => 'Famous (specially named) show or track',
   'Guest' => 'Other artists joining the band',
   'Narration' => 'Narrative spoken word',
-  # 'Samples' => 'Audio samples used in performance',
+  'Samples' => 'Audio samples used in performance',
   # 'Secret Language' => 'Secret language instructions and invocations',
   'Tease' => 'Transient musical reference'
 }.freeze

@@ -9,11 +9,12 @@ class TrackTagSyncService
     @data = data
     @tag = Tag.find_by!(name: tag_name)
     @dupes = []
+    @created_ids = []
+    @updated_ids = []
   end
 
   def call
-    @created_ids = []
-    destroy_existing_track_tags
+    # destroy_existing_track_tags
     sync_track_tags
     # create_csv_for_extra_track_tags
 
@@ -23,7 +24,9 @@ class TrackTagSyncService
       puts dupes
     end
 
-    puts "#{created_ids.size} tags synced"
+    puts
+    puts "#{created_ids.size} tags created"
+    puts "#{updated_ids.size} tags updated"
   end
 
   private
@@ -35,20 +38,13 @@ class TrackTagSyncService
   def sync_track_tags
     data.each do |row|
       @track = find_track_by_url(row['URL'])
-      # existing = TrackTag.find_by(tag: tag, track: track)
-      # existing ? update_track_tag(existing, row) : create_track_tag(row)
-      create_track_tag(row)
+      existing = TrackTag.find_by(tag: tag, track: track)
+      existing ? update_track_tag(existing, row) : create_track_tag(row)
     end
   end
 
   def create_track_tag(row)
-    if TrackTag.find_by(tag: tag, track: track)
-      print '*'
-      @dupes << row['URL']
-    else
-      print '.'
-    end
-
+    print '.'
     @created_ids <<
       TrackTag.create!(
         tag: tag,
@@ -58,6 +54,17 @@ class TrackTagSyncService
         notes: row['Notes'],
         transcript: row['Transcript']
       ).id
+  end
+
+  def update_track_tag(tt, row)
+    print '-'
+    tt.update(
+      starts_at_second: seconds_or_nil(row['Starts At']),
+      ends_at_second: seconds_or_nil(row['Ends At']),
+      notes: row['Notes'],
+      transcript: row['Transcript']
+    )
+    @updated_ids << tt.id
   end
 
   def seconds_or_nil(str)
@@ -88,17 +95,6 @@ class TrackTagSyncService
   def show_slug(url)
     path_segments(url)[-2]
   end
-
-
-  # def update_track_tag(track_tag, row)
-  #   puts "Updating #{row['URL']}"
-  #   track_tag.update(
-  #     starts_at_second: seconds_or_nil(row['Starts At']),
-  #     ends_at_second: seconds_or_nil(row['Ends At']),
-  #     notes: row['Notes']
-  #   )
-  #   @updated_ids << track_tag.id
-  # end
 
   # def csv_file
   #   "#{Rails.root}/tmp/tagit/#{tag.slug}_extras.csv"

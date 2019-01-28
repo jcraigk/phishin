@@ -3,8 +3,7 @@ class GoogleSpreadsheetFetcher
   attr_reader :spreadsheet_id, :range, :has_headers
 
   OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'
-  CREDENTIALS_PATH = "#{Rails.root}/tmp/tagin/credentials.json"
-  TOKEN_PATH = "#{Rails.root}/tmp/tagin/token.yml"
+  TOKEN_PATH = "#{Rails.root}/tmp/google_api_token.yml"
 
   def initialize(spreadsheet_id, range, opts = {})
     @spreadsheet_id = spreadsheet_id
@@ -42,7 +41,7 @@ class GoogleSpreadsheetFetcher
   def authorizer
     @authorizer ||=
       Google::Auth::UserAuthorizer.new(
-        Google::Auth::ClientId.from_file(CREDENTIALS_PATH),
+        Google::Auth::ClientId.from_hash(JSON[ENV['GOOGLE_API_CREDS_JSON']]),
         Google::Apis::SheetsV4::AUTH_SPREADSHEETS_READONLY,
         Google::Auth::Stores::FileTokenStore.new(file: TOKEN_PATH)
       )
