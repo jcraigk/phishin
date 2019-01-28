@@ -48,21 +48,40 @@ module TagHelper
     title = ''
 
     tag_instances.each_with_index do |t, idx|
-      if t.try(:starts_at_second)&.present?
-        title += "Starts at #{tag_timestamp(t&.starts_at_second)}<br><br>"
-      end
-      if t.try(:ends_at_second)&.present?
-        title += "Ends at #{tag_timestamp(t&.ends_at_second)}<br><br>"
-      end
-      title += wrapped_str(t.notes) if t.notes.present?
-      if t.try(:transcript)&.present?
-        title += "<br><br>-TRANSCRIPT-<br> #{wrapped_str(t.transcript)}"
+      if t.tag.name == 'Tease'
+        title += wrapped_str(t.notes) if t.notes.present?
+        if start_timestamp(t) && end_timestamp(t)
+          title += " between #{start_timestamp(t)} and #{end_timestamp(t)}"
+        elsif start_timestamp(t)
+          title += " at #{start_timestamp(t)}"
+        end
+      else
+        if start_timestamp(t)
+          title += "Starts at #{start_timestamp(t)}<br>"
+        end
+        if end_timestamp(t)
+          title += "Ends at #{end_timestamp(t)}<br>"
+        end
+        title += wrapped_str(t.notes) if t.notes.present?
+        if t.try(:transcript)&.present?
+          title += "<br><br>-TRANSCRIPT-<br> #{wrapped_str(t.transcript)}"
+        end
       end
 
       title += '<br>-------------------<br>' unless idx == tag_instances.size - 1
     end
 
     title
+  end
+
+  def start_timestamp(t)
+    return unless t.try(:starts_at_second)
+    tag_timestamp(t.starts_at_second)
+  end
+
+  def end_timestamp(t)
+    return unless t.try(:ends_at_second)
+    tag_timestamp(t.ends_at_second)
   end
 
   def wrapped_str(str)
