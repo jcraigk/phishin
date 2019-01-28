@@ -52,16 +52,16 @@ module TagHelper
     if t.try(:ends_at_second)&.present?
       title += "Ends at #{tag_timestamp(t&.ends_at_second)}<br><br>"
     end
-    title += "#{t.notes}<br><br>" if t.notes.present?
+    title += "#{wrapped_str(t.notes)}" if t.notes.present?
     if t.try(:transcript)&.present?
-      title += "-TRANSCRIPT-<br> #{sanitized_transcript(t.transcript)}"
+      title += "<br><br>-TRANSCRIPT-<br> #{wrapped_str(t.transcript)}"
     end
 
     title
   end
 
-  def sanitized_transcript(transcript)
-    transcript.gsub("\n", '<br>')
+  def wrapped_str(str)
+    word_wrap(str, line_width: 50).gsub("\n", '<br>')
   end
 
   def tag_timestamp(timestamp)
