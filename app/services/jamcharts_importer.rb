@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class JamchartsImporter
-  attr_reader :api_key, :invalid_items, :missing_shows
+  attr_reader :api_key, :invalid_items, :missing_shows, :matched_ids
 
   def initialize(api_key)
     @api_key = api_key
@@ -9,6 +9,7 @@ class JamchartsImporter
   def call
     @invalid_items = []
     @missing_shows = []
+    @matched_ids = []
     sync_jamcharts
   end
 
@@ -62,26 +63,25 @@ class JamchartsImporter
   end
 
   def handle_item(item, show)
-    track_matched = false
+    song = find_song_by_title(item['song'])
     show.tracks.sort_by(&:position).each do |track|
-      song = find_song_by_title(item['song'])
       next if song.nil?
 
       st = SongsTrack.where(song_id: song.id, track_id: track.id).first
       next if st.nil?
-      track_matched = true
+
+      details = "#{show.date} => #{track.title} (#{track.id})"
+      next if matched_ids.include?(track.id) # Skip to next occurrence of song in set
+      matched_ids << track.id
 
       tt = TrackTag.find_by(track: track, tag: jamcharts_tag)
       next if tt&.notes == item['jamchart_description']
 
-      # TODO: Handle multiple jamcharts descriptions for the same track
-      # (is this an error on phish.net side?  Shouldn't these be unique?)
-      details = "#{show.date} => #{track.title} (#{track.id})"
       if tt.present?
-        puts "Updating #{details}"
+        # puts "Updating #{details}"
         tt.update(notes: item['jamchart_description'])
       else
-        puts "Creating #{details}"
+        # puts "Creating #{details}"
         TrackTag.create!(
           track: track,
           tag: jamcharts_tag,
@@ -89,7 +89,9 @@ class JamchartsImporter
         )
       end
 
-      @invalid_items << "#{item['showdate']} - #{item['song']}" unless track_matched
+      return # Important for multi-track matching!
     end
+
+    @invalid_items << "#{item['showdate']} - #{item['song']}"
   end
 end

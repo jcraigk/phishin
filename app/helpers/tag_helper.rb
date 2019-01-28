@@ -1,37 +1,38 @@
 # frozen_string_literal: true
 module TagHelper
-  def display_tag_instances(
-    tag_instances,
-    short = false,
-    css_class = 'show_tag_container',
-    context = 'show'
-  )
-    tag_instances = tag_instances.sort_by { |t| t.tag.priority }
+  def display_tag_instances(tag_instances, css_class = 'show_tag_container', context = 'show')
+    tag_groups =
+      tag_instances.sort_by { |t| [t.tag.priority, t.tag.try(:starts_at_second)] }
+                   .group_by { |t| t.tag.name }
+    return unless tag_groups.any?
+
     str = "<span class=\"#{css_class}\">"
-    if short
-      if (count = tag_instances.count).positive?
-        t = tag_instances.first
-        str += tag_instance_label(t, context)
-        str += '<span class="tags_plus">...</span>' if count > 1
-      end
-    else
-      tag_instances.each { |ti| str += tag_instance_label(ti, context) }
-    end
+    tag_groups.each { |group| str += tag_stack_label(group, context) }
     str += '</span>'
+
     str.html_safe
   end
 
-  def tag_instance_label(tag_instance, context = 'show')
-    link_to tag_path(tag_instance.tag.slug, entity: context) do
+  def tag_stack_label(tag_stack, context = 'show')
+    title = tag_stack.first
+    tag_instances = tag_stack.second
+    first_instance = tag_instances.first
+    link_to tag_path(first_instance.tag.slug, entity: context) do
       content_tag(
         :span,
-        tag_instance.tag.name,
+        stack_title(tag_instances),
         class: 'label tag_label',
-        title: title_for_tag_instance(tag_instance),
-        style: "background-color: #{tag_instance.tag.color}",
+        title: tooltip_for_tag_instances(tag_instances),
+        style: "background-color: #{first_instance.tag.color}",
         data: { html: true }
       )
     end
+  end
+
+  def stack_title(tag_instances)
+    str = tag_instances.first.tag.name
+    str += " (#{tag_instances.size})" if tag_instances.size >= 2
+    str
   end
 
   def tag_label(tag, css_class = '')
@@ -43,18 +44,22 @@ module TagHelper
     )
   end
 
-  def title_for_tag_instance(t)
+  def tooltip_for_tag_instances(tag_instances)
     title = ''
 
-    if t.try(:starts_at_second)&.present?
-      title += "Starts at #{tag_timestamp(t&.starts_at_second)}<br><br>"
-    end
-    if t.try(:ends_at_second)&.present?
-      title += "Ends at #{tag_timestamp(t&.ends_at_second)}<br><br>"
-    end
-    title += "#{wrapped_str(t.notes)}" if t.notes.present?
-    if t.try(:transcript)&.present?
-      title += "<br><br>-TRANSCRIPT-<br> #{wrapped_str(t.transcript)}"
+    tag_instances.each_with_index do |t, idx|
+      if t.try(:starts_at_second)&.present?
+        title += "Starts at #{tag_timestamp(t&.starts_at_second)}<br><br>"
+      end
+      if t.try(:ends_at_second)&.present?
+        title += "Ends at #{tag_timestamp(t&.ends_at_second)}<br><br>"
+      end
+      title += wrapped_str(t.notes) if t.notes.present?
+      if t.try(:transcript)&.present?
+        title += "<br><br>-TRANSCRIPT-<br> #{wrapped_str(t.transcript)}"
+      end
+
+      title += '<br><br>-------------------<br><br>' unless idx == tag_instances.size - 1
     end
 
     title
