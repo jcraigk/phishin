@@ -14,7 +14,7 @@
       a href="/tags" Tags page
       | .
 
-    p To further expand discoverability of content, we are proposing a crowd-sourced effort to apply an expanded set of pre-selected Tags:
+    p To further expand discoverability, we are proposing a crowd-sourced effort to apply an expanded set of pre-selected Tags based on objective analysis of the content:
 
     ul
       - TAGIN_TAGS.each do |name, _desc|
@@ -24,10 +24,6 @@
       ' See the
       a href='https://docs.google.com/spreadsheets/d/1WZtJYSHvt0DSYeUtzM5h0U5c90DN9Or7ckkJD-ds-rM' Master Tag.in Spreadsheet
       | &nbsp;for examples.  Note this list is subject to change as the project develops.
-
-    h2 A Note on Objectivity
-
-    p The curated set of Tags above focuses on objective classification rather than subjective interpretation.  Some of the Tags, such as "Famous Jam" and "Notable Segue" will introduce some subjectivity, in which case the admins of Phish.in will make the final determination as to its inclusion.  Each tag has its own set of conventions for promoting consistency (see below).
 
     h2 Contributing
 
@@ -69,7 +65,7 @@
     h2 A Cappella
     ul
       li Includes typical a cappella song performances (Sweet Adeline, The Birdwatcher, Star Spangled Banner, etc)
-      li Question: should composed "steam dream" section of Split Open and Melt be included?
+      li Does NOT include smaller sections like "steam dream" in SOAMelt
       li Question: should pure vocal jams at end of YEM be included?
 
     h2 Acoustic
@@ -110,18 +106,19 @@
       li Notes section should contain brief summary of what was talked about (example: "Trey teases Fish")
       li All spoken words should be transcribed and pasted into Transcript field (example: "Trey: Fish, have you had your ass handed to you today?")
 
-    h2 Crowd Interaction
+    h2 Crowd
     ul
-      li "Woo"s (appearing outside Twist)
+      li Any crowd interaction that is audible or referenced by the band
+      li "Woo"s (heard outside Twist)
       li Anytime a crowd member is brought onstage even if they don't speak
       li Unique interactions: "Fuck You" from 1991-10-31 Wait, for example
       li Does NOT include the common ones like Stash claps, Gin "take a bath", or applause during Divided Sky pause
       li Notes section should contain brief summary of interaction
       li If there are spoken words, they should be transcribed and pasted into Transcript field
 
-    h2 Famous Jam
+    h2 Famous
     ul
-      li Well-known named performances of songs like Prague Ghost, Tahoe Tweezer, etc.
+      li Well-known (named) performances of songs like Prague Ghost, Tahoe Tweezer, etc.
 
     h2 Guest
     ul
@@ -133,13 +130,6 @@
       li Most notably Gamehendge narration, but also Harpua, etc
       li Notes section should contain brief summary of interaction
       li All spoken words should be transcribed and pasted into Transcript field
-
-    h2 Notable Segue
-    ul
-      li Phish performs segues frequently and they are subjectively perceived (Trey pulls the "rip cord" and it gets labeled with ">" on some setlists, which is arguably incorrect labeling).
-      li These should be the most notable segues in the band's history
-      li The total occurrences should be capped at 50 or so to ensure only the most notable ones are tagged
-      li Some segues may be split across multiple tracks, in which case multiple Segue Tag instances will need to be created.  The first one should have no stop timestamp and the second one should have no start timestamp to indicate a continuation across tracks.
 
     h2 Samples
     ul
@@ -157,8 +147,7 @@
     h2 Tease
     ul
       li The band members frequently reference other works during jams
-      li Some tracks may have many Tease instances
-      li Question: should each have its own entry with timestamps and Notes fields, or just one Tease for the track with single detailed Notes?
-      li Put the name(s) of the teased work in the Notes field ("Streets of Cairo" for example)
+      li Some tracks may have many Tease instances; each should be input separately
+      li Put the name(s) of the teased work in the Notes field ("Norwegian Wood by The Beatles" for example)
 
   = clear_both
