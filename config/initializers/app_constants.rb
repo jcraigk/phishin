@@ -41,12 +41,12 @@ TAGIN_TAGS = {
   'Alt Lyric' => 'Atypical lyrics or keyword section',
   'Alt Rig' => 'Band member using atypical gear',
   'Alt Version' => 'Atypical variation on a song',
-  # 'Banter' => 'Band members having a chat',
-  # 'Crowd' => 'Crowd interacting with band or music',
-  # 'Famous' => 'Famous (specially named) show or track',
+  'Banter' => 'Band members having a chat',
+  'Crowd' => 'Crowd interacting with band or music',
+  'Famous' => 'Famous (specially named) show or track',
   'Guest' => 'Other artists joining the band',
   'Narration' => 'Narrative spoken word',
   'Samples' => 'Audio samples used in performance',
-  # 'Secret Language' => 'Secret language instructions and invocations',
+  'Secret Language' => 'Secret language instructions and invocations',
   'Tease' => 'Transient musical reference'
 }.freeze
