@@ -18,12 +18,11 @@
           h2.position_num = idx + 1
           h2
             a href="/#{show.date}" = show.date_with_dots
-          h4.narrow
-            a href="/#{show.venue.slug}" = truncate(show.venue_name, length: 30)
+          h2.widest
+            a href="/#{show.venue.slug}" = show.venue_name
           = likable(show, @shows_likes[idx], 'small')
           h3.narrow = duration_readable(show.duration, 'letters')
           = render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false }
-          = display_tag_instances(show.show_tags)
           = clear_both
 
   = clear_both

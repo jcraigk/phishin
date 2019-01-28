@@ -76,10 +76,9 @@
             .drag_arrows_vertical
               i.icon-resize-vertical
             h2.position_num = idx + 1
-            h2.wide = track.title
+            h2.wider = track.title
             h5.narrower
               a href="/#{track.show.date}" = track.show.date_with_dots
-            = display_tag_instances(track.track_tags, 'tag_container_small', 'track')
             = likable(track, @tracks_likes[idx], 'small')
             h3 = duration_readable(track.duration)
             = render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: true, show: nil }
