@@ -414,7 +414,7 @@ $ ->
 
   .on 'click', '.share_with_timestamp', ->
     time = App.Util.readableDuration App.Player.currentPosition()
-    App.Util.copyToClipboard($('body').data('base-url')+$(this).data('url')+'?'+time)
+    App.Util.copyToClipboard($('body').data('base-url')+$(this).data('url')+'?t='+time)
 
   # Play random song track
   .on 'click', '#random_song_track_btn', (e) ->
