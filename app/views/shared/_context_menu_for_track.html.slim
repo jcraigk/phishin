@@ -25,6 +25,10 @@
           i.icon-share-alt
           |  Share
       li
+        a.share_with_timestamp.share_track href='null' data-url="/#{show ? show.date : track.show.date}/#{track.slug}"
+          i.icon-share-alt
+          |  Share with timestamp
+      li
         a.download href='null' data-url=download_track_path(track.id)
           i.icon-download
           |  Download MP3

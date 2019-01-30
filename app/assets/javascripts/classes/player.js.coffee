@@ -46,6 +46,8 @@ class @Player
             this.togglePause()
             alert 'Touch the Play button to begin playback. Your browser does not support auto-play.'
 
+  currentPosition: ->
+    @sm_sound.position
 
   togglePlaylistMode: ->
     if @playlist_mode
