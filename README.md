@@ -21,7 +21,7 @@ make build
 make start
 ```
 
-3. Download the [data/audio seed file](https://www.dropbox.com/s/mxkevdsz4m40ji6/phishin_for_devs.zip?dl=1) and unzip it.  This file contains a full set of data from Nov 2017 with user data purged.  It also includes all mp3 audio files for the last Baker's Dozen show (2017-08-06).
+3. Download the [data/audio seed file](https://www.dropbox.com/s/o1d40ik3crme0vj/phishin_for_devs.20190129.zip?dl=1) and unzip it.  This file contains a full set of data with user and other sensitive information purged.  It also includes all mp3 audio files for the last Baker's Dozen show (2017-08-06).
 
 ```bash
 # Copy the SQL dump into PG container and run it
