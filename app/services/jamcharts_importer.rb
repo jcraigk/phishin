@@ -88,7 +88,7 @@ class JamchartsImporter
         end
 
       tt = TrackTag.find_by(track: track, tag: tag)
-      next if desc.present && tt&.notes == desc
+      next if desc.present? && tt&.notes == desc
 
       if tt.present?
         # puts "Updating #{details}"
