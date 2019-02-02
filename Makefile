@@ -12,7 +12,7 @@ clean :
 	docker volume prune
 
 services :
-	docker-compose up -d pg adminer
+	docker-compose up -d pg
 
 spec :
 	RAILS_ENV=test docker-compose run --rm app rspec

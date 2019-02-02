@@ -33,6 +33,21 @@ docker exec -u postgres phishin_pg_1 psql phishin postgres -f docker-entrypoint-
 
 Open your browser and direct it to `http://localhost/2017-08-06`.  You should be able to play the full show through the browser.
 
+## Testing
+
+First, create the test db:
+
+```bash
+rails db:create RAILS_ENV=test
+rails db:schema:load RAILS_ENV=test
+```
+
+Then run the specs:
+
+```bash
+rspec
+```
+
 ## Importing Audio
 
 To import a new show or replace an existing one, name the MP3s according to the import format (`I 01 Harry Hood.mp3`) and place them in a folder named by date (`2018-08-12`).  Place this folder in `/content/import` (as seen from the app container) and run the following command from within the container (`docker-compose exec app bash`):
@@ -55,9 +70,7 @@ Go to `https://phish.in/<date>` to verify the import.
 
 ## Maintenance
 
-You can create a new user via the Rails console (`rails c`).  See [Devise documentation](https://github.com/plataformatec/devise) for details.
-
-You can use [Adminer](https://www.adminer.org/) to interact with Postgres using a GUI.  Visit `http://localhost:81` and select `PostgreSQL` in the System dropdown menu.  Server is `pg`, username/pass are both `postgres`, db name is `phishin`.
+You can create a new user via the Rails console (`rails c`).  See [Devise documentation](https://github.com/plataformatec/devise) for details on the authentication system.
 
 ## Contributions
 

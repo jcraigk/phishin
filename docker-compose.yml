@@ -19,10 +19,6 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
-  adminer:
-    image: adminer
-    ports:
-      - 81:8080
 
 volumes:
   pg_data:

@@ -224,6 +224,44 @@ namespace :tagin do
     puts "Processed #{csv_data.size} entries"
   end
 
+  desc 'Calculate Grind days counts'
+  task grind: :environment do
+    include ActionView::Helpers::NumberHelper
+
+    tag = Tag.find_by(name: 'Alt Lyric')
+    first_date = Date.parse('2009-03-06');
+    first_days_lived = {
+      'Page' => 16_730,
+      'Fish' => 16_086,
+      'Trey' => 16_228,
+      'Mike' => 15_982
+    }
+
+    csv_data = []
+    Track.joins(:show)
+         .where('tracks.title = ?', 'Grind')
+         .where('shows.date > ?', first_date)
+         .order('shows.date asc')
+         .each do |track|
+      delta = (track.show.date - first_date).to_i
+      total = 0
+      notes = first_days_lived.map do |person, count|
+        person_total = count + delta
+        total += person_total
+        "#{person}: #{number_with_delimiter(person_total)} days"
+      end.join("\n")
+      notes += "\nGrand total: #{number_with_delimiter(total)} days"
+
+      csv_data << [track.url, '', '', notes]
+    end
+
+    CSV.open("#{Rails.root}/tmp/grind.csv", 'w') do |csv|
+      csv_data.each do |d|
+        csv << d
+      end
+    end
+  end
+
   def title_abbreviations
     {
       "1st Alumni" => "Alumni Blues",

@@ -22,7 +22,7 @@ module TagHelper
         :span,
         stack_title(tag_instances),
         class: 'label tag_label',
-        title: tooltip_for_tag_instances(tag_instances),
+        title: tooltip_for_tag_stack(tag_instances),
         style: "background-color: #{first_instance.tag.color}",
         data: { html: true }
       )
@@ -44,7 +44,7 @@ module TagHelper
     )
   end
 
-  def tooltip_for_tag_instances(tag_instances)
+  def tooltip_for_tag_stack(tag_instances)
     title = ''
 
     tag_instances.each_with_index do |t, idx|
@@ -70,6 +70,8 @@ module TagHelper
 
       title += '<br>-------------------<br>' unless idx == tag_instances.size - 1
     end
+
+    title = tag_instances.first.tag.description if title.blank?
 
     title
   end
