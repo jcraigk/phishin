@@ -12,7 +12,7 @@ APP_CONTENT_PATH = Rails.env.test? ? "#{Rails.root}/tmp/content" : '/content'
 IMPORT_DIR = APP_CONTENT_PATH + '/import'
 
 APP_BASE_URL =
-  if Rails.env.in?(%w[ test])
+  if Rails.env.in?(%w[development test])
     'http://localhost'
   else
     'https://phish.in'
