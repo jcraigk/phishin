@@ -19,6 +19,10 @@ class JamchartsImporter
     @jamcharts_tag ||= Tag.where(name: 'Jamcharts').first
   end
 
+  def debut_tag
+    @debut_tag ||= Tag.where(name: 'Debut').first
+  end
+
   def phishnet_uri
     URI.parse("http://api.phish.net/api.js?api=2.0&method=pnet.jamcharts.all&apikey=#{api_key}")
   end
@@ -55,7 +59,7 @@ class JamchartsImporter
 
   def print_results
     puts "#{missing_shows.size} missing shows:\n" + missing_shows.join(', ')
-    puts "#{invalid_items.size} invalid recs:\n" + invalid_items.join("\n")
+    # puts "#{invalid_items.size} invalid recs:\n" + invalid_items.join("\n")
   end
 
   def find_song_by_title(title)
@@ -74,18 +78,27 @@ class JamchartsImporter
       next if matched_ids.include?(track.id) # Skip to next occurrence of song in set
       matched_ids << track.id
 
-      tt = TrackTag.find_by(track: track, tag: jamcharts_tag)
-      next if tt&.notes == item['jamchart_description']
+      desc = item['jamchart_description']
+      tag =
+        if desc.start_with?('Debut.') || desc.start_with?('First version.')
+          desc = nil
+          debut_tag
+        else
+          jamcharts_tag
+        end
+
+      tt = TrackTag.find_by(track: track, tag: tag)
+      next if tt&.notes == desc
 
       if tt.present?
         # puts "Updating #{details}"
-        tt.update(notes: item['jamchart_description'])
+        tt.update(notes: desc)
       else
         # puts "Creating #{details}"
         TrackTag.create!(
           track: track,
-          tag: jamcharts_tag,
-          notes: item['jamchart_description']
+          tag: tag,
+          notes: desc
         )
       end
 
