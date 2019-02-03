@@ -2,6 +2,8 @@
 require 'csv'
 
 class TrackTagSyncService
+  include ActionView::Helpers::SanitizeHelper
+
   attr_reader :tag, :data
   attr_reader :track, :created_ids, :updated_ids, :dupes
 
@@ -48,16 +50,22 @@ class TrackTagSyncService
     end
   end
 
+  def sanitize_str(str)
+    sanitize(str.gsub(/[”“]/, '"').gsub(/[‘’]/, "'"))
+  end
+
   def create_track_tag(row)
     print '.'
+    notes = sanitize_str(row['Notes'])
+    transcript = sanitize_str(row['Transcript'])
     @created_ids <<
       TrackTag.create!(
         tag: tag,
         track: track,
         starts_at_second: seconds_or_nil(row['Starts At']),
         ends_at_second: seconds_or_nil(row['Ends At']),
-        notes: row['Notes'],
-        transcript: row['Transcript']
+        notes: notes,
+        transcript: transcript
       ).id
   end
 
@@ -66,8 +74,8 @@ class TrackTagSyncService
     tt.update(
       starts_at_second: seconds_or_nil(row['Starts At']),
       ends_at_second: seconds_or_nil(row['Ends At']),
-      notes: row['Notes'],
-      transcript: row['Transcript']
+      notes: notes,
+      transcript: transcript
     )
     @updated_ids << tt.id
   end
