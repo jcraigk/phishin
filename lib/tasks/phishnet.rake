@@ -8,6 +8,8 @@ namespace :phishnet do
 
   desc 'Syncs various tags and outputs CSV for Guest/Alt Rig'
   task setlist_tags: :environment do
+    include ActionView::Helpers::SanitizeHelper
+
     relation = Show.unscoped.order(date: :asc)
 
     debut_tag = Tag.find_by(name: 'Debut')
@@ -33,7 +35,7 @@ namespace :phishnet do
       notes = Nokogiri.HTML(data['setlistdata']).css('.setlist-song + sup')
 
       notes.each do |note|
-        text = note['title']
+        text = sanitize(note['title'].gsub(/[”“]/, '"').gsub(/[‘’]/, "'"))
         title = note.previous_sibling.content
 
         track =
