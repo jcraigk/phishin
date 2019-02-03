@@ -17,8 +17,8 @@
     p To further expand discoverability, we are proposing a crowd-sourced effort to apply an expanded set of pre-selected Tags based on objective analysis of the content:
 
     ul
-      - TAGIN_TAGS.each do |name, _desc|
-        li = name
+      - TAGIN_TAGS.each do |tag_name|
+        li = tag_name
 
     p
       ' See the
@@ -52,9 +52,9 @@
       li Select "Edit > Find and replace..." and search for existing URL to ensure it has not already been tagged
       li If it has already been tagged, verify the metadata, make any corrections, and add +1 to Verified column
       li If it has not been tagged, paste the URL into the URL column
-      li If the tag applies only to a section of the track, add start/stop timestamps.  If it starts at the beginning of the track, the start time can be omitted; same for stop timestamp.  Certain Tags will lend themselves more to timestamps than others ("Tease", for example, should generallys have start timestamps).
+      li If the tag applies only to a section of the track, add start/stop timestamps.  If it starts at the beginning of the track, the start time can be omitted; same for stop timestamp.  Certain Tags will lend themselves more to timestamps than others ("Tease", for example, should generally have start timestamps).
       li Add text to Notes field, adhering to established conventions within each Tag (see below).
-      li If the Tag happens to be Banter, Audience, Narration, or Secret Langauge, then spoken words should be transcribed and pasted into the Transcript column, ensuring that linebreaks are preserved (Shift-Enter or Option-Enter).
+      li If the Tag happens to be Banter or Narration, then spoken words should be transcribed and pasted into the Transcript column, ensuring that linebreaks are preserved (Shift-Enter or Option-Enter).
 
     h2 Tag Conventions
 
@@ -99,21 +99,13 @@
       li Slow Sanity ('89)
       li Slow Water in the Sky
 
-    h2 Audience
-    ul
-      li Any audience interaction (besides cheering) that is audible or referenced by the band
-      li "Woo"s (heard outside Twist)
-      li Anytime a crowd member is brought onstage even if they don't speak
-      li Unique interactions: "Fuck You" from 1991-10-31 Wait, for example
-      li Does NOT include the common ones like Stash claps, Gin "take a bath", or applause during Divided Sky pause
-      li Notes section should contain brief summary of interaction
-      li If there are spoken words, they should be transcribed and pasted into Transcript field
-
     h2 Banter
     ul
-      li Anytime a band member says something to the crowd or another band member that does not fit into Narration or Secret Language classifications (see below)
+      li Anytime a band member says something to the crowd or another band member that does not fit into Narration tag (see below)
       li Starts At/Ends At should be provided
       li Notes section should contain brief summary of what was talked about (example: "Trey pokes fun at Fish")
+      li Can include crowd interaction, if significant ("woo"), but does not include exclamations from the crowd that happen to be caught by AUD mic
+      li Any time Secret Language Instructions are provided by Trey
       li All spoken words should be transcribed and pasted into Transcript field (example: "TREY: Fish, have you had your ass handed to you today?")
 
     h2 Famous
@@ -131,18 +123,11 @@
       li Notes section should contain brief summary of interaction
       li All spoken words should be transcribed and pasted into Transcript field
 
-    h2 Samples
+    h2 Sample
     ul
       li Any time Page uses a sample from Chilling Thrilling or Kasvot sets, for example
       li Intro to 1995-10-31 set 2 ocean sounds played through PA, for example
       li If many samples appear in a single track ("Your trip is short"), a single tag can be applied to the whole track with no timestamps.  If a single sample appears in the middle of a longer jam, timestamps probably make sense there.
-
-    h2 Secret Language
-    ul
-      li Any time instructions are provided by Trey (those also be tagged as Banter?)
-      li Any time the secret language is invoked by a band member such as Simpsons Theme (should those also be tagged as Tease?)
-      li Notes section should contain brief summary like "Trey provides Secret Language instructions"
-      li All spoken words should be transcribed and pasted into Transcript field
 
     h2 Tease
     ul
