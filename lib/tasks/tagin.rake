@@ -10,7 +10,7 @@ namespace :tagin do
   task sync: :environment do
     SPREADSHEET_ID = '1WZtJYSHvt0DSYeUtzM5h0U5c90DN9Or7ckkJD-ds-rM'
 
-    SKIP_TAGS = ['Banter', 'Audience', 'Secret Language'].freeze
+    SKIP_TAGS = ['Audience', 'Secret Language'].freeze
 
     TAGIN_TAGS.each do |tag_name, _desc|
       next if tag_name.in?(SKIP_TAGS)
