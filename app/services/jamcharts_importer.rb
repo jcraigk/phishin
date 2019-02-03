@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 class JamchartsImporter
+  include ActionView::Helpers::SanitizeHelper
+
   attr_reader :api_key, :invalid_items, :missing_shows, :matched_ids
 
   def initialize(api_key)
@@ -66,6 +68,11 @@ class JamchartsImporter
     songs.find { |s| s.title.casecmp(title).zero? }
   end
 
+  def sanitize_str(str)
+    return if str.nil?
+    sanitize(str.gsub(/[”“]/, '"').gsub(/[‘’]/, "'"))
+  end
+
   def handle_item(item, show)
     song = find_song_by_title(item['song'])
     show.tracks.sort_by(&:position).each do |track|
@@ -78,7 +85,7 @@ class JamchartsImporter
       next if matched_ids.include?(track.id) # Skip to next occurrence of song in set
       matched_ids << track.id
 
-      desc = item['jamchart_description']
+      desc = sanitize_str(item['jamchart_description'])
       tag =
         if desc.start_with?('Debut.') || desc.start_with?('First version.')
           desc = nil
