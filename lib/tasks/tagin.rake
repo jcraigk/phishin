@@ -46,9 +46,9 @@ namespace :tagin do
     end
   end
 
-  desc 'Apply Costume Set tag to shows and tracks'
+  desc 'Apply Costume tag to shows and tracks'
   task costume: :environment do
-    tag = Tag.find_by(name: 'Costume Set')
+    tag = Tag.find_by(name: 'Costume')
     show_data = {
       '1994-10-31' => 'The White Album by The Beatles',
       '1996-10-31' => 'Remain In Light by Talking Heads',

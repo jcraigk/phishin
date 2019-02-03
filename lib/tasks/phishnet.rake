@@ -13,7 +13,6 @@ namespace :phishnet do
     relation = Show.unscoped.order(date: :asc)
 
     debut_tag = Tag.find_by(name: 'Debut')
-    phish_debut_tag = Tag.find_by(name: 'Phish Debut')
     signal_tag = Tag.find_by(name: 'Signal')
 
     csv_guest = []
@@ -59,8 +58,6 @@ namespace :phishnet do
           if downtxt.include?('signal')
             tag = signal_tag
             notes = txt.strip.chomp('.')
-          elsif downtxt.include?('phish debut')
-            tag = phish_debut_tag
           elsif downtxt.include?('debut')
             tag = debut_tag
           elsif downtxt.include?('guest') || downtxt =~ /\son\s/
