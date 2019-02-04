@@ -29,7 +29,7 @@ docker cp /path/to/phishin_for_devs.sql phishin_pg_1:/docker-entrypoint-initdb.d
 docker exec -u postgres phishin_pg_1 psql phishin postgres -f docker-entrypoint-initdb.d/dump.sql
 ```
 
-5. Place the `tracks` folder on your local drive and set its location in `docker-compose.yml` (default is `/j/app_content/phishin`).
+5. Place the `tracks` folder on your local drive.  If you run Rails inside Docker (recommended as a starting point), set its location in `docker-compose.yml` (default is `/j/app_content/phishin`). If you run Rails outside Docker, set its location as `APP_CONTENT_PATH` in `.env` and symlink it to your public folder: `ln -s <path to files>/audio_files public/audio`.
 
 Open your browser and direct it to `http://localhost/2017-08-06`.  You should be able to play the full show through the browser.
 

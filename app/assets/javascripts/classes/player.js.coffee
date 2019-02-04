@@ -169,6 +169,14 @@ class @Player
         else
           @Util.feedback { alert: r.msg }
 
+  scrubBackward: ->
+    @sm_sound.setPosition(@sm_sound.position - 5000)
+    console.log('back')
+
+  scrubForward: ->
+    @sm_sound.setPosition(@sm_sound.position + 5000)
+    console.log('foward')
+
   stopAndUnload: ->
     this._fastFadeout @active_track
     @sm_sound.unload() if @sm_sound.loaded
