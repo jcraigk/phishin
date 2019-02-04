@@ -435,8 +435,14 @@ $ ->
         App.Player.togglePause()
         e.preventDefault()
       when 37 # <-
-        App.Player.previousTrack()
+        if e.shiftKey
+          App.Player.scrubBackward()
+        else
+          App.Player.previousTrack()
         e.preventDefault()
       when 39 # ->
-        App.Player.nextTrack()
+        if e.shiftKey
+          App.Player.scrubForward()
+        else
+          App.Player.nextTrack()
         e.preventDefault()
