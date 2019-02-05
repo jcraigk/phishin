@@ -1111,6 +1111,7 @@ html {
     height: 15px !important;
     float: right;
     width: 200px;
+    overflow: visible;
 
     .tag_label {
       float: right;
@@ -1276,6 +1277,14 @@ html {
       background-color: #eee;
       border-radius: 5px;
       border: 1px solid black;
+    }
+    .tooltip-inner {
+      white-space: pre-wrap;
+      max-width: 1000px;
+      max-height: 600px;
+      font-size: 12px;
+      text-align: left;
+      overflow-y: scroll;
     }
     #google_map {
       width: 100%;

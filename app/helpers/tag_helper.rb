@@ -62,9 +62,9 @@ module TagHelper
         if end_timestamp(t)
           title += "Ends at #{end_timestamp(t)}<br>"
         end
-        title += wrapped_str(t.notes) if t.notes.present?
+        title += t.notes if t.notes.present?
         if t.try(:transcript)&.present?
-          title += "<br><br>-TRANSCRIPT-<br> #{wrapped_str(t.transcript)}"
+          title += "<br><br>-TRANSCRIPT-<br> #{collapse_newlines(t.transcript)}"
         end
       end
 
@@ -86,10 +86,14 @@ module TagHelper
     tag_timestamp(t.ends_at_second)
   end
 
-  def wrapped_str(str)
-    word_wrap(str, line_width: 50).gsub("\n", '<br>')
+  def wrapped_str(str,line_width=50)
+    word_wrap(str, line_width: line_width).gsub("\n", '<br>')
   end
 
+  def collapse_newlines(str)
+    str.squeeze("\n")
+  end
+  
   def tag_timestamp(timestamp)
     duration_readable(timestamp * 1000, 'colons')
   end
