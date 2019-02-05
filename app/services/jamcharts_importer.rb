@@ -70,7 +70,7 @@ class JamchartsImporter
 
   def sanitize_str(str)
     return if str.nil?
-    sanitize(str.gsub(/[”“]/, '"').gsub(/[‘’]/, "'"))
+    sanitize(str.gsub(/[”“]/, '"').gsub(/[‘’]/, "'").strip)
   end
 
   def handle_item(item, show)
