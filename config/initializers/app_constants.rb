@@ -48,10 +48,12 @@ TAGIN_TAGS = [
   'Alt Lyric',
   'Alt Rig',
   'Alt Version',
+  'Audience',
   'Banter',
   'Famous',
   'Guest',
   'Narration',
   'Sample',
+  'Signal',
   'Tease'
 ].freeze

@@ -18,6 +18,7 @@ namespace :phishnet do
 
     csv_guest = []
     csv_alt_rig = []
+    csv_signal = []
 
     pbar = ProgressBar.create(total: relation.count, format: '%a %B %c/%C %p%% %E')
 
@@ -57,8 +58,21 @@ namespace :phishnet do
           if downtxt.include?('acoustic')
             tag = acoustic_tag
           elsif downtxt.include?('signal')
-            tag = signal_tag
-            notes = txt.strip.chomp('.')
+            if downtxt =~ /\A(.+), (.+) and (.+) signals/
+              (1..3).each do |idx|
+                csv_signal << [track.url, '', '', Regexp.last_match[idx].titleize.chomp('signal').strip.chomp(','), 'Imported from Phish.net setlist API']
+              end
+            elsif downtxt =~ /\A(.+) and (.+) signals/
+              (1..2).each do |idx|
+                csv_signal << [track.url, '', '', Regexp.last_match[idx].titleize.chomp('signal').strip.chomp(','), 'Imported from Phish.net setlist API']
+              end
+            elsif downtxt =~ /\A(.+) signal\z/
+              csv_signal << [track.url, '', '', Regexp.last_match[1].titleize.chomp('signal').strip.chomp(','), 'Imported from Phish.net setlist API']
+            else
+              txt = txt.chomp('.').strip.chomp('signal').chomp('signal in intro').chomp(',')
+              csv_signal << [track.url, '', '', txt, 'Imported from Phish.net setlist API']
+            end
+
           elsif downtxt.include?('debut')
             tag = debut_tag
           elsif downtxt.include?('guest') || downtxt =~ /\son\s/
@@ -89,6 +103,12 @@ namespace :phishnet do
 
     CSV.open("#{Rails.root}/tmp/alt_rig.csv", 'w') do |csv|
       csv_alt_rig.each do |d|
+        csv << d
+      end
+    end
+
+    CSV.open("#{Rails.root}/tmp/signal.csv", 'w') do |csv|
+      csv_signal.each do |d|
         csv << d
       end
     end

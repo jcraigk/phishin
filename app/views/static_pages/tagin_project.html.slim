@@ -10,11 +10,11 @@
     h2 Overview
 
     p
-      ' This site provides access to live legal Phish audio recordings.  Its goal is to maintain a highly available and comprehensive archive of live performances curated by the community through cooperative effort. Content is discoverable based on available metadata, such as performance date, song title, venue name, etc.  Additinally, a limited set of Tags have been manually applied; see the
+      ' This site provides access to live legal Phish audio recordings.  Its goal is to maintain a highly available and comprehensive archive of live performances curated by the community through cooperative effort. Content is discoverable based on available metadata, such as performance date, song title, venue name, etc.  Additinally, a set of curated Tags has been applied; see the
       a href="/tags" Tags page
       | .
 
-    p To further expand discoverability, we are proposing a crowd-sourced effort to apply an expanded set of pre-selected Tags based on objective analysis of the content:
+    p These have largely been imported from Phish.net projects such as Jam Charts and Teases.  Many of these tags need verification and further expansion.  Here is the full list:
 
     ul
       - TAGIN_TAGS.each do |tag_name|
@@ -23,7 +23,7 @@
     p
       ' See the
       a href='https://docs.google.com/spreadsheets/d/1WZtJYSHvt0DSYeUtzM5h0U5c90DN9Or7ckkJD-ds-rM' Master Tag.in Spreadsheet
-      | &nbsp;for examples.  Note this list is subject to change as the project develops.
+      | &nbsp;for the current state of project.
 
     h2 Contributing
 
@@ -45,7 +45,7 @@
         a href='https://docs.google.com/spreadsheets/d/1WZtJYSHvt0DSYeUtzM5h0U5c90DN9Or7ckkJD-ds-rM' Master Tag.in Spreadsheet
       li Familiarize yourself with each Tag by clicking the workbook tabs at the bottom of the screen (also see specific Tag Conventions below)
       li Listen to audio content at https://phish.in
-      li When you notice a taggable moment, pause the playback (spacebar or button in upper-right)
+      li When you notice a taggable moment that has not yet been captured or an incorrect Tag, pause the playback (spacebar or button in upper-right).  Note you can also scrub forward and backward in 5 second increments by presshing Shift-LeftArrow and Shift-RightArrow.
       li Roll the mouse cursor over the track in question and click on the context menu (down arrow) that appears
       li Click "Share" in the dropdown menu (URL will be copied to clipboard)
       li Return to the spreadsheet and select the appropriate workbook for the Tag you want to add
@@ -60,6 +60,8 @@
 
     p Each Tag entry in the spreadsheet consists of a URL (pointing to the track the Tag is associated with) and optionally has Starts At, Ends At, and Notes fields.  If a Tag applies to the entire track, then Starts At and Ends At should be ommitted.  If the tag refers to the first half of the track, omit the Strats At value but enter the Ends At value; same for the second half accordingly.  The Notes field should contain details about that Tag instance.
 
+    p Narration and Banter tags also include a Transcript field which contain a full transcript of all spoken words.
+
     p Below we outline conventions for each Tag; these are subject to change as the project develops.
 
     h2 A Cappella
@@ -67,12 +69,6 @@
       li Includes typical a cappella song performances (Sweet Adeline, The Birdwatcher, Star Spangled Banner, etc)
       li Does NOT include smaller sections like "steam dream" in SOAMelt
       li Question: should pure vocal jams at end of YEM be included?
-
-    h2 Acoustic
-    ul
-      li Acoustic sets, tracks, or sections
-      li Trey using an acoustic guitar only is NOT included (that's an Alt Rig tag)
-      li Page's solo piano outro in Squirming Coil is NOT included
 
     h2 Alt Lyric
     ul
@@ -95,11 +91,7 @@
 
     h2 Alt Version
     ul
-      li Slow Llama
-      li Funky Lawn Boy
-      li Slow Brother
-      li Slow Sanity ('89)
-      li Slow Water in the Sky
+      li Slow Llama, Funky Lawn Boy, etc.
 
     h2 Banter
     ul
@@ -110,6 +102,12 @@
       li Any time Secret Language Instructions are provided by Trey
       li All spoken words should be transcribed and pasted into Transcript field (example: "TREY: Fish, have you had your ass handed to you today?")
 
+    h2 Audience
+    ul
+      li Any time there is significant collective crowd response such as "woo", "polo", etc.
+      li Does NOT include random individuals caught on audience mics
+      li DOES NOT include Secret Language Signal responses; those should be tagged as Signal (see below)
+
     h2 Famous
     ul
       li Well-known (named) performances of songs like Prague Ghost, Tahoe Tweezer, etc.
@@ -117,10 +115,12 @@
     h2 Guest
     ul
       li Any time another artist/group joins the band on stage
+      li Past guests have been imported from the Phish.net Guest Chart
 
     h2 Narration
     ul
       li Any spoken word related to storytelling
+      li Past narration has been imported from Phish.net Narration Chart
       li Most notably Gamehendge narration, but also Harpua, etc
       li Notes section should contain brief summary of interaction
       li All spoken words should be transcribed and pasted into Transcript field
@@ -131,10 +131,20 @@
       li Intro to 1995-10-31 set 2 ocean sounds played through PA, for example
       li If many samples appear in a single track ("Your trip is short"), a single tag can be applied to the whole track with no timestamps.  If a single sample appears in the middle of a longer jam, timestamps probably make sense there.
 
+    h2 Signal
+    ul
+      li Any time one of the band members invokes a Secret Language signal
+      li Past signals have been imported from Phish.net setlist notes but some are combined
+      li Combined signal tags should be split into indivdiual ones, even if they occur multiple times
+      li Starts At timestamps should be applied to each Signal instance
+
     h2 Tease
     ul
       li The band members frequently reference other musical works during improv
+      li Past teases have been imported from the Phish.net Tease Chart
+      li The timestamps may not be accurate on Phish.in sources so they need verification/correction
       li Some tracks may have many Tease instances; each should be input separately
       li Put the name(s) of the teased work in the Notes field ("Norwegian Wood by The Beatles" for example)
+      li Enter a Starts At timestamp
 
   = clear_both
