@@ -41,7 +41,7 @@ class TrackTagSyncService
     data.each do |row|
       @track = find_track_by_url(row['URL'])
       existing =
-        if tag.name == 'Tease'
+        if tag.name.in?(['Tease', 'Signal'])
           TrackTag.find_by(tag: tag, track: track, notes: row['Notes'])
         else
           TrackTag.find_by(tag: tag, track: track)
