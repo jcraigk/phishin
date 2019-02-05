@@ -63,7 +63,7 @@ class TrackTagSyncService
         track: track,
         starts_at_second: seconds_or_nil(row['Starts At']),
         ends_at_second: seconds_or_nil(row['Ends At']),
-        notes: sanitize_str(row['Notes']),
+        notes: sanitize_str(row['Notes']).chomp('.'),
         transcript: sanitize_str(row['Transcript'])
       ).id
   end
@@ -73,7 +73,7 @@ class TrackTagSyncService
     tt.update(
       starts_at_second: seconds_or_nil(row['Starts At']),
       ends_at_second: seconds_or_nil(row['Ends At']),
-      notes: sanitize_str(row['Notes']),
+      notes: sanitize_str(row['Notes']).chomp('.'),
       transcript: sanitize_str(row['Transcript'])
     )
     @updated_ids << tt.id

@@ -45,7 +45,6 @@ SET_NAMES = {
 
 TAGIN_TAGS = [
   'A Cappella',
-  'Acoustic',
   'Alt Lyric',
   'Alt Rig',
   'Alt Version',

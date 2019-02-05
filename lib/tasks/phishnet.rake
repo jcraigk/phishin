@@ -6,7 +6,7 @@ namespace :phishnet do
     JamchartsImporter.new(ENV['PNET_API_KEY']).call
   end
 
-  desc 'Syncs various tags and outputs CSV for Guest/Alt Rig'
+  desc 'Syncs various tags and outputs CSVs for others'
   task setlist_tags: :environment do
     include ActionView::Helpers::SanitizeHelper
 
@@ -14,6 +14,7 @@ namespace :phishnet do
 
     debut_tag = Tag.find_by(name: 'Debut')
     signal_tag = Tag.find_by(name: 'Signal')
+    acoustic_tag = Tag.find_by(name: 'Acoustic')
 
     csv_guest = []
     csv_alt_rig = []
@@ -22,13 +23,11 @@ namespace :phishnet do
 
     relation.each do |show|
       date = show.date
-
       resp =
         HTTParty.get(
           "https://api.phish.net/v3/setlists/get?apikey=#{ENV['PNET_API_KEY']}&showdate=#{date}"
         ).body
       data = JSON[resp].dig('response', 'data')&.first
-
       next unless data.present?
 
       notes = Nokogiri.HTML(data['setlistdata']).css('.setlist-song + sup')
@@ -55,7 +54,9 @@ namespace :phishnet do
 
           tag = nil
           notes = nil
-          if downtxt.include?('signal')
+          if downtxt.include?('acoustic')
+            tag = acoustic_tag
+          elsif downtxt.include?('signal')
             tag = signal_tag
             notes = txt.strip.chomp('.')
           elsif downtxt.include?('debut')
