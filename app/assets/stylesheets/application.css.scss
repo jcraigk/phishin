@@ -2,7 +2,6 @@
  *= require_self
  *= require jquery-ui/slider
  *= require jquery-ui/datepicker
- *= require tagin_project
  *= require_tree .
  */
 
@@ -81,6 +80,17 @@ $highlight4: #fff494;
 #download_iframe {
   display: none;
 }
+
+.tagin_project {
+  p, li {
+    font-size: 20px;
+    line-height: 30px;
+  }
+  a {
+    text-decoration: underline;
+  }
+}
+
 
 html {
   margin: 0;
