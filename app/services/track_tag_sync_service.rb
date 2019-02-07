@@ -42,7 +42,12 @@ class TrackTagSyncService
       @track = find_track_by_url(row['URL'])
       existing =
         if tag.name.in?(['Tease', 'Signal'])
-          TrackTag.find_by(tag: tag, track: track, notes: row['Notes'])
+          TrackTag.find_by(
+            tag: tag,
+            track: track,
+            notes: row['Notes'],
+            starts_at_second: seconds_or_nil(row['Starts At'])
+          )
         else
           TrackTag.find_by(tag: tag, track: track)
         end
