@@ -4,7 +4,8 @@
   #title_box
     = tag_label(@tag, :large_tag_label)
     = clear_both
-    p = @tag.description
+    h3 = @tag.description
+    br
 
     .btn-group
       button.btn class=(@context == 'show' ? 'active' : '')
