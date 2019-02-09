@@ -17,15 +17,28 @@ module TagHelper
     title = tag_stack.first
     tag_instances = tag_stack.second
     first_instance = tag_instances.first
-    link_to tag_path(first_instance.tag.slug, entity: context) do
+    link_to '#' do
       content_tag(
         :span,
         stack_title(tag_instances),
         class: 'label tag_label',
         title: tooltip_for_tag_stack(tag_instances),
         style: "background-color: #{first_instance.tag.color}",
-        data: { html: true }
+        data: {
+          html: true,
+          detail_title: detail_title(tag_instances),
+          detail: tooltip_for_tag_stack(tag_instances, true)
+        }
       )
+    end
+  end
+
+  def detail_title(tag_instances)
+    tag_instance = tag_instances.first
+    if tag_instance.is_a?(TrackTag)
+      "#{tag_label(tag_instance.tag, 'detail_tag_label')}<br>#{tag_instance.track.show.date_with_dots} #{tag_instance.track.title}"
+    else
+      "#{tag_label(tag_instance.tag, 'detail_tag_label')}<br>#{tag_instance.show.date_with_dots}"
     end
   end
 
@@ -44,31 +57,22 @@ module TagHelper
     )
   end
 
-  def tooltip_for_tag_stack(tag_instances)
+  def tooltip_for_tag_stack(tag_instances, include_transcript = false)
     title = ''
 
     tag_instances.each_with_index do |t, idx|
-      if t.tag.name.in?(%w[Tease Signal])
-        title += wrapped_str(t.notes) if t.notes.present?
-        if start_timestamp(t) && end_timestamp(t)
-          title += " between #{start_timestamp(t)} and #{end_timestamp(t)}"
-        elsif start_timestamp(t)
-          title += " at #{start_timestamp(t)}"
-        end
-      else
-        if start_timestamp(t)
-          title += "Starts at #{start_timestamp(t)}<br>"
-        end
-        if end_timestamp(t)
-          title += "Ends at #{end_timestamp(t)}<br>"
-        end
-        title += wrapped_str(t.notes) if t.notes.present?
-        if t.try(:transcript)&.present?
-          title += "<br><br>-TRANSCRIPT-<br> #{wrapped_str(t.transcript)}"
-        end
+      title += "#{t.notes.presence&.gsub("\n", '<br>')} #{time_range(t)}".strip
+
+      if t.try(:transcript)&.present?
+        title +=
+          if include_transcript
+            "<br><br><strong>TRANSCRIPT</strong><br><br> #{t.transcript}"
+          else
+            '<br>[CLICK FOR TRANSCRIPT]'
+          end
       end
 
-      title += '<br>-------------------<br>' unless idx == tag_instances.size - 1
+      title += '<br>' unless idx == tag_instances.size - 1
     end
 
     title = tag_instances.first.tag.description if title.blank?
@@ -76,18 +80,24 @@ module TagHelper
     title
   end
 
-  def start_timestamp(t)
-    return unless t.try(:starts_at_second)
-    tag_timestamp(t.starts_at_second)
+  def time_range(tag_instance)
+    return unless start_timestamp(tag_instance) || end_timestamp(tag_instance)
+
+    if start_timestamp(tag_instance) && end_timestamp(tag_instance)
+      "between #{start_timestamp(tag_instance)} and #{end_timestamp(tag_instance)}"
+    elsif start_timestamp(tag_instance)
+      "at #{start_timestamp(tag_instance)}"
+    end
   end
 
-  def end_timestamp(t)
-    return unless t.try(:ends_at_second)
-    tag_timestamp(t.ends_at_second)
+  def start_timestamp(tag_instance)
+    return unless tag_instance.try(:starts_at_second)
+    tag_timestamp(tag_instance.starts_at_second)
   end
 
-  def wrapped_str(str)
-    word_wrap(str, line_width: 50).gsub("\n", '<br>')
+  def end_timestamp(tag_instance)
+    return unless tag_instance.try(:ends_at_second)
+    tag_timestamp(tag_instance.ends_at_second)
   end
 
   def tag_timestamp(timestamp)

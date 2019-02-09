@@ -422,9 +422,15 @@ $ ->
 
   # Taper Notes link opens a modal
   .on 'click', '.show_taper_notes', ->
-    $('#taper_notes_content').html($(this).data('taper-notes'))
+    $('#taper_notes_content').html $(this).data('taper-notes')
     $('#taper_notes_date').html $(this).data('show-date')
     $('#taper_notes_modal').modal('show')
+
+  # Tag instance click opens a modal
+  .on 'click', '.tag_label', ->
+    $('#tag_detail_title').html $(this).data('detail-title')
+    $('#tag_detail').html $(this).data('detail')
+    $('#tag_modal').modal('show')
 
   # Keyboard shortcuts
   $(window).keydown (e) ->

@@ -90,7 +90,15 @@ $highlight4: #fff494;
     text-decoration: underline;
   }
 }
-
+#tag_detail {
+  font-size: 20px;
+  line-height: 26px;
+}
+.detail_tag_label {
+  font-size: 20px !important;
+  padding: 10px !important;
+  margin-bottom: 10px;
+}
 
 html {
   margin: 0;
@@ -1121,6 +1129,7 @@ html {
     height: 15px !important;
     float: right;
     width: 200px;
+    overflow: visible;
 
     .tag_label {
       float: right;
@@ -1286,6 +1295,13 @@ html {
       background-color: #eee;
       border-radius: 5px;
       border: 1px solid black;
+    }
+    .tooltip-inner {
+      white-space: pre-wrap;
+      max-width: 1000px;
+      max-height: 600px;
+      font-size: 12px;
+      overflow-y: scroll;
     }
     #google_map {
       width: 100%;
