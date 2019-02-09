@@ -48,7 +48,7 @@ module TagHelper
     title = ''
 
     tag_instances.each_with_index do |t, idx|
-      if t.tag.name == 'Tease'
+      if t.tag.name.in?(%w[Tease Signal])
         title += wrapped_str(t.notes) if t.notes.present?
         if start_timestamp(t) && end_timestamp(t)
           title += " between #{start_timestamp(t)} and #{end_timestamp(t)}"
