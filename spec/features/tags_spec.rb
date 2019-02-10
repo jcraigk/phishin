@@ -23,7 +23,7 @@ describe 'Tags', :js do
     visit tags_path
 
     within('#title_box') do
-      expect_content("All Tags (#{tags.count} total)")
+      expect_content('All Tag', "Total Tags: #{tags.count}")
     end
 
     within('#content_box') do
