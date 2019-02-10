@@ -67,7 +67,7 @@ class Show < ApplicationRecord
       incomplete: incomplete,
       sbd: sbd,
       remastered: remastered,
-      tags: tags.sort_by(&:priority).map(&:name).as_json,
+      tags: show_tags_for_api,
       tour_id: tour_id,
       venue: venue.as_json,
       venue_name: venue_name,
@@ -79,6 +79,19 @@ class Show < ApplicationRecord
   end
 
   private
+
+  def show_tags_for_api
+    show_tags.map do |show_tag|
+      {
+        id: show_tag.tag.id,
+        name: show_tag.tag.name,
+        priority: show_tag.tag.priority,
+        group: show_tag.tag.group,
+        color: show_tag.tag.color,
+        notes: show_tag.notes
+      }
+    end.sort_by { |t| t[:priority] }
+  end
 
   def cache_venue_name
     return if venue_name.present?

@@ -30,6 +30,9 @@ RSpec.describe Tag do
         id: subject.id,
         name: subject.name,
         slug: subject.slug,
+        group: subject.group,
+        color: subject.color,
+        priority: subject.priority,
         description: subject.description,
         updated_at: subject.updated_at.iso8601
       )
@@ -40,6 +43,9 @@ RSpec.describe Tag do
         id: subject.id,
         name: subject.name,
         slug: subject.slug,
+        group: subject.group,
+        color: subject.color,
+        priority: subject.priority,
         description: subject.description,
         updated_at: subject.updated_at.iso8601,
         show_ids: subject.shows.sort_by(&:id).map(&:id),

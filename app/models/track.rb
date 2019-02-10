@@ -81,7 +81,7 @@ class Track < ApplicationRecord
     }
   end
 
-  def as_json_api
+  def as_json_api # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     {
       id: id,
       show_id: show.id,
@@ -93,10 +93,28 @@ class Track < ApplicationRecord
       set_name: set_name,
       likes_count: likes_count,
       slug: slug,
-      tags: tags.sort_by(&:priority).map(&:name).as_json,
+      tags: track_tags_for_api,
       mp3: mp3_url,
       song_ids: songs.map(&:id),
       updated_at: updated_at.iso8601
     }
+  end
+
+  private
+
+  def track_tags_for_api
+    track_tags.map do |track_tag|
+      {
+        id: track_tag.tag.id,
+        name: track_tag.tag.name,
+        priority: track_tag.tag.priority,
+        group: track_tag.tag.group,
+        color: track_tag.tag.color,
+        notes: track_tag.notes,
+        transcript: track_tag.transcript,
+        starts_at_second: track_tag.starts_at_second,
+        ends_at_second: track_tag.ends_at_second
+      }
+    end.sort_by { |t| t[:priority] }
   end
 end

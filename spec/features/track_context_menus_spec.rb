@@ -25,13 +25,13 @@ describe 'Track Context Menues', :js do
     expect(page).to have_current_path("/#{show.tracks.first.songs.first.slug}")
   end
 
-  it 'share' do
+  it 'sharing' do
     visit show.date
 
     first('.playable_track').hover
     first('.track-context-dropdown').click
     within('.track-context-dropdown') do
-      click_link('Share')
+      first(:link, 'Share').click
     end
     expect_content('Link copied to clipboard')
   end
