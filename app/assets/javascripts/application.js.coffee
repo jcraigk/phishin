@@ -138,6 +138,10 @@ $ ->
   # DOM interactions
   ###############################################
 
+  # Scroll to top of modals when displayed
+  $('.modal').on 'shown', ->
+    $('.modal-body').scrollTop(0)
+
   # Click Phish On Demand app callout
   $(document).on 'click', '#relisten_callout', ->
     window.location = 'https://itunes.apple.com/us/app/relisten-all-live-music/id715886886'
@@ -430,6 +434,7 @@ $ ->
   .on 'click', '.tag_label', ->
     $('#tag_detail_title').html $(this).data('detail-title')
     $('#tag_detail').html $(this).data('detail')
+    $('#tag_modal').animate({ scrollTop: 0 }, 'slow');
     $('#tag_modal').modal('show')
 
   # Keyboard shortcuts

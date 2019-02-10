@@ -61,14 +61,15 @@ module TagHelper
     title = ''
 
     tag_instances.each_with_index do |t, idx|
-      title += "#{t.notes.presence&.gsub("\n", '<br>')} #{time_range(t)}".strip
+      title += "#{t.notes.gsub("\n", '<br>')} #{time_range(t)}".strip if t.notes.present?
 
       if t.try(:transcript)&.present?
-        title +=
           if include_transcript
-            "<br><br><strong>TRANSCRIPT</strong><br><br> #{t.transcript}"
+            title += '<br><br>' if title.present?
+            title += "<strong>TRANSCRIPT</strong><br><br> #{t.transcript.gsub("\n", '<br>')}"
           else
-            '<br>[CLICK FOR TRANSCRIPT]'
+            title += '<br>' if title.present?
+            title += '[CLICK FOR TRANSCRIPT]'
           end
       end
 
@@ -76,7 +77,6 @@ module TagHelper
     end
 
     title = tag_instances.first.tag.description if title.blank?
-
     title
   end
 
