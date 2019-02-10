@@ -3,12 +3,12 @@
 #content
   #title_box
     h1 = @song.title
-    h2
-      - if @song.original?
-        | (Original composition)
-      - else
-        | (A cover song)
     h2 Total tracks: #{@song.tracks.size}
+    h3
+      - if @song.original?
+        | Original composition
+      - else
+        | Cover song
     .hr
 
     = render partial: 'shared/sort_filter', locals: { item_hash: track_sort_items }
