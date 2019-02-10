@@ -142,6 +142,66 @@ namespace :tagin do
     end
   end
 
+  desc 'Tease Chart HTML'
+  task teases_html: :environment do
+    URL = 'https://phish.net/tease-chart'
+    response = HTTParty.get(URL)
+
+    tag = Tag.find_by(name: 'Tease')
+
+    headers = %i[song artist times dates]
+    data = []
+    Nokogiri.HTML(response).search('table').first.search('tr').each_with_index do |tr|
+      record = {}
+      tr.search('th, td').each_with_index do |cell, cell_idx|
+        key = headers[cell_idx]
+        record[key] = cell.text.strip
+      end
+      data << record
+    end
+
+    csv_data = []
+    data.each do |record|
+      record[:dates].split(',').each do |date_song|
+        date_song.strip!
+        next puts "Skipping #{date_song}" unless date_song =~ /\A(\d{4}-\d{2}-\d{2})(.*)\z/
+
+        date = Regexp.last_match[1].strip
+        title = Regexp.last_match[2].strip
+        title = title_abbreviations[title] if title_abbreviations[title]
+
+        show = Show.find_by(date: date)
+        next puts "Missing show: #{date}" unless show
+
+        track =
+          Track.where(show: show)
+               .where(
+                 'title = ? or title LIKE ? or title LIKE ? or title LIKE ? or title LIKE ?',
+                 title,
+                 "%> #{title}",
+                 "#{title} >%",
+                 "%> #{title} >%",
+                 "#{title}, %"
+               ).first
+        next puts "Missing track: #{date} #{title}" unless track
+
+        next if TrackTag.find_by(tag: tag, track: track)
+
+        song = record[:song]
+        song += " by #{record[:artist]}" unless record[:artist] == 'Phish'
+        csv_data << [track.url, '', '', song, 'Imported from Phish.net Tease Chart']
+      end
+    end
+
+    CSV.open("#{Rails.root}/tmp/teases_html.csv", 'w') do |csv|
+      csv_data.each do |d|
+        csv << d
+      end
+    end
+
+    puts "Processed #{csv_data.size} entries"
+  end
+
   desc 'Pull data from remote tease spreadsheet'
   task teases: :environment do
     SPREADSHEET_ID = '1gtR1yVQXA-4hZ2UEfXMl0bvCNLTmDOICHEXElZ1MK9g'
@@ -206,7 +266,7 @@ namespace :tagin do
                ).first
         next puts "No match: #{date} / #{title}" unless show && track
 
-        csv_data << [track.url, starts_at, '', notes, 'Imported from Tease Chart']
+        csv_data << [track.url, starts_at, '', notes, 'Imported from Phish.net Tease Chart']
       end
     end
     csv_data.compact!
@@ -260,6 +320,7 @@ namespace :tagin do
 
   def title_abbreviations
     {
+      "'A' Train" => "Take the 'A' Train",
       "1st Alumni" => "Alumni Blues",
       "1st Antelope" => "Run Like an Antelope",
       "1st Ass Handed" => "Ass Handed",
@@ -343,6 +404,7 @@ namespace :tagin do
       "ASZ" => "Also Sprach Zarathustra",
       "ATrain" => "Take the 'A' Train",
       "Axilla II" => "Axilla (Part II)",
+      "Bag" => "AC/DC Bag",
       "Bathtub" => "Bathtub Gin",
       "BBCFCM" => "Big Black Furry Creature from Mars",
       "BBCFM" => "Big Black Furry Creature from Mars",
@@ -350,6 +412,7 @@ namespace :tagin do
       "BBFCFM" => "Big Black Furry Creature from Mars",
       "BBJ" => "Big Ball Jam",
       "BDTNL" => "Backwards Down the Number Line",
+      "Big Black Furry Creature from Mars" => "Big Black Furry Creature from Mars",
       "Big Black Furry Creatures from Mars" => "Big Black Furry Creature from Mars",
       "Billie Jean Jam" => "Billie Jean",
       "Bittersweet" => "Bittersweet Motel",
@@ -358,8 +421,10 @@ namespace :tagin do
       "Boogie" => "Boogie On Reggae Woman",
       "BOTT" => "Back on the Train",
       "Bouncin" => "Bouncing Around the Room",
+      "Bouncin'" => "Bouncing Around the Room",
       "Bowie" => "David Bowie",
       "Buried" => "Buried Alive",
+      "C&P" => "Crosseyed and Painless",
       "Camel" => "Camel Walk",
       "Cantaloupe" => "Roll Like a Cantaloupe",
       "Caspian" => "Prince Caspian",
@@ -371,6 +436,8 @@ namespace :tagin do
       "Coil" => "The Squirming Coil",
       "Cold As Ice" => "Cold as Ice",
       "Crosseyed" => "Crosseyed and Painless",
+      "CTB" => "Cars Trucks Buses",
+      "Curtain With" => "The Curtain With",
       "Curtis Loew" => "The Ballad of Curtis Loew",
       "DDLJ" => "Digital Delay Loop Jam",
       "Dear Mrs Reagan" => "Dear Mrs. Reagan",
@@ -379,13 +446,16 @@ namespace :tagin do
       "Divided" => "Divided Sky",
       "DWD Jam" => "Down with Disease",
       "DWD" => "Down with Disease",
+      "DwD" => "Down with Disease",
       "DWDReprise" => "Down with Disease", # 1996-11-27 !! it's the second one
       "Feats" => "Feats Don't Fail Me Now",
       "Feel The Heat" => "Feel the Heat",
       "FEFY" => "Fast Enough for You",
       "Funky" => "Funky Bitch",
       "FYF" => "Fuck Your Face",
+      "Gin" => "Bathtub Gin",
       "Golgi" => "Golgi Apparatus",
+      "Great Gig in the Sky" => "The Great Gig in the Sky",
       "Great Gig" => "The Great Gig in the Sky",
       "GTBT" => "Good Times Bad Times",
       "Guelah" => "Guelah Papyrus",
@@ -416,6 +486,7 @@ namespace :tagin do
       "Limb" => "Limb By Limb",
       "Lizards" => "The Lizards",
       "Low Rider Jam" => "Low Rider",
+      "LxL" => "Limb By Limb",
       "Makisupa" => "Makisupa Policeman",
       "Mango" => "The Mango Song",
       "McGrupp" => "McGrupp and the Watchful Hosemasters",
@@ -439,6 +510,7 @@ namespace :tagin do
       "Punch You in the Eye" => "Punch You In the Eye",
       "PYITE" => "Punch You In the Eye",
       "Quinn" => "Quinn the Eskimo",
+      "R&R" => "Rock and Roll",
       "Rhombus" => "Rhombus Narration",
       "Rock And Roll" => "Rock and Roll",
       "Rock" => "Rock and Roll",
@@ -458,7 +530,10 @@ namespace :tagin do
       "Sneakin" => "Sneakin' Sally Through the Alley",
       "Sneakin' Sally" => "Sneakin' Sally Through the Alley",
       "Sneakin'" => "Sneakin' Sally Through the Alley",
+      "SOAMelt" => "Split Open and Melt",
+      "SOAMule" => "Scent of a Mule",
       "SOYF" => "Sunshine of Your Feeling",
+      "STFTFP" => "Stealing Time From the Faulty Plan",
       "STTFTFP" => "Stealing Time From the Faulty Plan",
       "Subtle" => "Scents and Subtle Sounds",
       "Suzy" => "Suzy Greenberg",
@@ -466,8 +541,12 @@ namespace :tagin do
       "The Way" => "The Way It Goes",
       "Theme from the Bottom" => "Theme From the Bottom",
       "Theme" => "Theme From the Bottom",
+      "Timber Ho" => "Timber (Jerry The Mule)",
       "Timber" => "Timber (Jerry The Mule)",
+      "TMWSIY" => "The Man Who Stepped Into Yesterday",
+      "Tweeprise" => "Tweezer Reprise",
       "Tweezer Reprise Jam" => "Tweezer Reprise",
+      "Tweezer Reprise" => "Ass Handed Reprise",
       "TweezerReprise" => "Tweezer Reprise",
       "Twqeezer" => "Tweezer",
       "TYL" => "Twenty Years Later",
@@ -482,7 +561,9 @@ namespace :tagin do
       "Whipping" => "Whipping Post",
       "Wolfman's" => "Wolfman's Brother",
       "Wolfmans" => "Wolfman's Brother",
+      "WotC" => "Walls of the Cave",
       "WOTC" => "Walls of the Cave",
+      "WTU?" => "What's the Use?",
       "YaMar" => "Ya Mar",
       "Yarmouth" => "Yarmouth Road",
       "YEM" => "You Enjoy Myself",
