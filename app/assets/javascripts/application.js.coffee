@@ -431,7 +431,7 @@ $ ->
     $('#taper_notes_modal').modal('show')
 
   # Tag instance click opens a modal
-  .on 'click', '.tag_label', ->
+  .on 'click', '.tag_label:not(.no-modal)', ->
     $('#tag_detail_title').html $(this).data('detail-title')
     $('#tag_detail').html $(this).data('detail')
     $('#tag_modal').animate({ scrollTop: 0 }, 'slow');
