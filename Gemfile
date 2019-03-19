@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 source 'https://rubygems.org'
-ruby '2.6.1'
+ruby '2.6.2'
 
 gem 'actionpack-action_caching'
 gem 'bootstrap-will_paginate'
