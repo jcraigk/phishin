@@ -2,7 +2,7 @@
 class Api::V1::ApiController < ActionController::Base
   include ApiAuth
 
-  # before_action :require_auth
+  before_action :require_auth
   before_action :save_api_request
   after_action :set_json_content_type
 
