@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 module ApiAuth
   def require_auth
+    return true if phish_od? # Skip auth for legacy iOS PhishOD app
     return missing_key unless key_from_header
     return invalid_key unless active_api_key
+    true
   end
 
   def save_api_request
@@ -11,6 +13,10 @@ module ApiAuth
   end
 
   private
+
+  def phish_od?
+    request.user_agent.include?('PhishOD')
+  end
 
   def active_api_key
     ApiKey.active.find_by(key: key_from_header)
