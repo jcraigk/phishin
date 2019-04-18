@@ -15,7 +15,7 @@ module ApiAuth
   private
 
   def phish_od?
-    request.user_agent.include?('PhishOD')
+    request.user_agent&.include?('PhishOD')
   end
 
   def active_api_key
