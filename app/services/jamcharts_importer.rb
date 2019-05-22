@@ -75,43 +75,65 @@ class JamchartsImporter
 
   def handle_item(item, show)
     song = find_song_by_title(item['song'])
+
+    return if handle_ambiguous_item(item)
+
     show.tracks.sort_by(&:position).each do |track|
       next if song.nil?
 
       st = SongsTrack.where(song_id: song.id, track_id: track.id).first
       next if st.nil?
 
-      details = "#{show.date} => #{track.title} (#{track.id})"
       next if matched_ids.include?(track.id) # Skip to next occurrence of song in set
       matched_ids << track.id
 
       desc = sanitize_str(item['jamchart_description'])
       tag =
-        if desc.start_with?('Debut.') || desc.start_with?('First version.')
+        if desc.start_with?('Debut.', 'First version.')
           desc = nil
           debut_tag
         else
           jamcharts_tag
         end
 
-      tt = TrackTag.find_by(track: track, tag: tag)
-      next if desc.present? && tt&.notes == desc
-
-      if tt.present?
-        # puts "Updating #{details}"
-        tt.update(notes: desc)
-      else
-        # puts "Creating #{details}"
-        TrackTag.create!(
-          track: track,
-          tag: tag,
-          notes: desc
-        )
-      end
-
-      return # Important for multi-track matching!
+      return create_or_update_tag(track, tag, desc)
     end
 
     @invalid_items << "#{item['showdate']} - #{item['song']}"
+  end
+
+  def create_or_update_tag(track, tag, desc)
+    tt = TrackTag.find_by(track: track, tag: tag)
+    if tt.present?
+      tt.update(notes: desc)
+    else
+      TrackTag.create!(
+        track: track,
+        tag: tag,
+        notes: desc
+      )
+    end
+  end
+
+  # Ambiguous: show contains multiple tracks of a song, only one is jamcharted
+  def handle_ambiguous_item(item)
+    return unless (matched_item = ambiguous_item(item))
+    track = Track.find(matched_item[:track_id])
+    create_or_update_tag(track, jamcharts_tag, sanitize_str(item['jamchart_description']))
+    true
+  end
+
+  def ambiguous_item(item)
+    ambiguous_items.find { |i| i[:showid] == item['showid'].to_s && i[:song] == item['song'] }
+  end
+
+  def ambiguous_items
+    [
+      {
+        song: 'Wipe Out',
+        showid: '1252806821',
+        track_id: '18941'
+      }
+    ]
   end
 end

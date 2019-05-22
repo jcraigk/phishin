@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 source 'https://rubygems.org'
-ruby '2.6.1'
+ruby '2.6.3'
 
 gem 'actionpack-action_caching'
 gem 'bootstrap-will_paginate'
@@ -25,6 +25,7 @@ gem 'rails'
 gem 'ruby-mp3info'
 gem 'ruby-progressbar'
 gem 'sass-rails'
+gem 'sentry-raven'
 gem 'slim'
 gem 'soundmanager2-rails'
 gem 'therubyracer'
