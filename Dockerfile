@@ -14,6 +14,7 @@ RUN apt-get update -qq && \
 WORKDIR $INSTALL_PATH
 
 COPY Gemfile Gemfile.lock ./
+RUN gem update bundler
 RUN bundle install
 COPY . .
 
