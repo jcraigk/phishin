@@ -56,6 +56,14 @@ module FeatureHelpers
       expect_content('Sort by', 'Duration')
     end
     expect_content_in_order(titles_by_duration)
+
+    # Sort by Reverse Duration
+    within('#title_box') do
+      first('.dropdown-toggle').click
+      click_link('Reverse Duration')
+      expect_content('Sort by', 'Duration')
+    end
+    expect_content_in_order(titles_by_duration.reverse)
   end
 
   def expect_show_sorting_controls(shows)
@@ -88,10 +96,19 @@ module FeatureHelpers
     # Sort by Duration
     within('#title_box') do
       first('.dropdown-toggle').click
-      click_link('Duration')
+      click_link('Reverse Duration')
       expect_content('Sort by', 'Duration')
     end
     expect_content_in_order(dates_by_duration)
+  end
+
+    # Sort by Duration
+    within('#title_box') do
+      first('.dropdown-toggle').click
+      click_link('Reverse Duration')
+      expect_content('Sort by', 'Duration')
+    end
+    expect_content_in_order(dates_by_duration.reverse)
   end
 
   def enter_search_term(term)

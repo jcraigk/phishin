@@ -23,7 +23,7 @@ class AmbiguityController < ApplicationController
 
   def validate_sorting_for_tracks
     params[:sort] = 'shows.date desc' unless
-      params[:sort].in?(['title', 'shows.date desc', 'shows.date asc', 'likes', 'duration'])
+      params[:sort].in?(['title', 'shows.date desc', 'shows.date asc', 'likes', 'duration', 'duration_rev'])
     order_by_for_tracks
   end
 
@@ -38,12 +38,14 @@ class AmbiguityController < ApplicationController
         { likes_count: :desc }
       when 'duration'
         { duration: :asc }
+      when 'duration_rev'
+        { duration: :desc }
       end
   end
 
   def validate_sorting_for_shows
     params[:sort] = 'date desc' unless
-      params[:sort].in?(['date desc', 'date asc', 'likes', 'duration'])
+      params[:sort].in?(['date desc', 'date asc', 'likes', 'duration', 'duration_rev'])
     order_by_for_shows
   end
 
@@ -54,6 +56,8 @@ class AmbiguityController < ApplicationController
       elsif params[:sort] == 'likes'
         { likes_count: :desc, date: :desc }
       elsif params[:sort] == 'duration'
+        'shows.duration asc, date desc'
+      elsif params[:sort] == 'duration_rev'
         'shows.duration desc, date desc'
       end
   end

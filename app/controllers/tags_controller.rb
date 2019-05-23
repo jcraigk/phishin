@@ -68,7 +68,7 @@ class TagsController < ApplicationController
 
   def shows_order_by
     params[:sort] = 'date desc' unless
-      params[:sort].in?(['date desc', 'date', 'likes', 'duration'])
+      params[:sort].in?(['date desc', 'date', 'likes', 'duration', 'duration_rev'])
 
     case params[:sort]
     when 'date desc'
@@ -78,13 +78,15 @@ class TagsController < ApplicationController
     when 'likes'
       { likes_count: :desc }
     when 'duration'
+      { duration: :asc }
+    when 'duration_rev'
       { duration: :desc }
     end
   end
 
   def tracks_order_by
     params[:sort] = 'date desc' unless
-      ['date desc', 'date', 'likes', 'duration'].include?(params[:sort])
+      ['date desc', 'date', 'likes', 'duration', 'duration_rev'].include?(params[:sort])
 
     case params[:sort]
     when 'date desc'
@@ -94,6 +96,8 @@ class TagsController < ApplicationController
     when 'likes'
       { likes_count: :desc }
     when 'duration'
+      { duration: :asc }
+    when 'duration_rev'
       { duration: :desc }
     end
   end
