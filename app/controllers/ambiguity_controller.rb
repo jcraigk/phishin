@@ -37,7 +37,7 @@ class AmbiguityController < ApplicationController
       when 'likes'
         { likes_count: :desc }
       when 'duration'
-        { duration: :asc }
+        { duration: :desc }
       end
   end
 

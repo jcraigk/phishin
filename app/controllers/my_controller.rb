@@ -36,7 +36,7 @@ class MyController < ApplicationController
       when 'likes'
         'likes_count desc, date desc'
       when 'duration'
-        'duration, date desc'
+        'duration desc, date desc'
       end
   end
 
@@ -52,7 +52,7 @@ class MyController < ApplicationController
       when 'likes'
         'likes_count desc'
       when 'duration'
-        'duration'
+        'duration desc'
       end
   end
 end

@@ -69,7 +69,7 @@ module SortHelper
       '<i class="icon-time"></i> Reverse Date' => 'date desc',
       '<i class="icon-time"></i> Date' => 'date',
       '<i class="icon-heart"></i> Likes' => 'likes',
-      '<i class="icon-play-circle"></i> Duration' => 'duration'
+      '<i class="icon-forward"></i> Duration' => 'duration'
     }
   end
 
@@ -111,7 +111,7 @@ module SortHelper
   def saved_playlist_sort_items
     {
       '<i class="icon-text-height"></i> Name' => 'name',
-      '<i class="icon-time"></i> Duration' => 'duration'
+      '<i class="icon-forward"></i> Duration' => 'duration'
     }
   end
 end
