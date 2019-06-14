@@ -10,7 +10,7 @@ All audio is currently in MP3 format; more formats may be made available at a la
 
 Join the [Discord](https://discord.gg/KZWFsNN) to discuss curation and development.
 
-## Developer setup
+## Developer Setup
 
 1. Install [Docker](https://www.docker.com/).
 
