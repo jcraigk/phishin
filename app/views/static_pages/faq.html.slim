@@ -1,0 +1,47 @@
+= render partial: 'layouts/global_nav'
+
+#content
+  #title_box
+    h1 Frequently Asked Questions
+  #content_box
+    p.large
+      strong Is this site legal?
+    p
+      | Yes, this site is 100% legal and complies with Phish's official taping policy as described at
+      a.non-remote<> href='http://phish.com/#/faq/taping-guidelines' target='_blank' http://phish.com/#/faq/taping-guidelines.
+      | If you know any of the material on this site to be in violation of Phish's policy, please send an email to
+      a.non-remote< href="mailto:#{APP_EMAIL}" target='_blank' = APP_EMAIL
+      | .
+    br
+
+    p.large
+      strong How is it funded?
+    p This site is funded privately by the author. No donations may be accepted according to Phish's taping policy.
+    br
+
+    p.large
+      strong How are audio sources chosen?
+    p
+      | Audio is downloaded from
+      a.non-remote<> href='http://bt.etree.org' target='_blank' http://bt.etree.org
+      | soon after it is uploaded by tapers.  This usually occurs 8 to 12 hours after a show takes place.  Often, the first source posted will be chosen to get content up as quickly as possible.  However, if the first source contains labeling, splitting, or quality issues, an alternate source will be selected.  In general, Phish.net setlists are preferred as far as labeling/splitting goes.
+    p Sometimes sources will be replaced later if a better version becomes available, but this is rare.  For multi-night runs, the same source is preferred, although not always available.
+    br
+
+    p.large
+      strong What format is audio encoded in?
+    p MP3 format is currently provided.  These may be replaced with lossless format at a later time as storage and bandwidth become available.
+    br
+
+    p.large
+      strong What technologies power the site?
+    p Ruby on Rails, Postgres, CloudFlare.
+    br
+
+    p.large
+      strong How can I contribute?
+    p
+    ' Join the discussion on Discord:
+    a.non-remote.underline href='https://discord.gg/KZWFsNN' https://discord.gg/KZWFsNN
+
+  = clear_both

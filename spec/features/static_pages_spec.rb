@@ -2,15 +2,15 @@
 require 'rails_helper'
 
 describe 'Static pages', :js do
-  it 'visit Legal page' do
-    visit '/legal'
+  it 'visit FAQ page' do
+    visit '/faq'
 
     within('#title_box') do
-      expect_content('Legal Stuff')
+      expect_content('Frequently Asked Questions')
     end
 
     within('#content_box') do
-      expect_content('This site complies with Phish\'s official taping policy')
+      expect_content('How are audio sources chosen?')
     end
   end
 
