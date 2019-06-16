@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class StaticPagesController < ApplicationController
-  def legal
+  def faq
     render_xhr_without_layout
   end
 
