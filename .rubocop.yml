@@ -1,4 +1,6 @@
-require: rubocop-rspec
+require:
+  - rubocop-rails
+  - rubocop-rspec
 
 AllCops:
   TargetRubyVersion: 2.6.3
@@ -9,6 +11,7 @@ AllCops:
     - db/schema.rb
     - spec/support/**/*
     - vendor/**/*
+    - lib/tasks/*
 
 Documentation:
   Enabled: false

@@ -34,8 +34,9 @@ gem 'uglifier'
 
 group :development do
   gem 'bullet'
-  gem 'rubocop'
+  gem 'rubocop-rails'
   gem 'rubocop-rspec'
+  gem 'rubocop'
 end
 
 group :development, :test do
