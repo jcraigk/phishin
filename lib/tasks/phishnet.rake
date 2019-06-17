@@ -1,5 +1,38 @@
 # frozen_string_literal: true
 namespace :phishnet do
+  desc 'Populate known dates'
+  task known_dates: :environment do
+    puts 'Fetching known dates from Phish.net API...'
+
+    bad_dates = ['2018-08-17', '2018-08-18', '2018-08-19']
+
+    (1983..Time.current.year).each do |year|
+      resp =
+        HTTParty.post(
+          'https://api.phish.net/v3/shows/query',
+          body: {
+            apikey: ENV['PNET_API_KEY'],
+            year: year,
+            order: 'ASC'
+          }
+        )
+      data = JSON[resp.body]['response']['data']
+      print "#{year}: "
+      data.each do |entry|
+        next unless entry['billed_as'] == 'Phish'
+        next if bad_dates.include?(entry['showdate'])
+        kdate = KnownDate.find_or_create_by(date: entry['showdate'])
+        kdate.update(
+          phishnet_url: entry['link'],
+          location: entry['location'].gsub(/ , /, ' '),
+          venue: entry['venue']
+        )
+        print '.'
+      end
+      puts 'done'
+    end
+  end
+
   desc 'Sync jamcharts data'
   task jamcharts: :environment do
     puts 'Fetching Jamcharts data from Phish.net API...'
