@@ -8,7 +8,7 @@
     h2 #{@kdates.size - @incomplete_dates.size} missing shows
     h2 #{@incomplete_dates.size} incomplete shows
     .hr
-    p This list represents all known shows that do not have complete recordings available on this site.
+    p This list represents all known Phish performances that do not have complete audience recordings available in circulation. Over time, new audio sources may surface, at which time they are added to the library. Some of these performances have copyright restrictions due to the venue, such as talk show appearances, and thus will likely never appear on this site.
 
   #content_box
     - @kdates.group_by { |kd| kd.date.year }.each do |year, known_dates|
