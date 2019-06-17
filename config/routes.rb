@@ -13,6 +13,9 @@ Rails.application.routes.draw do
   get '/api-docs' => 'static_pages#api_docs', as: 'api_docs'
   get '/tagin-project' => 'static_pages#tagin_project', as: 'tagin_project'
 
+  # Reports
+  get '/missing-content' => 'reports#missing_content', as: 'missing_content'
+
   # Content navigation pages
   get '/years' => 'eras#index', as: 'eras'
   get '/songs' => 'songs#index', as: 'songs'
