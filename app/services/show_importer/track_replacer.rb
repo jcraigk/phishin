@@ -19,14 +19,20 @@ class ShowImporter::TrackReplacer
 
   def match_files_to_tracks
     filenames.each_with_object({}) do |filename, track_hash|
-      track_hash[filename] =
-        Track.where(show_id: show.id)
-             .kinda_matching(scrub_filename(filename))
-             .first
+      tracks_kinda_matching(filename).each do |track|
+        next if track_hash.value?(track) # Handle multiple instances of song
+        break track_hash[filename] = track
+      end
     end
   end
 
   private
+
+  def tracks_kinda_matching(filename)
+    Track.where(show_id: show.id)
+         .kinda_matching(scrub_filename(filename))
+         .order(position: :asc)
+  end
 
   def replace_audio_on_tracks
     track_hash.sort.each do |filename, track|
