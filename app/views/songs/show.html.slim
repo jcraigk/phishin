@@ -36,7 +36,7 @@
               a href="/map?map_term=#{CGI.escape(track.show.venue.location)}" = truncate(track.show.venue.location, length: 20)
             = likable(track, @tracks_likes[idx], 'small')
             h3 = duration_readable(track.duration)
-            = render partial: 'shared/context_menu_for_track', locals: { track: track, playlist: false, show: nil }
+            = display_tag_instances(track.track_tags)
             = clear_both
 
     - if @tracks.total_pages > 1
