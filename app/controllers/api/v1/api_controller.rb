@@ -71,7 +71,7 @@ class Api::V1::ApiController < ActionController::Base
   end
 
   def sort_attr(relation)
-    params[:sort_attr].in?(relation.klass.new.attributes) ? params[:sort_attr] : 'id'
+    params[:sort_attr].in?(relation.first.class.new.attributes.keys) ? params[:sort_attr] : 'id'
   end
 
   def sort_dir
