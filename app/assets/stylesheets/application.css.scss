@@ -1226,7 +1226,6 @@ html {
       margin: 0 auto;
       text-align: center;
       font-size: 14px;
-      font-weight: bold;
       margin-top: 10px;
 
       & > input {
@@ -1238,7 +1237,7 @@ html {
         width: 140px;
       }
       #map_search_distance {
-        width: 40px;
+        width: 25px;
       }
       #map_search_submit {
         width: 150px;
@@ -1246,7 +1245,7 @@ html {
         margin-bottom: 20px;
       }
       #map_date_start {
-        width: 90px;
+        width: 80px;
       }
       #map_date_stop {
         width: 90px;

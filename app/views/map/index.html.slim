@@ -6,16 +6,15 @@
       h1 Find shows near:
       input#map_search_term type='text' placeholder='place or zipcode' value=(params[:map_term])
       br
-      | within
-      input#map_search_distance type='text' value=(params[:distance] || 50)
+      ' within
+      input#map_search_distance> type='text' value=(params[:distance] || 50)
       | miles  
       br
-      span.optional
-        | within timeframe
-        br
-        input#map_date_start.small_input type='text' name='date_start' placeholder='earliest' value=params[:date_start]
-        |  to
-        input#map_date_stop.small_input< type='text' name='date_start' placeholder='latest' value=params[:date_stop]
+      | within date range
+      p
+      input#map_date_start.small_input type='text' name='date_start' placeholder='earliest' value=params[:date_start]
+      |  to
+      input#map_date_stop.small_input< type='text' name='date_start' placeholder='latest' value=params[:date_stop]
       br
       br
       button#map_search_submit.btn type='button' SEARCH

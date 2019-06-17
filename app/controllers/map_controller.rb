@@ -24,20 +24,24 @@ class MapController < ApplicationController
   end
 
   def relevant_venues
-    venues.each_with_object([]) do |venue, relevant_venues|
+    venues_nearby.each_with_object([]) do |venue, relevant_venues|
       shows = relevant_shows_for(venue)
       next unless shows.any?
       relevant_venues << venue.as_json.merge(shows: shows.map(&:as_json))
     end
   end
 
-  def venues
-    @venues ||= Venue.near([params[:lat], params[:lng]], params[:distance]).includes(:shows)
+  def venues_nearby
+    @venues_nearby ||= Venue.near([params[:lat], params[:lng]], params[:distance]).includes(:shows)
   end
 
   def relevant_shows_for(venue)
-    venue.shows.select do |show|
-      show.date >= Time.parse(params[:date_start]) && show.date <= Time.parse(params[:date_stop])
-    end.sort_by(&:date).reverse
+    venue.shows.select { |show| shows_in_timeframe(show) }.sort_by(&:date).reverse
+  end
+
+  def shows_in_timeframe(show)
+    show.date >= Time.parse(params[:date_start]) && show.date <= Time.parse(params[:date_stop])
+  rescue ArgumentError
+    true
   end
 end
