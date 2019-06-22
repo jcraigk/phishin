@@ -14,8 +14,7 @@ RUN apt-get update -qq && \
 WORKDIR $INSTALL_PATH
 
 COPY Gemfile Gemfile.lock ./
-RUN gem update bundler
-RUN bundle install
+RUN gem install bundler && bundle install
 COPY . .
 
 # Symlink audio files to Rails public folder
