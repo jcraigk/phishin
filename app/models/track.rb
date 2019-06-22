@@ -62,15 +62,16 @@ class Track < ApplicationRecord
   end
 
   def save_duration
-    update_column(:duration, Mp3DurationQuery.new(audio_file.path).call)
+    update(duration: Mp3DurationQuery.new(audio_file.path).call)
   end
 
-  def as_json
+  def as_json # rubocop:disable Metrics/MethodLength
     {
       id: id,
       title: title,
       position: position,
       duration: duration,
+      jam_starts_at_second: jam_starts_at_second,
       set: set,
       set_name: set_name,
       likes_count: likes_count,
@@ -89,6 +90,7 @@ class Track < ApplicationRecord
       title: title,
       position: position,
       duration: duration,
+      jam_starts_at_second: jam_starts_at_second,
       set: set,
       set_name: set_name,
       likes_count: likes_count,
@@ -102,8 +104,8 @@ class Track < ApplicationRecord
 
   private
 
-  def track_tags_for_api
-    track_tags.map do |track_tag|
+  def track_tags_for_api # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    tags = track_tags.map do |track_tag|
       {
         id: track_tag.tag.id,
         name: track_tag.tag.name,
@@ -115,6 +117,7 @@ class Track < ApplicationRecord
         starts_at_second: track_tag.starts_at_second,
         ends_at_second: track_tag.ends_at_second
       }
-    end.sort_by { |t| t[:priority] }
+    end
+    tags.sort_by { |t| t[:priority] }
   end
 end

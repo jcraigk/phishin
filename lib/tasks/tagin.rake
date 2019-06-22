@@ -8,17 +8,27 @@ require 'csv'
 namespace :tagin do
   desc 'Sync data from remote spreadsheet'
   task sync: :environment do
-    SPREADSHEET_ID = '1WZtJYSHvt0DSYeUtzM5h0U5c90DN9Or7ckkJD-ds-rM'
-
     TAGIN_TAGS.each do |tag_name|
       puts '========================'
       puts " Syncing Tag: #{tag_name}"
       puts '========================'
 
       range = "#{tag_name}!A1:G5000"
-      data = GoogleSpreadsheetFetcher.new(SPREADSHEET_ID, range, headers: true).call
+      data = GoogleSpreadsheetFetcher.new(ENV['TAGIN_GSHEET_ID'], range, headers: true).call
 
       TrackTagSyncService.new(tag_name, data).call
+    end
+  end
+
+  desc 'Sync jam_starts_at_second data from spreadsheet'
+  task jamstart: :environment do
+    include Syncable
+
+    data = GoogleSpreadsheetFetcher.new(ENV['TAGIN_GSHEET_ID'], "JAMSTART!A1:G5000", headers: true).call
+    data.each do |row|
+      @track = find_track_by_url(row['URL'])
+      @track.update(jam_starts_at_second: seconds_or_nil(row['Starts At']))
+      print '.'
     end
   end
 
