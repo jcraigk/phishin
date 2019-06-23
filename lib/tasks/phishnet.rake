@@ -24,7 +24,7 @@ namespace :phishnet do
         kdate = KnownDate.find_or_create_by(date: entry['showdate'])
         kdate.update(
           phishnet_url: entry['link'],
-          location: entry['location'].gsub(/ , /, ' '),
+          location: entry['location']&.gsub(/ , /, ' '),
           venue: entry['venue']
         )
         print '.'
