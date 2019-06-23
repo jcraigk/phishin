@@ -16,7 +16,7 @@ class ShowImporter::Cli
   def main_menu
     puts "\n#{orch.show.date} - #{orch.show.venue.name} - #{orch.show.venue.location}\n\n"
     orch.pp_list
-    puts "\n\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, (s)ave: "
+    puts "\n\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, (s)ave, e(x)it: "
   end
 
   def print_filenames
@@ -158,6 +158,8 @@ class ShowImporter::Cli
       delete_track
     when 's'
       orch.save
+    when 'x'
+      exit
     end
   end
 end
