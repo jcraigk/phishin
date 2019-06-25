@@ -75,7 +75,7 @@ class Api::V1::ShowsController < Api::V1::ApiController
   end
 
   def show_id_is_date?
-    params[:id] =~ /\d{4}-\d{2}-\d{2}/
+    params[:id] =~ /\d{4}-\d{1,2}-\d{1,2}/
   end
 
   def show_on_date
