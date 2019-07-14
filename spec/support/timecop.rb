@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module TimeHelpers
   RSpec.configure do |config|
-    config.around(:each, :timecop) do |example|
+    config.around(:each, :freeze_time) do |example|
       destination_time =
         begin
           Time.at(example.metadata[:freeze_time])

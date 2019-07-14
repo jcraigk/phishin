@@ -61,7 +61,7 @@ module TagHelper
     title = ''
 
     tag_instances.each_with_index do |t, idx|
-      title += "#{simple_format(t.notes, {}, wrapper_tag: :span)} #{time_range(t)}".strip if t.notes.present?
+      title += "#{t.notes} #{time_range(t)}".strip if t.notes.present?
 
       if t.try(:transcript)&.present?
           if include_transcript

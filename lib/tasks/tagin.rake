@@ -294,7 +294,6 @@ namespace :tagin do
   task grind: :environment do
     include ActionView::Helpers::NumberHelper
 
-    tag = Tag.find_by(name: 'Alt Lyric')
     first_date = Date.parse('2009-03-06');
     first_days_lived = {
       'Page' => 16_730,
