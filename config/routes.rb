@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   # Static pages
   get '/faq' => 'static_pages#faq', as: 'faq'
-  get '/contact' => 'static_pages#contact', as: 'contact'
+  get '/contact-info' => 'static_pages#contact_info', as: 'contact_info'
   get '/api-docs' => 'static_pages#api_docs', as: 'api_docs'
   get '/tagin-project' => 'static_pages#tagin_project', as: 'tagin_project'
 

@@ -15,7 +15,7 @@ describe 'Static pages', :js do
   end
 
   it 'visit Contact page' do
-    visit '/contact'
+    visit '/contact-info'
 
     within('#title_box') do
       expect_content('Contact', 'I woke up one morning in November')

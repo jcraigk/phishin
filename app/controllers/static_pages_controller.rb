@@ -4,7 +4,7 @@ class StaticPagesController < ApplicationController
     render_xhr_without_layout
   end
 
-  def contact
+  def contact_info
     render_xhr_without_layout
   end
 
