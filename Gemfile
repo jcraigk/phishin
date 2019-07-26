@@ -34,6 +34,7 @@ gem 'uglifier'
 
 group :development do
   gem 'bullet'
+  gem 'rubocop-performance'
   gem 'rubocop-rails'
   gem 'rubocop-rspec'
   gem 'rubocop'

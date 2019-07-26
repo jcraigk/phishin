@@ -105,17 +105,17 @@ class Track < ApplicationRecord
   private
 
   def track_tags_for_api # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    tags = track_tags.map do |track_tag|
+    tags = track_tags.map do |tt|
       {
-        id: track_tag.tag.id,
-        name: track_tag.tag.name,
-        priority: track_tag.tag.priority,
-        group: track_tag.tag.group,
-        color: track_tag.tag.color,
-        notes: track_tag.notes,
-        transcript: track_tag.transcript,
-        starts_at_second: track_tag.starts_at_second,
-        ends_at_second: track_tag.ends_at_second
+        id: tt.tag.id,
+        name: tt.tag.name,
+        priority: tt.tag.priority,
+        group: tt.tag.group,
+        color: tt.tag.color,
+        notes: tt.notes,
+        transcript: tt.transcript,
+        starts_at_second: tt.starts_at_second,
+        ends_at_second: tt.ends_at_second
       }
     end
     tags.sort_by { |t| t[:priority] }
