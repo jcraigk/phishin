@@ -2,13 +2,13 @@
 module ApiAuth
   def require_auth
     return true if phish_od? # Skip auth for legacy iOS PhishOD app
-    return missing_key unless key_from_header
-    return invalid_key unless active_api_key
+    return missing_key if key_from_header.blank?
+    return invalid_key if active_api_key.blank?
     true
   end
 
   def save_api_request
-    return unless active_api_key
+    return if active_api_key.blank?
     ApiRequest.create(api_key: active_api_key, path: request.fullpath)
   end
 
@@ -23,7 +23,8 @@ module ApiAuth
   end
 
   def key_from_header
-    @key_from_header ||= request.authorization.to_s.sub('Bearer ', '')
+    @key_from_header ||=
+      (request.authorization || request.headers.to_h['Authorization']).to_s.sub('Bearer ', '')
   end
 
   def missing_key

@@ -53,6 +53,7 @@ describe 'Venues', :js do
 
   it 'Venue sorting' do
     visit venues_path(char: 'E')
+    sleep(1)
 
     expect_content_in_order('Eagles', 'Earlham')
 

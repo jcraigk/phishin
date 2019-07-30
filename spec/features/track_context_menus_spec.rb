@@ -11,6 +11,7 @@ describe 'Track Context Menues', :js do
 
   it 'add to playlist, this song' do
     visit show.date
+    sleep(1)
 
     first('.playable_track').hover
     first('.track-context-dropdown').click
@@ -27,6 +28,7 @@ describe 'Track Context Menues', :js do
 
   it 'sharing' do
     visit show.date
+    sleep(1)
 
     first('.playable_track').hover
     first('.track-context-dropdown').click

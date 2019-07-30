@@ -4,54 +4,66 @@ require 'rails_helper'
 describe Api::V1::ApiController do
   include Rack::Test::Methods
 
-  let(:json) { JSON[subject.body].deep_symbolize_keys }
+  subject(:response) { get(path, params, headers) }
+
+  let(:headers) { auth_header }
+  let(:json) { JSON[response.body].deep_symbolize_keys }
+  let(:params) { {} }
   let(:path) { '/api/v1/tags' }
 
   context 'with no authorization header' do
-    subject { get path, headers: nil }
+    let(:headers) { {} }
 
-    xit 'returns a 401' do
-      expect(subject.status).to eq(401)
+    it 'returns a 401' do
+      expect(response.status).to eq(401)
     end
   end
 
   describe 'api request logging' do
-    subject { get path, {}, auth_header }
+    before { allow(ApiRequest).to receive(:create) }
 
-    xit 'creates an ApiRequest' do
-      expect(ApiRequest).to receive(:create)
-      expect(subject.status).to eq(200)
+    it 'returns 200' do
+      expect(response.status).to eq(200)
+    end
+
+    it 'creates an ApiRequest' do
+      response
+      expect(ApiRequest).to have_received(:create)
     end
   end
 
   describe 'paging' do
-    subject { get path, {}, auth_header }
-
-    let!(:tags) { create_list(:tag, 50) }
+    let!(:tags) { create_list(:tag, 25) }
+    let(:expected_json) do
+      {
+        success: true,
+        total_entries: 25,
+        total_pages: 2,
+        page: 1,
+        data: tags.first(20).map(&:as_json)
+      }
+    end
 
     context 'without params' do
       it 'responds with expected data' do
-        expect(json).to eq(
-          success: true,
-          total_entries: 50,
-          total_pages: 3,
-          page: 1,
-          data: tags.first(20).map(&:as_json)
-        )
+        expect(json).to eq(expected_json)
       end
     end
 
     context 'with page param' do
-      subject { get "#{path}?page=2", {}, auth_header }
-
-      it 'responds with expected data' do
-        expect(json).to eq(
+      let(:params) { { page: 2 } }
+      let(:expected_json) do
+        {
           success: true,
-          total_entries: 50,
-          total_pages: 3,
+          total_entries: 25,
+          total_pages: 2,
           page: 2,
           data: tags[20..39].map(&:as_json)
-        )
+        }
+      end
+
+      it 'responds with expected data' do
+        expect(json).to eq(expected_json)
       end
     end
   end

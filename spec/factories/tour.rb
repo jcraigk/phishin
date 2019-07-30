@@ -2,8 +2,8 @@
 FactoryBot.define do
   factory :tour do
     name { "Tour #{Faker::Book.unique.title}"[0..40] }
-    starts_on { Faker::Date.unique.between(30.years.ago, Date.today) }
-    ends_on { Faker::Date.unique.between(30.years.ago, Date.today) }
+    starts_on { Faker::Date.unique.between(500.years.ago, Date.today) }
+    ends_on { Faker::Date.unique.between(500.years.ago, Date.today) }
 
     trait :with_shows do
       after(:build) do |tour|

@@ -7,6 +7,7 @@ describe 'Show Context Menus', :js do
 
   it 'use the show dropdown' do
     visit show.date
+    sleep(1)
 
     first('.show-context-dropdown').click
 

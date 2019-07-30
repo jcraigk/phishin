@@ -96,8 +96,9 @@ module FeatureHelpers
 
   def enter_search_term(term)
     visit root_path
+    sleep(1)
 
-    fill_in('term', with: term)
+    fill_in('search_term', with: term)
     find('#search_term').native.send_keys(:return)
 
     within('#title_box') do
