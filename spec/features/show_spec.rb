@@ -69,6 +69,8 @@ describe 'Show', :js do
   describe 'liking' do
     it 'when not logged in' do
       visit show.date
+      sleep(1)
+      
       within('#title_box') do
         first('.like_toggle').click
       end
@@ -79,6 +81,7 @@ describe 'Show', :js do
       before do
         login_as(create(:user))
         visit show.date
+        sleep(1)
       end
 
       it 'liking/unliking the show' do

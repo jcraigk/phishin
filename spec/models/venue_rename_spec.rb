@@ -9,5 +9,5 @@ RSpec.describe VenueRename do
   it { is_expected.to belong_to(:venue) }
 
   it { is_expected.to validate_presence_of(:name) }
-  it { is_expected.to validate_presence_of(:renamed_at) }
+  it { is_expected.to validate_presence_of(:renamed_on) }
 end

@@ -49,7 +49,7 @@ describe 'Homepage', :js do
       # Years
       years = page.all('ul.item_list li h2.wider')
       expect(years.first.text).to eq('2019')
-      expect(years[10].text).to eq('2004')
+      expect(years[10].text).to eq('2009')
       expect(years.last.text).to eq('1983-1987')
 
       # Venue stats
@@ -66,7 +66,7 @@ describe 'Homepage', :js do
     end
 
     within('#footer') do
-      expect_content("phish.in'", 'legal', 'contact', 'api')
+      expect_content("phish.in'", 'faq', 'contact', 'api', "tag.in' project")
     end
 
     # Click most recent year

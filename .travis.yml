@@ -1,0 +1,19 @@
+dist: trusty
+language: ruby
+rvm:
+  - 2.6.3
+cache: bundler
+notifications:
+  email: false
+addons:
+  apt:
+    packages:
+      - chromium-chromedriver
+before_install:
+  - ln -s /usr/lib/chromium-browser/chromedriver ~/bin/chromedriver
+  - psql -c 'create database phishin_test;' -U postgres
+  - gem update --system
+  - gem install bundler
+script:
+  - bundle exec rspec
+  - bundle exec rubocop

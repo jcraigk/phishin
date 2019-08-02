@@ -6,7 +6,7 @@ describe 'Venues page', :js do
     visit map_path
 
     within('#title_box') do
-      expect_content('Find shows near:', 'within', 'miles', 'within timeframe')
+      expect_content('Find shows near:', 'within', 'miles', 'within date range')
       expect_css('#map_search_term', '#map_search_distance', '#map_date_start', '#map_date_stop')
     end
 
