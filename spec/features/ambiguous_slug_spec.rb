@@ -6,7 +6,7 @@ describe 'Ambiguous slug resolution', :js do
   let!(:show2) { create(:show, date: '1998-10-31', tour: tour, venue: venue) }
   let!(:show3) { create(:show, date: '2014-10-31', tour: tour) }
   let!(:show4) { create(:show, :with_tracks, date: '2014-11-02', tour: tour) }
-  let!(:song) { create(:song, title: 'Alumni Blues') }
+  let!(:song) { create(:song, title: 'You Enjoy Myself', alias: 'YEM') }
   let!(:venue) { create(:venue, name: 'Madison Square Garden') }
   let!(:tour) { create(:tour, name: 'Magical Myster Tour') }
 
@@ -79,7 +79,7 @@ describe 'Ambiguous slug resolution', :js do
     visit "/#{song.slug}"
 
     within('#title_box') do
-      expect_content(song.title, "Total tracks: #{song.tracks.size}")
+      expect_content('You Enjoy Myself (aka YEM)', "Total tracks: #{song.tracks.size}")
     end
 
     items = page.all('ul.item_list li')

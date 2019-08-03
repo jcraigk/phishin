@@ -2,7 +2,7 @@
 
 #content
   #title_box
-    h1 = @song.title
+    h1 = song_title_with_alias(@song)
     h2 Total tracks: #{@song.tracks.size}
     h3
       - if @song.original?
@@ -23,7 +23,7 @@
       i.icon.icon-play
       |  Play Random Version
     br
-    a.btn href="http://phish.net/song/#{@song.slug}" target='_blank'
+    a.btn href="http://phish.net/song/#{@song.slug}/history" target='_blank'
       i.icon.icon-book>
       | Phish.net Song History
 

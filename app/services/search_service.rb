@@ -62,7 +62,7 @@ class SearchService
 
   def songs
     return [] if term_is_date?
-    Song.where('title ILIKE ?', "%#{term}%").order(title: :asc)
+    Song.where('title ILIKE :term OR alias ILIKE :term', term: "%#{term}%").order(title: :asc)
   end
 
   def venues

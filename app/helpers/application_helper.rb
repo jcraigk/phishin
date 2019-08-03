@@ -13,14 +13,19 @@ module ApplicationHelper
   end
 
   def link_to_song(song, term = nil)
-    slug = song.aliased_song ? "/#{song.aliased_song.slug}" : "/#{song.slug}"
-    title = (term ? highlight(song.title, term) : song.title)
-    link_to title, slug
+    title = song_title_with_alias(song)
+    title = highlight(title, term) if term.present?
+    link_to(title, "/#{song.slug}")
   end
 
-  def performances_or_alias_link(song)
-    return pluralize(song.tracks_count, 'track') unless song.aliased_song
-    link_to("alias for #{song.aliased_song.title}", song.aliased_song.slug, class: :alias_for)
+  def song_title_with_alias(song)
+    title = song.title
+    title += " (aka #{song.alias})" if song.alias.present?
+    title
+  end
+
+  def performances_link(song)
+    pluralize(song.tracks_count, 'track')
   end
 
   def likable(likable, like, size)
