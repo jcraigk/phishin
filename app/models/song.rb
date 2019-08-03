@@ -6,6 +6,7 @@ class Song < ApplicationRecord
   friendly_id :title, use: :slugged
 
   validates :title, presence: true, uniqueness: true
+  validates :alias, uniqueness: true, allow_nil: true
 
   include PgSearch::Model
   pg_search_scope(
@@ -35,19 +36,11 @@ class Song < ApplicationRecord
     where.not(lyrical_excerpt: nil).order(Arel.sql('RANDOM()')).first
   end
 
-  def aliased_song
-    Song.where(id: alias_for).first
-  end
-
-  def alias?
-    alias_for.present?
-  end
-
   def as_json
     {
       id: id,
       title: title,
-      alias_for: alias_for,
+      alias: self.alias,
       tracks_count: tracks_count,
       slug: slug,
       updated_at: updated_at.iso8601
@@ -58,7 +51,7 @@ class Song < ApplicationRecord
     {
       id: id,
       title: title,
-      alias_for: alias_for,
+      alias: self.alias,
       tracks_count: tracks_count,
       slug: slug,
       updated_at: updated_at.iso8601,

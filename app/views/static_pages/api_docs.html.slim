@@ -119,7 +119,7 @@
     span.api-command GET http://phish.in/api/v1/songs/40.json
     p will result in this response:
     pre
-      | { "success": true, "total_entries": 1, "total_pages": 1, "page": 1, "data": { "id": 40, "title": "Any Colour You Like", "alias_for": null, "tracks_count": 1, "slug": "any-colour-you-like", "updated_at": "2012-08-25T15:04:00Z", "tracks": [ { "id": 17963, "title": "Any Colour You Like", "duration": 211696, "show_id": 904, "show_date": "1998-11-02", "set": "2", "position": 20, "likes_count": 0, "slug": "any-colour-you-like", "mp3": "http://phish.in/audio/000/017/963/17963.mp3" } ] } }
+      | { "success": true, "total_entries": 1, "total_pages": 1, "page": 1, "data": { "id": 40, "title": "Any Colour You Like", "alias": null, "tracks_count": 1, "slug": "any-colour-you-like", "updated_at": "2012-08-25T15:04:00Z", "tracks": [ { "id": 17963, "title": "Any Colour You Like", "duration": 211696, "show_id": 904, "show_date": "1998-11-02", "set": "2", "position": 20, "likes_count": 0, "slug": "any-colour-you-like", "mp3": "http://phish.in/audio/000/017/963/17963.mp3" } ] } }
     p [2] Requesting "the 3 most recent shows":
     span.api-command GET http://phish.in/api/v1/shows.json?per_page=3&page=1&sort_attr=date&sort_dir=desc
     p will result in a response that looks like this:

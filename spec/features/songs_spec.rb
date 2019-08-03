@@ -2,7 +2,6 @@
 require 'rails_helper'
 
 describe 'Songs', :js do
-  let!(:a_song) { create(:song, :with_tracks, title: 'A Apolitical Blues') }
   let(:titles) { ['Garden Party', 'Gettin Jiggy', 'Ghost'] }
   let!(:g_songs) do
     titles.each_with_object([]) do |title, songs|
@@ -14,6 +13,7 @@ describe 'Songs', :js do
   let(:song3) { g_songs.third }
 
   before do
+    create(:song, :with_tracks, title: 'A Apolitical Blues', alias: 'Blues')
     create_list(:track, 2, songs: [g_songs.first])
     create_list(:track, 3, songs: [g_songs.second])
   end
@@ -30,7 +30,7 @@ describe 'Songs', :js do
     end
 
     within('#content_box') do
-      expect_content(a_song.title)
+      expect_content('A Apolitical Blues (aka Blues)')
     end
 
     # Click on sub nav 'G'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_22_014117) do
+ActiveRecord::Schema.define(version: 2019_08_03_193740) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -122,9 +122,10 @@ ActiveRecord::Schema.define(version: 2019_06_22_014117) do
     t.datetime "updated_at", null: false
     t.string "slug", limit: 255, null: false
     t.integer "tracks_count", default: 0
-    t.integer "alias_for"
     t.string "lyrical_excerpt", limit: 255
     t.boolean "original", default: false, null: false
+    t.string "alias"
+    t.index ["alias"], name: "index_songs_on_alias", unique: true
     t.index ["original"], name: "index_songs_on_original"
     t.index ["slug"], name: "index_songs_on_slug", unique: true
     t.index ["title"], name: "index_songs_on_title", unique: true

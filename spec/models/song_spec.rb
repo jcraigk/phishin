@@ -10,6 +10,7 @@ RSpec.describe Song do
 
   it { is_expected.to validate_presence_of(:title) }
   it { is_expected.to validate_uniqueness_of(:title) }
+  it { is_expected.to validate_uniqueness_of(:alias).allow_nil }
 
   it 'generates a slug from title (friendly_id)' do
     subject.save
@@ -53,20 +54,6 @@ RSpec.describe Song do
     end
   end
 
-  context 'aliasing' do
-    let(:alias_song) { create(:song, alias_for: song.id) }
-    let(:song) { create(:song) }
-
-    it 'provides #alias?' do
-      expect(song.alias?).to eq(false)
-      expect(alias_song.alias?).to eq(true)
-    end
-
-    it 'provides #aliased_song' do
-      expect(alias_song.aliased_song).to eq(song)
-    end
-  end
-
   context 'serialization' do
     subject { create(:song, :with_tracks) }
 
@@ -74,7 +61,7 @@ RSpec.describe Song do
       expect(subject.as_json).to eq(
         id: subject.id,
         title: subject.title,
-        alias_for: subject.alias_for,
+        alias: subject.alias,
         tracks_count: subject.tracks_count,
         slug: subject.slug,
         updated_at: subject.updated_at.iso8601
@@ -85,7 +72,7 @@ RSpec.describe Song do
       expect(subject.as_json_api).to eq(
         id: subject.id,
         title: subject.title,
-        alias_for: subject.alias_for,
+        alias: subject.alias,
         tracks_count: subject.tracks_count,
         slug: subject.slug,
         updated_at: subject.updated_at.iso8601,
