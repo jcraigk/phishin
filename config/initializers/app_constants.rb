@@ -1,7 +1,7 @@
 # frozen_string_literal: true
-APP_NAME = "phish.in'"
+APP_NAME = 'Phish.in'
 APP_EMAIL = 'phish.in.music@gmail.com'
-DEVISE_EMAIL_FROM = "phish.in' <noreply@phish.in>"
+DEVISE_EMAIL_FROM = 'Phish.in <noreply@phish.in>'
 
 CACHE_TTL = 10.minutes
 FIRST_CHAR_LIST = ('A'..'Z').to_a + ['#']
@@ -10,7 +10,7 @@ MIN_SEARCH_TERM_LENGTH = 3
 
 APP_CONTENT_PATH =
   if Rails.env.test?
-    "#{Rails.root}/tmp/content"
+    Rails.root.join('tmp', 'content')
   elsif ENV['IN_DOCKER']
     '/content'
   else

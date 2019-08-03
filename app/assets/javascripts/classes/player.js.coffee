@@ -171,11 +171,9 @@ class @Player
 
   scrubBackward: ->
     @sm_sound.setPosition(@sm_sound.position - 5000)
-    console.log('back')
 
   scrubForward: ->
     @sm_sound.setPosition(@sm_sound.position + 5000)
-    console.log('foward')
 
   stopAndUnload: ->
     this._fastFadeout @active_track
@@ -304,6 +302,7 @@ class @Player
     if r.title.length > 26 then @$player_title.addClass 'long_title' else @$player_title.removeClass 'long_title'
     if r.title.length > 50 then r.title = r.title.substring(0, 47) + '...'
     @$player_title.html r.title
+    document.title = r.title + ' - ' + r.show + ' - ' + @app_name
     @$likes_count.html r.likes_count
     @$likes_link.data 'id', r.id
     if r.liked

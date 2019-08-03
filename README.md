@@ -2,9 +2,9 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/fe9b48d7b87315f38be9/maintainability)](https://codeclimate.com/github/jcraigk/phishin/maintainability)
 [![Build Status](https://travis-ci.org/jcraigk/phishin.svg?branch=master)](https://travis-ci.org/jcraigk/phishin)
 
-![Phish.in' Logo](https://i.imgur.com/Zmj586L.jpg)
+![Phish.in Logo](https://i.imgur.com/Zmj586L.jpg)
 
-Phish.in' is a web-based archive containing legal live audio recordings of the improvisational rock band Phish.
+Phish.in is a web-based archive containing legal live audio recordings of the improvisational rock band Phish.
 
 Ruby on Rails and PostgreSQL are used on the server side.  There's a web frontend (http://phish.in) and a public REST-ish API (http://phish.in/api-docs).  The web frontend utilizes soundmanager2 as the audio playback engine.
 
