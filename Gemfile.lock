@@ -324,7 +324,6 @@ GEM
     thor (0.20.3)
     thread_safe (0.3.6)
     tilt (2.0.9)
-    timecop (0.9.1)
     twitter-bootstrap-rails (2.2.8)
       actionpack (>= 3.1)
       execjs
@@ -395,7 +394,6 @@ DEPENDENCIES
   slim
   soundmanager2-rails
   therubyracer
-  timecop
   twitter-bootstrap-rails (= 2.2.8)
   uglifier
 

@@ -24,13 +24,13 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   config.order = 'random'
 
-  config.after do
-    Timecop.return # TODO: Replace with `travel_to`
-    Faker::UniqueGenerator.clear
-    Warden.test_reset!
-  end
   config.include Paperclip::Shoulda::Matchers
   config.include FeatureHelpers
   config.include Warden::Test::Helpers
   config.include AuthHelper, type: :request
+
+  config.after do
+    Faker::UniqueGenerator.clear
+    Warden.test_reset!
+  end
 end
