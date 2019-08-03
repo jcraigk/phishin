@@ -13,7 +13,7 @@ class Track < ApplicationRecord
     path: "#{APP_CONTENT_PATH}/:class/:attachment/:id_partition/:id.:extension"
   )
 
-  include PgSearch
+  include PgSearch::Model
   pg_search_scope(
     :kinda_matching,
     against: :title,

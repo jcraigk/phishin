@@ -16,13 +16,13 @@ RSpec.describe Song do
     expect(subject.slug).to eq('bathtub-gin')
   end
 
-  context 'PgSearch kinda_matching title' do
+  context 'PgSearch::Model kinda_matching title' do
     let!(:song1) { create(:song, title: 'Wolfman\'s Brother') }
     let!(:song2) { create(:song, title: 'Dire Wolf') }
     let!(:song3) { create(:song, title: 'Tube') }
     let!(:song4) { create(:song, title: 'First Tube') }
 
-    it { is_expected.to be_a(PgSearch) }
+    it { is_expected.to be_a(PgSearch::Model) }
 
     it 'returns expected results' do
       expect(described_class.kinda_matching('Wolfman')).to eq([song1])

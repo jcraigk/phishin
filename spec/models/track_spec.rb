@@ -32,13 +32,13 @@ RSpec.describe Track do
     end
   end
 
-  describe 'PgSearch kinda_matching title' do
+  describe 'PgSearch::Model kinda_matching title' do
     let!(:track1) { create(:track, title: 'Wolfman\'s Brother') }
     let!(:track2) { create(:track, title: 'Dire Wolf') }
     let!(:track3) { create(:track, title: 'Tube') }
     let!(:track4) { create(:track, title: 'First Tube') }
 
-    it { is_expected.to be_a(PgSearch) }
+    it { is_expected.to be_a(PgSearch::Model) }
 
     it 'returns expected results' do
       expect(described_class.kinda_matching('Wolfman')).to eq([track1])

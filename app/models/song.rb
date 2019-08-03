@@ -7,7 +7,7 @@ class Song < ApplicationRecord
 
   validates :title, presence: true, uniqueness: true
 
-  include PgSearch
+  include PgSearch::Model
   pg_search_scope(
     :kinda_matching,
     against: :title,
