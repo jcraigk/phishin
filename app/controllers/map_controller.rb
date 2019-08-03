@@ -40,7 +40,8 @@ class MapController < ApplicationController
   end
 
   def shows_in_timeframe(show)
-    show.date >= Time.parse(params[:date_start]) && show.date <= Time.parse(params[:date_stop])
+    show.date >= Time.zone.parse(params[:date_start]) &&
+      show.date <= Time.zone.parse(params[:date_stop])
   rescue ArgumentError
     true
   end
