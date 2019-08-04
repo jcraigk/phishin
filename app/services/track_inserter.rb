@@ -65,8 +65,8 @@ class TrackInserter
 
   def ensure_records_present
     raise 'Invalid file!' unless File.exist?(file)
-    raise 'Invalid song!' unless song.present?
-    raise 'Invalid show!' unless show.present?
+    raise 'Invalid song!' if song.blank?
+    raise 'Invalid show!' if show.blank?
   end
 
   def song

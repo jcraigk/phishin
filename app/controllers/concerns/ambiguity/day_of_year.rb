@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Ambiguity::DayOfYear
   def slug_as_day_of_year
-    return false unless month_day_from_slug.present?
+    return false if month_day_from_slug.blank?
 
     validate_sorting_for_shows
     fetch_shows_on_day_of_year

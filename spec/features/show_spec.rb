@@ -70,7 +70,7 @@ describe 'Show', :js do
     it 'when not logged in' do
       visit show.date
       sleep(1)
-      
+
       within('#title_box') do
         first('.like_toggle').click
       end

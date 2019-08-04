@@ -1,20 +1,19 @@
 # frozen_string_literal: true
 module TagHelper
-  def display_tag_instances(tag_instances, css_class = 'show_tag_container', context = 'show')
+  def display_tag_instances(tag_instances, css_class = 'show_tag_container')
     tag_groups =
       tag_instances.sort_by { |t| [t.tag.priority, t.tag.try(:starts_at_second)] }
                    .group_by { |t| t.tag.name }
     return unless tag_groups.any?
 
     str = "<span class=\"#{css_class}\">"
-    tag_groups.each { |group| str += tag_stack_label(group, context) }
+    tag_groups.each { |group| str += tag_stack_label(group) }
     str += '</span>'
 
     str.html_safe
   end
 
-  def tag_stack_label(tag_stack, context = 'show')
-    title = tag_stack.first
+  def tag_stack_label(tag_stack)
     tag_instances = tag_stack.second
     first_instance = tag_instances.first
     link_to '#' do
@@ -64,13 +63,13 @@ module TagHelper
       title += "#{t.notes} #{time_range(t)}".strip if t.notes.present?
 
       if t.try(:transcript)&.present?
-          if include_transcript
-            title += '<br><br>' if title.present?
-            title += "<strong>TRANSCRIPT</strong><br><br> #{t.transcript.gsub("\n", '<br>')}"
-          else
-            title += '<br>' if title.present?
-            title += '[CLICK FOR TRANSCRIPT]'
-          end
+        if include_transcript
+          title += '<br><br>' if title.present?
+          title += "<strong>TRANSCRIPT</strong><br><br> #{t.transcript.gsub("\n", '<br>')}"
+        else
+          title += '<br>' if title.present?
+          title += '[CLICK FOR TRANSCRIPT]'
+        end
       end
 
       title += '<br>' unless idx == tag_instances.size - 1

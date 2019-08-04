@@ -42,7 +42,7 @@
             li.playable_track data-id=track.id data-track-anchor=track.slug data-section-anchor=slug_for_set(set)
               h2.position_num = idx + 1
               h2.wide.track_title = link_to(track.title, '#')
-              h2.wide-180 = display_tag_instances(track.track_tags, 'track_tag_container', 'track')
+              h2.wide-180 = display_tag_instances(track.track_tags, 'track_tag_container')
               = likable(track, props[:likes][idx], 'small')
               h3 = duration_readable(track.duration)
               = render partial: 'shared/context_menu_for_track', locals: { track: track, show: @show, playlist: false }

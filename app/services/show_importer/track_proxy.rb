@@ -4,7 +4,7 @@ class ShowImporter::TrackProxy
 
   def initialize(pos = nil, title = nil, filename = nil, song = nil)
     @_track = Track.new(position: pos, title: title, set: get_set_from_filename(filename))
-    song ||= Song.find_by_title(title)
+    song ||= Song.find_by(title: title)
     @_track.songs << song unless song.nil?
     @filename = filename
   end

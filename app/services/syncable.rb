@@ -1,8 +1,9 @@
+# frozen_string_literal: true
 module Syncable
   private
 
   def seconds_or_nil(str)
-    return if str.nil? || str.empty?
+    return if str.blank?
     min, sec = str.split(':')
     min.to_i * 60 + sec.to_i
   end

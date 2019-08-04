@@ -88,7 +88,6 @@ class SearchService
   def tags
     Tag.where('name ILIKE :term OR description ILIKE :term', term: "%#{term}%")
        .order(name: :asc)
-
   end
 
   def show_tags

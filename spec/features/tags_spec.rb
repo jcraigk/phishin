@@ -58,6 +58,6 @@ describe 'Tags', :js do
 
     # Click first track
     first('ul.item_list li a').click
-    expect(page.current_path).to match(/\d{4}-\d{2}-\d{2}/)
+    expect(page).to have_current_path(/\d{4}-\d{2}-\d{2}/)
   end
 end

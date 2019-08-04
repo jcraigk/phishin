@@ -31,7 +31,7 @@ class AmbiguityController < ApplicationController
     @order_by =
       case params[:sort]
       when 'title'
-        { title:  :asc }
+        { title: :asc }
       when 'shows.date asc', 'shows.date desc'
         params[:sort]
       when 'likes'
