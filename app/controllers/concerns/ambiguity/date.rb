@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Ambiguity::Date
   def slug_as_date
-    return false unless date_from_slug.present?
+    return false if date_from_slug.blank?
 
     fetch_show_on_date(date_from_slug)
     hydrate_page_for_date

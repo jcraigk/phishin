@@ -10,6 +10,6 @@ describe 'Play Random Show', :js do
     find('#control_playpause').click
     expect_content('Playing random show...')
 
-    expect(page.current_path).to match(/\d{4}-\d{2}-\d{2}/)
+    expect(page).to have_current_path(/\d{4}-\d{2}-\d{2}/)
   end
 end

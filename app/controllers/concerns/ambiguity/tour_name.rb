@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Ambiguity::TourName
   def slug_as_tour
-    return false unless tour.present?
+    return false if tour.blank?
 
     validate_sorting_for_shows
     hydrate_tour_page

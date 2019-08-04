@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module Ambiguity::Year
   def slug_as_year
-    return false unless year_from_slug.present?
+    return false if year_from_slug.blank?
 
     validate_sorting_for_shows
     hydrate_year_page

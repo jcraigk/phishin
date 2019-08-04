@@ -9,6 +9,7 @@ RSpec.describe ApiKey, type: :model do
 
   describe 'attributes' do
     subject { described_class.attribute_names.map(&:to_sym) }
+
     it { is_expected.to include :id }
     it { is_expected.to include :name }
     it { is_expected.to include :email }

@@ -36,7 +36,7 @@ class ShowImporter::Orchestrator
   end
 
   def assign_venue
-    unless @venue.present?
+    if @venue.blank?
       puts 'No venue matched! Enter Venue ID:'
       @venue = Venue.find(STDIN.gets.chomp.to_i)
     end
