@@ -23,13 +23,9 @@ class DurationFormatter
   end
 
   def format_with_letters
-    if days.positive?
-      lettered_days_hours_mins_seconds
-    elsif hours.positive?
-      lettered_hours_mins
-    else
-      lettered_mins_seconds
-    end
+    return lettered_days_hours_mins_seconds if days.positive?
+    return lettered_hours_mins if hours.positive?
+    lettered_mins_seconds
   end
 
   def format_with_colons
@@ -52,28 +48,29 @@ class DurationFormatter
     )
   end
 
+  def lettered_hours
+    format('%<hours>dh', hours: hours)
+  end
+
   def lettered_hours_mins
-    format(
-      '%<hours>dh %<minutes>dm',
-      hours: hours,
-      minutes: minutes
-    )
+    return lettered_hours if minutes.zero?
+    format('%<hours>dh %<minutes>dm', hours: hours, minutes: minutes)
+  end
+
+  def lettered_mins
+    format('%<minutes>dm', minutes: minutes)
   end
 
   def lettered_mins_seconds
-    format(
-      '%<minutes>dm %<seconds>ds',
-      minutes: minutes,
-      seconds: seconds
-    )
+    if seconds.zero?
+      return '0s' if minutes.zero?
+      return lettered_mins
+    end
+    format('%<minutes>dm %<seconds>ds', minutes: minutes, seconds: seconds)
   end
 
   def colon_mins_seconds
-    format(
-      '%<minutes>d:%<seconds>02d',
-      minutes: minutes,
-      seconds: seconds
-    )
+    format('%<minutes>d:%<seconds>02d', minutes: minutes, seconds: seconds)
   end
 
   def colon_days_hours_mins_seconds
