@@ -66,7 +66,7 @@ describe 'Homepage', :js do
     end
 
     within('#footer') do
-      expect_content("phish.in'", 'faq', 'contact', 'api', "tag.in' project")
+      expect_content('phish.in', 'faq', 'contact', 'api', 'tag.in project')
     end
 
     # Click most recent year

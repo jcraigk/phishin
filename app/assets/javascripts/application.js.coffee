@@ -130,7 +130,7 @@ $ ->
     url: '/assets/'
     useHTML5Audio: true
     preferFlash: false
-    debugMode: true
+    debugMode: false
   soundManager.onready ->
     App.Player.onReady()
 
@@ -180,7 +180,6 @@ $ ->
   # Map controls
 
   .on 'click', '#map_search_submit', (e) ->
-    console.log 'dinky stink'
     App.Util.navigateToRefreshMap()
   .on 'keypress', '#map_search_term', (e) ->
     App.Util.navigateToRefreshMap() if e.which is 13
@@ -381,7 +380,6 @@ $ ->
           App.Util.feedback({ notice: r.msg })
           if r.liked then $this.addClass('liked') else $this.removeClass('liked')
           $this.siblings('span').html r.likes_count
-          console.log(r.likes_count)
           # Update other instances of this track's Like controls
           $('.like_toggle[data-type="track"]').each(->
             unless $this.data('id') != $(this).data('id') or $this.is $(this)
