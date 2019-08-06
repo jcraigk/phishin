@@ -41,7 +41,7 @@ class ShowImporter::Cli
     @help_str ||= 'Combine (u)p, (S)ong, (F)ile, S(e)t, (T)itle, (M)ain menu'
   end
 
-  def process_pos(pos)
+  def process_pos(pos) # rubocop:disable Metrics/AbcSize
     while (line = Readline.readline('#=> ', false))
       case line.downcase
       when 'u'

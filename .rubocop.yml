@@ -12,7 +12,7 @@ AllCops:
     - db/**/*
     - vendor/**/*
     - lib/tasks/*
-  DisplayCopNames: true
+    - app/controllers/playlists_controller.rb # TODO: Refactor
 Documentation:
   Enabled: false
 Layout/EmptyLineAfterGuardClause:
@@ -20,7 +20,9 @@ Layout/EmptyLineAfterGuardClause:
 Layout/EmptyLineAfterMagicComment:
   Enabled: false
 Metrics/BlockLength:
-  Enabled: false
+  Exclude:
+    - spec/**/*
+    - config/routes.rb
 Metrics/ClassLength:
   Max: 250
 Metrics/LineLength:

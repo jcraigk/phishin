@@ -17,9 +17,7 @@ class TrackTagSyncService
   end
 
   def call
-    # destroy_existing_track_tags
     sync_track_tags
-    # create_csv_for_extra_track_tags
 
     if dupes.any?
       puts
@@ -41,19 +39,18 @@ class TrackTagSyncService
   def sync_track_tags
     data.each do |row|
       @track = find_track_by_url(row['URL'])
-      existing =
-        if tag.name.in?(%w[Tease Signal])
-          TrackTag.find_by(
-            tag: tag,
-            track: track,
-            notes: row['Notes'],
-            starts_at_second: seconds_or_nil(row['Starts At'])
-          )
-        else
-          TrackTag.find_by(tag: tag, track: track)
-        end
-      existing ? update_track_tag(existing, row) : create_track_tag(row)
+      existing_track_tag(row) ? update_track_tag(existing, row) : create_track_tag(row)
     end
+  end
+
+  def existing_track_tag(row)
+    return TrackTag.find_by(tag: tag, track: track) unless tag.name.in?(%w[Tease Signal])
+    TrackTag.find_by(
+      tag: tag,
+      track: track,
+      notes: row['Notes'],
+      starts_at_second: seconds_or_nil(row['Starts At'])
+    )
   end
 
   def sanitize_str(str)
@@ -84,31 +81,4 @@ class TrackTagSyncService
     )
     @updated_ids << tt.id
   end
-
-  # def csv_file
-  #   "#{Rails.root}/tmp/tagit/#{tag.slug}_extras.csv"
-  # end
-
-  # def create_csv_for_extra_track_tags
-  #   return puts 'No extra track tags found' unless extra_track_tags.any?
-  #   CSV.open(csv_file, 'w') { |csv| csv_data(csv) }
-  #   puts "#{csv_file} created with #{extra_track_tags.size} rows"
-  # end
-
-  # def csv_data(csv)
-  #   extra_track_tags.each { |track_tag| csv << csv_row_for(track_tag) }
-  # end
-
-  # def csv_row_for(track_tag)
-  #   [
-  #     "#{APP_BASE_URL}/#{track_tag.track.show.date}/#{track_tag.track.slug}",
-  #     DurationFormatter.new(track_tag.starts_at_second * 1000).call,
-  #     DurationFormatter.new(track_tag.ends_at_second * 1000).call,
-  #     track_tag.notes
-  #   ]
-  # end
-
-  # def extra_track_tags
-  #   @extra_track_tags ||= TrackTag.where(tag: tag).where.not(id: created_ids + updated_ids)
-  # end
 end

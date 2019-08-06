@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 module NavigationHelper
-  def global_nav
+  def global_nav # rubocop:disable Metrics/AbcSize
     str = ''
     global_nav_items.each do |name, props|
       css = ''
@@ -17,19 +17,28 @@ module NavigationHelper
         end
       end
       x = props[2]
-      str +=
-        content_tag(
-          :div,
-          link_to(name, props.first, class: "global_link #{css}"),
-          class: 'link_container',
-          style: "margin-left: #{x}px;"
-        )
+      str += nav_link(name, props, css)
+
       next unless /active/.match?(css)
       pos = x + 20
-      str += content_tag(:div, nil, class: 'nav_indicator', style: "margin-left: #{pos}px;")
-      str += content_tag(:div, nil, class: 'nav_indicator2', style: "margin-left: #{pos}px;")
+      str += nav_indicators(pos)
     end
+
     str.html_safe
+  end
+
+  def nav_link(name, props, css)
+    content_tag(
+      :div,
+      link_to(name, props.first, class: "global_link #{css}"),
+      class: 'link_container',
+      style: "margin-left: #{x}px;"
+    )
+  end
+
+  def nav_indicators(pos)
+    content_tag(:div, nil, class: 'nav_indicator', style: "margin-left: #{pos}px;") +
+      content_tag(:div, nil, class: 'nav_indicator2', style: "margin-left: #{pos}px;")
   end
 
   def sub_nav
@@ -48,18 +57,31 @@ module NavigationHelper
 
   def first_char_sub_links(base_url, current_item = nil)
     str = ''
-    FIRST_CHAR_LIST.each_with_index do |char, i|
+    FIRST_CHAR_LIST.each_with_index do |char, idx|
       css = 'char_link'
-      css += ' active' if
-        params[:char] == char ||
-        (params[:char].nil? && current_item.nil? && i.zero?) ||
-        (char == '#' && current_item.try(:name)&.first =~ /\d/) ||
-        (char == '#' && current_item.try(:title)&.first =~ /\d/) ||
-        (current_item.try(:name)&.first == char) ||
-        (current_item.try(:title)&.first == char)
+      css += ' active' if active_for_char?(current_item, char, idx)
       str += link_to char, "#{base_url}?char=#{CGI.escape(char)}", class: css
     end
     str.html_safe
+  end
+
+  def active_for_char?(current_item, char, idx)
+    params[:char] == char ||
+      default_char?(current_item, char, idx) ||
+      char_is_number?(current_item, char) ||
+      char_starts_name_or_title?(current_item, char)
+  end
+
+  def char_is_number?(current_item, char)
+    char == '#' && (current_item.try(:name)&.first =~ /\d/ || current_item.try(:title)&.first =~ /\d/)
+  end
+
+  def char_starts_name_or_title?(current_item, char)
+    char.in?([current_item.try(:name)&.first, current_item.try(:title)&.first])
+  end
+
+  def default_char?(current_item, _char, idx)
+    (params[:char].nil? && current_item.nil? && idx.zero?)
   end
 
   def global_nav_items
@@ -113,14 +135,16 @@ module NavigationHelper
     str = ''
     Hash[ERAS.to_a.reverse].each do |_era, years|
       years.reverse.each_with_index do |year, i|
-        style = ''
-        style = 'margin-right: 26px' if i + 1 == years.size
-        css = ''
-        css = 'active' if year == params[:slug]
-        str += link_to (year == '1983-1987' ? '83-87' : year[2..3]), "/#{year}", class: css, style: style
+        style = i + 1 == years.size ? 'margin-right: 26px' : ''
+        css = year == params[:slug] ? 'active' : ''
+        str += link_to_year(year, css, style)
       end
     end
     str.html_safe
+  end
+
+  def link_to_year(year)
+    link_to (year == '1983-1987' ? '83-87' : year[2..3]), "/#{year}", class: css, style: style
   end
 
   def will_paginate_simple(collection)

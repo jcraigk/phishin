@@ -6,20 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 23
-# Configuration parameters: Max.
-Metrics/AbcSize:
-  Exclude:
-    - 'app/controllers/playlists_controller.rb'
-    - 'app/helpers/navigation_helper.rb'
-    - 'app/helpers/tag_helper.rb'
-    - 'app/services/jamcharts_importer.rb'
-    - 'app/services/show_importer/cli.rb'
-    - 'app/services/show_importer/orchestrator.rb'
-    - 'app/services/show_importer/pnet.rb'
-    - 'app/services/track_tag_sync_service.rb'
-    - 'spec/support/feature_helpers.rb'
-
 # Offense count: 1
 # Configuration parameters: CountComments, Max.
 Metrics/ClassLength:
