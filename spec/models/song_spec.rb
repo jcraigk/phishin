@@ -17,7 +17,7 @@ RSpec.describe Song do
     expect(subject.slug).to eq('bathtub-gin')
   end
 
-  context 'PgSearch::Model kinda_matching title' do
+  describe 'PgSearch::Model kinda_matching title' do
     let!(:song1) { create(:song, title: 'Wolfman\'s Brother') }
     let!(:song2) { create(:song, title: 'Dire Wolf') }
     let!(:song3) { create(:song, title: 'Tube') }
@@ -32,31 +32,29 @@ RSpec.describe Song do
     end
   end
 
-  context 'scopes' do
-    context '#title_starting_with' do
-      let!(:a_song) { create(:song, title: 'Access Me') }
-      let!(:b_song) { create(:song, title: 'Bathtub Gin') }
-      let!(:num_song) { create(:song, title: '555') }
+  describe '#title_starting_with' do
+    let!(:a_song) { create(:song, title: 'Access Me') }
+    let!(:b_song) { create(:song, title: 'Bathtub Gin') }
+    let!(:num_song) { create(:song, title: '555') }
 
-      it 'returns expected objects' do
-        expect(described_class.title_starting_with('a')).to eq([a_song])
-        expect(described_class.title_starting_with('#')).to eq([num_song])
-      end
-    end
-
-    context '#with_lyrical_excerpt' do
-      let!(:songs_without_excerpt) { create_list(:song, 2) }
-      let!(:song_with_excerpt) do
-        create(:song, lyrical_excerpt: 'An asteroid crashed and nothing burned')
-      end
-
-      it 'returns the lyrical excerpt' do
-        expect(described_class.with_lyrical_excerpt).to eq([song_with_excerpt])
-      end
+    it 'returns expected objects' do
+      expect(described_class.title_starting_with('a')).to eq([a_song])
+      expect(described_class.title_starting_with('#')).to eq([num_song])
     end
   end
 
-  context 'serialization' do
+  describe '#with_lyrical_excerpt' do
+    let!(:songs_without_excerpt) { create_list(:song, 2) }
+    let!(:song_with_excerpt) do
+      create(:song, lyrical_excerpt: 'An asteroid crashed and nothing burned')
+    end
+
+    it 'returns the lyrical excerpt' do
+      expect(described_class.with_lyrical_excerpt).to eq([song_with_excerpt])
+    end
+  end
+
+  describe 'serialization' do
     subject { create(:song, :with_tracks) }
 
     it 'provides #as_json' do

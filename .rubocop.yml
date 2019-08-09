@@ -25,6 +25,8 @@ Metrics/BlockLength:
     - config/routes.rb
 Metrics/ClassLength:
   Max: 250
+Metrics/ModuleLength:
+  Max: 250
 Metrics/LineLength:
   Max: 100
 Rails/HttpPositionalArguments:

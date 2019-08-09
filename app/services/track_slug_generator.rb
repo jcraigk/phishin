@@ -34,7 +34,7 @@ class TrackSlugGenerator
   end
 
   def slugged_title
-    @sluggified_title ||=
+    @slugged_title ||=
       track.title
            .downcase
            .delete("'")

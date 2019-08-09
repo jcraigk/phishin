@@ -71,14 +71,14 @@ class TrackTagSyncService
       ).id
   end
 
-  def update_track_tag(tt, row)
+  def update_track_tag(track_tag, row)
     print '-'
-    tt.update(
+    track_tag.update(
       starts_at_second: seconds_or_nil(row['Starts At']),
       ends_at_second: seconds_or_nil(row['Ends At']),
       notes: sanitize_str(row['Notes']),
       transcript: sanitize_str(row['Transcript'])
     )
-    @updated_ids << tt.id
+    @updated_ids << track_tag.id
   end
 end

@@ -22,7 +22,7 @@ RSpec.describe Tag do
     expect(subject.slug).to eq('musical-tease')
   end
 
-  context 'serialization' do
+  describe 'serialization' do
     subject { create(:tag, :with_tracks, :with_shows) }
 
     it 'provides #as_json' do

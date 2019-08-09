@@ -20,7 +20,7 @@ RSpec.describe Tour do
     expect(subject.slug).to eq('1996-summer-tour')
   end
 
-  context 'serialization' do
+  describe 'serialization' do
     subject { create(:tour, :with_shows) }
 
     it 'provides #as_json' do

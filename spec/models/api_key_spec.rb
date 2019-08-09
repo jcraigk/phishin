@@ -51,12 +51,8 @@ RSpec.describe ApiKey, type: :model do
     end
   end
 
-  context 'callbacks' do
-    context 'before create' do
-      it 'generates a key' do
-        expect(create(:api_key).key).to be_present
-      end
-    end
+  it 'generates a key on create' do
+    expect(create(:api_key).key).to be_present
   end
 
   describe '#revoke!' do

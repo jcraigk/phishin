@@ -4,7 +4,7 @@ require 'rails_helper'
 describe 'Tag page', :js do
   let(:tag) { create(:tag) }
 
-  context 'shows' do
+  context 'with shows' do
     let(:shows) { create_list(:show, 3, tags: [tag]) }
 
     before do
@@ -22,7 +22,7 @@ describe 'Tag page', :js do
     end
   end
 
-  context 'tracks' do
+  context 'with tracks' do
     let(:tracks) { create_list(:track, 3, tags: [tag]) }
 
     before do
