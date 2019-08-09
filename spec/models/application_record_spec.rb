@@ -2,11 +2,11 @@
 require 'rails_helper'
 
 RSpec.describe ApplicationRecord do
-  subject { described_class.new }
+  subject(:record) { described_class.new }
 
   let(:described_class) { User }
 
   it 'exists' do
-    expect(subject.class).to eq(described_class)
+    expect(record.class).to eq(described_class)
   end
 end

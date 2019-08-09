@@ -2,13 +2,16 @@
 require 'rails_helper'
 
 describe 'Ambiguous slug resolution', :js do
-  let!(:show1) { create(:show, date: '1995-10-31', tour: tour, venue: venue) }
-  let!(:show2) { create(:show, date: '1998-10-31', tour: tour, venue: venue) }
   let!(:show3) { create(:show, date: '2014-10-31', tour: tour) }
   let!(:show4) { create(:show, :with_tracks, date: '2014-11-02', tour: tour) }
   let!(:song) { create(:song, title: 'You Enjoy Myself', alias: 'YEM') }
   let!(:venue) { create(:venue, name: 'Madison Square Garden') }
   let!(:tour) { create(:tour, name: 'Magical Myster Tour') }
+
+  before do
+    create(:show, date: '1995-10-31', tour: tour, venue: venue)
+    create(:show, date: '1998-10-31', tour: tour, venue: venue)
+  end
 
   it 'day of year' do
     visit '/october-31'

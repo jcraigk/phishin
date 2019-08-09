@@ -31,25 +31,31 @@ RSpec.describe Playlist do
 
   describe 'serialization' do
     let(:playlist) { create(:playlist) }
-
-    it 'provides #as_json_api' do
-      expect(playlist.as_json_api).to eq(
-        slug: playlist.slug,
-        name: playlist.name,
-        duration: playlist.duration,
-        tracks: playlist.playlist_tracks.order(:position).map(&:track).map(&:as_json_api),
-        updated_at: playlist.updated_at.iso8601
-      )
-    end
-
-    it 'provides #as_json_api_basic' do
-      expect(playlist.as_json_api_basic).to eq(
+    let(:expected_as_json_api_basic) do
+      {
         slug: playlist.slug,
         name: playlist.name,
         duration: playlist.duration,
         track_count: playlist.playlist_tracks.size,
         updated_at: playlist.updated_at.iso8601
-      )
+      }
+    end
+    let(:expected_as_json_api) do
+      {
+        slug: playlist.slug,
+        name: playlist.name,
+        duration: playlist.duration,
+        tracks: playlist.playlist_tracks.order(:position).map(&:track).map(&:as_json_api),
+        updated_at: playlist.updated_at.iso8601
+      }
+    end
+
+    it 'provides #as_json_api' do
+      expect(playlist.as_json_api).to eq(expected_as_json_api)
+    end
+
+    it 'provides #as_json_api_basic' do
+      expect(playlist.as_json_api_basic).to eq(expected_as_json_api_basic)
     end
   end
 end

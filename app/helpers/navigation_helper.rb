@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 module NavigationHelper
-  def global_nav # rubocop:disable Metrics/AbcSize
+  def global_nav(controller) # rubocop:disable Metrics/AbcSize
     str = ''
     global_nav_items.each do |name, props|
       css = ''
-      css = 'active' if (@ambiguity_controller || params[:controller]).in?(props[1])
+      css = 'active' if (controller || params[:controller]).in?(props[1])
       if name == 'userbox'
         css += ' user_control'
         if user_signed_in?
@@ -59,13 +59,13 @@ module NavigationHelper
       content_tag(:div, nil, class: 'nav_indicator2', style: "margin-left: #{pos}px;")
   end
 
-  def sub_nav
-    if year_context?
+  def sub_nav(controller, venue, song)
+    if year_context?(controller)
       years_sub_links
-    elsif venue_context?
-      first_char_sub_links(venues_path, @venue)
-    elsif song_context?
-      first_char_sub_links(songs_path, @song)
+    elsif venue_context?(controller)
+      first_char_sub_links(venues_path, venue)
+    elsif song_context?(controller)
+      first_char_sub_links(songs_path, song)
     elsif top_liked_context?
       top_liked_sub_links
     elsif playlist_context?
@@ -180,16 +180,16 @@ module NavigationHelper
     )
   end
 
-  def year_context?
-    params[:controller] == 'years' || @ambiguity_controller == 'years'
+  def year_context?(controller)
+    params[:controller] == 'years' || controller == 'years'
   end
 
-  def venue_context?
-    params[:controller] == 'venues' || @ambiguity_controller == 'venues'
+  def venue_context?(controller)
+    params[:controller] == 'venues' || controller == 'venues'
   end
 
-  def song_context?
-    params[:controller] == 'songs' || @ambiguity_controller == 'songs'
+  def song_context?(controller)
+    params[:controller] == 'songs' || controller == 'songs'
   end
 
   def top_liked_context?

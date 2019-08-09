@@ -2,7 +2,7 @@
 require 'rails_helper'
 
 RSpec.describe Song do
-  subject { create(:song, title: 'Bathtub Gin') }
+  subject(:song) { create(:song, title: 'Bathtub Gin') }
 
   it { is_expected.to be_an(ApplicationRecord) }
 
@@ -13,8 +13,8 @@ RSpec.describe Song do
   it { is_expected.to validate_uniqueness_of(:alias).allow_nil }
 
   it 'generates a slug from title (friendly_id)' do
-    subject.save
-    expect(subject.slug).to eq('bathtub-gin')
+    song.save
+    expect(song.slug).to eq('bathtub-gin')
   end
 
   describe 'PgSearch::Model kinda_matching title' do
@@ -34,8 +34,11 @@ RSpec.describe Song do
 
   describe '#title_starting_with' do
     let!(:a_song) { create(:song, title: 'Access Me') }
-    let!(:b_song) { create(:song, title: 'Bathtub Gin') }
     let!(:num_song) { create(:song, title: '555') }
+
+    before do
+      create(:song, title: 'Bathtub Gin') # Starts with `B`
+    end
 
     it 'returns expected objects' do
       expect(described_class.title_starting_with('a')).to eq([a_song])
@@ -44,9 +47,12 @@ RSpec.describe Song do
   end
 
   describe '#with_lyrical_excerpt' do
-    let!(:songs_without_excerpt) { create_list(:song, 2) }
     let!(:song_with_excerpt) do
       create(:song, lyrical_excerpt: 'An asteroid crashed and nothing burned')
+    end
+
+    before do
+      create_list(:song, 2) # songs with no excerpt
     end
 
     it 'returns the lyrical excerpt' do
@@ -55,29 +61,36 @@ RSpec.describe Song do
   end
 
   describe 'serialization' do
-    subject { create(:song, :with_tracks) }
+    subject(:song) { create(:song, :with_tracks) }
+
+    let(:expected_as_json) do
+      {
+        id: song.id,
+        title: song.title,
+        alias: song.alias,
+        tracks_count: song.tracks_count,
+        slug: song.slug,
+        updated_at: song.updated_at.iso8601
+      }
+    end
+    let(:expected_as_json_api) do
+      {
+        id: song.id,
+        title: song.title,
+        alias: song.alias,
+        tracks_count: song.tracks_count,
+        slug: song.slug,
+        updated_at: song.updated_at.iso8601,
+        tracks: song.tracks.sort_by { |t| t.show.date }.map(&:as_json_api)
+      }
+    end
 
     it 'provides #as_json' do
-      expect(subject.as_json).to eq(
-        id: subject.id,
-        title: subject.title,
-        alias: subject.alias,
-        tracks_count: subject.tracks_count,
-        slug: subject.slug,
-        updated_at: subject.updated_at.iso8601
-      )
+      expect(song.as_json).to eq(expected_as_json)
     end
 
     it 'provides #as_json_api' do
-      expect(subject.as_json_api).to eq(
-        id: subject.id,
-        title: subject.title,
-        alias: subject.alias,
-        tracks_count: subject.tracks_count,
-        slug: subject.slug,
-        updated_at: subject.updated_at.iso8601,
-        tracks: subject.tracks.sort_by { |t| t.show.date }.map(&:as_json_api)
-      )
+      expect(song.as_json_api).to eq(expected_as_json_api)
     end
   end
 end

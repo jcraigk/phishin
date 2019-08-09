@@ -38,10 +38,13 @@ RSpec.describe SearchService do
     let!(:show1) { create(:show, date: date) }
     let!(:show2) { create(:show, date: date - 1.year) }
     let!(:show3) { create(:show, date: date - 2.years) }
-    let!(:show4) { create(:show, date: date - 1.day) }
     let!(:tag) { create(:tag, name: "Date #{term}") }
     let!(:show_tag) { create(:show_tag, notes: "... blah #{term} ...") }
     let!(:track_tag) { create(:track_tag, notes: "... blah blah #{term} blah..") }
+
+    before do
+      create(:show, date: date - 1.day)
+    end
 
     include_examples 'expected results'
   end
@@ -60,20 +63,23 @@ RSpec.describe SearchService do
         track_tags: [track_tag]
       }
     end
-    let!(:tag1) { create(:tag, name: 'Hood Tag') }
-    let!(:tag2) { create(:tag, name: 'All Hood') }
-    let!(:tag3) { create(:tag, name: 'Something Else') }
     let!(:show_tag) { create(:show_tag, notes: "... blah #{term} ...") }
-    let!(:track_tag) { create(:track_tag, notes: "... blah blah #{term} blah..") }
     let!(:song1) { create(:song, title: 'Harry Hood') }
     let!(:song2) { create(:song, title: 'Hoodenstein') }
-    let!(:song3) { create(:song, title: 'Bathtub Gin') }
-    let!(:venue1) { create(:venue, name: 'Hood\'s Place') }
-    let!(:venue2) { create(:venue, name: 'Nectar\'s') }
-    let!(:venue3) { create(:venue, name: 'Hoody') }
+    let!(:tag1) { create(:tag, name: 'Hood Tag') }
+    let!(:tag2) { create(:tag, name: 'All Hood') }
     let!(:tour1) { create(:tour, name: 'Hood Tour') }
-    let!(:tour2) { create(:tour, name: '1995 Summer Tour') }
     let!(:tour3) { create(:tour, name: 'Another Hood Tour') }
+    let!(:track_tag) { create(:track_tag, notes: "... blah blah #{term} blah..") }
+    let!(:venue1) { create(:venue, name: 'Hood\'s Place') }
+    let!(:venue3) { create(:venue, name: 'Hoody') }
+
+    before do
+      create(:tour, name: '1995 Summer Tour')
+      create(:venue, name: 'Nectar\'s')
+      create(:song, title: 'Bathtub Gin')
+      create(:tag, name: 'Something Else')
+    end
 
     include_examples 'expected results'
   end

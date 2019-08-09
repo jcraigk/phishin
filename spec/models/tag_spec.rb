@@ -2,7 +2,7 @@
 require 'rails_helper'
 
 RSpec.describe Tag do
-  subject { create(:tag, name: 'Musical Tease') }
+  subject(:tag) { create(:tag, name: 'Musical Tease') }
 
   it { is_expected.to be_an(ApplicationRecord) }
 
@@ -18,39 +18,46 @@ RSpec.describe Tag do
   it { is_expected.to validate_uniqueness_of(:priority) }
 
   it 'generates a slug from name (friendly_id)' do
-    subject.save
-    expect(subject.slug).to eq('musical-tease')
+    tag.save
+    expect(tag.slug).to eq('musical-tease')
   end
 
   describe 'serialization' do
-    subject { create(:tag, :with_tracks, :with_shows) }
+    subject(:tag) { create(:tag, :with_tracks, :with_shows) }
+
+    let(:expected_as_json) do
+      {
+        id: tag.id,
+        name: tag.name,
+        slug: tag.slug,
+        group: tag.group,
+        color: tag.color,
+        priority: tag.priority,
+        description: tag.description,
+        updated_at: tag.updated_at.iso8601
+      }
+    end
+    let(:expected_as_json_api) do
+      {
+        id: tag.id,
+        name: tag.name,
+        slug: tag.slug,
+        group: tag.group,
+        color: tag.color,
+        priority: tag.priority,
+        description: tag.description,
+        updated_at: tag.updated_at.iso8601,
+        show_ids: tag.shows.sort_by(&:id).map(&:id),
+        track_ids: tag.tracks.sort_by(&:id).map(&:id)
+      }
+    end
 
     it 'provides #as_json' do
-      expect(subject.as_json).to eq(
-        id: subject.id,
-        name: subject.name,
-        slug: subject.slug,
-        group: subject.group,
-        color: subject.color,
-        priority: subject.priority,
-        description: subject.description,
-        updated_at: subject.updated_at.iso8601
-      )
+      expect(tag.as_json).to eq(expected_as_json)
     end
 
     it 'provides #as_json_api' do
-      expect(subject.as_json_api).to eq(
-        id: subject.id,
-        name: subject.name,
-        slug: subject.slug,
-        group: subject.group,
-        color: subject.color,
-        priority: subject.priority,
-        description: subject.description,
-        updated_at: subject.updated_at.iso8601,
-        show_ids: subject.shows.sort_by(&:id).map(&:id),
-        track_ids: subject.tracks.sort_by(&:id).map(&:id)
-      )
+      expect(tag.as_json_api).to eq(expected_as_json_api)
     end
   end
 end
