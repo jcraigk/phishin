@@ -5,7 +5,7 @@ RSpec.describe ApiKey, type: :model do
   subject(:api_key) { build(:api_key) }
 
   it { is_expected.to be_an(ApplicationRecord) }
-  it { is_expected.to have_many(:api_requests) }
+  it { is_expected.to have_many(:api_requests).dependent(:destroy) }
 
   describe 'attributes' do
     subject(:api_key) { described_class.attribute_names.map(&:to_sym) }
@@ -66,7 +66,7 @@ RSpec.describe ApiKey, type: :model do
 
   describe '#revoked?' do
     context 'when revoked' do
-      before { allow(api_key).to receive(:revoked_at).and_return Time.current }
+      before { api_key.update(revoked_at: Time.current) }
 
       it 'returns true' do
         expect(api_key).to be_revoked
@@ -74,7 +74,7 @@ RSpec.describe ApiKey, type: :model do
     end
 
     context 'when not revoked' do
-      before { allow(api_key).to receive(:revoked_at).and_return nil }
+      before { api_key.update(revoked_at: nil) }
 
       it 'returns false' do
         expect(api_key).not_to be_revoked

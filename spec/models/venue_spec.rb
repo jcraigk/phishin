@@ -6,7 +6,7 @@ RSpec.describe Venue do
 
   it { is_expected.to be_an(ApplicationRecord) }
 
-  it { is_expected.to have_many(:shows) }
+  it { is_expected.to have_many(:shows).dependent(:nullify) }
   it { is_expected.to have_many(:venue_renames).dependent(:destroy) }
 
   it { is_expected.to validate_presence_of(:name) }

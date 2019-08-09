@@ -181,6 +181,21 @@ RSpec.describe Track do
         updated_at: track.updated_at.iso8601
       }
     end
+    let(:tags) do
+      track_tags.map do |track_tag|
+        {
+          id: track_tag.tag.id,
+          name: track_tag.tag.name,
+          priority: track_tag.tag.priority,
+          group: track_tag.tag.group,
+          color: track_tag.tag.color,
+          notes: track_tag.notes,
+          transcript: track_tag.transcript,
+          starts_at_second: track_tag.starts_at_second,
+          ends_at_second: track_tag.ends_at_second
+        }
+      end
+    end
     let(:expected_as_json_api) do
       {
         id: track.id,
@@ -194,19 +209,7 @@ RSpec.describe Track do
         set_name: track.set_name,
         likes_count: track.likes_count,
         slug: track.slug,
-        tags: track_tags.map do |track_tag|
-          {
-            id: track_tag.tag.id,
-            name: track_tag.tag.name,
-            priority: track_tag.tag.priority,
-            group: track_tag.tag.group,
-            color: track_tag.tag.color,
-            notes: track_tag.notes,
-            transcript: track_tag.transcript,
-            starts_at_second: track_tag.starts_at_second,
-            ends_at_second: track_tag.ends_at_second
-          }
-        end.sort_by { |t| t[:priority] },
+        tags: tags.sort_by { |t| t[:priority] },
         mp3: track.mp3_url,
         song_ids: track.songs.map(&:id),
         updated_at: track.updated_at.iso8601

@@ -6,7 +6,8 @@ RSpec.describe Song do
 
   it { is_expected.to be_an(ApplicationRecord) }
 
-  it { is_expected.to have_and_belong_to_many(:tracks) }
+  it { is_expected.to have_many(:songs_tracks).dependent(:destroy) }
+  it { is_expected.to have_many(:tracks).through(:songs_tracks) }
 
   it { is_expected.to validate_presence_of(:title) }
   it { is_expected.to validate_uniqueness_of(:title) }

@@ -40,9 +40,9 @@ class ShowImporter::PNet
   end
 
   def method_missing(method, *args, &_block)
-    action = "pnet_#{method}".tr('_', '.')
     opts = args.first || {}
-    opts['method'] = action
+    opts['method'] = "pnet_#{method}".tr('_', '.')
     perform_action(opts)
+    super
   end
 end

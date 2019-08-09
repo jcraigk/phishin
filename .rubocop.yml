@@ -29,17 +29,24 @@ Metrics/ModuleLength:
   Max: 250
 Metrics/LineLength:
   Max: 100
-Rails/HttpPositionalArguments:
-  Enabled: false
 RSpec/DescribeClass:
   Exclude:
     - spec/features/**/*
 RSpec/ExampleLength:
   Exclude:
     - spec/features/**/*
+Rails/Exit:
+  Enabled: false
+Rails/HttpPositionalArguments:
+  Enabled: false
 RSpec/ImplicitSubject:
   EnforcedStyle: single_statement_only
+Rails/Output:
+  Enabled: false
 RSpec/NestedGroups:
   Max: 4
 Style/ClassAndModuleChildren:
   Enabled: false
+Style/MissingRespondToMissing:
+  Exclude:
+    - app/services/**/*

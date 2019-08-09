@@ -154,6 +154,18 @@ RSpec.describe Show do
         location: show.venue&.location
       }
     end
+    let(:tags) do
+      show_tags.map do |show_tag|
+        {
+          id: show_tag.tag.id,
+          name: show_tag.tag.name,
+          priority: show_tag.tag.priority,
+          group: show_tag.tag.group,
+          color: show_tag.tag.color,
+          notes: show_tag.notes
+        }
+      end
+    end
     let(:expected_as_json_api) do
       {
         id: show.id,
@@ -162,16 +174,7 @@ RSpec.describe Show do
         incomplete: show.incomplete,
         sbd: show.sbd,
         remastered: show.remastered,
-        tags: show_tags.map do |show_tag|
-          {
-            id: show_tag.tag.id,
-            name: show_tag.tag.name,
-            priority: show_tag.tag.priority,
-            group: show_tag.tag.group,
-            color: show_tag.tag.color,
-            notes: show_tag.notes
-          }
-        end.sort_by { |t| t[:priority] },
+        tags: tags.sort_by { |t| t[:priority] },
         tour_id: show.tour_id,
         venue: show.venue.as_json,
         venue_name: show.venue_name,

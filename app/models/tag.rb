@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 class Tag < ApplicationRecord
-  has_many :show_tags
+  has_many :show_tags, dependent: :destroy
   has_many :shows, through: :show_tags
-  has_many :track_tags
+  has_many :track_tags, dependent: :destroy
   has_many :tracks, through: :track_tags
 
   validates :name, :color, :priority, presence: true

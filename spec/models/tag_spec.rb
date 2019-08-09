@@ -6,9 +6,9 @@ RSpec.describe Tag do
 
   it { is_expected.to be_an(ApplicationRecord) }
 
-  it { is_expected.to have_many(:show_tags) }
+  it { is_expected.to have_many(:show_tags).dependent(:destroy) }
   it { is_expected.to have_many(:shows).through(:show_tags) }
-  it { is_expected.to have_many(:track_tags) }
+  it { is_expected.to have_many(:track_tags).dependent(:destroy) }
   it { is_expected.to have_many(:tracks).through(:track_tags) }
 
   it { is_expected.to validate_presence_of(:name) }

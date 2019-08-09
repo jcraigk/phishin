@@ -81,16 +81,18 @@ class Show < ApplicationRecord
   private
 
   def show_tags_for_api
-    show_tags.map do |show_tag|
-      {
-        id: show_tag.tag.id,
-        name: show_tag.tag.name,
-        priority: show_tag.tag.priority,
-        group: show_tag.tag.group,
-        color: show_tag.tag.color,
-        notes: show_tag.notes
-      }
-    end.sort_by { |t| t[:priority] }
+    show_tags.map { |show_tag| show_tag_json(show_tag) }.sort_by { |t| t[:priority] }
+  end
+
+  def show_tag_json(show_tag)
+    {
+      id: show_tag.tag.id,
+      name: show_tag.tag.name,
+      priority: show_tag.tag.priority,
+      group: show_tag.tag.group,
+      color: show_tag.tag.color,
+      notes: show_tag.notes
+    }
   end
 
   def cache_venue_name

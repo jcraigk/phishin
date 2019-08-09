@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 class Song < ApplicationRecord
-  has_and_belongs_to_many :tracks
+  has_many :songs_tracks, dependent: :destroy
+  has_many :tracks, through: :songs_tracks
 
   extend FriendlyId
   friendly_id :title, use: :slugged
