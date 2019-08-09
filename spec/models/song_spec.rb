@@ -46,7 +46,9 @@ RSpec.describe Song do
 
     context '#with_lyrical_excerpt' do
       let!(:songs_without_excerpt) { create_list(:song, 2) }
-      let!(:song_with_excerpt) { create(:song, lyrical_excerpt: 'An asteroid crashed and nothing burned') }
+      let!(:song_with_excerpt) do
+        create(:song, lyrical_excerpt: 'An asteroid crashed and nothing burned')
+      end
 
       it 'returns the lyrical excerpt' do
         expect(described_class.with_lyrical_excerpt).to eq([song_with_excerpt])

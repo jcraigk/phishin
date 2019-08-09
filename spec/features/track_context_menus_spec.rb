@@ -16,7 +16,14 @@ describe 'Track Context Menues', :js do
     first('.playable_track').hover
     first('.track-context-dropdown').click
     within('.track-context-dropdown') do
-      expect_content('Play', 'Add to playlist', 'Share', 'Download MP3', track.songs.first.title, track.songs.second.title)
+      expect_content(
+        'Play',
+        'Add to playlist',
+        'Share',
+        'Download MP3',
+        track.songs.first.title,
+        track.songs.second.title
+      )
     end
 
     click_link('Add to playlist')

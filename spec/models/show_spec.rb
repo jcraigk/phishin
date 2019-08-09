@@ -35,7 +35,12 @@ RSpec.describe Show do
       let(:rename) { 'Venue New Name' }
 
       before do
-        create(:venue_rename, venue: venue, renamed_on: Date.parse('2018-01-01') - 1.day, name: rename)
+        create(
+          :venue_rename,
+          venue: venue,
+          renamed_on: Date.parse('2018-01-01') - 1.day,
+          name: rename
+        )
         show.validate
       end
 

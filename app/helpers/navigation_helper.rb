@@ -17,7 +17,7 @@ module NavigationHelper
         end
       end
       x = props[2]
-      str += nav_link(name, props, css)
+      str += nav_link(name, props, css, x)
 
       next unless /active/.match?(css)
       pos = x + 20
@@ -27,12 +27,30 @@ module NavigationHelper
     str.html_safe
   end
 
-  def nav_link(name, props, css)
+  def category_select(form_object, categories, group_names, field_name, value)
+    common_options = [
+      :id, :name,
+      { prompt: true, name: field_name, selected: value },
+      { class: 'form-control', name: field_name }
+    ]
+    if group_names.size > 1
+      form_object.grouped_collection_select(
+        :category_id, group_names,
+        ->(group_name) { categories.where(group_name: group_name) },
+        ->(group_name) { group_name || 'Other' },
+        *common_options
+      )
+    else
+      form_object.collection_select(:category_id, categories, *common_options)
+    end
+  end
+
+  def nav_link(name, props, css, margin)
     content_tag(
       :div,
       link_to(name, props.first, class: "global_link #{css}"),
       class: 'link_container',
-      style: "margin-left: #{x}px;"
+      style: "margin-left: #{margin}px;"
     )
   end
 
@@ -73,7 +91,8 @@ module NavigationHelper
   end
 
   def char_is_number?(current_item, char)
-    char == '#' && (current_item.try(:name)&.first =~ /\d/ || current_item.try(:title)&.first =~ /\d/)
+    char == '#' && (current_item.try(:name)&.first =~ /\d/ ||
+      current_item.try(:title)&.first =~ /\d/)
   end
 
   def char_starts_name_or_title?(current_item, char)
@@ -143,7 +162,7 @@ module NavigationHelper
     str.html_safe
   end
 
-  def link_to_year(year)
+  def link_to_year(year, css, style)
     link_to (year == '1983-1987' ? '83-87' : year[2..3]), "/#{year}", class: css, style: style
   end
 

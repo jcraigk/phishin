@@ -78,7 +78,8 @@ module ApplicationHelper
   end
 
   def taper_notes_for(show)
-    show.taper_notes.present? ? CGI.escapeHTML(show.taper_notes) : 'No taper notes present for this show'.html_safe
+    return CGI.escapeHTML(show.taper_notes) if show.taper_notes.present?
+    'No taper notes present for this show'.html_safe
   end
 
   def pluralize_with_delimiter(count, word)

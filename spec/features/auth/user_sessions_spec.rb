@@ -7,7 +7,13 @@ describe 'User Sessions', :js do
   let(:password) { 'Tr3yIsj3dI' }
 
   before do
-    create(:user, username: username, email: email, password: password, password_confirmation: password)
+    create(
+      :user,
+      username: username,
+      email: email,
+      password: password,
+      password_confirmation: password
+    )
   end
 
   context 'with valid data' do

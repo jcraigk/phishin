@@ -29,6 +29,8 @@ Metrics/LineLength:
   Max: 100
 Rails/HttpPositionalArguments:
   Enabled: false
+RSpec/ImplicitSubject:
+  EnforcedStyle: single_statement_only
 RSpec/NestedGroups:
   Max: 4
 Style/ClassAndModuleChildren:

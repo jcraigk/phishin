@@ -50,6 +50,12 @@ module Ambiguity::DayOfYear
   end
 
   def month_day_regex
-    /\A(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})\z/i
+    /
+      \A
+      (january|february|march|april|may|june|july|august|september|october|november|december)
+      -
+      (\d{1,2})
+      \z
+    /xi
   end
 end

@@ -58,7 +58,13 @@ class Api::V1::ShowsController < Api::V1::ApiController
   end
 
   def long_form_regex
-    /\A(january|february|march|april|may|june|july|august|september|october|november|december)-(\d{1,2})\z/i
+    /
+      \A
+      (january|february|march|april|may|june|july|august|september|october|november|december)
+      -
+      (\d{1,2})
+      \z
+    /xi
   end
 
   def short_form_regex

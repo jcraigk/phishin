@@ -35,7 +35,8 @@ module TagHelper
   def detail_title(tag_instances)
     tag_instance = tag_instances.first
     if tag_instance.is_a?(TrackTag)
-      "#{tag_label(tag_instance.tag, 'detail_tag_label')}<br>#{tag_instance.track.show.date_with_dots} #{tag_instance.track.title}"
+      "#{tag_label(tag_instance.tag, 'detail_tag_label')}" \
+      "<br>#{tag_instance.track.show.date_with_dots} #{tag_instance.track.title}"
     else
       "#{tag_label(tag_instance.tag, 'detail_tag_label')}<br>#{tag_instance.show.date_with_dots}"
     end
@@ -61,7 +62,7 @@ module TagHelper
 
     tag_instances.each_with_index do |t, idx|
       title += tag_notes(t)
-      title += transcript_link(title, include_transcript)
+      title += transcript_or_link(t, title, include_transcript)
       title += '<br>' unless idx == tag_instances.size - 1
     end
 
@@ -70,17 +71,18 @@ module TagHelper
   end
 
   def tag_notes(tag)
-    "#{tag.notes} #{time_range(tag)}".strip if tag.notes.present?
+    return '' if tag.notes.blank?
+    "#{tag.notes} #{time_range(tag)}".strip
   end
 
-  def transcript(title, include_transcript)
-    return if t.try(:transcript).blank?
+  def transcript_or_link(tag, title, include_transcript)
+    return '' if tag.try(:transcript).blank?
 
     str = ''
 
     if include_transcript
       str += '<br><br>' if title.present?
-      return str + "<strong>TRANSCRIPT</strong><br><br> #{t.transcript.gsub("\n", '<br>')}"
+      return str + "<strong>TRANSCRIPT</strong><br><br> #{tag.transcript.gsub("\n", '<br>')}"
     end
 
     str += '<br>' if title.present?
