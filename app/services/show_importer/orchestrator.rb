@@ -31,8 +31,7 @@ class ShowImporter::Orchestrator
            '(venues.name = :name OR venue_renames.name = :name) AND city = :city',
            name: @show_info.venue_name,
            city: @show_info.venue_city
-         )
-         .first
+         ).first
   end
 
   def assign_venue
@@ -76,32 +75,47 @@ class ShowImporter::Orchestrator
 
   def save
     print 'Saving'
+
     @show.save
     @tracks.each do |track|
       next puts "\nInvalid track! (#{track.title})" unless track.valid?
-      track.show = @show
-      track.audio_file = File.new("#{@fm.s_dir}/#{track.filename}")
-      track.save!
+
+      track.update!(
+        show: @show,
+        audio_file: File.new("#{@fm.s_dir}/#{track.filename}")
+      )
       track.apply_id3_tags
       print '.'
     end
     @show.save_duration
-    puts "\n#{@show.date} show imported successfully"
+
+    puts_success
   end
 
   private
+
+  def puts_success
+    puts "\n#{@show.date} show imported successfully"
+  end
 
   def populate_tracks
     @tracks = []
     matches = @fm.matches.dup
     @show_info.songs.each do |pos, song_title|
-      fn_match = matches.find { |_k, v| !v.nil? && v.title == song_title }
-      if fn_match
-        @tracks << ShowImporter::TrackProxy.new(pos, song_title, fn_match[0], fn_match[1])
-        matches.delete(fn_match[0])
-      else
-        @tracks << ShowImporter::TrackProxy.new(pos, song_title)
-      end
+      process_track(matches, pos, song_title)
     end
+  end
+
+  def process_track(matches, pos, song_title)
+    if fn_match?(matches, song_title)
+      @tracks << ShowImporter::TrackProxy.new(pos, song_title, fn_match[0], fn_match[1])
+      return matches.delete(fn_match[0])
+    end
+
+    @tracks << ShowImporter::TrackProxy.new(pos, song_title)
+  end
+
+  def fn_match?(matches, song_title)
+    matches.find { |_k, v| !v.nil? && v.title == song_title }
   end
 end

@@ -4,7 +4,8 @@ class User < ApplicationRecord
   has_many :playlist_bookmarks, dependent: :destroy
   has_many :likes, dependent: :destroy
 
-  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
+  devise :database_authenticatable, :registerable, :recoverable,
+         :rememberable, :trackable, :validatable
 
   validates(
     :username,
@@ -23,7 +24,7 @@ class User < ApplicationRecord
     token = ''
     loop do
       token = Devise.friendly_token
-      break token unless User.where(authentication_token: token).first
+      break token unless User.find_by(authentication_token: token)
     end
     update(authentication_token: token)
   end

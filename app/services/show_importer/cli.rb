@@ -41,11 +41,14 @@ class ShowImporter::Cli
     @help_str ||= 'Combine (u)p, (S)ong, (F)ile, S(e)t, (T)itle, (M)ain menu'
   end
 
-  def process_pos(pos)
+  def process_pos(pos) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     while (line = Readline.readline('#=> ', false))
       case line.downcase
       when 'u'
-        puts "Combining up (#{pos}) #{orch.get_track(pos).title} into (#{pos - 1}) #{orch.get_track(pos - 1).title}"
+        puts(
+          "Combining up (#{pos}) #{orch.get_track(pos).title} into " \
+          "(#{pos - 1}) #{orch.get_track(pos - 1).title}"
+        )
         orch.combine_up(pos)
         break
       when 's'
@@ -146,7 +149,7 @@ class ShowImporter::Cli
     menu_branch(line)
   end
 
-  def menu_branch(line)
+  def menu_branch(line) # rubocop:disable Metrics/CyclomaticComplexity
     case line
     when 'f'
       print_filenames

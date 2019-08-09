@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class Venue < ApplicationRecord
-  has_many :shows
+  has_many :shows, dependent: :nullify
   has_many :venue_renames, dependent: :destroy
 
   extend FriendlyId

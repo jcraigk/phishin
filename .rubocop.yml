@@ -12,7 +12,7 @@ AllCops:
     - db/**/*
     - vendor/**/*
     - lib/tasks/*
-  DisplayCopNames: true
+    - app/controllers/playlists_controller.rb # TODO: Refactor
 Documentation:
   Enabled: false
 Layout/EmptyLineAfterGuardClause:
@@ -20,14 +20,33 @@ Layout/EmptyLineAfterGuardClause:
 Layout/EmptyLineAfterMagicComment:
   Enabled: false
 Metrics/BlockLength:
-  Enabled: false
+  Exclude:
+    - spec/**/*
+    - config/routes.rb
 Metrics/ClassLength:
+  Max: 250
+Metrics/ModuleLength:
   Max: 250
 Metrics/LineLength:
   Max: 100
+RSpec/DescribeClass:
+  Exclude:
+    - spec/features/**/*
+RSpec/ExampleLength:
+  Exclude:
+    - spec/features/**/*
+Rails/Exit:
+  Enabled: false
 Rails/HttpPositionalArguments:
+  Enabled: false
+RSpec/ImplicitSubject:
+  EnforcedStyle: single_statement_only
+Rails/Output:
   Enabled: false
 RSpec/NestedGroups:
   Max: 4
 Style/ClassAndModuleChildren:
   Enabled: false
+Style/MissingRespondToMissing:
+  Exclude:
+    - app/services/**/*

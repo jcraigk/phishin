@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class Tour < ApplicationRecord
-  has_many :shows
+  has_many :shows, dependent: :nullify
 
   extend FriendlyId
   friendly_id :name, use: :slugged

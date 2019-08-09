@@ -22,7 +22,7 @@ module FeatureHelpers
     end
   end
 
-  def expect_track_sorting_controls(tracks)
+  def expect_track_sorting_controls(tracks) # rubocop:disable Metrics/AbcSize
     titles_by_date = tracks.sort_by { |t| t.show.date }.map(&:title)
     titles_by_likes = tracks.sort_by(&:likes_count).map(&:title)
     titles_by_duration = tracks.sort_by(&:duration).map(&:title)
@@ -58,7 +58,7 @@ module FeatureHelpers
     expect_content_in_order(titles_by_duration)
   end
 
-  def expect_show_sorting_controls(shows)
+  def expect_show_sorting_controls(shows) # rubocop:disable Metrics/AbcSize
     dates_by_date = shows.sort_by(&:date).map(&:date_with_dots)
     dates_by_likes = shows.sort_by(&:likes_count).map(&:date_with_dots)
     dates_by_duration = shows.sort_by(&:duration).map(&:date_with_dots)

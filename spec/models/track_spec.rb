@@ -96,25 +96,51 @@ RSpec.describe Track do
     end
   end
 
-  it 'provides #set_name' do
-    track.set = nil
-    expect(track.set_name).to eq('Unknown Set')
-    track.set = 'S'
-    expect(track.set_name).to eq('Soundcheck')
-    track.set = 1
-    expect(track.set_name).to eq('Set 1')
-    track.set = 2
-    expect(track.set_name).to eq('Set 2')
-    track.set = 3
-    expect(track.set_name).to eq('Set 3')
-    track.set = 4
-    expect(track.set_name).to eq('Set 4')
-    track.set = 'E'
-    expect(track.set_name).to eq('Encore')
-    track.set = 'E2'
-    expect(track.set_name).to eq('Encore 2')
-    track.set = 'E3'
-    expect(track.set_name).to eq('Encore 3')
+  describe '#set_name' do
+    it 'recognizes nil' do
+      track.set = nil
+      expect(track.set_name).to eq('Unknown Set')
+    end
+
+    it 'recognizes `S`' do
+      track.set = 'S'
+      expect(track.set_name).to eq('Soundcheck')
+    end
+
+    it 'recognizes `1`' do
+      track.set = '1'
+      expect(track.set_name).to eq('Set 1')
+    end
+
+    it 'recognizes `2`' do
+      track.set = '2'
+      expect(track.set_name).to eq('Set 2')
+    end
+
+    it 'recognizes `3`' do
+      track.set = '3'
+      expect(track.set_name).to eq('Set 3')
+    end
+
+    it 'recognizes `4`' do
+      track.set = '4'
+      expect(track.set_name).to eq('Set 4')
+    end
+
+    it 'recognizes `E`' do
+      track.set = 'E'
+      expect(track.set_name).to eq('Encore')
+    end
+
+    it 'recognizes `E2`' do
+      track.set = 'E2'
+      expect(track.set_name).to eq('Encore 2')
+    end
+
+    it 'recognizes `E3`' do
+      track.set = 'E3'
+      expect(track.set_name).to eq('Encore 3')
+    end
   end
 
   describe 'ID3 tagging' do
@@ -139,9 +165,8 @@ RSpec.describe Track do
 
   describe 'serialization' do
     let!(:track_tags) { create_list(:track_tag, 3, track: track) }
-
-    it 'provides #as_json' do
-      expect(track.as_json).to eq(
+    let(:expected_as_json) do
+      {
         id: track.id,
         title: track.title,
         position: track.position,
@@ -154,11 +179,25 @@ RSpec.describe Track do
         mp3: track.mp3_url,
         song_ids: track.songs.map(&:id),
         updated_at: track.updated_at.iso8601
-      )
+      }
     end
-
-    it 'provides #as_json_api' do
-      expect(track.as_json_api).to eq(
+    let(:tags) do
+      track_tags.map do |track_tag|
+        {
+          id: track_tag.tag.id,
+          name: track_tag.tag.name,
+          priority: track_tag.tag.priority,
+          group: track_tag.tag.group,
+          color: track_tag.tag.color,
+          notes: track_tag.notes,
+          transcript: track_tag.transcript,
+          starts_at_second: track_tag.starts_at_second,
+          ends_at_second: track_tag.ends_at_second
+        }
+      end
+    end
+    let(:expected_as_json_api) do
+      {
         id: track.id,
         show_id: track.show.id,
         show_date: track.show.date.iso8601,
@@ -170,23 +209,19 @@ RSpec.describe Track do
         set_name: track.set_name,
         likes_count: track.likes_count,
         slug: track.slug,
-        tags: track_tags.map do |track_tag|
-          {
-            id: track_tag.tag.id,
-            name: track_tag.tag.name,
-            priority: track_tag.tag.priority,
-            group: track_tag.tag.group,
-            color: track_tag.tag.color,
-            notes: track_tag.notes,
-            transcript: track_tag.transcript,
-            starts_at_second: track_tag.starts_at_second,
-            ends_at_second: track_tag.ends_at_second
-          }
-        end.sort_by { |t| t[:priority] },
+        tags: tags.sort_by { |t| t[:priority] },
         mp3: track.mp3_url,
         song_ids: track.songs.map(&:id),
         updated_at: track.updated_at.iso8601
-      )
+      }
+    end
+
+    it 'provides #as_json' do
+      expect(track.as_json).to eq(expected_as_json)
+    end
+
+    it 'provides #as_json_api' do
+      expect(track.as_json_api).to eq(expected_as_json_api)
     end
   end
 end

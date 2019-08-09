@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :show do
-    date { Faker::Date.unique.between(from: 500.years.ago, to: Date.today) }
+    date { Faker::Date.unique.between(from: 500.years.ago, to: Time.zone.today) }
     published { true }
     taper_notes { Faker::Lorem.paragraph }
 

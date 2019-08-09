@@ -17,21 +17,24 @@ describe 'Search', :js do
   context 'with valid search term' do
     context 'when no data matches' do
       let(:term) { 'azdsd' }
+      let(:paragraph) do
+        <<~TXT
+          Got a blank space where results should be...
+          If searching for a date, enter it like "12/31/95" or "1995-12-31"
+          If searching for a day of the year (like Halloween), search for an instance like "10/31/94"
+          If searching for a venue, enter part of its name (or past names) or location like "msg" or "new york"
+          If searching for a song, enter all or part of its name like "also sprach" or "birdwatcher"
+          If searching for a tour, enter all or part of its name like "summer" or "1995"
+          If searching for a tag, enter all or part of its name or description like "sbd" or "soundboard"
+          If searching for a tag instance, enter part of its notes like "vaccuum solo"
+        TXT
+      end
 
       it 'returns no results' do
         enter_search_term(term)
 
         within('#content_box') do
-          expect_content(
-            'Got a blank space where results should be...',
-            'If searching for a date, enter it like "12/31/95" or "1995-12-31"',
-            'If searching for a day of the year (like Halloween), search for an instance like "10/31/94"',
-            'If searching for a venue, enter part of its name (or past names) or location like "msg" or "new york"',
-            'If searching for a song, enter all or part of its name like "also sprach" or "birdwatcher"',
-            'If searching for a tour, enter all or part of its name like "summer" or "1995"',
-            'If searching for a tag, enter all or part of its name or description like "sbd" or "soundboard"',
-            'If searching for a tag instance, enter part of its notes like "vaccuum solo"'
-          )
+          expect_content(paragraph.strip)
         end
       end
     end

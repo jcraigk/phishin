@@ -20,16 +20,8 @@ class ShowImporter::PNet
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
     res = http.start { |ht| ht.request(request) }
-    case res
-    when Net::HTTPSuccess
-      begin
-        return JSON::Parser.new(res.body).parse
-      rescue StandardError
-        raise 'Server or Parse Error'
-      end
-    else
-      raise 'Server Error'
-    end
+    raise 'Server Error' unless res == Net::HTTPSuccess
+    JSON[res.body]
   end
 
   # Will cause the Authkey to be used from this point forward.
@@ -48,9 +40,9 @@ class ShowImporter::PNet
   end
 
   def method_missing(method, *args, &_block)
-    action = "pnet_#{method}".tr('_', '.')
     opts = args.first || {}
-    opts['method'] = action
+    opts['method'] = "pnet_#{method}".tr('_', '.')
     perform_action(opts)
+    super
   end
 end

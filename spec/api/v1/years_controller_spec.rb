@@ -8,9 +8,11 @@ describe Api::V1::YearsController do
   let(:json_data) { json[:data] }
 
   describe 'index' do
-    let!(:show1) { create(:show, date: '1986-01-01') }
-    let!(:show2) { create(:show, date: '1987-01-01') }
-    let!(:show3) { create(:show, date: '1988-06-01') }
+    before do
+      create(:show, date: '1986-01-01')
+      create(:show, date: '1987-01-01')
+      create(:show, date: '1988-06-01')
+    end
 
     context 'without params' do
       subject { get('/api/v1/years', {}, auth_header) }
@@ -48,7 +50,10 @@ describe Api::V1::YearsController do
     let!(:show1) { create(:show, date: "#{year1}-01-01", tour: tour) }
     let!(:show2) { create(:show, date: "#{year1}-02-01", tour: tour) }
     let!(:show3) { create(:show, date: "#{year2}-01-01", tour: tour) }
-    let!(:show4) { create(:show, date: '1995-01-01', tour: tour) }
+
+    before do
+      create(:show, date: '1995-01-01', tour: tour) # Extra show
+    end
 
     context 'when providing a single year' do
       subject { get("/api/v1/years/#{year1}", {}, auth_header) }

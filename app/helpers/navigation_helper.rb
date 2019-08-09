@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 module NavigationHelper
-  def global_nav
+  def global_nav(controller) # rubocop:disable Metrics/AbcSize
     str = ''
     global_nav_items.each do |name, props|
       css = ''
-      css = 'active' if (@ambiguity_controller || params[:controller]).in?(props[1])
+      css = 'active' if (controller || params[:controller]).in?(props[1])
       if name == 'userbox'
         css += ' user_control'
         if user_signed_in?
@@ -17,28 +17,55 @@ module NavigationHelper
         end
       end
       x = props[2]
-      str +=
-        content_tag(
-          :div,
-          link_to(name, props.first, class: "global_link #{css}"),
-          class: 'link_container',
-          style: "margin-left: #{x}px;"
-        )
+      str += nav_link(name, props, css, x)
+
       next unless /active/.match?(css)
       pos = x + 20
-      str += content_tag(:div, nil, class: 'nav_indicator', style: "margin-left: #{pos}px;")
-      str += content_tag(:div, nil, class: 'nav_indicator2', style: "margin-left: #{pos}px;")
+      str += nav_indicators(pos)
     end
+
     str.html_safe
   end
 
-  def sub_nav
-    if year_context?
+  def category_select(form_object, categories, group_names, field_name, value)
+    common_options = [
+      :id, :name,
+      { prompt: true, name: field_name, selected: value },
+      { class: 'form-control', name: field_name }
+    ]
+    if group_names.size > 1
+      form_object.grouped_collection_select(
+        :category_id, group_names,
+        ->(group_name) { categories.where(group_name: group_name) },
+        ->(group_name) { group_name || 'Other' },
+        *common_options
+      )
+    else
+      form_object.collection_select(:category_id, categories, *common_options)
+    end
+  end
+
+  def nav_link(name, props, css, margin)
+    content_tag(
+      :div,
+      link_to(name, props.first, class: "global_link #{css}"),
+      class: 'link_container',
+      style: "margin-left: #{margin}px;"
+    )
+  end
+
+  def nav_indicators(pos)
+    content_tag(:div, nil, class: 'nav_indicator', style: "margin-left: #{pos}px;") +
+      content_tag(:div, nil, class: 'nav_indicator2', style: "margin-left: #{pos}px;")
+  end
+
+  def sub_nav(controller, venue, song)
+    if year_context?(controller)
       years_sub_links
-    elsif venue_context?
-      first_char_sub_links(venues_path, @venue)
-    elsif song_context?
-      first_char_sub_links(songs_path, @song)
+    elsif venue_context?(controller)
+      first_char_sub_links(venues_path, venue)
+    elsif song_context?(controller)
+      first_char_sub_links(songs_path, song)
     elsif top_liked_context?
       top_liked_sub_links
     elsif playlist_context?
@@ -48,18 +75,32 @@ module NavigationHelper
 
   def first_char_sub_links(base_url, current_item = nil)
     str = ''
-    FIRST_CHAR_LIST.each_with_index do |char, i|
+    FIRST_CHAR_LIST.each_with_index do |char, idx|
       css = 'char_link'
-      css += ' active' if
-        params[:char] == char ||
-        (params[:char].nil? && current_item.nil? && i.zero?) ||
-        (char == '#' && current_item.try(:name)&.first =~ /\d/) ||
-        (char == '#' && current_item.try(:title)&.first =~ /\d/) ||
-        (current_item.try(:name)&.first == char) ||
-        (current_item.try(:title)&.first == char)
+      css += ' active' if active_for_char?(current_item, char, idx)
       str += link_to char, "#{base_url}?char=#{CGI.escape(char)}", class: css
     end
     str.html_safe
+  end
+
+  def active_for_char?(current_item, char, idx)
+    params[:char] == char ||
+      default_char?(current_item, char, idx) ||
+      char_is_number?(current_item, char) ||
+      char_starts_name_or_title?(current_item, char)
+  end
+
+  def char_is_number?(current_item, char)
+    char == '#' && (current_item.try(:name)&.first =~ /\d/ ||
+      current_item.try(:title)&.first =~ /\d/)
+  end
+
+  def char_starts_name_or_title?(current_item, char)
+    char.in?([current_item.try(:name)&.first, current_item.try(:title)&.first])
+  end
+
+  def default_char?(current_item, _char, idx)
+    (params[:char].nil? && current_item.nil? && idx.zero?)
   end
 
   def global_nav_items
@@ -113,14 +154,16 @@ module NavigationHelper
     str = ''
     Hash[ERAS.to_a.reverse].each do |_era, years|
       years.reverse.each_with_index do |year, i|
-        style = ''
-        style = 'margin-right: 26px' if i + 1 == years.size
-        css = ''
-        css = 'active' if year == params[:slug]
-        str += link_to (year == '1983-1987' ? '83-87' : year[2..3]), "/#{year}", class: css, style: style
+        style = i + 1 == years.size ? 'margin-right: 26px' : ''
+        css = year == params[:slug] ? 'active' : ''
+        str += link_to_year(year, css, style)
       end
     end
     str.html_safe
+  end
+
+  def link_to_year(year, css, style)
+    link_to (year == '1983-1987' ? '83-87' : year[2..3]), "/#{year}", class: css, style: style
   end
 
   def will_paginate_simple(collection)
@@ -137,16 +180,16 @@ module NavigationHelper
     )
   end
 
-  def year_context?
-    params[:controller] == 'years' || @ambiguity_controller == 'years'
+  def year_context?(controller)
+    params[:controller] == 'years' || controller == 'years'
   end
 
-  def venue_context?
-    params[:controller] == 'venues' || @ambiguity_controller == 'venues'
+  def venue_context?(controller)
+    params[:controller] == 'venues' || controller == 'venues'
   end
 
-  def song_context?
-    params[:controller] == 'songs' || @ambiguity_controller == 'songs'
+  def song_context?(controller)
+    params[:controller] == 'songs' || controller == 'songs'
   end
 
   def top_liked_context?

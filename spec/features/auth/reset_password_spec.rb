@@ -15,7 +15,9 @@ describe 'Reset Password', :js do
     # Enter email address
     fill_in('user[email]', with: user.email)
     click_button('SEND PASSWORD RESET INSTRUCTIONS')
-    expect_content('You will receive an email with instructions about how to reset your password shortly')
+    expect_content(
+      'You will receive an email with instructions about how to reset your password shortly'
+    )
 
     # Open the email, click link
     open_email(user.email)
@@ -32,6 +34,8 @@ describe 'Reset Password', :js do
 
     # User is signed in and redirected to root path
     expect(page).to have_current_path(root_path)
-    expect(page).to have_content('Your password has been changed successfully. You are now signed in.')
+    expect(page).to(
+      have_content('Your password has been changed successfully. You are now signed in.')
+    )
   end
 end

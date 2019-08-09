@@ -6,7 +6,7 @@ RSpec.describe Venue do
 
   it { is_expected.to be_an(ApplicationRecord) }
 
-  it { is_expected.to have_many(:shows) }
+  it { is_expected.to have_many(:shows).dependent(:nullify) }
   it { is_expected.to have_many(:venue_renames).dependent(:destroy) }
 
   it { is_expected.to validate_presence_of(:name) }
@@ -35,8 +35,11 @@ RSpec.describe Venue do
   describe 'scopes' do
     describe '#name_starting_with' do
       let!(:a_venue) { create(:venue, name: 'Allstate Arena') }
-      let!(:b_venue) { create(:venue, name: 'BlueCross Arena') }
       let!(:num_venue) { create(:venue, name: '13x13 Club') }
+
+      before do
+        create(:venue, name: 'BlueCross Arena')
+      end
 
       it 'returns expected objects' do
         expect(described_class.name_starting_with('a')).to eq([a_venue])
@@ -46,17 +49,19 @@ RSpec.describe Venue do
   end
 
   describe '#long_name' do
-    subject { build(:venue, name: 'Madison Square Garden', abbrev: 'MSG') }
+    subject(:venue) { build(:venue, name: 'Madison Square Garden', abbrev: 'MSG') }
 
-    let!(:venue_rename) { create(:venue_rename, name: 'The Dump', venue: subject) }
+    before do
+      create(:venue_rename, name: 'The Dump', venue: venue)
+    end
 
     it 'returns long name' do
-      expect(subject.long_name).to eq('Madison Square Garden (MSG) (aka The Dump)')
+      expect(venue.long_name).to eq('Madison Square Garden (MSG) (aka The Dump)')
     end
   end
 
   describe '#location' do
-    subject do
+    subject(:venue) do
       build(
         :venue,
         city: 'Miami',
@@ -66,48 +71,55 @@ RSpec.describe Venue do
     end
 
     it 'returns expected location strings' do
-      expect(subject.location).to eq('Miami, FL')
-      subject.country = 'Russia'
-      expect(subject.location).to eq('Miami, FL, Russia')
-      subject.state = nil
-      expect(subject.location).to eq('Miami, Russia')
+      expect(venue.location).to eq('Miami, FL')
+      venue.country = 'Russia'
+      expect(venue.location).to eq('Miami, FL, Russia')
+      venue.state = nil
+      expect(venue.location).to eq('Miami, Russia')
     end
   end
 
   context 'when serializing' do
-    subject { create(:venue, :with_shows) }
+    subject(:venue) { create(:venue, :with_shows) }
+
+    let(:expected_as_json) do
+      {
+        id: venue.id,
+        name: venue.name,
+        other_names: venue.other_names,
+        latitude: venue.latitude.round(6),
+        longitude: venue.longitude.round(6),
+        shows_count: venue.shows_count,
+        location: venue.location,
+        slug: venue.slug,
+        updated_at: venue.updated_at.iso8601
+      }
+    end
+    let(:expected_as_json_api) do
+      {
+        id: venue.id,
+        name: venue.name,
+        other_names: venue.other_names,
+        latitude: venue.latitude.round(6),
+        longitude: venue.longitude.round(6),
+        shows_count: venue.shows_count,
+        location: venue.location,
+        city: venue.city,
+        state: venue.state,
+        country: venue.country,
+        slug: venue.slug,
+        show_dates: venue.shows.order(date: :asc).map(&:date).map(&:iso8601),
+        show_ids: venue.shows.order(date: :asc).map(&:id),
+        updated_at: venue.updated_at.iso8601
+      }
+    end
 
     it 'provides #as_json' do
-      expect(subject.as_json).to eq(
-        id: subject.id,
-        name: subject.name,
-        other_names: subject.other_names,
-        latitude: subject.latitude.round(6),
-        longitude: subject.longitude.round(6),
-        shows_count: subject.shows_count,
-        location: subject.location,
-        slug: subject.slug,
-        updated_at: subject.updated_at.iso8601
-      )
+      expect(venue.as_json).to eq(expected_as_json)
     end
 
     it 'provides #as_json_api' do
-      expect(subject.as_json_api).to eq(
-        id: subject.id,
-        name: subject.name,
-        other_names: subject.other_names,
-        latitude: subject.latitude.round(6),
-        longitude: subject.longitude.round(6),
-        shows_count: subject.shows_count,
-        location: subject.location,
-        city: subject.city,
-        state: subject.state,
-        country: subject.country,
-        slug: subject.slug,
-        show_dates: subject.shows.order(date: :asc).map(&:date).map(&:iso8601),
-        show_ids: subject.shows.order(date: :asc).map(&:id),
-        updated_at: subject.updated_at.iso8601
-      )
+      expect(venue.as_json_api).to eq(expected_as_json_api)
     end
   end
 end

@@ -3,7 +3,7 @@ class GoogleSpreadsheetFetcher
   attr_reader :spreadsheet_id, :range, :has_headers
 
   OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'
-  TOKEN_PATH = "#{Rails.root}/tmp/google_api_token.yml"
+  TOKEN_PATH = Rails.root.join('tmp', 'google_api_token.yml')
 
   def initialize(spreadsheet_id, range, opts = {})
     @spreadsheet_id = spreadsheet_id

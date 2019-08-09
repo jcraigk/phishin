@@ -15,15 +15,18 @@ RSpec.describe TrackInserter do
       is_sbd: true
     }
   end
-  let(:show) { create(:show) }
-  let!(:track1) { create(:track, show: show, position: 1) }
-  let!(:track2) { create(:track, show: show, position: 2) }
-  let!(:track3) { create(:track, show: show, position: 3) }
-  let(:song) { create(:song) }
-  let(:file) { "#{Rails.root}/spec/fixtures/test.mp3" }
   let(:date) { show.date }
+  let(:file) { Rails.root.join('spec', 'fixtures', 'test.mp3') }
+  let(:show) { create(:show) }
   let(:song_id) { song.id }
+  let(:song) { create(:song) }
   let(:title) { 'New Track' }
+
+  before do
+    create(:track, show: show, position: 1)
+    create(:track, show: show, position: 2)
+    create(:track, show: show, position: 3)
+  end
 
   context 'with invalid options' do
     let(:opts) { { invalid: 'options' } }
@@ -60,12 +63,14 @@ RSpec.describe TrackInserter do
 
     context 'when entities exist' do
       let!(:sbd_tag) { create(:tag, name: 'SBD') }
+      let(:new_track) { show.tracks.sort_by(&:position).second }
 
-      it 'inserts the track, shifting other tracks up' do
+      before do
         service.call
         show.reload
-        expect(show.tracks.size).to eq(4)
-        new_track = show.tracks.sort_by(&:position).second
+      end
+
+      it 'inserts the track, shifting other tracks up' do
         expect(new_track.title).to eq(title)
         expect(new_track.tags).to include(sbd_tag)
       end

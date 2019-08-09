@@ -35,7 +35,12 @@ RSpec.describe Show do
       let(:rename) { 'Venue New Name' }
 
       before do
-        create(:venue_rename, venue: venue, renamed_on: Date.parse('2018-01-01') - 1.day, name: rename)
+        create(
+          :venue_rename,
+          venue: venue,
+          renamed_on: Date.parse('2018-01-01') - 1.day,
+          name: rename
+        )
         show.validate
       end
 
@@ -47,9 +52,12 @@ RSpec.describe Show do
 
   describe 'scopes' do
     describe 'default scope' do
-      let!(:show1) { create(:show, published: false) }
       let!(:show2) { create(:show, published: true) }
       let!(:show3) { create(:show, published: true) }
+
+      before do
+        create(:show, published: false)
+      end
 
       it 'returns published shows' do
         expect(described_class.order(date: :asc)).to match_array([show2, show3])
@@ -59,8 +67,11 @@ RSpec.describe Show do
     describe '#between_years' do
       let!(:show1) { create(:show, date: '2014-10-31') }
       let!(:show2) { create(:show, date: '2015-01-01') }
-      let!(:show3) { create(:show, date: '2016-01-01') }
-      let!(:show4) { create(:show, date: '2017-01-01') }
+
+      before do
+        create(:show, date: '2016-01-01')
+        create(:show, date: '2017-01-01')
+      end
 
       it 'returns expected objects' do
         expect(described_class.between_years(2014, 2015)).to eq([show1, show2])
@@ -69,7 +80,10 @@ RSpec.describe Show do
 
     describe '#during_year' do
       let!(:show1) { create(:show, date: '2014-10-31') }
-      let!(:show2) { create(:show, date: '2015-01-01') }
+
+      before do
+        create(:show, date: '2015-01-01')
+      end
 
       it 'returns expected objects' do
         expect(described_class.during_year(2014)).to eq([show1])
@@ -78,7 +92,10 @@ RSpec.describe Show do
 
     describe '#on_day_of_year' do
       let!(:show1) { create(:show, date: '2018-10-31') }
-      let!(:show2) { create(:show, date: '2018-01-01') }
+
+      before do
+        create(:show, date: '2018-01-01')
+      end
 
       it 'returns expected object' do
         expect(described_class.on_day_of_year(10, 31)).to eq([show1])
@@ -120,9 +137,8 @@ RSpec.describe Show do
 
   describe 'serialization' do
     let!(:show_tags) { create_list(:show_tag, 3, show: show) }
-
-    it 'provides #as_json' do
-      expect(show.as_json).to eq(
+    let(:expected_as_json) do
+      {
         id: show.id,
         date: show.date.iso8601,
         duration: show.duration,
@@ -136,27 +152,29 @@ RSpec.describe Show do
         updated_at: show.updated_at.iso8601,
         venue_name: show.venue&.name,
         location: show.venue&.location
-      )
+      }
     end
-
-    it 'provides #as_json_api' do
-      expect(show.as_json_api).to eq(
+    let(:tags) do
+      show_tags.map do |show_tag|
+        {
+          id: show_tag.tag.id,
+          name: show_tag.tag.name,
+          priority: show_tag.tag.priority,
+          group: show_tag.tag.group,
+          color: show_tag.tag.color,
+          notes: show_tag.notes
+        }
+      end
+    end
+    let(:expected_as_json_api) do
+      {
         id: show.id,
         date: show.date.iso8601,
         duration: show.duration,
         incomplete: show.incomplete,
         sbd: show.sbd,
         remastered: show.remastered,
-        tags: show_tags.map do |show_tag|
-          {
-            id: show_tag.tag.id,
-            name: show_tag.tag.name,
-            priority: show_tag.tag.priority,
-            group: show_tag.tag.group,
-            color: show_tag.tag.color,
-            notes: show_tag.notes
-          }
-        end.sort_by { |t| t[:priority] },
+        tags: tags.sort_by { |t| t[:priority] },
         tour_id: show.tour_id,
         venue: show.venue.as_json,
         venue_name: show.venue_name,
@@ -164,7 +182,15 @@ RSpec.describe Show do
         likes_count: show.likes_count,
         tracks: show.tracks.sort_by(&:position).map(&:as_json_api),
         updated_at: show.updated_at.iso8601
-      )
+      }
+    end
+
+    it 'provides #as_json' do
+      expect(show.as_json).to eq(expected_as_json)
+    end
+
+    it 'provides #as_json_api' do
+      expect(show.as_json_api).to eq(expected_as_json_api)
     end
   end
 end
