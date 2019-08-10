@@ -13,7 +13,7 @@ module TagHelper
     str.html_safe
   end
 
-  def tag_stack_label(tag_stack)
+  def tag_stack_label(tag_stack) # rubocop:disable Metrics/MethodLength
     tag_instances = tag_stack.second
     first_instance = tag_instances.first
     link_to '#' do

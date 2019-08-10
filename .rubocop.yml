@@ -5,6 +5,27 @@ require:
   - rubocop-rails
   - rubocop-rspec
 
+Metrics/MethodLength:
+  Exclude:
+    - 'spec/support/feature_helpers.rb'
+    # - 'app/controllers/ambiguity_controller.rb'
+    # - 'app/controllers/concerns/ambiguity/year.rb'
+    # - 'app/controllers/concerns/ambiguity/year_range.rb'
+    # - 'app/controllers/downloads_controller.rb'
+    # - 'app/controllers/my_controller.rb'
+    # - 'app/controllers/tags_controller.rb'
+    # - 'app/helpers/application_helper.rb'
+    # - 'app/helpers/navigation_helper.rb'
+    # - 'app/helpers/sort_helper.rb'
+    # - 'app/helpers/tag_helper.rb'
+    # - 'app/services/jamcharts_importer.rb'
+    # - 'app/services/show_importer/cli.rb'
+    # - 'app/services/show_importer/filename_matcher.rb'
+    # - 'app/services/show_importer/orchestrator.rb'
+    # - 'app/services/show_importer/track_proxy.rb'
+    # - 'app/services/show_importer/track_replacer.rb'
+
+
 AllCops:
   TargetRubyVersion: 2.6.3
   Exclude:

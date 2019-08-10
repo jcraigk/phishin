@@ -27,7 +27,7 @@ class AmbiguityController < ApplicationController
     order_by_for_tracks
   end
 
-  def order_by_for_tracks
+  def order_by_for_tracks # rubocop:disable Metrics/MethodLength
     @order_by =
       case params[:sort]
       when 'title'

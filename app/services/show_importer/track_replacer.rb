@@ -65,18 +65,14 @@ class ShowImporter::TrackReplacer
   end
 
   def scrub_filename(filename)
-    if /mike/i.match?(filename)
-      "Mike's Song"
-    elsif /Freebird.mp3/.match?(filename)
-      'Free Bird'
-    else
-      filename
-        .gsub('.mp3', '')
-        .gsub(/\AII?/, '')
-        .tr('_', ' ')
-        .gsub(/\d/, '')
-        .strip
-    end
+    return "Mike's Song" if /mike/i.match?(filename)
+    return 'Free Bird' if /Freebird.mp3/.match?(filename)
+    filename
+      .gsub('.mp3', '')
+      .gsub(/\AII?/, '')
+      .tr('_', ' ')
+      .gsub(/\d/, '')
+      .strip
   end
 
   def show

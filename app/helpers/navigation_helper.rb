@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 module NavigationHelper
-  def global_nav(controller) # rubocop:disable Metrics/AbcSize
+  def global_nav(controller) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     str = ''
     global_nav_items.each do |name, props|
       css = ''
@@ -27,24 +27,6 @@ module NavigationHelper
     str.html_safe
   end
 
-  def category_select(form_object, categories, group_names, field_name, value)
-    common_options = [
-      :id, :name,
-      { prompt: true, name: field_name, selected: value },
-      { class: 'form-control', name: field_name }
-    ]
-    if group_names.size > 1
-      form_object.grouped_collection_select(
-        :category_id, group_names,
-        ->(group_name) { categories.where(group_name: group_name) },
-        ->(group_name) { group_name || 'Other' },
-        *common_options
-      )
-    else
-      form_object.collection_select(:category_id, categories, *common_options)
-    end
-  end
-
   def nav_link(name, props, css, margin)
     content_tag(
       :div,
@@ -59,7 +41,7 @@ module NavigationHelper
       content_tag(:div, nil, class: 'nav_indicator2', style: "margin-left: #{pos}px;")
   end
 
-  def sub_nav(controller, venue, song)
+  def sub_nav(controller, venue, song) # rubocop:disable Metrics/MethodLength
     if year_context?(controller)
       years_sub_links
     elsif venue_context?(controller)
@@ -116,38 +98,27 @@ module NavigationHelper
   end
 
   def user_dropdown_links
-    nav_items = {
+    {
       'My Shows' => [my_shows_path, false, ['my_shows']],
       'My Tracks' => [my_tracks_path, false, ['my_tracks']],
       'Change Password' => [edit_user_registration_path, true, ['edit']],
       'Logout' => [destroy_user_session_path, true, ['nothing']]
-    }
-    str = ''
-    nav_items.each do |name, props|
-      str += '<li>'
-      str +=
-        if name == 'Logout'
-          link_to(name, props[0], method: :delete, class: 'non-remote')
-        else
-          link_to(name, props[0], class: 'non-remote')
-        end
-      str += '</li>'
-    end
-    str.html_safe
+    }.map do |name, props|
+      opts = { class: 'non-remote' }
+      opts[:method] = :delete if name == 'Logout'
+      content_tag(:li, link_to(name, props.first, opts))
+    end.join.html_safe
   end
 
   def playlists_sub_links
-    nav_items = {
+    {
       'Active' => [active_playlist_path, ['active_playlist']],
       'Saved' => [saved_playlists_path, ['saved_playlists']]
-    }
-    str = ''
-    nav_items.each do |name, props|
+    }.map do |name, props|
       css = ''
-      css = 'active' if props[1].include?(params[:action])
-      str += link_to name, props[0], class: css
-    end
-    str.html_safe
+      css = 'active' if props.second.include?(params[:action])
+      link_to(name, props.first, class: css)
+    end.join.html_safe
   end
 
   def years_sub_links
@@ -173,10 +144,7 @@ module NavigationHelper
       outer_window: 0,
       previous_label: '<<',
       next_label: '>>',
-      params: {
-        per_page: params[:per_page],
-        t: params[:t]
-      }
+      params: { per_page: params[:per_page], t: params[:t] }
     )
   end
 
@@ -205,12 +173,9 @@ module NavigationHelper
       'Top 40 Shows' => [top_shows_path, %w[top_shows]],
       'Top 40 Tracks' => [top_tracks_path, %w[top_tracks]]
     }
-    str = ''
-    nav_items.each do |name, props|
-      css = ''
-      css = 'active' if params[:controller].in?(props[1])
-      str += link_to name, props[0], class: css
-    end
-    str.html_safe
+    nav_items.map do |name, props|
+      css = params[:controller].in?(props.second) ? 'active' : ''
+      link_to(name, props.first, class: css)
+    end.join.html_safe
   end
 end

@@ -79,12 +79,7 @@ class ShowImporter::Orchestrator
     @show.save
     @tracks.each do |track|
       next puts "\nInvalid track! (#{track.title})" unless track.valid?
-
-      track.update!(
-        show: @show,
-        audio_file: File.new("#{@fm.s_dir}/#{track.filename}")
-      )
-      track.apply_id3_tags
+      update_track(track)
       print '.'
     end
     @show.save_duration
@@ -93,6 +88,14 @@ class ShowImporter::Orchestrator
   end
 
   private
+
+  def update_track(track)
+    track.update!(
+      show: @show,
+      audio_file: File.new("#{@fm.s_dir}/#{track.filename}")
+    )
+    track.apply_id3_tags
+  end
 
   def puts_success
     puts "\n#{@show.date} show imported successfully"

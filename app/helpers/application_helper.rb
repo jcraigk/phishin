@@ -30,15 +30,10 @@ module ApplicationHelper
 
   def likable(likable, like, size)
     likable_name = likable.class.name.downcase
-    css = like.present? ? %i[like_toggle liked] : %i[like_toggle]
     a = link_to(
-      '',
-      'null',
-      data: {
-        type: likable_name,
-        id: likable.id
-      },
-      class: css,
+      '', 'null',
+      data: { type: likable_name, id: likable.id },
+      class: like.present? ? %i[like_toggle liked] : %i[like_toggle],
       title: "Click to Like or Unlike this #{likable_name}"
     )
     span = content_tag(:span, likable.likes_count)

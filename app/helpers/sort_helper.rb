@@ -1,18 +1,10 @@
 # frozen_string_literal: true
 module SortHelper
   def sort_songs_and_venues_links(item_hash)
-    str = ''
-    item_hash.each do |k, v|
+    item_hash.map do |k, v|
       link = params[:sort] == v ? "<strong>#{k}</strong>" : k
-      str += content_tag(
-        :li,
-        link_to(
-          link.html_safe,
-          "?char=#{params[:char]}&sort=#{CGI.escape(v)}"
-        )
-      )
-    end
-    str.html_safe
+      content_tag(:li, link_to(link.html_safe, "?char=#{params[:char]}&sort=#{CGI.escape(v)}"))
+    end.join.html_safe
   end
 
   def sort_tags_title(item_hash)
@@ -41,20 +33,15 @@ module SortHelper
   end
 
   def sort_filter(items)
-    str = ''
-    items.each do |k, v|
+    items.map do |k, v|
       link = params[:sort] == v ? "<strong>#{k}</strong>" : k
       param_str = "?sort=#{CGI.escape(v)}"
       params.each do |key, val|
-        unless %w[controller action name t sort].include?(key)
-          param_str += "&#{key}=#{val}" if val.present?
-        end
+        next if key.in?(%w[controller action name t sort])
+        param_str += "&#{key}=#{val}" if val.present?
       end
-
-      str += content_tag :li, link_to(link.html_safe, param_str)
-    end
-
-    str.html_safe
+      content_tag(:li, link_to(link.html_safe, param_str))
+    end.join.html_safe
   end
 
   def sort_songs_title(items)

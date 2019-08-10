@@ -23,7 +23,7 @@ module Ambiguity::Year
         .order(@order_by)
   end
 
-  def hydrate_year_page
+  def hydrate_year_page # rubocop:disable Metrics/MethodLength
     @shows = shows_during_year
     @sections =
       @shows.group_by(&:tour_name)

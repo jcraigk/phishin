@@ -28,7 +28,7 @@ class MyController < ApplicationController
 
   private
 
-  def validate_sorting_for_my_shows
+  def validate_sorting_for_my_shows # rubocop:disable Metrics/MethodLength
     params[:sort] = 'date desc' unless
       params[:sort].in?(['date desc', 'date asc', 'title', 'likes', 'duration'])
     @order_by =
@@ -44,7 +44,7 @@ class MyController < ApplicationController
       end
   end
 
-  def validate_sorting_for_my_tracks
+  def validate_sorting_for_my_tracks # rubocop:disable Metrics/MethodLength
     params[:sort] = 'shows.date desc' unless
       params[:sort].in?(['title', 'shows.date desc', 'shows.date asc', 'likes', 'duration'])
     @order_by =
