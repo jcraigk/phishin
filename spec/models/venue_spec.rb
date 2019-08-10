@@ -37,12 +37,13 @@ RSpec.describe Venue do
       let!(:a_venue) { create(:venue, name: 'Allstate Arena') }
       let!(:num_venue) { create(:venue, name: '13x13 Club') }
 
-      before do
-        create(:venue, name: 'BlueCross Arena')
+      before { create(:venue, name: 'BlueCross Arena') }
+
+      it 'returns expected records starting with `A`' do
+        expect(described_class.name_starting_with('a')).to eq([a_venue])
       end
 
-      it 'returns expected objects' do
-        expect(described_class.name_starting_with('a')).to eq([a_venue])
+      it 'returns expected records starting with a number' do
         expect(described_class.name_starting_with('#')).to eq([num_venue])
       end
     end
@@ -61,19 +62,19 @@ RSpec.describe Venue do
   end
 
   describe '#location' do
-    subject(:venue) do
-      build(
-        :venue,
-        city: 'Miami',
-        state: 'FL',
-        country: 'USA'
-      )
+    subject(:venue) { build(:venue, city: 'Miami', state: 'FL', country: 'USA') }
+
+    it 'returns expected full string' do
+      expect(venue.location).to eq('Miami, FL')
     end
 
-    it 'returns expected location strings' do
-      expect(venue.location).to eq('Miami, FL')
+    it 'includes country when not USA' do
       venue.country = 'Russia'
       expect(venue.location).to eq('Miami, FL, Russia')
+    end
+
+    it 'excludes state when not present' do
+      venue.country = 'Russia'
       venue.state = nil
       expect(venue.location).to eq('Miami, Russia')
     end

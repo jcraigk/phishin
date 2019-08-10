@@ -25,9 +25,7 @@ RSpec.describe Track do
       track.save
     end
 
-    it 'assigns slug from TrackSlugGenerator' do
-      expect(TrackSlugGenerator).to have_received(:new).with(track)
-      expect(mock_generator).to have_received(:call)
+    it 'produces expected slug' do
       expect(track.slug).to eq(slug)
     end
   end
@@ -40,9 +38,15 @@ RSpec.describe Track do
 
     it { is_expected.to be_a(PgSearch::Model) }
 
-    it 'returns expected results' do
+    it 'matches `Wolfman`' do
       expect(described_class.kinda_matching('Wolfman')).to eq([track1])
+    end
+
+    it 'matches `Wolf`' do
       expect(described_class.kinda_matching('Wolf')).to eq([track2])
+    end
+
+    it 'matches `Tube`' do
       expect(described_class.kinda_matching('Tube')).to match_array([track3, track4])
     end
   end
@@ -57,9 +61,12 @@ RSpec.describe Track do
     expect(track.url).to eq("#{APP_BASE_URL}/#{track.show.date.to_s(:db)}/#{track.slug}")
   end
 
-  it 'validates >= 1 song associated' do
+  it 'validates >= 1 song' do
     track.validate
     expect(track.errors.keys).not_to include(:songs)
+  end
+
+  it 'invalidates < 1 song' do
     track.songs = []
     track.validate
     expect(track.errors.keys).to include(:songs)
@@ -148,12 +155,15 @@ RSpec.describe Track do
 
     before do
       allow(Id3Tagger).to receive(:new).and_return(mock_tagger)
-      allow(mock_tagger).to receive(:call).and_return(true)
+      allow(mock_tagger).to receive(:call)
       track.apply_id3_tags
     end
 
-    it 'calls Id3Tagger' do
+    it 'instantiates Id3Tagger with tracks' do
       expect(Id3Tagger).to have_received(:new).with(track)
+    end
+
+    it 'calls Id3Tagger' do
       expect(mock_tagger).to have_received(:call)
     end
   end

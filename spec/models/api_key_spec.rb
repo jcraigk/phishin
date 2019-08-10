@@ -27,8 +27,7 @@ RSpec.describe ApiKey, type: :model do
       subject(:api_key) { described_class.active }
 
       it 'returns active keys' do
-        expect(api_key).to include active_key
-        expect(api_key).not_to include revoked_key
+        expect(api_key).to eq([active_key])
       end
     end
 
@@ -36,8 +35,7 @@ RSpec.describe ApiKey, type: :model do
       subject(:api_key) { described_class.not_revoked }
 
       it 'returns only not revoked keys' do
-        expect(api_key).to include active_key
-        expect(api_key).not_to include revoked_key
+        expect(api_key).to eq([active_key])
       end
     end
 
@@ -45,8 +43,7 @@ RSpec.describe ApiKey, type: :model do
       subject(:api_key) { described_class.revoked }
 
       it 'returns only revoked keys' do
-        expect(api_key).not_to include active_key
-        expect(api_key).to include revoked_key
+        expect(api_key).to eq([revoked_key])
       end
     end
   end
@@ -56,9 +53,9 @@ RSpec.describe ApiKey, type: :model do
   end
 
   describe '#revoke!' do
+    let(:key) { create(:api_key) }
+
     it 'revokes the key' do
-      key = create(:api_key)
-      expect(key).not_to be_revoked
       key.revoke!
       expect(key).to be_revoked
     end

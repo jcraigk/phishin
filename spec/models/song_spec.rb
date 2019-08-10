@@ -26,9 +26,15 @@ RSpec.describe Song do
 
     it { is_expected.to be_a(PgSearch::Model) }
 
-    it 'returns expected results' do
+    it 'matches `Woflman`' do
       expect(described_class.kinda_matching('Wolfman')).to eq([song1])
+    end
+
+    it 'matches `Wolf`' do
       expect(described_class.kinda_matching('Wolf')).to eq([song2])
+    end
+
+    it 'matches `Tube`' do
       expect(described_class.kinda_matching('Tube')).to match_array([song3, song4])
     end
   end
@@ -41,8 +47,11 @@ RSpec.describe Song do
       create(:song, title: 'Bathtub Gin') # Starts with `B`
     end
 
-    it 'returns expected objects' do
+    it 'returns records starting with `A`' do
       expect(described_class.title_starting_with('a')).to eq([a_song])
+    end
+
+    it 'returns records starting with a number' do
       expect(described_class.title_starting_with('#')).to eq([num_song])
     end
   end
