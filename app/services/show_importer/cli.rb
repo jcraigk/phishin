@@ -41,7 +41,8 @@ class ShowImporter::Cli
     @help_str ||= 'Combine (u)p, (S)ong, (F)ile, S(e)t, (T)itle, (M)ain menu'
   end
 
-  def process_pos(pos) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
+  def process_pos(pos)
     while (line = Readline.readline('#=> ', false))
       case line.downcase
       when 'u'
@@ -68,6 +69,7 @@ class ShowImporter::Cli
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   def insert_new_track
     puts 'Before track #:'
@@ -85,7 +87,7 @@ class ShowImporter::Cli
     end
   end
 
-  def update_song_for_pos(pos)
+  def update_song_for_pos(pos) # rubocop:disable Metrics/MethodLength
     puts 'Enter exact song title:'
     while (line = Readline.readline('#=> ', true))
       matched = orch.fm.find_match(line, exact: true)
@@ -120,7 +122,7 @@ class ShowImporter::Cli
     puts
   end
 
-  def update_file_for_pos(pos)
+  def update_file_for_pos(pos) # rubocop:disable Metrics/MethodLength
     puts 'Choose a file:'
     filenames = print_filenames
     while (line = Readline.readline("1-#{filenames.length} > "))
@@ -149,7 +151,7 @@ class ShowImporter::Cli
     menu_branch(line)
   end
 
-  def menu_branch(line) # rubocop:disable Metrics/CyclomaticComplexity
+  def menu_branch(line) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
     case line
     when 'f'
       print_filenames

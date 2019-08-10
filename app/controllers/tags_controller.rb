@@ -66,7 +66,7 @@ class TagsController < ApplicationController
     end
   end
 
-  def shows_order_by
+  def shows_order_by # rubocop:disable Metrics/MethodLength
     params[:sort] = 'date desc' unless
       params[:sort].in?(['date desc', 'date', 'likes', 'duration'])
 
@@ -82,7 +82,7 @@ class TagsController < ApplicationController
     end
   end
 
-  def tracks_order_by
+  def tracks_order_by # rubocop:disable Metrics/MethodLength
     params[:sort] = 'date desc' unless
       ['date desc', 'date', 'likes', 'duration'].include?(params[:sort])
 

@@ -1,5 +1,3 @@
-inherit_from: .rubocop_todo.yml
-
 require:
   - rubocop-performance
   - rubocop-rails
@@ -25,6 +23,9 @@ Metrics/BlockLength:
     - config/routes.rb
 Metrics/ClassLength:
   Max: 250
+Metrics/MethodLength:
+  Exclude:
+    - spec/support/feature_helpers.rb
 Metrics/ModuleLength:
   Max: 250
 Metrics/LineLength:
@@ -35,6 +36,9 @@ RSpec/DescribeClass:
 RSpec/ExampleLength:
   Exclude:
     - spec/features/**/*
+RSpec/MultipleExpectations:
+  Exclude:
+    - spec/features/**/*
 Rails/Exit:
   Enabled: false
 Rails/HttpPositionalArguments:
@@ -42,6 +46,8 @@ Rails/HttpPositionalArguments:
 RSpec/ImplicitSubject:
   EnforcedStyle: single_statement_only
 Rails/Output:
+  Enabled: false
+Rails/OutputSafety:
   Enabled: false
 RSpec/NestedGroups:
   Max: 4

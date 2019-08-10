@@ -13,7 +13,7 @@ module Ambiguity::YearRange
 
   private
 
-  def hydrate_year_range_page
+  def hydrate_year_range_page # rubocop:disable Metrics/MethodLength
     @shows = shows_during_year_range
     @sections =
       @shows.group_by(&:tour_name)

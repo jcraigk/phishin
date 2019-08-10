@@ -2,6 +2,14 @@
 class ShowImporter::TrackProxy
   attr_accessor :filename
 
+  SET_MAP = {
+    '1' => 'I',
+    '2' => 'II',
+    '3' => 'III',
+    'E' => 'II-e',
+    'S' => '(Check)'
+  }.freeze
+
   def initialize(pos = nil, title = nil, filename = nil, song = nil)
     @_track = Track.new(position: pos, title: title, set: get_set_from_filename(filename))
     song ||= Song.find_by(title: title)
@@ -10,19 +18,8 @@ class ShowImporter::TrackProxy
   end
 
   def get_set_from_filename(filename)
-    if filename.nil?
-      '1'
-    elsif filename[0...6] == '(Check)'
-      'S'
-    elsif filename[0..3] == 'II-e'
-      'E'
-    elsif filename[0..2] == 'III'
-      '3'
-    elsif filename[0..1] == 'II'
-      '2'
-    else
-      '1'
-    end
+    SET_MAP.each { |k, v| return k if filename&.start_with?(v) }
+    '1'
   end
 
   def valid?

@@ -129,7 +129,6 @@ RSpec.describe Show do
     let(:track_sum) { show.tracks.map(&:duration).inject(0, &:+) }
 
     it 'updates the duration with the sum of all tracks' do
-      expect(show.duration).not_to eq(track_sum)
       show.save_duration
       expect(show.duration).to eq(track_sum)
     end

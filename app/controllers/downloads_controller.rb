@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class DownloadsController < ApplicationController
-  def track_info # rubocop:disable Metrics/AbcSize
+  def track_info # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     return render json: { success: false } unless track
     render json: {
       success: true,

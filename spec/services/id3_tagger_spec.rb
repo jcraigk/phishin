@@ -16,7 +16,8 @@ RSpec.describe Id3Tagger do
 
   before { service.call }
 
-  it 'sets id3 tags on track mp3' do # rubocop:disable RSpec/ExampleLength
+  # rubocop:disable RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'sets id3 tags on track mp3' do
     Mp3Info.open(track.audio_file.path) do |mp3|
       tag = mp3.tag
       expect(tag.title).to eq(title)
@@ -28,7 +29,7 @@ RSpec.describe Id3Tagger do
     end
   end
 
-  it 'sets id3v2 tags on track mp3' do # rubocop:disable RSpec/ExampleLength
+  it 'sets id3v2 tags on track mp3' do
     Mp3Info.open(track.audio_file.path) do |mp3|
       tag2 = mp3.tag2
       expect(tag2.TIT2).to eq(title)
@@ -39,4 +40,5 @@ RSpec.describe Id3Tagger do
       expect(tag2.COMM).to eq(comments)
     end
   end
+  # rubocop:enable RSpec/ExampleLength, RSpec/MultipleExpectations
 end

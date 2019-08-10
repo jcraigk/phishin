@@ -70,8 +70,11 @@ RSpec.describe TrackInserter do
         show.reload
       end
 
-      it 'inserts the track, shifting other tracks up' do
+      it 'inserts the track' do
         expect(new_track.title).to eq(title)
+      end
+
+      it 'includes SBD tag' do
         expect(new_track.tags).to include(sbd_tag)
       end
     end

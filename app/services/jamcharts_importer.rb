@@ -73,9 +73,8 @@ class JamchartsImporter
     sanitize(str.gsub(/[”“]/, '"').gsub(/[‘’]/, "'").strip)
   end
 
-  def handle_item(item, show) # rubocop:disable Metrics/AbcSize
+  def handle_item(item, show) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     song = find_song_by_title(item['song'])
-
     return if handle_ambiguous_item(item)
 
     show.tracks.sort_by(&:position).each do |track|
