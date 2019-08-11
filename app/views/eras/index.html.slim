@@ -6,9 +6,32 @@
     h3 #{number_with_delimiter(Show.count)} shows
     h3 #{number_with_delimiter(total_hours_of_music)} hours of music
     br
-    = render partial: 'shared/native_apps'
+
+    #relisten_callout.app_callout
+      = image_tag 'icon-relisten.png', alt: 'Relisten iOS app'
+      h2 Relisten
+      h3 iOS app
     = clear_both
 
+    #robophish_callout.app_callout
+      = image_tag 'icon-robophish.png', alt: 'RoboPhish app'
+      h2 RoboPhish
+      h3 Android app
+    = clear_both
+
+    #chatbot_callout.app_callout
+      = image_tag 'icon-chatbot.png', alt: 'chatbot.phish.in'
+      h2 Chatbot
+      h3 For Slack and Discord
+    = clear_both
+
+    br
+    h2 This project is open source
+    p
+      a href='https://github.com/jcraigk/phishin' Develop on GitHub
+      br
+      a href='https://discord.gg/KZWFsNN' Discuss on Discord
+    = clear_both
 
   #content_box
     - Hash[ERAS.to_a.reverse].each do |era, years|
