@@ -9,6 +9,7 @@ addons:
   apt:
     packages:
       - chromium-chromedriver
+  postgresql: '9.4'
 before_install:
   - ln -s /usr/lib/chromium-browser/chromedriver ~/bin/chromedriver
   - psql -c 'create database phishin_test;' -U postgres
