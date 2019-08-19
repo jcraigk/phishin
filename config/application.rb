@@ -13,6 +13,6 @@ module Phishin
 
     config.action_controller.permit_all_parameters = true
 
-    config.load_defaults '6.0'
+    # config.load_defaults '6.0'
   end
 end
