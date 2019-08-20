@@ -6,7 +6,7 @@ gem 'actionpack-action_caching', github: 'rails/actionpack-action_caching'
 gem 'bootstrap-will_paginate'
 gem 'coffee-rails'
 gem 'dalli'
-gem 'devise', github: 'plataformatec/devise'
+gem 'devise'
 gem 'dotenv-rails', require: false
 gem 'friendly_id'
 gem 'geocoder'
