@@ -20,7 +20,8 @@ class ShowImporter::PNet
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
     res = http.start { |ht| ht.request(request) }
-    raise 'Server Error' unless res == Net::HTTPSuccess
+    raise 'Server Error' unless res.code.to_i == 200
+
     JSON[res.body]
   end
 
@@ -43,6 +44,6 @@ class ShowImporter::PNet
     opts = args.first || {}
     opts['method'] = "pnet_#{method}".tr('_', '.')
     perform_action(opts)
-    super
+    # super
   end
 end

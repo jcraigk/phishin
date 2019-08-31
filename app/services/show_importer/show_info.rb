@@ -19,14 +19,13 @@ class ShowImporter::ShowInfo
 
   def parse_data(date)
     @pnet.shows_setlists_get('showdate' => date)[0]
-  rescue NoMethodError
-    {}
+    # binding.pry
+  # rescue NoMethodError
+  #   {}
   end
 
   def parse_songs
-    Nokogiri.HTML(@data['setlistdata'])
-            .css('p.pnetset > a')
-            .map(&:content)
+    Nokogiri.HTML(@data['setlistdata']).css('p.pnetset > a').map(&:content)
   rescue NoMethodError
     []
   end

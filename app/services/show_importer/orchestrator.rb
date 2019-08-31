@@ -110,7 +110,7 @@ class ShowImporter::Orchestrator
   end
 
   def process_track(matches, pos, song_title)
-    if fn_match?(matches, song_title)
+    if (fn_match = fn_match?(matches, song_title))
       @tracks << ShowImporter::TrackProxy.new(pos, song_title, fn_match[0], fn_match[1])
       return matches.delete(fn_match[0])
     end
