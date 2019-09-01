@@ -39,7 +39,8 @@ class TrackTagSyncService
   def sync_track_tags
     data.each do |row|
       @track = find_track_by_url(row['URL'])
-      existing_track_tag(row) ? update_track_tag(existing, row) : create_track_tag(row)
+      existing = existing_track_tag(row)
+      existing ? update_track_tag(existing, row) : create_track_tag(row)
     end
   end
 
