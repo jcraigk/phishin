@@ -65,6 +65,7 @@ class ShowImporter::TrackReplacer
   end
 
   def scrub_filename(filename)
+    return "555" if /555/i.match?(filename)
     return "Mike's Song" if /mike/i.match?(filename)
     return 'Free Bird' if /Freebird.mp3/.match?(filename)
     filename
