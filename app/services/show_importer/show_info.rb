@@ -19,9 +19,6 @@ class ShowImporter::ShowInfo
 
   def parse_data(date)
     @pnet.shows_setlists_get('showdate' => date)[0]
-    # binding.pry
-  # rescue NoMethodError
-  #   {}
   end
 
   def parse_songs

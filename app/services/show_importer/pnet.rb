@@ -11,7 +11,7 @@ class ShowImporter::PNet
     @url = URI.parse(BASE_URL)
   end
 
-  def perform_action(opts)
+  def perform_action(opts) # rubocop:disable Metrics/AbcSize
     url = URI.parse(BASE_URL)
     request = Net::HTTP::Post.new(url.path)
     request.set_form_data(@options.merge(opts))
@@ -40,7 +40,7 @@ class ShowImporter::PNet
     @options.delete('authkey')
   end
 
-  def method_missing(method, *args, &_block)
+  def method_missing(method, *args, &_block) # rubocop:disable Style/MethodMissingSuper
     opts = args.first || {}
     opts['method'] = "pnet_#{method}".tr('_', '.')
     perform_action(opts)
