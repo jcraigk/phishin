@@ -1,21 +1,3 @@
-//= require jquery
-//= require jquery_ujs
-//= require jquery-ui/slider
-//= require jquery-ui/sortable
-//= require jquery-ui/datepicker
-//= require jquery.cookie
-//= require twitter/bootstrap
-//= require soundmanager2
-//= require native.history
-//= require classes/detector
-//= require classes/util
-//= require classes/player
-//= require classes/playlist
-//= require classes/map
-//= require spin.min
-//= require phishtracks-stats-0.0.3
-//= require_tree .
-
 # Generic namespace
 @App = {}
 
@@ -145,10 +127,6 @@ $ ->
   # Click Phish On Demand app callout
   $(document).on 'click', '#relisten_callout', ->
     window.location = 'https://itunes.apple.com/us/app/relisten-all-live-music/id715886886'
-
-  # Click RoboPhish app callout
-  $(document).on 'click', '#robophish_callout', ->
-    window.location = 'https://play.google.com/store/apps/details?id=com.bayapps.android.robophish&hl=en'
 
   # Click Chatbot callout
   $(document).on 'click', '#chatbot_callout', ->

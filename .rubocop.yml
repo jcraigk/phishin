@@ -53,6 +53,8 @@ RSpec/NestedGroups:
   Max: 4
 Style/ClassAndModuleChildren:
   Enabled: false
+Style/FormatStringToken:
+  Enabled: false
 Style/MissingRespondToMissing:
   Exclude:
     - app/services/**/*

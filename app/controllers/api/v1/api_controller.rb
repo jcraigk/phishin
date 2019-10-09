@@ -24,7 +24,7 @@ class Api::V1::ApiController < ActionController::Base
       success: true,
       total_entries: total_entries,
       total_pages: total_pages,
-      page: page,
+      page: page.to_i,
       data: data_as_json(data, opts)
     }
   end
