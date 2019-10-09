@@ -38,7 +38,7 @@ describe 'Homepage', :js do
 
     # Title box
     within('#title_box') do
-      expect_content('LIVE PHISH AUDIO STREAMS', 'iOS app', 'Android app')
+      expect_content('LIVE PHISH AUDIO STREAMS', 'iOS app')
     end
 
     # Main content

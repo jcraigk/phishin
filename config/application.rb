@@ -1,18 +1,17 @@
 # frozen_string_literal: true
-require File.expand_path('boot', __dir__)
-require 'rails/all'
+require_relative 'boot'
 
-Bundler.require(*Rails.groups) if defined?(Bundler)
+require 'rails'
+require 'action_controller/railtie'
+require 'action_mailer/railtie'
+require 'action_view/railtie'
+require 'active_record/railtie'
+require 'sprockets/railtie'
+
+Bundler.require(*Rails.groups)
 
 module Phishin
   class Application < Rails::Application
-    config.assets.precompile += %w[
-      soundmanager2.swf
-      soundmanager2_flash9.swf
-    ]
-
     config.action_controller.permit_all_parameters = true
-
-    # config.load_defaults '6.0'
   end
 end

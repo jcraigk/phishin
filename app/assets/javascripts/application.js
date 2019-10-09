@@ -1,0 +1,17 @@
+//= require jquery
+//= require jquery_ujs
+//= require jquery-ui/datepicker
+//= require jquery-ui/slider
+//= require jquery-ui/sortable
+//= require jquery.cookie
+//= require native.history
+//= require phishtracks-stats-0.0.3
+//= require soundmanager2
+//= require spin.min
+//= require twitter/bootstrap
+//= require classes/detector
+//= require classes/map
+//= require classes/player
+//= require classes/playlist
+//= require classes/util
+//= require app-main

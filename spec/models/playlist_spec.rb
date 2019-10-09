@@ -17,12 +17,15 @@ RSpec.describe Playlist do
   it { is_expected.to validate_uniqueness_of(:name) }
   it { is_expected.to validate_uniqueness_of(:slug) }
   it { is_expected.to allow_values('Harpu', 'This is a longer name').for(:name) }
+
   it do
     is_expected
       .not_to allow_value('H', 'this is a longer name this is a longer name this is a')
       .for(:name)
   end
+
   it { is_expected.to allow_values('harpu', 'this-is-a-longer-name').for(:slug) }
+
   it do
     is_expected
       .not_to allow_value('h', 'this-is-a-longer-name-this-is-a-longer-name-this-is-a')

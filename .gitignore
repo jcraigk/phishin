@@ -1,9 +1,8 @@
 .bundle
-.env
 .DS_Store
-
+.env
 /coverage
 /log
-/tmp
-
+/public/assets/*
 /public/audio
+/tmp
