@@ -3,10 +3,10 @@ class ShowImporter::TrackProxy
   attr_accessor :filename
 
   SET_MAP = {
-    '1' => 'I',
-    '2' => 'II',
     '3' => 'III',
     'E' => 'II-e',
+    '2' => 'II',
+    '1' => 'I',
     'S' => '(Check)'
   }.freeze
 
