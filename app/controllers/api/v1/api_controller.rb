@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-class Api::V1::ApiController < ActionController::Base
+class Api::V1::ApiController < ActionController::Base # rubocop:disable Rails/ApplicationController
   include ApiAuth
 
   before_action :require_auth

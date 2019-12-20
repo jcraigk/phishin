@@ -2,6 +2,9 @@
 Rails.application.routes.draw do
   root to: 'eras#index'
 
+  # Stub audio file requests when testing
+  get '/audio/*mp3', to: 'static_pages#faq' if Rails.env.test?
+
   # Users
   devise_for :users
   get '/my-shows' => 'my#my_shows', as: 'my_shows'

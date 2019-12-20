@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :venue do
-    name { "Venue #{Faker::Address.unique.community}"[0..40] }
+    sequence(:name) { |n| "Venue #{n}" }
     city { Faker::Address.city }
     state { Faker::Address.state }
     country { Faker::Address.country }

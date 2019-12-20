@@ -17,7 +17,7 @@ RSpec.describe Mp3DurationQuery do
 
   context 'with valid file path' do
     context 'with non-mp3 file' do
-      let(:mp3_file) { Rails.root.join('spec', 'fixtures', 'textfile.txt') }
+      let(:mp3_file) { Rails.root.join('spec/fixtures/textfile.txt') }
 
       it 'raises exception' do
         expect { service.call }.to raise_error(Mp3InfoEOFError)
