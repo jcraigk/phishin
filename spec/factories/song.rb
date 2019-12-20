@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :song do
-    title { "Song #{Faker::Book.unique.title}"[0..40] }
+    sequence(:title) { |n| "Song #{n}" }
 
     trait :with_tracks do
       after(:build) do |song|

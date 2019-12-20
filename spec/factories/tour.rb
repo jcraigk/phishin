@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :tour do
-    name { "Tour #{Faker::Book.unique.title}"[0..40] }
+    sequence(:name) { |n| "Tour #{n}" }
     starts_on { Faker::Date.unique.between(from: 500.years.ago, to: Time.zone.today) }
     ends_on { Faker::Date.unique.between(from: 500.years.ago, to: Time.zone.today) }
 

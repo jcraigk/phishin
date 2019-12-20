@@ -10,7 +10,7 @@ MIN_SEARCH_TERM_LENGTH = 3
 
 APP_CONTENT_PATH =
   if Rails.env.test?
-    Rails.root.join('tmp', 'content')
+    Rails.root.join('tmp/content')
   elsif ENV['IN_DOCKER']
     '/content'
   else
