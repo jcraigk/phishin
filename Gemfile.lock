@@ -248,6 +248,7 @@ GEM
       thor (>= 0.20.3, < 2.0)
     rainbow (3.0.0)
     rake (13.0.1)
+    rb-readline (0.5.5)
     ref (2.0.0)
     regexp_parser (1.6.0)
     representable (3.0.4)
@@ -395,6 +396,7 @@ DEPENDENCIES
   pry-rails
   puma
   rails
+  rb-readline
   rspec-rails
   rubocop
   rubocop-performance
