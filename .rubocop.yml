@@ -4,19 +4,19 @@ require:
   - rubocop-rspec
 
 AllCops:
-  TargetRubyVersion: 2.6.5
+  TargetRubyVersion: 2.7.0
   Exclude:
     - bin/*
     - db/**/*
     - vendor/**/*
     - lib/tasks/*
     - app/controllers/playlists_controller.rb # TODO: Refactor
-Documentation:
-  Enabled: false
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
 Layout/EmptyLineAfterMagicComment:
   Enabled: false
+Layout/LineLength:
+  Max: 100
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
@@ -28,8 +28,6 @@ Metrics/MethodLength:
     - spec/support/feature_helpers.rb
 Metrics/ModuleLength:
   Max: 250
-Metrics/LineLength:
-  Max: 100
 RSpec/DescribeClass:
   Exclude:
     - spec/features/**/*
@@ -52,6 +50,8 @@ Rails/OutputSafety:
 RSpec/NestedGroups:
   Max: 4
 Style/ClassAndModuleChildren:
+  Enabled: false
+Style/Documentation:
   Enabled: false
 Style/FormatStringToken:
   Enabled: false
