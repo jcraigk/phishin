@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require 'readline'
+
 class ShowImporter::Cli
   attr_reader :orch
 

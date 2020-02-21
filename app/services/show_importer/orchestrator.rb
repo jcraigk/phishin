@@ -39,6 +39,7 @@ class ShowImporter::Orchestrator
 
     puts 'No venue matched! Enter Venue ID:'
     @venue = Venue.find(STDIN.gets.chomp.to_i)
+    @show.venue = @venue
   end
 
   def pp_list
