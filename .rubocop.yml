@@ -58,3 +58,9 @@ Style/FormatStringToken:
 Style/MissingRespondToMissing:
   Exclude:
     - app/services/**/*
+Style/HashEachMethods:
+  Enabled: true
+Style/HashTransformKeys:
+  Enabled: true
+Style/HashTransformValues:
+  Enabled: false
