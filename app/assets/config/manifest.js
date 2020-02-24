@@ -2,7 +2,6 @@
 //
 //= link application.js
 //
-//= link icon-chatbot.png
 //= link icon-context.png
 //= link icon-next.png
 //= link icon-previous.png

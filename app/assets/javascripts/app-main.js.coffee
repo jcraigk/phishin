@@ -132,10 +132,6 @@ $ ->
   $(document).on 'click', '#robophish_callout', ->
     window.location = 'https://play.google.com/store/apps/details?id=com.bayapps.android.robophish&hl=en'
 
-  # Click Chatbot callout
-  $(document).on 'click', '#chatbot_callout', ->
-    window.location = 'https://chatbot.phish.in'
-
   # Click a link to load page via ajax
   .on 'click', 'a', ->
     unless $(this).hasClass('non-remote')
