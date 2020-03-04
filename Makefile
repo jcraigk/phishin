@@ -15,7 +15,7 @@ services :
 	docker-compose up -d pg
 
 spec :
-	RAILS_ENV=test docker-compose run --rm app rspec $(file)
+	RAILS_ENV=test docker-compose run --rm app bundle exec rspec $(file)
 
 start : services
 	docker-compose up -d
