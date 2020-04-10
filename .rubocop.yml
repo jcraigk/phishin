@@ -4,7 +4,7 @@ require:
   - rubocop-rspec
 
 AllCops:
-  TargetRubyVersion: 2.7.0
+  TargetRubyVersion: 2.7.1
   Exclude:
     - bin/*
     - db/**/*
@@ -17,6 +17,10 @@ Layout/EmptyLineAfterMagicComment:
   Enabled: false
 Layout/LineLength:
   Max: 100
+Lint/RaiseException:
+  Enabled: true
+Lint/StructNewOverride:
+  Enabled: true
 Metrics/BlockLength:
   Exclude:
     - spec/**/*

@@ -3,9 +3,7 @@ class ErasController < ApplicationController
   caches_action :index, expires_in: CACHE_TTL
 
   def index
-    @shows = years.each_with_object({}) do |year, shows|
-      shows[year] = shows_for_year(year)
-    end
+    @shows = years.index_with { |year| shows_for_year(year) }
     render_xhr_without_layout
   end
 
