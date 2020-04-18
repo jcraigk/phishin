@@ -23,6 +23,13 @@ make build
 make start
 ```
 
+If you want to run the backing services in Docker but develop the app natively, you can also spin it up like this:
+
+```bash
+make services
+rails s
+```
+
 3. Download the [Fixtures Pack](https://www.dropbox.com/s/qgxbpa5uzsvlok6/PhishinDevFixtures.zip?dl=1) and unzip it.  This file contains a full set of data with user and other sensitive information purged.  It also includes all mp3 audio files for the last Baker's Dozen show (2017-08-06).
 
 ```bash
@@ -37,16 +44,20 @@ Open your browser and direct it to `http://localhost/2017-08-06`.  You should be
 
 ## Testing
 
-First, create the test db:
+You can test natively or in Docker.
+
+To run the specs in Docker:
 
 ```bash
-rails db:create RAILS_ENV=test
-rails db:schema:load RAILS_ENV=test
+make spec
 ```
 
-Then run the specs:
+To run the specs natively:
 
 ```bash
+make services
+rails db:create RAILS_ENV=test
+rails db:schema:load RAILS_ENV=test
 rspec
 ```
 
