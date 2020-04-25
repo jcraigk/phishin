@@ -30,7 +30,7 @@ make services
 rails s
 ```
 
-3. Download the [Fixtures Pack](https://www.dropbox.com/s/qgxbpa5uzsvlok6/PhishinDevFixtures.zip?dl=1) and unzip it.  This file contains a full set of data with user and other sensitive information purged.  It also includes all mp3 audio files for the last Baker's Dozen show (2017-08-06).
+3. Download the [Fixtures Pack](https://www.dropbox.com/s/m0lcvuus8gr2cmv/PhishinDevFixtures.zip?dl=1) and unzip it.  This file contains a full set of data with user and other sensitive information purged.  It also includes all mp3 audio files for the last Baker's Dozen show (2017-08-06).
 
 ```bash
 # Copy the SQL dump into PG container and run it
