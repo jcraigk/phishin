@@ -4,7 +4,7 @@ require:
   - rubocop-rspec
 
 AllCops:
-  TargetRubyVersion: 2.7.1
+  TargetRubyVersion: 2.6.6
   Exclude:
     - bin/*
     - db/**/*
@@ -17,6 +17,8 @@ Layout/EmptyLineAfterMagicComment:
   Enabled: false
 Layout/LineLength:
   Max: 100
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
 Lint/RaiseException:
   Enabled: true
 Lint/StructNewOverride:
@@ -57,6 +59,8 @@ Style/ClassAndModuleChildren:
   Enabled: false
 Style/Documentation:
   Enabled: false
+Style/ExponentialNotation:
+  Enabled: true
 Style/FormatStringToken:
   Enabled: false
 Style/MissingRespondToMissing:
