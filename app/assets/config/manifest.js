@@ -13,4 +13,4 @@
 //= link icons-playlist.png
 //= link icons-playpause.png
 //= link icons-volume.png
-//= link logo-text.png
+//= link logo-mask.png
