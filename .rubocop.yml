@@ -23,6 +23,8 @@ Layout/SpaceAroundMethodCallOperator:
   Enabled: true
 Lint/DeprecatedOpenSSLConstant:
   Enabled: true
+Lint/MixedRegexpCaptureTypes:
+  Enabled: true
 Lint/RaiseException:
   Enabled: true
 Lint/StructNewOverride:
@@ -76,5 +78,9 @@ Style/HashTransformValues:
 Style/MissingRespondToMissing:
   Exclude:
     - app/services/**/*
+Style/RedundantRegexpCharacterClass:
+  Enabled: true
+Style/RedundantRegexpEscape:
+  Enabled: true
 Style/SlicingWithRange:
   Enabled: true
