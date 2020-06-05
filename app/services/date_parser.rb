@@ -17,7 +17,7 @@ class DateParser
 
   # 10/31/95, 10-31-95
   def str_matches_short_date?
-    return false unless str =~ %r{\A(\d{1,2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})\z}
+    return false unless str =~ %r{\A(\d{1,2})(-|/)(\d{1,2})(-|/)(\d{1,2})\z}
     r = Regexp.last_match
     year = r[5]
     zero = (year.size == 1 ? '0' : '')
@@ -27,14 +27,14 @@ class DateParser
 
   # 10-31-1995, 10/31/1995
   def str_matches_year_at_end?
-    return false unless str =~ %r{\A(\d{1,2})(\-|\/)(\d{1,2})(\-|\/)(\d{1,4})\z}
+    return false unless str =~ %r{\A(\d{1,2})(-|/)(\d{1,2})(-|/)(\d{1,4})\z}
     r = Regexp.last_match
     @date_parts = [r[5], r[1], r[3]]
   end
 
   # 1995-10-31
   def str_matches_db_date?
-    return false unless str =~ %r{\A(\d{4})(\-|\/)(\d{1,2})(\-|\/)(\d{1,2})\z}
+    return false unless str =~ %r{\A(\d{4})(-|/)(\d{1,2})(-|/)(\d{1,2})\z}
     r = Regexp.last_match
     @date_parts = [r[1], r[3], r[5]]
   end
