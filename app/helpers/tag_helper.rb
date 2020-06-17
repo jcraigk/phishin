@@ -17,8 +17,7 @@ module TagHelper
     tag_instances = tag_stack.second
     first_instance = tag_instances.first
     link_to '#' do
-      content_tag(
-        :span,
+      tag.span(
         stack_title(tag_instances),
         class: 'label tag_label',
         title: tooltip_for_tag_stack(tag_instances),
@@ -48,12 +47,11 @@ module TagHelper
     str
   end
 
-  def tag_label(tag, css_class = '')
-    content_tag(
-      :span,
-      tag.name,
+  def tag_label(tag_record, css_class = '')
+    tag.span(
+      tag_record.name,
       class: "label tag_label #{css_class}",
-      style: "background-color: #{tag.color}"
+      style: "background-color: #{tag_record.color}"
     )
   end
 
@@ -70,19 +68,20 @@ module TagHelper
     title
   end
 
-  def tag_notes(tag)
-    return '' if tag.notes.blank?
-    "#{tag.notes} #{time_range(tag)}".strip
+  def tag_notes(tag_instance)
+    return '' if tag_instance.notes.blank?
+    "#{tag_instance.notes} #{time_range(tag_instance)}".strip
   end
 
-  def transcript_or_link(tag, title, include_transcript)
-    return '' if tag.try(:transcript).blank?
+  def transcript_or_link(tag_instance, title, include_transcript)
+    return '' if tag_instance.try(:transcript).blank?
 
     str = ''
 
     if include_transcript
       str += '<br><br>' if title.present?
-      return str + "<strong>TRANSCRIPT</strong><br><br> #{tag.transcript.gsub("\n", '<br>')}"
+      extra = "<strong>TRANSCRIPT</strong><br><br> #{tag_instance.transcript.gsub("\n", '<br>')}"
+      return str + extra
     end
 
     str += '<br>' if title.present?

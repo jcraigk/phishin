@@ -3,7 +3,7 @@ module SortHelper
   def sort_songs_and_venues_links(item_hash)
     item_hash.map do |k, v|
       link = params[:sort] == v ? "<strong>#{k}</strong>" : k
-      content_tag(:li, link_to(link.html_safe, "?char=#{params[:char]}&sort=#{CGI.escape(v)}"))
+      tag.li(link_to(link.html_safe, "?char=#{params[:char]}&sort=#{CGI.escape(v)}"))
     end.join.html_safe
   end
 
@@ -20,7 +20,7 @@ module SortHelper
     str = ''
     item_hash.each do |k, v|
       link = params[:sort] == v ? "<strong>#{k}</strong>" : k
-      str += content_tag :li, link_to(link.html_safe, "?sort=#{CGI.escape(v)}")
+      str += tag.li(link_to(link.html_safe, "?sort=#{CGI.escape(v)}"))
     end
     str.html_safe
   end
@@ -32,7 +32,7 @@ module SortHelper
     items.first.first.html_safe
   end
 
-  def sort_filter(items)
+  def sort_filter(items) # rubocop:disable Metrics/AbcSize
     items.map do |k, v|
       link = params[:sort] == v ? "<strong>#{k}</strong>" : k
       param_str = "?sort=#{CGI.escape(v)}"
@@ -40,7 +40,7 @@ module SortHelper
         next if key.in?(%w[controller action name t sort])
         param_str += "&#{key}=#{val}" if val.present?
       end
-      content_tag(:li, link_to(link.html_safe, param_str))
+      tag.li(link_to(link.html_safe, param_str))
     end.join.html_safe
   end
 

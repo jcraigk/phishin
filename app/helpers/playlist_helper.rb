@@ -27,7 +27,7 @@ module PlaylistHelper
     link = playlist_filter_link_title(key, val, idx)
     param_str = "/playlists?filter=#{CGI.escape(val)}"
     param_str += "&sort=#{params[:sort]}" if params[:sort]
-    content_tag(:li, link_to(link.html_safe, param_str))
+    tag.li(link_to(link.html_safe, param_str))
   end
 
   def playlist_filter_link_title(key, val, idx)

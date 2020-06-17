@@ -28,8 +28,7 @@ module NavigationHelper
   end
 
   def nav_link(name, props, css, margin)
-    content_tag(
-      :div,
+    tag.div(
       link_to(name, props.first, class: "global_link #{css}"),
       class: 'link_container',
       style: "margin-left: #{margin}px;"
@@ -37,8 +36,8 @@ module NavigationHelper
   end
 
   def nav_indicators(pos)
-    content_tag(:div, nil, class: 'nav_indicator', style: "margin-left: #{pos}px;") +
-      content_tag(:div, nil, class: 'nav_indicator2', style: "margin-left: #{pos}px;")
+    tag.div(class: 'nav_indicator', style: "margin-left: #{pos}px;") +
+      tag.div(class: 'nav_indicator2', style: "margin-left: #{pos}px;")
   end
 
   def sub_nav(controller, venue, song) # rubocop:disable Metrics/MethodLength
@@ -51,7 +50,7 @@ module NavigationHelper
     elsif top_liked_context?
       top_liked_sub_links
     elsif playlist_context?
-      content_tag(:div, id: 'playlist_subnav_container') { playlists_sub_links }
+      tag.div(id: 'playlist_subnav_container') { playlists_sub_links }
     end
   end
 
@@ -106,7 +105,7 @@ module NavigationHelper
     }.map do |name, props|
       opts = { class: 'non-remote' }
       opts[:method] = :delete if name == 'Logout'
-      content_tag(:li, link_to(name, props.first, opts))
+      tag.li(link_to(name, props.first, opts))
     end.join.html_safe
   end
 
