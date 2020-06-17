@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 module ApplicationHelper
   def clear_both
-    content_tag(:div, '', style: 'clear: both;')
+    tag.div(style: 'clear: both;')
   end
 
   def duration_readable(milliseconds, style = 'colons')
@@ -36,8 +36,8 @@ module ApplicationHelper
       class: like.present? ? %i[like_toggle liked] : %i[like_toggle],
       title: "Click to Like or Unlike this #{likable_name}"
     )
-    span = content_tag(:span, likable.likes_count)
-    str = content_tag(:div, a + span, class: "likes_#{size}")
+    span = tag.span(likable.likes_count)
+    str = tag.div(a + span, class: "likes_#{size}")
     str.html_safe
   end
 
