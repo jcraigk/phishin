@@ -78,6 +78,8 @@ Style/HashTransformValues:
 Style/MissingRespondToMissing:
   Exclude:
     - app/services/**/*
+Style/RedundantFetchBlock:
+  Enabled: true
 Style/RedundantRegexpCharacterClass:
   Enabled: true
 Style/RedundantRegexpEscape:

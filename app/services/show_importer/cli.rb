@@ -153,7 +153,7 @@ class ShowImporter::Cli
     menu_branch(line)
   end
 
-  def menu_branch(line) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
+  def menu_branch(line) # rubocop:disable Metrics/MethodLength
     case line
     when 'f'
       print_filenames
