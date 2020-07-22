@@ -13,7 +13,7 @@ module Ambiguity::TourName
 
   def tour
     @tour ||=
-      Tour.includes(shows: [:venue, show_tags: :tag])
+      Tour.includes(shows: [:venue, { show_tags: :tag }])
           .find_by(slug: current_slug)
   end
 

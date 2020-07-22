@@ -9,7 +9,7 @@ class Api::V1::TracksController < Api::V1::ApiController
   end
 
   def show
-    respond_with_success Track.includes(:tags, :show).find_by!(id: params[:id])
+    respond_with_success Track.includes(:tags, :show).find(params[:id])
   end
 
   private
