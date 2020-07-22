@@ -5,8 +5,7 @@ class TrackTagSyncService
   include ActionView::Helpers::SanitizeHelper
   include Syncable
 
-  attr_reader :tag, :data
-  attr_reader :track, :created_ids, :updated_ids, :dupes
+  attr_reader :tag, :data, :track, :created_ids, :updated_ids, :dupes
 
   def initialize(tag_name, data)
     @data = data

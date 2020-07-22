@@ -56,7 +56,7 @@ class TagsController < ApplicationController
     params[:sort] = 'name' unless
       params[:sort].in?(%w[name shows_count tracks_count])
 
-    case params[:sort]
+    case params[:sort] # rubocop:disable Style/HashLikeCase
     when 'name'
       { name: :asc }
     when 'shows_count'
@@ -70,7 +70,7 @@ class TagsController < ApplicationController
     params[:sort] = 'date desc' unless
       params[:sort].in?(['date desc', 'date', 'likes', 'duration'])
 
-    case params[:sort]
+    case params[:sort] # rubocop:disable Style/HashLikeCase
     when 'date desc'
       { date: :desc }
     when 'date'

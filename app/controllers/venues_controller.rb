@@ -11,10 +11,9 @@ class VenuesController < ApplicationController
 
   def order_by
     params[:sort] = 'name' unless params[:sort].in?(%w[name performances])
-    if params[:sort] == 'name'
-      { name: :asc }
-    elsif params[:sort] == 'performances'
-      { shows_count: :desc, name: :asc }
+    case params[:sort]
+    when 'name' then { name: :asc }
+    when 'performances' then { shows_count: :desc, name: :asc }
     end
   end
 end
