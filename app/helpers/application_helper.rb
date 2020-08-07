@@ -41,12 +41,12 @@ module ApplicationHelper
     str.html_safe
   end
 
-  def link_to_show(show, show_abbrev = true)
-    link_name = show_link_title(show, show_abbrev)
+  def link_to_show(show, show_abbrev: true)
+    link_name = show_link_title(show, show_abbrev: show_abbrev)
     link_to(link_name, "/#{show.date}")
   end
 
-  def show_link_title(show, show_abbrev = true)
+  def show_link_title(show, show_abbrev: true)
     show_abbrev ? show.date.strftime('%b %-d') : show.date_with_dots
   end
 

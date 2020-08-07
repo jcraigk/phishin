@@ -13,14 +13,7 @@ class Venue < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :city }
 
   scope :name_starting_with, lambda { |char|
-    where(
-      'name SIMILAR TO ?',
-      "#{if char == '#'
-           '[0-9]'
-         else
-           '(' + char.downcase + '|' + char.upcase + ')'
-         end}%"
-    )
+    where('LOWER(name) SIMILAR TO ?', "#{char == '#' ? '[0-9]' : char.downcase}%")
   }
 
   def should_generate_new_friendly_id?

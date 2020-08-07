@@ -54,11 +54,7 @@ class Track < ApplicationRecord
   end
 
   def mp3_url
-    APP_BASE_URL +
-      '/audio/' +
-      format('%<id>09d', id: id)
-      .scan(/.{3}/)
-      .join('/') + "/#{id}.mp3"
+    "#{APP_BASE_URL}/audio/#{partitioned_id}/#{id}.mp3"
   end
 
   def save_duration
@@ -103,6 +99,10 @@ class Track < ApplicationRecord
   end
 
   private
+
+  def partitioned_id
+    format('%<id>09d', id: id).scan(/.{3}/).join('/')
+  end
 
   def track_tags_for_api # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     tags = track_tags.map do |tt|

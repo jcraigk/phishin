@@ -41,7 +41,7 @@ class Show < ApplicationRecord
     date.strftime('%Y.%m.%d')
   end
 
-  def as_json # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  def as_json # rubocop:disable Metrics/MethodLength
     {
       id: id,
       date: date.iso8601,
