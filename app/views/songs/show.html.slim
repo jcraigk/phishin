@@ -32,7 +32,7 @@
       - @tracks.each_with_index do |track, idx|
           li
             h2
-              a href="/#{track.show.date}/#{track.slug}" = show_link_title(track.show, false)
+              a href="/#{track.show.date}/#{track.slug}" = show_link_title(track.show, show_abbrev: false)
             h2.wide-180
               a href="/#{track.show.venue.slug}" = truncate(track.show.venue_name, length: 35)
             h5.narrow

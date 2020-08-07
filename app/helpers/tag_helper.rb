@@ -25,7 +25,7 @@ module TagHelper
         data: {
           html: true,
           detail_title: detail_title(tag_instances),
-          detail: tooltip_for_tag_stack(tag_instances, true)
+          detail: tooltip_for_tag_stack(tag_instances, include_transcript: true)
         }
       )
     end
@@ -55,7 +55,7 @@ module TagHelper
     )
   end
 
-  def tooltip_for_tag_stack(tag_instances, include_transcript = false)
+  def tooltip_for_tag_stack(tag_instances, include_transcript: false)
     title = ''
 
     tag_instances.each_with_index do |t, idx|
@@ -85,7 +85,7 @@ module TagHelper
     end
 
     str += '<br>' if title.present?
-    str + '[CLICK FOR TRANSCRIPT]'
+    "#{str}[CLICK FOR TRANSCRIPT]"
   end
 
   def time_range(tag_instance)

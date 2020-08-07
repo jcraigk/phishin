@@ -17,7 +17,7 @@ APP_CONTENT_PATH =
     ENV['APP_CONTENT_PATH']
   end
 
-IMPORT_DIR = APP_CONTENT_PATH + '/import'
+IMPORT_DIR = "#{APP_CONTENT_PATH}/import"
 
 APP_BASE_URL =
   if Rails.env.in?(%w[development test])

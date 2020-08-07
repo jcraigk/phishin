@@ -22,14 +22,7 @@ class Song < ApplicationRecord
   )
 
   scope :title_starting_with, lambda { |char|
-    where(
-      'title SIMILAR TO ?',
-      "#{if char == '#'
-           '[0-9]'
-         else
-           '(' + char.downcase + '|' + char.upcase + ')'
-         end}%"
-    )
+    where('LOWER(title) SIMILAR TO ?', "#{char == '#' ? '[0-9]' : char.downcase}%")
   }
   scope :with_lyrical_excerpt, -> { where.not(lyrical_excerpt: nil) }
 

@@ -75,52 +75,39 @@ class ShowImporter::Cli
 
   def insert_new_track
     puts 'Before track #:'
-    while (line = Readline.readline('#=> ', true))
-      orch.insert_before(line.to_i)
-      break
-    end
+    line = Readline.readline('#=> ', true)
+    orch.insert_before(line.to_i)
   end
 
   def delete_track
     puts 'Delete track #:'
-    while (line = Readline.readline('#=> ', true))
-      orch.delete(line.to_i)
-      break
-    end
+    line = Readline.readline('#=> ', true)
+    orch.delete(line.to_i)
   end
 
-  def update_song_for_pos(pos) # rubocop:disable Metrics/MethodLength
+  def update_song_for_pos(pos)
     puts 'Enter exact song title:'
-    while (line = Readline.readline('#=> ', true))
-      matched = orch.fm.find_match(line, exact: true)
-      if matched
-        puts "Found \"#{matched.title}\".  Adding Song."
-        orch.get_track(pos).songs << matched
-        puts "Adding #{matched.title} to pos #{pos}"
-      end
-      break
+    line = Readline.readline('#=> ', true)
+    matched = orch.fm.find_match(line, exact: true)
+    if matched
+      puts "Found \"#{matched.title}\".  Adding Song."
+      orch.get_track(pos).songs << matched
+      puts "Adding #{matched.title} to pos #{pos}"
     end
-
     puts
   end
 
   def update_title_for_pos(pos)
     puts 'Enter new title:'
-    while (line = Readline.readline('#=> ', true))
-      orch.get_track(pos).title = line
-      break
-    end
-
+    line = Readline.readline('#=> ', true)
+    orch.get_track(pos).title = line
     puts
   end
 
   def update_set_for_pos(pos)
     puts 'Enter new set abbrev [S,1,2,3,4,E,E2,E3]:'
-    while (line = Readline.readline('#=> ', true))
-      orch.get_track(pos).set = line
-      break
-    end
-
+    line = Readline.readline('#=> ', true)
+    orch.get_track(pos).set = line
     puts
   end
 
