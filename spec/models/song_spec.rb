@@ -91,7 +91,7 @@ RSpec.describe Song do
         tracks_count: song.tracks_count,
         slug: song.slug,
         updated_at: song.updated_at.iso8601,
-        tracks: song.tracks.sort_by { |t| t.show.date }.map(&:as_json_api)
+        tracks: song.tracks.map(&:as_json_api)
       }
     end
 

@@ -211,6 +211,8 @@ RSpec.describe Track do
         id: track.id,
         show_id: track.show.id,
         show_date: track.show.date.iso8601,
+        venue_name: track.show.venue_name,
+        venue_location: track.show.venue.location,
         title: track.title,
         position: track.position,
         duration: track.duration,
