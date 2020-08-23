@@ -49,7 +49,7 @@ class Song < ApplicationRecord
       tracks_count: tracks_count,
       slug: slug,
       updated_at: updated_at.iso8601,
-      tracks: tracks.sort_by { |t| t.show.date }.map(&:as_json_api)
+      tracks: tracks.map(&:as_json_api)
     }
   end
 end

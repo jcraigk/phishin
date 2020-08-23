@@ -83,6 +83,8 @@ class Track < ApplicationRecord
       id: id,
       show_id: show.id,
       show_date: show.date.iso8601,
+      venue_name: show.venue_name,
+      venue_location: show.venue.location,
       title: title,
       position: position,
       duration: duration,
