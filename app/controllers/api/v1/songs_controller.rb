@@ -15,7 +15,7 @@ class Api::V1::SongsController < Api::V1::ApiController
 
   def song_scope
     scope = Song.includes(tracks: %i[show songs tags])
-    dir = params[:sort_dir].downcase.in?(%w[asc desc]) ? params[:sort_dir] : 'asc'
+    dir = params[:sort_dir]&.downcase&.in?(%w[asc desc]) ? params[:sort_dir] : 'asc'
     order_col = params[:sort_attr] == 'duration' ? 'tracks.duration' : 'shows.date'
     scope.order("#{order_col} #{dir}")
   end
