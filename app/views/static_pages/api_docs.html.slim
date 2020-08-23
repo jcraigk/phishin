@@ -74,7 +74,8 @@
       | GET /songs/:id
       br
       | GET /songs/:slug
-    span.api-doc Returns Song metadata for given ID (or slug) as well as a list of Tracks that contain performances of the Song
+    span.api-doc
+      | Returns Song metadata for given ID (or slug) as well as a list of Tracks that contain performances of the Song.<br>Tracks may be sorted by <span class="api-command-inline">date</span> or <span class="api-command-inline">duration</span>.
     span.api-command GET /tours
     span.api-doc Returns a list of all Tours
     span.api-command
