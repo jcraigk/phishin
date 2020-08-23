@@ -14,11 +14,11 @@ class Api::V1::SongsController < Api::V1::ApiController
   private
 
   def song_scope
-    Song.includes(tracks: %i[show songs tags]).tap do |scope|
-      if params[:sort_attr] == 'duration'
-        order = params[:sort_dir].downcase.in?(%w[asc desc]) ? params[:sort_dir] : 'asc'
-        scope = scope.order("tracks.duration #{order}")
-      end
+    scope = Song.includes(tracks: %i[show songs tags])
+    if params[:sort_attr] == 'duration'
+      order = params[:sort_dir].downcase.in?(%w[asc desc]) ? params[:sort_dir] : 'asc'
+      scope = scope.order("tracks.duration #{order}")
     end
+    scope
   end
 end
