@@ -126,7 +126,7 @@ RSpec.describe Show do
   describe '#save_duration' do
     subject(:show) { create(:show, :with_tracks) }
 
-    let(:track_sum) { show.tracks.map(&:duration).inject(0, &:+) }
+    let(:track_sum) { show.tracks.map(&:duration).sum }
 
     it 'updates the duration with the sum of all tracks' do
       show.save_duration

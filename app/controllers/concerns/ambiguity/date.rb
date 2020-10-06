@@ -31,7 +31,7 @@ module Ambiguity::Date
 
   def tracks_as_set(tracks)
     {
-      duration: tracks.map(&:duration).inject(0, &:+),
+      duration: tracks.map(&:duration).sum,
       tracks: tracks,
       likes: user_likes_for_tracks(tracks)
     }

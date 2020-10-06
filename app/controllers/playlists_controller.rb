@@ -21,7 +21,7 @@ class PlaylistsController < ApplicationController
       tracks_by_id = Track.where(id: session[:playlist]).includes(:show, track_tags: :tag).index_by(&:id)
       @tracks = session[:playlist].map { |id| tracks_by_id[id] }
       @tracks_likes = user_likes_for_tracks(@tracks)
-      @duration = @tracks.map(&:duration).inject(0, &:+)
+      @duration = @tracks.map(&:duration).sum
     end
 
     @saved_playlists = Playlist.where(user: current_user).order(name: :asc) if current_user
@@ -33,12 +33,10 @@ class PlaylistsController < ApplicationController
     if current_user
       bookmarked_ids = PlaylistBookmark.where(user: current_user).map(&:playlist_id)
       @playlists =
-        if params[:filter] == 'phriends'
-          Playlist.where(id: bookmarked_ids)
-        elsif params[:filter] == 'mine'
-          Playlist.where(user: current_user)
-        else
-          Playlist.where('user_id = ? OR id IN (?)', current_user.id, bookmarked_ids)
+        case params[:filter]
+        when 'phriends' then Playlist.where(id: bookmarked_ids)
+        when 'mine' then Playlist.where(user: current_user)
+        else Playlist.where('user_id = ? OR id IN (?)', current_user.id, bookmarked_ids)
         end
       @playlists =
         @playlists.includes(:user)
@@ -78,25 +76,26 @@ class PlaylistsController < ApplicationController
   end
 
   def destroy_playlist
-    if current_user && params[:id] && (playlist = Playlist.where(id: params[:id], user: current_user).first)
+    if current_user && params[:id] && (playlist = fetch_playlist)
       playlist.destroy
-      render json: { success: true, msg: 'Playlist deleted' }
-      return
+      return render json: { success: true, msg: 'Playlist deleted' }
     end
 
     render json: { success: false, msg: 'Invalid delete request' }
   end
 
+  def fetch_playlist
+    Playlist.find_by(id: params[:id], user: current_user)
+  end
+
   def bookmark_playlist
     if current_user && params[:id].present?
       if PlaylistBookmark.where(playlist_id: params[:id], user: current_user).first.present?
-        render json: { success: false, msg: 'Playlist already bookmarked' }
-        return
+        return render json: { success: false, msg: 'Playlist already bookmarked' }
       end
 
       PlaylistBookmark.create(playlist_id: params[:id], user: current_user)
-      render json: { success: true, msg: 'Playlist bookmarked' }
-      return
+      return render json: { success: true, msg: 'Playlist bookmarked' }
     end
 
     render json: { success: false, msg: "Error fetching ID #{params[:id]}" }
@@ -107,8 +106,7 @@ class PlaylistsController < ApplicationController
        params[:id] &&
        (bookmark = PlaylistBookmark.where(playlist_id: params[:id], user: current_user).first)
       bookmark.destroy
-      render json: { success: true, msg: 'Playlist unbookmarked' }
-      return
+      return render json: { success: true, msg: 'Playlist unbookmarked' }
     end
 
     render json: { success: false, msg: 'Playlist not bookmarked' }
@@ -141,8 +139,7 @@ class PlaylistsController < ApplicationController
 
   def add_track_to_playlist
     if session[:playlist].include?(params[:track_id].to_i)
-      render json: { success: false, msg: 'Track already in playlist' }
-      return
+      return render json: { success: false, msg: 'Track already in playlist' }
     end
 
     if session[:playlist].size > 99
@@ -173,10 +170,7 @@ class PlaylistsController < ApplicationController
   def next_track_id
     session[:playlist] = params[:playlist].split(',').map(&:to_i) if params[:playlist].present?
 
-    if session[:playlist].empty?
-      render json: { success: false, msg: 'No active playlist' }
-      return
-    end
+    return render json: { success: false, msg: 'No active playlist' } if session[:playlist].blank?
 
     playlist_track_ids = session[:shuffle] ? session[:playlist_shuffled] : session[:playlist]
 
@@ -196,10 +190,7 @@ class PlaylistsController < ApplicationController
   def previous_track_id
     session[:playlist] = params[:playlist].split(',').map(&:to_i) if params[:playlist].present?
 
-    if session[:playlist].empty?
-      render json: { success: false, msg: 'No active playlist' }
-      return
-    end
+    return render json: { success: false, msg: 'No active playlist' } if session[:playlist].blank?
 
     playlist_track_ids = session[:shuffle] ? session[:playlist_shuffled] : session[:playlist]
 
@@ -252,12 +243,7 @@ class PlaylistsController < ApplicationController
     if (song = Song.where(id: params[:song_id]).first)
       track = song.tracks.sample
       show = Show.find_by(id: track.show_id)
-
-      render json: {
-        success: true,
-        url: "/#{show.date}",
-        track_id: track.id
-      }
+      render json: { success: true, url: "/#{show.date}", track_id: track.id }
     else
       render json: { success: false, msg: 'Invalid song_id' }
     end
@@ -290,7 +276,7 @@ class PlaylistsController < ApplicationController
 
   def order_by_for_saved_playlists
     params[:sort] = 'name' unless params[:sort].in?(%w[name duration])
-    params[:sort] + ' asc'
+    "#{params[:sort]} asc"
   end
 
   def create_playlist_tracks(playlist)
@@ -301,11 +287,16 @@ class PlaylistsController < ApplicationController
         position: idx + 1
       )
     end
-    playlist.update(duration: playlist.tracks.map(&:duration).inject(0, &:+))
+    playlist.update(duration: playlist.tracks.map(&:duration).sum)
   end
 
   def activate_saved_playlist(playlist)
-    track_ids = playlist.playlist_tracks.order(position: :asc).map(&:track_id)
+    update_playlist(playlist)
+    retrieve_bookmark(playlist) if current_user
+  end
+
+  def update_playlist(playlist)
+    track_ids = playlist.playlist_tracks.order(position: :asc).pluck(:track_id)
     session.update(
       playlist: track_ids,
       playlist_shuffled: track_ids.shuffle,
@@ -315,8 +306,6 @@ class PlaylistsController < ApplicationController
       playlist_user_id: playlist.user.id,
       playlist_username: playlist.user.username
     )
-
-    retrieve_bookmark(playlist) if current_user
   end
 
   def retrieve_bookmark(playlist)

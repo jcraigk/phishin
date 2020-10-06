@@ -1,43 +1,31 @@
+inherit_from: .rubocop_todo.yml
+
 require:
   - rubocop-performance
   - rubocop-rails
   - rubocop-rspec
 
 AllCops:
-  TargetRubyVersion: 2.6.6
   Exclude:
     - bin/*
     - db/**/*
     - vendor/**/*
     - lib/tasks/*
-    - app/controllers/playlists_controller.rb # TODO: Refactor
+  NewCops: enable
+  TargetRubyVersion: 2.6.6
+
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
 Layout/EmptyLineAfterMagicComment:
   Enabled: false
-Layout/EmptyLinesAroundAttributeAccessor:
-  Enabled: true
 Layout/LineLength:
   Max: 100
-Layout/SpaceAroundMethodCallOperator:
-  Enabled: true
-Lint/DeprecatedOpenSSLConstant:
-  Enabled: true
-Lint/MixedRegexpCaptureTypes:
-  Enabled: true
-Lint/RaiseException:
-  Enabled: true
-Lint/StructNewOverride:
-  Enabled: true
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
     - config/routes.rb
 Metrics/ClassLength:
   Max: 250
-Metrics/MethodLength:
-  Exclude:
-    - spec/support/feature_helpers.rb
 Metrics/ModuleLength:
   Max: 250
 RSpec/DescribeClass:
@@ -67,115 +55,10 @@ Style/ClassAndModuleChildren:
   Enabled: false
 Style/Documentation:
   Enabled: false
-Style/ExponentialNotation:
-  Enabled: true
 Style/FormatStringToken:
   Enabled: false
-Style/HashEachMethods:
-  Enabled: true
-Style/HashTransformKeys:
-  Enabled: true
 Style/HashTransformValues:
   Enabled: false
 Style/MissingRespondToMissing:
   Exclude:
     - app/services/**/*
-Style/RedundantFetchBlock:
-  Enabled: true
-Style/RedundantRegexpCharacterClass:
-  Enabled: true
-Style/RedundantRegexpEscape:
-  Enabled: true
-Style/SlicingWithRange:
-  Enabled: true
-
-Lint/DuplicateElsifCondition:
-  Enabled: true
-Style/AccessorGrouping:
-  Enabled: true
-Style/ArrayCoercion:
-  Enabled: true
-Style/BisectedAttrAccessor:
-  Enabled: true
-Style/CaseLikeIf:
-  Enabled: true
-Style/HashAsLastArrayItem:
-  Enabled: true
-Style/HashLikeCase:
-  Enabled: true
-Style/RedundantAssignment:
-  Enabled: true
-Style/RedundantFileExtensionInRequire:
-  Enabled: true
-Performance/AncestorsInclude:
-  Enabled: true
-Performance/BigDecimalWithNumericArgument:
-  Enabled: true
-Performance/RedundantSortBlock:
-  Enabled: true
-Performance/RedundantStringChars:
-  Enabled: true
-Performance/ReverseFirst:
-  Enabled: true
-Performance/SortReverse:
-  Enabled: true
-Performance/Squeeze:
-  Enabled: true
-Performance/StringInclude:
-  Enabled: true
-Rails/ActiveRecordCallbacksOrder:
-  Enabled: true
-Rails/FindById:
-  Enabled: true
-Rails/Inquiry:
-  Enabled: true
-Rails/MailerName:
-  Enabled: true
-Rails/MatchRoute:
-  Enabled: true
-Rails/NegateInclude:
-  Enabled: true
-Rails/Pluck:
-  Enabled: true
-Rails/PluckId:
-  Enabled: true
-Rails/PluckInWhere:
-  Enabled: true
-Rails/RenderInline:
-  Enabled: true
-Rails/RenderPlainText:
-  Enabled: true
-Rails/ShortI18n:
-  Enabled: true
-Rails/WhereExists:
-  Enabled: true
-
-# New in 0.89
-Lint/BinaryOperatorWithIdenticalOperands:
-  Enabled: true
-Lint/DuplicateRescueException:
-  Enabled: true
-Lint/EmptyConditionalBody:
-  Enabled: true
-Lint/FloatComparison:
-  Enabled: true
-Lint/MissingSuper:
-  Enabled: true
-Lint/OutOfRangeRegexpRef:
-  Enabled: true
-Lint/SelfAssignment:
-  Enabled: true
-Lint/TopLevelReturnWithArgument:
-  Enabled: true
-Lint/UnreachableLoop:
-  Enabled: true
-Style/ExplicitBlockArgument:
-  Enabled: true
-Style/GlobalStdStream:
-  Enabled: true
-Style/OptionalBooleanParameter:
-  Enabled: true
-Style/SingleArgumentDig:
-  Enabled: true
-Style/StringConcatenation:
-  Enabled: true

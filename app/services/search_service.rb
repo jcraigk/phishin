@@ -55,7 +55,7 @@ class SearchService
   def shows_on_day_of_year
     return [] unless term_is_date?
     Show.on_day_of_year(date[5..6], date[8..9])
-        .where('date != ?', date)
+        .where.not(date: date)
         .includes(:venue)
         .order(date: :desc)
   end

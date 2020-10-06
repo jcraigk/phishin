@@ -32,7 +32,7 @@ module SortHelper
     items.first.first.html_safe
   end
 
-  def sort_filter(items) # rubocop:disable Metrics/AbcSize
+  def sort_filter(items)
     items.map do |k, v|
       link = params[:sort] == v ? "<strong>#{k}</strong>" : k
       param_str = "?sort=#{CGI.escape(v)}"
