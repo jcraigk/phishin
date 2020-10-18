@@ -7,7 +7,6 @@ gem 'bootstrap-will_paginate'
 gem 'coffee-rails'
 gem 'dalli'
 gem 'devise'
-gem 'dotenv-rails', require: false
 gem 'friendly_id'
 gem 'geocoder'
 gem 'google-api-client'
@@ -34,6 +33,7 @@ gem 'uglifier'
 
 group :development do
   gem 'bullet'
+  gem 'dotenv-rails'
   gem 'rubocop'
   gem 'rubocop-performance'
   gem 'rubocop-rails'
