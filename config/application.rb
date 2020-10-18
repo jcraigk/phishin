@@ -13,5 +13,14 @@ Bundler.require(*Rails.groups)
 module Phishin
   class Application < Rails::Application
     config.action_controller.permit_all_parameters = true
+
+    ActionMailer::Base.smtp_settings = {
+      user_name: ENV['SMTP_USERNAME'],
+      password: ENV['SMTP_PASSWORD'],
+      address: 'smtp.gmail.com',
+      port: 587,
+      authentication: :plain,
+      enable_starttls_auto: true
+    }
   end
 end
