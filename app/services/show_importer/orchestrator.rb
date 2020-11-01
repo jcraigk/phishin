@@ -105,7 +105,7 @@ class ShowImporter::Orchestrator
   def populate_tracks
     @tracks = []
     matches = @fm.matches.dup
-    @show_info.songs.each do |pos, song_title|
+    @show_info.song_titles.each do |pos, song_title|
       process_track(matches, pos, song_title)
     end
   end

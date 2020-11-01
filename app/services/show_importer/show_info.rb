@@ -3,32 +3,41 @@ require 'open-uri'
 require 'nokogiri'
 
 class ShowImporter::ShowInfo
-  attr_reader :songs, :pnet
+  attr_reader :song_titles, :pnet, :data
 
   def initialize(date)
+    @date = date
     @pnet = ShowImporter::PNet.new(ENV['PNET_API_KEY'])
-    @data = parse_data(date)
-    songs = parse_songs
-    raise 'Invalid date' if songs.empty?
+    @data = parse_data
 
-    @songs = {}
-    songs.each_with_index do |song, i|
-      @songs[i + 1] = song
+    populate_initial_setlist
+  end
+
+  def populate_initial_setlist
+    song_titles = parse_song_titles
+    if song_titles.empty?
+      puts "Date \"#{@date}\" not found on Phish.net!"
+      song_titles = ['You Enjoy Myself']
+    end
+
+    @song_titles = {}
+    song_titles.each_with_index do |song, i|
+      @song_titles[i + 1] = song
     end
   end
 
-  def parse_data(date)
-    @pnet.shows_setlists_get('showdate' => date)[0]
+  def parse_data
+    @pnet.shows_setlists_get('showdate' => @date)[0]
   end
 
-  def parse_songs
+  def parse_song_titles
     Nokogiri.HTML(@data['setlistdata']).css('p.pnetset > a').map(&:content)
   rescue NoMethodError
     []
   end
 
   def [](pos)
-    @songs[pos]
+    @song_titles[pos]
   end
 
   def venue_name
