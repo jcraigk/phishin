@@ -34,7 +34,7 @@ class Show < ApplicationRecord
   delegate :name, to: :tour, prefix: true
 
   def save_duration
-    update(duration: tracks.map(&:duration).sum)
+    update(duration: tracks.sum(&:duration))
   end
 
   def date_with_dots

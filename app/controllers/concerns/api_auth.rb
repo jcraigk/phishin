@@ -31,14 +31,14 @@ module ApiAuth
     render json: {
       success: false,
       error: 'No API key provided'
-    }, status: 401
+    }, status: :unauthorized
   end
 
   def invalid_key
     render json: {
       succes: false,
       message: 'Invalid API key provided'
-    }, status: 401
+    }, status: :unauthorized
   end
 
   def auth_header

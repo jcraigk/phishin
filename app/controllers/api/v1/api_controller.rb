@@ -33,7 +33,7 @@ class Api::V1::ApiController < ActionController::Base # rubocop:disable Rails/Ap
     render json: {
       success: false,
       message: 'Record not found'
-    }, status: 404
+    }, status: :not_found
   end
 
   private

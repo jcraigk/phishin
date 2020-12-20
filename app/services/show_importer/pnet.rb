@@ -40,7 +40,7 @@ class ShowImporter::PNet
     @options.delete('authkey')
   end
 
-  def method_missing(method, *args, &_block) # rubocop:disable Lint/MissingSuper
+  def method_missing(method, *args, &_block)
     opts = args.first || {}
     opts['method'] = "pnet_#{method}".tr('_', '.')
     perform_action(opts)

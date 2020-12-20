@@ -15,6 +15,6 @@ class Api::V1::SearchController < Api::V1::ApiController
     render json: {
       success: false,
       message: I18n.t('search.term_too_short', min_length: MIN_SEARCH_TERM_LENGTH)
-    }, status: 400
+    }, status: :bad_request
   end
 end

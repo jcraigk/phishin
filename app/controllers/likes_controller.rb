@@ -20,7 +20,7 @@ class LikesController < ApplicationController
   end
 
   def respond_with_status(liked)
-    msg = "#{(liked ? 'Like' : 'Unlike')} acknowledged"
+    msg = "#{liked ? 'Like' : 'Unlike'} acknowledged"
     render json: {
       success: true,
       msg: msg,

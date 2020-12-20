@@ -21,7 +21,7 @@ class PlaylistsController < ApplicationController
       tracks_by_id = Track.where(id: session[:playlist]).includes(:show, track_tags: :tag).index_by(&:id)
       @tracks = session[:playlist].map { |id| tracks_by_id[id] }
       @tracks_likes = user_likes_for_tracks(@tracks)
-      @duration = @tracks.map(&:duration).sum
+      @duration = @tracks.sum(&:duration)
     end
 
     @saved_playlists = Playlist.where(user: current_user).order(name: :asc) if current_user
@@ -287,7 +287,7 @@ class PlaylistsController < ApplicationController
         position: idx + 1
       )
     end
-    playlist.update(duration: playlist.tracks.map(&:duration).sum)
+    playlist.update(duration: playlist.tracks.sum(&:duration))
   end
 
   def activate_saved_playlist(playlist)
