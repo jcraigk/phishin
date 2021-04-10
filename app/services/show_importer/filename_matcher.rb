@@ -20,14 +20,12 @@ class ShowImporter::FilenameMatcher
       @matches[filename] = found
     end
 
-    @matches = Hash[@matches.sort]
+    @matches = @matches.sort.to_h
   end
 
   def filenames
-    @filenames ||= begin
-      Dir.entries(@s_dir).reject do |e|
-        e == '.' || e == '..' || e =~ /.txt\z/
-      end
+    @filenames ||= Dir.entries(@s_dir).reject do |e|
+      e == '.' || e == '..' || e =~ /.txt\z/
     end
   end
 

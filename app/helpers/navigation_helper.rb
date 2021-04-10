@@ -122,7 +122,7 @@ module NavigationHelper
 
   def years_sub_links
     str = ''
-    Hash[ERAS.to_a.reverse].each do |_era, years|
+    ERAS.to_a.reverse.to_h.each do |_era, years|
       years.reverse.each_with_index do |year, i|
         style = i + 1 == years.size ? 'margin-right: 26px' : ''
         css = year == params[:slug] ? 'active' : ''

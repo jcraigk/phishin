@@ -12,7 +12,7 @@ AllCops:
     - vendor/**/*
     - lib/tasks/*
   NewCops: enable
-  TargetRubyVersion: 2.6.6
+  TargetRubyVersion: 2.7.3
 
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
