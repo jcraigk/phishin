@@ -63,13 +63,13 @@ RSpec.describe Track do
 
   it 'validates >= 1 song' do
     track.validate
-    expect(track.errors.keys).not_to include(:songs)
+    expect(track.errors.attribute_names).not_to include(:songs)
   end
 
   it 'invalidates < 1 song' do
     track.songs = []
     track.validate
-    expect(track.errors.keys).to include(:songs)
+    expect(track.errors.attribute_names).to include(:songs)
   end
 
   describe 'scopes' do
