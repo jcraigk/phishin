@@ -115,6 +115,7 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.1.8)
+    content_disposition (1.0.0)
     crass (1.0.6)
     dalli (2.7.11)
     database_cleaner (2.0.1)
@@ -136,6 +137,8 @@ GEM
     dotenv-rails (2.7.6)
       dotenv (= 2.7.6)
       railties (>= 3.2)
+    down (5.2.0)
+      addressable (~> 2.5)
     erubi (1.10.0)
     execjs (2.7.0)
     factory_bot (6.1.0)
@@ -349,6 +352,9 @@ GEM
       faraday (>= 1.0)
     shoulda-matchers (4.5.1)
       activesupport (>= 4.2.0)
+    shrine (3.3.0)
+      content_disposition (~> 1.0)
+      down (~> 5.1)
     signet (0.15.0)
       addressable (~> 2.3)
       faraday (>= 0.17.3, < 2.0)
@@ -448,6 +454,7 @@ DEPENDENCIES
   selenium-webdriver
   sentry-raven
   shoulda-matchers
+  shrine
   simplecov
   slim
   soundmanager2-rails
