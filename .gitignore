@@ -3,6 +3,6 @@
 .env
 /coverage
 /log
-/public/assets/*
+/public/assets
 /public/audio
 /tmp

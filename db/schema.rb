@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_13_025053) do
+ActiveRecord::Schema.define(version: 2021_04_13_081017) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -189,10 +189,6 @@ ActiveRecord::Schema.define(version: 2021_04_13_025053) do
     t.integer "position", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "audio_file_file_name", limit: 255
-    t.string "audio_file_content_type", limit: 255
-    t.integer "audio_file_file_size"
-    t.datetime "audio_file_updated_at"
     t.integer "duration"
     t.string "set", limit: 255, null: false
     t.integer "likes_count", default: 0

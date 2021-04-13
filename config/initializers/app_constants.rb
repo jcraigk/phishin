@@ -21,7 +21,7 @@ IMPORT_DIR = "#{APP_CONTENT_PATH}/import"
 
 APP_BASE_URL =
   if Rails.env.in?(%w[development test])
-    'http://localhost'
+    'http://localhost:3000'
   else
     'https://phish.in'
   end

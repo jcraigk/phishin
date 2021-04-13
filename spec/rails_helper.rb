@@ -8,7 +8,6 @@ require File.expand_path('../config/environment', __dir__)
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
 Dir[Rails.root.join('spec/support/**/*')].sort.each { |f| require f }
-require 'paperclip/matchers'
 
 begin
   ActiveRecord::Migration.maintain_test_schema!
@@ -24,7 +23,6 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   config.order = 'random'
 
-  config.include Paperclip::Shoulda::Matchers
   config.include FeatureHelpers
   config.include Warden::Test::Helpers
   config.include AuthHelper, type: :request

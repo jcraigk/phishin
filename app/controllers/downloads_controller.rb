@@ -19,7 +19,7 @@ class DownloadsController < ApplicationController
   end
 
   def download_track
-    raise ActiveRecord::RecordNotFound unless file_exists?
+    raise ActiveRecord::RecordNotFound if track.audio_file.blank?
     send_audio_file
   end
 
@@ -27,16 +27,12 @@ class DownloadsController < ApplicationController
 
   def send_audio_file
     send_file(
-      track.audio_file.path,
+      track.audio_file.to_io.path,
       type: 'audio/mpeg',
       disposition: 'attachment',
       filename: "Phish #{track.show.date} #{track.title}.mp3",
-      length: File.size(track.audio_file.path)
+      length: track.audio_file.size
     )
-  end
-
-  def file_exists?
-    File.exist?(track.audio_file.path)
   end
 
   def track

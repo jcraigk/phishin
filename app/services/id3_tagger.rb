@@ -2,10 +2,11 @@
 require 'mp3info'
 
 class Id3Tagger
-  attr_reader :track
+  attr_reader :show, :track
 
   def initialize(track)
     @track = track
+    @show = Show.unscoped.find(track.show_id) # TODO: remove when default_scope removed from Show
   end
 
   def call
@@ -15,7 +16,7 @@ class Id3Tagger
   private
 
   def apply_default_tags
-    Mp3Info.open(track.audio_file.path) do |mp3|
+    Mp3Info.open(track.audio_file.to_io.path) do |mp3|
       apply_tags(mp3)
       apply_v2_tags(mp3)
       mp3.tag2.remove_pictures
@@ -46,10 +47,6 @@ class Id3Tagger
   def apply_track_specific_v2_tags(mp3)
     mp3.tag2.TIT2 = track.title[0..59]
     mp3.tag2.TRCK = track.position
-  end
-
-  def show
-    @show ||= track.show
   end
 
   def comments

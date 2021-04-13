@@ -18,6 +18,8 @@ class TrackInserter
   def call
     shift_track_positions
     insert_new_track
+    track.save_duration
+    track.apply_id3_tags
     add_sbd_tag
     update_show_duration
   end
