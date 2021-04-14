@@ -51,19 +51,6 @@ RSpec.describe Show do
   end
 
   describe 'scopes' do
-    describe 'default scope' do
-      let!(:show2) { create(:show, published: true) }
-      let!(:show3) { create(:show, published: true) }
-
-      before do
-        create(:show, published: false)
-      end
-
-      it 'returns published shows' do
-        expect(described_class.order(date: :asc)).to match_array([show2, show3])
-      end
-    end
-
     describe '#between_years' do
       let!(:show1) { create(:show, date: '2014-10-31') }
       let!(:show2) { create(:show, date: '2015-01-01') }
@@ -99,6 +86,17 @@ RSpec.describe Show do
 
       it 'returns expected object' do
         expect(described_class.on_day_of_year(10, 31)).to eq([show1])
+      end
+    end
+
+    describe '#published' do
+      let!(:show2) { create(:show, published: true) }
+      let!(:show3) { create(:show, published: true) }
+
+      before { create(:show, published: false) }
+
+      it 'returns published shows' do
+        expect(described_class.published.order(date: :asc)).to match_array([show2, show3])
       end
     end
 

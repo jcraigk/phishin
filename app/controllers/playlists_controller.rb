@@ -156,7 +156,7 @@ class PlaylistsController < ApplicationController
   def add_show_to_playlist
     clear_saved_playlist
 
-    if (show = Show.find_by(id: params[:show_id]))
+    if (show = Show.published.find_by(id: params[:show_id]))
 
       session[:playlist] += show.tracks.sort_by(&:position).map(&:id)
       session[:playlist] = session[:playlist].uniq.take(100)
@@ -231,7 +231,7 @@ class PlaylistsController < ApplicationController
   end
 
   def random_show
-    show = Show.random.first
+    show = Show.published.random.first
     render json: {
       success: true,
       url: "/#{show.date}",
@@ -242,7 +242,7 @@ class PlaylistsController < ApplicationController
   def random_song_track
     if (song = Song.where(id: params[:song_id]).first)
       track = song.tracks.sample
-      show = Show.find_by(id: track.show_id)
+      show = Show.published.find_by(id: track.show_id)
       render json: { success: true, url: "/#{show.date}", track_id: track.id }
     else
       render json: { success: false, msg: 'Invalid song_id' }

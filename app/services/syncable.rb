@@ -16,7 +16,7 @@ module Syncable
   end
 
   def show_from_url(url)
-    Show.find_by(date: show_slug(url))
+    Show.published.find_by(date: show_slug(url))
   end
 
   def path_segments(url)

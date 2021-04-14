@@ -3,7 +3,7 @@ namespace :tracks do
   desc 'Check for the same file being used for second occurrence of song within a show'
   task find_dupe_filenames: :environment do
     show_list = []
-    Show.unscoped.find_each do |show|
+    Show.find_each do |show|
       filenames = show.tracks.map(&:audio_file_file_name)
       dupe = filenames.find { |f| filenames.count(f) > 1 }
       show_list << "#{show.date} :: #{dupe}" if dupe
@@ -16,8 +16,7 @@ namespace :tracks do
   task find_missing: :environment do
     # Track gaps
     show_list = []
-    Show.unscoped
-        .includes(:tracks)
+    Show.includes(:tracks)
         .order(date: :desc)
         .find_each do |show|
       show.tracks.sort_by(&:position).each_with_index do |track, i|
@@ -34,8 +33,7 @@ namespace :tracks do
     end
     # Shows with no tracks
     show_list = []
-    Show.unscoped
-        .includes(:tracks)
+    Show.includes(:tracks)
         .order(date: :desc)
         .find_each do |show|
       show_list << show.date unless show.tracks.any?
@@ -49,7 +47,7 @@ namespace :tracks do
 
   desc 'Tighten up track positions within each show'
   task tighten_positions: :environment do
-    Show.unscoped.order(date: :desc).each do |show|
+    Show.order(date: :desc).find_each do |show|
       puts "Tightening: #{show.date}"
       show.tracks.order(position: :asc).each_with_index do |track, idx|
         track.update(position: idx + 1)

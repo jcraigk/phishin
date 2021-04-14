@@ -42,7 +42,7 @@ class JamchartsImporter
   end
 
   def find_show_by_date(date)
-    Show.unscoped.includes(:tracks).find_by(date: date)
+    Show.includes(:tracks).find_by(date: date)
   end
 
   def sync_jamcharts

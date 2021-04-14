@@ -71,9 +71,9 @@ rails shows:import
 Use the interactive CLI to execute the import, then go to the `rails console`:
 
 ```ruby
-Show.unscoped.last.update(
+Show.last.update(
   tour: Tour.find("<tour id>"),
-  taper_notes: "<paste taper notes>",
+  taper_notes: "<paste taper notes plaintext>",
   published: true
 )
 ```

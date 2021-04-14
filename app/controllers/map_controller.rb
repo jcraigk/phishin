@@ -19,8 +19,8 @@ class MapController < ApplicationController
   end
 
   def init_date_params
-    params[:date_start] ||= Show.order(date: :asc).first.date
-    params[:date_stop] ||= Show.order(date: :desc).first.date
+    params[:date_start] ||= Show.published.order(date: :asc).first.date
+    params[:date_stop] ||= Show.published.order(date: :desc).first.date
   end
 
   def relevant_venues

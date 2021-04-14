@@ -9,7 +9,7 @@ module ApplicationHelper
   end
 
   def total_hours_of_music
-    (Show.all.sum(&:duration) / 3_600_000.to_f).round
+    (Show.published.sum(&:duration) / 3_600_000.to_f).round
   end
 
   def link_to_song(song, term = nil)

@@ -43,7 +43,7 @@ namespace :phishnet do
   task setlist_tags: :environment do
     include ActionView::Helpers::SanitizeHelper
 
-    relation = Show.unscoped.order(date: :asc)
+    relation = Show.order(date: :asc)
 
     debut_tag = Tag.find_by(name: 'Debut')
     signal_tag = Tag.find_by(name: 'Signal')

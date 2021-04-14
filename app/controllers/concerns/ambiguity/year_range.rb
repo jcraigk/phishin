@@ -30,7 +30,8 @@ module Ambiguity::YearRange
   end
 
   def shows_during_year_range
-    Show.between_years(year1, year2)
+    Show.published
+        .between_years(year1, year2)
         .includes(:tour, :venue, show_tags: :tag)
         .order(@order_by)
   end

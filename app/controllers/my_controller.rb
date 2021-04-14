@@ -5,7 +5,8 @@ class MyController < ApplicationController
     validate_sorting_for_my_shows
 
     show_ids = Like.where(likable_type: 'Show', user: current_user).map(&:likable_id)
-    @shows = Show.where(id: show_ids)
+    @shows = Show.published
+                 .where(id: show_ids)
                  .includes(:tracks).order(@order_by)
                  .paginate(page: params[:page], per_page: 20)
     @shows_likes = user_likes_for_shows(@shows)
