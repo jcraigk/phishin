@@ -6,7 +6,7 @@ class Id3Tagger
 
   def initialize(track)
     @track = track
-    @show = Show.unscoped.find(track.show_id) # TODO: remove when default_scope removed from Show
+    @show = track.show
   end
 
   def call

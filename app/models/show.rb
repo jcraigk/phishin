@@ -14,8 +14,6 @@ class Show < ApplicationRecord
 
   before_validation :cache_venue_name
 
-  default_scope { where(published: true) }
-
   scope :between_years, lambda { |year1, year2|
     date1 = Date.new(year1.to_i).beginning_of_year
     date2 = Date.new(year2.to_i).end_of_year
@@ -28,6 +26,7 @@ class Show < ApplicationRecord
     where('extract(month from date) = ?', month)
       .where('extract(day from date) = ?', day)
   }
+  scope :published, -> { where(published: true) }
   scope :random, ->(amt = 1) { order(Arel.sql('RANDOM()')).limit(amt) }
   scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
 

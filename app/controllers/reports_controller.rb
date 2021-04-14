@@ -11,11 +11,11 @@ class ReportsController < ApplicationController
   private
 
   def complete_dates
-    Show.where(incomplete: false).all.map(&:date)
+    Show.published.where(incomplete: false).all.map(&:date)
   end
 
   def incomplete_dates
-    Show.where(incomplete: true).all.map(&:date)
+    Show.published.where(incomplete: true).all.map(&:date)
   end
 
   def notable_known_dates

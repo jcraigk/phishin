@@ -38,7 +38,10 @@ module Ambiguity::Date
   end
 
   def fetch_show_on_date(date)
-    @show = Show.includes(:venue, tracks: [:songs, { track_tags: :tag }]).find_by!(date: date)
+    @show =
+      Show.published
+          .includes(:venue, tracks: [:songs, { track_tags: :tag }])
+          .find_by!(date: date)
   end
 
   def date_from_slug
@@ -48,18 +51,22 @@ module Ambiguity::Date
   end
 
   def previous_show
-    Show.where('date < ?', @show.date)
+    Show.published
+        .where('date < ?', @show.date)
         .order(date: :desc)
         .first ||
-      Show.order(date: :desc)
+      Show.published
+          .order(date: :desc)
           .first
   end
 
   def next_show
-    Show.where('date > ?', @show.date)
+    Show.published
+        .where('date > ?', @show.date)
         .order(date: :asc)
         .first ||
-      Show.order(date: :asc)
+      Show.published
+          .order(date: :asc)
           .first
   end
 end

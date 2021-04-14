@@ -37,7 +37,7 @@ namespace :shows do
 
   desc 'Find shows with a single set'
   task single_set: :environment do
-    relation = Show.unscoped.includes(:tracks).order(date: :asc)
+    relation = Show.includes(:tracks).order(date: :asc)
     pbar = ProgressBar.create(
       total: relation.size,
       format: '%a %B %c/%C %p%% %E'
