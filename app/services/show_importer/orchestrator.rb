@@ -93,8 +93,9 @@ class ShowImporter::Orchestrator
   def update_track(track)
     track.update!(
       show: @show,
-      audio_file: File.new("#{@fm.s_dir}/#{track.filename}")
+      audio_file: File.open("#{@fm.s_dir}/#{track.filename}")
     )
+    track.save_duration
     track.apply_id3_tags
   end
 

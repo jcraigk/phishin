@@ -25,7 +25,7 @@ RSpec.describe Mp3DurationQuery do
     end
 
     context 'with mp3 file' do
-      let(:mp3_file) { track.audio_file.path }
+      let(:mp3_file) { track.audio_file.to_io.path }
 
       it 'returns duration of mp3 in seconds' do
         expect(service.call).to eq(2_011)

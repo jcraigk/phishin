@@ -13,8 +13,6 @@ RSpec.describe Track do
   it { is_expected.to have_many(:tags).through(:track_tags) }
   it { is_expected.to have_many(:playlist_tracks).dependent(:destroy) }
 
-  it { is_expected.to have_attached_file(:audio_file) }
-
   describe 'slug generation' do
     let(:slug) { 'new-slug' }
     let(:mock_generator) { instance_double(TrackSlugGenerator) }
@@ -95,12 +93,10 @@ RSpec.describe Track do
     end
   end
 
-  context 'when creating the record' do
-    before { track.save }
-
-    it 'updates the duration with that of audio_file' do
-      expect(track.duration).to eq(2_011)
-    end
+  it 'provides #save_duration' do
+    track.save
+    track.save_duration
+    expect(track.duration).to eq(2_011)
   end
 
   describe '#set_name' do
@@ -169,8 +165,8 @@ RSpec.describe Track do
   end
 
   it 'provides #mp3_url' do
-    track.id = 123_456_789
-    expect(track.mp3_url).to eq('http://localhost/audio/123/456/789/123456789.mp3')
+    url = track.audio_file.url(host: APP_BASE_URL).gsub('tracks/audio_files', 'audio')
+    expect(track.mp3_url).to eq(url)
   end
 
   describe 'serialization' do

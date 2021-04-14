@@ -34,15 +34,18 @@ RSpec/DescribeClass:
 RSpec/ExampleLength:
   Exclude:
     - spec/features/**/*
-RSpec/MultipleExpectations:
-  Exclude:
-    - spec/features/**/*
 Rails/Exit:
+  Enabled: false
+Rails/FilePath:
   Enabled: false
 Rails/HttpPositionalArguments:
   Enabled: false
 RSpec/ImplicitSubject:
   EnforcedStyle: single_statement_only
+RSpec/MultipleExpectations:
+  Exclude:
+    - spec/features/**/*
+  Max: 4
 Rails/Output:
   Enabled: false
 Rails/OutputSafety:
