@@ -5,7 +5,6 @@ RSpec.describe ApiKey, type: :model do
   subject(:api_key) { build(:api_key) }
 
   it { is_expected.to be_an(ApplicationRecord) }
-  it { is_expected.to have_many(:api_requests).dependent(:destroy) }
 
   describe 'attributes' do
     subject(:api_key) { described_class.attribute_names.map(&:to_sym) }

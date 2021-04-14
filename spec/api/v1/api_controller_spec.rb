@@ -19,19 +19,6 @@ describe Api::V1::ApiController do
     end
   end
 
-  describe 'api request logging' do
-    before { allow(ApiRequest).to receive(:create) }
-
-    it 'returns 200' do
-      expect(response.status).to eq(200)
-    end
-
-    it 'creates an ApiRequest' do
-      response
-      expect(ApiRequest).to have_received(:create)
-    end
-  end
-
   describe 'paging' do
     let!(:tags) { create_list(:tag, 25) }
     let(:expected_json) do
