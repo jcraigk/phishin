@@ -7,11 +7,6 @@ module ApiAuth
     true
   end
 
-  def save_api_request
-    return if active_api_key.blank?
-    ApiRequest.create(api_key: active_api_key, path: request.fullpath)
-  end
-
   private
 
   def phish_od?
