@@ -80,7 +80,7 @@ class ShowImporter::Orchestrator
     @show.save
     @tracks.each do |track|
       next puts "\nInvalid track! (#{track.title})" unless track.valid?
-      update_track(track)
+      create_real_track(track)
       print '.'
     end
     @show.save_duration
@@ -90,11 +90,10 @@ class ShowImporter::Orchestrator
 
   private
 
-  def update_track(track)
-    track.update!(
-      show: @show,
-      audio_file: File.open("#{@fm.s_dir}/#{track.filename}")
-    )
+  def create_real_track(track)
+    track.show = @show
+    track.save!(validate: false) # Generate ID for audio_file storage
+    track.update!(audio_file: File.open("#{@fm.s_dir}/#{track.filename}"))
     track.save_duration
     track.apply_id3_tags
   end

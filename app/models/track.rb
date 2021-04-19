@@ -27,7 +27,7 @@ class Track < ApplicationRecord
   validates :position, uniqueness: { scope: :show_id }
   validates :songs, length: { minimum: 1 }
 
-  before_validation :generate_slug
+  before_save :generate_slug
 
   scope :chronological, -> { joins(:show).order('shows.date') }
   scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
