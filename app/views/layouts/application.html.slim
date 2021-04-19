@@ -2,7 +2,8 @@ doctype html
 html
   head
     title = APP_NAME
-    link href='https://fonts.googleapis.com/css?family=Marck+Script|Open+Sans+Condensed:300,700|Molle' rel='stylesheet' type='text/css'
+    = render partial: 'layouts/meta'
+    = stylesheet_link_tag 'https://fonts.googleapis.com/css?family=Marck+Script|Open+Sans+Condensed:300,700|Molle'
     = stylesheet_link_tag 'application', media: :all
     = javascript_include_tag 'application'
     script async=true defer=true src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDYzzl_dLU5IX4t-rpVVRcA9YtrpPEivTk&amp;callback=App.Map.initMap'
