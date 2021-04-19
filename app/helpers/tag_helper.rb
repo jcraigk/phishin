@@ -14,7 +14,7 @@ module TagHelper
   end
 
   def tag_stack_label(tag_stack) # rubocop:disable Metrics/MethodLength
-    tag_instances = tag_stack.second.sort_by { |t| t.try(:starts_at_second) }
+    tag_instances = tag_stack.second.sort_by { |t| t.try(:starts_at_second) || 0 }
     first_instance = tag_instances.first
     link_to '#' do
       tag.span(
