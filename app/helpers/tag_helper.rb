@@ -14,7 +14,7 @@ module TagHelper
   end
 
   def tag_stack_label(tag_stack) # rubocop:disable Metrics/MethodLength
-    tag_instances = tag_stack.second
+    tag_instances = tag_stack.second.sort_by { |t| t.try(:starts_at_second) }
     first_instance = tag_instances.first
     link_to '#' do
       tag.span(
@@ -91,10 +91,13 @@ module TagHelper
   def time_range(tag_instance)
     return unless start_timestamp(tag_instance) || end_timestamp(tag_instance)
 
+    starts_at = start_timestamp(tag_instance)
+    url = "/#{tag_instance.track.show.date}/#{tag_instance.track.slug}?t=#{starts_at}"
     if start_timestamp(tag_instance) && end_timestamp(tag_instance)
-      "between #{start_timestamp(tag_instance)} and #{end_timestamp(tag_instance)}"
+      range = "#{starts_at} and #{end_timestamp(tag_instance)}"
+      "between #{link_to(range, url)}"
     elsif start_timestamp(tag_instance)
-      "at #{start_timestamp(tag_instance)}"
+      "at #{link_to(starts_at, url)}"
     end
   end
 
