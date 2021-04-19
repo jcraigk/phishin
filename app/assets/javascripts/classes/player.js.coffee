@@ -19,7 +19,6 @@ class @Player
     @$playlist_btn    = $ '#playlist_button'
     @$playpause       = $ '#control_playpause'
     @$scrubber        = $ '#scrubber'
-    @$volume_slider   = $ '#volume_slider'
     @$volume_icon     = $ '#volume_icon'
     @$time_elapsed    = $ '#time_elapsed'
     @$time_remaining  = $ '#time_remaining'
@@ -88,18 +87,13 @@ class @Player
   toggleMute: ->
     if @last_volume > 0
       if @muted
-        @$volume_slider.slider 'value', @last_volume
         @$volume_icon.removeClass 'muted'
         @sm.setVolume @active_track, @last_volume if @active_track
         @muted = false
       else
-        @last_volume = @$volume_slider.slider 'value'
-        @$volume_slider.slider 'value', 0
         @$volume_icon.addClass 'muted'
         @sm.setVolume @active_track, 0 if @active_track
         @muted = true
-    else
-      @last_volume = @$volume_slider.slider 'value'
 
   updateVolumeSlider: (value) ->
     if @muted and value > 0
@@ -360,7 +354,6 @@ class @Player
     if track_id and sound = @sm.getSoundById track_id
       if @muted or sound.volume is 0
         sound.stop()
-        @sm.setVolume track_id, @$volume_slider.slider('value')
       else
         if sound.volume < 10 then delta = 1 else delta = 3
         @sm.setVolume track_id, sound.volume - delta
