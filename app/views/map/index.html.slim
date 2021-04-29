@@ -20,26 +20,6 @@
       button#map_search_submit.btn type='button' SEARCH
 
   #content_box
-    #google_map
+    #map
 
   = clear_both
-
-javascript:
-  $(function() {
-    $('#map_date_start').datepicker({
-      dateFormat: 'yy-mm-dd',
-      changeYear: true,
-      changeMonth: true,
-      yearRange: '1983:2017',
-      showOtherMonths: true,
-      selectOtherMonths: true
-    });
-    $('#map_date_stop').datepicker({
-      dateFormat: 'yy-mm-dd',
-      changeYear: true,
-      changeMonth: true,
-      yearRange: '1983:2017',
-      showOtherMonths: true,
-      selectOtherMonths: true
-    });
-  })
