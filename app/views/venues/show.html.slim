@@ -3,7 +3,7 @@
   #title_box
     h1 = @venue.name
     h2
-      a href="/map?map_term=#{CGI.escape(@venue.location)}&amp;distance=.5" = @venue.location
+      a href="/map?map_term=#{CGI.escape(@venue.location)}&amp;distance=5" = @venue.location
     h2 Shows: #{@venue.shows_count}
     - if @venue.other_names.any?
       h3.other_names
