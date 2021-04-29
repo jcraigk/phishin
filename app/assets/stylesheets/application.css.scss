@@ -1266,19 +1266,13 @@ html {
       max-height: 600px;
       font-size: 12px;
     }
-    #google_map {
+    #map {
       width: 100%;
       height: 600px;
+      border-radius: 5px;
 
       a {
         color: black !important;
-      }
-      label {
-        width: auto;
-        display:inline;
-      }
-      img {
-        max-width: none;
       }
       h1 {
         font-size: 18px;

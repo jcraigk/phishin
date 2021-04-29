@@ -4,9 +4,10 @@ html
     title = APP_NAME
     = render partial: 'layouts/meta'
     = stylesheet_link_tag 'https://fonts.googleapis.com/css?family=Marck+Script|Open+Sans+Condensed:300,700|Molle'
+    = javascript_include_tag 'https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js'
+    = stylesheet_link_tag 'https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css'
     = stylesheet_link_tag 'application', media: :all
     = javascript_include_tag 'application'
-    script async=true defer=true src='https://maps.googleapis.com/maps/api/js?key=AIzaSyDYzzl_dLU5IX4t-rpVVRcA9YtrpPEivTk&amp;callback=App.Map.initMap'
     = csrf_meta_tags
 
     body[

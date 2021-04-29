@@ -56,7 +56,7 @@ $ ->
           # For detecting browsers/platforms
           App.Detector = new Detector
 
-          # Google Map
+          # Map
           if state.data.href.substr(0,4) is '/map'
             App.Map.initMap()
             term = $('#map_search_term').val()

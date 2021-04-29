@@ -11,7 +11,7 @@ describe 'Venues page', :js do
     end
 
     within('#content_box') do
-      expect_css('#google_map')
+      expect_css('#map')
     end
   end
 end
