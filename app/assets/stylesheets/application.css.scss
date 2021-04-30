@@ -293,6 +293,17 @@ html {
         text-decoration: underline !important;
       }
     }
+    .single_page {
+      line-height: 26px;
+      margin-top: -50px !important;
+      text-align: center;
+      border: 1px solid $gray_70;
+      border-radius: 3px;
+      margin: 0 auto;
+      width: 80px;
+      color: $text_gray;
+      background-color: $sub_nav_gray;
+    }
     .filter_menu {
       display: inline;
       width: 120px;

@@ -4,11 +4,7 @@ class MyController < ApplicationController
     return unless current_user
     validate_sorting_for_my_shows
 
-    show_ids = Like.where(likable_type: 'Show', user: current_user).map(&:likable_id)
-    @shows = Show.published
-                 .where(id: show_ids)
-                 .includes(:tracks).order(@order_by)
-                 .paginate(page: params[:page], per_page: 20)
+    @shows = paginated_shows
     @shows_likes = user_likes_for_shows(@shows)
 
     render_xhr_without_layout
@@ -21,13 +17,22 @@ class MyController < ApplicationController
     track_ids = Like.where(likable_type: 'Track', user: current_user).map(&:likable_id)
     @tracks = Track.where(id: track_ids)
                    .includes(:show).order(@order_by)
-                   .paginate(page: params[:page], per_page: 20)
+                   .paginate(page: params[:page], per_page: params[:per_page].presence || 20)
     @tracks_likes = user_likes_for_tracks([@tracks])
 
     render_xhr_without_layout
   end
 
   private
+
+  def paginated_shows
+    show_ids = Like.where(likable_type: 'Show', user: current_user).map(&:likable_id)
+    Show.published
+        .where(id: show_ids)
+        .includes(:tracks)
+        .order(@order_by)
+        .paginate(page: params[:page], per_page: params[:per_page].presence || 20)
+  end
 
   def validate_sorting_for_my_shows # rubocop:disable Metrics/MethodLength
     params[:sort] = 'date desc' unless

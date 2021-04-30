@@ -26,7 +26,8 @@
             = clear_both
 
       - if @tracks.total_pages > 1
-        .paging = will_paginate_simple @tracks
+        = will_paginate_simple @tracks
+        .single_page = single_page_link
 
     - else
       p.instructions Click heart icons to Like your favorite tracks

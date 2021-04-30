@@ -51,6 +51,7 @@
           .alert_container Selected tag is not associated with any tracks
 
     - if (@shows || @tracks).total_pages > 1
-      .paging = will_paginate_simple(@shows || @tracks)
+      = will_paginate_simple(@shows || @tracks)
+      .single_page = single_page_link
 
   = clear_both
