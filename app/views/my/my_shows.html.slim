@@ -26,7 +26,8 @@
             = render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false }
 
       - if @shows.total_pages > 1
-        .paging = will_paginate_simple @shows
+        = will_paginate_simple @shows
+        .single_page = single_page_link
 
     - else
       p.instructions Click heart icons to Like your favorite shows

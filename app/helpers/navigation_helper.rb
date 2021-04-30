@@ -177,4 +177,8 @@ module NavigationHelper
       link_to(name, props.first, class: css)
     end.join.html_safe
   end
+
+  def single_page_link
+    link_to 'Single page', url_for(per_page: 100_000)
+  end
 end

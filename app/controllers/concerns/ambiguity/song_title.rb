@@ -19,7 +19,7 @@ module Ambiguity::SongTitle
     @tracks = song.tracks
                   .includes(:songs, show: :venue, track_tags: :tag)
                   .order(@order_by)
-                  .paginate(page: params[:page], per_page: 20)
+                  .paginate(page: params[:page], per_page: params[:per_page].presence || 20)
     @tracks_likes = user_likes_for_tracks(@tracks)
   end
 
