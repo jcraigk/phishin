@@ -92,7 +92,8 @@ module NavigationHelper
       'Map' => [default_map_path, %w[map], 448],
       'Top 40' => [top_shows_path, %w[top_shows top_tracks], 504],
       'Playlists' => [active_playlist_path, %w[playlists], 570],
-      'Tags' => [tags_path, %w[tags], 630]
+      'Tags' => [tags_path, %w[tags], 630],
+      'Today' => [current_month_day, [], 685]
     }
   end
 
@@ -180,5 +181,9 @@ module NavigationHelper
 
   def single_page_link
     link_to 'Single page', url_for(per_page: 100_000)
+  end
+
+  def current_month_day
+    Time.use_zone(TIME_ZONE) { Time.current }.strftime('%B-%-d').downcase
   end
 end

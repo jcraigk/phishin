@@ -23,9 +23,10 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   config.order = 'random'
 
+  config.include ActiveSupport::Testing::TimeHelpers
+  config.include AuthHelper, type: :request
   config.include FeatureHelpers
   config.include Warden::Test::Helpers
-  config.include AuthHelper, type: :request
 
   config.after do
     Faker::UniqueGenerator.clear

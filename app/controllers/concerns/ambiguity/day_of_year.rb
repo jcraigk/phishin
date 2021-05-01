@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 module Ambiguity::DayOfYear
+  TODAY_SLUGS = %w[today today-in-history].freeze
+
   def slug_as_day_of_year
     return false if month_day_from_slug.blank?
 
@@ -46,6 +48,7 @@ module Ambiguity::DayOfYear
   end
 
   def month_day_from_slug
+    return [current_month, current_day] if current_slug.in?(TODAY_SLUGS)
     return false unless current_slug =~ month_day_regex
     [Date::MONTHNAMES.index(Regexp.last_match[1].titleize), Regexp.last_match[2]]
   end
@@ -58,5 +61,13 @@ module Ambiguity::DayOfYear
       (\d{1,2})
       \z
     /xi
+  end
+
+  def current_month
+    Time.use_zone(TIME_ZONE) { Time.current }.strftime('%-m').to_i
+  end
+
+  def current_day
+    Time.use_zone(TIME_ZONE) { Time.current }.strftime('%-d').to_i
   end
 end

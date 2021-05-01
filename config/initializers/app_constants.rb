@@ -8,6 +8,7 @@ CACHE_TTL = 10.minutes
 FIRST_CHAR_LIST = ('A'..'Z').to_a + ['#']
 MAX_PLAYLISTS_PER_USER = 20
 MIN_SEARCH_TERM_LENGTH = 3
+TIME_ZONE = 'Eastern Time (US & Canada)'
 
 APP_CONTENT_PATH =
   if Rails.env.test?
