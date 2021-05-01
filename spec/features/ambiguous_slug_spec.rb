@@ -13,22 +13,37 @@ describe 'Ambiguous slug resolution', :js do
     create(:show, date: '1998-10-31', tour: tour, venue: venue)
   end
 
-  it 'day of year' do
-    visit '/october-31'
+  shared_examples 'day of year' do
+    it 'display expected content' do
+      within('#title_box') do
+        expect_content('October 31')
+      end
 
-    within('#title_box') do
-      expect_content('October 31')
+      within('#content_box') do
+        expect_content(tour.name)
+      end
+
+      items = page.all('ul.item_list li')
+      expect(items.size).to eq(3)
+
+      first('ul.item_list li a').click
+      expect(page).to have_current_path("/#{show3.date}")
+    end
+  end
+
+  describe '/today' do
+    before do
+      travel_to Time.use_zone(TIME_ZONE) { Time.zone.local(2012, 10, 31) }
+      visit '/today'
     end
 
-    within('#content_box') do
-      expect_content(tour.name)
-    end
+    include_examples 'day of year'
+  end
 
-    items = page.all('ul.item_list li')
-    expect(items.size).to eq(3)
+  describe 'explicit day of year' do
+    before { visit '/october-31' }
 
-    first('ul.item_list li a').click
-    expect(page).to have_current_path("/#{show3.date}")
+    include_examples 'day of year'
   end
 
   it 'year' do
