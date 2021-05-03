@@ -38,3 +38,7 @@
             i.icon-book
             | &nbsp;
             = "#{song.title}..."
+        - if (show && link = next_gap_link(song, show.date))
+          li = link
+        - if (show && link = previous_gap_link(song, show.date))
+          li = link
