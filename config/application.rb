@@ -13,7 +13,6 @@ Bundler.require(*Rails.groups)
 module Phishin
   class Application < Rails::Application
     config.load_defaults = '6.1'
-    config.action_controller.permit_all_parameters = true
 
     ActionMailer::Base.smtp_settings = {
       user_name: ENV['SMTP_USERNAME'],
