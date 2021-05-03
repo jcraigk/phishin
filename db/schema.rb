@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_14_050545) do
+ActiveRecord::Schema.define(version: 2021_05_03_051354) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -118,6 +118,9 @@ ActiveRecord::Schema.define(version: 2021_04_14_050545) do
     t.string "lyrical_excerpt", limit: 255
     t.boolean "original", default: false, null: false
     t.string "alias"
+    t.text "lyrics"
+    t.string "artist"
+    t.boolean "instrumental", default: false, null: false
     t.index ["alias"], name: "index_songs_on_alias", unique: true
     t.index ["original"], name: "index_songs_on_original"
     t.index ["slug"], name: "index_songs_on_slug", unique: true

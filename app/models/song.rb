@@ -33,10 +33,11 @@ class Song < ApplicationRecord
   def as_json
     {
       id: id,
+      slug: slug,
       title: title,
       alias: self.alias,
+      lyrics: lyrics,
       tracks_count: tracks_count,
-      slug: slug,
       updated_at: updated_at.iso8601
     }
   end
@@ -44,10 +45,11 @@ class Song < ApplicationRecord
   def as_json_api
     {
       id: id,
+      slug: slug,
       title: title,
       alias: self.alias,
+      lyrics: lyrics,
       tracks_count: tracks_count,
-      slug: slug,
       updated_at: updated_at.iso8601,
       tracks: tracks.map(&:as_json_api)
     }

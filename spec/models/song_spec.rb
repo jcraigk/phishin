@@ -76,20 +76,22 @@ RSpec.describe Song do
     let(:expected_as_json) do
       {
         id: song.id,
+        slug: song.slug,
         title: song.title,
         alias: song.alias,
+        lyrics: song.lyrics,
         tracks_count: song.tracks_count,
-        slug: song.slug,
         updated_at: song.updated_at.iso8601
       }
     end
     let(:expected_as_json_api) do
       {
         id: song.id,
+        slug: song.slug,
         title: song.title,
         alias: song.alias,
+        lyrics: song.lyrics,
         tracks_count: song.tracks_count,
-        slug: song.slug,
         updated_at: song.updated_at.iso8601,
         tracks: song.tracks.map(&:as_json_api)
       }
