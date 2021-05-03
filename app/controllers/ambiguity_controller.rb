@@ -8,7 +8,7 @@ class AmbiguityController < ApplicationController
   include Ambiguity::VenueName
   include Ambiguity::TourName
 
-  caches_action :resolve, expires_in: CACHE_TTL
+  caches_action_params :resolve, %i[sort slug]
 
   def resolve
     if slug_matches_entity?

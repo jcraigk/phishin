@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class TopTracksController < ApplicationController
-  caches_action :index, expires_in: CACHE_TTL
+  caches_action_params :index
 
   def index
     @tracks =

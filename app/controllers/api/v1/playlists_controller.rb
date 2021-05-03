@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class Api::V1::PlaylistsController < Api::V1::ApiController
-  caches_action :show, expires_in: CACHE_TTL
+  caches_action_params :show, %i[id]
 
   def show
     return respond_with_404 unless playlist

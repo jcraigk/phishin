@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class ErasController < ApplicationController
-  caches_action :index, expires_in: CACHE_TTL
+  caches_action_params :index
 
   def index
     @shows = years.index_with { |year| shows_for_year(year) }

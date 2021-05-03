@@ -9,6 +9,13 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
 
+  def self.caches_action_params(action, params = [])
+    params += %i[sort per_page page id slug]
+    caches_action action,
+                  cache_path: proc { |c| c.params.permit(*params) },
+                  expires_in: CACHE_TTL
+  end
+
   protected
 
   def render_xhr_without_layout(view = nil)

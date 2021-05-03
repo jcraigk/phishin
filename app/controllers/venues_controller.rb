@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class VenuesController < ApplicationController
-  caches_action :index, expires_in: CACHE_TTL
+  caches_action_params :index
 
   def index
     @venues = Venue.name_starting_with(char_param).order(order_by)

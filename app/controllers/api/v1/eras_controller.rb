@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 class Api::V1::ErasController < Api::V1::ApiController
-  caches_action :index, expires_in: CACHE_TTL
-  caches_action :show, expires_in: CACHE_TTL
+  caches_action_params :index
+  caches_action_params :show, %i[id]
 
   def index
     respond_with_success(ERAS)

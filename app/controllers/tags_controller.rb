@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 class TagsController < ApplicationController
-  caches_action :index, expires_in: CACHE_TTL
-  caches_action :show, expires_in: CACHE_TTL
+  caches_action_params :index
+  caches_action_params :show, %i[entity]
 
   def index
     @tag_groups = Tag.order(tags_order_by).group_by(&:group).sort

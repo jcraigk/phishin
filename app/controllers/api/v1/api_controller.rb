@@ -7,6 +7,13 @@ class Api::V1::ApiController < ActionController::Base # rubocop:disable Rails/Ap
 
   rescue_from ActiveRecord::RecordNotFound, with: :respond_with_404
 
+  def self.caches_action_params(action, params = [])
+    params += %i[sort_attr sort_dir per_page page tag id slug]
+    caches_action action,
+                  cache_path: proc { |c| c.params.permit(*params) },
+                  expires_in: CACHE_TTL
+  end
+
   protected
 
   def get_data_for(relation)

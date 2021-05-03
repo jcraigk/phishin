@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class SongsController < ApplicationController
-  caches_action :index, expires_in: CACHE_TTL
+  caches_action_params :index, %i[char sort]
 
   def index
     @songs = Song.title_starting_with(char_param).order(order_by)

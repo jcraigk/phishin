@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 class Api::V1::YearsController < Api::V1::ApiController
-  caches_action :index, cache_path: proc { |c| c.params }, expires_in: CACHE_TTL
-  caches_action :show, cache_path: proc { |c| c.params }, expires_in: CACHE_TTL
+  caches_action_params :index, %i[include_show_counts]
+  caches_action_params :show
 
   def index
     respond_with_success(requested_year_data)

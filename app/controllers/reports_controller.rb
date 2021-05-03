@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class ReportsController < ApplicationController
-  caches_action :missing_content, expires_in: CACHE_TTL
+  caches_action_params :missing_content
 
   def missing_content
     @kdates = notable_known_dates

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 class Api::V1::ShowsController < Api::V1::ApiController
-  caches_action :index, cache_path: proc { |c| c.params }, expires_in: CACHE_TTL
-  caches_action :show, cache_path: proc { |c| c.params }, expires_in: CACHE_TTL
-  caches_action :on_date, cache_path: proc { |c| c.params }, expires_in: CACHE_TTL
-  caches_action :on_day_of_year, cache_path: proc { |c| c.params }, expires_in: CACHE_TTL
+  caches_action_params :index
+  caches_action_params :show
+  caches_action_params :on_date, %i[date]
+  caches_action_params :on_day_of_year, %i[day]
 
   def index
     shows = Show.published.includes(:venue, :tags, tracks: %i[songs tags])
