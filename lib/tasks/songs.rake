@@ -22,7 +22,7 @@ namespace :songs do
     relation.find_each do |song|
 
       # Search Genius for the song title
-      search_for_song(song)
+      data = search_for_song(song)
       song_path = data.response.hits.first&.result&.api_path
       next missing_songs << song.title if song_path.blank?
 
