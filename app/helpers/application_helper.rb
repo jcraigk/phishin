@@ -74,7 +74,12 @@ module ApplicationHelper
 
   def taper_notes_for(show)
     return CGI.escapeHTML(show.taper_notes) if show.taper_notes.present?
-    'No taper notes present for this show'.html_safe
+    'No taper notes present for this show'
+  end
+
+  def lyrics_for(song)
+    return CGI.escapeHTML(song.lyrics) if song.lyrics.present?
+    'No lyrics available for this song'
   end
 
   def pluralize_with_delimiter(count, word)

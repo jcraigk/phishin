@@ -410,6 +410,12 @@ $ ->
     $('#taper_notes_date').html $(this).data('show-date')
     $('#taper_notes_modal').modal('show')
 
+  # View Lyrics button opens a modal
+  .on 'click', '.song_lyrics', ->
+    $('#lyrics_content').html $(this).data('lyrics')
+    $('#lyrics_title').html $(this).data('title')
+    $('#lyrics_modal').modal('show')
+
   # Tag instance click opens a modal
   .on 'click', '.tag_label:not(.no-modal)', ->
     $('#tag_detail_title').html $(this).data('detail-title')

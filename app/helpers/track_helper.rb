@@ -10,7 +10,7 @@ module TrackHelper
           .first
     return if next_show.blank?
 
-    track = next_show.tracks.find { |t| song.in?(t.songs) }
+    track = next_show.tracks.includes(:songs).find { |t| song.in?(t.songs) }
     gap =
       Show.published
           .where('date BETWEEN ? AND ?', date, next_show.date)
@@ -31,7 +31,7 @@ module TrackHelper
           .first
     return if prev_show.blank?
 
-    track = prev_show.tracks.find { |t| song.in?(t.songs) }
+    track = prev_show.tracks.includes(:songs).find { |t| song.in?(t.songs) }
     gap =
       Show.published
           .where('date BETWEEN ? AND ?', prev_show.date, date)

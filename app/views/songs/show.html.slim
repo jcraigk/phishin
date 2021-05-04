@@ -2,13 +2,24 @@
 
 #content
   #title_box
-    h1 = song_title_with_alias(@song)
+    h1
+      = song_title_with_alias(@song)
+      - if !@song.original? && @song.artist.present?
+        br
+        | by #{@song.artist}
     h2 Total tracks: #{@song.tracks.size}
     h3
       - if @song.original?
         | Original composition
       - else
         | Cover song
+
+    h3
+      - if @song.instrumental?
+        | (Instrumental)
+      - elsif @song.lyrics.present?
+        = link_to "#{tag.i(class: 'icon-book')} View Lyrics".html_safe, '#', class: 'song_lyrics btn', data: { 'title' => @song.title, 'lyrics' => lyrics_for(@song) }
+      .hr
     .hr
 
     = render partial: 'shared/sort_filter', locals: { item_hash: track_sort_items }
@@ -21,7 +32,7 @@
 
     button#random_song_track_btn.btn type='button' data-song-id=@song.id
       i.icon.icon-play
-      |  Play Random Version
+      | Random Performance
     br
     a.btn href="http://phish.net/song/#{@song.slug}/history" target='_blank'
       i.icon.icon-book>
