@@ -18,7 +18,7 @@
       - if @song.instrumental?
         | (Instrumental)
       - elsif @song.lyrics.present?
-        = link_to "#{tag.i(class: 'icon-book')} View Lyrics".html_safe, '#', class: 'song_lyrics btn', data: { 'title' => @song.title, 'lyrics' => lyrics_for(@song) }
+        = link_to "#{tag.i(class: 'icon-book')} View Lyrics".html_safe, '#', class: 'song_lyrics btn', data: { title: @song.title, lyrics: lyrics_for(@song) }
       .hr
     .hr
 

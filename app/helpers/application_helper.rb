@@ -78,7 +78,7 @@ module ApplicationHelper
   end
 
   def lyrics_for(song)
-    return CGI.escapeHTML(song.lyrics) if song.lyrics.present?
+    return song.lyrics.gsub("\n", '<br>') if song.lyrics.present?
     'No lyrics available for this song'
   end
 

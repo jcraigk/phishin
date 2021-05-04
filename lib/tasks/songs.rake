@@ -9,7 +9,7 @@ namespace :songs do
         original: true,
         instrumental: false,
         lyrics: nil
-      ).order(title: :asc)
+      ).order(title: :desc)
     pbar = ProgressBar.create(
       total: relation.count,
       format: '%a %B %c/%C %p%% %E'
@@ -97,6 +97,24 @@ namespace :songs do
     end
 
     pbar.finish
+  end
+
+  desc 'Export lyrics to textfile'
+  task export_lyrics: :environment do
+    File.open("#{Rails.root}/lyrics.txt", 'w') do |f|
+      Song.where.not(lyrics: nil).find_each do |song|
+        f.write("#{song.title}::::#{song.lyrics};;;;")
+      end
+    end
+  end
+
+  desc 'Import lyrics from textfile'
+  task import_lyrics_text: :environment do
+    File.open("#{Rails.root}/lyrics.txt").read.split(';;;;').each do |data|
+      parts = data.split('::::')
+      puts "Importing #{parts.first}"
+      Song.find_by(title: parts.first).update(lyrics: parts.second)
+    end
   end
 
   def fetch_genius_data(path)
