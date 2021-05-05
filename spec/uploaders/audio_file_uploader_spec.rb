@@ -3,7 +3,7 @@ require 'rails_helper'
 
 RSpec.describe AudioFileUploader do
   let(:track) do
-    create(:track, audio_file: File.open("#{Rails.root}/spec/fixtures/test.mp3", 'rb'))
+    create(:track, audio_file: File.open("#{Rails.root}/spec/fixtures/audio_file.mp3", 'rb'))
   end
   let(:audio_file) { track.audio_file }
 

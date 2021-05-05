@@ -27,7 +27,6 @@ $highlight2: #91e1f2;
 $highlight3: #cbebf2;
 $highlight4: #fff494;
 
-
 @-webkit-keyframes pulsate-highlight {
     0%   { background: $background_gray; }
     100%  { background: $highlight4; }
@@ -448,8 +447,8 @@ html {
     }
     #player_menu {
       position: absolute;
-      margin-top: 46px;
-      margin-left: 655px;
+      margin-top: 92px;
+      margin-left: 836px;
       width: 60px;
       height: 40px;
 
@@ -491,75 +490,72 @@ html {
     }
     .playlist_title {
       float: left;
-      border: 1px solid red;
     }
     .playlist {
       margin-top: 60px;
     }
     #scrubber_controls {
       position: absolute;
-      width: 400px;
-      height: 36px;
-      margin-top: 42px;
+      width: 500px;
+      height: 70px;
+      margin-top: 40px;
       margin-left: 260px;
 
+      #waveform {
+        position: absolute;
+        width: 440px;
+        height: 70px;
+        margin-left: 30px;
+        z-index: 30;
+        pointer-events: none;
+      }
       #scrubber {
         &.ui-slider {
-          background-image: none !important; //Override jquery UI CSS
-          height: 5px !important;
-          background-color: #ccc !important;
-          cursor: pointer !important;
-          position: absolute !important;
-          margin-top: 14px !important;
-          margin-left: 57px !important;
-          width: 280px !important;
-          border-color: $btn_border !important;
+          position: absolute;
+          width: 440px;
+          height: 70px;
+          background-image: none; //Override jquery UI CSS
+          background-color: transparent;
+          cursor: pointer;
+          margin-left: 30px;
+          border: none;
         }
         .ui-slider-handle {
           background-image: none !important; //Override jquery UI CSS
           margin-top: 4px;
           margin-left: -4px !important;
-          background-color: $btn_border !important;
-          border-color: $btn_border !important;
-          width: 5px !important;
-          height: 5px !important;
-          cursor: pointer !important;
+          background-color: transparent;
+          width: 0px;
+          height: 70px;
+          cursor: pointer;
+          border: none;
         }
         .ui-slider-range {
-          background-image: none !important;
-          background-color: $btn_border !important;
+          background-image: none;
+          background: url('progress-bar.png');
         }
       }
       #time_elapsed {
-        font-size: 11px;
+        font-size: 13px;
         color: $gray_70;
-        margin-left: 30px;
+        margin-left: 5px;
         width: 30px;
-        line-height: 36px;
+        line-height: 70px;
         float: left;
         text-align: left;
         padding-right: 5px;
       }
       #time_remaining {
-        font-size: 11px;
+        font-size: 13px;
         color: $gray_70;
-        width: 48px;
-        line-height: 36px;
+        width: 20px;
+        line-height: 70px;
         float: right;
         text-align: left;
       }
       .scrubbing {
         color: #1a80f6;
       }
-    }
-    #playlist_button {
-      position: absolute;
-      margin-top: 55px;
-      margin-left: 644px;
-      width: 17px;
-      height: 12px;
-      cursor: pointer;
-      background: url('icons-playlist.png');
     }
     .playlist_active {
       background-position: -17px 0 !important;
@@ -582,8 +578,8 @@ html {
     #player_title_container {
       padding: 0px;
       position: absolute;
-      margin-left: 258px;
-      margin-top: 5px;
+      margin-left: 320px;
+      margin-top: -3px;
       width: 410px;
       height: 40px;
       text-align: center;
@@ -607,13 +603,15 @@ html {
     #player_detail {
       padding: 0px;
       position: absolute;
-      margin-top: 71px;
-      margin-left: 257px;
-      width: 400px;
+      margin-top: 83px;
+      margin-left: 0px;
+      width: 250px;
+      height: 20px;
       text-align: center;
       overflow: hidden;
       font-size: 15px;
       color: $gray_70;
+      overflow: hidden;
 
       a {
         color: #333;
@@ -622,7 +620,7 @@ html {
     #player_controls {
       position: absolute;
       margin-left: 773px;
-      margin-top: 42px;
+      margin-top: 58px;
 
       & > div {
         float: left;
@@ -680,7 +678,7 @@ html {
   }
   #logo {
     position: absolute;
-    margin-top: 34px;
+    margin-top: 24px;
     margin-left: 20px;
     width: 235px;
   }

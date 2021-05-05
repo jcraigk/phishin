@@ -16,9 +16,9 @@ class @Player
     @playlist         = []
     @app_name         = $('body').data 'app-name'
     @time_marker      = @Util.timeToMS $('body').data('time-marker')
-    @$playlist_btn    = $ '#playlist_button'
     @$playpause       = $ '#control_playpause'
     @$scrubber        = $ '#scrubber'
+    @$waveform        = $ '#waveform'
     @$volume_icon     = $ '#volume_icon'
     @$time_elapsed    = $ '#time_elapsed'
     @$time_remaining  = $ '#time_remaining'
@@ -207,7 +207,6 @@ class @Player
       data: { 'track_id': track_id }
       success: (r) =>
         @playlist = r.playlist
-    @$playlist_btn.addClass 'playlist_active'
 
   playRandomSongTrack: (song_id) ->
     $.ajax
@@ -292,6 +291,11 @@ class @Player
           @Util.feedback { alert: "Error retrieving track info" }
 
   _updatePlayerDisplay: (r) ->
+    @$scrubber.css('background-color', 'transparent')
+    @$waveform.css('background-image', "url(#{r.waveform_image_url})")
+    setTimeout( =>
+      @$scrubber.css('background-color', '#999999')
+    , 50)
     @duration = r.duration
     if r.title.length > 26 then @$player_title.addClass 'long_title' else @$player_title.removeClass 'long_title'
     if r.title.length > 50 then r.title = r.title.substring(0, 47) + '...'
@@ -308,7 +312,7 @@ class @Player
       @$time_elapsed.html '0:00'
       @$time_remaining.html '0:00'
     else
-      @$player_detail.html "<a class=\"show_date\" href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.venue_url}\">#{@Util.truncate(r.venue)}</a>&nbsp;&nbsp;&nbsp;<a href=\"#{r.city_url}\">#{r.city}</a>"
+      @$player_detail.html "<a class=\"show_date\" href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"#{r.venue_url}\">#{@Util.truncate(r.venue)}</a>"
 
   _updatePlayButton: (playing=true) ->
     if playing

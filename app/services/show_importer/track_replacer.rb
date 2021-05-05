@@ -41,6 +41,7 @@ class ShowImporter::TrackReplacer
       track.save
       track.save_duration
       track.apply_id3_tags
+      track.generate_waveform_image
       puts "#{track.position}. #{track.title} (#{track.id}) replaced with `#{filename}`"
     end
     show.save_duration

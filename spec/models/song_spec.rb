@@ -79,6 +79,8 @@ RSpec.describe Song do
         slug: song.slug,
         title: song.title,
         alias: song.alias,
+        original: song.original,
+        artist: song.artist,
         lyrics: song.lyrics,
         tracks_count: song.tracks_count,
         updated_at: song.updated_at.iso8601
@@ -90,6 +92,8 @@ RSpec.describe Song do
         slug: song.slug,
         title: song.title,
         alias: song.alias,
+        original: song.original,
+        artist: song.artist,
         lyrics: song.lyrics,
         tracks_count: song.tracks_count,
         updated_at: song.updated_at.iso8601,

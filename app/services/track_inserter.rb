@@ -20,6 +20,7 @@ class TrackInserter
     insert_new_track
     track.save_duration
     track.apply_id3_tags
+    track.generate_waveform_image
     add_sbd_tag
     update_show_duration
   end

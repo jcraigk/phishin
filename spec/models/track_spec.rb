@@ -169,6 +169,11 @@ RSpec.describe Track do
     expect(track.mp3_url).to eq(url)
   end
 
+  it 'provides #waveform_image_url' do
+    url = track.waveform_image.url(host: APP_BASE_URL).gsub('tracks/audio_files', 'audio')
+    expect(track.waveform_image_url).to eq(url)
+  end
+
   describe 'serialization' do
     let!(:track_tags) { create_list(:track_tag, 3, track: track) }
     let(:expected_as_json) do
@@ -183,6 +188,7 @@ RSpec.describe Track do
         likes_count: track.likes_count,
         slug: track.slug,
         mp3: track.mp3_url,
+        waveform_image: track.waveform_image_url,
         song_ids: track.songs.map(&:id),
         updated_at: track.updated_at.iso8601
       }
@@ -219,6 +225,7 @@ RSpec.describe Track do
         slug: track.slug,
         tags: tags.sort_by { |t| t[:priority] },
         mp3: track.mp3_url,
+        waveform_image: track.waveform_image_url,
         song_ids: track.songs.map(&:id),
         updated_at: track.updated_at.iso8601
       }
