@@ -34,6 +34,8 @@ RSpec/DescribeClass:
 RSpec/ExampleLength:
   Exclude:
     - spec/features/**/*
+Rails/EnvironmentVariableAccess:
+  Enabled: false
 Rails/Exit:
   Enabled: false
 Rails/FilePath:
