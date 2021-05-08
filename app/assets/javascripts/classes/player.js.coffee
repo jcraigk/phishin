@@ -293,10 +293,12 @@ class @Player
 
   _updatePlayerDisplay: (r) ->
     @$scrubber.css('background-color', 'transparent')
+    @$scrubber.css('opacity', 0)
     @$waveform.css('background-image', "url(#{r.waveform_image_url})")
     setTimeout( =>
+      @$scrubber.animate({ opacity: 1 }, { duration: 1000 });
       @$scrubber.css('background-color', '#999999')
-    , 50)
+    , 500)
     @duration = r.duration
     if r.title.length > 26 then @$player_title.addClass 'long_title' else @$player_title.removeClass 'long_title'
     if r.title.length > 50 then r.title = r.title.substring(0, 47) + '...'
