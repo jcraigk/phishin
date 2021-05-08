@@ -14,7 +14,7 @@ describe 'Player controls', :js do
       expect_content(show.tracks.first.title)
     end
     within('#player_detail') do
-      expect_content(show.date_with_dots, show.venue.name, show.venue.location)
+      expect_content(show.date_with_dots, show.venue.name)
     end
 
     # Hover over the track title at the top of the player
@@ -42,11 +42,6 @@ describe 'Player controls', :js do
 
   it 'click links below scrubber' do
     visit show.date
-
-    within('#player_detail') do
-      click_link(show.venue.location)
-    end
-    expect(page).to have_current_path(map_path(map_term: show.venue.location))
 
     within('#player_detail') do
       click_link(show.venue.name)
@@ -82,29 +77,31 @@ describe 'Player controls', :js do
     end
   end
 
-  it 'playlist icon' do
-    visit root_path
+  # Removed to make space for waveform image
+  # it 'playlist icon' do
+  #   visit root_path
+  #
+  #   find('#playlist_button').click
+  #   expect(page).to have_current_path(active_playlist_path)
+  # end
 
-    find('#playlist_button').click
-    expect(page).to have_current_path(active_playlist_path)
-  end
-
-  it 'gear icon (loop/shuffle)' do
-    visit root_path
-
-    # Click gear icon
-    find('#player_menu .btn-group').click
-
-    # Loop
-    find('#loop_checkbox').set(true)
-    expect_content('Playback looping enabled')
-    find('#loop_checkbox').set(false)
-    expect_content('Playback looping disabled')
-
-    # Shuffle
-    find('#shuffle_checkbox').set(true)
-    expect_content('Playback shuffling enabled')
-    find('#shuffle_checkbox').set(false)
-    expect_content('Playback shuffling disabled')
-  end
+  # Removed to make space for waveform image
+  # it 'gear icon (loop/shuffle)' do
+  #   visit root_path
+  #
+  #   # Click gear icon
+  #   find('#player_menu .btn-group').click
+  #
+  #   # Loop
+  #   find('#loop_checkbox').set(true)
+  #   expect_content('Playback looping enabled')
+  #   find('#loop_checkbox').set(false)
+  #   expect_content('Playback looping disabled')
+  #
+  #   # Shuffle
+  #   find('#shuffle_checkbox').set(true)
+  #   expect_content('Playback shuffling enabled')
+  #   find('#shuffle_checkbox').set(false)
+  #   expect_content('Playback shuffling disabled')
+  # end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-class AudioFileUploader < PhishinUploader
+class WaveformImageUploader < PhishinUploader
   def generate_location(_io, record: nil, _name: nil, **)
-    "#{partition_path(record)}/#{record.id}.mp3"
+    "#{partition_path(record)}/#{record.id}.png"
   end
 end

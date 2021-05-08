@@ -16,13 +16,17 @@ RSpec.describe TrackInserter do
     }
   end
   let(:date) { show.date }
-  let(:file) { Rails.root.join('spec/fixtures/test.mp3') }
+  let(:file) { Rails.root.join('spec/fixtures/audio_file.mp3') }
   let(:show) { create(:show) }
   let(:song_id) { song.id }
   let(:song) { create(:song) }
   let(:title) { 'New Track' }
+  let(:mock_generator) { instance_spy(WaveformImageGenerator) }
 
   before do
+    allow(WaveformImageGenerator).to receive(:new).and_return(mock_generator)
+    allow(mock_generator).to receive(:call)
+
     create(:track, show: show, position: 1)
     create(:track, show: show, position: 2)
     create(:track, show: show, position: 3)

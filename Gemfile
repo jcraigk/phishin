@@ -30,6 +30,7 @@ gem 'soundmanager2-rails'
 gem 'therubyracer'
 gem 'twitter-bootstrap-rails', '2.2.8'
 gem 'uglifier'
+gem 'waveform'
 
 group :development do
   gem 'bullet'

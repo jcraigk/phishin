@@ -96,6 +96,7 @@ class ShowImporter::Orchestrator
     track.update!(audio_file: File.open("#{@fm.s_dir}/#{track.filename}"))
     track.save_duration
     track.apply_id3_tags
+    track.generate_waveform_image
   end
 
   def puts_success

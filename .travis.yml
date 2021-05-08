@@ -7,10 +7,12 @@ notifications:
   email: false
 addons:
   apt:
+    update: true
     packages:
       - chromium-chromedriver
   postgresql: '9.4'
 before_install:
+  - sudo apt-get -y install libsndfile-dev
   - ln -s /usr/lib/chromium-browser/chromedriver ~/bin/chromedriver
   - psql -c 'create database phishin_test;' -U postgres
   - gem update --system --no-document

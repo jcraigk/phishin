@@ -1,5 +1,21 @@
 # frozen_string_literal: true
 namespace :tracks do
+  desc 'Generate waveform images from audio files'
+  task generate_images: :environment do
+    relation = Track.where(waveform_image_data: nil).order(id: :asc)
+    pbar = ProgressBar.create(
+      total: relation.count,
+      format: '%a %B %c/%C %p%% %E'
+    )
+
+    relation.find_each do |track|
+      track.generate_waveform_image
+      pbar.increment
+    end
+
+    pbar.finish
+  end
+
   desc 'Check for the same file being used for second occurrence of song within a show'
   task find_dupe_filenames: :environment do
     show_list = []

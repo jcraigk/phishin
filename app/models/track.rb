@@ -11,6 +11,8 @@ class Track < ApplicationRecord
   include AudioFileUploader::Attachment(:audio_file)
   validates :audio_file, presence: true
 
+  include WaveformImageUploader::Attachment(:waveform_image)
+
   include PgSearch::Model
   pg_search_scope(
     :kinda_matching,
@@ -53,8 +55,16 @@ class Track < ApplicationRecord
     audio_file.url(host: APP_BASE_URL).gsub('tracks/audio_files', 'audio')
   end
 
+  def waveform_image_url
+    waveform_image.url(host: APP_BASE_URL).gsub('tracks/audio_files', 'audio')
+  end
+
   def save_duration
     update(duration: Mp3DurationQuery.new(audio_file.to_io.path).call)
+  end
+
+  def generate_waveform_image
+    WaveformImageGenerator.new(self).call
   end
 
   def as_json # rubocop:disable Metrics/MethodLength
@@ -69,6 +79,7 @@ class Track < ApplicationRecord
       likes_count: likes_count,
       slug: slug,
       mp3: mp3_url,
+      waveform_image: waveform_image_url,
       song_ids: songs.map(&:id),
       updated_at: updated_at.iso8601
     }
@@ -91,6 +102,7 @@ class Track < ApplicationRecord
       slug: slug,
       tags: track_tags_for_api,
       mp3: mp3_url,
+      waveform_image: waveform_image_url,
       song_ids: songs.map(&:id),
       updated_at: updated_at.iso8601
     }

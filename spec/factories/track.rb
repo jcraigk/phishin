@@ -5,7 +5,8 @@ FactoryBot.define do
     songs { [build(:song)] }
     set { '1' }
     sequence(:position, 1)
-    audio_file_data { ShrineTestData.attachment_data }
+    audio_file_data { ShrineTestData.attachment_data('audio_file.mp3') }
+    waveform_image_data { ShrineTestData.attachment_data('waveform_image.png') }
     duration { 1_000 }
 
     show

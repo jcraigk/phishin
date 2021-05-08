@@ -183,8 +183,6 @@ $ ->
   $(document)
   .on 'click', '#playlist_mode_btn', (e) ->
     App.Player.togglePlaylistMode()
-  .on 'click', '#playlist_button', ->
-    App.Util.navigateTo $(this).data('url')
   .on 'blur', '#playlist_name_input', (e) ->
     $('#playlist_slug_input').val App.Util.stringToSlug($(this).val())
   .on 'click', '#save_playlist_btn', (e) ->
