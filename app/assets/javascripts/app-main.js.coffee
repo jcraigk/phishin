@@ -262,7 +262,7 @@ $ ->
 
   # Scrubber (jQuery UI slider)
   $('#scrubber').slider({
-    animate: 'fast',
+    animate: false,
     range: 'min',
     max: 100,
     value: 0,

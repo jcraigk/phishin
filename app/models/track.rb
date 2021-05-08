@@ -56,7 +56,7 @@ class Track < ApplicationRecord
   end
 
   def waveform_image_url
-    waveform_image.url(host: APP_BASE_URL).gsub('tracks/audio_files', 'audio')
+    waveform_image&.url(host: APP_BASE_URL)&.gsub('tracks/audio_files', 'audio')
   end
 
   def save_duration
