@@ -106,6 +106,7 @@ class @Player
 
   playTrack: (track_id, time_marker=0) ->
     if track_id != @active_track
+      @$scrubber.slider 'value', 0
       @preload_started = false
       unless track_id and @sm_sound = @sm.getSoundById track_id
         this._hidePlayTooltip()

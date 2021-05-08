@@ -6,7 +6,6 @@
  */
 
 $text_gray: #6d6f71;
-$highlight: #7eb8c7;
 $emphasis: #000;
 $alert: #2a2a2a;
 $background_gray: #f2f3f5;
@@ -22,10 +21,12 @@ $btn_bg_bottom: #d3d4d6;
 $likes_blue: #6ccff6;
 $hr_gray: #cececf;
 $nav_highlight: #5f5f5f;
+$highlight: #7eb8c7;
 $highlight1: #00baf2;
 $highlight2: #91e1f2;
 $highlight3: #cbebf2;
 $highlight4: #fff494;
+$scrubbing: #1a80f6;
 
 @-webkit-keyframes pulsate-highlight {
     0%   { background: $background_gray; }
@@ -533,6 +534,7 @@ html {
         .ui-slider-range {
           background-image: none;
           background: url('progress-bar.png');
+          border-radius: 0px;
         }
       }
       #time_elapsed {
@@ -554,7 +556,7 @@ html {
         text-align: left;
       }
       .scrubbing {
-        color: #1a80f6;
+        color: $scrubbing;
       }
     }
     .playlist_active {
