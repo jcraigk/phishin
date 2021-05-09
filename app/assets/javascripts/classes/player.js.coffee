@@ -18,6 +18,7 @@ class @Player
     @time_marker      = @Util.timeToMS $('body').data('time-marker')
     @$playpause       = $ '#control_playpause'
     @$scrubber        = $ '#scrubber'
+    @$scrubber_ctrl   = $ '#scrubber_controls'
     @$waveform        = $ '#waveform'
     @$volume_icon     = $ '#volume_icon'
     @$time_elapsed    = $ '#time_elapsed'
@@ -292,6 +293,7 @@ class @Player
           @Util.feedback { alert: "Error retrieving track info" }
 
   _updatePlayerDisplay: (r) ->
+    @$scrubber_ctrl.css('opacity', 1)
     @$scrubber.css('background-color', 'transparent')
     @$scrubber.css('opacity', 0)
     @$waveform.css('background-image', "url(#{r.waveform_image_url})")

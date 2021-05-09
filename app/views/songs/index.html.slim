@@ -3,7 +3,7 @@
 #content
   #title_box
     h1 '#{params[:char]}' Songs
-    h2 Total Songs: #{@songs.size}
+    h3 Total: #{@songs.size}
     .hr
 
     = render partial: 'shared/sort_songs_and_venues_filter', locals: { item_hash: songs_and_venues_sort_items }

@@ -2,10 +2,13 @@
 
 #content
   #title_box
+    - if @pretitle.present?
+      h1 = @pretitle
     h1 = @title
+    h3 Total shows: #{@shows.size}
+
     .hr
-    h2 Shows: #{@shows.size}
-    .hr
+
     = render partial: 'shared/sort_filter', locals: { item_hash: show_sort_items }
 
   #content_box

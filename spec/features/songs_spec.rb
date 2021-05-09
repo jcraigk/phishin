@@ -22,7 +22,7 @@ describe 'Songs', :js do
     visit songs_path
 
     within('#title_box') do
-      expect_content("'A' Songs", 'Total Songs: 1')
+      expect_content("'A' Songs", 'Total: 1')
     end
 
     within('#sub_nav') do
@@ -39,7 +39,7 @@ describe 'Songs', :js do
     end
 
     within('#title_box') do
-      expect_content("'G' Songs", "Total Songs: #{g_songs.count}")
+      expect_content("'G' Songs", "Total: #{g_songs.count}")
     end
 
     within('#content_box') do

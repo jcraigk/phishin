@@ -32,6 +32,11 @@
       h1
         = era
         |  Era
+
+      span.set_duration
+        => number_with_delimiter(years.sum { |year| @shows[year].size })
+        | shows
+
       ul.item_list.clickable
         - years.reverse.each do |year|
           li

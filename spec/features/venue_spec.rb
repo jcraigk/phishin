@@ -14,7 +14,7 @@ describe 'Venue page', :js do
 
   it 'sorting' do
     visit "/#{venue.slug}"
-    expect_content('Shows: 3')
+    expect_content('Total shows: 3')
 
     expect_show_sorting_controls(shows)
   end

@@ -3,8 +3,10 @@
 #content
   #title_box
     h1 All Tags
-    h2 = "Total Tags: #{number_with_delimiter(Tag.count)}"
+    h3 = "Total: #{number_with_delimiter(Tag.count)}"
+
     .hr
+
     p Tags are used to annotate and highlight content.
     p
       ' The tag associations seen here have been pulled from various

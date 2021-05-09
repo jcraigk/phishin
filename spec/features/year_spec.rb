@@ -18,7 +18,7 @@ describe 'Year spec', :js do
     visit '/2018'
 
     within('#title_box') do
-      expect_content('Shows: 3')
+      expect_content('Total shows: 3')
     end
 
     expect_show_sorting_controls(shows)

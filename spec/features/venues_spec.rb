@@ -22,7 +22,7 @@ describe 'Venues', :js do
     visit venues_path
 
     within('#title_box') do
-      expect_content("'A' Venues", 'Total Venues: 1')
+      expect_content("'A' Venues", 'Total: 1')
     end
 
     within('#sub_nav') do
@@ -39,7 +39,7 @@ describe 'Venues', :js do
     end
 
     within('#title_box') do
-      expect_content("'E' Venues", "Total Venues: #{e_venues.count}")
+      expect_content("'E' Venues", "Total: #{e_venues.count}")
     end
 
     within('#content_box') do

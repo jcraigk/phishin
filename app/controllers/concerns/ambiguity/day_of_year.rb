@@ -16,6 +16,7 @@ module Ambiguity::DayOfYear
 
   def hydrate_day_of_year
     @sections = day_of_year_sections
+    @pretitle = 'Today in History' if current_slug.in?(TODAY_SLUGS)
     @title = "#{Date::MONTHNAMES[month]} #{day}"
     @view = 'shows/index'
   end

@@ -50,7 +50,7 @@ describe 'Ambiguous slug resolution', :js do
     visit '/2014'
 
     within('#title_box') do
-      expect_content('Year: 2014', 'Shows: 2')
+      expect_content('Year of 2014', 'Total shows: 2')
     end
 
     within('#content_box') do
@@ -68,7 +68,7 @@ describe 'Ambiguous slug resolution', :js do
     visit '/1998-2014'
 
     within('#title_box') do
-      expect_content('Years: 1998-2014', 'Shows: 3')
+      expect_content('Years: 1998-2014', 'Total shows: 3')
     end
 
     within('#content_box') do
@@ -108,7 +108,7 @@ describe 'Ambiguous slug resolution', :js do
     visit "/#{venue.slug}"
 
     within('#title_box') do
-      expect_content(venue.name, venue.location, "Shows: #{venue.shows.size}")
+      expect_content(venue.name, venue.location, "Total shows: #{venue.shows.size}")
     end
 
     items = page.all('ul.item_list li')
@@ -119,7 +119,7 @@ describe 'Ambiguous slug resolution', :js do
     visit "/#{tour.slug}"
 
     within('#title_box') do
-      expect_content(tour.name, "Shows: #{tour.shows.size}")
+      expect_content(tour.name, "Total shows: #{tour.shows.size}")
     end
 
     items = page.all('ul.item_list li')

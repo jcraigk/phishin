@@ -3,8 +3,7 @@ module NavigationHelper
   def global_nav(controller) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     str = ''
     global_nav_items.each do |name, props|
-      css = ''
-      css = 'active' if (controller || params[:controller]).in?(props[1])
+      css = active_route?(controller, props[1]) ? 'active' : nil
       if name == 'userbox'
         css += ' user_control'
         if user_signed_in?
@@ -25,6 +24,12 @@ module NavigationHelper
     end
 
     str.html_safe
+  end
+
+  def active_route?(controller, keyword)
+    controller.in?(keyword) ||
+      params[:controller].in?(keyword) ||
+      params[:slug].in?(keyword)
   end
 
   def nav_link(name, props, css, margin)
@@ -86,14 +91,14 @@ module NavigationHelper
 
   def global_nav_items
     {
-      'Years' => [eras_path, %w[years], 263],
+      'Years' => [eras_path, %w[years eras], 263],
       'Venues' => [venues_path, %w[venues], 327],
       'Songs' => [songs_path, %w[songs], 390],
       'Map' => [default_map_path, %w[map], 448],
       'Top 40' => [top_shows_path, %w[top_shows top_tracks], 504],
       'Playlists' => [active_playlist_path, %w[playlists], 570],
       'Tags' => [tags_path, %w[tags], 630],
-      'Today' => [current_month_day, [], 685]
+      'Today' => ['/today-in-history', %w[today today-in-history], 685]
     }
   end
 
@@ -181,9 +186,5 @@ module NavigationHelper
 
   def single_page_link
     link_to 'Single page', url_for(per_page: 100_000)
-  end
-
-  def current_month_day
-    Time.use_zone(TIME_ZONE) { Time.current }.strftime('%B-%-d').downcase
   end
 end

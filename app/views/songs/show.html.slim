@@ -7,36 +7,41 @@
       - if !@song.original? && @song.artist.present?
         br
         | by #{@song.artist}
-    h2 Total tracks: #{@song.tracks.size}
     h3
       - if @song.original?
         | Original composition
       - else
         | Cover song
+    - if @song.instrumental?
+      h3 (Instrumental)
 
-    h3
-      - if @song.instrumental?
-        | (Instrumental)
-      - elsif @song.lyrics.present?
-        = link_to "#{tag.i(class: 'icon-book')} View Lyrics".html_safe, '#', class: 'song_lyrics btn', data: { title: @song.title, lyrics: lyrics_for(@song) }
-      .hr
+    h3 Total tracks: #{@song.tracks.size}
+
+    .hr
+    br
+
+    - if @song.lyrics.present?
+      = link_to "#{tag.i(class: 'icon-book')} &nbsp;Lyrics".html_safe, '#', class: 'song_lyrics btn', data: { title: @song.title, lyrics: lyrics_for(@song) }
+      br
+
+    a.btn href="http://phish.net/song/#{@song.slug}/history" target='_blank'
+      i.icon.icon-share
+      | &nbsp; History
+    br
+
+    button#random_song_track_btn.btn type='button' data-song-id=@song.id
+      i.icon.icon-play
+      | &nbsp;Random Track
+
     .hr
 
     = render partial: 'shared/sort_filter', locals: { item_hash: track_sort_items }
+
     .hr
 
     = link_to('<< Previous Song'.html_safe, "/#{@previous_song.slug}")
     = clear_both
     = link_to('Next Song >>'.html_safe, "/#{@next_song.slug}", class: 'next_item_link')
-    .hr
-
-    button#random_song_track_btn.btn type='button' data-song-id=@song.id
-      i.icon.icon-play
-      | Random Performance
-    br
-    a.btn href="http://phish.net/song/#{@song.slug}/history" target='_blank'
-      i.icon.icon-book>
-      | Phish.net Song History
 
   #content_box
     ul.item_list.clickable

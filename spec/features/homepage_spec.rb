@@ -73,7 +73,7 @@ describe 'Homepage', :js do
     click_link(most_recent_year)
 
     within('#title_box') do
-      expect_content(most_recent_year, 'Shows: 3')
+      expect_content(most_recent_year, 'Total shows: 3')
     end
 
     items = page.all('ul.item_list li')

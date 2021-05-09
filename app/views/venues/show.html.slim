@@ -4,12 +4,12 @@
     h1 = @venue.name
     h2
       a href="/map?map_term=#{CGI.escape(@venue.location)}&amp;distance=5" = @venue.location
-    h2 Shows: #{@venue.shows_count}
     - if @venue.other_names.any?
       h3.other_names
         | Also known as:
         <br>
         = @venue.other_names.join('<br>').html_safe
+    h3 Total shows: #{@venue.shows_count}
     .hr
 
     = render partial: 'shared/sort_filter', locals: { item_hash: show_sort_items }

@@ -500,6 +500,7 @@ html {
       height: 70px;
       margin-top: 40px;
       margin-left: 260px;
+      opacity: 0;
 
       #waveform {
         position: absolute;
@@ -619,7 +620,7 @@ html {
     #player_controls {
       position: absolute;
       margin-left: 773px;
-      margin-top: 58px;
+      margin-top: 43px;
 
       & > div {
         float: left;
@@ -854,10 +855,11 @@ html {
 
   .likes_large {
     a {
-      margin-top: 20px;
+      margin-top: 12px;
     }
     span {
-      line-height: 64px;
+      margin-top: 13px;
+      margin-left: -13px;
     }
   }
 }
