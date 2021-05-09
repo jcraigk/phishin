@@ -1,7 +1,6 @@
 /*
  *= require_self
  *= require jquery-ui/slider
- *= require jquery-ui/datepicker
  *= require_tree .
  */
 
@@ -1033,12 +1032,6 @@ html {
     position: relative;
     top: 6px;
   }
-  .beta {
-    color: #e26b6b !important;
-  }
-  .ui-datepicker {
-    margin-top: 0px !important;
-  }
   .track_tag_container_inline {
     float: left;
     margin-top: -10px;
@@ -1217,10 +1210,10 @@ html {
         margin-bottom: 20px;
       }
       #map_date_start {
-        width: 80px;
+        width: 120px;
       }
       #map_date_stop {
-        width: 90px;
+        width: 120px;
       }
     }
   }

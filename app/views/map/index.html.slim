@@ -12,9 +12,11 @@
       br
       | within date range
       p
-      input#map_date_start.small_input type='text' name='date_start' placeholder='earliest' value=params[:date_start]
-      |  to
-      input#map_date_stop.small_input< type='text' name='date_start' placeholder='latest' value=params[:date_stop]
+      input#map_date_start type='date' min='1983-01-01' max='#{Time.current.year}-12-31' name='date_start' value=params[:date_start]
+      br
+      | to
+      br
+      input#map_date_stop< type='date' min='1983-01-01' max='#{Time.current.year}-12-31' name='date_start' value=params[:date_stop]
       br
       br
       button#map_search_submit.btn type='button' SEARCH
