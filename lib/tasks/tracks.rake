@@ -2,7 +2,7 @@
 namespace :tracks do
   desc 'Generate waveform images from audio files'
   task generate_images: :environment do
-    relation = Track.where(waveform_image_data: nil).order(id: :asc)
+    relation = Track.unscoped.order(id: :desc)
     pbar = ProgressBar.create(
       total: relation.count,
       format: '%a %B %c/%C %p%% %E'

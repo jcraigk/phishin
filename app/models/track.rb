@@ -67,6 +67,10 @@ class Track < ApplicationRecord
     WaveformImageGenerator.new(self).call
   end
 
+  def extract_waveform_data
+    WaveformDataExtractor.new(self).call
+  end
+
   def as_json # rubocop:disable Metrics/MethodLength
     {
       id: id,
