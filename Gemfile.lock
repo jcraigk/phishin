@@ -129,7 +129,7 @@ GEM
     down (5.2.1)
       addressable (~> 2.5)
     erubi (1.10.0)
-    execjs (2.8.0)
+    execjs (2.7.0)
     factory_bot (6.2.0)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.2.0)
@@ -419,6 +419,7 @@ DEPENDENCIES
   database_cleaner
   devise
   dotenv-rails
+  execjs (= 2.7.0)
   factory_bot_rails
   faker
   friendly_id

@@ -7,6 +7,7 @@ gem 'bootstrap-will_paginate'
 gem 'coffee-rails'
 gem 'dalli'
 gem 'devise'
+gem 'execjs', '2.7.0' # 2.8 breaks coffeescript compilation
 gem 'friendly_id'
 gem 'geocoder'
 gem 'google-api-client'
