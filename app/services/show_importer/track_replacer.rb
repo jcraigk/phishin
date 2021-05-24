@@ -35,7 +35,8 @@ class ShowImporter::TrackReplacer
   end
 
   def replace_audio_on_tracks
-    track_hash.sort.each do |filename, track|
+    track_hash.sort_by { |_k, v| v.position }
+              .each do |filename, track|
       full_path = "#{IMPORT_DIR}/#{date}/#{filename}"
       track.audio_file = File.open(full_path, 'rb')
       track.save

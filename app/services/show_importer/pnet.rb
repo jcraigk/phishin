@@ -22,6 +22,7 @@ class ShowImporter::PNet
     res = http.start { |ht| ht.request(request) }
     raise 'Server Error' unless res.code.to_i == 200
 
+    return {} if res.body.blank?
     JSON[res.body]
   end
 
