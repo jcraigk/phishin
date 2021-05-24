@@ -170,7 +170,7 @@ GEM
       rexml
       signet (~> 0.14)
       webrick
-    google-apis-discovery_v1 (0.3.0)
+    google-apis-discovery_v1 (0.4.0)
       google-apis-core (~> 0.1)
     google-apis-generator (0.2.0)
       activesupport (>= 5.0)
