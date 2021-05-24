@@ -34,7 +34,7 @@ class ShowImporter::TrackReplacer
          .order(position: :asc)
   end
 
-  def replace_audio_on_tracks
+  def replace_audio_on_tracks # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     track_hash.sort_by { |_k, v| v.position }
               .each do |filename, track|
       full_path = "#{IMPORT_DIR}/#{date}/#{filename}"
