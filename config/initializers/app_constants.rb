@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 APP_NAME = 'Phish.in'
-APP_EMAIL = 'phish.in.music@gmail.com'
+APP_EMAIL = 'noreply@phish.in'
 DEVISE_EMAIL_FROM = 'Phish.in <noreply@phish.in>'
 DESCRIPTION = 'Phish.in is an open source archive of live Phish audio. Stream legal audience recordings using the web UI or API.'
 
