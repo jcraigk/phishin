@@ -84,9 +84,9 @@ class SearchService
 
   def venue_where_str
     'venues.name ILIKE :term OR venues.abbrev ILIKE :term ' \
-    'OR venue_renames.name ILIKE :term ' \
-    'OR venues.city ILIKE :term OR venues.state ILIKE :term ' \
-    'OR venues.country ILIKE :term '
+      'OR venue_renames.name ILIKE :term ' \
+      'OR venues.city ILIKE :term OR venues.state ILIKE :term ' \
+      'OR venues.country ILIKE :term '
   end
 
   def tags

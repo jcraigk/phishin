@@ -35,7 +35,7 @@ module TagHelper
     tag_instance = tag_instances.first
     if tag_instance.is_a?(TrackTag)
       "#{tag_label(tag_instance.tag, 'detail_tag_label')}" \
-      "<br>#{tag_instance.track.show.date_with_dots} #{tag_instance.track.title}"
+        "<br>#{tag_instance.track.show.date_with_dots} #{tag_instance.track.title}"
     else
       "#{tag_label(tag_instance.tag, 'detail_tag_label')}<br>#{tag_instance.show.date_with_dots}"
     end
