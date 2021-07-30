@@ -130,7 +130,7 @@ module NavigationHelper
     str = ''
     ERAS.to_a.reverse.to_h.each do |_era, years|
       years.reverse.each_with_index do |year, i|
-        style = i + 1 == years.size ? 'margin-right: 26px' : ''
+        style = i + 1 == years.size ? 'margin-right: 15px' : ''
         css = year == params[:slug] ? 'active' : ''
         str += link_to_year(year, css, style)
       end
