@@ -7,8 +7,17 @@ ENV APP_NAME=${APP_NAME} \
     IN_DOCKER=true
 
 RUN apt-get update -qq && \
-    apt-get install -y build-essential libpq-dev nodejs memcached git shared-mime-info libsndfile-dev ffmpeg && \
-    apt-get clean
+    apt-get install -y \
+      build-essential \
+      ffmpeg \
+      git \
+      curl \
+      libpq-dev \
+      libsndfile-dev \
+      memcached \
+      nodejs \
+      shared-mime-info \
+    && apt-get clean
 
 # Bundle install, copy app
 WORKDIR $INSTALL_PATH
