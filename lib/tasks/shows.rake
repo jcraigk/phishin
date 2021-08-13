@@ -19,20 +19,13 @@ namespace :shows do
   desc 'Import a show'
   task import: :environment do
     require "#{Rails.root}/app/services/show_importer/show_importer"
+    include ActionView::Helpers::TextHelper
 
-    dates = Dir.entries(IMPORT_DIR).select do |entry|
-      File.directory?(File.join(IMPORT_DIR, entry)) &&
-        /\A\d{4}\-\d{2}\-\d{2}\z/.match?(entry)
-    end
-    next puts "No shows found in #{IMPORT_DIR}" unless dates.any?
+    dates = Dir.entries(IMPORT_DIR).grep(/\d{4}\-\d{1,2}\-\d{1,2}\z/).sort
+    next puts "❌ No shows found in #{IMPORT_DIR}" unless dates.any?
 
-    puts "#{dates.size} show folders found"
-    dates.each do |date|
-      puts '========================'
-      puts " PROCESSING #{date}"
-      puts '========================'
-      ShowImporter::Cli.new(date)
-    end
+    puts "🔎 #{pluralize(dates.size, 'folder')} found"
+    dates.each { |date| ShowImporter::Cli.new(date) }
   end
 
   desc 'Find shows with a single set'

@@ -1,54 +1,39 @@
 # frozen_string_literal: true
-require 'open-uri'
-require 'nokogiri'
-
 class ShowImporter::ShowInfo
-  attr_reader :song_titles, :pnet, :data
+  BASE_URL = 'https://api.phish.net/v5'
+  API_KEY = ENV['PNET_API_KEY']
+
+  attr_reader :date, :data, :songs
 
   def initialize(date)
     @date = date
-    @pnet = ShowImporter::PNet.new(ENV['PNET_API_KEY'])
-    @data = parse_data
+    @data = fetch_pnet_data
+    @songs ||= {}
 
-    populate_initial_setlist
-  end
+    raise "Date \"#{date}\" not found on Phish.net" if data.none?
 
-  def populate_initial_setlist
-    song_titles = parse_song_titles
-    if song_titles.empty?
-      puts "Date \"#{@date}\" not found on Phish.net!"
-      song_titles = ['You Enjoy Myself']
-    end
-
-    @song_titles = {}
-    song_titles.each_with_index do |song, i|
-      @song_titles[i + 1] = song
-    end
-  end
-
-  def parse_data
-    @pnet.shows_setlists_get('showdate' => @date)[0]
-  end
-
-  def parse_song_titles
-    Nokogiri.HTML(@data['setlistdata']).css('p.pnetset > a').map(&:content)
-  rescue NoMethodError
-    []
-  end
-
-  def [](pos)
-    @song_titles[pos]
+    populate_songs
   end
 
   def venue_name
-    @data['venue']
-  rescue NoMethodError
-    'Unknown Venue'
+    data.first.venue
   end
 
   def venue_city
-    @data['city']
-  rescue NoMethodError
-    'Unknown City'
+    data.first.city
+  end
+
+  private
+
+  def populate_songs
+    data.each { |t| @songs[t.position] = t.song }
+  end
+
+  def fetch_pnet_data
+    JSON.parse(Typhoeus.get(phishnet_api_url).body, object_class: OpenStruct).data
+  end
+
+  def phishnet_api_url
+    "#{BASE_URL}/setlists/showdate/#{date}.json?apikey=#{API_KEY}"
   end
 end

@@ -1,45 +1,58 @@
 # frozen_string_literal: true
 class ShowImporter::Orchestrator
-  attr_reader :show, :fm, :songs, :date, :show_found
+  attr_reader :fm, :date, :show_found, :path, :show_info
 
   def initialize(date)
     @date = date
-
-    puts 'Fetching show info...'
+    @path = "#{IMPORT_DIR}/#{date}"
     @show_info = ShowImporter::ShowInfo.new(date)
 
     analyze_filenames
 
-    @show = Show.find_by(date: date)
-    return if (@show_found = @show.present?)
+    return if (@show_found = Show.find_by(date: date).present?)
 
-    @show = Show.new(date: date, published: false)
-    @venue = find_venue
     assign_venue
+    assign_tour
+    import_notes
     populate_tracks
   end
 
-  def analyze_filenames
-    puts 'Analyzing filenames...'
-    @fm = ShowImporter::FilenameMatcher.new("#{IMPORT_DIR}/#{date}")
+  def show
+    @show ||= Show.new(date: date, published: false)
   end
 
-  def find_venue
-    puts 'Finding venue...'
-    Venue.left_outer_joins(:venue_renames)
-         .where(
-           '(venues.name = :name OR venue_renames.name = :name) AND city = :city',
-           name: @show_info.venue_name,
-           city: @show_info.venue_city
-         ).first
+  def analyze_filenames
+    @fm = ShowImporter::FilenameMatcher.new(path)
+  end
+
+  def venue
+    @venue ||=
+      Venue.left_outer_joins(:venue_renames)
+           .where(
+             '(venues.name = :name OR venue_renames.name = :name) AND city = :city',
+             name: show_info.venue_name,
+             city: show_info.venue_city
+           ).first
+  end
+
+  def tour
+    @tour ||= Tour.where('starts_on <= :date AND ends_on >= :date', date: date).first
   end
 
   def assign_venue
-    return @show.venue = @venue if @venue.present?
+    return show.venue = venue if venue.present?
 
     puts 'No venue matched! Enter Venue ID:'
     @venue = Venue.find($stdin.gets.chomp.to_i)
-    @show.venue = @venue
+    show.venue = venue
+  end
+
+  def assign_tour
+    return show.tour = tour if tour.present?
+
+    puts 'No tour matched! Enter Tour ID:'
+    @tour = Tour.find($stdin.gets.chomp.to_i)
+    show.tour = tour
   end
 
   def pp_list
@@ -62,7 +75,7 @@ class ShowImporter::Orchestrator
 
   def insert_before(pos)
     @tracks.each { |track| track.incr_pos if track.pos >= pos }
-    @tracks.insert pos, ShowImporter::TrackProxy.new(pos)
+    @tracks.insert pos, ShowImporter::TrackProxy.new(pos: pos)
   end
 
   def delete(pos)
@@ -74,53 +87,72 @@ class ShowImporter::Orchestrator
     @tracks.find { |s| s.pos == pos }
   end
 
+  def import_notes
+    return unless File.exist?(notes_file)
+    show.taper_notes = File.read(notes_file)
+  end
+
   def save
-    print 'Saving'
+    print '🍩 Processing...'
+    pbar = ProgressBar.create(total: @tracks.size, format: '%a %B %c/%C %p%% %E')
 
-    @show.save
-    @tracks.each do |track|
-      next puts "\nInvalid track! (#{track.title})" unless track.valid?
-      create_real_track(track)
-      print '.'
-    end
-    @show.save_duration
+    show.save
+    save_tracks(pbar)
+    show.save_duration
+    show.update!(published: true)
 
-    puts_success
+    pbar.finish
+    success
   end
 
   private
 
-  def create_real_track(track)
-    track.show = @show
-    track.save!(validate: false) # Generate ID for audio_file storage
-    track.update!(audio_file: File.open("#{@fm.s_dir}/#{track.filename}"))
-    track.save_duration
-    track.apply_id3_tags
-    track.generate_waveform_image
+  def notes_file
+    "#{path}/notes.txt"
   end
 
-  def puts_success
-    puts "\n#{@show.date} show imported successfully"
+  def save_tracks(pbar)
+    @tracks.each do |track|
+      next puts "\n❌ Invalid track! (#{track.title})" unless track.valid?
+      create_real_track(track)
+      pbar.increment
+    end
+  end
+
+  def create_real_track(track)
+    track.show = show
+    track.save!(validate: false) # Generate ID for audio_file storage
+    track.update!(audio_file: File.open("#{@fm.dir}/#{track.filename}"))
+    track.process_audio_file
+  end
+
+  def success
+    puts "✅ #{show.date} imported"
   end
 
   def populate_tracks
     @tracks = []
     matches = @fm.matches.dup
-    @show_info.song_titles.each do |pos, song_title|
-      process_track(matches, pos, song_title)
+    show_info.songs.each do |pos, title|
+      process_track(matches, pos, title)
     end
   end
 
-  def process_track(matches, pos, song_title)
-    if (fn_match = fn_match?(matches, song_title))
-      @tracks << ShowImporter::TrackProxy.new(pos, song_title, fn_match[0], fn_match[1])
-      return matches.delete(fn_match[0])
+  def process_track(matches, pos, title)
+    if (fn_match = fn_match?(matches, title))
+      @tracks << ShowImporter::TrackProxy.new(
+        pos: pos,
+        title: title,
+        filename: fn_match.first,
+        song: fn_match.second
+      )
+      return matches.delete(fn_match.first)
     end
 
-    @tracks << ShowImporter::TrackProxy.new(pos, song_title)
+    @tracks << ShowImporter::TrackProxy.new(pos: pos, title: title)
   end
 
-  def fn_match?(matches, song_title)
-    matches.find { |_k, v| !v.nil? && v.title == song_title }
+  def fn_match?(matches, title)
+    matches.find { |_k, v| !v.nil? && v.title == title }
   end
 end

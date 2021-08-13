@@ -156,13 +156,13 @@ namespace :tagin do
   desc 'Tease Chart HTML'
   task teases_html: :environment do
     URL = 'https://phish.net/tease-chart'
-    response = HTTParty.get(URL)
+    response = Typhoeus.get(URL)
 
     tag = Tag.find_by(name: 'Tease')
 
     headers = %i[song artist times dates]
     data = []
-    Nokogiri.HTML(response).search('table').first.search('tr').each_with_index do |tr|
+    Nokogiri.HTML(response.body).search('table').first.search('tr').each_with_index do |tr|
       record = {}
       tr.search('th, td').each_with_index do |cell, cell_idx|
         key = headers[cell_idx]
