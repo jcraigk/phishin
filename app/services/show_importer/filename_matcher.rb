@@ -1,14 +1,9 @@
 # frozen_string_literal: true
 class ShowImporter::FilenameMatcher
-  attr_reader :matches, :s_dir
+  attr_reader :matches, :dir
 
   def initialize(dir)
-    @s_dir = dir
-    unless File.directory?(@s_dir)
-      puts "TRIED: #{@s_dir}"
-      raise 'Must provide a valid directory path'
-    end
-
+    @dir = dir
     find_matches
   end
 
@@ -24,7 +19,7 @@ class ShowImporter::FilenameMatcher
   end
 
   def filenames
-    @filenames ||= Dir.entries(@s_dir).reject do |e|
+    @filenames ||= Dir.entries(dir).reject do |e|
       e == '.' || e == '..' || e =~ /.txt\z/
     end
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_09_161243) do
+ActiveRecord::Schema.define(version: 2021_08_13_175705) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -185,7 +185,7 @@ ActiveRecord::Schema.define(version: 2021_05_09_161243) do
     t.integer "position", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "duration"
+    t.integer "duration", default: 0, null: false
     t.string "set", limit: 255, null: false
     t.integer "likes_count", default: 0
     t.string "slug", limit: 255, null: false

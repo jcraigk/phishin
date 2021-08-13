@@ -7,15 +7,16 @@ namespace :phishnet do
     bad_dates = ['2018-08-17', '2018-08-18', '2018-08-19']
 
     (1983..Time.current.year).each do |year|
-      resp =
-        HTTParty.post(
-          'https://api.phish.net/v3/shows/query',
-          body: {
-            apikey: ENV['PNET_API_KEY'],
-            year: year,
-            order: 'ASC'
-          }
-        )
+      # TODO: Use PNet API v5
+      # resp =
+      #   HTTParty.post(
+      #     'https://api.phish.net/v3/shows/query',
+      #     body: {
+      #       apikey: ENV['PNET_API_KEY'],
+      #       year: year,
+      #       order: 'ASC'
+      #     }
+      #   )
       data = JSON[resp.body]['response']['data']
       print "#{year}: "
       data.each do |entry|
@@ -57,10 +58,11 @@ namespace :phishnet do
 
     relation.each do |show|
       date = show.date
-      resp =
-        HTTParty.get(
-          "https://api.phish.net/v3/setlists/get?apikey=#{ENV['PNET_API_KEY']}&showdate=#{date}"
-        ).body
+      # TODO: Use PNet API v5
+      # resp =
+      #   HTTParty.get(
+      #     "https://api.phish.net/v3/setlists/get?apikey=#{ENV['PNET_API_KEY']}&showdate=#{date}"
+      #   ).body
       data = JSON[resp].dig('response', 'data')&.first
       next unless data.present?
 

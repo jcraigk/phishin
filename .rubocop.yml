@@ -42,6 +42,8 @@ Rails/FilePath:
   Enabled: false
 Rails/HttpPositionalArguments:
   Enabled: false
+Rails/SkipsModelValidations:
+  Enabled: false
 RSpec/ImplicitSubject:
   EnforcedStyle: single_statement_only
 RSpec/MultipleExpectations:

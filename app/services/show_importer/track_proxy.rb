@@ -10,7 +10,7 @@ class ShowImporter::TrackProxy
     'S' => '(Check)'
   }.freeze
 
-  def initialize(pos = nil, title = nil, filename = nil, song = nil) # rubocop:disable Metrics/ParameterLists
+  def initialize(pos: nil, title: nil, filename: nil, song: nil)
     @_track = Track.new(position: pos, title: title, set: get_set_from_filename(filename))
     song ||= Song.find_by(title: title)
     @_track.songs << song unless song.nil?

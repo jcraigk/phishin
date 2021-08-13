@@ -60,7 +60,7 @@ class Track < ApplicationRecord
   end
 
   def save_duration
-    update(duration: Mp3DurationQuery.new(audio_file.to_io.path).call)
+    update_column(:duration, Mp3DurationQuery.new(audio_file.to_io.path).call)
   end
 
   def generate_waveform_image
@@ -110,6 +110,12 @@ class Track < ApplicationRecord
       song_ids: songs.map(&:id),
       updated_at: updated_at.iso8601
     }
+  end
+
+  def process_audio_file
+    save_duration
+    apply_id3_tags
+    generate_waveform_image
   end
 
   private

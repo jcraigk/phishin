@@ -33,7 +33,7 @@ namespace :songs do
 
       # Scrape lyrics from public path
       url = "https://genius.com#{lyrics_path}"
-      html = HTTParty.get(url).body
+      html = Typhoeus.get(url).body
       doc = Nokogiri::HTML(html)
       text = doc.css('.lyrics').first&.text&.strip
 
@@ -119,7 +119,7 @@ namespace :songs do
 
   def fetch_genius_data(path)
     JSON.parse(
-      HTTParty.get(
+      Typhoeus.get(
         "https://api.genius.com#{path}",
         headers: { 'Authorization' => "Bearer #{ENV['GENIUS_API_TOKEN']}" }
       ).body,
