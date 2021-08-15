@@ -46,8 +46,8 @@ class Track < ApplicationRecord
     Id3Tagger.new(self).call
   end
 
-  def generate_slug
-    return if slug.present?
+  def generate_slug(force: false)
+    return if !force && slug.present?
     self.slug = TrackSlugGenerator.new(self).call
   end
 

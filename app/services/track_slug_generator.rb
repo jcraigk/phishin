@@ -17,16 +17,21 @@ class TrackSlugGenerator
   end
 
   def suffix
-    return unless existing_titles.include?(new_title)
-    "-#{existing_titles.count(new_title) + 1}"
+    return if num_dupe_titles_before.zero?
+    "-#{num_dupe_titles_before + 1}"
   end
 
-  def new_title
-    @new_title ||= track.title
+  def num_dupe_titles_before
+    num = 0
+    existing_tracks.each do |t|
+      break if t == track
+      num += 1 if t.title == track.title
+    end
+    num
   end
 
-  def existing_titles
-    @existing_titles = Track.where(show_id: track.show_id).map(&:title)
+  def existing_tracks
+    @existing_tracks = track.show.tracks.order(position: :asc)
   end
 
   def base_slug

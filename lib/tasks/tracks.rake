@@ -1,5 +1,22 @@
 # frozen_string_literal: true
 namespace :tracks do
+  desc 'Fix bad slugs'
+  task fix_slugs: :environment do
+    rel = Track.where('slug SIMILAR TO ?', '\-\d').order(id: :desc)
+    pbar = ProgressBar.create(
+      total: rel.count,
+      format: '%a %B %c/%C %p%% %E'
+    )
+
+    rel.each do |track|
+      track.generate_slug(force: true)
+      track.save!
+      pbar.increment
+    end
+
+    pbar.finish
+  end
+
   desc 'Generate waveform images from audio files'
   task generate_images: :environment do
     relation = Track.includes(:show).where(waveform_data: nil).order(id: :desc)
