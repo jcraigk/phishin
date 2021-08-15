@@ -70,7 +70,7 @@ class @Map
   _drawVenues: (venues) ->
     for venue in venues
       html = "<h1><a href=\"/#{venue.slug}\">#{venue.name}</a></h1>"
-      html += "<h2><i>Also known as #{venue.other_names.join(', ')}</i></h2>" if venue.other_names
+      html += "<h2><i>Also known as #{venue.other_names.join(', ')}</i></h2>" if venue.other_names.length > 0
       html += "<h2>#{venue.location}</h2>"
       word = 'show'
       if venue.shows_count != 1
