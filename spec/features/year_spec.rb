@@ -7,7 +7,7 @@ describe 'Year spec', :js do
   before do
     shows.each_with_index do |show, idx|
       show.update(
-        duration: show.duration + idx * 10,
+        duration: show.duration + (idx * 10),
         date: "2018-01-#{idx + 1}"
       )
       create_list(:like, 10 - idx, likable: show)

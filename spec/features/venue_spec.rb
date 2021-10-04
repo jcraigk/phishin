@@ -7,7 +7,7 @@ describe 'Venue page', :js do
 
   before do
     shows.each_with_index do |show, idx|
-      show.update(duration: show.duration + idx * 10)
+      show.update(duration: show.duration + (idx * 10))
       create_list(:like, 10 - idx, likable: show)
     end
   end

@@ -21,7 +21,7 @@ RSpec.describe TrackSlugGenerator do
     end
   end
 
-  context 'when title is  Hold Your Head Up' do
+  context 'when title is Hold Your Head Up' do
     let(:title) { 'Hold Your Head Up' }
 
     it 'returns an abbreviated slug' do

@@ -5,7 +5,7 @@ module Syncable
   def seconds_or_nil(str)
     return if str.blank?
     min, sec = str.split(':')
-    min.to_i * 60 + sec.to_i
+    (min.to_i * 60) + sec.to_i
   end
 
   def find_track_by_url(url)

@@ -9,7 +9,7 @@ describe 'My Tracks', :js do
     tracks.each_with_index do |track, idx|
       create(:like, likable: track, user: user)
       create_list(:like, 10 - idx, likable: track)
-      track.update(duration: track.duration + idx * 10)
+      track.update(duration: track.duration + (idx * 10))
     end
 
     login_as(user)
