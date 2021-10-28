@@ -2,6 +2,9 @@
 class JamchartsImporter
   include ActionView::Helpers::SanitizeHelper
 
+  BASE_URL = 'https://api.phish.net/v5'
+  API_KEY = ENV['PNET_API_KEY']
+
   attr_reader :api_key, :invalid_items, :missing_shows, :matched_ids
 
   def initialize(api_key)
@@ -26,7 +29,7 @@ class JamchartsImporter
   end
 
   def phishnet_uri
-    URI.parse("http://api.phish.net/api.js?api=2.0&method=pnet.jamcharts.all&apikey=#{api_key}")
+    URI.parse("#{BASE_URL}/jamcharts.json?apikey=#{API_KEY}")
   end
 
   def songs
@@ -34,7 +37,7 @@ class JamchartsImporter
   end
 
   def jamcharts_as_json
-    @jamcharts_as_json ||= JSON[Net::HTTP.get_response(phishnet_uri).body]
+    @jamcharts_as_json ||= JSON[Net::HTTP.get_response(phishnet_uri).body]['data']
   end
 
   def create_progress_bar
