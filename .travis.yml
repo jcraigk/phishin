@@ -1,19 +1,36 @@
-dist: trusty
+dist: focal
 language: ruby
 rvm:
-  - 2.7.3
+  - 2.7.4
 cache: bundler
 notifications:
   email: false
+services:
+  - redis-server
+  - postgresql
 addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+  postgresql: '12'
   apt:
     update: true
     packages:
-      - chromium-chromedriver
-  postgresql: '9.4'
+      - postgresql-12
+env:
+  global:
+  - PGUSER=postgres
+  - PGPORT=5432
+  - PGHOST=localhost
 before_install:
   - sudo apt-get -y install libsndfile-dev
   - ln -s /usr/lib/chromium-browser/chromedriver ~/bin/chromedriver
+  - sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
+  - sudo service postgresql restart
+  - sleep 1
+  - postgres --version
   - psql -c 'create database phishin_test;' -U postgres
   - gem update --system --no-document
   - gem install bundler --no-document
