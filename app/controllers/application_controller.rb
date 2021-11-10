@@ -4,7 +4,6 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
 
   before_action :random_song_with_excerpt
-  before_action :require_xhr
   before_action :permitted_params, if: :devise_controller?
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_404
@@ -32,7 +31,7 @@ class ApplicationController < ActionController::Base
   end
 
   def random_song_with_excerpt
-    return if request_is_ajax?
+    return if request.xhr?
     @random_song = Song.random_with_lyrical_excerpt
   end
 
@@ -55,16 +54,5 @@ class ApplicationController < ActionController::Base
   def char_param
     c = params[:char]
     params[:char] = c.in?(FIRST_CHAR_LIST) ? c : FIRST_CHAR_LIST.first
-  end
-
-  private
-
-  def request_is_ajax?
-    request.xhr?
-  end
-
-  def require_xhr
-    return if request.xhr? || xhr_exempt_controller
-    render 'layouts/application', layout: false
   end
 end

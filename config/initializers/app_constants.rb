@@ -2,7 +2,7 @@
 APP_NAME = 'Phish.in'
 CONTACT_EMAIL = 'phish.in.music@gmail.com'
 DEVISE_EMAIL_FROM = 'Phish.in <noreply@phish.in>'
-DESCRIPTION = 'Phish.in is an open source archive of live Phish audio. Stream legal audience recordings using the web UI or API.'
+DESCRIPTION = 'An open source archive of live Phish audience recordings'
 
 CACHE_TTL = 10.minutes
 FIRST_CHAR_LIST = ('A'..'Z').to_a + ['#']
