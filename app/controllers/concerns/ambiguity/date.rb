@@ -12,12 +12,31 @@ module Ambiguity::Date
   private
 
   def hydrate_page_for_date
+    assign_ogp_values
     @sets = compose_sets_for_date
     @show_like = user_likes_for_shows([@show]).first
     @previous_show = previous_show
     @next_show = next_show
 
     @view = 'shows/show'
+  end
+
+  def assign_ogp_values
+    date = Date.parse(current_slug).strftime('%B %d, %Y')
+    if (track = track_from_show).present?
+      @ogp_audio_url = track.mp3_url
+      @ogp_title = "Listen to #{track.title} from #{date}"
+    else
+      @ogp_title = "Listen to #{date}"
+    end
+  end
+
+  def track_from_show
+    return if params[:anchor].blank?
+    Track.joins(:show)
+         .where(show: { date: current_slug })
+         .where(slug: params[:anchor])
+         .first
   end
 
   def compose_sets_for_date

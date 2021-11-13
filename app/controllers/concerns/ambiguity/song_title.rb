@@ -12,6 +12,7 @@ module Ambiguity::SongTitle
   private
 
   def hydrate_song_page
+    @ogp_title = "Listen to versions of #{song.title}"
     @previous_song = previous_song
     @next_song = next_song
     @view = 'songs/show'

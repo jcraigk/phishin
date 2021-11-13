@@ -25,6 +25,7 @@ module Ambiguity::Year
   end
 
   def hydrate_year_page # rubocop:disable Metrics/MethodLength
+    @ogp_title = "Listen to shows from #{current_slug}"
     @shows = shows_during_year
     @sections =
       @shows.group_by(&:tour_name)

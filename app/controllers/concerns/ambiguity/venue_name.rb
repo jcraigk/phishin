@@ -16,6 +16,7 @@ module Ambiguity::VenueName
   end
 
   def hydrate_venue_page
+    @ogp_title = "Listen to shows from #{venue.name}"
     @shows = venue.shows.includes(show_tags: :tag).order(@order_by)
     @shows_likes = user_likes_for_shows(@shows)
     @previous_venue = prev_venue
