@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 source 'https://rubygems.org'
-ruby '2.7.3'
+ruby '3.0.2'
 
 gem 'actionpack-action_caching', github: 'rails/actionpack-action_caching'
 gem 'bootstrap-will_paginate'
@@ -27,7 +27,7 @@ gem 'sentry-raven'
 gem 'shrine'
 gem 'slim'
 gem 'soundmanager2-rails'
-gem 'therubyracer'
+# gem 'therubyracer'
 gem 'twitter-bootstrap-rails', '2.2.8'
 gem 'typhoeus'
 gem 'uglifier'
