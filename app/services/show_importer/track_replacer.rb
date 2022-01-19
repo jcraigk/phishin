@@ -53,7 +53,7 @@ class ShowImporter::TrackReplacer
 
   def ensure_tracks_present
     return unless nil_tracks.any?
-    raise "❌ Not all files matched: #{nil_tracks.keys}"
+    abort "❌ Not all files matched: #{nil_tracks.keys}"
   end
 
   def nil_tracks
@@ -62,7 +62,7 @@ class ShowImporter::TrackReplacer
 
   def ensure_all_tracks_matched
     return if unmatched_tracks.empty?
-    raise "❌ Not all tracks matched: #{unmatched_tracks}"
+    abort "❌ Not all tracks matched: #{unmatched_tracks}"
   end
 
   def unmatched_tracks

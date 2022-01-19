@@ -10,7 +10,7 @@ class ShowImporter::ShowInfo
     @data = fetch_pnet_data
     @songs ||= {}
 
-    raise "Date \"#{date}\" not found on Phish.net" if data.none?
+    abort "Date \"#{date}\" not found on Phish.net" if data.none?
 
     populate_songs
   end
