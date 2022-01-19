@@ -3,7 +3,7 @@ require 'rails_helper'
 
 describe 'Venue page', :js do
   let(:venue) { create(:venue) }
-  let(:shows) { create_list(:show, 3, venue: venue) }
+  let(:shows) { create_list(:show, 3, venue:) }
 
   before do
     shows.each_with_index do |show, idx|

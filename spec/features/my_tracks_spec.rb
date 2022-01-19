@@ -7,7 +7,7 @@ describe 'My Tracks', :js do
 
   before do
     tracks.each_with_index do |track, idx|
-      create(:like, likable: track, user: user)
+      create(:like, likable: track, user:)
       create_list(:like, 10 - idx, likable: track)
       track.update(duration: track.duration + (idx * 10))
     end

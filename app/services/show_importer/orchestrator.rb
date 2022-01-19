@@ -9,7 +9,7 @@ class ShowImporter::Orchestrator
 
     analyze_filenames
 
-    return if (@show_found = Show.find_by(date: date).present?)
+    return if (@show_found = Show.find_by(date:).present?)
 
     assign_venue
     assign_tour
@@ -18,7 +18,7 @@ class ShowImporter::Orchestrator
   end
 
   def show
-    @show ||= Show.new(date: date, published: false)
+    @show ||= Show.new(date:, published: false)
   end
 
   def analyze_filenames
@@ -36,7 +36,7 @@ class ShowImporter::Orchestrator
   end
 
   def tour
-    @tour ||= Tour.where('starts_on <= :date AND ends_on >= :date', date: date).first
+    @tour ||= Tour.where('starts_on <= :date AND ends_on >= :date', date:).first
   end
 
   def assign_venue
@@ -75,7 +75,7 @@ class ShowImporter::Orchestrator
 
   def insert_before(pos)
     @tracks.each { |track| track.incr_pos if track.pos >= pos }
-    @tracks.insert pos, ShowImporter::TrackProxy.new(pos: pos)
+    @tracks.insert pos, ShowImporter::TrackProxy.new(pos:)
   end
 
   def delete(pos)
@@ -141,15 +141,15 @@ class ShowImporter::Orchestrator
   def process_track(matches, pos, title)
     if (fn_match = fn_match?(matches, title))
       @tracks << ShowImporter::TrackProxy.new(
-        pos: pos,
-        title: title,
+        pos:,
+        title:,
         filename: fn_match.first,
         song: fn_match.second
       )
       return matches.delete(fn_match.first)
     end
 
-    @tracks << ShowImporter::TrackProxy.new(pos: pos, title: title)
+    @tracks << ShowImporter::TrackProxy.new(pos:, title:)
   end
 
   def fn_match?(matches, title)

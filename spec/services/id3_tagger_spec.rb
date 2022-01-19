@@ -6,7 +6,7 @@ RSpec.describe Id3Tagger do
   subject(:service) { described_class.new(track) }
 
   let(:show) { create(:show, date: "#{year}-10-31") }
-  let(:track) { create(:track, position: position, title: title, show: show) }
+  let(:track) { create(:track, position:, title:, show:) }
   let(:year) { 1995 }
   let(:position) { 2 }
   let(:title) { 'Bathtub Gin' }

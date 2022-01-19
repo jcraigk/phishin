@@ -7,7 +7,7 @@ describe 'My Shows', :js do
 
   before do
     shows.each_with_index do |show, idx|
-      create(:like, likable: show, user: user)
+      create(:like, likable: show, user:)
       show.update(duration: show.duration + (idx * 10))
       create_list(:like, 10 - idx, likable: show)
     end

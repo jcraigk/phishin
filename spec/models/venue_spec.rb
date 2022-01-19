@@ -53,7 +53,7 @@ RSpec.describe Venue do
     subject(:venue) { build(:venue, name: 'Madison Square Garden', abbrev: 'MSG') }
 
     before do
-      create(:venue_rename, name: 'The Dump', venue: venue)
+      create(:venue_rename, name: 'The Dump', venue:)
     end
 
     it 'returns long name' do

@@ -3,7 +3,7 @@ require 'rails_helper'
 
 describe 'Top 40', :js do
   let(:tour) { create(:tour) }
-  let(:shows) { create_list(:show, 42, :with_likes, tour: tour) }
+  let(:shows) { create_list(:show, 42, :with_likes, tour:) }
 
   before do
     create_list(:track, 42, :with_likes, show: shows.first)

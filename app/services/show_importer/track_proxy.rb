@@ -11,8 +11,8 @@ class ShowImporter::TrackProxy
   }.freeze
 
   def initialize(pos: nil, title: nil, filename: nil, song: nil)
-    @_track = Track.new(position: pos, title: title, set: get_set_from_filename(filename))
-    song ||= Song.find_by(title: title)
+    @_track = Track.new(position: pos, title:, set: get_set_from_filename(filename))
+    song ||= Song.find_by(title:)
     @_track.songs << song unless song.nil?
     @filename = filename
   end
@@ -55,7 +55,7 @@ class ShowImporter::TrackProxy
     true
   end
 
-  def method_missing(method, *args, &_block)
+  def method_missing(method, *args, &)
     return @_track.send(method, *args) if @_track.respond_to?(method)
     super
   end

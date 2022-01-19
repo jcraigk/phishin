@@ -68,8 +68,8 @@ class GoogleSpreadsheetFetcher
          "resulting code after authorization:\n" + url
     code = $stdin.gets
     authorizer.get_and_store_credentials_from_code(
-      user_id: user_id,
-      code: code,
+      user_id:,
+      code:,
       base_url: OOB_URI
     )
   end

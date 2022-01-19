@@ -5,7 +5,7 @@ describe 'Tags', :js do
   let(:tag_names) { %w[Awesome Boppin Cool] }
   let!(:tags) do
     tag_names.each_with_object([]) do |name, tags|
-      tags << create(:tag, :with_tracks, :with_shows, name: name)
+      tags << create(:tag, :with_tracks, :with_shows, name:)
     end
   end
   let(:tag1) { tags.first }

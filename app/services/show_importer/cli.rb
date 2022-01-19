@@ -36,7 +36,7 @@ class ShowImporter::Cli
     filenames = orch.fm.matches.keys
 
     filenames.each_with_index do |fn, i|
-      puts format('%2<idx>d. %<fn>s', idx: i + 1, fn: fn)
+      puts format('%2<idx>d. %<fn>s', idx: i + 1, fn:)
     end
     filenames
   end

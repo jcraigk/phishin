@@ -9,9 +9,9 @@ describe 'User Sessions', :js do
   before do
     create(
       :user,
-      username: username,
-      email: email,
-      password: password,
+      username:,
+      email:,
+      password:,
       password_confirmation: password
     )
   end

@@ -3,7 +3,7 @@ require 'rails_helper'
 
 describe 'Change Password', :js do
   let(:password) { 'Tr3yIsj3dI' }
-  let(:user) { create(:user, password: password, password_confirmation: password) }
+  let(:user) { create(:user, password:, password_confirmation: password) }
 
   before { login_as(user) }
 

@@ -18,7 +18,7 @@ module ShrineTestData
     uploaded_file.metadata.merge!(
       size: File.size(file.path),
       mime_type: Marcel::MimeType.for(Pathname.new(file)),
-      filename: filename
+      filename:
     )
     uploaded_file
   end

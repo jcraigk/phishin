@@ -45,7 +45,7 @@ class JamchartsImporter
   end
 
   def find_show_by_date(date)
-    Show.includes(:tracks).find_by(date: date)
+    Show.includes(:tracks).find_by(date:)
   end
 
   def sync_jamcharts
@@ -105,13 +105,13 @@ class JamchartsImporter
   end
 
   def create_or_update_tag(track, tag, desc)
-    tt = TrackTag.find_by(track: track, tag: tag)
+    tt = TrackTag.find_by(track:, tag:)
     if tt.present?
       tt.update(notes: desc)
     else
       TrackTag.create!(
-        track: track,
-        tag: tag,
+        track:,
+        tag:,
         notes: desc
       )
     end

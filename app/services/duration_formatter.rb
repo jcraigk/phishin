@@ -41,24 +41,24 @@ class DurationFormatter
   def lettered_days_hours_mins_seconds
     format(
       '%<days>dd %<hours>dh %<minutes>dm %<seconds>ds',
-      days: days,
-      hours: hours,
-      minutes: minutes,
-      seconds: seconds
+      days:,
+      hours:,
+      minutes:,
+      seconds:
     )
   end
 
   def lettered_hours
-    format('%<hours>dh', hours: hours)
+    format('%<hours>dh', hours:)
   end
 
   def lettered_hours_mins
     return lettered_hours if minutes.zero?
-    format('%<hours>dh %<minutes>dm', hours: hours, minutes: minutes)
+    format('%<hours>dh %<minutes>dm', hours:, minutes:)
   end
 
   def lettered_mins
-    format('%<minutes>dm', minutes: minutes)
+    format('%<minutes>dm', minutes:)
   end
 
   def lettered_mins_seconds
@@ -66,29 +66,29 @@ class DurationFormatter
       return '0s' if minutes.zero?
       return lettered_mins
     end
-    format('%<minutes>dm %<seconds>ds', minutes: minutes, seconds: seconds)
+    format('%<minutes>dm %<seconds>ds', minutes:, seconds:)
   end
 
   def colon_mins_seconds
-    format('%<minutes>d:%<seconds>02d', minutes: minutes, seconds: seconds)
+    format('%<minutes>d:%<seconds>02d', minutes:, seconds:)
   end
 
   def colon_days_hours_mins_seconds
     format(
       '%<days>d:%<hours>02d:%<minutes>02d:%<seconds>02d',
-      days: days,
-      hours: hours,
-      minutes: minutes,
-      seconds: seconds
+      days:,
+      hours:,
+      minutes:,
+      seconds:
     )
   end
 
   def colon_hours_mins_seconds
     format(
       '%<hours>d:%<minutes>02d:%<seconds>02d',
-      hours: hours,
-      minutes: minutes,
-      seconds: seconds
+      hours:,
+      minutes:,
+      seconds:
     )
   end
 

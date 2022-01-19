@@ -27,9 +27,9 @@ RSpec.describe TrackInserter do
     allow(WaveformImageGenerator).to receive(:new).and_return(mock_generator)
     allow(mock_generator).to receive(:call)
 
-    create(:track, show: show, position: 1)
-    create(:track, show: show, position: 2)
-    create(:track, show: show, position: 3)
+    create(:track, show:, position: 1)
+    create(:track, show:, position: 2)
+    create(:track, show:, position: 3)
   end
 
   context 'with invalid options' do

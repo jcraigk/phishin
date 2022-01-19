@@ -82,7 +82,7 @@ describe 'Playlists', :js do
     end
 
     context 'with saved playlist' do
-      let!(:playlist) { create(:playlist, user: user) }
+      let!(:playlist) { create(:playlist, user:) }
 
       it 'opening a saved playlist' do
         visit saved_playlists_path

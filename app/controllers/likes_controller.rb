@@ -23,8 +23,8 @@ class LikesController < ApplicationController
     msg = "#{liked ? 'Like' : 'Unlike'} acknowledged"
     render json: {
       success: true,
-      msg: msg,
-      liked: liked,
+      msg:,
+      liked:,
       likes_count: likable.likes_count
     }
   end

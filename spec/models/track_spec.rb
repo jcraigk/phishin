@@ -49,7 +49,6 @@ RSpec.describe Track do
     end
   end
 
-  it { is_expected.to validate_presence_of(:show) }
   it { is_expected.to validate_presence_of(:title) }
   it { is_expected.to validate_presence_of(:position) }
   it { is_expected.to validate_presence_of(:set) }
@@ -175,7 +174,7 @@ RSpec.describe Track do
   end
 
   describe 'serialization' do
-    let!(:track_tags) { create_list(:track_tag, 3, track: track) }
+    let!(:track_tags) { create_list(:track_tag, 3, track:) }
     let(:expected_as_json) do
       {
         id: track.id,

@@ -22,7 +22,7 @@ RSpec.describe Show do
   describe '#cache_venue_name' do
     let(:venue) { create(:venue) }
     let(:date) { '2018-01-01' }
-    let(:show) { build(:show, venue: venue, date: date) }
+    let(:show) { build(:show, venue:, date:) }
 
     context 'when there are no venue renames' do
       it 'caches the venue name before validation' do
@@ -37,7 +37,7 @@ RSpec.describe Show do
       before do
         create(
           :venue_rename,
-          venue: venue,
+          venue:,
           renamed_on: Date.parse('2018-01-01') - 1.day,
           name: rename
         )
@@ -133,7 +133,7 @@ RSpec.describe Show do
   end
 
   describe 'serialization' do
-    let!(:show_tags) { create_list(:show_tag, 3, show: show) }
+    let!(:show_tags) { create_list(:show_tag, 3, show:) }
     let(:expected_as_json) do
       {
         id: show.id,

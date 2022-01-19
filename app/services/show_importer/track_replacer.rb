@@ -6,7 +6,7 @@ class ShowImporter::TrackReplacer
 
   def initialize(date)
     @date = date
-    @show = Show.find_by(date: date)
+    @show = Show.find_by(date:)
     @track_hash = match_files_to_tracks
 
     ensure_tracks_present
@@ -82,7 +82,7 @@ class ShowImporter::TrackReplacer
   end
 
   def show
-    @show ||= Show.find_by(date: date)
+    @show ||= Show.find_by(date:)
   end
 
   def base_path
