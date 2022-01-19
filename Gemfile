@@ -27,7 +27,6 @@ gem 'sentry-raven'
 gem 'shrine'
 gem 'slim'
 gem 'soundmanager2-rails'
-# gem 'therubyracer'
 gem 'twitter-bootstrap-rails', '2.2.8'
 gem 'typhoeus'
 gem 'uglifier'
@@ -50,14 +49,13 @@ group :development, :test do
 end
 
 group :test do
-  gem 'capybara', require: false
-  gem 'capybara-email', require: false
-  gem 'capybara-screenshot', require: false
+  gem 'capybara'
+  gem 'capybara-email'
+  gem 'capybara-screenshot'
   gem 'database_cleaner'
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'rspec-rails'
   gem 'selenium-webdriver'
   gem 'shoulda-matchers'
-  gem 'simplecov'
 end

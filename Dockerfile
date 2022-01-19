@@ -9,9 +9,10 @@ ENV APP_NAME=${APP_NAME} \
 RUN apt-get update -qq && \
     apt-get install -y \
       build-essential \
+      chromium-driver \
+      curl \
       ffmpeg \
       git \
-      curl \
       libpq-dev \
       libsndfile-dev \
       memcached \
