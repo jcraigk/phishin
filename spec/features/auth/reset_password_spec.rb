@@ -5,7 +5,7 @@ require 'capybara/email/rspec'
 describe 'Reset Password', :js do
   let(:password) { 'Tr3yIsj3dI' }
   let(:new_password) { 'Tr3yIsj3dI2' }
-  let(:user) { create(:user, password: password, password_confirmation: password) }
+  let(:user) { create(:user, password:, password_confirmation: password) }
 
   xit 'user enters email, receives message, and changes password' do
     visit new_user_session_path

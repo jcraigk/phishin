@@ -12,7 +12,7 @@ RSpec.describe SongsTrack do
   it { is_expected.to validate_uniqueness_of(:song).scoped_to(:track_id) }
 
   describe 'callbacks' do
-    subject(:songs_track) { build(:songs_track, song: song) }
+    subject(:songs_track) { build(:songs_track, song:) }
 
     let(:song) { build(:song) }
 

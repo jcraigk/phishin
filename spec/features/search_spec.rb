@@ -75,7 +75,7 @@ describe 'Search', :js do
       let(:date) { Date.parse(term) }
 
       before do
-        create(:show, date: date)
+        create(:show, date:)
         create(:show, date: date + 1.day)
         create(:show, date: date - 1.year)
         create(:show, date: date - 2.years)

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 source 'https://rubygems.org'
-ruby '2.7.3'
+ruby '3.1.0'
 
 gem 'actionpack-action_caching', github: 'rails/actionpack-action_caching'
 gem 'bootstrap-will_paginate'
@@ -27,7 +27,6 @@ gem 'sentry-raven'
 gem 'shrine'
 gem 'slim'
 gem 'soundmanager2-rails'
-gem 'therubyracer'
 gem 'twitter-bootstrap-rails', '2.2.8'
 gem 'typhoeus'
 gem 'uglifier'
@@ -50,14 +49,13 @@ group :development, :test do
 end
 
 group :test do
-  gem 'capybara', require: false
-  gem 'capybara-email', require: false
-  gem 'capybara-screenshot', require: false
+  gem 'capybara'
+  gem 'capybara-email'
+  gem 'capybara-screenshot'
   gem 'database_cleaner'
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'rspec-rails'
   gem 'selenium-webdriver'
   gem 'shoulda-matchers'
-  gem 'simplecov'
 end

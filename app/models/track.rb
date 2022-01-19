@@ -25,7 +25,7 @@ class Track < ApplicationRecord
     }
   )
 
-  validates :position, :show, :title, :set, presence: true
+  validates :position, :title, :set, presence: true
   validates :position, uniqueness: { scope: :show_id }
   validates :songs, length: { minimum: 1 }
 
@@ -35,7 +35,7 @@ class Track < ApplicationRecord
   scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
 
   def url
-    "#{APP_BASE_URL}/#{show.date.to_s(:db)}/#{slug}"
+    "#{APP_BASE_URL}/#{show.date.to_formatted_s(:db)}/#{slug}"
   end
 
   def set_name
@@ -121,7 +121,7 @@ class Track < ApplicationRecord
   private
 
   def partitioned_id
-    format('%<id>09d', id: id).scan(/.{3}/).join('/')
+    format('%<id>09d', id:).scan(/.{3}/).join('/')
   end
 
   def track_tags_for_api # rubocop:disable Metrics/AbcSize, Metrics/MethodLength

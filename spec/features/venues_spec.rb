@@ -6,7 +6,7 @@ describe 'Venues', :js do
   let(:names) { ['Eagles Ballroom', 'Earlham College', 'Eastbrook Theatre'] }
   let!(:e_venues) do
     names.each_with_object([]) do |name, venues|
-      venues << create(:venue, :with_shows, name: name)
+      venues << create(:venue, :with_shows, name:)
     end
   end
   let(:venue1) { e_venues.first }

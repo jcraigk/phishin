@@ -60,7 +60,7 @@ module Ambiguity::Date
     @show =
       Show.published
           .includes(:venue, tracks: [:songs, { track_tags: :tag }])
-          .find_by!(date: date)
+          .find_by!(date:)
   end
 
   def date_from_slug

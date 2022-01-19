@@ -32,7 +32,7 @@ class TrackTagSyncService
   private
 
   def destroy_existing_track_tags
-    TrackTag.where(tag: tag).destroy_all
+    TrackTag.where(tag:).destroy_all
   end
 
   def sync_track_tags
@@ -44,10 +44,10 @@ class TrackTagSyncService
   end
 
   def existing_track_tag(row)
-    return TrackTag.find_by(tag: tag, track: track) unless tag.name.in?(%w[Tease Signal])
+    return TrackTag.find_by(tag:, track:) unless tag.name.in?(%w[Tease Signal])
     TrackTag.find_by(
-      tag: tag,
-      track: track,
+      tag:,
+      track:,
       notes: row['Notes'],
       starts_at_second: seconds_or_nil(row['Starts At'])
     )
@@ -62,8 +62,8 @@ class TrackTagSyncService
     print '.'
     @created_ids <<
       TrackTag.create!(
-        tag: tag,
-        track: track,
+        tag:,
+        track:,
         starts_at_second: seconds_or_nil(row['Starts At']),
         ends_at_second: seconds_or_nil(row['Ends At']),
         notes: sanitize_str(row['Notes']),

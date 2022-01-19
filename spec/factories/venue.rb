@@ -10,7 +10,7 @@ FactoryBot.define do
 
     trait :with_shows do
       after(:build) do |venue|
-        create_list(:show, 2, venue: venue)
+        create_list(:show, 2, venue:)
       end
     end
   end

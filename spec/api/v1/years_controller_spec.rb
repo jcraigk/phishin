@@ -47,12 +47,12 @@ describe Api::V1::YearsController do
     let(:year1) { 1999 }
     let(:year2) { 2000 }
     let(:tour) { create(:tour, starts_on: '1990-01-01', ends_on: '2000-12-31') }
-    let!(:show1) { create(:show, date: "#{year1}-01-01", tour: tour) }
-    let!(:show2) { create(:show, date: "#{year1}-02-01", tour: tour) }
-    let!(:show3) { create(:show, date: "#{year2}-01-01", tour: tour) }
+    let!(:show1) { create(:show, date: "#{year1}-01-01", tour:) }
+    let!(:show2) { create(:show, date: "#{year1}-02-01", tour:) }
+    let!(:show3) { create(:show, date: "#{year2}-01-01", tour:) }
 
     before do
-      create(:show, date: '1995-01-01', tour: tour) # Extra show
+      create(:show, date: '1995-01-01', tour:) # Extra show
     end
 
     context 'when providing a single year' do

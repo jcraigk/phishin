@@ -5,15 +5,15 @@ RSpec.describe TrackSlugGenerator do
   subject(:service) { described_class.new(track) }
 
   let(:show) { create(:show) }
-  let(:track) { build(:track, show: show, title: title) }
+  let(:track) { build(:track, show:, title:) }
   let(:title) { "I Didn't Know" }
 
   context 'when title is not a specific long name' do
     before do
-      create(:track, show: show, title: title, slug: 'i-didnt-know')
-      create(:track, show: show, title: title, slug: 'i-didnt-know-2')
-      create(:track, show: show, title: 'Bathtub Gin', slug: 'bathtub-gin')
-      create(:track, show: show, title: 'Prince Caspian', slug: 'prince-caspian')
+      create(:track, show:, title:, slug: 'i-didnt-know')
+      create(:track, show:, title:, slug: 'i-didnt-know-2')
+      create(:track, show:, title: 'Bathtub Gin', slug: 'bathtub-gin')
+      create(:track, show:, title: 'Prince Caspian', slug: 'prince-caspian')
     end
 
     it 'returns a unique slug with expected suffix' do

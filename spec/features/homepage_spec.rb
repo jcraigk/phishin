@@ -7,7 +7,7 @@ describe 'Homepage', :js do
   let!(:shows) do
     [1983, most_recent_year].each_with_object([]) do |year, shows|
       (1..3).each do |day|
-        shows << create(:show, venue: venue, date: "#{year}-01-#{day}")
+        shows << create(:show, venue:, date: "#{year}-01-#{day}")
       end
     end
   end

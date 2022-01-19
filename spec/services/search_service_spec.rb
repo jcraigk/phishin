@@ -35,7 +35,7 @@ RSpec.describe SearchService do
         track_tags: [track_tag]
       }
     end
-    let!(:show1) { create(:show, date: date) }
+    let!(:show1) { create(:show, date:) }
     let!(:show2) { create(:show, date: date - 1.year) }
     let!(:show3) { create(:show, date: date - 2.years) }
     let!(:tag) { create(:tag, name: "Date #{term}") }

@@ -28,8 +28,8 @@ class Api::V1::ApiController < ActionController::Base # rubocop:disable Rails/Ap
     page = data.respond_to?(:current_page) ? data.current_page : 1
     render json: {
       success: true,
-      total_entries: total_entries,
-      total_pages: total_pages,
+      total_entries:,
+      total_pages:,
       page: page.to_i,
       data: data_as_json(data, opts)
     }

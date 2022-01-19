@@ -7,7 +7,7 @@ class TrackInserter
     @position = opts[:position].to_i
     @file = opts[:file]
     @title = opts[:title]
-    @song_id = opts[:song_id] || Song.find_by(title: title)&.id
+    @song_id = opts[:song_id] || Song.find_by(title:)&.id
     @set = opts[:set]
     @is_sbd = opts[:is_sbd]
 
@@ -32,17 +32,17 @@ class TrackInserter
   end
 
   def show
-    @show ||= Show.published.find_by(date: date)
+    @show ||= Show.published.find_by(date:)
   end
 
   def insert_new_track
     @track = Track.create(
-      show: show,
-      title: title,
+      show:,
+      title:,
       songs: [Song.find(song_id)],
       audio_file: File.new(file, 'r'),
-      position: position,
-      set: set
+      position:,
+      set:
     )
   end
 

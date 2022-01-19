@@ -42,7 +42,7 @@ module ApplicationHelper
   end
 
   def link_to_show(show, show_abbrev: true)
-    link_name = show_link_title(show, show_abbrev: show_abbrev)
+    link_name = show_link_title(show, show_abbrev:)
     link_to(link_name, "/#{show.date}")
   end
 

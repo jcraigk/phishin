@@ -5,7 +5,7 @@ describe 'Songs', :js do
   let(:titles) { ['Garden Party', 'Gettin Jiggy', 'Ghost'] }
   let!(:g_songs) do
     titles.each_with_object([]) do |title, songs|
-      songs << create(:song, :with_tracks, title: title)
+      songs << create(:song, :with_tracks, title:)
     end
   end
   let(:song1) { g_songs.first }

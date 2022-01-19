@@ -49,14 +49,13 @@ RSpec.describe Track do
     end
   end
 
-  it { is_expected.to validate_presence_of(:show) }
   it { is_expected.to validate_presence_of(:title) }
   it { is_expected.to validate_presence_of(:position) }
   it { is_expected.to validate_presence_of(:set) }
   it { is_expected.to validate_uniqueness_of(:position).scoped_to(:show_id) }
 
   it 'provides #url' do
-    expect(track.url).to eq("#{APP_BASE_URL}/#{track.show.date.to_s(:db)}/#{track.slug}")
+    expect(track.url).to eq("#{APP_BASE_URL}/#{track.show.date.to_formatted_s(:db)}/#{track.slug}")
   end
 
   it 'validates >= 1 song' do
@@ -175,7 +174,7 @@ RSpec.describe Track do
   end
 
   describe 'serialization' do
-    let!(:track_tags) { create_list(:track_tag, 3, track: track) }
+    let!(:track_tags) { create_list(:track_tag, 3, track:) }
     let(:expected_as_json) do
       {
         id: track.id,

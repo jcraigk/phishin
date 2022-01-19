@@ -39,7 +39,7 @@ namespace :shows do
     dates = {}
     relation.find_each do |show|
       sets = show.tracks.map(&:set).uniq
-      dates[show.date.to_s(:db)] = sets.first if sets.size < 2
+      dates[show.date.to_formatted_s(:db)] = sets.first if sets.size < 2
       pbar.increment
     end
 

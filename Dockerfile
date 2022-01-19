@@ -1,4 +1,4 @@
-FROM ruby:2.7.3-slim
+FROM ruby:3.1.0-slim
 
 ARG APP_NAME=phishin
 
@@ -9,9 +9,10 @@ ENV APP_NAME=${APP_NAME} \
 RUN apt-get update -qq && \
     apt-get install -y \
       build-essential \
+      chromium-driver \
+      curl \
       ffmpeg \
       git \
-      curl \
       libpq-dev \
       libsndfile-dev \
       memcached \

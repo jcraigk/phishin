@@ -30,7 +30,7 @@ class ShowImporter::ShowInfo
   end
 
   def fetch_pnet_data
-    JSON.parse(Typhoeus.get(phishnet_api_url).body, object_class: OpenStruct).data
+    JSON.parse(Typhoeus.get(phishnet_api_url).body, object_class: OpenStruct).data # rubocop:disable Style/OpenStructUse
   end
 
   def phishnet_api_url

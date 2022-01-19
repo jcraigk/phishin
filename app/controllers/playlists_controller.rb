@@ -127,7 +127,7 @@ class PlaylistsController < ApplicationController
       success = true
     end
 
-    render json: { success: success, playlist: session[:playlist] }
+    render json: { success:, playlist: session[:playlist] }
   end
 
   def update_active_playlist
@@ -216,7 +216,7 @@ class PlaylistsController < ApplicationController
       msg = 'Playback looping disabled'
     end
 
-    render json: { success: true, msg: msg }
+    render json: { success: true, msg: }
   end
 
   def submit_playback_shuffle
@@ -227,7 +227,7 @@ class PlaylistsController < ApplicationController
       session[:shuffle] = false
       msg = 'Playback shuffling disabled'
     end
-    render json: { success: true, msg: msg }
+    render json: { success: true, msg: }
   end
 
   def random_show
@@ -283,7 +283,7 @@ class PlaylistsController < ApplicationController
     session[:playlist].each_with_index do |track_id, idx|
       PlaylistTrack.create(
         playlist_id: playlist.id,
-        track_id: track_id,
+        track_id:,
         position: idx + 1
       )
     end

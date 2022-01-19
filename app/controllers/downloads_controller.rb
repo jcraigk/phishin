@@ -14,7 +14,7 @@ class DownloadsController < ApplicationController
       city: track.show.venue.location,
       city_url: "/map?map_term=#{CGI.escape(track.show.venue.location)}",
       likes_count: track.likes_count,
-      liked: liked,
+      liked:,
       waveform_image_url: track.waveform_image_url
     }
   end
