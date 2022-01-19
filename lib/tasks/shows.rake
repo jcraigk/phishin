@@ -18,7 +18,7 @@ namespace :shows do
 
   desc 'Import a show'
   task import: :environment do
-    require "#{Rails.root}/app/services/show_importer/show_importer"
+    require "#{Rails.root}/app/services/show_importer"
     include ActionView::Helpers::TextHelper
 
     dates = Dir.entries(IMPORT_DIR).grep(/\d{4}\-\d{1,2}\-\d{1,2}\z/).sort
