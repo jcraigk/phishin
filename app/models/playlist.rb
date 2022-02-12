@@ -19,9 +19,9 @@ class Playlist < ApplicationRecord
 
   def as_json_api
     {
-      slug: slug,
-      name: name,
-      duration: duration,
+      slug:,
+      name:,
+      duration:,
       tracks: playlist_tracks.order(:position).map(&:track).map(&:as_json_api),
       updated_at: updated_at.iso8601
     }
@@ -29,9 +29,9 @@ class Playlist < ApplicationRecord
 
   def as_json_api_basic
     {
-      slug: slug,
-      name: name,
-      duration: duration,
+      slug:,
+      name:,
+      duration:,
       track_count: playlist_tracks.size,
       updated_at: updated_at.iso8601
     }

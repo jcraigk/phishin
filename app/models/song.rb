@@ -32,28 +32,28 @@ class Song < ApplicationRecord
 
   def as_json # rubocop:disable Metrics/MethodLength
     {
-      id: id,
-      slug: slug,
-      title: title,
+      id:,
+      slug:,
+      title:,
       alias: self.alias,
-      original: original,
-      artist: artist,
-      lyrics: lyrics,
-      tracks_count: tracks_count,
+      original:,
+      artist:,
+      lyrics:,
+      tracks_count:,
       updated_at: updated_at.iso8601
     }
   end
 
   def as_json_api # rubocop:disable Metrics/MethodLength
     {
-      id: id,
-      slug: slug,
-      title: title,
+      id:,
+      slug:,
+      title:,
       alias: self.alias,
-      original: original,
-      artist: artist,
-      lyrics: lyrics,
-      tracks_count: tracks_count,
+      original:,
+      artist:,
+      lyrics:,
+      tracks_count:,
       updated_at: updated_at.iso8601,
       tracks: tracks.map(&:as_json_api)
     }

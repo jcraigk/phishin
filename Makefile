@@ -14,9 +14,8 @@ clean :
 services :
 	docker-compose up -d pg
 
-spec :
-	docker-compose run -e RAILS_ENV=test --rm app bash -c "rails db:drop && rails db:create && rails db:schema:load"
-	docker-compose run -e RAILS_ENV=test --rm app bundle exec rspec $(file)
+spec : services
+	docker-compose run --rm app bundle exec rspec $(file)
 
 start : services
 	docker-compose up -d

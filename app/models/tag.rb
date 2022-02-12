@@ -13,26 +13,26 @@ class Tag < ApplicationRecord
 
   def as_json
     {
-      id: id,
-      name: name,
-      slug: slug,
-      group: group,
-      color: color,
-      priority: priority,
-      description: description,
+      id:,
+      name:,
+      slug:,
+      group:,
+      color:,
+      priority:,
+      description:,
       updated_at: updated_at.iso8601
     }
   end
 
   def as_json_api # rubocop:disable Metrics/MethodLength
     {
-      id: id,
-      name: name,
-      slug: slug,
-      group: group,
-      color: color,
-      priority: priority,
-      description: description,
+      id:,
+      name:,
+      slug:,
+      group:,
+      color:,
+      priority:,
+      description:,
       updated_at: updated_at.iso8601,
       show_ids: shows.sort_by(&:id).map(&:id),
       track_ids: tracks.sort_by(&:id).map(&:id)

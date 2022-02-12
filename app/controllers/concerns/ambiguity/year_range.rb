@@ -20,7 +20,7 @@ module Ambiguity::YearRange
       @shows.group_by(&:tour_name)
             .each_with_object({}) do |(tour, shows), sections|
               sections[tour] = {
-                shows: shows,
+                shows:,
                 likes: user_likes_for_shows(shows)
               }
             end

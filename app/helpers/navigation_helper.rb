@@ -139,7 +139,7 @@ module NavigationHelper
   end
 
   def link_to_year(year, css, style)
-    link_to (year == '1983-1987' ? '83-87' : year[2..3]), "/#{year}", class: css, style: style
+    link_to (year == '1983-1987' ? '83-87' : year[2..3]), "/#{year}", class: css, style:
   end
 
   def will_paginate_simple(collection)

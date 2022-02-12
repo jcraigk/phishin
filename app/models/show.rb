@@ -42,36 +42,36 @@ class Show < ApplicationRecord
 
   def as_json # rubocop:disable Metrics/MethodLength
     {
-      id: id,
+      id:,
       date: date.iso8601,
-      duration: duration,
-      incomplete: incomplete,
-      sbd: sbd,
-      remastered: remastered,
-      tour_id: tour_id,
-      venue_id: venue_id,
-      likes_count: likes_count,
-      taper_notes: taper_notes,
+      duration:,
+      incomplete:,
+      sbd:,
+      remastered:,
+      tour_id:,
+      venue_id:,
+      likes_count:,
+      taper_notes:,
       updated_at: updated_at.iso8601,
-      venue_name: venue_name,
+      venue_name:,
       location: venue&.location
     }
   end
 
   def as_json_api # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     {
-      id: id,
+      id:,
       date: date.iso8601,
-      duration: duration,
-      incomplete: incomplete,
-      sbd: sbd,
-      remastered: remastered,
+      duration:,
+      incomplete:,
+      sbd:,
+      remastered:,
       tags: show_tags_for_api,
-      tour_id: tour_id,
+      tour_id:,
       venue: venue.as_json,
-      venue_name: venue_name,
-      taper_notes: taper_notes,
-      likes_count: likes_count,
+      venue_name:,
+      taper_notes:,
+      likes_count:,
       tracks: tracks.sort_by(&:position).map(&:as_json_api),
       updated_at: updated_at.iso8601
     }

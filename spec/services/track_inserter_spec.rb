@@ -6,11 +6,11 @@ RSpec.describe TrackInserter do
 
   let(:opts) do
     {
-      date: date,
+      date:,
       position: 2,
-      file: file,
-      title: title,
-      song_id: song_id,
+      file:,
+      title:,
+      song_id:,
       set: 1,
       is_sbd: true
     }

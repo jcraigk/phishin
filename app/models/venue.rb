@@ -53,31 +53,31 @@ class Venue < ApplicationRecord
 
   def as_json # rubocop:disable Metrics/MethodLength
     {
-      id: id,
-      slug: slug,
-      name: name,
-      other_names: other_names,
+      id:,
+      slug:,
+      name:,
+      other_names:,
       latitude: latitude.round(6),
       longitude: longitude.round(6),
-      shows_count: shows_count,
-      location: location,
+      shows_count:,
+      location:,
       updated_at: updated_at.iso8601
     }
   end
 
   def as_json_api # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     {
-      id: id,
-      slug: slug,
-      name: name,
-      other_names: other_names,
+      id:,
+      slug:,
+      name:,
+      other_names:,
       latitude: latitude.round(6),
       longitude: longitude.round(6),
-      location: location,
-      city: city,
-      state: state,
-      country: country,
-      shows_count: shows_count,
+      location:,
+      city:,
+      state:,
+      country:,
+      shows_count:,
       show_dates: shows_played_here.map(&:date).map(&:iso8601),
       show_ids: shows_played_here.map(&:id),
       updated_at: updated_at.iso8601

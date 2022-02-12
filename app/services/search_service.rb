@@ -30,12 +30,12 @@ class SearchService
 
   def text_results
     {
-      songs: songs,
-      venues: venues,
-      tours: tours,
-      tags: tags,
-      show_tags: show_tags,
-      track_tags: track_tags
+      songs:,
+      venues:,
+      tours:,
+      tags:,
+      show_tags:,
+      track_tags:
     }
   end
 

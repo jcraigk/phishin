@@ -11,22 +11,22 @@ class Tour < ApplicationRecord
 
   def as_json
     {
-      id: id,
-      name: name,
-      shows_count: shows_count,
+      id:,
+      name:,
+      shows_count:,
       starts_on: starts_on.iso8601,
       ends_on: ends_on.iso8601,
-      slug: slug,
+      slug:,
       updated_at: updated_at.iso8601
     }
   end
 
   def as_json_api
     {
-      id: id,
-      name: name,
-      shows_count: shows_count,
-      slug: slug,
+      id:,
+      name:,
+      shows_count:,
+      slug:,
       starts_on: starts_on.iso8601,
       ends_on: ends_on.iso8601,
       shows: shows.sort_by(&:date).as_json,
