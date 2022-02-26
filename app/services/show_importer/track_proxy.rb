@@ -55,8 +55,11 @@ class ShowImporter::TrackProxy
     true
   end
 
+  # TODO: Rewrite this to not use method_missing
   def method_missing(method, *args, &)
     return @_track.send(method, *args) if @_track.respond_to?(method)
     super
+  rescue => e
+    nil
   end
 end
