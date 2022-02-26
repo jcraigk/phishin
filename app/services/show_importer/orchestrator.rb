@@ -2,7 +2,17 @@
 class ShowImporter::Orchestrator
   attr_reader :fm, :date, :show_found, :path, :show_info
 
+  SET_MAP = {
+    '3' => %w[III],
+    'E' => %w[e I-e II-e],
+    '2' => %w[II],
+    '1' => %w[I],
+    'S' => %w[(Check)]
+  }.freeze
+
   def initialize(date)
+    Track.attr_accessor(:filename)
+
     @date = date
     @path = "#{IMPORT_DIR}/#{date}"
     @show_info = ShowImporter::ShowInfo.new(date)
@@ -36,7 +46,9 @@ class ShowImporter::Orchestrator
   end
 
   def tour
-    @tour ||= Tour.where('starts_on <= :date AND ends_on >= :date', date:).first
+    @tour ||=
+      Tour.where('starts_on <= :date AND ends_on >= :date', date:)
+          .first
   end
 
   def assign_venue
@@ -56,35 +68,37 @@ class ShowImporter::Orchestrator
   end
 
   def pp_list
-    @tracks.sort_by(&:pos).each do |track|
-      puts track
-    end
+    @tracks.sort_by(&:position).each { |t| puts track_display(t) }
   end
 
-  def combine_up(pos)
-    assimilating = get_track(pos)
-    receiving = get_track(pos - 1)
-
-    return if assimilating.nil? || receiving.nil?
-
-    receiving.merge_track(assimilating)
-    @tracks.delete assimilating
-
-    @tracks.each { |track| track.decr_pos if track.pos > pos }
+  def merge_tracks(subsumed_track, subsuming_track)
+    subsuming_track.title += " > #{subsumed_track.title}"
+    subsuming_track.songs << subsumed_track.songs.reject { |s| subsuming_track.songs.include?(s) }
+    subsuming_track.filename ||= subsumed_track.filename
+    @tracks.delete(subsumed_track)
   end
 
-  def insert_before(pos)
-    @tracks.each { |track| track.incr_pos if track.pos >= pos }
-    @tracks.insert pos, ShowImporter::TrackProxy.new(pos:)
+  def combine_up(position)
+    subsumed_track = get_track(position)
+    subsuming_track = get_track(position - 1)
+    return if subsumed_track.nil? || subsuming_track.nil?
+    merge_tracks(subsumed_track, subsuming_track)
+    @tracks.each { |track| track.position -= 1 if track.position > position }
   end
 
-  def delete(pos)
-    @tracks.delete_if { |track| track.pos == pos }
-    @tracks.each { |track| track.decr_pos if track.pos > pos }
+  def insert_before(position)
+    @tracks.each { |track| track.position += 1 if track.position >= position }
+    set = get_track(position).set
+    @tracks.insert position, Track.new(position:, set:)
   end
 
-  def get_track(pos)
-    @tracks.find { |s| s.pos == pos }
+  def delete(position)
+    @tracks.delete_if { |track| track.position == position }
+    @tracks.each { |track| track.position -= 1 if track.position > position }
+  end
+
+  def get_track(position)
+    @tracks.find { |t| t.position == position }
   end
 
   def import_notes
@@ -96,13 +110,26 @@ class ShowImporter::Orchestrator
     print '🍩 Processing...'
     pbar = ProgressBar.create(total: @tracks.size, format: '%a %B %c/%C %p%% %E')
 
-    show.save
+    show.save!
+
     save_tracks(pbar)
+
     show.save_duration
     show.update!(published: true)
 
     pbar.finish
     success
+  end
+
+  def track_display(track)
+    (valid?(track) ? '  ' : '* ') +
+      format(
+        '%2d. [%1s] %-30.30s     %-30.30s     ',
+        track.position,
+        track.set,
+        track.title,
+        track.filename
+      ) + track.songs.map { |song| format('(%-3d) %-20.20s', song.id, song.title) }.join('   ')
   end
 
   private
@@ -113,13 +140,21 @@ class ShowImporter::Orchestrator
 
   def save_tracks(pbar)
     @tracks.each do |track|
-      next puts "\n❌ Invalid track! (#{track.title})" unless track.valid?
-      create_real_track(track)
+      next puts "\n❌ Invalid track! (#{track.title})" unless valid?(track)
+      save_track(track)
       pbar.increment
     end
   end
 
-  def create_real_track(track)
+  def valid?(track)
+    track.filename.present? &&
+      track.title.present? &&
+      track.position.present? &&
+      track.songs.to_a.present? &&
+      track.set.present?
+  end
+
+  def save_track(track)
     track.show = show
     track.save!(validate: false) # Generate ID for audio_file storage
     track.update!(audio_file: File.open("#{@fm.dir}/#{track.filename}"))
@@ -133,26 +168,42 @@ class ShowImporter::Orchestrator
   def populate_tracks
     @tracks = []
     matches = @fm.matches.dup
-    show_info.songs.each do |pos, title|
-      process_track(matches, pos, title)
+    show_info.songs.each do |position, title|
+      process_track(matches, position, title)
     end
   end
 
-  def process_track(matches, pos, title)
-    if (fn_match = fn_match?(matches, title))
-      @tracks << ShowImporter::TrackProxy.new(
-        pos:,
-        title:,
-        filename: fn_match.first,
-        song: fn_match.second
+  # rubocop:disable Metrics/MethodLength
+  def process_track(matches, position, title)
+    if (match = fn_match?(matches, title))
+      filename = match.first
+      song = match.second
+      track = Track.new(
+        set: musical_set_from_fn(filename),
+        position:,
+        title: song.title,
+        filename:
       )
-      return matches.delete(fn_match.first)
+      track.songs << song if song.present?
+    else
+      track = Track.new(position:, title:)
     end
 
-    @tracks << ShowImporter::TrackProxy.new(pos:, title:)
+    @tracks << track
   end
+  # rubocop:enable Metrics/MethodLength
 
   def fn_match?(matches, title)
     matches.find { |_k, v| !v.nil? && v.title == title }
+  end
+
+  def musical_set_from_fn(filename)
+    SET_MAP.each do |set, values|
+      values.each do |value|
+        return set if filename&.start_with?(value)
+      end
+    end
+
+    '1'
   end
 end

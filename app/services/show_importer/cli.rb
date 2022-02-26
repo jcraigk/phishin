@@ -41,11 +41,12 @@ class ShowImporter::Cli
     filenames
   end
 
-  def edit_for_pos(pos)
-    puts orch.get_track(pos).to_s
+  def edit_for_pos(position)
+    track = get_track(position)
+    puts orch.track_display(track)
     puts help_str
 
-    process_pos(pos)
+    process_pos(position)
 
     puts
   end
@@ -75,7 +76,7 @@ class ShowImporter::Cli
       when 't'
         update_title_for_pos(pos)
       when '?'
-        puts orch.get_track(pos).to_s
+        puts orch.track_display(get_track(pos))
         puts help_str
       when 'm'
         main_menu
