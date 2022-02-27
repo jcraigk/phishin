@@ -87,8 +87,8 @@ class ShowImporter::Orchestrator
   end
 
   def insert_before(position)
-    @tracks.each { |track| track.position += 1 if track.position >= position }
     set = get_track(position).set
+    @tracks.each { |track| track.position += 1 if track.position >= position }
     @tracks.insert position, Track.new(position:, set:)
   end
 
