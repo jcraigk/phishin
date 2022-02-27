@@ -42,7 +42,7 @@ class ShowImporter::Cli
   end
 
   def edit_for_pos(position)
-    track = get_track(position)
+    track = orch.get_track(position)
     puts orch.track_display(track)
     puts help_str
 
@@ -76,7 +76,8 @@ class ShowImporter::Cli
       when 't'
         update_title_for_pos(pos)
       when '?'
-        puts orch.track_display(get_track(pos))
+        track = orch.get_track(pos)
+        puts orch.track_display(track)
         puts help_str
       when 'm'
         main_menu
