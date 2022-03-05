@@ -33,7 +33,7 @@ describe 'Change Password', :js do
         'Password is too short (minimum is 8 characters)',
         'Current password is invalid'
       )
-      expect(user.reload.valid_password?(new_password)).to eq(false)
+      expect(user.reload.valid_password?(new_password)).to be(false)
     end
   end
 
@@ -49,7 +49,7 @@ describe 'Change Password', :js do
       click_button('CHANGE PASSWORD')
 
       expect_content('You updated your account successfully')
-      expect(user.reload.valid_password?(new_password)).to eq(true)
+      expect(user.reload.valid_password?(new_password)).to be(true)
     end
   end
 end

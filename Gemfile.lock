@@ -226,7 +226,7 @@ GEM
       digest
       net-protocol
       timeout
-    newrelic_rpm (8.4.0)
+    newrelic_rpm (8.5.0)
     nio4r (2.5.8)
     nokogiri (1.13.3)
       mini_portile2 (~> 2.8.0)
@@ -328,7 +328,7 @@ GEM
       activesupport (>= 4.2.0)
       rack (>= 1.1)
       rubocop (>= 1.7.0, < 2.0)
-    rubocop-rspec (2.8.0)
+    rubocop-rspec (2.9.0)
       rubocop (~> 1.19)
     ruby-audio (1.6.1)
     ruby-mp3info (0.8.10)
@@ -365,7 +365,7 @@ GEM
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
     soundmanager2-rails (2.97.20170601)
-    sprockets (4.0.2)
+    sprockets (4.0.3)
       concurrent-ruby (~> 1.0)
       rack (> 1, < 3)
     sprockets-rails (3.4.2)

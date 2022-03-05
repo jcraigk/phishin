@@ -5,6 +5,9 @@ all : build up
 build :
 	docker-compose build
 
+bash :
+	RAILS_ENV=test docker-compose run --rm app bash
+
 clean :
 	docker-compose down
 	docker-compose rm

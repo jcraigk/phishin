@@ -30,7 +30,7 @@ describe 'Reset Password', :js do
     click_on('Change My Password')
 
     # User's password is changed
-    expect(user.reload.valid_password?(new_password)).to eq(true)
+    expect(user.reload.valid_password?(new_password)).to be(true)
 
     # User is signed in and redirected to root path
     expect(page).to have_current_path(root_path)

@@ -16,7 +16,7 @@ RSpec.describe DateParser do
     let(:date) { 'blah' }
 
     it 'returns false' do
-      expect(service.call).to eq(false)
+      expect(service.call).to be(false)
     end
   end
 
