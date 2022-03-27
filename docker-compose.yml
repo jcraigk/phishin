@@ -11,11 +11,11 @@ services:
     tty: true
     stdin_open: true
   pg:
-    image: postgres:13.1-alpine
+    image: postgres:14.2-alpine
     ports:
       - 5432:5432
     volumes:
-      - pg_data:/j/pg_data
+      - pg_data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres

@@ -42,6 +42,8 @@ Rails/FilePath:
   Enabled: false
 Rails/HttpPositionalArguments:
   Enabled: false
+Rails/I18nLocaleTexts:
+  Enabled: false
 Rails/SkipsModelValidations:
   Enabled: false
 RSpec/ImplicitSubject:
