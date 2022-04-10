@@ -6,7 +6,7 @@
 //= link icon-next.png
 //= link icon-previous.png
 //= link icon-relisten.png
-//= link icon-robophish.png
+//= link icon-splendor.png
 //= link icon-search.png
 //= link icons-heart-small.png
 //= link icons-heart.png

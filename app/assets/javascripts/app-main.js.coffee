@@ -128,9 +128,9 @@ $ ->
   $(document).on 'click', '#relisten_callout', ->
     window.location = 'https://itunes.apple.com/us/app/relisten-all-live-music/id715886886'
 
-  # Click RoboPhish app callout
-  $(document).on 'click', '#robophish_callout', ->
-    window.location = 'https://play.google.com/store/apps/details?id=com.bayapps.android.robophish&hl=en'
+  # Click Never Ending Splendor app callout
+  $(document).on 'click', '#splendor_callout', ->
+    window.location = 'https://play.google.com/store/apps/details?id=never.ending.splendor'
 
   # Click a link to load page via ajax
   .on 'click', 'a', ->
