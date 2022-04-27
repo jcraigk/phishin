@@ -15,12 +15,12 @@ module Phishin
     config.load_defaults = '7.0'
     config.active_record.legacy_connection_handling = false
 
-    config.hosts << ENV['WEB_HOST'] if ENV['WEB_HOST'].present?
+    config.hosts << ENV.fetch('WEB_HOST', nil) if ENV['WEB_HOST'].present?
 
     ActionMailer::Base.smtp_settings = {
-      user_name: ENV['SMTP_USERNAME'],
-      password: ENV['SMTP_PASSWORD'],
-      address: ENV['SMTP_ADDRESS'],
+      user_name: ENV.fetch('SMTP_USERNAME', nil),
+      password: ENV.fetch('SMTP_PASSWORD', nil),
+      address: ENV.fetch('SMTP_ADDRESS', nil),
       port: 587,
       authentication: :plain
     }

@@ -40,11 +40,14 @@ class GoogleSpreadsheetFetcher
 
   def authorizer
     @authorizer ||=
-      Google::Auth::UserAuthorizer.new(
-        Google::Auth::ClientId.from_hash(JSON[ENV['GOOGLE_API_CREDS_JSON']]),
+      Google::Auth::UserAuthorizer.new \
+        Google::Auth::ClientId.from_hash(json_creds),
         Google::Apis::SheetsV4::AUTH_SPREADSHEETS_READONLY,
         Google::Auth::Stores::FileTokenStore.new(file: TOKEN_PATH)
-      )
+  end
+
+  def json_creds
+    JSON.parse(ENV.fetch('GOOGLE_API_CREDS_JSON', {}))
   end
 
   def credentials
