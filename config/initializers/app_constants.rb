@@ -13,10 +13,10 @@ TIME_ZONE = 'Eastern Time (US & Canada)'
 APP_CONTENT_PATH =
   if Rails.env.test?
     Rails.root.join('tmp/content')
-  elsif ENV['IN_DOCKER']
+  elsif ENV.fetch('IN_DOCKER', false)
     '/content'
   else
-    ENV['APP_CONTENT_PATH']
+    ENV.fetch('APP_CONTENT_PATH', '/')
   end
 
 IMPORT_DIR = "#{APP_CONTENT_PATH}/import".freeze

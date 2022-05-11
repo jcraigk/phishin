@@ -14,15 +14,6 @@ module Phishin
   class Application < Rails::Application
     config.load_defaults = '7.0'
     config.active_record.legacy_connection_handling = false
-
     config.hosts << ENV.fetch('WEB_HOST', nil) if ENV['WEB_HOST'].present?
-
-    ActionMailer::Base.smtp_settings = {
-      user_name: ENV.fetch('SMTP_USERNAME', nil),
-      password: ENV.fetch('SMTP_PASSWORD', nil),
-      address: ENV.fetch('SMTP_ADDRESS', nil),
-      port: 587,
-      authentication: :plain
-    }
   end
 end
