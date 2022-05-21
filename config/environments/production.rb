@@ -65,4 +65,11 @@ Rails.application.configure do
   config.active_support.deprecation = :notify
 
   config.action_mailer.default_url_options = { host: 'phish.in' }
+  config.action_mailer.smtp_settings = {
+    user_name: ENV.fetch('SMTP_USERNAME', nil),
+    password: ENV.fetch('SMTP_PASSWORD', nil),
+    address: ENV.fetch('SMTP_ADDRESS', nil),
+    port: 587,
+    authentication: :plain
+  }
 end
