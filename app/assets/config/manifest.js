@@ -15,3 +15,4 @@
 //= link icons-volume.png
 //= link logo.png
 //= link logo-og.png
+//= link logo-twitter-card.png

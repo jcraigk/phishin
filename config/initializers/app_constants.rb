@@ -3,6 +3,7 @@ APP_NAME = 'Phish.in'
 CONTACT_EMAIL = 'phish.in.music@gmail.com'
 DEVISE_EMAIL_FROM = 'Phish.in <noreply@phish.in>'
 DESCRIPTION = 'An open source archive of live Phish audience recordings'
+TWITTER_USER = '@phish_in'
 
 CACHE_TTL = 10.minutes
 FIRST_CHAR_LIST = ('A'..'Z').to_a + ['#']
