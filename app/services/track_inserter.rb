@@ -36,14 +36,14 @@ class TrackInserter
   end
 
   def insert_new_track
-    @track = Track.create(
+    @track = Track.new \
       show:,
       title:,
       songs: [Song.find(song_id)],
-      audio_file: File.new(file, 'r'),
       position:,
       set:
-    )
+    track.save!(validate: false) # Generate ID for audio_file storage
+    track.update!(audio_file: File.open(file))
   end
 
   def add_sbd_tag

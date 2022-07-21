@@ -30,6 +30,7 @@ class Track < ApplicationRecord
   validates :songs, length: { minimum: 1 }
 
   before_save :generate_slug
+  after_update :process_audio_file, if: :saved_change_to_audio_file_data
 
   scope :chronological, -> { joins(:show).order('shows.date') }
   scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
