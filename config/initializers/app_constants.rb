@@ -57,7 +57,6 @@ TAGIN_TAGS = [
   'Famous',
   'Guest',
   'Narration',
-  'Sample',
   'Signal',
   'Tease'
 ].freeze
