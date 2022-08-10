@@ -115,6 +115,7 @@ class Track < ApplicationRecord
 
   def process_audio_file
     save_duration
+    show.save_duration
     apply_id3_tags
     generate_waveform_image
   end
