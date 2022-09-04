@@ -4,11 +4,11 @@
 
 ![Phish.in Logo](https://i.imgur.com/Zmj586L.jpg)
 
-Phish.in is an open source archive of live audio recordings of the improvisational rock band Phish.
+Phish.in is an open source archive of live Phish audience recordings.
 
-Ruby on Rails and PostgreSQL are used on the server side. There's a web frontend (http://phish.in) and a public REST-ish API (http://phish.in/api-docs). The web frontend utilizes soundmanager2 as the audio playback engine.
+Ruby on Rails and PostgreSQL are used on the server side. There's a web frontend (http://phish.in) and a public REST-ish API (http://phish.in/api-docs). The web frontend uses soundmanager2 as the audio playback engine.
 
-All audio is currently in MP3 format; more formats may be made available at a later time.  Files are currently served directly from the web server and cached via CloudFlare CDN.
+All audio is provided in MP3 format; more formats and sources may be made available at a later time. Files are served directly from the web server and cached via CloudFlare CDN.
 
 Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and development.
 
@@ -27,16 +27,9 @@ docker cp /path/to/phishin_for_devs.sql phishin_pg_1:/docker-entrypoint-initdb.d
 docker exec -u postgres phishin_pg_1 psql phishin postgres -f docker-entrypoint-initdb.d/dump.sql
 ```
 
-5. Create a folder or symlink named `content` in your local `phishin` folder to store mp3s, pngs, etc. Place the `tracks` folder from the Fixtures Pack inside the `content` folder. If you run Rails outside Docker, set its location as `APP_CONTENT_PATH` in `.env` and symlink it to your public folder: `ln -s ./content/tracks/audio_files public/audio`.
+5. Create a folder named `content` in your local `phishin` folder to store mp3s, pngs, etc. Place the `tracks` folder from the Fixtures Pack inside the `content` folder. Symlink it to your public folder: `ln -s ./content/tracks/audio_files public/audio`. If you run Rails outside Docker, set its location as `APP_CONTENT_PATH` in `.env`.
 
-6. From the repo folder, build and start the containers.
-
-```bash
-make build
-make up
-```
-
-If you want to run the backing services in Docker but develop the app natively, you can also spin it up like this:
+6. If you want to run the Postgres database in Docker and develop the app natively (recommended), you can spin it up like this:
 
 ```bash
 make services
@@ -51,12 +44,16 @@ brew install libsndfile
 gem install ruby-audio -- --with-sndfile-dir=/opt/homebrew/opt/libsndfile
 ```
 
-Open your browser and direct it to `http://localhost/2017-08-06`. You should be able to play the full show through the browser.
+Alternatively, if you prefer to develop completely in Docker, build and start the containers like this:
+
+```bash
+make up
+```
+
+7. Open your browser and go to `http://localhost/2017-08-06`. You should be able to view and play the full show.
 
 
 ## Testing
-
-You can test natively or in Docker.
 
 To run the specs in Docker:
 
@@ -78,7 +75,7 @@ bundle exec rspec
 To import a new show or replace an existing one, name the MP3s according to the import format (`I 01 Harry Hood.mp3`) and place them in a folder named by date (`2018-08-12`).  Place this folder in `./content/import` and run the following command from within the container (`make bash`):
 
 ```bash
-rails shows:import
+bundle exec rails shows:import
 ```
 
 Use the interactive CLI to finish the import process then go to `https://phish.in/<date>` to verify the import.
