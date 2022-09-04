@@ -114,7 +114,7 @@ class ShowImporter::Orchestrator
 
     save_tracks(pbar)
 
-    show.save_duration
+    show.reload.save_duration
     show.update!(published: true)
 
     pbar.finish

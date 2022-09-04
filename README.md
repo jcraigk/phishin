@@ -72,7 +72,7 @@ bundle exec rspec
 
 ## Importing Content
 
-The content import proceses uses the [Phish.net API](https://docs.phish.net/). You must first obtain an API key from them and assign it to the environment variable `PNET_API_KEY` in `.env`.
+The content import process uses the [Phish.net API](https://docs.phish.net/). You must first obtain an API key from them and assign it to the environment variable `PNET_API_KEY` in `.env`.
 
 To import a new show or replace an existing one, name the MP3s according to the import format (`I 01 Harry Hood.mp3`) and place them in a folder named by date (`2018-08-12`).  Place this folder in `./content/import` and run the following command (`make bash` first if you use Docker):
 
