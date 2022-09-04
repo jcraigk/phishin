@@ -23,7 +23,7 @@ class ShowImporter::Cli
   end
 
   def print_show_title
-    puts "🎸 #{orch.show.date} - #{orch.show.venue.name} - #{orch.show.venue.location}\n"
+    puts "🎸 #{orch.show.date} - #{orch.show.venue.name_on(orch.show.date)} - #{orch.show.venue.location}\n"
   end
 
   def print_notes

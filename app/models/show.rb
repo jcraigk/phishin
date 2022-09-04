@@ -96,11 +96,6 @@ class Show < ApplicationRecord
 
   def cache_venue_name
     return if venue_name.present?
-    self.venue_name =
-      venue.venue_renames
-           .where('renamed_on <= ?', date)
-           .order(renamed_on: :desc)
-           .first
-           &.name || venue.name
+    self.venue_name = venue.name_on(date)
   end
 end
