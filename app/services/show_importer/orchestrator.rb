@@ -10,12 +10,13 @@ class ShowImporter::Orchestrator
     'S' => %w[(Check)]
   }.freeze
 
-  def initialize(date)
+  def initialize(date) # rubocop:disable Metrics/MethodLength
     Track.attr_accessor(:filename)
 
     @date = date
     @path = "#{IMPORT_DIR}/#{date}"
     @show_info = ShowImporter::ShowInfo.new(date)
+    @used_files = []
 
     analyze_filenames
 
@@ -30,6 +31,27 @@ class ShowImporter::Orchestrator
   def show
     @show ||= Show.new(date:, published: false)
   end
+
+  def pp_list
+    @tracks.sort_by(&:position).each { |t| puts track_display(t) }
+  end
+
+  def save
+    print '🍩 Processing...'
+    pbar = ProgressBar.create(total: @tracks.size, format: '%a %B %c/%C %p%% %E')
+
+    show.save!
+
+    save_tracks(pbar)
+
+    show.reload.save_duration
+    show.update!(published: true)
+
+    pbar.finish
+    success
+  end
+
+  private
 
   def analyze_filenames
     @fm = ShowImporter::FilenameMatcher.new(path)
@@ -67,10 +89,6 @@ class ShowImporter::Orchestrator
     show.tour = tour
   end
 
-  def pp_list
-    @tracks.sort_by(&:position).each { |t| puts track_display(t) }
-  end
-
   def merge_tracks(subsumed_track, subsuming_track)
     subsuming_track.title += " > #{subsumed_track.title}"
     subsuming_track.songs << subsumed_track.songs.reject { |s| subsuming_track.songs.include?(s) }
@@ -106,21 +124,6 @@ class ShowImporter::Orchestrator
     show.taper_notes = File.read(notes_file)
   end
 
-  def save
-    print '🍩 Processing...'
-    pbar = ProgressBar.create(total: @tracks.size, format: '%a %B %c/%C %p%% %E')
-
-    show.save!
-
-    save_tracks(pbar)
-
-    show.reload.save_duration
-    show.update!(published: true)
-
-    pbar.finish
-    success
-  end
-
   def track_display(track)
     (valid?(track) ? '  ' : '* ') +
       format(
@@ -131,8 +134,6 @@ class ShowImporter::Orchestrator
         track.filename
       ) + track.songs.map { |song| format('(%-3d) %-20.20s', song.id, song.title) }.join('   ')
   end
-
-  private
 
   def notes_file
     "#{path}/notes.txt"
@@ -166,15 +167,16 @@ class ShowImporter::Orchestrator
 
   def populate_tracks
     @tracks = []
-    matches = @fm.matches.dup
+    @matches = @fm.matches.dup
+
     show_info.songs.each do |position, title|
-      process_track(matches, position, title)
+      process_track(position, title)
     end
   end
 
   # rubocop:disable Metrics/MethodLength
-  def process_track(matches, position, title)
-    if (match = fn_match?(matches, title))
+  def process_track(position, title)
+    if (match = fn_match?(title))
       filename = match.first
       song = match.second
       track = Track.new(
@@ -192,8 +194,14 @@ class ShowImporter::Orchestrator
   end
   # rubocop:enable Metrics/MethodLength
 
-  def fn_match?(matches, title)
-    matches.find { |_k, v| !v.nil? && v.title == title }
+  def fn_match?(title)
+    unused_matches.find { |_k, v| !v.nil? && v.title == title }.tap do |k, _v|
+      @used_files << k
+    end
+  end
+
+  def unused_matches
+    @matches.reject { |k, _v| k.in?(@used_files) }
   end
 
   def musical_set_from_fn(filename)

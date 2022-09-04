@@ -19,7 +19,7 @@ Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and developmen
 
 2. Clone the repo to your local machine
 
-4. Download the [Fixtures Pack](https://www.dropbox.com/s/m0lcvuus8gr2cmv/PhishinDevFixtures.zip?dl=1) and unzip it.  This file contains a full set of data with user and other sensitive information purged. It also includes all mp3 audio files for the last Baker's Dozen show (2017-08-06).
+4. Download the [Fixtures Pack](https://www.dropbox.com/s/m0lcvuus8gr2cmv/PhishinDevFixtures.zip?dl=1) and unzip it. This file contains a full set of data with user and other sensitive information purged. It also includes all mp3 audio files for the last Baker's Dozen show (2017-08-06).
 
 ```bash
 # Copy the SQL dump into PG container and run it
@@ -72,9 +72,11 @@ bundle exec rspec
 
 ## Importing Content
 
-The content import process uses the [Phish.net API](https://docs.phish.net/). You must first obtain an API key from them and assign it to the environment variable `PNET_API_KEY` in `.env`.
+The content import process uses the [Phish.net API](https://docs.phish.net/) for setlists. You must first obtain an API key from them and assign it to the environment variable `PNET_API_KEY` in `.env`.
 
-To import a new show or replace an existing one, name the MP3s according to the import format (`I 01 Harry Hood.mp3`) and place them in a folder named by date (`2018-08-12`).  Place this folder in `./content/import` and run the following command (`make bash` first if you use Docker):
+If running the Rails app natively, you may need to install `ffmpeg`.
+
+To import a new show or replace an existing one, name the MP3s according to the import format (`I 01 Harry Hood.mp3`) and place them in a folder named by date (`2018-08-12`). Place this folder in `./content/import` and run the following command (`make bash` first if you use Docker):
 
 ```bash
 bundle exec rails shows:import
@@ -85,7 +87,7 @@ Use the interactive CLI to finish the import process then go to `https://phish.i
 
 ## Maintenance
 
-You can create a new user via the Rails console (`bundle exec rails c`).  See [Devise documentation](https://github.com/plataformatec/devise) for details on the authentication system.
+You can create a new user via the Rails console (`bundle exec rails c`). See [Devise documentation](https://github.com/plataformatec/devise) for details on the authentication system.
 
 
 ## Contributions

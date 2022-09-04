@@ -4,14 +4,17 @@ class ShowImporter::FilenameMatcher
 
   def initialize(dir)
     @dir = dir
-    find_matches
+    @matches = {}
+
+    match_filenames_with_songs
   end
 
-  def find_matches
-    @matches = {}
+  private
+
+  def match_filenames_with_songs
     filenames.each do |filename|
       s_filename = scrub_filename(filename)
-      found = find_match(s_filename)
+      found = find_song(s_filename)
       @matches[filename] = found
     end
 
@@ -19,39 +22,15 @@ class ShowImporter::FilenameMatcher
   end
 
   def filenames
-    @filenames ||= Dir.entries(dir).reject do |e|
-      e == '.' || e == '..' || e =~ /.txt\z/
+    Dir.entries(dir).reject do |e|
+      e.start_with?('.') || e =~ /.txt\z/
     end
   end
 
-  def submit_correction(filename, search_term)
-    return false unless @matches.key?(filename)
-
-    match = find_match(search_term, exact: true)
-    if match
-      @matches[filename] = match
-      true
-    else
-      false
-    end
-  end
-
-  def pp_matches
-    @matches.each do |filename, match|
-      puts "#{filename} -- #{match.title}"
-    end
-  end
-
-  def all_matched?
-    @matches.values.select(&:nil?).empty?
-  end
-
-  def find_match(term, opts = {})
+  def find_song(term, opts = {})
     return Song.where('lower(title) = ?', term.downcase).first if opts[:exact]
     Song.kinda_matching(term).first
   end
-
-  private
 
   def scrub_dir_path(path)
     path.delete('\\').tr('/', '-')
