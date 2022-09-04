@@ -4,33 +4,22 @@
 
 ![Phish.in Logo](https://i.imgur.com/Zmj586L.jpg)
 
-Phish.in is a web-based archive containing legal live audio recordings of the improvisational rock band Phish.
+Phish.in is an open source archive of live audio recordings of the improvisational rock band Phish.
 
-Ruby on Rails and PostgreSQL are used on the server side.  There's a web frontend (http://phish.in) and a public REST-ish API (http://phish.in/api-docs).  The web frontend utilizes soundmanager2 as the audio playback engine.
+Ruby on Rails and PostgreSQL are used on the server side. There's a web frontend (http://phish.in) and a public REST-ish API (http://phish.in/api-docs). The web frontend utilizes soundmanager2 as the audio playback engine.
 
 All audio is currently in MP3 format; more formats may be made available at a later time.  Files are currently served directly from the web server and cached via CloudFlare CDN.
 
-Join the [Discord](https://discord.gg/KZWFsNN) to discuss curation and development.
+Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and development.
+
 
 ## Developer Setup
 
-1. Install [Docker](https://www.docker.com/).
+1. Install [Docker](https://www.docker.com/)
 
-2. From the repo folder, build and start the containers.
+2. Clone the repo to your local machine
 
-```bash
-make build
-make start
-```
-
-If you want to run the backing services in Docker but develop the app natively, you can also spin it up like this:
-
-```bash
-make services
-rails s
-```
-
-3. Download the [Fixtures Pack](https://www.dropbox.com/s/m0lcvuus8gr2cmv/PhishinDevFixtures.zip?dl=1) and unzip it.  This file contains a full set of data with user and other sensitive information purged.  It also includes all mp3 audio files for the last Baker's Dozen show (2017-08-06).
+4. Download the [Fixtures Pack](https://www.dropbox.com/s/m0lcvuus8gr2cmv/PhishinDevFixtures.zip?dl=1) and unzip it.  This file contains a full set of data with user and other sensitive information purged. It also includes all mp3 audio files for the last Baker's Dozen show (2017-08-06).
 
 ```bash
 # Copy the SQL dump into PG container and run it
@@ -38,9 +27,32 @@ docker cp /path/to/phishin_for_devs.sql phishin_pg_1:/docker-entrypoint-initdb.d
 docker exec -u postgres phishin_pg_1 psql phishin postgres -f docker-entrypoint-initdb.d/dump.sql
 ```
 
-5. Place the `tracks` folder on your local drive.  If you run Rails inside Docker (recommended as a starting point), set its location in `docker-compose.yml` (default is `/j/app_content/phishin`). If you run Rails outside Docker, set its location as `APP_CONTENT_PATH` in `.env` and symlink it to your public folder: `ln -s <path to files>/audio_files public/audio`.
+5. Create a folder or symlink named `content` in your local `phishin` folder to store mp3s, pngs, etc. Place the `tracks` folder from the Fixtures Pack inside the `content` folder. If you run Rails outside Docker, set its location as `APP_CONTENT_PATH` in `.env` and symlink it to your public folder: `ln -s ./content/tracks/audio_files public/audio`.
 
-Open your browser and direct it to `http://localhost/2017-08-06`.  You should be able to play the full show through the browser.
+6. From the repo folder, build and start the containers.
+
+```bash
+make build
+make up
+```
+
+If you want to run the backing services in Docker but develop the app natively, you can also spin it up like this:
+
+```bash
+make services
+bundle
+bundle exec rails s
+```
+
+If you are on a Mac M1 and the `ruby-audio` gem fails to install, try the following:
+
+```
+brew install libsndfile
+gem install ruby-audio -- --with-sndfile-dir=/opt/homebrew/opt/libsndfile
+```
+
+Open your browser and direct it to `http://localhost/2017-08-06`. You should be able to play the full show through the browser.
+
 
 ## Testing
 
@@ -56,34 +68,26 @@ To run the specs natively:
 
 ```bash
 make services
-rails db:create RAILS_ENV=test
-rails db:schema:load RAILS_ENV=test
-rspec
+bundle exec rails db:setup RAILS_ENV=test
+bundle exec rspec
 ```
+
 
 ## Importing Audio
 
-To import a new show or replace an existing one, name the MP3s according to the import format (`I 01 Harry Hood.mp3`) and place them in a folder named by date (`2018-08-12`).  Place this folder in `/content/import` (as seen from the app container) and run the following command from within the container (`docker-compose exec app bash`):
+To import a new show or replace an existing one, name the MP3s according to the import format (`I 01 Harry Hood.mp3`) and place them in a folder named by date (`2018-08-12`).  Place this folder in `./content/import` and run the following command from within the container (`make bash`):
 
 ```bash
 rails shows:import
 ```
 
-Use the interactive CLI to execute the import, then go to the `rails console`:
+Use the interactive CLI to finish the import process then go to `https://phish.in/<date>` to verify the import.
 
-```ruby
-Show.last.update(
-  tour: Tour.find("<tour id>"),
-  taper_notes: "<paste taper notes plaintext>",
-  published: true
-)
-```
-
-Go to `https://phish.in/<date>` to verify the import.
 
 ## Maintenance
 
-You can create a new user via the Rails console (`rails c`).  See [Devise documentation](https://github.com/plataformatec/devise) for details on the authentication system.
+You can create a new user via the Rails console (`bundle exec rails c`).  See [Devise documentation](https://github.com/plataformatec/devise) for details on the authentication system.
+
 
 ## Contributions
 

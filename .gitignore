@@ -1,6 +1,7 @@
 .bundle
 .DS_Store
 .env
+/content
 /coverage
 /log
 /public/assets

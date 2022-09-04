@@ -6,7 +6,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - /j/app_content/phishin:/content
+      - ./content:/content
       - .:/phishin
     tty: true
     stdin_open: true
