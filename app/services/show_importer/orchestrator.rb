@@ -201,7 +201,7 @@ class ShowImporter::Orchestrator
   end
 
   def unused_matches
-    @matches.reject { |k, _v| k.in?(@used_files) }
+    @matches.except(*@used_files)
   end
 
   def musical_set_from_fn(filename)
