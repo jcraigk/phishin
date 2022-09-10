@@ -19,7 +19,7 @@ Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and developmen
 
 2. Clone the repo to your local machine
 
-4. Download the [Fixtures Pack](https://www.dropbox.com/s/m0lcvuus8gr2cmv/PhishinDevFixtures.zip?dl=1) and unzip it. This file contains a full set of data with user and other sensitive information purged. It also includes all mp3 audio files for the last Baker's Dozen show (2017-08-06).
+4. Download the [Fixtures Pack](https://www.dropbox.com/s/17kjzt9cph13wgg/PhishinDevFixtures.zip?dl=1) and unzip it. This file contains a full set of data with user and other sensitive information purged. It also includes all mp3 audio files for the last Baker's Dozen show (2017-08-06).
 
 ```bash
 # Copy the SQL dump into PG container and run it
