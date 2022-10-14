@@ -18,7 +18,7 @@ describe 'My Shows', :js do
   it 'click My Shows, display/sorting of shows' do
     visit root_path
 
-    find('#user_controls').click
+    find_by_id('user_controls').click
     click_link('My Shows')
 
     expect(page).to have_current_path(my_shows_path)

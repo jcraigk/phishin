@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-RSpec.describe KnownDate, type: :model do
+RSpec.describe KnownDate do
   subject { build(:known_date) }
 
   it { is_expected.to be_an(ApplicationRecord) }

@@ -52,6 +52,9 @@ RSpec/MultipleExpectations:
   Exclude:
     - spec/features/**/*
   Max: 4
+RSpec/NoExpectationExample: # We use expect_content helper method
+  Exclude:
+    - spec/features/**/*
 Rails/Output:
   Enabled: false
 Rails/OutputSafety:

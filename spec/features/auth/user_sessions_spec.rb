@@ -29,7 +29,7 @@ describe 'User Sessions', :js do
       expect(page).to have_current_path(root_path)
       expect_content('Signed in successfully')
 
-      find('#user_controls').click
+      find_by_id('user_controls').click
       click_link('Logout')
 
       expect(page).to have_current_path(root_path)
