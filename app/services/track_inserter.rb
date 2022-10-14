@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class TrackInserter
-  attr_reader :date, :position, :file, :title, :song_id, :set, :is_sbd, :track
+  attr_reader :date, :position, :file, :title, :song_id, :set, :track
 
   def initialize(opts = {})
     @date = opts[:date]
@@ -9,7 +9,6 @@ class TrackInserter
     @title = opts[:title]
     @song_id = opts[:song_id] || Song.find_by(title:)&.id
     @set = opts[:set]
-    @is_sbd = opts[:is_sbd]
 
     ensure_valid_options
     ensure_records_present
@@ -18,7 +17,6 @@ class TrackInserter
   def call
     shift_track_positions
     insert_new_track
-    add_sbd_tag
     update_show_duration
   end
 
@@ -36,19 +34,15 @@ class TrackInserter
   end
 
   def insert_new_track
-    @track = Track.new \
+    track = Track.new(
       show:,
       title:,
       songs: [Song.find(song_id)],
       position:,
       set:
+    )
     track.save!(validate: false) # Generate ID for audio_file storage
     track.update!(audio_file: File.open(file))
-  end
-
-  def add_sbd_tag
-    return unless is_sbd
-    track.tags << Tag.find_by(name: 'SBD')
   end
 
   def update_show_duration
