@@ -21,14 +21,6 @@ env:
   - PGPORT=5432
   - PGHOST=localhost
 before_install:
-  - wget http://chromedriver.storage.googleapis.com/2.27/chromedriver_linux64.zip
-  - unzip chromedriver_linux64.zip
-  - sudo apt-get install libnss3
-  - sudo apt-get --only-upgrade install google-chrome-stable
-  - sudo cp chromedriver /usr/local/bin/.
-  - sudo chmod +x /usr/local/bin/chromedriver
-  - export DISPLAY=:99.0
-  - sleep 3
   - sudo apt-get -y install libsndfile-dev
   - sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
   - sudo service postgresql restart
