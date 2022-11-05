@@ -99,7 +99,7 @@ module FeatureHelpers
     sleep(1)
 
     fill_in('search_term', with: term)
-    find('#search_term').native.send_keys(:return)
+    find_by_id('search_term').native.send_keys(:return)
 
     within('#title_box') do
       expect_content("Search: '#{term}'")

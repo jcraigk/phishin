@@ -18,7 +18,7 @@ describe 'My Tracks', :js do
   it 'click My Tracks, display/sorting of tracks' do
     visit root_path
 
-    find('#user_controls').click
+    find_by_id('user_controls').click
     click_link('My Track')
 
     expect(page).to have_current_path(my_tracks_path)

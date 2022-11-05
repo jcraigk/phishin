@@ -18,7 +18,7 @@ describe 'Player controls', :js do
     end
 
     # Hover over the track title at the top of the player
-    find('#player_title_container').hover
+    find_by_id('player_title_container').hover
 
     within('#player_title_container') do
       within('.likes_large span') do
@@ -61,17 +61,17 @@ describe 'Player controls', :js do
       expect_content(show.tracks.first.title)
     end
 
-    find('#control_next').click
+    find_by_id('control_next').click
     within('#player_title_container') do
       expect_content(show.tracks.second.title)
     end
 
-    find('#control_next').click
+    find_by_id('control_next').click
     within('#player_title_container') do
       expect_content(show.tracks.third.title)
     end
 
-    find('#control_previous').click
+    find_by_id('control_previous').click
     within('#player_title_container') do
       expect_content(show.tracks.second.title)
     end

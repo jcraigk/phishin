@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 require 'rails_helper'
 
-RSpec.describe ApiKey, type: :model do
+RSpec.describe ApiKey do
   subject(:api_key) { build(:api_key) }
 
   it { is_expected.to be_an(ApplicationRecord) }

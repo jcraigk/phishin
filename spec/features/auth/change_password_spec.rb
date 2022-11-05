@@ -10,7 +10,7 @@ describe 'Change Password', :js do
   it 'click Change Password from user dropdown' do
     visit root_path
 
-    find('#user_controls').click
+    find_by_id('user_controls').click
     click_link('Change Password')
 
     expect(page).to have_current_path(edit_user_registration_path)
