@@ -72,7 +72,7 @@ namespace :tagin do
       '2018-10-31' => 'i Rokk by Kasvot Växt (Phish)'
     }
     # Exclude standard songs surrounding 1998-11-02 Dark Side of the Moon
-    blacklist_track_ids = [17952, 17953, 17954, 17955, 17956, 17966]
+    denylist_track_ids = [17952, 17953, 17954, 17955, 17956, 17966]
 
     # Clear existing
     ShowTag.where(tag_id: tag.id).destroy_all
@@ -84,7 +84,7 @@ namespace :tagin do
       ShowTag.create(show: show, tag: tag, notes: notes)
       Track.where(show_id: show.id, set: '2')
            .where
-           .not(id: blacklist_track_ids)
+           .not(id: denylist_track_ids)
            .order(position: :asc)
            .each do |track|
         TrackTag.create(track: track, tag: tag, notes: notes)
@@ -103,7 +103,7 @@ namespace :tagin do
       '1994-06-26' => 'Fourth live Gamehendge',
       '1994-07-08' => 'Fifth live Gamehendge'
     }
-    blacklist_track_ids = [7818, 7828, 10079, 10080, 10081, 10094, 10095, 10096, 5968, 5969, 5986, 5987, 5988]
+    denylist_track_ids = [7818, 7828, 10079, 10080, 10081, 10094, 10095, 10096, 5968, 5969, 5986, 5987, 5988]
 
     # Clear existing
     ShowTag.where(tag_id: tag.id).destroy_all
@@ -116,7 +116,7 @@ namespace :tagin do
       set = date == '1993-03-22' ? '2' : '1'
       Track.where(show_id: show.id, set: set)
            .where
-           .not(id: blacklist_track_ids)
+           .not(id: denylist_track_ids)
            .order(position: :asc)
            .each do |track|
         TrackTag.create(track: track, tag: tag, notes: notes)
@@ -533,7 +533,7 @@ namespace :tagin do
       "SevenBelow" => "Seven Below",
       "Sevent Below" => "Seven Below",
       "Skin It" => "Skin It Back",
-      "Slave" => "Slave to the Traffic Light",
+      "Slave" => "Slave to the Traffic Light", # wokeignore:rule=slave
       "SLI" => "Secret Language Instructions",
       "Sloth" => "The Sloth",
       "Smoke" => "Smoke on the Water",
