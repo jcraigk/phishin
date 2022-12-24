@@ -47,11 +47,21 @@ class ShowImporter::Orchestrator
     show.reload.save_duration
     show.update!(published: true)
 
+    create_announcement
+
     pbar.finish
     success
   end
 
   private
+
+  def create_announcement
+    show_name = "#{show.date} at #{show.venue_name}"
+    Announcement.create! \
+      title: "New content: #{show_name}",
+      description: "A new show has been added: #{show_name}",
+      url: "#{APP_BASE_URL}/#{show.date}"
+  end
 
   def analyze_filenames
     @fm = ShowImporter::FilenameMatcher.new(path)

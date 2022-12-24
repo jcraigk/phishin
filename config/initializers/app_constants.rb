@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 APP_NAME = 'Phish.in'
+APP_DESC = "#{APP_NAME} is an open source archive of live Phish audience recordings".freeze
 CONTACT_EMAIL = 'phish.in.music@gmail.com'
 DEVISE_EMAIL_FROM = 'Phish.in <noreply@phish.in>'
 DESCRIPTION = 'An open source archive of live Phish audience recordings'

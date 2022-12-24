@@ -10,18 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_13_175705) do
-
+ActiveRecord::Schema[7.0].define(version: 2022_12_24_070950) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "announcements", force: :cascade do |t|
+    t.string "title"
+    t.string "description"
+    t.string "url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_announcements_on_created_at"
+  end
 
   create_table "api_keys", force: :cascade do |t|
     t.string "name", null: false
     t.string "email", null: false
     t.string "key", null: false
-    t.datetime "revoked_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "revoked_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["email"], name: "index_api_keys_on_email", unique: true
     t.index ["key"], name: "index_api_keys_on_key", unique: true
     t.index ["name"], name: "index_api_keys_on_name", unique: true
@@ -32,8 +40,8 @@ ActiveRecord::Schema.define(version: 2021_08_13_175705) do
     t.string "phishnet_url"
     t.string "location"
     t.string "venue"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["date"], name: "index_known_dates_on_date", unique: true
   end
 
@@ -41,7 +49,7 @@ ActiveRecord::Schema.define(version: 2021_08_13_175705) do
     t.string "likable_type", limit: 255
     t.integer "likable_id"
     t.integer "user_id"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.index ["likable_id"], name: "index_likes_on_likable_id"
     t.index ["likable_type"], name: "index_likes_on_likable_type"
     t.index ["user_id"], name: "index_likes_on_user_id"
@@ -67,8 +75,8 @@ ActiveRecord::Schema.define(version: 2021_08_13_175705) do
     t.integer "user_id"
     t.string "name", limit: 255, null: false
     t.string "slug", limit: 255, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "duration", default: 0
     t.index ["duration"], name: "index_playlists_on_duration"
     t.index ["name"], name: "index_playlists_on_name", unique: true
@@ -79,7 +87,7 @@ ActiveRecord::Schema.define(version: 2021_08_13_175705) do
   create_table "show_tags", id: :serial, force: :cascade do |t|
     t.integer "show_id"
     t.integer "tag_id"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.text "notes"
     t.index ["notes"], name: "index_show_tags_on_notes"
     t.index ["show_id"], name: "index_show_tags_on_show_id"
@@ -88,8 +96,8 @@ ActiveRecord::Schema.define(version: 2021_08_13_175705) do
 
   create_table "shows", id: :serial, force: :cascade do |t|
     t.date "date", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "remastered", default: false
     t.boolean "sbd", default: false
     t.integer "venue_id"
@@ -111,8 +119,8 @@ ActiveRecord::Schema.define(version: 2021_08_13_175705) do
 
   create_table "songs", id: :serial, force: :cascade do |t|
     t.string "title", limit: 255, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "slug", limit: 255, null: false
     t.integer "tracks_count", default: 0
     t.string "lyrical_excerpt", limit: 255
@@ -139,8 +147,8 @@ ActiveRecord::Schema.define(version: 2021_08_13_175705) do
     t.string "name", limit: 255, null: false
     t.string "color", limit: 255, null: false
     t.text "description"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "shows_count", default: 0
     t.integer "tracks_count", default: 0
     t.integer "priority", default: 0, null: false
@@ -157,8 +165,8 @@ ActiveRecord::Schema.define(version: 2021_08_13_175705) do
     t.date "starts_on", null: false
     t.date "ends_on", null: false
     t.string "slug", limit: 255, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "shows_count", default: 0
     t.index ["ends_on"], name: "index_tours_on_ends_on", unique: true
     t.index ["name"], name: "index_tours_on_name", unique: true
@@ -169,7 +177,7 @@ ActiveRecord::Schema.define(version: 2021_08_13_175705) do
   create_table "track_tags", id: :serial, force: :cascade do |t|
     t.integer "track_id"
     t.integer "tag_id"
-    t.datetime "created_at"
+    t.datetime "created_at", precision: nil
     t.text "notes"
     t.integer "starts_at_second"
     t.integer "ends_at_second"
@@ -183,8 +191,8 @@ ActiveRecord::Schema.define(version: 2021_08_13_175705) do
     t.integer "show_id"
     t.string "title", limit: 255, null: false
     t.integer "position", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "duration", default: 0, null: false
     t.string "set", limit: 255, null: false
     t.integer "likes_count", default: 0
@@ -206,19 +214,19 @@ ActiveRecord::Schema.define(version: 2021_08_13_175705) do
     t.string "email", limit: 255, default: "", null: false
     t.string "encrypted_password", limit: 255, default: "", null: false
     t.string "reset_password_token", limit: 255
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
     t.integer "sign_in_count", default: 0
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
+    t.datetime "current_sign_in_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
     t.string "current_sign_in_ip", limit: 255
     t.string "last_sign_in_ip", limit: 255
     t.string "confirmation_token", limit: 255
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
+    t.datetime "confirmed_at", precision: nil
+    t.datetime "confirmation_sent_at", precision: nil
     t.string "unconfirmed_email", limit: 255
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "username", limit: 255, default: "", null: false
     t.string "authentication_token", limit: 255
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
@@ -241,8 +249,8 @@ ActiveRecord::Schema.define(version: 2021_08_13_175705) do
     t.string "state", limit: 255, null: false
     t.string "country", limit: 255, null: false
     t.string "slug", limit: 255, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "shows_count", default: 0
     t.float "latitude"
     t.float "longitude"
