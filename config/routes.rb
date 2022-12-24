@@ -2,6 +2,9 @@
 Rails.application.routes.draw do
   root to: 'eras#index'
 
+  # RSS feed
+  get 'feeds/rss', to: 'feeds#rss', format: 'xml', as: :rss_feed
+
   # Stub audio file requests when testing
   get '/audio/*mp3', to: 'static_pages#faq' if Rails.env.test?
 
