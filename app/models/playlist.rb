@@ -12,7 +12,7 @@ class Playlist < ApplicationRecord
   validates :slug,
             presence: true,
             format: {
-              with: /\A[a-z0-9\-]{5,50}\z/,
+              with: /\A[a-z0-9-]{5,50}\z/,
               message: 'must be between 5 and 50 lowercase letters, numbers, or dashes'
             },
             uniqueness: true
