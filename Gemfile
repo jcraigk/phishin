@@ -41,12 +41,6 @@ group :development do
   gem 'rubocop-rspec'
 end
 
-group :development, :test do
-  gem 'awesome_print'
-  gem 'pry-byebug'
-  gem 'pry-rails'
-end
-
 group :test do
   gem 'capybara'
   gem 'capybara-email'
