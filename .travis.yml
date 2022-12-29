@@ -29,6 +29,7 @@ before_install:
   - psql -c 'create database phishin_test;' -U postgres
   - gem update --system --no-document
   - gem install bundler --no-document
+install: bundle install
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
