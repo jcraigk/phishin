@@ -3,7 +3,7 @@ html
   head
     title = APP_NAME
     = render partial: 'layouts/meta'
-    = auto_discovery_link_tag :rss, { controller: 'feeds', action: 'rss' }, title: 'Phish.in Updates'
+    = auto_discovery_link_tag :rss, '/feeds/rss', title: 'Phish.in Updates'
     = stylesheet_link_tag 'https://fonts.googleapis.com/css?family=Marck+Script|Open+Sans+Condensed:300,700|Molle'
     = javascript_include_tag 'https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js'
     = stylesheet_link_tag 'https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css'

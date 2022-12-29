@@ -22,10 +22,11 @@
     br
     h2 This project is open source
     p
-      a href='https://github.com/jcraigk/phishin' Develop on GitHub
+      = link_to 'Develop on GitHub', 'https://github.com/jcraigk/phishin'
       br
-      a href='https://discord.gg/KZWFsNN' Discuss on Discord
-    h3 = link_to 'RSS Feed', rss_feed_path, class: 'strong non-remote'
+      = link_to 'Discuss on Discord', 'https://discord.gg/KZWFsNN'
+      br
+      = link_to 'RSS Feed', rss_feed_path, class: 'non-remote'
 
     = clear_both
 

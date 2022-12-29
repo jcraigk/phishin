@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 source 'https://rubygems.org'
-ruby '3.1.3'
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
+
+ruby '3.2.0'
 
 gem 'actionpack-action_caching', github: 'rails/actionpack-action_caching'
 gem 'bootstrap-will_paginate'
