@@ -372,9 +372,6 @@ GEM
     uniform_notifier (1.16.0)
     warden (1.2.9)
       rack (>= 2.0.9)
-    waveform (0.1.2)
-      chunky_png
-      ruby-audio
     waveformjson (0.1.0)
       ruby-audio
     webrick (1.7.0)
@@ -397,6 +394,7 @@ DEPENDENCIES
   capybara
   capybara-email
   capybara-screenshot
+  chunky_png
   coffee-rails
   dalli
   devise
@@ -432,7 +430,6 @@ DEPENDENCIES
   twitter-bootstrap-rails (= 2.2.8)
   typhoeus
   uglifier
-  waveform
   waveformjson
 
 RUBY VERSION

@@ -6,6 +6,7 @@ ruby '3.2.0'
 
 gem 'actionpack-action_caching', github: 'rails/actionpack-action_caching'
 gem 'bootstrap-will_paginate'
+gem 'chunky_png'
 gem 'coffee-rails'
 gem 'dalli'
 gem 'devise'
@@ -31,7 +32,6 @@ gem 'soundmanager2-rails'
 gem 'twitter-bootstrap-rails', '2.2.8'
 gem 'typhoeus'
 gem 'uglifier'
-gem 'waveform'
 gem 'waveformjson'
 
 group :development do
