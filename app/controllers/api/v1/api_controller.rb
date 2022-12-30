@@ -5,7 +5,7 @@ class Api::V1::ApiController < ActionController::Base # rubocop:disable Rails/Ap
   before_action :require_auth
   after_action :set_json_content_type
 
-  rescue_from ActiveRecord::RecordNotFound, with: :respond_with_404
+  rescue_from ActiveRecord::RecordNotFound, with: :respond_with_not_found
 
   def self.caches_action_params(action, params = [])
     params += %i[sort_attr sort_dir per_page page tag id slug]
@@ -35,7 +35,7 @@ class Api::V1::ApiController < ActionController::Base # rubocop:disable Rails/Ap
     }
   end
 
-  def respond_with_404
+  def respond_with_not_found
     render json: {
       success: false,
       message: 'Record not found'

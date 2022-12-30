@@ -53,6 +53,47 @@ class ShowImporter::Orchestrator
     success
   end
 
+  def get_track(position)
+    @tracks.find { |t| t.position == position }
+  end
+
+  def track_display(track)
+    (valid?(track) ? '  ' : '* ') +
+      format(
+        '%2d. [%1s] %-30.30s     %-30.30s     ',
+        track.position,
+        track.set,
+        track.title,
+        track.filename
+      ) + track.songs.map { |song| format('(%-3d) %-20.20s', song.id, song.title) }.join('   ')
+  end
+
+  def merge_tracks(subsumed_track, subsuming_track)
+    subsuming_track.title += " > #{subsumed_track.title}"
+    subsuming_track.songs << subsumed_track.songs.reject { |s| subsuming_track.songs.include?(s) }
+    subsuming_track.filename ||= subsumed_track.filename
+    @tracks.delete(subsumed_track)
+  end
+
+  def combine_up(position)
+    subsumed_track = get_track(position)
+    subsuming_track = get_track(position - 1)
+    return if subsumed_track.nil? || subsuming_track.nil?
+    merge_tracks(subsumed_track, subsuming_track)
+    @tracks.each { |track| track.position -= 1 if track.position > position }
+  end
+
+  def insert_before(position)
+    set = get_track(position).set
+    @tracks.each { |track| track.position += 1 if track.position >= position }
+    @tracks.insert position, Track.new(position:, set:)
+  end
+
+  def delete(position)
+    @tracks.delete_if { |track| track.position == position }
+    @tracks.each { |track| track.position -= 1 if track.position > position }
+  end
+
   private
 
   def create_announcement
@@ -99,50 +140,9 @@ class ShowImporter::Orchestrator
     show.tour = tour
   end
 
-  def merge_tracks(subsumed_track, subsuming_track)
-    subsuming_track.title += " > #{subsumed_track.title}"
-    subsuming_track.songs << subsumed_track.songs.reject { |s| subsuming_track.songs.include?(s) }
-    subsuming_track.filename ||= subsumed_track.filename
-    @tracks.delete(subsumed_track)
-  end
-
-  def combine_up(position)
-    subsumed_track = get_track(position)
-    subsuming_track = get_track(position - 1)
-    return if subsumed_track.nil? || subsuming_track.nil?
-    merge_tracks(subsumed_track, subsuming_track)
-    @tracks.each { |track| track.position -= 1 if track.position > position }
-  end
-
-  def insert_before(position)
-    set = get_track(position).set
-    @tracks.each { |track| track.position += 1 if track.position >= position }
-    @tracks.insert position, Track.new(position:, set:)
-  end
-
-  def delete(position)
-    @tracks.delete_if { |track| track.position == position }
-    @tracks.each { |track| track.position -= 1 if track.position > position }
-  end
-
-  def get_track(position)
-    @tracks.find { |t| t.position == position }
-  end
-
   def import_notes
     return unless File.exist?(notes_file)
     show.taper_notes = File.read(notes_file)
-  end
-
-  def track_display(track)
-    (valid?(track) ? '  ' : '* ') +
-      format(
-        '%2d. [%1s] %-30.30s     %-30.30s     ',
-        track.position,
-        track.set,
-        track.title,
-        track.filename
-      ) + track.songs.map { |song| format('(%-3d) %-20.20s', song.id, song.title) }.join('   ')
   end
 
   def notes_file

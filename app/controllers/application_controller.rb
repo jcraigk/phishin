@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   before_action :random_song_with_excerpt
   before_action :permitted_params, if: :devise_controller?
 
-  rescue_from ActiveRecord::RecordNotFound, with: :render_404
+  rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
 
   def self.caches_action_params(action, params = [])
     params += %i[sort per_page page id slug]
@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
     render layout: false if request.xhr?
   end
 
-  def render_404
+  def render_not_found
     render_xhr_without_layout('errors/404')
   end
 

@@ -11,7 +11,7 @@ rescue LoadError
 end
 
 class Waveform
-  DefaultOptions = { # rubocop:disable Naming/ConstantName
+  DEFAULT_OPTIONS = {
     method: :peak,
     width: 1800,
     height: 280,
@@ -20,8 +20,8 @@ class Waveform
     force: false,
     logger: nil
   }.freeze
-  TransparencyMask = '#00ff00' # rubocop:disable Naming/ConstantName
-  TransparencyAlternate = '#ffff00' # rubocop:disable Naming/ConstantName
+  TRANSPARENCY_MASK = '#00ff00'
+  TRANSPARENCY_ALT = '#ffff00'
 
   attr_reader :source
 
@@ -76,8 +76,10 @@ class Waveform
     #   Waveform.generate \
     #     "Kickstart My Heart.wav", "Kickstart My Heart.png", color: "#ff00ff", logger: $stdout
     #
+
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def generate(source, filename, options = {})
-      options = DefaultOptions.merge(options)
+      options = DEFAULT_OPTIONS.merge(options)
 
       unless source
         raise ArgumentError,
@@ -151,20 +153,28 @@ class Waveform
     end
 
     def draw(samples, options)
-      image = ChunkyPNG::Image.new(options[:width], options[:height],
-        options[:background_color] == :transparent ? ChunkyPNG::Color::TRANSPARENT : options[:background_color]
-      )
+      bg =
+        if options[:background_color] == :transparent
+          ChunkyPNG::Color::TRANSPARENT
+        else
+          options[:background_color]
+        end
+      image = ChunkyPNG::Image.new(options[:width], options[:height], bg)
 
       if options[:color] == :transparent
-        color = transparent = ChunkyPNG::Color.from_hex(
-          # Have to do this little bit because it's possible the color we were
-          # intending to use a transparency mask *is* the background color, and
-          # then we'd end up wiping out the whole image.
-          options[:background_color].downcase == TransparencyMask ? TransparencyAlternate : TransparencyMask
-        )
+        # Have to do this little bit because it's possible the color we were
+        # intending to use a transparency mask *is* the background color, and
+        # then we'd end up wiping out the whole image.
+        opt = if options[:background_color].downcase == TRANSPARENCY_MASK
+                TRANSPARENCY_ALT
+              else
+                TRANSPARENCY_MASK
+              end
+        color = transparent = ChunkyPNG::Color.from_hex(opt)
       else
         color = ChunkyPNG::Color.from_hex(options[:color])
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
       # Calling "zero" the middle of the waveform, like there's positive and
       # negative amplitude
