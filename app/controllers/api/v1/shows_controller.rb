@@ -21,7 +21,7 @@ class Api::V1::ShowsController < Api::V1::ApiController
   end
 
   def on_day_of_year
-    return respond_with_404 unless month_and_day_from_params
+    return respond_with_not_found unless month_and_day_from_params
     respond_with_success shows_on_day
   end
 

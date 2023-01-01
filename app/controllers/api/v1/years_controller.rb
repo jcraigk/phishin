@@ -9,7 +9,7 @@ class Api::V1::YearsController < Api::V1::ApiController
 
   def show
     return respond_with_success(shows_that_year) if requested_years
-    respond_with_404
+    respond_with_not_found
   end
 
   private
