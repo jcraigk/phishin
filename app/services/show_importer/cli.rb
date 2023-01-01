@@ -104,7 +104,7 @@ class ShowImporter::Cli
   def update_song_for_pos(pos)
     puts 'Enter exact song title:'
     line = Readline.readline('➡ ', true)
-    matched = orch.fm.find_match(line, exact: true)
+    matched = orch.fm.find_song(line, exact: true)
     if matched
       puts "Found \"#{matched.title}\".  Adding Song."
       orch.get_track(pos).songs << matched

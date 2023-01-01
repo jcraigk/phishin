@@ -9,6 +9,11 @@ class ShowImporter::FilenameMatcher
     match_filenames_with_songs
   end
 
+  def find_song(term, opts = {})
+    return Song.where('lower(title) = ?', term.downcase).first if opts[:exact]
+    Song.kinda_matching(term).first
+  end
+
   private
 
   def match_filenames_with_songs
@@ -25,11 +30,6 @@ class ShowImporter::FilenameMatcher
     Dir.entries(dir).reject do |e|
       e.start_with?('.') || e =~ /.txt\z/
     end
-  end
-
-  def find_song(term, opts = {})
-    return Song.where('lower(title) = ?', term.downcase).first if opts[:exact]
-    Song.kinda_matching(term).first
   end
 
   def scrub_dir_path(path)
