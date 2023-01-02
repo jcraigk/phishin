@@ -130,7 +130,7 @@ $ ->
 
   # Click Never Ending Splendor app callout
   $(document).on 'click', '#splendor_callout', ->
-    window.location = 'https://apkcombo.com/never-ending-splendor/never.ending.splendor/'
+    window.location = 'https://play.google.com/store/apps/details?id=never.ending.splendor'
 
   # Click a link to load page via ajax
   .on 'click', 'a', ->
