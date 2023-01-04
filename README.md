@@ -50,7 +50,7 @@ Alternatively, if you prefer to develop completely in Docker, build and start th
 make up
 ```
 
-7. Open your browser and go to `http://localhost/2017-08-06`. You should be able to view and play the full show.
+7. Open your browser and go to `http://localhost:3000/2017-08-06`. You should be able to view and play the full show.
 
 
 ## Testing
@@ -82,7 +82,7 @@ To import a new show or replace an existing one, name the MP3s according to the 
 bundle exec rails shows:import
 ```
 
-Use the interactive CLI to finish the import process then go to `https://phish.in/<date>` to verify the import.
+Use the interactive CLI to finish the import process then go to `https://localhost:3000/<date>` to verify the import.
 
 
 ## Maintenance
