@@ -145,7 +145,7 @@ GEM
       activerecord (>= 4.0.0)
     gems (1.2.0)
     geocoder (1.8.1)
-    globalid (1.0.0)
+    globalid (1.0.1)
       activesupport (>= 5.0)
     google-api-client (0.53.0)
       google-apis-core (~> 0.1)
@@ -202,7 +202,7 @@ GEM
     method_source (1.0.0)
     mini_mime (1.1.2)
     mini_portile2 (2.8.1)
-    minitest (5.16.3)
+    minitest (5.17.0)
     multi_json (1.15.0)
     net-imap (0.3.4)
       date
@@ -387,6 +387,7 @@ GEM
 PLATFORMS
   arm64-darwin-21
   arm64-darwin-22
+  x86_64-linux
 
 DEPENDENCIES
   actionpack-action_caching!
