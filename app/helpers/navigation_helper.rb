@@ -18,7 +18,7 @@ module NavigationHelper
       x = props[2]
       str += nav_link(name, props, css, x)
 
-      next unless /active/.match?(css)
+      next unless css&.include?('active')
       pos = x + 20
       str += nav_indicators(pos)
     end
