@@ -35,7 +35,7 @@ RSpec.describe Song do
     end
 
     it 'matches `Tube`' do
-      expect(described_class.kinda_matching('Tube')).to match_array([song3, song4])
+      expect(described_class.kinda_matching('Tube')).to contain_exactly(song3, song4)
     end
   end
 
