@@ -1,6 +1,7 @@
 //= require jquery
 //= require jquery_ujs
-//= require jquery-ui
+//= require jquery-ui/slider
+//= require jquery-ui/sortable
 //= require jquery.cookie
 //= require native.history
 //= require phishtracks-stats-0.0.3
