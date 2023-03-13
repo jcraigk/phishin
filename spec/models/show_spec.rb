@@ -96,7 +96,7 @@ RSpec.describe Show do
       before { create(:show, published: false) }
 
       it 'returns published shows' do
-        expect(described_class.published.order(date: :asc)).to match_array([show2, show3])
+        expect(described_class.published.order(date: :asc)).to contain_exactly(show2, show3)
       end
     end
 
