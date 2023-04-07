@@ -19,7 +19,7 @@ Capybara.register_driver :chrome do |app|
   options.add_argument 'disable-gpu'
   options.add_argument 'no-sandbox'
   options.add_argument 'window-size=1366,768'
-  Capybara::Selenium::Driver.new(app, browser: :chrome, capabilities: [options])
+  Capybara::Selenium::Driver.new(app, browser: :chrome, options:)
 end
 
 Capybara::Screenshot.register_driver(:chrome) do |driver, path|
