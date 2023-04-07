@@ -14,7 +14,7 @@ jobs:
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.2.1'
+        ruby-version: '3.2.2'
     - name: Setup Brakeman
       env:
         BRAKEMAN_VERSION: '5.4.0'
