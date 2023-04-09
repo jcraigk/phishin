@@ -69,6 +69,7 @@ Rails.application.routes.draw do
 
   # API Routes
   namespace :api do
+    # Simple REST API
     namespace :v1 do
       devise_for :users
 
@@ -88,5 +89,8 @@ Rails.application.routes.draw do
       get 'shows-on-day-of-year/:day', to: 'shows#on_day_of_year'
       get 'random-show',               to: 'shows#random'
     end
+
+    # Grape API
+    mount Phishin::V2::Api, at: '/'
   end
 end

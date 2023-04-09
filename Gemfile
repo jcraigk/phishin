@@ -14,6 +14,11 @@ gem 'execjs', '2.7.0' # 2.8 breaks coffeescript compilation
 gem 'friendly_id'
 gem 'geocoder'
 gem 'google-api-client'
+gem 'grape'
+gem 'grape-entity'
+gem 'grape_logging'
+gem 'grape-swagger'
+# gem 'grape-swagger-entity'
 gem 'highline'
 gem 'jquery-rails'
 gem 'jquery-ui-rails', '< 6.0' # 6.0 breaks slider/scrubber
