@@ -48,7 +48,7 @@ describe 'Homepage', :js do
 
       # Years
       years = page.all('ul.item_list li h2.wider')
-      expect(years.first.text).to eq('2022')
+      expect(years.first.text).to eq('2023')
       expect(years.last.text).to eq('1983-1987')
 
       # Venue stats
