@@ -24,7 +24,7 @@ class Phishin::V2::Shows < Grape::API
         # tags ['tag1', 'tag2']
       end
       get do
-        present Show.limit(10)
+        Phishin::V2::Entities::Show.represent(Show.first)
       end
     end
 

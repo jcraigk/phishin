@@ -64,6 +64,7 @@ class Phishin::V2::Entities::Show < Phishin::V2::Entities::Base
   private
 
   def era
+    return '1.0' if object.date.year.in?(1983..1987)
     ERAS.find { |_era, years| years.include?(object.date.year.to_s) }.first
   end
 

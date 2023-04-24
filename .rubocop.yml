@@ -35,6 +35,8 @@ RSpec/DescribeClass:
 RSpec/ExampleLength:
   Exclude:
     - spec/features/**/*
+RSpec/IndexedLet:
+  Enabled: false
 Rails/EnvironmentVariableAccess:
   Enabled: false
 Rails/Exit:

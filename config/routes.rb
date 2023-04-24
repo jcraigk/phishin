@@ -64,9 +64,6 @@ Rails.application.routes.draw do
   get '/play-track/:track_id' => 'downloads#play_track', as: 'play_track'
   get '/download-track/:track_id' => 'downloads#download_track', as: 'download_track'
 
-  # Catch-all matcher for ambiguous content slugs
-  get '/(:slug(/:anchor))' => 'ambiguity#resolve', constraints: { glob: %r{[^/]+} }
-
   # API Routes
   namespace :api do
     # Simple REST API
@@ -93,4 +90,7 @@ Rails.application.routes.draw do
     # Grape API
     mount Phishin::V2::Api, at: '/'
   end
+
+  # Catch-all matcher for ambiguous content slugs
+  get '/(:slug(/:anchor))' => 'ambiguity#resolve', constraints: { glob: %r{[^/]+} }
 end

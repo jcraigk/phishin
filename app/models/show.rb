@@ -40,23 +40,23 @@ class Show < ApplicationRecord
     date.strftime('%Y.%m.%d')
   end
 
-  # def as_json # rubocop:disable Metrics/MethodLength
-  #   {
-  #     id:,
-  #     date: date.iso8601,
-  #     duration:,
-  #     incomplete:,
-  #     sbd:,
-  #     remastered:,
-  #     tour_id:,
-  #     venue_id:,
-  #     likes_count:,
-  #     taper_notes:,
-  #     updated_at: updated_at.iso8601,
-  #     venue_name:,
-  #     location: venue&.location
-  #   }
-  # end
+  def as_json # rubocop:disable Metrics/MethodLength
+    {
+      id:,
+      date: date.iso8601,
+      duration:,
+      incomplete:,
+      sbd:,
+      remastered:,
+      tour_id:,
+      venue_id:,
+      likes_count:,
+      taper_notes:,
+      updated_at: updated_at.iso8601,
+      venue_name:,
+      location: venue&.location
+    }
+  end
 
   def as_json_api # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     {
