@@ -7,6 +7,7 @@ class Phishin::V2::Api < Grape::API
 
   mount Phishin::V2::Shows
 
+
   # rescue_from :all do |e|
   #   raise e
   #   error_response(message: "Internal server error: #{e}", status: 500)
@@ -18,8 +19,8 @@ class Phishin::V2::Api < Grape::API
     # schemes: Common::Helpers::ApiHelpers.swagger_scheme_config,
     schemes: %w[http https],
     info: {
-      title: 'Phishin API TODO',
-      description: 'TODO',
+      title: APP_NAME,
+      description: APP_DESC,
       contact_name: 'Phishin Music',
       contact_email: 'phish.in.music@gmail.com',
       contact_url: 'https://phish.in/contact',
