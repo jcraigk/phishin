@@ -49,11 +49,11 @@ class TrackSlugGenerator
   end
 
   def abbreviate_long_slug(slug)
-    slug.gsub!(/hold-your-head-up/, 'hyhu')
-    slug.gsub!(/the-man-who-stepped-into-yesterday/, 'tmwsiy')
-    slug.gsub!(/she-caught-the-katy-and-left-me-a-mule-to-ride/, 'she-caught-the-katy')
-    slug.gsub!(/mcgrupp-and-the-watchful-hosemasters/, 'mcgrupp')
-    slug.gsub!(/big-black-furry-creature-from-mars/, 'bbfcfm')
+    slug.gsub!('hold-your-head-up', 'hyhu')
+    slug.gsub!('the-man-who-stepped-into-yesterday', 'tmwsiy')
+    slug.gsub!('she-caught-the-katy-and-left-me-a-mule-to-ride', 'she-caught-the-katy')
+    slug.gsub!('mcgrupp-and-the-watchful-hosemasters', 'mcgrupp')
+    slug.gsub!('big-black-furry-creature-from-mars', 'bbfcfm')
     slug
   end
 end

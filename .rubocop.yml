@@ -1,8 +1,10 @@
 inherit_from: .rubocop_todo.yml
 
 require:
+  - rubocop-factory_bot
   - rubocop-performance
   - rubocop-rails
+  - rubocop-rake
   - rubocop-rspec
 
 AllCops:
@@ -34,6 +36,8 @@ RSpec/DescribeClass:
 RSpec/ExampleLength:
   Exclude:
     - spec/features/**/*
+RSpec/IndexedLet:
+  Enabled: false
 Rails/EnvironmentVariableAccess:
   Enabled: false
 Rails/Exit:

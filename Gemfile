@@ -38,8 +38,10 @@ group :development do
   gem 'bullet'
   gem 'dotenv-rails'
   gem 'rubocop'
+  gem 'rubocop-factory_bot'
   gem 'rubocop-performance'
   gem 'rubocop-rails'
+  gem 'rubocop-rake'
   gem 'rubocop-rspec'
 end
 
