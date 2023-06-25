@@ -33,6 +33,7 @@ gem 'twitter-bootstrap-rails', '2.2.8'
 gem 'typhoeus'
 gem 'uglifier'
 gem 'waveformjson'
+gem 'will_paginate', '< 4' # 4.0 breaks bootstrap-will_paginate
 
 group :development do
   gem 'bullet'
