@@ -5,7 +5,7 @@ class @Player
     @sm               = soundManager
     @sm_sound         = {}
     @preload_time     = 5000
-    @preload_started  = false
+    # @preload_started  = false
     @active_track     = ''
     @invoked          = false
     @muted            = false
@@ -108,7 +108,7 @@ class @Player
   playTrack: (track_id, time_marker=0) ->
     if track_id != @active_track
       @$scrubber.slider 'value', 0
-      @preload_started = false
+      # @preload_started = false
       unless track_id and @sm_sound = @sm.getSoundById track_id
         this._hidePlayTooltip()
         @sm_sound = @sm.createSound
@@ -329,12 +329,12 @@ class @Player
     unless @scrubbing or @duration is 0
       unless isNaN @duration or isNaN @sm_sound.position
         # Preload next track if we're close to the end of this one
-        if !@preload_started and @duration - @sm_sound.position <= @preload_time
-          $.ajax
-            url: "/next-track/#{@active_track}"
-            success: (r) =>
-              this._preloadTrack(r.track_id) if r.success
-          @preload_started = true
+        # if !@preload_started and @duration - @sm_sound.position <= @preload_time
+        #   $.ajax
+        #     url: "/next-track/#{@active_track}"
+        #     success: (r) =>
+        #       this._preloadTrack(r.track_id) if r.success
+        #   @preload_started = true
         @$scrubber.slider 'value', (@sm_sound.position / @duration) * 100
         @$time_elapsed.html @Util.readableDuration(@sm_sound.position)
         remaining = @duration - @sm_sound.position
