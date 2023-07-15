@@ -29,7 +29,6 @@ class @Player
     @$likes_count     = $ '#player_likes_container > .likes_large > span'
     @$likes_link      = $ '#player_likes_container > .likes_large > a'
     @$feedback.hide()
-    this._initStatsAPI()
 
   # Check for track anchor to scroll-to [and play]
   onReady: ->
@@ -377,22 +376,3 @@ class @Player
 
   _hidePlayTooltip: ->
     $('#playpause_tooltip').tooltip('destroy')
-
-  ###########################################################################
-  # PhishTrackStats
-  ###########################################################################
-
-  _initStatsAPI: ->
-    PhishTracksStats.setup
-      testMode: false
-      auth: 'MDI5NDQ0NDQ1MzYxZjkxMzUzODliOGEwNGYyYjA3M2U6'
-
-  _createStatsAPIEvent: (r) ->
-    # Post 'listen' event to PhishTracksStats at 80% played
-    pos = parseInt(r.duration * 0.8)
-    @sm.clearOnPosition r.id, pos
-    @sm_sound.onPosition pos, (eventPosition) =>
-      PhishTracksStats.postPlay { streaming_site: 'phishin', event: 'listen', track_id: r.id }, (data) =>
-        console.log "Listen event for Track ID #{r.id} posted to PhishTracksStats"
-      , (data) ->
-        console.error(data)

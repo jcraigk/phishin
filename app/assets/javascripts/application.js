@@ -4,7 +4,6 @@
 //= require jquery-ui/sortable
 //= require jquery.cookie
 //= require native.history
-//= require phishtracks-stats-0.0.3
 //= require soundmanager2
 //= require spin.min
 //= require twitter/bootstrap
