@@ -287,7 +287,6 @@ class @Player
       success: (r) =>
         if r.success
           this._updatePlayerDisplay r
-          this._createStatsAPIEvent r
         else
           @Util.feedback { alert: "Error retrieving track info" }
 
