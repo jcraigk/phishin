@@ -16,6 +16,7 @@
         = render partial: 'results_exact_show' if @exact_show.present?
         = render partial: 'results_other_shows' if @other_shows.any?
         = render partial: 'results_songs' if @songs.any?
+        = render partial: 'results_tracks' if @tracks.any?
         = render partial: 'results_venues' if @venues.any?
         = render partial: 'results_tours' if @tours.any?
         = render partial: 'results_tags' if @tags.any?
