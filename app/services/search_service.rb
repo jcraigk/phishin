@@ -2,6 +2,8 @@
 class SearchService
   attr_reader :term
 
+  LIMIT = 200
+
   def initialize(term)
     @term = term || ''
   end
@@ -30,12 +32,13 @@ class SearchService
 
   def text_results
     {
-      songs:,
-      venues:,
-      tours:,
-      tags:,
       show_tags:,
-      track_tags:
+      songs:,
+      tags:,
+      tours:,
+      track_tags:,
+      tracks:,
+      venues:
     }
   end
 
@@ -62,8 +65,9 @@ class SearchService
   end
 
   def songs
+    return @songs if defined?(@songs)
     return [] if term_is_date?
-    Song.where(
+    @songs = Song.where(
       'title ILIKE :term OR alias ILIKE :term',
       term: "%#{term}%"
     ).order(title: :asc)
@@ -98,13 +102,29 @@ class SearchService
     ShowTag.includes(:tag, :show)
            .where('notes ILIKE ?', "%#{term}%")
            .order('tags.name, shows.date')
-           .limit(200)
+           .limit(LIMIT)
   end
 
   def track_tags
     TrackTag.includes(:tag, track: :show)
             .where('notes ILIKE ?', "%#{term}%")
             .order('tags.name, shows.date, tracks.position')
-            .limit(200)
+            .limit(LIMIT)
+  end
+
+  def song_titles
+    @song_titles ||= songs.map(&:title)
+  end
+
+  # Return only tracks that don't have a song title that matches the search term
+  # since those would produce essentially duplicate search results
+  def tracks
+    tracks_by_title.reject { |track| track.title.in?(song_titles) }
+  end
+
+  def tracks_by_title
+    Track.where('title ILIKE ?', "%#{term}%")
+         .order(title: :asc)
+         .limit(LIMIT)
   end
 end

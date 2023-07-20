@@ -18,6 +18,12 @@ module ApplicationHelper
     link_to(title, "/#{song.slug}")
   end
 
+  def link_to_track(track, term = nil)
+    title = track.title
+    title = highlight(title, term) if term.present?
+    link_to(title, "/#{track.show.date}/#{track.slug}")
+  end
+
   def song_title_with_alias(song)
     title = song.title
     title += " (aka #{song.alias})" if song.alias.present?
