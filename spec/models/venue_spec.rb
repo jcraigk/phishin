@@ -109,7 +109,7 @@ RSpec.describe Venue do
         state: venue.state,
         country: venue.country,
         slug: venue.slug,
-        show_dates: venue.shows.order(date: :asc).map(&:date).map(&:iso8601),
+        show_dates: venue.shows.order(date: :asc).map { |x| x.date.iso8601 },
         show_ids: venue.shows.order(date: :asc).map(&:id),
         updated_at: venue.updated_at.iso8601
       }

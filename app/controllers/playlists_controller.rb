@@ -135,7 +135,7 @@ class PlaylistsController < ApplicationController
 
   def update_active_playlist
     clear_saved_playlist
-    session[:playlist] = params[:track_ids].map(&:to_i).take(100)
+    session[:playlist] = params[:track_ids]&.map(&:to_i)&.take(100) || []
     session[:playlist_shuffled] = session[:playlist].shuffle
     render json: { success: true, msg: session[:playlist] }
   end

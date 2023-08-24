@@ -78,7 +78,7 @@ class Venue < ApplicationRecord
       state:,
       country:,
       shows_count:,
-      show_dates: shows_played_here.map(&:date).map(&:iso8601),
+      show_dates: shows_played_here.map { |x| x.date.iso8601 },
       show_ids: shows_played_here.map(&:id),
       updated_at: updated_at.iso8601
     }

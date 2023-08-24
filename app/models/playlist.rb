@@ -22,7 +22,7 @@ class Playlist < ApplicationRecord
       slug:,
       name:,
       duration:,
-      tracks: playlist_tracks.order(:position).map(&:track).map(&:as_json_api),
+      tracks: playlist_tracks.order(:position).map { |x| x.track.as_json_api },
       updated_at: updated_at.iso8601
     }
   end
