@@ -46,7 +46,8 @@ describe Api::V1::SearchController do
           ],
           tags: [],
           show_tags: [],
-          track_tags: []
+          track_tags: [],
+          tracks: []
         }
       end
 

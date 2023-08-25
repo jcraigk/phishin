@@ -8,7 +8,7 @@ RSpec.describe SearchService do
 
   shared_examples 'expected results' do
     it 'returns expected results' do
-      expect(service.call).to eq(expected_results)
+      expect(service.call.as_json).to eq(expected_results.as_json)
     end
   end
 
@@ -32,7 +32,8 @@ RSpec.describe SearchService do
         tours: [],
         tags: [tag],
         show_tags: [show_tag],
-        track_tags: [track_tag]
+        track_tags: [track_tag],
+        tracks: []
       }
     end
     let!(:show1) { create(:show, date:) }
@@ -60,7 +61,8 @@ RSpec.describe SearchService do
         tours: [tour3, tour1],
         tags: [tag2, tag1],
         show_tags: [show_tag],
-        track_tags: [track_tag]
+        track_tags: [track_tag],
+        tracks: [track]
       }
     end
     let!(:show_tag) { create(:show_tag, notes: "... blah #{term} ...") }
@@ -73,6 +75,7 @@ RSpec.describe SearchService do
     let!(:track_tag) { create(:track_tag, notes: "... blah blah #{term} blah..") }
     let!(:venue1) { create(:venue, name: 'Hood\'s Place') }
     let!(:venue3) { create(:venue, name: 'Hoody') }
+    let!(:track) { create(:track, title: "Foo #{term.upcase}") }
 
     before do
       create(:tour, name: '1995 Summer Tour')
