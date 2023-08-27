@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/jcraigk/phishin.svg?branch=master)](https://travis-ci.org/jcraigk/phishin)
+[![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)
 
 ![Phish.in Logo](https://i.imgur.com/Zmj586L.jpg)
 
