@@ -4,7 +4,7 @@
 
 Phish.in is an open source archive of live Phish audience recordings.
 
-Ruby on Rails and PostgreSQL are used on the server side. There's a web frontend (http://phish.in) and a public REST-ish API (http://phish.in/api-docs). The web frontend uses soundmanager2 as the audio playback engine.
+Ruby on Rails and PostgreSQL are used on the server side. There's a web frontend (https://phish.in) and a public REST-ish API (https://phish.in/api-docs). The web frontend uses soundmanager2 as the audio playback engine.
 
 All audio is provided in MP3 format; more formats and sources may be made available at a later time. Files are served directly from the web server and cached via CloudFlare CDN.
 
@@ -80,7 +80,7 @@ To import a new show or replace an existing one, name the MP3s according to the 
 bundle exec rails shows:import
 ```
 
-Use the interactive CLI to finish the import process then go to `https://localhost:3000/<date>` to verify the import.
+Use the interactive CLI to finish the import process then go to `http://localhost:3000/<date>` to verify the import.
 
 
 ## Maintenance

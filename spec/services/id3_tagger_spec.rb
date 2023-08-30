@@ -12,7 +12,7 @@ RSpec.describe Id3Tagger do
   let(:title) { 'Bathtub Gin' }
   let(:artist) { 'Phish' }
   let(:album) { "#{track.show.date} #{track.show.venue_name}"[0..29] }
-  let(:comments) { 'http://phish.in for more' }
+  let(:comments) { 'https://phish.in for more' }
 
   before { service.call }
 

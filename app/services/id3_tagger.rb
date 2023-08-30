@@ -50,7 +50,7 @@ class Id3Tagger
   end
 
   def comments
-    'http://phish.in for more'
+    'https://phish.in for more'
   end
 
   def year

@@ -1,10 +1,3 @@
-GIT
-  remote: https://github.com/rails/actionpack-action_caching.git
-  revision: 05c821ec84eb79760e95b0a57ae72919eefb0257
-  specs:
-    actionpack-action_caching (1.2.2)
-      actionpack (>= 4.0.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -40,6 +33,8 @@ GEM
       rack-test (>= 0.6.3)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.2.0)
+    actionpack-action_caching (1.2.2)
+      actionpack (>= 4.0.0)
     actiontext (7.0.7.2)
       actionpack (= 7.0.7.2)
       activerecord (= 7.0.7.2)
@@ -215,6 +210,8 @@ GEM
     net-smtp (0.3.3)
       net-protocol
     nio4r (2.5.9)
+    nokogiri (1.15.4-aarch64-linux)
+      racc (~> 1.4)
     nokogiri (1.15.4-arm64-darwin)
       racc (~> 1.4)
     orm_adapter (0.5.0)
@@ -291,7 +288,7 @@ GEM
       rspec-mocks (~> 3.12)
       rspec-support (~> 3.12)
     rspec-support (3.12.1)
-    rubocop (1.56.1)
+    rubocop (1.56.2)
       base64 (~> 0.1.1)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
@@ -398,11 +395,12 @@ GEM
     zeitwerk (2.6.11)
 
 PLATFORMS
+  aarch64-linux
   arm64-darwin-21
   arm64-darwin-22
 
 DEPENDENCIES
-  actionpack-action_caching!
+  actionpack-action_caching
   bootstrap-will_paginate
   bullet
   capybara
