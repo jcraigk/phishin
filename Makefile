@@ -9,10 +9,15 @@ bash :
 	RAILS_ENV=test docker-compose run --rm app bash
 
 clean :
-	docker-compose down
+	docker-compose down --remove-orphans
 	docker-compose rm
 	docker image prune
 	docker volume prune
+
+cleanforce:
+	docker-compose down -v
+	docker image prune -af
+	docker volume prune -f
 
 services :
 	docker-compose up -d pg
