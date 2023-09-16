@@ -20,7 +20,7 @@ class DownloadsController < ApplicationController
   end
 
   def download_track
-    raise ActiveRecord::RecordNotFound if track.audio_file.blank?
+    raise ActiveRecord::RecordNotFound if track&.audio_file.blank?
     send_audio_file
   end
 
