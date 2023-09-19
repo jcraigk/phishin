@@ -28,7 +28,7 @@ class @Playlist
       $(this).find('.position_num').html "#{idx+1}"
     )
     $.ajax({
-      url: '/update-current-playlist',
+      url: '/reposition-playlist',
       type: 'post',
       data: { 'track_ids': track_ids },
       success: (r) =>
@@ -100,7 +100,7 @@ class @Playlist
 
   clearPlaylist: (supress_feedback=true)->
     $.ajax({
-     url: '/clear-playlist',
+     url: '/reset-playlist',
      type: 'post',
      success: (r) =>
        @Player.stopAndUnload()
