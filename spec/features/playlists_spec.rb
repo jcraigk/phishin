@@ -85,7 +85,7 @@ describe 'Playlists', :js do
       let!(:playlist) { create(:playlist, user:) }
 
       it 'opening a saved playlist' do
-        visit saved_playlists_path
+        visit stored_playlists_path
 
         click_link(playlist.name)
         expect(page).to have_current_path("/play/#{playlist.slug}")

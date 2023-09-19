@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 class Playlist < ApplicationRecord
+  MAX_TRACKS = 100
+
   has_many :playlist_tracks, dependent: :destroy
   has_many :tracks, through: :playlist_tracks
   has_many :playlist_bookmarks, dependent: :destroy
@@ -16,6 +18,7 @@ class Playlist < ApplicationRecord
               message: 'must be between 5 and 50 lowercase letters, numbers, or dashes'
             },
             uniqueness: true
+  validate :limit_total_tracks
 
   def as_json_api
     {
@@ -35,5 +38,12 @@ class Playlist < ApplicationRecord
       track_count: playlist_tracks.size,
       updated_at: updated_at.iso8601
     }
+  end
+
+  private
+
+  def limit_total_tracks
+    return unless playlist_tracks.count > MAX_TRACKS
+    errors.add(:tracks, "can't have more than #{MAX_TRACKS} tracks")
   end
 end

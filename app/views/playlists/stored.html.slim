@@ -6,18 +6,21 @@
     - if user_signed_in?
       h3 Lists: #{number_with_delimiter(@playlists.size)}
       = render partial: 'display_filter'
-      = render partial: 'shared/sort_filter', locals: { item_hash: saved_playlist_sort_items }
+      = render partial: 'shared/sort_filter', locals: { item_hash: stored_playlist_sort_items }
 
   #content_box
     - if !user_signed_in?
-      .callout_box You must sign in to manage saved playlists
+      .callout_box
+        |> You must
+        => link_to 'sign in', new_user_session_path, class: 'non-remote'
+        | to create and share custom playlists!
     - else
       ul.item_list.clickable
         - @playlists.each do |playlist|
           li
             h2.wide-350
               a.non-remote href="/play/#{playlist.slug}" = playlist.name
-            h3 = duration_readable(playlist.duration, 'letters')
+            h3.alt = duration_readable(playlist.duration, 'letters')
             h4.narrow-100 by #{playlist.user.username}
             = render partial: 'shared/context_menu_for_playlist', locals: { playlist: playlist }
             = clear_both

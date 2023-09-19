@@ -16,7 +16,7 @@ class @Playlist
     $('#active_playlist').sortable({
       placeholder: "ui-state-highlight",
       update: =>
-        this.updatePlaylist 'Track moved in playlist'
+        this.updatePlaylist 'Track repositioned in playlist'
     })
 
   updatePlaylist: (success_msg) ->
@@ -199,14 +199,15 @@ class @Playlist
     })
 
   _getPlaylist: ->
-    $.ajax({
-      url: '/get-playlist',
-      success: (r) =>
-        if r.playlist && r.playlist.length > 0
-          $('#empty_playlist_msg').hide()
-        else
-          $('#empty_playlist_msg').show()
-    })
+    console.log('getting playlist')
+    # $.ajax({
+    #   url: '/preload-playlist',
+    #   success: (r) =>
+    #     if r.playlist && r.playlist.length > 0
+    #       $('#empty_playlist_msg').hide()
+    #     else
+    #       $('#empty_playlist_msg').show()
+    # })
 
   _updatePlaylistStats: (num_tracks=0, duration=0) ->
     $('#active_playlist_tracks_label').html "Tracks: #{num_tracks}"
