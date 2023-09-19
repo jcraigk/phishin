@@ -144,6 +144,7 @@ class @Playlist
   handleSaveModal: ->
     if name = $('#playlist_data').attr 'data-name'
       @$save_action_existing.attr 'disabled', false
+      @$save_action_existing.attr 'selected', true
       @$playlist_name_input.val name
       @$playlist_slug_input.val $('#playlist_data').attr 'data-slug'
     else
