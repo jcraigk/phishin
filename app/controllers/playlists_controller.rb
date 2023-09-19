@@ -73,7 +73,7 @@ class PlaylistsController < ApplicationController
     render_good_playlist(playlist)
   end
 
-  def preload
+  def load
     render json: { playlist: session[:playlist][:tracks] }
   end
 
@@ -115,28 +115,14 @@ class PlaylistsController < ApplicationController
     render json: { success: true }
   end
 
-  # TODO: When is this used?
   def reset
     clear_session
-
-    success = false
-    if (track = Track.find_by(id: params[:track_id]))
-      session[:playlist][:tracks] = track.show.tracks.order(:position).map(&:id)
-      session[:playlist][:shuffled_tracks] = session[:playlist][:tracks].shuffle
-      success = true
-    end
-
-    render json: { success:, playlist: session[:playlist][:tracks] }
+    render json: { success: true, playlist: [] }
   end
 
   def reposition_tracks
     session[:playlist][:tracks] = params[:track_ids]&.map(&:to_i)&.take(100) || []
     session[:playlist][:shuffled_tracks] = session[:playlist][:tracks].shuffle
-
-    playlist = Playlist.find(session[:playlist][:id])
-    playlist.playlist_tracks.map(&:destroy)
-    create_playlist_tracks(playlist)
-
     render json: { success: true }
   end
 
