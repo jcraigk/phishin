@@ -116,7 +116,7 @@ class PlaylistsController < ApplicationController
 
     session[:playlist][:tracks] =
       Track.includes(:show).find_by(id: params[:track_id]).show.tracks.order(:position).pluck(:id)
-    session[:playlist][:shuffled_tracks] = session[:playlist][:tracks].shuffle
+    shuffle_tracks
 
     render json: { success: true, playlist: session[:playlist][:tracks] }
   end
@@ -128,9 +128,11 @@ class PlaylistsController < ApplicationController
 
   def reposition
     session[:playlist][:tracks] = params[:track_ids]&.map(&:to_i)&.take(100) || []
-    session[:playlist][:shuffled_tracks] = session[:playlist][:tracks].shuffle
+    shuffle_tracks
     render json: { success: true }
   end
+
+
 
   def add_track
     if session[:playlist][:tracks].include?(params[:track_id].to_i)
@@ -319,5 +321,9 @@ class PlaylistsController < ApplicationController
 
   def init_session
     session[:playlist] ||= EMPTY_PLAYLIST.dup
+  end
+
+  def shuffle_tracks
+    session[:playlist][:shuffled_tracks] = session[:playlist][:tracks].shuffle
   end
 end
