@@ -318,6 +318,7 @@ class PlaylistsController < ApplicationController
   end
 
   def init_session
+    return if session[:playlist].is_a?(Hash) # Ease into new session format
     session[:playlist] ||= EMPTY_PLAYLIST.dup
   end
 
