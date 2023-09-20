@@ -47,7 +47,7 @@ Rails.application.routes.draw do
   post '/bookmark-playlist' => 'playlists#bookmark'
   post '/unbookmark-playlist' => 'playlists#unbookmark'
   post '/delete-playlist' => 'playlists#destroy'
-  post '/reset-playlist' => 'playlists#reset'
+  post '/clear-playlist' => 'playlists#clear'
   post '/override-playlist' => 'playlists#override'
   post '/reposition-playlist' => 'playlists#reposition'
   post '/add-track' => 'playlists#add_track'

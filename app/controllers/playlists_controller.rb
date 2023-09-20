@@ -121,7 +121,7 @@ class PlaylistsController < ApplicationController
     render json: { success: true, playlist: session[:playlist][:tracks] }
   end
 
-  def reset
+  def clear
     clear_session
     render json: { success: true, playlist: [] }
   end
@@ -131,8 +131,6 @@ class PlaylistsController < ApplicationController
     shuffle_tracks
     render json: { success: true }
   end
-
-
 
   def add_track
     if session[:playlist][:tracks].include?(params[:track_id].to_i)

@@ -100,7 +100,7 @@ class @Playlist
 
   clearPlaylist: (supress_feedback=true)->
     $.ajax({
-     url: '/reset-playlist',
+     url: '/clear-playlist',
      type: 'post',
      success: (r) =>
        @Player.stopAndUnload()
