@@ -117,8 +117,8 @@ module NavigationHelper
 
   def playlists_sub_links
     {
-      'Active' => [active_playlist_path, ['active_playlist']],
-      'Saved' => [saved_playlists_path, ['saved_playlists']]
+      'Active' => [active_playlist_path, ['active']],
+      'Saved' => [stored_playlists_path, ['stored']]
     }.map do |name, props|
       css = ''
       css = 'active' if props.second.include?(params[:action])

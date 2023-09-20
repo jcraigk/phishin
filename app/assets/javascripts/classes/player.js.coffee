@@ -204,7 +204,7 @@ class @Player
   setCurrentPlaylist: (track_id) ->
     $.ajax
       type: 'post'
-      url: '/reset-playlist'
+      url: '/override-playlist'
       data: { 'track_id': track_id }
       success: (r) =>
         @playlist = r.playlist

@@ -95,7 +95,7 @@ module SortHelper
     }
   end
 
-  def saved_playlist_sort_items
+  def stored_playlist_sort_items
     {
       '<i class="icon-text-height"></i> Name' => 'name',
       '<i class="icon-forward"></i> Duration' => 'duration'

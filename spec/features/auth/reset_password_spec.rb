@@ -27,7 +27,7 @@ describe 'Reset Password', :js do
     # User enters a new password, twice
     fill_in('user[password]', with: new_password)
     fill_in('user[password_confirmation]', with: new_password)
-    click_on('Change My Password')
+    click_link('Change My Password')
 
     # User's password is changed
     expect(user.reload.valid_password?(new_password)).to be(true)

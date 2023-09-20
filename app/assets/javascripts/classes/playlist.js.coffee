@@ -16,7 +16,7 @@ class @Playlist
     $('#active_playlist').sortable({
       placeholder: "ui-state-highlight",
       update: =>
-        this.updatePlaylist 'Track moved in playlist'
+        this.updatePlaylist()
     })
 
   updatePlaylist: (success_msg) ->
@@ -28,7 +28,7 @@ class @Playlist
       $(this).find('.position_num').html "#{idx+1}"
     )
     $.ajax({
-      url: '/update-current-playlist',
+      url: '/reposition-playlist',
       type: 'post',
       data: { 'track_ids': track_ids },
       success: (r) =>
@@ -114,7 +114,7 @@ class @Playlist
        $('#playlist_title').html '(Untitled Playlist)'
        this._updatePlaylistStats()
        $('#empty_playlist_msg').show()
-       unless supress_feedback then @Util.feedback { notice: 'Actve Playlist is now empty' }
+       unless supress_feedback then @Util.feedback { notice: 'Actve playlist is now empty' }
     })
 
   bookmarkPlaylist: ->
@@ -144,6 +144,7 @@ class @Playlist
   handleSaveModal: ->
     if name = $('#playlist_data').attr 'data-name'
       @$save_action_existing.attr 'disabled', false
+      @$save_action_existing.attr 'selected', true
       @$playlist_name_input.val name
       @$playlist_slug_input.val $('#playlist_data').attr 'data-slug'
     else
@@ -200,7 +201,7 @@ class @Playlist
 
   _getPlaylist: ->
     $.ajax({
-      url: '/get-playlist',
+      url: '/load-playlist',
       success: (r) =>
         if r.playlist && r.playlist.length > 0
           $('#empty_playlist_msg').hide()

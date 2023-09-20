@@ -666,7 +666,8 @@ html {
   #playlist_mode_notice {
     display: none;
     position: absolute;
-    left: 66px;
+    width: 170px;
+    left: 756px;
     top: 86px;
     border-radius: 5px;
     background-color: #d0f7d0;
@@ -675,6 +676,7 @@ html {
     font-size: 16px;
     text-align: center;
     padding: 3px;
+    font-weight: bold;
   }
   #logo {
     position: absolute;
