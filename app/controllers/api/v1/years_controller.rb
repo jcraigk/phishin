@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class Api::V1::YearsController < Api::V1::ApiController
   caches_action_params :index, %i[include_show_counts]
   caches_action_params :show

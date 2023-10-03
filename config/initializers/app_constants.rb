@@ -1,16 +1,15 @@
-# frozen_string_literal: true
-APP_NAME = 'Phish.in'
+APP_NAME = 'Phish.in'.freeze
 APP_DESC = "#{APP_NAME} is an open source archive of live Phish audience recordings".freeze
-CONTACT_EMAIL = 'phish.in.music@gmail.com'
-DEVISE_EMAIL_FROM = 'Phish.in <noreply@phish.in>'
-DESCRIPTION = 'An open source archive of live Phish audience recordings'
-TWITTER_USER = '@phish_in'
+CONTACT_EMAIL = 'phish.in.music@gmail.com'.freeze
+DEVISE_EMAIL_FROM = 'Phish.in <noreply@phish.in>'.freeze
+DESCRIPTION = 'An open source archive of live Phish audience recordings'.freeze
+TWITTER_USER = '@phish_in'.freeze
 
 CACHE_TTL = 10.minutes
 FIRST_CHAR_LIST = ('A'..'Z').to_a + ['#']
 MAX_PLAYLISTS_PER_USER = 20
 MIN_SEARCH_TERM_LENGTH = 3
-TIME_ZONE = 'Eastern Time (US & Canada)'
+TIME_ZONE = 'Eastern Time (US & Canada)'.freeze
 
 APP_CONTENT_PATH =
   if Rails.env.test?

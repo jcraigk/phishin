@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class MyController < ApplicationController
   def my_shows
     return unless current_user

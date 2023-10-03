@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class DurationFormatter
   attr_reader :duration, :seconds, :minutes, :hours, :days, :style
 

@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 module TagHelper
   def display_tag_instances(tag_instances, css_class = 'show_tag_container')
     tag_groups =

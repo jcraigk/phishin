@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 module Ambiguity::VenueName
   def slug_as_venue
     return false if venue.blank?

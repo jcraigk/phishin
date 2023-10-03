@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 module FeatureHelpers
   def expect_content(*args)
     args.each { |c| expect_content_single(c) }

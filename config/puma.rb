@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require 'puma'
 
 threads_count = ENV.fetch('RAILS_MAX_THREADS', 5)

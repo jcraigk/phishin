@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class ShowImporter::Orchestrator
   attr_reader :fm, :date, :show_found, :path, :show_info
 

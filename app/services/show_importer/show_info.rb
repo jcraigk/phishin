@@ -1,6 +1,5 @@
-# frozen_string_literal: true
 class ShowImporter::ShowInfo
-  BASE_URL = 'https://api.phish.net/v5'
+  BASE_URL = 'https://api.phish.net/v5'.freeze
   API_KEY = ENV.fetch('PNET_API_KEY', nil)
 
   attr_reader :date, :data, :songs

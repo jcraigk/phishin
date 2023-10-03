@@ -75,6 +75,8 @@ Style/Documentation:
   Enabled: false
 Style/FormatStringToken:
   Enabled: false
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: never
 Style/HashTransformValues:
   Enabled: false
 Style/MissingRespondToMissing:

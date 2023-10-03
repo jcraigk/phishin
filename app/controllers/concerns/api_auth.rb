@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 module ApiAuth
   def require_auth
     return true if phish_od? # Skip auth for legacy iOS PhishOD app

@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class Api::V1::VenuesController < Api::V1::ApiController
   caches_action_params :index
   caches_action_params :show

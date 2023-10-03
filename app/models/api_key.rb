@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class ApiKey < ApplicationRecord
   scope :revoked, -> { where.not(revoked_at: nil) }
   scope :not_revoked, -> { where(revoked_at: nil) }

@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 module ApplicationHelper
   def clear_both
     tag.div(style: 'clear: both;')

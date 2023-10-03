@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class SongsController < ApplicationController
   caches_action_params :index, %i[char sort]
 

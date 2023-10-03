@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class LikesController < ApplicationController
   before_action :authorize_user!
 

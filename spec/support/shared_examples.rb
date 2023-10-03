@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 RSpec.shared_examples 'responds with 404' do
   let(:json) { JSON[subject.body].deep_symbolize_keys }
 

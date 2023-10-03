@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 module Ambiguity::Year
   def slug_as_year
     return false if year_from_slug.blank?

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Entire file copied from https://github.com/benalavi/waveform
 # to fix issue with `File.exists?` removal in Ruby 3.2.0
 
@@ -20,8 +18,8 @@ class Waveform
     force: false,
     logger: nil
   }.freeze
-  TRANSPARENCY_MASK = '#00ff00'
-  TRANSPARENCY_ALT = '#ffff00'
+  TRANSPARENCY_MASK = '#00ff00'.freeze
+  TRANSPARENCY_ALT = '#ffff00'.freeze
 
   attr_reader :source
 

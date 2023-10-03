@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class Song < ApplicationRecord
   has_many :songs_tracks, dependent: :destroy
   has_many :tracks, through: :songs_tracks

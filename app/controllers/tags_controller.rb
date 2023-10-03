@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class TagsController < ApplicationController
   caches_action_params :index
   caches_action_params :show, %i[entity]

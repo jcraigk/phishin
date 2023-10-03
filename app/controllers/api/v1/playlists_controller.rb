@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class Api::V1::PlaylistsController < Api::V1::ApiController
   caches_action_params :show, %i[id]
 

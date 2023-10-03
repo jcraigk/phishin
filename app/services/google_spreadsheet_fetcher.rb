@@ -1,8 +1,7 @@
-# frozen_string_literal: true
 class GoogleSpreadsheetFetcher
   attr_reader :spreadsheet_id, :range, :has_headers
 
-  OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'
+  OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'.freeze
   TOKEN_PATH = Rails.root.join('config/google_api.yml')
 
   def initialize(spreadsheet_id, range, opts = {})

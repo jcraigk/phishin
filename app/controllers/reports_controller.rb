@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class ReportsController < ApplicationController
   caches_action_params :missing_content
 

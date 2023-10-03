@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class Tag < ApplicationRecord
   has_many :show_tags, dependent: :destroy
   has_many :shows, through: :show_tags

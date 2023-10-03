@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 module AuthHelper
   def auth_header
     api_key = create(:api_key)

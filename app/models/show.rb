@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class Show < ApplicationRecord
   belongs_to :tour, counter_cache: true
   belongs_to :venue, counter_cache: true

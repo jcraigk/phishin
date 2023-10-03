@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class AmbiguityController < ApplicationController
   include Ambiguity::Date
   include Ambiguity::DayOfYear

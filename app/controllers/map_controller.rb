@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class MapController < ApplicationController
   def index
     params[:date_start] ||= '1983-01-01'

@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class ShowImporter::FilenameMatcher
   attr_reader :matches, :dir
 

@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 require 'mp3info'
 
 class Id3Tagger

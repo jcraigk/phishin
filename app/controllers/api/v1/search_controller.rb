@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class Api::V1::SearchController < Api::V1::ApiController
   def index
     return respond_with_invalid_term unless results

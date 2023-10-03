@@ -1,8 +1,7 @@
-# frozen_string_literal: true
 class JamchartsImporter
   include ActionView::Helpers::SanitizeHelper
 
-  BASE_URL = 'https://api.phish.net/v5'
+  BASE_URL = 'https://api.phish.net/v5'.freeze
   API_KEY = ENV.fetch('PNET_API_KEY', nil)
 
   attr_reader :api_key, :invalid_items, :missing_shows, :matched_ids

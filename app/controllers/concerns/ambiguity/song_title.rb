@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 module Ambiguity::SongTitle
   def slug_as_song
     return false if song.blank?

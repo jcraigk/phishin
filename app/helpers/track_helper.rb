@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 module TrackHelper
   def next_gap_link(song, date) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     next_show =

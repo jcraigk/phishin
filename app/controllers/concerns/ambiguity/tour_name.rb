@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 module Ambiguity::TourName
   def slug_as_tour
     return false if tour.blank?

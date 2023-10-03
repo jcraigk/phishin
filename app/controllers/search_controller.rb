@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class SearchController < ApplicationController
   def results
     perform_search

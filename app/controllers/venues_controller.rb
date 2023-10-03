@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class VenuesController < ApplicationController
   caches_action_params :index
 

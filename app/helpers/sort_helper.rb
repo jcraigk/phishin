@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 module SortHelper
   def sort_songs_and_venues_links(item_hash)
     item_hash.map do |k, v|

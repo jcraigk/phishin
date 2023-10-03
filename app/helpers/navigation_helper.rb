@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 module NavigationHelper
   def global_nav(controller) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     str = ''

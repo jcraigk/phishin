@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 module Ambiguity::DayOfYear
   TODAY_SLUGS = %w[today today-in-history].freeze
 
