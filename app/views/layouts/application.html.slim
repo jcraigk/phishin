@@ -1,22 +1,19 @@
 doctype html
 html
   head
-    title = APP_NAME
-    = render partial: 'layouts/meta'
-    = auto_discovery_link_tag :rss, '/feeds/rss', title: 'Phish.in Updates'
-    = stylesheet_link_tag 'https://fonts.googleapis.com/css?family=Marck+Script|Open+Sans+Condensed:300,700|Molle'
+    = render partial: 'layouts/head'
     = javascript_include_tag 'https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js'
     = stylesheet_link_tag 'https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css'
     = stylesheet_link_tag 'application', media: :all
     = javascript_include_tag 'application'
     = csrf_meta_tags
 
-    body[
-      data-base-url=APP_BASE_URL
-      data-app-name=APP_NAME
-      data-anchor=params[:anchor]&.downcase
-      data-time-marker=(params[:t] || 0)
-    ]
+  body[
+    data-base-url=APP_BASE_URL
+    data-app-name=APP_NAME
+    data-anchor=params[:anchor]&.downcase
+    data-time-marker=(params[:t] || 0)
+  ]
 
     = render partial: 'layouts/ajax_overlay'
     = render partial: 'layouts/feedback'

@@ -1,4 +1,11 @@
 Rails.application.routes.draw do
+  # React SPA mounted under /mobile
+  # See lib/mobile_redirect_middleware.rb for details
+  namespace :mobile, path: 'mobile' do
+    root to: 'mobile#index'
+    get '*path', to: 'mobile_home#index'
+  end
+
   root to: 'eras#index'
 
   # RSS feed

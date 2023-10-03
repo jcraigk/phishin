@@ -5,6 +5,7 @@ ruby '3.2.2'
 
 gem 'actionpack-action_caching'
 gem 'bootstrap-will_paginate'
+gem 'browser'
 gem 'chunky_png'
 gem 'coffee-rails'
 gem 'dalli'
