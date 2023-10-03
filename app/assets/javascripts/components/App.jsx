@@ -1,7 +1,7 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './components/App';
-
-document.addEventListener('DOMContentLoaded', () => {
-  ReactDOM.render(<App />, document.getElementById('root'));
-});
+window.App = function() {
+  return (
+    <div>
+      <YearList years={[2020, 2021, 2022]} />
+    </div>
+  )
+}

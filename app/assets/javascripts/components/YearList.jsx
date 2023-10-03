@@ -1,5 +1,8 @@
-const YearList = ({ years }) => <div>Years: {years}</div>;
+window.YearList = function({ years }) {
+  console.log('YearList', years)
+  return <div>Years: {years.join(', ')}</div>
+}
 
 YearList.propTypes = {
   years: PropTypes.array
-};
+}

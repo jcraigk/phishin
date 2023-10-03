@@ -17,5 +17,10 @@ module Phishin
     config.hosts << ENV.fetch('WEB_HOST', nil) if ENV['WEB_HOST'].present?
 
     config.middleware.insert_before 0, Middleware::MobileRedirect
+
+    config.assets.precompile += %w[mobile.js]
+
+    config.react.variant = :production
+    config.react.version = '18'
   end
 end
