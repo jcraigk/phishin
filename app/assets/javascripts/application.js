@@ -13,3 +13,6 @@
 //= require classes/playlist
 //= require classes/util
 //= require app-main
+//= require react
+//= require react_ujs
+//= require components
