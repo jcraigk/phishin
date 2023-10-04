@@ -15,7 +15,7 @@ module TrackHelper
           .where('date BETWEEN ? AND ?', date, next_show.date)
           .count
     link_to(
-      "#{tag.i(class: 'icon-forward')} Next Performance (gap: #{gap})".html_safe,
+      "#{tag.i(class: 'glyphicon glyphicon-forward')} Next Performance (gap: #{gap})".html_safe,
       "/#{next_show.date}/#{track.slug}"
     )
   end
@@ -35,8 +35,9 @@ module TrackHelper
       Show.published
           .where('date BETWEEN ? AND ?', prev_show.date, date)
           .count
+    text = "#{tag.i(class: 'glyphicon glyphicon-backward')} Previous Performance (gap: #{gap}) "
     link_to(
-      "#{tag.i(class: 'icon-backward')} Previous Performance (gap: #{gap})".html_safe,
+      text.html_safe,
       "/#{prev_show.date}/#{track.slug}"
     )
   end

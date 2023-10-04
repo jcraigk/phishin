@@ -17,46 +17,46 @@
         |  to create and share custom playlists!
 
     button#playlist_mode_btn.btn.btn-success type='button'
-      i.icon-white.icon-edit>
+      i.glyphicon.glyphicon-white.icon-edit>
       span#playlist_mode_label EDIT
     br
 
     - if user_signed_in?
       - if session[:playlist][:id].positive? && session[:playlist][:user_id] != current_user.id
         button#duplicate_playlist_btn.btn type='button'
-          i.icon-file
+          i.glyphicon.glyphicon-file
           |  DUPLICATE
         br
 
       - else
         button#save_playlist_btn.btn type='button'
-          i.icon-file
+          i.glyphicon.glyphicon-file
           |  SAVE
         br
 
       - if session[:playlist][:id].positive?
         - if current_user.id == session[:playlist][:user_id]
           button#delete_playlist_btn.btn type='button'
-            i.icon-remove
+            i.glyphicon.glyphicon-remove
             |  DELETE
           br
 
         - else
           - if session[:playlist_is_bookmarked]
             button#unbookmark_playlist_btn.btn type='button'
-              i.icon-remove
+              i.glyphicon.glyphicon-remove
               |  UNBOOKMARK
             br
 
           - else
             button#bookmark_playlist_btn.btn type='button'
-              i.icon-bookmark
+              i.glyphicon.glyphicon-bookmark
               |  BOOKMARK
             br
 
     - else
     button#clear_playlist_btn.btn type='button'
-      i.icon-eject
+      i.glyphicon.glyphicon-eject
       |  EMPTY
     br
 
@@ -74,7 +74,7 @@
         - @tracks.each_with_index do |track, idx|
           li.playable_track data-id=track.id data-track-duration=track.duration
             .drag_arrows_vertical
-              i.icon-resize-vertical
+              i.glyphicon.glyphicon-resize-vertical
             h2.position_num = idx + 1
             h2.wider = track.title
             h5.narrower

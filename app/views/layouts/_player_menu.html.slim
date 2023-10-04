@@ -1,7 +1,7 @@
 #player_menu
   .btn-group
     a.btn.dropdown-toggle.btn-round.btn_invisible data-toggle='dropdown' href='null'
-      i.icon-cog
+      i.glyphicon.glyphicon-cog
     ul.dropdown-menu
       li.nolink = check_box_tag('loop_checkbox', 1, session[:loop], class: 'playback_loop') + ' Loop'
       li.nolink = check_box_tag('shuffle_checkbox', 1, session[:shuffle], class: 'playback_shuffle') + ' Shuffle'

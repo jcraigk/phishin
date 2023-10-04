@@ -73,8 +73,6 @@ GEM
     ast (2.4.2)
     base64 (0.1.1)
     bcrypt (3.1.19)
-    bootstrap-will_paginate (1.0.0)
-      will_paginate
     builder (3.2.4)
     bullet (7.0.7)
       activesupport (>= 3.0.0)
@@ -369,7 +367,6 @@ PLATFORMS
 
 DEPENDENCIES
   actionpack-action_caching
-  bootstrap-will_paginate
   bullet
   capybara
   capybara-email

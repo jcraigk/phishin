@@ -270,60 +270,48 @@ html {
       }
     }
     #footer {
-      width: 930px;
+      width: 940px;
       background-color: $sub_nav_gray;
       margin: 0 auto;
       border-radius: 8px;
       text-align: center;
       padding: 5px;
       margin-bottom: 20px;
+      margin-top: 20px;
 
       a {
         margin-right: 20px;
       }
     }
     .pagination {
-      margin-top: 4px !important;
-      background: transparent !important;
-      text-align: center !important;
-      padding: 1em !important;
-      cursor: default !important;
-      box-shadow: none !important;
-      font-size: 16px !important;
+      width: 100%;
+      text-align: center;
+      font-size: 18px;
 
       ul {
         box-shadow: none !important;
       }
       a, span {
-        box-shadow: none !important;
-        background: transparent !important;
-        border: none !important;
         padding: 0.2em 0.3em !important;
       }
       a {
         text-decoration: none !important;
         color: $text_gray !important;
       }
-      .disabled {
-        color: #aaaaaa !important;
-      }
-      .active {
-        a {
-          color: $nav_highlight !important;
-          font-weight: bold !important;
-        }
+      .current {
+        color: $nav_highlight !important;
+        font-weight: bold !important;
       }
       a:hover, a:focus {
         text-decoration: underline !important;
       }
     }
     .single_page {
+      margin: 0 auto;
       line-height: 26px;
-      margin-top: -50px !important;
       text-align: center;
       border: 1px solid $gray_70;
       border-radius: 3px;
-      margin: 0 auto;
       width: 80px;
       color: $text_gray;
       background-color: $sub_nav_gray;
@@ -956,7 +944,7 @@ html {
     float: right;
     padding-top: 5px;
     width: 50px;
-    height: 14px;
+    height: 20px;
     margin-top: 0px;
     margin-left: 20px;
     line-height: 14px;
@@ -1070,7 +1058,7 @@ html {
     line-height: 10px !important;
   }
   .show_tag_container {
-    height: 15px !important;
+    height: 22px !important;
     padding-top: 6px;
     float: right;
     width: 120px;
@@ -1433,7 +1421,7 @@ html {
         margin-left: 15px;
         line-height: 10px;
         text-align: left;
-        margin-top: -2px !important;
+        margin-top: -6px !important;
         visibility: hidden;
         position: relative;
         top: 7px;
