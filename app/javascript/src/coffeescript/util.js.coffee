@@ -8,7 +8,7 @@ class Util
     @page_init          = true
     @$feedback          = $ '#feedback'
 
-  @feedback: (feedback) ->
+  feedback: (feedback) ->
     if feedback.alert
       msg = feedback.alert
       css = 'feedback_alert'
@@ -23,7 +23,7 @@ class Util
       $("##{id}").hide 'slide'
     , 3000)
 
-  @followLink: ($el) ->
+  followLink: ($el) ->
     this.navigateTo $el.attr('href')
 
   navigateTo: (href) ->
@@ -34,14 +34,14 @@ class Util
     history.pushState { href: href, scroll: 0 }, $('body').data('app-name'), href
     document.title = title
 
-  @navigateToRefreshMap: ->
+  navigateToRefreshMap: ->
     url = "/map?map_term=#{$('#map_search_term').val().replace /\s/g, '+' }"
     url += "&distance=#{$('#map_search_distance').val()}"
     url += "&date_start=#{$('#map_date_start').val()}"
     url += "&date_stop=#{$('#map_date_stop').val()}"
     this.navigateTo url
 
-  @readableDuration: (ms, style='colons', include_seconds=false) ->
+  readableDuration: (ms, style='colons', include_seconds=false) ->
     x = Math.floor(ms / 1000)
     seconds = x % 60
     seconds_with_zero = "#{if seconds < 10 then '0' else '' }#{seconds}"
@@ -109,10 +109,10 @@ class Util
   @truncate: (string, length=40) ->
     if string.length > length then string.substring(0, length) + '...' else string
 
-  @showHTMLError: (str) ->
+  showHTMLError: (str) ->
     $('body').append "<div id=\"system_error\">#{str.replace(/(\r\n|\n|\r)/gm,"<br />")}</div>"
 
-  @copyToClipboard: (text) ->
+  copyToClipboard: (text) ->
     el = $('#clipboard')
     el.val(text)
     el.select()

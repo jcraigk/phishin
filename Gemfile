@@ -12,8 +12,6 @@ gem 'friendly_id'
 gem 'geocoder'
 gem 'google-api-client'
 gem 'highline'
-gem 'jquery-rails'
-gem 'jquery-ui-rails', '< 6.0' # 6.0 breaks slider/scrubber
 gem 'nokogiri'
 gem 'pg'
 gem 'pg_search'

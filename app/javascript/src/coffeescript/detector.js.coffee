@@ -1,3 +1,5 @@
+import 'jquery.cookie'
+
 class Detector
 
   constructor: ->

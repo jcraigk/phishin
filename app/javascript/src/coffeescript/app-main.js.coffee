@@ -3,6 +3,9 @@ import Map from './map.js'
 import Player from './player.js'
 import Playlist from './playlist.js'
 import Util from './util.js'
+import $ from 'jquery'
+import 'jquery-ui/ui/widgets/slider'
+import 'jquery-ui/ui/widgets/tooltip'
 
 App = {}
 export default App
@@ -63,14 +66,14 @@ $ ->
           App.Detector = new Detector
 
           # Map
-          if state.data.href.substr(0,4) is '/map'
+          if state.href.substr(0,4) is '/map'
             App.Map.initMap()
             term = $('#map_search_term').val()
             distance = $('#map_search_distance').val()
             App.Map.handleSearch(term, distance) if term and distance
 
           # Playlist
-          else if state.data.href.substr(0,9) is '/playlist' or state.href.substr(0,6) is '/play/'
+          else if state.href.substr(0,9) is '/playlist' or state.href.substr(0,6) is '/play/'
             App.Playlist.initPlaylist()
       )
 

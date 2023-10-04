@@ -9,7 +9,7 @@
     "@types/babel__core": "7",
     "@types/webpack": "5",
     "babel-loader": "8",
-    "bootstrap": "3.1.1",
+    "bootstrap": "3.4.1",
     "coffee-loader": "^4.0.0",
     "coffeescript": "^2.7.0",
     "compression-webpack-plugin": "9",

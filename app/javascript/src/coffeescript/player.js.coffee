@@ -1,4 +1,7 @@
 import Util from './util.js'
+import $ from 'jquery'
+import 'jquery-ui/ui/widgets/slider'
+import 'jquery-ui/ui/widgets/tooltip'
 
 class Player
 
@@ -20,6 +23,7 @@ class Player
     @time_marker      = @Util.timeToMS $('body').data('time-marker')
     @$playpause       = $ '#control_playpause'
     @$scrubber        = $ '#scrubber'
+    @$scrubber.slider()
     @$scrubber_ctrl   = $ '#scrubber_controls'
     @$waveform        = $ '#waveform'
     @$volume_icon     = $ '#volume_icon'

@@ -1,5 +1,6 @@
 import Util from './util.js'
 import Player from './player.js'
+import 'jquery-ui/ui/widgets/sortable'
 
 class Playlist
 
