@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.2.2'
 
 gem 'actionpack-action_caching'
-gem 'bootstrap-will_paginate'
+gem 'bootstrap-will_paginate' # TODO: Needed?
 gem 'chunky_png'
 gem 'dalli'
 gem 'devise'
@@ -23,12 +23,9 @@ gem 'sentry-raven'
 gem 'shakapacker'
 gem 'shrine'
 gem 'slim'
-gem 'soundmanager2-rails'
-gem 'twitter-bootstrap-rails', '2.2.8'
 gem 'typhoeus'
-gem 'uglifier'
 gem 'waveformjson'
-gem 'will_paginate', '< 4' # 4.0 breaks bootstrap-will_paginate
+gem 'will_paginate', '< 4' # 4.0 breaks bootstrap-will_paginate # TODO: Can upgrade?
 
 group :development do
   gem 'bullet'

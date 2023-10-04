@@ -28,7 +28,7 @@ $ ->
 
   $notice         = $ '.feedback_notice'
   $alert          = $ '.feedback_alert'
-  $ajax_overlay   = $ '#ajax_overlay'
+  $ajax_loading   = $ '#ajax_loading'
   $page           = $ '#page'
 
   ###############################################
@@ -36,11 +36,9 @@ $ ->
   ###############################################
 
   handleNavigation = ->
-    console.log("handleNavigation")
     state = window.history.state
-    console.log("state: #{state}")
     if state?.href && !App.Util.page_init
-      $ajax_overlay.css 'visibility', 'visible'
+      $ajax_loading.css 'visibility', 'visible'
       $page.html ''
 
       fetch(state.href, {
@@ -56,7 +54,7 @@ $ ->
 
       .then (html) ->
         $page.html html
-        $ajax_overlay.css 'visibility', 'hidden'
+        $ajax_loading.css 'visibility', 'hidden'
 
         # Scroll to proper position
         window.scrollTo(0, App.Util.historyScrollStates[state.id]) if App.Util.historyScrollStates[state.id]
@@ -98,25 +96,22 @@ $ ->
 
   # User clicks back button
   window.addEventListener 'popstate', (e) ->
-    console.log("popstate fired")
     handleNavigation()
 
   # Result of user clicking a link
   window.addEventListener 'navigation', (e) ->
-    console.log("navigation fired")
     handleNavigation()
 
   ###############################################
   # Load initial page if not an exempt route
   ###############################################
-  # path_segment = window.location.pathname.split('/')[1]
-  # if path_segment isnt 'users'
-  #   $page.html ''
-  #   match = /^(http|https):\/\/(.+)$/.exec(window.location)
-  #   href = match[2].substr(match[2].indexOf('/'), match[2].length - 1)
-  #   console.log("calling initial page load with href: #{href}")
-    # App.Util.navigateTo(href)
-    # handleNavigation() # Need to call this explicitly on page load (to keep Firefox in the mix)
+  path_segment = window.location.pathname.split('/')[1]
+  if path_segment isnt 'users'
+    $page.html ''
+    match = /^(http|https):\/\/(.+)$/.exec(window.location)
+    href = match[2].substr(match[2].indexOf('/'), match[2].length - 1)
+    App.Util.navigateTo(href)
+    handleNavigation() # Need to call this explicitly on page load (to keep Firefox in the mix)
 
   ###############################################
   # Handle feedback on DOM load (for Devise)
@@ -378,15 +373,12 @@ $ ->
         className = 'spinner_likes_small'
       else if $(this).parent().hasClass('likes_large')
         className = 'spinner_likes_large'
-    spinner = App.Util.newSpinner className
-    $(this).parent().append spinner.el
     $.ajax({
       type: 'post',
       url: '/toggle-like',
       data: { 'likable_type': $this.data('type'), 'likable_id': $this.data('id') }
       dataType: 'json',
       success: (r) ->
-        spinner.stop()
         if r.success
           App.Util.feedback({ notice: r.msg })
           if r.liked then $this.addClass('liked') else $this.removeClass('liked')

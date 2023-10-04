@@ -25,6 +25,19 @@ $highlight3: #cbebf2;
 $highlight4: #fff494;
 $scrubbing: #1a80f6;
 
+@keyframes rotateCounterClockwise {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spinner {
+  animation: rotateCounterClockwise 3s linear infinite;
+  font-size: 7em;
+}
+
 @-webkit-keyframes pulsate-highlight {
     0%   { background: $background_gray; }
     100%  { background: $highlight4; }
@@ -154,7 +167,7 @@ html {
       color: #51A9C9 !important;
     }
 
-    #ajax_overlay {
+    #ajax_loading {
       text-align: center;
       visibility: hidden;
       position: absolute;
@@ -713,7 +726,7 @@ html {
     margin: 0 auto;
     font-size: 16px;
     color: $gray_70;
-    height: 30px;
+    height: 37px;
     vertical-align: middle;
     padding-top: 6px;
     background-color: $global_nav_gray;
@@ -741,8 +754,8 @@ html {
       margin-right: 20px;
       margin-top: 1px;
       float: right;
-      height: 21px;
-      width: 118px;
+      height: 23px;
+      width: 120px;
       border: 1px solid $btn_border;
       border-radius: 5px;
       text-align: left;
@@ -751,8 +764,8 @@ html {
       cursor: pointer;
 
       img {
-        margin-left: 5px;
-        margin-top: -8px;
+        margin-left: 4px;
+        margin-top: -5px;
       }
       #search_term {
         background: transparent;
