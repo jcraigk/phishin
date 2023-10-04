@@ -16,7 +16,9 @@ class Util
       msg = feedback.notice
       css = 'feedback_notice'
       icon = 'icon-ok-sign'
-    id = this._uniqueID()
+    id = ""
+    id += Math.random().toString(36).substr 2 while id.length < length
+    id.substr 0, length
     @$feedback.append "<p class=\"#{css}\" id=\"#{id}\"><i class=\"#{icon}\"></i> #{msg}</p>"
     setTimeout( ->
       $("##{id}").hide 'slide'
@@ -111,15 +113,10 @@ class Util
     el.val(text)
     el.select()
     document.execCommand('copy')
-    App.Util.feedback({ notice: 'Link copied to clipboard' })
+    Util.feedback({ notice: 'Link copied to clipboard' })
 
   _findMatch: (href) ->
     match = /^([^\?]+)\??(.+)?$/.exec(href.split("/")[1])
     match[1] if match
-
-  _uniqueID: (length=8) ->
-    id = ""
-    id += Math.random().toString(36).substr 2 while id.length < length
-    id.substr 0, length
 
 export default Util

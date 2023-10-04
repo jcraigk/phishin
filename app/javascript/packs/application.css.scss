@@ -1,5 +1,4 @@
-@import '~jquery-ui/themes/base/slider.css';
-@import '~jquery-ui/themes/base/sortable.css';
+@import '~jquery-ui/themes/base/all.css';
 @import '~bootstrap/dist/css/bootstrap.css';
 
 $text_gray: #6d6f71;
@@ -87,15 +86,6 @@ $scrubbing: #1a80f6;
   100%  { background: $highlight2; }
 }
 
-#download_iframe {
-  display: none;
-}
-
-#lyrics_content {
-  font-size: 20px;
-  line-height: 28px;
-}
-
 button.dropdown-toggle {
   margin-top: 3px;
   height: 18px;
@@ -113,6 +103,16 @@ button.dropdown-toggle {
 #tag_detail {
   font-size: 20px;
   line-height: 26px;
+}
+#download_iframe {
+  display: none;
+}
+#lyrics_content {
+  font-size: 20px;
+  line-height: 28px;
+}
+#taper_notes_content {
+  white-space: pre-wrap;
 }
 .detail_tag_label {
   font-size: 20px !important;

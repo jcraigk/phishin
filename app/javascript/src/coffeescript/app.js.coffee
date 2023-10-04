@@ -149,16 +149,12 @@ $ ->
 
   # Initialize all dialogs (jQUery UI)
   $('.dialog').dialog({
-    autoOpen: true,
+    autoOpen: false,
     height: 400,
     width: 350,
     modal: true,
     draggable: false
   })
-
-  # Scroll to top of dialogs when displayed
-  $('.dialog').on 'shown', ->
-    $('.dialog-body').scrollTop(0)
 
   # Click Phish On Demand app callout
   $(document).on 'click', '#relisten_callout', ->
@@ -167,6 +163,10 @@ $ ->
   # Click Never Ending Splendor app callout
   $(document).on 'click', '#splendor_callout', ->
     window.location = 'https://play.google.com/store/apps/details?id=never.ending.splendor'
+
+  # Prevent context menu clicks from playing parent track
+  .on 'click', 'button', (e) ->
+    e.stopPropagation()
 
   # Click a link to load page via ajax
   .on 'click', 'a', ->
@@ -390,7 +390,7 @@ $ ->
       dataType: 'json',
       success: (r) ->
         if r.success
-          App.Util.feedback({ notice: r.msg })
+          Util.feedback({ notice: r.msg })
           if r.liked then $this.addClass('liked') else $this.removeClass('liked')
           $this.siblings('span').html r.likes_count
           # Update other instances of this track's Like controls
@@ -400,7 +400,7 @@ $ ->
               $(this).siblings('span').html r.likes_count
           )
         else
-          App.Util.feedback { alert: r.msg }
+          Util.feedback { alert: r.msg }
     })
 
   ###############################################
@@ -438,20 +438,18 @@ $ ->
   # Taper Notes link opens a dialog
   .on 'click', '.show_taper_notes', ->
     $('#taper_notes_content').html $(this).data('taper-notes')
-    $('#taper_notes_date').html $(this).data('show-date')
     $('#taper_notes_dialog').dialog('open')
 
   # View Lyrics button opens a dialog
   .on 'click', '.song_lyrics', ->
+    $('#lyrics_dialog').attr('title', $(this).data('title'))
     $('#lyrics_content').html $(this).data('lyrics')
-    $('#lyrics_title').html $(this).data('title')
     $('#lyrics_dialog').dialog('open')
 
   # Tag instance click opens a dialog
   .on 'click', '.tag_label:not(.no-dialog)', ->
-    $('#tag_detail_title').html $(this).data('detail-title')
+    $('#tag_dialog').attr('title', $(this).data('detail-title'))
     $('#tag_detail').html $(this).data('detail')
-    $('#tag_dialog').animate({ scrollTop: 0 }, 'slow');
     $('#tag_dialog').dialog('open')
 
   # Keyboard shortcuts
