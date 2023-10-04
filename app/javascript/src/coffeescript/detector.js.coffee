@@ -1,4 +1,4 @@
-class @Detector
+class Detector
 
   constructor: ->
     @detectPlatform()
@@ -41,3 +41,5 @@ class @Detector
 
   unsupportedBrowser: ->
     window.location.href = '/browser-unsupported'
+
+export default Detector

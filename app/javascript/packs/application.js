@@ -10,5 +10,5 @@ import 'jquery.cookie'
 // import 'bootstrap/dist/js/bootstrap';
 import History from 'historyjs/scripts/uncompressed/history'
 
-const requireAll = (r) => r.keys().forEach(r);
-requireAll(require.context('../src/coffeescript/', true, /\.coffee$/));
+import App from '../src/coffeescript/app-main.js.coffee';
+import 'soundmanager2'

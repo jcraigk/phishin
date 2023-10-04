@@ -1,4 +1,4 @@
-class @Util
+class Util
 
   historyScrollStates: [] # Need to store scroll states outside history.js based on the way that library works
 
@@ -6,7 +6,7 @@ class @Util
     @page_init          = true
     @$feedback          = $ '#feedback'
 
-  feedback: (feedback) ->
+  @feedback: (feedback) ->
     if feedback.alert
       msg = feedback.alert
       css = 'feedback_alert'
@@ -21,24 +21,24 @@ class @Util
       $("##{id}").hide 'slide'
     , 3000)
 
-  followLink: ($el) ->
+  @followLink: ($el) ->
     this.navigateTo $el.attr('href')
 
-  navigateTo: (href) ->
+  @navigateTo: (href) ->
     @page_init = false
     this.historyScrollStates[History.savedStates[History.savedStates.length-1].id] = $('body').scrollTop()
     title = document.title
     History.pushState { href: href, scroll: 0 }, $('body').data('app-name'), href
     document.title = title
 
-  navigateToRefreshMap: ->
+  @navigateToRefreshMap: ->
     url = "/map?map_term=#{$('#map_search_term').val().replace /\s/g, '+' }"
     url += "&distance=#{$('#map_search_distance').val()}"
     url += "&date_start=#{$('#map_date_start').val()}"
     url += "&date_stop=#{$('#map_date_stop').val()}"
     this.navigateTo url
 
-  readableDuration: (ms, style='colons', include_seconds=false) ->
+  @readableDuration: (ms, style='colons', include_seconds=false) ->
     x = Math.floor(ms / 1000)
     seconds = x % 60
     seconds_with_zero = "#{if seconds < 10 then '0' else '' }#{seconds}"
@@ -68,7 +68,7 @@ class @Util
       else
         "#{minutes}:#{seconds_with_zero}"
 
-  timeToMS: (time) ->
+  @timeToMS: (time) ->
     time = "#{time}"
     if time.match /^\d+$/  # It's already in ms
       time
@@ -85,7 +85,7 @@ class @Util
         this.feedback { alert: "Invalid start time provided (#{time})" }
         0
 
-  stringToSlug: (str) ->
+  @stringToSlug: (str) ->
     str.toLowerCase().trim().replace(/[^a-z0-9\-\s]/g, '').replace(/[\s]/g, '-')
 
   newSpinner: (className = 'spinner_likes_small') ->
@@ -103,13 +103,13 @@ class @Util
     #   className: className
     # }).spin()
 
-  truncate: (string, length=40) ->
+  @truncate: (string, length=40) ->
     if string.length > length then string.substring(0, length) + '...' else string
 
-  showHTMLError: (str) ->
+  @showHTMLError: (str) ->
     $('body').append "<div id=\"system_error\">#{str.replace(/(\r\n|\n|\r)/gm,"<br />")}</div>"
 
-  copyToClipboard: (text) ->
+  @copyToClipboard: (text) ->
     el = $('#clipboard')
     el.val(text)
     el.select()
@@ -124,3 +124,5 @@ class @Util
     id = ""
     id += Math.random().toString(36).substr 2 while id.length < length
     id.substr 0, length
+
+export default Util

@@ -1,7 +1,9 @@
-class @Player
+import Util from './util.js'
+
+class Player
 
   constructor: ->
-    @Util             = App.Util
+    @Util             = Util
     @sm               = soundManager
     @sm_sound         = {}
     @preload_time     = 5000
@@ -375,3 +377,5 @@ class @Player
 
   _hidePlayTooltip: ->
     $('#playpause_tooltip').tooltip('destroy')
+
+export default Player

@@ -1,8 +1,11 @@
-class @Playlist
+import Util from './util.js'
+import Player from './player.js'
+
+class Playlist
 
   constructor: ->
-    @Util                   = App.Util
-    @Player                 = App.Player
+    @Util                   = Util
+    @Player                 = Player
     @$save_modal            = $ '#save_playlist_modal'
     @$save_action_dropdown  = $ '#save_action_dropdown'
     @$save_action_new       = $ '#save_action_new'
@@ -212,3 +215,5 @@ class @Playlist
   _updatePlaylistStats: (num_tracks=0, duration=0) ->
     $('#active_playlist_tracks_label').html "Tracks: #{num_tracks}"
     $('#active_playlist_duration_label').html "Length: #{@Util.readableDuration(duration, 'letters')}"
+
+export default Playlist

@@ -1,4 +1,6 @@
-class @Map
+import Util from './util.js'
+
+class Map
 
   constructor: ->
     @init             = true
@@ -6,7 +8,7 @@ class @Map
     @popups           = []
     @map              = {}
     @view_circle      = {}
-    @util             = App.Util
+    @util             = Util
     @default_lng      = -73.21 # Burlington, VT
     @default_lat      = 44.47 # Burlington, VT
     @mapbox_token   = 'pk.eyJ1IjoicGhpc2hpbiIsImEiOiJjanE0cWlzYmIxd245NDNzYjR1MHV2aGExIn0.UeKqNVoqRBqYKjfLshbShw'
@@ -102,3 +104,5 @@ class @Map
       marker.remove()
     @popups = []
     @markers = []
+
+export default Map

@@ -1,5 +1,11 @@
-# Generic namespace
-@App = {}
+import Detector from './detector.js'
+import Map from './map.js'
+import Player from './player.js'
+import Playlist from './playlist.js'
+import Util from './util.js'
+
+App = {}
+export default App
 
 $ ->
 
