@@ -1,13 +1,14 @@
-.btn_context
-  .btn-group
-    a.btn.dropdown-toggle.btn-round data-toggle='dropdown' href='null'
-      = image_pack_tag 'static/images/icon-context.png', alt: 'Icon: context menu'
-    ul.dropdown-menu
+.btn-group.small-dropdown.btn_context
+  button.btn.btn-default.dropdown-toggle type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'
+    span.caret
+  ul.dropdown-menu
       li
         a href="/play/#{playlist.slug}"
           i.icon-play
-          |  Activate
+          |> &nbsp;
+          | Activate
       li
         a.share href='null' data-url="/play/#{playlist.slug}"
           i.icon-share-alt
-          |  Share
+          |> &nbsp;
+          | Share

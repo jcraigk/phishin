@@ -1,22 +1,25 @@
-.btn_context.show-context-dropdown class=(viewing_this_show ? 'btn_context_for_show' : '')
-  .btn-group
-    a.btn.dropdown-toggle.btn-round data-toggle='dropdown' href='null'
-      = image_pack_tag 'static/images/icon-context.png', alt: 'Icon: context menu'
-    ul.dropdown-menu
-      - unless viewing_this_show
-        li
-          a href="/#{show.date}"
-            i.icon-arrow-right
-            |  Go to show
+.btn-group.small-dropdown.show-context-dropdown.btn_context class=(viewing_this_show ? 'btn_context_for_show' : '')
+  button.btn.btn-default.dropdown-toggle type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'
+    span.caret
+  ul.dropdown-menu
+    - unless viewing_this_show
       li
-        a.playlist_add_show href='null' data-id=show.id
-          i.icon-plus-sign
-          |  Add to playlist
-      li
-        a.share href='null' data-url="/#{show.date}"
-          i.icon-share-alt
-          |  Share
-      li
-        a.non-remote target='_blank' href="https://phish.net/setlists/?d=#{show.date}"
-          i.icon-search
-          |  Lookup at phish.net
+        a href="/#{show.date}"
+          i.glyphicon.glyphicon-arrow-right
+          |> &nbsp;
+          |< Go to show
+    li
+      a.playlist_add_show href='null' data-id=show.id
+        i.glyphicon.glyphicon-plus-sign
+        |> &nbsp;
+        |< Add to playlist
+    li
+      a.share href='null' data-url="/#{show.date}"
+        i.glyphicon.glyphicon-share-alt
+        |> &nbsp;
+        | Share
+    li
+      a.non-remote target='_blank' href="https://phish.net/setlists/?d=#{show.date}"
+        i.glyphicon.glyphicon-search
+        |> &nbsp;
+        |< Lookup at phish.net

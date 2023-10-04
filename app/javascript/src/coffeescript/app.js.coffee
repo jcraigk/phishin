@@ -6,6 +6,7 @@ import Util from './util.js'
 import $ from 'jquery'
 import 'jquery-ui/ui/widgets/slider'
 import 'jquery-ui/ui/widgets/tooltip'
+import 'jquery-ui/ui/widgets/dialog'
 
 App = {}
 export default App
@@ -146,9 +147,18 @@ $ ->
   # DOM interactions
   ###############################################
 
-  # Scroll to top of modals when displayed
-  $('.modal').on 'shown', ->
-    $('.modal-body').scrollTop(0)
+  # Initialize all dialogs (jQUery UI)
+  $('.dialog').dialog({
+    autoOpen: true,
+    height: 400,
+    width: 350,
+    modal: true,
+    draggable: false
+  })
+
+  # Scroll to top of dialogs when displayed
+  $('.dialog').on 'shown', ->
+    $('.dialog-body').scrollTop(0)
 
   # Click Phish On Demand app callout
   $(document).on 'click', '#relisten_callout', ->
@@ -212,9 +222,9 @@ $ ->
   .on 'blur', '#playlist_name_input', (e) ->
     $('#playlist_slug_input').val App.Util.stringToSlug($(this).val())
   .on 'click', '#save_playlist_btn', (e) ->
-    App.Playlist.handleSaveModal()
+    App.Playlist.handleSaveDialog()
   .on 'click', '#duplicate_playlist_btn', (e) ->
-    App.Playlist.handleDuplicateModal()
+    App.Playlist.handleDuplicateDialog()
   .on 'click', '#save_playlist_submit', (e) ->
     App.Playlist.savePlaylist()
   .on 'click', '#delete_playlist_btn', (e) ->
@@ -425,24 +435,24 @@ $ ->
   .on 'click', '#random_song_track_btn', (e) ->
     App.Player.playRandomSongTrack $(this).data('song-id')
 
-  # Taper Notes link opens a modal
+  # Taper Notes link opens a dialog
   .on 'click', '.show_taper_notes', ->
     $('#taper_notes_content').html $(this).data('taper-notes')
     $('#taper_notes_date').html $(this).data('show-date')
-    $('#taper_notes_modal').modal('show')
+    $('#taper_notes_dialog').dialog('open')
 
-  # View Lyrics button opens a modal
+  # View Lyrics button opens a dialog
   .on 'click', '.song_lyrics', ->
     $('#lyrics_content').html $(this).data('lyrics')
     $('#lyrics_title').html $(this).data('title')
-    $('#lyrics_modal').modal('show')
+    $('#lyrics_dialog').dialog('open')
 
-  # Tag instance click opens a modal
-  .on 'click', '.tag_label:not(.no-modal)', ->
+  # Tag instance click opens a dialog
+  .on 'click', '.tag_label:not(.no-dialog)', ->
     $('#tag_detail_title').html $(this).data('detail-title')
     $('#tag_detail').html $(this).data('detail')
-    $('#tag_modal').animate({ scrollTop: 0 }, 'slow');
-    $('#tag_modal').modal('show')
+    $('#tag_dialog').animate({ scrollTop: 0 }, 'slow');
+    $('#tag_dialog').dialog('open')
 
   # Keyboard shortcuts
   $(window).keydown (e) ->

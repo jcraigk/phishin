@@ -1,13 +1,14 @@
 import Util from './util.js'
 import Player from './player.js'
 import 'jquery-ui/ui/widgets/sortable'
+import 'jquery-ui/ui/widgets/dialog'
 
 class Playlist
 
   constructor: ->
     @Util                   = Util
     @Player                 = Player
-    @$save_modal            = $ '#save_playlist_modal'
+    @$save_dialog            = $ '#save_playlist_dialog'
     @$save_action_dropdown  = $ '#save_action_dropdown'
     @$save_action_new       = $ '#save_action_new'
     @$save_action_existing  = $ '#save_action_existing'
@@ -145,7 +146,7 @@ class Playlist
           @Util.feedback { alert: r.msg }
     })
 
-  handleSaveModal: ->
+  handleSaveDialog: ->
     if name = $('#playlist_data').attr 'data-name'
       @$save_action_existing.attr 'disabled', false
       @$save_action_existing.attr 'selected', true
@@ -155,16 +156,16 @@ class Playlist
       @$save_action_existing.attr 'disabled', true
       @$playlist_name_input.val ''
       @$playlist_slug_input.val ''
-    @$save_modal.modal 'show'
+    @$save_dialog.dialog 'show'
 
-  handleDuplicateModal: ->
+  handleDuplicateDialog: ->
     @$save_action_existing.attr 'disabled', true
     @$playlist_name_input.val ''
     @$playlist_slug_input.val ''
-    @$save_modal.modal 'show'
+    @$save_dialog.dialog 'show'
 
   savePlaylist: ->
-    @$save_modal.modal 'hide'
+    @$save_dialog.dialog 'hide'
     $('#duplicate_playlist_btn').hide()
     $('#unbookmark_playlist_btn').hide()
     $('#bookmark_playlist_btn').hide()

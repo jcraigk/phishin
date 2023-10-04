@@ -96,6 +96,11 @@ $scrubbing: #1a80f6;
   line-height: 28px;
 }
 
+button.dropdown-toggle {
+  margin-top: 3px;
+  height: 18px;
+  line-height: 0;
+}
 .tagin_project {
   p, li {
     font-size: 20px;
@@ -125,6 +130,10 @@ html {
 
     a, p, span, h1, h2, h3, h4, h5, input {
       font-family: 'Open Sans Condensed', sans-serif;
+    }
+
+    h1, h2, h3, h4, h5 {
+      margin-top: 10px;
     }
 
     a {
@@ -375,18 +384,18 @@ html {
       position: relative;
       top: -22px;
     }
-    .btn-round {
-      margin-top: -1px;
-      height: 8px !important;
-      width: 10px !important;
-      -moz-border-radius: 30px !important;
-      -webkit-border-radius: 30px !important;
-      border-radius: 30px !important;
-      line-height: 6px !important;
-      font-weight: bold !important;
-      padding-left: 14px !important;
-      font-size: 17px !important;
-    }
+    // .btn-round {
+    //   margin-top: -1px;
+    //   height: 8px !important;
+    //   width: 10px !important;
+    //   -moz-border-radius: 30px !important;
+    //   -webkit-border-radius: 30px !important;
+    //   border-radius: 30px !important;
+    //   line-height: 6px !important;
+    //   font-weight: bold !important;
+    //   padding-left: 14px !important;
+    //   font-size: 17px !important;
+    // }
     .btn-sort {
       height: 18px !important;
       -moz-border-radius: 30px !important;
@@ -1083,8 +1092,6 @@ html {
     }
   }
   .tag_label {
-    height: 10px !important;
-    line-height: 10px !important;
     float: left;
     font-size: 10px !important;
     margin-right: 5px;
@@ -1139,7 +1146,7 @@ html {
 
   #title_box {
     position: fixed;
-    width: 190px;
+    width: 230px;
     background-color: $sub_nav_gray;
     padding: 20px 20px 10px 20px;
     border-radius: 10px;
@@ -1264,7 +1271,7 @@ html {
     }
     .set_duration {
       position: absolute;
-      margin-top: -39px;
+      margin-top: -42px;
       margin-left: 565px;
       font-size: 18px;
     }
@@ -1309,7 +1316,7 @@ html {
     }
   }
   .item_list {
-    margin-left: 0px;
+    margin-left: -40px;
     margin-bottom: 20px;
     list-style-type: none;
 
@@ -1319,8 +1326,8 @@ html {
       -moz-border-radius: 8px;
       -webkit-border-radius: 8px;
       border-radius: 8px;
-      padding: 5px 0px 0px 10px;
-      height: 30px;
+      padding: 5px 10px 0px 10px;
+      height: 35px;
 
       &:hover {
         cursor: pointer;
@@ -1378,7 +1385,6 @@ html {
 
         &.alt {
           width: 120px;
-          margin-right: 10px;
 
           a {
             line-height: 10px;
