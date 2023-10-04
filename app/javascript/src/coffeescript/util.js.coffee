@@ -1,14 +1,13 @@
-import History from 'historyjs/scripts/uncompressed/history'
-
 class Util
 
   historyScrollStates: [] # Need to store scroll states outside history.js based on the way that library works
 
   constructor: ->
     @page_init          = true
+    @page_init          = true
     @$feedback          = $ '#feedback'
 
-  feedback: (feedback) ->
+  @feedback: (feedback) ->
     if feedback.alert
       msg = feedback.alert
       css = 'feedback_alert'
@@ -27,12 +26,22 @@ class Util
     this.navigateTo $el.attr('href')
 
   navigateTo: (href) ->
+    console.log("navigateTo: #{href}")
     @page_init = false
-    # TODO: Fix this
-    # this.historyScrollStates[History.savedStates[History.savedStates.length-1].id] = $('body').scrollTop()
+
+    # Save the current scroll position to the state
+    scrollPosition = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0
+    history.replaceState { href: window.location.href, scroll: scrollPosition }, document.title, window.location.href
+
+    # Push the new state
     title = document.title
     history.pushState { href: href, scroll: 0 }, $('body').data('app-name'), href
     document.title = title
+
+    console.log("navigateTo: #{href} (done)")
+
+    # Manually trigger a popstate event
+    window.dispatchEvent(new CustomEvent('navigation'))
 
   navigateToRefreshMap: ->
     url = "/map?map_term=#{$('#map_search_term').val().replace /\s/g, '+' }"
@@ -41,7 +50,7 @@ class Util
     url += "&date_stop=#{$('#map_date_stop').val()}"
     this.navigateTo url
 
-  readableDuration: (ms, style='colons', include_seconds=false) ->
+  @readableDuration: (ms, style='colons', include_seconds=false) ->
     x = Math.floor(ms / 1000)
     seconds = x % 60
     seconds_with_zero = "#{if seconds < 10 then '0' else '' }#{seconds}"

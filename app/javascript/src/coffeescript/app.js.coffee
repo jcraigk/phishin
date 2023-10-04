@@ -35,64 +35,88 @@ $ ->
   # Helpers
   ###############################################
 
-  handleHistory = ->
-    state = history.state
-    if state?.href != undefined and !App.Util.page_init
+  handleNavigation = ->
+    console.log("handleNavigation")
+    state = window.history.state
+    console.log("state: #{state}")
+    if state?.href && !App.Util.page_init
       $ajax_overlay.css 'visibility', 'visible'
       $page.html ''
-      $page.load(
-        state.href, (response, status, xhr) ->
-          App.Util.showHTMLError(response) if status is 'error'
 
-          $ajax_overlay.css 'visibility', 'hidden'
+      fetch(state.href, {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then (response) ->
+        if response.ok
+          response.text()
+        else
+          throw new Error('Network response was not ok')
 
-          # Scroll to proper position (not currently working)
-          window.scrollTo 0, App.Util.historyScrollStates[state.id] if App.Util.historyScrollStates[state.id]
+      .then (html) ->
+        $page.html html
+        $ajax_overlay.css 'visibility', 'hidden'
 
-          # Tooltips
-          $('a[title]').tooltip()
-          $('.tag_label[title]').tooltip()
+        # Scroll to proper position
+        window.scrollTo(0, App.Util.historyScrollStates[state.id]) if App.Util.historyScrollStates[state.id]
 
-          # Auto-scroll and highlight track anchor if present
-          if state.href.substr(0,6) != '/play/' and path = state.href.split("/")[2]
-            match = /^([^\?]+)\??(.+)?$/.exec(path)
-            $('body').attr 'data-anchor', match[1]
-          else
-            $('body').attr 'data-anchor', ''
-          App.Player.onReady() # For scrolling to and auto-playing a track
-          App.Player.highlightActiveTrack(true) # For highlighting current track in a list, scrollTo = true
+        # Tooltips
+        $('a[title]').each -> $(this).tooltip()
+        $('.tag_label[title]').each -> $(this).tooltip()
 
-          # For detecting browsers/platforms
-          App.Detector = new Detector
+        # Auto-scroll and highlight track anchor if present
+        path = state.href.split('/')[2]
+        if state.href.substr(0,6) != '/play/' and path
+          match = /^([^\?]+)\??(.+)?$/.exec(path)
+          $('body').attr 'data-anchor', match[1]
+        else
+          $('body').attr 'data-anchor', ''
+        App.Player.onReady() # For scrolling to and auto-playing a track
+        App.Player.highlightActiveTrack(true) # For highlighting current track in a list, scrollTo = true
 
-          # Map
-          if state.href.substr(0,4) is '/map'
-            App.Map.initMap()
-            term = $('#map_search_term').val()
-            distance = $('#map_search_distance').val()
-            App.Map.handleSearch(term, distance) if term and distance
+        # For detecting browsers/platforms
+        App.Detector = new Detector
 
-          # Playlist
-          else if state.href.substr(0,9) is '/playlist' or state.href.substr(0,6) is '/play/'
-            App.Playlist.initPlaylist()
-      )
+        # Map
+        if state.href.substr(0,4) is '/map'
+          App.Map.initMap()
+          term = $('#map_search_term').val()
+          distance = $('#map_search_distance').val()
+          App.Map.handleSearch(term, distance) if term and distance
+
+        # Playlist
+        else if state.href.substr(0,9) is '/playlist' or state.href.substr(0,6) is '/play/'
+          App.Playlist.initPlaylist()
+
+      .catch (error) ->
+        console.log('There was a problem with the fetch operation:', error.message)
 
   ###############################################
   # Prepare history.js
   ###############################################
-  $(window).on 'statechange', ->
-    handleHistory()
+
+  # User clicks back button
+  window.addEventListener 'popstate', (e) ->
+    console.log("popstate fired")
+    handleNavigation()
+
+  # Result of user clicking a link
+  window.addEventListener 'navigation', (e) ->
+    console.log("navigation fired")
+    handleNavigation()
 
   ###############################################
   # Load initial page if not an exempt route
   ###############################################
-  path_segment = window.location.pathname.split('/')[1]
-  if path_segment isnt 'users'
-    $page.html ''
-    match = /^(http|https):\/\/(.+)$/.exec(window.location)
-    href = match[2].substr(match[2].indexOf('/'), match[2].length - 1)
-    App.Util.navigateTo(href)
-    handleHistory()  # Need to call this explicitly on page load (to keep Firefox in the mix)
+  # path_segment = window.location.pathname.split('/')[1]
+  # if path_segment isnt 'users'
+  #   $page.html ''
+  #   match = /^(http|https):\/\/(.+)$/.exec(window.location)
+  #   href = match[2].substr(match[2].indexOf('/'), match[2].length - 1)
+  #   console.log("calling initial page load with href: #{href}")
+    # App.Util.navigateTo(href)
+    # handleNavigation() # Need to call this explicitly on page load (to keep Firefox in the mix)
 
   ###############################################
   # Handle feedback on DOM load (for Devise)

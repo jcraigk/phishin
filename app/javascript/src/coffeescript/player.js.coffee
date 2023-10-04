@@ -1,4 +1,5 @@
 import Util from './util.js'
+import App from './app.js'
 import $ from 'jquery'
 import 'jquery-ui/ui/widgets/slider'
 import 'jquery-ui/ui/widgets/tooltip'
