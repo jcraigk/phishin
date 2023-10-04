@@ -1,3 +1,5 @@
+import History from 'historyjs/scripts/uncompressed/history'
+
 class Util
 
   historyScrollStates: [] # Need to store scroll states outside history.js based on the way that library works
@@ -24,11 +26,12 @@ class Util
   @followLink: ($el) ->
     this.navigateTo $el.attr('href')
 
-  @navigateTo: (href) ->
+  navigateTo: (href) ->
     @page_init = false
-    this.historyScrollStates[History.savedStates[History.savedStates.length-1].id] = $('body').scrollTop()
+    # TODO: Fix this
+    # this.historyScrollStates[History.savedStates[History.savedStates.length-1].id] = $('body').scrollTop()
     title = document.title
-    History.pushState { href: href, scroll: 0 }, $('body').data('app-name'), href
+    history.pushState { href: href, scroll: 0 }, $('body').data('app-name'), href
     document.title = title
 
   @navigateToRefreshMap: ->

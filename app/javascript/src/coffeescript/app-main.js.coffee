@@ -33,12 +33,12 @@ $ ->
   ###############################################
 
   handleHistory = ->
-    state = window.History.getState()
-    if state.data.href != undefined and !App.Util.page_init
+    state = history.state
+    if state?.href != undefined and !App.Util.page_init
       $ajax_overlay.css 'visibility', 'visible'
       $page.html ''
       $page.load(
-        state.data.href, (response, status, xhr) ->
+        state.href, (response, status, xhr) ->
           App.Util.showHTMLError(response) if status is 'error'
 
           $ajax_overlay.css 'visibility', 'hidden'
@@ -51,7 +51,7 @@ $ ->
           $('.tag_label[title]').tooltip()
 
           # Auto-scroll and highlight track anchor if present
-          if state.data.href.substr(0,6) != '/play/' and path = state.data.href.split("/")[2]
+          if state.href.substr(0,6) != '/play/' and path = state.href.split("/")[2]
             match = /^([^\?]+)\??(.+)?$/.exec(path)
             $('body').attr 'data-anchor', match[1]
           else
@@ -70,16 +70,14 @@ $ ->
             App.Map.handleSearch(term, distance) if term and distance
 
           # Playlist
-          else if state.data.href.substr(0,9) is '/playlist' or state.data.href.substr(0,6) is '/play/'
+          else if state.data.href.substr(0,9) is '/playlist' or state.href.substr(0,6) is '/play/'
             App.Playlist.initPlaylist()
       )
 
   ###############################################
   # Prepare history.js
   ###############################################
-  History = window.History
-  return false if !History.enabled
-  History.Adapter.bind window, 'statechange', ->
+  $(window).on 'statechange', ->
     handleHistory()
 
   ###############################################

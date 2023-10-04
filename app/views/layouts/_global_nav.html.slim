@@ -4,7 +4,7 @@
     = global_nav(@ambiguity_controller)
 
     #search_box
-      = image_tag 'icon-search.png', alt: 'search icon'
+      = image_pack_tag 'static/images/icon-search.png', alt: 'search icon'
       input#search_term type='text' name='term' value=params[:term]
 
   .divider
