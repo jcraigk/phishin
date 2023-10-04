@@ -16,11 +16,8 @@ module Phishin
     config.active_record.legacy_connection_handling = false
     config.hosts << ENV.fetch('WEB_HOST', nil) if ENV['WEB_HOST'].present?
 
-    config.middleware.insert_before 0, Middleware::MobileRedirect
-
-    config.assets.precompile += %w[mobile.js]
-
-    config.react.variant = :production
+    # config.middleware.insert_before 0, Middleware::MobileRedirect
+    # config.react.variant = :production
     config.react.version = '18'
   end
 end
