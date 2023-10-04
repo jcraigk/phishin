@@ -1,8 +1,6 @@
-/*
- *= require_self
- *= require jquery-ui/slider
- *= require_tree .
- */
+// require jquery-ui/slider
+
+@import '~bootstrap/dist/css/bootstrap.css';
 
 $text_gray: #6d6f71;
 $emphasis: #000;
@@ -225,7 +223,7 @@ html {
         width: 16px;
         height: 16px;
         text-decoration: none;
-        background: url('icons-heart.png');
+        background: image_pack_path('icons-heart.png');
         margin-right: 4px;
         margin-bottom: 10px;
 
@@ -480,7 +478,7 @@ html {
       width: 22px !important;
       height: 21px;
       cursor: pointer;
-      background: url('icons-volume.png');
+      background: image_pack_path('icons-volume.png');
     }
     .playing {
       background-position: -65px 0 !important;
@@ -533,7 +531,7 @@ html {
         }
         .ui-slider-range {
           background-image: none;
-          background: url('progress-bar.png');
+          background: image_pack_path('progress-bar.png');
           border-radius: 0px;
         }
       }
@@ -640,7 +638,7 @@ html {
         border-radius: 100px;
         margin-top: -16px;
         margin-left: 5px;
-        background: white url('icons-playpause.png');
+        background: white image_pack_path('icons-playpause.png');
         cursor: pointer;
       }
       #control_next, #control_previous {
@@ -654,11 +652,11 @@ html {
         cursor: pointer;
       }
       #control_previous {
-        background: white url('icon-previous.png');
+        background: white image_pack_path('icon-previous.png');
         margin-right: 2px;
       }
       #control_next {
-        background: white url('icon-next.png');
+        background: white image_pack_path('icon-next.png');
         margin-left: 2px;
       }
     }
@@ -949,7 +947,7 @@ html {
       width: 14px;
       height: 14px !important;
       text-decoration: none;
-      background: url('icons-heart-small.png');
+      background: image_pack_path('icons-heart-small.png');
       margin-right: 3px;
 
       &:hover {

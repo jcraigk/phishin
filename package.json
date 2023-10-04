@@ -1,0 +1,47 @@
+{
+  "name": "app",
+  "private": true,
+  "dependencies": {
+    "@babel/core": "7",
+    "@babel/plugin-transform-runtime": "7",
+    "@babel/preset-env": "7",
+    "@babel/runtime": "7",
+    "@types/babel__core": "7",
+    "@types/webpack": "5",
+    "babel-loader": "8",
+    "bootstrap": "3.1.1",
+    "coffee-loader": "^4.0.0",
+    "coffeescript": "^2.7.0",
+    "compression-webpack-plugin": "9",
+    "css-loader": "^6.8.1",
+    "css-minimizer-webpack-plugin": "^5.0.1",
+    "historyjs": "^1.8.0-b2",
+    "jquery": "^3.7.1",
+    "jquery-ui": "^1.13.2",
+    "jquery-ujs": "^1.2.3",
+    "jquery.cookie": "^1.4.1",
+    "mini-css-extract-plugin": "^2.7.6",
+    "sass": "^1.68.0",
+    "sass-loader": "^13.3.2",
+    "shakapacker": "7.1.0",
+    "soundmanager2": "^2.97.20170602",
+    "style-loader": "^3.3.3",
+    "terser-webpack-plugin": "5",
+    "webpack": "5",
+    "webpack-assets-manifest": "5",
+    "webpack-cli": "4",
+    "webpack-merge": "5"
+  },
+  "version": "0.1.0",
+  "babel": {
+    "presets": [
+      "./node_modules/shakapacker/package/babel/preset.js"
+    ]
+  },
+  "browserslist": [
+    "defaults"
+  ],
+  "devDependencies": {
+    "webpack-dev-server": "4"
+  }
+}
