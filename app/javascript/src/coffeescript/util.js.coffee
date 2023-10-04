@@ -89,19 +89,19 @@ class @Util
     str.toLowerCase().trim().replace(/[^a-z0-9\-\s]/g, '').replace(/[\s]/g, '-')
 
   newSpinner: (className = 'spinner_likes_small') ->
-    new Spinner({
-      lines: 9,
-      length: 4,
-      width: 2,
-      radius: 3,
-      corners: 1.0,
-      rotate: 0,
-      direction: -1,
-      color: '#000',
-      speed: 1.0,
-      trail: 50,
-      className: className
-    }).spin()
+    # new Spinner({
+    #   lines: 9,
+    #   length: 4,
+    #   width: 2,
+    #   radius: 3,
+    #   corners: 1.0,
+    #   rotate: 0,
+    #   direction: -1,
+    #   color: '#000',
+    #   speed: 1.0,
+    #   trail: 50,
+    #   className: className
+    # }).spin()
 
   truncate: (string, length=40) ->
     if string.length > length then string.substring(0, length) + '...' else string
