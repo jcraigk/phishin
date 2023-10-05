@@ -1,5 +1,7 @@
-class @Detector
+import $ from 'jquery'
+import 'jquery.cookie'
 
+class Detector
   constructor: ->
     @detectPlatform()
 
@@ -41,3 +43,5 @@ class @Detector
 
   unsupportedBrowser: ->
     window.location.href = '/browser-unsupported'
+
+export default Detector

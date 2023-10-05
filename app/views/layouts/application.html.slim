@@ -7,8 +7,8 @@ html
     = stylesheet_link_tag 'https://fonts.googleapis.com/css?family=Marck+Script|Open+Sans+Condensed:300,700|Molle'
     = javascript_include_tag 'https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js'
     = stylesheet_link_tag 'https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css'
-    = stylesheet_link_tag 'application', media: :all
-    = javascript_include_tag 'application'
+    = stylesheet_pack_tag 'application', media: :all
+    = javascript_pack_tag 'application'
     = csrf_meta_tags
 
     body[
@@ -18,14 +18,14 @@ html
       data-time-marker=(params[:t] || 0)
     ]
 
-    = render partial: 'layouts/ajax_overlay'
+    = render partial: 'layouts/ajax_loading'
     = render partial: 'layouts/feedback'
     = render partial: 'layouts/page_header'
     = render partial: 'shared/clipboard'
-    = render partial: 'shared/lyrics_modal'
-    = render partial: 'shared/save_playlist_modal'
-    = render partial: 'shared/tag_modal'
-    = render partial: 'shared/taper_notes_modal'
+    = render partial: 'shared/lyrics_dialog'
+    = render partial: 'shared/save_playlist_dialog'
+    = render partial: 'shared/tag_dialog'
+    = render partial: 'shared/taper_notes_dialog'
 
     #page = yield if xhr_exempt_controller
 

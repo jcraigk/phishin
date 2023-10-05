@@ -1,0 +1,12 @@
+// Images
+const images = require.context('../images', true)
+const imagePath = (name) => images(name, true)
+
+// Global dependencies
+import 'jquery/src/jquery';
+import 'jquery-ujs'
+import 'bootstrap/dist/js/bootstrap';
+import 'soundmanager2'
+
+// App logic (legacy CoffeeScript)
+import '../src/coffeescript/app.js.coffee';

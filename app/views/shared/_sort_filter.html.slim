@@ -1,7 +1,7 @@
 h3
-  | Sort by 
+  |> Sort by
   .btn-group
-    a.btn.dropdown-toggle data-toggle='dropdown' href='null'
-      = sort_filter_link_title(item_hash)
-      span.caret<
+    button.btn.btn-default.dropdown-toggle type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'
+      => sort_filter_link_title(item_hash)
+      span.caret
     ul.dropdown-menu = sort_filter(item_hash)

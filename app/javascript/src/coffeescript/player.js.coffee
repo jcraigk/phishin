@@ -1,7 +1,14 @@
-class @Player
+import $ from 'jquery'
+import 'jquery-ui/ui/widgets/slider'
+import 'jquery-ui/ui/widgets/tooltip'
+
+import Util from './util.js'
+import App from './app.js'
+
+class Player
 
   constructor: ->
-    @Util             = App.Util
+    @Util             = new Util
     @sm               = soundManager
     @sm_sound         = {}
     @preload_time     = 5000
@@ -18,6 +25,7 @@ class @Player
     @time_marker      = @Util.timeToMS $('body').data('time-marker')
     @$playpause       = $ '#control_playpause'
     @$scrubber        = $ '#scrubber'
+    @$scrubber.slider()
     @$scrubber_ctrl   = $ '#scrubber_controls'
     @$waveform        = $ '#waveform'
     @$volume_icon     = $ '#volume_icon'
@@ -130,7 +138,7 @@ class @Player
       this._updatePlayButton()
       this.highlightActiveTrack()
     else
-      # @Util.feedback { notice: 'That is already the current track' }
+      @Util.feedback { notice: 'That is already the current track' }
 
   togglePause: ->
     if @sm_sound.paused
@@ -375,3 +383,5 @@ class @Player
 
   _hidePlayTooltip: ->
     $('#playpause_tooltip').tooltip('destroy')
+
+export default Player

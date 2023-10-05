@@ -4,18 +4,13 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.2.2'
 
 gem 'actionpack-action_caching'
-gem 'bootstrap-will_paginate'
 gem 'chunky_png'
-gem 'coffee-rails'
 gem 'dalli'
 gem 'devise'
-gem 'execjs', '2.7.0' # 2.8 breaks coffeescript compilation
 gem 'friendly_id'
 gem 'geocoder'
 gem 'google-api-client'
 gem 'highline'
-gem 'jquery-rails'
-gem 'jquery-ui-rails', '< 6.0' # 6.0 breaks slider/scrubber
 gem 'nokogiri'
 gem 'pg'
 gem 'pg_search'
@@ -23,16 +18,13 @@ gem 'puma'
 gem 'rails'
 gem 'ruby-mp3info'
 gem 'ruby-progressbar'
-gem 'sass-rails'
 gem 'sentry-raven'
+gem 'shakapacker'
 gem 'shrine'
 gem 'slim'
-gem 'soundmanager2-rails'
-gem 'twitter-bootstrap-rails', '2.2.8'
 gem 'typhoeus'
-gem 'uglifier'
 gem 'waveformjson'
-gem 'will_paginate', '< 4' # 4.0 breaks bootstrap-will_paginate
+gem 'will_paginate'
 
 group :development do
   gem 'bullet'

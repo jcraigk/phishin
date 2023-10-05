@@ -1,9 +1,16 @@
-class @Playlist
+import $ from 'jquery'
+import 'jquery-ui/ui/widgets/sortable'
+import 'jquery-ui/ui/widgets/dialog'
+
+import Util from './util.js'
+import Player from './player.js'
+
+class Playlist
 
   constructor: ->
-    @Util                   = App.Util
-    @Player                 = App.Player
-    @$save_modal            = $ '#save_playlist_modal'
+    @Util                   = new Util
+    @Player                 = Player
+    @$save_dialog            = $ '#save_playlist_dialog'
     @$save_action_dropdown  = $ '#save_action_dropdown'
     @$save_action_new       = $ '#save_action_new'
     @$save_action_existing  = $ '#save_action_existing'
@@ -16,7 +23,7 @@ class @Playlist
     $('#active_playlist').sortable({
       placeholder: "ui-state-highlight",
       update: =>
-        this.updatePlaylist()
+        this.updatePlaylist('Track repositioned in playlist')
     })
 
   updatePlaylist: (success_msg) ->
@@ -141,7 +148,7 @@ class @Playlist
           @Util.feedback { alert: r.msg }
     })
 
-  handleSaveModal: ->
+  handleSaveDialog: ->
     if name = $('#playlist_data').attr 'data-name'
       @$save_action_existing.attr 'disabled', false
       @$save_action_existing.attr 'selected', true
@@ -151,16 +158,16 @@ class @Playlist
       @$save_action_existing.attr 'disabled', true
       @$playlist_name_input.val ''
       @$playlist_slug_input.val ''
-    @$save_modal.modal 'show'
+    @$save_dialog.dialog 'open'
 
-  handleDuplicateModal: ->
+  handleDuplicateDialog: ->
     @$save_action_existing.attr 'disabled', true
     @$playlist_name_input.val ''
     @$playlist_slug_input.val ''
-    @$save_modal.modal 'show'
+    @$save_dialog.dialog 'open'
 
   savePlaylist: ->
-    @$save_modal.modal 'hide'
+    @$save_dialog.dialog 'close'
     $('#duplicate_playlist_btn').hide()
     $('#unbookmark_playlist_btn').hide()
     $('#bookmark_playlist_btn').hide()
@@ -212,3 +219,5 @@ class @Playlist
   _updatePlaylistStats: (num_tracks=0, duration=0) ->
     $('#active_playlist_tracks_label').html "Tracks: #{num_tracks}"
     $('#active_playlist_duration_label').html "Length: #{@Util.readableDuration(duration, 'letters')}"
+
+export default Playlist

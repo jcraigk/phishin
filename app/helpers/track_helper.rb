@@ -14,10 +14,9 @@ module TrackHelper
       Show.published
           .where('date BETWEEN ? AND ?', date, next_show.date)
           .count
-    link_to(
-      "#{tag.i(class: 'icon-forward')} Next Performance (gap: #{gap})".html_safe,
-      "/#{next_show.date}/#{track.slug}"
-    )
+    text = 'Next Performance'
+    text = "#{tag.i(class: 'glyphicon glyphicon-forward')}&nbsp; #{text}(gap: #{gap})"
+    link_to(text.html_safe, "/#{next_show.date}/#{track.slug}")
   end
 
   def previous_gap_link(song, date) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -35,9 +34,8 @@ module TrackHelper
       Show.published
           .where('date BETWEEN ? AND ?', prev_show.date, date)
           .count
-    link_to(
-      "#{tag.i(class: 'icon-backward')} Previous Performance (gap: #{gap})".html_safe,
-      "/#{prev_show.date}/#{track.slug}"
-    )
+    text = 'Previous Performance'
+    text = "#{tag.i(class: 'glyphicon glyphicon-backward')}&nbsp; #{text} (gap: #{gap})"
+    link_to(text.html_safe, "/#{prev_show.date}/#{track.slug}")
   end
 end

@@ -21,16 +21,16 @@
     br
 
     - if @song.lyrics.present?
-      = link_to "#{tag.i(class: 'icon-book')} &nbsp;Lyrics".html_safe, '#', class: 'song_lyrics btn', data: { title: @song.title, lyrics: lyrics_for(@song) }
+      = link_to "#{tag.i(class: 'glyphicon glyphicon-book')} &nbsp;Lyrics".html_safe, '#', class: 'song_lyrics btn btn-default', data: { title: @song.title, lyrics: lyrics_for(@song) }
       br
 
-    a.btn href="http://phish.net/song/#{@song.slug}/history" target='_blank'
-      i.icon.icon-share
+    a.btn.btn-default href="http://phish.net/song/#{@song.slug}/history" target='_blank'
+      i.glyphicon.glyphicon-share
       | &nbsp; History
     br
 
     button#random_song_track_btn.btn type='button' data-song-id=@song.id
-      i.icon.icon-play
+      i.glyphicon.glyphicon-play
       | &nbsp;Random Track
 
     .hr

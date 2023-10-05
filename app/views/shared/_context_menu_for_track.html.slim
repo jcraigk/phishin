@@ -1,44 +1,49 @@
-.btn_context.track-context-dropdown
-  .btn-group
-    a.btn.dropdown-toggle.btn-round data-toggle='dropdown' href='null'
-      = image_tag 'icon-context.png', alt: 'Icon: context menu'
-    ul.dropdown-menu
-      li
-        a.context_play_track href='null' data-id=track.id
-          i.icon-play
-          |  Play
+.btn-group.track-context-dropdown.btn_context
+  button.btn.btn-default.dropdown-toggle type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'
+    span.caret
+  ul.dropdown-menu
+    li
+      a.context_play_track href='null' data-id=track.id
+        i.glyphicon.glyphicon-play
+        |> &nbsp;
+        | Play
 
-      - if playlist
-        li
-          a.playlist_remove_track href='null'
-            i.icon-remove
-            |  Remove from playlist
+    - if playlist
+      li
+        a.playlist_remove_track href='null'
+          i.glyphicon.glyphicon-remove
+          |> &nbsp;
+          | Remove from playlist
 
-      - else
-        li
-          a.playlist_add_track href='null' data-id=track.id
-            i.icon-plus-sign
-            |  Add to playlist
+    - else
+      li
+        a.playlist_add_track href='null' data-id=track.id
+          i.glyphicon.glyphicon-plus-sign
+          |> &nbsp;
+          | Add to playlist
 
+    li
+      a.share.share_track href='null' data-url="/#{show ? show.date : track.show.date}/#{track.slug}"
+        i.glyphicon.glyphicon-share-alt
+        |> &nbsp;
+        | Share
+    li
+      a.share_with_timestamp.share_track href='null' data-url="/#{show ? show.date : track.show.date}/#{track.slug}"
+        i.glyphicon.glyphicon-share-alt
+        |> &nbsp;
+        | Share with timestamp
+    li
+      a.download href='null' data-url=download_track_path(track.id)
+        i.glyphicon.glyphicon-download
+        |> &nbsp;
+        | Download MP3
+    - track.songs.sort_by(&:title).each do |song|
       li
-        a.share.share_track href='null' data-url="/#{show ? show.date : track.show.date}/#{track.slug}"
-          i.icon-share-alt
-          |  Share
-      li
-        a.share_with_timestamp.share_track href='null' data-url="/#{show ? show.date : track.show.date}/#{track.slug}"
-          i.icon-share-alt
-          |  Share with timestamp
-      li
-        a.download href='null' data-url=download_track_path(track.id)
-          i.icon-download
-          |  Download MP3
-      - track.songs.sort_by(&:title).each do |song|
-        li
-          a href="/#{song.slug}"
-            i.icon-book
-            | &nbsp;
-            = "#{song.title}..."
-        - if (show && link = next_gap_link(song, show.date))
-          li = link
-        - if (show && link = previous_gap_link(song, show.date))
-          li = link
+        a href="/#{song.slug}"
+          i.glyphicon.glyphicon-book
+          |> &nbsp;
+          = "#{song.title}..."
+      - if (show && link = next_gap_link(song, show.date))
+        li = link
+      - if (show && link = previous_gap_link(song, show.date))
+        li = link

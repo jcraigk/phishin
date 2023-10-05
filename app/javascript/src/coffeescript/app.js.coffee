@@ -1,5 +1,16 @@
-# Generic namespace
-@App = {}
+import $ from 'jquery'
+import 'jquery-ui/ui/widgets/slider'
+import 'jquery-ui/ui/widgets/tooltip'
+import 'jquery-ui/ui/widgets/dialog'
+
+import Detector from './detector.js'
+import Map from './map.js'
+import Player from './player.js'
+import Playlist from './playlist.js'
+import Util from './util.js'
+
+App = {}
+export default App
 
 $ ->
 
@@ -19,62 +30,79 @@ $ ->
 
   $notice         = $ '.feedback_notice'
   $alert          = $ '.feedback_alert'
-  $ajax_overlay   = $ '#ajax_overlay'
+  $ajax_loading   = $ '#ajax_loading'
   $page           = $ '#page'
 
   ###############################################
   # Helpers
   ###############################################
 
-  handleHistory = ->
-    state = window.History.getState()
-    if state.data.href != undefined and !App.Util.page_init
-      $ajax_overlay.css 'visibility', 'visible'
+  handleNavigation = ->
+    state = window.history.state
+    if state?.href && !App.Util.page_init
+      $ajax_loading.css 'visibility', 'visible'
       $page.html ''
-      $page.load(
-        state.data.href, (response, status, xhr) ->
-          App.Util.showHTMLError(response) if status is 'error'
 
-          $ajax_overlay.css 'visibility', 'hidden'
+      fetch(state.href, {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then (response) ->
+        if response.ok
+          response.text()
+        else
+          throw new Error('Network response was not ok')
 
-          # Scroll to proper position (not currently working)
-          window.scrollTo 0, App.Util.historyScrollStates[state.id] if App.Util.historyScrollStates[state.id]
+      .then (html) ->
+        $page.html html
+        $ajax_loading.css 'visibility', 'hidden'
 
-          # Tooltips
-          $('a[title]').tooltip()
-          $('.tag_label[title]').tooltip()
+        # Scroll to proper position
+        window.scrollTo(0, App.Util.historyScrollStates[state.id]) if App.Util.historyScrollStates[state.id]
 
-          # Auto-scroll and highlight track anchor if present
-          if state.data.href.substr(0,6) != '/play/' and path = state.data.href.split("/")[2]
-            match = /^([^\?]+)\??(.+)?$/.exec(path)
-            $('body').attr 'data-anchor', match[1]
-          else
-            $('body').attr 'data-anchor', ''
-          App.Player.onReady() # For scrolling to and auto-playing a track
-          App.Player.highlightActiveTrack(true) # For highlighting current track in a list, scrollTo = true
+        # Tooltips
+        $('a[title]').each -> $(this).tooltip()
+        $('.tag_label[title]').each -> $(this).tooltip()
 
-          # For detecting browsers/platforms
-          App.Detector = new Detector
+        # Auto-scroll and highlight track anchor if present
+        path = state.href.split('/')[2]
+        if state.href.substr(0,6) != '/play/' and path
+          match = /^([^\?]+)\??(.+)?$/.exec(path)
+          $('body').attr 'data-anchor', match[1]
+        else
+          $('body').attr 'data-anchor', ''
+        App.Player.onReady() # For scrolling to and auto-playing a track
+        App.Player.highlightActiveTrack(true) # For highlighting current track in a list, scrollTo = true
 
-          # Map
-          if state.data.href.substr(0,4) is '/map'
-            App.Map.initMap()
-            term = $('#map_search_term').val()
-            distance = $('#map_search_distance').val()
-            App.Map.handleSearch(term, distance) if term and distance
+        # For detecting browsers/platforms
+        App.Detector = new Detector
 
-          # Playlist
-          else if state.data.href.substr(0,9) is '/playlist' or state.data.href.substr(0,6) is '/play/'
-            App.Playlist.initPlaylist()
-      )
+        # Map
+        if state.href.substr(0,4) is '/map'
+          App.Map.initMap()
+          term = $('#map_search_term').val()
+          distance = $('#map_search_distance').val()
+          App.Map.handleSearch(term, distance) if term and distance
+
+        # Playlist
+        else if state.href.substr(0,9) is '/playlist' or state.href.substr(0,6) is '/play/'
+          App.Playlist.initPlaylist()
+
+      .catch (error) ->
+        console.log('Navigation fetch error: ', error.message)
 
   ###############################################
   # Prepare history.js
   ###############################################
-  History = window.History
-  return false if !History.enabled
-  History.Adapter.bind window, 'statechange', ->
-    handleHistory()
+
+  # User clicks back button
+  window.addEventListener 'popstate', (e) ->
+    handleNavigation()
+
+  # Result of user clicking a link
+  window.addEventListener 'navigation', (e) ->
+    handleNavigation()
 
   ###############################################
   # Load initial page if not an exempt route
@@ -85,7 +113,7 @@ $ ->
     match = /^(http|https):\/\/(.+)$/.exec(window.location)
     href = match[2].substr(match[2].indexOf('/'), match[2].length - 1)
     App.Util.navigateTo(href)
-    handleHistory()  # Need to call this explicitly on page load (to keep Firefox in the mix)
+    handleNavigation() # Need to call this explicitly on page load (to keep Firefox in the mix)
 
   ###############################################
   # Handle feedback on DOM load (for Devise)
@@ -120,9 +148,14 @@ $ ->
   # DOM interactions
   ###############################################
 
-  # Scroll to top of modals when displayed
-  $('.modal').on 'shown', ->
-    $('.modal-body').scrollTop(0)
+  # Initialize all dialogs (jQUery UI)
+  $('.dialog').dialog({
+    autoOpen: false,
+    height: 400,
+    width: 350,
+    modal: true,
+    draggable: false
+  })
 
   # Click Phish On Demand app callout
   $(document).on 'click', '#relisten_callout', ->
@@ -131,6 +164,10 @@ $ ->
   # Click Never Ending Splendor app callout
   $(document).on 'click', '#splendor_callout', ->
     window.location = 'https://play.google.com/store/apps/details?id=never.ending.splendor'
+
+  # Prevent context menu clicks from playing parent track
+  .on 'click', 'button', (e) ->
+    e.stopPropagation()
 
   # Click a link to load page via ajax
   .on 'click', 'a', ->
@@ -186,9 +223,9 @@ $ ->
   .on 'blur', '#playlist_name_input', (e) ->
     $('#playlist_slug_input').val App.Util.stringToSlug($(this).val())
   .on 'click', '#save_playlist_btn', (e) ->
-    App.Playlist.handleSaveModal()
+    App.Playlist.handleSaveDialog()
   .on 'click', '#duplicate_playlist_btn', (e) ->
-    App.Playlist.handleDuplicateModal()
+    App.Playlist.handleDuplicateDialog()
   .on 'click', '#save_playlist_submit', (e) ->
     App.Playlist.savePlaylist()
   .on 'click', '#delete_playlist_btn', (e) ->
@@ -347,15 +384,12 @@ $ ->
         className = 'spinner_likes_small'
       else if $(this).parent().hasClass('likes_large')
         className = 'spinner_likes_large'
-    spinner = App.Util.newSpinner className
-    $(this).parent().append spinner.el
     $.ajax({
       type: 'post',
       url: '/toggle-like',
       data: { 'likable_type': $this.data('type'), 'likable_id': $this.data('id') }
       dataType: 'json',
       success: (r) ->
-        spinner.stop()
         if r.success
           App.Util.feedback({ notice: r.msg })
           if r.liked then $this.addClass('liked') else $this.removeClass('liked')
@@ -402,24 +436,22 @@ $ ->
   .on 'click', '#random_song_track_btn', (e) ->
     App.Player.playRandomSongTrack $(this).data('song-id')
 
-  # Taper Notes link opens a modal
+  # Taper Notes link opens a dialog
   .on 'click', '.show_taper_notes', ->
     $('#taper_notes_content').html $(this).data('taper-notes')
-    $('#taper_notes_date').html $(this).data('show-date')
-    $('#taper_notes_modal').modal('show')
+    $('#taper_notes_dialog').dialog('open')
 
-  # View Lyrics button opens a modal
+  # View Lyrics button opens a dialog
   .on 'click', '.song_lyrics', ->
+    $('#lyrics_dialog').attr('title', $(this).data('title'))
     $('#lyrics_content').html $(this).data('lyrics')
-    $('#lyrics_title').html $(this).data('title')
-    $('#lyrics_modal').modal('show')
+    $('#lyrics_dialog').dialog('open')
 
-  # Tag instance click opens a modal
-  .on 'click', '.tag_label:not(.no-modal)', ->
-    $('#tag_detail_title').html $(this).data('detail-title')
+  # Tag instance click opens a dialog
+  .on 'click', '.tag_label:not(.no-dialog)', ->
+    $('#tag_dialog').attr('title', $(this).data('detail-title'))
     $('#tag_detail').html $(this).data('detail')
-    $('#tag_modal').animate({ scrollTop: 0 }, 'slow');
-    $('#tag_modal').modal('show')
+    $('#tag_dialog').dialog('open')
 
   # Keyboard shortcuts
   $(window).keydown (e) ->

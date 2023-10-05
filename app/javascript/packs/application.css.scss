@@ -1,8 +1,5 @@
-/*
- *= require_self
- *= require jquery-ui/slider
- *= require_tree .
- */
+@import '~jquery-ui/themes/base/all.css';
+@import '~bootstrap/dist/css/bootstrap.css';
 
 $text_gray: #6d6f71;
 $emphasis: #000;
@@ -27,6 +24,19 @@ $highlight3: #cbebf2;
 $highlight4: #fff494;
 $scrubbing: #1a80f6;
 
+@keyframes rotateCounterClockwise {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spinner {
+  animation: rotateCounterClockwise 3s linear infinite;
+  font-size: 7em;
+}
+
 @-webkit-keyframes pulsate-highlight {
     0%   { background: $background_gray; }
     100%  { background: $highlight4; }
@@ -75,16 +85,6 @@ $scrubbing: #1a80f6;
   0%   { background: $background_gray; }
   100%  { background: $highlight2; }
 }
-
-#download_iframe {
-  display: none;
-}
-
-#lyrics_content {
-  font-size: 20px;
-  line-height: 28px;
-}
-
 .tagin_project {
   p, li {
     font-size: 20px;
@@ -97,6 +97,16 @@ $scrubbing: #1a80f6;
 #tag_detail {
   font-size: 20px;
   line-height: 26px;
+}
+#download_iframe {
+  display: none;
+}
+#lyrics_content {
+  font-size: 20px;
+  line-height: 28px;
+}
+#taper_notes_content {
+  white-space: pre-wrap;
 }
 .detail_tag_label {
   font-size: 20px !important;
@@ -114,6 +124,10 @@ html {
 
     a, p, span, h1, h2, h3, h4, h5, input {
       font-family: 'Open Sans Condensed', sans-serif;
+    }
+
+    h1, h2, h3, h4, h5 {
+      margin-top: 10px;
     }
 
     a {
@@ -156,7 +170,7 @@ html {
       color: #51A9C9 !important;
     }
 
-    #ajax_overlay {
+    #ajax_loading {
       text-align: center;
       visibility: hidden;
       position: absolute;
@@ -208,12 +222,18 @@ html {
         border: 1px solid black;
       }
     }
+    .btn_context {
+      .dropdown-toggle {
+        height: 18px;
+        line-height: 0px !important;
+      }
+    }
     .show_duration {
       color: $text_gray !important;
     }
     .show_taper_notes {
       cursor: pointer;
-      align: center;
+      text-align: center;
       text-indent: 0px;
     }
     .likes_large {
@@ -225,7 +245,7 @@ html {
         width: 16px;
         height: 16px;
         text-decoration: none;
-        background: url('icons-heart.png');
+        background: url('../images/icons-heart.png');
         margin-right: 4px;
         margin-bottom: 10px;
 
@@ -250,60 +270,48 @@ html {
       }
     }
     #footer {
-      width: 930px;
+      width: 940px;
       background-color: $sub_nav_gray;
       margin: 0 auto;
       border-radius: 8px;
       text-align: center;
       padding: 5px;
       margin-bottom: 20px;
+      margin-top: 20px;
 
       a {
         margin-right: 20px;
       }
     }
     .pagination {
-      margin-top: 4px !important;
-      background: transparent !important;
-      text-align: center !important;
-      padding: 1em !important;
-      cursor: default !important;
-      box-shadow: none !important;
-      font-size: 16px !important;
+      width: 100%;
+      text-align: center;
+      font-size: 18px;
 
       ul {
         box-shadow: none !important;
       }
       a, span {
-        box-shadow: none !important;
-        background: transparent !important;
-        border: none !important;
         padding: 0.2em 0.3em !important;
       }
       a {
         text-decoration: none !important;
         color: $text_gray !important;
       }
-      .disabled {
-        color: #aaaaaa !important;
-      }
-      .active {
-        a {
-          color: $nav_highlight !important;
-          font-weight: bold !important;
-        }
+      .current {
+        color: $nav_highlight !important;
+        font-weight: bold !important;
       }
       a:hover, a:focus {
         text-decoration: underline !important;
       }
     }
     .single_page {
+      margin: 0 auto;
       line-height: 26px;
-      margin-top: -50px !important;
       text-align: center;
       border: 1px solid $gray_70;
       border-radius: 3px;
-      margin: 0 auto;
       width: 80px;
       color: $text_gray;
       background-color: $sub_nav_gray;
@@ -359,23 +367,6 @@ html {
     .btn_context {
       cursor: pointer;
     }
-    .btn_context_for_show {
-      float: right;
-      position: relative;
-      top: -22px;
-    }
-    .btn-round {
-      margin-top: -1px;
-      height: 8px !important;
-      width: 10px !important;
-      -moz-border-radius: 30px !important;
-      -webkit-border-radius: 30px !important;
-      border-radius: 30px !important;
-      line-height: 6px !important;
-      font-weight: bold !important;
-      padding-left: 14px !important;
-      font-size: 17px !important;
-    }
     .btn-sort {
       height: 18px !important;
       -moz-border-radius: 30px !important;
@@ -416,6 +407,10 @@ html {
 }
 
 /******************************/
+
+#page {
+  min-height: 650px;
+}
 
 #page_header {
   height: 120px;
@@ -480,7 +475,7 @@ html {
       width: 22px !important;
       height: 21px;
       cursor: pointer;
-      background: url('icons-volume.png');
+      background: url('../images/icons-volume.png');
     }
     .playing {
       background-position: -65px 0 !important;
@@ -533,7 +528,7 @@ html {
         }
         .ui-slider-range {
           background-image: none;
-          background: url('progress-bar.png');
+          background: url('../images/progress-bar.png');
           border-radius: 0px;
         }
       }
@@ -633,20 +628,20 @@ html {
       }
       #control_playpause {
         border: 1px solid $btn_border;
-        width: 63px;
-        height: 63px;
+        width: 65px;
+        height: 65px;
         -moz-border-radius: 100px;
         -webkit-border-radius: 100px;
         border-radius: 100px;
         margin-top: -16px;
         margin-left: 5px;
-        background: white url('icons-playpause.png');
+        background: white url('../images/icons-playpause.png');
         cursor: pointer;
       }
       #control_next, #control_previous {
         border: 1px solid $btn_border;
-        width: 32px;
-        height: 32px;
+        width: 34px;
+        height: 34px;
         -moz-border-radius: 100px;
         -webkit-border-radius: 100px;
         border-radius: 100px;
@@ -654,11 +649,11 @@ html {
         cursor: pointer;
       }
       #control_previous {
-        background: white url('icon-previous.png');
+        background: white url('../images/icon-previous.png');
         margin-right: 2px;
       }
       #control_next {
-        background: white url('icon-next.png');
+        background: white url('../images/icon-next.png');
         margin-left: 2px;
       }
     }
@@ -715,7 +710,7 @@ html {
     margin: 0 auto;
     font-size: 16px;
     color: $gray_70;
-    height: 30px;
+    height: 37px;
     vertical-align: middle;
     padding-top: 6px;
     background-color: $global_nav_gray;
@@ -743,8 +738,8 @@ html {
       margin-right: 20px;
       margin-top: 1px;
       float: right;
-      height: 21px;
-      width: 118px;
+      height: 23px;
+      width: 120px;
       border: 1px solid $btn_border;
       border-radius: 5px;
       text-align: left;
@@ -753,8 +748,8 @@ html {
       cursor: pointer;
 
       img {
-        margin-left: 5px;
-        margin-top: -8px;
+        margin-left: 4px;
+        margin-top: -5px;
       }
       #search_term {
         background: transparent;
@@ -936,7 +931,7 @@ html {
     float: right;
     padding-top: 5px;
     width: 50px;
-    height: 14px;
+    height: 20px;
     margin-top: 0px;
     margin-left: 20px;
     line-height: 14px;
@@ -949,7 +944,7 @@ html {
       width: 14px;
       height: 14px !important;
       text-decoration: none;
-      background: url('icons-heart-small.png');
+      background: url('../images/icons-heart-small.png');
       margin-right: 3px;
 
       &:hover {
@@ -1050,7 +1045,7 @@ html {
     line-height: 10px !important;
   }
   .show_tag_container {
-    height: 15px !important;
+    height: 22px !important;
     padding-top: 6px;
     float: right;
     width: 120px;
@@ -1072,8 +1067,6 @@ html {
     }
   }
   .tag_label {
-    height: 10px !important;
-    line-height: 10px !important;
     float: left;
     font-size: 10px !important;
     margin-right: 5px;
@@ -1128,7 +1121,7 @@ html {
 
   #title_box {
     position: fixed;
-    width: 190px;
+    width: 230px;
     background-color: $sub_nav_gray;
     padding: 20px 20px 10px 20px;
     border-radius: 10px;
@@ -1253,7 +1246,7 @@ html {
     }
     .set_duration {
       position: absolute;
-      margin-top: -39px;
+      margin-top: -42px;
       margin-left: 565px;
       font-size: 18px;
     }
@@ -1298,7 +1291,7 @@ html {
     }
   }
   .item_list {
-    margin-left: 0px;
+    margin-left: -40px;
     margin-bottom: 20px;
     list-style-type: none;
 
@@ -1308,8 +1301,8 @@ html {
       -moz-border-radius: 8px;
       -webkit-border-radius: 8px;
       border-radius: 8px;
-      padding: 5px 0px 0px 10px;
-      height: 30px;
+      padding: 5px 10px 0px 10px;
+      height: 35px;
 
       &:hover {
         cursor: pointer;
@@ -1367,7 +1360,6 @@ html {
 
         &.alt {
           width: 120px;
-          margin-right: 10px;
 
           a {
             line-height: 10px;
@@ -1408,16 +1400,12 @@ html {
         font-size: 14px;
       }
       .btn_context {
-        font-size: 14px !important;
         visibility: hidden;
         float: right;
-        width: 40px;
         margin-right: 20px;
         margin-left: 15px;
         line-height: 10px;
-        text-align: left;
-        margin-top: -2px !important;
-        visibility: hidden;
+        margin-top: -6px !important;
         position: relative;
         top: 7px;
 

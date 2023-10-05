@@ -1,8 +1,11 @@
-class @Util
+import $ from 'jquery'
+
+class Util
 
   historyScrollStates: [] # Need to store scroll states outside history.js based on the way that library works
 
   constructor: ->
+    @page_init          = true
     @page_init          = true
     @$feedback          = $ '#feedback'
 
@@ -10,13 +13,15 @@ class @Util
     if feedback.alert
       msg = feedback.alert
       css = 'feedback_alert'
-      icon = 'icon-exclamation-sign'
+      icon = 'exclamation-sign'
     else
       msg = feedback.notice
       css = 'feedback_notice'
-      icon = 'icon-ok-sign'
-    id = this._uniqueID()
-    @$feedback.append "<p class=\"#{css}\" id=\"#{id}\"><i class=\"#{icon}\"></i> #{msg}</p>"
+      icon = 'ok-sign'
+    id = ""
+    id += Math.random().toString(36).substr 2 while id.length < length
+    id.substr 0, length
+    @$feedback.append "<p class=\"#{css}\" id=\"#{id}\"><i class=\"glyphicon glyphicon-#{icon}\"></i> #{msg}</p>"
     setTimeout( ->
       $("##{id}").hide 'slide'
     , 3000)
@@ -26,10 +31,18 @@ class @Util
 
   navigateTo: (href) ->
     @page_init = false
-    this.historyScrollStates[History.savedStates[History.savedStates.length-1].id] = $('body').scrollTop()
+
+    # Save the current scroll position to the state
+    scrollPosition = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0
+    history.replaceState { href: window.location.href, scroll: scrollPosition }, document.title, window.location.href
+
+    # Push the new state
     title = document.title
-    History.pushState { href: href, scroll: 0 }, $('body').data('app-name'), href
+    history.pushState { href: href, scroll: 0 }, $('body').data('app-name'), href
     document.title = title
+
+    # Manually trigger a popstate event
+    window.dispatchEvent(new CustomEvent('navigation'))
 
   navigateToRefreshMap: ->
     url = "/map?map_term=#{$('#map_search_term').val().replace /\s/g, '+' }"
@@ -88,21 +101,6 @@ class @Util
   stringToSlug: (str) ->
     str.toLowerCase().trim().replace(/[^a-z0-9\-\s]/g, '').replace(/[\s]/g, '-')
 
-  newSpinner: (className = 'spinner_likes_small') ->
-    new Spinner({
-      lines: 9,
-      length: 4,
-      width: 2,
-      radius: 3,
-      corners: 1.0,
-      rotate: 0,
-      direction: -1,
-      color: '#000',
-      speed: 1.0,
-      trail: 50,
-      className: className
-    }).spin()
-
   truncate: (string, length=40) ->
     if string.length > length then string.substring(0, length) + '...' else string
 
@@ -114,13 +112,10 @@ class @Util
     el.val(text)
     el.select()
     document.execCommand('copy')
-    App.Util.feedback({ notice: 'Link copied to clipboard' })
+    this.feedback({ notice: 'Link copied to clipboard' })
 
   _findMatch: (href) ->
     match = /^([^\?]+)\??(.+)?$/.exec(href.split("/")[1])
     match[1] if match
 
-  _uniqueID: (length=8) ->
-    id = ""
-    id += Math.random().toString(36).substr 2 while id.length < length
-    id.substr 0, length
+export default Util
