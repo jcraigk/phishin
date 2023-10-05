@@ -1,7 +1,7 @@
+import $ from 'jquery'
 import 'jquery.cookie'
 
 class Detector
-
   constructor: ->
     @detectPlatform()
 

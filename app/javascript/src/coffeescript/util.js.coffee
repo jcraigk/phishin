@@ -1,3 +1,5 @@
+import $ from 'jquery'
+
 class Util
 
   historyScrollStates: [] # Need to store scroll states outside history.js based on the way that library works
@@ -28,7 +30,6 @@ class Util
     this.navigateTo $el.attr('href')
 
   navigateTo: (href) ->
-    console.log("navigateTo: #{href}")
     @page_init = false
 
     # Save the current scroll position to the state
@@ -39,8 +40,6 @@ class Util
     title = document.title
     history.pushState { href: href, scroll: 0 }, $('body').data('app-name'), href
     document.title = title
-
-    console.log("navigateTo: #{href} (done)")
 
     # Manually trigger a popstate event
     window.dispatchEvent(new CustomEvent('navigation'))

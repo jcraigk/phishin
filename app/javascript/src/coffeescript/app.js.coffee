@@ -1,12 +1,13 @@
+import $ from 'jquery'
+import 'jquery-ui/ui/widgets/slider'
+import 'jquery-ui/ui/widgets/tooltip'
+import 'jquery-ui/ui/widgets/dialog'
+
 import Detector from './detector.js'
 import Map from './map.js'
 import Player from './player.js'
 import Playlist from './playlist.js'
 import Util from './util.js'
-import $ from 'jquery'
-import 'jquery-ui/ui/widgets/slider'
-import 'jquery-ui/ui/widgets/tooltip'
-import 'jquery-ui/ui/widgets/dialog'
 
 App = {}
 export default App
@@ -89,7 +90,7 @@ $ ->
           App.Playlist.initPlaylist()
 
       .catch (error) ->
-        console.log('There was a problem with the fetch operation:', error.message)
+        console.log('Navigation fetch error: ', error.message)
 
   ###############################################
   # Prepare history.js

@@ -1,9 +1,9 @@
-import Util from './util.js'
-import Player from './player.js'
 import $ from 'jquery'
-window.$ = window.jQuery = $
 import 'jquery-ui/ui/widgets/sortable'
 import 'jquery-ui/ui/widgets/dialog'
+
+import Util from './util.js'
+import Player from './player.js'
 
 class Playlist
 
@@ -23,7 +23,7 @@ class Playlist
     $('#active_playlist').sortable({
       placeholder: "ui-state-highlight",
       update: =>
-        this.updatePlaylist()
+        this.updatePlaylist('Track repositioned in playlist')
     })
 
   updatePlaylist: (success_msg) ->
@@ -39,6 +39,7 @@ class Playlist
       type: 'post',
       data: { 'track_ids': track_ids },
       success: (r) =>
+
         this._updatePlaylistStats(track_ids.length, duration)
         @Util.feedback { notice: success_msg }
     })

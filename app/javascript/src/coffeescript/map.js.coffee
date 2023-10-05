@@ -1,7 +1,8 @@
+import $ from 'jquery'
+
 import Util from './util.js'
 
 class Map
-
   constructor: ->
     @init             = true
     @markers          = []
