@@ -85,12 +85,6 @@ $scrubbing: #1a80f6;
   0%   { background: $background_gray; }
   100%  { background: $highlight2; }
 }
-
-button.dropdown-toggle {
-  margin-top: 3px;
-  height: 18px;
-  line-height: 0;
-}
 .tagin_project {
   p, li {
     font-size: 20px;
@@ -1430,6 +1424,10 @@ html {
         position: relative;
         top: 7px;
 
+        .dropdown-toggle {
+          height: 18px;
+          line-height: 0px !important;
+        }
         a {
           line-height: 0px !important;
         }

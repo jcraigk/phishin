@@ -11,15 +11,15 @@ class Util
     if feedback.alert
       msg = feedback.alert
       css = 'feedback_alert'
-      icon = 'icon-exclamation-sign'
+      icon = 'exclamation-sign'
     else
       msg = feedback.notice
       css = 'feedback_notice'
-      icon = 'icon-ok-sign'
+      icon = 'ok-sign'
     id = ""
     id += Math.random().toString(36).substr 2 while id.length < length
     id.substr 0, length
-    @$feedback.append "<p class=\"#{css}\" id=\"#{id}\"><i class=\"#{icon}\"></i> #{msg}</p>"
+    @$feedback.append "<p class=\"#{css}\" id=\"#{id}\"><i class=\"glyphicon glyphicon-#{icon}\"></i> #{msg}</p>"
     setTimeout( ->
       $("##{id}").hide 'slide'
     , 3000)

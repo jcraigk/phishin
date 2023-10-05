@@ -52,52 +52,52 @@ module SortHelper
 
   def show_sort_items
     {
-      '<i class="icon-time"></i> Reverse Date' => 'date desc',
-      '<i class="icon-time"></i> Date' => 'date',
-      '<i class="icon-heart"></i> Likes' => 'likes',
-      '<i class="icon-forward"></i> Duration' => 'duration'
+      '<i class="glyphicon glyphicon-time"></i> Reverse Date' => 'date desc',
+      '<i class="glyphicon glyphicon-time"></i> Date' => 'date',
+      '<i class="glyphicon glyphicon-heart"></i> Likes' => 'likes',
+      '<i class="glyphicon glyphicon-forward"></i> Duration' => 'duration'
     }
   end
 
   def my_track_sort_items
-    { '<i class="icon-time"></i> Title' => 'title' }.merge(track_sort_items)
+    { '<i class="glyphicon glyphicon-time"></i> Title' => 'title' }.merge(track_sort_items)
   end
 
   def track_sort_items
     {
-      '<i class="icon-time"></i> Reverse Date' => 'shows.date desc',
-      '<i class="icon-time"></i> Date' => 'shows.date asc',
-      '<i class="icon-heart"></i> Likes' => 'likes',
-      '<i class="icon-forward"></i> Duration' => 'duration'
+      '<i class="glyphicon glyphicon-time"></i> Reverse Date' => 'shows.date desc',
+      '<i class="glyphicon glyphicon-time"></i> Date' => 'shows.date asc',
+      '<i class="glyphicon glyphicon-heart"></i> Likes' => 'likes',
+      '<i class="glyphicon glyphicon-forward"></i> Duration' => 'duration'
     }
   end
 
   def songs_and_venues_sort_items
     {
-      '<i class="icon-text-height"></i> Title' => 'title',
-      '<i class="icon-list"></i> Track Count' => 'performances'
+      '<i class="glyphicon glyphicon-text-height"></i> Title' => 'title',
+      '<i class="glyphicon glyphicon-list"></i> Track Count' => 'performances'
     }
   end
 
   def tag_sort_items
     {
-      '<i class="icon-text-height"></i> Name' => 'name',
-      '<i class="icon-list"></i> Track Count' => 'tracks_count',
-      '<i class="icon-list"></i> Show Count' => 'shows_count'
+      '<i class="glyphicon glyphicon-text-height"></i> Name' => 'name',
+      '<i class="glyphicon glyphicon-list"></i> Track Count' => 'tracks_count',
+      '<i class="glyphicon glyphicon-list"></i> Show Count' => 'shows_count'
     }
   end
 
   def venues_sort_items
     {
-      '<i class="icon-text-height"></i> Name' => 'name',
-      '<i class="icon-list"></i> Show Count' => 'performances'
+      '<i class="glyphicon glyphicon-text-height"></i> Name' => 'name',
+      '<i class="glyphicon glyphicon-list"></i> Show Count' => 'performances'
     }
   end
 
   def stored_playlist_sort_items
     {
-      '<i class="icon-text-height"></i> Name' => 'name',
-      '<i class="icon-forward"></i> Duration' => 'duration'
+      '<i class="glyphicon glyphicon-text-height"></i> Name' => 'name',
+      '<i class="glyphicon glyphicon-forward"></i> Duration' => 'duration'
     }
   end
 end

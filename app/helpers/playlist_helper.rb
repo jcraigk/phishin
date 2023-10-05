@@ -1,9 +1,9 @@
 module PlaylistHelper
   def playlist_filter_hash
     {
-      '<i class="icon icon-globe"></i> All' => 'all',
-      '<i class="icon icon-user"></i> Only Mine' => 'mine',
-      '<i class="icon icon-bookmark"></i> Only Phriends\'' => 'phriends'
+      '<i class="glyphicon glyphicon-globe"></i> All' => 'all',
+      '<i class="glyphicon glyphicon-user"></i> Only Mine' => 'mine',
+      '<i class="glyphicon glyphicon-bookmark"></i> Only Phriends\'' => 'phriends'
     }
   end
 

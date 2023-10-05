@@ -9,12 +9,11 @@ describe 'Show Context Menus', :js do
     sleep(1)
 
     first('.show-context-dropdown').click
-
     expect_content('Lookup at phish.net')
-
     click_link('Add to playlist')
     expect_content('Tracks from show added to playlist')
 
+    first('.show-context-dropdown').click
     click_link('Share')
     expect_content('Link copied to clipboard')
   end
