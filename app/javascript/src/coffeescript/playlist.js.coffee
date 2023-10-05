@@ -39,7 +39,6 @@ class Playlist
       type: 'post',
       data: { 'track_ids': track_ids },
       success: (r) =>
-
         this._updatePlaylistStats(track_ids.length, duration)
         @Util.feedback { notice: success_msg }
     })
