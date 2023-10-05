@@ -20,8 +20,7 @@ RUN apt-get update -qq && \
       shared-mime-info \
     && apt-get clean
 
-# Install a specific version of Node.js using NVM
-# For asset compilation
+# Install a specific version of nodejs using nvm for yarn install
 ENV NODE_VERSION 14.18.0
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash && \
     . $HOME/.nvm/nvm.sh && \
