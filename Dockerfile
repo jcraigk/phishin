@@ -45,8 +45,5 @@ COPY . .
 # Expose audio files thru Rails public folder
 RUN ln -sf /content/tracks/audio_files ./public/audio
 
-# Precompile assets
-RUN bundle exec rake assets:precompile
-
 EXPOSE 3000
 CMD bundle exec puma -b tcp://0.0.0.0:3000
