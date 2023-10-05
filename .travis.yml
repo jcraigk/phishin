@@ -31,6 +31,7 @@ before_install:
   - gem install bundler --no-document
 install: bundle install
 script:
+  - webpack -p --config ./webpack.config.js
   - bundle exec rubocop
   - bundle exec rails assets:precompile
   - bundle exec rspec
