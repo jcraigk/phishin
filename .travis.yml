@@ -29,6 +29,7 @@ before_install:
   - psql -c 'create database phishin_test;' -U postgres
   - gem update --system --no-document
   - gem install bundler --no-document
+  - RAILS_ENV=test bundle exec rails shakapacker:compile
 install: bundle install
 script:
   - bundle exec rubocop
