@@ -7,3 +7,8 @@
 /public/assets
 /public/audio
 /tmp
+
+node_modules/
+public/packs-test/
+public/packs/
+yarn-error.log
