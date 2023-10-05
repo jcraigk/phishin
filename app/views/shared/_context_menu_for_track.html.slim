@@ -41,7 +41,7 @@
       li
         a href="/#{song.slug}"
           i.glyphicon.glyphicon-book
-          | &nbsp;
+          |> &nbsp;
           = "#{song.title}..."
       - if (show && link = next_gap_link(song, show.date))
         li = link

@@ -390,7 +390,7 @@ $ ->
       dataType: 'json',
       success: (r) ->
         if r.success
-          Util.feedback({ notice: r.msg })
+          App.Util.feedback({ notice: r.msg })
           if r.liked then $this.addClass('liked') else $this.removeClass('liked')
           $this.siblings('span').html r.likes_count
           # Update other instances of this track's Like controls
@@ -400,7 +400,7 @@ $ ->
               $(this).siblings('span').html r.likes_count
           )
         else
-          Util.feedback { alert: r.msg }
+          App.Util.feedback { alert: r.msg }
     })
 
   ###############################################
@@ -428,7 +428,7 @@ $ ->
     App.Util.copyToClipboard($('body').data('base-url')+$(this).data('url'))
 
   .on 'click', '.share_with_timestamp', ->
-    time = App.Util.readableDuration App.Player.currentPosition()
+    time = Util.readableDuration App.Player.currentPosition()
     App.Util.copyToClipboard($('body').data('base-url')+$(this).data('url')+'?t='+time)
 
   # Play random song track

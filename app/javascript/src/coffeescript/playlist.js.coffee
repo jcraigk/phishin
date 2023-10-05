@@ -1,12 +1,14 @@
 import Util from './util.js'
 import Player from './player.js'
+import $ from 'jquery'
+window.$ = window.jQuery = $
 import 'jquery-ui/ui/widgets/sortable'
 import 'jquery-ui/ui/widgets/dialog'
 
 class Playlist
 
   constructor: ->
-    @Util                   = Util
+    @Util                   = new Util
     @Player                 = Player
     @$save_dialog            = $ '#save_playlist_dialog'
     @$save_action_dropdown  = $ '#save_action_dropdown'
@@ -156,13 +158,13 @@ class Playlist
       @$save_action_existing.attr 'disabled', true
       @$playlist_name_input.val ''
       @$playlist_slug_input.val ''
-    @$save_dialog.dialog 'show'
+    @$save_dialog.dialog 'open'
 
   handleDuplicateDialog: ->
     @$save_action_existing.attr 'disabled', true
     @$playlist_name_input.val ''
     @$playlist_slug_input.val ''
-    @$save_dialog.dialog 'show'
+    @$save_dialog.dialog 'open'
 
   savePlaylist: ->
     @$save_dialog.dialog 'hide'

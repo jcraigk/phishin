@@ -7,7 +7,7 @@ import 'jquery-ui/ui/widgets/tooltip'
 class Player
 
   constructor: ->
-    @Util             = Util
+    @Util             = new Util
     @sm               = soundManager
     @sm_sound         = {}
     @preload_time     = 5000
@@ -21,7 +21,7 @@ class Player
     @playlist_mode    = false
     @playlist         = []
     @app_name         = $('body').data 'app-name'
-    @time_marker      = @Util.timeToMS $('body').data('time-marker')
+    @time_marker      = Util.timeToMS $('body').data('time-marker')
     @$playpause       = $ '#control_playpause'
     @$scrubber        = $ '#scrubber'
     @$scrubber.slider()
@@ -88,8 +88,8 @@ class Player
   moveScrubber: ->
     if @scrubbing and @active_track
       scrubber_position = (@$scrubber.slider('value') / 100) * @duration
-      @$time_elapsed.html @Util.readableDuration(scrubber_position)
-      @$time_remaining.html "-#{@Util.readableDuration(@duration - scrubber_position)}"
+      @$time_elapsed.html Util.readableDuration(scrubber_position)
+      @$time_remaining.html "-#{Util.readableDuration(@duration - scrubber_position)}"
 
   toggleMute: ->
     if @last_volume > 0
@@ -137,7 +137,7 @@ class Player
       this._updatePlayButton()
       this.highlightActiveTrack()
     else
-      # @Util.feedback { notice: 'That is already the current track' }
+      @Util.feedback { notice: 'That is already the current track' }
 
   togglePause: ->
     if @sm_sound.paused

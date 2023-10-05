@@ -7,7 +7,7 @@ class Util
     @page_init          = true
     @$feedback          = $ '#feedback'
 
-  @feedback: (feedback) ->
+  feedback: (feedback) ->
     if feedback.alert
       msg = feedback.alert
       css = 'feedback_alert'
@@ -102,7 +102,7 @@ class Util
   @stringToSlug: (str) ->
     str.toLowerCase().trim().replace(/[^a-z0-9\-\s]/g, '').replace(/[\s]/g, '-')
 
-  @truncate: (string, length=40) ->
+  truncate: (string, length=40) ->
     if string.length > length then string.substring(0, length) + '...' else string
 
   showHTMLError: (str) ->
@@ -113,7 +113,7 @@ class Util
     el.val(text)
     el.select()
     document.execCommand('copy')
-    Util.feedback({ notice: 'Link copied to clipboard' })
+    this.feedback({ notice: 'Link copied to clipboard' })
 
   _findMatch: (href) ->
     match = /^([^\?]+)\??(.+)?$/.exec(href.split("/")[1])
