@@ -29,12 +29,12 @@ before_install:
   - psql -c 'create database phishin_test;' -U postgres
   - gem update --system --no-document
   - gem install bundler --no-document
-  - apt install webpack
-install: bundle install
+install:
+  - bundle install
+  - yarn install
 script:
-  - webpack -p --config ./config/webpack/webpack.config.js
-  - bundle exec rubocop
   - bundle exec rails assets:precompile
+  - bundle exec rubocop
   - bundle exec rspec
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
