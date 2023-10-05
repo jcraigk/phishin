@@ -52,7 +52,7 @@ class Util
     url += "&date_stop=#{$('#map_date_stop').val()}"
     this.navigateTo url
 
-  @readableDuration: (ms, style='colons', include_seconds=false) ->
+  readableDuration: (ms, style='colons', include_seconds=false) ->
     x = Math.floor(ms / 1000)
     seconds = x % 60
     seconds_with_zero = "#{if seconds < 10 then '0' else '' }#{seconds}"
@@ -82,7 +82,7 @@ class Util
       else
         "#{minutes}:#{seconds_with_zero}"
 
-  @timeToMS: (time) ->
+  timeToMS: (time) ->
     time = "#{time}"
     if time.match /^\d+$/  # It's already in ms
       time
@@ -99,7 +99,7 @@ class Util
         this.feedback { alert: "Invalid start time provided (#{time})" }
         0
 
-  @stringToSlug: (str) ->
+  stringToSlug: (str) ->
     str.toLowerCase().trim().replace(/[^a-z0-9\-\s]/g, '').replace(/[\s]/g, '-')
 
   truncate: (string, length=40) ->

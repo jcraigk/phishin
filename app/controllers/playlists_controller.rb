@@ -11,6 +11,7 @@ class PlaylistsController < ApplicationController
     shuffle: false
   }.freeze
 
+  skip_before_action :verify_authenticity_token
   before_action :init_session
   before_action :authenticate_user!, only: %i[save destroy bookmark unbookmark]
 

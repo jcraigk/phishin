@@ -167,7 +167,7 @@ class Playlist
     @$save_dialog.dialog 'open'
 
   savePlaylist: ->
-    @$save_dialog.dialog 'hide'
+    @$save_dialog.dialog 'close'
     $('#duplicate_playlist_btn').hide()
     $('#unbookmark_playlist_btn').hide()
     $('#bookmark_playlist_btn').hide()

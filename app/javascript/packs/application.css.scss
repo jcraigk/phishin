@@ -425,6 +425,10 @@ html {
 
 /******************************/
 
+#page {
+  min-height: 600px;
+}
+
 #page_header {
   height: 120px;
   width: 100%;
@@ -641,8 +645,8 @@ html {
       }
       #control_playpause {
         border: 1px solid $btn_border;
-        width: 63px;
-        height: 63px;
+        width: 65px;
+        height: 65px;
         -moz-border-radius: 100px;
         -webkit-border-radius: 100px;
         border-radius: 100px;
