@@ -11,8 +11,6 @@ class Player
     @Util             = new Util
     @sm               = soundManager
     @sm_sound         = {}
-    @preload_time     = 5000
-    # @preload_started  = false
     @active_track     = ''
     @invoked          = false
     @muted            = false
@@ -48,10 +46,6 @@ class Player
           path_segment = window.location.pathname.split('/')[1]
           this.setCurrentPlaylist track_id if path_segment isnt 'playlist' and path_segment isnt 'play'
           this.playTrack track_id
-          # iOS doesn't allow auto-play
-          if /(iPhone|iPad|iPod)/g.test(navigator.userAgent)
-            this.togglePause()
-            alert 'Touch the Play button to begin playback. Your browser does not support auto-play.'
 
   currentPosition: ->
     @sm_sound.position
@@ -115,8 +109,8 @@ class Player
   playTrack: (track_id, time_marker=0) ->
     if track_id != @active_track
       @$scrubber.slider 'value', 0
-      # @preload_started = false
-      unless track_id and @sm_sound = @sm.getSoundById track_id
+      sound = @sm.getSoundById track_id
+      if !sound
         this._hidePlayTooltip()
         @sm_sound = @sm.createSound
           id: track_id
@@ -125,31 +119,39 @@ class Player
             this._updateLoadingState track_id
           whileplaying: =>
             this._updatePlayerState()
+      else
+        @sm_sound = sound
 
       if @muted
         @sm.setVolume track_id, 0
       else
         @sm.setVolume track_id, @last_volume
-      this._loadInfoAndPlay track_id, 0
-      this._fastFadeout @active_track if @active_track
-      @active_track = track_id
-      @$feedback.hide()
+
+      if @sm_sound.playState != 1 or @sm_sound.paused
+        this._loadInfoAndPlay track_id, time_marker
+        this._fastFadeout @active_track if @active_track
+        @active_track = track_id
+        @sm_sound.play()
+
       this._updateLoadingState track_id
       this._updatePlayButton()
       this.highlightActiveTrack()
     else
       @Util.feedback { notice: 'That is already the current track' }
 
+
   togglePause: ->
-    if @sm_sound.paused
-      this._updatePlayButton()
-      @sm_sound.togglePause()
-    else
-      if @active_track
-        this._updatePlayButton false
-        @sm_sound.togglePause()
+    if @active_track
+      if @sm_sound.playState == 1 and !@sm_sound.paused
+        # If a sound is playing, pause it.
+        @sm_sound.pause()
+        this._updatePlayButton(false)
       else
-        this._playRandomShowOrPlaylist()
+        # If a sound is paused or stopped, play it.
+        @sm_sound.play()
+        this._updatePlayButton()
+    else
+      this._playRandomShowOrPlaylist()
 
   previousTrack: ->
     if @sm_sound.position > 3000
@@ -228,8 +230,20 @@ class Player
 
   _loadInfoAndPlay: (track_id, time_marker) ->
     this._loadTrackInfo track_id
-    @sm.setPosition track_id, time_marker
-    @sm.play track_id, { onfinish: => this.nextTrack() }
+    testAudio = new Audio()
+    playTest = testAudio.play()
+    if playTest?
+      playTest
+        .then(() =>
+          @sm.play track_id, { onfinish: => this.nextTrack() }
+          this._updatePlayButton()
+        )
+        .catch (error) =>
+          @$playpause.removeClass 'playing'
+          @$playpause.addClass 'pulse'
+    else
+      @sm.play track_id, { onfinish: => this.nextTrack() }
+      this._updatePlayButton()
     @invoked = true
 
   _handleAutoPlayTrack: ->
@@ -266,7 +280,7 @@ class Player
                 @Util.feedback { notice: 'Playing random show...'}
                 @Util.navigateTo r.url
                 this.setCurrentPlaylist r.track_id
-                # this.playTrack r.track_id
+                this.playTrack r.track_id
 
   _disengagePlayer: ->
     if @active_track
@@ -275,19 +289,6 @@ class Player
       @sm_sound.pause()
     @$scrubber.slider 'value', 0
     this._updatePlayButton false
-
-  _preloadTrack: (track_id) ->
-    unless track_id and @sm.getSoundById track_id
-      this._hidePlayTooltip()
-      @sm.createSound
-        id: track_id
-        url: this._trackIDtoURL track_id
-        autoLoad: true
-        whileloading: =>
-          this._updateLoadingState track_id
-        whileplaying: =>
-          this._updatePlayerState()
-      @sm.setVolume track_id, @last_volume
 
   _loadTrackInfo: (track_id) ->
     $.ajax
@@ -328,19 +329,13 @@ class Player
   _updatePlayButton: (playing=true) ->
     if playing
       @$playpause.addClass 'playing'
+      @$playpause.removeClass 'pulse'
     else
       @$playpause.removeClass 'playing'
 
   _updatePlayerState: ->
     unless @scrubbing or @duration is 0
       unless isNaN @duration or isNaN @sm_sound.position
-        # Preload next track if we're close to the end of this one
-        # if !@preload_started and @duration - @sm_sound.position <= @preload_time
-        #   $.ajax
-        #     url: "/next-track/#{@active_track}"
-        #     success: (r) =>
-        #       this._preloadTrack(r.track_id) if r.success
-        #   @preload_started = true
         @$scrubber.slider 'value', (@sm_sound.position / @duration) * 100
         @$time_elapsed.html @Util.readableDuration(@sm_sound.position)
         remaining = @duration - @sm_sound.position

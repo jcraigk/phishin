@@ -89,8 +89,8 @@ $ ->
         else if state.href.substr(0,9) is '/playlist' or state.href.substr(0,6) is '/play/'
           App.Playlist.initPlaylist()
 
-      .catch (error) ->
-        console.log('Navigation fetch error: ', error.message)
+      # .catch (error) ->
+      #   console.log('Navigation fetch error: ', error.message)
 
   ###############################################
   # Prepare history.js

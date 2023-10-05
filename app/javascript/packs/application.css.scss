@@ -37,11 +37,7 @@ $scrubbing: #1a80f6;
   font-size: 7em;
 }
 
-@-webkit-keyframes pulsate-highlight {
-    0%   { background: $background_gray; }
-    100%  { background: $highlight4; }
-}
-@-moz-keyframes pulsate-highlight {
+@keyframes pulsate-highlight {
   0%   { background: $background_gray; }
   100%  { background: $highlight4; }
 }
@@ -49,23 +45,7 @@ $scrubbing: #1a80f6;
   0%   { background: $background_gray; }
   100%  { background: $highlight4; }
 }
-@-webkit-keyframes pulsate-highlight {
-    0%   { background: $background_gray; }
-    100%  { background: $highlight4; }
-}
-@-moz-keyframes pulsate-highlight {
-  0%   { background: $background_gray; }
-  100%  { background: $highlight4; }
-}
-@keyframes pulsate-highlight {
-  0%   { background: $background_gray; }
-  100%  { background: $highlight4; }
-}
-@-webkit-keyframes pulsate-highlight2 {
-    0%   { background: $background_gray; }
-    100%  { background: $highlight2; }
-}
-@-moz-keyframes pulsate-highlight2 {
+@keyframes pulsate-highlight2 {
   0%   { background: $background_gray; }
   100%  { background: $highlight2; }
 }
@@ -73,17 +53,9 @@ $scrubbing: #1a80f6;
   0%   { background: $background_gray; }
   100%  { background: $highlight2; }
 }
-@-webkit-keyframes pulsate-highlight2 {
-    0%   { background: $background_gray; }
-    100%  { background: $highlight2; }
-}
-@-moz-keyframes pulsate-highlight2 {
-  0%   { background: $background_gray; }
-  100%  { background: $highlight2; }
-}
-@keyframes pulsate-highlight2 {
-  0%   { background: $background_gray; }
-  100%  { background: $highlight2; }
+@keyframes pulsate-outline {
+  0%   { box-shadow: 0 0 5px $highlight1; }
+  100% { box-shadow: 0 0 35px $highlight1; }
 }
 .tagin_project {
   p, li {
@@ -364,9 +336,6 @@ html {
       padding-left: 10px;
       padding-top: 6px;
     }
-    .btn_context {
-      cursor: pointer;
-    }
     .btn-sort {
       height: 18px !important;
       -moz-border-radius: 30px !important;
@@ -637,6 +606,12 @@ html {
         margin-left: 5px;
         background: white url('../images/icons-playpause.png');
         cursor: pointer;
+
+        &.pulse {
+          -webkit-animation: pulsate-outline 0.7s infinite alternate linear;
+          -moz-animation: pulsate-outline 0.7s infinite alternate linear;
+          animation: pulsate-outline 0.7s infinite alternate linear;
+        }
       }
       #control_next, #control_previous {
         border: 1px solid $btn_border;
@@ -1407,7 +1382,7 @@ html {
         line-height: 10px;
         margin-top: -6px !important;
         position: relative;
-        top: 7px;
+        top: 10px;
 
         a {
           line-height: 0px !important;
