@@ -29,9 +29,10 @@ before_install:
   - psql -c 'create database phishin_test;' -U postgres
   - gem update --system --no-document
   - gem install bundler --no-document
+  - apt install webpack
 install: bundle install
 script:
-  - webpack -p --config ./webpack.config.js
+  - webpack -p --config ./config/webpack/webpack.config.js
   - bundle exec rubocop
   - bundle exec rails assets:precompile
   - bundle exec rspec
