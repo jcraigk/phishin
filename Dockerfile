@@ -18,8 +18,11 @@ RUN apt-get update -qq && \
       memcached \
       nodejs \
       shared-mime-info \
-      yarn \
     && apt-get clean
+
+# Install latest Yarn (apt-get installs old version)
+RUN curl -o- -L https://yarnpkg.com/install.sh | bash
+ENV PATH="/root/.yarn/bin:/root/.config/yarn/global/node_modules/.bin:$PATH"
 
 # Bundle install, copy app
 WORKDIR $INSTALL_PATH
