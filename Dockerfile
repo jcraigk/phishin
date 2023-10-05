@@ -29,6 +29,7 @@ WORKDIR $INSTALL_PATH
 
 COPY Gemfile Gemfile.lock ./
 RUN gem install bundler && bundle install
+COPY package.json yarn.lock ./
 RUN yarn install
 COPY . .
 
