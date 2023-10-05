@@ -14,7 +14,8 @@ module TrackHelper
       Show.published
           .where('date BETWEEN ? AND ?', date, next_show.date)
           .count
-    text = "#{tag.i(class: 'glyphicon glyphicon-forward')}&nbsp; Next Performance (gap: #{gap})"
+    text = 'Next Performance'
+    text = "#{tag.i(class: 'glyphicon glyphicon-forward')}&nbsp; #{text}(gap: #{gap})"
     link_to(text.html_safe, "/#{next_show.date}/#{track.slug}")
   end
 

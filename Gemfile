@@ -24,7 +24,7 @@ gem 'shrine'
 gem 'slim'
 gem 'typhoeus'
 gem 'waveformjson'
-gem 'will_paginate', '< 4' # 4.0 breaks bootstrap-will_paginate # TODO: Can upgrade?
+gem 'will_paginate'
 
 group :development do
   gem 'bullet'

@@ -25,10 +25,6 @@ Rails.application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-  # Expands the lines which load the assets
-  # config.assets.debug = true
-  # config.assets.check_precompiled_asset = false
-
   config.action_mailer.default_url_options = { host: 'localhost:3000' }
   config.action_mailer.smtp_settings = {
     user_name: ENV.fetch('SMTP_USERNAME', nil),
