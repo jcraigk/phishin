@@ -18,6 +18,7 @@ RUN apt-get update -qq && \
       memcached \
       nodejs \
       shared-mime-info \
+      yarn \
     && apt-get clean
 
 # Bundle install, copy app
