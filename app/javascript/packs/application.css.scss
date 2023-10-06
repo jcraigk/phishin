@@ -195,6 +195,8 @@ html {
       }
     }
     .btn_context {
+      margin-right: 10px;
+
       .dropdown-toggle {
         height: 18px;
         line-height: 0px !important;
@@ -543,7 +545,7 @@ html {
     }
     #player_title_container {
       position: absolute;
-      margin-left: 290px;
+      margin-left: 280px;
       margin-top: -3px;
       width: 438px;
       height: 40px;
@@ -1316,7 +1318,7 @@ html {
           width: 220px;
         }
         &.wide {
-          width: 240px;
+          width: 290px;
         }
         &.wider {
           width: 290px;
@@ -1330,7 +1332,7 @@ html {
       }
       h3 {
         float: right;
-        width: 50px;
+        width: 40px;
         text-align: right;
 
         &.alt {
@@ -1377,12 +1379,7 @@ html {
       .btn_context {
         visibility: hidden;
         float: right;
-        margin-right: 20px;
-        margin-left: 15px;
-        line-height: 10px;
-        margin-top: -6px !important;
-        position: relative;
-        top: 10px;
+        margin-top: 4px;
 
         a {
           line-height: 0px !important;
