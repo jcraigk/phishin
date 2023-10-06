@@ -24,7 +24,7 @@ module TagHelper
         data: {
           html: true,
           detail_title: detail_title(tag_instances),
-          detail: tooltip_for_tag_stack(tag_instances, include_transcript: true)
+          detail: tooltip_for_tag_stack(tag_instances, detail: true)
         }
       )
     end
@@ -54,12 +54,12 @@ module TagHelper
     )
   end
 
-  def tooltip_for_tag_stack(tag_instances, include_transcript: false)
+  def tooltip_for_tag_stack(tag_instances, detail: false)
     title = ''
 
     tag_instances.each_with_index do |t, idx|
-      title += tag_notes(t)
-      title += transcript_or_link(t, title, include_transcript)
+      title += tag_notes(t, detail:)
+      title += transcript_or_link(t, title, detail:)
       title += '<br>' unless idx == tag_instances.size - 1
     end
 
@@ -67,17 +67,19 @@ module TagHelper
     title
   end
 
-  def tag_notes(tag_instance)
+  def tag_notes(tag_instance, detail:)
     return '' if tag_instance.notes.blank?
-    "#{tag_instance.notes} #{time_range(tag_instance)}".strip
+    str = tag_instance.notes
+    str += " #{time_range(tag_instance, detail:)}"
+    str.strip
   end
 
-  def transcript_or_link(tag_instance, title, include_transcript)
+  def transcript_or_link(tag_instance, title, detail:)
     return '' if tag_instance.try(:transcript).blank?
 
     str = ''
 
-    if include_transcript
+    if detail
       str += '<br><br>' if title.present?
       extra = "<strong>TRANSCRIPT</strong><br><br> #{tag_instance.transcript.gsub("\n", '<br>')}"
       return str + extra
@@ -87,17 +89,20 @@ module TagHelper
     "#{str}[CLICK FOR TRANSCRIPT]"
   end
 
-  def time_range(tag_instance)
+  def time_range(tag_instance, detail:) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     return unless start_timestamp(tag_instance) || end_timestamp(tag_instance)
 
     starts_at = start_timestamp(tag_instance)
     url = "/#{tag_instance.track.show.date}/#{tag_instance.track.slug}?t=#{starts_at}"
     if start_timestamp(tag_instance) && end_timestamp(tag_instance)
       range = "#{starts_at} and #{end_timestamp(tag_instance)}"
-      "between #{link_to(range, url)}"
+      str = 'between '
+      str += detail ? link_to(range, url) : range
     elsif start_timestamp(tag_instance)
-      "at #{link_to(starts_at, url)}"
+      str = 'at '
+      str += detail ? link_to(starts_at, url) : starts_at
     end
+    str
   end
 
   def start_timestamp(tag_instance)
