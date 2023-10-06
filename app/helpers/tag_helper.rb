@@ -59,7 +59,7 @@ module TagHelper
 
     tag_instances.each_with_index do |t, idx|
       title += tag_notes(t, detail:)
-      title += transcript_or_link(t, title, detail:)
+      title += transcript_or_link(t, title) if detail
       title += '<br>' unless idx == tag_instances.size - 1
     end
 
@@ -74,19 +74,10 @@ module TagHelper
     str.strip
   end
 
-  def transcript_or_link(tag_instance, title, detail:)
+  def transcript_or_link(tag_instance, title)
     return '' if tag_instance.try(:transcript).blank?
-
-    str = ''
-
-    if detail
-      str += '<br><br>' if title.present?
-      extra = "<strong>TRANSCRIPT</strong><br><br> #{tag_instance.transcript.gsub("\n", '<br>')}"
-      return str + extra
-    end
-
-    str += '<br>' if title.present?
-    "#{str}[CLICK FOR TRANSCRIPT]"
+    str = '<br><br>' if title.present?
+    str += "<strong>TRANSCRIPT</strong><br><br> #{tag_instance.transcript.gsub("\n", '<br>')}"
   end
 
   def time_range(tag_instance, detail:) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
