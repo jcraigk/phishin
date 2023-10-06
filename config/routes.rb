@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
-  get 'hello_world', to: 'hello_world#index'
+  # React entrypoint at /mobile
+  scope path: 'mobile', controller: 'mobile' do
+    root action: 'index', as: 'mobile_root'
+    get '*path', action: 'index'
+  end
+
   root to: 'eras#index'
 
   # RSS feed

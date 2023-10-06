@@ -1,0 +1,9 @@
+doctype html
+html
+  head
+    = render partial: 'layouts/head'
+    = stylesheet_link_tag 'mobile', media: :all
+    = javascript_include_tag 'mobile'
+
+  body
+    = yield
