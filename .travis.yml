@@ -33,8 +33,8 @@ install:
   - bundle install
   - yarn install
 script:
-  - bundle exec rails assets:precompile
   - bundle exec rubocop
+  - bundle exec rails assets:precompile
   - bundle exec rspec
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
