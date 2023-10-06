@@ -271,6 +271,8 @@ GEM
       zeitwerk (~> 2.6)
     rainbow (3.1.1)
     rake (13.0.6)
+    rdoc (6.5.0)
+      psych (>= 4.0.0)
     react_on_rails (13.4.0)
       addressable
       connection_pool
@@ -278,6 +280,8 @@ GEM
       rails (>= 5.2)
       rainbow (~> 3.0)
     regexp_parser (2.8.1)
+    reline (0.3.9)
+      io-console (~> 0.5)
     representable (3.2.0)
       declarative (< 0.1.0)
       trailblazer-option (>= 0.1.1, < 0.2.0)
