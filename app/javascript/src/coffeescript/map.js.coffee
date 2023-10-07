@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import mapboxgl from 'mapbox-gl/dist/mapbox-gl'
 
 import Util from './util.js'
 
