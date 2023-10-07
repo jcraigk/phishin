@@ -2,6 +2,7 @@ import $ from 'jquery'
 import 'jquery-ui/ui/widgets/slider'
 import 'jquery-ui/ui/widgets/tooltip'
 import 'jquery-ui/ui/widgets/dialog'
+import 'soundmanager2'
 
 import Detector from './detector.js'
 import Map from './map.js'

@@ -77,7 +77,7 @@ module TagHelper
   def transcript_or_link(tag_instance, title)
     return '' if tag_instance.try(:transcript).blank?
     str = '<br><br>' if title.present?
-    str += "<strong>TRANSCRIPT</strong><br><br> #{tag_instance.transcript.gsub("\n", '<br>')}"
+    str + "<strong>TRANSCRIPT</strong><br><br> #{tag_instance.transcript.gsub("\n", '<br>')}"
   end
 
   def time_range(tag_instance, detail:) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
