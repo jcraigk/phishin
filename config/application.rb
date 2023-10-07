@@ -10,8 +10,6 @@ Bundler.require(*Rails.groups)
 
 module Phishin
   class Application < Rails::Application
-    config.load_defaults = '7.0'
-    config.active_record.legacy_connection_handling = false
     config.hosts << ENV.fetch('WEB_HOST', nil) if ENV['WEB_HOST'].present?
   end
 end
