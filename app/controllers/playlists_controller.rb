@@ -162,11 +162,12 @@ class PlaylistsController < ApplicationController
   end
 
   def next_track_id
+    # binding.irb
     if params[:playlist].present?
       session[:playlist][:tracks] = params[:playlist].split(',').map(&:to_i)
     end
 
-    if session[:playlist][:tracks].none?
+    if session[:playlist][:tracks].blank?
       return render json: { success: false, msg: 'No active playlist' }
     end
 

@@ -105,7 +105,7 @@ class ShowImporter::Cli
     line = Readline.readline('➡ ', true)
     matched = orch.fm.find_song(line, exact: true)
     if matched
-      puts "Found \"#{matched.title}\".  Adding Song."
+      puts "Found \"#{matched.title}\". Adding Song."
       orch.get_track(pos).songs << matched
       puts "Adding #{matched.title} to pos #{pos}"
     end

@@ -2,7 +2,6 @@ import $ from 'jquery'
 import 'jquery-ui/ui/widgets/slider'
 import 'jquery-ui/ui/widgets/tooltip'
 import 'jquery-ui/ui/widgets/dialog'
-import 'soundmanager2'
 
 import Detector from './detector.js'
 import Map from './map.js'
@@ -74,7 +73,6 @@ $ ->
         else
           $('body').attr 'data-anchor', ''
         App.Player.onReady() # For scrolling to and auto-playing a track
-        App.Player.highlightActiveTrack(true) # For highlighting current track in a list, scrollTo = true
 
         # For detecting browsers/platforms
         App.Detector = new Detector
@@ -90,20 +88,18 @@ $ ->
         else if state.href.substr(0,9) is '/playlist' or state.href.substr(0,6) is '/play/'
           App.Playlist.initPlaylist()
 
-      # .catch (error) ->
-      #   console.log('Navigation fetch error: ', error.message)
+      .catch (error) ->
+        console.log('Navigation fetch error: ', error.message)
 
   ###############################################
   # Prepare history.js
   ###############################################
 
   # User clicks back button
-  window.addEventListener 'popstate', (e) ->
-    handleNavigation()
+  window.addEventListener 'popstate', (e) -> handleNavigation()
 
   # Result of user clicking a link
-  window.addEventListener 'navigation', (e) ->
-    handleNavigation()
+  window.addEventListener 'navigation', (e) -> handleNavigation()
 
   ###############################################
   # Load initial page if not an exempt route
@@ -114,7 +110,6 @@ $ ->
     match = /^(http|https):\/\/(.+)$/.exec(window.location)
     href = match[2].substr(match[2].indexOf('/'), match[2].length - 1)
     App.Util.navigateTo(href)
-    handleNavigation() # Need to call this explicitly on page load (to keep Firefox in the mix)
 
   ###############################################
   # Handle feedback on DOM load (for Devise)
@@ -133,17 +128,6 @@ $ ->
     , 3000)
   else
     $alert.hide()
-
-  ###############################################
-  # Auto-play or scroll to and play anchor
-  ###############################################
-  soundManager.setup
-    url: '/assets/'
-    useHTML5Audio: true
-    preferFlash: false
-    debugMode: false
-  soundManager.onready ->
-    App.Player.onReady()
 
   ###############################################
   # DOM interactions

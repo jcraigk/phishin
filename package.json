@@ -26,7 +26,6 @@
     "sass": "^1.68.0",
     "sass-loader": "^13.3.2",
     "shakapacker": "7.1.0",
-    "soundmanager2": "^2.97.20170602",
     "style-loader": "^3.3.3",
     "terser-webpack-plugin": "5",
     "webpack": "5",

@@ -1,4 +1,5 @@
 #player_container
+  audio#audio src='http://localhost:3000/audio/000/032/224/32224.mp3'
   #user_controls
 
     - if user_signed_in?
@@ -18,7 +19,7 @@
 
   #player_controls
     #control_previous
-    #control_playpause
+    #control_playpause role='switch' aria-checked='false'
     #control_next
 
   #scrubber_controls
