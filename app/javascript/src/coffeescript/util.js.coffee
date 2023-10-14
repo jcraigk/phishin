@@ -52,6 +52,7 @@ class Util
     this.navigateTo url
 
   readableDuration: (x, style='colons', include_seconds=false) ->
+    x = Math.floor(x)
     seconds = x % 60
     seconds_with_zero = "#{if seconds < 10 then '0' else '' }#{seconds}"
     x = Math.floor(x / 60)

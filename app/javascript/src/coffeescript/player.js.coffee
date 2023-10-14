@@ -18,7 +18,6 @@ class Player
     @$waveform        = $ '#waveform'
     @$time_elapsed    = $ '#time_elapsed'
     @$time_remaining  = $ '#time_remaining'
-    @$feedback        = $ '#player_feedback'
     @$player_title    = $ '#player_title'
     @$player_detail   = $ '#player_detail'
     @$likes_count     = $ '#player_likes_container > .likes_large > span'
@@ -29,23 +28,21 @@ class Player
     @time_marker = @Util.timeToMS($('body').data('time-marker'))
     @$scrubber.slider()
     @$scrubber.slider('enable')
-    @$feedback.hide()
     this._updatePlaylistMode()
 
     # Check for track anchor to scroll to [and play]
     unless @playlist_mode or this._handleAutoPlayTrack()
       if track_id = $('.playable_track').first().data('id')
-        console.log("Playable track found: #{track_id}")
         path_segment = window.location.pathname.split('/')[1]
         this.setCurrentPlaylist track_id if path_segment isnt 'playlist' and path_segment isnt 'play'
         this.playTrack track_id
 
-  _updatePlayerState: ->
+  _updateProgress: ->
     unless @scrubbing or @duration == 0
       unless isNaN @duration
-        @$scrubber.slider 'value', @audioElement.currentPosition / @duration
-        @$time_elapsed.html @Util.readableDuration(@audioElement.currentPosition)
-        remaining = @duration - @audioElement.currentPosition
+        @$scrubber.slider 'value', (@audioElement.currentTime / @duration) * 100
+        @$time_elapsed.html @Util.readableDuration(@audioElement.currentTime)
+        remaining = @duration - Math.floor(@audioElement.currentTime)
         if remaining > 0
           @$time_remaining.html "-#{@Util.readableDuration(remaining)}"
         else
@@ -81,7 +78,7 @@ class Player
     @$time_elapsed.removeClass 'scrubbing'
     @$time_remaining.removeClass 'scrubbing'
     if @active_track_id
-      @audioElement.currentPosition = Math.round((@$scrubber.slider('value') / 100) * @duration)
+      @audioElement.currentTime = Math.round((@$scrubber.slider('value') / 100) * @duration)
     else
       @$scrubber.slider 'value', 0
 
@@ -107,7 +104,7 @@ class Player
       this._playRandomShowOrPlaylist()
 
   previousTrack: ->
-    if @audioElement.currentPosition > 3
+    if @audioElement.currentTime > 3
       @audioElement.currentTime = 0
     else
       $.ajax
@@ -128,15 +125,15 @@ class Player
           @Util.feedback { alert: r.msg }
 
   scrubBackward: ->
-    @audioElement.currentPosition = @audioElement.currentPosition - 5
+    @audioElement.currentTime = @audioElement.currentTime - 5
 
   scrubForward: ->
-    @audioElement.currentPosition = @audioElement.currentPosition + 5
+    @audioElement.currentTime = @audioElement.currentTime + 5
 
   stopAndUnload: ->
     @audioElement.pause()
     @active_track_id = ''
-    this._updatePlayerDisplay
+    this._updateDisplay
       title: @app_name,
       duration: 0
     @$scrubber.slider 'value', 0
@@ -146,7 +143,6 @@ class Player
     @$time_elapsed.html '0:00'
 
   _highlightActiveTrack: (scroll_to_track=false)->
-    console.log("Highligting #{@active_track_id}")
     if @active_track_id
       $track = $('.playable_track[data-id="'+@active_track_id+'"]')
       $playlist_track = $('#active_playlist>li[data-id="'+@active_track_id+'"]')
@@ -223,12 +219,12 @@ class Player
       url: "/track-info/#{@active_track_id}",
       success: (r) =>
         if r.success
-          this._updatePlayerDisplay r
+          this._updateDisplay r
           this._loadAndPlayAudio r.mp3_url
         else
           @Util.feedback { alert: "Error retrieving track info" }
 
-  _updatePlayerDisplay: (r) ->
+  _updateDisplay: (r) ->
     @$scrubber_ctrl.css('opacity', 1)
     @$scrubber.css('background-color', 'transparent')
     @$scrubber.css('opacity', 0)
@@ -237,7 +233,7 @@ class Player
       @$scrubber.animate({ opacity: 1 }, { duration: 1000 });
       @$scrubber.css('background-color', '#999999')
     , 500)
-    @duration = r.duration
+    @duration = Math.floor(r.duration / 1000)
     if r.title.length > 26 then @$player_title.addClass 'long_title' else @$player_title.removeClass 'long_title'
     if r.title.length > 50 then r.title = r.title.substring(0, 47) + '...'
     @$player_title.html r.title
@@ -267,11 +263,8 @@ class Player
       @audioElement = document.querySelector('audio')
       @audioElement.addEventListener('canplay', => this._playAudio())
       @audioElement.addEventListener('ended', => this.nextTrack())
-      @audioElement.addEventListener('timeupdate', => this._updatePlayerState())
-    if @track
-      @track.disconnect()
-    unless @audioContext
-      @audioContext = new AudioContext()
+      @audioElement.addEventListener('timeupdate', => this._updateProgress())
+    @audioContext = new AudioContext()
     @audioElement.src = url
 
   _playAudio: =>
@@ -281,8 +274,7 @@ class Player
       if @audioContext.state == 'suspended'
         @$playpause.removeClass 'playing'
         @$playpause.addClass 'pulse'
-        alert('Press play button to start audio')
-        @audioContext.resume()
+        # alert('Press play button to listen')
       else
         @audioElement.play()
       this._updatePlayButton()
