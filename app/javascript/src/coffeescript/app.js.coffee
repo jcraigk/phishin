@@ -326,9 +326,6 @@ $ ->
     App.Player.toggleMute()
     e.stopPropagation()
 
-  # Play button tooltip
-  $('#playpause_tooltip').tooltip({trigger: 'manual'}).tooltip('show')
-
   ###############################################
 
   # Click to download an individual track

@@ -7,11 +7,7 @@ import Util from './util.js'
 class Player
   constructor: ->
     @Util             = new Util
-    @audioContext     = new AudioContext()
-    @audioElement     = document.querySelector('#audio')
     @active_track_id  = ''
-    @invoked          = false
-    @playing          = false
     @scrubbing        = false
     @duration         = 0
     @playlist_mode    = false
@@ -34,24 +30,15 @@ class Player
     @$scrubber.slider()
     @$scrubber.slider('enable')
     @$feedback.hide()
-
-    @audioElement.addEventListener('ended', => this.nextTrack())
-    @audioElement.addEventListener('timeupdate', => this._updatePlayerState())
-
-    unless @track
-      @track = @audioContext.createMediaElementSource(@audioElement)
-      @track.connect(@audioContext.destination)
-
     this._updatePlaylistMode()
 
     # Check for track anchor to scroll to [and play]
     unless @playlist_mode or this._handleAutoPlayTrack()
       if track_id = $('.playable_track').first().data('id')
         console.log("Playable track found: #{track_id}")
-        unless @invoked
-          path_segment = window.location.pathname.split('/')[1]
-          this.setCurrentPlaylist track_id if path_segment isnt 'playlist' and path_segment isnt 'play'
-          this.playTrack track_id
+        path_segment = window.location.pathname.split('/')[1]
+        this.setCurrentPlaylist track_id if path_segment isnt 'playlist' and path_segment isnt 'play'
+        this.playTrack track_id
 
   _updatePlayerState: ->
     unless @scrubbing or @duration == 0
@@ -106,30 +93,15 @@ class Player
 
   playTrack: (track_id, time_marker=0) ->
     @active_track_id = track_id
-    console.log("active_track_id is #{@active_track_id}")
-    this._updatePlayButton()
-    this.highlightActiveTrack()
-    if @audioContext.state == 'suspended'
-      @$playpause.removeClass 'playing'
-      @$playpause.addClass 'pulse'
-      alert('press play')
-      @audioContext.resume()
-      @playing = false
-    else
-      console.log("trying to play")
-      @audioElement.play()
-      @playing = true
+    this._loadTrack()
+    this._highlightActiveTrack()
 
   togglePause: ->
     if @active_track_id
-      if @playing
-        @audioElement.pause()
-        @playing = false
-      else
-        if @audioContext.state == 'suspended'
-          @audioContext.resume()
+      if @audioElement.paused
         @audioElement.play()
-        @playing = true
+      else
+        @audioElement.pause()
       this._updatePlayButton()
     else
       this._playRandomShowOrPlaylist()
@@ -162,19 +134,18 @@ class Player
     @audioElement.currentPosition = @audioElement.currentPosition + 5
 
   stopAndUnload: ->
-    @audioElement.stop()
+    @audioElement.pause()
     @active_track_id = ''
     this._updatePlayerDisplay
       title: @app_name,
       duration: 0
     @$scrubber.slider 'value', 0
     @$scrubber.slider 'disable'
-    this._updatePlayButton false
+    this._updatePlayButton
     @$time_remaining.html '0:00'
     @$time_elapsed.html '0:00'
-    @invoked = false
 
-  highlightActiveTrack: (scroll_to_track=false)->
+  _highlightActiveTrack: (scroll_to_track=false)->
     console.log("Highligting #{@active_track_id}")
     if @active_track_id
       $track = $('.playable_track[data-id="'+@active_track_id+'"]')
@@ -209,12 +180,6 @@ class Player
           this.setCurrentPlaylist r.track_id
           this.playTrack r.track_id
 
-  _loadInfoAndPlay: (track_id, time_marker) ->
-    this._loadTrackInfo track_id
-    @audioElement.play()
-    this._updatePlayButton()
-    @invoked = true
-
   _handleAutoPlayTrack: ->
     if anchor_name = $('body').attr('data-anchor')
       $col = $('li[data-track-anchor='+anchor_name+']')
@@ -222,13 +187,14 @@ class Player
       if $col.length > 0
         $el = $col.first()
         $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
-        if not @invoked
-          track_id = $el.data 'id'
-          this.setCurrentPlaylist track_id
-          # console.log('auto play')
-          # this.playTrack track_id, @time_marker
-        else
-          $el.addClass 'highlighted_track'
+        # TODO fix
+        # if not @invoked
+        #   track_id = $el.data 'id'
+        #   this.setCurrentPlaylist track_id
+        #   # console.log('auto play')
+        #   # this.playTrack track_id, @time_marker
+        # else
+        #   $el.addClass 'highlighted_track'
         true
       else
         false
@@ -252,18 +218,17 @@ class Player
                 this.setCurrentPlaylist r.track_id
                 this.playTrack r.track_id
 
-  _loadTrackInfo: (track_id) ->
+  _loadTrack: ->
     $.ajax
-      url: "/track-info/#{track_id}",
+      url: "/track-info/#{@active_track_id}",
       success: (r) =>
         if r.success
           this._updatePlayerDisplay r
+          this._loadAndPlayAudio r.mp3_url
         else
           @Util.feedback { alert: "Error retrieving track info" }
 
   _updatePlayerDisplay: (r) ->
-    @audioElement.src = r.mp3_url
-    console.log("r.mp3_url: #{r.mp3_url}")
     @$scrubber_ctrl.css('opacity', 1)
     @$scrubber.css('background-color', 'transparent')
     @$scrubber.css('opacity', 0)
@@ -291,18 +256,35 @@ class Player
       @$player_detail.html "<a class=\"show_date\" href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"#{r.venue_url}\">#{@Util.truncate(r.venue)}</a>"
 
   _updatePlayButton: ->
-    if @playing
+    if @audioElement.paused
+      @$playpause.removeClass 'playing'
+    else
       @$playpause.addClass 'playing'
       @$playpause.removeClass 'pulse'
+
+  _loadAndPlayAudio: (url) ->
+    unless @audioElement
+      @audioElement = document.querySelector('audio')
+      @audioElement.addEventListener('canplay', => this._playAudio())
+      @audioElement.addEventListener('ended', => this.nextTrack())
+      @audioElement.addEventListener('timeupdate', => this._updatePlayerState())
+    if @track
+      @track.disconnect()
+    unless @audioContext
+      @audioContext = new AudioContext()
+    @audioElement.src = url
+
+  _playAudio: =>
+    unless @audioElement.readyState >= 3
+      @audioElement.addEventListener 'canplay', => this._playAudio()
     else
-      @$playpause.removeClass 'playing'
-
-  _trackIDtoURL: (track_id) ->
-    str = track_id.toString()
-    str = '0' + str for i in [0..(8-str.length)] by 1
-    "/audio/#{str[0..2]}/#{str[3..5]}/#{str[6..9]}/#{track_id}.mp3"
-
-  _hidePlayTooltip: ->
-    $('#playpause_tooltip').tooltip('destroy')
+      if @audioContext.state == 'suspended'
+        @$playpause.removeClass 'playing'
+        @$playpause.addClass 'pulse'
+        alert('Press play button to start audio')
+        @audioContext.resume()
+      else
+        @audioElement.play()
+      this._updatePlayButton()
 
 export default Player
