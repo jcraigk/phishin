@@ -29,6 +29,7 @@ class Player
     @$scrubber.slider()
     @$scrubber.slider('enable')
     this._updatePlaylistMode()
+    this._highlightActiveTrack(true)
 
     # Play first track on the page if no audio playing, not a playlist page, and no track slug in URL
     unless @active_track_id or @playlist_mode or this._handleAutoPlayTrack()
