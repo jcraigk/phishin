@@ -171,7 +171,7 @@ class PlaylistsController < ApplicationController
     end
 
     prefix = session['playlist']['shuffle'] ? 'shuffled_' : nil
-    track_ids = session['playlist']["#{prefix}tracks".to_sym]
+    track_ids = session['playlist']["#{prefix}tracks"]
 
     if track_ids.last == params[:track_id].to_i
       if session['playlist']['loop']
@@ -196,7 +196,7 @@ class PlaylistsController < ApplicationController
     end
 
     prefix = session['playlist']['shuffle'] ? 'shuffled_' : nil
-    track_ids = session['playlist']["#{prefix}tracks".to_sym]
+    track_ids = session['playlist']["#{prefix}tracks"]
 
     if track_ids.first == params[:track_id].to_i
       if session['loop']

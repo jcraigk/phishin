@@ -53,12 +53,12 @@ class Player
         @$time_remaining.html '0:00'
 
   togglePlaylistMode: ->
-    txt = 'You are about to enter Playlist Edit Mode. In this mode, any track you click will be added to the end of your active playlist. This playlist can then be saved and shared. Are you sure you want to continue?'
+    txt = "You're entering Playlist Edit Mode. Any track you click will be added to the end of your active playlist. Are you sure you want to continue?"
     if @playlist_mode
       @playlist_mode = false
     else if confirm(txt)
       @playlist_mode = true
-      this._updatePlaylistMode()
+    this._updatePlaylistMode()
 
   _updatePlaylistMode: ->
     if @playlist_mode
@@ -132,7 +132,8 @@ class Player
     @audioElement.currentTime = @audioElement.currentTime + 5
 
   stopAndUnload: ->
-    @audioElement.pause()
+    if @active_track_id
+      @audioElement.pause()
     @active_track_id = ''
     this._updateDisplay
       title: @app_name,
@@ -179,7 +180,6 @@ class Player
 
   _handleAutoPlayTrack: ->
     if anchor_name = $('body').attr('data-anchor')
-      console.log("AUTOPLAY")
       $col = $('li[data-track-anchor='+anchor_name+']')
       $col = $('li[data-section-anchor='+anchor_name+']') if $col.length == 0
       if $col.length > 0
@@ -234,8 +234,8 @@ class Player
       @$scrubber.css('background-color', '#999999')
     , 500)
     @duration = Math.floor(r.duration / 1000)
-    if r.title.length > 26 then @$player_title.addClass 'long_title' else @$player_title.removeClass 'long_title'
-    if r.title.length > 50 then r.title = r.title.substring(0, 47) + '...'
+    if r.title?.length > 26 then @$player_title.addClass 'long_title' else @$player_title.removeClass 'long_title'
+    if r.title?.length > 50 then r.title = r.title.substring(0, 47) + '...'
     @$player_title.html r.title
     document.title = r.title + ' - ' + r.show + ' - ' + @app_name
     @$likes_count.html r.likes_count

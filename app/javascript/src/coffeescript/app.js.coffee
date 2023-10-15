@@ -337,11 +337,11 @@ $ ->
 
   # Hover on player title to reveal Like toggle
   $(document).on 'mouseover', '#player_title_container', (e) ->
-    if App.Player.invoked
+    if App.Player.active_track_id
       $('#player_title').css 'display', 'none'
       $('#player_likes_container').css 'display', 'inline-block'
   .on 'mouseout', '#player_title_container', (e) ->
-    if App.Player.invoked
+    if App.Player.active_track_id
       $('#player_likes_container').css 'display', 'none'
       $('#player_title').css 'display', 'block'
 
