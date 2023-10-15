@@ -1,7 +1,8 @@
 #player_container
-  audio
-  #user_controls
 
+  audio
+
+  #user_controls
     - if user_signed_in?
       .btn-group
         a.btn.dropdown-toggle data-toggle='dropdown' href='null'
@@ -19,7 +20,7 @@
 
   #player_controls
     #control_previous
-    #control_playpause role='switch' aria-checked='false'
+    #control_playpause
     #control_next
 
   #scrubber_controls
