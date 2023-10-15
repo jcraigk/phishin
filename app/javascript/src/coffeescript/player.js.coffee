@@ -30,8 +30,8 @@ class Player
     @$scrubber.slider('enable')
     this._updatePlaylistMode()
 
-    # Check for track anchor to scroll to [and play]
-    unless @playlist_mode or this._handleAutoPlayTrack()
+    # Play first track on the page if no audio playing, not a playlist page, and no track slug in URL
+    unless @active_track_id or @playlist_mode or this._handleAutoPlayTrack()
       if track_id = $('.playable_track').first().data('id')
         path_segment = window.location.pathname.split('/')[1]
         this.setCurrentPlaylist track_id if path_segment isnt 'playlist' and path_segment isnt 'play'
@@ -178,19 +178,18 @@ class Player
 
   _handleAutoPlayTrack: ->
     if anchor_name = $('body').attr('data-anchor')
+      console.log("AUTOPLAY")
       $col = $('li[data-track-anchor='+anchor_name+']')
       $col = $('li[data-section-anchor='+anchor_name+']') if $col.length == 0
       if $col.length > 0
         $el = $col.first()
         $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
-        # TODO fix
-        # if not @invoked
-        #   track_id = $el.data 'id'
-        #   this.setCurrentPlaylist track_id
-        #   # console.log('auto play')
-        #   # this.playTrack track_id, @time_marker
-        # else
-        #   $el.addClass 'highlighted_track'
+        unless @active_track_id
+          track_id = $el.data 'id'
+          this.setCurrentPlaylist track_id
+          this.playTrack track_id, @time_marker
+        else
+          $el.addClass 'highlighted_track'
         true
       else
         false
