@@ -267,11 +267,10 @@ class Player
       @$player_detail.html "<a class=\"show_date\" href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"#{r.venue_url}\">#{@Util.truncate(r.venue)}</a>"
 
   _updateMediaSession: (r) ->
-    console.log(r)
     navigator.mediaSession.metadata = new MediaMetadata
       title: r.title,
-      artist: 'Phish',
-      album: r.show,
+      artist: "Phish - #{r.show}",
+      album: "#{r.show} - #{r.venue}",
       artwork: [
         {
           src: 'https://phish.in/static/logo-96.png',
