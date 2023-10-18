@@ -31,6 +31,12 @@ class Player
     this._updatePlaylistMode()
     this._highlightActiveTrack(true)
 
+    # Support next/prev buttons on mobile lock screens
+    navigator.mediaSession.setActionHandler 'previoustrack', =>
+      this.previousTrack()
+    navigator.mediaSession.setActionHandler 'nexttrack', =>
+      this.nextTrack()
+
     # Play first track on the page if no audio playing, not a playlist page, and no track slug in URL
     unless @active_track_id or @playlist_mode or this._handleAutoPlayTrack()
       if track_id = $('.playable_track').first().data('id')
@@ -220,6 +226,7 @@ class Player
       success: (r) =>
         if r.success
           this._updateDisplay r
+          this._updateMediaSession r
           this._loadAndPlayAudio r.mp3_url
         else
           @Util.feedback { alert: "Error retrieving track info" }
@@ -250,6 +257,13 @@ class Player
       @$time_remaining.html '0:00'
     else
       @$player_detail.html "<a class=\"show_date\" href=\"#{r.show_url}\">#{r.show}</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"#{r.venue_url}\">#{@Util.truncate(r.venue)}</a>"
+
+  _updateMediaSession: (r) ->
+    console.log(r)
+    navigator.mediaSession.metadata = new MediaMetadata
+      title: r.title,
+      artist: 'Phish',
+      album: r.show
 
   _updatePlayButton: ->
     if @audioElement.paused
