@@ -9,8 +9,8 @@ class Playlist
 
   constructor: ->
     @Util                   = new Util
-    @Player                 = Player
-    @$save_dialog            = $ '#save_playlist_dialog'
+    @Player                 = new Player
+    @$save_dialog           = $ '#save_playlist_dialog'
     @$save_action_dropdown  = $ '#save_action_dropdown'
     @$save_action_new       = $ '#save_action_new'
     @$save_action_existing  = $ '#save_action_existing'

@@ -532,21 +532,6 @@ html {
     .playlist_active {
       background-position: -17px 0 !important;
     }
-    #player_feedback {
-      width: 50px;
-      margin-top: 52px;
-      float: right;
-      margin-right: 5px;
-      text-align: center;
-      background-color: #edf2b5;
-      -moz-border-radius: 10px;
-      -webkit-border-radius: 10px;
-      border-radius: 10px;
-      padding: 2px 5px 2px 5px;
-      font-size: 12px;
-      font-weight: bold;
-      color: #333;
-    }
     #player_title_container {
       position: absolute;
       margin-left: 280px;
@@ -595,11 +580,6 @@ html {
       & > div {
         float: left;
         margin-right: 5px;
-      }
-      #playpause_tooltip {
-        position: relative;
-        top: 15px;
-        left: 53px;
       }
       #control_playpause {
         border: 1px solid $btn_border;

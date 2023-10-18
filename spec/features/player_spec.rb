@@ -71,11 +71,9 @@ describe 'Player controls', :js do
     end
 
     find_by_id('control_previous').click
-    # TODO: Re-enable this
-    # Not sure why this is failing, but works fine in manual testing
-    # within('#player_title_container') do
-    #   expect_content(show.tracks.second.title)
-    # end
+    within('#player_title_container') do
+      expect_content(show.tracks.second.title)
+    end
   end
 
   # Removed to make space for waveform image
