@@ -36,6 +36,12 @@ class Player
       this.previousTrack()
     navigator.mediaSession.setActionHandler 'nexttrack', =>
       this.nextTrack()
+    navigator.mediaSession.setActionHandler 'play', =>
+      this.togglePause()
+    navigator.mediaSession.setActionHandler 'pause', =>
+      this.togglePause()
+    navigator.mediaSession.setActionHandler 'stop', =>
+      this.togglePause()
 
     # Play first track on the page if no audio playing, not a playlist page, and no track slug in URL
     unless @active_track_id or @playlist_mode or this._handleAutoPlayTrack()
@@ -104,8 +110,10 @@ class Player
     if @active_track_id
       if @audioElement.paused
         @audioElement.play()
+        navigator.mediaSession.playbackState = 'playing'
       else
         @audioElement.pause()
+        navigator.mediaSession.playbackState = 'paused'
       this._updatePlayButton()
     else
       this._playRandomShowOrPlaylist()
@@ -323,6 +331,7 @@ class Player
         # alert('Press play button to listen')
       else
         @audioElement.play()
+        navigator.mediaSession.playbackState = 'playing'
       this._updatePlayButton()
 
 export default Player
