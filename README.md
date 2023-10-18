@@ -17,7 +17,7 @@ Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and developmen
 
 2. Clone the repo to your local machine
 
-4. Download the [Fixtures Pack](https://www.dropbox.com/scl/fi/eqlbsznvzab4y5yjqoqxj/PhishinDevFixtures.zip?rlkey=m4lnamdzgxzp97caa5bnuvh37&dl=0) and unzip it. This file contains a full database export minus users and API keys. It also includes MP3 audio and PNG waveform attachments for the last Baker's Dozen show, which should be browsable and playable via `localhost:3000/2017-08-06` once the local server is running. Additionally it includes MP3s/notes for 2018-12-28 for testing the `rails shows:import` task.
+4. Download the [Fixtures Pack](https://www.dropbox.com/scl/fi/v8f2mpyxasx07tqvcqekl/PhishinDevFixtures.zip?rlkey=kav09ng2o08rcu11fs3sb38dv&dl=0) and unzip it. This file contains a full database export minus users and API keys. It also includes MP3 audio and PNG waveform attachments for the last Baker's Dozen show, which should be browsable and playable via `localhost:3000/2017-08-06` once the local server is running. Additionally it includes MP3s/notes for 2018-12-28 for testing the `rails shows:import` task.
 
 ```bash
 # Copy the SQL dump into PG container and run it
