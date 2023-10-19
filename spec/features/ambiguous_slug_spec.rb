@@ -19,7 +19,7 @@ describe 'Ambiguous slug resolution', :js do
       end
 
       within('#content_box') do
-        expect_content(tour.name)
+        expect_content('Today in History')
       end
 
       items = page.all('ul.item_list li')

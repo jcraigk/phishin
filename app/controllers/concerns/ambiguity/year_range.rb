@@ -15,6 +15,7 @@ module Ambiguity::YearRange
   def hydrate_year_range_page # rubocop:disable Metrics/MethodLength
     @ogp_title = "Listen to shows from #{year1} to #{year2}"
     @shows = shows_during_year_range
+    apply_shows_tag_filter
     @sections =
       @shows.group_by(&:tour_name)
             .each_with_object({}) do |(tour, shows), sections|

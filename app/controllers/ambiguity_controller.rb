@@ -20,6 +20,12 @@ class AmbiguityController < ApplicationController
 
   private
 
+  def apply_shows_tag_filter
+    @all_shows = @shows
+    return if params[:tag_slug].blank? || params[:tag_slug] == 'all'
+    @shows = @shows.tagged_with(params[:tag_slug])
+  end
+
   def validate_sorting_for_tracks
     params[:sort] = 'shows.date desc' unless
       params[:sort].in?(['title', 'shows.date desc', 'shows.date asc', 'likes', 'duration'])

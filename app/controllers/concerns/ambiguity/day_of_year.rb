@@ -6,6 +6,7 @@ module Ambiguity::DayOfYear
 
     validate_sorting_for_shows
     fetch_shows_on_day_of_year
+    apply_shows_tag_filter
     hydrate_day_of_year
 
     true
@@ -31,13 +32,12 @@ module Ambiguity::DayOfYear
   end
 
   def day_of_year_sections
-    @shows.group_by(&:tour_name)
-          .each_with_object({}) do |(tour, shows), sections|
-            sections[tour] = {
-              shows:,
-              likes: user_likes_for_shows(shows)
-            }
-          end
+    {
+      'Today in History' => {
+        shows: @shows,
+        likes: user_likes_for_shows(@shows)
+      }
+    }
   end
 
   def month

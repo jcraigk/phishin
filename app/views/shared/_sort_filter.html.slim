@@ -1,7 +1,8 @@
-h3
-  |> Sort by
+.filter_label Sort
+.filter_dropdown
   .btn-group
     button.btn.btn-default.dropdown-toggle type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'
-      => sort_filter_link_title(item_hash)
+      => filter_title(:sort, item_hash)
       span.caret
-    ul.dropdown-menu = sort_filter(item_hash)
+    ul.dropdown-menu = filter(:sort, item_hash)
+= clear_both

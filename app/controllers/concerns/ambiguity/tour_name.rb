@@ -19,6 +19,7 @@ module Ambiguity::TourName
   def hydrate_tour_page
     @ogp_title = "Listen to shows from #{tour.name}"
     @shows = tour.shows.order(@order_by)
+    apply_shows_tag_filter
     @shows_likes = user_likes_for_shows(@shows)
     @sections = tour_sections
     @title = tour.name

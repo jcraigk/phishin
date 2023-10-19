@@ -28,7 +28,7 @@ module FeatureHelpers
 
     # Default sort by Reverse date
     within('#title_box') do
-      expect_content('Sort by', 'Reverse Date')
+      expect_content('Sort', 'Reverse Date')
     end
     expect_content_in_order(titles_by_date.reverse)
 
@@ -36,7 +36,7 @@ module FeatureHelpers
     within('#title_box') do
       first('.dropdown-toggle').click
       click_link('Date')
-      expect_content('Sort by', 'Date')
+      expect_content('Sort', 'Date')
     end
     expect_content_in_order(titles_by_date)
 
@@ -44,7 +44,7 @@ module FeatureHelpers
     within('#title_box') do
       first('.dropdown-toggle').click
       click_link('Likes')
-      expect_content('Sort by', 'Likes')
+      expect_content('Sort', 'Likes')
     end
     expect_content_in_order(titles_by_likes)
 
@@ -52,7 +52,7 @@ module FeatureHelpers
     within('#title_box') do
       first('.dropdown-toggle').click
       click_link('Duration')
-      expect_content('Sort by', 'Duration')
+      expect_content('Sort', 'Duration')
     end
     expect_content_in_order(titles_by_duration)
   end
@@ -64,7 +64,7 @@ module FeatureHelpers
 
     # Default sort by Reverse date
     within('#title_box') do
-      expect_content('Sort by', 'Reverse Date')
+      expect_content('Sort', 'Reverse Date')
     end
     expect_content_in_order(dates_by_date.reverse)
 
@@ -72,7 +72,7 @@ module FeatureHelpers
     within('#title_box') do
       first('.dropdown-toggle').click
       click_link('Date')
-      expect_content('Sort by', 'Date')
+      expect_content('Sort', 'Date')
     end
     expect_content_in_order(dates_by_date)
 
@@ -80,7 +80,7 @@ module FeatureHelpers
     within('#title_box') do
       first('.dropdown-toggle').click
       click_link('Likes')
-      expect_content('Sort by', 'Likes')
+      expect_content('Sort', 'Likes')
     end
     expect_content_in_order(dates_by_likes)
 
@@ -88,7 +88,7 @@ module FeatureHelpers
     within('#title_box') do
       first('.dropdown-toggle').click
       click_link('Duration')
-      expect_content('Sort by', 'Duration')
+      expect_content('Sort', 'Duration')
     end
     expect_content_in_order(dates_by_duration)
   end
