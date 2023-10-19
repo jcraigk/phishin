@@ -10,8 +10,8 @@ class WaveformImageGenerator
     extract_waveform_data
     generate_waveform_image
     track.update!(
-      waveform_max: data.max,
-      waveform_image: File.open(tmp_image)
+      # waveform_max: data.max, # TODO: Re-enable or remove
+      waveform_png: File.open(tmp_image)
     )
     remove_temp_files
   end
@@ -35,8 +35,8 @@ class WaveformImageGenerator
       method: :peak,
       width: 500,
       height: 70,
-      color: :transparent,
-      background_color: '#f2f3f5',
+      color: '#999999',
+      background_color: :transparent,
       force: true
     }
   end
