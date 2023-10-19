@@ -10,7 +10,6 @@ class WaveformImageGenerator
     extract_waveform_data
     generate_waveform_image
     track.update!(
-      waveform_data: data,
       waveform_max: data.max,
       waveform_image: File.open(tmp_image)
     )

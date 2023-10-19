@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_24_070950) do
+ActiveRecord::Schema[7.1].define(version: 2023_10_19_051213) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -201,7 +201,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_24_070950) do
     t.integer "jam_starts_at_second"
     t.text "audio_file_data"
     t.text "waveform_image_data"
-    t.json "waveform_data"
     t.float "waveform_max"
     t.index ["jam_starts_at_second"], name: "index_tracks_on_jam_starts_at_second"
     t.index ["likes_count"], name: "index_tracks_on_likes_count"
