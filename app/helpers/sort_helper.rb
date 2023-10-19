@@ -53,7 +53,7 @@ module SortHelper
   def show_sort_items
     {
       '<i class="glyphicon glyphicon-time"></i> Reverse Date' => 'date desc',
-      '<i class="glyphicon glyphicon-time"></i> Date' => 'date',
+      '<i class="glyphicon glyphicon-time"></i> Date' => 'date asc',
       '<i class="glyphicon glyphicon-heart"></i> Likes' => 'likes',
       '<i class="glyphicon glyphicon-forward"></i> Duration' => 'duration'
     }

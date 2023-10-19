@@ -17,17 +17,17 @@ module Ambiguity::TourName
   end
 
   def hydrate_tour_page
-    @ogp_title = "Listen to shows from #{@tour.name}"
-    @shows = @tour.shows.sort_by(&:date).reverse
+    @ogp_title = "Listen to shows from #{tour.name}"
+    @shows = tour.shows.order(@order_by)
     @shows_likes = user_likes_for_shows(@shows)
-    @sections = sections
-    @title = @tour.name
+    @sections = tour_sections
+    @title = tour.name
     @view = 'shows/index'
   end
 
-  def sections
+  def tour_sections
     {
-      @tour.name => {
+      tour.name => {
         shows: @shows,
         likes: @shows_likes
       }
