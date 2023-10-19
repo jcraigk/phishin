@@ -302,6 +302,7 @@ html {
       .current {
         color: $nav_highlight !important;
         font-weight: bold !important;
+        margin-right: 3px;
       }
       a:hover, a:focus {
         text-decoration: underline !important;
@@ -1086,7 +1087,6 @@ html {
     width: 100%;
     border-bottom: 1px solid $hr_gray;
     margin-top: 10px;
-    margin-bottom: 5px;
   }
   .next_item_link {
     float: right;
@@ -1144,6 +1144,19 @@ html {
       &.other_names {
         font-size: 18px;
       }
+    }
+    .filter_label {
+      float: left;
+      width: 30px;
+      position: relative;
+      top: 7px;
+      font-size: 1.2em;
+    }
+    .filter_dropdown {
+      float: left;
+    }
+    .hr {
+      margin-bottom: 15px;
     }
     .app_callout {
       * {
@@ -1370,6 +1383,9 @@ html {
 
         &.width-200 {
           width: 200px;
+        }
+        &.narrow-140 {
+          width: 140px;
         }
         &.narrow {
           width: 120px;

@@ -55,7 +55,7 @@ describe 'Songs', :js do
 
     # Default sort by Title
     within('#title_box') do
-      expect_content('Sort by', 'Title')
+      expect_content('Sort', 'Title')
     end
     expect_content_in_order([song1, song2, song3].map(&:title))
 
@@ -63,7 +63,7 @@ describe 'Songs', :js do
     within('#title_box') do
       first('.btn-group').click
       click_link('Track Count')
-      expect_content('Sort by', 'Track Count')
+      expect_content('Sort', 'Track Count')
     end
     expect_content_in_order([song2, song1, song3].map(&:title))
   end

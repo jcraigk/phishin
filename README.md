@@ -20,7 +20,7 @@ Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and developmen
 4. Download the [Fixtures Pack](https://www.dropbox.com/scl/fi/s822to1wv8y7ra3l3pao1/PhishinDevFixtures.zip?rlkey=t1us9qzosl941hak2msujcfuy&dl=0) and unzip it. This file contains a full database export minus users and API keys. It also includes MP3 audio and PNG waveform attachments for the last Baker's Dozen show, which should be browsable and playable via `localhost:3000/2017-08-06` once the local server is running. Additionally it includes MP3s/notes for 2018-12-28 for testing the `rails shows:import` task.
 
 ```bash
-# Copy the SQL dump into PG container and run it
+# Copy SQL dump into PG container and run it
 docker cp /path/to/phishin_for_devs.sql phishin_pg_1:/docker-entrypoint-initdb.d/dump.sql
 docker exec -u postgres phishin_pg_1 psql phishin postgres -f docker-entrypoint-initdb.d/dump.sql
 ```

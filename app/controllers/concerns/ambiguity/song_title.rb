@@ -16,11 +16,19 @@ module Ambiguity::SongTitle
     @next_song = next_song
     @view = 'songs/show'
     @ambiguity_controller = 'songs'
-    @tracks = song.tracks
-                  .includes(:songs, show: :venue, track_tags: :tag)
-                  .order(@order_by)
-                  .paginate(page: params[:page], per_page: params[:per_page].presence || 20)
+    @tracks = fetch_song_tracks
     @tracks_likes = user_likes_for_tracks(@tracks)
+  end
+
+  def fetch_song_tracks
+    tracks = song.tracks.includes(:songs, show: :venue, track_tags: :tag).order(@order_by)
+    tracks = tagged_tracks(tracks)
+    tracks.paginate(page: params[:page], per_page: params[:per_page].presence || 20)
+  end
+
+  def tagged_tracks(tracks)
+    return tracks if params[:tag_slug].blank? || params[:tag_slug] == 'all'
+    tracks.tagged_with(params[:tag_slug])
   end
 
   def previous_song

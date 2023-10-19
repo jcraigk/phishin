@@ -15,10 +15,14 @@
     - if @song.instrumental?
       h3 (Instrumental)
 
-    h3 Total tracks: #{@song.tracks.size}
+    h3 Total tracks: #{@tracks.size}
 
     .hr
-    br
+
+    = render partial: 'shared/sort_filter', locals: { item_hash: track_sort_items }
+    = render partial: 'shared/tag_filter', locals: { item_hash: song_track_tag_items(@song) }
+
+    .hr
 
     - if @song.lyrics.present?
       = link_to "#{tag.i(class: 'glyphicon glyphicon-book')} &nbsp;Lyrics".html_safe, '#', class: 'song_lyrics btn btn-default', data: { title: @song.title, lyrics: lyrics_for(@song) }
@@ -32,10 +36,6 @@
     button#random_song_track_btn.btn type='button' data-song-id=@song.id
       i.glyphicon.glyphicon-play
       | &nbsp;Random Track
-
-    .hr
-
-    = render partial: 'shared/sort_filter', locals: { item_hash: track_sort_items }
 
     .hr
 

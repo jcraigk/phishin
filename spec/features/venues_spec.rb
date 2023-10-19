@@ -58,7 +58,7 @@ describe 'Venues', :js do
 
     # Default sort by Name
     within('#title_box') do
-      expect_content('Sort by', 'Name')
+      expect_content('Sort', 'Name')
     end
     expect_content_in_order([venue1, venue2, venue3].map(&:name))
 
@@ -66,7 +66,7 @@ describe 'Venues', :js do
     within('#title_box') do
       first('.btn-group').click
       click_link('Show Count')
-      expect_content('Sort by', 'Show Count')
+      expect_content('Sort', 'Show Count')
     end
     expect_content_in_order([venue3, venue1, venue2].map(&:name))
   end

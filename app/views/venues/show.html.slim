@@ -13,6 +13,8 @@
     .hr
 
     = render partial: 'shared/sort_filter', locals: { item_hash: show_sort_items }
+    = render partial: 'shared/tag_filter', locals: { item_hash: shows_tag_items(@venue.shows) }
+
     .hr
 
     = link_to('<< Previous Venue'.html_safe, "/#{@previous_venue.slug}")
@@ -35,6 +37,7 @@
             = likable(show, @shows_likes[idx], 'small')
             h3 = duration_readable(show.duration, 'letters')
             = render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false }
+            = display_tag_instances(show.show_tags)
             = clear_both
 
   = clear_both
