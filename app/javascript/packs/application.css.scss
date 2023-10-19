@@ -509,8 +509,6 @@ html {
           position: absolute;
           width: 440px;
           height: 70px;
-          background-image: none; //Override jquery UI CSS
-          background-color: transparent;
           cursor: pointer;
           margin-left: 30px;
           border: none;
@@ -526,9 +524,9 @@ html {
           border: none;
         }
         .ui-slider-range {
-          background-image: none;
           background: url('../images/progress-bar.png');
           border-radius: 0px;
+          z-index: 100 !important;
         }
       }
       #time_elapsed {

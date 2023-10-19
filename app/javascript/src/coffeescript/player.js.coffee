@@ -247,9 +247,9 @@ class Player
     @$scrubber.css('background-color', 'transparent')
     @$scrubber.css('opacity', 0)
     @$waveform.css('background-image', "url(#{r.waveform_image_url})")
+    $('.ui-slider-range').css('mask-image', "url(#{r.waveform_image_url})")
     setTimeout( =>
       @$scrubber.animate({ opacity: 1 }, { duration: 1000 });
-      @$scrubber.css('background-color', '#999999')
     , 500)
     @duration = Math.floor(r.duration / 1000)
     if r.title?.length > 26 then @$player_title.addClass 'long_title' else @$player_title.removeClass 'long_title'
