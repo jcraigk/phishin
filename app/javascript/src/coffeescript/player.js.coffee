@@ -50,6 +50,9 @@ class Player
         this.setCurrentPlaylist track_id if path_segment isnt 'playlist' and path_segment isnt 'play'
         this.playTrack track_id
 
+  currentPosition: ->
+    if @active_track_id then @audioElement.currentTime else 0
+
   _updateProgress: ->
     unless @scrubbing or @duration == 0
       unless isNaN @duration
