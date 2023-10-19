@@ -17,7 +17,7 @@ Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and developmen
 
 2. Clone the repo to your local machine
 
-4. Download the [Fixtures Pack](https://www.dropbox.com/scl/fi/v8f2mpyxasx07tqvcqekl/PhishinDevFixtures.zip?rlkey=kav09ng2o08rcu11fs3sb38dv&dl=0) and unzip it. This file contains a full database export minus users and API keys. It also includes MP3 audio and PNG waveform attachments for the last Baker's Dozen show, which should be browsable and playable via `localhost:3000/2017-08-06` once the local server is running. Additionally it includes MP3s/notes for 2018-12-28 for testing the `rails shows:import` task.
+4. Download the [Fixtures Pack](https://www.dropbox.com/scl/fi/s822to1wv8y7ra3l3pao1/PhishinDevFixtures.zip?rlkey=t1us9qzosl941hak2msujcfuy&dl=0) and unzip it. This file contains a full database export minus users and API keys. It also includes MP3 audio and PNG waveform attachments for the last Baker's Dozen show, which should be browsable and playable via `localhost:3000/2017-08-06` once the local server is running. Additionally it includes MP3s/notes for 2018-12-28 for testing the `rails shows:import` task.
 
 ```bash
 # Copy the SQL dump into PG container and run it
@@ -25,7 +25,7 @@ docker cp /path/to/phishin_for_devs.sql phishin_pg_1:/docker-entrypoint-initdb.d
 docker exec -u postgres phishin_pg_1 psql phishin postgres -f docker-entrypoint-initdb.d/dump.sql
 ```
 
-5. Create a folder named `content` in your local `phishin` folder to store mp3s, pngs, etc. Place the `tracks` and `import` folders from the Fixtures Pack inside the `content` folder. Symlink it to your public folder: `ln -s ./content/tracks/audio_files public/audio`. If you run Rails outside Docker, set its location as `APP_CONTENT_PATH` in `.env`.
+5. Create a folder named `content` in the local project folder. Place the `tracks` and `import` folders from the Fixtures Pack inside. Symlink the `tracks/audio_files` folder as `audio` in your public folder: `ln -s ./content/tracks/audio_files public/audio`. If you run Rails outside Docker, set `APP_CONTENT_PATH` in `.env` as the absolute path to your `content` folder.
 
 6. If you want to run the Postgres database in Docker and develop the app natively (recommended), you can spin it up like this:
 

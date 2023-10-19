@@ -4,8 +4,11 @@ class ShowImporter::Cli
   attr_reader :orch
 
   def initialize(date)
+    puts "Preparing #{date}"
+
     @orch = ShowImporter::Orchestrator.new(date)
     ShowImporter::TrackReplacer.new(date) && return if orch.show_found
+
     repl
   end
 
@@ -147,6 +150,7 @@ class ShowImporter::Cli
     main_menu
     while (line = Readline.readline('↪ ', true))
       process(line)
+      break if line.in?(%w[s x])
     end
   end
 
@@ -170,9 +174,6 @@ class ShowImporter::Cli
       main_menu
     when 's'
       orch.save
-      exit
-    when 'x'
-      exit
     end
   end
 end

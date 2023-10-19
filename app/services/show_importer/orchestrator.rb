@@ -171,7 +171,7 @@ class ShowImporter::Orchestrator
   end
 
   def success
-    puts "✅ #{show.date} imported"
+    puts "✅ #{show.date} imported\n\n"
   end
 
   def populate_tracks
