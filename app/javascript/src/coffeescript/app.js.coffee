@@ -425,13 +425,14 @@ $ ->
 
   # View Lyrics button opens a dialog
   .on 'click', '.song_lyrics', ->
-    $('#lyrics_dialog').attr('title', $(this).data('title'))
+    $('#lyrics_dialog').dialog('option', 'title', $(this).data('title'))
     $('#lyrics_content').html $(this).data('lyrics')
     $('#lyrics_dialog').dialog('open')
 
   # Tag instance click opens a dialog
   .on 'click', '.tag_label:not(.no-dialog)', ->
-    $('#tag_dialog').attr('title', $(this).data('detail-title'))
+    console.log($(this).attr('title'))
+    $('#tag_dialog').dialog('option', 'title', $(this).data('title'))
     $('#tag_detail').html $(this).data('detail')
     $('#tag_dialog').dialog('open')
 

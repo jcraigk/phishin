@@ -15,28 +15,19 @@ module TagHelper
   def tag_stack_label(tag_stack) # rubocop:disable Metrics/MethodLength
     tag_instances = tag_stack.second.sort_by { |t| t.try(:starts_at_second) || 0 }
     first_instance = tag_instances.first
+    title = stack_title(tag_instances)
     link_to '#' do
       tag.span(
-        stack_title(tag_instances),
+        title,
         class: 'label tag_label',
-        title: tooltip_for_tag_stack(tag_instances),
         style: "background-color: #{first_instance.tag.color}",
+        title: tooltip_for_tag_stack(tag_instances),
         data: {
           html: true,
-          detail_title: detail_title(tag_instances),
+          title:, # Dialog headers
           detail: tooltip_for_tag_stack(tag_instances, detail: true)
         }
       )
-    end
-  end
-
-  def detail_title(tag_instances)
-    tag_instance = tag_instances.first
-    if tag_instance.is_a?(TrackTag)
-      "#{tag_label(tag_instance.tag, 'detail_tag_label')}" \
-        "<br>#{tag_instance.track.show.date_with_dots} #{tag_instance.track.title}"
-    else
-      "#{tag_label(tag_instance.tag, 'detail_tag_label')}<br>#{tag_instance.show.date_with_dots}"
     end
   end
 
@@ -58,41 +49,40 @@ module TagHelper
     title = ''
 
     tag_instances.each_with_index do |t, idx|
-      title += tag_notes(t, detail:)
+      title += tag_notes(t)
       title += transcript_or_link(t, title) if detail
-      title += '<br>' unless idx == tag_instances.size - 1
+      break if idx == tag_instances.size - 1
+      title += (detail ? '<br>' : ', ')
     end
 
     title = tag_instances.first.tag.description if title.blank?
     title
   end
 
-  def tag_notes(tag_instance, detail:)
+  def tag_notes(tag_instance)
     return '' if tag_instance.notes.blank?
     str = tag_instance.notes
-    str += " #{time_range(tag_instance, detail:)}"
+    str += " #{time_range(tag_instance)}"
     str.strip
   end
 
   def transcript_or_link(tag_instance, title)
     return '' if tag_instance.try(:transcript).blank?
     str = '<br><br>' if title.present?
-    str + "<strong>TRANSCRIPT</strong><br><br> #{tag_instance.transcript.gsub("\n", '<br>')}"
+    str + "<strong>Transcript</strong><br><br> #{tag_instance.transcript.gsub("\n", '<br>')}"
   end
 
-  def time_range(tag_instance, detail:) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  def time_range(tag_instance)
     return unless start_timestamp(tag_instance) || end_timestamp(tag_instance)
 
     starts_at = start_timestamp(tag_instance)
-    url = "/#{tag_instance.track.show.date}/#{tag_instance.track.slug}?t=#{starts_at}"
     if start_timestamp(tag_instance) && end_timestamp(tag_instance)
       range = "#{starts_at} and #{end_timestamp(tag_instance)}"
-      str = 'between '
-      str += detail ? link_to(range, url) : range
+      str = "between #{range}"
     elsif start_timestamp(tag_instance)
-      str = 'at '
-      str += detail ? link_to(starts_at, url) : starts_at
+      str = "at #{starts_at}"
     end
+
     str
   end
 

@@ -61,6 +61,29 @@ $scrubbing: #1a80f6;
   0%   { box-shadow: 0 0 5px $highlight1; }
   100% { box-shadow: 0 0 35px $highlight1; }
 }
+
+.ui-tooltip {
+  font-family: 'Open Sans Condensed', sans-serif;
+  background: $gray_70;
+  color: $background_gray;
+  border-radius: 5px;
+}
+.ui-dialog {
+  background: $gray_70;
+  border-radius: 5px;
+
+  .ui-dialog-titlebar {
+    background: $gray_80;
+    border: none;
+    color: $background_gray;
+    font-size: 1.5em;
+    line-height: 1.2em;
+  }
+  .ui-dialog-content {
+    font-family: 'Open Sans Condensed', sans-serif;
+    color: $background_gray
+  }
+}
 .tagin_project {
   p, li {
     font-size: 20px;
@@ -1071,8 +1094,6 @@ html {
     top: -20px;
   }
   #search_results_container {
-    position: relative;
-    top: -20px;
 
     & > h2 {
       font-size: 24px;
