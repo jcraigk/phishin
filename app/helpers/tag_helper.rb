@@ -68,6 +68,7 @@ module TagHelper
 
   def transcript_or_link(tag_instance, title)
     return '' if tag_instance.try(:transcript).blank?
+    str = ''
     str = '<br><br>' if title.present?
     str + "<strong>Transcript</strong><br><br> #{tag_instance.transcript.gsub("\n", '<br>')}"
   end
