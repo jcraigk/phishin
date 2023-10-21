@@ -4,8 +4,8 @@
   #playlist_data data-id=session['playlist']['id'] data-name=session['playlist']['name'] data-slug=session['playlist']['slug'] data-user-id=session['playlist']['user_id'] data-username=session['playlist']['username']
 
   #title_box
-    h1.playlist_title = session['playlist']['id'].positive? ? session['playlist'][:name] : '(Untitled Playlist)'
-    - if session['playlist']['id'].positive?
+    h1.playlist_title = session['playlist']['id']&.positive? ? session['playlist'][:name] : '(Untitled Playlist)'
+    - if session['playlist']['id']&.positive?
       h3 Author: #{session['playlist']['username']}
     h3#active_playlist_tracks_label Tracks: #{@tracks.size}
     h3#active_playlist_duration_label Length: #{duration_readable(@duration, 'letters')}
@@ -22,7 +22,7 @@
     br
 
     - if user_signed_in?
-      - if session['playlist']['id'].positive? && session['playlist']['user_id'] != current_user.id
+      - if session['playlist']['id']&.positive? && session['playlist']['user_id'] != current_user.id
         button#duplicate_playlist_btn.btn type='button'
           i.glyphicon.glyphicon-file
           |  DUPLICATE
@@ -34,7 +34,7 @@
           |  SAVE
         br
 
-      - if session['playlist']['id'].positive?
+      - if session['playlist']['id']&.positive?
         - if current_user.id == session['playlist']['user_id']
           button#delete_playlist_btn.btn type='button'
             i.glyphicon.glyphicon-remove

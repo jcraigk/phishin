@@ -22,7 +22,7 @@ class PlaylistsController < ApplicationController
 
     track_ids = session['playlist']['tracks']
     tracks_by_id = Track.where(id: track_ids).includes(:show, track_tags: :tag).index_by(&:id)
-    @tracks = track_ids.map { |id| tracks_by_id[id] }
+    @tracks = track_ids&.map { |id| tracks_by_id[id] } || []
     @tracks_likes = user_likes_for_tracks(@tracks)
     @duration = @tracks&.sum(&:duration)
     @stored = Playlist.where(user: current_user).order(name: :asc) if current_user
