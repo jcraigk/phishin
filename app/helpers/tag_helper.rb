@@ -61,7 +61,7 @@ module TagHelper
 
   def tag_notes(tag_instance)
     return '' if tag_instance.notes.blank?
-    str = tag_instance.notes
+    str = CGI.unescapeHTML(tag_instance.notes)
     str += " #{time_range(tag_instance)}"
     str.strip
   end

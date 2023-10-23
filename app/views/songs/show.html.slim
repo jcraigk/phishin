@@ -58,7 +58,7 @@
             = display_tag_instances(track.track_tags)
             = clear_both
 
-    - if @tracks.total_pages > 1
+    - if @tracks.present? && @tracks.total_pages > 1
       = will_paginate_simple @tracks
       .single_page = single_page_link
 
