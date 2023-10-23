@@ -28,19 +28,6 @@ $highlight3: #cbebf2;
 $highlight4: #fff494;
 $scrubbing: #1a80f6;
 
-@keyframes rotateCounterClockwise {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-.spinner {
-  animation: rotateCounterClockwise 3s linear infinite;
-  font-size: 7em;
-}
-
 @keyframes pulsate-highlight {
   0%   { background: $background_gray; }
   100%  { background: $highlight4; }
@@ -61,7 +48,19 @@ $scrubbing: #1a80f6;
   0%   { box-shadow: 0 0 5px $highlight1; }
   100% { box-shadow: 0 0 35px $highlight1; }
 }
-
+@keyframes rotateClockwise {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.spinner {
+  animation: rotateClockwise 3s linear infinite;
+  font-size: 7em;
+  color: $gray_70;
+}
 .ui-tooltip {
   font-family: 'Open Sans Condensed', sans-serif;
   background: $gray_70;
