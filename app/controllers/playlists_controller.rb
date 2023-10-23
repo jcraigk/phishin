@@ -133,16 +133,17 @@ class PlaylistsController < ApplicationController
   end
 
   def add_track
-    if session['playlist']['tracks'].include?(params[:track_id].to_i)
+    return if (tracks = session['playlist']['tracks']).nil?
+
+    if tracks.include?(params[:track_id].to_i)
       return render json: { success: false, msg: 'Track already in playlist' }
     end
 
-    if session['playlist']['tracks'].size > 99
+    if tracks.size > 99
       msg = "Playlists are limited to #{Playlist::MAX_TRACKS} tracks"
       render json: { success: false, msg: }
     elsif (track = Track.find(params[:track_id]))
       session['playlist']['tracks'] << track.id
-      session['playlist']['shuffled_tracks'].size
       num_tracks = session['playlist']['tracks'].size
       session['playlist']['shuffled_tracks'].insert(rand(0..num_tracks), track.id)
       render json: { success: true }
