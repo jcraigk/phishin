@@ -222,11 +222,6 @@ class Waveform
 
     # Returns the peak voltage reached on the given channel in the given collection
     # of frames.
-    #
-    # TODO: Could lose some resolution and only sample every other frame, would
-    # likely still generate the same waveform as the waveform is so comparitively
-    # low resolution to the original input (in most cases), and would increase
-    # the analyzation speed (maybe).
     def channel_peak(frames, channel = 0)
       peak = 0.0
       frames.each do |frame|

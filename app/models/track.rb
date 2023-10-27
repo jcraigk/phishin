@@ -10,7 +10,6 @@ class Track < ApplicationRecord
   include AudioFileUploader::Attachment(:audio_file)
   validates :audio_file, presence: true
 
-  include WaveformImageUploader::Attachment(:waveform_image)
   include WaveformPngUploader::Attachment(:waveform_png)
 
   include PgSearch::Model

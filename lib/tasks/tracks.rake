@@ -34,23 +34,6 @@ namespace :tracks do
     pbar.finish
   end
 
-  desc 'Delete legacy `waveform_image`s from Tracks'
-  task delete_legacy_waveforms: :environment do
-    relation = Track.where.not(waveform_image_data: nil)
-    pbar = ProgressBar.create(
-      total: relation.size,
-      format: '%a %B %c/%C %p%% %E'
-    )
-
-    relation.find_each do |track|
-      track.waveform_image = nil
-      track.save!
-      pbar.increment
-    end
-
-    pbar.finish
-  end
-
   desc 'Check for the same file being used for second occurrence of song within a show'
   task find_dupe_filenames: :environment do
     show_list = []
