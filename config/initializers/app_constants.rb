@@ -24,7 +24,10 @@ IMPORT_DIR = "#{APP_CONTENT_PATH}/import".freeze
 
 APP_BASE_URL =
   if Rails.env.in?(%w[development test])
-    'http://localhost:3000'
+    web_host = ENV.fetch('WEB_HOST', nil)
+    protocol = web_host ? 'https' : 'http'
+    host = web_host || 'localhost:3000'
+    "#{protocol}://#{host}"
   else
     'https://phish.in'
   end
