@@ -508,8 +508,6 @@ html {
           position: absolute;
           width: 440px;
           height: 70px;
-          background-image: none; // TODO
-          background-color: transparent; // TODO
           cursor: pointer;
           margin-left: 30px;
           border: none;
@@ -525,10 +523,9 @@ html {
           border: none;
         }
         .ui-slider-range {
-          background-image: none; // TODO
           background: url('../images/progress-bar.png');
           border-radius: 0px;
-          // z-index: 100 !important; TODO
+          z-index: 100 !important;
         }
       }
       #time_elapsed {
