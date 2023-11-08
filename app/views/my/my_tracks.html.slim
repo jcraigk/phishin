@@ -17,7 +17,7 @@
         - @tracks.each_with_index do |track, idx|
           li.playable_track data-id=track.id
             h2.wide
-              a href="/#{track.show.date}/#{track.slug}" = truncate(track.title, length: 44)
+              a href="/#{track.show.date}/#{track.slug}" = track.title
             h5
               a.narrow href="/#{track.show.date}" = track.show.date_with_dots
             = likable(track, @tracks_likes[idx], 'small')

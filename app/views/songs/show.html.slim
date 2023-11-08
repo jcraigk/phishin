@@ -50,9 +50,9 @@
             h2
               a href="/#{track.show.date}/#{track.slug}" = show_link_title(track.show, show_abbrev: false)
             h2.wide-180
-              a href="/#{track.show.venue.slug}" = truncate(track.show.venue_name, length: 35)
+              a href="/#{track.show.venue.slug}" = track.show.venue_name
             h5.narrow
-              a href="/map?map_term=#{CGI.escape(track.show.venue.location)}" = truncate(track.show.venue.location, length: 20)
+              a href="/map?map_term=#{CGI.escape(track.show.venue.location)}" = track.show.venue.location
             = likable(track, @tracks_likes[idx], 'small')
             h3 = duration_readable(track.duration)
             = display_tag_instances(track.track_tags)

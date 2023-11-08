@@ -17,7 +17,7 @@
         li.playable_track data-id=track.id
           h2.position_num = idx + 1
           h2.wider
-            a href="/#{track.show.date}/#{track.slug}" = truncate(track.title, length: 44)
+            a href="/#{track.show.date}/#{track.slug}" = track.title
           h5.narrow
             a href="/#{track.show.date}" = track.show.date_with_dots
           = likable(track, @tracks_likes[idx], 'small')

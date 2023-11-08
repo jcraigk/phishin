@@ -14,7 +14,7 @@
       - @venues.each do |venue|
         li
           h2.wider
-            a href="/#{venue.slug}" = truncate(venue.name, length: 45)
+            a href="/#{venue.slug}" = venue.name
           h5
             a href="/map?map_term=#{CGI.escape(venue.location)}&amp;distance=5" = venue.location
           h3.alt = pluralize(venue.shows_count, 'show')

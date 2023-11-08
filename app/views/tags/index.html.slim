@@ -26,7 +26,7 @@
             h2
               a href="/tags/#{tag.slug}"
                 .tag_container_small = tag_label(tag, 'no-dialog')
-            h2.wider.small-font = truncate(tag.description, length: 70)
+            h2.wider.small-font = tag.description
             h3.alt = tag.tracks_count.positive? ? pluralize_with_delimiter(tag.tracks_count, 'track') : ''
             h3.alt = tag.shows_count.positive? ? pluralize_with_delimiter(tag.shows_count, 'show') : ''
             = clear_both

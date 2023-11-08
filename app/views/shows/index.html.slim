@@ -27,9 +27,9 @@
             li
               h2 = link_to_show(show, show_abbrev: false)
               h5.small-font.narrow-140
-                a href="/#{show.venue.slug}" = truncate(show.venue_name, length: 45)
+                a href="/#{show.venue.slug}" = show.venue_name
               h5.small-font.narrow-140
-                a href="/map?map_term=#{CGI.escape(show.venue.location)}" = truncate(show.venue.location, length: 25)
+                a href="/map?map_term=#{CGI.escape(show.venue.location)}" = show.venue.location
               = likable(show, props[:likes][idx], 'small')
               h3 = duration_readable(show.duration, 'letters')
               = render partial: 'shared/context_menu_for_show', locals: { show: show, viewing_this_show: false }
