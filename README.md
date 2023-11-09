@@ -4,7 +4,7 @@
 
 **Phish.in** is an open source archive of live Phish audience recordings.
 
-**Ruby on Rails** and **PostgreSQL** are used on the backend. There's a web frontend (https://phish.in) for browsing and playing audio content as well as a public REST-ish API (https://phish.in/api-docs).
+**Ruby on Rails** and **PostgreSQL** are used on the backend. There's a [web frontend](https://phish.in) for browsing and playing audio content as well as a [public API](https://phish.in/api-docs) for accessing content programmatically.
 
 All audio is provided in MP3 format; more formats and sources may be made available at a later time. Files are served directly from the web server and cached via CloudFlare CDN.
 
