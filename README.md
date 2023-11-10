@@ -35,7 +35,7 @@ bundle
 bundle exec rails s
 ```
 
-If you are on a Mac M1 and the `ruby-audio` gem fails to install, try the following:
+If you are on a Mac ARM and the `ruby-audio` gem fails to install, try the following:
 
 ```
 brew install libsndfile
