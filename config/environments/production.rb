@@ -1,6 +1,7 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
+
   # Code is not reloaded between requests
   config.cache_classes = true
 
@@ -14,6 +15,9 @@ Rails.application.configure do
   # Specifies the header that your server uses for sending files
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for apache
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
+
+  # Disable random ActionDispatch::RemoteIp::IpSpoofAttackError errors when deployed
+  config.action_dispatch.ip_spoofing_check = false
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
