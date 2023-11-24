@@ -319,9 +319,9 @@ class PlaylistsController < ApplicationController
   end
 
   def init_session
-    return if session['playlist'].is_a?(Hash) # Ease into new session format
+    return if EMPTY_PLAYLIST.keys.all? { |key| session['playlist']&.key?(key) }
     session['playlist'] = EMPTY_PLAYLIST.dup
-    session['playlist'] = session['playlist'].with_indifferent_access
+    session['playlist'] = session['playlist']
   end
 
   def shuffle_tracks
