@@ -319,9 +319,8 @@ class PlaylistsController < ApplicationController
   end
 
   def init_session
-    return if EMPTY_PLAYLIST.keys.all? { |key| session['playlist']&.key?(key) }
-    session['playlist'] = EMPTY_PLAYLIST.dup
-    session['playlist'] = session['playlist']
+    return if EMPTY_PLAYLIST.keys.map(&:to_s).all? { |key| session['playlist']&.key?(key) }
+    session['playlist'] = EMPTY_PLAYLIST.stringify_keys.dup
   end
 
   def shuffle_tracks
