@@ -68,19 +68,15 @@ $scrubbing: #1a80f6;
   border-radius: 5px;
 }
 .ui-dialog {
-  background: $gray_70;
   border-radius: 5px;
 
   .ui-dialog-titlebar {
-    background: $gray_80;
     border: none;
-    color: $background_gray;
     font-size: 1.5em;
     line-height: 1.2em;
   }
   .ui-dialog-content {
     font-family: 'Open Sans Condensed', sans-serif;
-    color: $background_gray
   }
 }
 .tagin_project {

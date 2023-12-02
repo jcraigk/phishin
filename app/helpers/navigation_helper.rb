@@ -85,7 +85,7 @@ module NavigationHelper
   end
 
   def default_char?(current_item, _char, idx)
-    (params[:char].nil? && current_item.nil? && idx.zero?)
+    params[:char].nil? && current_item.nil? && idx.zero?
   end
 
   def global_nav_items
@@ -127,7 +127,7 @@ module NavigationHelper
 
   def years_sub_links
     str = ''
-    ERAS.to_a.reverse.to_h.each do |_era, years|
+    ERAS.to_a.reverse.to_h.each_value do |years|
       years.reverse.each_with_index do |year, i|
         style = i + 1 == years.size ? 'margin-right: 15px' : ''
         css = year == params[:slug] ? 'active' : ''

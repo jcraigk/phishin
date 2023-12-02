@@ -78,12 +78,11 @@ class PlaylistsController < ApplicationController
   end
 
   def destroy
-    if current_user && params[:id] && (playlist = fetch_playlist)
+    if (playlist = current_user&.playlists&.find_by(id: params[:id]))
       playlist.destroy
       return render json: { success: true, msg: 'Playlist deleted' }
     end
-
-    render json: { success: false, msg: 'Invalid delete request' }
+    render json: { success: false, msg: 'Invalid playlist delete request' }
   end
 
   def bookmark
@@ -298,15 +297,19 @@ class PlaylistsController < ApplicationController
 
   def update_playlist(playlist)
     track_ids = playlist.playlist_tracks.order(position: :asc).pluck(:track_id)
-    session['playlist'].merge!(
-      tracks: track_ids,
-      shuffled_tracks: track_ids.shuffle,
+    session['playlist'].merge!(playlist_attrs(playlist, track_ids))
+  end
+
+  def playlist_attrs(playlist, track_ids)
+    {
       id: playlist.id,
       name: playlist.name,
       slug: playlist.slug,
       user_id: playlist.user.id,
-      username: playlist.user.username
-    )
+      username: playlist.user.username,
+      tracks: track_ids,
+      shuffled_tracks: track_ids.shuffle
+    }.stringify_keys
   end
 
   def retrieve_bookmark(playlist)
