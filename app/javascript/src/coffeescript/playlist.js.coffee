@@ -39,7 +39,7 @@ class Playlist
       type: 'post',
       data: { 'track_ids': track_ids },
       success: (r) =>
-        this._updatePlaylistStats(track_ids.length, duration)
+        this._updatePlaylistStats(track_ids.length, duration / 1000)
         @Util.feedback { notice: success_msg }
     })
 
@@ -217,6 +217,7 @@ class Playlist
     })
 
   _updatePlaylistStats: (num_tracks=0, duration=0) ->
+    console.log(num_tracks, duration)
     $('#active_playlist_tracks_label').html "Tracks: #{num_tracks}"
     $('#active_playlist_duration_label').html "Length: #{@Util.readableDuration(duration, 'letters')}"
 
