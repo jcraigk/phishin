@@ -230,8 +230,8 @@ $ ->
   .on 'click', '.playlist_add_show', (e) ->
     App.Playlist.addShowToPlaylist $(this).data('id')
   .on 'click', '.playlist_remove_track', (e) ->
+    App.Playlist.removeTrackFromPlaylist $(this).data('id')
     $(this).parents('li').remove()
-    App.Playlist.removeTrackFromPlaylist $(this).parents('li').data('id')
   .on 'change', '.playback_loop', (e) ->
     App.Playlist.handlePlaybackLoopChange()
   .on 'change', '.playback_shuffle', (e) ->

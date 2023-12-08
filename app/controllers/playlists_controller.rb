@@ -132,8 +132,7 @@ class PlaylistsController < ApplicationController
   end
 
   def add_track
-    return if (tracks = session['playlist']['tracks']).nil?
-
+    tracks = session['playlist']['tracks']
     if tracks.include?(params[:track_id].to_i)
       return render json: { success: false, msg: 'Track already in playlist' }
     end
@@ -148,6 +147,17 @@ class PlaylistsController < ApplicationController
       render json: { success: true }
     else
       render json: { success: false, msg: 'Invalid track provided for playlist' }
+    end
+  end
+
+  def remove_track
+    track_id = params[:track_id].to_i
+    if session['playlist']['tracks'].include?(track_id)
+      session['playlist']['tracks'].delete(track_id)
+      session['playlist']['shuffled_tracks'].delete(track_id)
+      render json: { success: true }
+    else
+      render json: { success: false, msg: 'Track not in playlist' }
     end
   end
 

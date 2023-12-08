@@ -56,6 +56,18 @@ class Playlist
           @Util.feedback { alert: r.msg }
     })
 
+  removeTrackFromPlaylist: (track_id) ->
+    $.ajax({
+      type: 'post',
+      url: '/remove-track',
+      data: { 'track_id': track_id}
+      success: (r) =>
+        if r.success
+          @Util.feedback { notice: 'Track removed from playlist' }
+        else
+          @Util.feedback { alert: r.msg }
+    })
+
   addShowToPlaylist: (show_id) ->
     $.ajax({
       type: 'post',
@@ -69,13 +81,7 @@ class Playlist
           @Util.feedback { alert: r.msg }
     })
 
-  removeTrackFromPlaylist: (track_id) ->
-    if $('#active_playlist').children('li').size() is 0
-      this.clearPlaylist()
-      @Player.stopAndUnload()
-    else
-      this.updatePlaylist 'Track removed from playlist'
-      @Player.stopAndUnload()
+
 
   handlePlaybackLoopChange: ->
     $.ajax({
