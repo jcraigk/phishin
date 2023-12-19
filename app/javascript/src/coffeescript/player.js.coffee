@@ -68,11 +68,12 @@ class Player
         @$time_remaining.html '0:00'
 
   togglePlaylistMode: ->
-    txt = "You're entering Playlist Edit Mode. Any track you click will be added to the end of your active playlist. Are you sure you want to continue?"
+    txt = "You're entering Playlist Edit Mode. Playback will be disabled. Any track you click will be added to the end of your active playlist. Are you sure you want to continue?"
     if @playlist_mode
       @playlist_mode = false
     else if confirm(txt)
       @playlist_mode = true
+      this.togglePause()
     this._updatePlaylistMode()
 
   _updatePlaylistMode: ->
@@ -112,16 +113,18 @@ class Player
   togglePause: ->
     if @active_track_id
       if @audioElement.paused
-        @audioElement.play()
-        navigator.mediaSession.playbackState = 'playing'
+        unless @playlist_mode
+          @audioElement.play()
+          navigator.mediaSession.playbackState = 'playing'
       else
         @audioElement.pause()
         navigator.mediaSession.playbackState = 'paused'
       this._updatePlayButton()
-    else
+    else if !@playlist_mode
       this._playRandomShowOrPlaylist()
 
   previousTrack: ->
+    return if @playlist_mode
     if @audioElement.currentTime > 3
       @audioElement.currentTime = 0
     else
@@ -134,6 +137,7 @@ class Player
             @Util.feedback { alert: r.msg }
 
   nextTrack: ->
+    return if @playlist_mode
     $.ajax
       url: "/next-track/#{@active_track_id}?playlist=#{@playlist}"
       success: (r) =>
@@ -179,6 +183,7 @@ class Player
           $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
 
   setCurrentPlaylist: (track_id) ->
+    return if @playlist_mode
     $.ajax
       type: 'post'
       url: '/override-playlist'
@@ -331,7 +336,7 @@ class Player
         @$playpause.removeClass 'playing'
         @$playpause.addClass 'pulse'
         # alert('Press play button to listen')
-      else
+      else if !@playlist_mode
         @audioElement.play()
         navigator.mediaSession.playbackState = 'playing'
       this._updatePlayButton()

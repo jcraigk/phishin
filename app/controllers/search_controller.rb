@@ -9,7 +9,7 @@ class SearchController < ApplicationController
   def perform_search
     params[:term] = params[:term]&.strip || ''
     return error unless search_results
-    search_results.each { |k, v| instance_variable_set("@#{k}", v) }
+    search_results.each { |k, v| instance_variable_set(:"@#{k}", v) }
     @any_results = search_results.values.find(&:present?)
   end
 
