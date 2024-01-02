@@ -11,7 +11,7 @@ services:
     tty: true
     stdin_open: true
   pg:
-    image: postgres:14.2-alpine
+    image: postgres:16.1-alpine
     ports:
       - 5432:5432
     volumes:

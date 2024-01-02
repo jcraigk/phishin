@@ -263,6 +263,8 @@ class Player
     document.title = r.title + ' - ' + r.show + ' - ' + @app_name
     @$likes_count.html r.likes_count
     @$likes_link.data 'id', r.id
+    if @time_marker > 0
+      @$scrubber.slider 'value', ((@time_marker / 1000) / @duration) * 100
     if r.liked
       @$likes_link.addClass 'liked'
     else
@@ -327,6 +329,9 @@ class Player
       @audioElement.addEventListener('timeupdate', => this._updateProgress())
     @audioContext = new AudioContext()
     @audioElement.src = url
+    if @time_marker > 0
+      @audioElement.currentTime = @time_marker / 1000
+      @time_marker = 0 # Only first track should start at time marker
 
   _playAudio: =>
     unless @audioElement.readyState >= 3

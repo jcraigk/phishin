@@ -223,7 +223,6 @@ class Playlist
     })
 
   _updatePlaylistStats: (num_tracks=0, duration=0) ->
-    console.log(num_tracks, duration)
     $('#active_playlist_tracks_label').html "Tracks: #{num_tracks}"
     $('#active_playlist_duration_label').html "Length: #{@Util.readableDuration(duration, 'letters')}"
 

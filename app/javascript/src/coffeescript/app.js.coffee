@@ -431,7 +431,6 @@ $ ->
 
   # Tag instance click opens a dialog
   .on 'click', '.tag_label:not(.no-dialog)', ->
-    console.log($(this).attr('title'))
     $('#tag_dialog').dialog('option', 'title', $(this).data('title'))
     $('#tag_detail').html $(this).data('detail')
     $('#tag_dialog').dialog('open')
