@@ -1,16 +1,11 @@
 module ApiAuth
   def require_auth
-    return true if phish_od? # Skip auth for legacy iOS PhishOD app
     return missing_key if key_from_header.blank?
     return invalid_key if active_api_key.blank?
     true
   end
 
   private
-
-  def phish_od?
-    request.user_agent&.include?('PhishOD')
-  end
 
   def active_api_key
     ApiKey.active.find_by(key: key_from_header)
