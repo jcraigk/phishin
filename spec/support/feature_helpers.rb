@@ -35,7 +35,7 @@ module FeatureHelpers
     # Sort by Date
     within('#title_box') do
       first('.dropdown-toggle').click
-      click_link('Date')
+      click_on('Date')
       expect_content('Sort', 'Date')
     end
     expect_content_in_order(titles_by_date)
@@ -43,7 +43,7 @@ module FeatureHelpers
     # Sort by Likes
     within('#title_box') do
       first('.dropdown-toggle').click
-      click_link('Likes')
+      click_on('Likes')
       expect_content('Sort', 'Likes')
     end
     expect_content_in_order(titles_by_likes)
@@ -51,7 +51,7 @@ module FeatureHelpers
     # Sort by Duration
     within('#title_box') do
       first('.dropdown-toggle').click
-      click_link('Duration')
+      click_on('Duration')
       expect_content('Sort', 'Duration')
     end
     expect_content_in_order(titles_by_duration)
@@ -71,7 +71,7 @@ module FeatureHelpers
     # Sort by Date
     within('#title_box') do
       first('.dropdown-toggle').click
-      click_link('Date')
+      click_on('Date')
       expect_content('Sort', 'Date')
     end
     expect_content_in_order(dates_by_date)
@@ -79,7 +79,7 @@ module FeatureHelpers
     # Sort by Likes
     within('#title_box') do
       first('.dropdown-toggle').click
-      click_link('Likes')
+      click_on('Likes')
       expect_content('Sort', 'Likes')
     end
     expect_content_in_order(dates_by_likes)
@@ -87,7 +87,7 @@ module FeatureHelpers
     # Sort by Duration
     within('#title_box') do
       first('.dropdown-toggle').click
-      click_link('Duration')
+      click_on('Duration')
       expect_content('Sort', 'Duration')
     end
     expect_content_in_order(dates_by_duration)

@@ -9,14 +9,14 @@ describe 'User Registration', :js do
     it 'user signs up' do
       visit root_path
 
-      click_link('Sign in')
-      click_link('Sign up now!')
+      click_on('Sign in')
+      click_on('Sign up now!')
 
       fill_in('user[username]', with: username)
       fill_in('user[email]', with: email)
       fill_in('user[password]', with: password)
       fill_in('user[password_confirmation]', with: password)
-      click_button('SIGN UP')
+      click_on('SIGN UP')
 
       expect(page).to have_current_path(root_path)
       expect_content('Welcome! You have signed up successfully')
@@ -35,7 +35,7 @@ describe 'User Registration', :js do
       fill_in('user[email]', with: email)
       fill_in('user[password]', with: password)
       fill_in('user[password_confirmation]', with: 'b')
-      click_button('SIGN UP')
+      click_on('SIGN UP')
 
       expect(page).to have_current_path('/users')
       expect_content(

@@ -26,7 +26,7 @@ describe 'Playlists', :js do
 
       # Saved Playlists
       within('#sub_nav') do
-        click_link('Saved')
+        click_on('Saved')
       end
 
       within('#title_box') do
@@ -50,12 +50,12 @@ describe 'Playlists', :js do
 
       # Click EDIT PLAYLIST
       accept_confirm do
-        click_button('EDIT PLAYLIST')
+        click_on('EDIT PLAYLIST')
       end
       expect_content('PLAYLIST EDIT MODE')
 
       # Go to show, click on first three tracks
-      click_link('Years')
+      click_on('Years')
       first('ul.item_list li').click
       first('ul.item_list li a').click
       track_items = page.all('ul.item_list li')
@@ -66,15 +66,15 @@ describe 'Playlists', :js do
 
       # Return to playlist, ensure tracks are there
       within('#global_nav') do
-        click_link('Playlists')
+        click_on('Playlists')
       end
       track_items = page.all('.playable_track')
       expect(track_items.size).to eq(3)
       expect_content_in_order(show.tracks)
 
       # Click DONE EDITING
-      click_button('DONE EDITING')
-      expect(page).not_to have_content('PLAYLIST EDIT MODE')
+      click_on('DONE EDITING')
+      expect(page).to have_no_content('PLAYLIST EDIT MODE')
     end
 
     xit 'saving (including invalid name/slug, no tracks)' do
@@ -86,7 +86,7 @@ describe 'Playlists', :js do
       it 'opening a saved playlist' do
         visit stored_playlists_path
 
-        click_link(playlist.name)
+        click_on(playlist.name)
         expect(page).to have_current_path("/play/#{playlist.slug}")
       end
 

@@ -50,22 +50,22 @@ describe 'Show', :js do
     visit show2.date
 
     within('#title_box') do
-      click_link('<< Previous Show')
+      click_on('<< Previous Show')
     end
     expect(page).to have_current_path("/#{show.date}")
 
     within('#title_box') do
-      click_link('<< Previous Show')
+      click_on('<< Previous Show')
     end
     expect(page).to have_current_path("/#{show3.date}")
 
     within('#title_box') do
-      click_link('Next Show >>')
+      click_on('Next Show >>')
     end
     expect(page).to have_current_path("/#{show.date}")
 
     within('#title_box') do
-      click_link('Next Show >>')
+      click_on('Next Show >>')
     end
     expect(page).to have_current_path("/#{show2.date}")
   end

@@ -15,7 +15,7 @@ describe 'Tag page', :js do
 
     it 'sorting' do
       visit tag_path(tag)
-      click_button('Shows: 3')
+      click_button('Shows: 3') # rubocop:disable Capybara/ClickLinkOrButtonStyle
 
       expect_show_sorting_controls(shows)
     end
@@ -33,7 +33,7 @@ describe 'Tag page', :js do
 
     it 'sorting' do
       visit tag_path(tag)
-      click_button('Tracks: 3')
+      click_button('Tracks: 3') # rubocop:disable Capybara/ClickLinkOrButtonStyle
 
       expect_track_sorting_controls(tracks)
     end

@@ -34,7 +34,7 @@ describe 'Songs', :js do
 
     # Click on sub nav 'G'
     within('#sub_nav') do
-      click_link('G')
+      click_on('G')
     end
 
     within('#title_box') do
@@ -62,7 +62,7 @@ describe 'Songs', :js do
     # Sort by Track Count
     within('#title_box') do
       first('.btn-group').click
-      click_link('Track Count')
+      click_on('Track Count')
       expect_content('Sort', 'Track Count')
     end
     expect_content_in_order([song2, song1, song3].map(&:title))

@@ -9,11 +9,11 @@ describe 'Reset Password', :js do
   xit 'user enters email, receives message, and changes password' do
     visit new_user_session_path
 
-    click_link('Forgot your password?')
+    click_on('Forgot your password?')
 
     # Enter email address
     fill_in('user[email]', with: user.email)
-    click_button('SEND PASSWORD RESET INSTRUCTIONS')
+    click_on('SEND PASSWORD RESET INSTRUCTIONS')
     expect_content(
       'You will receive an email with instructions about how to reset your password shortly'
     )
@@ -26,7 +26,7 @@ describe 'Reset Password', :js do
     # User enters a new password, twice
     fill_in('user[password]', with: new_password)
     fill_in('user[password_confirmation]', with: new_password)
-    click_link('Change My Password')
+    click_on('Change My Password')
 
     # User's password is changed
     expect(user.reload.valid_password?(new_password)).to be(true)

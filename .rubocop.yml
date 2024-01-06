@@ -16,6 +16,8 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 3.2.2
 
+FactoryBot/ExcessiveCreateList:
+  Enabled: false
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
 Layout/EmptyLineAfterMagicComment:

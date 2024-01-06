@@ -19,17 +19,17 @@ describe 'User Sessions', :js do
     it 'user signs in' do
       visit root_path
 
-      click_link('Sign in')
+      click_on('Sign in')
 
       fill_in('user[email]', with: email)
       fill_in('user[password]', with: password)
-      click_button('SIGN IN')
+      click_on('SIGN IN')
 
       expect(page).to have_current_path(root_path)
       expect_content('Signed in successfully')
 
       find_by_id('user_controls').click
-      click_link('Logout')
+      click_on('Logout')
 
       expect(page).to have_current_path(root_path)
       expect_content('Signed out successfully')
@@ -42,7 +42,7 @@ describe 'User Sessions', :js do
 
       fill_in('user[email]', with: email)
       fill_in('user[password]', with: 'wrongpass')
-      click_button('SIGN IN')
+      click_on('SIGN IN')
 
       expect(page).to have_current_path(new_user_session_path)
       expect_content('Invalid email or password')

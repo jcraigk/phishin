@@ -25,10 +25,10 @@ describe 'Track Context Menues', :js do
       )
     end
 
-    click_link('Add to playlist')
+    click_on('Add to playlist')
     expect_content('Track added to playlist')
 
-    click_link(track.songs.first.title)
+    click_on(track.songs.first.title)
     expect(page).to have_current_path("/#{show.tracks.first.songs.first.slug}")
   end
 

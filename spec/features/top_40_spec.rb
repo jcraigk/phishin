@@ -20,7 +20,7 @@ describe 'Top 40', :js do
     expect(items.count).to eq(40)
 
     # Top 40 Tracks
-    click_link('Top 40 Tracks')
+    click_on('Top 40 Tracks')
 
     within('#title_box') do
       expect_content('Top 40 Tracks')

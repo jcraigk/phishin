@@ -10,7 +10,7 @@ describe 'Change Password', :js do
     visit root_path
 
     find_by_id('user_controls').click
-    click_link('Change Password')
+    click_on('Change Password')
 
     expect(page).to have_current_path(edit_user_registration_path)
   end
@@ -24,7 +24,7 @@ describe 'Change Password', :js do
       fill_in('user[password]', with: new_password)
       fill_in('user[password_confirmation]', with: 'newpass2')
       fill_in('user[current_password]', with: 'newpass')
-      click_button('CHANGE PASSWORD')
+      click_on('CHANGE PASSWORD')
 
       expect_content(
         '3 errors prohibited this user from being saved:',
@@ -45,7 +45,7 @@ describe 'Change Password', :js do
       fill_in('user[password]', with: new_password)
       fill_in('user[password_confirmation]', with: new_password)
       fill_in('user[current_password]', with: password)
-      click_button('CHANGE PASSWORD')
+      click_on('CHANGE PASSWORD')
 
       expect_content('You updated your account successfully')
       expect(user.reload.valid_password?(new_password)).to be(true)

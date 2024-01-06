@@ -68,7 +68,7 @@ describe 'Homepage', :js do
     end
 
     # Click most recent year
-    click_link(most_recent_year)
+    click_on(most_recent_year)
 
     within('#title_box') do
       expect_content(most_recent_year, 'Total shows: 3')

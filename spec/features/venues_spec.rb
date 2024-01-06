@@ -34,7 +34,7 @@ describe 'Venues', :js do
 
     # Click on 'G'
     within('#sub_nav') do
-      click_link('E')
+      click_on('E')
     end
 
     within('#title_box') do
@@ -65,7 +65,7 @@ describe 'Venues', :js do
     # Sort by Track Count
     within('#title_box') do
       first('.btn-group').click
-      click_link('Show Count')
+      click_on('Show Count')
       expect_content('Sort', 'Show Count')
     end
     expect_content_in_order([venue3, venue1, venue2].map(&:name))

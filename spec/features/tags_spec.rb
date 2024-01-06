@@ -36,7 +36,7 @@ describe 'Tags', :js do
     expect(items.count).to eq(tags.count)
 
     # Click first tag
-    click_link(tag1.name)
+    click_on(tag1.name)
 
     within('#title_box') do
       expect_content(
@@ -51,7 +51,7 @@ describe 'Tags', :js do
     expect(items.count).to eq(tag1.shows.count)
 
     # Click Shows button
-    click_button("Tracks: #{tag1.tracks.count}")
+    click_on("Tracks: #{tag1.tracks.count}")
 
     items = page.all('ul.item_list li')
     expect(items.count).to eq(tag1.tracks.count)

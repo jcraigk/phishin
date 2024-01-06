@@ -18,7 +18,7 @@ describe 'My Tracks', :js do
     visit root_path
 
     find_by_id('user_controls').click
-    click_link('My Track')
+    click_on('My Track')
 
     expect(page).to have_current_path(my_tracks_path)
 

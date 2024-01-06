@@ -43,12 +43,12 @@ describe 'Player controls', :js do
     visit show.date
 
     within('#player_detail') do
-      click_link(show.venue.name)
+      click_on(show.venue.name)
     end
     expect(page).to have_current_path("/#{show.venue.slug}")
 
     within('#player_detail') do
-      click_link(show.date_with_dots)
+      click_on(show.date_with_dots)
     end
     expect(page).to have_current_path("/#{show.date}")
   end
