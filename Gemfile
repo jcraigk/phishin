@@ -24,6 +24,7 @@ gem 'shakapacker'
 gem 'shrine'
 gem 'slim'
 gem 'typhoeus'
+gem 'waveform'
 gem 'waveformjson'
 gem 'will_paginate'
 
