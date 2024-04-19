@@ -1,11 +1,13 @@
 inherit_from: .rubocop_todo.yml
 
 require:
+  - rubocop-capybara
   - rubocop-factory_bot
   - rubocop-performance
   - rubocop-rails
   - rubocop-rake
   - rubocop-rspec
+  - rubocop-rspec_rails
 
 AllCops:
   Exclude:
@@ -69,7 +71,7 @@ RSpec/MultipleMemoizedHelpers:
   Enabled: false
 RSpec/NestedGroups:
   Max: 4
-RSpec/Rails/HaveHttpStatus: # We use Rack::MockResponse
+RSpecRails/HaveHttpStatus: # We use Rack::MockResponse
   Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false
