@@ -32,7 +32,7 @@ module Ambiguity::SongTitle
   end
 
   def previous_song
-    Song.where('title < ?', @song.title)
+    Song.where(title: ...@song.title)
         .order(title: :desc)
         .first ||
       Song.order(title: :desc).first

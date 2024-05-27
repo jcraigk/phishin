@@ -17,11 +17,11 @@ Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and developmen
 
 2. Clone the repo to your local machine
 
-4. Download the [Fixtures Pack](https://www.dropbox.com/scl/fi/4bb8q8hflgmtsub6t3rq2/PhishinDevFixtures.zip?rlkey=a79cyz2awghl15ms77pp1hg3u&dl=0) and unzip it. This file contains a full database export minus users and API keys. It also includes MP3 audio and PNG waveform attachments for the last Baker's Dozen show, which should be browsable and playable via `localhost:3000/2017-08-06` once the local server is running. Additionally it includes MP3s/notes for 2018-12-28 for testing the `rails shows:import` task.
+4. Download the [Fixtures Pack](https://www.dropbox.com/scl/fi/p2yiuzwhr148wmya59tzv/PhishinDevFixtures.zip?rlkey=cwfhbpxcroyeilx293cf2dlau&st=gu9q276e&dl=0) and unzip it. This file contains a full database export (updated May 2024) minus users and API keys. It also includes MP3 audio and PNG waveform attachments for the last Baker's Dozen show, which should be browsable and playable via `localhost:3000/2017-08-06` once the local server is running. Additionally it includes MP3s/notes for 2018-12-28 for testing the `rails shows:import` task.
 
 ```bash
 # Copy SQL dump into PG container and run it
-docker cp /path/to/phishin_for_devs.sql phishin_pg_1:/docker-entrypoint-initdb.d/dump.sql
+docker cp /path/to/phishin.sql phishin_pg_1:/docker-entrypoint-initdb.d/dump.sql
 docker exec -u postgres phishin_pg_1 psql phishin postgres -f docker-entrypoint-initdb.d/dump.sql
 ```
 

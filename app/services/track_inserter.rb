@@ -23,7 +23,7 @@ class TrackInserter
 
   def shift_track_positions
     show.tracks
-        .where('position >= ?', position)
+        .where(position: position..)
         .order(position: :desc)
         .each { |t| t.update(position: t.position + 1) }
   end

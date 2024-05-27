@@ -23,7 +23,7 @@ module TrackHelper
     prev_show =
       Show.joins(tracks: :songs)
           .published
-          .where('date < ?', date)
+          .where(date: ...date)
           .where(songs: { id: song.id })
           .order(date: :desc)
           .first

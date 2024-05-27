@@ -70,7 +70,7 @@ module Ambiguity::Date
 
   def previous_show
     Show.published
-        .where('date < ?', @show.date)
+        .where(date: ...@show.date)
         .order(date: :desc)
         .first ||
       Show.published

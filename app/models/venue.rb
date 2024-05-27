@@ -84,7 +84,7 @@ class Venue < ApplicationRecord
   end
 
   def name_on(date)
-    venue_renames.where('renamed_on <= ?', date)
+    venue_renames.where(renamed_on: ..date)
                  .order(renamed_on: :desc)
                  .first
                  &.name || name

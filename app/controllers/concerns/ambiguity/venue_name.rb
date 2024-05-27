@@ -32,7 +32,7 @@ module Ambiguity::VenueName
   end
 
   def prev_venue
-    Venue.where('name < ?', venue.name).order(name: :desc).first ||
+    Venue.where(name: ...venue.name).order(name: :desc).first ||
       Venue.order(name: :desc).first
   end
 
