@@ -16,7 +16,7 @@ AllCops:
     - vendor/**/*
     - lib/tasks/*
   NewCops: enable
-  TargetRubyVersion: 3.2.2
+  TargetRubyVersion: 3.3.1
 
 FactoryBot/ExcessiveCreateList:
   Enabled: false
