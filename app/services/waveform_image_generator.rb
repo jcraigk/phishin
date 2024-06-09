@@ -23,7 +23,11 @@ class WaveformImageGenerator
   end
 
   def convert_mp3_to_wav
-    `ffmpeg -y -hide_banner -loglevel error -i #{track.audio_file.to_io.path} -f wav #{tmp_wav}`
+    audio_file_path = track.audio_file.to_io.path
+    tmp_wav_path = tmp_wav
+    Open3.capture3 \
+      'ffmpeg', '-y', '-hide_banner', '-loglevel', 'error', '-i',
+      audio_file_path, '-f', 'wav', tmp_wav_path
   end
 
   def generate_waveform_image
