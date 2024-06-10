@@ -61,5 +61,6 @@ TAGIN_TAGS = [
   'Guest',
   'Narration',
   'Signal',
-  'Tease'
+  'Tease',
+  'Unfinished'
 ].freeze
