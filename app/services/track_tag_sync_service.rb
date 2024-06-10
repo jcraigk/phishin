@@ -47,12 +47,10 @@ class TrackTagSyncService
 
   def existing_track_tag(row)
     return TrackTag.find_by(tag:, track:) unless tag.name.in?(%w[Tease Signal])
-    TrackTag.find_by(
+    TrackTag.find_by \
       tag:,
       track:,
-      notes: row['Notes'],
-      starts_at_second: seconds_or_nil(row['Starts At'])
-    )
+      notes: row['Notes']
   end
 
   def sanitize_str(str)
