@@ -9,7 +9,8 @@ namespace :shows do
       title: ENV['TITLE'],
       song_id: ENV['SONG_ID'],
       set: ENV['SET'],
-      is_sbd: ENV['SBD'].present?
+      is_sbd: ENV['SBD'].present?,
+      slug: ENV['SLUG']
     }
 
     TrackInserter.new(opts).call

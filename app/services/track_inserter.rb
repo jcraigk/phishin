@@ -1,5 +1,5 @@
 class TrackInserter
-  attr_reader :date, :position, :file, :title, :song_id, :set, :track
+  attr_reader :date, :position, :file, :title, :song_id, :set, :track, :slug
 
   def initialize(opts = {})
     @date = opts[:date]
@@ -8,6 +8,7 @@ class TrackInserter
     @title = opts[:title]
     @song_id = opts[:song_id] || Song.find_by(title:)&.id
     @set = opts[:set]
+    @slug = opts[:slug]
 
     ensure_valid_options
     ensure_records_present
@@ -40,6 +41,7 @@ class TrackInserter
       position:,
       set:
     )
+    track.slug = slug if slug.present?
     track.save!(validate: false) # Generate ID for audio_file storage
     track.update!(audio_file: File.open(file))
   end
