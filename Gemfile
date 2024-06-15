@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.3.2'
+ruby '3.3.3'
 
 gem 'actionpack-action_caching'
 gem 'chunky_png'
@@ -32,11 +32,13 @@ group :development do
   gem 'bullet'
   gem 'dotenv-rails'
   gem 'rubocop'
+  gem 'rubocop-capybara'
   gem 'rubocop-factory_bot'
   gem 'rubocop-performance'
   gem 'rubocop-rails'
   gem 'rubocop-rake'
   gem 'rubocop-rspec'
+  gem 'rubocop-rspec_rails'
 end
 
 group :test do
