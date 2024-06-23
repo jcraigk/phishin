@@ -40,6 +40,7 @@ ERAS = {
 }.freeze
 
 SET_NAMES = {
+  'P' => 'Pre-Show',
   'S' => 'Soundcheck',
   '1' => 'Set 1',
   '2' => 'Set 2',
