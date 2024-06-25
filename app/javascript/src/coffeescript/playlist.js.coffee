@@ -92,7 +92,7 @@ class Playlist
        $('#playlist_data').attr 'data-slug', ''
        $('#playlist_data').attr 'data-user-id', ''
        $('#playlist_data').attr 'data-username', ''
-       $('#delete_playlist_btn').hide()
+       $('#delete_playlist_btn').addClass('display-none')
        $('#active_playlist').html ''
        $('#playlist_title').html '(Untitled Playlist)'
        this._updatePlaylistStats()
@@ -162,6 +162,7 @@ class Playlist
          $('#playlist_data').attr 'data-name', r.name
          $('#playlist_data').attr 'data-slug', r.slug
          $('#playlist_title').html r.name
+         $('#delete_playlist_btn').removeClass('display-none')
          @Util.feedback { notice: r.msg }
        else
          @Util.feedback { alert: r.msg }

@@ -114,7 +114,7 @@ class PlaylistsController < ApplicationController
   end
 
   def clear
-    clear_session
+    reset_session
     render json: { success: true, playlist: [] }
   end
 
@@ -257,9 +257,5 @@ class PlaylistsController < ApplicationController
   def retrieve_bookmark(playlist)
     bookmark = PlaylistBookmark.find_by(playlist_id: playlist.id, user: current_user)
     session[:playlist_bookmarked] = bookmark.present?
-  end
-
-  def clear_session
-    session[:track_ids] = []
   end
 end

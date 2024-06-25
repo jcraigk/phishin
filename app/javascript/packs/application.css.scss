@@ -95,6 +95,9 @@ $scrubbing: #1a80f6;
 #download_iframe {
   display: none;
 }
+.display-none {
+  display: none;
+}
 #lyrics_content {
   font-size: 20px;
   line-height: 28px;
@@ -473,7 +476,7 @@ html {
     .muted {
       background-position: -22px 0 !important;
     }
-    .playlist_title {
+    #playlist_title {
       float: left;
     }
     .playlist {

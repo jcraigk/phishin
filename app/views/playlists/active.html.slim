@@ -23,7 +23,7 @@
 
     - if user_signed_in?
       - if session[:playlist_id]&.positive? && session[:playlist_user_id] != current_user.id
-        button#duplicate_playlist_btn.btn type='button'
+        button#duplicate_playlist_btn.btn type='button' class=(session[:playlist_id]&.positive? && current_user.id == session[:playlist_user_id] ? nil : 'display-none')
           i.glyphicon.glyphicon-file
           |  DUPLICATE
         br
@@ -34,25 +34,22 @@
           |  SAVE
         br
 
-      - if session[:playlist_id]&.positive?
-        - if current_user.id == session[:playlist_user_id]
-          button#delete_playlist_btn.btn type='button'
-            i.glyphicon.glyphicon-remove
-            |  DELETE
-          br
+      button#delete_playlist_btn.btn type='button' class=(session[:playlist_id]&.positive? && current_user.id == session[:playlist_user_id] ? nil : 'display-none')
+        i.glyphicon.glyphicon-remove
+        |  DELETE
+      br
 
-        - else
-          - if session[:playlist_bookmarked]
-            button#unbookmark_playlist_btn.btn type='button'
-              i.glyphicon.glyphicon-remove
-              |  UNBOOKMARK
-            br
+      - if session[:playlist_bookmarked]
+        button#unbookmark_playlist_btn.btn type='button'
+          i.glyphicon.glyphicon-remove
+          |  UNBOOKMARK
+        br
 
-          - else
-            button#bookmark_playlist_btn.btn type='button'
-              i.glyphicon.glyphicon-bookmark
-              |  BOOKMARK
-            br
+      - else
+        button#bookmark_playlist_btn.btn type='button'
+          i.glyphicon.glyphicon-bookmark
+          |  BOOKMARK
+        br
 
     - else
     button#clear_playlist_btn.btn type='button'
