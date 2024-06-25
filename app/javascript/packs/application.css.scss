@@ -457,10 +457,6 @@ html {
         margin-left: 14px !important;
       }
     }
-    #shuffle_checkbox {
-      margin-bottom: 15px;
-      vertical-align: top;
-    }
     #volume_icon {
       padding: 0px 0px 0px 0px !important;
       float: left;
@@ -477,7 +473,7 @@ html {
     .muted {
       background-position: -22px 0 !important;
     }
-    .playlist_title {
+    #playlist_title {
       float: left;
     }
     .playlist {

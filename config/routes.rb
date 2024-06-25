@@ -47,16 +47,13 @@ Rails.application.routes.draw do
   post '/unbookmark-playlist' => 'playlists#unbookmark'
   post '/delete-playlist' => 'playlists#destroy'
   post '/clear-playlist' => 'playlists#clear'
-  post '/override-playlist' => 'playlists#override'
   post '/reposition-playlist' => 'playlists#reposition'
   post '/add-track' => 'playlists#add_track'
   post '/remove-track' => 'playlists#remove_track'
   post '/add-show' => 'playlists#add_show'
+  post '/enqueue-show' => 'playlists#enqueue_show'
   get '/next-track(/:track_id)' => 'playlists#next_track_id'
   get '/previous-track/:track_id' => 'playlists#previous_track_id'
-  post '/submit-playback-loop' => 'playlists#submit_playback_loop'
-  post '/submit-playback-shuffle' => 'playlists#submit_playback_shuffle'
-  get '/random-show' => 'playlists#random_show'
   get '/random-song-track/:song_id' => 'playlists#random_song_track'
 
   # Track info/download

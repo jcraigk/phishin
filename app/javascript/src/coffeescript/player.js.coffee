@@ -7,11 +7,11 @@ import Util from './util.js'
 class Player
   constructor: ->
     @Util             = new Util
+    @app_name         = 'Phish.in'
     @active_track_id  = ''
     @scrubbing        = false
     @duration         = 0
     @playlist_mode    = false
-    @playlist         = []
     @$playpause       = $ '#control_playpause'
     @$scrubber        = $ '#scrubber'
     @$scrubber_ctrl   = $ '#scrubber_controls'
@@ -24,7 +24,6 @@ class Player
     @$likes_link      = $ '#player_likes_container > .likes_large > a'
 
   onReady: ->
-    @app_name = $('body').data('app-name')
     @time_marker = @Util.timeToMS($('body').data('time-marker'))
     @$scrubber.slider()
     @$scrubber.slider('enable')
@@ -47,8 +46,8 @@ class Player
     unless @active_track_id or @playlist_mode or this._handleAutoPlayTrack()
       if track_id = $('.playable_track').first().data('id')
         path_segment = window.location.pathname.split('/')[1]
-        this.setCurrentPlaylist track_id if path_segment isnt 'playlist' and path_segment isnt 'play'
-        this.playTrack track_id
+        if path_segment isnt 'playlist' and path_segment isnt 'play'
+          this.setCurrentPlaylist track_id
 
   currentPosition: ->
     if @active_track_id then @audioElement.currentTime else 0
@@ -79,6 +78,7 @@ class Player
   _updatePlaylistMode: ->
     if @playlist_mode
       $('#playlist_mode_notice').show()
+      $('#save_playlist_btn').hide()
       $('#playlist_mode_label').html 'DONE EDITING'
     else
       $('#playlist_mode_notice').hide()
@@ -129,7 +129,7 @@ class Player
       @audioElement.currentTime = 0
     else
       $.ajax
-        url: "/previous-track/#{@active_track_id}?playlist=#{@playlist}"
+        url: "/previous-track/#{@active_track_id}"
         success: (r) =>
           if r.success
             this.playTrack r.track_id
@@ -139,7 +139,7 @@ class Player
   nextTrack: ->
     return if @playlist_mode
     $.ajax
-      url: "/next-track/#{@active_track_id}?playlist=#{@playlist}"
+      url: "/next-track/#{@active_track_id}"
       success: (r) =>
         if r.success
           this.playTrack r.track_id
@@ -157,7 +157,7 @@ class Player
       @audioElement.pause()
     @active_track_id = ''
     this._updateDisplay
-      title: @app_name,
+      title: '',
       duration: 0
     @$scrubber.slider 'value', 0
     @$scrubber.slider 'disable'
@@ -182,14 +182,15 @@ class Player
         if $el
           $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
 
-  setCurrentPlaylist: (track_id) ->
+  setCurrentPlaylist: (track_id, time_marker=0) ->
     return if @playlist_mode
     $.ajax
-      type: 'post'
-      url: '/override-playlist'
-      data: { 'track_id': track_id }
+      type: 'POST'
+      url: '/enqueue-show'
+      data: { track_id: track_id }
       success: (r) =>
-        @playlist = r.playlist
+        if r.success
+          this.playTrack r.track_id, time_marker
 
   playRandomSongTrack: (song_id) ->
     $.ajax
@@ -198,7 +199,6 @@ class Player
         if r.success
           @Util.navigateTo r.url
           this.setCurrentPlaylist r.track_id
-          this.playTrack r.track_id
 
   _handleAutoPlayTrack: ->
     if anchor_name = $('body').attr('data-anchor')
@@ -209,8 +209,7 @@ class Player
         $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
         unless @active_track_id
           track_id = $el.data 'id'
-          this.setCurrentPlaylist track_id
-          this.playTrack track_id, @time_marker
+          this.setCurrentPlaylist track_id, @time_marker
         else
           $el.addClass 'highlighted_track'
         true
@@ -221,20 +220,20 @@ class Player
 
   _playRandomShowOrPlaylist: ->
     $.ajax
-      url: "/next-track"
+      url: '/next-track'
       success: (r) =>
         if r.success
           @Util.feedback { notice: 'Playing active playlist...'}
           this.playTrack r.track_id
         else
           $.ajax
-            url: "/random-show"
+            type: 'POST'
+            url: '/enqueue-show'
             success: (r) =>
               if r.success
                 @Util.feedback { notice: 'Playing random show...'}
                 @Util.navigateTo r.url
                 this.setCurrentPlaylist r.track_id
-                this.playTrack r.track_id
 
   _loadTrack: ->
     $.ajax
@@ -260,7 +259,9 @@ class Player
     if r.title?.length > 26 then @$player_title.addClass 'long_title' else @$player_title.removeClass 'long_title'
     if r.title?.length > 50 then r.title = r.title.substring(0, 47) + '...'
     @$player_title.html r.title
-    document.title = r.title + ' - ' + r.show + ' - ' + @app_name
+    long_title = "#{r.title} - #{r.show} - #{@app_name}"
+    doctitle = if r.title and r.show then long_title else @app_name
+    document.title = doctitle
     @$likes_count.html r.likes_count
     @$likes_link.data 'id', r.id
     if @time_marker > 0

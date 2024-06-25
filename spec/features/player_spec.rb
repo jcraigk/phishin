@@ -75,32 +75,4 @@ describe 'Player controls', :js do
       expect_content(show.tracks.second.title)
     end
   end
-
-  # Removed to make space for waveform image
-  # it 'playlist icon' do
-  #   visit root_path
-  #
-  #   find('#playlist_button').click
-  #   expect(page).to have_current_path(active_playlist_path)
-  # end
-
-  # Removed to make space for waveform image
-  # it 'gear icon (loop/shuffle)' do
-  #   visit root_path
-  #
-  #   # Click gear icon
-  #   find('#player_menu .btn-group').click
-  #
-  #   # Loop
-  #   find('#loop_checkbox').set(true)
-  #   expect_content('Playback looping enabled')
-  #   find('#loop_checkbox').set(false)
-  #   expect_content('Playback looping disabled')
-  #
-  #   # Shuffle
-  #   find('#shuffle_checkbox').set(true)
-  #   expect_content('Playback shuffling enabled')
-  #   find('#shuffle_checkbox').set(false)
-  #   expect_content('Playback shuffling disabled')
-  # end
 end

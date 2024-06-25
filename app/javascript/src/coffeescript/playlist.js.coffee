@@ -16,7 +16,6 @@ class Playlist
     @$save_action_existing  = $ '#save_action_existing'
     @$playlist_name_input   = $ '#playlist_name_input'
     @$playlist_slug_input   = $ '#playlist_slug_input'
-    this._getPlaylist()
 
   initPlaylist: ->
     this._getPlaylist()
@@ -35,9 +34,9 @@ class Playlist
       $(this).find('.position_num').html "#{idx+1}"
     )
     $.ajax({
-      url: '/reposition-playlist',
-      type: 'post',
-      data: { 'track_ids': track_ids },
+      url: '/reposition-playlist'
+      type: 'POST'
+      data: { 'track_ids': track_ids }
       success: (r) =>
         this._updatePlaylistStats(track_ids.length, duration / 1000)
         @Util.feedback { notice: success_msg }
@@ -45,8 +44,8 @@ class Playlist
 
   addTrackToPlaylist: (track_id) ->
     $.ajax({
-      type: 'post',
-      url: '/add-track',
+      type: 'POST'
+      url: '/add-track'
       data: { 'track_id': track_id}
       success: (r) =>
         if r.success
@@ -58,7 +57,7 @@ class Playlist
 
   removeTrackFromPlaylist: (track_id) ->
     $.ajax({
-      type: 'post',
+      type: 'POST',
       url: '/remove-track',
       data: { 'track_id': track_id}
       success: (r) =>
@@ -70,7 +69,7 @@ class Playlist
 
   addShowToPlaylist: (show_id) ->
     $.ajax({
-      type: 'post',
+      type: 'POST',
       url: '/add-show',
       data: { 'show_id': show_id}
       success: (r) =>
@@ -81,40 +80,10 @@ class Playlist
           @Util.feedback { alert: r.msg }
     })
 
-
-
-  handlePlaybackLoopChange: ->
-    $.ajax({
-      type: 'post',
-      url: '/submit-playback-loop',
-      data: {
-        'loop': $('#loop_checkbox').prop('checked')
-      }
-      success: (r) =>
-        if r.success
-          @Util.feedback { notice: r.msg }
-        else
-          @Util.feedback { alert: r.msg }
-    })
-
-  handlePlaybackShuffleChange: ->
-    $.ajax({
-      type: 'post',
-      url: '/submit-playback-shuffle',
-      data: {
-        'shuffle': $('#shuffle_checkbox').prop('checked')
-      }
-      success: (r) =>
-        if r.success
-          @Util.feedback { notice: r.msg }
-        else
-          @Util.feedback { alert: r.msg }
-    })
-
   clearPlaylist: (supress_feedback=true)->
     $.ajax({
-     url: '/clear-playlist',
-     type: 'post',
+     url: '/clear-playlist'
+     type: 'POST'
      success: (r) =>
        @Player.stopAndUnload()
        $('#playlist_data').attr 'data-id', 0
@@ -123,8 +92,12 @@ class Playlist
        $('#playlist_data').attr 'data-user-id', ''
        $('#playlist_data').attr 'data-username', ''
        $('#delete_playlist_btn').hide()
+       $('#bookmark_playlist_btn').hide()
+       $('#clear_playlist_btn').hide()
+       $('#save_playlist_btn').hide()
        $('#active_playlist').html ''
        $('#playlist_title').html '(Untitled Playlist)'
+       $('#playlist_author').hide()
        this._updatePlaylistStats()
        $('#empty_playlist_msg').show()
        unless supress_feedback then @Util.feedback { notice: 'Actve playlist is now empty' }
@@ -132,8 +105,8 @@ class Playlist
 
   bookmarkPlaylist: ->
     $.ajax({
-      type: 'post',
-      url: '/bookmark-playlist',
+      type: 'POST'
+      url: '/bookmark-playlist'
       data: { 'id': $('#playlist_data').attr 'data-id' }
       success: (r) =>
         if r.success
@@ -144,8 +117,8 @@ class Playlist
 
   unbookmarkPlaylist: ->
     $.ajax({
-      type: 'post',
-      url: '/unbookmark-playlist',
+      type: 'POST'
+      url: '/unbookmark-playlist'
       data: { 'id': $('#playlist_data').attr 'data-id' }
       success: (r) =>
         if r.success
@@ -177,30 +150,33 @@ class Playlist
     $('#duplicate_playlist_btn').hide()
     $('#unbookmark_playlist_btn').hide()
     $('#bookmark_playlist_btn').hide()
-    $.ajax({
-     url: '/save-playlist',
-     type: 'post',
-     data: {
-       id: $('#playlist_data').attr('data-id')
-       name: @$playlist_name_input.val()
-       slug: @$playlist_slug_input.val()
-       save_action:  @$save_action_dropdown.val()
-     }
-     success: (r) =>
-       if r.success
-         $('#playlist_data').attr 'data-id', r.id
-         $('#playlist_data').attr 'data-name', r.name
-         $('#playlist_data').attr 'data-slug', r.slug
-         $('#playlist_title').html r.name
-         @Util.feedback { notice: r.msg }
-       else
-         @Util.feedback { alert: r.msg }
-    })
+    $.ajax
+      url: '/save-playlist'
+      type: 'POST'
+      data: {
+        id: $('#playlist_data').attr('data-id')
+        name: @$playlist_name_input.val()
+        slug: @$playlist_slug_input.val()
+        save_action: @$save_action_dropdown.val()
+      }
+      success: (r) =>
+        if r.success
+          $('#playlist_data').attr 'data-id', r.id
+          $('#playlist_data').attr 'data-name', r.name
+          $('#playlist_data').attr 'data-slug', r.slug
+          $('#playlist_title').html r.name
+          $('#delete_playlist_btn').show()
+          $('#bookmark_playlist_btn').show()
+          $('#clear_playlist_btn').show()
+          $('#save_playlist_btn').show()
+          @Util.feedback { notice: r.msg }
+        else
+          @Util.feedback { alert: r.msg }
 
   deletePlaylist: (id) ->
     $.ajax({
-     url: '/delete-playlist',
-     type: 'post',
+     url: '/delete-playlist'
+     type: 'POST'
      data: {
        id: $('#playlist_data').attr('data-id'),
      }
@@ -214,7 +190,7 @@ class Playlist
 
   _getPlaylist: ->
     $.ajax({
-      url: '/load-playlist',
+      url: '/load-playlist'
       success: (r) =>
         if r.playlist && r.playlist.length > 0
           $('#empty_playlist_msg').hide()
