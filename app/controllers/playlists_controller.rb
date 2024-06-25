@@ -1,15 +1,5 @@
 class PlaylistsController < ApplicationController
-  EMPTY_PLAYLIST = {
-    tracks: [],
-    id: 0,
-    name: '',
-    slug: '',
-    user_id: 0,
-    username: ''
-  }.freeze
-
   skip_before_action :verify_authenticity_token
-  before_action :init_session
   before_action :authenticate_user!, only: %i[save destroy bookmark unbookmark]
 
   def active
@@ -17,7 +7,7 @@ class PlaylistsController < ApplicationController
       activate_stored(playlist)
     end
 
-    track_ids = session['playlist']['tracks']
+    track_ids = session[:track_ids]
     tracks_by_id = Track.where(id: track_ids).includes(:show, track_tags: :tag).index_by(&:id)
     @tracks = track_ids&.map { |id| tracks_by_id[id] } || []
     @tracks_likes = user_likes_for_tracks(@tracks)
@@ -71,7 +61,7 @@ class PlaylistsController < ApplicationController
   end
 
   def load
-    render json: { playlist: session['playlist']['tracks'] }
+    render json: { playlist: session[:track_ids] }
   end
 
   def destroy
@@ -106,29 +96,20 @@ class PlaylistsController < ApplicationController
     render json: { success: false, msg: 'Playlist not bookmarked' }
   end
 
-  # Replace the playlist with a show based on a specific track
+  # Replace the playlist with a show using specified track_id or random
   def enqueue_show
-    session['playlist'] ||= {}
-    session['playlist']['tracks'] =
-      Track.includes(:show)
-           .find_by(id: params[:track_id])
-           .show
-           .tracks
-           .order(position: :asc)
-           .pluck(:id)
-    # TODO: Remove this line and session is not persisted (?!)
-    session['playlist']['tracks']
-    render json: { success: true }
-  end
-
-  # Replace the playlist with a random show
-  def enqueue_random_show
-    show = Show.published.random.first
-    session['playlist']['tracks'] = show.tracks.order(position: :asc).pluck(:id)
+    reset_session
+    show =
+      if params[:track_id].present?
+        Track.includes(:show).find(params[:track_id]).show
+      else
+        Show.published.random.first
+      end
+    session[:track_ids] = show.tracks.order(position: :asc).pluck(:id)
     render json: {
       success: true,
       url: "/#{show.date}",
-      track_id: session['playlist']['tracks'].first
+      track_id: session[:track_ids].first
     }
   end
 
@@ -138,13 +119,12 @@ class PlaylistsController < ApplicationController
   end
 
   def reposition
-    session['playlist']['tracks'] = params[:track_ids]&.map(&:to_i)&.take(100) || []
+    session[:track_ids] = params[:track_ids]&.map(&:to_i)&.take(100) || []
     render json: { success: true }
   end
 
   def add_track
-    tracks = session['playlist']['tracks']
-    if tracks.include?(params[:track_id].to_i)
+    if session[:track_ids].include?(params[:track_id].to_i)
       return render json: { success: false, msg: 'Track already in playlist' }
     end
 
@@ -152,7 +132,7 @@ class PlaylistsController < ApplicationController
       msg = "Playlists are limited to #{Playlist::MAX_TRACKS} tracks"
       render json: { success: false, msg: }
     elsif (track = Track.find(params[:track_id]))
-      session['playlist']['tracks'] << track.id
+      session[:track_ids] << track.id
       render json: { success: true }
     else
       render json: { success: false, msg: 'Invalid track provided for playlist' }
@@ -161,8 +141,8 @@ class PlaylistsController < ApplicationController
 
   def remove_track
     track_id = params[:track_id].to_i
-    if session['playlist']['tracks'].include?(track_id)
-      session['playlist']['tracks'].delete(track_id)
+    if session[:track_ids].include?(track_id)
+      session[:track_ids].delete(track_id)
       render json: { success: true }
     else
       render json: { success: false, msg: 'Track not in playlist' }
@@ -171,8 +151,8 @@ class PlaylistsController < ApplicationController
 
   def add_show
     if (show = Show.published.find_by(id: params[:show_id]))
-      session['playlist']['tracks'] += show.tracks.sort_by(&:position).map(&:id)
-      session['playlist']['tracks'] = session['playlist']['tracks'].uniq.take(Playlist::MAX_TRACKS)
+      session[:track_ids] += show.tracks.sort_by(&:position).map(&:id)
+      session[:track_ids] = session[:track_ids].uniq.take(Playlist::MAX_TRACKS)
       render json: { success: true, msg: 'Tracks from show added to playlist' }
     else
       render json: { success: false, msg: 'Invalid show provided for playlist' }
@@ -180,12 +160,8 @@ class PlaylistsController < ApplicationController
   end
 
   def next_track_id
-    if session['playlist']['tracks'].blank?
-      return render json: { success: false, msg: 'No active playlist' }
-    end
-
-    track_ids = session['playlist']['tracks']
-
+    return no_active_playlist if session[:track_ids].blank?
+    track_ids = session[:track_ids]
     if track_ids.last == params[:track_id].to_i
       render json: { success: false, msg: 'End of playlist' }
     elsif (idx = track_ids.find_index(params[:track_id].to_i))
@@ -196,12 +172,8 @@ class PlaylistsController < ApplicationController
   end
 
   def previous_track_id
-    if session['playlist']['tracks'].none?
-      return render json: { success: false, msg: 'No active playlist' }
-    end
-
-    track_ids = session['playlist']['tracks']
-
+    return no_active_playlist if session[:track_ids].none?
+    track_ids = session[:track_ids]
     if track_ids.first == params[:track_id].to_i
       render json: { success: false, msg: 'Beginning of playlist' }
     elsif (idx = track_ids.find_index(params[:track_id].to_i))
@@ -252,7 +224,7 @@ class PlaylistsController < ApplicationController
   end
 
   def create_playlist_tracks(playlist)
-    session['playlist']['tracks'].each_with_index do |track_id, idx|
+    session[:track_ids].each_with_index do |track_id, idx|
       PlaylistTrack.create(playlist:, track_id:, position: idx + 1)
     end
     playlist.update(duration: playlist.tracks.sum(&:duration))
@@ -264,34 +236,30 @@ class PlaylistsController < ApplicationController
   end
 
   def update_playlist(playlist)
-    track_ids = playlist.playlist_tracks.order(position: :asc).pluck(:track_id)
-    session['playlist'].merge!(playlist_attrs(playlist, track_ids))
+    session[:track_ids] = playlist.playlist_tracks.order(position: :asc).pluck(:track_id)
+    session.merge!(playlist_attrs(playlist))
   end
 
-  def playlist_attrs(playlist, track_ids)
+  def playlist_attrs(playlist)
     {
-      id: playlist.id,
-      name: playlist.name,
-      slug: playlist.slug,
-      user_id: playlist.user.id,
-      username: playlist.user.username,
-      tracks: track_ids
-    }.stringify_keys
+      playlist_id: playlist.id,
+      playlist_name: playlist.name,
+      playlist_slug: playlist.slug,
+      playlist_user_id: playlist.user.id,
+      playlist_username: playlist.user.username
+    }
+  end
+
+  def no_active_playlist
+    render json: { success: false, msg: 'No active playlist' }
   end
 
   def retrieve_bookmark(playlist)
     bookmark = PlaylistBookmark.find_by(playlist_id: playlist.id, user: current_user)
-    session['playlist_is_bookmarked'] = bookmark.present?
+    session[:playlist_bookmarked] = bookmark.present?
   end
 
   def clear_session
-    session['playlist'] = EMPTY_PLAYLIST.stringify_keys.dup
-    # TODO: remove this line and session is not persisted (?!)
-    logger.debug('!')
-  end
-
-  def init_session
-    return if session['playlist'].present?
-    clear_session
+    session[:track_ids] = []
   end
 end

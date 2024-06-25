@@ -184,11 +184,8 @@ class Player
   setCurrentPlaylist: (track_id) ->
     return if @playlist_mode
     $.ajax
-      type: 'post'
       url: '/enqueue-show'
       data: { 'track_id': track_id }
-      success: (r) =>
-        @playlist = r.playlist
 
   playRandomSongTrack: (song_id) ->
     $.ajax
@@ -227,12 +224,11 @@ class Player
           this.playTrack r.track_id
         else
           $.ajax
-            url: "/random-show"
+            url: "/enqueue-show"
             success: (r) =>
               if r.success
                 @Util.feedback { notice: 'Playing random show...'}
                 @Util.navigateTo r.url
-                this.setCurrentPlaylist r.track_id
                 this.playTrack r.track_id
 
   _loadTrack: ->

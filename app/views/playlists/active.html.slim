@@ -1,12 +1,12 @@
 = render partial: 'layouts/global_nav'
 ''
 #content
-  #playlist_data data-id=session['playlist']['id'] data-name=session['playlist']['name'] data-slug=session['playlist']['slug'] data-user-id=session['playlist']['user_id'] data-username=session['playlist']['username']
+  #playlist_data data-id=session[:playlist_id] data-name=session[:playlist_name] data-slug=session[:playlist_slug] data-user-id=session[:playlist_user_id] data-username=session[:playlist_username]
 
   #title_box
-    h1.playlist_title = session['playlist']['id']&.positive? ? session['playlist'][:name] : '(Untitled Playlist)'
-    - if session['playlist']['id']&.positive?
-      h3 Author: #{session['playlist']['username']}
+    h1.playlist_title = session[:playlist_id]&.positive? ? session[:playlist_name] : '(Untitled Playlist)'
+    - if session[:playlist_id]&.positive?
+      h3 Author: #{session[:playlist_username]}
     h3#active_playlist_tracks_label Tracks: #{@tracks.size}
     h3#active_playlist_duration_label Length: #{duration_readable(@duration, 'letters')}
     br
@@ -22,7 +22,7 @@
     br
 
     - if user_signed_in?
-      - if session['playlist']['id']&.positive? && session['playlist']['user_id'] != current_user.id
+      - if session[:playlist_id]&.positive? && session[:playlist_user_id] != current_user.id
         button#duplicate_playlist_btn.btn type='button'
           i.glyphicon.glyphicon-file
           |  DUPLICATE
@@ -34,15 +34,15 @@
           |  SAVE
         br
 
-      - if session['playlist']['id']&.positive?
-        - if current_user.id == session['playlist']['user_id']
+      - if session[:playlist_id]&.positive?
+        - if current_user.id == session[:playlist_user_id]
           button#delete_playlist_btn.btn type='button'
             i.glyphicon.glyphicon-remove
             |  DELETE
           br
 
         - else
-          - if session['playlist_is_bookmarked']
+          - if session[:playlist_bookmarked]
             button#unbookmark_playlist_btn.btn type='button'
               i.glyphicon.glyphicon-remove
               |  UNBOOKMARK
