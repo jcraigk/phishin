@@ -78,6 +78,7 @@ class Player
   _updatePlaylistMode: ->
     if @playlist_mode
       $('#playlist_mode_notice').show()
+      $('#save_playlist_btn').hide()
       $('#playlist_mode_label').html 'DONE EDITING'
     else
       $('#playlist_mode_notice').hide()

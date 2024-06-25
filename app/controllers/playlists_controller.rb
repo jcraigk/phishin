@@ -124,14 +124,15 @@ class PlaylistsController < ApplicationController
   end
 
   def add_track
-    if session[:track_ids].include?(params[:track_id].to_i)
+    if session[:track_ids]&.include?(params[:track_id].to_i)
       return render json: { success: false, msg: 'Track already in playlist' }
     end
 
-    if tracks.size > 99
+    if session[:track_ids].present? && session[:track_ids].size > 99
       msg = "Playlists are limited to #{Playlist::MAX_TRACKS} tracks"
       render json: { success: false, msg: }
     elsif (track = Track.find(params[:track_id]))
+      session[:track_ids] ||= []
       session[:track_ids] << track.id
       render json: { success: true }
     else
