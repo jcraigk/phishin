@@ -81,36 +81,6 @@ class Playlist
           @Util.feedback { alert: r.msg }
     })
 
-
-
-  handlePlaybackLoopChange: ->
-    $.ajax({
-      type: 'post',
-      url: '/submit-playback-loop',
-      data: {
-        'loop': $('#loop_checkbox').prop('checked')
-      }
-      success: (r) =>
-        if r.success
-          @Util.feedback { notice: r.msg }
-        else
-          @Util.feedback { alert: r.msg }
-    })
-
-  handlePlaybackShuffleChange: ->
-    $.ajax({
-      type: 'post',
-      url: '/submit-playback-shuffle',
-      data: {
-        'shuffle': $('#shuffle_checkbox').prop('checked')
-      }
-      success: (r) =>
-        if r.success
-          @Util.feedback { notice: r.msg }
-        else
-          @Util.feedback { alert: r.msg }
-    })
-
   clearPlaylist: (supress_feedback=true)->
     $.ajax({
      url: '/clear-playlist',

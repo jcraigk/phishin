@@ -11,7 +11,6 @@ class Player
     @scrubbing        = false
     @duration         = 0
     @playlist_mode    = false
-    @playlist         = []
     @$playpause       = $ '#control_playpause'
     @$scrubber        = $ '#scrubber'
     @$scrubber_ctrl   = $ '#scrubber_controls'
@@ -129,7 +128,7 @@ class Player
       @audioElement.currentTime = 0
     else
       $.ajax
-        url: "/previous-track/#{@active_track_id}?playlist=#{@playlist}"
+        url: "/previous-track/#{@active_track_id}"
         success: (r) =>
           if r.success
             this.playTrack r.track_id
@@ -139,7 +138,7 @@ class Player
   nextTrack: ->
     return if @playlist_mode
     $.ajax
-      url: "/next-track/#{@active_track_id}?playlist=#{@playlist}"
+      url: "/next-track/#{@active_track_id}"
       success: (r) =>
         if r.success
           this.playTrack r.track_id
@@ -186,7 +185,7 @@ class Player
     return if @playlist_mode
     $.ajax
       type: 'post'
-      url: '/override-playlist'
+      url: '/enqueue-show'
       data: { 'track_id': track_id }
       success: (r) =>
         @playlist = r.playlist
