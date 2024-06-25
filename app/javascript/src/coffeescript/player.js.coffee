@@ -7,6 +7,7 @@ import Util from './util.js'
 class Player
   constructor: ->
     @Util             = new Util
+    @app_name         = 'Phish.in'
     @active_track_id  = ''
     @scrubbing        = false
     @duration         = 0
@@ -23,7 +24,6 @@ class Player
     @$likes_link      = $ '#player_likes_container > .likes_large > a'
 
   onReady: ->
-    @app_name = $('body').data('app-name')
     @time_marker = @Util.timeToMS($('body').data('time-marker'))
     @$scrubber.slider()
     @$scrubber.slider('enable')
@@ -157,7 +157,7 @@ class Player
       @audioElement.pause()
     @active_track_id = ''
     this._updateDisplay
-      title: @app_name,
+      title: '',
       duration: 0
     @$scrubber.slider 'value', 0
     @$scrubber.slider 'disable'
@@ -259,7 +259,9 @@ class Player
     if r.title?.length > 26 then @$player_title.addClass 'long_title' else @$player_title.removeClass 'long_title'
     if r.title?.length > 50 then r.title = r.title.substring(0, 47) + '...'
     @$player_title.html r.title
-    document.title = r.title + ' - ' + r.show + ' - ' + @app_name
+    long_title = "#{r.title} - #{r.show} - #{@app_name}"
+    doctitle = if r.title and r.show then long_title else @app_name
+    document.title = doctitle
     @$likes_count.html r.likes_count
     @$likes_link.data 'id', r.id
     if @time_marker > 0
