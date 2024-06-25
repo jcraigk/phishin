@@ -21,13 +21,15 @@ Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and developmen
 
 ```bash
 # Copy SQL dump into PG container and run it
-docker cp /path/to/phishin.sql phishin_pg_1:/docker-entrypoint-initdb.d/dump.sql
-docker exec -u postgres phishin_pg_1 psql phishin postgres -f docker-entrypoint-initdb.d/dump.sql
+docker cp /path/to/phishin.sql phishin-pg-1:/docker-entrypoint-initdb.d/dump.sql
+docker exec -u postgres phishin-pg-1 psql phishin postgres -f docker-entrypoint-initdb.d/dump.sql
 ```
 
 5. Create a folder named `content` in the local project folder. Place the `tracks` and `import` folders from the Fixtures Pack inside. Symlink the `tracks/audio_files` folder as `audio` in your public folder: `ln -s ./content/tracks/audio_files public/audio`. If you run Rails outside Docker, set `APP_CONTENT_PATH` in `.env` as the absolute path to your `content` folder.
 
-6. If you want to run the Postgres database in Docker and develop the app natively (recommended), you can spin it up like this:
+6. To use audio and waveform images from production while developing locally, set `PRODUCTION_CONTENT=true` in `.env`.
+
+7. If you want to run the Postgres database in Docker and develop the app natively (recommended), you can spin it up like this:
 
 ```bash
 make services
@@ -48,7 +50,7 @@ Alternatively, if you prefer to develop completely in Docker, build and start th
 make up
 ```
 
-7. Open your browser and go to `http://localhost:3000/2017-08-06`. You should be able to view and play the full show.
+8. Open your browser and go to `http://localhost:3000/2017-08-06`. You should be able to view and play the full show.
 
 
 ## Testing

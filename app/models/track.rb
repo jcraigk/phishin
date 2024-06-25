@@ -52,11 +52,11 @@ class Track < ApplicationRecord
   end
 
   def mp3_url
-    audio_file.url(host: APP_BASE_URL).gsub('tracks/audio_files', 'audio')
+    audio_file.url(host: content_host).gsub('tracks/audio_files', 'audio')
   end
 
   def waveform_image_url
-    waveform_png&.url(host: APP_BASE_URL)&.gsub('tracks/audio_files', 'audio')
+    waveform_png&.url(host: content_host)&.gsub('tracks/audio_files', 'audio')
   end
 
   def save_duration
@@ -120,6 +120,10 @@ class Track < ApplicationRecord
   end
 
   private
+
+  def content_host
+    PRODUCTION_CONTENT ? PRODUCTION_BASE_URL : APP_BASE_URL
+  end
 
   def partitioned_id
     format('%<id>09d', id:).scan(/.{3}/).join('/')

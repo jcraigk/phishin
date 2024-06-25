@@ -22,6 +22,7 @@ APP_CONTENT_PATH =
 
 IMPORT_DIR = "#{APP_CONTENT_PATH}/import".freeze
 
+PRODUCTION_BASE_URL = 'https://phish.in'.freeze
 APP_BASE_URL =
   if Rails.env.in?(%w[development test])
     web_host = ENV.fetch('WEB_HOST', nil)
@@ -29,8 +30,9 @@ APP_BASE_URL =
     host = web_host || 'localhost:3000'
     "#{protocol}://#{host}"
   else
-    'https://phish.in'
+    PRODUCTION_BASE_URL
   end
+PRODUCTION_CONTENT = ENV.fetch('PRODUCTION_CONTENT', 'false') == 'true'
 
 ERAS = {
   '1.0' => %w[1983-1987] + (1988..2000).map(&:to_s),
