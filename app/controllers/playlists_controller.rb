@@ -109,7 +109,7 @@ class PlaylistsController < ApplicationController
     render json: {
       success: true,
       url: "/#{show.date}",
-      track_id: session[:track_ids].first
+      track_id: params[:track_id].presence || session[:track_ids].first
     }
   end
 

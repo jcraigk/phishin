@@ -46,8 +46,8 @@ class Player
     unless @active_track_id or @playlist_mode or this._handleAutoPlayTrack()
       if track_id = $('.playable_track').first().data('id')
         path_segment = window.location.pathname.split('/')[1]
-        this.setCurrentPlaylist track_id if path_segment isnt 'playlist' and path_segment isnt 'play'
-        this.playTrack track_id
+        if path_segment isnt 'playlist' and path_segment isnt 'play'
+          this.setCurrentPlaylist track_id
 
   currentPosition: ->
     if @active_track_id then @audioElement.currentTime else 0
@@ -181,13 +181,15 @@ class Player
         if $el
           $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
 
-  setCurrentPlaylist: (track_id) ->
+  setCurrentPlaylist: (track_id, time_marker=0) ->
     return if @playlist_mode
-    console.log('setCurrentPlaylist: ' + track_id)
     $.ajax
       type: 'POST'
       url: '/enqueue-show'
-      data: { 'track_id': track_id }
+      data: { track_id: track_id }
+      success: (r) =>
+        if r.success
+          this.playTrack r.track_id, time_marker
 
   playRandomSongTrack: (song_id) ->
     $.ajax
@@ -196,7 +198,6 @@ class Player
         if r.success
           @Util.navigateTo r.url
           this.setCurrentPlaylist r.track_id
-          this.playTrack r.track_id
 
   _handleAutoPlayTrack: ->
     if anchor_name = $('body').attr('data-anchor')
@@ -207,8 +208,7 @@ class Player
         $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
         unless @active_track_id
           track_id = $el.data 'id'
-          this.setCurrentPlaylist track_id
-          this.playTrack track_id, @time_marker
+          this.setCurrentPlaylist track_id, @time_marker
         else
           $el.addClass 'highlighted_track'
         true
@@ -219,7 +219,7 @@ class Player
 
   _playRandomShowOrPlaylist: ->
     $.ajax
-      url: "/next-track"
+      url: '/next-track'
       success: (r) =>
         if r.success
           @Util.feedback { notice: 'Playing active playlist...'}
@@ -232,7 +232,7 @@ class Player
               if r.success
                 @Util.feedback { notice: 'Playing random show...'}
                 @Util.navigateTo r.url
-                this.playTrack r.track_id
+                this.setCurrentPlaylist r.track_id
 
   _loadTrack: ->
     $.ajax

@@ -61,6 +61,9 @@ $scrubbing: #1a80f6;
   font-size: 7em;
   color: $gray_70;
 }
+.hidden {
+  display: none;
+}
 .ui-tooltip {
   font-family: 'Open Sans Condensed', sans-serif;
   background: $gray_70;
@@ -93,9 +96,6 @@ $scrubbing: #1a80f6;
   line-height: 26px;
 }
 #download_iframe {
-  display: none;
-}
-.display-none {
   display: none;
 }
 #lyrics_content {

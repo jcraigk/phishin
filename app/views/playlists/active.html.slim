@@ -23,7 +23,7 @@
 
     - if user_signed_in?
       - if session[:playlist_id]&.positive? && session[:playlist_user_id] != current_user.id
-        button#duplicate_playlist_btn.btn type='button' class=(session[:playlist_id]&.positive? && current_user.id == session[:playlist_user_id] ? nil : 'display-none')
+        button#duplicate_playlist_btn.btn type='button' class=(session[:playlist_id]&.positive? && current_user.id == session[:playlist_user_id] ? nil : 'hidden')
           i.glyphicon.glyphicon-file
           |  DUPLICATE
         br
@@ -34,7 +34,7 @@
           |  SAVE
         br
 
-      button#delete_playlist_btn.btn type='button' class=(session[:playlist_id]&.positive? && current_user.id == session[:playlist_user_id] ? nil : 'display-none')
+      button#delete_playlist_btn.btn type='button' class=(session[:playlist_id]&.positive? && current_user.id == session[:playlist_user_id] ? nil : 'hidden')
         i.glyphicon.glyphicon-remove
         |  DELETE
       br
