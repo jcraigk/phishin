@@ -325,26 +325,19 @@ class Player
   _loadAndPlayAudio: (url) ->
     unless @audioElement
       @audioElement = document.querySelector('audio')
-      @audioElement.addEventListener('canplay', => this._playAudio())
       @audioElement.addEventListener('ended', => this.nextTrack())
       @audioElement.addEventListener('timeupdate', => this._updateProgress())
-    @audioContext = new AudioContext()
     @audioElement.src = url
     if @time_marker > 0
       @audioElement.currentTime = @time_marker / 1000
       @time_marker = 0 # Only first track should start at time marker
+    this._playAudio()
 
   _playAudio: =>
-    unless @audioElement.readyState >= 3
-      @audioElement.addEventListener 'canplay', => this._playAudio()
-    else
-      if @audioContext.state == 'suspended'
-        @$playpause.removeClass 'playing'
-        @$playpause.addClass 'pulse'
-        # alert('Press play button to listen')
-      else if !@playlist_mode
-        @audioElement.play()
-        navigator.mediaSession.playbackState = 'playing'
-      this._updatePlayButton()
+    @audioElement.play().catch (error) ->
+      # suppress errors and scroll to right if audio fails to play
+      $('html, body').animate({ scrollLeft: $(document).width() }, 'smooth')
+    navigator.mediaSession.playbackState = 'playing'
+    this._updatePlayButton()
 
 export default Player
