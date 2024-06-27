@@ -142,7 +142,7 @@ class PlaylistsController < ApplicationController
 
   def remove_track
     track_id = params[:track_id].to_i
-    if session[:track_ids].include?(track_id)
+    if session[:track_ids]&.include?(track_id)
       session[:track_ids].delete(track_id)
       render json: { success: true }
     else
@@ -152,6 +152,7 @@ class PlaylistsController < ApplicationController
 
   def add_show
     if (show = Show.published.find_by(id: params[:show_id]))
+      session[:track_ids] ||= []
       session[:track_ids] += show.tracks.sort_by(&:position).map(&:id)
       session[:track_ids] = session[:track_ids].uniq.take(Playlist::MAX_TRACKS)
       render json: { success: true, msg: 'Tracks from show added to playlist' }
@@ -225,7 +226,7 @@ class PlaylistsController < ApplicationController
   end
 
   def create_playlist_tracks(playlist)
-    session[:track_ids].each_with_index do |track_id, idx|
+    session[:track_ids]&.each_with_index do |track_id, idx|
       PlaylistTrack.create(playlist:, track_id:, position: idx + 1)
     end
     playlist.update(duration: playlist.tracks.sum(&:duration))
