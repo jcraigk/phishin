@@ -13,6 +13,7 @@ class PlaylistsController < ApplicationController
     @tracks_likes = user_likes_for_tracks(@tracks)
     @duration = @tracks&.sum(&:duration)
     @stored = Playlist.where(user: current_user).order(name: :asc) if current_user
+    @ogp_audio_url = @tracks.first&.mp3_url
 
     render layout: false if request.xhr?
   end

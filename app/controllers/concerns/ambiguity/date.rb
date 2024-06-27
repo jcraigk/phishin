@@ -22,20 +22,22 @@ module Ambiguity::Date
 
   def assign_ogp_values
     date = Date.parse(current_slug).strftime('%B %d, %Y')
-    if (track = track_from_show).present?
-      @ogp_audio_url = track.mp3_url
-      @ogp_title = "Listen to #{track.title} from #{date}"
-    else
-      @ogp_title = "Listen to #{date}"
-    end
+    @ogp_audio_url = selected_track.mp3_url
+    @ogp_title =
+      if params[:anchor].present?
+        "Listen to #{selected_track.title} from #{date}"
+      else
+        @ogp_title = "Listen to #{date}"
+      end
   end
 
-  def track_from_show
-    return if params[:anchor].blank?
-    Track.joins(:show)
-         .where(show: { date: current_slug })
-         .where(slug: params[:anchor])
-         .first
+  def selected_track
+    tracks =
+      Track.joins(:show)
+           .where(show: { date: current_slug })
+           .order(:position)
+    tracks = tracks.where(slug: params[:anchor]) if params[:anchor].present?
+    tracks.first
   end
 
   def compose_sets_for_date
