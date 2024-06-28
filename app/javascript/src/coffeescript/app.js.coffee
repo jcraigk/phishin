@@ -3,7 +3,6 @@ import 'jquery-ui/ui/widgets/slider'
 import 'jquery-ui/ui/widgets/tooltip'
 import 'jquery-ui/ui/widgets/dialog'
 
-import Detector from './detector.js'
 import Map from './map.js'
 import Player from './player.js'
 import Playlist from './playlist.js'
@@ -18,7 +17,6 @@ $ ->
   # Init
   ###############################################
 
-  App.Detector     = null       # delay Detector creation until body load (Relisten track ID detection)
   App.Util         = new Util
   App.Player       = new Player
   App.Playlist     = new Playlist
