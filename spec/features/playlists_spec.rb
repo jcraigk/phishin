@@ -13,7 +13,7 @@ describe 'Playlists', :js do
           'Sign in to create and share custom playlists!'
         )
         within('#playlist_mode_btn') do
-          expect_content('EDIT PLAYLIST')
+          expect_content('EDIT')
         end
         within('#clear_playlist_btn') do
           expect_content('EMPTY')
@@ -50,7 +50,7 @@ describe 'Playlists', :js do
 
       # Click EDIT PLAYLIST
       accept_confirm do
-        click_on('EDIT PLAYLIST')
+        click_on('EDIT')
       end
       expect_content('PLAYLIST EDIT MODE')
 

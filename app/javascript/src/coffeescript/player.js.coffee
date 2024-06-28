@@ -78,7 +78,7 @@ class Player
       $('#playlist_mode_label').html 'DONE EDITING'
     else
       $('#playlist_mode_notice').hide()
-      $('#playlist_mode_label').html 'EDIT PLAYLIST'
+      $('#playlist_mode_label').html 'EDIT'
 
   startScrubbing: ->
     @scrubbing = true

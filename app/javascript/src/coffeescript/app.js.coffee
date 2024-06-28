@@ -60,6 +60,7 @@ $ ->
         $page.html html
         $ajax_loading.css 'visibility', 'hidden'
         App.Player._highlightActiveTrack()
+        App.Player._updatePlaylistMode()
 
         # Scroll to proper position
         window.scrollTo(0, App.Util.historyScrollStates[state.id]) if App.Util.historyScrollStates[state.id]
