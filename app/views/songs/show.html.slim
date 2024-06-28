@@ -45,6 +45,8 @@
 
   #content_box
     ul.item_list.clickable
+      - if @tracks.none?
+        li No tracks match the specified criteria
       - @tracks.each_with_index do |track, idx|
           li
             h2

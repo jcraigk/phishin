@@ -101,19 +101,30 @@ module FilterHelper
   end
 
   def song_track_tag_items(song)
-    tag_data = song.tracks.joins(:tags).order('tags.name').pluck('tags.name', 'tags.slug').uniq
-    generic_track_items(tag_data)
+    tag_data =
+      song.tracks
+          .joins(:tags)
+          .group('tags.name', 'tags.slug')
+          .order('tags.name')
+          .pluck('tags.name', 'tags.slug', 'COUNT(tags.id)')
+    total_count = song.tracks.joins(:tags).count
+    generic_track_items(tag_data, total_count)
   end
 
   def shows_tag_items(shows)
-    tag_data = shows.joins(:tags).order('tags.name').pluck('tags.name', 'tags.slug').uniq
-    generic_track_items(tag_data)
+    tag_data =
+      shows.joins(:tags)
+           .group('tags.name', 'tags.slug')
+           .order('tags.name')
+           .pluck('tags.name', 'tags.slug', 'COUNT(tags.id)')
+    total_count = shows.joins(:tags).count
+    generic_track_items(tag_data, total_count)
   end
 
-  def generic_track_items(tag_data)
-    items = { 'All Tags' => 'all' }
-    tag_data.each do |name, slug|
-      items[name] = slug
+  def generic_track_items(tag_data, total_count = nil)
+    items = { "All Tags (#{total_count})" => 'all' }
+    tag_data.each do |name, slug, count|
+      items["#{name} (#{count})"] = slug
     end
     items
   end
