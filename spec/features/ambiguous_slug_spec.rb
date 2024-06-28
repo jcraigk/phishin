@@ -3,7 +3,6 @@ require 'rails_helper'
 describe 'Ambiguous slug resolution', :js do
   let!(:show3) { create(:show, date: '2014-10-31', tour:) }
   let!(:show4) { create(:show, :with_tracks, date: '2014-11-02', tour:) }
-  let!(:song) { create(:song, title: 'You Enjoy Myself', alias: 'YEM') }
   let!(:venue) { create(:venue, name: 'Madison Square Garden') }
   let!(:tour) { create(:tour, name: 'Magical Myster Tour') }
 
@@ -93,6 +92,9 @@ describe 'Ambiguous slug resolution', :js do
   end
 
   it 'song' do
+    song = create(:song, title: 'You Enjoy Myself', alias: 'YEM')
+    song.tracks << create(:track, show: show4)
+
     visit "/#{song.slug}"
 
     within('#title_box') do

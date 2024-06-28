@@ -6,7 +6,7 @@ class MyController < ApplicationController
     @shows = paginated_shows
     @shows_likes = user_likes_for_shows(@shows)
 
-    render_xhr_without_layout
+    render_view
   end
 
   def my_tracks
@@ -19,7 +19,7 @@ class MyController < ApplicationController
                    .paginate(page: params[:page], per_page: params[:per_page].presence || 20)
     @tracks_likes = user_likes_for_tracks([@tracks])
 
-    render_xhr_without_layout
+    render_view
   end
 
   private

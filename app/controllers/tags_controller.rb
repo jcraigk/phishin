@@ -4,7 +4,7 @@ class TagsController < ApplicationController
 
   def index
     @tag_groups = Tag.order(tags_order_by).group_by(&:group).sort
-    render_xhr_without_layout
+    render_view
   end
 
   def show
@@ -17,7 +17,7 @@ class TagsController < ApplicationController
       @tracks_likes = user_likes_for_tracks(@tracks)
     end
 
-    render_xhr_without_layout
+    render_view
   end
 
   private

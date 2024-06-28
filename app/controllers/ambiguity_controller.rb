@@ -12,7 +12,7 @@ class AmbiguityController < ApplicationController
   def resolve
     if slug_matches_entity?
       return redirect_to(@redirect) if @redirect
-      return render_xhr_without_layout(@view)
+      return render_view(@view)
     end
 
     redirect_to :root

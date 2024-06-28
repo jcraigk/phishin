@@ -1,13 +1,17 @@
 class LikesController < ApplicationController
   skip_before_action :verify_authenticity_token
-  before_action :authorize_user!
 
   def toggle_like
+    return respond_sign_in unless current_user
     return respond_with_invalid_likable unless likable
     respond_with_status(like_status)
   end
 
   private
+
+  def respond_sign_in
+    render json: { success: false, msg: 'You must be signed in to submit Likes' }
+  end
 
   def like_status
     if existing_like
@@ -38,11 +42,6 @@ class LikesController < ApplicationController
 
   def existing_like
     @existing_like ||= likable.likes.find_by(user: current_user)
-  end
-
-  def authorize_user!
-    return if current_user
-    render json: { success: false, msg: 'You must be signed in to submit Likes' }
   end
 
   def likable

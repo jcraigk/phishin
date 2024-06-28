@@ -5,8 +5,6 @@ class Util
   historyScrollStates: [] # Need to store scroll states outside history.js based on the way that library works
 
   constructor: ->
-    @page_init          = true
-    @page_init          = true
     @$feedback          = $ '#feedback'
 
   feedback: (feedback) ->
@@ -30,8 +28,6 @@ class Util
     this.navigateTo $el.attr('href')
 
   navigateTo: (href) ->
-    @page_init = false
-
     # Save the current scroll position to the state
     scrollPosition = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0
     history.replaceState { href: window.location.href, scroll: scrollPosition }, document.title, window.location.href

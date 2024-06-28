@@ -1,17 +1,17 @@
 class StaticPagesController < ApplicationController
   def faq
-    render_xhr_without_layout
+    render_view
   end
 
   def contact_info
-    render_xhr_without_layout
+    render_view
   end
 
   def api_docs
-    render_xhr_without_layout
+    render_view
   end
 
   def tagin_project
-    render_xhr_without_layout
+    render_view
   end
 end

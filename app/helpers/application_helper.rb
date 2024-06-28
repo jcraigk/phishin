@@ -67,16 +67,6 @@ module ApplicationHelper
     "#{day_link}, #{year_link}".html_safe
   end
 
-  def xhr_exempt_controller
-    controller_name.in?(
-      %w[
-        sessions registrations confirmations
-        passwords unlocks omniauth_callbacks
-        downloads errors
-      ]
-    )
-  end
-
   def taper_notes_for(show)
     return CGI.escapeHTML(show.taper_notes) if show.taper_notes.present?
     'No taper notes present for this show'

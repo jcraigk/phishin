@@ -3,7 +3,7 @@ class ErasController < ApplicationController
 
   def index
     @shows = years.index_with { |year| shows_for_year(year) }
-    render_xhr_without_layout
+    render_view
   end
 
   private

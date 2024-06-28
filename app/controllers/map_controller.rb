@@ -2,7 +2,7 @@ class MapController < ApplicationController
   def index
     params[:date_start] ||= '1983-01-01'
     params[:date_stop]  ||= Time.zone.today.to_s
-    render_xhr_without_layout
+    render_view
   end
 
   def search
