@@ -97,22 +97,23 @@ class PlaylistsController < ApplicationController
     render json: { success: false, msg: 'Playlist not bookmarked' }
   end
 
-  # Replace current active playlist with an array of tracks using
+  # Replace active playlist using one of:
   # (1) track_id
   # (2) date/slug combo from URL path (`/YYYY-MM-DD/:track_slug`)
-  # (3) playlist by slug from (`/play/:playlist_slug`)
+  # (3) playlist by slug from URL path (`/play/:playlist_slug`)
   # (3) random show
   def enqueue_tracks
     reset_session
     path1, slug = params[:path]&.split('/')&.reject(&:empty?)
-    return enqueue_playlist if path1 == 'play'
+    return enqueue_playlist(slug) if path1 == 'play'
     show = enqueuable_show(path1)
     session[:track_ids] = show.tracks.order(position: :asc).pluck(:id)
     track_id = slug.present? ? show.tracks.find_by(slug:)&.id : params[:track_id]
+    track_id ||= session[:track_ids].first
     render json: {
       success: true,
       url: @url,
-      track_id: track_id || session[:track_ids].first,
+      track_id:,
       msg: @msg
     }
   end
@@ -207,13 +208,14 @@ class PlaylistsController < ApplicationController
     elsif path_segment&.match?(/^\d{4}-\d{2}-\d{2}$/)
       Show.published.find_by(date: path_segment)
     else
+      show = Show.published.random.first
       @url = "/#{show.date}"
       @msg = 'Playing random show...'
-      Show.published.random.first
+      show
     end
   end
 
-  def enqueue_playlist(slug = nil)
+  def enqueue_playlist(slug)
     session[:track_ids] =
       Playlist.find_by(slug:)
               &.playlist_tracks

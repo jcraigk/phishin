@@ -24,6 +24,8 @@ $ ->
   App.Playlist     = new Playlist
   App.Map          = new Map
 
+  App.Player.onReady()
+
   ###############################################
   # Assignments
   ###############################################
@@ -57,6 +59,7 @@ $ ->
       .then (html) ->
         $page.html html
         $ajax_loading.css 'visibility', 'hidden'
+        App.Player._highlightActiveTrack()
 
         # Scroll to proper position
         window.scrollTo(0, App.Util.historyScrollStates[state.id]) if App.Util.historyScrollStates[state.id]
@@ -64,18 +67,6 @@ $ ->
         # Tooltips
         $('a[title]').each -> $(this).tooltip()
         $('.tag_label[title]').each -> $(this).tooltip()
-
-        # Auto-scroll and highlight track anchor if present
-        path = state.href.split('/')[2]
-        if state.href.substr(0,6) != '/play/' and path
-          match = /^([^\?]+)\??(.+)?$/.exec(path)
-          $('body').attr 'data-anchor', match[1]
-        else
-          $('body').attr 'data-anchor', ''
-        App.Player.onReady() # For scrolling to and auto-playing a track
-
-        # For detecting browsers/platforms
-        App.Detector = new Detector
 
         # Map
         if state.href.substr(0,4) is '/map'

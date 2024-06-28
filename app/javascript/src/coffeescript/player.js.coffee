@@ -27,8 +27,6 @@ class Player
     @time_marker = @Util.timeToMS($('body').data('time-marker'))
     @$scrubber.slider()
     @$scrubber.slider('enable')
-    this._updatePlaylistMode()
-    this._highlightActiveTrack(true)
 
     # Support next/prev buttons on mobile lock screens
     navigator.mediaSession.setActionHandler 'previoustrack', =>
@@ -42,12 +40,10 @@ class Player
     navigator.mediaSession.setActionHandler 'stop', =>
       this.togglePause()
 
-    # Play first track on the page if no audio playing, not a playlist page, and no track slug in URL
-    unless @active_track_id or @playlist_mode or this._handleAutoPlayTrack()
-      if track_id = $('.playable_track').first().data('id')
-        path_segment = window.location.pathname.split('/')[1]
-        if path_segment isnt 'playlist' and path_segment isnt 'play'
-          this.setCurrentPlaylist track_id
+    # Autoplay if URL indicates show date (`1995-10-31`) or playlist (`/play/asdf`)
+    path = window.location.pathname.split('/').filter(Boolean)
+    if path.length > 0 && (/^\d{4}-\d{2}-\d{2}$/.test(path[0]) || path[0] == 'play')
+      this.togglePause()
 
   currentPosition: ->
     if @active_track_id then @audioElement.currentTime else 0
@@ -129,7 +125,7 @@ class Player
           if r.success
             @Util.navigateTo r.url if r.url?
             @Util.feedback { notice: r.msg } if r.msg?
-            this.setCurrentPlaylist r.track_id
+            this.playTrack r.track_id
 
   previousTrack: ->
     return if @playlist_mode
@@ -173,7 +169,7 @@ class Player
     @$time_remaining.html '0:00'
     @$time_elapsed.html '0:00'
 
-  _highlightActiveTrack: (scroll_to_track=false)->
+  _highlightActiveTrack: ->
     if @active_track_id
       $track = $('.playable_track[data-id="'+@active_track_id+'"]')
       $playlist_track = $('#active_playlist>li[data-id="'+@active_track_id+'"]')
@@ -182,13 +178,12 @@ class Player
       $track.addClass 'active_track'
       $('#active_playlist>li').removeClass 'active_track'
       $playlist_track.addClass 'active_track'
-      if scroll_to_track
-        if $track.length > 0
-          $el = $track.first()
-        else if $playlist_track.length > 0
-          $el = $playlist_track.first()
-        if $el
-          $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
+      if $track.length > 0
+        $el = $track.first()
+      else if $playlist_track.length > 0
+        $el = $playlist_track.first()
+      if $el
+        $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
 
   setCurrentPlaylist: (track_id, time_marker=0) ->
     return if @playlist_mode
@@ -207,24 +202,6 @@ class Player
         if r.success
           @Util.navigateTo r.url
           this.setCurrentPlaylist r.track_id
-
-  _handleAutoPlayTrack: ->
-    if anchor_name = $('body').attr('data-anchor')
-      $col = $('li[data-track-anchor='+anchor_name+']')
-      $col = $('li[data-section-anchor='+anchor_name+']') if $col.length == 0
-      if $col.length > 0
-        $el = $col.first()
-        $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
-        unless @active_track_id
-          track_id = $el.data 'id'
-          this.setCurrentPlaylist track_id, @time_marker
-        else
-          $el.addClass 'highlighted_track'
-        true
-      else
-        false
-    else
-      false
 
   _loadTrack: ->
     $.ajax
