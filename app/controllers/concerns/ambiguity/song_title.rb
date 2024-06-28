@@ -23,12 +23,12 @@ module Ambiguity::SongTitle
   def fetch_song_tracks
     tracks = song.tracks.includes(:songs, show: :venue, track_tags: :tag).order(@order_by)
     tracks = tagged_tracks(tracks)
-    params[:page] = constrained_page_param
+    params[:page] = constrained_page_param(tracks)
     tracks.paginate(page: params[:page], per_page: params[:per_page].presence || 20)
   end
 
-  def constrained_page_param
-    [tracks.paginate(page: 1).total_pages, params[:page]&.to_i].min
+  def constrained_page_param(tracks)
+    [tracks.paginate(page: 1).total_pages, params[:page]&.to_i || 1].min
   end
 
   def tagged_tracks(tracks)
