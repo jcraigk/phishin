@@ -39,7 +39,7 @@ $ ->
 
   handleNavigation = ->
     state = window.history.state
-    if state?.href && !App.Util.page_init
+    if state?.href
       $ajax_loading.css 'visibility', 'visible'
       $page.html ''
 
@@ -100,16 +100,6 @@ $ ->
 
   # Result of user clicking a link
   window.addEventListener 'navigation', (e) -> handleNavigation()
-
-  ###############################################
-  # Load initial page if not an exempt route
-  ###############################################
-  path_segment = window.location.pathname.split('/')[1]
-  if path_segment isnt 'users'
-    $page.html ''
-    match = /^(http|https):\/\/(.+)$/.exec(window.location)
-    href = match[2].substr(match[2].indexOf('/'), match[2].length - 1)
-    App.Util.navigateTo(href)
 
   ###############################################
   # Handle feedback on DOM load (for Devise)

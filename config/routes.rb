@@ -51,7 +51,7 @@ Rails.application.routes.draw do
   post '/add-track' => 'playlists#add_track'
   post '/remove-track' => 'playlists#remove_track'
   post '/add-show' => 'playlists#add_show'
-  post '/enqueue-show' => 'playlists#enqueue_show'
+  post '/enqueue-tracks' => 'playlists#enqueue_tracks'
   get '/next-track(/:track_id)' => 'playlists#next_track_id'
   get '/previous-track/:track_id' => 'playlists#previous_track_id'
   get '/random-song-track/:song_id' => 'playlists#random_song_track'

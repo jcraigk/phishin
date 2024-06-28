@@ -121,7 +121,15 @@ class Player
         navigator.mediaSession.playbackState = 'paused'
       this._updatePlayButton()
     else if !@playlist_mode
-      this._playRandomShowOrPlaylist()
+      $.ajax
+        type: 'POST'
+        url: '/enqueue-tracks'
+        data: { path: window.location.pathname }
+        success: (r) =>
+          if r.success
+            @Util.navigateTo r.url if r.url?
+            @Util.feedback { notice: r.msg } if r.msg?
+            this.setCurrentPlaylist r.track_id
 
   previousTrack: ->
     return if @playlist_mode
@@ -186,7 +194,7 @@ class Player
     return if @playlist_mode
     $.ajax
       type: 'POST'
-      url: '/enqueue-show'
+      url: '/enqueue-tracks'
       data: { track_id: track_id }
       success: (r) =>
         if r.success
@@ -217,23 +225,6 @@ class Player
         false
     else
       false
-
-  _playRandomShowOrPlaylist: ->
-    $.ajax
-      url: '/next-track'
-      success: (r) =>
-        if r.success
-          @Util.feedback { notice: 'Playing active playlist...'}
-          this.playTrack r.track_id
-        else
-          $.ajax
-            type: 'POST'
-            url: '/enqueue-show'
-            success: (r) =>
-              if r.success
-                @Util.feedback { notice: 'Playing random show...'}
-                @Util.navigateTo r.url
-                this.setCurrentPlaylist r.track_id
 
   _loadTrack: ->
     $.ajax
