@@ -9,6 +9,7 @@ class Player
     @Util             = new Util
     @app_name         = 'Phish.in'
     @active_track_id  = ''
+    @active_show_id   = ''
     @scrubbing        = false
     @duration         = 0
     @playlist_mode    = false
@@ -104,7 +105,7 @@ class Player
   playTrack: (track_id, time_marker=0) ->
     @active_track_id = track_id
     this._loadTrack()
-    this._highlightActiveTrack()
+    this._highlightActiveItem()
 
   togglePause: ->
     if @active_track_id
@@ -169,19 +170,15 @@ class Player
     @$time_remaining.html '0:00'
     @$time_elapsed.html '0:00'
 
-  _highlightActiveTrack: ->
+  _highlightActiveItem: ->
     if @active_track_id
+      $show = $('.playable_show[data-id="'+@active_show_id+'"]')
       $track = $('.playable_track[data-id="'+@active_track_id+'"]')
-      $playlist_track = $('#active_playlist>li[data-id="'+@active_track_id+'"]')
       $('.playable_track').removeClass 'active_track'
-      $track.removeClass 'highlighted_track'
       $track.addClass 'active_track'
-      $('#active_playlist>li').removeClass 'active_track'
-      $playlist_track.addClass 'active_track'
+      $show.addClass 'active_track'
       if $track.length > 0
         $el = $track.first()
-      else if $playlist_track.length > 0
-        $el = $playlist_track.first()
       if $el
         $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
 
@@ -211,6 +208,7 @@ class Player
           this._updateDisplay r
           this._updateMediaSession r
           this._loadAndPlayAudio r.mp3_url
+          @active_show_id = r.show_id
         # else
         #   @Util.feedback { alert: "Error retrieving track info" }
 

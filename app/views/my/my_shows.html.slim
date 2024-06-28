@@ -15,7 +15,7 @@
     - elsif @shows.any?
       ul.item_list.clickable
         - @shows.each_with_index do |show, idx|
-          li
+          li.playable_show data-id=show.id
             h2 = link_to_show(show, show_abbrev: false)
             h4.small-font
               a href="/#{show.venue.slug}" = show.venue_name

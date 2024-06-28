@@ -14,7 +14,7 @@
   #content_box
     ul.item_list.clickable
       - @shows.each_with_index do |show, idx|
-        li
+        li.playable_show data-id=show.id
           h2.position_num = idx + 1
           h2
             a href="/#{show.date}" = show.date_with_dots

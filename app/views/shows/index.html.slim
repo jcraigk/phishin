@@ -24,7 +24,7 @@
 
         ul.item_list.clickable
           - props[:shows].each_with_index do |show, idx|
-            li
+            li.playable_show data-id=show.id
               h2 = link_to_show(show, show_abbrev: false)
               h5.small-font.narrow-140
                 a href="/#{show.venue.slug}" = show.venue_name

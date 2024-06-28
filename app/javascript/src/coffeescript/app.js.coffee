@@ -57,7 +57,7 @@ $ ->
       .then (html) ->
         $page.html html
         $ajax_loading.css 'visibility', 'hidden'
-        App.Player._highlightActiveTrack()
+        App.Player._highlightActiveItem()
         App.Player._updatePlaylistMode()
 
         # Scroll to proper position

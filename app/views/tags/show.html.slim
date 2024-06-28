@@ -21,7 +21,7 @@
       - if @context == 'show'
         - if @shows.any?
           - @shows.each_with_index do |show, idx|
-            li
+            li.playable_show data-id=show.id
               h2
                 a href="/#{show.date}" = show.date_with_dots
               h2.wide-180
