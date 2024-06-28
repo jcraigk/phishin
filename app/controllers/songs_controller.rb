@@ -3,7 +3,7 @@ class SongsController < ApplicationController
 
   def index
     @songs = Song.title_starting_with(char_param).order(order_by)
-    render_xhr_without_layout
+    render_view
   end
 
   private

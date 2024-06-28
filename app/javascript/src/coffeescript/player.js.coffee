@@ -211,8 +211,8 @@ class Player
           this._updateDisplay r
           this._updateMediaSession r
           this._loadAndPlayAudio r.mp3_url
-        else
-          @Util.feedback { alert: "Error retrieving track info" }
+        # else
+        #   @Util.feedback { alert: "Error retrieving track info" }
 
   _updateDisplay: (r) ->
     @$scrubber_ctrl.css('opacity', 1)

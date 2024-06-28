@@ -9,6 +9,6 @@ class TopShowsController < ApplicationController
           .order(likes_count: :desc, date: :desc)
           .limit(40)
     @shows_likes = user_likes_for_shows(@shows)
-    render_xhr_without_layout
+    render_view
   end
 end

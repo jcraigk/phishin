@@ -1,7 +1,7 @@
 class SearchController < ApplicationController
   def results
     perform_search
-    render_xhr_without_layout
+    render_view
   end
 
   private

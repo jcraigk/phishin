@@ -16,13 +16,16 @@ class ApplicationController < ActionController::Base
 
   protected
 
-  def render_xhr_without_layout(view = nil)
-    return (request.xhr? ? (render view, layout: false) : (render view)) if view
+  def render_view(view = nil, status = 200)
+    if view
+      return render view, layout: false if request.xhr?
+      return render view, status:
+    end
     render layout: false if request.xhr?
   end
 
   def render_not_found
-    render_xhr_without_layout('errors/404')
+    render_view('errors/404', 404)
   end
 
   def permitted_params

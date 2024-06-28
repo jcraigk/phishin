@@ -4,7 +4,7 @@ class ReportsController < ApplicationController
   def missing_content
     @kdates = notable_known_dates
     @incomplete_dates = incomplete_dates
-    render_xhr_without_layout
+    render_view
   end
 
   private

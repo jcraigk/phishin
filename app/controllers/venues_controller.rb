@@ -3,7 +3,7 @@ class VenuesController < ApplicationController
 
   def index
     @venues = Venue.name_starting_with(char_param).order(order_by)
-    render_xhr_without_layout
+    render_view
   end
 
   private

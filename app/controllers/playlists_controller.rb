@@ -107,7 +107,7 @@ class PlaylistsController < ApplicationController
     path1, slug = params[:path]&.split('/')&.reject(&:empty?)
     return enqueue_playlist(slug) if path1 == 'play'
     show = enqueuable_show(path1)
-    session[:track_ids] = show.tracks.order(position: :asc).pluck(:id)
+    session[:track_ids] = show&.tracks&.order(position: :asc)&.pluck(:id) || []
     track_id = slug.present? ? show.tracks.find_by(slug:)&.id : params[:track_id]
     track_id ||= session[:track_ids].first
     render json: {
