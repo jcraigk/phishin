@@ -107,18 +107,26 @@ module FilterHelper
           .group('tags.name', 'tags.slug')
           .order('tags.name')
           .pluck('tags.name', 'tags.slug', 'COUNT(tags.id)')
-    total_count = song.tracks.joins(:tags).count
-    tag_filter_options(tag_data, total_count)
+    tag_filter_options(tag_data)
   end
 
-  def shows_tag_items(shows)
-    tag_data = shows.joins(:tags).order('tags.name').pluck('tags.name', 'tags.slug').uniq
-    tag_filter_options(tag_data, nil)
+  # Use Ruby for tag counts because shows.order_values may take different forms
+  # and GROUP_BY requires all columns in ORDER BY
+  def shows_tag_items(shows) # rubocop:disable Metrics/AbcSize
+    tag_data = shows.includes(:tags).flat_map(&:tags)
+    grouped_tags = tag_data.each_with_object(Hash.new { |h, k| h[k] = { count: 0 } }) do |tag, hash|
+      key = [tag.name, tag.slug]
+      hash[key][:count] += 1
+    end
+    tag_data_array = grouped_tags.map do |(name, slug), data|
+      [name, slug, data[:count]]
+    end
+    tag_data_array.uniq!
+    tag_filter_options(tag_data_array)
   end
 
-  def tag_filter_options(tag_data, total_count = nil)
-    all_title = total_count ? "All (#{total_count})" : 'All'
-    items = { all_title => 'all' }
+  def tag_filter_options(tag_data)
+    items = { 'Any Tag' => 'all' }
     tag_data.each do |name, slug, count|
       items["#{name} (#{count})"] = slug
     end
