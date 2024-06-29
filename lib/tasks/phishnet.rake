@@ -3,11 +3,9 @@ namespace :phishnet do
   desc 'Populate known dates'
   task known_dates: :environment do
     puts 'Fetching known dates from Phish.net API...'
-    bad_dates = ['2018-08-17', '2018-08-18', '2018-08-19'] # Curveball :(
     url = "https://api.phish.net/v5/shows.json?apikey=#{ENV['PNET_API_KEY']}"
     JSON.parse(Typhoeus.get(url).body)['data'].each do |entry|
-      next unless entry['artist_name'] == 'Phish'
-      next if bad_dates.include?(entry['showdate'])
+      next unless entry['artist_name'] == 'Phish' && entry['exclude_from_stats'] != '1'
       kdate = KnownDate.find_or_create_by(date: entry['showdate'])
       location = entry['city']
       location += ", #{entry['state']}" if entry['state'].present?
