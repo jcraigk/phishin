@@ -301,8 +301,10 @@ class Player
 
   _playAudio: =>
     @audioElement.play().catch (error) ->
-      # suppress errors and scroll to right if audio fails to play
-      $('html, body').animate({ scrollLeft: $(document).width() }, 'smooth')
+      # Suppress initial play error and scroll to right
+      # We can ignore subsequent AbortError from iOS for example
+      if error.name is 'NotAllowedError'
+        $('html, body').animate({ scrollLeft: $(document).width() }, 'smooth')
     navigator.mediaSession.playbackState = 'playing'
     this._updatePlayButton()
 
