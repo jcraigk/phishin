@@ -35,7 +35,7 @@ class Track < ApplicationRecord
   scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
 
   def url
-    "#{APP_BASE_URL}/#{show.date.to_fs(:db)}/#{slug}"
+    "#{APP_BASE_URL}/#{show.date}/#{slug}"
   end
 
   def set_name

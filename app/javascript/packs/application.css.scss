@@ -500,7 +500,7 @@ html {
           border: none;
         }
         .ui-slider-handle {
-          background-image: none !important; //Override jquery UI CSS
+          background-image: none !important; // Override jQuery UI CSS
           margin-top: 4px;
           margin-left: -4px !important;
           background-color: transparent;
@@ -508,6 +508,8 @@ html {
           height: 70px;
           cursor: pointer;
           border: none;
+          outline: none; // Prevent focus outline
+          pointer-events: none; // Prevent interaction if necessary
         }
         .ui-slider-range {
           background: url('../images/progress-bar.png');
