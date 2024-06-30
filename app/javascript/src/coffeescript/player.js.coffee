@@ -26,8 +26,6 @@ class Player
 
   onReady: ->
     @time_marker = @Util.timeToMS($('body').data('time-marker'))
-    @$scrubber.slider()
-    @$scrubber.slider('enable')
 
     # Support next/prev buttons on mobile lock screens
     navigator.mediaSession.setActionHandler 'previoustrack', =>

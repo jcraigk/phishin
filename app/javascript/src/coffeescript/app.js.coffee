@@ -259,25 +259,17 @@ $ ->
     App.Player.nextTrack()
 
   # Scrubber (jQuery UI slider)
-  $('#scrubber').slider({
+  $('#scrubber').slider
     animate: false,
     range: 'min',
     max: 100,
     value: 0,
-    create: ->
-      # Fix knob in Safari and Firefox/Mac (offset vertically by 1 px)
-      if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') is -1)
-        $('#scrubber .ui-slider-handle').css('margin-top', '3px')
-      else if (navigator.userAgent.indexOf('Firefox') != -1 && navigator.userAgent.indexOf('Chrome') is -1)
-        $('#scrubber .ui-slider-handle').css('margin-top', '4px')
-      else
     start: ->
       App.Player.startScrubbing()
     stop: ->
       App.Player.stopScrubbing()
     slide: ->
       App.Player.moveScrubber()
-  }).slider('disable')
 
   # Volume slider (jQuery UI slider)
   $('#volume_slider').slider({

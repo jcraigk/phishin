@@ -9,7 +9,7 @@ namespace :phishnet do
                   entry['exclude_from_stats'] != '1'
 
       setlist_url = "https://api.phish.net/v5/setlists/showdate/#{entry['showdate']}.json?apikey=#{ENV['PNET_API_KEY']}"
-      setlist_count = JSON.parse(Typhoeus.get(url).body)['data'].size
+      setlist_count = JSON.parse(Typhoeus.get(setlist_url).body)['data'].size
       next if setlist_count.zero?
 
       kdate = KnownDate.find_or_create_by(date: entry['showdate'])
@@ -165,6 +165,49 @@ namespace :phishnet do
       csv_signal.each do |d|
         csv << d
       end
+    end
+
+    pbar.finish
+  end
+
+  desc 'Compare local setlists with Phish.net'
+  task compare_setlists: :environment do
+    # "A > B" => ["A", "B"]
+    def expand(setlist)
+      normalized = []
+      setlist.each do |set, title|
+        if title.include?(' > ')
+          titles = title.split(' > ')
+          titles.each { |t| normalized << [set, t] }
+        else
+          normalized << [set, title]
+        end
+      end
+      normalized
+    end
+
+    shows = Show.published
+                .where(incomplete: false)
+                .where(matches_pnet: false)
+                .order(date: :asc)
+    pbar = ProgressBar.create \
+      total: shows.count,
+      format: '%a %B %c/%C %p%% %E'
+
+    shows.each do |show|
+      url = "https://api.phish.net/v5/setlists/showdate/#{show.date}.json?apikey=#{ENV['PNET_API_KEY']}"
+      sa = JSON.parse(Typhoeus.get(url).body)['data'].map { |d| [d['set'].upcase, d['song']] }
+      sb = expand \
+        show.tracks
+            .where.not(title: 'Banter')
+            .order(:position)
+            .map { |t| [t.set, t.title] }
+      if sa == sb
+        show.update(matches_pnet: true)
+      else
+        binding.irb
+      end
+      pbar.increment
     end
 
     pbar.finish
