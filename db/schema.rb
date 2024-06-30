@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_10_27_223005) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_30_030323) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
   create_table "announcements", force: :cascade do |t|
@@ -110,6 +111,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_10_27_223005) do
     t.integer "tags_count", default: 0
     t.boolean "published", default: false, null: false
     t.string "venue_name", default: "", null: false
+    t.boolean "matches_pnet", default: false
     t.index ["date"], name: "index_shows_on_date", unique: true
     t.index ["duration"], name: "index_shows_on_duration"
     t.index ["likes_count"], name: "index_shows_on_likes_count"

@@ -76,6 +76,10 @@ class Show < ApplicationRecord
     }
   end
 
+  def url
+    "#{APP_BASE_URL}/#{date}"
+  end
+
   private
 
   def show_tags_for_api

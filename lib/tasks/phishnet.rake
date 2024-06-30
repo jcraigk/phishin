@@ -5,7 +5,13 @@ namespace :phishnet do
     puts 'Fetching known dates from Phish.net API...'
     url = "https://api.phish.net/v5/shows.json?apikey=#{ENV['PNET_API_KEY']}"
     JSON.parse(Typhoeus.get(url).body)['data'].each do |entry|
-      next unless entry['artist_name'] == 'Phish' && entry['exclude_from_stats'] != '1'
+      next unless entry['artist_name'] == 'Phish' &&
+                  entry['exclude_from_stats'] != '1'
+
+      setlist_url = "https://api.phish.net/v5/setlists/showdate/#{entry['showdate']}.json?apikey=#{ENV['PNET_API_KEY']}"
+      setlist_count = JSON.parse(Typhoeus.get(url).body)['data'].size
+      next if setlist_count.zero?
+
       kdate = KnownDate.find_or_create_by(date: entry['showdate'])
       location = entry['city']
       location += ", #{entry['state']}" if entry['state'].present?
