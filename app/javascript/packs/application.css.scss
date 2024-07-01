@@ -1410,6 +1410,12 @@ html {
           white-space: nowrap;
         }
       }
+      // Force visibility of context buttons on mobile
+      @media (max-width: 767px) {
+        .btn_context {
+          visibility: visible;
+        }
+      }
     }
   }
 }
