@@ -220,7 +220,7 @@ class PlaylistsController < ApplicationController
       Playlist.find_by(slug:)
               &.playlist_tracks
               &.order(position: :asc)
-              &.pluck(:track_id)
+              &.pluck(:track_id) || []
     render json: {
       success: true,
       track_id: session[:track_ids].first
