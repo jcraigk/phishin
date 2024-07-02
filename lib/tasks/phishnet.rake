@@ -200,6 +200,7 @@ namespace :phishnet do
       sb = expand \
         show.tracks
             .where.not(title: 'Banter')
+            .where.not(set: 'S')
             .order(:position)
             .map { |t| [t.set, t.title] }
       if sa == sb
