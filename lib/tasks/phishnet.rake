@@ -196,7 +196,9 @@ namespace :phishnet do
 
     shows.each do |show|
       url = "https://api.phish.net/v5/setlists/showdate/#{show.date}.json?apikey=#{ENV['PNET_API_KEY']}"
-      sa = JSON.parse(Typhoeus.get(url).body)['data'].map { |d| [d['set'].upcase, d['song']] }
+      data = JSON.parse(Typhoeus.get(url).body)
+      sa = data['data'].reject { |d| d['artist_name'] != 'Phish' }
+                       .map { |d| [d['set'].upcase, d['song']] }
       sb = expand \
         show.tracks
             .where.not(title: 'Banter')
