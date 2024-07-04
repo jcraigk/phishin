@@ -201,7 +201,7 @@ namespace :phishnet do
                        .map { |d| [d['set'].upcase, d['song']] }
       sb = expand \
         show.tracks
-            .where.not(title: 'Banter')
+            .where.not(title: %w[Banter Narration])
             .where.not(set: 'S')
             .order(:position)
             .map { |t| [t.set, t.title] }
