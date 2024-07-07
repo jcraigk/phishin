@@ -19,7 +19,7 @@ class ReportsController < ApplicationController
 
   def notable_known_dates
     KnownDate.where.not(date: complete_dates)
-             .where(date: ...Date.today)
+             .where(date: ...Time.zone.today)
              .order(date: :desc)
   end
 end
