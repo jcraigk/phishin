@@ -81,7 +81,7 @@ namespace :tracks do
 
   desc 'Tighten up track positions within each show'
   task tighten_positions: :environment do
-    Show.order(date: :desc).find_each do |show|
+    Show.order(date: :desc).each do |show|
       puts "Tightening: #{show.date}"
       show.tracks.order(position: :asc).each_with_index do |track, idx|
         track.update(position: idx + 1)

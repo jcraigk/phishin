@@ -34,6 +34,11 @@ class Track < ApplicationRecord
   scope :chronological, -> { joins(:show).order('shows.date') }
   scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
 
+  def self.by_url(url)
+    segments = URI.parse(url).path.split('/')
+    Track.joins(:show).find_by(shows: { date: segments[-2] }, slug: segments[-1])
+  end
+
   def url
     "#{APP_BASE_URL}/#{show.date}/#{slug}"
   end
