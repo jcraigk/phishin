@@ -59,6 +59,14 @@ class Track < ApplicationRecord
     waveform_png&.url(host: content_host)&.gsub('tracks/audio_files', 'audio')
   end
 
+  def urls
+    {
+      web: url,
+      mp3: mp3_url,
+      img: waveform_image_url
+    }
+  end
+
   def save_duration
     update_column(:duration, Mp3DurationQuery.new(audio_file.to_io.path).call)
   end
