@@ -15,7 +15,7 @@ class ShowImporter::Cli
   def main_menu
     print_header
     orch.pp_list
-    puts "\n\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, (s)ave, e(x)it: "
+    puts "\n\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, sa(v)e, e(x)it: "
   end
 
   def print_header
@@ -57,7 +57,7 @@ class ShowImporter::Cli
   end
 
   def help_str
-    @help_str ||= 'Combine (u)p, (S)ong, (F)ile, S(e)t, (T)itle, (M)ain menu'
+    @help_str ||= 'Combine (u)p, (S)ong, (F)ile, S(e)t, (T)itle, (L)ist'
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
@@ -84,7 +84,7 @@ class ShowImporter::Cli
         track = orch.get_track(pos)
         puts orch.track_display(track)
         puts help_str
-      when 'm'
+      when 'l'
         main_menu
         break
       end
@@ -173,7 +173,7 @@ class ShowImporter::Cli
       main_menu
     when 'l'
       main_menu
-    when 's'
+    when 'v'
       orch.save
     end
   end
