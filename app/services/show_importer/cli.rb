@@ -32,6 +32,7 @@ class ShowImporter::Cli
 
   def print_notes
     notes = orch.show.taper_notes
+    notes.encode!('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
     puts "📒 Taper Notes: #{pluralize(notes.split("\n").size, 'line')}" if notes.present?
     puts "\n"
   end
