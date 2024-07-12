@@ -30,7 +30,7 @@ class TrackInserter
   end
 
   def show
-    @show ||= Show.published.find_by(date:)
+    @show ||= Show.find_by(date:)
   end
 
   def insert_new_track
