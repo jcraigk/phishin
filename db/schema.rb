@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_30_030323) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_12_163755) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
@@ -99,8 +99,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_30_030323) do
     t.date "date", null: false
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.boolean "remastered", default: false
-    t.boolean "sbd", default: false
     t.integer "venue_id"
     t.integer "tour_id"
     t.integer "likes_count", default: 0
