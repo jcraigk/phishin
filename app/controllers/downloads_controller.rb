@@ -15,7 +15,8 @@ class DownloadsController < ApplicationController
       likes_count: track.likes_count,
       liked:,
       waveform_image_url: track.waveform_image_url,
-      mp3_url: track.mp3_url
+      mp3_url: track.mp3_url,
+      next_mp3_url: next_track&.mp3_url
     }
   end
 
@@ -34,6 +35,16 @@ class DownloadsController < ApplicationController
       filename: "Phish #{track.show.date} #{track.title}.mp3",
       length: track.audio_file.size
     )
+  end
+
+  def next_track
+    return if defined?(@next_track)
+    return if session[:track_ids].blank?
+    current_idx = session[:track_ids].index(track.id)
+    return unless current_idx
+    next_idx = current_idx + 1
+    return if next_idx >= session[:track_ids].length
+    @next_track = Track.find(session[:track_ids][next_idx])
   end
 
   def track

@@ -13,6 +13,9 @@ class Player
     @scrubbing        = false
     @duration         = 0
     @playlist_mode    = false
+    @audioContext     = new (window.AudioContext || window.webkitAudioContext)()
+    @currentSource    = null
+    @nextSource       = null
     @$playpause       = $ '#control_playpause'
     @$scrubber        = $ '#scrubber'
     @$scrubber_ctrl   = $ '#scrubber_controls'
@@ -44,100 +47,60 @@ class Player
     if path.length > 0 && (/^\d{4}-\d{2}-\d{2}$/.test(path[0]) || path[0] == 'play')
       this.togglePause()
 
-  currentPosition: ->
-    if @active_track_id then @audioElement.currentTime else 0
-
-  _updateProgress: ->
-    unless @scrubbing or @duration == 0
-      unless isNaN @duration
-        @$scrubber.slider 'value', (@audioElement.currentTime / @duration) * 100
-        @$time_elapsed.html @Util.readableDuration(@audioElement.currentTime)
-        remaining = @duration - Math.floor(@audioElement.currentTime)
-        if remaining > 0
-          @$time_remaining.html "-#{@Util.readableDuration(remaining)}"
-        else
-          @$time_remaining.html '0:00'
-      else
-        @$time_elapsed.html '0:00'
-        @$time_remaining.html '0:00'
-
-  togglePlaylistMode: ->
-    txt = "You're entering Playlist Edit Mode. Playback will be disabled. Any track you click will be added to the end of your active playlist. Are you sure you want to continue?"
-    if @playlist_mode
-      @playlist_mode = false
-    else if confirm(txt)
-      @playlist_mode = true
-      this.togglePause()
-    this._updatePlaylistMode()
-
-  _updatePlaylistMode: ->
-    if @playlist_mode
-      $('#playlist_mode_notice').show()
-      $('#save_playlist_btn').hide()
-      $('#playlist_mode_label').html 'DONE EDITING'
-    else
-      $('#playlist_mode_notice').hide()
-      $('#playlist_mode_label').html 'EDIT'
-
-  startScrubbing: ->
-    @scrubbing = true
-    @$time_elapsed.addClass 'scrubbing'
-    @$time_remaining.addClass 'scrubbing'
-    this.moveScrubber()
-
-  stopScrubbing: ->
-    @scrubbing = false
-    @$time_elapsed.removeClass 'scrubbing'
-    @$time_remaining.removeClass 'scrubbing'
-    if @active_track_id
-      @audioElement.currentTime = Math.round((@$scrubber.slider('value') / 100) * @duration)
-    else
-      @$scrubber.slider 'value', 0
-
-  moveScrubber: ->
-    if @scrubbing and @active_track_id
-      scrubber_position = (@$scrubber.slider('value') / 100) * @duration
-      @$time_elapsed.html @Util.readableDuration(scrubber_position)
-      @$time_remaining.html "-#{@Util.readableDuration(@duration - scrubber_position)}"
-
   playTrack: (track_id, time_marker=0) ->
     @active_track_id = track_id
     this._loadTrack()
     this._highlightActiveItem()
 
-  togglePause: ->
-    if @active_track_id
-      if @audioElement.paused
-        unless @playlist_mode
-          @audioElement.play()
-          navigator.mediaSession.playbackState = 'playing'
-      else
-        @audioElement.pause()
-        navigator.mediaSession.playbackState = 'paused'
-      this._updatePlayButton()
-    else if !@playlist_mode
-      $.ajax
-        type: 'POST'
-        url: '/enqueue-tracks'
-        data: { path: window.location.pathname }
-        success: (r) =>
-          if r.success
-            @Util.navigateTo r.url if r.url?
-            @Util.feedback { notice: r.msg } if r.msg?
-            this.playTrack r.track_id
+  _loadTrack: ->
+    $.ajax
+      url: "/track-info/#{@active_track_id}"
+      success: (r) =>
+        if r.success
+          this._updateDisplay r
+          this._updateMediaSession r
+          @currentSource = null
+          @nextSource = null
+          this._loadAndPlayAudio r.mp3_url, r.next_mp3_url
+          @active_show_id = r.show_id
 
-  previousTrack: ->
-    return if @playlist_mode
-    if @audioElement.currentTime > 3
-      @audioElement.currentTime = 0
-    else
-      $.ajax
-        url: "/previous-track/#{@active_track_id}"
-        success: (r) =>
-          if r.success
-            this.playTrack r.track_id
-          else
-            @Util.feedback { alert: r.msg }
+  _loadAndPlayAudio: (url, next_url) =>
+    fetch(url)
+      .then (response) =>
+        response.arrayBuffer()
+      .then (data) =>
+        @audioContext.decodeAudioData(data)
+      .then (buffer) =>
+        @currentSource = @audioContext.createBufferSource()
+        @currentSource.buffer = buffer
+        @currentSource.connect(@audioContext.destination)
+        @currentSource.start()
+        @currentSource.onended = => @._playNextBuffer()
+        @._preloadNextTrack(next_url)
+      .catch (error) =>
+        console.error('Error loading or decoding audio:', error)
+
+
+  _preloadNextTrack: (url) =>
+    fetch(url)
+      .then (response) ->
+        response.arrayBuffer()
+      .then (data) ->
+        @audioContext.decodeAudioData(data)
+      .then (buffer) =>
+        @nextSource = @audioContext.createBufferSource()
+        @nextSource.buffer = buffer
+        @nextSource.connect(@audioContext.destination)
+      .catch (error) ->
+        console.error('Error preloading next track:', error)
+
+
+  _playNextBuffer: ->
+    if @nextSource
+      @nextSource.start(0)
+      @currentSource = @nextSource
+      @nextSource = null
+      this.nextTrack()
 
   nextTrack: ->
     return if @playlist_mode
@@ -145,28 +108,11 @@ class Player
       url: "/next-track/#{@active_track_id}"
       success: (r) =>
         if r.success
-          this.playTrack r.track_id
+          @active_track_id = r.track_id
+          this._preloadNextTrack(r.next_mp3_url)
+          this._highlightActiveItem()
         else
           @Util.feedback { alert: r.msg }
-
-  scrubBackward: ->
-    @audioElement.currentTime = @audioElement.currentTime - 5
-
-  scrubForward: ->
-    @audioElement.currentTime = @audioElement.currentTime + 5
-
-  stopAndUnload: ->
-    if @active_track_id
-      @audioElement.pause()
-    @active_track_id = ''
-    this._updateDisplay
-      title: '',
-      duration: 0
-    @$scrubber.slider 'value', 0
-    @$scrubber.slider 'disable'
-    this._updatePlayButton
-    @$time_remaining.html '0:00'
-    @$time_elapsed.html '0:00'
 
   _highlightActiveItem: ->
     if @active_track_id
@@ -179,36 +125,6 @@ class Player
         $el = $track.first()
       if $el
         $('html,body').animate {scrollTop: $el.offset().top - 300}, 500
-
-  setCurrentPlaylist: (track_id, time_marker=0) ->
-    return if @playlist_mode
-    $.ajax
-      type: 'POST'
-      url: '/enqueue-tracks'
-      data: { track_id: track_id }
-      success: (r) =>
-        if r.success
-          this.playTrack r.track_id, time_marker
-
-  playRandomSongTrack: (song_id) ->
-    $.ajax
-      url: "/random-song-track/#{song_id}"
-      success: (r) =>
-        if r.success
-          @Util.navigateTo r.url
-          this.setCurrentPlaylist r.track_id
-
-  _loadTrack: ->
-    $.ajax
-      url: "/track-info/#{@active_track_id}",
-      success: (r) =>
-        if r.success
-          this._updateDisplay r
-          this._updateMediaSession r
-          this._loadAndPlayAudio r.mp3_url
-          @active_show_id = r.show_id
-        # else
-        #   @Util.feedback { alert: "Error retrieving track info" }
 
   _updateDisplay: (r) ->
     @$scrubber_ctrl.css('opacity', 1)
@@ -255,30 +171,57 @@ class Player
       ]
 
   _updatePlayButton: ->
-    if @audioElement.paused
+    if not @currentSource or @audioContext.state == 'suspended'
       @$playpause.removeClass 'playing'
     else
       @$playpause.addClass 'playing'
       @$playpause.removeClass 'pulse'
 
-  _loadAndPlayAudio: (url) ->
-    unless @audioElement
-      @audioElement = document.querySelector('audio')
-      @audioElement.addEventListener('ended', => this.nextTrack())
-      @audioElement.addEventListener('timeupdate', => this._updateProgress())
-    @audioElement.src = url
-    if @time_marker > 0
-      @audioElement.currentTime = @time_marker / 1000
-      @time_marker = 0 # Only first track should start at time marker
-    this._playAudio()
+  togglePause: ->
+    if @currentSource
+      if @audioContext.state == 'running'
+        @audioContext.suspend()
+        navigator.mediaSession.playbackState = 'paused'
+      else
+        @audioContext.resume()
+        navigator.mediaSession.playbackState = 'playing'
+      this._updatePlayButton()
+    else if !@playlist_mode
+      $.ajax
+        type: 'POST'
+        url: '/enqueue-tracks'
+        data: { path: window.location.pathname }
+        success: (r) =>
+          if r.success
+            @Util.navigateTo r.url if r.url?
+            @Util.feedback { notice: r.msg } if r.msg?
+            this.playTrack r.track_id
 
-  _playAudio: =>
-    @audioElement.play().catch (error) ->
-      # Suppress initial play error and scroll to right
-      # We can ignore subsequent AbortError from iOS for example
-      if error.name is 'NotAllowedError'
-        $('html, body').animate({ scrollLeft: $(document).width() }, 'smooth')
-    navigator.mediaSession.playbackState = 'playing'
+  previousTrack: ->
+    return if @playlist_mode
+    if @currentSource?.buffer and @audioContext.currentTime > 3
+      @currentSource.stop()
+      @currentSource.start(0)
+    else
+      $.ajax
+        url: "/previous-track/#{@active_track_id}"
+        success: (r) =>
+          if r.success
+            this.playTrack r.track_id
+          else
+            @Util.feedback { alert: r.msg }
+
+  stopAndUnload: ->
+    if @currentSource
+      @currentSource.stop()
+    @active_track_id = ''
+    this._updateDisplay
+      title: '',
+      duration: 0
+    @$scrubber.slider 'value', 0
+    @$scrubber.slider 'disable'
     this._updatePlayButton()
+    @$time_remaining.html '0:00'
+    @$time_elapsed.html '0:00'
 
 export default Player
