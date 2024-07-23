@@ -179,7 +179,7 @@ class PlaylistsController < ApplicationController
   end
 
   def previous_track_id
-    return no_active_playlist unless session[:track_ids].any?
+    return no_active_playlist unless session[:track_ids]&.any?
     track_ids = session[:track_ids]
     if track_ids.first == params[:track_id].to_i
       render json: { success: false, msg: 'Beginning of playlist' }
