@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
   def render_view(view = nil, status = 200)
     if view
       return render view, layout: false if request.xhr?
-      return render view, status:
+      return render view, status:, formats: :html
     end
     render layout: false if request.xhr?
   end
