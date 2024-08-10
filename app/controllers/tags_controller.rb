@@ -9,10 +9,10 @@ class TagsController < ApplicationController
 
   def show
     case context
-    when 'show'
+    when "show"
       @shows = fetch_shows
       @shows_likes = user_likes_for_shows(@shows)
-    when 'track'
+    when "track"
       @tracks = fetch_tracks
       @tracks_likes = user_likes_for_tracks(@tracks)
     end
@@ -27,9 +27,9 @@ class TagsController < ApplicationController
       if params[:entity].in?(%w[show track])
         params[:entity]
       elsif ShowTag.where(tag:).count.positive?
-        'show'
+        "show"
       else
-        'track'
+        "track"
       end
   end
 
@@ -52,47 +52,47 @@ class TagsController < ApplicationController
   end
 
   def tags_order_by
-    params[:sort] = 'name' unless
+    params[:sort] = "name" unless
       params[:sort].in?(%w[name shows_count tracks_count])
 
     case params[:sort] # rubocop:disable Style/HashLikeCase
-    when 'name'
+    when "name"
       { name: :asc }
-    when 'shows_count'
+    when "shows_count"
       { shows_count: :desc, name: :asc }
-    when 'tracks_count'
+    when "tracks_count"
       { tracks_count: :desc, name: :asc }
     end
   end
 
   def shows_order_by # rubocop:disable Metrics/MethodLength
-    params[:sort] = 'date desc' unless
-      params[:sort].in?(['date desc', 'date', 'likes', 'duration'])
+    params[:sort] = "date desc" unless
+      params[:sort].in?([ "date desc", "date", "likes", "duration" ])
 
     case params[:sort] # rubocop:disable Style/HashLikeCase
-    when 'date desc'
+    when "date desc"
       { date: :desc }
-    when 'date'
+    when "date"
       { date: :asc  }
-    when 'likes'
+    when "likes"
       { likes_count: :desc }
-    when 'duration'
+    when "duration"
       { duration: :desc }
     end
   end
 
   def tracks_order_by # rubocop:disable Metrics/MethodLength
-    params[:sort] = 'date desc' unless
-      ['date desc', 'date', 'likes', 'duration'].include?(params[:sort])
+    params[:sort] = "date desc" unless
+      [ "date desc", "date", "likes", "duration" ].include?(params[:sort])
 
     case params[:sort]
-    when 'date desc'
-      'shows.date desc, tracks.position asc'
-    when 'date'
-      'shows.date asc, tracks.position asc'
-    when 'likes'
+    when "date desc"
+      "shows.date desc, tracks.position asc"
+    when "date"
+      "shows.date asc, tracks.position asc"
+    when "likes"
       { likes_count: :desc }
-    when 'duration'
+    when "duration"
       { duration: :desc }
     end
   end

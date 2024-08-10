@@ -22,44 +22,44 @@ class AmbiguityController < ApplicationController
 
   def apply_shows_tag_filter
     @all_shows = @shows
-    return if params[:tag_slug].blank? || params[:tag_slug] == 'all'
+    return if params[:tag_slug].blank? || params[:tag_slug] == "all"
     @shows = @shows.tagged_with(params[:tag_slug])
   end
 
   def validate_sorting_for_tracks
-    params[:sort] = 'shows.date desc' unless
-      params[:sort].in?(['title', 'shows.date desc', 'shows.date asc', 'likes', 'duration'])
+    params[:sort] = "shows.date desc" unless
+      params[:sort].in?([ "title", "shows.date desc", "shows.date asc", "likes", "duration" ])
     order_by_for_tracks
   end
 
   def order_by_for_tracks # rubocop:disable Metrics/MethodLength
     @order_by =
       case params[:sort]
-      when 'title'
+      when "title"
         { title: :asc }
-      when 'shows.date asc', 'shows.date desc'
+      when "shows.date asc", "shows.date desc"
         params[:sort]
-      when 'likes'
+      when "likes"
         { likes_count: :desc }
-      when 'duration'
+      when "duration"
         { duration: :desc }
       end
   end
 
   def validate_sorting_for_shows
-    params[:sort] = 'date desc' unless
-      params[:sort].in?(['date desc', 'date asc', 'likes', 'duration'])
+    params[:sort] = "date desc" unless
+      params[:sort].in?([ "date desc", "date asc", "likes", "duration" ])
     order_by_for_shows
   end
 
   def order_by_for_shows
     @order_by =
-      if params[:sort].in?(['date asc', 'date desc'])
+      if params[:sort].in?([ "date asc", "date desc" ])
         params[:sort]
-      elsif params[:sort] == 'likes'
+      elsif params[:sort] == "likes"
         { likes_count: :desc, date: :desc }
-      elsif params[:sort] == 'duration'
-        'shows.duration desc, date desc'
+      elsif params[:sort] == "duration"
+        "shows.duration desc, date desc"
       end
   end
 

@@ -37,7 +37,7 @@ class Api::V1::ApiController < ActionController::Base # rubocop:disable Rails/Ap
   def respond_with_not_found
     render json: {
       success: false,
-      message: 'Record not found'
+      message: "Record not found"
     }, status: :not_found
   end
 
@@ -62,7 +62,7 @@ class Api::V1::ApiController < ActionController::Base # rubocop:disable Rails/Ap
   end
 
   def set_json_content_type
-    response.set_header('Content-Type', 'application/json')
+    response.set_header("Content-Type", "application/json")
   end
 
   def configure_page_params
@@ -76,10 +76,10 @@ class Api::V1::ApiController < ActionController::Base # rubocop:disable Rails/Ap
   end
 
   def sort_attr(relation)
-    params[:sort_attr].in?(relation.first.class.new.attributes.keys) ? params[:sort_attr] : 'id'
+    params[:sort_attr].in?(relation.first.class.new.attributes.keys) ? params[:sort_attr] : "id"
   end
 
   def sort_dir
-    params[:sort_dir].in?(%w[asc desc]) ? params[:sort_dir] : 'desc'
+    params[:sort_dir].in?(%w[asc desc]) ? params[:sort_dir] : "desc"
   end
 end

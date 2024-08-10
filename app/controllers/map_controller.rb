@@ -1,6 +1,6 @@
 class MapController < ApplicationController
   def index
-    params[:date_start] ||= '1983-01-01'
+    params[:date_start] ||= "1983-01-01"
     params[:date_stop]  ||= Time.zone.today.to_s
     render_view
   end
@@ -8,7 +8,7 @@ class MapController < ApplicationController
   def search
     init_date_params
     return render json: { success: true, venues: relevant_venues } if all_params_present?
-    render json: { success: false, msg: 'No search criteria provided' }
+    render json: { success: false, msg: "No search criteria provided" }
   end
 
   private
@@ -31,7 +31,8 @@ class MapController < ApplicationController
   end
 
   def venues_nearby
-    @venues_nearby ||= Venue.near([params[:lat], params[:lng]], params[:distance]).includes(:shows)
+    @venues_nearby ||= Venue.near([ params[:lat], params[:lng] ],
+params[:distance]).includes(:shows)
   end
 
   def relevant_shows_for(venue)

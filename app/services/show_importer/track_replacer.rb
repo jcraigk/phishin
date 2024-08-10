@@ -1,4 +1,4 @@
-require 'highline'
+require "highline"
 
 class ShowImporter::TrackReplacer
   attr_reader :date, :track_hash
@@ -11,7 +11,7 @@ class ShowImporter::TrackReplacer
     ensure_tracks_present
     ensure_all_tracks_matched
 
-    replace_audio_on_tracks if HighLine.new.ask(question) == 'Y'
+    replace_audio_on_tracks if HighLine.new.ask(question) == "Y"
   end
 
   def match_files_to_tracks
@@ -36,7 +36,7 @@ class ShowImporter::TrackReplacer
   end
 
   def replace_audio_on_tracks
-    pbar = ProgressBar.create(total: track_hash.size, format: '%a %B %c/%C %p%% %E')
+    pbar = ProgressBar.create(total: track_hash.size, format: "%a %B %c/%C %p%% %E")
 
     track_hash.sort_by { |_k, v| v.position }
               .each do |filename, track|
@@ -67,14 +67,14 @@ class ShowImporter::TrackReplacer
   end
 
   def scrub_filename(filename)
-    return '555' if /555/i.match?(filename)
+    return "555" if /555/i.match?(filename)
     return "Mike's Song" if /mike/i.match?(filename)
-    return 'Free Bird' if /Freebird.mp3/.match?(filename)
+    return "Free Bird" if /Freebird.mp3/.match?(filename)
     filename
-      .gsub('.mp3', '')
-      .gsub(/\AII?/, '')
-      .tr('_', ' ')
-      .gsub(/\d/, '')
+      .gsub(".mp3", "")
+      .gsub(/\AII?/, "")
+      .tr("_", " ")
+      .gsub(/\d/, "")
       .strip
   end
 

@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
   end
 
   def render_not_found
-    render_view('errors/404', 404)
+    render_view("errors/404", 404)
   end
 
   def permitted_params

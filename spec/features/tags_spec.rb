@@ -12,10 +12,10 @@ describe 'Tags', :js do
   let(:tag3) { tags.third }
 
   before do
-    create_list(:show, 2, tags: [tag1])
-    create_list(:show, 3, tags: [tag2])
-    create_list(:track, 5, tags: [tag1])
-    create_list(:track, 7, tags: [tag3])
+    create_list(:show, 2, tags: [ tag1 ])
+    create_list(:show, 3, tags: [ tag2 ])
+    create_list(:track, 5, tags: [ tag1 ])
+    create_list(:track, 7, tags: [ tag3 ])
   end
 
   # TODO: Overlapping elements here

@@ -1,8 +1,8 @@
 class GoogleSpreadsheetFetcher
   attr_reader :spreadsheet_id, :range, :has_headers
 
-  OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'.freeze
-  TOKEN_PATH = Rails.root.join('config/google_api.yml')
+  OOB_URI = "urn:ietf:wg:oauth:2.0:oob".freeze
+  TOKEN_PATH = Rails.root.join("config/google_api.yml")
 
   def initialize(spreadsheet_id, range, opts = {})
     @spreadsheet_id = spreadsheet_id
@@ -46,7 +46,7 @@ class GoogleSpreadsheetFetcher
   end
 
   def json_creds
-    JSON.parse(ENV.fetch('GOOGLE_API_CREDS_JSON', {}))
+    JSON.parse(ENV.fetch("GOOGLE_API_CREDS_JSON", {}))
   end
 
   def credentials
@@ -54,7 +54,7 @@ class GoogleSpreadsheetFetcher
   end
 
   def user_id
-    'default'
+    "default"
   end
 
   ##
@@ -66,7 +66,7 @@ class GoogleSpreadsheetFetcher
   def authorize
     return credentials if credentials
     url = authorizer.get_authorization_url(base_url: OOB_URI)
-    puts 'Open the following URL in the browser and enter the ' \
+    puts "Open the following URL in the browser and enter the " \
          "resulting code after authorization:\n" + url
     code = $stdin.gets
     authorizer.get_and_store_credentials_from_code(

@@ -9,7 +9,7 @@ class ShowImporter::FilenameMatcher
   end
 
   def find_song(term, opts = {})
-    return Song.where('lower(title) = ?', term.downcase).first if opts[:exact]
+    return Song.where("lower(title) = ?", term.downcase).first if opts[:exact]
     Song.kinda_matching(term).first
   end
 
@@ -27,21 +27,21 @@ class ShowImporter::FilenameMatcher
 
   def filenames
     Dir.entries(dir).reject do |e|
-      e.start_with?('.') || e =~ /.txt\z/
+      e.start_with?(".") || e =~ /.txt\z/
     end
   end
 
   def scrub_dir_path(path)
-    path.delete('\\').tr('/', '-')
+    path.delete("\\").tr("/", "-")
   end
 
   def scrub_filename(filename)
     return "Mike's Song" if /mike/i.match?(filename)
-    return 'Hold Your Head Up' if /\d postgres( -)?.mp3\z/.match?(filename)
-    return 'Free Bird' if /Freebird.mp3/.match?(filename)
+    return "Hold Your Head Up" if /\d postgres( -)?.mp3\z/.match?(filename)
+    return "Free Bird" if /Freebird.mp3/.match?(filename)
     filename
-      .gsub('.mp3', '')
-      .gsub(/\AII?/, '')
-      .tr('_', ' ')
+      .gsub(".mp3", "")
+      .gsub(/\AII?/, "")
+      .tr("_", " ")
   end
 end

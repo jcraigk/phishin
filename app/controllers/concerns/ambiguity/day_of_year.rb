@@ -16,10 +16,10 @@ module Ambiguity::DayOfYear
 
   def hydrate_day_of_year
     @sections = day_of_year_sections
-    @pretitle = 'Today in History' if current_slug.in?(TODAY_SLUGS)
+    @pretitle = "Today in History" if current_slug.in?(TODAY_SLUGS)
     @title = "#{Date::MONTHNAMES[month]} #{day}"
     @ogp_title = "Listen to shows on #{@title}"
-    @view = 'shows/index'
+    @view = "shows/index"
   end
 
   def fetch_shows_on_day_of_year
@@ -33,7 +33,7 @@ module Ambiguity::DayOfYear
 
   def day_of_year_sections
     {
-      'Today in History' => {
+      "Today in History" => {
         shows: @shows,
         likes: user_likes_for_shows(@shows)
       }
@@ -49,9 +49,9 @@ module Ambiguity::DayOfYear
   end
 
   def month_day_from_slug
-    return [current_month, current_day] if current_slug.in?(TODAY_SLUGS)
+    return [ current_month, current_day ] if current_slug.in?(TODAY_SLUGS)
     return false unless current_slug =~ month_day_regex
-    [Date::MONTHNAMES.index(Regexp.last_match[1].titleize), Regexp.last_match[2]]
+    [ Date::MONTHNAMES.index(Regexp.last_match[1].titleize), Regexp.last_match[2] ]
   end
 
   def month_day_regex
@@ -65,10 +65,10 @@ module Ambiguity::DayOfYear
   end
 
   def current_month
-    Time.use_zone(TIME_ZONE) { Time.current }.strftime('%-m').to_i
+    Time.use_zone(TIME_ZONE) { Time.current }.strftime("%-m").to_i
   end
 
   def current_day
-    Time.use_zone(TIME_ZONE) { Time.current }.strftime('%-d').to_i
+    Time.use_zone(TIME_ZONE) { Time.current }.strftime("%-d").to_i
   end
 end

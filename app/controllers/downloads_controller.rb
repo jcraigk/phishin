@@ -29,8 +29,8 @@ class DownloadsController < ApplicationController
   def send_audio_file
     send_file(
       track.audio_file.to_io.path,
-      type: 'audio/mpeg',
-      disposition: 'attachment',
+      type: "audio/mpeg",
+      disposition: "attachment",
       filename: "Phish #{track.show.date} #{track.title}.mp3",
       length: track.audio_file.size
     )

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe 'Song page', :js do
   let(:song) { create(:song) }
-  let(:tracks) { create_list(:track, 3, songs: [song]) }
+  let(:tracks) { create_list(:track, 3, songs: [ song ]) }
 
   before do
     tracks.each_with_index do |track, idx|

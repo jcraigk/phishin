@@ -1,4 +1,4 @@
-require 'mp3info'
+require "mp3info"
 
 class Mp3DurationQuery
   attr_reader :mp3_file

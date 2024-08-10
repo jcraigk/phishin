@@ -1,13 +1,13 @@
 module TagHelper
-  def display_tag_instances(tag_instances, css_class = 'show_tag_container')
+  def display_tag_instances(tag_instances, css_class = "show_tag_container")
     tag_groups =
-      tag_instances.sort_by { |t| [t.tag.priority, t.tag.try(:starts_at_second)] }
+      tag_instances.sort_by { |t| [ t.tag.priority, t.tag.try(:starts_at_second) ] }
                    .group_by { |t| t.tag.name }
     return unless tag_groups.any?
 
     str = "<span class=\"#{css_class}\">"
     tag_groups.each { |group| str += tag_stack_label(group) }
-    str += '</span>'
+    str += "</span>"
 
     str.html_safe
   end
@@ -16,10 +16,10 @@ module TagHelper
     tag_instances = tag_stack.second.sort_by { |t| t.try(:starts_at_second) || 0 }
     first_instance = tag_instances.first
     title = stack_title(tag_instances)
-    link_to '#' do
+    link_to "#" do
       tag.span(
         title,
-        class: 'label tag_label',
+        class: "label tag_label",
         style: "background-color: #{first_instance.tag.color}",
         title: tooltip_for_tag_stack(tag_instances),
         data: {
@@ -37,7 +37,7 @@ module TagHelper
     str
   end
 
-  def tag_label(tag_record, css_class = '')
+  def tag_label(tag_record, css_class = "")
     tag.span(
       tag_record.name,
       class: "label tag_label #{css_class}",
@@ -46,13 +46,13 @@ module TagHelper
   end
 
   def tooltip_for_tag_stack(tag_instances, detail: false)
-    title = ''
+    title = ""
 
     tag_instances.each_with_index do |t, idx|
       title += tag_notes(t)
       title += transcript_or_link(t, title) if detail
       break if idx == tag_instances.size - 1
-      title += (detail ? '<br>' : ', ')
+      title += (detail ? "<br>" : ", ")
     end
 
     title = tag_instances.first.tag.description if title.blank?
@@ -60,16 +60,16 @@ module TagHelper
   end
 
   def tag_notes(tag_instance)
-    return '' if tag_instance.notes.blank?
+    return "" if tag_instance.notes.blank?
     str = CGI.unescapeHTML(tag_instance.notes)
     str += " #{time_range(tag_instance)}"
     str.strip
   end
 
   def transcript_or_link(tag_instance, title)
-    return '' if tag_instance.try(:transcript).blank?
-    str = ''
-    str = '<br><br>' if title.present?
+    return "" if tag_instance.try(:transcript).blank?
+    str = ""
+    str = "<br><br>" if title.present?
     str + "<strong>Transcript</strong><br><br> #{tag_instance.transcript.gsub("\n", '<br>')}"
   end
 
@@ -98,6 +98,6 @@ module TagHelper
   end
 
   def tag_timestamp(timestamp)
-    duration_readable(timestamp * 1000, 'colons')
+    duration_readable(timestamp * 1000, "colons")
   end
 end

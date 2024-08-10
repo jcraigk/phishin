@@ -1,4 +1,4 @@
-require 'mp3info'
+require "mp3info"
 
 class Id3Tagger
   attr_reader :show, :track
@@ -49,15 +49,15 @@ class Id3Tagger
   end
 
   def comments
-    'https://phish.in for more'
+    "https://phish.in for more"
   end
 
   def year
-    @year ||= show.date.strftime('%Y').to_i
+    @year ||= show.date.strftime("%Y").to_i
   end
 
   def artist
-    'Phish'
+    "Phish"
   end
 
   def album

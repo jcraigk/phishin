@@ -1,8 +1,8 @@
 class JamchartsImporter
   include ActionView::Helpers::SanitizeHelper
 
-  BASE_URL = 'https://api.phish.net/v5'.freeze
-  API_KEY = ENV.fetch('PNET_API_KEY', nil)
+  BASE_URL = "https://api.phish.net/v5".freeze
+  API_KEY = ENV.fetch("PNET_API_KEY", nil)
 
   attr_reader :api_key, :invalid_items, :missing_shows, :matched_ids
 
@@ -20,11 +20,11 @@ class JamchartsImporter
   private
 
   def jamcharts_tag
-    @jamcharts_tag ||= Tag.where(name: 'Jamcharts').first
+    @jamcharts_tag ||= Tag.where(name: "Jamcharts").first
   end
 
   def debut_tag
-    @debut_tag ||= Tag.where(name: 'Debut').first
+    @debut_tag ||= Tag.where(name: "Debut").first
   end
 
   def phishnet_uri
@@ -36,11 +36,11 @@ class JamchartsImporter
   end
 
   def jamcharts_as_json
-    @jamcharts_as_json ||= JSON[Net::HTTP.get_response(phishnet_uri).body]['data']
+    @jamcharts_as_json ||= JSON[Net::HTTP.get_response(phishnet_uri).body]["data"]
   end
 
   def create_progress_bar
-    ProgressBar.create(total: jamcharts_as_json.size, format: '%a %B %c/%C %p%% %E')
+    ProgressBar.create(total: jamcharts_as_json.size, format: "%a %B %c/%C %p%% %E")
   end
 
   def find_show_by_date(date)
@@ -51,8 +51,8 @@ class JamchartsImporter
     pbar = create_progress_bar
 
     jamcharts_as_json.each do |item|
-      show = find_show_by_date(item['showdate'])
-      next @missing_shows << item['showdate'] unless show
+      show = find_show_by_date(item["showdate"])
+      next @missing_shows << item["showdate"] unless show
       handle_item(item, show)
       pbar.increment
     end
@@ -62,7 +62,7 @@ class JamchartsImporter
   end
 
   def print_results
-    puts "#{missing_shows.size} missing shows:\n" + missing_shows.join(', ')
+    puts "#{missing_shows.size} missing shows:\n" + missing_shows.join(", ")
     # puts "#{invalid_items.size} invalid recs:\n" + invalid_items.join("\n")
   end
 
@@ -76,7 +76,7 @@ class JamchartsImporter
   end
 
   def handle_item(item, show) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-    song = find_song_by_title(item['song'])
+    song = find_song_by_title(item["song"])
     return if handle_ambiguous_item(item)
 
     show.tracks.sort_by(&:position).each do |track|
@@ -88,9 +88,9 @@ class JamchartsImporter
       next if matched_ids.include?(track.id) # Skip to next occurrence of song in set
       matched_ids << track.id
 
-      desc = sanitize_str(item['jamchart_description'])
+      desc = sanitize_str(item["jamchart_description"])
       tag =
-        if desc.start_with?('Debut.', 'First version.')
+        if desc.start_with?("Debut.", "First version.")
           desc = nil
           debut_tag
         else
@@ -120,20 +120,20 @@ class JamchartsImporter
   def handle_ambiguous_item(item)
     return unless (matched_item = ambiguous_item(item))
     track = Track.find(matched_item[:track_id])
-    create_or_update_tag(track, jamcharts_tag, sanitize_str(item['jamchart_description']))
+    create_or_update_tag(track, jamcharts_tag, sanitize_str(item["jamchart_description"]))
     true
   end
 
   def ambiguous_item(item)
-    ambiguous_items.find { |i| i[:showid] == item['showid'].to_s && i[:song] == item['song'] }
+    ambiguous_items.find { |i| i[:showid] == item["showid"].to_s && i[:song] == item["song"] }
   end
 
   def ambiguous_items
     [
       {
-        song: 'Wipe Out',
-        showid: '1252806821',
-        track_id: '18941'
+        song: "Wipe Out",
+        showid: "1252806821",
+        track_id: "18941"
       }
     ]
   end

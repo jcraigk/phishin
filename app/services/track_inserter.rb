@@ -37,7 +37,7 @@ class TrackInserter
     track = Track.new(
       show:,
       title:,
-      songs: [Song.find(song_id)],
+      songs: [ Song.find(song_id) ],
       position:,
       set:
     )
@@ -51,7 +51,7 @@ class TrackInserter
   end
 
   def ensure_valid_options
-    raise 'Invalid options!' unless all_options_present?
+    raise "Invalid options!" unless all_options_present?
   end
 
   def all_options_present?
@@ -59,9 +59,9 @@ class TrackInserter
   end
 
   def ensure_records_present
-    raise 'Invalid file!' unless File.exist?(file)
-    raise 'Invalid song!' if song.blank?
-    raise 'Invalid show!' if show.blank?
+    raise "Invalid file!" unless File.exist?(file)
+    raise "Invalid song!" if song.blank?
+    raise "Invalid show!" if show.blank?
   end
 
   def song

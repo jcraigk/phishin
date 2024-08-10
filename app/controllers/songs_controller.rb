@@ -9,10 +9,10 @@ class SongsController < ApplicationController
   private
 
   def order_by
-    params[:sort] = 'title' unless params[:sort].in?(%w[title performances])
+    params[:sort] = "title" unless params[:sort].in?(%w[title performances])
     case params[:sort]
-    when 'title' then { title: :asc }
-    when 'performances' then { tracks_count: :desc, title: :asc }
+    when "title" then { title: :asc }
+    when "performances" then { tracks_count: :desc, title: :asc }
     end
   end
 end

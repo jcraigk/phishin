@@ -39,11 +39,11 @@ RSpec.describe Venue do
       before { create(:venue, name: 'BlueCross Arena') }
 
       it 'returns expected records starting with `A`' do
-        expect(described_class.name_starting_with('a')).to eq([a_venue])
+        expect(described_class.name_starting_with('a')).to eq([ a_venue ])
       end
 
       it 'returns expected records starting with a number' do
-        expect(described_class.name_starting_with('#')).to eq([num_venue])
+        expect(described_class.name_starting_with('#')).to eq([ num_venue ])
       end
     end
   end

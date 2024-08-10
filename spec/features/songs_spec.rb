@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe 'Songs', :js do
-  let(:titles) { ['Garden Party', 'Gettin Jiggy', 'Ghost'] }
+  let(:titles) { [ 'Garden Party', 'Gettin Jiggy', 'Ghost' ] }
   let!(:g_songs) do
     titles.each_with_object([]) do |title, songs|
       songs << create(:song, :with_tracks, title:)
@@ -13,8 +13,8 @@ describe 'Songs', :js do
 
   before do
     create(:song, :with_tracks, title: 'A Apolitical Blues', alias: 'Blues')
-    create_list(:track, 2, songs: [g_songs.first])
-    create_list(:track, 3, songs: [g_songs.second])
+    create_list(:track, 2, songs: [ g_songs.first ])
+    create_list(:track, 3, songs: [ g_songs.second ])
   end
 
   it 'visit Songs page' do
@@ -57,7 +57,7 @@ describe 'Songs', :js do
     within('#title_box') do
       expect_content('Sort', 'Title')
     end
-    expect_content_in_order([song1, song2, song3].map(&:title))
+    expect_content_in_order([ song1, song2, song3 ].map(&:title))
 
     # Sort by Track Count
     within('#title_box') do
@@ -65,6 +65,6 @@ describe 'Songs', :js do
       click_on('Track Count')
       expect_content('Sort', 'Track Count')
     end
-    expect_content_in_order([song2, song1, song3].map(&:title))
+    expect_content_in_order([ song2, song1, song3 ].map(&:title))
   end
 end

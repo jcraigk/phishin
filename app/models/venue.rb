@@ -12,7 +12,7 @@ class Venue < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :city }
 
   scope :name_starting_with, lambda { |char|
-    where('LOWER(name) SIMILAR TO ?', "#{char == '#' ? '[0-9]' : char.downcase}%")
+    where("LOWER(name) SIMILAR TO ?", "#{char == '#' ? '[0-9]' : char.downcase}%")
   }
 
   def should_generate_new_friendly_id?
@@ -35,19 +35,19 @@ class Venue < ApplicationRecord
   end
 
   def other_names_str
-    other_names.join(', ')
+    other_names.join(", ")
   end
 
   def location
     loc =
-      if country == 'USA'
+      if country == "USA"
         "#{city}, #{state}"
       elsif state.present?
         "#{city}, #{state}, #{country}"
       else
         "#{city}, #{country}"
       end
-    loc.gsub(/\s+/, ' ')
+    loc.gsub(/\s+/, " ")
   end
 
   def as_json # rubocop:disable Metrics/MethodLength

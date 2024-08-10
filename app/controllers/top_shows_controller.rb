@@ -4,7 +4,7 @@ class TopShowsController < ApplicationController
   def index
     @shows =
       Show.published
-          .where('likes_count > 0')
+          .where("likes_count > 0")
           .includes(:venue, show_tags: :tag)
           .order(likes_count: :desc, date: :desc)
           .limit(40)

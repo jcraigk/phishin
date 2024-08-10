@@ -26,11 +26,11 @@ RSpec.describe Song do
     it { is_expected.to be_a(PgSearch::Model) }
 
     it 'matches `Woflman`' do
-      expect(described_class.kinda_matching('Wolfman')).to eq([song1])
+      expect(described_class.kinda_matching('Wolfman')).to eq([ song1 ])
     end
 
     it 'matches `Wolf`' do
-      expect(described_class.kinda_matching('Wolf')).to eq([song2])
+      expect(described_class.kinda_matching('Wolf')).to eq([ song2 ])
     end
 
     it 'matches `Tube`' do
@@ -47,11 +47,11 @@ RSpec.describe Song do
     end
 
     it 'returns records starting with `A`' do
-      expect(described_class.title_starting_with('a')).to eq([a_song])
+      expect(described_class.title_starting_with('a')).to eq([ a_song ])
     end
 
     it 'returns records starting with a number' do
-      expect(described_class.title_starting_with('#')).to eq([num_song])
+      expect(described_class.title_starting_with('#')).to eq([ num_song ])
     end
   end
 
@@ -65,7 +65,7 @@ RSpec.describe Song do
     end
 
     it 'returns the lyrical excerpt' do
-      expect(described_class.with_lyrical_excerpt).to eq([song_with_excerpt])
+      expect(described_class.with_lyrical_excerpt).to eq([ song_with_excerpt ])
     end
   end
 

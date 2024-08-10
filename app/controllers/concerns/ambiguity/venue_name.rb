@@ -21,13 +21,13 @@ module Ambiguity::VenueName
     @previous_venue = prev_venue
     @next_venue = next_venue
 
-    @view = 'venues/show'
-    @ambiguity_controller = 'venues'
+    @view = "venues/show"
+    @ambiguity_controller = "venues"
   end
 
   def fetch_shows
     shows = venue.shows.includes(show_tags: :tag).order(@order_by)
-    return shows if params[:tag_slug].blank? || params[:tag_slug] == 'all'
+    return shows if params[:tag_slug].blank? || params[:tag_slug] == "all"
     shows.tagged_with(params[:tag_slug])
   end
 
@@ -37,7 +37,7 @@ module Ambiguity::VenueName
   end
 
   def next_venue
-    Venue.where('name > ?', venue.name).order(name: :asc).first ||
+    Venue.where("name > ?", venue.name).order(name: :asc).first ||
       Venue.order(name: :asc).first
   end
 end

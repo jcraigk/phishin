@@ -57,7 +57,7 @@ describe Api::V1::YearsController do
     context 'when providing a single year' do
       subject { get("/api/v1/years/#{year1}", {}, auth_header) }
 
-      let(:expected_shows) { [show1, show2].map(&:as_json_api) }
+      let(:expected_shows) { [ show1, show2 ].map(&:as_json_api) }
 
       it 'responds with expected data' do
         expect(json_data).to eq(expected_shows)
@@ -67,7 +67,7 @@ describe Api::V1::YearsController do
     context 'when providing a year range' do
       subject { get("/api/v1/years/#{year1}-#{year2}", {}, auth_header) }
 
-      let(:expected_shows) { [show1, show2, show3].map(&:as_json_api) }
+      let(:expected_shows) { [ show1, show2, show3 ].map(&:as_json_api) }
 
       it 'responds with expected data' do
         expect(json_data).to match_array(expected_shows)

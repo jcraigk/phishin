@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe 'Venues', :js do
   let!(:a_venue) { create(:venue, :with_shows, name: 'Alpine Valley Music Theater') }
-  let(:names) { ['Eagles Ballroom', 'Earlham College', 'Eastbrook Theatre'] }
+  let(:names) { [ 'Eagles Ballroom', 'Earlham College', 'Eastbrook Theatre' ] }
   let!(:e_venues) do
     names.each_with_object([]) do |name, venues|
       venues << create(:venue, :with_shows, name:)
@@ -60,7 +60,7 @@ describe 'Venues', :js do
     within('#title_box') do
       expect_content('Sort', 'Name')
     end
-    expect_content_in_order([venue1, venue2, venue3].map(&:name))
+    expect_content_in_order([ venue1, venue2, venue3 ].map(&:name))
 
     # Sort by Track Count
     within('#title_box') do
@@ -68,6 +68,6 @@ describe 'Venues', :js do
       click_on('Show Count')
       expect_content('Sort', 'Show Count')
     end
-    expect_content_in_order([venue3, venue1, venue2].map(&:name))
+    expect_content_in_order([ venue3, venue1, venue2 ].map(&:name))
   end
 end

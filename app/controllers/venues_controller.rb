@@ -9,10 +9,10 @@ class VenuesController < ApplicationController
   private
 
   def order_by
-    params[:sort] = 'name' unless params[:sort].in?(%w[name performances])
+    params[:sort] = "name" unless params[:sort].in?(%w[name performances])
     case params[:sort]
-    when 'name' then { name: :asc }
-    when 'performances' then { shows_count: :desc, name: :asc }
+    when "name" then { name: :asc }
+    when "performances" then { shows_count: :desc, name: :asc }
     end
   end
 end

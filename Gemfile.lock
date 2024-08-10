@@ -452,7 +452,6 @@ DEPENDENCIES
   rubocop-capybara
   rubocop-factory_bot
   rubocop-performance
-  rubocop-rails
   rubocop-rails-omakase
   rubocop-rake
   rubocop-rspec

@@ -1,7 +1,7 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
-  config.action_controller.asset_host = 'https://jcktest.ngrok.io'
+  config.action_controller.asset_host = "https://jcktest.ngrok.io"
 
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
@@ -27,11 +27,11 @@ Rails.application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-  config.action_mailer.default_url_options = { host: 'localhost:3000' }
+  config.action_mailer.default_url_options = { host: "localhost:3000" }
   config.action_mailer.smtp_settings = {
-    user_name: ENV.fetch('SMTP_USERNAME', nil),
-    password: ENV.fetch('SMTP_PASSWORD', nil),
-    address: ENV.fetch('SMTP_ADDRESS', nil),
+    user_name: ENV.fetch("SMTP_USERNAME", nil),
+    password: ENV.fetch("SMTP_PASSWORD", nil),
+    address: ENV.fetch("SMTP_ADDRESS", nil),
     port: 587,
     authentication: :plain
   }
