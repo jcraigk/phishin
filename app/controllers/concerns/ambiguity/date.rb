@@ -21,7 +21,7 @@ module Ambiguity::Date
   end
 
   def assign_ogp_values
-    date = Date.parse(current_slug).strftime('%B %d, %Y')
+    date = Date.parse(current_slug).strftime('%B %-d, %Y')
     @ogp_audio_url = selected_track&.mp3_url
     @ogp_title =
       if params[:anchor].present? && selected_track.present?

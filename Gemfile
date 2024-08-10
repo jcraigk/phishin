@@ -31,14 +31,15 @@ gem 'will_paginate'
 group :development do
   gem 'bullet'
   gem 'dotenv-rails'
-  gem 'rubocop'
   gem 'rubocop-capybara'
   gem 'rubocop-factory_bot'
   gem 'rubocop-performance'
+  gem 'rubocop-rails-omakase', require: false
   gem 'rubocop-rails'
   gem 'rubocop-rake'
-  gem 'rubocop-rspec'
   gem 'rubocop-rspec_rails'
+  gem 'rubocop-rspec'
+  gem 'rubocop'
 end
 
 group :test do
