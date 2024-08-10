@@ -12,7 +12,7 @@ module Phishin
   class Application < Rails::Application
     config.load_defaults 7.2
 
-    # For backwards compatibility with earlier Devise logins
+    # Honor pre-Rails 7.2 user login cookies (Devise)
     config.active_support.key_generator_hash_digest_class = OpenSSL::Digest::SHA1
     config.action_dispatch.cookies_serializer = :json_allow_marshal
 
