@@ -13,15 +13,15 @@ module Ambiguity::Date
   def hydrate_page_for_date
     assign_ogp_values
     @sets = compose_sets_for_date
-    @show_like = user_likes_for_shows([@show]).first
+    @show_like = user_likes_for_shows([ @show ]).first
     @previous_show = previous_show
     @next_show = next_show
 
-    @view = 'shows/show'
+    @view = "shows/show"
   end
 
   def assign_ogp_values
-    date = Date.parse(current_slug).strftime('%B %d, %Y')
+    date = Date.parse(current_slug).strftime("%B %-d, %Y")
     @ogp_audio_url = selected_track&.mp3_url
     @ogp_title =
       if params[:anchor].present? && selected_track.present?
@@ -60,13 +60,13 @@ module Ambiguity::Date
   def fetch_show_on_date(date)
     @show =
       Show.published
-          .includes(:venue, tracks: [:songs, { track_tags: :tag }])
+          .includes(:venue, tracks: [ :songs, { track_tags: :tag } ])
           .find_by!(date:)
   end
 
   def date_from_slug
     return false unless current_slug.match?(/\A\d{4}(-|\.)\d{1,2}(-|\.)\d{1,2}\z/)
-    return current_slug.tr('-', '.') if current_slug.match?(/\A(\d{4})\.(\d{1,2})\.(\d{1,2})\z/)
+    return current_slug.tr("-", ".") if current_slug.match?(/\A(\d{4})\.(\d{1,2})\.(\d{1,2})\z/)
     current_slug
   end
 
@@ -82,7 +82,7 @@ module Ambiguity::Date
 
   def next_show
     Show.published
-        .where('date > ?', @show.date)
+        .where("date > ?", @show.date)
         .order(date: :asc)
         .first ||
       Show.published

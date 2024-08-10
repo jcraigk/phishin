@@ -1,9 +1,9 @@
 module ApplicationHelper
   def clear_both
-    tag.div(style: 'clear: both;')
+    tag.div(style: "clear: both;")
   end
 
-  def duration_readable(milliseconds, style = 'colons')
+  def duration_readable(milliseconds, style = "colons")
     DurationFormatter.new(milliseconds, style).call
   end
 
@@ -30,13 +30,13 @@ module ApplicationHelper
   end
 
   def performances_link(song)
-    pluralize(song.tracks_count, 'track')
+    pluralize(song.tracks_count, "track")
   end
 
   def likable(likable, like, size)
     likable_name = likable.class.name.downcase
     a = link_to(
-      '', 'null',
+      "", "null",
       data: { type: likable_name, id: likable.id },
       class: like.present? ? %i[like_toggle liked] : %i[like_toggle],
       title: "Click to Like or Unlike this #{likable_name}"
@@ -52,16 +52,16 @@ module ApplicationHelper
   end
 
   def show_link_title(show, show_abbrev: true)
-    show_abbrev ? show.date.strftime('%b %-d') : show.date_with_dots
+    show_abbrev ? show.date.strftime("%b %-d") : show.date_with_dots
   end
 
   def linked_show_date(show)
     day_link = link_to(
-      show.date.strftime('%b %-d'),
+      show.date.strftime("%b %-d"),
       "/#{show.date.strftime('%B').downcase}-#{show.date.strftime('%-d')}"
     )
     year_link = link_to(
-      show.date.strftime('%Y'),
+      show.date.strftime("%Y"),
       "/#{show.date.strftime('%Y')}"
     )
     "#{day_link}, #{year_link}".html_safe
@@ -69,12 +69,12 @@ module ApplicationHelper
 
   def taper_notes_for(show)
     return CGI.escapeHTML(show.taper_notes) if show.taper_notes.present?
-    'No taper notes present for this show'
+    "No taper notes present for this show"
   end
 
   def lyrics_for(song)
-    return song.lyrics.gsub("\n", '<br>') if song.lyrics.present?
-    'No lyrics available for this song'
+    return song.lyrics.gsub("\n", "<br>") if song.lyrics.present?
+    "No lyrics available for this song"
   end
 
   def pluralize_with_delimiter(count, word)
@@ -82,10 +82,10 @@ module ApplicationHelper
   end
 
   def default_map_path
-    '/map?map_term=Burlington%20VT&distance=10'
+    "/map?map_term=Burlington%20VT&distance=10"
   end
 
   def slug_for_set(set)
-    set.downcase.tr(' ', '-')
+    set.downcase.tr(" ", "-")
   end
 end

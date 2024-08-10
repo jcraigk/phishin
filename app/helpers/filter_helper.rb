@@ -5,7 +5,7 @@ module FilterHelper
   end
 
   def filter(param_name, items) # rubocop:disable Metrics/AbcSize
-    skippables = %w[controller action name t slug] + [param_name.to_s]
+    skippables = %w[controller action name t slug] + [ param_name.to_s ]
     items.map do |k, v|
       link = params[param_name] == v ? "<strong>#{k}</strong>" : k
       param_str = "?#{param_name}=#{CGI.escape(v)}"
@@ -34,7 +34,7 @@ module FilterHelper
   end
 
   def sort_tags_links(item_hash)
-    str = ''
+    str = ""
     item_hash.each do |k, v|
       link = params[:sort] == v ? "<strong>#{k}</strong>" : k
       str += tag.li(link_to(link.html_safe, "?sort=#{CGI.escape(v)}"))
@@ -51,52 +51,52 @@ module FilterHelper
 
   def show_sort_items
     {
-      'Reverse Date' => 'date desc',
-      'Date' => 'date asc',
-      'Likes' => 'likes',
-      'Duration' => 'duration'
+      "Reverse Date" => "date desc",
+      "Date" => "date asc",
+      "Likes" => "likes",
+      "Duration" => "duration"
     }
   end
 
   def my_track_sort_items
-    { 'Title' => 'title' }.merge(track_sort_items)
+    { "Title" => "title" }.merge(track_sort_items)
   end
 
   def track_sort_items
     {
-      'Reverse Date' => 'shows.date desc',
-      'Date' => 'shows.date asc',
-      'Likes' => 'likes',
-      'Duration' => 'duration'
+      "Reverse Date" => "shows.date desc",
+      "Date" => "shows.date asc",
+      "Likes" => "likes",
+      "Duration" => "duration"
     }
   end
 
   def songs_and_venues_sort_items
     {
-      'Title' => 'title',
-      'Track Count' => 'performances'
+      "Title" => "title",
+      "Track Count" => "performances"
     }
   end
 
   def tag_sort_items
     {
-      'Name' => 'name',
-      'Track Count' => 'tracks_count',
-      'Show Count' => 'shows_count'
+      "Name" => "name",
+      "Track Count" => "tracks_count",
+      "Show Count" => "shows_count"
     }
   end
 
   def venues_sort_items
     {
-      'Name' => 'name',
-      'Show Count' => 'performances'
+      "Name" => "name",
+      "Show Count" => "performances"
     }
   end
 
   def stored_playlist_sort_items
     {
-      'Name' => 'name',
-      'Duration' => 'duration'
+      "Name" => "name",
+      "Duration" => "duration"
     }
   end
 
@@ -104,9 +104,9 @@ module FilterHelper
     tag_data =
       song.tracks
           .joins(:tags)
-          .group('tags.name', 'tags.slug')
-          .order('tags.name')
-          .pluck('tags.name', 'tags.slug', 'COUNT(tags.id)')
+          .group("tags.name", "tags.slug")
+          .order("tags.name")
+          .pluck("tags.name", "tags.slug", "COUNT(tags.id)")
     tag_filter_options(tag_data)
   end
 
@@ -115,18 +115,18 @@ module FilterHelper
   def shows_tag_items(shows) # rubocop:disable Metrics/AbcSize
     tag_data = shows.includes(:tags).flat_map(&:tags)
     grouped_tags = tag_data.each_with_object(Hash.new { |h, k| h[k] = { count: 0 } }) do |tag, hash|
-      key = [tag.name, tag.slug]
+      key = [ tag.name, tag.slug ]
       hash[key][:count] += 1
     end
     tag_data_array = grouped_tags.map do |(name, slug), data|
-      [name, slug, data[:count]]
+      [ name, slug, data[:count] ]
     end
     tag_data_array.uniq!
     tag_filter_options(tag_data_array)
   end
 
   def tag_filter_options(tag_data)
-    items = { 'Any Tag' => 'all' }
+    items = { "Any Tag" => "all" }
     tag_data.each do |name, slug, count|
       items["#{name} (#{count})"] = slug
     end

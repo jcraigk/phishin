@@ -25,9 +25,9 @@ class PlaylistsController < ApplicationController
       bookmarked_ids = PlaylistBookmark.where(user: current_user).map(&:playlist_id)
       rel =
         case params[:filter]
-        when 'phriends' then Playlist.where(id: bookmarked_ids)
-        when 'mine' then Playlist.where(user: current_user)
-        else Playlist.where('user_id = ? OR id IN (?)', current_user.id, bookmarked_ids)
+        when "phriends" then Playlist.where(id: bookmarked_ids)
+        when "mine" then Playlist.where(user: current_user)
+        else Playlist.where("user_id = ? OR id IN (?)", current_user.id, bookmarked_ids)
         end
       @playlists = rel.includes(:user).order(order_by_for_stored_playlists).page(params[:page])
     end
@@ -36,9 +36,9 @@ class PlaylistsController < ApplicationController
   end
 
   def save
-    save_action = params[:save_action].in?(%w[new existing]) ? params[:save_action] : 'new'
+    save_action = params[:save_action].in?(%w[new existing]) ? params[:save_action] : "new"
 
-    if save_action == 'new'
+    if save_action == "new"
       if Playlist.where(user: current_user).count >= MAX_PLAYLISTS_PER_USER
         return render(
           json: {
@@ -68,19 +68,19 @@ class PlaylistsController < ApplicationController
   def destroy
     if (playlist = current_user&.playlists&.find_by(id: params[:id]))
       playlist.destroy
-      return render json: { success: true, msg: 'Playlist deleted' }
+      return render json: { success: true, msg: "Playlist deleted" }
     end
-    render json: { success: false, msg: 'Invalid playlist delete request' }
+    render json: { success: false, msg: "Invalid playlist delete request" }
   end
 
   def bookmark
     if current_user && params[:id].present?
       if PlaylistBookmark.find_by(playlist_id: params[:id], user: current_user).present?
-        return render json: { success: false, msg: 'Playlist already bookmarked' }
+        return render json: { success: false, msg: "Playlist already bookmarked" }
       end
 
       PlaylistBookmark.create(playlist_id: params[:id], user: current_user)
-      return render json: { success: true, msg: 'Playlist bookmarked' }
+      return render json: { success: true, msg: "Playlist bookmarked" }
     end
 
     render json: { success: false, msg: "Error fetching ID #{params[:id]}" }
@@ -91,21 +91,21 @@ class PlaylistsController < ApplicationController
        params[:id] &&
        (bookmark = PlaylistBookmark.find_by(playlist_id: params[:id], user: current_user))
       bookmark.destroy
-      return render json: { success: true, msg: 'Playlist unbookmarked' }
+      return render json: { success: true, msg: "Playlist unbookmarked" }
     end
 
-    render json: { success: false, msg: 'Playlist not bookmarked' }
+    render json: { success: false, msg: "Playlist not bookmarked" }
   end
 
   # Replace active playlist using one of:
   # (1) track_id
   # (2) date/slug combo from URL path (`/YYYY-MM-DD/:track_slug`)
   # (3) playlist by slug from URL path (`/play/:playlist_slug`)
-  # (3) random show
+  # (4) fallback to random show
   def enqueue_tracks
     reset_session
-    path1, slug = params[:path]&.split('/')&.reject(&:empty?)
-    return enqueue_playlist(slug) if path1 == 'play'
+    path1, slug = params[:path]&.split("/")&.reject(&:empty?)
+    return enqueue_playlist(slug) if path1 == "play"
     show = enqueuable_show(path1)
     session[:track_ids] = show&.tracks&.order(position: :asc)&.pluck(:id) || []
     track_id = slug.present? ? show&.tracks&.find_by(slug:)&.id : params[:track_id]
@@ -130,7 +130,7 @@ class PlaylistsController < ApplicationController
 
   def add_track
     if session[:track_ids]&.include?(params[:track_id].to_i)
-      return render json: { success: false, msg: 'Track already in playlist' }
+      return render json: { success: false, msg: "Track already in playlist" }
     end
 
     if session[:track_ids].present? && session[:track_ids].size > 99
@@ -141,7 +141,7 @@ class PlaylistsController < ApplicationController
       session[:track_ids] << track.id
       render json: { success: true }
     else
-      render json: { success: false, msg: 'Invalid track provided for playlist' }
+      render json: { success: false, msg: "Invalid track provided for playlist" }
     end
   end
 
@@ -151,7 +151,7 @@ class PlaylistsController < ApplicationController
       session[:track_ids].delete(track_id)
       render json: { success: true }
     else
-      render json: { success: false, msg: 'Track not in playlist' }
+      render json: { success: false, msg: "Track not in playlist" }
     end
   end
 
@@ -160,9 +160,9 @@ class PlaylistsController < ApplicationController
       session[:track_ids] ||= []
       session[:track_ids] += show.tracks.sort_by(&:position).map(&:id)
       session[:track_ids] = session[:track_ids].uniq.take(Playlist::MAX_TRACKS)
-      render json: { success: true, msg: 'Tracks from show added to playlist' }
+      render json: { success: true, msg: "Tracks from show added to playlist" }
     else
-      render json: { success: false, msg: 'Invalid show provided for playlist' }
+      render json: { success: false, msg: "Invalid show provided for playlist" }
     end
   end
 
@@ -170,11 +170,11 @@ class PlaylistsController < ApplicationController
     return no_active_playlist if session[:track_ids].blank?
     track_ids = session[:track_ids]
     if track_ids.last == params[:track_id].to_i
-      render json: { success: false, msg: 'End of playlist' }
+      render json: { success: false, msg: "End of playlist" }
     elsif (idx = track_ids.find_index(params[:track_id].to_i))
       render json: { success: true, track_id: track_ids[idx + 1] }
     else
-      render json: { success: false, msg: 'track_id not in playlist' }
+      render json: { success: false, msg: "track_id not in playlist" }
     end
   end
 
@@ -182,11 +182,11 @@ class PlaylistsController < ApplicationController
     return no_active_playlist unless session[:track_ids]&.any?
     track_ids = session[:track_ids]
     if track_ids.first == params[:track_id].to_i
-      render json: { success: false, msg: 'Beginning of playlist' }
+      render json: { success: false, msg: "Beginning of playlist" }
     elsif (idx = track_ids.find_index(params[:track_id].to_i))
       render json: { success: true, track_id: track_ids[idx - 1] }
     else
-      render json: { success: false, msg: 'track_id not in playlist' }
+      render json: { success: false, msg: "track_id not in playlist" }
     end
   end
 
@@ -196,7 +196,7 @@ class PlaylistsController < ApplicationController
       show = Show.published.find_by(id: track.show_id)
       render json: { success: true, url: "/#{show.date}/#{track.slug}", track_id: track.id }
     else
-      render json: { success: false, msg: 'Invalid song_id' }
+      render json: { success: false, msg: "Invalid song_id" }
     end
   end
 
@@ -210,7 +210,7 @@ class PlaylistsController < ApplicationController
     else
       show = Show.published.random.first
       @url = "/#{show.date}"
-      @msg = 'Playing random show...'
+      @msg = "Playing random show..."
       show
     end
   end
@@ -228,13 +228,13 @@ class PlaylistsController < ApplicationController
   end
 
   def render_bad_playlist(playlist)
-    render json: { success: false, msg: playlist.errors.full_messages.join(', ') }
+    render json: { success: false, msg: playlist.errors.full_messages.join(", ") }
   end
 
   def render_good_playlist(playlist)
     render json: {
       success: true,
-      msg: 'Playlist saved',
+      msg: "Playlist saved",
       id: playlist.id,
       name: playlist.name,
       slug: playlist.slug
@@ -247,7 +247,7 @@ class PlaylistsController < ApplicationController
   end
 
   def order_by_for_stored_playlists
-    params[:sort] = 'name' unless params[:sort].in?(%w[name duration])
+    params[:sort] = "name" unless params[:sort].in?(%w[name duration])
     "#{params[:sort]} asc"
   end
 
@@ -279,7 +279,7 @@ class PlaylistsController < ApplicationController
   end
 
   def no_active_playlist
-    render json: { success: false, msg: 'No active playlist' }
+    render json: { success: false, msg: "No active playlist" }
   end
 
   def retrieve_bookmark(playlist)

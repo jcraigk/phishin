@@ -3,6 +3,6 @@ class KnownDate < ApplicationRecord
   validates :phishnet_url, :venue, :location, presence: true
 
   def date_with_dots
-    date.strftime('%Y.%m.%d')
+    date.strftime("%Y.%m.%d")
   end
 end

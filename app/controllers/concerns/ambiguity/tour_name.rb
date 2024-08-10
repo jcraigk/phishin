@@ -12,7 +12,7 @@ module Ambiguity::TourName
 
   def tour
     @tour ||=
-      Tour.includes(shows: [:venue, { show_tags: :tag }])
+      Tour.includes(shows: [ :venue, { show_tags: :tag } ])
           .find_by(slug: current_slug)
   end
 
@@ -23,7 +23,7 @@ module Ambiguity::TourName
     @shows_likes = user_likes_for_shows(@shows)
     @sections = tour_sections
     @title = tour.name
-    @view = 'shows/index'
+    @view = "shows/index"
   end
 
   def tour_sections

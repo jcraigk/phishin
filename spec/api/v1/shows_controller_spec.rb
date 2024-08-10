@@ -21,10 +21,10 @@ describe Api::V1::ShowsController do
 
       let(:tag) { create(:tag) }
 
-      before { shows.first.tags = [tag] }
+      before { shows.first.tags = [ tag ] }
 
       it 'responds with expected data' do
-        expect(json_data).to eq([shows.first.reload.as_json_api])
+        expect(json_data).to eq([ shows.first.reload.as_json_api ])
       end
     end
   end
@@ -90,7 +90,7 @@ describe Api::V1::ShowsController do
       subject { get('/api/v1/shows-on-day-of-year/october-31', {}, auth_header) }
 
       it 'responds with expected data' do
-        expect(json_data).to eq([show.as_json_api])
+        expect(json_data).to eq([ show.as_json_api ])
       end
     end
 
@@ -98,7 +98,7 @@ describe Api::V1::ShowsController do
       subject { get('/api/v1/shows-on-day-of-year/10-31', {}, auth_header) }
 
       it 'responds with expected data' do
-        expect(json_data).to eq([show.as_json_api])
+        expect(json_data).to eq([ show.as_json_api ])
       end
     end
 

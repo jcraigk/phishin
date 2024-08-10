@@ -10,7 +10,7 @@ class LikesController < ApplicationController
   private
 
   def respond_sign_in
-    render json: { success: false, msg: 'You must be signed in to submit Likes' }
+    render json: { success: false, msg: "You must be signed in to submit Likes" }
   end
 
   def like_status
@@ -49,6 +49,6 @@ class LikesController < ApplicationController
   end
 
   def likable_type
-    params[:likable_type].in?(%w[show track]) ? params[:likable_type] : 'show'
+    params[:likable_type].in?(%w[show track]) ? params[:likable_type] : "show"
   end
 end

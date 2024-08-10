@@ -44,12 +44,12 @@ class Api::V1::ShowsController < Api::V1::ApiController
 
   def month_day_from_longform
     return unless params[:day] =~ long_form_regex
-    [month_num_from_name(Regexp.last_match[1]), Regexp.last_match[2]]
+    [ month_num_from_name(Regexp.last_match[1]), Regexp.last_match[2] ]
   end
 
   def month_day_from_shortform
     return unless params[:day] =~ short_form_regex
-    [Regexp.last_match[1], Regexp.last_match[2]]
+    [ Regexp.last_match[1], Regexp.last_match[2] ]
   end
 
   def month_num_from_name(name)
@@ -71,8 +71,8 @@ class Api::V1::ShowsController < Api::V1::ApiController
   end
 
   def shows_on_day
-    show_scope.where('extract(month from date) = ?', month_param)
-              .where('extract(day from date) = ?', day_param)
+    show_scope.where("extract(month from date) = ?", month_param)
+              .where("extract(day from date) = ?", day_param)
   end
 
   def show_scope

@@ -1,4 +1,4 @@
-require 'csv'
+require "csv"
 
 class TrackTagSyncService
   include ActionView::Helpers::SanitizeHelper
@@ -25,7 +25,7 @@ class TrackTagSyncService
     return if missing_tracks.none?
 
     puts
-    puts 'MISSING TRACKS:'
+    puts "MISSING TRACKS:"
     puts missing_tracks
   end
 
@@ -39,7 +39,7 @@ class TrackTagSyncService
 
   def sync_track_tags
     data.each do |row|
-      @track = find_track_by_url(row['URL'])
+      @track = find_track_by_url(row["URL"])
       existing = existing_track_tag(row)
       existing ? update_track_tag(existing, row) : create_track_tag(row)
     end
@@ -50,7 +50,7 @@ class TrackTagSyncService
     TrackTag.find_by \
       tag:,
       track:,
-      notes: row['Notes']
+      notes: row["Notes"]
   end
 
   def sanitize_str(str)
@@ -60,10 +60,10 @@ class TrackTagSyncService
 
   def create_track_tag(row)
     if track.blank?
-      @missing_tracks << row['URL']
-      print 'x'
+      @missing_tracks << row["URL"]
+      print "x"
     else
-      print '.'
+      print "."
       @created_ids << new_track_tag_id(row)
     end
   end
@@ -72,20 +72,20 @@ class TrackTagSyncService
     TrackTag.create!(
       tag:,
       track:,
-      starts_at_second: seconds_or_nil(row['Starts At']),
-      ends_at_second: seconds_or_nil(row['Ends At']),
-      notes: sanitize_str(row['Notes']),
-      transcript: sanitize_str(row['Transcript'])
+      starts_at_second: seconds_or_nil(row["Starts At"]),
+      ends_at_second: seconds_or_nil(row["Ends At"]),
+      notes: sanitize_str(row["Notes"]),
+      transcript: sanitize_str(row["Transcript"])
     ).id
   end
 
   def update_track_tag(track_tag, row)
-    print '-'
+    print "-"
     track_tag.update(
-      starts_at_second: seconds_or_nil(row['Starts At']),
-      ends_at_second: seconds_or_nil(row['Ends At']),
-      notes: sanitize_str(row['Notes']),
-      transcript: sanitize_str(row['Transcript'])
+      starts_at_second: seconds_or_nil(row["Starts At"]),
+      ends_at_second: seconds_or_nil(row["Ends At"]),
+      notes: sanitize_str(row["Notes"]),
+      transcript: sanitize_str(row["Transcript"])
     )
     @updated_ids << track_tag.id
   end

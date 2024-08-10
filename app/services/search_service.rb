@@ -4,7 +4,7 @@ class SearchService
   LIMIT = 200
 
   def initialize(term)
-    @term = term || ''
+    @term = term || ""
   end
 
   def call
@@ -67,7 +67,7 @@ class SearchService
     return @songs if defined?(@songs)
     return [] if term_is_date?
     @songs = Song.where(
-      'title ILIKE :term OR alias ILIKE :term',
+      "title ILIKE :term OR alias ILIKE :term",
       term: "%#{term}%"
     ).order(title: :asc)
   end
@@ -82,32 +82,32 @@ class SearchService
 
   def tours
     return [] if term_is_date?
-    Tour.where('name ILIKE ?', "%#{term}%").order(name: :asc)
+    Tour.where("name ILIKE ?", "%#{term}%").order(name: :asc)
   end
 
   def venue_where_str
-    'venues.name ILIKE :term OR venues.abbrev ILIKE :term ' \
-      'OR venue_renames.name ILIKE :term ' \
-      'OR venues.city ILIKE :term OR venues.state ILIKE :term ' \
-      'OR venues.country ILIKE :term '
+    "venues.name ILIKE :term OR venues.abbrev ILIKE :term " \
+      "OR venue_renames.name ILIKE :term " \
+      "OR venues.city ILIKE :term OR venues.state ILIKE :term " \
+      "OR venues.country ILIKE :term "
   end
 
   def tags
-    Tag.where('name ILIKE :term OR description ILIKE :term', term: "%#{term}%")
+    Tag.where("name ILIKE :term OR description ILIKE :term", term: "%#{term}%")
        .order(name: :asc)
   end
 
   def show_tags
     ShowTag.includes(:tag, :show)
-           .where('notes ILIKE ?', "%#{term}%")
-           .order('tags.name, shows.date')
+           .where("notes ILIKE ?", "%#{term}%")
+           .order("tags.name, shows.date")
            .limit(LIMIT)
   end
 
   def track_tags
     TrackTag.includes(:tag, track: :show)
-            .where('notes ILIKE ?', "%#{term}%")
-            .order('tags.name, shows.date, tracks.position')
+            .where("notes ILIKE ?", "%#{term}%")
+            .order("tags.name, shows.date, tracks.position")
             .limit(LIMIT)
   end
 
@@ -122,7 +122,7 @@ class SearchService
   end
 
   def tracks_by_title
-    Track.where('title ILIKE ?', "%#{term}%")
+    Track.where("title ILIKE ?", "%#{term}%")
          .order(title: :asc)
          .limit(LIMIT)
   end

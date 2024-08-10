@@ -60,7 +60,7 @@ RSpec.describe Show do
       end
 
       it 'returns expected objects' do
-        expect(described_class.between_years(2014, 2015)).to eq([show1, show2])
+        expect(described_class.between_years(2014, 2015)).to eq([ show1, show2 ])
       end
     end
 
@@ -72,7 +72,7 @@ RSpec.describe Show do
       end
 
       it 'returns expected objects' do
-        expect(described_class.during_year(2014)).to eq([show1])
+        expect(described_class.during_year(2014)).to eq([ show1 ])
       end
     end
 
@@ -84,7 +84,7 @@ RSpec.describe Show do
       end
 
       it 'returns expected object' do
-        expect(described_class.on_day_of_year(10, 31)).to eq([show1])
+        expect(described_class.on_day_of_year(10, 31)).to eq([ show1 ])
       end
     end
 
@@ -111,7 +111,7 @@ RSpec.describe Show do
       before { shows.first.tags << tag }
 
       it 'returns expected objects' do
-        expect(described_class.tagged_with(tag.slug)).to eq([shows.first])
+        expect(described_class.tagged_with(tag.slug)).to eq([ shows.first ])
       end
     end
   end

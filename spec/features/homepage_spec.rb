@@ -4,7 +4,7 @@ describe 'Homepage', :js do
   let(:venue) { create(:venue) }
   let(:most_recent_year) { ERAS.values.flatten.last }
   let!(:shows) do
-    [1983, most_recent_year].each_with_object([]) do |year, shows|
+    [ 1983, most_recent_year ].each_with_object([]) do |year, shows|
       (1..3).each do |day|
         shows << create(:show, venue:, date: "#{year}-01-#{day}")
       end

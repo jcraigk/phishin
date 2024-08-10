@@ -29,7 +29,7 @@ describe Api::V1::TracksController do
       before { tracks.first.tags << tag }
 
       it 'responds with expected data' do
-        expect(json_data).to eq([tracks.first.reload.as_json_api])
+        expect(json_data).to eq([ tracks.first.reload.as_json_api ])
       end
     end
   end

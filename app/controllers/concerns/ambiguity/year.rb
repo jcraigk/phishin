@@ -36,8 +36,8 @@ module Ambiguity::Year
               }
             end
 
-    @ambiguity_controller = 'years'
+    @ambiguity_controller = "years"
     @title = "Year of #{current_slug}"
-    @view = 'shows/index'
+    @view = "shows/index"
   end
 end

@@ -10,7 +10,7 @@ class ErasController < ApplicationController
 
   def shows_for_year(year)
     shows = Show.published.includes(:venue)
-    return shows.between_years('1983', '1987') if year == '1983-1987'
+    return shows.between_years("1983", "1987") if year == "1983-1987"
     shows.during_year(year)
   end
 

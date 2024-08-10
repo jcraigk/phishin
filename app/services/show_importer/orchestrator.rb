@@ -2,11 +2,11 @@ class ShowImporter::Orchestrator
   attr_reader :fm, :date, :show_found, :path, :show_info
 
   SET_MAP = {
-    '3' => %w[III],
-    'E' => %w[e I-e II-e],
-    '2' => %w[II],
-    '1' => %w[I],
-    'S' => %w[(Check)]
+    "3" => %w[III],
+    "E" => %w[e I-e II-e],
+    "2" => %w[II],
+    "1" => %w[I],
+    "S" => %w[(Check)]
   }.freeze
 
   def initialize(date) # rubocop:disable Metrics/MethodLength
@@ -36,8 +36,8 @@ class ShowImporter::Orchestrator
   end
 
   def save
-    print '🍩 Processing...'
-    pbar = ProgressBar.create(total: @tracks.size, format: '%a %B %c/%C %p%% %E')
+    print "🍩 Processing..."
+    pbar = ProgressBar.create(total: @tracks.size, format: "%a %B %c/%C %p%% %E")
 
     show.save!
 
@@ -57,14 +57,14 @@ class ShowImporter::Orchestrator
   end
 
   def track_display(track)
-    (valid?(track) ? '  ' : '* ') +
+    (valid?(track) ? "  " : "* ") +
       format(
-        '%2d. [%1s] %-30.30s     %-30.30s     ',
+        "%2d. [%1s] %-30.30s     %-30.30s     ",
         track.position,
         track.set,
         track.title,
         track.filename
-      ) + track.songs.map { |song| format('(%-3d) %-20.20s', song.id, song.title) }.join('   ')
+      ) + track.songs.map { |song| format("(%-3d) %-20.20s", song.id, song.title) }.join("   ")
   end
 
   def merge_tracks(subsumed_track, subsuming_track)
@@ -111,7 +111,7 @@ class ShowImporter::Orchestrator
     @venue ||=
       Venue.left_outer_joins(:venue_renames)
            .where(
-             '(venues.name = :name OR venue_renames.name = :name) AND city = :city',
+             "(venues.name = :name OR venue_renames.name = :name) AND city = :city",
              name: show_info.venue_name,
              city: show_info.venue_city
            ).first
@@ -119,14 +119,14 @@ class ShowImporter::Orchestrator
 
   def tour
     @tour ||=
-      Tour.where('starts_on <= :date AND ends_on >= :date', date:)
+      Tour.where("starts_on <= :date AND ends_on >= :date", date:)
           .first
   end
 
   def assign_venue
     return show.venue = venue if venue.present?
 
-    puts 'No venue matched! Enter Venue ID:'
+    puts "No venue matched! Enter Venue ID:"
     @venue = Venue.find($stdin.gets.chomp.to_i)
     show.venue = venue
   end
@@ -134,7 +134,7 @@ class ShowImporter::Orchestrator
   def assign_tour
     return show.tour = tour if tour.present?
 
-    puts 'No tour matched! Enter Tour ID:'
+    puts "No tour matched! Enter Tour ID:"
     @tour = Tour.find($stdin.gets.chomp.to_i)
     show.tour = tour
   end
@@ -220,6 +220,6 @@ class ShowImporter::Orchestrator
       end
     end
 
-    '1'
+    "1"
   end
 end

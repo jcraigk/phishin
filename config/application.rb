@@ -1,18 +1,21 @@
-require_relative 'boot'
+require_relative "boot"
 
-require 'rails'
-require 'action_controller/railtie'
-require 'action_mailer/railtie'
-require 'action_view/railtie'
-require 'active_record/railtie'
+require "rails"
+require "action_controller/railtie"
+require "action_mailer/railtie"
+require "action_view/railtie"
+require "active_record/railtie"
 
 Bundler.require(*Rails.groups)
 
 module Phishin
   class Application < Rails::Application
-    # TODO: Re-enable when devise is updated (silently breaks prod login)
-    # config.load_defaults 7.1
-    config.active_support.cache_format_version = 7.0 # Remove later
-    config.hosts << ENV.fetch('WEB_HOST', nil) if ENV['WEB_HOST'].present?
+    config.load_defaults 7.2
+
+    # Honor pre-Rails 7.2 user login cookies (Devise)
+    config.active_support.key_generator_hash_digest_class = OpenSSL::Digest::SHA1
+    config.action_dispatch.cookies_serializer = :json_allow_marshal
+
+    config.hosts << ENV.fetch("WEB_HOST", nil) if ENV["WEB_HOST"].present?
   end
 end

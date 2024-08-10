@@ -31,8 +31,8 @@ class Api::V1::YearsController < Api::V1::ApiController
   end
 
   def shows_for_era(era)
-    return Show.published.during_year(era) unless era == '1983-1987'
-    Show.published.between_years('1983', '1987')
+    return Show.published.during_year(era) unless era == "1983-1987"
+    Show.published.between_years("1983", "1987")
   end
 
   def shows_that_year
@@ -48,11 +48,11 @@ class Api::V1::YearsController < Api::V1::ApiController
 
   def years_from_single
     return unless params[:id].match?(/\A\d{4}\z/)
-    [params[:id], params[:id]]
+    [ params[:id], params[:id] ]
   end
 
   def years_from_range
     return unless params[:id] =~ /\A(\d{4})-(\d+{4})\z/
-    [Regexp.last_match[1], Regexp.last_match[2]]
+    [ Regexp.last_match[1], Regexp.last_match[2] ]
   end
 end

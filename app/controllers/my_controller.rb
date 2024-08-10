@@ -13,11 +13,11 @@ class MyController < ApplicationController
     return unless current_user
     validate_sorting_for_my_tracks
 
-    track_ids = Like.where(likable_type: 'Track', user: current_user).map(&:likable_id)
+    track_ids = Like.where(likable_type: "Track", user: current_user).map(&:likable_id)
     @tracks = Track.where(id: track_ids)
                    .includes(:show).order(@order_by)
                    .paginate(page: params[:page], per_page: params[:per_page].presence || 20)
-    @tracks_likes = user_likes_for_tracks([@tracks])
+    @tracks_likes = user_likes_for_tracks([ @tracks ])
 
     render_view
   end
@@ -25,7 +25,7 @@ class MyController < ApplicationController
   private
 
   def paginated_shows
-    show_ids = Like.where(likable_type: 'Show', user: current_user).map(&:likable_id)
+    show_ids = Like.where(likable_type: "Show", user: current_user).map(&:likable_id)
     Show.published
         .where(id: show_ids)
         .includes(:tracks)
@@ -34,34 +34,34 @@ class MyController < ApplicationController
   end
 
   def validate_sorting_for_my_shows # rubocop:disable Metrics/MethodLength
-    params[:sort] = 'date desc' unless
-      params[:sort].in?(['date desc', 'date asc', 'title', 'likes', 'duration'])
+    params[:sort] = "date desc" unless
+      params[:sort].in?([ "date desc", "date asc", "title", "likes", "duration" ])
     @order_by =
       case params[:sort]
-      when 'date asc', 'date desc'
+      when "date asc", "date desc"
         params[:sort]
-      when 'title'
-        'title desc, date desc'
-      when 'likes'
-        'likes_count desc, date desc'
-      when 'duration'
-        'duration desc, date desc'
+      when "title"
+        "title desc, date desc"
+      when "likes"
+        "likes_count desc, date desc"
+      when "duration"
+        "duration desc, date desc"
       end
   end
 
   def validate_sorting_for_my_tracks # rubocop:disable Metrics/MethodLength
-    params[:sort] = 'shows.date desc' unless
-      params[:sort].in?(['title', 'shows.date desc', 'shows.date asc', 'likes', 'duration'])
+    params[:sort] = "shows.date desc" unless
+      params[:sort].in?([ "title", "shows.date desc", "shows.date asc", "likes", "duration" ])
     @order_by =
       case params[:sort]
-      when 'title'
-        'title asc'
-      when 'shows.date asc', 'shows.date desc'
+      when "title"
+        "title asc"
+      when "shows.date asc", "shows.date desc"
         params[:sort]
-      when 'likes'
-        'likes_count desc'
-      when 'duration'
-        'duration desc'
+      when "likes"
+        "likes_count desc"
+      when "duration"
+        "duration desc"
       end
   end
 end

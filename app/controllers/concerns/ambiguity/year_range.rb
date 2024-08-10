@@ -25,9 +25,9 @@ module Ambiguity::YearRange
               }
             end
 
-    @ambiguity_controller = 'years'
+    @ambiguity_controller = "years"
     @title = "Years: #{year1}-#{year2}"
-    @view = 'shows/index'
+    @view = "shows/index"
   end
 
   def shows_during_year_range
@@ -39,7 +39,7 @@ module Ambiguity::YearRange
 
   def year_range_from_slug
     return false unless current_slug =~ /\A(\d{4})-(\d{4})\z/
-    [Regexp.last_match[1], Regexp.last_match[2]]
+    [ Regexp.last_match[1], Regexp.last_match[2] ]
   end
 
   def year1

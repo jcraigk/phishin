@@ -1,10 +1,10 @@
-inherit_from: .rubocop_todo.yml
+inherit_gem:
+  rubocop-rails-omakase: rubocop.yml
 
 require:
   - rubocop-capybara
   - rubocop-factory_bot
   - rubocop-performance
-  - rubocop-rails
   - rubocop-rake
   - rubocop-rspec
   - rubocop-rspec_rails

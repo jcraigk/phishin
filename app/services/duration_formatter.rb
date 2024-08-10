@@ -3,7 +3,7 @@ class DurationFormatter
 
   def initialize(duration, style = nil)
     @duration = duration || 0
-    @style = style.in?(%w[colons letters]) ? style : 'colons'
+    @style = style.in?(%w[colons letters]) ? style : "colons"
   end
 
   def call
@@ -14,7 +14,7 @@ class DurationFormatter
   private
 
   def format_as_string
-    if style == 'letters'
+    if style == "letters"
       format_with_letters
     else
       format_with_colons
@@ -39,7 +39,7 @@ class DurationFormatter
 
   def lettered_days_hours_mins_seconds
     format(
-      '%<days>dd %<hours>dh %<minutes>dm %<seconds>ds',
+      "%<days>dd %<hours>dh %<minutes>dm %<seconds>ds",
       days:,
       hours:,
       minutes:,
@@ -48,33 +48,33 @@ class DurationFormatter
   end
 
   def lettered_hours
-    format('%<hours>dh', hours:)
+    format("%<hours>dh", hours:)
   end
 
   def lettered_hours_mins
     return lettered_hours if minutes.zero?
-    format('%<hours>dh %<minutes>dm', hours:, minutes:)
+    format("%<hours>dh %<minutes>dm", hours:, minutes:)
   end
 
   def lettered_mins
-    format('%<minutes>dm', minutes:)
+    format("%<minutes>dm", minutes:)
   end
 
   def lettered_mins_seconds
     if seconds.zero?
-      return '0s' if minutes.zero?
+      return "0s" if minutes.zero?
       return lettered_mins
     end
-    format('%<minutes>dm %<seconds>ds', minutes:, seconds:)
+    format("%<minutes>dm %<seconds>ds", minutes:, seconds:)
   end
 
   def colon_mins_seconds
-    format('%<minutes>d:%<seconds>02d', minutes:, seconds:)
+    format("%<minutes>d:%<seconds>02d", minutes:, seconds:)
   end
 
   def colon_days_hours_mins_seconds
     format(
-      '%<days>d:%<hours>02d:%<minutes>02d:%<seconds>02d',
+      "%<days>d:%<hours>02d:%<minutes>02d:%<seconds>02d",
       days:,
       hours:,
       minutes:,
@@ -84,7 +84,7 @@ class DurationFormatter
 
   def colon_hours_mins_seconds
     format(
-      '%<hours>d:%<minutes>02d:%<seconds>02d',
+      "%<hours>d:%<minutes>02d:%<seconds>02d",
       hours:,
       minutes:,
       seconds:

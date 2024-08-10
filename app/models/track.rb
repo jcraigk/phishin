@@ -31,11 +31,11 @@ class Track < ApplicationRecord
   before_save :generate_slug
   after_update :process_audio_file, if: :saved_change_to_audio_file_data
 
-  scope :chronological, -> { joins(:show).order('shows.date') }
+  scope :chronological, -> { joins(:show).order("shows.date") }
   scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
 
   def self.by_url(url)
-    segments = URI.parse(url).path.split('/')
+    segments = URI.parse(url).path.split("/")
     Track.joins(:show).find_by(shows: { date: segments[-2] }, slug: segments[-1])
   end
 
@@ -44,7 +44,7 @@ class Track < ApplicationRecord
   end
 
   def set_name
-    SET_NAMES[set] || 'Unknown Set'
+    SET_NAMES[set] || "Unknown Set"
   end
 
   def apply_id3_tags
@@ -57,11 +57,11 @@ class Track < ApplicationRecord
   end
 
   def mp3_url
-    audio_file.url(host: content_host).gsub('tracks/audio_files', 'audio')
+    audio_file.url(host: content_host).gsub("tracks/audio_files", "audio")
   end
 
   def waveform_image_url
-    waveform_png&.url(host: content_host)&.gsub('tracks/audio_files', 'audio')
+    waveform_png&.url(host: content_host)&.gsub("tracks/audio_files", "audio")
   end
 
   def urls
@@ -139,7 +139,7 @@ class Track < ApplicationRecord
   end
 
   def partitioned_id
-    format('%<id>09d', id:).scan(/.{3}/).join('/')
+    format("%<id>09d", id:).scan(/.{3}/).join("/")
   end
 
   def track_tags_for_api # rubocop:disable Metrics/AbcSize, Metrics/MethodLength

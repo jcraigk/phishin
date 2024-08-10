@@ -1,14 +1,14 @@
 module PlaylistHelper
   def playlist_filter_hash
     {
-      '<i class="glyphicon glyphicon-globe"></i> All' => 'all',
-      '<i class="glyphicon glyphicon-user"></i> Only Mine' => 'mine',
-      '<i class="glyphicon glyphicon-bookmark"></i> Only Phriends\'' => 'phriends'
+      '<i class="glyphicon glyphicon-globe"></i> All' => "all",
+      '<i class="glyphicon glyphicon-user"></i> Only Mine' => "mine",
+      '<i class="glyphicon glyphicon-bookmark"></i> Only Phriends\'' => "phriends"
     }
   end
 
   def playlist_filters
-    str = ''
+    str = ""
     playlist_filter_hash.each_with_index do |(key, val), idx|
       str += playlist_filter_link(key, val, idx)
     end

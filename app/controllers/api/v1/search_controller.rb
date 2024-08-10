@@ -13,7 +13,7 @@ class Api::V1::SearchController < Api::V1::ApiController
   def respond_with_invalid_term
     render json: {
       success: false,
-      message: I18n.t('search.term_too_short', min_length: MIN_SEARCH_TERM_LENGTH)
+      message: I18n.t("search.term_too_short", min_length: MIN_SEARCH_TERM_LENGTH)
     }, status: :bad_request
   end
 end

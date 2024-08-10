@@ -26,8 +26,8 @@ class WaveformImageGenerator
     audio_file_path = track.audio_file.to_io.path
     tmp_wav_path = tmp_wav
     Open3.capture3 \
-      'ffmpeg', '-y', '-hide_banner', '-loglevel', 'error', '-i',
-      audio_file_path, '-f', 'wav', tmp_wav_path
+      "ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i",
+      audio_file_path, "-f", "wav", tmp_wav_path
   end
 
   def generate_waveform_image
@@ -39,7 +39,7 @@ class WaveformImageGenerator
       method: :peak,
       width: 500,
       height: 70,
-      color: '#999999',
+      color: "#999999",
       background_color: :transparent,
       force: true
     }

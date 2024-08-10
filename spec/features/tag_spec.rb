@@ -4,7 +4,7 @@ describe 'Tag page', :js do
   let(:tag) { create(:tag) }
 
   context 'with shows' do
-    let(:shows) { create_list(:show, 3, tags: [tag]) }
+    let(:shows) { create_list(:show, 3, tags: [ tag ]) }
 
     before do
       shows.each_with_index do |show, idx|
@@ -22,7 +22,7 @@ describe 'Tag page', :js do
   end
 
   context 'with tracks' do
-    let(:tracks) { create_list(:track, 3, tags: [tag]) }
+    let(:tracks) { create_list(:track, 3, tags: [ tag ]) }
 
     before do
       tracks.each_with_index do |track, idx|

@@ -7,7 +7,7 @@ class Api::V1::ErasController < Api::V1::ApiController
   end
 
   def show
-    return respond_with_success(ERAS["#{params[:id]}.0"]) if params[:id].to_i.in?([1, 2, 3])
+    return respond_with_success(ERAS["#{params[:id]}.0"]) if params[:id].to_i.in?([ 1, 2, 3 ])
     respond_with_not_found
   end
 end

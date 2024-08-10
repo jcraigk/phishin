@@ -12,15 +12,15 @@ class User < ApplicationRecord
     uniqueness: true,
     format: {
       with: /\A[A-Za-z0-9_]{4,15}\z/,
-      message: 'may contain only letters, numbers, and ' \
-               'underscores; must be unique; and must be ' \
-               '4 to 15 characters long'
+      message: "may contain only letters, numbers, and " \
+               "underscores; must be unique; and must be " \
+               "4 to 15 characters long"
     }
   )
 
   # Token-based authentication for API usage (https://gist.github.com/josevalim/fb706b1e933ef01e4fb6)
   def generate_authentication_token!
-    token = ''
+    token = ""
     loop do
       token = Devise.friendly_token
       break token unless User.find_by(authentication_token: token)

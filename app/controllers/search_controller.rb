@@ -7,7 +7,7 @@ class SearchController < ApplicationController
   private
 
   def perform_search
-    params[:term] = params[:term]&.strip || ''
+    params[:term] = params[:term]&.strip || ""
     return error unless search_results
     search_results.each { |k, v| instance_variable_set(:"@#{k}", v) }
     @any_results = search_results.values.find(&:present?)
@@ -18,6 +18,6 @@ class SearchController < ApplicationController
   end
 
   def error
-    @error = I18n.t('search.term_too_short', min_length: MIN_SEARCH_TERM_LENGTH)
+    @error = I18n.t("search.term_too_short", min_length: MIN_SEARCH_TERM_LENGTH)
   end
 end

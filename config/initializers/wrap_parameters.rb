@@ -1,5 +1,5 @@
 ActiveSupport.on_load(:action_controller) do
-  wrap_parameters format: [:json]
+  wrap_parameters format: [ :json ]
 end
 
 ActiveSupport.on_load(:active_record) do

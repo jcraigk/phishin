@@ -22,11 +22,11 @@ class Show < ApplicationRecord
     where("date_part('year', date) = ?", year)
   }
   scope :on_day_of_year, lambda { |month, day|
-    where('extract(month from date) = ?', month)
-      .where('extract(day from date) = ?', day)
+    where("extract(month from date) = ?", month)
+      .where("extract(day from date) = ?", day)
   }
   scope :published, -> { where(published: true) }
-  scope :random, ->(amt = 1) { order(Arel.sql('RANDOM()')).limit(amt) }
+  scope :random, ->(amt = 1) { order(Arel.sql("RANDOM()")).limit(amt) }
   scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
 
   delegate :name, to: :tour, prefix: true
@@ -36,7 +36,7 @@ class Show < ApplicationRecord
   end
 
   def date_with_dots
-    date.strftime('%Y.%m.%d')
+    date.strftime("%Y.%m.%d")
   end
 
   def as_json # rubocop:disable Metrics/MethodLength

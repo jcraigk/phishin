@@ -36,11 +36,11 @@ RSpec.describe Track do
     it { is_expected.to be_a(PgSearch::Model) }
 
     it 'matches `Wolfman`' do
-      expect(described_class.kinda_matching('Wolfman')).to eq([track1])
+      expect(described_class.kinda_matching('Wolfman')).to eq([ track1 ])
     end
 
     it 'matches `Wolf`' do
-      expect(described_class.kinda_matching('Wolf')).to eq([track2])
+      expect(described_class.kinda_matching('Wolf')).to eq([ track2 ])
     end
 
     it 'matches `Tube`' do
@@ -75,7 +75,7 @@ RSpec.describe Track do
       let!(:track3) { create(:track, show: create(:show, date: 2.years.ago)) }
 
       it 'returns expected objects' do
-        expect(described_class.chronological).to eq([track2, track3, track1])
+        expect(described_class.chronological).to eq([ track2, track3, track1 ])
       end
     end
 
@@ -86,7 +86,7 @@ RSpec.describe Track do
       before { tracks.first.tags << tag }
 
       it 'returns expected objects' do
-        expect(described_class.tagged_with(tag.slug)).to eq([tracks.first])
+        expect(described_class.tagged_with(tag.slug)).to eq([ tracks.first ])
       end
     end
   end

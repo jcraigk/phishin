@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :track do
     sequence(:title) { |n| "Track #{n}" }
-    songs { [build(:song)] }
+    songs { [ build(:song) ] }
     set { '1' }
     sequence(:position, 1)
     audio_file_data { ShrineTestData.attachment_data('audio_file.mp3') }

@@ -3,7 +3,7 @@ module Syncable
 
   def seconds_or_nil(str)
     return if str.blank?
-    min, sec = str.split(':')
+    min, sec = str.split(":")
     (min.to_i * 60) + sec.to_i
   end
 
@@ -19,7 +19,7 @@ module Syncable
   end
 
   def path_segments(url)
-    url.split('/')
+    url.split("/")
   end
 
   def track_slug(url)
