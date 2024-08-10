@@ -101,7 +101,7 @@ class PlaylistsController < ApplicationController
   # (1) track_id
   # (2) date/slug combo from URL path (`/YYYY-MM-DD/:track_slug`)
   # (3) playlist by slug from URL path (`/play/:playlist_slug`)
-  # (3) random show
+  # (4) fallback to random show
   def enqueue_tracks
     reset_session
     path1, slug = params[:path]&.split("/")&.reject(&:empty?)
