@@ -92,7 +92,7 @@ $ ->
   window.addEventListener 'navigation', (e) -> handleNavigation()
 
   ###############################################
-  # Handle feedback on DOM load (for Devise)
+  # Handle feedback on DOM load (for auth)
   ###############################################
   if $notice and $notice.html() != ''
     $notice.show 'slide'

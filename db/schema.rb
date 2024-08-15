@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_12_163755) do
+ActiveRecord::Schema[7.2].define(version: 2024_08_16_022858) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
@@ -34,6 +34,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_12_163755) do
     t.index ["email"], name: "index_api_keys_on_email", unique: true
     t.index ["key"], name: "index_api_keys_on_key", unique: true
     t.index ["name"], name: "index_api_keys_on_name", unique: true
+  end
+
+  create_table "authentications", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "provider", null: false
+    t.string "uid", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provider", "uid"], name: "index_authentications_on_provider_and_uid"
+    t.index ["user_id"], name: "index_authentications_on_user_id"
   end
 
   create_table "known_dates", force: :cascade do |t|
@@ -211,7 +221,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_12_163755) do
 
   create_table "users", id: :serial, force: :cascade do |t|
     t.string "email", limit: 255, default: "", null: false
-    t.string "encrypted_password", limit: 255, default: "", null: false
+    t.string "crypted_password", limit: 255, default: "", null: false
     t.string "reset_password_token", limit: 255
     t.datetime "reset_password_sent_at", precision: nil
     t.datetime "remember_created_at", precision: nil
@@ -228,8 +238,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_12_163755) do
     t.datetime "updated_at", precision: nil, null: false
     t.string "username", limit: 255, default: "", null: false
     t.string "authentication_token", limit: 255
+    t.string "salt"
+    t.string "remember_me_token"
+    t.datetime "remember_me_token_expires_at"
+    t.datetime "reset_password_token_expires_at"
+    t.datetime "reset_password_email_sent_at"
+    t.integer "access_count_to_reset_password_page", default: 0
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["remember_me_token"], name: "index_users_on_remember_me_token"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end
@@ -257,5 +274,4 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_12_163755) do
     t.index ["name", "city"], name: "index_venues_on_name_and_city", unique: true
     t.index ["slug"], name: "index_venues_on_slug", unique: true
   end
-
 end

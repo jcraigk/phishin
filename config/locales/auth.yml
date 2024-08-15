@@ -1,0 +1,40 @@
+en:
+  auth:
+    account_verified: Account Verified
+    confirm_new_password: Confirm new password
+    confirm_password: Confirm password
+    current_email: Current Email
+    email: Email
+    external_fail: 'Sign in via %{provider} failed'
+    facebook_login: Sign in with Facebook
+    forgot_password: Forgot Password?
+    google_login: Sign in with Google
+    login_existing: Sign in to existing account
+    login_fail: Sign in failed
+    login: Sign In
+    logout: Sign out
+    name: Name
+    new_email: New Email
+    new_password: New password
+    not_authorized: You are not authorized to perform that action
+    password_reset_sent: Instructions have been sent to the specified email
+    password_reset: Password Reset
+    password_updated: Password successfully updated. You are now logged in.
+    password: Password
+    passwords_dont_match: Passwords do not match
+    resend_verification: Resend verification email
+    reset_password: Reset Password
+    signup: Sign Up
+    update_details_failed: User detail update failed
+    update_details_success: User details updated
+    update_email_fail: Email update failed
+    update_email_success: Email updated - please check inbox for verification email
+    update_password_fail: Password update failed
+    update_password_success: Password updated
+    user_not_saved: 'prevented this user from being saved:'
+    user_updated: User was successfully updated
+    user_verified: Email address successfully verified
+    user: User
+    verification_check_email: Please check your email for verification instructions before proceeding
+    verification_required: Verify Your Email
+    verification_resent: 'Verification instructions sent to %{email}'

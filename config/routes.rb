@@ -8,7 +8,24 @@ Rails.application.routes.draw do
   get "/audio/*mp3", to: "static_pages#faq" if Rails.env.test?
 
   # Users
-  devise_for :users
+  namespace :oauth do
+    get "callback/:provider", to: "sorcery#callback"
+    get ":provider", to: "sorcery#oauth", as: :at_provider
+  end
+
+  resources :users, only: %i[new create] do
+    collection do
+      get :resend_verification
+    end
+    member do
+      get :verify
+      patch :update_settings
+      patch :update_email
+      patch :update_password
+    end
+  end
+
+  # User favorites
   get "/my-shows" => "my#my_shows", as: "my_shows"
   get "/my-tracks" => "my#my_tracks", as: "my_tracks"
 
@@ -66,10 +83,10 @@ Rails.application.routes.draw do
   # Catch-all matcher for ambiguous content slugs
   get "/(:slug(/:anchor))" => "ambiguity#resolve", constraints: { glob: %r{[^/]+} }
 
-  # API Routes
+  # API
   namespace :api do
     namespace :v1 do
-      devise_for :users
+      # devise_for :users # TODO: sorcery
 
       resources :eras,      only: %i[index show]
       resources :years,     only: %i[index show]

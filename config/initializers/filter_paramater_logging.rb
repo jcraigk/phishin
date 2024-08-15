@@ -1,1 +1,3 @@
-Rails.application.config.filter_parameters += %i[password]
+Rails.application.config.filter_parameters += %i[
+  password secret token crypt salt
+]

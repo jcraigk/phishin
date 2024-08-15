@@ -87,7 +87,7 @@ Use the interactive CLI to finish the import process then go to `http://localhos
 
 ## Maintenance
 
-You can create a new user via the Rails console (`bundle exec rails c`). See [Devise documentation](https://github.com/plataformatec/devise) for details on the authentication system.
+You can create a new user via the Rails console (`bundle exec rails c`). See [Sorcery documentation](https://github.com/Sorcery/sorcery) for details on the authentication system.
 
 
 ## Contributions

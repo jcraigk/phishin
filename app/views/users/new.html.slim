@@ -1,0 +1,39 @@
+- content_for :subtitle, t('auth.signup')
+- content_for :meta_description, t('meta.signup')
+
+#user-container data-controller='auth'
+  h2.subtitle = t('auth.signup')
+
+  = form_with model: @user, local: true do |f|
+
+    .field
+      .control.has-icons-left
+        = f.text_field :email, placeholder: t('auth.email'), class: 'input', required: true
+        span.icon.is-small.is-left
+          i.fa.fa-envelope
+
+    .field
+      .control.has-icons-left
+        = f.text_field :name, placeholder: t('auth.name'), class: 'input'
+        span.icon.is-small.is-left
+          i.fa.fa-user
+
+    .field
+      .control.has-icons-left
+        = f.password_field :password, placeholder: t('auth.password'), class: 'input', required: true
+        span.icon.is-small.is-left
+          i.fa.fa-lock
+      span.icon.is-pulled-right.password-eye data-action="click->auth#togglePasswordVisibility"
+        i.fa.fa-eye
+
+    .field
+      .control.has-icons-left
+        = f.password_field :password_confirmation, placeholder: t('auth.confirm_password'), class: 'input', required: true
+        span.icon.is-small.is-left
+          i.fa.fa-lock
+      span.icon.is-pulled-right.password-eye data-action="click->auth#togglePasswordVisibility"
+        i.fa.fa-eye
+
+    = submit_button(t('auth.signup'), 'clipboard-user')
+
+  = render 'shared/external_login_buttons'

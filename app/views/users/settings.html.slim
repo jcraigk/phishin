@@ -1,0 +1,12 @@
+.box
+  = render partial: 'details'
+
+  - if current_user.authentications.none?
+    br
+    br
+
+    = render partial: 'change_password'
+    br
+    br
+
+    = render partial: 'change_email'

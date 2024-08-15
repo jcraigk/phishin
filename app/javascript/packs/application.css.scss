@@ -27,6 +27,7 @@ $highlight2: #91e1f2;
 $highlight3: #cbebf2;
 $highlight4: #fff494;
 $scrubbing: #1a80f6;
+$google-blue: #5385ed;
 
 @keyframes pulsate-highlight {
   0%   { background: $background_gray; }
@@ -56,6 +57,39 @@ $scrubbing: #1a80f6;
     transform: rotate(360deg);
   }
 }
+
+.external-login-container {
+  margin-top: 15px;
+
+  .external-login-btn {
+    width: 100%;
+    margin-top: 15px;
+    justify-content: left;
+    padding-left: 130px;
+    color: $white-ter;
+
+    @media (max-width: 600px) {
+      padding-left: 60px;
+    }
+  }
+  .external-login-icon {
+    margin-right: 10px;
+  }
+}
+.login-logo {
+  background-color: white;
+  border-radius: 3px;
+  width: 25px;
+  height: 25px;
+  position: relative;
+  left: -10px;
+  padding: 3px;
+}
+.google-btn {
+  background-color: $google-blue;
+}
+
+
 .spinner {
   animation: rotateClockwise 3s linear infinite;
   font-size: 7em;

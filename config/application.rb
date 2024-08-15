@@ -11,11 +11,6 @@ Bundler.require(*Rails.groups)
 module Phishin
   class Application < Rails::Application
     config.load_defaults 7.2
-
-    # Honor pre-Rails 7.2 user login cookies (Devise)
-    config.active_support.key_generator_hash_digest_class = OpenSSL::Digest::SHA1
-    config.action_dispatch.cookies_serializer = :json_allow_marshal
-
     config.hosts << ENV.fetch("WEB_HOST", nil) if ENV["WEB_HOST"].present?
   end
 end
