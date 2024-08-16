@@ -1,0 +1,8 @@
+#user-container
+
+  h2.subtitle = t('auth.forgot_password')
+
+  = form_with url: password_resets_path, method: :post, local: true do |f|
+    = f.text_field :email, placeholder: t('auth.email'), class: 'input', required: true
+
+    = submit_button(t('auth.reset_password'))

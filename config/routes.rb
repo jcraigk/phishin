@@ -24,6 +24,11 @@ Rails.application.routes.draw do
       patch :update_password
     end
   end
+  # get "settings", to: "users#settings", as: :user_settings
+  resources :user_sessions, only: %i[new create destroy]
+  resources :password_resets, only: %i[new create edit update]
+  get "login", to: "user_sessions#new", as: :login
+  delete "logout", to: "user_sessions#destroy", as: :logout
 
   # User favorites
   get "/my-shows" => "my#my_shows", as: "my_shows"

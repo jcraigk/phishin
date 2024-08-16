@@ -88,4 +88,12 @@ module ApplicationHelper
   def slug_for_set(set)
     set.downcase.tr(" ", "-")
   end
+
+  def submit_button(label = nil)
+    label ||= t("controls.save")
+    button_tag \
+      type: "submit",
+      class: "button is-primary mb-2 is-hidden-offline",
+      data: { disable_with: t("controls.please_wait") }
+  end
 end

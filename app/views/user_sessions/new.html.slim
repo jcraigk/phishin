@@ -1,34 +1,29 @@
-#user-container
-  = form_with url: user_sessions_path, method: :post, local: true do |f|
+= render partial: 'layouts/global_nav'
 
-    .field
-      .control.has-icons-left
-        = f.text_field :email, type: 'email', placeholder: t('auth.email'), class: 'input', required: true
-        span.icon.is-left
-          i.fa.fa-envelope
+#content
+  #title_box
+    h1 Sign In
 
-    .field
-      .control.has-icons-left
-        = f.password_field :password, placeholder: t('auth.password'), class: 'input', required: true
-        span.icon.is-left
-          i.fa.fa-lock
+  #content_box
+    .instructions
+      | Don't have an account?   
+      a.non-remote.strong< href=new_user_path Sign up now!
 
-    = submit_button(t('auth.login'), 'sign-in')
-    = link_to t('auth.forgot_password'), new_password_reset_path, class: 'is-pulled-right'
+    = form_with url: user_sessions_path, method: :post, local: true do |f|
 
-  = render 'shared/external_login_buttons'
+      br
+      .field_label Email
+      .field_content = f.email_field :email, autofocus: true
+      = clear_both
 
-br
-.box.app-description
-  p.has-text-weight-bold = t('meta.app_description', app: App.app_name)
-  ul
-    li Manage your band's repertoire
-    li Collaboratively build setlists
-    li Stay synchronized while performing
+      .field_label Password
+      .field_content = f.password_field :password
+      = clear_both
 
-/ br
-/ .box.app-description
-/   p.has-text-weight-bold
-/   => fa_icon('info-circle')
-/   = t('meta.install_app', app: App.app_name)
+      br
+      .field_label = f.submit 'SIGN IN', class: 'btn'
+      = clear_both
 
+      = link_to t('auth.forgot_password'), new_password_reset_path, class: 'is-pulled-right'
+
+  = clear_both
