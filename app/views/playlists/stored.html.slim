@@ -3,13 +3,13 @@
 #content
   #title_box
     h1 Saved Playlists
-    - if user_signed_in?
+    - if logged_in?
       h3 Lists: #{number_with_delimiter(@playlists.size)}
       = render partial: 'display_filter'
       = render partial: 'shared/sort_filter', locals: { item_hash: stored_playlist_sort_items }
 
   #content_box
-    - if !user_signed_in?
+    - if !logged_in?
       .callout_box
         |> You must
         => link_to 'sign in', new_user_session_path, class: 'non-remote'

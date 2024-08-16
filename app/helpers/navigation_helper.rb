@@ -5,7 +5,7 @@ module NavigationHelper
       css = active_route?(controller, props[1]) ? "active" : nil
       if name == "userbox"
         css += " user_control"
-        if user_signed_in?
+        if logged_in?
           props[0] = my_shows_path
           name = current_user.username
         else

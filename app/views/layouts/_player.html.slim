@@ -3,7 +3,7 @@
   audio
 
   #user_controls
-    - if user_signed_in?
+    - if logged_in?
       .btn-group
         a.btn.dropdown-toggle data-toggle='dropdown' href='null'
           = current_user.username
