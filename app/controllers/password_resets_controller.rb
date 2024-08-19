@@ -23,7 +23,7 @@ class PasswordResetsController < ApplicationController
       redirect_to root_path, notice: t("auth.update_password_success")
     else
       redirect_to edit_password_reset_path(user.reset_password_token),
-                  notice: t("auth.update_password_fail")
+                  alert: t("auth.update_password_fail")
     end
   end
 

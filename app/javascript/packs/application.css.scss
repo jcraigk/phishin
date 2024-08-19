@@ -71,7 +71,7 @@ $google-blue: #5385ed;
   cursor: pointer;
   text-align: center;
   white-space: nowrap;
-  background-color: #00d1b2;
+  background-color: $highlight1;
   color: #fff;
   transition: background-color 0.2s ease, color 0.2s ease;
 }

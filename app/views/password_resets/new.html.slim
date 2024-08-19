@@ -1,8 +1,20 @@
-#user-container
+= render partial: 'layouts/global_nav'
 
-  h2.subtitle = t('auth.reset_password')
+#content
+  #title_box
+    h1 Reset a Password
 
-  = form_with url: password_resets_path, method: :post, local: true do |f|
-    = f.text_field :email, placeholder: t('auth.email'), class: 'input', required: true
+  #content_box
+     = form_with url: password_resets_path, method: :post, local: true do |f|
 
-    = submit_button(t('auth.reset_password'))
+      br
+      .field_label Email
+      .field_content = f.email_field :email, autofocus: true
+      = clear_both
+
+      br
+      .field_label = submit_button(t('auth.reset_password'))
+
+      = clear_both
+
+  = clear_both

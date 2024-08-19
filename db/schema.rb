@@ -236,7 +236,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_16_022858) do
     t.string "unconfirmed_email", limit: 255
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.string "username", limit: 255, default: "", null: false
+    t.string "username", limit: 255, default: ""
     t.string "authentication_token", limit: 255
     t.string "crypted_password"
     t.string "salt"
@@ -249,7 +249,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_16_022858) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["remember_me_token"], name: "index_users_on_remember_me_token"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-    t.index ["username"], name: "index_users_on_username", unique: true
+    t.index ["username"], name: "index_users_on_username_uniq", unique: true, where: "(username IS NOT NULL)"
   end
 
   create_table "venue_renames", force: :cascade do |t|

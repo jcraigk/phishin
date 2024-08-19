@@ -13,6 +13,11 @@ class SorceryColumns < ActiveRecord::Migration[7.2]
 
     add_index :users, :remember_me_token
 
+    # Allow NULL usernames for OAuth users
+    remove_index :users, :username if index_exists?(:users, :username, unique: true)
+    change_column_null :users, :username, true
+    add_index :users, :username, unique: true, where: "username IS NOT NULL", name: 'index_users_on_username_uniq'
+
     # TODO: AFTER PROD WORKS
     # remove_column :users, :reset_password_sent_at, :datetime
     # remove_column :users, :remember_created_at, :datetime
