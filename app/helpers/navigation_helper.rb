@@ -105,8 +105,7 @@ module NavigationHelper
     {
       "My Shows" => [ my_shows_path, false, [ "my_shows" ] ],
       "My Tracks" => [ my_tracks_path, false, [ "my_tracks" ] ],
-      "Change Password" => [ edit_user_registration_path, true, [ "edit" ] ],
-      "Logout" => [ destroy_user_session_path, true, [ "nothing" ] ]
+      "Logout" => [ logout_path, true, [ "nothing" ] ]
     }.map do |name, props|
       opts = { class: "non-remote" }
       opts[:method] = :delete if name == "Logout"

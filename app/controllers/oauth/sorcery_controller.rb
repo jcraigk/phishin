@@ -35,7 +35,7 @@ class Oauth::SorceryController < ApplicationController
 
     user.activate! unless user.verified?
     reset_session
-    auto_login(user)
+    auto_login(user, true)
 
     redirect_back_or_to root_path
   end

@@ -7,7 +7,7 @@
   #content_box
     = form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f|
 
-      = render 'auth/shared/error_messages', resource: resource
+      / = render 'auth/shared/error_messages', resource: resource
 
       br
       .field_label Email

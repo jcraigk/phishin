@@ -1,39 +1,41 @@
-- content_for :subtitle, t('auth.signup')
-- content_for :meta_description, t('meta.signup')
+= render partial: 'layouts/global_nav'
 
-#user-container data-controller='auth'
-  h2.subtitle = t('auth.signup')
+#content
+  #title_box
+    h1 Sign Up
 
-  = form_with model: @user, local: true do |f|
+  #content_box
+    .instructions Enter your details below to sign up. Alternatively, you may login using your Google account below.
 
-    .field
-      .control.has-icons-left
-        = f.text_field :email, placeholder: t('auth.email'), class: 'input', required: true
-        span.icon.is-small.is-left
-          i.fa.fa-envelope
+    = form_with model: @user, local: true do |f|
 
-    .field
-      .control.has-icons-left
-        = f.text_field :name, placeholder: t('auth.name'), class: 'input'
-        span.icon.is-small.is-left
-          i.fa.fa-user
+      - if @user.errors.any?
+        #error_explanation
+          h2 = pluralize(@user.errors.count, 'error')
+          ul
+          - @user.errors.full_messages.each do |message|
+            li = message
 
-    .field
-      .control.has-icons-left
-        = f.password_field :password, placeholder: t('auth.password'), class: 'input', required: true
-        span.icon.is-small.is-left
-          i.fa.fa-lock
-      span.icon.is-pulled-right.password-eye data-action="click->auth#togglePasswordVisibility"
-        i.fa.fa-eye
+      br
+      .field_label Username
+      .field_content = f.text_field :username
+      = clear_both
 
-    .field
-      .control.has-icons-left
-        = f.password_field :password_confirmation, placeholder: t('auth.confirm_password'), class: 'input', required: true
-        span.icon.is-small.is-left
-          i.fa.fa-lock
-      span.icon.is-pulled-right.password-eye data-action="click->auth#togglePasswordVisibility"
-        i.fa.fa-eye
+      .field_label Email
+      .field_content = f.email_field :email, autofocus: true
+      .field_note Required for account confirmation
+      = clear_both
 
-    = submit_button(t('auth.signup'), 'clipboard-user')
+      .field_label Password
+      .field_content = f.password_field :password
+      = clear_both
 
-  = render 'shared/external_login_buttons'
+      .field_label Confirm Password
+      .field_content = f.password_field :password_confirmation
+      = clear_both
+
+      = submit_button(t('auth.signup'))
+
+    = render 'shared/external_login_buttons'
+
+  = clear_both

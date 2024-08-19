@@ -2,7 +2,6 @@ Rails.application.config.sorcery.submodules = %i[
   external
   remember_me
   reset_password
-  user_activation
 ]
 
 Rails.application.config.sorcery.configure do |config|
@@ -17,15 +16,13 @@ Rails.application.config.sorcery.configure do |config|
 
   config.cookie_domain = ENV.fetch("WEB_HOST", "localhost")
 
+  # TODO: Are these defaults anyway?
   # General auth settings
   config.user_class = "User"
   config.user_config do |user|
     user.stretches = 1 if Rails.env.test?
     user.remember_me_token_persist_globally = true
-    user.user_activation_mailer = UserMailer
     user.email_delivery_method = :deliver_now
-    user.activation_needed_email_method_name = :verification_required
-    user.activation_success_email_method_name = nil
     user.reset_password_mailer = UserMailer
     user.reset_password_email_method_name = :reset_password
     user.authentications_class = Authentication

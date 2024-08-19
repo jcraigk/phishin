@@ -1,6 +1,4 @@
 class UserSessionsController < ApplicationController
-  # skip_before_action :require_login, only: %i[new create]
-
   def new
     return redirect_to root_path if current_user
     @user = User.new
@@ -9,7 +7,7 @@ class UserSessionsController < ApplicationController
   def create
     if valid_credentials?
       auto_login(@user, true)
-      redirect_back_or_to root_path
+      redirect_back_or_to root_path, notice: t("auth.login_success")
     else
       redirect_to new_user_session_path, alert: t("auth.login_fail")
     end
@@ -17,7 +15,7 @@ class UserSessionsController < ApplicationController
 
   def destroy
     logout
-    redirect_to login_path
+    redirect_to login_path, notice: t("auth.logout_success")
   end
 
   private

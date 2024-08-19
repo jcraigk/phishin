@@ -243,12 +243,11 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_16_022858) do
     t.datetime "reset_password_token_expires_at"
     t.datetime "reset_password_email_sent_at"
     t.integer "access_count_to_reset_password_page", default: 0
-    t.string "activation_state"
-    t.string "activation_token"
-    t.datetime "activation_token_expires_at"
-    t.index ["activation_token"], name: "index_users_on_activation_token"
+    t.string "remember_me_token"
+    t.datetime "remember_me_token_expires_at"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["remember_me_token"], name: "index_users_on_remember_me_token"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["username"], name: "index_users_on_username", unique: true
   end

@@ -8,11 +8,10 @@ class SorceryColumns < ActiveRecord::Migration[7.2]
     add_column :users, :reset_password_email_sent_at, :datetime, default: nil
     add_column :users, :access_count_to_reset_password_page, :integer, default: 0
 
-    add_column :users, :activation_state, :string, default: nil
-    add_column :users, :activation_token, :string, default: nil
-    add_column :users, :activation_token_expires_at, :datetime, default: nil
+    add_column :users, :remember_me_token, :string, default: nil
+    add_column :users, :remember_me_token_expires_at, :datetime, default: nil
 
-    add_index :users, :activation_token
+    add_index :users, :remember_me_token
 
     # TODO: AFTER PROD WORKS
     # remove_column :users, :reset_password_sent_at, :datetime
