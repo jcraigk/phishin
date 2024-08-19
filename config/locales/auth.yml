@@ -6,7 +6,7 @@ en:
     current_email: Current Email
     email: Email
     external_fail: 'Sign in via %{provider} failed'
-    forgot_password: Forgot Password?
+    reset_password: Reset Password
     google_login: Sign in with Google
     login_existing: Sign in to existing account
     login_fail: Sign in failed
@@ -25,12 +25,13 @@ en:
     passwords_dont_match: Passwords do not match
     resend_verification: Resend verification email
     reset_password: Reset Password
-    signup: Sign Up
+    signup: Create New Account
     signup_success: Sign up success - you are now logged in
     update_details_failed: User detail update failed
     update_details_success: User details updated
     update_email_fail: Email update failed
     update_email_success: Email updated - please check inbox for verification email
+    email_taken: That email address has already been taken
     update_password_fail: Password update failed
     update_password_success: Password updated
     user_not_saved: 'prevented this user from being saved:'

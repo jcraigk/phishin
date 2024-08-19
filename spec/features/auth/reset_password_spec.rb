@@ -9,7 +9,7 @@ describe 'Reset Password', :js do
   xit 'user enters email, receives message, and changes password' do
     visit new_user_session_path
 
-    click_on('Forgot your password?')
+    click_on('Reset password')
 
     # Enter email address
     fill_in('user[email]', with: user.email)

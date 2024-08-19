@@ -1,12 +1,10 @@
 class Oauth::SorceryController < ApplicationController
-  # skip_before_action :require_login, raise: false
-
   def oauth
     login_at(params[:provider])
   end
 
   def callback
-    return redirect_to(root_path) if login_from(params[:provider])
+    return redirect_to(root_path, notice: t("auth.login_success")) if login_from(params[:provider])
     create_user_and_login
   rescue StandardError => e
     Sentry.capture_exception(e)
@@ -16,28 +14,12 @@ class Oauth::SorceryController < ApplicationController
   private
 
   def create_user_and_login
-    binding.irb
-    user = User.find_by(email: auth_hash[:info][:email])
-    if user
-      authentication =
-        user.authentications
-            .find_by(provider: params[:provider], uid: auth[:uid])
-
-      unless authentication
-        user.authentications
-            .create!(provider: params[:provider], uid: auth[:uid])
-      end
-    else
-      user = User.build_from(params[:provider])
-      user.username = user.email.split("@").first
-      user.save!
-    end
-
-    user.activate! unless user.verified?
+    user = create_from(params[:provider])
     reset_session
     auto_login(user, true)
-
-    redirect_back_or_to root_path
+    redirect_back_or_to root_path, notice: t("auth.login_success")
+  rescue ActiveRecord::RecordNotUnique
+    redirect_to login_path, alert: t("auth.email_taken", provider: provider_title)
   end
 
   def auth_params

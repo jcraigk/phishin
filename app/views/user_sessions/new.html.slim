@@ -6,8 +6,11 @@
 
   #content_box
     .instructions
-      | Don't have an account?
-      a.non-remote.strong< href=new_user_path Sign up now!
+      = link_to t('auth.signup'), new_user_path, class: 'strong'
+      br
+      = link_to t('auth.reset_password'), new_password_reset_path, class: 'strong'
+
+    h2 Sign In with Email
 
     = form_with url: user_sessions_path, method: :post, local: true do |f|
 
@@ -24,6 +27,9 @@
       .field_label = f.submit 'SIGN IN', class: 'btn'
       = clear_both
 
-      = link_to t('auth.forgot_password'), new_password_reset_path, class: 'is-pulled-right'
+
+    h2 Sign In with Provider
+    = render 'shared/external_login_buttons'
+
 
   = clear_both

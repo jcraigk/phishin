@@ -15,4 +15,8 @@ class User < ApplicationRecord
                "underscores, must be unique, and must be " \
                "4 to 15 characters long"
     }
+
+  def username
+    super.presence || email.split("@").first
+  end
 end
