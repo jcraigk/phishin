@@ -14,11 +14,7 @@ class Oauth::SorceryController < ApplicationController
   private
 
   def create_user_and_login
-    user = build_from(params[:provider])
-    username = user.email.split("@").first.gsub(/[^A-Za-z0-9_]/, "-")
-    username = "#{username}-#{SecureRandom.hex(4)}" if User.where(username:).exists?
-    user.username = username
-    user.save!
+    user = create_from(params[:provider])
     reset_session
     auto_login(user, true)
     redirect_back_or_to root_path, notice: t("auth.login_success")
