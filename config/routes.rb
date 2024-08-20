@@ -12,19 +12,7 @@ Rails.application.routes.draw do
     get "callback/:provider", to: "sorcery#callback"
     get ":provider", to: "sorcery#oauth", as: :at_provider
   end
-
-  resources :users, only: %i[new create] do
-    collection do
-      get :resend_verification
-    end
-    member do
-      get :verify
-      patch :update_settings
-      patch :update_email
-      patch :update_password
-    end
-  end
-  # get "settings", to: "users#settings", as: :user_settings
+  resources :users, only: %i[new create]
   resources :user_sessions, only: %i[new create destroy]
   resources :password_resets, only: %i[new create edit update]
   get "login", to: "user_sessions#new", as: :login
@@ -91,8 +79,6 @@ Rails.application.routes.draw do
   # API
   namespace :api do
     namespace :v1 do
-      # devise_for :users # TODO: sorcery
-
       resources :eras,      only: %i[index show]
       resources :years,     only: %i[index show]
       resources :tours,     only: %i[index show]

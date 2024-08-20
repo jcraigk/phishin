@@ -14,10 +14,10 @@ Rails.application.config.sorcery.configure do |config|
   config.google.user_info_mapping = { email: "email" }
   config.google.scope = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
 
+  # Cookies
   config.cookie_domain = ENV.fetch("WEB_HOST", "localhost")
 
-  # TODO: Are these defaults anyway?
-  # General auth settings
+  # Users
   config.user_class = "User"
   config.user_config do |user|
     user.stretches = 1 if Rails.env.test?

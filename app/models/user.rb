@@ -19,8 +19,8 @@ class User < ApplicationRecord
   before_save :assign_username_from_email
 
   def assign_username_from_email
-    name = email.split("@").first.gsub(/[^A-Za-z0-9_]/, "-")
-    name = "#{name}-#{SecureRandom.hex(4)}" if User.where(username: name).exists?
+    name = email.split("@").first.gsub(/[^A-Za-z0-9_]/, "_")
+    name = "#{name}_#{SecureRandom.hex(4)}" if User.where(username: name).exists?
     self.username = name
   end
 end

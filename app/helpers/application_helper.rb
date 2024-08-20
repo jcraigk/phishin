@@ -90,11 +90,11 @@ module ApplicationHelper
   end
 
   def submit_button(label = nil)
-    label ||= t("controls.save")
+    label ||= "Submit"
     button_tag(
       type: "submit",
-      class: "button is-primary mb-2 is-hidden-offline",
-      data: { disable_with: t("controls.please_wait") }
+      class: "button",
+      data: { disable_with: "Please wait..." }
     ) do
       label
     end
