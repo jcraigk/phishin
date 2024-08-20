@@ -5,7 +5,7 @@
     h1 Sign Up
 
   #content_box
-    .instructions Enter your details below to sign up. Alternatively, you may login using your Google account below.
+    h1 Sign Up with Email and Password
 
     = form_with model: @user, local: true do |f|
 
@@ -34,8 +34,12 @@
       .field_content = f.password_field :password_confirmation
       = clear_both
 
+      br
       = submit_button(t('auth.signup'))
 
+    br
+    br
+    h1 Sign Up with Provider
     = render 'shared/external_login_buttons'
 
   = clear_both

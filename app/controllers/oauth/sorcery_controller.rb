@@ -4,7 +4,7 @@ class Oauth::SorceryController < ApplicationController
   end
 
   def callback
-    return redirect_to(root_path, notice: t("auth.login_success")) if login_from(params[:provider])
+    return redirect_to(root_path, notice: t("auth.login_success")) if login_from(params[:provider], true)
     create_user_and_login
   rescue StandardError => e
     Sentry.capture_exception(e)

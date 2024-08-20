@@ -5,12 +5,12 @@
     h1 Sign In
 
   #content_box
-    .instructions
-      = link_to t('auth.signup'), new_user_path, class: 'strong'
-      br
-      = link_to t('auth.reset_password'), new_password_reset_path, class: 'strong'
+    h1 Sign In with Provider
+    = render 'shared/external_login_buttons'
 
-    h2 Sign In with Email
+    br
+    br
+    h1 Sign In with Email
 
     = form_with url: user_sessions_path, method: :post, local: true do |f|
 
@@ -24,12 +24,15 @@
       = clear_both
 
       br
-      .field_label = f.submit 'SIGN IN', class: 'btn'
+      .field_label = submit_button('SIGN IN')
       = clear_both
 
-
-    h2 Sign In with Provider
-    = render 'shared/external_login_buttons'
+    br
+    br
+    .instructions
+      = link_to t('auth.signup'), new_user_path, class: 'strong'
+      br
+      = link_to t('auth.reset_password'), new_password_reset_path, class: 'strong'
 
 
   = clear_both
