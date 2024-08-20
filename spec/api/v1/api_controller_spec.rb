@@ -19,7 +19,7 @@ describe Api::V1::ApiController do
   end
 
   describe 'paging' do
-    let!(:tags) { create_list(:tag, 25) }
+    let!(:tags) { create_list(:tag, 25).sort_by(&:name) }
     let(:expected_json) do
       {
         success: true,
@@ -30,14 +30,15 @@ describe Api::V1::ApiController do
       }
     end
 
-    context 'without params' do
+    context 'with only sort params' do
+      let(:params) { { sort_attr: :name, sort_dir: :asc } }
       it 'responds with expected data' do
         expect(json).to eq(expected_json)
       end
     end
 
     context 'with page param' do
-      let(:params) { { page: 2 } }
+      let(:params) { { page: 2, sort_attr: :name, sort_dir: :asc } }
       let(:expected_json) do
         {
           success: true,

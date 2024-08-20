@@ -1,14 +1,15 @@
 en:
   auth:
+    email_taken: That email address has already been taken
+    email: Email
     external_fail: 'Sign in via %{provider} failed'
-    reset_password: Reset Password
     google_login: Sign in with Google
     login_existing: Sign in to existing account
     login_fail: Sign in failed
     login_success: Signed in successfully
     login: Sign In
-    logout: Sign Out
     logout_success: You are now logged out
+    logout: Sign Out
     not_authorized: You are not authorized to perform that action
     password_reset_sent: Instructions have been sent to the specified email
     password_reset: Password Reset
@@ -16,9 +17,8 @@ en:
     password: Password
     passwords_dont_match: Passwords do not match
     reset_password: Reset Password
-    signup: Create New Account
     signup_success: Sign up success - you are now logged in
-    email_taken: That email address has already been taken
+    signup: Create New Account
     update_password_fail: Password update failure - passwords must match and be at least 5 characters long
     update_password_success: Password updated
     user_not_saved: 'prevented this user from being saved:'

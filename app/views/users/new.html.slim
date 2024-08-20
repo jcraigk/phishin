@@ -1,4 +1,4 @@
-= render partial: 'layouts/global_nav'
+= render partial: "layouts/global_nav"
 
 #content
   #title_box
@@ -11,7 +11,7 @@
 
       - if @user.errors.any?
         #error_explanation
-          h2 = pluralize(@user.errors.count, 'error')
+          h2 = pluralize(@user.errors.count, "error")
           ul
           - @user.errors.full_messages.each do |message|
             li = message
@@ -35,11 +35,11 @@
       = clear_both
 
       br
-      = submit_button(t('auth.signup'))
+      = submit_button(t("auth.signup"))
 
     br
     br
     h1 Sign Up with Provider
-    = render 'shared/external_login_buttons'
+    = render "shared/external_login_buttons"
 
   = clear_both

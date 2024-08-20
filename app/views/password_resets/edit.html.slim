@@ -2,7 +2,7 @@
 
 #content
   #title_box
-    h1 Reset Password
+    h1 = t("auth.reset_password")
 
   #content_box
     = form_with model: @user, url: password_reset_path(@token), method: :put, local: true do |f|

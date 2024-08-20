@@ -18,8 +18,7 @@ describe 'Tags', :js do
     create_list(:track, 7, tags: [ tag3 ])
   end
 
-  # TODO: Overlapping elements here
-  xit 'visit Tags page, select tag, select a show' do
+  it 'visit Tags page, select tag, select a show', skip: 'Overlapping elements' do
     visit tags_path
 
     within('#title_box') do
