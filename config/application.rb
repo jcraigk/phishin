@@ -10,7 +10,7 @@ Bundler.require(*Rails.groups)
 
 module Phishin
   class Application < Rails::Application
-    config.load_defaults 7.2
+    config.load_defaults 7.0
     config.hosts << ENV.fetch("WEB_HOST", nil) if ENV["WEB_HOST"].present?
   end
 end
