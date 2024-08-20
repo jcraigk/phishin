@@ -83,7 +83,7 @@ describe 'Show', :js do
 
     context 'when logged in' do
       before do
-        login_as(create(:user))
+        sign_in(create(:user))
         visit show.date
         sleep(1)
       end

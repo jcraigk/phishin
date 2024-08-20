@@ -4,7 +4,7 @@ describe 'Change Password', :js do
   let(:password) { 'Tr3yIsj3dI' }
   let(:user) { create(:user, password:, password_confirmation: password) }
 
-  before { login_as(user) }
+  before { sign_in(user) }
 
   it 'click Change Password from user dropdown' do
     visit root_path

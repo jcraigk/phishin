@@ -11,7 +11,7 @@ describe 'My Tracks', :js do
       track.update(duration: track.duration + (idx * 10))
     end
 
-    login_as(user)
+    sign_in(user)
   end
 
   it 'click My Tracks, display/sorting of tracks' do

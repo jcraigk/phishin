@@ -3,7 +3,7 @@ require 'rails_helper'
 describe 'Player controls', :js do
   let(:show) { create(:show, :with_tracks) }
 
-  before { login_as create(:user) }
+  before { sign_in create(:user) }
 
   it 'hovering over track title and liking' do
     visit show.date
