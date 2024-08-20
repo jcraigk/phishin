@@ -104,8 +104,7 @@ module NavigationHelper
   def user_dropdown_links
     {
       "My Shows" => [ my_shows_path, false, [ "my_shows" ] ],
-      "My Tracks" => [ my_tracks_path, false, [ "my_tracks" ] ],
-      "Logout" => [ logout_path, true, [ "nothing" ] ]
+      "My Tracks" => [ my_tracks_path, false, [ "my_tracks" ] ]
     }.map do |name, props|
       opts = { class: "non-remote" }
       opts[:method] = :delete if name == "Logout"

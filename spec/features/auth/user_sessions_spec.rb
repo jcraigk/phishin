@@ -21,18 +21,17 @@ describe 'User Sessions', :js do
 
       click_on('Sign in')
 
-      fill_in('user[email]', with: email)
-      fill_in('user[password]', with: password)
-      click_on('SIGN IN')
+      fill_in('email', with: email)
+      fill_in('password', with: password)
+      click_on(I18n.t("auth.login"))
 
       expect(page).to have_current_path(root_path)
-      expect_content('Signed in successfully')
+      expect_content(I18n.t("auth.login_success"))
 
       find_by_id('user_controls').click
-      click_on('Logout')
+      click_on(I18n.t("auth.logout"))
 
-      expect(page).to have_current_path(root_path)
-      expect_content('Signed out successfully')
+      expect_content(I18n.t("auth.logout_success"))
     end
   end
 
@@ -40,12 +39,12 @@ describe 'User Sessions', :js do
     it 'user signs up with valid data' do
       visit new_user_session_path
 
-      fill_in('user[email]', with: email)
-      fill_in('user[password]', with: 'wrongpass')
-      click_on('SIGN IN')
+      fill_in('email', with: email)
+      fill_in('password', with: 'wrongpass')
+      click_on(I18n.t("auth.login"))
 
       expect(page).to have_current_path(new_user_session_path)
-      expect_content('Invalid email or password')
+      expect_content(I18n.t("auth.login_fail"))
     end
   end
 end

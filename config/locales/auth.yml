@@ -7,7 +7,7 @@ en:
     login_fail: Sign in failed
     login_success: Signed in successfully
     login: Sign In
-    logout: Sign out
+    logout: Sign Out
     logout_success: You are now logged out
     not_authorized: You are not authorized to perform that action
     password_reset_sent: Instructions have been sent to the specified email

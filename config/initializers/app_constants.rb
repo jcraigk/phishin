@@ -4,7 +4,7 @@ CONTACT_EMAIL = "phish.in.music@gmail.com".freeze
 AUTH_EMAIL_FROM = "Phish.in <noreply@phish.in>".freeze
 DESCRIPTION = "An open source archive of live Phish audience recordings".freeze
 TWITTER_USER = "@phish_in".freeze
-OAUTH_PROVIDERS = ENV.fetch("OAUTH_PROVIDERS", nil).presence&.split(",")&.map(&:to_sym)
+OAUTH_PROVIDERS = %i[google]
 
 CACHE_TTL = 10.minutes
 FIRST_CHAR_LIST = ("A".."Z").to_a + [ "#" ]
