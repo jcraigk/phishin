@@ -20,7 +20,8 @@ module SorceryAuthenticable
     validates :password, length: { minimum: 5 }, if: :password
     validates :password, confirmation: true, if: :password
 
-    before_validation :assign_username_from_email
+    before_save :assign_username_from_email # For Sorcery
+    before_validation :assign_username_from_email # For specs
 
     private
 
