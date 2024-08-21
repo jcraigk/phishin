@@ -3,6 +3,14 @@ class StaticPagesController < ApplicationController
     render_view
   end
 
+  def privacy_policy
+    render_view
+  end
+
+  def terms_of_service
+    render_view
+  end
+
   def contact_info
     render_view
   end
