@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_08_16_022858) do
+ActiveRecord::Schema[7.2].define(version: 2024_08_22_053815) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
@@ -221,23 +221,10 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_16_022858) do
 
   create_table "users", id: :serial, force: :cascade do |t|
     t.string "email", limit: 255, default: "", null: false
-    t.string "encrypted_password", limit: 255, default: "", null: false
     t.string "reset_password_token", limit: 255
-    t.datetime "reset_password_sent_at", precision: nil
-    t.datetime "remember_created_at", precision: nil
-    t.integer "sign_in_count", default: 0
-    t.datetime "current_sign_in_at", precision: nil
-    t.datetime "last_sign_in_at", precision: nil
-    t.string "current_sign_in_ip", limit: 255
-    t.string "last_sign_in_ip", limit: 255
-    t.string "confirmation_token", limit: 255
-    t.datetime "confirmed_at", precision: nil
-    t.datetime "confirmation_sent_at", precision: nil
-    t.string "unconfirmed_email", limit: 255
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.string "username", limit: 255, default: "", null: false
-    t.string "authentication_token", limit: 255
     t.string "crypted_password"
     t.string "salt"
     t.datetime "reset_password_token_expires_at"
@@ -245,7 +232,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_16_022858) do
     t.integer "access_count_to_reset_password_page", default: 0
     t.string "remember_me_token"
     t.datetime "remember_me_token_expires_at"
-    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["remember_me_token"], name: "index_users_on_remember_me_token"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
