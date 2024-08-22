@@ -2,13 +2,13 @@
 
 #content
   #title_box
-    h1 Reset a Password
+    h1 = t("auth.reset_password")
 
   #content_box
      = form_with url: password_resets_path, method: :post, local: true do |f|
 
       br
-      .field_label Email
+      .field_label = t("auth.email")
       .field_content = f.email_field :email, autofocus: true
       = clear_both
 

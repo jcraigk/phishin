@@ -5,12 +5,12 @@
     h1 = t("auth.login")
 
   #content_box
-    h1 Sign In with Provider
+    h1 = t("auth.login_provider")
     = render "shared/external_login_buttons"
 
     br
     br
-    h1 Sign In with Email
+    h1 = t("auth.login_email")
 
     = form_with url: user_sessions_path, method: :post, local: true do |f|
 

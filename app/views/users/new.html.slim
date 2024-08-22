@@ -5,7 +5,7 @@
     h1 Sign Up
 
   #content_box
-    h1 Sign Up with Email and Password
+    h1 = t("auth.signup_email")
 
     = form_with model: @user, local: true do |f|
 
@@ -17,20 +17,20 @@
             li = message
 
       br
-      .field_label Username
+      .field_label = t("auth.username")
       .field_content = f.text_field :username
       = clear_both
 
-      .field_label Email
+      .field_label = t("auth.email")
       .field_content = f.email_field :email, autofocus: true
       .field_note Required for account confirmation
       = clear_both
 
-      .field_label Password
+      .field_label = t("auth.password")
       .field_content = f.password_field :password
       = clear_both
 
-      .field_label Confirm Password
+      .field_label = t("auth.confirm_password")
       .field_content = f.password_field :password_confirmation
       = clear_both
 
@@ -39,7 +39,7 @@
 
     br
     br
-    h1 Sign Up with Provider
+    h1 = t("auth.signup_provider")
     = render "shared/external_login_buttons"
 
   = clear_both

@@ -1,6 +1,6 @@
-require 'rails_helper'
+require "rails_helper"
 
-describe 'Tags', :js do
+describe "Tags", :js do
   let(:tag_names) { %w[Awesome Boppin Cool] }
   let!(:tags) do
     tag_names.each_with_object([]) do |name, tags|
@@ -18,26 +18,26 @@ describe 'Tags', :js do
     create_list(:track, 7, tags: [ tag3 ])
   end
 
-  it 'visit Tags page, select tag, select a show', skip: 'Overlapping elements' do
+  it "visit Tags page, select tag, select a show", skip: "Overlapping elements" do
     visit tags_path
 
-    within('#title_box') do
-      expect_content('All Tag', "Total Tags: #{tags.count}")
+    within("#title_box") do
+      expect_content("All Tag", "Total Tags: #{tags.count}")
     end
 
-    within('#content_box') do
+    within("#content_box") do
       expect_content(*tags.map(&:name))
-      expect_content('2 shows')
-      expect_content('2 tracks')
+      expect_content("2 shows")
+      expect_content("2 tracks")
     end
 
-    items = page.all('ul.item_list li')
+    items = page.all("ul.item_list li")
     expect(items.count).to eq(tags.count)
 
     # Click first tag
     click_on(tag1.name)
 
-    within('#title_box') do
+    within("#title_box") do
       expect_content(
         tag1.name,
         tag1.description,
@@ -46,17 +46,17 @@ describe 'Tags', :js do
       )
     end
 
-    items = page.all('ul.item_list li')
+    items = page.all("ul.item_list li")
     expect(items.count).to eq(tag1.shows.count)
 
     # Click Shows button
     click_on("Tracks: #{tag1.tracks.count}")
 
-    items = page.all('ul.item_list li')
+    items = page.all("ul.item_list li")
     expect(items.count).to eq(tag1.tracks.count)
 
     # Click first track
-    first('ul.item_list li a').click
+    first("ul.item_list li a").click
     expect(page).to have_current_path(/\d{4}-\d{2}-\d{2}/)
   end
 end

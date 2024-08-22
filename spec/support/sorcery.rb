@@ -7,9 +7,9 @@ module Sorcery
     module Rails
       def sign_in(user)
         visit login_path
-        fill_in 'email', with: user.email
-        fill_in 'password', with: 'password'
-        click_on I18n.t('auth.login')
+        fill_in "email", with: user.email
+        fill_in "password", with: "password"
+        click_on I18n.t("auth.login")
       end
     end
   end

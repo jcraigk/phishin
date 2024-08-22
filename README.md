@@ -87,8 +87,8 @@ Use the interactive CLI to finish the import process then go to `http://localhos
 
 ## Contributions
 
-Forked in 2012 from [StreamPhish](https://github.com/jeffplang/streamphish/) by Jeff Lang.
+Forked with permission in 2012 from [StreamPhish](https://github.com/jeffplang/streamphish/) by Jeff Lang.
 
 Layout and graphic design by Mark Craig.
 
-Maintained by [Justin Craig-Kuhn](https://github.com/jcraigk).
+Software and content maintained by [Justin Craig-Kuhn](https://github.com/jcraigk).

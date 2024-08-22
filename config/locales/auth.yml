@@ -15,6 +15,8 @@ en:
     password_reset: Password Reset
     password_updated: Password successfully updated. You are now logged in.
     password: Password
+    confirm_password: Password
+    new_password: New Password
     passwords_dont_match: Passwords do not match
     reset_password: Reset Password
     signup_success: Sign up success - you are now logged in
@@ -22,3 +24,8 @@ en:
     update_password_fail: Password update failure - passwords must match and be at least 5 characters long
     update_password_success: Password updated
     user_not_saved: 'prevented this user from being saved:'
+    login_provider: Sign In with Provider
+    login_email: Sign In with Email
+    signup_email: Sign Up with Email and Password
+    signup_provider: Sign Up with Provider
+    username: Username

@@ -5,19 +5,20 @@ Rails.application.config.sorcery.submodules = %i[
 ]
 
 Rails.application.config.sorcery.configure do |config|
+  # Cookies
+  config.cookie_domain = ENV.fetch("WEB_HOST", "localhost")
+
+  # OAuth Providers
   config.external_providers = %i[google]
 
-  # Google
+  # OAuth Provider: Google
   config.google.key = ENV.fetch("OAUTH_GOOGLE_KEY", nil)
   config.google.secret = ENV.fetch("OAUTH_GOOGLE_SECRET", nil)
   config.google.callback_url = "#{APP_BASE_URL}/oauth/callback/google"
   config.google.user_info_mapping = { email: "email" }
-  config.google.scope = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile"
+  config.google.scope = "https://www.googleapis.com/auth/userinfo.email"
 
-  # Cookies
-  config.cookie_domain = ENV.fetch("WEB_HOST", "localhost")
-
-  # Users
+  # Rails User Config
   config.user_class = "User"
   config.user_config do |user|
     user.stretches = 1 if Rails.env.test?

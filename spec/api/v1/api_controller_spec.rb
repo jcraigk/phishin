@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 describe Api::V1::ApiController do
   include Rack::Test::Methods
@@ -8,17 +8,17 @@ describe Api::V1::ApiController do
   let(:headers) { auth_header }
   let(:json) { JSON[response.body].deep_symbolize_keys }
   let(:params) { {} }
-  let(:path) { '/api/v1/tags' }
+  let(:path) { "/api/v1/tags" }
 
-  context 'with no authorization header' do
+  context "with no authorization header" do
     let(:headers) { {} }
 
-    it 'returns a 401' do
+    it "returns a 401" do
       expect(response.status).to eq(401)
     end
   end
 
-  describe 'paging' do
+  describe "paging" do
     let!(:tags) { create_list(:tag, 25).sort_by(&:name) }
     let(:expected_json) do
       {
@@ -30,14 +30,14 @@ describe Api::V1::ApiController do
       }
     end
 
-    context 'with only sort params' do
+    context "with only sort params" do
       let(:params) { { sort_attr: :name, sort_dir: :asc } }
-      it 'responds with expected data' do
+      it "responds with expected data" do
         expect(json).to eq(expected_json)
       end
     end
 
-    context 'with page param' do
+    context "with page param" do
       let(:params) { { page: 2, sort_attr: :name, sort_dir: :asc } }
       let(:expected_json) do
         {
@@ -49,7 +49,7 @@ describe Api::V1::ApiController do
         }
       end
 
-      it 'responds with expected data' do
+      it "responds with expected data" do
         expect(json).to eq(expected_json)
       end
     end

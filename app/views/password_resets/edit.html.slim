@@ -15,18 +15,18 @@
       = f.hidden_field :reset_password_token
 
       br
-      .field_label New Password
+      .field_label = t("auth.new_password")
       .field_content = f.password_field :password, autofocus: true
       = clear_both
 
-      .field_label Confirm Password
+      .field_label = t("auth.confirm_password")
       .field_content = f.password_field :password_confirmation
       = clear_both
 
       br
       .field_label
         = f.hidden_field :token, value: @token
-        = submit_button(t('auth.reset_password'))
+        = submit_button(t("auth.reset_password"))
 
       = clear_both
 
