@@ -13,7 +13,7 @@ class ShowImporter::Orchestrator
     Track.attr_accessor(:filename)
 
     @date = date
-    @path = "#{IMPORT_DIR}/#{date}"
+    @path = "#{App.content_import_path}/#{date}"
     @show_info = ShowImporter::ShowInfo.new(date)
     @used_files = []
 
@@ -100,7 +100,7 @@ class ShowImporter::Orchestrator
     Announcement.create! \
       title: "New content: #{show_name}",
       description: "A new show has been added: #{show_name}",
-      url: "#{APP_BASE_URL}/#{show.date}"
+      url: "#{App.base_url}/#{show.date}"
   end
 
   def analyze_filenames

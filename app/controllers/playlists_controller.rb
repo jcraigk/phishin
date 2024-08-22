@@ -39,11 +39,11 @@ class PlaylistsController < ApplicationController
     save_action = params[:save_action].in?(%w[new existing]) ? params[:save_action] : "new"
 
     if save_action == "new"
-      if Playlist.where(user: current_user).count >= MAX_PLAYLISTS_PER_USER
+      if Playlist.where(user: current_user).count >= App.max_playlists_per_user
         return render(
           json: {
             success: false,
-            msg: "Sorry, each user is limited to #{MAX_PLAYLISTS_PER_USER} playlists"
+            msg: "Sorry, each user is limited to #{App.max_playlists_per_user} playlists"
           }
         )
       end

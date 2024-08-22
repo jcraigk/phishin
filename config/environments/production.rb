@@ -1,8 +1,7 @@
 Rails.application.configure do
-  config.action_controller.asset_host = "https://phish.in"
+  config.action_controller.asset_host = App.base_url
   config.cache_store = :mem_cache_store
   config.action_controller.perform_caching = true
-  config.action_mailer.default_url_options = { host: ENV.fetch("WEB_HOST", nil) }
   config.action_mailer.smtp_settings = {
     user_name: ENV.fetch("SMTP_USERNAME", nil),
     password: ENV.fetch("SMTP_PASSWORD", nil),

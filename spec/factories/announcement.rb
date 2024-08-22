@@ -2,6 +2,6 @@ FactoryBot.define do
   factory :announcement do
     title { "New show: #{Faker::Date}" }
     description { "New content added: #{Faker::Date}" }
-    url { "#{APP_BASE_URL}/#{Faker::Date}" }
+    url { "#{App.base_url}/#{Faker::Date}" }
   end
 end

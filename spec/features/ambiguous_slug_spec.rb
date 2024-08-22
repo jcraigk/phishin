@@ -31,7 +31,7 @@ describe 'Ambiguous slug resolution', :js do
 
   describe '/today' do
     before do
-      travel_to Time.use_zone(TIME_ZONE) { Time.zone.local(2012, 10, 31) }
+      travel_to Time.use_zone(App.time_zone) { Time.zone.local(2012, 10, 31) }
       visit '/today'
     end
 

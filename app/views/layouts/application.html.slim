@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title = APP_NAME
+    title = App.app_name
     = render partial: 'layouts/meta'
     = auto_discovery_link_tag :rss, '/feeds/rss', title: 'Phish.in Updates'
     = stylesheet_pack_tag 'application', media: :all
@@ -9,8 +9,8 @@ html
     = csrf_meta_tags
 
   body[
-    data-base-url=APP_BASE_URL
-    data-app-name=APP_NAME
+    data-base-url=App.base_url
+    data-app-name=App.app_name
     data-anchor=params[:anchor]&.downcase
     data-time-marker=(params[:t] || 0)
   ]

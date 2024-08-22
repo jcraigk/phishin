@@ -65,10 +65,10 @@ module Ambiguity::DayOfYear
   end
 
   def current_month
-    Time.use_zone(TIME_ZONE) { Time.current }.strftime("%-m").to_i
+    Time.use_zone(App.time_zone) { Time.current }.strftime("%-m").to_i
   end
 
   def current_day
-    Time.use_zone(TIME_ZONE) { Time.current }.strftime("%-d").to_i
+    Time.use_zone(App.time_zone) { Time.current }.strftime("%-d").to_i
   end
 end

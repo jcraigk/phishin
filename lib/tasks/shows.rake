@@ -22,8 +22,8 @@ namespace :shows do
     require "#{Rails.root}/app/services/show_importer"
     include ActionView::Helpers::TextHelper
 
-    dates = Dir.entries(IMPORT_DIR).grep(/\d{4}\-\d{1,2}\-\d{1,2}\z/).sort
-    next puts "❌ No shows found in #{IMPORT_DIR}" unless dates.any?
+    dates = Dir.entries(App.content_import_path).grep(/\d{4}\-\d{1,2}\-\d{1,2}\z/).sort
+    next puts "❌ No shows found in #{App.content_import_path}" unless dates.any?
 
     puts "🔎 #{pluralize(dates.size, 'folder')} found"
     dates.each { |date| ShowImporter::Cli.new(date) }

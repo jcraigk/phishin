@@ -49,7 +49,7 @@ class Id3Tagger
   end
 
   def comments
-    "https://phish.in for more"
+    "#{App.base_url} for more"
   end
 
   def year

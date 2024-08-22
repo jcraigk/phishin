@@ -40,7 +40,7 @@ class Track < ApplicationRecord
   end
 
   def url
-    "#{APP_BASE_URL}/#{show.date}/#{slug}"
+    "#{App.base_url}/#{show.date}/#{slug}"
   end
 
   def set_name
@@ -57,11 +57,11 @@ class Track < ApplicationRecord
   end
 
   def mp3_url
-    audio_file.url(host: content_host).gsub("tracks/audio_files", "audio")
+    audio_file.url(host: App.content_base_url).gsub("tracks/audio_files", "audio")
   end
 
   def waveform_image_url
-    waveform_png&.url(host: content_host)&.gsub("tracks/audio_files", "audio")
+    waveform_png&.url(host: App.content_base_url)&.gsub("tracks/audio_files", "audio")
   end
 
   def urls
@@ -133,10 +133,6 @@ class Track < ApplicationRecord
   end
 
   private
-
-  def content_host
-    PRODUCTION_CONTENT ? PRODUCTION_BASE_URL : APP_BASE_URL
-  end
 
   def partitioned_id
     format("%<id>09d", id:).scan(/.{3}/).join("/")

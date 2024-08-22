@@ -1,4 +1,4 @@
-meta name='Description' content=DESCRIPTION
+meta name='Description' content=App.app_desc
 meta http-equiv='Content-Type' content='text/html; charset=utf-8'
 meta charset='Unicode/UTF-8'
 meta name='viewport' content='width=device-width, initial-scale=1'
@@ -7,16 +7,16 @@ meta name='viewport' content='width=device-width, initial-scale=1'
 meta property='og:type' content='music.playlist'
 meta property='og:url' content=request.original_url
 meta property='og:image' content=image_pack_url('static/images/logo-opengraph.png')
-meta property='og:image:alt' content='Phish.in logo'
-meta property='og:title' content="#{@ogp_title.presence || APP_NAME}"
+meta property='og:image:alt' content="#{App.app_name} logo"
+meta property='og:title' content="#{@ogp_title.presence || App.app_name}"
 - if @ogp_audio_url.present?
   meta property='og:audio' content=@ogp_audio_url
 
 / https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards
 meta name='twitter:card' content='summary'
-meta name='twitter:site' content=TWITTER_USER
-meta name='twitter:title' content="#{@ogp_title.presence || APP_NAME}"
-meta name='twitter:description' content=DESCRIPTION
+meta name='twitter:site' content=App.twitter_handle
+meta name='twitter:title' content="#{@ogp_title.presence || App.app_name}"
+meta name='twitter:description' content=App.app_desc
 meta name='twitter:image' content=image_pack_url('static/images/logo-twitter-card.png')
 meta name='twitter:image:alt' content='Phish.in logo'
 - if @ogp_audio_url.present?

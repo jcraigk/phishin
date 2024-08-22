@@ -83,7 +83,7 @@ class ShowImporter::TrackReplacer
   end
 
   def base_path
-    @base_path ||= "#{IMPORT_DIR}/#{date}"
+    @base_path ||= "#{App.content_import_path}/#{date}"
   end
 
   def filenames

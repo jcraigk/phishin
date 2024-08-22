@@ -77,7 +77,7 @@ class Show < ApplicationRecord
   end
 
   def url
-    "#{APP_BASE_URL}/#{date}"
+    "#{App.base_url}/#{date}"
   end
 
   private

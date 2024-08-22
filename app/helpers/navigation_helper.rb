@@ -60,7 +60,7 @@ module NavigationHelper
 
   def first_char_sub_links(base_url, current_item = nil)
     str = ""
-    FIRST_CHAR_LIST.each_with_index do |char, idx|
+    App.first_char_list.each_with_index do |char, idx|
       css = "char_link"
       css += " active" if active_for_char?(current_item, char, idx)
       str += link_to char, "#{base_url}?char=#{CGI.escape(char)}", class: css

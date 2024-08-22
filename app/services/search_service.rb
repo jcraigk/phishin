@@ -15,7 +15,7 @@ class SearchService
   private
 
   def term_too_short?
-    term.size.to_i < MIN_SEARCH_TERM_LENGTH
+    term.size.to_i < App.min_search_term_length
   end
 
   def search_results

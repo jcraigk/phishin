@@ -10,7 +10,7 @@ class Api::V1::ApiController < ActionController::Base # rubocop:disable Rails/Ap
     params += %i[sort_attr sort_dir per_page page tag id slug]
     caches_action action,
                   cache_path: proc { |c| c.params.permit(*params) },
-                  expires_in: CACHE_TTL
+                  expires_in: App.cache_ttl
   end
 
   protected

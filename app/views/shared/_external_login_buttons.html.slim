@@ -1,5 +1,5 @@
 .external-login-container
-  - OAUTH_PROVIDERS.each do |provider|
+  - App.oauth_providers.each do |provider|
     = link_to oauth_at_provider_path(provider:),
               class: "button external-login-btn #{provider}-btn non-remote" do
       .login-logo = image_pack_tag "static/images/external-logos/#{provider}.png", alt: "#{provider.to_s.titleize} Logo", size: "18x18"

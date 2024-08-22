@@ -54,7 +54,7 @@ RSpec.describe Track do
   it { is_expected.to validate_uniqueness_of(:position).scoped_to(:show_id) }
 
   it 'provides #url' do
-    expect(track.url).to eq("#{APP_BASE_URL}/#{track.show.date.to_fs(:db)}/#{track.slug}")
+    expect(track.url).to eq("#{App.base_url}/#{track.show.date.to_fs(:db)}/#{track.slug}")
   end
 
   it 'validates >= 1 song' do
@@ -163,12 +163,12 @@ RSpec.describe Track do
   end
 
   it 'provides #mp3_url' do
-    url = track.audio_file.url(host: APP_BASE_URL).gsub('tracks/audio_files', 'audio')
+    url = track.audio_file.url(host: App.base_url).gsub('tracks/audio_files', 'audio')
     expect(track.mp3_url).to eq(url)
   end
 
   it 'provides #waveform_image_url' do
-    url = track.waveform_png.url(host: APP_BASE_URL).gsub('tracks/audio_files', 'audio')
+    url = track.waveform_png.url(host: App.base_url).gsub('tracks/audio_files', 'audio')
     expect(track.waveform_image_url).to eq(url)
   end
 

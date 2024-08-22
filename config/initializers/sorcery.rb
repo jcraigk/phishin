@@ -6,15 +6,15 @@ Rails.application.config.sorcery.submodules = %i[
 
 Rails.application.config.sorcery.configure do |config|
   # Cookies
-  config.cookie_domain = ENV.fetch("WEB_HOST", "localhost")
+  config.cookie_domain = App.web_host
 
   # OAuth Providers
-  config.external_providers = %i[google]
+  config.external_providers = App.oauth_providers
 
   # OAuth Provider: Google
-  config.google.key = ENV.fetch("OAUTH_GOOGLE_KEY", nil)
-  config.google.secret = ENV.fetch("OAUTH_GOOGLE_SECRET", nil)
-  config.google.callback_url = "#{APP_BASE_URL}/oauth/callback/google"
+  config.google.key = App.oauth_google_key
+  config.google.secret = App.oauth_google_secret
+  config.google.callback_url = "#{App.base_url}/oauth/callback/google"
   config.google.user_info_mapping = { email: "email" }
   config.google.scope = "https://www.googleapis.com/auth/userinfo.email"
 

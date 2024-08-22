@@ -35,7 +35,7 @@
 
     h2 Contact the site maintainers
     p.large
-      a.non-remote.underline href="mailto:#{CONTACT_EMAIL}" target='_blank' = CONTACT_EMAIL
+      a.non-remote.underline href="mailto:#{App.contact_email}" target='_blank' = App.contact_email
     = render partial: 'shared/twitter_follow_button'
 
   = clear_both

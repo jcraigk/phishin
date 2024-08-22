@@ -1,3 +1,3 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: AUTH_EMAIL_FROM
+  default from: App.auth_email_from
 end

@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
     params += %i[sort per_page page id slug]
     caches_action action,
                   cache_path: proc { |c| c.params.permit(*params) },
-                  expires_in: CACHE_TTL
+                  expires_in: App.cache_ttl
   end
 
   protected
@@ -49,7 +49,7 @@ class ApplicationController < ActionController::Base
   end
 
   def char_param
-    c = params[:char]
-    params[:char] = c.in?(FIRST_CHAR_LIST) ? c : FIRST_CHAR_LIST.first
+    char = params[:char]
+    params[:char] = char.in?(App.first_char_list) ? char : App.first_char_list.first
   end
 end

@@ -18,6 +18,6 @@ class SearchController < ApplicationController
   end
 
   def error
-    @error = I18n.t("search.term_too_short", min_length: MIN_SEARCH_TERM_LENGTH)
+    @error = I18n.t("search.term_too_short", min_length: App.min_search_term_length)
   end
 end
