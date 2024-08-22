@@ -11,7 +11,7 @@ describe 'My Shows', :js do
       create_list(:like, 10 - idx, likable: show)
     end
 
-    login_as(user)
+    sign_in(user)
   end
 
   it 'click My Shows, display/sorting of shows' do

@@ -3,7 +3,6 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
 
   before_action :random_song_with_excerpt
-  before_action :permitted_params, if: :devise_controller?
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
 
@@ -26,10 +25,6 @@ class ApplicationController < ActionController::Base
 
   def render_not_found
     render_view("errors/404", 404)
-  end
-
-  def permitted_params
-    devise_parameter_sanitizer.permit(:sign_up, keys: %i[username])
   end
 
   def random_song_with_excerpt

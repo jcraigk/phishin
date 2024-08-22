@@ -5,7 +5,7 @@ module NavigationHelper
       css = active_route?(controller, props[1]) ? "active" : nil
       if name == "userbox"
         css += " user_control"
-        if user_signed_in?
+        if logged_in?
           props[0] = my_shows_path
           name = current_user.username
         else
@@ -104,9 +104,7 @@ module NavigationHelper
   def user_dropdown_links
     {
       "My Shows" => [ my_shows_path, false, [ "my_shows" ] ],
-      "My Tracks" => [ my_tracks_path, false, [ "my_tracks" ] ],
-      "Change Password" => [ edit_user_registration_path, true, [ "edit" ] ],
-      "Logout" => [ destroy_user_session_path, true, [ "nothing" ] ]
+      "My Tracks" => [ my_tracks_path, false, [ "my_tracks" ] ]
     }.map do |name, props|
       opts = { class: "non-remote" }
       opts[:method] = :delete if name == "Logout"

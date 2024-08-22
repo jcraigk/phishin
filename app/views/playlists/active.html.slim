@@ -11,7 +11,7 @@
     h3#active_playlist_duration_label Length: #{duration_readable(@duration, 'letters')}
     br
 
-    - unless user_signed_in?
+    - unless logged_in?
       p.instructions
         = link_to 'Sign in', new_user_session_path, class: 'non-remote'
         |  to create and share custom playlists!
@@ -21,7 +21,7 @@
       span#playlist_mode_label EDIT
     br
 
-    - if user_signed_in?
+    - if logged_in?
       - if session[:playlist_id]&.positive? && session[:playlist_user_id] != current_user.id
         button#duplicate_playlist_btn.btn type='button' style=(session[:playlist_id]&.positive? && current_user.id == session[:playlist_user_id] ? nil : 'display: none;')
           i.glyphicon.glyphicon-file

@@ -83,12 +83,11 @@ describe 'Show', :js do
 
     context 'when logged in' do
       before do
-        login_as(create(:user))
+        sign_in(create(:user))
         visit show.date
         sleep(1)
       end
 
-      # TODO: Feature works fine but test fails...`current_user` not set via AJAX
       it 'liking/unliking the show', skip: 'Feature works fine but test fails' do
         within('#title_box') do
           first('.like_toggle').click
@@ -115,7 +114,6 @@ describe 'Show', :js do
         expect_content(show.date_with_dots, show.venue.name)
       end
 
-      # TODO: Feature works fine but test fails...`current_user` not set via AJAX
       it 'liking/unliking a track', skip: 'Feature works fine but test fails' do
         within('#content_box') do
           first('.like_toggle').click

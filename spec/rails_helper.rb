@@ -20,12 +20,10 @@ RSpec.configure do |config|
   config.order = 'random'
 
   config.include ActiveSupport::Testing::TimeHelpers
-  config.include AuthHelper, type: :request
+  config.include ApiHelper, type: :request
   config.include FeatureHelpers
-  config.include Warden::Test::Helpers
 
   config.after do
     Faker::UniqueGenerator.clear
-    Warden.test_reset!
   end
 end

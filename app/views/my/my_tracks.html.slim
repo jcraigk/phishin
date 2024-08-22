@@ -9,7 +9,7 @@
     = render partial: 'shared/sort_filter', locals: { item_hash: my_track_sort_items }
 
   #content_box
-    - if !user_signed_in?
+    - if !logged_in?
       p.instructions Sign in and click heart icons to Like your favorite tracks
 
     - elsif @tracks.any?

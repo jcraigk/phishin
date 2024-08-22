@@ -3,12 +3,14 @@
   audio
 
   #user_controls
-    - if user_signed_in?
+    - if logged_in?
       .btn-group
         a.btn.dropdown-toggle data-toggle='dropdown' href='null'
           = current_user.username
           span.caret<
-        ul.dropdown-menu = user_dropdown_links
+        ul.dropdown-menu
+          = user_dropdown_links
+          li = link_to t("auth.logout"), logout_path, method: :delete
 
     - else
       a#sign_in_link.non-remote href=new_user_session_path Sign in

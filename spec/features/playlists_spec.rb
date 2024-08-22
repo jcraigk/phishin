@@ -43,7 +43,7 @@ describe 'Playlists', :js do
     let(:user) { create(:user) }
     let!(:show) { create(:show, :with_tracks, date: "#{ERAS.values.flatten.last}-01-01") }
 
-    before { login_as(user) }
+    before { sign_in(user) }
 
     it 'editing' do
       visit active_playlist_path

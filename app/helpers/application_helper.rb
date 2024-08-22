@@ -88,4 +88,15 @@ module ApplicationHelper
   def slug_for_set(set)
     set.downcase.tr(" ", "-")
   end
+
+  def submit_button(label = nil)
+    label ||= "Submit"
+    button_tag(
+      type: "submit",
+      class: "button",
+      data: { disable_with: "Please wait..." }
+    ) do
+      label
+    end
+  end
 end

@@ -27,6 +27,7 @@ $highlight2: #91e1f2;
 $highlight3: #cbebf2;
 $highlight4: #fff494;
 $scrubbing: #1a80f6;
+$google-blue: #5385ed;
 
 @keyframes pulsate-highlight {
   0%   { background: $background_gray; }
@@ -56,6 +57,50 @@ $scrubbing: #1a80f6;
     transform: rotate(360deg);
   }
 }
+
+/* From Bulma */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5em 1em;
+  font-size: 1rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  background-color: $highlight1;
+  color: #fff;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.external-login-container {
+  margin-top: 15px;
+
+  .external-login-btn {
+    font-size: 1.5rem;
+    width: 50%;
+    margin-top: 15px;
+    justify-content: left;
+    padding-left: 130px;
+  }
+}
+.login-logo {
+  background-color: white;
+  border-radius: 3px;
+  width: 28px;
+  height: 28px;
+  position: relative;
+  left: -10px;
+  padding: 3px;
+}
+.google-btn {
+  color: white !important;
+  background-color: $google-blue;
+}
+
 .spinner {
   animation: rotateClockwise 3s linear infinite;
   font-size: 7em;
