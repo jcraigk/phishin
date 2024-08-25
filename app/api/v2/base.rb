@@ -1,10 +1,10 @@
 require_relative "shows"
 
-class Phishin::Api < Grape::API
+class V2::Base < Grape::API
   # version "v2", using: :path
   format :json
 
-  mount Phishin::Shows
+  mount V2::Shows
 
   get '/foo' do
     binding.irb

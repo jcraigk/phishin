@@ -1,4 +1,4 @@
-require Rails.root.join("app/api/phishin/api") # Grape API
+require Rails.root.join("app/api/v2/base") # Grape API
 
 Rails.application.routes.draw do
   root to: "eras#index"
@@ -99,5 +99,5 @@ Rails.application.routes.draw do
   end
 
   # API v2
-  mount Phishin::Api => "/api/v2"
+  mount V2::Base => "/api/v2"
 end

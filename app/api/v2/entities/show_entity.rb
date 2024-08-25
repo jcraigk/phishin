@@ -1,5 +1,4 @@
-# app/api/v2/entities/show_entity.rb
-module Phishin
+module V2
   module Entities
     class ShowEntity < Grape::Entity
       expose :id

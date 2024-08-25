@@ -1,9 +1,9 @@
-class Phishin::Shows < Grape::API
+class V2::Shows < Grape::API
   resource :shows do
     desc "Return a list of shows"
     get do
       shows = Show.all
-      present shows, with: Phishin::Entities::ShowEntity
+      present shows, with: V2::Entities::ShowEntity
     end
 
     desc "Return a specific show"
@@ -12,7 +12,7 @@ class Phishin::Shows < Grape::API
     end
     get ":id" do
       show = Show.find(params[:id])
-      present show, with: Phishin::Entities::ShowEntity
+      present show, with: V2::Entities::ShowEntity
     end
   end
 end
