@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :show do
-    date { Faker::Date.unique.between(from: 500.years.ago, to: Time.zone.today) }
+    date { Faker::Date.unique.between(from: 40.years.ago, to: Time.zone.today) }
     published { true }
     taper_notes { Faker::Lorem.paragraph }
 

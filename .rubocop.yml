@@ -29,6 +29,7 @@ Layout/LineLength:
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
+    - app/api/v2/**/*
     - config/routes.rb
 Metrics/ClassLength:
   Max: 250
@@ -40,6 +41,7 @@ RSpec/DescribeClass:
 RSpec/ExampleLength:
   Exclude:
     - spec/features/**/*
+    - spec/requests/**/*
 RSpec/IndexedLet:
   Enabled: false
 Rails/EnvironmentVariableAccess:
