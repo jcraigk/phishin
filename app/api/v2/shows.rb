@@ -1,5 +1,3 @@
-require_relative "entities/show" # TODO: Remove this
-
 class Api::V2::Shows < Grape::API
   resource :shows do
     desc "Return a list of shows"

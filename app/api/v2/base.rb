@@ -3,8 +3,8 @@ module Api
   end
 end
 
-require_relative "years"
-require_relative "shows"
+Dir[File.join(__dir__, "*.rb")].each { |file| require_relative file }
+Dir[File.join(__dir__, "entities", "*.rb")].each { |file| require_relative file }
 
 class Api::V2::Base < Grape::API
   format :json
@@ -25,6 +25,6 @@ class Api::V2::Base < Grape::API
       contact_url: "https://phish.in/contact-info",
       license: "MIT",
       license_url: "https://github.com/jcraigk/phishin/blob/main/MIT-LICENSE",
-      terms_of_service_url: "https://phish.in/terms",
+      terms_of_service_url: "https://phish.in/terms"
     }
 end
