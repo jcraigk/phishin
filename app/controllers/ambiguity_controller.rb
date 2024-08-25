@@ -15,7 +15,7 @@ class AmbiguityController < ApplicationController
       return render_view(@view)
     end
 
-    # redirect_to :root
+    redirect_to :root
   end
 
   private

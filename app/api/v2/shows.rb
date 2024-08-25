@@ -6,12 +6,21 @@ class Api::V2::Shows < Grape::API
     params do
       optional :sort,
                type: String,
-               desc: "Sort by attribute and direction (e.g., 'date:asc', 'likes_count:desc')",
+               desc: "Sort by attribute and direction (e.g., 'date:desc', 'likes_count:desc')",
                default: "date:desc"
+      optional :page,
+               type: Integer,
+               desc: "Page number for pagination",
+               default: 1
+      optional :per_page,
+               type: Integer,
+               desc: "Number of items per page for pagination",
+               default: 10
     end
     get do
       shows = Show.all
       shows = apply_sorting(shows, params[:sort])
+      shows = shows.paginate(page: params[:page], per_page: params[:per_page])
       present shows, with: Api::V2::Entities::Show
     end
 
