@@ -30,7 +30,7 @@ class Api::V2::Shows < Grape::API
     end
     get ":date" do
       show = Show.find_by!(date: params[:date])
-      present show, with: Api::V2::Entities::Show
+      present show, with: Api::V2::Entities::Show, include_tracks: true
     end
   end
 

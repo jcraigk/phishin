@@ -1,3 +1,4 @@
+require_relative "track" # TODO: remove somehow
 require_relative "show_tag" # TODO: remove somehow
 
 module Api::V2::Entities
@@ -5,7 +6,6 @@ module Api::V2::Entities
     expose :date, format_with: :iso8601
     expose :duration
     expose :incomplete
-    expose :show_tags, using: Api::V2::Entities::ShowTag, as: :tags
     expose(:tour_name) { |obj, _opts| obj.tour.name }
     expose :venue_name
     expose(:venue_latitude) { |obj, _opts| obj.venue.latitude }
@@ -15,7 +15,10 @@ module Api::V2::Entities
     expose :taper_notes
     expose :likes_count
     expose :updated_at, format_with: :iso8601
-    # expose :tracks, using: API::V2::Entities::TrackEntity
+    expose :show_tags, using: Api::V2::Entities::ShowTag, as: :tags
+    expose :tracks,
+           using: Api::V2::Entities::Track,
+           if: ->(_obj, opts) { opts[:include_tracks] }
 
     private
 

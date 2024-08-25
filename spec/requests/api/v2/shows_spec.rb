@@ -36,34 +36,18 @@ RSpec.describe "API::V2::Shows", type: :request do
 
     it "returns the first page of shows sorted by date in descending order by default" do
       get_authorized "/api/v2/shows", params: { page: 1, per_page: 2 }
-
       expect(response).to have_http_status(:ok)
-      json = JSON.parse(response.body)
-      expect(json.size).to eq(2)
 
+      json = JSON.parse(response.body, symbolize_names: true)
       first_show = shows.sort_by(&:date).reverse.first
-      expect(json.first).to include(
-        "date" => first_show.date.iso8601,
-        "duration" => first_show.duration,
-        "venue_name" => first_show.venue.name,
-        "venue_latitude" => first_show.venue.latitude,
-        "venue_longitude" => first_show.venue.longitude,
-        "venue_location" => first_show.venue.location,
-        "venue_slug" => first_show.venue.slug,
-        "tags" => first_show.show_tags.map do |show_tag|
-          {
-            "name" => show_tag.tag.name,
-            "priority" => show_tag.tag.priority,
-            "notes" => show_tag.notes
-          }
-        end
-      )
+      expected = Api::V2::Entities::Show.represent([ first_show ], include_tracks: false).as_json
+      expect(json.first).to eq(expected.first)
     end
 
     it "returns the second page of shows sorted by date in descending order" do
       get_authorized "/api/v2/shows", params: { page: 2, per_page: 2 }
-
       expect(response).to have_http_status(:ok)
+
       json = JSON.parse(response.body)
       expect(json.size).to eq(2)
 
@@ -73,23 +57,22 @@ RSpec.describe "API::V2::Shows", type: :request do
 
     it "returns a list of shows sorted by likes_count in ascending order" do
       get_authorized "/api/v2/shows", params: { sort: "likes_count:asc", page: 1, per_page: 3 }
-
       expect(response).to have_http_status(:ok)
+
       json = JSON.parse(response.body)
       expect(json.map { |s| s["likes_count"] }).to eq([5, 10, 20])
     end
 
     it "returns a list of shows sorted by duration in descending order" do
       get_authorized "/api/v2/shows", params: { sort: "duration:desc", page: 1, per_page: 3 }
-
       expect(response).to have_http_status(:ok)
+
       json = JSON.parse(response.body)
       expect(json.map { |s| s["duration"] }).to eq([200, 150, 120])
     end
 
     it "returns a 400 error for an invalid sort parameter" do
       get_authorized "/api/v2/shows", params: { sort: "invalid_param:asc", page: 1, per_page: 3 }
-
       expect(response).to have_http_status(:bad_request)
     end
   end
@@ -97,33 +80,24 @@ RSpec.describe "API::V2::Shows", type: :request do
   describe "GET /api/v2/shows/:date" do
     let!(:show) { create(:show, date: "2022-01-01", venue:) }
     let!(:show_tag) { create(:show_tag, show:, tag:, notes: "A classic show") }
+    let!(:tracks) do
+      [
+        create(:track, show:, title: "Track 1", position: 1, duration: 300, set: 1),
+        create(:track, show:, title: "Track 2", position: 2, duration: 240, set: 1)
+      ]
+    end
 
-    it "returns the specified show with venue and tags" do
+    it "returns the specified show with venue, tags, and tracks" do
       get_authorized "/api/v2/shows/#{show.date}"
-
       expect(response).to have_http_status(:ok)
-      json = JSON.parse(response.body)
-      expect(json).to include(
-        "date" => show.date.iso8601,
-        "duration" => show.duration,
-        "venue_name" => show.venue.name,
-        "venue_latitude" => show.venue.latitude,
-        "venue_longitude" => show.venue.longitude,
-        "venue_location" => show.venue.location,
-        "venue_slug" => show.venue.slug,
-        "tags" => show.show_tags.map do |st|
-          {
-            "name" => st.tag.name,
-            "priority" => st.tag.priority,
-            "notes" => st.notes
-          }
-        end
-      )
+
+      json = JSON.parse(response.body, symbolize_names: true)
+      expected_json = Api::V2::Entities::Show.represent(show, include_tracks: true).as_json
+      expect(json).to eq(expected_json)
     end
 
     it "returns a 404 if the show does not exist" do
       get_authorized "/api/v2/shows/1930-01-01"
-
       expect(response).to have_http_status(:not_found)
     end
   end
