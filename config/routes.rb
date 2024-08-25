@@ -1,3 +1,5 @@
+require Rails.root.join("app/api/phishin/api") # Grape API
+
 Rails.application.routes.draw do
   root to: "eras#index"
 
@@ -74,9 +76,9 @@ Rails.application.routes.draw do
   get "/download-track/:track_id" => "downloads#download_track", as: "download_track"
 
   # Catch-all matcher for ambiguous content slugs
-  get "/(:slug(/:anchor))" => "ambiguity#resolve", constraints: { glob: %r{[^/]+} }
+  # get "/(:slug(/:anchor))" => "ambiguity#resolve", constraints: { glob: %r{[^/]+} }
 
-  # API
+  # API v1
   namespace :api do
     namespace :v1 do
       resources :eras,      only: %i[index show]
@@ -89,11 +91,13 @@ Rails.application.routes.draw do
       resources :tags,      only: %i[index show]
       resources :playlists, only: %i[show]
 
-      # Misc
       get "search/:term",              to: "search#index"
       get "show-on-date/:date",        to: "shows#on_date"
       get "shows-on-day-of-year/:day", to: "shows#on_day_of_year"
       get "random-show",               to: "shows#random"
     end
   end
+
+  # API v2
+  mount Phishin::Api => "/api/v2"
 end
