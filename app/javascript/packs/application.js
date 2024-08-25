@@ -9,3 +9,9 @@ import 'bootstrap/dist/js/bootstrap'
 
 // CoffeeScript bundle
 import '../src/coffeescript/app.js.coffee'
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.fonts.ready.then(() => {
+    document.body.classList.remove('fonts-loading');
+  });
+});
