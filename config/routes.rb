@@ -99,5 +99,5 @@ Rails.application.routes.draw do
   end
 
   # API v2
-  mount V2::Base => "/api/v2"
+  mount Api::V2::Base => "/api/v2"
 end

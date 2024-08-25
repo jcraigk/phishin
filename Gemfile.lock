@@ -197,6 +197,9 @@ GEM
     grape-swagger (2.1.0)
       grape (>= 1.7, < 3.0)
       rack-test (~> 2)
+    grape-swagger-entity (0.5.4)
+      grape-entity (~> 1)
+      grape-swagger (~> 2)
     hashie (5.0.0)
     highline (3.1.0)
       reline
@@ -487,6 +490,7 @@ DEPENDENCIES
   grape
   grape-entity
   grape-swagger
+  grape-swagger-entity
   highline
   nokogiri
   pg
