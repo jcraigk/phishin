@@ -10,7 +10,7 @@ RSpec.describe "API::V2::Years", type: :request do
     end
 
     it "returns a list of years with show counts and eras" do
-      get "/api/v2/years"
+      get_authorized "/api/v2/years"
 
       expect(response).to have_http_status(:ok)
 

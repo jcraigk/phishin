@@ -3,11 +3,16 @@ module Api
   end
 end
 
+# TODO: There must be a better way
 Dir[File.join(__dir__, "*.rb")].each { |file| require_relative file }
 Dir[File.join(__dir__, "entities", "*.rb")].each { |file| require_relative file }
+# Dir[File.join(__dir__, "helpers", "*.rb")].each { |file| require_relative file }
 
 class Api::V2::Base < Grape::API
   format :json
+
+  helpers ApiKeyHelper
+  before { authenticate_api_key! }
 
   mount Api::V2::Years
   mount Api::V2::Shows
