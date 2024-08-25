@@ -29,6 +29,10 @@ $highlight4: #fff494;
 $scrubbing: #1a80f6;
 $google-blue: #5385ed;
 
+body.fonts-loading {
+  visibility: hidden;
+}
+
 @keyframes pulsate-highlight {
   0%   { background: $background_gray; }
   100%  { background: $highlight4; }
