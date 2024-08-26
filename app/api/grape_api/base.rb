@@ -2,9 +2,9 @@ class GrapeApi::Base < Grape::API
   format :json
 
   # Helpers
-  helpers GrapeApi::Helpers::SharedParams
   helpers GrapeApi::Helpers::AuthHelper
   helpers GrapeApi::Helpers::SharedHelpers
+  helpers GrapeApi::Helpers::SharedParams
 
   # Endpoints
   before { authenticate_api_key! unless swagger_endpoint? }
