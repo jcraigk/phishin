@@ -27,10 +27,12 @@ module GrapeApi
           type: "apiKey",
           name: "Authorization",
           in: "header",
-          description: "Use your API key as a Bearer token in the 'Authorization' header. Example: 'Authorization: Bearer YOUR_API_KEY'"
+          description:
+            "Use your API key as a Bearer token in the 'Authorization' " \
+              "header. Example: 'Authorization: Bearer YOUR_API_KEY'"
         }
       },
-      security: [{ api_key: [] }],
+      security: [ { api_key: [] } ],
       tags: [
         {
           name: "years",

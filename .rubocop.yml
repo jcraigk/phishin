@@ -29,7 +29,7 @@ Layout/LineLength:
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
-    - app/api/v2/**/*
+    - app/api/**/*
     - config/routes.rb
 Metrics/ClassLength:
   Max: 250

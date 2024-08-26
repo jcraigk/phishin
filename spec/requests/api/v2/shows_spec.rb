@@ -9,7 +9,8 @@ RSpec.describe "API v2 Shows", type: :request do
       state: "NY",
       country: "USA",
       latitude: 40.7505045,
-      longitude: -73.9934387
+      longitude: -73.9934387,
+      slug: "madison-square-garden"
     )
   end
   let!(:tag) { create(:tag, name: "Classic", priority: 1) }
@@ -108,8 +109,23 @@ RSpec.describe "API v2 Shows", type: :request do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expected = GrapeApi::Entities::Show.represent(shows.select { |show|
- show.date.year == 2022 }, include_tracks: false).as_json
+      expected = GrapeApi::Entities::Show.represent(
+        shows.select { |show| show.date.year == 2022 },
+        include_tracks: false
+      ).as_json
+      expect(json).to eq(expected)
+    end
+
+    it "filters shows by venue_slug" do
+      get_authorized "/api/v2/shows", params: { venue_slug: "madison-square-garden" }
+      expect(response).to have_http_status(:ok)
+
+      json = JSON.parse(response.body, symbolize_names: true)
+      expected = GrapeApi::Entities::Show.represent(
+        shows.sort_by(&:date).reverse,
+        include_tracks: false
+      ).as_json
+
       expect(json).to eq(expected)
     end
   end
