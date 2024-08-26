@@ -2,10 +2,10 @@ class ApiV2::Songs < ApiV2::Base
   SORT_OPTIONS = [ "title", "tracks_count" ]
 
   resource :songs do
-    desc "Return a list of Songs" do
+    desc "Return a list of songs" do
       detail \
-        "Fetches a sortable paginated list of Songs with optional filtering " \
-        "by the first character of the title"
+        "Return a sortable paginated list of songs, " \
+        "optionally filtered by the first character of the title"
       success ApiV2::Entities::Song
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
@@ -27,8 +27,8 @@ class ApiV2::Songs < ApiV2::Base
       present page_of_songs, with: ApiV2::Entities::Song
     end
 
-    desc "Return a specific Song by slug" do
-      detail "Fetches a specific Song by its unique slug"
+    desc "Return a specific song" do
+      detail "Return a specific song by its slug"
       success ApiV2::Entities::Song
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],

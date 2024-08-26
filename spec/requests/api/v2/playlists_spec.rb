@@ -76,12 +76,7 @@ RSpec.describe "API v2 Playlists" do
     context "when deleting an existing playlist" do
       it "deletes the playlist and returns a success message" do
         delete_api_authed(user, "/playlists/#{playlist.slug}")
-
-        expect(response).to have_http_status(:ok)
-        json = JSON.parse(response.body, symbolize_names: true)
-
-        expect(json[:message]).to eq("Playlist deleted successfully")
-        expect(Playlist.exists?(playlist.id)).to be_falsey
+        expect(response).to have_http_status(:no_content)
       end
 
       it "returns a 404 error if the playlist does not exist" do

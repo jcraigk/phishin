@@ -2,8 +2,8 @@ class ApiV2::Tours < ApiV2::Base
   SORT_OPTIONS = [ "name", "starts_on", "ends_on", "shows_count" ]
 
   resource :tours do
-    desc "Return a list of Tours" do
-      detail "Fetches a sortable paginated list of Tours"
+    desc "Return a list of tours" do
+      detail "Return a sortable paginated list of tours"
       success ApiV2::Entities::Tour
     end
     params do
@@ -18,8 +18,8 @@ class ApiV2::Tours < ApiV2::Base
       present page_of_tours, with: ApiV2::Entities::Tour
     end
 
-    desc "Return a specific Tour by slug" do
-      detail "Fetches a specific Tour by its slug, including details of associated shows"
+    desc "Return a specific tour" do
+      detail "Return a specific tour by its slug, including associated shows"
       success ApiV2::Entities::Tour
     end
     params do

@@ -10,6 +10,7 @@ class ApiV2::Base < Grape::API
   before { authenticate_api_key! unless swagger_endpoint? }
   mount ApiV2::Announcements
   mount ApiV2::Auth
+  mount ApiV2::Likes
   mount ApiV2::Playlists
   mount ApiV2::Search
   mount ApiV2::Shows

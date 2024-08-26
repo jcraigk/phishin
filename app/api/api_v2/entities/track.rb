@@ -1,5 +1,12 @@
 class ApiV2::Entities::Track < ApiV2::Entities::Base
   expose \
+    :id,
+    documentation: {
+      type: "String",
+      desc: "ID of the track"
+    }
+
+  expose \
     :slug,
     documentation: {
       type: "String",

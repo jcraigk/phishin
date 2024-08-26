@@ -1,7 +1,7 @@
 class ApiV2::Tags < ApiV2::Base
   resource :tags do
-    desc "Return a list of Tags" do
-      detail "Fetches a list of all Tags, sorted alphabetically by name"
+    desc "Return a list of tags" do
+      detail "Return a list of all tags, sorted alphabetically by name"
       success ApiV2::Entities::Tag
     end
 

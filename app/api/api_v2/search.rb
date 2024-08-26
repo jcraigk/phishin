@@ -3,7 +3,7 @@ class ApiV2::Search < ApiV2::Base
     desc "Search all content" do
       detail \
         "Performs a search across multiple entities including " \
-        "Shows, Songs, Venues, Tours, and Tags"
+        "shows, songs, venues, tours, and tags"
       success ApiV2::Entities::SearchResults
       failure [ [ 400, "Bad Request", ApiV2::Entities::ApiResponse ] ]
     end

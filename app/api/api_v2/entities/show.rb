@@ -1,5 +1,12 @@
 class ApiV2::Entities::Show < ApiV2::Entities::Base
   expose \
+    :id,
+    documentation: {
+      type: "String",
+      desc: "ID of the show"
+    }
+
+  expose \
     :date,
     format_with: :iso8601,
     documentation: {

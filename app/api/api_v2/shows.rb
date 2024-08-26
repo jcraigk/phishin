@@ -2,9 +2,9 @@ class ApiV2::Shows < ApiV2::Base
   SORT_OPTIONS = [ "date", "likes_count", "duration" ]
 
   resource :shows do
-    desc "Return a list of Shows" do
+    desc "Return a list of shows" do
       detail \
-        "Fetches a sortable paginated list of Shows, " \
+        "Return a sortable paginated list of shows, " \
         "optionally filtered by year, year range, or venue slug"
       success ApiV2::Entities::Show
       failure [
@@ -33,8 +33,8 @@ class ApiV2::Shows < ApiV2::Base
       present page_of_shows, with: ApiV2::Entities::Show
     end
 
-    desc "Return a specific Show by date, including Tracks and Tags" do
-      detail "Fetches a specific Show by its date, including associated tracks and tags"
+    desc "Return a specific show" do
+      detail "Return a specific show by its date, including associated tracks and tags"
       success ApiV2::Entities::Show
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
