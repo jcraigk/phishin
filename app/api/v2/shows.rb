@@ -2,7 +2,9 @@ class Api::V2::Shows < Grape::API
   SORT_OPTIONS = [ "date", "likes_count", "duration" ]
 
   resource :shows do
-    desc "Return a list of shows, optionally filtered by year or year range"
+    desc \
+      "Return a list of shows, optionally filtered by year or year range, " \
+        "sorted in descending chronological order"
     params do
       optional :year,
                type: Integer,
@@ -38,14 +40,21 @@ class Api::V2::Shows < Grape::API
 
   helpers do
     def page_of_shows
-      Show.published
-          .then { |s| apply_filtering(s) }
-          .then { |s| apply_sorting(s) }
-          .paginate(page: params[:page], per_page: params[:per_page])
+      Rails.cache.fetch("api/v2/shows?#{params.to_query}") do
+        Show.published
+            .includes(show_tags: :tag)
+            .then { |s| apply_filtering(s) }
+            .then { |s| apply_sorting(s) }
+            .paginate(page: params[:page], per_page: params[:per_page])
+      end
     end
 
     def show_by_date
-      Show.published.find_by!(date: params[:date])
+      Rails.cache.fetch("api/v2/shows/#{params[:date]}") do
+        Show.published
+            .includes(tracks: { track_tags: :tag }, show_tags: :tag)
+            .find_by!(date: params[:date])
+      end
     end
 
     def apply_filtering(shows)

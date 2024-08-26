@@ -20,7 +20,9 @@ module Api::V2::Entities
       :tracks,
       if: ->(_obj, opts) { opts[:include_tracks] }
     ) do |obj, opts|
-      Api::V2::Entities::Track.represent obj.tracks, show_details: true
+      Api::V2::Entities::Track.represent \
+        obj.tracks.sort_by(&:position),
+        show_details: true
     end
 
     private

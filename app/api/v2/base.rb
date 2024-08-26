@@ -6,19 +6,17 @@ end
 # TODO: There must be a better way
 Dir[File.join(__dir__, "*.rb")].each { |file| require_relative file }
 Dir[File.join(__dir__, "entities", "*.rb")].each { |file| require_relative file }
-# Dir[File.join(__dir__, "helpers", "*.rb")].each { |file| require_relative file }
 
 class Api::V2::Base < Grape::API
   format :json
 
   helpers ApiKeyHelper
-  before { authenticate_api_key! }
+  before do
+    authenticate_api_key! unless swagger_endpoint?
+  end
 
   mount Api::V2::Years
   mount Api::V2::Shows
-  # mount Api::V2::Tracks
-  # mount Api::V2::Venues
-  # mount Api::V2::Songs
 
   add_swagger_documentation \
     info: {
@@ -31,5 +29,21 @@ class Api::V2::Base < Grape::API
       license: "MIT",
       license_url: "https://github.com/jcraigk/phishin/blob/main/MIT-LICENSE",
       terms_of_service_url: "https://phish.in/terms"
-    }
+    },
+    tags: [
+      {
+        name: "years",
+        description: "Years during which Phish performed live shows."
+      },
+      {
+        name: "shows",
+        description: "Live shows performed by Phish, including metadata and links to MP3 audio."
+      }
+    ]
+
+  helpers do
+    def swagger_endpoint?
+      request.path.include?("/swagger_doc")
+    end
+  end
 end

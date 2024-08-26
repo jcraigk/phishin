@@ -8,9 +8,7 @@ class ApplicationController < ActionController::Base
 
   def self.caches_action_params(action, params = [])
     params += %i[sort per_page page id slug]
-    caches_action action,
-                  cache_path: proc { |c| c.params.permit(*params) },
-                  expires_in: App.cache_ttl
+    caches_action action, cache_path: proc { |c| c.params.permit(*params) }
   end
 
   protected

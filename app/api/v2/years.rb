@@ -1,5 +1,15 @@
 
 class Api::V2::Years < Grape::API
+  desc "Years during which Phish performed live shows"
+  resource :years do
+    desc \
+      "Return a list of years during which Phish performed live shows, " \
+        "including era designations"
+    get do
+      present cached_years_data
+    end
+  end
+
   helpers do
     def years_data
       ERAS.map do |era, periods|
@@ -20,16 +30,9 @@ class Api::V2::Years < Grape::API
     end
 
     def cached_years_data
-      Rails.cache.fetch("api/v2/years", expires_in: App.cache_ttl) do
+      Rails.cache.fetch("api/v2/years") do
         years_data
       end
-    end
-  end
-
-  resource :years do
-    desc "Return a list of years during which Phish performed"
-    get do
-      present cached_years_data
     end
   end
 end
