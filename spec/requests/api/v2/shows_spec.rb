@@ -41,7 +41,7 @@ RSpec.describe "API v2 Shows" do
 
       json = JSON.parse(response.body, symbolize_names: true)
       first_show = shows.sort_by(&:date).reverse.first
-      expected = GrapeApi::Entities::Show.represent([ first_show ], include_tracks: false).as_json
+      expected = ApiV2::Entities::Show.represent([ first_show ], include_tracks: false).as_json
       expect(json.first).to eq(expected.first)
     end
 
@@ -82,7 +82,7 @@ RSpec.describe "API v2 Shows" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expected = GrapeApi::Entities::Show.represent(
+      expected = ApiV2::Entities::Show.represent(
         shows.select { |show| show.date.year == 2022 },
         include_tracks: false
       ).as_json
@@ -94,7 +94,7 @@ RSpec.describe "API v2 Shows" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expected = GrapeApi::Entities::Show.represent(
+      expected = ApiV2::Entities::Show.represent(
         shows.select { |show| show.date.year.between?(2021, 2023) },
         include_tracks: false
       ).as_json
@@ -109,7 +109,7 @@ RSpec.describe "API v2 Shows" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expected = GrapeApi::Entities::Show.represent(
+      expected = ApiV2::Entities::Show.represent(
         shows.select { |show| show.date.year == 2022 },
         include_tracks: false
       ).as_json
@@ -121,7 +121,7 @@ RSpec.describe "API v2 Shows" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expected = GrapeApi::Entities::Show.represent(
+      expected = ApiV2::Entities::Show.represent(
         shows.sort_by(&:date).reverse,
         include_tracks: false
       ).as_json
@@ -145,7 +145,7 @@ RSpec.describe "API v2 Shows" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expected = GrapeApi::Entities::Show.represent(show, include_tracks: true).as_json
+      expected = ApiV2::Entities::Show.represent(show, include_tracks: true).as_json
       expect(json).to eq(expected)
     end
 

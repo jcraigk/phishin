@@ -46,7 +46,7 @@ RSpec.describe "API v2 Venues" do
 
       json = JSON.parse(response.body, symbolize_names: true)
       first_venue = venues.sort_by(&:name).first(2) # adjust to reflect pagination
-      expected = GrapeApi::Entities::Venue.represent(first_venue).as_json
+      expected = ApiV2::Entities::Venue.represent(first_venue).as_json
       expect(json).to eq(expected)
     end
 
@@ -64,7 +64,7 @@ RSpec.describe "API v2 Venues" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expected = GrapeApi::Entities::Venue.represent(
+      expected = ApiV2::Entities::Venue.represent(
         venues.select { |venue| venue.name.downcase.start_with?("m") }
       ).as_json
       expect(json).to eq(expected)
@@ -79,7 +79,7 @@ RSpec.describe "API v2 Venues" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expected = GrapeApi::Entities::Venue.represent(venue).as_json
+      expected = ApiV2::Entities::Venue.represent(venue).as_json
       expect(json).to eq(expected)
     end
 

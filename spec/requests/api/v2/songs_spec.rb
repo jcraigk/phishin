@@ -40,7 +40,7 @@ RSpec.describe "API Songs" do
 
       json = JSON.parse(response.body, symbolize_names: true)
       first_songs = songs.sort_by(&:title).first(2)
-      expected = GrapeApi::Entities::Song.represent(first_songs).as_json
+      expected = ApiV2::Entities::Song.represent(first_songs).as_json
       expect(json).to eq(expected)
     end
 
@@ -58,7 +58,7 @@ RSpec.describe "API Songs" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expected = GrapeApi::Entities::Song.represent(
+      expected = ApiV2::Entities::Song.represent(
         songs.select { |song| song.title.downcase.start_with?("c") }
       ).as_json
       expect(json).to eq(expected)
@@ -73,7 +73,7 @@ RSpec.describe "API Songs" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expected = GrapeApi::Entities::Song.represent(song).as_json
+      expected = ApiV2::Entities::Song.represent(song).as_json
       expect(json).to eq(expected)
     end
 

@@ -40,7 +40,7 @@ RSpec.describe "API v2 Tours" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expected = GrapeApi::Entities::Tour.represent([ tour1, tour3 ]).as_json
+      expected = ApiV2::Entities::Tour.represent([ tour1, tour3 ]).as_json
       expect(json).to eq(expected)
     end
 
@@ -50,7 +50,7 @@ RSpec.describe "API v2 Tours" do
 
       json = JSON.parse(response.body, symbolize_names: true)
       sorted_tours = [ tour2, tour3, tour1 ].sort_by(&:name).reverse
-      expected = GrapeApi::Entities::Tour.represent(sorted_tours).as_json
+      expected = ApiV2::Entities::Tour.represent(sorted_tours).as_json
 
       expect(json).to eq(expected)
     end
@@ -61,7 +61,7 @@ RSpec.describe "API v2 Tours" do
 
       json = JSON.parse(response.body, symbolize_names: true)
       sorted_tours = [ tour2, tour1, tour3 ].sort_by(&:shows_count)
-      expected = GrapeApi::Entities::Tour.represent(sorted_tours).as_json
+      expected = ApiV2::Entities::Tour.represent(sorted_tours).as_json
 
       expect(json).to eq(expected)
     end
@@ -94,7 +94,7 @@ RSpec.describe "API v2 Tours" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expected = GrapeApi::Entities::Tour.represent(tour1, include_shows: true).as_json
+      expected = ApiV2::Entities::Tour.represent(tour1, include_shows: true).as_json
       expect(json).to eq(expected)
     end
 
