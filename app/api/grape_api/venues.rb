@@ -2,16 +2,17 @@ class GrapeApi::Venues < GrapeApi::Base
   SORT_OPTIONS = [ "name", "shows_count" ]
 
   resource :venues do
-    desc \
-      "Return a list of venues " \
-      "optionally filtered by the first character of the venue name, " \
-      "sorted by name or shows_count."
+    desc "Return a list of Venues" do
+      detail "Fetches a sortable paginated list of Venues"
+      success GrapeApi::Entities::Venue
+    end
     params do
       use :pagination
       optional :sort,
                type: String,
                desc: "Sort by attribute and direction (e.g., 'name:asc')",
-               default: "name:asc"
+               default: "name:asc",
+               values: SORT_OPTIONS.map { |option| [ "#{option}:asc", "#{option}:desc" ] }.flatten
       optional :first_char,
                type: String,
                desc: "Filter venues by the first character of the venue name (case-insensitive)"
@@ -20,7 +21,10 @@ class GrapeApi::Venues < GrapeApi::Base
       present page_of_venues, with: GrapeApi::Entities::Venue
     end
 
-    desc "Return a specific Venue by slug"
+    desc "Return a specific Venue by slug" do
+      detail "Fetches a specific Venue by its slug"
+      success GrapeApi::Entities::Venue
+    end
     params do
       requires :slug, type: String, desc: "Slug of the venue"
     end

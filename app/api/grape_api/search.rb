@@ -3,7 +3,7 @@ class GrapeApi::Search < GrapeApi::Base
     desc "Search all content" do
       detail \
         "Performs a search across multiple entities including " \
-        "Shows, Songs, Venues, Tours, and Tags."
+        "Shows, Songs, Venues, Tours, and Tags"
       success GrapeApi::Entities::SearchResults
       failure [ [ 400, "Bad Request", GrapeApi::Entities::ApiResponse ] ]
     end

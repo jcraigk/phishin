@@ -1,7 +1,7 @@
 class GrapeApi::Playlists < GrapeApi::Base
   resource :playlists do
     desc "Return a specific Playlist by slug" do
-      detail "Fetches a playlist by its slug, including all associated tracks."
+      detail "Fetches a Playlist by its slug, including all associated tracks"
       success GrapeApi::Entities::Playlist
       failure [ [ 404, "Not Found", GrapeApi::Entities::ApiResponse ] ]
     end
@@ -13,8 +13,8 @@ class GrapeApi::Playlists < GrapeApi::Base
       present playlist, with: GrapeApi::Entities::Playlist
     end
 
-    desc "Create a new playlist" do
-      detail "Creates a new playlist for the authenticated user."
+    desc "Create a new Playlist" do
+      detail "Creates a new Playlist for the authenticated user"
       success GrapeApi::Entities::Playlist
       failure [ [ 422, "Unprocessable Entity", GrapeApi::Entities::ApiResponse ] ]
     end
@@ -35,8 +35,8 @@ class GrapeApi::Playlists < GrapeApi::Base
       present playlist, with: GrapeApi::Entities::Playlist
     end
 
-    desc "Update an existing playlist" do
-      detail "Updates the name of an existing playlist owned by the authenticated user."
+    desc "Update an existing Playlist" do
+      detail "Updates the name of an existing Playlist owned by the authenticated user"
       success GrapeApi::Entities::Playlist
       failure [
         [ 404, "Not Found", GrapeApi::Entities::ApiResponse ],
@@ -54,8 +54,8 @@ class GrapeApi::Playlists < GrapeApi::Base
       present playlist, with: GrapeApi::Entities::Playlist
     end
 
-    desc "Delete a playlist" do
-      detail "Deletes a playlist owned by the authenticated user."
+    desc "Delete a Playlist" do
+      detail "Deletes a Playlist owned by the authenticated user"
       success GrapeApi::Entities::ApiResponse
       failure [
         [ 404, "Not Found", GrapeApi::Entities::ApiResponse ],

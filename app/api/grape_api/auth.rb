@@ -3,7 +3,7 @@ require "jwt"
 class GrapeApi::Auth < GrapeApi::Base
   resource :auth do
     desc "User login via email and password" do
-      detail "Authenticates a user using their email and password and returns a JWT."
+      detail "Authenticates a User using their email and password and returns a JWT"
       success GrapeApi::Entities::LoginResponse
       failure [ [ 401, "Unauthorized - Invalid email or password" ] ]
     end
@@ -21,7 +21,7 @@ class GrapeApi::Auth < GrapeApi::Base
     end
 
     desc "Get currently logged in user" do
-      detail "Fetches the currently authenticated user."
+      detail "Fetches the currently authenticated User"
       success GrapeApi::Entities::User
       failure [ [ 401, "Unauthorized - Invalid JWT" ] ]
     end
@@ -31,7 +31,7 @@ class GrapeApi::Auth < GrapeApi::Base
     end
 
     desc "Request password reset email" do
-      detail "Sends a password reset email to the user if the email exists in the system."
+      detail "Sends a password reset email to the User if found"
       success GrapeApi::Entities::ApiResponse
     end
     params do
@@ -41,11 +41,11 @@ class GrapeApi::Auth < GrapeApi::Base
       user = User.find_by(email: params[:email])
       user&.deliver_reset_password_instructions!
       status 200
-      { message: "If the email exists, reset instructions have been sent." }
+      { message: "If the email exists, reset instructions have been sent" }
     end
 
-    desc "Reset a user's password via reset token" do
-      detail "Resets the user's password using a token received in the password reset email."
+    desc "Reset a User's password via reset token" do
+      detail "Resets the User's password using a token received in the password reset email"
       success code: 200, message: "Password has been reset successfully"
       failure [
         [ 401, "Unauthorized - Invalid reset token" ],
@@ -64,7 +64,7 @@ class GrapeApi::Auth < GrapeApi::Base
       if params[:password] == params[:password_confirmation] &&
          user.change_password(params[:password])
         status 200
-        { message: "Password has been reset successfully." }
+        { message: "Password has been reset successfully" }
       else
         error!({ message: "Password reset failed" }, 422)
       end

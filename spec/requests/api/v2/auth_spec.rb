@@ -55,7 +55,7 @@ RSpec.describe "API v2 Auth" do
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
-        expect(json[:message]).to eq("If the email exists, reset instructions have been sent.")
+        expect(json[:message]).to eq("If the email exists, reset instructions have been sent")
       end
     end
 
@@ -65,7 +65,7 @@ RSpec.describe "API v2 Auth" do
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
-        expect(json[:message]).to eq("If the email exists, reset instructions have been sent.")
+        expect(json[:message]).to eq("If the email exists, reset instructions have been sent")
       end
     end
   end
@@ -86,7 +86,7 @@ RSpec.describe "API v2 Auth" do
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
-        expect(json[:message]).to eq("Password has been reset successfully.")
+        expect(json[:message]).to eq("Password has been reset successfully")
       end
     end
 

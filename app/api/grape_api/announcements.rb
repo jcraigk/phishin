@@ -2,8 +2,8 @@ class GrapeApi::Announcements < GrapeApi::Base
   resource :announcements do
     desc "Return recent Announcements" do
       detail \
-        "Fetches the 100 most recent announcements, " \
-        "ordered by creation date in descending order."
+        "Fetches the 100 most recent Announcements, " \
+        "ordered by creation date in descending order"
       success GrapeApi::Entities::Announcement
     end
     get do

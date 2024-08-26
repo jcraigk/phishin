@@ -37,7 +37,7 @@ class GrapeApi::Base < Grape::API
       title: "#{App.app_name} API v2",
       description:
         "A RESTful API for accessing content on #{App.app_name}, an " \
-          "open source archive of live Phish audience recordings.",
+          "open source archive of live Phish audience recordings",
       contact_email: "phish.in.music@gmail.com",
       contact_url: "https://phish.in/contact-info",
       license: "MIT",
@@ -59,43 +59,43 @@ class GrapeApi::Base < Grape::API
     tags: [
       {
         name: "announcements",
-        description: "Announcements about new content and other updates."
+        description: "Announcements about new content and other updates"
       },
       {
         name: "auth",
-        description: "Manage user authentication including registration, login, and password reset."
+        description: "Manage user authentication including registration, login, and password reset"
       },
       {
         name: "playlists",
-        description: "Playlists created by users."
+        description: "Playlists created by users"
       },
       {
         name: "search",
-        description: "Search across Shows, Songs, Venues, Tours, and Tags."
+        description: "Search across Shows, Songs, Venues, Tours, and Tags"
       },
       {
         name: "songs",
-        description: "Songs that Phish have played, including tracks of actual performances."
+        description: "Songs that Phish have played, including tracks of actual performances"
       },
       {
         name: "tags",
-        description: "Tags conveying metadata on Shows and Tracks."
+        description: "Tags conveying metadata on Shows and Tracks"
       },
       {
         name: "tours",
-        description: "Tours that Phish have embarked on, including associated Shows."
+        description: "Tours that Phish have embarked on, including associated Shows"
       },
       {
         name: "venues",
-        description: "Venues that Phish have played on, including associated Shows."
+        description: "Venues that Phish have played on, including associated Shows"
       },
       {
         name: "years",
-        description: "Years and eras during which Phish performed live shows."
+        description: "Years and eras during which Phish performed live shows"
       },
       {
         name: "shows",
-        description: "Live shows performed by Phish, including metadata and links to MP3 audio."
+        description: "Live shows performed by Phish, including metadata and links to MP3 audio"
       }
     ]
 end

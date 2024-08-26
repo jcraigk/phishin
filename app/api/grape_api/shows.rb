@@ -2,11 +2,10 @@ class GrapeApi::Shows < GrapeApi::Base
   SORT_OPTIONS = [ "date", "likes_count", "duration" ]
 
   resource :shows do
-    desc "Return a list of shows" do
+    desc "Return a list of Shows" do
       detail \
-        "Fetches a paginated list of shows, " \
-        "optionally filtered by year, year range, or venue slug, " \
-        "sorted by date, likes_count, or duration."
+        "Fetches a sortable paginated list of Shows, " \
+        "optionally filtered by year, year range, or venue slug"
       success GrapeApi::Entities::Show
       failure [
         [ 400, "Bad Request", GrapeApi::Entities::ApiResponse ],
@@ -18,7 +17,8 @@ class GrapeApi::Shows < GrapeApi::Base
       optional :sort,
                type: String,
                desc: "Sort by attribute and direction (e.g., 'date:desc')",
-               default: "date:desc"
+               default: "date:desc",
+               values: SORT_OPTIONS.map { |option| [ "#{option}:asc", "#{option}:desc" ] }.flatten
       optional :year,
                type: Integer,
                desc: "Filter shows by a specific year"
@@ -34,7 +34,7 @@ class GrapeApi::Shows < GrapeApi::Base
     end
 
     desc "Return a specific Show by date, including Tracks and Tags" do
-      detail "Fetches a specific show by its date, including associated tracks and tags."
+      detail "Fetches a specific Show by its date, including associated tracks and tags"
       success GrapeApi::Entities::Show
       failure [
         [ 400, "Bad Request", GrapeApi::Entities::ApiResponse ],

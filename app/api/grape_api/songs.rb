@@ -2,23 +2,23 @@ class GrapeApi::Songs < GrapeApi::Base
   SORT_OPTIONS = [ "title", "tracks_count" ]
 
   resource :songs do
-    desc "Return a list of songs" do
+    desc "Return a list of Songs" do
       detail \
-        "Fetches a paginated list of songs, with optional filtering " \
-        "by the first character of the title, and sorting by title " \
-        "or number of tracks."
-        success GrapeApi::Entities::Song
-        failure [
-          [ 400, "Bad Request", GrapeApi::Entities::ApiResponse ],
-          [ 404, "Not Found", GrapeApi::Entities::ApiResponse ]
-        ]
+        "Fetches a sortable paginated list of Songs with optional filtering " \
+        "by the first character of the title"
+      success GrapeApi::Entities::Song
+      failure [
+        [ 400, "Bad Request", GrapeApi::Entities::ApiResponse ],
+        [ 404, "Not Found", GrapeApi::Entities::ApiResponse ]
+      ]
     end
     params do
       use :pagination
       optional :sort,
                type: String,
                desc: "Sort by attribute and direction (e.g., 'title:asc')",
-               default: "title:asc"
+               default: "title:asc",
+               values: SORT_OPTIONS.map { |option| [ "#{option}:asc", "#{option}:desc" ] }.flatten
       optional :first_char,
                type: String,
                desc: "Filter songs by the first character of the song title (case-insensitive)"
@@ -28,7 +28,7 @@ class GrapeApi::Songs < GrapeApi::Base
     end
 
     desc "Return a specific Song by slug" do
-      detail "Fetches a specific song by its unique slug."
+      detail "Fetches a specific Song by its unique slug"
       success GrapeApi::Entities::Song
       failure [
         [ 400, "Bad Request", GrapeApi::Entities::ApiResponse ],
