@@ -10,7 +10,7 @@ RSpec.describe "API v2 Auth" do
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
-        expect(json[:token]).to be_present
+        expect(json[:jwt]).to be_present
         expect(json[:username]).to eq(user.username)
         expect(json[:email]).to eq(user.email)
       end

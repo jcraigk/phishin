@@ -2,24 +2,38 @@ require "jwt"
 
 class GrapeApi::Auth < GrapeApi::Base
   resource :auth do
-    desc "User login via email and password"
+    desc "User login via email and password" do
+      detail "Authenticates a user using their email and password and returns a JWT."
+      success GrapeApi::Entities::LoginResponse
+      failure [ [ 401, "Unauthorized - Invalid email or password" ] ]
+    end
     params do
       requires :email, type: String, desc: "User email"
       requires :password, type: String, desc: "User password"
     end
     post :login do
-      user, token = authenticate_user!(params[:email], params[:password])
+      user, jwt = authenticate_user!(params[:email], params[:password])
       status 200
-      { token:, username: user.username, email: user.email }
+      present(
+        { jwt:, username: user.username, email: user.email },
+        with: GrapeApi::Entities::LoginResponse
+      )
     end
 
-    desc "Get currently logged in user"
+    desc "Get currently logged in user" do
+      detail "Fetches the currently authenticated user."
+      success GrapeApi::Entities::User
+      failure [ [ 401, "Unauthorized - Invalid JWT" ] ]
+    end
     get :user do
       authenticate!
       present current_user, with: GrapeApi::Entities::User
     end
 
-    desc "Request password reset email"
+    desc "Request password reset email" do
+      detail "Sends a password reset email to the user if the email exists in the system."
+      success GrapeApi::Entities::ApiResponse
+    end
     params do
       requires :email, type: String, desc: "User email"
     end
@@ -30,7 +44,14 @@ class GrapeApi::Auth < GrapeApi::Base
       { message: "If the email exists, reset instructions have been sent." }
     end
 
-    desc "Reset a user's password via reset token"
+    desc "Reset a user's password via reset token" do
+      detail "Resets the user's password using a token received in the password reset email."
+      success code: 200, message: "Password has been reset successfully"
+      failure [
+        [ 401, "Unauthorized - Invalid reset token" ],
+        [ 422, "Unprocessable Entity - Password reset failed" ]
+      ]
+    end
     params do
       requires :token, type: String, desc: "Reset token from email"
       requires :password, type: String, desc: "New password"
