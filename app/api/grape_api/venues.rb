@@ -3,17 +3,15 @@ class GrapeApi::Venues < GrapeApi::Base
 
   resource :venues do
     desc \
-      "Return a list of venues, " \
-        "optionally filtered by the first character of the venue name, " \
-        "sorted by name or shows_count."
+      "Return a list of venues " \
+      "optionally filtered by the first character of the venue name, " \
+      "sorted by name or shows_count."
     params do
       use :pagination
       optional :sort,
                type: String,
-               desc:
-               "Sort by attribute and direction (e.g., 'name:asc', " \
-                 "'shows_count:desc')",
-              default: "name:asc"
+               desc: "Sort by attribute and direction (e.g., 'name:asc')",
+               default: "name:asc"
       optional :first_char,
                type: String,
                desc: "Filter venues by the first character of the venue name (case-insensitive)"

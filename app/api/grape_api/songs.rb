@@ -3,15 +3,13 @@ class GrapeApi::Songs < GrapeApi::Base
 
   resource :songs do
     desc \
-      "Return a list of songs, optionally filtered by the first character of the song title, " \
-      "sorted by title or tracks_count"
+      "Return a list of songs, optionally filtered by the first character " \
+      "of the song title, sorted by title or tracks_count"
     params do
       use :pagination
       optional :sort,
                type: String,
-               desc:
-               "Sort by attribute and direction (e.g., 'title:asc', " \
-                 "'tracks_count:desc')",
+               desc: "Sort by attribute and direction (e.g., 'title:asc')",
                default: "title:asc"
       optional :first_char,
                type: String,

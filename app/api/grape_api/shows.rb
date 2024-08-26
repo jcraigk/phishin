@@ -4,15 +4,13 @@ class GrapeApi::Shows < GrapeApi::Base
   resource :shows do
     desc \
       "Return a list of shows, \ "
-        "optionally filtered by year, year range, or venue slug, " \
-        "sorted by date, likes_count, or duration."
+      "optionally filtered by year, year range, or venue slug, " \
+      "sorted by date, likes_count, or duration."
     params do
       use :pagination
       optional :sort,
                type: String,
-               desc:
-                "Sort by attribute and direction (e.g., 'date:desc', " \
-                  "'likes_count:desc')",
+               desc: "Sort by attribute and direction (e.g., 'date:desc')",
                default: "date:desc"
       optional :year,
                type: Integer,

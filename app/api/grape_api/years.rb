@@ -3,7 +3,7 @@ class GrapeApi::Years < GrapeApi::Base
   resource :years do
     desc \
       "Return a list of years during which Phish performed live shows, " \
-        "including era designations"
+      "including era designations"
     get do
       present cached_years_data, with: GrapeApi::Entities::Year
     end

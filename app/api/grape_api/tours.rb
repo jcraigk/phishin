@@ -3,15 +3,12 @@ class GrapeApi::Tours < GrapeApi::Base
 
   resource :tours do
     desc \
-      "Return a list of Tours, " \
-        "sorted by name, starts_on, ends_on, or shows_count."
+      "Return a list of Tours sorted by name, starts_on, ends_on, or shows_count."
     params do
       use :pagination
       optional :sort,
                type: String,
-               desc:
-               "Sort by attribute and direction (e.g., 'name:asc', " \
-                 "'starts_on:desc', etc)",
+               desc: "Sort by attribute and direction (e.g., 'starts_on:asc')",
                default: "starts_on:asc"
     end
     get do
