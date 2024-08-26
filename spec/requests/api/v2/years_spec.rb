@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "API::V2::Years", type: :request do
+RSpec.describe "API v2 Years", type: :request do
   describe "GET /api/v2/years" do
     before do
       # Create published shows for different years and eras

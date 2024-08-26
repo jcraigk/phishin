@@ -1,4 +1,4 @@
-class Api::V2::Shows < Grape::API
+class GrapeApi::Shows < Grape::API
   SORT_OPTIONS = [ "date", "likes_count", "duration" ]
 
   resource :shows do
@@ -26,7 +26,7 @@ class Api::V2::Shows < Grape::API
                default: 10
     end
     get do
-      present page_of_shows, with: Api::V2::Entities::Show
+      present page_of_shows, with: GrapeApi::Entities::Show
     end
 
     desc "Return a specific Show by date, including Tracks and Tags"
@@ -34,7 +34,7 @@ class Api::V2::Shows < Grape::API
       requires :date, type: String, desc: "Date of the show"
     end
     get ":date" do
-      present show_by_date, with: Api::V2::Entities::Show, include_tracks: true
+      present show_by_date, with: GrapeApi::Entities::Show, include_tracks: true
     end
   end
 

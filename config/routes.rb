@@ -1,5 +1,3 @@
-require Rails.root.join("app/api/v2/base") # Grape API
-
 Rails.application.routes.draw do
   root to: "eras#index"
 
@@ -99,5 +97,5 @@ Rails.application.routes.draw do
   end
 
   # API v2
-  mount Api::V2::Base => "/api/v2"
+  mount GrapeApi::Base => "/api/v2"
 end

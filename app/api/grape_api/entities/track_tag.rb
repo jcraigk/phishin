@@ -1,4 +1,4 @@
-module Api::V2::Entities
+module GrapeApi::Entities
   class TrackTag < Grape::Entity
     expose(:name) { |obj, _opts| obj.tag.name }
     expose(:priority) { |obj, _opts| obj.tag.priority }

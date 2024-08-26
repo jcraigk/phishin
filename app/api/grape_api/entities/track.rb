@@ -1,6 +1,4 @@
-require_relative "track_tag" # TODO: remove somehow
-
-module Api::V2::Entities
+module GrapeApi::Entities
   class Track < Grape::Entity
     expose :slug
 
@@ -18,7 +16,7 @@ module Api::V2::Entities
     expose :likes_count
     expose(:mp3_url) { |track| track.mp3_url }
     expose(:waveform_image_url) { |track| track.waveform_image_url }
-    expose :track_tags, using: Api::V2::Entities::TrackTag, as: :tags
+    expose :track_tags, using: GrapeApi::Entities::TrackTag, as: :tags
     expose(:song_titles) { |track| track.songs.map(&:title) }
     expose(:song_slugs) { |track| track.songs.map(&:slug) }
     expose :updated_at, format_with: :iso8601

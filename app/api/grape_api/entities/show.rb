@@ -1,7 +1,4 @@
-require_relative "track" # TODO: remove somehow
-require_relative "show_tag" # TODO: remove somehow
-
-module Api::V2::Entities
+module GrapeApi::Entities
   class Show < Grape::Entity
     expose :date, format_with: :iso8601
     expose :duration
@@ -15,12 +12,12 @@ module Api::V2::Entities
     expose :taper_notes
     expose :likes_count
     expose :updated_at, format_with: :iso8601
-    expose :show_tags, using: Api::V2::Entities::ShowTag, as: :tags
+    expose :show_tags, using: GrapeApi::Entities::ShowTag, as: :tags
     expose(
       :tracks,
       if: ->(_obj, opts) { opts[:include_tracks] }
     ) do |obj, opts|
-      Api::V2::Entities::Track.represent \
+      GrapeApi::Entities::Track.represent \
         obj.tracks.sort_by(&:position),
         show_details: true
     end
