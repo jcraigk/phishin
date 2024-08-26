@@ -15,14 +15,14 @@ class GrapeApi::Years < GrapeApi::Base
         periods.map do |period|
           {
             period:,
-            show_count: show_count_for(period),
+            shows_count: shows_count_for(period),
             era:
           }
         end
       end.flatten
     end
 
-    def show_count_for(period)
+    def shows_count_for(period)
       shows = Show.published
       return shows.between_years(*period.split("-")).count if period.include?("-")
       shows.during_year(period).count

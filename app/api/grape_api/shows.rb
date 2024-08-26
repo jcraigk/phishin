@@ -6,7 +6,13 @@ class GrapeApi::Shows < GrapeApi::Base
       "Return a list of shows, optionally filtered by year, year range, or venue slug, " \
         "sorted in descending chronological order"
     params do
-      use :sort_and_pagination
+      use :pagination
+      optional :sort,
+               type: String,
+               desc:
+                "Sort by attribute and direction (e.g., 'date:desc', " \
+                  "'likes_count:desc', 'duration:asc')",
+               default: "date:desc"
       optional :year,
                type: Integer,
                desc: "Filter shows by a specific year"

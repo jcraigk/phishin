@@ -1,13 +1,7 @@
 module GrapeApi::Helpers::SharedParams
   extend Grape::API::Helpers
 
-  SORT_OPTIONS = [ "date", "likes_count", "duration" ]
-
-  params :sort_and_pagination do
-    optional :sort,
-            type: String,
-            desc: "Sort by attribute and direction (e.g., 'date:desc', 'likes_count:desc')",
-            default: "date:desc"
+  params :pagination do
     optional :page,
             type: Integer,
             desc: "Page number for pagination",

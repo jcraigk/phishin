@@ -20,7 +20,7 @@ RSpec.describe "API v2 Years", type: :request do
       first_period = json.find { |period| period["period"] == "1983-1987" }
       expect(first_period).to include(
         "period" => "1983-1987",
-        "show_count" => 2,
+        "shows_count" => 2,
         "era" => "1.0"
       )
 
@@ -28,7 +28,7 @@ RSpec.describe "API v2 Years", type: :request do
       year_2003 = json.find { |period| period["period"] == "2003" }
       expect(year_2003).to include(
         "period" => "2003",
-        "show_count" => 1,
+        "shows_count" => 1,
         "era" => "2.0"
       )
     end

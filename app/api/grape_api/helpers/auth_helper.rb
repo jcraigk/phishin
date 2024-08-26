@@ -4,6 +4,10 @@ module GrapeApi::Helpers::AuthHelper
     error!("Unauthorized: Invalid API key", 401) unless valid_api_key?
   end
 
+  def swagger_endpoint?
+    request.path.include?("/swagger_doc")
+  end
+
   private
 
   def api_key
