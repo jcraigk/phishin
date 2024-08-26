@@ -1,4 +1,4 @@
-class GrapeApi::Shows < Grape::API
+class GrapeApi::Shows < GrapeApi::Base
   SORT_OPTIONS = [ "date", "likes_count", "duration" ]
 
   resource :shows do
@@ -6,6 +6,7 @@ class GrapeApi::Shows < Grape::API
       "Return a list of shows, optionally filtered by year, year range, or venue slug, " \
         "sorted in descending chronological order"
     params do
+      use :sort_and_pagination
       optional :year,
                type: Integer,
                desc: "Filter shows by a specific year"
@@ -15,18 +16,6 @@ class GrapeApi::Shows < Grape::API
       optional :venue_slug,
                type: String,
                desc: "Filter shows by the slug of the venue"
-      optional :sort,
-               type: String,
-               desc: "Sort by attribute and direction (e.g., 'date:desc', 'likes_count:desc')",
-               default: "date:desc"
-      optional :page,
-               type: Integer,
-               desc: "Page number for pagination",
-               default: 1
-      optional :per_page,
-               type: Integer,
-               desc: "Number of items per page for pagination",
-               default: 10
     end
     get do
       present page_of_shows, with: GrapeApi::Entities::Show

@@ -1,4 +1,4 @@
-class GrapeApi::Years < Grape::API
+class GrapeApi::Years < GrapeApi::Base
   desc "Years during which Phish performed live shows"
   resource :years do
     desc \

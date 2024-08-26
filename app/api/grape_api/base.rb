@@ -2,14 +2,21 @@ module GrapeApi
   class Base < Grape::API
     format :json
 
-    helpers ApiKeyHelper
-    before do
-      authenticate_api_key! unless swagger_endpoint?
-    end
+    # Helpers
+    helpers GrapeApi::Helpers::SharedParams
+    helpers GrapeApi::Helpers::AuthHelper
 
+    # Endpoints
+    before { authenticate_api_key! unless swagger_endpoint? }
     mount GrapeApi::Years
     mount GrapeApi::Shows
 
+    # Swagger docs
+    helpers do
+      def swagger_endpoint?
+        request.path.include?("/swagger_doc")
+      end
+    end
     add_swagger_documentation \
       info: {
         title: "#{App.app_name} API v2",
@@ -43,11 +50,5 @@ module GrapeApi
           description: "Live shows performed by Phish, including metadata and links to MP3 audio."
         }
       ]
-
-    helpers do
-      def swagger_endpoint?
-        request.path.include?("/swagger_doc")
-      end
-    end
   end
 end
