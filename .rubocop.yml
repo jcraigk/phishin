@@ -61,6 +61,7 @@ RSpec/ImplicitSubject:
 RSpec/MultipleExpectations:
   Exclude:
     - spec/features/**/*
+    - spec/requests/**/*
   Max: 4
 RSpec/NoExpectationExample: # We use expect_content helper method
   Exclude:

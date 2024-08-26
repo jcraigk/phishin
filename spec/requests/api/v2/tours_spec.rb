@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "API v2 Tours", type: :request do
+RSpec.describe "API v2 Tours" do
   let!(:tour1) do
     create(
       :tour,

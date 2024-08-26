@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "API v2 Songs", type: :request do
+RSpec.describe "API v2 Songs" do
   let!(:songs) do
     [
       create(

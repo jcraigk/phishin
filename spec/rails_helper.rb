@@ -20,7 +20,7 @@ RSpec.configure do |config|
   config.order = 'random'
 
   config.include ActiveSupport::Testing::TimeHelpers
-  config.include ApiHelper, type: :request
+  config.include ApiHelper
   config.include FeatureHelpers
 
   config.after do

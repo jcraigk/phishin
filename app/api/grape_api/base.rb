@@ -8,8 +8,10 @@ class GrapeApi::Base < Grape::API
 
   # Endpoints
   before { authenticate_api_key! unless swagger_endpoint? }
+  mount GrapeApi::Search
   mount GrapeApi::Shows
   mount GrapeApi::Songs
+  mount GrapeApi::Tags
   mount GrapeApi::Tours
   mount GrapeApi::Venues
   mount GrapeApi::Years

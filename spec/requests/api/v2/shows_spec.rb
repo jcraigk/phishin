@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "API v2 Shows", type: :request do
+RSpec.describe "API v2 Shows" do
   let!(:venue) do
     create(
       :venue,
