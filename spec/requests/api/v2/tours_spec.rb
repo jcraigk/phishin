@@ -60,7 +60,7 @@ RSpec.describe "API v2 Tours" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      sorted_tours = [tour2, tour1, tour3].sort_by(&:shows_count)
+      sorted_tours = [ tour2, tour1, tour3 ].sort_by(&:shows_count)
       expected = GrapeApi::Entities::Tour.represent(sorted_tours).as_json
 
       expect(json).to eq(expected)

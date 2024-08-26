@@ -4,7 +4,7 @@ module GrapeApi::Helpers::SharedHelpers
   def apply_sorting(relation, sort_options)
     attribute, direction = params[:sort].split(":")
     direction ||= "asc"
-    if sort_options.include?(attribute) && ["asc", "desc"].include?(direction)
+    if sort_options.include?(attribute) && [ "asc", "desc" ].include?(direction)
       relation.order("#{attribute} #{direction}")
     else
       error!("Invalid sort parameter", 400)

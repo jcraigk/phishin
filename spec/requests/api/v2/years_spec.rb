@@ -3,7 +3,6 @@ require "rails_helper"
 RSpec.describe "API v2 Years" do
   describe "GET /api/v2/years" do
     before do
-      # Create published shows for different years and eras
       create(:show, date: "1987-05-01", published: true)
       create(:show, date: "1986-07-15", published: true)
       create(:show, date: "2003-12-01", published: true)
