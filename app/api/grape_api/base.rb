@@ -55,11 +55,10 @@ class GrapeApi::Base < Grape::API
       }
     },
     security: [ { api_key: [] } ],
-    models: [ GrapeApi::Entities::Playlist ],
     tags: [
       {
         name: "announcements",
-        description: "Announcements about new content and other updates"
+        description: "Announcements about new content and site updates"
       },
       {
         name: "auth",
@@ -71,31 +70,31 @@ class GrapeApi::Base < Grape::API
       },
       {
         name: "search",
-        description: "Search across Shows, Songs, Venues, Tours, and Tags"
+        description: "Search across shows, songs, venues, tours, and tags"
       },
       {
         name: "songs",
-        description: "Songs that Phish have played, including tracks of actual performances"
+        description: "Songs that Phish have played, including audio tracks of live performances"
       },
       {
         name: "tags",
-        description: "Tags conveying metadata on Shows and Tracks"
+        description: "Tags conveying metadata about shows and audio tracks"
       },
       {
         name: "tours",
-        description: "Tours that Phish have embarked on, including associated Shows"
+        description: "Tours that Phish have embarked on, including associated shows"
       },
       {
         name: "venues",
-        description: "Venues that Phish have played on, including associated Shows"
+        description: "Venues that Phish have played at, including associated shows"
       },
       {
         name: "years",
-        description: "Years and eras during which Phish performed live shows"
+        description: "Years and eras during which Phish have performed live shows"
       },
       {
         name: "shows",
-        description: "Live shows performed by Phish, including metadata and links to MP3 audio"
+        description: "Live shows performed by Phish, including audio tracks"
       }
     ]
 end
