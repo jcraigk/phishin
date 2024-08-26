@@ -3,8 +3,9 @@ class GrapeApi::Venues < GrapeApi::Base
 
   resource :venues do
     desc \
-      "Return a list of venues, optionally filtered by the first character of the venue name, " \
-      "sorted in ascending order by name or by shows count"
+      "Return a list of venues, " \
+        "optionally filtered by the first character of the venue name, " \
+        "sorted by name or shows_count."
     params do
       use :pagination
       optional :sort,
@@ -21,7 +22,7 @@ class GrapeApi::Venues < GrapeApi::Base
       present page_of_venues, with: GrapeApi::Entities::Venue
     end
 
-    desc "Return a specific Venue by slug, including details"
+    desc "Return a specific Venue by slug"
     params do
       requires :slug, type: String, desc: "Slug of the venue"
     end
@@ -35,7 +36,7 @@ class GrapeApi::Venues < GrapeApi::Base
       Rails.cache.fetch("api/v2/venues?#{params.to_query}") do
         Venue.unscoped
              .then { |v| apply_filtering(v) }
-             .then { |v| apply_sorting(v) }
+             .then { |v| apply_sorting(v, SORT_OPTIONS) }
              .paginate(page: params[:page], per_page: params[:per_page])
       end
     end
@@ -51,16 +52,6 @@ class GrapeApi::Venues < GrapeApi::Base
         venues = venues.name_starting_with(params[:first_char])
       end
       venues
-    end
-
-    def apply_sorting(venues)
-      attribute, direction = params[:sort].split(":")
-      direction ||= "asc"
-      if SORT_OPTIONS.include?(attribute) && [ "asc", "desc" ].include?(direction)
-        venues.order("#{attribute} #{direction}")
-      else
-        error!("Invalid sort parameter", 400)
-      end
     end
   end
 end

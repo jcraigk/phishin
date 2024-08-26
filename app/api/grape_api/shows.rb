@@ -3,15 +3,16 @@ class GrapeApi::Shows < GrapeApi::Base
 
   resource :shows do
     desc \
-      "Return a list of shows, optionally filtered by year, year range, or venue slug, " \
-        "sorted in descending chronological order"
+      "Return a list of shows, \ "
+        "optionally filtered by year, year range, or venue slug, " \
+        "sorted by date, likes_count, or duration."
     params do
       use :pagination
       optional :sort,
                type: String,
                desc:
                 "Sort by attribute and direction (e.g., 'date:desc', " \
-                  "'likes_count:desc', 'duration:asc')",
+                  "'likes_count:desc')",
                default: "date:desc"
       optional :year,
                type: Integer,
@@ -42,7 +43,7 @@ class GrapeApi::Shows < GrapeApi::Base
         Show.published
             .includes(:venue, show_tags: :tag)
             .then { |s| apply_filtering(s) }
-            .then { |s| apply_sorting(s) }
+            .then { |s| apply_sorting(s, SORT_OPTIONS) }
             .paginate(page: params[:page], per_page: params[:per_page])
       end
     end
@@ -68,16 +69,6 @@ class GrapeApi::Shows < GrapeApi::Base
       end
 
       shows
-    end
-
-    def apply_sorting(shows)
-      attribute, direction = params[:sort].split(":")
-      direction ||= "desc"
-      if SORT_OPTIONS.include?(attribute) && [ "asc", "desc" ].include?(direction)
-        shows.order("#{attribute} #{direction}")
-      else
-        error!("Invalid sort parameter", 400)
-      end
     end
   end
 end

@@ -4,12 +4,14 @@ class GrapeApi::Base < Grape::API
   # Helpers
   helpers GrapeApi::Helpers::SharedParams
   helpers GrapeApi::Helpers::AuthHelper
+  helpers GrapeApi::Helpers::SharedHelpers
 
   # Endpoints
   before { authenticate_api_key! unless swagger_endpoint? }
-  mount GrapeApi::Years
   mount GrapeApi::Shows
+  mount GrapeApi::Songs
   mount GrapeApi::Venues
+  mount GrapeApi::Years
 
   # Swagger docs
   add_swagger_documentation \
