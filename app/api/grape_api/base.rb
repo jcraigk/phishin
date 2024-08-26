@@ -44,8 +44,36 @@ class GrapeApi::Base < Grape::API
     security: [ { api_key: [] } ],
     tags: [
       {
+        name: "announcements",
+        description: "Announcements about new content and other updates."
+      },
+      {
+        name: "playlists",
+        description: "Playlists created by users."
+      },
+      {
+        name: "search",
+        description: "Search across Shows, Songs, Venues, Tours, and Tags."
+      },
+      {
+        name: "songs",
+        description: "Songs that Phish have played, including tracks of actual performances."
+      },
+      {
+        name: "tags",
+        description: "Tags conveying metadata on Shows and Tracks."
+      },
+      {
+        name: "tours",
+        description: "Tours that Phish have embarked on, including associated Shows."
+      },
+      {
+        name: "venues",
+        description: "Venues that Phish have played on, including associated Shows."
+      },
+      {
         name: "years",
-        description: "Years during which Phish performed live shows."
+        description: "Years and eras during which Phish performed live shows."
       },
       {
         name: "shows",
