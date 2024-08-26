@@ -29,17 +29,17 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
       type: "Array",
       desc: "The tracks in the playlist"
     } do |playlist|
-    playlist.playlist_tracks.order(:position).map(&:track)
-  end
+      playlist.playlist_tracks.order(:position).map(&:track)
+    end
 
   expose \
-    :track_count,
+    :tracks_count,
     documentation: {
       type: "Integer",
       desc: "The number of tracks in the playlist"
     } do |playlist|
-    playlist.playlist_tracks.size
-  end
+      playlist.playlist_tracks.size
+    end
 
   expose \
     :updated_at,

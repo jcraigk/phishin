@@ -21,6 +21,9 @@ class ApiV2::Playlists < ApiV2::Base
     params do
       requires :name, type: String, desc: "Name of the playlist"
       requires :slug, type: String, desc: "Slug of the playlist"
+      optional :track_ids,
+               type: Array[Integer],
+               desc: "Array of track IDs to associate with the playlist"
     end
     post do
       authenticate!
@@ -32,11 +35,13 @@ class ApiV2::Playlists < ApiV2::Base
       end
 
       playlist = Playlist.create!(user: current_user, name: params[:name], slug: params[:slug])
+      update_playlist_tracks(playlist, params[:track_ids])
+
       present playlist, with: ApiV2::Entities::Playlist
     end
 
     desc "Update an existing playlist" do
-      detail "Updates the name of an existing playlist owned by the authenticated user"
+      detail "Updates an existing playlist for an authenticated user"
       success ApiV2::Entities::Playlist
       failure [
         [ 404, "Not Found", ApiV2::Entities::ApiResponse ],
@@ -46,11 +51,16 @@ class ApiV2::Playlists < ApiV2::Base
     params do
       requires :slug, type: String, desc: "Slug of the playlist"
       requires :name, type: String, desc: "Updated name of the playlist"
+      optional :track_ids,
+               type: Array[Integer],
+               desc: "Array of track IDs to update the playlist with"
     end
     put ":slug" do
       authenticate!
       playlist = Playlist.find_by!(user: current_user, slug: params[:slug])
       playlist.update!(name: params[:name])
+      update_playlist_tracks(playlist, params[:track_ids])
+
       present playlist, with: ApiV2::Entities::Playlist
     end
 
@@ -69,6 +79,17 @@ class ApiV2::Playlists < ApiV2::Base
       authenticate!
       current_user.playlists.find_by!(slug: params[:slug]).destroy!
       status 204
+    end
+  end
+
+  helpers do
+    def update_playlist_tracks(playlist, track_ids)
+      return unless track_ids
+
+      playlist.playlist_tracks.destroy_all
+      track_ids.each_with_index do |track_id, index|
+        playlist.playlist_tracks.create!(track_id:, position: index + 1)
+      end
     end
   end
 end

@@ -7,6 +7,7 @@ RSpec.describe "API v2 Playlists" do
   let!(:playlist) { create(:playlist, slug: "summer-jams", name: "Summer Jams", user:) }
   let!(:track1) { create(:track) }
   let!(:track2) { create(:track) }
+  let!(:track3) { create(:track) }
 
   before do
     playlist.playlist_tracks.create!(track: track1, position: 1)
@@ -28,14 +29,20 @@ RSpec.describe "API v2 Playlists" do
 
   describe "POST /playlists" do
     context "when creating a new playlist" do
-      it "creates the playlist and returns it" do
-        post_api_authed(user, "/playlists", params: { name: "Road Trip", slug: "road-trip" })
+      it "creates the playlist and returns it with associated tracks" do
+        post_api_authed(
+          user,
+          "/playlists",
+          params: { name: "Road Trip", slug: "road-trip", track_ids: [ track1.id, track2.id ] }
+        )
 
         expect(response).to have_http_status(:created)
         json = JSON.parse(response.body, symbolize_names: true)
 
         expect(json[:name]).to eq("Road Trip")
         expect(json[:slug]).to eq("road-trip")
+        expect(json[:tracks].size).to eq(2)
+        expect(json[:tracks].map { |t| t[:id] }).to match_array([ track1.id, track2.id ])
       end
 
       it "returns a 422 error if the playlist is invalid" do
@@ -51,14 +58,20 @@ RSpec.describe "API v2 Playlists" do
 
   describe "PUT /playlists/:slug" do
     context "when updating an existing playlist" do
-      it "updates the playlist name and returns it" do
-        put_api_authed(user, "/playlists/#{playlist.slug}", params: { name: "Winter Jams" })
+      it "updates the playlist name and associated tracks" do
+        put_api_authed(
+          user,
+          "/playlists/#{playlist.slug}",
+          params: { name: "Winter Jams", track_ids: [ track2.id, track3.id ] }
+        )
 
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body, symbolize_names: true)
 
         expect(json[:name]).to eq("Winter Jams")
         expect(json[:slug]).to eq("summer-jams") # Slug remains unchanged
+        expect(json[:tracks].size).to eq(2)
+        expect(json[:tracks].map { |t| t[:id] }).to match_array([ track2.id, track3.id ])
       end
 
       it "returns a 422 error if the update is invalid" do
