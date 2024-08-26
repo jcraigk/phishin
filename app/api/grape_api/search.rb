@@ -1,6 +1,6 @@
 class GrapeApi::Search < GrapeApi::Base
   resource :search do
-    desc "Search across shows, songs, venues, tours, and tags"
+    desc "Search across Shows, Songs, Venues, Tours, and Tags"
     params do
       requires :term, type: String, desc: "Search term"
     end
