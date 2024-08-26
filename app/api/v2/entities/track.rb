@@ -3,9 +3,13 @@ require_relative "track_tag" # TODO: remove somehow
 module Api::V2::Entities
   class Track < Grape::Entity
     expose :slug
-    expose(:show_date) { |track| track.show.date.iso8601 }
-    expose(:venue_name) { |track| track.show.venue_name }
-    expose(:venue_location) { |track| track.show.venue.location }
+
+    with_options if: ->(_obj, opts) { opts[:show_details] } do
+      expose(:show_date) { |obj| obj.show.date.iso8601 }
+      expose(:venue_name) { |obj| obj.show.venue.name }
+      expose(:venue_location) { |obj| obj.show.venue.location }
+    end
+
     expose :title
     expose :position
     expose :duration

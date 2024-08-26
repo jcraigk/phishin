@@ -16,9 +16,12 @@ module Api::V2::Entities
     expose :likes_count
     expose :updated_at, format_with: :iso8601
     expose :show_tags, using: Api::V2::Entities::ShowTag, as: :tags
-    expose :tracks,
-           using: Api::V2::Entities::Track,
-           if: ->(_obj, opts) { opts[:include_tracks] }
+    expose(
+      :tracks,
+      if: ->(_obj, opts) { opts[:include_tracks] }
+    ) do |obj, opts|
+      Api::V2::Entities::Track.represent obj.tracks, show_details: true
+    end
 
     private
 

@@ -60,7 +60,7 @@ RSpec.describe "API::V2::Shows", type: :request do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body)
-      expect(json.map { |s| s["likes_count"] }).to eq([5, 10, 20])
+      expect(json.map { |s| s["likes_count"] }).to eq([ 5, 10, 20 ])
     end
 
     it "returns a list of shows sorted by duration in descending order" do
@@ -68,12 +68,49 @@ RSpec.describe "API::V2::Shows", type: :request do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body)
-      expect(json.map { |s| s["duration"] }).to eq([200, 150, 120])
+      expect(json.map { |s| s["duration"] }).to eq([ 200, 150, 120 ])
     end
 
     it "returns a 400 error for an invalid sort parameter" do
       get_authorized "/api/v2/shows", params: { sort: "invalid_param:asc", page: 1, per_page: 3 }
       expect(response).to have_http_status(:bad_request)
+    end
+
+    it "filters shows by a specific year" do
+      get_authorized "/api/v2/shows", params: { year: 2022 }
+      expect(response).to have_http_status(:ok)
+
+      json = JSON.parse(response.body, symbolize_names: true)
+      expected = Api::V2::Entities::Show.represent(
+        shows.select { |show| show.date.year == 2022 },
+        include_tracks: false
+      ).as_json
+      expect(json).to eq(expected)
+    end
+
+    it "filters shows by a year range" do
+      get_authorized "/api/v2/shows", params: { year_range: "2021-2023" }
+      expect(response).to have_http_status(:ok)
+
+      json = JSON.parse(response.body, symbolize_names: true)
+      expected = Api::V2::Entities::Show.represent(
+        shows.select { |show| show.date.year.between?(2021, 2023) },
+        include_tracks: false
+      ).as_json
+
+      expected_sorted = expected.sort_by { |show| show[:date] }
+      json_sorted = json.sort_by { |show| show[:date] }
+      expect(json_sorted).to eq(expected_sorted)
+    end
+
+    it "gives precedence to the year over year_range when both are provided" do
+      get_authorized "/api/v2/shows", params: { year: 2022, year_range: "2021-2023" }
+      expect(response).to have_http_status(:ok)
+
+      json = JSON.parse(response.body, symbolize_names: true)
+      expected = Api::V2::Entities::Show.represent(shows.select { |show|
+ show.date.year == 2022 }, include_tracks: false).as_json
+      expect(json).to eq(expected)
     end
   end
 
@@ -92,8 +129,8 @@ RSpec.describe "API::V2::Shows", type: :request do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expected_json = Api::V2::Entities::Show.represent(show, include_tracks: true).as_json
-      expect(json).to eq(expected_json)
+      expected = Api::V2::Entities::Show.represent(show, include_tracks: true).as_json
+      expect(json).to eq(expected)
     end
 
     it "returns a 404 if the show does not exist" do
