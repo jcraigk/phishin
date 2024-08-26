@@ -34,9 +34,9 @@ RSpec.describe "API v2 Tours" do
     )
   end
 
-  describe "GET /api/v2/tours" do
+  describe "GET /tours" do
     it "returns the first page of tours sorted by starts_on in ascending order by default" do
-      get_authorized "/api/v2/tours", params: { page: 1, per_page: 2 }
+      get_authorized "/tours", params: { page: 1, per_page: 2 }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -45,7 +45,7 @@ RSpec.describe "API v2 Tours" do
     end
 
     it "returns the tours sorted by name in descending order" do
-      get_authorized "/api/v2/tours", params: { sort: "name:desc", page: 1, per_page: 3 }
+      get_authorized "/tours", params: { sort: "name:desc", page: 1, per_page: 3 }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -56,7 +56,7 @@ RSpec.describe "API v2 Tours" do
     end
 
     it "returns the tours sorted by shows_count in ascending order" do
-      get_authorized "/api/v2/tours", params: { sort: "shows_count:asc", page: 1, per_page: 3 }
+      get_authorized "/tours", params: { sort: "shows_count:asc", page: 1, per_page: 3 }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -67,12 +67,12 @@ RSpec.describe "API v2 Tours" do
     end
 
     it "returns a 400 error for an invalid sort parameter" do
-      get_authorized "/api/v2/tours", params: { sort: "invalid_param:asc", page: 1, per_page: 3 }
+      get_authorized "/tours", params: { sort: "invalid_param:asc", page: 1, per_page: 3 }
       expect(response).to have_http_status(:bad_request)
     end
   end
 
-  describe "GET /api/v2/tours/:slug" do
+  describe "GET /tours/:slug" do
     let!(:show1) do
       create(
         :show,
@@ -90,7 +90,7 @@ RSpec.describe "API v2 Tours" do
     end
 
     it "returns the specified tour by slug, including shows" do
-      get_authorized "/api/v2/tours/#{tour1.slug}"
+      get_authorized "/tours/#{tour1.slug}"
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -99,7 +99,7 @@ RSpec.describe "API v2 Tours" do
     end
 
     it "returns a 404 if the tour does not exist" do
-      get_authorized "/api/v2/tours/non-existent-slug"
+      get_authorized "/tours/non-existent-slug"
       expect(response).to have_http_status(:not_found)
     end
   end

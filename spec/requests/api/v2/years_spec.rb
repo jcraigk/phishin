@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "API v2 Years" do
-  describe "GET /api/v2/years" do
+  describe "GET /years" do
     before do
       create(:show, date: "1987-05-01", published: true)
       create(:show, date: "1986-07-15", published: true)
@@ -9,7 +9,7 @@ RSpec.describe "API v2 Years" do
     end
 
     it "returns a list of years with show counts and eras" do
-      get_authorized "/api/v2/years"
+      get_authorized "/years"
 
       expect(response).to have_http_status(:ok)
 

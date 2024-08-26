@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "API v2 Tags", type: :request do
+RSpec.describe "API Tags" do
   let!(:tags) do
     [
       create(:tag, name: "Classic", slug: "classic"),
@@ -10,7 +10,7 @@ RSpec.describe "API v2 Tags", type: :request do
 
   describe "GET /api/v2/tags" do
     it "returns a list of all tags" do
-      get_authorized "/api/v2/tags"
+      get_authorized "/tags"
 
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body, symbolize_names: true)

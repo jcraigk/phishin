@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "API v2 Playlists", type: :request do
+RSpec.describe "API v2 Playlists" do
   let!(:playlist) do
     create(:playlist, slug: "summer-jams", name: "Summer Jams")
   end
@@ -12,9 +12,9 @@ RSpec.describe "API v2 Playlists", type: :request do
     playlist.playlist_tracks.create!(track: track2, position: 2)
   end
 
-  describe "GET /api/v2/playlists/:slug" do
+  describe "GET /playlists/:slug" do
     it "returns the specified playlist by slug" do
-      get_authorized "/api/v2/playlists/#{playlist.slug}"
+      get_authorized "/playlists/#{playlist.slug}"
 
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body, symbolize_names: true)

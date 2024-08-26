@@ -19,10 +19,10 @@ RSpec.describe "API v2 Search" do
   let!(:show_tag) { create(:show_tag, show:, tag:) }
   let!(:track_tag) { create(:track_tag, track: create(:track, show:), tag:) }
 
-  describe "GET /api/v2/search" do
+  describe "GET /search" do
     context "when searching by term" do
       it "returns search results" do
-        get_authorized "/api/v2/search", params: { term: "Madison" }
+        get_authorized "/search", params: { term: "Madison" }
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
@@ -30,7 +30,7 @@ RSpec.describe "API v2 Search" do
       end
 
       it "returns shows by exact date" do
-        get_authorized "/api/v2/search", params: { term: "2022-01-01" }
+        get_authorized "/search", params: { term: "2022-01-01" }
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
@@ -38,7 +38,7 @@ RSpec.describe "API v2 Search" do
       end
 
       it "returns songs matching the term" do
-        get_authorized "/api/v2/search", params: { term: "Sample Song" }
+        get_authorized "/search", params: { term: "Sample Song" }
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
@@ -46,7 +46,7 @@ RSpec.describe "API v2 Search" do
       end
 
       it "returns tours matching the term" do
-        get_authorized "/api/v2/search", params: { term: "Winter Tour" }
+        get_authorized "/search", params: { term: "Winter Tour" }
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
@@ -54,7 +54,7 @@ RSpec.describe "API v2 Search" do
       end
 
       it "returns empty arrays for no matches" do
-        get_authorized "/api/v2/search", params: { term: "NonExistent" }
+        get_authorized "/search", params: { term: "NonExistent" }
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)

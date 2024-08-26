@@ -15,7 +15,7 @@ RSpec.describe "API v2 Shows" do
   end
   let!(:tag) { create(:tag, name: "Classic", priority: 1) }
 
-  describe "GET /api/v2/shows" do
+  describe "GET /shows" do
     let!(:shows) do
       [
         create(:show, date: "2022-01-01", likes_count: 10, duration: 120, venue:),
@@ -36,7 +36,7 @@ RSpec.describe "API v2 Shows" do
     end
 
     it "returns the first page of shows sorted by date in descending order by default" do
-      get_authorized "/api/v2/shows", params: { page: 1, per_page: 2 }
+      get_authorized "/shows", params: { page: 1, per_page: 2 }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -46,7 +46,7 @@ RSpec.describe "API v2 Shows" do
     end
 
     it "returns the second page of shows sorted by date in descending order" do
-      get_authorized "/api/v2/shows", params: { page: 2, per_page: 2 }
+      get_authorized "/shows", params: { page: 2, per_page: 2 }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body)
@@ -57,7 +57,7 @@ RSpec.describe "API v2 Shows" do
     end
 
     it "returns a list of shows sorted by likes_count in ascending order" do
-      get_authorized "/api/v2/shows", params: { sort: "likes_count:asc", page: 1, per_page: 3 }
+      get_authorized "/shows", params: { sort: "likes_count:asc", page: 1, per_page: 3 }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body)
@@ -65,7 +65,7 @@ RSpec.describe "API v2 Shows" do
     end
 
     it "returns a list of shows sorted by duration in descending order" do
-      get_authorized "/api/v2/shows", params: { sort: "duration:desc", page: 1, per_page: 3 }
+      get_authorized "/shows", params: { sort: "duration:desc", page: 1, per_page: 3 }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body)
@@ -73,12 +73,12 @@ RSpec.describe "API v2 Shows" do
     end
 
     it "returns a 400 error for an invalid sort parameter" do
-      get_authorized "/api/v2/shows", params: { sort: "invalid_param:asc", page: 1, per_page: 3 }
+      get_authorized "/shows", params: { sort: "invalid_param:asc", page: 1, per_page: 3 }
       expect(response).to have_http_status(:bad_request)
     end
 
     it "filters shows by a specific year" do
-      get_authorized "/api/v2/shows", params: { year: 2022 }
+      get_authorized "/shows", params: { year: 2022 }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -90,7 +90,7 @@ RSpec.describe "API v2 Shows" do
     end
 
     it "filters shows by a year range" do
-      get_authorized "/api/v2/shows", params: { year_range: "2021-2023" }
+      get_authorized "/shows", params: { year_range: "2021-2023" }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -105,7 +105,7 @@ RSpec.describe "API v2 Shows" do
     end
 
     it "gives precedence to the year over year_range when both are provided" do
-      get_authorized "/api/v2/shows", params: { year: 2022, year_range: "2021-2023" }
+      get_authorized "/shows", params: { year: 2022, year_range: "2021-2023" }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -117,7 +117,7 @@ RSpec.describe "API v2 Shows" do
     end
 
     it "filters shows by venue_slug" do
-      get_authorized "/api/v2/shows", params: { venue_slug: "madison-square-garden" }
+      get_authorized "/shows", params: { venue_slug: "madison-square-garden" }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -130,7 +130,7 @@ RSpec.describe "API v2 Shows" do
     end
   end
 
-  describe "GET /api/v2/shows/:date" do
+  describe "GET /shows/:date" do
     let!(:show) { create(:show, date: "2022-01-01", venue:) }
     let!(:show_tag) { create(:show_tag, show:, tag:, notes: "A classic show") }
     let!(:tracks) do
@@ -141,7 +141,7 @@ RSpec.describe "API v2 Shows" do
     end
 
     it "returns the specified show with venue, tags, and tracks" do
-      get_authorized "/api/v2/shows/#{show.date}"
+      get_authorized "/shows/#{show.date}"
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -150,7 +150,7 @@ RSpec.describe "API v2 Shows" do
     end
 
     it "returns a 404 if the show does not exist" do
-      get_authorized "/api/v2/shows/1930-01-01"
+      get_authorized "/shows/1930-01-01"
       expect(response).to have_http_status(:not_found)
     end
   end

@@ -4,15 +4,15 @@ module ApiHelper
     { 'Authorization' => "Bearer #{api_key.key}" }
   end
 
-  def get_authorized(path, params: {}, headers: {})
+  def get_authorized(path, params: {}, headers: {}, version: 2)
     api_key = ApiKey.create!(name: "Test Key", email: "test@example.com")
     headers["Authorization"] = "Bearer #{api_key.key}"
-    get path, params:, headers:
+    get "/api/v#{version}#{path}", params:, headers:
   end
 
-  def post_authorized(path, params: {}, headers: {})
+  def post_authorized(path, params: {}, headers: {}, version: 2)
     api_key = ApiKey.create!(name: "Test Key", email: "test@example.com")
     headers["Authorization"] = "Bearer #{api_key.key}"
-    post path, params:, headers:
+    post "/api/v#{version}#{path}", params:, headers:
   end
 end

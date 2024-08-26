@@ -9,7 +9,7 @@ RSpec.describe "API v2 Announcements" do
 
   describe "GET /api/v2/announcements" do
     it "returns the last 100 announcements ordered by created_at desc" do
-      get_authorized "/api/v2/announcements"
+      get_authorized "/announcements"
 
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body, symbolize_names: true)

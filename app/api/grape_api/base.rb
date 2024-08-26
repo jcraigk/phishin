@@ -9,6 +9,7 @@ class GrapeApi::Base < Grape::API
   # Endpoints
   before { authenticate_api_key! unless swagger_endpoint? }
   mount GrapeApi::Announcements
+  mount GrapeApi::Auth
   mount GrapeApi::Playlists
   mount GrapeApi::Search
   mount GrapeApi::Shows
@@ -46,6 +47,14 @@ class GrapeApi::Base < Grape::API
       {
         name: "announcements",
         description: "Announcements about new content and other updates."
+      },
+      {
+        name: "auth",
+        description: "Manage user authentication including registration and login."
+      },
+      {
+        name: "password_resets",
+        description: "Reset a user's password via email."
       },
       {
         name: "playlists",

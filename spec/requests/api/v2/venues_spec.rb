@@ -39,9 +39,9 @@ RSpec.describe "API v2 Venues" do
     ]
   end
 
-  describe "GET /api/v2/venues" do
+  describe "GET /venues" do
     it "returns the first page of venues sorted by name in ascending order by default" do
-      get_authorized "/api/v2/venues", params: { page: 1, per_page: 2 }
+      get_authorized "/venues", params: { page: 1, per_page: 2 }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -51,7 +51,7 @@ RSpec.describe "API v2 Venues" do
     end
 
     it "returns venues sorted by shows_count in descending order" do
-      get_authorized "/api/v2/venues", params: { sort: "shows_count:desc", page: 1, per_page: 3 }
+      get_authorized "/venues", params: { sort: "shows_count:desc", page: 1, per_page: 3 }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body)
@@ -60,7 +60,7 @@ RSpec.describe "API v2 Venues" do
     end
 
     it "filters venues by the first character of the name" do
-      get_authorized "/api/v2/venues", params: { first_char: "M" }
+      get_authorized "/venues", params: { first_char: "M" }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -71,11 +71,11 @@ RSpec.describe "API v2 Venues" do
     end
   end
 
-  describe "GET /api/v2/venues/:slug" do
+  describe "GET /venues/:slug" do
     let!(:venue) { venues.first }
 
     it "returns the specified venue by slug" do
-      get_authorized "/api/v2/venues/#{venue.slug}"
+      get_authorized "/venues/#{venue.slug}"
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -84,7 +84,7 @@ RSpec.describe "API v2 Venues" do
     end
 
     it "returns a 404 if the venue does not exist" do
-      get_authorized "/api/v2/venues/non-existent-venue"
+      get_authorized "/venues/non-existent-venue"
       expect(response).to have_http_status(:not_found)
     end
   end
