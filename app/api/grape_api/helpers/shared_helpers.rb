@@ -7,7 +7,7 @@ module GrapeApi::Helpers::SharedHelpers
     if sort_options.include?(attribute) && [ "asc", "desc" ].include?(direction)
       relation.order("#{attribute} #{direction}")
     else
-      error!("Invalid sort parameter", 400)
+      error!({ message: "Invalid sort parameter" }, 400)
     end
   end
 
@@ -26,6 +26,6 @@ module GrapeApi::Helpers::SharedHelpers
   end
 
   def authenticate!
-    error!("Unauthorized", 401) unless current_user
+    error!({ message: "Unauthorized" }, 401) unless current_user
   end
 end

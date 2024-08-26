@@ -2,10 +2,17 @@ class GrapeApi::Shows < GrapeApi::Base
   SORT_OPTIONS = [ "date", "likes_count", "duration" ]
 
   resource :shows do
-    desc \
-      "Return a list of shows, \ "
-      "optionally filtered by year, year range, or venue slug, " \
-      "sorted by date, likes_count, or duration."
+    desc "Return a list of shows" do
+      detail \
+        "Fetches a paginated list of shows, " \
+        "optionally filtered by year, year range, or venue slug, " \
+        "sorted by date, likes_count, or duration."
+      success GrapeApi::Entities::Show
+      failure [
+        [ 400, "Bad Request", GrapeApi::Entities::ApiResponse ],
+        [ 404, "Not Found", GrapeApi::Entities::ApiResponse ]
+      ]
+    end
     params do
       use :pagination
       optional :sort,
@@ -26,7 +33,14 @@ class GrapeApi::Shows < GrapeApi::Base
       present page_of_shows, with: GrapeApi::Entities::Show
     end
 
-    desc "Return a specific Show by date, including Tracks and Tags"
+    desc "Return a specific Show by date, including Tracks and Tags" do
+      detail "Fetches a specific show by its date, including associated tracks and tags."
+      success GrapeApi::Entities::Show
+      failure [
+        [ 400, "Bad Request", GrapeApi::Entities::ApiResponse ],
+        [ 404, "Not Found", GrapeApi::Entities::ApiResponse ]
+      ]
+    end
     params do
       requires :date, type: String, desc: "Date of the show"
     end

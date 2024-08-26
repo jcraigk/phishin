@@ -22,7 +22,7 @@ RSpec.describe "API v2 Auth" do
         expect(response).to have_http_status(:unauthorized)
 
         json = JSON.parse(response.body)
-        expect(json["error"]).to eq("Invalid email or password")
+        expect(json["message"]).to eq("Invalid email or password")
       end
     end
   end
@@ -100,7 +100,7 @@ RSpec.describe "API v2 Auth" do
         expect(response).to have_http_status(:unauthorized)
 
         json = JSON.parse(response.body)
-        expect(json["error"]).to eq("Invalid token")
+        expect(json["message"]).to eq("Invalid token")
       end
     end
 
@@ -114,7 +114,7 @@ RSpec.describe "API v2 Auth" do
         expect(response).to have_http_status(:unprocessable_entity)
 
         json = JSON.parse(response.body)
-        expect(json["error"]).to eq("Password reset failed")
+        expect(json["message"]).to eq("Password reset failed")
       end
     end
   end

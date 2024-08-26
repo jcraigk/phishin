@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.describe "API v2 Search" do
+  include ApiHelper
+
   let!(:venue) do
     create(
       :venue,
@@ -21,7 +23,7 @@ RSpec.describe "API v2 Search" do
 
   describe "GET /search" do
     context "when searching by term" do
-      it "returns search results" do
+      it "returns search results for venues" do
         get_api "/search", params: { term: "Madison" }
         expect(response).to have_http_status(:ok)
 
@@ -62,6 +64,14 @@ RSpec.describe "API v2 Search" do
         expect(json[:exact_show]).to eq(nil)
         expect(json[:songs]).to eq([])
         expect(json[:tours]).to eq([])
+      end
+
+      it "returns a 400 error when the term is too short" do
+        get_api "/search", params: { term: "Ma" }
+        expect(response).to have_http_status(:bad_request)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:message]).to eq("Term too short")
       end
     end
   end

@@ -38,14 +38,14 @@ class GrapeApi::Auth < GrapeApi::Base
     end
     post :reset_password do
       user = User.load_from_reset_password_token(params[:token])
-      error!("Invalid token", 401) unless user
+      error!({ message: "Invalid token" }, 401) unless user
 
       if params[:password] == params[:password_confirmation] &&
          user.change_password(params[:password])
         status 200
         { message: "Password has been reset successfully." }
       else
-        error!("Password reset failed", 422)
+        error!({ message: "Password reset failed" }, 422)
       end
     end
   end
@@ -56,7 +56,7 @@ class GrapeApi::Auth < GrapeApi::Base
       if user&.valid_password?(password)
         [ user, jwt_for(user) ]
       else
-        error!("Invalid email or password", 401)
+        error!({ message: "Invalid email or password" }, 401)
       end
     end
 
