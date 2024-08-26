@@ -50,7 +50,7 @@ class GrapeApi::Base < Grape::API
       },
       {
         name: "auth",
-        description: "Manage user authentication including registration and login."
+        description: "Manage user authentication including registration, login, and password reset via email."
       },
       {
         name: "password_resets",
