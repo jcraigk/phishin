@@ -10,7 +10,7 @@ RSpec.describe "API Tags" do
 
   describe "GET /api/v2/tags" do
     it "returns a list of all tags" do
-      get_authorized "/tags"
+      get_api "/tags"
 
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body, symbolize_names: true)

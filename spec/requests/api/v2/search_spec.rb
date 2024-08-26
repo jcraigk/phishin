@@ -22,7 +22,7 @@ RSpec.describe "API v2 Search" do
   describe "GET /search" do
     context "when searching by term" do
       it "returns search results" do
-        get_authorized "/search", params: { term: "Madison" }
+        get_api "/search", params: { term: "Madison" }
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
@@ -30,7 +30,7 @@ RSpec.describe "API v2 Search" do
       end
 
       it "returns shows by exact date" do
-        get_authorized "/search", params: { term: "2022-01-01" }
+        get_api "/search", params: { term: "2022-01-01" }
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
@@ -38,7 +38,7 @@ RSpec.describe "API v2 Search" do
       end
 
       it "returns songs matching the term" do
-        get_authorized "/search", params: { term: "Sample Song" }
+        get_api "/search", params: { term: "Sample Song" }
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
@@ -46,7 +46,7 @@ RSpec.describe "API v2 Search" do
       end
 
       it "returns tours matching the term" do
-        get_authorized "/search", params: { term: "Winter Tour" }
+        get_api "/search", params: { term: "Winter Tour" }
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
@@ -54,7 +54,7 @@ RSpec.describe "API v2 Search" do
       end
 
       it "returns empty arrays for no matches" do
-        get_authorized "/search", params: { term: "NonExistent" }
+        get_api "/search", params: { term: "NonExistent" }
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)

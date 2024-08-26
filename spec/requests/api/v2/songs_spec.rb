@@ -35,7 +35,7 @@ RSpec.describe "API Songs" do
 
   describe "GET /songs" do
     it "returns the first page of songs sorted by title in ascending order by default" do
-      get_authorized "/songs", params: { page: 1, per_page: 2 }
+      get_api "/songs", params: { page: 1, per_page: 2 }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -45,7 +45,7 @@ RSpec.describe "API Songs" do
     end
 
     it "returns songs sorted by tracks_count in descending order" do
-      get_authorized "/songs", params: { sort: "tracks_count:desc", page: 1, per_page: 3 }
+      get_api "/songs", params: { sort: "tracks_count:desc", page: 1, per_page: 3 }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body)
@@ -54,7 +54,7 @@ RSpec.describe "API Songs" do
     end
 
     it "filters songs by the first character of the title" do
-      get_authorized "/songs", params: { first_char: "C" }
+      get_api "/songs", params: { first_char: "C" }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -69,7 +69,7 @@ RSpec.describe "API Songs" do
     let!(:song) { songs.first }
 
     it "returns the specified song by slug" do
-      get_authorized "/songs/#{song.slug}"
+      get_api "/songs/#{song.slug}"
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -78,7 +78,7 @@ RSpec.describe "API Songs" do
     end
 
     it "returns a 404 if the song does not exist" do
-      get_authorized "/songs/non-existent-song"
+      get_api "/songs/non-existent-song"
       expect(response).to have_http_status(:not_found)
     end
   end

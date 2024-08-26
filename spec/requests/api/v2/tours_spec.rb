@@ -36,7 +36,7 @@ RSpec.describe "API v2 Tours" do
 
   describe "GET /tours" do
     it "returns the first page of tours sorted by starts_on in ascending order by default" do
-      get_authorized "/tours", params: { page: 1, per_page: 2 }
+      get_api "/tours", params: { page: 1, per_page: 2 }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -45,7 +45,7 @@ RSpec.describe "API v2 Tours" do
     end
 
     it "returns the tours sorted by name in descending order" do
-      get_authorized "/tours", params: { sort: "name:desc", page: 1, per_page: 3 }
+      get_api "/tours", params: { sort: "name:desc", page: 1, per_page: 3 }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -56,7 +56,7 @@ RSpec.describe "API v2 Tours" do
     end
 
     it "returns the tours sorted by shows_count in ascending order" do
-      get_authorized "/tours", params: { sort: "shows_count:asc", page: 1, per_page: 3 }
+      get_api "/tours", params: { sort: "shows_count:asc", page: 1, per_page: 3 }
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -67,7 +67,7 @@ RSpec.describe "API v2 Tours" do
     end
 
     it "returns a 400 error for an invalid sort parameter" do
-      get_authorized "/tours", params: { sort: "invalid_param:asc", page: 1, per_page: 3 }
+      get_api "/tours", params: { sort: "invalid_param:asc", page: 1, per_page: 3 }
       expect(response).to have_http_status(:bad_request)
     end
   end
@@ -90,7 +90,7 @@ RSpec.describe "API v2 Tours" do
     end
 
     it "returns the specified tour by slug, including shows" do
-      get_authorized "/tours/#{tour1.slug}"
+      get_api "/tours/#{tour1.slug}"
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -99,7 +99,7 @@ RSpec.describe "API v2 Tours" do
     end
 
     it "returns a 404 if the tour does not exist" do
-      get_authorized "/tours/non-existent-slug"
+      get_api "/tours/non-existent-slug"
       expect(response).to have_http_status(:not_found)
     end
   end

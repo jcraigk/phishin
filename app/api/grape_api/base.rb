@@ -19,6 +19,18 @@ class GrapeApi::Base < Grape::API
   mount GrapeApi::Venues
   mount GrapeApi::Years
 
+  # Error handling
+  rescue_from ActiveRecord::RecordNotFound do |e|
+    error!({ message: "Not found" }, 404)
+  end
+  rescue_from ActiveRecord::RecordNotUnique do |e|
+    error!({ message: "Not unique" }, 409)
+  end
+  rescue_from ActiveRecord::RecordInvalid do |e|
+    errors = e.record.errors.full_messages.join(", ")
+    error!({ message: "Record invalid: #{errors}" }, 422)
+  end
+
   # Swagger docs
   add_swagger_documentation \
     info: {
@@ -43,6 +55,7 @@ class GrapeApi::Base < Grape::API
       }
     },
     security: [ { api_key: [] } ],
+    models: [ GrapeApi::Entities::Playlist ],
     tags: [
       {
         name: "announcements",
@@ -50,11 +63,7 @@ class GrapeApi::Base < Grape::API
       },
       {
         name: "auth",
-        description: "Manage user authentication including registration, login, and password reset via email."
-      },
-      {
-        name: "password_resets",
-        description: "Reset a user's password via email."
+        description: "Manage user authentication including registration, login, and password reset."
       },
       {
         name: "playlists",

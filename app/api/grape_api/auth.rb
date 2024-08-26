@@ -23,7 +23,7 @@ class GrapeApi::Auth < GrapeApi::Base
     params do
       requires :email, type: String, desc: "User email"
     end
-    post :password_reset do
+    post :send_password_reset_email do
       user = User.find_by(email: params[:email])
       user&.deliver_reset_password_instructions!
       status 200
@@ -69,24 +69,6 @@ class GrapeApi::Auth < GrapeApi::Base
         Rails.application.secret_key_base,
         "HS256"
       )
-    end
-
-    def current_user
-      return unless (token = headers["X-Auth-Token"])
-      decoded_token = JWT.decode(
-        token,
-        Rails.application.secret_key_base,
-        true,
-        algorithm: "HS256"
-      )
-      user_id = decoded_token[0]["sub"]
-      User.find_by(id: user_id)
-    rescue JWT::DecodeError
-      nil
-    end
-
-    def authenticate!
-      error!("Unauthorized", 401) unless current_user
     end
   end
 end
