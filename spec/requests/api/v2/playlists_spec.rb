@@ -22,7 +22,7 @@ RSpec.describe "API v2 Playlists" do
 
       expect(json[:name]).to eq("Summer Jams")
       expect(json[:tracks].size).to eq(2)
-      expect(json[:tracks].map { |t| t[:slug] }).to match_array([track1.slug, track2.slug])
+      expect(json[:tracks].map { |t| t[:slug] }).to match_array([ track1.slug, track2.slug ])
     end
   end
 

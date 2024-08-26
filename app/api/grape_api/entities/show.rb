@@ -1,23 +1,26 @@
 class GrapeApi::Entities::Show < GrapeApi::Entities::Base
-  expose :date,
-         format_with: :iso8601,
-         documentation: {
-           type: "String",
-           format: "date",
-           desc: "Date of the show in ISO8601 format"
-         }
+  expose \
+    :date,
+    format_with: :iso8601,
+    documentation: {
+      type: "String",
+      format: "date",
+      desc: "Date of the show"
+    }
 
-  expose :duration,
-         documentation: {
-           type: "Integer",
-           desc: "Duration of the show in seconds"
-         }
+  expose \
+    :duration,
+    documentation: {
+      type: "Integer",
+      desc: "Duration of the show in seconds"
+    }
 
-  expose :incomplete,
-         documentation: {
-           type: "Boolean",
-           desc: "Indicates if the show is incomplete"
-         }
+  expose \
+    :incomplete,
+    documentation: {
+      type: "Boolean",
+      desc: "Indicates if the show is incomplete"
+    }
 
   expose(
     :tour_name,
@@ -27,11 +30,12 @@ class GrapeApi::Entities::Show < GrapeApi::Entities::Base
     }
   ) { _1.tour.name }
 
-  expose :venue_name,
-         documentation: {
-           type: "String",
-           desc: "Name of the venue where the show took place"
-         }
+  expose \
+    :venue_name,
+    documentation: {
+      type: "String",
+      desc: "Name of the venue where the show took place"
+    }
 
   expose(
     :venue_latitude,
@@ -65,40 +69,44 @@ class GrapeApi::Entities::Show < GrapeApi::Entities::Base
     }
   ) { _1.venue.slug }
 
-  expose :taper_notes,
-         documentation: {
-           type: "String",
-           desc: "Notes from the taper of the show"
-         }
+  expose \
+    :taper_notes,
+    documentation: {
+      type: "String",
+      desc: "Notes from the taper of the show"
+    }
 
-  expose :likes_count,
-         documentation: {
-           type: "Integer",
-           desc: "Number of likes the show has received"
-         }
+  expose \
+    :likes_count,
+    documentation: {
+      type: "Integer",
+      desc: "Number of likes the show has received"
+    }
 
-  expose :updated_at,
-         format_with: :iso8601,
-         documentation: {
-           type: "String",
-           format: "date-time",
-           desc: "Timestamp of the last update in ISO8601 format"
-         }
+  expose \
+    :updated_at,
+    format_with: :iso8601,
+    documentation: {
+      type: "String",
+      format: "date-time",
+      desc: "Timestamp of the last update"
+    }
 
-  expose :show_tags,
-         using: GrapeApi::Entities::ShowTag,
-         as: :tags,
-         documentation: {
-           is_array: true,
-           desc: "Tags associated with the show"
-         }
+  expose \
+    :show_tags,
+    using: GrapeApi::Entities::ShowTag,
+    as: :tags,
+    documentation: {
+      is_array: true,
+      desc: "Tags associated with the show"
+    }
 
   expose(
     :tracks,
     if: ->(_obj, opts) { opts[:include_tracks] },
     documentation: {
       is_array: true,
-      desc: "Tracks associated with the show"
+      desc: "Tracks associated with the show, included only on individual show requests"
     }
   ) do
     GrapeApi::Entities::Track.represent(

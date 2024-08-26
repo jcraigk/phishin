@@ -72,8 +72,8 @@ RSpec.describe "API v2 Auth" do
 
   describe "POST /auth/reset_password" do
     before do
-      user.deliver_reset_password_instructions! # Send the reset instructions which sets the reset token
-      @token = user.reset_password_token # Get the reset token from the user object
+      user.deliver_reset_password_instructions!
+      @token = user.reset_password_token
     end
 
     context "with valid token and matching passwords" do

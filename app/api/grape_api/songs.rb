@@ -2,9 +2,17 @@ class GrapeApi::Songs < GrapeApi::Base
   SORT_OPTIONS = [ "title", "tracks_count" ]
 
   resource :songs do
-    desc \
-      "Return a list of songs, optionally filtered by the first character " \
-      "of the song title, sorted by title or tracks_count"
+    desc "Return a list of songs" do
+      detail \
+        "Fetches a paginated list of songs, with optional filtering " \
+        "by the first character of the title, and sorting by title " \
+        "or number of tracks."
+        success GrapeApi::Entities::Song
+        failure [
+          [ 400, "Bad Request", GrapeApi::Entities::ApiResponse ],
+          [ 404, "Not Found", GrapeApi::Entities::ApiResponse ]
+        ]
+    end
     params do
       use :pagination
       optional :sort,
@@ -19,7 +27,14 @@ class GrapeApi::Songs < GrapeApi::Base
       present page_of_songs, with: GrapeApi::Entities::Song
     end
 
-    desc "Return a specific Song by slug"
+    desc "Return a specific Song by slug" do
+      detail "Fetches a specific song by its unique slug."
+      success GrapeApi::Entities::Song
+      failure [
+        [ 400, "Bad Request", GrapeApi::Entities::ApiResponse ],
+        [ 404, "Not Found", GrapeApi::Entities::ApiResponse ]
+      ]
+    end
     params do
       requires :slug, type: String, desc: "Slug of the song"
     end
