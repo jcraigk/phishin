@@ -1,8 +1,8 @@
 module ApiHelper
-  def auth_header
-    api_key = create(:api_key)
-    { "Authorization" => "Bearer #{api_key.key}" }
-  end
+  # def auth_header
+  #   api_key = create(:api_key)
+  #   { "Authorization" => "Bearer #{api_key.key}" }
+  # end
 
   def user_auth_header(user)
     token = JWT.encode(
@@ -18,7 +18,7 @@ module ApiHelper
 
   %i[ get post put delete ].each do |http_method|
     define_method("#{http_method}_api") do |path, params: {}, headers: {}, version: 2|
-      headers.merge!(auth_header)
+      # headers.merge!(auth_header)
       send(http_method, "/api/v#{version}#{path}", params:, headers:)
     end
 

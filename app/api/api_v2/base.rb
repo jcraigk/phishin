@@ -2,12 +2,12 @@ class ApiV2::Base < Grape::API
   format :json
 
   # Helpers
-  helpers ApiV2::Helpers::AuthHelper
+  # helpers ApiV2::Helpers::AuthHelper
   helpers ApiV2::Helpers::SharedHelpers
   helpers ApiV2::Helpers::SharedParams
 
   # Endpoints
-  before { authenticate_api_key! unless swagger_endpoint? }
+  # before { authenticate_api_key! unless swagger_endpoint? }
   mount ApiV2::Announcements
   mount ApiV2::Auth
   mount ApiV2::Likes
@@ -46,16 +46,16 @@ class ApiV2::Base < Grape::API
       license_url: "https://github.com/jcraigk/phishin/blob/main/MIT-LICENSE",
       terms_of_service_url: "https://phish.in/terms"
     },
-    security_definitions: {
-      api_key: {
-        type: "apiKey",
-        name: "Authorization",
-        in: "header",
-        description:
-          "Use your API key as a Bearer token in the 'Authorization' " \
-            "header. Example: 'Authorization: Bearer YOUR_API_KEY'"
-      }
-    },
+    # security_definitions: {
+    #   api_key: {
+    #     type: "apiKey",
+    #     name: "Authorization",
+    #     in: "header",
+    #     description:
+    #       "Use your API key as a Bearer token in the 'Authorization' " \
+    #         "header. Example: 'Authorization: Bearer YOUR_API_KEY'"
+    #   }
+    # },
     security: [ { api_key: [] } ],
     tags: [
       {
