@@ -16,6 +16,7 @@ class ApiV2::Base < Grape::API
   mount ApiV2::Shows
   mount ApiV2::Songs
   mount ApiV2::Tags
+  mount ApiV2::Tracks
   mount ApiV2::Tours
   mount ApiV2::Venues
   mount ApiV2::Years
@@ -66,12 +67,20 @@ class ApiV2::Base < Grape::API
         description: "Manage user authentication including registration, login, and password reset"
       },
       {
+        name: "likes",
+        description: "User likes (upvotes) on shows and tracks"
+      },
+      {
         name: "playlists",
         description: "Playlists created by users"
       },
       {
         name: "search",
         description: "Search across shows, songs, venues, tours, and tags"
+      },
+      {
+        name: "shows",
+        description: "Live shows performed by Phish, including audio tracks"
       },
       {
         name: "songs",
@@ -86,16 +95,16 @@ class ApiV2::Base < Grape::API
         description: "Tours that Phish have embarked on, including associated shows"
       },
       {
+        name: "tracks",
+        description: "Tracks of legal audio recordings from live Phish shows"
+      },
+      {
         name: "venues",
         description: "Venues that Phish have played at, including associated shows"
       },
       {
         name: "years",
         description: "Years and eras during which Phish have performed live shows"
-      },
-      {
-        name: "shows",
-        description: "Live shows performed by Phish, including audio tracks"
       }
     ]
 end

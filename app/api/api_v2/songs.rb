@@ -1,5 +1,5 @@
 class ApiV2::Songs < ApiV2::Base
-  SORT_OPTIONS = [ "title", "tracks_count" ]
+  SORT_OPTIONS = %w[ title tracks_count ]
 
   resource :songs do
     desc "Return a list of songs" do

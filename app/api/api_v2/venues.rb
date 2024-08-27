@@ -1,5 +1,5 @@
 class ApiV2::Venues < ApiV2::Base
-  SORT_OPTIONS = [ "name", "shows_count" ]
+  SORT_OPTIONS = %w[name shows_count ]
 
   resource :venues do
     desc "Return a list of venues" do

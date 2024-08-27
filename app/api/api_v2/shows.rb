@@ -1,11 +1,11 @@
 class ApiV2::Shows < ApiV2::Base
-  SORT_OPTIONS = [ "date", "likes_count", "duration" ]
+  SORT_OPTIONS = %w[ date likes_count duration updated_at ]
 
   resource :shows do
     desc "Return a list of shows" do
       detail \
         "Return a sortable paginated list of shows, " \
-        "optionally filtered by year, year range, or venue slug"
+        "optionally filtered by year, year range, venue slug, or tag slug"
       success ApiV2::Entities::Show
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
@@ -28,9 +28,44 @@ class ApiV2::Shows < ApiV2::Base
       optional :venue_slug,
                type: String,
                desc: "Filter shows by the slug of the venue"
+      optional :tag_slug,
+               type: String,
+               desc: "Filter shows by the slug of an associated tag"
     end
     get do
       present page_of_shows, with: ApiV2::Entities::Show
+    end
+
+    desc "Return a random show" do
+      detail "Return a random show"
+      success ApiV2::Entities::Show
+    end
+    get "random" do
+      present \
+        Show.published.order("RANDOM()").first,
+        with: ApiV2::Entities::Show,
+        include_tracks: true
+    end
+
+    desc "Return shows on a specific day of the year" do
+      detail \
+        "Return all shows that occurred on a specific day of the year " \
+        "based on the provided date"
+      success ApiV2::Entities::Show
+      failure [
+        [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
+        [ 404, "Not Found", ApiV2::Entities::ApiResponse ]
+      ]
+    end
+    params do
+      requires :date, type: Date, desc: "Date in 'YYYY-MM-DD' format"
+    end
+    get "day_of_year" do
+      shows =
+        Show.published
+            .where("extract(month from date) = ?", params[:date].month)
+            .where("extract(day from date) = ?", params[:date].day)
+      present shows, with: ApiV2::Entities::Show
     end
 
     desc "Return a specific show" do
@@ -78,6 +113,10 @@ class ApiV2::Shows < ApiV2::Base
 
       if params[:venue_slug]
         shows = shows.joins(:venue).where(venues: { slug: params[:venue_slug] })
+      end
+
+      if params[:tag_slug]
+        shows = shows.joins(:tags).where(tags: { slug: params[:tag_slug] })
       end
 
       shows

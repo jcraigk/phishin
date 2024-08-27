@@ -13,6 +13,13 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       desc: "Unique slug identifier for the track"
     }
 
+  expose \
+    :show_id,
+    documentation: {
+      type: "Integer",
+      desc: "ID of the show this track belongs to"
+    }
+
   with_options if: ->(_obj, opts) { opts[:show_details] } do
     expose \
       :show_date,
@@ -119,22 +126,12 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     }
 
   expose \
-    :song_titles,
+    :songs,
+    using: ApiV2::Entities::Song,
     documentation: {
-      type: "Array",
-      desc: "List of song titles associated with the track"
-    } do |track|
-      track.songs.map(&:title)
-  end
-
-  expose \
-    :song_slugs,
-    documentation: {
-      type: "Array",
-      desc: "List of song slugs associated with the track"
-    } do |track|
-      track.songs.map(&:slug)
-  end
+      is_array: true,
+      desc: "Songs associated with the track"
+  }
 
   expose \
     :updated_at,

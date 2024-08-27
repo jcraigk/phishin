@@ -1,5 +1,5 @@
 class ApiV2::Tours < ApiV2::Base
-  SORT_OPTIONS = [ "name", "starts_on", "ends_on", "shows_count" ]
+  SORT_OPTIONS = %w[ name starts_on ends_on shows_count ]
 
   resource :tours do
     desc "Return a list of tours" do

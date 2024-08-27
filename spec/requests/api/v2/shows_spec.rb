@@ -1,6 +1,15 @@
 require "rails_helper"
 
 RSpec.describe "API v2 Shows" do
+  let!(:shows) do
+    [
+      create(:show, date: "2022-01-02", likes_count: 10, duration: 120, venue:),
+      create(:show, date: "2021-01-01", likes_count: 30, duration: 90, venue:),
+      create(:show, date: "2023-01-01", likes_count: 20, duration: 150, venue:),
+      create(:show, date: "2024-01-01", likes_count: 40, duration: 200, venue:),
+      create(:show, date: "2020-01-01", likes_count: 5, duration: 110, venue:)
+    ]
+  end
   let!(:venue) do
     create(
       :venue,
@@ -16,15 +25,6 @@ RSpec.describe "API v2 Shows" do
   let!(:tag) { create(:tag, name: "Classic", priority: 1) }
 
   describe "GET /shows" do
-    let!(:shows) do
-      [
-        create(:show, date: "2022-01-01", likes_count: 10, duration: 120, venue:),
-        create(:show, date: "2021-01-01", likes_count: 30, duration: 90, venue:),
-        create(:show, date: "2023-01-01", likes_count: 20, duration: 150, venue:),
-        create(:show, date: "2024-01-01", likes_count: 40, duration: 200, venue:),
-        create(:show, date: "2020-01-01", likes_count: 5, duration: 110, venue:)
-      ]
-    end
     let!(:show_tags) do
       [
         create(:show_tag, show: shows[0], tag:, notes: "A classic show"),
@@ -127,6 +127,50 @@ RSpec.describe "API v2 Shows" do
       ).as_json
 
       expect(json).to eq(expected)
+    end
+
+    it "filters shows by tag_slug" do
+      get_api "/shows", params: { tag_slug: tag.slug }
+      expect(response).to have_http_status(:ok)
+
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      expected_shows = shows.select { |show| show.tags.include?(tag) }
+      expected_json = ApiV2::Entities::Show.represent(
+        expected_shows.sort_by(&:date).reverse,
+        include_tracks: false
+      ).as_json
+      sorted_json = json.sort_by { |show| show[:date] }.reverse
+      expect(sorted_json).to eq(expected_json)
+    end
+  end
+
+  describe "GET /shows/random" do
+    it "returns a random published show" do
+      get_api "/shows/random"
+      expect(response).to have_http_status(:ok)
+
+      json = JSON.parse(response.body, symbolize_names: true)
+      expect(json).to be_present
+      expect(json[:date]).to be_present
+      expect(json[:venue_name]).to eq("Madison Square Garden")
+    end
+  end
+
+  describe "GET /shows/day_of_year" do
+    it "returns shows for a specific day of the year given a date" do
+      get_api "/shows/day_of_year", params: { date: "2000-01-01" }
+      expect(response).to have_http_status(:ok)
+
+      json = JSON.parse(response.body, symbolize_names: true)
+      expect(json.size).to eq(4)
+      expect(json.map { |s|
+ s[:date] }).to match_array([ "2021-01-01", "2023-01-01", "2024-01-01", "2020-01-01" ])
+    end
+
+    it "returns a 400 error for an invalid day format" do
+      get_api "/shows/day_of_year", params: { date: "Invalid Day" }
+      expect(response).to have_http_status(:bad_request)
     end
   end
 
