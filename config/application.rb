@@ -12,6 +12,10 @@ module Phishin
   class Application < Rails::Application
     config.load_defaults 7.2
 
+    api = root.join("app/api")
+    config.autoload_paths << api
+    config.eager_load_paths << api
+
     # Custom app config
     config.app_name = "Phish.in"
     config.web_host = ENV.fetch("WEB_HOST", nil)
