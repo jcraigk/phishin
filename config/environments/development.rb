@@ -11,7 +11,6 @@ Rails.application.configure do
     authentication: :plain
   }
   config.active_support.deprecation = :log
-  config.cache_classes = false
   config.cache_store = :null_store
   config.consider_all_requests_local = true
   config.eager_load = false
