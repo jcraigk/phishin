@@ -84,15 +84,20 @@ server {
 
   location    / {
 
-      ## BEGIN CORS
-      add_header 'Access-Control-Allow-Origin' '*';
-      add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-      add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
-      add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
-      if ($request_method = 'OPTIONS') {
-        return 204;
-      }
-      ## END CORS
+    ## BEGIN CORS
+
+    ## Access-Control-Allow-Origin seems to be set somewhere else
+    ## So the following becomes a duplicate, violating spec
+    ## add_header 'Access-Control-Allow-Origin' '*';
+
+    add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+    add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization';
+    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+    if ($request_method = 'OPTIONS') {
+      return 204;
+    }
+
+    ## END CORS
 
     gzip on;
     gzip_min_length  1100;
