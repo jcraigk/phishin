@@ -43,7 +43,6 @@ class ApiV2::Entities::Tour < ApiV2::Entities::Base
     format_with: :iso8601,
     documentation: {
       type: "String",
-      format: "date-time",
       desc: "Timestamp of the last update to the tour"
     }
 

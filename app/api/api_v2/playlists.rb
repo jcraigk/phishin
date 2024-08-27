@@ -85,7 +85,6 @@ class ApiV2::Playlists < ApiV2::Base
   helpers do
     def update_playlist_tracks(playlist, track_ids)
       return unless track_ids
-
       playlist.playlist_tracks.destroy_all
       track_ids.each_with_index do |track_id, index|
         playlist.playlist_tracks.create!(track_id:, position: index + 1)

@@ -26,7 +26,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
     :incomplete,
     documentation: {
       type: "Boolean",
-      desc: "Indicates if the show is incomplete"
+      desc: "Indicates if the audio recording of the show is incomplete"
     }
 
   expose(
@@ -64,7 +64,6 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
     format_with: :iso8601,
     documentation: {
       type: "String",
-      format: "date-time",
       desc: "Timestamp of the last update"
     }
 

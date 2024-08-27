@@ -25,7 +25,6 @@ class ApiV2::Entities::Announcement < ApiV2::Entities::Base
     format_with: :iso8601,
     documentation: {
       type: "String",
-      format: "date-time",
       desc: "Timestamp when the announcement was created"
     }
 end

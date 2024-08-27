@@ -87,7 +87,6 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     format_with: :iso8601,
     documentation: {
       type: "String",
-      format: "date-time",
       desc: "Timestamp of the last update to the track"
     }
 

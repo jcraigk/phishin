@@ -45,7 +45,6 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
     :updated_at,
     documentation: {
       type: "String",
-      format: "date-time",
       desc: "The last update time of the playlist"
     }
 end
