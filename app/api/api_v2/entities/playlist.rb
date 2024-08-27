@@ -19,7 +19,7 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
     :duration,
     documentation: {
       type: "Integer",
-      desc: "The total duration of all tracks in the playlist"
+      desc: "The total duration of all tracks in the playlist, in milliseconds"
     }
 
   expose \

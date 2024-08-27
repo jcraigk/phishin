@@ -24,7 +24,7 @@ RSpec.describe "API v2 Search" do
   describe "GET /search" do
     context "when searching by term" do
       it "returns search results for venues" do
-        get_api "/search", params: { term: "Madison" }
+        get_api "/search/Madison"
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
@@ -32,7 +32,7 @@ RSpec.describe "API v2 Search" do
       end
 
       it "returns shows by exact date" do
-        get_api "/search", params: { term: "2022-01-01" }
+        get_api "/search/2022-01-01"
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
@@ -40,7 +40,7 @@ RSpec.describe "API v2 Search" do
       end
 
       it "returns songs matching the term" do
-        get_api "/search", params: { term: "Sample Song" }
+        get_api "/search/Sample%20Song"
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
@@ -48,7 +48,7 @@ RSpec.describe "API v2 Search" do
       end
 
       it "returns tours matching the term" do
-        get_api "/search", params: { term: "Winter Tour" }
+        get_api "/search/Winter%20Tour"
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
@@ -56,7 +56,7 @@ RSpec.describe "API v2 Search" do
       end
 
       it "returns empty arrays for no matches" do
-        get_api "/search", params: { term: "NonExistent" }
+        get_api "/search/NonExistent"
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
@@ -67,7 +67,7 @@ RSpec.describe "API v2 Search" do
       end
 
       it "returns a 400 error when the term is too short" do
-        get_api "/search", params: { term: "Ma" }
+        get_api "/search/Ma"
         expect(response).to have_http_status(:bad_request)
 
         json = JSON.parse(response.body, symbolize_names: true)

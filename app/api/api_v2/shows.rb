@@ -56,24 +56,19 @@ class ApiV2::Shows < ApiV2::Base
         include_tracks: true
     end
 
-    desc "Return shows on a specific day of the year" do
-      detail \
-        "Return all shows that occurred on a specific day of the year " \
-        "based on the provided date"
+    desc "Return a specific show by id" do
+      detail "Return a specific show by its ID, including associated tracks and tags"
       success ApiV2::Entities::Show
+      failure [
+        [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
+        [ 404, "Not Found", ApiV2::Entities::ApiResponse ]
+      ]
     end
-    params do
-      requires :date, type: Date, desc: "Date in 'YYYY-MM-DD' format"
-    end
-    get "day_of_year" do
-      shows =
-        Show.published
-            .where("extract(month from date) = ?", params[:date].month)
-            .where("extract(day from date) = ?", params[:date].day)
-      present shows, with: ApiV2::Entities::Show
+    get ":id" do
+      present Show.find(params[:id]), with: ApiV2::Entities::Show, include_tracks: true
     end
 
-    desc "Return a specific show" do
+    desc "Return a specific show by date" do
       detail "Return a specific show by its date, including associated tracks and tags"
       success ApiV2::Entities::Show
       failure [
@@ -81,11 +76,25 @@ class ApiV2::Shows < ApiV2::Base
         [ 404, "Not Found", ApiV2::Entities::ApiResponse ]
       ]
     end
-    params do
-      requires :date, type: String, desc: "Date of the show"
-    end
-    get ":date" do
+    get "on_date/:date" do
       present show_by_date, with: ApiV2::Entities::Show, include_tracks: true
+    end
+
+    desc "Return shows on a specific day of the year" do
+      detail \
+        "Return all shows that occurred on a specific day of the year " \
+        "based on the provided date"
+      success ApiV2::Entities::Show
+    end
+    get "on_day_of_year/:date" do
+      date = Date.parse(params[:date])
+      shows =
+        Show.published
+            .where("extract(month from date) = ?", date.month)
+            .where("extract(day from date) = ?", date.day)
+      present shows, with: ApiV2::Entities::Show
+    rescue ArgumentError
+      error!({ message: "Invalid date format" }, 400)
     end
   end
 

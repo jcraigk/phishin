@@ -74,7 +74,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     :duration,
     documentation: {
       type: "Integer",
-      desc: "Duration of the track in seconds"
+      desc: "Duration of the track in milliseconds"
     }
 
   expose \

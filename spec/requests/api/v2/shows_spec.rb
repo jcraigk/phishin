@@ -177,24 +177,43 @@ RSpec.describe "API v2 Shows" do
     end
   end
 
-  describe "GET /shows/day_of_year" do
+  describe "GET /shows/:id" do
+    let!(:show) { create(:show, date: "2022-01-01", venue:) }
+
+    it "returns the specified show" do
+      get_api "/shows/#{show.id}"
+      expect(response).to have_http_status(:ok)
+
+      json = JSON.parse(response.body, symbolize_names: true)
+      expected = ApiV2::Entities::Show.represent(show, include_tracks: true).as_json
+      expect(json).to eq(expected)
+    end
+
+    it "returns a 404 if the show does not exist" do
+      get_api "/shows/9999"
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe "GET /shows/day_of_year/:date" do
     it "returns shows for a specific day of the year given a date" do
-      get_api "/shows/day_of_year", params: { date: "2000-01-01" }
+      get_api "/shows/on_day_of_year/2000-01-01"
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
       expect(json.size).to eq(4)
-      expect(json.map { |s|
- s[:date] }).to match_array([ "2021-01-01", "2023-01-01", "2024-01-01", "2020-01-01" ])
+      expect(
+        json.map { |s| s[:date] }
+      ).to match_array([ "2021-01-01", "2023-01-01", "2024-01-01", "2020-01-01" ])
     end
 
     it "returns a 400 error for an invalid day format" do
-      get_api "/shows/day_of_year", params: { date: "Invalid Day" }
+      get_api "/shows/on_day_of_year/invalid-date"
       expect(response).to have_http_status(:bad_request)
     end
   end
 
-  describe "GET /shows/:date" do
+  describe "GET /shows/on_date/:date" do
     let!(:show) { create(:show, date: "2022-01-01", venue:) }
     let!(:show_tag) { create(:show_tag, show:, tag:, notes: "A classic show") }
     let!(:tracks) do
@@ -205,7 +224,7 @@ RSpec.describe "API v2 Shows" do
     end
 
     it "returns the specified show with venue, tags, and tracks" do
-      get_api "/shows/#{show.date}"
+      get_api "/shows/on_date/#{show.date}"
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
@@ -214,7 +233,7 @@ RSpec.describe "API v2 Shows" do
     end
 
     it "returns a 404 if the show does not exist" do
-      get_api "/shows/1930-01-01"
+      get_api "/shows/on_date/1930-01-01"
       expect(response).to have_http_status(:not_found)
     end
   end

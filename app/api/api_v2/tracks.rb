@@ -5,7 +5,7 @@ class ApiV2::Tracks < ApiV2::Base
     desc "Return a list of tracks" do
       detail \
         "Fetches a sortable paginated list of tracks, " \
-        "optionally filtered by tag_slug."
+        "optionally filtered by tag_slug or song_slug."
       success ApiV2::Entities::Track
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
@@ -22,6 +22,9 @@ class ApiV2::Tracks < ApiV2::Base
       optional :tag_slug,
                type: String,
                desc: "Filter tracks by the slug of the tag"
+      optional :song_slug,
+               type: String,
+               desc: "Filter tracks by the slug of the song"
     end
     get do
       present page_of_tracks, with: ApiV2::Entities::Track, show_details: true
@@ -63,6 +66,14 @@ class ApiV2::Tracks < ApiV2::Base
       if params[:tag_slug]
         tracks = tracks.joins(track_tags: :tag).where(tags: { slug: params[:tag_slug] })
       end
+
+      if params[:song_slug]
+        track_ids = Track.joins(:songs)
+                         .where(songs: { slug: params[:song_slug] })
+                         .pluck(:id)
+        tracks = tracks.where(id: track_ids)
+      end
+
       tracks
     end
   end

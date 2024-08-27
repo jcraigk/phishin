@@ -7,12 +7,7 @@ class ApiV2::Search < ApiV2::Base
       success ApiV2::Entities::SearchResults
       failure [ [ 400, "Bad Request", ApiV2::Entities::ApiResponse ] ]
     end
-    params do
-      requires :term,
-               type: String,
-               desc: "Search term"
-    end
-    get do
+    get ":term" do
       return error!({ message: "Term too short" }, 400) if params[:term].length < 3
       present \
         SearchService.new(params[:term]).call,

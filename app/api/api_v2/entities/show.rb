@@ -19,7 +19,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
     :duration,
     documentation: {
       type: "Integer",
-      desc: "Duration of the show in seconds"
+      desc: "Duration of the show in milliseconds"
     }
 
   expose \
