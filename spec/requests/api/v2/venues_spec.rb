@@ -69,6 +69,18 @@ RSpec.describe "API v2 Venues" do
       ).as_json
       expect(json).to eq(expected)
     end
+
+    it "returns venues near a given lat/lng within a specified distance" do
+      get_api "/venues", params: { lat: 40.7505045, lng: -73.9934387, distance: 50 }
+      expect(response).to have_http_status(:ok)
+
+      json = JSON.parse(response.body, symbolize_names: true)
+      nearby_venues = venues.select do |venue|
+        venue.distance_from([ 40.7505045, -73.9934387 ]) <= 50
+      end
+      expected = ApiV2::Entities::Venue.represent(nearby_venues).as_json
+      expect(json).to eq(expected)
+    end
   end
 
   describe "GET /venues/:slug" do

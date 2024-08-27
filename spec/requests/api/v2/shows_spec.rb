@@ -143,6 +143,26 @@ RSpec.describe "API v2 Shows" do
       sorted_json = json.sort_by { |show| show[:date] }.reverse
       expect(sorted_json).to eq(expected_json)
     end
+
+    it "filters shows by distance from location" do
+      get_api "/shows", params: { lat: 40.7505045, lng: -73.9934387, distance: 50 }
+      expect(response).to have_http_status(:ok)
+
+      json = JSON.parse(response.body, symbolize_names: true)
+      nearby_shows = shows.sort_by(&:date).reverse.select do |show|
+        show.venue.distance_from([ 40.7505045, -73.9934387 ]) <= 50
+      end
+      expected = ApiV2::Entities::Show.represent(nearby_shows).as_json
+      expect(json).to eq(expected)
+    end
+
+    it "returns no shows if none are within the specified distance" do
+      get_api "/shows", params: { lat: 0, lng: 0, distance: 50 }
+      expect(response).to have_http_status(:ok)
+
+      json = JSON.parse(response.body, symbolize_names: true)
+      expect(json).to be_empty
+    end
   end
 
   describe "GET /shows/random" do

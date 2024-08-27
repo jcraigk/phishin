@@ -1,11 +1,12 @@
 class ApiV2::Venues < ApiV2::Base
-  SORT_OPTIONS = %w[name shows_count ]
+  SORT_OPTIONS = %w[ name shows_count ]
 
   resource :venues do
     desc "Return a list of venues" do
       detail \
         "Return a sortable paginated list of venues " \
-        "optionally filtered by the first character of the venue name"
+        "optionally filtered by the first character of the venue name and " \
+        "by proximity to a specific location"
       success ApiV2::Entities::Venue
     end
     params do
@@ -18,6 +19,15 @@ class ApiV2::Venues < ApiV2::Base
       optional :first_char,
                type: String,
                desc: "Filter venues by the first character of the venue name (case-insensitive)"
+      optional :lat,
+               type: Float,
+               desc: "Latitude for proximity search"
+      optional :lng,
+               type: Float,
+               desc: "Longitude for proximity search"
+      optional :distance,
+               type: Float,
+               desc: "Distance (in miles) for proximity search"
     end
     get do
       present page_of_venues, with: ApiV2::Entities::Venue
@@ -39,7 +49,8 @@ class ApiV2::Venues < ApiV2::Base
     def page_of_venues
       Rails.cache.fetch("api/v2/venues?#{params.to_query}") do
         Venue.unscoped
-             .then { |v| apply_filtering(v) }
+             .then { |v| apply_proximity_filter(v) }
+             .then { |v| apply_first_char_filter(v) }
              .then { |v| apply_sorting(v, SORT_OPTIONS) }
              .paginate(page: params[:page], per_page: params[:per_page])
       end
@@ -51,9 +62,16 @@ class ApiV2::Venues < ApiV2::Base
       end
     end
 
-    def apply_filtering(venues)
+    def apply_first_char_filter(venues)
       if params[:first_char].present?
         venues = venues.name_starting_with(params[:first_char])
+      end
+      venues
+    end
+
+    def apply_proximity_filter(venues)
+      if params[:lat].present? && params[:lng].present? && params[:distance].present?
+        venues = venues.near([ params[:lat], params[:lng] ], params[:distance])
       end
       venues
     end

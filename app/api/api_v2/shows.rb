@@ -5,7 +5,7 @@ class ApiV2::Shows < ApiV2::Base
     desc "Return a list of shows" do
       detail \
         "Return a sortable paginated list of shows, " \
-        "optionally filtered by year, year range, venue slug, or tag slug"
+        "optionally filtered by year, year range, venue slug, tag slug, or proximity to lat/lng"
       success ApiV2::Entities::Show
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
@@ -31,6 +31,15 @@ class ApiV2::Shows < ApiV2::Base
       optional :tag_slug,
                type: String,
                desc: "Filter shows by the slug of an associated tag"
+      optional :lat,
+               type: Float,
+               desc: "Latitude to filter shows by proximity to a venue"
+      optional :lng,
+               type: Float,
+               desc: "Longitude to filter shows by proximity to a venue"
+      optional :distance,
+               type: Float,
+               desc: "Distance in miles to filter shows by proximity to a venue"
     end
     get do
       present page_of_shows, with: ApiV2::Entities::Show
@@ -52,10 +61,6 @@ class ApiV2::Shows < ApiV2::Base
         "Return all shows that occurred on a specific day of the year " \
         "based on the provided date"
       success ApiV2::Entities::Show
-      failure [
-        [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
-        [ 404, "Not Found", ApiV2::Entities::ApiResponse ]
-      ]
     end
     params do
       requires :date, type: Date, desc: "Date in 'YYYY-MM-DD' format"
@@ -117,6 +122,11 @@ class ApiV2::Shows < ApiV2::Base
 
       if params[:tag_slug]
         shows = shows.joins(:tags).where(tags: { slug: params[:tag_slug] })
+      end
+
+      if params[:lat].present? && params[:lng].present? && params[:distance].present?
+        venue_ids = Venue.near([ params[:lat], params[:lng] ], params[:distance]).all.map(&:id)
+        shows = shows.where(venue_id: venue_ids)
       end
 
       shows
