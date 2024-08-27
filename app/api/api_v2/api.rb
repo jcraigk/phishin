@@ -19,12 +19,7 @@ class ApiV2::Api < ApiV2::Base
         "A RESTful API for accessing data and content on [Phish.in](#{App.base_url}), an " \
         "open source archive of live Phish audience recordings. " \
         "See [GitHub](https://github.com/jcraigk/phishin) for development and issue tracking. " \
-        "Access is provided free of charge and without warranty. Please be nice.",
-      # contact_email: "phish.in.music@gmail.com",
-      # contact_url: "https://phish.in/contact-info",
-      # license: "MIT",
-      # license_url: "https://github.com/jcraigk/phishin/blob/main/MIT-LICENSE",
-      # terms_of_service_url: "https://phish.in/terms"
+        "Access is provided free of charge and without warranty. Please be nice."
     },
     # security_definitions: {
     #   api_key: {
@@ -36,7 +31,7 @@ class ApiV2::Api < ApiV2::Base
     #         "header. Example: 'Authorization: Bearer YOUR_API_KEY'"
     #   }
     # },
-    security: [ { api_key: [] } ],
+    # security: [ { api_key: [] } ],
     tags: [
       {
         name: "announcements",

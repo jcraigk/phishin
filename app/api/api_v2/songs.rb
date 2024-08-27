@@ -1,5 +1,5 @@
 class ApiV2::Songs < ApiV2::Base
-  SORT_OPTIONS = %w[ title tracks_count ]
+  SORT_COLS = %w[ title tracks_count ]
 
   resource :songs do
     desc "Return a list of songs" do
@@ -18,10 +18,11 @@ class ApiV2::Songs < ApiV2::Base
                type: String,
                desc: "Sort by attribute and direction (e.g., 'title:asc')",
                default: "title:asc",
-               values: SORT_OPTIONS.map { |option| [ "#{option}:asc", "#{option}:desc" ] }.flatten
+               values: SORT_COLS.map { |opt| [ "#{opt}:asc", "#{opt}:desc" ] }.flatten
       optional :first_char,
                type: String,
-               desc: "Filter songs by the first character of the song title (case-insensitive)"
+               desc: "Filter songs by the first character of the song title (case-insensitive)",
+               values: App.first_char_list
     end
     get do
       present page_of_songs, with: ApiV2::Entities::Song
@@ -48,7 +49,7 @@ class ApiV2::Songs < ApiV2::Base
       Rails.cache.fetch("api/v2/songs?#{params.to_query}") do
         Song.unscoped
             .then { |s| apply_filtering(s) }
-            .then { |s| apply_sorting(s, SORT_OPTIONS) }
+            .then { |s| apply_sorting(s, SORT_COLS) }
             .paginate(page: params[:page], per_page: params[:per_page])
       end
     end

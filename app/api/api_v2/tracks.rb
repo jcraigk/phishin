@@ -1,5 +1,5 @@
 class ApiV2::Tracks < ApiV2::Base
-  SORT_OPTIONS = %w[ id title likes_count duration ]
+  SORT_COLS = %w[ id title likes_count duration ]
 
   resource :tracks do
     desc "Return a list of tracks" do
@@ -18,7 +18,7 @@ class ApiV2::Tracks < ApiV2::Base
                type: String,
                desc: "Sort by attribute and direction (e.g., 'id:asc')",
                default: "id:asc",
-               values: SORT_OPTIONS.map { |option| [ "#{option}:asc", "#{option}:desc" ] }.flatten
+               values: SORT_COLS.map { |opt| [ "#{opt}:asc", "#{opt}:desc" ] }.flatten
       optional :tag_slug,
                type: String,
                desc: "Filter tracks by the slug of the tag"
@@ -51,7 +51,7 @@ class ApiV2::Tracks < ApiV2::Base
       Rails.cache.fetch("api/v2/tracks?#{params.to_query}") do
         Track.includes(:show, :songs, track_tags: :tag)
              .then { |t| apply_filtering(t) }
-             .then { |t| apply_sorting(t, SORT_OPTIONS) }
+             .then { |t| apply_sorting(t, SORT_COLS) }
              .paginate(page: params[:page], per_page: params[:per_page])
       end
     end

@@ -1,5 +1,5 @@
 class ApiV2::Shows < ApiV2::Base
-  SORT_OPTIONS = %w[ date likes_count duration updated_at ]
+  SORT_COLS = %w[ date likes_count duration updated_at ]
 
   resource :shows do
     desc "Return a list of shows" do
@@ -13,12 +13,12 @@ class ApiV2::Shows < ApiV2::Base
       ]
     end
     params do
-      use :pagination
+      use :pagination, :proximity
       optional :sort,
                type: String,
                desc: "Sort by attribute and direction (e.g., 'date:desc')",
                default: "date:desc",
-               values: SORT_OPTIONS.map { |option| [ "#{option}:asc", "#{option}:desc" ] }.flatten
+               values: SORT_COLS.map { |opt| [ "#{opt}:asc", "#{opt}:desc" ] }.flatten
       optional :year,
                type: Integer,
                desc: "Filter shows by a specific year"
@@ -31,15 +31,6 @@ class ApiV2::Shows < ApiV2::Base
       optional :tag_slug,
                type: String,
                desc: "Filter shows by the slug of an associated tag"
-      optional :lat,
-               type: Float,
-               desc: "Latitude to filter shows by proximity to a venue"
-      optional :lng,
-               type: Float,
-               desc: "Longitude to filter shows by proximity to a venue"
-      optional :distance,
-               type: Float,
-               desc: "Distance in miles to filter shows by proximity to a venue"
     end
     get do
       present page_of_shows, with: ApiV2::Entities::Show
@@ -104,7 +95,7 @@ class ApiV2::Shows < ApiV2::Base
         Show.published
             .includes(:venue, show_tags: :tag)
             .then { |s| apply_filtering(s) }
-            .then { |s| apply_sorting(s, SORT_OPTIONS) }
+            .then { |s| apply_sorting(s, SORT_COLS) }
             .paginate(page: params[:page], per_page: params[:per_page])
       end
     end

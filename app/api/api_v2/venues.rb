@@ -1,5 +1,5 @@
 class ApiV2::Venues < ApiV2::Base
-  SORT_OPTIONS = %w[ name shows_count ]
+  SORT_COLS = %w[ name shows_count ]
 
   resource :venues do
     desc "Return a list of venues" do
@@ -10,24 +10,16 @@ class ApiV2::Venues < ApiV2::Base
       success ApiV2::Entities::Venue
     end
     params do
-      use :pagination
+      use :pagination, :proximity
       optional :sort,
                type: String,
                desc: "Sort by attribute and direction (e.g., 'name:asc')",
                default: "name:asc",
-               values: SORT_OPTIONS.map { |option| [ "#{option}:asc", "#{option}:desc" ] }.flatten
+               values: SORT_COLS.map { |opt| [ "#{opt}:asc", "#{opt}:desc" ] }.flatten
       optional :first_char,
                type: String,
-               desc: "Filter venues by the first character of the venue name (case-insensitive)"
-      optional :lat,
-               type: Float,
-               desc: "Latitude for proximity search"
-      optional :lng,
-               type: Float,
-               desc: "Longitude for proximity search"
-      optional :distance,
-               type: Float,
-               desc: "Distance (in miles) for proximity search"
+               desc: "Filter venues by the first character of the venue name (case-insensitive)",
+               values: App.first_char_list
     end
     get do
       present page_of_venues, with: ApiV2::Entities::Venue
@@ -45,13 +37,15 @@ class ApiV2::Venues < ApiV2::Base
     end
   end
 
+
+
   helpers do
     def page_of_venues
       Rails.cache.fetch("api/v2/venues?#{params.to_query}") do
         Venue.unscoped
              .then { |v| apply_proximity_filter(v) }
              .then { |v| apply_first_char_filter(v) }
-             .then { |v| apply_sorting(v, SORT_OPTIONS) }
+             .then { |v| apply_sorting(v, SORT_COLS) }
              .paginate(page: params[:page], per_page: params[:per_page])
       end
     end

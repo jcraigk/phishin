@@ -20,6 +20,23 @@ class ApiV2::Auth < ApiV2::Base
       )
     end
 
+    # desc "User login via Google OAuth" do
+    #   detail "Exchanges Google OAuth authorization code for a JWT"
+    #   success ApiV2::Entities::LoginResponse
+    #   failure [ [ 401, "Unauthorized - Invalid OAuth token" ] ]
+    # end
+    # params do
+    #   requires :code, type: String, desc: "Google OAuth authorization code"
+    # end
+    # post :google_login do
+    #   user, jwt = authenticate_with_google!(params[:code])
+    #   status 200
+    #   present(
+    #     { jwt:, username: user.username, email: user.email },
+    #     with: ApiV2::Entities::LoginResponse
+    #   )
+    # end
+
     desc "Get currently logged in user" do
       detail "Return the currently authenticated User"
       success ApiV2::Entities::User
@@ -91,5 +108,47 @@ class ApiV2::Auth < ApiV2::Base
         "HS256"
       )
     end
+
+    # def authenticate_with_google!(code)
+    #   token_response = exchange_code_for_token(code)
+    #   id_token = token_response["id_token"]
+    #   payload = decode_google_id_token(id_token)
+    #   user = find_or_create_user_from_google_payload(payload)
+    #   [ user, jwt_for(user) ]
+    # end
+
+    # def exchange_code_for_token(code)
+    #   client_id = App.oauth_google_key
+    #   client_secret = App.oauth_google_secret
+    #   redirect_uri = "#{App.base_url}/oauth/callback/google"
+
+    #   response = Typhoeus.post \
+    #     "https://oauth2.googleapis.com/token",
+    #     body: {
+    #       code:,
+    #       client_id:,
+    #       client_secret:,
+    #       redirect_uri:,
+    #       grant_type: "authorization_code"
+    #     }
+
+    #   JSON.parse(response.body)
+    # end
+
+    # def decode_google_id_token(id_token)
+    #   JWT.decode(id_token, nil, true, {
+    #     algorithm: "RS256",
+    #     iss: "https://accounts.google.com",
+    #     verify_iss: true,
+    #     verify_iat: true,
+    #     aud: App.oauth_google_key
+    #   }).first
+    # end
+
+    # def find_or_create_user_from_google_payload(payload)
+    #   user = User.find_or_initialize_by(email: payload["email"])
+    #   user.save!
+    #   user
+    # end
   end
 end
