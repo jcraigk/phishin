@@ -1,8 +1,8 @@
 module ApiHelper
-  # def auth_header
-  #   api_key = create(:api_key)
-  #   { "Authorization" => "Bearer #{api_key.key}" }
-  # end
+  def auth_header
+    api_key = create(:api_key)
+    { "Authorization" => "Bearer #{api_key.key}" }
+  end
 
   def user_auth_header(user)
     token = JWT.encode(
