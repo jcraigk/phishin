@@ -16,7 +16,7 @@ class MyController < ApplicationController
     track_ids = Like.where(likable_type: "Track", user: current_user).map(&:likable_id)
     @tracks = Track.where(id: track_ids)
                    .includes(:show).order(@order_by)
-                   .paginate(page: params[:page], per_page: params[:per_page].presence || 20)
+                   .paginate(page: params[:page], per_page:)
     @tracks_likes = user_likes_for_tracks([ @tracks ])
 
     render_view
@@ -30,7 +30,7 @@ class MyController < ApplicationController
         .where(id: show_ids)
         .includes(:tracks)
         .order(@order_by)
-        .paginate(page: params[:page], per_page: params[:per_page].presence || 20)
+        .paginate(page: params[:page], per_page:)
   end
 
   def validate_sorting_for_my_shows # rubocop:disable Metrics/MethodLength

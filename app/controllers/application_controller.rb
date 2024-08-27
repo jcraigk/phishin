@@ -13,6 +13,10 @@ class ApplicationController < ActionController::Base
 
   protected
 
+  def per_page
+    @per_page ||= params[:per_page].presence&.to_i || 20
+  end
+
   def render_view(view = nil, status = 200)
     if view
       return render view, layout: false if request.xhr?

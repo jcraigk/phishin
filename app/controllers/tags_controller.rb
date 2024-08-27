@@ -41,14 +41,14 @@ class TagsController < ApplicationController
     tag.shows
        .includes(:venue, :tags)
        .order(shows_order_by)
-       .paginate(page: params[:page], per_page: params[:per_page].presence || 20)
+       .paginate(page: params[:page], per_page:)
   end
 
   def fetch_tracks
     tag.tracks
        .includes(:show, :tags)
        .order(tracks_order_by)
-       .paginate(page: params[:page], per_page: params[:per_page].presence || 20)
+       .paginate(page: params[:page], per_page:)
   end
 
   def tags_order_by
