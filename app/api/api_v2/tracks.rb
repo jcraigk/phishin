@@ -64,7 +64,10 @@ class ApiV2::Tracks < ApiV2::Base
 
     def apply_filtering(tracks)
       if params[:tag_slug]
-        tracks = tracks.joins(track_tags: :tag).where(tags: { slug: params[:tag_slug] })
+        track_ids = Track.joins(track_tags: :tag)
+                         .where(tags: { slug: params[:tag_slug] })
+                         .pluck(:id)
+        tracks = tracks.where(id: track_ids)
       end
 
       if params[:song_slug]

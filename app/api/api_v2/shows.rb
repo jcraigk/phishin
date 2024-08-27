@@ -126,11 +126,15 @@ class ApiV2::Shows < ApiV2::Base
       end
 
       if params[:venue_slug]
-        shows = shows.joins(:venue).where(venues: { slug: params[:venue_slug] })
+        venue_ids = Venue.where(slug: params[:venue_slug]).pluck(:id)
+        shows = shows.where(venue_id: venue_ids)
       end
 
       if params[:tag_slug]
-        shows = shows.joins(:tags).where(tags: { slug: params[:tag_slug] })
+        show_ids = Show.joins(:tags)
+                       .where(tags: { slug: params[:tag_slug] })
+                       .pluck(:id)
+        shows = shows.where(id: show_ids)
       end
 
       if params[:lat].present? && params[:lng].present? && params[:distance].present?
