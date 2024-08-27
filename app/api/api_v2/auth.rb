@@ -3,7 +3,7 @@ require "jwt"
 class ApiV2::Auth < ApiV2::Base
   resource :auth do
     desc "User login via email and password" do
-      detail "Authenticates a user using their email and password and returns a JWT"
+      detail "Authenticate a user using their email and password and return a JWT"
       success ApiV2::Entities::LoginResponse
       failure [ [ 401, "Unauthorized - Invalid email or password" ] ]
     end
@@ -48,7 +48,7 @@ class ApiV2::Auth < ApiV2::Base
     end
 
     desc "Request password reset email" do
-      detail "Sends a password reset email to the user if found"
+      detail "Send a password reset email to the user if found"
       success ApiV2::Entities::ApiResponse
     end
     params do
@@ -62,7 +62,7 @@ class ApiV2::Auth < ApiV2::Base
     end
 
     desc "Reset a user's password via reset token" do
-      detail "Resets the user's password using a token received in the password reset email"
+      detail "Reset the user's password using a token received in the password reset email"
       success ApiV2::Entities::ApiResponse
       failure [
         [ 401, "Unauthorized - Invalid reset token" ],

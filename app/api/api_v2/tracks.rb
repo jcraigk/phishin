@@ -4,7 +4,7 @@ class ApiV2::Tracks < ApiV2::Base
   resource :tracks do
     desc "Return a list of tracks" do
       detail \
-        "Fetches a sortable paginated list of tracks, " \
+        "Return a sortable paginated list of tracks, " \
         "optionally filtered by tag_slug or song_slug."
       success ApiV2::Entities::Track
       failure [
@@ -31,7 +31,7 @@ class ApiV2::Tracks < ApiV2::Base
     end
 
     desc "Return a track by ID" do
-      detail "Fetches a track by its ID, including show details, tags, and songs"
+      detail "Return a track by its ID, including show details, tags, and songs"
       success ApiV2::Entities::Track
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],

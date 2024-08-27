@@ -1,7 +1,7 @@
 class ApiV2::Announcements < ApiV2::Base
   resource :announcements do
     desc "Return recent announcements" do
-      detail "Returns the 100 newest announcements"
+      detail "Return the newest 100 announcements"
       success ApiV2::Entities::Announcement
     end
     get do
