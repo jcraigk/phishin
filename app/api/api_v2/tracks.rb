@@ -27,11 +27,11 @@ class ApiV2::Tracks < ApiV2::Base
                desc: "Filter tracks by the slug of the song"
     end
     get do
-      present page_of_tracks, with: ApiV2::Entities::Track, show_details: true
+      present page_of_tracks, with: ApiV2::Entities::Track
     end
 
-    desc "Return a specific track by ID" do
-      detail "Fetches a specific track by its ID, including show details, tags, and songs"
+    desc "Return a track by ID" do
+      detail "Fetches a track by its ID, including show details, tags, and songs"
       success ApiV2::Entities::Track
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
@@ -42,7 +42,7 @@ class ApiV2::Tracks < ApiV2::Base
       requires :id, type: Integer, desc: "ID of the track"
     end
     get ":id" do
-      present track_by_id, with: ApiV2::Entities::Track, show_details: true
+      present track_by_id, with: ApiV2::Entities::Track
     end
   end
 

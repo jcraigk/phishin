@@ -18,8 +18,8 @@ class ApiV2::Tours < ApiV2::Base
       present page_of_tours, with: ApiV2::Entities::Tour
     end
 
-    desc "Return a specific tour" do
-      detail "Return a specific tour by its slug, including associated shows"
+    desc "Return a tour" do
+      detail "Return a tour by its slug, including associated shows"
       success ApiV2::Entities::Tour
     end
     params do

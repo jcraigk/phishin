@@ -38,13 +38,15 @@ class ApiV2::Base < Grape::API
     info: {
       title: "#{App.app_name} API v2",
       description:
-        "A RESTful API for accessing content on #{App.app_name}, an " \
-          "open source archive of live Phish audience recordings",
-      contact_email: "phish.in.music@gmail.com",
-      contact_url: "https://phish.in/contact-info",
-      license: "MIT",
-      license_url: "https://github.com/jcraigk/phishin/blob/main/MIT-LICENSE",
-      terms_of_service_url: "https://phish.in/terms"
+        "A RESTful API for accessing data and content on [Phish.in](#{App.base_url}), an " \
+        "open source archive of live Phish audience recordings. " \
+        "See [GitHub](https://github.com/jcraigk/phishin) for development and issue tracking. " \
+        "Access is provided free of charge and without warranty. Please be nice.",
+      # contact_email: "phish.in.music@gmail.com",
+      # contact_url: "https://phish.in/contact-info",
+      # license: "MIT",
+      # license_url: "https://github.com/jcraigk/phishin/blob/main/MIT-LICENSE",
+      # terms_of_service_url: "https://phish.in/terms"
     },
     # security_definitions: {
     #   api_key: {

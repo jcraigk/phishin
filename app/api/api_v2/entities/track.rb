@@ -14,49 +14,6 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     }
 
   expose \
-    :show_id,
-    documentation: {
-      type: "Integer",
-      desc: "ID of the show this track belongs to"
-    }
-
-  with_options if: ->(_obj, opts) { opts[:show_details] } do
-    expose \
-      :show_date,
-      documentation: {
-        type: "String",
-        format: "date",
-        desc:
-          "Date of the show this track belongs to, " \
-          "included only if not part of a show request"
-      } do |track|
-        track.show.date.iso8601
-    end
-
-    expose \
-      :venue_name,
-      documentation: {
-        type: "String",
-        desc:
-          "Name of the venue where the show took place, " \
-          "included only if not part of a show request"
-      } do |track|
-        track.show.venue.name
-    end
-
-    expose \
-      :venue_location,
-      documentation: {
-        type: "String",
-        desc:
-          "Location (city, state, country) of the venue, " \
-          "included only if not part of a show request"
-      } do |track|
-        track.show.venue.location
-    end
-  end
-
-  expose \
     :title,
     documentation: {
       type: "String",
@@ -126,14 +83,6 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     }
 
   expose \
-    :songs,
-    using: ApiV2::Entities::Song,
-    documentation: {
-      is_array: true,
-      desc: "Songs associated with the track"
-  }
-
-  expose \
     :updated_at,
     format_with: :iso8601,
     documentation: {
@@ -141,4 +90,21 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       format: "date-time",
       desc: "Timestamp of the last update to the track"
     }
+
+  expose \
+    :show,
+    using: ApiV2::Entities::Show,
+    unless: ->(_obj, opts) { opts[:exclude_show] },
+    documentation: {
+      type: "Object",
+      desc: "Show this track belongs to"
+    }
+
+  expose \
+    :songs,
+    using: ApiV2::Entities::Song,
+    documentation: {
+      is_array: true,
+      desc: "Songs associated with the track"
+  }
 end

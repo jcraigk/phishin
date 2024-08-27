@@ -36,7 +36,7 @@ songs: [ songs[0], songs[1] ])
 
       json = JSON.parse(response.body, symbolize_names: true)
       sorted_tracks = tracks.sort_by(&:id).take(2)
-      expected = ApiV2::Entities::Track.represent(sorted_tracks, show_details: true).as_json
+      expected = ApiV2::Entities::Track.represent(sorted_tracks, include_show: true).as_json
       expect(json).to eq(expected)
     end
 
@@ -48,7 +48,7 @@ songs: [ songs[0], songs[1] ])
       filtered_tracks = tracks.select { |track| track.tags.include?(tag) }
       filtered_tracks_sorted = filtered_tracks.sort_by(&:id)
       expected = ApiV2::Entities::Track.represent(filtered_tracks_sorted,
-show_details: true).as_json
+include_show: true).as_json
       expect(json).to eq(expected)
     end
 
@@ -60,7 +60,7 @@ show_details: true).as_json
       filtered_tracks = tracks.select { |track| track.songs.include?(songs[0]) }
       filtered_tracks_sorted = filtered_tracks.sort_by(&:id)
       expected = ApiV2::Entities::Track.represent(filtered_tracks_sorted,
-show_details: true).as_json
+include_show: true).as_json
       expect(json).to eq(expected)
     end
 
@@ -73,7 +73,7 @@ show_details: true).as_json
  track.tags.include?(tag) && track.songs.include?(songs[0]) }
       filtered_tracks_sorted = filtered_tracks.sort_by(&:id)
       expected = ApiV2::Entities::Track.represent(filtered_tracks_sorted,
-show_details: true).as_json
+include_show: true).as_json
       expect(json).to eq(expected)
     end
 
@@ -83,7 +83,7 @@ show_details: true).as_json
 
       json = JSON.parse(response.body, symbolize_names: true)
       sorted_tracks = tracks.sort_by(&:likes_count).reverse.take(3)
-      expected = ApiV2::Entities::Track.represent(sorted_tracks, show_details: true).as_json
+      expected = ApiV2::Entities::Track.represent(sorted_tracks, include_show: true).as_json
       expect(json).to eq(expected)
     end
 
@@ -93,7 +93,7 @@ show_details: true).as_json
 
       json = JSON.parse(response.body, symbolize_names: true)
       sorted_tracks = tracks.sort_by(&:duration).take(3)
-      expected = ApiV2::Entities::Track.represent(sorted_tracks, show_details: true).as_json
+      expected = ApiV2::Entities::Track.represent(sorted_tracks, include_show: true).as_json
       expect(json).to eq(expected)
     end
 
@@ -110,7 +110,7 @@ show_details: true).as_json
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expected = ApiV2::Entities::Track.represent(track, show_details: true).as_json
+      expected = ApiV2::Entities::Track.represent(track, include_show: true).as_json
       expect(json).to eq(expected)
     end
 

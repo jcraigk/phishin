@@ -56,8 +56,8 @@ class ApiV2::Shows < ApiV2::Base
         include_tracks: true
     end
 
-    desc "Return a specific show by id" do
-      detail "Return a specific show by its ID, including associated tracks and tags"
+    desc "Return a show by id" do
+      detail "Return a show by its ID, including associated tracks and tags"
       success ApiV2::Entities::Show
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
@@ -68,8 +68,8 @@ class ApiV2::Shows < ApiV2::Base
       present Show.find(params[:id]), with: ApiV2::Entities::Show, include_tracks: true
     end
 
-    desc "Return a specific show by date" do
-      detail "Return a specific show by its date, including associated tracks and tags"
+    desc "Return a show by date" do
+      detail "Return a show by its date, including associated tracks and tags"
       success ApiV2::Entities::Show
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],

@@ -1,6 +1,6 @@
 class ApiV2::Search < ApiV2::Base
   resource :search do
-    desc "Search all content" do
+    desc "Search the database" do
       detail \
         "Performs a search across multiple entities including " \
         "shows, songs, venues, tours, and tags"

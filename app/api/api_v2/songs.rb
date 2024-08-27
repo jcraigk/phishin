@@ -27,8 +27,8 @@ class ApiV2::Songs < ApiV2::Base
       present page_of_songs, with: ApiV2::Entities::Song
     end
 
-    desc "Return a specific song" do
-      detail "Return a specific song by its slug"
+    desc "Return a song" do
+      detail "Return a song by its slug"
       success ApiV2::Entities::Song
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],

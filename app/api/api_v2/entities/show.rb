@@ -38,43 +38,12 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
   ) { _1.tour.name }
 
   expose \
-    :venue_name,
+    :venue,
+    using: ApiV2::Entities::Venue,
     documentation: {
-      type: "String",
-      desc: "Name of the venue where the show took place"
+      type: "Object",
+      desc: "Venue where the show took place"
     }
-
-  expose(
-    :venue_latitude,
-    documentation: {
-      type: "Float",
-      desc: "Latitude of the venue"
-    }
-  ) { _1.venue.latitude }
-
-  expose(
-    :venue_longitude,
-    documentation: {
-      type: "Float",
-      desc: "Longitude of the venue"
-    }
-  ) { _1.venue.longitude }
-
-  expose(
-    :venue_location,
-    documentation: {
-      type: "String",
-      desc: "Location (city, state, country) of the venue"
-    }
-  ) { _1.venue.location }
-
-  expose(
-    :venue_slug,
-    documentation: {
-      type: "String",
-      desc: "Slug of the venue"
-    }
-  ) { _1.venue.slug }
 
   expose \
     :taper_notes,
@@ -115,10 +84,9 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
       is_array: true,
       desc: "Tracks associated with the show, included only on individual show requests"
     }
-  ) do
-    ApiV2::Entities::Track.represent(
-      _1.tracks.sort_by(&:position),
-      show_details: true
-    )
+  ) do |obj, opts|
+    ApiV2::Entities::Track.represent \
+      obj.tracks.sort_by(&:position),
+      opts.merge(exclude_show: true)
   end
 end

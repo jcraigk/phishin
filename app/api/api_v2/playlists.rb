@@ -1,6 +1,6 @@
 class ApiV2::Playlists < ApiV2::Base
   resource :playlists do
-    desc "Return a specific playlist by slug" do
+    desc "Return a playlist by slug" do
       detail "Return a playlist by its slug, including all associated tracks"
       success ApiV2::Entities::Playlist
       failure [ [ 404, "Not Found", ApiV2::Entities::ApiResponse ] ]

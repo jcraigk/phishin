@@ -33,8 +33,8 @@ class ApiV2::Venues < ApiV2::Base
       present page_of_venues, with: ApiV2::Entities::Venue
     end
 
-    desc "Return a specific venue" do
-      detail "Return a specific venue by its slug"
+    desc "Return a venue" do
+      detail "Return a venue by its slug"
       success ApiV2::Entities::Venue
     end
     params do

@@ -19,6 +19,7 @@ module Phishin
       "#{config.web_host ? "https" : "http"}://#{config.web_host || "localhost:3000"}"
     config.app_desc =
       "#{config.app_name} is an open source archive of live Phish audience recordings"
+    config.github_url = "https://github.com/jcraigk/phishin"
     config.contact_email = "phish.in.music@gmail.com"
     config.auth_email_from = "Phish.in <noreply@phish.in>"
     config.twitter_handle = "@phish_in"

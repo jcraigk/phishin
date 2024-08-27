@@ -173,7 +173,7 @@ RSpec.describe "API v2 Shows" do
       json = JSON.parse(response.body, symbolize_names: true)
       expect(json).to be_present
       expect(json[:date]).to be_present
-      expect(json[:venue_name]).to eq("Madison Square Garden")
+      expect(json[:venue][:name]).to eq("Madison Square Garden")
     end
   end
 
