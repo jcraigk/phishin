@@ -13,7 +13,7 @@ Rails.application.configure do
   config.active_support.report_deprecations = false
   config.cache_classes = true
   config.consider_all_requests_local = false
-  config.eager_load = false
+  config.eager_load = false # TODO: Disabled for Grape API :shrug:
   config.force_ssl = true
   config.i18n.fallbacks = true
   config.require_master_key = true

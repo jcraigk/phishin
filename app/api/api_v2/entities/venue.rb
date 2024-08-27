@@ -16,7 +16,7 @@ class ApiV2::Entities::Venue < ApiV2::Entities::Base
   expose \
     :other_names,
     documentation: {
-      type: "Array",
+      is_array: true,
       desc: "Other names or aliases of the venue"
     }
 
