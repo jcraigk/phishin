@@ -76,8 +76,16 @@ body.fonts-loading {
   text-align: center;
   white-space: nowrap;
   background-color: $highlight1;
-  color: #fff;
+  color: #000;
   transition: background-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    color: #000 !important;
+  }
+}
+.large-button {
+  font-size: 1.5rem;
+  padding: 0.5em 1em;
 }
 
 .external-login-container {
