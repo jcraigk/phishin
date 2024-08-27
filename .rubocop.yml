@@ -29,6 +29,7 @@ Layout/LineLength:
 Metrics/BlockLength:
   Exclude:
     - spec/**/*
+    - app/api/**/*
     - config/routes.rb
 Metrics/ClassLength:
   Max: 250
@@ -40,6 +41,7 @@ RSpec/DescribeClass:
 RSpec/ExampleLength:
   Exclude:
     - spec/features/**/*
+    - spec/requests/**/*
 RSpec/IndexedLet:
   Enabled: false
 Rails/EnvironmentVariableAccess:
@@ -59,6 +61,7 @@ RSpec/ImplicitSubject:
 RSpec/MultipleExpectations:
   Exclude:
     - spec/features/**/*
+    - spec/requests/**/*
   Max: 4
 RSpec/NoExpectationExample: # We use expect_content helper method
   Exclude:

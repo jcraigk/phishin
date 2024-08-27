@@ -4,7 +4,7 @@ Rails.application.configure do
   config.action_dispatch.show_exceptions = false
   config.action_mailer.delivery_method = :test
   config.active_support.deprecation = :stderr
-  config.cache_classes = true
+  config.cache_store = :null_store
   config.consider_all_requests_local = true
   config.eager_load = false
   config.serve_static_assets = true
