@@ -28,7 +28,8 @@ module Ambiguity::SongTitle
   end
 
   def constrained_page_param(tracks)
-    [ tracks.paginate(page: 1).total_pages, params[:page]&.to_i || 1 ].min
+    total = (tracks.count.to_f / (params[:per_page].presence || 20)).ceil
+    [ total, params[:page]&.to_i || 1 ].min
   end
 
   def tagged_tracks(tracks)
