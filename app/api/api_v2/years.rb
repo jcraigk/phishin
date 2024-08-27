@@ -12,6 +12,12 @@ class ApiV2::Years < ApiV2::Base
   end
 
   helpers do
+    def cached_years_data
+      Rails.cache.fetch("api/v2/years") do
+        years_data
+      end
+    end
+
     def years_data
       ERAS.map do |era, periods|
         periods.map do |period|
@@ -28,12 +34,6 @@ class ApiV2::Years < ApiV2::Base
       shows = Show.published
       return shows.between_years(*period.split("-")).count if period.include?("-")
       shows.during_year(period).count
-    end
-
-    def cached_years_data
-      Rails.cache.fetch("api/v2/years") do
-        years_data
-      end
     end
   end
 end

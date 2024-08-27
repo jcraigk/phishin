@@ -6,8 +6,15 @@ class ApiV2::Tags < ApiV2::Base
     end
 
     get do
-      tags = Tag.order(name: :asc)
       present tags, with: ApiV2::Entities::Tag
+    end
+  end
+
+  helpers do
+    def tags
+      Rails.cache.fetch("api/v2/tags") do
+        Tag.order(name: :asc)
+      end
     end
   end
 end

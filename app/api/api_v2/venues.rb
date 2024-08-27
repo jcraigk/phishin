@@ -37,15 +37,13 @@ class ApiV2::Venues < ApiV2::Base
     end
   end
 
-
-
   helpers do
     def page_of_venues
       Rails.cache.fetch("api/v2/venues?#{params.to_query}") do
         Venue.unscoped
              .then { |v| apply_proximity_filter(v) }
              .then { |v| apply_first_char_filter(v) }
-             .then { |v| apply_sorting(v, SORT_COLS) }
+             .then { |v| apply_sort(v) }
              .paginate(page: params[:page], per_page: params[:per_page])
       end
     end

@@ -1,14 +1,9 @@
 module ApiV2::Helpers::SharedHelpers
   extend Grape::API::Helpers
 
-  def apply_sorting(relation, sort_options)
+  def apply_sort(relation)
     attribute, direction = params[:sort].split(":")
-    direction ||= "asc"
-    if sort_options.include?(attribute) && [ "asc", "desc" ].include?(direction)
-      relation.order("#{relation.table_name}.#{attribute} #{direction}")
-    else
-      error!({ message: "Invalid sort parameter" }, 400)
-    end
+    relation.order("#{relation.table_name}.#{attribute} #{direction}")
   end
 
   def current_user

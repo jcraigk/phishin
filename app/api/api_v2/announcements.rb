@@ -5,9 +5,15 @@ class ApiV2::Announcements < ApiV2::Base
       success ApiV2::Entities::Announcement
     end
     get do
-      present \
-        Announcement.order(created_at: :desc).limit(100),
-        with: ApiV2::Entities::Announcement
+      present announcements, with: ApiV2::Entities::Announcement
+    end
+  end
+
+  helpers do
+    def announcements
+      Rails.cache.fetch("api/v2/announcements") do
+        Announcement.order(created_at: :desc).limit(100)
+      end
     end
   end
 end

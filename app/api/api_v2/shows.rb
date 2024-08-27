@@ -94,8 +94,8 @@ class ApiV2::Shows < ApiV2::Base
       Rails.cache.fetch("api/v2/shows?#{params.to_query}") do
         Show.published
             .includes(:venue, show_tags: :tag)
-            .then { |s| apply_filtering(s) }
-            .then { |s| apply_sorting(s, SORT_COLS) }
+            .then { |s| apply_filter(s) }
+            .then { |s| apply_sort(s) }
             .paginate(page: params[:page], per_page: params[:per_page])
       end
     end
@@ -108,7 +108,7 @@ class ApiV2::Shows < ApiV2::Base
       end
     end
 
-    def apply_filtering(shows)
+    def apply_filter(shows)
       if params[:year]
         shows = shows.where("extract(year from date) = ?", params[:year])
       elsif params[:year_range]

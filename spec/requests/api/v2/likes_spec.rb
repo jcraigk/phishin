@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "API v2 Likes", type: :request do
+RSpec.describe "API v2 Likes" do
   let!(:user) { create(:user) }
   let!(:show) { create(:show) }
   let!(:track) { create(:track) }

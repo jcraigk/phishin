@@ -3,21 +3,6 @@ require "rails_helper"
 RSpec.describe "API v2 Auth" do
   let!(:user) { create(:user, password: "password") }
 
-  let(:google_auth_response) do
-    {
-      id_token: JWT.encode(
-        {
-          sub: "1234567890",
-          email: "user@example.com",
-          name: "Test User",
-          exp: (Time.now + 1.hour).to_i
-        },
-        nil,
-        "none"
-      )
-    }
-  end
-
   describe "POST /auth/login" do
     context "with valid credentials" do
       it "returns a JWT token and user information" do

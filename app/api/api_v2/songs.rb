@@ -48,8 +48,8 @@ class ApiV2::Songs < ApiV2::Base
     def page_of_songs
       Rails.cache.fetch("api/v2/songs?#{params.to_query}") do
         Song.unscoped
-            .then { |s| apply_filtering(s) }
-            .then { |s| apply_sorting(s, SORT_COLS) }
+            .then { |s| apply_filter(s) }
+            .then { |s| apply_sort(s) }
             .paginate(page: params[:page], per_page: params[:per_page])
       end
     end
@@ -60,7 +60,7 @@ class ApiV2::Songs < ApiV2::Base
       end
     end
 
-    def apply_filtering(songs)
+    def apply_filter(songs)
       if params[:first_char].present?
         songs = songs.title_starting_with(params[:first_char])
       end

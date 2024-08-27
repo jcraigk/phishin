@@ -50,8 +50,8 @@ class ApiV2::Tracks < ApiV2::Base
     def page_of_tracks
       Rails.cache.fetch("api/v2/tracks?#{params.to_query}") do
         Track.includes(:show, :songs, track_tags: :tag)
-             .then { |t| apply_filtering(t) }
-             .then { |t| apply_sorting(t, SORT_COLS) }
+             .then { |t| apply_filter(t) }
+             .then { |t| apply_sort(t) }
              .paginate(page: params[:page], per_page: params[:per_page])
       end
     end
@@ -62,7 +62,7 @@ class ApiV2::Tracks < ApiV2::Base
       end
     end
 
-    def apply_filtering(tracks)
+    def apply_filter(tracks)
       if params[:tag_slug]
         track_ids = Track.joins(track_tags: :tag)
                          .where(tags: { slug: params[:tag_slug] })
