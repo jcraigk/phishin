@@ -2,6 +2,7 @@ class SongsController < ApplicationController
   caches_action_params :index, %i[char sort]
 
   def index
+    @canonical_url = songs_url
     @songs = Song.title_starting_with(char_param).order(order_by)
     render_view
   end

@@ -66,7 +66,7 @@ module Ambiguity::Date
 
   def date_from_slug
     return false unless current_slug.match?(/\A\d{4}(-|\.)\d{1,2}(-|\.)\d{1,2}\z/)
-    return current_slug.tr("-", ".") if current_slug.match?(/\A(\d{4})\.(\d{1,2})\.(\d{1,2})\z/)
+    return current_slug.tr(".", "-") if current_slug.match?(/\A(\d{4})\.(\d{1,2})\.(\d{1,2})\z/)
     current_slug
   end
 

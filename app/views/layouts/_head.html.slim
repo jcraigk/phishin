@@ -1,0 +1,5 @@
+= render 'layouts/meta'
+= auto_discovery_link_tag :rss, '/feeds/rss', title: 'Phish.in Updates'
+
+- if @canonical_url
+  link rel='canonical' href=@canonical_url

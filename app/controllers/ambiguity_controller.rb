@@ -11,6 +11,7 @@ class AmbiguityController < ApplicationController
 
   def resolve
     if slug_matches_entity?
+      @canonical_url = "#{App.base_url}/#{current_slug}"
       return redirect_to(@redirect) if @redirect
       return render_view(@view)
     end

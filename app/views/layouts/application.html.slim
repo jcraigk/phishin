@@ -2,8 +2,7 @@ doctype html
 html
   head
     title = App.app_name
-    = render partial: 'layouts/meta'
-    = auto_discovery_link_tag :rss, '/feeds/rss', title: 'Phish.in Updates'
+    = render 'layouts/head'
     = stylesheet_pack_tag 'application', media: :all
     = javascript_pack_tag 'application'
     = csrf_meta_tags
@@ -15,17 +14,17 @@ html
     data-time-marker=(params[:t] || 0)
   ]
 
-    = render partial: 'layouts/ajax_loading'
-    = render partial: 'layouts/feedback'
-    = render partial: 'layouts/page_header'
-    = render partial: 'shared/clipboard'
-    = render partial: 'shared/lyrics_dialog'
-    = render partial: 'shared/save_playlist_dialog'
-    = render partial: 'shared/tag_dialog'
-    = render partial: 'shared/taper_notes_dialog'
+    = render 'layouts/ajax_loading'
+    = render 'layouts/feedback'
+    = render 'layouts/page_header'
+    = render 'shared/clipboard'
+    = render 'shared/lyrics_dialog'
+    = render 'shared/save_playlist_dialog'
+    = render 'shared/tag_dialog'
+    = render 'shared/taper_notes_dialog'
 
     #page = yield
 
-    = render partial: 'layouts/page_footer'
+    = render 'layouts/page_footer'
 
     iframe#download_iframe src=''
