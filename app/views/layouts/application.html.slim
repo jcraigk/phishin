@@ -7,6 +7,8 @@ html
     = javascript_pack_tag 'application'
     = csrf_meta_tags
 
+  = render 'layouts/_google_analytics'
+
   body.fonts-loading[
     data-base-url=App.base_url
     data-app-name=App.app_name
