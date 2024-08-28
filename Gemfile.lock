@@ -137,6 +137,7 @@ GEM
       tzinfo
     ethon (0.16.0)
       ffi (>= 1.15.0)
+    execjs (2.9.1)
     factory_bot (6.4.6)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.4.3)
@@ -149,7 +150,6 @@ GEM
       logger
     faraday-net_http (3.3.0)
       net-http
-    ffi (1.17.0-aarch64-linux-gnu)
     ffi (1.17.0-arm64-darwin)
     friendly_id (5.5.1)
       activerecord (>= 4.0.0)
@@ -254,8 +254,6 @@ GEM
     net-smtp (0.5.0)
       net-protocol
     nio4r (2.7.3)
-    nokogiri (1.16.7-aarch64-linux)
-      racc (~> 1.4)
     nokogiri (1.16.7-arm64-darwin)
       racc (~> 1.4)
     oauth (1.1.0)
@@ -333,6 +331,12 @@ GEM
     rake (13.2.1)
     rdoc (6.7.0)
       psych (>= 4.0.0)
+    react_on_rails (14.0.5)
+      addressable
+      connection_pool
+      execjs (~> 2.5)
+      rails (>= 5.2)
+      rainbow (~> 3.0)
     redis-client (0.22.2)
       connection_pool
     regexp_parser (2.9.2)
@@ -494,7 +498,6 @@ GEM
     zeitwerk (2.6.17)
 
 PLATFORMS
-  aarch64-linux
   arm64-darwin-23
 
 DEPENDENCIES
@@ -523,6 +526,7 @@ DEPENDENCIES
   puma
   rack-cors
   rails
+  react_on_rails
   rspec-rails
   rubocop
   rubocop-capybara

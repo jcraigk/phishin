@@ -1,6 +1,7 @@
 require "sidekiq/web"
 
 Rails.application.routes.draw do
+  # Sidekiq admin dashboard
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
     ActiveSupport::SecurityUtils.secure_compare(
       ::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_USERNAME"])
@@ -9,6 +10,12 @@ Rails.application.routes.draw do
     )
   end
   mount Sidekiq::Web, at: "/sidekiq"
+
+  # React entrypoint at /mobile
+  scope path: "mobile", controller: "mobile" do
+    root action: "index", as: "mobile_root"
+    get "*path", action: "index"
+  end
 
   root to: "eras#index"
 

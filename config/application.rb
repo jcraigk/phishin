@@ -5,6 +5,7 @@ require "action_controller/railtie"
 require "action_mailer/railtie"
 require "action_view/railtie"
 require "active_record/railtie"
+require_relative "../lib/middleware/mobile_redirect"
 
 Bundler.require(*Rails.groups)
 
@@ -13,6 +14,9 @@ module Phishin
     # Rails config
     config.load_defaults 7.2
     config.active_job.queue_adapter = :sidekiq
+
+    # React on Rails entry point
+    # config.middleware.insert_before 0, Middleware::MobileRedirect
 
     # Custom app config
     config.app_name = "Phish.in"
