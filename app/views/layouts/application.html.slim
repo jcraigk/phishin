@@ -6,8 +6,9 @@ html
     = stylesheet_pack_tag 'application', media: :all
     = javascript_pack_tag 'application'
     = csrf_meta_tags
+    = render 'analytics/plausible'
 
-  = render 'layouts/google_analytics'
+  = render 'analytics/google'
 
   body.fonts-loading[
     data-base-url=App.base_url

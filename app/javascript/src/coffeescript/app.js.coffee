@@ -78,6 +78,11 @@ $ ->
         else if state.href.substr(0,9) is '/playlist' or state.href.substr(0,6) is '/play/'
           App.Playlist.initPlaylist()
 
+        # Report page view to Google Analytics
+        gtag 'config', 'G-K44DN1T3J8',
+          page_path: "#{window.location.pathname}#{window.location.search}"
+          page_title: document.title
+
       .catch (error) ->
         console.log('Navigation fetch error: ', error.message)
 
