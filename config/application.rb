@@ -10,7 +10,9 @@ Bundler.require(*Rails.groups)
 
 module Phishin
   class Application < Rails::Application
+    # Rails config
     config.load_defaults 7.2
+    config.active_job.queue_adapter = :sidekiq
 
     # Custom app config
     config.app_name = "Phish.in"

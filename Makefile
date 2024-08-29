@@ -20,7 +20,7 @@ cleanforce:
 	docker volume prune -f
 
 services :
-	docker-compose up -d pg
+	docker-compose up -d pg redis
 
 spec : services
 	docker-compose run --rm app bundle exec rspec $(file)
