@@ -83,6 +83,18 @@ $ ->
           page_path: "#{window.location.pathname}#{window.location.search}"
           page_title: document.title
 
+        # Report page view to Swetrix
+        fetch "https://api.swetrix.com/log",
+          method: "POST"
+          headers:
+            "User-Agent": window.navigator.userAgent
+            "X-Client-IP-Address": window.location.hostname
+            "Content-Type": "application/json"
+          body: JSON.stringify
+            pid: "GzC6rQfcKjIw"
+            lc: window.navigator.language
+            pg: "#{window.location.pathname}#{window.location.search}"
+
       .catch (error) ->
         console.log('Navigation fetch error: ', error.message)
 
