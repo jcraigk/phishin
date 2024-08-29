@@ -1,0 +1,6 @@
+:scheduler:
+  :schedule:
+    sitemap_refresh:
+      cron: "0 3 * * * America/Los_Angeles" # Runs at 3 AM Pacific Time every day
+      class: SitemapRefreshJob
+      queue: default

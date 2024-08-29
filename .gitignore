@@ -6,6 +6,8 @@
 /log
 /public/assets
 /public/audio
+/public/sitemap.xml
+/public/sitemap.xml.gz
 /tmp
 /public/packs
 /public/packs-test

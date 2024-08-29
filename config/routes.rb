@@ -34,12 +34,12 @@ Rails.application.routes.draw do
   get "/my-tracks" => "my#my_tracks", as: "my_tracks"
 
   # Static pages
+  get "/api-docs" => "static_pages#api_docs", as: "api_docs"
+  get "/contact-info" => "static_pages#contact_info", as: "contact_info"
   get "/faq" => "static_pages#faq", as: "faq"
   get "/privacy" => "static_pages#privacy_policy", as: "privacy_policy"
-  get "/terms" => "static_pages#terms_of_service", as: "terms_of_service"
-  get "/contact-info" => "static_pages#contact_info", as: "contact_info"
-  get "/api-docs" => "static_pages#api_docs", as: "api_docs"
   get "/tagin-project" => "static_pages#tagin_project", as: "tagin_project"
+  get "/terms" => "static_pages#terms_of_service", as: "terms_of_service"
 
   # Reports
   get "/missing-content" => "reports#missing_content", as: "missing_content"
