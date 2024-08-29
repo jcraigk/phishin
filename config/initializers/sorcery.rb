@@ -23,7 +23,7 @@ Rails.application.config.sorcery.configure do |config|
   config.user_config do |user|
     user.stretches = 1 if Rails.env.test?
     user.remember_me_token_persist_globally = true
-    user.email_delivery_method = :deliver_now
+    user.email_delivery_method = :deliver_later
     user.reset_password_mailer = UserMailer
     user.reset_password_email_method_name = :reset_password
     user.authentications_class = Authentication
