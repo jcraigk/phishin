@@ -1,4 +1,5 @@
 SitemapGenerator::Sitemap.default_host = App.base_url
+SitemapGenerator::Sitemap.sitemaps_path = 'sitemap/'
 SitemapGenerator::Sitemap.create do # rubocop:disable Metrics/BlockLength
   # Static pages
   add "/api-docs"
