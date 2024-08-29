@@ -9,6 +9,8 @@ class ApiV2::Base < Grape::API
   # Endpoints
   # before { authenticate_api_key! unless swagger_endpoint? }
 
+  after { log_api_event }
+
   # Error handling
   rescue_from ActiveRecord::RecordNotFound do |e|
     error!({ message: "Not found" }, 404)

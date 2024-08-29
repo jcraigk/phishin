@@ -1,14 +1,14 @@
 module ApiAuth
   def require_auth
     return missing_key if key_from_header.blank?
-    return invalid_key if active_api_key.blank?
+    return invalid_key if api_key.blank?
     true
   end
 
   private
 
-  def active_api_key
-    ApiKey.active.find_by(key: key_from_header)
+  def api_key
+    @api_key ||= ApiKey.active.find_by(key: key_from_header)
   end
 
   def key_from_header
