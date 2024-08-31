@@ -10,7 +10,7 @@ const HelloWorld = (props) => {
       <hr className="my-4" />
       <form>
         <label className="block text-sm font-bold mb-2" htmlFor="name">
-          Say hello to:
+          Say <span className="special">hello</span> to:
         </label>
         <input
           id="name"
