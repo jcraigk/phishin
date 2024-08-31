@@ -1,7 +1,6 @@
 require "sidekiq/web"
 
 Rails.application.routes.draw do
-  get 'hello_world', to: 'hello_world#index'
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
     ActiveSupport::SecurityUtils.secure_compare(
       ::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_USERNAME"])
@@ -11,7 +10,9 @@ Rails.application.routes.draw do
   end
   mount Sidekiq::Web, at: "/sidekiq"
 
-  root to: "eras#index"
+  # root to: "eras#index"
+  root to: "hello_world#index"
+  # root to: "react#index"
 
   # RSS feed
   get "feeds/rss", to: "feeds#rss", format: "xml", as: :rss_feed

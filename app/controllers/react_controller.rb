@@ -1,5 +1,7 @@
 class ReactController < ApplicationController
-  layout "react"
+  layout "hello_world"
 
-  def index; end
+  def index
+    @props = { welcome: "Welcome" }
+  end
 end
