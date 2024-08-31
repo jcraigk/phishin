@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import "bulma";
+
 .special {
-  color: red;
+  color: purple;
+  @apply bg-red-200;
 }
