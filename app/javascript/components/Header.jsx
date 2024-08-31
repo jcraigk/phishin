@@ -1,3 +1,6 @@
+import React from "react"
+import PropTypes from "prop-types"
+
 const Header = ({ title = 'Eras of Phish', backRoute = null}) => {
   return (
     <div className='header-container'>
