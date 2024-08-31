@@ -137,6 +137,7 @@ GEM
       tzinfo
     ethon (0.16.0)
       ffi (>= 1.15.0)
+    execjs (2.9.1)
     factory_bot (6.4.6)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.4.3)
@@ -333,6 +334,12 @@ GEM
     rake (13.2.1)
     rdoc (6.7.0)
       psych (>= 4.0.0)
+    react_on_rails (14.0.5)
+      addressable
+      connection_pool
+      execjs (~> 2.5)
+      rails (>= 5.2)
+      rainbow (~> 3.0)
     redis-client (0.22.2)
       connection_pool
     regexp_parser (2.9.2)
@@ -523,6 +530,7 @@ DEPENDENCIES
   puma
   rack-cors
   rails
+  react_on_rails
   rspec-rails
   rubocop
   rubocop-capybara
