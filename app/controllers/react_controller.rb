@@ -1,7 +1,7 @@
 class ReactController < ApplicationController
-  layout "hello_world"
+  layout "react"
 
   def index
-    @props = { welcome: "Welcome" }
+    @props = { app_name: App.app_name }
   end
 end

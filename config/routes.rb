@@ -11,8 +11,8 @@ Rails.application.routes.draw do
   mount Sidekiq::Web, at: "/sidekiq"
 
   # root to: "eras#index"
-  root to: "hello_world#index"
-  # root to: "react#index"
+  # root to: "hello_world#index"
+  root to: "react#index"
 
   # RSS feed
   get "feeds/rss", to: "feeds#rss", format: "xml", as: :rss_feed

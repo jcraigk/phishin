@@ -1,9 +1,9 @@
-@import '~@fontsource/marck-script/400.css';
-@import '~@fontsource/open-sans-condensed/300.css';
-@import '~@fontsource/open-sans-condensed/700.css';
-@import '~bootstrap/dist/css/bootstrap.css';
-@import '~jquery-ui/themes/base/all.css';
-@import '~mapbox-gl/dist/mapbox-gl.css';
+@import "~@fontsource/marck-script/400.css";
+@import "~@fontsource/open-sans-condensed/300.css";
+@import "~@fontsource/open-sans-condensed/700.css";
+@import "~bootstrap/dist/css/bootstrap.css";
+@import "~jquery-ui/themes/base/all.css";
+@import "~mapbox-gl/dist/mapbox-gl.css";
 
 $text_gray: #6d6f71;
 $emphasis: #000;
@@ -119,7 +119,7 @@ body.fonts-loading {
   color: $gray_70;
 }
 .ui-tooltip {
-  font-family: 'Open Sans Condensed', sans-serif;
+  font-family: "Open Sans Condensed", sans-serif;
   background: $gray_70;
   color: $background_gray;
   border-radius: 5px;
@@ -133,7 +133,7 @@ body.fonts-loading {
     line-height: 1.2em;
   }
   .ui-dialog-content {
-    font-family: 'Open Sans Condensed', sans-serif;
+    font-family: "Open Sans Condensed", sans-serif;
   }
 }
 .tagin_project {
@@ -174,7 +174,7 @@ html {
     background-color: $background_gray !important;
 
     a, p, span, h1, h2, h3, h4, h5, input {
-      font-family: 'Open Sans Condensed', sans-serif;
+      font-family: "Open Sans Condensed", sans-serif;
     }
 
     h1, h2, h3, h4, h5 {
@@ -265,7 +265,7 @@ html {
 
       .error_box {
         background-color: $alert_background;
-        font-family: 'Open Sans Condensed', sans-serif;
+        font-family: "Open Sans Condensed", sans-serif;
         font-size: 26px;
         line-height: 30px;
         padding: 20px;
@@ -298,7 +298,7 @@ html {
         width: 16px;
         height: 16px;
         text-decoration: none;
-        background: url('../images/icons-heart.png');
+        background: url("../images/icons-heart.png");
         margin-right: 4px;
         margin-bottom: 10px;
 
@@ -317,7 +317,7 @@ html {
         line-height: 22px;
         color: $gray_50;
         font-size: 17px;
-        font-family: 'Marck Script', cursive !important;
+        font-family: "Marck Script", cursive !important;
         font-style: italic;
         overflow: hidden;
       }
@@ -473,7 +473,7 @@ html {
     height: 120px;
     vertical-align: middle;
     position: relative;
-    font-family: 'Open Sans Condensed', sans-serif;
+    font-family: "Open Sans Condensed", sans-serif;
 
     #user_controls {
       position: absolute;
@@ -517,7 +517,7 @@ html {
       width: 22px !important;
       height: 21px;
       cursor: pointer;
-      background: url('../images/icons-volume.png');
+      background: url("../images/icons-volume.png");
     }
     .playing {
       background-position: -65px 0 !important;
@@ -569,7 +569,7 @@ html {
           pointer-events: none; // Prevent interaction if necessary
         }
         .ui-slider-range {
-          background: url('../images/progress-bar.png');
+          background: url("../images/progress-bar.png");
           border-radius: 0px;
           z-index: 100 !important;
         }
@@ -657,7 +657,7 @@ html {
         border-radius: 100px;
         margin-top: -16px;
         margin-left: 5px;
-        background: white url('../images/icons-playpause.png');
+        background: white url("../images/icons-playpause.png");
         cursor: pointer;
 
         &.pulse {
@@ -677,11 +677,11 @@ html {
         cursor: pointer;
       }
       #control_previous {
-        background: white url('../images/icon-previous.png');
+        background: white url("../images/icon-previous.png");
         margin-right: 2px;
       }
       #control_next {
-        background: white url('../images/icon-next.png');
+        background: white url("../images/icon-next.png");
         margin-left: 2px;
       }
     }
@@ -972,7 +972,7 @@ html {
       width: 14px;
       height: 14px !important;
       text-decoration: none;
-      background: url('../images/icons-heart-small.png');
+      background: url("../images/icons-heart-small.png");
       margin-right: 3px;
 
       &:hover {
@@ -990,7 +990,7 @@ html {
       line-height: 15px;
       color: $gray_50;
       font-size: 14px !important;
-      font-family: 'Marck Script', cursive !important;
+      font-family: "Marck Script", cursive !important;
       font-style: italic;
       overflow: hidden;
     }
@@ -1053,7 +1053,7 @@ html {
   }
   .btn {
     margin-bottom: 10px !important;
-    font-family: 'Open Sans Condensed', sans-serif;
+    font-family: "Open Sans Condensed", sans-serif;
   }
   .icon-resize-vertical {
     position: relative;
@@ -1150,7 +1150,7 @@ html {
     background-color: $sub_nav_gray;
     padding: 20px 20px 10px 20px;
     border-radius: 10px;
-    font-family: 'Open Sans Condensed', sans-serif;
+    font-family: "Open Sans Condensed", sans-serif;
     z-index: 1;
 
     h1 {
@@ -1257,7 +1257,7 @@ html {
     float: right;
     width: 690px;
     position: relative;
-    font-family: 'Open Sans Condensed', sans-serif;
+    font-family: "Open Sans Condensed", sans-serif;
 
     & > h1 {
       margin-top: -5px !important;

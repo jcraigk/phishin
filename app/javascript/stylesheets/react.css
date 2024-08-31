@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "~@fontsource/marck-script/400.css";
+@import "~@fontsource/open-sans-condensed/300.css";
+@import "~@fontsource/open-sans-condensed/700.css";
+
+.special {
+  @apply bg-red-200;
+}
