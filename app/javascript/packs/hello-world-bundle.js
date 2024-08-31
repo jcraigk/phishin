@@ -1,4 +1,5 @@
 import ReactOnRails from 'react-on-rails';
+import '../stylesheets/react.css.scss';
 
 import HelloWorld from '../bundles/HelloWorld/components/HelloWorld';
 

@@ -1,19 +1,24 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import style from './HelloWorld.module.css';
 
 const HelloWorld = (props) => {
   const [name, setName] = useState(props.name);
 
   return (
-    <div>
-      <h3>Hello, {name}!</h3>
-      <hr />
+    <div className="bg-blue-500 p-4 rounded text-white">
+      <h3 className="text-xl">Hello, {name}!</h3>
+      <hr className="my-4" />
       <form>
-        <label className={style.bright} htmlFor="name">
+        <label className="block text-sm font-bold mb-2" htmlFor="name">
           Say hello to:
-          <input id="name" type="text" value={name} onChange={(e) => setName(e.target.value)} />
         </label>
+        <input
+          id="name"
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="p-2 border border-gray-300 rounded w-full"
+        />
       </form>
     </div>
   );
