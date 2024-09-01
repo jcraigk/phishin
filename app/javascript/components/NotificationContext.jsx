@@ -1,8 +1,8 @@
 import React, { createContext, useState, useContext } from "react";
 
-const AppNotificationContext = createContext();
+const NotificationContext = createContext();
 
-export const useNotification = () => useContext(AppNotificationContext);
+export const useNotification = () => useContext(NotificationContext);
 
 export const NotificationProvider = ({ children }) => {
   const [notification, setNotification] = useState(null);
@@ -20,8 +20,8 @@ export const NotificationProvider = ({ children }) => {
   };
 
   return (
-    <AppNotificationContext.Provider value={{ notification, setError, setMessage }}>
+    <NotificationContext.Provider value={{ notification, setError, setMessage, clearNotification }}>
       {children}
-    </AppNotificationContext.Provider>
+    </NotificationContext.Provider>
   );
 };

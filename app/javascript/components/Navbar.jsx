@@ -84,10 +84,12 @@ const Navbar = ({ appName }) => {
         <div className="navbar-end">
           <div className="navbar-item">
             <div className="buttons">
-              <a className="button is-primary">
+              <Link to="/signup" className="button is-primary">
                 <strong>Sign up</strong>
-              </a>
-              <a className="button is-light">Log in</a>
+              </Link>
+              <Link to="/login" className="button is-light">
+                Log in
+              </Link>
             </div>
           </div>
         </div>
