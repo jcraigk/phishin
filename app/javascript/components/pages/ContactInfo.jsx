@@ -1,6 +1,6 @@
 import React from "react";
 
-const ContactUs = () => {
+const ContactInfo = () => {
   return (
     <div className="p-4">
       <p>This is the Contact page for {document.title}.</p>
@@ -8,4 +8,4 @@ const ContactUs = () => {
   );
 };
 
-export default ContactUs;
+export default ContactInfo;

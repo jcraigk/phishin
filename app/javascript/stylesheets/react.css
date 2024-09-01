@@ -6,6 +6,8 @@
 @import "~@fontsource/open-sans-condensed/300.css";
 @import "~@fontsource/open-sans-condensed/700.css";
 
-.special {
-  @apply bg-red-200;
+@layer base {
+  body {
+    @apply font-open-sans;
+  }
 }
