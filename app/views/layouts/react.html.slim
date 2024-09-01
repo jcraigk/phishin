@@ -1,11 +1,13 @@
 doctype html
-html
+html data-theme="light"
   head
     title Phishin React
+    meta charset="UTF-8"
+    meta name="viewport" content="width=device-width, initial-scale=1.0"
     link rel="icon" href="/favicon.ico"
     = csrf_meta_tags
     = javascript_pack_tag 'react'
     = stylesheet_pack_tag 'react'
 
-  body.bg-blue-30
+  body
     = yield

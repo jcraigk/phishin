@@ -1,12 +1,12 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Header from "./Header";
+import Navbar from "./Navbar";
 
 const Layout = ({ appName }) => {
   return (
     <>
-      <Header appName={appName} />
-      <main className="mt-16">
+      <Navbar appName={appName} />
+      <main>
         <Outlet />
       </main>
     </>

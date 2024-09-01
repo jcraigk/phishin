@@ -4,6 +4,11 @@ import PageWrapper from "./PageWrapper";
 const Faq = ({ contact_email }) => {
   return (
     <PageWrapper>
+      <h3>What does this site do?</h3>
+      <p>
+        Phish.in provides a web UI and RESTful API for discovering, streaming, and sharing live audience recordings of the band Phish. The site has been running since 2013, delivering a reliable and comprehensive resource for fans.
+      </p>
+
       <h3>Is this site legal?</h3>
       <p>
         Yes, this site is 100% legal and complies with Phish's official taping policy as described at
@@ -16,8 +21,8 @@ const Faq = ({ contact_email }) => {
         </a>.
       </p>
 
-      <h3>How is it funded?</h3>
-      <p>This site is funded privately.</p>
+      <h3>How is the project funded?</h3>
+      <p>This site is funded 100% privately by the maintainer.</p>
 
       <h3>How are audio sources chosen?</h3>
       <p>
@@ -46,25 +51,20 @@ const Faq = ({ contact_email }) => {
       </p>
 
       <h3>Is there a list of missing audio content?</h3>
-      <p>
-        Yes, see the
-        <a href="/missing-content">
-          Missing Content Report
-        </a>.
-      </p>
+      <p>Yes, see the <a href="/missing-content">Missing Content Report</a></p>
 
       <h3>What format is audio encoded in?</h3>
       <p>MP3 format is currently provided. These may be replaced with lossless format at a later time as storage and bandwidth become available.</p>
 
       <h3>What technologies power the site?</h3>
-      <p>Ruby on Rails, Postgres, CloudFlare.</p>
+      <p>Ruby on Rails, React, and Postgres are the primary technologies used.</p>
 
       <h3>How can I contribute?</h3>
       <p>
-        Join the discussion on
+        Join the discussion on{" "}
         <a href="https://discord.gg/KZWFsNN" target="_blank">
           Discord
-        </a> or post an issue on
+        </a> or post an issue on{" "}
         <a href="https://github.com/jcraigk/phishin/issues" target="_blank">
           GitHub
         </a>.

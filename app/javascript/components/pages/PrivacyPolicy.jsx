@@ -1,10 +1,12 @@
 import React from "react";
+import PageWrapper from "./PageWrapper";
 
 const PrivacyPolicy = () => {
   return (
-    <div className="p-4">
-      <p>This is the FAQ page for {document.title}.</p>
-    </div>
+    <PageWrapper>
+      <h2>Privacy Policy</h2>
+      <p>When you log in using a third party provider like Google, we collect only the information necessary to provide access to our services. We do not share your email address or any other personal information with anyone for any reason.</p>
+    </PageWrapper>
   );
 };
 
