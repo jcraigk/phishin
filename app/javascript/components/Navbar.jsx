@@ -13,6 +13,7 @@ const Navbar = ({ appName }) => {
     { path: "/privacy", label: "Privacy Policy" },
     { path: "/terms", label: "Terms of Service" },
     { path: "/contact-info", label: "Contact" },
+    { path: "/request-password-reset", label: "Reset Password" },
   ];
 
   const handleLinkClick = () => {

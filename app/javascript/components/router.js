@@ -13,6 +13,8 @@ import Faq from "./pages/Faq";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TaginProject from "./pages/TaginProject";
 import TermsOfService from "./pages/TermsOfService";
+import RequestPasswordReset from "./pages/RequestPasswordReset";
+import ResetPassword from "./pages/ResetPassword";
 
 const router = (props) =>
   createBrowserRouter([
@@ -30,14 +32,14 @@ const router = (props) =>
         //   path: "/login",
         //   element: <LoginForm />,
         // },
-        // {
-        //   path: "/request_password_reset",
-        //   element: <RequestPasswordResetForm />,
-        // },
-        // {
-        //   path: "/reset_password",
-        //   element: <ResetPasswordForm />,
-        // },
+        {
+        path: "/request-password-reset",
+          element: <RequestPasswordReset />,
+        },
+        {
+          path: "/reset-password/:token",
+          element: <ResetPassword />,
+        },
         // Static pages
         {
           path: "api-docs",
