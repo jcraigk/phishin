@@ -33,7 +33,7 @@ $gray_70: #666666;
 
 body {
   font-family: "Open Sans Condensed", sans-serif;
-  padding-top: 3rem;
+  padding-top: 5rem;
 }
 
 p {
@@ -66,7 +66,10 @@ h3 ~ h3 {
 
 // Common components
 .notification {
-  margin-bottom: 1rem;
+  margin: 0 1rem 1rem 1rem;
+}
+.section {
+  padding-top: 0 !important;
 }
 
 //Navbar

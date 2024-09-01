@@ -1,5 +1,4 @@
 import React, { createContext, useState, useContext } from "react";
-import AppNotification from "./AppNotification"; // Import the notification component
 
 const AppNotificationContext = createContext();
 
@@ -8,12 +7,12 @@ export const useNotification = () => useContext(AppNotificationContext);
 export const NotificationProvider = ({ children }) => {
   const [notification, setNotification] = useState(null);
 
-  const setError = (error) => {
-    setNotification({ type: "error", message: error });
+  const setError = (message) => {
+    setNotification({ type: "danger", message, clearNotification });
   };
 
   const setMessage = (message) => {
-    setNotification({ type: "message", message });
+    setNotification({ type: "success", message, clearNotification });
   };
 
   const clearNotification = () => {
@@ -21,7 +20,7 @@ export const NotificationProvider = ({ children }) => {
   };
 
   return (
-    <AppNotificationContext.Provider value={{ notification, setError, setMessage, clearNotification }}>
+    <AppNotificationContext.Provider value={{ notification, setError, setMessage }}>
       {children}
     </AppNotificationContext.Provider>
   );
