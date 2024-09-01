@@ -15,6 +15,7 @@ import TaginProject from "./pages/TaginProject";
 import TermsOfService from "./pages/TermsOfService";
 import RequestPasswordReset from "./pages/RequestPasswordReset";
 import ResetPassword from "./pages/ResetPassword";
+import Login from "./pages/Login";
 
 const router = (props) =>
   createBrowserRouter([
@@ -28,10 +29,10 @@ const router = (props) =>
           element: <Eras />,
         },
         // Auth pages
-        // {
-        //   path: "/login",
-        //   element: <LoginForm />,
-        // },
+        {
+          path: "/login",
+          element: <Login />,
+        },
         {
         path: "/request-password-reset",
           element: <RequestPasswordReset />,
