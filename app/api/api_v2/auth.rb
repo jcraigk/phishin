@@ -4,7 +4,7 @@ class ApiV2::Auth < ApiV2::Base
   resource :auth do
     desc "User login via email and password" do
       detail "Authenticate a user using their email and password and return a JWT"
-      success ApiV2::Entities::LoginResponse
+      success [ { code: 200, model: ApiV2::Entities::LoginResponse } ]
       failure [ [ 401, "Unauthorized - Invalid email or password" ] ]
     end
     params do
@@ -49,16 +49,16 @@ class ApiV2::Auth < ApiV2::Base
 
     desc "Request password reset email" do
       detail "Send a password reset email to the user if found"
-      success ApiV2::Entities::ApiResponse
+      success [ { code: 200, model: ApiV2::Entities::ApiResponse } ]
     end
     params do
       requires :email, type: String, desc: "User email"
     end
-    post :send_password_reset_email do
+    post :request_password_reset do
       user = User.find_by(email: params[:email])
       user&.deliver_reset_password_instructions!
       status 200
-      { message: "If the email exists, reset instructions have been sent" }
+      { message: "Password reset instructions will be sent to the email if it exists" }
     end
 
     desc "Reset a user's password via reset token" do
