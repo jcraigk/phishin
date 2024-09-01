@@ -4,7 +4,8 @@ class ReactController < ApplicationController
   def index
     @props = {
       app_name: App.app_name,
-      contact_email: App.contact_email,
+      base_url: App.base_url,
+      contact_email: App.contact_email
     }
   end
 end

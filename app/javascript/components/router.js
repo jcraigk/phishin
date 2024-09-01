@@ -25,14 +25,27 @@ const router = (props) =>
           path: "/",
           element: <Eras />,
         },
+        // Auth pages
+        // {
+        //   path: "/login",
+        //   element: <LoginForm />,
+        // },
+        // {
+        //   path: "/request_password_reset",
+        //   element: <RequestPasswordResetForm />,
+        // },
+        // {
+        //   path: "/reset_password",
+        //   element: <ResetPasswordForm />,
+        // },
         // Static pages
         {
           path: "api-docs",
-          element: <ApiDocs />,
+          element: <ApiDocs base_url={props.base_url} />,
         },
         {
           path: "contact-info",
-          element: <ContactInfo />,
+          element: <ContactInfo contact_email={props.contact_email} />,
         },
         {
           path: "faq",
@@ -44,7 +57,7 @@ const router = (props) =>
         },
         {
           path: "tagin-project",
-          element: <TaginProject />,
+          element: <TaginProject base_url={props.base_url} />,
         },
         {
           path: "terms",
