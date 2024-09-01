@@ -1,5 +1,5 @@
 import ReactOnRails from "react-on-rails";
-import "../stylesheets/react.css";
+import "../stylesheets/react.css.scss";
 
 import App from "../components/App";
 
