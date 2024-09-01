@@ -1,11 +1,10 @@
 import React from "react";
+import PageWrapper from "./PageWrapper";
 
 const Faq = ({ contact_email }) => {
   return (
-    <>
-      <p className="font-bold">
-        Is this site legal?
-      </p>
+    <PageWrapper>
+      <h3>Is this site legal?</h3>
       <p>
         Yes, this site is 100% legal and complies with Phish's official taping policy as described at
         <a href="https://phish.com/#/faq/taping-guidelines" target="_blank">
@@ -17,14 +16,10 @@ const Faq = ({ contact_email }) => {
         </a>.
       </p>
 
-      <p className="font-bold">
-        How is it funded?
-      </p>
+      <h3>How is it funded?</h3>
       <p>This site is funded privately.</p>
 
-      <p className="font-bold">
-        How are audio sources chosen?
-      </p>
+      <h3>How are audio sources chosen?</h3>
       <p>
         The general goal of the site is to provide the most complete audio experience for every show in circulation, even if that means mixing different sources in rare cases. Due to hosting costs, there is currently only one recording per show, so the "best" source (highly subjective) is chosen from what is available online.
       </p>
@@ -50,9 +45,7 @@ const Faq = ({ contact_email }) => {
         </a> and include a link to download the source in question.
       </p>
 
-      <p className="font-bold">
-        Is there a list of missing audio content?
-      </p>
+      <h3>Is there a list of missing audio content?</h3>
       <p>
         Yes, see the
         <a href="/missing-content">
@@ -60,19 +53,13 @@ const Faq = ({ contact_email }) => {
         </a>.
       </p>
 
-      <p className="font-bold">
-        What format is audio encoded in?
-      </p>
+      <h3>What format is audio encoded in?</h3>
       <p>MP3 format is currently provided. These may be replaced with lossless format at a later time as storage and bandwidth become available.</p>
 
-      <p className="font-bold">
-        What technologies power the site?
-      </p>
+      <h3>What technologies power the site?</h3>
       <p>Ruby on Rails, Postgres, CloudFlare.</p>
 
-      <p className="font-bold">
-        How can I contribute?
-      </p>
+      <h3>How can I contribute?</h3>
       <p>
         Join the discussion on
         <a href="https://discord.gg/KZWFsNN" target="_blank">
@@ -82,7 +69,7 @@ const Faq = ({ contact_email }) => {
           GitHub
         </a>.
       </p>
-    </>
+    </PageWrapper>
   );
 };
 
