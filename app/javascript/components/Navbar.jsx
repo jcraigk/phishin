@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { useNotification } from "./NotificationContext";
@@ -7,6 +7,7 @@ const Navbar = ({ appName, user, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { setMessage } = useNotification();
+  const menuRef = useRef(null); // To detect clicks outside the menu
 
   const handleLinkClick = () => {
     setIsMenuOpen(false);
@@ -21,6 +22,21 @@ const Navbar = ({ appName, user, onLogout }) => {
     onLogout();
   };
 
+  // Close the menu when clicking outside of it
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuRef]);
+
   const staticLinks = [
     { path: "/faq", label: "FAQ" },
     { path: "/api-docs", label: "API" },
@@ -32,7 +48,7 @@ const Navbar = ({ appName, user, onLogout }) => {
   ];
 
   return (
-    <nav className="navbar" role="navigation" aria-label="main navigation">
+    <nav className="navbar" role="navigation" aria-label="main navigation" ref={menuRef}>
       <div className="navbar-brand">
         <Link to="/" className="navbar-item" onClick={handleLinkClick}>
           <img src="/static/logo-96.png" alt="Site Logo" />
@@ -46,6 +62,7 @@ const Navbar = ({ appName, user, onLogout }) => {
           data-target="navbarBasicExample"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
+          <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>

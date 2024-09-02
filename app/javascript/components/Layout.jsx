@@ -1,10 +1,16 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import { useNotification } from "./NotificationContext";
 
 const Layout = ({ appName, user, onLogout }) => {
-  const { notification } = useNotification();
+  const { notification, clearNotification } = useNotification();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Clear notification on route change
+    clearNotification();
+  }, [location.pathname]); // Dependency array to trigger the effect on path change
 
   return (
     <>

@@ -47,15 +47,11 @@ const ContactInfo = ({ contact_email }) => {
 
       <a
         href="https://x.com/phish_in"
-        className="x-follow-button"
-        data-show-count="false"
-        data-size="large"
+        className="button"
         target="_blank"
-        rel="noopener noreferrer"
       >
-        Follow
+        Follow on X
       </a>
-      <script async src="https://platform.x.com/widgets.js" charset="utf-8"></script>
     </PageWrapper>
   );
 };
