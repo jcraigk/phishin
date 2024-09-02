@@ -18,8 +18,7 @@ const Navbar = ({ appName, user, onLogout }) => {
   };
 
   const handleLogout = () => {
-    onLogout(); // Calls the handleLogout function passed from App
-    setMessage("Logged out successfully");
+    onLogout();
   };
 
   const staticLinks = [
