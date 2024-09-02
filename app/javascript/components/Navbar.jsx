@@ -6,7 +6,7 @@ import { useNotification } from "./NotificationContext";
 const Navbar = ({ appName, user, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { setMessage } = useNotification();
+  const { setNotice } = useNotification();
   const menuRef = useRef(null); // To detect clicks outside the menu
 
   const handleLinkClick = () => {

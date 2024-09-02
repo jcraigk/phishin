@@ -11,7 +11,8 @@ class ReactController < ApplicationController
       username: session[:username],
       email: session[:email],
       alert: flash[:alert],
-      notice: flash[:notice]
+      notice: flash[:notice],
+      eras: ERAS.to_json
     }
 
     session.delete(:jwt)

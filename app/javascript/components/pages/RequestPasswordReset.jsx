@@ -3,7 +3,7 @@ import PageWrapper from "./PageWrapper";
 import { useNotification } from "../NotificationContext"; // Updated path
 
 const RequestPasswordReset = () => {
-  const { setError, setMessage } = useNotification();
+  const { setAlert, setNotice } = useNotification();
   const [email, setEmail] = useState("");
 
   const handleSubmit = async (e) => {
@@ -18,10 +18,10 @@ const RequestPasswordReset = () => {
       return response.json();
     })
     .then(data => {
-      setMessage(data.message);
+      setNotice(data.message);
     })
     .catch(error => {
-      setError('Sorry, something went wrong');
+      setAlert('Sorry, something went wrong');
     });
   };
 

@@ -33,7 +33,7 @@ const router = (props) =>
       children: [
         {
           path: "/",
-          element: <Eras />,
+          element: <Eras eras={props.eras} />,
         },
         // Auth pages
         {

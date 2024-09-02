@@ -11,7 +11,7 @@ const AppRouter = (props) => {
     return jwt ? { jwt, username, email } : null;
   });
 
-  const { setError, setMessage } = useNotification();
+  const { setAlert, setNotice } = useNotification();
 
   useEffect(() => {
     if (props.jwt && props.username && props.email) {
@@ -21,10 +21,10 @@ const AppRouter = (props) => {
 
   useEffect(() => {
     if (props.notice) {
-      setMessage(props.notice);
+      setNotice(props.notice);
     }
     if (props.alert) {
-      setError(props.alert);
+      setAlert(props.alert);
     }
   }, [props.notice, props.alert]);
 
@@ -33,7 +33,7 @@ const AppRouter = (props) => {
     localStorage.setItem("username", userData.username);
     localStorage.setItem("email", userData.email);
     setUser(userData);
-    setMessage("You are now logged in as " + userData.email);
+    setNotice("You are now logged in as " + userData.email);
   };
 
   const handleLogout = () => {
@@ -41,7 +41,7 @@ const AppRouter = (props) => {
     localStorage.removeItem("username");
     localStorage.removeItem("email");
     setUser(null);
-    setMessage("Logged out successfully");
+    setNotice("Logged out successfully");
   };
 
   return (

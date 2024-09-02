@@ -5,7 +5,7 @@ import { useNotification } from "../NotificationContext";
 
 
 const ResetPassword = () => {
-  const { setError, setMessage } = useNotification();
+  const { setAlert, setNotice } = useNotification();
   const { token } = useParams();
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
@@ -15,16 +15,16 @@ const ResetPassword = () => {
 
     // Client-side validation
     if (password.length < 5) {
-      setError("Password must be at least 5 characters long.");
+      setAlert("Password must be at least 5 characters long.");
       return;
     }
 
     if (password !== passwordConfirmation) {
-      setError("Passwords do not match.");
+      setAlert("Passwords do not match.");
       return;
     }
 
-    setError(""); // Clear any existing errors
+    setAlert(""); // Clear any existing errors
 
     fetch('/api/v2/auth/reset_password', {
       method: 'POST',
@@ -44,10 +44,10 @@ const ResetPassword = () => {
       return response.json();
     })
     .then(data => {
-      setMessage(data.message);
+      setNotice(data.message);
     })
     .catch(error => {
-      setError(error.message);
+      setAlert(error.message);
     });
   };
 
