@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const ErrorNotice = ({ error }) => {
+const ErrorPage = ({ error }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-center p-6">
       <h1 className="text-4xl font-bold mb-4 text-red-600">We are so very sorry...</h1>
@@ -31,11 +31,11 @@ const ErrorNotice = ({ error }) => {
   );
 };
 
-ErrorNotice.propTypes = {
+ErrorPage.propTypes = {
   error: PropTypes.shape({
     message: PropTypes.string,
     stack: PropTypes.string,
   }),
 };
 
-export default ErrorNotice;
+export default ErrorPage;

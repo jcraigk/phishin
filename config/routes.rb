@@ -44,7 +44,7 @@ Rails.application.routes.draw do
   mount ApiV2::Api => "/api/v2"
 
   # React app
-  get "/", to: "react#index"
+  root to: "react#index"
   get "/(:path(/:arg))", to: "react#index"
 
   # Test env: disable content file requests

@@ -8,7 +8,7 @@ import YearRange from "./YearRange";
 
 import ApiDocs from "./pages/ApiDocs";
 import ContactInfo from "./pages/ContactInfo";
-import ErrorNotice from "./pages/ErrorNotice";
+import ErrorPage from "./pages/ErrorPage";
 import Faq from "./pages/Faq";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TaginProject from "./pages/TaginProject";
@@ -29,7 +29,7 @@ const router = (props) =>
           onLogout={props.handleLogout}
         />
       ),
-      errorElement: <ErrorNotice />,
+      errorElement: <ErrorPage />,
       children: [
         {
           path: "/",
@@ -38,11 +38,11 @@ const router = (props) =>
         // Auth pages
         {
           path: "login",
-          element: <Login onLogin={props.handleLogin} />
+          element: <Login oauth_providers={props.oauth_providers} onLogin={props.handleLogin}  />
         },
         {
           path: "signup",
-          element: <Signup onSignup={props.handleLogin} />
+          element: <Signup oauth_providers={props.oauth_providers} onSignup={props.handleLogin} />
         },
         {
         path: "/request-password-reset",

@@ -3,37 +3,12 @@
 @import "~@fontsource/open-sans-condensed/700.css";
 @import '~mapbox-gl/dist/mapbox-gl.css';
 
-$primary: #00baf2;
-
 @import "bulma";
-
-// $text_gray: #6d6f71;
-// $emphasis: #000;
-// $alert: #2a2a2a;
-// $background_gray: #f2f3f5;
-// $global_nav_gray: #c7c8ca;
-// $sub_nav_gray: #d9dbdc;
-// $alert_background: #ffc7c6;
-// $gray_50: #999999;
-$gray_70: #666666;
-// $gray_80: #4d4d4d;
-// $btn_border: #9da5aa;
-// $btn_bg_top: #fefefe;
-// $btn_bg_bottom: #d3d4d6;
-// $likes_blue: #6ccff6;
-// $hr_gray: #cececf;
-// $nav_highlight: #5f5f5f;
-// $highlight: #7eb8c7;
-// $highlight1: #00baf2;
-// $highlight2: #91e1f2;
-// $highlight3: #cbebf2;
-// $highlight4: #fff494;
-// $scrubbing: #1a80f6;
-// $google-blue: #5385ed;
 
 $bg_gray: #f2f3f5;
 $header_gray: #c7c8ca;
 $subheader_gray: #d9dbdc;
+$google-blue: #5385ed;
 
 body {
   font-family: "Open Sans Condensed", sans-serif;
@@ -116,44 +91,33 @@ h3 ~ h3 {
   margin: 0 0 2rem 1rem;
 }
 
+// OAuth
+.external-login-container {
+  margin-top: 15px;
 
-
-
-/* @layer base {
-  body {
-    @apply font-open-sans;
+  .external-login-btn {
+    font-size: 1.5rem;
+    width: 50%;
+    margin-top: 15px;
+    justify-content: left;
+    padding-left: 130px;
   }
+  .login-logo {
+    background-color: white;
+    border-radius: 3px;
+    width: 28px;
+    height: 28px;
+    position: relative;
+    left: -10px;
+    padding: 3px;
 
-  p {
-    @apply mb-4;
+    img {
+      position: relative;
+      top: -6px;
+    }
   }
-
-  h1 {
-    @apply text-3xl font-bold mb-6;
+  .google-btn {
+    color: white !important;
+    background-color: $google-blue;
   }
-
-  h2 {
-    @apply text-2xl font-bold mb-4;
-  }
-
-  h3 {
-    @apply text-lg font-bold mb-4;
-  }
-
-  h3 + h3,
-  h3 ~ h3 {
-    @apply mt-8;
-  }
-
-  .api-doc {
-    @apply block mb-8 ml-4;
-  }
-
-  .api-command {
-    @apply block rounded border border-dashed border-gray-300 p-2 text-base bg-white my-2;
-  }
-
-  .api-inline {
-    @apply inline-block rounded border border-dashed border-gray-300 p-2 text-base bg-white m-1;
-  }
-} */
+}
