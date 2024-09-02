@@ -22,7 +22,13 @@ const router = (props) =>
   createBrowserRouter([
     {
       path: "/",
-      element: <Layout appName={props.app_name} />,
+      element: (
+        <Layout
+          appName={props.app_name}
+          user={props.user}
+          onLogout={props.handleLogout}
+        />
+      ),
       errorElement: <ErrorNotice />,
       children: [
         {
