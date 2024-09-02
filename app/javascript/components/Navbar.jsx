@@ -3,21 +3,10 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { useNotification } from "./NotificationContext";
 
-const Navbar = ({ appName }) => {
+const Navbar = ({ appName, user, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [user, setUser] = useState(null);
   const { setMessage } = useNotification();
-
-  useEffect(() => {
-    const jwt = localStorage.getItem("jwt");
-    const username = localStorage.getItem("username");
-    const email = localStorage.getItem("email");
-
-    if (jwt) {
-      setUser({ username, email });
-    }
-  }, []);
 
   const handleLinkClick = () => {
     setIsMenuOpen(false);
@@ -29,10 +18,7 @@ const Navbar = ({ appName }) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("jwt");
-    localStorage.removeItem("username");
-    localStorage.removeItem("email");
-    setUser(null);
+    onLogout(); // Calls the handleLogout function passed from App
     setMessage("Logged out successfully");
   };
 
@@ -142,6 +128,8 @@ const Navbar = ({ appName }) => {
 
 Navbar.propTypes = {
   appName: PropTypes.string.isRequired,
+  user: PropTypes.object,
+  onLogout: PropTypes.func.isRequired,
 };
 
 export default Navbar;

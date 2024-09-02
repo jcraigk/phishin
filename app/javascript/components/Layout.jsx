@@ -3,12 +3,12 @@ import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import { useNotification } from "./NotificationContext";
 
-const Layout = ({ appName }) => {
+const Layout = ({ appName, user, onLogout }) => {
   const { notification } = useNotification();
 
   return (
     <>
-      <Navbar appName={appName} />
+      <Navbar appName={appName} user={user} onLogout={onLogout} />
       {notification && (
         <div className={`notification is-${notification.type}`}>
           <button className="delete" onClick={notification.clearNotification}></button>
