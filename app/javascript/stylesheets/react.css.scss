@@ -10,6 +10,8 @@ $header_gray: #c7c8ca;
 $subheader_gray: #d9dbdc;
 $google-blue: #5385ed;
 
+@import "./content.css.scss";
+
 
 body {
   font-family: "Open Sans Condensed", sans-serif;
@@ -17,36 +19,39 @@ body {
   background-color: $bg_gray;
 }
 
-hr {
-  border: 1px solid $header_gray; /* Bulma's default light gray color */
-}
+// Bulma .content overrides
+.content {
+  hr {
+    border: 1px solid $header_gray; /* Bulma's default light gray color */
+  }
 
-p {
-  margin-bottom: 1.5rem;
-  font-size: 1.25rem;
-}
+  p {
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+  }
 
-h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-}
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
 
-h2 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-}
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
 
-h3 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-}
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
 
-h3 + h3,
-h3 ~ h3 {
-  margin-top: 2rem;
+  h3 + h3,
+  h3 ~ h3 {
+    margin-top: 2rem;
+  }
 }
 
 // Common components
@@ -128,14 +133,7 @@ h3 ~ h3 {
 }
 
 // Content
-.content-item {
-  display: block;
-  width: 100%;
-  padding: 10px 15px;
-  background-color: #f0f0f0;
-  margin-bottom: 5px;
-  text-decoration: none;
-  color: inherit;
-  border-radius: var(--bulma-radius);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+
+
+
+

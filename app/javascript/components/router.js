@@ -133,12 +133,12 @@ const router = (props) =>
         // },
         // Content slugs
         {
-          path: ":date(\\d{4}-\\d{2}-\\d{2})",
-          element: <Show />,
+          path: ":yearRange",
+          element: <YearRange />,
         },
         {
-          path: ":yearRange(\\d{4}(-\\d{4})?)",
-          element: <YearRange />,
+          path: ":date(\\d{4}-\\d{2}-\\d{2})",
+          element: <Show />,
         },
         // Catch-all route for arbitrary slugs
         // {

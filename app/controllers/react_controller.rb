@@ -11,10 +11,10 @@ class ReactController < ApplicationController
       username: session[:username],
       email: session[:email],
       alert: flash[:alert],
-      notice: flash[:notice],
-      eras: ERAS.to_json
+      notice: flash[:notice]
     }
 
+    # Clear session after OAuth redirect
     session.delete(:jwt)
     session.delete(:username)
     session.delete(:email)

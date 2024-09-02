@@ -44,8 +44,12 @@ const AppRouter = (props) => {
     setNotice("Logged out successfully");
   };
 
+  const formatNumber = (number) => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
   return (
-    <RouterProvider router={router({ ...props, user, handleLogin, handleLogout })} />
+    <RouterProvider router={router({ ...props, user, handleLogin, handleLogout, formatNumber })} />
   );
 };
 

@@ -1,20 +1,58 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { formatDate, formatNumber, formatDurationShow } from "./utils";
 
-const YearRangePage = () => {
+const YearRange = () => {
   const { yearRange } = useParams();
+  const [shows, setShows] = useState([]);
 
-  const isRange = yearRange.includes("-");
-  const content = isRange
-    ? `This is a year range: ${yearRange}`
-    : `This is a year: ${yearRange}`;
+  useEffect(() => {
+    const fetchShows = async () => {
+      try {
+        const response = await fetch(`/api/v2/shows?per_page=1000&sort=date:desc&${yearRange.includes("-") ? `year_range=${yearRange}` : `year=${yearRange}`}`);
+        const data = await response.json();
+        setShows(data);
+      } catch (error) {
+        console.error("Error fetching shows:", error);
+      }
+    };
+
+    fetchShows();
+  }, [yearRange]);
+
+  let lastTourName = null;
+  let tourShowCount = 0;
 
   return (
-    <div>
-      <h1>{content}</h1>
-      <p>Rendering content for the selected year or year range.</p>
+    <div className="list-container">
+      <ul>
+        {shows.map((show, index) => {
+          const isNewTour = show.tour_name !== lastTourName;
+
+          if (isNewTour) {
+            tourShowCount = shows.filter(s => s.tour_name === show.tour_name).length;
+            lastTourName = show.tour_name;
+          }
+
+          return (
+            <React.Fragment key={show.id}>
+              {isNewTour && (
+                <div className="section-title">
+                  <h2>{show.tour_name}</h2>
+                  <span className="detail-right">{formatNumber(tourShowCount)} shows</span>
+                </div>
+              )}
+              <li className="list-item">
+                <span className="primary-data">{formatDate(show.date)}</span>
+                <span className="secondary-data">{show.location}</span>
+                <span className="tertiary-data">{formatDurationShow(show.duration)}</span>
+              </li>
+            </React.Fragment>
+          );
+        })}
+      </ul>
     </div>
   );
 };
 
-export default YearRangePage;
+export default YearRange;
