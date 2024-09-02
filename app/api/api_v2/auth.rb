@@ -2,8 +2,57 @@ require "jwt"
 
 class ApiV2::Auth < ApiV2::Base
   resource :auth do
+    desc "Create a new user" do
+      detail \
+        "Create a new user with the provided username, email, " \
+        "password, and password confirmation"
+      success [
+        {
+          code: 201,
+          model: ApiV2::Entities::LoginResponse,
+          message: "Create a new user and return a JWT for X-Auth-Token header"
+        }
+      ]
+      failure [
+        [ 422, "Unprocessable Entity - User creation failed" ],
+        [ 409, "Conflict - Email already exists" ]
+      ]
+    end
+    params do
+      requires :username, type: String, desc: "Username"
+      requires :email, type: String, desc: "Email"
+      requires :password, type: String, desc: "Password"
+      requires :password_confirmation, type: String, desc: "Password confirmation"
+    end
+    post :create_user do
+      if User.exists?(email: params[:email])
+        error!({ message: "Email already exists" }, 409)
+      end
+
+      unless params[:password] == params[:password_confirmation]
+        error!({ message: "Passwords do not match" }, 422)
+      end
+
+      user = User.new \
+        username: params[:username],
+        email: params[:email],
+        password: params[:password]
+
+      if user.save
+        status 201
+        present(
+          { jwt: jwt_for(user), username: user.username, email: user.email },
+          with: ApiV2::Entities::LoginResponse
+        )
+      else
+        error!({ message: user.errors.full_messages.join(", ") }, 422)
+      end
+    end
+
     desc "User login via email and password" do
-      detail "Authenticate a user using their email and password and return a JWT"
+      detail \
+        "Authenticate a user using their email and password " \
+        "and return a JWT for X-Auth-Token header"
       success [ { code: 200, model: ApiV2::Entities::LoginResponse } ]
       failure [ [ 401, "Unauthorized - Invalid email or password" ] ]
     end
