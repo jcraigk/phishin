@@ -4,18 +4,25 @@ import PageWrapper from "./PageWrapper";
 const ApiDocs = ({ base_url }) => {
   return (
     <PageWrapper>
-      <h2 className="title is-2">Version 2 (Experimental!)</h2>
+      <h2 className="title is-2">API Keys</h2>
+      <p className="font-semibold mb-8">
+        API keys can be requested via email, see the <a href="/contact-info" className="has-text-link is-underlined">contact page</a>.
+      </p>
+
+      <hr />
+
+      <h2 className="title is-2">API v2</h2>
       <a
         href={`https://petstore.swagger.io/?url=${base_url}/api/v2/swagger_doc`}
         target="_blank"
         className="button is-primary"
       >
-        Swagger API Documentation
+        Swagger Documentation
       </a>
 
-      <div className="my-12"></div>
+      <hr />
 
-      <h2 className="title is-2">Version 1 (Stable)</h2>
+      <h2 className="title is-2">API v1</h2>
 
       <h3 className="title is-3">Requests</h3>
       <p className="mb-4">
@@ -23,9 +30,6 @@ const ApiDocs = ({ base_url }) => {
         <span className="api-inline">HTTP GET</span> and must include the
         <span className="api-inline">Accept: application/json</span> header as well as a bearer auth header:
         <span className="api-inline">Authorization: Bearer &lt;your_api_key&gt;</span>
-      </p>
-      <p className="font-semibold mb-8">
-        API keys can be requested via the <a href="/contact-info" className="has-text-link is-underlined">contact page</a>.
       </p>
 
       <h3 className="title is-3">Responses</h3>

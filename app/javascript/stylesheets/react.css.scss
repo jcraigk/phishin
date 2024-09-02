@@ -10,10 +10,15 @@ $header_gray: #c7c8ca;
 $subheader_gray: #d9dbdc;
 $google-blue: #5385ed;
 
+
 body {
   font-family: "Open Sans Condensed", sans-serif;
   padding-top: 5rem;
   background-color: $bg_gray;
+}
+
+hr {
+  border: 1px solid $header_gray; /* Bulma's default light gray color */
 }
 
 p {
