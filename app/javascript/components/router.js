@@ -1,10 +1,9 @@
 import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 
+import DynamicRoute from "./DynamicRoute";
 import Layout from "./Layout";
 import Eras from "./Eras";
-import Show from "./Show";
-import YearRange from "./YearRange";
 
 import ApiDocs from "./pages/ApiDocs";
 import ContactInfo from "./pages/ContactInfo";
@@ -33,7 +32,7 @@ const router = (props) =>
       children: [
         {
           path: "/",
-          element: <Eras eras={props.eras} />,
+          element: <Eras eras={props.eras} />
         },
         // Auth pages
         {
@@ -46,36 +45,36 @@ const router = (props) =>
         },
         {
         path: "/request-password-reset",
-          element: <RequestPasswordReset />,
+          element: <RequestPasswordReset />
         },
         {
           path: "/reset-password/:token",
-          element: <ResetPassword />,
+          element: <ResetPassword />
         },
         // Static pages
         {
           path: "api-docs",
-          element: <ApiDocs base_url={props.base_url} />,
+          element: <ApiDocs base_url={props.base_url} />
         },
         {
           path: "contact-info",
-          element: <ContactInfo contact_email={props.contact_email} />,
+          element: <ContactInfo contact_email={props.contact_email} />
         },
         {
           path: "faq",
-          element: <Faq contact_email={props.contact_email} />,
+          element: <Faq contact_email={props.contact_email} />
         },
         {
           path: "privacy",
-          element: <PrivacyPolicy />,
+          element: <PrivacyPolicy />
         },
         {
           path: "tagin-project",
-          element: <TaginProject base_url={props.base_url} />,
+          element: <TaginProject base_url={props.base_url} />
         },
         {
           path: "terms",
-          element: <TermsOfService />,
+          element: <TermsOfService />
         },
         // Index pages
         // {
@@ -132,19 +131,14 @@ const router = (props) =>
         //   element: <MyTracks />,
         // },
         // Content slugs
-        {
-          path: ":yearRange",
-          element: <YearRange />,
-        },
-        {
-          path: ":date(\\d{4}-\\d{2}-\\d{2})",
-          element: <Show />,
-        },
-        // Catch-all route for arbitrary slugs
         // {
-        //   path: ":slug",
-        //   element: <SongOrVenue />,
+        //   path: ":show_date/:track_slug",
+        //   element: <Show />
         // },
+        {
+          path: ":route_path",
+          element: <DynamicRoute />
+        },
       ],
     },
   ]);

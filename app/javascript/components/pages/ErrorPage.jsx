@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import logo from "../../images/logo-96.png";
 
-const ErrorPage = () => {
+const ErrorPage = ({ message }) => {
   return (
     <div className="section">
       <div className="container">
@@ -15,15 +15,17 @@ const ErrorPage = () => {
           </a>
           <h1 className="title has-text-danger mb-6">We are so very sorry...</h1>
           <p className="subtitle is-4">
-            An unexpected error has occurred. If the problem persists, please submit a{" "}
-            <a
-              href="https://github.com/jcraigk/phishin/issues"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="has-text-link"
-            >
-              GitHub issue
-            </a>.
+            {message || "An unexpected error has occurred. If the problem persists, please submit a "}
+            {!message && (
+              <a
+                href="https://github.com/jcraigk/phishin/issues"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="has-text-link"
+              >
+                GitHub issue
+              </a>
+            )}
           </p>
         </div>
       </div>
@@ -32,10 +34,7 @@ const ErrorPage = () => {
 };
 
 ErrorPage.propTypes = {
-  error: PropTypes.shape({
-    message: PropTypes.string,
-    stack: PropTypes.string,
-  }),
+  message: PropTypes.string,
 };
 
 export default ErrorPage;

@@ -78,6 +78,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
 
   expose(
     :tracks,
+    # using: ApiV2::Entities::Track, # TODO: Fixes docs, breaks the data
     if: ->(_obj, opts) { opts[:include_tracks] },
     documentation: {
       is_array: true,
