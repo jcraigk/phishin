@@ -121,6 +121,7 @@ GEM
       concurrent-ruby (~> 1.0)
       zeitwerk (~> 2.6)
     dry-inflector (1.1.0)
+    dry-initializer (3.1.1)
     dry-logic (1.5.0)
       concurrent-ruby (~> 1.0)
       dry-core (~> 1.0, < 2)
@@ -513,6 +514,7 @@ DEPENDENCIES
   chunky_png
   dalli
   dotenv-rails
+  dry-initializer
   factory_bot_rails
   faker
   friendly_id

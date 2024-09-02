@@ -40,8 +40,9 @@ class ApiV2::Auth < ApiV2::Base
 
       if user.save
         status 201
+        jwt = UserJwtService.call(user)
         present(
-          { jwt: jwt_for(user), username: user.username, email: user.email },
+          { jwt:, username: user.username, email: user.email },
           with: ApiV2::Entities::LoginResponse
         )
       else
@@ -124,21 +125,10 @@ class ApiV2::Auth < ApiV2::Base
     def authenticate_user!(email, password)
       user = User.find_by(email:)
       if user&.valid_password?(password)
-        [ user, jwt_for(user) ]
+        [ user, UserJwtService.call(user) ]
       else
         error!({ message: "Invalid email or password" }, 401)
       end
-    end
-
-    def jwt_for(user)
-      JWT.encode(
-        {
-          sub: user.id,
-          exp: (Time.now + 1.year).to_i
-        },
-        Rails.application.secret_key_base,
-        "HS256"
-      )
     end
   end
 end
