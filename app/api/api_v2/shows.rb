@@ -67,6 +67,9 @@ class ApiV2::Shows < ApiV2::Base
         [ 404, "Not Found", ApiV2::Entities::ApiResponse ]
       ]
     end
+    params do
+      requires :date, type: String, desc: "Date in the format YYYY-MM-DD"
+    end
     get "on_date/:date" do
       present show_by_date, with: ApiV2::Entities::Show, include_tracks: true
     end
@@ -76,6 +79,9 @@ class ApiV2::Shows < ApiV2::Base
         "Return all shows that occurred on a specific day of the year " \
         "based on the provided date"
       success ApiV2::Entities::Show
+    end
+    params do
+      requires :date, type: String, desc: "Date in the format YYYY-MM-DD"
     end
     get "on_day_of_year/:date" do
       date = Date.parse(params[:date])

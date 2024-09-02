@@ -42,7 +42,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     }
 
   expose \
-    :set,
+    :set_name,
     documentation: {
       type: "Integer",
       desc: "Set number this track belongs to"

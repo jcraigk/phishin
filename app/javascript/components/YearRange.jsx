@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { formatDate, formatNumber, formatDurationShow } from "./utils";
 
 const YearRange = () => {
-  const { yearRange } = useParams();
+  const { route_path } = useParams();
   const [shows, setShows] = useState([]);
 
   useEffect(() => {
     const fetchShows = async () => {
       try {
-        const response = await fetch(`/api/v2/shows?per_page=1000&sort=date:desc&${yearRange.includes("-") ? `year_range=${yearRange}` : `year=${yearRange}`}`);
+        const response = await fetch(`/api/v2/shows?per_page=1000&sort=date:desc&${route_path.includes("-") ? `year_range=${route_path}` : `year=${route_path}`}`);
         const data = await response.json();
         setShows(data);
       } catch (error) {
@@ -18,7 +18,7 @@ const YearRange = () => {
     };
 
     fetchShows();
-  }, [yearRange]);
+  }, [route_path]);
 
   let lastTourName = null;
   let tourShowCount = 0;
@@ -42,11 +42,13 @@ const YearRange = () => {
                   <span className="detail-right">{formatNumber(tourShowCount)} shows</span>
                 </div>
               )}
-              <li className="list-item">
-                <span className="primary-data">{formatDate(show.date)}</span>
-                <span className="secondary-data">{show.location}</span>
-                <span className="tertiary-data">{formatDurationShow(show.duration)}</span>
-              </li>
+              <Link to={`/${show.date}`} className="list-item-link">
+                <li className="list-item">
+                  <span className="primary-data">{formatDate(show.date)}</span>
+                  <span className="secondary-data">{show.location}</span>
+                  <span className="tertiary-data">{formatDurationShow(show.duration)}</span>
+                </li>
+              </Link>
             </React.Fragment>
           );
         })}
