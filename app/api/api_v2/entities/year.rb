@@ -10,7 +10,14 @@ class ApiV2::Entities::Year < ApiV2::Entities::Base
     :shows_count,
     documentation: {
       type: "Integer",
-      desc: "Number of shows that occurred during this period"
+      desc: "Number of shows that were performed during this period"
+    }
+
+  expose \
+    :venues_count,
+    documentation: {
+      type: "Integer",
+      desc: "Unique number of venues that shows were performed at during this period"
     }
 
   expose \

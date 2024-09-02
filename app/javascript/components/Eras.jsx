@@ -1,32 +1,60 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { formatNumber } from "./utils";
 
-const Eras = ({ eras }) => {
-  const parsedEras = JSON.parse(eras); // Convert JSON string to JS object
+const Eras = () => {
+  const [eras, setEras] = useState({});
+
+  useEffect(() => {
+    fetch("/api/v2/years")
+      .then(response => response.json().then(data => {
+        if (response.ok) {
+          const erasData = data.reduce((acc, { era, period, shows_count, venues_count }) => {
+            if (!acc[era]) {
+              acc[era] = { periods: [], total_shows: 0 };
+            }
+            acc[era].periods.push({ period, shows_count, venues_count });
+            acc[era].total_shows += shows_count;
+            return acc;
+          }, {});
+
+          Object.keys(erasData).forEach((era) => {
+            erasData[era].periods.sort((a, b) => b.period.localeCompare(a.period));
+          });
+
+          setEras(erasData);
+        } else {
+          console.error("Error fetching data");
+        }
+      }));
+  }, []);
 
   return (
-    <div>
-      {Object.keys(parsedEras)
+    <div className="list-container">
+      {Object.keys(eras)
         .sort((a, b) => b.localeCompare(a)) // Sort eras in reverse order
         .map((era) => (
-          <div key={era}>
-            <h2>{era}</h2>
+          <React.Fragment key={era}>
+            <div className="section-title">
+              <h2>{era} Era</h2>
+              <span className="detail-right">{formatNumber(eras[era].total_shows)} shows</span>
+            </div>
             <ul>
-              {parsedEras[era]
-                .slice() // Make a shallow copy to avoid mutating original data
-                .reverse() // Reverse the years within each era
-                .map((year) => (
-                  <li key={year} style={{ listStyleType: "none" }}>
-                    <Link
-                      className="content-item"
-                      to={`/${year}`}
-                    >
-                      {year}
-                    </Link>
+              {eras[era].periods.map(({ period, shows_count, venues_count }) => (
+                <Link to={`/${period}`} key={period} className="list-item-link">
+                  <li className="list-item">
+                    <span className="primary-data">{period}</span>
+                    <span className="secondary-data">
+                      {venues_count} venue{venues_count !== 1 ? "s" : ""}
+                    </span>
+                    <span className="tertiary-data">
+                      {formatNumber(shows_count)} show{shows_count !== 1 ? "s" : ""}
+                    </span>
                   </li>
-                ))}
+                </Link>
+              ))}
             </ul>
-          </div>
+          </React.Fragment>
         ))}
     </div>
   );

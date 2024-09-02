@@ -3,7 +3,8 @@ class ApiV2::Years < ApiV2::Base
     desc "Return a list of years" do
       detail \
         "Return a list of years during which Phish performed live shows, " \
-        "including era designations and the number of shows performed each year"
+        "including era designations, the number of shows performed each " \
+        "year, and unique venues count."
       success ApiV2::Entities::Year
     end
     get do
@@ -21,19 +22,26 @@ class ApiV2::Years < ApiV2::Base
     def years_data
       ERAS.map do |era, periods|
         periods.map do |period|
+          shows_count, venues_count = counts_for(period)
           {
             period:,
-            shows_count: shows_count_for(period),
+            shows_count:,
+            venues_count:,
             era:
           }
         end
       end.flatten
     end
 
-    def shows_count_for(period)
+    def counts_for(period)
       shows = Show.published
-      return shows.between_years(*period.split("-")).count if period.include?("-")
-      shows.during_year(period).count
+      shows = if period.include?("-")
+        shows.between_years(*period.split("-"))
+      else
+        shows.during_year(period)
+      end
+
+      [ shows.count, shows.select(:venue_id).distinct.count ]
     end
   end
 end
