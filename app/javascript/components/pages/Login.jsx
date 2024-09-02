@@ -6,7 +6,7 @@ import { useNotification } from "../NotificationContext";
 const Login = ({ onLogin, oauth_providers }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setError, setMessage } = useNotification();
+  const { setAlert, setNotice } = useNotification();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -20,10 +20,10 @@ const Login = ({ onLogin, oauth_providers }) => {
     .then(response => response.json().then(data => {
       if (response.ok) {
         onLogin(data);
-        setMessage("Login successful");
+        setNotice("Login successful");
         navigate("/");
       } else {
-        setError(data.message || "An error occurred");
+        setAlert(data.message || "An error occurred");
       }
     }));
   };

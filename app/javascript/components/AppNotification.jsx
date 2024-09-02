@@ -7,11 +7,11 @@ export const useNotification = () => useContext(AppNotificationContext);
 export const NotificationProvider = ({ children }) => {
   const [notification, setNotification] = useState(null);
 
-  const setError = (message) => {
+  const setAlert = (message) => {
     setNotification({ type: "danger", message });
   };
 
-  const setMessage = (message) => {
+  const setNotice = (message) => {
     setNotification({ type: "success", message });
   };
 
@@ -20,7 +20,7 @@ export const NotificationProvider = ({ children }) => {
   };
 
   return (
-    <AppNotificationContext.Provider value={{ setError, setMessage, clearNotification }}>
+    <AppNotificationContext.Provider value={{ setAlert, setNotice, clearNotification }}>
       {children}
       {notification && (
         <AppNotification

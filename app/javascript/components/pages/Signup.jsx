@@ -8,7 +8,7 @@ const Signup = ({ onSignup }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const { setError, setMessage, clearNotification } = useNotification();
+  const { setAlert, setNotice, clearNotification } = useNotification();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -27,10 +27,10 @@ const Signup = ({ onSignup }) => {
     .then(response => response.json().then(data => {
       if (response.ok) {
         onSignup(data); // Calls the handleLogin function from App
-        setMessage("User created successfully - you are now logged in");
+        setNotice("User created successfully - you are now logged in");
         navigate("/");
       } else {
-        setError(data.message || "An error occurred");
+        setAlert(data.message || "An error occurred");
       }
     }));
   };
