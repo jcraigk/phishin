@@ -16,6 +16,7 @@ import TermsOfService from "./pages/TermsOfService";
 import RequestPasswordReset from "./pages/RequestPasswordReset";
 import ResetPassword from "./pages/ResetPassword";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 const router = (props) =>
   createBrowserRouter([
@@ -30,8 +31,12 @@ const router = (props) =>
         },
         // Auth pages
         {
-          path: "/login",
-          element: <Login />,
+          path: "login",
+          element: <Login onLogin={props.handleLogin} />
+        },
+        {
+          path: "signup",
+          element: <Signup onSignup={props.handleLogin} />
         },
         {
         path: "/request-password-reset",

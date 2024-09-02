@@ -1,10 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import { useNotification } from "./NotificationContext";
 
 const Navbar = ({ appName }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const { setMessage } = useNotification();
+
+  useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+    const username = localStorage.getItem("username");
+    const email = localStorage.getItem("email");
+
+    if (jwt) {
+      setUser({ username, email });
+    }
+  }, []);
+
+  const handleLinkClick = () => {
+    setIsMenuOpen(false);
+    setIsDropdownOpen(false);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("jwt");
+    localStorage.removeItem("username");
+    localStorage.removeItem("email");
+    setUser(null);
+    setMessage("Logged out successfully");
+  };
 
   const staticLinks = [
     { path: "/faq", label: "FAQ" },
@@ -15,15 +45,6 @@ const Navbar = ({ appName }) => {
     { path: "/contact-info", label: "Contact" },
     { path: "/request-password-reset", label: "Reset Password" },
   ];
-
-  const handleLinkClick = () => {
-    setIsMenuOpen(false);
-    setIsDropdownOpen(false);
-  };
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
 
   return (
     <nav className="navbar" role="navigation" aria-label="main navigation">
@@ -84,12 +105,33 @@ const Navbar = ({ appName }) => {
         <div className="navbar-end">
           <div className="navbar-item">
             <div className="buttons">
-              <Link to="/signup" className="button is-primary">
-                <strong>Sign up</strong>
-              </Link>
-              <Link to="/login" className="button is-light">
-                Log in
-              </Link>
+              {user ? (
+                <>
+                  <div className="navbar-item has-dropdown is-hoverable">
+                    <a className="navbar-link">
+                      {user.username}
+                    </a>
+                    <div className="navbar-dropdown is-right">
+                      <a
+                        href="#logout"
+                        className="navbar-item"
+                        onClick={handleLogout}
+                      >
+                        Logout
+                      </a>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Link to="/signup" className="button is-primary">
+                    <strong>Sign up</strong>
+                  </Link>
+                  <Link to="/login" className="button is-light">
+                    Log in
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
