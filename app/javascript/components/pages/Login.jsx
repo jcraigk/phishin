@@ -28,10 +28,6 @@ const Login = ({ onLogin, oauth_providers }) => {
     }));
   };
 
-  const getProviderLogo = (provider) => {
-    return require(`../../images/external-logos/${provider}.png`);
-  };
-
   return (
     <PageWrapper>
       <div className="container">
@@ -45,7 +41,7 @@ const Login = ({ onLogin, oauth_providers }) => {
             >
               <div className="login-logo">
                 <img
-                  src={getProviderLogo(provider)}
+                  src={require(`../../images/external-logos/${provider}.png`)}
                   alt={`${provider.toString().toUpperCase()} Logo`}
                   width="18"
                   height="18"
