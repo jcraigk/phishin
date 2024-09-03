@@ -41,7 +41,7 @@ const Venues = () => {
           <Link to={`/venues/${venue.slug}`} key={venue.slug} className="list-item-link">
             <li className="list-item">
               <span className="leftside-primary">{venue.name}</span>
-              <span className="leftside-secondary">{show.venue.name}</span>
+              <span className="leftside-secondary">{venue.location}</span>
               <span className="rightside-primary">{formatNumber(venue.shows_count)} shows</span>
             </li>
           </Link>
