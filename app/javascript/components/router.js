@@ -97,51 +97,47 @@ const router = (props) =>
         //   element: <Tracks />,
         // },
         // {
-        //   path: "map",
+        //   path: "/map",
         //   element: <Map />,
         // },
         // {
-        //   path: "top-shows",
+        //   path: "/top-shows",
         //   element: <TopShows />,
         // },
         // {
-        //   path: "top-tracks",
+        //   path: "/top-tracks",
         //   element: <TopTracks />,
         // },
         // {
-        //   path: "playlist",
+        //   path: "/playlist",
         //   element: <Playlist />,
         // },
         // {
-        //   path: "playlists",
+        //   path: "/playlists",
         //   element: <Playlists />,
         // },
         // {
-        //   path: "play/:playlist_slug",
+        //   path: "/play/:playlist_slug",
         //   element: <Playlist />,
         // },
         // {
-        //   path: "today",
+        //   path: "/today",
         //   element: <Today />,
         // },
         // {
-        //   path: "search",
+        //   path: "/search",
         //   element: <Search />,
         // },
         // User content pages
         // {
-        //   path: "my-shows",
+        //   path: "/my-shows",
         //   element: <MyShows />,
         // },
         // {
-        //   path: "my-tracks",
+        //   path: "/my-tracks",
         //   element: <MyTracks />,
-        // },
+        // }
         // Content slugs
-        // {
-        //   path: ":show_date/:track_slug",
-        //   element: <Show />
-        // },
         {
           path: ":route_path",
           element: <DynamicRoute />

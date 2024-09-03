@@ -46,10 +46,10 @@ const Venues = () => {
         <h2 className="subtitle">{formatNumber(totalEntries)} total</h2>
         <div className="select is-fullwidth">
           <select value={sortOption} onChange={handleSortChange}>
-            <option value="name:asc">Name (A-Z)</option>
-            <option value="name:desc">Name (Z-A)</option>
-            <option value="shows_count:desc">Shows Count (High to Low)</option>
-            <option value="shows_count:asc">Shows Count (Low to High)</option>
+            <option value="name:asc">Sort by Name (A-Z)</option>
+            <option value="name:desc">Sort by Name (Z-A)</option>
+            <option value="shows_count:desc">Sort by Shows Count (High to Low)</option>
+            <option value="shows_count:asc">Sort by Shows Count (Low to High)</option>
           </select>
         </div>
       </div>

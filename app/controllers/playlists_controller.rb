@@ -1,6 +1,6 @@
 class PlaylistsController < ApplicationController
   skip_before_action :verify_authenticity_token
-  before_action :authenticate_user!, only: %i[save destroy bookmark unbookmark]
+  before_action :require_login, only: %i[save destroy bookmark unbookmark]
 
   def active
     if (playlist = Playlist.find_by(slug: params[:slug]))

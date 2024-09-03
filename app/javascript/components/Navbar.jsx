@@ -8,12 +8,16 @@ const Navbar = ({ appName, user, onLogout }) => {
   const [isAboutDropdownOpen, setIsAboutDropdownOpen] = useState(false);
   const [isContentDropdownOpen, setIsContentDropdownOpen] = useState(false);
   const { setNotice } = useNotification();
-  const menuRef = useRef(null); // To detect clicks outside the menu
+  const menuRef = useRef(null);
 
   const handleLinkClick = () => {
     setIsMenuOpen(false);
     setIsAboutDropdownOpen(false);
     setIsContentDropdownOpen(false);
+
+    // Forcefully remove the 'is-active' class from dropdowns
+    const dropdowns = document.querySelectorAll('.has-dropdown.is-active');
+    dropdowns.forEach((dropdown) => dropdown.classList.remove('is-active'));
   };
 
   const toggleDropdown = (setDropdown) => {
@@ -22,15 +26,19 @@ const Navbar = ({ appName, user, onLogout }) => {
 
   const handleLogout = () => {
     onLogout();
+    handleLinkClick(); // Ensure dropdowns close after logout
   };
 
-  // Close the menu when clicking outside of it
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsMenuOpen(false);
         setIsAboutDropdownOpen(false);
         setIsContentDropdownOpen(false);
+
+        // Forcefully remove the 'is-active' class from dropdowns
+        const dropdowns = document.querySelectorAll('.has-dropdown.is-active');
+        dropdowns.forEach((dropdown) => dropdown.classList.remove('is-active'));
       }
     };
 
@@ -40,7 +48,6 @@ const Navbar = ({ appName, user, onLogout }) => {
     };
   }, [menuRef]);
 
-  // Collapse dropdowns when the burger menu is toggled
   useEffect(() => {
     if (!isMenuOpen) {
       setIsAboutDropdownOpen(false);
@@ -48,7 +55,7 @@ const Navbar = ({ appName, user, onLogout }) => {
     }
   }, [isMenuOpen]);
 
-  const stiteLinks = [
+  const siteLinks = [
     { path: "/faq", label: "FAQ" },
     { path: "/api-docs", label: "API" },
     { path: "/tagin-project", label: "Tagin' Project" },
@@ -106,7 +113,7 @@ const Navbar = ({ appName, user, onLogout }) => {
           >
             <a className="navbar-link">Site</a>
             <div className="navbar-dropdown">
-              {stiteLinks.map((link) => (
+              {siteLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}

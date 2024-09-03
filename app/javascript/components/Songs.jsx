@@ -46,10 +46,10 @@ const Songs = () => {
         <h2 className="subtitle">{formatNumber(totalEntries)} total</h2>
         <div className="select is-fullwidth">
           <select value={sortOption} onChange={handleSortChange}>
-            <option value="title:asc">Title (A-Z)</option>
-            <option value="title:desc">Title (Z-A)</option>
-            <option value="tracks_count:desc">Tracks Count (High to Low)</option>
-            <option value="tracks_count:asc">Tracks Count (Low to High)</option>
+            <option value="title:asc">Sort by Title (A-Z)</option>
+            <option value="title:desc">Sort by Title (Z-A)</option>
+            <option value="tracks_count:desc">Sort by Tracks Count (High to Low)</option>
+            <option value="tracks_count:asc">Sort by Tracks Count (Low to High)</option>
           </select>
         </div>
       </div>

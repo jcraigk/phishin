@@ -93,6 +93,10 @@
   flex-shrink: 0;
 }
 
+.width-8 {
+  width: 8rem !important;
+}
+
 @media (hover: hover) {
   .list-item:hover {
     background-color: var(--bulma-grey-lighter);
@@ -106,6 +110,3 @@
   }
 }
 
-.width-8 {
-  width: 8rem !important;
-}
