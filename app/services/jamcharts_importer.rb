@@ -105,14 +105,14 @@ class JamchartsImporter
 
   def create_or_update_tag(track, tag, desc)
     tt = TrackTag.find_by(track:, tag:)
+    notes = html_entities_coder.decode(desc)
     if tt.present?
-      tt.update(notes: desc)
+      tt.update(notes:)
     else
-      TrackTag.create!(
+      TrackTag.create! \
         track:,
         tag:,
-        notes: desc
-      )
+        notes:
     end
   end
 
@@ -127,7 +127,7 @@ class JamchartsImporter
   def ambiguous_item(item)
     ambiguous_items.find { |i| i[:showid] == item["showid"].to_s && i[:song] == item["song"] }
   end
-
+2
   def ambiguous_items
     [
       {
@@ -136,5 +136,9 @@ class JamchartsImporter
         track_id: "18941"
       }
     ]
+  end
+
+  def html_entities_coder
+    @html_entities_coder ||= HTMLEntities.new
   end
 end
