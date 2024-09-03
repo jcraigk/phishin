@@ -2,20 +2,21 @@ import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 
 import DynamicRoute from "./DynamicRoute";
-import Layout from "./Layout";
 import Eras from "./Eras";
+import Layout from "./Layout";
+import Venues from "./Venues";
 
 import ApiDocs from "./pages/ApiDocs";
 import ContactInfo from "./pages/ContactInfo";
 import ErrorPage from "./pages/ErrorPage";
 import Faq from "./pages/Faq";
+import Login from "./pages/Login";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TaginProject from "./pages/TaginProject";
-import TermsOfService from "./pages/TermsOfService";
 import RequestPasswordReset from "./pages/RequestPasswordReset";
 import ResetPassword from "./pages/ResetPassword";
-import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import TaginProject from "./pages/TaginProject";
+import TermsOfService from "./pages/TermsOfService";
 
 const router = (props) =>
   createBrowserRouter([
@@ -36,11 +37,11 @@ const router = (props) =>
         },
         // Auth pages
         {
-          path: "login",
+          path: "/login",
           element: <Login oauth_providers={props.oauth_providers} onLogin={props.handleLogin}  />
         },
         {
-          path: "signup",
+          path: "/signup",
           element: <Signup oauth_providers={props.oauth_providers} onSignup={props.handleLogin} />
         },
         {
@@ -53,38 +54,34 @@ const router = (props) =>
         },
         // Static pages
         {
-          path: "api-docs",
+          path: "/api-docs",
           element: <ApiDocs base_url={props.base_url} />
         },
         {
-          path: "contact-info",
+          path: "/contact-info",
           element: <ContactInfo contact_email={props.contact_email} />
         },
         {
-          path: "faq",
+          path: "/faq",
           element: <Faq contact_email={props.contact_email} />
         },
         {
-          path: "privacy",
+          path: "/privacy",
           element: <PrivacyPolicy />
         },
         {
-          path: "tagin-project",
+          path: "/tagin-project",
           element: <TaginProject base_url={props.base_url} />
         },
         {
-          path: "terms",
+          path: "/terms",
           element: <TermsOfService />
         },
         // Index pages
-        // {
-        //   path: "years",
-        //   element: <Eras />,
-        // },
-        // {
-        //   path: "venues",
-        //   element: <Venues />,
-        // },
+        {
+          path: "/venues",
+          element: <Venues />,
+        },
         // {
         //   path: "songs",
         //   element: <Songs />,

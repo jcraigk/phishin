@@ -36,18 +36,18 @@ const Eras = () => {
         .map((era) => (
           <React.Fragment key={era}>
             <div className="section-title">
-              <h2>{era} Era</h2>
+              <div className="title-left">{era} Era</div>
               <span className="detail-right">{formatNumber(eras[era].total_shows)} shows</span>
             </div>
             <ul>
               {eras[era].periods.map(({ period, shows_count, venues_count }) => (
                 <Link to={`/${period}`} key={period} className="list-item-link">
                   <li className="list-item">
-                    <span className="primary-data">{period}</span>
-                    <span className="secondary-data">
+                    <span className="leftside-primary">{period}</span>
+                    <span className="leftside-secondary">
                       {venues_count} venue{venues_count !== 1 ? "s" : ""}
                     </span>
-                    <span className="tertiary-data">
+                    <span className="rightside-primary width-8">
                       {formatNumber(shows_count)} show{shows_count !== 1 ? "s" : ""}
                     </span>
                   </li>

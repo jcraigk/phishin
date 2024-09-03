@@ -4,7 +4,7 @@
 
   .section-title {
     display: flex;
-    align-items: baseline; /* Aligns the baseline of h2 and detail-right */
+    align-items: baseline;
     justify-content: space-between;
     margin-bottom: 0.5rem;
     padding-right: 1rem;
@@ -14,17 +14,17 @@
       margin-top: 3rem;
     }
 
-    h2 {
+    .title-left {
       font-size: 1.75rem;
       font-weight: 700;
-      line-height: 1; /* Ensure line height doesn't affect baseline alignment */
+      line-height: 1;
     }
 
     .detail-right {
       font-size: 1rem;
       font-weight: bold;
       color: var(--bulma-grey-dark);
-      line-height: 1; /* Match line height to ensure baseline alignment */
+      line-height: 1;
     }
   }
 
@@ -34,8 +34,8 @@
   }
 
   .list-item {
-    display: flex;
-    justify-content: space-between;
+    display: flex; /* Use flexbox to keep items in a row */
+    justify-content: space-between; /* Ensure rightside items stay on the right */
     align-items: center;
     padding: 0.25rem 1rem;
     background-color: var(--bulma-white);
@@ -44,27 +44,57 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  .primary-data {
-    flex: 1;
-    font-size: 2rem;
+  .leftside-primary {
+    flex-grow: 1; /* Allow this to take up remaining space */
+    font-size: 1.5rem;
     color: var(--bulma-grey-dark);
-    max-width: 50%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    min-width: 10rem; /* Minimum width for the primary text */
   }
 
-  .secondary-data, .tertiary-data {
-    flex: 0 0 auto;
-    font-size: 1.2rem;
-    max-width: 20%;
+  .leftside-secondary {
+    font-size: 1.1rem;
+    text-align: left; /* Ensure text is left-aligned */
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    width: 12rem; /* Fixed width to maintain alignment */
+    margin-right: 0.5rem;
+    flex-shrink: 0; /* Prevent shrinking of this element */
   }
 
-  .tertiary-data {
-    margin-left: 2rem;
+  .leftside-tertiary {
+    font-size: 1.1rem;
+    text-align: left; /* Ensure text is left-aligned */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 12rem; /* Fixed width to maintain alignment */
+    margin-right: 0.5rem;
+    flex-shrink: 0; /* Prevent shrinking of this element */
+  }
+
+  .rightside-primary {
+    font-size: 1.1rem;
+    width: 3.5rem; /* Fixed width */
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellisis;
+    white-space: nowrap;
+    margin-left: 1rem;
+    flex-shrink: 0; /* Prevent shrinking of this element */
+  }
+
+  .rightside-secondary {
+    font-size: 1.1rem;
+    width: 5rem; /* Fixed width */
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 0; /* Prevent shrinking of this element */
   }
 
   @media (hover: hover) {
@@ -72,4 +102,15 @@
       background-color: var(--bulma-grey-lighter);
     }
   }
+
+  @media (max-width: 768px) {
+    .leftside-secondary,
+    .leftside-tertiary {
+      display: none;
+    }
+  }
+}
+
+.width-8 {
+  width: 8rem !important;
 }

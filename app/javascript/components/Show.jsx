@@ -48,15 +48,15 @@ const Show = () => {
             <React.Fragment key={track.id}>
               {isNewSet && (
                 <div className="section-title">
-                  <h2>{track.set_name}</h2>
+                  <div className="title-left">{track.set_name}</div>
                 </div>
               )}
               <li className="list-item">
-                <span className="primary-data">{track.title}</span>
-                <span className="secondary-data">
+                <span className="leftside-primary">{track.title}</span>
+                <span className="leftside-secondary">
                   {track.tags.map(tag => tag.name).join(", ")}
                 </span>
-                <span className="tertiary-data">{formatDurationTrack(track.duration)}</span>
+                <span className="rightside-primary">{formatDurationTrack(track.duration)}</span>
               </li>
             </React.Fragment>
           );
