@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "API v2 Search" do
+RSpec.describe "API v2 Search", type: :request do
   include ApiHelper
 
   let!(:venue) do

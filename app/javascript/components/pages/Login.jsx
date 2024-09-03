@@ -91,7 +91,7 @@ const Login = ({ onLogin, oauth_providers }) => {
         <hr />
 
         <h1 className="title">Sign Up with Email</h1>
-        <Link to="/signup" className="button is-primary has-text-weight-bold">
+        <Link to="/signup" className="button has-text-weight-bold">
           Sign Up
         </Link>
       </div>

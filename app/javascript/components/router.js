@@ -5,6 +5,7 @@ import DynamicRoute from "./DynamicRoute";
 import Eras from "./Eras";
 import Layout from "./Layout";
 import Venues from "./Venues";
+import Songs from "./Songs";
 import Shows from "./Shows";
 
 import ApiDocs from "./pages/ApiDocs";
@@ -87,9 +88,13 @@ const router = (props) =>
           path: "/venues/:venue_slug",
           element: <Shows />,
         },
+        {
+          path: "/songs",
+          element: <Songs />,
+        },
         // {
-        //   path: "songs",
-        //   element: <Songs />,
+        //   path: "/songs/:song_slug",
+        //   element: <Tracks />,
         // },
         // {
         //   path: "map",
