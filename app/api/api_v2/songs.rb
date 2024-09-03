@@ -25,7 +25,12 @@ class ApiV2::Songs < ApiV2::Base
                values: App.first_char_list
     end
     get do
-      present page_of_songs, with: ApiV2::Entities::Song
+      s = page_of_songs
+      present \
+        songs: ApiV2::Entities::Song.represent(s[:songs]),
+        total_pages: s[:total_pages],
+        current_page: s[:current_page],
+        total_entries: s[:total_entries]
     end
 
     desc "Return a song" do
@@ -47,10 +52,17 @@ class ApiV2::Songs < ApiV2::Base
   helpers do
     def page_of_songs
       Rails.cache.fetch("api/v2/songs?#{params.to_query}") do
-        Song.unscoped
-            .then { |s| apply_filter(s) }
-            .then { |s| apply_sort(s) }
-            .paginate(page: params[:page], per_page: params[:per_page])
+        songs = Song.unscoped
+                    .then { |s| apply_filter(s) }
+                    .then { |s| apply_sort(s) }
+                    .paginate(page: params[:page], per_page: params[:per_page])
+
+        {
+          songs: songs,
+          total_pages: songs.total_pages,
+          current_page: songs.current_page,
+          total_entries: songs.total_entries
+        }
       end
     end
 
@@ -65,6 +77,11 @@ class ApiV2::Songs < ApiV2::Base
         songs = songs.title_starting_with(params[:first_char])
       end
       songs
+    end
+
+    def apply_sort(songs)
+      sort_column, sort_direction = params[:sort].split(":")
+      songs.order(sort_column => sort_direction)
     end
   end
 end

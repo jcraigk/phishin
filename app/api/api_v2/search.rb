@@ -1,8 +1,5 @@
 class ApiV2::Search < ApiV2::Base
   resource :search do
-    params do
-      requires :date, type: String, desc: "Date of the show in the format YYYY-MM-DD"
-    end
     desc "Search the database" do
       detail \
         "Performs a search across multiple entities including " \

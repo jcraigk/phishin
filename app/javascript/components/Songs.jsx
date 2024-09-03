@@ -4,30 +4,30 @@ import ReactPaginate from "react-paginate";
 import { formatNumber } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
 
-const Venues = () => {
-  const [venues, setVenues] = useState([]);
+const Songs = () => {
+  const [songs, setSongs] = useState([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [totalEntries, setTotalEntries] = useState(0);
-  const [sortOption, setSortOption] = useState("name:asc");
+  const [sortOption, setSortOption] = useState("title:asc");
 
   useEffect(() => {
-    const fetchVenues = async () => {
+    const fetchSongs = async () => {
       try {
         const response = await fetch(
-          `/api/v2/venues?page=${page + 1}&sort=${sortOption}`
+          `/api/v2/songs?page=${page + 1}&sort=${sortOption}`
         );
         const data = await response.json();
 
-        setVenues(data.venues);
+        setSongs(data.songs);
         setTotalPages(data.total_pages);
         setTotalEntries(data.total_entries);
       } catch (error) {
-        console.error("Error fetching venues:", error);
+        console.error("Error fetching songs:", error);
       }
     };
 
-    fetchVenues();
+    fetchSongs();
   }, [page, sortOption]);
 
   const handlePageClick = (data) => {
@@ -42,29 +42,31 @@ const Venues = () => {
   return (
     <LayoutWrapper sidebarContent={
       <div className="sidebar-content">
-        <h1 className="title">Venues</h1>
+        <h1 className="title">Songs</h1>
         <h2 className="subtitle">{formatNumber(totalEntries)} total</h2>
         <div className="select is-fullwidth">
           <select value={sortOption} onChange={handleSortChange}>
-            <option value="name:asc">Name (A-Z)</option>
-            <option value="name:desc">Name (Z-A)</option>
-            <option value="shows_count:desc">Shows Count (High to Low)</option>
-            <option value="shows_count:asc">Shows Count (Low to High)</option>
+            <option value="title:asc">Title (A-Z)</option>
+            <option value="title:desc">Title (Z-A)</option>
+            <option value="tracks_count:desc">Tracks Count (High to Low)</option>
+            <option value="tracks_count:asc">Tracks Count (Low to High)</option>
           </select>
         </div>
       </div>
     }>
       <div className="section-title mobile-title">
-        <div className="title-left">Venues</div>
+        <div className="title-left">Songs</div>
         <span className="detail-right">{formatNumber(totalEntries)} total</span>
       </div>
       <ul>
-        {venues.map((venue) => (
-          <Link to={`/venues/${venue.slug}`} key={venue.slug} className="list-item-link">
+        {songs.map((song) => (
+          <Link to={`/songs/${song.slug}`} key={song.slug} className="list-item-link">
             <li className="list-item">
-              <span className="leftside-primary">{venue.name}</span>
-              <span className="leftside-secondary">{venue.location}</span>
-              <span className="rightside-primary">{formatNumber(venue.shows_count)} shows</span>
+              <span className="leftside-primary">{song.title}</span>
+              <span className="leftside-secondary">
+                {song.original ? "Original" : "Cover"}
+              </span>
+              <span className="rightside-primary">{formatNumber(song.tracks_count)} tracks</span>
             </li>
           </Link>
         ))}
@@ -86,4 +88,4 @@ const Venues = () => {
   );
 };
 
-export default Venues;
+export default Songs;
