@@ -210,6 +210,7 @@ GEM
     hashie (5.0.0)
     highline (3.1.1)
       reline
+    htmlentities (4.3.4)
     httpclient (2.8.3)
     i18n (1.14.5)
       concurrent-ruby (~> 1.0)
@@ -525,6 +526,7 @@ DEPENDENCIES
   grape-swagger
   grape-swagger-entity
   highline
+  htmlentities
   jwt
   nokogiri
   pg
