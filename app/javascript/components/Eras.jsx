@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { formatNumber } from "./utils";
+import LayoutWrapper from "./LayoutWrapper";
+import relistenIcon from "../images/icon-relisten.png";
+import splendorIcon from "../images/icon-splendor.png";
 
 const Eras = () => {
   const [eras, setEras] = useState({});
@@ -29,8 +32,34 @@ const Eras = () => {
       }));
   }, []);
 
+  const sidebarContent = (
+    <div className="sidebar-content">
+      <p className="has-text-weight-bold mb-5">LIVE PHISH AUDIO STREAMS</p>
+
+      <p className="has-text-weight-bold mb-2 mt-5">Mobile Apps</p>
+      <a href="https://itunes.apple.com/us/app/relisten-all-live-music/id715886886" target="_blank">
+        <img src={relistenIcon} alt="iOS app" />
+        <p className="mb-1">Relisten</p>
+      </a>
+
+      <a href="https://play.google.com/store/apps/details?id=never.ending.splendor" target="_blank">
+        <img src={splendorIcon} alt="Android app" />
+        <p>Never Ending Splendor</p>
+      </a>
+
+      <p className="has-text-weight-bold mb-1 mt-5">This project is open source</p>
+      <p>
+        <a href="https://github.com/jcraigk/phishin">Develop on GitHub</a>
+        <br />
+        <a href="https://discord.gg/KZWFsNN">Discuss on Discord</a>
+        <br />
+        <a href="/feeds/rss">RSS Feed</a>
+      </p>
+    </div>
+  );
+
   return (
-    <div className="list-container">
+    <LayoutWrapper sidebarContent={sidebarContent}>
       {Object.keys(eras)
         .sort((a, b) => b.localeCompare(a)) // Sort eras in reverse order
         .map((era) => (
@@ -47,7 +76,7 @@ const Eras = () => {
                     <span className="leftside-secondary">
                       {venues_count} venue{venues_count !== 1 ? "s" : ""}
                     </span>
-                    <span className="rightside-primary width-8">
+                    <span className="rightside-primary">
                       {formatNumber(shows_count)} show{shows_count !== 1 ? "s" : ""}
                     </span>
                   </li>
@@ -56,7 +85,7 @@ const Eras = () => {
             </ul>
           </React.Fragment>
         ))}
-    </div>
+    </LayoutWrapper>
   );
 };
 

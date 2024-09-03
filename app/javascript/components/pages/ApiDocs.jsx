@@ -1,30 +1,35 @@
 import React from "react";
 import PageWrapper from "./PageWrapper";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 
 const ApiDocs = ({ base_url }) => {
   return (
     <PageWrapper>
-      <h2 className="title is-2">API Keys</h2>
+      <h1 className="title">API Documentation</h1>
+
+      <h2 className="title">API Keys</h2>
       <p className="font-semibold mb-8">
         API keys can be requested via email, see the <a href="/contact-info" className="has-text-link is-underlined">contact page</a>.
       </p>
 
       <hr />
 
-      <h2 className="title is-2">API v2</h2>
+      <h2 className="title">API v2</h2>
       <a
         href={`https://petstore.swagger.io/?url=${base_url}/api/v2/swagger_doc`}
         target="_blank"
         className="button is-primary"
       >
-        Swagger Documentation
+        API v2 Documentation
+        <FontAwesomeIcon icon={faExternalLinkAlt} className="ml-2" />
       </a>
 
       <hr />
 
-      <h2 className="title is-2">API v1</h2>
+      <h2 className="title">API v1</h2>
 
-      <h3 className="title is-3">Requests</h3>
+      <h3 className="title">Requests</h3>
       <p className="mb-4">
         All requests must be in the form of
         <span className="api-inline">HTTP GET</span> and must include the
@@ -32,7 +37,7 @@ const ApiDocs = ({ base_url }) => {
         <span className="api-inline">Authorization: Bearer &lt;your_api_key&gt;</span>
       </p>
 
-      <h3 className="title is-3">Responses</h3>
+      <h3 className="title">Responses</h3>
       <p>
         Responses will include the header <span className="api-inline">Content-Type: application/json</span> and should be parsed as JSON.
       </p>
@@ -45,7 +50,7 @@ const ApiDocs = ({ base_url }) => {
         {`{ success: false, message: "Something went wrong!" }`}
       </pre>
 
-      <h3 className="title is-3">Parameters</h3>
+      <h3 className="title">Parameters</h3>
       <p>Most routes accept the following optional parameters:</p>
       <ul className="list-disc list-inside mb-4">
         <li>
@@ -70,7 +75,7 @@ const ApiDocs = ({ base_url }) => {
         </li>
       </ul>
 
-      <h3 className="title is-3">Endpoints</h3>
+      <h3 className="title">Endpoints</h3>
       <p>
         All endpoints can be reached by using the full address of <span className="has-text-weight-bold">{base_url}/api/v1</span> followed by one of these routes:
       </p>
@@ -80,7 +85,7 @@ const ApiDocs = ({ base_url }) => {
         <span className="api-doc">Returns all Eras and the Years that belong to each</span>
       </div>
 
-      <h3 className="title is-3">Examples</h3>
+      <h3 className="title">Examples</h3>
       <p>[1] Requesting "the song with ID of 40":</p>
       <span className="api-command mb-2">
         GET {base_url}/api/v1/songs/40.json

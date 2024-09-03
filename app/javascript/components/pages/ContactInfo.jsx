@@ -4,10 +4,10 @@ import PageWrapper from "./PageWrapper";
 const ContactInfo = ({ contact_email }) => {
   return (
     <PageWrapper>
-      <h3>Bug</h3>
-      <p>This project is open source.</p>
+      <h1 className="title">Contact</h1>
+
       <p>
-        If you notice a bug, please file an issue on GitHub:{" "}
+        If you notice a bug, please file an issue or pull request on GitHub:{" "}
         <a
           href="https://github.com/jcraigk/phishin/issues"
           className="underline text-blue-500 hover:text-blue-700"
@@ -17,11 +17,7 @@ const ContactInfo = ({ contact_email }) => {
           https://github.com/jcraigk/phishin/issues
         </a>
       </p>
-      <p>
-        If you are a developer, please feel free to submit a pull request.
-      </p>
 
-      <h3>Talk</h3>
       <p>
         Join the community discussion on Discord:{" "}
         <a
@@ -34,7 +30,7 @@ const ContactInfo = ({ contact_email }) => {
         </a>
       </p>
 
-      <h3>Contact the site maintainers</h3>
+      <h3 className="mt-6">Contact the site maintainers</h3>
       <p>
         <a
           href={`mailto:${contact_email}`}

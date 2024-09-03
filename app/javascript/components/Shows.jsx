@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { formatDate, formatNumber, formatDurationShow } from "./utils";
+import LayoutWrapper from "./LayoutWrapper";
 
 const Shows = () => {
   const { route_path, venue_slug } = useParams(); // Capture both route_path and venue_slug
@@ -9,7 +10,7 @@ const Shows = () => {
   useEffect(() => {
     const fetchShows = async () => {
       try {
-        let url = '/api/v2/shows?per_page=1000&sort=date:desc';
+        let url = "/api/v2/shows?per_page=1000&sort=date:desc";
 
         if (venue_slug) {
           url += `&venue_slug=${venue_slug}`;
@@ -33,14 +34,22 @@ const Shows = () => {
   let lastTourName = null;
   let tourShowCount = 0;
 
+  const sidebarContent = (
+    <div className="sidebar-content">
+      <p className="has-text-weight-bold mb-5">Browse Shows</p>
+      <p>Explore all the shows based on the selected filters.</p>
+      {/* Add more sidebar content here if needed */}
+    </div>
+  );
+
   return (
-    <div className="list-container">
+    <LayoutWrapper sidebarContent={sidebarContent}>
       <ul>
         {shows.map((show, index) => {
           const isNewTour = show.tour_name !== lastTourName;
 
           if (isNewTour) {
-            tourShowCount = shows.filter(s => s.tour_name === show.tour_name).length;
+            tourShowCount = shows.filter((s) => s.tour_name === show.tour_name).length;
             lastTourName = show.tour_name;
           }
 
@@ -64,7 +73,7 @@ const Shows = () => {
           );
         })}
       </ul>
-    </div>
+    </LayoutWrapper>
   );
 };
 

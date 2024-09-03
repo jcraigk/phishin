@@ -4,6 +4,8 @@ import PageWrapper from "./PageWrapper";
 const Faq = ({ contact_email }) => {
   return (
     <PageWrapper>
+      <h1 className="title">Frequently Asked Questions</h1>
+
       <h3>What is Phish.in?</h3>
       <p>
         Phish.in is a website and API for discovering, streaming, and sharing live audience recordings of the band Phish. The site has been running since 2013, delivering a reliable and comprehensive resource for fans.

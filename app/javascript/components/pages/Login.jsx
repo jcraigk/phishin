@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import PageWrapper from "./PageWrapper";
 import { useNotification } from "../NotificationContext";
 
@@ -31,26 +31,23 @@ const Login = ({ onLogin, oauth_providers }) => {
   return (
     <PageWrapper>
       <div className="container">
-        <h1 className="title">Login with Google</h1>
-        <div className="external-login-container">
-          {oauth_providers.map(provider => (
-            <a
-              key={provider}
-              href={`/oauth/${provider}`}
-              className={`button external-login-btn ${provider}-btn non-remote`}
-            >
-              <div className="login-logo">
-                <img
-                  src={require(`../../images/external-logos/${provider}.png`)}
-                  alt={`${provider.toString().toUpperCase()} Logo`}
-                  width="18"
-                  height="18"
-                />
-              </div>
-              {`Login with ${provider.charAt(0).toUpperCase() + provider.slice(1)}`}
-            </a>
-          ))}
-        </div>
+        {oauth_providers.map(provider => (
+          <a
+            key={provider}
+            href={`/oauth/${provider}`}
+            className={`button external-login-btn ${provider}-btn non-remote`}
+          >
+            <div className="login-logo">
+              <img
+                src={require(`../../images/external-logos/${provider}.png`)}
+                alt={`${provider.toString().toUpperCase()} Logo`}
+                width="18"
+                height="18"
+              />
+            </div>
+            {`Login with ${provider.charAt(0).toUpperCase() + provider.slice(1)}`}
+          </a>
+        ))}
 
         <hr />
 
@@ -84,12 +81,19 @@ const Login = ({ onLogin, oauth_providers }) => {
           </div>
           <div className="field">
             <div className="control">
-              <button className="button is-primary" type="submit">
+              <button className="button is-primary has-text-weight-bold" type="submit">
                 Login
               </button>
             </div>
           </div>
         </form>
+
+        <hr />
+
+        <h1 className="title">Sign Up with Email</h1>
+        <Link to="/signup" className="button is-primary has-text-weight-bold">
+          Sign Up
+        </Link>
       </div>
     </PageWrapper>
   );

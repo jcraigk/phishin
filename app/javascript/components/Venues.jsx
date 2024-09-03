@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import { formatNumber } from "./utils";
+import LayoutWrapper from "./LayoutWrapper";
 
 const Venues = () => {
   const [venues, setVenues] = useState([]);
@@ -30,9 +31,16 @@ const Venues = () => {
     setPage(data.selected);
   };
 
+  const sidebarContent = (
+    <div className="sidebar-content">
+      <h1 className="title">Venues</h1>
+      <p>Filters coming...</p>
+    </div>
+  );
+
   return (
-    <div className="list-container">
-      <div className="section-title">
+    <LayoutWrapper sidebarContent={sidebarContent}>
+      <div className="section-title mobile-title">
         <div className="title-left">Venues</div>
         <span className="detail-right">{formatNumber(totalEntries)} total</span>
       </div>
@@ -59,7 +67,7 @@ const Venues = () => {
         containerClassName={"pagination"}
         activeClassName={"active"}
       />
-    </div>
+    </LayoutWrapper>
   );
 };
 
