@@ -34,8 +34,8 @@
   }
 
   .list-item {
-    display: flex; /* Use flexbox to keep items in a row */
-    justify-content: space-between; /* Ensure rightside items stay on the right */
+    display: flex;
+    justify-content: space-between;
     align-items: center;
     padding: 0.25rem 1rem;
     background-color: var(--bulma-white);
@@ -45,56 +45,56 @@
   }
 
   .leftside-primary {
-    flex-grow: 1; /* Allow this to take up remaining space */
+    flex-grow: 1;
     font-size: 1.5rem;
     color: var(--bulma-grey-dark);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    min-width: 10rem; /* Minimum width for the primary text */
+    min-width: 10rem;
   }
 
   .leftside-secondary {
     font-size: 1.1rem;
-    text-align: left; /* Ensure text is left-aligned */
+    text-align: left;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: 12rem; /* Fixed width to maintain alignment */
+    width: 12rem;
     margin-right: 0.5rem;
-    flex-shrink: 0; /* Prevent shrinking of this element */
+    flex-shrink: 0;
   }
 
   .leftside-tertiary {
     font-size: 1.1rem;
-    text-align: left; /* Ensure text is left-aligned */
+    text-align: left;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: 12rem; /* Fixed width to maintain alignment */
+    width: 12rem;
     margin-right: 0.5rem;
-    flex-shrink: 0; /* Prevent shrinking of this element */
+    flex-shrink: 0;
   }
 
   .rightside-primary {
     font-size: 1.1rem;
-    width: 3.5rem; /* Fixed width */
+    width: 3.5rem;
     text-align: right;
     overflow: hidden;
     text-overflow: ellisis;
     white-space: nowrap;
     margin-left: 1rem;
-    flex-shrink: 0; /* Prevent shrinking of this element */
+    flex-shrink: 0;
   }
 
   .rightside-secondary {
     font-size: 1.1rem;
-    width: 5rem; /* Fixed width */
+    width: 5rem;
     text-align: right;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    flex-shrink: 0; /* Prevent shrinking of this element */
+    flex-shrink: 0;
   }
 
   @media (hover: hover) {

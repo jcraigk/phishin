@@ -5,17 +5,19 @@ import { useNotification } from "./NotificationContext";
 
 const Navbar = ({ appName, user, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isAboutDropdownOpen, setIsAboutDropdownOpen] = useState(false);
+  const [isContentDropdownOpen, setIsContentDropdownOpen] = useState(false);
   const { setNotice } = useNotification();
   const menuRef = useRef(null); // To detect clicks outside the menu
 
   const handleLinkClick = () => {
     setIsMenuOpen(false);
-    setIsDropdownOpen(false);
+    setIsAboutDropdownOpen(false);
+    setIsContentDropdownOpen(false);
   };
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
+  const toggleDropdown = (setDropdown) => {
+    setDropdown((prevState) => !prevState);
   };
 
   const handleLogout = () => {
@@ -27,7 +29,8 @@ const Navbar = ({ appName, user, onLogout }) => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsMenuOpen(false);
-        setIsDropdownOpen(false);
+        setIsAboutDropdownOpen(false);
+        setIsContentDropdownOpen(false);
       }
     };
 
@@ -37,6 +40,14 @@ const Navbar = ({ appName, user, onLogout }) => {
     };
   }, [menuRef]);
 
+  // Collapse dropdowns when the burger menu is toggled
+  useEffect(() => {
+    if (!isMenuOpen) {
+      setIsAboutDropdownOpen(false);
+      setIsContentDropdownOpen(false);
+    }
+  }, [isMenuOpen]);
+
   const staticLinks = [
     { path: "/faq", label: "FAQ" },
     { path: "/api-docs", label: "API" },
@@ -45,6 +56,12 @@ const Navbar = ({ appName, user, onLogout }) => {
     { path: "/terms", label: "Terms of Service" },
     { path: "/contact-info", label: "Contact" },
     { path: "/request-password-reset", label: "Reset Password" },
+  ];
+
+  const contentLinks = [
+    { path: "/", label: "Years" },
+    { path: "/venues", label: "Venues" },
+    // Add more content links here as needed
   ];
 
   return (
@@ -74,23 +91,38 @@ const Navbar = ({ appName, user, onLogout }) => {
         className={`navbar-menu ${isMenuOpen ? "is-active" : ""}`}
       >
         <div className="navbar-start">
-          <Link to="/faq" className="navbar-item" onClick={handleLinkClick}>
-            FAQ
-          </Link>
-          <Link to="/api-docs" className="navbar-item" onClick={handleLinkClick}>
-            API
-          </Link>
-
+          {/* About Dropdown */}
           <div
             className={`navbar-item has-dropdown ${
-              isDropdownOpen ? "is-active" : ""
+              isAboutDropdownOpen ? "is-active" : ""
             }`}
-            onClick={toggleDropdown}
+            onClick={() => toggleDropdown(setIsAboutDropdownOpen)}
           >
-            <a className="navbar-link">More</a>
-
+            <a className="navbar-link">About</a>
             <div className="navbar-dropdown">
-              {staticLinks.slice(2).map((link) => (
+              {staticLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className="navbar-item"
+                  onClick={handleLinkClick}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Content Dropdown */}
+          <div
+            className={`navbar-item has-dropdown ${
+              isContentDropdownOpen ? "is-active" : ""
+            }`}
+            onClick={() => toggleDropdown(setIsContentDropdownOpen)}
+          >
+            <a className="navbar-link">Content</a>
+            <div className="navbar-dropdown">
+              {contentLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
@@ -108,22 +140,20 @@ const Navbar = ({ appName, user, onLogout }) => {
           <div className="navbar-item">
             <div className="buttons">
               {user ? (
-                <>
-                  <div className="navbar-item has-dropdown is-hoverable">
-                    <a className="navbar-link">
-                      {user.username}
+                <div className="navbar-item has-dropdown is-hoverable">
+                  <a className="navbar-link">
+                    {user.username}
+                  </a>
+                  <div className="navbar-dropdown is-right">
+                    <a
+                      href="#logout"
+                      className="navbar-item"
+                      onClick={handleLogout}
+                    >
+                      Logout
                     </a>
-                    <div className="navbar-dropdown is-right">
-                      <a
-                        href="#logout"
-                        className="navbar-item"
-                        onClick={handleLogout}
-                      >
-                        Logout
-                      </a>
-                    </div>
                   </div>
-                </>
+                </div>
               ) : (
                 <>
                   <Link to="/signup" className="button is-primary">
