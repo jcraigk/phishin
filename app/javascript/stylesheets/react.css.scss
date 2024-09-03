@@ -9,10 +9,13 @@ $bg_gray: #f2f3f5;
 $header_gray: #c7c8ca;
 $subheader_gray: #d9dbdc;
 $google-blue: #5385ed;
+$tag_gray: #888888;
 
 @import "./content.css.scss";
 @import "./pagination.css.scss";
 @import "./layout.css.scss";
+@import "./tags.css.scss";
+@import "./tooltips.css.scss";
 
 
 body {

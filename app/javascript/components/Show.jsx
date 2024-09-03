@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { formatDate, formatDurationTrack } from "./utils";
 import ErrorPage from "./pages/ErrorPage"; // Import the ErrorPage component
 import LayoutWrapper from "./LayoutWrapper"; // Import the LayoutWrapper
+import TagBadges from "./TagBadges";
 
 const Show = () => {
   const { route_path } = useParams();
@@ -65,7 +66,7 @@ const Show = () => {
               <li className="list-item">
                 <span className="leftside-primary">{track.title}</span>
                 <span className="leftside-secondary">
-                  {track.tags.map(tag => tag.name).join(", ")}
+                  {<TagBadges tags={track.tags} />}
                 </span>
                 <span className="rightside-primary">{formatDurationTrack(track.duration)}</span>
               </li>
