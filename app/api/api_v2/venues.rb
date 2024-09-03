@@ -4,7 +4,7 @@ class ApiV2::Venues < ApiV2::Base
   resource :venues do
     desc "Return a list of venues" do
       detail \
-        "Return a sortable paginated list of venues " \
+        "Return a sortable paginated list of venues, " \
         "optionally filtered by the first character of the venue name and " \
         "by proximity to a specific location"
       success ApiV2::Entities::Venue
@@ -22,7 +22,12 @@ class ApiV2::Venues < ApiV2::Base
                values: App.first_char_list
     end
     get do
-      present page_of_venues, with: ApiV2::Entities::Venue
+      v = page_of_venues
+      present \
+        venues: ApiV2::Entities::Venue.represent(v[:venues]),
+        total_pages: v[:total_pages],
+        current_page: v[:current_page],
+        total_entries: v[:total_entries]
     end
 
     desc "Return a venue" do
@@ -40,11 +45,18 @@ class ApiV2::Venues < ApiV2::Base
   helpers do
     def page_of_venues
       Rails.cache.fetch("api/v2/venues?#{params.to_query}") do
-        Venue.unscoped
-             .then { |v| apply_proximity_filter(v) }
-             .then { |v| apply_first_char_filter(v) }
-             .then { |v| apply_sort(v) }
-             .paginate(page: params[:page], per_page: params[:per_page])
+        venues = Venue.unscoped
+                      .then { |v| apply_proximity_filter(v) }
+                      .then { |v| apply_first_char_filter(v) }
+                      .then { |v| apply_sort(v) }
+                      .paginate(page: params[:page], per_page: params[:per_page])
+
+        {
+          venues: venues,
+          total_pages: venues.total_pages,
+          current_page: venues.current_page,
+          total_entries: venues.total_entries
+        }
       end
     end
 

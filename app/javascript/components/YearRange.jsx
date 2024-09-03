@@ -38,15 +38,16 @@ const YearRange = () => {
             <React.Fragment key={show.id}>
               {isNewTour && (
                 <div className="section-title">
-                  <h2>{show.tour_name}</h2>
+                  <div className="title-left">{show.tour_name}</div>
                   <span className="detail-right">{formatNumber(tourShowCount)} shows</span>
                 </div>
               )}
               <Link to={`/${show.date}`} className="list-item-link">
                 <li className="list-item">
-                  <span className="primary-data">{formatDate(show.date)}</span>
-                  <span className="secondary-data">{show.location}</span>
-                  <span className="tertiary-data">{formatDurationShow(show.duration)}</span>
+                  <span className="leftside-primary">{formatDate(show.date)}</span>
+                  <span className="leftside-secondary">{show.venue.name}</span>
+                  <span className="leftside-tertiary">{show.venue.location}</span>
+                  <span className="rightside-primary">{formatDurationShow(show.duration)}</span>
                 </li>
               </Link>
             </React.Fragment>
