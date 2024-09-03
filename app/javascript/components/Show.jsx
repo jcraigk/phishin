@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { formatDate, formatDurationTrack } from "./utils";
 import ErrorPage from "./pages/ErrorPage"; // Import the ErrorPage component
+import LayoutWrapper from "./LayoutWrapper"; // Import the LayoutWrapper
 
 const Show = () => {
   const { route_path } = useParams();
@@ -37,8 +38,18 @@ const Show = () => {
 
   let lastSetName = null;
 
+  const sidebarContent = (
+    <div className="sidebar-content">
+      <p className="has-text-weight-bold mb-5">Show Details</p>
+      <p>Date: {formatDate(show.date)}</p>
+      <p>Venue: {show.venue.name}</p>
+      <p>Location: {show.venue.location}</p>
+      {/* Add more details or links as needed */}
+    </div>
+  );
+
   return (
-    <div className="list-container">
+    <LayoutWrapper sidebarContent={sidebarContent}>
       <ul>
         {show.tracks.map((track, index) => {
           const isNewSet = track.set_name !== lastSetName;
@@ -62,7 +73,7 @@ const Show = () => {
           );
         })}
       </ul>
-    </div>
+    </LayoutWrapper>
   );
 };
 

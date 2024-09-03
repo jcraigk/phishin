@@ -94,7 +94,7 @@ const Signup = ({ onSignup }) => {
           </div>
           <div className="field">
             <div className="control">
-              <button className="button is-primary" type="submit">
+              <button className="button is-primary has-text-weight-bold" type="submit">
                 Sign Up
               </button>
             </div>

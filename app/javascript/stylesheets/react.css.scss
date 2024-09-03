@@ -12,6 +12,7 @@ $google-blue: #5385ed;
 
 @import "./content.css.scss";
 @import "./pagination.css.scss";
+@import "./layout.css.scss";
 
 
 body {
@@ -23,7 +24,7 @@ body {
 // Bulma .content overrides
 .content {
   hr {
-    border: 1px solid $header_gray; /* Bulma's default light gray color */
+    border: 1px solid $header_gray;
   }
 
   p {
@@ -70,6 +71,7 @@ body {
   top: 0;
   width: 100%;
   z-index: 10;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1); /* Adds a subtle drop shadow */
 
   .navbar-brand {
     img {
@@ -77,6 +79,7 @@ body {
     }
   }
 }
+
 
 // Static pages
 .api-command {
@@ -103,32 +106,26 @@ body {
 }
 
 // OAuth
-.external-login-container {
-  margin-top: 15px;
+.external-login-btn {
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: bold;
+}
+.login-logo {
+  background-color: white;
+  border-radius: 3px;
+  width: 28px;
+  height: 28px;
+  position: relative;
+  left: -10px;
+  padding: 3px;
 
-  .external-login-btn {
-    font-size: 1.5rem;
-    width: 50%;
-    margin-top: 15px;
-    justify-content: left;
-    padding-left: 130px;
-  }
-  .login-logo {
-    background-color: white;
-    border-radius: 3px;
-    width: 28px;
-    height: 28px;
+  img {
     position: relative;
-    left: -10px;
-    padding: 3px;
-
-    img {
-      position: relative;
-      top: -6px;
-    }
+    top: -6px;
   }
-  .google-btn {
-    color: white !important;
-    background-color: $google-blue;
-  }
+}
+.google-btn {
+  color: white !important;
+  background-color: $google-blue;
 }

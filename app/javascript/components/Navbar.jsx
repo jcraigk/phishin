@@ -48,7 +48,7 @@ const Navbar = ({ appName, user, onLogout }) => {
     }
   }, [isMenuOpen]);
 
-  const staticLinks = [
+  const stiteLinks = [
     { path: "/faq", label: "FAQ" },
     { path: "/api-docs", label: "API" },
     { path: "/tagin-project", label: "Tagin' Project" },
@@ -60,8 +60,14 @@ const Navbar = ({ appName, user, onLogout }) => {
 
   const contentLinks = [
     { path: "/", label: "Years" },
+    { path: "/search", label: "Search" },
+    { path: "/songs", label: "Songs" },
     { path: "/venues", label: "Venues" },
-    // Add more content links here as needed
+    { path: "/top-shows", label: "Top Shows" },
+    { path: "/top-tracks", label: "Top Tracks" },
+    { path: "/tags", label: "Tags" },
+    { path: "/today", label: "Today" },
+    { path: "/map", label: "Map" },
   ];
 
   return (
@@ -98,9 +104,9 @@ const Navbar = ({ appName, user, onLogout }) => {
             }`}
             onClick={() => toggleDropdown(setIsAboutDropdownOpen)}
           >
-            <a className="navbar-link">About</a>
+            <a className="navbar-link">Site</a>
             <div className="navbar-dropdown">
-              {staticLinks.map((link) => (
+              {stiteLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
@@ -156,9 +162,6 @@ const Navbar = ({ appName, user, onLogout }) => {
                 </div>
               ) : (
                 <>
-                  <Link to="/signup" className="button is-primary">
-                    <strong>Sign up</strong>
-                  </Link>
                   <Link to="/login" className="button is-light">
                     Log in
                   </Link>
