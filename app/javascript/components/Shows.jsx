@@ -2,14 +2,24 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { formatDate, formatNumber, formatDurationShow } from "./utils";
 
-const YearRange = () => {
-  const { route_path } = useParams();
+const Shows = () => {
+  const { route_path, venue_slug } = useParams(); // Capture both route_path and venue_slug
   const [shows, setShows] = useState([]);
 
   useEffect(() => {
     const fetchShows = async () => {
       try {
-        const response = await fetch(`/api/v2/shows?per_page=1000&sort=date:desc&${route_path.includes("-") ? `year_range=${route_path}` : `year=${route_path}`}`);
+        let url = '/api/v2/shows?per_page=1000&sort=date:desc';
+
+        if (venue_slug) {
+          url += `&venue_slug=${venue_slug}`;
+        } else if (route_path.includes("-")) {
+          url += `&year_range=${route_path}`;
+        } else {
+          url += `&year=${route_path}`;
+        }
+
+        const response = await fetch(url);
         const data = await response.json();
         setShows(data);
       } catch (error) {
@@ -18,7 +28,7 @@ const YearRange = () => {
     };
 
     fetchShows();
-  }, [route_path]);
+  }, [route_path, venue_slug]);
 
   let lastTourName = null;
   let tourShowCount = 0;
@@ -36,7 +46,7 @@ const YearRange = () => {
 
           return (
             <React.Fragment key={show.id}>
-              {isNewTour && (
+              {!venue_slug && isNewTour && (
                 <div className="section-title">
                   <div className="title-left">{show.tour_name}</div>
                   <span className="detail-right">{formatNumber(tourShowCount)} shows</span>
@@ -58,4 +68,4 @@ const YearRange = () => {
   );
 };
 
-export default YearRange;
+export default Shows;
