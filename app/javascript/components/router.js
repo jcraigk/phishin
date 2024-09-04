@@ -8,6 +8,9 @@ import Venues from "./Venues";
 import Songs from "./Songs";
 import VenueShows from "./VenueShows";
 import TopShows from "./TopShows";
+import TopTracks from "./TopTracks";
+import Tags from "./Tags";
+import TagTracks from "./TagTracks";
 
 import ApiDocs from "./pages/ApiDocs";
 import ContactInfo from "./pages/ContactInfo";
@@ -93,6 +96,18 @@ const router = (props) =>
           path: "/songs",
           element: <Songs />,
         },
+        {
+          path: "/tags",
+          element: <Tags />,
+        },
+        // {
+        //   path: "/show_tags/:tag_slug",
+        //   element: <TagShows />,
+        // },
+        {
+          path: "/track_tags/:tag_slug",
+          element: <TagTracks />,
+        },
         // {
         //   path: "/songs/:song_slug",
         //   element: <Tracks />,
@@ -105,10 +120,10 @@ const router = (props) =>
           path: "/top-shows",
           element: <TopShows />,
         },
-        // {
-        //   path: "/top-tracks",
-        //   element: <TopTracks />,
-        // },
+        {
+          path: "/top-tracks",
+          element: <TopTracks />,
+        },
         // {
         //   path: "/playlist",
         //   element: <Playlist />,

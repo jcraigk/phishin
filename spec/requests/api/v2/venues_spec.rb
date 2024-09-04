@@ -47,7 +47,8 @@ RSpec.describe "API v2 Venues", type: :request do
       json = JSON.parse(response.body, symbolize_names: true)
       first_venues = venues.sort_by(&:name).first(2)
       expected_response = {
-        venues: first_venues.map { |v| ApiV2::Entities::Venue.represent(v).as_json.deep_symbolize_keys },
+        venues: first_venues.map { |v|
+ ApiV2::Entities::Venue.represent(v).as_json.deep_symbolize_keys },
         total_pages: (venues.count.to_f / 2).ceil,
         current_page: 1,
         total_entries: venues.count
@@ -62,7 +63,8 @@ RSpec.describe "API v2 Venues", type: :request do
       json = JSON.parse(response.body, symbolize_names: true)
       sorted_venues = venues.sort_by { |v| -v.shows_count }.first(3)
       expected_response = {
-        venues: sorted_venues.map { |v| ApiV2::Entities::Venue.represent(v).as_json.deep_symbolize_keys },
+        venues: sorted_venues.map { |v|
+ ApiV2::Entities::Venue.represent(v).as_json.deep_symbolize_keys },
         total_pages: 1,
         current_page: 1,
         total_entries: venues.count
@@ -77,7 +79,8 @@ RSpec.describe "API v2 Venues", type: :request do
       json = JSON.parse(response.body, symbolize_names: true)
       filtered_venues = venues.select { |venue| venue.name.downcase.start_with?("m") }
       expected_response = {
-        venues: filtered_venues.map { |v| ApiV2::Entities::Venue.represent(v).as_json.deep_symbolize_keys },
+        venues: filtered_venues.map { |v|
+ ApiV2::Entities::Venue.represent(v).as_json.deep_symbolize_keys },
         total_pages: 1,
         current_page: 1,
         total_entries: filtered_venues.count
@@ -91,10 +94,11 @@ RSpec.describe "API v2 Venues", type: :request do
 
       json = JSON.parse(response.body, symbolize_names: true)
       nearby_venues = venues.select do |venue|
-        venue.distance_from([40.7505045, -73.9934387]) <= 50
+        venue.distance_from([ 40.7505045, -73.9934387 ]) <= 50
       end
       expected_response = {
-        venues: nearby_venues.map { |v| ApiV2::Entities::Venue.represent(v).as_json.deep_symbolize_keys },
+        venues: nearby_venues.map { |v|
+ ApiV2::Entities::Venue.represent(v).as_json.deep_symbolize_keys },
         total_pages: 1,
         current_page: 1,
         total_entries: nearby_venues.count

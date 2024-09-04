@@ -1,7 +1,9 @@
 .tag-badges-container {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  flex-wrap: nowrap;
+  gap: 0.2rem;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .tag-badge {
@@ -13,11 +15,13 @@
   cursor: pointer;
   transition: background-color 0.2s;
   font-weight: bold;
+  white-space: nowrap;
 }
 
 .tag-badge:hover {
   background-color: darken($header_gray, 10%);
 }
+
 
 .tag-modal {
   background: white;

@@ -2,6 +2,10 @@ require "rails_helper"
 
 RSpec.describe "API v2 Tracks" do
   let!(:tag) { create(:tag, name: "Classic", priority: 1) }
+  let!(:show1) { create(:show, date: "2023-01-01") }
+  let!(:show2) { create(:show, date: "2024-01-01") }
+  let!(:show3) { create(:show, date: "2025-01-01") }
+
   let!(:songs) do
     [
       create(:song, title: "Song 1", slug: "song-1"),
@@ -9,18 +13,20 @@ RSpec.describe "API v2 Tracks" do
       create(:song, title: "Song 3", slug: "song-3")
     ]
   end
+
   let!(:tracks) do
     [
-      create(:track, title: "Track 1", position: 1, duration: 300, likes_count: 10,
+      create(:track, title: "Track 1", position: 1, duration: 300, likes_count: 10, show: show1,
 songs: [ songs[0] ]),
-      create(:track, title: "Track 2", position: 2, duration: 240, likes_count: 20,
+      create(:track, title: "Track 2", position: 2, duration: 240, likes_count: 20, show: show2,
 songs: [ songs[1] ]),
-      create(:track, title: "Track 3", position: 3, duration: 360, likes_count: 5,
+      create(:track, title: "Track 3", position: 3, duration: 360, likes_count: 5, show: show3,
 songs: [ songs[2] ]),
-      create(:track, title: "Track 4", position: 4, duration: 180, likes_count: 15,
+      create(:track, title: "Track 4", position: 4, duration: 180, likes_count: 15, show: show1,
 songs: [ songs[0], songs[1] ])
     ]
   end
+
   let!(:track_tags) do
     [
       create(:track_tag, track: tracks[0], tag:, notes: "A classic track"),
@@ -37,7 +43,7 @@ songs: [ songs[0], songs[1] ])
       json = JSON.parse(response.body, symbolize_names: true)
       sorted_tracks = tracks.sort_by(&:id).take(2)
       expected = ApiV2::Entities::Track.represent(sorted_tracks, include_show: true).as_json
-      expect(json).to eq(expected)
+      expect(json[:tracks]).to eq(expected)
     end
 
     it "filters tracks by tag_slug" do
@@ -49,7 +55,7 @@ songs: [ songs[0], songs[1] ])
       filtered_tracks_sorted = filtered_tracks.sort_by(&:id)
       expected = ApiV2::Entities::Track.represent(filtered_tracks_sorted,
 include_show: true).as_json
-      expect(json).to eq(expected)
+      expect(json[:tracks]).to eq(expected)
     end
 
     it "filters tracks by song_slug" do
@@ -61,7 +67,7 @@ include_show: true).as_json
       filtered_tracks_sorted = filtered_tracks.sort_by(&:id)
       expected = ApiV2::Entities::Track.represent(filtered_tracks_sorted,
 include_show: true).as_json
-      expect(json).to eq(expected)
+      expect(json[:tracks]).to eq(expected)
     end
 
     it "filters tracks by both tag_slug and song_slug" do
@@ -74,7 +80,7 @@ include_show: true).as_json
       filtered_tracks_sorted = filtered_tracks.sort_by(&:id)
       expected = ApiV2::Entities::Track.represent(filtered_tracks_sorted,
 include_show: true).as_json
-      expect(json).to eq(expected)
+      expect(json[:tracks]).to eq(expected)
     end
 
     it "returns a list of tracks sorted by likes_count in descending order" do
@@ -84,7 +90,7 @@ include_show: true).as_json
       json = JSON.parse(response.body, symbolize_names: true)
       sorted_tracks = tracks.sort_by(&:likes_count).reverse.take(3)
       expected = ApiV2::Entities::Track.represent(sorted_tracks, include_show: true).as_json
-      expect(json).to eq(expected)
+      expect(json[:tracks]).to eq(expected)
     end
 
     it "returns a list of tracks sorted by duration in ascending order" do
@@ -94,7 +100,17 @@ include_show: true).as_json
       json = JSON.parse(response.body, symbolize_names: true)
       sorted_tracks = tracks.sort_by(&:duration).take(3)
       expected = ApiV2::Entities::Track.represent(sorted_tracks, include_show: true).as_json
-      expect(json).to eq(expected)
+      expect(json[:tracks]).to eq(expected)
+    end
+
+    it "returns a list of tracks sorted by show date in ascending order" do
+      get_api "/tracks", params: { sort: "date:asc", page: 1, per_page: 3 }
+      expect(response).to have_http_status(:ok)
+
+      json = JSON.parse(response.body, symbolize_names: true)
+      sorted_tracks = tracks.sort_by { |track| track.show.date }.take(3)
+      expected = ApiV2::Entities::Track.represent(sorted_tracks, include_show: true).as_json
+      expect(json[:tracks]).to eq(expected)
     end
 
     it "returns a 400 error for an invalid sort parameter" do

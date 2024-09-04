@@ -1,5 +1,5 @@
 class ApiV2::Tracks < ApiV2::Base
-  SORT_COLS = %w[ id title likes_count duration ]
+  SORT_COLS = %w[id title likes_count duration date]
 
   resource :tracks do
     desc "Return a list of tracks" do
@@ -27,7 +27,12 @@ class ApiV2::Tracks < ApiV2::Base
                desc: "Filter tracks by the slug of the song"
     end
     get do
-      present page_of_tracks, with: ApiV2::Entities::Track
+      result = page_of_tracks
+      present \
+        tracks: ApiV2::Entities::Track.represent(result[:tracks]),
+        total_pages: result[:total_pages],
+        current_page: result[:current_page],
+        total_entries: result[:total_entries]
     end
 
     desc "Return a track by ID" do
@@ -49,10 +54,17 @@ class ApiV2::Tracks < ApiV2::Base
   helpers do
     def page_of_tracks
       Rails.cache.fetch("api/v2/tracks?#{params.to_query}") do
-        Track.includes(:show, :songs, track_tags: :tag)
-             .then { |t| apply_filter(t) }
-             .then { |t| apply_sort(t) }
-             .paginate(page: params[:page], per_page: params[:per_page])
+        tracks = Track.includes(:show, :songs, track_tags: :tag)
+                      .then { |t| apply_filter(t) }
+                      .then { |t| apply_sort(t) }
+                      .paginate(page: params[:page], per_page: params[:per_page])
+
+        {
+          tracks: tracks,
+          total_pages: tracks.total_pages,
+          current_page: tracks.current_page,
+          total_entries: tracks.total_entries
+        }
       end
     end
 
@@ -75,6 +87,19 @@ class ApiV2::Tracks < ApiV2::Base
                          .where(songs: { slug: params[:song_slug] })
                          .pluck(:id)
         tracks = tracks.where(id: track_ids)
+      end
+
+      tracks
+    end
+
+    def apply_sort(tracks)
+      sort_by, sort_direction = params[:sort].split(":")
+
+      case sort_by
+      when "date"
+        tracks = tracks.joins(:show).order("shows.date #{sort_direction}")
+      else
+        tracks = tracks.order("#{sort_by} #{sort_direction}")
       end
 
       tracks
