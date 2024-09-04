@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Modal from "react-modal";
-import { Tooltip } from "react-tooltip"; // Import Tooltip correctly
+import { Tooltip } from "react-tooltip";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 Modal.setAppElement("body");
 
@@ -18,8 +20,11 @@ const TagBadges = ({ tags }) => {
     }, {});
 
   const handleClick = (tagGroup, event) => {
-    event.stopPropagation(); // Prevent the click event from propagating to the Link
-    event.preventDefault();  // Prevent the Link's default behavior (navigation)
+    if (!tagGroup[0].notes && !tagGroup[0].transcript) {
+      return; // Do nothing if there are no notes or transcript
+    }
+    event.stopPropagation();
+    event.preventDefault();
     setSelectedTag(tagGroup);
   };
 
@@ -28,26 +33,32 @@ const TagBadges = ({ tags }) => {
   };
 
   const formatTimeRange = (tag) => {
-    if (!tag.starts_at_second && !tag.ends_at_second) return null;
+    if (!tag.starts_at_second && !tag.ends_at_second) return "";
     const start = formatTimestamp(tag.starts_at_second);
     const end = formatTimestamp(tag.ends_at_second);
-    return start && end ? `between ${start} and ${end}` : start ? `at ${start}` : null;
+    return start && end ? `between ${start} and ${end}` : start ? `at ${start}` : "";
   };
+
 
   const formatTimestamp = (seconds) => {
     if (!seconds) return null;
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${minutes}:${secs.toString().padStart(2, '0')}`;
+    return `${minutes}:${secs.toString().padStart(2, "0")}`;
   };
 
   const tooltipForTagStack = (tagGroup) => {
-    let tooltip = tagGroup.map((tag) => {
-      let tooltipPart = tag.notes ? `${tag.notes} ${formatTimeRange(tag)}` : tag.name;
-      return tooltipPart;
-    }).join(", ");
+    const hasNotesOrTranscript = tagGroup.some(tag => tag.notes || tag.transcript);
 
-    return tooltip || tagGroup[0].description || tagGroup[0].name;
+    if (!hasNotesOrTranscript) {
+      return tagGroup[0].description || "";
+    }
+
+    return tagGroup.map((tag) => {
+      let timeRange = formatTimeRange(tag);
+      let tooltipPart = tag.notes ? `${tag.notes} ${timeRange}`.trim() : "";
+      return tooltipPart.trim();
+    }).filter(Boolean).join(", ");
   };
 
   return (
@@ -58,14 +69,20 @@ const TagBadges = ({ tags }) => {
         const title = `${tagName} ${count > 1 ? `(${count})` : ""}`;
         const tooltipId = `tooltip-${tagName}`;
 
+        // Determine if the tag is clickable
+        const isClickable = tag.notes || tag.transcript;
+
         return (
           <div
             key={tagName}
             className="tag-badge"
-            data-tooltip-id={tooltipId} // Attach tooltip id
-            data-tooltip-content={tooltipForTagStack(tagGroup)} // Attach tooltip content
-            onClick={(event) => handleClick(tagGroup, event)}
-            style={{ backgroundColor: "$header_gray" }}
+            data-tooltip-id={tooltipId}
+            data-tooltip-content={tooltipForTagStack(tagGroup)}
+            onClick={isClickable ? (event) => handleClick(tagGroup, event) : null}
+            style={{
+              backgroundColor: "$header_gray",
+              cursor: isClickable ? "pointer" : "default", // Change cursor based on clickability
+            }}
           >
             {title}
             <Tooltip id={tooltipId} effect="solid" place="top" type="dark" className="custom-tooltip" />
@@ -77,21 +94,30 @@ const TagBadges = ({ tags }) => {
           isOpen={!!selectedTag}
           onRequestClose={closeModal}
           contentLabel="Tag Details"
-          className="Modal"
-          overlayClassName="Overlay"
+          className="tag-modal"
+          overlayClassName="modal-overlay"
         >
-          <h2>{selectedTag[0].name}</h2>
+          <button onClick={closeModal} className="button is-pulled-right">
+            <FontAwesomeIcon icon={faTimes} />
+          </button>
+          <h2 className="title mb-2">{selectedTag[0].name}</h2>
+
           <div>
             {selectedTag.map((tag, index) => (
               <div key={index}>
-                <p><strong>Notes:</strong> {tag.notes}</p>
+                <h3 className="subtitle">{tag.notes}</h3>
                 {tag.transcript && (
-                  <p><strong>Transcript:</strong><br />{tag.transcript.replace(/\n/g, "<br />")}</p>
+                  <p>
+                    <strong>TRANSCRIPT:</strong>
+                    <br />
+                    <span
+                      dangerouslySetInnerHTML={{ __html: tag.transcript.replace(/\n/g, "<br />") }}
+                    />
+                  </p>
                 )}
               </div>
             ))}
           </div>
-          <button onClick={closeModal} className="button is-primary mt-4">Close</button>
         </Modal>
       )}
     </div>
@@ -105,6 +131,9 @@ TagBadges.propTypes = {
       priority: PropTypes.number.isRequired,
       notes: PropTypes.string,
       transcript: PropTypes.string,
+      description: PropTypes.string,
+      starts_at_second: PropTypes.number,
+      ends_at_second: PropTypes.number,
     })
   ).isRequired,
 };

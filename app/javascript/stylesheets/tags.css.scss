@@ -5,7 +5,7 @@
 }
 
 .tag-badge {
-  font-size: 0.9rem;
+  font-size: 0.6rem;
   padding: 0.1rem 0.4rem;
   background-color: $tag_gray;
   color: white;
@@ -19,16 +19,17 @@
   background-color: darken($header_gray, 10%);
 }
 
-/* Modal specific styles */
-.Modal {
+.tag-modal {
   background: white;
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 8px;
   max-width: 500px;
   margin: 0 auto;
+  max-height: 500px;
+  overflow: auto;
 }
 
-.Overlay {
+.modal-overlay {
   background: rgba(0, 0, 0, 0.75);
   position: fixed;
   top: 0;
