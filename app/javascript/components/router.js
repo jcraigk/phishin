@@ -11,6 +11,7 @@ import TopShows from "./TopShows";
 import TopTracks from "./TopTracks";
 import Tags from "./Tags";
 import TagTracks from "./TagTracks";
+import TagShows from "./TagShows";
 
 import ApiDocs from "./pages/ApiDocs";
 import ContactInfo from "./pages/ContactInfo";
@@ -100,10 +101,10 @@ const router = (props) =>
           path: "/tags",
           element: <Tags />,
         },
-        // {
-        //   path: "/show_tags/:tag_slug",
-        //   element: <TagShows />,
-        // },
+        {
+          path: "/show_tags/:tag_slug",
+          element: <TagShows />,
+        },
         {
           path: "/track_tags/:tag_slug",
           element: <TagTracks />,

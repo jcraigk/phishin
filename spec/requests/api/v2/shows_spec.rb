@@ -40,36 +40,46 @@ RSpec.describe "API v2 Shows" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      first_show = shows.sort_by(&:date).reverse.first
-      expected = ApiV2::Entities::Show.represent([ first_show ], include_tracks: false).as_json
-      expect(json.first).to eq(expected.first)
+      shows_data = json[:shows]
+      expect(shows_data.length).to eq(2)
+
+      expect(json[:total_pages]).to eq(3)
+      expect(json[:current_page]).to eq(1)
+      expect(json[:total_entries]).to eq(5)
+
+      first_page_shows = shows.sort_by(&:date).reverse.take(2)
+      expected = ApiV2::Entities::Show.represent(first_page_shows, include_tracks: false).as_json
+      expect(shows_data).to eq(expected)
     end
 
     it "returns the second page of shows sorted by date in descending order" do
       get_api "/shows", params: { page: 2, per_page: 2 }
       expect(response).to have_http_status(:ok)
 
-      json = JSON.parse(response.body)
-      expect(json.size).to eq(2)
+      json = JSON.parse(response.body, symbolize_names: true)
+      shows_data = json[:shows]
+      expect(shows_data.length).to eq(2)
 
       second_page_shows = shows.sort_by(&:date).reverse[2, 2]
-      expect(json.map { |s| s["date"] }).to eq(second_page_shows.map { |show| show.date.iso8601 })
+      expect(shows_data.map { |s| s[:date] }).to eq(second_page_shows.map { |show| show.date.iso8601 })
     end
 
     it "returns a list of shows sorted by likes_count in ascending order" do
       get_api "/shows", params: { sort: "likes_count:asc", page: 1, per_page: 3 }
       expect(response).to have_http_status(:ok)
 
-      json = JSON.parse(response.body)
-      expect(json.map { |s| s["likes_count"] }).to eq([ 5, 10, 20 ])
+      json = JSON.parse(response.body, symbolize_names: true)
+      shows_data = json[:shows]
+      expect(shows_data.map { |s| s[:likes_count] }).to eq([ 5, 10, 20 ])
     end
 
     it "returns a list of shows sorted by duration in descending order" do
       get_api "/shows", params: { sort: "duration:desc", page: 1, per_page: 3 }
       expect(response).to have_http_status(:ok)
 
-      json = JSON.parse(response.body)
-      expect(json.map { |s| s["duration"] }).to eq([ 200, 150, 120 ])
+      json = JSON.parse(response.body, symbolize_names: true)
+      shows_data = json[:shows]
+      expect(shows_data.map { |s| s[:duration] }).to eq([ 200, 150, 120 ])
     end
 
     it "returns a 400 error for an invalid sort parameter" do
@@ -82,11 +92,12 @@ RSpec.describe "API v2 Shows" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
+      shows_data = json[:shows]
       expected = ApiV2::Entities::Show.represent(
         shows.select { |show| show.date.year == 2022 },
         include_tracks: false
       ).as_json
-      expect(json).to eq(expected)
+      expect(shows_data).to eq(expected)
     end
 
     it "filters shows by a year range" do
@@ -94,14 +105,15 @@ RSpec.describe "API v2 Shows" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
+      shows_data = json[:shows]
       expected = ApiV2::Entities::Show.represent(
         shows.select { |show| show.date.year.between?(2021, 2023) },
         include_tracks: false
       ).as_json
 
       expected_sorted = expected.sort_by { |show| show[:date] }
-      json_sorted = json.sort_by { |show| show[:date] }
-      expect(json_sorted).to eq(expected_sorted)
+      shows_data_sorted = shows_data.sort_by { |show| show[:date] }
+      expect(shows_data_sorted).to eq(expected_sorted)
     end
 
     it "gives precedence to the year over year_range when both are provided" do
@@ -109,11 +121,12 @@ RSpec.describe "API v2 Shows" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
+      shows_data = json[:shows]
       expected = ApiV2::Entities::Show.represent(
         shows.select { |show| show.date.year == 2022 },
         include_tracks: false
       ).as_json
-      expect(json).to eq(expected)
+      expect(shows_data).to eq(expected)
     end
 
     it "filters shows by venue_slug" do
@@ -121,12 +134,13 @@ RSpec.describe "API v2 Shows" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
+      shows_data = json[:shows]
       expected = ApiV2::Entities::Show.represent(
         shows.sort_by(&:date).reverse,
         include_tracks: false
       ).as_json
 
-      expect(json).to eq(expected)
+      expect(shows_data).to eq(expected)
     end
 
     it "filters shows by tag_slug" do
@@ -134,13 +148,14 @@ RSpec.describe "API v2 Shows" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
+      shows_data = json[:shows]
 
       expected_shows = shows.select { |show| show.tags.include?(tag) }
       expected_json = ApiV2::Entities::Show.represent(
         expected_shows.sort_by(&:date).reverse,
         include_tracks: false
       ).as_json
-      sorted_json = json.sort_by { |show| show[:date] }.reverse
+      sorted_json = shows_data.sort_by { |show| show[:date] }.reverse
       expect(sorted_json).to eq(expected_json)
     end
 
@@ -149,11 +164,12 @@ RSpec.describe "API v2 Shows" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
+      shows_data = json[:shows]
       nearby_shows = shows.sort_by(&:date).reverse.select do |show|
         show.venue.distance_from([ 40.7505045, -73.9934387 ]) <= 50
       end
       expected = ApiV2::Entities::Show.represent(nearby_shows).as_json
-      expect(json).to eq(expected)
+      expect(shows_data).to eq(expected)
     end
 
     it "returns no shows if none are within the specified distance" do
@@ -161,7 +177,7 @@ RSpec.describe "API v2 Shows" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expect(json).to be_empty
+      expect(json[:shows]).to be_empty
     end
   end
 

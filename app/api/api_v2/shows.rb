@@ -33,7 +33,12 @@ class ApiV2::Shows < ApiV2::Base
                desc: "Filter shows by the slug of an associated tag"
     end
     get do
-      present page_of_shows, with: ApiV2::Entities::Show
+      shows = page_of_shows
+      present \
+        shows: ApiV2::Entities::Show.represent(shows[:shows]),
+        total_pages: shows[:total_pages],
+        current_page: shows[:current_page],
+        total_entries: shows[:total_entries]
     end
 
     desc "Return a random show" do
@@ -98,11 +103,18 @@ class ApiV2::Shows < ApiV2::Base
   helpers do
     def page_of_shows
       Rails.cache.fetch("api/v2/shows?#{params.to_query}") do
-        Show.published
-            .includes(:venue, show_tags: :tag)
-            .then { |s| apply_filter(s) }
-            .then { |s| apply_sort(s) }
-            .paginate(page: params[:page], per_page: params[:per_page])
+        shows = Show.published
+                    .includes(:venue, show_tags: :tag)
+                    .then { |s| apply_filter(s) }
+                    .then { |s| apply_sort(s) }
+                    .paginate(page: params[:page], per_page: params[:per_page])
+
+        {
+          shows: shows,
+          total_pages: shows.total_pages,
+          current_page: shows.current_page,
+          total_entries: shows.total_entries
+        }
       end
     end
 

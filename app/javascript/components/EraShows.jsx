@@ -20,7 +20,7 @@ const EraShows = () => {
 
         const response = await fetch(url);
         const data = await response.json();
-        setShows(data);
+        setShows(data.shows);
       } catch (error) {
         console.error("Error fetching shows:", error);
       }
