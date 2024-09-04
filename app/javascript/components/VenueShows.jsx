@@ -13,7 +13,7 @@ const VenueShows = () => {
       try {
         const response = await fetch(`/api/v2/shows?venue_slug=${venue_slug}&per_page=1000`);
         const data = await response.json();
-        setShows(data);
+        setShows(data.shows);
       } catch (error) {
         console.error("Error fetching shows:", error);
       }
