@@ -6,7 +6,8 @@ import Eras from "./Eras";
 import Layout from "./Layout";
 import Venues from "./Venues";
 import Songs from "./Songs";
-import Shows from "./Shows";
+import VenueShows from "./VenueShows";
+import TopShows from "./TopShows";
 
 import ApiDocs from "./pages/ApiDocs";
 import ContactInfo from "./pages/ContactInfo";
@@ -86,7 +87,7 @@ const router = (props) =>
         },
         {
           path: "/venues/:venue_slug",
-          element: <Shows />,
+          element: <VenueShows />,
         },
         {
           path: "/songs",
@@ -100,10 +101,10 @@ const router = (props) =>
         //   path: "/map",
         //   element: <Map />,
         // },
-        // {
-        //   path: "/top-shows",
-        //   element: <TopShows />,
-        // },
+        {
+          path: "/top-shows",
+          element: <TopShows />,
+        },
         // {
         //   path: "/top-tracks",
         //   element: <TopTracks />,

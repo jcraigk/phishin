@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { formatDate, formatDurationTrack } from "./utils";
-import ErrorPage from "./pages/ErrorPage"; // Import the ErrorPage component
-import LayoutWrapper from "./LayoutWrapper"; // Import the LayoutWrapper
-import TagBadges from "./TagBadges";
+import { formatDate } from "./utils";
+import ErrorPage from "./pages/ErrorPage";
+import LayoutWrapper from "./LayoutWrapper";
+import Tracks from "./Tracks";
 
 const Show = () => {
   const { route_path } = useParams();
@@ -37,43 +37,18 @@ const Show = () => {
     return <div>Loading...</div>;
   }
 
-  let lastSetName = null;
-
   const sidebarContent = (
     <div className="sidebar-content">
       <p className="has-text-weight-bold mb-5">Show Details</p>
       <p>Date: {formatDate(show.date)}</p>
       <p>Venue: {show.venue.name}</p>
       <p>Location: {show.venue.location}</p>
-      {/* Add more details or links as needed */}
     </div>
   );
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <ul>
-        {show.tracks.map((track, index) => {
-          const isNewSet = track.set_name !== lastSetName;
-          lastSetName = track.set_name;
-
-          return (
-            <React.Fragment key={track.id}>
-              {isNewSet && (
-                <div className="section-title">
-                  <div className="title-left">{track.set_name}</div>
-                </div>
-              )}
-              <li className="list-item">
-                <span className="leftside-primary">{track.title}</span>
-                <span className="leftside-secondary">
-                  {<TagBadges tags={track.tags} />}
-                </span>
-                <span className="rightside-primary">{formatDurationTrack(track.duration)}</span>
-              </li>
-            </React.Fragment>
-          );
-        })}
-      </ul>
+      <Tracks tracks={show.tracks} set_headers={true} />
     </LayoutWrapper>
   );
 };
