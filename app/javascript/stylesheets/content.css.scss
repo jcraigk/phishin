@@ -38,6 +38,7 @@
   border-radius: 5px;
   margin-bottom: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-height: 3rem;
 }
 
 .leftside-numbering {
@@ -74,14 +75,14 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 12rem;
+  width: 10rem;
   margin-right: 0.5rem;
   flex-shrink: 0;
 }
 
 .rightside-primary {
   font-size: 1.1rem;
-  width: 3.5rem;
+  width: 4rem;
   text-align: right;
   overflow: hidden;
   text-overflow: ellisis;
@@ -92,12 +93,16 @@
 
 .rightside-secondary {
   font-size: 1.1rem;
-  width: 5rem;
+  width: 4rem;
   text-align: right;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   flex-shrink: 0;
+
+  .fa-heart {
+    color: $tag_gray;
+  }
 }
 
 .width-8 {
