@@ -11,7 +11,8 @@ class ReactController < ApplicationController
       username: session[:username],
       email: session[:email],
       alert: flash[:alert],
-      notice: flash[:notice]
+      notice: flash[:notice],
+      mapbox_token: ENV.fetch("MAPBOX_TOKEN", nil)
     }
 
     # Clear session after OAuth redirect
