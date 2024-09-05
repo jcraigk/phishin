@@ -10,6 +10,8 @@ $header_gray: #c7c8ca;
 $subheader_gray: #d9dbdc;
 $google-blue: #5385ed;
 $tag_gray: #888888;
+$likes_blue: #6ccff6;
+
 
 @import "./content.css.scss";
 @import "./pagination.css.scss";
@@ -17,6 +19,7 @@ $tag_gray: #888888;
 @import "./tags.css.scss";
 @import "./tooltips.css.scss";
 @import "./map.css.scss";
+@import "./likes.css.scss";
 
 
 body {

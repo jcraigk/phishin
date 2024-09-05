@@ -8,8 +8,8 @@ class ApiV2::Tracks < ApiV2::Base
         "optionally filtered by tag_slug or song_slug."
       success ApiV2::Entities::Track
       failure [
-        [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
-        [ 404, "Not Found", ApiV2::Entities::ApiResponse ]
+        [400, "Bad Request", ApiV2::Entities::ApiResponse],
+        [404, "Not Found", ApiV2::Entities::ApiResponse]
       ]
     end
     params do
@@ -18,7 +18,7 @@ class ApiV2::Tracks < ApiV2::Base
                type: String,
                desc: "Sort by attribute and direction (e.g., 'id:asc')",
                default: "id:asc",
-               values: SORT_COLS.map { |opt| [ "#{opt}:asc", "#{opt}:desc" ] }.flatten
+               values: SORT_COLS.map { |opt| ["#{opt}:asc", "#{opt}:desc"] }.flatten
       optional :tag_slug,
                type: String,
                desc: "Filter tracks by the slug of the tag"
@@ -28,8 +28,10 @@ class ApiV2::Tracks < ApiV2::Base
     end
     get do
       result = page_of_tracks
+      liked_track_ids = current_user ? fetch_liked_track_ids(result[:tracks], current_user) : []
+
       present \
-        tracks: ApiV2::Entities::Track.represent(result[:tracks]),
+        tracks: ApiV2::Entities::Track.represent(result[:tracks], liked_track_ids:),
         total_pages: result[:total_pages],
         current_page: result[:current_page],
         total_entries: result[:total_entries]
@@ -39,15 +41,19 @@ class ApiV2::Tracks < ApiV2::Base
       detail "Return a track by its ID, including show details, tags, and songs"
       success ApiV2::Entities::Track
       failure [
-        [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
-        [ 404, "Not Found", ApiV2::Entities::ApiResponse ]
+        [400, "Bad Request", ApiV2::Entities::ApiResponse],
+        [404, "Not Found", ApiV2::Entities::ApiResponse]
       ]
     end
     params do
       requires :id, type: Integer, desc: "ID of the track"
     end
     get ":id" do
-      present track_by_id, with: ApiV2::Entities::Track
+      track = track_by_id
+      present \
+        track,
+        with: ApiV2::Entities::Track,
+        liked_by_user: current_user ? current_user.likes.exists?(likable: track) : false
     end
   end
 
@@ -72,6 +78,11 @@ class ApiV2::Tracks < ApiV2::Base
       Rails.cache.fetch("api/v2/tracks/#{params[:id]}") do
         Track.includes(:show, :songs, track_tags: :tag).find_by!(id: params[:id])
       end
+    end
+
+    def fetch_liked_track_ids(tracks, user)
+      track_ids = tracks.map(&:id)
+      Like.where(likable_type: 'Track', likable_id: track_ids, user_id: user.id).pluck(:likable_id)
     end
 
     def apply_filter(tracks)

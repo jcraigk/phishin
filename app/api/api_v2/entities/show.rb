@@ -89,4 +89,12 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
       obj.tracks.sort_by(&:position),
       opts.merge(exclude_show: true)
   end
+
+  expose :liked_by_user do |obj, opts|
+    if opts.key?(:liked_by_user)
+      opts[:liked_by_user]
+    else
+      opts[:liked_show_ids]&.include?(obj.id) || false
+    end
+  end
 end

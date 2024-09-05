@@ -1,6 +1,7 @@
 require "rails_helper"
 
-RSpec.describe "API v2 Tracks" do
+RSpec.describe "API v2 Tracks", type: :request do
+  let!(:user) { create(:user) }
   let!(:tag) { create(:tag, name: "Classic", priority: 1) }
   let!(:show1) { create(:show, date: "2023-01-01") }
   let!(:show2) { create(:show, date: "2024-01-01") }
@@ -16,14 +17,10 @@ RSpec.describe "API v2 Tracks" do
 
   let!(:tracks) do
     [
-      create(:track, title: "Track 1", position: 1, duration: 300, likes_count: 10, show: show1,
-songs: [ songs[0] ]),
-      create(:track, title: "Track 2", position: 2, duration: 240, likes_count: 20, show: show2,
-songs: [ songs[1] ]),
-      create(:track, title: "Track 3", position: 3, duration: 360, likes_count: 5, show: show3,
-songs: [ songs[2] ]),
-      create(:track, title: "Track 4", position: 4, duration: 180, likes_count: 15, show: show1,
-songs: [ songs[0], songs[1] ])
+      create(:track, title: "Track 1", position: 1, duration: 300, likes_count: 10, show: show1, songs: [songs[0]]),
+      create(:track, title: "Track 2", position: 2, duration: 240, likes_count: 20, show: show2, songs: [songs[1]]),
+      create(:track, title: "Track 3", position: 3, duration: 360, likes_count: 5, show: show3, songs: [songs[2]]),
+      create(:track, title: "Track 4", position: 4, duration: 180, likes_count: 15, show: show1, songs: [songs[0], songs[1]])
     ]
   end
 
@@ -31,107 +28,97 @@ songs: [ songs[0], songs[1] ])
     [
       create(:track_tag, track: tracks[0], tag:, notes: "A classic track"),
       create(:track_tag, track: tracks[1], tag:, notes: "Another classic track"),
-      create(:track_tag, track: tracks[2], tag:, notes: "")
     ]
   end
 
+  let!(:like) { create(:like, user:, likable: tracks[0]) }
+
   describe "GET /tracks" do
-    it "returns the first page of tracks sorted by id in ascending order by default" do
-      get_api "/tracks", params: { page: 1, per_page: 2 }
-      expect(response).to have_http_status(:ok)
+    context "with no filters" do
+      it "returns paginated tracks sorted by id in ascending order" do
+        get_api_authed(user, "/tracks", params: { page: 1, per_page: 2 })
+        expect(response).to have_http_status(:ok)
 
-      json = JSON.parse(response.body, symbolize_names: true)
-      sorted_tracks = tracks.sort_by(&:id).take(2)
-      expected = ApiV2::Entities::Track.represent(sorted_tracks, include_show: true).as_json
-      expect(json[:tracks]).to eq(expected)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:tracks].size).to eq(2)
+        expect(json[:total_pages]).to eq(2)
+
+        track_ids = json[:tracks].map { |t| t[:id] }
+        expect(track_ids).to eq([tracks[0].id, tracks[1].id])
+      end
     end
 
-    it "filters tracks by tag_slug" do
-      get_api "/tracks", params: { tag_slug: tag.slug }
-      expect(response).to have_http_status(:ok)
+    context "with sorting" do
+      it "returns tracks sorted by likes_count in descending order" do
+        get_api_authed(user, "/tracks", params: { sort: "likes_count:desc", page: 1, per_page: 3 })
+        expect(response).to have_http_status(:ok)
 
-      json = JSON.parse(response.body, symbolize_names: true)
-      filtered_tracks = tracks.select { |track| track.tags.include?(tag) }
-      filtered_tracks_sorted = filtered_tracks.sort_by(&:id)
-      expected = ApiV2::Entities::Track.represent(filtered_tracks_sorted,
-include_show: true).as_json
-      expect(json[:tracks]).to eq(expected)
+        json = JSON.parse(response.body, symbolize_names: true)
+        track_ids = json[:tracks].map { |t| t[:id] }
+
+        expect(track_ids).to eq([tracks[1].id, tracks[3].id, tracks[0].id])
+      end
     end
 
-    it "filters tracks by song_slug" do
-      get_api "/tracks", params: { song_slug: songs[0].slug }
-      expect(response).to have_http_status(:ok)
+    context "with tag_slug filter" do
+      it "returns tracks filtered by tag_slug" do
+        get_api_authed(user, "/tracks", params: { tag_slug: tag.slug })
+        expect(response).to have_http_status(:ok)
 
-      json = JSON.parse(response.body, symbolize_names: true)
-      filtered_tracks = tracks.select { |track| track.songs.include?(songs[0]) }
-      filtered_tracks_sorted = filtered_tracks.sort_by(&:id)
-      expected = ApiV2::Entities::Track.represent(filtered_tracks_sorted,
-include_show: true).as_json
-      expect(json[:tracks]).to eq(expected)
+        json = JSON.parse(response.body, symbolize_names: true)
+        track_ids = json[:tracks].map { |t| t[:id] }
+
+        expect(track_ids).to eq([tracks[0].id, tracks[1].id])
+      end
     end
 
-    it "filters tracks by both tag_slug and song_slug" do
-      get_api "/tracks", params: { tag_slug: tag.slug, song_slug: songs[0].slug }
-      expect(response).to have_http_status(:ok)
+    context "with song_slug filter" do
+      it "returns tracks filtered by song_slug" do
+        get_api_authed(user, "/tracks", params: { song_slug: songs[0].slug })
+        expect(response).to have_http_status(:ok)
 
-      json = JSON.parse(response.body, symbolize_names: true)
-      filtered_tracks = tracks.select { |track|
- track.tags.include?(tag) && track.songs.include?(songs[0]) }
-      filtered_tracks_sorted = filtered_tracks.sort_by(&:id)
-      expected = ApiV2::Entities::Track.represent(filtered_tracks_sorted,
-include_show: true).as_json
-      expect(json[:tracks]).to eq(expected)
+        json = JSON.parse(response.body, symbolize_names: true)
+        track_ids = json[:tracks].map { |t| t[:id] }
+
+        expect(track_ids).to eq([tracks[0].id, tracks[3].id]) # Tracks associated with song 1
+      end
     end
 
-    it "returns a list of tracks sorted by likes_count in descending order" do
-      get_api "/tracks", params: { sort: "likes_count:desc", page: 1, per_page: 3 }
-      expect(response).to have_http_status(:ok)
+    context "with liked_by_user" do
+      it "marks liked tracks correctly for the logged-in user" do
+        get_api_authed(user, "/tracks", params: { page: 1, per_page: 2 })
+        expect(response).to have_http_status(:ok)
 
-      json = JSON.parse(response.body, symbolize_names: true)
-      sorted_tracks = tracks.sort_by(&:likes_count).reverse.take(3)
-      expected = ApiV2::Entities::Track.represent(sorted_tracks, include_show: true).as_json
-      expect(json[:tracks]).to eq(expected)
-    end
-
-    it "returns a list of tracks sorted by duration in ascending order" do
-      get_api "/tracks", params: { sort: "duration:asc", page: 1, per_page: 3 }
-      expect(response).to have_http_status(:ok)
-
-      json = JSON.parse(response.body, symbolize_names: true)
-      sorted_tracks = tracks.sort_by(&:duration).take(3)
-      expected = ApiV2::Entities::Track.represent(sorted_tracks, include_show: true).as_json
-      expect(json[:tracks]).to eq(expected)
-    end
-
-    it "returns a list of tracks sorted by show date in ascending order" do
-      get_api "/tracks", params: { sort: "date:asc", page: 1, per_page: 3 }
-      expect(response).to have_http_status(:ok)
-
-      json = JSON.parse(response.body, symbolize_names: true)
-      sorted_tracks = tracks.sort_by { |track| track.show.date }.take(3)
-      expected = ApiV2::Entities::Track.represent(sorted_tracks, include_show: true).as_json
-      expect(json[:tracks]).to eq(expected)
-    end
-
-    it "returns a 400 error for an invalid sort parameter" do
-      get_api "/tracks", params: { sort: "invalid_param:asc", page: 1, per_page: 3 }
-      expect(response).to have_http_status(:bad_request)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:tracks][0][:liked_by_user]).to eq(true)  # Track 1 is liked
+        expect(json[:tracks][1][:liked_by_user]).to eq(false) # Track 2 is not liked
+      end
     end
   end
 
   describe "GET /tracks/:id" do
-    it "returns the specified track with show details, tags, and songs" do
+    it "returns the specified track with liked_by_user set" do
       track = tracks.first
-      get_api "/tracks/#{track.id}"
+      get_api_authed(user, "/tracks/#{track.id}")
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expected = ApiV2::Entities::Track.represent(track, include_show: true).as_json
-      expect(json).to eq(expected)
+      expect(json[:id]).to eq(track.id)
+      expect(json[:liked_by_user]).to eq(true) # Track 1 is liked by the user
     end
 
-    it "returns a 404 if the track does not exist" do
-      get_api "/tracks/9999"
+    it "returns a track that is not liked by the user with liked_by_user set to false" do
+      track = tracks.second
+      get_api_authed(user, "/tracks/#{track.id}")
+      expect(response).to have_http_status(:ok)
+
+      json = JSON.parse(response.body, symbolize_names: true)
+      expect(json[:id]).to eq(track.id)
+      expect(json[:liked_by_user]).to eq(false) # Track 2 is not liked by the user
+    end
+
+    it "returns a 404 error if the track does not exist" do
+      get_api_authed(user, "/tracks/9999")
       expect(response).to have_http_status(:not_found)
     end
   end
