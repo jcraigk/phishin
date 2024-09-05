@@ -28,7 +28,7 @@ class ApiV2::Tracks < ApiV2::Base
     end
     get do
       result = page_of_tracks
-      liked_track_ids = current_user ? fetch_liked_track_ids(result[:tracks], current_user) : []
+      liked_track_ids = current_user ? fetch_liked_track_ids(result[:tracks]) : []
 
       present \
         tracks: ApiV2::Entities::Track.represent(result[:tracks], liked_track_ids:),
@@ -80,9 +80,9 @@ class ApiV2::Tracks < ApiV2::Base
       end
     end
 
-    def fetch_liked_track_ids(tracks, user)
+    def fetch_liked_track_ids(tracks)
       track_ids = tracks.map(&:id)
-      Like.where(likable_type: 'Track', likable_id: track_ids, user_id: user.id).pluck(:likable_id)
+      Like.where(likable_type: 'Track', likable_id: track_ids, user_id: current_user.id).pluck(:likable_id)
     end
 
     def apply_filter(tracks)
