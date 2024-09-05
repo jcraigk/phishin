@@ -13,7 +13,7 @@ class ApiV2::Likes < ApiV2::Base
       requires :likable_type,
                type: String,
                desc: "Type of the likable object",
-               values: %w[show track]
+               values: %w[Show Track]
       requires :likable_id,
                type: Integer,
                desc: "ID of the likable object"
@@ -37,7 +37,7 @@ class ApiV2::Likes < ApiV2::Base
       requires :likable_type,
                type: String,
                desc: "Type of the likable object",
-               values: %w[show track]
+               values: %w[Show Track]
       requires :likable_id,
                type: Integer,
                desc: "ID of the likable object"
@@ -56,11 +56,7 @@ class ApiV2::Likes < ApiV2::Base
 
   helpers do
     def likable
-      likable_type.classify.constantize.find_by(id: params[:likable_id])
-    end
-
-    def likable_type
-      params[:likable_type].in?(%w[show track]) ? params[:likable_type] : nil
+      params[:likable_type].classify.constantize.find_by(id: params[:likable_id])
     end
   end
 end

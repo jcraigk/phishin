@@ -1,0 +1,8 @@
+.heart-icon {
+  color: $tag_gray;
+  cursor: pointer;
+}
+
+.heart-icon.liked {
+  color: $likes_blue;
+}

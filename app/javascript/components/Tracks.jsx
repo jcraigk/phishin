@@ -1,15 +1,66 @@
-import React from "react";
+import React, { useState } from "react";
 import TagBadges from "./TagBadges";
+import { useNotification } from "./NotificationContext"; // Updated path
 import { formatDurationTrack, formatDate } from "./utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
-const Tracks = ({ tracks, set_headers = false, numbering = false, show_dates = false }) => {
+const Tracks = ({ tracks, set_headers = false, numbering = false, show_dates = false, user }) => {
+  const { setAlert, setNotice } = useNotification();
+  const [trackLikes, setTrackLikes] = useState(tracks);
+
+  const toggleLike = async (track) => {
+    const jwt = localStorage.getItem("jwt");
+    if (!jwt) {
+      setAlert("You need to be logged in to like a track.");
+      return;
+    }
+
+    const isLiked = track.liked_by_user;
+    const url = `/api/v2/likes`;
+    const method = isLiked ? "DELETE" : "POST";
+    const requestBody = {
+      likable_type: "Track",
+      likable_id: track.id,
+    };
+
+    try {
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          "X-Auth-Token": jwt, // Pass the jwt for authentication
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (response.ok) {
+        // Update the track's likes_count and liked_by_user status locally
+        const updatedTracks = trackLikes.map((t) => {
+          if (t.id === track.id) {
+            return {
+              ...t,
+              likes_count: isLiked ? t.likes_count - 1 : t.likes_count + 1,
+              liked_by_user: !isLiked,
+            };
+          }
+          return t;
+        });
+
+        setTrackLikes(updatedTracks);
+      } else {
+        console.error("Error toggling like");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   let lastSetName = null;
 
   return (
     <ul>
-      {tracks.map((track, index) => {
+      {trackLikes.map((track, index) => {
         const isNewSet = set_headers && track.set_name !== lastSetName;
         lastSetName = track.set_name;
 
@@ -32,7 +83,12 @@ const Tracks = ({ tracks, set_headers = false, numbering = false, show_dates = f
               </span>
               <span className="rightside-primary">{formatDurationTrack(track.duration)}</span>
               <span className="rightside-secondary">
-                <FontAwesomeIcon icon={faHeart} /> {track.likes_count}
+                <FontAwesomeIcon
+                  icon={faHeart}
+                  className={`heart-icon mr-1 ${track.liked_by_user ? "liked" : ""}`}
+                  onClick={() => toggleLike(track)}
+                />
+                {track.likes_count}
               </span>
             </li>
           </React.Fragment>

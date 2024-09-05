@@ -106,4 +106,12 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       is_array: true,
       desc: "Songs associated with the track"
   }
+
+  expose :liked_by_user do |obj, opts|
+    if opts.key?(:liked_by_user)
+      opts[:liked_by_user]
+    else
+      opts[:liked_track_ids]&.include?(obj.id) || false
+    end
+  end
 end
