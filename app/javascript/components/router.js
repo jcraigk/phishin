@@ -13,6 +13,8 @@ import Tags from "./Tags";
 import TagTracks from "./TagTracks";
 import TagShows from "./TagShows";
 import MapView from "./MapView";
+import TodayShows from "./TodayShows";
+import SongTracks from "./SongTracks";
 
 import ApiDocs from "./pages/ApiDocs";
 import ContactInfo from "./pages/ContactInfo";
@@ -110,10 +112,10 @@ const router = (props) =>
           path: "/track_tags/:tag_slug",
           element: <TagTracks />,
         },
-        // {
-        //   path: "/songs/:song_slug",
-        //   element: <Tracks />,
-        // },
+        {
+          path: "/songs/:song_slug",
+          element: <SongTracks />,
+        },
         {
           path: "/map",
           element: <MapView mapbox_token={props.mapbox_token} />,
@@ -138,10 +140,10 @@ const router = (props) =>
         //   path: "/play/:playlist_slug",
         //   element: <Playlist />,
         // },
-        // {
-        //   path: "/today",
-        //   element: <Today />,
-        // },
+        {
+          path: "/today",
+          element: <TodayShows />,
+        },
         // {
         //   path: "/search",
         //   element: <Search />,
