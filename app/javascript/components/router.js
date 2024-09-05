@@ -12,6 +12,7 @@ import TopTracks from "./TopTracks";
 import Tags from "./Tags";
 import TagTracks from "./TagTracks";
 import TagShows from "./TagShows";
+import MapView from "./MapView";
 
 import ApiDocs from "./pages/ApiDocs";
 import ContactInfo from "./pages/ContactInfo";
@@ -113,10 +114,10 @@ const router = (props) =>
         //   path: "/songs/:song_slug",
         //   element: <Tracks />,
         // },
-        // {
-        //   path: "/map",
-        //   element: <Map />,
-        // },
+        {
+          path: "/map",
+          element: <MapView mapbox_token={props.mapbox_token} />,
+        },
         {
           path: "/top-shows",
           element: <TopShows />,

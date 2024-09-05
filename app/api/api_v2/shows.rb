@@ -31,6 +31,17 @@ class ApiV2::Shows < ApiV2::Base
       optional :tag_slug,
                type: String,
                desc: "Filter shows by the slug of an associated tag"
+      optional :start_date,
+               type: String,
+               desc: "Filter shows from this start date (inclusive)",
+               default: "1970-01-01"
+      optional :end_date,
+               type: String,
+               desc: "Filter shows up to this end date (inclusive)",
+               default: "2070-01-01"
+      optional :us_state,
+               type: String,
+               desc: "Abbreviation of a US state to filter shows by venue location"
     end
     get do
       shows = page_of_shows
@@ -132,10 +143,22 @@ class ApiV2::Shows < ApiV2::Base
       elsif params[:year_range]
         start_year, end_year = params[:year_range].split("-").map(&:to_i)
         shows = shows.where("extract(year from date) BETWEEN ? AND ?", start_year, end_year)
+      else
+        start_date = Date.parse(params[:start_date])
+        end_date = Date.parse(params[:end_date])
+        shows = shows.where(date: start_date..end_date)
       end
 
       if params[:venue_slug]
         venue_ids = Venue.where(slug: params[:venue_slug]).pluck(:id)
+        shows = shows.where(venue_id: venue_ids)
+      end
+
+      if params[:us_state].present?
+        venue_ids = Venue.where(state: params[:us_state]).pluck(:id)
+        shows = shows.where(venue_id: venue_ids)
+      elsif params[:lat].present? && params[:lng].present? && params[:distance].present?
+        venue_ids = Venue.near([params[:lat], params[:lng]], params[:distance]).all.map(&:id)
         shows = shows.where(venue_id: venue_ids)
       end
 
@@ -144,11 +167,6 @@ class ApiV2::Shows < ApiV2::Base
                        .where(tags: { slug: params[:tag_slug] })
                        .pluck(:id)
         shows = shows.where(id: show_ids)
-      end
-
-      if params[:lat].present? && params[:lng].present? && params[:distance].present?
-        venue_ids = Venue.near([ params[:lat], params[:lng] ], params[:distance]).all.map(&:id)
-        shows = shows.where(venue_id: venue_ids)
       end
 
       shows
