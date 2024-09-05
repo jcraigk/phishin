@@ -44,12 +44,14 @@ class ApiV2::Shows < ApiV2::Base
                desc: "Abbreviation of a US state to filter shows by venue location"
     end
     get do
-      shows = page_of_shows
+      result = page_of_shows
+      liked_show_ids = current_user ? fetch_liked_show_ids(result[:shows], current_user) : []
+
       present \
-        shows: ApiV2::Entities::Show.represent(shows[:shows]),
-        total_pages: shows[:total_pages],
-        current_page: shows[:current_page],
-        total_entries: shows[:total_entries]
+        shows: ApiV2::Entities::Show.represent(result[:shows], liked_show_ids:),
+        total_pages: result[:total_pages],
+        current_page: result[:current_page],
+        total_entries: result[:total_entries]
     end
 
     desc "Return a random show" do
@@ -60,7 +62,8 @@ class ApiV2::Shows < ApiV2::Base
       present \
         Show.published.order("RANDOM()").first,
         with: ApiV2::Entities::Show,
-        include_tracks: true
+        include_tracks: true,
+        liked_by_user: current_user ? current_user.likes.exists?(likable: show) : false
     end
 
     desc "Return a show by id" do
@@ -72,7 +75,11 @@ class ApiV2::Shows < ApiV2::Base
       ]
     end
     get ":id" do
-      present Show.find(params[:id]), with: ApiV2::Entities::Show, include_tracks: true
+      show = Show.find(params[:id])
+      present \
+        show,
+        with: ApiV2::Entities::Show,
+        liked_by_user: current_user ? current_user.likes.exists?(likable: show) : false
     end
 
     desc "Return a show by date" do
@@ -87,7 +94,11 @@ class ApiV2::Shows < ApiV2::Base
       requires :date, type: String, desc: "Date in the format YYYY-MM-DD"
     end
     get "on_date/:date" do
-      present show_by_date, with: ApiV2::Entities::Show, include_tracks: true
+      present \
+        show_by_date,
+        with: ApiV2::Entities::Show,
+        include_tracks: true,
+        liked_by_user: current_user ? current_user.likes.exists?(likable: show) : false
     end
 
     desc "Return shows on a specific day of the year" do
@@ -105,7 +116,9 @@ class ApiV2::Shows < ApiV2::Base
         Show.published
             .where("extract(month from date) = ?", date.month)
             .where("extract(day from date) = ?", date.day)
-      present shows, with: ApiV2::Entities::Show
+      liked_show_ids = current_user ? fetch_liked_show_ids(shows) : []
+      present \
+        shows: ApiV2::Entities::Show.represent(shows, liked_show_ids:)
     rescue ArgumentError
       error!({ message: "Invalid date format" }, 400)
     end
@@ -127,6 +140,11 @@ class ApiV2::Shows < ApiV2::Base
           total_entries: shows.total_entries
         }
       end
+    end
+
+    def fetch_liked_show_ids(shows)
+      show_ids = shows.map(&:id)
+      Like.where(likable_type: 'Show', likable_id: show_ids, user_id: current_user.id).pluck(:likable_id)
     end
 
     def show_by_date
@@ -170,6 +188,11 @@ class ApiV2::Shows < ApiV2::Base
       end
 
       shows
+    end
+
+    def apply_sort(shows)
+      sort_by, sort_direction = params[:sort].split(":")
+      shows.order("#{sort_by} #{sort_direction}")
     end
   end
 end

@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 import TagBadges from "./TagBadges";
-import { useNotification } from "./NotificationContext"; // Updated path
 import { formatDurationTrack, formatDate } from "./utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
 const Tracks = ({ tracks, set_headers = false, numbering = false, show_dates = false, user }) => {
-  const { setAlert, setNotice } = useNotification();
   const [trackLikes, setTrackLikes] = useState(tracks);
 
   const toggleLike = async (track) => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
-      setAlert("You need to be logged in to like a track.");
+      alert("You need to be logged in to like a track.");
       return;
     }
 
@@ -85,9 +83,9 @@ const Tracks = ({ tracks, set_headers = false, numbering = false, show_dates = f
               <span className="rightside-secondary">
                 <FontAwesomeIcon
                   icon={faHeart}
-                  className={`heart-icon mr-1 ${track.liked_by_user ? "liked" : ""}`}
+                  className={track.liked_by_user ? "heart-icon liked" : "heart-icon"}
                   onClick={() => toggleLike(track)}
-                />
+                />{" "}
                 {track.likes_count}
               </span>
             </li>

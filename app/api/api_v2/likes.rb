@@ -19,6 +19,7 @@ class ApiV2::Likes < ApiV2::Base
                desc: "ID of the likable object"
     end
     post do
+      # binding.irb
       authenticate!
       return error!({ message: "Invalid show or track" }, 422) unless likable
       likable.likes.create!(user: current_user)
@@ -43,6 +44,7 @@ class ApiV2::Likes < ApiV2::Base
                desc: "ID of the likable object"
     end
     delete do
+      # binding.irb
       authenticate!
       return error!({ message: "Invalid show or track" }, 422) unless likable
 
