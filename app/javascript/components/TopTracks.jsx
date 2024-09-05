@@ -11,7 +11,7 @@ const TopTracks = ({ user }) => {
       try {
         const response = await fetch(`/api/v2/tracks?per_page=40&sort=likes_count:desc`);
         const data = await response.json();
-        setTracks(data);
+        setTracks(data.tracks);
       } catch (error) {
         console.error("Error fetching tracks:", error);
       }

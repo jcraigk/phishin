@@ -11,7 +11,7 @@ const TopShows = ({ user }) => {
       try {
         const response = await fetch(`/api/v2/shows?per_page=40&sort=likes_count:desc`);
         const data = await response.json();
-        setShows(data);
+        setShows(data.shows);
       } catch (error) {
         console.error("Error fetching shows:", error);
       }
