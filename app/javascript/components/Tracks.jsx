@@ -1,20 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TagBadges from "./TagBadges";
+import { useNotification } from "./NotificationContext";
 import { formatDurationTrack, formatDate } from "./utils";
+import HighlightedText from "./HighlightedText";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
-const Tracks = ({ tracks, set_headers = false, numbering = false, show_dates = false, user }) => {
+const Tracks = ({ tracks, set_headers = false, numbering = false, show_dates = false, user, highlight }) => {
   const [trackLikes, setTrackLikes] = useState(tracks);
+
+  const { setAlert, setNotice } = useNotification();
+
+  // Update trackLikes whenever tracks prop changes
+  useEffect(() => {
+    setTrackLikes(tracks);
+  }, [tracks]);
 
   const toggleLike = async (track) => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
-      alert("You need to be logged in to like a track.");
+      setAlert("You must be logged in to submit Likes");
       return;
     }
 
+    // Optimistically update UI
     const isLiked = track.liked_by_user;
+    const updatedTracks = trackLikes.map((t) => {
+      if (t.id === track.id) {
+        return {
+          ...t,
+          likes_count: isLiked ? t.likes_count - 1 : t.likes_count + 1,
+          liked_by_user: !isLiked,
+        };
+      }
+      return t;
+    });
+
+    setTrackLikes(updatedTracks); // Update the UI immediately
+
+    // Send request to the server
     const url = `/api/v2/likes`;
     const method = isLiked ? "DELETE" : "POST";
     const requestBody = {
@@ -33,19 +57,7 @@ const Tracks = ({ tracks, set_headers = false, numbering = false, show_dates = f
       });
 
       if (response.ok) {
-        // Update the track's likes_count and liked_by_user status locally
-        const updatedTracks = trackLikes.map((t) => {
-          if (t.id === track.id) {
-            return {
-              ...t,
-              likes_count: isLiked ? t.likes_count - 1 : t.likes_count + 1,
-              liked_by_user: !isLiked,
-            };
-          }
-          return t;
-        });
-
-        setTrackLikes(updatedTracks);
+        setNotice("Like saved"); // Notify the user when the server responds
       } else {
         console.error("Error toggling like");
       }
@@ -62,6 +74,7 @@ const Tracks = ({ tracks, set_headers = false, numbering = false, show_dates = f
         const isNewSet = set_headers && track.set_name !== lastSetName;
         lastSetName = track.set_name;
 
+        // Using HighlightedText within the existing logic for trackTitle
         const trackTitle = show_dates ? `${formatDate(track.show.date)} ${track.title}` : track.title;
 
         return (
@@ -75,7 +88,9 @@ const Tracks = ({ tracks, set_headers = false, numbering = false, show_dates = f
               {numbering && (
                 <span className="leftside-numbering">#{index + 1}</span>
               )}
-              <span className="leftside-primary">{trackTitle}</span>
+              <span className="leftside-primary">
+                <HighlightedText text={trackTitle} highlight={highlight} />
+              </span>
               <span className="leftside-secondary">
                 <TagBadges tags={track.tags} />
               </span>

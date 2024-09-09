@@ -5,10 +5,13 @@ import { useNotification } from "./NotificationContext";
 
 const AppRouter = (props) => {
   const [user, setUser] = useState(() => {
-    const jwt = localStorage.getItem("jwt");
-    const username = localStorage.getItem("username");
-    const email = localStorage.getItem("email");
-    return jwt ? { jwt, username, email } : null;
+    if (typeof window !== "undefined") {
+      const jwt = localStorage.getItem("jwt");
+      const username = localStorage.getItem("username");
+      const email = localStorage.getItem("email");
+      return jwt ? { jwt, username, email } : null;
+    }
+    return null;
   });
 
   const { setAlert, setNotice } = useNotification();
@@ -29,27 +32,32 @@ const AppRouter = (props) => {
   }, [props.notice, props.alert]);
 
   const handleLogin = (userData) => {
-    localStorage.setItem("jwt", userData.jwt);
-    localStorage.setItem("username", userData.username);
-    localStorage.setItem("email", userData.email);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("jwt", userData.jwt);
+      localStorage.setItem("username", userData.username);
+      localStorage.setItem("email", userData.email);
+    }
     setUser(userData);
     setNotice("You are now logged in as " + userData.email);
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("jwt");
-    localStorage.removeItem("username");
-    localStorage.removeItem("email");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("jwt");
+      localStorage.removeItem("username");
+      localStorage.removeItem("email");
+    }
     setUser(null);
     setNotice("Logged out successfully");
   };
 
-  const formatNumber = (number) => {
-    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
+  // Only render the router in the browser environment
+  if (typeof window === "undefined") {
+    return null;
+  }
 
   return (
-    <RouterProvider router={router({ ...props, user, handleLogin, handleLogout, formatNumber })} />
+    <RouterProvider router={router({ ...props, user, handleLogin, handleLogout })} />
   );
 };
 

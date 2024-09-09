@@ -1,10 +1,13 @@
-class SearchService
-  attr_reader :term
+class SearchService < BaseService
+  extend Dry::Initializer
+
+  param :term
+  param :scope, default: proc { "all" }
 
   LIMIT = 200
 
-  def initialize(term)
-    @term = term || ""
+  def initialize(term, scope = nil)
+    super(term, scope || "all") # Ensure scope defaults to "all" if nil
   end
 
   def call
@@ -19,10 +22,14 @@ class SearchService
   end
 
   def search_results
-    date_results.merge(text_results)
+    results = {}
+    results.merge!(date_results)
+    results.merge!(text_results)
+    results
   end
 
   def date_results
+    return {} unless scope == "all" || scope == "shows"
     {
       exact_show: show_on_date,
       other_shows: shows_on_day_of_year
@@ -30,15 +37,28 @@ class SearchService
   end
 
   def text_results
-    {
-      show_tags:,
-      songs:,
-      tags:,
-      tours:,
-      track_tags:,
-      tracks:,
-      venues:
-    }
+    case scope
+    when "shows"
+      {}
+    when "songs"
+      { songs: }
+    when "venues"
+      { venues: }
+    when "tours"
+      { tours: }
+    when "tags"
+      { tags:, show_tags:, track_tags: }
+    else
+      {
+        songs:,
+        venues:,
+        tours:,
+        tags:,
+        show_tags:,
+        track_tags:,
+        tracks: tracks_filtered_by_songs
+      }
+    end
   end
 
   def date
@@ -64,12 +84,10 @@ class SearchService
   end
 
   def songs
-    return @songs if defined?(@songs)
     return [] if term_is_date?
-    @songs = Song.where(
-      "title ILIKE :term OR alias ILIKE :term",
-      term: "%#{term}%"
-    ).order(title: :asc)
+    Song.where("title ILIKE :term OR alias ILIKE :term", term: "%#{term}%")
+        .order(title: :asc)
+        .limit(LIMIT)
   end
 
   def venues
@@ -82,19 +100,20 @@ class SearchService
 
   def tours
     return [] if term_is_date?
-    Tour.where("name ILIKE ?", "%#{term}%").order(name: :asc)
+    Tour.where("name ILIKE ?", "%#{term}%").order(name: :asc).limit(LIMIT)
   end
 
   def venue_where_str
     "venues.name ILIKE :term OR venues.abbrev ILIKE :term " \
       "OR venue_renames.name ILIKE :term " \
       "OR venues.city ILIKE :term OR venues.state ILIKE :term " \
-      "OR venues.country ILIKE :term "
+      "OR venues.country ILIKE :term"
   end
 
   def tags
     Tag.where("name ILIKE :term OR description ILIKE :term", term: "%#{term}%")
        .order(name: :asc)
+       .limit(LIMIT)
   end
 
   def show_tags
@@ -117,7 +136,7 @@ class SearchService
 
   # Return only tracks that don't have a song title that matches the search term
   # since those would produce essentially duplicate search results
-  def tracks
+  def tracks_filtered_by_songs
     tracks_by_title.reject { |track| track.title.in?(song_titles) }
   end
 

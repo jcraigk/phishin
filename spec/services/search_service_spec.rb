@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe SearchService do
-  subject(:service) { described_class.new(term) }
+  subject(:service) { described_class.new(term, scope) }
 
   let(:term) { nil }
+  let(:scope) { nil }
 
   shared_examples 'expected results' do
     it 'returns expected results' do
@@ -25,13 +26,13 @@ RSpec.describe SearchService do
     let(:expected_results) do
       {
         exact_show: show1,
-        other_shows: [ show2, show3 ],
+        other_shows: [show2, show3],
         songs: [],
         venues: [],
         tours: [],
-        tags: [ tag ],
-        show_tags: [ show_tag ],
-        track_tags: [ track_tag ],
+        tags: [tag],
+        show_tags: [show_tag],
+        track_tags: [track_tag],
         tracks: []
       }
     end
@@ -55,13 +56,13 @@ RSpec.describe SearchService do
       {
         exact_show: nil,
         other_shows: [],
-        songs: [ song1, song2 ],
-        venues: [ venue1, venue3 ],
-        tours: [ tour3, tour1 ],
-        tags: [ tag2, tag1 ],
-        show_tags: [ show_tag ],
-        track_tags: [ track_tag ],
-        tracks: [ track ]
+        songs: [song1, song2],
+        venues: [venue1, venue3],
+        tours: [tour3, tour1],
+        tags: [tag2, tag1],
+        show_tags: [show_tag],
+        track_tags: [track_tag],
+        tracks: [track]
       }
     end
     let!(:show_tag) { create(:show_tag, notes: "... blah #{term} ...") }
@@ -82,6 +83,38 @@ RSpec.describe SearchService do
       create(:song, title: 'Bathtub Gin')
       create(:tag, name: 'Something Else')
     end
+
+    include_examples 'expected results'
+  end
+
+  context 'with scope set to "tags"' do
+    let(:term) { 'tag_search' }
+    let(:scope) { 'tags' }
+    let(:expected_results) do
+      {
+        tags: [tag],
+        show_tags: [show_tag],
+        track_tags: [track_tag]
+      }
+    end
+    let!(:tag) { create(:tag, name: "Tag #{term}") }
+    let!(:show_tag) { create(:show_tag, notes: "Tagged show #{term}") }
+    let!(:track_tag) { create(:track_tag, notes: "Tagged track #{term}") }
+
+    include_examples 'expected results'
+  end
+
+  context 'with scope set to "shows"' do
+    let(:term) { show.date.to_s }
+    let(:scope) { 'shows' }
+    let(:expected_results) do
+      {
+        exact_show: show,
+        other_shows: [ other_show ]
+      }
+    end
+    let!(:show) { create(:show, date: Date.today) }
+    let!(:other_show) { create(:show, date: Date.today - 1.year) }
 
     include_examples 'expected results'
   end

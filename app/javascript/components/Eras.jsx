@@ -66,7 +66,7 @@ const Eras = () => {
           <React.Fragment key={era}>
             <div className="section-title">
               <div className="title-left">{era} Era</div>
-              <span className="detail-right">{formatNumber(eras[era].total_shows)} shows</span>
+              <span className="detail-right">{formatNumber(eras[era].total_shows, 'show')}</span>
             </div>
             <ul>
               {eras[era].periods.map(({ period, shows_count, venues_count }) => (
@@ -77,7 +77,7 @@ const Eras = () => {
                       {venues_count} venue{venues_count !== 1 ? "s" : ""}
                     </span>
                     <span className="rightside-primary">
-                      {formatNumber(shows_count)} show{shows_count !== 1 ? "s" : ""}
+                      {formatNumber(shows_count, 'show')}
                     </span>
                   </li>
                 </Link>

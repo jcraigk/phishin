@@ -1,5 +1,6 @@
-export const formatNumber = (number) => {
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+export const formatNumber = (number, label = "") => {
+  const formattedNumber = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return `${formattedNumber} ${label}${number !== 1 && label ? "s" : ""}`;
 };
 
 export const formatDurationShow = (milliseconds) => {
