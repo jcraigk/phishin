@@ -2,6 +2,7 @@
  * Form on map should be above the map on mobile
  * https://jcktest.ngrok.io/songs/46-days - doesn't need track title, needs venue name, etc (different Tracks component probably). also needs to link to the show and highlight the track, not just play the track.
  * Logging in should retain the path where you clicked login from
+ * style the feedback messages - should we use bulma styles or no?
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)
 

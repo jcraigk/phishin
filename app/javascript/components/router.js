@@ -4,17 +4,18 @@ import { createBrowserRouter } from "react-router-dom";
 import DynamicRoute from "./DynamicRoute";
 import Eras from "./Eras";
 import Layout from "./Layout";
-import Venues from "./Venues";
-import Songs from "./Songs";
+import VenueIndex from "./VenueIndex";
+import SongIndex from "./SongIndex";
 import VenueShows from "./VenueShows";
 import TopShows from "./TopShows";
 import TopTracks from "./TopTracks";
-import Tags from "./Tags";
+import TagIndex from "./TagIndex";
 import TagTracks from "./TagTracks";
 import TagShows from "./TagShows";
 import MapView from "./MapView";
 import TodayShows from "./TodayShows";
 import SongTracks from "./SongTracks";
+import Search from "./pages/Search";
 
 import ApiDocs from "./pages/ApiDocs";
 import ContactInfo from "./pages/ContactInfo";
@@ -90,7 +91,7 @@ const router = (props) =>
         // Index pages
         {
           path: "/venues",
-          element: <Venues />,
+          element: <VenueIndex />,
         },
         {
           path: "/venues/:venue_slug",
@@ -98,11 +99,11 @@ const router = (props) =>
         },
         {
           path: "/songs",
-          element: <Songs />,
+          element: <SongIndex />,
         },
         {
           path: "/tags",
-          element: <Tags />,
+          element: <TagIndex />,
         },
         {
           path: "/show_tags/:tag_slug",
@@ -144,10 +145,10 @@ const router = (props) =>
           path: "/today",
           element: <TodayShows />,
         },
-        // {
-        //   path: "/search",
-        //   element: <Search />,
-        // },
+        {
+          path: "/search",
+          element: <Search />,
+        },
         // User content pages
         // {
         //   path: "/my-shows",

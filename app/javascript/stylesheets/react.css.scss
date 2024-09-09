@@ -20,6 +20,7 @@ $likes_blue: #6ccff6;
 @import "./tooltips.css.scss";
 @import "./map.css.scss";
 @import "./likes.css.scss";
+@import "./notification.css.scss";
 
 
 body {
@@ -63,10 +64,10 @@ body {
   }
 }
 
-// Common components
-.notification {
-  margin: 0 1rem 1rem 1rem;
+.hilite {
+  background-color: yellow !important;
 }
+
 .section {
   padding-top: 0 !important;
 }

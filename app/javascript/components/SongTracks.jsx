@@ -39,6 +39,7 @@ const SongTracks = () => {
       try {
         const response = await fetch(`/api/v2/tracks?song_slug=${song_slug}&sort=${sortOption}&page=${page + 1}&per_page=${itemsPerPage}`);
         const data = await response.json();
+        console.log(data.tracks);
         setTracks(data.tracks);
         setTotalEntries(data.total_entries); // Assuming the API returns `total_entries`
         setTotalPages(data.total_pages); // Assuming the API returns `total_pages`
