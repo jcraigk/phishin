@@ -72,6 +72,8 @@ const Navbar = ({ appName, user, onLogout }) => {
     { path: "/venues", label: "Venues" },
     { path: "/top-shows", label: "Top Shows" },
     { path: "/top-tracks", label: "Top Tracks" },
+    { path: "/my-shows", label: "My Shows" },
+    { path: "/my-tracks", label: "My Tracks" },
     { path: "/tags", label: "Tags" },
     { path: "/today", label: "Today" },
     { path: "/map", label: "Map" },

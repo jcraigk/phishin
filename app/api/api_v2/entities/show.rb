@@ -90,11 +90,37 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
       opts.merge(exclude_show: true)
   end
 
-  expose :liked_by_user do |obj, opts|
+  expose(
+    :liked_by_user
+  ) do |obj, opts|
     if opts.key?(:liked_by_user)
       opts[:liked_by_user]
     else
       opts[:liked_show_ids]&.include?(obj.id) || false
     end
+  end
+
+  expose(
+    :previous_show_date,
+    format_with: :iso8601,
+    documentation: {
+      type: "String",
+      format: "date",
+      desc: "Date of the previous show (or last show if none exists)"
+    }
+  ) do |_, opts|
+    opts[:previous_show_date]
+  end
+
+  expose(
+    :next_show_date,
+    format_with: :iso8601,
+    documentation: {
+      type: "String",
+      format: "date",
+      desc: "Date of the next show (or first show if none exists)"
+    }
+  ) do |_, opts|
+    opts[:next_show_date]
   end
 end

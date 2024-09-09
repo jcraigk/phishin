@@ -14,6 +14,7 @@ import TagTracks from "./TagTracks";
 import TagShows from "./TagShows";
 import MapView from "./MapView";
 import TodayShows from "./TodayShows";
+import MyShows from "./MyShows";
 import SongTracks from "./SongTracks";
 import Search from "./pages/Search";
 
@@ -150,10 +151,10 @@ const router = (props) =>
           element: <Search />,
         },
         // User content pages
-        // {
-        //   path: "/my-shows",
-        //   element: <MyShows />,
-        // },
+        {
+          path: "/my-shows",
+          element: <MyShows />,
+        },
         // {
         //   path: "/my-tracks",
         //   element: <MyTracks />,

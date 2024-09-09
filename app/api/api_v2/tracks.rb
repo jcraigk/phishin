@@ -8,8 +8,8 @@ class ApiV2::Tracks < ApiV2::Base
         "optionally filtered by tag_slug or song_slug, and whether they are liked by the user."
       success ApiV2::Entities::Track
       failure [
-        [400, "Bad Request", ApiV2::Entities::ApiResponse],
-        [404, "Not Found", ApiV2::Entities::ApiResponse]
+        [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
+        [ 404, "Not Found", ApiV2::Entities::ApiResponse ]
       ]
     end
     params do
@@ -18,7 +18,7 @@ class ApiV2::Tracks < ApiV2::Base
                type: String,
                desc: "Sort by attribute and direction (e.g., 'id:asc')",
                default: "id:asc",
-               values: SORT_COLS.map { |opt| ["#{opt}:asc", "#{opt}:desc"] }.flatten
+               values: SORT_COLS.map { |opt| [ "#{opt}:asc", "#{opt}:desc" ] }.flatten
       optional :tag_slug,
                type: String,
                desc: "Filter tracks by the slug of the tag"
@@ -45,8 +45,8 @@ class ApiV2::Tracks < ApiV2::Base
       detail "Return a track by its ID, including show details, tags, and songs"
       success ApiV2::Entities::Track
       failure [
-        [400, "Bad Request", ApiV2::Entities::ApiResponse],
-        [404, "Not Found", ApiV2::Entities::ApiResponse]
+        [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
+        [ 404, "Not Found", ApiV2::Entities::ApiResponse ]
       ]
     end
     params do
@@ -86,7 +86,8 @@ class ApiV2::Tracks < ApiV2::Base
 
     def fetch_liked_track_ids(tracks)
       track_ids = tracks.map(&:id)
-      Like.where(likable_type: 'Track', likable_id: track_ids, user_id: current_user.id).pluck(:likable_id)
+      Like.where(likable_type: "Track", likable_id: track_ids,
+user_id: current_user.id).pluck(:likable_id)
     end
 
     def apply_filter(tracks)
@@ -105,7 +106,7 @@ class ApiV2::Tracks < ApiV2::Base
       end
 
       if params[:liked_by_user] && current_user
-        liked_track_ids = current_user.likes.where(likable_type: 'Track').pluck(:likable_id)
+        liked_track_ids = current_user.likes.where(likable_type: "Track").pluck(:likable_id)
         tracks = tracks.where(id: liked_track_ids)
       end
 
