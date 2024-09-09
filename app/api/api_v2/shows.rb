@@ -1,5 +1,5 @@
 class ApiV2::Shows < ApiV2::Base
-  SORT_COLS = %w[ date likes_count duration updated_at ]
+  SORT_COLS = %w[date likes_count duration updated_at]
 
   resource :shows do
     desc "Return a list of shows" do
@@ -87,7 +87,9 @@ class ApiV2::Shows < ApiV2::Base
       present \
         show,
         with: ApiV2::Entities::Show,
-        liked_by_user: current_user ? current_user.likes.exists?(likable: show) : false
+        liked_by_user: current_user ? current_user.likes.exists?(likable: show) : false,
+        next_show_date: next_show_date(show.date),
+        previous_show_date: previous_show_date(show.date)
     end
 
     desc "Return a show by date" do
@@ -102,11 +104,14 @@ class ApiV2::Shows < ApiV2::Base
       requires :date, type: String, desc: "Date in the format YYYY-MM-DD"
     end
     get "on_date/:date" do
+      show = show_by_date
       present \
-        show_by_date,
+        show,
         with: ApiV2::Entities::Show,
         include_tracks: true,
-        liked_by_user: current_user ? current_user.likes.exists?(likable: show) : false
+        liked_by_user: current_user ? current_user.likes.exists?(likable: show) : false,
+        next_show_date: next_show_date(show.date),
+        previous_show_date: previous_show_date(show.date)
     end
 
     desc "Return shows on a specific day of the year" do
@@ -152,7 +157,11 @@ class ApiV2::Shows < ApiV2::Base
 
     def fetch_liked_show_ids(shows)
       show_ids = shows.map(&:id)
-      Like.where(likable_type: 'Show', likable_id: show_ids, user_id: current_user.id).pluck(:likable_id)
+      Like.where(
+        likable_type: "Show",
+        likable_id: show_ids,
+        user_id: current_user.id
+      ).pluck(:likable_id)
     end
 
     def show_by_date
@@ -184,7 +193,7 @@ class ApiV2::Shows < ApiV2::Base
         venue_ids = Venue.where(state: params[:us_state]).pluck(:id)
         shows = shows.where(venue_id: venue_ids)
       elsif params[:lat].present? && params[:lng].present? && params[:distance].present?
-        venue_ids = Venue.near([params[:lat], params[:lng]], params[:distance]).all.map(&:id)
+        venue_ids = Venue.near([ params[:lat], params[:lng] ], params[:distance]).all.map(&:id)
         shows = shows.where(venue_id: venue_ids)
       end
 
@@ -201,6 +210,22 @@ class ApiV2::Shows < ApiV2::Base
     def apply_sort(shows)
       sort_by, sort_direction = params[:sort].split(":")
       shows.order("#{sort_by} #{sort_direction}")
+    end
+
+    def next_show_date(current_date)
+      Show.published
+          .where("date > ?", current_date)
+          .order(date: :asc)
+          .pluck(:date).first ||
+            Show.published.order(date: :asc).pluck(:date).first
+    end
+
+    def previous_show_date(current_date)
+      Show.published
+          .where("date < ?", current_date)
+          .order(date: :desc)
+          .pluck(:date).first ||
+            Show.published.order(date: :desc).pluck(:date).first
     end
   end
 end

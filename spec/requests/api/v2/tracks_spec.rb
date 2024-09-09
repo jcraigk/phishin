@@ -17,17 +17,21 @@ RSpec.describe "API v2 Tracks", type: :request do
 
   let!(:tracks) do
     [
-      create(:track, title: "Track 1", position: 1, duration: 300, likes_count: 10, show: show1, songs: [songs[0]]),
-      create(:track, title: "Track 2", position: 2, duration: 240, likes_count: 20, show: show2, songs: [songs[1]]),
-      create(:track, title: "Track 3", position: 3, duration: 360, likes_count: 5, show: show3, songs: [songs[2]]),
-      create(:track, title: "Track 4", position: 4, duration: 180, likes_count: 15, show: show1, songs: [songs[0], songs[1]])
+      create(:track, title: "Track 1", position: 1, duration: 300, likes_count: 10, show: show1,
+songs: [ songs[0] ]),
+      create(:track, title: "Track 2", position: 2, duration: 240, likes_count: 20, show: show2,
+songs: [ songs[1] ]),
+      create(:track, title: "Track 3", position: 3, duration: 360, likes_count: 5, show: show3,
+songs: [ songs[2] ]),
+      create(:track, title: "Track 4", position: 4, duration: 180, likes_count: 15, show: show1,
+songs: [ songs[0], songs[1] ])
     ]
   end
 
   let!(:track_tags) do
     [
       create(:track_tag, track: tracks[0], tag:, notes: "A classic track"),
-      create(:track_tag, track: tracks[1], tag:, notes: "Another classic track"),
+      create(:track_tag, track: tracks[1], tag:, notes: "Another classic track")
     ]
   end
 
@@ -44,7 +48,7 @@ RSpec.describe "API v2 Tracks", type: :request do
         expect(json[:total_pages]).to eq(2)
 
         track_ids = json[:tracks].map { |t| t[:id] }
-        expect(track_ids).to eq([tracks[0].id, tracks[1].id])
+        expect(track_ids).to eq([ tracks[0].id, tracks[1].id ])
       end
     end
 
@@ -56,7 +60,7 @@ RSpec.describe "API v2 Tracks", type: :request do
         json = JSON.parse(response.body, symbolize_names: true)
         track_ids = json[:tracks].map { |t| t[:id] }
 
-        expect(track_ids).to eq([tracks[1].id, tracks[3].id, tracks[0].id])
+        expect(track_ids).to eq([ tracks[1].id, tracks[3].id, tracks[0].id ])
       end
     end
 
@@ -68,7 +72,7 @@ RSpec.describe "API v2 Tracks", type: :request do
         json = JSON.parse(response.body, symbolize_names: true)
         track_ids = json[:tracks].map { |t| t[:id] }
 
-        expect(track_ids).to eq([tracks[0].id, tracks[1].id])
+        expect(track_ids).to eq([ tracks[0].id, tracks[1].id ])
       end
     end
 
@@ -80,7 +84,7 @@ RSpec.describe "API v2 Tracks", type: :request do
         json = JSON.parse(response.body, symbolize_names: true)
         track_ids = json[:tracks].map { |t| t[:id] }
 
-        expect(track_ids).to eq([tracks[0].id, tracks[3].id]) # Tracks associated with song 1
+        expect(track_ids).to eq([ tracks[0].id, tracks[3].id ]) # Tracks associated with song 1
       end
     end
 
@@ -92,7 +96,7 @@ RSpec.describe "API v2 Tracks", type: :request do
         json = JSON.parse(response.body, symbolize_names: true)
         track_ids = json[:tracks].map { |t| t[:id] }
 
-        expect(track_ids).to eq([tracks[0].id]) # Only track 1 is liked by the user
+        expect(track_ids).to eq([ tracks[0].id ]) # Only track 1 is liked by the user
       end
 
       it "returns all tracks when liked_by_user is false" do
@@ -102,7 +106,7 @@ RSpec.describe "API v2 Tracks", type: :request do
         json = JSON.parse(response.body, symbolize_names: true)
         track_ids = json[:tracks].map { |t| t[:id] }
 
-        expect(track_ids).to eq([tracks[0].id, tracks[1].id, tracks[2].id])
+        expect(track_ids).to eq([ tracks[0].id, tracks[1].id, tracks[2].id ])
       end
     end
 

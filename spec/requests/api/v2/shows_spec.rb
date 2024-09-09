@@ -29,7 +29,7 @@ RSpec.describe "API v2 Shows", type: :request do
         expect(json[:total_pages]).to eq(2)
 
         show_ids = json[:shows].map { |s| s[:id] }
-        expect(show_ids).to eq([show3.id, show2.id]) # Sorted by date:desc
+        expect(show_ids).to eq([ show3.id, show2.id ]) # Sorted by date:desc
       end
     end
 
@@ -53,7 +53,7 @@ RSpec.describe "API v2 Shows", type: :request do
         json = JSON.parse(response.body, symbolize_names: true)
         show_ids = json[:shows].map { |s| s[:id] }
 
-        expect(show_ids).to eq([show2.id, show1.id]) # Shows associated with the "Classic" tag
+        expect(show_ids).to eq([ show2.id, show1.id ]) # Shows associated with the "Classic" tag
       end
     end
 
@@ -65,7 +65,7 @@ RSpec.describe "API v2 Shows", type: :request do
         json = JSON.parse(response.body, symbolize_names: true)
         show_ids = json[:shows].map { |s| s[:id] }
 
-        expect(show_ids).to eq([show1.id]) # Only show1 is liked by the user
+        expect(show_ids).to eq([ show1.id ]) # Only show1 is liked by the user
       end
     end
 
@@ -77,7 +77,7 @@ RSpec.describe "API v2 Shows", type: :request do
         json = JSON.parse(response.body, symbolize_names: true)
         show_ids = json[:shows].map { |s| s[:id] }
 
-        expect(show_ids).to eq([show3.id, show2.id, show1.id]) # All shows in date:desc order
+        expect(show_ids).to eq([ show3.id, show2.id, show1.id ]) # All shows in date:desc order
       end
     end
   end

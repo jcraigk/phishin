@@ -10,3 +10,8 @@ end
 Sidekiq.configure_client do |config|
   config.redis = redis_config
 end
+
+# Disable connection message on rspec runs
+if Rails.env.test?
+  Sidekiq.logger.level = Logger::WARN
+end

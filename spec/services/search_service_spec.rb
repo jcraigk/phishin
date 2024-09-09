@@ -26,13 +26,13 @@ RSpec.describe SearchService do
     let(:expected_results) do
       {
         exact_show: show1,
-        other_shows: [show2, show3],
+        other_shows: [ show2, show3 ],
         songs: [],
         venues: [],
         tours: [],
-        tags: [tag],
-        show_tags: [show_tag],
-        track_tags: [track_tag],
+        tags: [ tag ],
+        show_tags: [ show_tag ],
+        track_tags: [ track_tag ],
         tracks: []
       }
     end
@@ -56,13 +56,13 @@ RSpec.describe SearchService do
       {
         exact_show: nil,
         other_shows: [],
-        songs: [song1, song2],
-        venues: [venue1, venue3],
-        tours: [tour3, tour1],
-        tags: [tag2, tag1],
-        show_tags: [show_tag],
-        track_tags: [track_tag],
-        tracks: [track]
+        songs: [ song1, song2 ],
+        venues: [ venue1, venue3 ],
+        tours: [ tour3, tour1 ],
+        tags: [ tag2, tag1 ],
+        show_tags: [ show_tag ],
+        track_tags: [ track_tag ],
+        tracks: [ track ]
       }
     end
     let!(:show_tag) { create(:show_tag, notes: "... blah #{term} ...") }
@@ -92,9 +92,9 @@ RSpec.describe SearchService do
     let(:scope) { 'tags' }
     let(:expected_results) do
       {
-        tags: [tag],
-        show_tags: [show_tag],
-        track_tags: [track_tag]
+        tags: [ tag ],
+        show_tags: [ show_tag ],
+        track_tags: [ track_tag ]
       }
     end
     let!(:tag) { create(:tag, name: "Tag #{term}") }
