@@ -84,7 +84,29 @@ RSpec.describe "API v2 Tracks", type: :request do
       end
     end
 
-    context "with liked_by_user" do
+    context "with liked_by_user filter" do
+      it "returns only tracks liked by the user when liked_by_user is true" do
+        get_api_authed(user, "/tracks", params: { liked_by_user: true })
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        track_ids = json[:tracks].map { |t| t[:id] }
+
+        expect(track_ids).to eq([tracks[0].id]) # Only track 1 is liked by the user
+      end
+
+      it "returns all tracks when liked_by_user is false" do
+        get_api_authed(user, "/tracks", params: { liked_by_user: false, page: 1, per_page: 3 })
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        track_ids = json[:tracks].map { |t| t[:id] }
+
+        expect(track_ids).to eq([tracks[0].id, tracks[1].id, tracks[2].id])
+      end
+    end
+
+    context "with liked_by_user flag" do
       it "marks liked tracks correctly for the logged-in user" do
         get_api_authed(user, "/tracks", params: { page: 1, per_page: 2 })
         expect(response).to have_http_status(:ok)

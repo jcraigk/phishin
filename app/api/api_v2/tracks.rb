@@ -5,7 +5,7 @@ class ApiV2::Tracks < ApiV2::Base
     desc "Return a list of tracks" do
       detail \
         "Return a sortable paginated list of tracks, " \
-        "optionally filtered by tag_slug or song_slug."
+        "optionally filtered by tag_slug or song_slug, and whether they are liked by the user."
       success ApiV2::Entities::Track
       failure [
         [400, "Bad Request", ApiV2::Entities::ApiResponse],
@@ -25,6 +25,10 @@ class ApiV2::Tracks < ApiV2::Base
       optional :song_slug,
                type: String,
                desc: "Filter tracks by the slug of the song"
+      optional :liked_by_user,
+               type: Boolean,
+               desc: "Filter by tracks liked by the current user",
+               default: false
     end
     get do
       result = page_of_tracks
@@ -98,6 +102,11 @@ class ApiV2::Tracks < ApiV2::Base
                          .where(songs: { slug: params[:song_slug] })
                          .pluck(:id)
         tracks = tracks.where(id: track_ids)
+      end
+
+      if params[:liked_by_user] && current_user
+        liked_track_ids = current_user.likes.where(likable_type: 'Track').pluck(:likable_id)
+        tracks = tracks.where(id: liked_track_ids)
       end
 
       tracks
