@@ -38,7 +38,8 @@ const TopShows = ({ user }) => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Shows shows={shows} numbering={true} />
+      {/* Pass setShows along with shows to the Shows component */}
+      <Shows shows={shows} setShows={setShows} numbering={true} />
     </LayoutWrapper>
   );
 };

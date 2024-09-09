@@ -43,7 +43,8 @@ const VenueShows = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Shows shows={shows} />
+      {/* Pass setShows along with shows to the Shows component */}
+      <Shows shows={shows} setShows={setShows} />
     </LayoutWrapper>
   );
 };

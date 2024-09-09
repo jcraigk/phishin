@@ -1,13 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { formatDate, formatDurationShow } from "./utils";
-import { useNotification } from "./NotificationContext"; // Updated path
+import { useNotification } from "./NotificationContext";
 import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
-const Shows = ({ shows, numbering = false, tour_headers = false }) => {
-  const { setAlert } = useNotification();
+const Shows = ({ shows, setShows, numbering = false, tour_headers = false }) => {
+  const { setAlert, setNotice } = useNotification();
 
   let lastTourName = null;
 
@@ -19,12 +19,8 @@ const Shows = ({ shows, numbering = false, tour_headers = false }) => {
     }
 
     const isLiked = show.liked_by_user;
-    const url = `/api/v2/likes`;
+    const url = `/api/v2/likes?likable_type=Show&likable_id=${show.id}`;
     const method = isLiked ? "DELETE" : "POST";
-    const body = JSON.stringify({
-      likable_type: "Show",
-      likable_id: show.id,
-    });
 
     try {
       const response = await fetch(url, {
@@ -33,15 +29,23 @@ const Shows = ({ shows, numbering = false, tour_headers = false }) => {
           "Content-Type": "application/json",
           "X-Auth-Token": jwt,
         },
-        body: method === "POST" ? body : null, // Only include body for POST
       });
 
       if (response.ok) {
-        // Update local like state and count
-        console.log("Toggled like for show:", show.id);
+        setNotice("Like saved"); // Notify the user when the server responds
 
-        show.liked_by_user = !isLiked;
-        show.likes_count = isLiked ? show.likes_count - 1 : show.likes_count + 1;
+        // Update the local like state and count
+        setShows((prevShows) =>
+          prevShows.map((s) =>
+            s.id === show.id
+              ? {
+                  ...s,
+                  liked_by_user: !isLiked,
+                  likes_count: isLiked ? s.likes_count - 1 : s.likes_count + 1,
+                }
+              : s
+          )
+        );
       } else {
         console.error("Failed to toggle like");
       }
@@ -59,7 +63,6 @@ const Shows = ({ shows, numbering = false, tour_headers = false }) => {
           lastTourName = show.tour_name;
         }
 
-        // Get total number of shows in the current tour
         const tourShowCount = shows.filter(s => s.tour_name === show.tour_name).length;
 
         return (
