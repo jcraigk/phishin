@@ -31,7 +31,6 @@ const TagShows = ({ user }) => {
       try {
         const response = await fetch(`/api/v2/shows?tag_slug=${tag_slug}&sort=${sortOption}&page=${page + 1}&per_page=${itemsPerPage}`);
         const data = await response.json();
-        console.log(data);
         setShows(data.shows);
         setTotalPages(data.total_pages); // Assuming the API returns `total_pages`
       } catch (error) {
@@ -77,7 +76,8 @@ const TagShows = ({ user }) => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Shows shows={shows} numbering={false} set_headers={false} />
+      {/* Pass setShows along with shows */}
+      <Shows shows={shows} setShows={setShows} numbering={false} set_headers={false} />
       {totalPages > 1 && (
         <ReactPaginate
           previousLabel={"Previous"}

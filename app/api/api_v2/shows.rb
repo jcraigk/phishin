@@ -48,18 +48,13 @@ class ApiV2::Shows < ApiV2::Base
                desc: "If true, only return shows liked by the current user"
     end
     get do
-      result = page_of_shows
-      liked_show_ids = current_user ? fetch_liked_show_ids(result[:shows]) : []
-
-      if params[:liked_by_user]
-        result[:shows] = result[:shows].where(id: liked_show_ids)
-      end
-
+      page = page_of_shows
+      liked_show_ids = current_user ? fetch_liked_show_ids(page[:shows]) : []
       present \
-        shows: ApiV2::Entities::Show.represent(result[:shows], liked_show_ids:),
-        total_pages: result[:total_pages],
-        current_page: result[:current_page],
-        total_entries: result[:total_entries]
+        shows: ApiV2::Entities::Show.represent(page[:shows], liked_show_ids:),
+        total_pages: page[:total_pages],
+        current_page: page[:current_page],
+        total_entries: page[:total_entries]
     end
 
     desc "Return a random show" do
@@ -202,6 +197,11 @@ class ApiV2::Shows < ApiV2::Base
                        .where(tags: { slug: params[:tag_slug] })
                        .pluck(:id)
         shows = shows.where(id: show_ids)
+      end
+
+      if params[:liked_by_user] && current_user
+        liked_show_ids = Like.where(user_id: current_user.id, likable_type: "Show").pluck(:likable_id)
+        shows = shows.where(id: liked_show_ids)
       end
 
       shows

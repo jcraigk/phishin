@@ -3,18 +3,34 @@ import { Link } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
 import ReactPaginate from "react-paginate";
+import { useNotification } from "./NotificationContext";
 
-const MyShows = ({ user }) => {
-  const [shows, setShows] = useState([]);
+const MyShows = () => {
+  const [shows, setShows] = useState([]); // Keep this in MyShows
   const [sortOption, setSortOption] = useState("date:desc");
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
+  const { setAlert } = useNotification();
 
   useEffect(() => {
     const fetchLikedShows = async () => {
+      const jwt = localStorage.getItem("jwt");
+      if (!jwt) {
+        setAlert("Please log in to view your liked shows.");
+        return;
+      }
+
       try {
-        const response = await fetch(`/api/v2/shows?liked_by_user=true&sort=${sortOption}&page=${page + 1}&per_page=${itemsPerPage}`);
+        const response = await fetch(
+          `/api/v2/shows?liked_by_user=true&sort=${sortOption}&page=${page + 1}&per_page=${itemsPerPage}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-Auth-Token": jwt,
+            },
+          }
+        );
         const data = await response.json();
         setShows(data.shows);
         setTotalPages(data.total_pages);
@@ -23,10 +39,8 @@ const MyShows = ({ user }) => {
       }
     };
 
-    if (user) {
-      fetchLikedShows();
-    }
-  }, [sortOption, page, user]);
+    fetchLikedShows();
+  }, [sortOption, page]);
 
   const handleSortChange = (event) => {
     setSortOption(event.target.value);
@@ -44,13 +58,11 @@ const MyShows = ({ user }) => {
         <select value={sortOption} onChange={handleSortChange}>
           <option value="date:desc">Sort by Date (Newest First)</option>
           <option value="date:asc">Sort by Date (Oldest First)</option>
-          <option value="likes_count:desc">Sort by Title (A-Z)</option>
-          <option value="likes_count:asc">Sort by Title (Z-A)</option>
           <option value="likes_count:desc">Sort by Likes (Most to Least)</option>
           <option value="likes_count:asc">Sort by Likes (Least to Most)</option>
         </select>
       </div>
-      {!user && (
+      {!localStorage.getItem("jwt") && (
         <div className="sidebar-callout">
           <Link to="/login" className="button">
             Login to see your liked shows!
@@ -62,7 +74,8 @@ const MyShows = ({ user }) => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Shows shows={shows} numbering={false} set_headers={false} />
+      {/* Pass setShows down as a prop */}
+      <Shows shows={shows} setShows={setShows} numbering={false} set_headers={false} />
       {totalPages > 1 && (
         <ReactPaginate
           previousLabel={"Previous"}
