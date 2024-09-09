@@ -57,20 +57,27 @@ RSpec.describe "API v2 Shows", type: :request do
       end
     end
 
-    context "with liked_by_user" do
-      it "marks liked shows correctly for the logged-in user" do
-        get_api_authed(user, "/shows", params: { page: 1, per_page: 3 })
+    context "with liked_by_user set to true" do
+      it "returns only shows liked by the current user" do
+        get_api_authed(user, "/shows", params: { liked_by_user: true, page: 1, per_page: 3 })
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
         show_ids = json[:shows].map { |s| s[:id] }
 
-        # We expect shows to be returned in date:desc order
-        expect(show_ids).to eq([show3.id, show2.id, show1.id]) # Date descending order
+        expect(show_ids).to eq([show1.id]) # Only show1 is liked by the user
+      end
+    end
 
-        # Show 1 is liked, so the third item (show1) should be liked_by_user
-        expect(json[:shows][2][:liked_by_user]).to eq(true)  # Show 1 is liked
-        expect(json[:shows][0][:liked_by_user]).to eq(false) # Show 3 is not liked
+    context "with liked_by_user set to false" do
+      it "returns all shows regardless of user likes" do
+        get_api_authed(user, "/shows", params: { liked_by_user: false, page: 1, per_page: 3 })
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        show_ids = json[:shows].map { |s| s[:id] }
+
+        expect(show_ids).to eq([show3.id, show2.id, show1.id]) # All shows in date:desc order
       end
     end
   end

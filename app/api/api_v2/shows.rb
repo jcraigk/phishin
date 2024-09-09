@@ -42,10 +42,18 @@ class ApiV2::Shows < ApiV2::Base
       optional :us_state,
                type: String,
                desc: "Abbreviation of a US state to filter shows by venue location"
+      optional :liked_by_user,
+               type: Boolean,
+               default: false,
+               desc: "If true, only return shows liked by the current user"
     end
     get do
       result = page_of_shows
-      liked_show_ids = current_user ? fetch_liked_show_ids(result[:shows], current_user) : []
+      liked_show_ids = current_user ? fetch_liked_show_ids(result[:shows]) : []
+
+      if params[:liked_by_user]
+        result[:shows] = result[:shows].where(id: liked_show_ids)
+      end
 
       present \
         shows: ApiV2::Entities::Show.represent(result[:shows], liked_show_ids:),
