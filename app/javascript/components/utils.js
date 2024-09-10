@@ -34,3 +34,12 @@ export const formatDurationTrack = (milliseconds) => {
 export const formatDate = (dateString) => {
   return dateString.replace(/-/g, ".");
 };
+
+export const formatDateLong = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};

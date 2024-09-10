@@ -116,8 +116,13 @@
 }
 
 @media (max-width: 1023px) {
-  .leftside-secondary,
   .leftside-tertiary {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .leftside-secondary {
     display: none;
   }
 }

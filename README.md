@@ -4,6 +4,8 @@
  * Logging in should retain the path where you clicked login from
  * style the feedback messages - should we use bulma styles or no?
  * Do we need all the keys in the components? look for other excess/DRYness
+ * Add a spinner using react-spinners - will require passing loading state from components
+ * Map needs to take params and fill in the form and submit it
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)
 

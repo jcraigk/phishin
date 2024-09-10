@@ -92,7 +92,7 @@ const TagBadges = ({ tags }) => {
           isOpen={!!selectedTag}
           onRequestClose={closeModal}
           contentLabel="Tag Details"
-          className="tag-modal"
+          className="modal-content"
           overlayClassName="modal-overlay"
         >
           <button onClick={closeModal} className="button is-pulled-right">
