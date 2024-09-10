@@ -72,7 +72,7 @@ const Eras = () => {
               {eras[era].periods.map(({ period, shows_count, venues_count }) => (
                 <Link to={`/${period}`} key={period} className="list-item-link">
                   <li className="list-item">
-                    <span className="leftside-primary">{period}</span>
+                    <span className="leftside-primary-narrow">{period}</span>
                     <span className="leftside-secondary">
                       {venues_count} venue{venues_count !== 1 ? "s" : ""}
                     </span>
