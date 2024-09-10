@@ -19,18 +19,16 @@ const Tags = ({ tags, group = false, highlight = "" }) => {
 
   const renderTagItem = (tag) => (
     <li key={tag.slug} className="list-item">
-      <span className="leftside-primary">
+      <span className="leftside-primary-narrow">
         <TagBadges tags={[tag]} />
       </span>
       <span className="leftside-secondary">
         <HighlightedText text={tag.description} highlight={highlight} />
       </span>
-      <span className="rightside-primary">
+      <span className="rightside-primary-wide">
         <Link to={`/show_tags/${tag.slug}`} className="button is-small">
           {formatNumber(tag.shows_count, "show")}
         </Link>
-      </span>
-      <span className="rightside-secondary">
         <Link to={`/track_tags/${tag.slug}`} className="button is-small">
           {formatNumber(tag.tracks_count, "track")}
         </Link>
