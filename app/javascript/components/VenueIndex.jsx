@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import { formatNumber } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
-import Venues from "./Venues"; // New component for rendering the list
+import Venues from "./Venues";
 
 const VenueIndex = () => {
   const [venues, setVenues] = useState([]);
@@ -60,7 +60,7 @@ const VenueIndex = () => {
         <div className="title-left">Venues</div>
         <span className="detail-right">{formatNumber(totalEntries)} total</span>
       </div>
-      <Venues venues={venues} /> {/* Reuse the extracted Venues component */}
+      <Venues venues={venues} />
       <ReactPaginate
         previousLabel={"Previous"}
         nextLabel={"Next"}

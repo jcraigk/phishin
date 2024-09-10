@@ -14,7 +14,7 @@ const Shows = ({ shows, setShows, numbering = false, tour_headers = false }) => 
   const toggleLike = async (show) => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
-      setAlert("Please log in to like a show.");
+      setAlert("Please log in to like a show");
       return;
     }
 
@@ -32,9 +32,7 @@ const Shows = ({ shows, setShows, numbering = false, tour_headers = false }) => 
       });
 
       if (response.ok) {
-        setNotice("Like saved"); // Notify the user when the server responds
-
-        // Update the local like state and count
+        setNotice("Like saved");
         setShows((prevShows) =>
           prevShows.map((s) =>
             s.id === show.id

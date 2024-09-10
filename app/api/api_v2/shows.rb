@@ -2,10 +2,8 @@ class ApiV2::Shows < ApiV2::Base
   SORT_COLS = %w[date likes_count duration updated_at]
 
   resource :shows do
-    desc "Return a list of shows" do
-      detail \
-        "Return a sortable paginated list of shows, " \
-        "optionally filtered by year, year range, venue slug, tag slug, or proximity to lat/lng"
+    desc "Fetch a list of shows" do
+      detail "Fetch a filtered, sorted, paginated list of shows"
       success ApiV2::Entities::Show
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
@@ -41,11 +39,11 @@ class ApiV2::Shows < ApiV2::Base
                default: "2070-01-01"
       optional :us_state,
                type: String,
-               desc: "Abbreviation of a US state to filter shows by venue location"
+               desc: "Filter shows by US state (abbreviations)"
       optional :liked_by_user,
                type: Boolean,
                default: false,
-               desc: "If true, only return shows liked by the current user"
+               desc: "If true, fetch only those shows liked by the current user"
     end
     get do
       page = page_of_shows
@@ -57,8 +55,8 @@ class ApiV2::Shows < ApiV2::Base
         total_entries: page[:total_entries]
     end
 
-    desc "Return a random show" do
-      detail "Return a random show"
+    desc "Fetch a random show" do
+      detail "Fetch a random show"
       success ApiV2::Entities::Show
     end
     get "random" do
@@ -69,26 +67,8 @@ class ApiV2::Shows < ApiV2::Base
         liked_by_user: current_user ? current_user.likes.exists?(likable: show) : false
     end
 
-    desc "Return a show by id" do
-      detail "Return a show by its ID, including associated tracks and tags"
-      success ApiV2::Entities::Show
-      failure [
-        [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
-        [ 404, "Not Found", ApiV2::Entities::ApiResponse ]
-      ]
-    end
-    get ":id" do
-      show = Show.find(params[:id])
-      present \
-        show,
-        with: ApiV2::Entities::Show,
-        liked_by_user: current_user ? current_user.likes.exists?(likable: show) : false,
-        next_show_date: next_show_date(show.date),
-        previous_show_date: previous_show_date(show.date)
-    end
-
-    desc "Return a show by date" do
-      detail "Return a show by its date, including associated tracks and tags"
+    desc "Fetch a show by date" do
+      detail "Fetch a show by its date, including associated tracks and tags"
       success ApiV2::Entities::Show
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
@@ -98,7 +78,7 @@ class ApiV2::Shows < ApiV2::Base
     params do
       requires :date, type: String, desc: "Date in the format YYYY-MM-DD"
     end
-    get "on_date/:date" do
+    get ":date" do
       show = show_by_date
       present \
         show,
@@ -109,16 +89,16 @@ class ApiV2::Shows < ApiV2::Base
         previous_show_date: previous_show_date(show.date)
     end
 
-    desc "Return shows on a specific day of the year" do
+    desc "Fetch shows on a specific day of the year" do
       detail \
-        "Return all shows that occurred on a specific day of the year " \
-        "based on the provided date"
+        "Fetch all shows that occurred on a specific day of the year " \
+        "based on the specified date"
       success ApiV2::Entities::Show
     end
     params do
       requires :date, type: String, desc: "Date in the format YYYY-MM-DD"
     end
-    get "on_day_of_year/:date" do
+    get "day_of_year/:date" do
       date = Date.parse(params[:date])
       shows =
         Show.published
@@ -200,7 +180,10 @@ class ApiV2::Shows < ApiV2::Base
       end
 
       if params[:liked_by_user] && current_user
-        liked_show_ids = Like.where(user_id: current_user.id, likable_type: "Show").pluck(:likable_id)
+        liked_show_ids = Like.where(
+          user_id: current_user.id,
+          likable_type: "Show"
+        ).pluck(:likable_id)
         shows = shows.where(id: liked_show_ids)
       end
 

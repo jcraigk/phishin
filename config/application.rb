@@ -10,10 +10,6 @@ Bundler.require(*Rails.groups)
 
 module Phishin
   class Application < Rails::Application
-    # Rails config
-    config.load_defaults 7.2
-    config.active_job.queue_adapter = :sidekiq
-
     # Custom app config
     config.app_name = "Phish.in"
     config.web_host = ENV.fetch("WEB_HOST", nil)
@@ -44,6 +40,8 @@ module Phishin
       end
 
     # Rails config
+    config.load_defaults 7.2
+    config.active_job.queue_adapter = :sidekiq
     config.action_mailer.default_url_options = { host: config.base_url }
     config.action_mailer.smtp_settings = {
       user_name: ENV.fetch("SMTP_USERNAME", nil),

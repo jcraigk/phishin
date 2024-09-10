@@ -81,31 +81,4 @@ RSpec.describe "API v2 Shows", type: :request do
       end
     end
   end
-
-  describe "GET /shows/:id" do
-    it "returns the specified show with liked_by_user set" do
-      show = show1
-      get_api_authed(user, "/shows/#{show.id}")
-      expect(response).to have_http_status(:ok)
-
-      json = JSON.parse(response.body, symbolize_names: true)
-      expect(json[:id]).to eq(show.id)
-      expect(json[:liked_by_user]).to eq(true) # Show 1 is liked by the user
-    end
-
-    it "returns a show that is not liked by the user with liked_by_user set to false" do
-      show = show2
-      get_api_authed(user, "/shows/#{show.id}")
-      expect(response).to have_http_status(:ok)
-
-      json = JSON.parse(response.body, symbolize_names: true)
-      expect(json[:id]).to eq(show.id)
-      expect(json[:liked_by_user]).to eq(false) # Show 2 is not liked by the user
-    end
-
-    it "returns a 404 error if the show does not exist" do
-      get_api_authed(user, "/shows/9999")
-      expect(response).to have_http_status(:not_found)
-    end
-  end
 end

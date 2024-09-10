@@ -38,7 +38,6 @@ const EraShows = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      {/* Pass setShows along with shows */}
       <Shows shows={shows} setShows={setShows} tour_headers={true} />
     </LayoutWrapper>
   );

@@ -2,10 +2,8 @@ class ApiV2::Songs < ApiV2::Base
   SORT_COLS = %w[ title tracks_count ]
 
   resource :songs do
-    desc "Return a list of songs" do
-      detail \
-        "Return a sortable paginated list of songs, " \
-        "optionally filtered by the first character of the title"
+    desc "Fetch a list of songs" do
+      detail "Fetch a filtered, sorted, paginated list of songs"
       success ApiV2::Entities::Song
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
@@ -33,8 +31,8 @@ class ApiV2::Songs < ApiV2::Base
         total_entries: s[:total_entries]
     end
 
-    desc "Return a song" do
-      detail "Return a song by its slug"
+    desc "Fetch a song" do
+      detail "Fetch a song by its slug"
       success ApiV2::Entities::Song
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],

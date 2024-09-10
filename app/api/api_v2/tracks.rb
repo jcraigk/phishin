@@ -2,10 +2,8 @@ class ApiV2::Tracks < ApiV2::Base
   SORT_COLS = %w[id title likes_count duration date]
 
   resource :tracks do
-    desc "Return a list of tracks" do
-      detail \
-        "Return a sortable paginated list of tracks, " \
-        "optionally filtered by tag_slug or song_slug, and whether they are liked by the user."
+    desc "Fetch a list of tracks" do
+      detail "Fetch a filtered, sorted, paginated list of tracks"
       success ApiV2::Entities::Track
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
@@ -41,8 +39,8 @@ class ApiV2::Tracks < ApiV2::Base
         total_entries: result[:total_entries]
     end
 
-    desc "Return a track by ID" do
-      detail "Return a track by its ID, including show details, tags, and songs"
+    desc "Fetch a track by ID" do
+      detail "Fetch a track by its ID, including show details, tags, and songs"
       success ApiV2::Entities::Track
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],

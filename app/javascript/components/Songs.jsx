@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { formatNumber } from "./utils";
-import HighlightedText from "./HighlightedText"; // Import the HighlightedText component
+import HighlightedText from "./HighlightedText";
 
 const Songs = ({ songs, highlight }) => {
   return (

@@ -4,7 +4,7 @@ import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
 import ReactPaginate from "react-paginate";
 
-const TagShows = ({ user }) => {
+const TagShows = () => {
   const { tag_slug } = useParams();
   const [shows, setShows] = useState([]);
   const [tagName, setTagName] = useState("");
@@ -32,7 +32,7 @@ const TagShows = ({ user }) => {
         const response = await fetch(`/api/v2/shows?tag_slug=${tag_slug}&sort=${sortOption}&page=${page + 1}&per_page=${itemsPerPage}`);
         const data = await response.json();
         setShows(data.shows);
-        setTotalPages(data.total_pages); // Assuming the API returns `total_pages`
+        setTotalPages(data.total_pages);
       } catch (error) {
         console.error("Error fetching shows:", error);
       }
@@ -44,7 +44,7 @@ const TagShows = ({ user }) => {
 
   const handleSortChange = (event) => {
     setSortOption(event.target.value);
-    setPage(0); // Reset to first page on sort change
+    setPage(0);
   };
 
   const handlePageClick = (data) => {
@@ -64,19 +64,11 @@ const TagShows = ({ user }) => {
           <option value="likes_count:asc">Sort by Likes (Least to Most)</option>
         </select>
       </div>
-      {!user && (
-        <div className="sidebar-callout">
-          <Link to="/login" className="button">
-            Login to contribute!
-          </Link>
-        </div>
-      )}
     </div>
   );
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      {/* Pass setShows along with shows */}
       <Shows shows={shows} setShows={setShows} numbering={false} set_headers={false} />
       {totalPages > 1 && (
         <ReactPaginate

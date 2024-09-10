@@ -16,14 +16,12 @@ const SongTracks = () => {
   const itemsPerPage = 10;
 
   useEffect(() => {
-    // Fetch the song information using song_slug
     const fetchSongTitle = async () => {
       try {
         const response = await fetch(`/api/v2/songs/${song_slug}`);
         const data = await response.json();
-        setSongTitle(data.title); // Use the title returned by the API
+        setSongTitle(data.title);
 
-        // Determine if it's an original composition or cover
         if (data.original) {
           setOriginalInfo("Original composition");
         } else {
@@ -34,15 +32,13 @@ const SongTracks = () => {
       }
     };
 
-    // Fetch the tracks associated with the song_slug
     const fetchTracks = async () => {
       try {
         const response = await fetch(`/api/v2/tracks?song_slug=${song_slug}&sort=${sortOption}&page=${page + 1}&per_page=${itemsPerPage}`);
         const data = await response.json();
-        console.log(data.tracks);
         setTracks(data.tracks);
-        setTotalEntries(data.total_entries); // Assuming the API returns `total_entries`
-        setTotalPages(data.total_pages); // Assuming the API returns `total_pages`
+        setTotalEntries(data.total_entries);
+        setTotalPages(data.total_pages);
       } catch (error) {
         console.error("Error fetching tracks:", error);
       }
@@ -54,7 +50,7 @@ const SongTracks = () => {
 
   const handleSortChange = (event) => {
     setSortOption(event.target.value);
-    setPage(0); // Reset to first page on sort change
+    setPage(0);
   };
 
   const handlePageClick = (data) => {

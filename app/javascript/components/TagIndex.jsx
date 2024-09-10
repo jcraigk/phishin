@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Tags from "./Tags";
 
@@ -23,7 +24,11 @@ const TagIndex = () => {
     <div className="sidebar-content">
       <h1 className="title">All Tags</h1>
       <p className="sidebar-detail">
-        Tags are used to annotate and highlight content. The tag associations seen here have been pulled from various Phish.net projects as well as crowd-sourcing through the Tag.in Project.
+        Tags are used to annotate and highlight content. The tag associations seen here have been pulled from various Phish.net projects as well as crowd-sourcing through the{" "}
+        <Link to="/tagin-project">
+          Tagin' Project
+        </Link>
+        .
       </p>
     </div>
   );

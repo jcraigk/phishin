@@ -22,13 +22,13 @@ class ApiV2::Search < ApiV2::Base
     get ":term" do
       return error!({ message: "Term too short" }, 400) if params[:term].length < 3
       present \
-        search_results(params[:term], params[:scope]),
+        results(params[:term], params[:scope]),
         with: ApiV2::Entities::SearchResults
     end
   end
 
   helpers do
-    def search_results(term, scope)
+    def results(term, scope)
       Rails.cache.fetch("api/v2/search/#{term}/#{scope}") do
         SearchService.new(term, scope).call
       end

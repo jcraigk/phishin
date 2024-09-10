@@ -8,9 +8,8 @@ const Layout = ({ appName, user, onLogout }) => {
   const location = useLocation();
 
   useEffect(() => {
-    // Clear notification on route change
     clearNotification();
-  }, [location.pathname]); // Dependency array to trigger the effect on path change
+  }, [location.pathname]);
 
   return (
     <>

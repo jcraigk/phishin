@@ -11,7 +11,6 @@ const Tracks = ({ tracks, set_headers = false, numbering = false, show_dates = f
 
   const { setAlert, setNotice } = useNotification();
 
-  // Update trackLikes whenever tracks prop changes
   useEffect(() => {
     setTrackLikes(tracks);
   }, [tracks]);
@@ -23,7 +22,6 @@ const Tracks = ({ tracks, set_headers = false, numbering = false, show_dates = f
       return;
     }
 
-    // Optimistically update UI
     const isLiked = track.liked_by_user;
     const updatedTracks = trackLikes.map((t) => {
       if (t.id === track.id) {
@@ -36,9 +34,8 @@ const Tracks = ({ tracks, set_headers = false, numbering = false, show_dates = f
       return t;
     });
 
-    setTrackLikes(updatedTracks); // Update the UI immediately
+    setTrackLikes(updatedTracks);
 
-    // Send request to the server
     const url = `/api/v2/likes`;
     const method = isLiked ? "DELETE" : "POST";
     const requestBody = {
@@ -51,13 +48,13 @@ const Tracks = ({ tracks, set_headers = false, numbering = false, show_dates = f
         method,
         headers: {
           "Content-Type": "application/json",
-          "X-Auth-Token": jwt, // Pass the jwt for authentication
+          "X-Auth-Token": jwt,
         },
         body: JSON.stringify(requestBody),
       });
 
       if (response.ok) {
-        setNotice("Like saved"); // Notify the user when the server responds
+        setNotice("Like saved");
       } else {
         console.error("Error toggling like");
       }
@@ -74,7 +71,6 @@ const Tracks = ({ tracks, set_headers = false, numbering = false, show_dates = f
         const isNewSet = set_headers && track.set_name !== lastSetName;
         lastSetName = track.set_name;
 
-        // Using HighlightedText within the existing logic for trackTitle
         const trackTitle = show_dates ? `${formatDate(track.show.date)} ${track.title}` : track.title;
 
         return (

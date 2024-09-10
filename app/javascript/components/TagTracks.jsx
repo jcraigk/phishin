@@ -4,7 +4,7 @@ import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
 import ReactPaginate from "react-paginate";
 
-const TagTracks = ({ user }) => {
+const TagTracks = () => {
   const { tag_slug } = useParams();
   const [tracks, setTracks] = useState([]);
   const [tagName, setTagName] = useState("");
@@ -44,7 +44,7 @@ const TagTracks = ({ user }) => {
 
   const handleSortChange = (event) => {
     setSortOption(event.target.value);
-    setPage(0); // Reset to first page on sort change
+    setPage(0);
   };
 
   const handlePageClick = (data) => {
@@ -66,13 +66,6 @@ const TagTracks = ({ user }) => {
           <option value="duration:asc">Sort by Duration (Shortest First)</option>
         </select>
       </div>
-      {!user && (
-        <div className="sidebar-callout">
-          <Link to="/login" className="button">
-            Login to contribute!
-          </Link>
-        </div>
-      )}
     </div>
   );
 

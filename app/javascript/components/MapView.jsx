@@ -31,7 +31,7 @@ const MapView = ({ mapbox_token }) => {
 
   const initializeMap = (lat, lng, radius) => {
     if (map) {
-      map.remove(); // Remove the existing map if it exists
+      map.remove();
     }
 
     mapboxgl.accessToken = mapbox_token;

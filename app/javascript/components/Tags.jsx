@@ -7,7 +7,6 @@ import HighlightedText from "./HighlightedText";
 const Tags = ({ tags, group = false, highlight = "" }) => {
   let groupedTags = {};
 
-  // Grouping logic if the group prop is true
   if (group) {
     groupedTags = tags.reduce((acc, tag) => {
       if (!acc[tag.group]) {
