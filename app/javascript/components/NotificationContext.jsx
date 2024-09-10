@@ -23,9 +23,9 @@ export const NotificationProvider = ({ children }) => {
     if (notification) {
       const timeout = setTimeout(() => {
         clearNotification();
-      }, 5000); // Automatically clear notification after 5 seconds
+      }, 5000);
 
-      return () => clearTimeout(timeout); // Cleanup timeout on unmount or new notification
+      return () => clearTimeout(timeout);
     }
   }, [notification]);
 

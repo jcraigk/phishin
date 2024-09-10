@@ -1,9 +1,8 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-
 import EraShows from "./EraShows";
-import Show from "./Show";
 import ErrorPage from "./pages/ErrorPage";
+import Show from "./Show";
 
 const DynamicRoute = () => {
   const { route_path } = useParams();

@@ -4,20 +4,20 @@ import { createBrowserRouter } from "react-router-dom";
 import DynamicRoute from "./DynamicRoute";
 import Eras from "./Eras";
 import Layout from "./Layout";
-import VenueIndex from "./VenueIndex";
-import SongIndex from "./SongIndex";
-import VenueShows from "./VenueShows";
-import TopShows from "./TopShows";
-import TopTracks from "./TopTracks";
-import TagIndex from "./TagIndex";
-import TagTracks from "./TagTracks";
-import TagShows from "./TagShows";
 import MapView from "./MapView";
-import TodayShows from "./TodayShows";
 import MyShows from "./MyShows";
 import MyTracks from "./MyTracks";
-import SongTracks from "./SongTracks";
 import Search from "./pages/Search";
+import SongIndex from "./SongIndex";
+import SongTracks from "./SongTracks";
+import TagIndex from "./TagIndex";
+import TagShows from "./TagShows";
+import TagTracks from "./TagTracks";
+import TodayShows from "./TodayShows";
+import TopShows from "./TopShows";
+import TopTracks from "./TopTracks";
+import VenueIndex from "./VenueIndex";
+import VenueShows from "./VenueShows";
 
 import ApiDocs from "./pages/ApiDocs";
 import ContactInfo from "./pages/ContactInfo";
@@ -90,7 +90,7 @@ const router = (props) =>
           path: "/terms",
           element: <TermsOfService />
         },
-        // Index pages
+        // Content pages
         {
           path: "/venues",
           element: <VenueIndex />,
@@ -125,11 +125,19 @@ const router = (props) =>
         },
         {
           path: "/top-shows",
-          element: <TopShows />,
+          element: <TopShows user={props.user} />,
         },
         {
           path: "/top-tracks",
-          element: <TopTracks />,
+          element: <TopTracks user={props.user} />,
+        },
+        {
+          path: "/my-shows",
+          element: <MyShows />,
+        },
+        {
+          path: "/my-tracks",
+          element: <MyTracks />,
         },
         // {
         //   path: "/playlist",
@@ -151,16 +159,6 @@ const router = (props) =>
           path: "/search",
           element: <Search />,
         },
-        // User content pages
-        {
-          path: "/my-shows",
-          element: <MyShows />,
-        },
-        {
-          path: "/my-tracks",
-          element: <MyTracks />,
-        },
-        // Content slugs
         {
           path: ":route_path",
           element: <DynamicRoute />

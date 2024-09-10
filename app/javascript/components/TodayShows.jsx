@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
-import { Link } from "react-router-dom";
 
-const TodayShows = ({ user }) => {
+const TodayShows = () => {
   const [shows, setShows] = useState([]);
   const [sortBy, setSortBy] = useState("date:desc");
 
@@ -25,7 +24,7 @@ const TodayShows = ({ user }) => {
     const fetchShows = async () => {
       const todayDate = getTodayDate();
       try {
-        const response = await fetch(`/api/v2/shows/on_day_of_year/${todayDate}?sort=${sortBy}`);
+        const response = await fetch(`/api/v2/shows/day_of_year/${todayDate}?sort=${sortBy}`);
         const data = await response.json();
         setShows(data.shows || []);
       } catch (error) {
@@ -65,7 +64,6 @@ const TodayShows = ({ user }) => {
       {shows.length === 0 ? (
         <h1 className="title">No shows found for today.</h1>
       ) : (
-        // Pass setShows along with shows to the Shows component
         <Shows shows={shows} setShows={setShows} numbering={false} set_headers={false} />
       )}
     </LayoutWrapper>

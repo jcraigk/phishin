@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
-import { Link } from "react-router-dom";
 
 const TopShows = ({ user }) => {
   const [shows, setShows] = useState([]);
@@ -38,7 +38,6 @@ const TopShows = ({ user }) => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      {/* Pass setShows along with shows to the Shows component */}
       <Shows shows={shows} setShows={setShows} numbering={true} />
     </LayoutWrapper>
   );

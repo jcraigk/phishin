@@ -6,7 +6,7 @@ import ReactPaginate from "react-paginate";
 import { useNotification } from "./NotificationContext";
 
 const MyShows = () => {
-  const [shows, setShows] = useState([]); // Keep this in MyShows
+  const [shows, setShows] = useState([]);
   const [sortOption, setSortOption] = useState("date:desc");
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -17,7 +17,7 @@ const MyShows = () => {
     const fetchLikedShows = async () => {
       const jwt = localStorage.getItem("jwt");
       if (!jwt) {
-        setAlert("Please log in to view your liked shows.");
+        setAlert("Please log in to view your liked shows");
         return;
       }
 
@@ -44,7 +44,7 @@ const MyShows = () => {
 
   const handleSortChange = (event) => {
     setSortOption(event.target.value);
-    setPage(0); // Reset to first page on sort change
+    setPage(0);
   };
 
   const handlePageClick = (data) => {
@@ -53,7 +53,7 @@ const MyShows = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <h1 className="title">My Liked Shows</h1>
+      <h1 className="title">My Shows</h1>
       <div className="select is-fullwidth mb-5">
         <select value={sortOption} onChange={handleSortChange}>
           <option value="date:desc">Sort by Date (Newest First)</option>
@@ -74,7 +74,6 @@ const MyShows = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      {/* Pass setShows down as a prop */}
       <Shows shows={shows} setShows={setShows} numbering={false} set_headers={false} />
       {totalPages > 1 && (
         <ReactPaginate

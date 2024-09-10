@@ -13,7 +13,7 @@ const Show = () => {
   useEffect(() => {
     const fetchShow = async () => {
       try {
-        const response = await fetch(`/api/v2/shows/on_date/${route_path}`);
+        const response = await fetch(`/api/v2/shows/${route_path}`);
         if (response.status === 404) {
           setError(`No data was found for the date ${route_path}`);
           return;

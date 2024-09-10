@@ -2,11 +2,8 @@ class ApiV2::Venues < ApiV2::Base
   SORT_COLS = %w[ name shows_count ]
 
   resource :venues do
-    desc "Return a list of venues" do
-      detail \
-        "Return a sortable paginated list of venues, " \
-        "optionally filtered by the first character of the venue name and " \
-        "by proximity to a specific location"
+    desc "Fetch a list of venues" do
+      detail "Fetch a filtered, sorted, paginated list of venues"
       success ApiV2::Entities::Venue
     end
     params do
@@ -30,8 +27,8 @@ class ApiV2::Venues < ApiV2::Base
         total_entries: v[:total_entries]
     end
 
-    desc "Return a venue" do
-      detail "Return a venue by its slug"
+    desc "Fetch a venue" do
+      detail "Fetch a venue by its slug"
       success ApiV2::Entities::Venue
     end
     params do

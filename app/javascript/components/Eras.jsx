@@ -61,7 +61,7 @@ const Eras = () => {
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
       {Object.keys(eras)
-        .sort((a, b) => b.localeCompare(a)) // Sort eras in reverse order
+        .sort((a, b) => b.localeCompare(a))
         .map((era) => (
           <React.Fragment key={era}>
             <div className="section-title">

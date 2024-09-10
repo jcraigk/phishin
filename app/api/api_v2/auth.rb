@@ -70,8 +70,8 @@ class ApiV2::Auth < ApiV2::Base
       )
     end
 
-    desc "Get currently logged in user" do
-      detail "Return the currently authenticated User"
+    desc "Fetch the currently logged in user" do
+      detail "Fetch the currently authenticated user"
       success ApiV2::Entities::User
       failure [ [ 401, "Unauthorized - Invalid JWT" ] ]
     end

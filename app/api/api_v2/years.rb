@@ -1,8 +1,8 @@
 class ApiV2::Years < ApiV2::Base
   resource :years do
-    desc "Return a list of years" do
+    desc "Fetch a list of years" do
       detail \
-        "Return a list of years during which Phish performed live shows, " \
+        "Fetch a list of years during which Phish has performed, " \
         "including era designations, the number of shows performed each " \
         "year, and unique venues count."
       success ApiV2::Entities::Year

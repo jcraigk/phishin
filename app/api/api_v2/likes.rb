@@ -1,6 +1,6 @@
 class ApiV2::Likes < ApiV2::Base
   resource :likes do
-    desc "Like a show or track" do
+    desc "Like or unlike a show or track" do
       detail "Creates a like for a show or track, restricted to authenticated users"
       success [ { code: 201 } ]
       failure [
@@ -45,10 +45,8 @@ class ApiV2::Likes < ApiV2::Base
     delete do
       authenticate!
       return error!({ message: "Invalid show or track" }, 422) unless likable
-
       existing_like = likable.likes.find_by(user: current_user)
       return error!({ message: "Like not found" }, 404) unless existing_like
-
       existing_like.destroy
       status 204
     end

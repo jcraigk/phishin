@@ -21,7 +21,7 @@ const TagBadges = ({ tags }) => {
 
   const handleClick = (tagGroup, event) => {
     if (!tagGroup[0].notes && !tagGroup[0].transcript) {
-      return; // Do nothing if there are no notes or transcript
+      return;
     }
     event.stopPropagation();
     event.preventDefault();
@@ -68,8 +68,6 @@ const TagBadges = ({ tags }) => {
         const tag = tagGroup[0];
         const title = `${tagName} ${count > 1 ? `(${count})` : ""}`;
         const tooltipId = `tooltip-${tagName}`;
-
-        // Determine if the tag is clickable
         const isClickable = tag.notes || tag.transcript;
 
         return (
@@ -81,7 +79,7 @@ const TagBadges = ({ tags }) => {
             onClick={isClickable ? (event) => handleClick(tagGroup, event) : null}
             style={{
               backgroundColor: "$header_gray",
-              cursor: isClickable ? "pointer" : "default", // Change cursor based on clickability
+              cursor: isClickable ? "pointer" : "default",
             }}
           >
             {title}
