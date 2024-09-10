@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { useNotification } from "./NotificationContext";
 
-const Navbar = ({ appName, user, onLogout }) => {
+const Navbar = ({ appName, user, onLogout, staticLinks }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAboutDropdownOpen, setIsAboutDropdownOpen] = useState(false);
   const [isContentDropdownOpen, setIsContentDropdownOpen] = useState(false);
@@ -16,8 +16,8 @@ const Navbar = ({ appName, user, onLogout }) => {
     setIsContentDropdownOpen(false);
 
     // Forcefully remove the 'is-active' class from dropdowns
-    const dropdowns = document.querySelectorAll('.has-dropdown.is-active');
-    dropdowns.forEach((dropdown) => dropdown.classList.remove('is-active'));
+    const dropdowns = document.querySelectorAll(".has-dropdown.is-active");
+    dropdowns.forEach((dropdown) => dropdown.classList.remove("is-active"));
   };
 
   const toggleDropdown = (setDropdown) => {
@@ -37,8 +37,8 @@ const Navbar = ({ appName, user, onLogout }) => {
         setIsContentDropdownOpen(false);
 
         // Forcefully remove the 'is-active' class from dropdowns
-        const dropdowns = document.querySelectorAll('.has-dropdown.is-active');
-        dropdowns.forEach((dropdown) => dropdown.classList.remove('is-active'));
+        const dropdowns = document.querySelectorAll(".has-dropdown.is-active");
+        dropdowns.forEach((dropdown) => dropdown.classList.remove("is-active"));
       }
     };
 
@@ -54,16 +54,6 @@ const Navbar = ({ appName, user, onLogout }) => {
       setIsContentDropdownOpen(false);
     }
   }, [isMenuOpen]);
-
-  const siteLinks = [
-    { path: "/faq", label: "FAQ" },
-    { path: "/api-docs", label: "API" },
-    { path: "/tagin-project", label: "Tagin' Project" },
-    { path: "/privacy", label: "Privacy Policy" },
-    { path: "/terms", label: "Terms of Service" },
-    { path: "/contact-info", label: "Contact" },
-    { path: "/request-password-reset", label: "Reset Password" },
-  ];
 
   const contentLinks = [
     { path: "/", label: "Years" },
@@ -101,21 +91,16 @@ const Navbar = ({ appName, user, onLogout }) => {
         </a>
       </div>
 
-      <div
-        id="navbarBasicExample"
-        className={`navbar-menu ${isMenuOpen ? "is-active" : ""}`}
-      >
+      <div id="navbarBasicExample" className={`navbar-menu ${isMenuOpen ? "is-active" : ""}`}>
         <div className="navbar-start">
-          {/* About Dropdown */}
+          {/* Site Links Dropdown */}
           <div
-            className={`navbar-item has-dropdown ${
-              isAboutDropdownOpen ? "is-active" : ""
-            }`}
+            className={`navbar-item has-dropdown ${isAboutDropdownOpen ? "is-active" : ""}`}
             onClick={() => toggleDropdown(setIsAboutDropdownOpen)}
           >
             <a className="navbar-link">Site</a>
             <div className="navbar-dropdown">
-              {siteLinks.map((link) => (
+              {staticLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
@@ -128,11 +113,9 @@ const Navbar = ({ appName, user, onLogout }) => {
             </div>
           </div>
 
-          {/* Content Dropdown */}
+          {/* Content Links Dropdown */}
           <div
-            className={`navbar-item has-dropdown ${
-              isContentDropdownOpen ? "is-active" : ""
-            }`}
+            className={`navbar-item has-dropdown ${isContentDropdownOpen ? "is-active" : ""}`}
             onClick={() => toggleDropdown(setIsContentDropdownOpen)}
           >
             <a className="navbar-link">Content</a>
@@ -156,15 +139,9 @@ const Navbar = ({ appName, user, onLogout }) => {
             <div className="buttons">
               {user ? (
                 <div className="navbar-item has-dropdown is-hoverable">
-                  <a className="navbar-link">
-                    {user.username}
-                  </a>
+                  <a className="navbar-link">{user.username}</a>
                   <div className="navbar-dropdown is-right">
-                    <a
-                      href="#logout"
-                      className="navbar-item"
-                      onClick={handleLogout}
-                    >
+                    <a href="#logout" className="navbar-item" onClick={handleLogout}>
                       Logout
                     </a>
                   </div>
@@ -188,6 +165,7 @@ Navbar.propTypes = {
   appName: PropTypes.string.isRequired,
   user: PropTypes.object,
   onLogout: PropTypes.func.isRequired,
+  staticLinks: PropTypes.array.isRequired,
 };
 
 export default Navbar;

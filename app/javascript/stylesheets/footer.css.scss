@@ -1,0 +1,22 @@
+footer {
+  background-color: $header_gray;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+}
+
+footer a {
+  color: white;
+  margin: 0 1rem;
+  text-decoration: none;
+  line-height: 1rem;
+  text-align: center;
+  text-decoration: none !important;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
