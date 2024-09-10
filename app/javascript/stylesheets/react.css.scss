@@ -11,6 +11,7 @@ $subheader_gray: #d9dbdc;
 $google-blue: #5385ed;
 $tag_gray: #888888;
 $likes_blue: #6ccff6;
+$text_gray: #6d6f71;
 
 
 @import "./content.css.scss";
@@ -22,57 +23,25 @@ $likes_blue: #6ccff6;
 @import "./likes.css.scss";
 @import "./notification.css.scss";
 @import "./footer.css.scss";
+@import "./bulma-overrides.css.scss";
+@import "./sidebar.css.scss";
+@import "./modal.css.scss";
 
 html, body {
   height: 100%;
   margin: 0;
   display: flex;
   flex-direction: column;
+  background-color: $bg_gray;
+  font-family: "Open Sans Condensed", sans-serif;
 }
 
 body {
-  font-family: "Open Sans Condensed", sans-serif;
   padding-top: 5rem;
-  background-color: $bg_gray;
 }
 
 main {
   flex: 1;
-}
-
-// Bulma .content overrides
-.content {
-  hr {
-    border: 1px solid $header_gray;
-  }
-
-  p {
-    margin-bottom: 1.5rem;
-    font-size: 1.25rem;
-  }
-
-  h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-  }
-
-  h2 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-  }
-
-  h3 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-  }
-
-  h3 + h3,
-  h3 ~ h3 {
-    margin-top: 2rem;
-  }
 }
 
 .hilite {

@@ -1,0 +1,32 @@
+.sidebar-content {
+  a {
+    color: $text_gray;
+    text-decoration: none;
+  }
+  a:hover {
+    color: $text_gray;
+    text-decoration: underline;
+  }
+  .show-date {
+    font-size: 1.7em;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .show-venue {
+    font-size: 1.3em;
+    line-height: 1.5rem;
+  }
+  .show-location {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+  }
+  .show-duration {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+  }
+  .taper-notes:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}

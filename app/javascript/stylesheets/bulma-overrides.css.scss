@@ -1,0 +1,33 @@
+.content {
+  hr {
+    border: 1px solid $header_gray;
+  }
+
+  p {
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+
+  h3 + h3,
+  h3 ~ h3 {
+    margin-top: 2rem;
+  }
+}
