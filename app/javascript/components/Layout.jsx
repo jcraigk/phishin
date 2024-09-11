@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import Player from "./Player";
 import { useNotification } from "./NotificationContext";
 
 const Layout = ({ appName, user, onLogout }) => {
@@ -21,6 +22,14 @@ const Layout = ({ appName, user, onLogout }) => {
     clearNotification();
   }, [location.pathname]);
 
+  const [currentPlaylist, setCurrentPlaylist] = useState([]);
+  const [activeTrack, setActiveTrack] = useState(null);
+
+  const playTrack = (playlist, track) => {
+    setCurrentPlaylist(playlist);
+    setActiveTrack(track);
+  };
+
   return (
     <>
       <Navbar appName={appName} user={user} onLogout={onLogout} staticLinks={staticLinks} />
@@ -31,9 +40,16 @@ const Layout = ({ appName, user, onLogout }) => {
         </div>
       )}
       <main>
-        <Outlet />
+        <Outlet context={{ currentPlaylist, activeTrack, playTrack }} />
       </main>
       <Footer staticLinks={staticLinks} />
+      {activeTrack && (
+        <Player
+          currentPlaylist={currentPlaylist}
+          activeTrack={activeTrack}
+          setActiveTrack={setActiveTrack}
+        />
+      )}
     </>
   );
 };

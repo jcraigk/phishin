@@ -1,0 +1,71 @@
+.audio-player {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  transform: translateY(100%); /* Keep it hidden initially */
+  transition: transform 0.5s ease-in-out; /* Smooth transition */
+}
+
+.audio-player.visible {
+  transform: translateY(0); /* Move it into view when visible */
+}
+
+.audio-player .track-info {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.audio-player .controls {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+}
+
+.audio-player .scrubber {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  width: 100%;
+}
+
+.audio-player .scrubber-bar {
+  position: relative;
+  width: 500px; /* Fixed width for both waveform and progress */
+  height: 70px; /* Fixed height */
+  cursor: pointer;
+  background-size: 500px 70px; /* Make sure the waveform image stays aligned */
+  background-repeat: no-repeat;
+}
+
+.audio-player .progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(to bottom, #a9e8fb, #03bbf2); /* Blue gradient */
+  z-index: 1;
+  width: 0%; /* Dynamically expand based on progress */
+  mask-size: 500px 70px; /* Ensure mask image covers the 500px area */
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 500px 70px; /* For WebKit browsers */
+  -webkit-mask-repeat: no-repeat;
+}
+
+.audio-player .list-item.active-track {
+  background-color: #e0f7fa;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    background-color: #a9e8fb;
+  }
+  100% {
+    background-color: #03bbf2;
+  }
+}

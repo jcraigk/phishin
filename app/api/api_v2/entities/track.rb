@@ -90,6 +90,39 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       desc: "Timestamp of the last update to the track"
     }
 
+  expose(
+    :show_date,
+    format_with: :iso8601,
+    documentation: {
+      type: "String",
+      format: "date",
+      desc: "Date of the show that the track belongs to"
+    }
+  ) do |obj|
+    obj.show.date
+  end
+
+  expose(
+    :venue_name,
+    documentation: {
+      type: "String",
+      desc: "Name the venue where the show took place, " \
+            "reflecting the name used on the date of the show"
+    }
+  ) do |obj|
+    obj.show.venue_name
+  end
+
+  expose(
+    :venue_location,
+    documentation: {
+      type: "String",
+      desc: "City and state where the venue of the show was located"
+    }
+  ) do |obj|
+    obj.show.venue.location
+  end
+
   expose \
     :show,
     using: ApiV2::Entities::Show,
