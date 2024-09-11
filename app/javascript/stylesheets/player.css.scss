@@ -25,6 +25,37 @@
   padding: 10px;
 }
 
+.audio-player .controls button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  margin: 0 10px;
+}
+
+.audio-player .controls button:hover {
+  color: #03bbf2;
+}
+
+/* Specific styling for play/pause button */
+.audio-player .play-pause-btn {
+  width: 60px; /* Set equal width and height for a perfect circle */
+  height: 60px;
+  font-size: 24px; /* Keep the icon smaller inside the circle */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc; /* 1px grey border */
+  border-radius: 50%; /* Circular */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light drop shadow */
+  transition: all 0.3s ease; /* Smooth hover effect */
+}
+
+.audio-player .play-pause-btn:hover {
+  color: #03bbf2;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Slightly larger shadow on hover */
+}
+
 .audio-player .scrubber {
   display: flex;
   align-items: center;
