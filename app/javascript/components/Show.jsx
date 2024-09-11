@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useOutletContext } from "react-router-dom";
 import { formatDateLong, formatDurationShow } from "./utils";
 import ErrorPage from "./pages/ErrorPage";
 import LayoutWrapper from "./LayoutWrapper";
@@ -20,6 +20,7 @@ const Show = () => {
   const [isTaperNotesModalOpen, setIsTaperNotesModalOpen] = useState(false); // State for Taper Notes modal
   const dropdownRef = useRef(null);
   const baseUrl = window.location.origin;
+  const { playTrack, activeTrack } = useOutletContext();
 
   useEffect(() => {
     const fetchShow = async () => {
@@ -193,7 +194,7 @@ const Show = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Tracks tracks={show.tracks} set_headers={true} />
+      <Tracks tracks={show.tracks} set_headers={true} show_dates={false} playTrack={playTrack} activeTrack={activeTrack} />
     </LayoutWrapper>
   );
 };
