@@ -1,11 +1,62 @@
 import React, { useState, useEffect, useRef } from "react";
 import { formatDate } from "./utils";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward } from "@fortawesome/free-solid-svg-icons";
 
 const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
   const audioRef = useRef();
   const scrubberRef = useRef();
   const progressBarRef = useRef();
   const [currentTime, setCurrentTime] = useState(0);
+
+  // Toggle play/pause functionality
+  const togglePlayPause = () => {
+    if (audioRef.current.paused) {
+      audioRef.current.play().catch((error) => {
+        console.error("Play error:", error);
+      });
+      navigator.mediaSession.playbackState = 'playing';
+    } else {
+      audioRef.current.pause();
+      navigator.mediaSession.playbackState = 'paused';
+    }
+  };
+
+  // Scrub forward by 10 seconds
+  const scrubForward = () => {
+    audioRef.current.currentTime = Math.min(audioRef.current.currentTime + 10, audioRef.current.duration);
+  };
+
+  // Scrub backward by 10 seconds
+  const scrubBackward = () => {
+    audioRef.current.currentTime = Math.max(audioRef.current.currentTime - 10, 0);
+  };
+
+  // Media Session API hooks
+  const setupMediaSession = () => {
+    if ('mediaSession' in navigator) {
+      // Set the media metadata
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: activeTrack.title,
+        artist: "Phish",
+        album: `${formatDate(activeTrack.show_date)} - ${activeTrack.venue_name}`,
+        artwork: [
+          {
+            src: 'https://phish.in/static/logo-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+          }
+        ]
+      });
+
+      // Set media session action handlers
+      navigator.mediaSession.setActionHandler('previoustrack', skipToPreviousTrack);
+      navigator.mediaSession.setActionHandler('nexttrack', skipToNextTrack);
+      navigator.mediaSession.setActionHandler('play', togglePlayPause);
+      navigator.mediaSession.setActionHandler('pause', togglePlayPause);
+      navigator.mediaSession.setActionHandler('stop', togglePlayPause);
+    }
+  };
 
   // Apply mask dynamically when the track changes
   useEffect(() => {
@@ -30,19 +81,10 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         .catch((error) => {
           console.error("Error playing audio:", error);
         });
+
+      setupMediaSession(); // Set up Media Session API
     }
   }, [activeTrack]);
-
-  // Toggle play/pause functionality
-  const togglePlayPause = () => {
-    if (audioRef.current.paused) {
-      audioRef.current.play().catch((error) => {
-        console.error("Play error:", error);
-      });
-    } else {
-      audioRef.current.pause();
-    }
-  };
 
   // Skip to the next track in the playlist
   const skipToNextTrack = () => {
@@ -105,11 +147,21 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         <span>{activeTrack?.venue_name}</span>
       </div>
       <div className="controls">
-        <button onClick={skipToPreviousTrack}>Previous</button>
-        <button onClick={togglePlayPause}>
-          {audioRef.current?.paused ? "Play" : "Pause"}
+        <button onClick={skipToPreviousTrack}>
+          <FontAwesomeIcon icon={faStepBackward} />
         </button>
-        <button onClick={skipToNextTrack}>Next</button>
+        <button onClick={scrubBackward}>
+          <FontAwesomeIcon icon={faRotateLeft} />
+        </button>
+        <button className="play-pause-btn" onClick={togglePlayPause}>
+          {audioRef.current?.paused ? <FontAwesomeIcon icon={faPlay} /> : <FontAwesomeIcon icon={faPause} />}
+        </button>
+        <button onClick={scrubForward}>
+          <FontAwesomeIcon icon={faRotateRight} />
+        </button>
+        <button onClick={skipToNextTrack}>
+          <FontAwesomeIcon icon={faStepForward} />
+        </button>
       </div>
       <div className="scrubber">
         <span>{formatTime(currentTime)}</span>
@@ -120,7 +172,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         >
           <div className="progress-bar" ref={progressBarRef}></div>
         </div>
-        <span>{formatTime(audioRef.current?.duration - currentTime || 0)}</span>
+        <span>-{formatTime(audioRef.current?.duration - currentTime || 0)}</span>
       </div>
       <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} />
     </div>
