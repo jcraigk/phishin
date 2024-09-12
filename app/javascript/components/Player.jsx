@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { formatDate } from "./utils";
+import { Tooltip } from "react-tooltip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward } from "@fortawesome/free-solid-svg-icons";
 
@@ -109,6 +110,31 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
     }
   };
 
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === " " && !e.shiftKey) {
+        e.preventDefault();
+        togglePlayPause();
+      } else if (e.key === "ArrowLeft" && !e.shiftKey) {
+        e.preventDefault();
+        skipToPreviousTrack();
+      } else if (e.key === "ArrowRight" && !e.shiftKey) {
+        e.preventDefault();
+        skipToNextTrack();
+      } else if (e.key === "ArrowLeft" && e.shiftKey) {
+        e.preventDefault();
+        scrubBackward();
+      } else if (e.key === "ArrowRight" && e.shiftKey) {
+        e.preventDefault();
+        scrubForward();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [togglePlayPause, scrubBackward, scrubForward, skipToPreviousTrack, skipToNextTrack]);
+
   // Update the current time as the audio plays
   const handleTimeUpdate = () => {
     setCurrentTime(audioRef.current.currentTime);
@@ -161,21 +187,52 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         </div>
         <div className="right-half">
           <div className="controls">
-            <button onClick={skipToPreviousTrack}>
+            <button
+              onClick={skipToPreviousTrack}
+              data-tooltip-id="previous-track-tooltip"
+              data-tooltip-content="[Shortcut] Left Arrow: scrub to beginning of current track or skip to previous track"
+            >
               <FontAwesomeIcon icon={faStepBackward} />
             </button>
-            <button className="scrub-btn" onClick={scrubBackward}>
+            <Tooltip id="previous-track-tooltip" effect="solid" place="top" type="dark" className="custom-tooltip" />
+            <button
+              className="scrub-btn scrub-back"
+              onClick={scrubBackward}
+              data-tooltip-id="scrub-back-tooltip"
+              data-tooltip-content="[Shortcut] Shift + Left Arrow: scrub back 10 seconds"
+            >
               <FontAwesomeIcon icon={faRotateLeft} />
+              <span>10</span>
             </button>
-            <button className="play-pause-btn" onClick={togglePlayPause}>
-              {audioRef.current?.paused ? <FontAwesomeIcon icon={faPlay} /> : <FontAwesomeIcon icon={faPause} />}
+            <Tooltip id="scrub-back-tooltip" effect="solid" place="top" type="dark" className="custom-tooltip" />
+            <button
+              className="play-pause-btn"
+              onClick={togglePlayPause}
+              data-tooltip-id="play-tooltip"
+              data-tooltip-content="[Shortcut] Spacebar: toggle play/pause"
+            >
+              {audioRef.current?.paused ? <FontAwesomeIcon icon={faPlay} className="play-icon" /> : <FontAwesomeIcon icon={faPause} />}
             </button>
-            <button className="scrub-btn" onClick={scrubForward}>
+            <Tooltip id="play-tooltip" effect="solid" place="top" type="dark" className="custom-tooltip" />
+            <button
+              className="scrub-btn scrub-forward"
+              onClick={scrubForward}
+              data-tooltip-id="scrub-forward-tooltip"
+              data-tooltip-content="[Shortcut] Shift + Right Arrow: scrub forward 10 seconds"
+            >
               <FontAwesomeIcon icon={faRotateRight} />
+              <span>10</span>
             </button>
-            <button onClick={skipToNextTrack}>
+            <Tooltip id="scrub-forward-tooltip" effect="solid" place="top" type="dark" className="custom-tooltip" />
+            <button
+              onClick={skipToNextTrack}
+              data-tooltip-id="next-track-tooltip"
+              data-tooltip-content="[Shortcut] Right Arrow: skip to next track"
+            >
               <FontAwesomeIcon icon={faStepForward} />
             </button>
+            <Tooltip id="next-track-tooltip" effect="solid" place="top" type="dark" className="custom-tooltip" />
+
           </div>
         </div>
       </div>
