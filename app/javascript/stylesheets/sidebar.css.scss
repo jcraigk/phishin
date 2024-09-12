@@ -1,32 +1,52 @@
-.sidebar-content {
-  a {
-    color: $text_gray;
-    text-decoration: none;
-  }
-  a:hover {
-    color: $text_gray;
-    text-decoration: underline;
-  }
-  .show-date {
-    font-size: 1.7em;
+.sidebar {
+  background-color: $header_gray;
+  padding: 1rem;
+  flex: 0 0 16rem;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  max-height: fit-content;
+
+  .sidebar-subtitle {
+    font-size: 1.3rem;
     font-weight: bold;
-    margin-bottom: 10px;
+  }
+  .sidebar-detail {
+    font-size: 1.3rem;
+    line-height: 1.7rem;
   }
 
-  .show-venue {
-    font-size: 1.2em;
-    line-height: 1.2rem;
-  }
-  .show-location {
-    font-size: 1.1em;
-    margin-bottom: 10px;
-  }
-  .show-duration {
-    font-size: 1.1em;
-    margin-bottom: 10px;
-  }
-  .taper-notes:hover {
-    text-decoration: underline;
-    cursor: pointer;
+  .sidebar-content {
+    a {
+      color: $text_gray;
+      text-decoration: none;
+    }
+    a:hover {
+      color: $text_gray;
+      text-decoration: underline;
+    }
+    .show-date {
+      font-size: 1.7em;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .show-venue {
+      font-size: 1.2em;
+      line-height: 1.2rem;
+    }
+    .show-location {
+      font-size: 1.1em;
+      margin-bottom: 10px;
+    }
+    .show-duration {
+      font-size: 1.1em;
+      margin-bottom: 10px;
+    }
+    .taper-notes:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
   }
 }
+
+
