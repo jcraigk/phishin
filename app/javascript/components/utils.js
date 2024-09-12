@@ -44,3 +44,28 @@ export const formatDateLong = (dateString) => {
     year: "numeric",
   });
 };
+
+export const toggleLike = async ({ id, type, isLiked, jwt }) => {
+  const url = `/api/v2/likes?likable_type=${type}&likable_id=${id}`;
+  const method = isLiked ? "DELETE" : "POST";
+
+  try {
+    const response = await fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        "X-Auth-Token": jwt,
+      },
+    });
+
+    if (response.ok) {
+      return { success: true, isLiked: !isLiked };
+    } else {
+      console.error("Failed to toggle like");
+      return { success: false };
+    }
+  } catch (error) {
+    console.error("Error toggling like:", error);
+    return { success: false };
+  }
+};

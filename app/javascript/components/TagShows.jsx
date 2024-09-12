@@ -69,7 +69,7 @@ const TagShows = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Shows shows={shows} setShows={setShows} numbering={false} set_headers={false} />
+      <Shows shows={shows} setShows={setShows} numbering={false} setHeaders={false} />
       {totalPages > 1 && (
         <ReactPaginate
           previousLabel={"Previous"}

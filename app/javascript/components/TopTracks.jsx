@@ -24,7 +24,7 @@ const TopTracks = ({ user }) => {
     <div className="sidebar-content">
       <h1 className="title">Top 40 Tracks</h1>
       <p className="sidebar-detail mb-5">
-        An aggregated list of the top tracks, ranked by user Likes from the Phish.in community.
+        An aggregated list of the top tracks, ranked by user likes from the Phish.in community.
       </p>
       {!user && (
         <div className="sidebar-callout">
@@ -38,7 +38,7 @@ const TopTracks = ({ user }) => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Tracks tracks={tracks} numbering={true} set_headers={false} />
+      <Tracks tracks={tracks} numbering={true} setHeaders={false} showDates={true} />
     </LayoutWrapper>
   );
 };

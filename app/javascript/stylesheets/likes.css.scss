@@ -1,8 +1,18 @@
+.fa-heart {
+  color: $tag_gray;
+}
+
 .heart-icon {
   color: $tag_gray;
   cursor: pointer;
+  margin-right: 0.3rem;
 }
 
 .heart-icon.liked {
   color: $likes_blue;
+}
+
+.likes-count {
+  width: 1.8rem; /* Ensures a consistent width for the number */
+  text-align: left; /* Aligns the number to the right within the fixed width */
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Tracks from "../Tracks";
 import Tags from "../Tags";
 import Shows from "../Shows";
@@ -6,22 +6,35 @@ import Songs from "../Songs";
 import Venues from "../Venues";
 
 const SearchResults = ({ results, term }) => {
-  const { songs, tracks, tags, venues, exact_show, other_shows } = results;
+  const {
+    songs,
+    tracks: initialTracks,
+    tags,
+    venues,
+    exact_show: initialExactShow,
+    other_shows: initialOtherShows,
+  } = results;
+
+  // Wrap the exact show in an array immediately if it exists
+  const [tracks, setTracks] = useState(initialTracks || []);
+  const [otherShows, setOtherShows] = useState(initialOtherShows || []);
+  const [exactShows, setExactShows] = useState(initialExactShow ? [initialExactShow] : []);
 
   return (
     <div className="search-results">
       <h1 className="title mt-6">Search Results for "{term}"</h1>
-      {exact_show && (
+
+      {exactShows?.length > 0 && (
         <>
           <h2 className="title">Show on Date</h2>
-          <Shows shows={[exact_show]} />
+          <Shows shows={exactShows} setShows={setExactShows} />
         </>
       )}
 
-      {other_shows?.length > 0 && (
+      {otherShows?.length > 0 && (
         <>
           <h2 className="title">Shows on Day of Year</h2>
-          <Shows shows={other_shows} />
+          <Shows shows={otherShows} setShows={setOtherShows} />
         </>
       )}
 
@@ -35,7 +48,7 @@ const SearchResults = ({ results, term }) => {
       {tracks?.length > 0 && (
         <>
           <h2 className="title">Tracks</h2>
-          <Tracks tracks={tracks} highlight={term} />
+          <Tracks tracks={tracks} setTracks={setTracks} highlight={term} />
         </>
       )}
 
@@ -53,7 +66,7 @@ const SearchResults = ({ results, term }) => {
         </>
       )}
 
-      {!exact_show && !other_shows?.length && !songs?.length && !tracks?.length && !tags?.length && !venues?.length && (
+      {!exactShows?.length && !otherShows?.length && !songs?.length && !tracks?.length && !tags?.length && !venues?.length && (
         <p>Sorry, no results found.</p>
       )}
     </div>

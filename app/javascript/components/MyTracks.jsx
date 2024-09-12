@@ -76,7 +76,7 @@ const MyTracks = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Tracks tracks={tracks} setTracks={setTracks} numbering={false} set_headers={false} show_dates={true} />
+      <Tracks tracks={tracks} setTracks={setTracks} numbering={false} setHeaders={false} showDates={true} />
       {totalPages > 1 && (
         <ReactPaginate
           previousLabel={"Previous"}
