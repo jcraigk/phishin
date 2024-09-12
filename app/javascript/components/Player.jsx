@@ -119,7 +119,8 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
   const updateProgressBar = () => {
     const progress = (currentTime / audioRef.current.duration) * 100;
     if (progressBarRef.current) {
-      progressBarRef.current.style.width = `${(progress / 100) * 500}px`; // Adjust progress bar width based on 500px width
+      // Dynamically adjust the gradient to reflect progress
+      progressBarRef.current.style.background = `linear-gradient(to right, #03bbf2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
     }
   };
 

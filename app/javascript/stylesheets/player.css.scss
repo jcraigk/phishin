@@ -94,7 +94,6 @@
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     width: 100%;
-    border: 1px solid green;
 
     .elapsed {
       margin-right: 0.5rem;
@@ -105,12 +104,12 @@
 
     .scrubber-bar {
       position: relative;
-      width: 100%; /* Fixed width for both waveform and progress */
-      height: 70px; /* Fixed height */
+      width: 100%;
+      height: 70px;
       cursor: pointer;
-      background-size: 500px 70px; /* Make sure the waveform image stays aligned */
+      background-size: 100% 100%; /* Stretches waveform image across the whole bar */
       background-repeat: no-repeat;
-      border: 1px solid yellow;
+      background-position: 0 0;
     }
 
     .progress-bar {
@@ -118,12 +117,15 @@
       top: 0;
       left: 0;
       height: 100%;
-      background: linear-gradient(to bottom, #a9e8fb, #03bbf2); /* Blue gradient */
-      z-index: 1;
-      width: 0%; /* Dynamically expand based on progress */
-      mask-size: 500px 70px; /* Ensure mask image covers the 500px area */
+      width: 100%; /* Full width, we'll handle progress with the background */
+      background: linear-gradient(to right, #03bbf2 0%, #03bbf2 0%, transparent 0%); /* Dynamically update this gradient */
+      mask-size: 100% 100%; /* Ensure the mask covers the entire progress bar */
+      mask-position: 0 0;
       mask-repeat: no-repeat;
-      -webkit-mask-size: 500px 70px; /* For WebKit browsers */
+
+      /* WebKit Browsers */
+      -webkit-mask-size: 100% 100%;
+      -webkit-mask-position: 0 0;
       -webkit-mask-repeat: no-repeat;
     }
   }
@@ -155,7 +157,4 @@
   .scrub-btn {
     display: none !important;
   }
-  // .scrubber {
-  //   max-height: 30px;
-  // }
 }
