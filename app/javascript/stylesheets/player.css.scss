@@ -21,6 +21,10 @@ footer.with-player {
   a {
     text-decoration: none;
     color: var(--bulma-text);
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   .top-row {
@@ -62,6 +66,7 @@ footer.with-player {
     display: flex;
     justify-content: right;
     padding-top: 0.3rem;
+    gap: 1.2rem;
 
     button {
       background: none;
@@ -70,9 +75,38 @@ footer.with-player {
       cursor: pointer;
       margin: 0 0.6rem;
 
-      button:hover {
-        color: #03bbf2;
+      &:hover {
+        color: #03bbf2 !important;
       }
+
+      &:focus {
+        outline: none;
+      }
+
+      .play-icon {
+        position: relative;
+        left: 3px;
+        font-size: 1.8rem;
+      }
+    }
+
+    .scrub-btn {
+      position: relative;
+
+      span {
+        position: absolute;
+        font-size: 0.65rem;
+        font-weight: bold;
+        top: 21px;
+      }
+    }
+
+    .scrub-back span {
+      right: 10px;
+    }
+
+    .scrub-forward span {
+      right: 12px;
     }
 
     .play-pause-btn {
@@ -82,14 +116,12 @@ footer.with-player {
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid #ccc;
       border-radius: 50%;
-      transition: all 0.3s ease;
-      background-color: #03bbf2 !important;
-    }
+      background-color: #03bbf2;
 
-    .play-pause-btn:hover {
-      color: white;
+      &:hover {
+        color: white !important;
+      }
     }
   }
 
@@ -148,8 +180,8 @@ footer.with-player {
   border: 1px solid #03bbf2;
 }
 
-@media (max-width: 767px) {
-  .scrub-btn, .venue-location {
+@media (max-width: 1023px) {
+  .scrub-btn {
     display: none !important;
   }
   .bottom-row {
@@ -158,6 +190,18 @@ footer.with-player {
   }
   .track-title {
     font-size: 1.2rem !important;
+  }
+  main.with-player {
+    margin-bottom: 110px;
+  }
+}
+
+@media (max-width: 767px) {
+  .venue-location {
+    display: none !important;
+  }
+  .controls {
+    gap: 0 !important;
   }
 }
 
