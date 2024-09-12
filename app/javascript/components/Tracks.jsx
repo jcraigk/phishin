@@ -18,11 +18,14 @@ const Tracks = ({ tracks, playTrack, activeTrack, show_dates }) => {
 
   return (
     <ul>
-      {trackLikes.map((track, index) => (
+      {trackLikes.map((track) => (
         <li
           key={track.id}
           className={`list-item ${track.id === activeTrack?.id ? "active-track" : ""}`}
           onClick={() => handleTrackClick(track)}
+          style={{
+            backgroundImage: `url(${track.waveform_image_url})`,
+          }}
         >
           <span className="leftside-primary">
             <HighlightedText

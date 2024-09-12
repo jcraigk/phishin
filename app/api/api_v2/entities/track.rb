@@ -103,6 +103,16 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
   end
 
   expose(
+    :venue_slug,
+    documentation: {
+      type: "String",
+      desc: "Unique slug of the venue where the show took place"
+    }
+  ) do |obj|
+    obj.show.venue.slug
+  end
+
+  expose(
     :venue_name,
     documentation: {
       type: "String",

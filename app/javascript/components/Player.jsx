@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { formatDate } from "./utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward } from "@fortawesome/free-solid-svg-icons";
@@ -61,11 +62,8 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
   // Apply mask dynamically when the track changes
   useEffect(() => {
     if (activeTrack && scrubberRef.current && progressBarRef.current) {
-      // Dynamically set the mask-image on the progress bar
+      scrubberRef.current.style.backgroundImage = `url(${activeTrack.waveform_image_url})`;
       progressBarRef.current.style.maskImage = `url(${activeTrack.waveform_image_url})`;
-      progressBarRef.current.style.webkitMaskImage = `url(${activeTrack.waveform_image_url})`; // For WebKit browsers
-      progressBarRef.current.style.maskSize = '500px 70px'; // Ensure the mask fits the progress bar
-      progressBarRef.current.style.maskRepeat = 'no-repeat'; // No repeat for the waveform mask
     }
 
     if (activeTrack && audioRef.current) {
@@ -141,30 +139,46 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
 
   return (
     <div className={`audio-player ${activeTrack ? 'visible' : ''}`}>
-      <div className="track-info">
-        <span>{formatDate(activeTrack?.show_date)}</span>
-        <span>{activeTrack?.title}</span>
-        <span>{activeTrack?.venue_name}</span>
+      <div className="top-row">
+        <div className="half">
+          <div className="track-title">{activeTrack?.title}</div>
+          <div className="track-info">
+            <Link to={`/${activeTrack?.show_date}`}>
+              {formatDate(activeTrack?.show_date)}
+            </Link>
+          </div>
+          <div className="track-info">
+            <Link to={`/venues/${activeTrack?.venue_slug}`}>
+              {activeTrack?.venue_name}
+            </Link>
+            {" "}&bull;{" "}
+            <Link to={`/map?term=${activeTrack?.venue_location}`}>
+              {activeTrack?.venue_location}
+            </Link>
+          </div>
+        </div>
+        <div className="half">
+          <div className="controls">
+            <button onClick={skipToPreviousTrack}>
+              <FontAwesomeIcon icon={faStepBackward} />
+            </button>
+            <button className="scrub-btn" onClick={scrubBackward}>
+              <FontAwesomeIcon icon={faRotateLeft} />
+            </button>
+            <button className="play-pause-btn" onClick={togglePlayPause}>
+              {audioRef.current?.paused ? <FontAwesomeIcon icon={faPlay} /> : <FontAwesomeIcon icon={faPause} />}
+            </button>
+            <button className="scrub-btn" onClick={scrubForward}>
+              <FontAwesomeIcon icon={faRotateRight} />
+            </button>
+            <button onClick={skipToNextTrack}>
+              <FontAwesomeIcon icon={faStepForward} />
+            </button>
+          </div>
+        </div>
       </div>
-      <div className="controls">
-        <button onClick={skipToPreviousTrack}>
-          <FontAwesomeIcon icon={faStepBackward} />
-        </button>
-        <button onClick={scrubBackward}>
-          <FontAwesomeIcon icon={faRotateLeft} />
-        </button>
-        <button className="play-pause-btn" onClick={togglePlayPause}>
-          {audioRef.current?.paused ? <FontAwesomeIcon icon={faPlay} /> : <FontAwesomeIcon icon={faPause} />}
-        </button>
-        <button onClick={scrubForward}>
-          <FontAwesomeIcon icon={faRotateRight} />
-        </button>
-        <button onClick={skipToNextTrack}>
-          <FontAwesomeIcon icon={faStepForward} />
-        </button>
-      </div>
-      <div className="scrubber">
-        <span>{formatTime(currentTime)}</span>
+      <div className="bottom-row">
+        <p className="elapsed">{formatTime(currentTime)}</p>
         <div
           className="scrubber-bar"
           onClick={handleScrubberClick}
@@ -172,10 +186,11 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         >
           <div className="progress-bar" ref={progressBarRef}></div>
         </div>
-        <span>-{formatTime(audioRef.current?.duration - currentTime || 0)}</span>
+        <p className="remaining">-{formatTime(audioRef.current?.duration - currentTime || 0)}</p>
       </div>
       <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} />
     </div>
+
   );
 };
 
