@@ -21,7 +21,7 @@ const Tracks = ({ tracks, playTrack, activeTrack, show_dates }) => {
       {trackLikes.map((track) => (
         <li
           key={track.id}
-          className={`list-item ${track.id === activeTrack?.id ? "active-item" : ""}`}
+          className={`list-item track-item ${track.id === activeTrack?.id ? "active-item" : ""}`}
           onClick={() => handleTrackClick(track)}
           style={{
             backgroundImage: `url(${track.waveform_image_url})`,

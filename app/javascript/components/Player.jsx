@@ -64,18 +64,18 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
     if (activeTrack && audioRef.current) {
       setFadeClass("fade-out");
 
+      audioRef.current.pause();
+      audioRef.current.src = activeTrack.mp3_url;
+      audioRef.current.load();
+      audioRef.current
+        .play()
+        .catch((error) => {
+          console.error("Error playing audio:", error);
+        });
+
+      setupMediaSession();
+
       setTimeout(() => {
-        audioRef.current.pause();
-        audioRef.current.src = activeTrack.mp3_url;
-        audioRef.current.load();
-        audioRef.current
-          .play()
-          .catch((error) => {
-            console.error("Error playing audio:", error);
-          });
-
-        setupMediaSession();
-
         scrubberRef.current.style.backgroundImage = `url(${activeTrack.waveform_image_url})`;
         progressBarRef.current.style.maskImage = `url(${activeTrack.waveform_image_url})`;
 

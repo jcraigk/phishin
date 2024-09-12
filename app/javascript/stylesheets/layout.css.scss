@@ -6,24 +6,6 @@
   align-items: flex-start;
 }
 
-.sidebar {
-  background-color: $header_gray;
-  padding: 1rem;
-  flex: 0 0 16rem; /* Sets the sidebar width to 16rem */
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  max-height: fit-content;
-
-  .sidebar-subtitle {
-    font-size: 1.3rem;
-    font-weight: bold;
-  }
-  .sidebar-detail {
-    font-size: 1.3rem;
-    line-height: 1.7rem;
-  }
-}
-
 .main-content {
   flex: 1;
 }

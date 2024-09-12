@@ -86,7 +86,7 @@ footer.with-player {
       margin: 0 0.6rem;
 
       &:hover {
-        color: #03bbf2 !important;
+        color: $likes_blue !important;
       }
 
       &:focus {
@@ -127,7 +127,7 @@ footer.with-player {
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      background-color: #03bbf2;
+      background-color: $likes_blue;
 
       &:hover {
         color: white !important;
@@ -144,6 +144,7 @@ footer.with-player {
     width: 100%;
     height: 70px;
     margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
 
     .elapsed {
       margin-right: 0.5rem;
@@ -172,7 +173,7 @@ footer.with-player {
       left: 0;
       height: 100%;
       width: 100%; /* Full width, we'll handle progress with the background */
-      background: linear-gradient(to right, #03bbf2 0%, #03bbf2 0%, transparent 0%); /* Dynamically update this gradient */
+      // background: linear-gradient(to right, $likes_blue 0%, $likes_blue 0%, transparent 0%); /* Dynamically update this gradient */
       mask-size: 100% 100%; /* Ensure the mask covers the entire progress bar */
       mask-position: 0 0;
       mask-repeat: no-repeat;
@@ -183,10 +184,6 @@ footer.with-player {
       -webkit-mask-repeat: no-repeat;
     }
   }
-}
-
-.active-item {
-  animation: pulse 3s infinite ease-in-out;
 }
 
 @media (max-width: 1023px) {
@@ -211,19 +208,6 @@ footer.with-player {
   }
   .controls {
     gap: 0 !important;
-  }
-}
-
-@keyframes pulse {
-  0% {
-    background-color: $bg_gray;
-  }
-  50% {
-    background-color: #03bbf2;
-
-  }
-  100% {
-    background-color: $bg_gray;
   }
 }
 

@@ -37,12 +37,26 @@
   padding: 0.25rem 1rem;
   border-radius: 5px;
   margin-bottom: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+
   min-height: 3.5rem;
   cursor: pointer;
   background-size: cover;
   background-repeat: no-repeat;
 
+  // Pulse animation for active-item
+  &.active-item {
+    animation: pulse 3s infinite ease-in-out;
+    background-image: none !important;
+
+    &::before {
+      display: none;
+    }
+  }
+}
+
+// Clickable item with faded waveform image background
+.track-item {
   // Overlay to lighten the waveform background
   &::before {
     content: "";
@@ -51,7 +65,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.85);
+    background-color: rgba(255, 255, 255, 0.87);
     border-radius: 5px;
     pointer-events: none;
     z-index: 1;
@@ -153,9 +167,26 @@
   width: 8rem !important;
 }
 
+@keyframes pulse {
+  0% {
+    background-color: $likes_blue;
+  }
+  50% {
+    background-color: #cbe8fa;
+  }
+  100% {
+    background-color: $likes_blue;
+  }
+}
+
 @media (hover: hover) {
   .list-item:hover {
-    background-color: var(--bulma-grey-lighter);
+    background-color: white;
+    background-image: none !important;
+
+    &::before {
+      display: none;
+    }
   }
 }
 
