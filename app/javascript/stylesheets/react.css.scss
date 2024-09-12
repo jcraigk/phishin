@@ -27,6 +27,7 @@ $text_gray: #6d6f71;
 @import "./sidebar.css.scss";
 @import "./modal.css.scss";
 @import "./player.css.scss";
+@import "./navbar.css.scss";
 
 html, body {
   height: 100%;
@@ -38,7 +39,7 @@ html, body {
 }
 
 body {
-  padding-top: 5rem;
+  padding-top: 4rem;
 }
 
 main {
@@ -52,23 +53,6 @@ main {
 .section {
   padding-top: 0 !important;
 }
-
-//Navbar
-.navbar {
-  background-color: $header_gray;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 10;
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1); /* Adds a subtle drop shadow */
-
-  .navbar-brand {
-    img {
-      border-radius: var(--bulma-radius);
-    }
-  }
-}
-
 
 // Static pages
 .api-command {

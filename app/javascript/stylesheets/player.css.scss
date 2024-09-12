@@ -1,47 +1,53 @@
+main.with-player {
+  margin-bottom: 150px;
+}
+footer.with-player {
+  display: none;
+}
+
 .audio-player {
   position: fixed;
-  bottom: 0;
+  bottom: -100px;
   width: 100%;
   background-color: $header_gray;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
   z-index: 100;
-  transform: translateY(100%); /* Keep it hidden initially */
-  transition: transform 0.5s ease-in-out; /* Smooth transition */
+  opacity: 0;
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.3);
 
   &.visible {
-    transform: translateY(0); /* Move it into view when visible */
+    animation: slideUp 0.3s ease-in-out forwards;
   }
 
   a {
     text-decoration: none;
-    color: black;
+    color: var(--bulma-text);
   }
 
   .top-row {
+    margin: 0 auto;
+    max-width: 800px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
     padding-top: 0.2rem;
-    padding-bottom: 0.5rem;
+    padding-left: 0.9rem;
+    padding-right: 0.5rem;
 
-    .half {
+    .left-half {
       flex: 1;
       white-space: nowrap;
-      max-width: 50%;
       overflow: hidden;
-      padding-left: 0.8rem;
+    }
+
+    .right-half {
+      flex: 0;
     }
   }
 
-  .track-title,
-  .top-row .half .track-info {
-    padding: 2px 0;
-  }
-
   .track-title {
-    font-size: 1.2rem;
-    line-height: 1.8rem;
+    font-size: 1.5rem;
+    line-height: 2rem;
     font-weight: bold;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -49,12 +55,12 @@
 
   .track-info {
     font-size: 1rem;
-    line-height: 0.9rem;
+    line-height: 1.3rem;
   }
 
   .controls {
     display: flex;
-    justify-content: center;
+    justify-content: right;
     padding-top: 0.3rem;
 
     button {
@@ -68,44 +74,50 @@
         color: #03bbf2;
       }
     }
-  }
 
-  .play-pause-btn {
-    width: 3.5rem;
-    height: 3.5rem;
-    font-size: 3rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #ccc;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    background-color: #03bbf2 !important;
-  }
+    .play-pause-btn {
+      width: 3.5rem;
+      height: 3.5rem;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      background-color: #03bbf2 !important;
+    }
 
-  .play-pause-btn:hover {
-    color: white;
+    .play-pause-btn:hover {
+      color: white;
+    }
   }
 
   .bottom-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: 0.8rem;
+    padding-right: 0.8rem;
     width: 100%;
+    height: 70px;
+    margin-bottom: 0.5rem;
 
     .elapsed {
       margin-right: 0.5rem;
+      min-width: 2rem;
+      text-align: left;
     }
     .remaining {
       margin-left: 0.5rem;
+      min-width: 2rem;
+      text-align: right;
     }
 
     .scrubber-bar {
       position: relative;
       width: 100%;
-      height: 70px;
+      height: 100%;
       cursor: pointer;
       background-size: 100% 100%; /* Stretches waveform image across the whole bar */
       background-repeat: no-repeat;
@@ -136,6 +148,19 @@
   border: 1px solid #03bbf2;
 }
 
+@media (max-width: 767px) {
+  .scrub-btn, .venue-location {
+    display: none !important;
+  }
+  .bottom-row {
+    height: 30px !important;
+    margin-top: 5px !important;
+  }
+  .track-title {
+    font-size: 1.2rem !important;
+  }
+}
+
 @keyframes pulse {
   0% {
     background-color: $bg_gray;
@@ -152,9 +177,13 @@
   }
 }
 
-
-@media (max-width: 767px) {
-  .scrub-btn {
-    display: none !important;
+@keyframes slideUp {
+  from {
+    bottom: -100px;
+    opacity: 0;
+  }
+  to {
+    bottom: 0;
+    opacity: 1;
   }
 }
