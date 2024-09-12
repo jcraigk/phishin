@@ -10,6 +10,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
   const scrubberRef = useRef();
   const progressBarRef = useRef();
   const [currentTime, setCurrentTime] = useState(0);
+  const [fadeClass, setFadeClass] = useState("");
 
   // Toggle play/pause functionality
   const togglePlayPause = () => {
@@ -62,26 +63,29 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
 
   // Apply mask dynamically when the track changes
   useEffect(() => {
-    if (activeTrack && scrubberRef.current && progressBarRef.current) {
-      scrubberRef.current.style.backgroundImage = `url(${activeTrack.waveform_image_url})`;
-      progressBarRef.current.style.maskImage = `url(${activeTrack.waveform_image_url})`;
-    }
-
     if (activeTrack && audioRef.current) {
-      // Pause the current audio, load the new track, and start playing it
-      audioRef.current.pause();
-      audioRef.current.src = activeTrack.mp3_url;
-      audioRef.current.load(); // Ensure the audio is loaded before playing
-      audioRef.current
-        .play()
-        .then(() => {
-          console.log("Audio started playing");
-        })
-        .catch((error) => {
-          console.error("Error playing audio:", error);
-        });
+      setFadeClass("fade-out");
 
-      setupMediaSession(); // Set up Media Session API
+      setTimeout(() => {
+        audioRef.current.pause();
+        audioRef.current.src = activeTrack.mp3_url;
+        audioRef.current.load(); // Ensure the audio is loaded before playing
+        audioRef.current
+          .play()
+          .then(() => {
+            console.log("Audio started playing");
+          })
+          .catch((error) => {
+            console.error("Error playing audio:", error);
+          });
+
+        setupMediaSession();
+
+        scrubberRef.current.style.backgroundImage = `url(${activeTrack.waveform_image_url})`;
+        progressBarRef.current.style.maskImage = `url(${activeTrack.waveform_image_url})`;
+
+        setFadeClass("fade-in");
+      }, 300);
     }
   }, [activeTrack]);
 
@@ -167,7 +171,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
   return (
     <div className={`audio-player ${activeTrack ? 'visible' : ''}`}>
       <div className="top-row">
-        <div className="left-half">
+        <div className={`left-half`}>
           <div className="track-title">{activeTrack?.title}</div>
           <div className="track-info">
             <Link to={`/${activeTrack?.show_date}`}>
@@ -236,7 +240,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
           </div>
         </div>
       </div>
-      <div className="bottom-row">
+      <div className={`bottom-row ${fadeClass}`}>
         <p className="elapsed">{formatTime(currentTime)}</p>
         <div
           className="scrubber-bar"
