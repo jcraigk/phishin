@@ -2,101 +2,160 @@
   position: fixed;
   bottom: 0;
   width: 100%;
-  background: #fff;
+  background-color: $header_gray;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
   z-index: 100;
   transform: translateY(100%); /* Keep it hidden initially */
   transition: transform 0.5s ease-in-out; /* Smooth transition */
+
+  &.visible {
+    transform: translateY(0); /* Move it into view when visible */
+  }
+
+  a {
+    text-decoration: none;
+    color: black;
+  }
+
+  .top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding-top: 0.2rem;
+    padding-bottom: 0.5rem;
+
+    .half {
+      flex: 1;
+      white-space: nowrap;
+      max-width: 50%;
+      overflow: hidden;
+      padding-left: 0.8rem;
+    }
+  }
+
+  .track-title,
+  .top-row .half .track-info {
+    padding: 2px 0;
+  }
+
+  .track-title {
+    font-size: 1.2rem;
+    line-height: 1.8rem;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .track-info {
+    font-size: 1rem;
+    line-height: 0.9rem;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    padding-top: 0.3rem;
+
+    button {
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      margin: 0 0.6rem;
+
+      button:hover {
+        color: #03bbf2;
+      }
+    }
+  }
+
+  .play-pause-btn {
+    width: 3.5rem;
+    height: 3.5rem;
+    font-size: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    background-color: #03bbf2 !important;
+  }
+
+  .play-pause-btn:hover {
+    color: white;
+  }
+
+  .bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    width: 100%;
+    border: 1px solid green;
+
+    .elapsed {
+      margin-right: 0.5rem;
+    }
+    .remaining {
+      margin-left: 0.5rem;
+    }
+
+    .scrubber-bar {
+      position: relative;
+      width: 100%; /* Fixed width for both waveform and progress */
+      height: 70px; /* Fixed height */
+      cursor: pointer;
+      background-size: 500px 70px; /* Make sure the waveform image stays aligned */
+      background-repeat: no-repeat;
+      border: 1px solid yellow;
+    }
+
+    .progress-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: linear-gradient(to bottom, #a9e8fb, #03bbf2); /* Blue gradient */
+      z-index: 1;
+      width: 0%; /* Dynamically expand based on progress */
+      mask-size: 500px 70px; /* Ensure mask image covers the 500px area */
+      mask-repeat: no-repeat;
+      -webkit-mask-size: 500px 70px; /* For WebKit browsers */
+      -webkit-mask-repeat: no-repeat;
+    }
+  }
 }
 
-.audio-player.visible {
-  transform: translateY(0); /* Move it into view when visible */
-}
-
-.audio-player .track-info {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-}
-
-.audio-player .controls {
-  display: flex;
-  justify-content: center;
-  padding: 10px;
-}
-
-.audio-player .controls button {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  margin: 0 10px;
-}
-
-.audio-player .controls button:hover {
-  color: #03bbf2;
-}
-
-/* Specific styling for play/pause button */
-.audio-player .play-pause-btn {
-  width: 60px; /* Set equal width and height for a perfect circle */
-  height: 60px;
-  font-size: 24px; /* Keep the icon smaller inside the circle */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #ccc; /* 1px grey border */
-  border-radius: 50%; /* Circular */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light drop shadow */
-  transition: all 0.3s ease; /* Smooth hover effect */
-}
-
-.audio-player .play-pause-btn:hover {
-  color: #03bbf2;
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Slightly larger shadow on hover */
-}
-
-.audio-player .scrubber {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px;
-  width: 100%;
-}
-
-.audio-player .scrubber-bar {
-  position: relative;
-  width: 500px; /* Fixed width for both waveform and progress */
-  height: 70px; /* Fixed height */
-  cursor: pointer;
-  background-size: 500px 70px; /* Make sure the waveform image stays aligned */
-  background-repeat: no-repeat;
-}
-
-.audio-player .progress-bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  background: linear-gradient(to bottom, #a9e8fb, #03bbf2); /* Blue gradient */
-  z-index: 1;
-  width: 0%; /* Dynamically expand based on progress */
-  mask-size: 500px 70px; /* Ensure mask image covers the 500px area */
-  mask-repeat: no-repeat;
-  -webkit-mask-size: 500px 70px; /* For WebKit browsers */
-  -webkit-mask-repeat: no-repeat;
-}
-
-.audio-player .list-item.active-track {
-  background-color: #e0f7fa;
-  animation: pulse 1s infinite;
+.active-track {
+  animation: pulse 3s infinite ease-in-out;
+  border: 1px solid #03bbf2;
 }
 
 @keyframes pulse {
   0% {
-    background-color: #a9e8fb;
+    background-color: $bg_gray;
+    border-color: $bg_gray;
+  }
+  50% {
+    background-color: #03bbf2;
+    border-color: #03bbf2;
+
   }
   100% {
-    background-color: #03bbf2;
+    background-color: $bg_gray;
+    border-color: $bg_gray;
   }
+}
+
+
+@media (max-width: 767px) {
+  .scrub-btn {
+    display: none !important;
+  }
+  // .scrubber {
+  //   max-height: 30px;
+  // }
 }
