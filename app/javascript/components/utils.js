@@ -21,7 +21,7 @@ export const formatDurationTrack = (milliseconds) => {
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
 
-  const formattedMinutes = minutes.toString().padStart(2, "0");
+  const formattedMinutes = hours > 0 ? minutes.toString().padStart(2, "0") : minutes.toString();
   const formattedSeconds = seconds.toString().padStart(2, "0");
 
   if (hours > 0) {
@@ -30,6 +30,7 @@ export const formatDurationTrack = (milliseconds) => {
     return `${formattedMinutes}:${formattedSeconds}`;
   }
 };
+
 
 export const formatDate = (dateString) => {
   return dateString.replace(/-/g, ".");

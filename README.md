@@ -11,7 +11,6 @@
  * Disable email account creation - allow oauth login through api?
  * Make larger waveform images (or multiple ones)
  * prevent landscape on mobile
- * waveform and track info should fade out and back in when new track is played
  * Handle "you must tap play" on mobile, etc
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)

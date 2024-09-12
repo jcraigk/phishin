@@ -4,6 +4,8 @@ import { formatDate } from "./utils";
 import { Tooltip } from "react-tooltip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward } from "@fortawesome/free-solid-svg-icons";
+import { useNotification } from "./NotificationContext";
+
 
 const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
   const audioRef = useRef();
@@ -11,8 +13,8 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
   const progressBarRef = useRef();
   const [currentTime, setCurrentTime] = useState(0);
   const [fadeClass, setFadeClass] = useState("");
+  const { setAlert, setNotice } = useNotification();
 
-  // Toggle play/pause functionality
   const togglePlayPause = () => {
     if (audioRef.current.paused) {
       audioRef.current.play().catch((error) => {
@@ -25,17 +27,14 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
     }
   };
 
-  // Scrub forward by 10 seconds
   const scrubForward = () => {
     audioRef.current.currentTime = Math.min(audioRef.current.currentTime + 10, audioRef.current.duration);
   };
 
-  // Scrub backward by 10 seconds
   const scrubBackward = () => {
     audioRef.current.currentTime = Math.max(audioRef.current.currentTime - 10, 0);
   };
 
-  // Media Session API hooks
   const setupMediaSession = () => {
     if ('mediaSession' in navigator) {
       // Set the media metadata
@@ -52,7 +51,6 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         ]
       });
 
-      // Set media session action handlers
       navigator.mediaSession.setActionHandler('previoustrack', skipToPreviousTrack);
       navigator.mediaSession.setActionHandler('nexttrack', skipToNextTrack);
       navigator.mediaSession.setActionHandler('play', togglePlayPause);
@@ -61,7 +59,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
     }
   };
 
-  // Apply mask dynamically when the track changes
+  // Hande activeTrack change
   useEffect(() => {
     if (activeTrack && audioRef.current) {
       setFadeClass("fade-out");
@@ -69,12 +67,9 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
       setTimeout(() => {
         audioRef.current.pause();
         audioRef.current.src = activeTrack.mp3_url;
-        audioRef.current.load(); // Ensure the audio is loaded before playing
+        audioRef.current.load();
         audioRef.current
           .play()
-          .then(() => {
-            console.log("Audio started playing");
-          })
           .catch((error) => {
             console.error("Error playing audio:", error);
           });
@@ -85,36 +80,36 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         progressBarRef.current.style.maskImage = `url(${activeTrack.waveform_image_url})`;
 
         setFadeClass("fade-in");
-      }, 300);
+      }, 700);
     }
   }, [activeTrack]);
 
-  // Skip to the next track in the playlist
   const skipToNextTrack = () => {
     const currentIndex = currentPlaylist.indexOf(activeTrack);
     const nextTrack = currentPlaylist[currentIndex + 1];
     if (nextTrack) {
       setActiveTrack(nextTrack);
+    } else {
+      setAlert("This is the last track in the playlist")
     }
   };
 
-  // Skip to the previous track in the playlist
   const skipToPreviousTrack = () => {
     const currentIndex = currentPlaylist.indexOf(activeTrack);
 
-    // If more than 10 seconds have passed in the current track, restart it
     if (audioRef.current.currentTime > 10) {
-      audioRef.current.currentTime = 0; // Reset to the beginning of the current track
+      audioRef.current.currentTime = 0;
     } else {
-      // Otherwise, skip to the previous track
       const previousTrack = currentPlaylist[currentIndex - 1];
       if (previousTrack) {
         setActiveTrack(previousTrack);
+      } else {
+        setAlert("This is the first track in the playlist")
       }
     }
   };
 
-  // Handle keyboard shortcuts
+  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === " " && !e.shiftKey) {
@@ -139,29 +134,24 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [togglePlayPause, scrubBackward, scrubForward, skipToPreviousTrack, skipToNextTrack]);
 
-  // Update the current time as the audio plays
   const handleTimeUpdate = () => {
     setCurrentTime(audioRef.current.currentTime);
-    updateProgressBar(); // Update the progress bar based on current time
+    updateProgressBar();
   };
 
-  // Function to update the progress bar fill
   const updateProgressBar = () => {
     const progress = (currentTime / audioRef.current.duration) * 100;
     if (progressBarRef.current) {
-      // Dynamically adjust the gradient to reflect progress
       progressBarRef.current.style.background = `linear-gradient(to right, #03bbf2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
     }
   };
 
-  // Handle user scrubbing
   const handleScrubberClick = (e) => {
     const clickPosition = e.nativeEvent.offsetX / e.target.offsetWidth;
     const newTime = clickPosition * audioRef.current.duration;
     audioRef.current.currentTime = newTime;
   };
 
-  // Format time in MM:SS
   const formatTime = (timeInSeconds) => {
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = Math.floor(timeInSeconds % 60).toString().padStart(2, "0");

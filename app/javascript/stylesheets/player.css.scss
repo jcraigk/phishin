@@ -185,9 +185,8 @@ footer.with-player {
   }
 }
 
-.active-track {
+.active-item {
   animation: pulse 3s infinite ease-in-out;
-  border: 1px solid #03bbf2;
 }
 
 @media (max-width: 1023px) {
@@ -218,16 +217,13 @@ footer.with-player {
 @keyframes pulse {
   0% {
     background-color: $bg_gray;
-    border-color: $bg_gray;
   }
   50% {
     background-color: #03bbf2;
-    border-color: #03bbf2;
 
   }
   100% {
     background-color: $bg_gray;
-    border-color: $bg_gray;
   }
 }
 
