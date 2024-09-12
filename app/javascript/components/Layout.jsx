@@ -39,10 +39,10 @@ const Layout = ({ appName, user, onLogout }) => {
           {notification.message}
         </div>
       )}
-      <main>
+      <main className={activeTrack ? 'with-player' : ''}>
         <Outlet context={{ currentPlaylist, activeTrack, playTrack }} />
       </main>
-      <Footer staticLinks={staticLinks} />
+      <Footer staticLinks={staticLinks} activeTrack={activeTrack} />
       {activeTrack && (
         <Player
           currentPlaylist={currentPlaylist}

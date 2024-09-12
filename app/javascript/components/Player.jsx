@@ -141,24 +141,25 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
   return (
     <div className={`audio-player ${activeTrack ? 'visible' : ''}`}>
       <div className="top-row">
-        <div className="half">
+        <div className="left-half">
           <div className="track-title">{activeTrack?.title}</div>
           <div className="track-info">
             <Link to={`/${activeTrack?.show_date}`}>
               {formatDate(activeTrack?.show_date)}
             </Link>
-          </div>
-          <div className="track-info">
+            {" "}&bull;{" "}
             <Link to={`/venues/${activeTrack?.venue_slug}`}>
               {activeTrack?.venue_name}
             </Link>
-            {" "}&bull;{" "}
-            <Link to={`/map?term=${activeTrack?.venue_location}`}>
-              {activeTrack?.venue_location}
-            </Link>
+            <span className="venue-location">
+              {" "}&bull;{" "}
+              <Link to={`/map?term=${activeTrack?.venue_location}`}>
+                {activeTrack?.venue_location}
+              </Link>
+            </span>
           </div>
         </div>
-        <div className="half">
+        <div className="right-half">
           <div className="controls">
             <button onClick={skipToPreviousTrack}>
               <FontAwesomeIcon icon={faStepBackward} />
@@ -191,7 +192,6 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
       </div>
       <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} />
     </div>
-
   );
 };
 

@@ -7,9 +7,9 @@ const LayoutWrapper = ({ sidebarContent, children }) => {
       <aside className="sidebar">
         {sidebarContent}
       </aside>
-      <main className="main-content">
+      <section className="main-content">
         {children}
-      </main>
+      </section>
     </div>
   );
 };
