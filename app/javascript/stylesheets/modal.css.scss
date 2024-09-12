@@ -1,7 +1,7 @@
 .modal-content {
   background: white;
   padding: 1.5rem;
-  border-radius: 8px;
+  border-radius: var(--bulma-radius);
   max-width: 500px;
   margin: 0 auto;
   max-height: 500px;

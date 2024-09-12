@@ -16,7 +16,8 @@ class ApiV2::Venues < ApiV2::Base
       optional :first_char,
                type: String,
                desc: "Filter venues by the first character of the venue name (case-insensitive)",
-               values: App.first_char_list
+               values: App.first_char_list,
+               allow_blank: true
     end
     get do
       v = page_of_venues

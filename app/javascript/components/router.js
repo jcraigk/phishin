@@ -35,15 +35,10 @@ const router = (props) =>
   createBrowserRouter([
     {
       path: "/",
-      element: (
-        <Layout
-          appName={props.app_name}
-          user={props.user}
-          onLogout={props.handleLogout}
-        />
-      ),
+      element: (<Layout user={props.user} onLogout={props.handleLogout} />),
       errorElement: <ErrorPage />,
       children: [
+        // Root
         {
           path: "/",
           element: <Eras eras={props.eras} />

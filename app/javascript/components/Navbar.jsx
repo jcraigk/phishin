@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { useNotification } from "./NotificationContext";
 
-const Navbar = ({ appName, user, onLogout, staticLinks }) => {
+const Navbar = ({ user, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAboutDropdownOpen, setIsAboutDropdownOpen] = useState(false);
   const [isContentDropdownOpen, setIsContentDropdownOpen] = useState(false);
@@ -54,6 +54,15 @@ const Navbar = ({ appName, user, onLogout, staticLinks }) => {
       setIsContentDropdownOpen(false);
     }
   }, [isMenuOpen]);
+
+  const staticLinks = [
+    { path: "/faq", label: "FAQ" },
+    { path: "/api-docs", label: "API" },
+    { path: "/tagin-project", label: "Tagin' Project" },
+    { path: "/privacy", label: "Privacy Policy" },
+    { path: "/terms", label: "Terms of Service" },
+    { path: "/contact-info", label: "Contact" },
+  ];
 
   const contentLinks = [
     { path: "/", label: "Years" },
@@ -162,10 +171,8 @@ const Navbar = ({ appName, user, onLogout, staticLinks }) => {
 };
 
 Navbar.propTypes = {
-  appName: PropTypes.string.isRequired,
   user: PropTypes.object,
   onLogout: PropTypes.func.isRequired,
-  staticLinks: PropTypes.array.isRequired,
 };
 
 export default Navbar;

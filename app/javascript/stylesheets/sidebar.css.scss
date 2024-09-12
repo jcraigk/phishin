@@ -3,7 +3,7 @@
   padding: 1rem;
   flex: 0 0 16rem;
   border-radius: 5px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   max-height: fit-content;
 
   .sidebar-subtitle {
@@ -32,10 +32,11 @@
 
     .show-venue {
       font-size: 1.2em;
-      line-height: 1.2rem;
+      line-height: 1.7rem;
     }
     .show-location {
       font-size: 1.1em;
+      line-height: 2rem;
       margin-bottom: 10px;
     }
     .show-duration {

@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { formatDate, formatDurationShow } from "./utils";
+import { Link, useOutletContext } from "react-router-dom";
+import { formatDate, formatDurationShow, toggleLike } from "./utils";
 import { useNotification } from "./NotificationContext";
 import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,60 +8,56 @@ import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
 const Shows = ({ shows, setShows, numbering = false, tour_headers = false }) => {
   const { setAlert, setNotice } = useNotification();
+  const { activeTrack } = useOutletContext();
 
   let lastTourName = null;
 
-  const toggleLike = async (show) => {
+  const handleLikeToggle = async (show) => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
       setAlert("Please log in to like a show");
       return;
     }
 
-    const isLiked = show.liked_by_user;
-    const url = `/api/v2/likes?likable_type=Show&likable_id=${show.id}`;
-    const method = isLiked ? "DELETE" : "POST";
+    // Call the toggleLike utility function
+    const result = await toggleLike({
+      id: show.id,
+      type: "Show",
+      isLiked: show.liked_by_user,
+      jwt,
+    });
 
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          "X-Auth-Token": jwt,
-        },
-      });
+    if (result.success) {
+      setNotice("Like saved");
 
-      if (response.ok) {
-        setNotice("Like saved");
-        setShows((prevShows) =>
-          prevShows.map((s) =>
-            s.id === show.id
-              ? {
-                  ...s,
-                  liked_by_user: !isLiked,
-                  likes_count: isLiked ? s.likes_count - 1 : s.likes_count + 1,
-                }
-              : s
-          )
+      // Update the shows array based on whether it's a single show or multiple shows
+      setShows((prevShows) => {
+        const updatedShows = Array.isArray(prevShows) ? prevShows : [prevShows];
+
+        return updatedShows.map((s) =>
+          s.id === show.id
+            ? {
+                ...s,
+                liked_by_user: result.isLiked,
+                likes_count: result.isLiked ? s.likes_count + 1 : s.likes_count - 1,
+              }
+            : s
         );
-      } else {
-        console.error("Failed to toggle like");
-      }
-    } catch (error) {
-      console.error("Error toggling like:", error);
+      });
     }
   };
 
   return (
     <ul>
       {shows.map((show, index) => {
+        console.log(shows)
         const isNewTour = show.tour_name !== lastTourName;
 
         if (isNewTour) {
           lastTourName = show.tour_name;
         }
 
-        const tourShowCount = shows.filter(s => s.tour_name === show.tour_name).length;
+        const tourShowCount = shows.filter((s) => s.tour_name === show.tour_name).length;
 
         return (
           <React.Fragment key={show.id}>
@@ -72,10 +68,8 @@ const Shows = ({ shows, setShows, numbering = false, tour_headers = false }) => 
               </div>
             )}
             <Link to={`/${show.date}`} className="list-item-link">
-              <li className="list-item">
-                {numbering && (
-                  <span className="leftside-numbering">#{index + 1}</span>
-                )}
+              <li className={`list-item ${show.date === activeTrack?.show_date ? "active-item" : ""}`}>
+                {numbering && <span className="leftside-numbering">#{index + 1}</span>}
                 <span className="leftside-primary width-8">{formatDate(show.date)}</span>
                 <span className="leftside-secondary">{show.venue.name}</span>
                 <span className="leftside-tertiary">
@@ -88,10 +82,10 @@ const Shows = ({ shows, setShows, numbering = false, tour_headers = false }) => 
                     className={`heart-icon ${show.liked_by_user ? "liked" : ""}`}
                     onClick={(e) => {
                       e.preventDefault();
-                      toggleLike(show);
+                      handleLikeToggle(show);
                     }}
-                  />{" "}
-                  {show.likes_count}
+                  />
+                  <span className="likes-count">{show.likes_count}</span>
                 </span>
               </li>
             </Link>

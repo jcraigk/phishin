@@ -24,7 +24,7 @@ const TopShows = ({ user }) => {
     <div className="sidebar-content">
       <h1 className="title">Top 40 Shows</h1>
       <p className="sidebar-detail mb-5">
-        An aggregated list of the top shows, ranked by user Likes from the Phish.in community.
+        An aggregated list of the top shows, ranked by user likes from the Phish.in community.
       </p>
       {!user && (
         <div className="sidebar-callout">

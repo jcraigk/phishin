@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams, Link, useOutletContext } from "react-router-dom";
-import { formatDateLong, formatDurationShow } from "./utils";
+import { useParams, Link } from "react-router-dom";
+import { formatDateLong, formatDurationShow, toggleLike } from "./utils"; // Import toggleLike
 import ErrorPage from "./pages/ErrorPage";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
@@ -14,13 +14,13 @@ Modal.setAppElement("body");
 const Show = () => {
   const { route_path } = useParams();
   const [show, setShow] = useState(null);
+  const [tracks, setTracks] = useState([]); // State to hold the tracks
   const [error, setError] = useState(null);
-  const { setNotice } = useNotification();
+  const { setNotice, setAlert } = useNotification();
   const [isDropdownActive, setIsDropdownActive] = useState(false);
   const [isTaperNotesModalOpen, setIsTaperNotesModalOpen] = useState(false); // State for Taper Notes modal
   const dropdownRef = useRef(null);
   const baseUrl = window.location.origin;
-  const { playTrack, activeTrack } = useOutletContext();
 
   useEffect(() => {
     const fetchShow = async () => {
@@ -32,6 +32,7 @@ const Show = () => {
         }
         const data = await response.json();
         setShow(data);
+        setTracks(data.tracks); // Set the tracks when fetching show data
       } catch (error) {
         console.error("Error fetching show:", error);
         setError("An unexpected error has occurred.");
@@ -62,38 +63,29 @@ const Show = () => {
     return <div>Loading...</div>;
   }
 
-  const toggleLike = async () => {
+  const handleLikeToggle = async () => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
-      console.error("Please log in to like a show");
+      setAlert("Please log in to like a show");
       return;
     }
 
-    const isLiked = show.liked_by_user;
-    const url = `/api/v2/likes?likable_type=Show&likable_id=${show.id}`;
-    const method = isLiked ? "DELETE" : "POST";
+    const result = await toggleLike({
+      id: show.id,
+      type: "Show",
+      isLiked: show.liked_by_user,
+      jwt,
+    });
 
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-          "X-Auth-Token": jwt,
-        },
-      });
-
-      if (response.ok) {
-        setShow((prevShow) => ({
-          ...prevShow,
-          liked_by_user: !isLiked,
-          likes_count: isLiked ? prevShow.likes_count - 1 : prevShow.likes_count + 1,
-        }));
-        setNotice("Like saved");
-      } else {
-        console.error("Failed to toggle like");
-      }
-    } catch (error) {
-      console.error("Error toggling like:", error);
+    if (result.success) {
+      setShow((prevShow) => ({
+        ...prevShow,
+        liked_by_user: result.isLiked,
+        likes_count: result.isLiked ? prevShow.likes_count + 1 : prevShow.likes_count - 1,
+      }));
+      setNotice("Like saved");
+    } else {
+      console.error("Failed to toggle like");
     }
   };
 
@@ -137,7 +129,7 @@ const Show = () => {
         <FontAwesomeIcon
           icon={faHeart}
           className={`heart-icon ${show.liked_by_user ? "liked" : ""}`}
-          onClick={toggleLike}
+          onClick={handleLikeToggle}
         />{" "}
         {show.likes_count}
       </div>
@@ -194,7 +186,7 @@ const Show = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Tracks tracks={show.tracks} set_headers={true} show_dates={false} playTrack={playTrack} activeTrack={activeTrack} />
+      <Tracks tracks={tracks} setTracks={setTracks} showDates={false} setHeaders={true} />
     </LayoutWrapper>
   );
 };

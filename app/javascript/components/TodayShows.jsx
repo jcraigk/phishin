@@ -64,7 +64,7 @@ const TodayShows = () => {
       {shows.length === 0 ? (
         <h1 className="title">No shows found for today.</h1>
       ) : (
-        <Shows shows={shows} setShows={setShows} numbering={false} set_headers={false} />
+        <Shows shows={shows} setShows={setShows} numbering={false} setHeaders={false} />
       )}
     </LayoutWrapper>
   );
