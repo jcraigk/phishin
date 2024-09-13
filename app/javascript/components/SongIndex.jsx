@@ -54,10 +54,10 @@ const SongIndex = () => {
         </div>
       </div>
     }>
-      <div className="section-title mobile-title">
+      {/* <div className="section-title mobile-title">
         <div className="title-left">Songs</div>
         <span className="detail-right">{formatNumber(totalEntries)} total</span>
-      </div>
+      </div> */}
       <Songs songs={songs} />
       <ReactPaginate
         previousLabel={"Previous"}
