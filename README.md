@@ -5,11 +5,12 @@
  * style the feedback messages - should we use bulma styles or no?
  * Do we need all the keys in the components? look for other excess/DRYness
  * Add a spinner using react-spinners - will require passing loading state from components
- * Map needs to take params and fill in the form and submit it
  * Prerender caching? How does it work for logged in users? Just skip prerender for those?
  * share/play from timestamp
  * Disable email account creation - allow oauth login through api?
  * Handle "you must tap play" on mobile, etc
+ * Put mobile titles in navbar
+ * Opengraph
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)
 

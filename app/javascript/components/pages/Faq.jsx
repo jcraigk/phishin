@@ -23,6 +23,9 @@ const Faq = ({ contactEmail }) => {
         </a>.
       </p>
 
+      <h3>Are there any keyboard shortcuts?</h3>
+      <p>To control audio playback when listening to a playlist, use Spacebar to toggle play/pause, left/right arrow keys to skip tracks, and hold shift and press left/right arrow keys to seek by 10 seconds.</p>
+
       <h3>How is the project funded?</h3>
       <p>This site is funded privately.</p>
 

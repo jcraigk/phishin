@@ -86,10 +86,10 @@ const VenueIndex = () => {
         </div>
       }
     >
-      <div className="section-title mobile-title">
+      {/* <div className="section-title mobile-title">
         <div className="title-left">Venues</div>
         <span className="detail-right">{formatNumber(totalEntries)} total</span>
-      </div>
+      </div> */}
       <Venues venues={venues} />
       <ReactPaginate
         previousLabel={"Previous"}
