@@ -46,11 +46,11 @@ const router = (props) =>
         // Auth pages
         {
           path: "/login",
-          element: <Login oauth_providers={props.oauth_providers} onLogin={props.handleLogin}  />
+          element: <Login oauthProviders={props.oauth_providers} onLogin={props.handleLogin}  />
         },
         {
           path: "/signup",
-          element: <Signup oauth_providers={props.oauth_providers} onSignup={props.handleLogin} />
+          element: <Signup handleLogin={props.handleLogin} />
         },
         {
         path: "/request-password-reset",
@@ -63,15 +63,15 @@ const router = (props) =>
         // Static pages
         {
           path: "/api-docs",
-          element: <ApiDocs base_url={props.base_url} />
+          element: <ApiDocs baseUrl={props.base_url} />
         },
         {
           path: "/contact-info",
-          element: <ContactInfo contact_email={props.contact_email} />
+          element: <ContactInfo contactEmail={props.contact_email} />
         },
         {
           path: "/faq",
-          element: <Faq contact_email={props.contact_email} />
+          element: <Faq contactEmail={props.contact_email} />
         },
         {
           path: "/privacy",
@@ -79,7 +79,7 @@ const router = (props) =>
         },
         {
           path: "/tagin-project",
-          element: <TaginProject base_url={props.base_url} />
+          element: <TaginProject baseUrl={props.base_url} />
         },
         {
           path: "/terms",
@@ -91,7 +91,7 @@ const router = (props) =>
           element: <VenueIndex />,
         },
         {
-          path: "/venues/:venue_slug",
+          path: "/venues/:venueSlug",
           element: <VenueShows />,
         },
         {
@@ -103,15 +103,15 @@ const router = (props) =>
           element: <TagIndex />,
         },
         {
-          path: "/show_tags/:tag_slug",
+          path: "/show_tags/:tagSlug",
           element: <TagShows />,
         },
         {
-          path: "/track_tags/:tag_slug",
+          path: "/track_tags/:tagSlug",
           element: <TagTracks />,
         },
         {
-          path: "/songs/:song_slug",
+          path: "/songs/:songSlug",
           element: <SongTracks />,
         },
         {
@@ -143,7 +143,7 @@ const router = (props) =>
         //   element: <Playlists />,
         // },
         // {
-        //   path: "/play/:playlist_slug",
+        //   path: "/play/:playlistSlug",
         //   element: <Playlist />,
         // },
         {
@@ -155,7 +155,7 @@ const router = (props) =>
           element: <Search />,
         },
         {
-          path: ":route_path",
+          path: ":routePath",
           element: <DynamicRoute />
         },
       ],

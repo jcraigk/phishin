@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { formatDateLong, formatDurationShow, toggleLike } from "./utils"; // Import toggleLike
+import { formatDateLong, formatDurationShow, toggleLike, authFetch } from "./utils"; // Import toggleLike
 import ErrorPage from "./pages/ErrorPage";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
@@ -12,7 +12,7 @@ import { useNotification } from "./NotificationContext";
 Modal.setAppElement("body");
 
 const Show = () => {
-  const { route_path } = useParams();
+  const { routePath } = useParams();
   const [show, setShow] = useState(null);
   const [tracks, setTracks] = useState([]); // State to hold the tracks
   const [error, setError] = useState(null);
@@ -25,17 +25,9 @@ const Show = () => {
   useEffect(() => {
     const fetchShow = async () => {
       try {
-        const response = await fetch(
-          `/api/v2/shows/${route_path}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "X-Auth-Token": localStorage.getItem("jwt"),
-            },
-          }
-        );
+        const response = await authFetch(`/api/v2/shows/${routePath}`);
         if (response.status === 404) {
-          setError(`No data was found for the date ${route_path}`);
+          setError(`No data was found for the date ${routePath}`);
           return;
         }
         const data = await response.json();
@@ -48,7 +40,7 @@ const Show = () => {
     };
 
     fetchShow();
-  }, [route_path]);
+  }, [routePath]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

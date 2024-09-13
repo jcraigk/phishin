@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
+import { authFetch } from "./utils";
 
 const TopTracks = ({ user }) => {
   const [tracks, setTracks] = useState([]);
@@ -9,7 +10,7 @@ const TopTracks = ({ user }) => {
   useEffect(() => {
     const fetchTracks = async () => {
       try {
-        const response = await fetch(`/api/v2/tracks?per_page=40&sort=likes_count:desc`);
+        const response = await authFetch(`/api/v2/tracks?per_page=40&sort=likes_count:desc`);
         const data = await response.json();
         setTracks(data.tracks);
       } catch (error) {
@@ -38,7 +39,7 @@ const TopTracks = ({ user }) => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Tracks tracks={tracks} numbering={true} setHeaders={false} showDates={true} />
+      <Tracks tracks={tracks} setTracks={setTracks} numbering={true} setHeaders={false} showDates={true} />
     </LayoutWrapper>
   );
 };

@@ -1,7 +1,7 @@
 import React from "react";
 import PageWrapper from "./PageWrapper";
 
-const ContactInfo = ({ contact_email }) => {
+const ContactInfo = ({ contactEmail }) => {
   return (
     <PageWrapper>
       <h1 className="title">Contact</h1>
@@ -33,11 +33,11 @@ const ContactInfo = ({ contact_email }) => {
       <h3 className="mt-6">Contact the site maintainers</h3>
       <p>
         <a
-          href={`mailto:${contact_email}`}
+          href={`mailto:${contactEmail}`}
           className="underline text-blue-500 hover:text-blue-700"
           target="_blank"
         >
-          {contact_email}
+          {contactEmail}
         </a>
       </p>
 

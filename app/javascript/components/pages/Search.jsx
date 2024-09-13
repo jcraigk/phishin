@@ -25,17 +25,12 @@ const Search = () => {
   const performSearch = async (searchTerm, searchScope) => {
     setLoading(true);
     setError(null);
-    setResults(null); // Clear old results while loading
+    setResults(null);
 
     try {
       const response = await fetch(
         `/api/v2/search/${searchTerm}?scope=${searchScope}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "X-Auth-Token": localStorage.getItem("jwt"),
-          },
-        }
+        { headers: { "X-Auth-Token": localStorage.getItem("jwt") } }
       );
       if (!response.ok) throw new Error("Search failed");
       const data = await response.json();

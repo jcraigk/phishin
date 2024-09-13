@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import PageWrapper from "./PageWrapper";
 import { useNotification } from "../NotificationContext";
 
-const Login = ({ onLogin, oauth_providers }) => {
+const Login = ({ onLogin, oauthProviders }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { setAlert, setNotice } = useNotification();
@@ -31,7 +31,7 @@ const Login = ({ onLogin, oauth_providers }) => {
   return (
     <PageWrapper>
       <div className="container">
-        {oauth_providers.map(provider => (
+        {oauthProviders.map(provider => (
           <a
             key={provider}
             href={`/oauth/${provider}`}

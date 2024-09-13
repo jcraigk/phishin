@@ -5,13 +5,13 @@ import ErrorPage from "./pages/ErrorPage";
 import Show from "./Show";
 
 const DynamicRoute = () => {
-  const { route_path } = useParams();
+  const { routePath } = useParams();
 
-  if (/^\d{4}$/.test(route_path) || /^\d{4}-\d{4}$/.test(route_path)) {
+  if (/^\d{4}$/.test(routePath) || /^\d{4}-\d{4}$/.test(routePath)) {
     return <EraShows />;
   }
 
-  if (/^\d{4}-\d{2}-\d{2}$/.test(route_path)) {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(routePath)) {
     return <Show />;
   }
 

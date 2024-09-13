@@ -1,7 +1,7 @@
 import React from "react";
 import PageWrapper from "./PageWrapper";
 
-const TaginProject = ({ base_url }) => {
+const TaginProject = ({ baseUrl }) => {
   return (
     <PageWrapper>
       <h1 className="title">Tagin' Project</h1>
@@ -58,7 +58,7 @@ const TaginProject = ({ base_url }) => {
           </a>.
         </li>
         <li>Familiarize yourself with each Tag by clicking the workbook tabs at the bottom of the screen (also see specific Tag Conventions below).</li>
-        <li>Listen to audio content at <a href="{base_url}" className="underline text-blue-500 hover:text-blue-700">{base_url}</a>.</li>
+        <li>Listen to audio content at <a href="{baseUrl}" className="underline text-blue-500 hover:text-blue-700">{baseUrl}</a>.</li>
         <li>When you notice a taggable moment that has not yet been captured or an incorrect Tag, pause the playback (spacebar or button in upper-right). Note you can also scrub forward and backward in 5-second increments by pressing Shift-LeftArrow and Shift-RightArrow.</li>
         <li>Roll the mouse cursor over the track in question and click on the context menu (down arrow) that appears.</li>
         <li>Click "Share" in the dropdown menu (URL will be copied to clipboard).</li>
