@@ -10,19 +10,20 @@ SitemapGenerator::Sitemap.create do # rubocop:disable Metrics/BlockLength
   add "/terms"
 
   # Auth
-  add login_path
-  add new_user_path
-  add new_password_reset_path
+  add "/login"
+  add "/signup"
+  add "/request-password-reset"
 
   # Misc pages
   add "/map"
   add "/missing-content"
   add "/my-shows"
   add "/my-tracks"
-  add "/playlist"
-  add "/playlists"
+  # add "/playlist" # TODO
+  # add "/playlists" # TODO
+  add "/search"
   add "/tags"
-  add "/today-in-history"
+  add "/today"
   add "/top-shows"
   add "/top-tracks"
 
@@ -31,30 +32,32 @@ SitemapGenerator::Sitemap.create do # rubocop:disable Metrics/BlockLength
     add "/#{year}"
   end
 
-  # Tours
-  Tour.find_each do |tour|
-    add tour.slug, lastmod: tour.updated_at
-  end
-
   # Songs
   add "/songs"
   Song.find_each do |song|
-    add song.slug, lastmod: song.updated_at
+    add "/songs/#{song.slug}", lastmod: song.updated_at
   end
 
   # Venues
   add "/venues"
   Venue.find_each do |venue|
-    add venue.slug, lastmod: venue.updated_at
+    add "/venues/#{venue.slug}", lastmod: venue.updated_at
+  end
+
+  # Tags
+  add "/tags"
+  Tag.find_each do |tag|
+    add "/show_tags/#{tag.slug}", lastmod: tag.show_tags.order(updated_at: :desc).first.updated_at
+    add "/track_tags/#{tag.slug}", lastmod: tag.track_tags.order(updated_at: :desc).first.updated_at
   end
 
   # Shows
   Show.published.find_each do |show|
-    add show.date, lastmod: show.updated_at
+    add "/#{show.date}", lastmod: show.updated_at
   end
 
   # Tracks
   Track.includes(:show).find_each do |track|
-    add "#{track.show.date}/#{track.slug}", lastmod: track.updated_at
+    add "/#{track.show.date}/#{track.slug}", lastmod: track.updated_at
   end
 end

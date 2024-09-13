@@ -11,6 +11,17 @@
  * Handle "you must tap play" on mobile, etc
  * Put mobile titles in navbar
  * Opengraph
+ * context dropdowns
+ * put play random show button on empty playlist page
+ * anywhere we can put lyrical excerpts?
+ * Update page title when playing audio
+ * Set page title on each specific page
+ * Add CSRF to POSTs on API
+ * Remove lyrics / dialogue
+ * Canonical URLs in Helmet
+ * disable swetrix - or sign up
+ * /missing-content
+ * remove data-theme="light" (and maybe bulma entirely)
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)
 

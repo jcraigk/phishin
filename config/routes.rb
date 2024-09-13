@@ -1,7 +1,6 @@
 require "sidekiq/web"
 
 Rails.application.routes.draw do
-  # Sidekiq Web UI
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
     ActiveSupport::SecurityUtils.secure_compare(
       ::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_USERNAME"])
@@ -11,16 +10,13 @@ Rails.application.routes.draw do
   end
   mount Sidekiq::Web, at: "/sidekiq"
 
-  # RSS
   get "feeds/rss", to: "feeds#rss", format: "xml", as: :rss_feed
 
-  # OAuth
   namespace :oauth do
-    get "callback/:provider", to: "sorcery#callback"
-    get ":provider", to: "sorcery#oauth", as: :at_provider
+    get "callback/:provider", to: "oauth#callback"
+    get ":provider", to: "oauth#login", as: :at_provider
   end
 
-  # API v1
   namespace :api do
     namespace :v1 do
       resources :eras,      only: %i[index show]
@@ -40,12 +36,10 @@ Rails.application.routes.draw do
     end
   end
 
-  # API v2
   mount ApiV2::Api => "/api/v2"
 
-  # React app
-  root to: "react#index"
-  get "/(:path(/:arg))", to: "react#index"
+  root to: "application#application"
+  get "/(:path(/:arg))", to: "application#application"
 
   # Test env: disable content file requests
   get "/audio/*mp3", to: "static_pages#faq" if Rails.env.test?

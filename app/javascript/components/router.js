@@ -116,7 +116,7 @@ const router = (props) =>
         },
         {
           path: "/map",
-          element: <MapView mapbox_token={props.mapbox_token} />,
+          element: <MapView mapboxToken={props.mapbox_token} />,
         },
         {
           path: "/top-shows",
