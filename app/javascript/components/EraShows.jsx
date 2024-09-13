@@ -39,7 +39,7 @@ const EraShows = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Shows shows={shows} setShows={setShows} tour_headers={true} />
+      <Shows shows={shows} setShows={setShows} tourHeaders={true} />
     </LayoutWrapper>
   );
 };

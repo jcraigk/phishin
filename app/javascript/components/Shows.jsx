@@ -6,7 +6,7 @@ import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
-const Shows = ({ shows, setShows, numbering = false, tour_headers = false }) => {
+const Shows = ({ shows, setShows, numbering = false, tourHeaders = false }) => {
   const { setAlert, setNotice } = useNotification();
   const { activeTrack } = useOutletContext();
 
@@ -60,7 +60,7 @@ const Shows = ({ shows, setShows, numbering = false, tour_headers = false }) => 
 
         return (
           <React.Fragment key={show.id}>
-            {isNewTour && tour_headers && (
+            {isNewTour && tourHeaders && (
               <div className="section-title">
                 <div className="title-left">{show.tour_name}</div>
                 <span className="detail-right">{tourShowCount} shows</span>
