@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
+import { authFetch } from "./utils";
 
 const TodayShows = () => {
   const [shows, setShows] = useState([]);
@@ -24,7 +25,7 @@ const TodayShows = () => {
     const fetchShows = async () => {
       const todayDate = getTodayDate();
       try {
-        const response = await fetch(`/api/v2/shows/day_of_year/${todayDate}?sort=${sortBy}`);
+        const response = await authFetch(`/api/v2/shows/day_of_year/${todayDate}?sort=${sortBy}`);
         const data = await response.json();
         setShows(data.shows || []);
       } catch (error) {

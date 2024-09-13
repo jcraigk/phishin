@@ -2,24 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
+import { authFetch } from "./utils";
 
 const VenueShows = () => {
-  const { venue_slug } = useParams();
+  const { venueSlug } = useParams();
   const [shows, setShows] = useState([]);
   const [venue, setVenue] = useState(null);
 
   useEffect(() => {
     const fetchShows = async () => {
       try {
-        const response = await fetch(
-          `/api/v2/shows?venue_slug=${venue_slug}&per_page=1000`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "X-Auth-Token": localStorage.getItem("jwt"),
-            },
-          }
-        );
+        const response = await authFetch(`/api/v2/shows?venue_slug=${venueSlug}&per_page=1000`);
         const data = await response.json();
         setShows(data.shows);
       } catch (error) {
@@ -29,7 +22,7 @@ const VenueShows = () => {
 
     const fetchVenue = async () => {
       try {
-        const response = await fetch(`/api/v2/venues/${venue_slug}`);
+        const response = await fetch(`/api/v2/venues/${venueSlug}`);
         const data = await response.json();
         setVenue(data);
       } catch (error) {
@@ -39,7 +32,7 @@ const VenueShows = () => {
 
     fetchShows();
     fetchVenue();
-  }, [venue_slug]);
+  }, [venueSlug]);
 
   const sidebarContent = venue ? (
     <div className="sidebar-content">

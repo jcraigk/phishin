@@ -1,7 +1,7 @@
 import React from "react";
 import PageWrapper from "./PageWrapper";
 
-const Faq = ({ contact_email }) => {
+const Faq = ({ contactEmail }) => {
   return (
     <PageWrapper>
       <h1 className="title">Frequently Asked Questions</h1>
@@ -18,8 +18,8 @@ const Faq = ({ contact_email }) => {
           https://phish.com/#/faq/taping-guidelines
         </a>.
         If you know any of the material on this site to be in violation of Phish's policy, please send an email to{" "}
-        <a href={`mailto:${contact_email}`} target="_blank">
-          {contact_email}
+        <a href={`mailto:${contactEmail}`} target="_blank">
+          {contactEmail}
         </a>.
       </p>
 
@@ -47,8 +47,8 @@ const Faq = ({ contact_email }) => {
       </p>
       <p>
         If you are aware of a source that is superior to the one on the site, please send an email to{" "}
-        <a href={`mailto:${contact_email}`} target="_blank">
-          {contact_email}
+        <a href={`mailto:${contactEmail}`} target="_blank">
+          {contactEmail}
         </a> and include a link to download the source in question.
       </p>
 

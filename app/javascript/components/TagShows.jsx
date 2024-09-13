@@ -3,9 +3,10 @@ import { useParams, Link } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
 import ReactPaginate from "react-paginate";
+import { authFetch } from "./utils";
 
 const TagShows = () => {
-  const { tag_slug } = useParams();
+  const { tagSlug } = useParams();
   const [shows, setShows] = useState([]);
   const [tagName, setTagName] = useState("");
   const [sortOption, setSortOption] = useState("date:desc");
@@ -18,7 +19,7 @@ const TagShows = () => {
       try {
         const response = await fetch(`/api/v2/tags`);
         const data = await response.json();
-        const tag = data.find(t => t.slug === tag_slug);
+        const tag = data.find(t => t.slug === tagSlug);
         if (tag) {
           setTagName(tag.name);
         }
@@ -29,7 +30,7 @@ const TagShows = () => {
 
     const fetchShows = async () => {
       try {
-        const response = await fetch(`/api/v2/shows?tag_slug=${tag_slug}&sort=${sortOption}&page=${page + 1}&per_page=${itemsPerPage}`);
+        const response = await authFetch(`/api/v2/shows?tag_slug=${tagSlug}&sort=${sortOption}&page=${page + 1}&per_page=${itemsPerPage}`);
         const data = await response.json();
         setShows(data.shows);
         setTotalPages(data.total_pages);
@@ -40,7 +41,7 @@ const TagShows = () => {
 
     fetchTagName();
     fetchShows();
-  }, [tag_slug, sortOption, page]);
+  }, [tagSlug, sortOption, page]);
 
   const handleSortChange = (event) => {
     setSortOption(event.target.value);

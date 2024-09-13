@@ -4,6 +4,7 @@ import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
 import ReactPaginate from "react-paginate";
 import { useNotification } from "./NotificationContext";
+import { authFetch } from "./utils";
 
 const MyTracks = () => {
   const [tracks, setTracks] = useState([]);
@@ -22,15 +23,7 @@ const MyTracks = () => {
       }
 
       try {
-        const response = await fetch(
-          `/api/v2/tracks?liked_by_user=true&sort=${sortOption}&page=${page + 1}&per_page=${itemsPerPage}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "X-Auth-Token": jwt,
-            },
-          }
-        );
+        const response = await authFetch(`/api/v2/tracks?liked_by_user=true&sort=${sortOption}&page=${page + 1}&per_page=${itemsPerPage}`);
         const data = await response.json();
         setTracks(data.tracks);
         setTotalPages(data.total_pages);

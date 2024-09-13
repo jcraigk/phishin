@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
+import { authFetch } from "./utils";
 
 const TopShows = ({ user }) => {
   const [shows, setShows] = useState([]);
@@ -9,7 +10,7 @@ const TopShows = ({ user }) => {
   useEffect(() => {
     const fetchShows = async () => {
       try {
-        const response = await fetch(`/api/v2/shows?per_page=40&sort=likes_count:desc`);
+        const response = await authFetch(`/api/v2/shows?per_page=40&sort=likes_count:desc`);
         const data = await response.json();
         setShows(data.shows);
       } catch (error) {

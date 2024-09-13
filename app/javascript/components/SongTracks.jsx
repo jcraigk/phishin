@@ -3,9 +3,10 @@ import { useParams } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
 import ReactPaginate from "react-paginate";
+import { authFetch } from "./utils";
 
 const SongTracks = () => {
-  const { song_slug } = useParams();
+  const { songSlug } = useParams();
   const [tracks, setTracks] = useState([]);
   const [songTitle, setSongTitle] = useState("");
   const [originalInfo, setOriginalInfo] = useState("");
@@ -18,7 +19,7 @@ const SongTracks = () => {
   useEffect(() => {
     const fetchSongTitle = async () => {
       try {
-        const response = await fetch(`/api/v2/songs/${song_slug}`);
+        const response = await fetch(`/api/v2/songs/${songSlug}`);
         const data = await response.json();
         setSongTitle(data.title);
 
@@ -34,7 +35,7 @@ const SongTracks = () => {
 
     const fetchTracks = async () => {
       try {
-        const response = await fetch(`/api/v2/tracks?song_slug=${song_slug}&sort=${sortOption}&page=${page + 1}&per_page=${itemsPerPage}`);
+        const response = await authFetch(`/api/v2/tracks?song_slug=${songSlug}&sort=${sortOption}&page=${page + 1}&per_page=${itemsPerPage}`);
         const data = await response.json();
         setTracks(data.tracks);
         setTotalEntries(data.total_entries);
@@ -46,7 +47,7 @@ const SongTracks = () => {
 
     fetchSongTitle();
     fetchTracks();
-  }, [song_slug, sortOption, page]);
+  }, [songSlug, sortOption, page]);
 
   const handleSortChange = (event) => {
     setSortOption(event.target.value);

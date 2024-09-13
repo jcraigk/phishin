@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import PageWrapper from "./PageWrapper";
 import { useNotification } from "../NotificationContext";
 
-const Signup = ({ onSignup }) => {
+const Signup = ({ handleLogin }) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,7 +26,7 @@ const Signup = ({ onSignup }) => {
     })
     .then(response => response.json().then(data => {
       if (response.ok) {
-        onSignup(data); // Calls the handleLogin function from App
+        handleLogin(data);
         setNotice("User created successfully - you are now logged in");
         navigate("/");
       } else {
