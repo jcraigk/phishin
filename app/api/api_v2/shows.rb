@@ -47,7 +47,7 @@ class ApiV2::Shows < ApiV2::Base
     end
     get do
       page = page_of_shows
-      liked_show_ids = current_user ? fetch_liked_show_ids(page[:shows]) : []
+      liked_show_ids = fetch_liked_show_ids(page[:shows])
       present \
         shows: ApiV2::Entities::Show.represent(page[:shows], liked_show_ids:),
         total_pages: page[:total_pages],
@@ -60,15 +60,17 @@ class ApiV2::Shows < ApiV2::Base
       success ApiV2::Entities::Show
     end
     get "random" do
+      show = Show.published.order("RANDOM()").first
       present \
-        Show.published.order("RANDOM()").first,
+        show,
         with: ApiV2::Entities::Show,
         include_tracks: true,
-        liked_by_user: current_user ? current_user.likes.exists?(likable: show) : false
+        liked_by_user: current_user&.likes&.exists?(likable: show) || false,
+        liked_track_ids: fetch_liked_track_ids(show)
     end
 
     desc "Fetch a show by date" do
-      detail "Fetch a show by its date, including associated tracks and tags"
+      detail "Fetch a specific show by its date, including associated tracks and tags"
       success ApiV2::Entities::Show
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
@@ -84,12 +86,13 @@ class ApiV2::Shows < ApiV2::Base
         show,
         with: ApiV2::Entities::Show,
         include_tracks: true,
-        liked_by_user: current_user ? current_user.likes.exists?(likable: show) : false,
+        liked_by_user: current_user&.likes&.exists?(likable: show) || false,
+        liked_track_ids: fetch_liked_track_ids(show),
         next_show_date: next_show_date(show.date),
         previous_show_date: previous_show_date(show.date)
     end
 
-    desc "Fetch shows on a specific day of the year" do
+    desc "Fetch shows played on a day of the year" do
       detail \
         "Fetch all shows that occurred on a specific day of the year " \
         "based on the specified date"
@@ -104,7 +107,7 @@ class ApiV2::Shows < ApiV2::Base
         Show.published
             .where("extract(month from date) = ?", date.month)
             .where("extract(day from date) = ?", date.day)
-      liked_show_ids = current_user ? fetch_liked_show_ids(shows) : []
+      liked_show_ids = fetch_liked_show_ids(shows)
       present \
         shows: ApiV2::Entities::Show.represent(shows, liked_show_ids:)
     rescue ArgumentError
@@ -131,10 +134,19 @@ class ApiV2::Shows < ApiV2::Base
     end
 
     def fetch_liked_show_ids(shows)
-      show_ids = shows.map(&:id)
+      return [] unless current_user
       Like.where(
         likable_type: "Show",
-        likable_id: show_ids,
+        likable_id: shows.map(&:id),
+        user_id: current_user.id
+      ).pluck(:likable_id)
+    end
+
+    def fetch_liked_track_ids(show)
+      return [] unless current_user
+      Like.where(
+        likable_type: "Track",
+        likable_id: show.tracks.map(&:id),
         user_id: current_user.id
       ).pluck(:likable_id)
     end

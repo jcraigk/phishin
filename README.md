@@ -9,8 +9,6 @@
  * Prerender caching? How does it work for logged in users? Just skip prerender for those?
  * share/play from timestamp
  * Disable email account creation - allow oauth login through api?
- * Make larger waveform images (or multiple ones)
- * prevent landscape on mobile
  * Handle "you must tap play" on mobile, etc
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)

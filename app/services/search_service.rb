@@ -4,7 +4,7 @@ class SearchService < BaseService
   param :term
   param :scope, default: proc { "all" }
 
-  LIMIT = 200
+  LIMIT = 50
 
   def initialize(term, scope = nil)
     super(term, scope || "all") # Ensure scope defaults to "all" if nil

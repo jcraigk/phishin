@@ -1,4 +1,4 @@
 .map-container {
-  border-radius: 12px; /* Add border radius */
-  // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Optional shadow for better appearance */
+  border-radius: var(--bulma-radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 }

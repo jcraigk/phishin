@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_08_22_053815) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_13_000444) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
@@ -61,6 +61,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_22_053815) do
     t.integer "likable_id"
     t.integer "user_id"
     t.datetime "created_at", precision: nil
+    t.index ["likable_id", "likable_type", "user_id"], name: "index_likes_on_likable_and_user_uniq", unique: true
     t.index ["likable_id"], name: "index_likes_on_likable_id"
     t.index ["likable_type"], name: "index_likes_on_likable_type"
     t.index ["user_id"], name: "index_likes_on_user_id"

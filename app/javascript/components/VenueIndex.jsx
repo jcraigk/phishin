@@ -18,8 +18,9 @@ const VenueIndex = () => {
   useEffect(() => {
     const fetchVenues = async () => {
       try {
+        const encodedFirstChar = encodeURIComponent(firstChar);
         const response = await fetch(
-          `/api/v2/venues?page=${page + 1}&sort=${sortOption}&first_char=${firstChar}`
+          `/api/v2/venues?page=${page + 1}&sort=${sortOption}&first_char=${encodedFirstChar}`
         );
 
         if (!response.ok) {

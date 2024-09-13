@@ -21,17 +21,39 @@ class ApiV2::Search < ApiV2::Base
 
     get ":term" do
       return error!({ message: "Term too short" }, 400) if params[:term].length < 3
+      results = fetch_results(params[:term], params[:scope])
+      all_matched_shows = ([ results[:exact_show] ] + results[:other_shows]).compact
       present \
-        results(params[:term], params[:scope]),
-        with: ApiV2::Entities::SearchResults
+        results,
+        with: ApiV2::Entities::SearchResults,
+        liked_track_ids: fetch_liked_track_ids(results[:tracks]),
+        liked_show_ids: fetch_liked_show_ids(all_matched_shows)
     end
   end
 
   helpers do
-    def results(term, scope)
+    def fetch_results(term, scope)
       Rails.cache.fetch("api/v2/search/#{term}/#{scope}") do
         SearchService.new(term, scope).call
       end
+    end
+
+    def fetch_liked_track_ids(tracks)
+      return [] unless current_user
+      Like.where(
+        likable_type: "Track",
+        likable_id: tracks.map(&:id),
+        user_id: current_user.id
+      ).pluck(:likable_id)
+    end
+
+    def fetch_liked_show_ids(shows)
+      return [] unless current_user
+      Like.where(
+        likable_type: "Show",
+        likable_id: shows.map(&:id),
+        user_id: current_user.id
+      ).pluck(:likable_id)
     end
   end
 end
