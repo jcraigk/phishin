@@ -1,17 +1,8 @@
-// Images
-const images = require.context("../images", true)
-const imagePath = (name) => images(name, true)
+import ReactOnRails from "react-on-rails";
+import "../stylesheets/application.css.scss";
 
-// Global dependencies
-import "jquery/src/jquery"
-import "jquery-ujs"
-import "bootstrap/dist/js/bootstrap"
+import App from "../components/App";
 
-// CoffeeScript bundle
-import "../src/coffeescript/app.js.coffee"
-
-document.addEventListener("DOMContentLoaded", () => {
-  document.fonts.ready.then(() => {
-    document.body.classList.remove("fonts-loading");
-  });
+ReactOnRails.register({
+  App,
 });

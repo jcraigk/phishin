@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { formatDateLong, formatDurationShow, toggleLike, authFetch } from "./utils"; // Import toggleLike
+import { formatDateLong, formatDurationShow, toggleLike, authFetch } from "./utils";
 import ErrorPage from "./pages/ErrorPage";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
@@ -8,17 +8,18 @@ import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faCaretDown, faShare, faExternalLinkAlt, faCaretLeft, faCaretRight, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { useNotification } from "./NotificationContext";
+import { Helmet } from 'react-helmet-async';
 
 Modal.setAppElement("body");
 
 const Show = () => {
   const { routePath } = useParams();
   const [show, setShow] = useState(null);
-  const [tracks, setTracks] = useState([]); // State to hold the tracks
+  const [tracks, setTracks] = useState([]);
   const [error, setError] = useState(null);
   const { setNotice, setAlert } = useNotification();
   const [isDropdownActive, setIsDropdownActive] = useState(false);
-  const [isTaperNotesModalOpen, setIsTaperNotesModalOpen] = useState(false); // State for Taper Notes modal
+  const [isTaperNotesModalOpen, setIsTaperNotesModalOpen] = useState(false);
   const dropdownRef = useRef(null);
   const baseUrl = window.location.origin;
 
@@ -185,6 +186,7 @@ const Show = () => {
   );
 
   return (
+
     <LayoutWrapper sidebarContent={sidebarContent}>
       <Tracks tracks={tracks} setTracks={setTracks} showDates={false} setHeaders={true} />
     </LayoutWrapper>
