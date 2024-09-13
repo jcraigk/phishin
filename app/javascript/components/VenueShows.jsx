@@ -11,7 +11,15 @@ const VenueShows = () => {
   useEffect(() => {
     const fetchShows = async () => {
       try {
-        const response = await fetch(`/api/v2/shows?venue_slug=${venue_slug}&per_page=1000`);
+        const response = await fetch(
+          `/api/v2/shows?venue_slug=${venue_slug}&per_page=1000`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "X-Auth-Token": localStorage.getItem("jwt"),
+            },
+          }
+        );
         const data = await response.json();
         setShows(data.shows);
       } catch (error) {

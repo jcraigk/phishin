@@ -28,7 +28,15 @@ const Search = () => {
     setResults(null); // Clear old results while loading
 
     try {
-      const response = await fetch(`/api/v2/search/${searchTerm}?scope=${searchScope}`);
+      const response = await fetch(
+        `/api/v2/search/${searchTerm}?scope=${searchScope}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "X-Auth-Token": localStorage.getItem("jwt"),
+          },
+        }
+      );
       if (!response.ok) throw new Error("Search failed");
       const data = await response.json();
       setResults(data);

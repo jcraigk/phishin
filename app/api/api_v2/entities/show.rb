@@ -87,13 +87,13 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
   ) do |obj, opts|
     ApiV2::Entities::Track.represent \
       obj.tracks.sort_by(&:position),
-      opts.merge(exclude_show: true)
+      opts.merge(exclude_show: true, liked_by_user: nil, liked_track_ids: opts[:liked_track_ids])
   end
 
   expose(
     :liked_by_user
   ) do |obj, opts|
-    if opts.key?(:liked_by_user)
+    unless opts[:liked_by_user].nil?
       opts[:liked_by_user]
     else
       opts[:liked_show_ids]&.include?(obj.id) || false

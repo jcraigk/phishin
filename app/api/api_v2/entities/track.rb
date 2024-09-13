@@ -60,18 +60,14 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     documentation: {
       type: "String",
       desc: "URL to the MP3 file of the track"
-    } do |track|
-      track.mp3_url
-  end
+    }
 
   expose \
     :waveform_image_url,
     documentation: {
       type: "String",
       desc: "URL to the waveform image of the track"
-    } do |track|
-      track.waveform_image_url
-  end
+    }
 
   expose \
     :track_tags,
@@ -151,7 +147,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
   }
 
   expose :liked_by_user do |obj, opts|
-    if opts.key?(:liked_by_user)
+    unless opts[:liked_by_user].nil?
       opts[:liked_by_user]
     else
       opts[:liked_track_ids]&.include?(obj.id) || false

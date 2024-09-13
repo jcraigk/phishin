@@ -12,13 +12,18 @@ const MapView = ({ mapbox_token }) => {
   const mapContainer = useRef(null);
   const [map, setMap] = useState(null);
 
-  const [formData, setFormData] = useState({
-    term: "Burlington, VT",
-    distance: "10",
-    start_date: "1983-12-02",
-    end_date: new Date().toISOString().split("T")[0],
-    us_state: "(US State)"
-  });
+  const getQueryParams = () => {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      term: params.get("term") || "Burlington, VT",
+      distance: params.get("distance") || "10",
+      start_date: params.get("start_date") || "1983-12-02",
+      end_date: params.get("end_date") || new Date().toISOString().split("T")[0],
+      us_state: params.get("us_state") || "(US State)"
+    };
+  };
+
+  const [formData, setFormData] = useState(getQueryParams());
 
   const defaultCoordinates = { lat: 44.47, lng: -73.21 }; // Burlington, VT
   const defaultRadius = 10;
@@ -26,7 +31,13 @@ const MapView = ({ mapbox_token }) => {
   const isStateSelected = formData.us_state !== "(US State)";
 
   useEffect(() => {
-    initializeMap(defaultCoordinates.lat, defaultCoordinates.lng, defaultRadius);
+    const { term, us_state } = formData;
+
+    if (term !== "Burlington, VT" || us_state !== "(US State)") {
+      handleSubmit(new Event("submit"));
+    } else {
+      initializeMap(defaultCoordinates.lat, defaultCoordinates.lng, defaultRadius);
+    }
   }, [mapbox_token]);
 
   const initializeMap = (lat, lng, radius) => {

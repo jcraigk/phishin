@@ -50,7 +50,6 @@ const Shows = ({ shows, setShows, numbering = false, tour_headers = false }) => 
   return (
     <ul>
       {shows.map((show, index) => {
-        console.log(shows)
         const isNewTour = show.tour_name !== lastTourName;
 
         if (isNewTour) {

@@ -1,5 +1,5 @@
 class ApiV2::Entities::SearchResults < ApiV2::Entities::Base
-  expose \
+  expose(
     :exact_show,
     using: ApiV2::Entities::Show,
     documentation: {
@@ -9,10 +9,10 @@ class ApiV2::Entities::SearchResults < ApiV2::Entities::Base
         "Returns a show object including venue and date information. " \
         "Null if no exact match is found."
     }
+  )
 
-  expose \
+  expose(
     :other_shows,
-    using: ApiV2::Entities::Show,
     default: [],
     documentation: {
       type: "Array[Object]",
@@ -21,6 +21,11 @@ class ApiV2::Entities::SearchResults < ApiV2::Entities::Base
         "from any year. Returns an array of show objects including date " \
         "and venue details. Empty array if no shows are found."
     }
+  ) do |obj, opts|
+    ApiV2::Entities::Show.represent \
+      obj[:other_shows],
+      opts.merge(liked_by_user: nil, liked_show_ids: opts[:liked_show_ids])
+  end
 
   expose \
     :songs,
@@ -82,9 +87,8 @@ class ApiV2::Entities::SearchResults < ApiV2::Entities::Base
         "track and show details. Empty array if no track tags match."
     }
 
-  expose \
+  expose(
     :tracks,
-    using: ApiV2::Entities::Track,
     default: [],
     documentation: {
       type: "Array[Object]",
@@ -94,6 +98,11 @@ class ApiV2::Entities::SearchResults < ApiV2::Entities::Base
         "Each track object includes show and track details. Empty array " \
         "if no tracks match."
     }
+  ) do |obj, opts|
+    ApiV2::Entities::Track.represent \
+      obj[:tracks],
+      opts.merge(exclude_show: true, liked_by_user: nil, liked_track_ids: opts[:liked_track_ids])
+  end
 
   expose \
     :tags,
