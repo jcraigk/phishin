@@ -12,7 +12,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
   const progressBarRef = useRef();
   const [currentTime, setCurrentTime] = useState(0);
   const [fadeClass, setFadeClass] = useState("");
-  const { setAlert, setNotice } = useNotification();
+  const { setAlert } = useNotification();
 
   const togglePlayPause = () => {
     if (audioRef.current.paused) {

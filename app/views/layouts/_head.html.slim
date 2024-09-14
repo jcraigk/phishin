@@ -1,0 +1,8 @@
+    title = App.app_name
+    link rel="icon" href="/favicon.ico"
+    = render "layouts/meta"
+    = auto_discovery_link_tag :rss, "/feeds/rss", title: "#{App.app_name} Updates"
+    = csrf_meta_tags
+    = javascript_pack_tag "application"
+    = stylesheet_pack_tag "application"
+    = render "analytics/plausible"

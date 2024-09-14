@@ -1,19 +1,7 @@
 doctype html
 html data-theme="light"
-  head
-    title = App.app_name
-    meta name="Description" content=App.app_desc
-    meta charset="Unicode/UTF-8"
-    meta name="viewport" content="width=device-width, initial-scale=1"
-    link rel="icon" href="/favicon.ico"
-    = auto_discovery_link_tag :rss, "/feeds/rss", title: "#{App.app_name} Updates"
-    = csrf_meta_tags
-    = javascript_pack_tag "application"
-    = stylesheet_pack_tag "application"
-    = render "analytics/plausible"
-
+  head = render "layouts/head"
   = render "analytics/google"
-
   body
     = render "analytics/swetrix"
     = yield
