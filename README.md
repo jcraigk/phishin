@@ -20,8 +20,10 @@
  * Remove lyrics / dialogue
  * Canonical URLs in Helmet
  * disable swetrix - or sign up
- * /missing-content
+ * /missing-content -> DO WE REALLY NEED THIS?
  * remove data-theme="light" (and maybe bulma entirely)
+ * tracks displayed in non-show contexts should have their dates linked to show via button so you can still play the current page as a playlist
+ * https://github.com/remix-run/react-router/blob/v4.3.1/packages/react-router-dom/docs/guides/scroll-restoration.md ?
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)
 

@@ -1,18 +1,22 @@
-/ Open Graph Protocol (embed previews)
-meta property='og:type' content='music.playlist'
+meta name="Description" content=App.app_desc
+meta charset="Unicode/UTF-8"
+meta name="viewport" content="width=device-width, initial-scale=1"
+
+link rel="canonical" href="#{request.base_url}#{request.path}"
+
+/ OpenGraph is overridden by Helmet in React components
+meta property='og:type' content='website'
 meta property='og:url' content=request.original_url
 meta property='og:image' content=image_pack_url('static/images/logo-opengraph.png')
 meta property='og:image:alt' content="#{App.app_name} logo"
-meta property='og:title' content="#{@ogp_title.presence || App.app_name}"
-- if @ogp_audio_url.present?
-  meta property='og:audio' content=@ogp_audio_url
+meta property='og:title' content=App.app_name
 
 / https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards
-meta name='twitter:card' content='summary'
-meta name='twitter:site' content=App.twitter_handle
-meta name='twitter:title' content="#{@ogp_title.presence || App.app_name}"
-meta name='twitter:description' content=App.app_desc
-meta name='twitter:image' content=image_pack_url('static/images/logo-twitter-card.png')
-meta name='twitter:image:alt' content='Phish.in logo'
-- if @ogp_audio_url.present?
-  meta name='twitter:player:stream' content=@ogp_audio_url
+/ meta name='twitter:card' content='summary'
+/ meta name='twitter:site' content=App.twitter_handle
+/ meta name='twitter:title' content="#{@ogp_title.presence || App.app_name}"
+/ meta name='twitter:description' content=App.app_desc
+/ meta name='twitter:image' content=image_pack_url('static/images/logo-twitter-card.png')
+/ meta name='twitter:image:alt' content='Phish.in logo'
+/ - if @ogp_audio_url.present?
+/   meta name='twitter:player:stream' content=@ogp_audio_url
