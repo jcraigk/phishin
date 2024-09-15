@@ -19,7 +19,6 @@ const Shows = ({ shows, setShows, numbering = false, tourHeaders = false }) => {
       return;
     }
 
-    // Call the toggleLike utility function
     const result = await toggleLike({
       id: show.id,
       type: "Show",
@@ -30,7 +29,6 @@ const Shows = ({ shows, setShows, numbering = false, tourHeaders = false }) => {
     if (result.success) {
       setNotice("Like saved");
 
-      // Update the shows array based on whether it's a single show or multiple shows
       setShows((prevShows) => {
         const updatedShows = Array.isArray(prevShows) ? prevShows : [prevShows];
 

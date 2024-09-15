@@ -1,25 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import LayoutWrapper from "./LayoutWrapper";
-import Shows from "./Shows";
 import { authFetch } from "./utils";
 
+export const topShowsLoader = async () => {
+  try {
+    const response = await authFetch(`/api/v2/shows?per_page=40&sort=likes_count:desc`);
+    if (!response.ok) throw response;
+    const data = await response.json();
+    return { shows: data.shows };
+  } catch (error) {
+    throw new Response("Error fetching data", { status: 500 });
+  }
+};
+
+import React from "react";
+import { useLoaderData } from "react-router-dom";
+import LayoutWrapper from "./LayoutWrapper";
+import Shows from "./Shows";
+
 const TopShows = ({ user }) => {
-  const [shows, setShows] = useState([]);
-
-  useEffect(() => {
-    const fetchShows = async () => {
-      try {
-        const response = await authFetch(`/api/v2/shows?per_page=40&sort=likes_count:desc`);
-        const data = await response.json();
-        setShows(data.shows);
-      } catch (error) {
-        console.error("Error fetching shows:", error);
-      }
-    };
-
-    fetchShows();
-  }, []);
+  const { shows } = useLoaderData();
 
   const sidebarContent = (
     <div className="sidebar-content">
@@ -39,9 +37,10 @@ const TopShows = ({ user }) => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Shows shows={shows} setShows={setShows} numbering={true} />
+      <Shows shows={shows} numbering={true} />
     </LayoutWrapper>
   );
 };
 
 export default TopShows;
+

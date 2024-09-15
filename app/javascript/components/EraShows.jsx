@@ -12,16 +12,13 @@ export const eraShowsLoader = async ({ params }) => {
 
   try {
     const response = await authFetch(url);
-    if (!response.ok) throw new Error("Error fetching data");
+    if (!response.ok) throw response;
     const data = await response.json();
-    console.log("Loader data:", data);  // Log the fetched data
     return { shows: data.shows, routePath };
   } catch (error) {
-    console.error("Loader error:", error);  // Log any errors
     throw new Response("Error fetching data", { status: 500 });
   }
 };
-
 
 import React from "react";
 import { useLoaderData } from "react-router-dom";

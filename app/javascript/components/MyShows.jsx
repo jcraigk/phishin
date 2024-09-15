@@ -1,47 +1,46 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { authFetch } from "./utils";
+
+export const myShowsLoader = async ({ request }) => {
+  const url = new URL(request.url);
+  const page = url.searchParams.get("page") || 1;
+  const sortOption = url.searchParams.get("sort") || "date:desc";
+
+  const jwt = typeof window !== "undefined" ? localStorage.getItem("jwt") : null;
+  if (!jwt) {
+    return { shows: [], totalPages: 1, page: 0, sortOption };
+  }
+
+  try {
+    const response = await authFetch(`/api/v2/shows?liked_by_user=true&sort=${sortOption}&page=${page}&per_page=10`);
+    if (!response.ok) throw response;
+    const data = await response.json();
+    return {
+      shows: data.shows,
+      totalPages: data.total_pages,
+      page: parseInt(page, 10) - 1,
+      sortOption,
+    };
+  } catch (error) {
+    throw new Response("Error fetching data", { status: 500 });
+  }
+};
+
+import React from "react";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
 import ReactPaginate from "react-paginate";
-import { useNotification } from "./NotificationContext";
-import { authFetch } from "./utils";
 
 const MyShows = () => {
-  const [shows, setShows] = useState([]);
-  const [sortOption, setSortOption] = useState("date:desc");
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10;
-  const { setAlert } = useNotification();
-
-  useEffect(() => {
-    const fetchLikedShows = async () => {
-      const jwt = localStorage.getItem("jwt");
-      if (!jwt) {
-        setAlert("Please log in to view your liked shows");
-        return;
-      }
-
-      try {
-        const response = await authFetch(`/api/v2/shows?liked_by_user=true&sort=${sortOption}&page=${page + 1}&per_page=${itemsPerPage}`);
-        const data = await response.json();
-        setShows(data.shows);
-        setTotalPages(data.total_pages);
-      } catch (error) {
-        console.error("Error fetching liked shows:", error);
-      }
-    };
-
-    fetchLikedShows();
-  }, [sortOption, page]);
+  const { shows, totalPages, page, sortOption } = useLoaderData();
+  const navigate = useNavigate();
 
   const handleSortChange = (event) => {
-    setSortOption(event.target.value);
-    setPage(0);
+    navigate(`?page=1&sort=${event.target.value}`);
   };
 
   const handlePageClick = (data) => {
-    setPage(data.selected);
+    navigate(`?page=${data.selected + 1}&sort=${sortOption}`);
   };
 
   const sidebarContent = (
@@ -67,7 +66,7 @@ const MyShows = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Shows shows={shows} setShows={setShows} numbering={false} setHeaders={false} />
+      <Shows shows={shows} setShows={() => {}} numbering={false} setHeaders={false} />
       {totalPages > 1 && (
         <ReactPaginate
           previousLabel={"Previous"}

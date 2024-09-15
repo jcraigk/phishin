@@ -1,55 +1,52 @@
-import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { authFetch } from "./utils";
+
+export const tagShowsLoader = async ({ params, request }) => {
+  const url = new URL(request.url);
+  const page = url.searchParams.get("page") || 1;
+  const sortOption = url.searchParams.get("sort") || "date:desc";
+  const { tagSlug } = params;
+
+  try {
+    const tagResponse = await fetch(`/api/v2/tags`);
+    if (!tagResponse.ok) throw tagResponse;
+    const tagData = await tagResponse.json();
+    const tag = tagData.find(t => t.slug === tagSlug);
+    const tagName = tag ? tag.name : "Unknown Tag";
+
+    const showsResponse = await authFetch(
+      `/api/v2/shows?tag_slug=${tagSlug}&sort=${sortOption}&page=${page}&per_page=10`
+    );
+    if (!showsResponse.ok) throw showsResponse;
+    const showsData = await showsResponse.json();
+
+    return {
+      tagName,
+      shows: showsData.shows,
+      totalPages: showsData.total_pages,
+      page: parseInt(page, 10) - 1,
+      sortOption,
+    };
+  } catch (error) {
+    throw new Response("Error fetching data", { status: 500 });
+  }
+};
+
+import React from "react";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
 import ReactPaginate from "react-paginate";
-import { authFetch } from "./utils";
 
 const TagShows = () => {
-  const { tagSlug } = useParams();
-  const [shows, setShows] = useState([]);
-  const [tagName, setTagName] = useState("");
-  const [sortOption, setSortOption] = useState("date:desc");
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10;
-
-  useEffect(() => {
-    const fetchTagName = async () => {
-      try {
-        const response = await fetch(`/api/v2/tags`);
-        const data = await response.json();
-        const tag = data.find(t => t.slug === tagSlug);
-        if (tag) {
-          setTagName(tag.name);
-        }
-      } catch (error) {
-        console.error("Error fetching tag:", error);
-      }
-    };
-
-    const fetchShows = async () => {
-      try {
-        const response = await authFetch(`/api/v2/shows?tag_slug=${tagSlug}&sort=${sortOption}&page=${page + 1}&per_page=${itemsPerPage}`);
-        const data = await response.json();
-        setShows(data.shows);
-        setTotalPages(data.total_pages);
-      } catch (error) {
-        console.error("Error fetching shows:", error);
-      }
-    };
-
-    fetchTagName();
-    fetchShows();
-  }, [tagSlug, sortOption, page]);
+  const { tagName, shows, totalPages, page, sortOption } = useLoaderData();
+  const navigate = useNavigate();
 
   const handleSortChange = (event) => {
-    setSortOption(event.target.value);
-    setPage(0);
+    navigate(`?page=1&sort=${event.target.value}`);
   };
 
   const handlePageClick = (data) => {
-    setPage(data.selected);
+    navigate(`?page=${data.selected + 1}&sort=${sortOption}`);
   };
 
   const sidebarContent = (
@@ -70,7 +67,7 @@ const TagShows = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Shows shows={shows} setShows={setShows} numbering={false} setHeaders={false} />
+      <Shows shows={shows} setShows={() => {}} numbering={false} setHeaders={false} />
       {totalPages > 1 && (
         <ReactPaginate
           previousLabel={"Previous"}
