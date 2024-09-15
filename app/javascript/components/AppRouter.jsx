@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
-import router from "./router";
+import clientRouter from "./clientRouter";
+import serverRouter from "./serverRouter";
 import { useNotification } from "./NotificationContext";
 
 const AppRouter = (props) => {
-  // Initialize the user state as null for SSR (assuming user is logged out initially)
   const [user, setUser] = useState(null);
-
   const { setAlert, setNotice } = useNotification();
 
-  // Handle client-side login after hydration
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // Only check localStorage on the client side after hydration
       const jwt = localStorage.getItem("jwt");
       const username = localStorage.getItem("username");
       const email = localStorage.getItem("email");
@@ -23,14 +20,12 @@ const AppRouter = (props) => {
     }
   }, []);
 
-  // React to props passed for logging in
   useEffect(() => {
     if (props.jwt && props.username && props.email) {
       handleLogin({ jwt: props.jwt, username: props.username, email: props.email });
     }
   }, [props.jwt, props.username, props.email]);
 
-  // React to notifications or alerts passed via props
   useEffect(() => {
     if (props.notice) {
       setNotice(props.notice);
@@ -40,7 +35,6 @@ const AppRouter = (props) => {
     }
   }, [props.notice, props.alert]);
 
-  // Handle login and store user information in localStorage
   const handleLogin = (userData) => {
     if (typeof window !== "undefined") {
       localStorage.setItem("jwt", userData.jwt);
@@ -51,7 +45,6 @@ const AppRouter = (props) => {
     setNotice("You are now logged in as " + userData.email);
   };
 
-  // Handle logout and remove user information from localStorage
   const handleLogout = () => {
     if (typeof window !== "undefined") {
       localStorage.removeItem("jwt");
@@ -62,9 +55,12 @@ const AppRouter = (props) => {
     setNotice("Logged out successfully");
   };
 
-  // Render the router on both client and server
+  const RouterComponent = typeof window === "undefined" ? serverRouter : clientRouter;
+
   return (
-    <RouterProvider router={router({ ...props, user, handleLogin, handleLogout })} />
+    <RouterProvider
+      router={RouterComponent({ ...props, user, handleLogin, handleLogout })}
+    />
   );
 };
 

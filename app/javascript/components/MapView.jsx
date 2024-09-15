@@ -13,6 +13,7 @@ const MapView = ({ mapboxToken }) => {
   const [map, setMap] = useState(null);
 
   const getQueryParams = () => {
+    // TODO handle location in SSR
     const params = new URLSearchParams(window.location.search);
     return {
       term: params.get("term") || "Burlington, VT",

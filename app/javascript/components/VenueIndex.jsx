@@ -1,58 +1,49 @@
-import React, { useEffect, useState } from "react";
+export const venueIndexLoader = async ({ request }) => {
+  const url = new URL(request.url);
+  const page = url.searchParams.get("page") || 1;
+  const sortOption = url.searchParams.get("sort") || "name:asc";
+  const firstChar = url.searchParams.get("first_char") || "";
+
+  try {
+    const response = await fetch(`/api/v2/venues?page=${page}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}`);
+    if (!response.ok) throw new Error("Error fetching data");
+    const data = await response.json();
+    return {
+      venues: data.venues,
+      totalPages: data.total_pages,
+      totalEntries: data.total_entries,
+      page: parseInt(page, 10) - 1,
+      sortOption,
+      firstChar
+    };
+  } catch (error) {
+    throw new Response("Error fetching data", { status: 500 });
+  }
+};
+
+import React from "react";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import { formatNumber } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
 import Venues from "./Venues";
 
-// List of first characters for the filter (A-Z and # for numbers)
 const FIRST_CHAR_LIST = ["#", ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))];
 
 const VenueIndex = () => {
-  const [venues, setVenues] = useState([]);
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalEntries, setTotalEntries] = useState(0);
-  const [sortOption, setSortOption] = useState("name:asc");
-  const [firstChar, setFirstChar] = useState("");
-
-  useEffect(() => {
-    const fetchVenues = async () => {
-      try {
-        const encodedFirstChar = encodeURIComponent(firstChar);
-        const response = await fetch(
-          `/api/v2/venues?page=${page + 1}&sort=${sortOption}&first_char=${encodedFirstChar}`
-        );
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error);
-        }
-
-        const data = await response.json();
-
-        setVenues(data.venues);
-        setTotalPages(data.total_pages);
-        setTotalEntries(data.total_entries);
-      } catch (error) {
-        console.error("Error fetching venues:", error.message);
-      }
-    };
-
-    fetchVenues();
-  }, [page, sortOption, firstChar]);
+  const { venues, totalPages, totalEntries, page, sortOption, firstChar } = useLoaderData();
+  const navigate = useNavigate();
 
   const handlePageClick = (data) => {
-    setPage(data.selected);
+    navigate(`?page=${data.selected + 1}&sort=${sortOption}&first_char=${firstChar}`);
   };
 
   const handleSortChange = (event) => {
-    setSortOption(event.target.value);
-    setPage(0); // Reset to first page when sort changes
+    navigate(`?page=1&sort=${event.target.value}&first_char=${firstChar}`);
   };
 
   const handleFirstCharChange = (event) => {
-    setFirstChar(event.target.value);
-    setPage(0); // Reset to first page when filter changes
+    navigate(`?page=1&sort=${sortOption}&first_char=${event.target.value}`);
   };
 
   return (
@@ -70,11 +61,7 @@ const VenueIndex = () => {
             </select>
           </div>
           <div className="select is-fullwidth mt-2">
-            <select
-              id="first-char-filter"
-              value={firstChar}
-              onChange={handleFirstCharChange}
-            >
+            <select id="first-char-filter" value={firstChar} onChange={handleFirstCharChange}>
               <option value="">All names</option>
               {FIRST_CHAR_LIST.map((char) => (
                 <option key={char} value={char}>
@@ -86,10 +73,6 @@ const VenueIndex = () => {
         </div>
       }
     >
-      {/* <div className="section-title mobile-title">
-        <div className="title-left">Venues</div>
-        <span className="detail-right">{formatNumber(totalEntries)} total</span>
-      </div> */}
       <Venues venues={venues} />
       <ReactPaginate
         previousLabel={"Previous"}

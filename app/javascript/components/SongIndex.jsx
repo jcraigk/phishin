@@ -1,42 +1,41 @@
-import React, { useEffect, useState } from "react";
+export const songIndexLoader = async ({ request }) => {
+  const url = new URL(request.url);
+  const page = url.searchParams.get("page") || 1;
+  const sortOption = url.searchParams.get("sort") || "title:asc";
+
+  try {
+    const response = await fetch(`/api/v2/songs?page=${page}&sort=${sortOption}`);
+    if (!response.ok) throw new Error("Error fetching data");
+    const data = await response.json();
+    return {
+      songs: data.songs,
+      totalPages: data.total_pages,
+      totalEntries: data.total_entries,
+      page: parseInt(page, 10) - 1,
+      sortOption
+    };
+  } catch (error) {
+    throw new Response("Error fetching data", { status: 500 });
+  }
+};
+
+import React from "react";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { formatNumber } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
 import Songs from "./Songs";
 import ReactPaginate from "react-paginate";
 
 const SongIndex = () => {
-  const [songs, setSongs] = useState([]);
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalEntries, setTotalEntries] = useState(0);
-  const [sortOption, setSortOption] = useState("title:asc");
-
-  useEffect(() => {
-    const fetchSongs = async () => {
-      try {
-        const response = await fetch(
-          `/api/v2/songs?page=${page + 1}&sort=${sortOption}`
-        );
-        const data = await response.json();
-
-        setSongs(data.songs);
-        setTotalPages(data.total_pages);
-        setTotalEntries(data.total_entries);
-      } catch (error) {
-        console.error("Error fetching songs:", error);
-      }
-    };
-
-    fetchSongs();
-  }, [page, sortOption]);
+  const { songs, totalPages, totalEntries, page, sortOption } = useLoaderData();
+  const navigate = useNavigate();
 
   const handlePageClick = (data) => {
-    setPage(data.selected);
+    navigate(`?page=${data.selected + 1}&sort=${sortOption}`);
   };
 
   const handleSortChange = (event) => {
-    setSortOption(event.target.value);
-    setPage(0);
+    navigate(`?page=1&sort=${event.target.value}`);
   };
 
   return (
@@ -54,10 +53,6 @@ const SongIndex = () => {
         </div>
       </div>
     }>
-      {/* <div className="section-title mobile-title">
-        <div className="title-left">Songs</div>
-        <span className="detail-right">{formatNumber(totalEntries)} total</span>
-      </div> */}
       <Songs songs={songs} />
       <ReactPaginate
         previousLabel={"Previous"}

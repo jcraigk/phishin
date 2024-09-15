@@ -1,7 +1,27 @@
+import { authFetch } from "./utils";
+
+export const showLoader = async ({ params }) => {
+  const { routePath } = params;
+  const url = `/api/v2/shows/${routePath}`;
+
+  try {
+    const response = await authFetch(url);
+
+    if (response.status === 404) {
+      throw new Response("Show not found", { status: 404 });
+    }
+
+    const data = await response.json();
+    return { show: data };
+  } catch (error) {
+    if (error instanceof Response) throw error;
+    throw new Response("Error fetching data", { status: 500 });
+  }
+};
+
 import React, { useEffect, useState, useRef } from "react";
-import { useParams, Link } from "react-router-dom";
-import { formatDateMed, formatDateLong, formatDurationShow, toggleLike, authFetch } from "./utils";
-import ErrorPage from "./pages/ErrorPage";
+import { Link, useLoaderData } from "react-router-dom";
+import { formatDateMed, formatDateLong, formatDurationShow, toggleLike } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
 import Modal from "react-modal";
@@ -13,56 +33,14 @@ import { Helmet } from 'react-helmet-async';
 Modal.setAppElement("body");
 
 const Show = () => {
-  const { routePath } = useParams();
-  const [show, setShow] = useState(null);
-  const [tracks, setTracks] = useState([]);
-  const [error, setError] = useState(null);
+  const { show } = useLoaderData();
+  const [tracks, setTracks] = useState(show.tracks);
   const { setNotice, setAlert } = useNotification();
   const [isDropdownActive, setIsDropdownActive] = useState(false);
   const [isTaperNotesModalOpen, setIsTaperNotesModalOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const baseUrl = window.location.origin;
-
-  useEffect(() => {
-    const fetchShow = async () => {
-      try {
-        const response = await authFetch(`/api/v2/shows/${routePath}`);
-        if (response.status === 404) {
-          setError(`No data was found for the date ${routePath}`);
-          return;
-        }
-        const data = await response.json();
-        setShow(data);
-        setTracks(data.tracks); // Set the tracks when fetching show data
-      } catch (error) {
-        console.error("Error fetching show:", error);
-        setError("An unexpected error has occurred.");
-      }
-    };
-
-    fetchShow();
-  }, [routePath]);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsDropdownActive(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [dropdownRef]);
-
-  if (error) {
-    return <ErrorPage message={error} />;
-  }
-
-  if (!show) {
-    return <div>Loading...</div>;
-  }
+  // const baseUrl = window.location.origin; // TODO: pass this in as prop for SSR
+  const baseUrl = "";
 
   const handleLikeToggle = async () => {
     const jwt = localStorage.getItem("jwt");
@@ -116,7 +94,7 @@ const Show = () => {
   const sidebarContent = (
     <>
       <Helmet>
-        <meta property="og:title" content="Listen to {formatDateLong(show.date)}" />
+        <meta property="og:title" content={`Listen to ${formatDateLong(show.date)}`} />
         <meta property="og:type" content="music.playlist" />
         <meta property="og:audio" content={show.tracks[0].mp3_url} />
       </Helmet>
@@ -193,7 +171,6 @@ const Show = () => {
   );
 
   return (
-
     <LayoutWrapper sidebarContent={sidebarContent}>
       <Tracks tracks={tracks} setTracks={setTracks} showDates={false} setHeaders={true} />
     </LayoutWrapper>

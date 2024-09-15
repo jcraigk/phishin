@@ -1,36 +1,38 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+export const erasLoader = async () => {
+  try {
+    const response = await fetch("/api/v2/years");
+    if (!response.ok) throw new Error("Error fetching data");
+    const data = await response.json();
+
+    const erasData = data.reduce((acc, { era, period, shows_count, venues_count }) => {
+      if (!acc[era]) {
+        acc[era] = { periods: [], total_shows: 0 };
+      }
+      acc[era].periods.push({ period, shows_count, venues_count });
+      acc[era].total_shows += shows_count;
+      return acc;
+    }, {});
+
+    Object.keys(erasData).forEach((era) => {
+      erasData[era].periods.sort((a, b) => b.period.localeCompare(a.period));
+    });
+
+    return erasData;
+  } catch (error) {
+    console.error("Error fetching data", error);
+    throw new Response("Error fetching eras data", { status: 500 });
+  }
+};
+
+import React from "react";
+import { Link, useLoaderData } from "react-router-dom";
 import { formatNumber } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
 import relistenIcon from "../images/icon-relisten.png";
 import splendorIcon from "../images/icon-splendor.png";
 
 const Eras = () => {
-  const [eras, setEras] = useState({});
-
-  useEffect(() => {
-    fetch("/api/v2/years")
-      .then(response => response.json().then(data => {
-        if (response.ok) {
-          const erasData = data.reduce((acc, { era, period, shows_count, venues_count }) => {
-            if (!acc[era]) {
-              acc[era] = { periods: [], total_shows: 0 };
-            }
-            acc[era].periods.push({ period, shows_count, venues_count });
-            acc[era].total_shows += shows_count;
-            return acc;
-          }, {});
-
-          Object.keys(erasData).forEach((era) => {
-            erasData[era].periods.sort((a, b) => b.period.localeCompare(a.period));
-          });
-
-          setEras(erasData);
-        } else {
-          console.error("Error fetching data");
-        }
-      }));
-  }, []);
+  const eras = useLoaderData();
 
   const sidebarContent = (
     <div className="sidebar-content">
@@ -90,3 +92,4 @@ const Eras = () => {
 };
 
 export default Eras;
+

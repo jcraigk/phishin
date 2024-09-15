@@ -5,9 +5,11 @@ import Footer from "./Footer";
 import Player from "./Player";
 import { useNotification } from "./NotificationContext";
 
-const Layout = ({ user, onLogout }) => {
+const Layout = ({ user, onLogout, location: ssrLocation }) => {
   const { notification, clearNotification } = useNotification();
-  const location = useLocation();
+
+  const clientLocation = useLocation();
+  const location = typeof window === "undefined" ? ssrLocation : clientLocation;
 
   useEffect(() => {
     clearNotification();
