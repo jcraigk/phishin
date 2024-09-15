@@ -1,23 +1,22 @@
 import { authFetch } from "./utils";
 
-export const showLoader = async ({ params }) => {
-  const { routePath } = params;
-  const url = `/api/v2/shows/${routePath}`;
-
+export const showLoader = async ({ params, request }) => {
+  const { date } = params;
+  const url = `/api/v2/shows/${date}`;
   try {
     const response = await authFetch(url);
-
     if (response.status === 404) {
       throw new Response("Show not found", { status: 404 });
     }
-
     const data = await response.json();
-    return { show: data };
+    const baseUrl = new URL(request.url).origin;
+    return { show: data, baseUrl };
   } catch (error) {
     if (error instanceof Response) throw error;
     throw new Response("Error fetching data", { status: 500 });
   }
 };
+
 
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useLoaderData, useOutletContext } from "react-router-dom";
@@ -33,31 +32,30 @@ import { Helmet } from 'react-helmet-async';
 Modal.setAppElement("body");
 
 const Show = ({ trackSlug }) => {
-  const { show } = useLoaderData();
+  const { show, baseUrl } = useLoaderData();
   const [tracks, setTracks] = useState(show.tracks);
   const trackRefs = useRef([]);
   const { setNotice, setAlert } = useNotification();
   const [isDropdownActive, setIsDropdownActive] = useState(false);
   const [isTaperNotesModalOpen, setIsTaperNotesModalOpen] = useState(false);
   const dropdownRef = useRef(null);
-  // const baseUrl = window.location.origin; // TODO: pass this in as prop for SSR
-  const baseUrl = "";
   const { playTrack } = useOutletContext();
+  const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
 
   useEffect(() => {
-    if (trackSlug) {
-      const matchedTrack = tracks.find((track) => track.slug === trackSlug);
-      if (matchedTrack) {
-        playTrack(tracks, matchedTrack);
-
-        // Find the ref for the matched track and scroll to it
-        const trackIndex = tracks.findIndex((track) => track.slug === trackSlug);
-        if (trackRefs.current[trackIndex]) {
-          trackRefs.current[trackIndex].scrollIntoView({ behavior: "smooth", block: "center" });
-        }
+    let foundTrack;
+    if (trackSlug) foundTrack = tracks.find((track) => track.slug === trackSlug);
+    if (!foundTrack) foundTrack = tracks[0];
+    if (foundTrack) {
+      playTrack(tracks, foundTrack);
+      setMatchedTrack(foundTrack);
+      // Scroll to the matched track
+      const trackIndex = tracks.findIndex((track) => track.slug === foundTrack.slug);
+      if (trackRefs.current[trackIndex]) {
+        trackRefs.current[trackIndex].scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
-  }, [trackSlug]);
+  }, [trackSlug, tracks]);
 
   const handleLikeToggle = async () => {
     const jwt = localStorage.getItem("jwt");
@@ -111,10 +109,10 @@ const Show = ({ trackSlug }) => {
   const sidebarContent = (
     <>
       <Helmet>
-        <title>{formatDate(show.date)} - Phish.in</title>
-        <meta property="og:title" content={`Listen to ${formatDateLong(show.date)}`} />
+        <title>{matchedTrack ? `${matchedTrack.title} - ${formatDate(show.date)} - Phish.in` : `${formatDate(show.date)} - Phish.in`}</title>
+        <meta property="og:title" content={trackSlug && matchedTrack ? `Listen to ${matchedTrack.title} from ${formatDateLong(show.date)}` : `Listen to ${formatDateLong(show.date)}`} />
         <meta property="og:type" content="music.playlist" />
-        <meta property="og:audio" content={show.tracks[0].mp3_url} />
+        <meta property="og:audio" content={matchedTrack?.mp3_url} />
       </Helmet>
       <div className="sidebar-content">
         <p className="show-date">{formatDateMed(show.date)}</p>

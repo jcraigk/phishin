@@ -1,20 +1,20 @@
 import { authFetch } from "./utils";
 
 export const eraShowsLoader = async ({ params }) => {
-  const { routePath } = params;
+  const { year } = params;
   let url = `/api/v2/shows?per_page=1000`;
 
-  if (routePath.includes("-")) {
-    url += `&year_range=${routePath}`;
+  if (year.includes("-")) {
+    url += `&year_range=${year}`;
   } else {
-    url += `&year=${routePath}`;
+    url += `&year=${year}`;
   }
 
   try {
     const response = await authFetch(url);
     if (!response.ok) throw response;
     const data = await response.json();
-    return { shows: data.shows, routePath };
+    return { shows: data.shows, year };
   } catch (error) {
     throw new Response("Error fetching data", { status: 500 });
   }
@@ -27,11 +27,11 @@ import Shows from "./Shows";
 import { Helmet } from 'react-helmet-async';
 
 const EraShows = () => {
-  const { shows, routePath } = useLoaderData();
+  const { shows, year } = useLoaderData();
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <h1 className="title">{routePath}</h1>
+      <h1 className="title">{year}</h1>
       <p className="sidebar-subtitle">{shows.length} shows total</p>
     </div>
   );
@@ -39,7 +39,7 @@ const EraShows = () => {
   return (
     <>
       <Helmet>
-        <title>{routePath} - Phish.in</title>
+        <title>{year} - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <Shows shows={shows} tourHeaders={true} />
