@@ -77,15 +77,17 @@ export const toggleLike = async ({ id, type, isLiked, jwt }) => {
 };
 
 export const authFetch = async (url, options = {}) => {
-  const token = localStorage.getItem("jwt");
+  let token = null;
 
-  // Merge the existing headers with the auth token
+  if (typeof window !== "undefined" && window.localStorage) {
+    token = localStorage.getItem("jwt");
+  }
+
   const headers = {
     ...options.headers,
-    "X-Auth-Token": token,
+    ...(token ? { "X-Auth-Token": token } : {}),
   };
 
-  // Use the custom headers in the fetch call
   const response = await fetch(url, {
     ...options,
     headers,
@@ -93,3 +95,4 @@ export const authFetch = async (url, options = {}) => {
 
   return response;
 };
+

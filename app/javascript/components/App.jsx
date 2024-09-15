@@ -1,13 +1,14 @@
 import React from "react";
 import AppRouter from "./AppRouter";
+import { HelmetProvider } from "react-helmet-async";
 import { NotificationProvider } from "./NotificationContext";
-import { HelmetProvider } from "react-helmet-async"; // Import HelmetProvider
 
 const App = (props) => {
+  const helmetContext = {};
+
   return (
-    <HelmetProvider>
+    <HelmetProvider context={helmetContext}>
       <NotificationProvider>
-        <h1>SSR Test: This should appear if SSR is working</h1>
         <AppRouter {...props} />
       </NotificationProvider>
     </HelmetProvider>

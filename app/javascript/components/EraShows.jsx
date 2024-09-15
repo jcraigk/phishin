@@ -1,34 +1,35 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import LayoutWrapper from "./LayoutWrapper";
-import Shows from "./Shows";
 import { authFetch } from "./utils";
 
+export const eraShowsLoader = async ({ params }) => {
+  const { routePath } = params;
+  let url = `/api/v2/shows?per_page=1000`;
+
+  if (routePath.includes("-")) {
+    url += `&year_range=${routePath}`;
+  } else {
+    url += `&year=${routePath}`;
+  }
+
+  try {
+    const response = await authFetch(url);
+    if (!response.ok) throw new Error("Error fetching data");
+    const data = await response.json();
+    console.log("Loader data:", data);  // Log the fetched data
+    return { shows: data.shows, routePath };
+  } catch (error) {
+    console.error("Loader error:", error);  // Log any errors
+    throw new Response("Error fetching data", { status: 500 });
+  }
+};
+
+
+import React from "react";
+import { useLoaderData } from "react-router-dom";
+import LayoutWrapper from "./LayoutWrapper";
+import Shows from "./Shows";
+
 const EraShows = () => {
-  const { routePath } = useParams();
-  const [shows, setShows] = useState([]);
-
-  useEffect(() => {
-    const fetchShows = async () => {
-      try {
-        let url = `/api/v2/shows?per_page=1000`;
-
-        if (routePath.includes("-")) {
-          url += `&year_range=${routePath}`;
-        } else {
-          url += `&year=${routePath}`;
-        }
-
-        const response = await authFetch(url);
-        const data = await response.json();
-        setShows(data.shows);
-      } catch (error) {
-        console.error("Error fetching shows:", error);
-      }
-    };
-
-    fetchShows();
-  }, [routePath]);
+  const { shows, routePath } = useLoaderData();
 
   const sidebarContent = (
     <div className="sidebar-content">
@@ -39,7 +40,7 @@ const EraShows = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Shows shows={shows} setShows={setShows} tourHeaders={true} />
+      <Shows shows={shows} tourHeaders={true} />
     </LayoutWrapper>
   );
 };
