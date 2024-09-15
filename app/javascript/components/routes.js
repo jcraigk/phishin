@@ -17,6 +17,7 @@ import TopShows, { topShowsLoader } from "./TopShows";
 import TopTracks, { topTracksLoader } from "./TopTracks";
 import VenueIndex, { venueIndexLoader } from "./VenueIndex";
 import VenueShows, { venueShowsLoader } from "./VenueShows";
+import MissingContentReport, { missingContentLoader } from "./MissingContentReport";
 
 import ApiDocs from "./pages/ApiDocs";
 import ContactInfo from "./pages/ContactInfo";
@@ -41,6 +42,12 @@ const routes = (props) => [
         path: "/",
         element: <Eras />,
         loader: erasLoader,
+      },
+      // Reports
+      {
+        path: "/missing-content",
+        element: <MissingContentReport />,
+        loader: missingContentLoader,
       },
       // Auth pages
       {

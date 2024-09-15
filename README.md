@@ -12,7 +12,6 @@
  * track context dropdowns
     * share from timestamp
  * put play random show button on empty playlist page
- * /missing-content - we need shows/missing on the api side (missing/incomplete)
  * remove data-theme="light" (and maybe bulma entirely)
  * tracks displayed in non-show contexts should have their dates linked to show via button so you can still play the current page as a playlist
  * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
@@ -23,6 +22,7 @@
  * anywhere we can put lyrical excerpts?
  * disable swetrix - or sign up
  * Add CSRF to POSTs on API
+ * Can we use as_json to clean up request specs?
 
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)

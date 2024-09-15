@@ -3,12 +3,13 @@ class ApiV2::Api < ApiV2::Base
   mount ApiV2::Auth
   mount ApiV2::Likes
   mount ApiV2::Playlists
+  mount ApiV2::Reports
   mount ApiV2::Search
   mount ApiV2::Shows
   mount ApiV2::Songs
   mount ApiV2::Tags
-  mount ApiV2::Tracks
   mount ApiV2::Tours
+  mount ApiV2::Tracks
   mount ApiV2::Venues
   mount ApiV2::Years
 
@@ -39,7 +40,7 @@ class ApiV2::Api < ApiV2::Base
       },
       {
         name: "auth",
-        description: "Manage user authentication including registration, login, and password reset"
+        description: "User authentication including registration, login, and password reset"
       },
       {
         name: "likes",
@@ -48,6 +49,10 @@ class ApiV2::Api < ApiV2::Base
       {
         name: "playlists",
         description: "Playlists created by users"
+      },
+      {
+        name: "reports",
+        description: "Reports about content"
       },
       {
         name: "search",
