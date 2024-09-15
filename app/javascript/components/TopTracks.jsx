@@ -15,6 +15,7 @@ import React from "react";
 import { useLoaderData } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
+import { Helmet } from 'react-helmet-async';
 
 const TopTracks = ({ user }) => {
   const { tracks } = useLoaderData();
@@ -36,9 +37,14 @@ const TopTracks = ({ user }) => {
   );
 
   return (
-    <LayoutWrapper sidebarContent={sidebarContent}>
-      <Tracks tracks={tracks} setTracks={() => {}} numbering={true} setHeaders={false} showDates={true} />
-    </LayoutWrapper>
+    <>
+      <Helmet>
+        <title>Top Tracks - Phish.in</title>
+      </Helmet>
+      <LayoutWrapper sidebarContent={sidebarContent}>
+        <Tracks tracks={tracks} setTracks={() => {}} numbering={true} setHeaders={false} showDates={true} />
+      </LayoutWrapper>
+    </>
   );
 };
 

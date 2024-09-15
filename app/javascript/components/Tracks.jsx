@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useNotification } from "./NotificationContext";
 
-const Tracks = ({ tracks, setTracks, showDates, numbering = false, setHeaders = false, highlight }) => {
+const Tracks = ({ tracks, setTracks, showDates, numbering = false, setHeaders = false, highlight, trackRefs }) => {
   const [trackLikes, setTrackLikes] = useState(tracks);
   const { playTrack, activeTrack } = useOutletContext();
   const { setAlert, setNotice } = useNotification();
@@ -62,6 +62,7 @@ const Tracks = ({ tracks, setTracks, showDates, numbering = false, setHeaders = 
             <li
               className={`list-item track-item ${track.id === activeTrack?.id ? "active-item" : ""}`}
               onClick={() => handleTrackClick(track)}
+              ref={(el) => (trackRefs.current[index] = el)}
             >
               {numbering && (
                 <span className="leftside-numbering">#{index + 1}</span>

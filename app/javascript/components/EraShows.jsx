@@ -24,6 +24,7 @@ import React from "react";
 import { useLoaderData } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
+import { Helmet } from 'react-helmet-async';
 
 const EraShows = () => {
   const { shows, routePath } = useLoaderData();
@@ -36,9 +37,14 @@ const EraShows = () => {
   );
 
   return (
-    <LayoutWrapper sidebarContent={sidebarContent}>
-      <Shows shows={shows} tourHeaders={true} />
-    </LayoutWrapper>
+    <>
+      <Helmet>
+        <title>{routePath} - Phish.in</title>
+      </Helmet>
+      <LayoutWrapper sidebarContent={sidebarContent}>
+        <Shows shows={shows} tourHeaders={true} />
+      </LayoutWrapper>
+    </>
   );
 };
 

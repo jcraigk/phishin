@@ -61,6 +61,10 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
   // Hande activeTrack change
   useEffect(() => {
     if (activeTrack && audioRef.current) {
+      if (typeof window !== "undefined") {
+        document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
+      }
+
       setFadeClass("fade-out");
 
       audioRef.current.pause();

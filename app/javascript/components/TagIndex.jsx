@@ -13,6 +13,7 @@ import React from "react";
 import { useLoaderData, Link } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Tags from "./Tags";
+import { Helmet } from 'react-helmet-async';
 
 const TagIndex = () => {
   const { tags } = useLoaderData();
@@ -28,9 +29,14 @@ const TagIndex = () => {
   );
 
   return (
-    <LayoutWrapper sidebarContent={sidebarContent}>
-      <Tags tags={tags} group={true} />
-    </LayoutWrapper>
+    <>
+      <Helmet>
+        <title>Tags - Phish.in</title>
+      </Helmet>
+      <LayoutWrapper sidebarContent={sidebarContent}>
+        <Tags tags={tags} group={true} />
+      </LayoutWrapper>
+    </>
   );
 };
 

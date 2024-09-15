@@ -166,7 +166,7 @@ const routes = (props) => [
         element: <Search />,
       },
       {
-        path: ":routePath",
+        path: "*",
         element: <DynamicRoute />,
         loader: dynamicLoader,
       },

@@ -25,6 +25,7 @@ import { formatNumber } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
 import Songs from "./Songs";
 import ReactPaginate from "react-paginate";
+import { Helmet } from 'react-helmet-async';
 
 const SongIndex = () => {
   const { songs, totalPages, totalEntries, page, sortOption } = useLoaderData();
@@ -38,36 +39,43 @@ const SongIndex = () => {
     navigate(`?page=1&sort=${event.target.value}`);
   };
 
-  return (
-    <LayoutWrapper sidebarContent={
-      <div className="sidebar-content">
-        <h1 className="title">Songs</h1>
-        <h2 className="subtitle">{formatNumber(totalEntries)} total</h2>
-        <div className="select is-fullwidth">
-          <select value={sortOption} onChange={handleSortChange}>
-            <option value="title:asc">Sort by Title (A-Z)</option>
-            <option value="title:desc">Sort by Title (Z-A)</option>
-            <option value="tracks_count:desc">Sort by Tracks Count (High to Low)</option>
-            <option value="tracks_count:asc">Sort by Tracks Count (Low to High)</option>
-          </select>
-        </div>
+  const sidebarContent = (
+    <div className="sidebar-content">
+      <h1 className="title">Songs</h1>
+      <h2 className="subtitle">{formatNumber(totalEntries)} total</h2>
+      <div className="select is-fullwidth">
+        <select value={sortOption} onChange={handleSortChange}>
+          <option value="title:asc">Sort by Title (A-Z)</option>
+          <option value="title:desc">Sort by Title (Z-A)</option>
+          <option value="tracks_count:desc">Sort by Tracks Count (High to Low)</option>
+          <option value="tracks_count:asc">Sort by Tracks Count (Low to High)</option>
+        </select>
       </div>
-    }>
-      <Songs songs={songs} />
-      <ReactPaginate
-        previousLabel={"Previous"}
-        nextLabel={"Next"}
-        breakLabel={"..."}
-        breakClassName={"break-me"}
-        pageCount={totalPages}
-        marginPagesDisplayed={1}
-        pageRangeDisplayed={1}
-        onPageChange={handlePageClick}
-        containerClassName={"pagination"}
-        activeClassName={"active"}
-        forcePage={page}
-      />
-    </LayoutWrapper>
+    </div>
+  );
+
+  return (
+    <>
+      <Helmet>
+        <title>Songs - Phish.in</title>
+      </Helmet>
+      <LayoutWrapper sidebarContent={sidebarContent}>
+        <Songs songs={songs} />
+        <ReactPaginate
+          previousLabel={"Previous"}
+          nextLabel={"Next"}
+          breakLabel={"..."}
+          breakClassName={"break-me"}
+          pageCount={totalPages}
+          marginPagesDisplayed={1}
+          pageRangeDisplayed={1}
+          onPageChange={handlePageClick}
+          containerClassName={"pagination"}
+          activeClassName={"active"}
+          forcePage={page}
+        />
+      </LayoutWrapper>
+    </>
   );
 };
 

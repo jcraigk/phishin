@@ -28,6 +28,7 @@ import React from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
+import { Helmet } from 'react-helmet-async';
 
 const TodayShows = () => {
   const { shows, month, day, sortBy } = useLoaderData();
@@ -102,13 +103,18 @@ const TodayShows = () => {
   );
 
   return (
-    <LayoutWrapper sidebarContent={sidebarContent}>
-      {shows.length === 0 ? (
-        <h1 className="title">No shows found for {getMonthDayDisplay()}.</h1>
-      ) : (
-        <Shows shows={shows} setShows={() => {}} numbering={false} tourHeaders={true} />
-      )}
-    </LayoutWrapper>
+    <>
+      <Helmet>
+        <title>{getMonthDayDisplay()} - Phish.in</title>
+      </Helmet>
+      <LayoutWrapper sidebarContent={sidebarContent}>
+        {shows.length === 0 ? (
+          <h1 className="title">No shows found for {getMonthDayDisplay()}.</h1>
+        ) : (
+          <Shows shows={shows} setShows={() => {}} numbering={false} tourHeaders={true} />
+        )}
+      </LayoutWrapper>
+    </>
   );
 };
 

@@ -2,18 +2,20 @@ import { eraShowsLoader } from "./EraShows";
 import { showLoader } from "./Show";
 
 export const dynamicLoader = async ({ params, request }) => {
-  const { routePath } = params;
+  const { "*": fullPath } = params;
+  const [firstSegment] = fullPath.split("/");
 
-  if (/^\d{4}$/.test(routePath) || /^\d{4}-\d{4}$/.test(routePath)) {
-    return eraShowsLoader({ params, request });
+  if (/^\d{4}$/.test(firstSegment) || /^\d{4}-\d{4}$/.test(firstSegment)) {
+    return eraShowsLoader({ params: { routePath: firstSegment }, request });
   }
 
-  if (/^\d{4}-\d{2}-\d{2}$/.test(routePath)) {
-    return showLoader({ params, request });
+  if (/^\d{4}-\d{2}-\d{2}$/.test(firstSegment)) {
+    return showLoader({ params: { routePath: firstSegment }, request });
   }
 
   throw new Response("Not Found", { status: 404 });
 };
+
 
 import React from "react";
 import { useParams } from "react-router-dom";
@@ -22,14 +24,15 @@ import ErrorPage from "./pages/ErrorPage";
 import Show from "./Show";
 
 const DynamicRoute = () => {
-  const { routePath } = useParams();
+  const { "*": fullPath } = useParams();
+  const [firstSegment, secondSegment] = fullPath.split("/");
 
-  if (/^\d{4}$/.test(routePath) || /^\d{4}-\d{4}$/.test(routePath)) {
+  if (/^\d{4}$/.test(firstSegment) || /^\d{4}-\d{4}$/.test(firstSegment)) {
     return <EraShows />;
   }
 
-  if (/^\d{4}-\d{2}-\d{2}$/.test(routePath)) {
-    return <Show />;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(firstSegment)) {
+    return <Show trackSlug={secondSegment} />;
   }
 
   return <ErrorPage />;

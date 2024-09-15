@@ -266,13 +266,18 @@ const MapView = ({ mapboxToken }) => {
   );
 
   return (
-    <LayoutWrapper sidebarContent={sidebarContent}>
-      <div
-        className="map-container"
-        ref={mapContainer}
-        style={{ width: "100%", height: "500px" }}
-      />
-    </LayoutWrapper>
+    <>
+      <Helmet>
+        <title>Map - Phish.in</title>
+      </Helmet>
+      <LayoutWrapper sidebarContent={sidebarContent}>
+        <div
+          className="map-container"
+          ref={mapContainer}
+          style={{ width: "100%", height: "500px" }}
+        />
+      </LayoutWrapper>
+    </>
   );
 };
 
