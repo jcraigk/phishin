@@ -96,3 +96,11 @@ export const authFetch = async (url, options = {}) => {
   return response;
 };
 
+export const parseTimeParam = (t) => {
+  if (!t) return null;
+  if (t.includes(":")) {
+    const [minutes, seconds] = t.split(":").map(Number);
+    return minutes * 60 + seconds;
+  }
+  return Number(t);
+};

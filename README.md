@@ -6,11 +6,11 @@
  * Do we need all the keys in the components? look for other excess/DRYness
  * Add a spinner using react-spinners - will require passing loading state from components
  * Prerender caching? How does it work for logged in users? Just skip prerender for those?
- * share/play from timestamp
  * Disable email account creation - allow oauth login through api?
  * Put mobile titles in navbar
- * Opengraph
- * context dropdowns
+ * Opengraph (helmet context)
+ * track context dropdowns
+    * share from timestamp
  * put play random show button on empty playlist page
  * /missing-content - we need shows/missing on the api side (missing/incomplete)
  * remove data-theme="light" (and maybe bulma entirely)
@@ -18,6 +18,7 @@
  * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
  * ErrorPage should handle status codes (Not Found especially)
  * make sure we re-hydrate any pages that have tracks on them when doing SSR
+ * If you play a show and navigate to a new show, does it take over the playlist?
 
  * anywhere we can put lyrical excerpts?
  * disable swetrix - or sign up
