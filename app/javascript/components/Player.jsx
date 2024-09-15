@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { formatDate } from "./utils";
+import { formatDate, parseTimeParam } from "./utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward } from "@fortawesome/free-solid-svg-icons";
 import { useNotification } from "./NotificationContext";
@@ -11,7 +11,6 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
   const scrubberRef = useRef();
   const progressBarRef = useRef();
   const [currentTime, setCurrentTime] = useState(0);
-  const [fadeClass, setFadeClass] = useState("");
   const { setAlert } = useNotification();
 
   const togglePlayPause = () => {
@@ -60,6 +59,9 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
 
   // Hande activeTrack change
   useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const startTime = parseTimeParam(searchParams.get("t"));
+
     if (activeTrack && audioRef.current) {
       if (typeof window !== "undefined") {
         document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
@@ -71,19 +73,24 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
       audioRef.current.pause();
       audioRef.current.src = activeTrack.mp3_url;
       audioRef.current.load();
-      audioRef.current
-        .play()
-        .catch((error) => {
+
+      audioRef.current.onloadedmetadata = () => {
+        if (startTime && startTime <= audioRef.current.duration) {
+          audioRef.current.currentTime = startTime;
+        }
+        audioRef.current.play().catch((error) => {
           if (error.name === "NotAllowedError") {
             setAlert("Tap Play or press Spacebar to listen");
           } else {
             console.error("Play error:", error);
           }
         });
+      };
 
       setupMediaSession();
     }
-  }, [activeTrack]);
+  }, [activeTrack, location.search]);
+
 
   const skipToNextTrack = () => {
     const currentIndex = currentPlaylist.indexOf(activeTrack);
@@ -211,7 +218,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
           </div>
         </div>
       </div>
-      <div className={`bottom-row ${fadeClass}`}>
+      <div className="bottom-row">
         <p className="elapsed">{formatTime(currentTime)}</p>
         <div
           className="scrubber-bar"
