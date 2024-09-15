@@ -6,11 +6,11 @@ export const dynamicLoader = async ({ params, request }) => {
   const [firstSegment] = fullPath.split("/");
 
   if (/^\d{4}$/.test(firstSegment) || /^\d{4}-\d{4}$/.test(firstSegment)) {
-    return eraShowsLoader({ params: { routePath: firstSegment }, request });
+    return eraShowsLoader({ params: { year: firstSegment }, request });
   }
 
   if (/^\d{4}-\d{2}-\d{2}$/.test(firstSegment)) {
-    return showLoader({ params: { routePath: firstSegment }, request });
+    return showLoader({ params: { date: firstSegment }, request });
   }
 
   throw new Response("Not Found", { status: 404 });

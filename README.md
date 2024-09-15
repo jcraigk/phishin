@@ -8,7 +8,6 @@
  * Prerender caching? How does it work for logged in users? Just skip prerender for those?
  * share/play from timestamp
  * Disable email account creation - allow oauth login through api?
- * Handle "you must tap play" on mobile, etc
  * Put mobile titles in navbar
  * Opengraph
  * context dropdowns

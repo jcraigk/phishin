@@ -65,7 +65,8 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
       }
 
-      setFadeClass("fade-out");
+      scrubberRef.current.style.backgroundImage = `url(${activeTrack.waveform_image_url})`;
+      progressBarRef.current.style.maskImage = `url(${activeTrack.waveform_image_url})`;
 
       audioRef.current.pause();
       audioRef.current.src = activeTrack.mp3_url;
@@ -73,17 +74,14 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
       audioRef.current
         .play()
         .catch((error) => {
-          console.error("Error playing audio:", error);
+          if (error.name === "NotAllowedError") {
+            setAlert("Tap Play or press Spacebar to listen");
+          } else {
+            console.error("Play error:", error);
+          }
         });
 
       setupMediaSession();
-
-      setTimeout(() => {
-        scrubberRef.current.style.backgroundImage = `url(${activeTrack.waveform_image_url})`;
-        progressBarRef.current.style.maskImage = `url(${activeTrack.waveform_image_url})`;
-
-        setFadeClass("fade-in");
-      }, 700);
     }
   }, [activeTrack]);
 
