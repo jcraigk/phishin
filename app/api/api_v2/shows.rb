@@ -1,6 +1,16 @@
 class ApiV2::Shows < ApiV2::Base
   SORT_COLS = %w[date likes_count duration updated_at]
 
+  helpers do
+    params :sort do
+      optional :sort,
+               type: String,
+               desc: "Sort by attribute and direction (e.g., 'date:desc')",
+               default: "date:desc",
+               values: SORT_COLS.map { |opt| ["#{opt}:asc", "#{opt}:desc"] }.flatten
+    end
+  end
+
   resource :shows do
     desc "Fetch a list of shows" do
       detail "Fetch a filtered, sorted, paginated list of shows"
@@ -11,12 +21,7 @@ class ApiV2::Shows < ApiV2::Base
       ]
     end
     params do
-      use :pagination, :proximity
-      optional :sort,
-               type: String,
-               desc: "Sort by attribute and direction (e.g., 'date:desc')",
-               default: "date:desc",
-               values: SORT_COLS.map { |opt| [ "#{opt}:asc", "#{opt}:desc" ] }.flatten
+      use :pagination, :proximity, :sort
       optional :year,
                type: Integer,
                desc: "Filter shows by a specific year"
@@ -99,6 +104,7 @@ class ApiV2::Shows < ApiV2::Base
       success ApiV2::Entities::Show
     end
     params do
+      use :sort
       requires :date, type: String, desc: "Date in the format YYYY-MM-DD"
     end
     get "day_of_year/:date" do
@@ -107,6 +113,7 @@ class ApiV2::Shows < ApiV2::Base
         Show.published
             .where("extract(month from date) = ?", date.month)
             .where("extract(day from date) = ?", date.day)
+      shows = apply_sort(shows)
       liked_show_ids = fetch_liked_show_ids(shows)
       present \
         shows: ApiV2::Entities::Show.represent(shows, liked_show_ids:)

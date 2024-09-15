@@ -1,32 +1,50 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import LayoutWrapper from "./LayoutWrapper";
-import Shows from "./Shows";
 import { authFetch } from "./utils";
 
-const TodayShows = () => {
-  const [shows, setShows] = useState([]);
-  const [sortBy, setSortBy] = useState("date:desc");
-  const [month, setMonth] = useState(new Date().getMonth() + 1); // Default to current month
-  const [day, setDay] = useState(new Date().getDate()); // Default to current day
+export const todayShowsLoader = async ({ request }) => {
+  const url = new URL(request.url);
+  const month = url.searchParams.get("month") || new Date().getMonth() + 1;
+  const day = url.searchParams.get("day") || new Date().getDate();
+  const sortBy = url.searchParams.get("sort") || "date:desc";
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const todayDate = `${new Date().getFullYear()}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+  try {
+    const response = await authFetch(`/api/v2/shows/day_of_year/${todayDate}?sort=${sortBy}`);
+    if (!response.ok) throw response;
+    const data = await response.json();
+
+    return {
+      shows: data.shows || [],
+      month: Number(month),
+      day: Number(day),
+      sortBy,
+    };
+  } catch (error) {
+    throw new Response("Error fetching data", { status: 500 });
+  }
+};
+
+import React from "react";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import LayoutWrapper from "./LayoutWrapper";
+import Shows from "./Shows";
+
+const TodayShows = () => {
+  const { shows, month, day, sortBy } = useLoaderData();
   const navigate = useNavigate();
 
-  const getQueryParams = () => {
-    return {
-      month: searchParams.get("month") ? Number(searchParams.get("month")) : new Date().getMonth() + 1,
-      day: searchParams.get("day") ? Number(searchParams.get("day")) : new Date().getDate(),
-    };
+  const handleSortChange = (e) => {
+    navigate(`?month=${month}&day=${day}&sort=${e.target.value}`);
   };
 
-  const updateQueryParams = (newMonth, newDay) => {
-    setSearchParams({ month: newMonth, day: newDay });
+  const handleMonthChange = (e) => {
+    const newMonth = Number(e.target.value);
+    navigate(`?month=${newMonth}&day=${day}&sort=${sortBy}`);
   };
 
-  const getTodayDate = () => {
-    const year = new Date().getFullYear();
-    return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  const handleDayChange = (e) => {
+    const newDay = Number(e.target.value);
+    navigate(`?month=${month}&day=${newDay}&sort=${sortBy}`);
   };
 
   const getMonthDayDisplay = () => {
@@ -35,44 +53,6 @@ const TodayShows = () => {
     date.setDate(day);
     const options = { month: "long", day: "numeric" };
     return date.toLocaleDateString("en-US", options);
-  };
-
-  useEffect(() => {
-    // Initialize from URL params
-    const { month: urlMonth, day: urlDay } = getQueryParams();
-    setMonth(urlMonth);
-    setDay(urlDay);
-  }, [searchParams]);
-
-  useEffect(() => {
-    const fetchShows = async () => {
-      const todayDate = getTodayDate();
-      try {
-        const response = await authFetch(`/api/v2/shows/day_of_year/${todayDate}?sort=${sortBy}`);
-        const data = await response.json();
-        setShows(data.shows || []);
-      } catch (error) {
-        console.error("Error fetching shows:", error);
-      }
-    };
-
-    fetchShows();
-  }, [sortBy, month, day]);
-
-  const handleSortChange = (e) => {
-    setSortBy(e.target.value);
-  };
-
-  const handleMonthChange = (e) => {
-    const newMonth = Number(e.target.value);
-    setMonth(newMonth);
-    updateQueryParams(newMonth, day); // Update URL when month changes
-  };
-
-  const handleDayChange = (e) => {
-    const newDay = Number(e.target.value);
-    setDay(newDay);
-    updateQueryParams(month, newDay); // Update URL when day changes
   };
 
   const monthOptions = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -126,12 +106,11 @@ const TodayShows = () => {
       {shows.length === 0 ? (
         <h1 className="title">No shows found for {getMonthDayDisplay()}.</h1>
       ) : (
-        <>
-          <Shows shows={shows} setShows={setShows} numbering={false} tourHeaders={true} />
-        </>
+        <Shows shows={shows} setShows={() => {}} numbering={false} tourHeaders={true} />
       )}
     </LayoutWrapper>
   );
 };
 
 export default TodayShows;
+

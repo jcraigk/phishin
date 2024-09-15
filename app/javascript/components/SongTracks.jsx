@@ -1,61 +1,57 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { authFetch } from "./utils";
+
+export const songTracksLoader = async ({ params, request }) => {
+  const url = new URL(request.url);
+  const page = url.searchParams.get("page") || 1;
+  const sortOption = url.searchParams.get("sort") || "date:desc";
+  const { songSlug } = params;
+
+  try {
+    const songResponse = await fetch(`/api/v2/songs/${songSlug}`);
+    if (!songResponse.ok) throw songResponse;
+    const songData = await songResponse.json();
+
+    const songTitle = songData.title;
+    const originalInfo = songData.original
+      ? "Original composition"
+      : `Original Artist: ${songData.artist}`;
+
+    const tracksResponse = await authFetch(
+      `/api/v2/tracks?song_slug=${songSlug}&sort=${sortOption}&page=${page}&per_page=10`
+    );
+    if (!tracksResponse.ok) throw tracksResponse;
+    const tracksData = await tracksResponse.json();
+
+    return {
+      songTitle,
+      originalInfo,
+      tracks: tracksData.tracks,
+      totalEntries: tracksData.total_entries,
+      totalPages: tracksData.total_pages,
+      page: parseInt(page, 10) - 1, // Convert to zero-based index for pagination
+      sortOption
+    };
+  } catch (error) {
+    throw new Response("Error fetching data", { status: 500 });
+  }
+};
+
+import React from "react";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
 import ReactPaginate from "react-paginate";
-import { authFetch } from "./utils";
 
 const SongTracks = () => {
-  const { songSlug } = useParams();
-  const [tracks, setTracks] = useState([]);
-  const [songTitle, setSongTitle] = useState("");
-  const [originalInfo, setOriginalInfo] = useState("");
-  const [totalEntries, setTotalEntries] = useState(0);
-  const [sortOption, setSortOption] = useState("date:desc");
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10;
-
-  useEffect(() => {
-    const fetchSongTitle = async () => {
-      try {
-        const response = await fetch(`/api/v2/songs/${songSlug}`);
-        const data = await response.json();
-        setSongTitle(data.title);
-
-        if (data.original) {
-          setOriginalInfo("Original composition");
-        } else {
-          setOriginalInfo(`Original Artist: ${data.artist}`);
-        }
-      } catch (error) {
-        console.error("Error fetching song:", error);
-      }
-    };
-
-    const fetchTracks = async () => {
-      try {
-        const response = await authFetch(`/api/v2/tracks?song_slug=${songSlug}&sort=${sortOption}&page=${page + 1}&per_page=${itemsPerPage}`);
-        const data = await response.json();
-        setTracks(data.tracks);
-        setTotalEntries(data.total_entries);
-        setTotalPages(data.total_pages);
-      } catch (error) {
-        console.error("Error fetching tracks:", error);
-      }
-    };
-
-    fetchSongTitle();
-    fetchTracks();
-  }, [songSlug, sortOption, page]);
+  const { songTitle, originalInfo, tracks, totalEntries, totalPages, page, sortOption } = useLoaderData();
+  const navigate = useNavigate();
 
   const handleSortChange = (event) => {
-    setSortOption(event.target.value);
-    setPage(0);
+    navigate(`?page=1&sort=${event.target.value}`);
   };
 
   const handlePageClick = (data) => {
-    setPage(data.selected);
+    navigate(`?page=${data.selected + 1}&sort=${sortOption}`);
   };
 
   const sidebarContent = (
@@ -78,7 +74,7 @@ const SongTracks = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Tracks tracks={tracks} setTracks={setTracks} numbering={false} setHeaders={false} showDates={true} />
+      <Tracks tracks={tracks} setTracks={() => {}} numbering={false} setHeaders={false} showDates={true} />
       {totalPages > 1 && (
         <ReactPaginate
           previousLabel={"Previous"}

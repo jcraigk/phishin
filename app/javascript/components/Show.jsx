@@ -19,7 +19,7 @@ export const showLoader = async ({ params }) => {
   }
 };
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { Link, useLoaderData } from "react-router-dom";
 import { formatDateMed, formatDateLong, formatDurationShow, toggleLike } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";

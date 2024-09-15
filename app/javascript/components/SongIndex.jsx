@@ -5,7 +5,7 @@ export const songIndexLoader = async ({ request }) => {
 
   try {
     const response = await fetch(`/api/v2/songs?page=${page}&sort=${sortOption}`);
-    if (!response.ok) throw new Error("Error fetching data");
+    if (!response.ok) response;
     const data = await response.json();
     return {
       songs: data.songs,

@@ -2,22 +2,21 @@ import React from "react";
 
 import DynamicRoute, { dynamicLoader } from "./DynamicRoute";
 import Eras, { erasLoader } from './Eras';
-import EraShows, { eraShowsLoader } from './EraShows';
 import Layout from "./Layout";
 import MapView from "./MapView";
-import MyShows from "./MyShows";
-import MyTracks from "./MyTracks";
+import MyShows, { myShowsLoader } from "./MyShows";
+import MyTracks, { myTracksLoader } from "./MyTracks";
 import Search from "./pages/Search";
 import SongIndex, { songIndexLoader } from "./SongIndex";
-import SongTracks from "./SongTracks";
-import TagIndex from "./TagIndex";
-import TagShows from "./TagShows";
-import TagTracks from "./TagTracks";
-import TodayShows from "./TodayShows";
-import TopShows from "./TopShows";
-import TopTracks from "./TopTracks";
+import SongTracks, { songTracksLoader } from "./SongTracks";
+import TagIndex, { tagIndexLoader } from "./TagIndex";
+import TagShows, { tagShowsLoader } from "./TagShows";
+import TagTracks, { tagTracksLoader } from "./TagTracks";
+import TodayShows, { todayShowsLoader } from "./TodayShows";
+import TopShows, { topShowsLoader } from "./TopShows";
+import TopTracks, { topTracksLoader } from "./TopTracks";
 import VenueIndex, { venueIndexLoader } from "./VenueIndex";
-import VenueShows from "./VenueShows";
+import VenueShows, { venueShowsLoader } from "./VenueShows";
 
 import ApiDocs from "./pages/ApiDocs";
 import ContactInfo from "./pages/ContactInfo";
@@ -94,6 +93,7 @@ const routes = (props) => [
       {
         path: "/venues/:venueSlug",
         element: <VenueShows />,
+        loader: venueShowsLoader,
       },
       {
         path: "/songs",
@@ -103,18 +103,22 @@ const routes = (props) => [
       {
         path: "/tags",
         element: <TagIndex />,
+        loader: tagIndexLoader,
       },
       {
         path: "/show_tags/:tagSlug",
         element: <TagShows />,
+        loader: tagShowsLoader,
       },
       {
         path: "/track_tags/:tagSlug",
         element: <TagTracks />,
+        loader: tagTracksLoader,
       },
       {
         path: "/songs/:songSlug",
         element: <SongTracks />,
+        loader: songTracksLoader,
       },
       {
         path: "/map",
@@ -123,18 +127,22 @@ const routes = (props) => [
       {
         path: "/top-shows",
         element: <TopShows user={props.user} />,
+        loader: topShowsLoader,
       },
       {
         path: "/top-tracks",
         element: <TopTracks user={props.user} />,
+        loader: topTracksLoader,
       },
       {
         path: "/my-shows",
         element: <MyShows />,
+        loader: myShowsLoader,
       },
       {
         path: "/my-tracks",
         element: <MyTracks />,
+        loader: myTracksLoader,
       },
       // {
       //   path: "/playlist",
@@ -151,6 +159,7 @@ const routes = (props) => [
       {
         path: "/today",
         element: <TodayShows />,
+        loader: todayShowsLoader,
       },
       {
         path: "/search",
