@@ -27,6 +27,7 @@ import ReactPaginate from "react-paginate";
 import { formatNumber } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
 import Venues from "./Venues";
+import { Helmet } from 'react-helmet-async';
 
 const FIRST_CHAR_LIST = ["#", ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))];
 
@@ -46,48 +47,53 @@ const VenueIndex = () => {
     navigate(`?page=1&sort=${sortOption}&first_char=${event.target.value}`);
   };
 
+  const sidebarContent = (
+    <div className="sidebar-content">
+      <h1 className="title">Venues</h1>
+      <h2 className="subtitle">{formatNumber(totalEntries)} total</h2>
+      <div className="select is-fullwidth">
+        <select value={sortOption} onChange={handleSortChange}>
+          <option value="name:asc">Sort by Name (A-Z)</option>
+          <option value="name:desc">Sort by Name (Z-A)</option>
+          <option value="shows_count:desc">Sort by Shows Count (High to Low)</option>
+          <option value="shows_count:asc">Sort by Shows Count (Low to High)</option>
+        </select>
+      </div>
+      <div className="select is-fullwidth mt-2">
+        <select id="first-char-filter" value={firstChar} onChange={handleFirstCharChange}>
+          <option value="">All names</option>
+          {FIRST_CHAR_LIST.map((char) => (
+            <option key={char} value={char}>
+              Names starting with {char}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+
   return (
-    <LayoutWrapper
-      sidebarContent={
-        <div className="sidebar-content">
-          <h1 className="title">Venues</h1>
-          <h2 className="subtitle">{formatNumber(totalEntries)} total</h2>
-          <div className="select is-fullwidth">
-            <select value={sortOption} onChange={handleSortChange}>
-              <option value="name:asc">Sort by Name (A-Z)</option>
-              <option value="name:desc">Sort by Name (Z-A)</option>
-              <option value="shows_count:desc">Sort by Shows Count (High to Low)</option>
-              <option value="shows_count:asc">Sort by Shows Count (Low to High)</option>
-            </select>
-          </div>
-          <div className="select is-fullwidth mt-2">
-            <select id="first-char-filter" value={firstChar} onChange={handleFirstCharChange}>
-              <option value="">All names</option>
-              {FIRST_CHAR_LIST.map((char) => (
-                <option key={char} value={char}>
-                  Names starting with {char}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      }
-    >
-      <Venues venues={venues} />
-      <ReactPaginate
-        previousLabel={"Previous"}
-        nextLabel={"Next"}
-        breakLabel={"..."}
-        breakClassName={"break-me"}
-        pageCount={totalPages}
-        marginPagesDisplayed={1}
-        pageRangeDisplayed={1}
-        onPageChange={handlePageClick}
-        containerClassName={"pagination"}
-        activeClassName={"active"}
-        forcePage={page}
-      />
-    </LayoutWrapper>
+    <>
+      <Helmet>
+        <title>Venues - Phish.in</title>
+      </Helmet>
+      <LayoutWrapper sidebarContent={sidebarContent}>
+        <Venues venues={venues} />
+        <ReactPaginate
+          previousLabel={"Previous"}
+          nextLabel={"Next"}
+          breakLabel={"..."}
+          breakClassName={"break-me"}
+          pageCount={totalPages}
+          marginPagesDisplayed={1}
+          pageRangeDisplayed={1}
+          onPageChange={handlePageClick}
+          containerClassName={"pagination"}
+          activeClassName={"active"}
+          forcePage={page}
+        />
+      </LayoutWrapper>
+    </>
   );
 };
 

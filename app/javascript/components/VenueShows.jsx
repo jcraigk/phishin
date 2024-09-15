@@ -25,6 +25,7 @@ import React from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
+import { Helmet } from 'react-helmet-async';
 
 const VenueShows = () => {
   const { shows, venue, sortOption } = useLoaderData();
@@ -53,9 +54,14 @@ const VenueShows = () => {
   ) : null;
 
   return (
-    <LayoutWrapper sidebarContent={sidebarContent}>
-      <Shows shows={shows} setShows={() => {}} />
-    </LayoutWrapper>
+    <>
+      <Helmet>
+        <title>{venue.name} - Phish.in</title>
+      </Helmet>
+      <LayoutWrapper sidebarContent={sidebarContent}>
+        <Shows shows={shows} setShows={() => {}} />
+      </LayoutWrapper>
+    </>
   );
 };
 

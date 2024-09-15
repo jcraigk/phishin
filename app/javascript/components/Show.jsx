@@ -19,9 +19,9 @@ export const showLoader = async ({ params }) => {
   }
 };
 
-import React, { useState, useRef } from "react";
-import { Link, useLoaderData } from "react-router-dom";
-import { formatDateMed, formatDateLong, formatDurationShow, toggleLike } from "./utils";
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useLoaderData, useOutletContext } from "react-router-dom";
+import { formatDate, formatDateMed, formatDateLong, formatDurationShow, toggleLike } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
 import Modal from "react-modal";
@@ -32,15 +32,32 @@ import { Helmet } from 'react-helmet-async';
 
 Modal.setAppElement("body");
 
-const Show = () => {
+const Show = ({ trackSlug }) => {
   const { show } = useLoaderData();
   const [tracks, setTracks] = useState(show.tracks);
+  const trackRefs = useRef([]);
   const { setNotice, setAlert } = useNotification();
   const [isDropdownActive, setIsDropdownActive] = useState(false);
   const [isTaperNotesModalOpen, setIsTaperNotesModalOpen] = useState(false);
   const dropdownRef = useRef(null);
   // const baseUrl = window.location.origin; // TODO: pass this in as prop for SSR
   const baseUrl = "";
+  const { playTrack } = useOutletContext();
+
+  useEffect(() => {
+    if (trackSlug) {
+      const matchedTrack = tracks.find((track) => track.slug === trackSlug);
+      if (matchedTrack) {
+        playTrack(tracks, matchedTrack);
+
+        // Find the ref for the matched track and scroll to it
+        const trackIndex = tracks.findIndex((track) => track.slug === trackSlug);
+        if (trackRefs.current[trackIndex]) {
+          trackRefs.current[trackIndex].scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
+    }
+  }, [trackSlug]);
 
   const handleLikeToggle = async () => {
     const jwt = localStorage.getItem("jwt");
@@ -94,6 +111,7 @@ const Show = () => {
   const sidebarContent = (
     <>
       <Helmet>
+        <title>{formatDate(show.date)} - Phish.in</title>
         <meta property="og:title" content={`Listen to ${formatDateLong(show.date)}`} />
         <meta property="og:type" content="music.playlist" />
         <meta property="og:audio" content={show.tracks[0].mp3_url} />
@@ -172,7 +190,7 @@ const Show = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Tracks tracks={tracks} setTracks={setTracks} showDates={false} setHeaders={true} />
+      <Tracks tracks={tracks} setTracks={setTracks} showDates={false} setHeaders={true} trackRefs={trackRefs} />
     </LayoutWrapper>
   );
 };

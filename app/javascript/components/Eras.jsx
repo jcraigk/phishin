@@ -30,6 +30,7 @@ import { formatNumber } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
 import relistenIcon from "../images/icon-relisten.png";
 import splendorIcon from "../images/icon-splendor.png";
+import { Helmet } from 'react-helmet-async';
 
 const Eras = () => {
   const eras = useLoaderData();
@@ -61,33 +62,38 @@ const Eras = () => {
   );
 
   return (
-    <LayoutWrapper sidebarContent={sidebarContent}>
-      {Object.keys(eras)
-        .sort((a, b) => b.localeCompare(a))
-        .map((era) => (
-          <React.Fragment key={era}>
-            <div className="section-title">
-              <div className="title-left">{era} Era</div>
-              <span className="detail-right">{formatNumber(eras[era].total_shows, 'show')}</span>
-            </div>
-            <ul>
-              {eras[era].periods.map(({ period, shows_count, venues_count }) => (
-                <Link to={`/${period}`} key={period} className="list-item-link">
-                  <li className="list-item">
-                    <span className="leftside-primary-narrow">{period}</span>
-                    <span className="leftside-secondary">
-                      {venues_count} venue{venues_count !== 1 ? "s" : ""}
-                    </span>
-                    <span className="rightside-primary">
-                      {formatNumber(shows_count, 'show')}
-                    </span>
-                  </li>
-                </Link>
-              ))}
-            </ul>
-          </React.Fragment>
-        ))}
-    </LayoutWrapper>
+    <>
+      <Helmet>
+        <title>Phish.in</title>
+      </Helmet>
+      <LayoutWrapper sidebarContent={sidebarContent}>
+        {Object.keys(eras)
+          .sort((a, b) => b.localeCompare(a))
+          .map((era) => (
+            <React.Fragment key={era}>
+              <div className="section-title">
+                <div className="title-left">{era} Era</div>
+                <span className="detail-right">{formatNumber(eras[era].total_shows, 'show')}</span>
+              </div>
+              <ul>
+                {eras[era].periods.map(({ period, shows_count, venues_count }) => (
+                  <Link to={`/${period}`} key={period} className="list-item-link">
+                    <li className="list-item">
+                      <span className="leftside-primary-narrow">{period}</span>
+                      <span className="leftside-secondary">
+                        {venues_count} venue{venues_count !== 1 ? "s" : ""}
+                      </span>
+                      <span className="rightside-primary">
+                        {formatNumber(shows_count, 'show')}
+                      </span>
+                    </li>
+                  </Link>
+                ))}
+              </ul>
+            </React.Fragment>
+          ))}
+      </LayoutWrapper>
+    </>
   );
 };
 

@@ -36,6 +36,7 @@ import { useLoaderData, useNavigate } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
 import ReactPaginate from "react-paginate";
+import { Helmet } from 'react-helmet-async';
 
 const TagShows = () => {
   const { tagName, shows, totalPages, page, sortOption } = useLoaderData();
@@ -66,24 +67,29 @@ const TagShows = () => {
   );
 
   return (
-    <LayoutWrapper sidebarContent={sidebarContent}>
-      <Shows shows={shows} setShows={() => {}} numbering={false} setHeaders={false} />
-      {totalPages > 1 && (
-        <ReactPaginate
-          previousLabel={"Previous"}
-          nextLabel={"Next"}
-          breakLabel={"..."}
-          breakClassName={"break-me"}
-          pageCount={totalPages}
-          marginPagesDisplayed={1}
-          pageRangeDisplayed={1}
-          onPageChange={handlePageClick}
-          containerClassName={"pagination"}
-          activeClassName={"active"}
-          forcePage={page}
-        />
-      )}
-    </LayoutWrapper>
+    <>
+      <Helmet>
+        <title>{tagName} - Shows - Phish.in</title>
+      </Helmet>
+      <LayoutWrapper sidebarContent={sidebarContent}>
+        <Shows shows={shows} setShows={() => {}} numbering={false} setHeaders={false} />
+        {totalPages > 1 && (
+          <ReactPaginate
+            previousLabel={"Previous"}
+            nextLabel={"Next"}
+            breakLabel={"..."}
+            breakClassName={"break-me"}
+            pageCount={totalPages}
+            marginPagesDisplayed={1}
+            pageRangeDisplayed={1}
+            onPageChange={handlePageClick}
+            containerClassName={"pagination"}
+            activeClassName={"active"}
+            forcePage={page}
+          />
+        )}
+      </LayoutWrapper>
+    </>
   );
 };
 

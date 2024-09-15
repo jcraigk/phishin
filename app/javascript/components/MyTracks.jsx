@@ -30,6 +30,7 @@ import { useLoaderData, useNavigate } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
 import ReactPaginate from "react-paginate";
+import { Helmet } from 'react-helmet-async';
 
 const MyTracks = () => {
   const { tracks, totalPages, page, sortOption } = useLoaderData();
@@ -67,24 +68,29 @@ const MyTracks = () => {
   );
 
   return (
-    <LayoutWrapper sidebarContent={sidebarContent}>
-      <Tracks tracks={tracks} setTracks={() => {}} numbering={false} setHeaders={false} showDates={true} />
-      {totalPages > 1 && (
-        <ReactPaginate
-          previousLabel={"Previous"}
-          nextLabel={"Next"}
-          breakLabel={"..."}
-          breakClassName={"break-me"}
-          pageCount={totalPages}
-          marginPagesDisplayed={1}
-          pageRangeDisplayed={1}
-          onPageChange={handlePageClick}
-          containerClassName={"pagination"}
-          activeClassName={"active"}
-          forcePage={page}
-        />
-      )}
-    </LayoutWrapper>
+    <>
+      <Helmet>
+        <title>My Tracks - Phish.in</title>
+      </Helmet>
+      <LayoutWrapper sidebarContent={sidebarContent}>
+        <Tracks tracks={tracks} setTracks={() => {}} numbering={false} setHeaders={false} showDates={true} />
+        {totalPages > 1 && (
+          <ReactPaginate
+            previousLabel={"Previous"}
+            nextLabel={"Next"}
+            breakLabel={"..."}
+            breakClassName={"break-me"}
+            pageCount={totalPages}
+            marginPagesDisplayed={1}
+            pageRangeDisplayed={1}
+            onPageChange={handlePageClick}
+            containerClassName={"pagination"}
+            activeClassName={"active"}
+            forcePage={page}
+          />
+        )}
+      </LayoutWrapper>
+    </>
   );
 };
 

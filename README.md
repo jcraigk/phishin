@@ -13,21 +13,17 @@
  * Opengraph
  * context dropdowns
  * put play random show button on empty playlist page
- * anywhere we can put lyrical excerpts?
- * Update page title when playing audio
- * Set page title on each specific page
- * Add CSRF to POSTs on API
- * Remove lyrics / dialogue
- * Canonical URLs in Helmet
- * disable swetrix - or sign up
- * /missing-content -> DO WE REALLY NEED THIS?
+ * /missing-content - we need shows/missing on the api side (missing/incomplete)
  * remove data-theme="light" (and maybe bulma entirely)
  * tracks displayed in non-show contexts should have their dates linked to show via button so you can still play the current page as a playlist
- * https://github.com/remix-run/react-router/blob/v4.3.1/packages/react-router-dom/docs/guides/scroll-restoration.md ?
  * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
- * Can helmet set the title dynamically like window.title when a track is played? does this even make sense?
  * ErrorPage should handle status codes (Not Found especially)
  * make sure we re-hydrate any pages that have tracks on them when doing SSR
+
+ * anywhere we can put lyrical excerpts?
+ * disable swetrix - or sign up
+ * Add CSRF to POSTs on API
+
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)
 

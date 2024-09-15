@@ -15,6 +15,7 @@ import React from "react";
 import { useLoaderData } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
+import { Helmet } from 'react-helmet-async';
 
 const TopShows = ({ user }) => {
   const { shows } = useLoaderData();
@@ -36,9 +37,14 @@ const TopShows = ({ user }) => {
   );
 
   return (
-    <LayoutWrapper sidebarContent={sidebarContent}>
-      <Shows shows={shows} numbering={true} />
-    </LayoutWrapper>
+    <>
+      <Helmet>
+        <title>Top Shows - Phish.in</title>
+      </Helmet>
+      <LayoutWrapper sidebarContent={sidebarContent}>
+        <Shows shows={shows} numbering={true} />
+      </LayoutWrapper>
+    </>
   );
 };
 
