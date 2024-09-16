@@ -1,9 +1,7 @@
 ** React TODO
- * style the feedback messages - should we use bulma styles or no?
  * Opengraph (helmet context)
  * track context dropdowns
     * share from timestamp
- * put play random show button on empty playlist page
  * remove data-theme="light" (and maybe bulma entirely)
  * ErrorPage should handle status codes (Not Found especially)
  * make sure we re-hydrate any pages that have tracks on them when doing SSR (to highlight likes)
@@ -18,6 +16,7 @@
  * Disable email account creation - allow oauth login through api?
  * Prerender caching? Would only benefit logged out users since we'd need to rehydrate on load for any pages that showed liked items
  * button to minimize/recall player
+ * put play random show button on empty playlist page
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)
 

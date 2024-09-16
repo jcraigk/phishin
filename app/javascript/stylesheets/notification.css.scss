@@ -1,40 +1,39 @@
 .notification {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
-  z-index: 9999;
-  background-color: #f0f0f0;
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  opacity: 1;
-  transition: opacity 0.5s ease-out;
-  width: 300px;
-}
-
-.notification.hide {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.notification .close-btn {
-  position: absolute;
   top: 0.5rem;
-  right: 0.5rem;
-  cursor: pointer;
-  background: none;
-  border: none;
-  font-size: 1rem;
-}
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  padding: 1rem;
+  border-radius: --var(bulma-radius);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: opacity 0.5s ease-out;
+  font-size: 1.5rem;
 
-.notification .progress-bar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  background-color: #3498db;
-  animation: progress 5s linear forwards;
+  &.notice {
+    background-color: #cfffe3;
+
+    .progress-bar {
+      background-color: #2ecc71;
+    }
+  }
+
+  &.alert {
+    background-color: #ffe4e1;
+
+    .progress-bar {
+      background-color: #e74c3c;
+    }
+  }
+
+  .progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background-color: $header_gray;
+    animation: progress 5s linear forwards;
+  }
 }
 
 @keyframes progress {
@@ -45,4 +44,3 @@
     width: 0;
   }
 }
-
