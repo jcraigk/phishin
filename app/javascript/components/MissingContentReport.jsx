@@ -4,8 +4,8 @@ export const missingContentLoader = async () => {
     if (!response.ok) throw response;
     const data = await response.json();
     const combinedData = [
-      ...data.missing_show_dates.map((date) => ({ date, type: "Missing" })),
-      ...data.incomplete_show_dates.map((date) => ({ date, type: "Incomplete" }))
+      ...data.missing_shows.map((show) => ({ ...show, type: "Missing" })),
+      ...data.incomplete_shows.map((show) => ({ ...show, type: "Incomplete" }))
     ];
     combinedData.sort((a, b) => new Date(b.date) - new Date(a.date));
     return combinedData;
@@ -23,9 +23,11 @@ import { Helmet } from "react-helmet-async";
 const MissingContentReport = () => {
   const missingContent = useLoaderData();
 
-  const incompleteCount = missingContent.filter(item => item.type === "Incomplete").length;
-  const missingCount = missingContent.filter(item => item.type === "Missing").length;
+  const incompleteCount = missingContent.filter((item) => item.type === "Incomplete").length;
+  const missingCount = missingContent.filter((item) => item.type === "Missing").length;
   const totalIssues = incompleteCount + missingCount;
+
+  let lastYear = null;
 
   const sidebarContent = (
     <div className="sidebar-content">
@@ -42,22 +44,39 @@ const MissingContentReport = () => {
         <title>Missing Content Report - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        <div className="section-title">
-          <div className="title-left">Missing and Incomplete Content</div>
-        </div>
         <ul>
-          {missingContent.map(({ date, type }) => (
-            <li className="list-item" key={date}>
-              <span className="leftside-primary">{date}</span>
-              <span className="leftside-secondary">
-                {type === "Incomplete" ? (
-                  <Link to={`/${date}`}>{type}</Link>
-                ) : (
-                  type
+          {missingContent.map(({ date, venue_name, location, type }) => {
+            const currentYear = new Date(date).getFullYear();
+            const isNewYear = currentYear !== lastYear;
+
+            if (isNewYear) {
+              lastYear = currentYear;
+            }
+
+            return (
+              <>
+                {isNewYear && (
+                  <div className="section-title">
+                    <div className="title-left">{lastYear}</div>
+                  </div>
                 )}
-              </span>
-            </li>
-          ))}
+                <li className="list-item">
+                  <span className="leftside-primary">{date}</span>
+                  <span className="leftside-secondary">{venue_name}</span>
+                  <span className="leftside-tertiary">{location}</span>
+                  <span className="rightside-primary-wide">
+                    {type === "Incomplete" ? (
+                      <Link to={`/${date}`} className="button is-small">
+                        {type}
+                      </Link>
+                    ) : (
+                      type
+                    )}
+                  </span>
+                </li>
+              </>
+            );
+          })}
         </ul>
       </LayoutWrapper>
     </>
