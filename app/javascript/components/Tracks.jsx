@@ -78,7 +78,14 @@ const Tracks = ({ tracks, setTracks, showDates, numbering = false, showView = fa
                   highlight={highlight}
                 />
               </span>
-              <span className="leftside-secondary">
+              {
+                !showView && (
+                  <span className="leftside-secondary">
+                    {track.venue_location}
+                  </span>
+                )
+              }
+              <span className="leftside-tertiary">
                 <TagBadges tags={track.tags} />
               </span>
               <span className="rightside-primary">{formatDurationTrack(track.duration)}</span>
