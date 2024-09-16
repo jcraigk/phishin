@@ -12,6 +12,9 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
   const progressBarRef = useRef();
   const [currentTime, setCurrentTime] = useState(0);
   const { setAlert } = useNotification();
+  const [fadeClass, setFadeClass] = useState("fade-in");
+  const [isFadeOutComplete, setIsFadeOutComplete] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   const togglePlayPause = () => {
     if (audioRef.current.paused) {
@@ -59,22 +62,34 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
 
   // Hande activeTrack change
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const startTime = parseTimeParam(searchParams.get("t"));
-
     if (activeTrack && audioRef.current) {
       if (typeof window !== "undefined") {
         document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
       }
 
-      scrubberRef.current.style.backgroundImage = `url(${activeTrack.waveform_image_url})`;
-      progressBarRef.current.style.maskImage = `url(${activeTrack.waveform_image_url})`;
+      setFadeClass("fade-out");
+      setIsFadeOutComplete(false);
+      setIsImageLoaded(false);
+
+      const fadeOutTimer = setTimeout(() => {
+        setIsFadeOutComplete(true);
+      }, 500);
+
+      const newImage = new Image();
+      newImage.src = activeTrack.waveform_image_url;
+
+      newImage.onload = () => {
+        setIsImageLoaded(true);
+      };
 
       audioRef.current.pause();
       audioRef.current.src = activeTrack.mp3_url;
       audioRef.current.load();
 
       audioRef.current.onloadedmetadata = () => {
+        const searchParams = new URLSearchParams(location.search);
+        const startTime = parseTimeParam(searchParams.get("t"));
+
         if (startTime && startTime <= audioRef.current.duration) {
           audioRef.current.currentTime = startTime;
         }
@@ -87,10 +102,17 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         });
       };
 
-      setupMediaSession();
+      return () => clearTimeout(fadeOutTimer);
     }
   }, [activeTrack, location.search]);
 
+  useEffect(() => {
+    if (isFadeOutComplete && isImageLoaded) {
+      scrubberRef.current.style.backgroundImage = `url(${activeTrack.waveform_image_url})`;
+      progressBarRef.current.style.maskImage = `url(${activeTrack.waveform_image_url})`;
+      setFadeClass("fade-in");
+    }
+  }, [isFadeOutComplete, isImageLoaded]);
 
   const skipToNextTrack = () => {
     const currentIndex = currentPlaylist.indexOf(activeTrack);
@@ -221,7 +243,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
       <div className="bottom-row">
         <p className="elapsed">{formatTime(currentTime)}</p>
         <div
-          className="scrubber-bar"
+          className={`scrubber-bar ${fadeClass}`}
           onClick={handleScrubberClick}
           ref={scrubberRef}
         >
