@@ -46,7 +46,6 @@ const AppRouter = (props) => {
       window.location.href = redirectPath;
     }
     setUser(userData);
-    setNotice("You are now logged in");
   };
 
   const handleLogout = () => {

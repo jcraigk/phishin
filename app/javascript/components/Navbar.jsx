@@ -150,9 +150,12 @@ const Navbar = ({ user, onLogout }) => {
                 <div className="navbar-item has-dropdown is-hoverable">
                   <a className="navbar-link">{user.username}</a>
                   <div className="navbar-dropdown is-right">
-                    <a href="#logout" className="navbar-item" onClick={handleLogout}>
-                      Logout
-                    </a>
+                  <a href="#logout" className="navbar-item" onClick={(e) => {
+                    e.preventDefault();
+                    handleLogout();
+                  }}>
+                    Logout
+                  </a>
                   </div>
                 </div>
               ) : (

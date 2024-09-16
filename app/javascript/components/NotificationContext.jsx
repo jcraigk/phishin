@@ -8,11 +8,11 @@ export const NotificationProvider = ({ children }) => {
   const [notification, setNotification] = useState(null);
 
   const setAlert = (message) => {
-    setNotification({ type: "is-danger", message, clearNotification });
+    setNotification({ type: "alert", message, clearNotification });
   };
 
   const setNotice = (message) => {
-    setNotification({ type: "is-success", message, clearNotification });
+    setNotification({ type: "notice", message, clearNotification });
   };
 
   const clearNotification = () => {
@@ -34,7 +34,6 @@ export const NotificationProvider = ({ children }) => {
       {children}
       {notification && (
         <div className={`notification ${notification.type}`}>
-          <button className="close-btn" onClick={clearNotification}>&times;</button>
           <p>{notification.message}</p>
           <div className="progress-bar"></div>
         </div>
