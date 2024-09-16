@@ -42,6 +42,7 @@
     "react-on-rails": "14.0.5",
     "react-paginate": "^8.2.0",
     "react-router-dom": "^6.26.1",
+    "react-spinners": "^0.14.1",
     "react-tooltip": "^5.28.0",
     "sass": "^1.68.0",
     "sass-loader": "^16.0.1",

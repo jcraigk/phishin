@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import Loader from "./Loader";
 import Player from "./Player";
 import { useNotification } from "./NotificationContext";
 
 const Layout = ({ user, onLogout, location: ssrLocation }) => {
   const { notification, clearNotification } = useNotification();
+  const navigation = useNavigation();
 
   const clientLocation = useLocation();
   const location = typeof window === "undefined" ? ssrLocation : clientLocation;
@@ -25,6 +27,7 @@ const Layout = ({ user, onLogout, location: ssrLocation }) => {
 
   return (
     <>
+      {navigation.state === 'loading' && <Loader />}
       <Navbar user={user} onLogout={onLogout} />
       {notification && (
         <div className={`notification is-${notification.type}`}>
