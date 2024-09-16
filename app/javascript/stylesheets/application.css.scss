@@ -13,7 +13,6 @@ $tag_gray: #888888;
 $likes_blue: #03bbf2;
 $text_gray: #6d6f71;
 
-
 @import "./content.css.scss";
 @import "./pagination.css.scss";
 @import "./layout.css.scss";
@@ -28,6 +27,7 @@ $text_gray: #6d6f71;
 @import "./modal.css.scss";
 @import "./player.css.scss";
 @import "./navbar.css.scss";
+@import "./errors.css.scss";
 
 html, body {
   height: 100%;

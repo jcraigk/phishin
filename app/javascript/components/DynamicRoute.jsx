@@ -13,7 +13,7 @@ export const dynamicLoader = async ({ params, request }) => {
     return showLoader({ params: { date: firstSegment }, request });
   }
 
-  throw new Response("Not Found", { status: 404 });
+  throw new Response("Page not found", { status: 404 });
 };
 
 

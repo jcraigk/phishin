@@ -1,21 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { useNotification } from "./NotificationContext";
+import logo from "../images/logo-350.png";
 
 const Navbar = ({ user, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAboutDropdownOpen, setIsAboutDropdownOpen] = useState(false);
   const [isContentDropdownOpen, setIsContentDropdownOpen] = useState(false);
-  const { setNotice } = useNotification();
   const menuRef = useRef(null);
 
   const handleLinkClick = () => {
     setIsMenuOpen(false);
     setIsAboutDropdownOpen(false);
     setIsContentDropdownOpen(false);
-
-    // Forcefully remove the 'is-active' class from dropdowns
     const dropdowns = document.querySelectorAll(".has-dropdown.is-active");
     dropdowns.forEach((dropdown) => dropdown.classList.remove("is-active"));
   };
@@ -26,7 +23,7 @@ const Navbar = ({ user, onLogout }) => {
 
   const handleLogout = () => {
     onLogout();
-    handleLinkClick(); // Ensure dropdowns close after logout
+    handleLinkClick();
   };
 
   useEffect(() => {
@@ -36,7 +33,6 @@ const Navbar = ({ user, onLogout }) => {
         setIsAboutDropdownOpen(false);
         setIsContentDropdownOpen(false);
 
-        // Forcefully remove the 'is-active' class from dropdowns
         const dropdowns = document.querySelectorAll(".has-dropdown.is-active");
         dropdowns.forEach((dropdown) => dropdown.classList.remove("is-active"));
       }
@@ -82,7 +78,7 @@ const Navbar = ({ user, onLogout }) => {
     <nav className="navbar" role="navigation" aria-label="main navigation" ref={menuRef}>
       <div className="navbar-brand">
         <Link to="/" className="navbar-item" onClick={handleLinkClick}>
-          <img src="/static/logo-96.png" alt="Site Logo" />
+          <img src={logo} alt="Site logo" />
         </Link>
 
         <a
@@ -162,14 +158,14 @@ const Navbar = ({ user, onLogout }) => {
                 <>
                   <Link
                     to="/login"
-                    className="button is-light"
+                    className="button login-btn"
                     onClick={() => {
                       if (typeof window !== "undefined") {
                         localStorage.setItem("redirectAfterLogin", window.location.pathname);
                       }
                     }}
                   >
-                    Log in
+                    Login
                   </Link>
                 </>
               )}

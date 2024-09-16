@@ -39,7 +39,7 @@ const Login = ({ onLogin, oauthProviders }) => {
           >
             <div className="login-logo">
               <img
-                src={require(`../../images/external-logos/${provider}.png`)}
+                src={require(`../../images/external-logo-${provider}.png`)}
                 alt={`${provider.toString().toUpperCase()} Logo`}
                 width="18"
                 height="18"

@@ -10,10 +10,6 @@
   flex: 1;
 }
 
-.mobile-title {
-  display: block;
-}
-
 .sidebar {
   flex: 0 0 16rem;
   background-color: $header_gray;
@@ -38,10 +34,6 @@
   .main-content {
     width: 100%;
   }
-
-  .mobile-title {
-    display: block;
-  }
 }
 
 @media (min-width: 1200px) {
@@ -49,9 +41,5 @@
     flex: 0 0 16rem;
     margin-right: 2rem;
     padding: 1rem;
-  }
-
-  .mobile-title {
-    display: none;
   }
 }

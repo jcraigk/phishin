@@ -11,7 +11,7 @@ export const tagTracksLoader = async ({ params, request }) => {
     if (!tagResponse.ok) throw tagResponse;
     const tagData = await tagResponse.json();
     const tag = tagData.find(t => t.slug === tagSlug);
-    const tagName = tag ? tag.name : "Unknown Tag";
+    if (!tag) throw new Response("Tag not found", { status: 404 });
 
     const tracksResponse = await authFetch(
       `/api/v2/tracks?tag_slug=${tagSlug}&sort=${sortOption}&page=${page}&per_page=10`
@@ -27,6 +27,7 @@ export const tagTracksLoader = async ({ params, request }) => {
       sortOption,
     };
   } catch (error) {
+    if (error instanceof Response) throw error;
     throw new Response("Error fetching data", { status: 500 });
   }
 };
