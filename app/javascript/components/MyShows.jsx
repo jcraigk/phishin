@@ -26,7 +26,7 @@ export const myShowsLoader = async ({ request }) => {
 };
 
 import React from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate, Link } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
 import ReactPaginate from "react-paginate";

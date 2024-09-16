@@ -98,6 +98,18 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 10rem;
+
+  .date {
+    color: var(--bulma-grey-dark);
+    font-weight: bold;
+    margin-right: 0.5rem;
+    border-radius: var(--bulma-radius);
+    padding: 0.2rem;
+
+    &:hover {
+      background-color: var(--bulma-grey-light);
+    }
+  }
 }
 
 .leftside-primary-narrow {

@@ -12,7 +12,7 @@ export const topTracksLoader = async () => {
 };
 
 import React from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, Link } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
 import { Helmet } from 'react-helmet-async';
@@ -42,7 +42,7 @@ const TopTracks = ({ user }) => {
         <title>Top Tracks - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        <Tracks tracks={tracks} setTracks={() => {}} numbering={true} setHeaders={false} showDates={true} />
+        <Tracks tracks={tracks} setTracks={() => {}} numbering={true} />
       </LayoutWrapper>
     </>
   );

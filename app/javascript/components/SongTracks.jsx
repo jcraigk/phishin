@@ -79,7 +79,7 @@ const SongTracks = () => {
         <title>{songTitle} - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        <Tracks tracks={tracks} setTracks={() => {}} numbering={false} setHeaders={false} showDates={true} />
+        <Tracks tracks={tracks} setTracks={() => {}} />
         {totalPages > 1 && (
           <ReactPaginate
             previousLabel={"Previous"}

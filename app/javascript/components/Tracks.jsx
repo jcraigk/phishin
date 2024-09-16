@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, Link } from "react-router-dom";
 import TagBadges from "./TagBadges";
 import { formatDurationTrack, formatDate, toggleLike } from "./utils";
 import HighlightedText from "./HighlightedText";
@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useNotification } from "./NotificationContext";
 
-const Tracks = ({ tracks, setTracks, showDates, numbering = false, setHeaders = false, highlight, trackRefs }) => {
+const Tracks = ({ tracks, setTracks, showDates, numbering = false, showView = false, highlight, trackRefs }) => {
   const [trackLikes, setTrackLikes] = useState(tracks);
   const { playTrack, activeTrack } = useOutletContext();
   const { setAlert, setNotice } = useNotification();
@@ -47,10 +47,8 @@ const Tracks = ({ tracks, setTracks, showDates, numbering = false, setHeaders = 
   return (
     <ul>
       {trackLikes.map((track, index) => {
-        const isNewSet = setHeaders && track.set_name !== lastSetName;
+        const isNewSet = showView && track.set_name !== lastSetName;
         lastSetName = track.set_name;
-
-        const trackTitle = showDates ? `${formatDate(track.show_date)} ${track.title}` : track.title;
 
         return (
           <React.Fragment key={track.id}>
@@ -62,14 +60,21 @@ const Tracks = ({ tracks, setTracks, showDates, numbering = false, setHeaders = 
             <li
               className={`list-item track-item ${track.id === activeTrack?.id ? "active-item" : ""}`}
               onClick={() => handleTrackClick(track)}
-              ref={(el) => (trackRefs.current[index] = el)}
+              ref={trackRefs ? (el) => (trackRefs.current[index] = el) : null}
             >
               {numbering && (
                 <span className="leftside-numbering">#{index + 1}</span>
               )}
               <span className="leftside-primary">
+                {
+                  !showView && (
+                    <Link className="date" to={`/${track.show_date}`}>
+                      {formatDate(track.show_date)}
+                    </Link>
+                  )
+                }
                 <HighlightedText
-                  text={trackTitle}
+                  text={track.title}
                   highlight={highlight}
                 />
               </span>
