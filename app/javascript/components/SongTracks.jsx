@@ -8,6 +8,9 @@ export const songTracksLoader = async ({ params, request }) => {
 
   try {
     const songResponse = await fetch(`/api/v2/songs/${songSlug}`);
+    if (songResponse.status === 404) {
+      throw new Response("Song not found", { status: 404 });
+    }
     if (!songResponse.ok) throw songResponse;
     const songData = await songResponse.json();
 
@@ -28,10 +31,11 @@ export const songTracksLoader = async ({ params, request }) => {
       tracks: tracksData.tracks,
       totalEntries: tracksData.total_entries,
       totalPages: tracksData.total_pages,
-      page: parseInt(page, 10) - 1, // Convert to zero-based index for pagination
+      page: parseInt(page, 10) - 1,
       sortOption
     };
   } catch (error) {
+    if (error instanceof Response) throw error;
     throw new Response("Error fetching data", { status: 500 });
   }
 };

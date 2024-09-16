@@ -14,8 +14,10 @@ export const eraShowsLoader = async ({ params }) => {
     const response = await authFetch(url);
     if (!response.ok) throw response;
     const data = await response.json();
+    if (data.shows.length === 0) throw new Response("Shows not found", { status: 404 });
     return { shows: data.shows, year };
   } catch (error) {
+    if (error instanceof Response) throw error;
     throw new Response("Error fetching data", { status: 500 });
   }
 };

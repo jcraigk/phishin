@@ -3,12 +3,12 @@
  * track context dropdowns
     * share from timestamp
  * remove data-theme="light" (and maybe bulma entirely)
- * ErrorPage should handle status codes (Not Found especially)
- * make sure we re-hydrate any pages that have tracks on them when doing SSR (to highlight likes)
  * If you play a show and navigate to a new show, it resets the playlist
  * admin note and incomplete at top of show
+ * on mobile should sidebar go below on main page (and others?)
 
  * anywhere we can put lyrical excerpts?
+ * search bar in navbar
  * disable swetrix - or sign up
  * Add CSRF to POSTs on API
  * Can we use as_json to clean up request specs?
@@ -17,6 +17,7 @@
  * Prerender caching? Would only benefit logged out users since we'd need to rehydrate on load for any pages that showed liked items
  * button to minimize/recall player
  * put play random show button on empty playlist page
+ * make sure we re-hydrate any pages that have tracks on them when doing SSR (to highlight likes)
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)
 

@@ -45,7 +45,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         album: `${formatDate(activeTrack.show_date)} - ${activeTrack.venue_name}`,
         artwork: [
           {
-            src: 'https://phish.in/static/logo-512.png',
+            src: 'https://phish.in/static/logo-square-512.png',
             sizes: '512x512',
             type: 'image/png',
           }

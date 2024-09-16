@@ -7,6 +7,9 @@ export const venueShowsLoader = async ({ params, request }) => {
 
   try {
     const venueResponse = await fetch(`/api/v2/venues/${venueSlug}`);
+    if (venueResponse.status === 404) {
+      throw new Response("Venue not found", { status: 404 });
+    }
     if (!venueResponse.ok) throw venueResponse;
     const venueData = await venueResponse.json();
 
@@ -16,6 +19,7 @@ export const venueShowsLoader = async ({ params, request }) => {
 
     return { shows: showsData.shows, venue: venueData, sortOption };
   } catch (error) {
+    if (error instanceof Response) throw error;
     throw new Response("Error fetching data", { status: 500 });
   }
 };
