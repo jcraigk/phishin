@@ -44,7 +44,7 @@ main {
 
 .loader-container {
   position: fixed;
-  top: 0;
+  top: 56px; // Don't fade the navbar
   left: 0;
   right: 0;
   bottom: 0;

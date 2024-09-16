@@ -6,7 +6,7 @@ import Layout from "./Layout";
 import MapView from "./MapView";
 import MyShows, { myShowsLoader } from "./MyShows";
 import MyTracks, { myTracksLoader } from "./MyTracks";
-import Search from "./pages/Search";
+import Search from "./Search";
 import SongIndex, { songIndexLoader } from "./SongIndex";
 import SongTracks, { songTracksLoader } from "./SongTracks";
 import TagIndex, { tagIndexLoader } from "./TagIndex";

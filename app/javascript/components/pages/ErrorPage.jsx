@@ -1,6 +1,5 @@
 import React from "react";
 import { useRouteError, Link } from "react-router-dom";
-import PropTypes from "prop-types";
 import logo from "../../images/logo-350.png";
 
 const ErrorPage = () => {
@@ -12,12 +11,12 @@ const ErrorPage = () => {
       {error?.status === 404 ? (
         <>
           <p className="error-title">404</p>
-          <p className="error-subtitle">Got a blank space</p>
+          <p className="error-subtitle">Got a blank space...</p>
         </>
       ) : (
         <>
           <p className="error-title">500</p>
-          <p className="error-subtitle">We are so very sorry</p>
+          <p className="error-subtitle">We are so very sorry...</p>
         </>
       )}
       <p className="error-detail">
@@ -27,10 +26,6 @@ const ErrorPage = () => {
       <Link to="/" className="button">Return Home</Link>
     </div>
   );
-};
-
-ErrorPage.propTypes = {
-  message: PropTypes.string,
 };
 
 export default ErrorPage;

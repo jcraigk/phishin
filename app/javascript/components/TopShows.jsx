@@ -2,7 +2,7 @@ import { authFetch } from "./utils";
 
 export const topShowsLoader = async () => {
   try {
-    const response = await authFetch(`/api/v2/shows?per_page=40&sort=likes_count:desc`);
+    const response = await authFetch(`/api/v2/shows?per_page=46&sort=likes_count:desc`);
     if (!response.ok) throw response;
     const data = await response.json();
     return { shows: data.shows };
@@ -12,7 +12,7 @@ export const topShowsLoader = async () => {
 };
 
 import React from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, Link } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
 import { Helmet } from 'react-helmet-async';

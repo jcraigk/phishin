@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import Tracks from "../Tracks";
-import Tags from "../Tags";
-import Shows from "../Shows";
-import Songs from "../Songs";
-import Venues from "../Venues";
+import Tracks from "./Tracks";
+import Tags from "./Tags";
+import Shows from "./Shows";
+import Songs from "./Songs";
+import Venues from "./Venues";
 
 const SearchResults = ({ results, term }) => {
   const {
@@ -21,9 +21,7 @@ const SearchResults = ({ results, term }) => {
   const [exactShows, setExactShows] = useState(initialExactShow ? [initialExactShow] : []);
 
   return (
-    <div className="search-results">
-      <h1 className="title mt-6">Search Results for "{term}"</h1>
-
+    <>
       {exactShows?.length > 0 && (
         <>
           <h2 className="title">Show on Date</h2>
@@ -69,7 +67,7 @@ const SearchResults = ({ results, term }) => {
       {!exactShows?.length && !otherShows?.length && !songs?.length && !tracks?.length && !tags?.length && !venues?.length && (
         <p>Sorry, no results found.</p>
       )}
-    </div>
+    </>
   );
 };
 

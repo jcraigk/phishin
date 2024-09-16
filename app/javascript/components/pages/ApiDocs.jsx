@@ -19,7 +19,7 @@ const ApiDocs = ({ baseUrl }) => {
       <a
         href={`https://petstore.swagger.io/?url=${baseUrl}/api/v2/swagger_doc`}
         target="_blank"
-        className="button is-primary"
+        className="button"
       >
         API v2 Documentation
         <FontAwesomeIcon icon={faExternalLinkAlt} className="ml-2" />

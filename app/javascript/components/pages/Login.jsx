@@ -81,7 +81,7 @@ const Login = ({ onLogin, oauthProviders }) => {
           </div>
           <div className="field">
             <div className="control">
-              <button className="button is-primary has-text-weight-bold" type="submit">
+              <button className="button has-text-weight-bold" type="submit">
                 Login
               </button>
             </div>
