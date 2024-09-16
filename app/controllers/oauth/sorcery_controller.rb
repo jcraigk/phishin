@@ -1,4 +1,4 @@
-class OauthController < ApplicationController
+class Oauth::SorceryController < ApplicationController
   def login
     login_at(params[:provider])
   end

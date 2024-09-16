@@ -19,6 +19,7 @@ import React from "react";
 import { Link, useLoaderData } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import { Helmet } from "react-helmet-async";
+import { formatNumber } from "./utils";
 
 const MissingContentReport = () => {
   const missingContent = useLoaderData();
@@ -28,6 +29,11 @@ const MissingContentReport = () => {
   const totalIssues = incompleteCount + missingCount;
 
   let lastYear = null;
+
+  // Helper function to count shows for a given year
+  const countShowsForYear = (year) => {
+    return missingContent.filter(({ date }) => new Date(date).getFullYear() === year).length;
+  };
 
   const sidebarContent = (
     <div className="sidebar-content">
@@ -58,6 +64,7 @@ const MissingContentReport = () => {
                 {isNewYear && (
                   <div className="section-title">
                     <div className="title-left">{lastYear}</div>
+                    <span className="detail-right">{formatNumber(countShowsForYear(lastYear), "show")}</span>
                   </div>
                 )}
                 <li className="list-item">
