@@ -80,13 +80,13 @@
 // }
 
 .leftside-numbering {
-  margin-right: 2rem;
-  width: 3rem;
+  margin-right: 0.5rem;
+  width: 2rem;
   padding-left: 0.3rem;
   padding-right: 0.3rem;
   border-radius: var(--bulma-radius);
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 1rem;
   background-color: $header_gray;
 }
 
@@ -100,11 +100,12 @@
   min-width: 10rem;
 
   .date {
+    font-size: 1.25rem;
+    background-color: $header_gray;
     color: var(--bulma-grey-dark);
-    font-weight: bold;
     margin-right: 0.5rem;
     border-radius: var(--bulma-radius);
-    padding: 0.2rem;
+    padding: 0.2rem 0.5rem;
 
     &:hover {
       background-color: var(--bulma-grey-light);
