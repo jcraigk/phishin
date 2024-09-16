@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types";
 import Modal from "react-modal";
 import { Tooltip } from "react-tooltip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -120,20 +119,6 @@ const TagBadges = ({ tags }) => {
       )}
     </div>
   );
-};
-
-TagBadges.propTypes = {
-  tags: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      priority: PropTypes.number.isRequired,
-      notes: PropTypes.string,
-      transcript: PropTypes.string,
-      description: PropTypes.string,
-      starts_at_second: PropTypes.number,
-      ends_at_second: PropTypes.number,
-    })
-  ).isRequired,
 };
 
 export default TagBadges;

@@ -88,7 +88,7 @@ const ResetPassword = () => {
 
           <div className="field">
             <div className="control">
-              <button className="button is-primary" type="submit">Reset Password</button>
+              <button className="button" type="submit">Reset Password</button>
             </div>
           </div>
         </form>

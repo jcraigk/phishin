@@ -1,185 +1,198 @@
 import React, { useState, useEffect, useRef } from "react";
-import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import logo from "../images/logo-350.png";
+import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendarAlt, faMusic, faMapMarkerAlt, faStar, faCalendarDay, faMap, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = ({ user, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAboutDropdownOpen, setIsAboutDropdownOpen] = useState(false);
-  const [isContentDropdownOpen, setIsContentDropdownOpen] = useState(false);
-  const menuRef = useRef(null);
-
-  const handleLinkClick = () => {
-    setIsMenuOpen(false);
-    setIsAboutDropdownOpen(false);
-    setIsContentDropdownOpen(false);
-    const dropdowns = document.querySelectorAll(".has-dropdown.is-active");
-    dropdowns.forEach((dropdown) => dropdown.classList.remove("is-active"));
-  };
-
-  const toggleDropdown = (setDropdown) => {
-    setDropdown((prevState) => !prevState);
-  };
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     onLogout();
-    handleLinkClick();
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsMenuOpen(false);
-        setIsAboutDropdownOpen(false);
-        setIsContentDropdownOpen(false);
-
-        const dropdowns = document.querySelectorAll(".has-dropdown.is-active");
-        dropdowns.forEach((dropdown) => dropdown.classList.remove("is-active"));
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [menuRef]);
-
-  useEffect(() => {
-    if (!isMenuOpen) {
-      setIsAboutDropdownOpen(false);
-      setIsContentDropdownOpen(false);
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchTerm) {
+      navigate(`/search?term=${searchTerm}`);
     }
-  }, [isMenuOpen]);
+  };
 
   const staticLinks = [
-    { path: "/faq", label: "FAQ" },
-    { path: "/api-docs", label: "API" },
-    { path: "/tagin-project", label: "Tagin' Project" },
-    { path: "/privacy", label: "Privacy Policy" },
-    { path: "/terms", label: "Terms of Service" },
-    { path: "/contact-info", label: "Contact" },
+    { path: "/faq", label: "FAQ", icon: faQuestionCircle },
+    { path: "/api-docs", label: "API Docs", icon: faBook },
+    { path: "/tagin-project", label: "Tagin' Project", icon: faTags },
+    { path: "/contact-info", label: "Contact Info", icon: faAddressBook },
+    { path: "/privacy", label: "Privacy Policy", icon: faUserShield },
+    { path: "/terms", label: "Terms of Service", icon: faFileContract }
   ];
 
-  const contentLinks = [
-    { path: "/", label: "Years" },
-    { path: "/search", label: "Search" },
-    { path: "/songs", label: "Songs" },
-    { path: "/venues", label: "Venues" },
-    { path: "/top-shows", label: "Top Shows" },
-    { path: "/top-tracks", label: "Top Tracks" },
-    { path: "/my-shows", label: "My Shows" },
-    { path: "/my-tracks", label: "My Tracks" },
-    { path: "/tags", label: "Tags" },
-    { path: "/today", label: "Today" },
-    { path: "/map", label: "Map" },
+  const browseLinks = [
+    { path: "/", label: "Years", icon: faCalendarAlt },
+    { path: "/songs", label: "Songs", icon: faMusic },
+    { path: "/venues", label: "Venues", icon: faMapMarkerAlt },
+    { path: "/tags", label: "Tags", icon: faTags },
+    { path: "/today", label: "Today", icon: faCalendarDay },
+    { path: "/map", label: "Map", icon: faMap }
+  ];
+
+  const topLinks = [
+    { path: "/top-shows", label: "Top 46 Shows", icon: faStar },
+    { path: "/top-tracks", label: "Top 46 Tracks", icon: faStar }
+  ];
+
+  const userLinks = [
+    { path: "/my-shows", label: "My Shows", icon: faGuitar },
+    { path: "/my-tracks", label: "My Tracks", icon: faRecordVinyl }
+  ];
+
+  const combinedLinks = [
+    ...browseLinks.map(link => ({ ...link, type: 'link' })),
+    { type: 'divider' },
+    ...topLinks.map(link => ({ ...link, type: 'link' })),
+    { type: 'divider' },
+    ...userLinks.map(link => ({ ...link, type: 'link' }))
   ];
 
   return (
-    <nav className="navbar" role="navigation" aria-label="main navigation" ref={menuRef}>
+    <nav className="navbar" role="navigation">
       <div className="navbar-brand">
-        <Link to="/" className="navbar-item" onClick={handleLinkClick}>
+        <Link to="/" className="navbar-item">
           <img src={logo} alt="Site logo" />
         </Link>
 
         <a
           role="button"
           className={`navbar-burger ${isMenuOpen ? "is-active" : ""}`}
-          aria-label="menu"
-          aria-expanded={isMenuOpen}
-          data-target="navbarBasicExample"
+          data-target="navbar"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
         </a>
       </div>
 
-      <div id="navbarBasicExample" className={`navbar-menu ${isMenuOpen ? "is-active" : ""}`}>
+      <div id="navbar" className={`navbar-menu ${isMenuOpen ? "is-active" : ""}`}>
         <div className="navbar-start">
-          {/* Site Links Dropdown */}
-          <div
-            className={`navbar-item has-dropdown ${isAboutDropdownOpen ? "is-active" : ""}`}
-            onClick={() => toggleDropdown(setIsAboutDropdownOpen)}
-          >
-            <a className="navbar-link">Site</a>
-            <div className="navbar-dropdown">
-              {staticLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className="navbar-item"
-                  onClick={handleLinkClick}
-                >
-                  {link.label}
-                </Link>
-              ))}
+
+          <div className="dropdown is-hoverable navbar-item">
+            <div className="dropdown-trigger">
+              <button className="button">
+                <span>INFO</span>
+                <span className="icon">
+                  <FontAwesomeIcon icon={faAngleDown} />
+                </span>
+              </button>
+            </div>
+            <div className="dropdown-menu" id="dropdown-site-menu" role="menu">
+              <div className="dropdown-content">
+                {staticLinks.map((item, index) => (
+                  <Link key={item.path} to={item.path} className="dropdown-item">
+                    <span className="icon">
+                      <FontAwesomeIcon icon={item.icon} />
+                    </span>
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Content Links Dropdown */}
-          <div
-            className={`navbar-item has-dropdown ${isContentDropdownOpen ? "is-active" : ""}`}
-            onClick={() => toggleDropdown(setIsContentDropdownOpen)}
-          >
-            <a className="navbar-link">Content</a>
-            <div className="navbar-dropdown">
-              {contentLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className="navbar-item"
-                  onClick={handleLinkClick}
-                >
-                  {link.label}
-                </Link>
-              ))}
+          <div className="dropdown is-hoverable navbar-item">
+            <div className="dropdown-trigger">
+              <button className="button">
+                <span>CONTENT</span>
+                <span className="icon">
+                  <FontAwesomeIcon icon={faAngleDown} />
+                </span>
+              </button>
+            </div>
+            <div className="dropdown-menu" role="menu">
+              <div className="dropdown-content">
+                {combinedLinks.map((item, index) => (
+                  item.type === 'link' ? (
+                    <Link key={item.path} to={item.path} className="dropdown-item">
+                      <span className="icon">
+                        <FontAwesomeIcon icon={item.icon} />
+                      </span>
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <hr key={`divider-${index}`} className="dropdown-divider" />
+                  )
+                ))}
+              </div>
             </div>
           </div>
+
+          <div className="navbar-item">
+            <form onSubmit={handleSearchSubmit} className="control has-icons-left">
+              <input
+                className="input search-term"
+                type="text"
+                placeholder="Search"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <span className="icon is-left">
+                <FontAwesomeIcon icon={faSearch} />
+              </span>
+            </form>
+          </div>
+
+          {!user && (
+            <div className="navbar-item">
+              <Link
+                to="/login"
+                className="button login-btn"
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    localStorage.setItem("redirectAfterLogin", window.location.pathname);
+                  }
+                }}
+              >
+                Login
+              </Link>
+            </div>
+          )}
         </div>
 
-        <div className="navbar-end">
-          <div className="navbar-item">
-            <div className="buttons">
-              {user ? (
-                <div className="navbar-item has-dropdown is-hoverable">
-                  <a className="navbar-link">{user.username}</a>
-                  <div className="navbar-dropdown is-right">
-                  <a href="#logout" className="navbar-item" onClick={(e) => {
-                    e.preventDefault();
-                    handleLogout();
-                  }}>
-                    Logout
-                  </a>
+        {user && (
+          <div className="navbar-end">
+            <div className="navbar-item">
+              <div className="dropdown is-hoverable navbar-item">
+                <div className="dropdown-trigger user-dropdown">
+                  <button className="button">
+                    <span className="icon">
+                      <FontAwesomeIcon icon={faUser} />
+                    </span>
+                    <span>{user.username}</span>
+                  </button>
+                </div>
+                <div className="dropdown-menu is-right" role="menu">
+                  <div className="dropdown-content">
+                    <a href="#logout" className="navbar-item" onClick={(e) => {
+                      e.preventDefault();
+                      handleLogout();
+                    }}>
+                      <span className="icon">
+                        <FontAwesomeIcon icon={faCircleXmark} />
+                      </span>
+                      Logout
+                    </a>
                   </div>
                 </div>
-              ) : (
-                <>
-                  <Link
-                    to="/login"
-                    className="button login-btn"
-                    onClick={() => {
-                      if (typeof window !== "undefined") {
-                        localStorage.setItem("redirectAfterLogin", window.location.pathname);
-                      }
-                    }}
-                  >
-                    Login
-                  </Link>
-                </>
-              )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </nav>
   );
-};
-
-Navbar.propTypes = {
-  user: PropTypes.object,
-  onLogout: PropTypes.func.isRequired,
 };
 
 export default Navbar;

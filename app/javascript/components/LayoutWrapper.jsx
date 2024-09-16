@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 
 const LayoutWrapper = ({ sidebarContent, children }) => {
   return (
@@ -12,11 +11,6 @@ const LayoutWrapper = ({ sidebarContent, children }) => {
       </section>
     </div>
   );
-};
-
-LayoutWrapper.propTypes = {
-  sidebarContent: PropTypes.node.isRequired,
-  children: PropTypes.node.isRequired,
 };
 
 export default LayoutWrapper;

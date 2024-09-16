@@ -5,17 +5,17 @@
  * remove data-theme="light" (and maybe bulma entirely)
  * If you play a show and navigate to a new show, it resets the playlist
  * admin note and incomplete at top of show
- * on mobile should sidebar go below on main page (and others?)
+ * should sidebar go below on main page (and others?)
+ * ensure searching for "oct 29" works, also "dec 31 2023", "december 31, 2023"
+ * button to minimize/restore player
 
  * anywhere we can put lyrical excerpts?
- * search bar in navbar
  * disable swetrix - or sign up
  * Add CSRF to POSTs on API
  * Can we use as_json to clean up request specs?
  * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
  * Disable email account creation - allow oauth login through api?
  * Prerender caching? Would only benefit logged out users since we'd need to rehydrate on load for any pages that showed liked items
- * button to minimize/recall player
  * put play random show button on empty playlist page
  * make sure we re-hydrate any pages that have tracks on them when doing SSR (to highlight likes)
 

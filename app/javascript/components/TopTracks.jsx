@@ -2,7 +2,7 @@ import { authFetch } from "./utils";
 
 export const topTracksLoader = async () => {
   try {
-    const response = await authFetch(`/api/v2/tracks?per_page=40&sort=likes_count:desc`);
+    const response = await authFetch(`/api/v2/tracks?per_page=46&sort=likes_count:desc`);
     if (!response.ok) throw response;
     const data = await response.json();
     return { tracks: data.tracks };
