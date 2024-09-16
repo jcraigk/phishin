@@ -1,6 +1,5 @@
 ** React TODO
  * style the feedback messages - should we use bulma styles or no?
- * Add a spinner using react-spinners - will require passing loading state from components
  * Opengraph (helmet context)
  * track context dropdowns
     * share from timestamp
@@ -8,7 +7,7 @@
  * remove data-theme="light" (and maybe bulma entirely)
  * ErrorPage should handle status codes (Not Found especially)
  * make sure we re-hydrate any pages that have tracks on them when doing SSR (to highlight likes)
- * If you play a show and navigate to a new show, does it take over the playlist?
+ * If you play a show and navigate to a new show, it resets the playlist
  * admin note and incomplete at top of show
 
  * anywhere we can put lyrical excerpts?
