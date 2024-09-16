@@ -6,25 +6,41 @@
   align-items: flex-start;
 }
 
+/* Main content will take up available space */
 .main-content {
   flex: 1;
 }
 
+/* Mobile title is visible by default */
 .mobile-title {
   display: block;
 }
 
+/* Sidebar default position (desktop and larger tablets) */
+.sidebar {
+  flex: 0 0 16rem;
+  background-color: $header_gray;
+  padding: 1rem;
+  max-height: fit-content;
+  margin-right: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  border-radius: 5px;
+}
+
+/* Responsive layout for smaller screens (below 1023px) */
 @media (max-width: 1023px) {
   .layout-container {
-    flex-direction: column;
+    flex-direction: column; /* Stack sidebar above content */
   }
 
   .sidebar {
-    display: none;
+    display: block; /* Ensure sidebar is displayed */
+    width: 100%; /* Sidebar takes up full width */
+    margin-bottom: 1rem; /* Space between sidebar and content */
   }
 
   .main-content {
-    width: 100%;
+    width: 100%; /* Main content takes up full width */
   }
 
   .mobile-title {
@@ -32,7 +48,13 @@
   }
 }
 
+/* Larger screens (1023px and above) */
 @media (min-width: 1023px) {
+  .sidebar {
+    flex: 0 0 16rem; /* Sidebar takes up 16rem width */
+    margin-right: 2rem; /* Sidebar stays beside content */
+  }
+
   .mobile-title {
     display: none;
   }

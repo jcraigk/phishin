@@ -57,7 +57,7 @@ const Shows = ({ shows, setShows, numbering = false, tourHeaders = false }) => {
         const tourShowCount = shows.filter((s) => s.tour_name === show.tour_name).length;
 
         return (
-          <>
+          <React.Fragment key={show.date}>
             {isNewTour && tourHeaders && (
               <div className="section-title">
                 <div className="title-left">{show.tour_name}</div>
@@ -65,7 +65,9 @@ const Shows = ({ shows, setShows, numbering = false, tourHeaders = false }) => {
               </div>
             )}
             <Link to={`/${show.date}`} className="list-item-link">
-              <li className={`list-item ${show.date === activeTrack?.show_date ? "active-item" : ""}`}>
+              <li
+                className={`list-item ${show.date === activeTrack?.show_date ? "active-item" : ""}`}
+              >
                 {numbering && <span className="leftside-numbering">#{index + 1}</span>}
                 <span className="leftside-primary width-8">{formatDate(show.date)}</span>
                 <span className="leftside-secondary">{show.venue.name}</span>
@@ -86,7 +88,7 @@ const Shows = ({ shows, setShows, numbering = false, tourHeaders = false }) => {
                 </span>
               </li>
             </Link>
-          </>
+          </React.Fragment>
         );
       })}
     </ul>

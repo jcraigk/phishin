@@ -40,9 +40,13 @@ const AppRouter = (props) => {
       localStorage.setItem("jwt", userData.jwt);
       localStorage.setItem("username", userData.username);
       localStorage.setItem("email", userData.email);
+
+      const redirectPath = localStorage.getItem("redirectAfterLogin") || "/";
+      localStorage.removeItem("redirectAfterLogin");
+      window.location.href = redirectPath;
     }
     setUser(userData);
-    setNotice("You are now logged in as " + userData.email);
+    setNotice("You are now logged in");
   };
 
   const handleLogout = () => {

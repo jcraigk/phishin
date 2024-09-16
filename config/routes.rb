@@ -13,8 +13,8 @@ Rails.application.routes.draw do
   get "feeds/rss", to: "feeds#rss", format: "xml", as: :rss_feed
 
   namespace :oauth do
-    get "callback/:provider", to: "oauth#callback"
-    get ":provider", to: "oauth#login", as: :at_provider
+    get "callback/:provider", to: "sorcery#callback"
+    get ":provider", to: "sorcery#login", as: :at_provider
   end
 
   namespace :api do

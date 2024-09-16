@@ -157,7 +157,15 @@ const Navbar = ({ user, onLogout }) => {
                 </div>
               ) : (
                 <>
-                  <Link to="/login" className="button is-light">
+                  <Link
+                    to="/login"
+                    className="button is-light"
+                    onClick={() => {
+                      if (typeof window !== "undefined") {
+                        localStorage.setItem("redirectAfterLogin", window.location.pathname);
+                      }
+                    }}
+                  >
                     Log in
                   </Link>
                 </>

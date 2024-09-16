@@ -1,7 +1,5 @@
 ** React TODO
- * Form on map should be above the map on mobile (and other sidebars similar?)
  * https://jcktest.ngrok.io/songs/46-days - needs venue/location
- * Logging in should retain the path where you clicked login from
  * style the feedback messages - should we use bulma styles or no?
  * Do we need all the keys in the components? look for other excess/DRYness
  * Add a spinner using react-spinners - will require passing loading state from components
