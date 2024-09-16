@@ -1,19 +1,19 @@
 class ApiV2::Entities::MissingContentReport < ApiV2::Entities::Base
   expose \
-    :missing_show_dates,
+    :missing_shows,
     documentation: {
-      type: "Array[String]",
+      type: "Array[Object]",
       desc: \
-        "A list of dates on which Phish is known to have played " \
-        "but for which there is no circulated recording. Dates are in ISO 8601 format."
+        "A list of shows for which there is no circulated recording. " \
+        "Each object contains the date, venue_name, and location."
     }
 
   expose \
-    :incomplete_show_dates,
+    :incomplete_shows,
     documentation: {
-      type: "Array[String]",
+      type: "Array[Object]",
       desc: \
-        "A list of dates on which Phish is known to have played " \
-        "but for which there is only a partial recording. Dates are in ISO 8601 format."
+        "A list of shows for which there is only a partial recording. " \
+        "Each object contains the date, venue_name, and location."
     }
 end

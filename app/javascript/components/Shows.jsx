@@ -57,7 +57,7 @@ const Shows = ({ shows, setShows, numbering = false, tourHeaders = false }) => {
         const tourShowCount = shows.filter((s) => s.tour_name === show.tour_name).length;
 
         return (
-          <React.Fragment key={show.id}>
+          <>
             {isNewTour && tourHeaders && (
               <div className="section-title">
                 <div className="title-left">{show.tour_name}</div>
@@ -86,7 +86,7 @@ const Shows = ({ shows, setShows, numbering = false, tourHeaders = false }) => {
                 </span>
               </li>
             </Link>
-          </React.Fragment>
+          </>
         );
       })}
     </ul>
