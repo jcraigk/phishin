@@ -188,7 +188,7 @@ const Show = ({ trackSlug }) => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      <Tracks tracks={tracks} setTracks={setTracks} showDates={false} setHeaders={true} trackRefs={trackRefs} />
+      <Tracks tracks={tracks} setTracks={setTracks} showView={true} trackRefs={trackRefs} />
     </LayoutWrapper>
   );
 };

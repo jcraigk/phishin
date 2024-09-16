@@ -1,6 +1,6 @@
 ** React TODO
  * Form on map should be above the map on mobile (and other sidebars similar?)
- * https://jcktest.ngrok.io/songs/46-days - doesn't need track title, needs venue name, etc (different Tracks component probably). also needs to link to the show and highlight the track, not just play the track.
+ * https://jcktest.ngrok.io/songs/46-days - needs venue/location
  * Logging in should retain the path where you clicked login from
  * style the feedback messages - should we use bulma styles or no?
  * Do we need all the keys in the components? look for other excess/DRYness
@@ -11,7 +11,6 @@
     * share from timestamp
  * put play random show button on empty playlist page
  * remove data-theme="light" (and maybe bulma entirely)
- * tracks displayed in non-show contexts should have their dates linked to show via button so you can still play the current page as a playlist
  * ErrorPage should handle status codes (Not Found especially)
  * make sure we re-hydrate any pages that have tracks on them when doing SSR (to highlight likes)
  * If you play a show and navigate to a new show, does it take over the playlist?

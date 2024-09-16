@@ -26,7 +26,7 @@ export const myTracksLoader = async ({ request }) => {
 };
 
 import React from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate, Link } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
 import ReactPaginate from "react-paginate";
@@ -73,7 +73,7 @@ const MyTracks = () => {
         <title>My Tracks - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        <Tracks tracks={tracks} setTracks={() => {}} numbering={false} setHeaders={false} showDates={true} />
+        <Tracks tracks={tracks} setTracks={() => {}} />
         {totalPages > 1 && (
           <ReactPaginate
             previousLabel={"Previous"}
