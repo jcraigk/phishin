@@ -5,8 +5,6 @@
  * style the feedback messages - should we use bulma styles or no?
  * Do we need all the keys in the components? look for other excess/DRYness
  * Add a spinner using react-spinners - will require passing loading state from components
- * Prerender caching? How does it work for logged in users? Just skip prerender for those?
- * Disable email account creation - allow oauth login through api?
  * Put mobile titles in navbar
  * Opengraph (helmet context)
  * track context dropdowns
@@ -14,16 +12,17 @@
  * put play random show button on empty playlist page
  * remove data-theme="light" (and maybe bulma entirely)
  * tracks displayed in non-show contexts should have their dates linked to show via button so you can still play the current page as a playlist
- * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
  * ErrorPage should handle status codes (Not Found especially)
- * make sure we re-hydrate any pages that have tracks on them when doing SSR
+ * make sure we re-hydrate any pages that have tracks on them when doing SSR (to highlight likes)
  * If you play a show and navigate to a new show, does it take over the playlist?
 
  * anywhere we can put lyrical excerpts?
  * disable swetrix - or sign up
  * Add CSRF to POSTs on API
  * Can we use as_json to clean up request specs?
-
+ * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
+ * Disable email account creation - allow oauth login through api?
+ * Prerender caching? Would only benefit logged out users since we'd need to rehydrate on load for any pages that showed liked items
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)
 

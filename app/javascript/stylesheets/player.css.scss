@@ -27,16 +27,15 @@ footer.with-player {
     }
   }
 
-  .fade-out {
-    opacity: 0;
-    transition: opacity 0.3s ease-out;
-  }
-
   .fade-in {
     opacity: 1;
-    transition: opacity 0.3s ease-in;
+    transition: opacity 2s ease-in;
   }
 
+  .fade-out {
+    opacity: 0;
+    transition: opacity 500ms ease-out;
+  }
   .top-row {
     margin: 0 auto;
     max-width: 800px;
