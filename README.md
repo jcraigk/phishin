@@ -11,6 +11,7 @@ NICE TO HAVE:
  * Prerender caching? Would only benefit logged out users since we'd need to rehydrate on load for any pages that showed liked items
  * make sure we re-hydrate any pages that have tracks on them when doing SSR (to highlight likes)
  * test for dark reader compatibility (pulse doesn't look great)
+ * reports of "500"s on the FE?
 
  BACKBURNER
   * lyrical excerpts?
