@@ -62,7 +62,7 @@ class SearchService < BaseService
   end
 
   def date
-    @date ||= DateParser.new(term).call
+    @date ||= Chronic.parse(term).to_s
   end
 
   def term_is_date?
