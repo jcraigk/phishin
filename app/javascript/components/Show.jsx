@@ -47,7 +47,7 @@ const Show = ({ trackSlug }) => {
     if (trackSlug) foundTrack = tracks.find((track) => track.slug === trackSlug);
     if (!foundTrack) foundTrack = tracks[0];
     if (foundTrack) {
-      playTrack(tracks, foundTrack);
+      playTrack(tracks, foundTrack, true);
       setMatchedTrack(foundTrack);
       // Scroll to the matched track
       const trackIndex = tracks.findIndex((track) => track.slug === foundTrack.slug);

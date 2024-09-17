@@ -5,13 +5,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward } from "@fortawesome/free-solid-svg-icons";
 import { useNotification } from "./NotificationContext";
 
-
 const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
   const audioRef = useRef();
   const scrubberRef = useRef();
   const progressBarRef = useRef();
   const [currentTime, setCurrentTime] = useState(0);
-  const { setAlert } = useNotification();
+  const { setAlert, setNotice } = useNotification();
   const [fadeClass, setFadeClass] = useState("fade-in");
   const [isFadeOutComplete, setIsFadeOutComplete] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -95,7 +94,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         }
         audioRef.current.play().catch((error) => {
           if (error.name === "NotAllowedError") {
-            setAlert("Tap Play or press Spacebar to listen");
+            setNotice("Tap Play or press Spacebar to listen");
           } else {
             console.error("Play error:", error);
           }
@@ -241,7 +240,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         </div>
       </div>
       <div className="bottom-row">
-        <p className="elapsed">{formatTime(currentTime)}</p>
+        <p className="elapsed" onClick={scrubBackward}>{formatTime(currentTime)}</p>
         <div
           className={`scrubber-bar ${fadeClass}`}
           onClick={handleScrubberClick}
@@ -249,7 +248,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         >
           <div className="progress-bar" ref={progressBarRef}></div>
         </div>
-        <p className="remaining">-{formatTime(audioRef.current?.duration - currentTime || 0)}</p>
+        <p className="remaining" onClick={scrubForward}>-{formatTime(audioRef.current?.duration - currentTime || 0)}</p>
       </div>
       <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} />
     </div>

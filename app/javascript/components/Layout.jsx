@@ -20,7 +20,8 @@ const Layout = ({ user, onLogout, location: ssrLocation }) => {
   const [currentPlaylist, setCurrentPlaylist] = useState([]);
   const [activeTrack, setActiveTrack] = useState(null);
 
-  const playTrack = (playlist, track) => {
+  const playTrack = (playlist, track, autoplay = false) => {
+    if (currentPlaylist.length > 0 && autoplay) return;
     setCurrentPlaylist(playlist);
     setActiveTrack(track);
   };
