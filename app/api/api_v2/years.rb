@@ -22,10 +22,11 @@ class ApiV2::Years < ApiV2::Base
     def years_data
       ERAS.map do |era, periods|
         periods.map do |period|
-          shows_count, venues_count = counts_for(period)
+          shows_count, venues_count, shows_duration = stats_for(period)
           {
             period:,
             shows_count:,
+            shows_duration:,
             venues_count:,
             era:
           }
@@ -33,7 +34,7 @@ class ApiV2::Years < ApiV2::Base
       end.flatten
     end
 
-    def counts_for(period)
+    def stats_for(period)
       shows = Show.published
       shows = if period.include?("-")
         shows.between_years(*period.split("-"))
@@ -41,7 +42,7 @@ class ApiV2::Years < ApiV2::Base
         shows.during_year(period)
       end
 
-      [ shows.count, shows.select(:venue_id).distinct.count ]
+      [ shows.count, shows.select(:venue_id).distinct.count, shows.sum(:duration) ]
     end
   end
 end

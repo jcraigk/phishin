@@ -4,12 +4,13 @@ export const erasLoader = async () => {
     if (!response.ok) throw response;
     const data = await response.json();
 
-    const erasData = data.reduce((acc, { era, period, shows_count, venues_count }) => {
+    const erasData = data.reduce((acc, { era, period, shows_count, shows_duration, venues_count }) => {
       if (!acc[era]) {
-        acc[era] = { periods: [], total_shows: 0 };
+        acc[era] = { periods: [], total_shows: 0, total_duration: 0 };
       }
       acc[era].periods.push({ period, shows_count, venues_count });
       acc[era].total_shows += shows_count;
+      acc[era].total_duration += shows_duration; // Accumulating total duration in milliseconds
       return acc;
     }, {});
 
@@ -27,44 +28,60 @@ import React from "react";
 import { Link, useLoaderData } from "react-router-dom";
 import { formatNumber } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
-import relistenIcon from "../images/icon-relisten.png";
-import splendorIcon from "../images/icon-splendor.png";
-import { Helmet } from 'react-helmet-async';
+import MobileApps from "./pages/MobileApps";
+import GitHubButton from "./pages/GitHubButton";
+import DiscordButton from "./pages/DiscordButton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRss } from "@fortawesome/free-solid-svg-icons";
 
 const Eras = () => {
   const eras = useLoaderData();
 
+  const totalShows = Object.keys(eras).reduce((sum, era) => sum + eras[era].total_shows, 0);
+  const totalDurationMs = Object.keys(eras).reduce((sum, era) => sum + eras[era].total_duration, 0);
+  const totalHours = Math.round(totalDurationMs / (1000 * 60 * 60));
+
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="has-text-weight-bold mb-5">LIVE PHISH AUDIO STREAMS</p>
+      <p className="has-text-weight-bold">LIVE PHISH AUDIO STREAMS</p>
+      <div className="hidden-mobile">
+        <p>{formatNumber(totalShows)} shows</p>
+        <p>{formatNumber(totalHours)} hours of music</p>
+      </div>
+      <div className="visible-mobile">
+        <p>
+          {formatNumber(totalShows)} shows
+          •{" "}
+          {formatNumber(totalHours)} hours of music
+        </p>
+      </div>
 
-      <p className="has-text-weight-bold mb-2 mt-5">Mobile Apps</p>
-      <a href="https://itunes.apple.com/us/app/relisten-all-live-music/id715886886" target="_blank">
-        <img src={relistenIcon} alt="iOS app" />
-        <p className="mb-1">Relisten</p>
-      </a>
+      <MobileApps className="mt-5" />
 
-      <a href="https://play.google.com/store/apps/details?id=never.ending.splendor" target="_blank">
-        <img src={splendorIcon} alt="Android app" />
-        <p>Never Ending Splendor</p>
-      </a>
-
-      <p className="has-text-weight-bold mb-1 mt-5">This project is open source</p>
-      <p>
-        <a href="https://github.com/jcraigk/phishin">Develop on GitHub</a>
-        <br />
-        <a href="https://discord.gg/KZWFsNN">Discuss on Discord</a>
-        <br />
-        <a href="/feeds/rss">RSS Feed</a>
-      </p>
+      <div className="external-links">
+        <p className="has-text-weight-bold mb-1 mt-5 project-open-source">This project is open source</p>
+        <p>
+          <GitHubButton className="mb-2" />
+          <br />
+          <DiscordButton className="mb-2" />
+          <br />
+          <a
+            href="/feeds/rss"
+            className="button"
+            target="_blank"
+          >
+            <div className="icon mr-1">
+              <FontAwesomeIcon icon={faRss} />
+            </div>
+            RSS
+          </a>
+        </p>
+      </div>
     </div>
   );
 
   return (
     <>
-      <Helmet>
-        <title>Phish.in</title>
-      </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         {Object.keys(eras)
           .sort((a, b) => b.localeCompare(a))
@@ -97,4 +114,3 @@ const Eras = () => {
 };
 
 export default Eras;
-

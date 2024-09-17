@@ -1,6 +1,10 @@
 import React from "react";
 import PageWrapper from "./PageWrapper";
 import { Link } from "react-router-dom";
+import MobileApps from "./MobileApps";
+import DiscordButton from "./DiscordButton";
+import GitHubButton from "./GitHubButton";
+import EmailButton from "./EmailButton";
 
 const Faq = ({ contactEmail }) => {
   return (
@@ -12,20 +16,22 @@ const Faq = ({ contactEmail }) => {
         Phish.in is a website and API for discovering, streaming, and sharing live audience recordings of the band Phish. The site has been running since 2013, delivering a reliable and comprehensive resource for fans.
       </p>
 
+      <h3>Are there native mobile apps?</h3>
+      <p>Yes, there are native apps for iOS and Android. Follow the links below.</p>
+      <MobileApps />
+
       <h3>Is this site legal?</h3>
       <p>
         Yes, this site is 100% legal and complies with Phish's official taping policy as described at{" "}
         <a href="https://phish.com/#/faq/taping-guidelines" target="_blank">
           https://phish.com/#/faq/taping-guidelines
         </a>.
-        If you know any of the material on this site to be in violation of Phish's policy, please send an email to{" "}
-        <a href={`mailto:${contactEmail}`} target="_blank">
-          {contactEmail}
-        </a>.
+        If you know any of the material on this site to be in violation of Phish's policy, please send an email:{" "}
+        <EmailButton contactEmail={contactEmail} />
       </p>
 
       <h3>Are there any keyboard shortcuts?</h3>
-      <p>To control audio playback when listening to a playlist, use Spacebar to toggle play/pause, left/right arrow keys to skip tracks, and hold shift and press left/right arrow keys to seek by 10 seconds.</p>
+      <p>Yes. To control audio playback, use Spacebar to toggle play/pause, left/right arrow keys to skip tracks, and hold shift and press left/right arrow keys to seek by 10 seconds.</p>
 
       <h3>How is the project funded?</h3>
       <p>This site is funded privately.</p>
@@ -50,10 +56,8 @@ const Faq = ({ contactEmail }) => {
         Sometimes sources will be replaced later if a better version becomes available, but this is rare. For multi-night runs, the same source is preferred, although not always available.
       </p>
       <p>
-        If you are aware of a source that is superior to the one on the site, please send an email to{" "}
-        <a href={`mailto:${contactEmail}`} target="_blank">
-          {contactEmail}
-        </a> and include a link to download the source in question.
+        If you are aware of a source that is superior to the one on the site, please send an email:{" "}
+        <EmailButton contactEmail={contactEmail} />
       </p>
 
       <h3>Is there a list of missing audio content?</h3>
@@ -68,12 +72,9 @@ const Faq = ({ contactEmail }) => {
       <h3>How can I contribute?</h3>
       <p>
         Join the discussion on{" "}
-        <a href="https://discord.gg/KZWFsNN" target="_blank">
-          Discord
-        </a> or post an issue on{" "}
-        <a href="https://github.com/jcraigk/phishin/issues" target="_blank">
-          GitHub
-        </a>.
+        <DiscordButton />{" "}
+        or post an issue on{" "}
+        <GitHubButton />
       </p>
     </PageWrapper>
   );

@@ -2,14 +2,11 @@ require "rails_helper"
 
 RSpec.describe "API v2 Years" do
   describe "GET /years" do
-    before do
-      venue1 = create(:venue)
-      venue2 = create(:venue)
-
-      create(:show, date: "1987-05-01", published: true, venue: venue1)
-      create(:show, date: "1986-07-15", published: true, venue: venue1)
-      create(:show, date: "2003-12-01", published: true, venue: venue2)
-    end
+    let(:venue1) { create(:venue) }
+    let(:venue2) { create(:venue) }
+    let!(:show1) { create(:show, date: "1987-05-01", published: true, venue: venue1) }
+    let!(:show2) { create(:show, date: "1986-07-15", published: true, venue: venue1) }
+    let!(:show3) { create(:show, date: "2003-12-01", published: true, venue: venue2) }
 
     it "returns a list of years with show counts, venue counts, and eras" do
       get_api "/years"
@@ -23,6 +20,7 @@ RSpec.describe "API v2 Years" do
       expect(first_period).to include(
         "period" => "1983-1987",
         "shows_count" => 2,
+        "shows_duration" => show1.duration + show2.duration,
         "venues_count" => 1,
         "era" => "1.0"
       )
@@ -32,6 +30,7 @@ RSpec.describe "API v2 Years" do
       expect(year_2003).to include(
         "period" => "2003",
         "shows_count" => 1,
+        "shows_duration" => show3.duration,
         "venues_count" => 1,
         "era" => "2.0"
       )
