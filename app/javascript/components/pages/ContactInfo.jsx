@@ -6,7 +6,7 @@ import EmailButton from "./EmailButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
-const ContactInfo = ({ contactEmail }) => {
+const ContactInfo = () => {
   return (
     <PageWrapper>
       <h1 className="title">Contact Info</h1>
@@ -41,7 +41,7 @@ const ContactInfo = ({ contactEmail }) => {
       <p>
         Email the site maintainer:
         <br />
-        <EmailButton contactEmail={contactEmail} />
+        <EmailButton />
       </p>
     </PageWrapper>
   );

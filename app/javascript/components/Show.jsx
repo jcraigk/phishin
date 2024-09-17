@@ -1,4 +1,4 @@
-import { authFetch } from "./utils";
+import { authFetch, baseUrl } from "./utils";
 
 export const showLoader = async ({ params, request }) => {
   const { date } = params;
@@ -8,15 +8,12 @@ export const showLoader = async ({ params, request }) => {
     if (response.status === 404) {
       throw new Response("Show not found", { status: 404 });
     }
-    const data = await response.json();
-    const baseUrl = new URL(request.url).origin;
-    return { show: data, baseUrl };
+    return await response.json();
   } catch (error) {
     if (error instanceof Response) throw error;
     throw new Response("Error fetching data", { status: 500 });
   }
 };
-
 
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useLoaderData, useOutletContext } from "react-router-dom";
@@ -32,7 +29,7 @@ import { Helmet } from 'react-helmet-async';
 Modal.setAppElement("body");
 
 const Show = ({ trackSlug }) => {
-  const { show, baseUrl } = useLoaderData();
+  const show = useLoaderData();
   const [tracks, setTracks] = useState(show.tracks);
   const trackRefs = useRef([]);
   const { setNotice, setAlert } = useFeedback();
@@ -84,7 +81,7 @@ const Show = ({ trackSlug }) => {
   };
 
   const copyToClipboard = () => {
-    const showUrl = `${baseUrl}/${show.date}`;
+    const showUrl = `${baseUrl(location)}/${show.date}`;
     navigator.clipboard.writeText(showUrl);
     setNotice("URL of show copied to clipboard");
   };

@@ -6,7 +6,7 @@ import DiscordButton from "./DiscordButton";
 import GitHubButton from "./GitHubButton";
 import EmailButton from "./EmailButton";
 
-const Faq = ({ contactEmail }) => {
+const Faq = () => {
   return (
     <PageWrapper>
       <h1 className="title">Frequently Asked Questions</h1>
@@ -27,7 +27,7 @@ const Faq = ({ contactEmail }) => {
           https://phish.com/#/faq/taping-guidelines
         </a>.
         If you know any of the material on this site to be in violation of Phish's policy, please send an email:{" "}
-        <EmailButton contactEmail={contactEmail} />
+        <EmailButton />
       </p>
 
       <h3>Are there any keyboard shortcuts?</h3>
@@ -57,7 +57,7 @@ const Faq = ({ contactEmail }) => {
       </p>
       <p>
         If you are aware of a source that is superior to the one on the site, please send an email:{" "}
-        <EmailButton contactEmail={contactEmail} />
+        <EmailButton />
       </p>
 
       <h3>Is there a list of missing audio content?</h3>

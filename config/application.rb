@@ -17,15 +17,10 @@ module Phishin
       "#{config.web_host ? "https" : "http"}://#{config.web_host || "localhost:3000"}"
     config.app_desc =
       "#{config.app_name} is an open source archive of live Phish audience recordings"
-    config.github_url = "https://github.com/jcraigk/phishin"
-    config.contact_email = "phish.in.music@gmail.com"
-    config.auth_email_from = "Phish.in <noreply@phish.in>"
-    config.twitter_handle = "@phish_in"
     config.first_char_list = ("A".."Z").to_a + [ "#" ]
     config.max_playlists_per_user = 20
     config.min_search_term_length = 3
     config.time_zone = "Eastern Time (US & Canada)"
-    config.oauth_providers = %i[google]
     config.oauth_google_key = ENV.fetch("OAUTH_GOOGLE_KEY", nil)
     config.oauth_google_secret = ENV.fetch("OAUTH_GOOGLE_SECRET", nil)
     config.content_path =

@@ -1,4 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 
 const FeedbackContext = createContext();
 
@@ -34,6 +36,9 @@ export const FeedbackProvider = ({ children }) => {
       {children}
       {feedback && (
         <div className={`feedback ${feedback.type}`}>
+          <button className="close-btn" onClick={clearFeedback}>
+            <FontAwesomeIcon icon={faCircleXmark} />
+          </button>
           <p>{feedback.message}</p>
           <div className="progress-bar"></div>
         </div>

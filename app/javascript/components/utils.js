@@ -104,3 +104,9 @@ export const parseTimeParam = (t) => {
   }
   return Number(t);
 };
+
+export const baseUrl = (location) => {
+  const baseUrlClient = typeof window !== 'undefined' ? window.location.origin : null;
+  const baseUrlServer = location?.origin || '';
+  return baseUrlClient || baseUrlServer;
+}

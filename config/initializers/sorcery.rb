@@ -9,7 +9,7 @@ Rails.application.config.sorcery.configure do |config|
   config.cookie_domain = App.web_host
 
   # OAuth Providers
-  config.external_providers = App.oauth_providers
+  config.external_providers = %i[ google ]
 
   # OAuth Provider: Google
   config.google.key = App.oauth_google_key

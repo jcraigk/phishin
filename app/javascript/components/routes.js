@@ -52,7 +52,7 @@ const routes = (props) => [
       // Auth pages
       {
         path: "/login",
-        element: <Login oauthProviders={props.oauth_providers} onLogin={props.handleLogin}  />
+        element: <Login onLogin={props.handleLogin}  />
       },
       {
         path: "/signup",
@@ -69,15 +69,15 @@ const routes = (props) => [
       // Static pages
       {
         path: "/api-docs",
-        element: <ApiDocs baseUrl={props.base_url} contactEmail={props.contact_email} />
+        element: <ApiDocs />
       },
       {
         path: "/contact-info",
-        element: <ContactInfo contactEmail={props.contact_email} />
+        element: <ContactInfo />
       },
       {
         path: "/faq",
-        element: <Faq contactEmail={props.contact_email} />
+        element: <Faq />
       },
       {
         path: "/privacy",
@@ -85,7 +85,7 @@ const routes = (props) => [
       },
       {
         path: "/tagin-project",
-        element: <TaginProject baseUrl={props.base_url} />
+        element: <TaginProject />
       },
       {
         path: "/terms",

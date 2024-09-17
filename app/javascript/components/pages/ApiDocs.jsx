@@ -3,8 +3,9 @@ import PageWrapper from "./PageWrapper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import EmailButton from "./EmailButton";
+import { baseUrl } from "../utils";
 
-const ApiDocs = ({ baseUrl, contactEmail }) => {
+const ApiDocs = () => {
   return (
     <PageWrapper>
       <h1 className="title">API Documentation</h1>
@@ -19,7 +20,7 @@ const ApiDocs = ({ baseUrl, contactEmail }) => {
       <p>Currently no API key is required to acces the API.</p>
 
       <a
-        href={`https://petstore.swagger.io/?url=${baseUrl}/api/v2/swagger_doc`}
+        href={`https://petstore.swagger.io/?url=${baseUrl(location)}/api/v2/swagger_doc`}
         target="_blank"
         className="button"
       >
@@ -37,7 +38,7 @@ const ApiDocs = ({ baseUrl, contactEmail }) => {
 
       <p className="font-semibold mb-8">
         API keys can be requested via email:{" "}
-        <EmailButton contactEmail={contactEmail} />
+        <EmailButton />
       </p>
 
       <div className="box">
@@ -89,7 +90,7 @@ const ApiDocs = ({ baseUrl, contactEmail }) => {
 
         <h3 className="title">Endpoints</h3>
         <p>
-          All endpoints can be reached by using the full address of <span className="has-text-weight-bold">{baseUrl}/api/v1</span> followed by one of these routes:
+          All endpoints can be reached by using the full address of <span className="has-text-weight-bold">{baseUrl(location)}/api/v1</span> followed by one of these routes:
         </p>
 
         <div className="mb-6">
@@ -100,7 +101,7 @@ const ApiDocs = ({ baseUrl, contactEmail }) => {
         <h3 className="title">Examples</h3>
         <p>[1] Requesting "the song with ID of 40":</p>
         <span className="api-command mb-2">
-          GET {baseUrl}/api/v1/songs/40.json
+          GET {baseUrl(location)}/api/v1/songs/40.json
         </span>
         <p>will result in this response:</p>
         <pre className="box bg-gray-100 p-4 rounded-lg overflow-x-auto mb-4">
@@ -109,7 +110,7 @@ const ApiDocs = ({ baseUrl, contactEmail }) => {
 
         <p>[2] Requesting "the 3 most recent shows":</p>
         <span className="api-command mb-2">
-          GET {baseUrl}/api/v1/shows.json?per_page=3&page=1&sort_attr=date&sort_dir=desc
+          GET {baseUrl(location)}/api/v1/shows.json?per_page=3&page=1&sort_attr=date&sort_dir=desc
         </span>
         <p>will result in a response that looks like this:</p>
         <pre className="box bg-gray-100 p-4 rounded-lg overflow-x-auto">
