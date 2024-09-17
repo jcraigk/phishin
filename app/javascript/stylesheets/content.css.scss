@@ -44,6 +44,10 @@
   background-size: cover;
   background-repeat: no-repeat;
 
+  &.focus {
+    border: 1px solid $likes_blue;
+  }
+
   // Pulse animation for active-item
   &.active-item {
     animation: pulse 3s infinite ease-in-out;

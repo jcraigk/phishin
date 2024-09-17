@@ -24,12 +24,12 @@ export const venueShowsLoader = async ({ params, request }) => {
   }
 };
 
-
 import React from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
 import { Helmet } from 'react-helmet-async';
+import { Link } from "react-router-dom";
 
 const VenueShows = () => {
   const { shows, venue, sortOption } = useLoaderData();
@@ -42,7 +42,11 @@ const VenueShows = () => {
   const sidebarContent = venue ? (
     <div className="sidebar-content">
       <h1 className="title">{venue.name}</h1>
-      <p className="sidebar-subtitle">{venue.location}</p>
+      <p className="sidebar-subtitle">
+        <Link to={`/map?term=${venue.location}`}>
+            {venue.location}
+        </Link>
+      </p>
       <p className="sidebar-subtitle">{venue.shows_count} shows total</p>
       <div className="select is-fullwidth mb-5">
         <select value={sortOption} onChange={handleSortChange}>

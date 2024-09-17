@@ -1,10 +1,10 @@
 import React from "react";
-import SyncLoader from "react-spinners/SyncLoader";
+import MoonLoader from "react-spinners/MoonLoader";
 
 const Loader = () => {
   return (
     <div className="loader-container">
-      <SyncLoader color="#c7c8ca" size={50} />
+      <MoonLoader color="#c7c8ca" size={120} />
     </div>
   );
 };
