@@ -6,17 +6,19 @@
  * Opengraph (helmet context)
 
 NICE TO HAVE:
- * show dates on tracks should link to track slug and we should add a border or something to these tracks so even if not autoplayed cuz there's already a playlist, it's clear what is highlighted
  * anywhere we can put lyrical excerpts?
- * disable swetrix - or sign up
- * Add CSRF to POSTs on API
  * Can we use as_json to clean up request specs?
  * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
- * Disable email account creation - allow oauth login through api?
  * Prerender caching? Would only benefit logged out users since we'd need to rehydrate on load for any pages that showed liked items
- * put play random show button on empty playlist page
  * make sure we re-hydrate any pages that have tracks on them when doing SSR (to highlight likes)
  * test for dark reader compatibility (pulse doesn't look great)
+
+ BACKBURNER
+  * disable swetrix - or sign up
+  * put play random show button on empty playlist page
+  * Add CSRF to POSTs on API
+  * Disable email account creation - allow oauth login through api?
+
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)
 

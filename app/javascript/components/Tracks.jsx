@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useFeedback } from "./FeedbackContext";
 
-const Tracks = ({ tracks, setTracks, numbering = false, showView = false, highlight, trackRefs }) => {
+const Tracks = ({ tracks, setTracks, numbering = false, showView = false, highlight, trackRefs, trackSlug }) => {
   const [trackLikes, setTrackLikes] = useState(tracks);
   const { playTrack, activeTrack } = useOutletContext();
   const { setAlert, setNotice } = useFeedback();
@@ -58,7 +58,9 @@ const Tracks = ({ tracks, setTracks, numbering = false, showView = false, highli
               </div>
             )}
             <li
-              className={`list-item track-item ${track.id === activeTrack?.id ? "active-item" : ""}`}
+              className={
+                `list-item track-item ${track.id === activeTrack?.id ? "active-item" : ""} ${track.slug === trackSlug ? "focus" : ""}`
+              }
               onClick={() => handleTrackClick(track)}
               ref={trackRefs ? (el) => (trackRefs.current[index] = el) : null}
             >
@@ -68,7 +70,11 @@ const Tracks = ({ tracks, setTracks, numbering = false, showView = false, highli
               <span className="leftside-primary">
                 {
                   !showView && (
-                    <Link className="date" to={`/${track.show_date}`}>
+                    <Link
+                      className="date"
+                      to={`/${track.show_date}/${track.slug}`}
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       {formatDate(track.show_date)}
                     </Link>
                   )

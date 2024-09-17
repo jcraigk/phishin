@@ -199,7 +199,7 @@ const Show = ({ trackSlug }) => {
     <LayoutWrapper sidebarContent={sidebarContent}>
       {show.incomplete && infoBox("This show's audio is incomplete")}
       {show.admin_notes && infoBox(show.admin_notes)}
-      <Tracks tracks={tracks} setTracks={setTracks} showView={true} trackRefs={trackRefs} />
+      <Tracks tracks={tracks} setTracks={setTracks} showView={true} trackRefs={trackRefs} trackSlug={trackSlug} />
     </LayoutWrapper>
   );
 };

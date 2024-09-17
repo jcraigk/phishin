@@ -1,7 +1,7 @@
 export const erasLoader = async () => {
   try {
     const response = await fetch("/api/v2/years");
-    if (!response.ok) throw new Error("Error fetching data");
+    if (!response.ok) throw response;
     const data = await response.json();
 
     const erasData = data.reduce((acc, { era, period, shows_count, venues_count }) => {
@@ -19,8 +19,7 @@ export const erasLoader = async () => {
 
     return erasData;
   } catch (error) {
-    console.error("Error fetching data", error);
-    throw new Response("Error fetching eras data", { status: 500 });
+    throw new Response("Error fetching data", { status: 500 });
   }
 };
 

@@ -17,9 +17,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
 
   const togglePlayPause = () => {
     if (audioRef.current.paused) {
-      audioRef.current.play().catch((error) => {
-        console.error("Play error:", error);
-      });
+      audioRef.current.play();
       navigator.mediaSession.playbackState = 'playing';
     } else {
       audioRef.current.pause();
@@ -95,8 +93,6 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         audioRef.current.play().catch((error) => {
           if (error.name === "NotAllowedError") {
             setNotice("Tap Play or press Spacebar to listen");
-          } else {
-            console.error("Play error:", error);
           }
         });
       };
@@ -193,7 +189,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         <div className={`left-half`}>
           <div className="track-title">{activeTrack?.title}</div>
           <div className="track-info">
-            <Link to={`/${activeTrack?.show_date}`}>
+            <Link to={`/${activeTrack?.show_date}/${activeTrack?.slug}`}>
               {formatDate(activeTrack?.show_date)}
             </Link>
             {" "}&bull;{" "}

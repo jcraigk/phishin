@@ -10,8 +10,7 @@ export const missingContentLoader = async () => {
     combinedData.sort((a, b) => new Date(b.date) - new Date(a.date));
     return combinedData;
   } catch (error) {
-    console.error("Error fetching data", error);
-    throw new Response("Error fetching missing content data", { status: 500 });
+    throw new Response("Error fetching data", { status: 500 });
   }
 };
 
