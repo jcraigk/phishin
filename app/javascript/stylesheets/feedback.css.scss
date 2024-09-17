@@ -1,11 +1,11 @@
-.notification {
+.feedback {
   position: fixed;
   top: 0.5rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
   padding: 1rem;
-  border-radius: --var(bulma-radius);
+  border-radius: var(--bulma-radius);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   transition: opacity 0.5s ease-out;
   font-size: 1.5rem;
@@ -33,6 +33,22 @@
     height: 4px;
     background-color: $header_gray;
     animation: progress 5s linear forwards;
+  }
+}
+
+.notification {
+  font-size: 1.3rem;
+  padding: 1rem;
+  border: 1px solid $header_gray;
+
+  &.show-info {
+    background-color: $info;
+  }
+
+  .icon {
+    position: relative;
+    top: 0.2rem;
+    margin-right: 0.5rem;
   }
 }
 

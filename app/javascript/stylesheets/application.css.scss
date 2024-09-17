@@ -7,12 +7,12 @@
 
 $bg_gray: #f2f3f5;
 $header_gray: #c7c8ca;
-$subheader_gray: #d9dbdc;
+$inactive_gray: #d9dbdc;
 $control_gray: #f5f5f5;
 $text_gray: #6d6f71;
 $google-blue: #5385ed;
 $likes_blue: #03bbf2;
-
+$info: #cbf3ff;
 
 @import "./content.css.scss";
 @import "./pagination.css.scss";
@@ -21,7 +21,7 @@ $likes_blue: #03bbf2;
 @import "./tooltips.css.scss";
 @import "./map.css.scss";
 @import "./likes.css.scss";
-@import "./notification.css.scss";
+@import "./feedback.css.scss";
 @import "./footer.css.scss";
 @import "./bulma-overrides.css.scss";
 @import "./sidebar.css.scss";

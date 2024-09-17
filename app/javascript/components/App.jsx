@@ -1,16 +1,16 @@
 import React from "react";
 import AppRouter from "./AppRouter";
 import { HelmetProvider } from "react-helmet-async";
-import { NotificationProvider } from "./NotificationContext";
+import { FeedbackProvider } from "./FeedbackContext";
 
 const App = (props) => {
   const helmetContext = {};
 
   return (
     <HelmetProvider context={helmetContext}>
-      <NotificationProvider>
+      <FeedbackProvider>
         <AppRouter {...props} />
-      </NotificationProvider>
+      </FeedbackProvider>
     </HelmetProvider>
   );
 };

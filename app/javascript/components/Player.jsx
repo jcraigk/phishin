@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 import { formatDate, parseTimeParam } from "./utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward } from "@fortawesome/free-solid-svg-icons";
-import { useNotification } from "./NotificationContext";
+import { useFeedback } from "./FeedbackContext";
 
 const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
   const audioRef = useRef();
   const scrubberRef = useRef();
   const progressBarRef = useRef();
   const [currentTime, setCurrentTime] = useState(0);
-  const { setAlert, setNotice } = useNotification();
+  const { setAlert, setNotice } = useFeedback();
   const [fadeClass, setFadeClass] = useState("fade-in");
   const [isFadeOutComplete, setIsFadeOutComplete] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);

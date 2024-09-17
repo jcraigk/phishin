@@ -1,13 +1,13 @@
 ** React TODO
  * track context dropdowns
     * share from timestamp
- * admin note and incomplete at top of show
  * should sidebar go below on main page (and others?)
  * ensure searching for "oct 29" works, also "dec 31 2023", "december 31, 2023"
  * button to minimize/restore player
  * Opengraph (helmet context)
 
 NICE TO HAVE:
+ * show dates on tracks should link to track slug and we should add a border or something to these tracks so even if not autoplayed cuz there's already a playlist, it's clear what is highlighted
  * anywhere we can put lyrical excerpts?
  * disable swetrix - or sign up
  * Add CSRF to POSTs on API

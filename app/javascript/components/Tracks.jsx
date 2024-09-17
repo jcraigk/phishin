@@ -5,12 +5,12 @@ import { formatDurationTrack, formatDate, toggleLike } from "./utils";
 import HighlightedText from "./HighlightedText";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import { useNotification } from "./NotificationContext";
+import { useFeedback } from "./FeedbackContext";
 
 const Tracks = ({ tracks, setTracks, numbering = false, showView = false, highlight, trackRefs }) => {
   const [trackLikes, setTrackLikes] = useState(tracks);
   const { playTrack, activeTrack } = useOutletContext();
-  const { setAlert, setNotice } = useNotification();
+  const { setAlert, setNotice } = useFeedback();
 
   useEffect(() => {
     setTrackLikes(tracks);

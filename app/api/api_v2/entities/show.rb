@@ -29,6 +29,13 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
       desc: "Indicates if the audio recording of the show is incomplete"
     }
 
+  expose \
+    :admin_notes,
+    documentation: {
+      type: "String",
+      desc: "Administrator's notes related to the show"
+    }
+
   expose(
     :tour_name,
     documentation: {

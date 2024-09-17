@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import { RouterProvider } from "react-router-dom";
 import clientRouter from "./clientRouter";
 import serverRouter from "./serverRouter";
-import { useNotification } from "./NotificationContext";
+import { useFeedback } from "./FeedbackContext";
 
 const AppRouter = (props) => {
   const [user, setUser] = useState(null);
-  const { setAlert, setNotice } = useNotification();
+  const { setAlert, setNotice } = useFeedback();
 
   useEffect(() => {
     if (typeof window !== "undefined") {

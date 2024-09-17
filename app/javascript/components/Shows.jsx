@@ -1,13 +1,13 @@
 import React from "react";
 import { Link, useOutletContext } from "react-router-dom";
 import { formatDate, formatDurationShow, toggleLike } from "./utils";
-import { useNotification } from "./NotificationContext";
+import { useFeedback } from "./FeedbackContext";
 import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
 const Shows = ({ shows, setShows, numbering = false, tourHeaders = false }) => {
-  const { setAlert, setNotice } = useNotification();
+  const { setAlert, setNotice } = useFeedback();
   const { activeTrack } = useOutletContext();
 
   let lastTourName = null;

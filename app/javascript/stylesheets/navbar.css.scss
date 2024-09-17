@@ -32,7 +32,7 @@
     }
 
     .icon {
-      color: $subheader_gray;
+      color: $inactive_gray;
       margin-right: 0.1rem !important;
     }
   }
@@ -63,7 +63,7 @@
   }
 
   .user-dropdown button {
-    background-color: $subheader_gray;
+    background-color: $inactive_gray;
     border: none;
   }
 
