@@ -20,9 +20,8 @@ RSpec.describe SearchService do
     end
   end
 
-  context 'with date-based term' do
-    let(:term) { '1995-10-31' }
-    let(:date) { Date.parse(term) }
+  context 'with date-based terms' do
+    let(:date) { Date.parse("#{Time.now.year}-10-31") }
     let(:expected_results) do
       {
         exact_show: show1,
@@ -47,7 +46,23 @@ RSpec.describe SearchService do
       create(:show, date: date - 1.day)
     end
 
-    include_examples 'expected results'
+    context 'with exact is8601 date' do
+      let(:term) { "#{Time.now.year}-10-31" }
+
+      include_examples 'expected results'
+    end
+
+    context 'with English month and day' do
+      let(:term) { 'october 31' }
+
+      include_examples 'expected results'
+    end
+
+    context 'with shortened English month and day and shortened year' do
+      let(:term) { 'oct 31, 2024' }
+
+      include_examples 'expected results'
+    end
   end
 
   context 'with text-based term' do

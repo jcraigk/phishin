@@ -2,7 +2,6 @@
  * track context dropdowns
     * share from timestamp
  * should sidebar go below on main page (and others?)
- * ensure searching for "oct 29" works, also "dec 31 2023", "december 31, 2023"
  * button to minimize/restore player
  * Opengraph (helmet context)
 

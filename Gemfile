@@ -5,6 +5,7 @@ ruby "3.3.3"
 
 gem "actionpack-action_caching"
 gem "chunky_png"
+gem "chronic"
 gem "dalli"
 gem "friendly_id"
 gem "dry-initializer"
