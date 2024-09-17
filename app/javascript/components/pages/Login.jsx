@@ -5,7 +5,7 @@ import { useFeedback } from "../FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowAltCircleRight, faRightToBracket, faUserCheck } from "@fortawesome/free-solid-svg-icons";
 
-const Login = ({ onLogin, oauthProviders }) => {
+const Login = ({ onLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { setAlert, setNotice } = useFeedback();
@@ -32,23 +32,20 @@ const Login = ({ onLogin, oauthProviders }) => {
 
   return (
     <PageWrapper>
-      {oauthProviders.map(provider => (
-        <a
-          key={provider}
-          href={`/oauth/${provider}`}
-          className={`button external-login-btn ${provider}-btn non-remote`}
-        >
-          <div className="login-logo">
-            <img
-              src={require(`../../images/external-logo-${provider}.png`)}
-              alt={`${provider.toString().toUpperCase()} Logo`}
-              width="18"
-              height="18"
-            />
-          </div>
-          {`Login with ${provider.charAt(0).toUpperCase() + provider.slice(1)}`}
-        </a>
-      ))}
+      <a
+        href="/oauth/google"
+        className="button external-login-btn google-btn non-remote"
+      >
+        <div className="login-logo">
+          <img
+            src={require(`../../images/external-logo-google.png`)}
+            alt="Google logo"
+            width="18"
+            height="18"
+          />
+        </div>
+        Login with Google
+      </a>
 
       <hr />
 

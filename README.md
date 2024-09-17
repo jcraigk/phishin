@@ -4,7 +4,8 @@
  * each sidebar should be optimized on mobile (hide filters initially?)
  * button to minimize/restore player on desktop (rollover to see down arrow), hide waveform
  * Opengraph (helmet context)
- * we don't need to pass down base_url I think (remember SSR)
+ * Add previous/next performance for each song on each track
+ * audit yarn packages (remove coffeescript)
 
 NICE TO HAVE:
  * stats on main page (hours of music, number of shows, tracks, etc)

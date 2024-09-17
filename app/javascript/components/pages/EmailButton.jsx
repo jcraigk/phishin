@@ -2,9 +2,9 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
-const EmailButton = ({ contactEmail }) => (
+const EmailButton = () => (
   <a
-    href={`mailto:${contactEmail}`}
+    href="mailto:phish.in.music@gmail.com"
     className="button"
     target="_blank"
   >

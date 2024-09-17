@@ -7,12 +7,11 @@ class ApplicationController < ActionController::Base
     context = {}
 
     @props = {
+      # SSR
       location: request.fullpath,
       context:, # Pass this context to React on Rails
-      app_name: App.app_name,
-      base_url: App.base_url,
-      contact_email: App.contact_email,
-      oauth_providers: App.oauth_providers,
+
+      # OAuth login
       jwt: session[:jwt],
       username: session[:username],
       email: session[:email],

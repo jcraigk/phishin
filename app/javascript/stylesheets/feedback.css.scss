@@ -1,17 +1,19 @@
 .feedback {
   position: fixed;
-  top: 0.5rem;
+  top: 2rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
   padding: 1rem;
   border-radius: var(--bulma-radius);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.5);
   transition: opacity 0.5s ease-out;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
+  width: 20rem;
 
   &.notice {
     background-color: #cfffe3;
+    border: 1px solid #2ecc71;
 
     .progress-bar {
       background-color: #2ecc71;
@@ -20,10 +22,17 @@
 
   &.alert {
     background-color: #ffe4e1;
+    border: 1px solid #e74c3c;
 
     .progress-bar {
       background-color: #e74c3c;
     }
+  }
+
+  .close-btn {
+    float: right;
+    font-size: 1rem;
+    margin-left: 0.5rem;
   }
 
   .progress-bar {
