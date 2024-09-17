@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import PageWrapper from "./PageWrapper";
-import { useNotification } from "../NotificationContext"; // Updated path
+import { useFeedback } from "../FeedbackContext"; // Updated path
 
 const RequestPasswordReset = () => {
-  const { setAlert, setNotice } = useNotification();
+  const { setAlert, setNotice } = useFeedback();
   const [email, setEmail] = useState("");
 
   const handleSubmit = async (e) => {

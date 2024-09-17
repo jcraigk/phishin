@@ -25,8 +25,8 @@ import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
 import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faCaretDown, faShare, faExternalLinkAlt, faCaretLeft, faCaretRight, faTimes } from "@fortawesome/free-solid-svg-icons";
-import { useNotification } from "./NotificationContext";
+import { faHeart, faCaretDown, faShare, faExternalLinkAlt, faCaretLeft, faCaretRight, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { useFeedback } from "./FeedbackContext";
 import { Helmet } from 'react-helmet-async';
 
 Modal.setAppElement("body");
@@ -35,7 +35,7 @@ const Show = ({ trackSlug }) => {
   const { show, baseUrl } = useLoaderData();
   const [tracks, setTracks] = useState(show.tracks);
   const trackRefs = useRef([]);
-  const { setNotice, setAlert } = useNotification();
+  const { setNotice, setAlert } = useFeedback();
   const [isDropdownActive, setIsDropdownActive] = useState(false);
   const [isTaperNotesModalOpen, setIsTaperNotesModalOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -186,8 +186,19 @@ const Show = ({ trackSlug }) => {
     </>
   );
 
+  const infoBox = (message) => (
+    <div className="notification show-info">
+      <span className="icon">
+        <FontAwesomeIcon icon={faInfoCircle} />
+      </span>
+      {message}
+    </div>
+  );
+
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
+      {show.incomplete && infoBox("This show's audio is incomplete")}
+      {show.admin_notes && infoBox(show.admin_notes)}
       <Tracks tracks={tracks} setTracks={setTracks} showView={true} trackRefs={trackRefs} />
     </LayoutWrapper>
   );

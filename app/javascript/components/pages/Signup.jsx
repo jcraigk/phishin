@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageWrapper from "./PageWrapper";
-import { useNotification } from "../NotificationContext";
+import { useFeedback } from "../FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
@@ -10,7 +10,7 @@ const Signup = ({ handleLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const { setAlert, setNotice, clearNotification } = useNotification();
+  const { setAlert, setNotice } = useFeedback();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {

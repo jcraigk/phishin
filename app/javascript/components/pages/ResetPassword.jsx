@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import PageWrapper from "./PageWrapper";
-import { useNotification } from "../NotificationContext";
+import { useFeedback } from "../FeedbackContext";
 
 
 const ResetPassword = () => {
-  const { setAlert, setNotice } = useNotification();
+  const { setAlert, setNotice } = useFeedback();
   const { token } = useParams();
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
