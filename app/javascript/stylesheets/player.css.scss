@@ -9,7 +9,7 @@ footer.with-player {
   position: fixed;
   bottom: -100px;
   width: 100%;
-  background-color: $header_gray;
+  background-color: $header-gray;
   z-index: 100;
   opacity: 0;
   box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.3);
@@ -85,7 +85,7 @@ footer.with-player {
       margin: 0 0.6rem;
 
       &:hover {
-        color: $likes_blue !important;
+        color: $likes-blue !important;
       }
 
       &:focus {
@@ -126,7 +126,7 @@ footer.with-player {
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      background-color: $likes_blue;
+      background-color: $likes-blue;
 
       &:hover {
         color: white !important;
@@ -174,7 +174,7 @@ footer.with-player {
       left: 0;
       height: 100%;
       width: 100%; /* Full width, we'll handle progress with the background */
-      // background: linear-gradient(to right, $likes_blue 0%, $likes_blue 0%, transparent 0%); /* Dynamically update this gradient */
+      // background: linear-gradient(to right, $likes-blue 0%, $likes-blue 0%, transparent 0%); /* Dynamically update this gradient */
       mask-size: 100% 100%; /* Ensure the mask covers the entire progress bar */
       mask-position: 0 0;
       mask-repeat: no-repeat;

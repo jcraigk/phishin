@@ -1,5 +1,5 @@
 footer {
-  background-color: $header_gray;
+  background-color: $header-gray;
   height: 3rem;
   display: flex;
   align-items: center;
@@ -10,7 +10,7 @@ footer {
 }
 
 footer a {
-  color: $text_gray;
+  color: $text-gray;
   margin: 0 1rem;
   text-decoration: none;
   line-height: 1rem;

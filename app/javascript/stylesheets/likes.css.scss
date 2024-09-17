@@ -1,15 +1,15 @@
 .fa-heart {
-  color: $text_gray;
+  color: $text-gray;
 }
 
 .heart-icon {
-  color: $text_gray;
+  color: $text-gray;
   cursor: pointer;
   margin-right: 0.3rem;
 }
 
 .heart-icon.liked {
-  color: $likes_blue;
+  color: $likes-blue;
 }
 
 .likes-count {

@@ -5,14 +5,14 @@
 
 @import "bulma";
 
-$bg_gray: #f2f3f5;
-$header_gray: #c7c8ca;
-$inactive_gray: #d9dbdc;
-$control_gray: #f5f5f5;
-$text_gray: #6d6f71;
+$bg-gray: #f2f3f5;
+$header-gray: #c7c8ca;
+$inactive-gray: #d9dbdc;
+$control-gray: #f5f5f5;
+$text-gray: #6d6f71;
 $google-blue: #5385ed;
-$likes_blue: #03bbf2;
-$info_blue: #cbf3ff;
+$likes-blue: #03bbf2;
+$info-blue: #cbf3ff;
 
 @import "./content.css.scss";
 @import "./pagination.css.scss";
@@ -35,7 +35,7 @@ html, body {
   margin: 0;
   display: flex;
   flex-direction: column;
-  background-color: $bg_gray;
+  background-color: $bg-gray;
   font-family: "Open Sans Condensed", sans-serif;
 }
 
@@ -52,7 +52,7 @@ main {
 }
 
 .icon {
-  color: $text_gray;
+  color: $text-gray;
 }
 
 .loader-container {

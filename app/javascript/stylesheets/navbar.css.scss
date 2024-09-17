@@ -1,11 +1,11 @@
 .navbar {
-  background-color: $header_gray;
+  background-color: $header-gray;
   width: 100%;
   margin-bottom: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
 
   .navbar-burger {
-    color: $text_gray;
+    color: $text-gray;
   }
 
   .navbar-brand {
@@ -21,25 +21,25 @@
   }
 
   .login-btn {
-    background-color: $control_gray;
+    background-color: $control-gray;
 
     &:hover {
-      background-color: $bg_gray;
+      background-color: $bg-gray;
 
       .icon {
-        color: $text_gray;
+        color: $text-gray;
       }
     }
 
     .icon {
-      color: $inactive_gray;
+      color: $inactive-gray;
       margin-right: 0.1rem !important;
     }
   }
 
   .dropdown-trigger button {
     width: 8rem;
-    background-color: $control_gray
+    background-color: $control-gray
   }
 
   .dropdown-menu {
@@ -59,11 +59,11 @@
 
   .search-term {
     width: 10rem;
-    background-color: $control_gray;
+    background-color: $control-gray;
   }
 
   .user-dropdown button {
-    background-color: $inactive_gray;
+    background-color: $inactive-gray;
     border: none;
   }
 

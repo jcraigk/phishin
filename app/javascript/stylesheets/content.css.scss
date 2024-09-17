@@ -45,7 +45,7 @@
   background-repeat: no-repeat;
 
   &.focus {
-    border: 1px solid $likes_blue;
+    border: 1px solid $likes-blue;
   }
 
   // Pulse animation for active-item
@@ -91,7 +91,7 @@
   border-radius: var(--bulma-radius);
   text-align: center;
   font-size: 1rem;
-  background-color: $header_gray;
+  background-color: $header-gray;
 }
 
 .leftside-primary {
@@ -106,7 +106,7 @@
 
   .date {
     font-size: 1.25rem;
-    background-color: $header_gray;
+    background-color: $header-gray;
     color: var(--bulma-grey-dark);
     margin-right: 0.5rem;
     border-radius: var(--bulma-radius);
@@ -191,13 +191,13 @@
 
 @keyframes pulse {
   0% {
-    background-color: $likes_blue;
+    background-color: $likes-blue;
   }
   50% {
     background-color: #cbe8fa;
   }
   100% {
-    background-color: $likes_blue;
+    background-color: $likes-blue;
   }
 }
 
