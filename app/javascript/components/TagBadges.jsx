@@ -82,7 +82,7 @@ const TagBadges = ({ tags }) => {
             }}
           >
             {title}
-            <Tooltip id={tooltipId} effect="solid" place="top" type="dark" className="custom-tooltip" />
+            <Tooltip id={tooltipId} className="custom-tooltip" />
           </div>
         );
       })}

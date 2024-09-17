@@ -69,7 +69,7 @@ const routes = (props) => [
       // Static pages
       {
         path: "/api-docs",
-        element: <ApiDocs baseUrl={props.base_url} />
+        element: <ApiDocs baseUrl={props.base_url} contactEmail={props.contact_email} />
       },
       {
         path: "/contact-info",
