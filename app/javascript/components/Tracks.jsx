@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useNotification } from "./NotificationContext";
 
-const Tracks = ({ tracks, setTracks, showDates, numbering = false, showView = false, highlight, trackRefs }) => {
+const Tracks = ({ tracks, setTracks, numbering = false, showView = false, highlight, trackRefs }) => {
   const [trackLikes, setTrackLikes] = useState(tracks);
   const { playTrack, activeTrack } = useOutletContext();
   const { setAlert, setNotice } = useNotification();

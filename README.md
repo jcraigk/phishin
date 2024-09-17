@@ -1,8 +1,6 @@
 ** React TODO
  * track context dropdowns
     * share from timestamp
- * remove data-theme="light" (and maybe bulma entirely)
- * If you play a show and navigate to a new show, it resets the playlist
  * admin note and incomplete at top of show
  * should sidebar go below on main page (and others?)
  * ensure searching for "oct 29" works, also "dec 31 2023", "december 31, 2023"
@@ -10,7 +8,6 @@
  * Opengraph (helmet context)
 
 NICE TO HAVE:
- * on mobile, the elapsed/remaining times should be the scrub forward/back buttons
  * anywhere we can put lyrical excerpts?
  * disable swetrix - or sign up
  * Add CSRF to POSTs on API
@@ -20,6 +17,7 @@ NICE TO HAVE:
  * Prerender caching? Would only benefit logged out users since we'd need to rehydrate on load for any pages that showed liked items
  * put play random show button on empty playlist page
  * make sure we re-hydrate any pages that have tracks on them when doing SSR (to highlight likes)
+ * test for dark reader compatibility (pulse doesn't look great)
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)
 

@@ -149,11 +149,13 @@ footer.with-player {
       margin-right: 0.5rem;
       min-width: 2rem;
       text-align: left;
+      cursor: pointer;
     }
     .remaining {
       margin-left: 0.5rem;
       min-width: 2rem;
       text-align: right;
+      cursor: pointer;
     }
 
     .scrubber-bar {
