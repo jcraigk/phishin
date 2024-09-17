@@ -31,7 +31,7 @@
     bottom: 0;
     left: 0;
     height: 4px;
-    background-color: $header_gray;
+    background-color: $header-gray;
     animation: progress 5s linear forwards;
   }
 }
@@ -39,10 +39,10 @@
 .notification {
   font-size: 1.3rem;
   padding: 1rem;
-  border: 1px solid $header_gray;
+  border: 1px solid $header-gray;
 
   &.show-info {
-    background-color: $info_blue;
+    background-color: $info-blue;
   }
 
   .icon {

@@ -1,19 +1,19 @@
 ** React TODO
  * track context dropdowns
     * share from timestamp
- * should sidebar go below on main page (and others?)
- * button to minimize/restore player
+ * each sidebar should be optimized on mobile (hide filters initially?)
+ * button to minimize/restore player on desktop (rollover to see down arrow), hide waveform
  * Opengraph (helmet context)
 
 NICE TO HAVE:
- * anywhere we can put lyrical excerpts?
- * Can we use as_json to clean up request specs?
+ * Ensure no FOUC with font
  * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
  * Prerender caching? Would only benefit logged out users since we'd need to rehydrate on load for any pages that showed liked items
  * make sure we re-hydrate any pages that have tracks on them when doing SSR (to highlight likes)
  * test for dark reader compatibility (pulse doesn't look great)
 
  BACKBURNER
+  * lyrical excerpts?
   * disable swetrix - or sign up
   * put play random show button on empty playlist page
   * Add CSRF to POSTs on API

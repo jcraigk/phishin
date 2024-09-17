@@ -77,7 +77,7 @@ const TagBadges = ({ tags }) => {
             data-tooltip-content={tooltipForTagStack(tagGroup)}
             onClick={isClickable ? (event) => handleClick(tagGroup, event) : null}
             style={{
-              backgroundColor: "$header_gray",
+              backgroundColor: "$header-gray",
               cursor: isClickable ? "pointer" : "default",
             }}
           >

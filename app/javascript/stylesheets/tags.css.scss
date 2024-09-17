@@ -9,7 +9,7 @@
 .tag-badge {
   font-size: 0.6rem;
   padding: 0.1rem 0.4rem;
-  background-color: $text_gray;
+  background-color: $text-gray;
   color: white;
   border-radius: 0.25rem;
   cursor: pointer;
@@ -19,5 +19,5 @@
 }
 
 .tag-badge:hover {
-  background-color: darken($header_gray, 10%);
+  background-color: darken($header-gray, 10%);
 }

@@ -1,5 +1,5 @@
 .sidebar {
-  background-color: $header_gray;
+  background-color: $header-gray;
   padding: 1rem;
   flex: 0 0 16rem;
   border-radius: 5px;
@@ -17,11 +17,11 @@
 
   .sidebar-content {
     a {
-      color: $text_gray;
+      color: $text-gray;
       text-decoration: none;
     }
     a:hover {
-      color: $text_gray;
+      color: $text-gray;
       text-decoration: underline;
     }
     .show-date {
