@@ -10,7 +10,7 @@ footer {
 }
 
 footer a {
-  color: white;
+  color: $text_gray;
   margin: 0 1rem;
   text-decoration: none;
   line-height: 1rem;
@@ -20,4 +20,5 @@ footer a {
 
 footer a:hover {
   text-decoration: underline;
+  color: white;
 }

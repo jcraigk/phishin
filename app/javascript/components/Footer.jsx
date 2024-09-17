@@ -9,13 +9,15 @@ const Footer = () => {
     { path: "/contact-info", label: "Contact" },
   ];
 
-  <footer>
-    {links.map((link) => (
-      <Link key={link.path} to={link.path}>
-        {link.label}
-      </Link>
-    ))}
-  </footer>
+  return (
+    <footer>
+      {links.map((link) => (
+        <Link key={link.path} to={link.path}>
+          {link.label}
+        </Link>
+      ))}
+    </footer>
+  );
 };
 
 export default Footer;

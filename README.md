@@ -1,5 +1,4 @@
 ** React TODO
- * Opengraph (helmet context)
  * track context dropdowns
     * share from timestamp
  * remove data-theme="light" (and maybe bulma entirely)
@@ -8,7 +7,10 @@
  * should sidebar go below on main page (and others?)
  * ensure searching for "oct 29" works, also "dec 31 2023", "december 31, 2023"
  * button to minimize/restore player
+ * Opengraph (helmet context)
 
+NICE TO HAVE:
+ * on mobile, the elapsed/remaining times should be the scrub forward/back buttons
  * anywhere we can put lyrical excerpts?
  * disable swetrix - or sign up
  * Add CSRF to POSTs on API

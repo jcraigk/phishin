@@ -3,6 +3,8 @@ import { useSearchParams } from "react-router-dom";
 import SearchResults from "./SearchResults";
 import LayoutWrapper from "./LayoutWrapper"; // For sidebar layout
 import { authFetch } from "./utils";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -49,7 +51,7 @@ const Search = () => {
   const sidebarContent = (
     <div className="sidebar-content">
       <div className="field">
-        <label className="label">Search</label>
+        <label className="label">Search Term</label>
         <div className="control">
           <input
             className="input"
@@ -80,6 +82,9 @@ const Search = () => {
 
       <div className="control">
         <button className="button" onClick={handleSearch}>
+          <div className="icon mr-1">
+            <FontAwesomeIcon icon={faSearch} />
+          </div>
           Search
         </button>
       </div>

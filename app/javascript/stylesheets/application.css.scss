@@ -8,10 +8,12 @@
 $bg_gray: #f2f3f5;
 $header_gray: #c7c8ca;
 $subheader_gray: #d9dbdc;
-$google-blue: #5385ed;
-$tag_gray: #888888;
-$likes_blue: #03bbf2;
+$control_gray: #f5f5f5;
 $text_gray: #6d6f71;
+$google-blue: #5385ed;
+
+$likes_blue: #03bbf2;
+
 
 @import "./content.css.scss";
 @import "./pagination.css.scss";
@@ -38,8 +40,20 @@ html, body {
   font-family: "Open Sans Condensed", sans-serif;
 }
 
+input, textarea, select, button {
+  font-family: inherit;
+}
+
 main {
   flex: 1;
+}
+
+::placeholder {
+  font-family: "Open Sans Condensed", sans-serif;
+}
+
+.icon {
+  color: $text_gray;
 }
 
 .loader-container {

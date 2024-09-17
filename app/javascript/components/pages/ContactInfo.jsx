@@ -1,10 +1,12 @@
 import React from "react";
 import PageWrapper from "./PageWrapper";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faX } from "@fortawesome/free-solid-svg-icons";
 
 const ContactInfo = ({ contactEmail }) => {
   return (
     <PageWrapper>
-      <h1 className="title">Contact</h1>
+      <h1 className="title">Contact Info</h1>
 
       <p>
         If you notice a bug, please file an issue or pull request on GitHub:{" "}
@@ -30,7 +32,7 @@ const ContactInfo = ({ contactEmail }) => {
         </a>
       </p>
 
-      <h3 className="mt-6">Contact the site maintainers</h3>
+      <h3 className="mt-6">Contact the site maintainer</h3>
       <p>
         <a
           href={`mailto:${contactEmail}`}
@@ -46,6 +48,9 @@ const ContactInfo = ({ contactEmail }) => {
         className="button"
         target="_blank"
       >
+        <div className="icon mr-1">
+          <FontAwesomeIcon icon={faX} />
+        </div>
         Follow on X
       </a>
     </PageWrapper>

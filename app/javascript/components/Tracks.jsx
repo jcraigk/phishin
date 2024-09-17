@@ -24,7 +24,7 @@ const Tracks = ({ tracks, setTracks, showDates, numbering = false, showView = fa
     e.stopPropagation();
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
-      setAlert("Please log in to like a track");
+      setAlert("Please login to like a track");
       return;
     }
 

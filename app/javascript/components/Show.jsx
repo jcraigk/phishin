@@ -60,7 +60,7 @@ const Show = ({ trackSlug }) => {
   const handleLikeToggle = async () => {
     const jwt = localStorage.getItem("jwt");
     if (!jwt) {
-      setAlert("Please log in to like a show");
+      setAlert("Please login to like a show");
       return;
     }
 

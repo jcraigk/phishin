@@ -2,12 +2,24 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import logo from "../images/logo-350.png";
-import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendarAlt, faMusic, faMapMarkerAlt, faStar, faCalendarDay, faMap, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendarAlt, faMusic, faMapMarkerAlt, faStar, faCalendarDay, faMap, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = ({ user, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+
+  const closeMenus = () => {
+    setIsMenuOpen(false);
+    // Fix for bulma dropdowns not closing from navbar
+    const dropdowns = document.querySelectorAll('.dropdown-menu');
+    dropdowns.forEach((dropdown) => {
+      dropdown.style.display = 'none';
+      setTimeout(() => {
+        dropdown.style.display = '';
+      }, 200);
+    });
+  };
 
   const handleLogout = () => {
     onLogout();
@@ -17,6 +29,7 @@ const Navbar = ({ user, onLogout }) => {
     e.preventDefault();
     if (searchTerm) {
       navigate(`/search?term=${searchTerm}`);
+      closeMenus();
     }
   };
 
@@ -88,10 +101,15 @@ const Navbar = ({ user, onLogout }) => {
                 </span>
               </button>
             </div>
-            <div className="dropdown-menu" id="dropdown-site-menu" role="menu">
+            <div className="dropdown-menu" role="menu">
               <div className="dropdown-content">
                 {staticLinks.map((item, index) => (
-                  <Link key={item.path} to={item.path} className="dropdown-item">
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className="dropdown-item"
+                    onClick={closeMenus}
+                  >
                     <span className="icon">
                       <FontAwesomeIcon icon={item.icon} />
                     </span>
@@ -115,7 +133,12 @@ const Navbar = ({ user, onLogout }) => {
               <div className="dropdown-content">
                 {combinedLinks.map((item, index) => (
                   item.type === 'link' ? (
-                    <Link key={item.path} to={item.path} className="dropdown-item">
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      className="dropdown-item"
+                      onClick={closeMenus}
+                    >
                       <span className="icon">
                         <FontAwesomeIcon icon={item.icon} />
                       </span>
@@ -134,7 +157,7 @@ const Navbar = ({ user, onLogout }) => {
               <input
                 className="input search-term"
                 type="text"
-                placeholder="Search"
+                placeholder="SEARCH"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -153,9 +176,13 @@ const Navbar = ({ user, onLogout }) => {
                   if (typeof window !== "undefined") {
                     localStorage.setItem("redirectAfterLogin", window.location.pathname);
                   }
+                  closeMenus();
                 }}
               >
-                Login
+                <div className="icon">
+                  <FontAwesomeIcon icon={faRightToBracket} />
+                </div>
+                LOGIN
               </Link>
             </div>
           )}
@@ -173,7 +200,7 @@ const Navbar = ({ user, onLogout }) => {
                     <span>{user.username}</span>
                   </button>
                 </div>
-                <div className="dropdown-menu is-right" role="menu">
+                <div className="dropdown-menu" role="menu">
                   <div className="dropdown-content">
                     <a href="#logout" className="navbar-item" onClick={(e) => {
                       e.preventDefault();

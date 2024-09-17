@@ -1,5 +1,6 @@
 import React from "react";
 import PageWrapper from "./PageWrapper";
+import { Link } from "react-router-dom";
 
 const Faq = ({ contactEmail }) => {
   return (
@@ -56,7 +57,7 @@ const Faq = ({ contactEmail }) => {
       </p>
 
       <h3>Is there a list of missing audio content?</h3>
-      <p>Yes, see the <a href="/missing-content">Missing Content Report</a></p>
+      <p>Yes, see the <Link to="/missing-content">Missing Content Report</Link>.</p>
 
       <h3>What format is audio encoded in?</h3>
       <p>MP3 format is currently provided. These may be replaced with lossless format at a later time as storage and bandwidth become available.</p>
