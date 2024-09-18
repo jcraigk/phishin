@@ -85,8 +85,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
 
   expose(
     :tracks,
-    # using: ApiV2::Entities::Track, # TODO: Fixes docs, breaks the data
-    if: ->(_obj, opts) { opts[:include_tracks] },
+    if: ->(_, opts) { opts[:include_tracks] },
     documentation: {
       is_array: true,
       desc: "Tracks associated with the show, included only on individual show requests"
@@ -94,7 +93,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
   ) do |obj, opts|
     ApiV2::Entities::Track.represent \
       obj.tracks.sort_by(&:position),
-      opts.merge(exclude_show: true, liked_by_user: nil, liked_track_ids: opts[:liked_track_ids])
+      opts.merge(exclude_show: true, liked_by_user: nil)
   end
 
   expose(

@@ -73,7 +73,7 @@ const Search = () => {
               <option value="shows">Shows</option>
               <option value="songs">Songs</option>
               <option value="tags">Tags</option>
-              <option value="tours">Tours</option>
+              <option value="tracks">Tracks</option>
               <option value="venues">Venues</option>
             </select>
           </div>

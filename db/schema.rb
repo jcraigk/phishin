@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_13_000444) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_18_023447) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
@@ -149,6 +149,12 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_13_000444) do
   create_table "songs_tracks", id: :serial, force: :cascade do |t|
     t.integer "song_id"
     t.integer "track_id"
+    t.integer "previous_performance_gap"
+    t.string "previous_performance_slug"
+    t.integer "next_performance_gap"
+    t.string "next_performance_slug"
+    t.index ["next_performance_gap"], name: "index_songs_tracks_on_next_performance_gap"
+    t.index ["previous_performance_gap"], name: "index_songs_tracks_on_previous_performance_gap"
     t.index ["song_id"], name: "index_songs_tracks_on_song_id"
     t.index ["track_id", "song_id"], name: "index_songs_tracks_on_track_id_and_song_id", unique: true
     t.index ["track_id"], name: "index_songs_tracks_on_track_id"

@@ -42,6 +42,7 @@ class ShowImporter::Orchestrator
     show.save!
 
     save_tracks(pbar)
+    save_song_gaps(show)
 
     show.reload.save_duration
     show.update!(published: true)
@@ -94,6 +95,12 @@ class ShowImporter::Orchestrator
   end
 
   private
+
+  def save_song_gaps(show)
+    GapService.call(show)
+    GapService.call \
+      Show.where("date < ?", show.date).order(date: :desc).first
+  end
 
   def create_announcement
     show_name = "#{show.date} at #{show.venue_name}"

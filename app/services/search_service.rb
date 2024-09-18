@@ -44,15 +44,14 @@ class SearchService < BaseService
       { songs: }
     when "venues"
       { venues: }
-    when "tours"
-      { tours: }
     when "tags"
       { tags:, show_tags:, track_tags: }
+    when "tracks"
+      { tracks: tracks_filtered_by_songs }
     else
       {
         songs:,
         venues:,
-        tours:,
         tags:,
         show_tags:,
         track_tags:,
@@ -96,11 +95,6 @@ class SearchService < BaseService
          .where(venue_where_str, term: "%#{term}%")
          .order(name: :asc)
          .uniq
-  end
-
-  def tours
-    return [] if term_is_date?
-    Tour.where("name ILIKE ?", "%#{term}%").order(name: :asc).limit(LIMIT)
   end
 
   def venue_where_str

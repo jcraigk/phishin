@@ -2,8 +2,8 @@ class ApiV2::Search < ApiV2::Base
   resource :search do
     desc "Search the database" do
       detail \
-        "Performs a search across multiple entities including " \
-        "shows, songs, venues, tours, and tags."
+        "Perform a text based search across " \
+        "shows, tracks, songs, venues, and tags."
       success ApiV2::Entities::SearchResults
       failure [ [ 400, "Bad Request", ApiV2::Entities::ApiResponse ] ]
     end
@@ -14,7 +14,7 @@ class ApiV2::Search < ApiV2::Base
                desc: "Search term (at least 3 characters long)"
       optional :scope,
                type: String,
-               values: %w[all shows songs tags tours venues],
+               values: %w[all shows songs tags tracks venues],
                default: "all",
                desc: "Specifies the area of the site to search"
     end
@@ -22,7 +22,7 @@ class ApiV2::Search < ApiV2::Base
     get ":term" do
       return error!({ message: "Term too short" }, 400) if params[:term].length < 3
       results = fetch_results(params[:term], params[:scope])
-      all_matched_shows = ([ results[:exact_show] ] + results[:other_shows]).compact
+      all_matched_shows = (Array(results[:exact_show]) + Array(results[:other_shows])).compact
       present \
         results,
         with: ApiV2::Entities::SearchResults,
