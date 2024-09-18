@@ -5,47 +5,126 @@
   border-radius: 5px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   max-height: fit-content;
-
-  .sidebar-subtitle {
-    font-size: 1.3rem;
-    font-weight: bold;
-  }
-  .sidebar-detail {
-    font-size: 1.3rem;
-    line-height: 1.7rem;
-  }
+  margin-bottom: 1rem;
 
   .sidebar-content {
     a {
       color: $text-gray;
       text-decoration: none;
     }
+
     a:hover {
       color: $text-gray;
       text-decoration: underline;
     }
-    .show-date {
-      font-size: 1.7em;
-      font-weight: bold;
-      margin-bottom: 10px;
+
+    select {
+      max-width: 20rem;
     }
 
-    .show-venue {
-      font-size: 1.2em;
-      line-height: 1.7rem;
+    hr {
+      background-color: $inactive-gray;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
     }
-    .show-location {
-      font-size: 1.1em;
+
+    .sidebar-title {
+      font-size: 2rem;
+      font-weight: bold;
       line-height: 2rem;
-      margin-bottom: 10px;
+      margin-bottom: 0.4rem;
+      color: $title-gray;
     }
-    .show-duration {
-      font-size: 1.1em;
-      margin-bottom: 10px;
+
+    .sidebar-info {
+      font-size: 1.2rem;
     }
+
+    .sidebar-subtitle {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      color: $title-gray;
+    }
+
+    .sidebar-detail {
+      font-size: 1.3rem;
+      line-height: 1.7rem;
+      margin-top: 1rem;
+    }
+
+    .sidebar-filters {
+      margin-top: 1rem;
+    }
+
+    .sidebar-control-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem; /* Optional: adjust the gap between the heart and dropdown */
+    }
+
     .taper-notes:hover {
       text-decoration: underline;
       cursor: pointer;
+    }
+  }
+}
+
+.sidebar-content {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .sidebar-content .select {
+    margin-bottom: 1rem; /* Add some spacing between select elements */
+  }
+
+  .sidebar-content .select:last-child {
+    margin-bottom: 0; /* Optional: Remove margin from the last select if desired */
+  }
+}
+
+@media (max-width: 1023px) {
+  .sidebar-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    column-gap: 0.5rem !important;
+    row-gap: 5px !important;
+
+    .sidebar-control {
+      flex: 0;
+    }
+
+    hr {
+      display: none;
+    }
+
+    form {
+      width: 100%;
+    }
+
+    select {
+      margin: none !important;
+    }
+
+    .sidebar-filters {
+      margin-top: 0rem !important;
+    }
+
+    .sidebar-title {
+      margin-bottom: 0rem !important;
+      font-size: 1.5rem !important;
+    }
+    .sidebar-subtitle {
+      margin-bottom: 0rem !important;
+    }
+    .sidebar-detail {
+      display: none;
+    }
+    .sidebar-extras {
+      display: none;
     }
   }
 }

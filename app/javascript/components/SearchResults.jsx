@@ -65,7 +65,7 @@ const SearchResults = ({ results, term }) => {
       )}
 
       {!exactShows?.length && !otherShows?.length && !songs?.length && !tracks?.length && !tags?.length && !venues?.length && (
-        <p>Sorry, no results found.</p>
+        <h2 className="title">Sorry, no results found.</h2>
       )}
     </>
   );

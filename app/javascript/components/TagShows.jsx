@@ -18,9 +18,8 @@ export const tagShowsLoader = async ({ params, request }) => {
     );
     if (!showsResponse.ok) throw showsResponse;
     const showsData = await showsResponse.json();
-
     return {
-      tagName,
+      tag,
       shows: showsData.shows,
       totalPages: showsData.total_pages,
       page: parseInt(page, 10) - 1,
@@ -40,7 +39,7 @@ import ReactPaginate from "react-paginate";
 import { Helmet } from 'react-helmet-async';
 
 const TagShows = () => {
-  const { tagName, shows, totalPages, page, sortOption } = useLoaderData();
+  const { tag, shows, totalPages, page, sortOption } = useLoaderData();
   const navigate = useNavigate();
 
   const handleSortChange = (event) => {
@@ -53,16 +52,19 @@ const TagShows = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <h1 className="title">Shows Tagged with "{tagName}"</h1>
-      <div className="select is-fullwidth mb-5">
-        <select value={sortOption} onChange={handleSortChange}>
-          <option value="date:desc">Sort by Date (Newest First)</option>
-          <option value="date:asc">Sort by Date (Oldest First)</option>
-          <option value="likes_count:desc">Sort by Title (A-Z)</option>
-          <option value="likes_count:asc">Sort by Title (Z-A)</option>
-          <option value="likes_count:desc">Sort by Likes (Most to Least)</option>
-          <option value="likes_count:asc">Sort by Likes (Least to Most)</option>
-        </select>
+      <p className="sidebar-title">"{tag.name}" Shows</p>
+
+      <div className="sidebar-filters">
+        <div className="select">
+          <select value={sortOption} onChange={handleSortChange}>
+            <option value="date:desc">Sort by Date (Newest First)</option>
+            <option value="date:asc">Sort by Date (Oldest First)</option>
+            <option value="likes_count:desc">Sort by Title (Alphabetical)</option>
+            <option value="likes_count:asc">Sort by Title (Reverse Alphabetical)</option>
+            <option value="likes_count:desc">Sort by Likes (Most to Least)</option>
+            <option value="likes_count:asc">Sort by Likes (Least to Most)</option>
+          </select>
+        </div>
       </div>
     </div>
   );
@@ -70,7 +72,7 @@ const TagShows = () => {
   return (
     <>
       <Helmet>
-        <title>{tagName} - Shows - Phish.in</title>
+        <title>{tag.name} - Shows - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <Shows shows={shows} setShows={() => {}} numbering={false} setHeaders={false} />

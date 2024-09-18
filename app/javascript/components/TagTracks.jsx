@@ -18,15 +18,16 @@ export const tagTracksLoader = async ({ params, request }) => {
     );
     if (!tracksResponse.ok) throw tracksResponse;
     const tracksData = await tracksResponse.json();
-
+    console.log('hello')
     return {
-      tagName,
+      tag,
       tracks: tracksData.tracks,
       totalPages: tracksData.total_pages,
       page: parseInt(page, 10) - 1,
       sortOption,
     };
   } catch (error) {
+    console.log(error);
     if (error instanceof Response) throw error;
     throw new Response("Error fetching data", { status: 500 });
   }
@@ -40,7 +41,7 @@ import ReactPaginate from "react-paginate";
 import { Helmet } from 'react-helmet-async';
 
 const TagTracks = () => {
-  const { tagName, tracks, totalPages, page, sortOption } = useLoaderData();
+  const { tag, tracks, totalPages, page, sortOption } = useLoaderData();
   const navigate = useNavigate();
 
   const handleSortChange = (event) => {
@@ -53,18 +54,21 @@ const TagTracks = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <h1 className="title">Tracks Tagged with "{tagName}"</h1>
-      <div className="select is-fullwidth mb-5">
-        <select value={sortOption} onChange={handleSortChange}>
-          <option value="date:desc">Sort by Date (Newest First)</option>
-          <option value="date:asc">Sort by Date (Oldest First)</option>
-          <option value="likes_count:desc">Sort by Title (A-Z)</option>
-          <option value="likes_count:asc">Sort by Title (Z-A)</option>
-          <option value="likes_count:desc">Sort by Likes (Most to Least)</option>
-          <option value="likes_count:asc">Sort by Likes (Least to Most)</option>
-          <option value="duration:desc">Sort by Duration (Longest First)</option>
-          <option value="duration:asc">Sort by Duration (Shortest First)</option>
-        </select>
+      <p className="sidebar-title">"{tag.name}" Tracks</p>
+
+      <div className="sidebar-filters">
+        <div className="select">
+          <select value={sortOption} onChange={handleSortChange}>
+            <option value="date:desc">Sort by Date (Newest First)</option>
+            <option value="date:asc">Sort by Date (Oldest First)</option>
+            <option value="likes_count:desc">Sort by Title (Alphabetical)</option>
+            <option value="likes_count:asc">Sort by Title (Reverse Alphabetical)</option>
+            <option value="likes_count:desc">Sort by Likes (Most to Least)</option>
+            <option value="likes_count:asc">Sort by Likes (Least to Most)</option>
+            <option value="duration:desc">Sort by Duration (Longest First)</option>
+            <option value="duration:asc">Sort by Duration (Shortest First)</option>
+          </select>
+        </div>
       </div>
     </div>
   );
@@ -72,7 +76,7 @@ const TagTracks = () => {
   return (
     <>
       <Helmet>
-        <title>{tagName} - Tracks - Phish.in</title>
+        <title>{tag.name} - Tracks - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <Tracks tracks={tracks} setTracks={() => {}} />

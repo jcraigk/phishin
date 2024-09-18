@@ -39,27 +39,30 @@ const VenueShows = () => {
     navigate(`?sort=${event.target.value}`);
   };
 
-  const sidebarContent = venue ? (
+  const sidebarContent = (
     <div className="sidebar-content">
-      <h1 className="title">{venue.name}</h1>
+      <p className="sidebar-title">{venue.name}</p>
       <p className="sidebar-subtitle">
         <Link to={`/map?term=${venue.location}`}>
             {venue.location}
         </Link>
       </p>
-      <p className="sidebar-subtitle">{venue.shows_count} shows total</p>
-      <div className="select is-fullwidth mb-5">
-        <select value={sortOption} onChange={handleSortChange}>
-          <option value="date:desc">Sort by Date (Newest First)</option>
-          <option value="date:asc">Sort by Date (Oldest First)</option>
-          <option value="likes_count:desc">Sort by Likes (Most to Least)</option>
-          <option value="likes_count:asc">Sort by Likes (Least to Most)</option>
-          <option value="duration:desc">Sort by Duration (Longest First)</option>
-          <option value="duration:asc">Sort by Duration (Shortest First)</option>
-        </select>
+      <p className="sidebar-subtitle sidebar-extras">{venue.shows_count} shows total</p>
+
+      <div className="sidebar-filters">
+        <div className="select">
+          <select value={sortOption} onChange={handleSortChange}>
+            <option value="date:desc">Sort by Date (Newest First)</option>
+            <option value="date:asc">Sort by Date (Oldest First)</option>
+            <option value="likes_count:desc">Sort by Likes (Most to Least)</option>
+            <option value="likes_count:asc">Sort by Likes (Least to Most)</option>
+            <option value="duration:desc">Sort by Duration (Longest First)</option>
+            <option value="duration:asc">Sort by Duration (Shortest First)</option>
+          </select>
+        </div>
       </div>
     </div>
-  ) : null;
+  );
 
   return (
     <>

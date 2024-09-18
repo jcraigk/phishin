@@ -46,7 +46,7 @@ const Tags = ({ tags, group = false, highlight = "" }) => {
     return (
       <>
         {sortedGroups.map(group => (
-          <>
+          <React.Fragment key={group}>
             <div className="section-title">
               <div className="title-left">{group}</div>
               <span className="detail-right">{groupedTags[group].length} tags</span>
@@ -54,7 +54,7 @@ const Tags = ({ tags, group = false, highlight = "" }) => {
             <ul className="tag-list">
               {groupedTags[group].map(tag => renderTagItem(tag))}
             </ul>
-          </>
+          </React.Fragment>
         ))}
       </>
     );

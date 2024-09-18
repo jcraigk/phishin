@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import LayoutWrapper from "./LayoutWrapper";
 import { Helmet } from "react-helmet-async";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const usStates = [
   "(US State)", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME",
@@ -189,79 +191,58 @@ const MapView = ({ mapboxToken }) => {
   const sidebarContent = (
     <div className="sidebar-content">
       <form onSubmit={handleSubmit}>
-        <div className="field">
-          <label className="label">US State</label>
-          <div className="control">
-            <div className="select">
-              <select name="us_state" value={formData.us_state} onChange={handleInputChange}>
-                {usStates.map((state) => (
-                  <option key={state} value={state}>
-                    {state}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+        <label className="label">US State</label>
+        <div className="select">
+          <select name="us_state" value={formData.us_state} onChange={handleInputChange}>
+            {usStates.map((state) => (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            ))}
+          </select>
         </div>
-        <div className="field">
-          <label className="label">Location</label>
-          <div className="control">
-            <input
-              className="input"
-              type="text"
-              name="term"
-              placeholder="Place or zipcode"
-              value={formData.term}
-              onChange={handleInputChange}
-              disabled={isStateSelected}
-            />
-          </div>
-        </div>
-        <div className="field">
-          <label className="label">Distance (miles)</label>
-          <div className="control">
-            <input
-              className="input"
-              type="number"
-              name="distance"
-              placeholder="Distance (miles)"
-              value={formData.distance}
-              onChange={handleInputChange}
-              disabled={isStateSelected}
-            />
-          </div>
-        </div>
-        <div className="field">
-          <label className="label">Start Date</label>
-          <div className="control">
-            <input
-              className="input"
-              type="date"
-              name="start_date"
-              value={formData.start_date}
-              onChange={handleInputChange}
-            />
-          </div>
-        </div>
-        <div className="field">
-          <label className="label">End Date</label>
-          <div className="control">
-            <input
-              className="input"
-              type="date"
-              name="end_date"
-              value={formData.end_date}
-              onChange={handleInputChange}
-            />
-          </div>
-        </div>
-        <div className="field">
-          <div className="control">
-            <button className="button" type="submit">
-              Search
-            </button>
-          </div>
-        </div>
+        <label className="label">Location</label>
+        <input
+          className="input"
+          type="text"
+          name="term"
+          placeholder="Place or zipcode"
+          value={formData.term}
+          onChange={handleInputChange}
+          disabled={isStateSelected}
+        />
+        <label className="label">Distance (miles)</label>
+        <input
+          className="input"
+          type="number"
+          name="distance"
+          placeholder="Distance (miles)"
+          value={formData.distance}
+          onChange={handleInputChange}
+          disabled={isStateSelected}
+        />
+        <label className="label">Start Date</label>
+        <input
+          className="input"
+          type="date"
+          name="start_date"
+          value={formData.start_date}
+          onChange={handleInputChange}
+        />
+        <label className="label">End Date</label>
+        <input
+          className="input"
+          type="date"
+          name="end_date"
+          value={formData.end_date}
+          onChange={handleInputChange}
+        />
+        <button className="button mt-4" type="submit">
+          <span className="icon mr-1">
+            <FontAwesomeIcon icon={faSearch} />
+          </span>
+          Search
+        </button>
       </form>
     </div>
   );

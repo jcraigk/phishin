@@ -13,14 +13,16 @@
   .title-left {
     font-size: 1.75rem;
     font-weight: 700;
-    line-height: 1;
+    line-height: 1rem;
+    color: $title-gray;
   }
 
   .detail-right {
     font-size: 1rem;
     font-weight: bold;
     color: var(--bulma-grey-dark);
-    line-height: 1;
+    line-height: 1rem;
+    color: $title-gray;
   }
 }
 

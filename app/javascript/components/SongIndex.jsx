@@ -41,12 +41,12 @@ const SongIndex = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <h1 className="title">Songs</h1>
-      <h2 className="subtitle">{formatNumber(totalEntries)} total</h2>
-      <div className="select is-fullwidth">
+      <p className="sidebar-title">Songs</p>
+      <p className="sidebar-subtitle">{formatNumber(totalEntries)} total</p>
+      <div className="select">
         <select value={sortOption} onChange={handleSortChange}>
-          <option value="title:asc">Sort by Title (A-Z)</option>
-          <option value="title:desc">Sort by Title (Z-A)</option>
+          <option value="title:asc">Sort by Title (Alphabetical)</option>
+          <option value="title:desc">Sort by Title (Reverse Alphabetical)</option>
           <option value="tracks_count:desc">Sort by Tracks Count (High to Low)</option>
           <option value="tracks_count:asc">Sort by Tracks Count (Low to High)</option>
         </select>
