@@ -8,7 +8,8 @@ export const showLoader = async ({ params, request }) => {
     if (response.status === 404) {
       throw new Response("Show not found", { status: 404 });
     }
-    return await response.json();
+    let show = await response.json();
+    return show;
   } catch (error) {
     if (error instanceof Response) throw error;
     throw new Response("Error fetching data", { status: 500 });
@@ -24,7 +25,7 @@ import LikeButton from "./LikeButton";
 import Tracks from "./Tracks";
 import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAnglesLeft, faAnglesRight, faCircleXmark, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { Helmet } from 'react-helmet-async';
 
 Modal.setAppElement("body");
@@ -38,6 +39,7 @@ const Show = ({ trackSlug }) => {
   const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
 
   useEffect(() => {
+    setTracks(show.tracks);
     let foundTrack;
     if (trackSlug) foundTrack = tracks.find((track) => track.slug === trackSlug);
     if (!foundTrack) foundTrack = tracks[0];
@@ -50,7 +52,7 @@ const Show = ({ trackSlug }) => {
         trackRefs.current[trackIndex].scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
-  }, [trackSlug, tracks]);
+  }, [show, trackSlug, tracks]);
 
   const openTaperNotesModal = () => {
     setIsTaperNotesModalOpen(true);
@@ -83,12 +85,12 @@ const Show = ({ trackSlug }) => {
       <div className="sidebar-extras">
         <hr />
         <Link to={`/${show.previous_show_date}`}>
-          <FontAwesomeIcon icon={faAnglesLeft} style={{ marginRight: "5px" }} />
+          <FontAwesomeIcon icon={faCircleChevronLeft} style={{ marginRight: "5px" }} />
           Previous show
         </Link>
         <Link to={`/${show.next_show_date}`} className="is-pulled-right">
           Next show
-          <FontAwesomeIcon icon={faAnglesRight} style={{ marginLeft: "5px" }} />
+          <FontAwesomeIcon icon={faCircleChevronRight} style={{ marginLeft: "5px" }} />
         </Link>
       </div>
     </div>

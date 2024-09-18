@@ -64,7 +64,8 @@ class GapService < BaseService
   def calculate_gap(start_date, end_date)
     return nil if start_date.nil? || end_date.nil?
     return 0 if start_date == end_date
-    KnownDate.where(date: start_date..end_date).count - 1
+    num = KnownDate.where(date: start_date..end_date).count - 1
+    num
   end
 
   def build_slug(track)

@@ -1,17 +1,17 @@
 TODO
- * Track context dropdowns
- * each sidebar should be optimized on mobile (hide filters initially?)
  * button to minimize/restore player on desktop (rollover to see down arrow), hide waveform
  * Opengraph (helmet context)
- * audit yarn packages (remove coffeescript)
- * Test for dark reader compatibility (pulse doesn't look great)
+ * debuts / first occurrences of tracks should have previous gap of 0. last occurrence should have next gap of 0.
 
 NICE TO HAVE:
+ * Test for dark reader compatibility (pulse doesn't look great)
+ * audit yarn packages (remove coffeescript)
  * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
  * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
  * Install sentry react https://docs.sentry.io/platforms/javascript/guides/react/
  * Feature specs
  * Ensure API spec coverage
+ * when a track is playing, the pulsing should be a gradient showing the progress through the track, like the scrubber (but no waveform). maybe also a border
 
  BACKBURNER
   * lyrical excerpts?
@@ -23,6 +23,10 @@ NICE TO HAVE:
   * Bullet N+1 against API
   * Every page should keep all content on screen at any size (nothing gets cut off on right)
   * audit components for unused imports
+  * close button on incomplete/admin notes
+
+TEST URLS
+https://jcktest.ngrok.io/1990-06-16/you-enjoy-myself
 
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)

@@ -4,6 +4,7 @@ import TagBadges from "./TagBadges";
 import { formatDurationTrack, formatDurationShow, formatDate } from "./utils";
 import HighlightedText from "./HighlightedText";
 import LikeButton from "./LikeButton";
+import TrackContextMenu from "./TrackContextMenu";
 
 const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackRefs, trackSlug }) => {
   const { playTrack, activeTrack } = useOutletContext();
@@ -74,6 +75,9 @@ const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackR
               <span className="rightside-primary">{formatDurationTrack(track.duration)}</span>
               <span className="rightside-secondary">
                 <LikeButton likable={track} />
+              </span>
+              <span className="rightside-menu">
+                <TrackContextMenu track={track} />
               </span>
             </li>
           </React.Fragment>

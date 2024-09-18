@@ -17,6 +17,8 @@ Rails.application.routes.draw do
     get ":provider", to: "sorcery#login", as: :at_provider
   end
 
+  get "/download-track/:id" => "downloads#download_track"
+
   namespace :api do
     namespace :v1 do
       resources :eras,      only: %i[index show]
