@@ -20,7 +20,7 @@ import { Link, useLoaderData, useOutletContext } from "react-router-dom";
 import { formatDate, formatDateMed, formatDateLong, formatDurationShow } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
 import ShowContextMenu from "./ShowContextMenu";
-import ShowLikeButton from "./ShowLikeButton";
+import LikeButton from "./LikeButton";
 import Tracks from "./Tracks";
 import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -76,7 +76,7 @@ const Show = ({ trackSlug }) => {
       <hr />
 
       <div className="sidebar-control-wrapper">
-        <ShowLikeButton show={show} />
+        <LikeButton likable={show} />
         <ShowContextMenu show={show} openTaperNotesModal={openTaperNotesModal} />
       </div>
 
