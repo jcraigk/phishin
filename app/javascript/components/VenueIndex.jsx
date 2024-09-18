@@ -49,25 +49,28 @@ const VenueIndex = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <h1 className="title">Venues</h1>
-      <h2 className="subtitle">{formatNumber(totalEntries)} total</h2>
-      <div className="select is-fullwidth">
-        <select value={sortOption} onChange={handleSortChange}>
-          <option value="name:asc">Sort by Name (A-Z)</option>
-          <option value="name:desc">Sort by Name (Z-A)</option>
-          <option value="shows_count:desc">Sort by Shows Count (High to Low)</option>
-          <option value="shows_count:asc">Sort by Shows Count (Low to High)</option>
-        </select>
-      </div>
-      <div className="select is-fullwidth mt-2">
-        <select id="first-char-filter" value={firstChar} onChange={handleFirstCharChange}>
-          <option value="">All names</option>
-          {FIRST_CHAR_LIST.map((char) => (
-            <option key={char} value={char}>
-              Names starting with {char}
-            </option>
-          ))}
-        </select>
+      <p className="sidebar-title">Venues</p>
+      <p className="sidebar-subtitle">{formatNumber(totalEntries)} total</p>
+
+      <div className="sidebar-filters">
+        <div className="select">
+          <select value={sortOption} onChange={handleSortChange}>
+            <option value="name:asc">Sort by Name (A-Z)</option>
+            <option value="name:desc">Sort by Name (Z-A)</option>
+            <option value="shows_count:desc">Sort by Shows Count (High to Low)</option>
+            <option value="shows_count:asc">Sort by Shows Count (Low to High)</option>
+          </select>
+        </div>
+        <div className="select">
+          <select id="first-char-filter" value={firstChar} onChange={handleFirstCharChange}>
+            <option value="">All names</option>
+            {FIRST_CHAR_LIST.map((char) => (
+              <option key={char} value={char}>
+                Names starting with {char}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );

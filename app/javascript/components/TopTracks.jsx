@@ -22,7 +22,7 @@ const TopTracks = ({ user }) => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <h1 className="title">Top 46 Tracks</h1>
+      <p className="sidebar-title">Top 46 Tracks</p>
       <p className="sidebar-detail mb-5">
         An aggregated list of the top tracks, ranked by user likes from the Phish.in community.
       </p>

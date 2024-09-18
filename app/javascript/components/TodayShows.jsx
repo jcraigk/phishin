@@ -61,42 +61,38 @@ const TodayShows = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <h1 className="title">Today in History</h1>
-      <div className="field is-grouped">
-        <div className="control">
-          <div className="select">
-            <select value={month} onChange={handleMonthChange}>
-              {monthOptions.map((m) => (
-                <option key={m} value={m}>
-                  {new Date(0, m - 1).toLocaleString("en-US", { month: "long" })}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <div className="control">
-          <div className="select">
-            <select value={day} onChange={handleDayChange}>
-              {dayOptions.map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </div>
+      <p className="sidebar-title">Today in History</p>
 
-      <div className="field">
-        <div className="control">
-          <div className="select">
-            <select value={sortBy} onChange={handleSortChange}>
-              <option value="date:desc">Sort by Date (newest first)</option>
-              <option value="date:asc">Sort by Date (oldest first)</option>
-              <option value="likes_count:desc">Sort by Most Liked</option>
-              <option value="duration:desc">Sort by Longest Duration</option>
-            </select>
-          </div>
+      <div className="sidebar-filters">
+        <div className="select">
+          <select value={month} onChange={handleMonthChange}>
+            {monthOptions.map((m) => (
+              <option key={m} value={m}>
+                {new Date(0, m - 1).toLocaleString("en-US", { month: "long" })}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="select">
+          <select value={day} onChange={handleDayChange}>
+            {dayOptions.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="select">
+          <select value={sortBy} onChange={handleSortChange}>
+            <option value="date:desc">Sort by Date (Newest First)</option>
+            <option value="date:asc">Sort by Date (Oldest First)</option>
+            <option value="likes_count:desc">Sort by Likes (Most to Least)</option>
+            <option value="likes_count:asc">Sort by Likes (Least to Most)</option>
+            <option value="duration:desc">Sort by Duration (Longest First)</option>
+            <option value="duration:asc">Sort by Duration (Shortest First)</option>
+          </select>
         </div>
       </div>
     </div>

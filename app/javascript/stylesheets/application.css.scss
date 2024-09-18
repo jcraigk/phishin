@@ -10,6 +10,7 @@ $header-gray: #c7c8ca;
 $inactive-gray: #d9dbdc;
 $control-gray: #f5f5f5;
 $text-gray: #6d6f71;
+$title-gray: #515152;
 $google-blue: #5385ed;
 $likes-blue: #03bbf2;
 $info-blue: #cbf3ff;
@@ -31,6 +32,7 @@ $info-blue: #cbf3ff;
 @import "./errors.css.scss";
 @import "./eras.css.scss";
 @import "./mobile.css.scss";
+@import "./search.css.scss";
 
 html, body {
   height: 100%;
@@ -49,6 +51,10 @@ main {
   flex: 1;
 }
 
+h2.title:not(:first-of-type) {
+  margin-top: 2rem;
+}
+
 ::placeholder {
   font-family: "Open Sans Condensed", sans-serif;
 }
@@ -57,9 +63,21 @@ main {
   color: $text-gray;
 }
 
+// Misc
+.show-context-dropdown {
+  .icon {
+    margin-right: 0.4rem;
+    position: relative;
+    top: 2px;
+  }
+  .dropdown-item {
+    font-size: 1.2rem;
+  }
+}
+
 .loader-container {
   position: fixed;
-  top: 56px; // Don't fade the navbar
+  top: 70px; // Don't fade the navbar
   left: 0;
   right: 0;
   bottom: 0;
@@ -67,7 +85,7 @@ main {
   justify-content: center;
   align-items: center;
   background-color: rgba(255, 255, 255, 0.8);
-  z-index: 9999;
+  z-index: 99;
 }
 
 .hilite {

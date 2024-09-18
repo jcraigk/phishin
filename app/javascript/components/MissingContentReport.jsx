@@ -36,10 +36,12 @@ const MissingContentReport = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <h1 className="title">Missing and Incomplete Content</h1>
-      <p className="sidebar-subtitle">{totalIssues} total issues</p>
-      <p className="sidebar-subtitle">{incompleteCount} incomplete shows</p>
-      <p className="sidebar-subtitle">{missingCount} missing shows</p>
+      <p className="sidebar-title">Missing and Incomplete Content</p>
+      <p className="sidebar-subtitle">
+        {totalIssues} total issues<br />
+        {incompleteCount} incomplete shows<br />
+        {missingCount} missing shows
+      </p>
     </div>
   );
 

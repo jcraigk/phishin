@@ -33,7 +33,7 @@ const EraShows = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <h1 className="title">{year}</h1>
+      <p className="sidebar-title">{year}</p>
       <p className="sidebar-subtitle">{shows.length} shows total</p>
     </div>
   );

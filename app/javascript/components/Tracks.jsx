@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useOutletContext, Link } from "react-router-dom";
 import TagBadges from "./TagBadges";
-import { formatDurationTrack, formatDate, toggleLike } from "./utils";
+import { formatDurationTrack, formatDurationShow, formatDate, toggleLike } from "./utils";
 import HighlightedText from "./HighlightedText";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
@@ -52,11 +52,18 @@ const Tracks = ({ tracks, setTracks, numbering = false, showView = false, highli
 
         return (
           <React.Fragment key={track.id}>
-            {isNewSet && (
-              <div className="section-title">
-                <div className="title-left">{track.set_name}</div>
-              </div>
-            )}
+          {isNewSet && (
+            <div className="section-title">
+              <div className="title-left">{track.set_name}</div>
+              <span className="detail-right">
+                {formatDurationShow(
+                  tracks
+                    .filter(t => t.set_name === track.set_name)
+                    .reduce((total, t) => total + t.duration, 0)
+                )}
+              </span>
+            </div>
+          )}
             <li
               className={
                 `list-item track-item ${track.id === activeTrack?.id ? "active-item" : ""} ${track.slug === trackSlug ? "focus" : ""}`

@@ -45,6 +45,15 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
   ) { _1.tour.name }
 
   expose \
+    :venue_name,
+    documentation: {
+      type: "String",
+      desc: \
+        "Name of the venue where the show took place, reflecting " \
+        "the name at the time (not necessarily the current name)"
+    }
+
+  expose \
     :venue,
     using: ApiV2::Entities::Venue,
     documentation: {

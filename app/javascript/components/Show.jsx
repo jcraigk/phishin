@@ -17,13 +17,14 @@ export const showLoader = async ({ params, request }) => {
 
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useLoaderData, useOutletContext } from "react-router-dom";
-import { formatDate, formatDateMed, formatDateLong, formatDurationShow, toggleLike } from "./utils";
+import { formatDate, formatDateMed, formatDateLong, formatDurationShow } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
+import ShowContextMenu from "./ShowContextMenu";
+import ShowLikeButton from "./ShowLikeButton";
 import Tracks from "./Tracks";
 import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faCaretDown, faShare, faExternalLinkAlt, faCaretLeft, faCaretRight, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import { useFeedback } from "./FeedbackContext";
+import { faAnglesLeft, faAnglesRight, faCircleXmark, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { Helmet } from 'react-helmet-async';
 
 Modal.setAppElement("body");
@@ -32,10 +33,7 @@ const Show = ({ trackSlug }) => {
   const show = useLoaderData();
   const [tracks, setTracks] = useState(show.tracks);
   const trackRefs = useRef([]);
-  const { setNotice, setAlert } = useFeedback();
-  const [isDropdownActive, setIsDropdownActive] = useState(false);
   const [isTaperNotesModalOpen, setIsTaperNotesModalOpen] = useState(false);
-  const dropdownRef = useRef(null);
   const { playTrack } = useOutletContext();
   const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
 
@@ -54,47 +52,6 @@ const Show = ({ trackSlug }) => {
     }
   }, [trackSlug, tracks]);
 
-  const handleLikeToggle = async () => {
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) {
-      setAlert("Please login to like a show");
-      return;
-    }
-
-    const result = await toggleLike({
-      id: show.id,
-      type: "Show",
-      isLiked: show.liked_by_user,
-      jwt,
-    });
-
-    if (result.success) {
-      setShow((prevShow) => ({
-        ...prevShow,
-        liked_by_user: result.isLiked,
-        likes_count: result.isLiked ? prevShow.likes_count + 1 : prevShow.likes_count - 1,
-      }));
-      setNotice("Like saved");
-    } else {
-      console.error("Failed to toggle like");
-    }
-  };
-
-  const copyToClipboard = () => {
-    const showUrl = `${baseUrl(location)}/${show.date}`;
-    navigator.clipboard.writeText(showUrl);
-    setNotice("URL of show copied to clipboard");
-  };
-
-  const openPhishNet = () => {
-    const phishNetUrl = `https://phish.net/setlists/?d=${show.date}`;
-    window.open(phishNetUrl, "_blank");
-  };
-
-  const toggleDropdown = () => {
-    setIsDropdownActive(!isDropdownActive);
-  };
-
   const openTaperNotesModal = () => {
     setIsTaperNotesModalOpen(true);
   };
@@ -104,83 +61,37 @@ const Show = ({ trackSlug }) => {
   };
 
   const sidebarContent = (
-    <>
-      <Helmet>
-        <title>{matchedTrack ? `${matchedTrack.title} - ${formatDate(show.date)} - Phish.in` : `${formatDate(show.date)} - Phish.in`}</title>
-        <meta property="og:title" content={trackSlug && matchedTrack ? `Listen to ${matchedTrack.title} from ${formatDateLong(show.date)}` : `Listen to ${formatDateLong(show.date)}`} />
-        <meta property="og:type" content="music.playlist" />
-        <meta property="og:audio" content={matchedTrack?.mp3_url} />
-      </Helmet>
-      <div className="sidebar-content">
-        <p className="show-date">{formatDateMed(show.date)}</p>
-        <p className="show-venue">
-          <Link to={`/venues/${show.venue.slug}`} className="show-venue">{show.venue.name}</Link>
-        </p>
-        <p className="show-location">
-          <Link to={`/map?term=${encodeURIComponent(show.venue.location)}&distance=50`} className="show-location">{show.venue.location}</Link>
-        </p>
-        <p className="show-duration">
-          {formatDurationShow(show.duration)} • <span className="taper-notes" onClick={openTaperNotesModal}>Taper Notes</span>
-        </p>
+    <div className="sidebar-content">
+      <p className="sidebar-title">{formatDateMed(show.date)}</p>
+      <p className="sidebar-info sidebar-extras">
+        <Link to={`/venues/${show.venue.slug}`}>{show.venue_name}</Link>
+      </p>
+      <p className="sidebar-info sidebar-extras">
+        <Link to={`/map?term=${encodeURIComponent(show.venue.location)}`}>{show.venue.location}</Link>
+      </p>
+      <p className="sidebar-info">
+        {formatDurationShow(show.duration)}
+      </p>
+
+      <hr />
+
+      <div className="sidebar-control-wrapper">
+        <ShowLikeButton show={show} />
+        <ShowContextMenu show={show} openTaperNotesModal={openTaperNotesModal} />
+      </div>
+
+      <div className="sidebar-extras">
         <hr />
-        <div className="like-button mb-2">
-          <FontAwesomeIcon
-            icon={faHeart}
-            className={`heart-icon ${show.liked_by_user ? "liked" : ""}`}
-            onClick={handleLikeToggle}
-          />{" "}
-          {show.likes_count}
-        </div>
-        <div ref={dropdownRef} className={`dropdown is-right ${isDropdownActive ? "is-active" : ""}`} style={{ width: "100%" }}>
-          <div className="dropdown-trigger">
-            <button className="button" onClick={toggleDropdown} aria-haspopup="true" aria-controls="dropdown-menu">
-              <span className="icon is-small">
-                <FontAwesomeIcon icon={faCaretDown} />
-              </span>
-            </button>
-          </div>
-          <div className="dropdown-menu" id="dropdown-menu" role="menu">
-            <div className="dropdown-content">
-              <a className="dropdown-item" onClick={copyToClipboard}>
-                <span className="icon">
-                  <FontAwesomeIcon icon={faShare} />
-                </span>
-                <span>Share</span>
-              </a>
-              <a className="dropdown-item" onClick={openPhishNet}>
-                <span className="icon">
-                  <FontAwesomeIcon icon={faExternalLinkAlt} />
-                </span>
-                <span>Lookup at phish.net</span>
-              </a>
-            </div>
-          </div>
-        </div>
-        <hr />
-        <Link to={`/${show.previous_show_date}`} className="previous-show">
-          <FontAwesomeIcon icon={faCaretLeft} style={{ marginRight: "5px" }} />
+        <Link to={`/${show.previous_show_date}`}>
+          <FontAwesomeIcon icon={faAnglesLeft} style={{ marginRight: "5px" }} />
           Previous show
         </Link>
-        <Link to={`/${show.next_show_date}`} className="next-show" style={{ float: "right" }}>
+        <Link to={`/${show.next_show_date}`} className="is-pulled-right">
           Next show
-          <FontAwesomeIcon icon={faCaretRight} style={{ marginLeft: "5px" }} />
+          <FontAwesomeIcon icon={faAnglesRight} style={{ marginLeft: "5px" }} />
         </Link>
-
-        <Modal
-          isOpen={isTaperNotesModalOpen}
-          onRequestClose={closeTaperNotesModal}
-          contentLabel="Taper Notes"
-          className="modal-content"
-          overlayClassName="modal-overlay"
-        >
-          <button onClick={closeTaperNotesModal} className="button is-pulled-right">
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
-          <h2 className="title mb-2">Taper Notes</h2>
-          <p dangerouslySetInnerHTML={{ __html: show.taper_notes.replace(/\n/g, "<br />") }}></p>
-        </Modal>
       </div>
-    </>
+    </div>
   );
 
   const infoBox = (message) => (
@@ -193,11 +104,35 @@ const Show = ({ trackSlug }) => {
   );
 
   return (
-    <LayoutWrapper sidebarContent={sidebarContent}>
-      {show.incomplete && infoBox("This show's audio is incomplete")}
-      {show.admin_notes && infoBox(show.admin_notes)}
-      <Tracks tracks={tracks} setTracks={setTracks} showView={true} trackRefs={trackRefs} trackSlug={trackSlug} />
-    </LayoutWrapper>
+    <>
+      <Modal
+        isOpen={isTaperNotesModalOpen}
+        onRequestClose={closeTaperNotesModal}
+        contentLabel="Taper Notes"
+        className="modal-content"
+        overlayClassName="modal-overlay"
+      >
+        <FontAwesomeIcon
+          icon={faCircleXmark}
+          onClick={closeTaperNotesModal}
+          className="is-pulled-right close-btn is-size-3"
+          style={{ cursor: "pointer" }}
+        />
+        <h2 className="title mb-5">Taper Notes</h2>
+        <p dangerouslySetInnerHTML={{ __html: show.taper_notes.replace(/\n/g, "<br />") }}></p>
+      </Modal>
+      <Helmet>
+        <title>{matchedTrack ? `${matchedTrack.title} - ${formatDate(show.date)} - Phish.in` : `${formatDate(show.date)} - Phish.in`}</title>
+        <meta property="og:title" content={trackSlug && matchedTrack ? `Listen to ${matchedTrack.title} from ${formatDateLong(show.date)}` : `Listen to ${formatDateLong(show.date)}`} />
+        <meta property="og:type" content="music.playlist" />
+        <meta property="og:audio" content={matchedTrack?.mp3_url} />
+      </Helmet>
+      <LayoutWrapper sidebarContent={sidebarContent}>
+        {show.incomplete && infoBox("This show's audio is incomplete")}
+        {show.admin_notes && infoBox(show.admin_notes)}
+        <Tracks tracks={tracks} setTracks={setTracks} showView={true} trackRefs={trackRefs} trackSlug={trackSlug} />
+      </LayoutWrapper>
+    </>
   );
 };
 

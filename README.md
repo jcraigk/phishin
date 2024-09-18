@@ -21,6 +21,8 @@ NICE TO HAVE:
   * Disable email account creation - allow oauth login through api?
   * Ensure no FOUC with font (seems hard or impossible to do)
   * Bullet N+1 against API
+  * Every page should keep all content on screen at any size (nothing gets cut off on right)
+  * audit components for unused imports
 
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)
