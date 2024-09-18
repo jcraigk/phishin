@@ -5,11 +5,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward } from "@fortawesome/free-solid-svg-icons";
 import { useFeedback } from "./FeedbackContext";
 
-const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
-  const audioRef = useRef();
+const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCurrentTime }) => {
   const scrubberRef = useRef();
   const progressBarRef = useRef();
-  const [currentTime, setCurrentTime] = useState(0);
   const { setAlert, setNotice } = useFeedback();
   const [fadeClass, setFadeClass] = useState("fade-in");
   const [isFadeOutComplete, setIsFadeOutComplete] = useState(false);
@@ -165,7 +163,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
   };
 
   const updateProgressBar = () => {
-    const progress = (currentTime / audioRef.current.duration) * 100;
+    const progress = (audioRef.current.currentTime / audioRef.current.duration) * 100;
     if (progressBarRef.current) {
       progressBarRef.current.style.background = `linear-gradient(to right, #03bbf2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
     }
@@ -236,7 +234,9 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         </div>
       </div>
       <div className="bottom-row">
-        <p className="elapsed" onClick={scrubBackward}>{formatTime(currentTime)}</p>
+        <p className="elapsed" onClick={scrubBackward}>
+          {audioRef.current ? formatTime(audioRef.current.currentTime) : "0:00"}
+        </p>
         <div
           className={`scrubber-bar ${fadeClass}`}
           onClick={handleScrubberClick}
@@ -244,7 +244,9 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack }) => {
         >
           <div className="progress-bar" ref={progressBarRef}></div>
         </div>
-        <p className="remaining" onClick={scrubForward}>-{formatTime(audioRef.current?.duration - currentTime || 0)}</p>
+        <p className="remaining" onClick={scrubForward}>
+          {audioRef.current ? `-${formatTime(audioRef.current.duration - audioRef.current.currentTime || 0)}` : "0:00"}
+        </p>
       </div>
       <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} />
     </div>

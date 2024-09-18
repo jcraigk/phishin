@@ -77,7 +77,7 @@ h2.title:not(:first-of-type) {
 
 .loader-container {
   position: fixed;
-  top: 70px; // Don't fade the navbar
+  top: 70px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -86,6 +86,10 @@ h2.title:not(:first-of-type) {
   align-items: center;
   background-color: rgba(255, 255, 255, 0.8);
   z-index: 99;
+
+  .loader-content {
+    transform: translateY(-100px);
+  }
 }
 
 .hilite {

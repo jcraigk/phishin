@@ -13,7 +13,7 @@ const LikeButton = ({ likable }) => {
   const type = likable.date ? "Show" : "Track";
 
   const handleLikeToggle = async (e) => {
-    e.preventDefault();
+    e.stopPropagation();
     let jwt = null;
 
     if (typeof window !== "undefined") {

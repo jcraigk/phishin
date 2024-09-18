@@ -1,43 +1,56 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faShare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faAnglesLeft, faAnglesRight } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { baseUrl } from "./utils";
 import { useFeedback } from "./FeedbackContext";
 
-const ShowContextMenu = ({ show, openTaperNotesModal }) => {
+const ShowContextMenu = ({ show }) => {
   const dropdownRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
+  const { activeTrack, currentTime, openTaperNotesModal } = useOutletContext();
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const hideDropdown = () => {
     setDropdownVisible(false);
   };
 
-  const copyToClipboard = () => {
-    const showUrl = `${baseUrl(location)}/${show.date}`;
-    navigator.clipboard.writeText(showUrl);
-    setNotice("URL of show copied to clipboard");
+  const copyToClipboard = (e, includeTimestamp = false) => {
+    e.stopPropagation();
+
+    let url;
+    if (includeTimestamp && activeTrack?.show_date === show.date) {
+      const timestamp = `${Math.floor(currentTime / 60)}:${String(Math.floor(currentTime % 60)).padStart(2, "0")}`;
+      url = `${baseUrl(location)}/${activeTrack.show_date}/${activeTrack.slug}?t=${timestamp}`;
+    } else {
+      url = `${baseUrl(location)}/${show.date}`;
+    }
+    navigator.clipboard.writeText(url);
+    setNotice("URL copied to clipboard");
     hideDropdown();
   };
 
-  const openPhishNet = () => {
+  const openPhishNet = (e) => {
+    e.stopPropagation();
     const phishNetUrl = `https://phish.net/setlists/?d=${show.date}`;
     window.open(phishNetUrl, "_blank");
     hideDropdown();
   };
 
-  const handleTaperNotesClick = () => {
-    openTaperNotesModal();
+  const handleTaperNotesClick = (e) => {
+    e.stopPropagation();
+    openTaperNotesModal(show);
     hideDropdown();
   };
 
-  const toggleDropdownVisibility = () => {
+  const toggleDropdownVisibility = (e) => {
+    e.stopPropagation();
+    console.log("toggleDropdownVisibility");
     setDropdownVisible(!dropdownVisible);
   };
 
   const handleAddToPlaylist = () => {
-    setAlert("Sorry, that's under construction! Try again next week :)");
+    setAlert("Sorry, that's under construction! Try again next month :)");
     hideDropdown();
   };
 
@@ -77,40 +90,52 @@ const ShowContextMenu = ({ show, openTaperNotesModal }) => {
             </span>
             Taper Notes
           </a>
+
           <Link className="dropdown-item" to={`/venues/${show.venue.slug}`}>
             <span className="icon">
               <FontAwesomeIcon icon={faLandmark} />
             </span>
             {show.venue_name}
           </Link>
+
           <Link className="dropdown-item" to={`/map?term=${show.venue.location}`}>
             <span className="icon">
               <FontAwesomeIcon icon={faMapMarkerAlt} />
             </span>
             {show.venue.location}
           </Link>
-          <a className="dropdown-item" onClick={copyToClipboard}>
+
+          <a className="dropdown-item" onClick={(e) => copyToClipboard(e, false)}>
             <span className="icon">
-              <FontAwesomeIcon icon={faShare} />
+              <FontAwesomeIcon icon={faShareFromSquare} />
             </span>
             Share
           </a>
+
+          {activeTrack?.show_date === show.date && (
+            <a className="dropdown-item" onClick={(e) => copyToClipboard(e, true)}>
+              <span className="icon">
+                <FontAwesomeIcon icon={faShareFromSquare} />
+              </span>
+              Share with timestamp
+            </a>
+          )}
+
           <a className="dropdown-item" onClick={openPhishNet}>
             <span className="icon">
               <FontAwesomeIcon icon={faExternalLinkAlt} />
             </span>
             Phish.net
           </a>
-
           <Link className="dropdown-item" to={`/${show.previous_show_date}`}>
             <span className="icon">
-              <FontAwesomeIcon icon={faAnglesLeft} />
+              <FontAwesomeIcon icon={faCircleChevronLeft} />
             </span>
             Previous show
           </Link>
           <Link className="dropdown-item" to={`/${show.next_show_date}`}>
             <span className="icon">
-              <FontAwesomeIcon icon={faAnglesRight} />
+              <FontAwesomeIcon icon={faCircleChevronRight} />
             </span>
             Next show
           </Link>
@@ -118,7 +143,7 @@ const ShowContextMenu = ({ show, openTaperNotesModal }) => {
             <span className="icon">
               <FontAwesomeIcon icon={faCirclePlus} />
             </span>
-            <span>Add to Playlist</span>
+            <span>Add to playlist</span>
           </a>
         </div>
       </div>

@@ -104,6 +104,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 10rem;
+  max-width: 20rem;
   padding-right: 0.5rem;
 
   .date {
@@ -189,6 +190,11 @@
 
 .width-8 {
   width: 8rem !important;
+}
+
+.rightside-menu {
+  width: 2rem;
+  margin-left: 1rem;
 }
 
 @keyframes pulse {
