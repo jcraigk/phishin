@@ -4,10 +4,13 @@ import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { toggleLike } from "./utils";
 import { useFeedback } from "./FeedbackContext";
 
-const ShowLikeButton = ({ show }) => {
+const LikeButton = ({ likable }) => {
   const { setAlert, setNotice } = useFeedback();
-  const [likedByUser, setLikedByUser] = useState(show.liked_by_user);
-  const [likesCount, setLikesCount] = useState(show.likes_count);
+  const [likedByUser, setLikedByUser] = useState(likable.liked_by_user);
+  const [likesCount, setLikesCount] = useState(likable.likes_count);
+
+  // Determine the type based on the presence of the 'date' property
+  const type = likable.date ? "Show" : "Track";
 
   const handleLikeToggle = async (e) => {
     e.preventDefault();
@@ -16,14 +19,14 @@ const ShowLikeButton = ({ show }) => {
     if (typeof window !== "undefined") {
       jwt = localStorage.getItem("jwt");
       if (!jwt) {
-        setAlert("Please login to like a show");
+        setAlert("Please login to save likes");
         return;
       }
     }
 
     const result = await toggleLike({
-      id: show.id,
-      type: "Show",
+      id: likable.id,
+      type, // Dynamically use the inferred type
       isLiked: likedByUser,
       jwt,
     });
@@ -50,4 +53,4 @@ const ShowLikeButton = ({ show }) => {
   );
 };
 
-export default ShowLikeButton;
+export default LikeButton;

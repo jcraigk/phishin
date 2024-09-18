@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useOutletContext } from "react-router-dom";
 import { formatDate, formatDurationShow } from "./utils";
 import TagBadges from "./TagBadges";
-import ShowLikeButton from "./ShowLikeButton";
+import LikeButton from "./LikeButton";
 
 const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
   const { activeTrack } = useOutletContext();
@@ -40,7 +40,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
                 </span>
                 <span className="rightside-primary">{formatDurationShow(show.duration)}</span>
                 <span className="rightside-secondary">
-                  <ShowLikeButton show={show} />
+                  <LikeButton likable={show} />
                 </span>
               </li>
             </Link>
