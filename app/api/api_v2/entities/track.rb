@@ -132,7 +132,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
   expose \
     :show,
     using: ApiV2::Entities::Show,
-    unless: ->(_obj, opts) { opts[:exclude_show] },
+    unless: ->(_, opts) { opts[:exclude_show] },
     documentation: {
       type: "Object",
       desc: "Show this track belongs to"
@@ -140,11 +140,15 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
 
   expose \
     :songs,
-    using: ApiV2::Entities::Song,
     documentation: {
       is_array: true,
       desc: "Songs associated with the track"
-  }
+    } do |track, opts|
+      track.songs.map do |song|
+        songs_track = track.songs_tracks.find { |st| st.song_id == song.id }
+        ApiV2::Entities::Song.represent(song, opts.merge(songs_track:))
+      end
+  end
 
   expose :liked_by_user do |obj, opts|
     unless opts[:liked_by_user].nil?

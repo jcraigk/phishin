@@ -32,7 +32,7 @@ class ApiV2::Tracks < ApiV2::Base
       result = page_of_tracks
       liked_track_ids = fetch_liked_track_ids(result[:tracks])
       present \
-        tracks: ApiV2::Entities::Track.represent(result[:tracks], liked_track_ids:),
+        tracks: ApiV2::Entities::Track.represent(result[:tracks], liked_track_ids:, include_gaps: true),
         total_pages: result[:total_pages],
         current_page: result[:current_page],
         total_entries: result[:total_entries]
@@ -54,17 +54,23 @@ class ApiV2::Tracks < ApiV2::Base
       present \
         track,
         with: ApiV2::Entities::Track,
-        liked_by_user: current_user&.likes&.exists?(likable: track) || false
+        liked_by_user: current_user&.likes&.exists?(likable: track) || false,
+        include_gaps: true
     end
   end
 
   helpers do
     def page_of_tracks
       Rails.cache.fetch("api/v2/tracks?#{params.to_query}") do
-        tracks = Track.includes(:show, :songs, track_tags: :tag)
-                      .then { |t| apply_filter(t) }
-                      .then { |t| apply_sort(t) }
-                      .paginate(page: params[:page], per_page: params[:per_page])
+        tracks = Track.includes(
+                        :show,
+                        :songs,
+                        { track_tags: :tag },
+                        :songs_tracks
+                     )
+                     .then { |t| apply_filter(t) }
+                     .then { |t| apply_sort(t) }
+                     .paginate(page: params[:page], per_page: params[:per_page])
 
         {
           tracks: tracks,
@@ -77,7 +83,12 @@ class ApiV2::Tracks < ApiV2::Base
 
     def track_by_id
       Rails.cache.fetch("api/v2/tracks/#{params[:id]}") do
-        Track.includes(:show, :songs, track_tags: :tag).find_by!(id: params[:id])
+        Track.includes(
+                 :show,
+                 :songs,
+                 { track_tags: :tag },
+                 :songs_tracks
+              ).find_by!(id: params[:id])
       end
     end
 

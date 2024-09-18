@@ -91,6 +91,7 @@ class ApiV2::Shows < ApiV2::Base
         show,
         with: ApiV2::Entities::Show,
         include_tracks: true,
+        include_gaps: true,
         liked_by_user: current_user&.likes&.exists?(likable: show) || false,
         liked_track_ids: fetch_liked_track_ids(show),
         next_show_date: next_show_date(show.date),
@@ -161,7 +162,14 @@ class ApiV2::Shows < ApiV2::Base
     def show_by_date
       Rails.cache.fetch("api/v2/shows/#{params[:date]}") do
         Show.published
-            .includes(:venue, tracks: { track_tags: :tag }, show_tags: :tag)
+            .includes(
+              :venue,
+              tracks: [
+                { track_tags: :tag },
+                { songs: :songs_tracks }
+              ],
+              show_tags: :tag
+            )
             .find_by!(date: params[:date])
       end
     end

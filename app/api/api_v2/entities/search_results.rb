@@ -24,7 +24,7 @@ class ApiV2::Entities::SearchResults < ApiV2::Entities::Base
   ) do |obj, opts|
     ApiV2::Entities::Show.represent \
       obj[:other_shows],
-      opts.merge(liked_by_user: nil, liked_show_ids: opts[:liked_show_ids])
+      opts.merge(liked_by_user: nil)
   end
 
   expose \
@@ -49,18 +49,6 @@ class ApiV2::Entities::SearchResults < ApiV2::Entities::Base
         "An array of venues where the name, abbreviation, city, state, or " \
         "country matches the search term. Each venue object contains " \
         "detailed venue information. Returns an empty array if no venues match."
-    }
-
-  expose \
-    :tours,
-    using: ApiV2::Entities::Tour,
-    default: [],
-    documentation: {
-      type: "Array[Object]",
-      desc: \
-        "Tours that match the search term by name. Each tour object contains " \
-        "details such as tour name and start/end dates. Returns an empty " \
-        "array if no tours match."
     }
 
   expose \
@@ -101,7 +89,7 @@ class ApiV2::Entities::SearchResults < ApiV2::Entities::Base
   ) do |obj, opts|
     ApiV2::Entities::Track.represent \
       obj[:tracks],
-      opts.merge(exclude_show: true, liked_by_user: nil, liked_track_ids: opts[:liked_track_ids])
+      opts.merge(exclude_show: true, liked_by_user: nil)
   end
 
   expose \

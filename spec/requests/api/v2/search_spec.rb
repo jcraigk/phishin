@@ -47,14 +47,6 @@ RSpec.describe "API v2 Search", type: :request do
         expect(json[:songs]).to include(a_hash_including(title: "Sample Song"))
       end
 
-      it "returns tours matching the term" do
-        get_api "/search/Winter%20Tour"
-        expect(response).to have_http_status(:ok)
-
-        json = JSON.parse(response.body, symbolize_names: true)
-        expect(json[:tours]).to include(a_hash_including(name: "Winter Tour 2022"))
-      end
-
       it "returns empty arrays for no matches" do
         get_api "/search/NonExistent"
         expect(response).to have_http_status(:ok)
@@ -63,7 +55,6 @@ RSpec.describe "API v2 Search", type: :request do
         expect(json[:venues]).to eq([])
         expect(json[:exact_show]).to eq(nil)
         expect(json[:songs]).to eq([])
-        expect(json[:tours]).to eq([])
       end
 
       it "returns a 400 error when the term is too short" do

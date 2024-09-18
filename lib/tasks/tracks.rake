@@ -1,5 +1,21 @@
 # frozen_string_literal: true
 namespace :tracks do
+  desc 'Populate song performance gaps'
+  task populate_gaps: :environment do
+    rel = Show.published.order(date: :asc)
+    pbar = ProgressBar.create(
+      total: rel.count,
+      format: '%a %B %c/%C %p%% %E'
+    )
+
+    rel.each do |show|
+      GapService.call(show)
+      pbar.increment
+    end
+
+    pbar.finish
+  end
+
   desc 'Fix bad slugs'
   task fix_slugs: :environment do
     rel = Track.where('slug SIMILAR TO ?', '\-\d').order(id: :desc)

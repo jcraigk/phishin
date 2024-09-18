@@ -1,19 +1,17 @@
-** React TODO
+TODO
  * Track context dropdowns
-    * share from timestamp
  * each sidebar should be optimized on mobile (hide filters initially?)
  * button to minimize/restore player on desktop (rollover to see down arrow), hide waveform
  * Opengraph (helmet context)
- * Add previous/next performance for each song on each track
  * audit yarn packages (remove coffeescript)
+ * Test for dark reader compatibility (pulse doesn't look great)
 
 NICE TO HAVE:
- * stats on main page (hours of music, number of shows, tracks, etc)
  * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
- * Prerender caching? Would only benefit logged out users since we'd need to rehydrate on load for any pages that showed liked items
- * make sure we re-hydrate any pages that have tracks on them when doing SSR (to highlight likes)
- * test for dark reader compatibility (pulse doesn't look great)
- * reports of "500"s on the FE?
+ * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
+ * Install sentry react https://docs.sentry.io/platforms/javascript/guides/react/
+ * Feature specs
+ * Ensure API spec coverage
 
  BACKBURNER
   * lyrical excerpts?
@@ -22,6 +20,7 @@ NICE TO HAVE:
   * Add CSRF to POSTs on API
   * Disable email account creation - allow oauth login through api?
   * Ensure no FOUC with font (seems hard or impossible to do)
+  * Bullet N+1 against API
 
 
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)
