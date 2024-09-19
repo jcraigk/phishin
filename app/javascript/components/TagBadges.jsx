@@ -1,13 +1,10 @@
-import React, { useState } from "react";
-import Modal from "react-modal";
+// TagBadges.jsx
+import React from "react";
 import { Tooltip } from "react-tooltip";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
-
-Modal.setAppElement("body");
+import { useOutletContext } from "react-router-dom";
 
 const TagBadges = ({ tags }) => {
-  const [selectedTag, setSelectedTag] = useState(null);
+  const { openModal } = useOutletContext();
 
   const groupedTags = tags
     .sort((a, b) => a.priority - b.priority || (a.starts_at_second || 0) - (b.starts_at_second || 0))
@@ -24,11 +21,29 @@ const TagBadges = ({ tags }) => {
     }
     event.stopPropagation();
     event.preventDefault();
-    setSelectedTag(tagGroup);
-  };
 
-  const closeModal = () => {
-    setSelectedTag(null);
+    const modalContent = (
+      <>
+        <h2 className="title mb-5">{tagGroup[0].name}</h2>
+        <div>
+          {tagGroup.map((tag, index) => (
+            <div key={index}>
+              <h3 className="subtitle">{tag.notes}</h3>
+              {tag.transcript && (
+                <p>
+                  <strong>TRANSCRIPT:</strong>
+                  <br />
+                  <span
+                    dangerouslySetInnerHTML={{ __html: tag.transcript.replace(/\n/g, "<br />") }}
+                  />
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </>
+    );
+    openModal(modalContent);
   };
 
   const formatTimeRange = (tag) => {
@@ -37,7 +52,6 @@ const TagBadges = ({ tags }) => {
     const end = formatTimestamp(tag.ends_at_second);
     return start && end ? `between ${start} and ${end}` : start ? `at ${start}` : "";
   };
-
 
   const formatTimestamp = (seconds) => {
     if (!seconds) return null;
@@ -64,10 +78,9 @@ const TagBadges = ({ tags }) => {
     <div className="tag-badges-container">
       {Object.entries(groupedTags).map(([tagName, tagGroup]) => {
         const count = tagGroup.length;
-        const tag = tagGroup[0];
         const title = `${tagName} ${count > 1 ? `(${count})` : ""}`;
         const tooltipId = `tooltip-${tagName}`;
-        const isClickable = tag.notes || tag.transcript;
+        const isClickable = tagGroup[0].notes || tagGroup[0].transcript;
 
         return (
           <div
@@ -86,37 +99,6 @@ const TagBadges = ({ tags }) => {
           </div>
         );
       })}
-      {selectedTag && (
-        <Modal
-          isOpen={!!selectedTag}
-          onRequestClose={closeModal}
-          contentLabel="Tag Details"
-          className="modal-content"
-          overlayClassName="modal-overlay"
-        >
-          <button onClick={closeModal} className="button is-pulled-right">
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
-          <h2 className="title mb-2">{selectedTag[0].name}</h2>
-
-          <div>
-            {selectedTag.map((tag, index) => (
-              <div key={index}>
-                <h3 className="subtitle">{tag.notes}</h3>
-                {tag.transcript && (
-                  <p>
-                    <strong>TRANSCRIPT:</strong>
-                    <br />
-                    <span
-                      dangerouslySetInnerHTML={{ __html: tag.transcript.replace(/\n/g, "<br />") }}
-                    />
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
-        </Modal>
-      )}
     </div>
   );
 };

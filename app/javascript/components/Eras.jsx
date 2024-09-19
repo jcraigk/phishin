@@ -62,7 +62,9 @@ const Eras = () => {
         <p className="has-text-weight-bold mb-1 mt-5 project-open-source">This project is open source</p>
         <div>
           <GitHubButton className="mb-2" />
+          <br />
           <DiscordButton className="mb-2" />
+          <br />
           <a href="/feeds/rss" className="button" target="_blank">
             <span className="icon mr-1">
               <FontAwesomeIcon icon={faRss} />
