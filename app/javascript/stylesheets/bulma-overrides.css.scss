@@ -2,6 +2,19 @@
   z-index: 101; /* Higher than audio player */
 }
 
+.dropdown-content {
+  background-color: $bg-gray;
+}
+
+.dropdown-item {
+  cursor: pointer;
+  text-decoration: none !important;
+
+  &:hover {
+    background-color: rgba($likes-blue, 0.3) !important;
+  }
+}
+
 .content {
   margin-top: 2rem;
 

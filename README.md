@@ -3,7 +3,6 @@ TODO
  * Opengraph (helmet context)
 
 NICE TO HAVE:
- * Test for dark reader compatibility (pulse doesn't look great)
  * audit yarn packages (remove coffeescript)
  * audit models for unused methods
  * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)

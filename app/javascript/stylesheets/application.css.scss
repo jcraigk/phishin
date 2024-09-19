@@ -12,7 +12,8 @@ $control-gray: #f5f5f5;
 $text-gray: #6d6f71;
 $title-gray: #515152;
 $google-blue: #5385ed;
-$likes-blue: #03bbf2;
+// $likes-blue: #03bbf2;
+$likes-blue: rgb(3, 187, 242);
 $info-blue: #cbf3ff;
 
 @import "./content.css.scss";
@@ -49,6 +50,7 @@ input, textarea, select, button {
 
 button {
   border: none !important;
+  color: $text-gray !important;
 }
 
 h2.title:not(:first-of-type) {
@@ -64,7 +66,7 @@ h2.title:not(:first-of-type) {
 }
 
 // Misc
-.show-context-dropdown {
+.context-dropdown-content {
   .icon {
     margin-right: 0.4rem;
     position: relative;
@@ -72,6 +74,7 @@ h2.title:not(:first-of-type) {
   }
   .dropdown-item {
     font-size: 1.2rem;
+    background-color: $bg-gray;
   }
 }
 
