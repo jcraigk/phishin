@@ -10,7 +10,7 @@ export const erasLoader = async () => {
       }
       acc[era].periods.push({ period, shows_count, venues_count });
       acc[era].total_shows += shows_count;
-      acc[era].total_duration += shows_duration; // Accumulating total duration in milliseconds
+      acc[era].total_duration += shows_duration;
       return acc;
     }, {});
 

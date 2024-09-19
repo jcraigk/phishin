@@ -174,7 +174,7 @@ const Navbar = ({ user, onLogout }) => {
                 className="button login-btn"
                 onClick={() => {
                   if (typeof window !== "undefined") {
-                    localStorage.setItem("redirectAfterLogin", window.location.pathname);
+                    localStorage.setItem("redirectAfterLogin", location.pathname);
                   }
                   closeMenus();
                 }}

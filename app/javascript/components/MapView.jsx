@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import mapboxgl from "mapbox-gl";
 import LayoutWrapper from "./LayoutWrapper";
 import { Helmet } from "react-helmet-async";
@@ -12,12 +13,12 @@ const usStates = [
 ];
 
 const MapView = ({ mapboxToken }) => {
+  const location = useLocation();
   const mapContainer = useRef(null);
   const [map, setMap] = useState(null);
 
   const getQueryParams = () => {
-    // TODO handle location in SSR
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
     return {
       term: params.get("term") || "Burlington, VT",
       distance: params.get("distance") || "10",

@@ -11,7 +11,7 @@ const EmailButton = () => (
     <div className="icon mr-1">
       <FontAwesomeIcon icon={faEnvelope} />
     </div>
-    {contactEmail}
+    Contact via Email
   </a>
 );
 

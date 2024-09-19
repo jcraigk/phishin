@@ -1,11 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Link, useOutletContext } from "react-router-dom";
+import { Link, useOutletContext, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { baseUrl } from "./utils";
 import { useFeedback } from "./FeedbackContext";
 
-const ShowContextMenu = ({ show }) => {
+const ShowContextMenu = ({ show, adjacentLinks = true }) => {
+  const location = useLocation();
   const dropdownRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
   const { activeTrack, currentTime, openTaperNotesModal } = useOutletContext();
@@ -21,9 +21,9 @@ const ShowContextMenu = ({ show }) => {
     let url;
     if (includeTimestamp && activeTrack?.show_date === show.date) {
       const timestamp = `${Math.floor(currentTime / 60)}:${String(Math.floor(currentTime % 60)).padStart(2, "0")}`;
-      url = `${baseUrl(location)}/${activeTrack.show_date}/${activeTrack.slug}?t=${timestamp}`;
+      url = `https://phish.in/${activeTrack.show_date}/${activeTrack.slug}?t=${timestamp}`;
     } else {
-      url = `${baseUrl(location)}/${show.date}`;
+      url = `https://phish.in/${show.date}`;
     }
     navigator.clipboard.writeText(url);
     setNotice("URL copied to clipboard");
@@ -45,7 +45,6 @@ const ShowContextMenu = ({ show }) => {
 
   const toggleDropdownVisibility = (e) => {
     e.stopPropagation();
-    console.log("toggleDropdownVisibility");
     setDropdownVisible(!dropdownVisible);
   };
 
@@ -84,27 +83,6 @@ const ShowContextMenu = ({ show }) => {
         style={{ display: dropdownVisible ? "block" : "none" }}
       >
         <div className="dropdown-content show-context-dropdown">
-          <a className="dropdown-item" onClick={handleTaperNotesClick}>
-            <span className="icon">
-              <FontAwesomeIcon icon={faClipboard} />
-            </span>
-            Taper Notes
-          </a>
-
-          <Link className="dropdown-item" to={`/venues/${show.venue.slug}`}>
-            <span className="icon">
-              <FontAwesomeIcon icon={faLandmark} />
-            </span>
-            {show.venue_name}
-          </Link>
-
-          <Link className="dropdown-item" to={`/map?term=${show.venue.location}`}>
-            <span className="icon">
-              <FontAwesomeIcon icon={faMapMarkerAlt} />
-            </span>
-            {show.venue.location}
-          </Link>
-
           <a className="dropdown-item" onClick={(e) => copyToClipboard(e, false)}>
             <span className="icon">
               <FontAwesomeIcon icon={faShareFromSquare} />
@@ -127,18 +105,52 @@ const ShowContextMenu = ({ show }) => {
             </span>
             Phish.net
           </a>
-          <Link className="dropdown-item" to={`/${show.previous_show_date}`}>
+
+          <hr className="dropdown-divider" />
+
+          <a className="dropdown-item" onClick={handleTaperNotesClick}>
             <span className="icon">
-              <FontAwesomeIcon icon={faCircleChevronLeft} />
+              <FontAwesomeIcon icon={faClipboard} />
             </span>
-            Previous show
-          </Link>
-          <Link className="dropdown-item" to={`/${show.next_show_date}`}>
+            Taper Notes
+          </a>
+
+          <Link className="dropdown-item" to={`/venues/${show.venue.slug}`}>
             <span className="icon">
-              <FontAwesomeIcon icon={faCircleChevronRight} />
+              <FontAwesomeIcon icon={faLandmark} />
             </span>
-            Next show
+            {show.venue_name}
           </Link>
+
+          <Link className="dropdown-item" to={`/map?term=${show.venue.location}`}>
+            <span className="icon">
+              <FontAwesomeIcon icon={faMapMarkerAlt} />
+            </span>
+            {show.venue.location}
+          </Link>
+
+
+          {adjacentLinks && (
+            <>
+              <hr className="dropdown-divider" />
+
+              <Link className="dropdown-item" to={`/${show.previous_show_date}`}>
+              <span className="icon">
+                <FontAwesomeIcon icon={faCircleChevronLeft} />
+              </span>
+              Previous show
+            </Link>
+            <Link className="dropdown-item" to={`/${show.next_show_date}`}>
+              <span className="icon">
+                <FontAwesomeIcon icon={faCircleChevronRight} />
+              </span>
+              Next show
+            </Link>
+          </>
+          )}
+
+          <hr className="dropdown-divider" />
+
           <a className="dropdown-item" onClick={handleAddToPlaylist}>
             <span className="icon">
               <FontAwesomeIcon icon={faCirclePlus} />

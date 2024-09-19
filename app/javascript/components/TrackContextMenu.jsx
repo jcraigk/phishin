@@ -1,11 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faShareFromSquare, faCirclePlus, faDownload, faMusic, faCircleChevronLeft, faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { baseUrl } from "./utils";
 import { useFeedback } from "./FeedbackContext";
-import { useOutletContext, Link } from "react-router-dom";
+import { useOutletContext, Link, useLocation } from "react-router-dom";
 
 const TrackContextMenu = ({ track }) => {
+  const location = useLocation();
   const dropdownRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -17,7 +17,7 @@ const TrackContextMenu = ({ track }) => {
 
   const share = (e, include_timestamp = false) => {
     e.stopPropagation();
-    let url = `${baseUrl(location)}/${track.show_date}/${track.slug}`;
+    let url = `https://phish.in/${track.show_date}/${track.slug}`;
     if (include_timestamp && activeTrack?.id === track.id) {
       const minutes = Math.floor(currentTime / 60);
       const seconds = Math.floor(currentTime % 60).toString().padStart(2, "0");
@@ -27,10 +27,6 @@ const TrackContextMenu = ({ track }) => {
     navigator.clipboard.writeText(url);
     setNotice("URL copied to clipboard");
     hideDropdown();
-  };
-
-  const useEffect = () => {
-    console.log(track);
   };
 
   const toggleDropdownVisibility = (e) => {
@@ -111,12 +107,13 @@ const TrackContextMenu = ({ track }) => {
           </a>
 
           {track.songs?.sort((a, b) => a.title.localeCompare(b.title)).map((song) => (
-            <div key={song.id}>
+            <div key={`${track.id}-${song.id}`}>
               <hr className="dropdown-divider" />
 
               <Link
                 className="dropdown-item"
                 to={`/songs/${song.slug}`}
+                key={`${track.id}-${song.id}-link`}
               >
                 <span className="icon">
                   <FontAwesomeIcon icon={faMusic} />
@@ -128,6 +125,7 @@ const TrackContextMenu = ({ track }) => {
                 <Link
                   className="dropdown-item"
                   to={`/${song.previous_performance_slug}`}
+                  key={`${track.id}-${song.id}-previous-performance`}
                 >
                   <span className="icon">
                     <FontAwesomeIcon icon={faCircleChevronLeft} />
@@ -140,6 +138,7 @@ const TrackContextMenu = ({ track }) => {
                 <Link
                   className="dropdown-item"
                   to={`/${song.next_performance_slug}`}
+                  key={`${track.id}-${song.id}-next-performance`}
                 >
                   <span className="icon">
                     <FontAwesomeIcon icon={faCircleChevronRight} />
@@ -147,7 +146,6 @@ const TrackContextMenu = ({ track }) => {
                   Next Performance (gap: {song.next_performance_gap})
                 </Link>
               )}
-
             </div>
           ))}
 

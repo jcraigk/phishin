@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { formatDate, parseTimeParam } from "./utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward } from "@fortawesome/free-solid-svg-icons";
 import { useFeedback } from "./FeedbackContext";
 
 const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCurrentTime }) => {
+  const location = useLocation();
   const scrubberRef = useRef();
   const progressBarRef = useRef();
   const { setAlert, setNotice } = useFeedback();
