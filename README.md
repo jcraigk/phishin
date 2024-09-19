@@ -1,8 +1,6 @@
 TODO
  * button to minimize/restore player on desktop (rollover to see down arrow), hide waveform
  * Opengraph (helmet context)
- * clicking outside context menu should close it - can get multiple ones open on shows/tracks pages
- * if you follow a "Next performance" (navigate to a show/track slug) then like a track, it auto-scrolls to the selected track again. stop that.
 
 NICE TO HAVE:
  * Test for dark reader compatibility (pulse doesn't look great)

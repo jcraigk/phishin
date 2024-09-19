@@ -107,7 +107,7 @@ const TrackContextMenu = ({ track }) => {
           </a>
 
           {track.songs?.sort((a, b) => a.title.localeCompare(b.title)).map((song) => (
-            <div key={`${track.id}-${song.id}`}>
+            <div key={`${track.id}-${song.slug}`}>
               <hr className="dropdown-divider" />
 
               <Link
