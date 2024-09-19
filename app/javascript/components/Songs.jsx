@@ -15,7 +15,7 @@ const Songs = ({ songs, highlight }) => {
             <span className="leftside-secondary">
               {song.original ? "Original" : "Cover"}
             </span>
-            <span className="rightside-primary">
+            <span className="rightside-group">
               {formatNumber(song.tracks_count, 'track')}
             </span>
           </li>

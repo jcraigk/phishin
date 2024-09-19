@@ -49,11 +49,7 @@ const Eras = () => {
         <p>{formatNumber(totalHours)} hours of music</p>
       </div>
       <div className="visible-mobile">
-        <p>
-          {formatNumber(totalShows)} shows
-          •{" "}
-          {formatNumber(totalHours)} hours of music
-        </p>
+        {formatNumber(totalShows)} shows
       </div>
 
       <MobileApps className="mt-5" />
@@ -95,7 +91,7 @@ const Eras = () => {
                       <span className="leftside-secondary">
                         {venues_count} venue{venues_count !== 1 ? "s" : ""}
                       </span>
-                      <span className="rightside-primary">
+                      <span className="rightside-group">
                         {formatNumber(shows_count, 'show')}
                       </span>
                     </li>

@@ -77,7 +77,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
   }, [dropdownRef]);
 
   return (
-    <div className={`dropdown is-${isLeft ? "left" : "right"}`} ref={dropdownRef}>
+    <div className={`dropdown context-dropdown is-${isLeft ? "left" : "right"}`} ref={dropdownRef}>
       <div className="dropdown-trigger">
         <button className="button" onClick={toggleDropdownVisibility}>
           <span className="icon is-small">

@@ -95,7 +95,7 @@ const Navbar = ({ user, onLogout }) => {
           <div className="dropdown is-hoverable navbar-item">
             <div className="dropdown-trigger">
               <button className="button">
-                <span>INFO</span>
+                <span className="navbar-dropdown-label">INFO</span>
                 <span className="icon">
                   <FontAwesomeIcon icon={faAngleDown} />
                 </span>
@@ -123,7 +123,7 @@ const Navbar = ({ user, onLogout }) => {
           <div className="dropdown is-hoverable navbar-item">
             <div className="dropdown-trigger">
               <button className="button">
-                <span>CONTENT</span>
+                <span className="navbar-dropdown-label">CONTENT</span>
                 <span className="icon">
                   <FontAwesomeIcon icon={faAngleDown} />
                 </span>

@@ -66,6 +66,14 @@ h2.title:not(:first-of-type) {
 }
 
 // Misc
+.context-dropdown .button {
+  background-color: transparent;
+  box-shadow: none;
+
+  &:hover {
+    background-color: $control-gray;
+  }
+}
 .context-dropdown-content {
   .icon {
     margin-right: 0.4rem;
@@ -74,7 +82,7 @@ h2.title:not(:first-of-type) {
   }
   .dropdown-item {
     font-size: 1.2rem;
-    background-color: $bg-gray;
+    background-color: white;
   }
 }
 

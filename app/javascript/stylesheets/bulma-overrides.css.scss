@@ -3,12 +3,13 @@
 }
 
 .dropdown-content {
-  background-color: $bg-gray;
+  background-color: white;
 }
 
 .dropdown-item {
   cursor: pointer;
   text-decoration: none !important;
+  line-height: 1.8rem !important;
 
   &:hover {
     background-color: rgba($likes-blue, 0.3) !important;

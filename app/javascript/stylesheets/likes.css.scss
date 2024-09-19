@@ -1,3 +1,9 @@
+.like-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .fa-heart {
   color: $text-gray;
 }
@@ -5,7 +11,6 @@
 .heart-icon {
   color: $text-gray;
   cursor: pointer;
-  margin-right: 0.3rem;
 }
 
 .heart-icon.liked {
