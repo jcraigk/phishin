@@ -1,18 +1,20 @@
 TODO
  * button to minimize/restore player on desktop (rollover to see down arrow), hide waveform
+ * when a track is playing, the pulsing should be a gradient showing the progress through the track, like the scrubber (but no waveform). maybe also a border
+ * close button on incomplete/admin notes
  * Opengraph (helmet context)
 
 NICE TO HAVE:
- * audit yarn packages (remove coffeescript)
- * audit models for unused methods
- * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
+ * https://jcktest.ngrok.io/2023-12-31 tag rollovers flicker
+ * style paging
  * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
  * Install sentry react https://docs.sentry.io/platforms/javascript/guides/react/
  * Feature specs
  * Ensure API spec coverage
- * when a track is playing, the pulsing should be a gradient showing the progress through the track, like the scrubber (but no waveform). maybe also a border
+
 
  BACKBURNER
+  * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
   * lyrical excerpts?
   * disable swetrix - or sign up
   * put play random show button on empty playlist page
@@ -20,9 +22,6 @@ NICE TO HAVE:
   * Disable email account creation - allow oauth login through api?
   * Ensure no FOUC with font (seems hard or impossible to do)
   * Bullet N+1 against API
-  * Every page should keep all content on screen at any size (nothing gets cut off on right)
-  * audit components for unused imports
-  * close button on incomplete/admin notes
 
 TEST URLS
 https://jcktest.ngrok.io/1990-06-16/you-enjoy-myself
