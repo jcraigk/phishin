@@ -19,5 +19,6 @@
 }
 
 .tag-badge:hover {
-  background-color: darken($header-gray, 10%);
+  background-color: $control-gray;
+  color: $text-gray;
 }

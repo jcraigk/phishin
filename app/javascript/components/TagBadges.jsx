@@ -24,7 +24,7 @@ const TagBadges = ({ tags }) => {
 
     const modalContent = (
       <>
-        <h2 className="title mb-5">{tagGroup[0].name}</h2>
+        <h2 className="title mb-2">{tagGroup[0].name}</h2>
         <div>
           {tagGroup.map((tag, index) => (
             <div key={index}>
