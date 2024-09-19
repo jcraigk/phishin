@@ -1,15 +1,16 @@
+// Layout.jsx
 import React, { useState, useRef } from "react";
 import { Outlet, useNavigation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Loader from "./Loader";
 import Player from "./Player";
-import TaperNotesModal from "./TaperNotesModal";
+import AppModal from "./AppModal";
 
 const Layout = ({ user, onLogout }) => {
   const navigation = useNavigation();
-  const [isTaperNotesModalOpen, setIsTaperNotesModalOpen] = useState(false);
-  const [taperNotesShow, setTaperNotesShow] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
   const [currentPlaylist, setCurrentPlaylist] = useState([]);
   const [activeTrack, setActiveTrack] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -21,13 +22,14 @@ const Layout = ({ user, onLogout }) => {
     setActiveTrack(track);
   };
 
-  const openTaperNotesModal = (show) => {
-    setTaperNotesShow(show);
-    setIsTaperNotesModalOpen(true);
+  const openModal = (content) => {
+    setModalContent(content);
+    setIsModalOpen(true);
   };
 
-  const closeTaperNotesModal = () => {
-    setIsTaperNotesModalOpen(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalContent(null);
   };
 
   return (
@@ -35,7 +37,14 @@ const Layout = ({ user, onLogout }) => {
       {navigation.state === 'loading' && <Loader />}
       <Navbar user={user} onLogout={onLogout} />
       <main className={activeTrack ? 'with-player' : ''}>
-        <Outlet context={{ currentPlaylist, activeTrack, playTrack, audioRef, currentTime, setCurrentTime, openTaperNotesModal }} />
+        <Outlet context={{
+          currentPlaylist,
+          activeTrack,
+          playTrack,
+          audioRef,
+          currentTime,
+          setCurrentTime,
+          openModal }} />
       </main>
       <Footer />
       {activeTrack && (
@@ -47,10 +56,10 @@ const Layout = ({ user, onLogout }) => {
           setCurrentTime={setCurrentTime}
         />
       )}
-      <TaperNotesModal
-        isOpen={isTaperNotesModalOpen}
-        onRequestClose={closeTaperNotesModal}
-        show={taperNotesShow}
+      <AppModal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        modalContent={modalContent}
       />
     </>
   );

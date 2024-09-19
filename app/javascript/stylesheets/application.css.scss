@@ -25,7 +25,6 @@ $info-blue: #cbf3ff;
 @import "./feedback.css.scss";
 @import "./footer.css.scss";
 @import "./bulma-overrides.css.scss";
-@import "./sidebar.css.scss";
 @import "./modal.css.scss";
 @import "./player.css.scss";
 @import "./navbar.css.scss";
@@ -45,10 +44,11 @@ html, body {
 
 input, textarea, select, button {
   font-family: inherit;
+  border: none !important;
 }
 
-main {
-  flex: 1;
+button {
+  border: none !important;
 }
 
 h2.title:not(:first-of-type) {

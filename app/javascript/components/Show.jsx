@@ -1,6 +1,6 @@
 import { authFetch } from "./utils";
 
-export const showLoader = async ({ params, request }) => {
+export const showLoader = async ({ params }) => {
   const { date } = params;
   const url = `/api/v2/shows/${date}`;
   try {
@@ -23,18 +23,14 @@ import LayoutWrapper from "./LayoutWrapper";
 import ShowContextMenu from "./ShowContextMenu";
 import LikeButton from "./LikeButton";
 import Tracks from "./Tracks";
-import Modal from "react-modal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { Helmet } from 'react-helmet-async';
-
-Modal.setAppElement("body");
 
 const Show = ({ trackSlug }) => {
   const show = useLoaderData();
   const [tracks, setTracks] = useState(show.tracks);
   const trackRefs = useRef([]);
-  const [isTaperNotesModalOpen, setIsTaperNotesModalOpen] = useState(false);
   const { playTrack } = useOutletContext();
   const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
 
@@ -56,14 +52,6 @@ const Show = ({ trackSlug }) => {
     }
   }, []);
 
-  const openTaperNotesModal = () => {
-    setIsTaperNotesModalOpen(true);
-  };
-
-  const closeTaperNotesModal = () => {
-    setIsTaperNotesModalOpen(false);
-  };
-
   const sidebarContent = (
     <div className="sidebar-content">
       <p className="sidebar-title">{formatDateMed(show.date)}</p>
@@ -81,7 +69,7 @@ const Show = ({ trackSlug }) => {
 
       <div className="sidebar-control-wrapper">
         <LikeButton likable={show} />
-        <ShowContextMenu show={show} openTaperNotesModal={openTaperNotesModal} />
+        <ShowContextMenu show={show} isLeft={true} />
       </div>
 
       <div className="sidebar-extras">
@@ -109,22 +97,6 @@ const Show = ({ trackSlug }) => {
 
   return (
     <>
-      <Modal
-        isOpen={isTaperNotesModalOpen}
-        onRequestClose={closeTaperNotesModal}
-        contentLabel="Taper Notes"
-        className="modal-content"
-        overlayClassName="modal-overlay"
-      >
-        <FontAwesomeIcon
-          icon={faCircleXmark}
-          onClick={closeTaperNotesModal}
-          className="is-pulled-right close-btn is-size-3"
-          style={{ cursor: "pointer" }}
-        />
-        <h2 className="title mb-5">Taper Notes</h2>
-        <p dangerouslySetInnerHTML={{ __html: show.taper_notes.replace(/\n/g, "<br />") }}></p>
-      </Modal>
       <Helmet>
         <title>{matchedTrack ? `${matchedTrack.title} - ${formatDate(show.date)} - Phish.in` : `${formatDate(show.date)} - Phish.in`}</title>
         <meta property="og:title" content={trackSlug && matchedTrack ? `Listen to ${matchedTrack.title} from ${formatDateLong(show.date)}` : `Listen to ${formatDateLong(show.date)}`} />

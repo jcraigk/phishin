@@ -79,7 +79,7 @@
     align-items: center;
   }
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1023px) {
     // Prevent user dropdown from going off right side of screen
     .navbar-end .dropdown-menu {
       right: 0;

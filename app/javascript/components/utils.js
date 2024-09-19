@@ -34,14 +34,12 @@ export const formatDurationTrack = (milliseconds) => {
 export const formatDate = (dateString) => {
   return dateString.replace(/-/g, ".");
 };
-
 export const formatDateMed = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  const [year, month, day] = dateString.split("-").map(Number);
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  const formattedDate = `${monthNames[month - 1]} ${day}, ${year}`;
+  return formattedDate;
 };
 
 export const formatDateLong = (dateString) => {
