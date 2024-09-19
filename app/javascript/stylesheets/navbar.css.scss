@@ -57,6 +57,13 @@
     }
   }
 
+  .navbar-dropdown-label {
+    font-size: 0.9rem;
+    color: $text-gray;
+    font-weight: bold;
+    opacity: 0.85;
+  }
+
   .search-term {
     width: 10rem;
     background-color: $control-gray;

@@ -72,13 +72,15 @@ const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackR
               <span className="leftside-tertiary">
                 <TagBadges tags={track.tags} />
               </span>
-              <span className="rightside-primary">{formatDurationTrack(track.duration)}</span>
-              <span className="rightside-secondary">
-                <LikeButton likable={track} />
-              </span>
-              <span className="rightside-menu">
-                <TrackContextMenu track={track} />
-              </span>
+              <div className="rightside-group">
+                <span className="rightside-primary">{formatDurationTrack(track.duration)}</span>
+                <span className="rightside-secondary">
+                  <LikeButton likable={track} />
+                </span>
+                <span className="rightside-menu">
+                  <TrackContextMenu track={track} />
+                </span>
+              </div>
             </li>
           </React.Fragment>
         );

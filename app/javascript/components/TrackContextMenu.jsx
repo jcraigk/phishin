@@ -65,7 +65,7 @@ const TrackContextMenu = ({ track }) => {
   }, [dropdownRef]);
 
   return (
-    <div className="dropdown is-right" ref={dropdownRef}>
+    <div className="dropdown is-right context-dropdown" ref={dropdownRef}>
       <div className="dropdown-trigger">
         <button className="button" onClick={toggleDropdownVisibility}>
           <span className="icon is-small">

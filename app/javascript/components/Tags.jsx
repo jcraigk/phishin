@@ -25,14 +25,16 @@ const Tags = ({ tags, group = false, highlight = "" }) => {
       <span className="leftside-secondary">
         <HighlightedText text={tag.description} highlight={highlight} />
       </span>
-      <span className="rightside-primary-wide">
-        <Link to={`/show_tags/${tag.slug}`} className="button is-small mr-1">
-          {formatNumber(tag.shows_count, "show")}
-        </Link>
-        <Link to={`/track_tags/${tag.slug}`} className="button is-small">
-          {formatNumber(tag.tracks_count, "track")}
-        </Link>
-      </span>
+      <div className="rightside-group">
+        <span className="rightside-primary-wide">
+          <Link to={`/show_tags/${tag.slug}`} className="button is-small mr-1">
+            {formatNumber(tag.shows_count, "show")}
+          </Link>
+          <Link to={`/track_tags/${tag.slug}`} className="button is-small">
+            {formatNumber(tag.tracks_count, "track")}
+          </Link>
+        </span>
+      </div>
     </li>
   );
 

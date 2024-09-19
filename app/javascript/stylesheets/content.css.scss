@@ -153,9 +153,18 @@
   flex-shrink: 0;
 }
 
+.rightside-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
 .rightside-primary {
   font-size: 1.1rem;
-  width: 4rem;
+  width: 2.5rem;
   text-align: right;
   overflow: hidden;
   text-overflow: ellisis;
@@ -177,24 +186,16 @@
 
 .rightside-secondary {
   font-size: 1.1rem;
-  width: 5rem;
+  width: auto; /* Use auto width to avoid excess space */
   text-align: right;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center; /* Center the heart icon */
 }
 
 .width-8 {
   width: 8rem !important;
-}
-
-.rightside-menu {
-  width: 2rem;
-  margin-left: 1rem;
 }
 
 @keyframes pulse {

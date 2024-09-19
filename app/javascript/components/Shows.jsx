@@ -48,13 +48,15 @@ const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
                 <TagBadges tags={show.tags} />
               </span>
 
-              <span className="rightside-primary">{formatDurationShow(show.duration)}</span>
-              <span className="rightside-secondary">
-                <LikeButton likable={show} />
-              </span>
-              <span className="rightside-menu">
-                <ShowContextMenu show={show} adjacentLinks={false} />
-              </span>
+              <div className="rightside-group">
+                <span className="rightside-primary">{formatDurationShow(show.duration)}</span>
+                <span className="rightside-secondary">
+                  <LikeButton likable={show} />
+                </span>
+                <span className="rightside-menu">
+                  <ShowContextMenu show={show} adjacentLinks={false} />
+                </span>
+              </div>
             </li>
           </React.Fragment>
         );

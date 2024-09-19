@@ -40,13 +40,15 @@ const LikeButton = ({ likable }) => {
   };
 
   return (
-    <div className="like-button">
+    <div className="like-wrapper">
       <FontAwesomeIcon
         icon={faHeart}
         className={`heart-icon ${likedByUser ? "liked" : ""}`}
         onClick={handleLikeToggle}
       />{" "}
-      {likesCount}
+      <span className="likes-count">
+        {likesCount}
+      </span>
     </div>
   );
 };

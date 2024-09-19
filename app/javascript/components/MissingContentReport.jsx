@@ -72,7 +72,7 @@ const MissingContentReport = () => {
                   <span className="leftside-primary">{date}</span>
                   <span className="leftside-secondary">{venue_name}</span>
                   <span className="leftside-tertiary">{location}</span>
-                  <span className="rightside-primary-wide">
+                  <span className="rightside-group">
                     {type === "Incomplete" ? (
                       <Link to={`/${date}`} className="button is-small">
                         {type}

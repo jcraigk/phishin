@@ -15,7 +15,7 @@ const Venues = ({ venues, highlight }) => {
             <span className="leftside-secondary">
               <HighlightedText text={venue.location} highlight={highlight} />
             </span>
-            <span className="rightside-primary">{formatNumber(venue.shows_count, "show")}</span>
+            <span className="rightside-group">{formatNumber(venue.shows_count, "show")}</span>
           </li>
         </Link>
       ))}
