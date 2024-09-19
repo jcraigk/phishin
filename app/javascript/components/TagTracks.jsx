@@ -18,7 +18,6 @@ export const tagTracksLoader = async ({ params, request }) => {
     );
     if (!tracksResponse.ok) throw tracksResponse;
     const tracksData = await tracksResponse.json();
-    console.log('hello')
     return {
       tag,
       tracks: tracksData.tracks,
@@ -27,7 +26,6 @@ export const tagTracksLoader = async ({ params, request }) => {
       sortOption,
     };
   } catch (error) {
-    console.log(error);
     if (error instanceof Response) throw error;
     throw new Response("Error fetching data", { status: 500 });
   }

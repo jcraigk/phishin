@@ -6,7 +6,7 @@ import Loader from "./Loader";
 import Player from "./Player";
 import TaperNotesModal from "./TaperNotesModal";
 
-const Layout = ({ user, onLogout, location }) => {
+const Layout = ({ user, onLogout }) => {
   const navigation = useNavigation();
   const [isTaperNotesModalOpen, setIsTaperNotesModalOpen] = useState(false);
   const [taperNotesShow, setTaperNotesShow] = useState(null);

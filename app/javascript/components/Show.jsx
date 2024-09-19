@@ -1,4 +1,4 @@
-import { authFetch, baseUrl } from "./utils";
+import { authFetch } from "./utils";
 
 export const showLoader = async ({ params, request }) => {
   const { date } = params;

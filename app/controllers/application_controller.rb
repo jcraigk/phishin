@@ -3,9 +3,7 @@ class ApplicationController < ActionController::Base
   include ActionView::Helpers::TagHelper
 
   def application
-    # Set up initial props, including the context for SSR
     context = {}
-
     @props = {
       # SSR
       location: request.fullpath,

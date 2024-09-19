@@ -1,11 +1,13 @@
 TODO
  * button to minimize/restore player on desktop (rollover to see down arrow), hide waveform
  * Opengraph (helmet context)
- * debuts / first occurrences of tracks should have previous gap of 0. last occurrence should have next gap of 0.
+ * clicking outside context menu should close it - can get multiple ones open on shows/tracks pages
+ * if you follow a "Next performance" (navigate to a show/track slug) then like a track, it auto-scrolls to the selected track again. stop that.
 
 NICE TO HAVE:
  * Test for dark reader compatibility (pulse doesn't look great)
  * audit yarn packages (remove coffeescript)
+ * audit models for unused methods
  * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
  * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
  * Install sentry react https://docs.sentry.io/platforms/javascript/guides/react/

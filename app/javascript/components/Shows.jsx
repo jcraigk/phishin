@@ -1,6 +1,6 @@
 import React from "react";
-import { Link, useOutletContext, useNavigate } from "react-router-dom";
-import { formatDate, formatDurationShow } from "./utils";
+import { useOutletContext, useNavigate } from "react-router-dom";
+import { formatDurationShow } from "./utils";
 import TagBadges from "./TagBadges";
 import LikeButton from "./LikeButton";
 import ShowContextMenu from "./ShowContextMenu";
@@ -12,7 +12,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
   let lastTourName = null;
 
   const handleShowClick = (showDate) => {
-    navigate(`/${showDate}`); // Navigate programmatically when the li is clicked
+    navigate(`/${showDate}`);
   };
 
   return (
@@ -53,7 +53,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
                 <LikeButton likable={show} />
               </span>
               <span className="rightside-menu">
-                <ShowContextMenu show={show} />
+                <ShowContextMenu show={show} adjacentLinks={false} />
               </span>
             </li>
           </React.Fragment>

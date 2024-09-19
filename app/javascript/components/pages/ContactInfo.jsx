@@ -4,7 +4,7 @@ import GitHubButton from "./GitHubButton";
 import DiscordButton from "./DiscordButton";
 import EmailButton from "./EmailButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faX, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { faX } from "@fortawesome/free-solid-svg-icons";
 
 const ContactInfo = () => {
   return (
@@ -13,36 +13,36 @@ const ContactInfo = () => {
 
       <p>
         If you notice a bug, please file an issue or pull request on GitHub:
-        <br />
-        <GitHubButton />
       </p>
+      <GitHubButton className="mb-6" />
 
       <p>
         Join the community discussion on Discord:
-        <br />
-        <DiscordButton />
       </p>
+      <DiscordButton className="mb-6" />
 
       <p>
         Follow on X:
-        <br />
-        <a
-          href="https://x.com/phish_in"
-          className="button"
-          target="_blank"
-        >
-          <div className="icon mr-1">
-            <FontAwesomeIcon icon={faX} />
-          </div>
-          @phish_in
-        </a>
       </p>
+      <a
+        href="https://x.com/phish_in"
+        className="button mb-6"
+        target="_blank"
+      >
+        <div className="icon mr-1">
+          <FontAwesomeIcon icon={faX} />
+        </div>
+        @phish_in
+      </a>
+      <br />
+
 
       <p>
         Email the site maintainer:
-        <br />
-        <EmailButton />
       </p>
+      <EmailButton />
+      <br />
+
     </PageWrapper>
   );
 };

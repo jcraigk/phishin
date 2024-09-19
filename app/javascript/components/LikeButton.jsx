@@ -9,7 +9,6 @@ const LikeButton = ({ likable }) => {
   const [likedByUser, setLikedByUser] = useState(likable.liked_by_user);
   const [likesCount, setLikesCount] = useState(likable.likes_count);
 
-  // Determine the type based on the presence of the 'date' property
   const type = likable.date ? "Show" : "Track";
 
   const handleLikeToggle = async (e) => {
@@ -36,7 +35,6 @@ const LikeButton = ({ likable }) => {
       setLikesCount(result.isLiked ? likesCount + 1 : likesCount - 1);
       setNotice("Like saved");
     } else {
-      console.log(result);
       setAlert("Like failed to save");
     }
   };
