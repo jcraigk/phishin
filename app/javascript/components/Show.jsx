@@ -40,19 +40,21 @@ const Show = ({ trackSlug }) => {
 
   useEffect(() => {
     setTracks(show.tracks);
+  }, [show]);
+
+  useEffect(() => {
     let foundTrack;
     if (trackSlug) foundTrack = tracks.find((track) => track.slug === trackSlug);
     if (!foundTrack) foundTrack = tracks[0];
     if (foundTrack) {
       playTrack(tracks, foundTrack, true);
       setMatchedTrack(foundTrack);
-      // Scroll to the matched track
       const trackIndex = tracks.findIndex((track) => track.slug === foundTrack.slug);
       if (trackRefs.current[trackIndex]) {
         trackRefs.current[trackIndex].scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
-  }, [show, trackSlug, tracks]);
+  }, []);
 
   const openTaperNotesModal = () => {
     setIsTaperNotesModalOpen(true);
