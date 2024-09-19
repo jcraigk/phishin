@@ -91,7 +91,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
         role="menu"
         style={{ display: dropdownVisible ? "block" : "none" }}
       >
-        <div className="dropdown-content show-context-dropdown">
+        <div className="dropdown-content context-dropdown-content">
           <a className="dropdown-item" onClick={(e) => copyToClipboard(e, false)}>
             <span className="icon">
               <FontAwesomeIcon icon={faShareFromSquare} />

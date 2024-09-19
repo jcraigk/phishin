@@ -199,13 +199,13 @@
 
 @keyframes pulse {
   0% {
-    background-color: $likes-blue;
+    background-color: rgba($likes-blue, 0.5);
   }
   50% {
-    background-color: #cbe8fa;
+    background-color: transparent;
   }
   100% {
-    background-color: $likes-blue;
+    background-color: rgba($likes-blue, 0.5);
   }
 }
 

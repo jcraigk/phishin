@@ -79,7 +79,7 @@ const TrackContextMenu = ({ track }) => {
         role="menu"
         style={{ display: dropdownVisible ? "block" : "none" }}
       >
-        <div className="dropdown-content show-context-dropdown">
+        <div className="dropdown-content context-dropdown-content">
           <a className="dropdown-item" onClick={(e) => share(e, false)}>
             <span className="icon">
               <FontAwesomeIcon icon={faShareFromSquare} />

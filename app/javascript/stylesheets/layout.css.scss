@@ -16,6 +16,7 @@ main {
 
 .main-content {
   flex: 1;
+  margin-top: 0.5rem;
 }
 
 .sidebar {
@@ -25,7 +26,6 @@ main {
   border-radius: 5px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   max-height: fit-content;
-  margin-bottom: 1rem;
 
   .sidebar-content {
     a {
