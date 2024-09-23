@@ -4,6 +4,7 @@ const imagePath = (name) => images(name, true)
 import ReactOnRails from "react-on-rails";
 import "../stylesheets/application.css.scss";
 
+import "../components/instrument";
 import App from "../components/App";
 
 ReactOnRails.register({
