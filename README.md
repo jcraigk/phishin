@@ -1,6 +1,5 @@
 TODO
  * button to minimize/restore player on desktop (rollover to see down arrow), hide waveform
- * close button on incomplete/admin notes
  * Opengraph (helmet context)
  * Search boxes on venue/song indexes
  * Mention dark reader in faq

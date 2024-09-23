@@ -1,3 +1,9 @@
+.close-btn {
+  float: right;
+  font-size: 1rem;
+  margin-left: 0.5rem;
+}
+
 .feedback {
   position: fixed;
   top: 2rem;
@@ -27,12 +33,6 @@
     .progress-bar {
       background-color: #e74c3c;
     }
-  }
-
-  .close-btn {
-    float: right;
-    font-size: 1rem;
-    margin-left: 0.5rem;
   }
 
   .progress-bar {

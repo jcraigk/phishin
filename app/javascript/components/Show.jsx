@@ -34,6 +34,10 @@ const Show = ({ trackSlug }) => {
   const { playTrack } = useOutletContext();
   const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
 
+  // State to manage notification visibility
+  const [showIncompleteNotification, setShowIncompleteNotification] = useState(show.incomplete);
+  const [showAdminNotesNotification, setShowAdminNotesNotification] = useState(!!show.admin_notes);
+
   useEffect(() => {
     setTracks(show.tracks);
   }, [show]);
@@ -51,6 +55,11 @@ const Show = ({ trackSlug }) => {
       }
     }
   }, []);
+
+  const handleClose = (notificationType) => {
+    if (notificationType === "incomplete") setShowIncompleteNotification(false);
+    if (notificationType === "adminNotes") setShowAdminNotesNotification(false);
+  };
 
   const sidebarContent = (
     <div className="sidebar-content">
@@ -86,8 +95,11 @@ const Show = ({ trackSlug }) => {
     </div>
   );
 
-  const infoBox = (message) => (
+  const infoBox = (message, onClose) => (
     <div className="notification show-info">
+      <button className="close-btn" onClick={onClose}>
+        <FontAwesomeIcon icon={faCircleXmark} />
+      </button>
       <span className="icon">
         <FontAwesomeIcon icon={faInfoCircle} />
       </span>
@@ -104,8 +116,8 @@ const Show = ({ trackSlug }) => {
         <meta property="og:audio" content={matchedTrack?.mp3_url} />
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        {show.incomplete && infoBox("This show's audio is incomplete")}
-        {show.admin_notes && infoBox(show.admin_notes)}
+        {showIncompleteNotification && infoBox("This show's audio is incomplete", () => handleClose("incomplete"))}
+        {showAdminNotesNotification && infoBox(show.admin_notes, () => handleClose("adminNotes"))}
         <Tracks tracks={tracks} setTracks={setTracks} showView={true} trackRefs={trackRefs} trackSlug={trackSlug} />
       </LayoutWrapper>
     </>
@@ -113,3 +125,4 @@ const Show = ({ trackSlug }) => {
 };
 
 export default Show;
+
