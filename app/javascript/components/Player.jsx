@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { formatDate, parseTimeParam } from "./utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward } from "@fortawesome/free-solid-svg-icons";
+import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward, faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { useFeedback } from "./FeedbackContext";
 
 const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCurrentTime }) => {
@@ -13,6 +13,11 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCur
   const [fadeClass, setFadeClass] = useState("fade-in");
   const [isFadeOutComplete, setIsFadeOutComplete] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [isPlayerCollapsed, setIsPlayerCollapsed] = useState(true);
+
+  const togglePlayerPosition = () => {
+    setIsPlayerCollapsed(!isPlayerCollapsed);
+  };
 
   const togglePlayPause = () => {
     if (audioRef.current.paused) {
@@ -183,7 +188,13 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCur
   };
 
   return (
-    <div className={`audio-player ${activeTrack ? 'visible' : ''}`}>
+    <div className={`audio-player ${activeTrack ? 'visible' : ''} ${isPlayerCollapsed ? '' : 'collapsed'}`}>
+      <div
+        className="chevron-button"
+        onClick={togglePlayerPosition}
+      >
+        <FontAwesomeIcon icon={isPlayerCollapsed ? faChevronDown : faChevronUp} />
+      </div>
       <div className="top-row">
         <div className={`left-half`}>
           <div className="track-title">{activeTrack?.title}</div>

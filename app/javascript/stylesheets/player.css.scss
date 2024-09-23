@@ -1,6 +1,7 @@
 main.with-player {
   margin-bottom: 150px;
 }
+
 footer.with-player {
   display: none;
 }
@@ -11,31 +12,41 @@ footer.with-player {
   width: 100%;
   background-color: $header-gray;
   z-index: 100;
-  opacity: 0;
   box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.3);
+  transition: bottom 0.5s ease;
 
   &.visible {
-    animation: slideUp 0.3s ease-in-out forwards;
+    bottom: -20px;
   }
 
   a {
     text-decoration: none;
-    color: var(--bulma-text);
+    color: $text-gray;
 
     &:hover {
       text-decoration: underline;
     }
   }
 
-  .fade-in {
-    opacity: 1;
-    transition: opacity 1s ease-in;
+  .chevron-button {
+    background-color: $control-gray;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    padding: 0.3rem 0.7rem;
+    color: $text-gray;
+    box-shadow: 0 0px 10px rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    cursor: pointer;
+    display: none;
+    z-index: 101;
   }
 
-  .fade-out {
-    opacity: 0;
-    transition: opacity 500ms ease-out;
+  &:hover .chevron-button {
+    display: block;
   }
+
   .top-row {
     margin: 0 auto;
     max-width: 800px;
@@ -151,6 +162,7 @@ footer.with-player {
       text-align: left;
       cursor: pointer;
     }
+
     .remaining {
       margin-left: 0.5rem;
       min-width: 2rem;
@@ -163,7 +175,7 @@ footer.with-player {
       width: 100%;
       height: 100%;
       cursor: pointer;
-      background-size: 100% 100%; /* Stretches waveform image across the whole bar */
+      background-size: 100% 100%;
       background-repeat: no-repeat;
       background-position: 0 0;
     }
@@ -173,52 +185,49 @@ footer.with-player {
       top: 0;
       left: 0;
       height: 100%;
-      width: 100%; /* Full width, we'll handle progress with the background */
-      // background: linear-gradient(to right, $likes-blue 0%, $likes-blue 0%, transparent 0%); /* Dynamically update this gradient */
-      mask-size: 100% 100%; /* Ensure the mask covers the entire progress bar */
+      width: 100%;
+      mask-size: 100% 100%;
       mask-position: 0 0;
       mask-repeat: no-repeat;
 
-      /* WebKit Browsers */
       -webkit-mask-size: 100% 100%;
       -webkit-mask-position: 0 0;
       -webkit-mask-repeat: no-repeat;
     }
   }
-}
 
-@media (max-width: 1023px) {
-  .scrub-btn {
-    display: none !important;
-  }
-  .bottom-row {
-    height: 30px !important;
-    margin-top: 5px !important;
-  }
-  .track-title {
-    font-size: 1.2rem !important;
-  }
-  main.with-player {
-    margin-bottom: 110px;
-  }
-}
+  @media (min-width: 1024px) {
+    &:hover .chevron-button {
+      display: block;
+    }
 
-@media (max-width: 767px) {
-  .venue-location {
-    display: none !important;
+    &.collapsed {
+      bottom: -80px !important;
+    }
   }
-  .controls {
-    gap: 0 !important;
-  }
-}
 
-@keyframes slideUp {
-  from {
-    bottom: -100px;
-    opacity: 0;
+  @media (max-width: 1023px) {
+    .scrub-btn {
+      display: none !important;
+    }
+    .bottom-row {
+      height: 30px !important;
+      margin-top: 5px !important;
+    }
+    .track-title {
+      font-size: 1.2rem !important;
+    }
+    main.with-player {
+      margin-bottom: 110px;
+    }
   }
-  to {
-    bottom: 0;
-    opacity: 1;
+
+  @media (max-width: 767px) {
+    .venue-location {
+      display: none !important;
+    }
+    .controls {
+      gap: 0 !important;
+    }
   }
 }
