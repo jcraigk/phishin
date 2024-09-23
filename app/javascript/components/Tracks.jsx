@@ -63,7 +63,7 @@ const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackR
             )}
             <li
               className={
-                `list-item track-item ${track.id === activeTrack?.id ? "active-item" : ""} ${track.slug === trackSlug ? "focus" : ""}`
+                `list-item track-item ${track.id === activeTrack?.id ? "active-item" : ""} ${showView && track.slug === trackSlug ? "focus" : ""}`
               }
               onClick={() => handleTrackClick(track)}
               ref={trackRefs ? (el) => (trackRefs.current[index] = el) : null}
