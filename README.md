@@ -2,7 +2,6 @@ TODO
  * button to minimize/restore player on desktop (rollover to see down arrow), hide waveform
  * Opengraph (helmet context)
  * Search boxes on venue/song indexes
- * Mention dark reader in faq
 
 NICE TO HAVE:
  * https://jcktest.ngrok.io/2023-12-31 tag rollovers flicker

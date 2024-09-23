@@ -15,6 +15,8 @@ class ApplicationController < ActionController::Base
       email: session[:email],
       alert: flash[:alert],
       notice: flash[:notice],
+
+      # Third party integrations
       mapbox_token: ENV.fetch("MAPBOX_TOKEN", nil)
     }
 
