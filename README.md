@@ -1,17 +1,21 @@
 TODO
  * button to minimize/restore player on desktop (rollover to see down arrow), hide waveform
- * when a track is playing, the pulsing should be a gradient showing the progress through the track, like the scrubber (but no waveform). maybe also a border
  * close button on incomplete/admin notes
  * Opengraph (helmet context)
+ * Search boxes on venue/song indexes
+ * Mention dark reader in faq
 
 NICE TO HAVE:
  * https://jcktest.ngrok.io/2023-12-31 tag rollovers flicker
  * style paging
  * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
- * Install sentry react https://docs.sentry.io/platforms/javascript/guides/react/
  * Feature specs
  * Ensure API spec coverage
-
+ * cooler animation for feedback (bulge/fade)
+ * Search venues/songs from index page (just go to search results scoped to that)
+ * Show tags in sidebar
+ * Remove analytics - keep GA (free)
+ * move navbar content inward
 
  BACKBURNER
   * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
@@ -22,6 +26,12 @@ NICE TO HAVE:
   * Disable email account creation - allow oauth login through api?
   * Ensure no FOUC with font (seems hard or impossible to do)
   * Bullet N+1 against API
+  * Native dark mode
+  * Look for too many font sizes
+  * Look for inline styles
+  * Reset usernames once per year (users who login w/google and share playlists)
+  * Idea: badges for show times with clock icon
+  * Per page controls
 
 TEST URLS
 https://jcktest.ngrok.io/1990-06-16/you-enjoy-myself

@@ -61,29 +61,58 @@
   }
 }
 
-// Clickable item with faded waveform image background
-// The following breaks the tooltips and doesn't look great anyway
-// .track-item {
-//   // Overlay to lighten the waveform background
-//   &::before {
-//     content: "";
-//     position: absolute;
-//     top: 0;
-//     left: 0;
-//     width: 100%;
-//     height: 100%;
-//     background-color: rgba(255, 255, 255, 0.87);
-//     border-radius: 5px;
-//     pointer-events: none;
-//     z-index: 1;
-//   }
+@keyframes pulse-gradient {
+  0% {
+    background: linear-gradient(
+      to right,
+      rgba(3, 187, 242, 0.5) 0%,
+      rgba(255, 255, 255, 0) 0%
+    );
+  }
+  50% {
+    background: linear-gradient(
+      to right,
+      rgba(3, 187, 242, 0.5) 50%,
+      rgba(255, 255, 255, 0) 50%
+    );
+  }
+  100% {
+    background: linear-gradient(
+      to right,
+      rgba(3, 187, 242, 0.5) 100%,
+      rgba(255, 255, 255, 0) 100%
+    );
+  }
+}
 
-//   // Bump text and content above the overlay
-//   & > * {
-//     position: relative;
-//     z-index: 2;
-//   }
-// }
+.track-item.active-item {
+  animation: pulse-gradient 3s infinite ease-in-out;
+  background-image: none !important;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.track-item.active-item .track-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: rgba(3, 187, 242, 0.5);
+  transition: width 0.3s ease;
+  z-index: 1;
+}
+
+.track-item {
+  position: relative;
+  overflow: hidden;
+}
+
+.track-item > * {
+  position: relative;
+  z-index: 2;
+}
+
 
 .leftside-numbering {
   margin-right: 0.5rem;
