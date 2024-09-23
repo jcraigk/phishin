@@ -39,7 +39,7 @@ class ApiV2::Search < ApiV2::Base
     end
 
     def fetch_liked_track_ids(tracks)
-      return [] unless current_user
+      return [] unless current_user && tracks
       Like.where(
         likable_type: "Track",
         likable_id: tracks.map(&:id),
@@ -48,7 +48,7 @@ class ApiV2::Search < ApiV2::Base
     end
 
     def fetch_liked_show_ids(shows)
-      return [] unless current_user
+      return [] unless current_user && shows
       Like.where(
         likable_type: "Show",
         likable_id: shows.map(&:id),

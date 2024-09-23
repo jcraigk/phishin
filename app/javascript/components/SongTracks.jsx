@@ -40,8 +40,8 @@ export const songTracksLoader = async ({ params, request }) => {
   }
 };
 
-import React from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import React, { useRef, useEffect, useState } from "react";
+import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
 import ReactPaginate from "react-paginate";
@@ -50,6 +50,31 @@ import { Helmet } from 'react-helmet-async';
 const SongTracks = () => {
   const { songTitle, originalInfo, tracks, totalEntries, totalPages, page, sortOption } = useLoaderData();
   const navigate = useNavigate();
+  const { playTrack } = useOutletContext(); // Use outlet context to access playTrack function
+
+  const trackRefs = useRef([]);
+  const [matchedTrack, setMatchedTrack] = useState(tracks[0]); // State for matched track
+
+  // This effect handles highlighting and scrolling to the matched track
+  useEffect(() => {
+    if (tracks.length > 0) {
+      const initialTrack = tracks[0];
+      setMatchedTrack(initialTrack);
+      if (trackRefs.current[0]) {
+        trackRefs.current[0].scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [tracks]);
+
+  // Handle track clicks to play the track
+  const handleTrackClick = (track) => {
+    playTrack(tracks, track);
+    setMatchedTrack(track);
+    const trackIndex = tracks.findIndex(t => t.id === track.id);
+    if (trackRefs.current[trackIndex]) {
+      trackRefs.current[trackIndex].scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
 
   const handleSortChange = (event) => {
     navigate(`?page=1&sort=${event.target.value}`);
@@ -86,7 +111,11 @@ const SongTracks = () => {
         <title>{songTitle} - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        <Tracks tracks={tracks} setTracks={() => {}} />
+        <Tracks
+          tracks={tracks}
+          setTracks={() => {}}
+          trackRefs={trackRefs}
+        />
         {totalPages > 1 && (
           <ReactPaginate
             previousLabel={"Previous"}
@@ -108,3 +137,4 @@ const SongTracks = () => {
 };
 
 export default SongTracks;
+

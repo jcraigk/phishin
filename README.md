@@ -1,19 +1,18 @@
 TODO
  * button to minimize/restore player on desktop (rollover to see down arrow), hide waveform
  * Opengraph (helmet context)
- * Search boxes on venue/song indexes
 
 NICE TO HAVE:
  * https://jcktest.ngrok.io/2023-12-31 tag rollovers flicker
  * style paging
  * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
- * Feature specs
- * Ensure API spec coverage
  * cooler animation for feedback (bulge/fade)
  * Search venues/songs from index page (just go to search results scoped to that)
  * Show tags in sidebar
  * Remove analytics - keep GA (free)
  * move navbar content inward
+ * Feature specs
+ * API spec coverage
 
  BACKBURNER
   * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
