@@ -1,5 +1,4 @@
 TODO
- * button to minimize/restore player on desktop (rollover to see down arrow), hide waveform
  * Opengraph (helmet context)
 
 NICE TO HAVE:
@@ -15,6 +14,7 @@ NICE TO HAVE:
  * API spec coverage
 
  BACKBURNER
+  * Player should slide in
   * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
   * lyrical excerpts?
   * disable swetrix - or sign up
