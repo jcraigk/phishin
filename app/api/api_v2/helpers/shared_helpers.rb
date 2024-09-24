@@ -23,17 +23,4 @@ module ApiV2::Helpers::SharedHelpers
   def authenticate!
     error!({ message: "Unauthorized" }, 401) unless current_user
   end
-
-  def log_api_event
-    SwetrixEventJob.perform_async \
-      request.url,
-      request.user_agent,
-      request.ip
-
-    PlausibleEventJob.perform_async \
-      request.url,
-      request.user_agent,
-      request.ip,
-      @api_key&.id
-  end
 end
