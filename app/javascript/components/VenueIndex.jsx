@@ -23,13 +23,13 @@ export const venueIndexLoader = async ({ request }) => {
 
 import React, { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import ReactPaginate from "react-paginate";
 import { formatNumber } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
 import Venues from "./Venues";
 import { Helmet } from 'react-helmet-async';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import Pagination from "./Pagination"; // Import the new component
 
 const FIRST_CHAR_LIST = ["#", ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))];
 
@@ -56,7 +56,6 @@ const VenueIndex = () => {
 
   const handleSearchSubmit = () => {
     if (!searchTerm) return;
-    // Redirect to the search page with the 'venues' scope
     navigate(`/search?term=${encodeURIComponent(searchTerm)}&scope=venues`);
   };
 
@@ -93,7 +92,6 @@ const VenueIndex = () => {
         </div>
       </div>
 
-
       <div className="mt-6 hidden-mobile">
         <label className="label">Search Venues</label>
         <input
@@ -121,18 +119,10 @@ const VenueIndex = () => {
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <Venues venues={venues} />
-        <ReactPaginate
-          previousLabel={"Previous"}
-          nextLabel={"Next"}
-          breakLabel={"..."}
-          breakClassName={"break-me"}
-          pageCount={totalPages}
-          marginPagesDisplayed={1}
-          pageRangeDisplayed={1}
-          onPageChange={handlePageClick}
-          containerClassName={"pagination"}
-          activeClassName={"active"}
-          forcePage={page}
+        <Pagination
+          totalPages={totalPages}
+          handlePageClick={handlePageClick}
+          currentPage={page}
         />
       </LayoutWrapper>
     </>

@@ -29,7 +29,7 @@ import React from "react";
 import { useLoaderData, useNavigate, Link } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
-import ReactPaginate from "react-paginate";
+import Pagination from "./Pagination";
 import { Helmet } from 'react-helmet-async';
 
 const MyShows = () => {
@@ -59,7 +59,7 @@ const MyShows = () => {
         </div>
       </div>
 
-      <div class="sidebar-details">
+      <div className="sidebar-details">
         {!localStorage.getItem("jwt") && (
           <div className="sidebar-callout">
             <Link to="/login" className="button">
@@ -79,18 +79,10 @@ const MyShows = () => {
       <LayoutWrapper sidebarContent={sidebarContent}>
         <Shows shows={shows} setShows={() => {}} numbering={false} setHeaders={false} />
         {totalPages > 1 && (
-          <ReactPaginate
-            previousLabel={"Previous"}
-            nextLabel={"Next"}
-            breakLabel={"..."}
-            breakClassName={"break-me"}
-            pageCount={totalPages}
-            marginPagesDisplayed={1}
-            pageRangeDisplayed={1}
-            onPageChange={handlePageClick}
-            containerClassName={"pagination"}
-            activeClassName={"active"}
-            forcePage={page}
+          <Pagination
+            totalPages={totalPages}
+            handlePageClick={handlePageClick}
+            currentPage={page}
           />
         )}
       </LayoutWrapper>
