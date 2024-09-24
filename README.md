@@ -2,12 +2,23 @@ TODO
  * Opengraph (helmet context)
  * Playlist placeholder page (or whole thing...)
 
-
 NICE TO HAVE:
   * Feature specs
   * API spec coverage
   * One final pass on widths of content sections
+  * Test on iphone and tablet (including mediasession)
 
+PLAYLIST
+ * API: change username once per year
+ * Change username page
+ * Playlists
+   * Browse public
+   * Bookmarked playlists
+   * My playlists
+   * Create/edit playlist
+     * Option to list publicly (add to database/API)
+ * Context menus: Add to Playlist
+ * Search playlists (new scope)
 
  BACKBURNER
   * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
