@@ -41,7 +41,7 @@ export const songTracksLoader = async ({ params, request }) => {
 };
 
 import React, { useRef, useEffect, useState } from "react";
-import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
@@ -50,7 +50,6 @@ import Pagination from "./Pagination";
 const SongTracks = () => {
   const { songTitle, originalInfo, tracks, totalEntries, totalPages, page, sortOption } = useLoaderData();
   const navigate = useNavigate();
-  const { playTrack } = useOutletContext();
 
   const trackRefs = useRef([]);
   const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
@@ -64,15 +63,6 @@ const SongTracks = () => {
       }
     }
   }, [tracks]);
-
-  const handleTrackClick = (track) => {
-    playTrack(tracks, track);
-    setMatchedTrack(track);
-    const trackIndex = tracks.findIndex(t => t.id === track.id);
-    if (trackRefs.current[trackIndex]) {
-      trackRefs.current[trackIndex].scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  };
 
   const handleSortChange = (event) => {
     navigate(`?page=1&sort=${event.target.value}`);

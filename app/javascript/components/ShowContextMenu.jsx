@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link, useOutletContext } from "react-router-dom";
+import { formatDate } from "./utils";
 import { useFeedback } from "./FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
@@ -40,7 +41,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
     e.stopPropagation();
     const modalContent = (
       <>
-        <h2 className="title mb-5">Taper Notes for {show.date}</h2>
+        <h2 className="title mb-5">Taper Notes for {formatDate(show.date)}</h2>
         <p dangerouslySetInnerHTML={{ __html: (show.taper_notes || "").replace(/\n/g, "<br />") }}></p>
       </>
     );

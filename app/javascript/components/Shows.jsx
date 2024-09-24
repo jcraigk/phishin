@@ -1,6 +1,6 @@
 import React from "react";
 import { useOutletContext, useNavigate } from "react-router-dom";
-import { formatDurationShow } from "./utils";
+import { formatDurationShow, formatDate } from "./utils";
 import TagBadges from "./TagBadges";
 import LikeButton from "./LikeButton";
 import ShowContextMenu from "./ShowContextMenu";
@@ -41,7 +41,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
 
               {numbering && <span className="leftside-numbering">#{index + 1}</span>}
               <span className="leftside-primary width-8">
-                {show.date}
+                {formatDate(show.date)}
               </span>
               <span className="leftside-secondary">{show.venue.name}</span>
               <span className="leftside-tertiary">

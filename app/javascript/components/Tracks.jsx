@@ -49,7 +49,7 @@ const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackR
                 {
                   !showView && (
                     <Link
-                      className="date"
+                      className="date-link"
                       to={`/${track.show_date}/${track.slug}`}
                       onClick={(e) => e.stopPropagation()}
                     >
