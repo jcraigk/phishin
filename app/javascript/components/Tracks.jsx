@@ -13,32 +13,6 @@ const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackR
     playTrack(tracks, track);
   };
 
-  useEffect(() => {
-    if (trackRefs.current) {
-      // Reset all progress bars to width 0
-      trackRefs.current.forEach((trackElement) => {
-        if (trackElement) {
-          const progressBar = trackElement.querySelector(".track-progress");
-          if (progressBar) {
-            progressBar.style.width = "0%";
-          }
-        }
-      });
-
-      // Set width for the active track
-      if (activeTrack?.id && audioRef.current) {
-        const activeTrackElement = trackRefs.current[tracks.findIndex(t => t.id === activeTrack.id)];
-        if (activeTrackElement) {
-          const progressBar = activeTrackElement.querySelector(".track-progress");
-          if (progressBar) {
-            const progress = (audioRef.current.currentTime / audioRef.current.duration) * 100;
-            progressBar.style.width = `${progress}%`;
-          }
-        }
-      }
-    }
-  }, [activeTrack, audioRef.current?.currentTime]);
-
   let lastSetName = null;
 
   return (
@@ -68,10 +42,6 @@ const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackR
               onClick={() => handleTrackClick(track)}
               ref={trackRefs ? (el) => (trackRefs.current[index] = el) : null}
             >
-              {/* Progress bar for active track */}
-              {track.id === activeTrack?.id && (
-                <div className="track-progress"></div>
-              )}
               {numbering && (
                 <span className="leftside-numbering">#{index + 1}</span>
               )}
@@ -100,7 +70,7 @@ const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackR
                 )
               }
               <span className="leftside-tertiary">
-                <TagBadges tags={track.tags} />
+                <TagBadges tags={track.tags} parentId={track.id} />
               </span>
               <div className="rightside-group">
                 <span className="rightside-primary">{formatDurationTrack(track.duration)}</span>

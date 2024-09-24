@@ -26,6 +26,7 @@ import Tracks from "./Tracks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { Helmet } from 'react-helmet-async';
+import TagBadges from "./TagBadges";
 
 const Show = ({ trackSlug }) => {
   const show = useLoaderData();
@@ -82,6 +83,7 @@ const Show = ({ trackSlug }) => {
       </div>
 
       <div className="sidebar-extras">
+        <TagBadges tags={show.tags} parentId={show.date} />
         <hr />
         <Link to={`/${show.previous_show_date}`}>
           <FontAwesomeIcon icon={faCircleChevronLeft} style={{ marginRight: "5px" }} />

@@ -1,9 +1,8 @@
-// TagBadges.jsx
 import React from "react";
 import { Tooltip } from "react-tooltip";
 import { useOutletContext } from "react-router-dom";
 
-const TagBadges = ({ tags }) => {
+const TagBadges = ({ tags, parentId }) => {
   const { openModal } = useOutletContext();
 
   const groupedTags = tags
@@ -79,20 +78,17 @@ const TagBadges = ({ tags }) => {
       {Object.entries(groupedTags).map(([tagName, tagGroup]) => {
         const count = tagGroup.length;
         const title = `${tagName} ${count > 1 ? `(${count})` : ""}`;
-        const tooltipId = `tooltip-${tagName}`;
+        const tooltipId = `tooltip-${parentId}-${tagName}`;
         const isClickable = tagGroup[0].notes || tagGroup[0].transcript;
 
         return (
           <div
-            key={tagName}
+            key={tooltipId}
             className="tag-badge"
             data-tooltip-id={tooltipId}
             data-tooltip-content={tooltipForTagStack(tagGroup)}
             onClick={isClickable ? (event) => handleClick(tagGroup, event) : null}
-            style={{
-              backgroundColor: "$header-gray",
-              cursor: isClickable ? "pointer" : "default",
-            }}
+            style={{cursor: isClickable ? "pointer" : "default"}}
           >
             {title}
             <Tooltip id={tooltipId} className="custom-tooltip" />

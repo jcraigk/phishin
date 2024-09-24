@@ -2,7 +2,6 @@ TODO
  * Opengraph (helmet context)
 
 NICE TO HAVE:
- * https://jcktest.ngrok.io/2023-12-31 tag rollovers flicker
  * style paging
  * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
  * cooler animation for feedback (bulge/fade)
@@ -30,6 +29,7 @@ NICE TO HAVE:
   * Reset usernames once per year (users who login w/google and share playlists)
   * Idea: badges for show times with clock icon
   * Per page controls
+  * Component import order
 
 TEST URLS
 https://jcktest.ngrok.io/1990-06-16/you-enjoy-myself
