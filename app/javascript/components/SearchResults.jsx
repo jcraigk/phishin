@@ -15,7 +15,6 @@ const SearchResults = ({ results, term }) => {
     other_shows: initialOtherShows,
   } = results;
 
-  // Wrap the exact show in an array immediately if it exists
   const [tracks, setTracks] = useState(initialTracks || []);
   const [otherShows, setOtherShows] = useState(initialOtherShows || []);
   const [exactShows, setExactShows] = useState(initialExactShow ? [initialExactShow] : []);

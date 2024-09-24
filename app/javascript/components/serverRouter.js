@@ -1,6 +1,6 @@
 import React from "react";
 import { createStaticHandler, createStaticRouter, StaticRouterProvider } from "react-router-dom/server";
-import routes from "./routes"; // Your routes configuration
+import routes from "./routes";
 
 const serverRouter = async (props) => {
   const { location, context } = props;
@@ -8,7 +8,7 @@ const serverRouter = async (props) => {
   console.log("SSR: location passed to serverRouter", location);
   console.log("SSR: context passed to serverRouter", context);
 
-  const helmetContext = {};  // Track helmet context for SSR
+  const helmetContext = {};
 
   const staticHandler = createStaticHandler(routes(props));
   console.log("SSR: staticHandler", staticHandler);
@@ -28,16 +28,14 @@ const serverRouter = async (props) => {
     console.log("SSR: 404 detected");
   }
 
-  // Render the component tree, no need for another HelmetProvider
   const html = (
     <StaticRouterProvider router={staticRouter} context={result} location={location} />
   );
 
-  // Pass helmet context back to Rails for head tags
   context.helmetData = helmetContext.helmet;
   console.log("SSR: helmetContext", helmetContext);
 
-  return html;  // Return rendered HTML
+  return html;
 };
 
 export default serverRouter;

@@ -43,6 +43,12 @@ html, body {
   font-family: "Open Sans Condensed", sans-serif;
 }
 
+.root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Make sure the container stretches to full height */
+}
+
 input, textarea, select, button {
   font-family: inherit;
   border: none !important;

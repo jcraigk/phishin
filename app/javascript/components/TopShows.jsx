@@ -13,9 +13,9 @@ export const topShowsLoader = async () => {
 
 import React from "react";
 import { useLoaderData, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
-import { Helmet } from 'react-helmet-async';
 
 const TopShows = ({ user }) => {
   const { shows } = useLoaderData();

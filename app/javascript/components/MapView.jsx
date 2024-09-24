@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import mapboxgl from "mapbox-gl";
 import LayoutWrapper from "./LayoutWrapper";
-import { Helmet } from "react-helmet-async";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
@@ -112,7 +112,7 @@ const MapView = ({ mapboxToken }) => {
     if (venues.length === 0) {
       const noResultsPopup = new mapboxgl.Popup({ closeButton: false })
         .setLngLat(mapInstance.getCenter()) // Show the popover at the center of the map
-        .setHTML("<p style=\"font-family: 'Open Sans Condensed', sans-serif; font-weight: bold; font-size: 1.25rem;\">No results found for your search.</p>")
+        .setHTML("<p style=\"font-family: 'Open Sans Condensed', sans-serif; font-weight: bold; font-size: 1.2rem;\">No results found for your search.</p>")
         .addTo(mapInstance);
 
       return;

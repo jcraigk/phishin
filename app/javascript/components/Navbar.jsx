@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import logo from "../images/logo-350.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendarAlt, faMusic, faMapMarkerAlt, faStar, faCalendarDay, faMap, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = ({ user, onLogout }) => {
@@ -9,9 +9,9 @@ const Navbar = ({ user, onLogout }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
+  // Fix for bulma dropdowns not closing from navbar
   const closeMenus = () => {
     setIsMenuOpen(false);
-    // Fix for bulma dropdowns not closing from navbar
     const dropdowns = document.querySelectorAll('.dropdown-menu');
     dropdowns.forEach((dropdown) => {
       dropdown.style.display = 'none';

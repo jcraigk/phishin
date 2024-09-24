@@ -27,10 +27,10 @@ export const myTracksLoader = async ({ request }) => {
 
 import React from "react";
 import { useLoaderData, useNavigate, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
 import Pagination from "./Pagination";
-import { Helmet } from 'react-helmet-async';
 
 const MyTracks = () => {
   const { tracks, totalPages, page, sortOption } = useLoaderData();

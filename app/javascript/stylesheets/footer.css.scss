@@ -6,19 +6,20 @@ footer {
   justify-content: center;
   width: 100%;
   position: relative;
-  margin-top: 2rem
-}
+  margin-top: 2rem;
+  flex-shrink: 0;
 
-footer a {
-  color: $text-gray;
-  margin: 0 1rem;
-  text-decoration: none;
-  line-height: 1rem;
-  text-align: center;
-  text-decoration: none !important;
-}
+  a {
+    color: $text-gray;
+    margin: 0 1rem;
+    text-decoration: none;
+    line-height: 1rem;
+    text-align: center;
+    text-decoration: none !important;
 
-footer a:hover {
-  text-decoration: underline;
-  color: white;
+    &:hover {
+      text-decoration: underline;
+      color: white;
+    }
+  }
 }

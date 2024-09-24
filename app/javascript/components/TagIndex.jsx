@@ -13,7 +13,7 @@ import React from "react";
 import { useLoaderData, Link } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Tags from "./Tags";
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from "react-helmet-async";
 
 const TagIndex = () => {
   const { tags } = useLoaderData();

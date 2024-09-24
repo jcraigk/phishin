@@ -25,11 +25,10 @@ export const venueShowsLoader = async ({ params, request }) => {
 };
 
 import React from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
-import { Helmet } from 'react-helmet-async';
-import { Link } from "react-router-dom";
 
 const VenueShows = () => {
   const { shows, venue, sortOption } = useLoaderData();

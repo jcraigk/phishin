@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import SearchResults from "./SearchResults";
-import LayoutWrapper from "./LayoutWrapper"; // For sidebar layout
 import { authFetch } from "./utils";
+import SearchResults from "./SearchResults";
+import LayoutWrapper from "./LayoutWrapper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 

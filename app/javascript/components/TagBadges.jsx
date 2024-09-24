@@ -1,6 +1,6 @@
 import React from "react";
-import { Tooltip } from "react-tooltip";
 import { useOutletContext } from "react-router-dom";
+import { Tooltip } from "react-tooltip";
 
 const TagBadges = ({ tags, parentId }) => {
   const { openModal } = useOutletContext();

@@ -18,15 +18,15 @@ export const showLoader = async ({ params }) => {
 
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useLoaderData, useOutletContext } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { formatDate, formatDateMed, formatDateLong, formatDurationShow } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
 import ShowContextMenu from "./ShowContextMenu";
 import LikeButton from "./LikeButton";
 import Tracks from "./Tracks";
+import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import { Helmet } from 'react-helmet-async';
-import TagBadges from "./TagBadges";
 
 const Show = ({ trackSlug }) => {
   const show = useLoaderData();
@@ -86,12 +86,12 @@ const Show = ({ trackSlug }) => {
         <TagBadges tags={show.tags} parentId={show.date} />
         <hr />
         <Link to={`/${show.previous_show_date}`}>
-          <FontAwesomeIcon icon={faCircleChevronLeft} style={{ marginRight: "5px" }} />
+          <FontAwesomeIcon icon={faCircleChevronLeft} className="mr-1" />
           Previous show
         </Link>
         <Link to={`/${show.next_show_date}`} className="is-pulled-right">
           Next show
-          <FontAwesomeIcon icon={faCircleChevronRight} style={{ marginLeft: "5px" }} />
+          <FontAwesomeIcon icon={faCircleChevronRight} className="ml-1" />
         </Link>
       </div>
     </div>

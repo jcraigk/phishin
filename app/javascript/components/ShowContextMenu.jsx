@@ -1,13 +1,13 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link, useOutletContext } from "react-router-dom";
+import { useFeedback } from "./FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { useFeedback } from "./FeedbackContext";
 
 const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
   const dropdownRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
-  const { activeTrack, currentTime, openModal } = useOutletContext(); // Use openModal from context
+  const { activeTrack, currentTime, openModal } = useOutletContext();
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const hideDropdown = () => {
@@ -38,16 +38,12 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
 
   const handleTaperNotesClick = (e) => {
     e.stopPropagation();
-
-    // Define modal content dynamically
     const modalContent = (
       <>
         <h2 className="title mb-5">Taper Notes for {show.date}</h2>
         <p dangerouslySetInnerHTML={{ __html: (show.taper_notes || "").replace(/\n/g, "<br />") }}></p>
       </>
     );
-
-    // Use openModal to show the content
     openModal(modalContent);
     hideDropdown();
   };
