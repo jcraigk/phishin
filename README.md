@@ -3,9 +3,7 @@ TODO
 
 
 NICE TO HAVE:
- * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
  * cooler animation for feedback (bulge/fade)
- * Remove analytics - keep GA (free)
  * move navbar content inward
  * Feature specs
  * API spec coverage
@@ -13,11 +11,11 @@ NICE TO HAVE:
 
 
  BACKBURNER
+  * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
   * When next track is played, the track progress bar has a flicker
   * waveforms don't fade in properly (especially the first one)
   * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
   * lyrical excerpts?
-  * disable swetrix - or sign up
   * put play random show button on empty playlist page
   * Add CSRF to POSTs on API
   * Disable email account creation - allow oauth login through api?

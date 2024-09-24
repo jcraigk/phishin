@@ -24,11 +24,8 @@ html data-theme="light"
     /   = @props[:context]["helmet"]["meta"].to_s.html_safe
     /   = @props[:context]["helmet"]["link"].to_s.html_safe
 
-    / = render "analytics/plausible"
-
-  / = render "analytics/google"
+  = render "analytics/google"
   body
-    / = render "analytics/swetrix"
     = react_component("App", props: @props, prerender: false)
 
     / - react_helmet_app = react_component_hash("App", props: @props)

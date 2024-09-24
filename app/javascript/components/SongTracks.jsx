@@ -17,7 +17,7 @@ export const songTracksLoader = async ({ params, request }) => {
     const songTitle = songData.title;
     const originalInfo = songData.original
       ? "Original composition"
-      : `Original Artist: ${songData.artist}`;
+      : songData.artist;
 
     const tracksResponse = await authFetch(
       `/api/v2/tracks?song_slug=${songSlug}&sort=${sortOption}&page=${page}&per_page=10`
