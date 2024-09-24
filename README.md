@@ -3,7 +3,6 @@ TODO
 
 
 NICE TO HAVE:
- * move navbar content inward
  * Feature specs
  * API spec coverage
  * Pass sentry dsn in as env var
@@ -27,6 +26,7 @@ NICE TO HAVE:
   * Idea: badges for show times with clock icon
   * Per page controls
   * Component import order
+  * can LayoutWrapper and Layout be combined? or renamed?
 
 TEST URLS
 https://jcktest.ngrok.io/1990-06-16/you-enjoy-myself

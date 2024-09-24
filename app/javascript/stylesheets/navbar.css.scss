@@ -1,8 +1,16 @@
-.navbar {
+.navbar-background {
   background-color: $header-gray;
   width: 100%;
   margin-bottom: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.navbar {
+  background-color: $header-gray;
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  z-index: 2;
 
   .navbar-burger {
     color: $text-gray;
