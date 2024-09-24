@@ -33,10 +33,10 @@ export const tagShowsLoader = async ({ params, request }) => {
 
 import React from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
 import Pagination from "./Pagination";
-import { Helmet } from 'react-helmet-async';
 
 const TagShows = () => {
   const { tag, shows, totalPages, page, sortOption } = useLoaderData();

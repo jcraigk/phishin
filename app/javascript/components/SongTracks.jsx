@@ -42,10 +42,10 @@ export const songTracksLoader = async ({ params, request }) => {
 
 import React, { useRef, useEffect, useState } from "react";
 import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
 import Pagination from "./Pagination";
-import { Helmet } from 'react-helmet-async';
 
 const SongTracks = () => {
   const { songTitle, originalInfo, tracks, totalEntries, totalPages, page, sortOption } = useLoaderData();

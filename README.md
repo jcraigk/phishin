@@ -1,17 +1,20 @@
 TODO
  * Opengraph (helmet context)
+ * Playlist placeholder page
 
 
 NICE TO HAVE:
- * Feature specs
- * API spec coverage
- * Pass sentry dsn in as env var
+  * Feature specs
+  * API spec coverage
+  * When next track is played, the track progress bar has a flicker
+  * waveforms don't fade in properly (especially the first one)
+  * Idea: badges for show times with clock icon
+  * Improve style of show date links on tracks
+  * One final pass on widths of content sections
 
 
  BACKBURNER
   * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
-  * When next track is played, the track progress bar has a flicker
-  * waveforms don't fade in properly (especially the first one)
   * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
   * lyrical excerpts?
   * put play random show button on empty playlist page
@@ -19,13 +22,8 @@ NICE TO HAVE:
   * Disable email account creation - allow oauth login through api?
   * Ensure no FOUC with font (seems hard or impossible to do)
   * Bullet N+1 against API
-  * Native dark mode
-  * Look for too many font sizes
-  * Look for inline styles
   * Reset usernames once per year (users who login w/google and share playlists)
-  * Idea: badges for show times with clock icon
   * Per page controls
-  * Component import order
   * can LayoutWrapper and Layout be combined? or renamed?
 
 TEST URLS

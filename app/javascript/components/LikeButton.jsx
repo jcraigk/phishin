@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { toggleLike } from "./utils";
 import { useFeedback } from "./FeedbackContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
 const LikeButton = ({ likable }) => {
   const { setAlert, setNotice } = useFeedback();

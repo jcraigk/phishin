@@ -23,13 +23,13 @@ export const venueIndexLoader = async ({ request }) => {
 
 import React, { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { formatNumber } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
 import Venues from "./Venues";
-import { Helmet } from 'react-helmet-async';
+import Pagination from "./Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import Pagination from "./Pagination"; // Import the new component
 
 const FIRST_CHAR_LIST = ["#", ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))];
 

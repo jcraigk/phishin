@@ -21,11 +21,11 @@ export const songIndexLoader = async ({ request }) => {
 
 import React, { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { formatNumber } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
 import Songs from "./Songs";
 import Pagination from "./Pagination";
-import { Helmet } from 'react-helmet-async';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 

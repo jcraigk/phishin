@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useOutletContext, Link } from "react-router-dom";
-import TagBadges from "./TagBadges";
 import { formatDurationTrack, formatDurationShow, formatDate } from "./utils";
+import TagBadges from "./TagBadges";
 import HighlightedText from "./HighlightedText";
 import LikeButton from "./LikeButton";
 import TrackContextMenu from "./TrackContextMenu";

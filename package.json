@@ -27,6 +27,7 @@
     "css-minimizer-webpack-plugin": "^7.0.0",
     "mapbox-gl": "^3.6.0",
     "mini-css-extract-plugin": "^2.9.1",
+    "rails-erb-loader": "^5.5.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-helmet-async": "^2.0.5",

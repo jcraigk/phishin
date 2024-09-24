@@ -26,9 +26,9 @@ export const todayShowsLoader = async ({ request }) => {
 
 import React from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./LayoutWrapper";
 import Shows from "./Shows";
-import { Helmet } from 'react-helmet-async';
 
 const TodayShows = () => {
   const { shows, month, day, sortBy } = useLoaderData();

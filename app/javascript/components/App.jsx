@@ -1,6 +1,6 @@
 import React from "react";
-import AppRouter from "./AppRouter";
 import { HelmetProvider } from "react-helmet-async";
+import AppRouter from "./AppRouter";
 import { FeedbackProvider } from "./FeedbackContext";
 
 const App = (props) => {
@@ -9,7 +9,9 @@ const App = (props) => {
   return (
     <HelmetProvider context={helmetContext}>
       <FeedbackProvider>
-        <AppRouter {...props} />
+        <div className="root">
+          <AppRouter {...props} />
+        </div>
       </FeedbackProvider>
     </HelmetProvider>
   );
