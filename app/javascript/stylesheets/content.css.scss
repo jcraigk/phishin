@@ -40,7 +40,6 @@
   border-radius: var(--bulma-radius);
   margin-bottom: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-
   min-height: 3.5rem;
   cursor: pointer;
   background-size: cover;
@@ -50,7 +49,6 @@
     border: 1px solid $likes-blue;
   }
 
-  // Pulse animation for active-item
   &.active-item {
     animation: pulse 3s infinite ease-in-out;
     background-image: none !important;
@@ -60,59 +58,6 @@
     }
   }
 }
-
-@keyframes pulse-gradient {
-  0% {
-    background: linear-gradient(
-      to right,
-      rgba(3, 187, 242, 0.5) 0%,
-      rgba(255, 255, 255, 0) 0%
-    );
-  }
-  50% {
-    background: linear-gradient(
-      to right,
-      rgba(3, 187, 242, 0.5) 50%,
-      rgba(255, 255, 255, 0) 50%
-    );
-  }
-  100% {
-    background: linear-gradient(
-      to right,
-      rgba(3, 187, 242, 0.5) 100%,
-      rgba(255, 255, 255, 0) 100%
-    );
-  }
-}
-
-.track-item.active-item {
-  animation: pulse-gradient 3s infinite ease-in-out;
-  background-image: none !important;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-}
-
-.track-item.active-item .track-progress {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0;
-  background-color: rgba(3, 187, 242, 0.5);
-  transition: width 0.3s ease;
-  z-index: 1;
-}
-
-.track-item {
-  position: relative;
-  overflow: hidden;
-}
-
-.track-item > * {
-  position: relative;
-  z-index: 2;
-}
-
 
 .leftside-numbering {
   margin-right: 0.5rem;

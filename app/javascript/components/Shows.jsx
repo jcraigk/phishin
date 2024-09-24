@@ -45,7 +45,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
               </span>
               <span className="leftside-secondary">{show.venue.name}</span>
               <span className="leftside-tertiary">
-                <TagBadges tags={show.tags} />
+                <TagBadges tags={show.tags} parentId={show.date} />
               </span>
 
               <div className="rightside-group">
