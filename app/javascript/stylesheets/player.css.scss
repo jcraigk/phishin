@@ -1,5 +1,6 @@
 main.with-player {
   margin-bottom: 150px;
+  transition: margin-bottom 0.5s ease;
 }
 
 footer.with-player {
@@ -8,7 +9,7 @@ footer.with-player {
 
 .audio-player {
   position: fixed;
-  bottom: -100px;
+  bottom: -160px;
   width: 100%;
   background-color: $header-gray;
   z-index: 100;
@@ -16,7 +17,7 @@ footer.with-player {
   transition: bottom 0.5s ease;
 
   &.visible {
-    bottom: -20px;
+    bottom: 0px;
   }
 
   a {

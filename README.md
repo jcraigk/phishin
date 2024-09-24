@@ -14,7 +14,8 @@ NICE TO HAVE:
  * API spec coverage
 
  BACKBURNER
-  * Player should slide in
+  * When next track is played, the track progress bar has a flicker
+  * waveforms don't fade in properly (especially the first one)
   * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
   * lyrical excerpts?
   * disable swetrix - or sign up
