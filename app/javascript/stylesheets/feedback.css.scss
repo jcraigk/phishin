@@ -16,6 +16,7 @@
   transition: opacity 0.5s ease-out;
   font-size: 1.3rem;
   width: 20rem;
+  animation: popOut 0.3s ease-in-out;
 
   &.notice {
     background-color: #cfffe3;
@@ -69,5 +70,17 @@
   }
   to {
     width: 0;
+  }
+}
+
+@keyframes popOut {
+  0% {
+    transform: translateX(-50%) scale(0.8);
+  }
+  50% {
+    transform: translateX(-50%) scale(1.2);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
   }
 }
