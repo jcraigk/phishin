@@ -35,7 +35,7 @@ import React from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
-import ReactPaginate from "react-paginate";
+import Pagination from "./Pagination";
 import { Helmet } from 'react-helmet-async';
 
 const TagTracks = () => {
@@ -79,18 +79,10 @@ const TagTracks = () => {
       <LayoutWrapper sidebarContent={sidebarContent}>
         <Tracks tracks={tracks} setTracks={() => {}} />
         {totalPages > 1 && (
-          <ReactPaginate
-            previousLabel={"Previous"}
-            nextLabel={"Next"}
-            breakLabel={"..."}
-            breakClassName={"break-me"}
-            pageCount={totalPages}
-            marginPagesDisplayed={1}
-            pageRangeDisplayed={1}
-            onPageChange={handlePageClick}
-            containerClassName={"pagination"}
-            activeClassName={"active"}
-            forcePage={page}
+          <Pagination
+            totalPages={totalPages}
+            handlePageClick={handlePageClick}
+            currentPage={page}
           />
         )}
       </LayoutWrapper>

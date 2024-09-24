@@ -1,16 +1,16 @@
 TODO
  * Opengraph (helmet context)
 
+
 NICE TO HAVE:
- * style paging
  * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
  * cooler animation for feedback (bulge/fade)
- * Search venues/songs from index page (just go to search results scoped to that)
- * Show tags in sidebar
  * Remove analytics - keep GA (free)
  * move navbar content inward
  * Feature specs
  * API spec coverage
+ * Pass sentry dsn in as env var
+
 
  BACKBURNER
   * When next track is played, the track progress bar has a flicker

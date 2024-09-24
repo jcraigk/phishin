@@ -44,18 +44,17 @@ import React, { useRef, useEffect, useState } from "react";
 import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
-import ReactPaginate from "react-paginate";
+import Pagination from "./Pagination";
 import { Helmet } from 'react-helmet-async';
 
 const SongTracks = () => {
   const { songTitle, originalInfo, tracks, totalEntries, totalPages, page, sortOption } = useLoaderData();
   const navigate = useNavigate();
-  const { playTrack } = useOutletContext(); // Use outlet context to access playTrack function
+  const { playTrack } = useOutletContext();
 
   const trackRefs = useRef([]);
-  const [matchedTrack, setMatchedTrack] = useState(tracks[0]); // State for matched track
+  const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
 
-  // This effect handles highlighting and scrolling to the matched track
   useEffect(() => {
     if (tracks.length > 0) {
       const initialTrack = tracks[0];
@@ -66,7 +65,6 @@ const SongTracks = () => {
     }
   }, [tracks]);
 
-  // Handle track clicks to play the track
   const handleTrackClick = (track) => {
     playTrack(tracks, track);
     setMatchedTrack(track);
@@ -117,18 +115,10 @@ const SongTracks = () => {
           trackRefs={trackRefs}
         />
         {totalPages > 1 && (
-          <ReactPaginate
-            previousLabel={"Previous"}
-            nextLabel={"Next"}
-            breakLabel={"..."}
-            breakClassName={"break-me"}
-            pageCount={totalPages}
-            marginPagesDisplayed={1}
-            pageRangeDisplayed={1}
-            onPageChange={handlePageClick}
-            containerClassName={"pagination"}
-            activeClassName={"active"}
-            forcePage={page}
+          <Pagination
+            totalPages={totalPages}
+            handlePageClick={handlePageClick}
+            currentPage={page}
           />
         )}
       </LayoutWrapper>
@@ -137,4 +127,3 @@ const SongTracks = () => {
 };
 
 export default SongTracks;
-

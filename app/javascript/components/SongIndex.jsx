@@ -24,7 +24,7 @@ import { useLoaderData, useNavigate } from "react-router-dom";
 import { formatNumber } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
 import Songs from "./Songs";
-import ReactPaginate from "react-paginate";
+import Pagination from "./Pagination";
 import { Helmet } from 'react-helmet-async';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -48,7 +48,6 @@ const SongIndex = () => {
 
   const handleSearchSubmit = () => {
     if (!searchTerm) return;
-    // Redirect to the search page with the 'songs' scope
     navigate(`/search?term=${encodeURIComponent(searchTerm)}&scope=songs`);
   };
 
@@ -99,23 +98,16 @@ const SongIndex = () => {
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <Songs songs={songs} />
-        <ReactPaginate
-          previousLabel={"Previous"}
-          nextLabel={"Next"}
-          breakLabel={"..."}
-          breakClassName={"break-me"}
-          pageCount={totalPages}
-          marginPagesDisplayed={1}
-          pageRangeDisplayed={1}
-          onPageChange={handlePageClick}
-          containerClassName={"pagination"}
-          activeClassName={"active"}
-          forcePage={page}
-        />
+        {totalPages > 1 && (
+          <Pagination
+            totalPages={totalPages}
+            handlePageClick={handlePageClick}
+            currentPage={page}
+          />
+        )}
       </LayoutWrapper>
     </>
   );
 };
 
 export default SongIndex;
-
