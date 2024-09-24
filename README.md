@@ -1,15 +1,11 @@
 TODO
  * Opengraph (helmet context)
- * Playlist placeholder page
+ * Playlist placeholder page (or whole thing...)
 
 
 NICE TO HAVE:
   * Feature specs
   * API spec coverage
-  * When next track is played, the track progress bar has a flicker
-  * waveforms don't fade in properly (especially the first one)
-  * Idea: badges for show times with clock icon
-  * Improve style of show date links on tracks
   * One final pass on widths of content sections
 
 

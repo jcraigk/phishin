@@ -26,7 +26,7 @@ import LikeButton from "./LikeButton";
 import Tracks from "./Tracks";
 import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle, faClock } from "@fortawesome/free-solid-svg-icons";
 
 const Show = ({ trackSlug }) => {
   const show = useLoaderData();
@@ -34,8 +34,6 @@ const Show = ({ trackSlug }) => {
   const trackRefs = useRef([]);
   const { playTrack } = useOutletContext();
   const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
-
-  // State to manage notification visibility
   const [showIncompleteNotification, setShowIncompleteNotification] = useState(show.incomplete);
   const [showAdminNotesNotification, setShowAdminNotesNotification] = useState(!!show.admin_notes);
 
@@ -71,9 +69,10 @@ const Show = ({ trackSlug }) => {
       <p className="sidebar-info sidebar-extras">
         <Link to={`/map?term=${encodeURIComponent(show.venue.location)}`}>{show.venue.location}</Link>
       </p>
-      <p className="sidebar-info">
+      <div className="show-duration mr-1">
+        <FontAwesomeIcon icon={faClock} className="mr-1" />
         {formatDurationShow(show.duration)}
-      </p>
+      </div>
 
       <hr />
 
