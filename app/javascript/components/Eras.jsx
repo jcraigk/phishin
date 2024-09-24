@@ -55,7 +55,7 @@ const Eras = () => {
       <MobileApps className="mt-5" />
 
       <div className="external-links">
-        <p className="has-text-weight-bold mb-1 mt-5 project-open-source">This project is open source</p>
+        <p className="has-text-weight-bold mb-2 mt-5 project-open-source">This project is open source</p>
         <div>
           <GitHubButton className="mb-2" />
           <br />

@@ -70,155 +70,162 @@ const Navbar = ({ user, onLogout }) => {
   ];
 
   return (
-    <nav className="navbar" role="navigation">
-      <div className="navbar-brand">
-        <Link to="/" className="navbar-item">
-          <img src={logo} alt="Site logo" />
-        </Link>
+    <>
+      <div className="navbar-background">
+        <nav className="navbar" role="navigation">
+          <div className="navbar-brand">
+            <Link to="/" className="navbar-item">
+              <img src={logo} alt="Site logo" />
+            </Link>
 
-        <a
-          role="button"
-          className={`navbar-burger ${isMenuOpen ? "is-active" : ""}`}
-          data-target="navbar"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-        </a>
-      </div>
-
-      <div id="navbar" className={`navbar-menu ${isMenuOpen ? "is-active" : ""}`}>
-        <div className="navbar-start">
-
-          <div className="dropdown is-hoverable navbar-item">
-            <div className="dropdown-trigger">
-              <button className="button">
-                <span className="navbar-dropdown-label">INFO</span>
-                <span className="icon">
-                  <FontAwesomeIcon icon={faAngleDown} />
-                </span>
-              </button>
-            </div>
-            <div className="dropdown-menu" role="menu">
-              <div className="dropdown-content">
-                {staticLinks.map((item, index) => (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className="dropdown-item"
-                    onClick={closeMenus}
-                  >
-                    <span className="icon">
-                      <FontAwesomeIcon icon={item.icon} />
-                    </span>
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
+            <a
+              role="button"
+              className={`navbar-burger ${isMenuOpen ? "is-active" : ""}`}
+              data-target="navbar"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+            </a>
           </div>
 
-          <div className="dropdown is-hoverable navbar-item">
-            <div className="dropdown-trigger">
-              <button className="button">
-                <span className="navbar-dropdown-label">CONTENT</span>
-                <span className="icon">
-                  <FontAwesomeIcon icon={faAngleDown} />
-                </span>
-              </button>
-            </div>
-            <div className="dropdown-menu" role="menu">
-              <div className="dropdown-content">
-                {combinedLinks.map((item, index) => (
-                  item.type === 'link' ? (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      className="dropdown-item"
-                      onClick={closeMenus}
-                    >
-                      <span className="icon">
-                        <FontAwesomeIcon icon={item.icon} />
-                      </span>
-                      {item.label}
-                    </Link>
-                  ) : (
-                    <hr key={`divider-${index}`} className="dropdown-divider" />
-                  )
-                ))}
-              </div>
-            </div>
-          </div>
+          <div id="navbar" className={`navbar-menu ${isMenuOpen ? "is-active" : ""}`}>
+            <div className="navbar-start">
 
-          <div className="navbar-item">
-            <form onSubmit={handleSearchSubmit} className="control has-icons-left">
-              <input
-                className="input search-term"
-                type="text"
-                placeholder="SEARCH"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <span className="icon is-left">
-                <FontAwesomeIcon icon={faSearch} />
-              </span>
-            </form>
-          </div>
-
-          {!user && (
-            <div className="navbar-item">
-              <Link
-                to="/login"
-                className="button login-btn"
-                onClick={() => {
-                  if (typeof window !== "undefined") {
-                    localStorage.setItem("redirectAfterLogin", location.pathname);
-                  }
-                  closeMenus();
-                }}
-              >
-                <div className="icon">
-                  <FontAwesomeIcon icon={faRightToBracket} />
-                </div>
-                LOGIN
-              </Link>
-            </div>
-          )}
-        </div>
-
-        {user && (
-          <div className="navbar-end">
-            <div className="navbar-item">
               <div className="dropdown is-hoverable navbar-item">
-                <div className="dropdown-trigger user-dropdown">
+                <div className="dropdown-trigger">
                   <button className="button">
+                    <span className="navbar-dropdown-label">INFO</span>
                     <span className="icon">
-                      <FontAwesomeIcon icon={faUser} />
+                      <FontAwesomeIcon icon={faAngleDown} />
                     </span>
-                    <span>{user.username}</span>
                   </button>
                 </div>
                 <div className="dropdown-menu" role="menu">
                   <div className="dropdown-content">
-                    <a href="#logout" className="navbar-item" onClick={(e) => {
-                      e.preventDefault();
-                      handleLogout();
-                    }}>
-                      <span className="icon">
-                        <FontAwesomeIcon icon={faCircleXmark} />
-                      </span>
-                      Logout
-                    </a>
+                    {staticLinks.map((item, index) => (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        className="dropdown-item"
+                        onClick={closeMenus}
+                      >
+                        <span className="icon">
+                          <FontAwesomeIcon icon={item.icon} />
+                        </span>
+                        {item.label}
+                      </Link>
+                    ))}
                   </div>
                 </div>
               </div>
+
+              <div className="dropdown is-hoverable navbar-item">
+                <div className="dropdown-trigger">
+                  <button className="button">
+                    <span className="navbar-dropdown-label">CONTENT</span>
+                    <span className="icon">
+                      <FontAwesomeIcon icon={faAngleDown} />
+                    </span>
+                  </button>
+                </div>
+                <div className="dropdown-menu" role="menu">
+                  <div className="dropdown-content">
+                    {combinedLinks.map((item, index) => (
+                      item.type === 'link' ? (
+                        <Link
+                          key={item.path}
+                          to={item.path}
+                          className="dropdown-item"
+                          onClick={closeMenus}
+                        >
+                          <span className="icon">
+                            <FontAwesomeIcon icon={item.icon} />
+                          </span>
+                          {item.label}
+                        </Link>
+                      ) : (
+                        <hr key={`divider-${index}`} className="dropdown-divider" />
+                      )
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="navbar-item">
+                <form onSubmit={handleSearchSubmit} className="control has-icons-left">
+                  <input
+                    className="input search-term"
+                    type="text"
+                    placeholder="SEARCH"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <span className="icon is-left">
+                    <FontAwesomeIcon icon={faSearch} />
+                  </span>
+                </form>
+              </div>
+
+
+            </div>
+
+            <div className="navbar-end">
+              <div className="navbar-item">
+                {!user && (
+                  <div className="navbar-item">
+                    <Link
+                      to="/login"
+                      className="button login-btn"
+                      onClick={() => {
+                        if (typeof window !== "undefined") {
+                          localStorage.setItem("redirectAfterLogin", location.pathname);
+                        }
+                        closeMenus();
+                      }}
+                    >
+                      <div className="icon">
+                        <FontAwesomeIcon icon={faRightToBracket} />
+                      </div>
+                      LOGIN
+                    </Link>
+                  </div>
+                )}
+
+                {user && (
+
+                  <div className="dropdown is-hoverable navbar-item">
+                    <div className="dropdown-trigger user-dropdown">
+                      <button className="button">
+                        <span className="icon">
+                          <FontAwesomeIcon icon={faUser} />
+                        </span>
+                        <span>{user.username}</span>
+                      </button>
+                    </div>
+                    <div className="dropdown-menu" role="menu">
+                      <div className="dropdown-content">
+                        <a href="#logout" className="navbar-item" onClick={(e) => {
+                          e.preventDefault();
+                          handleLogout();
+                        }}>
+                          <span className="icon">
+                            <FontAwesomeIcon icon={faCircleXmark} />
+                          </span>
+                          Logout
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        )}
+        </nav>
       </div>
-    </nav>
+    </>
   );
 };
 
