@@ -3,7 +3,6 @@ TODO
 
 
 NICE TO HAVE:
- * cooler animation for feedback (bulge/fade)
  * move navbar content inward
  * Feature specs
  * API spec coverage
