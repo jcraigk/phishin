@@ -32,7 +32,7 @@ export const formatDurationTrack = (milliseconds) => {
 };
 
 export const formatDate = (dateString) => {
-  return dateString.replace(/-/g, ".");
+  return dateString?.replace(/-/g, ".");
 };
 export const formatDateMed = (dateString) => {
   const [year, month, day] = dateString.split("-").map(Number);

@@ -13,7 +13,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCur
   const [fadeClass, setFadeClass] = useState("fade-in");
   const [isFadeOutComplete, setIsFadeOutComplete] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
-  const [isPlayerCollapsed, setIsPlayerCollapsed] = useState(true);
+  const [isPlayerCollapsed, setIsPlayerCollapsed] = useState(false);
 
   const togglePlayerPosition = () => {
     setIsPlayerCollapsed(!isPlayerCollapsed);
@@ -100,6 +100,8 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCur
           }
         });
       };
+
+      audioRef.current.onended = skipToNextTrack;
 
       return () => clearTimeout(fadeOutTimer);
     }
@@ -188,12 +190,12 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCur
   };
 
   return (
-    <div className={`audio-player ${activeTrack ? 'visible' : ''} ${isPlayerCollapsed ? '' : 'collapsed'}`}>
+    <div className={`audio-player ${activeTrack ? 'visible' : ''} ${isPlayerCollapsed ? 'collapsed' : ''}`}>
       <div
         className="chevron-button"
         onClick={togglePlayerPosition}
       >
-        <FontAwesomeIcon icon={isPlayerCollapsed ? faChevronDown : faChevronUp} />
+        <FontAwesomeIcon icon={isPlayerCollapsed ? faChevronUp : faChevronDown} />
       </div>
       <div className="top-row">
         <div className={`left-half`}>

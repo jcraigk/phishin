@@ -47,15 +47,13 @@ const Layout = ({ user, onLogout }) => {
           openModal }} />
       </main>
       <Footer />
-      {activeTrack && (
-        <Player
+      <Player
           currentPlaylist={currentPlaylist}
           activeTrack={activeTrack}
           setActiveTrack={setActiveTrack}
           audioRef={audioRef}
           setCurrentTime={setCurrentTime}
-        />
-      )}
+      />
       <AppModal
         isOpen={isModalOpen}
         onRequestClose={closeModal}
