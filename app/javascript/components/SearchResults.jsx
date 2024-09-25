@@ -4,18 +4,18 @@ import Tags from "./Tags";
 import Shows from "./Shows";
 import Songs from "./Songs";
 import Venues from "./Venues";
+import Playlists from "./Playlists";
 
 const SearchResults = ({ results, term }) => {
   const {
     songs,
-    tracks: initialTracks,
+    tracks,
     tags,
     venues,
+    playlists,
     exact_show: initialExactShow,
     other_shows: initialOtherShows,
   } = results;
-
-  const [tracks, setTracks] = useState(initialTracks || []);
   const [otherShows, setOtherShows] = useState(initialOtherShows || []);
   const [exactShows, setExactShows] = useState(initialExactShow ? [initialExactShow] : []);
 
@@ -45,7 +45,7 @@ const SearchResults = ({ results, term }) => {
       {tracks?.length > 0 && (
         <>
           <h2 className="title">Tracks</h2>
-          <Tracks tracks={tracks} setTracks={setTracks} highlight={term} />
+          <Tracks tracks={tracks} setTracks={() => {}} highlight={term} />
         </>
       )}
 
@@ -63,7 +63,14 @@ const SearchResults = ({ results, term }) => {
         </>
       )}
 
-      {!exactShows?.length && !otherShows?.length && !songs?.length && !tracks?.length && !tags?.length && !venues?.length && (
+      {playlists?.length > 0 && (
+        <>
+          <h2 className="title">Playlists</h2>
+          <Playlists playlists={playlists} highlight={term} />
+        </>
+      )}
+
+      {!exactShows?.length && !otherShows?.length && !songs?.length && !tracks?.length && !tags?.length && !venues?.length && !playlists?.length && (
         <h2 className="title">Sorry, no results found.</h2>
       )}
     </>

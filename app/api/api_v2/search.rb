@@ -14,7 +14,7 @@ class ApiV2::Search < ApiV2::Base
                desc: "Search term (at least 3 characters long)"
       optional :scope,
                type: String,
-               values: %w[all shows songs tags tracks venues],
+               values: SearchService::SCOPES,
                default: "all",
                desc: "Specifies the area of the site to search"
     end
@@ -27,7 +27,8 @@ class ApiV2::Search < ApiV2::Base
         results,
         with: ApiV2::Entities::SearchResults,
         liked_track_ids: fetch_liked_track_ids(results[:tracks]),
-        liked_show_ids: fetch_liked_show_ids(all_matched_shows)
+        liked_show_ids: fetch_liked_show_ids(all_matched_shows),
+        liked_playlists_ids: fetch_liked_playlist_ids(results[:playlists])
     end
   end
 
@@ -52,6 +53,15 @@ class ApiV2::Search < ApiV2::Base
       Like.where(
         likable_type: "Show",
         likable_id: shows.map(&:id),
+        user_id: current_user.id
+      ).pluck(:likable_id)
+    end
+
+    def fetch_liked_playlist_ids(playlists)
+      return [] unless current_user
+      Like.where(
+        likable_type: "Playlist",
+        likable_id: playlists.map(&:id),
         user_id: current_user.id
       ).pluck(:likable_id)
     end

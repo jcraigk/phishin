@@ -51,7 +51,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
               <div className="rightside-group">
                 <span className="rightside-primary">{formatDurationShow(show.duration)}</span>
                 <span className="rightside-secondary">
-                  <LikeButton likable={show} />
+                  <LikeButton likable={show} type="Show" />
                 </span>
                 <span className="rightside-menu">
                   <ShowContextMenu show={show} adjacentLinks={false} />

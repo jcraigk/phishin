@@ -9,20 +9,7 @@ const AppRouter = (props) => {
   const { setAlert, setNotice } = useFeedback();
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const jwt = localStorage.getItem("jwt");
-      const username = localStorage.getItem("username");
-      const usernameUpdatedAt = localStorage.getItem("usernameUpdatedAt");
-      const email = localStorage.getItem("email");
-
-      if (jwt && username && usernameUpdatedAt && email) {
-        setUser({ jwt, username, usernameUpdatedAt, email });
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (props.jwt && props.username && props.username_updated_at && props.email) {
+    if (props.jwt) {
       handleLogin({
         jwt: props.jwt,
         username: props.username,
@@ -30,7 +17,18 @@ const AppRouter = (props) => {
         email: props.email,
       });
     }
-  }, [props.jwt, props.username, props.username_updated_at, props.email]);
+
+    if (typeof window !== "undefined") {
+      const jwt = localStorage.getItem("jwt");
+      const username = localStorage.getItem("username");
+      const usernameUpdatedAt = localStorage.getItem("usernameUpdatedAt");
+      const email = localStorage.getItem("email");
+
+      if (jwt && username && email) {
+        setUser({ jwt, username, usernameUpdatedAt, email });
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (props.notice) {

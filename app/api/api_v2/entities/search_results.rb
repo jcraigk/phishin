@@ -103,4 +103,19 @@ class ApiV2::Entities::SearchResults < ApiV2::Entities::Base
         "Each tag object includes the tag name and details. Returns an empty " \
         "array if no tags match."
     }
+
+    expose(
+      :playlists,
+      default: [],
+      documentation: {
+        type: "Array[Object]",
+        desc: \
+          "An array of playlists whose name matches the search term. " \
+          "Does not include track information."
+      }
+    ) do |obj, opts|
+      ApiV2::Entities::Playlist.represent \
+        obj[:playlists],
+        opts.merge(liked_by_user: nil, exclude_entries: true)
+    end
 end

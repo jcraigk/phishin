@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :playlist do
     sequence(:name) { |n| "Playlist #{n}" }
     slug { name.downcase.gsub(/[^a-z0-9]/, '-') }
-    self.public { true }
+    published { true }
 
     user
 

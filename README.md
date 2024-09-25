@@ -1,22 +1,23 @@
 TODO
  * Opengraph (helmet context)
- * Playlist placeholder page (or whole thing...)
- * Multi-teases don't separate with comma in dialog (https://jcktest.ngrok.io/2024-08-15)
- * Feature specs
- * API specs
- * One final pass on widths of content sections (color the borders)
- * Test on iphone and tablet (including mediasession)
+ * SPECS: Feature
+ * SPECS: API
+ * TEST: final pass on widths of content sections (color the borders)
+   * /search is wide when showing days of year
+ * TEST: on iphone and tablet (including mediasession)
 
 PLAYLISTS
- * Change username once per year
  * Playlists
    * Browse public listing
    * My playlists (including liked)
    * Create/edit playlist
  * Context menus: Add to Playlist
- * Search playlists (new scope)
 
  BACKBURNER
+  * Have a "display more..." on search results if > 20 per category
+  * obj. can be replace with _1 in entities
+  * Loading spinner on search results page?
+  * DRY fetch_liked_* from API. Also combine 3 lookups into one (don't separate by type)
   * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
   * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
   * lyrical excerpts?

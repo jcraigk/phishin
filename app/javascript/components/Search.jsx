@@ -64,6 +64,7 @@ const Search = () => {
       <div className="select">
         <select value={scope} onChange={(e) => setScope(e.target.value)}>
           <option value="all">All</option>
+          <option value="playlists">Playlists</option>
           <option value="shows">Shows</option>
           <option value="songs">Songs</option>
           <option value="tags">Tags</option>

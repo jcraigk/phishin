@@ -86,7 +86,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_25_052955) do
     t.datetime "updated_at", precision: nil, null: false
     t.integer "duration", default: 0
     t.integer "likes_count", default: 0
-    t.boolean "public", default: false
+    t.boolean "published", default: false
     t.index ["duration"], name: "index_playlists_on_duration"
     t.index ["name"], name: "index_playlists_on_name", unique: true
     t.index ["slug"], name: "index_playlists_on_slug", unique: true

@@ -101,10 +101,12 @@ class ApiV2::Playlists < ApiV2::Base
                desc: "Slug of the playlist"
       requires :name,
                type: String,
-               desc: "Updated name of the playlist"
-      requires :public,
+               desc: "Name of the playlist"
+      requires :published,
                type: Boolean,
-               desc: "Updated public flag value (true to make public, false to make private)"
+               desc: \
+                "Published flag (true to make browseable/searchable " \
+                "by public users, false to make private)"
       requires :track_ids,
                type: Array[Integer],
                desc: "Array of track IDs that make up the playlist"
@@ -134,7 +136,7 @@ class ApiV2::Playlists < ApiV2::Base
       playlist.update!(
         name: params[:name],
         slug: params[:slug],
-        public: params[:public],
+        published: params[:published],
         playlist_tracks_attributes: track_attributes
       )
       present playlist, with: ApiV2::Entities::Playlist
