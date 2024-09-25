@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Outlet, useNavigation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -6,7 +6,7 @@ import Loader from "./Loader";
 import Player from "./Player";
 import AppModal from "./AppModal";
 
-const Layout = ({ user, onLogout }) => {
+const Layout = ({ user, setUser, onLogout }) => {
   const navigation = useNavigation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
@@ -43,7 +43,9 @@ const Layout = ({ user, onLogout }) => {
           audioRef,
           currentTime,
           setCurrentTime,
-          openModal }} />
+          openModal,
+          setUser
+        }} />
       </main>
       <Footer />
       <Player

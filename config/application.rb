@@ -33,6 +33,7 @@ module Phishin
       else
         config.base_url
       end
+    config.username_cooldown = 1.year
 
     # Rails config
     config.load_defaults 7.2

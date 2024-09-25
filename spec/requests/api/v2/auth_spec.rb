@@ -186,4 +186,35 @@ RSpec.describe "API v2 Auth" do
       end
     end
   end
+
+  describe "PATCH /auth/change_username/:username" do
+    context "when the username can be changed" do
+      it "updates the username and returns the user information" do
+        patch_api_authed(user, "/auth/change_username/newusername")
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:username]).to eq("newusername")
+        expect(user.reload.username_updated_at).to be_within(1.minute).of(Time.current)
+      end
+    end
+
+    context "when the username cannot be changed (cooldown period)" do
+      before { user.update(username_updated_at: 6.months.ago) }
+
+      it "returns a 403 error" do
+        patch_api_authed(user, "/auth/change_username/newusername")
+        expect(response).to have_http_status(:forbidden)
+        json = JSON.parse(response.body)
+        expect(json["message"]).to eq("Username can only be changed once per year")
+      end
+    end
+
+    context "when the update fails" do
+      it "returns a 422 error" do
+        allow_any_instance_of(User).to receive(:update).and_return(false)
+        patch_api_authed(user, "/auth/change_username/invalidusername")
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+  end
 end

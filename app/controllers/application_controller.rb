@@ -12,9 +12,13 @@ class ApplicationController < ActionController::Base
       # OAuth login
       jwt: session[:jwt],
       username: session[:username],
+      username_updated_at: session[:username_updated_at],
       email: session[:email],
       alert: flash[:alert],
       notice: flash[:notice],
+
+      # Misc
+      username_cooldown: App.username_cooldown.to_i,
 
       # Third party integrations
       mapbox_token: ENV.fetch("MAPBOX_TOKEN", nil)
@@ -23,6 +27,7 @@ class ApplicationController < ActionController::Base
     # Clear session after OAuth redirect
     session.delete(:jwt)
     session.delete(:username)
+    session.delete(:username_updated_at)
     session.delete(:email)
 
     # react_app = react_component_hash("App", prerender: false, props: @props)

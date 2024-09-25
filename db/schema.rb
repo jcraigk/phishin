@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_24_232957) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_25_052955) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
@@ -236,6 +236,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_24_232957) do
     t.integer "access_count_to_reset_password_page", default: 0
     t.string "remember_me_token"
     t.datetime "remember_me_token_expires_at"
+    t.datetime "username_updated_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["remember_me_token"], name: "index_users_on_remember_me_token"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
