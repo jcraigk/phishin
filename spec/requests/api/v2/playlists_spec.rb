@@ -67,7 +67,7 @@ RSpec.describe "API v2 Playlists" do
           params: {
             name: "Winter Jams #2",
             slug: "winter-jams-2",
-            public: false,
+            published: false,
             track_ids: [ track2.id, track3.id ],
             starts_at_seconds: [0, 15],
             ends_at_seconds: [120, 180]
@@ -79,7 +79,7 @@ RSpec.describe "API v2 Playlists" do
 
         expect(json[:name]).to eq("Winter Jams #2")
         expect(json[:slug]).to eq("winter-jams-2")
-        expect(json[:public]).to eq(false)
+        expect(json[:published]).to eq(false)
         expect(json[:entries].size).to eq(2)
         expect(json[:entries].map { _1[:track][:id] }).to eq([ track2.id, track3.id ])
         expect(json[:entries].map { _1[:starts_at_second] }).to eq([0, 15])
@@ -92,7 +92,7 @@ RSpec.describe "API v2 Playlists" do
           params: {
             name: "WJ",
             slug: "wj",
-            public: true,
+            published: true,
             track_ids: [],
             starts_at_seconds: [],
             ends_at_seconds: []

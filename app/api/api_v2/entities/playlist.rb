@@ -32,6 +32,7 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
   expose \
     :entries,
     using: ApiV2::Entities::PlaylistTrack,
+    unless: ->(_, opts) { opts[:exclude_entries] },
     documentation: {
       type: "Array",
       desc: \
@@ -67,10 +68,12 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
     }
 
   expose \
-    :public,
+    :published,
     documentation: {
       type: "Boolean",
-      desc: "Indicates if the playlist is listed publicly for other users to browse"
+      desc: \
+        "Indicates if the playlist is listed publicly " \
+        "for other users to browse and search"
     }
 
   expose(

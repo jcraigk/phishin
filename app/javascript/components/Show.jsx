@@ -77,7 +77,7 @@ const Show = ({ trackSlug }) => {
       <hr />
 
       <div className="sidebar-control-wrapper">
-        <LikeButton likable={show} />
+        <LikeButton likable={show} type="Show" />
         <ShowContextMenu show={show} isLeft={true} />
       </div>
 

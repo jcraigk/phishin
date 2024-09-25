@@ -5,6 +5,7 @@ class SearchService < BaseService
   param :scope, default: proc { "all" }
 
   LIMIT = 50
+  SCOPES = %w[all playlists shows songs tags tracks venues]
 
   def initialize(term, scope = nil)
     super(term, scope || "all") # Ensure scope defaults to "all" if nil
@@ -12,6 +13,7 @@ class SearchService < BaseService
 
   def call
     return if term_too_short?
+    # binding.irb
     search_results
   end
 
@@ -48,6 +50,8 @@ class SearchService < BaseService
       { tags:, show_tags:, track_tags: }
     when "tracks"
       { tracks: tracks_filtered_by_songs }
+    when "playlists"
+      { playlists: }
     else
       {
         songs:,
@@ -55,7 +59,8 @@ class SearchService < BaseService
         tags:,
         show_tags:,
         track_tags:,
-        tracks: tracks_filtered_by_songs
+        tracks: tracks_filtered_by_songs,
+        playlists:
       }
     end
   end
@@ -128,8 +133,6 @@ class SearchService < BaseService
     @song_titles ||= songs.map(&:title)
   end
 
-  # Return only tracks that don't have a song title that matches the search term
-  # since those would produce essentially duplicate search results
   def tracks_filtered_by_songs
     tracks_by_title.reject { |track| track.title.in?(song_titles) }
   end
@@ -138,5 +141,13 @@ class SearchService < BaseService
     Track.where("title ILIKE ?", "%#{term}%")
          .order(title: :asc)
          .limit(LIMIT)
+  end
+
+  # TODO: add published back here
+  def playlists
+    Playlist.includes(:user)
+            .where("name ILIKE :term", term: "%#{term}%")
+            .order(name: :asc)
+            .limit(LIMIT)
   end
 end

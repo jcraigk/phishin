@@ -4,12 +4,10 @@ import { useFeedback } from "./FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
-const LikeButton = ({ likable }) => {
+const LikeButton = ({ likable, type }) => {
   const { setAlert, setNotice } = useFeedback();
   const [likedByUser, setLikedByUser] = useState(likable.liked_by_user);
   const [likesCount, setLikesCount] = useState(likable.likes_count);
-
-  const type = likable.date ? "Show" : "Track";
 
   const handleLikeToggle = async (e) => {
     e.stopPropagation();
@@ -25,7 +23,7 @@ const LikeButton = ({ likable }) => {
 
     const result = await toggleLike({
       id: likable.id,
-      type, // Dynamically use the inferred type
+      type,
       isLiked: likedByUser,
       jwt,
     });

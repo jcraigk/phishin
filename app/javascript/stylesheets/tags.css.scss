@@ -23,3 +23,9 @@
   background-color: $control-gray;
   color: $text-gray;
 }
+
+ul.note-list {
+  list-style-type: disc;
+  margin-left: 20px;
+  padding-left: 0;
+}

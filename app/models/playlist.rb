@@ -21,6 +21,8 @@ class Playlist < ApplicationRecord
             uniqueness: true
   validate :validate_track_count
 
+  scope :published, -> { where(published: true) }
+
   def as_json_api
     {
       slug:,

@@ -28,11 +28,11 @@ RSpec.describe SearchService do
         other_shows: [ show2, show3 ],
         songs: [],
         venues: [],
-        tours: [],
         tags: [ tag ],
         show_tags: [ show_tag ],
         track_tags: [ track_tag ],
-        tracks: []
+        tracks: [],
+        playlists: []
       }
     end
     let!(:show1) { create(:show, date:) }
@@ -73,11 +73,11 @@ RSpec.describe SearchService do
         other_shows: [],
         songs: [ song1, song2 ],
         venues: [ venue1, venue3 ],
-        tours: [ tour3, tour1 ],
         tags: [ tag2, tag1 ],
         show_tags: [ show_tag ],
         track_tags: [ track_tag ],
-        tracks: [ track ]
+        tracks: [ track ],
+        playlists: []
       }
     end
     let!(:show_tag) { create(:show_tag, notes: "... blah #{term} ...") }
@@ -85,15 +85,12 @@ RSpec.describe SearchService do
     let!(:song2) { create(:song, title: 'Hoodenstein') }
     let!(:tag1) { create(:tag, name: 'Hood Tag') }
     let!(:tag2) { create(:tag, name: 'All Hood') }
-    let!(:tour1) { create(:tour, name: 'Hood Tour') }
-    let!(:tour3) { create(:tour, name: 'Another Hood Tour') }
     let!(:track_tag) { create(:track_tag, notes: "... blah blah #{term} blah..") }
     let!(:venue1) { create(:venue, name: 'Hood\'s Place') }
     let!(:venue3) { create(:venue, name: 'Hoody') }
     let!(:track) { create(:track, title: "Foo #{term.upcase}") }
 
     before do
-      create(:tour, name: '1995 Summer Tour')
       create(:venue, name: 'Nectar\'s')
       create(:song, title: 'Bathtub Gin')
       create(:tag, name: 'Something Else')
@@ -130,6 +127,18 @@ RSpec.describe SearchService do
     end
     let!(:show) { create(:show, date: Date.today) }
     let!(:other_show) { create(:show, date: Date.today - 1.year) }
+
+    include_examples 'expected results'
+  end
+
+  context 'with scope set to "playlists"' do
+    let(:term) { 'hood' }
+    let(:scope) { 'playlists' }
+    let(:expected_results) { { playlists: [ playlist1, playlist2 ] } }
+    let!(:playlist1) { create(:playlist, name: "A Playlist #{term}") }
+    let!(:playlist2) { create(:playlist, name: "B #{term} Greatest Hits") }
+
+    before { create(:playlist, name: "Other Playlist") }
 
     include_examples 'expected results'
   end

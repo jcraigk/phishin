@@ -11,6 +11,7 @@ const Layout = ({ user, setUser, onLogout }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState(null);
   const [currentPlaylist, setCurrentPlaylist] = useState([]);
+  const [customPlaylist, setCustomPlaylist] = useState(null);
   const [activeTrack, setActiveTrack] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
   const audioRef = useRef(null);
@@ -38,6 +39,8 @@ const Layout = ({ user, setUser, onLogout }) => {
       <main className={activeTrack ? 'with-player' : ''}>
         <Outlet context={{
           currentPlaylist,
+          customPlaylist,
+          setCustomPlaylist,
           activeTrack,
           playTrack,
           audioRef,
