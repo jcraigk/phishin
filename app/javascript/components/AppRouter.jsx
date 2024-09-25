@@ -12,19 +12,25 @@ const AppRouter = (props) => {
     if (typeof window !== "undefined") {
       const jwt = localStorage.getItem("jwt");
       const username = localStorage.getItem("username");
+      const usernameUpdatedAt = localStorage.getItem("usernameUpdatedAt");
       const email = localStorage.getItem("email");
 
-      if (jwt && username && email) {
-        setUser({ jwt, username, email });
+      if (jwt && username && usernameUpdatedAt && email) {
+        setUser({ jwt, username, usernameUpdatedAt, email });
       }
     }
   }, []);
 
   useEffect(() => {
-    if (props.jwt && props.username && props.email) {
-      handleLogin({ jwt: props.jwt, username: props.username, email: props.email });
+    if (props.jwt && props.username && props.username_updated_at && props.email) {
+      handleLogin({
+        jwt: props.jwt,
+        username: props.username,
+        usernameUpdatedAt: props.username_updated_at,
+        email: props.email,
+      });
     }
-  }, [props.jwt, props.username, props.email]);
+  }, [props.jwt, props.username, props.username_updated_at, props.email]);
 
   useEffect(() => {
     if (props.notice) {
@@ -39,6 +45,7 @@ const AppRouter = (props) => {
     if (typeof window !== "undefined") {
       localStorage.setItem("jwt", userData.jwt);
       localStorage.setItem("username", userData.username);
+      localStorage.setItem("usernameUpdatedAt", userData.usernameUpdatedAt);
       localStorage.setItem("email", userData.email);
 
       const redirectPath = localStorage.getItem("redirectAfterLogin") || "/";
@@ -52,6 +59,7 @@ const AppRouter = (props) => {
     if (typeof window !== "undefined") {
       localStorage.removeItem("jwt");
       localStorage.removeItem("username");
+      localStorage.removeItem("usernameUpdatedAt");
       localStorage.removeItem("email");
     }
     setUser(null);
@@ -62,7 +70,7 @@ const AppRouter = (props) => {
 
   return (
     <RouterProvider
-      router={RouterComponent({ ...props, user, handleLogin, handleLogout })}
+      router={RouterComponent({ ...props, user, setUser, handleLogin, handleLogout })}
     />
   );
 };

@@ -1,13 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../images/logo-350.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendarAlt, faMusic, faMapMarkerAlt, faStar, faCalendarDay, faMap, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendarAlt, faMusic, faMapMarkerAlt, faStar, faCalendarDay, faMap, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark, faRightToBracket, faGear } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = ({ user, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  // const [currentUser, setCurrentUser] = useState(user);
   const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   setCurrentUser(user);
+  // }, [user]);
 
   // Fix for bulma dropdowns not closing from navbar
   const closeMenus = () => {
@@ -19,10 +24,6 @@ const Navbar = ({ user, onLogout }) => {
         dropdown.style.display = '';
       }, 200);
     });
-  };
-
-  const handleLogout = () => {
-    onLogout();
   };
 
   const handleSearchSubmit = (e) => {
@@ -195,27 +196,27 @@ const Navbar = ({ user, onLogout }) => {
                 )}
 
                 {user && (
-
                   <div className="dropdown is-hoverable navbar-item">
                     <div className="dropdown-trigger user-dropdown">
                       <button className="button">
-                        <span className="icon">
-                          <FontAwesomeIcon icon={faUser} />
-                        </span>
+                        <FontAwesomeIcon icon={faUser} className="icon" />
                         <span>{user.username}</span>
                       </button>
                     </div>
                     <div className="dropdown-menu" role="menu">
                       <div className="dropdown-content">
+                        <Link to="/settings" className="navbar-item" onClick={closeMenus}>
+                          <FontAwesomeIcon icon={faGear} className="icon" />
+                          Settings
+                        </Link>
                         <a href="#logout" className="navbar-item" onClick={(e) => {
                           e.preventDefault();
-                          handleLogout();
+                          onLogout();
                         }}>
-                          <span className="icon">
-                            <FontAwesomeIcon icon={faCircleXmark} />
-                          </span>
+                          <FontAwesomeIcon icon={faCircleXmark} className="icon" />
                           Logout
                         </a>
+
                       </div>
                     </div>
                   </div>

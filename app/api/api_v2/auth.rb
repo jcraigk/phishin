@@ -119,6 +119,41 @@ class ApiV2::Auth < ApiV2::Base
         error!({ message: "Password reset failed" }, 422)
       end
     end
+
+    desc "Change username" do
+      detail "Change the current user's username, restricted to once per year"
+      success [
+        {
+          code: 200,
+          model: ApiV2::Entities::User,
+          message: "Username changed successfully" }
+      ]
+      failure [
+        [ 403, "Forbidden - Username can only be changed once per year" ],
+        [ 422, "Unprocessable Entity - Username change failed" ]
+      ]
+    end
+    params do
+      requires :username, type: String, desc: "New username"
+    end
+    patch "change_username/:username" do
+      authenticate!
+      if current_user.username_updated_at.present? &&
+         current_user.username_updated_at > App.username_cooldown.ago
+        error!({ message: "Username can only be changed once per year" }, 403)
+      end
+
+      if current_user.update(username: params[:username], username_updated_at: Time.current)
+        status 200
+        present current_user, with: ApiV2::Entities::User
+      else
+        message =
+          "Username may contain only letters, numbers, and " \
+          "underscores, must be unique, and must be " \
+          "4 to 15 characters long"
+        error!({ message: }, 422)
+      end
+    end
   end
 
   helpers do

@@ -19,6 +19,7 @@ class Oauth::SorceryController < ApplicationController
   def store_user_data_in_session(user)
     session[:jwt] = jwt_for(user)
     session[:username] = user.username
+    session[:username_updated_at] = user.username_updated_at
     session[:email] = user.email
   end
 

@@ -20,4 +20,12 @@ class ApiV2::Entities::User < ApiV2::Entities::Base
       type: "String",
       desc: "Timestamp of when the user was created"
     }
+
+  expose \
+    :username_updated_at,
+    format_with: :iso8601,
+    documentation: {
+      type: "String",
+      desc: "Timestamp of when the user's username was last updated"
+    }
 end

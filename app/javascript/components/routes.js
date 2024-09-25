@@ -1,9 +1,11 @@
 import React from "react";
 
+// Content pages with sidebar
 import DynamicRoute, { dynamicLoader } from "./DynamicRoute";
 import Eras, { erasLoader } from './Eras';
 import Layout from "./Layout";
 import MapView from "./MapView";
+import MissingContentReport, { missingContentLoader } from "./MissingContentReport";
 import MyShows, { myShowsLoader } from "./MyShows";
 import MyTracks, { myTracksLoader } from "./MyTracks";
 import Search from "./Search";
@@ -17,8 +19,8 @@ import TopShows, { topShowsLoader } from "./TopShows";
 import TopTracks, { topTracksLoader } from "./TopTracks";
 import VenueIndex, { venueIndexLoader } from "./VenueIndex";
 import VenueShows, { venueShowsLoader } from "./VenueShows";
-import MissingContentReport, { missingContentLoader } from "./MissingContentReport";
 
+// Simple pages with no sidebar
 import ApiDocs from "./pages/ApiDocs";
 import ContactInfo from "./pages/ContactInfo";
 import ErrorPage from "./pages/ErrorPage";
@@ -30,6 +32,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Signup from "./pages/Signup";
 import TaginProject from "./pages/TaginProject";
 import TermsOfService from "./pages/TermsOfService";
+import Settings from "./pages/Settings";
 
 const routes = (props) => [
   {
@@ -171,6 +174,10 @@ const routes = (props) => [
       {
         path: "/search",
         element: <Search />,
+      },
+      {
+        path: "/settings",
+        element: <Settings setUser={props.setUser} usernameCooldown={props.username_cooldown} />,
       },
       {
         path: "*",

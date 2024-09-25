@@ -16,7 +16,7 @@ module ApiHelper
     { "X-Auth-Token" => token }
   end
 
-  %i[ get post put delete ].each do |http_method|
+  %i[ get patch post put delete ].each do |http_method|
     define_method("#{http_method}_api") do |path, params: {}, headers: {}, version: 2|
       # headers.merge!(auth_header)
       send(http_method, "/api/v#{version}#{path}", params:, headers:)

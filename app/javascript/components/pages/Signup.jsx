@@ -18,7 +18,6 @@ const Signup = ({ handleLogin }) => {
 
     fetch("/api/v2/auth/create_user", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         username,
         email,
