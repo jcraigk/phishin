@@ -7,7 +7,7 @@ RSpec.describe Playlist do
 
   it { is_expected.to have_many(:tracks) }
   it { is_expected.to have_many(:playlist_tracks) }
-  it { is_expected.to have_many(:playlist_bookmarks) }
+  it { is_expected.to have_many(:likes).dependent(:destroy) }
 
   it { is_expected.to belong_to(:user) }
 

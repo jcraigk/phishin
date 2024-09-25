@@ -2,7 +2,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
   expose \
     :id,
     documentation: {
-      type: "String",
+      type: "Integer",
       desc: "ID of the show"
     }
 

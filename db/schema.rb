@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_18_023447) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_24_232957) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
@@ -67,17 +67,12 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_18_023447) do
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
-  create_table "playlist_bookmarks", id: :serial, force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "playlist_id"
-    t.index ["playlist_id"], name: "index_playlist_bookmarks_on_playlist_id"
-    t.index ["user_id"], name: "index_playlist_bookmarks_on_user_id"
-  end
-
   create_table "playlist_tracks", id: :serial, force: :cascade do |t|
     t.integer "playlist_id"
     t.integer "track_id"
     t.integer "position"
+    t.integer "starts_at_second"
+    t.integer "ends_at_second"
     t.index ["playlist_id"], name: "index_playlist_tracks_on_playlist_id"
     t.index ["position", "playlist_id"], name: "index_playlist_tracks_on_position_and_playlist_id", unique: true
     t.index ["track_id"], name: "index_playlist_tracks_on_track_id"
@@ -90,6 +85,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_18_023447) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.integer "duration", default: 0
+    t.integer "likes_count", default: 0
+    t.boolean "public", default: false
     t.index ["duration"], name: "index_playlists_on_duration"
     t.index ["name"], name: "index_playlists_on_name", unique: true
     t.index ["slug"], name: "index_playlists_on_slug", unique: true

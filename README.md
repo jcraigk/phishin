@@ -1,22 +1,18 @@
 TODO
  * Opengraph (helmet context)
  * Playlist placeholder page (or whole thing...)
+ * Multi-teases don't separate with comma in dialog (https://jcktest.ngrok.io/2024-08-15)
+ * Feature specs
+ * API specs
+ * One final pass on widths of content sections (color the borders)
+ * Test on iphone and tablet (including mediasession)
 
-NICE TO HAVE:
-  * Feature specs
-  * API spec coverage
-  * One final pass on widths of content sections
-  * Test on iphone and tablet (including mediasession)
-
-PLAYLIST
- * API: change username once per year
- * Change username page
+PLAYLISTS
+ * Change username once per year
  * Playlists
-   * Browse public
-   * Bookmarked playlists
-   * My playlists
+   * Browse public listing
+   * My playlists (including liked)
    * Create/edit playlist
-     * Option to list publicly (add to database/API)
  * Context menus: Add to Playlist
  * Search playlists (new scope)
 
@@ -32,6 +28,7 @@ PLAYLIST
   * Reset usernames once per year (users who login w/google and share playlists)
   * Per page controls
   * can LayoutWrapper and Layout be combined? or renamed?
+  * Reduce waveform filesize?
 
 TEST URLS
 https://jcktest.ngrok.io/1990-06-16/you-enjoy-myself
@@ -43,7 +40,7 @@ https://jcktest.ngrok.io/1990-06-16/you-enjoy-myself
 
 **Phish.in** is an open source archive of live Phish audience recordings.
 
-**Ruby on Rails** and **PostgreSQL** are used on the backend. There's a [web frontend](https://phish.in) for browsing and playing audio content as well as a [public API](https://phish.in/api-docs) for accessing content programmatically.
+**Ruby on Rails** and **PostgreSQL** are used on the backend. There's a [web frontend](https://phish.in) written in **React** for browsing and playing audio content as well as a [RESTful API](https://phish.in/api-docs) for accessing content programmatically.
 
 All audio is provided in MP3 format; more formats and sources may be made available at a later time. Files are served directly from the web server and cached via CloudFlare CDN.
 
@@ -89,7 +86,14 @@ Alternatively, if you prefer to develop completely in Docker, build and start th
 make up
 ```
 
-8. Open your browser and go to `http://localhost:3000/2017-08-06`. You should be able to view and play the full show.
+8. This project uses [React on Rails](https://github.com/shakacode/react_on_rails). Spin up the React development environment like this:
+
+```bash
+bin/shakapacker-dev-server
+SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch
+```
+
+9. Open your browser and go to `http://localhost:3000/2017-08-06`. You should be able to view and play the full show.
 
 
 ## Testing
