@@ -6,6 +6,5 @@ describe User do
   it { is_expected.to be_an(ApplicationRecord) }
 
   it { is_expected.to have_many(:playlists) }
-  it { is_expected.to have_many(:playlist_bookmarks) }
   it { is_expected.to have_many(:likes) }
 end

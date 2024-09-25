@@ -2,7 +2,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
   expose \
     :id,
     documentation: {
-      type: "String",
+      type: "Integer",
       desc: "ID of the track"
     }
 
@@ -143,9 +143,9 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     documentation: {
       is_array: true,
       desc: "Songs associated with the track"
-    } do |track, opts|
-      track.songs.map do |song|
-        songs_track = track.songs_tracks.find { |st| st.song_id == song.id }
+    } do |obj, opts|
+      obj.songs.map do |song|
+        songs_track = obj.songs_tracks.find { |st| st.song_id == song.id }
         ApiV2::Entities::Song.represent(song, opts.merge(songs_track:))
       end
   end

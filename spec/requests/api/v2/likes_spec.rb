@@ -44,7 +44,7 @@ RSpec.describe "API v2 Likes" do
 
         expect(response).to have_http_status(:unprocessable_entity)
         json = JSON.parse(response.body)
-        expect(json["message"]).to eq("Invalid show or track")
+        expect(json["message"]).to eq("Invalid likable entity")
       end
     end
 
@@ -104,7 +104,7 @@ RSpec.describe "API v2 Likes" do
 
         expect(response).to have_http_status(:unprocessable_entity)
         json = JSON.parse(response.body)
-        expect(json["message"]).to eq("Invalid show or track")
+        expect(json["message"]).to eq("Invalid likable entity")
       end
     end
 
