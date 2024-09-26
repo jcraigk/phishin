@@ -6,7 +6,6 @@ TODO
    * /search is wide when showing days of year
  * TEST: on iphone and tablet (including mediasession)
  * Create a published playlist in prod so index page isn't empty
- * anywhere we localStorage.getItem("jwt"), pass in user instead
 
 PLAYLISTS
  * Display/play a playlist at /play/:slug
@@ -14,6 +13,8 @@ PLAYLISTS
  * Context menus: Add to Playlist
 
  BACKBURNER
+  * Cleanup <span className="icon">
+  * "e" param to end playing a track (counterpart to "t")
   * Have a "display more..." on search results if > 20 per category
   * obj. can be replace with _1 in entities
   * Loading spinner on search results page?

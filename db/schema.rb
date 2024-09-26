@@ -74,8 +74,10 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_26_034415) do
     t.integer "starts_at_second"
     t.integer "ends_at_second"
     t.integer "duration"
+    t.index ["duration"], name: "index_playlist_tracks_on_duration"
     t.index ["playlist_id"], name: "index_playlist_tracks_on_playlist_id"
     t.index ["position", "playlist_id"], name: "index_playlist_tracks_on_position_and_playlist_id", unique: true
+    t.index ["position"], name: "index_playlist_tracks_on_position"
     t.index ["track_id"], name: "index_playlist_tracks_on_track_id"
   end
 
@@ -89,9 +91,13 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_26_034415) do
     t.integer "likes_count", default: 0
     t.boolean "published", default: false
     t.integer "tracks_count", default: 0
+    t.text "description"
     t.index ["duration"], name: "index_playlists_on_duration"
+    t.index ["likes_count"], name: "index_playlists_on_likes_count"
     t.index ["name"], name: "index_playlists_on_name", unique: true
     t.index ["slug"], name: "index_playlists_on_slug", unique: true
+    t.index ["tracks_count"], name: "index_playlists_on_tracks_count"
+    t.index ["updated_at"], name: "index_playlists_on_updated_at"
     t.index ["user_id"], name: "index_playlists_on_user_id"
   end
 

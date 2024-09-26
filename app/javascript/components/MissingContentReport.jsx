@@ -69,18 +69,20 @@ const MissingContentReport = () => {
                   </div>
                 )}
                 <li className="list-item">
-                  <span className="leftside-primary">{date}</span>
-                  <span className="leftside-secondary">{venue_name}</span>
-                  <span className="leftside-tertiary">{location}</span>
-                  <span className="rightside-group">
-                    {type === "Incomplete" ? (
-                      <Link to={`/${date}`} className="button is-small">
-                        {type}
-                      </Link>
-                    ) : (
-                      type
-                    )}
-                  </span>
+                  <div className="main-row">
+                    <span className="leftside-primary">{date}</span>
+                    <span className="leftside-secondary">{venue_name}</span>
+                    <span className="leftside-tertiary">{location}</span>
+                    <span className="rightside-group">
+                      {type === "Incomplete" ? (
+                        <Link to={`/${date}`} className="button is-small">
+                          {type}
+                        </Link>
+                      ) : (
+                        type
+                      )}
+                    </span>
+                  </div>
                 </li>
               </>
             );

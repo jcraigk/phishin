@@ -146,7 +146,7 @@ class SearchService < BaseService
   # TODO: add published back here
   def playlists
     Playlist.includes(:user)
-            .where("name ILIKE :term", term: "%#{term}%")
+            .where("name ILIKE :term OR description ILIKE :term", term: "%#{term}%")
             .order(name: :asc)
             .limit(LIMIT)
   end

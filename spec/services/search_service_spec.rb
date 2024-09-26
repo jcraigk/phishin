@@ -136,9 +136,9 @@ RSpec.describe SearchService do
     let(:scope) { 'playlists' }
     let(:expected_results) { { playlists: [ playlist1, playlist2 ] } }
     let!(:playlist1) { create(:playlist, name: "A Playlist #{term}") }
-    let!(:playlist2) { create(:playlist, name: "B #{term} Greatest Hits") }
+    let!(:playlist2) { create(:playlist, name: "B Greatest Hits", description: 'Some good hoods') }
 
-    before { create(:playlist, name: "Other Playlist") }
+    before { create(:playlist, name: "Other Playlist", description: "Nutn") }
 
     include_examples 'expected results'
   end

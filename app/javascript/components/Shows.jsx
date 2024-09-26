@@ -42,24 +42,25 @@ const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
               className={`list-item ${show.date === activeTrack?.show_date ? "active-item" : ""}`}
               onClick={() => handleShowClick(show.date)}
             >
-
-              {numbering && <span className="leftside-numbering">#{index + 1}</span>}
-              <span className="leftside-primary width-8">
-                {formatDate(show.date)}
-              </span>
-              <span className="leftside-secondary">{show.venue.name}</span>
-              <span className="leftside-tertiary">
-                <TagBadges tags={show.tags} parentId={show.date} />
-              </span>
-
-              <div className="rightside-group">
-                <span className="rightside-primary">{formatDurationShow(show.duration)}</span>
-                <span className="rightside-secondary">
-                  <LikeButton likable={show} type="Show" />
+              <div className="main-row">
+                {numbering && <span className="leftside-numbering">#{index + 1}</span>}
+                <span className="leftside-primary width-8">
+                  {formatDate(show.date)}
                 </span>
-                <span className="rightside-menu">
-                  <ShowContextMenu show={show} adjacentLinks={false} />
+                <span className="leftside-secondary">{show.venue.name}</span>
+                <span className="leftside-tertiary">
+                  <TagBadges tags={show.tags} parentId={show.date} />
                 </span>
+
+                <div className="rightside-group">
+                  <span className="rightside-primary">{formatDurationShow(show.duration)}</span>
+                  <span className="rightside-secondary">
+                    <LikeButton likable={show} type="Show" />
+                  </span>
+                  <span className="rightside-menu">
+                    <ShowContextMenu show={show} adjacentLinks={false} />
+                  </span>
+                </div>
               </div>
             </li>
           </React.Fragment>

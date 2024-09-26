@@ -5,6 +5,8 @@ import TagBadges from "./TagBadges";
 import HighlightedText from "./HighlightedText";
 import LikeButton from "./LikeButton";
 import TrackContextMenu from "./TrackContextMenu";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGuitar } from "@fortawesome/free-solid-svg-icons";
 
 const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackRefs, trackSlug }) => {
   const { playTrack, activeTrack } = useOutletContext();
@@ -46,44 +48,49 @@ const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackR
               onClick={() => handleTrackClick(track)}
               ref={trackRefs ? (el) => (trackRefs.current[index] = el) : null}
             >
-              {numbering && (
-                <span className="leftside-numbering">#{index + 1}</span>
-              )}
-              <span className="leftside-primary">
+              <div className="main-row">
+                {numbering && (
+                  <span className="leftside-numbering">#{index + 1}</span>
+                )}
+                <span className="leftside-primary">
+                  {
+                    !showView && (
+                      <span className="show-badge">
+                        <FontAwesomeIcon icon={faGuitar} className="mr-1" />
+                        <Link
+                          className="date-link"
+                          to={`/${track.show_date}/${track.slug}`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {formatDate(track.show_date)}
+                        </Link>
+                      </span>
+                    )
+                  }
+                  <HighlightedText
+                    text={track.title}
+                    highlight={highlight}
+                  />
+                </span>
                 {
                   !showView && (
-                    <Link
-                      className="date-link"
-                      to={`/${track.show_date}/${track.slug}`}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {formatDate(track.show_date)}
-                    </Link>
+                    <span className="leftside-secondary">
+                      {track.venue_location}
+                    </span>
                   )
                 }
-                <HighlightedText
-                  text={track.title}
-                  highlight={highlight}
-                />
-              </span>
-              {
-                !showView && (
-                  <span className="leftside-secondary">
-                    {track.venue_location}
+                <span className="leftside-tertiary">
+                  <TagBadges tags={track.tags} parentId={track.id} />
+                </span>
+                <div className="rightside-group">
+                  <span className="rightside-primary">{formatDurationTrack(track.duration)}</span>
+                  <span className="rightside-secondary">
+                    <LikeButton likable={track} type="Track" />
                   </span>
-                )
-              }
-              <span className="leftside-tertiary">
-                <TagBadges tags={track.tags} parentId={track.id} />
-              </span>
-              <div className="rightside-group">
-                <span className="rightside-primary">{formatDurationTrack(track.duration)}</span>
-                <span className="rightside-secondary">
-                  <LikeButton likable={track} type="Track" />
-                </span>
-                <span className="rightside-menu">
-                  <TrackContextMenu track={track} />
-                </span>
+                  <span className="rightside-menu">
+                    <TrackContextMenu track={track} />
+                  </span>
+                </div>
               </div>
             </li>
           </React.Fragment>

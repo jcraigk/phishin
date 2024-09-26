@@ -9,15 +9,17 @@ const Songs = ({ songs, highlight }) => {
       {songs.map((song) => (
         <Link to={`/songs/${song.slug}`} key={song.slug} className="list-item-link">
           <li className="list-item">
-            <span className="leftside-primary">
-              <HighlightedText text={song.title} highlight={highlight} />
-            </span>
-            <span className="leftside-secondary">
-              {song.original ? "Original" : "Cover"}
-            </span>
-            <span className="rightside-group">
-              {formatNumber(song.tracks_count, 'track')}
-            </span>
+            <div className="main-row">
+              <span className="leftside-primary">
+                <HighlightedText text={song.title} highlight={highlight} />
+              </span>
+              <span className="leftside-secondary">
+                {song.original ? "Original" : "Cover"}
+              </span>
+              <span className="rightside-group">
+                {formatNumber(song.tracks_count, 'track')}
+              </span>
+            </div>
           </li>
         </Link>
       ))}

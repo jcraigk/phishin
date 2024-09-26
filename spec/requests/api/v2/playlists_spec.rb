@@ -9,6 +9,7 @@ RSpec.describe "API v2 Playlists" do
       :playlist,
       slug: "summer-jams",
       name: "Summer Jams",
+      description: "The best summer jams",
       user:,
       tracks_count: 2
   end
@@ -35,7 +36,12 @@ RSpec.describe "API v2 Playlists" do
         post_api_authed(
           user,
           "/playlists",
-          params: { name: "Road Trip", slug: "road-trip", track_ids: [ track1.id, track2.id ] }
+          params: {
+            name: "Road Trip",
+            description: "Road trip playlist",
+            slug: "road-trip",
+            track_ids: [ track1.id, track2.id ]
+        }
         )
 
         expect(response).to have_http_status(:created)
@@ -66,6 +72,7 @@ RSpec.describe "API v2 Playlists" do
           "/playlists/#{playlist.id}",
           params: {
             name: "Winter Jams #2",
+            description: "Winter jams playlist",
             slug: "winter-jams-2",
             published: false,
             track_ids: [ track2.id, track3.id ],
@@ -78,6 +85,7 @@ RSpec.describe "API v2 Playlists" do
         json = JSON.parse(response.body, symbolize_names: true)
 
         expect(json[:name]).to eq("Winter Jams #2")
+        expect(json[:description]).to eq("Winter jams playlist")
         expect(json[:slug]).to eq("winter-jams-2")
         expect(json[:published]).to eq(false)
         expect(json[:entries].size).to eq(2)
@@ -91,6 +99,7 @@ RSpec.describe "API v2 Playlists" do
           "/playlists/#{playlist.id}",
           params: {
             name: "WJ",
+            description: "Winter jams playlist",
             slug: "wj",
             published: true,
             track_ids: [],

@@ -107,6 +107,9 @@ class ApiV2::Playlists < ApiV2::Base
       requires :name,
                type: String,
                desc: "Name of the playlist"
+      requires :description,
+               type: String,
+               desc: "Description of the playlist"
       requires :published,
                type: Boolean,
                desc: \
@@ -140,6 +143,7 @@ class ApiV2::Playlists < ApiV2::Base
       end
       playlist.update!(
         name: params[:name],
+        description: params[:description],
         slug: params[:slug],
         published: params[:published],
         playlist_tracks_attributes: track_attributes

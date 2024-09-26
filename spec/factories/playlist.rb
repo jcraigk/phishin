@@ -3,6 +3,7 @@ FactoryBot.define do
     sequence(:name) { |n| "Playlist #{n}" }
     slug { name.downcase.gsub(/[^a-z0-9]/, '-') }
     published { true }
+    description { Faker::Lorem.paragraph_by_chars(number: 500, supplemental: false) }
 
     user
 
