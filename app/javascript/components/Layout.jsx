@@ -54,11 +54,12 @@ const Layout = ({ user, setUser, onLogout }) => {
       </main>
       <Footer />
       <Player
-          currentPlaylist={currentPlaylist}
-          activeTrack={activeTrack}
-          setActiveTrack={setActiveTrack}
-          audioRef={audioRef}
-          setCurrentTime={setCurrentTime}
+        currentPlaylist={currentPlaylist}
+        activeTrack={activeTrack}
+        setActiveTrack={setActiveTrack}
+        audioRef={audioRef}
+        setCurrentTime={setCurrentTime}
+        customPlaylist={customPlaylist}
       />
       <AppModal
         isOpen={isModalOpen}

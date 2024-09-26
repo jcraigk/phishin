@@ -6,11 +6,16 @@ import HighlightedText from "./HighlightedText";
 import LikeButton from "./LikeButton";
 import TrackContextMenu from "./TrackContextMenu";
 
-const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackRefs, trackSlug }) => {
-  const { playTrack, activeTrack } = useOutletContext();
+const Tracks = ({ tracks, viewStyle, numbering = false, highlight, trackRefs, trackSlug }) => {
+  const { playTrack, activeTrack, customPlaylist, setCustomPlaylist  } = useOutletContext();
 
   const handleTrackClick = (track) => {
     playTrack(tracks, track);
+    if (viewStyle === "playlist") {
+      setCustomPlaylist(tracks);
+    } else {
+      setCustomPlaylist(null);
+    }
   };
 
   if (tracks.length === 0) {
@@ -22,7 +27,7 @@ const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackR
   return (
     <ul>
       {tracks.map((track, index) => {
-        const isNewSet = showView && track.set_name !== lastSetName;
+        const isNewSet = viewStyle === "show" && track.set_name !== lastSetName;
         lastSetName = track.set_name;
 
         return (
@@ -41,7 +46,7 @@ const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackR
             )}
             <li
               className={
-                `list-item track-item ${track.id === activeTrack?.id ? "active-item" : ""} ${showView && track.slug === trackSlug ? "focus" : ""}`
+                `list-item track-item ${track.id === activeTrack?.id ? "active-item" : ""} ${viewStyle === "show" && track.slug === trackSlug ? "focus" : ""}`
               }
               onClick={() => handleTrackClick(track)}
               ref={trackRefs ? (el) => (trackRefs.current[index] = el) : null}
@@ -52,7 +57,7 @@ const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackR
                 )}
                 <span className="leftside-primary">
                   {
-                    !showView && (
+                    viewStyle !== "show" && (
                       <span className="show-badge">
                         <Link
                           className="date-link"
@@ -70,7 +75,7 @@ const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackR
                   />
                 </span>
                 {
-                  !showView && (
+                  viewStyle !== "show" && (
                     <span className="leftside-secondary">
                       {track.venue_location}
                     </span>
