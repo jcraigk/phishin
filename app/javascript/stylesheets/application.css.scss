@@ -84,7 +84,9 @@ h2.title:not(:first-of-type) {
   .icon {
     margin-right: 0.4rem;
     position: relative;
-    top: 2px;
+    top: 3px;
+    color: $text-gray;
+    width: 1rem;
   }
   .dropdown-item {
     font-size: 1.2rem;

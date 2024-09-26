@@ -13,7 +13,6 @@ PLAYLISTS
  * Context menus: Add to Playlist
 
  BACKBURNER
-  * Cleanup <span className="icon">
   * "e" param to end playing a track (counterpart to "t")
   * Have a "display more..." on search results if > 20 per category
   * Loading spinner on search results page?

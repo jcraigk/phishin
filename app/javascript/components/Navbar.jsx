@@ -95,7 +95,7 @@ const Navbar = ({ user, onLogout }) => {
                   <button className="button">
                     <span className="navbar-dropdown-label">INFO</span>
                     <span className="icon">
-                      <FontAwesomeIcon icon={faAngleDown} />
+                      <FontAwesomeIcon icon={faAngleDown} className="icon" />
                     </span>
                   </button>
                 </div>
@@ -108,9 +108,7 @@ const Navbar = ({ user, onLogout }) => {
                         className="dropdown-item"
                         onClick={closeMenus}
                       >
-                        <span className="icon">
-                          <FontAwesomeIcon icon={item.icon} />
-                        </span>
+                        <FontAwesomeIcon icon={item.icon} className="icon" />
                         {item.label}
                       </Link>
                     ))}
@@ -137,9 +135,7 @@ const Navbar = ({ user, onLogout }) => {
                           className="dropdown-item"
                           onClick={closeMenus}
                         >
-                          <span className="icon">
-                            <FontAwesomeIcon icon={item.icon} />
-                          </span>
+                          <FontAwesomeIcon icon={item.icon} className="icon" />
                           {item.label}
                         </Link>
                       ) : (
@@ -207,9 +203,7 @@ const Navbar = ({ user, onLogout }) => {
                             className="dropdown-item"
                             onClick={closeMenus}
                           >
-                            <span className="icon">
-                              <FontAwesomeIcon icon={item.icon} />
-                            </span>
+                            <FontAwesomeIcon icon={item.icon} className="icon" />
                             {item.label}
                           </Link>
                         ))}
