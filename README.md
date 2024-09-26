@@ -8,9 +8,9 @@ TODO
  * Create a published playlist in prod so index page isn't empty
 
 PLAYLISTS
- * Display/play a playlist at /play/:slug
  * Create/edit playlist
  * Context menus: Add to Playlist
+ * Active playlist name in the player, clickable to view it
 
  BACKBURNER
   * Have a "display more..." on search results if > 20 per category

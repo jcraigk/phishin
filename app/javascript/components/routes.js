@@ -8,6 +8,7 @@ import MapView from "./MapView";
 import MissingContentReport, { missingContentLoader } from "./MissingContentReport";
 import MyShows, { myShowsLoader } from "./MyShows";
 import MyTracks, { myTracksLoader } from "./MyTracks";
+import Playlist, { playlistLoader } from "./Playlist";
 import PlaylistIndex, { playlistIndexLoader } from "./PlaylistIndex";
 import Search from "./Search";
 import SongIndex, { songIndexLoader } from "./SongIndex";
@@ -164,10 +165,11 @@ const routes = (props) => [
         element: <PlaylistIndex />,
         loader: playlistIndexLoader,
       },
-      // {
-      //   path: "/play/:playlistSlug",
-      //   element: <Playlist />,
-      // },
+      {
+        path: "/play/:playlistSlug",
+        element: <Playlist />,
+        loader: playlistLoader,
+      },
       {
         path: "/today",
         element: <TodayShows />,

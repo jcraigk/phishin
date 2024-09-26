@@ -160,8 +160,6 @@ const Navbar = ({ user, onLogout }) => {
                   </span>
                 </form>
               </div>
-
-
             </div>
 
             <div className="navbar-end">
