@@ -77,9 +77,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
     <div className={`dropdown context-dropdown is-${isLeft ? "left" : "right"}`} ref={dropdownRef}>
       <div className="dropdown-trigger">
         <button className="button" onClick={toggleDropdownVisibility}>
-          <span className="icon is-small">
-            <FontAwesomeIcon icon={faEllipsis} />
-          </span>
+          <FontAwesomeIcon icon={faEllipsis} className="icon is-small" />
         </button>
       </div>
       <div
@@ -90,48 +88,36 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
       >
         <div className="dropdown-content context-dropdown-content">
           <a className="dropdown-item" onClick={(e) => copyToClipboard(e, false)}>
-            <span className="icon">
-              <FontAwesomeIcon icon={faShareFromSquare} />
-            </span>
+            <FontAwesomeIcon icon={faShareFromSquare} className="icon" />
             Share
           </a>
 
           {activeTrack?.show_date === show.date && (
             <a className="dropdown-item" onClick={(e) => copyToClipboard(e, true)}>
-              <span className="icon">
-                <FontAwesomeIcon icon={faShareFromSquare} />
-              </span>
+              <FontAwesomeIcon icon={faShareFromSquare} className="icon" />
               Share with timestamp
             </a>
           )}
 
           <a className="dropdown-item" onClick={openPhishNet}>
-            <span className="icon">
-              <FontAwesomeIcon icon={faExternalLinkAlt} />
-            </span>
+            <FontAwesomeIcon icon={faExternalLinkAlt} className="icon" />
             Phish.net
           </a>
 
           <hr className="dropdown-divider" />
 
           <a className="dropdown-item" onClick={handleTaperNotesClick}>
-            <span className="icon">
-              <FontAwesomeIcon icon={faClipboard} />
-            </span>
+            <FontAwesomeIcon icon={faClipboard} className="icon" />
             Taper Notes
           </a>
 
           <Link className="dropdown-item" to={`/venues/${show.venue.slug}`}>
-            <span className="icon">
-              <FontAwesomeIcon icon={faLandmark} />
-            </span>
+            <FontAwesomeIcon icon={faLandmark} className="icon" />
             {show.venue_name}
           </Link>
 
           <Link className="dropdown-item" to={`/map?term=${show.venue.location}`}>
-            <span className="icon">
-              <FontAwesomeIcon icon={faMapMarkerAlt} />
-            </span>
+            <FontAwesomeIcon icon={faMapMarkerAlt} className="icon" />
             {show.venue.location}
           </Link>
 
@@ -141,27 +127,21 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
               <hr className="dropdown-divider" />
 
               <Link className="dropdown-item" to={`/${show.previous_show_date}`}>
-              <span className="icon">
-                <FontAwesomeIcon icon={faCircleChevronLeft} />
-              </span>
-              Previous show
-            </Link>
-            <Link className="dropdown-item" to={`/${show.next_show_date}`}>
-              <span className="icon">
-                <FontAwesomeIcon icon={faCircleChevronRight} />
-              </span>
-              Next show
-            </Link>
-          </>
+                <FontAwesomeIcon icon={faCircleChevronLeft} className="icon" />
+                Previous show
+              </Link>
+              <Link className="dropdown-item" to={`/${show.next_show_date}`}>
+                <FontAwesomeIcon icon={faCircleChevronRight} className="icon" />
+                Next show
+              </Link>
+            </>
           )}
 
           <hr className="dropdown-divider" />
 
           <a className="dropdown-item" onClick={handleAddToPlaylist}>
-            <span className="icon">
-              <FontAwesomeIcon icon={faCirclePlus} />
-            </span>
-            <span>Add to playlist</span>
+            <FontAwesomeIcon icon={faCirclePlus} className="icon" />
+            Add to playlist
           </a>
         </div>
       </div>

@@ -68,9 +68,7 @@ const TrackContextMenu = ({ track }) => {
     <div className="dropdown is-right context-dropdown" ref={dropdownRef}>
       <div className="dropdown-trigger">
         <button className="button" onClick={toggleDropdownVisibility}>
-          <span className="icon is-small">
-            <FontAwesomeIcon icon={faEllipsis} />
-          </span>
+          <FontAwesomeIcon icon={faEllipsis} className="icon is-small" />
         </button>
       </div>
       <div
@@ -81,17 +79,13 @@ const TrackContextMenu = ({ track }) => {
       >
         <div className="dropdown-content context-dropdown-content">
           <a className="dropdown-item" onClick={(e) => share(e, false)}>
-            <span className="icon">
-              <FontAwesomeIcon icon={faShareFromSquare} />
-            </span>
+            <FontAwesomeIcon icon={faShareFromSquare} className="icon" />
             Share
           </a>
 
           {activeTrack?.id === track.id && (
             <a className="dropdown-item" onClick={(e) => share(e, true)}>
-              <span className="icon">
-                <FontAwesomeIcon icon={faShareFromSquare} />
-              </span>
+              <FontAwesomeIcon icon={faShareFromSquare} className="icon" />
               Share with Timestamp
             </a>
           )}
@@ -100,9 +94,7 @@ const TrackContextMenu = ({ track }) => {
             className="dropdown-item"
             onClick={(e) => handleDownload(e, track.id)}
           >
-            <span className="icon">
-              <FontAwesomeIcon icon={faDownload} />
-            </span>
+            <FontAwesomeIcon icon={faDownload} className="icon" />
             Download MP3
           </a>
 
@@ -115,9 +107,7 @@ const TrackContextMenu = ({ track }) => {
                 to={`/songs/${song.slug}`}
                 key={`${track.id}-${song.id}-link`}
               >
-                <span className="icon">
-                  <FontAwesomeIcon icon={faMusic} />
-                </span>
+                <FontAwesomeIcon icon={faMusic} className="icon" />
                 Song: {song.title}
               </Link>
 
@@ -127,9 +117,7 @@ const TrackContextMenu = ({ track }) => {
                   to={`/${song.previous_performance_slug}`}
                   key={`${track.id}-${song.id}-previous-performance`}
                 >
-                  <span className="icon">
-                    <FontAwesomeIcon icon={faCircleChevronLeft} />
-                  </span>
+                  <FontAwesomeIcon icon={faCircleChevronLeft} className="icon" />
                   Previous Performance (gap: {song.previous_performance_gap})
                 </Link>
               )}
@@ -140,9 +128,7 @@ const TrackContextMenu = ({ track }) => {
                   to={`/${song.next_performance_slug}`}
                   key={`${track.id}-${song.id}-next-performance`}
                 >
-                  <span className="icon">
-                    <FontAwesomeIcon icon={faCircleChevronRight} />
-                  </span>
+                  <FontAwesomeIcon icon={faCircleChevronRight} className="icon" />
                   Next Performance (gap: {song.next_performance_gap})
                 </Link>
               )}
@@ -152,9 +138,7 @@ const TrackContextMenu = ({ track }) => {
           <hr className="dropdown-divider" />
 
           <a className="dropdown-item" onClick={handleAddToPlaylist}>
-            <span className="icon">
-              <FontAwesomeIcon icon={faCirclePlus} />
-            </span>
+            <FontAwesomeIcon icon={faCirclePlus} className="icon" />
             Add to Playlist
           </a>
         </div>

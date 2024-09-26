@@ -54,9 +54,11 @@
     border-radius: 5px !important;
 
     .icon {
-      margin-right: 0.4rem;
+      margin-right: 0.5rem;
       position: relative;
       top: 2px;
+      color: $text-gray;
+      width: 1.2rem;
     }
 
     & a {
