@@ -47,6 +47,7 @@ const Layout = ({ user, setUser, onLogout }) => {
           currentTime,
           setCurrentTime,
           openModal,
+          user,
           setUser
         }} />
       </main>

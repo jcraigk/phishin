@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_25_052955) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_26_034415) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
@@ -73,6 +73,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_25_052955) do
     t.integer "position"
     t.integer "starts_at_second"
     t.integer "ends_at_second"
+    t.integer "duration"
     t.index ["playlist_id"], name: "index_playlist_tracks_on_playlist_id"
     t.index ["position", "playlist_id"], name: "index_playlist_tracks_on_position_and_playlist_id", unique: true
     t.index ["track_id"], name: "index_playlist_tracks_on_track_id"
@@ -87,6 +88,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_25_052955) do
     t.integer "duration", default: 0
     t.integer "likes_count", default: 0
     t.boolean "published", default: false
+    t.integer "tracks_count", default: 0
     t.index ["duration"], name: "index_playlists_on_duration"
     t.index ["name"], name: "index_playlists_on_name", unique: true
     t.index ["slug"], name: "index_playlists_on_slug", unique: true

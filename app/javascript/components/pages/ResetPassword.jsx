@@ -13,7 +13,6 @@ const ResetPassword = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Client-side validation
     if (password.length < 5) {
       setAlert("Password must be at least 5 characters long.");
       return;
@@ -23,8 +22,6 @@ const ResetPassword = () => {
       setAlert("Passwords do not match.");
       return;
     }
-
-    setAlert(""); // Clear any existing errors
 
     fetch('/api/v2/auth/reset_password', {
       method: 'POST',

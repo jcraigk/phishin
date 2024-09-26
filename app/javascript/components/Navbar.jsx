@@ -2,17 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../images/logo-350.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendarAlt, faMusic, faMapMarkerAlt, faStar, faCalendarDay, faMap, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark, faRightToBracket, faGear } from "@fortawesome/free-solid-svg-icons";
+import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendarAlt, faMusic, faMapMarkerAlt, faStar, faCalendarDay, faMap, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark, faRightToBracket, faGear, faList, faListCheck } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = ({ user, onLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  // const [currentUser, setCurrentUser] = useState(user);
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   setCurrentUser(user);
-  // }, [user]);
 
   // Fix for bulma dropdowns not closing from navbar
   const closeMenus = () => {
@@ -54,7 +49,12 @@ const Navbar = ({ user, onLogout }) => {
 
   const topLinks = [
     { path: "/top-shows", label: "Top 46 Shows", icon: faStar },
-    { path: "/top-tracks", label: "Top 46 Tracks", icon: faStar }
+    { path: "/top-tracks", label: "Top 46 Tracks", icon: faStar },
+  ];
+
+  const playlistLinks = [
+    { path: "/playlists", label: "Browse Playlists", icon: faList },
+    { path: "/edit-playlist", label: "Create Playlist", icon: faListCheck },
   ];
 
   const userLinks = [
@@ -66,6 +66,8 @@ const Navbar = ({ user, onLogout }) => {
     ...browseLinks.map(link => ({ ...link, type: 'link' })),
     { type: 'divider' },
     ...topLinks.map(link => ({ ...link, type: 'link' })),
+    { type: 'divider' },
+    ...playlistLinks.map(link => ({ ...link, type: 'link' })),
     { type: 'divider' },
     ...userLinks.map(link => ({ ...link, type: 'link' }))
   ];

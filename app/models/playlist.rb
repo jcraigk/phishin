@@ -19,7 +19,7 @@ class Playlist < ApplicationRecord
               message: "must be between 5 and 50 lowercase letters, numbers, or dashes"
             },
             uniqueness: true
-  validate :validate_track_count
+  validate :validate_tracks_count
 
   scope :published, -> { where(published: true) }
 
@@ -45,7 +45,7 @@ class Playlist < ApplicationRecord
 
   private
 
-  def validate_track_count
+  def validate_tracks_count
     if playlist_tracks.size > MAX_TRACKS
       errors.add(:tracks, "can't number more than #{MAX_TRACKS}")
     elsif playlist_tracks.size < 2

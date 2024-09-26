@@ -1,6 +1,7 @@
 class ApiV2::Entities::PlaylistTrack < ApiV2::Entities::Base
   expose(
     :track,
+    unless: ->(_, opts) { opts[:exclude_tracks] },
     documentation: {
       type: "Object",
       desc: "The associated track details"
@@ -18,26 +19,15 @@ class ApiV2::Entities::PlaylistTrack < ApiV2::Entities::Base
       desc: "Position of the track in the setlist"
     }
 
-  expose(
+  expose \
     :duration,
     documentation: {
       type: "Integer",
       desc: \
-        "Duration of track excerpt in milliseconds if " \
-        "starts_at_second and/or ends_at_second is present"
-    }) do |obj|
-      start_second = obj.starts_at_second.to_i
-      end_second = obj.ends_at_second.to_i
-      if start_second <= 0 && end_second <= 0
-        obj.track.duration
-      elsif start_second > 0 && end_second > 0
-        (end_second - start_second) * 1000
-      elsif start_second > 0
-        (obj.track.duration / 1000 - start_second) * 1000
-      elsif end_second > 0
-        end_second * 1000
-      end
-    end
+        "Duration of track excerpt in milliseconds. If " \
+        "starts_at_second and ends_at_second are both blank, " \
+        "this will be the full duration of the track."
+    }
 
   expose \
     :starts_at_second,

@@ -5,12 +5,12 @@ TODO
  * TEST: final pass on widths of content sections (color the borders)
    * /search is wide when showing days of year
  * TEST: on iphone and tablet (including mediasession)
+ * Create a published playlist in prod so index page isn't empty
+ * anywhere we localStorage.getItem("jwt"), pass in user instead
 
 PLAYLISTS
- * Playlists
-   * Browse public listing
-   * My playlists (including liked)
-   * Create/edit playlist
+ * Display/play a playlist at /play/:slug
+ * Create/edit playlist
  * Context menus: Add to Playlist
 
  BACKBURNER

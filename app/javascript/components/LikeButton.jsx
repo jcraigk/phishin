@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import { toggleLike } from "./utils";
 import { useFeedback } from "./FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,24 +9,19 @@ const LikeButton = ({ likable, type }) => {
   const { setAlert, setNotice } = useFeedback();
   const [likedByUser, setLikedByUser] = useState(likable.liked_by_user);
   const [likesCount, setLikesCount] = useState(likable.likes_count);
+  const { user } = useOutletContext();
 
   const handleLikeToggle = async (e) => {
     e.stopPropagation();
-    let jwt = null;
-
-    if (typeof window !== "undefined") {
-      jwt = localStorage.getItem("jwt");
-      if (!jwt) {
-        setAlert("Please login to save likes");
-        return;
-      }
+    if (!user) {
+      setAlert("Please login to save likes");
+      return;
     }
 
     const result = await toggleLike({
       id: likable.id,
       type,
-      isLiked: likedByUser,
-      jwt,
+      isLiked: likedByUser
     });
 
     if (result.success) {
