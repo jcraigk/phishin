@@ -6,10 +6,10 @@ class ApiV2::Entities::PlaylistTrack < ApiV2::Entities::Base
       type: "Object",
       desc: "The associated track details"
     }
-  ) do |obj, opts|
+  ) do
     ApiV2::Entities::Track.represent \
-      obj.track,
-      opts.merge(exclude_show: true)
+      _1.track,
+      _2.merge(exclude_show: true)
   end
 
   expose \

@@ -1,39 +1,35 @@
 class ApiV2::Entities::TrackTag < ApiV2::Entities::Base
-  expose \
+  expose(
     :name,
     documentation: {
       type: "String",
       desc: "The name of the tag"
-    } do |track_tag|
-      track_tag.tag.name
-    end
+    }
+   ) { _1.tag.name }
 
-  expose \
+  expose(
     :description,
     documentation: {
       type: "String",
       desc: "A description of the tag"
-    } do |track_tag|
-      track_tag.tag.description
-    end
+    }
+  ) { _1.tag.description }
 
-  expose \
+  expose(
     :color,
     documentation: {
       type: "String",
       desc: "The color of the tag"
-    } do |track_tag|
-      track_tag.tag.color
-    end
+    }
+  ) { _1.tag.color }
 
-  expose \
+  expose(
     :priority,
     documentation: {
       type: "Integer",
       desc: "The display priority of the tag"
-    } do |track_tag|
-      track_tag.tag.priority
-    end
+    }
+  ) { _1.tag.priority }
 
   expose \
     :notes,

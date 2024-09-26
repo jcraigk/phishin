@@ -94,9 +94,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       format: "date",
       desc: "Date of the show that the track belongs to"
     }
-  ) do |obj|
-    obj.show.date
-  end
+  ) { _1.show.date }
 
   expose(
     :venue_slug,
@@ -104,9 +102,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       type: "String",
       desc: "Unique slug of the venue where the show took place"
     }
-  ) do |obj|
-    obj.show.venue.slug
-  end
+  ) { _1.show.venue.slug }
 
   expose(
     :venue_name,
@@ -115,9 +111,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       desc: "Name the venue where the show took place, " \
             "reflecting the name used on the date of the show"
     }
-  ) do |obj|
-    obj.show.venue_name
-  end
+  ) { _1.show.venue_name }
 
   expose(
     :venue_location,
@@ -125,9 +119,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       type: "String",
       desc: "City and state where the venue of the show was located"
     }
-  ) do |obj|
-    obj.show.venue.location
-  end
+  ) { _1.show.venue.location }
 
   expose \
     :show,
@@ -150,11 +142,11 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       end
   end
 
-  expose :liked_by_user do |obj, opts|
-    unless opts[:liked_by_user].nil?
-      opts[:liked_by_user]
+  expose :liked_by_user do
+    unless _2[:liked_by_user].nil?
+      _2[:liked_by_user]
     else
-      opts[:liked_track_ids]&.include?(obj.id) || false
+      _2[:liked_track_ids]&.include?(_1.id) || false
     end
   end
 end
