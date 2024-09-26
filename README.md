@@ -12,6 +12,8 @@ PLAYLISTS
  * Context menus: Add to Playlist
 
  BACKBURNER
+  * Link locations to map in lists like https://jcktest.ngrok.io/play/011021 ?
+  * Map in sidebar of show?
   * Have a "display more..." on search results if > 20 per category
   * Loading spinner on search results page?
   * DRY fetch_liked_* from API. Also combine 3 lookups into one (don't separate by type)

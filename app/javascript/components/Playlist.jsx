@@ -23,13 +23,12 @@ import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
 import LikeButton from "./LikeButton";
-import { formatDate, formatDateLong, formatDurationShow } from "./utils";
+import { formatDateLong, formatDurationShow } from "./utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock, faCircleXmark, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faClock, faCircleXmark, faInfoCircle, faCalendar } from "@fortawesome/free-solid-svg-icons";
 
 const Playlist = () => {
   const playlist = useLoaderData();
-  const trackRefs = useRef([]);
   const [tracks, setTracks] = useState(playlist.entries.map(entry => entry.track));
   const [showNotification, setShowNotification] = useState(true);
 
@@ -71,15 +70,20 @@ const Playlist = () => {
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         {showNotification && (
-          <div className="notification show-info">
+          <div className="notification playlist-info">
             <button className="close-btn" onClick={handleCloseNotification}>
               <FontAwesomeIcon icon={faCircleXmark} />
             </button>
             <span className="icon">
               <FontAwesomeIcon icon={faInfoCircle} />
             </span>
-            {playlist.description || "(No description)"}
-            <p>Last updated: {formatDateLong(playlist.updated_at)}</p>
+            {playlist.description || "This playlist has no description"}
+            <p>
+              <span className="icon">
+                <FontAwesomeIcon icon={faCalendar} />
+              </span>
+              Last updated: {formatDateLong(playlist.updated_at)}
+            </p>
           </div>
         )}
         <Tracks tracks={tracks} viewStyle="playlist" />
