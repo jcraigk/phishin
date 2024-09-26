@@ -206,12 +206,16 @@ class ApiV2::Shows < ApiV2::Base
         shows = shows.where(id: show_ids)
       end
 
-      if params[:liked_by_user] && current_user
-        liked_show_ids = Like.where(
-          user_id: current_user.id,
-          likable_type: "Show"
-        ).pluck(:likable_id)
-        shows = shows.where(id: liked_show_ids)
+      if params[:liked_by_user]
+        if current_user
+          liked_show_ids = Like.where(
+            user_id: current_user.id,
+            likable_type: "Show"
+          ).pluck(:likable_id)
+          shows = shows.where(id: liked_show_ids)
+        else
+          shows = shows.none
+        end
       end
 
       shows

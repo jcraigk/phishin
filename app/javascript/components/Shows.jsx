@@ -15,6 +15,10 @@ const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
     navigate(`/${showDate}`);
   };
 
+  if (shows.length === 0) {
+    return <h1 className="title">No shows found</h1>;
+  }
+
   return (
     <ul>
       {shows.map((show, index) => {

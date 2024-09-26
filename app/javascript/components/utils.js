@@ -51,14 +51,19 @@ export const formatDateLong = (dateString) => {
   });
 };
 
-export const toggleLike = async ({ id, type, isLiked, jwt }) => {
+export const toggleLike = async ({ id, type, isLiked }) => {
   const url = `/api/v2/likes?likable_type=${type}&likable_id=${id}`;
   const method = isLiked ? "DELETE" : "POST";
+  let token = null;
+
+  if (typeof window !== "undefined" && window.localStorage) {
+    token = localStorage.getItem("jwt");
+  }
 
   try {
     const response = await fetch(url, {
       method,
-      headers: { "X-Auth-Token": jwt },
+      headers: { "X-Auth-Token": token },
     });
 
     if (response.ok) {

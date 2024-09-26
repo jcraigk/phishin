@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { authFetch } from "../utils";
 import { useFeedback } from "../FeedbackContext";
 import PageWrapper from "./PageWrapper";
@@ -14,10 +14,11 @@ const Settings = ({ setUser, usernameCooldown }) => {
   const { setAlert, setNotice } = useFeedback();
   const [isCooldown, setIsCooldown] = useState(false);
   const [cooldownMessage, setCooldownMessage] = useState("");
+  const { user } = useOutletContext();
 
   // Redirect if not logged in
   useEffect(() => {
-    if (!localStorage.getItem("jwt")) {
+    if (!user) {
       navigate("/");
     }
   }, [navigate]);

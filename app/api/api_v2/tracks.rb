@@ -114,9 +114,13 @@ user_id: current_user.id).pluck(:likable_id)
         tracks = tracks.where(id: track_ids)
       end
 
-      if params[:liked_by_user] && current_user
-        liked_track_ids = current_user.likes.where(likable_type: "Track").pluck(:likable_id)
-        tracks = tracks.where(id: liked_track_ids)
+      if params[:liked_by_user]
+        if current_user
+          liked_track_ids = current_user.likes.where(likable_type: "Track").pluck(:likable_id)
+          tracks = tracks.where(id: liked_track_ids)
+        else
+          tracks = tracks.none
+        end
       end
 
       tracks

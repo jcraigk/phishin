@@ -6,7 +6,7 @@ export const venueIndexLoader = async ({ request }) => {
 
   try {
     const response = await fetch(`/api/v2/venues?page=${page}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}`);
-    if (!response.ok) response;
+    if (!response.ok) throw response;
     const data = await response.json();
     return {
       venues: data.venues,

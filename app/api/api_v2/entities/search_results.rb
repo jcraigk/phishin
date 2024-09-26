@@ -116,6 +116,6 @@ class ApiV2::Entities::SearchResults < ApiV2::Entities::Base
     ) do |obj, opts|
       ApiV2::Entities::Playlist.represent \
         obj[:playlists],
-        opts.merge(liked_by_user: nil, exclude_entries: true)
+        opts.merge(liked_by_user: nil, exclude_tracks: true)
     end
 end

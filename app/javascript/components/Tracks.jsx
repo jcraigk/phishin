@@ -13,6 +13,10 @@ const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackR
     playTrack(tracks, track);
   };
 
+  if (tracks.length === 0) {
+    return <h1 className="title">No tracks found</h1>;
+  }
+
   let lastSetName = null;
 
   return (

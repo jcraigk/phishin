@@ -32,7 +32,7 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
   expose \
     :entries,
     using: ApiV2::Entities::PlaylistTrack,
-    unless: ->(_, opts) { opts[:exclude_entries] },
+    unless: ->(_, opts) { opts[:exclude_tracks] },
     documentation: {
       type: "Array",
       desc: \
@@ -47,18 +47,14 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
     documentation: {
       type: "Integer",
       desc: "The number of tracks in the playlist"
-    } do |obj|
-      obj.playlist_tracks.size
-    end
+    }
 
   expose \
     :likes_count,
     documentation: {
       type: "Integer",
       desc: "The number of likes the playlist has received"
-    } do |obj|
-      obj.playlist_tracks.size
-    end
+    }
 
   expose \
     :updated_at,

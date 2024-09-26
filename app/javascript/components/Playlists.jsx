@@ -1,15 +1,19 @@
 import React from "react";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { formatNumber, formatDurationShow } from "./utils";
 import LikeButton from "./LikeButton";
 import HighlightedText from "./HighlightedText";
 
 const Playlists = ({ playlists, highlight }) => {
-  const { setCustomPlaylist } = useOutletContext();
+  const navigate = useNavigate();
 
   const handlePlaylistClick = (playlist) => {
-    setCustomPlaylist(playlist);
+    navigate(`/play/${playlist.slug}`);
   };
+
+  if (playlists.length === 0) {
+    return <h1 className="title">No playlists found</h1>;
+  }
 
   return (
     <ul>

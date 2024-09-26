@@ -1,5 +1,5 @@
 class ApiV2::Playlists < ApiV2::Base
-  SORT_COLS = %w[name likes_count duration updated_at]
+  SORT_COLS = %w[name likes_count tracks_count duration updated_at]
 
   resource :playlists do
     desc "Fetch a list of playlists" do
@@ -17,17 +17,22 @@ class ApiV2::Playlists < ApiV2::Base
                desc: "Sort by attribute and direction (e.g., 'name:asc')",
                default: "name:asc",
                values: SORT_COLS.map { |opt| ["#{opt}:asc", "#{opt}:desc"] }.flatten
-      optional :liked_by_user,
-               type: Boolean,
-               desc: "If true, fetch only those playlists liked by the current user",
-               default: false
+      optional :filter,
+               type: String,
+               desc: "Filter by user ownership or user likes. Requires authentication.",
+               values: %w[all mine liked]
     end
     get do
       result = page_of_playlists
       liked_playlist_ids = fetch_liked_playlist_ids(result[:playlists])
       liked_track_ids = fetch_liked_track_ids(result[:playlists])
       present \
-        playlists: ApiV2::Entities::Playlist.represent(result[:playlists], liked_playlist_ids, liked_track_ids:),
+        playlists: ApiV2::Entities::Playlist.represent(
+          result[:playlists],
+          liked_playlist_ids:,
+          liked_track_ids:,
+          exclude_tracks: true
+        ),
         total_pages: result[:total_pages],
         current_page: result[:current_page],
         total_entries: result[:total_entries]
@@ -163,7 +168,7 @@ class ApiV2::Playlists < ApiV2::Base
   helpers do
     def page_of_playlists
       Rails.cache.fetch("api/v2/playlists?#{params.to_query}") do
-        playlists = Playlist.includes(:tracks)
+        playlists = Playlist.includes(:user)
                             .then { |p| apply_filter(p) }
                             .then { |p| apply_sort(p) }
                             .paginate(page: params[:page], per_page: params[:per_page])
@@ -197,9 +202,13 @@ class ApiV2::Playlists < ApiV2::Base
     end
 
     def apply_filter(playlists)
-      if params[:liked_by_user] && current_user
+      if !params[:filter].in?(%w[mine liked])
+        # playlists = playlists.published # TODO: re-enable when published flag is added
+      elsif current_user && params[:filter] == "liked"
         liked_playlist_ids = current_user.likes.where(likable_type: "Playlist").pluck(:likable_id)
         playlists = playlists.where(id: liked_playlist_ids)
+      elsif current_user && params[:filter] == "mine"
+        playlists = playlists.where(user: current_user)
       end
 
       playlists

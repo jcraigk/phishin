@@ -5,11 +5,6 @@ export const myTracksLoader = async ({ request }) => {
   const page = url.searchParams.get("page") || 1;
   const sortOption = url.searchParams.get("sort") || "date:desc";
 
-  const jwt = typeof window !== "undefined" ? localStorage.getItem("jwt") : null;
-  if (!jwt) {
-    return { tracks: [], totalPages: 1, page: 0, sortOption };
-  }
-
   try {
     const response = await authFetch(`/api/v2/tracks?liked_by_user=true&sort=${sortOption}&page=${page}&per_page=10`);
     if (!response.ok) throw response;
@@ -26,7 +21,7 @@ export const myTracksLoader = async ({ request }) => {
 };
 
 import React from "react";
-import { useLoaderData, useNavigate, Link } from "react-router-dom";
+import { useLoaderData, useNavigate, Link, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
@@ -35,6 +30,7 @@ import Pagination from "./Pagination";
 const MyTracks = () => {
   const { tracks, totalPages, page, sortOption } = useLoaderData();
   const navigate = useNavigate();
+  const { user } = useOutletContext();
 
   const handleSortChange = (event) => {
     navigate(`?page=1&sort=${event.target.value}`);
@@ -61,15 +57,15 @@ const MyTracks = () => {
         </div>
       </div>
 
-      <div className="sidebar-details">
-        {!localStorage.getItem("jwt") && (
+      {!user && (
+        <div className="sidebar-details mt-6">
           <div className="sidebar-callout">
             <Link to="/login" className="button">
               Login to see your liked tracks!
             </Link>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 
