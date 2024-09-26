@@ -14,6 +14,8 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCur
   const [isFadeOutComplete, setIsFadeOutComplete] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [isPlayerCollapsed, setIsPlayerCollapsed] = useState(false);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [endTime, setEndTime] = useState(null);
 
   const togglePlayerPosition = () => {
     setIsPlayerCollapsed(!isPlayerCollapsed);
@@ -37,35 +39,38 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCur
     audioRef.current.currentTime = Math.max(audioRef.current.currentTime - 10, 0);
   };
 
-  const setupMediaSession = () => {
+  // Media session hooks
+  useEffect(() => {
     if ('mediaSession' in navigator) {
-      // Set the media metadata
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: activeTrack.title,
-        artist: "Phish",
-        album: `${formatDate(activeTrack.show_date)} - ${activeTrack.venue_name}`,
-        artwork: [
-          {
-            src: 'https://phish.in/static/logo-square-512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          }
-        ]
-      });
-
       navigator.mediaSession.setActionHandler('previoustrack', skipToPreviousTrack);
       navigator.mediaSession.setActionHandler('nexttrack', skipToNextTrack);
       navigator.mediaSession.setActionHandler('play', togglePlayPause);
       navigator.mediaSession.setActionHandler('pause', togglePlayPause);
       navigator.mediaSession.setActionHandler('stop', togglePlayPause);
     }
-  };
+  }, []);
 
   // Hande activeTrack change
   useEffect(() => {
     if (activeTrack && audioRef.current) {
       if (typeof window !== "undefined") {
         document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
+      }
+
+      // Update media session metadata
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: activeTrack.title,
+          artist: "Phish",
+          album: `${formatDate(activeTrack.show_date)} - ${activeTrack.venue_name}`,
+          artwork: [
+            {
+              src: 'https://phish.in/static/logo-square-512.png',
+              sizes: '512x512',
+              type: 'image/png',
+            }
+          ]
+        });
       }
 
       setFadeClass("fade-out");
@@ -90,11 +95,19 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCur
       audioRef.current.onloadedmetadata = () => {
         const searchParams = new URLSearchParams(location.search);
         const startTime = parseTimeParam(searchParams.get("t"));
+        const endTimeParam = parseTimeParam(searchParams.get("e"));
 
         if (startTime && startTime <= audioRef.current.duration) {
           audioRef.current.currentTime = startTime;
         }
-        audioRef.current.play().catch((error) => {
+
+        if (endTimeParam && endTimeParam > startTime && endTimeParam <= audioRef.current.duration) {
+          setEndTime(endTimeParam);
+        }
+
+        audioRef.current.play().then(() => {
+          setIsFirstLoad(false);
+        }).catch((error) => {
           if (error.name === "NotAllowedError") {
             setNotice("Tap Play or press Spacebar to listen");
           }
@@ -168,6 +181,11 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCur
   const handleTimeUpdate = () => {
     setCurrentTime(audioRef.current.currentTime);
     updateProgressBar();
+
+    if (isFirstLoad && endTime !== null && audioRef.current.currentTime >= endTime) {
+      audioRef.current.pause();
+      setIsFirstLoad(false);
+    }
   };
 
   const updateProgressBar = () => {
