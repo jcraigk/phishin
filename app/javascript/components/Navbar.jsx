@@ -35,16 +35,17 @@ const Navbar = ({ user, onLogout }) => {
     { path: "/tagin-project", label: "Tagin' Project", icon: faTags },
     { path: "/contact-info", label: "Contact Info", icon: faAddressBook },
     { path: "/privacy", label: "Privacy Policy", icon: faUserShield },
-    { path: "/terms", label: "Terms of Service", icon: faFileContract }
+    { path: "/terms", label: "Terms of Service", icon: faFileContract },
   ];
 
   const browseLinks = [
     { path: "/", label: "Years", icon: faCalendarAlt },
-    { path: "/songs", label: "Songs", icon: faMusic },
     { path: "/venues", label: "Venues", icon: faMapMarkerAlt },
+    { path: "/songs", label: "Songs", icon: faMusic },
     { path: "/tags", label: "Tags", icon: faTags },
     { path: "/today", label: "Today", icon: faCalendarDay },
-    { path: "/map", label: "Map", icon: faMap }
+    { path: "/map", label: "Map", icon: faMap },
+    { path: "/playlists", label: "Playlists", icon: faList },
   ];
 
   const topLinks = [
@@ -52,24 +53,16 @@ const Navbar = ({ user, onLogout }) => {
     { path: "/top-tracks", label: "Top 46 Tracks", icon: faStar },
   ];
 
-  const playlistLinks = [
-    { path: "/playlists", label: "Browse Playlists", icon: faList },
-    { path: "/edit-playlist", label: "Create Playlist", icon: faListCheck },
-  ];
-
   const userLinks = [
     { path: "/my-shows", label: "My Shows", icon: faGuitar },
-    { path: "/my-tracks", label: "My Tracks", icon: faRecordVinyl }
+    { path: "/my-tracks", label: "My Tracks", icon: faRecordVinyl },
+    { path: "/edit-playlist", label: "Create Playlist", icon: faListCheck },
   ];
 
   const combinedLinks = [
     ...browseLinks.map(link => ({ ...link, type: 'link' })),
     { type: 'divider' },
     ...topLinks.map(link => ({ ...link, type: 'link' })),
-    { type: 'divider' },
-    ...playlistLinks.map(link => ({ ...link, type: 'link' })),
-    { type: 'divider' },
-    ...userLinks.map(link => ({ ...link, type: 'link' }))
   ];
 
   return (
@@ -207,6 +200,19 @@ const Navbar = ({ user, onLogout }) => {
                     </div>
                     <div className="dropdown-menu" role="menu">
                       <div className="dropdown-content">
+                        {userLinks.map((item, index) => (
+                          <Link
+                            key={item.path}
+                            to={item.path}
+                            className="dropdown-item"
+                            onClick={closeMenus}
+                          >
+                            <span className="icon">
+                              <FontAwesomeIcon icon={item.icon} />
+                            </span>
+                            {item.label}
+                          </Link>
+                        ))}
                         <Link to="/settings" className="navbar-item" onClick={closeMenus}>
                           <FontAwesomeIcon icon={faGear} className="icon" />
                           Settings

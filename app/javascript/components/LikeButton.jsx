@@ -14,7 +14,7 @@ const LikeButton = ({ likable, type }) => {
   const handleLikeToggle = async (e) => {
     e.stopPropagation();
     if (!user) {
-      setAlert("Please login to save likes");
+      setAlert("You must login to submit likes");
       return;
     }
 

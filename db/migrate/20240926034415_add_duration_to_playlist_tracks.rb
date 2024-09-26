@@ -2,6 +2,9 @@ class AddDurationToPlaylistTracks < ActiveRecord::Migration[7.2]
   def change
     add_column :playlist_tracks, :duration, :integer
 
+    add_index :playlist_tracks, :duration
+    add_index :playlist_tracks, :position
+
     reversible do |dir|
       dir.up do
 

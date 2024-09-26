@@ -19,21 +19,23 @@ const Tags = ({ tags, group = false, highlight = "" }) => {
 
   const renderTagItem = (tag) => (
     <li key={tag.slug} className="list-item">
-      <span className="leftside-primary-narrow">
-        <TagBadges tags={[tag]} parentId={tag.slug} />
-      </span>
-      <span className="leftside-secondary">
-        <HighlightedText text={tag.description} highlight={highlight} />
-      </span>
-      <div className="rightside-group">
-        <span className="rightside-primary-wide">
-          <Link to={`/show_tags/${tag.slug}`} className="button is-small mr-1">
-            {formatNumber(tag.shows_count, "show")}
-          </Link>
-          <Link to={`/track_tags/${tag.slug}`} className="button is-small">
-            {formatNumber(tag.tracks_count, "track")}
-          </Link>
+      <div className="main-row">
+        <span className="leftside-primary-narrow">
+          <TagBadges tags={[tag]} parentId={tag.slug} />
         </span>
+        <span className="leftside-secondary">
+          <HighlightedText text={tag.description} highlight={highlight} />
+        </span>
+        <div className="rightside-group">
+          <span className="rightside-primary-wide">
+            <Link to={`/show_tags/${tag.slug}`} className="button is-small mr-1">
+              {formatNumber(tag.shows_count, "show")}
+            </Link>
+            <Link to={`/track_tags/${tag.slug}`} className="button is-small">
+              {formatNumber(tag.tracks_count, "track")}
+            </Link>
+          </span>
+        </div>
       </div>
     </li>
   );

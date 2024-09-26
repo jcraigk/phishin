@@ -12,6 +12,8 @@ class Playlist < ApplicationRecord
             presence: true,
             format: { with: /\A.{5,50}\z/ },
             uniqueness: true
+  validates :description,
+            length: { maximum: 500 }
   validates :slug,
             presence: true,
             format: {

@@ -20,6 +20,13 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
       desc: "The display name of the playlist"
     }
 
+  expose \
+    :description,
+    documentation: {
+      type: "String",
+      desc: "The description of the playlist"
+    }
+
   expose(:username) { _1.user.username }
 
   expose \

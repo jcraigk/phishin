@@ -16,6 +16,7 @@ RSpec.describe Playlist do
   it { is_expected.to validate_uniqueness_of(:name) }
   it { is_expected.to validate_uniqueness_of(:slug) }
   it { is_expected.to allow_values('Harpu', 'This is a longer name').for(:name) }
+  it { is_expected.to validate_length_of(:description).is_at_most(500) }
 
   it do
     is_expected

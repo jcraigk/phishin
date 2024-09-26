@@ -123,7 +123,7 @@ const PlaylistIndex = () => {
           value={searchTerm}
           onChange={handleSearchChange}
           onKeyDown={handleKeyDown}
-          placeholder="Playlist name"
+          placeholder="Name or description"
         />
         <button className="button mt-4" onClick={handleSearchSubmit}>
           <div className="icon mr-1">
