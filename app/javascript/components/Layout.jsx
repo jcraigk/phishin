@@ -39,6 +39,7 @@ const Layout = ({ user, setUser, onLogout }) => {
       <main className={activeTrack ? 'with-player' : ''}>
         <Outlet context={{
           currentPlaylist,
+          setCurrentPlaylist,
           customPlaylist,
           setCustomPlaylist,
           activeTrack,

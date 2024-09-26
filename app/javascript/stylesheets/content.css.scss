@@ -92,16 +92,15 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    min-width: 10rem;
-    max-width: 20rem;
+    min-width: 1rem;
     padding-right: 1rem;
 
     .show-badge {
       font-size: 1.2rem;
       background-color: $text-gray;
-      margin-right: 1rem;
+      margin-right: 0.5rem;
       border-radius: var(--bulma-radius);
-      padding: 0.2rem 0.5rem;
+      padding: 0.2rem 0.4rem;
       color: white;
 
       &:hover {
@@ -135,7 +134,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    width: 14rem;
+    width: 12rem;
     margin-right: 0.5rem;
     flex-shrink: 0;
   }
@@ -240,7 +239,7 @@
   }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 1199px) {
   .leftside-tertiary {
     display: none;
   }

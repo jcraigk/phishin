@@ -5,8 +5,6 @@ import TagBadges from "./TagBadges";
 import HighlightedText from "./HighlightedText";
 import LikeButton from "./LikeButton";
 import TrackContextMenu from "./TrackContextMenu";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGuitar } from "@fortawesome/free-solid-svg-icons";
 
 const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackRefs, trackSlug }) => {
   const { playTrack, activeTrack } = useOutletContext();
@@ -56,7 +54,6 @@ const Tracks = ({ tracks, numbering = false, showView = false, highlight, trackR
                   {
                     !showView && (
                       <span className="show-badge">
-                        <FontAwesomeIcon icon={faGuitar} className="mr-1" />
                         <Link
                           className="date-link"
                           to={`/${track.show_date}/${track.slug}`}
