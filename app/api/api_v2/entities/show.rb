@@ -99,19 +99,19 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
       is_array: true,
       desc: "Tracks associated with the show, included only on individual show requests"
     }
-  ) do |obj, opts|
+  ) do
     ApiV2::Entities::Track.represent \
-      obj.tracks.sort_by(&:position),
-      opts.merge(exclude_show: true, liked_by_user: nil)
+      _1.tracks.sort_by(&:position),
+      _2.merge(exclude_show: true, liked_by_user: nil)
   end
 
   expose(
     :liked_by_user
-  ) do |obj, opts|
-    unless opts[:liked_by_user].nil?
-      opts[:liked_by_user]
+  ) do
+    unless _2[:liked_by_user].nil?
+      _2[:liked_by_user]
     else
-      opts[:liked_show_ids]&.include?(obj.id) || false
+      _2[:liked_show_ids]&.include?(_1.id) || false
     end
   end
 
@@ -123,9 +123,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
       format: "date",
       desc: "Date of the previous show (or last show if none exists)"
     }
-  ) do |_, opts|
-    opts[:previous_show_date]
-  end
+  ) { _2[:previous_show_date] }
 
   expose(
     :next_show_date,
@@ -135,7 +133,5 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
       format: "date",
       desc: "Date of the next show (or first show if none exists)"
     }
-  ) do |_, opts|
-    opts[:next_show_date]
-  end
+  ) { _2[:next_show_date] }
 end

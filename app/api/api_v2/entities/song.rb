@@ -57,9 +57,7 @@ class ApiV2::Entities::Song < ApiV2::Entities::Base
       type: "String",
       desc: "Count of shows since the last performance of the song"
     }
-  ) do |song, opts|
-    opts[:songs_track].previous_performance_gap
-  end
+  ) { _2[:songs_track].previous_performance_gap }
 
   expose(
     :previous_performance_slug,
@@ -69,9 +67,7 @@ class ApiV2::Entities::Song < ApiV2::Entities::Base
       type: "String",
       desc: "Slug of the last performance of the song"
     }
-  ) do |song, opts|
-    opts[:songs_track].previous_performance_slug
-  end
+  ) { _2[:songs_track].previous_performance_slug }
 
   expose(
     :next_performance_gap,
@@ -81,9 +77,7 @@ class ApiV2::Entities::Song < ApiV2::Entities::Base
       type: "String",
       desc: "Count of shows until the next performance of the song"
     }
-  ) do |song, opts|
-    opts[:songs_track].next_performance_gap
-  end
+  ) { _2[:songs_track].next_performance_gap }
 
   expose(
     :next_performance_slug,
@@ -93,7 +87,5 @@ class ApiV2::Entities::Song < ApiV2::Entities::Base
       type: "String",
       desc: "Slug of the next performance of the song"
     }
-  ) do |song, opts|
-    opts[:songs_track].next_performance_slug
-  end
+  ) { _2[:songs_track].next_performance_slug }
 end

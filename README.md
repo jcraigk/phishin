@@ -16,7 +16,6 @@ PLAYLISTS
   * Cleanup <span className="icon">
   * "e" param to end playing a track (counterpart to "t")
   * Have a "display more..." on search results if > 20 per category
-  * obj. can be replace with _1 in entities
   * Loading spinner on search results page?
   * DRY fetch_liked_* from API. Also combine 3 lookups into one (don't separate by type)
   * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
