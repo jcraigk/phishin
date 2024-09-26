@@ -10,7 +10,6 @@ TODO
 PLAYLISTS
  * Create/edit playlist
  * Context menus: Add to Playlist
- * Active playlist name in the player, clickable to view it
 
  BACKBURNER
   * Have a "display more..." on search results if > 20 per category

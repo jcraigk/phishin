@@ -5,7 +5,7 @@ import { useFeedback } from "./FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward, faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
-const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCurrentTime }) => {
+const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCurrentTime, customPlaylist }) => {
   const location = useLocation();
   const scrubberRef = useRef();
   const progressBarRef = useRef();
@@ -219,19 +219,27 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCur
         <div className={`left-half`}>
           <div className="track-title">{activeTrack?.title}</div>
           <div className="track-info">
-            <Link to={`/${activeTrack?.show_date}/${activeTrack?.slug}`}>
-              {formatDate(activeTrack?.show_date)}
-            </Link>
-            {" "}&bull;{" "}
-            <Link to={`/venues/${activeTrack?.venue_slug}`}>
-              {activeTrack?.venue_name}
-            </Link>
-            <span className="venue-location">
-              {" "}&bull;{" "}
-              <Link to={`/map?term=${activeTrack?.venue_location}`}>
-                {activeTrack?.venue_location}
+            {customPlaylist ? (
+              <Link to={`/play/${customPlaylist.slug}`}>
+                {customPlaylist.name}
               </Link>
-            </span>
+            ) : (
+              <>
+                <Link to={`/${activeTrack?.show_date}/${activeTrack?.slug}`}>
+                  {formatDate(activeTrack?.show_date)}
+                </Link>
+                {" "}&bull;{" "}
+                <Link to={`/venues/${activeTrack?.venue_slug}`}>
+                  {activeTrack?.venue_name}
+                </Link>
+                <span className="venue-location">
+                  {" "}&bull;{" "}
+                  <Link to={`/map?term=${activeTrack?.venue_location}`}>
+                    {activeTrack?.venue_location}
+                  </Link>
+                </span>
+              </>
+            )}
           </div>
         </div>
         <div className="right-half">

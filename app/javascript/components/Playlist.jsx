@@ -33,6 +33,15 @@ const Playlist = () => {
   const [tracks, setTracks] = useState(playlist.entries.map(entry => entry.track));
   const [showNotification, setShowNotification] = useState(true);
 
+  const { playTrack, customPlaylist, setCustomPlaylist, activeTrack } = useOutletContext();
+
+  useEffect(() => {
+    if (!customPlaylist || customPlaylist.slug !== playlist.slug) {
+      setCustomPlaylist(playlist);
+      playTrack(tracks, tracks[0], true);
+    }
+  }, [playlist, tracks, customPlaylist, setCustomPlaylist, playTrack]);
+
   const handleCloseNotification = () => {
     setShowNotification(false);
   };
@@ -73,7 +82,7 @@ const Playlist = () => {
             <p>Last updated: {formatDateLong(playlist.updated_at)}</p>
           </div>
         )}
-        <Tracks tracks={tracks} showView={false} />
+        <Tracks tracks={tracks} viewStyle="playlist" />
       </LayoutWrapper>
     </>
   );
