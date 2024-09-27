@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../images/logo-350.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendarAlt, faMusic, faMapMarkerAlt, faStar, faCalendarDay, faMap, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark, faRightToBracket, faGear, faList, faListCheck } from "@fortawesome/free-solid-svg-icons";
+import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendarAlt, faMusic, faMapMarkerAlt, faStar, faCalendarDay, faMap, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark, faRightToBracket, faGear, faList, faListCheck, faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = ({ user, onLogout, handleInputFocus, handleInputBlur }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -142,6 +142,24 @@ const Navbar = ({ user, onLogout, handleInputFocus, handleInputBlur }) => {
                         <hr key={`divider-${index}`} className="dropdown-divider" />
                       )
                     ))}
+                    <hr className="dropdown-divider" />
+                    <a
+                      className="dropdown-item"
+                      onClick={async () => {
+                        closeMenus();
+                        try {
+                          const response = await fetch('/api/v2/shows/random');
+                          if (!response.ok) throw response;
+                          const show = await response.json();
+                          navigate(`/${show.date}`);
+                        } catch (error) {
+                          console.error('Error fetching random show:', error);
+                        }
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faCircleQuestion} className="icon" />
+                      Random Show...
+                    </a>
                   </div>
                 </div>
               </div>
