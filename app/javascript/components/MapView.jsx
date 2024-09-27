@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import mapboxgl from "mapbox-gl";
+import { formatNumber } from "./utils";
 import LayoutWrapper from "./LayoutWrapper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -92,7 +93,8 @@ const MapView = ({ mapboxToken }) => {
             location: venue.location,
             lat: venue.latitude,
             lng: venue.longitude,
-            shows: [{ date: show.date }],
+            shows_count: venue.shows_count,
+            shows: [{ date: show.date }]
           });
         } else if (isDuplicate) {
           const existingVenue = acc.find((v) => v.slug === venue.slug);
@@ -110,8 +112,8 @@ const MapView = ({ mapboxToken }) => {
 
   const addMarkersToMap = (mapInstance, venues) => {
     if (venues.length === 0) {
-      const noResultsPopup = new mapboxgl.Popup({ closeButton: false })
-        .setLngLat(mapInstance.getCenter()) // Show the popover at the center of the map
+      new mapboxgl.Popup({ closeButton: false })
+        .setLngLat(mapInstance.getCenter())
         .setHTML("<p style=\"font-family: 'Open Sans Condensed', sans-serif; font-weight: bold; font-size: 1.2rem;\">No results found for your search.</p>")
         .addTo(mapInstance);
 
@@ -122,16 +124,17 @@ const MapView = ({ mapboxToken }) => {
 
     venues.forEach((venue) => {
       const popupContent = `
-        <h3 style="font-family: 'Open Sans Condensed', sans-serif; font-weight: bold; font-size: 1.5rem;" class="mb-4">
-          ${venue.name}
-        </h3>
-        <ul style="font-family: 'Open Sans Condensed', sans-serif; font-size: 1.2rem; line-height: 1.5rem;">
+        <div class="map-popup">
+          <h2>${venue.name}</h2>
+          <h3>${venue.location} &bull; ${formatNumber(venue.shows_count, 'show')}</h3>
           ${venue.shows
             .map(
-              (show) => `<li><a href="/${show.date}" style="outline: none; text-decoration: none;">${show.date.replace(/-/g, ".")}</a></li>`
+              (show) => `
+              <a href="/${show.date}" class="show-badge">${show.date.replace(/-/g, ".")}</a>
+              `
             )
             .join("")}
-        </ul>
+        </div>
       `;
 
       const popup = new mapboxgl.Popup({ closeButton: false }).setHTML(popupContent);
@@ -257,7 +260,6 @@ const MapView = ({ mapboxToken }) => {
         <div
           className="map-container"
           ref={mapContainer}
-          style={{ width: "100%", height: "500px" }}
         />
       </LayoutWrapper>
     </>

@@ -19,7 +19,6 @@ export const playlistIndexLoader = async ({ request }) => {
       filter
     };
   } catch (error) {
-    console.log(error);
     throw new Response("Error fetching data", { status: 500 });
   }
 };

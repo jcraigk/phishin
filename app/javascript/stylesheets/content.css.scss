@@ -39,6 +39,29 @@
   color: black;
 }
 
+.show-badge {
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-size: 1.2rem;
+  background-color: $text-gray;
+  margin-right: 0.5rem;
+  border-radius: var(--bulma-radius);
+  padding: 0.2rem 0.4rem;
+  color: white;
+
+  &:hover {
+    background-color: $control-gray;
+    color: $text-gray;
+
+    .date-link {
+      color: $text-gray;
+    }
+  }
+
+  .date-link {
+    color: white;
+  }
+}
+
 .list-item {
   position: relative;
   display: flex;
@@ -94,28 +117,6 @@
     white-space: nowrap;
     min-width: 1rem;
     padding-right: 1rem;
-
-    .show-badge {
-      font-size: 1.2rem;
-      background-color: $text-gray;
-      margin-right: 0.5rem;
-      border-radius: var(--bulma-radius);
-      padding: 0.2rem 0.4rem;
-      color: white;
-
-      &:hover {
-        background-color: $control-gray;
-        color: $text-gray;
-
-        .date-link {
-          color: $text-gray;
-        }
-      }
-
-      .date-link {
-        color: white;
-      }
-    }
   }
 
   .leftside-primary-narrow {

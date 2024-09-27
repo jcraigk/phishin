@@ -5,7 +5,7 @@ TODO
  * TEST: final pass on widths of content sections (color the borders)
    * /search is wide when showing days of year
  * TEST: on iphone and tablet (including mediasession)
- * Create a published playlist in prod so index page isn't empty
+ * Create a published playlist in prod so index page isn't empty. include some excerpts too (so release first, then create the playlist)
 
 PLAYLISTS
  * Player should respect start/end times
@@ -13,6 +13,8 @@ PLAYLISTS
  * Create/edit playlist
 
  BACKBURNER
+  * Check consistency in sidebar/topbar (layout, styles, controls)
+  * look for random console errors
   * would be nice to have playlist_track ("entries") attributes on the track itself, as we do on the FE
   * look for class="
   * Do we really need customPlaylist or just the name?
