@@ -15,7 +15,7 @@ PLAYLISTS
  BACKBURNER
   * on mobile (<400 or whatever), show sidebar-filters underneath (?)
   * mag glass is blue in search on focus
-  * look for random console errors
+  * look for console errors
   * fade excerpts in/out (?)
   * Map in sidebar of show?
   * Have a "display more..." on search results if > 20 per category
@@ -24,7 +24,6 @@ PLAYLISTS
   * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
   * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
   * lyrical excerpts?
-  * put play random show button on empty playlist page
   * Add CSRF to POSTs on API
   * Disable email account creation - allow oauth login through api?
   * Ensure no FOUC with font (seems hard or impossible to do)
