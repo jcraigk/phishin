@@ -40,7 +40,7 @@ export const songTracksLoader = async ({ params, request }) => {
   }
 };
 
-import React, { useRef, useEffect, useState } from "react";
+import React from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./LayoutWrapper";
@@ -50,19 +50,6 @@ import Pagination from "./Pagination";
 const SongTracks = () => {
   const { songTitle, originalInfo, tracks, totalEntries, totalPages, page, sortOption } = useLoaderData();
   const navigate = useNavigate();
-
-  const trackRefs = useRef([]);
-  const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
-
-  useEffect(() => {
-    if (tracks.length > 0) {
-      const initialTrack = tracks[0];
-      setMatchedTrack(initialTrack);
-      if (trackRefs.current[0]) {
-        trackRefs.current[0].scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    }
-  }, [tracks]);
 
   const handleSortChange = (event) => {
     navigate(`?page=1&sort=${event.target.value}`);
@@ -75,8 +62,10 @@ const SongTracks = () => {
   const sidebarContent = (
     <div className="sidebar-content">
       <p className="sidebar-title">{songTitle}</p>
-      <p className="sidebar-subtitle sidebar-extras">{originalInfo}</p>
-      <p className="sidebar-subtitle sidebar-extras">Total Tracks: {totalEntries}</p>
+      <p className="sidebar-subtitle sidebar-extras">
+        {originalInfo}<br />
+        Total Tracks: {totalEntries}
+      </p>
 
       <div className="sidebar-filters">
         <div className="select">
@@ -99,11 +88,7 @@ const SongTracks = () => {
         <title>{songTitle} - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        <Tracks
-          tracks={tracks}
-          setTracks={() => {}}
-          trackRefs={trackRefs}
-        />
+        <Tracks tracks={tracks} />
         {totalPages > 1 && (
           <Pagination
             totalPages={totalPages}

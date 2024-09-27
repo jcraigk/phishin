@@ -75,7 +75,7 @@ const TagShows = () => {
         <title>{tag.name} - Shows - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        <Shows shows={shows} setShows={() => {}} numbering={false} setHeaders={false} />
+        <Shows shows={shows} />
         {totalPages > 1 && (
           <Pagination
             totalPages={totalPages}

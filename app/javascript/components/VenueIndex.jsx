@@ -93,14 +93,14 @@ const VenueIndex = () => {
       </div>
 
       <div className="mt-6 hidden-mobile">
-        <label className="label">Search Venues</label>
+        <hr />
         <input
           className="input"
           type="text"
           value={searchTerm}
           onChange={handleSearchChange}
           onKeyDown={handleKeyDown}
-          placeholder="Venue name"
+          placeholder="Search venues"
         />
         <button className="button mt-4" onClick={handleSearchSubmit}>
           <div className="icon mr-1">

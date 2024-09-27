@@ -6,7 +6,7 @@ import HighlightedText from "./HighlightedText";
 import LikeButton from "./LikeButton";
 import TrackContextMenu from "./TrackContextMenu";
 
-const Tracks = ({ tracks, viewStyle, numbering = false, highlight, trackRefs, trackSlug }) => {
+const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, highlight, trackRefs, trackSlug }) => {
   const { playTrack, activeTrack, setCustomPlaylist  } = useOutletContext();
 
   const handleTrackClick = (track) => {
@@ -80,7 +80,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, highlight, trackRefs, tr
                   />
                 </span>
                 {
-                  viewStyle !== "show" && (
+                  viewStyle !== "show" && !omitSecondary && (
                     <span className="leftside-secondary">
                       {track.venue_location}
                     </span>

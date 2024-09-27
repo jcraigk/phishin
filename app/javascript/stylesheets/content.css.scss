@@ -129,6 +129,16 @@
     flex-shrink: 0;
   }
 
+  .leftside-primary-medium {
+    width: 10rem;
+    font-size: 1.5rem;
+    color: var(--bulma-grey-dark);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
   .leftside-secondary {
     font-size: 1.1rem;
     text-align: left;
@@ -190,10 +200,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  .width-8 {
-    width: 8rem !important;
   }
 
   .addendum {

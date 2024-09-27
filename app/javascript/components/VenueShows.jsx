@@ -1,4 +1,4 @@
-import { authFetch } from "./utils";
+import { authFetch, formatNumber } from "./utils";
 
 export const venueShowsLoader = async ({ params, request }) => {
   const { venueSlug } = params;
@@ -46,7 +46,9 @@ const VenueShows = () => {
             {venue.location}
         </Link>
       </p>
-      <p className="sidebar-subtitle sidebar-extras">{venue.shows_count} shows total</p>
+      <p className="sidebar-subtitle">
+        {formatNumber(venue.shows_count, 'show')} total
+      </p>
 
       <div className="sidebar-filters">
         <div className="select">
@@ -69,7 +71,7 @@ const VenueShows = () => {
         <title>{venue.name} - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        <Shows shows={shows} setShows={() => {}} />
+        <Shows shows={shows} />
       </LayoutWrapper>
     </>
   );

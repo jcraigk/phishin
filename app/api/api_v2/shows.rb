@@ -114,7 +114,7 @@ class ApiV2::Shows < ApiV2::Base
         Show.published
             .where("extract(month from date) = ?", date.month)
             .where("extract(day from date) = ?", date.day)
-      shows = apply_sort(shows)
+      shows = apply_sort(shows, :date, :desc)
       liked_show_ids = fetch_liked_show_ids(shows)
       present \
         shows: ApiV2::Entities::Show.represent(shows, liked_show_ids:)
@@ -129,7 +129,7 @@ class ApiV2::Shows < ApiV2::Base
         shows = Show.published
                     .includes(:venue, show_tags: :tag)
                     .then { |s| apply_filter(s) }
-                    .then { |s| apply_sort(s) }
+                    .then { |s| apply_sort(s, :date, :desc) }
                     .paginate(page: params[:page], per_page: params[:per_page])
 
         {
@@ -219,11 +219,6 @@ class ApiV2::Shows < ApiV2::Base
       end
 
       shows
-    end
-
-    def apply_sort(shows)
-      sort_by, sort_direction = params[:sort].split(":")
-      shows.order("#{sort_by} #{sort_direction}")
     end
 
     def next_show_date(current_date)

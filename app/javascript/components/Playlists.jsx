@@ -40,7 +40,7 @@ const Playlists = ({ playlists, highlight }) => {
                 {formatDurationShow(playlist.duration)}
               </span>
               <span className="rightside-secondary">
-                <LikeButton likable={playlist} />
+                <LikeButton likable={playlist} type="Playlist" />
               </span>
             </div>
           </div>

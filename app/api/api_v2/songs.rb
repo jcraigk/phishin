@@ -52,7 +52,7 @@ class ApiV2::Songs < ApiV2::Base
       Rails.cache.fetch("api/v2/songs?#{params.to_query}") do
         songs = Song.unscoped
                     .then { |s| apply_filter(s) }
-                    .then { |s| apply_sort(s) }
+                    .then { |s| apply_sort(s, :title, :asc) }
                     .paginate(page: params[:page], per_page: params[:per_page])
 
         {
@@ -75,11 +75,6 @@ class ApiV2::Songs < ApiV2::Base
         songs = songs.title_starting_with(params[:first_char])
       end
       songs
-    end
-
-    def apply_sort(songs)
-      sort_column, sort_direction = params[:sort].split(":")
-      songs.order(sort_column => sort_direction)
     end
   end
 end

@@ -19,20 +19,20 @@
   animation: popOut 0.3s ease-in-out;
 
   &.notice {
-    background-color: #cfffe3;
-    border: 1px solid #2ecc71;
+    background-color: $bg-blue;
+    border: 1px solid $likes-blue;
 
     .progress-bar {
-      background-color: #2ecc71;
+      background-color: $likes-blue;
     }
   }
 
   &.alert {
-    background-color: #ffe4e1;
-    border: 1px solid #e74c3c;
+    background-color: $bg-red;
+    border: 1px solid $alert-red;
 
     .progress-bar {
-      background-color: #e74c3c;
+      background-color: $alert-red;
     }
   }
 
@@ -52,7 +52,7 @@
   border: 1px solid $inactive-gray;
 
   &.show-info {
-    background-color: $info-blue;
+    background-color: $bg-blue;
     padding: 0.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   }

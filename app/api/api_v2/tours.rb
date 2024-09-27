@@ -34,7 +34,7 @@ class ApiV2::Tours < ApiV2::Base
     def page_of_tours
       Rails.cache.fetch("api/v2/tours?#{params.to_query}") do
         Tour.unscoped
-            .then { |t| apply_sort(t) }
+            .then { |t| apply_sort(t, :name, :asc) }
             .paginate(page: params[:page], per_page: params[:per_page])
       end
     end

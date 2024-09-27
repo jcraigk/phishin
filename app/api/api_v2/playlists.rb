@@ -46,8 +46,8 @@ class ApiV2::Playlists < ApiV2::Base
       use :pagination
       optional :sort,
                type: String,
-               desc: "Sort by attribute and direction (e.g., 'name:asc')",
-               default: "name:asc",
+               desc: "Sort by attribute and direction (e.g., 'likes_count:desc')",
+               default: "likes_count:desc",
                values: SORT_COLS.map { |opt| ["#{opt}:asc", "#{opt}:desc"] }.flatten
       optional :filter,
                type: String,
@@ -174,7 +174,7 @@ class ApiV2::Playlists < ApiV2::Base
       Rails.cache.fetch("api/v2/playlists?#{params.to_query}") do
         playlists = Playlist.includes(:user)
                             .then { |p| apply_filter(p) }
-                            .then { |p| apply_sort(p) }
+                            .then { |p| apply_sort(p, :name, :asc) }
                             .paginate(page: params[:page], per_page: params[:per_page])
 
         {
@@ -216,11 +216,6 @@ class ApiV2::Playlists < ApiV2::Base
       end
 
       playlists
-    end
-
-    def apply_sort(playlists)
-      sort_by, sort_direction = params[:sort].split(":")
-      playlists.order("#{sort_by} #{sort_direction}")
     end
   end
 end
