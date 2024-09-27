@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../images/logo-350.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendarAlt, faMusic, faMapMarkerAlt, faStar, faCalendarDay, faMap, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark, faRightToBracket, faGear, faList, faListCheck } from "@fortawesome/free-solid-svg-icons";
 
-const Navbar = ({ user, onLogout }) => {
+const Navbar = ({ user, onLogout, handleInputFocus, handleInputBlur }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ const Navbar = ({ user, onLogout }) => {
   const userLinks = [
     { path: "/my-shows", label: "My Shows", icon: faGuitar },
     { path: "/my-tracks", label: "My Tracks", icon: faRecordVinyl },
-    { path: "/edit-playlist", label: "Create Playlist", icon: faListCheck },
+    { path: "/edit-playlist", label: "Draft Playlist", icon: faListCheck },
   ];
 
   const combinedLinks = [
@@ -154,6 +154,8 @@ const Navbar = ({ user, onLogout }) => {
                     placeholder="SEARCH"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    onFocus={handleInputFocus}
+                    onBlur={handleInputBlur}
                   />
                   <span className="icon is-left">
                     <FontAwesomeIcon icon={faSearch} />
@@ -205,6 +207,7 @@ const Navbar = ({ user, onLogout }) => {
                             {item.label}
                           </Link>
                         ))}
+                        <hr className="dropdown-divider" />
                         <Link to="/settings" className="navbar-item" onClick={closeMenus}>
                           <FontAwesomeIcon icon={faGear} className="icon" />
                           Settings

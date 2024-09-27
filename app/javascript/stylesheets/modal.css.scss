@@ -2,10 +2,14 @@
   background: white;
   padding: 1.5rem;
   border-radius: var(--bulma-radius);
-  max-width: 500px;
+  width: 500px;
   margin: 0 auto;
   max-height: 500px;
   overflow: auto;
+
+  &:focus {
+    outline: none;
+  }
 }
 
 .modal-overlay {

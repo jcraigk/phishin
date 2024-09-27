@@ -1,6 +1,38 @@
 class ApiV2::Playlists < ApiV2::Base
   SORT_COLS = %w[name likes_count tracks_count duration updated_at]
 
+  helpers do
+    params :playlist_params do
+      requires :name,
+               type: String,
+               desc: "Name of the playlist"
+      requires :slug,
+               type: String,
+               desc: "Slug of the playlist"
+      requires :description,
+               type: String,
+               desc: "Description of the playlist"
+      requires :published,
+               type: Boolean,
+               desc: \
+                "Published flag (true to make browseable/searchable " \
+                "by public users, false to make private)"
+      requires :track_ids,
+               type: Array[Integer],
+               desc: "Array of track IDs that make up the playlist"
+      requires :starts_at_seconds,
+               type: Array[Integer],
+               desc: \
+                "Array of starting positions of " \
+                "associated track selections in track_ids array"
+      requires :ends_at_seconds,
+               type: Array[Integer],
+               desc:
+                "Array of ending positions of " \
+                "associated track selections in track_ids array"
+    end
+  end
+
   resource :playlists do
     desc "Fetch a list of playlists" do
       detail "Fetch a filtered, sorted, paginated list of playlists"
@@ -59,13 +91,7 @@ class ApiV2::Playlists < ApiV2::Base
       success ApiV2::Entities::Playlist
       failure [ [ 422, "Unprocessable Entity", ApiV2::Entities::ApiResponse ] ]
     end
-    params do
-      requires :name, type: String, desc: "Name of the playlist"
-      requires :slug, type: String, desc: "Slug of the playlist"
-      optional :track_ids,
-               type: Array[Integer],
-               desc: "Array of track IDs to associate with the playlist"
-    end
+    params { use :playlist_params }
     post do
       authenticate!
 
@@ -98,36 +124,10 @@ class ApiV2::Playlists < ApiV2::Base
       ]
     end
     params do
+      use :playlist_params
       requires :id,
                type: Integer,
                desc: "ID of the playlist"
-      requires :slug,
-               type: String,
-               desc: "Slug of the playlist"
-      requires :name,
-               type: String,
-               desc: "Name of the playlist"
-      requires :description,
-               type: String,
-               desc: "Description of the playlist"
-      requires :published,
-               type: Boolean,
-               desc: \
-                "Published flag (true to make browseable/searchable " \
-                "by public users, false to make private)"
-      requires :track_ids,
-               type: Array[Integer],
-               desc: "Array of track IDs that make up the playlist"
-      requires :starts_at_seconds,
-               type: Array[Integer],
-               desc: \
-                "Array of starting positions of " \
-                "associated track selections in track_ids array"
-      requires :ends_at_seconds,
-               type: Array[Integer],
-               desc:
-                "Array of ending positions of " \
-                "associated track selections in track_ids array"
     end
     put ":id" do
       authenticate!

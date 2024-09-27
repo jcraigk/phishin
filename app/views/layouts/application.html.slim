@@ -26,7 +26,8 @@ html data-theme="light"
 
   = render "analytics/google"
   body
-    = react_component("App", props: @props, prerender: false)
+    #root
+      = react_component("App", props: @props, prerender: false)
 
     / - react_helmet_app = react_component_hash("App", props: @props)
     / - binding.irb

@@ -3,7 +3,7 @@ import { useOutletContext } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 
 const TagBadges = ({ tags, parentId }) => {
-  const { openModal } = useOutletContext();
+  const { openAppModal } = useOutletContext();
 
   const groupedTags = tags
     .sort((a, b) => a.priority - b.priority || (a.starts_at_second || 0) - (b.starts_at_second || 0))
@@ -49,7 +49,7 @@ const TagBadges = ({ tags, parentId }) => {
       </>
     );
 
-    openModal(modalContent);
+    openAppModal(modalContent);
   };
 
   const formatTimeRange = (tag) => {

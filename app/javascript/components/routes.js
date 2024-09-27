@@ -1,6 +1,7 @@
 import React from "react";
 
 // Content pages with sidebar
+import DraftPlaylist from "./DraftPlaylist";
 import DynamicRoute, { dynamicLoader } from "./DynamicRoute";
 import Eras, { erasLoader } from './Eras';
 import Layout from "./Layout";
@@ -42,19 +43,16 @@ const routes = (props) => [
     element: (<Layout user={props.user} onLogout={props.handleLogout} />),
     errorElement: <ErrorPage />,
     children: [
-      // Root
       {
         path: "/",
         element: <Eras />,
         loader: erasLoader,
       },
-      // Reports
       {
         path: "/missing-content",
         element: <MissingContentReport />,
         loader: missingContentLoader,
       },
-      // Auth pages
       {
         path: "/login",
         element: <Login onLogin={props.handleLogin}  />
@@ -156,10 +154,10 @@ const routes = (props) => [
         element: <MyTracks />,
         loader: myTracksLoader,
       },
-      // {
-      //   path: "/playlist",
-      //   element: <Playlist />,
-      // },
+      {
+        path: "/edit-playlist",
+        element: <DraftPlaylist />,
+      },
       {
         path: "/playlists",
         element: <PlaylistIndex />,

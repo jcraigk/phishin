@@ -8,24 +8,17 @@ import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCircle
 const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
   const dropdownRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
-  const { activeTrack, currentTime, openModal } = useOutletContext();
+  const { activeTrack, currentTime, openAppModal } = useOutletContext();
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const { user, draftPlaylist, setDraftPlaylist } = useOutletContext();
 
   const hideDropdown = () => {
     setDropdownVisible(false);
   };
 
-  const copyToClipboard = (e, includeTimestamp = false) => {
+  const copyToClipboard = (e) => {
     e.stopPropagation();
-
-    let url;
-    if (includeTimestamp && activeTrack?.show_date === show.date) {
-      const timestamp = `${Math.floor(currentTime / 60)}:${String(Math.floor(currentTime % 60)).padStart(2, "0")}`;
-      url = `https://phish.in/${activeTrack.show_date}/${activeTrack.slug}?t=${timestamp}`;
-    } else {
-      url = `https://phish.in/${show.date}`;
-    }
-    navigator.clipboard.writeText(url);
+    navigator.clipboard.writeText(`https://phish.in/${show.date}`);
     setNotice("URL copied to clipboard");
     hideDropdown();
   };
@@ -45,7 +38,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
         <p dangerouslySetInnerHTML={{ __html: (show.taper_notes || "").replace(/\n/g, "<br />") }}></p>
       </>
     );
-    openModal(modalContent);
+    openAppModal(modalContent);
     hideDropdown();
   };
 
@@ -54,8 +47,14 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
     setDropdownVisible(!dropdownVisible);
   };
 
-  const handleAddToPlaylist = () => {
-    setAlert("Sorry, that's under construction! Try again next month :)");
+  const handleAddToPlaylist = (e) => {
+    if (!user) {
+      setAlert("You must login to edit playlists");
+      return;
+    }
+    e.stopPropagation();
+    setDraftPlaylist([...draftPlaylist, ...show.tracks]);
+    setNotice("Show added to draft playlist");
     hideDropdown();
   };
 
@@ -91,13 +90,6 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
             <FontAwesomeIcon icon={faShareFromSquare} className="icon" />
             Share
           </a>
-
-          {activeTrack?.show_date === show.date && (
-            <a className="dropdown-item" onClick={(e) => copyToClipboard(e, true)}>
-              <FontAwesomeIcon icon={faShareFromSquare} className="icon" />
-              Share with timestamp
-            </a>
-          )}
 
           <a className="dropdown-item" onClick={openPhishNet}>
             <FontAwesomeIcon icon={faExternalLinkAlt} className="icon" />

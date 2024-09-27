@@ -38,10 +38,13 @@ RSpec.describe "API v2 Playlists" do
           "/playlists",
           params: {
             name: "Road Trip",
-            description: "Road trip playlist",
             slug: "road-trip",
-            track_ids: [ track1.id, track2.id ]
-        }
+            description: "Road trip playlist",
+            published: true,
+            track_ids: [ track1.id, track2.id ],
+            starts_at_seconds: [0, 15],
+            ends_at_seconds: [120, 180]
+          }
         )
 
         expect(response).to have_http_status(:created)
@@ -54,12 +57,24 @@ RSpec.describe "API v2 Playlists" do
       end
 
       it "returns a 422 error if the playlist is invalid" do
-        post_api_authed(user, "/playlists", params: { name: "RT", slug: "rt" })
+        post_api_authed(
+          user,
+          "/playlists",
+          params: {
+            name: "RT", # Too short
+            slug: "road-trip",
+            description: "Road trip playlist",
+            published: true,
+            track_ids: [ track1.id, track2.id ],
+            starts_at_seconds: [0, 15],
+            ends_at_seconds: [120, 180]
+          }
+        )
 
         expect(response).to have_http_status(:unprocessable_entity)
         json = JSON.parse(response.body)
 
-        expect(json["message"]).to include("must be between 5 and 50")
+        expect(json["message"]).to include("Name is invalid")
       end
     end
   end
