@@ -5,7 +5,7 @@ import { useFeedback } from "./FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward, faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
-const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCurrentTime, customPlaylist }) => {
+const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, setCurrentTime, customPlaylist, isInputFocused }) => {
   const location = useLocation();
   const scrubberRef = useRef();
   const progressBarRef = useRef();
@@ -129,8 +129,8 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCur
   }, [isFadeOutComplete, isImageLoaded]);
 
   const skipToNextTrack = () => {
-    const currentIndex = currentPlaylist.indexOf(activeTrack);
-    const nextTrack = currentPlaylist[currentIndex + 1];
+    const currentIndex = activePlaylist.indexOf(activeTrack);
+    const nextTrack = activePlaylist[currentIndex + 1];
     if (nextTrack) {
       setActiveTrack(nextTrack);
     } else {
@@ -139,12 +139,12 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCur
   };
 
   const skipToPreviousTrack = () => {
-    const currentIndex = currentPlaylist.indexOf(activeTrack);
+    const currentIndex = activePlaylist.indexOf(activeTrack);
 
     if (audioRef.current.currentTime > 10) {
       audioRef.current.currentTime = 0;
     } else {
-      const previousTrack = currentPlaylist[currentIndex - 1];
+      const previousTrack = activePlaylist[currentIndex - 1];
       if (previousTrack) {
         setActiveTrack(previousTrack);
       } else {
@@ -156,6 +156,8 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCur
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
+      if (isInputFocused) return;
+
       if (e.key === " " && !e.shiftKey) {
         e.preventDefault();
         togglePlayPause();
@@ -176,7 +178,7 @@ const Player = ({ currentPlaylist, activeTrack, setActiveTrack, audioRef, setCur
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [togglePlayPause, scrubBackward, scrubForward, skipToPreviousTrack, skipToNextTrack]);
+  }, [isInputFocused, togglePlayPause, scrubBackward, scrubForward, skipToPreviousTrack, skipToNextTrack]);
 
   const handleTimeUpdate = () => {
     setCurrentTime(audioRef.current.currentTime);

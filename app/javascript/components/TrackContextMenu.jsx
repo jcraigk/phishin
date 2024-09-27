@@ -1,21 +1,20 @@
 import React, { useRef, useState, useEffect } from "react";
-import { useOutletContext, Link, useLocation } from "react-router-dom";
+import { useOutletContext, Link } from "react-router-dom";
 import { useFeedback } from "./FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faShareFromSquare, faCirclePlus, faDownload, faMusic, faCircleChevronLeft, faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faShareFromSquare, faCirclePlus, faDownload, faMusic, faCircleChevronLeft, faCircleChevronRight, faTrashAlt, faClock } from "@fortawesome/free-solid-svg-icons";
 
-const TrackContextMenu = ({ track }) => {
-  const location = useLocation();
+const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
   const dropdownRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const { activeTrack, currentTime } = useOutletContext();
+  const { activeTrack, currentTime, user, draftPlaylist, setDraftPlaylist, openAppModal } = useOutletContext();
 
   const hideDropdown = () => {
     setDropdownVisible(false);
   };
 
-  const share = (e, include_timestamp = false) => {
+  const copyToClipboard = (e, include_timestamp = false) => {
     e.stopPropagation();
     let url = `https://phish.in/${track.show_date}/${track.slug}`;
     if (include_timestamp && activeTrack?.id === track.id) {
@@ -35,19 +34,90 @@ const TrackContextMenu = ({ track }) => {
   };
 
   const handleAddToPlaylist = (e) => {
+    if (!user) {
+      setAlert("You must login to edit playlists");
+      return;
+    }
     e.stopPropagation();
-    setAlert("Sorry, that's under construction! Try again next month :)");
+    setDraftPlaylist([...draftPlaylist, track]);
+    setNotice("Track added to draft playlist");
+    hideDropdown();
+  };
+
+  const handleRemoveFromPlaylist = (e) => {
+    e.stopPropagation();
+    const updatedPlaylist = [...draftPlaylist];
+    updatedPlaylist.splice(indexInPlaylist, 1);
+    setDraftPlaylist(updatedPlaylist);
+    setNotice("Track removed from draft playlist");
     hideDropdown();
   };
 
   const handleDownload = (e, trackId) => {
     e.stopPropagation();
     const link = document.createElement("a");
-    link.href = `/download-track/${trackId}`;  // Use the Rails route
+    link.href = `/download-track/${trackId}`;
     link.setAttribute("download", true);
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);  // Cleanup the element
+    document.body.removeChild(link);
+  };
+
+  const handleEditExcerpt = (e) => {
+    e.stopPropagation();
+
+    const initialStart = (draftPlaylist[indexInPlaylist]?.starts_at_second || 0) / 60;
+    const initialEnd = (draftPlaylist[indexInPlaylist]?.ends_at_second || track.duration) / 60;
+
+    const timeOptions = Array.from({ length: Math.floor(track.duration / 60) + 1 }, (_, i) => (
+      <option key={i} value={i}>{i < 10 ? `0:0${i}` : `0:${i}`}</option>
+    ));
+
+    openAppModal(
+      <div className="edit-excerpt-modal">
+        <h2>Edit Excerpt for {track.title}</h2>
+        <div className="field">
+          <label className="label">Start Time</label>
+          <div className="control">
+            <select
+              className="select"
+              value={initialStart}
+              onChange={(e) => {
+                const updatedPlaylist = [...draftPlaylist];
+                updatedPlaylist[indexInPlaylist].starts_at_second = e.target.value * 60;
+                setDraftPlaylist(updatedPlaylist);
+              }}
+            >
+              {timeOptions}
+            </select>
+          </div>
+        </div>
+        <div className="field">
+          <label className="label">End Time</label>
+          <div className="control">
+            <select
+              className="select"
+              value={initialEnd}
+              onChange={(e) => {
+                const updatedPlaylist = [...draftPlaylist];
+                updatedPlaylist[indexInPlaylist].ends_at_second = e.target.value * 60;
+                setDraftPlaylist(updatedPlaylist);
+              }}
+            >
+              {timeOptions}
+            </select>
+          </div>
+        </div>
+        <button
+          className="button is-primary"
+          onClick={() => openAppModal(null)}
+        >
+          Done Editing
+        </button>
+      </div>
+    );
+
+    hideDropdown();
   };
 
   // Close dropdown when clicking outside
@@ -78,13 +148,13 @@ const TrackContextMenu = ({ track }) => {
         style={{ display: dropdownVisible ? "block" : "none" }}
       >
         <div className="dropdown-content context-dropdown-content">
-          <a className="dropdown-item" onClick={(e) => share(e, false)}>
+          <a className="dropdown-item" onClick={(e) => copyToClipboard(e, false)}>
             <FontAwesomeIcon icon={faShareFromSquare} className="icon" />
             Share
           </a>
 
           {activeTrack?.id === track.id && (
-            <a className="dropdown-item" onClick={(e) => share(e, true)}>
+            <a className="dropdown-item" onClick={(e) => copyToClipboard(e, true)}>
               <FontAwesomeIcon icon={faShareFromSquare} className="icon" />
               Share with Timestamp
             </a>
@@ -141,6 +211,20 @@ const TrackContextMenu = ({ track }) => {
             <FontAwesomeIcon icon={faCirclePlus} className="icon" />
             Add to Playlist
           </a>
+
+          {draftPlaylist.includes(track) && (
+            <a className="dropdown-item" onClick={handleRemoveFromPlaylist}>
+              <FontAwesomeIcon icon={faTrashAlt} className="icon" />
+              Remove from Playlist
+            </a>
+          )}
+
+          {draftPlaylist.includes(track) && (
+            <a className="dropdown-item" onClick={handleEditExcerpt}>
+              <FontAwesomeIcon icon={faClock} className="icon" />
+              Edit Excerpt
+            </a>
+          )}
         </div>
       </div>
     </div>

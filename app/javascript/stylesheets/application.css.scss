@@ -43,7 +43,7 @@ html, body {
   font-family: "Open Sans Condensed", sans-serif;
 }
 
-.root {
+.root-layout {
   display: flex;
   flex-direction: column;
   min-height: 100vh; /* Make sure the container stretches to full height */
@@ -92,6 +92,11 @@ h2.title:not(:first-of-type) {
     font-size: 1.2rem;
     background-color: white;
   }
+}
+
+.excerpt {
+  font-style: italic;
+  color: red;
 }
 
 .loader-container {

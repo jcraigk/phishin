@@ -7,7 +7,7 @@ import LikeButton from "./LikeButton";
 import TrackContextMenu from "./TrackContextMenu";
 
 const Tracks = ({ tracks, viewStyle, numbering = false, highlight, trackRefs, trackSlug }) => {
-  const { playTrack, activeTrack, customPlaylist, setCustomPlaylist  } = useOutletContext();
+  const { playTrack, activeTrack, setCustomPlaylist  } = useOutletContext();
 
   const handleTrackClick = (track) => {
     playTrack(tracks, track);
@@ -29,6 +29,11 @@ const Tracks = ({ tracks, viewStyle, numbering = false, highlight, trackRefs, tr
       {tracks.map((track, index) => {
         const isNewSet = viewStyle === "show" && track.set_name !== lastSetName;
         lastSetName = track.set_name;
+
+        const isExcerpt = track.starts_at_second !== undefined && track.ends_at_second !== undefined;
+        const actualDuration = track.starts_at_second && track.ends_at_second
+          ? track.ends_at_second - track.starts_at_second
+          : track.duration;
 
         return (
           <React.Fragment key={track.id}>
@@ -85,12 +90,14 @@ const Tracks = ({ tracks, viewStyle, numbering = false, highlight, trackRefs, tr
                   <TagBadges tags={track.tags} parentId={track.id} />
                 </span>
                 <div className="rightside-group">
-                  <span className="rightside-primary">{formatDurationTrack(track.duration)}</span>
+                  <span className={`rightside-primary ${isExcerpt ? "excerpt" : ""}`}>
+                    {formatDurationTrack(actualDuration)}
+                  </span>
                   <span className="rightside-secondary">
                     <LikeButton likable={track} type="Track" />
                   </span>
                   <span className="rightside-menu">
-                    <TrackContextMenu track={track} />
+                    <TrackContextMenu track={track} indexInPlaylist={index} />
                   </span>
                 </div>
               </div>

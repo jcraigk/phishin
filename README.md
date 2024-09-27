@@ -8,10 +8,18 @@ TODO
  * Create a published playlist in prod so index page isn't empty
 
 PLAYLISTS
+ * Player should respect start/end times
+ * Default playlist sort: likes (also how can we then sort by name?)
  * Create/edit playlist
- * Context menus: Add to Playlist
 
  BACKBURNER
+  * would be nice to have playlist_track ("entries") attributes on the track itself, as we do on the FE
+  * look for class="
+  * Do we really need customPlaylist or just the name?
+  * feedback green should be blue?
+  * spinner should cover entire screen - there's always back button
+  * fade excerpts in/out
+  * Use track viewStyle for top numbering as well?
   * Link locations to map in lists like https://jcktest.ngrok.io/play/011021 ?
   * Map in sidebar of show?
   * Have a "display more..." on search results if > 20 per category

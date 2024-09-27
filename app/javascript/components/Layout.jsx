@@ -5,66 +5,111 @@ import Footer from "./Footer";
 import Loader from "./Loader";
 import Player from "./Player";
 import AppModal from "./AppModal";
+import DraftPlaylistModal from "./DraftPlaylistModal";
 
 const Layout = ({ user, setUser, onLogout }) => {
   const navigation = useNavigation();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState(null);
-  const [currentPlaylist, setCurrentPlaylist] = useState([]);
+  const [isAppModalOpen, setIsAppModalOpen] = useState(false);
+  const [appModalContent, setAppModalContent] = useState(null);
+  const [isDraftPlaylistModalOpen, setIsDraftPlaylistModalOpen] = useState(false);
+  const [activePlaylist, setActivePlaylist] = useState([]);
   const [customPlaylist, setCustomPlaylist] = useState(null);
+  const [draftPlaylist, setDraftPlaylist] = useState([]);
+  const [draftPlaylistMeta, setDraftPlaylistMeta] = useState({
+    name: "(Untitled Playlist)",
+    slug: "",
+    description: "",
+    published: false
+  });
   const [activeTrack, setActiveTrack] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const audioRef = useRef(null);
 
+  const handleInputFocus = () => setIsInputFocused(true);
+  const handleInputBlur = () => setIsInputFocused(false);
+
   const playTrack = (playlist, track, autoplay = false) => {
-    if (currentPlaylist.length > 0 && autoplay) return;
-    setCurrentPlaylist(playlist);
+    if (activePlaylist.length > 0 && autoplay) return;
+    setActivePlaylist(playlist);
     setActiveTrack(track);
   };
 
-  const openModal = (content) => {
-    setModalContent(content);
-    setIsModalOpen(true);
+  const openAppModal = (content) => {
+    setAppModalContent(content);
+    setIsAppModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setModalContent(null);
+  const closeAppModal = () => {
+    setIsAppModalOpen(false);
+    setAppModalContent(null);
+  };
+
+  const openDraftPlaylistModal = () => {
+    setIsDraftPlaylistModalOpen(true);
+  };
+
+  const closeDraftPlaylistModal = () => {
+    setIsDraftPlaylistModalOpen(false);
   };
 
   return (
     <>
       {navigation.state === 'loading' && <Loader />}
-      <Navbar user={user} onLogout={onLogout} />
+      <Navbar
+        user={user}
+        onLogout={onLogout}
+        handleInputFocus={handleInputFocus}
+        handleInputBlur={handleInputBlur}
+      />
       <main className={activeTrack ? 'with-player' : ''}>
         <Outlet context={{
-          currentPlaylist,
-          setCurrentPlaylist,
+          activePlaylist,
+          setActivePlaylist,
           customPlaylist,
           setCustomPlaylist,
+          draftPlaylist,
+          setDraftPlaylist,
+          draftPlaylistMeta,
+          setDraftPlaylistMeta,
           activeTrack,
           playTrack,
           audioRef,
           currentTime,
           setCurrentTime,
-          openModal,
+          openAppModal,
+          closeAppModal,
+          openDraftPlaylistModal,
+          closeDraftPlaylistModal,
           user,
-          setUser
+          setUser,
+          isInputFocused,
+          handleInputFocus,
+          handleInputBlur
         }} />
       </main>
       <Footer />
       <Player
-        currentPlaylist={currentPlaylist}
+        activePlaylist={activePlaylist}
         activeTrack={activeTrack}
         setActiveTrack={setActiveTrack}
         audioRef={audioRef}
         setCurrentTime={setCurrentTime}
         customPlaylist={customPlaylist}
+        isInputFocused={isInputFocused}
       />
       <AppModal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        modalContent={modalContent}
+        isOpen={isAppModalOpen}
+        onRequestClose={closeAppModal}
+        modalContent={appModalContent}
+      />
+      <DraftPlaylistModal
+        isOpen={isDraftPlaylistModalOpen}
+        onRequestClose={closeDraftPlaylistModal}
+        draftPlaylistMeta={draftPlaylistMeta}
+        setDraftPlaylistMeta={setDraftPlaylistMeta}
+        handleInputFocus={handleInputFocus}
+        handleInputBlur={handleInputBlur}
       />
     </>
   );

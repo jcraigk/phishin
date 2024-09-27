@@ -9,7 +9,7 @@ const App = (props) => {
   return (
     <HelmetProvider context={helmetContext}>
       <FeedbackProvider>
-        <div className="root">
+        <div className="root-layout">
           <AppRouter {...props} />
         </div>
       </FeedbackProvider>
