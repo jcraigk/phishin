@@ -116,7 +116,7 @@ const DraftPlaylist = () => {
             Add at least 2 tracks to save and share your custom playlist.
           </div>
         )}
-        <Tracks tracks={draftPlaylist} viewStyle="playlist" />
+        <Tracks tracks={draftPlaylist} viewStyle="playlist" numbering={true} />
       </div>
     </LayoutWrapper>
   );

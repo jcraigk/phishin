@@ -77,7 +77,7 @@ const TagTracks = () => {
         <title>{tag.name} - Tracks - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        <Tracks tracks={tracks} setTracks={() => {}} />
+        <Tracks tracks={tracks} />
         {totalPages > 1 && (
           <Pagination
             totalPages={totalPages}

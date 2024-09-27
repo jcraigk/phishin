@@ -107,7 +107,7 @@ const TodayShows = () => {
         {shows.length === 0 ? (
           <h1 className="title">No shows found for {getMonthDayDisplay()}.</h1>
         ) : (
-          <Shows shows={shows} setShows={() => {}} numbering={false} tourHeaders={true} />
+          <Shows shows={shows} tourHeaders={true} />
         )}
       </LayoutWrapper>
     </>

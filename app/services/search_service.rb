@@ -13,7 +13,6 @@ class SearchService < BaseService
 
   def call
     return if term_too_short?
-    # binding.irb
     search_results
   end
 

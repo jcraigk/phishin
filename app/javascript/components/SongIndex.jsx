@@ -72,14 +72,14 @@ const SongIndex = () => {
       </div>
 
       <div className="mt-5 hidden-mobile">
-        <label className="label">Search Songs</label>
+        <hr />
         <input
           className="input"
           type="text"
           value={searchTerm}
           onChange={handleSearchChange}
           onKeyDown={handleKeyDown}
-          placeholder="Song title"
+          placeholder="Search songs"
         />
         <button className="button mt-4" onClick={handleSearchSubmit}>
           <div className="icon mr-1">

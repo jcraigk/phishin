@@ -12,9 +12,10 @@ $control-gray: #f5f5f5;
 $text-gray: #6d6f71;
 $title-gray: #515152;
 $google-blue: #5385ed;
-// $likes-blue: #03bbf2;
 $likes-blue: rgb(3, 187, 242);
-$info-blue: #cbf3ff;
+$bg-blue: #cbf3ff;
+$bg-red: #ffe4e1;
+$alert-red: #c6867f;
 
 @import "./content.css.scss";
 @import "./pagination.css.scss";
@@ -67,8 +68,14 @@ h2.title:not(:first-of-type) {
   font-family: "Open Sans Condensed", sans-serif;
 }
 
-.icon {
+.select::after {
+  border-color: $text-gray !important; /* Bulma dropdown chevron color */
+}
+
+.label {
   color: $text-gray;
+  margin-top: 0.5rem;
+  margin-bottom: 0.1rem !important;
 }
 
 // Misc
@@ -101,7 +108,7 @@ h2.title:not(:first-of-type) {
 
 .loader-container {
   position: fixed;
-  top: 70px;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;

@@ -69,7 +69,7 @@ class ApiV2::Tracks < ApiV2::Base
                         :songs_tracks
                      )
                      .then { |t| apply_filter(t) }
-                     .then { |t| apply_sort(t) }
+                     .then { |t| apply_track_sort(t) }
                      .paginate(page: params[:page], per_page: params[:per_page])
 
         {
@@ -126,14 +126,17 @@ user_id: current_user.id).pluck(:likable_id)
       tracks
     end
 
-    def apply_sort(tracks)
+    def apply_track_sort(tracks)
       sort_by, sort_direction = params[:sort].split(":")
 
       case sort_by
       when "date"
-        tracks = tracks.joins(:show).order("shows.date #{sort_direction}")
+        tracks = tracks.joins(:show)
+                       .order("shows.date #{sort_direction}")
+                       .order("tracks.position asc")
       else
         tracks = tracks.order("#{sort_by} #{sort_direction}")
+        tracks = tracks.order("title asc") if sort_by != "title"
       end
 
       tracks

@@ -14,19 +14,19 @@ const ContactInfo = () => {
       <p>
         If you notice a bug, please file an issue or pull request on GitHub:
       </p>
-      <GitHubButton className="mb-6" />
+      <GitHubButton className="mb-5" />
 
       <p>
         Join the community discussion on Discord:
       </p>
-      <DiscordButton className="mb-6" />
+      <DiscordButton className="mb-5" />
 
       <p>
         Follow on X:
       </p>
       <a
         href="https://x.com/phish_in"
-        className="button mb-6"
+        className="button mb-5"
         target="_blank"
       >
         <div className="icon mr-1">

@@ -42,7 +42,7 @@ const TopTracks = ({ user }) => {
         <title>Top Tracks - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        <Tracks tracks={tracks} setTracks={() => {}} numbering={true} />
+        <Tracks tracks={tracks} numbering={true} omitSecondary={true} />
       </LayoutWrapper>
     </>
   );

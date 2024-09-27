@@ -3,7 +3,7 @@ import { authFetch } from "./utils";
 export const playlistIndexLoader = async ({ request }) => {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
-  const sortOption = url.searchParams.get("sort") || "name:asc";
+  const sortOption = url.searchParams.get("sort") || "likes_count:desc";
   const filter = url.searchParams.get("filter") || "all";
 
   try {
@@ -106,7 +106,7 @@ const PlaylistIndex = () => {
         {user && (
           <div className="select">
             <select id="playlist-filter" value={filter} onChange={handleFilterChange}>
-              <option value="public">Public Playlists</option>
+              <option value="all">All Published Playlists</option>
               <option value="mine">Playlists I Made</option>
               <option value="liked">Playlists I Liked</option>
             </select>
@@ -115,14 +115,14 @@ const PlaylistIndex = () => {
       </div>
 
       <div className="mt-6 hidden-mobile">
-        <label className="label">Search Playlists</label>
+        <hr />
         <input
           className="input"
           type="text"
           value={searchTerm}
           onChange={handleSearchChange}
           onKeyDown={handleKeyDown}
-          placeholder="Name or description"
+          placeholder="Search playlists"
         />
         <button className="button mt-4" onClick={handleSearchSubmit}>
           <div className="icon mr-1">
@@ -141,11 +141,13 @@ const PlaylistIndex = () => {
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <Playlists playlists={playlists} />
-        <Pagination
-          totalPages={totalPages}
-          handlePageClick={handlePageClick}
-          currentPage={page}
-        />
+        {totalPages > 1 && (
+          <Pagination
+            totalPages={totalPages}
+            handlePageClick={handlePageClick}
+            currentPage={page}
+          />
+        )}
       </LayoutWrapper>
     </>
   );
