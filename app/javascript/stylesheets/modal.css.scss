@@ -10,6 +10,13 @@
   &:focus {
     outline: none;
   }
+
+  input, select {
+    font-size: 1rem;
+    border-radius: var(--bulma-radius);
+    border-color: $header-gray;
+    padding: 0.5rem;
+  }
 }
 
 .modal-overlay {

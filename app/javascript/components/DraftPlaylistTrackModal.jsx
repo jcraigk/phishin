@@ -98,31 +98,31 @@ const DraftPlaylistTrackModal = ({
       <div className="field">
         <label className="label">Position</label>
         <div className="control">
-          <select className="select" value={position} onChange={handlePositionChange}>
+          <select className="select" value={position} onChange={handlePositionChange} onClick={(e) => e.stopPropagation()}>
             {positionOptions}
           </select>
         </div>
       </div>
 
       <div className="field">
-        <label className="label">Start Time</label>
+        <label className="label">Start Playing At</label>
         <div className="control">
-          <select className="select" value={start ?? "null"} onChange={handleStartChange}>
+          <select className="select" value={start ?? "null"} onChange={handleStartChange} onClick={(e) => e.stopPropagation()}>
             {startOptions}
           </select>
         </div>
       </div>
 
       <div className="field">
-        <label className="label">End Time</label>
+        <label className="label">Stop Playing At</label>
         <div className="control">
-          <select className="select" value={end ?? "null"} onChange={handleEndChange}>
+          <select className="select" value={end ?? "null"} onChange={handleEndChange} onClick={(e) => e.stopPropagation()}>
             {endOptions}
           </select>
         </div>
       </div>
 
-      <button className="button" onClick={saveChanges}>
+      <button className="button" onClick={(e) => { e.stopPropagation(); saveChanges(); }}>
         <span className="icon mr-1">
           <FontAwesomeIcon icon={faCircleCheck} />
         </span>

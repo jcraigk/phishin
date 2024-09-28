@@ -61,8 +61,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
       if (typeof window !== "undefined") {
         document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
       }
-
-      // Update media session metadata
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
           title: activeTrack.title,
@@ -88,31 +86,22 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
 
       const newImage = new Image();
       newImage.src = activeTrack.waveform_image_url;
-
-      newImage.onload = () => {
-        setIsImageLoaded(true);
-      };
+      newImage.onload = () => setIsImageLoaded(true);
 
       audioRef.current.pause();
       audioRef.current.src = activeTrack.mp3_url;
       audioRef.current.load();
 
       audioRef.current.onloadedmetadata = () => {
-        const searchParams = new URLSearchParams(location.search);
-        const startTime = parseTimeParam(searchParams.get("t"));
-        const endTimeParam = parseTimeParam(searchParams.get("e"));
+        const startTime = activeTrack.starts_at_second ?? parseTimeParam(new URLSearchParams(location.search).get("t"));
+        const endTime = activeTrack.ends_at_second ?? parseTimeParam(new URLSearchParams(location.search).get("e"));
 
         if (startTime && startTime <= audioRef.current.duration) {
           audioRef.current.currentTime = startTime;
         }
 
-        if (endTimeParam && endTimeParam > startTime && endTimeParam <= audioRef.current.duration) {
-          setEndTime(endTimeParam);
-        }
-
-        audioRef.current.play().then(() => {
-          setIsFirstLoad(false);
-        }).catch((error) => {
+        setEndTime(endTime);
+        audioRef.current.play().then(() => setIsFirstLoad(false)).catch((error) => {
           if (error.name === "NotAllowedError") {
             setNotice("Tap Play or press Spacebar to listen");
           }
@@ -188,10 +177,10 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
   const handleTimeUpdate = () => {
     setCurrentTime(audioRef.current.currentTime);
     updateProgressBar();
-    if (isFirstLoad && endTime !== null && audioRef.current.currentTime >= endTime) {
-      audioRef.current.pause();
-      setIsFirstLoad(false);
-      setIsPlaying(false);
+
+    // Check if the track should skip to the next one at a specific end time
+    if (endTime !== null && audioRef.current.currentTime >= endTime) {
+      skipToNextTrack();
     }
   };
 
