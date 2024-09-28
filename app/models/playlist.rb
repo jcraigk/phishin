@@ -25,6 +25,8 @@ class Playlist < ApplicationRecord
 
   scope :published, -> { where(published: true) }
 
+  after_save :update_duration
+
   def as_json_api
     {
       slug:,
@@ -53,5 +55,9 @@ class Playlist < ApplicationRecord
     elsif playlist_tracks.size < 2
       errors.add(:tracks, "must number at least 2")
     end
+  end
+
+  def update_duration
+    update_column(:duration, playlist_tracks.sum(:duration)) if self.persisted?
   end
 end

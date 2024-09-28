@@ -207,15 +207,29 @@ class ApiV2::Playlists < ApiV2::Base
 
     def track_attrs_from_params
       params[:track_ids].map.with_index do |track_id, idx|
-        starts_at = params[:starts_at_seconds][idx]
-        ends_at = params[:ends_at_seconds][idx]
+        starts_at, ends_at = sanitize_track_times(
+          starts_at: params[:starts_at_seconds][idx],
+          ends_at: params[:ends_at_seconds][idx],
+          track_duration: Track.find(track_id).duration / 1000
+        )
+
         {
           track_id: track_id,
           position: idx + 1,
-          starts_at_second: starts_at.zero? ? nil : starts_at,
-          ends_at_second: ends_at.zero? ? nil : ends_at
+          starts_at_second: starts_at,
+          ends_at_second: ends_at
         }
       end
+    end
+
+    def sanitize_track_times(starts_at:, ends_at:, track_duration:)
+      if starts_at <= 0 ||
+         starts_at >= track_duration ||
+         starts_at >= ends_at
+        starts_at = nil
+      end
+      ends_at = nil if ends_at <= 0 || ends_at >= track_duration
+      [ starts_at, ends_at ]
     end
 
     def update_playlist_data(playlist)
