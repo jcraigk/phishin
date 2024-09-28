@@ -22,7 +22,7 @@ class PlaylistTrack < ApplicationRecord
     elsif start_second > 0 && end_second > 0
       (end_second - start_second) * 1000
     elsif start_second > 0
-      (track.duration / 1000 - start_second) * 1000
+      (track.duration - (start_second * 1000))
     elsif end_second > 0
       end_second * 1000
     end

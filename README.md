@@ -2,43 +2,44 @@ TODO
  * Opengraph (helmet context)
  * SPECS: Feature
  * SPECS: API
- * TEST: final pass on widths of content sections (color the borders)
-   * /search is wide when showing days of year
  * TEST: on iphone and tablet (including mediasession)
  * Create a published playlist in prod so index page isn't empty. include some excerpts too (so release first, then create the playlist)
 
 PLAYLISTS
- * Verify duration of set is correct
- * Player should respect start/end times
  * Share button?
+ * Map in sidebar of show?
+ * /search is wide when showing days of year
+ * Specs for playlist/playlist_track duration callbacks
 
  BACKBURNER
   * Navbar appears above modal backdrop
-  * More validation around start/end times of excerpts?
-  * Modal layout consistency? button size?
-  * Component folders (modals, util, menus, layout)
+  * Modal layout consistency? close button size?
+  * Component folders? (modals, util, menus, layout)
   * DRY icon classes (mr-1)
   * dropdowns on mobile might go offscreen
   * on mobile (<400 or whatever), show sidebar-filters underneath (?)
   * mag glass is blue in search on focus, also outline on search box
   * look for console errors
   * fade excerpts in/out (?)
-  * Map in sidebar of show?
+  * can LayoutWrapper and Layout be combined? or renamed?
+
   * Have a "display more..." on search results if > 20 per category
   * Loading spinner on search results page?
+
   * DRY fetch_liked_* from API. Also combine 3 lookups into one (don't separate by type)
+
   * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
   * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
-  * lyrical excerpts?
   * Add CSRF to POSTs on API
-  * Disable email account creation - allow oauth login through api?
-  * Ensure no FOUC with font (seems hard or impossible to do)
   * Bullet N+1 against API
-  * Reset usernames once per year (users who login w/google and share playlists)
-  * Per page controls
-  * can LayoutWrapper and Layout be combined? or renamed?
-  * Reduce waveform filesize?
+  * Per page controls?
+
   * Link locations to map in lists like https://jcktest.ngrok.io/play/011021 (?)
+  * lyrical excerpts?
+  * Disable email account creation - allow oauth login through api?
+
+  * Reduce waveform filesize?
+
 
 TEST URLS
 https://jcktest.ngrok.io/1990-06-16/you-enjoy-myself
