@@ -32,6 +32,28 @@ RSpec.describe Playlist do
       .for(:slug)
   end
 
+  describe '#update_duration' do
+    let!(:playlist) { create(:playlist, tracks_count: 3) }
+
+    it 'updates the playlist duration after adding tracks' do
+      playlist.reload
+      expect(playlist.duration).to eq(3000)
+    end
+
+    it 'updates the playlist duration after removing a track' do
+      playlist.playlist_tracks.first.destroy
+      playlist.reload
+      expect(playlist.duration).to eq(2000)
+    end
+
+    it 'updates the playlist duration after changing a track excerpt' do
+      playlist_track = playlist.playlist_tracks.first
+      playlist_track.update(starts_at_second: 60, ends_at_second: 120) # Invalid but doesn't matter
+      playlist.reload
+      expect(playlist.duration).to eq(62000)
+    end
+  end
+
   describe 'serialization' do
     let(:playlist) { create(:playlist) }
     let(:expected_as_json_api_basic) do
