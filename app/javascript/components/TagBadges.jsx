@@ -23,23 +23,18 @@ const TagBadges = ({ tags, parentId }) => {
 
     const modalContent = (
       <>
-        <h2 className="title mb-2">{tagGroup[0].name}</h2>
+        <h2 className="title">{tagGroup[0].name}</h2>
         <div>
           {tagGroup.map((tag, index) => (
             <div key={index}>
               {tag.transcript ? (
                 <>
                   <h3 className="subtitle">{tag.notes}</h3>
-                  <p>
-                    <strong>TRANSCRIPT:</strong>
-                    <br />
-                    <span
-                      dangerouslySetInnerHTML={{ __html: tag.transcript.replace(/\n/g, "<br />") }}
-                    />
-                  </p>
+                  <p className="has-text-weight-bold mb-1">TRANSCRIPT:</p>
+                  <p dangerouslySetInnerHTML={{ __html: tag.transcript.replace(/\n/g, "<br />") }}></p>
                 </>
               ) : (
-                <ul className="note-list">
+                <ul className="notes-list">
                   <li>{tag.notes}</li>
                 </ul>
               )}

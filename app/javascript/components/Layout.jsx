@@ -4,8 +4,8 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Loader from "./Loader";
 import Player from "./Player";
-import AppModal from "./AppModal";
-import DraftPlaylistModal from "./DraftPlaylistModal";
+import AppModal from "./modals/AppModal";
+import DraftPlaylistModal from "./modals/DraftPlaylistModal";
 
 const initialDraftPlaylistMeta = {
   id: null,
