@@ -187,7 +187,7 @@ const MapView = ({ mapboxToken }) => {
         const { lat, lng } = geocodeResult;
         initializeMap(lat, lng, distance);
       } else {
-        alert("Could not find the location. Please try again.");
+        alert("Sorry, couldn't find that location");
       }
     }
   };

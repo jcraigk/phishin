@@ -16,7 +16,8 @@ const Layout = ({ user, setUser, onLogout }) => {
   const [customPlaylist, setCustomPlaylist] = useState(null);
   const [draftPlaylist, setDraftPlaylist] = useState([]);
   const [draftPlaylistMeta, setDraftPlaylistMeta] = useState({
-    name: "(Untitled Playlist)",
+    id: null,
+    name: "",
     slug: "",
     description: "",
     published: false
@@ -106,6 +107,7 @@ const Layout = ({ user, setUser, onLogout }) => {
       <DraftPlaylistModal
         isOpen={isDraftPlaylistModalOpen}
         onRequestClose={closeDraftPlaylistModal}
+        draftPlaylist={draftPlaylist}
         draftPlaylistMeta={draftPlaylistMeta}
         setDraftPlaylistMeta={setDraftPlaylistMeta}
         handleInputFocus={handleInputFocus}

@@ -10,11 +10,16 @@ TODO
 PLAYLISTS
  * Player should respect start/end times
  * Create/edit playlist
+ * Clear draft button w/confirmation
  * Duplicate existing
+ * Share button?
 
  BACKBURNER
+  * Cleanup duplication in POST and PUT playlist
+  * setAlert and setNotice are part of outletcontext? do they need to be? see what else we can pass down vs have in the context
+  * dropdowns on mobile might go offscreen
   * on mobile (<400 or whatever), show sidebar-filters underneath (?)
-  * mag glass is blue in search on focus
+  * mag glass is blue in search on focus, also outline on search box
   * look for console errors
   * fade excerpts in/out (?)
   * Map in sidebar of show?

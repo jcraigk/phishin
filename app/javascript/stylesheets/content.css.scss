@@ -4,6 +4,7 @@
   display: inline-block;
   padding: 0.1rem 0.3rem;
   color: white;
+  white-space: nowrap;
 }
 
 .section-title {
@@ -45,7 +46,7 @@
   background-color: $text-gray;
   margin-right: 0.5rem;
   border-radius: var(--bulma-radius);
-  padding: 0.2rem 0.4rem;
+  padding: 0.1rem 0.3rem;
   color: white;
 
   &:hover {
@@ -98,14 +99,12 @@
   }
 
   .leftside-numbering {
-    margin-right: 0.5rem;
+    font-family: 'Marck Script', cursive;
+    font-size: 1.4rem;
+    margin-right: 0.8rem;
+    position: relative;
+    top: 3px;
     width: 2rem;
-    padding-left: 0.3rem;
-    padding-right: 0.3rem;
-    border-radius: var(--bulma-radius);
-    text-align: center;
-    font-size: 1rem;
-    background-color: $header-gray;
   }
 
   .leftside-primary {
