@@ -3,8 +3,9 @@ import { useOutletContext } from "react-router-dom";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
 import { formatDurationShow } from "./helpers/utils";
+import { useFeedback } from "./controls/FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExclamationCircle, faClock, faGlobe, faLock, faEdit, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faExclamationCircle, faClock, faGlobe, faLock, faEdit, faShareFromSquare } from "@fortawesome/free-solid-svg-icons";
 
 const DraftPlaylist = () => {
   const {
@@ -12,6 +13,7 @@ const DraftPlaylist = () => {
     draftPlaylistMeta,
     openDraftPlaylistModal
   } = useOutletContext();
+  const { setNotice } = useFeedback();
 
   const { name, description, published } = draftPlaylistMeta;
 
@@ -42,6 +44,21 @@ const DraftPlaylist = () => {
       <div className="playlist-description-container mt-3 mb-3 sidebar-extras">
         {description || "No description"}
       </div>
+
+
+      {draftPlaylistMeta.id && (
+        <button
+          className="button mr-1"
+          onClick={() => {
+            navigator.clipboard.writeText(`https://phish.in/play/${draftPlaylistMeta.slug}`);
+            setNotice("Playlist URL copied to clipboard");
+          }}
+        >
+          <FontAwesomeIcon icon={faShareFromSquare} className="mr-1" />
+          Share
+        </button>
+      )}
+
       <button onClick={handleEditDetails} className="button">
         <FontAwesomeIcon icon={faEdit} className="mr-1" />
         Edit
