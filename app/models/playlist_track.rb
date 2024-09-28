@@ -7,6 +7,9 @@ class PlaylistTrack < ApplicationRecord
             uniqueness: { scope: :playlist_id }
 
   before_save :assign_duration
+  after_create :update_playlist_duration
+  after_update :update_playlist_duration
+  after_destroy :update_playlist_duration
 
   private
 
@@ -17,7 +20,7 @@ class PlaylistTrack < ApplicationRecord
   def excerpt_duration
     start_second = starts_at_second.to_i
     end_second = ends_at_second.to_i
-    if start_second <= 0 && end_second <= 0
+    dur = if start_second <= 0 && end_second <= 0
       track.duration
     elsif start_second > 0 && end_second > 0
       (end_second - start_second) * 1000
@@ -26,5 +29,10 @@ class PlaylistTrack < ApplicationRecord
     elsif end_second > 0
       end_second * 1000
     end
+    dur.negative? ? track.duration : dur
+  end
+
+  def update_playlist_duration
+    playlist.update_duration
   end
 end
