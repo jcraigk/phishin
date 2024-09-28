@@ -5,6 +5,8 @@ import TagBadges from "./TagBadges";
 import HighlightedText from "./HighlightedText";
 import LikeButton from "./LikeButton";
 import TrackContextMenu from "./TrackContextMenu";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faScissors } from "@fortawesome/free-solid-svg-icons";
 
 const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, highlight, trackRefs, trackSlug }) => {
   const { playTrack, activeTrack, setCustomPlaylist  } = useOutletContext();
@@ -30,10 +32,37 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
         const isNewSet = viewStyle === "show" && track.set_name !== lastSetName;
         lastSetName = track.set_name;
 
-        const isExcerpt = track.starts_at_second !== undefined && track.ends_at_second !== undefined;
-        const actualDuration = track.starts_at_second && track.ends_at_second
-          ? track.ends_at_second - track.starts_at_second
-          : track.duration;
+        const isStartValid = Number.isFinite(track.starts_at_second);
+        const isEndValid = Number.isFinite(track.ends_at_second);
+        let actualDuration = track.duration;
+        let isExcerpt = false;
+        if (isStartValid && isEndValid && track.ends_at_second > track.starts_at_second) {
+          // Both start and end are set, and end is after start
+          actualDuration = (track.ends_at_second - track.starts_at_second) * 1000;
+          if (actualDuration > track.duration) {
+            actualDuration = track.duration;
+          } else {
+            isExcerpt = true;
+          }
+        } else if (isStartValid && track.ends_at_second === null) {
+          console.log("here")
+          // Start is set, but end is the end of the track
+          actualDuration = (track.duration - track.starts_at_second * 1000);
+          if (actualDuration > track.duration) {
+            actualDuration = track.duration;
+          } else {
+            isExcerpt = true;
+          }
+        } else if (track.starts_at_second === null && isEndValid) {
+          // Start is beginning of track, end is set and valid
+          actualDuration = track.ends_at_second * 1000
+          if (actualDuration > track.duration) {
+            actualDuration = track.duration;
+          } else {
+            isExcerpt = true;
+          }
+          isExcerpt = true;
+        }
 
         return (
           <React.Fragment key={track.id}>
@@ -91,6 +120,9 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
                 </span>
                 <div className="rightside-group">
                   <span className={`rightside-primary ${isExcerpt ? "excerpt" : ""}`}>
+                    {isExcerpt && (
+                      <FontAwesomeIcon icon={faScissors} />
+                    )}
                     {formatDurationTrack(actualDuration)}
                   </span>
                   <span className="rightside-secondary">

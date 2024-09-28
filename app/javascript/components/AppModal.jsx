@@ -14,6 +14,7 @@ const AppModal = ({ isOpen, onRequestClose, modalContent }) => {
       onRequestClose={onRequestClose}
       className="modal-content"
       overlayClassName="modal-overlay"
+      onClick={(e) => e.stopPropagation()}
     >
       <FontAwesomeIcon
         icon={faCircleXmark}

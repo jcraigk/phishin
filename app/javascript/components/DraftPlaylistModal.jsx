@@ -72,12 +72,10 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
         starts_at_seconds: draftPlaylist.map((track) => track.starts_at_second),
         ends_at_seconds: draftPlaylist.map((track) => track.ends_at_second),
       });
-      console.log(body);
       const response = await authFetch(url, {
         method,
         body,
       });
-      console.log(response);
       if (!response.ok) throw response;
       const updatedPlaylist = await response.json();
       setDraftPlaylistMeta((prev) => ({
@@ -112,6 +110,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
       onRequestClose={onRequestClose}
       className="modal-content"
       overlayClassName="modal-overlay"
+      onClick={(e) => e.stopPropagation()}
     >
       <FontAwesomeIcon
         icon={faCircleXmark}

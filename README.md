@@ -14,6 +14,7 @@ PLAYLISTS
  * Share button?
 
  BACKBURNER
+  * Component folders (modals, util, menus, layout)
   * DRY icon classes (mr-1)
   * dropdowns on mobile might go offscreen
   * on mobile (<400 or whatever), show sidebar-filters underneath (?)
