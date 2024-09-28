@@ -3,28 +3,20 @@ TODO
  * SPECS: Feature
  * SPECS: API
  * TEST: on iphone and tablet (including mediasession)
+ * look for console errors
  * Create a published playlist in prod so index page isn't empty. include some excerpts too (so release first, then create the playlist)
 
 PLAYLISTS
  * Share button?
  * Map in sidebar of show?
- * /search is wide when showing days of year
- * Specs for playlist/playlist_track duration callbacks
 
  BACKBURNER
-  * Navbar appears above modal backdrop
-  * Modal layout consistency? close button size?
   * Component folders? (modals, util, menus, layout)
   * DRY icon classes (mr-1)
   * dropdowns on mobile might go offscreen
   * on mobile (<400 or whatever), show sidebar-filters underneath (?)
-  * mag glass is blue in search on focus, also outline on search box
-  * look for console errors
   * fade excerpts in/out (?)
   * can LayoutWrapper and Layout be combined? or renamed?
-
-  * Have a "display more..." on search results if > 20 per category
-  * Loading spinner on search results page?
 
   * DRY fetch_liked_* from API. Also combine 3 lookups into one (don't separate by type)
 

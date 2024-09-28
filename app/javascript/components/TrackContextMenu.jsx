@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useOutletContext, Link } from "react-router-dom";
 import { useFeedback } from "./FeedbackContext";
-import DraftPlaylistTrackModal from "./DraftPlaylistTrackModal";
+import DraftPlaylistTrackModal from "./modals/DraftPlaylistTrackModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faShareFromSquare, faCirclePlus, faDownload, faMusic, faCircleChevronLeft, faCircleChevronRight, faTrashAlt, faClock } from "@fortawesome/free-solid-svg-icons";
 

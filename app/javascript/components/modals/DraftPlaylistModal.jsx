@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
-import { authFetch } from "./utils";
-import { useFeedback } from "./FeedbackContext";
+import { authFetch } from "../utils";
+import { useFeedback } from "../FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark, faCircleCheck, faCloudArrowUp, faTrash } from "@fortawesome/free-solid-svg-icons";
 

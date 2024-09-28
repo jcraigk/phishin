@@ -17,6 +17,18 @@
     border-color: $header-gray;
     padding: 0.5rem;
   }
+
+  button {
+    font-size: 1rem;
+    border: 1px solid $header-gray !important;
+    border-radius: var(--bulma-radius);
+    padding: 0.5rem 1rem;
+    margin-top: 1rem;
+  }
+
+  .title {
+    margin-bottom: 0.3rem !important;
+  }
 }
 
 .modal-overlay {
@@ -29,4 +41,5 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 3;
 }

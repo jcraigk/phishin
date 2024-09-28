@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { authFetch } from "./utils";
 import SearchResults from "./SearchResults";
 import LayoutWrapper from "./LayoutWrapper";
+import Loader from "./Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
@@ -12,6 +13,7 @@ const Search = () => {
   const [scope, setScope] = useState(searchParams.get("scope") || "all");
   const [results, setResults] = useState(null);
   const [submittedTerm, setSubmittedTerm] = useState(searchParams.get("term") || "");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setTerm(searchParams.get("term") || "");
@@ -24,6 +26,7 @@ const Search = () => {
 
   const performSearch = async (searchTerm, searchScope) => {
     setResults(null);
+    setIsLoading(true);
 
     try {
       const response = await authFetch(`/api/v2/search/${searchTerm}?scope=${searchScope}`);
@@ -32,6 +35,8 @@ const Search = () => {
       setSubmittedTerm(searchTerm);
     } catch (error) {
       throw new Response("Error performing search", { status: 500 });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -85,7 +90,11 @@ const Search = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      {results && <SearchResults results={results} term={submittedTerm} />}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        results && <SearchResults results={results} term={submittedTerm} />
+      )}
     </LayoutWrapper>
   );
 };
