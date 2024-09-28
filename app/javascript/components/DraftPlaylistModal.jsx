@@ -10,7 +10,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
   const [slug, setSlug] = useState(draftPlaylistMeta.slug);
   const [description, setDescription] = useState(draftPlaylistMeta.description);
   const [published, setPublished] = useState(draftPlaylistMeta.published);
-  const { setAlert } = useFeedback();
+  const { setAlert, setNotice } = useFeedback();
 
   useEffect(() => {
     setName(draftPlaylistMeta.name);
@@ -69,13 +69,15 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
       const body = JSON.stringify({
         ...draftPlaylistMeta,
         track_ids: draftPlaylist.map((track) => track.id),
-        starts_at_seconds: draftPlaylist.map((track) => track.starts_at_second),
-        ends_at_seconds: draftPlaylist.map((track) => track.ends_at_second),
+        starts_at_seconds: draftPlaylist.map((track) => track.starts_at_second ?? 0),
+        ends_at_seconds: draftPlaylist.map((track) => track.ends_at_second ?? 0),
       });
+      console.log(body);
       const response = await authFetch(url, {
         method,
         body,
       });
+      console.log(response);
       if (!response.ok) throw response;
       const updatedPlaylist = await response.json();
       setDraftPlaylistMeta((prev) => ({
@@ -84,6 +86,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
       }));
       setNotice("Playlist saved successfully");
     } catch (error) {
+      console.error(error);
       setAlert("Error saving playlist");
     }
 

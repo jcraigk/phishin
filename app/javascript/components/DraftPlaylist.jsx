@@ -21,9 +21,7 @@ const DraftPlaylist = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">
-        {name || "(Untitled Playlist)"}
-      </p>
+      <p className="sidebar-title">Draft Playlist</p>
       <div className="sidebar-info">
         {draftPlaylist.length} tracks
       </div>
@@ -63,14 +61,17 @@ const DraftPlaylist = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
+      <h2 className="title">{name || "(Untitled Playlist)"}</h2>
+
       {draftPlaylist.length < 2 && (
         <div className="notification show-info">
           <span className="icon">
             <FontAwesomeIcon icon={faExclamationCircle} />
           </span>
-          Your playlist must have least 2 tracks before you can save and share it. Add items by clicking the ellipsis menus on any content on the site and selecting "Add to Playlist."
+          Playlists must have least 2 tracks before they can be saved or shared.
         </div>
       )}
+
       <Tracks tracks={draftPlaylist} viewStyle="playlist" numbering={true} />
     </LayoutWrapper>
   );

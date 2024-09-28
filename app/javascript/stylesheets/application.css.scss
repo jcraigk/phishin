@@ -106,6 +106,17 @@ h2.title:not(:first-of-type) {
   font-style: italic;
 }
 
+.excerpt-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translate(0, -50%);
+  opacity: 0.2;
+  font-size: 1rem;
+  z-index: 1; /* Behind the text */
+  pointer-events: none; /* Ignore mouse events */
+}
+
 .loader-container {
   position: fixed;
   top: 0;

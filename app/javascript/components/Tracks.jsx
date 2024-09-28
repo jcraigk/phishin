@@ -20,10 +20,6 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
     }
   };
 
-  if (tracks.length === 0) {
-    return <h1 className="title">No tracks found</h1>;
-  }
-
   let lastSetName = null;
 
   return (
@@ -121,7 +117,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
                 <div className="rightside-group">
                   <span className={`rightside-primary ${isExcerpt ? "excerpt" : ""}`}>
                     {isExcerpt && (
-                      <FontAwesomeIcon icon={faScissors} />
+                      <FontAwesomeIcon icon={faScissors} className="excerpt-icon" />
                     )}
                     {formatDurationTrack(actualDuration)}
                   </span>

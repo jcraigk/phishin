@@ -155,20 +155,20 @@ const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
 
             <a className="dropdown-item" onClick={handleAddToPlaylist}>
               <FontAwesomeIcon icon={faCirclePlus} className="icon" />
-              Add to Playlist
+              Add to Draft Playlist
             </a>
 
             {draftPlaylist.includes(track) && (
               <a className="dropdown-item" onClick={handleRemoveFromPlaylist}>
                 <FontAwesomeIcon icon={faTrashAlt} className="icon" />
-                Remove from Playlist
+                Remove from Draft Playlist
               </a>
             )}
 
             {draftPlaylist.includes(track) && (
               <a className="dropdown-item" onClick={handlePlaylistEntry}>
                 <FontAwesomeIcon icon={faClock} className="icon" />
-                Edit Playlist Entry
+                Edit Draft Playlist Entry
               </a>
             )}
           </div>
