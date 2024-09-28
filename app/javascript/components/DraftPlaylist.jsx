@@ -30,16 +30,6 @@ const DraftPlaylist = () => {
         {published ? "Public" : "Private"}
       </div>
 
-      {draftPlaylist.length > 1 && (
-        <div className="sidebar-extras mt-2">
-          <FontAwesomeIcon
-            icon={draftPlaylistMeta.id ? faCheck : faExclamationCircle}
-            className="mr-1"
-          />
-          {draftPlaylistMeta.id ? "Saved" : "Unsaved"}
-        </div>
-      )}
-
       <div className="show-duration">
         <FontAwesomeIcon icon={faClock} className="mr-1" />
         {formatDurationShow(draftPlaylist.reduce((total, track) => {
@@ -54,7 +44,7 @@ const DraftPlaylist = () => {
       </div>
       <button onClick={handleEditDetails} className="button">
         <FontAwesomeIcon icon={faEdit} className="mr-1" />
-        Edit / Save
+        Edit
       </button>
     </div>
   );
@@ -72,7 +62,7 @@ const DraftPlaylist = () => {
         </div>
       )}
 
-      <Tracks tracks={draftPlaylist} viewStyle="playlist" numbering={true} />
+      <Tracks tracks={draftPlaylist} viewStyle="playlist" numbering={true} omitSecondary={true} />
     </LayoutWrapper>
   );
 };

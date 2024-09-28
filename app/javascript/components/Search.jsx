@@ -58,6 +58,7 @@ const Search = () => {
         onChange={(e) => setTerm(e.target.value)}
         placeholder="Enter search term"
         onKeyDown={handleKeyDown}
+        autoCapitalize="off"
       />
 
       <label className="label scope-label">Scope</label>

@@ -17,22 +17,23 @@ export const playlistLoader = async ({ params }) => {
   }
 };
 
-import React, { useState, useEffect, useRef } from "react";
-import { useLoaderData, useOutletContext } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useLoaderData, useOutletContext, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./LayoutWrapper";
 import Tracks from "./Tracks";
 import LikeButton from "./LikeButton";
 import { formatDateLong, formatDurationShow } from "./utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock, faCircleXmark, faInfoCircle, faCalendar } from "@fortawesome/free-solid-svg-icons";
+import { faClock, faCircleXmark, faInfoCircle, faCalendar, faFileImport } from "@fortawesome/free-solid-svg-icons";
 
 const Playlist = () => {
   const playlist = useLoaderData();
-  const [tracks, setTracks] = useState(playlist.entries.map(entry => entry.track));
+  const [tracks] = useState(playlist.entries.map(entry => entry.track));
   const [showNotification, setShowNotification] = useState(true);
+  const { playTrack, customPlaylist, setCustomPlaylist, user, setDraftPlaylist, setDraftPlaylistMeta } = useOutletContext();
+  const navigate = useNavigate();
 
-  const { playTrack, customPlaylist, setCustomPlaylist, activeTrack } = useOutletContext();
 
   useEffect(() => {
     if (!customPlaylist || customPlaylist.slug !== playlist.slug) {
@@ -43,6 +44,25 @@ const Playlist = () => {
 
   const handleCloseNotification = () => {
     setShowNotification(false);
+  };
+
+  const handleSetAsDraft = () => {
+    setDraftPlaylist(playlist.entries.map(entry => entry.track));
+
+    const isOwner = playlist.username === user.username;
+    const id = isOwner ? playlist.id : null;
+    const namePrefix = isOwner ? "" : "Copy of ";
+    const slugPrefix = isOwner ? "" : "copy-of-";
+
+    setDraftPlaylistMeta({
+      id,
+      name: `${namePrefix}${playlist.name}`,
+      slug: `${slugPrefix}${playlist.slug}`,
+      description: playlist.description,
+      published: isOwner ? playlist.published : false,
+    });
+
+    navigate("/draft-playlist");
   };
 
   const sidebarContent = (
@@ -57,6 +77,13 @@ const Playlist = () => {
       <hr />
       <div className="sidebar-control-wrapper">
         <LikeButton likable={playlist} type="Playlist" />
+
+        <button className="button" onClick={handleSetAsDraft}>
+          <span className="icon mr-1">
+            <FontAwesomeIcon icon={faFileImport} />
+          </span>
+          Set as Draft
+        </button>
       </div>
     </div>
   );
@@ -86,7 +113,7 @@ const Playlist = () => {
             </p>
           </div>
         )}
-        <Tracks tracks={tracks} viewStyle="playlist" />
+        <Tracks tracks={tracks} viewStyle="playlist" omitSecondary={true} />
       </LayoutWrapper>
     </>
   );
