@@ -48,12 +48,11 @@ html, body {
 .root-layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Make sure the container stretches to full height */
+  min-height: 100vh;
 }
 
 input, textarea, select, button {
-  font-family: inherit;
-  border: none !important;
+  font-family: "Open Sans Condensed", sans-serif;
 }
 
 button {

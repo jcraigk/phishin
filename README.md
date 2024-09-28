@@ -13,6 +13,7 @@ PLAYLISTS
  * Share button?
 
  BACKBURNER
+  * Navbar appears above modal backdrop
   * More validation around start/end times of excerpts?
   * Modal layout consistency? button size?
   * Component folders (modals, util, menus, layout)

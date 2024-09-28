@@ -29,10 +29,16 @@ import { faClock, faCircleXmark, faInfoCircle, faCalendar, faFileImport } from "
 
 const Playlist = () => {
   const playlist = useLoaderData();
-  const [tracks] = useState(playlist.entries.map(entry => entry.track));
   const [showNotification, setShowNotification] = useState(true);
   const { playTrack, customPlaylist, setCustomPlaylist, user, setDraftPlaylist, setDraftPlaylistMeta } = useOutletContext();
   const navigate = useNavigate();
+  const [tracks] = useState(
+    playlist.entries.map(entry => ({
+      ...entry.track,
+      starts_at_second: entry.starts_at_second,
+      ends_at_second: entry.ends_at_second
+    }))
+  );
 
 
   useEffect(() => {
@@ -47,7 +53,13 @@ const Playlist = () => {
   };
 
   const handleSetAsDraft = () => {
-    setDraftPlaylist(playlist.entries.map(entry => entry.track));
+    setDraftPlaylist(
+      playlist.entries.map(entry => ({
+        ...entry.track,
+        starts_at_second: entry.starts_at_second,
+        ends_at_second: entry.ends_at_second
+      }))
+    );
 
     const isOwner = playlist.username === user.username;
     const id = isOwner ? playlist.id : null;
