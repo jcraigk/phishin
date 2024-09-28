@@ -8,12 +8,13 @@ TODO
  * Create a published playlist in prod so index page isn't empty. include some excerpts too (so release first, then create the playlist)
 
 PLAYLISTS
+ * Verify duration of set is correct
  * Player should respect start/end times
- * Create/edit playlist
- * Duplicate existing
  * Share button?
 
  BACKBURNER
+  * More validation around start/end times of excerpts?
+  * Modal layout consistency? button size?
   * Component folders (modals, util, menus, layout)
   * DRY icon classes (mr-1)
   * dropdowns on mobile might go offscreen

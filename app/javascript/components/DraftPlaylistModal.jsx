@@ -5,11 +5,13 @@ import { useFeedback } from "./FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark, faCircleCheck, faCloudArrowUp, faTrash } from "@fortawesome/free-solid-svg-icons";
 
-const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPlaylist, draftPlaylistMeta, setDraftPlaylistMeta, handleInputFocus, handleInputBlur }) => {
-  const [name, setName] = useState(draftPlaylistMeta.name);
-  const [slug, setSlug] = useState(draftPlaylistMeta.slug);
-  const [description, setDescription] = useState(draftPlaylistMeta.description);
-  const [published, setPublished] = useState(draftPlaylistMeta.published);
+const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPlaylist, draftPlaylistMeta, setDraftPlaylistMeta, resetDraftPlaylist, handleInputFocus, handleInputBlur }) => {
+  const [name, setName] = useState("");
+  const [slug, setSlug] = useState("");
+  const [description, setDescription] = useState("");
+  const [published, setPublished] = useState(false);
+  const [charCount, setCharCount] = useState(0);
+  const [isDescriptionModified, setIsDescriptionModified] = useState(false);
   const { setAlert, setNotice } = useFeedback();
 
   useEffect(() => {
@@ -21,37 +23,53 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
 
   const handleNameChange = (e) => {
     const updatedName = e.target.value;
-    setName(updatedName);
+    setName(updatedName); // Update local state
+    setDraftPlaylistMeta((prev) => ({
+      ...prev,
+      name: updatedName,
+    }));
     autoGenerateSlug(updatedName);
   };
 
-  const handleSlugChange = (e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""));
+  const handleSlugChange = (e) => {
+    const updatedSlug = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
+    setSlug(updatedSlug); // Update local state
+    setDraftPlaylistMeta((prev) => ({
+      ...prev,
+      slug: updatedSlug,
+    }));
+  };
 
-  const handleDescriptionChange = (e) => setDescription(e.target.value);
-  const handlePublishedChange = (e) => setPublished(e.target.checked);
+  const handleDescriptionChange = (e) => {
+    const updatedDescription = e.target.value.slice(0, 500); // Limit to 500 characters
+    setDescription(updatedDescription); // Update local state
+    setDraftPlaylistMeta((prev) => ({
+      ...prev,
+      description: updatedDescription,
+    }));
+    setCharCount(updatedDescription.length);
+    setIsDescriptionModified(true);
+  };
+
+  const handlePublishedChange = (e) => {
+    const updatedPublished = e.target.checked;
+    setPublished(updatedPublished); // Update local state
+    setDraftPlaylistMeta((prev) => ({
+      ...prev,
+      published: updatedPublished,
+    }));
+  };
 
   const autoGenerateSlug = (value) => {
     const generatedSlug = value
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-") // Replace non-alphanumeric with dashes
-      .replace(/^-+|-+$/g, ""); // Remove leading and trailing dashes
-    setSlug(generatedSlug);
-  };
-
-  const handleNameBlur = () => {
-    autoGenerateSlug(name);
-    handleInputBlur();
-  };
-
-  const handleDoneEditing = () => {
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    setSlug(generatedSlug); // Update local state
     setDraftPlaylistMeta((prev) => ({
       ...prev,
-      name,
-      slug,
-      description,
-      published
+      slug: generatedSlug,
     }));
-    onRequestClose();
   };
 
   const handleSavePlaylist = async () => {
@@ -72,12 +90,10 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
         starts_at_seconds: draftPlaylist.map((track) => track.starts_at_second ?? 0),
         ends_at_seconds: draftPlaylist.map((track) => track.ends_at_second ?? 0),
       });
-      console.log(body);
       const response = await authFetch(url, {
         method,
         body,
       });
-      console.log(response);
       if (!response.ok) throw response;
       const updatedPlaylist = await response.json();
       setDraftPlaylistMeta((prev) => ({
@@ -86,25 +102,38 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
       }));
       setNotice("Playlist saved successfully");
     } catch (error) {
-      console.error(error);
-      setAlert("Error saving playlist");
+      if (error.status === 422) {
+        const errorData = await error.json();
+        setAlert(`Error saving playlist: ${errorData.message}`);
+      } else {
+        setAlert("Error saving playlist");
+      }
     }
 
     onRequestClose();
   };
 
   const handleClearPlaylist = () => {
-    if (window.confirm("Are you sure you want to clear the draft playlist?")) {
-      setDraftPlaylist([]);
-      setDraftPlaylistMeta({
-        id: null,
-        name: "",
-        slug: "",
-        description: "",
-        published: false
-      });
+    if (window.confirm("Are you sure you want to reset the draft playlist? Any changes you have made will be lost.")) {
+      resetDraftPlaylist();
     }
     onRequestClose();
+  };
+
+  const handleDeletePlaylist = async () => {
+    if (window.confirm("Are you sure you want to delete this playlist? This action cannot be undone.")) {
+      try {
+        const response = await authFetch(`/api/v2/playlists/${draftPlaylistMeta.id}`, {
+          method: "DELETE",
+        });
+        if (!response.ok) throw response;
+        setNotice("Playlist deleted successfully");
+        resetDraftPlaylist();
+        onRequestClose();
+      } catch (error) {
+        setAlert("Error deleting playlist");
+      }
+    }
   };
 
   return (
@@ -122,6 +151,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
         style={{ cursor: "pointer" }}
       />
       <h2 className="title">Edit Playlist Details</h2>
+
       <div className="field">
         <label className="label">Name</label>
         <div className="control">
@@ -130,13 +160,13 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
             type="text"
             value={name}
             onChange={handleNameChange}
-            onKeyUp={handleNameChange}
-            onBlur={handleNameBlur}
             onFocus={handleInputFocus}
+            onBlur={handleInputBlur}
             placeholder="(Untitled Playlist)"
           />
         </div>
       </div>
+
       <div className="field">
         <label className="label">Slug</label>
         <div className="control">
@@ -148,22 +178,30 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
             placeholder="lowercase-letters-numbers"
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
+            autoCapitalize="off"
           />
         </div>
       </div>
+
       <div className="field">
         <label className="label">Description</label>
         <div className="control">
           <textarea
             className="textarea"
-            value={description}
+            value={description || ""}
             onChange={handleDescriptionChange}
             onFocus={handleInputFocus}
             onBlur={handleInputBlur}
             placeholder="Add a description"
           ></textarea>
+          {isDescriptionModified && (
+            <p className="help is-size-7 has-text-right">
+              {500 - charCount} characters remaining
+            </p>
+          )}
         </div>
       </div>
+
       <div className="field">
         <div className="control">
           <label className="checkbox">
@@ -176,15 +214,17 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
           </label>
         </div>
       </div>
+
       <button
         className="button"
-        onClick={handleDoneEditing}
+        onClick={onRequestClose}
       >
         <span className="icon mr-1">
           <FontAwesomeIcon icon={faCircleCheck} />
         </span>
         Done Editing
       </button>
+
       <button
         className="button ml-2"
         onClick={handleSavePlaylist}
@@ -192,8 +232,9 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
         <span className="icon mr-1">
           <FontAwesomeIcon icon={faCloudArrowUp} />
         </span>
-        Save Playlist
+        Save
       </button>
+
       <button
         className="button ml-2"
         onClick={handleClearPlaylist}
@@ -201,8 +242,20 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
         <span className="icon mr-1">
           <FontAwesomeIcon icon={faTrash} />
         </span>
-        Clear Playlist
+        Clear
       </button>
+
+      {draftPlaylistMeta.id && (
+        <button
+          className="button ml-2"
+          onClick={handleDeletePlaylist}
+        >
+          <span className="icon mr-1">
+            <FontAwesomeIcon icon={faTrash} />
+          </span>
+          Delete
+        </button>
+      )}
     </Modal>
   );
 };

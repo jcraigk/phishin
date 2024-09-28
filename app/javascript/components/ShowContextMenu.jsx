@@ -53,7 +53,6 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
       return;
     }
     e.stopPropagation();
-    console.log(show);
     setDraftPlaylist([...draftPlaylist, ...show.tracks]);
     setNotice("Show added to draft playlist");
     hideDropdown();

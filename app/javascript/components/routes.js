@@ -155,7 +155,7 @@ const routes = (props) => [
         loader: myTracksLoader,
       },
       {
-        path: "/edit-playlist",
+        path: "/draft-playlist",
         element: <DraftPlaylist />,
       },
       {

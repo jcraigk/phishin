@@ -7,7 +7,15 @@ import Player from "./Player";
 import AppModal from "./AppModal";
 import DraftPlaylistModal from "./DraftPlaylistModal";
 
-const Layout = ({ user, setUser, onLogout }) => {
+const initialDraftPlaylistMeta = {
+  id: null,
+  name: "",
+  slug: "",
+  description: "",
+  published: false,
+};
+
+const Layout = ({ user, onLogout }) => {
   const navigation = useNavigation();
   const [isAppModalOpen, setIsAppModalOpen] = useState(false);
   const [appModalContent, setAppModalContent] = useState(null);
@@ -15,18 +23,18 @@ const Layout = ({ user, setUser, onLogout }) => {
   const [activePlaylist, setActivePlaylist] = useState([]);
   const [customPlaylist, setCustomPlaylist] = useState(null);
   const [draftPlaylist, setDraftPlaylist] = useState([]);
-  const [draftPlaylistMeta, setDraftPlaylistMeta] = useState({
-    name: "",
-    slug: "",
-    description: "",
-    published: false
-  });
+  const [draftPlaylistMeta, setDraftPlaylistMeta] = useState(initialDraftPlaylistMeta);
   const [activeTrack, setActiveTrack] = useState(null);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const audioRef = useRef(null);
 
   const handleInputFocus = () => setIsInputFocused(true);
   const handleInputBlur = () => setIsInputFocused(false);
+
+  const resetDraftPlaylist = () => {
+    setDraftPlaylist([]);
+    setDraftPlaylistMeta(initialDraftPlaylistMeta);
+  };
 
   const playTrack = (playlist, track, autoplay = false) => {
     if (activePlaylist.length > 0 && autoplay) return;
@@ -70,6 +78,8 @@ const Layout = ({ user, setUser, onLogout }) => {
           draftPlaylist,
           setDraftPlaylist,
           draftPlaylistMeta,
+          setDraftPlaylistMeta,
+          resetDraftPlaylist,
           activeTrack,
           playTrack,
           audioRef,
@@ -104,6 +114,7 @@ const Layout = ({ user, setUser, onLogout }) => {
         setDraftPlaylist={setDraftPlaylist}
         draftPlaylistMeta={draftPlaylistMeta}
         setDraftPlaylistMeta={setDraftPlaylistMeta}
+        resetDraftPlaylist={resetDraftPlaylist}
         handleInputFocus={handleInputFocus}
         handleInputBlur={handleInputBlur}
       />

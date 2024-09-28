@@ -56,7 +56,7 @@ const Navbar = ({ user, onLogout, handleInputFocus, handleInputBlur }) => {
   const userLinks = [
     { path: "/my-shows", label: "My Shows", icon: faGuitar },
     { path: "/my-tracks", label: "My Tracks", icon: faRecordVinyl },
-    { path: "/edit-playlist", label: "Draft Playlist", icon: faListCheck },
+    { path: "/draft-playlist", label: "Draft Playlist", icon: faListCheck },
     { path: "/playlists?filter=mine", label: "My Playlists", icon: faListOl },
   ];
 
@@ -175,6 +175,7 @@ const Navbar = ({ user, onLogout, handleInputFocus, handleInputBlur }) => {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onFocus={handleInputFocus}
                     onBlur={handleInputBlur}
+                    autoCapitalize="off"
                   />
                   <span className="icon is-left">
                     <FontAwesomeIcon icon={faSearch} />

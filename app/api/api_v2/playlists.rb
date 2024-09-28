@@ -100,12 +100,17 @@ class ApiV2::Playlists < ApiV2::Base
           403
         )
       end
-      playlist = Playlist.create! \
-        user: current_user,
-        name: params[:name],
-        slug: params[:slug],
-        playlist_tracks_attributes: track_attrs_from_params
-      present playlist, with: ApiV2::Entities::Playlist
+      begin
+        playlist = Playlist.create!(
+          user: current_user,
+          name: params[:name],
+          slug: params[:slug],
+          playlist_tracks_attributes: track_attrs_from_params
+        )
+        present playlist, with: ApiV2::Entities::Playlist
+      rescue ActiveRecord::RecordInvalid => e
+        error!({ message: e.record.errors.full_messages.join(", ") }, 422)
+      end
     end
 
     desc "Update an existing playlist" do
@@ -125,8 +130,12 @@ class ApiV2::Playlists < ApiV2::Base
     put ":id" do
       authenticate!
       playlist = current_user.playlists.find(params[:id])
-      update_playlist_data(playlist)
-      present playlist, with: ApiV2::Entities::Playlist
+      begin
+        update_playlist_data(playlist)
+        present playlist, with: ApiV2::Entities::Playlist
+      rescue ActiveRecord::RecordInvalid => e
+        error!({ message: e.record.errors.full_messages.join(", ") }, 422)
+      end
     end
 
     desc "Delete a playlist" do
