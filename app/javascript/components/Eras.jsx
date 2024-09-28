@@ -26,7 +26,7 @@ export const erasLoader = async () => {
 
 import React from "react";
 import { Link, useLoaderData } from "react-router-dom";
-import { formatNumber } from "./util/utils";
+import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import MobileApps from "./pages/MobileApps";
 import GitHubButton from "./pages/GitHubButton";
@@ -62,9 +62,7 @@ const Eras = () => {
           <DiscordButton className="mb-2" />
           <br />
           <a href="/feeds/rss" className="button" target="_blank">
-            <span className="icon mr-1">
-              <FontAwesomeIcon icon={faRss} />
-            </span>
+            <FontAwesomeIcon icon={faRss} className="mr-1"/>
             RSS
           </a>
         </div>

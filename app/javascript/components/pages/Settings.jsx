@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import { authFetch } from "../util/utils";
+import { authFetch } from "../helpers/utils";
 import { useFeedback } from "../controls/FeedbackContext";
 import PageWrapper from "./PageWrapper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

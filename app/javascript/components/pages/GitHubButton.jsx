@@ -8,9 +8,7 @@ const GitHubButton = ({ className }) => (
     className={`button ${className}`}
     target="_blank"
   >
-    <div className="icon mr-1">
-      <FontAwesomeIcon icon={faCodeBranch} />
-    </div>
+    <FontAwesomeIcon icon={faCodeBranch} className="mr-1" />
     GitHub
   </a>
 );

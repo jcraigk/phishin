@@ -8,9 +8,7 @@ const EmailButton = () => (
     className="button"
     target="_blank"
   >
-    <div className="icon mr-1">
-      <FontAwesomeIcon icon={faEnvelope} />
-    </div>
+    <FontAwesomeIcon icon={faEnvelope} className="mr-1" />
     Contact via Email
   </a>
 );

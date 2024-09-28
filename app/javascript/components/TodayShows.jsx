@@ -1,4 +1,4 @@
-import { authFetch } from "./util/utils";
+import { authFetch } from "./helpers/utils";
 
 export const todayShowsLoader = async ({ request }) => {
   const url = new URL(request.url);

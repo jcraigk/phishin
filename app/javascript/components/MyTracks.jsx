@@ -1,4 +1,4 @@
-import { authFetch } from "./util/utils";
+import { authFetch } from "./helpers/utils";
 
 export const myTracksLoader = async ({ request }) => {
   const url = new URL(request.url);
@@ -56,16 +56,6 @@ const MyTracks = () => {
           </select>
         </div>
       </div>
-
-      {!user && (
-        <div className="sidebar-details mt-6">
-          <div className="sidebar-callout">
-            <Link to="/login" className="button">
-              Login to see your liked tracks!
-            </Link>
-          </div>
-        </div>
-      )}
     </div>
   );
 

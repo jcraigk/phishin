@@ -1,4 +1,4 @@
-import { authFetch } from "./util/utils";
+import { authFetch } from "./helpers/utils";
 
 export const showLoader = async ({ params }) => {
   const { date } = params;
@@ -19,7 +19,7 @@ export const showLoader = async ({ params }) => {
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useLoaderData, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { formatDate, formatDateMed, formatDateLong, formatDurationShow } from "./util/utils";
+import { formatDate, formatDateMed, formatDateLong, formatDurationShow } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import ShowContextMenu from "./controls/ShowContextMenu";
 import LikeButton from "./controls/LikeButton";
@@ -101,9 +101,7 @@ const Show = ({ trackSlug }) => {
       <button className="close-btn" onClick={onClose}>
         <FontAwesomeIcon icon={faCircleXmark} />
       </button>
-      <span className="icon">
-        <FontAwesomeIcon icon={faInfoCircle} />
-      </span>
+      <FontAwesomeIcon icon={faInfoCircle} className="mr-1" />
       {message}
     </div>
   );

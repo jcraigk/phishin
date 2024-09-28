@@ -29,9 +29,7 @@ const ContactInfo = () => {
         className="button mb-5"
         target="_blank"
       >
-        <div className="icon mr-1">
-          <FontAwesomeIcon icon={faX} />
-        </div>
+        <FontAwesomeIcon icon={faX} className="mr-1" />
         @phish_in
       </a>
       <br />

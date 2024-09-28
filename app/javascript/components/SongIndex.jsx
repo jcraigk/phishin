@@ -22,7 +22,7 @@ export const songIndexLoader = async ({ request }) => {
 import React, { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { formatNumber } from "./util/utils";
+import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Songs from "./Songs";
 import Pagination from "./controls/Pagination";
@@ -82,9 +82,7 @@ const SongIndex = () => {
           placeholder="Search songs"
         />
         <button className="button mt-4" onClick={handleSearchSubmit}>
-          <div className="icon mr-1">
-            <FontAwesomeIcon icon={faSearch} />
-          </div>
+          <FontAwesomeIcon icon={faSearch} className="mr-1"/>
           Search
         </button>
       </div>

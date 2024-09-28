@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import mapboxgl from "mapbox-gl";
-import { formatNumber } from "./util/utils";
+import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -242,9 +242,7 @@ const MapView = ({ mapboxToken }) => {
           onChange={handleInputChange}
         />
         <button className="button mt-4" type="submit">
-          <span className="icon mr-1">
-            <FontAwesomeIcon icon={faSearch} />
-          </span>
+          <FontAwesomeIcon icon={faSearch} className="mr-1" />
           Search
         </button>
       </form>

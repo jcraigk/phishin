@@ -1,6 +1,6 @@
 import React from "react";
 import { useOutletContext, useNavigate } from "react-router-dom";
-import { formatDurationShow, formatDate } from "./util/utils";
+import { formatDurationShow, formatDate } from "./helpers/utils";
 import TagBadges from "./controls/TagBadges";
 import LikeButton from "./controls/LikeButton";
 import ShowContextMenu from "./controls/ShowContextMenu";

@@ -1,4 +1,4 @@
-import { authFetch } from "./util/utils";
+import { authFetch } from "./helpers/utils";
 
 export const myShowsLoader = async ({ request }) => {
   const url = new URL(request.url);
@@ -54,16 +54,6 @@ const MyShows = () => {
           </select>
         </div>
       </div>
-
-      {!user && (
-        <div className="sidebar-details mt-6">
-          <div className="sidebar-callout">
-            <Link to="/login" className="button">
-              Login to see your liked shows!
-            </Link>
-          </div>
-        </div>
-      )}
     </div>
   );
 

@@ -1,4 +1,4 @@
-import { authFetch } from "./util/utils";
+import { authFetch } from "./helpers/utils";
 
 export const playlistIndexLoader = async ({ request }) => {
   const url = new URL(request.url);
@@ -26,7 +26,7 @@ export const playlistIndexLoader = async ({ request }) => {
 import React, { useState } from "react";
 import { useLoaderData, useNavigate, useOutletContext, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { formatNumber } from "./util/utils";
+import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Playlists from "./Playlists";
 import Pagination from "./controls/Pagination";
@@ -125,9 +125,7 @@ const PlaylistIndex = () => {
           placeholder="Search playlists"
         />
         <button className="button mt-4" onClick={handleSearchSubmit}>
-          <div className="icon mr-1">
-            <FontAwesomeIcon icon={faSearch} />
-          </div>
+          <FontAwesomeIcon icon={faSearch} className="mr-1" />
           Search
         </button>
       </div>

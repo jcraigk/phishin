@@ -11,12 +11,8 @@ PLAYLISTS
  * Map in sidebar of show?
 
  BACKBURNER
-  * DRY icon classes (mr-1)
   * dropdowns on mobile might go offscreen
   * on mobile (<400 or whatever), show sidebar-filters underneath (?)
-  * fade excerpts in/out (?)
-  * can LayoutWrapper and Layout be combined? or renamed?
-
   * DRY fetch_liked_* from API. Also combine 3 lookups into one (don't separate by type)
 
   * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
@@ -25,6 +21,7 @@ PLAYLISTS
   * Bullet N+1 against API
   * Per page controls?
 
+  * fade excerpts in/out (?)
   * Link locations to map in lists like https://jcktest.ngrok.io/play/011021 (?)
   * lyrical excerpts?
   * Disable email account creation - allow oauth login through api?

@@ -123,9 +123,7 @@ const DraftPlaylistTrackModal = ({
       </div>
 
       <button className="button" onClick={(e) => { e.stopPropagation(); saveChanges(); }}>
-        <span className="icon mr-1">
-          <FontAwesomeIcon icon={faCircleCheck} />
-        </span>
+        <FontAwesomeIcon icon={faCircleCheck} className="mr-1" />
         Done Editing
       </button>
     </Modal>

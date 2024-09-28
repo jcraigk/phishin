@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link, useOutletContext } from "react-router-dom";
-import { formatDate } from "../util/utils";
+import { formatDate } from "../helpers/utils";
 import { useFeedback } from "./FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
@@ -77,7 +77,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
     <div className={`dropdown context-dropdown is-${isLeft ? "left" : "right"}`} ref={dropdownRef}>
       <div className="dropdown-trigger">
         <button className="button" onClick={toggleDropdownVisibility}>
-          <FontAwesomeIcon icon={faEllipsis} className="icon is-small" />
+          <FontAwesomeIcon icon={faEllipsis} className="icon" />
         </button>
       </div>
       <div

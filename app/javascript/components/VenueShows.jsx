@@ -1,4 +1,4 @@
-import { authFetch, formatNumber } from "./util/utils";
+import { authFetch, formatNumber } from "./helpers/utils";
 
 export const venueShowsLoader = async ({ params, request }) => {
   const { venueSlug } = params;

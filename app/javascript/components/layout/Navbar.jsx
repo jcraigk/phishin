@@ -96,7 +96,7 @@ const Navbar = ({ user, onLogout, handleInputFocus, handleInputBlur }) => {
                   <button className="button">
                     <span className="navbar-dropdown-label">INFO</span>
                     <span className="icon">
-                      <FontAwesomeIcon icon={faAngleDown} className="icon" />
+                      <FontAwesomeIcon icon={faAngleDown} />
                     </span>
                   </button>
                 </div>
