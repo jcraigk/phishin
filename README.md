@@ -7,7 +7,6 @@ TODO
  * Create a published playlist in prod so index page isn't empty. include some excerpts too (so release first, then create the playlist)
 
 PLAYLISTS
- * Share button?
  * Map in sidebar of show?
 
  BACKBURNER
