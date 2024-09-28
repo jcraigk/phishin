@@ -1,7 +1,7 @@
 import React from "react";
 import { HelmetProvider } from "react-helmet-async";
-import AppRouter from "./AppRouter";
-import { FeedbackProvider } from "./FeedbackContext";
+import AppRouter from "./util/AppRouter";
+import { FeedbackProvider } from "./controls/FeedbackContext";
 
 const App = (props) => {
   const helmetContext = {};

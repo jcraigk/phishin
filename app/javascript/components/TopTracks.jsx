@@ -1,4 +1,4 @@
-import { authFetch } from "./utils";
+import { authFetch } from "./util/utils";
 
 export const topTracksLoader = async () => {
   try {
@@ -14,7 +14,7 @@ export const topTracksLoader = async () => {
 import React from "react";
 import { useLoaderData, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import LayoutWrapper from "./LayoutWrapper";
+import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
 
 const TopTracks = ({ user }) => {

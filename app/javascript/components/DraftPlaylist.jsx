@@ -1,8 +1,8 @@
 import React from "react";
 import { useOutletContext } from "react-router-dom";
-import LayoutWrapper from "./LayoutWrapper";
+import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
-import { formatDurationShow } from "./utils";
+import { formatDurationShow } from "./util/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationCircle, faClock, faGlobe, faLock, faEdit, faCheck } from "@fortawesome/free-solid-svg-icons";
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PageWrapper from "./PageWrapper";
-import { useFeedback } from "../FeedbackContext"; // Updated path
+import { useFeedback } from "../controls/FeedbackContext"; // Updated path
 
 const RequestPasswordReset = () => {
   const { setAlert, setNotice } = useFeedback();

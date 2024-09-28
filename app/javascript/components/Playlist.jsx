@@ -1,4 +1,4 @@
-import { authFetch } from "./utils";
+import { authFetch } from "./util/utils";
 
 export const playlistLoader = async ({ params }) => {
   const { playlistSlug } = params;
@@ -20,10 +20,10 @@ export const playlistLoader = async ({ params }) => {
 import React, { useState, useEffect } from "react";
 import { useLoaderData, useOutletContext, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import LayoutWrapper from "./LayoutWrapper";
+import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
-import LikeButton from "./LikeButton";
-import { formatDateLong, formatDurationShow } from "./utils";
+import LikeButton from "./controls/LikeButton";
+import { formatDateLong, formatDurationShow } from "./util/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faCircleXmark, faInfoCircle, faCalendar, faFileImport } from "@fortawesome/free-solid-svg-icons";
 

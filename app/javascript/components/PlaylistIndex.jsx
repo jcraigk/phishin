@@ -1,4 +1,4 @@
-import { authFetch } from "./utils";
+import { authFetch } from "./util/utils";
 
 export const playlistIndexLoader = async ({ request }) => {
   const url = new URL(request.url);
@@ -26,10 +26,10 @@ export const playlistIndexLoader = async ({ request }) => {
 import React, { useState } from "react";
 import { useLoaderData, useNavigate, useOutletContext, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { formatNumber } from "./utils";
-import LayoutWrapper from "./LayoutWrapper";
+import { formatNumber } from "./util/utils";
+import LayoutWrapper from "./layout/LayoutWrapper";
 import Playlists from "./Playlists";
-import Pagination from "./Pagination";
+import Pagination from "./controls/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 

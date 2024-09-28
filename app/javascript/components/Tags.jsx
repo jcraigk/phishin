@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { formatNumber } from "./utils";
-import TagBadges from "./TagBadges";
-import HighlightedText from "./HighlightedText";
+import { formatNumber } from "./util/utils";
+import TagBadges from "./controls/TagBadges";
+import HighlightedText from "./controls/HighlightedText";
 
 const Tags = ({ tags, group = false, highlight = "" }) => {
   let groupedTags = {};

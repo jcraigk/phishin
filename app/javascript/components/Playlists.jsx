@@ -1,8 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { formatNumber, formatDurationShow, formatDateLong } from "./utils";
-import LikeButton from "./LikeButton";
-import HighlightedText from "./HighlightedText";
+import { formatNumber, formatDurationShow, formatDateLong } from "./util/utils";
+import LikeButton from "./controls/LikeButton";
+import HighlightedText from "./controls/HighlightedText";
 
 const Playlists = ({ playlists, highlight }) => {
   const navigate = useNavigate();

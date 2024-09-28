@@ -1,41 +1,41 @@
 import React from "react";
 
 // Content pages with sidebar
-import DraftPlaylist from "./DraftPlaylist";
+import DraftPlaylist from "../DraftPlaylist";
 import DynamicRoute, { dynamicLoader } from "./DynamicRoute";
-import Eras, { erasLoader } from './Eras';
-import Layout from "./Layout";
-import MapView from "./MapView";
-import MissingContentReport, { missingContentLoader } from "./MissingContentReport";
-import MyShows, { myShowsLoader } from "./MyShows";
-import MyTracks, { myTracksLoader } from "./MyTracks";
-import Playlist, { playlistLoader } from "./Playlist";
-import PlaylistIndex, { playlistIndexLoader } from "./PlaylistIndex";
-import Search from "./Search";
-import SongIndex, { songIndexLoader } from "./SongIndex";
-import SongTracks, { songTracksLoader } from "./SongTracks";
-import TagIndex, { tagIndexLoader } from "./TagIndex";
-import TagShows, { tagShowsLoader } from "./TagShows";
-import TagTracks, { tagTracksLoader } from "./TagTracks";
-import TodayShows, { todayShowsLoader } from "./TodayShows";
-import TopShows, { topShowsLoader } from "./TopShows";
-import TopTracks, { topTracksLoader } from "./TopTracks";
-import VenueIndex, { venueIndexLoader } from "./VenueIndex";
-import VenueShows, { venueShowsLoader } from "./VenueShows";
+import Eras, { erasLoader } from '../Eras';
+import Layout from "../layout/Layout";
+import MapView from "../MapView";
+import MissingContentReport, { missingContentLoader } from "../MissingContentReport";
+import MyShows, { myShowsLoader } from "../MyShows";
+import MyTracks, { myTracksLoader } from "../MyTracks";
+import Playlist, { playlistLoader } from "../Playlist";
+import PlaylistIndex, { playlistIndexLoader } from "../PlaylistIndex";
+import Search from "../Search";
+import SongIndex, { songIndexLoader } from "../SongIndex";
+import SongTracks, { songTracksLoader } from "../SongTracks";
+import TagIndex, { tagIndexLoader } from "../TagIndex";
+import TagShows, { tagShowsLoader } from "../TagShows";
+import TagTracks, { tagTracksLoader } from "../TagTracks";
+import TodayShows, { todayShowsLoader } from "../TodayShows";
+import TopShows, { topShowsLoader } from "../TopShows";
+import TopTracks, { topTracksLoader } from "../TopTracks";
+import VenueIndex, { venueIndexLoader } from "../VenueIndex";
+import VenueShows, { venueShowsLoader } from "../VenueShows";
 
 // Simple pages with no sidebar
-import ApiDocs from "./pages/ApiDocs";
-import ContactInfo from "./pages/ContactInfo";
-import ErrorPage from "./pages/ErrorPage";
-import Faq from "./pages/Faq";
-import Login from "./pages/Login";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import RequestPasswordReset from "./pages/RequestPasswordReset";
-import ResetPassword from "./pages/ResetPassword";
-import Signup from "./pages/Signup";
-import TaginProject from "./pages/TaginProject";
-import TermsOfService from "./pages/TermsOfService";
-import Settings from "./pages/Settings";
+import ApiDocs from "../pages/ApiDocs";
+import ContactInfo from "../pages/ContactInfo";
+import ErrorPage from "../pages/ErrorPage";
+import Faq from "../pages/Faq";
+import Login from "../pages/Login";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
+import RequestPasswordReset from "../pages/RequestPasswordReset";
+import ResetPassword from "../pages/ResetPassword";
+import Signup from "../pages/Signup";
+import TaginProject from "../pages/TaginProject";
+import TermsOfService from "../pages/TermsOfService";
+import Settings from "../pages/Settings";
 
 const routes = (props) => [
   {

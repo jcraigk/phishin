@@ -1,4 +1,4 @@
-import { authFetch } from "./utils";
+import { authFetch } from "./util/utils";
 
 export const todayShowsLoader = async ({ request }) => {
   const url = new URL(request.url);
@@ -27,7 +27,7 @@ export const todayShowsLoader = async ({ request }) => {
 import React from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import LayoutWrapper from "./LayoutWrapper";
+import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
 
 const TodayShows = () => {

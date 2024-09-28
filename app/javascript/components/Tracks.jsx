@@ -1,10 +1,10 @@
 import React from "react";
 import { useOutletContext, Link } from "react-router-dom";
-import { formatDurationTrack, formatDurationShow, formatDate } from "./utils";
-import TagBadges from "./TagBadges";
-import HighlightedText from "./HighlightedText";
-import LikeButton from "./LikeButton";
-import TrackContextMenu from "./TrackContextMenu";
+import { formatDurationTrack, formatDurationShow, formatDate } from "./util/utils";
+import TagBadges from "./controls/TagBadges";
+import HighlightedText from "./controls/HighlightedText";
+import LikeButton from "./controls/LikeButton";
+import TrackContextMenu from "./controls/TrackContextMenu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faScissors } from "@fortawesome/free-solid-svg-icons";
 

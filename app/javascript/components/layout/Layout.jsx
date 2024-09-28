@@ -2,10 +2,10 @@ import React, { useRef, useState } from "react";
 import { Outlet, useNavigation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import Loader from "./Loader";
-import Player from "./Player";
-import AppModal from "./modals/AppModal";
-import DraftPlaylistModal from "./modals/DraftPlaylistModal";
+import Loader from "../controls/Loader";
+import Player from "../controls/Player";
+import AppModal from "../modals/AppModal";
+import DraftPlaylistModal from "../modals/DraftPlaylistModal";
 
 const initialDraftPlaylistMeta = {
   id: null,
