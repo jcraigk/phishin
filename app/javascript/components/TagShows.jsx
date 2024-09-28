@@ -1,4 +1,4 @@
-import { authFetch } from "./utils";
+import { authFetch } from "./util/utils";
 
 export const tagShowsLoader = async ({ params, request }) => {
   const url = new URL(request.url);
@@ -34,9 +34,9 @@ export const tagShowsLoader = async ({ params, request }) => {
 import React from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import LayoutWrapper from "./LayoutWrapper";
+import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
-import Pagination from "./Pagination";
+import Pagination from "./controls/Pagination";
 
 const TagShows = () => {
   const { tag, shows, totalPages, page, sortOption } = useLoaderData();

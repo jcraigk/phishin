@@ -1,4 +1,4 @@
-import { authFetch, formatNumber } from "./utils";
+import { authFetch, formatNumber } from "./util/utils";
 
 export const venueShowsLoader = async ({ params, request }) => {
   const { venueSlug } = params;
@@ -27,7 +27,7 @@ export const venueShowsLoader = async ({ params, request }) => {
 import React from "react";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import LayoutWrapper from "./LayoutWrapper";
+import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
 
 const VenueShows = () => {

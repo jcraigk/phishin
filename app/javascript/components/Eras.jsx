@@ -26,8 +26,8 @@ export const erasLoader = async () => {
 
 import React from "react";
 import { Link, useLoaderData } from "react-router-dom";
-import { formatNumber } from "./utils";
-import LayoutWrapper from "./LayoutWrapper";
+import { formatNumber } from "./util/utils";
+import LayoutWrapper from "./layout/LayoutWrapper";
 import MobileApps from "./pages/MobileApps";
 import GitHubButton from "./pages/GitHubButton";
 import DiscordButton from "./pages/DiscordButton";

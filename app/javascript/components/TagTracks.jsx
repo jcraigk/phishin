@@ -1,4 +1,4 @@
-import { authFetch } from "./utils";
+import { authFetch } from "./util/utils";
 
 export const tagTracksLoader = async ({ params, request }) => {
   const url = new URL(request.url);
@@ -34,9 +34,9 @@ export const tagTracksLoader = async ({ params, request }) => {
 import React from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import LayoutWrapper from "./LayoutWrapper";
+import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
-import Pagination from "./Pagination";
+import Pagination from "./controls/Pagination";
 
 const TagTracks = () => {
   const { tag, tracks, totalPages, page, sortOption } = useLoaderData();

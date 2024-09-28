@@ -1,4 +1,4 @@
-import { authFetch } from "./utils";
+import { authFetch } from "./util/utils";
 
 export const topShowsLoader = async () => {
   try {
@@ -14,7 +14,7 @@ export const topShowsLoader = async () => {
 import React from "react";
 import { useLoaderData, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import LayoutWrapper from "./LayoutWrapper";
+import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
 
 const TopShows = ({ user }) => {

@@ -11,7 +11,7 @@ export const tagIndexLoader = async () => {
 
 import React from "react";
 import { useLoaderData, Link } from "react-router-dom";
-import LayoutWrapper from "./LayoutWrapper";
+import LayoutWrapper from "./layout/LayoutWrapper";
 import Tags from "./Tags";
 import { Helmet } from "react-helmet-async";
 

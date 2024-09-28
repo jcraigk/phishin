@@ -17,8 +17,8 @@ export const missingContentLoader = async () => {
 import React from "react";
 import { Link, useLoaderData } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { formatNumber } from "./utils";
-import LayoutWrapper from "./LayoutWrapper";
+import { formatNumber } from "./util/utils";
+import LayoutWrapper from "./layout/LayoutWrapper";
 
 const MissingContentReport = () => {
   const missingContent = useLoaderData();

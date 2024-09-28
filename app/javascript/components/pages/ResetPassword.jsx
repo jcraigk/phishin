@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import PageWrapper from "./PageWrapper";
-import { useFeedback } from "../FeedbackContext";
+import { useFeedback } from "../controls/FeedbackContext";
 
 
 const ResetPassword = () => {

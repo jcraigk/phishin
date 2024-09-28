@@ -1,5 +1,5 @@
-import { eraShowsLoader } from "./EraShows";
-import { showLoader } from "./Show";
+import { eraShowsLoader } from "../EraShows";
+import { showLoader } from "../Show";
 
 export const dynamicLoader = async ({ params, request }) => {
   const { "*": fullPath } = params;
@@ -19,9 +19,9 @@ export const dynamicLoader = async ({ params, request }) => {
 
 import React from "react";
 import { useParams } from "react-router-dom";
-import EraShows from "./EraShows";
-import ErrorPage from "./pages/ErrorPage";
-import Show from "./Show";
+import EraShows from "../EraShows";
+import ErrorPage from "../pages/ErrorPage";
+import Show from "../Show";
 
 const DynamicRoute = () => {
   const { "*": fullPath } = useParams();

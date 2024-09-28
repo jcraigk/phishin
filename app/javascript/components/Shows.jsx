@@ -1,9 +1,9 @@
 import React from "react";
 import { useOutletContext, useNavigate } from "react-router-dom";
-import { formatDurationShow, formatDate } from "./utils";
-import TagBadges from "./TagBadges";
-import LikeButton from "./LikeButton";
-import ShowContextMenu from "./ShowContextMenu";
+import { formatDurationShow, formatDate } from "./util/utils";
+import TagBadges from "./controls/TagBadges";
+import LikeButton from "./controls/LikeButton";
+import ShowContextMenu from "./controls/ShowContextMenu";
 
 const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
   const { activeTrack } = useOutletContext();

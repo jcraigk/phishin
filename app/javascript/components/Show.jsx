@@ -1,4 +1,4 @@
-import { authFetch } from "./utils";
+import { authFetch } from "./util/utils";
 
 export const showLoader = async ({ params }) => {
   const { date } = params;
@@ -19,12 +19,12 @@ export const showLoader = async ({ params }) => {
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useLoaderData, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { formatDate, formatDateMed, formatDateLong, formatDurationShow } from "./utils";
-import LayoutWrapper from "./LayoutWrapper";
-import ShowContextMenu from "./ShowContextMenu";
-import LikeButton from "./LikeButton";
+import { formatDate, formatDateMed, formatDateLong, formatDurationShow } from "./util/utils";
+import LayoutWrapper from "./layout/LayoutWrapper";
+import ShowContextMenu from "./controls/ShowContextMenu";
+import LikeButton from "./controls/LikeButton";
 import Tracks from "./Tracks";
-import TagBadges from "./TagBadges";
+import TagBadges from "./controls/TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle, faClock } from "@fortawesome/free-solid-svg-icons";
 

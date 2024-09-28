@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import PageWrapper from "./PageWrapper";
-import { useFeedback } from "../FeedbackContext";
+import { useFeedback } from "../controls/FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowAltCircleRight, faRightToBracket, faUserCheck } from "@fortawesome/free-solid-svg-icons";
 

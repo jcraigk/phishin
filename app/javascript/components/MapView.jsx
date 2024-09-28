@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import mapboxgl from "mapbox-gl";
-import { formatNumber } from "./utils";
-import LayoutWrapper from "./LayoutWrapper";
+import { formatNumber } from "./util/utils";
+import LayoutWrapper from "./layout/LayoutWrapper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
