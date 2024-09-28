@@ -8,7 +8,7 @@ import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCircle
 const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
   const dropdownRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
-  const { activeTrack, currentTime, openAppModal } = useOutletContext();
+  const { openAppModal } = useOutletContext();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const { user, draftPlaylist, setDraftPlaylist } = useOutletContext();
 

@@ -22,7 +22,6 @@ const Layout = ({ user, setUser, onLogout }) => {
     published: false
   });
   const [activeTrack, setActiveTrack] = useState(null);
-  const [currentTime, setCurrentTime] = useState(0);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const audioRef = useRef(null);
 
@@ -71,18 +70,14 @@ const Layout = ({ user, setUser, onLogout }) => {
           draftPlaylist,
           setDraftPlaylist,
           draftPlaylistMeta,
-          setDraftPlaylistMeta,
           activeTrack,
           playTrack,
           audioRef,
-          currentTime,
-          setCurrentTime,
           openAppModal,
           closeAppModal,
           openDraftPlaylistModal,
           closeDraftPlaylistModal,
           user,
-          setUser,
           isInputFocused,
           handleInputFocus,
           handleInputBlur
@@ -94,7 +89,6 @@ const Layout = ({ user, setUser, onLogout }) => {
         activeTrack={activeTrack}
         setActiveTrack={setActiveTrack}
         audioRef={audioRef}
-        setCurrentTime={setCurrentTime}
         customPlaylist={customPlaylist}
         isInputFocused={isInputFocused}
       />

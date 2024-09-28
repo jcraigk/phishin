@@ -5,7 +5,7 @@ import { useFeedback } from "./FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward, faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
-const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, setCurrentTime, customPlaylist, isInputFocused }) => {
+const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customPlaylist, isInputFocused }) => {
   const location = useLocation();
   const scrubberRef = useRef();
   const progressBarRef = useRef();
@@ -16,6 +16,9 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, setCurr
   const [isPlayerCollapsed, setIsPlayerCollapsed] = useState(false);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [endTime, setEndTime] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+
 
   const togglePlayerPosition = () => {
     setIsPlayerCollapsed(!isPlayerCollapsed);
@@ -25,9 +28,11 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, setCurr
     if (audioRef.current.paused) {
       audioRef.current.play();
       navigator.mediaSession.playbackState = 'playing';
+      setIsPlaying(true);
     } else {
       audioRef.current.pause();
       navigator.mediaSession.playbackState = 'paused';
+      setIsPlaying(false);
     }
   };
 
@@ -183,10 +188,10 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, setCurr
   const handleTimeUpdate = () => {
     setCurrentTime(audioRef.current.currentTime);
     updateProgressBar();
-
     if (isFirstLoad && endTime !== null && audioRef.current.currentTime >= endTime) {
       audioRef.current.pause();
       setIsFirstLoad(false);
+      setIsPlaying(false);
     }
   };
 
@@ -277,7 +282,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, setCurr
       </div>
       <div className="bottom-row">
         <p className="elapsed" onClick={scrubBackward}>
-          {audioRef.current ? formatTime(audioRef.current.currentTime) : "0:00"}
+          {formatTime(currentTime)}
         </p>
         <div
           className={`scrubber-bar ${fadeClass}`}
@@ -287,7 +292,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, setCurr
           <div className="progress-bar" ref={progressBarRef}></div>
         </div>
         <p className="remaining" onClick={scrubForward}>
-          {audioRef.current ? `-${formatTime(audioRef.current.duration - audioRef.current.currentTime || 0)}` : "0:00"}
+          {activeTrack ? `-${formatTime((activeTrack.duration / 1000) - currentTime)}` : "0:00"}
         </p>
       </div>
       <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} />
