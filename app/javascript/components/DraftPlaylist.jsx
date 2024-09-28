@@ -9,9 +9,7 @@ import { faExclamationCircle, faClock, faGlobe, faLock, faEdit, faCheck } from "
 const DraftPlaylist = () => {
   const {
     draftPlaylist,
-    setDraftPlaylist,
     draftPlaylistMeta,
-    setCustomPlaylist,
     openDraftPlaylistModal
   } = useOutletContext();
 

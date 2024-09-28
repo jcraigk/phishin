@@ -1,5 +1,5 @@
 .playlist-description-container {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  max-height: 4rem;
 }

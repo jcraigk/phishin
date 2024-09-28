@@ -16,7 +16,6 @@ const Layout = ({ user, setUser, onLogout }) => {
   const [customPlaylist, setCustomPlaylist] = useState(null);
   const [draftPlaylist, setDraftPlaylist] = useState([]);
   const [draftPlaylistMeta, setDraftPlaylistMeta] = useState({
-    id: null,
     name: "",
     slug: "",
     description: "",
@@ -108,6 +107,7 @@ const Layout = ({ user, setUser, onLogout }) => {
         isOpen={isDraftPlaylistModalOpen}
         onRequestClose={closeDraftPlaylistModal}
         draftPlaylist={draftPlaylist}
+        setDraftPlaylist={setDraftPlaylist}
         draftPlaylistMeta={draftPlaylistMeta}
         setDraftPlaylistMeta={setDraftPlaylistMeta}
         handleInputFocus={handleInputFocus}
