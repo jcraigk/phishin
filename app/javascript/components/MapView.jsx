@@ -1,153 +1,115 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
+import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import { formatNumber } from "./helpers/utils";
-import LayoutWrapper from "./layout/LayoutWrapper";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
-const usStates = [
-  "(US State)", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME",
-  "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
-  "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
-];
-
-const MapView = ({ mapboxToken }) => {
-  const location = useLocation();
+const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = true }) => {
   const mapContainer = useRef(null);
   const [map, setMap] = useState(null);
 
-  const getQueryParams = () => {
-    const params = new URLSearchParams(location.search);
-    return {
-      term: params.get("term") || "Burlington, VT",
-      distance: params.get("distance") || "10",
-      start_date: params.get("start_date") || "1983-12-02",
-      end_date: params.get("end_date") || new Date().toISOString().split("T")[0],
-      us_state: params.get("us_state") || "(US State)"
-    };
-  };
-
-  const [formData, setFormData] = useState(getQueryParams());
-
-  const defaultCoordinates = { lat: 44.47, lng: -73.21 }; // Burlington, VT
-  const defaultRadius = 10;
-
-  const isStateSelected = formData.us_state !== "(US State)";
-
   useEffect(() => {
-    const { term, us_state } = formData;
-
-    if (term !== "Burlington, VT" || us_state !== "(US State)") {
-      handleSubmit(new Event("submit"));
-    } else {
-      initializeMap(defaultCoordinates.lat, defaultCoordinates.lng, defaultRadius);
-    }
-  }, [mapboxToken]);
-
-  const initializeMap = (lat, lng, radius) => {
-    if (map) {
-      map.remove();
-    }
+    if (!coordinates || !mapboxToken) return;
 
     mapboxgl.accessToken = mapboxToken;
 
     const mapboxMap = new mapboxgl.Map({
       container: mapContainer.current,
       style: "mapbox://styles/mapbox/streets-v12",
-      center: [lng, lat],
+      center: [coordinates.lng, coordinates.lat],
       zoom: 11,
+      attributionControl: false
     });
 
-    mapboxMap.addControl(new mapboxgl.NavigationControl());
+    mapboxMap.addControl(
+      new mapboxgl.AttributionControl({
+        compact: true,
+      })
+    );
+
+    if (controls) {
+      mapboxMap.addControl(new mapboxgl.NavigationControl());
+    }
+
     setMap(mapboxMap);
+  }, [coordinates, mapboxToken, controls]);
 
-    fetchShows(lat, lng, radius).then((venues) => {
-      addMarkersToMap(mapboxMap, venues);
-    });
-  };
-
-  const fetchShows = async (lat, lng, distance) => {
-    const { start_date, end_date, us_state } = formData;
-    let url = `/api/v2/shows?per_page=250&sort=date:desc&start_date=${start_date}&end_date=${end_date}`;
-
-    if (isStateSelected) {
-      url += `&us_state=${us_state}`;
-    } else {
-      url += `&lat=${lat}&lng=${lng}&distance=${distance}`;
+  useEffect(() => {
+    if (map && venues) {
+      addMarkersToMap(map, venues);
     }
-
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-
-      const uniqueVenues = data.shows.reduce((acc, show) => {
-        const venue = show.venue;
-        const isDuplicate = acc.some((v) => v.slug === venue.slug);
-
-        if (!isDuplicate && venue.latitude && venue.longitude) {
-          acc.push({
-            slug: venue.slug,
-            name: venue.name,
-            location: venue.location,
-            lat: venue.latitude,
-            lng: venue.longitude,
-            shows_count: venue.shows_count,
-            shows: [{ date: show.date }]
-          });
-        } else if (isDuplicate) {
-          const existingVenue = acc.find((v) => v.slug === venue.slug);
-          existingVenue.shows.push({ date: show.date });
-        }
-        return acc;
-      }, []);
-
-      return uniqueVenues;
-    } catch (error) {
-      console.error("Error fetching shows:", error);
-      return [];
-    }
-  };
+  }, [map, venues]);
 
   const addMarkersToMap = (mapInstance, venues) => {
-    if (venues.length === 0) {
-      new mapboxgl.Popup({ closeButton: false })
-        .setLngLat(mapInstance.getCenter())
-        .setHTML("<p style=\"font-family: 'Open Sans Condensed', sans-serif; font-weight: bold; font-size: 1.2rem;\">No results found for your search.</p>")
-        .addTo(mapInstance);
-
+    if (!mapInstance || venues.length === 0) {
+      if (searchComplete) {
+        new mapboxgl.Popup({ closeButton: false })
+          .setLngLat(mapInstance.getCenter())
+          .setHTML("<p style=\"font-family: 'Open Sans Condensed', sans-serif; font-weight: bold; font-size: 1.2rem;\">No results found for your search.</p>")
+          .addTo(mapInstance);
+      }
       return;
     }
 
     const bounds = new mapboxgl.LngLatBounds();
 
-    venues.forEach((venue) => {
-      const popupContent = `
-        <div class="map-popup">
-          <h2>${venue.name}</h2>
-          <h3>${venue.location} &bull; ${formatNumber(venue.shows_count, 'show')}</h3>
-          ${venue.shows
-            .map(
-              (show) => `
-              <a href="/${show.date}" class="show-badge">${show.date.replace(/-/g, ".")}</a>
-              `
-            )
-            .join("")}
-        </div>
-      `;
+    venues.forEach((venue, index) => {
+      let marker;
 
-      const popup = new mapboxgl.Popup({ closeButton: false }).setHTML(popupContent);
+      if (venues.length === 1) {
+        const customIcon = document.createElement('div');
+        customIcon.className = 'custom-marker-icon';
 
-      new mapboxgl.Marker()
-        .setLngLat([venue.lng, venue.lat])
-        .setPopup(popup)
-        .addTo(mapInstance);
+        marker = new mapboxgl.Marker(customIcon).setLngLat([venue.longitude, venue.latitude]);
 
-      bounds.extend([venue.lng, venue.lat]);
+        // Add optional popup for the single venue
+        if (venue.shows && venue.shows.length > 0) {
+          const popupContent = `
+            <div class="map-popup">
+              <h2>${venue.name}</h2>
+              <h3>${venue.location} &bull; ${formatNumber(venue.shows_count, 'show')}</h3>
+              ${venue.shows
+                .map(
+                  (show) => `
+                  <a href="/${show.date}" class="show-badge">${show.date.replace(/-/g, ".")}</a>
+                  `
+                )
+                .join("")}
+            </div>
+          `;
+          const popup = new mapboxgl.Popup({ closeButton: false }).setHTML(popupContent);
+          marker.setPopup(popup);
+        }
+
+      } else {
+        // Use default marker for multiple venues
+        marker = new mapboxgl.Marker().setLngLat([venue.longitude, venue.latitude]);
+
+        if (venue.shows && venue.shows.length > 0) {
+          const popupContent = `
+            <div class="map-popup">
+              <h2>${venue.name}</h2>
+              <h3>${venue.location} &bull; ${formatNumber(venue.shows_count, 'show')}</h3>
+              ${venue.shows
+                .map(
+                  (show) => `
+                  <a href="/${show.date}" class="show-badge">${show.date.replace(/-/g, ".")}</a>
+                  `
+                )
+                .join("")}
+            </div>
+          `;
+          const popup = new mapboxgl.Popup({ closeButton: false }).setHTML(popupContent);
+          marker.setPopup(popup);
+        }
+      }
+
+      marker.addTo(mapInstance);
+      bounds.extend([venue.longitude, venue.latitude]);
     });
 
-    if (venues.length > 0) {
+    if (venues.length === 1) {
+      mapInstance.setZoom(8);
+      mapInstance.setCenter([venues[0].longitude, venues[0].latitude]);
+    } else if (venues.length > 0) {
       mapInstance.fitBounds(bounds, {
         padding: 50,
         maxZoom: 12,
@@ -156,111 +118,8 @@ const MapView = ({ mapboxToken }) => {
     }
   };
 
-  const geocodeSearchTerm = async (term) => {
-    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${term}.json?access_token=${mapboxToken}`;
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      const [lng, lat] = data.features[0].center;
-      return { lat, lng };
-    } catch (error) {
-      console.error("Error with geocoding:", error);
-      return null;
-    }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (isStateSelected) {
-      initializeMap(defaultCoordinates.lat, defaultCoordinates.lng, defaultRadius);
-    } else {
-      const { term, distance } = formData;
-
-      const geocodeResult = await geocodeSearchTerm(term);
-      if (geocodeResult) {
-        const { lat, lng } = geocodeResult;
-        initializeMap(lat, lng, distance);
-      } else {
-        alert("Sorry, couldn't find that location");
-      }
-    }
-  };
-
-  const sidebarContent = (
-    <div className="sidebar-content">
-      <form onSubmit={handleSubmit}>
-        <label className="label">US State</label>
-        <div className="select">
-          <select name="us_state" value={formData.us_state} onChange={handleInputChange}>
-            {usStates.map((state) => (
-              <option key={state} value={state}>
-                {state}
-              </option>
-            ))}
-          </select>
-        </div>
-        <label className="label">Location</label>
-        <input
-          className="input"
-          type="text"
-          name="term"
-          placeholder="Place or zipcode"
-          value={formData.term}
-          onChange={handleInputChange}
-          disabled={isStateSelected}
-        />
-        <label className="label">Distance (miles)</label>
-        <input
-          className="input"
-          type="number"
-          name="distance"
-          placeholder="Distance (miles)"
-          value={formData.distance}
-          onChange={handleInputChange}
-          disabled={isStateSelected}
-        />
-        <label className="label">Start Date</label>
-        <input
-          className="input"
-          type="date"
-          name="start_date"
-          value={formData.start_date}
-          onChange={handleInputChange}
-        />
-        <label className="label">End Date</label>
-        <input
-          className="input"
-          type="date"
-          name="end_date"
-          value={formData.end_date}
-          onChange={handleInputChange}
-        />
-        <button className="button mt-4" type="submit">
-          <FontAwesomeIcon icon={faSearch} className="mr-1" />
-          Search
-        </button>
-      </form>
-    </div>
-  );
-
   return (
-    <>
-      <Helmet>
-        <title>Map - Phish.in</title>
-      </Helmet>
-      <LayoutWrapper sidebarContent={sidebarContent}>
-        <div
-          className="map-container"
-          ref={mapContainer}
-        />
-      </LayoutWrapper>
-    </>
+    <div className="map-container" ref={mapContainer} />
   );
 };
 

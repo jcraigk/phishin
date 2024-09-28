@@ -26,13 +26,6 @@ const TopTracks = ({ user }) => {
       <p className="sidebar-detail mb-5">
         An aggregated list of the top tracks, ranked by user likes from the Phish.in community.
       </p>
-      {!user && (
-        <div className="sidebar-callout">
-          <Link to="/login" className="button">
-            Login to contribute!
-          </Link>
-        </div>
-      )}
     </div>
   );
 
