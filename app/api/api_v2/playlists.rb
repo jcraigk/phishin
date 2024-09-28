@@ -104,7 +104,7 @@ class ApiV2::Playlists < ApiV2::Base
         user: current_user,
         name: params[:name],
         slug: params[:slug],
-        playlist_tracks_attributes: track_attributes_from_params
+        playlist_tracks_attributes: track_attrs_from_params
       present playlist, with: ApiV2::Entities::Playlist
     end
 
@@ -196,13 +196,15 @@ class ApiV2::Playlists < ApiV2::Base
       playlists
     end
 
-    def track_attributes_from_params
+    def track_attrs_from_params
       params[:track_ids].map.with_index do |track_id, idx|
+        starts_at = params[:starts_at_seconds][idx]
+        ends_at = params[:ends_at_seconds][idx]
         {
-          track_id:,
+          track_id: track_id,
           position: idx + 1,
-          starts_at_second: params[:starts_at_seconds][idx],
-          ends_at_second: params[:ends_at_seconds][idx]
+          starts_at_second: starts_at.zero? ? nil : starts_at,
+          ends_at_second: ends_at.zero? ? nil : ends_at
         }
       end
     end
@@ -215,7 +217,7 @@ class ApiV2::Playlists < ApiV2::Base
           description: params[:description],
           slug: params[:slug],
           published: params[:published],
-          playlist_tracks_attributes: track_attributes_from_params
+          playlist_tracks_attributes: track_attrs_from_params
       end
     end
   end
