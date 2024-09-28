@@ -5,7 +5,7 @@ import DraftPlaylist from "../DraftPlaylist";
 import DynamicRoute, { dynamicLoader } from "./DynamicRoute";
 import Eras, { erasLoader } from '../Eras';
 import Layout from "../layout/Layout";
-import MapView from "../MapView";
+import MapSearch from "../MapSearch";
 import MissingContentReport, { missingContentLoader } from "../MissingContentReport";
 import MyShows, { myShowsLoader } from "../MyShows";
 import MyTracks, { myTracksLoader } from "../MyTracks";
@@ -132,7 +132,7 @@ const routes = (props) => [
       },
       {
         path: "/map",
-        element: <MapView mapboxToken={props.mapbox_token} />,
+        element: <MapSearch mapboxToken={props.mapbox_token} />,
       },
       {
         path: "/top-shows",
@@ -183,7 +183,7 @@ const routes = (props) => [
       },
       {
         path: "*",
-        element: <DynamicRoute />,
+        element: <DynamicRoute props={props} />,
         loader: dynamicLoader,
       },
     ],

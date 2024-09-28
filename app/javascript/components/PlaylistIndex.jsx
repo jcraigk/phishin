@@ -97,12 +97,6 @@ const PlaylistIndex = () => {
           </select>
         </div>
 
-        {!user && (
-          <Link to="/login" className="button">
-            Login to create and like playlists!
-          </Link>
-        )}
-
         {user && (
           <div className="select">
             <select id="playlist-filter" value={filter} onChange={handleFilterChange}>

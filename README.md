@@ -6,9 +6,6 @@ TODO
  * look for console errors
  * Create a published playlist in prod so index page isn't empty. include some excerpts too (so release first, then create the playlist)
 
-PLAYLISTS
- * Map in sidebar of show?
-
  BACKBURNER
   * dropdowns on mobile might go offscreen
   * on mobile (<400 or whatever), show sidebar-filters underneath (?)
@@ -21,7 +18,6 @@ PLAYLISTS
   * Per page controls?
 
   * fade excerpts in/out (?)
-  * Link locations to map in lists like https://jcktest.ngrok.io/play/011021 (?)
   * lyrical excerpts?
   * Disable email account creation - allow oauth login through api?
 

@@ -62,6 +62,16 @@ const VenueShows = () => {
           </select>
         </div>
       </div>
+
+      <div className="sidebar-map mt-3 sidebar-extras">
+        <MapView
+          mapboxToken={mapboxToken}
+          coordinates={{ lat: venue.latitude, lng: venue.longitude }}
+          venues={[venue]}
+          searchComplete={true}
+          controls={false}
+        />
+      </div>
     </div>
   );
 

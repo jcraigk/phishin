@@ -25,10 +25,11 @@ import ShowContextMenu from "./controls/ShowContextMenu";
 import LikeButton from "./controls/LikeButton";
 import Tracks from "./Tracks";
 import TagBadges from "./controls/TagBadges";
+import MapView from "./MapView";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle, faClock } from "@fortawesome/free-solid-svg-icons";
 
-const Show = ({ trackSlug }) => {
+const Show = ({ trackSlug, mapboxToken }) => {
   const show = useLoaderData();
   const [tracks, setTracks] = useState(show.tracks);
   const trackRefs = useRef([]);
@@ -92,6 +93,18 @@ const Show = ({ trackSlug }) => {
           Next show
           <FontAwesomeIcon icon={faCircleChevronRight} className="ml-1" />
         </Link>
+
+        <div className="sidebar-map mt-3">
+        <div className="sidebar-map">
+          <MapView
+            mapboxToken={mapboxToken}
+            coordinates={{ lat: show.venue.latitude, lng: show.venue.longitude }}
+            venues={[show.venue]}
+            searchComplete={true}
+            controls={false}
+          />
+        </div>
+      </div>
       </div>
     </div>
   );

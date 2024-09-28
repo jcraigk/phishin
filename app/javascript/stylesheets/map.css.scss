@@ -2,6 +2,18 @@
   border-radius: var(--bulma-radius);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   width: 100%;
+  height: 100%;
+}
+
+.custom-marker-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: rgba($likes-blue, 0.5);
+  border: 2px solid $likes-blue;
+}
+
+.map-search-results {
   height: 500px;
 }
 
