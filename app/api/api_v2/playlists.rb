@@ -94,24 +94,25 @@ class ApiV2::Playlists < ApiV2::Base
     params { use :playlist_params }
     post do
       authenticate!
-
       if Playlist.where(user: current_user).count >= App.max_playlists_per_user
         error!(
           { message: "Each user is limited to #{App.max_playlists_per_user} playlists" },
           403
         )
       end
-
-      track_attributes = params[:track_ids]&.map&.with_index(1) do |track_id, position|
-        { track_id:, position: }
+      track_attributes = params[:track_ids].map.with_index do |track_id, idx|
+        {
+          track_id:,
+          position: idx + 1,
+          starts_at_second: params[:starts_at_seconds][idx],
+          ends_at_second: params[:ends_at_seconds][idx]
+        }
       end
-      playlist = Playlist.create!(
+      playlist = Playlist.create! \
         user: current_user,
         name: params[:name],
         slug: params[:slug],
-        playlist_tracks_attributes: track_attributes || []
-      )
-
+        playlist_tracks_attributes: track_attributes
       present playlist, with: ApiV2::Entities::Playlist
     end
 
@@ -133,21 +134,20 @@ class ApiV2::Playlists < ApiV2::Base
       authenticate!
       playlist = current_user.playlists.find(params[:id])
       playlist.playlist_tracks.destroy_all
-      track_attributes = params[:track_ids].each_with_index.map do |track_id, index|
+      track_attributes = params[:track_ids].each_with_index.map do |track_id, idx|
         {
           track_id:,
-          position: index + 1,
-          starts_at_second: params[:starts_at_seconds][index],
-          ends_at_second: params[:ends_at_seconds][index]
+          position: idx + 1,
+          starts_at_second: params[:starts_at_seconds][idx],
+          ends_at_second: params[:ends_at_seconds][idx]
         }
       end
-      playlist.update!(
+      playlist.update! \
         name: params[:name],
         description: params[:description],
         slug: params[:slug],
         published: params[:published],
         playlist_tracks_attributes: track_attributes
-      )
       present playlist, with: ApiV2::Entities::Playlist
     end
 

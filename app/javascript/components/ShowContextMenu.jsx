@@ -53,6 +53,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
       return;
     }
     e.stopPropagation();
+    console.log(show);
     setDraftPlaylist([...draftPlaylist, ...show.tracks]);
     setNotice("Show added to draft playlist");
     hideDropdown();
@@ -129,12 +130,15 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
             </>
           )}
 
-          <hr className="dropdown-divider" />
-
-          <a className="dropdown-item" onClick={handleAddToPlaylist}>
-            <FontAwesomeIcon icon={faCirclePlus} className="icon" />
-            Add to playlist
-          </a>
+          {show.tracks?.length > 0 && (
+            <>
+              <hr className="dropdown-divider" />
+              <a className="dropdown-item" onClick={handleAddToPlaylist}>
+                <FontAwesomeIcon icon={faCirclePlus} className="icon" />
+                Add to playlist
+              </a>
+            </>
+          )}
         </div>
       </div>
     </div>

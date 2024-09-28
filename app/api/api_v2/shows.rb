@@ -54,7 +54,7 @@ class ApiV2::Shows < ApiV2::Base
       page = page_of_shows
       liked_show_ids = fetch_liked_show_ids(page[:shows])
       present \
-        shows: ApiV2::Entities::Show.represent(page[:shows], liked_show_ids:),
+        shows: ApiV2::Entities::Show.represent(page[:shows], liked_show_ids:, exclude_tracks: true),
         total_pages: page[:total_pages],
         current_page: page[:current_page],
         total_entries: page[:total_entries]
@@ -69,7 +69,6 @@ class ApiV2::Shows < ApiV2::Base
       present \
         show,
         with: ApiV2::Entities::Show,
-        include_tracks: true,
         liked_by_user: current_user&.likes&.exists?(likable: show) || false,
         liked_track_ids: fetch_liked_track_ids(show)
     end
@@ -90,7 +89,6 @@ class ApiV2::Shows < ApiV2::Base
       present \
         show,
         with: ApiV2::Entities::Show,
-        include_tracks: true,
         include_gaps: true,
         liked_by_user: current_user&.likes&.exists?(likable: show) || false,
         liked_track_ids: fetch_liked_track_ids(show),

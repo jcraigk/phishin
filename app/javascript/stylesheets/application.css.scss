@@ -17,23 +17,24 @@ $bg-blue: #cbf3ff;
 $bg-red: #ffe4e1;
 $alert-red: #c6867f;
 
+@import "./bulma-overrides.css.scss";
 @import "./content.css.scss";
-@import "./pagination.css.scss";
-@import "./layout.css.scss";
-@import "./tags.css.scss";
-@import "./tooltips.css.scss";
-@import "./map.css.scss";
-@import "./likes.css.scss";
+@import "./eras.css.scss";
+@import "./errors.css.scss";
 @import "./feedback.css.scss";
 @import "./footer.css.scss";
-@import "./bulma-overrides.css.scss";
-@import "./modal.css.scss";
-@import "./player.css.scss";
-@import "./navbar.css.scss";
-@import "./errors.css.scss";
-@import "./eras.css.scss";
+@import "./layout.css.scss";
+@import "./likes.css.scss";
+@import "./map.css.scss";
 @import "./mobile.css.scss";
+@import "./modal.css.scss";
+@import "./navbar.css.scss";
+@import "./pagination.css.scss";
+@import "./player.css.scss";
+@import "./playlist.css.scss";
 @import "./search.css.scss";
+@import "./tags.css.scss";
+@import "./tooltips.css.scss";
 
 html, body {
   height: 100%;

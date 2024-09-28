@@ -94,7 +94,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
 
   expose(
     :tracks,
-    if: ->(_, opts) { opts[:include_tracks] },
+    unless: ->(_, opts) { opts[:exclude_tracks] },
     documentation: {
       is_array: true,
       desc: "Tracks associated with the show, included only on individual show requests"
