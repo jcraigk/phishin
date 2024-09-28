@@ -100,19 +100,11 @@ class ApiV2::Playlists < ApiV2::Base
           403
         )
       end
-      track_attributes = params[:track_ids].map.with_index do |track_id, idx|
-        {
-          track_id:,
-          position: idx + 1,
-          starts_at_second: params[:starts_at_seconds][idx],
-          ends_at_second: params[:ends_at_seconds][idx]
-        }
-      end
       playlist = Playlist.create! \
         user: current_user,
         name: params[:name],
         slug: params[:slug],
-        playlist_tracks_attributes: track_attributes
+        playlist_tracks_attributes: track_attributes_from_params
       present playlist, with: ApiV2::Entities::Playlist
     end
 
@@ -133,21 +125,7 @@ class ApiV2::Playlists < ApiV2::Base
     put ":id" do
       authenticate!
       playlist = current_user.playlists.find(params[:id])
-      playlist.playlist_tracks.destroy_all
-      track_attributes = params[:track_ids].each_with_index.map do |track_id, idx|
-        {
-          track_id:,
-          position: idx + 1,
-          starts_at_second: params[:starts_at_seconds][idx],
-          ends_at_second: params[:ends_at_seconds][idx]
-        }
-      end
-      playlist.update! \
-        name: params[:name],
-        description: params[:description],
-        slug: params[:slug],
-        published: params[:published],
-        playlist_tracks_attributes: track_attributes
+      update_playlist_data(playlist)
       present playlist, with: ApiV2::Entities::Playlist
     end
 
@@ -216,6 +194,29 @@ class ApiV2::Playlists < ApiV2::Base
       end
 
       playlists
+    end
+
+    def track_attributes_from_params
+      params[:track_ids].map.with_index do |track_id, idx|
+        {
+          track_id:,
+          position: idx + 1,
+          starts_at_second: params[:starts_at_seconds][idx],
+          ends_at_second: params[:ends_at_seconds][idx]
+        }
+      end
+    end
+
+    def update_playlist_data(playlist)
+      ActiveRecord::Base.transaction do
+        playlist.playlist_tracks.destroy_all
+        playlist.update! \
+          name: params[:name],
+          description: params[:description],
+          slug: params[:slug],
+          published: params[:published],
+          playlist_tracks_attributes: track_attributes_from_params
+      end
     end
   end
 end

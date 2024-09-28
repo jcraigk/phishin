@@ -3,9 +3,9 @@ import Modal from "react-modal";
 import { authFetch } from "./utils";
 import { useFeedback } from "./FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleXmark, faCheck, faCloudArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { faCircleXmark, faCircleCheck, faCloudArrowUp, faTrash } from "@fortawesome/free-solid-svg-icons";
 
-const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, draftPlaylistMeta, setDraftPlaylistMeta, handleInputFocus, handleInputBlur }) => {
+const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPlaylist, draftPlaylistMeta, setDraftPlaylistMeta, handleInputFocus, handleInputBlur }) => {
   const [name, setName] = useState(draftPlaylistMeta.name);
   const [slug, setSlug] = useState(draftPlaylistMeta.slug);
   const [description, setDescription] = useState(draftPlaylistMeta.description);
@@ -92,6 +92,20 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, draftPlayli
     onRequestClose();
   };
 
+  const handleClearPlaylist = () => {
+    if (window.confirm("Are you sure you want to clear the draft playlist?")) {
+      setDraftPlaylist([]);
+      setDraftPlaylistMeta({
+        id: null,
+        name: "",
+        slug: "",
+        description: "",
+        published: false
+      });
+    }
+    onRequestClose();
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -164,16 +178,28 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, draftPlayli
         className="button"
         onClick={handleDoneEditing}
       >
-        <FontAwesomeIcon icon={faCheck} className="icon mr-1" />
+        <span className="icon mr-1">
+          <FontAwesomeIcon icon={faCircleCheck} />
+        </span>
         Done Editing
       </button>
-
-        <button
+      <button
         className="button ml-2"
         onClick={handleSavePlaylist}
       >
-        <FontAwesomeIcon icon={faCloudArrowUp} className="icon mr-1" />
+        <span className="icon mr-1">
+          <FontAwesomeIcon icon={faCloudArrowUp} />
+        </span>
         Save Playlist
+      </button>
+      <button
+        className="button ml-2"
+        onClick={handleClearPlaylist}
+      >
+        <span className="icon mr-1">
+          <FontAwesomeIcon icon={faTrash} />
+        </span>
+        Clear Playlist
       </button>
     </Modal>
   );
