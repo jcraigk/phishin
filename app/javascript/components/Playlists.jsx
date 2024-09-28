@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { formatNumber, formatDurationShow, formatDateLong } from "./util/utils";
+import { formatNumber, formatDurationShow, formatDateLong } from "./helpers/utils";
 import LikeButton from "./controls/LikeButton";
 import HighlightedText from "./controls/HighlightedText";
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { formatNumber } from "./util/utils";
+import { formatNumber } from "./helpers/utils";
 import TagBadges from "./controls/TagBadges";
 import HighlightedText from "./controls/HighlightedText";
 

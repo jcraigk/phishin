@@ -95,9 +95,7 @@ const Signup = ({ handleLogin }) => {
         <div className="field mt-6">
           <div className="control">
             <button className="button" type="submit">
-              <div className="icon mr-1">
-                <FontAwesomeIcon icon={faCheck} />
-              </div>
+              <FontAwesomeIcon icon={faCheck} className="mr-1" />
               Sign Up
             </button>
           </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import { useOutletContext, Link } from "react-router-dom";
-import { formatDurationTrack, formatDurationShow, formatDate } from "./util/utils";
+import { formatDurationTrack, formatDurationShow, formatDate } from "./helpers/utils";
 import TagBadges from "./controls/TagBadges";
 import HighlightedText from "./controls/HighlightedText";
 import LikeButton from "./controls/LikeButton";

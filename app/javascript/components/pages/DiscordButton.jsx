@@ -8,9 +8,7 @@ const DiscordButton = ({ className }) => (
     className={`button ${className}`}
     target="_blank"
   >
-    <div className="icon mr-1">
-      <FontAwesomeIcon icon={faGamepad} />
-    </div>
+    <FontAwesomeIcon icon={faGamepad} className="mr-1" />
     Discord
   </a>
 );

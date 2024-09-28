@@ -80,9 +80,7 @@ const Login = ({ onLogin }) => {
         <div className="field">
           <div className="control">
             <button className="button" type="submit">
-              <div className="icon mr-1">
-                <FontAwesomeIcon icon={faRightToBracket} />
-              </div>
+              <FontAwesomeIcon icon={faRightToBracket} className="mr-1" />
               Login
             </button>
           </div>
@@ -93,9 +91,7 @@ const Login = ({ onLogin }) => {
 
       <h1 className="title">Sign Up with Email</h1>
       <Link to="/signup" className="button">
-        <div className="icon mr-1">
-          <FontAwesomeIcon icon={faArrowAltCircleRight} />
-        </div>
+        <FontAwesomeIcon icon={faArrowAltCircleRight} className="mr-1" />
         Sign Up
       </Link>
     </PageWrapper>

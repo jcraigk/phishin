@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
-import { authFetch } from "../util/utils";
+import { authFetch } from "../helpers/utils";
 import { useFeedback } from "../controls/FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark, faCircleCheck, faCloudArrowUp, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -219,9 +219,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
         className="button"
         onClick={onRequestClose}
       >
-        <span className="icon mr-1">
-          <FontAwesomeIcon icon={faCircleCheck} />
-        </span>
+        <FontAwesomeIcon icon={faCircleCheck} className="mr-1" />
         Done Editing
       </button>
 
@@ -229,9 +227,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
         className="button ml-2"
         onClick={handleSavePlaylist}
       >
-        <span className="icon mr-1">
-          <FontAwesomeIcon icon={faCloudArrowUp} />
-        </span>
+        <FontAwesomeIcon icon={faCloudArrowUp} className="mr-1" />
         Save
       </button>
 
@@ -239,9 +235,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
         className="button ml-2"
         onClick={handleClearPlaylist}
       >
-        <span className="icon mr-1">
-          <FontAwesomeIcon icon={faTrash} />
-        </span>
+        <FontAwesomeIcon icon={faTrash} className="mr-1" />
         Clear
       </button>
 
@@ -250,9 +244,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
           className="button ml-2"
           onClick={handleDeletePlaylist}
         >
-          <span className="icon mr-1">
-            <FontAwesomeIcon icon={faTrash} />
-          </span>
+          <FontAwesomeIcon icon={faTrash} className="mr-1" />
           Delete
         </button>
       )}

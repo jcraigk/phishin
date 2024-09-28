@@ -2,7 +2,7 @@ import React from "react";
 import { useOutletContext } from "react-router-dom";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
-import { formatDurationShow } from "./util/utils";
+import { formatDurationShow } from "./helpers/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationCircle, faClock, faGlobe, faLock, faEdit, faCheck } from "@fortawesome/free-solid-svg-icons";
 
@@ -55,9 +55,7 @@ const DraftPlaylist = () => {
 
       {draftPlaylist.length < 2 && (
         <div className="notification show-info">
-          <span className="icon">
-            <FontAwesomeIcon icon={faExclamationCircle} />
-          </span>
+          <FontAwesomeIcon icon={faExclamationCircle} className="mr-1" />
           Playlists must have least 2 tracks before they can be saved or shared.
         </div>
       )}

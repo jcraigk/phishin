@@ -84,7 +84,7 @@ const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
       <div className="dropdown is-right context-dropdown" ref={dropdownRef}>
         <div className="dropdown-trigger">
           <button className="button" onClick={toggleDropdownVisibility}>
-            <FontAwesomeIcon icon={faEllipsis} className="icon is-small" />
+            <FontAwesomeIcon icon={faEllipsis} className="icon" />
           </button>
         </div>
         <div

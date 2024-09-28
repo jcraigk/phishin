@@ -16,11 +16,24 @@
     color: $text-gray;
   }
 
+
+
   .navbar-brand {
     padding-left: 0.5rem;
 
-    &:hover a {
-      background-color: transparent;
+    & a {
+      &:hover {
+        background-color: transparent;
+      }
+      &:focus {
+        outline: none;
+        background-color: transparent;
+      }
+
+      &:focus-visible {
+        outline: 2px solid $control-gray;
+        background-color: transparent;
+      }
     }
 
     img:hover {

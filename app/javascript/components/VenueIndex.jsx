@@ -24,7 +24,7 @@ export const venueIndexLoader = async ({ request }) => {
 import React, { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { formatNumber } from "./util/utils";
+import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Venues from "./Venues";
 import Pagination from "./controls/Pagination";
@@ -103,9 +103,7 @@ const VenueIndex = () => {
           placeholder="Search venues"
         />
         <button className="button mt-4" onClick={handleSearchSubmit}>
-          <div className="icon mr-1">
-            <FontAwesomeIcon icon={faSearch} />
-          </div>
+          <FontAwesomeIcon icon={faSearch} className="mr-1" />
           Search
         </button>
       </div>

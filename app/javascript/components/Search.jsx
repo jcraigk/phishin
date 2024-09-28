@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { authFetch } from "./util/utils";
+import { authFetch } from "./helpers/utils";
 import SearchResults from "./SearchResults";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Loader from "./controls/Loader";
@@ -80,9 +80,7 @@ const Search = () => {
       </div>
 
       <button className="button ml-3" onClick={handleSearch}>
-        <div className="icon mr-1">
-          <FontAwesomeIcon icon={faSearch} />
-        </div>
+        <FontAwesomeIcon icon={faSearch} className="mr-1" />
         Search
       </button>
     </div>

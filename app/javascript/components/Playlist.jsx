@@ -1,4 +1,4 @@
-import { authFetch } from "./util/utils";
+import { authFetch } from "./helpers/utils";
 
 export const playlistLoader = async ({ params }) => {
   const { playlistSlug } = params;
@@ -23,7 +23,7 @@ import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
 import LikeButton from "./controls/LikeButton";
-import { formatDateLong, formatDurationShow } from "./util/utils";
+import { formatDateLong, formatDurationShow } from "./helpers/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faCircleXmark, faInfoCircle, faCalendar, faFileImport } from "@fortawesome/free-solid-svg-icons";
 
@@ -91,9 +91,7 @@ const Playlist = () => {
         <LikeButton likable={playlist} type="Playlist" />
 
         <button className="button" onClick={handleSetAsDraft}>
-          <span className="icon mr-1">
-            <FontAwesomeIcon icon={faFileImport} />
-          </span>
+          <FontAwesomeIcon icon={faFileImport} className="mr-1" />
           Set as Draft
         </button>
       </div>
@@ -113,14 +111,10 @@ const Playlist = () => {
             <button className="close-btn" onClick={handleCloseNotification}>
               <FontAwesomeIcon icon={faCircleXmark} />
             </button>
-            <span className="icon">
-              <FontAwesomeIcon icon={faInfoCircle} />
-            </span>
+            <FontAwesomeIcon icon={faInfoCircle} className="mr-1" />
             {playlist.description || "This playlist has no description"}
             <p>
-              <span className="icon">
-                <FontAwesomeIcon icon={faCalendar} />
-              </span>
+              <FontAwesomeIcon icon={faCalendar} className="mr-1" />
               Last updated: {formatDateLong(playlist.updated_at)}
             </p>
           </div>
