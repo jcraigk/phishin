@@ -89,9 +89,13 @@ const DraftPlaylistTrackModal = ({
     >
       <FontAwesomeIcon
         icon={faCircleXmark}
-        onClick={onRequestClose}
+        onClick={(e) => {
+          e.stopPropagation();
+          onRequestClose();
+        }}
         className="is-pulled-right close-btn is-size-3"
       />
+
       <h2 className="title">Edit Playlist Entry</h2>
       <h3 className="subtitle">{track.title}</h3>
 

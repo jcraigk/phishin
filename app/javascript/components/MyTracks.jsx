@@ -23,7 +23,7 @@ export const myTracksLoader = async ({ request }) => {
 };
 
 import React, { useState } from "react";
-import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
@@ -32,7 +32,6 @@ import Pagination from "./controls/Pagination";
 const MyTracks = () => {
   const { tracks, totalPages, page, sortOption, perPage } = useLoaderData();
   const navigate = useNavigate();
-  const { user } = useOutletContext();
   const [tempPerPage, setTempPerPage] = useState(perPage);
 
   const handleSortChange = (event) => {

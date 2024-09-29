@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import logo from "../../images/logo-350.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendarAlt, faMusic, faMapMarkerAlt, faStar, faCalendarDay, faMap, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark, faRightToBracket, faGear, faList, faListCheck, faListOl, faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
 
-const Navbar = ({ user, onLogout, handleInputFocus, handleInputBlur }) => {
+const Navbar = ({ user, handleLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
@@ -173,8 +173,6 @@ const Navbar = ({ user, onLogout, handleInputFocus, handleInputBlur }) => {
                     placeholder="SEARCH"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    onFocus={handleInputFocus}
-                    onBlur={handleInputBlur}
                     autoCapitalize="off"
                   />
                   <span className="icon is-left">
@@ -228,13 +226,13 @@ const Navbar = ({ user, onLogout, handleInputFocus, handleInputBlur }) => {
                           </Link>
                         ))}
                         <hr className="dropdown-divider" />
-                        <Link to="/settings" className="navbar-item" onClick={closeMenus}>
+                        <Link to="/settings" className="dropdown-item" onClick={closeMenus}>
                           <FontAwesomeIcon icon={faGear} className="icon" />
                           Settings
                         </Link>
-                        <a href="#logout" className="navbar-item" onClick={(e) => {
+                        <a id="logout" href="#logout" className="dropdown-item" onClick={(e) => {
                           e.preventDefault();
-                          onLogout();
+                          handleLogout();
                         }}>
                           <FontAwesomeIcon icon={faCircleXmark} className="icon" />
                           Logout

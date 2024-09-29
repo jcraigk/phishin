@@ -29,8 +29,9 @@ import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
+import MapView from "./MapView";
 
-const VenueShows = () => {
+const VenueShows = ({ mapboxToken }) => {
   const { shows, venue, sortOption } = useLoaderData();
   const navigate = useNavigate();
 

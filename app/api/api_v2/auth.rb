@@ -114,7 +114,7 @@ class ApiV2::Auth < ApiV2::Base
       if params[:password] == params[:password_confirmation] &&
          user.change_password(params[:password])
         status 200
-        { message: "Password has been reset successfully" }
+        { message: "Password reset successfully" }
       else
         error!({ message: "Password reset failed" }, 422)
       end

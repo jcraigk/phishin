@@ -40,7 +40,7 @@ import Settings from "../pages/Settings";
 const routes = (props) => [
   {
     path: "/",
-    element: (<Layout user={props.user} onLogout={props.handleLogout} />),
+    element: (<Layout user={props.user} setUser={props.setUser} />),
     errorElement: <ErrorPage />,
     children: [
       {
@@ -55,11 +55,11 @@ const routes = (props) => [
       },
       {
         path: "/login",
-        element: <Login onLogin={props.handleLogin}  />
+        element: <Login />
       },
       {
         path: "/signup",
-        element: <Signup handleLogin={props.handleLogin} />
+        element: <Signup />
       },
       {
       path: "/request-password-reset",
@@ -102,7 +102,7 @@ const routes = (props) => [
       },
       {
         path: "/venues/:venueSlug",
-        element: <VenueShows />,
+        element: <VenueShows mapboxToken={props.mapbox_token} />,
         loader: venueShowsLoader,
       },
       {
@@ -136,12 +136,12 @@ const routes = (props) => [
       },
       {
         path: "/top-shows",
-        element: <TopShows user={props.user} />,
+        element: <TopShows />,
         loader: topShowsLoader,
       },
       {
         path: "/top-tracks",
-        element: <TopTracks user={props.user} />,
+        element: <TopTracks />,
         loader: topTracksLoader,
       },
       {

@@ -5,7 +5,7 @@ import { useFeedback } from "../controls/FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark, faCircleCheck, faCloudArrowUp, faTrash } from "@fortawesome/free-solid-svg-icons";
 
-const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPlaylist, draftPlaylistMeta, setDraftPlaylistMeta, resetDraftPlaylist, handleInputFocus, handleInputBlur }) => {
+const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPlaylist, draftPlaylistMeta, setDraftPlaylistMeta, resetDraftPlaylist }) => {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
@@ -160,8 +160,6 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
             type="text"
             value={name}
             onChange={handleNameChange}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
             placeholder="(Untitled Playlist)"
           />
         </div>
@@ -176,8 +174,6 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
             value={slug}
             onChange={handleSlugChange}
             placeholder="lowercase-letters-numbers"
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
             autoCapitalize="off"
           />
         </div>
@@ -190,8 +186,6 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
             className="textarea"
             value={description || ""}
             onChange={handleDescriptionChange}
-            onFocus={handleInputFocus}
-            onBlur={handleInputBlur}
             placeholder="Add a description"
           ></textarea>
           {isDescriptionModified && (
