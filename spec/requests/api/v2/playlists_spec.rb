@@ -17,6 +17,79 @@ RSpec.describe "API v2 Playlists" do
   let!(:track2) { playlist.tracks.second }
   let!(:track3) { create(:track) }
 
+  describe "GET /playlists" do
+    let!(:published_playlist) { create(:playlist, published: true) }
+    let!(:unpublished_playlist) { create(:playlist, published: false, user:) }
+    let!(:liked_playlist) { create(:playlist) }
+    let!(:like) { create(:like, user:, likable: liked_playlist) }
+
+    context "when fetching all playlists" do
+      it "returns a list of published playlists" do
+        get_api_authed(user, "/playlists")
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+
+        expect(json[:playlists]).to be_an(Array)
+        expect(json[:playlists].size).to eq(4)
+      end
+    end
+
+    context "when filtering by liked playlists" do
+      it "returns a list of liked playlists for the user" do
+        get_api_authed(user, "/playlists", params: { filter: "liked" })
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+
+        expect(json[:playlists]).to be_an(Array)
+        expect(json[:playlists].size).to eq(1)
+        expect(json[:playlists].first[:slug]).to eq(liked_playlist.slug)
+        expect(json[:total_entries]).to eq(1)
+      end
+    end
+
+    context "when filtering by user's own playlists" do
+      it "returns a list of user's playlists" do
+        get_api_authed(user, "/playlists", params: { filter: "mine" })
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+
+        expect(json[:playlists]).to be_an(Array)
+        expect(json[:playlists].size).to eq(2)
+        expect(json[:playlists].first[:slug]).to eq(unpublished_playlist.slug)
+        expect(json[:total_entries]).to eq(2)
+      end
+    end
+
+    context "when sorting by likes_count in descending order" do
+      it "returns playlists sorted by likes_count" do
+        get_api_authed(user, "/playlists", params: { sort: "likes_count:desc" })
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+
+        expect(json[:playlists]).to be_an(Array)
+        expect(json[:playlists].first[:likes_count]).to eq(liked_playlist.likes.count)
+      end
+    end
+
+    context "when no playlists are found" do
+      before { Playlist.delete_all }
+
+      it "returns an empty list" do
+        get_api_authed(user, "/playlists")
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+
+        expect(json[:playlists]).to be_empty
+        expect(json[:total_entries]).to eq(0)
+      end
+    end
+  end
+
   describe "GET /playlists/:slug" do
     it "returns the specified playlist by slug" do
       get_api_authed(user, "/playlists/#{playlist.slug}")

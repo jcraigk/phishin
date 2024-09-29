@@ -12,6 +12,26 @@ RSpec.describe Track do
   it { is_expected.to have_many(:tags).through(:track_tags) }
   it { is_expected.to have_many(:playlist_tracks).dependent(:destroy) }
 
+  describe ".by_url" do
+    let!(:show) { create(:show, date: "2023-01-01") }
+    let!(:track) { create(:track, show:, slug: "bathtub-gin") }
+
+    it "finds the track by the given URL" do
+      url = "#{App.base_url}/2023-01-01/bathtub-gin"
+      expect(described_class.by_url(url)).to eq(track)
+    end
+
+    it "returns nil if no track matches the URL" do
+      url = "#{App.base_url}/2023-01-01/non-existent-track"
+      expect(described_class.by_url(url)).to be_nil
+    end
+
+    it "returns nil if the URL is malformed" do
+      url = "invalid_url"
+      expect(described_class.by_url(url)).to be_nil
+    end
+  end
+
   describe 'slug generation' do
     let(:slug) { 'new-slug' }
     let(:mock_generator) { instance_double(TrackSlugGenerator) }
