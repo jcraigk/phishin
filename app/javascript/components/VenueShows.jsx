@@ -25,14 +25,15 @@ export const venueShowsLoader = async ({ params, request }) => {
 };
 
 import React from "react";
-import { Link, useLoaderData, useNavigate } from "react-router-dom";
+import { Link, useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
 import MapView from "./MapView";
 
-const VenueShows = ({ mapboxToken }) => {
+const VenueShows = () => {
   const { shows, venue, sortOption } = useLoaderData();
+  const { mapboxToken } = useOutletContext();
   const navigate = useNavigate();
 
   const handleSortChange = (event) => {

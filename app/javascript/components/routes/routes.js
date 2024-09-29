@@ -40,7 +40,7 @@ import Settings from "../pages/Settings";
 const routes = (props) => [
   {
     path: "/",
-    element: (<Layout user={props.user} setUser={props.setUser} />),
+    element: (<Layout props={props} />),
     errorElement: <ErrorPage />,
     children: [
       {
@@ -102,7 +102,7 @@ const routes = (props) => [
       },
       {
         path: "/venues/:venueSlug",
-        element: <VenueShows mapboxToken={props.mapbox_token} />,
+        element: <VenueShows />,
         loader: venueShowsLoader,
       },
       {
@@ -132,7 +132,7 @@ const routes = (props) => [
       },
       {
         path: "/map",
-        element: <MapSearch mapboxToken={props.mapbox_token} />,
+        element: <MapSearch />,
       },
       {
         path: "/top-shows",
@@ -179,11 +179,11 @@ const routes = (props) => [
       },
       {
         path: "/settings",
-        element: <Settings setUser={props.setUser} usernameCooldown={props.username_cooldown} />,
+        element: <Settings />,
       },
       {
         path: "*",
-        element: <DynamicRoute props={props} />,
+        element: <DynamicRoute />,
         loader: dynamicLoader,
       },
     ],

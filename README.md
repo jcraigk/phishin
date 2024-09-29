@@ -8,6 +8,7 @@ TODO
  * Create a published playlist in prod so index page isn't empty. include some excerpts too (so release first, then create the playlist)
  * Delete playlist_bookmarks
 
+ * Don't pass in props at all in routes
  * Unsaved Changes indicator on draft playlist
 
 MOBILE ISSUES

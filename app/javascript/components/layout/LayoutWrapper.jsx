@@ -3,10 +3,10 @@ import React from "react";
 const LayoutWrapper = ({ sidebarContent, children }) => {
   return (
     <div className="layout-container">
-      <aside className="sidebar">
+      <aside id="sidebar">
         {sidebarContent}
       </aside>
-      <section className="main-content">
+      <section id="main-content">
         {children}
       </section>
     </div>

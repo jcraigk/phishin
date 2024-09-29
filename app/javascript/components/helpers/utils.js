@@ -60,6 +60,9 @@ export const toggleLike = async ({ id, type, isLiked }) => {
     token = localStorage.getItem("jwt");
   }
 
+  console.log("Toggling like", { id, type, isLiked });
+  console.log(token);
+
   try {
     const response = await fetch(url, {
       method,
