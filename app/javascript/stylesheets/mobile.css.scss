@@ -1,17 +1,17 @@
 @media (max-width: 1023px) {
   .hidden-mobile {
-    display: none;
+    display: none !important;
   }
   .visible-mobile {
-    display: block;
+    display: block !important;
   }
 }
 
 @media (min-width: 1024px) {
   .hidden-mobile {
-    display: block;
+    display: block !important;
   }
   .visible-mobile {
-    display: none;
+    display: none !important;
   }
 }

@@ -58,7 +58,7 @@ class ApiV2::Search < ApiV2::Base
     end
 
     def fetch_liked_playlist_ids(playlists)
-      return [] unless current_user
+      return [] unless current_user && playlists
       Like.where(
         likable_type: "Playlist",
         likable_id: playlists.map(&:id),

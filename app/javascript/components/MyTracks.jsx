@@ -4,9 +4,10 @@ export const myTracksLoader = async ({ request }) => {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
   const sortOption = url.searchParams.get("sort") || "date:desc";
+  const perPage = url.searchParams.get("per_page") || 10;
 
   try {
-    const response = await authFetch(`/api/v2/tracks?liked_by_user=true&sort=${sortOption}&page=${page}&per_page=10`);
+    const response = await authFetch(`/api/v2/tracks?liked_by_user=true&sort=${sortOption}&page=${page}&per_page=${perPage}`);
     if (!response.ok) throw response;
     const data = await response.json();
     return {
@@ -14,30 +15,50 @@ export const myTracksLoader = async ({ request }) => {
       totalPages: data.total_pages,
       page: parseInt(page, 10) - 1,
       sortOption,
+      perPage: parseInt(perPage)
     };
   } catch (error) {
     throw new Response("Error fetching data", { status: 500 });
   }
 };
 
-import React from "react";
-import { useLoaderData, useNavigate, Link, useOutletContext } from "react-router-dom";
+import React, { useState } from "react";
+import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
 import Pagination from "./controls/Pagination";
 
 const MyTracks = () => {
-  const { tracks, totalPages, page, sortOption } = useLoaderData();
+  const { tracks, totalPages, page, sortOption, perPage } = useLoaderData();
   const navigate = useNavigate();
   const { user } = useOutletContext();
+  const [tempPerPage, setTempPerPage] = useState(perPage);
 
   const handleSortChange = (event) => {
-    navigate(`?page=1&sort=${event.target.value}`);
+    navigate(`?page=1&sort=${event.target.value}&per_page=${perPage}`);
   };
 
   const handlePageClick = (data) => {
-    navigate(`?page=${data.selected + 1}&sort=${sortOption}`);
+    navigate(`?page=${data.selected + 1}&sort=${sortOption}&per_page=${perPage}`);
+  };
+
+  const handlePerPageInputChange = (e) => {
+    setTempPerPage(e.target.value);
+  };
+
+  const submitPerPage = () => {
+    if (tempPerPage && !isNaN(tempPerPage) && tempPerPage > 0) {
+      navigate(`?page=1&sort=${sortOption}&per_page=${tempPerPage}`);
+    }
+  };
+
+  const handlePerPageBlurOrEnter = (e) => {
+    if (e.type === "blur" || (e.type === "keydown" && e.key === "Enter")) {
+      e.preventDefault();
+      submitPerPage();
+      e.target.blur();
+    }
   };
 
   const sidebarContent = (
@@ -71,6 +92,9 @@ const MyTracks = () => {
             totalPages={totalPages}
             handlePageClick={handlePageClick}
             currentPage={page}
+            perPage={tempPerPage}
+            handlePerPageInputChange={handlePerPageInputChange}
+            handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
           />
         )}
       </LayoutWrapper>
@@ -79,3 +103,4 @@ const MyTracks = () => {
 };
 
 export default MyTracks;
+

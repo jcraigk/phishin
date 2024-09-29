@@ -5,9 +5,10 @@ export const playlistIndexLoader = async ({ request }) => {
   const page = url.searchParams.get("page") || 1;
   const sortOption = url.searchParams.get("sort") || "likes_count:desc";
   const filter = url.searchParams.get("filter") || "all";
+  const perPage = url.searchParams.get("per_page") || 10;
 
   try {
-    const response = await authFetch(`/api/v2/playlists?page=${page}&sort=${sortOption}&filter=${filter}`);
+    const response = await authFetch(`/api/v2/playlists?page=${page}&sort=${sortOption}&filter=${filter}&per_page=${perPage}`);
     if (!response.ok) throw response;
     const data = await response.json();
     return {
@@ -16,15 +17,17 @@ export const playlistIndexLoader = async ({ request }) => {
       totalEntries: data.total_entries,
       page: parseInt(page, 10) - 1,
       sortOption,
-      filter
+      filter,
+      perPage: parseInt(perPage)
     };
   } catch (error) {
     throw new Response("Error fetching data", { status: 500 });
   }
 };
 
+
 import React, { useState } from "react";
-import { useLoaderData, useNavigate, useOutletContext, Link } from "react-router-dom";
+import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
@@ -40,24 +43,26 @@ const PlaylistIndex = () => {
     totalEntries,
     page,
     sortOption,
-    filter: initialFilter
+    filter: initialFilter,
+    perPage
   } = useLoaderData();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState(initialFilter);
+  const [tempPerPage, setTempPerPage] = useState(perPage);
   const { user } = useOutletContext();
 
   const handlePageClick = (data) => {
-    navigate(`?page=${data.selected + 1}&sort=${sortOption}&filter=${filter}`);
+    navigate(`?page=${data.selected + 1}&sort=${sortOption}&filter=${filter}&per_page=${perPage}`);
   };
 
   const handleSortChange = (event) => {
-    navigate(`?page=1&sort=${event.target.value}&filter=${filter}`);
+    navigate(`?page=1&sort=${event.target.value}&filter=${filter}&per_page=${perPage}`);
   };
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
-    navigate(`?page=1&sort=${sortOption}&filter=${event.target.value}`);
+    navigate(`?page=1&sort=${sortOption}&filter=${event.target.value}&per_page=${perPage}`);
   };
 
   const handleSearchChange = (event) => {
@@ -73,6 +78,24 @@ const PlaylistIndex = () => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleSearchSubmit();
+    }
+  };
+
+  const handlePerPageInputChange = (e) => {
+    setTempPerPage(e.target.value);
+  };
+
+  const submitPerPage = () => {
+    if (tempPerPage && !isNaN(tempPerPage) && tempPerPage > 0) {
+      navigate(`?page=1&sort=${sortOption}&filter=${filter}&per_page=${tempPerPage}`);
+    }
+  };
+
+  const handlePerPageBlurOrEnter = (e) => {
+    if (e.type === "blur" || (e.type === "keydown" && e.key === "Enter")) {
+      e.preventDefault();
+      submitPerPage();
+      e.target.blur();
     }
   };
 
@@ -138,6 +161,9 @@ const PlaylistIndex = () => {
             totalPages={totalPages}
             handlePageClick={handlePageClick}
             currentPage={page}
+            perPage={tempPerPage}
+            handlePerPageInputChange={handlePerPageInputChange}
+            handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
           />
         )}
       </LayoutWrapper>

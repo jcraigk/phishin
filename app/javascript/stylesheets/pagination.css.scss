@@ -32,3 +32,28 @@
   background-color: $control-gray;
   cursor: not-allowed;
 }
+
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+
+  .per-page-input {
+    display: flex;
+    align-items: center;
+
+    label {
+      margin-right: 0.5rem;
+    }
+  }
+
+  .input.per-page {
+    width: 60px;
+    text-align: center;
+    vertical-align: middle;
+  }
+}
+
+
+

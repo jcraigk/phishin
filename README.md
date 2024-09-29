@@ -7,21 +7,18 @@ TODO
  * Create a published playlist in prod so index page isn't empty. include some excerpts too (so release first, then create the playlist)
 
  BACKBURNER
+  * fade excerpts in/out (?)
   * dropdowns on mobile might go offscreen
   * on mobile (<400 or whatever), show sidebar-filters underneath (?)
-  * DRY fetch_liked_* from API. Also combine 3 lookups into one (don't separate by type)
 
   * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
   * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
   * Add CSRF to POSTs on API
   * Bullet N+1 against API
-  * Per page controls?
+  * DRY out component paging controls? especially handlePerPageBlurOrEnter
 
-  * fade excerpts in/out (?)
   * lyrical excerpts?
   * Disable email account creation - allow oauth login through api?
-
-  * Reduce waveform filesize?
 
 
 TEST URLS
@@ -34,7 +31,7 @@ https://jcktest.ngrok.io/1990-06-16/you-enjoy-myself
 
 **Phish.in** is an open source archive of live Phish audience recordings.
 
-**Ruby on Rails** and **PostgreSQL** are used on the backend. There's a [web frontend](https://phish.in) written in **React** for browsing and playing audio content as well as a [RESTful API](https://phish.in/api-docs) for accessing content programmatically.
+**Ruby on Rails** and **Grape API** wrap a **PostgreSQL** database on the backend. There's a [web frontend](https://phish.in) written in **React** for browsing and playing audio content as well as a [JSON API](https://phish.in/api-docs) for accessing content programmatically.
 
 All audio is provided in MP3 format; more formats and sources may be made available at a later time. Files are served directly from the web server and cached via CloudFlare CDN.
 
