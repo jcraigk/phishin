@@ -14,12 +14,12 @@ main {
   margin: 0 auto;
 }
 
-.main-content {
+#main-content {
   flex: 1;
   margin-top: 0.5rem;
 }
 
-.sidebar {
+#sidebar {
   background-color: $header-gray;
   padding: 1rem;
   flex: 0 0 16rem;
@@ -116,7 +116,7 @@ main {
     width: 100%;
   }
 
-  .sidebar {
+  #sidebar {
     display: inline-block;
     width: 100%;
     flex: none !important;

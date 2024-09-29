@@ -29,11 +29,11 @@ import MapView from "./MapView";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle, faClock } from "@fortawesome/free-solid-svg-icons";
 
-const Show = ({ trackSlug, mapboxToken }) => {
+const Show = ({ trackSlug }) => {
   const show = useLoaderData();
   const [tracks, setTracks] = useState(show.tracks);
   const trackRefs = useRef([]);
-  const { playTrack } = useOutletContext();
+  const { playTrack, mapboxToken } = useOutletContext();
   const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
   const [showIncompleteNotification, setShowIncompleteNotification] = useState(show.incomplete);
   const [showAdminNotesNotification, setShowAdminNotesNotification] = useState(!!show.admin_notes);

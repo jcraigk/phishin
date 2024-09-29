@@ -12,16 +12,15 @@ class ApplicationController < ActionController::Base
       # OAuth login
       jwt: session[:jwt],
       username: session[:username],
-      username_updated_at: session[:username_updated_at],
+      usernameUpdatedAt: session[:username_updated_at],
       email: session[:email],
       alert: flash[:alert],
-      notice: flash[:notice],
 
       # Misc
-      username_cooldown: App.username_cooldown.to_i,
+      usernameCooldown: App.username_cooldown.to_i,
 
       # Third party integrations
-      mapbox_token: ENV.fetch("MAPBOX_TOKEN", nil)
+      mapboxToken: ENV.fetch("MAPBOX_TOKEN", nil)
     }
 
     # Clear session after OAuth redirect

@@ -23,7 +23,7 @@ import EraShows from "../EraShows";
 import ErrorPage from "../pages/ErrorPage";
 import Show from "../Show";
 
-const DynamicRoute = ({ props }) => {
+const DynamicRoute = () => {
   const { "*": fullPath } = useParams();
   const [firstSegment, secondSegment] = fullPath.split("/");
 
@@ -32,7 +32,7 @@ const DynamicRoute = ({ props }) => {
   }
 
   if (/^\d{4}-\d{2}-\d{2}$/.test(firstSegment)) {
-    return <Show trackSlug={secondSegment} mapboxToken={props.mapbox_token} />;
+    return <Show trackSlug={secondSegment} />;
   }
 
   return <ErrorPage />;

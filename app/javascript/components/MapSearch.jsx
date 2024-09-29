@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import MapView from "./MapView";
-import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -13,8 +12,9 @@ const usStates = [
   "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
 ];
 
-const MapSearch = ({ mapboxToken }) => {
+const MapSearch = () => {
   const location = useLocation();
+  const { mapboxToken } = useOutletContext();
 
   const getQueryParams = () => {
     const params = new URLSearchParams(location.search);

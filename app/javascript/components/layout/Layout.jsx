@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useNavigation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -16,9 +16,10 @@ const initialDraftPlaylistMeta = {
   published: false,
 };
 
-const Layout = ({ user, setUser }) => {
+const Layout = ({ props }) => {
   const navigation = useNavigation();
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const [isAppModalOpen, setIsAppModalOpen] = useState(false);
   const [appModalContent, setAppModalContent] = useState(null);
   const [isDraftPlaylistModalOpen, setIsDraftPlaylistModalOpen] = useState(false);
@@ -30,8 +31,34 @@ const Layout = ({ user, setUser }) => {
   const audioRef = useRef(null);
   const { setNotice } = useFeedback();
 
+  useEffect(() => {
+    // Finish OAuth login (jwt set on server and passed in with props)
+    // Otherwise, pull previously logged in user from local storage
+    if (props.jwt) {
+      handleLogin({
+        jwt: props.jwt,
+        username: props.username,
+        usernameUpdatedAt: props.usernameUpdatedAt,
+        email: props.email,
+      }, "Logged in via Google successfully");
+    } else if (typeof window !== "undefined") {
+      const jwt = localStorage.getItem("jwt");
+      const username = localStorage.getItem("username");
+      const usernameUpdatedAt = localStorage.getItem("usernameUpdatedAt");
+      const email = localStorage.getItem("email");
+
+      if (jwt && username && email) {
+        setUser({ jwt, username, usernameUpdatedAt, email });
+      }
+    }
+
+    // OAuth login alert
+    if (props.alert) setAlert(props.alert);
+  }, []);
+
   const handleLogin = (userData, message) => {
     if (typeof window !== "undefined") {
+      console.log("Setting user data in local storage", userData);
       localStorage.setItem("jwt", userData.jwt);
       localStorage.setItem("username", userData.username);
       localStorage.setItem("usernameUpdatedAt", userData.usernameUpdatedAt);
@@ -91,7 +118,9 @@ const Layout = ({ user, setUser }) => {
       <Navbar user={user} handleLogout={handleLogout} />
       <main className={activeTrack ? 'with-player' : ''}>
         <Outlet context={{
+          ...props,
           user,
+          setUser,
           handleLogin,
           handleLogout,
           activePlaylist,

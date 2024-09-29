@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import PageWrapper from "./PageWrapper";
 import { useFeedback } from "../controls/FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 
 const Signup = () => {
   const [username, setUsername] = useState("");
@@ -94,7 +94,7 @@ const Signup = () => {
         <div className="field mt-6">
           <div className="control">
             <button className="button" type="submit">
-              <FontAwesomeIcon icon={faCheck} className="mr-1" />
+              <FontAwesomeIcon icon={faCheckCircle} className="mr-1" />
               Sign Up
             </button>
           </div>

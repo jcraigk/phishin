@@ -1,4 +1,11 @@
 module FeatureHelpers
+  def sign_in(user)
+    visit "/login"
+    fill_in "email", with: user.email
+    fill_in "password", with: "password"
+    click_on "Login"
+  end
+
   def expect_content(*args)
     args.each { |c| expect_content_single(c) }
   end

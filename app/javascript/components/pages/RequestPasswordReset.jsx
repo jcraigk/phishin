@@ -47,7 +47,7 @@ const RequestPasswordReset = () => {
         </div>
         <div className="field">
           <div className="control">
-            <button className="button" type="submit">
+            <button className="button mt-2" type="submit">
               <FontAwesomeIcon icon={faEnvelope} className="mr-1" />
 
               Request password reset
