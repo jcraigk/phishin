@@ -20,17 +20,17 @@ RSpec.describe GapService do
   let!(:song) { create(:song, title: "Tweezer") }
   let!(:tracks) do
     [
-      create(:track, show: current_show, position: 1, songs: [song]),
-      create(:track, show: current_show, position: 5, songs: [song]),
-      create(:track, show: current_show, position: 10, songs: [song]),
-      create(:track, show: previous_show, position: 1, songs: [song]),
-      create(:track, show: next_show, position: 1, songs: [song])
+      create(:track, show: current_show, position: 1, songs: [ song ]),
+      create(:track, show: current_show, position: 5, songs: [ song ]),
+      create(:track, show: current_show, position: 10, songs: [ song ]),
+      create(:track, show: previous_show, position: 1, songs: [ song ]),
+      create(:track, show: next_show, position: 1, songs: [ song ])
     ]
   end
 
   before { service }
 
-  it "updates the gaps and slugs for song performances" do
+  it "updates the gaps and slugs for song performances" do # rubocop:disable RSpec/ExampleLength, RSpec/MultipleExpectations
     first_song_track = SongsTrack.find_by(track_id: tracks[0].id, song_id: song.id)
     expect(first_song_track.previous_performance_gap).to eq(1)
     expect(first_song_track.previous_performance_slug).to eq("2022-12-30/#{tracks[3].slug}")

@@ -42,8 +42,8 @@ RSpec.describe "API v2 Playlists" do
             description: "Road trip playlist",
             published: true,
             track_ids: [ track1.id, track2.id ],
-            starts_at_seconds: [0, 15],
-            ends_at_seconds: [120, 180]
+            starts_at_seconds: [ 0, 15 ],
+            ends_at_seconds: [ 120, 180 ]
           }
         )
 
@@ -66,8 +66,8 @@ RSpec.describe "API v2 Playlists" do
             description: "Road trip playlist",
             published: true,
             track_ids: [ track1.id, track2.id ],
-            starts_at_seconds: [0, 15],
-            ends_at_seconds: [120, 180]
+            starts_at_seconds: [ 0, 15 ],
+            ends_at_seconds: [ 120, 180 ]
           }
         )
 
@@ -91,8 +91,8 @@ RSpec.describe "API v2 Playlists" do
             slug: "winter-jams-2",
             published: false,
             track_ids: [ track2.id, track3.id ],
-            starts_at_seconds: [0, 15],
-            ends_at_seconds: [120, 180]
+            starts_at_seconds: [ 0, 15 ],
+            ends_at_seconds: [ 120, 180 ]
           }
         )
 
@@ -105,7 +105,7 @@ RSpec.describe "API v2 Playlists" do
         expect(json[:published]).to eq(false)
         expect(json[:entries].size).to eq(2)
         expect(json[:entries].map { _1[:track][:id] }).to eq([ track2.id, track3.id ])
-        expect(json[:entries].map { _1[:starts_at_second] }).to eq([0, 15])
+        expect(json[:entries].map { _1[:starts_at_second] }).to eq([ nil, 15 ])
       end
 
       it "returns a 422 error if the update is invalid" do

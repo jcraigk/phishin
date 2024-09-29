@@ -7,7 +7,6 @@ TODO
  * Create a published playlist in prod so index page isn't empty. include some excerpts too (so release first, then create the playlist)
 
  BACKBURNER
-  * fade excerpts in/out (?)
   * dropdowns on mobile might go offscreen
   * on mobile (<400 or whatever), show sidebar-filters underneath (?)
 
@@ -18,6 +17,7 @@ TODO
   * DRY out component paging controls? especially handlePerPageBlurOrEnter
 
   * lyrical excerpts?
+  * fade excerpts in/out - tried, failed
   * Disable email account creation - allow oauth login through api?
 
 

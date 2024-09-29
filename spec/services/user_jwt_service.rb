@@ -1,7 +1,7 @@
 require "rails_helper"
 require "jwt"
 
-RSpec.describe UserJwtService, type: :service do
+RSpec.describe UserJwtService do
   let(:user) { create(:user) }
   let(:secret_key) { Rails.application.secret_key_base }
   let(:service) { described_class.call(user) }
