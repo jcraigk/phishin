@@ -10,12 +10,11 @@ RSpec.describe KnownDate do
   it { is_expected.to validate_presence_of(:location) }
   it { is_expected.to validate_presence_of(:venue) }
 
-  describe 'attributes' do
-    subject(:attrs) { described_class.attribute_names.map(&:to_sym) }
+  describe '#date_with_dots' do
+    let(:known_date) { build(:known_date, date: Date.new(2023, 1, 1)) }
 
-    it { is_expected.to include :date }
-    it { is_expected.to include :phishnet_url }
-    it { is_expected.to include :location }
-    it { is_expected.to include :venue }
+    it 'returns the date in dot-separated format' do
+      expect(known_date.date_with_dots).to eq("2023.01.01")
+    end
   end
 end

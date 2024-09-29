@@ -23,7 +23,6 @@ class Song < ApplicationRecord
   scope :title_starting_with, lambda { |char|
     where("LOWER(title) SIMILAR TO ?", "#{char == '#' ? '[0-9]' : char.downcase}%")
   }
-  scope :with_lyrical_excerpt, -> { where.not(lyrical_excerpt: nil) }
 
   def self.random_with_lyrical_excerpt
     where.not(lyrical_excerpt: nil).order(Arel.sql("RANDOM()")).first

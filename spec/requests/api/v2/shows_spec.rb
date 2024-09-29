@@ -133,5 +133,151 @@ RSpec.describe "API v2 Shows" do
         expect(show_ids).to eq([ next_show.id, show1.id, previous_show.id ])
       end
     end
+
+    context "with venue_id filter" do
+      let!(:other_venue) { create(:venue, name: "The Roxy") }
+      let!(:show2) { create(:show, date: "2023-01-02", venue: other_venue) }
+
+      it "returns shows filtered by venue_slug" do
+        get_api_authed(user, "/shows", params: { venue_slug: other_venue.slug })
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        show_ids = json[:shows].map { |s| s[:id] }
+
+        expect(show_ids).to eq([ show2.id ])
+      end
+    end
+
+    context "with year filter" do
+      it "returns shows filtered by year range" do
+        get_api_authed(user, "/shows", params: { year: "2022" })
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        show_dates = json[:shows].map { |s| s[:date] }
+
+        expect(show_dates).to match_array(
+          [
+            "2022-12-30"
+          ]
+        )
+      end
+    end
+
+    context "with year_range filter" do
+      it "returns shows filtered by year range" do
+        get_api_authed(user, "/shows", params: { year_range: "2022-2023" })
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        show_dates = json[:shows].map { |s| s[:date] }
+
+        expect(show_dates).to match_array(
+          [
+            "2023-01-01",
+            "2023-01-05",
+            "2022-12-30"
+          ]
+        )
+      end
+    end
+
+    context "with us_state filter" do
+      let!(:other_venue) { create(:venue, name: "Red Rocks", state: "CO") }
+      let!(:show_in_co) { create(:show, date: "2022-08-15", venue: other_venue) }
+
+      it "returns shows filtered by US state" do
+        get_api_authed(user, "/shows", params: { us_state: "CO" })
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        show_ids = json[:shows].map { |s| s[:id] }
+
+        expect(show_ids).to eq([ show_in_co.id ])
+      end
+    end
+
+    context "with lat/lng distance filter" do
+      let!(:near_venue) { create(:venue, name: "Near Venue", latitude: 40.7, longitude: -74.0) }
+      let!(:show_near) { create(:show, date: "2022-11-20", venue: near_venue) }
+      let!(:far_venue) { create(:venue, name: "Far Venue", latitude: 34.0, longitude: -118.2) }
+      let!(:show_far) { create(:show, date: "2022-11-21", venue: far_venue) }
+
+      it "returns shows within the specified distance from the given coordinates" do
+        get_api_authed(
+          user,
+          "/shows",
+          params: {
+            lat: 40.7128, # Near NYC
+            lng: -74.0060,
+            distance: 50 # 50 miles radius
+          }
+        )
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        show_ids = json[:shows].map { |s| s[:id] }
+
+        expect(show_ids).to eq([ show_near.id ])
+      end
+    end
+  end
+
+  describe "GET /shows/random" do
+    it "returns a random show" do
+      get_api_authed(user, "/shows/random")
+
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body, symbolize_names: true)
+
+      expect(json[:id]).to be_present
+      expect(json[:date]).to be_present
+      expect(json[:venue]).to be_present
+    end
+  end
+
+  describe "GET /shows/day_of_year/:date" do
+    let!(:shows_on_date) do
+      [
+        create(:show, date: "2022-12-29", venue:, likes_count: 10),
+        create(:show, date: "2021-12-29", venue:, likes_count: 20)
+      ]
+    end
+    let!(:show_on_different_date) { create(:show, date: "2022-12-28", venue:) }
+
+    context "with a valid date" do
+      it "returns shows for that day of the year, sorted by date:desc" do
+        get_api_authed(user, "/shows/day_of_year/2022-12-29")
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+
+        expect(json[:shows].size).to eq(2)
+        expect(json[:shows].map { |s| s[:date] }).to eq([ "2022-12-29", "2021-12-29" ])
+      end
+    end
+
+    context "with no shows on that day" do
+      it "returns an empty array" do
+        get_api_authed(user, "/shows/day_of_year/2022-02-01")
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+
+        expect(json[:shows]).to be_empty
+      end
+    end
+
+    context "with an invalid date format" do
+      it "returns a 400 error" do
+        get_api_authed(user, "/shows/day_of_year/invalid-date")
+
+        expect(response).to have_http_status(:bad_request)
+        json = JSON.parse(response.body)
+
+        expect(json["message"]).to eq("Invalid date format")
+      end
+    end
   end
 end
