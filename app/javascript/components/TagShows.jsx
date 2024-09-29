@@ -4,6 +4,7 @@ export const tagShowsLoader = async ({ params, request }) => {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
   const sortOption = url.searchParams.get("sort") || "date:desc";
+  const perPage = url.searchParams.get("per_page") || 10;
   const { tagSlug } = params;
 
   try {
@@ -14,7 +15,7 @@ export const tagShowsLoader = async ({ params, request }) => {
     if (!tag) throw new Response("Tag not found", { status: 404 });
 
     const showsResponse = await authFetch(
-      `/api/v2/shows?tag_slug=${tagSlug}&sort=${sortOption}&page=${page}&per_page=10`
+      `/api/v2/shows?tag_slug=${tagSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}`
     );
     if (!showsResponse.ok) throw showsResponse;
     const showsData = await showsResponse.json();
@@ -24,6 +25,7 @@ export const tagShowsLoader = async ({ params, request }) => {
       totalPages: showsData.total_pages,
       page: parseInt(page, 10) - 1,
       sortOption,
+      perPage: parseInt(perPage)
     };
   } catch (error) {
     if (error instanceof Response) throw error;
@@ -31,7 +33,7 @@ export const tagShowsLoader = async ({ params, request }) => {
   }
 };
 
-import React from "react";
+import React, { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
@@ -39,15 +41,34 @@ import Shows from "./Shows";
 import Pagination from "./controls/Pagination";
 
 const TagShows = () => {
-  const { tag, shows, totalPages, page, sortOption } = useLoaderData();
+  const { tag, shows, totalPages, page, sortOption, perPage } = useLoaderData();
   const navigate = useNavigate();
+  const [tempPerPage, setTempPerPage] = useState(perPage);
 
   const handleSortChange = (event) => {
-    navigate(`?page=1&sort=${event.target.value}`);
+    navigate(`?page=1&sort=${event.target.value}&per_page=${perPage}`);
   };
 
   const handlePageClick = (data) => {
-    navigate(`?page=${data.selected + 1}&sort=${sortOption}`);
+    navigate(`?page=${data.selected + 1}&sort=${sortOption}&per_page=${perPage}`);
+  };
+
+  const handlePerPageInputChange = (e) => {
+    setTempPerPage(e.target.value);
+  };
+
+  const submitPerPage = () => {
+    if (tempPerPage && !isNaN(tempPerPage) && tempPerPage > 0) {
+      navigate(`?page=1&sort=${sortOption}&per_page=${tempPerPage}`);
+    }
+  };
+
+  const handlePerPageBlurOrEnter = (e) => {
+    if (e.type === "blur" || (e.type === "keydown" && e.key === "Enter")) {
+      e.preventDefault();
+      submitPerPage();
+      e.target.blur();
+    }
   };
 
   const sidebarContent = (
@@ -81,6 +102,9 @@ const TagShows = () => {
             totalPages={totalPages}
             handlePageClick={handlePageClick}
             currentPage={page}
+            perPage={tempPerPage}
+            handlePerPageInputChange={handlePerPageInputChange}
+            handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
           />
         )}
       </LayoutWrapper>

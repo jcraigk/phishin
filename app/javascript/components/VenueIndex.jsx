@@ -3,9 +3,10 @@ export const venueIndexLoader = async ({ request }) => {
   const page = url.searchParams.get("page") || 1;
   const sortOption = url.searchParams.get("sort") || "name:asc";
   const firstChar = url.searchParams.get("first_char") || "";
+  const perPage = url.searchParams.get("per_page") || 10;
 
   try {
-    const response = await fetch(`/api/v2/venues?page=${page}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}`);
+    const response = await fetch(`/api/v2/venues?page=${page}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}&per_page=${perPage}`);
     if (!response.ok) throw response;
     const data = await response.json();
     return {
@@ -14,7 +15,8 @@ export const venueIndexLoader = async ({ request }) => {
       totalEntries: data.total_entries,
       page: parseInt(page, 10) - 1,
       sortOption,
-      firstChar
+      firstChar,
+      perPage: parseInt(perPage)
     };
   } catch (error) {
     throw new Response("Error fetching data", { status: 500 });
@@ -34,20 +36,21 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 const FIRST_CHAR_LIST = ["#", ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))];
 
 const VenueIndex = () => {
-  const { venues, totalPages, totalEntries, page, sortOption, firstChar } = useLoaderData();
+  const { venues, totalPages, totalEntries, page, perPage, sortOption, firstChar } = useLoaderData();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [tempPerPage, setTempPerPage] = useState(perPage);
 
   const handlePageClick = (data) => {
-    navigate(`?page=${data.selected + 1}&sort=${sortOption}&first_char=${firstChar}`);
+    navigate(`?page=${data.selected + 1}&sort=${sortOption}&first_char=${firstChar}&per_page=${perPage}`);
   };
 
   const handleSortChange = (event) => {
-    navigate(`?page=1&sort=${event.target.value}&first_char=${firstChar}`);
+    navigate(`?page=1&sort=${event.target.value}&first_char=${firstChar}&per_page=${perPage}`);
   };
 
   const handleFirstCharChange = (event) => {
-    navigate(`?page=1&sort=${sortOption}&first_char=${event.target.value}`);
+    navigate(`?page=1&sort=${sortOption}&first_char=${event.target.value}&per_page=${perPage}`);
   };
 
   const handleSearchChange = (event) => {
@@ -63,6 +66,24 @@ const VenueIndex = () => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleSearchSubmit();
+    }
+  };
+
+  const handlePerPageInputChange = (e) => {
+    setTempPerPage(e.target.value); // Only update temp value
+  };
+
+  const submitPerPage = () => {
+    if (tempPerPage && !isNaN(tempPerPage) && tempPerPage > 0) {
+      navigate(`?page=1&sort=${sortOption}&first_char=${firstChar}&per_page=${tempPerPage}`);
+    }
+  };
+
+  const handlePerPageBlurOrEnter = (e) => {
+    if (e.type === "blur" || (e.type === "keydown" && e.key === "Enter")) {
+      e.preventDefault();
+      submitPerPage();
+      e.target.blur();
     }
   };
 
@@ -121,6 +142,9 @@ const VenueIndex = () => {
           totalPages={totalPages}
           handlePageClick={handlePageClick}
           currentPage={page}
+          perPage={tempPerPage}
+          handlePerPageInputChange={handlePerPageInputChange}
+          handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
         />
       </LayoutWrapper>
     </>

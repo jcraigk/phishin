@@ -2,9 +2,10 @@ export const songIndexLoader = async ({ request }) => {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
   const sortOption = url.searchParams.get("sort") || "title:asc";
+  const perPage = url.searchParams.get("per_page") || 10;
 
   try {
-    const response = await fetch(`/api/v2/songs?page=${page}&sort=${sortOption}`);
+    const response = await fetch(`/api/v2/songs?page=${page}&sort=${sortOption}&per_page=${perPage}`);
     if (!response.ok) throw response;
     const data = await response.json();
     return {
@@ -12,7 +13,8 @@ export const songIndexLoader = async ({ request }) => {
       totalPages: data.total_pages,
       totalEntries: data.total_entries,
       page: parseInt(page, 10) - 1,
-      sortOption
+      sortOption,
+      perPage: parseInt(perPage)
     };
   } catch (error) {
     throw new Response("Error fetching data", { status: 500 });
@@ -30,16 +32,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const SongIndex = () => {
-  const { songs, totalPages, totalEntries, page, sortOption } = useLoaderData();
+  const { songs, totalPages, totalEntries, page, sortOption, perPage } = useLoaderData(); // Include perPage
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [tempPerPage, setTempPerPage] = useState(perPage); // Add tempPerPage state
 
   const handlePageClick = (data) => {
-    navigate(`?page=${data.selected + 1}&sort=${sortOption}`);
+    navigate(`?page=${data.selected + 1}&sort=${sortOption}&per_page=${perPage}`); // Include perPage in query
   };
 
   const handleSortChange = (event) => {
-    navigate(`?page=1&sort=${event.target.value}`);
+    navigate(`?page=1&sort=${event.target.value}&per_page=${perPage}`); // Include perPage in query
   };
 
   const handleSearchChange = (event) => {
@@ -55,6 +58,24 @@ const SongIndex = () => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleSearchSubmit();
+    }
+  };
+
+  const handlePerPageInputChange = (e) => {
+    setTempPerPage(e.target.value);
+  };
+
+  const submitPerPage = () => {
+    if (tempPerPage && !isNaN(tempPerPage) && tempPerPage > 0) {
+      navigate(`?page=1&sort=${sortOption}&per_page=${tempPerPage}`);
+    }
+  };
+
+  const handlePerPageBlurOrEnter = (e) => {
+    if (e.type === "blur" || (e.type === "keydown" && e.key === "Enter")) {
+      e.preventDefault();
+      submitPerPage();
+      e.target.blur();
     }
   };
 
@@ -101,6 +122,9 @@ const SongIndex = () => {
             totalPages={totalPages}
             handlePageClick={handlePageClick}
             currentPage={page}
+            perPage={tempPerPage}
+            handlePerPageInputChange={handlePerPageInputChange}
+            handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
           />
         )}
       </LayoutWrapper>

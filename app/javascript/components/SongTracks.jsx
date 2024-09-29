@@ -4,6 +4,7 @@ export const songTracksLoader = async ({ params, request }) => {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
   const sortOption = url.searchParams.get("sort") || "date:desc";
+  const perPage = url.searchParams.get("per_page") || 10;
   const { songSlug } = params;
 
   try {
@@ -20,7 +21,7 @@ export const songTracksLoader = async ({ params, request }) => {
       : songData.artist;
 
     const tracksResponse = await authFetch(
-      `/api/v2/tracks?song_slug=${songSlug}&sort=${sortOption}&page=${page}&per_page=10`
+      `/api/v2/tracks?song_slug=${songSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}`
     );
     if (!tracksResponse.ok) throw tracksResponse;
     const tracksData = await tracksResponse.json();
@@ -32,7 +33,8 @@ export const songTracksLoader = async ({ params, request }) => {
       totalEntries: tracksData.total_entries,
       totalPages: tracksData.total_pages,
       page: parseInt(page, 10) - 1,
-      sortOption
+      sortOption,
+      perPage: parseInt(perPage)
     };
   } catch (error) {
     if (error instanceof Response) throw error;
@@ -40,7 +42,7 @@ export const songTracksLoader = async ({ params, request }) => {
   }
 };
 
-import React from "react";
+import React, { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
@@ -48,15 +50,34 @@ import Tracks from "./Tracks";
 import Pagination from "./controls/Pagination";
 
 const SongTracks = () => {
-  const { songTitle, originalInfo, tracks, totalEntries, totalPages, page, sortOption } = useLoaderData();
+  const { songTitle, originalInfo, tracks, totalEntries, totalPages, page, sortOption, perPage } = useLoaderData();
   const navigate = useNavigate();
+  const [tempPerPage, setTempPerPage] = useState(perPage);
 
   const handleSortChange = (event) => {
-    navigate(`?page=1&sort=${event.target.value}`);
+    navigate(`?page=1&sort=${event.target.value}&per_page=${perPage}`);
   };
 
   const handlePageClick = (data) => {
-    navigate(`?page=${data.selected + 1}&sort=${sortOption}`);
+    navigate(`?page=${data.selected + 1}&sort=${sortOption}&per_page=${perPage}`);
+  };
+
+  const handlePerPageInputChange = (e) => {
+    setTempPerPage(e.target.value);
+  };
+
+  const submitPerPage = () => {
+    if (tempPerPage && !isNaN(tempPerPage) && tempPerPage > 0) {
+      navigate(`?page=1&sort=${sortOption}&per_page=${tempPerPage}`);
+    }
+  };
+
+  const handlePerPageBlurOrEnter = (e) => {
+    if (e.type === "blur" || (e.type === "keydown" && e.key === "Enter")) {
+      e.preventDefault();
+      submitPerPage();
+      e.target.blur();
+    }
   };
 
   const sidebarContent = (
@@ -94,6 +115,9 @@ const SongTracks = () => {
             totalPages={totalPages}
             handlePageClick={handlePageClick}
             currentPage={page}
+            perPage={tempPerPage}
+            handlePerPageInputChange={handlePerPageInputChange}
+            handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
           />
         )}
       </LayoutWrapper>
