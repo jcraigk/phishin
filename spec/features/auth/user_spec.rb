@@ -7,48 +7,49 @@ describe "User Registration", :js do
 
   context "with valid data" do
     it "user signs up" do
-      visit root_path
+      visit '/'
 
-      click_on("Sign in")
-      click_on("Create New Account")
+      # save_and_open_page
+      click_on("LOGIN")
+      click_on("Sign Up")
 
-      fill_in("user[username]", with: username)
-      fill_in("user[email]", with: email)
-      fill_in("user[password]", with: password)
-      fill_in("user[password_confirmation]", with: password)
-      click_on("Create New Account")
+      fill_in("username", with: username)
+      fill_in("email", with: email)
+      fill_in("password", with: password)
+      fill_in("passwordConfirmation", with: password)
+      click_on("Sign Up")
 
-      expect(page).to have_current_path(root_path)
-      expect_content(I18n.t("auth.signup_success"))
+      expect(page).to have_current_path('/')
+      expect_content("User created successfully - you are now logged in")
     end
   end
 
   context "with invalid data" do
     it "user attempts signup but gives unmatched passwords" do
-      visit new_user_path
+      visit ('/signup')
 
-      fill_in("user[username]", with: username)
-      fill_in("user[email]", with: email)
-      fill_in("user[password]", with: password)
-      fill_in("user[password_confirmation]", with: "b")
-      click_on("Create New Account")
+      fill_in("username", with: username)
+      fill_in("email", with: email)
+      fill_in("password", with: password)
+      fill_in("passwordConfirmation", with: 'b')
+      click_on("Sign Up")
 
-      expect(page).to have_current_path(new_user_path)
-      expect_content(I18n.t("auth.passwords_dont_match"))
+      expect(page).to have_current_path('/signup')
+      expect_content("Passwords do not match")
     end
 
     it "user attempts signup but gives bad username" do
-      visit new_user_path
+      visit ('/signup')
 
-      fill_in("user[username]", with: "#{username}&*")
-      fill_in("user[email]", with: email)
-      fill_in("user[password]", with: password)
-      fill_in("user[password_confirmation]", with: password)
-      click_on("Create New Account")
+      fill_in("username", with: "#{username}&*")
+      fill_in("email", with: email)
+      fill_in("password", with: password)
+      fill_in("passwordConfirmation", with: password)
+      click_on("Sign Up")
 
       expect_content \
-        "Username may contain only letters, numbers, and underscores, must be unique, and must " \
-        "be 4 to 15 characters long"
+        "Username may contain only letters, numbers, and underscores, " \
+        "must be unique, and must be 4 to 15 characters long"
     end
   end
 end

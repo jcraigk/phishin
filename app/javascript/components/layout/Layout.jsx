@@ -1,11 +1,12 @@
 import React, { useRef, useState } from "react";
-import { Outlet, useNavigation } from "react-router-dom";
+import { Outlet, useNavigate, useNavigation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Loader from "../controls/Loader";
 import Player from "../controls/Player";
 import AppModal from "../modals/AppModal";
 import DraftPlaylistModal from "../modals/DraftPlaylistModal";
+import { useFeedback } from "../controls/FeedbackContext";
 
 const initialDraftPlaylistMeta = {
   id: null,
@@ -15,8 +16,9 @@ const initialDraftPlaylistMeta = {
   published: false,
 };
 
-const Layout = ({ user, onLogout }) => {
+const Layout = ({ user, setUser }) => {
   const navigation = useNavigation();
+  const navigate = useNavigate();
   const [isAppModalOpen, setIsAppModalOpen] = useState(false);
   const [appModalContent, setAppModalContent] = useState(null);
   const [isDraftPlaylistModalOpen, setIsDraftPlaylistModalOpen] = useState(false);
@@ -25,11 +27,34 @@ const Layout = ({ user, onLogout }) => {
   const [draftPlaylist, setDraftPlaylist] = useState([]);
   const [draftPlaylistMeta, setDraftPlaylistMeta] = useState(initialDraftPlaylistMeta);
   const [activeTrack, setActiveTrack] = useState(null);
-  const [isInputFocused, setIsInputFocused] = useState(false);
   const audioRef = useRef(null);
+  const { setNotice } = useFeedback();
 
-  const handleInputFocus = () => setIsInputFocused(true);
-  const handleInputBlur = () => setIsInputFocused(false);
+  const handleLogin = (userData, message) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("jwt", userData.jwt);
+      localStorage.setItem("username", userData.username);
+      localStorage.setItem("usernameUpdatedAt", userData.usernameUpdatedAt);
+      localStorage.setItem("email", userData.email);
+
+      const redirectPath = localStorage.getItem("redirectAfterLogin") || "/";
+      localStorage.removeItem("redirectAfterLogin");
+      navigate(redirectPath);
+      setNotice(message);
+    }
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("jwt");
+      localStorage.removeItem("username");
+      localStorage.removeItem("usernameUpdatedAt");
+      localStorage.removeItem("email");
+    }
+    setUser(null);
+    setNotice("Logged out successfully");
+  };
 
   const resetDraftPlaylist = () => {
     setDraftPlaylist([]);
@@ -63,14 +88,12 @@ const Layout = ({ user, onLogout }) => {
   return (
     <>
       {navigation.state === 'loading' && <Loader />}
-      <Navbar
-        user={user}
-        onLogout={onLogout}
-        handleInputFocus={handleInputFocus}
-        handleInputBlur={handleInputBlur}
-      />
+      <Navbar user={user} handleLogout={handleLogout} />
       <main className={activeTrack ? 'with-player' : ''}>
         <Outlet context={{
+          user,
+          handleLogin,
+          handleLogout,
           activePlaylist,
           setActivePlaylist,
           customPlaylist,
@@ -87,10 +110,6 @@ const Layout = ({ user, onLogout }) => {
           closeAppModal,
           openDraftPlaylistModal,
           closeDraftPlaylistModal,
-          user,
-          isInputFocused,
-          handleInputFocus,
-          handleInputBlur
         }} />
       </main>
       <Footer />
@@ -100,7 +119,6 @@ const Layout = ({ user, onLogout }) => {
         setActiveTrack={setActiveTrack}
         audioRef={audioRef}
         customPlaylist={customPlaylist}
-        isInputFocused={isInputFocused}
       />
       <AppModal
         isOpen={isAppModalOpen}
@@ -115,8 +133,6 @@ const Layout = ({ user, onLogout }) => {
         draftPlaylistMeta={draftPlaylistMeta}
         setDraftPlaylistMeta={setDraftPlaylistMeta}
         resetDraftPlaylist={resetDraftPlaylist}
-        handleInputFocus={handleInputFocus}
-        handleInputBlur={handleInputBlur}
       />
     </>
   );

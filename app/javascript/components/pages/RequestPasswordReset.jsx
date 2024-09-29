@@ -1,57 +1,60 @@
 import React, { useState } from "react";
 import PageWrapper from "./PageWrapper";
-import { useFeedback } from "../controls/FeedbackContext"; // Updated path
+import { useFeedback } from "../controls/FeedbackContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 
 const RequestPasswordReset = () => {
-  const { setAlert, setNotice } = useFeedback();
+  const { setNotice } = useFeedback();
   const [email, setEmail] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    fetch('/api/v2/auth/request_password_reset', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
-    })
-    .then(response => {
-      return response.json();
-    })
-    .then(data => {
+    try {
+      const response = await fetch(
+        "/api/v2/auth/request_password_reset",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email })
+        }
+      );
+      if (!response.ok) throw response;
+      const data = await response.json();
       setNotice(data.message);
-    })
-    .catch(error => {
-      setAlert('Sorry, something went wrong');
-    });
+    } catch (error) {
+      if (error instanceof Response) throw error;
+      throw new Response("Sorry, something went wrong", { status: 500 });
+    }
   };
 
   return (
     <PageWrapper>
-      <div className="container">
-        <h1 className="title">Request Password Reset</h1>
-        <form onSubmit={handleSubmit}>
-          <div className="field">
-            <label className="label" htmlFor="email">Email Address</label>
-            <div className="control">
-              <input
-                className="input"
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+      <h2 className="title">Request Password Reset</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="field">
+          <label className="label" htmlFor="email">Email Address</label>
+          <div className="control">
+            <input
+              className="input"
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
-          <div className="field">
-            <div className="control">
-              <button className="button is-primary" type="submit">
-                Request Password Reset
-              </button>
-            </div>
+        </div>
+        <div className="field">
+          <div className="control">
+            <button className="button" type="submit">
+              <FontAwesomeIcon icon={faEnvelope} className="mr-1" />
+
+              Request password reset
+            </button>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </PageWrapper>
   );
 };

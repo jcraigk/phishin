@@ -1,23 +1,24 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import PageWrapper from "./PageWrapper";
 import { useFeedback } from "../controls/FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
-const Signup = ({ handleLogin }) => {
+const Signup = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const { setAlert, setNotice } = useFeedback();
-  const navigate = useNavigate();
+  const { setAlert } = useFeedback();
+  const { handleLogin } = useOutletContext();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     fetch("/api/v2/auth/create_user", {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         username,
         email,
@@ -27,9 +28,7 @@ const Signup = ({ handleLogin }) => {
     })
     .then(response => response.json().then(data => {
       if (response.ok) {
-        handleLogin(data);
-        setNotice("User created successfully - you are now logged in");
-        navigate("/");
+        handleLogin(data, "User created successfully - you are now logged in");
       } else {
         setAlert(data.message || "An error occurred");
       }

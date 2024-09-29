@@ -17,7 +17,7 @@ import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
 
-const TopShows = ({ user }) => {
+const TopShows = () => {
   const { shows } = useLoaderData();
 
   const sidebarContent = (

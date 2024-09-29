@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 import PageWrapper from "./PageWrapper";
 import { useFeedback } from "../controls/FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowAltCircleRight, faRightToBracket, faUserCheck } from "@fortawesome/free-solid-svg-icons";
+import { faArrowAltCircleRight, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
-const Login = ({ onLogin }) => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { setAlert, setNotice } = useFeedback();
-  const navigate = useNavigate();
+  const { setAlert } = useFeedback();
+  const { handleLogin } = useOutletContext();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,9 +21,7 @@ const Login = ({ onLogin }) => {
     })
     .then(response => response.json().then(data => {
       if (response.ok) {
-        onLogin(data);
-        setNotice("Login successful");
-        navigate("/");
+        handleLogin(data, "Login successful");
       } else {
         setAlert(data.message || "An error occurred");
       }
@@ -87,6 +85,9 @@ const Login = ({ onLogin }) => {
         </div>
       </form>
 
+      <div className="mt-4">
+        <Link to="/request-password-reset">Forgot your password?</Link>
+      </div>
       <hr />
 
       <h1 className="title">Sign Up with Email</h1>

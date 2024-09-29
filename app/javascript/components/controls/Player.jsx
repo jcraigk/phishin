@@ -5,7 +5,7 @@ import { useFeedback } from "./FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward, faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
-const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customPlaylist, isInputFocused }) => {
+const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customPlaylist }) => {
   const location = useLocation();
   const scrubberRef = useRef();
   const progressBarRef = useRef();
@@ -14,7 +14,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
   const [isFadeOutComplete, setIsFadeOutComplete] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [isPlayerCollapsed, setIsPlayerCollapsed] = useState(false);
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [firstLoad, setIsFirstLoad] = useState(true);
   const [endTime, setEndTime] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -150,7 +150,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (isInputFocused) return;
+      if (typeof document !== "undefined" && ["INPUT", "TEXTAREA"].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) return;
 
       if (e.key === " " && !e.shiftKey) {
         e.preventDefault();
@@ -172,7 +172,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isInputFocused, togglePlayPause, scrubBackward, scrubForward, skipToPreviousTrack, skipToNextTrack]);
+  }, [togglePlayPause, scrubBackward, scrubForward, skipToPreviousTrack, skipToNextTrack]);
 
   const handleTimeUpdate = () => {
     setCurrentTime(audioRef.current.currentTime);

@@ -10,7 +10,7 @@ const AppRouter = (props) => {
 
   useEffect(() => {
     if (props.jwt) {
-      handleLogin({
+      setUser({
         jwt: props.jwt,
         username: props.username,
         usernameUpdatedAt: props.username_updated_at,
@@ -39,36 +39,11 @@ const AppRouter = (props) => {
     }
   }, [props.notice, props.alert]);
 
-  const handleLogin = (userData) => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("jwt", userData.jwt);
-      localStorage.setItem("username", userData.username);
-      localStorage.setItem("usernameUpdatedAt", userData.usernameUpdatedAt);
-      localStorage.setItem("email", userData.email);
-
-      const redirectPath = localStorage.getItem("redirectAfterLogin") || "/";
-      localStorage.removeItem("redirectAfterLogin");
-      window.location.href = redirectPath;
-    }
-    setUser(userData);
-  };
-
-  const handleLogout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("jwt");
-      localStorage.removeItem("username");
-      localStorage.removeItem("usernameUpdatedAt");
-      localStorage.removeItem("email");
-    }
-    setUser(null);
-    setNotice("Logged out successfully");
-  };
-
   const RouterComponent = typeof window === "undefined" ? serverRouter : clientRouter;
 
   return (
     <RouterProvider
-      router={RouterComponent({ ...props, user, setUser, handleLogin, handleLogout })}
+      router={RouterComponent({ ...props, user, setUser })}
     />
   );
 };

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import PageWrapper from "./PageWrapper";
 import { useFeedback } from "../controls/FeedbackContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 
 
 const ResetPassword = () => {
@@ -85,7 +87,10 @@ const ResetPassword = () => {
 
           <div className="field">
             <div className="control">
-              <button className="button" type="submit">Reset Password</button>
+              <button className="button" type="submit">
+                <FontAwesomeIcon icon={faCheck} className="mr-1" />
+                Reset password
+              </button>
             </div>
           </div>
         </form>
