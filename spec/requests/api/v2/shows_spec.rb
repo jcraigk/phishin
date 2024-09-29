@@ -21,11 +21,11 @@ RSpec.describe "API v2 Shows" do
   let!(:song) { create(:song, title: "Tweezer") }
   let!(:tracks) do
     [
-      create(:track, show: show1, position: 1, songs: [song], slug: 'tweezer-1'),
-      create(:track, show: show1, position: 5, songs: [song], slug: 'tweezer-2'),
-      create(:track, show: show1, position: 10, songs: [song], slug: 'tweezer-3'),
-      create(:track, show: previous_show, position: 1, songs: [song], slug: 'tweezer-4'),
-      create(:track, show: next_show, position: 1, songs: [song], slug: 'tweezer-5')
+      create(:track, show: show1, position: 1, songs: [ song ], slug: 'tweezer-1'),
+      create(:track, show: show1, position: 5, songs: [ song ], slug: 'tweezer-2'),
+      create(:track, show: show1, position: 10, songs: [ song ], slug: 'tweezer-3'),
+      create(:track, show: previous_show, position: 1, songs: [ song ], slug: 'tweezer-4'),
+      create(:track, show: next_show, position: 1, songs: [ song ], slug: 'tweezer-5')
     ]
   end
 
@@ -49,15 +49,18 @@ RSpec.describe "API v2 Shows" do
       tweezer_tracks = tracks.select { |t| t[:songs].any? { |s| s[:title] == "Tweezer" } }
 
       expect(tweezer_tracks[0][:songs].first[:previous_performance_gap]).to eq(2)
-      expect(tweezer_tracks[0][:songs].first[:previous_performance_slug]).to eq("2022-12-30/tweezer-4")
+      expect(tweezer_tracks[0][:songs].first[:previous_performance_slug]).to \
+        eq("2022-12-30/tweezer-4")
       expect(tweezer_tracks[0][:songs].first[:next_performance_gap]).to eq(0)
 
       expect(tweezer_tracks[1][:songs].first[:previous_performance_gap]).to eq(0)
-      expect(tweezer_tracks[1][:songs].first[:previous_performance_slug]).to eq("2023-01-01/tweezer-1")
+      expect(tweezer_tracks[1][:songs].first[:previous_performance_slug]).to \
+        eq("2023-01-01/tweezer-1")
       expect(tweezer_tracks[1][:songs].first[:next_performance_gap]).to eq(0)
 
       expect(tweezer_tracks[2][:songs].first[:previous_performance_gap]).to eq(0)
-      expect(tweezer_tracks[2][:songs].first[:previous_performance_slug]).to eq("2023-01-01/tweezer-2")
+      expect(tweezer_tracks[2][:songs].first[:previous_performance_slug]).to \
+        eq("2023-01-01/tweezer-2")
       expect(tweezer_tracks[2][:songs].first[:next_performance_gap]).to eq(4)
       expect(tweezer_tracks[2][:songs].first[:next_performance_slug]).to eq("2023-01-05/tweezer-5")
     end

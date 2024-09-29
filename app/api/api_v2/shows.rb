@@ -7,7 +7,7 @@ class ApiV2::Shows < ApiV2::Base
                type: String,
                desc: "Sort by attribute and direction (e.g., 'date:desc')",
                default: "date:desc",
-               values: SORT_COLS.map { |opt| ["#{opt}:asc", "#{opt}:desc"] }.flatten
+               values: SORT_COLS.map { |opt| [ "#{opt}:asc", "#{opt}:desc" ] }.flatten
     end
   end
 

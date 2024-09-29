@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "API v2 Tracks", type: :request do
+RSpec.describe "API v2 Tracks" do
   let!(:user) { create(:user) }
   let!(:tag) { create(:tag, name: "Classic", priority: 1) }
   let!(:show1) { create(:show, date: "2023-01-01") }

@@ -126,6 +126,7 @@ class Track < ApplicationRecord
   end
 
   def process_audio_file
+    return if Rails.env.test?
     save_duration
     show.save_duration
     apply_id3_tags

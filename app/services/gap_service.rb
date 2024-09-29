@@ -16,11 +16,13 @@ class GapService < BaseService
           song_track = SongsTrack.find_by(track_id: track.id, song_id: song.id)
 
           previous_performance = find_previous_performance(song, track)
-          song_track.previous_performance_gap = calculate_gap(previous_performance&.show&.date, track.show.date)
+          song_track.previous_performance_gap = calculate_gap(previous_performance&.show&.date,
+track.show.date)
           song_track.previous_performance_slug = build_slug(previous_performance)
 
           next_performance = find_next_performance(song, track)
-          song_track.next_performance_gap = calculate_gap(track.show.date, next_performance&.show&.date)
+          song_track.next_performance_gap = calculate_gap(track.show.date,
+next_performance&.show&.date)
           song_track.next_performance_slug = build_slug(next_performance)
 
           song_track.save!

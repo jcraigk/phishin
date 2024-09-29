@@ -48,7 +48,7 @@ class ApiV2::Playlists < ApiV2::Base
                type: String,
                desc: "Sort by attribute and direction (e.g., 'likes_count:desc')",
                default: "likes_count:desc",
-               values: SORT_COLS.map { |opt| ["#{opt}:asc", "#{opt}:desc"] }.flatten
+               values: SORT_COLS.map { |opt| [ "#{opt}:asc", "#{opt}:desc" ] }.flatten
       optional :filter,
                type: String,
                desc: "Filter by user ownership or user likes. Requires authentication.",
@@ -206,7 +206,7 @@ class ApiV2::Playlists < ApiV2::Base
     end
 
     def track_attrs_from_params
-      params[:track_ids].map.with_index do |track_id, idx|
+      params[:track_ids].compact.map.with_index do |track_id, idx|
         starts_at, ends_at = sanitize_track_times(
           starts_at: params[:starts_at_seconds][idx],
           ends_at: params[:ends_at_seconds][idx],
