@@ -28,10 +28,10 @@ const Tags = ({ tags, group = false, highlight = "" }) => {
         </span>
         <div className="rightside-group">
           <span className="rightside-primary-wide">
-            <Link to={`/show_tags/${tag.slug}`} className="button is-small mr-1">
+            <Link to={`/show-tags/${tag.slug}`} className="button is-small mr-1">
               {formatNumber(tag.shows_count, "show")}
             </Link>
-            <Link to={`/track_tags/${tag.slug}`} className="button is-small">
+            <Link to={`/track-tags/${tag.slug}`} className="button is-small">
               {formatNumber(tag.tracks_count, "track")}
             </Link>
           </span>

@@ -11,6 +11,7 @@ MOBILE
  * Remove the top sidebar if it doesn't have controls
 
  BACKBURNER
+  * "container" vs "wrapper" in css
   * look for console errors
   * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
   * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)

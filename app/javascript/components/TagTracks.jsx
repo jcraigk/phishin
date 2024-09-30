@@ -77,13 +77,13 @@ const TagTracks = () => {
 
       <div className="sidebar-filters">
         <div className="select">
-          <select value={sortOption} onChange={handleSortChange}>
+          <select id="sort" value={sortOption} onChange={handleSortChange}>
             <option value="date:desc">Sort by Date (Newest First)</option>
             <option value="date:asc">Sort by Date (Oldest First)</option>
             <option value="likes_count:desc">Sort by Title (Alphabetical)</option>
             <option value="likes_count:asc">Sort by Title (Reverse Alphabetical)</option>
-            <option value="likes_count:desc">Sort by Likes (Most to Least)</option>
-            <option value="likes_count:asc">Sort by Likes (Least to Most)</option>
+            <option value="likes_count:desc">Sort by Likes (High to Low)</option>
+            <option value="likes_count:asc">Sort by Likes (Low to High)</option>
             <option value="duration:desc">Sort by Duration (Longest First)</option>
             <option value="duration:asc">Sort by Duration (Shortest First)</option>
           </select>

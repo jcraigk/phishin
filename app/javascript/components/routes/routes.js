@@ -116,12 +116,12 @@ const routes = (props) => [
         loader: tagIndexLoader,
       },
       {
-        path: "/show_tags/:tagSlug",
+        path: "/show-tags/:tagSlug",
         element: <TagShows />,
         loader: tagShowsLoader,
       },
       {
-        path: "/track_tags/:tagSlug",
+        path: "/track-tags/:tagSlug",
         element: <TagTracks />,
         loader: tagTracksLoader,
       },

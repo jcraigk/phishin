@@ -26,11 +26,11 @@ describe "User Sessions", :js do
       click_on("Login")
 
       expect(page).to have_current_path("/")
-      expect_content("Login successful")
+      expect(page).to have_content("Login successful")
 
       find(".user-dropdown button").click
       find("#logout").click
-      expect_content("Logged out successfully")
+      expect(page).to have_content("Logged out successfully")
     end
   end
 
@@ -43,7 +43,7 @@ describe "User Sessions", :js do
       click_on("Login")
 
       expect(page).to have_current_path("/login")
-      expect_content("Invalid email or password")
+      expect(page).to have_content("Invalid email or password")
     end
   end
 end

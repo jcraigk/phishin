@@ -94,7 +94,7 @@ const VenueIndex = () => {
 
       <div className="sidebar-filters">
         <div className="select">
-          <select value={sortOption} onChange={handleSortChange}>
+          <select id="sort" value={sortOption} onChange={handleSortChange}>
             <option value="name:asc">Sort by Name (A-Z)</option>
             <option value="name:desc">Sort by Name (Z-A)</option>
             <option value="shows_count:desc">Sort by Shows Count (High to Low)</option>
@@ -116,6 +116,7 @@ const VenueIndex = () => {
       <div className="mt-6 hidden-mobile">
         <hr />
         <input
+          id="search"
           className="input"
           type="text"
           value={searchTerm}

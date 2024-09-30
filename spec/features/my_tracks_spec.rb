@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "My Tracks Page", :js do
+RSpec.describe "My Tracks", :js do
   let(:user) { create(:user) }
   let(:venue) { create(:venue) }
   let(:show) { create(:show, venue:) }
@@ -28,7 +28,7 @@ RSpec.describe "My Tracks Page", :js do
 
   it "allows sorting by likes count" do
     visit "/my-tracks"
-    select "Sort by Likes (Most to Least)", from: "sort"
+    select "Sort by Likes (High to Low)", from: "sort"
     sorted_tracks = tracks.sort_by { _1.likes.count }.reverse
     sorted_tracks.each_with_index do |track, idx|
       expect(page).to have_content(track.show.date.to_s.gsub("-", "."))

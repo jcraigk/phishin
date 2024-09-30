@@ -84,7 +84,7 @@ const SongIndex = () => {
       <p className="sidebar-title">Songs</p>
       <p className="sidebar-subtitle">{formatNumber(totalEntries)} total</p>
       <div className="select">
-        <select value={sortOption} onChange={handleSortChange}>
+        <select id="sort" value={sortOption} onChange={handleSortChange}>
           <option value="title:asc">Sort by Title (Alphabetical)</option>
           <option value="title:desc">Sort by Title (Reverse Alphabetical)</option>
           <option value="tracks_count:desc">Sort by Tracks Count (High to Low)</option>
@@ -95,6 +95,7 @@ const SongIndex = () => {
       <div className="mt-5 hidden-mobile">
         <hr />
         <input
+          id="search"
           className="input"
           type="text"
           value={searchTerm}
