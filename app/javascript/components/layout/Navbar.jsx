@@ -184,7 +184,7 @@ const Navbar = ({ user, handleLogout }) => {
 
             <div className="navbar-end">
               <div className="navbar-item">
-                {!user && (
+                {(user === null || user === "anonymous") && (
                   <div className="navbar-item">
                     <Link
                       to="/login"
@@ -204,7 +204,7 @@ const Navbar = ({ user, handleLogout }) => {
                   </div>
                 )}
 
-                {user && (
+                {(user !== null && user !== "anonymous") && (
                   <div className="dropdown is-hoverable navbar-item">
                     <div className="dropdown-trigger user-dropdown">
                       <button className="button">

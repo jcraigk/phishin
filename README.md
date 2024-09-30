@@ -18,7 +18,6 @@ MOBILE ISSUES
  * Remove the top sidebar if it doesn't have controls
 
  BACKBURNER
-  * cleanup AppRouter - jwt settting seems duped?
   * I think I removed some "const [x, setX]" where one wasn't being used, but that's wrong.
   * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
   * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)

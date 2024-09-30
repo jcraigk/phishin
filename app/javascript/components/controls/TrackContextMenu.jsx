@@ -30,7 +30,7 @@ const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
   };
 
   const handleAddToPlaylist = (e) => {
-    if (!user) {
+    if (user !== "anonymous") {
       setAlert("You must login to edit playlists");
       return;
     }

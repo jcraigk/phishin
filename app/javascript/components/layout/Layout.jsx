@@ -33,32 +33,39 @@ const Layout = ({ props }) => {
 
   useEffect(() => {
     // Finish OAuth login (jwt set on server and passed in with props)
-    // Otherwise, pull previously logged in user from local storage
     if (props.jwt) {
       handleLogin({
         jwt: props.jwt,
         username: props.username,
         usernameUpdatedAt: props.usernameUpdatedAt,
         email: props.email,
-      }, "Logged in via Google successfully");
-    } else if (typeof window !== "undefined") {
-      const jwt = localStorage.getItem("jwt");
-      const username = localStorage.getItem("username");
-      const usernameUpdatedAt = localStorage.getItem("usernameUpdatedAt");
-      const email = localStorage.getItem("email");
+      }, "Google login successful");
+      if (props.alert) setAlert(props.alert);
+
+    // Otherwise, attempt login from local storage
+    } else {
+      let jwt = "";
+      let username = "";
+      let email = "";
+      let usernameUpdatedAt = "";
+
+      if (typeof window !== "undefined") {
+        jwt = localStorage.getItem("jwt");
+        username = localStorage.getItem("username");
+        usernameUpdatedAt = localStorage.getItem("usernameUpdatedAt");
+        email = localStorage.getItem("email");
+      }
 
       if (jwt && username && email) {
         setUser({ jwt, username, usernameUpdatedAt, email });
+      } else {
+        setUser('anonymous');
       }
     }
-
-    // OAuth login alert
-    if (props.alert) setAlert(props.alert);
   }, []);
 
   const handleLogin = (userData, message) => {
     if (typeof window !== "undefined") {
-      console.log("Setting user data in local storage", userData);
       localStorage.setItem("jwt", userData.jwt);
       localStorage.setItem("username", userData.username);
       localStorage.setItem("usernameUpdatedAt", userData.usernameUpdatedAt);
@@ -79,7 +86,8 @@ const Layout = ({ props }) => {
       localStorage.removeItem("usernameUpdatedAt");
       localStorage.removeItem("email");
     }
-    setUser(null);
+    navigate("/")
+    setUser("anonymous");
     setNotice("Logged out successfully");
   };
 

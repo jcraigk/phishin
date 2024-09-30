@@ -49,7 +49,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
   };
 
   const handleAddToPlaylist = (e) => {
-    if (!user) {
+    if (user !== "anonymous") {
       setAlert("You must login to edit playlists");
       return;
     }
