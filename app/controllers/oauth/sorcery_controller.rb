@@ -8,10 +8,10 @@ class Oauth::SorceryController < ApplicationController
     store_user_data_in_session(user)
     redirect_to root_path
   rescue ActiveRecord::RecordNotUnique
-    redirect_to root_path, alert: t("auth.email_taken", provider: provider_title)
+    redirect_to root_path, alert: "That email address has already been taken"
   rescue StandardError => e
     Sentry.capture_exception(e)
-    redirect_to root_path, alert: t("auth.external_fail", provider: provider_title)
+    redirect_to root_path, alert: "Login via Google failed"
   end
 
   private
