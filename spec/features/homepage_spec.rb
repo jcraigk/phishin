@@ -47,10 +47,10 @@ describe "Homepage", :js do
       expect(page).to have_content("#{shows.count} shows")
       total_hours = (shows.sum(&:duration) / (1000 * 60 * 60)).round
       expect(page).to have_content("#{total_hours} hours of music")
-      expect(page).to have_selector('.mobile-apps')
-      expect(page).to have_link('GitHub')
-      expect(page).to have_link('Discord')
-      expect(page).to have_link('RSS', href: '/feeds/rss')
+      expect(page).to have_selector(".mobile-apps")
+      expect(page).to have_link("GitHub")
+      expect(page).to have_link("Discord")
+      expect(page).to have_link("RSS", href: "/feeds/rss")
     end
 
     within("#main-content") do
@@ -83,7 +83,8 @@ describe "Homepage", :js do
     click_on(most_recent_year)
     expect(page).to have_current_path("/#{most_recent_year}")
     within("#sidebar") do
-      expect_content(most_recent_year, "3 shows total")
+      expect(page).to have_content(most_recent_year)
+      expect(page).to have_content("3 shows total")
     end
     within("#main-content") do
       items = page.all("li.list-item")

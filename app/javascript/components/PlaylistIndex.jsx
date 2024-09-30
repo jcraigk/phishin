@@ -106,7 +106,7 @@ const PlaylistIndex = () => {
 
       <div className="sidebar-filters">
         <div className="select">
-          <select value={sortOption} onChange={handleSortChange}>
+          <select id="sort" value={sortOption} onChange={handleSortChange}>
             <option value="name:asc">Sort by Name (A-Z)</option>
             <option value="name:desc">Sort by Name (Z-A)</option>
             <option value="likes_count:desc">Sort by Likes (High to Low)</option>
@@ -134,6 +134,7 @@ const PlaylistIndex = () => {
       <div className="mt-6 hidden-mobile">
         <hr />
         <input
+          id="search"
           className="input"
           type="text"
           value={searchTerm}

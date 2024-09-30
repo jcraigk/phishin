@@ -80,8 +80,8 @@ const MyShows = () => {
           <select id="sort" value={sortOption} onChange={handleSortChange}>
             <option value="date:desc">Sort by Date (Newest First)</option>
             <option value="date:asc">Sort by Date (Oldest First)</option>
-            <option value="likes_count:desc">Sort by Likes (Most to Least)</option>
-            <option value="likes_count:asc">Sort by Likes (Least to Most)</option>
+            <option value="likes_count:desc">Sort by Likes (High to Low)</option>
+            <option value="likes_count:asc">Sort by Likes (Low to High)</option>
           </select>
         </div>
       </div>

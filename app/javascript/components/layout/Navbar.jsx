@@ -168,6 +168,7 @@ const Navbar = ({ user, handleLogout }) => {
               <div className="navbar-item">
                 <form onSubmit={handleSearchSubmit} className="control has-icons-left">
                   <input
+                    id="nav-search"
                     className="input search-term"
                     type="text"
                     placeholder="SEARCH"

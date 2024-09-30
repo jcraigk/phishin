@@ -20,7 +20,7 @@ describe "User Registration", :js do
       click_on("Sign Up")
 
       expect(page).to have_current_path('/')
-      expect_content("User created successfully - you are now logged in")
+      expect(page).to have_content("User created successfully - you are now logged in")
     end
   end
 
@@ -35,7 +35,7 @@ describe "User Registration", :js do
       click_on("Sign Up")
 
       expect(page).to have_current_path('/signup')
-      expect_content("Passwords do not match")
+      expect(page).to have_content("Passwords do not match")
     end
 
     it "user attempts signup but gives bad username" do
@@ -47,7 +47,7 @@ describe "User Registration", :js do
       fill_in("passwordConfirmation", with: password)
       click_on("Sign Up")
 
-      expect_content \
+      expect(page).to have_content \
         "Username may contain only letters, numbers, and underscores, " \
         "must be unique, and must be 4 to 15 characters long"
     end
