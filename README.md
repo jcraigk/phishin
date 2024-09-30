@@ -1,33 +1,31 @@
 TODO
- * Opengraph (helmet context)
- * SPECS: Feature
- * TEST: on iphone and tablet (including mediasession)
-  * dropdowns on mobile might go offscreen
-  * on mobile (<400 or whatever), show sidebar-filters underneath (?)
- * look for console errors
- * Create a published playlist in prod so index page isn't empty. include some excerpts too (so release first, then create the playlist)
- * Delete playlist_bookmarks
-
- * Don't pass in props at all in routes
  * Unsaved Changes indicator on draft playlist
+ * Opengraph (helmet context)
 
-MOBILE ISSUES
+MOBILE
+ * dropdowns on mobile might go offscreen
+ * on mobile (<400 or whatever), show sidebar-filters underneath (?)
  * interacting with player shows the chevron button
  * Move likes to adjacent context menus on mobile (rightside)
  * Map below other content would be tits
  * Remove the top sidebar if it doesn't have controls
 
  BACKBURNER
-  * I think I removed some "const [x, setX]" where one wasn't being used, but that's wrong.
+  * look for console errors
   * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
   * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
   * Add CSRF to POSTs on API
   * Bullet N+1 against API
   * DRY out component paging controls? especially handlePerPageBlurOrEnter
-  * lyrical excerpts?
   * fade excerpts in/out - tried, failed
-  * Disable email account creation - allow oauth login through api?
-  * Regenerate waveforms at 1100x70
+
+AFTER DEPLOY
+ * Create a published playlist in prod so index page isn't empty. include some excerpts too (so release first, then create the playlist)
+ * Delete playlist_bookmarks
+ * Remove songs.lyrical_excerpt
+ * Regenerate waveforms at 1100x70
+ * Disable email account creation - allow oauth login through api?
+
 
 TEST URLS
 https://jcktest.ngrok.io/1990-06-16/you-enjoy-myself

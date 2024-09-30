@@ -77,7 +77,7 @@ const MyShows = () => {
 
       <div className="sidebar-filters">
         <div className="select">
-          <select value={sortOption} onChange={handleSortChange}>
+          <select id="sort" value={sortOption} onChange={handleSortChange}>
             <option value="date:desc">Sort by Date (Newest First)</option>
             <option value="date:asc">Sort by Date (Oldest First)</option>
             <option value="likes_count:desc">Sort by Likes (Most to Least)</option>

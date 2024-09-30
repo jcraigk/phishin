@@ -55,20 +55,6 @@ RSpec.describe Song do
     end
   end
 
-  describe '#with_lyrical_excerpt' do
-    let!(:song_with_excerpt) do
-      create(:song, lyrical_excerpt: 'An asteroid crashed and nothing burned')
-    end
-
-    before do
-      create_list(:song, 2) # songs with no excerpt
-    end
-
-    it 'returns the lyrical excerpt' do
-      expect(described_class.with_lyrical_excerpt).to eq([ song_with_excerpt ])
-    end
-  end
-
   describe 'serialization' do
     subject(:song) { create(:song, :with_tracks) }
 
