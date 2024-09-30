@@ -29,7 +29,6 @@ const MissingContentReport = () => {
 
   let lastYear = null;
 
-  // Helper function to count shows for a given year
   const countShowsForYear = (year) => {
     return missingContent.filter(({ date }) => new Date(date).getFullYear() === year).length;
   };

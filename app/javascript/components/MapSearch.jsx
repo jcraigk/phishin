@@ -29,7 +29,7 @@ const MapSearch = () => {
 
   const [formData, setFormData] = useState(getQueryParams());
   const [venues, setVenues] = useState([]);
-  const [searchComplete, setSearchComplete] = useState(false); // Add searchComplete state
+  const [searchComplete, setSearchComplete] = useState(false);
   const defaultCoordinates = { lat: 44.47, lng: -73.21 }; // Burlington, VT
   const defaultRadius = 10;
   const isStateSelected = formData.us_state !== "(US State)";

@@ -79,7 +79,7 @@
   background-repeat: no-repeat;
 
   &.focus {
-    border: 1px solid $likes-blue;
+    border: 1px solid $blue;
   }
 
   &.active-item {
@@ -223,13 +223,13 @@
 
 @keyframes pulse {
   0% {
-    background-color: rgba($likes-blue, 0.5);
+    background-color: rgba($blue, 0.5);
   }
   50% {
     background-color: transparent;
   }
   100% {
-    background-color: rgba($likes-blue, 0.5);
+    background-color: rgba($blue, 0.5);
   }
 }
 

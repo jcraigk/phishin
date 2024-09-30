@@ -55,7 +55,7 @@ const Tags = ({ tags, group = false, highlight = "" }) => {
               <div className="title-left">{group}</div>
               <span className="detail-right">{groupedTags[group].length} tags</span>
             </div>
-            <ul className="tag-list">
+            <ul>
               {groupedTags[group].map(tag => renderTagItem(tag))}
             </ul>
           </React.Fragment>
@@ -66,7 +66,7 @@ const Tags = ({ tags, group = false, highlight = "" }) => {
 
   // Render tags without grouping
   return (
-    <ul className="tag-list">
+    <ul>
       {tags.map(tag => renderTagItem(tag))}
     </ul>
   );

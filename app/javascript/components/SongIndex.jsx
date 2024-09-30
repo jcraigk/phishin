@@ -32,17 +32,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const SongIndex = () => {
-  const { songs, totalPages, totalEntries, page, sortOption, perPage } = useLoaderData(); // Include perPage
+  const { songs, totalPages, totalEntries, page, sortOption, perPage } = useLoaderData();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [tempPerPage, setTempPerPage] = useState(perPage); // Add tempPerPage state
+  const [tempPerPage, setTempPerPage] = useState(perPage);
 
   const handlePageClick = (data) => {
-    navigate(`?page=${data.selected + 1}&sort=${sortOption}&per_page=${perPage}`); // Include perPage in query
+    navigate(`?page=${data.selected + 1}&sort=${sortOption}&per_page=${perPage}`);
   };
 
   const handleSortChange = (event) => {
-    navigate(`?page=1&sort=${event.target.value}&per_page=${perPage}`); // Include perPage in query
+    navigate(`?page=1&sort=${event.target.value}&per_page=${perPage}`);
   };
 
   const handleSearchChange = (event) => {

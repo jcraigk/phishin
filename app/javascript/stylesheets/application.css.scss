@@ -5,17 +5,17 @@
 
 @import "bulma";
 
+$alert-red: #c6867f;
+$bg-blue: #cbf3ff;
 $bg-gray: #f2f3f5;
+$bg-red: #ffe4e1;
+$blue: rgb(3, 187, 242);
+$control-gray: #f5f5f5;
+$google-blue: #5385ed;
 $header-gray: #c7c8ca;
 $inactive-gray: #d9dbdc;
-$control-gray: #f5f5f5;
 $text-gray: #6d6f71;
 $title-gray: #515152;
-$google-blue: #5385ed;
-$likes-blue: rgb(3, 187, 242);
-$bg-blue: #cbf3ff;
-$bg-red: #ffe4e1;
-$alert-red: #c6867f;
 
 @import "./bulma-overrides.css.scss";
 @import "./content.css.scss";
@@ -87,6 +87,7 @@ h2.title:not(:first-of-type) {
     background-color: $control-gray;
   }
 }
+
 .context-dropdown-content {
   .icon {
     margin-right: 0.4rem;

@@ -17,7 +17,6 @@ const SearchResults = ({ results, term }) => {
     other_shows: otherShows,
   } = results;
 
-  // State to track which sections have their full results displayed
   const [showMoreSongs, setShowMoreSongs] = useState(false);
   const [showMoreTracks, setShowMoreTracks] = useState(false);
   const [showMoreTags, setShowMoreTags] = useState(false);

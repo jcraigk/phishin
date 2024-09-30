@@ -23,7 +23,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
 
   const handleNameChange = (e) => {
     const updatedName = e.target.value;
-    setName(updatedName); // Update local state
+    setName(updatedName);
     setDraftPlaylistMeta((prev) => ({
       ...prev,
       name: updatedName,
@@ -33,7 +33,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
 
   const handleSlugChange = (e) => {
     const updatedSlug = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "");
-    setSlug(updatedSlug); // Update local state
+    setSlug(updatedSlug);
     setDraftPlaylistMeta((prev) => ({
       ...prev,
       slug: updatedSlug,
@@ -41,8 +41,8 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
   };
 
   const handleDescriptionChange = (e) => {
-    const updatedDescription = e.target.value.slice(0, 500); // Limit to 500 characters
-    setDescription(updatedDescription); // Update local state
+    const updatedDescription = e.target.value.slice(0, 500);
+    setDescription(updatedDescription);
     setDraftPlaylistMeta((prev) => ({
       ...prev,
       description: updatedDescription,
@@ -53,7 +53,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
 
   const handlePublishedChange = (e) => {
     const updatedPublished = e.target.checked;
-    setPublished(updatedPublished); // Update local state
+    setPublished(updatedPublished);
     setDraftPlaylistMeta((prev) => ({
       ...prev,
       published: updatedPublished,
@@ -65,7 +65,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-+|-+$/g, "");
-    setSlug(generatedSlug); // Update local state
+    setSlug(generatedSlug);
     setDraftPlaylistMeta((prev) => ({
       ...prev,
       slug: generatedSlug,

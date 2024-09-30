@@ -11,7 +11,6 @@ MOBILE
  * Remove the top sidebar if it doesn't have controls
 
  BACKBURNER
-  * css var cleanup
   * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
   * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
   * Add CSRF to POSTs on API
