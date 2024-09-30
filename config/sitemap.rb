@@ -19,8 +19,7 @@ SitemapGenerator::Sitemap.create do # rubocop:disable Metrics/BlockLength
   add "/missing-content"
   add "/my-shows"
   add "/my-tracks"
-  # add "/playlist" # TODO
-  # add "/playlists" # TODO
+  add "/playlists"
   add "/search"
   add "/tags"
   add "/today"
@@ -59,5 +58,11 @@ SitemapGenerator::Sitemap.create do # rubocop:disable Metrics/BlockLength
   # Tracks
   Track.includes(:show).find_each do |track|
     add "/#{track.show.date}/#{track.slug}", lastmod: track.updated_at
+  end
+
+  # Playlists
+  add "/playlists"
+  Playlist.published.find_each do |playlist|
+    add "/play/#{playlist.slug}", lastmod: playlist.updated_at
   end
 end
