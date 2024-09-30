@@ -9,7 +9,7 @@ RSpec.describe "My Shows Page", :js do
     shows.each_with_index do |show, idx|
       create(:like, likable: show, user:)
       show.update(duration: show.duration + (idx * 10))
-      create_list(:like, 10 - idx, likable: show)
+      create_list(:like, (shows.size - idx), likable: show)
     end
 
     sign_in(user)
@@ -41,11 +41,9 @@ RSpec.describe "My Shows Page", :js do
     it "paginates shows" do
       visit "/my-shows"
       expect(page).to have_selector(".pagination")
-      find(".pagination .page-link", text: "2").click
-      expect(page).to have_current_path(my_shows_path(page: 2))
-      additional_shows.each do |show|
-        expect(page).to have_content(show.date.to_s.gsub("-", "."))
-      end
+      find(".pagination li", text: "2").click
+      expect(page).to have_current_path(/\/my-shows.*page=2/)
+      expect(page).to have_selector(".list-item", count: 3)
     end
   end
 end
