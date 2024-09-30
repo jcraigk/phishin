@@ -22,7 +22,6 @@ const Settings = () => {
     }
   }, [navigate, user]);
 
-  // Cooldown check for username change
   useEffect(() => {
     if (user?.usernameUpdatedAt) {
       const cooldownEnd = new Date(new Date(user.usernameUpdatedAt).getTime() + usernameCooldown * 1000);

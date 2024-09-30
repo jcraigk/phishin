@@ -61,7 +61,7 @@ const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
 
   const handlePlaylistEntry = (e) => {
     e.stopPropagation();
-    setIsEditModalOpen(true); // Open the modal
+    setIsEditModalOpen(true);
     hideDropdown();
   };
 

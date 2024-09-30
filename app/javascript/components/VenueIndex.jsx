@@ -70,7 +70,7 @@ const VenueIndex = () => {
   };
 
   const handlePerPageInputChange = (e) => {
-    setTempPerPage(e.target.value); // Only update temp value
+    setTempPerPage(e.target.value);
   };
 
   const submitPerPage = () => {

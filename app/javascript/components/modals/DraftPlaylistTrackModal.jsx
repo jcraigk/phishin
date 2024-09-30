@@ -22,7 +22,7 @@ const DraftPlaylistTrackModal = ({
   }, [track, indexInPlaylist]);
 
   const timeOptions = Array.from({ length: Math.floor(track.duration / 1000) }, (_, i) => {
-    const seconds = i + 1; // Start from 1 second
+    const seconds = i + 1;
     const minutes = Math.floor(seconds / 60);
     const remainderSeconds = seconds % 60;
     const formattedTime = `${minutes}:${remainderSeconds < 10 ? `0${remainderSeconds}` : remainderSeconds}`;

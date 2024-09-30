@@ -54,33 +54,14 @@ const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = 
     venues.forEach((venue, index) => {
       let marker;
 
+      // If single venue, use custom icon
       if (venues.length === 1) {
         const customIcon = document.createElement('div');
         customIcon.className = 'custom-marker-icon';
 
         marker = new mapboxgl.Marker(customIcon).setLngLat([venue.longitude, venue.latitude]);
 
-        // Add optional popup for the single venue
-        if (venue.shows && venue.shows.length > 0) {
-          const popupContent = `
-            <div class="map-popup">
-              <h2>${venue.name}</h2>
-              <h3>${venue.location} &bull; ${formatNumber(venue.shows_count, 'show')}</h3>
-              ${venue.shows
-                .map(
-                  (show) => `
-                  <a href="/${show.date}" class="show-badge">${show.date.replace(/-/g, ".")}</a>
-                  `
-                )
-                .join("")}
-            </div>
-          `;
-          const popup = new mapboxgl.Popup({ closeButton: false }).setHTML(popupContent);
-          marker.setPopup(popup);
-        }
-
       } else {
-        // Use default marker for multiple venues
         marker = new mapboxgl.Marker().setLngLat([venue.longitude, venue.latitude]);
 
         if (venue.shows && venue.shows.length > 0) {
