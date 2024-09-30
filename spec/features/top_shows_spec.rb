@@ -18,7 +18,7 @@ RSpec.describe "Top Shows", :js do
       within all(".list-item")[idx] do
         expect(page).to have_css(".leftside-primary-medium", text: show.date.to_s.gsub("-", "."))
         expect(page).to have_css(".leftside-secondary", text: show.venue_name)
-        within(".like-wrapper") do
+        within(".like-container") do
           expect(page).to have_content(show.likes_count)
         end
         expect(page).to have_css(".leftside-numbering", text: "##{idx + 1}")
