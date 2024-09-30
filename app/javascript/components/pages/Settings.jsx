@@ -16,7 +16,6 @@ const Settings = () => {
 
   // Redirect and warn if not logged in
   useEffect(() => {
-    console.log(user);
     if (user === "anonymous") {
       navigate("/");
       setAlert("You must be logged in to view that page");

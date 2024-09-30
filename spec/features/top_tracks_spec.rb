@@ -17,7 +17,7 @@ RSpec.describe "Top Tracks", :js do
     tracks.sort_by { |track| track.likes_count }.reverse.each_with_index do |track, idx|
       within all(".list-item")[idx] do
         expect(page).to have_css(".leftside-primary", text: track.title)
-        within(".like-wrapper") do
+        within(".like-container") do
           expect(page).to have_content(track.likes_count)
         end
         expect(page).to have_css(".leftside-numbering", text: "##{idx + 1}")

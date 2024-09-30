@@ -38,7 +38,7 @@ RSpec.describe "Shows", :js do
       expect(page).to have_link("Madison Square Garden", href: "/venues/madison-square-garden")
       expect(page).to have_link("New York, NY", href: "/map?term=New%20York%2C%20NY")
       expect(page).to have_content("2h 0m")
-      within(".like-wrapper") do
+      within(".like-container") do
         expect(page).to have_content("3")
       end
     end

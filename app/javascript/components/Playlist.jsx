@@ -87,7 +87,7 @@ const Playlist = () => {
       </div>
       <p className="sidebar-info sidebar-extras">{playlist.tracks_count} tracks</p>
       <hr />
-      <div className="sidebar-control-wrapper">
+      <div className="sidebar-control-container">
         <LikeButton likable={playlist} type="Playlist" />
 
         <button className="button" onClick={handleSetAsDraft}>

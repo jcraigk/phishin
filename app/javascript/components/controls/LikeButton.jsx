@@ -34,7 +34,7 @@ const LikeButton = ({ likable, type }) => {
   };
 
   return (
-    <div className="like-wrapper">
+    <div className="like-container">
       <FontAwesomeIcon
         icon={faHeart}
         className={`heart-icon ${likedByUser ? "liked" : ""}`}
