@@ -13,7 +13,7 @@ const LikeButton = ({ likable, type }) => {
 
   const handleLikeToggle = async (e) => {
     e.stopPropagation();
-    if (!user) {
+    if (user === "anonymous") {
       setAlert("You must login to submit likes");
       return;
     }

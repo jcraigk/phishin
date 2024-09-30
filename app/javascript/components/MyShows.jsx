@@ -22,18 +22,28 @@ export const myShowsLoader = async ({ request }) => {
   }
 };
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
 import Pagination from "./controls/Pagination";
+import { useFeedback } from "./controls/FeedbackContext";
 
 const MyShows = () => {
   const { shows, totalPages, page, sortOption, perPage } = useLoaderData();
   const navigate = useNavigate();
-  const { user } = useOutletContext();
   const [tempPerPage, setTempPerPage] = useState(perPage);
+  const { setAlert } = useFeedback();
+  const { user } = useOutletContext();
+
+  // Redirect and warn if not logged in
+  useEffect(() => {
+    if (user === "anonymous") {
+      navigate("/");
+      setAlert("You must be logged in to view that page");
+    }
+  }, [navigate, user]);
 
   const handleSortChange = (event) => {
     navigate(`?page=1&sort=${event.target.value}&per_page=${perPage}`);

@@ -14,10 +14,12 @@ const Settings = () => {
   const [isCooldown, setIsCooldown] = useState(false);
   const [cooldownMessage, setCooldownMessage] = useState("");
 
-  // Redirect if not logged in
+  // Redirect and warn if not logged in
   useEffect(() => {
-    if (!user) {
+    console.log(user);
+    if (user === "anonymous") {
       navigate("/");
+      setAlert("You must be logged in to view that page");
     }
   }, [navigate, user]);
 
@@ -26,8 +28,6 @@ const Settings = () => {
     if (user?.usernameUpdatedAt) {
       const cooldownEnd = new Date(new Date(user.usernameUpdatedAt).getTime() + usernameCooldown * 1000);
       const now = new Date();
-      console.log(now < cooldownEnd);
-      console.log(usernameCooldown);
       setIsCooldown(now < cooldownEnd);
       setCooldownMessage(`You can change your username again on ${cooldownEnd.toLocaleDateString()}`);
     }
@@ -51,11 +51,7 @@ const Settings = () => {
       }));
   };
 
-  if (!user) {
-    return null;
-  } else {
-    console.log(user);
-  }
+  if (user === null) return null;
 
   return (
     <PageWrapper>

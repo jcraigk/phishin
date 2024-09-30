@@ -1,5 +1,5 @@
-import React from "react";
-import { useOutletContext } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
 import { formatDurationShow } from "./helpers/utils";
@@ -11,15 +11,25 @@ const DraftPlaylist = () => {
   const {
     draftPlaylist,
     draftPlaylistMeta,
-    openDraftPlaylistModal
+    openDraftPlaylistModal,
+    user
   } = useOutletContext();
-  const { setNotice } = useFeedback();
+  const { setNotice, setAlert } = useFeedback();
+  const navigate = useNavigate();
 
   const { name, description, published } = draftPlaylistMeta;
 
   const handleEditDetails = () => {
     openDraftPlaylistModal();
   };
+
+  // Redirect and warn if not logged in
+  useEffect(() => {
+    if (user === "anonymous") {
+      navigate("/");
+      setAlert("You must be logged in to view that page");
+    }
+  }, [navigate, user]);
 
   const sidebarContent = (
     <div className="sidebar-content">
