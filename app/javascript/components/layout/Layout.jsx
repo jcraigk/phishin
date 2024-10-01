@@ -27,6 +27,7 @@ const Layout = ({ props }) => {
   const [customPlaylist, setCustomPlaylist] = useState(null);
   const [draftPlaylist, setDraftPlaylist] = useState([]);
   const [draftPlaylistMeta, setDraftPlaylistMeta] = useState(initialDraftPlaylistMeta);
+  const [isDraftPlaylistSaved, setIsDraftPlaylistSaved] = useState(true);
   const [activeTrack, setActiveTrack] = useState(null);
   const audioRef = useRef(null);
   const { setNotice } = useFeedback();
@@ -140,6 +141,8 @@ const Layout = ({ props }) => {
           draftPlaylistMeta,
           setDraftPlaylistMeta,
           resetDraftPlaylist,
+          isDraftPlaylistSaved,
+          setIsDraftPlaylistSaved,
           activeTrack,
           playTrack,
           audioRef,
@@ -168,6 +171,7 @@ const Layout = ({ props }) => {
         draftPlaylist={draftPlaylist}
         setDraftPlaylist={setDraftPlaylist}
         draftPlaylistMeta={draftPlaylistMeta}
+        setIsDraftPlaylistSaved={setIsDraftPlaylistSaved}
         setDraftPlaylistMeta={setDraftPlaylistMeta}
         resetDraftPlaylist={resetDraftPlaylist}
       />

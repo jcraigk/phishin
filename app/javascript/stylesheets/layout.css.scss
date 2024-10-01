@@ -16,7 +16,6 @@ main {
 
 #main-content {
   flex: 1;
-  // margin-top: 0.5rem;
 }
 
 #sidebar {
@@ -44,8 +43,8 @@ main {
 
     hr {
       background-color: $inactive-gray;
-      margin-top: 1rem;
-      margin-bottom: 1rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
     }
 
     .sidebar-title {
@@ -58,6 +57,10 @@ main {
 
     .sidebar-info {
       font-size: 1.2rem;
+    }
+
+    .show-duration {
+      margin-top: 0.3rem;
     }
 
     .sidebar-subtitle {
@@ -235,5 +238,8 @@ main {
   }
   .sidebar-filters {
     display: none !important;
+  }
+  .show-duration {
+    margin-top: 0rem !important;
   }
 }

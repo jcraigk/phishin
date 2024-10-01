@@ -1,27 +1,39 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
 import { formatDurationShow } from "./helpers/utils";
 import { useFeedback } from "./controls/FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExclamationCircle, faClock, faGlobe, faLock, faEdit, faShareFromSquare, faCompactDisc } from "@fortawesome/free-solid-svg-icons";
+import { faExclamationCircle, faClock, faGlobe, faLock, faEdit, faShareFromSquare, faCompactDisc, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 
 const DraftPlaylist = () => {
   const {
     draftPlaylist,
     draftPlaylistMeta,
+    isDraftPlaylistSaved,
     openDraftPlaylistModal,
     user
   } = useOutletContext();
   const { setNotice, setAlert } = useFeedback();
   const navigate = useNavigate();
+  const [isSaved, setIsSaved] = useState(true);
 
   const { name, description, published } = draftPlaylistMeta;
 
   const handleEditDetails = () => {
     openDraftPlaylistModal();
   };
+
+  // Check if playlist is saved
+  useEffect(() => {
+    const hasUnsavedChanges = draftPlaylist.length > 0 ||
+      draftPlaylistMeta.name ||
+      draftPlaylistMeta.description ||
+      draftPlaylistMeta.slug;
+
+    setIsSaved(!hasUnsavedChanges);
+  }, [draftPlaylist, draftPlaylistMeta]);
 
   // Redirect and warn if not logged in
   useEffect(() => {
@@ -31,13 +43,34 @@ const DraftPlaylist = () => {
     }
   }, [navigate, user]);
 
+  const isEmpty = draftPlaylist.length === 0 && !draftPlaylistMeta.name && !draftPlaylistMeta.description && !draftPlaylistMeta.slug;
+
   const sidebarContent = (
     <div className="sidebar-content">
       <p className="sidebar-title">Draft Playlist</p>
-      <div className="sidebar-info hidden-phone">
+
+      {!isEmpty && (
+        <div className="mt-3 mb-3 hidden-phone">
+          {isDraftPlaylistSaved ? (
+            <span className="badge-saved">
+              <FontAwesomeIcon icon={faCircleCheck} className="mr-1" />
+              Saved
+            </span>
+          ) : (
+            <span className="badge-unsaved">
+              <FontAwesomeIcon icon={faExclamationCircle} className="mr-1" />
+              Unsaved changes
+            </span>
+          )}
+        </div>
+      )}
+
+      <div className="hidden-phone">
+        <FontAwesomeIcon icon={faCompactDisc} className="mr-1 text-gray" />
         {draftPlaylist.length} tracks
       </div>
-      <div className="hidden-mobile mt-2">
+
+      <div className="hidden-mobile">
         <FontAwesomeIcon icon={published ? faGlobe : faLock} className="mr-1 text-gray" />
         {published ? "Public" : "Private"}
       </div>
@@ -57,7 +90,7 @@ const DraftPlaylist = () => {
 
       {draftPlaylistMeta.id && (
         <button
-          className="button mr-1"
+          className="button hidden-phone mr-1"
           onClick={() => {
             navigator.clipboard.writeText(`https://phish.in/play/${draftPlaylistMeta.slug}`);
             setNotice("Playlist URL copied to clipboard");

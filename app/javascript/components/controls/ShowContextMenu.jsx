@@ -11,7 +11,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
   const { setNotice, setAlert } = useFeedback();
   const { openAppModal } = useOutletContext();
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const { user, draftPlaylist, setDraftPlaylist } = useOutletContext();
+  const { user, draftPlaylist, setDraftPlaylist, setIsDraftPlaylistSaved } = useOutletContext();
 
   const hideDropdown = () => {
     setDropdownVisible(false);
@@ -50,7 +50,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
   };
 
   const handleAddToPlaylist = (e) => {
-    if (user !== "anonymous") {
+    if (user === "anonymous") {
       setAlert("You must login to edit playlists");
       return;
     }
@@ -58,6 +58,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
     setDraftPlaylist([...draftPlaylist, ...show.tracks]);
     setNotice("Show added to draft playlist");
     hideDropdown();
+    setIsDraftPlaylistSaved(false);
   };
 
   // Close dropdown when clicking outside
