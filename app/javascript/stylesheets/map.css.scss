@@ -5,6 +5,28 @@
   height: 100%;
 }
 
+.show-badge {
+  font-family: 'Open Sans Condensed', sans-serif;
+  font-size: 1.2rem;
+  background-color: $text-gray;
+  margin-right: 0.5rem;
+  border-radius: var(--bulma-radius);
+  padding: 0.1rem 0.3rem;
+  color: white;
+
+  &:hover {
+    background-color: $control-gray;
+    color: $text-gray;
+
+    .date-link {
+      color: $text-gray;
+    }
+  }
+  .date-link {
+    color: white;
+  }
+}
+
 .custom-marker-icon {
   width: 1.5rem;
   height: 1.5rem;
@@ -29,18 +51,5 @@
   h3 {
     font-size: 1rem;
     margin-bottom: 0.5rem;
-  }
-
-  .show-badge {
-    font-size: 0.8rem;
-    line-height: 1.5rem;
-    padding: 0.1rem 0.3rem;
-    font-weight: bold;
-    border-radius: 3px;
-    margin-right: 0px;
-
-    &:focus {
-      outline: none;
-    }
   }
 }

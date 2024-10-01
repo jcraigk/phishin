@@ -35,26 +35,15 @@
   color: black;
 }
 
-.show-badge {
-  font-family: 'Open Sans Condensed', sans-serif;
-  font-size: 1.2rem;
-  background-color: $text-gray;
+.date-link {
   margin-right: 0.5rem;
-  border-radius: var(--bulma-radius);
-  padding: 0.1rem 0.3rem;
-  color: white;
 
   &:hover {
-    background-color: $control-gray;
-    color: $text-gray;
-
-    .date-link {
-      color: $text-gray;
-    }
+    text-decoration: underline;
   }
 
-  .date-link {
-    color: white;
+  a {
+    color: $text-gray !important;
   }
 }
 

@@ -91,14 +91,13 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
                     <span className="leftside-primary">
                       {
                         viewStyle !== "show" && (
-                          <span className="show-badge">
-                            <Link
-                              className="date-link"
+                          <span className="date-link">
+                            [<Link
                               to={`/${track.show_date}/${track.slug}`}
                               onClick={(e) => e.stopPropagation()}
                             >
                               {formatDate(track.show_date)}
-                            </Link>
+                            </Link>]
                           </span>
                         )
                       }
