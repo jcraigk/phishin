@@ -2,11 +2,10 @@ TODO
  * Opengraph (helmet context)
 
  BACKBURNER
-  * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
+  * Re-hydrate pages that contain likables when doing SSR and logged in
   * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
-  * Add CSRF to POSTs on API
+  * Add CSRF to POSTs on API ?
   * Bullet N+1 against API
-  * DRY out component paging controls? especially handlePerPageBlurOrEnter
   * fade excerpts in/out - tried, failed
 
 AFTER DEPLOY

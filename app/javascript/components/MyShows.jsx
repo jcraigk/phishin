@@ -22,20 +22,27 @@ export const myShowsLoader = async ({ request }) => {
   }
 };
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
 import Pagination from "./controls/Pagination";
 import { useFeedback } from "./controls/FeedbackContext";
+import { paginationHelper } from "./helpers/pagination";
 
 const MyShows = () => {
   const { shows, totalPages, page, sortOption, perPage } = useLoaderData();
   const navigate = useNavigate();
-  const [tempPerPage, setTempPerPage] = useState(perPage);
   const { setAlert } = useFeedback();
   const { user } = useOutletContext();
+  const {
+    tempPerPage,
+    handlePageClick,
+    handleSortChange,
+    handlePerPageInputChange,
+    handlePerPageBlurOrEnter
+  } = paginationHelper(page, sortOption, perPage);
 
   // Redirect and warn if not logged in
   useEffect(() => {
@@ -44,32 +51,6 @@ const MyShows = () => {
       setAlert("You must be logged in to view that page");
     }
   }, [navigate, user]);
-
-  const handleSortChange = (event) => {
-    navigate(`?page=1&sort=${event.target.value}&per_page=${perPage}`);
-  };
-
-  const handlePageClick = (data) => {
-    navigate(`?page=${data.selected + 1}&sort=${sortOption}&per_page=${perPage}`);
-  };
-
-  const handlePerPageInputChange = (e) => {
-    setTempPerPage(e.target.value);
-  };
-
-  const submitPerPage = () => {
-    if (tempPerPage && !isNaN(tempPerPage) && tempPerPage > 0) {
-      navigate(`?page=1&sort=${sortOption}&per_page=${tempPerPage}`);
-    }
-  };
-
-  const handlePerPageBlurOrEnter = (e) => {
-    if (e.type === "blur" || (e.type === "keydown" && e.key === "Enter")) {
-      e.preventDefault();
-      submitPerPage();
-      e.target.blur();
-    }
-  };
 
   const sidebarContent = (
     <div className="sidebar-content">

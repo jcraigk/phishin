@@ -30,20 +30,19 @@ import Songs from "./Songs";
 import Pagination from "./controls/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { paginationHelper } from "./helpers/pagination";
 
 const SongIndex = () => {
   const { songs, totalPages, totalEntries, page, sortOption, perPage } = useLoaderData();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [tempPerPage, setTempPerPage] = useState(perPage);
-
-  const handlePageClick = (data) => {
-    navigate(`?page=${data.selected + 1}&sort=${sortOption}&per_page=${perPage}`);
-  };
-
-  const handleSortChange = (event) => {
-    navigate(`?page=1&sort=${event.target.value}&per_page=${perPage}`);
-  };
+  const {
+    tempPerPage,
+    handlePageClick,
+    handleSortChange,
+    handlePerPageInputChange,
+    handlePerPageBlurOrEnter
+  } = paginationHelper(page, sortOption, perPage);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -58,24 +57,6 @@ const SongIndex = () => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleSearchSubmit();
-    }
-  };
-
-  const handlePerPageInputChange = (e) => {
-    setTempPerPage(e.target.value);
-  };
-
-  const submitPerPage = () => {
-    if (tempPerPage && !isNaN(tempPerPage) && tempPerPage > 0) {
-      navigate(`?page=1&sort=${sortOption}&per_page=${tempPerPage}`);
-    }
-  };
-
-  const handlePerPageBlurOrEnter = (e) => {
-    if (e.type === "blur" || (e.type === "keydown" && e.key === "Enter")) {
-      e.preventDefault();
-      submitPerPage();
-      e.target.blur();
     }
   };
 

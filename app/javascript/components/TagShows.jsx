@@ -33,43 +33,23 @@ export const tagShowsLoader = async ({ params, request }) => {
   }
 };
 
-import React, { useState } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import React from "react";
+import { useLoaderData } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
 import Pagination from "./controls/Pagination";
+import { paginationHelper } from "./helpers/pagination";
 
 const TagShows = () => {
   const { tag, shows, totalPages, page, sortOption, perPage } = useLoaderData();
-  const navigate = useNavigate();
-  const [tempPerPage, setTempPerPage] = useState(perPage);
-
-  const handleSortChange = (event) => {
-    navigate(`?page=1&sort=${event.target.value}&per_page=${perPage}`);
-  };
-
-  const handlePageClick = (data) => {
-    navigate(`?page=${data.selected + 1}&sort=${sortOption}&per_page=${perPage}`);
-  };
-
-  const handlePerPageInputChange = (e) => {
-    setTempPerPage(e.target.value);
-  };
-
-  const submitPerPage = () => {
-    if (tempPerPage && !isNaN(tempPerPage) && tempPerPage > 0) {
-      navigate(`?page=1&sort=${sortOption}&per_page=${tempPerPage}`);
-    }
-  };
-
-  const handlePerPageBlurOrEnter = (e) => {
-    if (e.type === "blur" || (e.type === "keydown" && e.key === "Enter")) {
-      e.preventDefault();
-      submitPerPage();
-      e.target.blur();
-    }
-  };
+  const {
+    tempPerPage,
+    handlePageClick,
+    handleSortChange,
+    handlePerPageInputChange,
+    handlePerPageBlurOrEnter
+  } = paginationHelper(page, sortOption, perPage);
 
   const sidebarContent = (
     <div className="sidebar-content">

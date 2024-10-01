@@ -35,6 +35,7 @@ import Playlists from "./Playlists";
 import Pagination from "./controls/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { paginationHelper } from "./helpers/pagination";
 
 const PlaylistIndex = () => {
   const {
@@ -49,16 +50,14 @@ const PlaylistIndex = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState(initialFilter);
-  const [tempPerPage, setTempPerPage] = useState(perPage);
   const { user } = useOutletContext();
-
-  const handlePageClick = (data) => {
-    navigate(`?page=${data.selected + 1}&sort=${sortOption}&filter=${filter}&per_page=${perPage}`);
-  };
-
-  const handleSortChange = (event) => {
-    navigate(`?page=1&sort=${event.target.value}&filter=${filter}&per_page=${perPage}`);
-  };
+  const {
+    tempPerPage,
+    handlePageClick,
+    handleSortChange,
+    handlePerPageInputChange,
+    handlePerPageBlurOrEnter
+  } = paginationHelper(page, sortOption, perPage);
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
@@ -78,24 +77,6 @@ const PlaylistIndex = () => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleSearchSubmit();
-    }
-  };
-
-  const handlePerPageInputChange = (e) => {
-    setTempPerPage(e.target.value);
-  };
-
-  const submitPerPage = () => {
-    if (tempPerPage && !isNaN(tempPerPage) && tempPerPage > 0) {
-      navigate(`?page=1&sort=${sortOption}&filter=${filter}&per_page=${tempPerPage}`);
-    }
-  };
-
-  const handlePerPageBlurOrEnter = (e) => {
-    if (e.type === "blur" || (e.type === "keydown" && e.key === "Enter")) {
-      e.preventDefault();
-      submitPerPage();
-      e.target.blur();
     }
   };
 

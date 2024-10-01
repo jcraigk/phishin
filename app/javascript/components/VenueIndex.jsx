@@ -32,6 +32,7 @@ import Venues from "./Venues";
 import Pagination from "./controls/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { paginationHelper } from "./helpers/pagination";
 
 const FIRST_CHAR_LIST = ["#", ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))];
 
@@ -39,15 +40,13 @@ const VenueIndex = () => {
   const { venues, totalPages, totalEntries, page, perPage, sortOption, firstChar } = useLoaderData();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [tempPerPage, setTempPerPage] = useState(perPage);
-
-  const handlePageClick = (data) => {
-    navigate(`?page=${data.selected + 1}&sort=${sortOption}&first_char=${firstChar}&per_page=${perPage}`);
-  };
-
-  const handleSortChange = (event) => {
-    navigate(`?page=1&sort=${event.target.value}&first_char=${firstChar}&per_page=${perPage}`);
-  };
+  const {
+    tempPerPage,
+    handlePageClick,
+    handleSortChange,
+    handlePerPageInputChange,
+    handlePerPageBlurOrEnter
+  } = paginationHelper(page, sortOption, perPage);
 
   const handleFirstCharChange = (event) => {
     navigate(`?page=1&sort=${sortOption}&first_char=${event.target.value}&per_page=${perPage}`);
@@ -66,24 +65,6 @@ const VenueIndex = () => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleSearchSubmit();
-    }
-  };
-
-  const handlePerPageInputChange = (e) => {
-    setTempPerPage(e.target.value);
-  };
-
-  const submitPerPage = () => {
-    if (tempPerPage && !isNaN(tempPerPage) && tempPerPage > 0) {
-      navigate(`?page=1&sort=${sortOption}&first_char=${firstChar}&per_page=${tempPerPage}`);
-    }
-  };
-
-  const handlePerPageBlurOrEnter = (e) => {
-    if (e.type === "blur" || (e.type === "keydown" && e.key === "Enter")) {
-      e.preventDefault();
-      submitPerPage();
-      e.target.blur();
     }
   };
 
