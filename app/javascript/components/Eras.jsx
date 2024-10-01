@@ -52,7 +52,7 @@ const Eras = () => {
         {formatNumber(totalShows)} shows
       </p>
       <p className="hidden-phone">
-        &#128339;{" "}
+        &#127926;{" "}
         {formatNumber(totalHours)} hours of music
       </p>
 

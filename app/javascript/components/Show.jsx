@@ -123,9 +123,6 @@ const Show = ({ trackSlug }) => {
     <>
       <Helmet>
         <title>{matchedTrack ? `${matchedTrack.title} - ${formatDate(show.date)} - Phish.in` : `${formatDate(show.date)} - Phish.in`}</title>
-        <meta property="og:title" content={trackSlug && matchedTrack ? `Listen to ${matchedTrack.title} from ${formatDateLong(show.date)}` : `Listen to ${formatDateLong(show.date)}`} />
-        <meta property="og:type" content="music.playlist" />
-        <meta property="og:audio" content={matchedTrack?.mp3_url} />
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         {showIncompleteNotification && infoBox("This show's audio is incomplete", () => handleClose("incomplete"))}

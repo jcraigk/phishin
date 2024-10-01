@@ -107,8 +107,6 @@ const Playlist = () => {
     <>
       <Helmet>
         <title>{`${playlist.name} - Phish.in`}</title>
-        <meta property="og:title" content={`Listen to ${playlist.name}`} />
-        <meta property="og:type" content="music.playlist" />
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         {showNotification && (

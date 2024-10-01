@@ -1,14 +1,7 @@
 class ApplicationController < ActionController::Base
-  include ReactOnRailsHelper
-  include ActionView::Helpers::TagHelper
-
   def application
-    context = {}
+    @meta = MetaTagService.call(request.path)
     @props = {
-      # SSR
-      location: request.fullpath,
-      context:, # Pass this context to React on Rails
-
       # OAuth login
       jwt: session[:jwt],
       username: session[:username],
@@ -29,11 +22,7 @@ class ApplicationController < ActionController::Base
     session.delete(:username_updated_at)
     session.delete(:email)
 
-    # react_app = react_component_hash("App", prerender: false, props: @props)
-    # binding.irb
-
-    # Render the view and layout
-    render html: "", layout: "application"
-    # render html: react_app, layout: "application"
+    # Render layout + React app
+    render html: "", layout: "application", status: @meta[:status]
   end
 end

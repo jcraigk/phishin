@@ -8,6 +8,8 @@ class Song < ApplicationRecord
   validates :title, presence: true, uniqueness: true
   validates :alias, uniqueness: true, allow_nil: true
 
+  alias_attribute :name, :title
+
   include PgSearch::Model
   pg_search_scope(
     :kinda_matching,

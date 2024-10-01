@@ -1,39 +1,16 @@
-
-
 doctype html
 html data-theme="light"
   head
-    title
-      - if content_for?(:title)
-        = yield(:title)
-      - else
-        = App.app_name
+    / Title is overridden by Helmet in React components
+    title = @meta[:title] || App.app_name
     link rel="icon" href="/favicon.ico"
     link rel="canonical" href="#{request.base_url}#{request.path}"
     = auto_discovery_link_tag :rss, "/feeds/rss", title: "#{App.app_name} Updates"
-    = csrf_meta_tags
     = javascript_pack_tag "application"
     = stylesheet_pack_tag "application"
     = render "layouts/meta"
-    = yield :meta
-
-
-    // Override head tags from React components
-    / - if @props[:context]["helmet"]
-    /   = @props[:context]["helmet"]["title"].to_s.html_safe
-    /   = @props[:context]["helmet"]["meta"].to_s.html_safe
-    /   = @props[:context]["helmet"]["link"].to_s.html_safe
 
   = render "analytics/google"
   body
-    #root
-      = react_component("App", props: @props, prerender: false)
-
-    / - react_helmet_app = react_component_hash("App", props: @props)
-    / - binding.irb
-    / - content_for :title do
-    /   = react_helmet_app["title"]
-    / - content_for :meta do
-    /   = react_helmet_app["meta"]
-    / = react_helmet_app["componentHtml"]
+    #root = react_component("App", props: @props)
 
