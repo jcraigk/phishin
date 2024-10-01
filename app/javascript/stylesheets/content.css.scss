@@ -1,3 +1,12 @@
+.donut-bullet {
+  font-size: 0.8rem;
+  margin-right: 0.5rem;
+  margin-left: 0.6rem;
+  filter: grayscale(1);
+  position: relative;
+  top: -4px;
+}
+
 .section-title {
   display: flex;
   align-items: baseline;
@@ -24,7 +33,7 @@
   .detail-right {
     font-size: 1rem;
     font-weight: bold;
-    color: var(--bulma-grey-dark);
+    color: $text-gray;
     line-height: 1rem;
     color: $title-gray;
   }
@@ -36,8 +45,6 @@
 }
 
 .date-link {
-  margin-right: 0.5rem;
-
   &:hover {
     text-decoration: underline;
   }
@@ -95,7 +102,7 @@
   .leftside-primary {
     flex-grow: 1;
     font-size: 1.5rem;
-    color: var(--bulma-grey-dark);
+    color: $text-gray;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

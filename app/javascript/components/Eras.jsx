@@ -48,11 +48,11 @@ const Eras = () => {
         <span className="hidden-phone"> AUDIO STREAMS</span>
       </p>
       <p>
-        <FontAwesomeIcon icon={faDrum} className="mr-1" />
+        &#127928;{" "}
         {formatNumber(totalShows)} shows
       </p>
       <p className="hidden-phone">
-        <FontAwesomeIcon icon={faCirclePlay} className="mr-1" />
+        &#128339;{" "}
         {formatNumber(totalHours)} hours of music
       </p>
 
