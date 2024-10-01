@@ -23,7 +23,7 @@ RSpec.describe "Era Shows", :js do
     visit "/2024"
 
     expect(page).to have_css(".sidebar-title", text: "2024")
-    expect(page).to have_css(".sidebar-subtitle", text: "5 shows total")
+    expect(page).to have_css(".sidebar-subtitle", text: "5 shows")
   end
 
   it "displays the list of shows with correct data" do

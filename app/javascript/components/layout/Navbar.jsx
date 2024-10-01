@@ -226,7 +226,7 @@ const Navbar = ({ user, handleLogout }) => {
                 )}
 
                 {(user !== null && user !== "anonymous") && (
-                  <div className={`dropdown navbar-item ${isUserDropdownOpen ? "is-active" : ""}`} ref={userDropdownRef}>
+                  <div className={`dropdown navbar-item user-dropdown ${isUserDropdownOpen ? "is-active" : ""}`} ref={userDropdownRef}>
                     <div className="dropdown-trigger">
                       <button className="button" onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}>
                         <FontAwesomeIcon icon={faUser} className="icon" />

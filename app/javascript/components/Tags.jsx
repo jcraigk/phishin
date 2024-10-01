@@ -20,7 +20,7 @@ const Tags = ({ tags, group = false, highlight = "" }) => {
   const renderTagItem = (tag) => (
     <li key={tag.slug} className="list-item">
       <div className="main-row">
-        <span className="leftside-primary-narrow">
+        <span className="leftside-primary">
           <TagBadges tags={[tag]} parentId={tag.slug} />
         </span>
         <span className="leftside-secondary">

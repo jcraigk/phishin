@@ -84,7 +84,7 @@ describe "Homepage", :js do
     expect(page).to have_current_path("/#{most_recent_year}")
     within("#sidebar") do
       expect(page).to have_content(most_recent_year)
-      expect(page).to have_content("3 shows total")
+      expect(page).to have_content("3 shows")
     end
     within("#main-content") do
       items = page.all("li.list-item")

@@ -1,0 +1,3 @@
+en:
+  search:
+    term_too_short: "Search term must be at least %{min_length} characters long"

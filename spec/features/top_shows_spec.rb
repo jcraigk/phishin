@@ -16,7 +16,7 @@ RSpec.describe "Top Shows", :js do
 
     shows.sort_by { |show| show.likes.count }.reverse.each_with_index do |show, idx|
       within all(".list-item")[idx] do
-        expect(page).to have_css(".leftside-primary-medium", text: show.date.to_s.gsub("-", "."))
+        expect(page).to have_css(".leftside-primary", text: show.date.to_s.gsub("-", "."))
         expect(page).to have_css(".leftside-secondary", text: show.venue_name)
         within(".like-container") do
           expect(page).to have_content(show.likes_count)

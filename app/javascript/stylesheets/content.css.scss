@@ -103,26 +103,6 @@
     padding-right: 1rem;
   }
 
-  .leftside-primary-narrow {
-    width: 6rem;
-    font-size: 1.5rem;
-    color: var(--bulma-grey-dark);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  // .leftside-primary-medium {
-  //   // width: 10rem;
-  //   font-size: 1.5rem;
-  //   color: var(--bulma-grey-dark);
-  //   overflow: hidden;
-  //   text-overflow: ellipsis;
-  //   white-space: nowrap;
-  //   flex-shrink: 0;
-  // }
-
   .leftside-secondary {
     font-size: 1.1rem;
     text-align: left;
@@ -149,7 +129,6 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    // gap: 0.3rem;
     flex-shrink: 0;
     margin-left: auto;
   }
