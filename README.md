@@ -1,4 +1,5 @@
 TODO
+ * stop prop in context menus - go to map, it auto navigate to show after that
  * Opengraph (helmet context)
 
  BACKBURNER

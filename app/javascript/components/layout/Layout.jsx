@@ -30,20 +30,21 @@ const Layout = ({ props }) => {
   const [isDraftPlaylistSaved, setIsDraftPlaylistSaved] = useState(true);
   const [activeTrack, setActiveTrack] = useState(null);
   const audioRef = useRef(null);
-  const { setNotice } = useFeedback();
+  const { setNotice, setAlert } = useFeedback();
 
   useEffect(() => {
-    // Finish OAuth login (jwt set on server and passed in with props)
-    if (props.jwt) {
+    // OAuth failure
+    if (props.alert) {
+      setAlert(props.alert);
+    // OAuth success
+    } else if (props.jwt) {
       handleLogin({
         jwt: props.jwt,
         username: props.username,
         usernameUpdatedAt: props.usernameUpdatedAt,
         email: props.email,
       }, "Google login successful");
-      if (props.alert) setAlert(props.alert);
-
-    // Otherwise, attempt login from local storage
+    // Attempt login from jwt stored locally
     } else {
       let jwt = "";
       let username = "";

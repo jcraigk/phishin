@@ -253,6 +253,7 @@ const Navbar = ({ user, handleLogout }) => {
                         </Link>
                         <a id="logout" href="#logout" className="dropdown-item" onClick={(e) => {
                           e.preventDefault();
+                          closeMenus();
                           handleLogout();
                         }}>
                           <FontAwesomeIcon icon={faCircleXmark} className="icon" />
