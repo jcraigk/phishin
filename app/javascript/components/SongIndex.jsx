@@ -83,13 +83,16 @@ const SongIndex = () => {
     <div className="sidebar-content">
       <p className="sidebar-title">Songs</p>
       <p className="sidebar-subtitle">{formatNumber(totalEntries)} total</p>
-      <div className="select">
-        <select id="sort" value={sortOption} onChange={handleSortChange}>
-          <option value="title:asc">Sort by Title (Alphabetical)</option>
-          <option value="title:desc">Sort by Title (Reverse Alphabetical)</option>
-          <option value="tracks_count:desc">Sort by Tracks Count (High to Low)</option>
-          <option value="tracks_count:asc">Sort by Tracks Count (Low to High)</option>
-        </select>
+
+      <div className="sidebar-filters">
+        <div className="select">
+          <select id="sort" value={sortOption} onChange={handleSortChange}>
+            <option value="title:asc">Sort by Title (Alphabetical)</option>
+            <option value="title:desc">Sort by Title (Reverse Alphabetical)</option>
+            <option value="tracks_count:desc">Sort by Tracks Count (High to Low)</option>
+            <option value="tracks_count:asc">Sort by Tracks Count (Low to High)</option>
+          </select>
+        </div>
       </div>
 
       <div className="mt-5 hidden-mobile">

@@ -71,7 +71,7 @@ const Show = ({ trackSlug }) => {
         <Link to={`/map?term=${encodeURIComponent(show.venue.location)}`}>{show.venue.location}</Link>
       </p>
       <div className="mr-1">
-        <FontAwesomeIcon icon={faClock} className="mr-1 icon text-gray" />
+        <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
         {formatDurationShow(show.duration)}
       </div>
 

@@ -11,6 +11,11 @@
   text-decoration: none !important;
   line-height: 1.8rem !important;
 
+  &.a {
+    padding-inline-end: none !important;
+  }
+
+
   &:hover {
     background-color: rgba($blue, 0.3) !important;
   }

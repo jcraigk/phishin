@@ -65,9 +65,7 @@ footer.with-player {
     justify-content: space-between;
     align-items: center;
     max-width: 1200px;
-    padding-top: 0.2rem;
-    padding-left: 0.9rem;
-    padding-right: 0.5rem;
+    padding: 0.2rem 0.5rem 0.3rem 0.9rem;
 
     .left-half {
       flex: 1;
@@ -250,6 +248,9 @@ footer.with-player {
     }
     .track-info {
       font-size: 1.2rem !important;
+    }
+    .top-row {
+      padding-bottom: 0rem !important;
     }
   }
 
