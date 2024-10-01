@@ -54,7 +54,14 @@ class ApiV2::Likes < ApiV2::Base
 
   helpers do
     def likable
-      params[:likable_type].classify.constantize.find_by(id: params[:likable_id])
+      likable_class =
+        case params[:likable_type]
+        when "Show" then Show
+        when "Track" then Track
+        when "Playlist" then Playlist
+        else return nil
+        end
+      likable_class.find_by(id: params[:likable_id])
     end
   end
 end
