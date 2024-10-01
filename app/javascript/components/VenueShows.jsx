@@ -43,13 +43,13 @@ const VenueShows = () => {
   const sidebarContent = (
     <div className="sidebar-content">
       <p className="sidebar-title">{venue.name}</p>
-      <p className="sidebar-subtitle">
+      <p className="sidebar-subtitle hidden-mobile">
         <Link to={`/map?term=${venue.location}`}>
             {venue.location}
         </Link>
       </p>
       <p className="sidebar-subtitle">
-        {formatNumber(venue.shows_count, 'show')} total
+        {formatNumber(venue.shows_count, 'show')}
       </p>
 
       <div className="sidebar-filters">
