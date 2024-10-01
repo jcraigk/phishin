@@ -190,14 +190,14 @@ const MapSearch = () => {
         <title>Map - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-          <div class="map-search-results">
-          <MapView
-            mapboxToken={mapboxToken}
-            coordinates={defaultCoordinates}
-            venues={venues}
-            searchComplete={searchComplete}
-          />
-        </div>
+          <div className="map-search-results">
+            <MapView
+              mapboxToken={mapboxToken}
+              coordinates={defaultCoordinates}
+              venues={venues}
+              searchComplete={searchComplete}
+            />
+          </div>
       </LayoutWrapper>
     </>
   );

@@ -2,10 +2,11 @@ import React, { useRef, useState, useEffect } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 import { formatDate } from "../helpers/utils";
 import { useFeedback } from "./FeedbackContext";
+import LikeButton from "./LikeButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
 
-const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
+const ShowContextMenu = ({ show, adjacentLinks = true }) => {
   const dropdownRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
   const { openAppModal } = useOutletContext();
@@ -74,7 +75,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
   }, [dropdownRef]);
 
   return (
-    <div className={`dropdown context-dropdown is-${isLeft ? "left" : "right"}`} ref={dropdownRef}>
+    <div className="dropdown context-dropdown is-right" ref={dropdownRef}>
       <div className="dropdown-trigger">
         <button className="button" onClick={toggleDropdownVisibility}>
           <FontAwesomeIcon icon={faEllipsis} className="icon" />
@@ -87,6 +88,9 @@ const ShowContextMenu = ({ show, adjacentLinks = true, isLeft = false }) => {
         style={{ display: dropdownVisible ? "block" : "none" }}
       >
         <div className="dropdown-content context-dropdown-content">
+          <div className="dropdown-item display-phone-only">
+            <LikeButton likable={show} type="Show" />
+          </div>
           <a className="dropdown-item" onClick={(e) => copyToClipboard(e, false)}>
             <FontAwesomeIcon icon={faShareFromSquare} className="icon" />
             Share

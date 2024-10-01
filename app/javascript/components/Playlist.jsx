@@ -25,7 +25,7 @@ import Tracks from "./Tracks";
 import LikeButton from "./controls/LikeButton";
 import { formatDateLong, formatDurationShow } from "./helpers/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock, faCircleXmark, faInfoCircle, faCalendar, faFileImport } from "@fortawesome/free-solid-svg-icons";
+import { faClock, faCircleXmark, faInfoCircle, faCalendar, faFileImport, faCompactDisc } from "@fortawesome/free-solid-svg-icons";
 
 const Playlist = () => {
   const playlist = useLoaderData();
@@ -80,15 +80,20 @@ const Playlist = () => {
   const sidebarContent = (
     <div className="sidebar-content">
       <p className="sidebar-title">{playlist.name}</p>
-      <p className="sidebar-info sidebar-extras mb-3">By {playlist.username}</p>
-      <div className="show-duration mr-1">
-        <FontAwesomeIcon icon={faClock} className="mr-1" />
+      <p className="sidebar-info hidden-mobile mb-3">By {playlist.username}</p>
+      <div className="mr-1 hidden-phone">
+        <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
         {formatDurationShow(playlist.duration)}
       </div>
-      <p className="sidebar-info sidebar-extras">{playlist.tracks_count} tracks</p>
+      <p className="sidebar-info hidden-mobile">
+        <FontAwesomeIcon icon={faCompactDisc} className="mr-1 text-gray" />
+        {playlist.tracks_count} tracks
+      </p>
       <hr />
       <div className="sidebar-control-container">
-        <LikeButton likable={playlist} type="Playlist" />
+        <div className="hidden-phone">
+          <LikeButton likable={playlist} type="Playlist" />
+        </div>
 
         <button className="button" onClick={handleSetAsDraft}>
           <FontAwesomeIcon icon={faFileImport} className="mr-1" />
@@ -111,12 +116,23 @@ const Playlist = () => {
             <button className="close-btn" onClick={handleCloseNotification}>
               <FontAwesomeIcon icon={faCircleXmark} />
             </button>
-            <FontAwesomeIcon icon={faInfoCircle} className="mr-1" />
+            <FontAwesomeIcon icon={faInfoCircle} className="mr-1 text-gray" />
             {playlist.description || "This playlist has no description"}
             <p>
-              <FontAwesomeIcon icon={faCalendar} className="mr-1" />
+              <FontAwesomeIcon icon={faCalendar} className="mr-1 text-gray" />
               Last updated: {formatDateLong(playlist.updated_at)}
             </p>
+
+            <div className="display-phone-only">
+              <p>
+                <FontAwesomeIcon icon={faCompactDisc} className="mr-1 text-gray" />
+                Tracks: {playlist.tracks_count}
+              </p>
+              <p>
+                <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
+                Duration: {formatDurationShow(playlist.duration)}
+              </p>
+            </div>
           </div>
         )}
         <Tracks tracks={tracks} viewStyle="playlist" omitSecondary={true} />

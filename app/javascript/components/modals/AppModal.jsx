@@ -20,7 +20,6 @@ const AppModal = ({ isOpen, onRequestClose, modalContent }) => {
         icon={faCircleXmark}
         onClick={onRequestClose}
         className="is-pulled-right close-btn is-size-3"
-        style={{ cursor: "pointer" }}
       />
       {modalContent}
     </Modal>

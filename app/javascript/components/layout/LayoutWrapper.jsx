@@ -2,7 +2,7 @@ import React from "react";
 
 const LayoutWrapper = ({ sidebarContent, children }) => {
   return (
-    <div className="layout-container">
+    <div id="layout-container">
       <aside id="sidebar">
         {sidebarContent}
       </aside>

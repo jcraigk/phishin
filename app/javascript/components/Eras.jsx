@@ -32,7 +32,7 @@ import MobileApps from "./pages/MobileApps";
 import GitHubButton from "./pages/GitHubButton";
 import DiscordButton from "./pages/DiscordButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRss } from "@fortawesome/free-solid-svg-icons";
+import { faRss, faHeadphones, faGuitar } from "@fortawesome/free-solid-svg-icons";
 
 const Eras = () => {
   const eras = useLoaderData();
@@ -44,17 +44,18 @@ const Eras = () => {
   const sidebarContent = (
     <div className="sidebar-content">
       <p className="has-text-weight-bold">LIVE PHISH AUDIO STREAMS</p>
-      <div className="hidden-mobile">
-        <p>{formatNumber(totalShows)} shows</p>
-        <p>{formatNumber(totalHours)} hours of music</p>
-      </div>
-      <div className="visible-mobile">
+      <p className="hidden-phone">
+        <FontAwesomeIcon icon={faGuitar} className="mr-1" />
         {formatNumber(totalShows)} shows
-      </div>
+      </p>
+      <p className="hidden-phone">
+        <FontAwesomeIcon icon={faHeadphones} className="mr-1" />
+        {formatNumber(totalHours)} hours
+      </p>
 
       <MobileApps className="mt-5" />
 
-      <div className="external-links">
+      <div className="hidden-mobile">
         <p className="has-text-weight-bold mb-2 mt-5 project-open-source">This project is open source</p>
         <div>
           <GitHubButton className="mb-2" />

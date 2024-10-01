@@ -26,7 +26,6 @@ $title-gray: #515152;
 @import "./layout.css.scss";
 @import "./likes.css.scss";
 @import "./map.css.scss";
-@import "./mobile.css.scss";
 @import "./modal.css.scss";
 @import "./navbar.css.scss";
 @import "./pagination.css.scss";
@@ -43,6 +42,7 @@ html, body {
   flex-direction: column;
   background-color: $bg-gray;
   font-family: "Open Sans Condensed", sans-serif;
+  overflow-x: hidden;
 }
 
 .root-layout {
@@ -60,8 +60,16 @@ button {
   color: $text-gray !important;
 }
 
-h2.title:not(:first-of-type) {
-  margin-top: 2rem;
+// h2.title:not(:first-of-type) {
+//   margin-top: 2rem;
+// }
+
+a {
+  text-decoration: none !important;
+
+  &:visited, &:focus, &:hover {
+    text-decoration: none !important;
+  }
 }
 
 ::placeholder {
@@ -86,6 +94,10 @@ h2.title:not(:first-of-type) {
   &:hover {
     background-color: $control-gray;
   }
+}
+
+.text-gray {
+  color: $text-gray;
 }
 
 .context-dropdown-content {

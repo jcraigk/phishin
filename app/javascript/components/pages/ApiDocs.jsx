@@ -17,9 +17,9 @@ const ApiDocs = () => {
 
       <h2 className="title">API v2</h2>
       <h3 className="subtitle">Recommended Version</h3>
-      <p>Version 2 of the API was released September 2024 and is the currently recommended version. Follow the link below for interactive documentation in Swagger. You can also browse the <a href="https://github.com/jcraigk/phishin/tree/main/app/api/api_v2" target="_blank">source on GitHub</a>, which uses Grape API and Grape Entities.</p>
+      <p>Version 2 of the API was released September 2024 and is the recommended version. Follow the link below for interactive documentation in Swagger. Browse the <a href="https://github.com/jcraigk/phishin/tree/main/app/api/api_v2" target="_blank">Grape API source</a> on GitHub. Phish.in (this website) uses v2 of the API so you can also look at the <a href="https://github.com/jcraigk/phishin/tree/main/app/javascript/components/" target="_blank">React source</a> on GitHub to see working examples.</p>
 
-      <p>Currently no API key is required to acces the API.</p>
+      <p>No API key is required to access v2 of the API.</p>
 
       <a
         href="https://petstore.swagger.io/?url=https%3A%2F%2Fphish.in/api/v2/swagger_doc"

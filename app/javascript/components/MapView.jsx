@@ -7,7 +7,7 @@ const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = 
   const [map, setMap] = useState(null);
 
   useEffect(() => {
-    if (!coordinates || !mapboxToken) return;
+    if (!coordinates || !mapboxToken || map) return;
 
     mapboxgl.accessToken = mapboxToken;
 
@@ -30,7 +30,7 @@ const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = 
     }
 
     setMap(mapboxMap);
-  }, [coordinates, mapboxToken, controls]);
+  }, [coordinates, mapboxToken, controls, map]);
 
   useEffect(() => {
     if (map && venues) {
@@ -51,7 +51,7 @@ const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = 
 
     const bounds = new mapboxgl.LngLatBounds();
 
-    venues.forEach((venue, index) => {
+    venues.forEach((venue) => {
       let marker;
 
       // If single venue, use custom icon

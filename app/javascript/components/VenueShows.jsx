@@ -65,7 +65,7 @@ const VenueShows = () => {
         </div>
       </div>
 
-      <div className="sidebar-map mt-3 sidebar-extras">
+      <div className="sidebar-map mt-3 hidden-mobile">
         <MapView
           mapboxToken={mapboxToken}
           coordinates={{ lat: venue.latitude, lng: venue.longitude }}

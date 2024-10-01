@@ -1,14 +1,12 @@
 TODO
- * Unsaved Changes indicator on draft playlist
+ * Unsaved Changes indicator on draft playlist / on phone show time/tracks
  * Opengraph (helmet context)
 
 MOBILE
- * dropdowns on mobile might go offscreen
+ * homepage topbar is redundant on phone
+ * clock icon is black
  * on mobile (<400 or whatever), show sidebar-filters underneath (?)
- * interacting with player shows the chevron button
- * Move likes to adjacent context menus on mobile (rightside)
  * Map below other content would be tits
- * Remove the top sidebar if it doesn't have controls
 
  BACKBURNER
   * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)

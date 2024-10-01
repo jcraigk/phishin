@@ -74,7 +74,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
 
   const handleSavePlaylist = async () => {
     if (draftPlaylist.length < 2) {
-      setAlert("Add at least 2 tracks to save the playlist");
+      setAlert("Add at least 2 tracks and try again");
       return;
     }
 

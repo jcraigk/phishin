@@ -64,25 +64,27 @@ const Show = ({ trackSlug }) => {
   const sidebarContent = (
     <div className="sidebar-content">
       <p className="sidebar-title">{formatDateMed(show.date)}</p>
-      <p className="sidebar-info sidebar-extras">
+      <p className="sidebar-info hidden-mobile">
         <Link to={`/venues/${show.venue.slug}`}>{show.venue_name}</Link>
       </p>
-      <p className="sidebar-info sidebar-extras">
+      <p className="sidebar-info hidden-mobile">
         <Link to={`/map?term=${encodeURIComponent(show.venue.location)}`}>{show.venue.location}</Link>
       </p>
-      <div className="show-duration mr-1">
-        <FontAwesomeIcon icon={faClock} className="mr-1" />
+      <div className="mr-1">
+        <FontAwesomeIcon icon={faClock} className="mr-1 icon text-gray" />
         {formatDurationShow(show.duration)}
       </div>
 
       <hr />
 
       <div className="sidebar-control-container">
-        <LikeButton likable={show} type="Show" />
-        <ShowContextMenu show={show} isLeft={true} />
+        <div className="hidden-phone">
+          <LikeButton likable={show} type="Show" />
+        </div>
+        <ShowContextMenu show={show} />
       </div>
 
-      <div className="sidebar-extras">
+      <div className="hidden-mobile">
         <TagBadges tags={show.tags} parentId={show.date} />
         <hr />
         <Link to={`/${show.previous_show_date}`}>
