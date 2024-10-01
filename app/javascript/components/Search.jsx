@@ -55,34 +55,41 @@ const Search = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <label className="label">Search Term</label>
-      <input
-        className="input search-term-form"
-        type="text"
-        value={term}
-        onChange={(e) => setTerm(e.target.value)}
-        placeholder="Enter search term"
-        onKeyDown={handleKeyDown}
-        autoCapitalize="off"
-      />
 
-      <label className="label scope-label">Scope</label>
-      <div className="select">
-        <select value={scope} onChange={(e) => setScope(e.target.value)}>
-          <option value="all">All</option>
-          <option value="playlists">Playlists</option>
-          <option value="shows">Shows</option>
-          <option value="songs">Songs</option>
-          <option value="tags">Tags</option>
-          <option value="tracks">Tracks</option>
-          <option value="venues">Venues</option>
-        </select>
+      <div className="display-phone-only">
+        <p className="has-text-weight-bold is-size-4">Search Results</p>
       </div>
 
-      <button className="button ml-3" onClick={handleSearch}>
-        <FontAwesomeIcon icon={faSearch} className="mr-1" />
-        Search
-      </button>
+      <div className="hidden-phone">
+        <label className="label">Search Term</label>
+        <input
+          className="input search-term-form"
+          type="text"
+          value={term}
+          onChange={(e) => setTerm(e.target.value)}
+          placeholder="Enter search term"
+          onKeyDown={handleKeyDown}
+          autoCapitalize="off"
+        />
+
+        <label className="label scope-label">Scope</label>
+        <div className="select">
+          <select value={scope} onChange={(e) => setScope(e.target.value)}>
+            <option value="all">All</option>
+            <option value="playlists">Playlists</option>
+            <option value="shows">Shows</option>
+            <option value="songs">Songs</option>
+            <option value="tags">Tags</option>
+            <option value="tracks">Tracks</option>
+            <option value="venues">Venues</option>
+          </select>
+        </div>
+
+        <button className="button ml-3" onClick={handleSearch}>
+          <FontAwesomeIcon icon={faSearch} className="mr-1" />
+          Search
+        </button>
+      </div>
     </div>
   );
 
