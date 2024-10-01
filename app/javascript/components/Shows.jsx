@@ -44,7 +44,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
             >
               <div className="main-row">
                 {numbering && <span className="leftside-numbering">#{index + 1}</span>}
-                <span className="leftside-primary-medium">
+                <span className="leftside-primary">
                   {formatDate(show.date)}
                 </span>
                 <span className="leftside-secondary">{show.venue.name}</span>
@@ -57,7 +57,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
                   <span className="rightside-secondary">
                     <LikeButton likable={show} type="Show" />
                   </span>
-                  <span className="rightside-menu hidden-mobile">
+                  <span className="rightside-menu">
                     <ShowContextMenu show={show} adjacentLinks={false} />
                   </span>
                 </div>

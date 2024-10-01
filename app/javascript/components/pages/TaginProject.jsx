@@ -16,7 +16,7 @@ const TaginProject = () => {
       <p>
         These have largely been imported from Phish.net projects such as Jam Charts and Teases. Many of these tags need verification and further expansion. Here is the full list:
       </p>
-      <ul className="list-disc pl-5">
+      <ul>
         <li>A Cappella</li>
         <li>Alt Lyric</li>
         <li>Alt Rig</li>
@@ -83,37 +83,37 @@ const TaginProject = () => {
       </p>
 
       <h3>Audience</h3>
-      <ul className="list-disc pl-5">
+      <ul>
         <li>Includes significant collective crowd response such as "woo," "polo," etc.</li>
         <li>Excludes random individuals caught on audience mics and Secret Language Signal responses, which should be tagged as "Signal."</li>
       </ul>
 
       <h3>Famous</h3>
-      <ul className="list-disc pl-5">
+      <ul>
         <li>Well-known (named) performances of songs like "Prague Ghost," "Tahoe Tweezer," etc.</li>
       </ul>
 
       <h3>Guest</h3>
-      <ul className="list-disc pl-5">
+      <ul>
         <li>Any time another artist or group joins the band on stage.</li>
         <li>Past guests have been imported from the Phish.net Guest Chart.</li>
       </ul>
 
       <h3>Narration</h3>
-      <ul className="list-disc pl-5">
+      <ul>
         <li>Any spoken word related to storytelling, such as Gamehendge narration or "Harpua."</li>
         <li>Include a brief summary in the Notes section and a full transcript in the Transcript field.</li>
       </ul>
 
       <h3>Signal</h3>
-      <ul className="list-disc pl-5">
+      <ul>
         <li>Any time one of the band members invokes a Secret Language signal.</li>
         <li>Past signals have been imported from Phish.net setlist notes but need to be split if they are combined.</li>
         <li>Apply Starts At timestamps to each Signal instance.</li>
       </ul>
 
       <h3>Tease</h3>
-      <ul className="list-disc pl-5">
+      <ul>
         <li>The band members frequently reference other musical works during improvisation.</li>
         <li>Past teases have been imported from the Phish.net Tease Chart and setlist API, though they require verification and correction.</li>
         <li>Each tease should be input separately with specific timestamps and detailed Notes, especially if the tease is not listed on Phish.net.</li>

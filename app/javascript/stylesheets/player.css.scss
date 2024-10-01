@@ -1,6 +1,6 @@
 main.with-player {
   margin-bottom: 100px;
-  transition: margin-bottom 0.5s ease;
+  // transition: margin-bottom 0.5s ease;
 }
 
 footer.with-player {
@@ -88,11 +88,16 @@ footer.with-player {
     font-weight: bold;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    a {
+      color: $title-gray;
+    }
   }
 
   .track-info {
-    font-size: 1rem;
-    line-height: 1.3rem;
+    font-size: 1.2rem;
+    position: relative;
+    top: -0.2rem;
   }
 
   .controls {
@@ -145,7 +150,6 @@ footer.with-player {
     .play-pause-btn {
       width: 3.5rem;
       height: 3.5rem;
-      font-size: 2rem;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -154,6 +158,10 @@ footer.with-player {
 
       &:hover {
         color: white !important;
+      }
+
+      svg {
+        font-size: 2rem;
       }
     }
   }
@@ -168,7 +176,7 @@ footer.with-player {
     max-width: 1200px;
     height: 70px;
     margin-bottom: 0.5rem;
-    margin-top: 0.5rem;
+    margin-top: 0.1rem;
 
     .elapsed {
       margin-right: 0.5rem;
@@ -218,9 +226,15 @@ footer.with-player {
     &.collapsed {
       bottom: -80px !important;
     }
+    .top-row {
+      margin-top: 0.3rem;
+    }
   }
 
   @media (max-width: 1023px) {
+    .chevron-button {
+      display: none !important;
+    }
     .scrub-btn {
       display: none !important;
     }
@@ -233,6 +247,9 @@ footer.with-player {
     }
     main.with-player {
       margin-bottom: 110px;
+    }
+    .track-info {
+      font-size: 1.2rem !important;
     }
   }
 
@@ -248,6 +265,14 @@ footer.with-player {
     }
     .right-half {
       margin-right: 0px !important;
+    }
+    .play-pause-btn {
+      width: 2.7rem !important;
+      height: 2.7rem !important;
+
+      svg {
+        font-size: 1.4rem !important;
+      }
     }
   }
 }

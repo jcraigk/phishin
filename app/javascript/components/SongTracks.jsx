@@ -83,7 +83,7 @@ const SongTracks = () => {
   const sidebarContent = (
     <div className="sidebar-content">
       <p className="sidebar-title">{songTitle}</p>
-      <p className="sidebar-subtitle sidebar-extras">
+      <p className="sidebar-subtitle hidden-mobile">
         {originalInfo}<br />
         Total Tracks: {totalEntries}
       </p>

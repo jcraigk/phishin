@@ -61,6 +61,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
       if (typeof window !== "undefined") {
         document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
       }
+      console.log(activeTrack);
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
           title: activeTrack.title,
@@ -112,7 +113,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
 
       return () => clearTimeout(fadeOutTimer);
     }
-  }, [activeTrack, location.search]);
+  }, [activeTrack]);
 
   useEffect(() => {
     if (isFadeOutComplete && isImageLoaded) {
@@ -213,7 +214,11 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
       </div>
       <div className="top-row">
         <div className={`left-half`}>
-          <div className="track-title">{activeTrack?.title}</div>
+          <div className="track-title">
+            <Link to={`/${activeTrack?.show_date}/${activeTrack?.slug}`}>
+              {activeTrack?.title}
+            </Link>
+          </div>
           <div className="track-info">
             {customPlaylist ? (
               <Link to={`/play/${customPlaylist.slug}`}>
@@ -224,15 +229,17 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
                 <Link to={`/${activeTrack?.show_date}/${activeTrack?.slug}`}>
                   {formatDate(activeTrack?.show_date)}
                 </Link>
-                {" "}&bull;{" "}
-                <Link to={`/venues/${activeTrack?.venue_slug}`}>
-                  {activeTrack?.venue_name}
-                </Link>
-                <span className="venue-location">
+                <span className="hidden-phone">
                   {" "}&bull;{" "}
-                  <Link to={`/map?term=${activeTrack?.venue_location}`}>
-                    {activeTrack?.venue_location}
+                  <Link to={`/venues/${activeTrack?.venue_slug}`}>
+                    {activeTrack?.venue_name}
                   </Link>
+                  <span className="venue-location">
+                    {" "}&bull;{" "}
+                    <Link to={`/map?term=${activeTrack?.venue_location}`}>
+                      {activeTrack?.venue_location}
+                    </Link>
+                  </span>
                 </span>
               </>
             )}

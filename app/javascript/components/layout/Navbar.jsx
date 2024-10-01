@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import logo from "../../images/logo-350.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendarAlt, faMusic, faMapMarkerAlt, faStar, faCalendarDay, faMap, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark, faRightToBracket, faGear, faList, faListCheck, faListOl, faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
+import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendarAlt, faMusic, faMapMarkerAlt, faStar, faCalendarDay, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark, faRightToBracket, faGear, faList, faListCheck, faListOl, faCircleQuestion, faLandmark } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = ({ user, handleLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,11 +40,11 @@ const Navbar = ({ user, handleLogout }) => {
 
   const browseLinks = [
     { path: "/", label: "Years", icon: faCalendarAlt },
-    { path: "/venues", label: "Venues", icon: faMapMarkerAlt },
+    { path: "/venues", label: "Venues", icon: faLandmark },
     { path: "/songs", label: "Songs", icon: faMusic },
     { path: "/tags", label: "Tags", icon: faTags },
     { path: "/today", label: "Today", icon: faCalendarDay },
-    { path: "/map", label: "Map", icon: faMap },
+    { path: "/map", label: "Map", icon: faMapMarkerAlt },
     { path: "/playlists", label: "Playlists", icon: faList },
   ];
 
@@ -68,7 +68,7 @@ const Navbar = ({ user, handleLogout }) => {
 
   return (
     <>
-      <div className="navbar-background">
+      <div id="navbar-background">
         <nav className="navbar" role="navigation">
           <div className="navbar-brand">
             <Link to="/" className="navbar-item">
