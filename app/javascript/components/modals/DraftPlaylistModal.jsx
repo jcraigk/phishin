@@ -5,7 +5,7 @@ import { useFeedback } from "../controls/FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark, faCircleCheck, faCloudArrowUp, faTrash } from "@fortawesome/free-solid-svg-icons";
 
-const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPlaylist, draftPlaylistMeta, setDraftPlaylistMeta, resetDraftPlaylist }) => {
+const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, draftPlaylistMeta, setDraftPlaylistMeta, resetDraftPlaylist, setIsDraftPlaylistSaved }) => {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [description, setDescription] = useState("");
@@ -29,6 +29,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
       name: updatedName,
     }));
     autoGenerateSlug(updatedName);
+    setIsDraftPlaylistSaved(false);
   };
 
   const handleSlugChange = (e) => {
@@ -38,6 +39,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
       ...prev,
       slug: updatedSlug,
     }));
+    setIsDraftPlaylistSaved(false);
   };
 
   const handleDescriptionChange = (e) => {
@@ -49,6 +51,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
     }));
     setCharCount(updatedDescription.length);
     setIsDescriptionModified(true);
+    setIsDraftPlaylistSaved(false);
   };
 
   const handlePublishedChange = (e) => {
@@ -101,6 +104,7 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, setDraftPla
         id: updatedPlaylist.id
       }));
       setNotice("Playlist saved successfully");
+      setIsDraftPlaylistSaved(true);
     } catch (error) {
       if (error.status === 422) {
         const errorData = await error.json();

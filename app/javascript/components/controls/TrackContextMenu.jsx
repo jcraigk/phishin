@@ -11,7 +11,7 @@ const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
   const { setNotice, setAlert } = useFeedback();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const { user, draftPlaylist, setDraftPlaylist } = useOutletContext();
+  const { user, draftPlaylist, setDraftPlaylist, setIsDraftPlaylistSaved } = useOutletContext();
 
   const hideDropdown = () => {
     setDropdownVisible(false);
@@ -31,7 +31,7 @@ const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
   };
 
   const handleAddToPlaylist = (e) => {
-    if (user !== "anonymous") {
+    if (user === "anonymous") {
       setAlert("You must login to edit playlists");
       return;
     }
@@ -39,6 +39,7 @@ const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
     setDraftPlaylist([...draftPlaylist, track]);
     setNotice("Track added to draft playlist");
     hideDropdown();
+    setIsDraftPlaylistSaved(false);
   };
 
   const handleRemoveFromPlaylist = (e) => {
@@ -48,6 +49,7 @@ const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
     setDraftPlaylist(updatedPlaylist);
     setNotice("Track removed from draft playlist");
     hideDropdown();
+    setIsDraftPlaylistSaved(false);
   };
 
   const handleDownload = (e, trackId) => {

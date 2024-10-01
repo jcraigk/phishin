@@ -91,7 +91,7 @@ const Navbar = ({ user, handleLogout }) => {
       <div id="navbar-background">
         <nav className="navbar" role="navigation">
           <div className="navbar-brand">
-            <Link to="/" className="navbar-item">
+            <Link to="/" className="navbar-item" onClick={closeMenus}>
               <img src={logo} alt="Site logo" />
             </Link>
 

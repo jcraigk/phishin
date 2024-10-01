@@ -60,14 +60,10 @@ button {
   color: $text-gray !important;
 }
 
-// h2.title:not(:first-of-type) {
-//   margin-top: 2rem;
-// }
-
 a {
-  text-decoration: none !important;
+  text-decoration: none;
 
-  &:visited, &:focus, &:hover {
+  &:visited, &:focus {
     text-decoration: none !important;
   }
 }

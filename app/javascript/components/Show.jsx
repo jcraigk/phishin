@@ -70,7 +70,7 @@ const Show = ({ trackSlug }) => {
       <p className="sidebar-info hidden-mobile">
         <Link to={`/map?term=${encodeURIComponent(show.venue.location)}`}>{show.venue.location}</Link>
       </p>
-      <div className="mr-1">
+      <div className="mr-1 show-duration">
         <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
         {formatDurationShow(show.duration)}
       </div>
@@ -96,8 +96,7 @@ const Show = ({ trackSlug }) => {
           <FontAwesomeIcon icon={faCircleChevronRight} className="ml-1" />
         </Link>
 
-        <div className="sidebar-map mt-3">
-        <div className="sidebar-map">
+        <div className="sidebar-map mt-4">
           <MapView
             mapboxToken={mapboxToken}
             coordinates={{ lat: show.venue.latitude, lng: show.venue.longitude }}
@@ -106,7 +105,6 @@ const Show = ({ trackSlug }) => {
             controls={false}
           />
         </div>
-      </div>
       </div>
     </div>
   );
