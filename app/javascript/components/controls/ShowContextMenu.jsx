@@ -123,11 +123,19 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
             <>
               <hr className="dropdown-divider" />
 
-              <Link className="dropdown-item" to={`/${show.previous_show_date}`}>
+              <Link
+                className="dropdown-item"
+                to={`/${show.previous_show_date}`}
+                onClick={hideDropdown}
+              >
                 <FontAwesomeIcon icon={faCircleChevronLeft} className="icon" />
                 Previous show
               </Link>
-              <Link className="dropdown-item" to={`/${show.next_show_date}`}>
+              <Link
+                className="dropdown-item"
+                to={`/${show.next_show_date}`}
+                onClick={hideDropdown}
+              >
                 <FontAwesomeIcon icon={faCircleChevronRight} className="icon" />
                 Next show
               </Link>

@@ -1,24 +1,44 @@
-import React, { useState } from "react";
-import { Link, useNavigate, useOutletContext } from "react-router-dom";
+import React, { useRef, useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../images/logo-350.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendarAlt, faMusic, faMapMarkerAlt, faStar, faCalendarDay, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark, faRightToBracket, faGear, faList, faListCheck, faListOl, faCircleQuestion, faLandmark } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = ({ user, handleLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isInfoDropdownOpen, setIsInfoDropdownOpen] = useState(false);
+  const [isContentDropdownOpen, setIsContentDropdownOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+  const infoDropdownRef = useRef(null);
+  const contentDropdownRef = useRef(null);
+  const userDropdownRef = useRef(null);
 
-  // Fix for bulma dropdowns not closing from navbar
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (infoDropdownRef.current && !infoDropdownRef.current.contains(event.target)) {
+        setIsInfoDropdownOpen(false);
+      }
+      if (contentDropdownRef.current && !contentDropdownRef.current.contains(event.target)) {
+        setIsContentDropdownOpen(false);
+      }
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+        setIsUserDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [infoDropdownRef, contentDropdownRef, userDropdownRef]);
+
   const closeMenus = () => {
     setIsMenuOpen(false);
-    const dropdowns = document.querySelectorAll('.dropdown-menu');
-    dropdowns.forEach((dropdown) => {
-      dropdown.style.display = 'none';
-      setTimeout(() => {
-        dropdown.style.display = '';
-      }, 200);
-    });
+    setIsInfoDropdownOpen(false);
+    setIsContentDropdownOpen(false);
+    setIsUserDropdownOpen(false);
   };
 
   const handleSearchSubmit = (e) => {
@@ -91,9 +111,9 @@ const Navbar = ({ user, handleLogout }) => {
           <div id="navbar" className={`navbar-menu ${isMenuOpen ? "is-active" : ""}`}>
             <div className="navbar-start">
 
-              <div className="dropdown is-hoverable navbar-item">
+              <div className={`dropdown navbar-item ${isInfoDropdownOpen ? "is-active" : ""}`} ref={infoDropdownRef}>
                 <div className="dropdown-trigger">
-                  <button className="button">
+                  <button className="button" onClick={() => setIsInfoDropdownOpen(!isInfoDropdownOpen)}>
                     <span className="navbar-dropdown-label">INFO</span>
                     <span className="icon">
                       <FontAwesomeIcon icon={faAngleDown} />
@@ -107,7 +127,7 @@ const Navbar = ({ user, handleLogout }) => {
                         key={item.path}
                         to={item.path}
                         className="dropdown-item"
-                        onClick={closeMenus}
+                        onClick={() => closeMenus()}
                       >
                         <FontAwesomeIcon icon={item.icon} className="icon" />
                         {item.label}
@@ -117,9 +137,9 @@ const Navbar = ({ user, handleLogout }) => {
                 </div>
               </div>
 
-              <div className="dropdown is-hoverable navbar-item">
+              <div className={`dropdown navbar-item ${isContentDropdownOpen ? "is-active" : ""}`} ref={contentDropdownRef}>
                 <div className="dropdown-trigger">
-                  <button className="button">
+                  <button className="button" onClick={() => setIsContentDropdownOpen(!isContentDropdownOpen)}>
                     <span className="navbar-dropdown-label">CONTENT</span>
                     <span className="icon">
                       <FontAwesomeIcon icon={faAngleDown} />
@@ -134,7 +154,7 @@ const Navbar = ({ user, handleLogout }) => {
                           key={item.path}
                           to={item.path}
                           className="dropdown-item"
-                          onClick={closeMenus}
+                          onClick={() => closeMenus()}
                         >
                           <FontAwesomeIcon icon={item.icon} className="icon" />
                           {item.label}
@@ -206,9 +226,9 @@ const Navbar = ({ user, handleLogout }) => {
                 )}
 
                 {(user !== null && user !== "anonymous") && (
-                  <div className="dropdown is-hoverable navbar-item">
-                    <div className="dropdown-trigger user-dropdown">
-                      <button className="button">
+                  <div className={`dropdown navbar-item ${isUserDropdownOpen ? "is-active" : ""}`} ref={userDropdownRef}>
+                    <div className="dropdown-trigger">
+                      <button className="button" onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}>
                         <FontAwesomeIcon icon={faUser} className="icon" />
                         <span>{user.username}</span>
                       </button>
@@ -238,7 +258,6 @@ const Navbar = ({ user, handleLogout }) => {
                           <FontAwesomeIcon icon={faCircleXmark} className="icon" />
                           Logout
                         </a>
-
                       </div>
                     </div>
                   </div>

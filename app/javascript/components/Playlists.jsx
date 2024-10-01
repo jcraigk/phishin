@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { formatNumber, formatDurationShow, formatDateLong } from "./helpers/utils";
 import LikeButton from "./controls/LikeButton";
 import HighlightedText from "./controls/HighlightedText";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faClock, faCalendar, faInfoCircle, faCompactDisc } from "@fortawesome/free-solid-svg-icons";
 
 const Playlists = ({ playlists, highlight }) => {
   const navigate = useNavigate();
@@ -47,15 +49,28 @@ const Playlists = ({ playlists, highlight }) => {
 
           <div className="addendum">
             <div className="description">
-            {playlist.description ? (
-              <HighlightedText
-                text={playlist.description}
-                highlight={highlight}
-              />
-            ) : "(No description)"}
-            </div>
+              <FontAwesomeIcon icon={faInfoCircle} className="mr-1 text-gray" />
+              {playlist.description ? (
+                <HighlightedText
+                  text={playlist.description}
+                  highlight={highlight}
+                />
+              ) : "(No description)"}
+              </div>
             <div className="last-updated">
+              <FontAwesomeIcon icon={faCalendar} className="mr-1 text-gray" />
               Last Updated: {formatDateLong(new Date(playlist.updated_at))}
+            </div>
+
+            <div className="display-phone-only">
+              <p>
+                <FontAwesomeIcon icon={faCompactDisc} className="mr-1 text-gray" />
+                Tracks: {playlist.tracks_count}
+              </p>
+              <p className="mb-2">
+                <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
+                Duration: {formatDurationShow(playlist.duration)}
+              </p>
             </div>
           </div>
         </li>

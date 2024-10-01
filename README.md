@@ -2,11 +2,6 @@ TODO
  * Unsaved Changes indicator on draft playlist / on phone show time/tracks
  * Opengraph (helmet context)
 
-MOBILE
- * homepage topbar is redundant on phone
- * clock icon is black
- * on mobile (<400 or whatever), show sidebar-filters underneath (?)
- * Map below other content would be tits
 
  BACKBURNER
   * Re-hydrate pages that have tracks when doing SSR on logged-in pages (to highlight likes)
