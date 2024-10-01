@@ -5,6 +5,12 @@
   height: 100%;
 }
 
+.sidebar-content {
+  .map-container {
+    box-shadow: none !important;
+  }
+}
+
 .show-badge {
   font-family: 'Open Sans Condensed', sans-serif;
   font-size: 1.2rem;

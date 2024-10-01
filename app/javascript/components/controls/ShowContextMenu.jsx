@@ -109,12 +109,21 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
             Taper Notes
           </a>
 
-          <Link className="dropdown-item" to={`/venues/${show.venue.slug}`}>
+          <Link
+            className="dropdown-item"
+            to={`/venues/${show.venue.slug}`}
+            onClick={(e) => e.stopPropagation()}
+          >
             <FontAwesomeIcon icon={faLandmark} className="icon" />
             {show.venue_name}
           </Link>
 
-          <Link className="dropdown-item" to={`/map?term=${show.venue.location}`}>
+          <Link
+            className="dropdown-item"
+            to={`/map?term=${show.venue.location}`
+            }
+            onClick={(e) => e.stopPropagation()}
+          >
             <FontAwesomeIcon icon={faMapMarkerAlt} className="icon" />
             {show.venue.location}
           </Link>
@@ -127,7 +136,10 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
               <Link
                 className="dropdown-item"
                 to={`/${show.previous_show_date}`}
-                onClick={hideDropdown}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  hideDropdown();
+                }}
               >
                 <FontAwesomeIcon icon={faCircleChevronLeft} className="icon" />
                 Previous show
@@ -135,7 +147,10 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
               <Link
                 className="dropdown-item"
                 to={`/${show.next_show_date}`}
-                onClick={hideDropdown}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  hideDropdown();
+                }}
               >
                 <FontAwesomeIcon icon={faCircleChevronRight} className="icon" />
                 Next show

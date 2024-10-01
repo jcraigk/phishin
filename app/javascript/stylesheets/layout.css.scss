@@ -181,6 +181,9 @@ main {
 }
 
 @media (max-width: 420px) {
+  .list-item {
+    min-height: 2rem;
+  }
   .display-phone-only {
     display: block !important;
   }

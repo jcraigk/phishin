@@ -143,7 +143,7 @@ class MetaTagService < BaseService
   end
 
   def year_range_data
-    start_year, end_year = segments[0].split('-').map(&:to_i)
+    start_year, end_year = segments[0].split("-").map(&:to_i)
     shows = Show.where("EXTRACT(YEAR FROM date) BETWEEN ? AND ?", start_year, end_year)
     return { title: "404 - Phish.in", og: {}, status: :not_found } if shows.empty?
 

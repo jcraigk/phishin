@@ -106,13 +106,6 @@ const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
               Share
             </a>
 
-            {/* {activeTrack?.id === track.id && (
-              <a className="dropdown-item" onClick={(e) => copyToClipboard(e)}>
-                <FontAwesomeIcon icon={faShareFromSquare} className="icon" />
-                Share with Timestamp
-              </a>
-            )} */}
-
             <a
               className="dropdown-item"
               onClick={(e) => handleDownload(e, track.id)}
@@ -129,6 +122,7 @@ const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
                   className="dropdown-item"
                   to={`/songs/${song.slug}`}
                   key={`${track.id}-${song.id}-link`}
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <FontAwesomeIcon icon={faMusic} className="icon" />
                   Song: {song.title}
@@ -139,6 +133,7 @@ const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
                     className="dropdown-item"
                     to={`/${song.previous_performance_slug}`}
                     key={`${track.id}-${song.id}-previous-performance`}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <FontAwesomeIcon icon={faCircleChevronLeft} className="icon" />
                     Previous Performance (gap: {song.previous_performance_gap})
@@ -150,6 +145,7 @@ const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
                     className="dropdown-item"
                     to={`/${song.next_performance_slug}`}
                     key={`${track.id}-${song.id}-next-performance`}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <FontAwesomeIcon icon={faCircleChevronRight} className="icon" />
                     Next Performance (gap: {song.next_performance_gap})

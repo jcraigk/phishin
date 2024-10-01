@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../images/logo-350.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendarAlt, faMusic, faMapMarkerAlt, faStar, faCalendarDay, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark, faRightToBracket, faGear, faList, faListCheck, faListOl, faCircleQuestion, faLandmark } from "@fortawesome/free-solid-svg-icons";
+import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendar, faMicrophone, faMapMarkerAlt, faAward, faCalendarDay, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark, faRightToBracket, faGear, faClipboardList, faListCheck, faListOl, faDiceFive, faLandmark } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = ({ user, handleLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -59,18 +59,18 @@ const Navbar = ({ user, handleLogout }) => {
   ];
 
   const browseLinks = [
-    { path: "/", label: "Years", icon: faCalendarAlt },
-    { path: "/venues", label: "Venues", icon: faLandmark },
-    { path: "/songs", label: "Songs", icon: faMusic },
-    { path: "/tags", label: "Tags", icon: faTags },
+    { path: "/", label: "Years", icon: faCalendar },
     { path: "/today", label: "Today", icon: faCalendarDay },
+    { path: "/venues", label: "Venues", icon: faLandmark },
+    { path: "/songs", label: "Songs", icon: faMicrophone },
+    { path: "/tags", label: "Tags", icon: faTags },
     { path: "/map", label: "Map", icon: faMapMarkerAlt },
-    { path: "/playlists", label: "Playlists", icon: faList },
+    { path: "/playlists", label: "Playlists", icon: faClipboardList },
   ];
 
   const topLinks = [
-    { path: "/top-shows", label: "Top 46 Shows", icon: faStar },
-    { path: "/top-tracks", label: "Top 46 Tracks", icon: faStar },
+    { path: "/top-shows", label: "Top 46 Shows", icon: faAward },
+    { path: "/top-tracks", label: "Top 46 Tracks", icon: faAward },
   ];
 
   const userLinks = [
@@ -178,8 +178,8 @@ const Navbar = ({ user, handleLogout }) => {
                         }
                       }}
                     >
-                      <FontAwesomeIcon icon={faCircleQuestion} className="icon" />
-                      Random Show...
+                      <FontAwesomeIcon icon={faDiceFive} className="icon" />
+                      Random Show
                     </a>
                   </div>
                 </div>

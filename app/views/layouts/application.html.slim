@@ -1,7 +1,6 @@
 doctype html
 html data-theme="light"
   head
-    / Title is overridden by Helmet in React components
     title = @meta[:title] || App.app_name
     link rel="icon" href="/favicon.ico"
     link rel="canonical" href="#{request.base_url}#{request.path}"
@@ -12,5 +11,5 @@ html data-theme="light"
 
   = render "analytics/google"
   body
-    #root = react_component("App", props: @props)
+    #root = react_component("App", props: @react_props)
 

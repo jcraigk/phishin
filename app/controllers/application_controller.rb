@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   def application
     @meta = MetaTagService.call(request.path)
-    @props = {
+    @react_props = {
       # OAuth login
       jwt: session[:jwt],
       username: session[:username],

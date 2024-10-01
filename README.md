@@ -1,26 +1,3 @@
-TODO
- * stop prop in context menus - go to map, it auto navigate to show after that
- * Opengraph (helmet context)
-
- BACKBURNER
-  * Re-hydrate pages that contain likables when doing SSR and logged in
-  * Caching on SSR (Rails.cache.fetch in layouts/application) (https://github.com/shakacode/react_on_rails/wiki)
-  * Add CSRF to POSTs on API ?
-  * Bullet N+1 against API
-  * fade excerpts in/out - tried, failed
-
-AFTER DEPLOY
- * Create a published playlist in prod so index page isn't empty. include some excerpts too (so release first, then create the playlist)
- * Delete playlist_bookmarks
- * Remove songs.lyrical_excerpt
- * Regenerate waveforms at 1100x70
- * Disable email account creation - allow oauth login through api?
-
-
-TEST URLS
-https://jcktest.ngrok.io/1990-06-16/you-enjoy-myself
-
-
 [![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)
 
 ![Phish.in Logo](https://i.imgur.com/Zmj586L.jpg)

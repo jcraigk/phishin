@@ -53,6 +53,12 @@
     margin-bottom: 1.5rem;
     margin-top: 3rem !important;
     color: $title-gray;
+
+    &::before {
+      content: "🍩";
+      margin-right: 0.4rem;
+      filter: grayscale(100%);
+    }
   }
 
   h3 + h3,

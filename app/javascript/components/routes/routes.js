@@ -2,7 +2,7 @@ import React from "react";
 
 // Content pages with sidebar
 import DraftPlaylist from "../DraftPlaylist";
-import DynamicRoute, { dynamicLoader } from "./DynamicRoute";
+import DynamicRoute, { dynamicLoader } from "../routes/DynamicRoute";
 import Eras, { erasLoader } from '../Eras';
 import Layout from "../layout/Layout";
 import MapSearch from "../MapSearch";
