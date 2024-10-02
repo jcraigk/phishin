@@ -194,7 +194,7 @@ class ApiV2::Playlists < ApiV2::Base
 
     def apply_filter(playlists)
       if !params[:filter].in?(%w[mine liked])
-        # playlists = playlists.published # TODO: re-enable when published flag is added
+        playlists = playlists.published
       elsif current_user && params[:filter] == "liked"
         liked_playlist_ids = current_user.likes.where(likable_type: "Playlist").pluck(:likable_id)
         playlists = playlists.where(id: liked_playlist_ids)

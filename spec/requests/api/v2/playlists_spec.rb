@@ -31,7 +31,7 @@ RSpec.describe "API v2 Playlists" do
         json = JSON.parse(response.body, symbolize_names: true)
 
         expect(json[:playlists]).to be_an(Array)
-        expect(json[:playlists].size).to eq(4)
+        expect(json[:playlists].size).to eq(3)
       end
     end
 
