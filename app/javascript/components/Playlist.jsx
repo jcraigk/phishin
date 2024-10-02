@@ -85,7 +85,7 @@ const Playlist = () => {
         <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
         {formatDurationShow(playlist.duration)}
       </div>
-      <p className="sidebar-info hidden-mobile">
+      <p className="hidden-mobile">
         <FontAwesomeIcon icon={faCompactDisc} className="mr-1 text-gray" />
         {playlist.tracks_count} tracks
       </p>
