@@ -270,6 +270,8 @@ footer.with-player {
     .play-pause-btn {
       width: 2.7rem !important;
       height: 2.7rem !important;
+      position: relative;
+      top: 4px;
 
       svg {
         font-size: 1.4rem !important;
