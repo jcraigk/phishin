@@ -47,13 +47,23 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
   // Media session hooks
   useEffect(() => {
     if ('mediaSession' in navigator) {
-      navigator.mediaSession.setActionHandler('previoustrack', skipToPreviousTrack);
-      navigator.mediaSession.setActionHandler('nexttrack', skipToNextTrack);
+      const handleNextTrack = () => {
+        if (activeTrack) skipToNextTrack();
+      };
+
+      const handlePreviousTrack = () => {
+        if (activeTrack) skipToPreviousTrack();
+      };
+
+      navigator.mediaSession.setActionHandler('previoustrack', handlePreviousTrack);
+      navigator.mediaSession.setActionHandler('nexttrack', handleNextTrack);
       navigator.mediaSession.setActionHandler('play', togglePlayPause);
       navigator.mediaSession.setActionHandler('pause', togglePlayPause);
       navigator.mediaSession.setActionHandler('stop', togglePlayPause);
+      navigator.mediaSession.setActionHandler('seekbackward', scrubBackward);
+      navigator.mediaSession.setActionHandler('seekforward', scrubForward);
     }
-  }, []);
+  }, [activeTrack]);
 
   // Hande activeTrack change
   useEffect(() => {
@@ -61,7 +71,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
       if (typeof window !== "undefined") {
         document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
       }
-      console.log(activeTrack);
+
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
           title: activeTrack.title,
@@ -102,7 +112,9 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
         }
 
         setEndTime(endTime);
-        audioRef.current.play().then(() => setIsFirstLoad(false)).catch((error) => {
+        audioRef.current.play().then(() => {
+          () => setIsFirstLoad(false);
+        }).catch((error) => {
           if (error.name === "NotAllowedError") {
             setNotice("Press Play to listen");
           }
@@ -247,7 +259,10 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
         </div>
         <div className="right-half">
           <div className="controls">
-            <button onClick={skipToPreviousTrack}>
+            <button
+              className="skip-btn"
+              onClick={skipToPreviousTrack}
+            >
               <FontAwesomeIcon icon={faStepBackward} />
             </button>
             <button
@@ -270,7 +285,10 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
               <FontAwesomeIcon icon={faRotateRight} />
               <span>10</span>
             </button>
-            <button onClick={skipToNextTrack}>
+            <button
+              className="skip-btn"
+              onClick={skipToNextTrack}
+            >
               <FontAwesomeIcon icon={faStepForward} />
             </button>
           </div>

@@ -115,6 +115,7 @@ footer.with-player {
       }
 
       &:focus {
+        color: $text-gray !important;
         outline: none;
       }
 
@@ -123,6 +124,10 @@ footer.with-player {
         left: 3px;
         font-size: 1.8rem;
       }
+    }
+
+    .skip-btn:hover {
+      color: $text-gray !important;
     }
 
     .scrub-btn {
