@@ -104,7 +104,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
         setEndTime(endTime);
         audioRef.current.play().then(() => setIsFirstLoad(false)).catch((error) => {
           if (error.name === "NotAllowedError") {
-            setNotice("Tap Play listen");
+            setNotice("Press Play to listen");
           }
         });
       };

@@ -28,9 +28,9 @@ import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Songs from "./Songs";
 import Pagination from "./controls/Pagination";
+import { paginationHelper } from "./helpers/pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { paginationHelper } from "./helpers/pagination";
 
 const SongIndex = () => {
   const { songs, totalPages, totalEntries, page, sortOption, perPage } = useLoaderData();

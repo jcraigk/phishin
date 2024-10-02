@@ -1,7 +1,7 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import PageWrapper from "./PageWrapper";
 import DiscordButton from "./DiscordButton";
-import { Link } from "react-router-dom";
 
 const TaginProject = () => {
   return (

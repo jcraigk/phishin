@@ -30,9 +30,9 @@ import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Venues from "./Venues";
 import Pagination from "./controls/Pagination";
+import { paginationHelper } from "./helpers/pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { paginationHelper } from "./helpers/pagination";
 
 const FIRST_CHAR_LIST = ["#", ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))];
 

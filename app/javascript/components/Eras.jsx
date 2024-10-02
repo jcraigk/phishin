@@ -32,7 +32,7 @@ import MobileApps from "./pages/MobileApps";
 import GitHubButton from "./pages/GitHubButton";
 import DiscordButton from "./pages/DiscordButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRss, faCirclePlay, faDrum } from "@fortawesome/free-solid-svg-icons";
+import { faRss } from "@fortawesome/free-solid-svg-icons";
 
 const Eras = () => {
   const eras = useLoaderData();

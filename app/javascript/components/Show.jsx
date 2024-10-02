@@ -19,7 +19,7 @@ export const showLoader = async ({ params }) => {
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useLoaderData, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { formatDate, formatDateMed, formatDateLong, formatDurationShow } from "./helpers/utils";
+import { formatDate, formatDateMed, formatDurationShow } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import ShowContextMenu from "./controls/ShowContextMenu";
 import LikeButton from "./controls/LikeButton";
