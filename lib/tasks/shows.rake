@@ -1,5 +1,24 @@
 # frozen_string_literal: true
 namespace :shows do
+  desc "Generate cover art prompts"
+  task generate_cover_art: :environment do
+    rel = Show.where(date: Date.new(2024, 1, 1)..Date.new(2024, 12, 31))
+              .order(date: :asc)
+    pbar = ProgressBar.create(
+      total: rel.count,
+      format: "%a %B %c/%C %p%% %E"
+    )
+
+    rel.each do |show|
+      pbar.increment
+      # next if show.cover_art_prompt.present?
+      CoverArtPromptService.new(show).call
+      CoverArtImageService.new(show).call
+    end
+
+    pbar.finish
+  end
+
   desc 'Insert a track into a show at given position'
   task insert_track: :environment do
     opts = {

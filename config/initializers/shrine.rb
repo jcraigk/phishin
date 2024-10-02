@@ -3,7 +3,7 @@ require "shrine/storage/file_system"
 
 Shrine.storages = {
   cache: Shrine::Storage::FileSystem.new("tmp/cache"),
-  store: Shrine::Storage::FileSystem.new(App.content_path, prefix: "tracks/audio_files")
+  store: Shrine::Storage::FileSystem.new(App.content_path)
 }
 
 Shrine.plugin :activerecord

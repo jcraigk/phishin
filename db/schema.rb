@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_26_034415) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_02_181911) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
@@ -133,6 +133,13 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_26_034415) do
     t.boolean "published", default: false, null: false
     t.string "venue_name", default: "", null: false
     t.boolean "matches_pnet", default: false
+    t.text "cover_art_data"
+    t.string "cover_art_style"
+    t.string "cover_art_hue"
+    t.string "cover_art_subjects"
+    t.text "cover_art_prompt"
+    t.integer "cover_art_parent_show_id"
+    t.datetime "cover_art_generated_at"
     t.index ["date"], name: "index_shows_on_date", unique: true
     t.index ["duration"], name: "index_shows_on_duration"
     t.index ["likes_count"], name: "index_shows_on_likes_count"

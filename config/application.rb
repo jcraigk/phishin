@@ -5,6 +5,7 @@ require "action_controller/railtie"
 require "action_mailer/railtie"
 require "action_view/railtie"
 require "active_record/railtie"
+require "active_storage/engine"
 
 Bundler.require(*Rails.groups)
 
@@ -47,6 +48,8 @@ module Phishin
       authentication: :plain
     }
     config.hosts << config.web_host if config.web_host
+    config.active_storage.variant_processor = :vips
+    config.active_storage.service = :local
   end
 end
 
