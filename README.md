@@ -50,7 +50,7 @@ Alternatively, if you prefer to develop completely in Docker, build and start th
 make up
 ```
 
-8. This project uses [React on Rails](https://github.com/shakacode/react_on_rails). Spin up the React development environment like this:
+8. This project uses [React on Rails](https://github.com/shakacode/react_on_rails). Spin up the development environment by using `overmind` or `foreman` to run `Procfile.dev`. Alternatively, you can manually run these commands in separate terminals:
 
 ```bash
 bin/shakapacker-dev-server

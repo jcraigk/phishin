@@ -27,7 +27,7 @@ const Layout = ({ props }) => {
   const [customPlaylist, setCustomPlaylist] = useState(null);
   const [draftPlaylist, setDraftPlaylist] = useState([]);
   const [draftPlaylistMeta, setDraftPlaylistMeta] = useState(initialDraftPlaylistMeta);
-  const [isDraftPlaylistSaved, setIsDraftPlaylistSaved] = useState(true);
+  const [isDraftPlaylistSaved, setIsDraftPlaylistSaved] = useState(false);
   const [activeTrack, setActiveTrack] = useState(null);
   const audioRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();

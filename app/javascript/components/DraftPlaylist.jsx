@@ -17,23 +17,12 @@ const DraftPlaylist = () => {
   } = useOutletContext();
   const { setNotice, setAlert } = useFeedback();
   const navigate = useNavigate();
-  const [isSaved, setIsSaved] = useState(true);
 
   const { name, description, published } = draftPlaylistMeta;
 
   const handleEditDetails = () => {
     openDraftPlaylistModal();
   };
-
-  // Check if playlist is saved
-  useEffect(() => {
-    const hasUnsavedChanges = draftPlaylist.length > 0 ||
-      draftPlaylistMeta.name ||
-      draftPlaylistMeta.description ||
-      draftPlaylistMeta.slug;
-
-    setIsSaved(!hasUnsavedChanges);
-  }, [draftPlaylist, draftPlaylistMeta]);
 
   // Redirect and warn if not logged in
   useEffect(() => {
