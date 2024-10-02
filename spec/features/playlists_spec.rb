@@ -1,97 +1,72 @@
-require 'rails_helper'
+require "rails_helper"
 
-describe 'Playlists', :js do
-  xcontext 'when not logged in' do # Commented due to flakiness when run with full suite
-    it 'visit Playlists page' do
-      visit active_playlist_path
-      sleep(1)
+RSpec.describe "Playlists", :js do
+  let(:user) { create(:user) }
+  let!(:playlists) { create_list(:playlist, 3, user:) }
 
-      # Active Playlist
-      within('#title_box') do
-        expect_content(
-          '(Untitled Playlist)',
-          'Sign in to create and share custom playlists!'
-        )
-        within('#playlist_mode_btn') do
-          expect_content('EDIT')
-        end
-        within('#clear_playlist_btn') do
-          expect_content('EMPTY')
-        end
-      end
+  before do
+    # Give each playlist a different number of likes (3, 2, 1)
+    playlists.each_with_index do |playlist, idx|
+      create_list(:like, playlists.size - idx, likable: playlist)
+    end
 
-      within('#content_box') do
-        expect_content('Your active playlist is empty.')
-      end
+    sign_in(user)
+  end
 
-      # Saved Playlists
-      within('#sub_nav') do
-        click_on('Saved')
-      end
+  it "displays the sidebar with sorting and filtering options" do
+    visit "/playlists"
+    expect(page).to have_css(".sidebar-title", text: "Playlists")
+    expect(page).to have_css(".sidebar-filters select#sort")
+  end
 
-      within('#title_box') do
-        expect_content('Saved Playlists')
-      end
+  it "displays all playlists with their details" do
+    visit "/playlists"
 
-      within('#content_box') do
-        expect_content('You must sign in to manage saved playlists')
+    playlists.each do |playlist|
+      expect(page).to have_css(".list-item", text: playlist.name)
+      expect(page).to have_css(".leftside-secondary", text: playlist.user.username)
+      expect(page).to have_css(".leftside-tertiary", text: "#{playlist.tracks.count} tracks")
+      expect(page).to have_css(".rightside-primary", text: format_duration_show(playlist.duration))
+      expect(page).to have_css \
+        ".addendum .description", text: playlist.description || "(No description)"
+      expect(page).to have_css \
+        ".addendum .last-updated", text: "Last Updated: #{format_date_long(playlist.updated_at)}"
+    end
+  end
+
+  it "allows sorting by likes count" do
+    visit "/playlists"
+    select "Sort by Likes (High to Low)", from: "sort"
+
+    sorted_playlists = playlists.sort_by { |playlist| playlist.likes.count }.reverse
+    sorted_playlists.each_with_index do |playlist, idx|
+      within all(".list-item")[idx] do
+        expect(page).to have_css(".leftside-primary", text: playlist.name)
       end
     end
   end
 
-  context 'when logged in' do
-    let(:user) { create(:user) }
-    let!(:show) { create(:show, :with_tracks, date: "#{ERAS.values.flatten.last}-01-01") }
+  it "submits search and navigates to the search results page" do
+    visit "/playlists"
+    fill_in "search", with: playlists.first.name[0, 5] # Partial search term
+    click_button "Search"
 
-    before { sign_in(user) }
+    expect(page).to have_current_path("/search?term=#{playlists.first.name[0, 5]}&scope=playlists")
 
-    it 'editing' do
-      visit active_playlist_path
-
-      # Click EDIT PLAYLIST
-      accept_confirm do
-        click_on('EDIT')
-      end
-      expect_content('PLAYLIST EDIT MODE')
-
-      # Go to show, click on first three tracks
-      click_on('Years')
-      first('ul.item_list li').click
-      first('ul.item_list li a').click
-      track_items = page.all('ul.item_list li')
-      track_items[0].click
-      track_items[1].click
-      track_items[2].click
-      expect_content('Track added to playlist')
-
-      # Return to playlist, ensure tracks are there
-      within('#global_nav') do
-        click_on('Playlists')
-      end
-      track_items = page.all('.playable_track')
-      expect(track_items.size).to eq(3)
-      expect_content_in_order(show.tracks)
-
-      # Click DONE EDITING
-      click_on('DONE EDITING')
-      expect(page).to have_no_content('PLAYLIST EDIT MODE')
+    within first(".list-item") do
+      expect(page).to have_css(".leftside-primary", text: playlists.first.name)
+      expect(page).to have_css(".leftside-secondary", text: playlists.first.user.username)
+      expect(page).to have_css(".leftside-tertiary", text: "#{playlists.first.tracks.count} tracks")
     end
+  end
 
-    xit 'saving (including invalid name/slug, no tracks)' do
-    end
+  it "navigates to playlist details page on click" do
+    visit "/playlists"
 
-    context 'with saved playlist' do
-      let!(:playlist) { create(:playlist, user:) }
+    first_playlist = playlists.first
+    find(".list-item", text: first_playlist.name).click
 
-      it 'opening a saved playlist' do
-        visit stored_playlists_path
-
-        click_on(playlist.name)
-        expect(page).to have_current_path("/play/#{playlist.slug}")
-      end
-
-      xit 'reordering a playlist' do
-      end
-    end
+    expect(page).to have_current_path("/play/#{first_playlist.slug}")
+    expect(page).to have_content(first_playlist.name)
   end
 end

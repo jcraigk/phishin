@@ -2,7 +2,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
   expose \
     :id,
     documentation: {
-      type: "String",
+      type: "Integer",
       desc: "ID of the track"
     }
 
@@ -42,7 +42,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     }
 
   expose \
-    :set,
+    :set_name,
     documentation: {
       type: "Integer",
       desc: "Set number this track belongs to"
@@ -60,18 +60,14 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     documentation: {
       type: "String",
       desc: "URL to the MP3 file of the track"
-    } do |track|
-      track.mp3_url
-  end
+    }
 
   expose \
     :waveform_image_url,
     documentation: {
       type: "String",
       desc: "URL to the waveform image of the track"
-    } do |track|
-      track.waveform_image_url
-  end
+    }
 
   expose \
     :track_tags,
@@ -90,10 +86,45 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       desc: "Timestamp of the last update to the track"
     }
 
+  expose(
+    :show_date,
+    format_with: :iso8601,
+    documentation: {
+      type: "String",
+      format: "date",
+      desc: "Date of the show that the track belongs to"
+    }
+  ) { _1.show.date }
+
+  expose(
+    :venue_slug,
+    documentation: {
+      type: "String",
+      desc: "Unique slug of the venue where the show took place"
+    }
+  ) { _1.show.venue.slug }
+
+  expose(
+    :venue_name,
+    documentation: {
+      type: "String",
+      desc: "Name the venue where the show took place, " \
+            "reflecting the name used on the date of the show"
+    }
+  ) { _1.show.venue_name }
+
+  expose(
+    :venue_location,
+    documentation: {
+      type: "String",
+      desc: "City and state where the venue of the show was located"
+    }
+  ) { _1.show.venue.location }
+
   expose \
     :show,
     using: ApiV2::Entities::Show,
-    unless: ->(_obj, opts) { opts[:exclude_show] },
+    unless: ->(_, opts) { opts[:exclude_show] },
     documentation: {
       type: "Object",
       desc: "Show this track belongs to"
@@ -101,9 +132,21 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
 
   expose \
     :songs,
-    using: ApiV2::Entities::Song,
     documentation: {
       is_array: true,
       desc: "Songs associated with the track"
-  }
+    } do |obj, opts|
+      obj.songs.map do |song|
+        songs_track = obj.songs_tracks.find { |st| st.song_id == song.id }
+        ApiV2::Entities::Song.represent(song, opts.merge(songs_track:))
+      end
+  end
+
+  expose :liked_by_user do
+    unless _2[:liked_by_user].nil?
+      _2[:liked_by_user]
+    else
+      _2[:liked_track_ids]&.include?(_1.id) || false
+    end
+  end
 end

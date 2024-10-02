@@ -3,8 +3,6 @@ class Api::V1::ApiController < ActionController::Base # rubocop:disable Rails/Ap
 
   before_action :require_auth
   after_action :set_json_content_type
-  after_action :log_to_swetrix
-  after_action :log_to_plausible
 
   rescue_from ActiveRecord::RecordNotFound, with: :respond_with_not_found
 
@@ -42,21 +40,6 @@ class Api::V1::ApiController < ActionController::Base # rubocop:disable Rails/Ap
   end
 
   private
-
-  def log_to_swetrix
-    SwetrixEventJob.perform_async \
-      request.original_url,
-      request.user_agent,
-      request.remote_ip
-  end
-
-  def log_to_plausible
-    PlausibleEventJob.perform_async \
-      request.original_url,
-      request.user_agent,
-      request.remote_ip,
-      @api_key&.id
-  end
 
   def data_as_json(data, opts = {})
     if data.is_a?(Enumerable) && !data.is_a?(Hash)

@@ -13,6 +13,13 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 
 RSpec.configure do |config|
+  ReactOnRails::TestHelper.configure_rspec_to_compile_assets(config)
+
+  # ReactOnRails::TestHelper.configure_rspec_to_compile_assets(config, :requires_webpack_assets)
+  # config.define_derived_metadata(file_path: %r{spec/features}) do |metadata|
+  #   metadata[:requires_webpack_assets] = true
+  # end
+
   config.fixture_paths = [ "#{Rails.root}/spec/fixtures" ]
   config.use_transactional_fixtures = true
   config.infer_spec_type_from_file_location!

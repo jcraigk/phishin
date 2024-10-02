@@ -1,15 +1,19 @@
 class Playlist < ApplicationRecord
-  MAX_TRACKS = 100
+  MAX_TRACKS = 250
 
   has_many :playlist_tracks, dependent: :destroy
   has_many :tracks, through: :playlist_tracks
-  has_many :playlist_bookmarks, dependent: :destroy
+  has_many :likes, as: :likable, dependent: :destroy
   belongs_to :user
+
+  accepts_nested_attributes_for :playlist_tracks, allow_destroy: true
 
   validates :name,
             presence: true,
             format: { with: /\A.{5,50}\z/ },
             uniqueness: true
+  validates :description,
+            length: { maximum: 500 }
   validates :slug,
             presence: true,
             format: {
@@ -17,7 +21,15 @@ class Playlist < ApplicationRecord
               message: "must be between 5 and 50 lowercase letters, numbers, or dashes"
             },
             uniqueness: true
-  validate :limit_total_tracks
+  validate :validate_tracks_count
+
+  scope :published, -> { where(published: true) }
+
+  after_save :update_duration
+
+  def update_duration
+    update_column(:duration, playlist_tracks.sum(:duration)) if self.persisted?
+  end
 
   def as_json_api
     {
@@ -41,8 +53,11 @@ class Playlist < ApplicationRecord
 
   private
 
-  def limit_total_tracks
-    return unless playlist_tracks.count > MAX_TRACKS
-    errors.add(:tracks, "can't have more than #{MAX_TRACKS} tracks")
+  def validate_tracks_count
+    if playlist_tracks.size > MAX_TRACKS
+      errors.add(:tracks, "can't number more than #{MAX_TRACKS}")
+    elsif playlist_tracks.size < 2
+      errors.add(:tracks, "must number at least 2")
+    end
   end
 end

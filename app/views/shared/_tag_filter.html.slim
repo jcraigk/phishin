@@ -1,8 +1,0 @@
-.filter_label Tag
-.filter_dropdown
-  .btn-group
-    button.btn.btn-default.dropdown-toggle type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'
-      => filter_title(:tag_slug, item_hash)
-      span.caret
-    ul.dropdown-menu = filter(:tag_slug, item_hash)
-= clear_both

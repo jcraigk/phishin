@@ -1,0 +1,150 @@
+#navbar-background {
+  background-color: $header-gray;
+  width: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.navbar {
+  background-color: $header-gray;
+  justify-content: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  z-index: 2;
+
+  .navbar-burger {
+    color: $text-gray;
+  }
+
+
+
+  .navbar-brand {
+    padding-left: 0.5rem;
+
+    & a {
+      &:hover {
+        background-color: transparent;
+      }
+      &:focus {
+        outline: none;
+        background-color: transparent;
+      }
+
+      &:focus-visible {
+        outline: 2px solid $control-gray;
+        background-color: transparent;
+      }
+    }
+
+    img:hover {
+      opacity: 0.65 !important;
+    }
+  }
+
+  .login-btn {
+    background-color: $control-gray;
+
+    &:hover {
+      background-color: $bg-gray;
+
+      .icon {
+        color: $text-gray;
+      }
+    }
+
+    .icon {
+      color: $inactive-gray;
+      margin-right: 0.1rem !important;
+    }
+  }
+
+  .dropdown-trigger button {
+    width: 8rem;
+    background-color: $control-gray
+  }
+
+  .dropdown-menu {
+    border-radius: 5px !important;
+
+    .icon {
+      margin-right: 0.5rem;
+      position: relative;
+      top: 2px;
+      color: $text-gray;
+      width: 1.2rem;
+    }
+
+    & a {
+      font-size: 1.2rem;
+      line-height: 1.4rem;
+    }
+  }
+
+  .navbar-dropdown-label {
+    font-size: 0.9rem;
+    color: $text-gray;
+    font-weight: bold;
+    opacity: 0.8;
+  }
+
+  .search-term {
+    width: 8rem;
+    background-color: $control-gray;
+  }
+
+  .user-dropdown button {
+    background-color: $inactive-gray;
+    border: none;
+  }
+
+  .navbar-start {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .navbar-item {
+    display: flex;
+    align-items: center;
+  }
+
+  @media (min-width: 1023px) {
+    // Prevent user dropdown from going off right side of screen
+    .navbar-end .dropdown-menu {
+      right: 0;
+      left: auto;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .navbar-end {
+      justify-content: center;
+      display: flex;
+      width: 100%;
+
+      .navbar-item {
+        justify-content: center;
+        width: 100%;
+        display: flex;
+      }
+    }
+
+    .dropdown-menu {
+      left: 50% !important;
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (max-width: 767px) {
+    .navbar-start {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .navbar-item {
+      justify-content: center;
+      margin: none;
+      padding: 0.5rem 0;
+    }
+  }
+}

@@ -1,0 +1,233 @@
+.donut-bullet {
+  font-size: 0.8rem;
+  margin-right: 0.5rem;
+  margin-left: 0.6rem;
+  filter: grayscale(1);
+  opacity: 0.75;
+  position: relative;
+  top: -4px;
+}
+
+.section-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-right: 1rem;
+  padding-left: 0.3rem;
+
+  &:not(:first-of-type) {
+    margin-top: 3rem;
+  }
+
+  &:first-of-type {
+    margin-top: 0.5rem;
+  }
+
+  .title-left {
+    font-size: 1.7rem;
+    font-weight: 700;
+    line-height: 1rem;
+    color: $title-gray;
+  }
+
+  .detail-right {
+    font-size: 1rem;
+    font-weight: bold;
+    color: $text-gray;
+    line-height: 1rem;
+    color: $title-gray;
+  }
+}
+
+.list-item-link {
+  text-decoration: none;
+  color: black;
+}
+
+.date-link {
+  &:hover {
+    text-decoration: underline;
+  }
+
+  a {
+    color: $text-gray !important;
+  }
+}
+
+.list-item {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.25rem 1rem;
+  border-radius: var(--bulma-radius);
+  margin-bottom: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  min-height: 3.5rem;
+  cursor: pointer;
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  &.focus {
+    border: 1px solid $blue;
+  }
+
+  &.active-item {
+    animation: pulse 3s infinite ease-in-out;
+    background-image: none !important;
+
+    &::before {
+      display: none;
+    }
+  }
+
+  .main-row {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .leftside-numbering {
+    font-family: 'Marck Script', cursive;
+    font-size: 1.4rem;
+    margin-right: 0.8rem;
+    position: relative;
+    top: 3px;
+    width: 2rem;
+    text-align: right;
+  }
+
+  .leftside-primary {
+    flex-grow: 1;
+    font-size: 1.5rem;
+    color: $text-gray;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 1rem;
+    max-width: 60%;
+    padding-right: 1rem;
+  }
+
+  .leftside-secondary {
+    font-size: 1.1rem;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 12rem;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .leftside-tertiary {
+    font-size: 1.1rem;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 10rem;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .rightside-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  .rightside-primary {
+    font-size: 1.1rem;
+    width: 3.5rem;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellisis;
+    white-space: nowrap;
+    margin-left: 1rem;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+    padding-right: 0.1rem;
+    position: relative;
+  }
+
+  .rightside-primary-wide {
+    font-size: 1.1rem;
+    width: 10rem;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellisis;
+    white-space: nowrap;
+    margin-left: 1rem;
+    flex-shrink: 0;
+    padding-right: 0.1rem;
+    margin-left: 1rem;
+    margin-right: 0.5rem;
+  }
+
+  .rightside-secondary {
+    font-size: 1.1rem;
+    width: auto;
+    text-align: right;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .addendum {
+    width: 100%;
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    background-color: rgba($blue, 0.5);
+  }
+  50% {
+    background-color: transparent;
+  }
+  100% {
+    background-color: rgba($blue, 0.5);
+  }
+}
+
+@media (hover: hover) {
+  .list-item:hover {
+    background-color: white;
+    background-image: none !important;
+
+    &::before {
+      display: none;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .show-duration {
+    margin-top: 0.5rem
+  }
+}
+
+@media (max-width: 1199px) {
+  .leftside-tertiary {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .leftside-secondary {
+    display: none;
+  }
+}
+

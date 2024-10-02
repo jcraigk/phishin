@@ -1,34 +1,40 @@
 class Oauth::SorceryController < ApplicationController
-  def oauth
+  def login
     login_at(params[:provider])
   end
 
   def callback
-    if login_from(params[:provider], true)
-      return redirect_to(root_path, notice: t("auth.login_success"))
-    end
-    create_user_and_login
+    user = login_from(params[:provider], true) || create_from(params[:provider])
+    store_user_data_in_session(user)
+    redirect_to root_path
+  rescue ActiveRecord::RecordNotUnique
+    redirect_to root_path, alert: "That email address has already been taken"
   rescue StandardError => e
     Sentry.capture_exception(e)
-    redirect_to login_path, alert: t("auth.external_fail", provider: provider_title)
+    redirect_to root_path, alert: "Login via Google failed"
   end
 
   private
 
-  def create_user_and_login
-    user = create_from(params[:provider])
-    reset_session
-    auto_login(user, true)
-    redirect_back_or_to root_path, notice: t("auth.login_success")
-  rescue ActiveRecord::RecordNotUnique
-    redirect_to login_path, alert: t("auth.email_taken", provider: provider_title)
-  end
-
-  def auth_params
-    params.permit(:code)
+  def store_user_data_in_session(user)
+    session[:jwt] = jwt_for(user)
+    session[:username] = user.username
+    session[:username_updated_at] = user.username_updated_at
+    session[:email] = user.email
   end
 
   def provider_title
     params[:provider].titleize
+  end
+
+  def jwt_for(user)
+    JWT.encode(
+      {
+        sub: user.id,
+        exp: (Time.now + 1.year).to_i
+      },
+      Rails.application.secret_key_base,
+      "HS256"
+    )
   end
 end

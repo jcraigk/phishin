@@ -1,0 +1,25 @@
+footer {
+  background-color: $header-gray;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+  margin-top: 2rem;
+  flex-shrink: 0;
+
+  a {
+    color: $text-gray;
+    margin: 0 1rem;
+    text-decoration: none;
+    line-height: 1rem;
+    text-align: center;
+    text-decoration: none !important;
+
+    &:hover {
+      text-decoration: underline;
+      color: white;
+    }
+  }
+}

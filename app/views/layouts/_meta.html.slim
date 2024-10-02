@@ -1,23 +1,21 @@
-meta name='Description' content=App.app_desc
-meta http-equiv='Content-Type' content='text/html; charset=utf-8'
-meta charset='Unicode/UTF-8'
-meta name='viewport' content='width=device-width, initial-scale=1'
+meta name="Description" content=App.app_desc
+meta charset="UTF-8"
+meta name="viewport" content="width=device-width, initial-scale=1"
 
-/ Open Graph Protocol (embed previews)
-meta property='og:type' content='music.playlist'
+meta property='og:type' content=(@meta.dig(:og, :type) || 'website')
 meta property='og:url' content=request.original_url
 meta property='og:image' content=image_pack_url('static/images/logo-opengraph.png')
 meta property='og:image:alt' content="#{App.app_name} logo"
-meta property='og:title' content="#{@ogp_title.presence || App.app_name}"
-- if @ogp_audio_url.present?
-  meta property='og:audio' content=@ogp_audio_url
+meta property='og:title' content=(@meta.dig(:og, :title) || App.app_name)
+- if @meta.dig(:og, :audio).present?
+  meta property='og:audio' content=@meta.dig(:og, :audio)
 
 / https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards
-meta name='twitter:card' content='summary'
-meta name='twitter:site' content=App.twitter_handle
-meta name='twitter:title' content="#{@ogp_title.presence || App.app_name}"
-meta name='twitter:description' content=App.app_desc
-meta name='twitter:image' content=image_pack_url('static/images/logo-twitter-card.png')
-meta name='twitter:image:alt' content='Phish.in logo'
-- if @ogp_audio_url.present?
-  meta name='twitter:player:stream' content=@ogp_audio_url
+/ meta name='twitter:card' content='summary'
+/ meta name='twitter:site' content="@phish_in"
+/ meta name='twitter:title' content="#{@meta.dig(:og, :title).presence || App.app_name}"
+/ meta name='twitter:description' content=App.app_desc
+/ meta name='twitter:image' content=image_pack_url('static/images/logo-twitter-card.png')
+/ meta name='twitter:image:alt' content='Phish.in logo'
+/ - if @meta.dig(:og, :audio).present?
+/   meta name='twitter:player:stream' content=@meta.dig(:og, :audio)

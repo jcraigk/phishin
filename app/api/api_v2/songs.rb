@@ -2,10 +2,8 @@ class ApiV2::Songs < ApiV2::Base
   SORT_COLS = %w[ title tracks_count ]
 
   resource :songs do
-    desc "Return a list of songs" do
-      detail \
-        "Return a sortable paginated list of songs, " \
-        "optionally filtered by the first character of the title"
+    desc "Fetch a list of songs" do
+      detail "Fetch a filtered, sorted, paginated list of songs"
       success ApiV2::Entities::Song
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
@@ -25,11 +23,16 @@ class ApiV2::Songs < ApiV2::Base
                values: App.first_char_list
     end
     get do
-      present page_of_songs, with: ApiV2::Entities::Song
+      s = page_of_songs
+      present \
+        songs: ApiV2::Entities::Song.represent(s[:songs]),
+        total_pages: s[:total_pages],
+        current_page: s[:current_page],
+        total_entries: s[:total_entries]
     end
 
-    desc "Return a song" do
-      detail "Return a song by its slug"
+    desc "Fetch a song" do
+      detail "Fetch a song by its slug"
       success ApiV2::Entities::Song
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
@@ -47,10 +50,17 @@ class ApiV2::Songs < ApiV2::Base
   helpers do
     def page_of_songs
       Rails.cache.fetch("api/v2/songs?#{params.to_query}") do
-        Song.unscoped
-            .then { |s| apply_filter(s) }
-            .then { |s| apply_sort(s) }
-            .paginate(page: params[:page], per_page: params[:per_page])
+        songs = Song.unscoped
+                    .then { |s| apply_filter(s) }
+                    .then { |s| apply_sort(s, :title, :asc) }
+                    .paginate(page: params[:page], per_page: params[:per_page])
+
+        {
+          songs: songs,
+          total_pages: songs.total_pages,
+          current_page: songs.current_page,
+          total_entries: songs.total_entries
+        }
       end
     end
 

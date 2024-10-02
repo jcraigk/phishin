@@ -1,0 +1,45 @@
+.modal-content {
+  background: white;
+  padding: 1.5rem;
+  border-radius: var(--bulma-radius);
+  width: 500px;
+  margin: 0 auto;
+  max-height: 500px;
+  overflow: auto;
+
+  &:focus {
+    outline: none;
+  }
+
+  input, select {
+    font-size: 1rem;
+    border-radius: var(--bulma-radius);
+    border-color: $header-gray;
+    padding: 0.5rem;
+  }
+
+  button {
+    font-size: 1rem;
+    border: 1px solid $header-gray !important;
+    border-radius: var(--bulma-radius);
+    padding: 0.5rem 1rem;
+    margin-top: 1rem;
+  }
+
+  .title {
+    margin-bottom: 0.3rem !important;
+  }
+}
+
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.75);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}

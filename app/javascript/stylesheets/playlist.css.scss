@@ -1,0 +1,17 @@
+.playlist-description-container {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: 4rem;
+}
+
+.badge-unsaved {
+  background-color: $bg-red;
+  padding: 0.3rem;
+  border-radius: var(--bulma-radius);
+}
+
+.badge-saved {
+  background-color: $bg-blue;
+  padding: 0.3rem;
+  border-radius: var(--bulma-radius);
+}

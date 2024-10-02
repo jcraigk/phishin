@@ -1,240 +1,283 @@
 require "rails_helper"
 
 RSpec.describe "API v2 Shows" do
-  let!(:shows) do
+  let!(:user) { create(:user) }
+  let!(:venue) { create(:venue, name: "Madison Square Garden") }
+  let!(:known_dates) do
     [
-      create(:show, date: "2022-01-02", likes_count: 10, duration: 120, venue:),
-      create(:show, date: "2021-01-01", likes_count: 30, duration: 90, venue:),
-      create(:show, date: "2023-01-01", likes_count: 20, duration: 150, venue:),
-      create(:show, date: "2024-01-01", likes_count: 40, duration: 200, venue:),
-      create(:show, date: "2020-01-01", likes_count: 5, duration: 110, venue:)
+      create(:known_date, date: "2022-12-29"),
+      create(:known_date, date: "2022-12-30"),
+      create(:known_date, date: "2022-12-31"),
+      create(:known_date, date: "2023-01-01"),
+      create(:known_date, date: "2023-01-02"),
+      create(:known_date, date: "2023-01-03"),
+      create(:known_date, date: "2023-01-04"),
+      create(:known_date, date: "2023-01-05")
     ]
   end
-  let!(:venue) do
-    create(
-      :venue,
-      name: "Madison Square Garden",
-      city: "New York",
-      state: "NY",
-      country: "USA",
-      latitude: 40.7505045,
-      longitude: -73.9934387,
-      slug: "madison-square-garden"
-    )
+  let!(:previous_show) { create(:show, date: "2022-12-30", venue:, likes_count: 0) }
+  let!(:next_show) { create(:show, date: "2023-01-05", venue:, likes_count: 25) }
+  let!(:show1) { create(:show, date: "2023-01-01", venue:, likes_count: 50) }
+  let!(:song) { create(:song, title: "Tweezer") }
+  let!(:tracks) do
+    [
+      create(:track, show: show1, position: 1, songs: [ song ], slug: 'tweezer-1'),
+      create(:track, show: show1, position: 5, songs: [ song ], slug: 'tweezer-2'),
+      create(:track, show: show1, position: 10, songs: [ song ], slug: 'tweezer-3'),
+      create(:track, show: previous_show, position: 1, songs: [ song ], slug: 'tweezer-4'),
+      create(:track, show: next_show, position: 1, songs: [ song ], slug: 'tweezer-5')
+    ]
   end
-  let!(:tag) { create(:tag, name: "Classic", priority: 1) }
+
+  describe "GET /shows/:date" do
+    before do
+      [ show1, previous_show, next_show ].each do |show|
+        GapService.call(show)
+      end
+    end
+
+    it "returns gaps for a song that appears multiple times in the show" do
+      get_api_authed(user, "/shows/2023-01-01")
+
+      expect(response).to have_http_status(:ok)
+
+      json = JSON.parse(response.body, symbolize_names: true)
+      tracks = json[:tracks]
+
+      expect(tracks.count { |t| t[:songs].any? { |s| s[:title] == "Tweezer" } }).to eq(3)
+
+      tweezer_tracks = tracks.select { |t| t[:songs].any? { |s| s[:title] == "Tweezer" } }
+
+      expect(tweezer_tracks[0][:songs].first[:previous_performance_gap]).to eq(2)
+      expect(tweezer_tracks[0][:songs].first[:previous_performance_slug]).to \
+        eq("2022-12-30/tweezer-4")
+      expect(tweezer_tracks[0][:songs].first[:next_performance_gap]).to eq(0)
+
+      expect(tweezer_tracks[1][:songs].first[:previous_performance_gap]).to eq(0)
+      expect(tweezer_tracks[1][:songs].first[:previous_performance_slug]).to \
+        eq("2023-01-01/tweezer-1")
+      expect(tweezer_tracks[1][:songs].first[:next_performance_gap]).to eq(0)
+
+      expect(tweezer_tracks[2][:songs].first[:previous_performance_gap]).to eq(0)
+      expect(tweezer_tracks[2][:songs].first[:previous_performance_slug]).to \
+        eq("2023-01-01/tweezer-2")
+      expect(tweezer_tracks[2][:songs].first[:next_performance_gap]).to eq(4)
+      expect(tweezer_tracks[2][:songs].first[:next_performance_slug]).to eq("2023-01-05/tweezer-5")
+    end
+  end
 
   describe "GET /shows" do
-    let!(:show_tags) do
-      [
-        create(:show_tag, show: shows[0], tag:, notes: "A classic show"),
-        create(:show_tag, show: shows[1], tag:, notes: "Another classic show"),
-        create(:show_tag, show: shows[2], tag:, notes: "Yet another classic"),
-        create(:show_tag, show: shows[3], tag:, notes: ""),
-        create(:show_tag, show: shows[4], tag:, notes: "")
-      ]
-    end
+    context "with no filters" do
+      it "returns paginated shows sorted by date:desc by default" do
+        get_api_authed(user, "/shows", params: { page: 1, per_page: 2 })
+        expect(response).to have_http_status(:ok)
 
-    it "returns the first page of shows sorted by date in descending order by default" do
-      get_api "/shows", params: { page: 1, per_page: 2 }
-      expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:shows].size).to eq(2)
+        expect(json[:total_pages]).to eq(2)
 
-      json = JSON.parse(response.body, symbolize_names: true)
-      first_show = shows.sort_by(&:date).reverse.first
-      expected = ApiV2::Entities::Show.represent([ first_show ], include_tracks: false).as_json
-      expect(json.first).to eq(expected.first)
-    end
-
-    it "returns the second page of shows sorted by date in descending order" do
-      get_api "/shows", params: { page: 2, per_page: 2 }
-      expect(response).to have_http_status(:ok)
-
-      json = JSON.parse(response.body)
-      expect(json.size).to eq(2)
-
-      second_page_shows = shows.sort_by(&:date).reverse[2, 2]
-      expect(json.map { |s| s["date"] }).to eq(second_page_shows.map { |show| show.date.iso8601 })
-    end
-
-    it "returns a list of shows sorted by likes_count in ascending order" do
-      get_api "/shows", params: { sort: "likes_count:asc", page: 1, per_page: 3 }
-      expect(response).to have_http_status(:ok)
-
-      json = JSON.parse(response.body)
-      expect(json.map { |s| s["likes_count"] }).to eq([ 5, 10, 20 ])
-    end
-
-    it "returns a list of shows sorted by duration in descending order" do
-      get_api "/shows", params: { sort: "duration:desc", page: 1, per_page: 3 }
-      expect(response).to have_http_status(:ok)
-
-      json = JSON.parse(response.body)
-      expect(json.map { |s| s["duration"] }).to eq([ 200, 150, 120 ])
-    end
-
-    it "returns a 400 error for an invalid sort parameter" do
-      get_api "/shows", params: { sort: "invalid_param:asc", page: 1, per_page: 3 }
-      expect(response).to have_http_status(:bad_request)
-    end
-
-    it "filters shows by a specific year" do
-      get_api "/shows", params: { year: 2022 }
-      expect(response).to have_http_status(:ok)
-
-      json = JSON.parse(response.body, symbolize_names: true)
-      expected = ApiV2::Entities::Show.represent(
-        shows.select { |show| show.date.year == 2022 },
-        include_tracks: false
-      ).as_json
-      expect(json).to eq(expected)
-    end
-
-    it "filters shows by a year range" do
-      get_api "/shows", params: { year_range: "2021-2023" }
-      expect(response).to have_http_status(:ok)
-
-      json = JSON.parse(response.body, symbolize_names: true)
-      expected = ApiV2::Entities::Show.represent(
-        shows.select { |show| show.date.year.between?(2021, 2023) },
-        include_tracks: false
-      ).as_json
-
-      expected_sorted = expected.sort_by { |show| show[:date] }
-      json_sorted = json.sort_by { |show| show[:date] }
-      expect(json_sorted).to eq(expected_sorted)
-    end
-
-    it "gives precedence to the year over year_range when both are provided" do
-      get_api "/shows", params: { year: 2022, year_range: "2021-2023" }
-      expect(response).to have_http_status(:ok)
-
-      json = JSON.parse(response.body, symbolize_names: true)
-      expected = ApiV2::Entities::Show.represent(
-        shows.select { |show| show.date.year == 2022 },
-        include_tracks: false
-      ).as_json
-      expect(json).to eq(expected)
-    end
-
-    it "filters shows by venue_slug" do
-      get_api "/shows", params: { venue_slug: "madison-square-garden" }
-      expect(response).to have_http_status(:ok)
-
-      json = JSON.parse(response.body, symbolize_names: true)
-      expected = ApiV2::Entities::Show.represent(
-        shows.sort_by(&:date).reverse,
-        include_tracks: false
-      ).as_json
-
-      expect(json).to eq(expected)
-    end
-
-    it "filters shows by tag_slug" do
-      get_api "/shows", params: { tag_slug: tag.slug }
-      expect(response).to have_http_status(:ok)
-
-      json = JSON.parse(response.body, symbolize_names: true)
-
-      expected_shows = shows.select { |show| show.tags.include?(tag) }
-      expected_json = ApiV2::Entities::Show.represent(
-        expected_shows.sort_by(&:date).reverse,
-        include_tracks: false
-      ).as_json
-      sorted_json = json.sort_by { |show| show[:date] }.reverse
-      expect(sorted_json).to eq(expected_json)
-    end
-
-    it "filters shows by distance from location" do
-      get_api "/shows", params: { lat: 40.7505045, lng: -73.9934387, distance: 50 }
-      expect(response).to have_http_status(:ok)
-
-      json = JSON.parse(response.body, symbolize_names: true)
-      nearby_shows = shows.sort_by(&:date).reverse.select do |show|
-        show.venue.distance_from([ 40.7505045, -73.9934387 ]) <= 50
+        show_ids = json[:shows].map { |s| s[:id] }
+        expect(show_ids).to eq([ next_show.id, show1.id ])
       end
-      expected = ApiV2::Entities::Show.represent(nearby_shows).as_json
-      expect(json).to eq(expected)
     end
 
-    it "returns no shows if none are within the specified distance" do
-      get_api "/shows", params: { lat: 0, lng: 0, distance: 50 }
-      expect(response).to have_http_status(:ok)
+    context "with sorting" do
+      it "returns shows sorted by likes_count in descending order" do
+        get_api_authed(user, "/shows", params: { sort: "likes_count:desc", page: 1, per_page: 3 })
+        expect(response).to have_http_status(:ok)
 
-      json = JSON.parse(response.body, symbolize_names: true)
-      expect(json).to be_empty
+        json = JSON.parse(response.body, symbolize_names: true)
+        show_ids = json[:shows].map { |s| s[:id] }
+
+        expect(show_ids.first).to eq(show1.id)
+      end
+    end
+
+    context "with tag_slug filter" do
+      let!(:tag) { create(:tag, name: "Classic", priority: 1) }
+      let!(:show_tag) { create(:show_tag, show: show1, tag:, notes: "A classic show") }
+
+      it "returns shows filtered by tag_slug" do
+        get_api_authed(user, "/shows", params: { tag_slug: tag.slug })
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        show_ids = json[:shows].map { |s| s[:id] }
+
+        expect(show_ids).to eq([ show1.id ])
+      end
+    end
+
+    context "with liked_by_user set to true" do
+      let!(:like) { create(:like, user:, likable: show1) }
+
+      it "returns only shows liked by the current user" do
+        get_api_authed(user, "/shows", params: { liked_by_user: true, page: 1, per_page: 3 })
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        show_ids = json[:shows].map { |s| s[:id] }
+
+        expect(show_ids).to eq([ show1.id ])
+      end
+    end
+
+    context "with liked_by_user set to false" do
+      it "returns all shows regardless of user likes" do
+        get_api_authed(user, "/shows", params: { liked_by_user: false, page: 1, per_page: 3 })
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        show_ids = json[:shows].map { |s| s[:id] }
+
+        expect(show_ids).to eq([ next_show.id, show1.id, previous_show.id ])
+      end
+    end
+
+    context "with venue_id filter" do
+      let!(:other_venue) { create(:venue, name: "The Roxy") }
+      let!(:show2) { create(:show, date: "2023-01-02", venue: other_venue) }
+
+      it "returns shows filtered by venue_slug" do
+        get_api_authed(user, "/shows", params: { venue_slug: other_venue.slug })
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        show_ids = json[:shows].map { |s| s[:id] }
+
+        expect(show_ids).to eq([ show2.id ])
+      end
+    end
+
+    context "with year filter" do
+      it "returns shows filtered by year range" do
+        get_api_authed(user, "/shows", params: { year: "2022" })
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        show_dates = json[:shows].map { |s| s[:date] }
+
+        expect(show_dates).to match_array(
+          [
+            "2022-12-30"
+          ]
+        )
+      end
+    end
+
+    context "with year_range filter" do
+      it "returns shows filtered by year range" do
+        get_api_authed(user, "/shows", params: { year_range: "2022-2023" })
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        show_dates = json[:shows].map { |s| s[:date] }
+
+        expect(show_dates).to match_array(
+          [
+            "2023-01-01",
+            "2023-01-05",
+            "2022-12-30"
+          ]
+        )
+      end
+    end
+
+    context "with us_state filter" do
+      let!(:other_venue) { create(:venue, name: "Red Rocks", state: "CO") }
+      let!(:show_in_co) { create(:show, date: "2022-08-15", venue: other_venue) }
+
+      it "returns shows filtered by US state" do
+        get_api_authed(user, "/shows", params: { us_state: "CO" })
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        show_ids = json[:shows].map { |s| s[:id] }
+
+        expect(show_ids).to eq([ show_in_co.id ])
+      end
+    end
+
+    context "with lat/lng distance filter" do
+      let!(:near_venue) { create(:venue, name: "Near Venue", latitude: 40.7, longitude: -74.0) }
+      let!(:show_near) { create(:show, date: "2022-11-20", venue: near_venue) }
+      let!(:far_venue) { create(:venue, name: "Far Venue", latitude: 34.0, longitude: -118.2) }
+      let!(:show_far) { create(:show, date: "2022-11-21", venue: far_venue) }
+
+      it "returns shows within the specified distance from the given coordinates" do
+        get_api_authed(
+          user,
+          "/shows",
+          params: {
+            lat: 40.7128, # Near NYC
+            lng: -74.0060,
+            distance: 50 # 50 miles radius
+          }
+        )
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        show_ids = json[:shows].map { |s| s[:id] }
+
+        expect(show_ids).to eq([ show_near.id ])
+      end
     end
   end
 
   describe "GET /shows/random" do
-    it "returns a random published show" do
-      get_api "/shows/random"
-      expect(response).to have_http_status(:ok)
+    it "returns a random show" do
+      get_api_authed(user, "/shows/random")
 
+      expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body, symbolize_names: true)
-      expect(json).to be_present
+
+      expect(json[:id]).to be_present
       expect(json[:date]).to be_present
-      expect(json[:venue][:name]).to eq("Madison Square Garden")
-    end
-  end
-
-  describe "GET /shows/:id" do
-    let!(:show) { create(:show, date: "2022-01-01", venue:) }
-
-    it "returns the specified show" do
-      get_api "/shows/#{show.id}"
-      expect(response).to have_http_status(:ok)
-
-      json = JSON.parse(response.body, symbolize_names: true)
-      expected = ApiV2::Entities::Show.represent(show, include_tracks: true).as_json
-      expect(json).to eq(expected)
-    end
-
-    it "returns a 404 if the show does not exist" do
-      get_api "/shows/9999"
-      expect(response).to have_http_status(:not_found)
+      expect(json[:venue]).to be_present
     end
   end
 
   describe "GET /shows/day_of_year/:date" do
-    it "returns shows for a specific day of the year given a date" do
-      get_api "/shows/on_day_of_year/2000-01-01"
-      expect(response).to have_http_status(:ok)
-
-      json = JSON.parse(response.body, symbolize_names: true)
-      expect(json.size).to eq(4)
-      expect(
-        json.map { |s| s[:date] }
-      ).to match_array([ "2021-01-01", "2023-01-01", "2024-01-01", "2020-01-01" ])
-    end
-
-    it "returns a 400 error for an invalid day format" do
-      get_api "/shows/on_day_of_year/invalid-date"
-      expect(response).to have_http_status(:bad_request)
-    end
-  end
-
-  describe "GET /shows/on_date/:date" do
-    let!(:show) { create(:show, date: "2022-01-01", venue:) }
-    let!(:show_tag) { create(:show_tag, show:, tag:, notes: "A classic show") }
-    let!(:tracks) do
+    let!(:shows_on_date) do
       [
-        create(:track, show:, title: "Track 1", position: 1, duration: 300, set: 1),
-        create(:track, show:, title: "Track 2", position: 2, duration: 240, set: 1)
+        create(:show, date: "2022-12-29", venue:, likes_count: 10),
+        create(:show, date: "2021-12-29", venue:, likes_count: 20)
       ]
     end
+    let!(:show_on_different_date) { create(:show, date: "2022-12-28", venue:) }
 
-    it "returns the specified show with venue, tags, and tracks" do
-      get_api "/shows/on_date/#{show.date}"
-      expect(response).to have_http_status(:ok)
+    context "with a valid date" do
+      it "returns shows for that day of the year, sorted by date:desc" do
+        get_api_authed(user, "/shows/day_of_year/2022-12-29")
 
-      json = JSON.parse(response.body, symbolize_names: true)
-      expected = ApiV2::Entities::Show.represent(show, include_tracks: true).as_json
-      expect(json).to eq(expected)
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+
+        expect(json[:shows].size).to eq(2)
+        expect(json[:shows].map { |s| s[:date] }).to eq([ "2022-12-29", "2021-12-29" ])
+      end
     end
 
-    it "returns a 404 if the show does not exist" do
-      get_api "/shows/on_date/1930-01-01"
-      expect(response).to have_http_status(:not_found)
+    context "with no shows on that day" do
+      it "returns an empty array" do
+        get_api_authed(user, "/shows/day_of_year/2022-02-01")
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+
+        expect(json[:shows]).to be_empty
+      end
+    end
+
+    context "with an invalid date format" do
+      it "returns a 400 error" do
+        get_api_authed(user, "/shows/day_of_year/invalid-date")
+
+        expect(response).to have_http_status(:bad_request)
+        json = JSON.parse(response.body)
+
+        expect(json["message"]).to eq("Invalid date format")
+      end
     end
   end
 end

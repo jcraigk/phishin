@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_08_22_053815) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_26_034415) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
@@ -61,6 +61,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_22_053815) do
     t.integer "likable_id"
     t.integer "user_id"
     t.datetime "created_at", precision: nil
+    t.index ["likable_id", "likable_type", "user_id"], name: "index_likes_on_likable_and_user_uniq", unique: true
     t.index ["likable_id"], name: "index_likes_on_likable_id"
     t.index ["likable_type"], name: "index_likes_on_likable_type"
     t.index ["user_id"], name: "index_likes_on_user_id"
@@ -77,8 +78,13 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_22_053815) do
     t.integer "playlist_id"
     t.integer "track_id"
     t.integer "position"
+    t.integer "starts_at_second"
+    t.integer "ends_at_second"
+    t.integer "duration"
+    t.index ["duration"], name: "index_playlist_tracks_on_duration"
     t.index ["playlist_id"], name: "index_playlist_tracks_on_playlist_id"
     t.index ["position", "playlist_id"], name: "index_playlist_tracks_on_position_and_playlist_id", unique: true
+    t.index ["position"], name: "index_playlist_tracks_on_position"
     t.index ["track_id"], name: "index_playlist_tracks_on_track_id"
   end
 
@@ -89,9 +95,16 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_22_053815) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.integer "duration", default: 0
+    t.integer "likes_count", default: 0
+    t.boolean "published", default: false
+    t.integer "tracks_count", default: 0
+    t.text "description"
     t.index ["duration"], name: "index_playlists_on_duration"
+    t.index ["likes_count"], name: "index_playlists_on_likes_count"
     t.index ["name"], name: "index_playlists_on_name", unique: true
     t.index ["slug"], name: "index_playlists_on_slug", unique: true
+    t.index ["tracks_count"], name: "index_playlists_on_tracks_count"
+    t.index ["updated_at"], name: "index_playlists_on_updated_at"
     t.index ["user_id"], name: "index_playlists_on_user_id"
   end
 
@@ -148,6 +161,12 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_22_053815) do
   create_table "songs_tracks", id: :serial, force: :cascade do |t|
     t.integer "song_id"
     t.integer "track_id"
+    t.integer "previous_performance_gap"
+    t.string "previous_performance_slug"
+    t.integer "next_performance_gap"
+    t.string "next_performance_slug"
+    t.index ["next_performance_gap"], name: "index_songs_tracks_on_next_performance_gap"
+    t.index ["previous_performance_gap"], name: "index_songs_tracks_on_previous_performance_gap"
     t.index ["song_id"], name: "index_songs_tracks_on_song_id"
     t.index ["track_id", "song_id"], name: "index_songs_tracks_on_track_id_and_song_id", unique: true
     t.index ["track_id"], name: "index_songs_tracks_on_track_id"
@@ -232,6 +251,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_08_22_053815) do
     t.integer "access_count_to_reset_password_page", default: 0
     t.string "remember_me_token"
     t.datetime "remember_me_token_expires_at"
+    t.datetime "username_updated_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["remember_me_token"], name: "index_users_on_remember_me_token"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

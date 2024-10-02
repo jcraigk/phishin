@@ -1,9 +1,13 @@
 module ApiV2::Helpers::SharedHelpers
   extend Grape::API::Helpers
 
-  def apply_sort(relation)
+  def apply_sort(relation, secondary_col = nil, secondary_dir = :asc)
     attribute, direction = params[:sort].split(":")
-    relation.order("#{relation.table_name}.#{attribute} #{direction}")
+    relation = relation.order("#{relation.table_name}.#{attribute} #{direction}")
+    if secondary_col && attribute != secondary_col
+      relation = relation.order("#{relation.table_name}.#{secondary_col} #{secondary_dir}")
+    end
+    relation
   end
 
   def current_user
@@ -22,18 +26,5 @@ module ApiV2::Helpers::SharedHelpers
 
   def authenticate!
     error!({ message: "Unauthorized" }, 401) unless current_user
-  end
-
-  def log_api_event
-    SwetrixEventJob.perform_async \
-      request.url,
-      request.user_agent,
-      request.ip
-
-    PlausibleEventJob.perform_async \
-      request.url,
-      request.user_agent,
-      request.ip,
-      @api_key&.id
   end
 end

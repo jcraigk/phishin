@@ -10,10 +10,6 @@ Bundler.require(*Rails.groups)
 
 module Phishin
   class Application < Rails::Application
-    # Rails config
-    config.load_defaults 7.2
-    config.active_job.queue_adapter = :sidekiq
-
     # Custom app config
     config.app_name = "Phish.in"
     config.web_host = ENV.fetch("WEB_HOST", nil)
@@ -21,15 +17,10 @@ module Phishin
       "#{config.web_host ? "https" : "http"}://#{config.web_host || "localhost:3000"}"
     config.app_desc =
       "#{config.app_name} is an open source archive of live Phish audience recordings"
-    config.github_url = "https://github.com/jcraigk/phishin"
-    config.contact_email = "phish.in.music@gmail.com"
-    config.auth_email_from = "Phish.in <noreply@phish.in>"
-    config.twitter_handle = "@phish_in"
     config.first_char_list = ("A".."Z").to_a + [ "#" ]
-    config.max_playlists_per_user = 20
+    config.max_playlists_per_user = 46
     config.min_search_term_length = 3
     config.time_zone = "Eastern Time (US & Canada)"
-    config.oauth_providers = %i[google]
     config.oauth_google_key = ENV.fetch("OAUTH_GOOGLE_KEY", nil)
     config.oauth_google_secret = ENV.fetch("OAUTH_GOOGLE_SECRET", nil)
     config.content_path =
@@ -42,8 +33,11 @@ module Phishin
       else
         config.base_url
       end
+    config.username_cooldown = 1.year
 
     # Rails config
+    config.load_defaults 7.2
+    config.active_job.queue_adapter = :sidekiq
     config.action_mailer.default_url_options = { host: config.base_url }
     config.action_mailer.smtp_settings = {
       user_name: ENV.fetch("SMTP_USERNAME", nil),

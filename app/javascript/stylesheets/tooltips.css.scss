@@ -1,0 +1,13 @@
+.custom-tooltip {
+  max-width: 25rem;
+  white-space: normal;
+  padding: 0.5rem 1rem !important;
+  text-align: left;
+  z-index: 95;
+  font-size: 1rem !important;
+  line-height: 1.5rem !important;
+  border-radius: var(--bulma-radius);
+  background-color: $title-gray !important;
+  opacity: 0.9 !important;
+  font-weight: normal;
+}

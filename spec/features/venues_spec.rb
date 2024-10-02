@@ -1,73 +1,58 @@
-require 'rails_helper'
+require "rails_helper"
 
-describe 'Venues', :js do
-  let!(:a_venue) { create(:venue, :with_shows, name: 'Alpine Valley Music Theater') }
-  let(:names) { [ 'Eagles Ballroom', 'Earlham College', 'Eastbrook Theatre' ] }
-  let!(:e_venues) do
-    names.each_with_object([]) do |name, venues|
-      venues << create(:venue, :with_shows, name:)
-    end
+RSpec.describe "Venues", :js do
+  let!(:venue_1) do
+    create(
+      :venue,
+      name: "Awesome Venue",
+      city: "New York",
+      shows_count: 15,
+      slug: "awesome-venue"
+    )
   end
-  let(:venue1) { e_venues.first }
-  let(:venue2) { e_venues.second }
-  let(:venue3) { e_venues.third }
+  let!(:venue_2) do
+    create(
+      :venue,
+      name: "Brilliant Venue",
+      city: "Los Angeles",
+      shows_count: 5,
+      slug: "brilliant-venue"
+    )
+  end
 
   before do
-    create_list(:show, 2, venue: venue1)
-    create_list(:show, 3, venue: venue3)
+    visit "/venues"
   end
 
-  it 'visit Venues page' do
-    visit venues_path
-
-    within('#title_box') do
-      expect_content("'A' Venues", 'Total: 1')
-    end
-
-    within('#sub_nav') do
-      expect_content('ABCDEFGHIJKLMNOPQRSTUVWXYZ#')
-    end
-
-    within('#content_box') do
-      expect_content(a_venue.name)
-    end
-
-    # Click on 'G'
-    within('#sub_nav') do
-      click_on('E')
-    end
-
-    within('#title_box') do
-      expect_content("'E' Venues", "Total: #{e_venues.count}")
-    end
-
-    within('#content_box') do
-      expect_content(*names)
-    end
-
-    # Click on first venue
-    first('ul.item_list li h2 a').click
-    expect(page).to have_current_path("/#{e_venues.first.slug}")
+  it "displays the sidebar with sorting and filtering options" do
+    expect(page).to have_css(".sidebar-title", text: "Venues")
+    expect(page).to have_css(".sidebar-subtitle", text: "2 total")
+    expect(page).to have_css("select#sort")
+    expect(page).to have_css("select#first-char-filter")
+    expect(page).to have_css("input#search")
+    expect(page).to have_button("Search")
   end
 
-  it 'Venue sorting' do
-    visit venues_path(char: 'E')
-    sleep(1)
+  it "displays the list of venues with their details" do
+    select "Sort by Shows Count (High to Low)", from: "sort"
 
-    expect_content_in_order('Eagles', 'Earlham')
-
-    # Default sort by Name
-    within('#title_box') do
-      expect_content('Sort', 'Name')
+    within first(".list-item", text: "Awesome Venue") do
+      expect(page).to have_css(".leftside-primary", text: "Awesome Venue")
+      expect(page).to have_css(".leftside-secondary", text: "New York")
+      expect(page).to have_css(".rightside-group", text: "15 shows")
     end
-    expect_content_in_order([ venue1, venue2, venue3 ].map(&:name))
 
-    # Sort by Track Count
-    within('#title_box') do
-      first('.btn-group').click
-      click_on('Show Count')
-      expect_content('Sort', 'Show Count')
+    within first(".list-item", text: "Brilliant Venue") do
+      expect(page).to have_css(".leftside-primary", text: "Brilliant Venue")
+      expect(page).to have_css(".leftside-secondary", text: "Los Angeles")
+      expect(page).to have_css(".rightside-group", text: "5 shows")
     end
-    expect_content_in_order([ venue3, venue1, venue2 ].map(&:name))
+  end
+
+  it "submits search and navigates to the search results page" do
+    fill_in "search", with: "Awesome"
+    click_button "Search"
+
+    expect(page).to have_current_path("/search?term=Awesome&scope=venues")
   end
 end

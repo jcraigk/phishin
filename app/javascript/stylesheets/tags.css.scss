@@ -1,0 +1,31 @@
+.tag-badges-container {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.2rem;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.tag-badge {
+  font-size: 0.6rem;
+  padding: 0.1rem 0.4rem;
+  background-color: $text-gray;
+  color: white;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-weight: bold;
+  white-space: nowrap;
+
+}
+
+.tag-badge:hover {
+  background-color: $control-gray;
+  color: $text-gray;
+}
+
+ul.notes-list {
+  list-style-type: disc;
+  margin-left: 20px;
+  padding-left: 0;
+}

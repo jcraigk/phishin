@@ -1,27 +1,49 @@
-require 'rails_helper'
+require "rails_helper"
 
-describe 'My Shows', :js do
+RSpec.describe "My Shows", :js do
   let(:user) { create(:user) }
-  let(:shows) { create_list(:show, 3) }
+  let(:venue) { create(:venue) }
+  let(:shows) { create_list(:show, 3, venue:) }
 
   before do
     shows.each_with_index do |show, idx|
       create(:like, likable: show, user:)
       show.update(duration: show.duration + (idx * 10))
-      create_list(:like, 10 - idx, likable: show)
+      create_list(:like, (shows.size - idx), likable: show)
     end
 
     sign_in(user)
   end
 
-  it 'click My Shows, display/sorting of shows' do
-    visit root_path
+  it "displays and sorts shows by default" do
+    visit "/my-shows"
+    expect(page).to have_current_path("/my-shows")
+    expect(page).to have_content("My Shows")
+    shows.sort_by(&:date).reverse.each_with_index do |show, idx|
+      expect(page).to have_content(show.date.to_s.gsub("-", "."))
+      expect(page).to have_content(show.venue.name)
+    end
+  end
 
-    find_by_id('user_controls').click
-    click_on('My Shows')
+  it "allows sorting by likes count" do
+    visit "/my-shows"
+    select "Sort by Likes (High to Low)", from: "sort"
+    sorted_shows = shows.sort_by { |show| show.likes.count }.reverse
+    sorted_shows.each_with_index do |show, idx|
+      expect(page).to have_content(show.date.to_s.gsub("-", "."))
+      expect(page).to have_content(show.venue.name)
+    end
+  end
 
-    expect(page).to have_current_path(my_shows_path)
+  context "with more shows" do
+    let(:shows) { create_list(:show, 13, venue:) }
 
-    expect_show_sorting_controls(shows)
+    it "paginates shows" do
+      visit "/my-shows"
+      expect(page).to have_selector(".pagination")
+      find(".pagination li", text: "2").click
+      expect(page).to have_current_path(/\/my-shows.*page=2/)
+      expect(page).to have_selector(".list-item", count: 3)
+    end
   end
 end

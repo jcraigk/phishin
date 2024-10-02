@@ -1,0 +1,246 @@
+main {
+  flex: 1;
+}
+
+#layout-container {
+  display: flex;
+  flex-wrap: nowrap;
+  padding: 1rem;
+  gap: 1.5rem;
+  align-items: flex-start;
+  justify-content: center;
+  max-width: 1200px !important;
+  width: 100%;
+  margin: 0 auto;
+}
+
+#main-content {
+  flex: 1;
+}
+
+#sidebar {
+  background-color: $header-gray;
+  padding: 1rem;
+  flex: 0 0 16rem;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  max-height: fit-content;
+
+  .sidebar-content {
+    a {
+      color: $text-gray;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: $text-gray;
+      text-decoration: underline;
+    }
+
+    select {
+      max-width: 20rem;
+    }
+
+    hr {
+      background-color: $inactive-gray;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .sidebar-title {
+      font-size: 2rem;
+      font-weight: bold;
+      line-height: 2rem;
+      margin-bottom: 0.4rem;
+      color: $title-gray;
+    }
+
+    .sidebar-info {
+      font-size: 1.2rem;
+    }
+
+    .show-duration {
+      margin-top: 0.3rem;
+    }
+
+    .sidebar-subtitle {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: $title-gray;
+
+      &:last-of-type {
+        margin-bottom: 1rem;
+      }
+    }
+
+    .sidebar-detail {
+      font-size: 1.3rem;
+      line-height: 1.7rem;
+      margin-top: 1rem;
+    }
+
+    .sidebar-filters {
+      margin-top: 1rem;
+
+      .select, .input {
+        margin-top: 0.8rem;
+        margin-right: 0.8rem;
+      }
+    }
+
+    .sidebar-control-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0rem;
+    }
+
+    .taper-notes:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .sidebar-map {
+      height: 20rem;
+    }
+  }
+}
+
+.sidebar-content {
+  display: block;
+}
+
+@media (max-width: 1023px) {
+  #layout-container {
+    flex-direction: column;
+  }
+
+  #main-content {
+    width: 100%;
+  }
+
+  #sidebar {
+    display: inline-block;
+    width: 100%;
+    flex: none !important;
+
+    .sidebar-content {
+      display: flex;
+      justify-content: center;
+      flex-direction: row;
+      align-items: center;
+      column-gap: 2rem !important;
+      row-gap: 5px !important;
+
+      .sidebar-control {
+        flex: 0;
+      }
+
+      hr {
+        display: none;
+      }
+
+      form {
+        width: 100%;
+      }
+
+      select {
+        margin: none !important;
+      }
+
+      .sidebar-filters {
+        margin-top: 0rem !important;
+
+        .select, .input {
+          margin-top: 0rem !important;
+          margin-right: 0.8rem !important;
+        }
+      }
+
+      .sidebar-title {
+        margin-bottom: 0rem;
+        font-size: 1.5rem;
+      }
+      .sidebar-subtitle {
+        margin-bottom: 0rem !important;
+      }
+    }
+  }
+  .hidden-mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 421px) {
+  .display-phone-only {
+    display: none !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .list-item {
+    min-height: 2rem;
+  }
+  .display-phone-only {
+    display: block !important;
+  }
+  .hidden-phone {
+    display: none !important;
+  }
+  .rightside-primary {
+    width: 3rem !important;
+    margin-left: 0.5rem !important;
+  }
+  .rightside-secondary {
+    display: none !important;
+  }
+
+  #layout-container {
+    padding: 0.6rem 0.5rem;
+    gap: 0.8rem;
+
+    #sidebar {
+      padding: 0.5rem;
+    }
+  }
+  .title-left {
+    font-size: 1.4rem !important;
+  }
+  .leftside-primary {
+    font-size: 1.3rem !important;
+    padding-right: 0.1rem !important;
+  }
+  h1.title {
+    font-size: 1.7rem !important;
+  }
+  h2.title {
+    margin-bottom: 0.5rem !important;
+  }
+  main.with-player {
+    margin-bottom: 2rem !important;
+  }
+
+  .section-title {
+    &:not(:first-of-type) {
+      margin-top: 2rem !important;
+    }
+  }
+  .map-search-results {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  .sidebar-title {
+    font-size: 1.2rem !important;
+    line-height: 1.3rem !important;
+  }
+  .sidebar-subtitle {
+    font-size: 1rem !important;
+    line-height: 1.1rem !important;
+  }
+  .sidebar-filters {
+    display: none !important;
+  }
+  .show-duration {
+    margin-top: 0rem !important;
+  }
+}

@@ -1,11 +1,9 @@
 class ApiV2::Tracks < ApiV2::Base
-  SORT_COLS = %w[ id title likes_count duration ]
+  SORT_COLS = %w[id title likes_count duration date]
 
   resource :tracks do
-    desc "Return a list of tracks" do
-      detail \
-        "Return a sortable paginated list of tracks, " \
-        "optionally filtered by tag_slug or song_slug."
+    desc "Fetch a list of tracks" do
+      detail "Fetch a filtered, sorted, paginated list of tracks"
       success ApiV2::Entities::Track
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
@@ -25,13 +23,28 @@ class ApiV2::Tracks < ApiV2::Base
       optional :song_slug,
                type: String,
                desc: "Filter tracks by the slug of the song"
+      optional :liked_by_user,
+               type: Boolean,
+               desc: "Filter by tracks liked by the current user",
+               default: false
     end
     get do
-      present page_of_tracks, with: ApiV2::Entities::Track
+      result = page_of_tracks
+      liked_track_ids = fetch_liked_track_ids(result[:tracks])
+      present \
+        tracks: ApiV2::Entities::Track.represent(
+          result[:tracks],
+          liked_track_ids:,
+          include_gaps: true,
+          exclude_tracks: true
+        ),
+        total_pages: result[:total_pages],
+        current_page: result[:current_page],
+        total_entries: result[:total_entries]
     end
 
-    desc "Return a track by ID" do
-      detail "Return a track by its ID, including show details, tags, and songs"
+    desc "Fetch a track by ID" do
+      detail "Fetch a track by its ID, including show details, tags, and songs"
       success ApiV2::Entities::Track
       failure [
         [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
@@ -42,24 +55,53 @@ class ApiV2::Tracks < ApiV2::Base
       requires :id, type: Integer, desc: "ID of the track"
     end
     get ":id" do
-      present track_by_id, with: ApiV2::Entities::Track
+      track = track_by_id
+      present \
+        track,
+        with: ApiV2::Entities::Track,
+        liked_by_user: current_user&.likes&.exists?(likable: track) || false,
+        include_gaps: true
     end
   end
 
   helpers do
     def page_of_tracks
       Rails.cache.fetch("api/v2/tracks?#{params.to_query}") do
-        Track.includes(:show, :songs, track_tags: :tag)
-             .then { |t| apply_filter(t) }
-             .then { |t| apply_sort(t) }
-             .paginate(page: params[:page], per_page: params[:per_page])
+        tracks = Track.includes(
+                        :show,
+                        :songs,
+                        { track_tags: :tag },
+                        :songs_tracks
+                     )
+                     .then { |t| apply_filter(t) }
+                     .then { |t| apply_track_sort(t) }
+                     .paginate(page: params[:page], per_page: params[:per_page])
+
+        {
+          tracks: tracks,
+          total_pages: tracks.total_pages,
+          current_page: tracks.current_page,
+          total_entries: tracks.total_entries
+        }
       end
     end
 
     def track_by_id
       Rails.cache.fetch("api/v2/tracks/#{params[:id]}") do
-        Track.includes(:show, :songs, track_tags: :tag).find_by!(id: params[:id])
+        Track.includes(
+                 :show,
+                 :songs,
+                 { track_tags: :tag },
+                 :songs_tracks
+              ).find_by!(id: params[:id])
       end
+    end
+
+    def fetch_liked_track_ids(tracks)
+      return [] unless current_user
+      track_ids = tracks.map(&:id)
+      Like.where(likable_type: "Track", likable_id: track_ids,
+user_id: current_user.id).pluck(:likable_id)
     end
 
     def apply_filter(tracks)
@@ -75,6 +117,31 @@ class ApiV2::Tracks < ApiV2::Base
                          .where(songs: { slug: params[:song_slug] })
                          .pluck(:id)
         tracks = tracks.where(id: track_ids)
+      end
+
+      if params[:liked_by_user]
+        if current_user
+          liked_track_ids = current_user.likes.where(likable_type: "Track").pluck(:likable_id)
+          tracks = tracks.where(id: liked_track_ids)
+        else
+          tracks = tracks.none
+        end
+      end
+
+      tracks
+    end
+
+    def apply_track_sort(tracks)
+      sort_by, sort_direction = params[:sort].split(":")
+
+      case sort_by
+      when "date"
+        tracks = tracks.joins(:show)
+                       .order("shows.date #{sort_direction}")
+                       .order("tracks.position asc")
+      else
+        tracks = tracks.order("#{sort_by} #{sort_direction}")
+        tracks = tracks.order("title asc") if sort_by != "title"
       end
 
       tracks

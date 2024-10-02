@@ -1,0 +1,76 @@
+.dropdown-menu {
+  z-index: 101; /* Higher than audio player */
+}
+
+.dropdown-content {
+  background-color: white;
+}
+
+.dropdown-item {
+  cursor: pointer;
+  text-decoration: none !important;
+  line-height: 1.8rem !important;
+
+  &.a {
+    padding-inline-end: none !important;
+  }
+
+
+  &:hover {
+    background-color: rgba($blue, 0.3) !important;
+  }
+}
+
+.section {
+  padding: 1rem;
+}
+
+.content {
+  padding: none !important;
+  margin-top: 2rem;
+  margin: 2rem auto;
+  max-width: 1200px !important;
+
+  hr {
+    border: 1px solid $header-gray;
+  }
+
+  p {
+    margin-bottom: 0.5rem !important;
+    font-size: 1.2rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: $title-gray;
+  }
+
+  h2 {
+    font-size: 1.7rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: $title-gray;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    margin-top: 3rem !important;
+    color: $title-gray;
+
+    &::before {
+      font-size: 1.1rem;
+      content: "🍩";
+      margin-right: 0.4rem;
+      filter: grayscale(100%);
+    }
+  }
+
+  h3 + h3,
+  h3 ~ h3 {
+    margin-top: 2rem;
+  }
+}

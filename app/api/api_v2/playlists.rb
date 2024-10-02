@@ -1,7 +1,77 @@
 class ApiV2::Playlists < ApiV2::Base
+  SORT_COLS = %w[name likes_count tracks_count duration updated_at]
+
+  helpers do
+    params :playlist_params do
+      requires :name,
+               type: String,
+               desc: "Name of the playlist"
+      requires :slug,
+               type: String,
+               desc: "Slug of the playlist"
+      requires :description,
+               type: String,
+               desc: "Description of the playlist"
+      requires :published,
+               type: Boolean,
+               desc: \
+                "Published flag (true to make browseable/searchable " \
+                "by public users, false to make private)"
+      requires :track_ids,
+               type: Array[Integer],
+               desc: "Array of track IDs that make up the playlist"
+      requires :starts_at_seconds,
+               type: Array[Integer],
+               desc: \
+                "Array of starting positions of " \
+                "associated track selections in track_ids array"
+      requires :ends_at_seconds,
+               type: Array[Integer],
+               desc:
+                "Array of ending positions of " \
+                "associated track selections in track_ids array"
+    end
+  end
+
   resource :playlists do
-    desc "Return a playlist by slug" do
-      detail "Return a playlist by its slug, including all associated tracks"
+    desc "Fetch a list of playlists" do
+      detail "Fetch a filtered, sorted, paginated list of playlists"
+      success ApiV2::Entities::Playlist
+      failure [
+        [ 400, "Bad Request", ApiV2::Entities::ApiResponse ],
+        [ 404, "Not Found", ApiV2::Entities::ApiResponse ]
+      ]
+    end
+    params do
+      use :pagination
+      optional :sort,
+               type: String,
+               desc: "Sort by attribute and direction (e.g., 'likes_count:desc')",
+               default: "likes_count:desc",
+               values: SORT_COLS.map { |opt| [ "#{opt}:asc", "#{opt}:desc" ] }.flatten
+      optional :filter,
+               type: String,
+               desc: "Filter by user ownership or user likes. Requires authentication.",
+               values: %w[all mine liked]
+    end
+    get do
+      result = page_of_playlists
+      liked_playlist_ids = fetch_liked_playlist_ids(result[:playlists])
+      liked_track_ids = fetch_liked_track_ids(result[:playlists])
+      present \
+        playlists: ApiV2::Entities::Playlist.represent(
+          result[:playlists],
+          liked_playlist_ids:,
+          liked_track_ids:,
+          exclude_tracks: true
+        ),
+        total_pages: result[:total_pages],
+        current_page: result[:current_page],
+        total_entries: result[:total_entries]
+    end
+
+    desc "Fetch a playlist by slug" do
+      detail "Fetch a playlist by its slug, including all associated tracks"
       success ApiV2::Entities::Playlist
       failure [ [ 404, "Not Found", ApiV2::Entities::ApiResponse ] ]
     end
@@ -10,7 +80,10 @@ class ApiV2::Playlists < ApiV2::Base
     end
     get ":slug" do
       playlist = Playlist.includes(:tracks).find_by!(slug: params[:slug])
-      present playlist, with: ApiV2::Entities::Playlist
+      present \
+        playlist,
+        with: ApiV2::Entities::Playlist,
+        liked_by_user: current_user&.likes&.exists?(likable: playlist) || false
     end
 
     desc "Create a new playlist" do
@@ -18,13 +91,7 @@ class ApiV2::Playlists < ApiV2::Base
       success ApiV2::Entities::Playlist
       failure [ [ 422, "Unprocessable Entity", ApiV2::Entities::ApiResponse ] ]
     end
-    params do
-      requires :name, type: String, desc: "Name of the playlist"
-      requires :slug, type: String, desc: "Slug of the playlist"
-      optional :track_ids,
-               type: Array[Integer],
-               desc: "Array of track IDs to associate with the playlist"
-    end
+    params { use :playlist_params }
     post do
       authenticate!
       if Playlist.where(user: current_user).count >= App.max_playlists_per_user
@@ -33,11 +100,17 @@ class ApiV2::Playlists < ApiV2::Base
           403
         )
       end
-
-      playlist = Playlist.create!(user: current_user, name: params[:name], slug: params[:slug])
-      update_playlist_tracks(playlist, params[:track_ids])
-
-      present playlist, with: ApiV2::Entities::Playlist
+      begin
+        playlist = Playlist.create!(
+          user: current_user,
+          name: params[:name],
+          slug: params[:slug],
+          playlist_tracks_attributes: track_attrs_from_params
+        )
+        present playlist, with: ApiV2::Entities::Playlist
+      rescue ActiveRecord::RecordInvalid => e
+        error!({ message: e.record.errors.full_messages.join(", ") }, 422)
+      end
     end
 
     desc "Update an existing playlist" do
@@ -49,19 +122,20 @@ class ApiV2::Playlists < ApiV2::Base
       ]
     end
     params do
-      requires :slug, type: String, desc: "Slug of the playlist"
-      requires :name, type: String, desc: "Updated name of the playlist"
-      optional :track_ids,
-               type: Array[Integer],
-               desc: "Array of track IDs to update the playlist with"
+      use :playlist_params
+      requires :id,
+               type: Integer,
+               desc: "ID of the playlist"
     end
-    put ":slug" do
+    put ":id" do
       authenticate!
-      playlist = Playlist.find_by!(user: current_user, slug: params[:slug])
-      playlist.update!(name: params[:name])
-      update_playlist_tracks(playlist, params[:track_ids])
-
-      present playlist, with: ApiV2::Entities::Playlist
+      playlist = current_user.playlists.find(params[:id])
+      begin
+        update_playlist_data(playlist)
+        present playlist, with: ApiV2::Entities::Playlist
+      rescue ActiveRecord::RecordInvalid => e
+        error!({ message: e.record.errors.full_messages.join(", ") }, 422)
+      end
     end
 
     desc "Delete a playlist" do
@@ -73,21 +147,100 @@ class ApiV2::Playlists < ApiV2::Base
       ]
     end
     params do
-      requires :slug, type: String, desc: "Slug of the playlist"
+      requires :id, type: Integer, desc: "ID of the playlist"
     end
-    delete ":slug" do
+    delete ":id" do
       authenticate!
-      current_user.playlists.find_by!(slug: params[:slug]).destroy!
+      current_user.playlists.find(params[:id]).destroy!
       status 204
     end
   end
 
   helpers do
-    def update_playlist_tracks(playlist, track_ids)
-      return unless track_ids
-      playlist.playlist_tracks.destroy_all
-      track_ids.each_with_index do |track_id, index|
-        playlist.playlist_tracks.create!(track_id:, position: index + 1)
+    def page_of_playlists
+      Rails.cache.fetch("api/v2/playlists?#{params.to_query}") do
+        playlists = Playlist.includes(:user)
+                            .then { |p| apply_filter(p) }
+                            .then { |p| apply_sort(p, :name, :asc) }
+                            .paginate(page: params[:page], per_page: params[:per_page])
+
+        {
+          playlists: playlists,
+          total_pages: playlists.total_pages,
+          current_page: playlists.current_page,
+          total_entries: playlists.total_entries
+        }
+      end
+    end
+
+    def fetch_liked_playlist_ids(playlists)
+      return [] unless current_user
+      Like.where(
+        likable_type: "Playlist",
+        likable_id: playlists.map(&:id),
+        user_id: current_user.id
+      ).pluck(:likable_id)
+    end
+
+    def fetch_liked_track_ids(playlists)
+      return [] unless current_user
+      track_ids = playlists.flat_map { |playlist| playlist.tracks.pluck(:id) }
+      Like.where(
+        likable_type: "Track",
+        likable_id: track_ids,
+        user_id: current_user.id
+      ).pluck(:likable_id)
+    end
+
+    def apply_filter(playlists)
+      if !params[:filter].in?(%w[mine liked])
+        playlists = playlists.published
+      elsif current_user && params[:filter] == "liked"
+        liked_playlist_ids = current_user.likes.where(likable_type: "Playlist").pluck(:likable_id)
+        playlists = playlists.where(id: liked_playlist_ids)
+      elsif current_user && params[:filter] == "mine"
+        playlists = playlists.where(user: current_user)
+      end
+
+      playlists
+    end
+
+    def track_attrs_from_params
+      params[:track_ids].compact.map.with_index do |track_id, idx|
+        starts_at, ends_at = sanitize_track_times(
+          starts_at: params[:starts_at_seconds][idx],
+          ends_at: params[:ends_at_seconds][idx],
+          track_duration: Track.find(track_id).duration / 1000
+        )
+
+        {
+          track_id: track_id,
+          position: idx + 1,
+          starts_at_second: starts_at,
+          ends_at_second: ends_at
+        }
+      end
+    end
+
+    def sanitize_track_times(starts_at:, ends_at:, track_duration:)
+      if starts_at <= 0 ||
+         starts_at >= track_duration ||
+         starts_at >= ends_at
+        starts_at = nil
+      end
+      ends_at = nil if ends_at <= 0 || ends_at >= track_duration
+      [ starts_at, ends_at ]
+    end
+
+    def update_playlist_data(playlist)
+      ActiveRecord::Base.transaction do
+        playlist.playlist_tracks.destroy_all
+        playlist.update! \
+          name: params[:name],
+          description: params[:description],
+          slug: params[:slug],
+          published: params[:published],
+          playlist_tracks_attributes: track_attrs_from_params
       end
     end
   end

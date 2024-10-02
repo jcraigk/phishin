@@ -20,16 +20,10 @@ RUN apt-get update -qq && \
       shared-mime-info \
     && apt-get clean
 
-# Install a specific version of nodejs using nvm for yarn install
-ENV NODE_VERSION 14.18.0
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash && \
-    . $HOME/.nvm/nvm.sh && \
-    nvm install $NODE_VERSION && \
-    nvm alias default $NODE_VERSION && \
-    nvm use default
-ENV PATH $PATH:/root/.nvm/versions/node/v$NODE_VERSION/bin
-RUN curl -o- -L https://yarnpkg.com/install.sh | bash
-ENV PATH="/root/.yarn/bin:/root/.config/yarn/global/node_modules/.bin:$PATH"
+# Install Node and Yarn
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
+RUN npm install -g yarn
 
 WORKDIR $INSTALL_PATH
 

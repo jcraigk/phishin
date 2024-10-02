@@ -5,13 +5,10 @@ Rails.application.config.sorcery.submodules = %i[
 ]
 
 Rails.application.config.sorcery.configure do |config|
-  # Cookies
   config.cookie_domain = App.web_host
+  config.external_providers = %i[ google ]
 
-  # OAuth Providers
-  config.external_providers = App.oauth_providers
-
-  # OAuth Provider: Google
+  # Google OAuth
   config.google.key = App.oauth_google_key
   config.google.secret = App.oauth_google_secret
   config.google.callback_url = "#{App.base_url}/oauth/callback/google"

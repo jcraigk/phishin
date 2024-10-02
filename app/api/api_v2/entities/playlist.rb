@@ -1,5 +1,12 @@
 class ApiV2::Entities::Playlist < ApiV2::Entities::Base
   expose \
+    :id,
+    documentation: {
+      type: "Integer",
+      desc: "ID of the playlist"
+    }
+
+  expose \
     :slug,
     documentation: {
       type: "String",
@@ -10,7 +17,14 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
     :name,
     documentation: {
       type: "String",
-      desc: "The name of the playlist"
+      desc: "The display name of the playlist"
+    }
+
+  expose \
+    :description,
+    documentation: {
+      type: "String",
+      desc: "The description of the playlist"
     }
 
   expose(:username) { _1.user.username }
@@ -23,13 +37,16 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
     }
 
   expose \
-    :tracks,
-    using: ApiV2::Entities::Track,
+    :entries,
+    using: ApiV2::Entities::PlaylistTrack,
+    unless: ->(_, opts) { opts[:exclude_tracks] },
     documentation: {
       type: "Array",
-      desc: "The tracks in the playlist"
-    } do |playlist|
-      playlist.playlist_tracks.order(:position).map(&:track)
+      desc: \
+        "The entries in the playlist, which themselves " \
+        "include the track along with its position and other metadata"
+    } do
+      _1.playlist_tracks.order(:position)
     end
 
   expose \
@@ -37,9 +54,14 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
     documentation: {
       type: "Integer",
       desc: "The number of tracks in the playlist"
-    } do |playlist|
-      playlist.playlist_tracks.size
-    end
+    }
+
+  expose \
+    :likes_count,
+    documentation: {
+      type: "Integer",
+      desc: "The number of likes the playlist has received"
+    }
 
   expose \
     :updated_at,
@@ -47,4 +69,23 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
       type: "String",
       desc: "The last update time of the playlist"
     }
+
+  expose \
+    :published,
+    documentation: {
+      type: "Boolean",
+      desc: \
+        "Indicates if the playlist is listed publicly " \
+        "for other users to browse and search"
+    }
+
+  expose(
+      :liked_by_user
+    ) do
+      unless _2[:liked_by_user].nil?
+        _2[:liked_by_user]
+      else
+        _2[:liked_playlist_ids]&.include?(_1.id) || false
+      end
+    end
 end

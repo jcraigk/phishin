@@ -12,7 +12,7 @@ RSpec.describe "API v2 Likes" do
           post_api_authed(
             user,
             "/likes",
-            params: { likable_type: "show", likable_id: show.id }
+            params: { likable_type: "Show", likable_id: show.id }
           )
         }.to change { show.likes.count }.by(1)
 
@@ -26,7 +26,7 @@ RSpec.describe "API v2 Likes" do
           post_api_authed(
             user,
             "/likes",
-            params: { likable_type: "track", likable_id: track.id }
+            params: { likable_type: "Track", likable_id: track.id }
           )
         }.to change { track.likes.count }.by(1)
 
@@ -39,12 +39,12 @@ RSpec.describe "API v2 Likes" do
         post_api_authed(
           user,
           "/likes",
-          params: { likable_type: "track", likable_id: 0 }
+          params: { likable_type: "Track", likable_id: 0 }
         )
 
         expect(response).to have_http_status(:unprocessable_entity)
         json = JSON.parse(response.body)
-        expect(json["message"]).to eq("Invalid show or track")
+        expect(json["message"]).to eq("Invalid likable entity")
       end
     end
 
@@ -52,7 +52,7 @@ RSpec.describe "API v2 Likes" do
       it "returns a 401 Unauthorized error" do
         post_api(
           "/likes",
-          params: { likable_type: "show", likable_id: show.id }
+          params: { likable_type: "Show", likable_id: show.id }
         )
 
         expect(response).to have_http_status(:unauthorized)
@@ -74,7 +74,7 @@ RSpec.describe "API v2 Likes" do
           delete_api_authed(
             user,
             "/likes",
-            params: { likable_type: "show", likable_id: show.id }
+            params: { likable_type: "Show", likable_id: show.id }
           )
         }.to change { show.likes.count }.by(-1)
         expect(response).to have_http_status(:no_content)
@@ -87,7 +87,7 @@ RSpec.describe "API v2 Likes" do
           delete_api_authed(
             user,
             "/likes",
-            params: { likable_type: "track", likable_id: track.id }
+            params: { likable_type: "Track", likable_id: track.id }
           )
         }.to change { track.likes.count }.by(-1)
         expect(response).to have_http_status(:no_content)
@@ -99,12 +99,12 @@ RSpec.describe "API v2 Likes" do
         delete_api_authed(
           user,
           "/likes",
-          params: { likable_type: "track", likable_id: 0 }
+          params: { likable_type: "Track", likable_id: 0 }
         )
 
         expect(response).to have_http_status(:unprocessable_entity)
         json = JSON.parse(response.body)
-        expect(json["message"]).to eq("Invalid show or track")
+        expect(json["message"]).to eq("Invalid likable entity")
       end
     end
 
@@ -115,7 +115,7 @@ RSpec.describe "API v2 Likes" do
         delete_api_authed(
           user,
           "/likes",
-          params: { likable_type: "track", likable_id: track.id }
+          params: { likable_type: "Track", likable_id: track.id }
         )
 
         expect(response).to have_http_status(:not_found)
@@ -128,7 +128,7 @@ RSpec.describe "API v2 Likes" do
       it "returns a 401 Unauthorized error" do
         delete_api(
           "/likes",
-          params: { likable_type: "show", likable_id: show.id }
+          params: { likable_type: "Show", likable_id: show.id }
         )
 
         expect(response).to have_http_status(:unauthorized)

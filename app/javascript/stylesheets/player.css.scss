@@ -1,0 +1,286 @@
+main.with-player {
+  margin-bottom: 100px;
+}
+
+footer.with-player {
+  display: none;
+}
+
+.audio-player {
+  position: fixed;
+  bottom: -160px;
+  width: 100%;
+  background-color: $header-gray;
+  z-index: 100;
+  box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.3);
+  transition: bottom 0.5s ease;
+
+  &.visible {
+    bottom: 0px;
+  }
+
+  a {
+    text-decoration: none;
+    color: $text-gray;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .chevron-button {
+    background-color: $control-gray;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    padding: 0.3rem 0.7rem;
+    color: $text-gray;
+    box-shadow: 0 0px 10px rgba(0, 0, 0, 0.3);
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    cursor: pointer;
+    display: none;
+    z-index: 101;
+  }
+
+  &:hover .chevron-button {
+    display: block;
+  }
+
+  .fade-in {
+    opacity: 1;
+    transition: opacity 2s ease-in;
+  }
+
+  .fade-out {
+    opacity: 0;
+    transition: opacity 500ms ease-out;
+  }
+
+  .top-row {
+    margin: 0 auto;
+    max-width: 800px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    padding: 0.2rem 0.5rem 0.3rem 0.9rem;
+
+    .left-half {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      margin-left: 40px;
+    }
+
+    .right-half {
+      flex: 0;
+      margin-right: 40px;
+    }
+  }
+
+  .track-title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    a {
+      color: $title-gray;
+    }
+  }
+
+  .track-info {
+    font-size: 1.2rem;
+    position: relative;
+    top: -0.2rem;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: right;
+    padding-top: 0.3rem;
+    gap: 1.2rem;
+
+    button {
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      margin: 0 0.6rem;
+
+      &:hover {
+        color: $blue !important;
+      }
+
+      &:focus {
+        color: $text-gray !important;
+        outline: none;
+      }
+
+      .play-icon {
+        position: relative;
+        left: 3px;
+        font-size: 1.8rem;
+      }
+    }
+
+    .skip-btn:hover {
+      color: $text-gray !important;
+    }
+
+    .scrub-btn {
+      position: relative;
+
+      span {
+        position: absolute;
+        font-size: 0.65rem;
+        font-weight: bold;
+        top: 21px;
+      }
+    }
+
+    .scrub-back span {
+      right: 10px;
+    }
+
+    .scrub-forward span {
+      right: 12px;
+    }
+
+    .play-pause-btn {
+      width: 3.5rem;
+      height: 3.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background-color: $blue;
+      margin-top: -0.3rem !important;
+
+      &:hover {
+        color: white !important;
+      }
+
+      svg {
+        font-size: 2rem;
+      }
+    }
+  }
+
+  .bottom-row {
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 0.6rem;
+    padding-right: 0.6rem;
+    max-width: 1200px;
+    height: 70px;
+    margin-bottom: 0.5rem;
+    margin-top: 0.1rem;
+
+    .elapsed {
+      margin-right: 0.5rem;
+      min-width: 2rem;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .remaining {
+      margin-left: 0.5rem;
+      min-width: 2rem;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .scrubber-bar {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      background-position: 0 0;
+    }
+
+    .progress-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      mask-size: 100% 100%;
+      mask-position: 0 0;
+      mask-repeat: no-repeat;
+
+      -webkit-mask-size: 100% 100%;
+      -webkit-mask-position: 0 0;
+      -webkit-mask-repeat: no-repeat;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    &:hover .chevron-button {
+      display: block;
+    }
+
+    &.collapsed {
+      bottom: -80px !important;
+    }
+    .top-row {
+      margin-top: 0.3rem;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .chevron-button {
+      display: none !important;
+    }
+    .scrub-btn {
+      display: none !important;
+    }
+    .bottom-row {
+      height: 30px !important;
+      margin-top: 5px !important;
+    }
+    .track-title {
+      font-size: 1.2rem !important;
+    }
+    main.with-player {
+      margin-bottom: 110px;
+    }
+    .track-info {
+      font-size: 1.2rem !important;
+    }
+    .top-row {
+      padding-bottom: 0rem !important;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .venue-location {
+      display: none !important;
+    }
+    .controls {
+      gap: 0 !important;
+    }
+    .left-half {
+      margin-left: 0px !important;
+    }
+    .right-half {
+      margin-right: 0px !important;
+    }
+    .play-pause-btn {
+      width: 2.7rem !important;
+      height: 2.7rem !important;
+      position: relative;
+      top: 4px;
+
+      svg {
+        font-size: 1.4rem !important;
+      }
+    }
+  }
+}

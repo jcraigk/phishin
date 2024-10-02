@@ -1,0 +1,13 @@
+.mobile-apps img {
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1023px) {
+  .mobile-apps {
+    display: none;
+  }
+}

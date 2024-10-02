@@ -1,0 +1,20 @@
+.search-term-form {
+  max-width: 12rem;
+  margin-bottom: 1rem; /* Add margin below search term input */
+}
+
+@media (max-width: 1023px) {
+  .sidebar-content .field {
+    flex: 1;
+    min-width: 45%;
+  }
+
+  .sidebar-content .control button {
+    flex: 1;
+    min-width: 45%;
+  }
+
+  .search-term-form {
+    margin-bottom: 0;
+  }
+}

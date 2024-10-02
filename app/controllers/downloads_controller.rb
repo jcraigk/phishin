@@ -1,24 +1,4 @@
 class DownloadsController < ApplicationController
-  def track_info # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    return render json: { success: false } unless track
-    render json: {
-      success: true,
-      id: track.id,
-      title: track.title,
-      duration: track.duration,
-      show: track.show.date_with_dots,
-      show_url: "/#{track.show.date}",
-      show_id: track.show.id,
-      venue: track.show.venue_name,
-      venue_url: "/#{track.show.venue.slug}",
-      city: track.show.venue.location,
-      likes_count: track.likes_count,
-      liked:,
-      waveform_image_url: track.waveform_image_url,
-      mp3_url: track.mp3_url
-    }
-  end
-
   def download_track
     raise ActiveRecord::RecordNotFound if track&.audio_file.blank?
     send_audio_file
@@ -39,12 +19,6 @@ class DownloadsController < ApplicationController
   def track
     @track ||=
       Track.includes(show: :venue)
-           .find_by(id: params[:track_id])
-  end
-
-  def liked
-    @liked ||=
-      current_user &&
-      track.likes.find_by(user: current_user)
+           .find_by(id: params[:id])
   end
 end

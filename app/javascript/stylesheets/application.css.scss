@@ -1,0 +1,201 @@
+@import "~@fontsource/marck-script/400.css";
+@import "~@fontsource/open-sans-condensed/300.css";
+@import "~@fontsource/open-sans-condensed/700.css";
+@import '~mapbox-gl/dist/mapbox-gl.css';
+
+@import "bulma";
+
+$alert-red: #c6867f;
+$bg-blue: #cbf3ff;
+$bg-gray: #f2f3f5;
+$bg-red: #ffe4e1;
+$blue: rgb(3, 187, 242);
+$control-gray: #f5f5f5;
+$google-blue: #5385ed;
+$header-gray: #c7c8ca;
+$inactive-gray: #d9dbdc;
+$text-gray: #6d6f71;
+$title-gray: #515152;
+
+@import "./bulma-overrides.css.scss";
+@import "./content.css.scss";
+@import "./eras.css.scss";
+@import "./errors.css.scss";
+@import "./feedback.css.scss";
+@import "./footer.css.scss";
+@import "./layout.css.scss";
+@import "./likes.css.scss";
+@import "./map.css.scss";
+@import "./modal.css.scss";
+@import "./navbar.css.scss";
+@import "./pagination.css.scss";
+@import "./player.css.scss";
+@import "./playlist.css.scss";
+@import "./search.css.scss";
+@import "./tags.css.scss";
+@import "./tooltips.css.scss";
+
+html, body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: $bg-gray;
+  font-family: "Open Sans Condensed", sans-serif;
+  overflow-x: hidden;
+}
+
+.root-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+input, textarea, select, button {
+  font-family: "Open Sans Condensed", sans-serif;
+}
+
+button {
+  border: none !important;
+  color: $text-gray !important;
+}
+
+a {
+  text-decoration: none;
+
+  &:visited, &:focus {
+    text-decoration: none !important;
+  }
+}
+
+::placeholder {
+  font-family: "Open Sans Condensed", sans-serif;
+}
+
+.select::after {
+  border-color: $text-gray !important; /* Bulma dropdown chevron color */
+}
+
+.label {
+  color: $text-gray;
+  margin-top: 0.5rem;
+  margin-bottom: 0.1rem !important;
+}
+
+// Misc
+.context-dropdown .button {
+  background-color: transparent;
+  box-shadow: none;
+
+  &:hover {
+    background-color: $control-gray;
+  }
+}
+
+.text-gray {
+  color: $text-gray;
+}
+
+.context-dropdown-content {
+  .icon {
+    margin-right: 0.4rem;
+    position: relative;
+    top: 3px;
+    color: $text-gray;
+    width: 1rem;
+  }
+  .dropdown-item {
+    font-size: 1.2rem;
+    background-color: white;
+    padding-inline-end: 1.2rem;
+  }
+}
+
+.excerpt {
+  font-style: italic;
+}
+
+.excerpt-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translate(0, -50%);
+  opacity: 0.2;
+  font-size: 1rem;
+  z-index: 1; /* Behind the text */
+  pointer-events: none; /* Ignore mouse events */
+}
+
+.loader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 99;
+
+  .loader-content {
+    transform: translateY(-100px);
+  }
+}
+
+.hilite {
+  background-color: yellow !important;
+}
+
+.section {
+  padding-top: 0 !important;
+}
+
+// Static pages
+.api-command {
+  margin: 0.5rem 0;
+  display: block;
+  border-radius: 0.25rem;
+  border: 1px dashed #ccc;
+  padding: 0.5rem;
+  font-size: 1rem;
+  background-color: #ffffff;
+}
+.api-inline {
+  margin: 0.5rem;
+  display: inline-block;
+  border-radius: 0.25rem;
+  border: 1px dashed #ccc;
+  padding: 0.5rem;
+  font-size: 1rem;
+  background-color: #ffffff;
+}
+.api-doc {
+  display: block;
+  margin: 0 0 2rem 1rem;
+}
+
+// OAuth
+.external-login-btn {
+  font-size: 1.3rem;
+  text-align: center;
+  font-weight: bold;
+}
+.login-logo {
+  background-color: white;
+  border-radius: 3px;
+  width: 28px;
+  height: 28px;
+  position: relative;
+  left: -10px;
+  padding: 3px;
+
+  img {
+    position: relative;
+    top: -3px;
+  }
+}
+.google-btn {
+  color: white !important;
+  background-color: $google-blue;
+}

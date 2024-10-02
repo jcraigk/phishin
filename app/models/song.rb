@@ -8,6 +8,8 @@ class Song < ApplicationRecord
   validates :title, presence: true, uniqueness: true
   validates :alias, uniqueness: true, allow_nil: true
 
+  alias_attribute :name, :title
+
   include PgSearch::Model
   pg_search_scope(
     :kinda_matching,
@@ -23,7 +25,6 @@ class Song < ApplicationRecord
   scope :title_starting_with, lambda { |char|
     where("LOWER(title) SIMILAR TO ?", "#{char == '#' ? '[0-9]' : char.downcase}%")
   }
-  scope :with_lyrical_excerpt, -> { where.not(lyrical_excerpt: nil) }
 
   def self.random_with_lyrical_excerpt
     where.not(lyrical_excerpt: nil).order(Arel.sql("RANDOM()")).first

@@ -17,34 +17,33 @@ describe "User Sessions", :js do
 
   context "with valid data" do
     it "user signs in" do
-      visit root_path
+      visit "/"
 
-      click_on("Sign in")
+      click_on("LOGIN")
 
       fill_in("email", with: email)
       fill_in("password", with: password)
-      click_on(I18n.t("auth.login"))
+      click_on("Login")
 
-      expect(page).to have_current_path(root_path)
-      expect_content(I18n.t("auth.login_success"))
+      expect(page).to have_current_path("/")
+      expect(page).to have_content("Login successful")
 
-      find_by_id("user_controls").click
-      click_on(I18n.t("auth.logout"))
-
-      expect_content(I18n.t("auth.logout_success"))
+      find(".user-dropdown button").click
+      find("#logout").click
+      expect(page).to have_content("Logged out successfully")
     end
   end
 
   context "with invalid data" do
     it "user signs up with valid data" do
-      visit new_user_session_path
+      visit "/login"
 
       fill_in("email", with: email)
       fill_in("password", with: "wrongpass")
-      click_on(I18n.t("auth.login"))
+      click_on("Login")
 
-      expect(page).to have_current_path(new_user_session_path)
-      expect_content(I18n.t("auth.login_fail"))
+      expect(page).to have_current_path("/login")
+      expect(page).to have_content("Invalid email or password")
     end
   end
 end

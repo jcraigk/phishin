@@ -1,0 +1,59 @@
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  list-style-type: none;
+  padding: 0;
+  font-size: 1.2rem;
+}
+
+.pagination li {
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.pagination li a {
+  padding: 0.6rem 0.8rem;
+  color: $text-gray;
+  text-decoration: none;
+  border-radius: var(--bulma-radius);
+
+  &:hover {
+    background-color: white;
+  }
+}
+
+.pagination li.active a {
+  border: 1px solid $blue;
+  color: $text-gray;
+}
+
+.pagination li.disabled a {
+  background-color: $control-gray;
+  cursor: not-allowed;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+
+  .per-page-input {
+    display: flex;
+    align-items: center;
+
+    label {
+      margin-right: 0.5rem;
+    }
+  }
+
+  .input.per-page {
+    width: 60px;
+    text-align: center;
+    vertical-align: middle;
+  }
+}
+
+
+

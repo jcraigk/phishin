@@ -1,107 +1,24 @@
 module FeatureHelpers
-  def expect_content(*args)
-    args.each { |c| expect_content_single(c) }
+  def sign_in(user)
+    visit "/login"
+    fill_in "email", with: user.email
+    fill_in "password", with: "password"
+    click_on "Login"
   end
 
-  def expect_content_single(content)
-    expect(page).to have_content(content)
-  end
+  def format_duration_show(milliseconds)
+    total_minutes = (milliseconds / 60000).floor
+    hours = (total_minutes / 60).floor
+    minutes = total_minutes % 60
 
-  def expect_css(*args)
-    args.each { |c| expect_css_single(c) }
-  end
-
-  def expect_css_single(css)
-    expect(page).to have_css(css)
-  end
-
-  def expect_content_in_order(*args)
-    args[0..-2].each_with_index do |c, idx|
-      expect(c).to appear_before(args[idx + 1])
+    if hours > 0
+      "#{hours}h #{minutes}m"
+    else
+      "#{minutes}m"
     end
   end
 
-  def expect_track_sorting_controls(tracks) # rubocop:disable Metrics/AbcSize
-    titles_by_date = tracks.sort_by { |t| t.show.date }.map(&:title)
-    titles_by_likes = tracks.sort_by(&:likes_count).map(&:title)
-    titles_by_duration = tracks.sort_by(&:duration).map(&:title)
-
-    # Default sort by Reverse date
-    within('#title_box') do
-      expect_content('Sort', 'Reverse Date')
-    end
-    expect_content_in_order(titles_by_date.reverse)
-
-    # Sort by Date
-    within('#title_box') do
-      first('.dropdown-toggle').click
-      click_on('Date')
-      expect_content('Sort', 'Date')
-    end
-    expect_content_in_order(titles_by_date)
-
-    # Sort by Likes
-    within('#title_box') do
-      first('.dropdown-toggle').click
-      click_on('Likes')
-      expect_content('Sort', 'Likes')
-    end
-    expect_content_in_order(titles_by_likes)
-
-    # Sort by Duration
-    within('#title_box') do
-      first('.dropdown-toggle').click
-      click_on('Duration')
-      expect_content('Sort', 'Duration')
-    end
-    expect_content_in_order(titles_by_duration)
-  end
-
-  def expect_show_sorting_controls(shows) # rubocop:disable Metrics/AbcSize
-    dates_by_date = shows.sort_by(&:date).map(&:date_with_dots)
-    dates_by_likes = shows.sort_by(&:likes_count).map(&:date_with_dots)
-    dates_by_duration = shows.sort_by(&:duration).map(&:date_with_dots)
-
-    # Default sort by Reverse date
-    within('#title_box') do
-      expect_content('Sort', 'Reverse Date')
-    end
-    expect_content_in_order(dates_by_date.reverse)
-
-    # Sort by Date
-    within('#title_box') do
-      first('.dropdown-toggle').click
-      click_on('Date')
-      expect_content('Sort', 'Date')
-    end
-    expect_content_in_order(dates_by_date)
-
-    # Sort by Likes
-    within('#title_box') do
-      first('.dropdown-toggle').click
-      click_on('Likes')
-      expect_content('Sort', 'Likes')
-    end
-    expect_content_in_order(dates_by_likes)
-
-    # Sort by Duration
-    within('#title_box') do
-      first('.dropdown-toggle').click
-      click_on('Duration')
-      expect_content('Sort', 'Duration')
-    end
-    expect_content_in_order(dates_by_duration)
-  end
-
-  def enter_search_term(term)
-    visit root_path
-    sleep(1)
-
-    fill_in('search_term', with: term)
-    find_by_id('search_term').native.send_keys(:return)
-
-    within('#title_box') do
-      expect_content("Search: '#{term}'")
-    end
+  def format_date_long(date_string)
+    Date.parse(date_string.to_s).strftime("%B %-d, %Y")
   end
 end

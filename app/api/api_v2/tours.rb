@@ -2,8 +2,8 @@ class ApiV2::Tours < ApiV2::Base
   SORT_COLS = %w[ name starts_on ends_on shows_count ]
 
   resource :tours do
-    desc "Return a list of tours" do
-      detail "Return a sortable paginated list of tours"
+    desc "Fetch a list of tours" do
+      detail "Fetch a sorted, paginated list of tours"
       success ApiV2::Entities::Tour
     end
     params do
@@ -18,8 +18,8 @@ class ApiV2::Tours < ApiV2::Base
       present page_of_tours, with: ApiV2::Entities::Tour
     end
 
-    desc "Return a tour" do
-      detail "Return a tour by its slug, including associated shows"
+    desc "Fetch a tour" do
+      detail "Fetch a tour by its slug, including associated shows"
       success ApiV2::Entities::Tour
     end
     params do
@@ -34,7 +34,7 @@ class ApiV2::Tours < ApiV2::Base
     def page_of_tours
       Rails.cache.fetch("api/v2/tours?#{params.to_query}") do
         Tour.unscoped
-            .then { |t| apply_sort(t) }
+            .then { |t| apply_sort(t, :name, :asc) }
             .paginate(page: params[:page], per_page: params[:per_page])
       end
     end

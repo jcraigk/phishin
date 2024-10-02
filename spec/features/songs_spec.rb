@@ -1,70 +1,57 @@
-require 'rails_helper'
+require "rails_helper"
 
-describe 'Songs', :js do
-  let(:titles) { [ 'Garden Party', 'Gettin Jiggy', 'Ghost' ] }
-  let!(:g_songs) do
-    titles.each_with_object([]) do |title, songs|
-      songs << create(:song, :with_tracks, title:)
-    end
+RSpec.describe "Songs", :js do
+  let!(:original_song) do
+    create(
+      :song,
+      title: "Original Song",
+      original: true,
+      tracks_count: 10,
+      slug: "original-song"
+    )
   end
-  let(:song1) { g_songs.first }
-  let(:song2) { g_songs.second }
-  let(:song3) { g_songs.third }
+  let!(:cover_song) do
+    create(
+      :song,
+      title: "Cover Song",
+      original: false,
+      tracks_count: 5,
+      slug: "cover-song"
+    )
+  end
 
   before do
-    create(:song, :with_tracks, title: 'A Apolitical Blues', alias: 'Blues')
-    create_list(:track, 2, songs: [ g_songs.first ])
-    create_list(:track, 3, songs: [ g_songs.second ])
+    visit "/songs"
   end
 
-  it 'visit Songs page' do
-    visit songs_path
-
-    within('#title_box') do
-      expect_content("'A' Songs", 'Total: 1')
-    end
-
-    within('#sub_nav') do
-      expect_content('ABCDEFGHIJKLMNOPQRSTUVWXYZ#')
-    end
-
-    within('#content_box') do
-      expect_content('A Apolitical Blues (aka Blues)')
-    end
-
-    # Click on sub nav 'G'
-    within('#sub_nav') do
-      click_on('G')
-    end
-
-    within('#title_box') do
-      expect_content("'G' Songs", "Total: #{g_songs.count}")
-    end
-
-    within('#content_box') do
-      expect_content(*titles)
-    end
-
-    # Click on first song
-    first('ul.item_list li').click
-    expect(page).to have_current_path("/#{g_songs.first.slug}")
+  it "displays the sidebar with sorting and filtering options" do
+    expect(page).to have_css(".sidebar-title", text: "Songs")
+    expect(page).to have_css(".sidebar-subtitle", text: "2 total")
+    expect(page).to have_css("select#sort")
+    expect(page).to have_css("input#search")
+    expect(page).to have_button("Search")
   end
 
-  it 'Song sorting' do
-    visit songs_path(char: 'G')
+  it "displays the list of songs with their details" do
+    select "Sort by Tracks Count (High to Low)", from: "sort"
 
-    # Default sort by Title
-    within('#title_box') do
-      expect_content('Sort', 'Title')
+    within first(".list-item", text: "Original Song") do
+      expect(page).to have_css(".leftside-primary", text: "Original Song")
+      expect(page).to have_css(".leftside-secondary", text: "Original")
+      expect(page).to have_css(".rightside-group", text: "10 tracks")
     end
-    expect_content_in_order([ song1, song2, song3 ].map(&:title))
 
-    # Sort by Track Count
-    within('#title_box') do
-      first('.btn-group').click
-      click_on('Track Count')
-      expect_content('Sort', 'Track Count')
+    within first(".list-item", text: "Cover Song") do
+      expect(page).to have_css(".leftside-primary", text: "Cover Song")
+      expect(page).to have_css(".leftside-secondary", text: "Cover")
+      expect(page).to have_css(".rightside-group", text: "5 tracks")
     end
-    expect_content_in_order([ song2, song1, song3 ].map(&:title))
+  end
+
+  it "submits search and navigates to the search results page" do
+    fill_in "search", with: "Original"
+    click_button "Search"
+
+    expect(page).to have_current_path("/search?term=Original&scope=songs")
   end
 end

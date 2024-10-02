@@ -1,3 +1,3 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: App.auth_email_from
+  default from: "Phish.in <noreply@phish.in>"
 end

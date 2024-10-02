@@ -1,5 +1,5 @@
 class WaveformImageGenerator
-  attr_reader :track, :data
+  attr_reader :track
 
   def initialize(track)
     @track = track
@@ -7,20 +7,12 @@ class WaveformImageGenerator
 
   def call
     convert_mp3_to_wav
-    extract_waveform_data
     generate_waveform_image
-    track.update!(
-      waveform_max: data.max,
-      waveform_png: File.open(tmp_image)
-    )
+    track.update!(waveform_png: File.open(tmp_image))
     remove_temp_files
   end
 
   private
-
-  def extract_waveform_data
-    @data = Waveformjson.generate(tmp_wav, options)
-  end
 
   def convert_mp3_to_wav
     audio_file_path = track.audio_file.to_io.path
@@ -37,7 +29,7 @@ class WaveformImageGenerator
   def options
     {
       method: :peak,
-      width: 500,
+      width: 1100,
       height: 70,
       color: "#999999",
       background_color: :transparent,

@@ -1,34 +1,15 @@
 doctype html
-html
+html data-theme="light"
   head
-    title = App.app_name
-    = render 'layouts/head'
-    = stylesheet_pack_tag 'application', media: :all
-    = javascript_pack_tag 'application'
-    = csrf_meta_tags
-    = render 'analytics/plausible'
+    title = @meta[:title] || App.app_name
+    link rel="icon" href="/favicon.ico"
+    link rel="canonical" href="#{request.base_url}#{request.path}"
+    = auto_discovery_link_tag :rss, "/feeds/rss", title: "#{App.app_name} Updates"
+    = javascript_pack_tag "application"
+    = stylesheet_pack_tag "application"
+    = render "layouts/meta"
 
-  = render 'analytics/google'
+  = render "analytics/google"
+  body
+    #root = react_component("App", props: @react_props)
 
-  body.fonts-loading[
-    data-base-url=App.base_url
-    data-app-name=App.app_name
-    data-anchor=params[:anchor]&.downcase
-    data-time-marker=(params[:t] || 0)
-  ]
-
-    = render 'analytics/swetrix'
-    = render 'layouts/ajax_loading'
-    = render 'layouts/feedback'
-    = render 'layouts/page_header'
-    = render 'shared/clipboard'
-    = render 'shared/lyrics_dialog'
-    = render 'shared/save_playlist_dialog'
-    = render 'shared/tag_dialog'
-    = render 'shared/taper_notes_dialog'
-
-    #page = yield
-
-    = render 'layouts/page_footer'
-
-    iframe#download_iframe src=''

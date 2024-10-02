@@ -1,7 +1,0 @@
-h2 Matched #{pluralize_with_delimiter(@tracks.size, 'Track')}
-ul.item_list.clickable
-  - @tracks.each do |track|
-    li name=track.slug
-      h2.wide = link_to_track(track, params[:term])
-      h3.alt = link_to_show(track.show, show_abbrev: false)
-      = clear_both

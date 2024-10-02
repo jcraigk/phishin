@@ -1,0 +1,25 @@
+.like-container {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.fa-heart {
+  color: $text-gray;
+}
+
+.heart-icon {
+  color: $text-gray;
+  cursor: pointer;
+}
+
+.heart-icon.liked {
+  color: $blue;
+}
+
+.likes-count {
+  font-family: 'Marck Script', cursive;
+  color: $text-gray;
+  width: 1.8rem;
+  text-align: left;
+}
