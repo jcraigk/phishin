@@ -67,6 +67,13 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_26_034415) do
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
+  create_table "playlist_bookmarks", id: :serial, force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "playlist_id"
+    t.index ["playlist_id"], name: "index_playlist_bookmarks_on_playlist_id"
+    t.index ["user_id"], name: "index_playlist_bookmarks_on_user_id"
+  end
+
   create_table "playlist_tracks", id: :serial, force: :cascade do |t|
     t.integer "playlist_id"
     t.integer "track_id"
