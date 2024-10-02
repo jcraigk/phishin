@@ -37,7 +37,7 @@ class WaveformImageGenerator
   def options
     {
       method: :peak,
-      width: 500,
+      width: 1100,
       height: 70,
       color: "#999999",
       background_color: :transparent,
