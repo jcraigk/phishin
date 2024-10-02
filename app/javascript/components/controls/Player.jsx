@@ -261,7 +261,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
               className="play-pause-btn"
               onClick={togglePlayPause}
             >
-              {isPlaying ? <span className="spinning-donut">🍩</span> : <FontAwesomeIcon icon={faPlay} className="play-icon" />}
+              {audioRef.current?.paused ? <FontAwesomeIcon icon={faPlay} className="play-icon" /> : <FontAwesomeIcon icon={faPause} />}
             </button>
             <button
               className="scrub-btn scrub-forward"

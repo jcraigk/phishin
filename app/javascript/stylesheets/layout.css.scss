@@ -166,6 +166,9 @@ main {
       }
     }
   }
+}
+
+@media (max-width: 1023px) {
   .hidden-mobile {
     display: none !important;
   }
