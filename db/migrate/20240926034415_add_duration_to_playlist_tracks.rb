@@ -7,15 +7,17 @@ class AddDurationToPlaylistTracks < ActiveRecord::Migration[7.2]
 
     reversible do |dir|
       dir.up do
+        # Destroy invalid playlist_tracks
+        PlaylistTrack.left_joins(:track).where(tracks: { id: nil }).destroy_all
+
+        # Destroy invalid playlists
+        Playlist.where('tracks_count < ?', 2).destroy_all
 
         # Assign durations
         PlaylistTrack.includes(:track).find_each do |pt|
           pt.send(:assign_duration)
           pt.save!
         end
-
-        # Destroy invalid playlists
-        Playlist.where('tracks_count < ?', 2).destroy_all
       end
     end
   end
