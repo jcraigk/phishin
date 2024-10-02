@@ -38,7 +38,6 @@ gem "slim"
 gem "sorcery"
 gem "typhoeus"
 gem "waveform"
-gem "waveformjson"
 gem "will_paginate"
 
 group :development do

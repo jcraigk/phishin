@@ -76,12 +76,9 @@ class Track < ApplicationRecord
     update_column(:duration, Mp3DurationQuery.new(audio_file.to_io.path).call)
   end
 
-  def generate_waveform_image
+  def generate_waveform_image(purge_cache: false)
     WaveformImageGenerator.new(self).call
-  end
-
-  def extract_waveform_data
-    WaveformDataExtractor.new(self).call
+    CloudflareCachePurgeService.call(waveform_image_url) if purge_cache
   end
 
   def as_json # rubocop:disable Metrics/MethodLength
