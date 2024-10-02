@@ -65,7 +65,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
           title: activeTrack.title,
-          artist: "Phish",
+          artist: `Phish - ${formatDate(activeTrack.show_date)}`,
           album: `${formatDate(activeTrack.show_date)} - ${activeTrack.venue_name}`,
           artwork: [
             {
