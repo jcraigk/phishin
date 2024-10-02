@@ -28,6 +28,23 @@ footer.with-player {
     }
   }
 
+  .spinning-donut {
+    font-size: 3.8rem;
+    filter: grayscale(100%);
+    display: inline-block;
+    animation: spin 5s linear infinite;
+    opacity: 0.5;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
   .chevron-button {
     background-color: $control-gray;
     border-radius: 50%;
@@ -252,6 +269,13 @@ footer.with-player {
     .top-row {
       padding-bottom: 0rem !important;
     }
+    .spinning-donut {
+      font-size: 3rem !important;
+    }
+    .play-pause-btn {
+      width: 2.8rem !important;
+      height: 2.8rem !important;
+    }
   }
 
   @media (max-width: 767px) {
@@ -274,6 +298,9 @@ footer.with-player {
       svg {
         font-size: 1.4rem !important;
       }
+    }
+    .spinning-donut {
+      font-size: 2.8rem !important;
     }
   }
 }
