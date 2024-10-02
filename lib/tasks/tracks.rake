@@ -18,7 +18,7 @@ namespace :tracks do
 
   desc "Regenerate waveform images"
   task generate_images: :environment do
-    relation = Track.where('id < ?', 100).select(:id)
+    relation = Track.select(:id)
     pbar = ProgressBar.create(
       total: relation.count,
       format: "%a %B %c/%C %p%% %E"
