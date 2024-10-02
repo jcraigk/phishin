@@ -21,8 +21,15 @@
   }
 }
 
+.section {
+  padding: 1rem;
+}
+
 .content {
+  padding: none !important;
   margin-top: 2rem;
+  margin: 2rem auto;
+  max-width: 1200px !important;
 
   hr {
     border: 1px solid $header-gray;
@@ -55,6 +62,7 @@
     color: $title-gray;
 
     &::before {
+      font-size: 1.1rem;
       content: "🍩";
       margin-right: 0.4rem;
       filter: grayscale(100%);
