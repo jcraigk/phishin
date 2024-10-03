@@ -28,11 +28,6 @@ class AlbumCoverService < BaseService
       file.binmode
       file.write(image_response.body)
     end
-    puts "Downloaded file size: #{File.size(@art_path)} bytes"
-
-    unless File.exist?(@art_path)
-      raise "Cover art file not found after download."
-    end
   end
 
   def composite_text_on_cover_art
@@ -44,7 +39,7 @@ class AlbumCoverService < BaseService
 
     # Solid color bg at bottom
     bg_block_path = Rails.root.join("tmp", "#{SecureRandom.hex}.png").to_s
-    MiniMagick::Tool::Magick.new do |cmd|
+    MiniMagick::Tool::Convert.new do |cmd|
       cmd.size "#{@art.width}x#{(@art.height * 0.2).to_i}"
       cmd.canvas bg_color
       cmd << bg_block_path
@@ -52,7 +47,7 @@ class AlbumCoverService < BaseService
 
     # Bg dropshadow
     gradient_path = Rails.root.join("tmp", "#{SecureRandom.hex}.png").to_s
-    MiniMagick::Tool::Magick.new do |cmd|
+    MiniMagick::Tool::Convert.new do |cmd|
       cmd.size "#{@art.width}x#{(@art.height * 0.015).to_i}"
       cmd.gradient "none-rgba(128,128,128,0.3)"
       cmd << gradient_path
