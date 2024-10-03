@@ -57,13 +57,11 @@ class Track < ApplicationRecord
   end
 
   def mp3_url
-    audio_file.url(host: App.content_base_url)
-              .gsub(App.content_path.to_s, "/audio")
+    audio_file.url(host: App.content_base_url).gsub("tracks/audio_files", "audio")
   end
 
   def waveform_image_url
-    waveform_png&.url(host: App.content_base_url)
-                &.gsub(App.content_path.to_s, "/audio")
+    waveform_png&.url(host: App.content_base_url)&.gsub("tracks/audio_files", "audio")
   end
 
   def urls

@@ -102,7 +102,6 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
                                 {formatDate(track.show_date)}
                               </Link>
                             </span>{" "}
-                            {/* <span className="donut-bullet">&#127849;</span> */}
                           </>
                         )
                       }

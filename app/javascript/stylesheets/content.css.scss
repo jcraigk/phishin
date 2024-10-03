@@ -1,13 +1,3 @@
-.donut-bullet {
-  font-size: 0.8rem;
-  margin-right: 0.5rem;
-  margin-left: 0.6rem;
-  filter: grayscale(1);
-  opacity: 0.75;
-  position: relative;
-  top: -4px;
-}
-
 .cover-art-modal-trigger {
   cursor: pointer;
 
@@ -77,6 +67,9 @@
 
 .date-link {
   font-size: 0.9rem;
+  position: relative;
+  top: -3px;
+  margin-right: 0.1rem;
 
   &:hover {
     text-decoration: underline;

@@ -34,14 +34,14 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
                .routes
                .url_helpers
                .rails_representation_url(
-                _1.cover_art.variant(:small).processed
+                 _1.cover_art.variant(:small).processed
                )
       }
     else
       {
         medium:
           ActionController::Base.helpers.asset_pack_path(
-            "static/images/placeholders/cover-art-original.jpg"
+            "static/images/placeholders/cover-art-medium.jpg"
           ),
         small:
           ActionController::Base.helpers.asset_pack_path(
