@@ -48,7 +48,7 @@ class Track < ApplicationRecord
   end
 
   def apply_id3_tags
-    Id3Tagger.new(self).call
+    Id3TagService.new(self).call
   end
 
   def generate_slug(force: false)
@@ -57,11 +57,13 @@ class Track < ApplicationRecord
   end
 
   def mp3_url
-    audio_file.url(host: App.content_base_url).gsub("tracks/audio_files", "audio")
+    audio_file.url(host: App.content_base_url)
+              .gsub(App.content_path.to_s, "/audio")
   end
 
   def waveform_image_url
-    waveform_png&.url(host: App.content_base_url)&.gsub("tracks/audio_files", "audio")
+    waveform_png&.url(host: App.content_base_url)
+                &.gsub(App.content_path.to_s, "/audio")
   end
 
   def urls

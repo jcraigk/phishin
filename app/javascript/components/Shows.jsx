@@ -45,7 +45,14 @@ const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
               <div className="main-row">
                 {numbering && <span className="leftside-numbering">#{index + 1}</span>}
                 <span className="leftside-primary">
-                  {formatDate(show.date)}
+                  <img
+                    src={show.cover_art_urls.small}
+                    alt="Cover art"
+                    className="cover-art-small"
+                  />
+                  <span className="bump-up">
+                    {formatDate(show.date)}
+                  </span>
                 </span>
                 <span className="leftside-secondary">{show.venue.name}</span>
                 <span className="leftside-tertiary">

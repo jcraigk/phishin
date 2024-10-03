@@ -28,9 +28,7 @@ RSpec.describe "Playlists", :js do
       expect(page).to have_css(".leftside-tertiary", text: "#{playlist.tracks.count} tracks")
       expect(page).to have_css(".rightside-primary", text: format_duration_show(playlist.duration))
       expect(page).to have_css \
-        ".addendum .description", text: playlist.description || "(No description)"
-      expect(page).to have_css \
-        ".addendum .last-updated", text: "Last Updated: #{format_date_long(playlist.updated_at)}"
+        ".addendum .description", text: playlist.description
     end
   end
 

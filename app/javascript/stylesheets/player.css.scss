@@ -71,6 +71,22 @@ footer.with-player {
       white-space: nowrap;
       overflow: hidden;
       margin-left: 40px;
+      display: flex;
+      align-items: center;
+
+      .cover-art {
+        position: relative;
+        top: -3px;
+        width: 44px !important;
+        flex-shrink: 0;
+        margin-right: 0.8rem;
+
+        .cover-art-small {
+          width: 44px;
+          height: 44px;
+          top: 5px;
+        }
+      }
     }
 
     .right-half {
@@ -268,6 +284,10 @@ footer.with-player {
     }
     .left-half {
       margin-left: 0px !important;
+
+      .cover-art {
+        margin-right: 0.5rem !important;
+      }
     }
     .right-half {
       margin-right: 0px !important;

@@ -53,6 +53,17 @@ main {
       line-height: 2rem;
       margin-bottom: 0.4rem;
       color: $title-gray;
+
+      &.show-cover-title {
+        position: relative;
+        top: -10px;
+      }
+
+      .cover-art-small {
+        position: relative;
+        top: 10px;
+        margin-right: 0.7rem;
+      }
     }
 
     .sidebar-info {
@@ -160,6 +171,11 @@ main {
       .sidebar-title {
         margin-bottom: 0rem;
         font-size: 1.5rem;
+
+        &.show-cover-title {
+          position: relative;
+          top: -8px;
+        }
       }
       .sidebar-subtitle {
         margin-bottom: 0rem !important;
@@ -242,5 +258,13 @@ main {
   }
   .show-duration {
     margin-top: 0rem !important;
+  }
+  .show-cover-title {
+    font-size: 1.3rem !important;
+
+    .cover-art-small {
+      width: 32px !important;
+      height: 32px !important;
+    }
   }
 }

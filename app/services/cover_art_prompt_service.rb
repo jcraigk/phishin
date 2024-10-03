@@ -1,6 +1,4 @@
 class CoverArtPromptService < BaseService
-  extend Dry::Initializer
-
   param :show
 
   HUES = %w[
@@ -32,7 +30,7 @@ class CoverArtPromptService < BaseService
       "prompt": "Create a rock album cover that includes images of skyscrapers, llamas, and a ufo in an abstract style with a blue hue",
     }
 
-    The subjects should be a comma separated list of 3 concepts or images pulled from the event info. Take liberty here and be creative in how these subjects are selected. Consider the time and location of the concert as well as imagery in the song lyrics. Favor well recognized songs over obscure ones. Consider cultural and artistic impressions of the songs played at the show to add to the pool of potential imagery. If there appear to be themes in the song selections, favor that. Lean into famous landmarks and famous songs/lyrics and other imagery. Don't be afraid to get creative and silly in some cases. If the show is not in the united states, lean into cultural/geographic references for the foreign country. If the show takes place in a unique location, lean into that uniqueness. For shows that take place on halloween, take note of the cover songs played and lean into that.
+    The subjects should be a comma separated list of 3 concepts or images pulled from the event info. Take liberty here and be creative in how these subjects are selected. Consider the time and location of the concert as well as imagery in the song lyrics. Favor well recognized songs over obscure ones. Consider cultural and artistic impressions of the songs played at the show to add to the pool of potential imagery. If there appear to be themes in the song selections, favor that. Lean into famous landmarks and famous songs/lyrics and other imagery. Don't be afraid to get creative and silly in some cases. If the show is not in the united states, lean into cultural/geographic references for the foreign country. If the show takes place in a unique location, lean into that uniqueness. For shows that take place on halloween, take note of the cover songs played and lean into that. Season and weather should also be considered.
 
     Do not let Dall-e know that the art is related to a concert, but rather be general about prompting it to generate an art piece based on the selected subjects. Do not let Dall-e generate text or symbols.
 
@@ -45,7 +43,7 @@ class CoverArtPromptService < BaseService
 
   def call
     # If show is inside a run at same venue, use same prompt
-    return use_prompt_from_run if show != run_kickoff_show
+    # return use_prompt_from_run if show != run_kickoff_show
 
     # Otherwise, generate a new prompt
     generate_new_prompt
@@ -113,7 +111,8 @@ class CoverArtPromptService < BaseService
     style_usage = Show.where.not(cover_art_style: nil).group(:cover_art_style).count
     sorted_styles = available_styles.sort_by { style_usage[_1] || 0 }
     min_usage = style_usage[sorted_styles.first] || 0
-    bottom_tier_styles = sorted_styles.select { style_usage[_1] == min_usage || style_usage[_1].nil? }
+    bottom_tier_styles = sorted_styles.select {
+ style_usage[_1] == min_usage || style_usage[_1].nil? }
 
     @style = bottom_tier_styles.sample
   end
@@ -145,7 +144,7 @@ class CoverArtPromptService < BaseService
     if prior_show.cover_art_prompt.present?
       txt +=
         "The previous show's prompt is this: " \
-        "'#{prior_show.cover_art_subjects}'. Avoid the subjects from " \
+        "'#{prior_show.cover_art_prompt}'. Avoid the subjects from " \
         "that prompt as well as closely associated imagery. " \
         "Ignore style and hue of the previous prompt, " \
         "we'll specify those explicitly next.\n\n"
@@ -167,6 +166,8 @@ class CoverArtPromptService < BaseService
 
   def chatgpt_response
     return @chatgpt_response if defined?(@chatgpt_response)
+
+    content = chatgpt_prompt + "\n\nDo not include any text, words, or numbers in the image."
 
     response = Typhoeus.post(
       "https://api.openai.com/v1/chat/completions",

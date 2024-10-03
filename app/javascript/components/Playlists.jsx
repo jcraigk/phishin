@@ -59,7 +59,7 @@ const Playlists = ({ playlists, highlight }) => {
               </div>
             <div className="last-updated">
               <FontAwesomeIcon icon={faCalendar} className="mr-1 text-gray" />
-              Last Updated: {formatDateLong(new Date(playlist.updated_at))}
+              Updated: {formatDateLong(new Date(playlist.updated_at))}
             </div>
 
             <div className="display-phone-only">

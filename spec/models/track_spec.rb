@@ -165,30 +165,34 @@ RSpec.describe Track do
   end
 
   describe 'ID3 tagging' do
-    let(:mock_tagger) { instance_double(Id3Tagger) }
+    let(:mock_tagger) { instance_double(Id3TagService) }
 
     before do
-      allow(Id3Tagger).to receive(:new).and_return(mock_tagger)
+      allow(Id3TagService).to receive(:new).and_return(mock_tagger)
       allow(mock_tagger).to receive(:call)
       track.apply_id3_tags
     end
 
-    it 'instantiates Id3Tagger with tracks' do
-      expect(Id3Tagger).to have_received(:new).with(track)
+    it 'instantiates Id3TagService with tracks' do
+      expect(Id3TagService).to have_received(:new).with(track)
     end
 
-    it 'calls Id3Tagger' do
+    it 'calls Id3TagService' do
       expect(mock_tagger).to have_received(:call)
     end
   end
 
   it 'provides #mp3_url' do
-    url = track.audio_file.url(host: App.base_url).gsub('tracks/audio_files', 'audio')
+    url = track.audio_file
+               .url(host: App.base_url)
+               .gsub(App.content_path.to_s, "/audio")
     expect(track.mp3_url).to eq(url)
   end
 
   it 'provides #waveform_image_url' do
-    url = track.waveform_png.url(host: App.base_url).gsub('tracks/audio_files', 'audio')
+    url = track.waveform_png
+               .url(host: App.base_url)
+               .gsub(App.content_path.to_s, "/audio")
     expect(track.waveform_image_url).to eq(url)
   end
 

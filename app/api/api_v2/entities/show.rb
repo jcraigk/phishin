@@ -15,16 +15,38 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
       desc: "Date of the show"
     }
 
-  expose :cover_art do |show, _options|
-    if show.cover_art.attached?
+  expose(
+    :cover_art_urls,
+    documentation: {
+      type: "Object",
+      desc: "Object containing named URLs for variants of cover art images"
+    }
+  ) do
+    if _1.cover_art.attached?
       {
-        original: Rails.application.routes.url_helpers.rails_blob_url(show.cover_art),
-        small: Rails.application.routes.url_helpers.rails_representation_url(show.cover_art.variant(:small).processed)
+        original:
+          Rails.application
+               .routes
+               .url_helpers
+               .rails_blob_url(_1.cover_art),
+        small:
+          Rails.application
+               .routes
+               .url_helpers
+               .rails_representation_url(
+                _1.cover_art.variant(:small).processed
+               )
       }
     else
       {
-        original: nil,
-        small: nil
+        original:
+          ActionController::Base.helpers.asset_pack_path(
+            "static/images/placeholders/cover-art-original.jpg"
+          ),
+        small:
+          ActionController::Base.helpers.asset_pack_path(
+            "static/images/placeholders/cover-art-small.jpg"
+          )
       }
     end
   end

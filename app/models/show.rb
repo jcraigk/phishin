@@ -7,9 +7,10 @@ class Show < ApplicationRecord
   has_many :tags, through: :show_tags
 
   has_one_attached :cover_art do |attachable|
-    attachable.variant :small, resize_to_limit: [ 36, 36 ]
+    attachable.variant :small,
+                       resize_to_limit: [ 36, 36 ],
+                       preprocessed: true
   end
-end
 
   extend FriendlyId
   friendly_id :date

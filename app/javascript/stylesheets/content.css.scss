@@ -8,6 +8,25 @@
   top: -4px;
 }
 
+.cover-art-modal-trigger {
+  cursor: pointer;
+
+  &:hover {
+    img {
+      filter: grayscale(0.5);
+    }
+  }
+}
+
+.cover-art-small {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--bulma-radius);
+  object-fit: cover;
+  position: relative;
+  margin-right: 0.5rem;
+}
+
 .section-title {
   display: flex;
   align-items: baseline;
@@ -110,6 +129,18 @@
     min-width: 1rem;
     max-width: 60%;
     padding-right: 1rem;
+
+    .cover-art-small {
+      width: 32px;
+      height: 32px;
+      filter: grayscale(1);
+      top: 2px;
+    }
+  }
+
+  .bump-up {
+    position: relative;
+    top: -5px;
   }
 
   .leftside-secondary {
@@ -209,6 +240,10 @@
 
     &::before {
       display: none;
+    }
+
+    .cover-art-small {
+      filter: grayscale(0);
     }
   }
 }

@@ -118,7 +118,7 @@ const Playlist = () => {
             {playlist.description || "This playlist has no description"}
             <p>
               <FontAwesomeIcon icon={faCalendar} className="mr-1 text-gray" />
-              Last updated: {formatDateLong(playlist.updated_at)}
+              Updated: {formatDateLong(playlist.updated_at)}
             </p>
 
             <div className="display-phone-only">

@@ -1,8 +1,12 @@
 # frozen_string_literal: true
+
+# .where(date: Date.new(2023, 1, 1)..Date.new(2024, 12, 31))
+
 namespace :shows do
   desc "Generate cover art prompts"
   task generate_cover_art: :environment do
-    rel = Show.where(date: Date.new(2024, 1, 1)..Date.new(2024, 12, 31))
+    rel = Show.includes(:tracks)
+              .where(date: '2017-08-06')
               .order(date: :asc)
     pbar = ProgressBar.create(
       total: rel.count,
@@ -11,9 +15,15 @@ namespace :shows do
 
     rel.each do |show|
       pbar.increment
-      # next if show.cover_art_prompt.present?
+      # next if show.cover_art.attached?
+
       CoverArtPromptService.new(show).call
       CoverArtImageService.new(show).call
+
+      # Apply cover art to mp3 files
+      show.tracks.each do |track|
+        track.apply_id3_tags
+      end
     end
 
     pbar.finish

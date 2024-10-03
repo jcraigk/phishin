@@ -26,6 +26,7 @@ import LikeButton from "./controls/LikeButton";
 import Tracks from "./Tracks";
 import TagBadges from "./controls/TagBadges";
 import MapView from "./MapView";
+import CoverArt from "./CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle, faClock } from "@fortawesome/free-solid-svg-icons";
 
@@ -33,7 +34,7 @@ const Show = ({ trackSlug }) => {
   const show = useLoaderData();
   const [tracks, setTracks] = useState(show.tracks);
   const trackRefs = useRef([]);
-  const { playTrack, mapboxToken } = useOutletContext();
+  const { playTrack, mapboxToken, openAppModal } = useOutletContext();
   const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
   const [showIncompleteNotification, setShowIncompleteNotification] = useState(show.incomplete);
   const [showAdminNotesNotification, setShowAdminNotesNotification] = useState(!!show.admin_notes);
@@ -63,7 +64,13 @@ const Show = ({ trackSlug }) => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">{formatDateMed(show.date)}</p>
+      <p className="sidebar-title show-cover-title">
+        <CoverArt
+          imageUrls={show.cover_art_urls}
+          openAppModal={openAppModal}
+        />
+        {formatDateMed(show.date)}
+      </p>
       <p className="sidebar-info hidden-mobile">
         <Link to={`/venues/${show.venue.slug}`}>{show.venue_name}</Link>
       </p>

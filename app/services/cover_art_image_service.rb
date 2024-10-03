@@ -1,6 +1,4 @@
 class CoverArtImageService < BaseService
-  extend Dry::Initializer
-
   param :show
 
   def call
@@ -10,24 +8,12 @@ class CoverArtImageService < BaseService
   private
 
   def generate_and_save_cover_art
-    # Get variation on venue run cover if part of run
+    # Use the parent show's cover art if part of a run
     if show.cover_art_parent_show_id
       parent_show = Show.find(show.cover_art_parent_show_id)
-      response = Typhoeus.post(
-        "https://api.openai.com/v1/images/variations",
-        headers: {
-          "Authorization" => "Bearer #{openai_api_token}",
-          "Content-Type" => "multipart/form-data"
-        },
-        body: {
-          image:  File.open(parent_show.cover_art.path, "rb"),
-          n: 1,
-          size: "1024x1024"
-        }
-      )
-      cover_art_file.close
+      show.cover_art.attach(parent_show.cover_art.blob)
+    # Otherwise, generate new cover art
     else
-      # Generate a new image from prompt
       response = Typhoeus.post(
         "https://api.openai.com/v1/images/generations",
         headers: {
@@ -37,24 +23,24 @@ class CoverArtImageService < BaseService
         body: {
           prompt: show.cover_art_prompt,
           n: 1,
-          size: "1024x1024"
+          size: "512x512"
         }.to_json
       )
-    end
 
-    if response.success?
-      result = JSON.parse(response.body)
-      image_url = result["data"].first["url"]
-      puts "IMAGE: #{image_url}"
-      download_and_convert_to_jpg(image_url)
-    else
-      raise "Failed to generate cover art: #{response.body}"
+      if response.success?
+        result = JSON.parse(response.body)
+        image_url = result["data"].first["url"]
+        download_and_convert_to_jpg(image_url)
+      else
+        raise "Failed to generate cover art: #{response.body}"
+      end
     end
   rescue StandardError => e
     binding.irb
   end
 
   def download_and_convert_to_jpg(image_url)
+    puts image_url
     image_response = Typhoeus.get(image_url)
 
     if image_response.success?
@@ -67,15 +53,20 @@ class CoverArtImageService < BaseService
         # Convert to JPG and generate derivatives
         image = Vips::Image.new_from_file(temp_png.path)
         Tempfile.create([ "cover_art", ".jpg" ]) do |temp_jpg|
-          image.jpegsave(temp_jpg.path)
-          show.cover_art = File.open(temp_jpg.path)
-          # TODO: Generate derivatives
-          show.save!
+          image.jpegsave(temp_jpg.path, Q: 75, strip: true)
+          show.cover_art.attach \
+            io: File.open(temp_jpg.path),
+            filename: "cover_art_#{show.id}.jpg",
+            content_type: "image/jpeg"
         end
       end
     else
       raise "Failed to download cover art: #{image_response.body}"
     end
+  end
+
+  def create_variants
+    show.cover_art.variant(resize_to_limit: [ 36, 36 ]).processed
   end
 
   def openai_api_token

@@ -97,6 +97,43 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
   ) { _1.show.date }
 
   expose(
+    :show_cover_art_urls,
+    documentation: {
+      type: "Object",
+      desc: "Object containing named URLs for variants of cover art images"
+    }
+  ) do
+    show = _1.show
+    if show.cover_art.attached?
+      {
+        original:
+          Rails.application
+               .routes
+               .url_helpers
+               .rails_blob_url(show.cover_art),
+        small:
+          Rails.application
+               .routes
+               .url_helpers
+               .rails_representation_url(
+                show.cover_art.variant(:small).processed
+               )
+      }
+    else
+      {
+        original:
+          ActionController::Base.helpers.asset_pack_path(
+            "static/images/placeholders/cover-art-original.jpg"
+          ),
+        small:
+          ActionController::Base.helpers.asset_pack_path(
+            "static/images/placeholders/cover-art-small.jpg"
+          )
+      }
+    end
+  end
+
+  expose(
     :venue_slug,
     documentation: {
       type: "String",

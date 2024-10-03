@@ -160,6 +160,7 @@ const Layout = ({ props }) => {
         setActiveTrack={setActiveTrack}
         audioRef={audioRef}
         customPlaylist={customPlaylist}
+        openAppModal={openAppModal}
       />
       <AppModal
         isOpen={isAppModalOpen}
