@@ -28,6 +28,11 @@ class AlbumCoverService < BaseService
       file.binmode
       file.write(image_response.body)
     end
+    puts "Downloaded file size: #{File.size(@art_path)} bytes"
+
+    unless File.exist?(@art_path)
+      raise "Cover art file not found after download."
+    end
   end
 
   def composite_text_on_cover_art
