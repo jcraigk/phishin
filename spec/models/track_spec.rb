@@ -183,16 +183,12 @@ RSpec.describe Track do
   end
 
   it 'provides #mp3_url' do
-    url = track.audio_file
-               .url(host: App.base_url)
-               .gsub(App.content_path.to_s, "/audio")
+    url = track.audio_file.url(host: App.base_url).gsub('tracks/audio_files', 'audio')
     expect(track.mp3_url).to eq(url)
   end
 
   it 'provides #waveform_image_url' do
-    url = track.waveform_png
-               .url(host: App.base_url)
-               .gsub(App.content_path.to_s, "/audio")
+    url = track.waveform_png.url(host: App.base_url).gsub('tracks/audio_files', 'audio')
     expect(track.waveform_image_url).to eq(url)
   end
 
