@@ -25,17 +25,13 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
     if _1.cover_art.attached?
       {
         medium:
-          Rails.application
-               .routes
-               .url_helpers
-               .rails_blob_url(_1.cover_art),
+          ActionController::Base.helpers.asset_pack_path(
+            "static/images/placeholders/cover-art-medium.jpg"
+          ),
         small:
-          Rails.application
-               .routes
-               .url_helpers
-               .rails_representation_url(
-                 _1.cover_art.variant(:small).processed
-               )
+          ActionController::Base.helpers.asset_pack_path(
+            "static/images/placeholders/cover-art-small.jpg"
+          )
       }
     else
       {
@@ -61,10 +57,9 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
     }
   ) do
     if _1.album_cover.attached?
-      Rails.application
-          .routes
-          .url_helpers
-          .rails_blob_url(_1.album_cover)
+      ActionController::Base.helpers.asset_pack_path(
+        "static/images/placeholders/cover-art-medium.jpg"
+      )
     end
   end
 

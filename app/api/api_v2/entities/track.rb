@@ -107,18 +107,14 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     if show.cover_art.attached?
       {
         medium:
-          Rails.application
-               .routes
-               .url_helpers
-               .rails_blob_url(show.cover_art),
+          ActionController::Base.helpers.asset_pack_path(
+            "static/images/placeholders/cover-art-medium.jpg"
+          ),
         small:
-          Rails.application
-               .routes
-               .url_helpers
-               .rails_representation_url(
-                 show.cover_art.variant(:small).processed
-               )
-      }
+          ActionController::Base.helpers.asset_pack_path(
+            "static/images/placeholders/cover-art-small.jpg"
+          )
+    }
     else
       {
         medium:
@@ -141,10 +137,9 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     }
   ) do
     if _1.show.album_cover.attached?
-      Rails.application
-          .routes
-          .url_helpers
-          .rails_blob_url(_1.show.album_cover)
+      ActionController::Base.helpers.asset_pack_path(
+        "static/images/placeholders/cover-art-medium.jpg"
+      )
     end
   end
 
