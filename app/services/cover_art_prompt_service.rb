@@ -30,7 +30,7 @@ class CoverArtPromptService < BaseService
       "prompt": "Create a rock album cover that includes images of skyscrapers, llamas, and a ufo in an abstract style with a blue hue",
     }
 
-    The subjects should be a comma separated list of 3 concepts or images pulled from the event info. Take liberty here and be creative in how these subjects are selected. Consider the time and location of the concert as well as imagery in the song lyrics. Favor well recognized songs over obscure ones. Consider cultural and artistic impressions of the songs played at the show to add to the pool of potential imagery. If there appear to be themes in the song selections, favor that. Lean into famous landmarks and famous songs/lyrics and other imagery. Don't be afraid to get creative and silly in some cases. If the show is not in the united states, lean into cultural/geographic references for the foreign country. If the show takes place in a unique location, lean into that uniqueness. For shows that take place on halloween, take note of the cover songs played and lean into that. Season and weather should also be considered.
+    The subjects should be a comma separated list of 3 concepts or images pulled from the event info. Take liberty here and be creative in how these subjects are selected. Consider the time and location of the concert. If a setlist is provided, include the song titles and your knowledge of song lyrical content in consideration. Favor popular songs over obscure ones. Consider cultural and artistic impressions of the songs played at the show to add to the pool of potential imagery. If there appear to be themes in the song selections, favor that. Lean into famous landmarks and famous songs/lyrics and other imagery. Don't be afraid to get creative and silly in some cases. If the show is not in the united states, lean into cultural/geographic references for the foreign country. If the show takes place in a unique location, lean into that uniqueness. For shows that take place on halloween, take note of the cover songs played and lean into that. Season and weather should also be considered.
 
     Do not let Dall-e know that the art is related to a concert, but rather be general about prompting it to generate an art piece based on the selected subjects. Do not let Dall-e generate text or symbols.
 
@@ -42,8 +42,8 @@ class CoverArtPromptService < BaseService
   TXT
 
   def call
-    # If show is inside a run at same venue, use same prompt
-    # return use_prompt_from_run if show != run_kickoff_show
+    # If show is inside a run at same venue, defer
+    return defer_to_kickoff_show if show != run_kickoff_show
 
     # Otherwise, generate a new prompt
     generate_new_prompt
@@ -57,12 +57,11 @@ class CoverArtPromptService < BaseService
       cover_art_hue: hue,
       cover_art_prompt: chatgpt_response[:prompt],
       cover_art_parent_show_id: nil
-    puts chatgpt_response[:prompt]
+    # puts chatgpt_response[:prompt]
   end
 
-  def use_prompt_from_run
+  def defer_to_kickoff_show
     show.update!(cover_art_parent_show_id: run_kickoff_show.id)
-    puts "Using prompt from run (#{run_kickoff_show.date})"
   end
 
   def run_kickoff_show
@@ -117,7 +116,6 @@ class CoverArtPromptService < BaseService
     @style = bottom_tier_styles.sample
   end
 
-
   # Fetch the previous show not at same venue to avoid duplication
   def prior_show
     return @prior_show if defined?(@prior_show)
@@ -140,7 +138,9 @@ class CoverArtPromptService < BaseService
     txt += "Date: #{show.date}\n"
     txt += "Venue: #{show.venue_name}\n"
     txt += "Location: #{show.venue.location}\n"
-    txt += "Songs: #{song_list}\n"
+    # Don't include songs for runs to avoid songs that don't appear in a show
+    # Since we use the same art for all shows in a run
+    txt += "Songs: #{song_list}\n" if show != run_kickoff_show
     if prior_show.cover_art_prompt.present?
       txt +=
         "The previous show's prompt is this: " \

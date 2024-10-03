@@ -8,6 +8,8 @@ class Id3TagService < BaseService
   def call
     @show = track.show
     apply_default_tags
+  rescue Shrine::FileNotFound => e
+    # puts "File not found: #{e.message}" # For dev env
   end
 
   private
@@ -48,8 +50,8 @@ class Id3TagService < BaseService
   end
 
   def apply_album_art(mp3)
-    return unless show.cover_art.attached?
-    mp3.tag2.add_picture(show.cover_art.download)
+    return unless show.album_cover.attached?
+    mp3.tag2.add_picture(show.album_cover.download)
   end
 
   def comments

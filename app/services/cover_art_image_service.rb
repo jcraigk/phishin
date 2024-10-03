@@ -1,3 +1,5 @@
+require "mini_magick"
+
 class CoverArtImageService < BaseService
   param :show
 
@@ -40,7 +42,6 @@ class CoverArtImageService < BaseService
   end
 
   def download_and_convert_to_jpg(image_url)
-    puts image_url
     image_response = Typhoeus.get(image_url)
 
     if image_response.success?
@@ -50,10 +51,15 @@ class CoverArtImageService < BaseService
         temp_png.write(image_response.body)
         temp_png.rewind
 
-        # Convert to JPG and generate derivatives
-        image = Vips::Image.new_from_file(temp_png.path)
+        # Convert to JPG and generate derivatives using MiniMagick
         Tempfile.create([ "cover_art", ".jpg" ]) do |temp_jpg|
-          image.jpegsave(temp_jpg.path, Q: 75, strip: true)
+          image = MiniMagick::Image.open(temp_png.path)
+          image.format "jpg"
+          image.quality 90
+          image.strip
+          image.write(temp_jpg.path)
+
+          # Attach the converted JPG image to the show
           show.cover_art.attach \
             io: File.open(temp_jpg.path),
             filename: "cover_art_#{show.id}.jpg",

@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 namespace :tracks do
   desc "Populate song performance gaps"
   task populate_gaps: :environment do

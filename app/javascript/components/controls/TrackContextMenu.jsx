@@ -108,7 +108,10 @@ const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
 
             <a
               className="dropdown-item"
-              onClick={(e) => handleDownload(e, track.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDownload(e, track.id);
+              }}
             >
               <FontAwesomeIcon icon={faDownload} className="icon" />
               Download MP3

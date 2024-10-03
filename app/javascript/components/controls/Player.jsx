@@ -228,7 +228,8 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
       <div className="top-row">
         <div className="left-half">
           <CoverArt
-            imageUrls={activeTrack?.show_cover_art_urls}
+            coverArtUrls={activeTrack?.show_cover_art_urls}
+            albumCoverUrl={activeTrack?.show_album_cover_url}
             openAppModal={openAppModal}
           />
           <div className="track-details">
@@ -252,12 +253,12 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
                     <Link to={`/venues/${activeTrack?.venue_slug}`}>
                       {activeTrack?.venue_name}
                     </Link>
-                    <span className="venue-location">
+                    {/* <span className="venue-location">
                       {" "}&bull;{" "}
                       <Link to={`/map?term=${activeTrack?.venue_location}`}>
                         {activeTrack?.venue_location}
                       </Link>
-                    </span>
+                    </span> */}
                   </span>
                 </>
               )}

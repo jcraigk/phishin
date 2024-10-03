@@ -4,6 +4,7 @@ import { formatDurationShow, formatDate } from "./helpers/utils";
 import TagBadges from "./controls/TagBadges";
 import LikeButton from "./controls/LikeButton";
 import ShowContextMenu from "./controls/ShowContextMenu";
+import CoverArt from "./CoverArt";
 
 const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
   const { activeTrack } = useOutletContext();
@@ -45,14 +46,8 @@ const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
               <div className="main-row">
                 {numbering && <span className="leftside-numbering">#{index + 1}</span>}
                 <span className="leftside-primary">
-                  <img
-                    src={show.cover_art_urls.small}
-                    alt="Cover art"
-                    className="cover-art-small"
-                  />
-                  <span className="bump-up">
-                    {formatDate(show.date)}
-                  </span>
+                  <CoverArt coverArtUrls={show.cover_art_urls} />
+                  {formatDate(show.date)}
                 </span>
                 <span className="leftside-secondary">{show.venue.name}</span>
                 <span className="leftside-tertiary">

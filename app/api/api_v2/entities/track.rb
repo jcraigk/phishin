@@ -100,13 +100,13 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     :show_cover_art_urls,
     documentation: {
       type: "Object",
-      desc: "Object containing named URLs for variants of cover art images"
+      desc: "Object containing named URLs for variants of raw cover art images"
     }
   ) do
     show = _1.show
     if show.cover_art.attached?
       {
-        original:
+        medium:
           Rails.application
                .routes
                .url_helpers
@@ -121,7 +121,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       }
     else
       {
-        original:
+        medium:
           ActionController::Base.helpers.asset_pack_path(
             "static/images/placeholders/cover-art-original.jpg"
           ),
@@ -130,6 +130,21 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
             "static/images/placeholders/cover-art-small.jpg"
           )
       }
+    end
+  end
+
+  expose(
+    :show_album_cover_url,
+    documentation: {
+      type: "Object",
+      desc: "Object containing named URLs for variants of cover art images"
+    }
+  ) do
+    if _1.show.album_cover.attached?
+      Rails.application
+          .routes
+          .url_helpers
+          .rails_blob_url(_1.show.album_cover)
     end
   end
 

@@ -48,7 +48,6 @@ module Phishin
       authentication: :plain
     }
     config.hosts << config.web_host if config.web_host
-    config.active_storage.variant_processor = :vips
     config.active_storage.service = :local
   end
 end

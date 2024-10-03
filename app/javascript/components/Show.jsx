@@ -64,18 +64,27 @@ const Show = ({ trackSlug }) => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title show-cover-title">
+      <div class="hidden-mobile mb-2">
         <CoverArt
-          imageUrls={show.cover_art_urls}
+          coverArtUrls={show.cover_art_urls}
+          albumCoverUrl={show.album_cover_url}
           openAppModal={openAppModal}
+          size="large"
         />
+      </div>
+
+      <p className="sidebar-title show-cover-title">
+        <span class="display-mobile-only">
+          <CoverArt
+            coverArtUrls={show.cover_art_urls}
+            albumCoverUrl={show.album_cover_url}
+            openAppModal={openAppModal}
+          />
+        </span>
         {formatDateMed(show.date)}
       </p>
       <p className="sidebar-info hidden-mobile">
         <Link to={`/venues/${show.venue.slug}`}>{show.venue_name}</Link>
-      </p>
-      <p className="sidebar-info hidden-mobile">
-        <Link to={`/map?term=${encodeURIComponent(show.venue.location)}`}>{show.venue.location}</Link>
       </p>
       <div className="mr-1 show-duration">
         <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />

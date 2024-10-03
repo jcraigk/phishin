@@ -1,13 +1,7 @@
-# frozen_string_literal: true
-
-# .where(date: Date.new(2023, 1, 1)..Date.new(2024, 12, 31))
-
 namespace :shows do
   desc "Generate cover art prompts"
   task generate_cover_art: :environment do
-    rel = Show.includes(:tracks)
-              .where(date: '2017-08-06')
-              .order(date: :asc)
+    rel = Show.includes(:tracks).order(date: :asc)
     pbar = ProgressBar.create(
       total: rel.count,
       format: "%a %B %c/%C %p%% %E"
@@ -15,10 +9,26 @@ namespace :shows do
 
     rel.each do |show|
       pbar.increment
-      # next if show.cover_art.attached?
 
-      CoverArtPromptService.new(show).call
-      CoverArtImageService.new(show).call
+      if show.cover_art_prompt.blank? && show.cover_art_parent_show_id.blank?
+        CoverArtPromptService.new(show).call
+        if show.cover_art_parent_show_id.present?
+          puts "PROMPT (DEFER): #{show.cover_art_parent_show_id}"
+        else
+          puts "PROMPT (NEW): #{show.cover_art_prompt}"
+        end
+      end
+
+      unless show.cover_art.attached?
+        CoverArtImageService.new(show).call
+        sleep 5 # for Dall-E API rate limiting
+        puts Rails.application.routes.url_helpers.rails_blob_url(show.cover_art)
+      end
+
+      unless show.album_cover.attached?
+        AlbumCoverService.new(show).call
+        puts Rails.application.routes.url_helpers.rails_blob_url(show.album_cover)
+      end
 
       # Apply cover art to mp3 files
       show.tracks.each do |track|
@@ -29,24 +39,24 @@ namespace :shows do
     pbar.finish
   end
 
-  desc 'Insert a track into a show at given position'
+  desc "Insert a track into a show at given position"
   task insert_track: :environment do
     opts = {
-      date: ENV['DATE'],
-      position: ENV['POSITION'],
-      file: ENV['FILE'],
-      title: ENV['TITLE'],
-      song_id: ENV['SONG_ID'],
-      set: ENV['SET'],
-      is_sbd: ENV['SBD'].present?,
-      slug: ENV['SLUG']
+      date: ENV["DATE"],
+      position: ENV["POSITION"],
+      file: ENV["FILE"],
+      title: ENV["TITLE"],
+      song_id: ENV["SONG_ID"],
+      set: ENV["SET"],
+      is_sbd: ENV["SBD"].present?,
+      slug: ENV["SLUG"]
     }
 
     TrackInserter.new(opts).call
-    puts 'Track inserted'
+    puts "Track inserted"
   end
 
-  desc 'Import a show'
+  desc "Import a show"
   task import: :environment do
     require "#{Rails.root}/app/services/show_importer"
     include ActionView::Helpers::TextHelper

@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 namespace :songs do
   desc 'Import song lyrics from Genius API'
   task import_lyrics: :environment do

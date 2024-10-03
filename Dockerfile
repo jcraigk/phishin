@@ -18,8 +18,8 @@ RUN apt-get update -qq && \
       libsndfile-dev \
       memcached \
       shared-mime-info \
-      libvips42 \
-      libvips-dev \
+      imagemagick \
+      libmagickwand-dev \
       libjpeg-turbo8-dev \
     && apt-get clean
 

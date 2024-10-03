@@ -5,6 +5,7 @@ import TagBadges from "./controls/TagBadges";
 import HighlightedText from "./controls/HighlightedText";
 import LikeButton from "./controls/LikeButton";
 import TrackContextMenu from "./controls/TrackContextMenu";
+import CoverArt from "./CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faScissors } from "@fortawesome/free-solid-svg-icons";
 
@@ -92,6 +93,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
                       {
                         viewStyle !== "show" && (
                           <>
+                            <CoverArt coverArtUrls={track.show_cover_art_urls} />
                             <span className="date-link">
                               <Link
                                 to={`/${track.show_date}/${track.slug}`}
@@ -99,8 +101,8 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
                               >
                                 {formatDate(track.show_date)}
                               </Link>
-                            </span>
-                            <span className="donut-bullet">&#127849;</span>
+                            </span>{" "}
+                            {/* <span className="donut-bullet">&#127849;</span> */}
                           </>
                         )
                       }

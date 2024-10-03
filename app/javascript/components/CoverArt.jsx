@@ -1,10 +1,11 @@
 import React from "react";
 
-const CoverArt = ({ imageUrls, openAppModal }) => {
+const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, size }) => {
   const handleOpenModal = () => {
+    if (!openAppModal) return;
     const modalContent = (
       <div className="large-album-art">
-        <img src={imageUrls?.original} alt="Cover art" />
+        <img src={albumCoverUrl || coverArtUrls?.medium} alt="Cover art" />
       </div>
     );
     openAppModal(modalContent);
@@ -13,9 +14,9 @@ const CoverArt = ({ imageUrls, openAppModal }) => {
   return (
     <span className="cover-art cover-art-modal-trigger" onClick={handleOpenModal}>
       <img
-        src={imageUrls?.small}
+        src={size === "large" ? coverArtUrls?.medium : coverArtUrls?.small}
         alt="Cover art"
-        className="cover-art-small"
+        className={size === "large" ? "cover-art-large" : "cover-art-small"}
       />
     </span>
   );

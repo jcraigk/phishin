@@ -18,6 +18,12 @@
   }
 }
 
+.cover-art-large {
+  width: 100%;
+  border-radius: var(--bulma-radius);
+  object-fit: cover;
+}
+
 .cover-art-small {
   width: 44px;
   height: 44px;
@@ -59,12 +65,19 @@
   }
 }
 
+.cover-art {
+  position: relative;
+  top: 3px;
+}
+
 .list-item-link {
   text-decoration: none;
   color: black;
 }
 
 .date-link {
+  font-size: 0.9rem;
+
   &:hover {
     text-decoration: underline;
   }
@@ -133,14 +146,9 @@
     .cover-art-small {
       width: 32px;
       height: 32px;
-      filter: grayscale(1);
+      filter: grayscale(0.5);
       top: 2px;
     }
-  }
-
-  .bump-up {
-    position: relative;
-    top: -5px;
   }
 
   .leftside-secondary {

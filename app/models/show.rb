@@ -8,9 +8,10 @@ class Show < ApplicationRecord
 
   has_one_attached :cover_art do |attachable|
     attachable.variant :small,
-                       resize_to_limit: [ 36, 36 ],
+                       resize_to_limit: [ 48, 48 ],
                        preprocessed: true
   end
+  has_one_attached :album_cover
 
   extend FriendlyId
   friendly_id :date

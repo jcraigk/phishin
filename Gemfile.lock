@@ -225,7 +225,7 @@ GEM
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     json (2.7.2)
-    jwt (2.9.1)
+    jwt (2.9.3)
       base64
     language_server-protocol (3.17.0.3)
     launchy (3.0.1)
@@ -365,7 +365,7 @@ GEM
     rspec-expectations (3.13.3)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-mocks (3.13.1)
+    rspec-mocks (3.13.2)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-rails (7.0.1)
@@ -559,7 +559,6 @@ DEPENDENCIES
   rubocop-rspec_rails
   ruby-mp3info
   ruby-progressbar
-  ruby-vips
   selenium-webdriver
   sentry-rails
   sentry-ruby
