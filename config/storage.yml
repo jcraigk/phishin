@@ -1,7 +1,7 @@
 test:
   service: Disk
-  root: <%= Rails.root.join('tmp/storage') %>
+  root: <%= Rails.root.join("tmp/storage") %>
 
 local:
   service: Disk
-  root: <%= Rails.root.join('content/active_storage') %>
+  root: <%= ENV["IN_DOCKER"] ? "/content/active_storage" : Rails.root.join("tmp/active_storage") %>
