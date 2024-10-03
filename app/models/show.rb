@@ -87,6 +87,49 @@ class Show < ApplicationRecord
     "#{App.base_url}/#{date}"
   end
 
+  def cover_art_urls
+    if cover_art.attached?
+      {
+        medium:
+          Rails.application
+               .routes
+               .url_helpers
+               .rails_blob_url(cover_art),
+        small:
+          Rails.application
+               .routes
+               .url_helpers
+               .rails_representation_url(
+                 cover_art.variant(:small).processed
+               )
+      }
+    else
+      {
+        medium:
+          ActionController::Base.helpers.asset_pack_path(
+            "static/images/placeholders/cover-art-medium.jpg"
+          ),
+        small:
+          ActionController::Base.helpers.asset_pack_path(
+            "static/images/placeholders/cover-art-small.jpg"
+          )
+      }
+    end
+  end
+
+  def album_cover_url
+    if album_cover.attached?
+      Rails.application
+          .routes
+          .url_helpers
+          .rails_blob_url(album_cover)
+    else
+      ActionController::Base.helpers.asset_pack_path(
+        "static/images/placeholders/cover-art-medium.jpg"
+      )
+    end
+  end
+
   private
 
   def show_tags_for_api

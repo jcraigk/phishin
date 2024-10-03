@@ -21,31 +21,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
       type: "Object",
       desc: "Object containing named URLs for variants of raw cover art images"
     }
-  ) do
-    if _1.cover_art.attached?
-      {
-        medium:
-          ActionController::Base.helpers.asset_pack_path(
-            "static/images/placeholders/cover-art-medium.jpg"
-          ),
-        small:
-          ActionController::Base.helpers.asset_pack_path(
-            "static/images/placeholders/cover-art-small.jpg"
-          )
-      }
-    else
-      {
-        medium:
-          ActionController::Base.helpers.asset_pack_path(
-            "static/images/placeholders/cover-art-medium.jpg"
-          ),
-        small:
-          ActionController::Base.helpers.asset_pack_path(
-            "static/images/placeholders/cover-art-small.jpg"
-          )
-      }
-    end
-  end
+  )
 
   expose(
     :album_cover_url,
@@ -55,13 +31,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
         "URL of album cover image, which includes band name, " \
         "date, and venue name in text overlayed on the cover art."
     }
-  ) do
-    if _1.album_cover.attached?
-      ActionController::Base.helpers.asset_pack_path(
-        "static/images/placeholders/cover-art-medium.jpg"
-      )
-    end
-  end
+  )
 
   expose \
     :duration,

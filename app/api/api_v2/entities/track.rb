@@ -102,32 +102,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       type: "Object",
       desc: "Object containing named URLs for variants of raw cover art images"
     }
-  ) do
-    show = _1.show
-    if show.cover_art.attached?
-      {
-        medium:
-          ActionController::Base.helpers.asset_pack_path(
-            "static/images/placeholders/cover-art-medium.jpg"
-          ),
-        small:
-          ActionController::Base.helpers.asset_pack_path(
-            "static/images/placeholders/cover-art-small.jpg"
-          )
-    }
-    else
-      {
-        medium:
-          ActionController::Base.helpers.asset_pack_path(
-            "static/images/placeholders/cover-art-medium.jpg"
-          ),
-        small:
-          ActionController::Base.helpers.asset_pack_path(
-            "static/images/placeholders/cover-art-small.jpg"
-          )
-      }
-    end
-  end
+  ) { _1.show.cover_art_urls }
 
   expose(
     :show_album_cover_url,
@@ -135,13 +110,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       type: "Object",
       desc: "Object containing named URLs for variants of cover art images"
     }
-  ) do
-    if _1.show.album_cover.attached?
-      ActionController::Base.helpers.asset_pack_path(
-        "static/images/placeholders/cover-art-medium.jpg"
-      )
-    end
-  end
+  ) { _1.show.album_cover_url }
 
   expose(
     :venue_slug,

@@ -49,6 +49,7 @@ module Phishin
     }
     config.hosts << config.web_host if config.web_host
     config.active_storage.service = :local
+    config.active_storage.variant_processor = :mini_magick
   end
 end
 
