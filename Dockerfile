@@ -20,7 +20,7 @@ RUN apt-get update -qq && \
       shared-mime-info \
       imagemagick \
       libmagickwand-dev \
-      libjpeg-turbo8-dev \
+      libjpeg-dev \
     && apt-get clean
 
 # Install Node and Yarn
