@@ -1,7 +1,10 @@
 namespace :shows do
   desc "Generate cover art prompts"
   task generate_cover_art: :environment do
-    rel = Show.includes(:tracks).where(date: "1983-12-02").order(date: :asc)
+    date = ENV.fetch("DATE", nil)
+
+    rel = Show.includes(:tracks).order(date: :asc)
+    rel = rel.where(date:) if date.present?
     pbar = ProgressBar.create(
       total: rel.count,
       format: "%a %B %c/%C %p%% %E"
