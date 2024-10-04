@@ -21,7 +21,9 @@ class AlbumCoverService < BaseService
   private
 
   def download_cover_art
-    url = Rails.application.routes.url_helpers.rails_blob_url(show.cover_art)
+    url =
+      Rails.application.routes.url_helpers.rails_representation_url \
+        show.cover_art.variant(:medium).processed
     image_response = Typhoeus.get(url, followlocation: true)
     @art_path = Rails.root.join("tmp", "#{SecureRandom.hex}.jpg")
     File.open(@art_path, "wb") do |file|

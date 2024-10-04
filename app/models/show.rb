@@ -10,6 +10,9 @@ class Show < ApplicationRecord
   has_many :tags, through: :show_tags
 
   has_one_attached :cover_art do |attachable|
+    attachable.variant :medium,
+                       resize_to_limit: [ 512, 512 ],
+                       preprocessed: true
     attachable.variant :small,
                        resize_to_limit: [ 48, 48 ],
                        preprocessed: true

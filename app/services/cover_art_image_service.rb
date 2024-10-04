@@ -23,9 +23,10 @@ class CoverArtImageService < BaseService
           "Content-Type" => "application/json"
         },
         body: {
+          model: "dall-e-3",
           prompt: show.cover_art_prompt,
           n: 1,
-          size: "512x512"
+          size: "1024x1024"
         }.to_json
       )
 
