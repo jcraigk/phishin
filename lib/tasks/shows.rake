@@ -4,9 +4,7 @@ namespace :shows do
     date = ENV.fetch("DATE", nil)
     force = ENV.fetch("FORCE", nil).present?
 
-    rel = Show.includes(:tracks)
-              .order(date: :asc)
-              .where('date >= ?', Date.parse('1991-02-21'))
+    rel = Show.includes(:tracks).where('date >= ?', '1993-02-17').order(date: :asc)
     rel = rel.where(date:) if date.present?
     pbar = ProgressBar.create(
       total: rel.count,
@@ -14,8 +12,6 @@ namespace :shows do
     )
 
     rel.each do |show|
-      pbar.increment
-
       if force || (show.cover_art_prompt.blank? && show.cover_art_parent_show_id.blank?)
         CoverArtPromptService.call(show)
         if show.cover_art_parent_show_id.present?
@@ -28,12 +24,12 @@ namespace :shows do
       if force || !show.cover_art.attached?
         CoverArtImageService.call(show)
         # sleep 1 # for Dall-E API rate limiting
-        puts Rails.application.routes.url_helpers.rails_blob_url(show.cover_art)
+        puts show.cover_art_urls[:large]
       end
 
       if force || !show.album_cover.attached?
         AlbumCoverService.call(show)
-        puts Rails.application.routes.url_helpers.rails_blob_url(show.album_cover)
+        puts show.album_cover_url
 
         # Apply cover art to mp3 files
         show.tracks.each do |track|
@@ -46,6 +42,7 @@ namespace :shows do
       end
 
       puts show.url
+      pbar.increment
     rescue StandardError => e
       if e.message.include?("blocked") # Dall-E regected the prompt
         puts "RETRYING #{show.date}"

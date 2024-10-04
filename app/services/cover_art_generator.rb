@@ -21,12 +21,12 @@ class CoverArtGenerator < BaseService
     if force || !show.cover_art.attached?
       CoverArtImageService.new(show).call
       # sleep 5 # for Dall-E API rate limiting
-      puts Rails.application.routes.url_helpers.rails_blob_url(show.cover_art)
+      puts show.cover_art_urls[:large]
     end
 
     if force || !show.album_cover.attached?
       AlbumCoverService.new(show).call
-      puts Rails.application.routes.url_helpers.rails_blob_url(show.album_cover)
+      puts show.album_cover_url
 
       # Apply cover art to mp3 files
       show.tracks.each do |track|

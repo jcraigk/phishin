@@ -13,26 +13,14 @@ class AlbumCoverService < BaseService
   private
 
   def create_album_cover
-    download_cover_art
     composite_text_on_cover_art
     attach_album_cover
   end
 
   private
 
-  def download_cover_art
-    url =
-      Rails.application.routes.url_helpers.rails_blob_url(show.cover_art)
-    image_response = Typhoeus.get(url, followlocation: true)
-    @art_path = Rails.root.join("tmp", "#{SecureRandom.hex}.jpg")
-    File.open(@art_path, "wb") do |file|
-      file.binmode
-      file.write(image_response.body)
-    end
-  end
-
   def composite_text_on_cover_art
-    @art = MiniMagick::Image.open(@art_path)
+    @art = MiniMagick::Image.open(show.cover_art_path)
     text_color = "#222222"
     bg_color = "#e5e5e5"
     font1 = Rails.root.join("lib/fonts/Molle-Italic.ttf")
@@ -111,7 +99,6 @@ class AlbumCoverService < BaseService
       io: File.open(album_cover_path),
       filename: "album_cover_#{show.id}.jpg",
       content_type: "image/jpeg"
-    File.delete(@art_path) if File.exist?(@art_path)
     File.delete(album_cover_path) if File.exist?(album_cover_path)
   end
 end
