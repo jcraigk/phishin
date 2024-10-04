@@ -11,16 +11,16 @@ class CoverArtGenerator < BaseService
   def generate_prompt_and_image_assets
     if force || (show.cover_art_prompt.blank? && show.cover_art_parent_show_id.blank?)
       CoverArtPromptService.new(show).call
-      # if show.cover_art_parent_show_id.present?
-      #   puts "PROMPT (DEFER): #{show.cover_art_parent_show_id}"
-      # else
-      #   puts "PROMPT (NEW): #{show.cover_art_prompt}"
-      # end
+      if show.cover_art_parent_show_id.present?
+        puts "PROMPT (DEFER): #{show.cover_art_parent_show_id}"
+      else
+        puts "PROMPT (NEW): #{show.cover_art_prompt}"
+      end
     end
 
     if force || !show.cover_art.attached?
       CoverArtImageService.new(show).call
-      sleep 5 # for Dall-E API rate limiting
+      # sleep 5 # for Dall-E API rate limiting
       puts Rails.application.routes.url_helpers.rails_blob_url(show.cover_art)
     end
 
