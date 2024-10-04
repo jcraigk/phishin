@@ -5,11 +5,13 @@ import Tracks from "./Tracks";
 import { formatDurationShow } from "./helpers/utils";
 import { useFeedback } from "./controls/FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExclamationCircle, faClock, faGlobe, faLock, faEdit, faShareFromSquare, faCompactDisc, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { faExclamationCircle, faClock, faGlobe, faLock, faEdit, faShareFromSquare, faCompactDisc, faCircleCheck, faFileImport } from "@fortawesome/free-solid-svg-icons";
 
 const DraftPlaylist = () => {
   const {
+    activePlaylist,
     draftPlaylist,
+    setDraftPlaylist,
     draftPlaylistMeta,
     isDraftPlaylistSaved,
     openDraftPlaylistModal,
@@ -22,6 +24,10 @@ const DraftPlaylist = () => {
 
   const handleEditDetails = () => {
     openDraftPlaylistModal();
+  };
+
+  const handleImportActivePlaylist = () => {
+    setDraftPlaylist(activePlaylist);
   };
 
   // Redirect and warn if not logged in
@@ -94,6 +100,13 @@ const DraftPlaylist = () => {
         <FontAwesomeIcon icon={faEdit} className="mr-1 text-gray" />
         Edit
       </button>
+
+      <div class="hidden-mobile mt-3">
+        <button onClick={handleImportActivePlaylist} className="button">
+          <FontAwesomeIcon icon={faFileImport} className="mr-1 text-gray" />
+          Import Active Playlist
+        </button>
+      </div>
     </div>
   );
 

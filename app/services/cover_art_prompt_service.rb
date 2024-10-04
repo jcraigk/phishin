@@ -72,7 +72,12 @@ class CoverArtPromptService < BaseService
             .where("date < ?", kickoff_show.date)
             .order(date: :desc)
             .first
+
+      # Break if prior show doesn't exist, is at a different venue,
+      # or is more than 4 days apart (early shows at Hunt's / Nectar's)
       break unless prior_show && prior_show.venue_id == kickoff_show.venue_id
+      break if (kickoff_show.date - prior_show.date).to_i > 4
+
       kickoff_show = prior_show
     end
     kickoff_show
@@ -167,8 +172,6 @@ class CoverArtPromptService < BaseService
   def chatgpt_response
     return @chatgpt_response if defined?(@chatgpt_response)
 
-    content = chatgpt_prompt + "\n\nDo not include any text, words, or numbers in the image."
-
     response = Typhoeus.post(
       "https://api.openai.com/v1/chat/completions",
       headers: {
@@ -179,7 +182,7 @@ class CoverArtPromptService < BaseService
         model: "gpt-4o",
         messages: [
           { role: "system", content: "You are an expert in generating DALL-E prompts." },
-          { role: "user", content: }
+          { role: "user", content: chatgpt_prompt }
         ]
       }.to_json
     )

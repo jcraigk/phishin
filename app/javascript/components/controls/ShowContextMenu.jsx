@@ -4,7 +4,7 @@ import { formatDate } from "../helpers/utils";
 import { useFeedback } from "./FeedbackContext";
 import LikeButton from "./LikeButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight, faDownload } from "@fortawesome/free-solid-svg-icons";
 
 const ShowContextMenu = ({ show, adjacentLinks = true }) => {
   const dropdownRef = useRef(null);
@@ -96,6 +96,13 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
             <FontAwesomeIcon icon={faShareFromSquare} className="icon" />
             Share
           </a>
+
+          {show.album_zip_url && (
+            <a href={show.album_zip_url} className="dropdown-item" onClick={(e) => e.stopPropagation}>
+              <FontAwesomeIcon icon={faDownload} className="icon" />
+              Download MP3s
+            </a>
+          )}
 
           <a className="dropdown-item" onClick={openPhishNet}>
             <FontAwesomeIcon icon={faExternalLinkAlt} className="icon" />

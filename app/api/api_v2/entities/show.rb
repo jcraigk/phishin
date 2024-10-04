@@ -31,6 +31,14 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
     }
   )
 
+  expose(
+    :album_zip_url,
+    documentation: {
+      type: "String",
+      desc: "URL of zipfile containing the show's MP3s, cover art, and taper notes"
+    }
+  )
+
   expose \
     :duration,
     documentation: {

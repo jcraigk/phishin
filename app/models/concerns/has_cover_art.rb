@@ -13,11 +13,17 @@ module HasCoverArt
       attachment_url(album_cover, "cover-art-medium.jpg")
     end
 
-    def generate_album_cover!
+    def generate_album!
       CoverArtPromptService.call(self)
       CoverArtImageService.call(self)
       AlbumCoverService.call(self)
       tracks.each(&:apply_id3_tags)
+      AlbumZipJob.perform_async(id)
+    end
+
+    def album_zip_url
+      return unless album_zip.attached?
+      Rails.application.routes.url_helpers.rails_blob_url(album_zip)
     end
 
     private
