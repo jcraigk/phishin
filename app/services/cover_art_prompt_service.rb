@@ -34,7 +34,7 @@ class CoverArtPromptService < BaseService
 
     Occasionally consider imagery of rock instruments. Don't overuse guitars. Don't overuse keyboards. Include imagery of instruments only every tenth prompt (so 10% chance).
 
-    Avoid imagery of humans, human forms, or faces.
+    Avoid mention of humans, human forms, or faces. Avoid historical figures.
 
     Do not let Dall-e know that the art is related to a concert, but rather be general about prompting it to generate an art piece based on the selected subjects. Do not let Dall-e generate text or symbols.
 
