@@ -119,8 +119,6 @@ main {
 .loading-shimmer {
   background: $text-gray;
   border-radius: var(--bulma-radius);
-  width: 224px;
-  height: 224px;
 }
 
 .loading-shimmer::before {
