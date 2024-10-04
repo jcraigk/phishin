@@ -2,6 +2,7 @@ namespace :shows do
   desc "Generate cover art prompts"
   task generate_cover_art: :environment do
     date = ENV.fetch("DATE", nil)
+    force = ENV.fetch("FORCE", nil).present?
 
     rel = Show.includes(:tracks).order(date: :asc)
     rel = rel.where(date:) if date.present?
@@ -13,7 +14,7 @@ namespace :shows do
     rel.each do |show|
       pbar.increment
 
-      if show.cover_art_prompt.blank? && show.cover_art_parent_show_id.blank?
+      if force || (show.cover_art_prompt.blank? && show.cover_art_parent_show_id.blank?)
         CoverArtPromptService.new(show).call
         if show.cover_art_parent_show_id.present?
           puts "PROMPT (DEFER): #{show.cover_art_parent_show_id}"
@@ -22,13 +23,13 @@ namespace :shows do
         end
       end
 
-      unless show.cover_art.attached?
+      if force || !show.cover_art.attached?
         CoverArtImageService.new(show).call
         sleep 5 # for Dall-E API rate limiting
         puts Rails.application.routes.url_helpers.rails_blob_url(show.cover_art)
       end
 
-      unless show.album_cover.attached?
+      if force || !show.album_cover.attached?
         AlbumCoverService.new(show).call
         puts Rails.application.routes.url_helpers.rails_blob_url(show.album_cover)
       end
