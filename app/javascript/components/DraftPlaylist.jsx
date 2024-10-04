@@ -101,7 +101,7 @@ const DraftPlaylist = () => {
         Edit
       </button>
 
-      <div class="hidden-mobile mt-3">
+      <div className="hidden-mobile mt-3">
         <button onClick={handleImportActivePlaylist} className="button">
           <FontAwesomeIcon icon={faFileImport} className="mr-1 text-gray" />
           Import Active Playlist
