@@ -4,7 +4,9 @@ namespace :shows do
     date = ENV.fetch("DATE", nil)
     force = ENV.fetch("FORCE", nil).present?
 
-    rel = Show.includes(:tracks).order(date: :asc)
+    rel = Show.includes(:tracks)
+              .order(date: :asc)
+              .where('date >= ?', Date.parse('1991-02-21'))
     rel = rel.where(date:) if date.present?
     pbar = ProgressBar.create(
       total: rel.count,
@@ -25,7 +27,7 @@ namespace :shows do
 
       if force || !show.cover_art.attached?
         CoverArtImageService.call(show)
-        sleep 5 # for Dall-E API rate limiting
+        # sleep 1 # for Dall-E API rate limiting
         puts Rails.application.routes.url_helpers.rails_blob_url(show.cover_art)
       end
 
@@ -44,6 +46,13 @@ namespace :shows do
       end
 
       puts show.url
+    rescue StandardError => e
+      if e.message.include?("blocked") # Dall-E regected the prompt
+        puts "RETRYING #{show.date}"
+        retry
+      else
+        binding.irb
+      end
     end
 
     pbar.finish

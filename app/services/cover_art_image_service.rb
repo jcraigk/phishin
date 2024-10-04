@@ -38,8 +38,6 @@ class CoverArtImageService < BaseService
         raise "Failed to generate cover art: #{response.body}"
       end
     end
-  rescue StandardError => e
-    binding.irb
   end
 
   def download_and_convert_to_jpg(image_url)
