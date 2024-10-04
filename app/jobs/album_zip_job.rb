@@ -45,7 +45,7 @@ class AlbumZipJob
 
       show.album_zip.attach \
         io: File.open(temp_zip.path),
-        filename: "Phish #{show.date} MP3 Album.zip",
+        filename: "Phish #{show.date} MP3.zip",
         content_type: "application/zip"
     end
   end

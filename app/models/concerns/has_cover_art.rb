@@ -25,7 +25,7 @@ module HasCoverArt
     def album_zip_url
       return unless album_zip.attached?
       key = album_zip.blob.key
-      "#{App.base_url}/attachments/#{key[0..1]}/#{key[2..3]}/#{key}"
+      "#{App.base_url}/download-show/#{date}"
     end
 
     def cover_art_path

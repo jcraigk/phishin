@@ -11,11 +11,11 @@ class CoverArtImageService < BaseService
 
   def generate_and_save_cover_art
     # Use the parent show's cover art if part of a run
-    # if show.cover_art_parent_show_id
-    #   parent_show = Show.find(show.cover_art_parent_show_id)
-    #   show.cover_art.attach(parent_show.cover_art.blob)
-    # # Otherwise, generate new cover art
-    # else
+    if show.cover_art_parent_show_id
+      parent_show = Show.find(show.cover_art_parent_show_id)
+      show.cover_art.attach(parent_show.cover_art.blob)
+    # Otherwise, generate new cover art
+    else
       response = Typhoeus.post(
         "https://api.openai.com/v1/images/generations",
         headers: {
@@ -37,7 +37,7 @@ class CoverArtImageService < BaseService
       else
         raise "Failed to generate cover art: #{response.body}"
       end
-    # end
+    end
   end
 
   def download_and_convert_to_jpg(image_url)
