@@ -179,7 +179,7 @@ class CoverArtPromptService < BaseService
         model: "gpt-4o",
         messages: [
           { role: "system", content: "You are an expert in generating DALL-E prompts." },
-          { role: "user", content: chatgpt_prompt }
+          { role: "user", content: }
         ]
       }.to_json
     )
