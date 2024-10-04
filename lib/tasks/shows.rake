@@ -2,18 +2,18 @@ namespace :shows do
   desc "Generate cover prompts, images, and zips for all shows or specific date"
   task generate_albums: :environment do
     date = ENV.fetch("DATE", nil)
+    start_date = ENV.fetch("START_DATE", nil)
     force = ENV.fetch("FORCE", nil).present?
 
     rel = Show.includes(:tracks).order(date: :asc)
     rel = rel.where(date:) if date.present?
+    rel = rel.where('date >= ?', start_date) if start_date.present?
     pbar = ProgressBar.create(
       total: rel.count,
       format: "%a %B %c/%C %p%% %E"
     )
 
     rel.each do |show|
-      pbar.increment
-
       if force || (show.cover_art_prompt.blank? && show.cover_art_parent_show_id.blank?)
         CoverArtPromptService.call(show)
         if show.cover_art_parent_show_id.present?
@@ -25,13 +25,13 @@ namespace :shows do
 
       if force || !show.cover_art.attached?
         CoverArtImageService.call(show)
-        sleep 5 # for Dall-E API rate limiting
-        puts Rails.application.routes.url_helpers.rails_blob_url(show.cover_art)
+        # sleep 1 # for Dall-E API rate limiting
+        puts show.cover_art_urls[:large]
       end
 
       if force || !show.album_cover.attached?
         AlbumCoverService.call(show)
-        puts Rails.application.routes.url_helpers.rails_blob_url(show.album_cover)
+        puts show.album_cover_url
 
         # Apply cover art to mp3 files
         show.tracks.each do |track|
@@ -44,6 +44,14 @@ namespace :shows do
       end
 
       puts show.url
+      pbar.increment
+    rescue StandardError => e
+      if e.message.include?("blocked") # Dall-E regected the prompt
+        puts "RETRYING #{show.date}"
+        retry
+      else
+        binding.irb
+      end
     end
 
     pbar.finish

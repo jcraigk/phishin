@@ -28,14 +28,14 @@ const SearchResults = ({ results, term }) => {
     <>
       {exactShow && (
         <>
-          <h2 className="title">Show on Date</h2>
+          <h2 className="title section-title">Show on Date</h2>
           <Shows shows={[exactShow]} />
         </>
       )}
 
       {otherShows?.length > 0 && (
         <>
-          <h2 className="title">Matched Shows</h2>
+          <h2 className="title section-title">Matched Shows</h2>
           <Shows shows={showMoreOtherShows ? otherShows : otherShows.slice(0, 10)} />
           {otherShows.length > 10 && (
             <button className="button" onClick={() => setShowMoreOtherShows(!showMoreOtherShows)}>
@@ -47,7 +47,7 @@ const SearchResults = ({ results, term }) => {
 
       {songs?.length > 0 && (
         <>
-          <h2 className="title">Songs</h2>
+          <h2 className="title section-title">Songs</h2>
           <Songs songs={showMoreSongs ? songs : songs.slice(0, 10)} highlight={term} />
           {songs.length > 10 && (
             <button className="button" onClick={() => setShowMoreSongs(!showMoreSongs)}>
@@ -59,7 +59,7 @@ const SearchResults = ({ results, term }) => {
 
       {tracks?.length > 0 && (
         <>
-          <h2 className="title">Tracks</h2>
+          <h2 className="title section-title">Tracks</h2>
           <Tracks tracks={showMoreTracks ? tracks : tracks.slice(0, 10)} highlight={term} />
           {tracks.length > 10 && (
             <button className="button" onClick={() => setShowMoreTracks(!showMoreTracks)}>
@@ -71,7 +71,7 @@ const SearchResults = ({ results, term }) => {
 
       {tags?.length > 0 && (
         <>
-          <h2 className="title">Tags</h2>
+          <h2 className="title section-title">Tags</h2>
           <Tags tags={showMoreTags ? tags : tags.slice(0, 10)} highlight={term} />
           {tags.length > 10 && (
             <button className="button" onClick={() => setShowMoreTags(!showMoreTags)}>
@@ -83,7 +83,7 @@ const SearchResults = ({ results, term }) => {
 
       {venues?.length > 0 && (
         <>
-          <h2 className="title">Venues</h2>
+          <h2 className="title section-title">Venues</h2>
           <Venues venues={showMoreVenues ? venues : venues.slice(0, 10)} highlight={term} />
           {venues.length > 10 && (
             <button className="button" onClick={() => setShowMoreVenues(!showMoreVenues)}>
@@ -95,7 +95,7 @@ const SearchResults = ({ results, term }) => {
 
       {playlists?.length > 0 && (
         <>
-          <h2 className="title">Playlists</h2>
+          <h2 className="title section-title">Playlists</h2>
           <Playlists playlists={showMorePlaylists ? playlists : playlists.slice(0, 10)} highlight={term} />
           {playlists.length > 10 && (
             <button className="button" onClick={() => setShowMorePlaylists(!showMorePlaylists)}>

@@ -16,10 +16,6 @@ class CoverArtImageService < BaseService
       show.cover_art.attach(parent_show.cover_art.blob)
     # Otherwise, generate new cover art
     else
-      prompt = show.cover_art_prompt
-      prompt += "\n\nDo not include any text, words, or numbers in the image."
-      prompt += "\n\nAvoid images of people or human faces."
-
       response = Typhoeus.post(
         "https://api.openai.com/v1/images/generations",
         headers: {
@@ -27,9 +23,10 @@ class CoverArtImageService < BaseService
           "Content-Type" => "application/json"
         },
         body: {
-          prompt:,
+          model: "dall-e-3",
+          prompt: show.cover_art_prompt,
           n: 1,
-          size: "512x512"
+          size: "1024x1024"
         }.to_json
       )
 
@@ -41,8 +38,6 @@ class CoverArtImageService < BaseService
         raise "Failed to generate cover art: #{response.body}"
       end
     end
-  rescue StandardError => e
-    binding.irb
   end
 
   def download_and_convert_to_jpg(image_url)
@@ -50,13 +45,13 @@ class CoverArtImageService < BaseService
 
     if image_response.success?
       # Save the image as a temporary PNG file
-      Tempfile.create([ "cover_art", ".png" ]) do |temp_png|
+      Tempfile.create([ "cover_art_#{SecureRandom.hex}", ".png" ]) do |temp_png|
         temp_png.binmode
         temp_png.write(image_response.body)
         temp_png.rewind
 
         # Convert to JPG and generate derivatives using MiniMagick
-        Tempfile.create([ "cover_art", ".jpg" ]) do |temp_jpg|
+        Tempfile.create([ "cover_art_#{SecureRandom.hex}", ".jpg" ]) do |temp_jpg|
           image = MiniMagick::Image.open(temp_png.path)
           image.format "jpg"
           image.quality 90

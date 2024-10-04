@@ -64,25 +64,28 @@ const Show = ({ trackSlug }) => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <div class="hidden-mobile mb-2">
+      <div className="hidden-mobile mb-2">
         <CoverArt
           coverArtUrls={show.cover_art_urls}
           albumCoverUrl={show.album_cover_url}
           openAppModal={openAppModal}
-          size="large"
+          size="medium"
+          prompt={show.cover_art_prompt}
         />
       </div>
 
-      <p className="sidebar-title show-cover-title">
-        <span class="display-mobile-only">
+      <div className="sidebar-title show-cover-title">
+        <span className="display-mobile-only">
           <CoverArt
             coverArtUrls={show.cover_art_urls}
             albumCoverUrl={show.album_cover_url}
             openAppModal={openAppModal}
+            prompt={show.cover_art_prompt}
           />
         </span>
         {formatDateMed(show.date)}
-      </p>
+      </div>
+
       <p className="sidebar-info hidden-mobile">
         <Link to={`/venues/${show.venue.slug}`}>{show.venue_name}</Link>
       </p>

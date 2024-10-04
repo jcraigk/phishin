@@ -14,6 +14,12 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
       format: "date",
       desc: "Date of the show"
     }
+  expose \
+    :cover_art_prompt,
+    documentation: {
+      type: "String",
+      desc: "Prompt used to generate the cover art for the show"
+    }
 
   expose(
     :cover_art_urls,

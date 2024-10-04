@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   end
 
   get "/download-track/:id" => "downloads#download_track"
+  get "/blob/:key" => "downloads#download_blob"
 
   namespace :api do
     namespace :v1 do

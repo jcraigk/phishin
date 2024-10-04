@@ -14,13 +14,13 @@
   object-fit: cover;
 }
 
-.cover-art-medium {
-  width: 120px;
-  height: 120px;
+.cover-art-inspector {
+  width: 100%;
   border-radius: var(--bulma-radius);
   object-fit: cover;
-  position: relative;
-  margin-right: 0.5rem;
+  width: 128px !important;
+  height: 128px !important;
+  margin-right: 0.3rem;
 }
 
 .cover-art-small {
@@ -67,6 +67,10 @@
 .cover-art {
   position: relative;
   top: 3px;
+
+  img {
+    border-radius: var(--bulma-radius);
+  }
 }
 
 .list-item-link {

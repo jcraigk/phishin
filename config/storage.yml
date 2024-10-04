@@ -4,4 +4,5 @@ test:
 
 local:
   service: Disk
-  root: <%= ENV["IN_DOCKER"] ? "/content/active_storage" : Rails.root.join("tmp/active_storage") %>
+  root: <%= ENV["IN_DOCKER"] ? "/content/active_storage" : Rails.root.join("public/attachments") %>
+  public: true
