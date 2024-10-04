@@ -112,9 +112,21 @@ main {
   display: block;
 }
 
+.cover-art {
+  display: inline-block;
+}
+
 @media (min-width: 1024px) {
   .display-mobile-only {
     display: none !important;
+  }
+
+  .sidebar-content {
+    .cover-art {
+      display: block;
+      width: 224px !important;
+      height: 230px !important;
+    }
   }
 }
 
@@ -126,19 +138,6 @@ main {
   .sidebar-control-container {
     position: relative;
     top: 3px;
-  }
-
-  .sidebar-title {
-    &.show-cover-title {
-      position: relative;
-      top: -10px;
-    }
-
-    .cover-art {
-      position: relative;
-      top: 10px;
-      margin-right: 0.3rem;
-    }
   }
 
   #layout-container {
