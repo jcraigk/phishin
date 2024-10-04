@@ -1,4 +1,22 @@
 namespace :shows do
+  desc "Cleanup taper notes"
+  task cleanup_taper_notes: :environment do
+    rel = Show.where("taper_notes ILIKE ?", "%.flac%")
+              .order(date: :asc)
+    pbar = ProgressBar.create(
+      total: rel.count,
+      format: "%a %B %c/%C %p%% %E"
+    )
+
+    rel.each do |show|
+      pbar.increment
+      puts show.url
+      TaperNotesCleanupService.call(show)
+    end
+
+    pbar.finish
+  end
+
   desc "Generate cover art prompts"
   task generate_cover_art: :environment do
     date = ENV.fetch("DATE", nil)
@@ -15,7 +33,7 @@ namespace :shows do
       pbar.increment
 
       if force || (show.cover_art_prompt.blank? && show.cover_art_parent_show_id.blank?)
-        CoverArtPromptService.new(show).call
+        CoverArtPromptService.call(show)
         if show.cover_art_parent_show_id.present?
           puts "PROMPT (DEFER): #{show.cover_art_parent_show_id}"
         else
@@ -24,13 +42,13 @@ namespace :shows do
       end
 
       if force || !show.cover_art.attached?
-        CoverArtImageService.new(show).call
+        CoverArtImageService.call(show)
         sleep 5 # for Dall-E API rate limiting
         puts Rails.application.routes.url_helpers.rails_blob_url(show.cover_art)
       end
 
       if force || !show.album_cover.attached?
-        AlbumCoverService.new(show).call
+        AlbumCoverService.call(show)
         puts Rails.application.routes.url_helpers.rails_blob_url(show.album_cover)
 
         # Apply cover art to mp3 files

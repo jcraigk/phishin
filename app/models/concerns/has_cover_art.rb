@@ -14,9 +14,9 @@ module HasCoverArt
     end
 
     def generate_album_cover!
-      CoverArtPromptService.new(self).call
-      CoverArtImageService.new(self).call
-      AlbumCoverService.new(self).call
+      CoverArtPromptService.call(self)
+      CoverArtImageService.call(self)
+      AlbumCoverService.call(self)
       tracks.each(&:apply_id3_tags)
     end
 
