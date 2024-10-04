@@ -17,8 +17,8 @@ Rails.application.routes.draw do
     get ":provider", to: "sorcery#login", as: :at_provider
   end
 
-  get "/download-show/:date" => "downloads#download_show"
   get "/download-track/:id" => "downloads#download_track"
+  get "/blob/:key" => "downloads#download_blob"
 
   namespace :api do
     namespace :v1 do

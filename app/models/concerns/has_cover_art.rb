@@ -25,7 +25,7 @@ module HasCoverArt
     def album_zip_url
       return unless album_zip.attached?
       key = album_zip.blob.key
-      "#{App.base_url}/download-show/#{date}"
+      "#{App.base_url}/blob/#{blob.key}"
     end
 
     def cover_art_path
@@ -48,7 +48,8 @@ module HasCoverArt
     def cover_art_variant_url(variant)
       if cover_art.attached?
         key = cover_art.variant(variant).processed.key
-        "#{App.base_url}/attachments/#{key[0..1]}/#{key[2..3]}/#{key}"
+        # "#{App.base_url}/attachments/#{key[0..1]}/#{key[2..3]}/#{key}"
+        "#{App.base_url}/blob/#{key}"
       else
         placeholder(variant)
       end
@@ -63,9 +64,10 @@ module HasCoverArt
 
     def attachment_url(attachment, placeholder)
       if attachment.attached?
-        key = attachment.blob.key
-        partitioned_key = "#{key[0..1]}/#{key[2..3]}/#{key}"
-        "#{App.base_url}/attachments/#{partitioned_key}"
+        # key = attachment.blob.key
+        # partitioned_key = "#{key[0..1]}/#{key[2..3]}/#{key}"
+        # "#{App.base_url}/attachments/#{partitioned_key}"
+        "#{App.base_url}/blob/#{attachment.blob.key}"
       else
         path = ActionController::Base.helpers.asset_pack_path \
           "static/images/placeholders/#{placeholder}.jpg"
