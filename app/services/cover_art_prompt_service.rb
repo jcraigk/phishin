@@ -186,6 +186,7 @@ class CoverArtPromptService < BaseService
 
     if response.success?
       response = JSON[response.body]["choices"].first["message"]["content"]
+      response = response.gsub("```json", "").gsub("```", "") # Remove markdown
       @chatgpt_response = JSON.parse(response, symbolize_names: true)
     else
       raise "Failed to get response from ChatGPT: #{response.body}"
