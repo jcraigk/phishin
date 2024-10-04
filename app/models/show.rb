@@ -87,6 +87,13 @@ class Show < ApplicationRecord
     "#{App.base_url}/#{date}"
   end
 
+  def generate_album_cover!
+    CoverArtPromptService.new(self).call
+    CoverArtImageService.new(self).call
+    AlbumCoverService.new(self).call
+    tracks.each(&:apply_id3_tags)
+  end
+
   def cover_art_urls
     if cover_art.attached?
       {

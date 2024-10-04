@@ -35,7 +35,7 @@ const SearchResults = ({ results, term }) => {
 
       {otherShows?.length > 0 && (
         <>
-          <h2 className="title">Shows on Day of Year</h2>
+          <h2 className="title">Matched Shows</h2>
           <Shows shows={showMoreOtherShows ? otherShows : otherShows.slice(0, 10)} />
           {otherShows.length > 10 && (
             <button className="button" onClick={() => setShowMoreOtherShows(!showMoreOtherShows)}>
