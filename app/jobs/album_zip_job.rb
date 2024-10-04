@@ -13,7 +13,7 @@ class AlbumZipJob
   private
 
   def create_and_attach_album_zip
-    Tempfile.open(["album-zip-#{show_id}", ".zip"]) do |temp_zip| # rubocop:disable Metrics/BlockLength
+    Tempfile.open([ "album-zip-#{show_id}", ".zip" ]) do |temp_zip| # rubocop:disable Metrics/BlockLength
       Zip::File.open(temp_zip.path, Zip::File::CREATE) do |zipfile|
         # Tracks
         show.tracks.order(:position).each do |track|

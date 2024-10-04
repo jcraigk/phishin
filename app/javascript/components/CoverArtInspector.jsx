@@ -1,12 +1,10 @@
-import { authFetch } from "./helpers/utils";
-
 export const coverArtInspectorLoader = async ({ request }) => {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
   const perPage = url.searchParams.get("per_page") || 50;
 
   try {
-    const response = await authFetch(`/api/v2/shows?page=${page}&per_page=${perPage}`);
+    const response = await fetch(`/api/v2/shows?page=${page}&per_page=${perPage}`);
     if (!response.ok) throw response;
     const data = await response.json();
     return {
@@ -51,7 +49,7 @@ const CoverArtInspector = () => {
   return (
     <>
       <Helmet>
-        <title>Album Covers - Phish.in</title>
+        <title>Cover Art - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <div className="grid-container">
