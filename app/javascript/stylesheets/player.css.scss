@@ -28,6 +28,10 @@ footer.with-player {
     }
   }
 
+  .loading-shimmer::before {
+    display: none;
+  }
+
   .chevron-button {
     background-color: $control-gray;
     border-radius: 50%;

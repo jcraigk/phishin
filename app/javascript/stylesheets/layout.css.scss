@@ -116,11 +116,6 @@ main {
   display: inline-block;
 }
 
-.loading-shimmer {
-  background: $text-gray;
-  border-radius: var(--bulma-radius);
-}
-
 .loading-shimmer::before {
   content: "";
   display: block;
@@ -133,8 +128,8 @@ main {
   animation: shimmer 1.5s infinite;
 }
 .list-item {
-  .loading-shimmer {
-    width: 32px !important;
+  .loading-shimmer::before {
+    width: 15px !important;
     height: 32px !important;
   }
 }
@@ -159,14 +154,17 @@ main {
       width: 224px !important;
       height: 230px !important;
     }
-    .loading-shimmer {
-      width: 224px !important;
-      height: 230px !important;
+    .loading-shimmer::before {
+      margin-left: 70px;
+      width: 70px;
     }
   }
 }
 
 @media (max-width: 1023px) {
+  .loading-shimmer::before {
+    display: none;
+  }
   .display-mobile-only {
     display: inline-block !important;
   }
