@@ -1,22 +1,4 @@
 namespace :shows do
-  desc "Cleanup taper notes"
-  task cleanup_taper_notes: :environment do
-    rel = Show.where("taper_notes ILIKE ?", "%.flac%")
-              .order(date: :asc)
-    pbar = ProgressBar.create(
-      total: rel.count,
-      format: "%a %B %c/%C %p%% %E"
-    )
-
-    rel.each do |show|
-      pbar.increment
-      puts show.url
-      TaperNotesCleanupService.call(show)
-    end
-
-    pbar.finish
-  end
-
   desc "Generate cover art prompts"
   task generate_cover_art: :environment do
     date = ENV.fetch("DATE", nil)
