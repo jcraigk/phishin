@@ -32,9 +32,9 @@ class CoverArtPromptService < BaseService
 
     The subjects should be a comma separated list of 3 concepts or images pulled from the event info. Take liberty here and be creative in how these subjects are selected. Consider the time and location of the concert. If a setlist is provided, include the song titles and your knowledge of song lyrical content in consideration. Favor popular songs over obscure ones. Consider cultural and artistic impressions of the songs played at the show to add to the pool of potential imagery. If there appear to be themes in the song selections, favor that. Lean into famous landmarks and famous songs/lyrics and other imagery. Don't be afraid to get creative and silly in some cases. If the show is not in the united states, lean into cultural/geographic references for the foreign country. If the show takes place in a unique location, lean into that uniqueness. For shows that take place on halloween, take note of the cover songs played and lean into that. Season and weather should also be considered.
 
-    Occasionally consider imagery of the instruments specifically used in the band Phish including guitars, bass, drums, and keyboards, including grand piano, organ, and synthesizers. Avoid jazz instruments like saxophones and trumpets. Avoid imagery of the band members themselves. And mix these general elements in only occasionally, maybe every 5th prompt.
+    Occasionally consider imagery of rock instruments. Don't overuse guitars. Don't overuse keyboards. Include imagery of instruments only every tenth prompt (so 10% chance).
 
-    Avoid imagery of humans, human forms, or faces. Animals are fine.
+    Avoid imagery of humans, human forms, or faces.
 
     Do not let Dall-e know that the art is related to a concert, but rather be general about prompting it to generate an art piece based on the selected subjects. Do not let Dall-e generate text or symbols.
 
