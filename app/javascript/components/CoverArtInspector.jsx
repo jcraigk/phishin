@@ -61,6 +61,7 @@ const CoverArtInspector = () => {
               openAppModal={openAppModal}
               size="medium"
               css="cover-art-inspector"
+              prompt={show.cover_art_prompt}
             />
           ))}
         </div>
