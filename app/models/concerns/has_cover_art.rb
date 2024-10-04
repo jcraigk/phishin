@@ -31,14 +31,18 @@ module HasCoverArt
 
     def cover_art_variant_url(variant)
       if cover_art.attached?
-        Rails.application.routes.url_helpers.rails_representation_url(
+        Rails.application.routes.url_helpers.rails_representation_url \
           cover_art.variant(variant).processed
-        )
       else
-        ActionController::Base.helpers.asset_pack_path(
-          "static/images/placeholders/cover-art-#{variant}.jpg"
-        )
+        placeholder(variant)
       end
+    rescue ActiveStorage::FileNotFoundError
+      placeholder(variant)
+    end
+
+    def placeholder(variant)
+      ActionController::Base.helpers.asset_pack_path \
+        "static/images/placeholders/cover-art-#{variant}.jpg"
     end
 
     def attachment_url(attachment, placeholder)
