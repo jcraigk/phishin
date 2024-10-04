@@ -15,6 +15,7 @@ class Show < ApplicationRecord
                        preprocessed: true
   end
   has_one_attached :album_cover
+  has_one_attached :album_zip
 
   extend FriendlyId
   friendly_id :date

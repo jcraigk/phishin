@@ -20,6 +20,11 @@ module HasCoverArt
       tracks.each(&:apply_id3_tags)
     end
 
+    def album_zip_url
+      return unless album_zip.attached?
+      Rails.application.routes.url_helpers.rails_blob_url(album_zip)
+    end
+
     private
 
     def cover_art_variant_url(variant)
