@@ -60,6 +60,7 @@ const CoverArtInspector = () => {
               albumCoverUrl={show.album_cover_url}
               openAppModal={openAppModal}
               size="medium"
+              css="cover-art-inspector"
             />
           ))}
         </div>
