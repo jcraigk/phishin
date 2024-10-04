@@ -70,6 +70,7 @@ const Show = ({ trackSlug }) => {
           albumCoverUrl={show.album_cover_url}
           openAppModal={openAppModal}
           size="medium"
+          prompt={show.cover_art_prompt}
         />
       </div>
 
@@ -79,6 +80,7 @@ const Show = ({ trackSlug }) => {
             coverArtUrls={show.cover_art_urls}
             albumCoverUrl={show.album_cover_url}
             openAppModal={openAppModal}
+            prompt={show.cover_art_prompt}
           />
         </span>
         {formatDateMed(show.date)}
