@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_03_001039) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_04_091430) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
@@ -95,13 +95,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_03_001039) do
     t.index ["user_id"], name: "index_likes_on_user_id"
   end
 
-  create_table "playlist_bookmarks", id: :serial, force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "playlist_id"
-    t.index ["playlist_id"], name: "index_playlist_bookmarks_on_playlist_id"
-    t.index ["user_id"], name: "index_playlist_bookmarks_on_user_id"
-  end
-
   create_table "playlist_tracks", id: :serial, force: :cascade do |t|
     t.integer "playlist_id"
     t.integer "track_id"
@@ -178,12 +171,10 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_03_001039) do
     t.datetime "updated_at", precision: nil, null: false
     t.string "slug", limit: 255, null: false
     t.integer "tracks_count", default: 0
-    t.string "lyrical_excerpt", limit: 255
     t.boolean "original", default: false, null: false
     t.string "alias"
     t.text "lyrics"
     t.string "artist"
-    t.boolean "instrumental", default: false, null: false
     t.index ["alias"], name: "index_songs_on_alias", unique: true
     t.index ["original"], name: "index_songs_on_original"
     t.index ["slug"], name: "index_songs_on_slug", unique: true
@@ -261,7 +252,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_03_001039) do
     t.integer "tags_count", default: 0
     t.integer "jam_starts_at_second"
     t.text "audio_file_data"
-    t.float "waveform_max"
     t.text "waveform_png_data"
     t.index ["jam_starts_at_second"], name: "index_tracks_on_jam_starts_at_second"
     t.index ["likes_count"], name: "index_tracks_on_likes_count"
