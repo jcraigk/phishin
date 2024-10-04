@@ -172,8 +172,6 @@ class CoverArtPromptService < BaseService
   def chatgpt_response
     return @chatgpt_response if defined?(@chatgpt_response)
 
-    content = chatgpt_prompt + "\n\nDo not include any text, words, or numbers in the image."
-
     response = Typhoeus.post(
       "https://api.openai.com/v1/chat/completions",
       headers: {
@@ -184,7 +182,7 @@ class CoverArtPromptService < BaseService
         model: "gpt-4o",
         messages: [
           { role: "system", content: "You are an expert in generating DALL-E prompts." },
-          { role: "user", content: }
+          { role: "user", content: chatgpt_prompt }
         ]
       }.to_json
     )
