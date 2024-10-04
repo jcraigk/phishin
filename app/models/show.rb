@@ -1,4 +1,7 @@
 class Show < ApplicationRecord
+  include HasCoverArt
+  include ShowApiV1
+
   belongs_to :tour, counter_cache: true
   belongs_to :venue, counter_cache: true
   has_many :tracks, dependent: :destroy
@@ -46,113 +49,11 @@ class Show < ApplicationRecord
     date.strftime("%Y.%m.%d")
   end
 
-  def as_json # rubocop:disable Metrics/MethodLength
-    {
-      id:,
-      date: date.iso8601,
-      duration:,
-      incomplete:,
-      sbd: false,
-      remastered: false,
-      tour_id:,
-      venue_id:,
-      likes_count:,
-      taper_notes:,
-      updated_at: updated_at.iso8601,
-      venue_name:,
-      location: venue&.location
-    }
-  end
-
-  def as_json_api # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    {
-      id:,
-      date: date.iso8601,
-      duration:,
-      incomplete:,
-      sbd: false,
-      remastered: false,
-      tags: show_tags_for_api,
-      tour_id:,
-      venue: venue.as_json,
-      venue_name:,
-      taper_notes:,
-      likes_count:,
-      tracks: tracks.sort_by(&:position).map(&:as_json_api),
-      updated_at: updated_at.iso8601
-    }
-  end
-
   def url
     "#{App.base_url}/#{date}"
   end
 
-  def generate_album_cover!
-    CoverArtPromptService.new(self).call
-    CoverArtImageService.new(self).call
-    AlbumCoverService.new(self).call
-    tracks.each(&:apply_id3_tags)
-  end
-
-  def cover_art_urls
-    if cover_art.attached?
-      {
-        medium:
-          Rails.application
-               .routes
-               .url_helpers
-               .rails_blob_url(cover_art),
-        small:
-          Rails.application
-               .routes
-               .url_helpers
-               .rails_representation_url(
-                 cover_art.variant(:small).processed
-               )
-      }
-    else
-      {
-        medium:
-          ActionController::Base.helpers.asset_pack_path(
-            "static/images/placeholders/cover-art-medium.jpg"
-          ),
-        small:
-          ActionController::Base.helpers.asset_pack_path(
-            "static/images/placeholders/cover-art-small.jpg"
-          )
-      }
-    end
-  end
-
-  def album_cover_url
-    if album_cover.attached?
-      Rails.application
-          .routes
-          .url_helpers
-          .rails_blob_url(album_cover)
-    else
-      ActionController::Base.helpers.asset_pack_path(
-        "static/images/placeholders/cover-art-medium.jpg"
-      )
-    end
-  end
-
   private
-
-  def show_tags_for_api
-    show_tags.map { |show_tag| show_tag_json(show_tag) }.sort_by { |t| t[:priority] }
-  end
-
-  def show_tag_json(show_tag)
-    {
-      id: show_tag.tag.id,
-      name: show_tag.tag.name,
-      priority: show_tag.tag.priority,
-      group: show_tag.tag.group,
-      color: show_tag.tag.color,
-      notes: show_tag.notes
-    }
-  end
 
   def cache_venue_name
     return if venue_name.present?

@@ -108,7 +108,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     :show_album_cover_url,
     documentation: {
       type: "Object",
-      desc: "Object containing named URLs for variants of cover art images"
+      desc: "URL of album cover image (text overlayed on cover art)"
     }
   ) { _1.show.album_cover_url }
 

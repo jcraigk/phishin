@@ -27,9 +27,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
     :album_cover_url,
     documentation: {
       type: "String",
-      desc:
-        "URL of album cover image, which includes band name, " \
-        "date, and venue name in text overlayed on the cover art."
+      desc: "URL of album cover image (text overlayed on cover art)"
     }
   )
 
