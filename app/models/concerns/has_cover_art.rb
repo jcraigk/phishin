@@ -3,18 +3,15 @@ module HasCoverArt
 
   included do # rubocop:disable Metrics/BlockLength
     def cover_art_urls
-      %i[medium small].each_with_object({}) do |variant, memo|
-        memo[variant] = cover_art_variant_url(variant)
-      end
+      {
+        large: attachment_url(cover_art, "cover-art-large.jpg"),
+        medium: cover_art_variant_url(:medium),
+        small: cover_art_variant_url(:small)
+      }
     end
 
     def album_cover_url
-      if album_cover.attached?
-        Rails.application.routes.url_helpers.rails_blob_url(album_cover)
-      else
-        ActionController::Base.helpers.asset_pack_path \
-          "static/images/placeholders/cover-art-medium.jpg"
-      end
+      attachment_url(album_cover, "cover-art-large.jpg")
     end
 
     def generate_album!
@@ -41,6 +38,15 @@ module HasCoverArt
         ActionController::Base.helpers.asset_pack_path(
           "static/images/placeholders/cover-art-#{variant}.jpg"
         )
+      end
+    end
+
+    def attachment_url(attachment, placeholder)
+      if attachment.attached?
+        Rails.application.routes.url_helpers.rails_blob_url(attachment)
+      else
+        path = "static/images/placeholders/#{placeholder}"
+        ActionController::Base.helpers.asset_pack_path(path)
       end
     end
   end

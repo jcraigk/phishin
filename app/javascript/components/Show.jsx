@@ -69,7 +69,7 @@ const Show = ({ trackSlug }) => {
           coverArtUrls={show.cover_art_urls}
           albumCoverUrl={show.album_cover_url}
           openAppModal={openAppModal}
-          size="large"
+          size="medium"
         />
       </div>
 

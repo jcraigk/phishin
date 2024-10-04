@@ -12,9 +12,9 @@ const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, size = "small" })
             <img src={albumCoverUrl} alt="Album cover" />
           </div>
         )}
-        {coverArtUrls?.medium && (
+        {coverArtUrls?.large && (
           <div className="large-album-art mt-3">
-            <img src={coverArtUrls?.medium} alt="Cover art" />
+            <img src={coverArtUrls?.large} alt="Cover art" />
           </div>
         )}
       </>
@@ -31,12 +31,12 @@ const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, size = "small" })
       className={`cover-art cover-art-modal-trigger ${isLoaded ? "" : "loading-shimmer"}`}
       onClick={handleOpenModal}
     >
-      <img
-        src={["large", "medium"].includes(size) ? coverArtUrls?.medium : coverArtUrls?.small}
-        alt="Cover art"
-        className={`cover-art-${size}`}
-        onLoad={handleImageLoad}
-      />
+    <img
+      src={coverArtUrls?.[size]}
+      alt="Cover art"
+      className={`cover-art-${size}`}
+      onLoad={handleImageLoad}
+    />
     </div>
   );
 };
