@@ -132,6 +132,12 @@ main {
   background: linear-gradient(90deg, rgba(240, 240, 240, 0) 0%, rgba(255, 255, 255, 0.6) 50%, rgba(240, 240, 240, 0) 100%);
   animation: shimmer 1.5s infinite;
 }
+.list-item {
+  .loading-shimmer {
+    width: 32px !important;
+    height: 32px !important;
+  }
+}
 
 @keyframes shimmer {
   0% {
@@ -150,6 +156,10 @@ main {
   .sidebar-content {
     .cover-art {
       display: block;
+      width: 224px !important;
+      height: 230px !important;
+    }
+    .loading-shimmer {
       width: 224px !important;
       height: 230px !important;
     }
