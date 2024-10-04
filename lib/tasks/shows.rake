@@ -32,11 +32,11 @@ namespace :shows do
       if force || !show.album_cover.attached?
         AlbumCoverService.new(show).call
         puts Rails.application.routes.url_helpers.rails_blob_url(show.album_cover)
-      end
 
-      # Apply cover art to mp3 files
-      show.tracks.each do |track|
-        track.apply_id3_tags
+        # Apply cover art to mp3 files
+        show.tracks.each do |track|
+          track.apply_id3_tags
+        end
       end
     end
 
