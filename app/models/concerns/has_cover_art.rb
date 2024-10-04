@@ -1,7 +1,7 @@
 module HasCoverArt
   extend ActiveSupport::Concern
 
-  included do
+  included do # rubocop:disable Metrics/BlockLength
     def cover_art_urls
       {
         large: attachment_url(cover_art, "cover-art-large"),
@@ -48,7 +48,6 @@ module HasCoverArt
     def cover_art_variant_url(variant)
       if cover_art.attached?
         key = cover_art.variant(variant).processed.key
-        # "#{App.base_url}/attachments/#{key[0..1]}/#{key[2..3]}/#{key}"
         "#{App.base_url}/blob/#{key}"
       else
         placeholder(variant)
@@ -64,9 +63,6 @@ module HasCoverArt
 
     def attachment_url(attachment, placeholder)
       if attachment.attached?
-        # key = attachment.blob.key
-        # partitioned_key = "#{key[0..1]}/#{key[2..3]}/#{key}"
-        # "#{App.base_url}/attachments/#{partitioned_key}"
         "#{App.base_url}/blob/#{attachment.blob.key}"
       else
         path = ActionController::Base.helpers.asset_pack_path \
