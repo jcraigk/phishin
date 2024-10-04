@@ -2,10 +2,12 @@ namespace :shows do
   desc "Generate cover prompts, images, and zips for all shows or specific date"
   task generate_albums: :environment do
     date = ENV.fetch("DATE", nil)
+    start_date = ENV.fetch("START_DATE", nil)
     force = ENV.fetch("FORCE", nil).present?
 
-    rel = Show.includes(:tracks).where('date >= ?', '1993-02-17').order(date: :asc)
+    rel = Show.includes(:tracks).order(date: :asc)
     rel = rel.where(date:) if date.present?
+    rel = rel.where('date >= ?', start_date) if start_date.present?
     pbar = ProgressBar.create(
       total: rel.count,
       format: "%a %B %c/%C %p%% %E"
