@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, size }) => {
+const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, size = "small" }) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const handleOpenModal = () => {
@@ -32,9 +32,9 @@ const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, size }) => {
       onClick={handleOpenModal}
     >
       <img
-        src={size === "large" ? coverArtUrls?.medium : coverArtUrls?.small}
+        src={["large", "medium"].includes(size) ? coverArtUrls?.medium : coverArtUrls?.small}
         alt="Cover art"
-        className={size === "large" ? "cover-art-large" : "cover-art-small"}
+        className={`cover-art-${size}`}
         onLoad={handleImageLoad}
       />
     </div>
