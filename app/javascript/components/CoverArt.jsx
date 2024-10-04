@@ -39,7 +39,7 @@ const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, size = "small", c
 
   return (
     <div
-      className={`cover-art cover-art-modal-trigger loading-shimmer`}
+      className={`cover-art cover-art-modal-trigger ${isLoaded ? "" : "loading-shimmer"}`}
       onClick={handleOpenModal}
     >
     <img
