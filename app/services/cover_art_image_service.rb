@@ -16,10 +16,6 @@ class CoverArtImageService < BaseService
       show.cover_art.attach(parent_show.cover_art.blob)
     # Otherwise, generate new cover art
     else
-      prompt = show.cover_art_prompt
-      prompt += "\n\nDo not include any text, words, or numbers in the image."
-      prompt += "\n\nAvoid images of people or human faces."
-
       response = Typhoeus.post(
         "https://api.openai.com/v1/images/generations",
         headers: {
@@ -27,7 +23,7 @@ class CoverArtImageService < BaseService
           "Content-Type" => "application/json"
         },
         body: {
-          prompt:,
+          prompt: show.cover_art_prompt,
           n: 1,
           size: "512x512"
         }.to_json
