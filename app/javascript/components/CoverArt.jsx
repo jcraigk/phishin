@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 
 const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, size }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
   const handleOpenModal = () => {
     if (!openAppModal) return;
     const modalContent = (
@@ -20,12 +22,20 @@ const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, size }) => {
     openAppModal(modalContent);
   };
 
+  const handleImageLoad = () => {
+    setIsLoaded(true);
+  };
+
   return (
-    <div className="cover-art cover-art-modal-trigger" onClick={handleOpenModal}>
+    <div
+      className={`cover-art cover-art-modal-trigger ${isLoaded ? "" : "loading-shimmer"}`}
+      onClick={handleOpenModal}
+    >
       <img
         src={size === "large" ? coverArtUrls?.medium : coverArtUrls?.small}
         alt="Cover art"
         className={size === "large" ? "cover-art-large" : "cover-art-small"}
+        onLoad={handleImageLoad}
       />
     </div>
   );
