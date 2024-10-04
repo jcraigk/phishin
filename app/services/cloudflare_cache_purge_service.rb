@@ -1,6 +1,4 @@
 class CloudflareCachePurgeService < BaseService
-  extend Dry::Initializer
-
   param :url
 
   def call

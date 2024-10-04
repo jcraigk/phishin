@@ -1,10 +1,20 @@
 class Show < ApplicationRecord
+  include HasCoverArt
+  include ShowApiV1
+
   belongs_to :tour, counter_cache: true
   belongs_to :venue, counter_cache: true
   has_many :tracks, dependent: :destroy
   has_many :likes, as: :likable, dependent: :destroy
   has_many :show_tags, dependent: :destroy
   has_many :tags, through: :show_tags
+
+  has_one_attached :cover_art do |attachable|
+    attachable.variant :small,
+                       resize_to_limit: [ 48, 48 ],
+                       preprocessed: true
+  end
+  has_one_attached :album_cover
 
   extend FriendlyId
   friendly_id :date
@@ -39,63 +49,11 @@ class Show < ApplicationRecord
     date.strftime("%Y.%m.%d")
   end
 
-  def as_json # rubocop:disable Metrics/MethodLength
-    {
-      id:,
-      date: date.iso8601,
-      duration:,
-      incomplete:,
-      sbd: false,
-      remastered: false,
-      tour_id:,
-      venue_id:,
-      likes_count:,
-      taper_notes:,
-      updated_at: updated_at.iso8601,
-      venue_name:,
-      location: venue&.location
-    }
-  end
-
-  def as_json_api # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    {
-      id:,
-      date: date.iso8601,
-      duration:,
-      incomplete:,
-      sbd: false,
-      remastered: false,
-      tags: show_tags_for_api,
-      tour_id:,
-      venue: venue.as_json,
-      venue_name:,
-      taper_notes:,
-      likes_count:,
-      tracks: tracks.sort_by(&:position).map(&:as_json_api),
-      updated_at: updated_at.iso8601
-    }
-  end
-
   def url
     "#{App.base_url}/#{date}"
   end
 
   private
-
-  def show_tags_for_api
-    show_tags.map { |show_tag| show_tag_json(show_tag) }.sort_by { |t| t[:priority] }
-  end
-
-  def show_tag_json(show_tag)
-    {
-      id: show_tag.tag.id,
-      name: show_tag.tag.name,
-      priority: show_tag.tag.priority,
-      group: show_tag.tag.group,
-      color: show_tag.tag.color,
-      notes: show_tag.notes
-    }
-  end
 
   def cache_venue_name
     return if venue_name.present?

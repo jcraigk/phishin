@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { formatDate, parseTimeParam } from "../helpers/utils";
 import { useFeedback } from "./FeedbackContext";
+import CoverArt from "../CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward, faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
-const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customPlaylist }) => {
+const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customPlaylist, openAppModal }) => {
   const location = useLocation();
   const scrubberRef = useRef();
   const progressBarRef = useRef();
@@ -73,13 +74,14 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
       }
 
       if ('mediaSession' in navigator) {
+        let imgSrc = 'https://phish.in/static/logo-square-512.png'
         navigator.mediaSession.metadata = new MediaMetadata({
           title: activeTrack.title,
           artist: `Phish - ${formatDate(activeTrack.show_date)}`,
           album: `${formatDate(activeTrack.show_date)} - ${activeTrack.venue_name}`,
           artwork: [
             {
-              src: 'https://phish.in/static/logo-square-512.png',
+              src: activeTrack.show_cover_art_urls.medium || imgSrc,
               sizes: '512x512',
               type: 'image/png',
             }
@@ -225,36 +227,43 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
         <FontAwesomeIcon icon={isPlayerCollapsed ? faChevronUp : faChevronDown} />
       </div>
       <div className="top-row">
-        <div className={`left-half`}>
-          <div className="track-title">
-            <Link to={`/${activeTrack?.show_date}/${activeTrack?.slug}`}>
-              {activeTrack?.title}
-            </Link>
-          </div>
-          <div className="track-info">
-            {customPlaylist ? (
-              <Link to={`/play/${customPlaylist.slug}`}>
-                {customPlaylist.name}
+        <div className="left-half">
+          <CoverArt
+            coverArtUrls={activeTrack?.show_cover_art_urls}
+            albumCoverUrl={activeTrack?.show_album_cover_url}
+            openAppModal={openAppModal}
+          />
+          <div className="track-details">
+            <div className="track-title">
+              <Link to={`/${activeTrack?.show_date}/${activeTrack?.slug}`}>
+                {activeTrack?.title}
               </Link>
-            ) : (
-              <>
-                <Link to={`/${activeTrack?.show_date}/${activeTrack?.slug}`}>
-                  {formatDate(activeTrack?.show_date)}
+            </div>
+            <div className="track-info">
+              {customPlaylist ? (
+                <Link to={`/play/${customPlaylist.slug}`}>
+                  {customPlaylist.name}
                 </Link>
-                <span className="hidden-phone">
-                  {" "}&bull;{" "}
-                  <Link to={`/venues/${activeTrack?.venue_slug}`}>
-                    {activeTrack?.venue_name}
+              ) : (
+                <>
+                  <Link to={`/${activeTrack?.show_date}/${activeTrack?.slug}`}>
+                    {formatDate(activeTrack?.show_date)}
                   </Link>
-                  <span className="venue-location">
+                  <span className="hidden-phone">
                     {" "}&bull;{" "}
-                    <Link to={`/map?term=${activeTrack?.venue_location}`}>
-                      {activeTrack?.venue_location}
+                    <Link to={`/venues/${activeTrack?.venue_slug}`}>
+                      {activeTrack?.venue_name}
                     </Link>
+                    {/* <span className="venue-location">
+                      {" "}&bull;{" "}
+                      <Link to={`/map?term=${activeTrack?.venue_location}`}>
+                        {activeTrack?.venue_location}
+                      </Link>
+                    </span> */}
                   </span>
-                </span>
-              </>
-            )}
+                </>
+              )}
+            </div>
           </div>
         </div>
         <div className="right-half">

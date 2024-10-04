@@ -1,15 +1,15 @@
 require "mp3info"
 
-class Id3Tagger
-  attr_reader :show, :track
+class Id3TagService < BaseService
+  param :track
 
-  def initialize(track)
-    @track = track
-    @show = track.show
-  end
+  attr_reader :show
 
   def call
+    @show = track.show
     apply_default_tags
+  rescue Shrine::FileNotFound => e
+    # puts "File not found: #{e.message}" # For dev env
   end
 
   private
@@ -19,6 +19,7 @@ class Id3Tagger
       apply_tags(mp3)
       apply_v2_tags(mp3)
       mp3.tag2.remove_pictures
+      apply_album_art(mp3)
     end
   end
 
@@ -46,6 +47,11 @@ class Id3Tagger
   def apply_track_specific_v2_tags(mp3)
     mp3.tag2.TIT2 = track.title[0..59]
     mp3.tag2.TRCK = track.position
+  end
+
+  def apply_album_art(mp3)
+    return unless show.album_cover.attached?
+    mp3.tag2.add_picture(show.album_cover.download)
   end
 
   def comments

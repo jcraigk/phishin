@@ -47,6 +47,8 @@ class ShowImporter::Orchestrator
     show.reload.save_duration
     show.update!(published: true)
 
+    show.generate_album_cover!
+
     create_announcement
 
     pbar.finish

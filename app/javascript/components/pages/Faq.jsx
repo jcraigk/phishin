@@ -36,7 +36,7 @@ const Faq = () => {
       <h3>Is there a dark mode?</h3>
       <p>No, there's no native dark mode, but the site works well with <a href="https://chromewebstore.google.com/detail/dark-reader/eimadpbcbfnmbkopoojfekhnkhdbieeh?hl=en-US&pli=1" target="_blank">Dark Reader</a>.</p>
 
-      <h3>Can I share excerpts from trcks?</h3>
+      <h3>Can I share excerpts of tracks?</h3>
       <p>Yes, there are two ways to share excerpts of tracks.</p>
 
       <p>You can add "t" and "e" params to an individual URL. For example https://phish.in/1993-04-01/llama?t=1:00&e=1:05 would start playing Llama at 1 minute and stop playing five seconds later.</p>
@@ -78,6 +78,9 @@ const Faq = () => {
 
       <h3>What technologies power the site?</h3>
       <p>Ruby on Rails, React, and Postgres are the primary technologies used.</p>
+
+      <h3>How is album cover art created?</h3>
+      <p>Album covers are generated with a combination of automation scripts and the assistance of ChatGPT and Dall-E.</p>
 
       <h3>How can I contribute?</h3>
       <p>

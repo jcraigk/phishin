@@ -126,6 +126,13 @@ a {
   pointer-events: none; /* Ignore mouse events */
 }
 
+.large-album-art {
+  img {
+    border-radius: var(--bulma-radius) !important;
+    margin-top: 0.5rem;
+  }
+}
+
 .loader-container {
   position: fixed;
   top: 0;

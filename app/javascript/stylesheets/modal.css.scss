@@ -2,9 +2,8 @@
   background: white;
   padding: 1.5rem;
   border-radius: var(--bulma-radius);
-  width: 500px;
-  margin: 0 auto;
-  max-height: 500px;
+  margin: 3rem auto auto auto;
+  max-height: 600px;
   overflow: auto;
 
   &:focus {
@@ -42,4 +41,10 @@
   align-items: center;
   justify-content: center;
   z-index: 3;
+}
+
+@media (min-width: 1023px) {
+  .modal-content {
+    min-width: 500px;
+  }
 }

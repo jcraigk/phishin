@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'mp3info'
 
-RSpec.describe Id3Tagger do
+RSpec.describe Id3TagService do
   subject(:service) { described_class.new(track) }
 
   let(:show) { create(:show, date: "#{year}-10-31") }

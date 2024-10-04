@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 namespace :phishnet do
   desc 'Populate known dates'
   task known_dates: :environment do

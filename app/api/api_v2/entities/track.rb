@@ -97,6 +97,22 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
   ) { _1.show.date }
 
   expose(
+    :show_cover_art_urls,
+    documentation: {
+      type: "Object",
+      desc: "Object containing named URLs for variants of raw cover art images"
+    }
+  ) { _1.show.cover_art_urls }
+
+  expose(
+    :show_album_cover_url,
+    documentation: {
+      type: "Object",
+      desc: "URL of album cover image (text overlayed on cover art)"
+    }
+  ) { _1.show.album_cover_url }
+
+  expose(
     :venue_slug,
     documentation: {
       type: "String",

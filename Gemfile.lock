@@ -217,12 +217,15 @@ GEM
     httpclient (2.8.3)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
+    image_processing (1.13.0)
+      mini_magick (>= 4.9.5, < 5)
+      ruby-vips (>= 2.0.17, < 3)
     io-console (0.7.2)
     irb (1.14.1)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
     json (2.7.2)
-    jwt (2.9.1)
+    jwt (2.9.3)
       base64
     language_server-protocol (3.17.0.3)
     launchy (3.0.1)
@@ -239,6 +242,7 @@ GEM
       net-smtp
     marcel (1.0.4)
     matrix (0.4.2)
+    mini_magick (4.13.2)
     mini_mime (1.1.5)
     minitest (5.25.1)
     multi_json (1.15.0)
@@ -361,7 +365,7 @@ GEM
     rspec-expectations (3.13.3)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-mocks (3.13.1)
+    rspec-mocks (3.13.2)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-rails (7.0.1)
@@ -415,6 +419,9 @@ GEM
     ruby-audio (1.6.1)
     ruby-mp3info (0.8.10)
     ruby-progressbar (1.13.0)
+    ruby-vips (2.2.2)
+      ffi (~> 1.12)
+      logger
     ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
     rufus-scheduler (3.9.2)
@@ -532,6 +539,7 @@ DEPENDENCIES
   grape-swagger-entity
   highline
   htmlentities
+  image_processing
   jwt
   nokogiri
   pg

@@ -165,19 +165,19 @@ RSpec.describe Track do
   end
 
   describe 'ID3 tagging' do
-    let(:mock_tagger) { instance_double(Id3Tagger) }
+    let(:mock_tagger) { instance_double(Id3TagService) }
 
     before do
-      allow(Id3Tagger).to receive(:new).and_return(mock_tagger)
+      allow(Id3TagService).to receive(:new).and_return(mock_tagger)
       allow(mock_tagger).to receive(:call)
       track.apply_id3_tags
     end
 
-    it 'instantiates Id3Tagger with tracks' do
-      expect(Id3Tagger).to have_received(:new).with(track)
+    it 'instantiates Id3TagService with tracks' do
+      expect(Id3TagService).to have_received(:new).with(track)
     end
 
-    it 'calls Id3Tagger' do
+    it 'calls Id3TagService' do
       expect(mock_tagger).to have_received(:call)
     end
   end

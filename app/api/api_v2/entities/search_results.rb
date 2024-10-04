@@ -51,30 +51,6 @@ class ApiV2::Entities::SearchResults < ApiV2::Entities::Base
         "detailed venue information. Returns an empty array if no venues match."
     }
 
-  expose \
-    :show_tags,
-    using: ApiV2::Entities::ShowTag,
-    default: [],
-    documentation: {
-      type: "Array[Object]",
-      desc: \
-        "Tags applied to shows that match the search term in their notes. " \
-        "Each show tag object includes the tag name and associated show details. " \
-        "Returns an empty array if no tags match."
-    }
-
-  expose \
-    :track_tags,
-    using: ApiV2::Entities::TrackTag,
-    default: [],
-    documentation: {
-      type: "Array[Object]",
-      desc: \
-        "Tags applied to tracks that match the search term in their notes. " \
-        "Each track tag object includes the tag name and the associated " \
-        "track and show details. Empty array if no track tags match."
-    }
-
   expose(
     :tracks,
     default: [],

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 # This migration comes from active_storage (originally 20170806125915)
-class CreateActiveStorageTables < ActiveRecord::Migration[5.2]
+class CreateActiveStorageTablesAsTest < ActiveRecord::Migration[5.2]
   def change
     create_table :active_storage_blobs do |t|
       t.string   :key,          null: false

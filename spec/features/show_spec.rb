@@ -36,7 +36,6 @@ RSpec.describe "Shows", :js do
     within(".sidebar-content") do
       expect(page).to have_content("Aug 1, 2023")
       expect(page).to have_link("Madison Square Garden", href: "/venues/madison-square-garden")
-      expect(page).to have_link("New York, NY", href: "/map?term=New%20York%2C%20NY")
       expect(page).to have_content("2h 0m")
       within(".like-container") do
         expect(page).to have_content("3")

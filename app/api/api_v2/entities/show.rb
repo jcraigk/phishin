@@ -15,6 +15,22 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
       desc: "Date of the show"
     }
 
+  expose(
+    :cover_art_urls,
+    documentation: {
+      type: "Object",
+      desc: "Object containing named URLs for variants of raw cover art images"
+    }
+  )
+
+  expose(
+    :album_cover_url,
+    documentation: {
+      type: "String",
+      desc: "URL of album cover image (text overlayed on cover art)"
+    }
+  )
+
   expose \
     :duration,
     documentation: {

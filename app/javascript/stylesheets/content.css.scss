@@ -1,11 +1,26 @@
-.donut-bullet {
-  font-size: 0.8rem;
-  margin-right: 0.5rem;
-  margin-left: 0.6rem;
-  filter: grayscale(1);
-  opacity: 0.75;
+.cover-art-modal-trigger {
+  cursor: pointer;
+
+  &:hover {
+    img {
+      filter: grayscale(0.5);
+    }
+  }
+}
+
+.cover-art-large {
+  width: 100%;
+  border-radius: var(--bulma-radius);
+  object-fit: cover;
+}
+
+.cover-art-small {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--bulma-radius);
+  object-fit: cover;
   position: relative;
-  top: -4px;
+  margin-right: 0.5rem;
 }
 
 .section-title {
@@ -40,12 +55,22 @@
   }
 }
 
+.cover-art {
+  position: relative;
+  top: 3px;
+}
+
 .list-item-link {
   text-decoration: none;
   color: black;
 }
 
 .date-link {
+  font-size: 0.9rem;
+  position: relative;
+  top: -3px;
+  margin-right: 0.1rem;
+
   &:hover {
     text-decoration: underline;
   }
@@ -110,6 +135,13 @@
     min-width: 1rem;
     max-width: 60%;
     padding-right: 1rem;
+
+    .cover-art-small {
+      width: 32px;
+      height: 32px;
+      filter: grayscale(0.5);
+      top: 2px;
+    }
   }
 
   .leftside-secondary {
@@ -209,6 +241,10 @@
 
     &::before {
       display: none;
+    }
+
+    .cover-art-small {
+      filter: grayscale(0);
     }
   }
 }

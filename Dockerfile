@@ -18,6 +18,9 @@ RUN apt-get update -qq && \
       libsndfile-dev \
       memcached \
       shared-mime-info \
+      imagemagick \
+      libmagickwand-dev \
+      libjpeg-dev \
     && apt-get clean
 
 # Install Node and Yarn

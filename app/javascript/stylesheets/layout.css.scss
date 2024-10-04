@@ -42,9 +42,11 @@ main {
     }
 
     hr {
-      background-color: $inactive-gray;
-      margin-top: 0.5rem;
-      margin-bottom: 0.5rem;
+      height: 1px;
+      background-color: $text-gray;
+      opacity: 0.2;
+      margin-top: 1rem;
+      margin-bottom: 0.8rem;
     }
 
     .sidebar-title {
@@ -110,7 +112,35 @@ main {
   display: block;
 }
 
+@media (min-width: 1024px) {
+  .display-mobile-only {
+    display: none !important;
+  }
+}
+
 @media (max-width: 1023px) {
+  .display-mobile-only {
+    display: inline-block !important;
+  }
+
+  .sidebar-control-container {
+    position: relative;
+    top: 3px;
+  }
+
+  .sidebar-title {
+    &.show-cover-title {
+      position: relative;
+      top: -10px;
+    }
+
+    .cover-art {
+      position: relative;
+      top: 10px;
+      margin-right: 0.3rem;
+    }
+  }
+
   #layout-container {
     flex-direction: column;
   }
@@ -131,6 +161,10 @@ main {
       align-items: center;
       column-gap: 2rem !important;
       row-gap: 5px !important;
+
+      .cover-art {
+        top: 12px !important;
+      }
 
       .sidebar-control {
         flex: 0;
@@ -160,6 +194,11 @@ main {
       .sidebar-title {
         margin-bottom: 0rem;
         font-size: 1.5rem;
+
+        &.show-cover-title {
+          position: relative;
+          top: -8px;
+        }
       }
       .sidebar-subtitle {
         margin-bottom: 0rem !important;
@@ -210,6 +249,9 @@ main {
     font-size: 1.3rem !important;
     padding-right: 0.1rem !important;
   }
+  .leftside-numbering {
+    display: none;
+  }
   h1.title {
     font-size: 1.7rem !important;
   }
@@ -242,5 +284,14 @@ main {
   }
   .show-duration {
     margin-top: 0rem !important;
+  }
+  .show-cover-title {
+    font-size: 1.3rem !important;
+
+    .cover-art-small {
+      width: 32px !important;
+      height: 32px !important;
+      top: -2px !important;
+    }
   }
 }
