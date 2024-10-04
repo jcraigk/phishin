@@ -1,5 +1,5 @@
 namespace :shows do
-  desc "Generate cover art prompts"
+  desc "Generate cover prompts, images, and zips for all shows or specific date"
   task generate_albums: :environment do
     date = ENV.fetch("DATE", nil)
     force = ENV.fetch("FORCE", nil).present?
@@ -42,6 +42,8 @@ namespace :shows do
       if force || !show.album_zip.attached?
         AlbumZipJob.new.perform(show.id)
       end
+
+      puts show.url
     end
 
     pbar.finish
