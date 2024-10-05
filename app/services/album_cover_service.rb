@@ -37,8 +37,8 @@ class AlbumCoverService < BaseService
     # Bg dropshadow
     gradient_path = Rails.root.join("tmp", "#{SecureRandom.hex}.png").to_s
     MiniMagick::Tool::Convert.new do |cmd|
-      cmd.size "#{@art.width}x#{(@art.height * 0.03).to_i}"
-      cmd.gradient "none-rgba(34,34,34,0.8)"
+      cmd.size "#{@art.width}x#{(@art.height * 0.015).to_i}"
+      cmd.gradient "none-rgba(34,34,34,0.55)"
       cmd << gradient_path
     end
 
@@ -67,22 +67,22 @@ class AlbumCoverService < BaseService
     end
 
     # Date
-    text = show.date.to_s.gsub("-", ".")
+    text = show.date.strftime("%b %-d, %Y")
     @art.combine_options do |c|
       c.gravity "SouthEast"
       c.font font2
-      c.pointsize 65
+      c.pointsize 60
       c.antialias
       c.fill text_color
-      c.draw "text 40,80 '#{text}'"
+      c.draw "text 40,92 '#{text}'"
     end
 
     # Venue
-    text = show.venue_name.truncate(50, omission: "...").gsub("'", "\\\\'")
+    text = show.venue_name.truncate(40, omission: "...").gsub("'", "\\\\'")
     @art.combine_options do |c|
       c.gravity "SouthEast"
       c.font font2
-      c.pointsize 32
+      c.pointsize 40
       c.antialias
       c.fill text_color
       c.draw "text 40,42 '#{text}'"
