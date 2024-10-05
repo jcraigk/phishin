@@ -19,7 +19,7 @@ class CoverArtPromptService < BaseService
     Pointillism Fauvism Graffiti Collage Ink-Drawing
     Watercolor Line-Art Cartoon Geometric
     Low-Poly Retro Vintage Comic-Book
-    Ukiyo-e Pastel Stained-Glass Mosaics Papercraft
+    Ukiyo-e Pastel Stained-Glass Mosaics
     Woodcut Block-Prints Cyberpunk Steampunk
   ]
   BASE_PROMPT = <<~TXT
