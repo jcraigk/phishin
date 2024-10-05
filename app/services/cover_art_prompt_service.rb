@@ -21,7 +21,6 @@ class CoverArtPromptService < BaseService
     Low-Poly Retro Pencil-Drawing Oil-Painting
     Ukiyo-e Pastel Stained-Glass Mosaics
     Woodcut Block-Prints
-    M-C-Escher Claude-Monet Vincent-Van-Gogh Degas Picasso
   ]
   BASE_PROMPT = <<~TXT
     We are going to generate an optimized prompt for DALL-E to create an artistic square image based on style, hue, and a few subjects pulled from a live musical performance held in the real world. I will provide general information of the event including time, place, and setlist. I will also provide data for a previous event to avoid repetition of imagery. The format of your response will take this JSON format. Always respond with pure JSON and always include "subjects" and "prompt" keys. Here is an example:
@@ -36,6 +35,8 @@ class CoverArtPromptService < BaseService
     Avoid images of musical instruments like guitars or keyboards. Avoid images of saxophones, trumpets, and other brass instruments. Avoid images of classical instruments like french horns and string instruments. NO SAXOPHONES EVER. Avoid mentioning surrealism.
 
     Avoid mention of humans, human forms, or faces. Avoid historical figures. Avoid images of clocks or hourglasses. Avoid references that will lead to text and symbols being included in the image. Avoid jellyfish. Avoid musical notes. Avoid chesire cats. Avoid anything that Dall-e will reject as inappropriate.
+
+    If the show takes place in philadelphia, do not reference bells. If it takes place in new york, do not reference the statue of liberty. Never reference cliche obvious landmarks.
 
     Use your best knowledge about Dall-e to generate an optimized prompt and provide the full text of the prompt in the 'prompt' key of your JSON response. Be sure this prompt includes indication of style, hue, subjects, and any other relevant information for a visually pleasing and unique piece of art.
 
