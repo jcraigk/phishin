@@ -53,7 +53,7 @@ namespace :shows do
       end
 
       if force || !show.album_zip.attached?
-        AlbumZipJob.new.perform(show.id)
+        AlbumZipJob.perform_async(show.id)
       end
 
       puts show.url
