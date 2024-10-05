@@ -23,30 +23,31 @@ class CoverArtPromptService < BaseService
     Woodcut Block-Prints Comic-Book
   ]
   BASE_PROMPT = <<~TXT
-    We are going to generate an optimized prompt for DALL-E to create an artistic square image based on style, hue, and a few subjects pulled from a live musical performance held in the real world. I will provide general information of the event including time, place, and setlist. I will also provide data for a previous event to avoid repetition of imagery. The format of your response will take this JSON format. Always respond with pure JSON and always include "subjects" and "prompt" keys. Here is an example:
+    We are going to generate an optimized prompt for DALL-E to create an artistic square image based on style, hue, and a few subjects pulled from a live musical performance.
+
+    First, here is a **critical set of exclusions** that should never be included under any circumstances:
+    - No jellyfish, horses, lighthouses, phoenixes, or carousels.
+    - Avoid instruments (guitars, saxophones, brass, classical instruments). No saxophones ever.
+    - Avoid images of humans, human forms, or faces.
+    - Avoid clocks, hourglasses, historical figures, and any text or symbols.
+    - Avoid owls, foxes, flamingos, raccoons, dragons, unicorns, buffalo, tornadoes, cowboy hats, pyramids, bats, bears, ferris wheels, churches, cathedrals, and ghosts.
+    - Avoid cliche landmarks like the Statue of Liberty, Golden Gate Bridge, Liberty Bell, and anything related to obvious geography (cornfields, cheese, moose, etc.).
+    - Avoid references that DALL-E might reject as inappropriate.
+
+    Now, let's generate the prompt:
+
+    You will take **style**, **hue**, and **subjects** related to the performance and generate a creative prompt that avoids the aforementioned exclusions. Be creative with subjects, drawing from song titles and themes, but without emphasizing location too heavily. Often the subjects should be more abstract, inspired by themes in the setlist rather than the time and place. The subjects should be a random selection of 2 or 3 concepts pulled from the performance, but never include any of the excluded items listed above.
+
+    Your JSON output should be in this format:
 
     {
       "subjects": "Skyscrapers, llamas, and a UFO",
-      "prompt": "Create a rock album cover that includes images of skyscrapers, llamas, and a ufo in an abstract style with a blue hue",
+      "prompt": "Create a rock album cover that includes images of skyscrapers, llamas, and a UFO in an abstract style with a blue hue."
     }
 
-    The subjects should be a comma separated list of 2 or 3 concepts or images pulled from the event info. You should have a 50% chance of selecting either 2 or 3 subjects for each prompt. Be creative in how these subjects are selected. Consider the time and location of the concert but don't over-emphasize this. We want randomness in the images, especially as they relate to the content of the songs played in the show. If a setlist is provided, include the song titles and your knowledge of song lyrical content in consideration. Favor popular songs over obscure ones. Consider cultural and artistic impressions of the songs played at the show to add to the pool of potential imagery. If there appear to be themes in the song selections, favor that. Lean into famous landmarks and famous songs/lyrics and other imagery, but avoid the Liberty Bell and the Statue of Liberty and apples in new york and cheese in wisconsin, that kind of thing. Avoid the golden gate bridge. Avoid corn fields at ruoff / deek creek or midwestern locations. Avoid moose and maple leaves in canada. Never include those in your prompt. Don't be afraid to get creative and silly in some cases. If the show is not in the United States, lean into cultural/geographic references for the foreign country. If the show takes place in a unique location, lean into that uniqueness. For shows that take place on halloween, take note of the cover songs played and lean into that. Season and weather should also be considered.
+    Never mention any of the excluded items in the prompt. If necessary, create variations, but always respect the exclusions list.
 
-    Avoid images of musical instruments like guitars or keyboards. Avoid images of saxophones, trumpets, and other brass instruments. Avoid images of classical instruments like french horns and string instruments. NO SAXOPHONES EVER. Avoid mentioning surrealism.
-
-    Avoid mention of humans, human forms, or faces. Avoid historical figures. Avoid images of clocks or hourglasses. Avoid references that will lead to text and symbols being included in the image. Avoid jellyfish. Avoid musical notes. Avoid chesire cats. Avoid anything that Dall-e will reject as inappropriate.
-
-    Never reference cliche obvious landmarks. Do not use horse or carousel imagery. No horses. Avoid phoenix imagery always. I repeat, DO NOT use carousel imagery at SPAC, pick something else. Avoid pumpkins always. Avoid dolphins and lobsters and lighthouses. No lighthouses, ever. Avoid owls, foxes, flamingos, badges, fireflies, dragonflies, dragons, bats, buffalo, twisters, tornadoes, cowboy hats, unicorns, pyramids, raccoons, tigers, squirrels, armadillos, ferris wheels, churches, cathedrals, ghosts, and bears of any kind.
-
-    Use your best knowledge about Dall-e to generate an optimized prompt and provide the full text of the prompt in the 'prompt' key of your JSON response. Be sure this prompt includes indication of style, hue, subjects, and any other relevant information for a visually pleasing and unique piece of art.
-
-    Your prompt should begin with "Create an image in x style with y hue." and then get creative with the subjects but do not specify any other styles or hues/colors beyond the initial specification.
-
-    Always respond with pure JSON. Do not include any markdown formatting, such as backticks or newlines outside of JSON structure.
-
-    NEVER MENTION THE LIBERTY BELL. NEVER MENTION CAROUSELS. NEVER MENTION JELLYFISH.
-
-    Don't consider the location in every prompt, often it should be more disassociative and abstract and be more related to the titles or themes of the setlist than the time and place.
+    Always respond with pure JSON as specified above.
   TXT
 
   def call
