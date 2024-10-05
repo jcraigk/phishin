@@ -36,13 +36,15 @@ class CoverArtPromptService < BaseService
 
     Avoid mention of humans, human forms, or faces. Avoid historical figures. Avoid images of clocks or hourglasses. Avoid references that will lead to text and symbols being included in the image. Avoid jellyfish. Avoid musical notes. Avoid chesire cats. Avoid anything that Dall-e will reject as inappropriate.
 
-    Never reference cliche obvious landmarks. If the show takes place at Saratoga Performing Arts Center, do not use horse or carousel imagery. Avoid phoenix imagery always. I repeat, DO NOT use carousel imagery at SPAC, pick something else. Avoid pumpkins always. Avoid dolphins and lobsters and lighthouses. Avoid owls, foxes, flamingos, badges, and raccoons.
+    Never reference cliche obvious landmarks. If the show takes place at Saratoga Performing Arts Center, do not use horse or carousel imagery. Avoid phoenix imagery always. I repeat, DO NOT use carousel imagery at SPAC, pick something else. Avoid pumpkins always. Avoid dolphins and lobsters and lighthouses. Avoid owls, foxes, flamingos, badges, fireflies, dragonflies, dragons, and raccoons.
 
     Use your best knowledge about Dall-e to generate an optimized prompt and provide the full text of the prompt in the 'prompt' key of your JSON response. Be sure this prompt includes indication of style, hue, subjects, and any other relevant information for a visually pleasing and unique piece of art.
 
     Your prompt should begin with "Create an image in x style with y hue." and then get creative with the subjects but do not specify any other styles or hues/colors beyond the initial specification.
 
     Always respond with pure JSON. Do not include any markdown formatting, such as backticks or newlines outside of JSON structure.
+
+    NEVER MENTION THE LIBERTY BELL.
   TXT
 
   def call
