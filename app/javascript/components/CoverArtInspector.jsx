@@ -19,7 +19,7 @@ export const coverArtInspectorLoader = async ({ request }) => {
   }
 };
 
-import React, { useState } from "react";
+import React from "react";
 import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";

@@ -4,21 +4,21 @@ class CoverArtPromptService < BaseService
   HUES = %w[
     Red Orange Yellow Green Blue Purple
     Red-Orange Yellow-Orange Yellow-Green Blue-Green
-    Blue-Violet Red-Violet Pink Magenta Vermilion
+    Pink Magenta Vermilion
     Scarlet Cyan Teal Turquoise Indigo Lavender
     Amethyst Chartreuse Lime Crimson Maroon Olive
     Burgundy Ochre Beige Peach Mint Navy Coral
     Rose Amber Emerald Sapphire Violet Periwinkle
-    Fuchsia Aquamarine Mint\ Green Apricot Mustard
+    Fuchsia Aquamarine Mint Apricot Mustard
     Tangerine Plum
   ]
   STYLES = %w[
     Abstract Impressionism Cubism Surrealism Minimalism Expressionism
-    Pop-Art Art-Deco Art-Nouveau Futurism Dadaism Bauhaus
-    Gothic Baroque Romanticism Renaissance Neo-Expressionism
+    Pop-Art Art-Deco Art-Nouveau Futurism Dadaism
+    Gothic Baroque Renaissance Neo-Expressionism
     Pointillism Fauvism Graffiti Collage Ink-Drawing
     Watercolor Line-Art Cartoon Geometric Psychedelic
-    Pixel-Art Low-Poly Vaporwave Retro Vintage
+    Low-Poly Vaporwave Retro Vintage Comic-Book
     Ukiyo-e Pastel Stained-Glass Mosaics
     Woodcut Block-Prints Cyberpunk Steampunk
   ]
@@ -32,7 +32,7 @@ class CoverArtPromptService < BaseService
 
     The subjects should be a comma separated list of 3 concepts or images pulled from the event info. Take liberty here and be creative in how these subjects are selected. Consider the time and location of the concert. If a setlist is provided, include the song titles and your knowledge of song lyrical content in consideration. Favor popular songs over obscure ones. Consider cultural and artistic impressions of the songs played at the show to add to the pool of potential imagery. If there appear to be themes in the song selections, favor that. Lean into famous landmarks and famous songs/lyrics and other imagery. Don't be afraid to get creative and silly in some cases. If the show is not in the united states, lean into cultural/geographic references for the foreign country. If the show takes place in a unique location, lean into that uniqueness. For shows that take place on halloween, take note of the cover songs played and lean into that. Season and weather should also be considered.
 
-    Occasionally consider imagery of rock instruments. Don't overuse guitars. Don't overuse keyboards. Include imagery of instruments only every tenth prompt (so 10% chance).
+    Occasionally consider imagery of rock instruments. Don't overuse guitars. Don't overuse keyboards. Include imagery of instruments only every tenth prompt (so 10% chance). Avoid images of saxophones, trumpets, and other brass instruments. Avoid images of classical instruments like french horns and string instruments.
 
     Avoid mention of humans, human forms, or faces. Avoid historical figures.
 
