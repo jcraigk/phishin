@@ -78,7 +78,7 @@ class AlbumCoverService < BaseService
     end
 
     # Venue
-    text = show.venue_name.truncate(35, omission: "...").gsub("'", "\\\\'")
+    text = smart_truncate(show.venue_name)
     @art.combine_options do |c|
       c.gravity "SouthEast"
       c.font font2
@@ -90,6 +90,12 @@ class AlbumCoverService < BaseService
 
     File.delete(bg_block_path) if File.exist?(bg_block_path)
     File.delete(gradient_path) if File.exist?(gradient_path)
+  end
+
+  # Remove any non-alphabetic characters before the omission
+  def smart_truncate(text, length: 35, omission: "...")
+    truncated = text.truncate(length, omission:)
+    truncated.sub(/[^a-zA-Z]+#{Regexp.escape(omission)}\z/, omission)
   end
 
   def attach_album_cover

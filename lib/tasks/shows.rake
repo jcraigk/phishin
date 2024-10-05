@@ -25,7 +25,6 @@ namespace :shows do
       rel = rel.where('date >= ?', start_date) if start_date.present?
     end
 
-    binding.irb
     pbar = ProgressBar.create(
       total: rel.count,
       format: "%a %B %c/%C %p%% %E"
