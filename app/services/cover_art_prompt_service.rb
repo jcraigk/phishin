@@ -20,7 +20,7 @@ class CoverArtPromptService < BaseService
     Watercolor Line-Art Geometric Charcoal
     Low-Poly Pencil-Drawing Oil-Painting
     Ukiyo-e Pastel Stained-Glass Mosaics
-    Woodcut Block-Prints
+    Woodcut Block-Prints Comic-Book
   ]
   BASE_PROMPT = <<~TXT
     We are going to generate an optimized prompt for DALL-E to create an artistic square image based on style, hue, and a few subjects pulled from a live musical performance held in the real world. I will provide general information of the event including time, place, and setlist. I will also provide data for a previous event to avoid repetition of imagery. The format of your response will take this JSON format. Always respond with pure JSON and always include "subjects" and "prompt" keys. Here is an example:
