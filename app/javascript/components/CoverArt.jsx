@@ -7,14 +7,15 @@ const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, size = "small", c
     if (!openAppModal) return;
     const modalContent = (
       <>
-        {albumCoverUrl && (
-          <div className="large-album-art">
-            <img src={albumCoverUrl} alt="Album cover" />
-          </div>
-        )}
         {coverArtUrls?.large && (
           <div className="large-album-art mt-3">
             <img src={coverArtUrls?.large} alt="Cover art" />
+          </div>
+        )}
+
+        {albumCoverUrl && (
+          <div className="large-album-art">
+            <img src={albumCoverUrl} alt="Album cover" />
           </div>
         )}
 
