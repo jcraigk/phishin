@@ -30,8 +30,9 @@ class CoverArtPromptService < BaseService
     - Avoid instruments (guitars, saxophones, brass, classical instruments). No saxophones ever.
     - Avoid images of humans, human forms, or faces.
     - Avoid clocks, hourglasses, historical figures, and any text or symbols.
-    - Avoid owls, foxes, flamingos, raccoons, dragons, unicorns, buffalo, tornadoes, cowboy hats, pyramids, bats, bears, ferris wheels, churches, cathedrals, and ghosts.
+    - Avoid owls, foxes, flamingos, raccoons, dragons, unicorns, buffalo, tornadoes, cowboy hats, pyramids, bats, bears, ferris wheels, churches, cathedrals, butterflies, pumpkins, gargoyles, and ghosts.
     - Avoid cliche landmarks like the Statue of Liberty, Golden Gate Bridge, Liberty Bell, and anything related to obvious geography (cornfields, cheese, moose, etc.).
+    - Avoid swirls and vortexes.
     - Avoid references that DALL-E might reject as inappropriate.
 
     Now, let's generate the prompt:
