@@ -14,11 +14,11 @@ class CoverArtPromptService < BaseService
   ]
   STYLES = %w[
     Abstract Impressionism Cubism Surrealism Minimalism Expressionism
-    Pop-Art Art-Deco Art-Nouveau Futurism Dadaism
+    Pop-Art Art-Deco Art-Nouveau Futurism
     Gothic Baroque Renaissance Neo-Expressionism
     Pointillism Fauvism Graffiti Collage Ink-Drawing
     Watercolor Line-Art Cartoon Geometric Psychedelic
-    Low-Poly Vaporwave Retro Vintage Comic-Book
+    Low-Poly Vaporwave Retro Vintage
     Ukiyo-e Pastel Stained-Glass Mosaics
     Woodcut Block-Prints Cyberpunk Steampunk
   ]
