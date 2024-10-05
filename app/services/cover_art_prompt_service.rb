@@ -36,7 +36,7 @@ class CoverArtPromptService < BaseService
 
     Avoid mention of humans, human forms, or faces. Avoid historical figures. Avoid images of clocks or hourglasses. Avoid references that will lead to text and symbols being included in the image. Avoid jellyfish. Avoid musical notes. Avoid chesire cats. Avoid anything that Dall-e will reject as inappropriate.
 
-    If the show takes place in philadelphia, do not reference bells. If it takes place in new york, do not reference the statue of liberty. Never reference cliche obvious landmarks.
+    If the show takes place in philadelphia, do not use bell imagery. If it takes place in new york, do not reference the statue of liberty. Never reference cliche obvious landmarks. If the show takes place at Saratoga Performing Arts Center, do not use horse or carousel imagery. Avoid phoenix imagery.
 
     Use your best knowledge about Dall-e to generate an optimized prompt and provide the full text of the prompt in the 'prompt' key of your JSON response. Be sure this prompt includes indication of style, hue, subjects, and any other relevant information for a visually pleasing and unique piece of art.
 
