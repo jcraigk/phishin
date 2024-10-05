@@ -18,7 +18,7 @@ class CoverArtPromptService < BaseService
     Gothic Renaissance Wood-Burned Technical-Drawing
     Pointillism Fauvism Collage Ink-Drawing
     Watercolor Line-Art Geometric Charcoal
-    Low-Poly Retro Vintage
+    Low-Poly Retro Vintage Pencil-Drawing
     Ukiyo-e Pastel Stained-Glass Mosaics Escheresque
     Woodcut Block-Prints Cyberpunk Steampunk
   ]
@@ -34,7 +34,7 @@ class CoverArtPromptService < BaseService
 
     Occasionally consider imagery of rock instruments but favor a drumkit over a guitar. Don't overuse guitars. Don't overuse keyboards. Include imagery of instruments only every tenth prompt (so 10% chance). Avoid images of saxophones, trumpets, and other brass instruments. Avoid images of classical instruments like french horns and string instruments.
 
-    Avoid mention of humans, human forms, or faces. Avoid historical figures. Avoid images of clocks or hourglasses. Avoid references that will lead to text and symbols being included in the image.
+    Avoid mention of humans, human forms, or faces. Avoid historical figures. Avoid images of clocks or hourglasses. Avoid references that will lead to text and symbols being included in the image. Avoid jellyfish. Avoid musical notes.
 
     Use your best knowledge about Dall-e to generate an optimized prompt and provide the full text of the prompt in the 'prompt' key of your JSON response. Be sure this prompt includes indication of style, hue, subjects, and any other relevant information for a visually pleasing and unique piece of art.
 
