@@ -46,7 +46,7 @@ class CoverArtPromptService < BaseService
 
     NEVER MENTION THE LIBERTY BELL. NEVER MENTION CAROUSELS. NEVER MENTION JELLYFISH.
 
-    Don't mention the location in every prompt, sometimes it can be more disassociative and abstract.
+    Don't consider the location in every prompt, often it should be more disassociative and abstract and be more related to the titles or themes of the setlist than the time and place.
   TXT
 
   def call
