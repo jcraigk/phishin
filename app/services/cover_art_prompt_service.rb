@@ -62,7 +62,11 @@ class CoverArtPromptService < BaseService
   end
 
   def defer_to_kickoff_show
-    show.update!(cover_art_parent_show_id: run_kickoff_show.id)
+    show.update! \
+      cover_art_parent_show_id: run_kickoff_show.id,
+      cover_art_style: run_kickoff_show.cover_art_style,
+      cover_art_hue: run_kickoff_show.cover_art_hue,
+      cover_art_prompt: run_kickoff_show.cover_art_prompt
   end
 
   def run_kickoff_show
