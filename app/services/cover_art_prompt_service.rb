@@ -19,7 +19,7 @@ class CoverArtPromptService < BaseService
     Pointillism Fauvism Ink-Drawing
     Watercolor Line-Art Geometric Charcoal
     Low-Poly Pencil-Drawing Oil-Painting
-    Ukiyo-e Pastel Stained-Glass Mosaics
+    Pastel Stained-Glass Mosaics
     Woodcut Block-Prints Comic-Book
   ]
   BASE_PROMPT = <<~TXT
