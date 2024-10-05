@@ -18,7 +18,7 @@ class CoverArtPromptService < BaseService
     Gothic Baroque Renaissance Neo-Expressionism
     Pointillism Fauvism Graffiti Collage Ink-Drawing
     Watercolor Line-Art Cartoon Geometric Psychedelic
-    Low-Poly Vaporwave Retro Vintage
+    Low-Poly Vaporwave Retro Vintage Comic-Book
     Ukiyo-e Pastel Stained-Glass Mosaics
     Woodcut Block-Prints Cyberpunk Steampunk
   ]
@@ -61,7 +61,6 @@ class CoverArtPromptService < BaseService
       cover_art_hue: hue,
       cover_art_prompt: chatgpt_response[:prompt],
       cover_art_parent_show_id: nil
-    # puts chatgpt_response[:prompt]
   end
 
   def defer_to_kickoff_show
@@ -87,42 +86,25 @@ class CoverArtPromptService < BaseService
     kickoff_show
   end
 
-  # Select a hue from our list, selecting a less used one
-  # and avoiding repetition of the previous show's hue
+  # Select a hue from our list, voiding repetition of the previous show's hue
   def hue
     return @hue if defined?(@hue)
-
     available_hues = HUES.dup
     if prior_show&.cover_art_hue.present?
       available_hues.delete(prior_show.cover_art_hue)
     end
-
-    hue_usage = Show.where.not(cover_art_hue: nil).group(:cover_art_hue).count
-    sorted_hues = available_hues.sort_by { hue_usage[_1] || 0 }
-    min_usage = hue_usage[sorted_hues.first] || 0
-    bottom_tier_hues = sorted_hues.select { hue_usage[_1] == min_usage || hue_usage[_1].nil? }
-
-    @hue = bottom_tier_hues.sample
+    @hue = available_hues.sample
   end
 
 
-  # Select a style from our list, selecting a less used one
-  # and avoiding repetition of the previous show's style
+  # Select a style from our list, avoiding repetition of the previous show's style
   def style
     return @style if defined?(@style)
-
     available_styles = STYLES.dup
     if prior_show&.cover_art_style.present?
       available_styles.delete(prior_show.cover_art_style)
     end
-
-    style_usage = Show.where.not(cover_art_style: nil).group(:cover_art_style).count
-    sorted_styles = available_styles.sort_by { style_usage[_1] || 0 }
-    min_usage = style_usage[sorted_styles.first] || 0
-    bottom_tier_styles = sorted_styles.select {
- style_usage[_1] == min_usage || style_usage[_1].nil? }
-
-    @style = bottom_tier_styles.sample
+    @style = available_styles.sample
   end
 
   # Fetch the previous show not at same venue to avoid duplication
