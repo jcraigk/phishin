@@ -94,9 +94,10 @@ class AlbumCoverService < BaseService
 
   # Remove any non-alphabetic characters before the omission
   def smart_truncate(text, length: 35, omission: "...")
-    truncated = text.truncate(length, omission:)
-    truncated.sub(/[^a-zA-Z]+#{Regexp.escape(omission)}\z/, omission)
+    return text if text.length <= length
+    text[0...(length - omission.length)].sub(/[^a-zA-Z]+$/, "") + omission
   end
+
 
   def attach_album_cover
     album_cover_path = Rails.root.join("tmp", "#{SecureRandom.hex}.jpg")
