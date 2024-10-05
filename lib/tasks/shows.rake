@@ -5,6 +5,19 @@ namespace :shows do
     start_date = ENV.fetch("START_DATE", nil)
     force = ENV.fetch("FORCE", nil).present?
 
+    # redo_dates = %w[1986-10-15 2017-08-06]
+    # all_dates = redo_dates.dup
+    # redo_dates.each do |date|
+    #   show = Show.find_by(date: date)
+    #   if show.cover_art_parent_show_id.present?
+    #     all_dates << Show.find(show.cover_art_parent_show_id).date.to_s
+    #     all_dates << Show.where(cover_art_parent_show_id: show.cover_art_parent_show_id).map(&:date).map(&:to_s)
+    #   elsif (shows = Show.where(cover_art_parent_show_id: show.id)).any?
+    #     all_dates << shows.map(&:date).map(&:to_s)
+    #   end
+    # end
+    # rel = Show.where(date: all_dates.uniq).order(date: :asc)
+
     rel = Show.includes(:tracks).order(date: :asc)
     rel = rel.where(date:) if date.present?
     rel = rel.where('date >= ?', start_date) if start_date.present?

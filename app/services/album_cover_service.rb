@@ -78,7 +78,7 @@ class AlbumCoverService < BaseService
     end
 
     # Venue
-    text = show.venue_name.truncate(40, omission: "...").gsub("'", "\\\\'")
+    text = show.venue_name.truncate(35, omission: "...").gsub("'", "\\\\'")
     @art.combine_options do |c|
       c.gravity "SouthEast"
       c.font font2
