@@ -13,12 +13,12 @@ class CoverArtPromptService < BaseService
     Tangerine Plum
   ]
   STYLES = %w[
-    Abstract Impressionism Surrealism Minimalism Expressionism
+    Abstract Impressionism Minimalism Expressionism
     Pop-Art Art-Deco Art-Nouveau Futurism Chinese-Brush-Painting
     Gothic Renaissance Wood-Burned Technical-Drawing
     Pointillism Fauvism Collage Ink-Drawing
     Watercolor Line-Art Geometric Charcoal
-    Low-Poly Retro Vintage Pencil-Drawing
+    Low-Poly Retro Pencil-Drawing Oil-Painting
     Ukiyo-e Pastel Stained-Glass Mosaics Escheresque
     Woodcut Block-Prints Cyberpunk Steampunk
   ]
@@ -32,7 +32,7 @@ class CoverArtPromptService < BaseService
 
     The subjects should be a comma separated list of 2 or 3 concepts or images pulled from the event info. You should have a 50% chance of selecting either 2 or 3 subjects for each prompt. Take liberty here and be creative in how these subjects are selected. Consider the time and location of the concert. If a setlist is provided, include the song titles and your knowledge of song lyrical content in consideration. Favor popular songs over obscure ones. Consider cultural and artistic impressions of the songs played at the show to add to the pool of potential imagery. If there appear to be themes in the song selections, favor that. Lean into famous landmarks and famous songs/lyrics and other imagery. Don't be afraid to get creative and silly in some cases. If the show is not in the united states, lean into cultural/geographic references for the foreign country. If the show takes place in a unique location, lean into that uniqueness, but avoid famous landmarks like the statue of liberty and the liberty bell. For shows that take place on halloween, take note of the cover songs played and lean into that. Season and weather should also be considered.
 
-    Occasionally consider imagery of rock instruments like drumkit, guitar, or keys. Don't overuse guitars. Don't overuse keyboards. Include imagery of instruments only every 20th prompt (so 5% chance). Avoid images of saxophones, trumpets, and other brass instruments. Avoid images of classical instruments like french horns and string instruments.
+    Occasionally consider imagery of rock instruments like drumkit, guitar, or keys. Don't overuse guitars. Don't overuse keyboards. Include imagery of instruments only every 20th prompt (so 5% chance). Avoid images of saxophones, trumpets, and other brass instruments. Avoid images of classical instruments like french horns and string instruments. NO SAXOPHONES EVER. Avoid mentioning surrealism as this sets off warnings.
 
     Avoid mention of humans, human forms, or faces. Avoid historical figures. Avoid images of clocks or hourglasses. Avoid references that will lead to text and symbols being included in the image. Avoid jellyfish. Avoid musical notes. Avoid chesire cats. Avoid anything that Dall-e will reject as inappropriate.
 
