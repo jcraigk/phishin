@@ -34,9 +34,7 @@ class CoverArtPromptService < BaseService
 
     Occasionally consider imagery of rock instruments. Don't overuse guitars. Don't overuse keyboards. Include imagery of instruments only every tenth prompt (so 10% chance). Avoid images of saxophones, trumpets, and other brass instruments. Avoid images of classical instruments like french horns and string instruments.
 
-    Avoid mention of humans, human forms, or faces. Avoid historical figures.
-
-    Do not let Dall-e know that the art is related to a concert, but rather be general about prompting it to generate an art piece based on the selected subjects. Do not let Dall-e generate text or symbols.
+    Avoid mention of humans, human forms, or faces. Avoid historical figures. Avoid images of clocks or hourglasses. Avoid references that will lead to text and symbols being included in the image.
 
     Use your best knowledge about Dall-e to generate an optimized prompt and provide the full text of the prompt in the 'prompt' key of your JSON response. Be sure this prompt includes indication of style, hue, subjects, and any other relevant information for a visually pleasing and unique piece of art.
 
