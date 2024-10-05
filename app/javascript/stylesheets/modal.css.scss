@@ -2,7 +2,7 @@
   background: white;
   padding: 1.5rem;
   border-radius: var(--bulma-radius);
-  margin: 2rem auto auto auto;
+  margin: 1rem auto auto auto;
   max-height: 800px;
   max-width: 1200px;
   overflow: auto;
@@ -41,7 +41,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 3;
+  z-index: 103;
 }
 
 @media (min-width: 1023px) {
