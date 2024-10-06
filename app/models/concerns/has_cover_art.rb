@@ -19,7 +19,7 @@ module HasCoverArt
       CoverArtImageService.call(self)
       AlbumCoverService.call(self)
       tracks.each(&:apply_id3_tags)
-      AlbumZipJob.perform_async(id)
+      # AlbumZipJob.perform_async(id)
     end
 
     def album_zip_url

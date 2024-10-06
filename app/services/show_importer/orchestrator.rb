@@ -123,7 +123,7 @@ class ShowImporter::Orchestrator
     AlbumCoverService.call(show)
     puts "🌌 #{show.album_cover_url}"
     show.tracks.each(&:apply_id3_tags)
-    AlbumZipJob.perform_async(show.id)
+    # AlbumZipJob.perform_async(show.id)
   end
 
   def save_song_gaps(show)
