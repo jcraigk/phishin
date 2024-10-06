@@ -1,6 +1,10 @@
 :scheduler:
   :schedule:
+
     sitemap_refresh:
-      cron: "0 3 * * * America/Los_Angeles" # Runs at 3 AM Pacific Time every day
+      cron: "0 3 * * * America/Los_Angeles" # Nightly at 3 AM Pacific Time
       class: SitemapRefreshJob
-      queue: default
+
+    album_zip_cleanup:
+      cron: "0 2 * * * America/Los_Angeles" # Nightly at 2 AM Pacific Time
+      class: AlbumZipCleanupJob

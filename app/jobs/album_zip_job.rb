@@ -8,6 +8,7 @@ class AlbumZipJob
   def perform(show_id)
     @show_id = show_id
     create_and_attach_album_zip
+    show.update!(album_zip_requested_at: nil)
   end
 
   private

@@ -8,7 +8,7 @@ namespace :shows do
     rel = Show.includes(:tracks).order(date: :asc)
 
     if ENV.fetch("REDO", nil).present?
-      redo_dates = File.readlines(Rails.root.join("lib/regen_list.txt")).map(&:strip)
+      redo_dates = File.readlines(Rails.root.join("lib/album_regen_list.txt")).map(&:strip)
       all_dates = redo_dates.dup
       redo_dates.each do |date|
         next unless show = Show.find_by(date: date)
