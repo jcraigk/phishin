@@ -41,7 +41,7 @@ const CoverArtInspector = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">Album Covers</p>
+      <p className="sidebar-title">Cover Art</p>
       <p className="sidebar-subtitle">{totalEntries} total</p>
     </div>
   );

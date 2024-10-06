@@ -101,26 +101,27 @@ class ShowImporter::Orchestrator
   def generate_album_interactively
     # Step 1: Generate and confirm cover art prompt
     loop do
-      puts "💬 Generating cover art prompt..."
+      puts "Generating cover art prompt..."
       CoverArtPromptService.call(show)
-      puts "Cover art prompt: #{show.cover_art_prompt}"
-      print "(c)onfirm or (r)edo? "
+      puts "💬 #{show.cover_art_prompt}"
+      print "(C)onfirm or (R)edo? "
       input = $stdin.gets.chomp.downcase
       break if input == "c"
     end
 
     # Step 2: Generate and confirm cover art image
     loop do
-      puts "🎨 Generating cover art..."
+      puts "Generating cover art..."
       CoverArtImageService.call(show)
-      puts "Cover art: #{App.base_url}/blob/#{show.cover_art.blob.key}"
-      print "(c)onfirm or (r)edo? "
+      puts "🏞 #{App.base_url}/blob/#{show.cover_art.blob.key}"
+      print "(C)onfirm or (R)edo? "
       input = $stdin.gets.chomp.downcase
       break if input == "c"
     end
 
-    puts "🖼️ Making album..."
+    puts "Making album..."
     AlbumCoverService.call(show)
+    puts "🌌 #{show.album_cover_url}"
     show.tracks.each(&:apply_id3_tags)
     AlbumZipJob.perform_async(show.id)
   end

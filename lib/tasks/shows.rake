@@ -33,10 +33,10 @@ namespace :shows do
     rel.each do |show|
       if force || (show.cover_art_prompt.blank? && show.cover_art_parent_show_id.blank?)
         loop do
-          puts "💬 Generating cover art prompt..."
+          puts "Generating cover art prompt..."
           CoverArtPromptService.call(show)
-          puts "Cover art prompt: #{show.cover_art_prompt}"
-          print "(c)onfirm or (r)edo? "
+          puts "💬 #{show.cover_art_prompt}"
+          print "(C)onfirm or (R)edo? "
           input = $stdin.gets.chomp.downcase
           break if input == "c"
         end
@@ -44,10 +44,10 @@ namespace :shows do
 
       if force || !show.cover_art.attached?
         loop do
-          puts "🎨 Generating cover art..."
+          puts "Generating cover art..."
           CoverArtImageService.call(show)
-          puts "Cover art: #{App.base_url}/blob/#{show.cover_art.blob.key}"
-          print "(c)onfirm or (r)edo? "
+          puts "🏞 #{App.base_url}/blob/#{show.cover_art.blob.key}"
+          print "(C)onfirm or (R)edo? "
           input = $stdin.gets.chomp.downcase
           break if input == "c"
         end
@@ -55,7 +55,7 @@ namespace :shows do
 
       if force || !show.album_cover.attached?
         AlbumCoverService.call(show)
-        puts show.album_cover_url
+        puts "🌌 #{show.album_cover_url}"
 
         # Apply cover art to mp3 files
         show.tracks.each do |track|
