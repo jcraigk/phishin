@@ -7,23 +7,23 @@ namespace :shows do
 
     rel = Show.includes(:tracks).order(date: :asc)
 
-    # if ENV.fetch("REDO", nil).present?
-    #   redo_dates = File.readlines(Rails.root.join("lib/regen_list.txt")).map(&:strip)
-    #   all_dates = redo_dates.dup
-    #   redo_dates.each do |date|
-    #     next unless show = Show.find_by(date: date)
-    #     if show.cover_art_parent_show_id.present?
-    #       all_dates << Show.find(show.cover_art_parent_show_id).date.to_s
-    #       all_dates << Show.where(cover_art_parent_show_id: show.cover_art_parent_show_id).map(&:date).map(&:to_s)
-    #     elsif (shows = Show.where(cover_art_parent_show_id: show.id)).any?
-    #       all_dates << shows.map(&:date).map(&:to_s)
-    #     end
-    #   end
-    #   rel = rel.where(date: all_dates.uniq.flatten)
-    # else
-    #   rel = rel.where(date:) if date.present?
-    #   rel = rel.where('date >= ?', start_date) if start_date.present?
-    # end
+    if ENV.fetch("REDO", nil).present?
+      redo_dates = File.readlines(Rails.root.join("lib/regen_list.txt")).map(&:strip)
+      all_dates = redo_dates.dup
+      redo_dates.each do |date|
+        next unless show = Show.find_by(date: date)
+        if show.cover_art_parent_show_id.present?
+          all_dates << Show.find(show.cover_art_parent_show_id).date.to_s
+          all_dates << Show.where(cover_art_parent_show_id: show.cover_art_parent_show_id).map(&:date).map(&:to_s)
+        elsif (shows = Show.where(cover_art_parent_show_id: show.id)).any?
+          all_dates << shows.map(&:date).map(&:to_s)
+        end
+      end
+      rel = rel.where(date: all_dates.uniq.flatten)
+    else
+      rel = rel.where(date:) if date.present?
+      rel = rel.where('date >= ?', start_date) if start_date.present?
+    end
 
     pbar = ProgressBar.create(
       total: rel.count,
