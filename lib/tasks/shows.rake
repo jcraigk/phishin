@@ -3,7 +3,6 @@ namespace :shows do
   task generate_albums: :environment do
     date = ENV.fetch("DATE", nil)
     start_date = ENV.fetch("START_DATE", nil)
-    force = ENV.fetch("FORCE", nil).present?
 
     rel = Show.includes(:tracks).order(date: :asc)
 
@@ -42,50 +41,43 @@ namespace :shows do
         puts "💬 #{show.cover_art_prompt}"
       end
 
-      if force || !show.cover_art.attached?
-        loop do
-          puts "Generating cover art image..."
-          CoverArtImageService.call(show)
-          puts "🏞 #{App.base_url}/blob/#{show.cover_art.blob.key}"
-          print "(C)onfirm, (R)egenerate, (N)ew prompt, or C(u)stomize prompt? "
-          input = $stdin.gets.chomp.downcase
-          case input
-          when "r"
-            next
-          when "n"
-            puts "Generating cover art prompt..."
-            CoverArtPromptService.call(show)
-            puts "💬 #{show.cover_art_prompt}"
-            next
-          when "u"
-            print "Custom prompt (or blank to use existing): "
-            prompt = $stdin.gets.chomp
-            if prompt.present?
-              puts "New prompt: 💬 #{prompt}"
-              show.update!(cover_art_prompt: prompt)
-            else
-              puts "Using existing prompt"
-            end
-            next
+      loop do
+        puts "Generating cover art image..."
+        CoverArtImageService.call(show)
+        puts "🏞 #{App.base_url}/blob/#{show.cover_art.blob.key}"
+        print "(C)onfirm, (R)egenerate, (N)ew prompt, or C(u)stomize prompt? "
+        input = $stdin.gets.chomp.downcase
+        case input
+        when "r"
+          next
+        when "n"
+          puts "Generating cover art prompt..."
+          CoverArtPromptService.call(show)
+          puts "💬 #{show.cover_art_prompt}"
+          next
+        when "u"
+          print "Custom prompt (or blank to use existing): "
+          prompt = $stdin.gets.chomp
+          if prompt.present?
+            puts "New prompt: 💬 #{prompt}"
+            show.update!(cover_art_prompt: prompt)
           else
-            break
+            puts "Using existing prompt"
           end
+          next
+        else
+          break
         end
       end
 
-      if force || !show.album_cover.attached?
-        AlbumCoverService.call(show)
-        puts "🌌 #{show.album_cover_url}"
-
-        # Apply cover art to mp3 files
-        show.tracks.each do |track|
-          track.apply_id3_tags
-        end
+      AlbumCoverService.call(show)
+      puts "🌌 #{show.album_cover_url}"
+      # Apply cover art to mp3 files
+      show.tracks.each do |track|
+        track.apply_id3_tags
       end
 
-      # if force || !show.album_zip.attached?
-      #   AlbumZipJob.perform_async(show.id)
-      # end
+      # AlbumZipJob.perform_async(show.id)
 
       puts show.url
       pbar.increment
