@@ -32,12 +32,14 @@ namespace :shows do
 
     rel.each do |show|
       puts "🏟 #{show.url} / #{show.venue_name} / #{show.venue.location}"
-      print "(C)ontinue or (S)kip? "
+      print "(R)egenerate or (S)kip? "
       input = $stdin.gets.chomp.downcase
-      if input != "c"
+      if input != "r"
         pbar.increment
         puts "Skipping!"
         next
+      else
+        puts "💬 #{show.cover_art_prompt}"
       end
 
       if force || !show.cover_art.attached?
