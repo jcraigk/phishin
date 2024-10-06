@@ -15,11 +15,11 @@ class CoverArtPromptService < BaseService
   STYLES = %w[
     Abstract Impressionism Minimalism Expressionism
     Pop-Art Art-Deco Art-Nouveau Futurism Chinese-Brush-Painting
-    Gothic Renaissance Wood-Burned Technical-Drawing
+    Gothic Wood-Burned Technical-Drawing
     Pointillism Fauvism Ink-Drawing Illustration
     Watercolor Line-Art Geometric Charcoal
     Low-Poly Pencil-Drawing Oil-Painting
-    Pastel Stained-Glass Mosaics
+    Pastel Stained-Glass Mosaics Childrens-Book
     Woodcut Block-Prints Comic-Book
   ]
   BASE_PROMPT = <<~TXT
