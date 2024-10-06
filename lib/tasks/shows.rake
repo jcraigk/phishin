@@ -42,7 +42,7 @@ namespace :shows do
 
       if force || (show.cover_art_prompt.blank? && show.cover_art_parent_show_id.blank?)
         puts "Existing prompt: 💬 #{show.cover_art_prompt}"
-        puts "Regenerate prompt (y/n)? "
+        print "Regenerate prompt (y/n)? "
         if $stdin.gets.chomp.downcase == "y"
           loop do
             puts "Generating cover art prompt..."
@@ -76,8 +76,26 @@ namespace :shows do
           CoverArtImageService.call(show)
           puts "🏞 #{App.base_url}/blob/#{show.cover_art.blob.key}"
           print "(C)onfirm or (R)egenerate? "
-          input = $stdin.gets.chomp.downcase
           break if input != "r"
+
+          print "(C)onfirm, (R)egenerate, or C(u)stom? "
+            input = $stdin.gets.chomp.downcase
+            case input
+            when "r"
+              next
+            when "u"
+              print "Custom prompt (or blank to use existing): "
+              prompt = $stdin.gets.chomp
+              if prompt.present?
+                puts "New prompt: 💬 #{prompt}"
+                show.update!(cover_art_prompt: prompt)
+              else
+                puts "Using existing prompt"
+              end
+              next
+            else
+              break
+            end
         end
       end
 
