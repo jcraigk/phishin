@@ -1,4 +1,4 @@
-class CleanupOldAlbumZipsWorker
+class AlbumZipCleanupJob
   include Sidekiq::Worker
 
   def perform
