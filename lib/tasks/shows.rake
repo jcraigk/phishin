@@ -31,6 +31,15 @@ namespace :shows do
     )
 
     rel.each do |show|
+      puts "🏟 #{show.date} / #{show.url}"
+      print "(R)egenerate or (S)kip?"
+      input = $stdin.gets.chomp.downcase
+      if input != "r"
+        pbar.increment
+        puts "Skipping!"
+        next
+      end
+
       if force || (show.cover_art_prompt.blank? && show.cover_art_parent_show_id.blank?)
         loop do
           puts "Generating cover art prompt..."
