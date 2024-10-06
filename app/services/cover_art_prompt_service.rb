@@ -16,7 +16,7 @@ class CoverArtPromptService < BaseService
     Abstract Impressionism Minimalism Expressionism
     Pop-Art Art-Deco Art-Nouveau Futurism Chinese-Brush-Painting
     Gothic Renaissance Wood-Burned Technical-Drawing
-    Pointillism Fauvism Ink-Drawing
+    Pointillism Fauvism Ink-Drawing Illustration
     Watercolor Line-Art Geometric Charcoal
     Low-Poly Pencil-Drawing Oil-Painting
     Pastel Stained-Glass Mosaics
@@ -26,12 +26,12 @@ class CoverArtPromptService < BaseService
     We are going to generate an optimized prompt for DALL-E to create an artistic square image based on style, hue, and a few subjects pulled from a live musical performance.
 
     First, here is a **critical set of exclusions** that should never be included under any circumstances:
-    - No jellyfish, horses, lighthouses, phoenixes, or carousels.
+    - No jellyfish, horses, lighthouses, phoenixes, carousels or spinning tops.
     - Avoid instruments (guitars, saxophones, brass, classical instruments). No saxophones ever.
     - Avoid images of humans, human forms, or faces.
     - Avoid clocks, hourglasses, historical figures, and any text or symbols.
-    - Avoid owls, foxes, flamingos, raccoons, dragons, unicorns, buffalo, tornadoes, cowboy hats, pyramids, bats, bears, ferris wheels, churches, cathedrals, butterflies, pumpkins, gargoyles, and ghosts.
-    - Avoid cliche landmarks like the Statue of Liberty, Golden Gate Bridge, Liberty Bell, and anything related to obvious geography (cornfields, cheese, moose, etc.).
+    - Avoid owls, foxes, flamingos, lobseters, raccoons, cats, lions, dolphins, skeletons, dragons, unicorns, buffalo, tornadoes, cowboy hats, pyramids, violins, bats, bears, ferris wheels, churches, cathedrals, butterflies, pumpkins, gargoyles, and ghosts.
+    - Avoid cliche landmarks like the Statue of Liberty, Golden Gate Bridge, Liberty Bell, Eiffel tower, and anything related to obvious geography (cornfields, cheese, moose, etc.).
     - Avoid swirls and vortexes.
     - Avoid references that DALL-E might reject as inappropriate.
 
