@@ -36,7 +36,7 @@ const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, size = "small", c
     setIsLoaded(true);
   };
 
-  const selectedImage = selectedOption === "coverArt" ? coverArtUrls?.[size] : albumCoverUrl;
+  const selectedImage = selectedOption === "albumCover" ?  albumCoverUrl : coverArtUrls?.[size];
 
   return (
     <div

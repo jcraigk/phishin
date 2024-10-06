@@ -28,12 +28,9 @@ import Pagination from "./controls/Pagination";
 import { paginationHelper } from "./helpers/pagination";
 
 const CoverArtInspector = () => {
-  const { shows, totalPages, totalEntries, page, perPage } = useLoaderData(); // Fetch the data from the loader
+  const { shows, totalPages, totalEntries, page, perPage } = useLoaderData();
   const { openAppModal } = useOutletContext();
-  const navigate = useNavigate();
-
   const [selectedOption, setSelectedOption] = useState("coverArt");
-
   const {
     tempPerPage,
     handlePageClick,
@@ -49,7 +46,6 @@ const CoverArtInspector = () => {
     <div className="sidebar-content">
       <p className="sidebar-title">Cover Art</p>
       <p className="sidebar-subtitle">{totalEntries} total</p>
-      {/* Dropdown to choose between Cover Art and Album Cover */}
       <div className="dropdown mt-3">
         <label htmlFor="coverArtOption">Display:</label>
         <select id="coverArtOption" value={selectedOption} onChange={handleOptionChange}>
