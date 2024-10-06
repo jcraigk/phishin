@@ -75,27 +75,24 @@ namespace :shows do
           puts "Generating cover art image..."
           CoverArtImageService.call(show)
           puts "🏞 #{App.base_url}/blob/#{show.cover_art.blob.key}"
-          print "(C)onfirm or (R)egenerate? "
-          break if input != "r"
-
-          print "(C)onfirm, (R)egenerate, or C(u)stom? "
-            input = $stdin.gets.chomp.downcase
-            case input
-            when "r"
-              next
-            when "u"
-              print "Custom prompt (or blank to use existing): "
-              prompt = $stdin.gets.chomp
-              if prompt.present?
-                puts "New prompt: 💬 #{prompt}"
-                show.update!(cover_art_prompt: prompt)
-              else
-                puts "Using existing prompt"
-              end
-              next
+          print "(C)onfirm, (R)egenerate, or C(u)stomize prompt? "
+          input = $stdin.gets.chomp.downcase
+          case input
+          when "r"
+            next
+          when "u"
+            print "Custom prompt (or blank to use existing): "
+            prompt = $stdin.gets.chomp
+            if prompt.present?
+              puts "New prompt: 💬 #{prompt}"
+              show.update!(cover_art_prompt: prompt)
             else
-              break
+              puts "Using existing prompt"
             end
+            next
+          else
+            break
+          end
         end
       end
 
