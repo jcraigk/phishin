@@ -31,10 +31,10 @@ namespace :shows do
     )
 
     rel.each do |show|
-      puts "🏟 #{show.date} / #{show.url}"
-      print "(R)egenerate or (S)kip?"
+      puts "🏟 #{show.url}"
+      print "(P)rocess or (S)kip?"
       input = $stdin.gets.chomp.downcase
-      if input != "r"
+      if input != "p"
         pbar.increment
         puts "Skipping!"
         next
@@ -45,15 +45,21 @@ namespace :shows do
           puts "Generating cover art prompt..."
           CoverArtPromptService.call(show)
           puts "💬 #{show.cover_art_prompt}"
-          print "(C)onfirm or (R)edo? "
+          print "(C)onfirm, (R)egenerate, or C(u)stom prompt? "
           input = $stdin.gets.chomp.downcase
-          break if input == "c"
+          case input
+          when "c" then break
+          when "u" then
+            print "Enter custom prompt: "
+            show.update!(cover_art_prompt: $stdin.gets.chomp)
+            break
+          end
         end
       end
 
       if force || !show.cover_art.attached?
         loop do
-          puts "Generating cover art..."
+          puts "Generating cover art image..."
           CoverArtImageService.call(show)
           puts "🏞 #{App.base_url}/blob/#{show.cover_art.blob.key}"
           print "(C)onfirm or (R)edo? "
