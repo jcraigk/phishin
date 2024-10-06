@@ -86,15 +86,17 @@ class MetaTagService < BaseService
   def playlist_data
     return { title: "Playlists#{TITLE_SUFFIX}", og: {}, status: :not_found } if slug.nil?
 
-    playlist = Playlist.includes(:tracks).find_by(slug:)
+    playlist = Playlist.includes(:tracks, :shows).find_by(slug:)
     return { title: "404 - Phish.in", og: {}, status: :not_found } if playlist.nil?
 
+    track = playlist.tracks.order(:position).first
     {
       title: "Listen to #{playlist.name}#{TITLE_SUFFIX}",
       og: {
         title: "Listen to #{playlist.name}",
         type: "music.playlist",
-        audio: playlist.tracks.order(:position).first&.mp3_url
+        audio: track&.mp3_url,
+        image: track&.show&.album_cover_url
       },
       status: :ok
     }
@@ -128,7 +130,8 @@ class MetaTagService < BaseService
       og: {
         title: og_title,
         type: "music.playlist",
-        audio: show.tracks.order(:position).first&.mp3_url
+        audio: show.tracks.order(:position).first&.mp3_url,
+        image: show&.album_cover_url
       },
       status: :ok
     }

@@ -37,8 +37,8 @@ class AlbumCoverService < BaseService
     # Bg dropshadow
     gradient_path = Rails.root.join("tmp", "#{SecureRandom.hex}.png").to_s
     MiniMagick::Tool::Convert.new do |cmd|
-      cmd.size "#{@art.width}x#{(@art.height * 0.03).to_i}"
-      cmd.gradient "none-rgba(34,34,34,0.8)"
+      cmd.size "#{@art.width}x#{(@art.height * 0.015).to_i}"
+      cmd.gradient "none-rgba(34,34,34,0.55)"
       cmd << gradient_path
     end
 
@@ -67,22 +67,22 @@ class AlbumCoverService < BaseService
     end
 
     # Date
-    text = show.date.to_s.gsub("-", ".")
+    text = show.date.strftime("%b %-d, %Y")
     @art.combine_options do |c|
       c.gravity "SouthEast"
       c.font font2
-      c.pointsize 65
+      c.pointsize 60
       c.antialias
       c.fill text_color
-      c.draw "text 40,80 '#{text}'"
+      c.draw "text 40,92 '#{text}'"
     end
 
     # Venue
-    text = show.venue_name.truncate(50, omission: "...").gsub("'", "\\\\'")
+    text = smart_truncate(show.venue_name).gsub("'", "\\\\'")
     @art.combine_options do |c|
       c.gravity "SouthEast"
       c.font font2
-      c.pointsize 32
+      c.pointsize 40
       c.antialias
       c.fill text_color
       c.draw "text 40,42 '#{text}'"
@@ -91,6 +91,13 @@ class AlbumCoverService < BaseService
     File.delete(bg_block_path) if File.exist?(bg_block_path)
     File.delete(gradient_path) if File.exist?(gradient_path)
   end
+
+  # Remove any non-alphabetic characters before the omission
+  def smart_truncate(text, length: 35, omission: "...")
+    return text if text.length <= length
+    text[0...(length - omission.length)].sub(/[^a-zA-Z]+$/, "") + omission
+  end
+
 
   def attach_album_cover
     album_cover_path = Rails.root.join("tmp", "#{SecureRandom.hex}.jpg")

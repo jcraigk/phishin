@@ -19,7 +19,7 @@ export const coverArtInspectorLoader = async ({ request }) => {
   }
 };
 
-import React, { useState } from "react";
+import React from "react";
 import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
@@ -41,7 +41,7 @@ const CoverArtInspector = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">Album Covers</p>
+      <p className="sidebar-title">Cover Art</p>
       <p className="sidebar-subtitle">{totalEntries} total</p>
     </div>
   );
@@ -61,6 +61,7 @@ const CoverArtInspector = () => {
               openAppModal={openAppModal}
               size="medium"
               css="cover-art-inspector"
+              prompt={show.cover_art_prompt}
             />
           ))}
         </div>

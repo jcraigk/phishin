@@ -47,7 +47,7 @@ class ShowImporter::Orchestrator
     show.reload.save_duration
     show.update!(published: true)
 
-    show.generate_album!
+    generate_album_interactively
 
     create_announcement
 
@@ -97,6 +97,34 @@ class ShowImporter::Orchestrator
   end
 
   private
+
+  def generate_album_interactively
+    # Step 1: Generate and confirm cover art prompt
+    loop do
+      puts "Generating cover art prompt..."
+      CoverArtPromptService.call(show)
+      puts "💬 #{show.cover_art_prompt}"
+      print "(C)onfirm or (R)edo? "
+      input = $stdin.gets.chomp.downcase
+      break if input == "c"
+    end
+
+    # Step 2: Generate and confirm cover art image
+    loop do
+      puts "Generating cover art..."
+      CoverArtImageService.call(show)
+      puts "🏞 #{App.base_url}/blob/#{show.cover_art.blob.key}"
+      print "(C)onfirm or (R)edo? "
+      input = $stdin.gets.chomp.downcase
+      break if input == "c"
+    end
+
+    puts "Making album..."
+    AlbumCoverService.call(show)
+    puts "🌌 #{show.album_cover_url}"
+    show.tracks.each(&:apply_id3_tags)
+    # AlbumZipJob.perform_async(show.id)
+  end
 
   def save_song_gaps(show)
     GapService.call(show)

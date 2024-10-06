@@ -74,15 +74,14 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
       }
 
       if ('mediaSession' in navigator) {
-        let imgSrc = 'https://phish.in/static/logo-square-512.png'
         navigator.mediaSession.metadata = new MediaMetadata({
           title: activeTrack.title,
           artist: `Phish - ${formatDate(activeTrack.show_date)}`,
           album: `${formatDate(activeTrack.show_date)} - ${activeTrack.venue_name}`,
           artwork: [
             {
-              src: activeTrack.show_cover_art_urls.medium || imgSrc,
-              sizes: '512x512',
+              src: activeTrack.show_album_cover_url,
+              sizes: '1024x1024',
               type: 'image/png',
             }
           ]

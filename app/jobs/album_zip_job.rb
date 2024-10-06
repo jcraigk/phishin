@@ -24,20 +24,20 @@ class AlbumZipJob
         end
 
         # taper-notes.txt
-        zipfile.get_output_stream("taper-notes.txt") do |stream|
-          stream.write show.taper_notes
+        zipfile.get_output_stream("taper_notes.txt") do |stream|
+          stream.write "#{show.taper_notes}\n\n=== Downloaded from https://phish.in ==="
         end
 
         # cover-art.jpg
         if show.cover_art.attached? && show.cover_art
-          zipfile.get_output_stream("cover-art.jpg") do |stream|
+          zipfile.get_output_stream("cover_art.jpg") do |stream|
             stream.write show.cover_art.download
           end
         end
 
         # album-cover.jpg
         if show.album_cover.attached?
-          zipfile.get_output_stream("album-cover.jpg") do |stream|
+          zipfile.get_output_stream("album_cover.jpg") do |stream|
             stream.write show.album_cover.download
           end
         end

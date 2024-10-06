@@ -6,32 +6,76 @@ namespace :shows do
     force = ENV.fetch("FORCE", nil).present?
 
     rel = Show.includes(:tracks).order(date: :asc)
-    rel = rel.where(date:) if date.present?
-    rel = rel.where('date >= ?', start_date) if start_date.present?
+
+    if ENV.fetch("REDO", nil).present?
+      redo_dates = File.readlines(Rails.root.join("lib/regen_list.txt")).map(&:strip)
+      all_dates = redo_dates.dup
+      redo_dates.each do |date|
+        next unless show = Show.find_by(date: date)
+        if show.cover_art_parent_show_id.present?
+          all_dates << Show.find(show.cover_art_parent_show_id).date.to_s
+          all_dates << Show.where(cover_art_parent_show_id: show.cover_art_parent_show_id).map(&:date).map(&:to_s)
+        elsif (shows = Show.where(cover_art_parent_show_id: show.id)).any?
+          all_dates << shows.map(&:date).map(&:to_s)
+        end
+      end
+      rel = rel.where(date: all_dates.uniq.flatten)
+    else
+      rel = rel.where(date:) if date.present?
+      rel = rel.where('date >= ?', start_date) if start_date.present?
+    end
+
     pbar = ProgressBar.create(
       total: rel.count,
       format: "%a %B %c/%C %p%% %E"
     )
 
     rel.each do |show|
-      if force || (show.cover_art_prompt.blank? && show.cover_art_parent_show_id.blank?)
-        CoverArtPromptService.call(show)
-        if show.cover_art_parent_show_id.present?
-          puts "PROMPT (DEFER): #{show.cover_art_parent_show_id}"
-        else
-          puts "PROMPT (NEW): #{show.cover_art_prompt}"
-        end
+      puts "🏟 #{show.url} / #{show.venue_name} / #{show.venue.location}"
+      print "(R)egenerate or (S)kip? "
+      input = $stdin.gets.chomp.downcase
+      if input != "r"
+        pbar.increment
+        puts "Skipping!"
+        next
+      else
+        puts "💬 #{show.cover_art_prompt}"
       end
 
       if force || !show.cover_art.attached?
-        CoverArtImageService.call(show)
-        # sleep 1 # for Dall-E API rate limiting
-        puts show.cover_art_urls[:large]
+        loop do
+          puts "Generating cover art image..."
+          CoverArtImageService.call(show)
+          puts "🏞 #{App.base_url}/blob/#{show.cover_art.blob.key}"
+          print "(C)onfirm, (R)egenerate, (N)ew prompt, or C(u)stomize prompt? "
+          input = $stdin.gets.chomp.downcase
+          case input
+          when "r"
+            next
+          when "n"
+            puts "Generating cover art prompt..."
+            CoverArtPromptService.call(show)
+            puts "💬 #{show.cover_art_prompt}"
+            next
+          when "u"
+            print "Custom prompt (or blank to use existing): "
+            prompt = $stdin.gets.chomp
+            if prompt.present?
+              puts "New prompt: 💬 #{prompt}"
+              show.update!(cover_art_prompt: prompt)
+            else
+              puts "Using existing prompt"
+            end
+            next
+          else
+            break
+          end
+        end
       end
 
       if force || !show.album_cover.attached?
         AlbumCoverService.call(show)
-        puts show.album_cover_url
+        puts "🌌 #{show.album_cover_url}"
 
         # Apply cover art to mp3 files
         show.tracks.each do |track|
@@ -39,9 +83,9 @@ namespace :shows do
         end
       end
 
-      if force || !show.album_zip.attached?
-        AlbumZipJob.new.perform(show.id)
-      end
+      # if force || !show.album_zip.attached?
+      #   AlbumZipJob.perform_async(show.id)
+      # end
 
       puts show.url
       pbar.increment
