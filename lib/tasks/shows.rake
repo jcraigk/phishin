@@ -51,8 +51,8 @@ namespace :shows do
             print "(C)onfirm, (R)egenerate, or C(u)stom? "
             input = $stdin.gets.chomp.downcase
             case input
-            when "c"
-              break
+            when "r"
+              next
             when "u"
               print "Custom prompt (or blank to use existing): "
               prompt = $stdin.gets.chomp
@@ -62,6 +62,8 @@ namespace :shows do
               else
                 puts "Using existing prompt"
               end
+              break
+            else
               break
             end
           end
@@ -75,7 +77,7 @@ namespace :shows do
           puts "🏞 #{App.base_url}/blob/#{show.cover_art.blob.key}"
           print "(C)onfirm or (R)egenerate? "
           input = $stdin.gets.chomp.downcase
-          break if input == "c"
+          break if input != "r"
         end
       end
 
