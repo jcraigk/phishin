@@ -113,7 +113,7 @@ class ShowImporter::Orchestrator
     loop do
       puts "🎨 Generating cover art..."
       CoverArtImageService.call(show)
-      puts "Cover art: #{show.cover_art_urls[:large]}"
+      puts "Cover art: #{App.base_url}/blob/#{show.cover_art.blob.key}"
       print "(c)onfirm or (r)edo? "
       input = $stdin.gets.chomp.downcase
       break if input == "c"
