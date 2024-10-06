@@ -41,24 +41,29 @@ namespace :shows do
       end
 
       if force || (show.cover_art_prompt.blank? && show.cover_art_parent_show_id.blank?)
-        loop do
-          puts "Generating cover art prompt..."
-          CoverArtPromptService.call(show)
-          puts "💬 #{show.cover_art_prompt}"
-          print "(C)onfirm, (R)egenerate, or C(u)stom? "
-          input = $stdin.gets.chomp.downcase
-          case input
-          when "c" then break
-          when "u" then
-            print "Custom prompt (or blank to use existing): "
-            prompt = $stdin.gets.chomp
-            if prompt.present?
-              puts "New prompt: 💬 #{prompt}"
-              show.update!(cover_art_prompt: prompt)
-            else
-              puts "Using existing prompt"
+        puts "Existing prompt: 💬 #{show.cover_art_prompt}"
+        puts "Regenerate prompt (y/n)? "
+        if $stdin.gets.chomp.downcase == "y"
+          loop do
+            puts "Generating cover art prompt..."
+            CoverArtPromptService.call(show)
+            puts "💬 #{show.cover_art_prompt}"
+            print "(C)onfirm, (R)egenerate, or C(u)stom? "
+            input = $stdin.gets.chomp.downcase
+            case input
+            when "c"
+              break
+            when "u"
+              print "Custom prompt (or blank to use existing): "
+              prompt = $stdin.gets.chomp
+              if prompt.present?
+                puts "New prompt: 💬 #{prompt}"
+                show.update!(cover_art_prompt: prompt)
+              else
+                puts "Using existing prompt"
+              end
+              break
             end
-            break
           end
         end
       end
