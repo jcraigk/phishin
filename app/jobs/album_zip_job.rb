@@ -6,6 +6,8 @@ class AlbumZipJob
   attr_reader :show_id
 
   def perform(show_id)
+    return if total_size > App.album_zip_disk_limit
+
     @show_id = show_id
     create_and_attach_album_zip
     show.update!(album_zip_requested_at: nil)
@@ -24,19 +26,19 @@ class AlbumZipJob
           end
         end
 
-        # taper-notes.txt
+        # taper_notes.txt
         zipfile.get_output_stream("taper_notes.txt") do |stream|
           stream.write "#{show.taper_notes}\n\n=== Downloaded from https://phish.in ==="
         end
 
-        # cover-art.jpg
+        # cover_art.jpg
         if show.cover_art.attached? && show.cover_art
           zipfile.get_output_stream("cover_art.jpg") do |stream|
             stream.write show.cover_art.download
           end
         end
 
-        # album-cover.jpg
+        # album_cover.jpg
         if show.album_cover.attached?
           zipfile.get_output_stream("album_cover.jpg") do |stream|
             stream.write show.album_cover.download
@@ -57,5 +59,12 @@ class AlbumZipJob
 
   def show
     @show ||= Show.find(show_id)
+  end
+
+  def total_size
+    ActiveStorage::Blob
+      .joins(:attachments)
+      .where(active_storage_attachments: { name: "album_zip", record_type: "Show" })
+      .sum(:byte_size)
   end
 end

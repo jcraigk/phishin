@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_04_091430) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_06_185101) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
@@ -158,6 +158,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_04_091430) do
     t.string "cover_art_hue"
     t.text "cover_art_prompt"
     t.integer "cover_art_parent_show_id"
+    t.datetime "album_zip_requested_at"
     t.index ["date"], name: "index_shows_on_date", unique: true
     t.index ["duration"], name: "index_shows_on_duration"
     t.index ["likes_count"], name: "index_shows_on_likes_count"

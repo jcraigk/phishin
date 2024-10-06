@@ -130,7 +130,9 @@ class ApiV2::Shows < ApiV2::Base
     end
     post "request_album_zip" do
       show = Show.find_by!(date: params[:date])
-      if show.album_zip_requested_at.present?
+      if show.album_zip.attached?
+        error!({ message: "Album already generated" }, 409)
+      elsif show.album_zip_requested_at.present?
         error!({ message: "Download already requested" }, 409)
       else
         show.update!(album_zip_requested_at: Time.current)

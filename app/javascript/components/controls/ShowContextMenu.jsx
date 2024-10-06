@@ -75,6 +75,27 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
     };
   }, [dropdownRef]);
 
+  const handleRequestAlbumZip = async () => {
+    try {
+      const response = await fetch(`/api/v2/shows/request_album_zip`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: show.date })
+      });
+
+      if (response.status === 204) {
+        setNotice("Album is being generated - refresh the page in ~30 seconds");
+      } else if (response.status === 409) {
+        setAlert("Album is already being generated");
+      } else {
+        setAlert("Sorry - album downloads are currently disabled");
+      }
+    } catch (error) {
+      console.log(error);
+      setAlert("Sorry - there was an error with the request");
+    }
+  };
+
   return (
     <div className="dropdown context-dropdown is-right" ref={dropdownRef}>
       <div className="dropdown-trigger">
@@ -97,13 +118,20 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
             Share
           </a>
 
-          {show.album_zip_url && (
-            <a href={show.album_zip_url} className="dropdown-item" onClick={(e) => e.stopPropagation}>
+          {show.album_zip_url ? (
+            <a href={show.album_zip_url} className="dropdown-item" onClick={(e) => e.stopPropagation()}>
               <FontAwesomeIcon icon={faDownload} className="icon" />
               Download MP3s
             </a>
+          ) : (
+            <a className="dropdown-item" onClick={(e) => {
+              e.stopPropagation();
+              handleRequestAlbumZip(show.id, setNotice, setAlert);
+            }}>
+              <FontAwesomeIcon icon={faDownload} className="icon" />
+              Request MP3 Download
+            </a>
           )}
-
           <a className="dropdown-item" onClick={openPhishNet}>
             <FontAwesomeIcon icon={faExternalLinkAlt} className="icon" />
             Phish.net
