@@ -44,12 +44,11 @@ const PlaylistIndex = () => {
     totalEntries,
     page,
     sortOption,
-    filter: initialFilter,
+    filter,
     perPage
   } = useLoaderData();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [filter, setFilter] = useState(initialFilter);
   const { user } = useOutletContext();
   const {
     tempPerPage,
@@ -57,7 +56,7 @@ const PlaylistIndex = () => {
     handleSortChange,
     handlePerPageInputChange,
     handlePerPageBlurOrEnter
-  } = paginationHelper(page, sortOption, perPage);
+  } = paginationHelper(page, sortOption, perPage, "", filter);
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
