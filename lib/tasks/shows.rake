@@ -74,9 +74,7 @@ namespace :shows do
       # Album cover
       AlbumCoverService.call(show)
       puts "🌌 #{show.album_cover_url}"
-      show.tracks.each do |track|
-        track.apply_id3_tags
-      end
+      show.tracks.each(&:apply_id3_tags)
 
       puts show.url
       pbar.increment
