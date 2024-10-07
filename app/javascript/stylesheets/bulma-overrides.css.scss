@@ -6,6 +6,11 @@
   background-color: white;
 }
 
+.input, .button {
+  border-color: $header-gray;
+  color: $text-gray;
+}
+
 .dropdown-item {
   cursor: pointer;
   text-decoration: none !important;

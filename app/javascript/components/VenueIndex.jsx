@@ -46,7 +46,7 @@ const VenueIndex = () => {
     handleSortChange,
     handlePerPageInputChange,
     handlePerPageBlurOrEnter
-  } = paginationHelper(page, sortOption, perPage);
+  } = paginationHelper(page, sortOption, perPage, firstChar);
 
   const handleFirstCharChange = (event) => {
     navigate(`?page=1&sort=${sortOption}&first_char=${event.target.value}&per_page=${perPage}`);

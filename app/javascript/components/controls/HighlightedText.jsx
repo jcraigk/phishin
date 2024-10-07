@@ -1,7 +1,7 @@
 import React from "react";
 
 const HighlightedText = ({ text, highlight }) => {
-  if (!highlight) return <span>{text}</span>;
+  if (!highlight) return <>{text}</>;
 
   const escapedHighlight = highlight.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
   const parts = text.split(new RegExp(`(${escapedHighlight})`, 'gi'));
