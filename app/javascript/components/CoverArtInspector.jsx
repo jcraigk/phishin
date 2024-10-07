@@ -19,7 +19,7 @@ export const coverArtInspectorLoader = async ({ request }) => {
   }
 };
 
-import React from "react";
+import React, { useState } from "react";
 import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
@@ -28,10 +28,9 @@ import Pagination from "./controls/Pagination";
 import { paginationHelper } from "./helpers/pagination";
 
 const CoverArtInspector = () => {
-  const { shows, totalPages, totalEntries, page, perPage } = useLoaderData(); // Fetch the data from the loader
+  const { shows, totalPages, totalEntries, page, perPage } = useLoaderData();
   const { openAppModal } = useOutletContext();
-  const navigate = useNavigate();
-
+  const [selectedOption, setSelectedOption] = useState("coverArt");
   const {
     tempPerPage,
     handlePageClick,
@@ -39,10 +38,21 @@ const CoverArtInspector = () => {
     handlePerPageBlurOrEnter
   } = paginationHelper(page, "", perPage);
 
+  const handleOptionChange = (e) => {
+    setSelectedOption(e.target.value);
+  };
+
   const sidebarContent = (
     <div className="sidebar-content">
       <p className="sidebar-title">Cover Art</p>
       <p className="sidebar-subtitle">{totalEntries} total</p>
+      <div className="dropdown mt-3">
+        <label htmlFor="coverArtOption">Display:</label>
+        <select id="coverArtOption" value={selectedOption} onChange={handleOptionChange}>
+          <option value="coverArt">Cover Art</option>
+          <option value="albumCover">Album Cover</option>
+        </select>
+      </div>
     </div>
   );
 
@@ -62,6 +72,7 @@ const CoverArtInspector = () => {
               size="medium"
               css="cover-art-inspector"
               prompt={show.cover_art_prompt}
+              selectedOption={selectedOption}
             />
           ))}
         </div>
@@ -79,4 +90,3 @@ const CoverArtInspector = () => {
 };
 
 export default CoverArtInspector;
-

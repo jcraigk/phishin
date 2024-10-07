@@ -119,6 +119,27 @@ class ApiV2::Shows < ApiV2::Base
     rescue ArgumentError
       error!({ message: "Invalid date format" }, 400)
     end
+
+    desc "Request a ZIP archive of a show's tracks" do
+      detail "Request a ZIP archive of a show's tracks, cover art, and taper notes"
+      success code: 204, message: "Download requested successfully"
+      success code: 409, message: "Download already requested"
+    end
+    params do
+      requires :date, type: String, desc: "Date in the format YYYY-MM-DD"
+    end
+    post "request_album_zip" do
+      show = Show.find_by!(date: params[:date])
+      if show.album_zip.attached?
+        error!({ message: "Album already generated" }, 409)
+      elsif show.album_zip_requested_at.present?
+        error!({ message: "Download already requested" }, 409)
+      else
+        show.update!(album_zip_requested_at: Time.current)
+        AlbumZipJob.perform_async(show.id)
+        status 204
+      end
+    end
   end
 
   helpers do
