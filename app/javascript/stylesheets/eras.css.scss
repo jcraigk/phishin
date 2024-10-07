@@ -7,7 +7,9 @@
 }
 
 @media (max-width: 1023px) {
-  .mobile-apps {
-    display: none;
+  .sidebar {
+    .mobile-apps {
+      display: none;
+    }
   }
 }
