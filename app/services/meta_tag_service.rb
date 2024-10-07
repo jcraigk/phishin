@@ -86,7 +86,7 @@ class MetaTagService < BaseService
   def playlist_data
     return { title: "Playlists#{TITLE_SUFFIX}", og: {}, status: :not_found } if slug.nil?
 
-    playlist = Playlist.includes(:tracks, :shows).find_by(slug:)
+    playlist = Playlist.includes(:tracks).find_by(slug:)
     return { title: "404 - Phish.in", og: {}, status: :not_found } if playlist.nil?
 
     track = playlist.tracks.order(:position).first
