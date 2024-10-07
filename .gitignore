@@ -6,7 +6,7 @@
 /log
 /public/assets
 /public/audio
-/public/sitemap
+/public/sitemap.xml.gz
 /public/attachments
 /tmp
 /public/packs

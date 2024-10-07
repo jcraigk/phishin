@@ -1,5 +1,4 @@
 SitemapGenerator::Sitemap.default_host = App.base_url
-SitemapGenerator::Sitemap.sitemaps_path = "sitemap/"
 SitemapGenerator::Sitemap.create do # rubocop:disable Metrics/BlockLength
   # Static pages
   add "/api-docs"
@@ -46,8 +45,8 @@ SitemapGenerator::Sitemap.create do # rubocop:disable Metrics/BlockLength
   # Tags
   add "/tags"
   Tag.find_each do |tag|
-    add "/show_tags/#{tag.slug}", lastmod: tag.show_tags.order(created_at: :desc).first.created_at
-    add "/track_tags/#{tag.slug}", lastmod: tag.track_tags.order(created_at: :desc).first.created_at
+    add "/show_tags/#{tag.slug}", lastmod: tag.show_tags.order(created_at: :desc).first&.created_at
+    add "/track_tags/#{tag.slug}", lastmod: tag.track_tags.order(created_at: :desc).first&.created_at
   end
 
   # Shows
