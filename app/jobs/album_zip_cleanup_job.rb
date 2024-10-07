@@ -15,7 +15,6 @@ class AlbumZipCleanupJob
       break unless oldest_blob
       byte_size = oldest_blob.byte_size
       oldest_blob.purge
-      binding.irb
       total_size -= byte_size
     end
   end

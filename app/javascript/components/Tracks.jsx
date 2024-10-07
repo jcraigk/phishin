@@ -1,6 +1,6 @@
 import React from "react";
 import { useOutletContext, Link } from "react-router-dom";
-import { formatDurationTrack, formatDurationShow, formatDate } from "./helpers/utils";
+import { formatDurationTrack, formatDurationShow, formatDate, truncate } from "./helpers/utils";
 import TagBadges from "./controls/TagBadges";
 import HighlightedText from "./controls/HighlightedText";
 import LikeButton from "./controls/LikeButton";
@@ -106,7 +106,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
                         )
                       }
                       <HighlightedText
-                        text={track.title}
+                        text={truncate(track.title, 50)}
                         highlight={highlight}
                       />
                     </span>

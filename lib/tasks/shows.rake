@@ -41,6 +41,7 @@ namespace :shows do
         puts "💬 #{show.cover_art_prompt}"
       end
 
+      # Prompt and cover art
       loop do
         puts "Generating cover art image..."
         CoverArtImageService.call(show)
@@ -70,14 +71,12 @@ namespace :shows do
         end
       end
 
+      # Album cover
       AlbumCoverService.call(show)
       puts "🌌 #{show.album_cover_url}"
-      # Apply cover art to mp3 files
       show.tracks.each do |track|
         track.apply_id3_tags
       end
-
-      # AlbumZipJob.perform_async(show.id)
 
       puts show.url
       pbar.increment
