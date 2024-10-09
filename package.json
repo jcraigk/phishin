@@ -17,6 +17,7 @@
     "@sentry/react": "^8.31.0",
     "autoprefixer": "^10.4.20",
     "babel-loader": "8",
+    "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "bulma": "^1.0.2",
     "compression-webpack-plugin": "9",
     "css-loader": "^7.1.2",
