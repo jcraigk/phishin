@@ -13,6 +13,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@fullhuman/postcss-purgecss": "^6.0.0",
     "@mapbox/mapbox-gl-geocoder": "^5.0.2",
     "@sentry/react": "^8.31.0",
     "@types/babel__core": "7",

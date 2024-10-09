@@ -19,6 +19,9 @@ cleanforce:
 	docker image prune -af
 	docker volume prune -f
 
+dev :
+	foreman start -f Procfile.dev
+
 services :
 	docker-compose up -d pg redis
 
