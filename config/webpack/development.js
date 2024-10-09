@@ -1,4 +1,5 @@
 const { devServer, inliningCss } = require('shakapacker');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const webpackConfig = require('./webpackConfig');
 
@@ -13,6 +14,15 @@ const developmentEnvOnly = (clientWebpackConfig, _serverWebpackConfig) => {
       }),
     );
   }
+
+  // BundleAnalyzerPlugin
+  clientWebpackConfig.plugins.push(
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      openAnalyzer: false,
+      reportFilename: 'bundle-report.html',
+    }),
+  );
 
   // Set allowedHosts to disable browser console warning
   // when using ngrok or other tunneling services.

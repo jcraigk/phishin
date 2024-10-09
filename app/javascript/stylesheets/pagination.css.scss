@@ -16,7 +16,7 @@
   padding: 0.6rem 0.8rem;
   color: $text-gray;
   text-decoration: none;
-  border-radius: var(--bulma-radius);
+  border-radius: $radius;
 
   &:hover {
     background-color: white;

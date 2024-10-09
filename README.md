@@ -50,11 +50,12 @@ Alternatively, if you prefer to develop completely in Docker, build and start th
 make up
 ```
 
-8. This project uses [React on Rails](https://github.com/shakacode/react_on_rails). Spin up the development environment by using `overmind` or `foreman` to run `Procfile.dev`. Alternatively, you can manually run these commands in separate terminals:
+8. This project uses [React on Rails](https://github.com/shakacode/react_on_rails). Spin up the development environment by running `make dev`. Alternatively, you can manually run these commands in separate terminals:
 
 ```bash
 bin/shakapacker-dev-server
 SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch
+rails s
 ```
 
 9. Open your browser and go to `http://localhost:3000/2017-08-06`. You should be able to view and play the full show.

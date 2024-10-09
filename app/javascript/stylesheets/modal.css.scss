@@ -1,7 +1,7 @@
 .modal-content {
   background: white;
   padding: 1.5rem;
-  border-radius: var(--bulma-radius);
+  border-radius: $radius;
   margin: 1rem auto auto auto;
   max-height: 800px;
   max-width: 1200px;
@@ -13,7 +13,7 @@
 
   input, select {
     font-size: 1rem;
-    border-radius: var(--bulma-radius);
+    border-radius: $radius;
     border-color: $header-gray;
     padding: 0.5rem;
   }
@@ -21,7 +21,7 @@
   button {
     font-size: 1rem;
     border: 1px solid $header-gray !important;
-    border-radius: var(--bulma-radius);
+    border-radius: $radius;
     padding: 0.5rem 1rem;
     margin-top: 1rem;
   }

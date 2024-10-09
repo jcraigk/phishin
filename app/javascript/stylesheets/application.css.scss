@@ -3,7 +3,7 @@
 @import "~@fontsource/open-sans-condensed/700.css";
 @import '~mapbox-gl/dist/mapbox-gl.css';
 
-@import "bulma";
+@import "bulma/css/versions/bulma-no-dark-mode.min";
 
 $alert-red: #c6867f;
 $bg-blue: #cbf3ff;
@@ -16,6 +16,7 @@ $header-gray: #c7c8ca;
 $inactive-gray: #d9dbdc;
 $text-gray: #6d6f71;
 $title-gray: #515152;
+$radius: 0.25rem;
 
 @import "./bulma-overrides.css.scss";
 @import "./content.css.scss";
@@ -128,7 +129,7 @@ a {
 
 .large-album-art {
   img {
-    border-radius: var(--bulma-radius) !important;
+    border-radius: $radius !important;
     margin-top: 0.5rem;
   }
 }
