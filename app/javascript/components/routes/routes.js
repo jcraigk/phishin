@@ -1,61 +1,42 @@
-import React, { lazy } from "react";
-import { authFetch } from "../helpers/utils";
+import React from "react";
 
-// Lazy load components
-const ApiDocs = lazy(() => import("../pages/ApiDocs"));
-const ContactInfo = lazy(() => import("../pages/ContactInfo"));
-const CoverArtInspector = lazy(() => import("../CoverArtInspector"));
-const DraftPlaylist = lazy(() => import("../DraftPlaylist"));
-const DynamicRoute = lazy(() => import("../routes/DynamicRoute"));
-const Eras = lazy(() => import('../Eras'));
-const ErrorPage = lazy(() => import("../pages/ErrorPage"));
-const Faq = lazy(() => import("../pages/Faq"));
-const Layout = lazy(() => import("../layout/Layout"));
-const Login = lazy(() => import("../pages/Login"));
-const MapSearch = lazy(() => import("../MapSearch"));
-const MissingContentReport = lazy(() => import("../MissingContentReport"));
-const MyShows = lazy(() => import("../MyShows"));
-const MyTracks = lazy(() => import("../MyTracks"));
-const Playlist = lazy(() => import("../Playlist"));
-const PlaylistIndex = lazy(() => import("../PlaylistIndex"));
-const PrivacyPolicy = lazy(() => import("../pages/PrivacyPolicy"));
-const RequestPasswordReset = lazy(() => import("../pages/RequestPasswordReset"));
-const ResetPassword = lazy(() => import("../pages/ResetPassword"));
-const Search = lazy(() => import("../Search"));
-const Settings = lazy(() => import("../pages/Settings"));
-const Signup = lazy(() => import("../pages/Signup"));
-const SongIndex = lazy(() => import("../SongIndex"));
-const SongTracks = lazy(() => import("../SongTracks"));
-const TagIndex = lazy(() => import("../TagIndex"));
-const TaginProject = lazy(() => import("../pages/TaginProject"));
-const TagShows = lazy(() => import("../TagShows"));
-const TagTracks = lazy(() => import("../TagTracks"));
-const TermsOfService = lazy(() => import("../pages/TermsOfService"));
-const TodayShows = lazy(() => import("../TodayShows"));
-const TopShows = lazy(() => import("../TopShows"));
-const TopTracks = lazy(() => import("../TopTracks"));
-const VenueIndex = lazy(() => import("../VenueIndex"));
-const VenueShows = lazy(() => import("../VenueShows"));
+// Content pages with sidebar
+import DraftPlaylist from "../DraftPlaylist";
+import DynamicRoute, { dynamicLoader } from "../routes/DynamicRoute";
+import Eras, { erasLoader } from '../Eras';
+import Layout from "../layout/Layout";
+import MapSearch from "../MapSearch";
+import MissingContentReport, { missingContentLoader } from "../MissingContentReport";
+import MyShows, { myShowsLoader } from "../MyShows";
+import MyTracks, { myTracksLoader } from "../MyTracks";
+import Playlist, { playlistLoader } from "../Playlist";
+import PlaylistIndex, { playlistIndexLoader } from "../PlaylistIndex";
+import Search from "../Search";
+import SongIndex, { songIndexLoader } from "../SongIndex";
+import SongTracks, { songTracksLoader } from "../SongTracks";
+import TagIndex, { tagIndexLoader } from "../TagIndex";
+import TagShows, { tagShowsLoader } from "../TagShows";
+import TagTracks, { tagTracksLoader } from "../TagTracks";
+import TodayShows, { todayShowsLoader } from "../TodayShows";
+import TopShows, { topShowsLoader } from "../TopShows";
+import TopTracks, { topTracksLoader } from "../TopTracks";
+import VenueIndex, { venueIndexLoader } from "../VenueIndex";
+import VenueShows, { venueShowsLoader } from "../VenueShows";
+import CoverArtInspector, { coverArtInspectorLoader } from "../CoverArtInspector";
 
-// Loaders
-import { coverArtInspectorLoader } from "../CoverArtInspector";
-import { dynamicLoader } from "../routes/DynamicRoute";
-import { erasLoader } from '../Eras';
-import { missingContentLoader } from "../MissingContentReport";
-import { myShowsLoader } from "../MyShows";
-import { myTracksLoader } from "../MyTracks";
-import { playlistIndexLoader } from "../PlaylistIndex";
-import { playlistLoader } from "../Playlist";
-import { songIndexLoader } from "../SongIndex";
-import { songTracksLoader } from "../SongTracks";
-import { tagIndexLoader } from "../TagIndex";
-import { tagShowsLoader } from "../TagShows";
-import { tagTracksLoader } from "../TagTracks";
-import { todayShowsLoader } from "../TodayShows";
-import { topShowsLoader } from "../TopShows";
-import { topTracksLoader } from "../TopTracks";
-import { venueIndexLoader } from "../VenueIndex";
-import { venueShowsLoader } from "../VenueShows";
+// Simple pages with no sidebar
+import ApiDocs from "../pages/ApiDocs";
+import ContactInfo from "../pages/ContactInfo";
+import ErrorPage from "../pages/ErrorPage";
+import Faq from "../pages/Faq";
+import Login from "../pages/Login";
+import PrivacyPolicy from "../pages/PrivacyPolicy";
+import RequestPasswordReset from "../pages/RequestPasswordReset";
+import ResetPassword from "../pages/ResetPassword";
+import Signup from "../pages/Signup";
+import TaginProject from "../pages/TaginProject";
+import TermsOfService from "../pages/TermsOfService";
+import Settings from "../pages/Settings";
 
 const routes = (props) => [
   {
