@@ -10,13 +10,13 @@
 
 .cover-art-large {
   width: 100%;
-  border-radius: var(--bulma-radius);
+  border-radius: $radius;
   object-fit: cover;
 }
 
 .cover-art-inspector {
   width: 100%;
-  border-radius: var(--bulma-radius);
+  border-radius: $radius;
   object-fit: cover;
   width: 128px !important;
   height: 128px !important;
@@ -26,7 +26,7 @@
 .cover-art-small {
   width: 44px;
   height: 44px;
-  border-radius: var(--bulma-radius);
+  border-radius: $radius;
   object-fit: cover;
   position: relative;
   margin-right: 0.5rem;
@@ -69,7 +69,7 @@
   top: 3px;
 
   img {
-    border-radius: var(--bulma-radius);
+    border-radius: $radius;
   }
 }
 
@@ -100,7 +100,7 @@
   flex-direction: column;
   align-items: flex-start;
   padding: 0.25rem 1rem;
-  border-radius: var(--bulma-radius);
+  border-radius: $radius;
   margin-bottom: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   min-height: 3.5rem;

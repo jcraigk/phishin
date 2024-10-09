@@ -7,11 +7,11 @@
 .badge-unsaved {
   background-color: $bg-red;
   padding: 0.3rem;
-  border-radius: var(--bulma-radius);
+  border-radius: $radius;
 }
 
 .badge-saved {
   background-color: $bg-blue;
   padding: 0.3rem;
-  border-radius: var(--bulma-radius);
+  border-radius: $radius;
 }
