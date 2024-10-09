@@ -1,7 +1,7 @@
 {
   "name": "app",
   "private": true,
-  "packageManager": "yarn@1.22.19",
+  "packageManager": "yarn@4.5.0",
   "dependencies": {
     "@babel/core": "7",
     "@babel/plugin-transform-runtime": "7",
@@ -14,7 +14,6 @@
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@mapbox/mapbox-gl-geocoder": "^5.0.2",
-    "@sentry/react": "^8.31.0",
     "autoprefixer": "^10.4.20",
     "babel-loader": "8",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
@@ -26,7 +25,6 @@
     "mapbox-gl": "^3.6.0",
     "mini-css-extract-plugin": "^2.9.1",
     "postcss": "^8.4.47",
-    "rails-erb-loader": "^5.5.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-helmet-async": "^2.0.5",
