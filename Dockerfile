@@ -26,8 +26,7 @@ RUN apt-get update -qq && \
 # Install Node and Yarn
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs
-RUN corepack enable
-RUN corepack prepare yarn@4.5.0 --activate
+RUN npm install -g yarn
 
 WORKDIR $INSTALL_PATH
 
