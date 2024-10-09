@@ -9,13 +9,20 @@ const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, size = "small", c
       <>
         {coverArtUrls?.large && (
           <div className="large-album-art mt-3">
-            <img src={coverArtUrls?.large} alt="Cover art" />
+            <img
+              src={coverArtUrls?.large}
+              alt="Cover art" loading="lazy"
+             />
           </div>
         )}
 
         {albumCoverUrl && (
           <div className="large-album-art">
-            <img src={albumCoverUrl} alt="Album cover" />
+            <img
+              src={albumCoverUrl}
+              alt="Album cover"
+              loading="lazy"
+            />
           </div>
         )}
 
@@ -48,6 +55,7 @@ const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, size = "small", c
         alt={selectedOption === "coverArt" ? "Cover art" : "Album cover"}
         className={`${css} cover-art-${size}`}
         onLoad={handleImageLoad}
+        loading="lazy"
       />
     </div>
   );

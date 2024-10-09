@@ -1,84 +1,103 @@
 import React, { useEffect, useRef, useState } from "react";
-import mapboxgl from "mapbox-gl";
 import { formatNumber } from "./helpers/utils";
 
 const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = true }) => {
   const mapContainer = useRef(null);
   const [map, setMap] = useState(null);
+  const [mapboxgl, setMapboxgl] = useState(null);  // Keep track of mapboxgl instance
 
   useEffect(() => {
     if (!coordinates || !mapboxToken || map) return;
 
-    mapboxgl.accessToken = mapboxToken;
+    // Dynamically import mapbox-gl when the component is rendered
+    import("mapbox-gl").then((mapboxglModule) => {
+      const mapboxglInstance = mapboxglModule.default;
+      setMapboxgl(mapboxglInstance);
 
-    const mapboxMap = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: "mapbox://styles/mapbox/streets-v12",
-      center: [coordinates.lng, coordinates.lat],
-      zoom: 11,
-      attributionControl: false
+      mapboxglInstance.accessToken = mapboxToken;
+
+      const mapboxMap = new mapboxglInstance.Map({
+        container: mapContainer.current,
+        style: "mapbox://styles/mapbox/streets-v12",
+        center: [coordinates.lng, coordinates.lat],
+        zoom: 11,
+        attributionControl: false,
+      });
+
+      mapboxMap.addControl(
+        new mapboxglInstance.AttributionControl({
+          compact: true,
+        })
+      );
+
+      if (controls) {
+        mapboxMap.addControl(new mapboxglInstance.NavigationControl());
+      }
+
+      setMap(mapboxMap);
     });
-
-    mapboxMap.addControl(
-      new mapboxgl.AttributionControl({
-        compact: true,
-      })
-    );
-
-    if (controls) {
-      mapboxMap.addControl(new mapboxgl.NavigationControl());
-    }
-
-    setMap(mapboxMap);
   }, [coordinates, mapboxToken, controls, map]);
 
   useEffect(() => {
-    if (map && venues) {
-      addMarkersToMap(map, venues);
+    if (map && venues && mapboxgl) {
+      addMarkersToMap(map, venues, mapboxgl);
     }
-  }, [map, venues]);
+  }, [map, venues, mapboxgl]);
 
-  const addMarkersToMap = (mapInstance, venues) => {
+  const addMarkersToMap = (mapInstance, venues, mapboxglInstance) => {
     if (!mapInstance || venues.length === 0) {
       if (searchComplete) {
-        new mapboxgl.Popup({ closeButton: false })
+        new mapboxglInstance.Popup({ closeButton: false })
           .setLngLat(mapInstance.getCenter())
-          .setHTML("<p style=\"font-family: 'Open Sans Condensed', sans-serif; font-weight: bold; font-size: 1.2rem;\">No results found for your search.</p>")
+          .setHTML(
+            "<p style=\"font-family: 'Open Sans Condensed', sans-serif; font-weight: bold; font-size: 1.2rem;\">No results found for your search.</p>"
+          )
           .addTo(mapInstance);
       }
       return;
     }
 
-    const bounds = new mapboxgl.LngLatBounds();
+    const bounds = new mapboxglInstance.LngLatBounds();
 
     venues.forEach((venue) => {
       let marker;
 
       // If single venue, use custom icon
       if (venues.length === 1) {
-        const customIcon = document.createElement('div');
-        customIcon.className = 'custom-marker-icon';
+        const customIcon = document.createElement("div");
+        customIcon.className = "custom-marker-icon";
 
-        marker = new mapboxgl.Marker(customIcon).setLngLat([venue.longitude, venue.latitude]);
-
+        marker = new mapboxglInstance.Marker(customIcon).setLngLat([
+          venue.longitude,
+          venue.latitude,
+        ]);
       } else {
-        marker = new mapboxgl.Marker().setLngLat([venue.longitude, venue.latitude]);
+        marker = new mapboxglInstance.Marker().setLngLat([
+          venue.longitude,
+          venue.latitude,
+        ]);
 
         if (venue.shows && venue.shows.length > 0) {
           const popupContent = `
             <div class="map-popup">
               <h2>${venue.name}</h2>
-              <h3>${venue.location} &bull; ${formatNumber(venue.shows_count, 'show')}</h3>
+              <h3>${venue.location} &bull; ${formatNumber(
+                venue.shows_count,
+                "show"
+              )}</h3>
               ${venue.shows
                 .map(
                   (show) => `
-                  <a href="/${show.date}" class="show-badge">${show.date.replace(/-/g, ".")}</a>
+                  <a href="/${show.date}" class="show-badge">${show.date.replace(
+                    /-/g,
+                    "."
+                  )}</a>
                   `
                 )
                 .join("")}
             </div>
           `;
-          const popup = new mapboxgl.Popup({ closeButton: false }).setHTML(popupContent);
+          const popup = new mapboxglInstance.Popup({ closeButton: false }).setHTML(popupContent);
           marker.setPopup(popup);
         }
       }
@@ -94,14 +113,12 @@ const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = 
       mapInstance.fitBounds(bounds, {
         padding: 50,
         maxZoom: 12,
-        duration: 1000
+        duration: 1000,
       });
     }
   };
 
-  return (
-    <div className="map-container" ref={mapContainer} />
-  );
+  return <div className="map-container" ref={mapContainer} />;
 };
 
 export default MapView;
