@@ -4,12 +4,11 @@ import { formatNumber } from "./helpers/utils";
 const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = true }) => {
   const mapContainer = useRef(null);
   const [map, setMap] = useState(null);
-  const [mapboxgl, setMapboxgl] = useState(null);  // Keep track of mapboxgl instance
+  const [mapboxgl, setMapboxgl] = useState(null);
 
   useEffect(() => {
     if (!coordinates || !mapboxToken || map) return;
 
-    // Dynamically import mapbox-gl when the component is rendered
     import("mapbox-gl").then((mapboxglModule) => {
       const mapboxglInstance = mapboxglModule.default;
       setMapboxgl(mapboxglInstance);
