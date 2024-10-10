@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { formatNumber } from "./helpers/utils";
+import Loader from "./controls/Loader";
 
 const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = true }) => {
   const mapContainer = useRef(null);
@@ -117,7 +118,12 @@ const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = 
     }
   };
 
-  return <div className="map-container" ref={mapContainer} />;
+  return (
+    <>
+      {!searchComplete && <Loader />}
+      <div className="map-container" ref={mapContainer} />
+    </>
+  );
 };
 
 export default MapView;

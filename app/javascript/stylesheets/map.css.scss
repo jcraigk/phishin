@@ -16,9 +16,12 @@
   font-size: 1.2rem;
   background-color: $text-gray;
   margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
   border-radius: $radius;
   padding: 0.1rem 0.3rem;
   color: white;
+  display: inline-block;
+  border: none !important;
 
   &:hover {
     background-color: $control-gray;
