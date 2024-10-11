@@ -46,6 +46,11 @@ html, body {
   overflow-x: hidden;
 }
 
+/* Disable gray squares after taps on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .root-layout {
   display: flex;
   flex-direction: column;
