@@ -5,7 +5,8 @@
   margin: 1rem auto auto auto;
   max-height: 800px;
   max-width: 1200px;
-  overflow: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 
   &:focus {
     outline: none;
