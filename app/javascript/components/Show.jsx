@@ -94,7 +94,7 @@ const Show = ({ trackSlug }) => {
         {formatDurationShow(show.duration)}
       </div>
 
-      <hr />
+      <hr className="sidebar-hr" />
 
       <div className="sidebar-control-container">
         <div className="hidden-phone">
@@ -105,7 +105,7 @@ const Show = ({ trackSlug }) => {
 
       <div className="hidden-mobile">
         <TagBadges tags={show.tags} parentId={show.date} />
-        <hr />
+        <hr className="sidebar-hr" />
         <Link to={`/${show.previous_show_date}`}>
           <FontAwesomeIcon icon={faCircleChevronLeft} className="mr-1" />
           Previous show

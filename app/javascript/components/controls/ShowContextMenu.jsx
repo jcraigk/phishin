@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link, useOutletContext } from "react-router-dom";
-import { formatDate } from "../helpers/utils";
+import { formatDateMed } from "../helpers/utils";
 import { useFeedback } from "./FeedbackContext";
 import LikeButton from "./LikeButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -36,7 +36,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
     const modalContent = (
       <>
         <h2 className="title">Taper Notes</h2>
-        <h3 className="subtitle">{formatDate(show.date)} &bull; {formatDate(show.venue_name)}</h3>
+        <h3 className="subtitle">{formatDateMed(show.date)} &bull; {show.venue_name}</h3>
         <p dangerouslySetInnerHTML={{ __html: (show.taper_notes || "").replace(/\n/g, "<br />") }}></p>
       </>
     );
