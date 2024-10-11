@@ -159,4 +159,10 @@
       padding: 0.5rem 0;
     }
   }
+
+  @media (max-width: 420px) {
+    .site-logo {
+      width: 135px !important;
+    }
+  }
 }
