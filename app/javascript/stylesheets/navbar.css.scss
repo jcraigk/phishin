@@ -35,6 +35,14 @@
       }
     }
 
+    .site-logo {
+      width: 220px;
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+      margin-left: 13px;
+    }
+
     img:hover {
       opacity: 0.65 !important;
     }
@@ -127,6 +135,10 @@
         width: 100%;
         display: flex;
       }
+    }
+
+    .site-logo {
+      width: 180px !important;
     }
 
     .dropdown-menu {

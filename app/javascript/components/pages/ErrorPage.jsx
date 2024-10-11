@@ -7,7 +7,7 @@ const ErrorPage = () => {
 
   return (
     <div className="error-page">
-      <img src={logo} className="site-logo" alt="Site logo" />
+      <img src={logo} className="error-logo" alt="Site logo" />
       {error?.status === 404 ? (
         <>
           <p className="error-title">404</p>

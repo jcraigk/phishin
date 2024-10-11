@@ -101,12 +101,14 @@ const DraftPlaylist = () => {
         Edit
       </button>
 
-      <div className="hidden-mobile mt-3">
-        <button onClick={handleImportActivePlaylist} className="button">
-          <FontAwesomeIcon icon={faFileImport} className="mr-1 text-gray" />
-          Import Active Playlist
-        </button>
-      </div>
+      {activePlaylist.length > 0 && (
+        <div className="hidden-mobile mt-3">
+          <button onClick={handleImportActivePlaylist} className="button">
+            <FontAwesomeIcon icon={faFileImport} className="mr-1 text-gray" />
+            Import Active Playlist
+          </button>
+        </div>
+      )}
     </div>
   );
 
