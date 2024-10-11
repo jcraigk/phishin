@@ -39,7 +39,7 @@ RSpec.describe "Tags", :js do
 
     first(".list-item", text: tag_1.name).find("a", text: "2 shows").click
     expect(page).to have_current_path("/show-tags/#{tag_1.slug}")
-    expect(page).to have_css(".list-item", text: show.date.to_s.gsub("-", "."))
+    expect(page).to have_css(".list-item", text: show.date.strftime("%b %-d, %Y"))
   end
 
   it "navigates to track tag page and displays correct track count" do

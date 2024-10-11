@@ -49,7 +49,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false }) => {
                   <CoverArt coverArtUrls={show.cover_art_urls} />
                   {formatDateMed(show.date)}
                 </span>
-                <span className="leftside-secondary">{show.venue.name}</span>
+                <span className="leftside-secondary">{show.venue_name}</span>
                 <span className="leftside-tertiary">
                   <TagBadges tags={show.tags} parentId={show.date} />
                 </span>

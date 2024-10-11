@@ -20,8 +20,8 @@ RSpec.describe "My Shows", :js do
     expect(page).to have_current_path("/my-shows")
     expect(page).to have_content("My Shows")
     shows.sort_by(&:date).reverse.each_with_index do |show, idx|
-      expect(page).to have_content(show.date.to_s.gsub("-", "."))
-      expect(page).to have_content(show.venue.name)
+      expect(page).to have_content(show.date.strftime("%b %-d, %Y"))
+      expect(page).to have_content(show.venue_name)
     end
   end
 
@@ -30,8 +30,8 @@ RSpec.describe "My Shows", :js do
     select "Sort by Likes (High to Low)", from: "sort"
     sorted_shows = shows.sort_by { |show| show.likes.count }.reverse
     sorted_shows.each_with_index do |show, idx|
-      expect(page).to have_content(show.date.to_s.gsub("-", "."))
-      expect(page).to have_content(show.venue.name)
+      expect(page).to have_content(show.date.strftime("%b %-d, %Y"))
+      expect(page).to have_content(show.venue_name)
     end
   end
 

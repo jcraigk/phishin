@@ -41,6 +41,8 @@ describe "Homepage", :js do
       expect(page).to have_link("Playlists", href: "/playlists")
       expect(page).to have_link("Top 46 Shows", href: "/top-shows")
       expect(page).to have_link("Top 46 Tracks", href: "/top-tracks")
+
+      find("#nav-search").click # Close the dropdown
     end
 
     within("#sidebar") do
@@ -81,6 +83,7 @@ describe "Homepage", :js do
 
     # Click most recent year
     click_on(most_recent_year)
+    sleep 1
     expect(page).to have_current_path("/#{most_recent_year}")
     within("#sidebar") do
       expect(page).to have_content(most_recent_year)

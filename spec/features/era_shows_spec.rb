@@ -30,8 +30,8 @@ RSpec.describe "Era Shows", :js do
     visit "/2024"
 
     shows.each do |show|
-      expect(page).to have_content(show.date.to_s.gsub("-", "."))
-      expect(page).to have_content(show.venue.name)
+      expect(page).to have_content(show.date.strftime("%b %-d, %Y"))
+      expect(page).to have_content(show.venue_name)
     end
   end
 

@@ -21,7 +21,7 @@ RSpec.describe "My Tracks", :js do
     expect(page).to have_current_path("/my-tracks")
     expect(page).to have_content("My Tracks")
     tracks.sort_by { _1.show.date }.reverse.each_with_index do |track, idx|
-      expect(page).to have_content(track.show.date.to_s.gsub("-", "."))
+      expect(page).to have_content(track.show.date.strftime("%b %-d, %Y"))
       expect(page).to have_content(track.title)
     end
   end
@@ -31,7 +31,7 @@ RSpec.describe "My Tracks", :js do
     select "Sort by Likes (High to Low)", from: "sort"
     sorted_tracks = tracks.sort_by { _1.likes.count }.reverse
     sorted_tracks.each_with_index do |track, idx|
-      expect(page).to have_content(track.show.date.to_s.gsub("-", "."))
+      expect(page).to have_content(track.show.date.strftime("%b %-d, %Y"))
       expect(page).to have_content(track.title)
     end
   end
@@ -41,7 +41,7 @@ RSpec.describe "My Tracks", :js do
     select "Sort by Duration (Longest First)", from: "sort"
     sorted_tracks = tracks.sort_by(&:duration).reverse
     sorted_tracks.each_with_index do |track, idx|
-      expect(page).to have_content(track.show.date.to_s.gsub("-", "."))
+      expect(page).to have_content(track.show.date.strftime("%b %-d, %Y"))
       expect(page).to have_content(track.title)
     end
   end
