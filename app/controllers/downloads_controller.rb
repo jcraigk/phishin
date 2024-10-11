@@ -18,6 +18,8 @@ class DownloadsController < ApplicationController
       disposition: "attachment",
       filename: "Phish #{track.show.date} #{track.title}.mp3",
       length: track.audio_file.size
+  rescue ActionController::MissingFile
+    head :not_found
   end
 
   def send_blob_file_inline
@@ -28,6 +30,8 @@ class DownloadsController < ApplicationController
       disposition: "inline",
       filename: blob.filename.to_s,
       length: blob.byte_size
+  rescue ActionController::MissingFile
+    head :not_found
   end
 
   def track
