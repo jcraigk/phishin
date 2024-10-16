@@ -105,6 +105,14 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
   ) { _1.show.cover_art_urls }
 
   expose(
+    :show_cover_art_prompt,
+    documentation: {
+      type: "Object",
+      desc: "URL of album cover image (text overlayed on cover art)"
+    }
+  ) { _1.show.cover_art_prompt }
+
+  expose(
     :show_album_cover_url,
     documentation: {
       type: "Object",
