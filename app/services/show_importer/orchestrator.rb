@@ -134,9 +134,11 @@ class ShowImporter::Orchestrator
   end
 
   def save_song_gaps(show)
+    puts "Calculating song gaps..."
     GapService.call(show)
     GapService.call \
       Show.where("date < ?", show.date).order(date: :desc).first
+    BustoutTagService.call(show)
   end
 
   def create_announcement
