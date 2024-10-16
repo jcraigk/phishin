@@ -3,6 +3,7 @@ import { Link, useOutletContext } from "react-router-dom";
 import { formatDateMed } from "../helpers/utils";
 import { useFeedback } from "./FeedbackContext";
 import LikeButton from "./LikeButton";
+import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight, faDownload } from "@fortawesome/free-solid-svg-icons";
 
@@ -113,6 +114,13 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
           <div className="dropdown-item display-phone-only">
             <LikeButton likable={show} type="Show" />
           </div>
+
+          {show.tags?.length > 0 && (
+            <div className="dropdown-item display-phone-only">
+              <TagBadges tags={show.tags} parentId={show.date} />
+            </div>
+          )}
+
           <a className="dropdown-item" onClick={(e) => copyToClipboard(e, false)}>
             <FontAwesomeIcon icon={faShareFromSquare} className="icon" />
             Share

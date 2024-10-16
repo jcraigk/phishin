@@ -14,30 +14,38 @@ const TagBadges = ({ tags, parentId }) => {
       return acc;
     }, {});
 
-  const handleClick = (tagGroup, event) => {
-    if (!tagGroup[0].notes && !tagGroup[0].transcript) {
-      return;
-    }
+  const handleClick = (event) => {
     event.stopPropagation();
     event.preventDefault();
 
     const modalContent = (
       <>
-        <h2 className="title">{tagGroup[0].name}</h2>
-        <div>
-          {tagGroup.map((tag, index) => (
-            <div key={index}>
-              {tag.transcript ? (
-                <>
-                  <h3 className="subtitle">{tag.notes}</h3>
-                  <p className="has-text-weight-bold mb-1">TRANSCRIPT:</p>
-                  <p dangerouslySetInnerHTML={{ __html: tag.transcript.replace(/\n/g, "<br />") }}></p>
-                </>
-              ) : (
-                <ul className="notes-list">
-                  <li>{tag.notes}</li>
-                </ul>
-              )}
+        <div className="tags-container">
+          {Object.entries(groupedTags).map(([tagName, tagGroup], index) => (
+            <div key={index} className="tag-group mb-4">
+              <div className="tag-badge mb-2">
+                {tagName} {tagGroup.length > 1 ? `(${tagGroup.length})` : ""}
+              </div>
+              <div className="tag-content">
+                {tagGroup.map((tag, idx) => (
+                  <div key={idx} className="tag-details">
+                    {tag.transcript ? (
+                      <>
+                        <p className="mb-4">{tag.notes || tag.description}</p>
+                        <p className="has-text-weight-bold mb-2">TRANSCRIPT:</p>
+                        <div
+                          className="box"
+                          dangerouslySetInnerHTML={{ __html: tag.transcript.replace(/\n/g, "<br />") }}
+                        ></div>
+                      </>
+                    ) : (
+                      <ul className="notes-list">
+                        <li>{tag.notes || tag.description}</li>
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
@@ -76,12 +84,11 @@ const TagBadges = ({ tags, parentId }) => {
   };
 
   return (
-    <div className="tag-badges-container">
+    <div className="tag-badges-container" onClick={handleClick}>
       {Object.entries(groupedTags).map(([tagName, tagGroup]) => {
         const count = tagGroup.length;
         const title = `${tagName} ${count > 1 ? `(${count})` : ""}`;
         const tooltipId = `tooltip-${parentId}-${tagName}`;
-        const isClickable = tagGroup[0].notes || tagGroup[0].transcript;
 
         return (
           <div
@@ -89,8 +96,6 @@ const TagBadges = ({ tags, parentId }) => {
             className="tag-badge"
             data-tooltip-id={tooltipId}
             data-tooltip-content={tooltipForTagStack(tagGroup)}
-            onClick={isClickable ? (event) => handleClick(tagGroup, event) : null}
-            style={{cursor: isClickable ? "pointer" : "default"}}
           >
             {title}
             <Tooltip id={tooltipId} className="custom-tooltip" />

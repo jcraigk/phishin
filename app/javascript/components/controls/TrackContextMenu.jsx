@@ -3,6 +3,7 @@ import { useOutletContext, Link } from "react-router-dom";
 import { useFeedback } from "./FeedbackContext";
 import DraftPlaylistTrackModal from "../modals/DraftPlaylistTrackModal";
 import LikeButton from "./LikeButton";
+import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faShareFromSquare, faCirclePlus, faDownload, faMusic, faCircleChevronLeft, faCircleChevronRight, faTrashAlt, faClock } from "@fortawesome/free-solid-svg-icons";
 
@@ -100,6 +101,12 @@ const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
             <div className="dropdown-item display-phone-only">
               <LikeButton likable={track} type="Track" />
             </div>
+
+            {track.tags?.length > 0 && (
+              <div className="dropdown-item display-phone-only">
+                <TagBadges tags={track.tags} parentId={track.id} />
+              </div>
+            )}
 
             <a className="dropdown-item" onClick={(e) => copyToClipboard(e)}>
               <FontAwesomeIcon icon={faShareFromSquare} className="icon" />

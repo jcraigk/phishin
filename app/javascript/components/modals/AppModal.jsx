@@ -10,6 +10,7 @@ const AppModal = ({ isOpen, onRequestClose, modalContent }) => {
 
   return (
     <Modal
+      id="app-modal"
       isOpen={isOpen}
       onRequestClose={onRequestClose}
       className="modal-content"

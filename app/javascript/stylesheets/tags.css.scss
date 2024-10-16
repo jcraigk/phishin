@@ -18,13 +18,26 @@
   white-space: nowrap;
 }
 
+.tag-details {
+  font-size: 1.2rem;
+}
+
+#app-modal {
+  .tag-badge {
+    font-size: 1.2rem !important;
+    padding: 0.2rem 0.6rem;
+    display: inline-block;
+  }
+}
+
+.dropdown-item {
+  .tag-badge {
+    font-size: 0.8rem !important;
+    line-height: 1rem !important;
+  }
+}
+
 .tag-badge:hover {
   background-color: $control-gray;
   color: $text-gray;
-}
-
-ul.notes-list {
-  list-style-type: disc;
-  margin-left: 20px;
-  padding-left: 0;
 }
