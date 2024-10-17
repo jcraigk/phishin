@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { formatNumber } from "./helpers/utils";
 import Loader from "./controls/Loader";
+import PhoneTiltSuggestion from "./PhoneTiltSuggestion";
 
 const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = true }) => {
   const mapContainer = useRef(null);
@@ -128,6 +129,7 @@ const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = 
     <>
       {!searchComplete && <Loader />}
       <div className="map-container" ref={mapContainer} />
+      <PhoneTiltSuggestion />
     </>
   );
 };

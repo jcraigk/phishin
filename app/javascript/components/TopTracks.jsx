@@ -16,6 +16,7 @@ import { useLoaderData } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
+import PhoneTitle from "./PhoneTitle";
 
 const TopTracks = () => {
   const { tracks } = useLoaderData();
@@ -35,6 +36,7 @@ const TopTracks = () => {
         <title>Top Tracks - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
+        <PhoneTitle title="Top 46 Tracks" />
         <Tracks tracks={tracks} numbering={true} omitSecondary={true} />
       </LayoutWrapper>
     </>

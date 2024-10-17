@@ -307,4 +307,13 @@ footer.with-player {
       }
     }
   }
+
+  @media (max-width: 420px) {
+    .track-title {
+      font-size: 1rem !important;
+    }
+    .track-info {
+      font-size: 1rem !important;
+    }
+  }
 }

@@ -28,6 +28,7 @@ import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Songs from "./Songs";
 import Pagination from "./controls/Pagination";
+import PhoneTitle from "./PhoneTitle";
 import { paginationHelper } from "./helpers/pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -101,6 +102,7 @@ const SongIndex = () => {
         <title>Songs - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
+        <PhoneTitle title="Songs" />
         <Songs songs={songs} />
         {totalPages > 1 && (
           <Pagination

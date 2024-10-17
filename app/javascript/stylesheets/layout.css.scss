@@ -252,6 +252,7 @@ main {
 @media (max-width: 420px) {
   .list-item {
     min-height: 2rem;
+    padding: 0.25rem 0.6rem;
   }
   .display-phone-only {
     display: block !important;
@@ -283,7 +284,8 @@ main {
     padding-right: 0.1rem !important;
   }
   .leftside-numbering {
-    display: none;
+    width: 0.8rem !important;
+    font-size: 0.8rem !important;
   }
   h1.title {
     font-size: 1.7rem !important;

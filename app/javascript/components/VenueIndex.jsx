@@ -29,6 +29,7 @@ import { Helmet } from "react-helmet-async";
 import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Venues from "./Venues";
+import PhoneTitle from "./PhoneTitle";
 import Pagination from "./controls/Pagination";
 import { paginationHelper } from "./helpers/pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -119,6 +120,7 @@ const VenueIndex = () => {
         <title>Venues - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
+        <PhoneTitle title="Venues" />
         <Venues venues={venues} />
         <Pagination
           totalPages={totalPages}
@@ -128,6 +130,7 @@ const VenueIndex = () => {
           handlePerPageInputChange={handlePerPageInputChange}
           handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
         />
+        <PhoneTitleSuggestion />
       </LayoutWrapper>
     </>
   );
