@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Outlet, useNavigate, useNavigation } from "react-router-dom";
+import { Outlet, useNavigate, useNavigation, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Loader from "../controls/Loader";
@@ -19,6 +19,7 @@ const initialDraftPlaylistMeta = {
 const Layout = ({ props }) => {
   const navigation = useNavigation();
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState(null);
   const [isAppModalOpen, setIsAppModalOpen] = useState(false);
   const [appModalContent, setAppModalContent] = useState(null);
@@ -31,6 +32,11 @@ const Layout = ({ props }) => {
   const [activeTrack, setActiveTrack] = useState(null);
   const audioRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
+
+  useEffect(() => {
+    // Scroll to top whenever the location changes
+    document.querySelector("#navbar-background").scrollIntoView({ behavior: "instant"});
+  }, [location]);
 
   useEffect(() => {
     // OAuth failure

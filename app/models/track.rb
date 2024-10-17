@@ -79,7 +79,7 @@ class Track < ApplicationRecord
   end
 
   def generate_waveform_image(purge_cache: false)
-    WaveformImageGenerator.new(self).call
+    WaveformImageService.new(self).call
     CloudflareCachePurgeService.call(waveform_image_url) if purge_cache
   end
 

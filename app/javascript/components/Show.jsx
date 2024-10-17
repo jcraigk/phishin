@@ -52,7 +52,7 @@ const Show = ({ trackSlug }) => {
       setMatchedTrack(foundTrack);
       const trackIndex = tracks.findIndex((track) => track.slug === foundTrack.slug);
       if (trackRefs.current[trackIndex]) {
-        trackRefs.current[trackIndex].scrollIntoView({ behavior: "smooth", block: "center" });
+        trackRefs.current[trackIndex].scrollIntoView({ behavior: "smooth" });
       }
     }
   }, []);
@@ -147,7 +147,7 @@ const Show = ({ trackSlug }) => {
         {showIncompleteNotification && infoBox("This show's audio is incomplete", () => handleClose("incomplete"))}
         {showAdminNotesNotification && infoBox(show.admin_notes, () => handleClose("adminNotes"))}
 
-        <div className="display-phone-only">
+        <div className="display-phone-only mt-1 mb-3">
           <div className="phone-show-container">
             <div className="phone-show-image">
               <CoverArt
