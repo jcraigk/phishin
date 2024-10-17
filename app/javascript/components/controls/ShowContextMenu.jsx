@@ -1,13 +1,13 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link, useOutletContext } from "react-router-dom";
-import { formatDateMed } from "../helpers/utils";
+import { formatDate } from "../helpers/utils";
 import { useFeedback } from "./FeedbackContext";
 import LikeButton from "./LikeButton";
 import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight, faDownload } from "@fortawesome/free-solid-svg-icons";
 
-const ShowContextMenu = ({ show, adjacentLinks = true }) => {
+const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
   const dropdownRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
   const { openAppModal } = useOutletContext();
@@ -37,7 +37,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
     const modalContent = (
       <>
         <h2 className="title">Taper Notes</h2>
-        <h3 className="subtitle">{formatDateMed(show.date)} &bull; {show.venue_name}</h3>
+        <h3 className="subtitle">{formatDate(show.date)} &bull; {show.venue_name}</h3>
         <p dangerouslySetInnerHTML={{ __html: (show.taper_notes || "").replace(/\n/g, "<br />") }}></p>
       </>
     );
@@ -110,7 +110,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
         role="menu"
         style={{ display: dropdownVisible ? "block" : "none" }}
       >
-        <div className="dropdown-content context-dropdown-content">
+        <div className={`dropdown-content context-dropdown-content ${css ? css : ""}`.trim()}>
           <div className="dropdown-item display-phone-only">
             <LikeButton likable={show} type="Show" />
           </div>

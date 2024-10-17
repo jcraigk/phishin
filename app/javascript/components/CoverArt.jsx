@@ -7,22 +7,23 @@ const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, size = "small", c
     if (!openAppModal) return;
     const modalContent = (
       <>
+        {albumCoverUrl && (
+          <div className="large-album-art">
+            <img
+              src={albumCoverUrl}
+              alt="Album cover"
+              loading="eager"
+            />
+          </div>
+        )}
+
         {coverArtUrls?.large && (
           <div className="large-album-art mt-3">
             <img
               src={coverArtUrls?.large}
-              alt="Cover art" loading="lazy"
+              alt="Cover art"
+              loading="eager"
              />
-          </div>
-        )}
-
-        {albumCoverUrl && (
-          <div className="large-album-art hidden-mobile">
-            <img
-              src={albumCoverUrl}
-              alt="Album cover"
-              loading="lazy"
-            />
           </div>
         )}
 
@@ -53,7 +54,7 @@ const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, size = "small", c
       <img
         src={selectedImage}
         alt={selectedOption === "coverArt" ? "Cover art" : "Album cover"}
-        className={`${css} cover-art-${size}`}
+        className={css || undefined}
         onLoad={handleImageLoad}
         loading="lazy"
       />

@@ -3,10 +3,12 @@
   padding: 1.5rem;
   border-radius: $radius;
   margin: 1rem auto auto auto;
-  max-height: 800px;
-  max-width: 1200px;
+  max-height: 80vh;
+  max-width: 90vw;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  position: relative;
+  top: 1rem;
 
   &:focus {
     outline: none;
@@ -43,6 +45,7 @@
   align-items: center;
   justify-content: center;
   z-index: 103;
+  overflow-y: auto;
 }
 
 @media (min-width: 1023px) {

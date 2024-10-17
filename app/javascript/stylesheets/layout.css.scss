@@ -272,7 +272,7 @@ main {
     gap: 0.8rem;
 
     #sidebar {
-      padding: 0.5rem;
+      display: none !important;
     }
   }
   .title-left {
@@ -294,7 +294,6 @@ main {
   main.with-player {
     margin-bottom: 2rem !important;
   }
-
   .section-title {
     &:not(:first-of-type) {
       margin-top: 2rem !important;
@@ -303,28 +302,5 @@ main {
   .map-search-results {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
-  }
-  .sidebar-title {
-    font-size: 1.2rem !important;
-    line-height: 1.3rem !important;
-  }
-  .sidebar-subtitle {
-    font-size: 1rem !important;
-    line-height: 1.1rem !important;
-  }
-  .sidebar-filters {
-    display: none !important;
-  }
-  .show-duration {
-    margin-top: 0rem !important;
-  }
-  .show-cover-title {
-    font-size: 1.3rem !important;
-
-    .cover-art-small {
-      width: 32px !important;
-      height: 32px !important;
-      top: -2px !important;
-    }
   }
 }
