@@ -1,15 +1,17 @@
 .phone-show-container {
   display: flex;
   align-items: flex-start;
-  margin-bottom: 1rem;
 
   .phone-show-image {
-    width: 128px;
-    height: 128px;
+    width: 100px;
+    height: 100px;
     margin-right: 0.3rem;
-    margin-left: 2rem;
+    margin-left: 3rem;
     flex-shrink: 0;
-    border-radius: $radius;
+
+    img {
+      box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.15);
+    }
   }
 
   .phone-show-info {

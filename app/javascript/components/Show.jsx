@@ -161,7 +161,7 @@ const Show = ({ trackSlug }) => {
             </div>
             <div className="phone-show-info">
               <span className="phone-show-date">{formatDate(show.date)}</span>
-              <span className="phone-show-venue">{show.venue_name}</span>
+              {/* <span className="phone-show-venue">{show.venue_name}</span> */}
               <span className="phone-show-duration">
                 <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
                 {formatDurationShow(show.duration)}

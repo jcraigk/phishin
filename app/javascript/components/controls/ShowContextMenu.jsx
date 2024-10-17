@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link, useOutletContext } from "react-router-dom";
-import { formatDate } from "../helpers/utils";
+import { formatDate, truncate } from "../helpers/utils";
 import { useFeedback } from "./FeedbackContext";
 import LikeButton from "./LikeButton";
 import TagBadges from "./TagBadges";
@@ -111,6 +111,33 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
         style={{ display: dropdownVisible ? "block" : "none" }}
       >
         <div className={`dropdown-content context-dropdown-content ${css ? css : ""}`.trim()}>
+
+          <Link
+            className="dropdown-item"
+            to={`/venues/${show.venue.slug}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <FontAwesomeIcon icon={faLandmark} className="icon" />
+            {truncate(show.venue_name, 25)}
+          </Link>
+
+          <Link
+            className="dropdown-item"
+            to={`/map?term=${show.venue.location}`
+            }
+            onClick={(e) => e.stopPropagation()}
+          >
+            <FontAwesomeIcon icon={faMapMarkerAlt} className="icon" />
+            {truncate(show.venue.location, 25)}
+          </Link>
+
+          <a className="dropdown-item" onClick={handleTaperNotesClick}>
+            <FontAwesomeIcon icon={faClipboard} className="icon" />
+            Taper Notes
+          </a>
+
+          <hr className="dropdown-divider" />
+
           <div className="dropdown-item display-phone-only">
             <LikeButton likable={show} type="Show" />
           </div>
@@ -145,37 +172,8 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
             Phish.net
           </a>
 
-          <hr className="dropdown-divider" />
-
-          <a className="dropdown-item" onClick={handleTaperNotesClick}>
-            <FontAwesomeIcon icon={faClipboard} className="icon" />
-            Taper Notes
-          </a>
-
-          <Link
-            className="dropdown-item"
-            to={`/venues/${show.venue.slug}`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <FontAwesomeIcon icon={faLandmark} className="icon" />
-            {show.venue_name}
-          </Link>
-
-          <Link
-            className="dropdown-item"
-            to={`/map?term=${show.venue.location}`
-            }
-            onClick={(e) => e.stopPropagation()}
-          >
-            <FontAwesomeIcon icon={faMapMarkerAlt} className="icon" />
-            {show.venue.location}
-          </Link>
-
-
           {adjacentLinks && (
             <>
-              <hr className="dropdown-divider" />
-
               <Link
                 className="dropdown-item"
                 to={`/${show.previous_show_date}`}
@@ -201,15 +199,11 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
             </>
           )}
 
-          {show.tracks?.length > 0 && (
-            <>
-              <hr className="dropdown-divider" />
-              <a className="dropdown-item" onClick={handleAddToPlaylist}>
-                <FontAwesomeIcon icon={faCirclePlus} className="icon" />
-                Add to playlist
-              </a>
-            </>
-          )}
+          <hr className="dropdown-divider" />
+          <a className="dropdown-item" onClick={handleAddToPlaylist}>
+            <FontAwesomeIcon icon={faCirclePlus} className="icon" />
+            Add to playlist
+          </a>
         </div>
       </div>
     </div>
