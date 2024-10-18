@@ -29,6 +29,7 @@ import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
+import PhoneTiltSuggestion from "./PhoneTiltSuggestion";
 
 const TodayShows = () => {
   const { shows, month, day, sortBy } = useLoaderData();
@@ -109,6 +110,7 @@ const TodayShows = () => {
         ) : (
           <Shows shows={shows} tourHeaders={true} />
         )}
+        <PhoneTiltSuggestion />
       </LayoutWrapper>
     </>
   );

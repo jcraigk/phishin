@@ -1,0 +1,31 @@
+.phone-show-container {
+  display: flex;
+  align-items: flex-start;
+
+  .phone-show-image {
+    width: 100px;
+    height: 100px;
+    margin-right: 0.3rem;
+    margin-left: 3.5rem;
+    flex-shrink: 0;
+
+    img {
+      box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .phone-show-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .phone-show-date {
+      font-size: 1.6rem;
+      font-weight: bold;
+    }
+    .phone-show-context {
+      position: relative;
+      left: -7px;
+    }
+  }
+}

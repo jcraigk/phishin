@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { formatNumber } from "./helpers/utils";
 import Loader from "./controls/Loader";
+import PhoneTiltSuggestion from "./PhoneTiltSuggestion";
 
 const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = true }) => {
   const mapContainer = useRef(null);
   const [map, setMap] = useState(null);
   const [mapboxgl, setMapboxgl] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!coordinates || !mapboxToken || map) return;
@@ -78,26 +81,30 @@ const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = 
         ]);
 
         if (venue.shows && venue.shows.length > 0) {
-          const popupContent = `
-            <div class="map-popup">
-              <h2>${venue.name}</h2>
-              <h3>${venue.location} &bull; ${formatNumber(
-                venue.shows_count,
-                "show"
-              )}</h3>
-              ${venue.shows
-                .map(
-                  (show) => `
-                  <a href="/${show.date}" class="show-badge">${show.date.replace(
-                    /-/g,
-                    "."
-                  )}</a>
-                  `
-                )
-                .join("")}
-            </div>
-          `;
-          const popup = new mapboxglInstance.Popup({ closeButton: false }).setHTML(popupContent);
+          const popupContent = document.createElement("div");
+          popupContent.className = "map-popup";
+
+          const venueTitle = document.createElement("h2");
+          venueTitle.textContent = venue.name;
+          popupContent.appendChild(venueTitle);
+
+          const venueLocation = document.createElement("h3");
+          venueLocation.textContent = `${venue.location} • ${formatNumber(venue.shows_count, "show")}`;
+          popupContent.appendChild(venueLocation);
+
+          venue.shows.forEach((show) => {
+            const showLink = document.createElement("a");
+            showLink.href = `/${show.date}`;
+            showLink.className = "show-badge";
+            showLink.textContent = show.date.replace(/-/g, ".");
+            showLink.onclick = (e) => {
+              e.preventDefault();
+              navigate(`/${show.date}`);
+            };
+            popupContent.appendChild(showLink);
+          });
+
+          const popup = new mapboxglInstance.Popup({ closeButton: false }).setDOMContent(popupContent);
           marker.setPopup(popup);
         }
       }
@@ -122,8 +129,10 @@ const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = 
     <>
       {!searchComplete && <Loader />}
       <div className="map-container" ref={mapContainer} />
+      <PhoneTiltSuggestion />
     </>
   );
 };
 
 export default MapView;
+

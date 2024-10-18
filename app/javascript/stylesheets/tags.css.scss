@@ -41,3 +41,12 @@
   background-color: $control-gray;
   color: $text-gray;
 }
+
+@media (hover: none) and (pointer: coarse) {
+  .custom-tooltip {
+    display: none !important;
+  }
+  .tag-badge {
+    pointer-events: none;
+  }
+}

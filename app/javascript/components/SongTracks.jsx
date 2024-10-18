@@ -47,6 +47,7 @@ import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
+import PhoneTitle from "./PhoneTitle";
 import Pagination from "./controls/Pagination";
 import { paginationHelper } from "./helpers/pagination";
 
@@ -90,6 +91,7 @@ const SongTracks = () => {
         <title>{songTitle} - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
+        <PhoneTitle title={songTitle} />
         <Tracks tracks={tracks} />
         {totalPages > 1 && (
           <Pagination

@@ -32,9 +32,8 @@ export const formatDurationTrack = (milliseconds) => {
 };
 
 export const formatDate = (dateString) => {
-  return dateString?.replace(/-/g, ".");
-};
-export const formatDateMed = (dateString) => {
+  if (!dateString) return "";
+
   const [year, month, day] = dateString.split("-").map(Number);
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 

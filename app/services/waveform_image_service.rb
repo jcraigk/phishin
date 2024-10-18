@@ -1,4 +1,4 @@
-class WaveformImageGenerator
+class WaveformImageService
   attr_reader :track
 
   def initialize(track)

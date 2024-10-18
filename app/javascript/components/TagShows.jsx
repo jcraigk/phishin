@@ -38,6 +38,7 @@ import { useLoaderData } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
+import PhoneTitle from "./PhoneTitle";
 import Pagination from "./controls/Pagination";
 import { paginationHelper } from "./helpers/pagination";
 
@@ -76,6 +77,7 @@ const TagShows = () => {
         <title>{tag.name} - Shows - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
+        <PhoneTitle title={`${tag.name} Shows`} />
         <Shows shows={shows} />
         {totalPages > 1 && (
           <Pagination

@@ -92,7 +92,7 @@ const Eras = () => {
                         <div className="main-row">
                         <span className="leftside-primary">{period}</span>
                         <span className="leftside-secondary">
-                          {venues_count} venue{venues_count !== 1 ? "s" : ""}
+                          {formatNumber(venues_count, 'venue')}
                         </span>
                         <span className="rightside-group">
                           {formatNumber(shows_count, 'show')}

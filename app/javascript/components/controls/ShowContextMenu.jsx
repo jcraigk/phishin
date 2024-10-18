@@ -1,13 +1,13 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link, useOutletContext } from "react-router-dom";
-import { formatDateMed } from "../helpers/utils";
+import { formatDate, truncate } from "../helpers/utils";
 import { useFeedback } from "./FeedbackContext";
 import LikeButton from "./LikeButton";
 import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight, faDownload } from "@fortawesome/free-solid-svg-icons";
 
-const ShowContextMenu = ({ show, adjacentLinks = true }) => {
+const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
   const dropdownRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
   const { openAppModal } = useOutletContext();
@@ -37,7 +37,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
     const modalContent = (
       <>
         <h2 className="title">Taper Notes</h2>
-        <h3 className="subtitle">{formatDateMed(show.date)} &bull; {show.venue_name}</h3>
+        <h3 className="subtitle">{formatDate(show.date)} &bull; {show.venue_name}</h3>
         <p dangerouslySetInnerHTML={{ __html: (show.taper_notes || "").replace(/\n/g, "<br />") }}></p>
       </>
     );
@@ -110,7 +110,34 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
         role="menu"
         style={{ display: dropdownVisible ? "block" : "none" }}
       >
-        <div className="dropdown-content context-dropdown-content">
+        <div className={`dropdown-content context-dropdown-content ${css ? css : ""}`.trim()}>
+
+          <Link
+            className="dropdown-item"
+            to={`/venues/${show.venue.slug}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <FontAwesomeIcon icon={faLandmark} className="icon" />
+            {truncate(show.venue_name, 25)}
+          </Link>
+
+          <Link
+            className="dropdown-item"
+            to={`/map?term=${show.venue.location}`
+            }
+            onClick={(e) => e.stopPropagation()}
+          >
+            <FontAwesomeIcon icon={faMapMarkerAlt} className="icon" />
+            {truncate(show.venue.location, 25)}
+          </Link>
+
+          <a className="dropdown-item" onClick={handleTaperNotesClick}>
+            <FontAwesomeIcon icon={faClipboard} className="icon" />
+            Taper Notes
+          </a>
+
+          <hr className="dropdown-divider" />
+
           <div className="dropdown-item display-phone-only">
             <LikeButton likable={show} type="Show" />
           </div>
@@ -145,37 +172,8 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
             Phish.net
           </a>
 
-          <hr className="dropdown-divider" />
-
-          <a className="dropdown-item" onClick={handleTaperNotesClick}>
-            <FontAwesomeIcon icon={faClipboard} className="icon" />
-            Taper Notes
-          </a>
-
-          <Link
-            className="dropdown-item"
-            to={`/venues/${show.venue.slug}`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <FontAwesomeIcon icon={faLandmark} className="icon" />
-            {show.venue_name}
-          </Link>
-
-          <Link
-            className="dropdown-item"
-            to={`/map?term=${show.venue.location}`
-            }
-            onClick={(e) => e.stopPropagation()}
-          >
-            <FontAwesomeIcon icon={faMapMarkerAlt} className="icon" />
-            {show.venue.location}
-          </Link>
-
-
           {adjacentLinks && (
             <>
-              <hr className="dropdown-divider" />
-
               <Link
                 className="dropdown-item"
                 to={`/${show.previous_show_date}`}
@@ -201,15 +199,11 @@ const ShowContextMenu = ({ show, adjacentLinks = true }) => {
             </>
           )}
 
-          {show.tracks?.length > 0 && (
-            <>
-              <hr className="dropdown-divider" />
-              <a className="dropdown-item" onClick={handleAddToPlaylist}>
-                <FontAwesomeIcon icon={faCirclePlus} className="icon" />
-                Add to playlist
-              </a>
-            </>
-          )}
+          <hr className="dropdown-divider" />
+          <a className="dropdown-item" onClick={handleAddToPlaylist}>
+            <FontAwesomeIcon icon={faCirclePlus} className="icon" />
+            Add to playlist
+          </a>
         </div>
       </div>
     </div>

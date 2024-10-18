@@ -18,7 +18,10 @@ module HasCoverArt
       CoverArtPromptService.call(self)
       CoverArtImageService.call(self)
       AlbumCoverService.call(self)
-      tracks.each(&:apply_id3_tags)
+      tracks.each do
+        _1.apply_id3_tags
+        CloudflareCachePurgeService.call(_1.mp3_url)
+      end
     end
 
     def album_zip_url

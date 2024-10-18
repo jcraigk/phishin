@@ -4,7 +4,7 @@ import { formatDate, parseTimeParam } from "../helpers/utils";
 import { useFeedback } from "./FeedbackContext";
 import CoverArt from "../CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlay, faPause, faRotateRight, faRotateLeft, faStepForward, faStepBackward, faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faPlay, faPause, faRotateRight, faRotateLeft, faForward, faBackward, faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 
 const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customPlaylist, openAppModal }) => {
   const location = useLocation();
@@ -232,6 +232,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
             albumCoverUrl={activeTrack?.show_album_cover_url}
             openAppModal={openAppModal}
             prompt={activeTrack?.show_cover_art_prompt}
+            css="cover-art-small"
           />
           <div className="track-details">
             <div className="track-title">
@@ -272,7 +273,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
               className="skip-btn"
               onClick={skipToPreviousTrack}
             >
-              <FontAwesomeIcon icon={faStepBackward} />
+              <FontAwesomeIcon icon={faBackward} />
             </button>
             <button
               className="scrub-btn scrub-back"
@@ -298,7 +299,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
               className="skip-btn"
               onClick={skipToNextTrack}
             >
-              <FontAwesomeIcon icon={faStepForward} />
+              <FontAwesomeIcon icon={faForward} />
             </button>
           </div>
         </div>

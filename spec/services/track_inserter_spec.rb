@@ -20,11 +20,11 @@ RSpec.describe TrackInserter do
   let(:song_id) { song.id }
   let(:song) { create(:song) }
   let(:title) { 'New Track' }
-  let(:mock_generator) { instance_spy(WaveformImageGenerator) }
+  let(:mock_service) { instance_spy(WaveformImageService) }
 
   before do
-    allow(WaveformImageGenerator).to receive(:new).and_return(mock_generator)
-    allow(mock_generator).to receive(:call)
+    allow(WaveformImageService).to receive(:new).and_return(mock_service)
+    allow(mock_service).to receive(:call)
 
     create(:track, show:, position: 1)
     create(:track, show:, position: 2)

@@ -19,7 +19,7 @@ export const showLoader = async ({ params }) => {
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useLoaderData, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { formatDate, formatDateMed, formatDurationShow } from "./helpers/utils";
+import { formatDate, formatDurationShow } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import ShowContextMenu from "./controls/ShowContextMenu";
 import LikeButton from "./controls/LikeButton";
@@ -52,7 +52,7 @@ const Show = ({ trackSlug }) => {
       setMatchedTrack(foundTrack);
       const trackIndex = tracks.findIndex((track) => track.slug === foundTrack.slug);
       if (trackRefs.current[trackIndex]) {
-        trackRefs.current[trackIndex].scrollIntoView({ behavior: "smooth", block: "center" });
+        trackRefs.current[trackIndex].scrollIntoView({ behavior: "smooth" });
       }
     }
   }, []);
@@ -83,7 +83,7 @@ const Show = ({ trackSlug }) => {
             prompt={show.cover_art_prompt}
           />
         </span>
-        {formatDateMed(show.date)}
+        {formatDate(show.date)}
       </div>
 
       <p className="sidebar-info hidden-mobile">
@@ -146,6 +146,32 @@ const Show = ({ trackSlug }) => {
       <LayoutWrapper sidebarContent={sidebarContent}>
         {showIncompleteNotification && infoBox("This show's audio is incomplete", () => handleClose("incomplete"))}
         {showAdminNotesNotification && infoBox(show.admin_notes, () => handleClose("adminNotes"))}
+
+        <div className="display-phone-only mt-1 mb-3">
+          <div className="phone-show-container">
+            <div className="phone-show-image">
+              <CoverArt
+                coverArtUrls={show.cover_art_urls}
+                albumCoverUrl={show.album_cover_url}
+                openAppModal={openAppModal}
+                prompt={show.cover_art_prompt}
+                size="medium"
+                css="phone-show-mobile"
+              />
+            </div>
+            <div className="phone-show-info">
+              <span className="phone-show-date">{formatDate(show.date)}</span>
+              <span className="phone-show-duration">
+                <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
+                {formatDurationShow(show.duration)}
+              </span>
+              <span className="phone-show-context">
+                <ShowContextMenu show={show} css="context-nudge-right" />
+              </span>
+            </div>
+          </div>
+        </div>
+
         <Tracks tracks={tracks} viewStyle="show" trackRefs={trackRefs} trackSlug={trackSlug} />
       </LayoutWrapper>
     </>

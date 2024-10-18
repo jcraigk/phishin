@@ -30,6 +30,7 @@ import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
 import MapView from "./MapView";
+import PhoneTitle from "./PhoneTitle";
 
 const VenueShows = () => {
   const { shows, venue, sortOption } = useLoaderData();
@@ -83,6 +84,7 @@ const VenueShows = () => {
         <title>{venue.name} - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
+        <PhoneTitle title={venue.name} />
         <Shows shows={shows} />
       </LayoutWrapper>
     </>
