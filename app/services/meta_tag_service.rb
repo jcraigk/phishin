@@ -116,13 +116,13 @@ class MetaTagService < BaseService
         end
       og_title =
         if track
-          "Listen to #{track.title} from #{long_date_format(show.date)}"
+          "Listen to #{track.title} from #{formatted_date(show.date)}"
         else
-          "Listen to #{long_date_format(show.date)}"
+          "Listen to #{formatted_date(show.date)}"
         end
     else
       title = "#{formatted_date(show.date)}#{TITLE_SUFFIX}"
-      og_title = "Listen to #{long_date_format(show.date)}"
+      og_title = "Listen to #{formatted_date(show.date)}"
     end
 
     {
@@ -166,11 +166,7 @@ class MetaTagService < BaseService
   end
 
   def formatted_date(date)
-    date.strftime("%Y.%m.%d")
-  end
-
-  def long_date_format(date)
-    date.strftime("%B %-d, %Y")
+    date.strftime("%b %-d, %Y")
   end
 
   def date?
