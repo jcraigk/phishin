@@ -101,6 +101,7 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   min-height: 3.5rem;
   cursor: pointer;
+  background-color: $bg-gray;
   background-size: cover;
   background-repeat: no-repeat;
 
@@ -247,7 +248,7 @@
     background-color: rgba($blue, 0.5);
   }
   50% {
-    background-color: transparent;
+    background-color: $bg-gray;
   }
   100% {
     background-color: rgba($blue, 0.5);

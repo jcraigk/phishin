@@ -41,6 +41,12 @@ const Show = ({ trackSlug }) => {
 
   useEffect(() => {
     setTracks(show.tracks);
+
+    const backgroundDiv = document.querySelector(".background-blur");
+    if (show.cover_art_urls?.medium && backgroundDiv) {
+      const imageUrl = show.cover_art_urls.medium;
+      backgroundDiv.style.backgroundImage = `url(${imageUrl})`;
+    }
   }, [show]);
 
   useEffect(() => {
@@ -141,6 +147,7 @@ const Show = ({ trackSlug }) => {
       <Helmet>
         <title>{matchedTrack ? `${matchedTrack.title} - ${formatDate(show.date)} - Phish.in` : `${formatDate(show.date)} - Phish.in`}</title>
       </Helmet>
+      <div className="background-blur"></div>
       <LayoutWrapper sidebarContent={sidebarContent}>
         {showIncompleteNotification && infoBox("This show's audio is incomplete", () => handleClose("incomplete"))}
         {showAdminNotesNotification && infoBox(show.admin_notes, () => handleClose("adminNotes"))}

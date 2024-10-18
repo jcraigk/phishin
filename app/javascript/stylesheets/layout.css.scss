@@ -25,6 +25,7 @@ main {
   border-radius: 5px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   max-height: fit-content;
+  z-index: 2;
 
   .sidebar-content {
     a {
