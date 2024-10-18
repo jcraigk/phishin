@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import PageWrapper from "./PageWrapper";
 import DiscordButton from "./DiscordButton";
 
-const taginProject = () => {
+const TaginProject = () => {
   return (
     <PageWrapper>
       <h1 className="title">Tagin' Project</h1>
@@ -122,4 +122,4 @@ const taginProject = () => {
   );
 };
 
-export default taginProject;
+export default TaginProject;

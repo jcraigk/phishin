@@ -30,7 +30,6 @@ import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Venues from "./Venues";
 import PhoneTitle from "./PhoneTitle";
-import PhoneTiltSuggestion from "./PhoneTiltSuggestion";
 import Pagination from "./controls/Pagination";
 import { paginationHelper } from "./helpers/pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -131,7 +130,6 @@ const VenueIndex = () => {
           handlePerPageInputChange={handlePerPageInputChange}
           handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
         />
-        <PhoneTiltSuggestion />
       </LayoutWrapper>
     </>
   );
