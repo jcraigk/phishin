@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../images/logo-350.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendar, faMicrophone, faMapMarkerAlt, faAward, faCalendarDay, faSearch, faAngleDown, faRecordVinyl, faGuitar, faUser, faCircleXmark, faRightToBracket, faGear, faClipboardList, faListCheck, faListOl, faDiceFive, faLandmark } from "@fortawesome/free-solid-svg-icons";
+import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendar, faMicrophone, faMapMarkerAlt, faAward, faCalendarDay, faSearch, faAngleDown, faRecordVinyl, faGuitar, faChevronDown, faCircleXmark, faRightToBracket, faGear, faClipboardList, faListCheck, faListOl, faDiceFive, faLandmark } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = ({ user, handleLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -233,7 +233,7 @@ const Navbar = ({ user, handleLogout }) => {
                     <div className="dropdown-trigger">
                       <button className="button" onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}>
                         <span className="icon">
-                          <FontAwesomeIcon icon={faUser} />
+                          <FontAwesomeIcon icon={faChevronDown} />
                         </span>
                         <span>{user.username}</span>
                       </button>

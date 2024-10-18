@@ -245,13 +245,13 @@
 
 @keyframes pulse {
   0% {
-    background-color: rgba($blue, 0.5);
+    background-color: $pulse-blue;
   }
   50% {
     background-color: $bg-gray;
   }
   100% {
-    background-color: rgba($blue, 0.5);
+    background-color: $pulse-blue;
   }
 }
 
