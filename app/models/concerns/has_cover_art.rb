@@ -1,3 +1,5 @@
+require "mini_magick"
+
 module HasCoverArt
   extend ActiveSupport::Concern
 
@@ -43,6 +45,36 @@ module HasCoverArt
     def album_zip_path
       return unless album_zip.attached?
       ActiveStorage::Blob.service.send(:path_for, album_zip.blob.key)
+    end
+
+    def attach_cover_art_by_url(image_url)
+      image_response = Typhoeus.get(image_url)
+
+      if image_response.success?
+        # Save the image as a temporary PNG file
+        Tempfile.create([ "cover_art_#{SecureRandom.hex}", ".png" ]) do |temp_png|
+          temp_png.binmode
+          temp_png.write(image_response.body)
+          temp_png.rewind
+
+          # Convert to JPG and generate derivatives using MiniMagick
+          Tempfile.create([ "cover_art_#{SecureRandom.hex}", ".jpg" ]) do |temp_jpg|
+            image = MiniMagick::Image.open(temp_png.path)
+            image.format "jpg"
+            image.quality 90
+            image.strip
+            image.write(temp_jpg.path)
+
+            # Attach the converted JPG image to the show
+            cover_art.attach \
+              io: File.open(temp_jpg.path),
+              filename: "cover_art_#{id}.jpg",
+              content_type: "image/jpeg"
+          end
+        end
+      else
+        raise "Failed to download image: #{image_response.body}"
+      end
     end
 
     private

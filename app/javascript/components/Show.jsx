@@ -119,7 +119,8 @@ const Show = ({ trackSlug }) => {
           <FontAwesomeIcon icon={faCircleChevronRight} className="ml-1" />
         </Link>
 
-        <div className="sidebar-map mt-4">
+        {/* MapBox free tier limits preclude the sidebar maps */}
+        {/* <div className="sidebar-map mt-4">
           <MapView
             mapboxToken={mapboxToken}
             coordinates={{ lat: show.venue.latitude, lng: show.venue.longitude }}
@@ -127,7 +128,7 @@ const Show = ({ trackSlug }) => {
             searchComplete={true}
             controls={false}
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );
