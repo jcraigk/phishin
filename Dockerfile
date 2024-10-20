@@ -23,6 +23,29 @@ RUN apt-get update -qq && \
       libjpeg-dev \
     && apt-get clean
 
+# Update and install necessary packages for timg and other dependencies
+RUN apt-get update && apt-get install -y \
+    cmake git g++ pkg-config \
+    libgraphicsmagick++-dev libturbojpeg-dev libexif-dev libswscale-dev libdeflate-dev librsvg2-dev libcairo-dev \
+    libsixel-dev \
+    libavcodec-dev libavformat-dev \
+    libavdevice-dev \
+    libopenslide-dev \
+    libpoppler-glib-dev \
+    pandoc \
+    --no-install-recommends && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Build and install timg
+RUN git clone https://github.com/hzeller/timg.git && \
+    cd timg && \
+    mkdir build && \
+    cd build && \
+    cmake ../ -DWITH_OPENSLIDE_SUPPORT=On && \
+    make && \
+    make install
+
 # Install Node and Yarn
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs
