@@ -243,6 +243,42 @@
   }
 }
 
+.set-group {
+  margin-bottom: 1.5rem;
+
+  .track-item {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.25rem 1rem;
+    margin-bottom: 0.2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    min-height: 3.5rem;
+    cursor: pointer;
+    background-color: $bg-gray;
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    &:first-of-type {
+      border-radius: 8px 8px 0 0;
+    }
+
+    &:not(:first-of-type):not(:last-of-type) {
+      border-radius: 0;
+    }
+
+    &:last-of-type {
+      border-radius: 0 0 8px 8px;
+    }
+
+    &:only-of-type {
+      border-radius: $radius;
+    }
+  }
+}
+
 @keyframes pulse {
   0% {
     background-color: $pulse-blue;
@@ -293,4 +329,3 @@
     display: none;
   }
 }
-

@@ -34,8 +34,11 @@ const Layout = ({ props }) => {
   const { setNotice, setAlert } = useFeedback();
 
   useEffect(() => {
-    // Scroll to top whenever the location changes
-    document.querySelector("#navbar-background").scrollIntoView({ behavior: "instant"});
+    // Scroll to top (skip for subpages to allow autoscroll to specific tracks)
+    const segments = location.pathname.split("/").filter(Boolean);
+    if (segments.length < 2) {
+      document.querySelector("#navbar-background").scrollIntoView({ behavior: "instant" });
+    }
   }, [location]);
 
   useEffect(() => {

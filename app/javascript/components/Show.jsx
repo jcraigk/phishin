@@ -52,7 +52,6 @@ const Show = ({ trackSlug }) => {
   useEffect(() => {
     let foundTrack;
     if (trackSlug) foundTrack = tracks.find((track) => track.slug === trackSlug);
-    if (!foundTrack) foundTrack = tracks[0];
     if (foundTrack) {
       playTrack(tracks, foundTrack, true);
       setMatchedTrack(foundTrack);
@@ -61,7 +60,7 @@ const Show = ({ trackSlug }) => {
         trackRefs.current[trackIndex].scrollIntoView({ behavior: "smooth" });
       }
     }
-  }, []);
+  }, [trackSlug, tracks]);
 
   const handleClose = (notificationType) => {
     if (notificationType === "incomplete") setShowIncompleteNotification(false);
