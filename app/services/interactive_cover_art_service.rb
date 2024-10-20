@@ -20,6 +20,8 @@ class InteractiveCoverArtService < BaseService
 
   def interactive_cli
     relation.each_with_index do |show, index|
+      @urls = []
+
       display_show_info(show)
       handle_cover_art_prompt(show)
 
@@ -32,12 +34,13 @@ class InteractiveCoverArtService < BaseService
     end
 
     pbar.finish if pbar
-  # rescue StandardError => e
-  #   binding.irb
+  rescue StandardError => e
+    binding.irb
   end
 
   def display_show_info(show)
     formatted_date = show.date.strftime("%b %-d, %Y")
+    puts "=================================="
     puts "🏟  \e]8;;#{show.url}\a#{formatted_date}\e]8;;\a - #{show.venue_name} - #{show.venue.location}"
     if show.cover_art_parent_show_id.present?
       parent_show = Show.find(show.cover_art_parent_show_id)
@@ -52,6 +55,7 @@ class InteractiveCoverArtService < BaseService
     if show.cover_art_prompt.blank?
       puts "Generating prompt..."
       CoverArtPromptService.call(show)
+      @urls = []
     end
     puts "💬 #{show.cover_art_prompt}"
   end
@@ -62,35 +66,45 @@ class InteractiveCoverArtService < BaseService
       return true
     end
 
-    @urls ||= []
     loop do
-      input = prompt_user_for_action(@urls)
-      result = process_input(show, @urls, input)
+      input = prompt_user_for_action
 
-      # Break the loop and move to the next show if a valid action is taken
-      return result if result.in?([ true, false ])
+      # If the input is longer than 1 character, treat it as a custom prompt
+      if input.length > 1
+        handle_custom_prompt(show, input)
+        next
+      end
+
+      result = process_input(show, input)
+      return result if result.in?([true, false])
     end
-
     true
   end
 
-  def prompt_user_for_action(urls)
-    txt = urls.any? ? "Use (1-#{urls.size}), " : ""
+  def handle_custom_prompt(show, input)
+    puts "💬 #{input}"
+    show.update!(cover_art_prompt: input)
+    @urls = []
+    generate_candidate_images(show)
+  end
+
+  def prompt_user_for_action
+    txt = @urls.any? ? "Use (1-#{@urls.size}), " : ""
     txt += "(S)kip, Gen (i)mages, Gen (p)rompt, (U)RL, or custom prompt 👉 "
     print txt
     $stdin.gets.chomp
   end
 
-  def process_input(show, urls, input)
+  def process_input(show, input)
     case input.downcase
     when "i", "p"
-      handle_image_or_prompt(show, input, urls)
+      handle_image_or_prompt(show, input)
       nil
     when "u"
       attach_cover_art_from_url(show)
       true
     when /\d+/
-      attach_selected_image(show, urls[input.to_i - 1])
+      attach_selected_image(show, @urls[input.to_i - 1])
       true
     when "s"
       puts "Skipping..."
@@ -101,13 +115,13 @@ class InteractiveCoverArtService < BaseService
     end
   end
 
-  def handle_image_or_prompt(show, input, urls)
+  def handle_image_or_prompt(show, input)
     if input == "p"
       puts "Generating cover art prompt..."
       CoverArtPromptService.call(show)
       puts "💬 #{show.cover_art_prompt}"
     end
-    generate_candidate_images(show, urls)
+    generate_candidate_images(show)
   end
 
   def attach_cover_art_from_url(show)
@@ -120,13 +134,13 @@ class InteractiveCoverArtService < BaseService
     show.attach_cover_art_by_url(image_url)
   end
 
-  def generate_candidate_images(show, urls)
+  def generate_candidate_images(show)
     puts "Generating #{NUM_IMAGES} candidate images..."
 
     NUM_IMAGES.times do |i|
       image_url = CoverArtImageService.call(show, dry_run: true)
-      urls << image_url
-      display_image_and_label(image_url, urls.size)
+      @urls << image_url
+      display_image_and_label(image_url, @urls.size)
     end
   end
 
@@ -137,7 +151,7 @@ class InteractiveCoverArtService < BaseService
 
   def display_image_in_terminal(image_url)
     return unless system("which timg > /dev/null 2>&1")
-    system("timg --pixelation=iterm2 -g 80x80 \"#{image_url}\" 2>/dev/null")
+    system("timg --pixelation=iterm2 -g 120x120 \"#{image_url}\" 2>/dev/null")
   end
 
   def use_parent_cover_art(show)
