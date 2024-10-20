@@ -19,8 +19,7 @@ class CoverArtPromptService < BaseService
     Fauvism Ink-Drawing Illustration Nihonga
     Watercolor Line-Art Geometric Charcoal
     Low-Poly Pencil-Drawing Oil-Painting
-    Pastel Stained-Glass Mosaics Cartoon
-    Woodcut Block-Prints Comic-Book
+    Pastel Mosaics Woodcut Block-Prints Comic-Book
   ]
   BASE_PROMPT = <<~TXT
     We are going to generate an optimized prompt for DALL-E to create an artistic square image based on style, hue, and a few subjects pulled from a live musical performance.

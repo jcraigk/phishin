@@ -1,15 +1,19 @@
 class InteractiveCoverArtService < BaseService
   extend Dry::Initializer
 
-  param :relation
+  class InterruptError < StandardError; end
 
-  attr_accessor :pbar
+  param :relation
 
   NUM_IMAGES = 2
 
   def call
     setup_progress_bar if relation.count > 1
     interactive_cli
+  rescue InterruptError
+    nil
+  rescue StandardError => e
+    binding.irb
   end
 
   def setup_progress_bar
@@ -30,12 +34,10 @@ class InteractiveCoverArtService < BaseService
         apply_cover_art_to_children(show)
       end
 
-      pbar.increment if pbar
+      @pbar.increment if @pbar
     end
 
-    pbar.finish if pbar
-  rescue StandardError => e
-    binding.irb
+    @pbar.finish if @pbar
   end
 
   def display_show_info(show)
@@ -57,7 +59,7 @@ class InteractiveCoverArtService < BaseService
       CoverArtPromptService.call(show)
       @urls = []
     end
-    puts "💬 #{show.cover_art_prompt}"
+    puts "\e[36m💬 #{show.cover_art_prompt}\e[0m"
   end
 
   def handle_cover_art_images(show)
@@ -70,7 +72,7 @@ class InteractiveCoverArtService < BaseService
       input = prompt_user_for_action
 
       # If the input is longer than 1 character, treat it as a custom prompt
-      if input.length > 1
+      if input.length > 5
         handle_custom_prompt(show, input)
         next
       end
@@ -82,7 +84,7 @@ class InteractiveCoverArtService < BaseService
   end
 
   def handle_custom_prompt(show, input)
-    puts "💬 #{input}"
+    puts "\e[36m💬 #{input}\e[0m"
     show.update!(cover_art_prompt: input)
     @urls = []
     generate_candidate_images(show)
@@ -101,7 +103,7 @@ class InteractiveCoverArtService < BaseService
       puts "Generating cover art prompt..."
       CoverArtPromptService.call(show)
       @urls = []
-      puts "💬 #{show.cover_art_prompt}"
+      puts "\e[36m💬 #{show.cover_art_prompt}\e[0m"
       nil
     when "i"
       generate_candidate_images(show)
@@ -115,6 +117,8 @@ class InteractiveCoverArtService < BaseService
     when "s"
       puts "Skipping..."
       false
+    when "x"
+      raise InterruptError
     else
       puts "Invalid input, skipping..."
       false
@@ -161,7 +165,7 @@ class InteractiveCoverArtService < BaseService
   end
 
   def apply_cover_art_to_children(show)
-    Show.where(cover_art_parent_show_id: show.id).each do |child_show|
+    Show.where(cover_art_parent_show_id: show.id).order(date: :asc).each do |child_show|
       CoverArtImageService.call(child_show)
       AlbumCoverService.call(child_show)
       child_show.tracks.each(&:apply_id3_tags)
