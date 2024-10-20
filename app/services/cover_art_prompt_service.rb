@@ -51,7 +51,7 @@ class CoverArtPromptService < BaseService
     Exmaple 2: a group of raccoons playing baseball in front of the rocky mountains
     Example 3: a giant tulip growing out of an abandoned airplane
 
-    Never mention any of the excluded items in the prompt. If necessary, create variations, but always respect the exclusions list.
+    Never mention any of the excluded items in the prompt. If necessary, create variations, but always respect the exclusions list. Do not include quotations marks.
 
     Always respond with just the prompt and no other text.
   TXT
@@ -70,7 +70,7 @@ class CoverArtPromptService < BaseService
     show.update! \
       cover_art_style: style,
       cover_art_hue: hue,
-      cover_art_prompt: chatgpt_response[:prompt],
+      cover_art_prompt: chatgpt_response,
       cover_art_parent_show_id: nil
   end
 

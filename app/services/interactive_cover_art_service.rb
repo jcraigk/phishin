@@ -32,8 +32,8 @@ class InteractiveCoverArtService < BaseService
     end
 
     pbar.finish if pbar
-  rescue StandardError => e
-    binding.irb
+  # rescue StandardError => e
+  #   binding.irb
   end
 
   def display_show_info(show)
@@ -50,7 +50,7 @@ class InteractiveCoverArtService < BaseService
     return unless show.cover_art_parent_show_id.nil?
 
     if show.cover_art_prompt.blank?
-      puts "Generating cover art prompt..."
+      puts "Generating prompt..."
       CoverArtPromptService.call(show)
     end
     puts "💬 #{show.cover_art_prompt}"
@@ -137,7 +137,7 @@ class InteractiveCoverArtService < BaseService
 
   def display_image_in_terminal(image_url)
     return unless system("which timg > /dev/null 2>&1")
-    system("timg --pixelation=iterm2 -g 32x32 \"#{image_url}\"")
+    system("timg --pixelation=iterm2 -g 80x80 \"#{image_url}\" 2>/dev/null")
   end
 
   def use_parent_cover_art(show)
@@ -148,6 +148,7 @@ class InteractiveCoverArtService < BaseService
 
   def apply_album_cover_and_id3_tags(show)
     AlbumCoverService.call(show)
+    display_image_in_terminal(show.album_cover_url)
     show.tracks.each(&:apply_id3_tags)
     puts "✅ \e]8;;#{show.url}\a#{show.date.strftime("%b %-d, %Y")}\e]8;;\a"
   end
