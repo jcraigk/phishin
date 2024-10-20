@@ -152,7 +152,7 @@ const Show = ({ trackSlug }) => {
         {showIncompleteNotification && infoBox("This show's audio is incomplete", () => handleClose("incomplete"))}
         {showAdminNotesNotification && infoBox(show.admin_notes, () => handleClose("adminNotes"))}
 
-        <div className="display-phone-only mt-1 mb-3">
+        <div className="display-phone-only mt-1">
           <div className="phone-show-container">
             <div className="phone-show-image">
               <CoverArt
@@ -165,9 +165,8 @@ const Show = ({ trackSlug }) => {
             </div>
             <div className="phone-show-info">
               <span className="phone-show-date">{formatDate(show.date)}</span>
-              <span className="phone-show-duration">
-                <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
-                {formatDurationShow(show.duration)}
+              <span className="phone-show-venue">
+                {show.venue_name}
               </span>
               <span className="phone-show-context">
                 <ShowContextMenu show={show} css="context-nudge-right" />

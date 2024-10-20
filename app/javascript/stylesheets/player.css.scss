@@ -14,7 +14,6 @@ footer.with-player {
   z-index: 100;
   box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.3);
   transition: bottom 0.5s ease;
-  color: $text-gray;
 
   &.visible {
     bottom: 0px;
@@ -306,6 +305,12 @@ footer.with-player {
       svg {
         font-size: 1.4rem !important;
       }
+    }
+  }
+
+  @media (max-width: 420px) {
+    .track-title {
+      max-width: 10.5rem;
     }
   }
 }

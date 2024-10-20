@@ -1,22 +1,19 @@
 #navbar-background {
-  background-color: $header-gray;
+  background-color: rgba($header-gray, 0.5);
   width: 100%;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   z-index: 2;
 }
 
 .navbar {
-  background-color: $header-gray;
+  background: transparent;
   justify-content: center;
   max-width: 1200px;
   margin: 0 auto;
-  z-index: 2;
 
   .navbar-burger {
     color: $text-gray;
   }
-
-
 
   .navbar-brand {
     padding-left: 0.5rem;

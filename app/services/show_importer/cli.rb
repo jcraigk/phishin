@@ -15,7 +15,7 @@ class ShowImporter::Cli
   def main_menu
     print_header
     orch.pp_list
-    puts "\n\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, sa(v)e, e(x)it: "
+    puts "\n\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, (s)ave, e(x)it: "
   end
 
   def print_header
@@ -26,7 +26,7 @@ class ShowImporter::Cli
 
   def print_show_title
     puts \
-      "🎸 #{orch.show.date} - #{orch.show.venue.name_on(orch.show.date)} " \
+      "🏛️ #{orch.show.date} - #{orch.show.venue.name_on(orch.show.date)} " \
       "- #{orch.show.venue.location}\n"
   end
 
@@ -173,7 +173,7 @@ class ShowImporter::Cli
       main_menu
     when "l"
       main_menu
-    when "v"
+    when "s"
       orch.save
     end
   end

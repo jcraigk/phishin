@@ -45,14 +45,12 @@ class ShowImporter::Orchestrator
     save_song_gaps(show)
 
     show.reload.save_duration
-    show.update!(published: true)
-
-    generate_album_interactively
-
-    create_announcement
-
     pbar.finish
-    success
+
+    InteractiveCoverArtService.call(Show.where(id: show.id))
+
+    show.update!(published: true)
+    create_announcement
   end
 
   def get_track(position)
@@ -97,41 +95,6 @@ class ShowImporter::Orchestrator
   end
 
   private
-
-  def generate_album_interactively
-    loop do # rubocop:disable Metrics/BlockLength
-      puts "Generating cover art image..."
-      CoverArtImageService.call(show)
-      puts "🏞 #{App.base_url}/blob/#{show.cover_art.blob.key}"
-      print "(C)onfirm, (R)egenerate, (N)ew prompt, or C(u)stomize prompt? "
-      input = $stdin.gets.chomp.downcase
-      case input
-      when "r"
-        next
-      when "n"
-        puts "Generating cover art prompt..."
-        CoverArtPromptService.call(show)
-        puts "💬 #{show.cover_art_prompt}"
-        next
-      when "u"
-        print "Custom prompt (or blank to use existing): "
-        prompt = $stdin.gets.chomp
-        if prompt.present?
-          puts "New prompt: 💬 #{prompt}"
-          show.update!(cover_art_prompt: prompt)
-        else
-          puts "Using existing prompt"
-        end
-        next
-      else
-        break
-      end
-
-      AlbumCoverService.call(show)
-      puts "🌌 #{show.album_cover_url}"
-      show.tracks.each(&:apply_id3_tags)
-    end
-  end
 
   def save_song_gaps(show)
     puts "Calculating song gaps..."
@@ -214,10 +177,6 @@ class ShowImporter::Orchestrator
     track.show = show
     track.save!(validate: false) # Generate ID for audio_file storage
     track.update!(audio_file: File.open("#{@fm.dir}/#{track.filename}"))
-  end
-
-  def success
-    puts "✅ Import complete: #{show.url}\n\n"
   end
 
   def populate_tracks

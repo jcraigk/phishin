@@ -52,7 +52,7 @@ module HasCoverArt
 
       if image_response.success?
         # Save the image as a temporary PNG file
-        Tempfile.create([ "cover_art_#{SecureRandom.hex}", ".png" ]) do |temp_png|
+        Tempfile.create("cover_art_#{SecureRandom.hex}") do |temp_png|
           temp_png.binmode
           temp_png.write(image_response.body)
           temp_png.rewind

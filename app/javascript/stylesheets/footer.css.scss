@@ -1,5 +1,5 @@
 footer {
-  background-color: $header-gray;
+  background-color: rgba($header-gray, 0.5);
   height: 3rem;
   display: flex;
   align-items: center;
@@ -8,6 +8,7 @@ footer {
   position: relative;
   margin-top: 2rem;
   flex-shrink: 0;
+  border-top: 1px solid rgba($text-gray, 0.3);
 
   a {
     color: $text-gray;

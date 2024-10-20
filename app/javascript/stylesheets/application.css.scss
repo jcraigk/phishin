@@ -10,14 +10,15 @@ $bg-blue: #cbf3ff;
 $bg-gray: #f2f3f5;
 $bg-red: #ffe4e1;
 $blue: rgb(3, 187, 242);
-$pulse-blue: rgb(25, 214, 243);
+$highlight-blue: rgb(171, 217, 255);
 $control-gray: #f5f5f5;
 $google-blue: #5385ed;
 $header-gray: #c7c8ca;
+$border-gray: #eeeeee;
 $inactive-gray: #d9dbdc;
 $text-gray: #6d6f71;
 $title-gray: #515152;
-$radius: 0.25rem;
+$radius: 0.35rem;
 
 @import "./bulma-overrides.css.scss";
 @import "./content.css.scss";
@@ -81,7 +82,7 @@ a {
 }
 
 .select::after {
-  border-color: $text-gray !important; /* Bulma dropdown chevron color */
+  border-color: $border-gray !important; /* Bulma dropdown chevron color */
 }
 
 .label {

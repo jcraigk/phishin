@@ -106,16 +106,12 @@
   background-repeat: no-repeat;
 
   &.focus {
-    border: 1px solid $blue;
+    border-left: 5px solid $highlight-blue;
   }
 
   &.active-item {
     animation: pulse 3s infinite ease-in-out;
     background-image: none !important;
-
-    &::before {
-      display: none;
-    }
   }
 
   .main-row {
@@ -244,7 +240,8 @@
 }
 
 .set-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2.5rem;
+  position: relative;
 
   .track-item {
     position: relative;
@@ -253,24 +250,26 @@
     flex-direction: column;
     align-items: flex-start;
     padding: 0.25rem 1rem;
-    margin-bottom: 0.2rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    margin-bottom: 0rem;
+    box-shadow: none;
     min-height: 3.5rem;
     cursor: pointer;
-    background-color: $bg-gray;
+    background: rgba(255, 255, 255, 0.9);
     background-size: cover;
     background-repeat: no-repeat;
 
     &:first-of-type {
-      border-radius: 8px 8px 0 0;
+      border-radius: $radius $radius 0 0;
     }
 
     &:not(:first-of-type):not(:last-of-type) {
       border-radius: 0;
+      border-top: 1px solid $border-gray;
     }
 
     &:last-of-type {
-      border-radius: 0 0 8px 8px;
+      border-radius: 0 0 $radius $radius;
+      border-top: 1px solid $border-gray;
     }
 
     &:only-of-type {
@@ -281,13 +280,13 @@
 
 @keyframes pulse {
   0% {
-    background-color: $pulse-blue;
+    background-color: $highlight-blue;
   }
   50% {
     background-color: $bg-gray;
   }
   100% {
-    background-color: $pulse-blue;
+    background-color: $highlight-blue;
   }
 }
 
@@ -324,7 +323,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 420px) {
   .leftside-secondary {
     display: none;
   }

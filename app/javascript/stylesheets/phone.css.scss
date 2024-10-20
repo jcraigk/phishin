@@ -1,6 +1,7 @@
 .phone-show-container {
   display: flex;
   align-items: flex-start;
+  position: relative;
 
   .phone-show-image {
     width: 100px;
@@ -19,6 +20,12 @@
     flex-direction: column;
     justify-content: center;
 
+    .phone-show-venue {
+      width: 10rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .phone-show-date {
       font-size: 1.6rem;
       font-weight: bold;

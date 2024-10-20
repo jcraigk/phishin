@@ -1,11 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link, useOutletContext } from "react-router-dom";
-import { formatDate, truncate } from "../helpers/utils";
+import { formatDate, formatDurationShow, truncate } from "../helpers/utils";
 import { useFeedback } from "./FeedbackContext";
 import LikeButton from "./LikeButton";
 import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight, faDownload } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight, faDownload, faClock } from "@fortawesome/free-solid-svg-icons";
 
 const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
   const dropdownRef = useRef(null);
@@ -111,6 +111,11 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
         style={{ display: dropdownVisible ? "block" : "none" }}
       >
         <div className={`dropdown-content context-dropdown-content ${css ? css : ""}`.trim()}>
+
+          <span className="dropdown-item">
+            <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
+            {formatDurationShow(show.duration)}
+            </span>
 
           <Link
             className="dropdown-item"
