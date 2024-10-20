@@ -5,7 +5,7 @@ class InteractiveCoverArtService < BaseService
 
   attr_accessor :pbar
 
-  NUM_IMAGES = 3
+  NUM_IMAGES = 2
 
   def call
     setup_progress_bar if relation.count > 1
@@ -119,6 +119,7 @@ class InteractiveCoverArtService < BaseService
     if input == "p"
       puts "Generating cover art prompt..."
       CoverArtPromptService.call(show)
+      @urls = []
       puts "💬 #{show.cover_art_prompt}"
     end
     generate_candidate_images(show)
@@ -140,13 +141,9 @@ class InteractiveCoverArtService < BaseService
     NUM_IMAGES.times do |i|
       image_url = CoverArtImageService.call(show, dry_run: true)
       @urls << image_url
-      display_image_and_label(image_url, @urls.size)
+      puts "\e]8;;#{image_url}\aImage ##{@urls.size}\e]8;;\a"
+      display_image_in_terminal(image_url)
     end
-  end
-
-  def display_image_and_label(image_url, num)
-    puts "\e]8;;#{image_url}\aImage ##{num}\e]8;;\a"
-    display_image_in_terminal(image_url)
   end
 
   def display_image_in_terminal(image_url)

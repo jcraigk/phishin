@@ -3,20 +3,20 @@ class CoverArtPromptService < BaseService
 
   HUES = %w[
     Red Orange Yellow Green Blue Purple
-    Red-Orange Yellow-Orange Yellow-Green Blue-Green
-    Pink Magenta Vermilion
+    Red-Orange Yellow-Orange Yellow-Green
+    Pink Magenta Vermilion Blue-Green Cerulean
     Scarlet Cyan Teal Turquoise Indigo Lavender
     Amethyst Chartreuse Lime Crimson Maroon Olive
     Burgundy Ochre Beige Peach Mint Navy Coral
     Rose Amber Emerald Sapphire Violet Periwinkle
     Fuchsia Aquamarine Mint Apricot Mustard
-    Tangerine Plum
+    Tangerine Plum Gold Chestnut Taupe Amber
   ]
   STYLES = %w[
-    Abstract Minimalism
-    Pop-Art Art-Deco Art-Nouveau Futurism Chinese-Brush-Painting
-    Gothic Wood-Burned Technical-Drawing
-    Pointillism Fauvism Ink-Drawing Illustration
+    Abstract Minimalism Chinese-Brush-Painting
+    Pop-Art Art-Deco Art-Nouveau Futurism
+    Wood-Burned Technical-Drawing Poster-Art
+    Fauvism Ink-Drawing Illustration Nihonga
     Watercolor Line-Art Geometric Charcoal
     Low-Poly Pencil-Drawing Oil-Painting
     Pastel Stained-Glass Mosaics Cartoon
