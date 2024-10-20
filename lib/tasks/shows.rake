@@ -30,18 +30,8 @@ namespace :shows do
     rel = Show.includes(:tracks).order(date: :asc)
 
     if ENV.fetch("REDO", nil).present?
-      redo_dates = File.readlines(Rails.root.join("lib/album_regen_list.txt")).map(&:strip)
-      all_dates = redo_dates.dup
-      redo_dates.each do |date|
-        next unless show = Show.find_by(date: date)
-        if show.cover_art_parent_show_id.present?
-          all_dates << Show.find(show.cover_art_parent_show_id).date.to_s
-          all_dates << Show.where(cover_art_parent_show_id: show.cover_art_parent_show_id).map(&:date).map(&:to_s)
-        elsif (shows = Show.where(cover_art_parent_show_id: show.id)).any?
-          all_dates << shows.map(&:date).map(&:to_s)
-        end
-      end
-      rel = rel.where(date: all_dates.uniq.flatten)
+      dates = File.readlines(Rails.root.join("lib/art_dates.txt")).map(&:strip)
+      rel = rel.where(date: dates)
     else
       rel = rel.where(date:) if date.present?
       rel = rel.where('date >= ?', start_date) if start_date.present?

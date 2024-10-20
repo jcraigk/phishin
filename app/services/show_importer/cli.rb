@@ -26,7 +26,7 @@ class ShowImporter::Cli
 
   def print_show_title
     puts \
-      "🏛️ #{orch.show.date} - #{orch.show.venue.name_on(orch.show.date)} " \
+      "🏟 #{orch.show.date} - #{orch.show.venue.name_on(orch.show.date)} " \
       "- #{orch.show.venue.location}\n"
   end
 

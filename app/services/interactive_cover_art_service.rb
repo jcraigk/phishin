@@ -19,25 +19,15 @@ class InteractiveCoverArtService < BaseService
 
   def interactive_cli
     relation.each do |show| # rubocop:disable Metrics/BlockLength
-      puts "🏟 #{show.url} - #{show.venue_name} - #{show.venue.location}"
+      puts "🏟  #{show.url} - #{show.venue_name} - #{show.venue.location}"
       if show.cover_art_parent_show_id.present?
-        puts "🔗 Parent: #{Show.find(show.cover_art_parent_show_id).url}"
+        puts "🔗  Parent: #{Show.find(show.cover_art_parent_show_id).url}"
       else
         if show.cover_art_prompt.blank?
           puts "Generating cover art prompt..."
           CoverArtPromptService.call(show)
         end
-        puts "💬 #{show.cover_art_prompt}"
-      end
-
-      if relation.count > 1
-        print "(P)rocess or (S)kip? "
-        input = $stdin.gets.chomp.downcase
-        if input != "p"
-          pbar.increment if pbar
-          puts "Skipping!"
-          next
-        end
+        puts "💬  #{show.cover_art_prompt}"
       end
 
       # Prompt and cover art
@@ -56,13 +46,13 @@ class InteractiveCoverArtService < BaseService
         print txt
         input = $stdin.gets.chomp
         if input.length > 1
-          puts "New prompt: 💬 #{input}"
+          puts "💬  #{input}"
           show.update!(cover_art_prompt: input)
           puts "Generating candidate images..."
           urls = []
           NUM_IMAGES.times do |i|
             image_url = CoverArtImageService.call(show, dry_run: true)
-            puts "🏞 #{i + 1} #{image_url}"
+            puts "🏞  #{i + 1} #{image_url}"
             urls << image_url
           end
           next
@@ -72,13 +62,13 @@ class InteractiveCoverArtService < BaseService
           if input == "p"
             puts "Generating cover art prompt..."
             CoverArtPromptService.call(show)
-            puts "💬 #{show.cover_art_prompt}"
+            puts "💬  #{show.cover_art_prompt}"
           end
           puts "Generating candidate images..."
           urls = []
           NUM_IMAGES.times do |i|
             image_url = CoverArtImageService.call(show, dry_run: true)
-            puts "🏞 #{i + 1} #{image_url}"
+            puts "🏞  #{i + 1} #{image_url}"
             urls << image_url
           end
           next
@@ -86,11 +76,11 @@ class InteractiveCoverArtService < BaseService
           print "URL: "
           url = $stdin.gets.chomp
           show.attach_cover_art_by_url(url)
-          puts "🏞 #{show.cover_art_urls[:large]}"
+          # puts "🏞 #{show.cover_art_urls[:large]}"
           break
         when "1", "2", "3", "4"
           show.attach_cover_art_by_url(urls[input.to_i - 1])
-          # puts "🏞 #{show.cover_art_urls[:large]}"
+          # puts "🏞  #{show.cover_art_urls[:large]}"
           break
         else
           break
@@ -99,18 +89,18 @@ class InteractiveCoverArtService < BaseService
 
       # Album cover
       AlbumCoverService.call(show)
-      # puts "🌌 #{show.album_cover_url}"
+      # puts "🌌  #{show.album_cover_url}"
       show.tracks.each(&:apply_id3_tags)
 
-      puts "✅ #{show.url}"
+      puts "✅  #{show.url}"
 
       # Apply same image to children
       if Show.where(cover_art_parent_show_id: show.id).any?
-        Show.where(cover_art_parent_show_id: show.id).each do |child|
-          CoverArtImageService.call(show)
-          AlbumCoverService.call(show)
-          show.tracks.each(&:apply_id3_tags)
-          puts "✅🔗 #{child.url}"
+        Show.where(cover_art_parent_show_id: show.id).each do |child_show|
+          CoverArtImageService.call(child_show)
+          AlbumCoverService.call(child_show)
+          child_show.tracks.each(&:apply_id3_tags)
+          puts "✅🔗  #{child_show.url}"
         end
       end
 
