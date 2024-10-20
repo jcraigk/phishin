@@ -13,13 +13,13 @@ class CoverArtPromptService < BaseService
     Tangerine Plum
   ]
   STYLES = %w[
-    Abstract Impressionism Minimalism Expressionism
+    Abstract Minimalism
     Pop-Art Art-Deco Art-Nouveau Futurism Chinese-Brush-Painting
     Gothic Wood-Burned Technical-Drawing
     Pointillism Fauvism Ink-Drawing Illustration
     Watercolor Line-Art Geometric Charcoal
     Low-Poly Pencil-Drawing Oil-Painting
-    Pastel Stained-Glass Mosaics Childrens-Book
+    Pastel Stained-Glass Mosaics Cartoon
     Woodcut Block-Prints Comic-Book
   ]
   BASE_PROMPT = <<~TXT
@@ -38,14 +38,16 @@ class CoverArtPromptService < BaseService
 
     Now, let's generate the prompt:
 
-    You will take **style**, **hue**, and **subjects** related to the performance and generate a creative prompt that avoids the aforementioned exclusions. Be creative with subjects, drawing from song titles and themes, but without emphasizing location too heavily. Often the subjects should be more abstract, inspired by themes in the setlist rather than the time and place. The subjects should be a random selection of 2 or 3 concepts pulled from the performance, but never include any of the excluded items listed above.
+    You will take **style**, **hue**, and **subjects** and generate a creative prompt that avoids the aforementioned exclusions. Be creative with subjects, drawing from song titles and themes, but without emphasizing location too heavily. Often the subjects should be more abstract, inspired by themes in the setlist rather than the time and place. If there are animals or objects references, use those. The subjects should be a random selection of 2 concepts pulled from the performance, but never include any of the excluded items listed above.
 
     Your JSON output should be in this format:
 
     {
       "subjects": "Skyscrapers, llamas, and a UFO",
-      "prompt": "Create a rock album cover that includes images of skyscrapers, llamas, and a UFO in an abstract style with a blue hue."
+      "prompt": "Create an image in {x} style with {y} hue featuring {subject 1} and {subject 2}."
     }
+
+    Subjects should vary between singular and plural.
 
     Never mention any of the excluded items in the prompt. If necessary, create variations, but always respect the exclusions list.
 
