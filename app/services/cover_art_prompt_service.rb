@@ -30,7 +30,7 @@ class CoverArtPromptService < BaseService
     - Avoid instruments (guitars, saxophones, brass, classical instruments). No saxophones ever.
     - Avoid images of humans, human forms, or faces.
     - Avoid clocks, hourglasses, historical figures, and any text or symbols.
-    - Avoid owls, foxes, flamingos, hedgehogs, lobseters, raccoons, cats, lions, dolphins, waves, skeletons, dragons, unicorns, buffalo, tornadoes, cowboy hats, pyramids, violins, bats, bears, ferris wheels, churches, cathedrals, butterflies, pumpkins, gargoyles, trees of all kinds, maple trees/leaves/syrup/saplings, and ghosts.
+    - Avoid coyotes, rabbits, owls, foxes, flamingos, hedgehogs, lobseters, raccoons, cats, lions, dolphins, waves, skeletons, dragons, unicorns, buffalo, tornadoes, cowboy hats, pyramids, violins, bats, bears, ferris wheels, churches, cathedrals, butterflies, pumpkins, gargoyles, trees of all kinds, maple trees/leaves/syrup/saplings, and ghosts.
     - Avoid cliche landmarks like the Statue of Liberty, Golden Gate Bridge, Liberty Bell, Eiffel tower, and anything related to obvious geography (cornfields, cheese, moose, etc.).
     - Avoid dirigibles and hot air balloons, vintage typewriters, vinyl records, radios, and other retro technologies. Avoid chessboards and chess pieces.
     - Avoid swirls, vortexes, kaleidoscope, spirals, fractals, galaxies, books, meteors, - Avoid kites and and staircases.
@@ -39,7 +39,7 @@ class CoverArtPromptService < BaseService
 
     Now, let's generate the prompt:
 
-    You will take **style**, **hue**, and **subjects** and generate a creative prompt that avoids the aforementioned exclusions. Subjects should be selected as follows: select 1 animal or plant from the location provided but don't choose the most obvious one, favoring animals most of the time, then have a 50/50 chance of selecting either (A) a landmark of the location/venue or some other time/place reference or (B) a completely random concept or image. BE CREATIVE AND RANDOM. Then combine the two subjects with a simple verb or verb phrase. The combination can include either a single or plural group of the first subject along with the second subject.
+    You will take **style**, **hue**, and **subjects** and generate a creative prompt that avoids the aforementioned exclusions. Subjects should be selected as follows: select 1 animal, plant, or food from the location provided but don't choose the most obvious one. Then have a 50% chance of selecting either (A) a landmark of the location/venue or some other time/place reference or (B) a completely random concept or image. BE CREATIVE AND RANDOM, THINK OF FIVE VERY DIFFERENT RANDOM CONCEPTS AND CHOOSE ONE. Then combine the two subjects with a simple verb or verb phrase. The combination can include either a single or plural group of the first subject along with the second subject.
 
     Your response should be in this format and should contain no other text:
 

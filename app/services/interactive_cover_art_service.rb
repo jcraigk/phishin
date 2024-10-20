@@ -97,8 +97,14 @@ class InteractiveCoverArtService < BaseService
 
   def process_input(show, input)
     case input.downcase
-    when "i", "p"
-      handle_image_or_prompt(show, input)
+    when "p"
+      puts "Generating cover art prompt..."
+      CoverArtPromptService.call(show)
+      @urls = []
+      puts "💬 #{show.cover_art_prompt}"
+      nil
+    when "i"
+      generate_candidate_images(show)
       nil
     when "u"
       attach_cover_art_from_url(show)
@@ -113,16 +119,6 @@ class InteractiveCoverArtService < BaseService
       puts "Invalid input, skipping..."
       false
     end
-  end
-
-  def handle_image_or_prompt(show, input)
-    if input == "p"
-      puts "Generating cover art prompt..."
-      CoverArtPromptService.call(show)
-      @urls = []
-      puts "💬 #{show.cover_art_prompt}"
-    end
-    generate_candidate_images(show)
   end
 
   def attach_cover_art_from_url(show)
