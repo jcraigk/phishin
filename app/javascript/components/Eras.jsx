@@ -48,11 +48,11 @@ const Eras = () => {
         <span className="hidden-phone"> AUDIO STREAMS</span>
       </p>
       <p>
-        &#127928;{" "}
+        🍩{" "}
         {formatNumber(totalShows)} shows
       </p>
       <p className="hidden-phone">
-        &#127926;{" "}
+        🎵{" "}
         {formatNumber(totalHours)} hours of music
       </p>
 
