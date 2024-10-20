@@ -38,13 +38,15 @@ class CoverArtPromptService < BaseService
 
     Now, let's generate the prompt:
 
-    You will take **style**, **hue**, and **subjects** and generate a creative prompt that avoids the aforementioned exclusions. Subjects should be selected as follows: select 1 animal, plant, or food from the location provided but don't choose the most obvious one. Then have a 50% chance of selecting either (A) a landmark of the location/venue or some other time/place reference or (B) a completely random concept or image. BE CREATIVE AND RANDOM, THINK OF FIVE VERY DIFFERENT RANDOM CONCEPTS AND CHOOSE ONE. Then combine the two subjects with a simple verb or verb phrase. The combination can include either a single or plural group of the first subject along with the second subject.
+    You will take **style**, **hue**, and **subjects** and generate a creative prompt that avoids the aforementioned exclusions.
+
+    BE CREATIVE AND RANDOM, THINK OF FIVE VERY DIFFERENT RANDOM CONCEPTS THAT MAKE INTERESTING VISUALS. Then combine the two subjects with a simple verb or verb phrase. The combination can include either a single or plural group of the first subject along with the second subject.
 
     Your response should be in this format and should contain no other text:
 
     "Create an image in {x} style with {y} hue featuring {subject 1} {interacting with or combined with} {subject 2}."
 
-    Here are some examples:
+    Here are some examples of the second part:
 
     Example 1: a giraffe licking a colorful lollipop through a chainlink fence
     Exmaple 2: a group of raccoons playing baseball in front of the rocky mountains
@@ -52,9 +54,8 @@ class CoverArtPromptService < BaseService
 
     Never mention any of the excluded items in the prompt. If necessary, create variations, but always respect the exclusions list. Do not include quotations marks.
 
-    Always respond with just the prompt and no other text.
+    Subjects should be selected as follows. Follow these instructions very carefully:
   TXT
-
   def call
     # If show is inside a run at same venue, defer
     return defer_to_kickoff_show if show != run_kickoff_show
@@ -139,6 +140,26 @@ class CoverArtPromptService < BaseService
     return @chatgpt_prompt if defined?(@chatgpt_prompt)
 
     txt = BASE_PROMPT.dup
+
+
+    txt += "\n\nFor the first subject, "
+    num = rand(1..4)
+    txt += case num
+           when 1 then "choose an animal related to the time/place."
+           when 2 then "choose a plant related to the time/place (tree, flowers, leaves, etc)."
+           when 3 then "choose a food related to the time/place."
+           when 4 then "choose a random object or concept from human history or modern life."
+           end
+
+    txt =+ "\n\nFor the second subject, "
+    num = rand(1..4)
+    txt += case num
+            when 1 then "choose a landmark related to the location."
+            when 2 then "choose something related to the venue."
+            when 3 then "choose something related to the date or season."
+            when 4 then "choose a completely random concept pulled from the store of all human knowledge."
+            end
+
     txt += "\n\nHere is info about the show:\n"
     txt += "Date: #{show.date}\n"
     txt += "Venue: #{show.venue_name}\n"
@@ -146,15 +167,20 @@ class CoverArtPromptService < BaseService
     # Don't include songs for runs to avoid songs that don't appear in a show
     # Since we use the same art for all shows in a run
     txt += "Songs: #{song_list}\n" if show != run_kickoff_show
-    if prior_show.cover_art_prompt.present?
-      txt +=
-        "The previous show's prompt is this: " \
-        "'#{prior_show.cover_art_prompt}'. Avoid the subjects from " \
-        "that prompt as well as closely associated imagery. " \
-        "Ignore style and hue of the previous prompt, " \
-        "we'll specify those explicitly next.\n\n"
-    end
+    # if prior_show.cover_art_prompt.present?
+    #   txt +=
+    #     "The previous show's prompt is this: " \
+    #     "'#{prior_show.cover_art_prompt}'. Avoid the subjects from " \
+    #     "that prompt as well as closely associated imagery. " \
+    #     "Ignore style and hue of the previous prompt, " \
+    #     "we'll specify those explicitly next.\n\n"
+    # end
     txt += "The hue of the art should be '#{hue}' and the style should be '#{style}'."
+
+    txt += "Provide the prompt exactly as specified without any extra text or formatting."
+    txt += "Use only 2 subjects as specified and ensure you specify style and hue."
+    txt += "\n\nRemember the format: Create an image in {x} style with {y} hue featuring {subject 1} {interacting with or combined with} {subject 2}."
+
     @chatgpt_prompt = txt
   end
 

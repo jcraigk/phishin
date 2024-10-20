@@ -44,6 +44,7 @@ class InteractiveCoverArtService < BaseService
     formatted_date = show.date.strftime("%b %-d, %Y")
     puts "=================================="
     puts "🏟  \e]8;;#{show.url}\a#{formatted_date}\e]8;;\a - #{show.venue_name} - #{show.venue.location}"
+    display_image_in_terminal(show.cover_art_urls[:large])
     if show.cover_art_parent_show_id.present?
       parent_show = Show.find(show.cover_art_parent_show_id)
       parent_date = parent_show.date.strftime("%b %-d, %Y")
@@ -59,7 +60,8 @@ class InteractiveCoverArtService < BaseService
       CoverArtPromptService.call(show)
       @urls = []
     end
-    puts "\e[36m💬 #{show.cover_art_prompt}\e[0m"
+    puts "\e[35m💬 #{show.cover_art_prompt}\e[0m"
+
   end
 
   def handle_cover_art_images(show)
@@ -84,15 +86,15 @@ class InteractiveCoverArtService < BaseService
   end
 
   def handle_custom_prompt(show, input)
-    puts "\e[36m💬 #{input}\e[0m"
+    puts "\e[35m💬 #{input}\e[0m"
     show.update!(cover_art_prompt: input)
     @urls = []
-    generate_candidate_images(show)
+    generate_images(show)
   end
 
   def prompt_user_for_action
     txt = @urls.any? ? "Use (1-#{@urls.size}), " : ""
-    txt += "(S)kip, Gen (i)mages, Gen (p)rompt, (U)RL, or custom prompt 👉 "
+    txt += "E(x)it, (S)kip, New (i)mages, New (p)rompt, (U)RL, or custom prompt 👉 "
     print txt
     $stdin.gets.chomp
   end
@@ -103,10 +105,10 @@ class InteractiveCoverArtService < BaseService
       puts "Generating cover art prompt..."
       CoverArtPromptService.call(show)
       @urls = []
-      puts "\e[36m💬 #{show.cover_art_prompt}\e[0m"
+      puts "\e[35m💬 #{show.cover_art_prompt}\e[0m"
       nil
     when "i"
-      generate_candidate_images(show)
+      generate_images(show)
       nil
     when "u"
       attach_cover_art_from_url(show)
@@ -135,13 +137,13 @@ class InteractiveCoverArtService < BaseService
     show.attach_cover_art_by_url(image_url)
   end
 
-  def generate_candidate_images(show)
-    puts "Generating #{NUM_IMAGES} candidate images..."
+  def generate_images(show)
+    puts "Generating #{NUM_IMAGES} images..."
 
     NUM_IMAGES.times do |i|
       image_url = CoverArtImageService.call(show, dry_run: true)
       @urls << image_url
-      puts "\e]8;;#{image_url}\aImage ##{@urls.size}\e]8;;\a"
+      puts "\e[36m\e]8;;#{image_url}\aImage ##{@urls.size}\e]8;;\a\e[0m"
       display_image_in_terminal(image_url)
     end
   end
@@ -161,7 +163,7 @@ class InteractiveCoverArtService < BaseService
     AlbumCoverService.call(show)
     display_image_in_terminal(show.album_cover_url)
     show.tracks.each(&:apply_id3_tags)
-    puts "✅ \e]8;;#{show.url}\a#{show.date.strftime("%b %-d, %Y")}\e]8;;\a"
+    puts "✔️ \e]8;;#{show.url}\a#{show.date.strftime("%b %-d, %Y")}\e]8;;\a"
   end
 
   def apply_cover_art_to_children(show)
@@ -169,7 +171,7 @@ class InteractiveCoverArtService < BaseService
       CoverArtImageService.call(child_show)
       AlbumCoverService.call(child_show)
       child_show.tracks.each(&:apply_id3_tags)
-      puts "✅🔗 \e]8;;#{child_show.url}\a#{child_show.date.strftime("%b %-d, %Y")}\e]8;;\a"
+      puts "✔️ \e]8;;#{child_show.url}\a#{child_show.date.strftime("%b %-d, %Y")}\e]8;;\a"
     end
   end
 end

@@ -27,7 +27,7 @@ namespace :shows do
     date = ENV.fetch("DATE", nil)
     start_date = ENV.fetch("START_DATE", nil)
 
-    rel = Show.includes(:tracks).order(date: :asc)
+    rel = Show.where(cover_art_parent_show_id: nil).includes(:tracks).order(date: :asc)
 
     if ENV.fetch("REDO", nil).present?
       dates = File.readlines(Rails.root.join("lib/art_dates.txt")).map(&:strip)
