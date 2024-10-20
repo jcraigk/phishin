@@ -68,7 +68,7 @@ class InteractiveCoverArtService < BaseService
       result = process_input(show, @urls, input)
 
       # Break the loop and move to the next show if a valid action is taken
-      return true if result == true || result == false
+      return result if result.in?([ true, false ])
     end
 
     true
@@ -96,7 +96,7 @@ class InteractiveCoverArtService < BaseService
       puts "Skipping..."
       false
     else
-      puts "Invalid input. Skipping..."
+      puts "Invalid input, skipping..."
       false
     end
   end
@@ -121,28 +121,23 @@ class InteractiveCoverArtService < BaseService
   end
 
   def generate_candidate_images(show, urls)
-    print "Generating #{NUM_IMAGES} candidate images"
+    puts "Generating #{NUM_IMAGES} candidate images..."
 
-    images_to_display = []
     NUM_IMAGES.times do |i|
-      print "..."
       image_url = CoverArtImageService.call(show, dry_run: true)
-      images_to_display << image_url
       urls << image_url
+      display_image_and_label(image_url, urls.size)
     end
-    puts ""
-
-    print_image_labels(urls, show)
-    display_images_in_terminal(images_to_display)
   end
 
-  def display_images_in_terminal(image_urls)
+  def display_image_and_label(image_url, num)
+    puts "\e]8;;#{image_url}\aImage ##{num}\e]8;;\a"
+    display_image_in_terminal(image_url)
+  end
+
+  def display_image_in_terminal(image_url)
     return unless system("which timg > /dev/null 2>&1")
-    system("timg --pixelation=iterm2 --grid=3x1 " + image_urls.map { |url| "\"#{url}\"" }.join(" "))
-  end
-
-  def print_image_labels(urls, show)
-    puts urls.each_with_index.map { |url, i| "\e]8;;#{url}\aImage ##{i + 1}\e]8;;\a" }.join(" / ")
+    system("timg --pixelation=iterm2 -g 32x32 \"#{image_url}\"")
   end
 
   def use_parent_cover_art(show)

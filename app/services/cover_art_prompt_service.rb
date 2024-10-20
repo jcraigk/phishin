@@ -30,22 +30,20 @@ class CoverArtPromptService < BaseService
     - Avoid instruments (guitars, saxophones, brass, classical instruments). No saxophones ever.
     - Avoid images of humans, human forms, or faces.
     - Avoid clocks, hourglasses, historical figures, and any text or symbols.
-    - Avoid owls, foxes, flamingos, lobseters, raccoons, cats, lions, dolphins, waves, skeletons, dragons, unicorns, buffalo, tornadoes, cowboy hats, pyramids, violins, bats, bears, ferris wheels, churches, cathedrals, butterflies, pumpkins, gargoyles, maple trees/leaves/syrup/saplings, and ghosts.
+    - Avoid owls, foxes, flamingos, lobseters, raccoons, cats, lions, dolphins, waves, skeletons, dragons, unicorns, buffalo, tornadoes, cowboy hats, pyramids, violins, bats, bears, ferris wheels, churches, cathedrals, butterflies, pumpkins, gargoyles, trees of all kinds, maple trees/leaves/syrup/saplings, and ghosts.
     - Avoid cliche landmarks like the Statue of Liberty, Golden Gate Bridge, Liberty Bell, Eiffel tower, and anything related to obvious geography (cornfields, cheese, moose, etc.).
+    - Avoid dirigibles and hot air balloons.
     - Avoid swirls, vortexes, kaleidoscope, spirals, fractals, galaxies, meteors, - Avoid kites and and staircases.
     - Avoid references that DALL-E might reject as inappropriate.
     - Do not mention musical performances or the band Phish. Dall-e should not be aware of the context of the prompt.
 
     Now, let's generate the prompt:
 
-    You will take **style**, **hue**, and **subjects** and generate a creative prompt that avoids the aforementioned exclusions. Subjects should be selected as follows: select 1 animal or plant from the location provided but don't choose the most obvious one, favoring animals most of the time, then have a 50/50 chance of selecting either (A) a landmark of the location or some other time/place reference or (B) a random concept or image. Then combine the two subjects with a simple verb or verb phrase. The combination can include either a single or plural group of the first subject along with the second subject.
+    You will take **style**, **hue**, and **subjects** and generate a creative prompt that avoids the aforementioned exclusions. Subjects should be selected as follows: select 1 animal or plant from the location provided but don't choose the most obvious one, favoring animals most of the time, then have a 50/50 chance of selecting either (A) a landmark of the location/venue or some other time/place reference or (B) a completely random concept or image. BE CREATIVE AND RANDOM. Then combine the two subjects with a simple verb or verb phrase. The combination can include either a single or plural group of the first subject along with the second subject.
 
-    Your JSON output should be in this format:
+    Your response should be in this format and should contain no other text:
 
-    {
-      "subjects": "Skyscrapers, llamas, and a UFO",
-      "prompt": "Create an image in {x} style with {y} hue featuring {subject 1} {interacting with or combined with} {subject 2}."
-    }
+    "Create an image in {x} style with {y} hue featuring {subject 1} {interacting with or combined with} {subject 2}."
 
     Here are some examples:
 
@@ -55,7 +53,7 @@ class CoverArtPromptService < BaseService
 
     Never mention any of the excluded items in the prompt. If necessary, create variations, but always respect the exclusions list.
 
-    Always respond with pure JSON as specified above.
+    Always respond with just the prompt and no other text.
   TXT
 
   def call
@@ -191,9 +189,7 @@ class CoverArtPromptService < BaseService
     )
 
     if response.success?
-      response = JSON[response.body]["choices"].first["message"]["content"]
-      response = response.gsub("```json", "").gsub("```", "") # Remove markdown
-      @chatgpt_response = JSON.parse(response, symbolize_names: true)
+      @chatgpt_response = JSON[response.body]["choices"].first["message"]["content"]
     else
       raise "Failed to get response from ChatGPT: #{response.body}"
     end
