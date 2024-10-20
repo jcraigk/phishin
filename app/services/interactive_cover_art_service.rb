@@ -23,9 +23,12 @@ class InteractiveCoverArtService < BaseService
     relation.each do |show|
       display_show_info(show)
       handle_cover_art_prompt(show)
-      handle_cover_art_images(show)
-      apply_album_cover_and_id3_tags(show)
-      apply_cover_art_to_children(show)
+
+      # If handle_cover_art_images returns true, process further actions
+      if handle_cover_art_images(show)
+        apply_album_cover_and_id3_tags(show)
+        apply_cover_art_to_children(show)
+      end
 
       pbar.increment if pbar
     rescue StandardError => e
@@ -55,17 +58,18 @@ class InteractiveCoverArtService < BaseService
   end
 
   def handle_cover_art_images(show)
-    return use_parent_cover_art(show) if show.cover_art_parent_show_id.present?
+    if show.cover_art_parent_show_id.present?
+      use_parent_cover_art(show)
+      return true
+    end
 
     @urls ||= []
     loop do
       input = prompt_user_for_action(@urls)
-      if input.length > 1
-        handle_custom_prompt(show, @urls, input)
-        next
-      end
-      break if process_input(show, @urls, input)
+      return false if process_input(show, @urls, input) == false
     end
+
+    true
   end
 
   def prompt_user_for_action(urls)
@@ -75,16 +79,8 @@ class InteractiveCoverArtService < BaseService
     $stdin.gets.chomp
   end
 
-  def handle_custom_prompt(show, urls, input)
-    puts "💬 #{input}"
-    show.update!(cover_art_prompt: input)
-    generate_candidate_images(show, urls)
-  end
-
   def process_input(show, urls, input)
     case input.downcase
-    when "s"
-      true
     when "i", "p"
       handle_image_or_prompt(show, input, urls)
       false
@@ -94,8 +90,12 @@ class InteractiveCoverArtService < BaseService
     when /\d+/
       attach_selected_image(show, urls[input.to_i - 1])
       true
+    when "s" # Skip
+      puts "Skipping this show..."
+      false
     else
-      true
+      puts "Invalid input. Skipping this show..."
+      false
     end
   end
 
@@ -119,29 +119,52 @@ class InteractiveCoverArtService < BaseService
   end
 
   def generate_candidate_images(show, urls)
-    puts "Generating candidate images..."
-    current_size = urls.size # Start numbering from the current size of the list
+    print "Generating #{NUM_IMAGES} candidate images "
+    current_size = urls.size
+
+    images_to_display = []
     NUM_IMAGES.times do |i|
+      print "..."
       image_url = CoverArtImageService.call(show, dry_run: true)
-      display_image_link(image_url, current_size + i, show)
-      display_image_in_terminal(image_url)
+      images_to_display << image_url
       urls << image_url
     end
+    puts ""
+
+    print_image_labels(urls, current_size, show)
+    display_images_in_terminal(images_to_display)
+  end
+
+  def display_images_in_terminal(image_urls)
+    return unless system("which timg > /dev/null 2>&1")
+    system("timg --grid=3x1 " + image_urls.map { |url| "\"#{url}\"" }.join(" "))
+  end
+
+  def print_image_labels(urls, current_size, show)
+    label_line = ""
+
+    # Calculate spaces needed to center the labels above each image
+    image_width = 80 # assuming each image is 80 characters wide
+    spacer = " " * 2  # 2 spaces between images
+
+    NUM_IMAGES.times do |i|
+      label = "\e]8;;#{urls[current_size + i]}\aImage ##{current_size + i + 1}\e]8;;\a"
+      padding = (image_width - "Image ##{current_size + i + 1}".length) / 2 # Center label within image width
+      label_line += " " * padding + label + spacer
+    end
+
+    puts label_line.rstrip # Print the centered labels
   end
 
   def use_parent_cover_art(show)
     puts "Using parent cover art image..."
     show.cover_art.attach(Show.find(show.cover_art_parent_show_id).cover_art.blob)
+    true
   end
 
   def display_image_link(image_url, index, show)
     formatted_date = show.date.strftime("%b %-d, %Y")
-    puts "🏞  \e]8;;#{image_url}\aImage ##{index + 1} - #{formatted_date}\e]8;;\a"
-  end
-
-  def display_image_in_terminal(image_url)
-    return unless system("which timg > /dev/null 2>&1")
-    system("timg -p i -g 80x80 \"#{image_url}\"")
+    puts "🏞  \e]8;;#{image_url}\aImage ##{index + 1}\e]8;;\a"
   end
 
   def apply_album_cover_and_id3_tags(show)
