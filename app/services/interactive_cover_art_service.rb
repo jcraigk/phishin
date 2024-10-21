@@ -112,6 +112,9 @@ class InteractiveCoverArtService < BaseService
     when "u"
       attach_cover_art_from_url(show)
       true
+    when /\d+z/
+      zoom_in_and_attach_selected_image(show, @urls[input.to_i - 1])
+      true
     when /\d+/
       attach_selected_image(show, @urls[input.to_i - 1])
       true
@@ -129,11 +132,17 @@ class InteractiveCoverArtService < BaseService
   def attach_cover_art_from_url(show)
     print "URL 👉 "
     url = $stdin.gets.chomp
-    show.attach_cover_art_by_url(url)
+    print "Zoom % 👉 "
+    zoom = $stdin.gets.chomp.to_i
+    show.attach_cover_art_by_url(url, zoom:)
   end
 
   def attach_selected_image(show, image_url)
     show.attach_cover_art_by_url(image_url)
+  end
+
+  def zoom_in_and_attach_selected_image(show, image_url)
+    show.attach_cover_art_by_url(image_url, zoom: 5)
   end
 
   def generate_images(show)
