@@ -61,7 +61,6 @@ class InteractiveCoverArtService < BaseService
       @urls = []
     end
     puts "\e[35m💬 #{show.cover_art_prompt}\e[0m"
-
   end
 
   def handle_cover_art_images(show)
