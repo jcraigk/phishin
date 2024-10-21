@@ -1,6 +1,4 @@
 class SearchService < BaseService
-  extend Dry::Initializer
-
   param :term
   param :scope, default: proc { "all" }
 
