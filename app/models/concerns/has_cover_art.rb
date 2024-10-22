@@ -70,10 +70,7 @@ module HasCoverArt
               new_height = (height * (1 - zoom_factor)).to_i
               image.crop "#{new_width}x#{new_height}+#{(width - new_width) / 2}+#{(height - new_height) / 2}"
             end
-
-            # Resize to 1024x1024 after cropping
             image.resize "1024x1024"
-
             image.format "jpg"
             image.quality 90
             image.strip

@@ -11,7 +11,7 @@ class CoverArtPromptService < BaseService
     Apricot Mustard Tangerine Plum Gold
   ]
   STYLES = %w[
-    Futurism Wood-Burned Poster-Art Chalk-Drawing
+    Futurism Wood-Burned Poster-Art
     Ink-Drawing Illustration Nihonga
     Watercolor Line-Art Geometric Low-Poly
     Oil-Painting Technical-Drawing

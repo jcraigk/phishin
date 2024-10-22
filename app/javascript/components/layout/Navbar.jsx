@@ -232,10 +232,10 @@ const Navbar = ({ user, handleLogout }) => {
                   <div className={`dropdown navbar-item user-dropdown ${isUserDropdownOpen ? "is-active" : ""}`} ref={userDropdownRef}>
                     <div className="dropdown-trigger">
                       <button className="button" onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}>
+                        <span>{user.username}</span>
                         <span className="icon">
                           <FontAwesomeIcon icon={faChevronDown} />
                         </span>
-                        <span>{user.username}</span>
                       </button>
                     </div>
                     <div className="dropdown-menu" role="menu">

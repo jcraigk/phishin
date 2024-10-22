@@ -23,7 +23,7 @@ RUN apt-get update -qq && \
       libjpeg-dev \
     && apt-get clean
 
-# Update and install necessary packages for timg and other dependencies
+# Install timg
 RUN apt-get update && apt-get install -y \
     cmake git g++ pkg-config \
     libgraphicsmagick++-dev libturbojpeg-dev libexif-dev libswscale-dev libdeflate-dev librsvg2-dev libcairo-dev \
@@ -36,8 +36,6 @@ RUN apt-get update && apt-get install -y \
     --no-install-recommends && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-# Build and install timg
 RUN git clone https://github.com/hzeller/timg.git && \
     cd timg && \
     mkdir build && \
