@@ -1,6 +1,4 @@
 class GapService < BaseService
-  extend Dry::Initializer
-
   param :show
 
   def call

@@ -1,8 +1,6 @@
 require "mini_magick"
 
 class AlbumCoverService < BaseService
-  extend Dry::Initializer
-
   param :show
 
   def call

@@ -24,9 +24,11 @@ class CoverArtImageService < BaseService
         },
         body: {
           model: "dall-e-3",
+          style: "vivid", # DALL-E 3 default
           prompt: show.cover_art_prompt,
-          n: 1,
-          size: "1024x1024"
+          n: 1, # DALL-E requirement
+          size: "1024x1024",
+          quality: "hd"
         }.to_json
       )
 

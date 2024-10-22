@@ -3,72 +3,149 @@ class CoverArtPromptService < BaseService
 
   HUES = %w[
     Red Orange Yellow Green Blue Purple
-    Red-Orange Yellow-Orange Yellow-Green Blue-Green
-    Pink Magenta Vermilion
+    Red-Orange Yellow-Orange Yellow-Green
+    Pink Magenta Vermilion Blue-Green Cerulean
     Scarlet Cyan Teal Turquoise Indigo Lavender
-    Amethyst Chartreuse Lime Crimson Maroon Olive
-    Burgundy Ochre Beige Peach Mint Navy Coral
-    Rose Amber Emerald Sapphire Violet Periwinkle
-    Fuchsia Aquamarine Mint Apricot Mustard
-    Tangerine Plum
+    Amethyst Lime Mint Crimson Maroon
+    Beige Peach Coral Amber Emerald Violet
+    Apricot Mustard Tangerine Plum Gold
   ]
   STYLES = %w[
-    Abstract Minimalism
-    Pop-Art Art-Deco Art-Nouveau Futurism Chinese-Brush-Painting
-    Gothic Wood-Burned Technical-Drawing
-    Pointillism Fauvism Ink-Drawing Illustration
-    Watercolor Line-Art Geometric Charcoal
-    Low-Poly Pencil-Drawing Oil-Painting
-    Pastel Stained-Glass Mosaics Cartoon
-    Woodcut Block-Prints Comic-Book
+    Futurism Wood-Burned Poster-Art
+    Ink-Drawing Illustration Nihonga
+    Watercolor Line-Art Geometric Low-Poly
+    Oil-Painting Technical-Drawing
+    Block-Prints Comic-Book Photograph Isometric-Drawing
   ]
+  CATEGORIES = %w[animals plants foods misc_objects time_concepts phish]
   BASE_PROMPT = <<~TXT
-    We are going to generate an optimized prompt for DALL-E to create an artistic square image based on style, hue, and a few subjects pulled from a live musical performance.
+    I want you to generate a series of objects and ideas in specific categories associated with a venue, time, and city/state I provide below. I want the answer in JSON format. The keys should be animals, plants, foods, misc_objects (miscellaneous objects), time_concepts (concepts related to time, season, social atmosphere, etc), and phish (explained below). I want you to give me ten words or phrases representing those categories. Avoid references that DALL-E might reject as inappropriate. Avoid images of humans, human forms, or faces.
 
-    First, here is a **critical set of exclusions** that should never be included under any circumstances:
-    - No jellyfish, horses, lighthouses, phoenixes, carousels or spinning tops.
-    - Avoid instruments (guitars, saxophones, brass, classical instruments). No saxophones ever.
-    - Avoid images of humans, human forms, or faces.
-    - Avoid clocks, hourglasses, historical figures, and any text or symbols.
-    - Avoid owls, foxes, flamingos, lobseters, raccoons, cats, lions, dolphins, waves, skeletons, dragons, unicorns, buffalo, tornadoes, cowboy hats, pyramids, violins, bats, bears, ferris wheels, churches, cathedrals, butterflies, pumpkins, gargoyles, and ghosts.
-    - Avoid cliche landmarks like the Statue of Liberty, Golden Gate Bridge, Liberty Bell, Eiffel tower, and anything related to obvious geography (cornfields, cheese, moose, etc.).
-    - Avoid swirls, vortexes, kaleidoscope, spirals, fractals, galaxies, meteors, - Avoid kites and and staircases.
-    - Avoid references that DALL-E might reject as inappropriate.
-    - Do not mention musical performances or the band Phish. Dall-e should not be aware of the context of the prompt.
+    The subjects in every category should reflect the time and place as well as content pulled from song titles. So, for example, if it's winter in New York, you wouldn't mention insects or other animals/plants not found during that time of year in that place. The "foods" key should similary be restricted to items that are commonly found in the area and are associated with the time of year. Take note of Halloween, Christmas, New Year's, and other holiday seasons.
 
-    Now, let's generate the prompt:
+    The "phish" key should include imagery pulled from the list of songs played at the show. This should include titles and your general knowledge of the lyrics. This should include both their originals and covers.
 
-    You will take **style**, **hue**, and **subjects** and generate a creative prompt that avoids the aforementioned exclusions. Be creative with subjects, drawing from song titles and themes, but without emphasizing location too heavily. Often the subjects should be more abstract, inspired by themes in the setlist rather than the time and place. If there are animals or objects references, use those. The subjects should be a random selection of 2 concepts pulled from the performance, but never include any of the excluded items listed above.
+    Be creative and random in your selections, especially when it comes to miscellaneous objects category. Those can incude other creatures from the tree of life, images from science and art, pop culture, etc. Choose not only the most relevant to the time/place given, but some loosely related objects/visuals/concepts. Make sure all of your selections have a visual element to them. Prefix words with "a" or "an" as needed.
 
-    Your JSON output should be in this format:
+    Here is an example if the time and place were Madison Square, New York City on December 31, 2021:
 
     {
-      "subjects": "Skyscrapers, llamas, and a UFO",
-      "prompt": "Create an image in {x} style with {y} hue featuring {subject 1} and {subject 2}."
+      "animals": [
+        "a pigeon",
+        "a rat",
+        "a sparrow",
+        "a falcon",
+        "a hawk",
+        "a cockroach",
+        "a squirrel",
+        "a starling",
+        "a house mouse",
+        "a striped skunk"
+      ]
+      "plants": [
+        "ivy creeping over stone",
+        "potted rosemary",
+        "snow-dusted grass",
+        "bamboo stalks",
+        "an aloe plant in window",
+        "a wild dandelion sprout",
+        "urban moss patch",
+        "rooftop garden basil",
+        "a succulent",
+        "a frozen fern"
+      ],
+      "foods": [
+        "a cinnamon pretzel",
+        "a slice of New York pizza",
+        "a churro",
+        "roasted peanuts",
+        "hot cider",
+        "a bag of chestnuts",
+        "a steaming hot dog",
+        "a sesame bagel",
+        "candy apple",
+        "an empanada"
+      ],
+      "misc_objects": [
+        "a frosted window pane",
+        "a subway sign",
+        "a discarded coffee cup",
+        "a streetlight glow",
+        "sparkling confetti",
+        "a bicycle lock",
+        "a neon glow reflection in puddle",
+        "a metal park bench",
+        "a fire hydrant with scarf",
+        "a sidewalk crack with snow"
+      ],
+      "time_concepts": [
+        "a midnight chill",
+        "frozen breath in the air",
+        "the last moments of the year",
+        "a winter night buzz",
+        "a holiday glow",
+        "festive anticipation",
+        "crisp midnight air",
+        "twinkling streetlights",
+        "evening stillness",
+        "a city's breath before midnight"
+      ],
+      "phish": [
+        "an oar",
+        "clouds in the sky",
+        "a cruise ship",
+        "spaghetti",
+        "strawberry goo",
+        "sugar shack",
+        "rock and roll",
+        "a dog",
+        "a cat"
+        "a horse"
+      ]
     }
 
-    Subjects should vary between singular and plural.
-
-    Never mention any of the excluded items in the prompt. If necessary, create variations, but always respect the exclusions list.
-
-    Always respond with pure JSON as specified above.
+    Respond only with the JSON object containing the keys and values for the categories. Do not include any other information or formatting characters in your response such as backticks or the token "json".
   TXT
-
   def call
-    # If show is inside a run at same venue, defer
-    return defer_to_kickoff_show if show != run_kickoff_show
-
-    # Otherwise, generate a new prompt
-    generate_new_prompt
+    if show == run_kickoff_show
+      generate_new_prompt
+      print_response_hints
+      # puts @chatgpt_response
+      # puts @new_prompt
+    else
+      defer_to_kickoff_show
+    end
   end
 
   private
+
+  def new_prompt
+    return @new_prompt if defined?(@new_prompt)
+    num = rand < 0.3 ? 1 : 2
+    subjects = CATEGORIES.sample(num).map { chatgpt_response[_1.to_sym].sample }.join(" and ")
+    @new_prompt =
+      "Create a cover art piece featuring #{subjects} " \
+      "in the style of #{style} with a #{hue} hue."
+  end
+
+  def print_response_hints
+    txt = CATEGORIES.map do |category|
+      "#{category.upcase} " + chatgpt_response[category.to_sym].sample(3).join(", ")
+    end.join(" / ")
+    puts txt
+  end
+
+  def song_list
+    show.tracks.map do
+      "#{_1.title} by #{_1.songs.first.artist || 'Phish'}"
+    end.join(", ")
+  end
 
   def generate_new_prompt
     show.update! \
       cover_art_style: style,
       cover_art_hue: hue,
-      cover_art_prompt: chatgpt_response[:prompt],
+      cover_art_prompt: new_prompt,
       cover_art_parent_show_id: nil
   end
 
@@ -134,42 +211,13 @@ class CoverArtPromptService < BaseService
     @prior_show
   end
 
-  def chatgpt_prompt
-    return @chatgpt_prompt if defined?(@chatgpt_prompt)
-
-    txt = BASE_PROMPT.dup
-    txt += "\n\nHere is info about the show:\n"
-    txt += "Date: #{show.date}\n"
-    txt += "Venue: #{show.venue_name}\n"
-    txt += "Location: #{show.venue.location}\n"
-    # Don't include songs for runs to avoid songs that don't appear in a show
-    # Since we use the same art for all shows in a run
-    txt += "Songs: #{song_list}\n" if show != run_kickoff_show
-    if prior_show.cover_art_prompt.present?
-      txt +=
-        "The previous show's prompt is this: " \
-        "'#{prior_show.cover_art_prompt}'. Avoid the subjects from " \
-        "that prompt as well as closely associated imagery. " \
-        "Ignore style and hue of the previous prompt, " \
-        "we'll specify those explicitly next.\n\n"
-    end
-    txt += "The hue of the art should be '#{hue}' and the style should be '#{style}'."
-    @chatgpt_prompt = txt
-  end
-
-  def song_list
-    unique_songs.map do
-      artist = _1.original? ? "Phish" : _1.artist
-      "#{_1.title} by #{artist}"
-    end.join(", ")
-  end
-
-  def unique_songs
-    @unique_songs ||= show.tracks.flat_map(&:songs).uniq
-  end
-
   def chatgpt_response
     return @chatgpt_response if defined?(@chatgpt_response)
+
+    prompt = BASE_PROMPT.dup
+    prompt += "\nThe songs played at this show were: #{song_list}"
+    prompt += "\n\nThe time and place is #{show.venue_name}, #{show.venue.location} on #{show.date}"
+    # puts prompt
 
     response = Typhoeus.post(
       "https://api.openai.com/v1/chat/completions",
@@ -180,15 +228,14 @@ class CoverArtPromptService < BaseService
       body: {
         model: "gpt-4o",
         messages: [
-          { role: "system", content: "You are an expert in generating DALL-E prompts." },
-          { role: "user", content: chatgpt_prompt }
+          { role: "system", content: "You are a generalized expert in knowledge about points of interest." },
+          { role: "user", content: prompt }
         ]
       }.to_json
     )
 
     if response.success?
       response = JSON[response.body]["choices"].first["message"]["content"]
-      response = response.gsub("```json", "").gsub("```", "") # Remove markdown
       @chatgpt_response = JSON.parse(response, symbolize_names: true)
     else
       raise "Failed to get response from ChatGPT: #{response.body}"

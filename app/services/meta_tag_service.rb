@@ -1,6 +1,4 @@
 class MetaTagService < BaseService
-  extend Dry::Initializer
-
   param :path
 
   TITLE_SUFFIX = " - #{App.app_name}"

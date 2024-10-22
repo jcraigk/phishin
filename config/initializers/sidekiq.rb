@@ -11,7 +11,7 @@ Sidekiq.configure_client do |config|
   config.redis = redis_config
 end
 
-# Disable connection message on rspec runs
-if Rails.env.test?
+# Disable connection message on rspec runs and rake tasks in prod
+if Rails.env.test? || Rails.env.production?
   Sidekiq.logger.level = Logger::WARN
 end
