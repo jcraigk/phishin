@@ -78,11 +78,9 @@ const EraShows = () => {
 
   const getPreviousAndNextYearLinks = () => {
     if (!yearsData) return null;
-    console.log(yearsData);
     const yearIndex = yearsData.findIndex((y) => y.period === year);
     const previousYear = yearsData[yearIndex - 1]?.period;
     const nextYear = yearsData[yearIndex + 1]?.period;
-    console.log(previousYear, nextYear, yearIndex);
 
     return (
       <div className="year-navigation hidden-mobile mt-5">

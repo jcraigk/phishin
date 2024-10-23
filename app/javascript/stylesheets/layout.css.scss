@@ -164,9 +164,6 @@ main {
 }
 
 @media (max-width: 1023px) {
-  .loading-shimmer::before {
-    display: none;
-  }
   .display-mobile-only {
     display: inline-block !important;
   }
