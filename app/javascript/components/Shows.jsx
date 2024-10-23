@@ -6,7 +6,7 @@ import LikeButton from "./controls/LikeButton";
 import ShowContextMenu from "./controls/ShowContextMenu";
 import CoverArt from "./CoverArt";
 
-const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode }) => {
+const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list" }) => {
   const { activeTrack } = useOutletContext();
   const navigate = useNavigate();
   const [loadedImages, setLoadedImages] = useState({}); // Keep track of loaded images
