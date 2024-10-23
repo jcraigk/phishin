@@ -92,6 +92,14 @@ const Show = ({ trackSlug }) => {
       <p className="sidebar-info hidden-mobile">
         <Link to={`/venues/${show.venue.slug}`}>{show.venue_name}</Link>
       </p>
+      <p className="sidebar-info hidden-mobile">
+        <Link
+            to={`/map?term=${show.venue.location}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {show.venue.location}
+        </Link>
+      </p>
       <div className="mr-1 show-duration">
         <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
         {formatDurationShow(show.duration)}

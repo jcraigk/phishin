@@ -58,7 +58,6 @@ class InteractiveCoverArtService < BaseService
     if show.cover_art_prompt.blank?
       puts "Generating prompt..."
       CoverArtPromptService.call(show)
-      @urls = []
     end
     puts "\e[35m💬 #{show.cover_art_prompt}\e[0m"
   end
@@ -87,7 +86,6 @@ class InteractiveCoverArtService < BaseService
   def handle_custom_prompt(show, input)
     puts "\e[35m💬 #{input}\e[0m"
     show.update!(cover_art_prompt: input)
-    @urls = []
     generate_images(show)
   end
 
@@ -103,7 +101,6 @@ class InteractiveCoverArtService < BaseService
     when "p"
       puts "Generating cover art prompt..."
       CoverArtPromptService.call(show)
-      @urls = []
       puts "\e[35m💬 #{show.cover_art_prompt}\e[0m"
       nil
     when "i"
