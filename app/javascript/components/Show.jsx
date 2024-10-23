@@ -175,6 +175,8 @@ const Show = ({ trackSlug }) => {
               <span className="phone-show-date">{formatDate(show.date)}</span>
               <span className="phone-show-venue">
                 {show.venue_name}
+                <br />
+                {show.venue.location}
               </span>
               <span className="phone-show-context">
                 <ShowContextMenu show={show} css="context-nudge-right" />
