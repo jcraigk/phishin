@@ -5,7 +5,6 @@ class AlbumZipCleanupJob
 
   def perform
     total_size = get_total_size
-    target_size = App.album_zip_disk_limit - BUFFER
     return if total_size <= target_size
 
     # Continue deleting the oldest attachments until we are under the target limit
@@ -27,6 +26,10 @@ class AlbumZipCleanupJob
   end
 
   private
+
+  def target_size
+    App.album_zip_disk_limit - BUFFER
+  end
 
   def get_total_size
     ActiveStorage::Blob

@@ -8,7 +8,7 @@ class AlbumZipJob
   def perform(show_id)
     @show_id = show_id
 
-    return show.update!(album_zip_requested_at: nil) if total_size > App.album_zip_disk_limit
+    AlbumZipCleanupJob.new.perform
 
     create_and_attach_album_zip
     show.update!(album_zip_requested_at: nil)
@@ -60,12 +60,5 @@ class AlbumZipJob
 
   def show
     @show ||= Show.find(show_id)
-  end
-
-  def total_size
-    ActiveStorage::Blob
-      .joins(:attachments)
-      .where(active_storage_attachments: { name: "album_zip", record_type: "Show" })
-      .sum(:byte_size)
   end
 end
