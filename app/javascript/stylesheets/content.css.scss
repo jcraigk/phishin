@@ -354,15 +354,15 @@
   list-style: none;
   padding: 0;
 
-
   .grid-item {
     position: relative;
     width: 100%;
-    padding-bottom: 100%;
+    aspect-ratio: 1 / 1;
     background-size: cover;
     background-position: center;
     cursor: pointer;
     border-radius: $radius;
+    max-width: 384px;
   }
 
   .grid-item:hover {
