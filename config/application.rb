@@ -35,7 +35,7 @@ module Phishin
         config.base_url
       end
     config.username_cooldown = 1.year
-    config.album_zip_disk_limit = 100.gigabytes
+    config.album_zip_disk_limit = 150.gigabytes
 
     # Rails config
     config.load_defaults 7.2

@@ -32,11 +32,11 @@ const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
   };
 
   const handleAddToPlaylist = (e) => {
+    e.stopPropagation();
     if (user === "anonymous") {
       setAlert("You must login to edit playlists");
       return;
     }
-    e.stopPropagation();
     setDraftPlaylist([...draftPlaylist, track]);
     setNotice("Track added to draft playlist");
     hideDropdown();

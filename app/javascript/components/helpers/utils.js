@@ -9,7 +9,7 @@ export const formatDurationShow = (milliseconds) => {
   const minutes = totalMinutes % 60;
 
   if (hours > 0) {
-    return `${hours}h ${minutes}m`;
+    return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
   } else {
     return `${minutes}m`;
   }

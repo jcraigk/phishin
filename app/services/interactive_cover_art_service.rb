@@ -6,6 +6,11 @@ class InteractiveCoverArtService < BaseService
   param :relation
 
   NUM_IMAGES = 2
+  def prompt_for_zoom
+    print "Zoom (0-50)% 👉 "
+    $stdin.gets.chomp.to_i
+  end
+
 
   def call
     setup_progress_bar if relation.count > 1
@@ -43,7 +48,9 @@ class InteractiveCoverArtService < BaseService
   def display_show_info(show)
     formatted_date = show.date.strftime("%b %-d, %Y")
     puts "=================================="
-    puts "🏟  \e]8;;#{show.url}\a#{formatted_date}\e]8;;\a - #{show.venue_name} - #{show.venue.location}"
+    puts \
+      "🏟  \e]8;;#{show.url}\a#{formatted_date}\e]8;;\a - " \
+      "#{show.venue_name} - #{show.venue.location}"
     display_image_in_terminal(show.cover_art_urls[:large])
     if show.cover_art_parent_show_id.present?
       parent_show = Show.find(show.cover_art_parent_show_id)
@@ -58,7 +65,6 @@ class InteractiveCoverArtService < BaseService
     if show.cover_art_prompt.blank?
       puts "Generating prompt..."
       CoverArtPromptService.call(show)
-      @urls = []
     end
     puts "\e[35m💬 #{show.cover_art_prompt}\e[0m"
   end
@@ -79,7 +85,7 @@ class InteractiveCoverArtService < BaseService
       end
 
       result = process_input(show, input)
-      return result if result.in?([true, false])
+      return result if result.in?([ true, false ])
     end
     true
   end
@@ -87,13 +93,12 @@ class InteractiveCoverArtService < BaseService
   def handle_custom_prompt(show, input)
     puts "\e[35m💬 #{input}\e[0m"
     show.update!(cover_art_prompt: input)
-    @urls = []
     generate_images(show)
   end
 
   def prompt_user_for_action
     txt = @urls.any? ? "Use (1-#{@urls.size}), " : ""
-    txt += "E(x)it, (S)kip, New (i)mages, New (p)rompt, (U)RL, or custom prompt 👉 "
+    txt += "E(x)it, (S)kip, New (i)mages, New (p)rompt, (U)RL, (F)ile, or custom prompt 👉 "
     print txt
     $stdin.gets.chomp
   end
@@ -103,7 +108,6 @@ class InteractiveCoverArtService < BaseService
     when "p"
       puts "Generating cover art prompt..."
       CoverArtPromptService.call(show)
-      @urls = []
       puts "\e[35m💬 #{show.cover_art_prompt}\e[0m"
       nil
     when "i"
@@ -112,9 +116,11 @@ class InteractiveCoverArtService < BaseService
     when "u"
       attach_cover_art_from_url(show)
       true
+    when "f"
+      attach_cover_art_from_file(show)
+      true
     when /\d+/
-      print "Zoom (0-50)% 👉 "
-      zoom = $stdin.gets.chomp.to_i
+      zoom = prompt_for_zoom
       show.attach_cover_art_by_url(@urls[input.to_i - 1], zoom:)
       true
     when "s"
@@ -131,9 +137,15 @@ class InteractiveCoverArtService < BaseService
   def attach_cover_art_from_url(show)
     print "URL 👉 "
     url = $stdin.gets.chomp
-    print "Zoom (0-50)% 👉 "
-    zoom = $stdin.gets.chomp.to_i
+    zoom = prompt_for_zoom
     show.attach_cover_art_by_url(url, zoom:)
+  end
+
+  def attach_cover_art_from_file(show)
+    print "File path 👉 "
+    path = $stdin.gets.chomp
+    zoom = prompt_for_zoom
+    show.attach_cover_art_by_path(path, zoom:)
   end
 
   def generate_images(show)
@@ -148,6 +160,7 @@ class InteractiveCoverArtService < BaseService
   end
 
   def display_image_in_terminal(image_url)
+    return
     return unless system("which timg > /dev/null 2>&1")
     system("timg --pixelation=iterm2 -g 120x120 \"#{image_url}\" 2>/dev/null")
   end

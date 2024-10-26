@@ -124,7 +124,7 @@ class CoverArtPromptService < BaseService
     num = rand < 0.3 ? 1 : 2
     subjects = CATEGORIES.sample(num).map { chatgpt_response[_1.to_sym].sample }.join(" and ")
     @new_prompt =
-      "Create a cover art piece featuring #{subjects} " \
+      "Create an image featuring #{subjects} " \
       "in the style of #{style} with a #{hue} hue."
   end
 
@@ -228,7 +228,8 @@ class CoverArtPromptService < BaseService
       body: {
         model: "gpt-4o",
         messages: [
-          { role: "system", content: "You are a generalized expert in knowledge about points of interest." },
+          { role: "system",
+content: "You are a generalized expert in knowledge about points of interest." },
           { role: "user", content: prompt }
         ]
       }.to_json

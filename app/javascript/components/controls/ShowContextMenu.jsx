@@ -77,23 +77,18 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
   }, [dropdownRef]);
 
   const handleRequestAlbumZip = async () => {
-    try {
-      const response = await fetch(`/api/v2/shows/request_album_zip`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ date: show.date })
-      });
+    const response = await fetch(`/api/v2/shows/request_album_zip`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ date: show.date })
+    });
 
-      if (response.status === 204) {
-        setNotice("Album is being generated - refresh the page in ~30 seconds");
-      } else if (response.status === 409) {
-        setAlert("Album is already being generated");
-      } else {
-        setAlert("Sorry - album downloads are currently disabled");
-      }
-    } catch (error) {
-      console.log(error);
-      setAlert("Sorry - there was an error with the request");
+    if (response.status === 204) {
+      setNotice("Album is being generated - refresh the page in ~30 seconds");
+    } else if (response.status === 409) {
+      setAlert("Album is already being generated");
+    } else {
+      setAlert("Sorry - album downloads are currently disabled");
     }
   };
 

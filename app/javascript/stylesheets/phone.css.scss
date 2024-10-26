@@ -4,10 +4,10 @@
   position: relative;
 
   .phone-show-image {
-    width: 100px;
-    height: 100px;
-    margin-right: 0.3rem;
-    margin-left: 5.5rem;
+    width: 148px;
+    height: 148px;
+    margin-right: 0.6rem;
+    margin-left: 3.7rem;
     flex-shrink: 0;
 
     img {
@@ -19,20 +19,30 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    height: 100%;
+    color: $dark-gray;
+    margin-top: 8px;
 
+    .phone-show-date {
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
     .phone-show-venue {
+      font-size: 1.2rem;
+      line-height: 1.5rem;
       width: 10rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-    }
-    .phone-show-date {
-      font-size: 1.6rem;
-      font-weight: bold;
+      margin-top: 5px;
     }
     .phone-show-context {
       position: relative;
       left: -7px;
+      margin-top: 3px;
+      svg {
+        color: $title-gray !important;
+      }
     }
   }
 }

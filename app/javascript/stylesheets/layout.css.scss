@@ -129,6 +129,14 @@ main {
   background: linear-gradient(90deg, rgba(240, 240, 240, 0) 0%, rgba(255, 255, 255, 0.6) 50%, rgba(240, 240, 240, 0) 100%);
   animation: shimmer 1.5s infinite;
 }
+
+.grid-view {
+  .loading-shimmer::before {
+    height: 70%;
+    width: 60%;
+  }
+}
+
 .list-item {
   .loading-shimmer::before {
     width: 15px !important;
@@ -138,10 +146,10 @@ main {
 
 @keyframes shimmer {
   0% {
-    transform: translateX(-100%);
+    transform: translateX(-30%);
   }
   100% {
-    transform: translateX(100%);
+    transform: translateX(35%);
   }
 }
 
@@ -164,9 +172,6 @@ main {
 }
 
 @media (max-width: 1023px) {
-  .loading-shimmer::before {
-    display: none;
-  }
   .display-mobile-only {
     display: inline-block !important;
   }
