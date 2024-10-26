@@ -228,7 +228,8 @@ class CoverArtPromptService < BaseService
       body: {
         model: "gpt-4o",
         messages: [
-          { role: "system", content: "You are a generalized expert in knowledge about points of interest." },
+          { role: "system",
+content: "You are a generalized expert in knowledge about points of interest." },
           { role: "user", content: prompt }
         ]
       }.to_json

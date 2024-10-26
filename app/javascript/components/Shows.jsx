@@ -9,7 +9,8 @@ import CoverArt from "./CoverArt";
 const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list" }) => {
   const { activeTrack } = useOutletContext();
   const navigate = useNavigate();
-  const [loadedImages, setLoadedImages] = useState({}); // Keep track of loaded images
+  const [loadedImages, setLoadedImages] = useState({});
+  let itemNumber = 1;
 
   const handleShowClick = (showDate) => {
     navigate(`/${showDate}`);
@@ -44,41 +45,45 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
     <React.Fragment key={tourName}>
       {tourHeaders && renderTourHeader(tourName, tourShows.length)}
       <ul className={viewMode === "grid" ? "grid-view" : "list-view"}>
-        {tourShows.map((show, index) =>
-          viewMode === "list" ? renderListItem(show, index) : renderGridItem(show)
+        {tourShows.map((show) =>
+          viewMode === "list" ? renderListItem(show) : renderGridItem(show)
         )}
       </ul>
     </React.Fragment>
   );
 
-  const renderListItem = (show, index) => (
-    <li
-      key={show.date}
-      className={`list-item ${show.date === activeTrack?.show_date ? "active-item" : ""}`}
-      onClick={() => handleShowClick(show.date)}
-    >
-      <div className="main-row">
-        {numbering && <span className="leftside-numbering">#{index + 1}</span>}
-        <span className="leftside-primary">
-          <CoverArt coverArtUrls={show.cover_art_urls} css="cover-art-small" />
-          <span className="show-date">{formatDate(show.date)}</span>
-        </span>
-        <span className="leftside-secondary">{show.venue_name}</span>
-        <span className="leftside-tertiary">
-          <TagBadges tags={show.tags} parentId={show.date} />
-        </span>
-        <div className="rightside-group">
-          <span className="rightside-primary">{formatDurationShow(show.duration)}</span>
-          <span className="rightside-secondary">
-            <LikeButton likable={show} type="Show" />
+  const renderListItem = (show) => {
+    const currentItemNumber = itemNumber++;
+
+    return (
+      <li
+        key={show.date}
+        className={`list-item ${show.date === activeTrack?.show_date ? "active-item" : ""}`}
+        onClick={() => handleShowClick(show.date)}
+      >
+        <div className="main-row">
+          {numbering && <span className="leftside-numbering">#{currentItemNumber}</span>}
+          <span className="leftside-primary">
+            <CoverArt coverArtUrls={show.cover_art_urls} css="cover-art-small" />
+            <span className="show-date">{formatDate(show.date)}</span>
           </span>
-          <span className="rightside-menu">
-            <ShowContextMenu show={show} adjacentLinks={false} />
+          <span className="leftside-secondary">{show.venue_name}</span>
+          <span className="leftside-tertiary">
+            <TagBadges tags={show.tags} parentId={show.date} />
           </span>
+          <div className="rightside-group">
+            <span className="rightside-primary">{formatDurationShow(show.duration)}</span>
+            <span className="rightside-secondary">
+              <LikeButton likable={show} type="Show" />
+            </span>
+            <span className="rightside-menu">
+              <ShowContextMenu show={show} adjacentLinks={false} />
+            </span>
+          </div>
         </div>
-      </div>
-    </li>
-  );
+      </li>
+    );
+  };
 
   const renderGridItem = (show) => {
     const isLoaded = loadedImages[show.date] || false;

@@ -48,7 +48,9 @@ class InteractiveCoverArtService < BaseService
   def display_show_info(show)
     formatted_date = show.date.strftime("%b %-d, %Y")
     puts "=================================="
-    puts "🏟  \e]8;;#{show.url}\a#{formatted_date}\e]8;;\a - #{show.venue_name} - #{show.venue.location}"
+    puts \
+      "🏟  \e]8;;#{show.url}\a#{formatted_date}\e]8;;\a - " \
+      "#{show.venue_name} - #{show.venue.location}"
     display_image_in_terminal(show.cover_art_urls[:large])
     if show.cover_art_parent_show_id.present?
       parent_show = Show.find(show.cover_art_parent_show_id)
@@ -83,7 +85,7 @@ class InteractiveCoverArtService < BaseService
       end
 
       result = process_input(show, input)
-      return result if result.in?([true, false])
+      return result if result.in?([ true, false ])
     end
     true
   end

@@ -75,10 +75,10 @@ describe "Homepage", :js do
 
     within("footer") do
       expect(page).to have_link("FAQ", href: "/faq")
-      expect(page).to have_link("RSS Feed", href: "/feeds/rss")
-      expect(page).to have_link("Privacy Policy", href: "/privacy")
-      expect(page).to have_link("Terms of Service", href: "/terms")
-      expect(page).to have_link("Contact Info", href: "/contact-info")
+      expect(page).to have_link("RSS", href: "/feeds/rss")
+      expect(page).to have_link("Privacy", href: "/privacy")
+      expect(page).to have_link("Terms", href: "/terms")
+      expect(page).to have_link("Contact", href: "/contact-info")
     end
 
     # Click most recent year
@@ -90,7 +90,7 @@ describe "Homepage", :js do
       expect(page).to have_content("3 shows")
     end
     within("#main-content") do
-      items = page.all("li.list-item")
+      items = page.all(".grid-item")
       expect(items.size).to eq(3)
     end
   end

@@ -58,7 +58,7 @@ RSpec.describe MetaTagService do
     let(:path) { "/2024-01-01" }
 
     it "returns the show title and og tags" do
-      expect(service[:title]).to eq("2024.01.01#{title_suffix}")
+      expect(service[:title]).to eq("Jan 1, 2024#{title_suffix}")
       expect(service[:og][:title]).to eq("Listen to January 1, 2024")
       expect(service[:status]).to eq(:ok)
     end
@@ -70,7 +70,7 @@ RSpec.describe MetaTagService do
     let(:path) { "/2024-01-01/#{track.slug}" }
 
     it "returns the track title and og tags" do
-      expect(service[:title]).to eq("#{track.title} - 2024.01.01#{title_suffix}")
+      expect(service[:title]).to eq("#{track.title} - Jan 1, 2024#{title_suffix}")
       expect(service[:og][:title]).to eq("Listen to #{track.title} from January 1, 2024")
       expect(service[:status]).to eq(:ok)
     end
@@ -81,7 +81,7 @@ RSpec.describe MetaTagService do
     let(:path) { "/2024-01-01/invalid-slug" }
 
     it "returns the show title without track details and status ok" do
-      expect(service[:title]).to eq("2024.01.01#{title_suffix}")
+      expect(service[:title]).to eq("Jan 1, 2024#{title_suffix}")
       expect(service[:og][:title]).to eq("Listen to January 1, 2024")
       expect(service[:status]).to eq(:ok)
     end

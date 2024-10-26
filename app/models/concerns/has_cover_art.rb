@@ -58,7 +58,7 @@ module HasCoverArt
     private
 
     def attach_cover_art(image_url: nil, file_path: nil, zoom: 0)
-      Tempfile.create(["cover_art_#{SecureRandom.hex}", ".jpg"]) do |temp_jpg|
+      Tempfile.create([ "cover_art_#{SecureRandom.hex}", ".jpg" ]) do |temp_jpg| # rubocop:disable Metrics/BlockLength
         image = if image_url
           image_response = Typhoeus.get(image_url)
           raise "Failed to download image: #{image_response.body}" unless image_response.success?
@@ -79,7 +79,8 @@ module HasCoverArt
           height = image.height
           new_width = (width * (1 - zoom_factor)).to_i
           new_height = (height * (1 - zoom_factor)).to_i
-          image.crop "#{new_width}x#{new_height}+#{(width - new_width) / 2}+#{(height - new_height) / 2}"
+          image.crop \
+            "#{new_width}x#{new_height}+#{(width - new_width) / 2}+#{(height - new_height) / 2}"
         end
 
         image.resize "1024x1024"

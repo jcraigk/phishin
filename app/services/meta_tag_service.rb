@@ -42,23 +42,13 @@ class MetaTagService < BaseService
   private
 
   def meta_tag_data
-    if path == "/"
-      { title: BASE_TITLE, status: :ok }
-    elsif hard_coded_title
-      { title: "#{hard_coded_title}#{TITLE_SUFFIX}", og: {}, status: :ok }
-    elsif date?
-      show_data
-    elsif year?
-      year_data
-    elsif year_range?
-      year_range_data
-    elsif playlist?
-      playlist_data
-    elsif tag_related?
-      tag_data
-    else
-      { title: resource_title || BASE_TITLE, og: {}, status: resource_title ? :ok : :not_found }
-    end
+    return { title: BASE_TITLE, status: :ok } if path == "/"
+    return hardcoded_meta_data if hard_coded_title
+    return dynamic_meta_data if date? || year? || year_range?
+    return playlist_data if playlist?
+    return tag_data if tag_related?
+
+    { title: resource_title || BASE_TITLE, og: {}, status: resource_title ? :ok : :not_found }
   end
 
   def hard_coded_title
@@ -72,13 +62,33 @@ class MetaTagService < BaseService
   def resource_title
     klass = RESOURCES[resource_type]
     if klass
-      slug ? resource_name(klass) : "#{resource_type.capitalize}#{TITLE_SUFFIX}"
+      if slug
+        resource_name(klass)
+      else
+        "#{resource_type.capitalize}#{TITLE_SUFFIX}"
+      end
+    else
+      nil
     end
   end
 
   def resource_name(klass)
     resource = klass.find_by(slug:)
     resource&.name || "404 - Phish.in"
+  end
+
+  def hardcoded_meta_data
+    { title: "#{hard_coded_title}#{TITLE_SUFFIX}", og: {}, status: :ok }
+  end
+
+  def dynamic_meta_data
+    if date?
+      show_data
+    elsif year?
+      year_data
+    elsif year_range?
+      year_range_data
+    end
   end
 
   def playlist_data
@@ -102,31 +112,37 @@ class MetaTagService < BaseService
 
   def show_data
     show = Show.includes(:tracks).find_by(date: date)
-    return { title: "404 - Phish.in", og: {}, status: :not_found } if show.nil?
+    return not_found_meta unless show
 
     if slug
       track = show.tracks.find_by(slug: slug)
-      title =
-        if track
-          "#{track.title} - #{formatted_date(show.date)}#{TITLE_SUFFIX}"
-        else
-          "#{formatted_date(show.date)}#{TITLE_SUFFIX}"
-        end
-      og_title =
-        if track
-          "Listen to #{track.title} from #{formatted_date(show.date)}"
-        else
-          "Listen to #{formatted_date(show.date)}"
-        end
+      if track
+        title = "#{track.title} - #{short_date(show.date)}#{TITLE_SUFFIX}"
+        og_title = "Listen to #{track.title} from #{long_date(show.date)}"
+      else
+        title = "#{short_date(show.date)}#{TITLE_SUFFIX}"
+        og_title = "Listen to #{long_date(show.date)}"
+      end
+      {
+        title: title,
+        og: {
+          title: og_title,
+          type: "music.playlist",
+          audio: show.tracks.order(:position).first&.mp3_url,
+          image: show&.album_cover_url
+        },
+        status: :ok
+      }
     else
-      title = "#{formatted_date(show.date)}#{TITLE_SUFFIX}"
-      og_title = "Listen to #{formatted_date(show.date)}"
+      default_show_meta(show)
     end
+  end
 
+  def default_show_meta(show)
     {
-      title:,
+      title: "#{short_date(show.date)}#{TITLE_SUFFIX}",
       og: {
-        title: og_title,
+        title: "Listen to #{long_date(show.date)}",
         type: "music.playlist",
         audio: show.tracks.order(:position).first&.mp3_url,
         image: show&.album_cover_url
@@ -138,22 +154,26 @@ class MetaTagService < BaseService
   def year_data
     year = segments[0].to_i
     shows = Show.where("EXTRACT(YEAR FROM date) = ?", year)
-    return { title: "404 - Phish.in", og: {}, status: :not_found } if shows.empty?
-
-    { title: "#{year}#{TITLE_SUFFIX}", og: {}, status: :ok }
+    if shows.present?
+      { title: "#{year}#{TITLE_SUFFIX}", og: {}, status: :ok }
+    else
+      not_found_meta
+    end
   end
 
   def year_range_data
     start_year, end_year = segments[0].split("-").map(&:to_i)
     shows = Show.where("EXTRACT(YEAR FROM date) BETWEEN ? AND ?", start_year, end_year)
-    return { title: "404 - Phish.in", og: {}, status: :not_found } if shows.empty?
-
-    { title: "#{start_year}-#{end_year}#{TITLE_SUFFIX}", og: {}, status: :ok }
+    if shows.present?
+      { title: "#{start_year}-#{end_year}#{TITLE_SUFFIX}", og: {}, status: :ok }
+    else
+      not_found_meta
+    end
   end
 
   def tag_data
     tag = Tag.find_by(slug: slug)
-    return { title: "404 - Phish.in", og: {}, status: :not_found } if tag.nil?
+    return not_found_meta unless tag
 
     title_suffix = resource_type == "show-tags" ? "Shows" : "Tracks"
     {
@@ -163,8 +183,16 @@ class MetaTagService < BaseService
     }
   end
 
-  def formatted_date(date)
+  def not_found_meta
+    { title: "404 - Phish.in", og: {}, status: :not_found }
+  end
+
+  def short_date(date)
     date.strftime("%b %-d, %Y")
+  end
+
+  def long_date(date)
+    date.strftime("%B %-d, %Y")
   end
 
   def date?
