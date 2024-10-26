@@ -41,13 +41,9 @@ $radius: 0.35rem;
 @import "./tooltips.css.scss";
 
 html, body {
-  height: 100%;
   margin: 0;
-  display: flex;
-  flex-direction: column;
   background-color: $bg-gray;
   font-family: "Open Sans Condensed", sans-serif;
-  overflow-x: hidden;
 }
 
 /* Disable gray squares after taps on mobile */

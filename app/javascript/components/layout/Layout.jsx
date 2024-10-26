@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Outlet, useNavigate, useNavigation, useLocation } from "react-router-dom";
+import { Outlet, useNavigate, useNavigation, ScrollRestoration} from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Loader from "../controls/Loader";
@@ -19,7 +19,6 @@ const initialDraftPlaylistMeta = {
 const Layout = ({ props }) => {
   const navigation = useNavigation();
   const navigate = useNavigate();
-  const location = useLocation();
   const [user, setUser] = useState(null);
   const [isAppModalOpen, setIsAppModalOpen] = useState(false);
   const [appModalContent, setAppModalContent] = useState(null);
@@ -32,14 +31,6 @@ const Layout = ({ props }) => {
   const [activeTrack, setActiveTrack] = useState(null);
   const audioRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
-
-  useEffect(() => {
-    // Scroll to top (skip for subpages to allow autoscroll to specific tracks)
-    const segments = location.pathname.split("/").filter(Boolean);
-    if (segments.length < 2) {
-      document.querySelector("#navbar-background").scrollIntoView({ behavior: "instant" });
-    }
-  }, [location]);
 
   useEffect(() => {
     // OAuth failure
@@ -133,6 +124,7 @@ const Layout = ({ props }) => {
 
   return (
     <>
+      <ScrollRestoration />
       {navigation.state === 'loading' && <Loader />}
       <Navbar user={user} handleLogout={handleLogout} />
       <main className={activeTrack ? 'with-player' : ''}>
