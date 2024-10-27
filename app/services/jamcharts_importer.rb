@@ -23,10 +23,6 @@ class JamchartsImporter
     @jamcharts_tag ||= Tag.where(name: "Jamcharts").first
   end
 
-  def debut_tag
-    @debut_tag ||= Tag.where(name: "Debut").first
-  end
-
   def phishnet_uri
     URI.parse("#{BASE_URL}/jamcharts.json?apikey=#{API_KEY}")
   end
@@ -89,38 +85,23 @@ class JamchartsImporter
       matched_ids << track.id
 
       desc = sanitize_str(item["jamchart_description"])
-      tag =
-        if desc.start_with?("Debut.", "First version.")
-          desc = nil
-          debut_tag
-        else
-          jamcharts_tag
-        end
 
-      return create_or_update_tag(track, tag, desc)
+      return create_or_update_tag(track, desc)
     end
 
     @invalid_items << "#{item['showdate']} - #{item['song']}"
   end
 
-  def create_or_update_tag(track, tag, desc)
-    tt = TrackTag.find_by(track:, tag:)
+  def create_or_update_tag(track, desc)
     notes = html_entities_coder.decode(desc)
-    if tt.present?
-      tt.update(notes:)
-    else
-      TrackTag.create! \
-        track:,
-        tag:,
-        notes:
-    end
+    TrackTag.find_or_initialize_by(track:, tag: jamcharts_tag).update!(notes:)
   end
 
   # Ambiguous: show contains multiple tracks of a song, only one is jamcharted
   def handle_ambiguous_item(item)
     return unless (matched_item = ambiguous_item(item))
     track = Track.find(matched_item[:track_id])
-    create_or_update_tag(track, jamcharts_tag, sanitize_str(item["jamchart_description"]))
+    create_or_update_tag(track, sanitize_str(item["jamchart_description"]))
     true
   end
 

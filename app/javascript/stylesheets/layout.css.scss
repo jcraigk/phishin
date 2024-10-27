@@ -29,16 +29,6 @@ main {
   opacity: 1;
 
   .sidebar-content {
-    a {
-      color: $text-gray;
-      text-decoration: none;
-    }
-
-    a:hover {
-      color: $text-gray;
-      text-decoration: underline;
-    }
-
     select {
       max-width: 20rem;
     }
@@ -56,11 +46,16 @@ main {
       font-weight: bold;
       line-height: 2rem;
       margin-bottom: 0.4rem;
-      color: $title-gray;
     }
 
     .sidebar-info {
       font-size: 1.2rem;
+      margin-top: 0.3rem;
+      color: $title-gray;
+
+      a {
+        color: $title-gray !important;
+      }
     }
 
     .show-duration {
@@ -193,6 +188,8 @@ main {
     display: inline-block;
     width: 100%;
     flex: none !important;
+    padding: 0.3rem;
+    background-color: rgba($header-gray, 0.5);
 
     .sidebar-content {
       display: flex;

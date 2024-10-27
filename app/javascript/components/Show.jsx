@@ -89,7 +89,7 @@ const Show = ({ trackSlug }) => {
         {formatDate(show.date)}
       </div>
 
-      <p className="sidebar-info hidden-mobile">
+      <p className="sidebar-info">
         <Link to={`/venues/${show.venue.slug}`}>{show.venue_name}</Link>
       </p>
       <p className="sidebar-info hidden-mobile">
@@ -100,10 +100,6 @@ const Show = ({ trackSlug }) => {
             {show.venue.location}
         </Link>
       </p>
-      <div className="mr-1 show-duration">
-        <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
-        {formatDurationShow(show.duration)}
-      </div>
 
       <hr className="sidebar-hr" />
 

@@ -19,7 +19,7 @@ $inactive-gray: #d9dbdc;
 $text-gray: #6d6f71;
 $title-gray: #515152;
 $dark-gray: #3a3a3a;
-$radius: 0.35rem;
+$radius: 0.5rem;
 
 @import "./bulma-overrides.css.scss";
 @import "./content.css.scss";
@@ -67,7 +67,12 @@ button {
 }
 
 a {
+  color: $text-gray;
   text-decoration: none;
+
+  a:hover {
+    text-decoration: underline;
+  }
 
   &:visited, &:focus {
     text-decoration: none !important;
@@ -138,7 +143,7 @@ a {
 
 .large-album-art {
   img {
-    border-radius: $radius !important;
+    border-radius: $radius;
     margin-top: 0.5rem;
   }
 }
