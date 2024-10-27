@@ -6,7 +6,7 @@
 
 **Ruby on Rails** and **Grape API** wrap a **PostgreSQL** database on the backend. There's a [web frontend](https://phish.in) written in **React** for browsing and playing audio content as well as a [JSON API](https://phish.in/api-docs) for accessing content programmatically.
 
-All audio is provided in MP3 format; more formats and sources may be made available at a later time. Files are served directly from the web server and cached via CloudFlare CDN.
+All audio is provided in MP3 format. More formats and sources may be made available at a later time. Assets such as audio MP3s, waveform PNGs, and album art JPEGs are served directly from the web server and cached via CloudFlare CDN.
 
 Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and development.
 
@@ -58,7 +58,7 @@ SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch
 rails s
 ```
 
-9. Open your browser and go to `http://localhost:3000/2017-08-06`. You should be able to view and play the full show.
+9. Open your browser and go to `http://localhost:3000/2017-08-06`. You should be able to view and play the full show. Additionally, if you set `PRODUCTION_CONTENT=true` then all content should be viewable and playable locally.
 
 
 ## Testing
