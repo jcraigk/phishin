@@ -26,7 +26,7 @@ class ShowImporter::Cli
 
   def print_show_title
     puts \
-      "🏟 #{orch.show.date} - #{orch.show.venue.name_on(orch.show.date)} " \
+      "🏟  #{orch.show.date} - #{orch.show.venue.name_on(orch.show.date)} " \
       "- #{orch.show.venue.location}\n"
   end
 
@@ -149,7 +149,7 @@ class ShowImporter::Cli
 
   def repl
     main_menu
-    while (line = Readline.readline("↪ ", true))
+    while (line = Readline.readline("👉 ", true))
       process(line)
       break if line.in?(%w[s x])
     end

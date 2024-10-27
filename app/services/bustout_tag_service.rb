@@ -1,12 +1,10 @@
 class BustoutTagService < BaseService
   MIN_GAP = 100
 
-  def initialize(show)
-    @show = show
-  end
+  param :show
 
   def call
-    @show.tracks.each do |track|
+    show.tracks.each do |track|
       track.songs_tracks.each do |songs_track|
         prev_perf_gap = songs_track.previous_performance_gap
         next unless prev_perf_gap && prev_perf_gap > MIN_GAP

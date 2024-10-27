@@ -47,11 +47,10 @@ class InteractiveCoverArtService < BaseService
 
   def display_show_info(show)
     formatted_date = show.date.strftime("%b %-d, %Y")
-    puts "=================================="
     puts \
       "🏟  \e]8;;#{show.url}\a#{formatted_date}\e]8;;\a - " \
       "#{show.venue_name} - #{show.venue.location}"
-    display_image_in_terminal(show.cover_art_urls[:large])
+    display_image_in_terminal(show.cover_art_urls[:large]) if show.cover_art.attached?
     if show.cover_art_parent_show_id.present?
       parent_show = Show.find(show.cover_art_parent_show_id)
       parent_date = parent_show.date.strftime("%b %-d, %Y")
@@ -160,7 +159,6 @@ class InteractiveCoverArtService < BaseService
   end
 
   def display_image_in_terminal(image_url)
-    return
     return unless system("which timg > /dev/null 2>&1")
     system("timg --pixelation=iterm2 -g 120x120 \"#{image_url}\" 2>/dev/null")
   end

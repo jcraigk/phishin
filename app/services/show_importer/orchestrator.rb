@@ -3,7 +3,7 @@ class ShowImporter::Orchestrator
 
   SET_MAP = {
     "3" => %w[III],
-    "E" => %w[e I-e II-e],
+    "E" => %w[E e I-e II-e],
     "2" => %w[II],
     "1" => %w[I],
     "S" => %w[(Check)]
@@ -48,6 +48,7 @@ class ShowImporter::Orchestrator
     pbar.finish
 
     InteractiveCoverArtService.call(Show.where(id: show.id))
+    DebutTagService.call(show)
 
     show.update!(published: true)
     create_announcement
@@ -97,7 +98,7 @@ class ShowImporter::Orchestrator
   private
 
   def save_song_gaps(show)
-    puts "Calculating song gaps..."
+    puts "Calculating song gaps and applying bustout tag..."
     GapService.call(show)
     GapService.call \
       Show.where("date < ?", show.date).order(date: :desc).first

@@ -8,3 +8,7 @@
     album_zip_cleanup:
       cron: "0 2 * * * America/Los_Angeles" # Nightly at 2 AM Pacific Time
       class: AlbumZipCleanupJob
+
+    jamcharts:
+      cron: "0 4 * * 1 America/Los_Angeles" # Weekly on Monday at 4 AM Pacific Time
+      class: JamchartsJob
