@@ -11,6 +11,7 @@ export const playlistIndexLoader = async ({ request }) => {
     const response = await authFetch(`/api/v2/playlists?page=${page}&sort=${sortOption}&filter=${filter}&per_page=${perPage}`);
     if (!response.ok) throw response;
     const data = await response.json();
+    console.log(data);
     return {
       playlists: data.playlists,
       totalPages: data.total_pages,

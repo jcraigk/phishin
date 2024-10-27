@@ -23,7 +23,7 @@ import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
 import LikeButton from "./controls/LikeButton";
-import { formatDateLong, formatDurationShow } from "./helpers/utils";
+import { formatDate, formatDurationShow } from "./helpers/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faCircleXmark, faInfoCircle, faCalendar, faFileImport, faCompactDisc } from "@fortawesome/free-solid-svg-icons";
 
@@ -118,7 +118,7 @@ const Playlist = () => {
             {playlist.description || "This playlist has no description"}
             <p>
               <FontAwesomeIcon icon={faCalendar} className="mr-1 text-gray" />
-              Updated: {formatDateLong(playlist.updated_at)}
+              Updated: {formatDate(playlist.updated_at)}
             </p>
 
             <div className="display-phone-only">

@@ -143,7 +143,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
           </div>
 
           {show.tags?.length > 0 && (
-            <div className="dropdown-item display-phone-only">
+            <div className="dropdown-item display-mobile-only">
               <TagBadges tags={show.tags} parentId={show.date} />
             </div>
           )}

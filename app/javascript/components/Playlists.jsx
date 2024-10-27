@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { formatNumber, formatDurationShow, formatDateLong } from "./helpers/utils";
+import { formatNumber, formatDurationShow, formatDate } from "./helpers/utils";
 import LikeButton from "./controls/LikeButton";
 import HighlightedText from "./controls/HighlightedText";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -59,7 +59,7 @@ const Playlists = ({ playlists, highlight }) => {
               </div>
             <div className="last-updated">
               <FontAwesomeIcon icon={faCalendar} className="mr-1 text-gray" />
-              Updated: {formatDateLong(new Date(playlist.updated_at))}
+              Updated: {formatDate(playlist.updated_at)}
             </div>
 
             <div className="display-phone-only">

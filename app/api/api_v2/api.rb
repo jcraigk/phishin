@@ -44,7 +44,7 @@ class ApiV2::Api < ApiV2::Base
       },
       {
         name: "likes",
-        description: "User likes (upvotes) on shows and tracks"
+        description: "User likes (upvotes) on shows, tracks, and playlists"
       },
       {
         name: "playlists",
@@ -60,11 +60,11 @@ class ApiV2::Api < ApiV2::Base
       },
       {
         name: "shows",
-        description: "Live shows performed by Phish, including audio tracks"
+        description: "Live shows performed by Phish, including audio track URLs"
       },
       {
         name: "songs",
-        description: "Songs that Phish have played, including audio tracks of live performances"
+        description: "Songs that Phish have played, including audio track URLs of live performances"
       },
       {
         name: "tags",

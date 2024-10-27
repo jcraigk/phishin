@@ -34,20 +34,15 @@ export const formatDurationTrack = (milliseconds) => {
 export const formatDate = (dateString) => {
   if (!dateString) return "";
 
-  const [year, month, day] = dateString.split("-").map(Number);
+  const date = new Date(dateString);
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-  const formattedDate = `${monthNames[month - 1]} ${day}, ${year}`;
-  return formattedDate;
-};
+  const year = date.getFullYear();
+  const month = monthNames[date.getMonth()];
+  const day = date.getDate();
 
-export const formatDateLong = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  const formattedDate = `${month} ${day}, ${year}`;
+  return formattedDate;
 };
 
 export const toggleLike = async ({ id, type, isLiked }) => {
