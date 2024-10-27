@@ -99,9 +99,9 @@ class ShowImporter::Orchestrator
 
   def save_song_gaps(show)
     puts "Calculating song gaps and applying bustout tag..."
-    GapService.call(show)
     GapService.call \
       Show.where("date < ?", show.date).order(date: :desc).first
+    GapService.call(show)
     BustoutTagService.call(show)
   end
 
