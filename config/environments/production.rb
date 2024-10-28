@@ -1,6 +1,6 @@
 Rails.application.configure do
   config.action_controller.asset_host = App.base_url
-  config.cache_store = :mem_cache_store, { expires_in: 10.minutes }
+  config.cache_store = :memory_store, { size: 32.megabytes, expires_in: 10.minutes }
   config.action_controller.perform_caching = true
   config.action_mailer.smtp_settings = {
     user_name: ENV.fetch("SMTP_USERNAME", nil),

@@ -42,15 +42,17 @@ class ShowImporter::Orchestrator
     show.save!
 
     save_tracks(pbar)
-    save_song_gaps(show)
+
 
     show.reload.save_duration
     pbar.finish
 
     InteractiveCoverArtService.call(Show.where(id: show.id))
     DebutTagService.call(show)
+    save_song_gaps(show)
 
     show.update!(published: true)
+
     create_announcement
   end
 
