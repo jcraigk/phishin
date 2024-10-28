@@ -34,16 +34,15 @@ export const formatDurationTrack = (milliseconds) => {
 export const formatDate = (dateString) => {
   if (!dateString) return "";
 
-  const date = new Date(dateString);
+  // Extract the first 10 characters to get the YYYY-MM-DD format
+  const datePart = dateString.slice(0, 10);
+  const [year, month, day] = datePart.split("-").map(Number);
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-  const year = date.getFullYear();
-  const month = monthNames[date.getMonth()];
-  const day = date.getDate();
-
-  const formattedDate = `${month} ${day}, ${year}`;
+  const formattedDate = `${monthNames[month - 1]} ${day}, ${year}`;
   return formattedDate;
 };
+
 
 export const toggleLike = async ({ id, type, isLiked }) => {
   const url = `/api/v2/likes?likable_type=${type}&likable_id=${id}`;
