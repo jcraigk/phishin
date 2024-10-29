@@ -85,6 +85,7 @@ class ApiV2::Shows < ApiV2::Base
       requires :date, type: String, desc: "Date in the format YYYY-MM-DD"
     end
     get ":date" do
+      # binding.irb
       show = show_by_date
       present \
         show,
