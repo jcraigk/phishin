@@ -9,21 +9,30 @@
 .input, .button {
   border-color: $border-gray;
   color: $text-gray;
+
+  &:focus {
+    border-color: $control-gray;
+    box-shadow: none;
+  }
 }
 
 .dropdown-item {
   cursor: pointer;
   text-decoration: none !important;
   line-height: 1.8rem !important;
+  background: none !important;
 
   &.a {
     padding-inline-end: none !important;
   }
 
-
   &:hover {
     background-color: rgba($blue, 0.3) !important;
   }
+}
+
+select {
+  color: $title-gray !important;
 }
 
 .section {

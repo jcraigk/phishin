@@ -101,7 +101,6 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
       </div>
       <div
         className="dropdown-menu"
-        id="dropdown-menu"
         role="menu"
         style={{ display: dropdownVisible ? "block" : "none" }}
       >

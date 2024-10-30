@@ -68,15 +68,7 @@ button {
 
 a {
   color: $text-gray;
-  text-decoration: none;
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  &:visited, &:focus {
-    text-decoration: none !important;
-  }
+  text-decoration: none !important;
 }
 
 ::placeholder {
@@ -121,7 +113,6 @@ a {
   }
   .dropdown-item {
     font-size: 1.2rem;
-    background-color: white;
     padding-inline-end: 1.2rem;
   }
 }
