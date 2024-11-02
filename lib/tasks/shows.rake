@@ -22,7 +22,11 @@ namespace :shows do
 
   desc "Apply ID3 tags and purge Cloudflare cache"
   task id3_tags: :environment do
+    start_id = ENV.fetch("START_ID", nil)
+
     rel = Show.includes(:tracks)
+    rel = rel.where('id >= ?', start_id) if start_id.present?
+
     pbar = ProgressBar.create \
       total: rel.count,
       format: "%a %B %c/%C %p%% %E"
@@ -32,6 +36,7 @@ namespace :shows do
         track.apply_id3_tags
         CloudflareCachePurgeService.call(track.mp3_url)
       end
+      puts "🎉 ID3 tags applied to #{show.date} / #{show.id}"
       pbar.increment
     end
 
