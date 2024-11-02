@@ -178,8 +178,11 @@ class ShowImporter::Orchestrator
 
   def save_track(track)
     track.show = show
-    track.save!(validate: false) # Generate ID for audio_file storage
-    track.update!(audio_file: File.open("#{@fm.dir}/#{track.filename}"))
+    track.save!
+    track.mp3_audio.attach \
+      io: File.open("#{@fm.dir}/#{track.filename}"),
+      filename: track.filename,
+      content_type: "audio/mpeg"
   end
 
   def populate_tracks

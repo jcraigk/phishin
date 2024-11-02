@@ -20,7 +20,7 @@ namespace :shows do
     InteractiveCoverArtService.call(rel, pbar)
   end
 
-  desc "Apply ID3 tags and purge Cloudflare cache"
+  desc "Apply ID3 tags"
   task id3_tags: :environment do
     start_id = ENV.fetch("START_ID", nil)
 
@@ -34,7 +34,6 @@ namespace :shows do
     rel.find_each do |show|
       show.tracks.each do |track|
         track.apply_id3_tags
-        CloudflareCachePurgeService.call(track.mp3_url)
       end
       puts "🎉 ID3 tags applied to #{show.date} / #{show.id}"
       pbar.increment

@@ -1,6 +1,5 @@
 class Track < ApplicationRecord
   include TrackApiV1
-  include HasAudio
 
   belongs_to :show
   has_many :songs_tracks, dependent: :destroy
@@ -10,11 +9,10 @@ class Track < ApplicationRecord
   has_many :tags, through: :track_tags
   has_many :playlist_tracks, dependent: :destroy
 
-  # ActiveStorage attachments
   has_one_attached :mp3_audio
   has_one_attached :png_waveform
 
-  # Existing Shrine attachments
+  # Deprecated Shrine attachments
   include AudioFileUploader::Attachment(:audio_file)
   validates :audio_file, presence: true
   include WaveformPngUploader::Attachment(:waveform_png)
@@ -58,21 +56,12 @@ class Track < ApplicationRecord
     self.slug = TrackSlugGenerator.new(self).call
   end
 
-  # Updated URL methods to prioritize ActiveStorage
   def mp3_url
-    if mp3_audio.attached?
-      audio_attachment_url(:mp3_audio)
-    else
-      audio_file.url(host: App.content_base_url)
-    end
+    blob_url(:mp3_audio) || audio_file.url(host: App.content_base_url)
   end
 
   def waveform_image_url
-    if png_waveform.attached?
-      waveform_attachment_url(:png_waveform)
-    else
-      waveform_png&.url(host: App.content_base_url)
-    end
+    blob_url(:png_waveform) || waveform_png&.url(host: App.content_base_url)
   end
 
   def urls
@@ -84,12 +73,22 @@ class Track < ApplicationRecord
   end
 
   def save_duration
-    update_column(:duration, Mp3DurationQuery.new(audio_file.to_io.path).call)
+    duration = Mp3DurationQuery.new(temp_audio_file_path).call
+    update_column(:duration, duration)
+  ensure
+    @temp_audio_file&.close!
+  end
+
+  def temp_audio_file_path
+    @temp_audio_file = Tempfile.new([ "track_#{id}", ".mp3" ])
+    @temp_audio_file.binmode
+    @temp_audio_file.write(mp3_audio.download)
+    @temp_audio_file.rewind
+    @temp_audio_file.path
   end
 
   def generate_waveform_image(purge_cache: false)
     WaveformImageService.new(self).call
-    CloudflareCachePurgeService.call(waveform_image_url) if purge_cache
   end
 
   def process_audio_file
@@ -101,6 +100,11 @@ class Track < ApplicationRecord
   end
 
   private
+
+  def blob_url(attachment_name)
+    attachment = public_send(attachment_name)
+    attachment.attached? ? "#{App.content_base_url}/blob/#{attachment.blob.key}" : nil
+  end
 
   def generate_active_storage_filename(ext)
     "#{show.date} - #{format('%02d', position)} - #{title}.#{ext}"
