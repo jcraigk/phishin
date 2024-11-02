@@ -269,6 +269,7 @@
 
     &:only-of-type {
       border-radius: $radius;
+      border: none;
     }
   }
 }
