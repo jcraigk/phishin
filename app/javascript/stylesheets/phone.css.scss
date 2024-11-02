@@ -1,6 +1,7 @@
 .phone-show-wrapper {
   display: flex;
   justify-content: center;
+  z-index: 1;
 
   .phone-show-container {
     display: flex;
