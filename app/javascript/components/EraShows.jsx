@@ -1,4 +1,11 @@
 import { authFetch } from "./helpers/utils";
+import React, { useState, useEffect } from "react";
+import { useLoaderData, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import LayoutWrapper from "./layout/LayoutWrapper";
+import Shows from "./Shows";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faList, faTh, faCircleChevronLeft, faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 export const eraShowsLoader = async ({ params }) => {
   const { year } = params;
@@ -15,14 +22,6 @@ export const eraShowsLoader = async ({ params }) => {
   const data = await response.json();
   return { shows: data.shows, year };
 };
-
-import React, { useState, useEffect } from "react";
-import { useLoaderData, Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
-import LayoutWrapper from "./layout/LayoutWrapper";
-import Shows from "./Shows";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faList, faTh, faCircleChevronLeft, faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 const EraShows = () => {
   const { shows, year } = useLoaderData();
@@ -70,14 +69,14 @@ const EraShows = () => {
     </div>
   );
 
-  const getPreviousAndNextYearLinks = () => {
+  const yearLinks = () => {
     if (!yearsData) return null;
     const yearIndex = yearsData.findIndex((y) => y.period === year);
     const previousYear = yearsData[yearIndex - 1]?.period;
     const nextYear = yearsData[yearIndex + 1]?.period;
 
     return (
-      <div className="year-navigation hidden-mobile mt-5">
+      <div className="mt-5">
         {previousYear && (
           <Link to={`/${previousYear}`}>
             <FontAwesomeIcon icon={faCircleChevronLeft} className="mr-1" />
@@ -99,7 +98,7 @@ const EraShows = () => {
       <p className="sidebar-title">{year}</p>
       <p className="sidebar-subtitle">{shows.length} shows</p>
       {renderViewToggleButtons()}
-      {getPreviousAndNextYearLinks()}
+      <div className="hidden-mobile">{yearLinks()}</div>
     </div>
   );
 
@@ -109,10 +108,9 @@ const EraShows = () => {
         <title>{year} - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        <div className="display-phone-only">
-          {renderViewToggleButtons()}
-        </div>
+        <div className="display-phone-only">{renderViewToggleButtons()}</div>
         <Shows shows={shows} tourHeaders={true} viewMode={viewMode} />
+        {yearLinks()}
       </LayoutWrapper>
     </>
   );
