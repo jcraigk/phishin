@@ -1,27 +1,4 @@
 namespace :shows do
-  desc "Apply Bustout tags to all shows or specific date"
-  task bustouts: :environment do
-    date = ENV.fetch("DATE", nil)
-    start_date = ENV.fetch("START_DATE", nil)
-
-    rel = Show.includes(tracks: :songs_tracks).order(date: :asc)
-
-    rel = rel.where(date:) if date.present?
-    rel = rel.where('date >= ?', start_date) if start_date.present?
-
-    pbar = ProgressBar.create(
-      total: rel.count,
-      format: "%a %B %c/%C %p%% %E"
-    )
-
-    rel.each do |show|
-      BustoutTagService.call(show)
-      pbar.increment
-    end
-
-    pbar.finish
-  end
-
   desc "Generate cover prompts, images, and zips for all shows or specific date"
   task art: :environment do
     date = ENV.fetch("DATE", nil)
@@ -43,6 +20,23 @@ namespace :shows do
     InteractiveCoverArtService.call(rel, pbar)
   end
 
+  desc "Apply ID3 tags and purge Cloudflare cache"
+  task id3_tags: :environment do
+    rel = Show.includes(:tracks)
+    pbar = ProgressBar.create \
+      total: rel.count,
+      format: "%a %B %c/%C %p%% %E"
+
+    rel.find_each do |show|
+      show.tracks.each do |track|
+        track.apply_id3_tags
+        CloudflareCachePurgeService.call(track.mp3_url)
+      end
+      pbar.increment
+    end
+
+    pbar.finish
+  end
 
   desc "Insert a track into a show at given position"
   task insert_track: :environment do

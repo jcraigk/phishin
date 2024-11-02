@@ -51,7 +51,8 @@ class Id3TagService < BaseService
 
   def apply_album_art(mp3)
     return unless show.album_cover.attached?
-    mp3.tag2.add_picture(show.album_cover.download)
+    mp3.tag2.add_picture \
+      show.album_cover.variant(:id3).processed.download
   end
 
   def comments
