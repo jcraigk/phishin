@@ -1,5 +1,6 @@
 class Track < ApplicationRecord
   include TrackApiV1
+  include HasAudio
 
   belongs_to :show
   has_many :songs_tracks, dependent: :destroy
@@ -9,21 +10,20 @@ class Track < ApplicationRecord
   has_many :tags, through: :track_tags
   has_many :playlist_tracks, dependent: :destroy
 
+  # ActiveStorage attachments
+  has_one_attached :mp3_audio
+  has_one_attached :png_waveform
+
+  # Existing Shrine attachments
   include AudioFileUploader::Attachment(:audio_file)
   validates :audio_file, presence: true
-
   include WaveformPngUploader::Attachment(:waveform_png)
 
   include PgSearch::Model
   pg_search_scope(
     :kinda_matching,
     against: :title,
-    using: {
-      tsearch: {
-        any_word: true,
-        normalization: 16
-      }
-    }
+    using: { tsearch: { any_word: true, normalization: 16 } }
   )
 
   validates :position, :title, :set, presence: true
@@ -58,12 +58,21 @@ class Track < ApplicationRecord
     self.slug = TrackSlugGenerator.new(self).call
   end
 
+  # Updated URL methods to prioritize ActiveStorage
   def mp3_url
-    audio_file.url(host: App.content_base_url).gsub("tracks/audio_files", "audio")
+    if mp3_audio.attached?
+      audio_attachment_url(:mp3_audio)
+    else
+      audio_file.url(host: App.content_base_url)
+    end
   end
 
   def waveform_image_url
-    waveform_png&.url(host: App.content_base_url)&.gsub("tracks/audio_files", "audio")
+    if png_waveform.attached?
+      waveform_attachment_url(:png_waveform)
+    else
+      waveform_png&.url(host: App.content_base_url)
+    end
   end
 
   def urls
@@ -89,5 +98,11 @@ class Track < ApplicationRecord
     show.save_duration
     apply_id3_tags
     generate_waveform_image
+  end
+
+  private
+
+  def generate_active_storage_filename(ext)
+    "#{show.date} - #{format('%02d', position)} - #{title}.#{ext}"
   end
 end
