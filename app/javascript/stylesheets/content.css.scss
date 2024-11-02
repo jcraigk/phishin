@@ -231,8 +231,11 @@
 }
 
 .set-group {
-  margin-bottom: 2.5rem;
   position: relative;
+
+  &:not(:last-child) {
+    margin-bottom: 2.5rem;
+  }
 
   .track-item {
     position: relative;

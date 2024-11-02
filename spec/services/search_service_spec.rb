@@ -54,6 +54,11 @@ RSpec.describe SearchService do
 
     context 'with English month and day' do
       let(:term) { 'october 31' }
+      let(:expected_results) do
+        super().merge \
+          exact_show: nil,
+          other_shows: [ show1, show2, show3 ]
+      end
 
       include_examples 'expected results'
     end

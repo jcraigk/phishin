@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useNavigation, ScrollRestoration} from "react-router-dom";
 import Navbar from "./Navbar";
-import Footer from "./Footer";
 import Loader from "../controls/Loader";
 import Player from "../controls/Player";
 import AppModal from "../modals/AppModal";
@@ -154,7 +153,6 @@ const Layout = ({ props }) => {
           closeDraftPlaylistModal,
         }} />
       </main>
-      <Footer />
       <Player
         activePlaylist={activePlaylist}
         activeTrack={activeTrack}

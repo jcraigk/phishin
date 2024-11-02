@@ -73,14 +73,6 @@ describe "Homepage", :js do
       end
     end
 
-    within("footer") do
-      expect(page).to have_link("FAQ", href: "/faq")
-      expect(page).to have_link("RSS", href: "/feeds/rss")
-      expect(page).to have_link("Privacy", href: "/privacy")
-      expect(page).to have_link("Terms", href: "/terms")
-      expect(page).to have_link("Contact", href: "/contact-info")
-    end
-
     # Click most recent year
     click_on(most_recent_year)
     sleep 1
