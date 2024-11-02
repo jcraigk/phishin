@@ -106,6 +106,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
         <div className="overlay">
           <p className="show-date">{formatDate(show.date)}</p>
           <p className="venue-name">{show.venue_name}</p>
+          <p className="venue-location">{show.venue.location}</p>
         </div>
       </li>
     );
