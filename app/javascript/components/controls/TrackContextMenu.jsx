@@ -7,7 +7,7 @@ import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faShareFromSquare, faCirclePlus, faDownload, faMusic, faCircleChevronLeft, faCircleChevronRight, faTrashAlt, faClock } from "@fortawesome/free-solid-svg-icons";
 
-const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
+const TrackContextMenu = ({ track, indexInPlaylist = null, highlight }) => {
   const dropdownRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -98,13 +98,13 @@ const TrackContextMenu = ({ track, indexInPlaylist = null }) => {
           style={{ display: dropdownVisible ? "block" : "none" }}
         >
           <div className="dropdown-content context-dropdown-content">
-            <div className="dropdown-item display-phone-only">
+            <div className="dropdown-item display-mobile-only">
               <LikeButton likable={track} type="Track" />
             </div>
 
             {track.tags?.length > 0 && (
-              <div className="dropdown-item display-phone-only">
-                <TagBadges tags={track.tags} parentId={track.id} />
+              <div className="dropdown-item display-mobile-only">
+                <TagBadges tags={track.tags} parentId={track.id} highlight={highlight} />
               </div>
             )}
 

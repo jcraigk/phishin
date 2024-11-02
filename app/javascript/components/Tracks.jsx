@@ -64,7 +64,10 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
           <span className="leftside-primary">
             {viewStyle !== "show" && (
               <>
-                <CoverArt coverArtUrls={track.show_cover_art_urls} />
+                <CoverArt
+                  coverArtUrls={track.show_cover_art_urls}
+                  css="cover-art-small"
+                />
                 <span className="date-link">
                   <Link to={`/${track.show_date}/${track.slug}`} onClick={(e) => e.stopPropagation()}>
                     {formatDate(track.show_date)}
@@ -78,7 +81,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
             <span className="leftside-secondary">{track.venue_location}</span>
           )}
           <span className="leftside-tertiary">
-            <TagBadges tags={track.tags} parentId={track.id} />
+            <TagBadges tags={track.tags} parentId={track.id} highlight={highlight} />
           </span>
           <div className="rightside-group">
             <span className={`rightside-primary ${isExcerpt ? "excerpt" : ""}`}>
@@ -89,7 +92,11 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
               <LikeButton likable={track} type="Track" />
             </span>
             <span className="rightside-menu">
-              <TrackContextMenu track={track} indexInPlaylist={track.position - 1} />
+              <TrackContextMenu
+                track={track}
+                indexInPlaylist={track.position - 1}
+                highlight={highlight}
+              />
             </span>
           </div>
         </div>

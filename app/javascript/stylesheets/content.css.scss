@@ -24,6 +24,7 @@
   object-fit: cover;
   position: relative;
   margin-right: 0.5rem;
+  border-radius: 0.3rem !important;
 }
 
 .section-title {
@@ -302,12 +303,6 @@
 @media (min-width: 1024px) {
   .show-duration {
     margin-top: 0.5rem
-  }
-}
-
-@media (max-width: 1023px) {
-  .cover-art {
-    margin-right: 0.5rem;
   }
 }
 

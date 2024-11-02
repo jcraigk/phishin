@@ -4,7 +4,7 @@ import { formatNumber } from "./helpers/utils";
 import TagBadges from "./controls/TagBadges";
 import HighlightedText from "./controls/HighlightedText";
 
-const Tags = ({ tags, group = false, highlight = "" }) => {
+const Tags = ({ tags, group = false, highlight }) => {
   let groupedTags = {};
 
   if (group) {
