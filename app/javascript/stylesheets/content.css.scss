@@ -351,10 +351,14 @@
 
 .grid-view {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(152px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 1rem;
   list-style: none;
   padding: 0;
+
+  &.limited-width {
+    grid-template-columns: repeat(auto-fit, minmax(152px, 256px));
+  }
 
   .grid-item {
     position: relative;
@@ -402,8 +406,13 @@
   }
 }
 
-@media (min-width: 1023px) {
+@media (max-width: 420px) {
   .grid-view {
-    grid-template-columns: repeat(4, minmax(152px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(152px, 1fr));
+    gap: 0.7rem;
+
+    &.limited-width {
+      grid-template-columns: repeat(auto-fit, minmax(152px, 1fr));
+    }
   }
 }

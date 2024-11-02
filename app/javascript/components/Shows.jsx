@@ -44,7 +44,11 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
   const renderListItemsForTour = (tourShows, tourName) => (
     <React.Fragment key={tourName}>
       {tourHeaders && renderTourHeader(tourName, tourShows.length)}
-      <ul className={viewMode === "grid" ? "grid-view" : "list-view"}>
+      <ul
+        className={`${viewMode === "grid" ? "grid-view" : "list-view"} ${
+          viewMode === "grid" && tourShows.length < 4 ? "limited-width" : ""
+        }`}
+      >
         {tourShows.map((show) =>
           viewMode === "list" ? renderListItem(show) : renderGridItem(show)
         )}
