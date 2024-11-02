@@ -148,8 +148,8 @@
     }
 
     .cover-art {
-      width: 32px;
-      height: 32px;
+      // width: 32px;
+      // height: 32px;
       margin-right: 0.5rem;
       position: relative;
       top: 5px;
@@ -399,5 +399,11 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+  }
+}
+
+@media (min-width: 1023px) {
+  .grid-view {
+    grid-template-columns: repeat(4, minmax(152px, 1fr));
   }
 }

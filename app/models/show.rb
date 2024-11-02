@@ -11,10 +11,10 @@ class Show < ApplicationRecord
 
   has_one_attached :cover_art do |attachable|
     attachable.variant :medium,
-                       resize_to_limit: [ 512, 512 ],
+                       resize_to_limit: [ 256, 256 ],
                        preprocessed: true
     attachable.variant :small,
-                       resize_to_limit: [ 48, 48 ],
+                       resize_to_limit: [ 32, 32 ],
                        preprocessed: true
   end
   has_one_attached :album_cover

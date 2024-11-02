@@ -19,16 +19,15 @@ export const showLoader = async ({ params }) => {
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useLoaderData, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { formatDate, formatDurationShow } from "./helpers/utils";
+import { formatDate } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import ShowContextMenu from "./controls/ShowContextMenu";
 import LikeButton from "./controls/LikeButton";
 import Tracks from "./Tracks";
 import TagBadges from "./controls/TagBadges";
-import MapView from "./MapView";
 import CoverArt from "./CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle, faClock } from "@fortawesome/free-solid-svg-icons";
+import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 const Show = ({ trackSlug }) => {
   const show = useLoaderData();
