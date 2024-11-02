@@ -59,9 +59,6 @@
 }
 
 .cover-art {
-  position: relative;
-  top: 3px;
-
   img {
     border-radius: $radius;
   }
@@ -147,19 +144,11 @@
       top: -3px;
     }
 
-    .cover-art {
-      // width: 32px;
-      // height: 32px;
-      margin-right: 0.5rem;
-      position: relative;
-      top: 5px;
-    }
-
     .cover-art-small {
       width: 32px;
       height: 32px;
       filter: grayscale(0.5);
-      top: 2px;
+      top: 5px;
     }
   }
 

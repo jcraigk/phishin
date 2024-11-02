@@ -18,7 +18,7 @@ class Show < ApplicationRecord
                        preprocessed: true
   end
   has_one_attached :album_cover do |attachable|
-    attachable.variant :id3, resize_to_limit: [ 512, 512 ]
+    attachable.variant :id3, resize_to_limit: [ 600, 600 ]
   end
   has_one_attached :album_zip
 
