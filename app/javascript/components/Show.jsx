@@ -20,7 +20,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useLoaderData, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { formatDate } from "./helpers/utils";
-import LayoutWrapper from "./layout/LayoutWrapper";
 import ShowContextMenu from "./controls/ShowContextMenu";
 import LikeButton from "./controls/LikeButton";
 import Tracks from "./Tracks";
@@ -66,75 +65,6 @@ const Show = ({ trackSlug }) => {
     if (notificationType === "adminNotes") setShowAdminNotesNotification(false);
   };
 
-  const sidebarContent = (
-    <div className="sidebar-content">
-      <div className="hidden-mobile mb-2">
-        <CoverArt
-          coverArtUrls={show.cover_art_urls}
-          albumCoverUrl={show.album_cover_url}
-          openAppModal={openAppModal}
-          size="medium"
-        />
-      </div>
-
-      <div className="sidebar-title show-cover-title">
-        <span className="display-mobile-only">
-          <CoverArt
-            coverArtUrls={show.cover_art_urls}
-            albumCoverUrl={show.album_cover_url}
-            openAppModal={openAppModal}
-          />
-        </span>
-        {formatDate(show.date)}
-      </div>
-
-      <p className="sidebar-info">
-        <Link to={`/venues/${show.venue.slug}`}>{show.venue_name}</Link>
-      </p>
-      <p className="sidebar-info hidden-mobile">
-        <Link
-            to={`/map?term=${show.venue.location}`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {show.venue.location}
-        </Link>
-      </p>
-
-      <hr className="sidebar-hr" />
-
-      <div className="sidebar-control-container">
-        <div className="hidden-phone">
-          <LikeButton likable={show} type="Show" />
-        </div>
-        <ShowContextMenu show={show} />
-      </div>
-
-      <div className="hidden-mobile">
-        <TagBadges tags={show.tags} parentId={show.date} />
-        <hr className="sidebar-hr" />
-        <Link to={`/${show.previous_show_date}`}>
-          <FontAwesomeIcon icon={faCircleChevronLeft} className="mr-1" />
-          Previous show
-        </Link>
-        <Link to={`/${show.next_show_date}`} className="is-pulled-right">
-          Next show
-          <FontAwesomeIcon icon={faCircleChevronRight} className="ml-1" />
-        </Link>
-
-        {/* MapBox free tier limits preclude the sidebar maps */}
-        {/* <div className="sidebar-map mt-4">
-          <MapView
-            mapboxToken={mapboxToken}
-            coordinates={{ lat: show.venue.latitude, lng: show.venue.longitude }}
-            venues={[show.venue]}
-            searchComplete={true}
-            controls={false}
-          />
-        </div> */}
-      </div>
-    </div>
-  );
-
   const infoBox = (message, onClose) => (
     <div className="notification show-info">
       <button className="close-btn" onClick={onClose}>
@@ -151,40 +81,90 @@ const Show = ({ trackSlug }) => {
         <title>{matchedTrack ? `${matchedTrack.title} - ${formatDate(show.date)} - Phish.in` : `${formatDate(show.date)} - Phish.in`}</title>
       </Helmet>
       <div className="background-blur"></div>
-      <LayoutWrapper sidebarContent={sidebarContent}>
-        {showIncompleteNotification && infoBox("This show's audio is incomplete", () => handleClose("incomplete"))}
-        {showAdminNotesNotification && infoBox(show.admin_notes, () => handleClose("adminNotes"))}
-
-        <div className="display-phone-only mt-1">
-          <div className="phone-show-container">
-            <div className="phone-show-image">
+      <div id="layout-container">
+        <aside id="sidebar" className="hidden-mobile">
+          <div className="sidebar-content">
+            <div className="mb-2">
               <CoverArt
                 coverArtUrls={show.cover_art_urls}
                 albumCoverUrl={show.album_cover_url}
                 openAppModal={openAppModal}
                 size="medium"
-                css="phone-show-mobile"
               />
             </div>
-            <div className="phone-show-info">
-              <span className="phone-show-date">{formatDate(show.date)}</span>
-              <span className="phone-show-venue">
-                {show.venue_name}
-                <br />
+
+            <div className="sidebar-title show-cover-title">
+              {formatDate(show.date)}
+            </div>
+
+            <p className="sidebar-info">
+              <Link to={`/venues/${show.venue.slug}`}>{show.venue_name}</Link>
+            </p>
+            <p className="sidebar-info">
+              <Link
+                to={`/map?term=${show.venue.location}`}
+                onClick={(e) => e.stopPropagation()}
+              >
                 {show.venue.location}
-              </span>
-              <span className="phone-show-context">
-                <ShowContextMenu show={show} css="context-nudge-right" />
-              </span>
+              </Link>
+            </p>
+
+            <hr className="sidebar-hr" />
+
+            <div className="sidebar-control-container">
+              <LikeButton likable={show} type="Show" />
+              <ShowContextMenu show={show} />
+            </div>
+
+            <TagBadges tags={show.tags} parentId={show.date} />
+            <hr className="sidebar-hr" />
+            <Link to={`/${show.previous_show_date}`}>
+              <FontAwesomeIcon icon={faCircleChevronLeft} className="mr-1" />
+              Previous show
+            </Link>
+            <Link to={`/${show.next_show_date}`} className="is-pulled-right">
+              Next show
+              <FontAwesomeIcon icon={faCircleChevronRight} className="ml-1" />
+            </Link>
+          </div>
+        </aside>
+
+        <section id="main-content">
+          {showIncompleteNotification && infoBox("This show's audio is incomplete", () => handleClose("incomplete"))}
+          {showAdminNotesNotification && infoBox(show.admin_notes, () => handleClose("adminNotes"))}
+
+          <div className="display-mobile-only mt-1">
+            <div className="phone-show-wrapper">
+              <div className="phone-show-container">
+                <div className="phone-show-image">
+                  <CoverArt
+                    coverArtUrls={show.cover_art_urls}
+                    albumCoverUrl={show.album_cover_url}
+                    openAppModal={openAppModal}
+                    size="medium"
+                    css="phone-show-mobile"
+                  />
+                </div>
+                <div className="phone-show-info">
+                  <span className="phone-show-date">{formatDate(show.date)}</span>
+                  <span className="phone-show-venue">
+                    {show.venue_name}
+                    <br />
+                    {show.venue.location}
+                  </span>
+                  <span className="phone-show-context">
+                    <ShowContextMenu show={show} css="context-nudge-right" />
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <Tracks tracks={tracks} viewStyle="show" trackRefs={trackRefs} trackSlug={trackSlug} />
-      </LayoutWrapper>
+          <Tracks tracks={tracks} viewStyle="show" trackRefs={trackRefs} trackSlug={trackSlug} />
+        </section>
+      </div>
     </>
   );
 };
 
 export default Show;
-

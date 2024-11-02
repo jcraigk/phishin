@@ -248,7 +248,7 @@
     box-shadow: none;
     min-height: 3.5rem;
     cursor: pointer;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.8);
     background-size: cover;
     background-repeat: no-repeat;
 
@@ -258,12 +258,12 @@
 
     &:not(:first-of-type):not(:last-of-type) {
       border-radius: 0;
-      border-top: 1px solid $border-gray;
+      border-top: 1px solid rgba($header-gray, 0.7);
     }
 
     &:last-of-type {
       border-radius: 0 0 $radius $radius;
-      border-top: 1px solid $border-gray;
+      border-top: 1px solid rgba($header-gray, 0.7);
     }
 
     &:only-of-type {
