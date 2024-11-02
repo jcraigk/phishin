@@ -2,7 +2,7 @@ import React from "react";
 import { useOutletContext } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 
-const TagBadges = ({ tags, parentId }) => {
+const TagBadges = ({ tags, parentId, highlight }) => {
   const { openAppModal } = useOutletContext();
 
   const groupedTags = tags
@@ -83,6 +83,18 @@ const TagBadges = ({ tags, parentId }) => {
     }).filter(Boolean).join(", ");
   };
 
+  const isHighlighted = (tagGroup) => {
+    if (!highlight) return false; // Return false if highlight is null or undefined
+
+    const lowerHighlight = highlight.toLowerCase();
+    return tagGroup.some(
+      tag =>
+        (tag.notes && tag.notes.toLowerCase().includes(lowerHighlight)) ||
+        (tag.description && tag.description.toLowerCase().includes(lowerHighlight))
+    );
+  };
+
+
   return (
     <div className="tag-badges-container" onClick={handleClick}>
       {Object.entries(groupedTags).map(([tagName, tagGroup]) => {
@@ -93,7 +105,7 @@ const TagBadges = ({ tags, parentId }) => {
         return (
           <div
             key={tooltipId}
-            className="tag-badge"
+            className={`tag-badge ${isHighlighted(tagGroup) ? "hilite-badge" : ""}`}
             data-tooltip-id={tooltipId}
             data-tooltip-content={tooltipForTagStack(tagGroup)}
           >

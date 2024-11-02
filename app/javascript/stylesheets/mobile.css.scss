@@ -1,0 +1,54 @@
+.mobile-show-wrapper {
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+
+  .mobile-show-container {
+    display: flex;
+
+    .mobile-show-image {
+      width: 148px;
+      height: 148px;
+      margin-right: 0.6rem;
+      margin-left: 3.7rem;
+      flex-shrink: 0;
+
+      img {
+        box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.15);
+      }
+    }
+
+    .mobile-show-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      * {
+        color: $dark-gray;
+      }
+
+      .mobile-show-date {
+        font-size: 1.8rem;
+        font-weight: bold;
+      }
+      .mobile-show-venue {
+        font-size: 1.2rem;
+        line-height: 1.5rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .mobile-show-context {
+        position: relative;
+        left: -7px;
+        margin-top: 3px;
+      }
+    }
+  }
+}
+
+@media (max-width: 420px) {
+  .mobile-show-venue {
+    width: 10rem !important;
+  }
+}

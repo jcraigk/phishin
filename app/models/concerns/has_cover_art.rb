@@ -16,16 +16,6 @@ module HasCoverArt
       attachment_url(album_cover, "cover-art-large")
     end
 
-    def generate_album!
-      CoverArtPromptService.call(self)
-      CoverArtImageService.call(self)
-      AlbumCoverService.call(self)
-      tracks.each do
-        _1.apply_id3_tags
-        CloudflareCachePurgeService.call(_1.mp3_url)
-      end
-    end
-
     def album_zip_url
       return unless album_zip.attached?
       key = album_zip.blob.key

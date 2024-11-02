@@ -25,13 +25,13 @@ class ApiV2::Search < ApiV2::Base
 
       # Add Show Tag matches to other_shows
       if results[:show_tags].present?
-        ids = results[:show_tags].map(&:show_id) + results[:other_shows].map(&:id)
+        ids = results[:show_tags].map(&:show_id) + (results[:other_shows].map(&:id) || [])
         results[:other_shows] = Show.where(id: ids)
       end
 
       # Add Track Tag matches to tracks
       if results[:track_tags].present?
-        ids = results[:track_tags].map(&:track_id) + results[:tracks].map(&:id)
+        ids = results[:track_tags].map(&:track_id) + (results[:tracks]&.map(&:id) || [])
         results[:tracks] = Track.where(id: ids)
       end
 

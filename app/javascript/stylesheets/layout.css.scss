@@ -19,7 +19,7 @@ main {
 }
 
 #sidebar {
-  background-color: rgba($header-gray, 0.5);
+  background-color: rgba($header-gray, 0.7);
   padding: 1rem;
   flex: 0 0 16rem;
   border-radius: 5px;
@@ -168,7 +168,9 @@ main {
 
 @media (max-width: 1023px) {
   .display-mobile-only {
-    display: inline-block !important;
+    display: flex;
+    justify-content: center;
+    width: 100%;
   }
 
   .sidebar-control-container {
@@ -189,7 +191,7 @@ main {
     width: 100%;
     flex: none !important;
     padding: 0.3rem;
-    background-color: rgba($header-gray, 0.5);
+    background-color: rgba($header-gray, 0.7);
 
     .sidebar-content {
       display: flex;
@@ -198,10 +200,6 @@ main {
       align-items: center;
       column-gap: 2rem !important;
       row-gap: 5px !important;
-
-      .cover-art {
-        top: 12px !important;
-      }
 
       .sidebar-control {
         flex: 0;
@@ -298,7 +296,7 @@ main {
     margin-bottom: 0.5rem !important;
   }
   main.with-player {
-    margin-bottom: 2rem !important;
+    margin-bottom: 8rem !important;
   }
   .section-title {
     &:not(:first-of-type) {

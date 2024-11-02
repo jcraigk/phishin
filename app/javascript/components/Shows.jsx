@@ -44,7 +44,11 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
   const renderListItemsForTour = (tourShows, tourName) => (
     <React.Fragment key={tourName}>
       {tourHeaders && renderTourHeader(tourName, tourShows.length)}
-      <ul className={viewMode === "grid" ? "grid-view" : "list-view"}>
+      <ul
+        className={`${viewMode === "grid" ? "grid-view" : "list-view"} ${
+          viewMode === "grid" && tourShows.length < 4 ? "limited-width" : ""
+        }`}
+      >
         {tourShows.map((show) =>
           viewMode === "list" ? renderListItem(show) : renderGridItem(show)
         )}
@@ -95,12 +99,14 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
         onClick={() => handleShowClick(show.date)}
         style={{
           backgroundImage: isLoaded ? `url(${show.cover_art_urls.medium})` : "none",
+          opacity: isLoaded ? 1 : 0, // Force re-render to fix iOS Safari bug
         }}
       >
         {!isLoaded && <div className="loading-shimmer" />}
         <div className="overlay">
           <p className="show-date">{formatDate(show.date)}</p>
           <p className="venue-name">{show.venue_name}</p>
+          <p className="venue-location">{show.venue.location}</p>
         </div>
       </li>
     );

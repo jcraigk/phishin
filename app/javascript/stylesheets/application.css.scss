@@ -11,6 +11,7 @@ $bg-gray: #f2f3f5;
 $bg-red: #ffe4e1;
 $blue: rgb(3, 187, 242);
 $highlight-blue: rgb(171, 217, 255);
+$highlight-orange: #ff9d15;
 $control-gray: #f5f5f5;
 $google-blue: #5385ed;
 $header-gray: #c7c8ca;
@@ -26,14 +27,13 @@ $radius: 0.5rem;
 @import "./eras.css.scss";
 @import "./errors.css.scss";
 @import "./feedback.css.scss";
-@import "./footer.css.scss";
 @import "./layout.css.scss";
 @import "./likes.css.scss";
 @import "./map.css.scss";
+@import "./mobile.css.scss";
 @import "./modal.css.scss";
 @import "./navbar.css.scss";
 @import "./pagination.css.scss";
-@import "./phone.css.scss";
 @import "./player.css.scss";
 @import "./playlist.css.scss";
 @import "./search.css.scss";
@@ -150,7 +150,6 @@ a {
   background-attachment: fixed;
   filter: blur(100px);
   opacity: 0.8;
-
   z-index: 0;
   pointer-events: none;
 }
@@ -173,8 +172,14 @@ a {
 }
 
 .hilite {
-  background-color: yellow !important;
+  background-color: transparent !important;
+  box-shadow: 0px 4px 0px $highlight-orange !important;
 }
+
+.hilite-badge {
+  background-color: $highlight-orange !important;
+}
+
 
 .section {
   padding-top: 0 !important;

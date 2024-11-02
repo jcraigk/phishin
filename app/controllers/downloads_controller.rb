@@ -12,6 +12,7 @@ class DownloadsController < ApplicationController
   private
 
   def send_audio_file_as_attachment
+    add_cache_header
     send_file \
       track.audio_file.to_io.path,
       type: "audio/mpeg",
@@ -23,7 +24,7 @@ class DownloadsController < ApplicationController
   end
 
   def send_blob_file_inline
-    response.headers["Cache-Control"] = "public, max-age=2592000"
+    add_cache_header
     send_file \
       ActiveStorage::Blob.service.send(:path_for, blob.key),
       type: blob.content_type || "application/octet-stream",
@@ -42,5 +43,9 @@ class DownloadsController < ApplicationController
 
   def blob
     @blob ||= ActiveStorage::Blob.find_by(key: params[:key])
+  end
+
+  def add_cache_header
+    response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
   end
 end
