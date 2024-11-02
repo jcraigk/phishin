@@ -134,25 +134,25 @@ const Show = ({ trackSlug }) => {
           {showAdminNotesNotification && infoBox(show.admin_notes, () => handleClose("adminNotes"))}
 
           <div className="display-mobile-only mt-1">
-            <div className="phone-show-wrapper">
-              <div className="phone-show-container">
-                <div className="phone-show-image">
+            <div className="mobile-show-wrapper">
+              <div className="mobile-show-container">
+                <div className="mobile-show-image">
                   <CoverArt
                     coverArtUrls={show.cover_art_urls}
                     albumCoverUrl={show.album_cover_url}
                     openAppModal={openAppModal}
                     size="medium"
-                    css="phone-show-mobile"
+                    css="mobile-show-mobile"
                   />
                 </div>
-                <div className="phone-show-info">
-                  <span className="phone-show-date">{formatDate(show.date)}</span>
-                  <span className="phone-show-venue">
+                <div className="mobile-show-info">
+                  <span className="mobile-show-date">{formatDate(show.date)}</span>
+                  <span className="mobile-show-venue">
                     {show.venue_name}
                     <br />
                     {show.venue.location}
                   </span>
-                  <span className="phone-show-context">
+                  <span className="mobile-show-context">
                     <ShowContextMenu show={show} css="context-nudge-right" />
                   </span>
                 </div>

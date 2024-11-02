@@ -1,12 +1,12 @@
-.phone-show-wrapper {
+.mobile-show-wrapper {
   display: flex;
   justify-content: center;
   z-index: 1;
 
-  .phone-show-container {
+  .mobile-show-container {
     display: flex;
 
-    .phone-show-image {
+    .mobile-show-image {
       width: 148px;
       height: 148px;
       margin-right: 0.6rem;
@@ -18,7 +18,7 @@
       }
     }
 
-    .phone-show-info {
+    .mobile-show-info {
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -27,18 +27,18 @@
         color: $dark-gray;
       }
 
-      .phone-show-date {
+      .mobile-show-date {
         font-size: 1.8rem;
         font-weight: bold;
       }
-      .phone-show-venue {
+      .mobile-show-venue {
         font-size: 1.2rem;
         line-height: 1.5rem;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      .phone-show-context {
+      .mobile-show-context {
         position: relative;
         left: -7px;
         margin-top: 3px;
@@ -48,7 +48,7 @@
 }
 
 @media (max-width: 420px) {
-  .phone-show-venue {
+  .mobile-show-venue {
     width: 10rem !important;
   }
 }

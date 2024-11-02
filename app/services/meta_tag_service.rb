@@ -155,7 +155,14 @@ class MetaTagService < BaseService
     year = segments[0].to_i
     shows = Show.where("EXTRACT(YEAR FROM date) = ?", year)
     if shows.present?
-      { title: "#{year}#{TITLE_SUFFIX}", og: {}, status: :ok }
+      {
+        title: "#{year}#{TITLE_SUFFIX}",
+        og: {
+          title: "Listen to shows from #{year}",
+          type: "music.playlist"
+        },
+        status: :ok
+      }
     else
       not_found_meta
     end
