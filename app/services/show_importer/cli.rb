@@ -4,7 +4,7 @@ class ShowImporter::Cli
   attr_reader :orch
 
   def initialize(date)
-    puts "Preparing #{date}"
+    puts "🗓️ Preparing #{date}"
 
     @orch = ShowImporter::Orchestrator.new(date)
     ShowImporter::TrackReplacer.new(date) && return if orch.show_found
@@ -15,7 +15,7 @@ class ShowImporter::Cli
   def main_menu
     print_header
     orch.pp_list
-    puts "\n\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, (s)ave, e(x)it: "
+    puts "\n\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, (s)ave, e(x)it"
   end
 
   def print_header
@@ -26,14 +26,14 @@ class ShowImporter::Cli
 
   def print_show_title
     puts \
-      "🏟  #{orch.show.date} - #{orch.show.venue.name_on(orch.show.date)} " \
+      "📍 #{orch.show.date} - #{orch.show.venue.name_on(orch.show.date)} " \
       "- #{orch.show.venue.location}\n"
   end
 
   def print_notes
     notes = orch.show.taper_notes&.encode! \
       "UTF-8", "binary", invalid: :replace, undef: :replace, replace: ""
-    puts "📒 Taper Notes: #{pluralize(notes.split("\n").size, 'line')}" if notes.present?
+    puts "📝 Taper Notes: #{pluralize(notes.split("\n").size, 'line')}" if notes.present?
     puts "\n"
   end
 
@@ -62,7 +62,7 @@ class ShowImporter::Cli
 
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
   def process_pos(pos)
-    while (line = Readline.readline("➡ ", false))
+    while (line = Readline.readline("👉 ", false))
       case line.downcase
       when "u"
         puts(
@@ -93,20 +93,18 @@ class ShowImporter::Cli
   # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   def insert_new_track
-    puts "Before track #:"
-    line = Readline.readline("➡ ", true)
+    puts
+    line = Readline.readline("Before track # 👉 ", true)
     orch.insert_before(line.to_i)
   end
 
   def delete_track
-    puts "Delete track #:"
-    line = Readline.readline("➡ ", true)
+    line = Readline.readline("Delete track # 👉 ", true)
     orch.delete(line.to_i)
   end
 
   def update_song_for_pos(pos)
-    puts "Enter exact song title:"
-    line = Readline.readline("➡ ", true)
+    line = Readline.readline("Song title 👉 ", true)
     matched = orch.fm.find_song(line, exact: true)
     if matched
       puts "Found \"#{matched.title}\". Adding Song."
@@ -117,23 +115,20 @@ class ShowImporter::Cli
   end
 
   def update_title_for_pos(pos)
-    puts "Enter new title:"
-    line = Readline.readline("➡ ", true)
+    line = Readline.readline("Title 👉 ", true)
     orch.get_track(pos).title = line
     puts
   end
 
   def update_set_for_pos(pos)
-    puts "Enter new set abbrev [S,1,2,3,4,E,E2,E3]:"
-    line = Readline.readline("➡ ", true)
+    line = Readline.readline("Set [S,1,2,3,4,E,E2,E3] 👉 ", true)
     orch.get_track(pos).set = line
     puts
   end
 
   def update_file_for_pos(pos) # rubocop:disable Metrics/MethodLength
-    puts "Choose a file:"
     filenames = print_filenames
-    while (line = Readline.readline("1-#{filenames.length} ➡ "))
+    while (line = Readline.readline("File 1-#{filenames.length} 👉 "))
       choice = line.to_i
       next unless choice.positive?
       new_filename = filenames[choice - 1]

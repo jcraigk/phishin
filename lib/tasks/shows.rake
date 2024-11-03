@@ -42,7 +42,7 @@ namespace :shows do
     dates = Dir.entries(App.content_import_path).grep(/\d{4}\-\d{1,2}\-\d{1,2}\z/).sort
     next puts "❌ No shows found in #{App.content_import_path}" unless dates.any?
 
-    puts "🔎 #{pluralize(dates.size, 'folder')} found"
+    puts "📂 #{pluralize(dates.size, 'folder')} found"
     dates.each { |date| ShowImporter::Cli.new(date) }
   end
 end
