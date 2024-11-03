@@ -125,17 +125,11 @@ main {
   animation: shimmer 1.5s infinite;
 }
 
-.grid-view {
-  .loading-shimmer::before {
-    height: 70%;
-    width: 60%;
-  }
-}
-
-.list-item {
-  .loading-shimmer::before {
-    width: 15px !important;
-    height: 32px !important;
+.mobile-show-image {
+  .cover-art {
+    display: block;
+    width: 148px !important;
+    height: 148px !important;
   }
 }
 
@@ -157,11 +151,7 @@ main {
     .cover-art {
       display: block;
       width: 224px !important;
-      height: 230px !important;
-    }
-    .loading-shimmer::before {
-      margin-left: 70px;
-      width: 70px;
+      height: 224px !important;
     }
   }
 }

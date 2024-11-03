@@ -84,7 +84,7 @@ const Show = ({ trackSlug }) => {
       <div id="layout-container">
         <aside id="sidebar" className="hidden-mobile">
           <div className="sidebar-content">
-            <div className="mb-2">
+            <div className="mb-4">
               <CoverArt
                 coverArtUrls={show.cover_art_urls}
                 albumCoverUrl={show.album_cover_url}
@@ -142,7 +142,6 @@ const Show = ({ trackSlug }) => {
                     albumCoverUrl={show.album_cover_url}
                     openAppModal={openAppModal}
                     size="medium"
-                    css="mobile-show-mobile"
                   />
                 </div>
                 <div className="mobile-show-info">

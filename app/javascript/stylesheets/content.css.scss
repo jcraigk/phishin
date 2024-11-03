@@ -8,18 +8,9 @@
   }
 }
 
-.cover-art-inspector {
-  width: 100%;
-  border-radius: $radius;
-  object-fit: cover;
-  width: 128px !important;
-  height: 128px !important;
-  margin-right: 0.3rem;
-}
-
 .cover-art-small {
-  width: 44px;
-  height: 44px;
+  width: 32px;
+  height: 32px;
   border-radius: $radius;
   object-fit: cover;
   position: relative;
@@ -60,6 +51,11 @@
 }
 
 .cover-art {
+  border-radius: $radius;
+  background-color: $inactive-gray;
+  position: relative;
+  overflow: hidden;
+
   img {
     border-radius: $radius;
   }
@@ -140,14 +136,18 @@
     max-width: 60%;
     padding-right: 1rem;
 
+    .cover-art {
+      background-color: transparent;
+      position: relative;
+      top: 3px;
+    }
+
     .show-date {
       position: relative;
-      top: -3px;
+      top: -8px;
     }
 
     .cover-art-small {
-      width: 32px;
-      height: 32px;
       filter: grayscale(0.5);
       top: 5px;
     }
@@ -357,6 +357,7 @@
     cursor: pointer;
     border-radius: $radius;
     max-width: 436px;
+    background-color: $inactive-gray;
   }
 
   .grid-item:hover {
