@@ -1,5 +1,5 @@
 class TrackAttachmentService < BaseService
-  option :track
+  param :track
 
   def call
     convert_attachment(track.audio_file, :mp3_audio, "mp3")
@@ -12,11 +12,10 @@ class TrackAttachmentService < BaseService
     return unless shrine_attachment&.exists?
 
     # Attach file to ActiveStorage
-    track.public_send(active_storage_attachment).attach(
+    track.public_send(active_storage_attachment).attach \
       io: shrine_attachment.download,
       filename: filename(ext),
       content_type: shrine_attachment.mime_type
-    )
 
     # Delete Shrine attachment if ActiveStorage attachment is successful
     # shrine_attachment.delete if track.public_send(active_storage_attachment).attached?

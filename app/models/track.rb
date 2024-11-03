@@ -57,11 +57,11 @@ class Track < ApplicationRecord
   end
 
   def mp3_url
-    blob_url(:mp3_audio) || audio_file.url(host: App.content_base_url)
+    blob_url(mp3_audio) || audio_file.url(host: App.content_base_url)
   end
 
   def waveform_image_url
-    blob_url(:png_waveform) || waveform_png&.url(host: App.content_base_url)
+    blob_url(png_waveform) || waveform_png&.url(host: App.content_base_url)
   end
 
   def urls
@@ -97,16 +97,5 @@ class Track < ApplicationRecord
     show.save_duration
     apply_id3_tags
     generate_waveform_image
-  end
-
-  private
-
-  def blob_url(attachment_name)
-    attachment = public_send(attachment_name)
-    attachment.attached? ? "#{App.content_base_url}/blob/#{attachment.blob.key}" : nil
-  end
-
-  def generate_active_storage_filename(ext)
-    "#{show.date} - #{format('%02d', position)} - #{title}.#{ext}"
   end
 end
