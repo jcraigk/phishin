@@ -43,7 +43,7 @@ module HasCoverArt
     private
 
     def attach_cover_art(image_url: nil, file_path: nil, zoom: 0)
-      Tempfile.create(["cover_art_#{SecureRandom.hex}", ".jpg"]) do |temp_jpg|
+      Tempfile.create([ "cover_art_#{SecureRandom.hex}", ".jpg" ]) do |temp_jpg|
         image = fetch_image(image_url, file_path)
         process_image(image, temp_jpg.path, zoom)
         cover_art.attach \

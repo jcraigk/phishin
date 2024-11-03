@@ -1,8 +1,6 @@
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
-  private
-
   def blob_url(attachment, variant = nil)
     return unless attachment.attached?
     key = variant ? attachment.variant(variant).processed.key : attachment.blob.key

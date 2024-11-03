@@ -183,13 +183,11 @@ RSpec.describe Track do
   end
 
   it 'provides #mp3_url' do
-    url = track.audio_file.url(host: App.base_url).gsub('tracks/audio_files', 'audio')
-    expect(track.mp3_url).to eq(url)
+    expect(track.mp3_url).to eq(track.blob_url(track.mp3_audio))
   end
 
   it 'provides #waveform_image_url' do
-    url = track.waveform_png.url(host: App.base_url).gsub('tracks/audio_files', 'audio')
-    expect(track.waveform_image_url).to eq(url)
+    expect(track.waveform_image_url).to eq(track.blob_url(track.png_waveform))
   end
 
   describe 'serialization' do

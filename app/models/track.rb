@@ -14,7 +14,7 @@ class Track < ApplicationRecord
 
   # Deprecated Shrine attachments
   include AudioFileUploader::Attachment(:audio_file)
-  validates :audio_file, presence: true
+  # validates :audio_file, presence: true
   include WaveformPngUploader::Attachment(:waveform_png)
 
   include PgSearch::Model
@@ -57,11 +57,13 @@ class Track < ApplicationRecord
   end
 
   def mp3_url
-    blob_url(mp3_audio) || audio_file.url(host: App.content_base_url)
+    blob_url(mp3_audio) ||
+      audio_file.url(host: App.content_base_url).gsub("tracks/audio_files", "audio")
   end
 
   def waveform_image_url
-    blob_url(png_waveform) || waveform_png&.url(host: App.content_base_url)
+    blob_url(png_waveform) ||
+      waveform_png&.url(host: App.content_base_url).gsub("tracks/audio_files", "audio")
   end
 
   def urls
@@ -73,18 +75,8 @@ class Track < ApplicationRecord
   end
 
   def save_duration
-    duration = Mp3DurationQuery.new(temp_audio_file_path).call
+    duration = Mp3DurationQuery.call(mp3_audio)
     update_column(:duration, duration)
-  ensure
-    @temp_audio_file&.close!
-  end
-
-  def temp_audio_file_path
-    @temp_audio_file = Tempfile.new([ "track_#{id}", ".mp3" ])
-    @temp_audio_file.binmode
-    @temp_audio_file.write(mp3_audio.download)
-    @temp_audio_file.rewind
-    @temp_audio_file.path
   end
 
   def generate_waveform_image(purge_cache: false)

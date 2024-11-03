@@ -12,7 +12,7 @@ class Id3TagService < BaseService
   rescue ActiveStorage::FileNotFoundError => e
     # puts "File not found: #{e.message}" # For dev env
   ensure
-    temp_audio_file&.close! # Clean up Tempfile
+    @temp_audio_file&.close! # Clean up Tempfile
   end
 
   private
@@ -27,7 +27,7 @@ class Id3TagService < BaseService
   end
 
   def temp_audio_file_path
-    @temp_audio_file = Tempfile.new(["track_#{track.id}", ".mp3"])
+    @temp_audio_file = Tempfile.new([ "track_#{track.id}", ".mp3" ])
     @temp_audio_file.binmode
     @temp_audio_file.write(track.mp3_audio.download)
     @temp_audio_file.rewind
@@ -35,11 +35,10 @@ class Id3TagService < BaseService
   end
 
   def reattach_modified_audio_file
-    track.mp3_audio.attach(
+    track.mp3_audio.attach \
       io: File.open(@temp_audio_file.path),
       filename: "#{track.id}.mp3",
       content_type: "audio/mpeg"
-    )
   end
 
   def apply_tags(mp3)

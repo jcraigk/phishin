@@ -9,6 +9,7 @@ class TrackAttachmentService < BaseService
   private
 
   def convert_attachment(shrine_attachment, active_storage_attachment, ext)
+    return if track.public_send(active_storage_attachment).attached?
     return unless shrine_attachment&.exists?
 
     # Attach file to ActiveStorage

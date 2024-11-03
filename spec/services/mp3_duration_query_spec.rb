@@ -1,34 +1,36 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Mp3DurationQuery do
-  subject(:service) { described_class.new(mp3_file) }
+  subject(:service) { described_class }
 
-  let(:mp3_file) { nil }
   let(:track) { create(:track) }
+  let(:attachment) { track.mp3_audio }
 
-  context 'with invalid file path' do
-    let(:mp3_file) { 'nonexistent/path' }
+  context "when attachment is missing" do
+    let(:track) { create(:track, attachments: false) }
 
-    it 'raises exception' do
-      expect { service.call }.to raise_error(Errno::ENOENT)
+    it "raises Errno::ENOENT" do
+      expect { service.call(attachment) }.to raise_error(Errno::ENOENT)
     end
   end
 
-  context 'with valid file path' do
-    context 'with non-mp3 file' do
-      let(:mp3_file) { Rails.root.join('spec/fixtures/textfile.txt') }
-
-      it 'raises exception' do
-        expect { service.call }.to raise_error(Mp3InfoEOFError)
-      end
+  context "when attachment is a non-MP3 file" do
+    before do
+      track.mp3_audio.attach \
+        io: StringIO.new("This is not an MP3"),
+        filename: "invalid.txt",
+        content_type: "text/plain"
     end
 
-    context 'with mp3 file' do
-      let(:mp3_file) { track.audio_file.to_io.path }
+    it "raises Mp3InfoEOFError" do
+      expect { service.call(attachment) }.to raise_error(Mp3InfoEOFError)
+    end
+  end
 
-      it 'returns duration of mp3 in seconds' do
-        expect(service.call).to eq(2_011)
-      end
+  context "when attachment is a valid MP3 file" do
+    it "returns the duration in milliseconds" do
+      expected_duration = 2011 # Adjust based on the actual duration of audio_file.mp3
+      expect(service.call(attachment)).to eq(expected_duration)
     end
   end
 end

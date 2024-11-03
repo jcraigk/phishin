@@ -16,7 +16,7 @@ class WaveformImageService
   private
 
   def create_temp_mp3_file
-    @temp_mp3 = Tempfile.new(["track_#{track.id}", ".mp3"])
+    @temp_mp3 = Tempfile.new([ "track_#{track.id}", ".mp3" ])
     @temp_mp3.binmode
     @temp_mp3.write(track.mp3_audio.download)
     @temp_mp3.rewind
@@ -24,10 +24,9 @@ class WaveformImageService
 
   def convert_mp3_to_wav
     tmp_wav_path = tmp_wav
-    Open3.capture3(
+    Open3.capture3 \
       "ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i",
       @temp_mp3.path, "-f", "wav", tmp_wav_path
-    )
   end
 
   def generate_waveform_image
@@ -35,11 +34,10 @@ class WaveformImageService
   end
 
   def attach_waveform_image
-    track.png_waveform.attach(
+    track.png_waveform.attach \
       io: File.open(tmp_image),
       filename: "#{track.id}.png",
       content_type: "image/png"
-    )
   end
 
   def options

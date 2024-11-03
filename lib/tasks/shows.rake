@@ -20,8 +20,8 @@ namespace :shows do
     InteractiveCoverArtService.call(rel, pbar)
   end
 
-  desc "Apply ID3 tags"
-  task id3_tags: :environment do
+  desc "Convert Shrine to ActiveStorage"
+  task shrine: :environment do
     start_id = ENV.fetch("START_ID", nil)
 
     rel = Show.includes(:tracks)
@@ -33,9 +33,9 @@ namespace :shows do
 
     rel.find_each do |show|
       show.tracks.each do |track|
-        track.apply_id3_tags
+        TrackAttachmentService.call(track)
       end
-      puts "🎉 ID3 tags applied to #{show.date} / #{show.id}"
+      puts "🎉 Attachments converted for #{show.date} / #{show.id}"
       pbar.increment
     end
 
