@@ -2,7 +2,6 @@ require "csv"
 
 class TrackTagSyncService
   include ActionView::Helpers::SanitizeHelper
-  include Syncable
 
   attr_reader :tag, :data, :track, :created_ids, :updated_ids, :dupes, :missing_tracks
 
@@ -39,7 +38,6 @@ class TrackTagSyncService
 
   def sync_track_tags
     data.each do |row|
-      @track = find_track_by_url(row["URL"])
       existing = existing_track_tag(row)
       existing ? update_track_tag(existing, row) : create_track_tag(row)
     end
@@ -88,5 +86,11 @@ class TrackTagSyncService
       transcript: sanitize_str(row["Transcript"])
     )
     @updated_ids << track_tag.id
+  end
+
+  def seconds_or_nil(str)
+    return if str.blank?
+    min, sec = str.split(":")
+    (min.to_i * 60) + sec.to_i
   end
 end

@@ -21,13 +21,18 @@ namespace :tagin do
 
   desc 'Sync jam_starts_at_second data from spreadsheet'
   task jamstart: :environment do
-    include Syncable
-
     data = GoogleSpreadsheetFetcher.new(ENV['TAGIN_GSHEET_ID'], "JAMSTART!A1:G5000", headers: true).call
     data.each do |row|
-      @track = find_track_by_url(row['URL'])
-      next puts "Invalid track: #{row['URL']}" if @track.blank?
-      @track.update(jam_starts_at_second: seconds_or_nil(row['Starts At']))
+      track = Track.by_url(row['URL'])
+      next puts "Invalid track: #{row['URL']}" if track.blank?
+      jam_starts_at_second =
+          if str.include?(":")
+            min, sec = str.split(":")
+            (min.to_i * 60) + sec.to_i
+          else
+            nil
+          end
+      track.update!(jam_starts_at_second:)
       print '.'
     end
   end

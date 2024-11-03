@@ -1,55 +1,25 @@
 class DownloadsController < ApplicationController
   def download_track
     raise ActiveRecord::RecordNotFound if track.blank?
-
-    if track.mp3_audio.attached?
-      send_active_storage_audio_as_attachment
-    elsif track.audio_file.exists?
-      send_shrine_audio_as_attachment
-    else
-      head :not_found
-    end
+    return head(:not_found) unless track.mp3_audio.attached?
+    send_file_response(track.mp3_audio, "attachment", "Phish #{track.show.date} #{track.title}.mp3")
   end
 
   def download_blob
     raise ActiveRecord::RecordNotFound if blob.blank?
-    send_blob_file_inline
+    send_file_response(blob, "inline", blob.filename.to_s)
   end
 
   private
 
-  def send_active_storage_audio_as_attachment
+  def send_file_response(file, disposition, filename)
     add_cache_header
     send_file \
-      ActiveStorage::Blob.service.send(:path_for, track.mp3_audio.blob.key),
-      type: "audio/mpeg",
-      disposition: "attachment",
-      filename: "Phish #{track.show.date} #{track.title}.mp3",
-      length: track.mp3_audio.blob.byte_size
-  rescue ActionController::MissingFile
-    head :not_found
-  end
-
-  def send_shrine_audio_as_attachment
-    add_cache_header
-    send_file \
-      track.audio_file.to_io.path,
-      type: "audio/mpeg",
-      disposition: "attachment",
-      filename: "Phish #{track.show.date} #{track.title}.mp3",
-      length: track.audio_file.size
-  rescue ActionController::MissingFile
-    head :not_found
-  end
-
-  def send_blob_file_inline
-    add_cache_header
-    send_file \
-      ActiveStorage::Blob.service.send(:path_for, blob.key),
-      type: blob.content_type || "application/octet-stream",
-      disposition: "inline",
-      filename: blob.filename.to_s,
-      length: blob.byte_size
+      ActiveStorage::Blob.service.send(:path_for, file.key),
+      type: file.content_type || "application/octet-stream",
+      disposition:,
+      filename:,
+      length: file.byte_size
   rescue ActionController::MissingFile
     head :not_found
   end

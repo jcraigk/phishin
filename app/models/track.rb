@@ -12,11 +12,6 @@ class Track < ApplicationRecord
   has_one_attached :mp3_audio
   has_one_attached :png_waveform
 
-  # Deprecated Shrine attachments
-  include AudioFileUploader::Attachment(:audio_file)
-  # validates :audio_file, presence: true
-  include WaveformPngUploader::Attachment(:waveform_png)
-
   include PgSearch::Model
   pg_search_scope(
     :kinda_matching,
@@ -48,7 +43,7 @@ class Track < ApplicationRecord
   end
 
   def apply_id3_tags
-    Id3TagService.new(self).call
+    Id3TagService.call(self)
   end
 
   def generate_slug(force: false)
@@ -57,13 +52,11 @@ class Track < ApplicationRecord
   end
 
   def mp3_url
-    blob_url(mp3_audio) ||
-      audio_file.url(host: App.content_base_url).gsub("tracks/audio_files", "audio")
+    blob_url(mp3_audio)
   end
 
   def waveform_image_url
-    blob_url(png_waveform) ||
-      waveform_png&.url(host: App.content_base_url).gsub("tracks/audio_files", "audio")
+    blob_url(png_waveform)
   end
 
   def urls

@@ -1,5 +1,5 @@
 namespace :shows do
-  desc "Generate cover prompts, images, and zips for all shows or specific date"
+  desc "Generate cover art"
   task art: :environment do
     date = ENV.fetch("DATE", nil)
     start_date = ENV.fetch("START_DATE", nil)
@@ -20,29 +20,7 @@ namespace :shows do
     InteractiveCoverArtService.call(rel, pbar)
   end
 
-  desc "Convert Shrine to ActiveStorage"
-  task shrine: :environment do
-    start_id = ENV.fetch("START_ID", nil)
-
-    rel = Show.includes(:tracks)
-    rel = rel.where('id >= ?', start_id) if start_id.present?
-
-    pbar = ProgressBar.create \
-      total: rel.count,
-      format: "%a %B %c/%C %p%% %E"
-
-    rel.find_each do |show|
-      show.tracks.each do |track|
-        TrackAttachmentService.call(track)
-      end
-      puts "🎉 Attachments converted for #{show.date} / #{show.id}"
-      pbar.increment
-    end
-
-    pbar.finish
-  end
-
-  desc "Insert a track into a show at given position"
+  desc "Insert a track"
   task insert_track: :environment do
     opts = {
       date: ENV["DATE"],

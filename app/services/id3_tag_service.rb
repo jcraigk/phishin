@@ -3,16 +3,13 @@ require "mp3info"
 class Id3TagService < BaseService
   param :track
 
-  attr_reader :show
-
   def call
-    @show = track.show
     apply_default_tags
     reattach_modified_audio_file
   rescue ActiveStorage::FileNotFoundError => e
-    # puts "File not found: #{e.message}" # For dev env
+    Rails.logger.error "File not found: #{e.message}"
   ensure
-    @temp_audio_file&.close! # Clean up Tempfile
+    @temp_audio_file&.close!
   end
 
   private
@@ -89,5 +86,9 @@ class Id3TagService < BaseService
 
   def album
     @album ||= "#{show.date} #{show.venue_name}"
+  end
+
+  def show
+    @show ||= track.show
   end
 end

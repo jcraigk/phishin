@@ -1,9 +1,5 @@
-class WaveformImageService
-  attr_reader :track
-
-  def initialize(track)
-    @track = track
-  end
+class WaveformImageService < BaseService
+  param :track
 
   def call
     create_temp_mp3_file
