@@ -75,8 +75,9 @@ class Track < ApplicationRecord
   end
 
   def save_duration
-    duration = Mp3DurationQuery.call(mp3_audio)
-    update_column(:duration, duration)
+    mp3_audio.analyze unless mp3_audio.analyzed?
+    duration_ms = (mp3_audio.blob.metadata[:duration] * 1000).round
+    update_column(:duration, duration_ms)
   end
 
   def generate_waveform_image(purge_cache: false)
