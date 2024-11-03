@@ -2,24 +2,24 @@
 @import "~@fontsource/open-sans-condensed/300.css";
 @import "~@fontsource/open-sans-condensed/700.css";
 @import '~mapbox-gl/dist/mapbox-gl.css';
-
 @import "bulma/css/versions/bulma-no-dark-mode.min";
 
 $alert-red: #c6867f;
-$bg-blue: #cbf3ff;
-$bg-gray: #f2f3f5;
 $bg-red: #ffe4e1;
-$blue: rgb(3, 187, 242);
-$highlight-blue: rgb(171, 217, 255);
+$error-red: #b65b5b;
 $highlight-orange: #ff9d15;
-$control-gray: #f5f5f5;
+$bg-blue: #cbf3ff;
+$blue: #03BBF2;
 $google-blue: #5385ed;
-$header-gray: #c7c8ca;
+$highlight-blue: #ABD9FF;
+$bg-gray: #f2f3f5;
 $border-gray: #e3e3e3;
+$control-gray: #f5f5f5;
+$dark-gray: #3a3a3a;
+$header-gray: #c7c8ca;
 $inactive-gray: #d9dbdc;
 $text-gray: #6d6f71;
 $title-gray: #515152;
-$dark-gray: #3a3a3a;
 $radius: 0.5rem;
 
 @import "./bulma-overrides.css.scss";
@@ -27,7 +27,6 @@ $radius: 0.5rem;
 @import "./eras.css.scss";
 @import "./errors.css.scss";
 @import "./feedback.css.scss";
-@import "./layout.css.scss";
 @import "./likes.css.scss";
 @import "./map.css.scss";
 @import "./mobile.css.scss";
@@ -85,7 +84,6 @@ a {
   margin-bottom: 0.1rem !important;
 }
 
-// Misc
 .context-dropdown .button {
   background-color: transparent;
   box-shadow: none;
@@ -180,12 +178,10 @@ a {
   background-color: $highlight-orange !important;
 }
 
-
 .section {
   padding-top: 0 !important;
 }
 
-// Static pages
 .api-command {
   margin: 0.5rem 0;
   display: block;
@@ -209,7 +205,6 @@ a {
   margin: 0 0 2rem 1rem;
 }
 
-// OAuth
 .external-login-btn {
   font-size: 1.3rem;
   text-align: center;

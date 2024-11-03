@@ -237,6 +237,7 @@ main.with-player {
     &.collapsed {
       bottom: -80px !important;
     }
+
     .top-row {
       margin-top: 0.3rem;
     }
@@ -246,22 +247,28 @@ main.with-player {
     .chevron-button {
       display: none !important;
     }
+
     .scrub-btn {
       display: none !important;
     }
+
     .bottom-row {
       height: 30px !important;
       margin-top: 5px !important;
     }
+
     .track-title {
       font-size: 1.2rem !important;
     }
+
     main.with-player {
       margin-bottom: 110px;
     }
+
     .track-info {
       font-size: 1.2rem !important;
     }
+
     .top-row {
       padding-bottom: 0rem !important;
     }
@@ -271,9 +278,11 @@ main.with-player {
     .venue-location {
       display: none !important;
     }
+
     .controls {
       gap: 0 !important;
     }
+
     .left-half {
       margin-left: 0px !important;
 
@@ -281,9 +290,11 @@ main.with-player {
         margin-right: 0.5rem !important;
       }
     }
+
     .right-half {
       margin-right: 0px !important;
     }
+
     .play-pause-btn {
       width: 2.7rem !important;
       height: 2.7rem !important;
