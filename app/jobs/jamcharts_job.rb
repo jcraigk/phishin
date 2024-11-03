@@ -2,7 +2,7 @@ class JamchartsJob
   include Sidekiq::Job
 
   def perform
-    JamchartsImporter.new(api_key).call
+    JamchartsImporter.call(api_key)
   end
 
   private

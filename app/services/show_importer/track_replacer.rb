@@ -1,5 +1,3 @@
-require "highline"
-
 class ShowImporter::TrackReplacer
   attr_reader :date, :track_hash
 
@@ -11,7 +9,7 @@ class ShowImporter::TrackReplacer
     ensure_tracks_present
     ensure_all_tracks_matched
 
-    replace_audio_on_tracks if HighLine.new.ask(question) == "Y"
+    replace_audio_on_tracks if prompt_user_for_replacement == "Y"
   end
 
   def match_files_to_tracks
@@ -24,6 +22,11 @@ class ShowImporter::TrackReplacer
   end
 
   private
+
+  def prompt_user_for_replacement
+    print "#{question} "
+    gets.strip.upcase
+  end
 
   def question
     "❓ #{date} already imported, replace track data? [Y/n]"
@@ -40,7 +43,7 @@ class ShowImporter::TrackReplacer
 
     track_hash.sort_by { |_k, v| v.position }
               .each do |filename, track|
-      track.update!(audio_file: File.open(filename))
+      track.mp3_audio.attach(io: File.open(filename), filename: File.basename(filename))
       pbar.increment
     end
     pbar.finish

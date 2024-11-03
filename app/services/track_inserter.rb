@@ -17,7 +17,6 @@ class TrackInserter
   def call
     shift_track_positions
     insert_new_track
-    update_show_duration
   end
 
   private
@@ -34,20 +33,16 @@ class TrackInserter
   end
 
   def insert_new_track
-    track = Track.new(
+    track = Track.new \
       show:,
       title:,
       songs: [ Song.find(song_id) ],
       position:,
       set:
-    )
     track.slug = slug if slug.present?
-    track.save!(validate: false) # Generate ID for audio_file storage
-    track.update!(audio_file: File.open(file))
-  end
-
-  def update_show_duration
-    show.save_duration
+    track.save!
+    track.mp3_audio.attach(io: File.open(file), filename: File.basename(file))
+    track.process_mp3_audio
   end
 
   def ensure_valid_options

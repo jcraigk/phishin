@@ -1,9 +1,5 @@
-class TrackSlugGenerator
-  attr_reader :track
-
-  def initialize(track)
-    @track = track
-  end
+class TrackSlugGenerator < BaseService
+  param :track
 
   def call
     unique_slug_scoped_to_show

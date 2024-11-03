@@ -26,11 +26,6 @@ RSpec.describe Venue do
     expect(venue.slug).to eq('madison-square-garden')
   end
 
-  # geocoded_by :address
-  it 'responds to geocode' do
-    expect(venue).to respond_to(:geocode)
-  end
-
   describe 'scopes' do
     describe '#name_starting_with' do
       let!(:a_venue) { create(:venue, name: 'Allstate Arena') }

@@ -27,7 +27,7 @@ namespace :phishnet do
   desc 'Sync jamcharts data'
   task jamcharts: :environment do
     puts 'Fetching Jamcharts data from Phish.net API...'
-    JamchartsImporter.new(ENV['PNET_API_KEY']).call
+    JamchartsImporter.call(ENV['PNET_API_KEY'])
   end
 
   desc 'Sync Unfinished tag from setlist notes'

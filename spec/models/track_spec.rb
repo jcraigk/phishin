@@ -111,12 +111,6 @@ RSpec.describe Track do
     end
   end
 
-  it 'provides #save_duration' do
-    track.save
-    track.save_duration
-    expect(track.duration).to eq(2_011)
-  end
-
   describe '#set_name' do
     it 'recognizes nil' do
       track.set = nil

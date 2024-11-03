@@ -1,14 +1,12 @@
-class GoogleSpreadsheetFetcher
+class GoogleSpreadsheetFetcher < BaseService
   attr_reader :spreadsheet_id, :range, :has_headers
 
   OOB_URI = "urn:ietf:wg:oauth:2.0:oob".freeze
   TOKEN_PATH = Rails.root.join("config/google_api.yml")
 
-  def initialize(spreadsheet_id, range, opts = {})
-    @spreadsheet_id = spreadsheet_id
-    @range = range
-    @has_headers = opts[:headers].nil? ? true : opts[:headers]
-  end
+  param :spreadsheet_id
+  param :range
+  option :opts, optional: true, default: -> { {} }
 
   def call
     service.authorization = authorize
@@ -74,5 +72,9 @@ class GoogleSpreadsheetFetcher
       code:,
       base_url: OOB_URI
     )
+  end
+
+  def has_headers
+    @has_headers = opts[:headers].nil? ? true : opts[:headers]
   end
 end

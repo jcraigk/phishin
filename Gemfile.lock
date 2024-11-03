@@ -108,7 +108,6 @@ GEM
     connection_pool (2.4.1)
     crass (1.0.6)
     csv (3.3.0)
-    dalli (3.2.8)
     date (3.4.0)
     declarative (0.0.20)
     diff-lcs (1.5.1)
@@ -211,8 +210,6 @@ GEM
       grape-entity (~> 1)
       grape-swagger (~> 2)
     hashie (5.0.0)
-    highline (3.1.1)
-      reline
     htmlentities (4.3.4)
     httpclient (2.8.3)
     i18n (1.14.6)
@@ -518,8 +515,6 @@ DEPENDENCIES
   capybara-email
   capybara-screenshot
   chronic
-  chunky_png
-  dalli
   dotenv-rails
   dry-initializer
   factory_bot_rails
@@ -531,7 +526,6 @@ DEPENDENCIES
   grape-entity
   grape-swagger
   grape-swagger-entity
-  highline
   htmlentities
   image_processing
   jwt
