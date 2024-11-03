@@ -8,19 +8,37 @@ class Id3TagService < BaseService
   def call
     @show = track.show
     apply_default_tags
-  rescue Shrine::FileNotFound => e
+    reattach_modified_audio_file
+  rescue ActiveStorage::FileNotFoundError => e
     # puts "File not found: #{e.message}" # For dev env
+  ensure
+    @temp_audio_file&.close! # Clean up Tempfile
   end
 
   private
 
   def apply_default_tags
-    Mp3Info.open(track.audio_file.to_io.path) do |mp3|
+    Mp3Info.open(temp_audio_file_path) do |mp3|
       apply_tags(mp3)
       apply_v2_tags(mp3)
       mp3.tag2.remove_pictures
       apply_album_art(mp3)
     end
+  end
+
+  def temp_audio_file_path
+    @temp_audio_file = Tempfile.new([ "track_#{track.id}", ".mp3" ])
+    @temp_audio_file.binmode
+    @temp_audio_file.write(track.mp3_audio.download)
+    @temp_audio_file.rewind
+    @temp_audio_file.path
+  end
+
+  def reattach_modified_audio_file
+    track.mp3_audio.attach \
+      io: File.open(@temp_audio_file.path),
+      filename: "#{track.id}.mp3",
+      content_type: "audio/mpeg"
   end
 
   def apply_tags(mp3)

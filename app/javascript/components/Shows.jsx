@@ -99,7 +99,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
         onClick={() => handleShowClick(show.date)}
         style={{
           backgroundImage: isLoaded ? `url(${show.cover_art_urls.medium})` : "none",
-          opacity: isLoaded ? 1 : 0, // Force re-render to fix iOS Safari bug
+          opacity: isLoaded ? 1 : 0.9, // Force re-render to fix iOS Safari bug
         }}
       >
         {!isLoaded && <div className="loading-shimmer" />}

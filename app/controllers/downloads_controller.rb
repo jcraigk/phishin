@@ -1,7 +1,14 @@
 class DownloadsController < ApplicationController
   def download_track
-    raise ActiveRecord::RecordNotFound if track&.audio_file.blank?
-    send_audio_file_as_attachment
+    raise ActiveRecord::RecordNotFound if track.blank?
+
+    if track.mp3_audio.attached?
+      send_active_storage_audio_as_attachment
+    elsif track.audio_file.exists?
+      send_shrine_audio_as_attachment
+    else
+      head :not_found
+    end
   end
 
   def download_blob
@@ -11,7 +18,19 @@ class DownloadsController < ApplicationController
 
   private
 
-  def send_audio_file_as_attachment
+  def send_active_storage_audio_as_attachment
+    add_cache_header
+    send_file \
+      ActiveStorage::Blob.service.send(:path_for, track.mp3_audio.blob.key),
+      type: "audio/mpeg",
+      disposition: "attachment",
+      filename: "Phish #{track.show.date} #{track.title}.mp3",
+      length: track.mp3_audio.blob.byte_size
+  rescue ActionController::MissingFile
+    head :not_found
+  end
+
+  def send_shrine_audio_as_attachment
     add_cache_header
     send_file \
       track.audio_file.to_io.path,
@@ -36,9 +55,7 @@ class DownloadsController < ApplicationController
   end
 
   def track
-    @track ||=
-      Track.includes(show: :venue)
-           .find_by(id: params[:id])
+    @track ||= Track.includes(show: :venue).find_by(id: params[:id])
   end
 
   def blob

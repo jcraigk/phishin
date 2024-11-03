@@ -9,21 +9,19 @@ class Track < ApplicationRecord
   has_many :tags, through: :track_tags
   has_many :playlist_tracks, dependent: :destroy
 
-  include AudioFileUploader::Attachment(:audio_file)
-  validates :audio_file, presence: true
+  has_one_attached :mp3_audio
+  has_one_attached :png_waveform
 
+  # Deprecated Shrine attachments
+  include AudioFileUploader::Attachment(:audio_file)
+  # validates :audio_file, presence: true
   include WaveformPngUploader::Attachment(:waveform_png)
 
   include PgSearch::Model
   pg_search_scope(
     :kinda_matching,
     against: :title,
-    using: {
-      tsearch: {
-        any_word: true,
-        normalization: 16
-      }
-    }
+    using: { tsearch: { any_word: true, normalization: 16 } }
   )
 
   validates :position, :title, :set, presence: true
@@ -59,11 +57,13 @@ class Track < ApplicationRecord
   end
 
   def mp3_url
-    audio_file.url(host: App.content_base_url).gsub("tracks/audio_files", "audio")
+    blob_url(mp3_audio) ||
+      audio_file.url(host: App.content_base_url).gsub("tracks/audio_files", "audio")
   end
 
   def waveform_image_url
-    waveform_png&.url(host: App.content_base_url)&.gsub("tracks/audio_files", "audio")
+    blob_url(png_waveform) ||
+      waveform_png&.url(host: App.content_base_url).gsub("tracks/audio_files", "audio")
   end
 
   def urls
@@ -75,12 +75,13 @@ class Track < ApplicationRecord
   end
 
   def save_duration
-    update_column(:duration, Mp3DurationQuery.new(audio_file.to_io.path).call)
+    mp3_audio.analyze unless mp3_audio.analyzed?
+    duration_ms = (mp3_audio.blob.metadata[:duration] * 1000).round
+    update_column(:duration, duration_ms)
   end
 
   def generate_waveform_image(purge_cache: false)
     WaveformImageService.new(self).call
-    CloudflareCachePurgeService.call(waveform_image_url) if purge_cache
   end
 
   def process_audio_file

@@ -37,17 +37,17 @@ const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, size = "small", c
     setIsLoaded(true);
   };
 
-  const selectedImage = selectedOption === "albumCover" ?  albumCoverUrl : coverArtUrls?.[size];
+  const selectedImage = selectedOption === "albumCover" ? albumCoverUrl : coverArtUrls?.[size];
 
   return (
     <div
-      className={`cover-art cover-art-modal-trigger ${isLoaded ? "" : "loading-shimmer"}`}
+      className="cover-art cover-art-modal-trigger"
       onClick={handleOpenModal}
     >
       <img
         src={selectedImage}
         alt={selectedOption === "coverArt" ? "Cover art" : "Album cover"}
-        className={css || undefined}
+        className={`${css || ""} ${isLoaded ? "" : "loading-shimmer"}`}
         onLoad={handleImageLoad}
         loading="lazy"
       />
