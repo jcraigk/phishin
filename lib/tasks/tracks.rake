@@ -15,7 +15,7 @@ namespace :tracks do
     pbar.finish
   end
 
-  desc "Regenerate waveform images"
+  desc "Regenerate waveform images (resizing)"
   task generate_images: :environment do
     relation = Track.select(:id)
     pbar = ProgressBar.create(

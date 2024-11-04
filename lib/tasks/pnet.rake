@@ -1,4 +1,4 @@
-namespace :phishnet do
+namespace :pnet do
   desc 'Populate known dates'
   task known_dates: :environment do
     puts 'Fetching known dates from Phish.net API...'

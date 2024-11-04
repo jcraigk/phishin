@@ -10,10 +10,8 @@ namespace :tagin do
       puts "========================"
       puts " Syncing Tag: #{tag_name}"
       puts "========================"
-
       range = "#{tag_name}!A1:G5000"
       data = GoogleSpreadsheetFetcher.call(ENV["TAGIN_GSHEET_ID"], range, headers: true)
-
       TrackTagSyncService.call(tag_name, data)
     end
   end

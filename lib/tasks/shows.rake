@@ -34,7 +34,7 @@ namespace :shows do
     puts "Track inserted"
   end
 
-  desc "Import a show"
+  desc "Import show(s) using PNet API and local MP3 audio files"
   task import: :environment do
     require "#{Rails.root}/app/services/show_importer"
     include ActionView::Helpers::TextHelper
