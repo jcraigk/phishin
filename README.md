@@ -17,7 +17,7 @@ Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and developmen
 
 2. Clone the repo to your local machine
 
-4. Download the [Fixtures Pack](https://www.dropbox.com/scl/fi/ezmwysxnj6z1kgpfy04nb/PhishinDevFixtures.zip?rlkey=qvpvezehcudnr0u7c54337gv0&st=c8nchmf2&dl=0) and unzip it. This file contains a full database export (updated May 2024) minus users and API keys. It also includes MP3 audio and PNG waveform attachments for the last Baker's Dozen show, which should be browsable and playable via `localhost:3000/2017-08-06` once the local server is running. Additionally it includes MP3s/notes for 2018-12-28 for testing the `rails shows:import` task.
+3. Download the [Development SQL File](https://www.dropbox.com/scl/fi/6zv4bzxxcjgv3ouv8d3ek/phishin-dev.sql?rlkey=4trafp2vxcgc1iuuq36yhl9gc&st=qbpu7wfq&dl=0) and import it:
 
 ```bash
 # Copy SQL dump into PG container and run it
@@ -25,16 +25,13 @@ docker cp /path/to/phishin.sql phishin-pg-1:/docker-entrypoint-initdb.d/dump.sql
 docker exec -u postgres phishin-pg-1 psql phishin postgres -f docker-entrypoint-initdb.d/dump.sql
 ```
 
-5. Create a folder named `content` in the local project folder. Place the `tracks` and `import` folders from the Fixtures Pack inside. Symlink the `tracks/audio_files` folder as `audio` in your public folder: `ln -s ./content/tracks/audio_files public/audio`. If you run Rails outside Docker, set `APP_CONTENT_PATH` in `.env` as the absolute path to your `content` folder.
+4. To present production content locally during development, set `PRODUCTION_CONTENT=true` in your local `.env` file.
 
-6. To use audio and waveform images from production while developing locally, set `PRODUCTION_CONTENT=true` in `.env`.
-
-7. If you want to run the Postgres database in Docker and develop the app natively (recommended), you can spin it up like this:
+5. If you want to run the Postgres database in Docker and develop the app natively (recommended), you can spin it up like this:
 
 ```bash
 make services
-bundle
-bundle exec rails s
+make dev
 ```
 
 If you are on a Mac ARM and the `ruby-audio` gem fails to install, try the following:
@@ -49,16 +46,6 @@ Alternatively, if you prefer to develop completely in Docker, build and start th
 ```bash
 make up
 ```
-
-8. This project uses [React on Rails](https://github.com/shakacode/react_on_rails). Spin up the development environment by running `make dev`. Alternatively, you can manually run these commands in separate terminals:
-
-```bash
-bin/shakapacker-dev-server
-SERVER_BUNDLE_ONLY=yes bin/shakapacker --watch
-rails s
-```
-
-9. Open your browser and go to `http://localhost:3000/2017-08-06`. You should be able to view and play the full show. Additionally, if you set `PRODUCTION_CONTENT=true` then all content should be viewable and playable locally.
 
 
 ## Testing
@@ -90,7 +77,7 @@ To import a new show or replace an existing one, name the MP3s according to the 
 bundle exec rails shows:import
 ```
 
-Use the interactive CLI to finish the import process then go to `http://localhost:3000/<date>` to verify the import.
+Use the interactive CLI to finish the import process then set `PRODUCTION_CONTENT=false`, restart the server, and visit `http://localhost:3000/<date>` to verify the import.
 
 
 ## Contributions

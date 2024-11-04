@@ -6,8 +6,7 @@ class ApplicationRecord < ActiveRecord::Base
       key = variant ? attachment.variant(variant).processed.key : attachment.blob.key
       "#{App.content_base_url}/blob/#{key}"
     elsif placeholder
-      ActionController::Base.helpers.asset_pack_path \
-        "static/images/placeholders/#{placeholder}"
+      "/placeholders/#{placeholder}"
     end
   rescue ActiveStorage::FileNotFoundError
     nil
