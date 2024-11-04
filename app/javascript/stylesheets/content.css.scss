@@ -277,7 +277,7 @@ main {
       top: 3px;
     }
 
-    .show-date {
+    .date {
       position: relative;
       top: -8px;
     }
@@ -451,8 +451,45 @@ main {
     background-color: $inactive-gray;
   }
 
-  .grid-item:hover {
-    opacity: 0.5 !important;
+  @media (hover: hover) and (pointer: fine) {
+    .grid-item:hover {
+      opacity: 0.5 !important;
+    }
+  }
+
+  .period-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(#e5e5e5, 0.8);
+    padding: 4px;
+    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: bold;
+    color: $title-gray;
+    border-radius: $radius;
+
+    .period {
+      font-weight: bold;
+      font-size: 4rem;
+      margin: 0;
+
+      &.period-range {
+        font-size: 3rem;
+      }
+    }
+
+    .period-details {
+      font-size: 1rem;
+      margin-top: 8px;
+    }
   }
 
   .overlay {
@@ -469,6 +506,7 @@ main {
     font-size: 1rem;
     font-weight: bold;
     color: $title-gray;
+    border-radius: 0 0 $radius $radius;
 
     .show-date {
       margin-top: 1px;
@@ -721,10 +759,8 @@ main {
     margin-bottom: 8rem !important;
   }
 
-  .section-title {
-    &:not(:first-of-type) {
-      margin-top: 2rem !important;
-    }
+  .section-title:not(:first-of-type) {
+    margin-top: 2rem !important;
   }
 
   .map-search-results {

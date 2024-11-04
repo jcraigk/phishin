@@ -37,7 +37,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
     const modalContent = (
       <>
         <h2 className="title">Taper Notes</h2>
-        <h3 className="subtitle">{formatDate(show.date)} &bull; {show.venue_name}</h3>
+        <h3 className="subtitle">{formatDate(show.date)} • {show.venue_name}</h3>
         <p dangerouslySetInnerHTML={{ __html: (show.taper_notes || "").replace(/\n/g, "<br />") }}></p>
       </>
     );

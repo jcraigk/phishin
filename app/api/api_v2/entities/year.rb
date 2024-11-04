@@ -33,4 +33,11 @@ class ApiV2::Entities::Year < ApiV2::Entities::Base
       type: "String",
       desc: 'The era associated with this period ("1.0", "2.0", etc.)'
     }
+
+  expose \
+    :cover_art_urls,
+    documentation: {
+      type: "Array",
+      desc: "Cover art URLs taken from the last show in the period"
+    }
 end

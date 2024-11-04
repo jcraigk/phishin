@@ -46,7 +46,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
       {tourHeaders && renderTourHeader(tourName, tourShows.length)}
       <ul
         className={`${viewMode === "grid" ? "grid-view" : "list-view"} ${
-          viewMode === "grid" && tourShows.length < 4 ? "limited-width" : ""
+          viewMode === "grid" && tourShows.length < 3 ? "limited-width" : ""
         }`}
       >
         {tourShows.map((show) =>
@@ -69,7 +69,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
           {numbering && <span className="leftside-numbering">#{currentItemNumber}</span>}
           <span className="leftside-primary">
             <CoverArt coverArtUrls={show.cover_art_urls} css="cover-art-small" />
-            <span className="show-date">{formatDate(show.date)}</span>
+            <span className="date">{formatDate(show.date)}</span>
           </span>
           <span className="leftside-secondary">{show.venue_name}</span>
           <span className="leftside-tertiary">
@@ -122,7 +122,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
   }, {});
 
   return (
-    <div className="shows-wrapper">
+    <div>
       {Object.entries(tours).map(([tourName, tourShows]) =>
         renderListItemsForTour(tourShows, tourName)
       )}

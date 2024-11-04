@@ -250,12 +250,12 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
                     {formatDate(activeTrack?.show_date)}
                   </Link>
                   <span className="hidden-phone">
-                    {" "}&bull;{" "}
+                    {" "}•{" "}
                     <Link to={`/venues/${activeTrack?.venue_slug}`}>
                       {activeTrack?.venue_name}
                     </Link>
                     {/* <span className="venue-location">
-                      {" "}&bull;{" "}
+                      {" "}•{" "}
                       <Link to={`/map?term=${activeTrack?.venue_location}`}>
                         {activeTrack?.venue_location}
                       </Link>
