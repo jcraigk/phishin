@@ -11,5 +11,5 @@ Sidekiq.configure_client do |config|
   config.redis = redis_config
 end
 
-# Disable annoying connection messages
+# Disable spammy connection messages
 Sidekiq.logger.level = Logger::WARN
