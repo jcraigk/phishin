@@ -80,8 +80,8 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
           album: `${formatDate(activeTrack.show_date)} - ${activeTrack.venue_name}`,
           artwork: [
             {
-              src: activeTrack.show_cover_art_urls.large,
-              sizes: '1024x1024',
+              src: activeTrack.show_cover_art_urls.medium,
+              sizes: '512x512',
               type: 'image/png',
             }
           ]
