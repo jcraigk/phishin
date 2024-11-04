@@ -1,4 +1,4 @@
-class CoverArtPromptService < BaseService
+class CoverArtPromptService < ApplicationService
   param :show
 
   HUES = %w[

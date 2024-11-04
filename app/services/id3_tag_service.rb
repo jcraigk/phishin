@@ -1,6 +1,6 @@
 require "mp3info"
 
-class Id3TagService < BaseService
+class Id3TagService < ApplicationService
   param :track
 
   def call

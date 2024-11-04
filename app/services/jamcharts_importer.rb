@@ -1,4 +1,4 @@
-class JamchartsImporter < BaseService
+class JamchartsImporter < ApplicationService
   include ActionView::Helpers::SanitizeHelper
 
   BASE_URL = "https://api.phish.net/v5".freeze

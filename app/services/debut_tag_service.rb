@@ -1,4 +1,4 @@
-class DebutTagService < BaseService
+class DebutTagService < ApplicationService
   param :show
 
   def call

@@ -1,6 +1,6 @@
 require "csv"
 
-class TrackTagSyncService < BaseService
+class TrackTagSyncService < ApplicationService
   include ActionView::Helpers::SanitizeHelper
 
   attr_reader :track, :created_ids, :updated_ids, :missing_tracks

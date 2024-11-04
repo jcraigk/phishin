@@ -1,4 +1,4 @@
-class MetaTagService < BaseService
+class MetaTagService < ApplicationService
   param :path
 
   TITLE_SUFFIX = " - #{App.app_name}"

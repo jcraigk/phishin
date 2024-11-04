@@ -1,4 +1,4 @@
-class GapService < BaseService
+class GapService < ApplicationService
   param :show
 
   def call

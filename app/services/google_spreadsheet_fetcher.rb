@@ -1,4 +1,4 @@
-class GoogleSpreadsheetFetcher < BaseService
+class GoogleSpreadsheetFetcher < ApplicationService
   attr_reader :spreadsheet_id, :range, :has_headers
 
   OOB_URI = "urn:ietf:wg:oauth:2.0:oob".freeze

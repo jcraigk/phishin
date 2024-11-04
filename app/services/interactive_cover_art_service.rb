@@ -1,4 +1,4 @@
-class InteractiveCoverArtService < BaseService
+class InteractiveCoverArtService < ApplicationService
   include ActionView::Helpers::TextHelper
 
   class InterruptError < StandardError; end

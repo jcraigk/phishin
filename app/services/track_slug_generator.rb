@@ -1,4 +1,4 @@
-class TrackSlugGenerator < BaseService
+class TrackSlugGenerator < ApplicationService
   param :track
 
   def call

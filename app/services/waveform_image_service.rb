@@ -1,4 +1,4 @@
-class WaveformImageService < BaseService
+class WaveformImageService < ApplicationService
   param :track
 
   def call

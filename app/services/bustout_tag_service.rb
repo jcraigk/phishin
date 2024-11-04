@@ -1,4 +1,4 @@
-class BustoutTagService < BaseService
+class BustoutTagService < ApplicationService
   MIN_GAP = 100
 
   param :show

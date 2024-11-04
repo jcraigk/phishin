@@ -9,7 +9,7 @@ class ShowImporter::TrackReplacer
     ensure_tracks_present
     ensure_all_tracks_matched
 
-    replace_audio_on_tracks if prompt_user_for_replacement == "Y"
+    replace_audio_on_tracks if prompt_for_replacement == "Y"
   end
 
   def match_files_to_tracks
@@ -23,7 +23,7 @@ class ShowImporter::TrackReplacer
 
   private
 
-  def prompt_user_for_replacement
+  def prompt_for_replacement
     print "#{question} "
     gets.strip.upcase
   end
