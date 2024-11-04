@@ -34,12 +34,11 @@ RSpec.describe Playlist do
   end
 
   describe 'validations' do
-    # Commented out because of `Too many open files @ rb_sysopen`
-    # it 'validates tracks count within limit' do
-    #   playlist = build(:playlist, playlist_tracks: build_list(:playlist_track, 251))
-    #   expect(playlist).not_to be_valid
-    #  expect(playlist.errors[:tracks]).to include("can't number more than #{Playlist::MAX_TRACKS}")
-    # end
+    it 'validates tracks count within limit' do
+      playlist = build(:playlist, playlist_tracks: build_list(:playlist_track, 251))
+      expect(playlist).not_to be_valid
+     expect(playlist.errors[:tracks]).to include("can't number more than #{Playlist::MAX_TRACKS}")
+    end
 
     it 'validates tracks count above minimum' do
       playlist = build(:playlist, playlist_tracks: build_list(:playlist_track, 1))

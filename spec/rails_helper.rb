@@ -15,7 +15,7 @@ end
 RSpec.configure do |config|
   # Commented to suppress announcement message
   # Uncomment to run feature specs remotely
-  # ReactOnRails::TestHelper.configure_rspec_to_compile_assets(config)
+  ReactOnRails::TestHelper.configure_rspec_to_compile_assets(config)
 
   config.fixture_paths = [ "#{Rails.root}/spec/fixtures" ]
   config.use_transactional_fixtures = true
