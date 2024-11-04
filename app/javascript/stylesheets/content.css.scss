@@ -231,7 +231,7 @@ main {
   background-repeat: no-repeat;
 
   &.focus {
-    border-left: 5px solid $highlight-blue;
+    border-bottom: 1px solid $highlight-blue;
   }
 
   &.active-item {
@@ -496,7 +496,7 @@ main {
     background-color: $highlight-blue;
   }
   50% {
-    background-color: $bg-gray;
+    background-color: rgba(255, 255, 255, 0.8);
   }
   100% {
     background-color: $highlight-blue;
