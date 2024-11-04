@@ -81,8 +81,8 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
           artwork: [
             {
               src: activeTrack.show_cover_art_urls.medium,
-              sizes: '512x512',
-              type: 'image/png',
+              sizes: "256x256",
+              type: "image/png",
             }
           ]
         });
