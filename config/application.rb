@@ -24,10 +24,7 @@ module Phishin
     config.time_zone = "Eastern Time (US & Canada)"
     config.oauth_google_key = ENV.fetch("OAUTH_GOOGLE_KEY", nil)
     config.oauth_google_secret = ENV.fetch("OAUTH_GOOGLE_SECRET", nil)
-    config.content_path =
-      ENV.fetch("APP_CONTENT_PATH", nil) ||
-        (Rails.env.test? ? Rails.root.join("tmp/content") : "/content")
-    config.content_import_path = "#{config.content_path}/import"
+    config.content_import_path = ENV.fetch("IMPORT_PATH", "/content/import")
     config.content_base_url =
       if ENV.fetch("PRODUCTION_CONTENT", nil) == "true"
         "https://phish.in"

@@ -51,11 +51,11 @@ class Track < ApplicationRecord
   end
 
   def mp3_url
-    blob_url(mp3_audio)
+    blob_url(mp3_audio, placeholder: "audio.mp3")
   end
 
   def waveform_image_url
-    blob_url(png_waveform)
+    blob_url(png_waveform, placeholder: "waveform.png")
   end
 
   def urls

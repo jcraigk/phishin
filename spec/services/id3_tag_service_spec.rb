@@ -1,5 +1,5 @@
-require 'rails_helper'
-require 'mp3info'
+require "rails_helper"
+require "mp3info"
 
 RSpec.describe Id3TagService do
   subject(:service) { described_class.new(track) }
@@ -8,14 +8,23 @@ RSpec.describe Id3TagService do
   let(:track) { create(:track, position:, title:, show:) }
   let(:year) { 1995 }
   let(:position) { 2 }
-  let(:title) { 'Bathtub Gin' }
-  let(:artist) { 'Phish' }
+  let(:title) { "Bathtub Gin" }
+  let(:artist) { "Phish" }
   let(:album) { "#{track.show.date} #{track.show.venue_name}"[0..29] }
   let(:comments) { "#{App.base_url} for more" }
 
-  before { service.call }
+  before do
+    # Attach the placeholder audio file
+    track.mp3_audio.attach(
+      io: File.open(Rails.root.join("public/placeholders/audio.mp3")),
+      filename: "audio.mp3",
+      content_type: "audio/mpeg"
+    )
 
-  it 'sets id3 tags on track mp3' do # rubocop:disable RSpec/ExampleLength, RSpec/MultipleExpectations
+    service.call
+  end
+
+  it "sets id3 tags on track mp3" do # rubocop:disable RSpec/ExampleLength, RSpec/MultipleExpectations
     Mp3Info.open(track.mp3_audio.blob.service.path_for(track.mp3_audio.key)) do |mp3|
       tag = mp3.tag
       expect(tag.title).to eq(title)
@@ -27,7 +36,7 @@ RSpec.describe Id3TagService do
     end
   end
 
-  it 'sets id3v2 tags on track mp3' do # rubocop:disable RSpec/ExampleLength, RSpec/MultipleExpectations
+  it "sets id3v2 tags on track mp3" do # rubocop:disable RSpec/ExampleLength, RSpec/MultipleExpectations
     Mp3Info.open(track.mp3_audio.blob.service.path_for(track.mp3_audio.key)) do |mp3|
       tag2 = mp3.tag2
       expect(tag2.TIT2).to eq(title)

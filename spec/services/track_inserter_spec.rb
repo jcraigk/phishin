@@ -15,7 +15,7 @@ RSpec.describe TrackInserter do
     }
   end
   let(:date) { show.date }
-  let(:file) { Rails.root.join('spec/fixtures/audio_file.mp3') }
+  let(:file) { Rails.root.join('public/placeholders/audio.mp3') }
   let(:show) { create(:show) }
   let(:song_id) { song.id }
   let(:song) { create(:song) }

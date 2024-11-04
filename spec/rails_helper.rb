@@ -17,7 +17,6 @@ RSpec.configure do |config|
   # Uncomment to run feature specs remotely
   # ReactOnRails::TestHelper.configure_rspec_to_compile_assets(config)
 
-  config.fixture_paths = [ "#{Rails.root}/spec/fixtures" ]
   config.use_transactional_fixtures = true
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!

@@ -177,11 +177,11 @@ RSpec.describe Track do
   end
 
   it 'provides #mp3_url' do
-    expect(track.mp3_url).to eq(track.blob_url(track.mp3_audio))
+    expect(track.mp3_url).to eq("/placeholders/audio.mp3")
   end
 
   it 'provides #waveform_image_url' do
-    expect(track.waveform_image_url).to eq(track.blob_url(track.png_waveform))
+    expect(track.waveform_image_url).to eq("/placeholders/waveform.png")
   end
 
   describe 'serialization' do

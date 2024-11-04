@@ -6,14 +6,14 @@ module HasCoverArt
   included do # rubocop:disable Metrics/BlockLength
     def cover_art_urls
       {
-        large: attachment_url(cover_art, "cover-art-large"),
-        medium: variant_url(cover_art, :medium),
-        small: variant_url(cover_art, :small)
+        large: blob_url(cover_art, placeholder: "cover-art-large.jpg"),
+        medium: blob_url(cover_art, variant: :medium, placeholder: "cover-art-medium.jpg"),
+        small: blob_url(cover_art, variant: :small, placeholder: "cover-art-small.jpg")
       }
     end
 
     def album_cover_url
-      attachment_url(album_cover, "cover-art-large")
+      blob_url(album_cover, placeholder: "cover-art-large.jpg")
     end
 
     def album_zip_url
@@ -87,30 +87,9 @@ module HasCoverArt
         "#{(image.height - new_height) / 2}"
     end
 
-    def attachment_url(attachment, placeholder = nil)
-      if attachment.attached?
-        blob_url(attachment)
-      else
-        placeholder_url(placeholder)
-      end
-    end
-
-    def variant_url(attachment, variant)
-      if attachment.attached?
-        blob_url(attachment, variant)
-      else
-        placeholder_url("cover-art-#{variant}")
-      end
-    end
-
     def attachment_path(attachment)
       return unless attachment.attached?
       ActiveStorage::Blob.service.path_for(attachment.blob.key)
-    end
-
-    def placeholder_url(name)
-      ActionController::Base.helpers.asset_pack_path \
-        "static/images/placeholders/#{name}.jpg"
     end
   end
 end
