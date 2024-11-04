@@ -1,19 +1,18 @@
-class JamchartsImporter
+class JamchartsImporter < ApplicationService
   include ActionView::Helpers::SanitizeHelper
 
   BASE_URL = "https://api.phish.net/v5".freeze
   API_KEY = ENV.fetch("PNET_API_KEY", nil)
 
-  attr_reader :api_key, :invalid_items, :missing_shows, :matched_ids
+  attr_reader :invalid_items, :missing_shows, :matched_ids
 
-  def initialize(api_key)
-    @api_key = api_key
-  end
+  param :api_key
 
   def call
     @invalid_items = []
     @missing_shows = []
     @matched_ids = []
+
     sync_jamcharts
   end
 

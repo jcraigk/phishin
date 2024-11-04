@@ -1,4 +1,4 @@
-class SearchService < BaseService
+class SearchService < ApplicationService
   param :term
   param :scope, default: proc { "all" }
 

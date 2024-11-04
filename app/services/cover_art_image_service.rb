@@ -1,4 +1,4 @@
-class CoverArtImageService < BaseService
+class CoverArtImageService < ApplicationService
   param :show
   option :dry_run, default: -> { false }
 

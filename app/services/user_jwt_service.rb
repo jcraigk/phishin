@@ -1,4 +1,4 @@
-class UserJwtService < BaseService
+class UserJwtService < ApplicationService
   param :user
 
   def call

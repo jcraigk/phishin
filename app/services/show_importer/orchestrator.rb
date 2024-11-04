@@ -183,6 +183,7 @@ class ShowImporter::Orchestrator
       io: File.open("#{@fm.dir}/#{track.filename}"),
       filename: track.filename,
       content_type: "audio/mpeg"
+    track.process_mp3_audio
   end
 
   def populate_tracks

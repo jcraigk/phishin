@@ -38,11 +38,9 @@ RUN yarn install
 
 COPY . .
 
-# Expose Shrine attachments as public cacheable URLs
+# TODO: Remove after grace period
+# Expose legacy Shrine files
 RUN ln -sf /content/tracks/audio_files ./public/audio
-
-# Expose ActiveStorage attachments as public cacheable URLs
-RUN ln -sf /content/active_storage ./public/attachments
 
 EXPOSE 3000
 CMD bundle exec puma -b tcp://0.0.0.0:3000

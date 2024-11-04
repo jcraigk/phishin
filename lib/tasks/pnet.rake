@@ -1,4 +1,4 @@
-namespace :phishnet do
+namespace :pnet do
   desc 'Populate known dates'
   task known_dates: :environment do
     puts 'Fetching known dates from Phish.net API...'
@@ -27,7 +27,7 @@ namespace :phishnet do
   desc 'Sync jamcharts data'
   task jamcharts: :environment do
     puts 'Fetching Jamcharts data from Phish.net API...'
-    JamchartsImporter.new(ENV['PNET_API_KEY']).call
+    JamchartsImporter.call(ENV['PNET_API_KEY'])
   end
 
   desc 'Sync Unfinished tag from setlist notes'

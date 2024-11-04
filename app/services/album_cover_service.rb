@@ -1,6 +1,6 @@
 require "mini_magick"
 
-class AlbumCoverService < BaseService
+class AlbumCoverService < ApplicationService
   param :show
 
   def call

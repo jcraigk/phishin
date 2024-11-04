@@ -1,4 +1,4 @@
-class BaseService
+class ApplicationService
   extend Dry::Initializer
 
   def self.call(...)

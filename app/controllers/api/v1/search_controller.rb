@@ -7,7 +7,7 @@ class Api::V1::SearchController < Api::V1::ApiController
   private
 
   def results
-    @results ||= SearchService.new(params[:term]).call
+    @results ||= SearchService.call(params[:term])
   end
 
   def respond_with_invalid_term

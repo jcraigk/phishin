@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe GapService do
-  subject(:service) { described_class.new(current_show).call }
+  subject(:service) { described_class.call(current_show) }
 
   let!(:venue) { create(:venue, name: "Madison Square Garden") }
   let!(:known_dates) do

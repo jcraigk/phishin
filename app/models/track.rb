@@ -12,11 +12,6 @@ class Track < ApplicationRecord
   has_one_attached :mp3_audio
   has_one_attached :png_waveform
 
-  # Deprecated Shrine attachments
-  include AudioFileUploader::Attachment(:audio_file)
-  # validates :audio_file, presence: true
-  include WaveformPngUploader::Attachment(:waveform_png)
-
   include PgSearch::Model
   pg_search_scope(
     :kinda_matching,
@@ -29,7 +24,6 @@ class Track < ApplicationRecord
   validates :songs, length: { minimum: 1 }
 
   before_save :generate_slug
-  after_update :process_audio_file, if: :saved_change_to_audio_file_data
 
   scope :chronological, -> { joins(:show).order("shows.date") }
   scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
@@ -48,22 +42,20 @@ class Track < ApplicationRecord
   end
 
   def apply_id3_tags
-    Id3TagService.new(self).call
+    Id3TagService.call(self)
   end
 
   def generate_slug(force: false)
     return if !force && slug.present?
-    self.slug = TrackSlugGenerator.new(self).call
+    self.slug = TrackSlugGenerator.call(self)
   end
 
   def mp3_url
-    blob_url(mp3_audio) ||
-      audio_file.url(host: App.content_base_url).gsub("tracks/audio_files", "audio")
+    blob_url(mp3_audio)
   end
 
   def waveform_image_url
-    blob_url(png_waveform) ||
-      waveform_png&.url(host: App.content_base_url).gsub("tracks/audio_files", "audio")
+    blob_url(png_waveform)
   end
 
   def urls
@@ -74,21 +66,22 @@ class Track < ApplicationRecord
     }
   end
 
-  def save_duration
-    mp3_audio.analyze unless mp3_audio.analyzed?
-    duration_ms = (mp3_audio.blob.metadata[:duration] * 1000).round
-    update_column(:duration, duration_ms)
-  end
-
   def generate_waveform_image(purge_cache: false)
-    WaveformImageService.new(self).call
+    WaveformImageService.call(self)
   end
 
-  def process_audio_file
-    return if Rails.env.test?
+  def process_mp3_audio
     save_duration
     show.save_duration
     apply_id3_tags
     generate_waveform_image
+  end
+
+  private
+
+  def save_duration
+    mp3_audio.analyze unless mp3_audio.analyzed?
+    duration_ms = (mp3_audio.blob.metadata[:duration] * 1000).round
+    update_column(:duration, duration_ms)
   end
 end

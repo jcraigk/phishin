@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe MetaTagService do
   let(:title_suffix) { " - #{App.app_name}" }
 
-  subject(:service) { described_class.new(path).call }
+  subject(:service) { described_class.call(path) }
 
   context "when the path is root" do
     let(:path) { "/" }
