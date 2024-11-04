@@ -68,7 +68,18 @@ class ApiV2::Tracks < ApiV2::Base
     def page_of_tracks
       Rails.cache.fetch("api/v2/tracks?#{params.to_query}") do
         tracks = Track.includes(
-                        :show,
+                        :mp3_audio_attachment,
+                        :png_waveform_attachment,
+                        {
+                          show: %i[
+                            album_cover_attachment
+                            album_zip_attachment
+                            cover_art_attachment
+                            tour
+                            venue
+                            show_tags
+                          ]
+                        },
                         :songs,
                         { track_tags: :tag },
                         :songs_tracks

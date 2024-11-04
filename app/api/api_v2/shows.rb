@@ -146,7 +146,13 @@ class ApiV2::Shows < ApiV2::Base
     def page_of_shows
       Rails.cache.fetch("api/v2/shows?#{params.to_query}") do
         shows = Show.published
-                    .includes(:venue, show_tags: :tag)
+                    .includes(
+                      :venue,
+                      :album_cover_attachment,
+                      :album_zip_attachment,
+                      :cover_art_attachment,
+                      show_tags: :tag
+                    )
                     .then { |s| apply_filter(s) }
                     .then { |s| apply_sort(s, :date, :desc) }
                     .paginate(page: params[:page], per_page: params[:per_page])
@@ -184,6 +190,8 @@ class ApiV2::Shows < ApiV2::Base
             .includes(
               :venue,
               tracks: [
+                :mp3_audio_attachment,
+                :png_waveform_attachment,
                 { track_tags: :tag },
                 { songs: :songs_tracks }
               ],
