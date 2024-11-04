@@ -148,6 +148,7 @@ class ApiV2::Shows < ApiV2::Base
         shows = Show.published
                     .includes(
                       :venue,
+                      :tour,
                       :album_cover_attachment,
                       :album_zip_attachment,
                       :cover_art_attachment,

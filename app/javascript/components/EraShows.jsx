@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faList, faTh, faCircleChevronLeft, faCircleChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faList, faTh, faCircleChevronLeft, faCircleChevronRight, faSortAmountDown, faSortAmountUp } from "@fortawesome/free-solid-svg-icons";
 
 export const eraShowsLoader = async ({ params }) => {
   const { year } = params;
@@ -24,9 +24,18 @@ export const eraShowsLoader = async ({ params }) => {
 };
 
 const EraShows = () => {
-  const { shows, year } = useLoaderData();
+  const { shows: initialShows, year } = useLoaderData();
   const [viewMode, setViewMode] = useState("grid");
+  const [sortOption, setSortOption] = useState("desc");
   const [yearsData, setYearsData] = useState(null);
+
+  const sortedShows = [...initialShows].sort((a, b) => {
+    if (sortOption === "asc") {
+      return new Date(a.date) - new Date(b.date);
+    } else {
+      return new Date(b.date) - new Date(a.date);
+    }
+  });
 
   useEffect(() => {
     const fetchYearsData = async () => {
@@ -44,6 +53,10 @@ const EraShows = () => {
 
   const handleViewModeChange = (mode) => {
     setViewMode(mode);
+  };
+
+  const handleSortOptionChange = (option) => {
+    setSortOption(option);
   };
 
   const renderViewToggleButtons = () => (
@@ -64,6 +77,29 @@ const EraShows = () => {
       >
         <span className="icon">
           <FontAwesomeIcon icon={faTh} />
+        </span>
+      </button>
+    </div>
+  );
+
+  const renderSortButtons = () => (
+    <div className="view-toggle buttons has-addons">
+      <button
+        className={`button ${sortOption === "desc" ? "is-selected" : ""}`}
+        onClick={() => handleSortOptionChange("desc")}
+        disabled={sortOption === "desc"}
+      >
+        <span className="icon">
+          <FontAwesomeIcon icon={faSortAmountDown} />
+        </span>
+      </button>
+      <button
+        className={`button ${sortOption === "asc" ? "is-selected" : ""}`}
+        onClick={() => handleSortOptionChange("asc")}
+        disabled={sortOption === "asc"}
+      >
+        <span className="icon">
+          <FontAwesomeIcon icon={faSortAmountUp} />
         </span>
       </button>
     </div>
@@ -96,8 +132,9 @@ const EraShows = () => {
   const sidebarContent = (
     <div className="sidebar-content">
       <p className="sidebar-title">{year}</p>
-      <p className="sidebar-subtitle">{shows.length} shows</p>
+      <p className="sidebar-subtitle">{sortedShows.length} shows</p>
       {renderViewToggleButtons()}
+      {renderSortButtons()}
       <div className="hidden-mobile">{yearLinks()}</div>
     </div>
   );
@@ -108,8 +145,11 @@ const EraShows = () => {
         <title>{year} - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        <div className="display-phone-only">{renderViewToggleButtons()}</div>
-        <Shows shows={shows} tourHeaders={true} viewMode={viewMode} />
+        <div className="display-phone-only">
+          {renderViewToggleButtons()}
+          {renderSortButtons()}
+        </div>
+        <Shows shows={sortedShows} tourHeaders={true} viewMode={viewMode} />
         {yearLinks()}
       </LayoutWrapper>
     </>

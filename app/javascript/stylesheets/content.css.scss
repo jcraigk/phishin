@@ -412,6 +412,10 @@ main {
 .view-toggle {
   margin-bottom: 0px !important;
 
+  &:not(:first-child) {
+    margin-top: 1rem;
+  }
+
   button {
     padding: 8px 16px;
     font-size: 1rem;
@@ -558,6 +562,14 @@ main {
     width: 100%;
   }
 
+  .view-toggle {
+    justify-content: center;
+
+    &:not(:first-child) {
+      margin-top: 0px !important;
+    }
+  }
+
   .sidebar-control-container {
     position: relative;
     top: 3px;
@@ -631,6 +643,18 @@ main {
 }
 
 @media (max-width: 420px) {
+  .display-phone-only {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .view-toggle {
+    display: flex;
+    gap: 0.5rem; /* Space between buttons within each group */
+  }
+
   .grid-view {
     grid-template-columns: repeat(auto-fit, minmax(152px, 1fr));
     gap: 0.7rem;
@@ -644,17 +668,9 @@ main {
     display: none;
   }
 
-  .view-toggle {
-    justify-content: center;
-  }
-
   .list-item {
     min-height: 2rem;
     padding: 0.25rem 0.6rem;
-  }
-
-  .display-phone-only {
-    display: block !important;
   }
 
   .hidden-phone {
