@@ -66,7 +66,7 @@ class ApiV2::Tracks < ApiV2::Base
 
   helpers do
     def page_of_tracks
-      Rails.cache.fetch("api/v2/tracks?#{params.to_query}") do
+      Rails.cache.fetch("api/v2/tracks?#{params.to_query}/#{current_user&.id}") do
         tracks = Track.includes(
                         :mp3_audio_attachment,
                         :png_waveform_attachment,
@@ -98,7 +98,9 @@ class ApiV2::Tracks < ApiV2::Base
     end
 
     def track_by_id
-      Rails.cache.fetch("api/v2/tracks/#{params[:id]}") do
+      cache_key = "api/v2/tracks/#{params[:id]}"
+      cache_key += "/#{current_user.id}" if params[:liked_by_user] && current_user
+      Rails.cache.fetch(cache_key) do
         Track.includes(
                  :show,
                  :songs,

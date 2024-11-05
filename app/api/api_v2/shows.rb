@@ -144,7 +144,9 @@ class ApiV2::Shows < ApiV2::Base
 
   helpers do
     def page_of_shows
-      Rails.cache.fetch("api/v2/shows?#{params.to_query}") do
+      cache_key = "api/v2/shows?#{params.to_query}"
+      cache_key += "/#{current_user.id}" if params[:liked_by_user] && current_user
+      Rails.cache.fetch(cache_key) do
         shows = Show.published
                     .includes(
                       :venue,
@@ -186,7 +188,9 @@ class ApiV2::Shows < ApiV2::Base
     end
 
     def show_by_date
-      Rails.cache.fetch("api/v2/shows/#{params[:date]}") do
+      cache_key = "api/v2/shows/#{params[:date]}"
+      cache_key += "/#{current_user.id}" if params[:liked_by_user] && current_user
+      Rails.cache.fetch(cache_key) do
         Show.published
             .includes(
               :venue,

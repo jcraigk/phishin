@@ -199,10 +199,9 @@ main {
 
 .date-link {
   font-size: 0.9rem;
-  position: relative;
-  top: -3px;
-  margin-right: 0.1rem;
-  display: inline-block;
+  margin-right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
   width: 3.8rem;
 
   &:hover {
@@ -270,6 +269,8 @@ main {
     min-width: 1rem;
     max-width: 60%;
     padding-right: 1rem;
+    display: flex;
+    align-items: center;
 
     .cover-art {
       background-color: transparent;
