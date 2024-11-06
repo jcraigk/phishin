@@ -413,10 +413,6 @@ main {
 .view-toggle {
   margin-bottom: 0px !important;
 
-  &:not(:first-child) {
-    margin-top: 1rem;
-  }
-
   button {
     padding: 8px 16px;
     font-size: 1rem;
@@ -458,13 +454,13 @@ main {
     }
   }
 
-  .period-overlay {
+  .overlay {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    background-color: rgba(#e5e5e5, 0.8);
+    height: 50%;
+    background-color: rgba(#e5e5e5, 0.85);
     padding: 4px;
     box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.15);
     display: flex;
@@ -475,12 +471,34 @@ main {
     font-size: 1rem;
     font-weight: bold;
     color: $title-gray;
-    border-radius: $radius;
+    border-radius: 0 0 $radius $radius;
+
+    .show-date {
+      font-weight: bold;
+      font-size: 2rem;
+      line-height: 2rem;
+    }
+
+    .venue-name {
+      font-size: 1rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      padding: 0 0.3rem;
+    }
+
+    .venue-location {
+      font-size: 0.8rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
     .period {
       font-weight: bold;
       font-size: 4rem;
-      margin: 0;
+      margin-top: -20px;
 
       &.period-range {
         font-size: 3rem;
@@ -490,47 +508,7 @@ main {
 
     .period-details {
       font-size: 1rem;
-      margin-top: 8px;
-    }
-  }
-
-  .overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 61px;
-    background-color: rgba(#e5e5e5, 0.85);
-    padding: 4px;
-    box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.15);
-    justify-content: center;
-    text-align: center;
-    font-size: 1rem;
-    font-weight: bold;
-    color: $title-gray;
-    border-radius: 0 0 $radius $radius;
-
-    .show-date {
-      margin-top: 1px;
-      margin-bottom: 1px;
-      font-weight: bold;
-      font-size: 1.2rem;
-      line-height: 1.2rem;
-    }
-
-    .venue-name {
-      font-size: 0.8rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .venue-location {
-      font-size: 0.6rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-top: -2px;
+      margin-top: -20px;
     }
   }
 }

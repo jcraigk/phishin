@@ -110,8 +110,8 @@ const Eras = () => {
 
   const renderGridItem = ({ period, shows_count, venues_count, cover_art_urls }) => (
     <Link to={`/${period}`} key={period} className="list-item-link">
-      <li className="grid-item period-item" style={{ backgroundImage: `url(${cover_art_urls.medium})` }}>
-        <div className="period-overlay">
+      <li className="grid-item" style={{ backgroundImage: `url(${cover_art_urls.medium})` }}>
+        <div className="overlay">
           <p className={`period ${period.includes("-") ? "period-range" : ""}`}>{period}</p>
           <p className="period-details">
             {formatNumber(venues_count, "venue")} • {formatNumber(shows_count, "show")}
@@ -127,21 +127,21 @@ const Eras = () => {
         LIVE PHISH
         <span className="hidden-phone"> AUDIO STREAMS</span>
       </p>
-      <p>🍩 {formatNumber(totalShows)} shows</p>
-      <p className="hidden-phone">🎵 {formatNumber(totalHours)} hours of music</p>
+      <p className="hidden-mobile">🍩 {formatNumber(totalShows)} shows</p>
+      <p className="hidden-mobile mb-4">🎵 {formatNumber(totalHours)} hours of music</p>
 
-      <div className="mt-3">{renderViewToggleButtons()}</div>
-      <div className="mt-2">{renderSortButtons()}</div>
+      <div className="buttons mb-0">
+        {renderViewToggleButtons()}
+        {renderSortButtons()}
+      </div>
 
       <MobileApps className="mt-5" />
 
       <div className="hidden-mobile">
         <p className="has-text-weight-bold mb-2 mt-5 project-open-source">This project is open source</p>
-        <GitHubButton className="mb-2" />
-        <br />
-        <DiscordButton className="mb-2" />
-        <br />
-        <a href="/feeds/rss" className="button" target="_blank">
+        <GitHubButton className="mr-2" />
+        <DiscordButton />
+        <a href="/feeds/rss" className="button mt-2" target="_blank">
           <FontAwesomeIcon icon={faRss} className="mr-1" />
           RSS
         </a>

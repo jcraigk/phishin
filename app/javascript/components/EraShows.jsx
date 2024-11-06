@@ -133,8 +133,12 @@ const EraShows = () => {
     <div className="sidebar-content">
       <p className="sidebar-title">{year}</p>
       <p className="sidebar-subtitle">{sortedShows.length} shows</p>
-      {renderViewToggleButtons()}
-      {renderSortButtons()}
+
+      <div className="buttons mb-0">
+        {renderViewToggleButtons()}
+        {renderSortButtons()}
+      </div>
+
       <div className="hidden-mobile">{yearLinks()}</div>
     </div>
   );
