@@ -110,7 +110,7 @@ const Eras = () => {
 
   const renderGridItem = ({ period, shows_count, venues_count, cover_art_urls }) => (
     <Link to={`/${period}`} key={period} className="list-item-link">
-      <li className="grid-item" style={{ backgroundImage: `url(${cover_art_urls.medium})` }}>
+      <li className="grid-item" style={{ backgroundImage: `url(${cover_art_urls?.medium})` }}>
         <div className="overlay">
           <p className={`period ${period.includes("-") ? "period-range" : ""}`}>{period}</p>
           <p className="period-details">

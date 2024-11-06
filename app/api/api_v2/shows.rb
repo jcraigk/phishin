@@ -1,4 +1,4 @@
-class ApiV2::Shows < ApiV2::Base
+class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
   SORT_COLS = %w[date likes_count duration updated_at]
 
   helpers do
