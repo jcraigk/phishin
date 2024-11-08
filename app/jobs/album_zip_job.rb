@@ -23,7 +23,7 @@ class AlbumZipJob
         show.tracks.order(:position).each do |track|
           track_filename = "#{format("%02d", track.position)} #{sanitize(track.title)}.mp3"
           zipfile.get_output_stream(track_filename) do |stream|
-            stream.write track.audio_file.read
+            stream.write track.mp3_audio.download
           end
         end
 
