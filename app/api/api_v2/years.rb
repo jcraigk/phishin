@@ -79,7 +79,7 @@ class ApiV2::Years < ApiV2::Base
         else
           shows.during_year(period)
         end
-      cover_art_urls = Show.find_by(date: COVER_ART[period]).cover_art_urls
+      cover_art_urls = Show.find_by(date: COVER_ART[period])&.cover_art_urls
       [ shows.count, shows.select(:venue_id).distinct.count, shows.sum(:duration), cover_art_urls ]
     end
   end
