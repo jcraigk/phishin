@@ -27,10 +27,12 @@ const Playlists = ({ playlists, highlight }) => {
         >
           <div className="main-row">
             <span className="leftside-primary">
-              <HighlightedText
-                text={playlist.name}
-                highlight={highlight}
-              />
+              <span className="text">
+                <HighlightedText
+                  text={playlist.name}
+                  highlight={highlight}
+                />
+              </span>
             </span>
             <span className="leftside-secondary">{playlist.username}</span>
             <span className="leftside-tertiary">

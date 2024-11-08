@@ -67,7 +67,9 @@ const MissingContentReport = () => {
                 )}
                 <li className="list-item">
                   <div className="main-row">
-                    <span className="leftside-primary">{date}</span>
+                    <span className="leftside-primary">
+                      <span className="text">{date}</span>
+                    </span>
                     <span className="leftside-secondary">{venue_name}</span>
                     <span className="leftside-tertiary">{location}</span>
                     <span className="rightside-group">

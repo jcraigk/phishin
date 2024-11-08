@@ -11,7 +11,9 @@ const Venues = ({ venues, highlight }) => {
           <li className="list-item">
             <div className="main-row">
               <span className="leftside-primary">
-                <HighlightedText text={venue.name} highlight={highlight} />
+                <span className="text">
+                  <HighlightedText text={venue.name} highlight={highlight} />
+                </span>
               </span>
               <span className="leftside-secondary">
                 <HighlightedText text={venue.location} highlight={highlight} />

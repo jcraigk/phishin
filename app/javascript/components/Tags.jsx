@@ -21,7 +21,9 @@ const Tags = ({ tags, group = false, highlight }) => {
     <li key={tag.slug} className="list-item">
       <div className="main-row">
         <span className="leftside-primary">
-          <TagBadges tags={[tag]} parentId={tag.slug} />
+          <span className="text">
+            <TagBadges tags={[tag]} parentId={tag.slug} />
+          </span>
         </span>
         <span className="leftside-secondary">
           <HighlightedText text={tag.description} highlight={highlight} />

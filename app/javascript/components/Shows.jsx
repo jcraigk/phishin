@@ -69,7 +69,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
           {numbering && <span className="leftside-numbering">#{currentItemNumber}</span>}
           <span className="leftside-primary">
             <CoverArt coverArtUrls={show.cover_art_urls} css="cover-art-small" />
-            <span className="date">{formatDate(show.date)}</span>
+            <span className="text date">{formatDate(show.date)}</span>
           </span>
           <span className="leftside-secondary">{show.venue_name}</span>
           <span className="leftside-tertiary">

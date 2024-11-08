@@ -11,7 +11,9 @@ const Songs = ({ songs, highlight }) => {
           <li className="list-item">
             <div className="main-row">
               <span className="leftside-primary">
-                <HighlightedText text={song.title} highlight={highlight} />
+                <span className="text">
+                  <HighlightedText text={song.title} highlight={highlight} />
+                </span>
               </span>
               <span className="leftside-secondary">
                 {song.original ? "Original" : "Cover"}
