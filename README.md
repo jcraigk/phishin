@@ -2,11 +2,11 @@
 
 ![Phish.in Logo](https://i.imgur.com/Zmj586L.jpg)
 
-**Phish.in** is an open source archive of live Phish audience recordings.
+Phish.in is an open source archive of live Phish audience recordings.
 
-**Ruby on Rails** and **Grape API** wrap a **PostgreSQL** database on the backend. There's a [web frontend](https://phish.in) written in **React** for browsing and playing audio content as well as a [JSON API](https://phish.in/api-docs) for accessing content programmatically.
+Ruby on Rails and Grape API wrap a PostgreSQL database on the backend. There's a [web frontend](https://phish.in) written in React for browsing and playing audio content as well as a [JSON API](https://phish.in/api-docs) for accessing content programmatically.
 
-All audio is provided in MP3 format. More formats and sources may be made available at a later time. Assets such as audio MP3s, waveform PNGs, and album art JPEGs are served directly from the web server and cached via CloudFlare CDN.
+All audio is provided in MP3 format. More formats and sources may be made available at a later time. Assets including audio MP3s, waveform PNGs, and album art JPEGs are served directly from the web server and cached via CloudFlare CDN.
 
 Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and development.
 
@@ -17,7 +17,7 @@ Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and developmen
 
 2. Clone the repo to your local machine
 
-3. Download the [Development SQL File](https://www.dropbox.com/scl/fi/6zv4bzxxcjgv3ouv8d3ek/phishin-dev.sql?rlkey=4trafp2vxcgc1iuuq36yhl9gc&st=qbpu7wfq&dl=0) and import it:
+3. Download the [Development SQL File](https://www.dropbox.com/scl/fi/6zv4bzxxcjgv3ouv8d3ek/phishin-dev.sql?rlkey=4trafp2vxcgc1iuuq36yhl9gc&dl=0) and import it:
 
 ```bash
 # Copy SQL dump into PG container and run it
