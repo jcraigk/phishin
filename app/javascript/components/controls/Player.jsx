@@ -232,6 +232,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
             albumCoverUrl={activeTrack?.show_album_cover_url}
             openAppModal={openAppModal}
             css="cover-art-small"
+            size="medium"
           />
           <div className="track-details">
             <div className="track-title">
