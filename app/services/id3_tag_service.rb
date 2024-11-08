@@ -66,10 +66,18 @@ class Id3TagService < ApplicationService
 
   def apply_album_art(mp3)
     return unless show.album_cover.attached?
+
+    # Process variant for ID3 tag
     album_cover_variant = show.album_cover.variant(:id3).processed
+
+    # Attach album art to ID3 tag
     album_art_data = album_cover_variant.download
     mp3.tag2.add_picture(album_art_data)
-    album_cover_variant.blob.purge
+
+    # Remove variant blob
+    blob = album_cover_variant.blob
+    blob.attachments.each(&:destroy)
+    blob.purge
   end
 
   def comments
