@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../images/logo-350.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendar, faMicrophone, faMapMarkerAlt, faAward, faCalendarDay, faSearch, faAngleDown, faRecordVinyl, faGuitar, faChevronDown, faCircleXmark, faRightToBracket, faGear, faClipboardList, faListCheck, faListOl, faDiceFive, faLandmark } from "@fortawesome/free-solid-svg-icons";
+import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendar, faMicrophone, faMapMarkerAlt, faAward, faCalendarDay, faSearch, faAngleDown, faRecordVinyl, faGuitar, faChevronDown, faCircleXmark, faRightToBracket, faGear, faClipboardList, faListCheck, faListOl, faDiceFive, faLandmark, faRss } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = ({ user, handleLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -52,6 +52,7 @@ const Navbar = ({ user, handleLogout }) => {
   const staticLinks = [
     { path: "/faq", label: "FAQ", icon: faQuestionCircle },
     { path: "/api-docs", label: "API Docs", icon: faBook },
+    { path: "/rss", label: "RSS Feed", icon: faRss },
     { path: "/tagin-project", label: "Tagin' Project", icon: faTags },
     { path: "/contact-info", label: "Contact Info", icon: faAddressBook },
     { path: "/privacy", label: "Privacy Policy", icon: faUserShield },

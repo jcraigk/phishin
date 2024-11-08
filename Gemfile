@@ -39,7 +39,7 @@ gem "waveform"
 gem "will_paginate"
 
 group :development do
-  gem "bullet"
+  # gem "bullet" TODO: Re-add when Rails 8 compatible
   gem "dotenv-rails"
   gem "rubocop-capybara"
   gem "rubocop-factory_bot"

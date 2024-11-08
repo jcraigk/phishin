@@ -29,7 +29,7 @@ import GitHubButton from "./pages/GitHubButton";
 import DiscordButton from "./pages/DiscordButton";
 import CoverArt from "./CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faList, faTh, faRss, faSortAmountDown, faSortAmountUp } from "@fortawesome/free-solid-svg-icons";
+import { faList, faTh, faSortAmountDown, faSortAmountUp } from "@fortawesome/free-solid-svg-icons";
 
 const Eras = () => {
   const eras = useLoaderData();
@@ -138,13 +138,9 @@ const Eras = () => {
       <MobileApps className="mt-5" />
 
       <div className="hidden-mobile">
-        <p className="has-text-weight-bold mb-2 mt-5 project-open-source">This project is open source</p>
+        <p className="has-text-weight-bold mb-2 mt-3 project-open-source">This project is open source</p>
         <GitHubButton className="mr-2" />
         <DiscordButton />
-        <a href="/feeds/rss" className="button mt-2" target="_blank">
-          <FontAwesomeIcon icon={faRss} className="mr-1" />
-          RSS
-        </a>
       </div>
     </div>
   );

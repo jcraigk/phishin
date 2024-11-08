@@ -52,7 +52,6 @@ describe "Homepage", :js do
       expect(page).to have_selector(".mobile-apps")
       expect(page).to have_link("GitHub")
       expect(page).to have_link("Discord")
-      expect(page).to have_link("RSS", href: "/feeds/rss")
     end
 
     within("#main-content") do

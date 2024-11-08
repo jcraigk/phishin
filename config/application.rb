@@ -35,7 +35,7 @@ module Phishin
     config.album_zip_disk_limit = 150.gigabytes
 
     # Rails config
-    config.load_defaults 7.2
+    config.load_defaults 8.0
     config.active_job.queue_adapter = :sidekiq
     config.action_mailer.default_url_options = { host: config.base_url }
     config.action_mailer.smtp_settings = {

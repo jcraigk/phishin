@@ -15,9 +15,4 @@ Rails.application.configure do
   config.consider_all_requests_local = true
   config.eager_load = false
   config.whiny_nils = true
-
-  # Bullet gem (N+1 queries)
-  Bullet.enable = true
-  Bullet.bullet_logger = true
-  Bullet.rails_logger = true
 end
