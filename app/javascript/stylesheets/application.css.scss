@@ -126,8 +126,8 @@ a {
   transform: translate(0, -50%);
   opacity: 0.2;
   font-size: 1rem;
-  z-index: 1; /* Behind the text */
-  pointer-events: none; /* Ignore mouse events */
+  z-index: 1;
+  pointer-events: none;
 }
 
 .large-album-art {

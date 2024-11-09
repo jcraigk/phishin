@@ -150,8 +150,10 @@ const EraShows = () => {
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <div className="display-phone-only">
-          {renderViewToggleButtons()}
-          {renderSortButtons()}
+          <div className="buttons mt-2 mb-2">
+            {renderViewToggleButtons()}
+            {renderSortButtons()}
+          </div>
         </div>
         <Shows shows={sortedShows} tourHeaders={true} viewMode={viewMode} />
         {yearLinks()}
