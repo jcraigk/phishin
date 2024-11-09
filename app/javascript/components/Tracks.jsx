@@ -67,6 +67,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
                 <CoverArt
                   coverArtUrls={track.show_cover_art_urls}
                   css="cover-art-small"
+                  size="small"
                 />
                 <span className="text date-link">
                   <Link to={`/${track.show_date}/${track.slug}`} onClick={(e) => e.stopPropagation()}>

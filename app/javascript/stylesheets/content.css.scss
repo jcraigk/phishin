@@ -271,18 +271,18 @@ main {
     display: flex;
     align-items: center;
 
-    .text {
-      margin-left: 0.5rem;
-    }
-
     .cover-art {
       background-color: transparent;
-      position: relative;
+      flex-shrink: 0;
+
+      .cover-art-small {
+        top: 5px;
+      }
     }
 
-    .cover-art-small {
-      filter: grayscale(0.5);
-      top: 5px;
+    .text {
+      margin-left: 0.5rem;
+      flex-shrink: 1;
     }
   }
 
