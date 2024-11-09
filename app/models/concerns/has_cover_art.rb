@@ -5,19 +5,21 @@ module HasCoverArt
 
   included do # rubocop:disable Metrics/BlockLength
     def cover_art_urls
-      {
-        large: blob_url(cover_art, placeholder: "cover-art-large.jpg"),
-        medium: blob_url(cover_art, variant: :medium, placeholder: "cover-art-medium.jpg"),
-        small: blob_url(cover_art, variant: :small, placeholder: "cover-art-small.jpg")
-      }
+      %i[large medium small].index_with do |size|
+        blob_url \
+          cover_art,
+          **(size == :large ? {} : { variant: size }),
+          placeholder: "cover-art-#{size}.jpg",
+          ext: :jpg
+      end
     end
 
     def album_cover_url
-      blob_url(album_cover, placeholder: "cover-art-large.jpg")
+      blob_url(album_cover, placeholder: "cover-art-large.jpg", ext: :jpg)
     end
 
     def album_zip_url
-      blob_url(album_zip)
+      blob_url(album_zip, ext: :zip)
     end
 
     def cover_art_path

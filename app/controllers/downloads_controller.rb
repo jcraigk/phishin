@@ -29,7 +29,7 @@ class DownloadsController < ApplicationController
   end
 
   def blob
-    @blob ||= ActiveStorage::Blob.find_by(key: params[:key])
+    @blob ||= ActiveStorage::Blob.find_by(key: params[:key].split(".").first)
   end
 
   def add_cache_header
