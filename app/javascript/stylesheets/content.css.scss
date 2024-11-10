@@ -240,6 +240,7 @@ main {
 
   .cover-art {
     display: inline-block;
+    margin-right: 0.2rem;
   }
 
   .main-row {
@@ -306,7 +307,6 @@ main {
     white-space: nowrap;
     width: 10rem;
     margin-right: 0.5rem;
-    flex-shrink: 0;
   }
 
   .rightside-group {
@@ -547,7 +547,7 @@ main {
   }
 }
 
-@media (max-width: 1199px) {
+@media (max-width: 768px) {
   .leftside-tertiary {
     display: none;
   }

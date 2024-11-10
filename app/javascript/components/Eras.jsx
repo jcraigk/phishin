@@ -95,7 +95,7 @@ const Eras = () => {
         <div className="main-row">
           <span className="leftside-primary">
             <CoverArt coverArtUrls={cover_art_urls} css="cover-art-small" />
-            <span className="text date">{period}</span>
+            <span className="text has-text-weight-bold">{period}</span>
           </span>
           <span className="leftside-secondary">
             {formatNumber(venues_count, "venue")}
