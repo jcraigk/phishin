@@ -28,7 +28,8 @@ const Layout = ({ props }) => {
   const [draftPlaylistMeta, setDraftPlaylistMeta] = useState(initialDraftPlaylistMeta);
   const [isDraftPlaylistSaved, setIsDraftPlaylistSaved] = useState(false);
   const [activeTrack, setActiveTrack] = useState(null);
-  const [viewMode, setViewMode] = useState("grid"); // Add viewMode state here
+  const [viewMode, setViewMode] = useState("grid");
+  const [sortOption, setSortOption] = useState("desc");
   const audioRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
 
@@ -154,6 +155,8 @@ const Layout = ({ props }) => {
             closeDraftPlaylistModal,
             viewMode,
             setViewMode,
+            sortOption,
+            setSortOption
           }}
         />
       </main>
