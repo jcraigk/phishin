@@ -229,8 +229,8 @@ main {
   background-size: cover;
   background-repeat: no-repeat;
 
-  &.focus {
-    border-bottom: 1px solid $highlight-blue;
+  &.focus .leftside-primary {
+    font-weight: bold;
   }
 
   &.active-item {
@@ -387,23 +387,36 @@ main {
     background-size: cover;
     background-repeat: no-repeat;
 
+    &::after {
+      content: "";
+      display: block;
+      position: absolute;
+      bottom: 0;
+      left: 1rem;
+      right: 1rem;
+      height: 1px;
+      background-color: rgba($header-gray, 0.7);
+    }
+
     &:first-of-type {
       border-radius: $radius $radius 0 0;
     }
 
     &:not(:first-of-type):not(:last-of-type) {
       border-radius: 0;
-      border-top: 1px solid rgba($header-gray, 0.7);
     }
 
     &:last-of-type {
       border-radius: 0 0 $radius $radius;
-      border-top: 1px solid rgba($header-gray, 0.7);
     }
 
     &:only-of-type {
       border-radius: $radius;
       border: none;
+
+      &::after {
+        content: none;
+      }
     }
   }
 }
