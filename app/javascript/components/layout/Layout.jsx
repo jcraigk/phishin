@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Outlet, useNavigate, useNavigation, ScrollRestoration} from "react-router-dom";
+import { Outlet, useNavigate, useNavigation, ScrollRestoration } from "react-router-dom";
 import Navbar from "./Navbar";
 import Loader from "../controls/Loader";
 import Player from "../controls/Player";
@@ -28,6 +28,7 @@ const Layout = ({ props }) => {
   const [draftPlaylistMeta, setDraftPlaylistMeta] = useState(initialDraftPlaylistMeta);
   const [isDraftPlaylistSaved, setIsDraftPlaylistSaved] = useState(false);
   const [activeTrack, setActiveTrack] = useState(null);
+  const [viewMode, setViewMode] = useState("grid"); // Add viewMode state here
   const audioRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
 
@@ -43,7 +44,6 @@ const Layout = ({ props }) => {
         usernameUpdatedAt: props.usernameUpdatedAt,
         email: props.email,
       }, "Google login successful");
-    // Attempt login from jwt stored locally
     } else {
       let jwt = "";
       let username = "";
@@ -60,7 +60,7 @@ const Layout = ({ props }) => {
       if (jwt && username && email) {
         setUser({ jwt, username, usernameUpdatedAt, email });
       } else {
-        setUser('anonymous');
+        setUser("anonymous");
       }
     }
   }, []);
@@ -87,7 +87,7 @@ const Layout = ({ props }) => {
       localStorage.removeItem("usernameUpdatedAt");
       localStorage.removeItem("email");
     }
-    navigate("/")
+    navigate("/");
     setUser("anonymous");
     setNotice("Logged out successfully");
   };
@@ -124,34 +124,38 @@ const Layout = ({ props }) => {
   return (
     <>
       <ScrollRestoration />
-      {navigation.state === 'loading' && <Loader />}
+      {navigation.state === "loading" && <Loader />}
       <Navbar user={user} handleLogout={handleLogout} />
-      <main className={activeTrack ? 'with-player' : ''}>
-        <Outlet context={{
-          ...props,
-          user,
-          setUser,
-          handleLogin,
-          handleLogout,
-          activePlaylist,
-          setActivePlaylist,
-          customPlaylist,
-          setCustomPlaylist,
-          draftPlaylist,
-          setDraftPlaylist,
-          draftPlaylistMeta,
-          setDraftPlaylistMeta,
-          resetDraftPlaylist,
-          isDraftPlaylistSaved,
-          setIsDraftPlaylistSaved,
-          activeTrack,
-          playTrack,
-          audioRef,
-          openAppModal,
-          closeAppModal,
-          openDraftPlaylistModal,
-          closeDraftPlaylistModal,
-        }} />
+      <main className={activeTrack ? "with-player" : ""}>
+        <Outlet
+          context={{
+            ...props,
+            user,
+            setUser,
+            handleLogin,
+            handleLogout,
+            activePlaylist,
+            setActivePlaylist,
+            customPlaylist,
+            setCustomPlaylist,
+            draftPlaylist,
+            setDraftPlaylist,
+            draftPlaylistMeta,
+            setDraftPlaylistMeta,
+            resetDraftPlaylist,
+            isDraftPlaylistSaved,
+            setIsDraftPlaylistSaved,
+            activeTrack,
+            playTrack,
+            audioRef,
+            openAppModal,
+            closeAppModal,
+            openDraftPlaylistModal,
+            closeDraftPlaylistModal,
+            viewMode,
+            setViewMode,
+          }}
+        />
       </main>
       <Player
         activePlaylist={activePlaylist}

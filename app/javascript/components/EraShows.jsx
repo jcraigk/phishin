@@ -1,6 +1,6 @@
 import { authFetch } from "./helpers/utils";
-import React, { useState, useEffect } from "react";
-import { useLoaderData, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLoaderData, Link, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
@@ -25,8 +25,7 @@ export const eraShowsLoader = async ({ params }) => {
 
 const EraShows = () => {
   const { shows: initialShows, year } = useLoaderData();
-  const [viewMode, setViewMode] = useState("grid");
-  const [sortOption, setSortOption] = useState("desc");
+  const { viewMode, setViewMode, sortOption, setSortOption } = useOutletContext();
   const [yearsData, setYearsData] = useState(null);
 
   const sortedShows = [...initialShows].sort((a, b) => {
@@ -51,19 +50,11 @@ const EraShows = () => {
     fetchYearsData();
   }, []);
 
-  const handleViewModeChange = (mode) => {
-    setViewMode(mode);
-  };
-
-  const handleSortOptionChange = (option) => {
-    setSortOption(option);
-  };
-
   const renderViewToggleButtons = () => (
     <div className="view-toggle buttons has-addons">
       <button
         className={`button ${viewMode === "list" ? "is-selected" : ""}`}
-        onClick={() => handleViewModeChange("list")}
+        onClick={() => setViewMode("list")}
         disabled={viewMode === "list"}
       >
         <span className="icon">
@@ -72,7 +63,7 @@ const EraShows = () => {
       </button>
       <button
         className={`button ${viewMode === "grid" ? "is-selected" : ""}`}
-        onClick={() => handleViewModeChange("grid")}
+        onClick={() => setViewMode("grid")}
         disabled={viewMode === "grid"}
       >
         <span className="icon">
@@ -86,7 +77,7 @@ const EraShows = () => {
     <div className="view-toggle buttons has-addons">
       <button
         className={`button ${sortOption === "desc" ? "is-selected" : ""}`}
-        onClick={() => handleSortOptionChange("desc")}
+        onClick={() => setSortOption("desc")}
         disabled={sortOption === "desc"}
       >
         <span className="icon">
@@ -95,7 +86,7 @@ const EraShows = () => {
       </button>
       <button
         className={`button ${sortOption === "asc" ? "is-selected" : ""}`}
-        onClick={() => handleSortOptionChange("asc")}
+        onClick={() => setSortOption("asc")}
         disabled={sortOption === "asc"}
       >
         <span className="icon">
