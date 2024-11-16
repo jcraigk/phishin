@@ -229,10 +229,6 @@ main {
   background-size: cover;
   background-repeat: no-repeat;
 
-  &.focus .leftside-primary {
-    font-weight: bold;
-  }
-
   &.active-item {
     animation: pulse 3s infinite ease-in-out;
     background-image: none !important;
@@ -416,6 +412,13 @@ main {
 
       &::after {
         content: none;
+      }
+    }
+
+    &.focus {
+      &::after {
+        background-color: $highlight-blue;
+        height: 2px;
       }
     }
   }
