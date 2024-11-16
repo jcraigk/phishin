@@ -4,7 +4,7 @@ import GitHubButton from "./GitHubButton";
 import DiscordButton from "./DiscordButton";
 import EmailButton from "./EmailButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faX } from "@fortawesome/free-solid-svg-icons";
+import { faCloud } from "@fortawesome/free-solid-svg-icons";
 
 const ContactInfo = () => {
   return (
@@ -22,21 +22,21 @@ const ContactInfo = () => {
       <DiscordButton className="mb-5" />
 
       <p>
-        Follow on X:
+        Follow on Bluesky:
       </p>
       <a
-        href="https://x.com/phish_in"
+        href="https://bsky.app/profile/phishin.bsky.social"
         className="button mb-5"
         target="_blank"
       >
-        <FontAwesomeIcon icon={faX} className="mr-1" />
-        @phish_in
+        <FontAwesomeIcon icon={faCloud} className="mr-1" />
+        @phishin.bsky.social
       </a>
       <br />
 
 
       <p>
-        Email the site maintainer:
+        Send an Email:
       </p>
       <EmailButton />
       <br />
