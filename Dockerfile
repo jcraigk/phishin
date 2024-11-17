@@ -38,9 +38,5 @@ RUN yarn install
 
 COPY . .
 
-# TODO: Remove after grace period
-# Expose legacy Shrine files
-RUN ln -sf /content/tracks/audio_files ./public/audio
-
 EXPOSE 3000
 CMD bundle exec puma -b tcp://0.0.0.0:3000
