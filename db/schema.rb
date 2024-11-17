@@ -10,10 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_06_185101) do
+ActiveRecord::Schema[8.0].define(version: 2024_11_17_095210) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
-  enable_extension "plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -252,8 +252,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_06_185101) do
     t.string "slug", limit: 255, null: false
     t.integer "tags_count", default: 0
     t.integer "jam_starts_at_second"
-    t.text "audio_file_data"
-    t.text "waveform_png_data"
     t.index ["jam_starts_at_second"], name: "index_tracks_on_jam_starts_at_second"
     t.index ["likes_count"], name: "index_tracks_on_likes_count"
     t.index ["show_id", "position"], name: "index_tracks_on_show_id_and_position", unique: true
