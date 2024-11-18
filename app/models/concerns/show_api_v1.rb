@@ -8,8 +8,8 @@ module ShowApiV1
         date: date.iso8601,
         duration:,
         incomplete:,
-        sbd: false,
-        remastered: false,
+        sbd:,
+        remastered:,
         tour_id:,
         venue_id:,
         likes_count:,
@@ -26,8 +26,8 @@ module ShowApiV1
         date: date.iso8601,
         duration:,
         incomplete:,
-        sbd: false,
-        remastered: false,
+        sbd:,
+        remastered:,
         tags: show_tags_for_api,
         tour_id:,
         venue: venue.as_json,
@@ -40,6 +40,16 @@ module ShowApiV1
     end
 
     private
+
+    def remastered
+      tag_id = Tag.find_by(name: "Remastered")&.id
+      tag_id ? ShowTag.exists?(show_id: id, tag_id:) : false
+    end
+
+    def sbd
+      tag_id = Tag.find_by(name: "SBD")&.id
+      tag_id ? ShowTag.exists?(show_id: id, tag_id:) : false
+    end
 
     def show_tags_for_api
       show_tags.map { |show_tag| show_tag_json(show_tag) }.sort_by { |t| t[:priority] }

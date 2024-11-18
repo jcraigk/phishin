@@ -35,8 +35,14 @@ describe Api::V1::ShowsController do
 
       let(:show) { create(:show) }
 
+      before do
+        create(:show_tag, show:, tag: create(:tag, name: 'SBD'))
+      end
+
       it 'responds with expected data' do
         expect(json_data).to eq(show.as_json_api)
+        expect(json_data[:remastered]).to eq(false)
+        expect(json_data[:sbd]).to eq(true)
       end
     end
 

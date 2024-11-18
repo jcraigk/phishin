@@ -1,7 +1,7 @@
 class Track < ApplicationRecord
   include TrackApiV1
 
-  belongs_to :show
+  belongs_to :show, touch: true
   has_many :songs_tracks, dependent: :destroy
   has_many :songs, through: :songs_tracks
   has_many :likes, as: :likable, dependent: :destroy
