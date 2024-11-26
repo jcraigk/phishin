@@ -64,7 +64,7 @@ class SearchService < ApplicationService
 
   def date
     @date ||= Chronic.parse(term).to_s
-  rescue ArgumentError
+  rescue StandardError
     nil
   end
 

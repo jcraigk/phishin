@@ -1,5 +1,5 @@
 class ApiV2::Tours < ApiV2::Base
-  SORT_COLS = %w[ name starts_on ends_on shows_count ]
+  SORT_COLS = %w[ name starts_on ends_on shows_count updated_at ]
 
   resource :tours do
     desc "Fetch a list of tours" do

@@ -1,5 +1,5 @@
 class ApiV2::Tracks < ApiV2::Base
-  SORT_COLS = %w[id title likes_count duration date]
+  SORT_COLS = %w[ id title likes_count duration date updated_at ]
 
   resource :tracks do
     desc "Fetch a list of tracks" do
@@ -66,55 +66,69 @@ class ApiV2::Tracks < ApiV2::Base
 
   helpers do
     def page_of_tracks
-      Rails.cache.fetch("api/v2/tracks?#{params.to_query}/#{current_user&.id}") do
-        tracks = Track.includes(
-                        :mp3_audio_attachment,
-                        :png_waveform_attachment,
-                        {
-                          show: %i[
-                            album_cover_attachment
-                            album_zip_attachment
-                            cover_art_attachment
-                            tour
-                            venue
-                            show_tags
-                          ]
-                        },
-                        :songs,
-                        { track_tags: :tag },
-                        :songs_tracks
-                     )
-                     .then { |t| apply_filter(t) }
-                     .then { |t| apply_track_sort(t) }
-                     .paginate(page: params[:page], per_page: params[:per_page])
+      tracks =
+        if params[:liked_by_user] && current_user
+          fetch_tracks
+        else
+          Rails.cache.fetch("api/v2/tracks?#{params.to_query}") { fetch_tracks }
+        end
 
-        {
-          tracks: tracks,
-          total_pages: tracks.total_pages,
-          current_page: tracks.current_page,
-          total_entries: tracks.total_entries
-        }
-      end
+      {
+        tracks: tracks,
+        total_pages: tracks.total_pages,
+        current_page: tracks.current_page,
+        total_entries: tracks.total_entries
+      }
+    end
+
+    def fetch_tracks
+      Track.includes(
+              :mp3_audio_attachment,
+              :png_waveform_attachment,
+              {
+                show: %i[
+                  album_cover_attachment
+                  album_zip_attachment
+                  cover_art_attachment
+                  tour
+                  venue
+                  show_tags
+                ]
+              },
+              :songs,
+              { track_tags: :tag },
+              :songs_tracks
+            )
+           .then { |t| apply_filter(t) }
+           .then { |t| apply_track_sort(t) }
+           .paginate(page: params[:page], per_page: params[:per_page])
     end
 
     def track_by_id
-      cache_key = "api/v2/tracks/#{params[:id]}"
-      cache_key += "/#{current_user.id}" if params[:liked_by_user] && current_user
-      Rails.cache.fetch(cache_key) do
-        Track.includes(
-                 :show,
-                 :songs,
-                 { track_tags: :tag },
-                 :songs_tracks
-              ).find_by!(id: params[:id])
+      if params[:liked_by_user] && current_user
+        fetch_track_by_id
+      else
+        Rails.cache.fetch("api/v2/tracks/#{params[:id]}") { fetch_track_by_id }
       end
+    end
+
+    def fetch_track_by_id
+      Track.includes(
+        :show,
+        :songs,
+        { track_tags: :tag },
+        :songs_tracks
+      ).find_by!(id: params[:id])
     end
 
     def fetch_liked_track_ids(tracks)
       return [] unless current_user
       track_ids = tracks.map(&:id)
-      Like.where(likable_type: "Track", likable_id: track_ids,
-user_id: current_user.id).pluck(:likable_id)
+      Like.where(
+        likable_type: "Track",
+        likable_id: track_ids,
+        user_id: current_user.id
+      ).pluck(:likable_id)
     end
 
     def apply_filter(tracks)

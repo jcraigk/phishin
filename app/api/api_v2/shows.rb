@@ -1,5 +1,5 @@
 class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
-  SORT_COLS = %w[date likes_count duration updated_at]
+  SORT_COLS = %w[ date likes_count duration updated_at ]
 
   helpers do
     params :sort do
@@ -144,29 +144,34 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
 
   helpers do
     def page_of_shows
-      cache_key = "api/v2/shows?#{params.to_query}"
-      cache_key += "/#{current_user.id}" if params[:liked_by_user] && current_user
-      Rails.cache.fetch(cache_key) do
-        shows = Show.published
-                    .includes(
-                      :venue,
-                      :tour,
-                      :album_cover_attachment,
-                      :album_zip_attachment,
-                      :cover_art_attachment,
-                      show_tags: :tag
-                    )
-                    .then { |s| apply_filter(s) }
-                    .then { |s| apply_sort(s, :date, :desc) }
-                    .paginate(page: params[:page], per_page: params[:per_page])
+      shows =
+        if params[:liked_by_user] && current_user
+          fetch_shows
+        else
+          Rails.cache.fetch("api/v2/shows?#{params.to_query}") { fetch_shows }
+        end
 
-        {
-          shows: shows,
-          total_pages: shows.total_pages,
-          current_page: shows.current_page,
-          total_entries: shows.total_entries
-        }
-      end
+      {
+        shows: shows,
+        total_pages: shows.total_pages,
+        current_page: shows.current_page,
+        total_entries: shows.total_entries
+      }
+    end
+
+    def fetch_shows
+      Show.published
+          .includes(
+            :venue,
+            :tour,
+            :album_cover_attachment,
+            :album_zip_attachment,
+            :cover_art_attachment,
+            show_tags: :tag
+          )
+          .then { |s| apply_filter(s) }
+          .then { |s| apply_sort(s, :date, :desc) }
+          .paginate(page: params[:page], per_page: params[:per_page])
     end
 
     def fetch_liked_show_ids(shows)
@@ -188,22 +193,26 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
     end
 
     def show_by_date
-      cache_key = "api/v2/shows/#{params[:date]}"
-      cache_key += "/#{current_user.id}" if params[:liked_by_user] && current_user
-      Rails.cache.fetch(cache_key) do
-        Show.published
-            .includes(
-              :venue,
-              tracks: [
-                :mp3_audio_attachment,
-                :png_waveform_attachment,
-                { track_tags: :tag },
-                { songs: :songs_tracks }
-              ],
-              show_tags: :tag
-            )
-            .find_by!(date: params[:date])
+      if params[:liked_by_user] && current_user
+        fetch_show_by_date
+      else
+        Rails.cache.fetch("api/v2/shows/#{params[:date]}") { fetch_show_by_date }
       end
+    end
+
+    def fetch_show_by_date
+      Show.published
+          .includes(
+            :venue,
+            tracks: [
+              :mp3_audio_attachment,
+              :png_waveform_attachment,
+              { track_tags: :tag },
+              { songs: :songs_tracks }
+            ],
+            show_tags: :tag
+          )
+          .find_by!(date: params[:date])
     end
 
     def apply_filter(shows)

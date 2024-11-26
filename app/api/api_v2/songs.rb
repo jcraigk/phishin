@@ -1,5 +1,5 @@
 class ApiV2::Songs < ApiV2::Base
-  SORT_COLS = %w[ title tracks_count ]
+  SORT_COLS = %w[ title tracks_count updated_at ]
 
   resource :songs do
     desc "Fetch a list of songs" do

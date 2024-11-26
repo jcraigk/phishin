@@ -158,21 +158,26 @@ class ApiV2::Playlists < ApiV2::Base
 
   helpers do
     def page_of_playlists
-      cache_key = "api/v2/playlists?#{params.to_query}"
-      cache_key += "/#{current_user.id}" if params[:filter] == "liked" && current_user
-      Rails.cache.fetch(cache_key) do
-        playlists = Playlist.includes(:user)
-                            .then { |p| apply_filter(p) }
-                            .then { |p| apply_sort(p, :name, :asc) }
-                            .paginate(page: params[:page], per_page: params[:per_page])
+      playlists =
+        if params[:filter] == "liked" && current_user
+          fetch_playlists
+        else
+          Rails.cache.fetch("api/v2/playlists?#{params.to_query}") { fetch_playlists }
+        end
 
-        {
-          playlists: playlists,
-          total_pages: playlists.total_pages,
-          current_page: playlists.current_page,
-          total_entries: playlists.total_entries
-        }
-      end
+      {
+        playlists: playlists,
+        total_pages: playlists.total_pages,
+        current_page: playlists.current_page,
+        total_entries: playlists.total_entries
+      }
+    end
+
+    def fetch_playlists
+      Playlist.includes(:user)
+              .then { |p| apply_filter(p) }
+              .then { |p| apply_sort(p, :name, :asc) }
+              .paginate(page: params[:page], per_page: params[:per_page])
     end
 
     def fetch_liked_playlist_ids(playlists)

@@ -1,5 +1,5 @@
 class ApiV2::Venues < ApiV2::Base
-  SORT_COLS = %w[ name shows_count ]
+  SORT_COLS = %w[ name shows_count updated_at ]
 
   resource :venues do
     desc "Fetch a list of venues" do
