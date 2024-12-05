@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { formatDate, parseTimeParam } from "../helpers/utils";
 import { useFeedback } from "./FeedbackContext";
 import CoverArt from "../CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause, faRotateRight, faRotateLeft, faForward, faBackward, faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import Gapless from './gapless'; // Assuming you'll save the Gapless plugin in a separate file
+import Gapless from './gapless';
 
 const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, openAppModal }) => {
   const location = useLocation();
@@ -16,18 +16,19 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   const [isFadeOutComplete, setIsFadeOutComplete] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [isPlayerCollapsed, setIsPlayerCollapsed] = useState(false);
+  const [firstLoad, setIsFirstLoad] = useState(true);
   const [endTime, setEndTime] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const gaplessQueueRef = useRef(null);
 
-  // Initialize Gapless Queue
+  const togglePlayerPosition = () => {
+    setIsPlayerCollapsed(!isPlayerCollapsed);
+  };
+
   useEffect(() => {
     if (activePlaylist && activePlaylist.length > 0) {
-      // Extract track URLs
       const trackUrls = activePlaylist.map(track => track.mp3_url);
-
-      // Create Gapless Queue
       const queue = new Gapless.Queue({
         tracks: trackUrls,
         onProgress: (track) => {
@@ -37,16 +38,23 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         onStartNewTrack: (track) => {
           const newActiveTrack = activePlaylist[track.idx];
           setActiveTrack(newActiveTrack);
+
+          if ('mediaSession' in navigator) {
+            navigator.mediaSession.playbackState = 'playing';
+          }
+          setIsPlaying(true);
         },
         onEnded: () => {
-          // Handle playlist end if needed
           setAlert("Playlist finished");
+          setIsPlaying(false);
+          if ('mediaSession' in navigator) {
+            navigator.mediaSession.playbackState = 'paused';
+          }
         }
       });
 
       gaplessQueueRef.current = queue;
 
-      // Set initial track and play if appropriate
       if (activeTrack) {
         const initialTrackIndex = activePlaylist.indexOf(activeTrack);
         queue.gotoTrack(initialTrackIndex, true);
@@ -54,22 +62,18 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     }
 
     return () => {
-      // Cleanup
       if (gaplessQueueRef.current) {
         gaplessQueueRef.current.pauseAll();
       }
     };
   }, [activePlaylist]);
 
-  // Update active track and media session when track changes
   useEffect(() => {
     if (activeTrack) {
-      // Update document title
       if (typeof window !== "undefined") {
         document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
       }
 
-      // Update Media Session
       if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
           title: activeTrack.title,
@@ -85,7 +89,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         });
       }
 
-      // Handle fade and image loading
       setFadeClass("fade-out");
       setIsFadeOutComplete(false);
       setIsImageLoaded(false);
@@ -98,11 +101,18 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       newImage.src = activeTrack.waveform_image_url;
       newImage.onload = () => setIsImageLoaded(true);
 
+      const startTime = activeTrack.starts_at_second ?? parseTimeParam(new URLSearchParams(location.search).get("t"));
+      const endTime = activeTrack.ends_at_second ?? parseTimeParam(new URLSearchParams(location.search).get("e"));
+
+      if (startTime && gaplessQueueRef.current?.currentTrack) {
+        gaplessQueueRef.current.currentTrack.seek(startTime);
+      }
+      setEndTime(endTime);
+
       return () => clearTimeout(fadeOutTimer);
     }
   }, [activeTrack]);
 
-  // Update waveform when fade and image are ready
   useEffect(() => {
     if (isFadeOutComplete && isImageLoaded && activeTrack) {
       if (scrubberRef.current) {
@@ -115,37 +125,50 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     }
   }, [isFadeOutComplete, isImageLoaded, activeTrack]);
 
-  // Toggle play/pause
+  useEffect(() => {
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.setActionHandler('previoustrack', skipToPreviousTrack);
+      navigator.mediaSession.setActionHandler('nexttrack', skipToNextTrack);
+      navigator.mediaSession.setActionHandler('play', togglePlayPause);
+      navigator.mediaSession.setActionHandler('pause', togglePlayPause);
+      navigator.mediaSession.setActionHandler('stop', togglePlayPause);
+      navigator.mediaSession.setActionHandler('seekbackward', scrubBackward);
+      navigator.mediaSession.setActionHandler('seekforward', scrubForward);
+    }
+  }, [activeTrack]);
+
   const togglePlayPause = () => {
     if (gaplessQueueRef.current) {
       gaplessQueueRef.current.togglePlayPause();
       setIsPlaying(!isPlaying);
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.playbackState = !isPlaying ? 'playing' : 'paused';
+      }
     }
   };
 
-  // Skip to next track
   const skipToNextTrack = () => {
     if (gaplessQueueRef.current) {
       gaplessQueueRef.current.playNext();
     }
   };
 
-  // Skip to previous track
   const skipToPreviousTrack = () => {
     if (gaplessQueueRef.current) {
       const currentTrackIndex = activePlaylist.indexOf(activeTrack);
 
       if (gaplessQueueRef.current.currentTrack.currentTime > 10) {
-        // If more than 10 seconds into the track, reset to beginning
         gaplessQueueRef.current.currentTrack.seek(0);
       } else {
-        // Otherwise go to previous track
-        gaplessQueueRef.current.playPrevious();
+        if (currentTrackIndex > 0) {
+          gaplessQueueRef.current.playPrevious();
+        } else {
+          setAlert("This is the first track in the playlist");
+        }
       }
     }
   };
 
-  // Scrub forward/backward
   const scrubForward = () => {
     if (gaplessQueueRef.current) {
       const currentTrack = gaplessQueueRef.current.currentTrack;
@@ -160,7 +183,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     }
   };
 
-  // Update progress bar
   const updateProgressBar = (track) => {
     if (progressBarRef.current) {
       const progress = (track.currentTime / track.duration) * 100;
@@ -168,7 +190,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     }
   };
 
-  // Handle scrubber click
   const handleScrubberClick = (e) => {
     if (gaplessQueueRef.current) {
       const currentTrack = gaplessQueueRef.current.currentTrack;
@@ -178,14 +199,12 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     }
   };
 
-  // Format time
   const formatTime = (timeInSeconds) => {
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = Math.floor(timeInSeconds % 60).toString().padStart(2, "0");
     return `${minutes}:${seconds}`;
   };
 
-  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (typeof document !== "undefined" && ["INPUT", "TEXTAREA"].includes(document.activeElement.tagName) || document.activeElement.isContentEditable) return;
@@ -210,12 +229,89 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [togglePlayPause, scrubBackward, scrubForward, skipToPreviousTrack, skipToNextTrack]);
+  }, []);
 
-  // Player UI remains largely the same
   return (
     <div className={`audio-player ${activeTrack ? 'visible' : ''} ${isPlayerCollapsed ? 'collapsed' : ''}`}>
-      {/* ... rest of the existing UI implementation ... */}
+      <div
+        className="chevron-button"
+        onClick={togglePlayerPosition}
+      >
+        <FontAwesomeIcon icon={isPlayerCollapsed ? faChevronUp : faChevronDown} />
+      </div>
+      <div className="top-row">
+        <div className="left-half">
+          <CoverArt
+            coverArtUrls={activeTrack?.show_cover_art_urls}
+            albumCoverUrl={activeTrack?.show_album_cover_url}
+            openAppModal={openAppModal}
+            css="cover-art-small"
+            size="medium"
+          />
+          <div className="track-details">
+            <div className="track-title">
+              <Link to={`/${activeTrack?.show_date}/${activeTrack?.slug}`}>
+                {activeTrack?.title}
+              </Link>
+            </div>
+            <div className="track-info">
+              {customPlaylist ? (
+                <Link to={`/play/${customPlaylist.slug}`}>
+                  {customPlaylist.name}
+                </Link>
+              ) : (
+                <>
+                  <Link to={`/${activeTrack?.show_date}/${activeTrack?.slug}`}>
+                    {formatDate(activeTrack?.show_date)}
+                  </Link>
+                  <span className="hidden-phone">
+                    {" "}•{" "}
+                    <Link to={`/venues/${activeTrack?.venue_slug}`}>
+                      {activeTrack?.venue_name}
+                    </Link>
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="right-half">
+          <div className="controls">
+            <button
+              className="skip-btn"
+              onClick={skipToPreviousTrack}
+            >
+              <FontAwesomeIcon icon={faBackward} />
+            </button>
+            <button
+              className="scrub-btn scrub-back"
+              onClick={scrubBackward}
+            >
+              <FontAwesomeIcon icon={faRotateLeft} />
+              <span>10</span>
+            </button>
+            <button
+              className="play-pause-btn"
+              onClick={togglePlayPause}
+            >
+              {!isPlaying ? <FontAwesomeIcon icon={faPlay} className="play-icon" /> : <FontAwesomeIcon icon={faPause} />}
+            </button>
+            <button
+              className="scrub-btn scrub-forward"
+              onClick={scrubForward}
+            >
+              <FontAwesomeIcon icon={faRotateRight} />
+              <span>10</span>
+            </button>
+            <button
+              className="skip-btn"
+              onClick={skipToNextTrack}
+            >
+              <FontAwesomeIcon icon={faForward} />
+            </button>
+          </div>
+        </div>
+      </div>
       <div className="bottom-row">
         <p className="elapsed" onClick={scrubBackward}>
           {formatTime(currentTime)}
@@ -233,6 +329,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       </div>
     </div>
   );
-};
+}
 
 export default Player;

@@ -1,13 +1,12 @@
+// This plugin was originally pulled from
+// https://github.com/RelistenNet/gapless.js by https://github.com/switz
+// Many thanks!
+
 (function(factory) {
-  // Establish the root object, `window` (`self`) in the browser, or `global` on the server.
-  // We use `self` instead of `window` for `WebWorker` support.
   var root = (typeof self == 'object' && self.self === self && self) ||
             (typeof global == 'object' && global.global === global && global);
-
-  // Node.js, CommonJS, or ES6
   if (typeof module === "object" && typeof module.exports === "object") {
     module.exports = factory(root, exports);
-  // Finally, as a browser global.
   } else {
     root.Gapless = factory(root, {});
   }
@@ -145,7 +144,6 @@
     }
 
     loadTrack(idx, loadHTML5) {
-      // only preload if song is within the next 2
       if (this.state.currentTrackIdx + PRELOAD_NUM_TRACKS <= idx) return;
       const track = this.tracks[idx];
 
@@ -179,26 +177,20 @@
     setVolume(nextVolume) {
       if (nextVolume < 0) nextVolume = 0;
       else if (nextVolume > 1) nextVolume = 1;
-
       this.state.volume = nextVolume;
-
       this.tracks.map(track => track.setVolume(nextVolume));
     }
   }
 
   class Track {
     constructor({ trackUrl, queue, idx, metadata }) {
-      // playback type state
       this.playbackType = GaplessPlaybackType.HTML5;
       this.webAudioLoadingState = GaplessPlaybackLoadingState.NONE;
       this.loadedHEAD = false;
-
-      // basic inputs from Queue
       this.idx = idx;
       this.queue = queue;
       this.trackUrl = trackUrl;
       this.metadata = metadata;
-
       this.onEnded = this.onEnded.bind(this);
       this.onProgress = this.onProgress.bind(this);
 
@@ -210,7 +202,6 @@
       this.audio.volume = queue.state.volume;
       this.audio.preload = 'none';
       this.audio.src = trackUrl;
-      // this.audio.onprogress = () => this.debug(this.idx, this.audio.buffered)
 
       if (queue.state.webAudioIsDisabled) return;
 
@@ -262,11 +253,8 @@
 
             this.bufferSourceNode.buffer = this.audioBuffer = buffer;
             this.bufferSourceNode.connect(this.gainNode);
-
-            // try to preload next track
             this.queue.loadTrack(this.idx + 1);
 
-            // if we loaded the active track, switch to web audio
             if (this.isActiveTrack) this.switchToWebAudio();
 
             cb && cb(buffer);
@@ -276,28 +264,17 @@
     }
 
     switchToWebAudio() {
-      // if we've switched tracks, don't switch to web audio
       if (!this.isActiveTrack) return;
 
       this.debug('switch to web audio', this.currentTime, this.isPaused, this.audio.duration - this.audioBuffer.duration);
-
-      // if currentTime === 0, this is a new track, so play it
-      // otherwise we're hitting this mid-track which may
-      // happen in the middle of a paused track
       this.bufferSourceNode.playbackRate.value = this.currentTime !== 0 && this.isPaused ? 0 : 1;
-
       this.connectGainNode();
-
       this.webAudioStartedPlayingAt = this.audioContext.currentTime - this.currentTime;
-
-      // slight blip, could be improved
       this.bufferSourceNode.start(0, this.currentTime);
       this.audio.pause();
-
       this.playbackType = GaplessPlaybackType.WEBAUDIO;
     }
 
-    // public-ish functions
     pause() {
       if (this.isUsingWebAudio) {
         if (this.bufferSourceNode.playbackRate.value === 0) return;
@@ -313,7 +290,6 @@
     play() {
       this.debug('play');
       if (this.audioBuffer) {
-        // if we've already set up the buffer just set playbackRate to 1
         if (this.isUsingWebAudio) {
           if (this.bufferSourceNode.playbackRate.value === 1) return;
 
@@ -321,22 +297,16 @@
             this.webAudioPausedDuration += this.audioContext.currentTime - this.webAudioPausedAt;
           }
 
-          // use seek to avoid bug where track wouldn't play properly
-          // if paused for longer than length of track
-          // TODO: fix bug -- must be related to bufferSourceNode
           this.seek(this.currentTime);
-          // was paused, now force play
           this.connectGainNode();
           this.bufferSourceNode.playbackRate.value = 1;
 
           this.webAudioPausedAt = 0;
         }
-        // otherwise set the bufferSourceNode buffer and switch to WebAudio
         else {
           this.switchToWebAudio();
         }
 
-        // Try to preload the next track
         this.queue.loadTrack(this.idx + 1);
       }
       else {
@@ -362,7 +332,6 @@
       }
     }
 
-    // TODO: add checks for to > duration or null or negative (duration - to)
     seek(to = 0) {
       if (this.isUsingWebAudio) {
         this.seekBufferSourceNode(to);
@@ -399,7 +368,6 @@
       this.gainNode.connect(this.audioContext.destination);
     }
 
-    // basic event handlers
     audioOnError(e) {
       this.debug('audioOnError', e);
     }
@@ -416,21 +384,15 @@
       const isWithinLastTwentyFiveSeconds = (this.duration - this.currentTime) <= 25;
       const nextTrack = this.queue.nextTrack;
 
-      // if in last 25 seconds and next track hasn't loaded yet
-      // start loading next track's HTML5
       if (isWithinLastTwentyFiveSeconds && nextTrack && !nextTrack.isLoaded) {
         this.queue.loadTrack(this.idx + 1, true);
       }
 
       this.queue.onProgress(this);
 
-      // if we're paused, we still want to send one final onProgress call
-      // and then bow out, hence this being at the end of the function
       if (this.isPaused) return;
 
-      // this.debug(this.currentTime, this.duration);
       window.requestAnimationFrame(this.onProgress);
-      // setTimeout(this.onProgress, 33.33); // 30fps
     }
 
     setVolume(nextVolume) {
@@ -438,7 +400,6 @@
       this.gainNode.gain.value = nextVolume;
     }
 
-    // getter helpers
     get isUsingWebAudio() {
       return this.playbackType === GaplessPlaybackType.WEBAUDIO;
     }
@@ -496,12 +457,10 @@
       };
     }
 
-    // debug helper
     debug(first, ...args) {
-      console.log(`${this.idx}:${first}`, ...args, this.state);
+      // console.log(`${this.idx}:${first}`, ...args, this.state);
     }
 
-    // just a helper to quick jump to the end of a track for testing
     seekToEnd() {
       if (this.isUsingWebAudio) {
         this.seekBufferSourceNode(this.audioBuffer.duration - 6);
