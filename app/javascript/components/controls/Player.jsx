@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { formatDate, parseTimeParam } from "../helpers/utils";
 import { useFeedback } from "./FeedbackContext";
@@ -17,6 +17,8 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [isPlayerCollapsed, setIsPlayerCollapsed] = useState(false);
   const [firstLoad, setIsFirstLoad] = useState(true);
+  const isPreloadingRef = useRef(false);
+  const currentTrackRef = useRef(activeTrack);
 
   const audioContext = useRef(null);
   const gainNode = useRef(null);
@@ -37,13 +39,18 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   }, []);
 
   const loadTrack = async (url) => {
+    if (isPreloadingRef.current) return null;
+    isPreloadingRef.current = true;
+
     try {
       const response = await fetch(url);
       const arrayBuffer = await response.arrayBuffer();
-      return await audioContext.current.decodeAudioData(arrayBuffer);
+      const buffer = await audioContext.current.decodeAudioData(arrayBuffer);
+      isPreloadingRef.current = false;
+      return buffer;
     } catch (error) {
       console.error("Error loading track:", error);
-      setAlert("Error loading track");
+      isPreloadingRef.current = false;
       return null;
     }
   };
@@ -92,16 +99,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     playBuffer(currentBuffer.current, elapsed);
   };
 
-  const skipToNextTrack = () => {
-    const currentIndex = activePlaylist.indexOf(activeTrack);
-    const nextTrack = activePlaylist[currentIndex + 1];
-    if (nextTrack) {
-      setActiveTrack(nextTrack);
-    } else {
-      setAlert("This is the last track in the playlist");
-    }
-  };
-
   const skipToPreviousTrack = () => {
     const currentIndex = activePlaylist.indexOf(activeTrack);
     const elapsed = audioContext.current.currentTime - startedAt.current;
@@ -141,8 +138,15 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       setIsImageLoaded(false);
 
       const loadCurrentAndNext = async () => {
-        // Load current track
-        currentBuffer.current = await loadTrack(activeTrack.mp3_url);
+        if (!currentBuffer.current && !nextBuffer.current) {
+          currentBuffer.current = await loadTrack(activeTrack.mp3_url);
+          currentTrackRef.current = activeTrack;
+        } else if (nextBuffer.current && activeTrack !== currentTrackRef.current) {
+          currentBuffer.current = nextBuffer.current;
+          nextBuffer.current = null;
+          currentTrackRef.current = activeTrack;
+        }
+
         if (currentBuffer.current) {
           const startTime = activeTrack.starts_at_second ??
             parseTimeParam(new URLSearchParams(location.search).get("t"));
@@ -152,16 +156,8 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
           } else {
             playBuffer(currentBuffer.current, 0);
           }
-
           setIsPlaying(true);
           setIsFirstLoad(false);
-
-          // Preload next track
-          const currentIndex = activePlaylist.indexOf(activeTrack);
-          const nextTrack = activePlaylist[currentIndex + 1];
-          if (nextTrack) {
-            nextBuffer.current = await loadTrack(nextTrack.mp3_url);
-          }
         }
       };
 
@@ -226,46 +222,68 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  useEffect(() => {
-    const updateProgress = () => {
-      if (currentBuffer.current && isPlaying) {
-        const elapsed = audioContext.current.currentTime - startedAt.current;
-        setCurrentTime(elapsed);
+    const skipToNextTrack = useCallback(() => {
+    const currentIndex = activePlaylist.indexOf(currentTrackRef.current);
+    const nextTrack = activePlaylist[currentIndex + 1];
+    if (nextTrack) {
+      setActiveTrack(nextTrack);
+    } else {
+      setAlert("This is the last track in the playlist");
+    }
+  }, [activePlaylist, setAlert, setActiveTrack]);
 
-        const progress = (elapsed / currentBuffer.current.duration) * 100;
-        if (progressBarRef.current) {
-          progressBarRef.current.style.background =
-            `linear-gradient(to right, #03bbf2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
-        }
+  const updateProgress = useCallback(() => {
+    if (!currentBuffer.current || !isPlaying) return;
 
-        if (endTime && elapsed >= endTime) {
-          skipToNextTrack();
-        }
+    const elapsed = audioContext.current.currentTime - startedAt.current;
+    setCurrentTime(elapsed);
 
-        // Start loading next track when near the end
-        if (elapsed >= currentBuffer.current.duration - 25) {
-          const currentIndex = activePlaylist.indexOf(activeTrack);
-          const nextTrack = activePlaylist[currentIndex + 1];
-          if (nextTrack && !nextBuffer.current) {
-            loadTrack(nextTrack.mp3_url).then(buffer => {
-              nextBuffer.current = buffer;
-            });
-          }
-        }
+    const progress = (elapsed / currentBuffer.current.duration) * 100;
+    if (progressBarRef.current) {
+      progressBarRef.current.style.background =
+        `linear-gradient(to right, #03bbf2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
+    }
 
-        // Switch to next track when current ends
-        if (elapsed >= currentBuffer.current.duration) {
-          skipToNextTrack();
-        } else {
-          requestAnimationFrame(updateProgress);
+    const timeRemaining = currentBuffer.current.duration - elapsed;
+    const currentIndex = activePlaylist.indexOf(currentTrackRef.current);
+    const nextTrack = activePlaylist[currentIndex + 1];
+
+    if (timeRemaining <= 25 && nextTrack && !nextBuffer.current && !isPreloadingRef.current) {
+      console.log("Starting preload:", nextTrack.title);
+      loadTrack(nextTrack.mp3_url).then(buffer => {
+        if (buffer) {
+          nextBuffer.current = buffer;
+          console.log("Finished preload:", nextTrack.title);
         }
+      });
+    }
+
+    if (timeRemaining <= 0.1) {
+      if (nextBuffer.current) {
+        currentSource.current?.stop();
+        currentBuffer.current = nextBuffer.current;
+        nextBuffer.current = null;
+        startedAt.current = audioContext.current.currentTime;
+        currentTrackRef.current = nextTrack;
+        playBuffer(currentBuffer.current, 0);
+        setIsPlaying(true);
+        setActiveTrack(nextTrack);
+      } else {
+        skipToNextTrack();
       }
-    };
+    }
 
-    if (isPlaying) {
+    if (timeRemaining > 0) {
       requestAnimationFrame(updateProgress);
     }
-  }, [isPlaying, activeTrack]);
+  }, [activePlaylist, isPlaying, loadTrack]);
+
+  useEffect(() => {
+    if (isPlaying) {
+      const animationFrame = requestAnimationFrame(updateProgress);
+      return () => cancelAnimationFrame(animationFrame);
+    }
+  }, [isPlaying, updateProgress]);
 
   const handleScrubberClick = (e) => {
     const clickPosition = e.nativeEvent.offsetX / e.target.offsetWidth;
