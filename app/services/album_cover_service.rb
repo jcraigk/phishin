@@ -96,7 +96,6 @@ class AlbumCoverService < ApplicationService
     text[0...(length - omission.length)].sub(/[^a-zA-Z]+$/, "") + omission
   end
 
-
   def attach_album_cover
     album_cover_path = Rails.root.join("tmp", "#{SecureRandom.hex}.jpg")
     @art.write(album_cover_path.to_s) { |img| img.quality 90 }
