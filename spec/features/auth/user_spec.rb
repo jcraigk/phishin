@@ -49,7 +49,7 @@ describe "User Registration", :js do
 
       expect(page).to have_content \
         "Username may contain only letters, numbers, and underscores, " \
-        "must be unique, and must be 4 to 15 characters long"
+        "must be unique, and must be 3 to 15 characters long"
     end
   end
 end
