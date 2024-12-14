@@ -82,6 +82,4 @@ Use the interactive CLI to finish the import process then set `PRODUCTION_CONTEN
 
 Forked with permission in 2012 from [StreamPhish](https://github.com/jeffplang/streamphish/) by Jeff Lang.
 
-Layout and graphic design by Mark Craig.
-
 Software and content maintained by [Justin Craig-Kuhn](https://github.com/jcraigk).
