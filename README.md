@@ -1,10 +1,8 @@
-[![Build Status](https://app.travis-ci.com/jcraigk/phishin.svg?branch=main)](https://travis-ci.org/jcraigk/phishin)
-
-![Phish.in Logo](https://i.imgur.com/Zmj586L.jpg)
+![Phish.in Logo](app/javascript/images/logo-full.png)
 
 Phish.in is an open source archive of live Phish audience recordings.
 
-Ruby on Rails and Grape API wrap a PostgreSQL database on the backend. There's a [web frontend](https://phish.in) written in React for browsing and playing audio content as well as a [JSON API](https://phish.in/api-docs) for accessing content programmatically.
+Ruby on Rails and Grape API wrap a PostgreSQL database on the backend. There's a [web frontend](https://phish.in) written in React for browsing and playing audio content as well as a [JSON API](https://petstore.swagger.io/?url=https%3A%2F%2Fphish.in/api/v2/swagger_doc) for accessing content programmatically.
 
 All audio is provided in MP3 format. More formats and sources may be made available at a later time. Assets including audio MP3s, waveform PNGs, and album art JPEGs are served directly from the web server and cached via CloudFlare CDN.
 
