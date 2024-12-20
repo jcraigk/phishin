@@ -22,6 +22,7 @@ import TopShows, { topShowsLoader } from "../TopShows";
 import TopTracks, { topTracksLoader } from "../TopTracks";
 import VenueIndex, { venueIndexLoader } from "../VenueIndex";
 import VenueShows, { venueShowsLoader } from "../VenueShows";
+import CoverArtInspector, { coverArtInspectorLoader } from "../CoverArtInspector";
 
 // Simple pages with no sidebar
 import ApiDocs from "../pages/ApiDocs";
@@ -180,6 +181,11 @@ const routes = (props) => [
       {
         path: "/settings",
         element: <Settings />,
+      },
+      {
+        path: "/cover-art",
+        element: <CoverArtInspector />,
+        loader: coverArtInspectorLoader,
       },
       {
         path: "*",

@@ -439,6 +439,31 @@ main {
   }
 }
 
+.cover-art-inspector-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+  width: 100%;
+
+  .cover-art-inspector {
+    width: 128px;
+    height: 128px;
+    border-radius: 8px;
+    object-fit: cover;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+      cursor: pointer;
+    }
+  }
+
+  .cover-art {
+    background-color: transparent !important;
+  }
+}
+
 .grid-view {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));

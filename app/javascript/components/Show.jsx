@@ -32,7 +32,7 @@ const Show = ({ trackSlug }) => {
   const show = useLoaderData();
   const [tracks, setTracks] = useState(show.tracks);
   const trackRefs = useRef([]);
-  const { playTrack, mapboxToken, openAppModal } = useOutletContext();
+  const { playTrack, mapboxToken, openAppModal, closeAppModal } = useOutletContext();
   const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
   const [showIncompleteNotification, setShowIncompleteNotification] = useState(show.incomplete);
   const [showAdminNotesNotification, setShowAdminNotesNotification] = useState(!!show.admin_notes);
@@ -89,6 +89,7 @@ const Show = ({ trackSlug }) => {
                 coverArtUrls={show.cover_art_urls}
                 albumCoverUrl={show.album_cover_url}
                 openAppModal={openAppModal}
+                closeAppModal={closeAppModal}
                 size="medium"
               />
             </div>
