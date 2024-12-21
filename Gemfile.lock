@@ -82,6 +82,9 @@ GEM
     benchmark (0.4.0)
     bigdecimal (3.1.8)
     builder (3.3.0)
+    bullet (8.0.0)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.11)
     capybara (3.40.0)
       addressable
       matrix
@@ -490,6 +493,7 @@ GEM
     unicode-display_width (3.1.2)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
+    uniform_notifier (1.16.0)
     uri (1.0.2)
     useragent (0.16.11)
     version_gem (1.1.4)
@@ -511,6 +515,7 @@ PLATFORMS
 
 DEPENDENCIES
   actionpack-action_caching
+  bullet
   capybara
   capybara-email
   capybara-screenshot

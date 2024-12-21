@@ -15,4 +15,11 @@ Rails.application.configure do
   config.consider_all_requests_local = true
   config.eager_load = false
   config.whiny_nils = true
+
+  # https://github.com/flyerhzm/bullet
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.bullet_logger = true # log/bullet.log
+    Bullet.rails_logger = true
+  end
 end
