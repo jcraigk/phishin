@@ -15,24 +15,24 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@mapbox/mapbox-gl-geocoder": "^5.0.2",
     "autoprefixer": "^10.4.20",
-    "babel-loader": "8",
+    "babel-loader": "9.2.1",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "bulma": "^1.0.2",
-    "compression-webpack-plugin": "9",
+    "compression-webpack-plugin": "11.1.0",
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.0",
     "js-yaml": "^4.1.0",
     "mapbox-gl": "^3.6.0",
     "mini-css-extract-plugin": "^2.9.1",
     "postcss": "^8.4.47",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "react-helmet-async": "^2.0.5",
     "react-modal": "^3.16.1",
     "react-on-rails": "14.0.5",
     "react-paginate": "^8.2.0",
-    "react-router-dom": "^6.26.2",
-    "react-spinners": "^0.14.1",
+    "react-router-dom": "^7.1.1",
+    "react-spinners": "^0.15.0",
     "react-tooltip": "^5.28.0",
     "sass": "^1.68.0",
     "sass-loader": "^16.0.1",
@@ -41,8 +41,8 @@
     "terser-webpack-plugin": "5",
     "webpack": "5",
     "webpack-assets-manifest": "5",
-    "webpack-cli": "4",
-    "webpack-merge": "5"
+    "webpack-cli": "6.0.1",
+    "webpack-merge": "6.0.1"
   },
   "version": "0.1.0",
   "babel": {
@@ -55,8 +55,8 @@
   ],
   "devDependencies": {
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.15",
-    "react-refresh": "^0.14.2",
+    "react-refresh": "^0.16.0",
     "webpack-bundle-analyzer": "^4.10.2",
-    "webpack-dev-server": "4"
+    "webpack-dev-server": "5.2.0"
   }
 }
