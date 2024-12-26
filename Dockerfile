@@ -1,4 +1,4 @@
-FROM ruby:3.4.1-alpine
+FROM ruby:3.4.1-slim-bullseye
 
 ARG APP_NAME=phishin
 
