@@ -8,7 +8,7 @@ class ApiV2::Entities::PlaylistTrack < ApiV2::Entities::Base
     }
   ) do
     ApiV2::Entities::Track.represent \
-      _1.track,
+      it.track,
       _2.merge(exclude_show: true)
   end
 

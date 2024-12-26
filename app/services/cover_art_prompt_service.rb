@@ -122,7 +122,7 @@ class CoverArtPromptService < ApplicationService
   def new_prompt
     return @new_prompt if defined?(@new_prompt)
     num = rand < 0.3 ? 1 : 2
-    subjects = CATEGORIES.sample(num).map { chatgpt_response[_1.to_sym].sample }.join(" and ")
+    subjects = CATEGORIES.sample(num).map { chatgpt_response[it.to_sym].sample }.join(" and ")
     @new_prompt =
       "Create an image featuring #{subjects} " \
       "in the style of #{style} with a #{hue} hue."
@@ -137,7 +137,7 @@ class CoverArtPromptService < ApplicationService
 
   def song_list
     show.tracks.map do
-      "#{_1.title} by #{_1.songs.first.artist || 'Phish'}"
+      "#{it.title} by #{it.songs.first.artist || 'Phish'}"
     end.join(", ")
   end
 

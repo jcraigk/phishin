@@ -27,7 +27,7 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
       desc: "The description of the playlist"
     }
 
-  expose(:username) { _1.user.username }
+  expose(:username) { it.user.username }
 
   expose \
     :duration,
@@ -46,7 +46,7 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
         "The entries in the playlist, which themselves " \
         "include the track along with its position and other metadata"
     } do
-      _1.playlist_tracks.order(:position)
+      it.playlist_tracks.order(:position)
     end
 
   expose \
@@ -85,7 +85,7 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
       unless _2[:liked_by_user].nil?
         _2[:liked_by_user]
       else
-        _2[:liked_playlist_ids]&.include?(_1.id) || false
+        _2[:liked_playlist_ids]&.include?(it.id) || false
       end
     end
 end

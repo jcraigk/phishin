@@ -17,7 +17,7 @@ class BustoutTagService < ApplicationService
 
   def apply_bustout_tag(track, song, gap)
     ttag = track.track_tags.find do
-      _1.tag == bustout_tag && _1.notes&.include?(song.title)
+      it.tag == bustout_tag && it.notes&.include?(song.title)
     end || track.track_tags.build(tag: bustout_tag)
     ttag.notes = "First performance of #{song.title} in #{gap} shows"
     ttag.save!

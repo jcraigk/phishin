@@ -99,7 +99,7 @@ RSpec.describe "API v2 Playlists" do
 
       expect(json[:name]).to eq("Summer Jams")
       expect(json[:entries].size).to eq(2)
-      expect(json[:entries].map { _1[:track][:slug] }).to match_array([ track1.slug, track2.slug ])
+      expect(json[:entries].map { it[:track][:slug] }).to match_array([ track1.slug, track2.slug ])
     end
   end
 
@@ -126,7 +126,7 @@ RSpec.describe "API v2 Playlists" do
         expect(json[:name]).to eq("Road Trip")
         expect(json[:slug]).to eq("road-trip")
         expect(json[:entries].size).to eq(2)
-        expect(json[:entries].map { _1[:track][:id] }).to match_array([ track1.id, track2.id ])
+        expect(json[:entries].map { it[:track][:id] }).to match_array([ track1.id, track2.id ])
       end
 
       it "returns a 422 error if the playlist is invalid" do
@@ -177,8 +177,8 @@ RSpec.describe "API v2 Playlists" do
         expect(json[:slug]).to eq("winter-jams-2")
         expect(json[:published]).to eq(false)
         expect(json[:entries].size).to eq(2)
-        expect(json[:entries].map { _1[:track][:id] }).to eq([ track2.id, track3.id ])
-        expect(json[:entries].map { _1[:starts_at_second] }).to eq([ nil, 15 ])
+        expect(json[:entries].map { it[:track][:id] }).to eq([ track2.id, track3.id ])
+        expect(json[:entries].map { it[:starts_at_second] }).to eq([ nil, 15 ])
       end
 
       it "returns a 422 error if the update is invalid" do
