@@ -1,13 +1,9 @@
 .bundle
 .DS_Store
 .env
-/content
 /coverage
 /log
-/public/assets
-/public/audio
 /public/sitemap
-/public/attachments
 /tmp
 /public/packs
 /public/packs-test
