@@ -162,7 +162,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     unless _2[:liked_by_user].nil?
       _2[:liked_by_user]
     else
-      _2[:liked_track_ids]&.include?(it.id) || false
+      _2[:liked_track_ids]&.include?(_1.id) || false
     end
   end
 end

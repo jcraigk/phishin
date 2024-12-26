@@ -23,7 +23,7 @@ class ApiV2::Entities::SearchResults < ApiV2::Entities::Base
     }
   ) do
     ApiV2::Entities::Show.represent \
-      it[:other_shows],
+      _1[:other_shows],
       _2.merge(liked_by_user: nil)
   end
 
@@ -64,7 +64,7 @@ class ApiV2::Entities::SearchResults < ApiV2::Entities::Base
     }
   ) do
     ApiV2::Entities::Track.represent \
-      it[:tracks],
+      _1[:tracks],
       _2.merge(exclude_show: true, liked_by_user: nil)
   end
 
@@ -91,7 +91,7 @@ class ApiV2::Entities::SearchResults < ApiV2::Entities::Base
       }
     ) do
       ApiV2::Entities::Playlist.represent \
-        it[:playlists],
+        _1[:playlists],
         _2.merge(liked_by_user: nil, exclude_tracks: true)
     end
 end

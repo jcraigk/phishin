@@ -125,7 +125,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
     }
   ) do
     ApiV2::Entities::Track.represent \
-      it.tracks.sort_by(&:position),
+      _1.tracks.sort_by(&:position),
       _2.merge(exclude_show: true, liked_by_user: nil)
   end
 
@@ -135,7 +135,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
     unless _2[:liked_by_user].nil?
       _2[:liked_by_user]
     else
-      _2[:liked_show_ids]&.include?(it.id) || false
+      _2[:liked_show_ids]&.include?(_1.id) || false
     end
   end
 
