@@ -94,7 +94,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       format: "date",
       desc: "Date of the show that the track belongs to"
     }
-  ) { _1.show.date }
+  ) { it.show.date }
 
   expose(
     :show_cover_art_urls,
@@ -102,7 +102,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       type: "Object",
       desc: "Object containing named URLs for variants of raw cover art images"
     }
-  ) { _1.show.cover_art_urls }
+  ) { it.show.cover_art_urls }
 
   expose(
     :show_album_cover_url,
@@ -110,7 +110,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       type: "Object",
       desc: "URL of album cover image (text overlayed on cover art)"
     }
-  ) { _1.show.album_cover_url }
+  ) { it.show.album_cover_url }
 
   expose(
     :venue_slug,
@@ -118,7 +118,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       type: "String",
       desc: "Unique slug of the venue where the show took place"
     }
-  ) { _1.show.venue.slug }
+  ) { it.show.venue.slug }
 
   expose(
     :venue_name,
@@ -127,7 +127,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       desc: "Name the venue where the show took place, " \
             "reflecting the name used on the date of the show"
     }
-  ) { _1.show.venue_name }
+  ) { it.show.venue_name }
 
   expose(
     :venue_location,
@@ -135,7 +135,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
       type: "String",
       desc: "City and state where the venue of the show was located"
     }
-  ) { _1.show.venue.location }
+  ) { it.show.venue.location }
 
   expose \
     :show,

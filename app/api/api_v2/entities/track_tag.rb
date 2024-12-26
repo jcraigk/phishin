@@ -5,7 +5,7 @@ class ApiV2::Entities::TrackTag < ApiV2::Entities::Base
       type: "String",
       desc: "The name of the tag"
     }
-   ) { _1.tag.name }
+   ) { it.tag.name }
 
   expose(
     :description,
@@ -13,7 +13,7 @@ class ApiV2::Entities::TrackTag < ApiV2::Entities::Base
       type: "String",
       desc: "A description of the tag"
     }
-  ) { _1.tag.description }
+  ) { it.tag.description }
 
   expose(
     :color,
@@ -21,7 +21,7 @@ class ApiV2::Entities::TrackTag < ApiV2::Entities::Base
       type: "String",
       desc: "The color of the tag"
     }
-  ) { _1.tag.color }
+  ) { it.tag.color }
 
   expose(
     :priority,
@@ -29,7 +29,7 @@ class ApiV2::Entities::TrackTag < ApiV2::Entities::Base
       type: "Integer",
       desc: "The display priority of the tag"
     }
-  ) { _1.tag.priority }
+  ) { it.tag.priority }
 
   expose \
     :notes,

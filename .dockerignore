@@ -1,4 +1,13 @@
-/public/attachments
+/public/packs
 /public/packs-test
-/node_modules
 /tmp
+/log/*
+/node_modules
+.git
+.gitignore
+.env
+/spec
+docker-compose.*
+Dockerfile.*
+/yarn-error.log
+/npm-debug.log

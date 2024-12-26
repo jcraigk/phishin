@@ -66,7 +66,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
       type: "String",
       desc: "Name of the tour the show belongs to"
     }
-  ) { _1.tour.name }
+  ) { it.tour.name }
 
   expose \
     :venue_name,

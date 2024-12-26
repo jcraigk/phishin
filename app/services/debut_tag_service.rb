@@ -13,7 +13,7 @@ class DebutTagService < ApplicationService
   private
 
   def apply_debut_tag(track)
-    ttag = track.track_tags.find { _1.tag == debut_tag } || track.track_tags.build(tag: debut_tag)
+    ttag = track.track_tags.find { it.tag == debut_tag } || track.track_tags.build(tag: debut_tag)
     ttag.save!
   end
 
