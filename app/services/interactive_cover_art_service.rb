@@ -153,7 +153,7 @@ class InteractiveCoverArtService < ApplicationService
     NUM_IMAGES.times do |i|
       image_url = CoverArtImageService.call(show, dry_run: true)
       @urls << image_url
-      puts "\e[36m\e]8;;#{image_url}\aImage ##{@urls.size}\e]8;;\a\e[0m"
+      puts "Image ##{@urls.size}: #{image_url}"
       display_image_in_terminal(image_url)
     end
   end

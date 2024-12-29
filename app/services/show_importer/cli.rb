@@ -4,7 +4,7 @@ class ShowImporter::Cli
   attr_reader :orch
 
   def initialize(date)
-    puts "🗓️ Preparing #{date}"
+    puts "📅 Preparing #{date}"
 
     @orch = ShowImporter::Orchestrator.new(date)
     ShowImporter::TrackReplacer.new(date) && return if orch.show_found
