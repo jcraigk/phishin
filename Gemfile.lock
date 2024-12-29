@@ -288,6 +288,7 @@ GEM
     pg_search (2.3.7)
       activerecord (>= 6.1)
       activesupport (>= 6.1)
+    pstore (0.1.4)
     psych (5.2.2)
       date
       stringio
@@ -535,6 +536,7 @@ DEPENDENCIES
   ostruct
   pg
   pg_search
+  pstore
   puma
   rack-cors
   rails
