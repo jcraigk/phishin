@@ -30,26 +30,29 @@ const TaginProject = () => {
         <li>Tease</li>
         <li>Unfinished</li>
       </ul>
-      <p>
+
+      {/* <p>
         See the{" "}
         <a href="https://docs.google.com/spreadsheets/d/1WZtJYSHvt0DSYeUtzM5h0U5c90DN9Or7ckkJD-ds-rM">
           Master Tag.in Spreadsheet
         </a>{" "}
         for the current state of the project.
-      </p>
+      </p> */}
 
       <h3>Contributing</h3>
       <p>
         To contribute, please join the{" "}
         <DiscordButton />{" "}
-        and check out the #tagging channel. Write access to the{" "}
+        and comment in the #tagging channel.
+
+        {/* Write access to the{" "}
         <a href="https://docs.google.com/spreadsheets/d/1WZtJYSHvt0DSYeUtzM5h0U5c90DN9Or7ckkJD-ds-rM" target="_blank">
           Master Tag.in Spreadsheet
         </a>{" "}
-        will be provided to those expressing a genuine interest in the project.
+        will be provided to those expressing a genuine interest in the project. */}
       </p>
 
-      <h3>Instructions for Contributors</h3>
+      {/* <h3>Instructions for Contributors</h3>
       <p><i>Note: If you notice any issues with content during your listening (track labeling, audio quality, etc.), please enter it in the CONTENT ISSUES tab on the spreadsheet.</i></p>
       <ol className="list-decimal list-inside">
         <li>Open the{" "}
@@ -117,7 +120,7 @@ const TaginProject = () => {
         <li>The band members frequently reference other musical works during improvisation.</li>
         <li>Past teases have been imported from the Phish.net Tease Chart and setlist API, though they require verification and correction.</li>
         <li>Each tease should be input separately with specific timestamps and detailed Notes, especially if the tease is not listed on Phish.net.</li>
-      </ul>
+      </ul> */}
     </PageWrapper>
   );
 };
