@@ -1,6 +1,5 @@
 const { devServer, inliningCss } = require('shakapacker');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-
 const webpackConfig = require('./webpackConfig');
 
 const developmentEnvOnly = (clientWebpackConfig, _serverWebpackConfig) => {
@@ -23,6 +22,15 @@ const developmentEnvOnly = (clientWebpackConfig, _serverWebpackConfig) => {
       reportFilename: 'bundle-report.html',
     }),
   );
+
+  // Disable Node.js "stream" module
+  clientWebpackConfig.resolve = {
+    ...clientWebpackConfig.resolve,
+    fallback: {
+      ...clientWebpackConfig.resolve?.fallback,
+      stream: false,
+    },
+  };
 
   // Set allowedHosts to disable browser console warning
   // when using ngrok or other tunneling services.
