@@ -69,7 +69,7 @@ class Id3TagService < ApplicationService
 
     # Process and download the ID3 variant
     album_cover_variant = show.album_cover.variant(:id3).processed
-    album_art_data = album_cover_variant.download
+    return unless album_art_data = album_cover_variant.download
 
     # Attach album art to ID3 tag
     mp3.tag2.add_picture(album_art_data)

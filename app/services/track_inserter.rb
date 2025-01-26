@@ -33,12 +33,13 @@ class TrackInserter
   end
 
   def insert_new_track
-    track = Track.new \
+    track = Track.new(
       show:,
       title:,
       songs: [ Song.find(song_id) ],
       position:,
       set:
+    )
     track.slug = slug if slug.present?
     track.save!
     track.mp3_audio.attach(io: File.open(file), filename: File.basename(file))
