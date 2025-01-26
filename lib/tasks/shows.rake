@@ -22,7 +22,7 @@ namespace :shows do
 
   desc "Insert a track"
   task insert_track: :environment do
-    TrackInserter.call \
+    TrackInserter.new(
       date: ENV["DATE"],
       position: ENV["POSITION"],
       file: ENV["FILE"],
@@ -31,6 +31,7 @@ namespace :shows do
       set: ENV["SET"],
       is_sbd: ENV["SBD"].present?,
       slug: ENV["SLUG"]
+    ).call
     puts "Track inserted"
   end
 
