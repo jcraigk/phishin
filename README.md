@@ -19,8 +19,8 @@ Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and developmen
 
 ```bash
 # Copy SQL dump into PG container and run it
-docker cp /path/to/phishin.sql phishin-pg-1:/docker-entrypoint-initdb.d/dump.sql
-docker exec -u postgres phishin-pg-1 psql phishin postgres -f docker-entrypoint-initdb.d/dump.sql
+docker cp /path/to/phishin-dev.sql phishin-pg-1:/docker-entrypoint-initdb.d/data.sql
+docker exec -u postgres phishin-pg-1 psql phishin postgres -f docker-entrypoint-initdb.d/data.sql
 ```
 
 4. To present production content locally during development, set `PRODUCTION_CONTENT=true` in your local `.env` file.

@@ -227,7 +227,7 @@ GEM
     json (2.9.1)
     jwt (2.10.1)
       base64
-    language_server-protocol (3.17.0.3)
+    language_server-protocol (3.17.0.4)
     launchy (3.1.0)
       addressable (~> 2.8)
       childprocess (~> 5.0)
@@ -299,7 +299,7 @@ GEM
       date
       stringio
     public_suffix (6.0.1)
-    puma (6.5.0)
+    puma (6.6.0)
       nio4r (~> 2.0)
     raabro (1.4.0)
     racc (1.8.1)
@@ -392,7 +392,7 @@ GEM
       rubocop-ast (>= 1.36.2, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 4.0)
-    rubocop-ast (1.37.0)
+    rubocop-ast (1.38.0)
       parser (>= 3.3.1.0)
     rubocop-capybara (2.21.0)
       rubocop (~> 1.41)
@@ -439,10 +439,10 @@ GEM
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
     semantic_range (3.1.0)
-    sentry-rails (5.22.2)
+    sentry-rails (5.22.3)
       railties (>= 5.0)
-      sentry-ruby (~> 5.22.2)
-    sentry-ruby (5.22.2)
+      sentry-ruby (~> 5.22.3)
+    sentry-ruby (5.22.3)
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.0.2)
     shakapacker (8.1.0)
