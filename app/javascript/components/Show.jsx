@@ -142,6 +142,7 @@ const Show = ({ trackSlug }) => {
                     coverArtUrls={show.cover_art_urls}
                     albumCoverUrl={show.album_cover_url}
                     openAppModal={openAppModal}
+                    closeAppModal={closeAppModal}
                     size="medium"
                   />
                 </div>
