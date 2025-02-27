@@ -51,7 +51,7 @@ RSpec.describe Playlist do
     it '.published returns only published playlists' do
       create(:playlist, published: true)
       create(:playlist, published: false)
-      expect(Playlist.published.count).to eq(1)
+      expect(described_class.published.count).to eq(1)
     end
   end
 

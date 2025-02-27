@@ -115,14 +115,20 @@ RSpec.describe "API v2 Auth" do
 
   describe "POST /auth/request_password_reset" do
     context "when the email exists" do
+      before do
+        allow(User).to receive(:find_by).with(email: user.email).and_return(user)
+        allow(user).to receive(:deliver_reset_password_instructions!)
+      end
+
       it "returns a 200 status and sends password reset instructions" do
-        expect_any_instance_of(User).to receive(:deliver_reset_password_instructions!)
         post_api "/auth/request_password_reset", params: { email: user.email }
+
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
         expect(json[:message]).to eq \
           "Password reset instructions will be sent to the email if it exists"
+        expect(user).to have_received(:deliver_reset_password_instructions!)
       end
     end
 
@@ -139,15 +145,17 @@ RSpec.describe "API v2 Auth" do
   end
 
   describe "POST /auth/reset_password" do
+    let(:token) { user.reset_password_token }
+
     before do
       user.deliver_reset_password_instructions!
-      @token = user.reset_password_token
+      token
     end
 
     context "with valid token and matching passwords" do
       it "resets the user's password" do
         post_api "/auth/reset_password", params: {
-          token: @token,
+          token:,
           password: "newpassword",
           password_confirmation: "newpassword"
         }
@@ -175,7 +183,7 @@ RSpec.describe "API v2 Auth" do
     context "with non-matching passwords" do
       it "returns a 422 error" do
         post_api "/auth/reset_password", params: {
-          token: @token,
+          token:,
           password: "newpassword",
           password_confirmation: "differentpassword"
         }
@@ -210,8 +218,12 @@ RSpec.describe "API v2 Auth" do
     end
 
     context "when the update fails" do
+      before do
+        allow(User).to receive(:find_by).with(id: user.id).and_return(user)
+        allow(user).to receive(:update).and_return(false)
+      end
+
       it "returns a 422 error" do
-        allow_any_instance_of(User).to receive(:update).and_return(false)
         patch_api_authed(user, "/auth/change_username/invalidusername")
         expect(response).to have_http_status(:unprocessable_entity)
       end

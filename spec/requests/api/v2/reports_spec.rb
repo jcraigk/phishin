@@ -3,23 +3,18 @@ require "rails_helper"
 RSpec.describe "API v2 Reports" do
   let!(:venue1) { create(:venue, name: "Madison Square Garden", city: "New York", state: "NY") }
   let!(:venue2) { create(:venue, name: "The Roxy", city: "Atlanta", state: "GA") }
+  let!(:show3) { create(:show, date: "2023-06-10", incomplete: true, published: true, venue: venue1) }
+  let!(:show4) { create(:show, date: "2023-05-01", incomplete: true, published: true, venue: venue2) }
+  let!(:known_date1) { create(:known_date, date: "2023-04-01", venue: "Red Rocks", location: "Morrison, CO") }
+  let!(:known_date2) { create(:known_date, date: "2023-03-15", venue: "The Gorge", location: "George, WA") }
+  let!(:known_date3) { create(:known_date, date: "2023-01-01", venue: "The Spectrum", location: "Philadelphia, PA") }
+  let(:show1) { create(:show, date: "2023-08-01", incomplete: false, published: true, venue: venue1) }
+  let(:show2) { create(:show, date: "2023-07-15", incomplete: false, published: true, venue: venue1) }
 
-  let!(:show1) {
- create(:show, date: "2023-08-01", incomplete: false, published: true, venue: venue1) }
-  let!(:show2) {
- create(:show, date: "2023-07-15", incomplete: false, published: true, venue: venue1) }
-
-  let!(:show3) {
- create(:show, date: "2023-06-10", incomplete: true, published: true, venue: venue1) }
-  let!(:show4) {
- create(:show, date: "2023-05-01", incomplete: true, published: true, venue: venue2) }
-
-  let!(:known_date1) {
- create(:known_date, date: "2023-04-01", venue: "Red Rocks", location: "Morrison, CO") }
-  let!(:known_date2) {
- create(:known_date, date: "2023-03-15", venue: "The Gorge", location: "George, WA") }
-  let!(:known_date3) {
- create(:known_date, date: "2023-01-01", venue: "The Spectrum", location: "Philadelphia, PA") }
+  before do
+    show1
+    show2
+  end
 
   describe "GET /api/v2/reports/missing_content" do
     it "returns a list of missing and incomplete content with date, venue_name," \

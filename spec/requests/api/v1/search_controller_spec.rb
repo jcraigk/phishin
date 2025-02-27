@@ -25,7 +25,7 @@ describe Api::V1::SearchController do
 
     context 'with valid term' do
       let(:term) { 'fall' }
-      let!(:tour) { create(:tour, name: '1995 Fall Tour') }
+      let(:tour) { create(:tour, name: '1995 Fall Tour') }
       let(:expected_json) do
         {
           exact_show: nil,
@@ -39,6 +39,8 @@ describe Api::V1::SearchController do
           playlists: []
         }
       end
+
+      before { tour }
 
       it 'returns 200' do
         expect(response.status).to eq(200)

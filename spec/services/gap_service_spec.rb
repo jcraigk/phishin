@@ -4,7 +4,7 @@ RSpec.describe GapService do
   subject(:service) { described_class.call(current_show) }
 
   let!(:venue) { create(:venue, name: "Madison Square Garden") }
-  let!(:known_dates) do
+  let(:known_dates) do
     [
       create(:known_date, date: "2022-12-29"),
       create(:known_date, date: "2022-12-30"),
@@ -28,7 +28,10 @@ RSpec.describe GapService do
     ]
   end
 
-  before { service }
+  before do
+    known_dates
+    service
+  end
 
   it "updates the gaps and slugs for song performances" do # rubocop:disable RSpec/ExampleLength, RSpec/MultipleExpectations
     first_song_track = SongsTrack.find_by(track_id: tracks[0].id, song_id: song.id)

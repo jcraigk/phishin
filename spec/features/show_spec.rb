@@ -1,6 +1,12 @@
 require "rails_helper"
 
 RSpec.describe "Shows", :js do
+  let!(:set_1_tracks) do
+    create_list(:track, 2, :with_likes, show:, set: 1)
+  end
+  let!(:set_2_tracks) do
+    create_list(:track, 3, :with_likes, show:, set: 2)
+  end
   let(:venue) do
     create(
       :venue,
@@ -12,19 +18,9 @@ RSpec.describe "Shows", :js do
       longitude: -73.9934387
     )
   end
-
   let(:show) do
     create(:show, :with_likes, venue:, date: "2023-08-01", duration: 120 * 60 * 1000)
   end
-
-  let!(:set_1_tracks) do
-    create_list(:track, 2, :with_likes, show:, set: 1)
-  end
-
-  let!(:set_2_tracks) do
-    create_list(:track, 3, :with_likes, show:, set: 2)
-  end
-
   let(:user) { create(:user)  }
 
   before do

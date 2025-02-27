@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Venues", :js do
-  let!(:venue_1) do
+  let(:venue_1) do
     create(
       :venue,
       name: "Awesome Venue",
@@ -10,7 +10,7 @@ RSpec.describe "Venues", :js do
       slug: "awesome-venue"
     )
   end
-  let!(:venue_2) do
+  let(:venue_2) do
     create(
       :venue,
       name: "Brilliant Venue",
@@ -21,15 +21,17 @@ RSpec.describe "Venues", :js do
   end
 
   before do
+    venue_1
+    venue_2
     visit "/venues"
   end
 
   it "displays the sidebar with sorting and filtering options" do
     expect(page).to have_css(".sidebar-title", text: "Venues")
     expect(page).to have_css(".sidebar-subtitle", text: "2 total")
-    expect(page).to have_css("select#sort")
-    expect(page).to have_css("select#first-char-filter")
-    expect(page).to have_css("input#search")
+    expect(page).to have_select("sort")
+    expect(page).to have_select("first-char-filter")
+    expect(page).to have_field("search")
     expect(page).to have_button("Search")
   end
 
@@ -51,7 +53,7 @@ RSpec.describe "Venues", :js do
 
   it "submits search and navigates to the search results page" do
     fill_in "search", with: "Awesome"
-    click_button "Search"
+    click_on "Search"
 
     expect(page).to have_current_path("/search?term=Awesome&scope=venues")
   end

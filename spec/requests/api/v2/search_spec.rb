@@ -15,11 +15,18 @@ RSpec.describe "API v2 Search" do
     )
   end
   let!(:show) { create(:show, date: "2022-01-01", venue:) }
-  let!(:song) { create(:song, title: "Sample Song") }
-  let!(:tour) { create(:tour, name: "Winter Tour 2022") }
   let!(:tag) { create(:tag, name: "Classic") }
-  let!(:show_tag) { create(:show_tag, show:, tag:) }
-  let!(:track_tag) { create(:track_tag, track: create(:track, show:), tag:) }
+  let(:song) { create(:song, title: "Sample Song") }
+  let(:tour) { create(:tour, name: "Winter Tour 2022") }
+  let(:show_tag) { create(:show_tag, show:, tag:) }
+  let(:track_tag) { create(:track_tag, track: create(:track, show:), tag:) }
+
+  before do
+    song
+    tour
+    show_tag
+    track_tag
+  end
 
   describe "GET /search" do
     context "when searching by term" do
@@ -53,7 +60,7 @@ RSpec.describe "API v2 Search" do
 
         json = JSON.parse(response.body, symbolize_names: true)
         expect(json[:venues]).to eq([])
-        expect(json[:exact_show]).to eq(nil)
+        expect(json[:exact_show]).to be_nil
         expect(json[:songs]).to eq([])
       end
 

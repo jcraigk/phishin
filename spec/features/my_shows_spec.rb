@@ -40,10 +40,10 @@ RSpec.describe "My Shows", :js do
 
     it "paginates shows" do
       visit "/my-shows"
-      expect(page).to have_selector(".pagination")
+      expect(page).to have_css(".pagination")
       find(".pagination li", text: "2").click
       expect(page).to have_current_path(/\/my-shows.*page=2/)
-      expect(page).to have_selector(".list-item", count: 3)
+      expect(page).to have_css(".list-item", count: 3)
     end
   end
 end

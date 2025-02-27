@@ -5,23 +5,29 @@ RSpec.describe "API v2 Playlists" do
 
   let!(:user) { create(:user) }
   let!(:playlist) do
-    create \
+    create(
       :playlist,
       slug: "summer-jams",
       name: "Summer Jams",
       description: "The best summer jams",
       user:,
       tracks_count: 2
+    )
   end
   let!(:track1) { playlist.tracks.first }
   let!(:track2) { playlist.tracks.second }
   let!(:track3) { create(:track) }
 
   describe "GET /playlists" do
-    let!(:published_playlist) { create(:playlist, published: true) }
     let!(:unpublished_playlist) { create(:playlist, published: false, user:) }
     let!(:liked_playlist) { create(:playlist) }
-    let!(:like) { create(:like, user:, likable: liked_playlist) }
+    let(:like) { create(:like, user:, likable: liked_playlist) }
+    let(:published_playlist) { create(:playlist, published: true) }
+
+    before do
+      like
+      published_playlist
+    end
 
     context "when fetching all playlists" do
       it "returns a list of published playlists" do
@@ -99,7 +105,7 @@ RSpec.describe "API v2 Playlists" do
 
       expect(json[:name]).to eq("Summer Jams")
       expect(json[:entries].size).to eq(2)
-      expect(json[:entries].map { it[:track][:slug] }).to match_array([ track1.slug, track2.slug ])
+      expect(json[:entries].map { it[:track][:slug] }).to contain_exactly(track1.slug, track2.slug)
     end
   end
 
@@ -126,7 +132,7 @@ RSpec.describe "API v2 Playlists" do
         expect(json[:name]).to eq("Road Trip")
         expect(json[:slug]).to eq("road-trip")
         expect(json[:entries].size).to eq(2)
-        expect(json[:entries].map { it[:track][:id] }).to match_array([ track1.id, track2.id ])
+        expect(json[:entries].map { it[:track][:id] }).to contain_exactly(track1.id, track2.id)
       end
 
       it "returns a 422 error if the playlist is invalid" do
@@ -175,7 +181,7 @@ RSpec.describe "API v2 Playlists" do
         expect(json[:name]).to eq("Winter Jams #2")
         expect(json[:description]).to eq("Winter jams playlist")
         expect(json[:slug]).to eq("winter-jams-2")
-        expect(json[:published]).to eq(false)
+        expect(json[:published]).to be(false)
         expect(json[:entries].size).to eq(2)
         expect(json[:entries].map { it[:track][:id] }).to eq([ track2.id, track3.id ])
         expect(json[:entries].map { it[:starts_at_second] }).to eq([ nil, 15 ])

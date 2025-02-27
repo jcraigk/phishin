@@ -32,6 +32,7 @@ describe Api::V1::ApiController do
 
     context "with only sort params" do
       let(:params) { { sort_attr: :name, sort_dir: :asc } }
+
       it "responds with expected data" do
         expect(json).to eq(expected_json)
       end

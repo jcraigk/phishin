@@ -1,16 +1,16 @@
 require "rails_helper"
 
 RSpec.describe "Tags", :js do
+  let!(:show) { create(:show, tags: [ tag_1, tag_2 ]) }
+  let!(:track) { create(:track, tags: [ tag_1, tag_2 ]) }
   let(:group_1) { "Group 1" }
   let(:group_2) { "Group 2" }
-
   let(:tag_1) { create(:tag, name: "Tag 1", group: group_1, shows_count: 1, tracks_count: 1) }
   let(:tag_2) { create(:tag, name: "Tag 2", group: group_1, shows_count: 1, tracks_count: 1) }
   let(:tag_3) { create(:tag, name: "Tag 3", group: group_2, shows_count: 1, tracks_count: 0) }
+  let(:show_2) { create(:show, tags: [ tag_3 ]) }
 
-  let!(:show) { create(:show, tags: [ tag_1, tag_2 ]) }
-  let!(:track) { create(:track, tags: [ tag_1, tag_2 ]) }
-  let!(:show_2) { create(:show, tags: [ tag_3 ]) }
+  before { show_2 }
 
   it "displays grouped tags with correct counts and links" do
     visit "/tags"

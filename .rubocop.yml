@@ -4,10 +4,12 @@ inherit_gem:
 require:
   - rubocop-capybara
   - rubocop-factory_bot
+  - rubocop-rspec_rails
+
+plugins:
   - rubocop-performance
   - rubocop-rake
   - rubocop-rspec
-  - rubocop-rspec_rails
 
 AllCops:
   Exclude:
@@ -18,6 +20,8 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 3.4.1
 
+# Capybara/SpecificActions:
+#   Enabled: false
 FactoryBot/ExcessiveCreateList:
   Enabled: false
 Layout/EmptyLineAfterGuardClause:
