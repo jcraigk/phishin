@@ -18,19 +18,21 @@ const LikeButton = ({ likable, type }) => {
       return;
     }
 
-    const result = await toggleLike({
-      id: likable.id,
-      type,
-      isLiked: likedByUser
-    });
+    setAlert("Likes temporarily disabled for server maintenance");
 
-    if (result.success) {
-      setLikedByUser(result.isLiked);
-      setLikesCount(result.isLiked ? likesCount + 1 : likesCount - 1);
-      setNotice("Like saved");
-    } else {
-      setAlert("Like failed to save");
-    }
+    // const result = await toggleLike({
+    //   id: likable.id,
+    //   type,
+    //   isLiked: likedByUser
+    // });
+
+    // if (result.success) {
+    //   setLikedByUser(result.isLiked);
+    //   setLikesCount(result.isLiked ? likesCount + 1 : likesCount - 1);
+    //   setNotice("Like saved");
+    // } else {
+    //   setAlert("Like failed to save");
+    // }
   };
 
   return (

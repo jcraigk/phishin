@@ -32,21 +32,23 @@ const Settings = () => {
   }, [user, usernameCooldown]);
 
   const handleChangeUsername = async (e) => {
+    setAlert("Username changes temporarily disabled for server maintenance");
+
     e.preventDefault();
 
-    if (!window.confirm("You won't be able to change your username again for a year. Are you sure?")) {
-      return;
-    }
+    // if (!window.confirm("You won't be able to change your username again for a year. Are you sure?")) {
+    //   return;
+    // }
 
-    authFetch(`/api/v2/auth/change_username/${newUsername}`, { method: "PATCH" })
-      .then((response) => response.json().then((data) => {
-        if (response.ok) {
-          setNotice("Username changed successfully");
-          setUser((prev) => ({ ...prev, username: data.username, usernameUpdatedAt: new Date().toISOString() }));
-        } else {
-          setAlert(data.message || "An error occurred");
-        }
-      }));
+    // authFetch(`/api/v2/auth/change_username/${newUsername}`, { method: "PATCH" })
+    //   .then((response) => response.json().then((data) => {
+    //     if (response.ok) {
+    //       setNotice("Username changed successfully");
+    //       setUser((prev) => ({ ...prev, username: data.username, usernameUpdatedAt: new Date().toISOString() }));
+    //     } else {
+    //       setAlert(data.message || "An error occurred");
+    //     }
+    //   }));
   };
 
   if (user === null) return null;

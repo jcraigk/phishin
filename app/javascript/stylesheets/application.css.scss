@@ -50,6 +50,10 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
+.warning {
+  color: $alert-red !important;
+}
+
 .root-layout {
   display: flex;
   flex-direction: column;

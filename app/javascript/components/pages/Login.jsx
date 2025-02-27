@@ -90,11 +90,13 @@ const Login = () => {
       </div>
       <hr />
 
-      <h2 className="subtitle">Sign Up with Email</h2>
+      <h2 className="subtitle warning">Email based signups temporarily disabled for server maintenance</h2>
+
+      {/* <h2 className="subtitle">Sign Up with Email</h2>
       <Link to="/signup" className="button">
         <FontAwesomeIcon icon={faArrowAltCircleRight} className="mr-1" />
         Sign Up
-      </Link>
+      </Link> */}
     </PageWrapper>
   );
 };
