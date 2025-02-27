@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class MoreIndexesAndCleanup < ActiveRecord::Migration[5.2]
   def change
     remove_column :songs, :alt_title, :string

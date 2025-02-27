@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class CreateSongsTracks < ActiveRecord::Migration
   def change
     create_table :songs_tracks do |t|

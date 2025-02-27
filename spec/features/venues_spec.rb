@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Venues", :js do
-  let(:venue_1) do
+  let(:venue1) do
     create(
       :venue,
       name: "Awesome Venue",
@@ -10,7 +10,7 @@ RSpec.describe "Venues", :js do
       slug: "awesome-venue"
     )
   end
-  let(:venue_2) do
+  let(:venue2) do
     create(
       :venue,
       name: "Brilliant Venue",
@@ -21,8 +21,8 @@ RSpec.describe "Venues", :js do
   end
 
   before do
-    venue_1
-    venue_2
+    venue1
+    venue2
     visit "/venues"
   end
 

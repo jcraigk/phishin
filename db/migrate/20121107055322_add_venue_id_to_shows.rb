@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class AddVenueIdToShows < ActiveRecord::Migration
   def change
     add_column :shows, :venue_id, :integer

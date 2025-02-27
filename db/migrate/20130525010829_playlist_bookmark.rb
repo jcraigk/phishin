@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class PlaylistBookmark < ActiveRecord::Migration
   def change
     create_table :playlist_bookmarks do |t|

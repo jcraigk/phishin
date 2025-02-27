@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class AddAltTitleToSongs < ActiveRecord::Migration
   def change
     add_column :songs, :alt_title, :string

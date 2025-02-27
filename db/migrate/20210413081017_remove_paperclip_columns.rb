@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class RemovePaperclipColumns < ActiveRecord::Migration[6.1]
   def change
     remove_column :tracks, :audio_file_file_name

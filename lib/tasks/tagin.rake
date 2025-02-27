@@ -38,7 +38,7 @@ namespace :tagin do
   task grind: :environment do
     include ActionView::Helpers::NumberHelper
 
-    first_date = Date.parse("2009-03-06");
+    first_date = Date.parse("2009-03-06")
     first_days_lived = {
       "Page" => 16_730,
       "Fish" => 16_086,
@@ -61,7 +61,7 @@ namespace :tagin do
       end.join("\n")
       notes += "\nGrand total: #{number_with_delimiter(total)} days"
 
-      csv_data << [track.url, "", "", notes]
+      csv_data << [ track.url, "", "", notes ]
     end
 
     CSV.open("#{Rails.root}/tmp/grind.csv", "w") do |csv|

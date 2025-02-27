@@ -12,81 +12,25 @@ plugins:
   - rubocop-rspec
 
 AllCops:
-  Exclude:
-    - bin/*
-    - db/**/*
-    - vendor/**/*
-    - lib/tasks/*
   NewCops: enable
   TargetRubyVersion: 3.4.1
 
-# Capybara/SpecificActions:
-#   Enabled: false
 FactoryBot/ExcessiveCreateList:
   Enabled: false
-Layout/EmptyLineAfterGuardClause:
-  Enabled: false
-Layout/EmptyLineAfterMagicComment:
-  Enabled: false
-Layout/LineLength:
-  Max: 100
-Metrics/BlockLength:
-  Exclude:
-    - spec/**/*
-    - app/api/**/*
-    - config/routes.rb
-Metrics/ClassLength:
-  Max: 250
-Metrics/ModuleLength:
-  Max: 250
-RSpec/DescribeClass:
-  Exclude:
-    - spec/features/**/*
 RSpec/ExampleLength:
   Exclude:
     - spec/features/**/*
     - spec/requests/**/*
 RSpec/IndexedLet:
   Enabled: false
-Rails/EnvironmentVariableAccess:
-  Enabled: false
-Rails/Exit:
-  Enabled: false
-Rails/FilePath:
-  Enabled: false
-Rails/HttpPositionalArguments:
-  Enabled: false
-Rails/I18nLocaleTexts:
-  Enabled: false
-Rails/SkipsModelValidations:
-  Enabled: false
-RSpec/ImplicitSubject:
-  EnforcedStyle: single_statement_only
 RSpec/MultipleExpectations:
   Exclude:
     - spec/features/**/*
     - spec/requests/**/*
   Max: 4
-Rails/Output:
-  Enabled: false
-Rails/OutputSafety:
-  Enabled: false
 RSpec/MultipleMemoizedHelpers:
   Enabled: false
 RSpec/NestedGroups:
   Max: 4
 RSpecRails/HaveHttpStatus: # We use Rack::MockResponse
   Enabled: false
-Style/ClassAndModuleChildren:
-  Enabled: false
-Style/Documentation:
-  Enabled: false
-Style/FormatStringToken:
-  Enabled: false
-Style/FrozenStringLiteralComment:
-  EnforcedStyle: never
-Style/HashTransformValues:
-  Enabled: false
-Style/MissingRespondToMissing:
-  Exclude:
-    - app/services/**/*

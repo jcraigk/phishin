@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class AddUniqueIndexesToTours < ActiveRecord::Migration[5.2]
   def change
     remove_index :tours, name: 'index_tours_on_name'
