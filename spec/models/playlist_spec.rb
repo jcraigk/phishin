@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Playlist do
-  subject { build(:playlist) }
+  subject(:playlist) { build(:playlist) }
 
   it { is_expected.to be_an(ApplicationRecord) }
 
@@ -20,7 +20,7 @@ RSpec.describe Playlist do
   it { is_expected.to validate_length_of(:description).is_at_most(500) }
 
   it do
-    is_expected
+    expect(playlist)
       .not_to allow_value('H', 'this is a longer name this is a longer name this is a')
       .for(:name)
   end
@@ -28,7 +28,7 @@ RSpec.describe Playlist do
   it { is_expected.to allow_values('harpu', 'this-is-a-longer-name').for(:slug) }
 
   it do
-    is_expected
+    expect(playlist)
       .not_to allow_value('h', 'this-is-a-longer-name-this-is-a-longer-name-this-is-a')
       .for(:slug)
   end
@@ -51,7 +51,7 @@ RSpec.describe Playlist do
     it '.published returns only published playlists' do
       create(:playlist, published: true)
       create(:playlist, published: false)
-      expect(Playlist.published.count).to eq(1)
+      expect(described_class.published.count).to eq(1)
     end
   end
 

@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class AddMissingForeignKeyIndexes < ActiveRecord::Migration[5.2]
   def change
     add_index :songs_tracks, :song_id

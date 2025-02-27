@@ -41,8 +41,8 @@ describe Api::V1::ShowsController do
 
       it 'responds with expected data' do
         expect(json_data).to eq(show.as_json_api)
-        expect(json_data[:remastered]).to eq(false)
-        expect(json_data[:sbd]).to eq(true)
+        expect(json_data[:remastered]).to be(false)
+        expect(json_data[:sbd]).to be(true)
       end
     end
 

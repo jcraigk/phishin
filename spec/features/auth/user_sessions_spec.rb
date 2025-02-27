@@ -28,8 +28,8 @@ describe "User Sessions", :js do
       expect(page).to have_current_path("/")
       expect(page).to have_content("Login successful")
 
-      find(".user-dropdown button").click
-      find("#logout").click
+      click_on(username)
+      find_by_id("logout").click
       expect(page).to have_content("Logged out successfully")
     end
   end

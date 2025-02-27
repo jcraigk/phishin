@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class RemoveLocationFromShows < ActiveRecord::Migration
   def change
     remove_column :shows, :location

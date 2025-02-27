@@ -1,8 +1,6 @@
 require "rails_helper"
 
 describe "Homepage", :js do
-  let(:venue) { create(:venue) }
-  let(:most_recent_year) { ERAS.values.flatten.last }
   let!(:shows) do
     [ 1983, most_recent_year ].each_with_object([]) do |year, shows|
       (1..3).each do |day|
@@ -10,6 +8,8 @@ describe "Homepage", :js do
       end
     end
   end
+  let(:venue) { create(:venue) }
+  let(:most_recent_year) { ERAS.values.flatten.last }
 
   before do
     shows.last.update(venue: create(:venue))
@@ -20,10 +20,10 @@ describe "Homepage", :js do
 
     # Nav
     within("#navbar") do
-      expect(page).to have_css('input.search-term[placeholder="SEARCH"]')
+      expect(page).to have_field("SEARCH", with: "", class: "search-term")
       expect(page).to have_link("LOGIN", href: "/login")
 
-      find("button", text: "INFO").click
+      click_on("INFO")
       expect(page).to have_link("FAQ", href: "/faq")
       expect(page).to have_link("API Docs", href: "/api-docs")
       expect(page).to have_link("Tagin' Project", href: "/tagin-project")
@@ -31,7 +31,7 @@ describe "Homepage", :js do
       expect(page).to have_link("Privacy Policy", href: "/privacy")
       expect(page).to have_link("Terms of Service", href: "/terms")
 
-      find("button", text: "CONTENT").click
+      click_on("CONTENT")
       expect(page).to have_link("Years", href: "/")
       expect(page).to have_link("Venues", href: "/venues")
       expect(page).to have_link("Songs", href: "/songs")
@@ -42,14 +42,14 @@ describe "Homepage", :js do
       expect(page).to have_link("Top 46 Shows", href: "/top-shows")
       expect(page).to have_link("Top 46 Tracks", href: "/top-tracks")
 
-      find("#nav-search").click # Close the dropdown
+      find_by_id("nav-search").click # Close the dropdown
     end
 
     within("#sidebar") do
       expect(page).to have_content("#{shows.count} shows")
       total_hours = (shows.sum(&:duration) / (1000 * 60 * 60)).round
       expect(page).to have_content("#{total_hours} hours of music")
-      expect(page).to have_selector(".mobile-apps")
+      expect(page).to have_css(".mobile-apps")
       expect(page).to have_link("GitHub")
       expect(page).to have_link("Discord")
     end

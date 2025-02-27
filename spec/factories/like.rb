@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :like do
     user
-    association :likable, factory: :show
+    likable { association :show }
   end
 end

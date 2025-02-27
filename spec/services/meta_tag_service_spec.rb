@@ -1,9 +1,9 @@
 require "rails_helper"
 
 RSpec.describe MetaTagService do
-  let(:title_suffix) { " - #{App.app_name}" }
-
   subject(:service) { described_class.call(path) }
+
+  let(:title_suffix) { " - #{App.app_name}" }
 
   context "when the path is root" do
     let(:path) { "/" }
@@ -54,10 +54,11 @@ RSpec.describe MetaTagService do
   end
 
   context "when the path is a show date without a slug" do
-    let!(:show) { create(:show, date: "2024-01-01") }
+    let(:show) { create(:show, date: "2024-01-01") }
     let(:path) { "/2024-01-01" }
 
     it "returns the show title and og tags" do
+      show
       expect(service[:title]).to eq("Jan 1, 2024#{title_suffix}")
       expect(service[:og][:title]).to eq("Listen to January 1, 2024")
       expect(service[:status]).to eq(:ok)
@@ -77,10 +78,11 @@ RSpec.describe MetaTagService do
   end
 
   context "when the path is a show date with an invalid track slug" do
-    let!(:show) { create(:show, date: "2024-01-01") }
+    let(:show) { create(:show, date: "2024-01-01") }
     let(:path) { "/2024-01-01/invalid-slug" }
 
     it "returns the show title without track details and status ok" do
+      show
       expect(service[:title]).to eq("Jan 1, 2024#{title_suffix}")
       expect(service[:og][:title]).to eq("Listen to January 1, 2024")
       expect(service[:status]).to eq(:ok)
@@ -97,10 +99,11 @@ RSpec.describe MetaTagService do
   end
 
   context "when the path is for a year with shows" do
-    let!(:show) { create(:show, date: "2023-05-01") }
+    let(:show) { create(:show, date: "2023-05-01") }
     let(:path) { "/2023" }
 
     it "returns the year title" do
+      show
       expect(service[:title]).to eq("2023#{title_suffix}")
       expect(service[:status]).to eq(:ok)
     end

@@ -83,27 +83,33 @@ ends_at_second: 30)
     describe '#update_playlist_duration' do
       let(:playlist) { create(:playlist) }
 
+      before { allow(playlist).to receive(:update_duration) }
+
       describe 'after create' do
         it 'calls update_duration on the parent playlist' do
           playlist_track = build(:playlist_track, playlist:)
-          expect(playlist).to receive(:update_duration)
           playlist_track.save
+          expect(playlist).to have_received(:update_duration)
         end
       end
 
       describe 'after update' do
+        before { allow(playlist).to receive(:update_duration) }
+
         it 'calls update_duration on the parent playlist' do
           playlist_track = create(:playlist_track, playlist:)
-          expect(playlist).to receive(:update_duration)
           playlist_track.update(starts_at_second: 3, ends_at_second: 5)
+          expect(playlist).to have_received(:update_duration).twice
         end
       end
 
       describe 'after destroy' do
+        before { allow(playlist).to receive(:update_duration) }
+
         it 'calls update_duration on the parent playlist' do
           playlist_track = create(:playlist_track, playlist:)
-          expect(playlist).to receive(:update_duration)
           playlist_track.destroy
+          expect(playlist).to have_received(:update_duration).twice
         end
       end
     end

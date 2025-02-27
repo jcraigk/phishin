@@ -11,7 +11,7 @@ namespace :shows do
       rel = rel.where(date: dates)
     else
       rel = rel.where(date:) if date.present?
-      rel = rel.where('date >= ?', start_date) if start_date.present?
+      rel = rel.where("date >= ?", start_date) if start_date.present?
     end
 
     pbar = ProgressBar.create \

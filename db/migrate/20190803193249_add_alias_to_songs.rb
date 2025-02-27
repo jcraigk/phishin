@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class AddAliasToSongs < ActiveRecord::Migration[5.2]
   def up
     add_column :songs, :alias, :string

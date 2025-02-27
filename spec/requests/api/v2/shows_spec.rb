@@ -3,7 +3,20 @@ require "rails_helper"
 RSpec.describe "API v2 Shows" do
   let!(:user) { create(:user) }
   let!(:venue) { create(:venue, name: "Madison Square Garden") }
-  let!(:known_dates) do
+  let!(:previous_show) { create(:show, date: "2022-12-30", venue:, likes_count: 0) }
+  let!(:next_show) { create(:show, date: "2023-01-05", venue:, likes_count: 25) }
+  let!(:show1) { create(:show, date: "2023-01-01", venue:, likes_count: 50) }
+  let!(:song) { create(:song, title: "Tweezer") }
+  let(:tracks) do
+    [
+      create(:track, show: show1, position: 1, songs: [ song ], slug: 'tweezer-1'),
+      create(:track, show: show1, position: 5, songs: [ song ], slug: 'tweezer-2'),
+      create(:track, show: show1, position: 10, songs: [ song ], slug: 'tweezer-3'),
+      create(:track, show: previous_show, position: 1, songs: [ song ], slug: 'tweezer-4'),
+      create(:track, show: next_show, position: 1, songs: [ song ], slug: 'tweezer-5')
+    ]
+  end
+  let(:known_dates) do
     [
       create(:known_date, date: "2022-12-29"),
       create(:known_date, date: "2022-12-30"),
@@ -15,18 +28,10 @@ RSpec.describe "API v2 Shows" do
       create(:known_date, date: "2023-01-05")
     ]
   end
-  let!(:previous_show) { create(:show, date: "2022-12-30", venue:, likes_count: 0) }
-  let!(:next_show) { create(:show, date: "2023-01-05", venue:, likes_count: 25) }
-  let!(:show1) { create(:show, date: "2023-01-01", venue:, likes_count: 50) }
-  let!(:song) { create(:song, title: "Tweezer") }
-  let!(:tracks) do
-    [
-      create(:track, show: show1, position: 1, songs: [ song ], slug: 'tweezer-1'),
-      create(:track, show: show1, position: 5, songs: [ song ], slug: 'tweezer-2'),
-      create(:track, show: show1, position: 10, songs: [ song ], slug: 'tweezer-3'),
-      create(:track, show: previous_show, position: 1, songs: [ song ], slug: 'tweezer-4'),
-      create(:track, show: next_show, position: 1, songs: [ song ], slug: 'tweezer-5')
-    ]
+
+  before do
+    tracks
+    known_dates
   end
 
   describe "GET /shows/:date" do
@@ -95,9 +100,11 @@ RSpec.describe "API v2 Shows" do
 
     context "with tag_slug filter" do
       let!(:tag) { create(:tag, name: "Classic", priority: 1) }
-      let!(:show_tag) { create(:show_tag, show: show1, tag:, notes: "A classic show") }
+      let(:show_tag) { create(:show_tag, show: show1, tag:, notes: "A classic show") }
 
       it "returns shows filtered by tag_slug" do
+        show_tag
+
         get_api_authed(user, "/shows", params: { tag_slug: tag.slug })
         expect(response).to have_http_status(:ok)
 
@@ -109,9 +116,11 @@ RSpec.describe "API v2 Shows" do
     end
 
     context "with liked_by_user set to true" do
-      let!(:like) { create(:like, user:, likable: show1) }
+      let(:like) { create(:like, user:, likable: show1) }
 
       it "returns only shows liked by the current user" do
+        like
+
         get_api_authed(user, "/shows", params: { liked_by_user: true, page: 1, per_page: 3 })
         expect(response).to have_http_status(:ok)
 
@@ -157,11 +166,7 @@ RSpec.describe "API v2 Shows" do
         json = JSON.parse(response.body, symbolize_names: true)
         show_dates = json[:shows].map { |s| s[:date] }
 
-        expect(show_dates).to match_array(
-          [
-            "2022-12-30"
-          ]
-        )
+        expect(show_dates).to contain_exactly("2022-12-30")
       end
     end
 
@@ -173,13 +178,7 @@ RSpec.describe "API v2 Shows" do
         json = JSON.parse(response.body, symbolize_names: true)
         show_dates = json[:shows].map { |s| s[:date] }
 
-        expect(show_dates).to match_array(
-          [
-            "2023-01-01",
-            "2023-01-05",
-            "2022-12-30"
-          ]
-        )
+        expect(show_dates).to contain_exactly("2023-01-01", "2023-01-05", "2022-12-30")
       end
     end
 
@@ -202,9 +201,11 @@ RSpec.describe "API v2 Shows" do
       let!(:near_venue) { create(:venue, name: "Near Venue", latitude: 40.7, longitude: -74.0) }
       let!(:show_near) { create(:show, date: "2022-11-20", venue: near_venue) }
       let!(:far_venue) { create(:venue, name: "Far Venue", latitude: 34.0, longitude: -118.2) }
-      let!(:show_far) { create(:show, date: "2022-11-21", venue: far_venue) }
+      let(:show_far) { create(:show, date: "2022-11-21", venue: far_venue) }
 
       it "returns shows within the specified distance from the given coordinates" do
+        show_far
+
         get_api_authed(
           user,
           "/shows",
@@ -238,16 +239,19 @@ RSpec.describe "API v2 Shows" do
   end
 
   describe "GET /shows/day_of_year/:date" do
-    let!(:shows_on_date) do
+    let(:shows_on_date) do
       [
         create(:show, date: "2022-12-29", venue:, likes_count: 10),
         create(:show, date: "2021-12-29", venue:, likes_count: 20)
       ]
     end
-    let!(:show_on_different_date) { create(:show, date: "2022-12-28", venue:) }
+    let(:show_on_different_date) { create(:show, date: "2022-12-28", venue:) }
 
     context "with a valid date" do
       it "returns shows for that day of the year, sorted by date:desc" do
+        shows_on_date
+        show_on_different_date
+
         get_api_authed(user, "/shows/day_of_year/2022-12-29")
 
         expect(response).to have_http_status(:ok)

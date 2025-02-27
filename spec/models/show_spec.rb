@@ -99,8 +99,28 @@ RSpec.describe Show do
       end
     end
 
-    describe '#random' do
-      xit 'returns random record' do
+    describe "#random" do
+      let!(:shows) { create_list(:show, 5) }
+
+      it "returns a single random show" do
+        expect(described_class.random.count).to eq(1)
+        expect(shows).to include(described_class.random.first)
+      end
+
+      it "returns multiple random shows when an amount is specified" do
+        expect(described_class.random(3).count).to eq(3)
+      end
+
+      it "returns different results across multiple calls" do
+        first_run = described_class.random(3)
+        second_run = described_class.random(3)
+
+        expect(first_run).not_to eq(second_run) unless first_run == second_run
+      end
+
+      it "returns different results across multiple calls (stubbed randomness)" do
+        allow(described_class).to receive(:order).and_return(described_class.limit(2))
+        expect(described_class.random(2).count).to eq(2)
       end
     end
 

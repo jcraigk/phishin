@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe "Playlists", :js do
-  let(:user) { create(:user) }
   let!(:playlists) { create_list(:playlist, 3, user:) }
+  let(:user) { create(:user) }
 
   before do
     # Give each playlist a different number of likes (3, 2, 1)
@@ -47,7 +47,7 @@ RSpec.describe "Playlists", :js do
   it "submits search and navigates to the search results page" do
     visit "/playlists"
     fill_in "search", with: playlists.first.name[0, 5] # Partial search term
-    click_button "Search"
+    click_on "Search"
 
     expect(page).to have_current_path("/search?term=#{playlists.first.name[0, 5]}&scope=playlists")
 

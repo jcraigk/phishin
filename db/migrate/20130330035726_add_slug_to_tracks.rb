@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class AddSlugToTracks < ActiveRecord::Migration
   def change
     add_column :tracks, :slug, :string

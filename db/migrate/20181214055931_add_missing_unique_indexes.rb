@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class AddMissingUniqueIndexes < ActiveRecord::Migration[5.2]
   disable_ddl_transaction!
 

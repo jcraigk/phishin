@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class CreateAlbumRequests < ActiveRecord::Migration
   def change
     create_table :album_requests do |t|

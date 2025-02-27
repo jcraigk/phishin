@@ -1,16 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Songs", :js do
-  let!(:original_song) do
-    create(
-      :song,
-      title: "Original Song",
-      original: true,
-      tracks_count: 10,
-      slug: "original-song"
-    )
-  end
-  let!(:cover_song) do
+  let(:cover_song) do
     create(
       :song,
       title: "Cover Song",
@@ -19,16 +10,27 @@ RSpec.describe "Songs", :js do
       slug: "cover-song"
     )
   end
+  let(:original_song) do
+    create(
+      :song,
+      title: "Original Song",
+      original: true,
+      tracks_count: 10,
+      slug: "original-song"
+    )
+  end
 
   before do
+    cover_song
+    original_song
     visit "/songs"
   end
 
   it "displays the sidebar with sorting and filtering options" do
     expect(page).to have_css(".sidebar-title", text: "Songs")
     expect(page).to have_css(".sidebar-subtitle", text: "2 total")
-    expect(page).to have_css("select#sort")
-    expect(page).to have_css("input#search")
+    expect(page).to have_select("sort")
+    expect(page).to have_field("search")
     expect(page).to have_button("Search")
   end
 
@@ -50,7 +52,7 @@ RSpec.describe "Songs", :js do
 
   it "submits search and navigates to the search results page" do
     fill_in "search", with: "Original"
-    click_button "Search"
+    click_on "Search"
 
     expect(page).to have_current_path("/search?term=Original&scope=songs")
   end

@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class AddTourIdToShows < ActiveRecord::Migration
   def change
     add_column :shows, :tour_id, :integer

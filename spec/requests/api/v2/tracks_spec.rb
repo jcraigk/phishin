@@ -6,7 +6,6 @@ RSpec.describe "API v2 Tracks" do
   let!(:show1) { create(:show, date: "2023-01-01") }
   let!(:show2) { create(:show, date: "2024-01-01") }
   let!(:show3) { create(:show, date: "2025-01-01") }
-
   let!(:songs) do
     [
       create(:song, title: "Song 1", slug: "song-1"),
@@ -14,7 +13,6 @@ RSpec.describe "API v2 Tracks" do
       create(:song, title: "Song 3", slug: "song-3")
     ]
   end
-
   let!(:tracks) do
     [
       create(:track, title: "Track 1", position: 1, duration: 300, likes_count: 10, show: show1,
@@ -27,15 +25,18 @@ songs: [ songs[2] ]),
 songs: [ songs[0], songs[1] ])
     ]
   end
-
-  let!(:track_tags) do
+  let(:like) { create(:like, user:, likable: tracks[0]) }
+  let(:track_tags) do
     [
       create(:track_tag, track: tracks[0], tag:, notes: "A classic track"),
       create(:track_tag, track: tracks[1], tag:, notes: "Another classic track")
     ]
   end
 
-  let!(:like) { create(:like, user:, likable: tracks[0]) }
+  before do
+    like
+    track_tags
+  end
 
   describe "GET /tracks" do
     context "with no filters" do
@@ -116,8 +117,8 @@ songs: [ songs[0], songs[1] ])
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
-        expect(json[:tracks][0][:liked_by_user]).to eq(true)  # Track 1 is liked
-        expect(json[:tracks][1][:liked_by_user]).to eq(false) # Track 2 is not liked
+        expect(json[:tracks][0][:liked_by_user]).to be(true)  # Track 1 is liked
+        expect(json[:tracks][1][:liked_by_user]).to be(false) # Track 2 is not liked
       end
     end
   end
@@ -130,7 +131,7 @@ songs: [ songs[0], songs[1] ])
 
       json = JSON.parse(response.body, symbolize_names: true)
       expect(json[:id]).to eq(track.id)
-      expect(json[:liked_by_user]).to eq(true) # Track 1 is liked by the user
+      expect(json[:liked_by_user]).to be(true) # Track 1 is liked by the user
     end
 
     it "returns a track that is not liked by the user with liked_by_user set to false" do
@@ -140,7 +141,7 @@ songs: [ songs[0], songs[1] ])
 
       json = JSON.parse(response.body, symbolize_names: true)
       expect(json[:id]).to eq(track.id)
-      expect(json[:liked_by_user]).to eq(false) # Track 2 is not liked by the user
+      expect(json[:liked_by_user]).to be(false) # Track 2 is not liked by the user
     end
 
     it "returns a 404 error if the track does not exist" do

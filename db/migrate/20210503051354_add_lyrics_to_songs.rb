@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class AddLyricsToSongs < ActiveRecord::Migration[6.1]
   def change
     add_column :songs, :lyrics, :text

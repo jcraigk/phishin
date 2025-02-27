@@ -73,20 +73,24 @@ RSpec.describe "API v2 Tours" do
   end
 
   describe "GET /tours/:slug" do
-    let!(:show1) do
+    let(:show1) do
       create(
         :show,
         tour: tour1,
         date: "2022-06-15"
       )
     end
-
-    let!(:show2) do
+    let(:show2) do
       create(
         :show,
         tour: tour1,
         date: "2022-07-10"
       )
+    end
+
+    before do
+      show1
+      show2
     end
 
     it "returns the specified tour by slug, including shows" do

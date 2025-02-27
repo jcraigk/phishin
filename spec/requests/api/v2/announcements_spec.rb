@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "API v2 Announcements" do
-  let!(:announcements) do
+  let(:announcements) do
     105.times.map do |i|
       create(:announcement, title: "Announcement #{i}", created_at: i.days.ago)
     end
@@ -9,6 +9,8 @@ RSpec.describe "API v2 Announcements" do
 
   describe "GET /api/v2/announcements" do
     it "returns the last 100 announcements ordered by created_at desc" do
+      announcements
+
       get_api "/announcements"
 
       expect(response).to have_http_status(:ok)

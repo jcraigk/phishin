@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class CreateTracks < ActiveRecord::Migration
   def change
     create_table :tracks do |t|

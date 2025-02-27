@@ -64,8 +64,7 @@ RSpec.describe TrackInserter do
       end
     end
 
-    # TODO: Fix @track being nil in test, but not binding.irb or dev/prod :shrug:
-    xcontext 'when entities exist' do
+    context 'when entities exist', skip:  "Fix @track being nil in test (works outside test)" do
       let!(:sbd_tag) { create(:tag, name: 'SBD') }
       let(:new_track) { show.tracks.sort_by(&:position).second }
 

@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class MoreIndexes < ActiveRecord::Migration[5.2]
   def change
     remove_index :playlist_tracks, name: 'index_playlist_tracks_on_position'

@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class CreateKnownDates < ActiveRecord::Migration[5.2]
   def change
     create_table :known_dates do |t|

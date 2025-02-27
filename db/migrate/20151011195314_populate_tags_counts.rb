@@ -1,4 +1,3 @@
-# frozen_string_literal: true
 class PopulateTagsCounts < ActiveRecord::Migration
   def up
     execute 'update shows set tags_count=(select count(*) from show_tags where show_id=shows.id)'
