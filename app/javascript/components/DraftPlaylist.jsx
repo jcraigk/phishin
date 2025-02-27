@@ -23,7 +23,8 @@ const DraftPlaylist = () => {
   const { name, description, published } = draftPlaylistMeta;
 
   const handleEditDetails = () => {
-    openDraftPlaylistModal();
+    setAlert("Playlist edits temporarily disabled for server maintenance");
+    // openDraftPlaylistModal();
   };
 
   const handleImportActivePlaylist = () => {
