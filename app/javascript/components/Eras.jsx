@@ -138,7 +138,7 @@ const Eras = () => {
         <DiscordButton />
       </div>
 
-      <p className="has-text-weight-bold mb-2 mt-5">Download mobile app</p>
+      <p className="has-text-weight-bold mb-2 mt-5">Mobile apps</p>
       <MobileApps />
     </div>
   );
