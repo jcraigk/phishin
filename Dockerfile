@@ -39,4 +39,4 @@ RUN yarn install
 COPY . .
 
 EXPOSE 3000
-CMD bundle exec puma -b tcp://0.0.0.0:3000
+CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
