@@ -13,7 +13,7 @@ Rails.application.configure do
   config.active_support.report_deprecations = false
   config.consider_all_requests_local = false
   config.eager_load = true
-  config.force_ssl = true
+  config.force_ssl = false
   config.i18n.fallbacks = true
   config.require_master_key = true
 end
