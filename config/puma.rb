@@ -5,3 +5,4 @@ threads threads_count, threads_count
 port 3000
 environment ENV.fetch("RAILS_ENV", "development")
 plugin :tmp_restart
+bind "tcp://0.0.0.0:3000"
