@@ -28,7 +28,7 @@ class AlbumZipCleanupJob
   private
 
   def target_size
-    App.album_zip_disk_limit - BUFFER
+    App.album_disk_limit - BUFFER
   end
 
   def get_total_size
