@@ -43,7 +43,6 @@ export const formatDate = (dateString) => {
   return formattedDate;
 };
 
-
 export const toggleLike = async ({ id, type, isLiked }) => {
   const url = `/api/v2/likes?likable_type=${type}&likable_id=${id}`;
   const method = isLiked ? "DELETE" : "POST";

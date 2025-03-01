@@ -24,12 +24,6 @@ export const paginationHelper = (initialPage, initialSortOption, initialPerPage,
     setTempPerPage(e.target.value);
   };
 
-  const submitPerPage = () => {
-    if (tempPerPage && !isNaN(tempPerPage) && tempPerPage > 0) {
-      navigate(`?page=1&sort=${currentSortOption}&first_char=${firstChar}&per_page=${tempPerPage}&filter=${filter}`);
-    }
-  };
-
   const handlePerPageBlurOrEnter = (e) => {
     if (e.type === "blur" || (e.type === "keydown" && e.key === "Enter")) {
       e.preventDefault();
