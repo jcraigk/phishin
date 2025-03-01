@@ -4,5 +4,17 @@
       "predeploy": "bundle exec rails db:migrate && bundle exec rails assets:precompile",
       "postdeploy": "if [ -n \"$DISCORD_WEBHOOK_URL\" ]; then JSON_STRING=\"{\\\"content\\\":\\\"[$GIT_REV](https://github.com/jcraigk/phishin/commit/$GIT_REV) successfully deployed\\\"}\"; curl -X POST -H 'Content-Type: application/json' --data \"$JSON_STRING\" $DISCORD_WEBHOOK_URL; fi"
     }
+  },
+  "healthchecks": {
+    "web": [
+      {
+        "type": "startup",
+        "name": "web check",
+        "path": "/health",
+        "timeout": 3,
+        "attempts": 3,
+        "wait": 5
+      }
+    ]
   }
 }
