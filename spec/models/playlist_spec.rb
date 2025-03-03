@@ -62,7 +62,7 @@ RSpec.describe Playlist do
     end
   end
 
-  describe '#update_duration' do
+  describe '#save_duration' do
     let!(:playlist) { create(:playlist, tracks_count: 3) }
 
     it 'updates the playlist duration after adding tracks' do

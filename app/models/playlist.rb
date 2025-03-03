@@ -25,9 +25,9 @@ class Playlist < ApplicationRecord
 
   scope :published, -> { where(published: true) }
 
-  after_save :update_duration
+  after_save :save_duration
 
-  def update_duration
+  def save_duration
     update_column(:duration, playlist_tracks.sum(:duration)) if self.persisted?
   end
 

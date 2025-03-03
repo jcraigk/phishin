@@ -47,6 +47,7 @@ group :development do
   gem "rubocop-capybara"
   gem "rubocop-factory_bot"
   gem "rubocop-performance"
+  gem "rubocop-rails-omakase"
   gem "rubocop-rake"
   gem "rubocop-rspec_rails"
   gem "rubocop-rspec"

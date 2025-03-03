@@ -1,7 +1,7 @@
 require "sidekiq/web"
 
 Rails.application.routes.draw do
-  get "/health", to: proc { [200, {}, ["OK"]] }
+  get "/health", to: proc { [ 200, {}, [ "OK" ] ] }
 
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
     ActiveSupport::SecurityUtils.secure_compare(

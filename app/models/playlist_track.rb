@@ -7,9 +7,9 @@ class PlaylistTrack < ApplicationRecord
             uniqueness: { scope: :playlist_id }
 
   before_save :assign_duration
-  after_create :update_playlist_duration
-  after_update :update_playlist_duration
-  after_destroy :update_playlist_duration
+  after_create :save_playlist_duration
+  after_update :save_playlist_duration
+  after_destroy :save_playlist_duration
 
   private
 
@@ -32,7 +32,7 @@ class PlaylistTrack < ApplicationRecord
     dur.negative? ? track.duration : dur
   end
 
-  def update_playlist_duration
-    playlist.update_duration
+  def save_playlist_duration
+    playlist.save_duration
   end
 end
