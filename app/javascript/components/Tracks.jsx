@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faScissors } from "@fortawesome/free-solid-svg-icons";
 
 const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, highlight, trackRefs, trackSlug }) => {
-  const { playTrack, activeTrack, setCustomPlaylist  } = useOutletContext();
+  const { playTrack, activeTrack, setCustomPlaylist } = useOutletContext();
 
   const handleTrackClick = (track) => {
     playTrack(tracks, track);
@@ -53,9 +53,8 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
     return (
       <li
         key={track.id}
-        className={`list-item ${viewStyle === "show" ? "track-item" : ""} ${
-          track.id === activeTrack?.id ? "active-item" : ""
-        } ${viewStyle === "show" && track.slug === trackSlug ? "focus" : ""}`}
+        className={`list-item ${viewStyle === "show" ? "track-item" : ""} ${track.id === activeTrack?.id ? "active-item" : ""
+          } ${viewStyle === "show" && track.slug === trackSlug ? "focus" : ""}`}
         onClick={() => handleTrackClick(track)}
         ref={trackRefs ? (el) => (trackRefs.current[track.position - 1] = el) : null}
       >
@@ -69,6 +68,8 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
                   css="cover-art-small"
                   size="small"
                 />
+                <HighlightedText text={truncate(track.title, 50)} highlight={highlight} />
+
                 <span className="text date-link">
                   <Link to={`/${track.show_date}/${track.slug}`} onClick={(e) => e.stopPropagation()}>
                     {formatDate(track.show_date)}
@@ -76,7 +77,6 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
                 </span>{" "}
               </>
             )}
-            <HighlightedText text={truncate(track.title, 50)} highlight={highlight} />
           </span>
           {viewStyle !== "show" && !omitSecondary && (
             <span className="leftside-secondary">{track.venue_location}</span>
@@ -113,23 +113,23 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
         <ul>
           {viewStyle === "show"
             ? Object.entries(
-                tracks.reduce((groups, track) => {
-                  (groups[track.set_name] = groups[track.set_name] || []).push(track);
-                  return groups;
-                }, {})
-              ).map(([setName, setTracks]) => (
-                <div key={setName} className="set-group">
-                  <div className="section-title">
-                    <div className="title-left">{setName}</div>
-                    <span className="detail-right">
-                      {formatDurationShow(
-                        setTracks.reduce((total, t) => total + t.duration, 0)
-                      )}
-                    </span>
-                  </div>
-                  <ul>{setTracks.map(renderTrackItem)}</ul>
+              tracks.reduce((groups, track) => {
+                (groups[track.set_name] = groups[track.set_name] || []).push(track);
+                return groups;
+              }, {})
+            ).map(([setName, setTracks]) => (
+              <div key={setName} className="set-group">
+                <div className="section-title">
+                  <div className="title-left">{setName}</div>
+                  <span className="detail-right">
+                    {formatDurationShow(
+                      setTracks.reduce((total, t) => total + t.duration, 0)
+                    )}
+                  </span>
                 </div>
-              ))
+                <ul>{setTracks.map(renderTrackItem)}</ul>
+              </div>
+            ))
             : tracks.map(renderTrackItem)}
         </ul>
       )}
