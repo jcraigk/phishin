@@ -9,7 +9,7 @@ class GapService < ApplicationService
 
   def update_song_gaps_for_show
     ActiveRecord::Base.transaction do
-      show.tracks.each do |track|
+      show.tracks.where.not(set: "S").each do |track|
         track.songs.each do |song|
           song_track = SongsTrack.find_by(track_id: track.id, song_id: song.id)
 
@@ -32,13 +32,17 @@ next_performance&.show&.date)
   def find_previous_performance(song, track)
     previous_tracks = Track.joins(:show, :songs)
                            .where(songs: { id: song.id })
+                           .where("tracks.set <> ?", "S")
                            .where("shows.date < ?", track.show.date)
                            .order("shows.date DESC, tracks.position DESC")
 
-    previous_tracks_within_show = track.show.tracks.joins(:songs)
-                                              .where(songs: { id: song.id })
-                                              .where("tracks.position < ?", track.position)
-                                              .order("tracks.position DESC")
+    previous_tracks_within_show = track.show
+                                       .tracks
+                                       .joins(:songs)
+                                       .where(songs: { id: song.id })
+                                       .where("tracks.set <> ?", "S")
+                                       .where("tracks.position < ?", track.position)
+                                       .order("tracks.position DESC")
 
     return previous_tracks_within_show.first if previous_tracks_within_show.exists?
 
@@ -48,13 +52,17 @@ next_performance&.show&.date)
   def find_next_performance(song, track)
     next_tracks = Track.joins(:show, :songs)
                        .where(songs: { id: song.id })
+                       .where("tracks.set <> ?", "S")
                        .where("shows.date > ?", track.show.date)
                        .order("shows.date ASC, tracks.position ASC")
 
-    next_tracks_within_show = track.show.tracks.joins(:songs)
-                                            .where(songs: { id: song.id })
-                                            .where("tracks.position > ?", track.position)
-                                            .order("tracks.position ASC")
+    next_tracks_within_show = track.show
+                                   .tracks
+                                   .joins(:songs)
+                                   .where(songs: { id: song.id })
+                                   .where("tracks.set <> ?", "S")
+                                   .where("tracks.position > ?", track.position)
+                                   .order("tracks.position ASC")
 
     return next_tracks_within_show.first if next_tracks_within_show.exists?
 

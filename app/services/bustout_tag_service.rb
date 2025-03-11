@@ -6,7 +6,7 @@ class BustoutTagService < ApplicationService
   param :show
 
   def call
-    show.tracks.each do |track|
+    show.tracks.where.not(set: "S").each do |track|
       track.songs_tracks.each do |songs_track|
         prev_perf_gap = songs_track.previous_performance_gap
         next unless prev_perf_gap && prev_perf_gap > MIN_GAP
