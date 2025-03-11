@@ -2,7 +2,7 @@ class DebutTagService < ApplicationService
   param :show
 
   def call
-    show.tracks.each do |track|
+    show.tracks.where.not(set: "S").each do |track|
       track.songs.each do |song|
         next unless song.tracks_count == 1
         apply_debut_tag(track)
