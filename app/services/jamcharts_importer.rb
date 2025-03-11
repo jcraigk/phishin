@@ -74,7 +74,7 @@ class JamchartsImporter < ApplicationService
     song = find_song_by_title(item["song"])
     return if handle_ambiguous_item(item)
 
-    show.tracks.where.not(set: "S").sort_by(&:position).each do |track|
+    show.tracks.where.not(set: "S").order(:position).each do |track|
       next if song.nil?
 
       st = SongsTrack.where(song_id: song.id, track_id: track.id).first
