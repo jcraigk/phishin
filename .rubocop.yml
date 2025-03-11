@@ -1,15 +1,13 @@
 inherit_gem:
   rubocop-rails-omakase: rubocop.yml
 
-require:
+plugins:
   - rubocop-capybara
   - rubocop-factory_bot
-  - rubocop-rspec_rails
-
-plugins:
   - rubocop-performance
   - rubocop-rake
   - rubocop-rspec
+  - rubocop-rspec_rails
 
 AllCops:
   NewCops: enable
