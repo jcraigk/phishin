@@ -30,6 +30,11 @@ const Faq = () => {
         <EmailButton />
       </p>
 
+      <h3>Does the site host solo content of Phish members?</h3>
+      <p>
+        No, only Phish content is available on the site. However, you can find <a href="https://relisten.net/trey" target="_blank">Trey solo content on Relisten</a>.
+      </p>
+
       <h3>Are there any keyboard shortcuts?</h3>
       <p>Yes. To control audio playback, use Spacebar to toggle play/pause, left/right arrow keys to skip tracks, and hold shift and press left/right arrow keys to seek by 10 seconds.</p>
 
