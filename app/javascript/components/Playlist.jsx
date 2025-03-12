@@ -133,7 +133,7 @@ const Playlist = () => {
             </div>
           </div>
         )}
-        <Tracks tracks={tracks} viewStyle="playlist" omitSecondary={true} />
+        <Tracks tracks={tracks} viewStyle="playlist" numbering={true} omitSecondary={true} />
       </LayoutWrapper>
     </>
   );

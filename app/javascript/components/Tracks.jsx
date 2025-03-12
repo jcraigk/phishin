@@ -53,16 +53,19 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
     return (
       <li
         key={track.id}
-        className={`list-item ${viewStyle === "show" ? "track-item" : ""} ${
-          track.id === activeTrack?.id ? "active-item" : ""
-        } ${viewStyle === "show" && track.slug === trackSlug ? "focus" : ""}`}
+        className={[
+          "list-item",
+          viewStyle === "show" ? "track-item" : "",
+          track.id === activeTrack?.id ? "active-item" : "",
+          viewStyle === "show" && track.slug === trackSlug ? "focus" : ""
+        ].filter(Boolean).join(" ")}
         onClick={() => handleTrackClick(track)}
         ref={trackRefs ? (el) => (trackRefs.current[track.position - 1] = el) : null}
       >
         <div className="main-row">
           {numbering && <span className="leftside-numbering">#{index + 1}</span>}
           <span className="leftside-primary">
-            {viewStyle !== "show" && (
+            {!viewStyle && (
               <>
                 <CoverArt
                   coverArtUrls={track.show_cover_art_urls}
@@ -76,7 +79,16 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
                 </span>{" "}
               </>
             )}
-            <HighlightedText text={truncate(track.title, 50)} highlight={highlight} />
+            <>
+              <HighlightedText text={truncate(track.title, 50)} highlight={highlight} />
+              {viewStyle === "playlist" && (
+                <span className="text date-link">
+                  <Link to={`/${track.show_date}/${track.slug}`} onClick={(e) => e.stopPropagation()}>
+                    {formatDate(track.show_date)}
+                  </Link>
+                </span>
+              )}
+            </>
           </span>
           {viewStyle !== "show" && !omitSecondary && (
             <span className="leftside-secondary">{track.venue_location}</span>
