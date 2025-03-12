@@ -45,8 +45,7 @@ module Phishin
       port: 587,
       authentication: :plain
     }
-    config.hosts << config.web_host if config.web_host
-    config.hosts << "172.17.0.5" # Allow Dokku health checks
+    config.hosts.clear # Rely on dokku/nginx for host checking
     config.active_storage.service = :local
     config.active_storage.variant_processor = :mini_magick
   end
