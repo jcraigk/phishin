@@ -25,7 +25,7 @@ gem "puma"
 gem "pstore"
 gem "rack-cors"
 gem "rails"
-gem "react_on_rails", "14.0.5" # TODO: Update (fix stream package issue)
+gem "react_on_rails"
 gem "ruby-mp3info"
 gem "ruby-progressbar"
 gem "rubyzip"
