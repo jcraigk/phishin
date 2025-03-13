@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.4.1"
+ruby "3.4.2"
 
 gem "actionpack-action_caching"
 gem "chronic"
@@ -35,7 +35,6 @@ gem "sidekiq"
 gem "sidekiq-scheduler"
 gem "sitemap_generator"
 gem "shakapacker"
-gem "slim"
 gem "sorcery"
 gem "typhoeus"
 gem "waveform"
