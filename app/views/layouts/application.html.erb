@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+ <head>
+   <title><%= @meta[:title] || App.app_name %></title>
+   <link rel="canonical" href="<%= request.base_url %><%= request.path %>">
+   <link rel="icon" type="image/x-icon" href="/favicon.ico">
+   <link rel="icon" type="image/png" sizes="192x192" href="<%= image_pack_url("static/images/logo-square-192.png") %>">
+   <link rel="apple-touch-icon" href="<%= image_pack_url("static/images/logo-square-180.png") %>">
+   <%= auto_discovery_link_tag :rss, "/feeds/rss", title: "#{App.app_name} Updates" %>
+   <%= javascript_pack_tag "application" %>
+   <%= stylesheet_pack_tag "application" %>
+   <%= render "layouts/meta" %>
+ </head>
+ <%= render "analytics/google" %>
+ <body>
+   <div id="root"><%= react_component("App", props: @react_props) %></div>
+ </body>
+</html>

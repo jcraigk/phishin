@@ -1,3 +1,5 @@
+@use "./variables" as *;
+
 .tag-badges-container {
   display: flex;
   flex-wrap: nowrap;

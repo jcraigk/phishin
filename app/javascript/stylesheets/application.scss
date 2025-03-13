@@ -1,43 +1,27 @@
+@use "sass:meta";
+@use "./variables" as *;
+@use "./bulma-overrides";
+@use "./content";
+@use "./eras";
+@use "./errors";
+@use "./feedback";
+@use "./likes";
+@use "./map";
+@use "./mobile";
+@use "./modal";
+@use "./navbar";
+@use "./pagination";
+@use "./player";
+@use "./playlist";
+@use "./search";
+@use "./tags";
+@use "./tooltips";
+
 @import "~@fontsource/marck-script/400.css";
 @import "~@fontsource/open-sans-condensed/300.css";
 @import "~@fontsource/open-sans-condensed/700.css";
-@import '~mapbox-gl/dist/mapbox-gl.css';
-@import "bulma/css/versions/bulma-no-dark-mode.min";
-
-$alert-red: #c6867f;
-$bg-red: #ffe4e1;
-$error-red: #b65b5b;
-$highlight-orange: #ff9d15;
-$bg-blue: #cbf3ff;
-$blue: #03BBF2;
-$google-blue: #5385ed;
-$highlight-blue: #ABD9FF;
-$bg-gray: #f2f3f5;
-$border-gray: #e3e3e3;
-$control-gray: #f5f5f5;
-$dark-gray: #3a3a3a;
-$header-gray: #c7c8ca;
-$inactive-gray: #d9dbdc;
-$text-gray: #6d6f71;
-$title-gray: #515152;
-$radius: 0.5rem;
-
-@import "./bulma-overrides.css.scss";
-@import "./content.css.scss";
-@import "./eras.css.scss";
-@import "./errors.css.scss";
-@import "./feedback.css.scss";
-@import "./likes.css.scss";
-@import "./map.css.scss";
-@import "./mobile.css.scss";
-@import "./modal.css.scss";
-@import "./navbar.css.scss";
-@import "./pagination.css.scss";
-@import "./player.css.scss";
-@import "./playlist.css.scss";
-@import "./search.css.scss";
-@import "./tags.css.scss";
-@import "./tooltips.css.scss";
+@import "~mapbox-gl/dist/mapbox-gl.css";
+@include meta.load-css("~bulma/css/versions/bulma-no-dark-mode.min");
 
 html, body {
   margin: 0;
@@ -160,7 +144,7 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(0, 0, 0, 0.6);
   z-index: 99;
 
   .loader-content {

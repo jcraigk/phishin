@@ -1,5 +1,7 @@
+@use "./variables" as *;
+
 #navbar-background {
-  background-color: rgba($header-gray, 0.7);
+  background-color: $navbar-gray;
   width: 100%;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   z-index: 2;
@@ -11,12 +13,17 @@
   max-width: 1200px;
   margin: 0 auto;
 
+  .navbar-start, .navbar-end {
+    background-color: $navbar-gray;
+  }
+
   .navbar-burger {
     color: $text-gray;
   }
 
   .navbar-brand {
     padding-left: 0.5rem;
+    background-color: $navbar-gray;
 
     a:hover {
       background-color: transparent;

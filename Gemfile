@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.4.1"
+ruby "3.4.2"
 
 gem "actionpack-action_caching"
 gem "chronic"
@@ -25,7 +25,7 @@ gem "puma"
 gem "pstore"
 gem "rack-cors"
 gem "rails"
-gem "react_on_rails", "14.0.5" # TODO: Update (fix stream package issue)
+gem "react_on_rails"
 gem "ruby-mp3info"
 gem "ruby-progressbar"
 gem "rubyzip"
@@ -35,7 +35,6 @@ gem "sidekiq"
 gem "sidekiq-scheduler"
 gem "sitemap_generator"
 gem "shakapacker"
-gem "slim"
 gem "sorcery"
 gem "typhoeus"
 gem "waveform"

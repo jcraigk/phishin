@@ -1,3 +1,5 @@
+@use "./variables" as *;
+
 .dropdown-menu {
   z-index: 101; /* Higher than audio player */
 }

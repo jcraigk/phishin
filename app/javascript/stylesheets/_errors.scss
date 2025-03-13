@@ -1,3 +1,5 @@
+@use "./variables" as *;
+
 .error-page {
   display: flex;
   flex-direction: column;

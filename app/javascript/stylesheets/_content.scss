@@ -1,3 +1,5 @@
+@use "./variables" as *;
+
 main {
   flex: 1;
 }
@@ -20,7 +22,7 @@ main {
 }
 
 #sidebar {
-  background-color: rgba($header-gray, 0.7);
+  background-color: $navbar-gray;
   padding: 1rem;
   flex: 0 0 16rem;
   border-radius: $radius;
@@ -391,7 +393,7 @@ main {
       left: 1rem;
       right: 1rem;
       height: 1px;
-      background-color: rgba($header-gray, 0.7);
+      background-color: $navbar-gray;
     }
 
     &:first-of-type {
@@ -645,7 +647,7 @@ main {
     width: 100%;
     flex: none !important;
     padding: 0.3rem;
-    background-color: rgba($header-gray, 0.7);
+    background-color: $navbar-gray;
 
     .sidebar-content {
       display: flex;
