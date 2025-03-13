@@ -10,6 +10,7 @@ gem "dalli"
 gem "dry-initializer"
 gem "geocoder"
 gem "google-api-client"
+gem "googleauth"
 gem "grape"
 gem "grape-entity"
 gem "grape-swagger"
@@ -51,6 +52,7 @@ group :development do
   gem "rubocop-rspec_rails"
   gem "rubocop-rspec"
   gem "rubocop"
+  gem "webrick"
 end
 
 group :test do
