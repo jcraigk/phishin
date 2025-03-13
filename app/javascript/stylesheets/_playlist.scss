@@ -1,3 +1,5 @@
+@use "./variables" as *;
+
 .playlist-description-container {
   overflow: hidden;
   text-overflow: ellipsis;
