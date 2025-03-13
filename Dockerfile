@@ -21,6 +21,7 @@ RUN apt-get update -qq && \
       imagemagick \
       libmagickwand-dev \
       libjpeg-dev \
+      libyaml-dev \
     && apt-get clean
 
 # Install Node and Yarn
