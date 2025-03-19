@@ -74,9 +74,7 @@
     border-radius: $radius !important;
 
     .icon {
-      margin-right: 0.5rem;
-      position: relative;
-      top: 2px;
+      margin-right: 0.5rem !important;
       color: $text-gray;
       width: 1.2rem;
     }
