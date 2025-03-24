@@ -204,7 +204,7 @@ main {
   margin-right: 0.5rem;
   display: inline-flex;
   align-items: center;
-  width: 3.8rem;
+  min-width: 3.8rem;
 
   &:hover {
     text-decoration: underline;
@@ -385,7 +385,7 @@ main {
     background-size: cover;
     background-repeat: no-repeat;
 
-    &::after {
+    &:not(:last-child)::after {
       content: "";
       display: block;
       position: absolute;
@@ -761,6 +761,7 @@ main {
   .leftside-primary {
     font-size: 1.6rem !important;
     padding-right: 0.1rem !important;
+    max-width: none !important;
   }
 
   .leftside-numbering {
