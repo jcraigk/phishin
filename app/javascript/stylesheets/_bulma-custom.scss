@@ -1,5 +1,27 @@
 @use "./variables" as *;
 
+@use "~bulma/sass/base/generic";
+@use "~bulma/sass/base/minireset";
+@use "~bulma/sass/base/skeleton";
+@use "~bulma/sass/components/dropdown";
+@use "~bulma/sass/components/navbar";
+@use "~bulma/sass/elements/button";
+@use "~bulma/sass/elements/icon";
+@use "~bulma/sass/elements/notification";
+@use "~bulma/sass/elements/title";
+@use "~bulma/sass/form/input-textarea";
+@use "~bulma/sass/form/select";
+@use "~bulma/sass/form/tools";
+@use "~bulma/sass/helpers/float";
+@use "~bulma/sass/helpers/spacing";
+@use "~bulma/sass/themes/light";
+@use "~bulma/sass/themes/setup";
+
+:root {
+  @include light.light-theme;
+  @include setup.setup-theme;
+}
+
 .dropdown-menu {
   z-index: 101; /* Higher than audio player */
 }

@@ -25,7 +25,7 @@ const AppModal = ({ isOpen, onRequestClose, modalContent }) => {
     },
     overlay: {
       backgroundColor: "rgba(0, 0, 0, 0.75)",
-      zIndex: 105
+      zIndex: 103
     }
   };
 

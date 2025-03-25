@@ -1,6 +1,6 @@
-@use "sass:meta";
 @use "./variables" as *;
-@use "./bulma-overrides";
+
+@use "./bulma-custom";
 @use "./content";
 @use "./eras";
 @use "./errors";
@@ -21,7 +21,6 @@
 @import "~@fontsource/open-sans-condensed/300.css";
 @import "~@fontsource/open-sans-condensed/700.css";
 @import "~mapbox-gl/dist/mapbox-gl.css";
-@include meta.load-css("~bulma/css/versions/bulma-no-dark-mode.min");
 
 html, body {
   margin: 0;
