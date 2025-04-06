@@ -13,7 +13,7 @@ const ApiDocs = () => {
       <h1 className="title">API Documentation</h1>
       <p>Phish.in provides programmatic access to content for free via a RESTful JSON API. There are two versions of the API. Version 2 is the latest stable version and is recommended. However, version 1 will remain supported for the foreseeable future.</p>
 
-      <hr className="mb-6" />
+      <hr className="mt-6 mb-6" />
 
       <h2 className="title">API v2</h2>
       <h3 className="subtitle">Recommended Version</h3>
@@ -30,7 +30,7 @@ const ApiDocs = () => {
         <FontAwesomeIcon icon={faExternalLinkAlt} className="ml-2" />
       </a>
 
-      <hr className="mb-6" />
+      <hr className="mt-6 mb-6" />
 
       <h2 className="title">API v1</h2>
       <h3 className="subtitle">Legacy Version</h3>
