@@ -13,7 +13,7 @@ const MobileApps = ({ className }) => {
       >
         <img
           src={relistenIcon}
-          alt="iOS app"
+          alt="Relisten"
           data-tooltip-id="tooltip-relisten"
           data-tooltip-content="Relisten (iOS / Android)"
         />
