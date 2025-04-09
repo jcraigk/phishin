@@ -6,7 +6,7 @@ Ruby on Rails and Grape API wrap a PostgreSQL database on the backend. There's a
 
 All audio is provided in MP3 format. More formats and sources may be made available at a later time. Assets including audio MP3s, waveform PNGs, and album art JPEGs are served directly from the web server and cached via CloudFlare CDN.
 
-Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and development.
+Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and development or install the [Discord Bot](https://github.com/jcraigk/phishin-discord) to query setlists and play music in voice channels.
 
 
 ## Developer Setup
