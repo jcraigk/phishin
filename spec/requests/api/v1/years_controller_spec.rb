@@ -77,7 +77,7 @@ describe Api::V1::YearsController do
     context 'when providing invalid input' do
       subject { get('/api/v1/years/bobweaver', {}, auth_header) }
 
-      include_examples 'responds with 404'
+      it_behaves_like 'responds with 404'
     end
   end
 end

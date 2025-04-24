@@ -38,7 +38,7 @@ describe Api::V1::SongsController do
     context 'when requesting invalid song' do
       subject { get('/api/v1/songs/nonexistent-song', {}, auth_header) }
 
-      include_examples 'responds with 404'
+      it_behaves_like 'responds with 404'
     end
   end
 end

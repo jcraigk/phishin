@@ -49,7 +49,7 @@ RSpec.describe SearchService do
     context 'with exact is8601 date' do
       let(:term) { "2024-10-31" }
 
-      include_examples 'expected results'
+      it_behaves_like 'expected results'
     end
 
     context 'with English month and day' do
@@ -60,13 +60,13 @@ RSpec.describe SearchService do
           other_shows: [ show1, show2, show3 ]
       end
 
-      include_examples 'expected results'
+      it_behaves_like 'expected results'
     end
 
     context 'with shortened English month and day and shortened year' do
       let(:term) { 'oct 31, 2024' }
 
-      include_examples 'expected results'
+      it_behaves_like 'expected results'
     end
   end
 
@@ -101,7 +101,7 @@ RSpec.describe SearchService do
       create(:tag, name: 'Something Else')
     end
 
-    include_examples 'expected results'
+    it_behaves_like 'expected results'
   end
 
   context 'with scope set to "tags"' do
@@ -118,7 +118,7 @@ RSpec.describe SearchService do
     let!(:show_tag) { create(:show_tag, notes: "Tagged show #{term}") }
     let!(:track_tag) { create(:track_tag, notes: "Tagged track #{term}") }
 
-    include_examples 'expected results'
+    it_behaves_like 'expected results'
   end
 
   context 'with scope set to "shows"' do
@@ -133,7 +133,7 @@ RSpec.describe SearchService do
     let!(:show) { create(:show, date: Date.today) }
     let!(:other_show) { create(:show, date: Date.today - 1.year) }
 
-    include_examples 'expected results'
+    it_behaves_like 'expected results'
   end
 
   context 'with scope set to "playlists"' do
@@ -145,6 +145,6 @@ RSpec.describe SearchService do
 
     before { create(:playlist, name: "Other Playlist", description: "Nutn") }
 
-    include_examples 'expected results'
+    it_behaves_like 'expected results'
   end
 end

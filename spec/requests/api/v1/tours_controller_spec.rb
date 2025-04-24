@@ -29,7 +29,7 @@ describe Api::V1::ToursController do
     context 'with invalid id param' do
       subject { get('/api/v1/tours/nonexistent-tour', {}, auth_header) }
 
-      include_examples 'responds with 404'
+      it_behaves_like 'responds with 404'
     end
   end
 end

@@ -38,7 +38,7 @@ describe Api::V1::VenuesController do
     context 'when requesting invalid venue' do
       subject { get('/api/v1/venues/nonexistent-venue', {}, auth_header) }
 
-      include_examples 'responds with 404'
+      it_behaves_like 'responds with 404'
     end
   end
 end

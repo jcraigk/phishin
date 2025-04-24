@@ -48,7 +48,7 @@ describe Api::V1::TracksController do
     context 'with invalid id param' do
       subject { get('/api/v1/tracks/nonexistent-track', {}, auth_header) }
 
-      include_examples 'responds with 404'
+      it_behaves_like 'responds with 404'
     end
   end
 end

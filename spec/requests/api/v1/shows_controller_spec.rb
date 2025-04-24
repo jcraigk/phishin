@@ -59,7 +59,7 @@ describe Api::V1::ShowsController do
     context 'with invalid id param' do
       subject { get('/api/v1/shows/nonexistent-show', {}, auth_header) }
 
-      include_examples 'responds with 404'
+      it_behaves_like 'responds with 404'
     end
   end
 
@@ -79,13 +79,13 @@ describe Api::V1::ShowsController do
 
       let(:show) { create(:show) }
 
-      include_examples 'responds with 404'
+      it_behaves_like 'responds with 404'
     end
 
     context 'with invalid param' do
       subject { get('/api/v1/show-on-date/invalid-date', {}, auth_header) }
 
-      include_examples 'responds with 404'
+      it_behaves_like 'responds with 404'
     end
   end
 
@@ -111,7 +111,7 @@ describe Api::V1::ShowsController do
     context 'with invalid param' do
       subject { get('/api/v1/shows-on-day-of-year/invalid-day', {}, auth_header) }
 
-      include_examples 'responds with 404'
+      it_behaves_like 'responds with 404'
     end
   end
 end

@@ -27,7 +27,7 @@ describe Api::V1::ErasController do
     context 'with invalid id param' do
       subject { get('/api/v1/eras/nonexistent-era', {}, auth_header) }
 
-      include_examples 'responds with 404'
+      it_behaves_like 'responds with 404'
     end
   end
 end
