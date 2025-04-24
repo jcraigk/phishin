@@ -4,6 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby "3.4.2"
 
 gem "actionpack-action_caching"
+gem "aws-sdk-s3"
 gem "chronic"
 gem "friendly_id"
 gem "dalli"
