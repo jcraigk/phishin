@@ -1,5 +1,5 @@
 module Backup
-  class Service < BaseService
+  class AttachmentService < BaseService
     BATCH_SIZE = 100
 
     param :model_name, proc(&:to_s)
@@ -11,9 +11,7 @@ module Backup
 
       log_info("Starting backup of #{model_name}.#{attachment_name}")
 
-      log_info("Collecting existing S3 keys...")
       existing_keys = @existing_keys || ListingService.call
-      log_info("Found #{existing_keys.size} existing keys in S3")
 
       total_count = count_attachments(model_class)
       log_info("Found #{total_count} #{model_name} records with #{attachment_name} to process")
@@ -108,8 +106,9 @@ module Backup
         s3_key = blob.key
 
         # Check if key exists in our pre-fetched set
-        if existing_keys.include?(s3_key)
-          log_info("Skipped (already exists): #{blob.filename} (#{s3_key})")
+        partitioned_key = "#{s3_key[0..1]}/#{s3_key[2..3]}/#{s3_key}"
+        if existing_keys.include?(partitioned_key)
+          log_info("Skipped (already exists): #{blob.filename} (#{partitioned_key})")
           return [ 0, 1, 0 ]
         end
 
@@ -117,9 +116,6 @@ module Backup
         begin
           # Download the file
           io = StringIO.new(blob.download)
-
-          # Construct the partitioned key path
-          partitioned_key = "#{s3_key[0..1]}/#{s3_key[2..3]}/#{s3_key}"
 
           # Upload directly to S3 using AWS SDK instead of ActiveStorage service
           s3_client.put_object(

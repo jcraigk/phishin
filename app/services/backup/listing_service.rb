@@ -21,9 +21,7 @@ module Backup
           )
 
           response.contents.each do |object|
-            # Extract the base key from the partitioned path
-            parts = object.key.split("/")
-            existing_keys << parts.last if parts.size == 3
+            existing_keys << object.key
           end
 
           next_token = response.next_continuation_token

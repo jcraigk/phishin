@@ -2,7 +2,6 @@
 namespace :backup do
   desc "Backup all configured model attachments to S3"
   task all: :environment do
-    puts "Collecting existing S3 keys..."
     existing_keys = Backup::ListingService.call
 
     Rails.application.config.attachment_backup[:attachments].each do |config|
@@ -10,7 +9,7 @@ namespace :backup do
       attachment = config[:attachment]
 
       puts "Backing up #{model} #{attachment}..."
-      Backup::Service.call(model, attachment, existing_keys)
+      Backup::AttachmentService.call(model, attachment, existing_keys)
     end
   end
 
@@ -26,7 +25,7 @@ namespace :backup do
     end
 
     puts "Backing up #{model} #{attachment}..."
-    Backup::Service.call(model, attachment)
+    Backup::AttachmentService.call(model, attachment)
   end
 
   desc "Clean up orphaned files in S3 storage"

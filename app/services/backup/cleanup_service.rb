@@ -7,51 +7,18 @@ module Backup
       valid_keys = collect_valid_attachment_keys
       log_info("Found #{valid_keys.size} valid attachment keys")
 
-      log_info("Listing S3 objects...")
-      s3_objects = []
-      total_objects = 0
-      batch_count = 0
-
-      begin
-        next_token = nil
-
-        loop do
-          response = s3_client.list_objects_v2(
-            bucket: s3_bucket_name,
-            continuation_token: next_token
-          )
-
-          batch_objects = response.contents
-          s3_objects += batch_objects
-          total_objects += batch_objects.size
-          batch_count += 1
-
-          if batch_count % 10 == 0
-            log_info("Listed #{total_objects} objects so far...")
-          end
-
-          next_token = response.next_continuation_token
-          break unless next_token
-        end
-      rescue => e
-        log_error("Error listing S3 objects: #{e.message}")
-        return 0
-      end
-
-      log_info("Found #{s3_objects.size} total objects in S3")
+      s3_objects = ListingService.call
 
       log_info("Checking objects against valid keys...")
       deleted_count = 0
 
-      s3_objects.each do |object|
-        key = object.key
-
+      s3_objects.each do |key|
         parts = key.split("/")
         prefix1, prefix2, base_key = parts
 
         unless base_key && base_key.length >= 4
-          log_info("Deleting invalid file: #{key} (invalid key format)")
-          if delete_s3_object(object.key)
+          log_info("Deleting invalid key format: #{key}")
+          if delete_s3_object(key)
             deleted_count += 1
           end
           next
@@ -62,15 +29,15 @@ module Backup
 
         if prefix1 != expected_prefix1 || prefix2 != expected_prefix2
           log_info("Deleting misplaced file: #{key} (should be in #{expected_prefix1}/#{expected_prefix2}/)")
-          if delete_s3_object(object.key)
+          if delete_s3_object(key)
             deleted_count += 1
           end
           next
         end
 
         unless valid_keys.include?(base_key)
-          log_info("Deleting orphaned file: #{key}")
-          if delete_s3_object(object.key)
+          log_info("Deleting orphaned file: #{key} (not found in #{valid_keys.size} valid keys)")
+          if delete_s3_object(key)
             deleted_count += 1
           end
         end
