@@ -1,0 +1,1 @@
+Typhoeus::Config.verbose = false

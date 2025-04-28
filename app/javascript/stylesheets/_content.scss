@@ -385,7 +385,7 @@ main {
     background-size: cover;
     background-repeat: no-repeat;
 
-    &:not(:last-child)::after {
+    &:not(:last-child):not(.focus):not(.active-item):not(:hover)::after {
       content: "";
       display: block;
       position: absolute;
