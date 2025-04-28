@@ -6,6 +6,7 @@ import LikeButton from "./LikeButton";
 import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight, faDownload, faClock } from "@fortawesome/free-solid-svg-icons";
+import { createTaperNotesModalContent } from "../helpers/modals";
 
 const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
   const dropdownRef = useRef(null);
@@ -32,17 +33,8 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
     hideDropdown();
   };
 
-  const handleTaperNotesClick = (e) => {
-    e.stopPropagation();
-    const modalContent = (
-      <>
-        <h2 className="title">Taper Notes</h2>
-        <h3 className="subtitle">{formatDate(show.date)} • {show.venue_name}</h3>
-        <p dangerouslySetInnerHTML={{ __html: (show.taper_notes || "").replace(/\n/g, "<br />") }}></p>
-      </>
-    );
-    openAppModal(modalContent);
-    hideDropdown();
+  const handleTaperNotesClick = () => {
+    openAppModal(createTaperNotesModalContent(show));
   };
 
   const toggleDropdownVisibility = (e) => {
