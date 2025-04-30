@@ -18,7 +18,7 @@ export const showLoader = async ({ params }) => {
 };
 
 import React, { useState, useRef, useEffect } from "react";
-import { Link, useLoaderData, useOutletContext, useLocation } from "react-router-dom";
+import { Link, useLoaderData, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { formatDate } from "./helpers/utils";
 import ShowContextMenu from "./controls/ShowContextMenu";
@@ -32,13 +32,12 @@ import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle 
 const Show = ({ trackSlug }) => {
   const show = useLoaderData();
   const [tracks, setTracks] = useState(show.tracks);
-  const [modalOpened, setModalOpened] = useState(false);
+  const [taperNotesModalClosed, setTaperNotesModalClosed] = useState(false);
   const trackRefs = useRef([]);
-  const { playTrack, mapboxToken, openAppModal, closeAppModal } = useOutletContext();
+  const { playTrack, openAppModal, closeAppModal } = useOutletContext();
   const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
   const [showIncompleteNotification, setShowIncompleteNotification] = useState(show.incomplete);
   const [showAdminNotesNotification, setShowAdminNotesNotification] = useState(!!show.admin_notes);
-  const location = useLocation();
 
   useEffect(() => {
     setTracks(show.tracks);
@@ -64,12 +63,11 @@ const Show = ({ trackSlug }) => {
   }, [trackSlug, tracks]);
 
   useEffect(() => {
-    const pathSegments = location.pathname.split('/');
-    if (pathSegments[2] === 'taper-notes' && !modalOpened) {
+    if (trackSlug === 'taper-notes' && !taperNotesModalClosed) {
       openAppModal(createTaperNotesModalContent(show));
-      setModalOpened(true);
+      setTaperNotesModalClosed(true);
     }
-  }, [location.pathname, show, openAppModal, modalOpened]);
+  }, [trackSlug, show, openAppModal]);
 
   const handleClose = (notificationType) => {
     if (notificationType === "incomplete") setShowIncompleteNotification(false);
