@@ -41,6 +41,7 @@ const Show = ({ trackSlug }) => {
 
   useEffect(() => {
     setTracks(show.tracks);
+    setShowIncompleteNotification(show.incomplete);
 
     const backgroundDiv = document.querySelector(".background-blur");
     if (show.cover_art_urls?.medium && backgroundDiv) {
