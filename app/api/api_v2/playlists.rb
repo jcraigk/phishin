@@ -159,7 +159,7 @@ class ApiV2::Playlists < ApiV2::Base
   helpers do
     def page_of_playlists
       playlists =
-        if params[:filter] == "liked" && current_user
+        if params[:filter].in?(%w[liked mine]) && current_user
           fetch_playlists
         else
           Rails.cache.fetch("api/v2/playlists?#{params.to_query}") { fetch_playlists }
