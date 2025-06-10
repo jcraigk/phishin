@@ -32,7 +32,7 @@ const Login = () => {
     <PageWrapper>
       <a
         href="/oauth/google"
-        className="button external-login-btn google-btn"
+        className="button external-login-btn google-btn mb-4"
       >
         <div className="login-logo">
           <img
@@ -47,7 +47,7 @@ const Login = () => {
 
       <hr />
 
-      <h2 className="subtitle">Login with Email / Password</h2>
+      <h2 className="subtitle mt-4">Login with Email / Password</h2>
       <form onSubmit={handleSubmit}>
         <div className="field">
           <label className="label" htmlFor="email">Email Address</label>
@@ -85,12 +85,13 @@ const Login = () => {
         </div>
       </form>
 
-      <div className="mt-4">
+      <div className="mt-4 mb-4">
         <Link to="/request-password-reset">Forgot your password?</Link>
       </div>
+
       <hr />
 
-      <h2 className="subtitle">Sign Up with Email</h2>
+      <h2 className="subtitle mt-4">Sign Up with Email</h2>
       <Link to="/signup" className="button">
         <FontAwesomeIcon icon={faArrowAltCircleRight} className="mr-1" />
         Sign Up
