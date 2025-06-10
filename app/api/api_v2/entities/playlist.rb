@@ -79,9 +79,12 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
         "for other users to browse and search"
     }
 
-  expose(
-      :liked_by_user
-    ) do
+  expose \
+    :liked_by_user,
+    documentation: {
+      type: "Boolean",
+      desc: "Indicates if the current user has liked this playlist"
+    } do
       unless _2[:liked_by_user].nil?
         _2[:liked_by_user]
       else
