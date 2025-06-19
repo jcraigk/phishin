@@ -5,7 +5,7 @@ import { useFeedback } from "./FeedbackContext";
 import CoverArt from "../CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause, faRotateRight, faRotateLeft, faForward, faBackward, faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import GaplessQueue from "gapless.js";
+import { Gapless5 } from "@regosen/gapless-5";
 
 const GaplessPlayer = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, openAppModal }) => {
   const location = useLocation();
@@ -29,46 +29,47 @@ const GaplessPlayer = ({ activePlaylist, activeTrack, setActiveTrack, customPlay
 
   const togglePlayPause = () => {
     if (gaplessPlayerRef.current) {
-      gaplessPlayerRef.current.togglePlayPause();
+      gaplessPlayerRef.current.playpause();
     }
   };
 
   const scrubForward = () => {
-    if (gaplessPlayerRef.current && gaplessPlayerRef.current.currentTrack) {
-      const newTime = Math.min(currentTime + 10, gaplessPlayerRef.current.currentTrack.duration || 0);
-      gaplessPlayerRef.current.seek(newTime);
+    if (gaplessPlayerRef.current) {
+      const newTime = Math.min(currentTime + 10, gaplessPlayerRef.current.getPosition() / 1000 + 10);
+      gaplessPlayerRef.current.setPosition(newTime * 1000);
     }
   };
 
   const scrubBackward = () => {
     if (gaplessPlayerRef.current) {
       const newTime = Math.max(currentTime - 10, 0);
-      gaplessPlayerRef.current.seek(newTime);
+      gaplessPlayerRef.current.setPosition(newTime * 1000);
     }
   };
 
   const skipToNextTrack = () => {
     if (gaplessPlayerRef.current) {
-      gaplessPlayerRef.current.playNext();
+      gaplessPlayerRef.current.next();
     }
   };
 
   const skipToPreviousTrack = () => {
     if (gaplessPlayerRef.current) {
       if (currentTime > 10) {
-        gaplessPlayerRef.current.seek(0);
+        gaplessPlayerRef.current.setPosition(0);
       } else {
-        gaplessPlayerRef.current.playPrevious();
+        gaplessPlayerRef.current.prev();
       }
     }
   };
 
-  // Initialize gapless player when activePlaylist changes
+    // Initialize gapless player when activePlaylist changes
   useEffect(() => {
     if (activePlaylist && activePlaylist.length > 0) {
       // Clean up existing player
       if (gaplessPlayerRef.current) {
         gaplessPlayerRef.current.stop();
+        gaplessPlayerRef.current.removeAllTracks();
         gaplessPlayerRef.current = null;
       }
 
@@ -79,61 +80,71 @@ const GaplessPlayer = ({ activePlaylist, activeTrack, setActiveTrack, customPlay
       const activeIndex = activePlaylist.findIndex(track => track.id === activeTrack?.id) || 0;
 
       // Create new gapless player
-      gaplessPlayerRef.current = new GaplessQueue({
+      gaplessPlayerRef.current = new Gapless5({
         tracks: tracks,
-        onProgress: (track) => {
-          if (track) {
-            setCurrentTime(track.currentTime || 0);
-            updateProgressBar(track.currentTime || 0, track.duration || 0);
-          }
-        },
-        onStartNewTrack: (track, index) => {
-          const newActiveTrack = activePlaylist[index];
-          if (newActiveTrack && newActiveTrack.id !== activeTrack?.id) {
-            setActiveTrack(newActiveTrack);
-            setCurrentTrackIndex(index);
-          }
-        },
-        onPlayNextTrack: (track, index) => {
-          const nextTrack = activePlaylist[index];
-          if (nextTrack) {
-            setActiveTrack(nextTrack);
-            setCurrentTrackIndex(index);
-          } else {
-            setAlert("This is the last track in the playlist");
-          }
-        },
-        onPlayPreviousTrack: (track, index) => {
-          const prevTrack = activePlaylist[index];
-          if (prevTrack) {
-            setActiveTrack(prevTrack);
-            setCurrentTrackIndex(index);
-          } else {
-            setAlert("This is the first track in the playlist");
-          }
-        },
-        onEnded: () => {
-          setIsPlaying(false);
-        }
+        loop: false,
+        singleMode: false,
+        useWebAudio: true,
+        useHTML5Audio: true,
+        volume: 1.0,
+        startingTrack: activeIndex
       });
 
-      // Set up play/pause state tracking
-      const originalPlay = gaplessPlayerRef.current.play;
-      const originalPause = gaplessPlayerRef.current.pause;
+      // Set up callbacks
+      gaplessPlayerRef.current.ontimeupdate = (current_track_time, current_track_index) => {
+        const timeInSeconds = current_track_time / 1000;
+        setCurrentTime(timeInSeconds);
+        setCurrentTrackIndex(current_track_index);
 
-      gaplessPlayerRef.current.play = function() {
-        setIsPlaying(true);
-        return originalPlay.call(this);
+        // Update progress bar
+        const currentTrack = activePlaylist[current_track_index];
+        if (currentTrack) {
+          updateProgressBar(timeInSeconds, currentTrack.duration / 1000);
+        }
       };
 
-      gaplessPlayerRef.current.pause = function() {
+      gaplessPlayerRef.current.onplay = (track_path) => {
+        setIsPlaying(true);
+      };
+
+      gaplessPlayerRef.current.onpause = (track_path) => {
         setIsPlaying(false);
-        return originalPause.call(this);
+      };
+
+      gaplessPlayerRef.current.onstop = (track_path) => {
+        setIsPlaying(false);
+      };
+
+      gaplessPlayerRef.current.onnext = (from_track, to_track) => {
+        const newIndex = gaplessPlayerRef.current.getIndex();
+        const newActiveTrack = activePlaylist[newIndex];
+        if (newActiveTrack && newActiveTrack.id !== activeTrack?.id) {
+          setActiveTrack(newActiveTrack);
+          setCurrentTrackIndex(newIndex);
+        }
+      };
+
+      gaplessPlayerRef.current.onprev = (from_track, to_track) => {
+        const newIndex = gaplessPlayerRef.current.getIndex();
+        const newActiveTrack = activePlaylist[newIndex];
+        if (newActiveTrack && newActiveTrack.id !== activeTrack?.id) {
+          setActiveTrack(newActiveTrack);
+          setCurrentTrackIndex(newIndex);
+        }
+      };
+
+      gaplessPlayerRef.current.onfinishedall = () => {
+        setIsPlaying(false);
+      };
+
+      gaplessPlayerRef.current.onerror = (track_path, error) => {
+        setAlert(`Error playing track: ${error}`);
+        setIsPlaying(false);
       };
 
       // Go to the active track
       if (activeIndex >= 0) {
-        gaplessPlayerRef.current.gotoTrack(activeIndex, false);
+        gaplessPlayerRef.current.gotoTrack(activeIndex);
         setCurrentTrackIndex(activeIndex);
       }
     }
@@ -141,6 +152,7 @@ const GaplessPlayer = ({ activePlaylist, activeTrack, setActiveTrack, customPlay
     return () => {
       if (gaplessPlayerRef.current) {
         gaplessPlayerRef.current.stop();
+        gaplessPlayerRef.current.removeAllTracks();
         gaplessPlayerRef.current = null;
       }
     };
@@ -187,17 +199,17 @@ const GaplessPlayer = ({ activePlaylist, activeTrack, setActiveTrack, customPlay
 
       setEndTime(endTime);
 
-      // Find track index and switch to it
+            // Find track index and switch to it
       const trackIndex = activePlaylist.findIndex(track => track.id === activeTrack.id);
       if (trackIndex >= 0 && trackIndex !== currentTrackIndex) {
-        gaplessPlayerRef.current.gotoTrack(trackIndex, true);
+        gaplessPlayerRef.current.gotoTrack(trackIndex);
         setCurrentTrackIndex(trackIndex);
 
         // Apply start time if specified
         if (startTime && startTime > 0) {
           setTimeout(() => {
             if (gaplessPlayerRef.current) {
-              gaplessPlayerRef.current.seek(startTime);
+              gaplessPlayerRef.current.setPosition(startTime * 1000);
             }
           }, 100);
         }
@@ -281,10 +293,10 @@ const GaplessPlayer = ({ activePlaylist, activeTrack, setActiveTrack, customPlay
   };
 
   const handleScrubberClick = (e) => {
-    if (gaplessPlayerRef.current && gaplessPlayerRef.current.currentTrack) {
+    if (gaplessPlayerRef.current && activeTrack) {
       const clickPosition = e.nativeEvent.offsetX / e.target.offsetWidth;
-      const newTime = clickPosition * (gaplessPlayerRef.current.currentTrack.duration || 0);
-      gaplessPlayerRef.current.seek(newTime);
+      const newTime = clickPosition * (activeTrack.duration / 1000);
+      gaplessPlayerRef.current.setPosition(newTime * 1000);
     }
   };
 
