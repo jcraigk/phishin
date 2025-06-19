@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useNavigation, ScrollRestoration } from "react-router-dom";
 import Navbar from "./Navbar";
 import Loader from "../controls/Loader";
-import Player from "../controls/Player";
+import GaplessPlayer from "../controls/GaplessPlayer";
 import AppModal from "../modals/AppModal";
 import DraftPlaylistModal from "../modals/DraftPlaylistModal";
 import { useFeedback } from "../controls/FeedbackContext";
@@ -30,7 +30,6 @@ const Layout = ({ props }) => {
   const [activeTrack, setActiveTrack] = useState(null);
   const [viewMode, setViewMode] = useState("grid");
   const [sortOption, setSortOption] = useState("desc");
-  const audioRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
 
   useEffect(() => {
@@ -148,7 +147,6 @@ const Layout = ({ props }) => {
             setIsDraftPlaylistSaved,
             activeTrack,
             playTrack,
-            audioRef,
             openAppModal,
             closeAppModal,
             openDraftPlaylistModal,
@@ -160,11 +158,10 @@ const Layout = ({ props }) => {
           }}
         />
       </main>
-      <Player
+      <GaplessPlayer
         activePlaylist={activePlaylist}
         activeTrack={activeTrack}
         setActiveTrack={setActiveTrack}
-        audioRef={audioRef}
         customPlaylist={customPlaylist}
         openAppModal={openAppModal}
       />
