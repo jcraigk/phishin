@@ -170,8 +170,14 @@ main.with-player {
       background-color: $blue;
       margin-top: -0.3rem !important;
 
-      &:hover {
+      &:hover:not(:disabled) {
         color: white !important;
+      }
+
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        background-color: lighten($blue, 10%);
       }
 
       svg {

@@ -4,7 +4,7 @@ import { formatDate, parseTimeParam } from "../helpers/utils";
 import { useFeedback } from "./FeedbackContext";
 import CoverArt from "../CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlay, faPause, faRotateRight, faRotateLeft, faForward, faBackward, faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faPlay, faPause, faRotateRight, faRotateLeft, faForward, faBackward, faChevronUp, faChevronDown, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { Gapless5 } from "@regosen/gapless-5";
 
 const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, openAppModal }) => {
@@ -20,6 +20,8 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   const [firstLoad, setIsFirstLoad] = useState(true);
   const [endTime, setEndTime] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingTrackPath, setLoadingTrackPath] = useState(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
 
@@ -29,6 +31,10 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
   const togglePlayPause = () => {
     if (gaplessPlayerRef.current) {
+      if (isLoading) {
+        setNotice("Track is loading, please wait a moment...");
+        return;
+      }
       gaplessPlayerRef.current.playpause();
     }
   };
@@ -79,13 +85,14 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       // Find the index of the active track
       const activeIndex = activePlaylist.findIndex(track => track.id === activeTrack?.id) || 0;
 
-      // Create new gapless player
+      // Create new gapless player with optimized settings for immediate playback
       gaplessPlayerRef.current = new Gapless5({
         tracks: tracks,
         loop: false,
         singleMode: false,
         useWebAudio: true,
-        useHTML5Audio: true,
+        useHTML5Audio: true, // This ensures immediate playback capability
+        loadLimit: 3, // Limit concurrent loading to improve performance
         volume: 1.0,
         startingTrack: activeIndex
       });
@@ -103,8 +110,30 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         }
       };
 
+      gaplessPlayerRef.current.onloadstart = (track_path) => {
+        setIsLoading(true);
+        setLoadingTrackPath(track_path);
+      };
+
+      gaplessPlayerRef.current.onload = (track_path, fully_loaded) => {
+        // Only set loading to false when HTML5 audio is ready (first load event)
+        if (!fully_loaded) {
+          setIsLoading(false);
+          setLoadingTrackPath(null);
+        }
+      };
+
+      gaplessPlayerRef.current.onplayrequest = (track_path) => {
+        // User requested play - show loading state if needed
+        if (isLoading) {
+          setNotice("Loading track...");
+        }
+      };
+
       gaplessPlayerRef.current.onplay = (track_path) => {
         setIsPlaying(true);
+        setIsLoading(false);
+        setLoadingTrackPath(null);
       };
 
       gaplessPlayerRef.current.onpause = (track_path) => {
@@ -113,6 +142,8 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
       gaplessPlayerRef.current.onstop = (track_path) => {
         setIsPlaying(false);
+        setIsLoading(false);
+        setLoadingTrackPath(null);
       };
 
       gaplessPlayerRef.current.onnext = (from_track, to_track) => {
@@ -135,11 +166,15 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
       gaplessPlayerRef.current.onfinishedall = () => {
         setIsPlaying(false);
+        setIsLoading(false);
+        setLoadingTrackPath(null);
       };
 
       gaplessPlayerRef.current.onerror = (track_path, error) => {
         setAlert(`Error playing track: ${error}`);
         setIsPlaying(false);
+        setIsLoading(false);
+        setLoadingTrackPath(null);
       };
 
       // Go to the active track
@@ -368,8 +403,15 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
             <button
               className="play-pause-btn"
               onClick={togglePlayPause}
+              disabled={isLoading}
             >
-              {isPlaying ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} className="play-icon" />}
+              {isLoading ? (
+                <FontAwesomeIcon icon={faSpinner} spin />
+              ) : isPlaying ? (
+                <FontAwesomeIcon icon={faPause} />
+              ) : (
+                <FontAwesomeIcon icon={faPlay} className="play-icon" />
+              )}
             </button>
             <button
               className="scrub-btn scrub-forward"
