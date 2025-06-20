@@ -5,11 +5,13 @@ import { useFeedback } from "./FeedbackContext";
 import CoverArt from "../CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay, faPause, faRotateRight, faRotateLeft, faForward, faBackward, faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { Gapless5 } from "@regosen/gapless-5";
 
-const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customPlaylist, openAppModal }) => {
+const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, openAppModal }) => {
   const location = useLocation();
   const scrubberRef = useRef();
   const progressBarRef = useRef();
+  const gaplessPlayerRef = useRef(null);
   const { setAlert, setNotice } = useFeedback();
   const [fadeClass, setFadeClass] = useState("fade-in");
   const [isFadeOutComplete, setIsFadeOutComplete] = useState(false);
@@ -19,31 +21,203 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
   const [endTime, setEndTime] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
 
   const togglePlayerPosition = () => {
     setIsPlayerCollapsed(!isPlayerCollapsed);
   };
 
   const togglePlayPause = () => {
-    if (audioRef.current.paused) {
-      audioRef.current.play();
-      navigator.mediaSession.playbackState = 'playing';
-      setIsPlaying(true);
-    } else {
-      audioRef.current.pause();
-      navigator.mediaSession.playbackState = 'paused';
-      setIsPlaying(false);
+    if (gaplessPlayerRef.current) {
+      gaplessPlayerRef.current.playpause();
     }
   };
 
   const scrubForward = () => {
-    audioRef.current.currentTime = Math.min(audioRef.current.currentTime + 10, audioRef.current.duration);
+    if (gaplessPlayerRef.current) {
+      const newTime = Math.min(currentTime + 10, gaplessPlayerRef.current.getPosition() / 1000 + 10);
+      gaplessPlayerRef.current.setPosition(newTime * 1000);
+    }
   };
 
   const scrubBackward = () => {
-    audioRef.current.currentTime = Math.max(audioRef.current.currentTime - 10, 0);
+    if (gaplessPlayerRef.current) {
+      const newTime = Math.max(currentTime - 10, 0);
+      gaplessPlayerRef.current.setPosition(newTime * 1000);
+    }
   };
+
+  const skipToNextTrack = () => {
+    if (gaplessPlayerRef.current) {
+      gaplessPlayerRef.current.next();
+    }
+  };
+
+  const skipToPreviousTrack = () => {
+    if (gaplessPlayerRef.current) {
+      if (currentTime > 10) {
+        gaplessPlayerRef.current.setPosition(0);
+      } else {
+        gaplessPlayerRef.current.prev();
+      }
+    }
+  };
+
+  // Initialize gapless player when activePlaylist changes
+  useEffect(() => {
+    if (activePlaylist && activePlaylist.length > 0) {
+      // Clean up existing player
+      if (gaplessPlayerRef.current) {
+        gaplessPlayerRef.current.stop();
+        gaplessPlayerRef.current.removeAllTracks();
+        gaplessPlayerRef.current = null;
+      }
+
+      // Create track URLs array
+      const tracks = activePlaylist.map(track => track.mp3_url);
+
+      // Find the index of the active track
+      const activeIndex = activePlaylist.findIndex(track => track.id === activeTrack?.id) || 0;
+
+      // Create new gapless player
+      gaplessPlayerRef.current = new Gapless5({
+        tracks: tracks,
+        loop: false,
+        singleMode: false,
+        useWebAudio: true,
+        useHTML5Audio: true,
+        volume: 1.0,
+        startingTrack: activeIndex
+      });
+
+      // Set up callbacks
+      gaplessPlayerRef.current.ontimeupdate = (current_track_time, current_track_index) => {
+        const timeInSeconds = current_track_time / 1000;
+        setCurrentTime(timeInSeconds);
+        setCurrentTrackIndex(current_track_index);
+
+        // Update progress bar
+        const currentTrack = activePlaylist[current_track_index];
+        if (currentTrack) {
+          updateProgressBar(timeInSeconds, currentTrack.duration / 1000);
+        }
+      };
+
+      gaplessPlayerRef.current.onplay = (track_path) => {
+        setIsPlaying(true);
+      };
+
+      gaplessPlayerRef.current.onpause = (track_path) => {
+        setIsPlaying(false);
+      };
+
+      gaplessPlayerRef.current.onstop = (track_path) => {
+        setIsPlaying(false);
+      };
+
+      gaplessPlayerRef.current.onnext = (from_track, to_track) => {
+        const newIndex = gaplessPlayerRef.current.getIndex();
+        const newActiveTrack = activePlaylist[newIndex];
+        if (newActiveTrack && newActiveTrack.id !== activeTrack?.id) {
+          setActiveTrack(newActiveTrack);
+          setCurrentTrackIndex(newIndex);
+        }
+      };
+
+      gaplessPlayerRef.current.onprev = (from_track, to_track) => {
+        const newIndex = gaplessPlayerRef.current.getIndex();
+        const newActiveTrack = activePlaylist[newIndex];
+        if (newActiveTrack && newActiveTrack.id !== activeTrack?.id) {
+          setActiveTrack(newActiveTrack);
+          setCurrentTrackIndex(newIndex);
+        }
+      };
+
+      gaplessPlayerRef.current.onfinishedall = () => {
+        setIsPlaying(false);
+      };
+
+      gaplessPlayerRef.current.onerror = (track_path, error) => {
+        setAlert(`Error playing track: ${error}`);
+        setIsPlaying(false);
+      };
+
+      // Go to the active track
+      if (activeIndex >= 0) {
+        gaplessPlayerRef.current.gotoTrack(activeIndex);
+        setCurrentTrackIndex(activeIndex);
+      }
+    }
+
+    return () => {
+      if (gaplessPlayerRef.current) {
+        gaplessPlayerRef.current.stop();
+        gaplessPlayerRef.current.removeAllTracks();
+        gaplessPlayerRef.current = null;
+      }
+    };
+  }, [activePlaylist]);
+
+  // Handle activeTrack change (when user selects a different track)
+  useEffect(() => {
+    if (activeTrack && gaplessPlayerRef.current && activePlaylist) {
+      if (typeof window !== "undefined") {
+        document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
+      }
+
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: activeTrack.title,
+          artist: `Phish - ${formatDate(activeTrack.show_date)}`,
+          album: `${formatDate(activeTrack.show_date)} - ${activeTrack.venue_name}`,
+          artwork: [
+            {
+              src: activeTrack.show_cover_art_urls.medium,
+              sizes: "256x256",
+              type: "image/jpeg",
+            }
+          ]
+        });
+      }
+
+      // Handle waveform image transition
+      setFadeClass("fade-out");
+      setIsFadeOutComplete(false);
+      setIsImageLoaded(false);
+
+      const fadeOutTimer = setTimeout(() => {
+        setIsFadeOutComplete(true);
+      }, 500);
+
+      const newImage = new Image();
+      newImage.src = activeTrack.waveform_image_url;
+      newImage.onload = () => setIsImageLoaded(true);
+
+      // Handle start/end time parameters
+      const startTime = activeTrack.starts_at_second ?? parseTimeParam(new URLSearchParams(location.search).get("t"));
+      const endTime = activeTrack.ends_at_second ?? parseTimeParam(new URLSearchParams(location.search).get("e"));
+
+      setEndTime(endTime);
+
+      // Find track index and switch to it
+      const trackIndex = activePlaylist.findIndex(track => track.id === activeTrack.id);
+      if (trackIndex >= 0 && trackIndex !== currentTrackIndex) {
+        gaplessPlayerRef.current.gotoTrack(trackIndex);
+        setCurrentTrackIndex(trackIndex);
+
+        // Apply start time if specified
+        if (startTime && startTime > 0) {
+          setTimeout(() => {
+            if (gaplessPlayerRef.current) {
+              gaplessPlayerRef.current.setPosition(startTime * 1000);
+            }
+          }, 100);
+        }
+      }
+
+      return () => clearTimeout(fadeOutTimer);
+    }
+  }, [activeTrack]);
 
   // Media session hooks
   useEffect(() => {
@@ -66,100 +240,14 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
     }
   }, [activeTrack]);
 
-  // Hande activeTrack change
+  // Waveform image fade effect
   useEffect(() => {
-    if (activeTrack && audioRef.current) {
-      if (typeof window !== "undefined") {
-        document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
-      }
-
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title: activeTrack.title,
-          artist: `Phish - ${formatDate(activeTrack.show_date)}`,
-          album: `${formatDate(activeTrack.show_date)} - ${activeTrack.venue_name}`,
-          artwork: [
-            {
-              src: activeTrack.show_cover_art_urls.medium,
-              sizes: "256x256",
-              type: "image/jpeg",
-            }
-          ]
-        });
-      }
-
-      setFadeClass("fade-out");
-      setIsFadeOutComplete(false);
-      setIsImageLoaded(false);
-
-      const fadeOutTimer = setTimeout(() => {
-        setIsFadeOutComplete(true);
-      }, 500);
-
-      const newImage = new Image();
-      newImage.src = activeTrack.waveform_image_url;
-      newImage.onload = () => setIsImageLoaded(true);
-
-      audioRef.current.pause();
-      audioRef.current.src = activeTrack.mp3_url;
-      audioRef.current.load();
-
-      audioRef.current.onloadedmetadata = () => {
-        const startTime = activeTrack.starts_at_second ?? parseTimeParam(new URLSearchParams(location.search).get("t"));
-        const endTime = activeTrack.ends_at_second ?? parseTimeParam(new URLSearchParams(location.search).get("e"));
-
-        if (startTime && startTime <= audioRef.current.duration) {
-          audioRef.current.currentTime = startTime;
-        }
-
-        setEndTime(endTime);
-        audioRef.current.play().then(() => {
-          () => setIsFirstLoad(false);
-        }).catch((error) => {
-          if (error.name === "NotAllowedError") {
-            setNotice("Press Play to listen");
-          }
-        });
-      };
-
-      audioRef.current.onended = skipToNextTrack;
-
-      return () => clearTimeout(fadeOutTimer);
-    }
-  }, [activeTrack]);
-
-  useEffect(() => {
-    if (isFadeOutComplete && isImageLoaded) {
+    if (isFadeOutComplete && isImageLoaded && activeTrack) {
       scrubberRef.current.style.backgroundImage = `url(${activeTrack.waveform_image_url})`;
       progressBarRef.current.style.maskImage = `url(${activeTrack.waveform_image_url})`;
       setFadeClass("fade-in");
     }
-  }, [isFadeOutComplete, isImageLoaded]);
-
-  const skipToNextTrack = () => {
-    const currentIndex = activePlaylist.indexOf(activeTrack);
-    const nextTrack = activePlaylist[currentIndex + 1];
-    if (nextTrack) {
-      setActiveTrack(nextTrack);
-    } else {
-      setAlert("This is the last track in the playlist")
-    }
-  };
-
-  const skipToPreviousTrack = () => {
-    const currentIndex = activePlaylist.indexOf(activeTrack);
-
-    if (audioRef.current.currentTime > 10) {
-      audioRef.current.currentTime = 0;
-    } else {
-      const previousTrack = activePlaylist[currentIndex - 1];
-      if (previousTrack) {
-        setActiveTrack(previousTrack);
-      } else {
-        setAlert("This is the first track in the playlist")
-      }
-    }
-  };
+  }, [isFadeOutComplete, isImageLoaded, activeTrack]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -186,29 +274,30 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [togglePlayPause, scrubBackward, scrubForward, skipToPreviousTrack, skipToNextTrack]);
+  }, []);
 
-  const handleTimeUpdate = () => {
-    setCurrentTime(audioRef.current.currentTime);
-    updateProgressBar();
-
-    // Check if the track should skip to the next one at a specific end time
-    if (endTime !== null && audioRef.current.currentTime >= endTime) {
+  // Handle end time checking
+  useEffect(() => {
+    if (endTime !== null && currentTime >= endTime) {
       skipToNextTrack();
     }
-  };
+  }, [currentTime, endTime]);
 
-  const updateProgressBar = () => {
-    const progress = (audioRef.current.currentTime / audioRef.current.duration) * 100;
-    if (progressBarRef.current) {
-      progressBarRef.current.style.background = `linear-gradient(to right, #03bbf2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
+  const updateProgressBar = (current, duration) => {
+    if (duration > 0) {
+      const progress = (current / duration) * 100;
+      if (progressBarRef.current) {
+        progressBarRef.current.style.background = `linear-gradient(to right, #03bbf2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
+      }
     }
   };
 
   const handleScrubberClick = (e) => {
-    const clickPosition = e.nativeEvent.offsetX / e.target.offsetWidth;
-    const newTime = clickPosition * audioRef.current.duration;
-    audioRef.current.currentTime = newTime;
+    if (gaplessPlayerRef.current && activeTrack) {
+      const clickPosition = e.nativeEvent.offsetX / e.target.offsetWidth;
+      const newTime = clickPosition * (activeTrack.duration / 1000);
+      gaplessPlayerRef.current.setPosition(newTime * 1000);
+    }
   };
 
   const formatTime = (timeInSeconds) => {
@@ -255,12 +344,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
                     <Link to={`/venues/${activeTrack?.venue_slug}`}>
                       {activeTrack?.venue_name}
                     </Link>
-                    {/* <span className="venue-location">
-                      {" "}•{" "}
-                      <Link to={`/map?term=${activeTrack?.venue_location}`}>
-                        {activeTrack?.venue_location}
-                      </Link>
-                    </span> */}
                   </span>
                 </>
               )}
@@ -286,7 +369,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
               className="play-pause-btn"
               onClick={togglePlayPause}
             >
-              {audioRef.current?.paused ? <FontAwesomeIcon icon={faPlay} className="play-icon" /> : <FontAwesomeIcon icon={faPause} />}
+              {isPlaying ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} className="play-icon" />}
             </button>
             <button
               className="scrub-btn scrub-forward"
@@ -319,7 +402,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, audioRef, customP
           {activeTrack ? `-${formatTime((activeTrack.duration / 1000) - currentTime)}` : "0:00"}
         </p>
       </div>
-      <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} />
     </div>
   );
 };

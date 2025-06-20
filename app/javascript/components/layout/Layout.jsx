@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Outlet, useNavigate, useNavigation, ScrollRestoration } from "react-router-dom";
 import Navbar from "./Navbar";
 import Loader from "../controls/Loader";
-import GaplessPlayer from "../controls/GaplessPlayer";
+import Player from "../controls/Player";
 import AppModal from "../modals/AppModal";
 import DraftPlaylistModal from "../modals/DraftPlaylistModal";
 import { useFeedback } from "../controls/FeedbackContext";
@@ -158,7 +158,7 @@ const Layout = ({ props }) => {
           }}
         />
       </main>
-      <GaplessPlayer
+      <Player
         activePlaylist={activePlaylist}
         activeTrack={activeTrack}
         setActiveTrack={setActiveTrack}
