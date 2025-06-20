@@ -115,15 +115,18 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         setLoadingTrackPath(track_path);
       };
 
-            gaplessPlayerRef.current.onload = (track_path, fully_loaded) => {
+                        gaplessPlayerRef.current.onload = (track_path, fully_loaded) => {
         // Clear loading state when any audio format is ready for playback
         setIsLoading(false);
         setLoadingTrackPath(null);
 
         // Auto-play since user has already requested this track
-        if (!isPlaying && gaplessPlayerRef.current) {
-          gaplessPlayerRef.current.play();
-        }
+        // Use a small delay to ensure the player is ready
+        setTimeout(() => {
+          if (gaplessPlayerRef.current) {
+            gaplessPlayerRef.current.play();
+          }
+        }, 50);
       };
 
       gaplessPlayerRef.current.onplayrequest = (track_path) => {
@@ -131,9 +134,12 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       };
 
       gaplessPlayerRef.current.onplay = (track_path) => {
-        setIsPlaying(true);
-        setIsLoading(false);
-        setLoadingTrackPath(null);
+        // Use setTimeout to ensure state updates happen after the play event
+        setTimeout(() => {
+          setIsPlaying(true);
+          setIsLoading(false);
+          setLoadingTrackPath(null);
+        }, 0);
       };
 
       gaplessPlayerRef.current.onpause = (track_path) => {
