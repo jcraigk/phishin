@@ -32,7 +32,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   const togglePlayPause = () => {
     if (gaplessPlayerRef.current) {
       if (isLoading) {
-        setNotice("Track is loading, please wait a moment...");
+        setNotice("Track is loading, will play automatically when ready...");
         return;
       }
       gaplessPlayerRef.current.playpause();
@@ -110,24 +110,24 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         }
       };
 
-      gaplessPlayerRef.current.onloadstart = (track_path) => {
+            gaplessPlayerRef.current.onloadstart = (track_path) => {
         setIsLoading(true);
         setLoadingTrackPath(track_path);
       };
 
-      gaplessPlayerRef.current.onload = (track_path, fully_loaded) => {
-        // Only set loading to false when HTML5 audio is ready (first load event)
-        if (!fully_loaded) {
-          setIsLoading(false);
-          setLoadingTrackPath(null);
+            gaplessPlayerRef.current.onload = (track_path, fully_loaded) => {
+        // Clear loading state when any audio format is ready for playback
+        setIsLoading(false);
+        setLoadingTrackPath(null);
+
+        // Auto-play since user has already requested this track
+        if (!isPlaying && gaplessPlayerRef.current) {
+          gaplessPlayerRef.current.play();
         }
       };
 
       gaplessPlayerRef.current.onplayrequest = (track_path) => {
-        // User requested play - show loading state if needed
-        if (isLoading) {
-          setNotice("Loading track...");
-        }
+        // Don't show notice here, let the togglePlayPause handle it
       };
 
       gaplessPlayerRef.current.onplay = (track_path) => {

@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "./variables" as *;
 
 main.with-player {
@@ -177,7 +178,7 @@ main.with-player {
       &:disabled {
         opacity: 0.7;
         cursor: not-allowed;
-        background-color: lighten($blue, 10%);
+        background-color: color.adjust($blue, $lightness: 10%);
       }
 
       svg {
