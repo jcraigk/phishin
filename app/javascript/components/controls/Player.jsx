@@ -41,14 +41,16 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
   const scrubForward = () => {
     if (gaplessPlayerRef.current) {
-      const newTime = Math.min(currentTime + 10, gaplessPlayerRef.current.getPosition() / 1000 + 10);
+      const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
+      const newTime = currentPosition + 10;
       gaplessPlayerRef.current.setPosition(newTime * 1000);
     }
   };
 
   const scrubBackward = () => {
     if (gaplessPlayerRef.current) {
-      const newTime = Math.max(currentTime - 10, 0);
+      const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
+      const newTime = Math.max(currentPosition - 10, 0);
       gaplessPlayerRef.current.setPosition(newTime * 1000);
     }
   };
@@ -59,12 +61,28 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     }
   };
 
-  const skipToPreviousTrack = () => {
-    if (gaplessPlayerRef.current) {
-      if (currentTime > 10) {
+        const skipToPreviousTrack = () => {
+    if (gaplessPlayerRef.current && activePlaylist) {
+      const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
+
+      if (currentPosition > 3) {
+        // If more than 3 seconds into track, go back to beginning
         gaplessPlayerRef.current.setPosition(0);
       } else {
-        gaplessPlayerRef.current.prev();
+        // If within first 3 seconds, go to previous track (if not first track)
+        const currentIndex = gaplessPlayerRef.current.getIndex();
+        if (currentIndex > 0) {
+          const previousIndex = currentIndex - 1;
+          const previousTrack = activePlaylist[previousIndex];
+
+          if (previousTrack) {
+            // Use gotoTrack instead of prev() for more reliable switching
+            gaplessPlayerRef.current.gotoTrack(previousIndex);
+            setActiveTrack(previousTrack);
+            setCurrentTrackIndex(previousIndex);
+          }
+        }
+        // If first track, do nothing
       }
     }
   };
@@ -402,6 +420,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
             <button
               className="scrub-btn scrub-back"
               onClick={scrubBackward}
+              disabled={isLoading}
             >
               <FontAwesomeIcon icon={faRotateLeft} />
               <span>10</span>
@@ -422,6 +441,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
             <button
               className="scrub-btn scrub-forward"
               onClick={scrubForward}
+              disabled={isLoading}
             >
               <FontAwesomeIcon icon={faRotateRight} />
               <span>10</span>

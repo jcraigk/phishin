@@ -145,6 +145,11 @@ main.with-player {
     .scrub-btn {
       position: relative;
 
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
       span {
         position: absolute;
         font-size: 0.65rem;
