@@ -25,36 +25,22 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   const [currentTime, setCurrentTime] = useState(0);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
 
-  // Safe wrapper for gapless player methods
-  const safeGaplessCall = (methodName, ...args) => {
-    if (!gaplessPlayerRef.current) return;
-
-    try {
-      const method = gaplessPlayerRef.current[methodName];
-      if (typeof method === 'function') {
-        return method.apply(gaplessPlayerRef.current, args);
-      }
-    } catch (error) {
-      console.warn(`Error calling gapless player ${methodName}:`, error);
-      // Don't re-throw the error, just log it
-    }
-  };
-
   const togglePlayerPosition = () => {
     setIsPlayerCollapsed(!isPlayerCollapsed);
   };
 
   const togglePlayPause = () => {
-    safeGaplessCall('playpause');
+    if (!gaplessPlayerRef.current) return;
+    gaplessPlayerRef.current.playpause();
   };
 
   const scrubForward = () => {
     if (!gaplessPlayerRef.current) return;
     try {
-      const currentPosition = safeGaplessCall('getPosition') / 1000;
+      const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
       if (currentPosition >= 0) {
         const newTime = currentPosition + 10;
-        safeGaplessCall('setPosition', newTime * 1000);
+        gaplessPlayerRef.current.setPosition(newTime * 1000);
       }
     } catch (error) {
       console.warn('Audio not ready for scrubbing forward:', error);
@@ -64,10 +50,10 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   const scrubBackward = () => {
     if (!gaplessPlayerRef.current) return;
     try {
-      const currentPosition = safeGaplessCall('getPosition') / 1000;
+      const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
       if (currentPosition >= 0) {
         const newTime = Math.max(currentPosition - 10, 0);
-        safeGaplessCall('setPosition', newTime * 1000);
+        gaplessPlayerRef.current.setPosition(newTime * 1000);
       }
     } catch (error) {
       console.warn('Audio not ready for scrubbing backward:', error);
@@ -83,27 +69,10 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
     // Check bounds
     if (nextIndex >= activePlaylist.length) {
-      console.log('Already at last track');
       return;
     }
 
-    // The overridden next() method now handles bounds checking
-    safeGaplessCall('next');
-
-    // Ensure state is updated (in case onnext doesn't fire)
-    setTimeout(() => {
-      const newIndex = gaplessPlayerRef.current.getIndex();
-      const newTrack = activePlaylist[newIndex];
-      if (newTrack && newIndex !== currentIndex) {
-        setCurrentTrackIndex(newIndex);
-        setActiveTrack(prevTrack => {
-          if (prevTrack && prevTrack.id === newTrack.id) {
-            return { ...newTrack };
-          }
-          return newTrack;
-        });
-      }
-    }, 50);
+    gaplessPlayerRef.current.next();
   };
 
   const skipToPreviousTrack = () => {
@@ -111,36 +80,23 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
     try {
       const currentIndex = gaplessPlayerRef.current.getIndex();
-      console.log('Current index:', currentIndex);
 
       // If we're on the first track (index 0)
       if (currentIndex === 0) {
-        // Check position to decide whether to restart or stay
-        try {
-          const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
-          console.log('Current position on first track:', currentPosition);
-          // Always restart the first track
-          gaplessPlayerRef.current.setPosition(0);
-        } catch (e) {
-          // If we can't get position, just restart
-          gaplessPlayerRef.current.setPosition(0);
-        }
+        // Always restart the first track
+        gaplessPlayerRef.current.setPosition(0);
         return;
       }
 
       // For any other track (not the first one)
       try {
         const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
-        console.log('Current position:', currentPosition, 'on track index:', currentIndex);
 
         if (currentPosition > 3) {
           // If more than 3 seconds into track, go back to beginning
-          console.log('Going back to beginning of current track');
           gaplessPlayerRef.current.setPosition(0);
         } else {
           // If less than 3 seconds, go to previous track
-          console.log('Going to previous track');
-          // Directly call the original prev without our override
           const previousIndex = currentIndex - 1;
           if (previousIndex >= 0) {
             gaplessPlayerRef.current.gotoTrack(previousIndex);
@@ -313,64 +269,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         return;
       }
 
-      // Override the next method to add bounds checking
-      const originalNext = gaplessPlayerRef.current.next.bind(gaplessPlayerRef.current);
-      gaplessPlayerRef.current.next = () => {
-        try {
-          const currentIndex = gaplessPlayerRef.current.getIndex();
-          // Prevent going beyond the last track
-          if (currentIndex >= activePlaylist.length - 1) {
-            console.log('Already at last track, preventing next() call');
-            // Ensure we stay at the last valid track
-            if (currentIndex > activePlaylist.length - 1) {
-              gaplessPlayerRef.current.gotoTrack(activePlaylist.length - 1);
-            }
-            return false; // Return false to indicate no action taken
-          }
-          return originalNext();
-        } catch (error) {
-          console.warn('Error in overridden next() method:', error);
-          return false;
-        }
-      };
-
-      // Override the prev method to add bounds checking
-      const originalPrev = gaplessPlayerRef.current.prev.bind(gaplessPlayerRef.current);
-      gaplessPlayerRef.current.prev = () => {
-        try {
-          const currentIndex = gaplessPlayerRef.current.getIndex();
-          // Prevent going before the first track
-          if (currentIndex <= 0) {
-            console.log('Already at first track, preventing prev() call');
-            // Ensure we stay at the first valid track
-            if (currentIndex < 0) {
-              gaplessPlayerRef.current.gotoTrack(0);
-            }
-            return false; // Return false to indicate no action taken
-          }
-          return originalPrev();
-        } catch (error) {
-          console.warn('Error in overridden prev() method:', error);
-          return false;
-        }
-      };
-
-      // Override gotoTrack to add bounds checking
-      const originalGotoTrack = gaplessPlayerRef.current.gotoTrack.bind(gaplessPlayerRef.current);
-      gaplessPlayerRef.current.gotoTrack = (index) => {
-        try {
-          // Clamp the index to valid bounds
-          const safeIndex = Math.max(0, Math.min(index, activePlaylist.length - 1));
-          if (index !== safeIndex) {
-            console.log(`Invalid track index ${index}, using ${safeIndex} instead`);
-          }
-          return originalGotoTrack(safeIndex);
-        } catch (error) {
-          console.warn('Error in overridden gotoTrack() method:', error);
-          return false;
-        }
-      };
-
       // Set up callbacks
       gaplessPlayerRef.current.ontimeupdate = (current_track_time, current_track_index) => {
         try {
@@ -405,7 +303,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
           setLoadingTrackPath(null);
           setTimeout(() => {
             if (!gaplessPlayerRef.current) return;
-            safeGaplessCall('play');
+            gaplessPlayerRef.current.play();
           }, 50);
         } catch (error) {
           console.warn('Error in onload callback:', error);
@@ -515,7 +413,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       };
 
       if (validActiveIndex >= 0) {
-        safeGaplessCall('gotoTrack', validActiveIndex);
+        gaplessPlayerRef.current.gotoTrack(validActiveIndex);
         setCurrentTrackIndex(validActiveIndex);
       }
     }
@@ -576,13 +474,13 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
       const trackIndex = activePlaylist.findIndex(track => track.id === activeTrack.id);
       if (trackIndex >= 0 && trackIndex !== currentTrackIndex) {
-        safeGaplessCall('gotoTrack', trackIndex);
+        gaplessPlayerRef.current.gotoTrack(trackIndex);
         setCurrentTrackIndex(trackIndex);
 
         if (startTime && startTime > 0) {
           setTimeout(() => {
             if (!gaplessPlayerRef.current) return;
-            safeGaplessCall('setPosition', startTime * 1000);
+            gaplessPlayerRef.current.setPosition(startTime * 1000);
           }, 100);
         }
       }
@@ -668,12 +566,12 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     if (gaplessPlayerRef.current && activeTrack) {
       // Check if the audio is ready for seeking
       try {
-        const currentPosition = safeGaplessCall('getPosition');
+        const currentPosition = gaplessPlayerRef.current.getPosition();
         // If we can get the position, the audio is ready
         if (currentPosition >= 0) {
           const clickPosition = e.nativeEvent.offsetX / e.target.offsetWidth;
           const newTime = clickPosition * (activeTrack.duration / 1000);
-          safeGaplessCall('setPosition', newTime * 1000);
+          gaplessPlayerRef.current.setPosition(newTime * 1000);
         }
       } catch (error) {
         // Audio not ready for seeking yet, ignore the click
