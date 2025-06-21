@@ -31,10 +31,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
   const togglePlayPause = () => {
     if (gaplessPlayerRef.current) {
-      if (isLoading) {
-        setNotice("Track is loading, will play automatically when ready...");
-        return;
-      }
       gaplessPlayerRef.current.playpause();
     }
   };
@@ -76,13 +72,11 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
           const previousTrack = activePlaylist[previousIndex];
 
           if (previousTrack) {
-            // Use gotoTrack instead of prev() for more reliable switching
             gaplessPlayerRef.current.gotoTrack(previousIndex);
             setActiveTrack(previousTrack);
             setCurrentTrackIndex(previousIndex);
           }
         }
-        // If first track, do nothing
       }
     }
   };
@@ -98,14 +92,14 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       }
 
       // Create track URLs array
-      const tracks = activePlaylist.map(track => track.mp3_url);
+      const trackUrls = activePlaylist.map(track => track.mp3_url);
 
       // Find the index of the active track
       const activeIndex = activePlaylist.findIndex(track => track.id === activeTrack?.id) || 0;
 
       // Create new gapless player with optimized settings for immediate playback
       gaplessPlayerRef.current = new Gapless5({
-        tracks: tracks,
+        tracks: trackUrls,
         loop: false,
         singleMode: false,
         useWebAudio: true,
@@ -128,27 +122,19 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         }
       };
 
-            gaplessPlayerRef.current.onloadstart = (track_path) => {
+      gaplessPlayerRef.current.onloadstart = (track_path) => {
         setIsLoading(true);
         setLoadingTrackPath(track_path);
       };
 
-                        gaplessPlayerRef.current.onload = (track_path, fully_loaded) => {
-        // Clear loading state when any audio format is ready for playback
+      gaplessPlayerRef.current.onload = (track_path, fully_loaded) => {
         setIsLoading(false);
         setLoadingTrackPath(null);
-
-        // Auto-play since user has already requested this track
-        // Use a small delay to ensure the player is ready
         setTimeout(() => {
           if (gaplessPlayerRef.current) {
             gaplessPlayerRef.current.play();
           }
         }, 50);
-      };
-
-      gaplessPlayerRef.current.onplayrequest = (track_path) => {
-        // Don't show notice here, let the togglePlayPause handle it
       };
 
       gaplessPlayerRef.current.onplay = (track_path) => {
@@ -201,7 +187,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         setLoadingTrackPath(null);
       };
 
-      // Go to the active track
       if (activeIndex >= 0) {
         gaplessPlayerRef.current.gotoTrack(activeIndex);
         setCurrentTrackIndex(activeIndex);
@@ -239,7 +224,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         });
       }
 
-      // Handle waveform image transition
+      // Waveform image transition
       setFadeClass("fade-out");
       setIsFadeOutComplete(false);
       setIsImageLoaded(false);
@@ -252,19 +237,17 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       newImage.src = activeTrack.waveform_image_url;
       newImage.onload = () => setIsImageLoaded(true);
 
-      // Handle start/end time parameters
+      // Start/end time parameters
       const startTime = activeTrack.starts_at_second ?? parseTimeParam(new URLSearchParams(location.search).get("t"));
       const endTime = activeTrack.ends_at_second ?? parseTimeParam(new URLSearchParams(location.search).get("e"));
 
       setEndTime(endTime);
 
-      // Find track index and switch to it
       const trackIndex = activePlaylist.findIndex(track => track.id === activeTrack.id);
       if (trackIndex >= 0 && trackIndex !== currentTrackIndex) {
         gaplessPlayerRef.current.gotoTrack(trackIndex);
         setCurrentTrackIndex(trackIndex);
 
-        // Apply start time if specified
         if (startTime && startTime > 0) {
           setTimeout(() => {
             if (gaplessPlayerRef.current) {
@@ -335,7 +318,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Handle end time checking
+  // End time checking
   useEffect(() => {
     if (endTime !== null && currentTime >= endTime) {
       skipToNextTrack();
