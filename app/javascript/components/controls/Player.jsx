@@ -11,6 +11,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   const location = useLocation();
   const scrubberRef = useRef();
   const progressBarRef = useRef();
+  const bufferProgressRef = useRef();
   const gaplessPlayerRef = useRef(null);
   const bufferIntervalRef = useRef(null);
   const { setAlert, setNotice } = useFeedback();
@@ -117,26 +118,29 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
             // Set up interval to check buffer progress
       bufferIntervalRef.current = setInterval(() => {
         if (gaplessPlayerRef.current) {
-          try {
-            const seekablePercent = gaplessPlayerRef.current.getSeekablePercent();
-            if (seekablePercent !== null && seekablePercent !== undefined) {
-              setBufferProgress(seekablePercent * 100);
+                      try {
+              const seekablePercent = gaplessPlayerRef.current.getSeekablePercent();
+              if (seekablePercent !== null && seekablePercent !== undefined) {
+                const bufferPercent = seekablePercent * 100;
+                setBufferProgress(bufferPercent);
+                updateBufferProgress(bufferPercent);
 
-              // Clear interval when fully buffered
-              if (seekablePercent >= 1) {
-                clearInterval(bufferIntervalRef.current);
-                bufferIntervalRef.current = null;
+                // Clear interval when fully buffered
+                if (seekablePercent >= 1) {
+                  clearInterval(bufferIntervalRef.current);
+                  bufferIntervalRef.current = null;
+                }
               }
+            } catch (error) {
+              // Audio not ready yet, keep checking
+              // Don't log this as it's expected during initial loading
             }
-          } catch (error) {
-            // Audio not ready yet, keep checking
-            // Don't log this as it's expected during initial loading
-          }
         }
       }, 100); // Check every 100ms
 
       // Reset buffer progress when track changes
       setBufferProgress(0);
+      updateBufferProgress(0);
     }
 
     return () => {
@@ -191,6 +195,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         setIsLoading(true);
         setLoadingTrackPath(track_path);
         setBufferProgress(0); // Reset buffer progress
+        updateBufferProgress(0);
       };
 
       gaplessPlayerRef.current.onload = (track_path, fully_loaded) => {
@@ -198,6 +203,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         setLoadingTrackPath(null);
         if (fully_loaded) {
           setBufferProgress(100); // Set to 100% when fully loaded
+          updateBufferProgress(100);
         }
         setTimeout(() => {
           if (!gaplessPlayerRef.current) return;
@@ -353,16 +359,16 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     }
   }, [activeTrack]);
 
-  // Waveform image fade effect
+    // Waveform image fade effect
   useEffect(() => {
     if (isFadeOutComplete && isImageLoaded && activeTrack) {
       scrubberRef.current.style.backgroundImage = `url(${activeTrack.waveform_image_url})`;
       progressBarRef.current.style.maskImage = `url(${activeTrack.waveform_image_url})`;
 
-      // Also apply the waveform image to the buffer progress element
-      const bufferProgressElement = scrubberRef.current.querySelector('.buffer-progress');
-      if (bufferProgressElement) {
-        bufferProgressElement.style.setProperty('--waveform-image', `url(${activeTrack.waveform_image_url})`);
+      // Also apply the waveform mask to the buffer progress element
+      if (bufferProgressRef.current) {
+        bufferProgressRef.current.style.maskImage = `url(${activeTrack.waveform_image_url})`;
+        bufferProgressRef.current.style.webkitMaskImage = `url(${activeTrack.waveform_image_url})`;
       }
 
       setFadeClass("fade-in");
@@ -409,6 +415,20 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       if (progressBarRef.current) {
         progressBarRef.current.style.background = `linear-gradient(to right, #03bbf2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
       }
+    }
+  };
+
+  const updateBufferProgress = (bufferPercent) => {
+    if (bufferProgressRef.current && activeTrack) {
+      // Create a composite mask: waveform shape AND buffer progress gradient
+      const waveformUrl = activeTrack.waveform_image_url;
+      const bufferGradient = `linear-gradient(to right, white ${bufferPercent}%, transparent ${bufferPercent}%)`;
+
+      // Combine both masks using mask-composite or fallback approach
+      bufferProgressRef.current.style.maskImage = `${bufferGradient}, url(${waveformUrl})`;
+      bufferProgressRef.current.style.webkitMaskImage = `${bufferGradient}, url(${waveformUrl})`;
+      bufferProgressRef.current.style.maskComposite = 'intersect';
+      bufferProgressRef.current.style.webkitMaskComposite = 'source-in';
     }
   };
 
@@ -535,7 +555,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
           onClick={handleScrubberClick}
           ref={scrubberRef}
         >
-          <div className="buffer-progress" style={{ width: `${bufferProgress}%` }}></div>
+          <div className="buffer-progress" ref={bufferProgressRef}></div>
           <div className="progress-bar" ref={progressBarRef}></div>
         </div>
         <p className="remaining" onClick={scrubForward}>

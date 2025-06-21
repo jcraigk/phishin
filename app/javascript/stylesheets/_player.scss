@@ -218,7 +218,7 @@ main.with-player {
       cursor: pointer;
     }
 
-    .scrubber-bar {
+        .scrubber-bar {
       position: relative;
       width: 100%;
       height: 100%;
@@ -226,45 +226,23 @@ main.with-player {
       background-size: 100% 100%;
       background-repeat: no-repeat;
       background-position: 0 0;
-
-      // Add initial dimmed state
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.4); // Dark overlay
-        z-index: 1;
-        pointer-events: none;
-      }
     }
 
-        .buffer-progress {
+            .buffer-progress {
       position: absolute;
       top: 0;
       left: 0;
       height: 100%;
-      background-color: transparent;
-      z-index: 2;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.3); // Dimmed waveform color
+      mask-size: 100% 100%;
+      mask-position: 0 0;
+      mask-repeat: no-repeat;
+      -webkit-mask-size: 100% 100%;
+      -webkit-mask-position: 0 0;
+      -webkit-mask-repeat: no-repeat;
+      z-index: 1; // Below progress bar
       pointer-events: none;
-
-      // This creates a "reveal" effect as the buffer loads
-      &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: var(--waveform-image);
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
-        background-position: 0 0;
-        mask-image: linear-gradient(to right, white 100%, transparent 100%);
-        -webkit-mask-image: linear-gradient(to right, white 100%, transparent 100%);
-      }
     }
 
     .progress-bar {
