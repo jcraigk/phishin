@@ -36,92 +36,50 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
   const scrubForward = () => {
     if (!gaplessPlayerRef.current) return;
-    try {
-      const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
-      if (currentPosition >= 0) {
-        const newTime = currentPosition + 10;
-        gaplessPlayerRef.current.setPosition(newTime * 1000);
-      }
-    } catch (error) {
-      console.warn('Audio not ready for scrubbing forward:', error);
+    const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
+    if (currentPosition >= 0) {
+      const newTime = currentPosition + 10;
+      gaplessPlayerRef.current.setPosition(newTime * 1000);
     }
   };
 
   const scrubBackward = () => {
     if (!gaplessPlayerRef.current) return;
-    try {
-      const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
-      if (currentPosition >= 0) {
-        const newTime = Math.max(currentPosition - 10, 0);
-        gaplessPlayerRef.current.setPosition(newTime * 1000);
-      }
-    } catch (error) {
-      console.warn('Audio not ready for scrubbing backward:', error);
+    const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
+    if (currentPosition >= 0) {
+      const newTime = Math.max(currentPosition - 10, 0);
+      gaplessPlayerRef.current.setPosition(newTime * 1000);
     }
   };
 
   const skipToNextTrack = () => {
     if (!gaplessPlayerRef.current || !activePlaylist) return;
-
-    // Get current index before calling next
     const currentIndex = gaplessPlayerRef.current.getIndex();
     const nextIndex = currentIndex + 1;
-
-    // Check bounds
-    if (nextIndex >= activePlaylist.length) {
-      return;
-    }
-
+    if (nextIndex >= activePlaylist.length) return;
     gaplessPlayerRef.current.next();
   };
 
   const skipToPreviousTrack = () => {
     if (!gaplessPlayerRef.current || !activePlaylist) return;
 
-    try {
+    const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
+
+    if (currentPosition > 3) {
+      // If more than 3 seconds into track, go back to beginning
+      gaplessPlayerRef.current.setPosition(0);
+    } else {
+      // If less than 3 seconds, go to previous track
       const currentIndex = gaplessPlayerRef.current.getIndex();
-
-      // If we're on the first track (index 0)
-      if (currentIndex === 0) {
-        // Always restart the first track
-        gaplessPlayerRef.current.setPosition(0);
-        return;
-      }
-
-      // For any other track (not the first one)
-      try {
-        const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
-
-        if (currentPosition > 3) {
-          // If more than 3 seconds into track, go back to beginning
-          gaplessPlayerRef.current.setPosition(0);
-        } else {
-          // If less than 3 seconds, go to previous track
-          const previousIndex = currentIndex - 1;
-          if (previousIndex >= 0) {
-            gaplessPlayerRef.current.gotoTrack(previousIndex);
-            const previousTrack = activePlaylist[previousIndex];
-            if (previousTrack) {
-              setActiveTrack(previousTrack);
-              setCurrentTrackIndex(previousIndex);
-            }
-          }
-        }
-      } catch (posError) {
-        console.warn('Error getting position, going to previous track:', posError);
-        // If we can't get position, go to previous track
-        const previousIndex = currentIndex - 1;
-        if (previousIndex >= 0) {
-          gaplessPlayerRef.current.gotoTrack(previousIndex);
-          const previousTrack = activePlaylist[previousIndex];
-          if (previousTrack) {
-            setActiveTrack(previousTrack);
-            setCurrentTrackIndex(previousIndex);
-          }
+      const previousIndex = currentIndex - 1;
+      if (previousIndex >= 0) {
+        gaplessPlayerRef.current.gotoTrack(previousIndex);
+        const previousTrack = activePlaylist[previousIndex];
+        if (previousTrack) {
+          setActiveTrack(previousTrack);
+          setCurrentTrackIndex(previousIndex);
         }
       }
-    } catch (error) {
-      console.warn('Error in skipToPreviousTrack:', error);
     }
   };
 
