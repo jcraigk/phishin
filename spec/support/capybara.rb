@@ -25,3 +25,12 @@ Capybara::Screenshot.register_driver(:chrome) do |driver, path|
   driver.browser.save_screenshot(path)
 end
 Capybara::Screenshot.prune_strategy = :keep_last_run
+
+# Clear localStorage before each JavaScript test to prevent state pollution
+RSpec.configure do |config|
+  config.before(:each, js: true) do
+    visit "/"  # Visit any page to establish a session
+    page.execute_script("localStorage.clear()")
+    page.execute_script("sessionStorage.clear()")
+  end
+end
