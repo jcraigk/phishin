@@ -38,16 +38,28 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
   const scrubForward = () => {
     if (!gaplessPlayerRef.current) return;
-    const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
-    const newTime = currentPosition + 10;
-    gaplessPlayerRef.current.setPosition(newTime * 1000);
+    try {
+      const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
+      if (currentPosition >= 0) {
+        const newTime = currentPosition + 10;
+        gaplessPlayerRef.current.setPosition(newTime * 1000);
+      }
+    } catch (error) {
+      console.warn('Audio not ready for scrubbing forward:', error);
+    }
   };
 
   const scrubBackward = () => {
     if (!gaplessPlayerRef.current) return;
-    const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
-    const newTime = Math.max(currentPosition - 10, 0);
-    gaplessPlayerRef.current.setPosition(newTime * 1000);
+    try {
+      const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
+      if (currentPosition >= 0) {
+        const newTime = Math.max(currentPosition - 10, 0);
+        gaplessPlayerRef.current.setPosition(newTime * 1000);
+      }
+    } catch (error) {
+      console.warn('Audio not ready for scrubbing backward:', error);
+    }
   };
 
   const skipToNextTrack = () => {
@@ -58,25 +70,40 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   const skipToPreviousTrack = () => {
     if (!gaplessPlayerRef.current || !activePlaylist) return;
 
-    const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
+    try {
+      const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
 
-    if (currentPosition > 3) {
-      // If more than 3 seconds into track, go back to beginning
-      gaplessPlayerRef.current.setPosition(0);
-      return;
+      if (currentPosition > 3) {
+        // If more than 3 seconds into track, go back to beginning
+        gaplessPlayerRef.current.setPosition(0);
+        return;
+      }
+
+      // If within first 3 seconds, go to previous track (if not first track)
+      const currentIndex = gaplessPlayerRef.current.getIndex();
+      if (currentIndex === 0) return;
+
+      const previousIndex = currentIndex - 1;
+      const previousTrack = activePlaylist[previousIndex];
+      if (!previousTrack) return;
+
+      gaplessPlayerRef.current.gotoTrack(previousIndex);
+      setActiveTrack(previousTrack);
+      setCurrentTrackIndex(previousIndex);
+    } catch (error) {
+      // If we can't get position, just go to previous track
+      console.warn('Audio not ready for position check, going to previous track:', error);
+      const currentIndex = gaplessPlayerRef.current.getIndex();
+      if (currentIndex === 0) return;
+
+      const previousIndex = currentIndex - 1;
+      const previousTrack = activePlaylist[previousIndex];
+      if (!previousTrack) return;
+
+      gaplessPlayerRef.current.gotoTrack(previousIndex);
+      setActiveTrack(previousTrack);
+      setCurrentTrackIndex(previousIndex);
     }
-
-    // If within first 3 seconds, go to previous track (if not first track)
-    const currentIndex = gaplessPlayerRef.current.getIndex();
-    if (currentIndex === 0) return;
-
-    const previousIndex = currentIndex - 1;
-    const previousTrack = activePlaylist[previousIndex];
-    if (!previousTrack) return;
-
-    gaplessPlayerRef.current.gotoTrack(previousIndex);
-    setActiveTrack(previousTrack);
-    setCurrentTrackIndex(previousIndex);
   };
 
   // Buffer progress monitoring
@@ -87,16 +114,23 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         clearInterval(bufferIntervalRef.current);
       }
 
-      // Set up interval to check buffer progress
+            // Set up interval to check buffer progress
       bufferIntervalRef.current = setInterval(() => {
         if (gaplessPlayerRef.current) {
-          const seekablePercent = gaplessPlayerRef.current.getSeekablePercent();
-          setBufferProgress(seekablePercent * 100);
+          try {
+            const seekablePercent = gaplessPlayerRef.current.getSeekablePercent();
+            if (seekablePercent !== null && seekablePercent !== undefined) {
+              setBufferProgress(seekablePercent * 100);
 
-          // Clear interval when fully buffered
-          if (seekablePercent >= 1) {
-            clearInterval(bufferIntervalRef.current);
-            bufferIntervalRef.current = null;
+              // Clear interval when fully buffered
+              if (seekablePercent >= 1) {
+                clearInterval(bufferIntervalRef.current);
+                bufferIntervalRef.current = null;
+              }
+            }
+          } catch (error) {
+            // Audio not ready yet, keep checking
+            // Don't log this as it's expected during initial loading
           }
         }
       }, 100); // Check every 100ms
@@ -380,9 +414,19 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
   const handleScrubberClick = (e) => {
     if (gaplessPlayerRef.current && activeTrack) {
-      const clickPosition = e.nativeEvent.offsetX / e.target.offsetWidth;
-      const newTime = clickPosition * (activeTrack.duration / 1000);
-      gaplessPlayerRef.current.setPosition(newTime * 1000);
+      // Check if the audio is ready for seeking
+      try {
+        const currentPosition = gaplessPlayerRef.current.getPosition();
+        // If we can get the position, the audio is ready
+        if (currentPosition >= 0) {
+          const clickPosition = e.nativeEvent.offsetX / e.target.offsetWidth;
+          const newTime = clickPosition * (activeTrack.duration / 1000);
+          gaplessPlayerRef.current.setPosition(newTime * 1000);
+        }
+      } catch (error) {
+        // Audio not ready for seeking yet, ignore the click
+        console.warn('Audio not ready for seeking:', error);
+      }
     }
   };
 
