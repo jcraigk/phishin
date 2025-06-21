@@ -228,22 +228,7 @@ main.with-player {
       background-position: 0 0;
     }
 
-            .buffer-progress {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.3); // Dimmed waveform color
-      mask-size: 100% 100%;
-      mask-position: 0 0;
-      mask-repeat: no-repeat;
-      -webkit-mask-size: 100% 100%;
-      -webkit-mask-position: 0 0;
-      -webkit-mask-repeat: no-repeat;
-      z-index: 1; // Below progress bar
-      pointer-events: none;
-    }
+
 
     .progress-bar {
       position: absolute;
@@ -258,7 +243,6 @@ main.with-player {
       -webkit-mask-size: 100% 100%;
       -webkit-mask-position: 0 0;
       -webkit-mask-repeat: no-repeat;
-      z-index: 3; // Ensure progress bar is above buffer indicator
     }
   }
 
