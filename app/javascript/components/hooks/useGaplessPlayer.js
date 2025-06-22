@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Gapless5 } from "@regosen/gapless-5";
 import { PLAYER_CONSTANTS } from "../helpers/playerConstants";
 
-export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, setNotice, setAlert, startTime) => {
+export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, setNotice, setAlert, startTime, shouldAutoplay, setShouldAutoplay) => {
   const gaplessPlayerRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -190,9 +190,10 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
             gaplessPlayerRef.current.setPosition(pendingStartTime * 1000);
             setPendingStartTime(null);
           }
-          // Don't autoplay on initial page load to avoid browser autoplay policy
-          if (shouldContinuePlayingRef.current) {
+          // Autoplay if user clicked on a track, or if already playing
+          if (shouldAutoplay || shouldContinuePlayingRef.current) {
             gaplessPlayerRef.current.play();
+            if (setShouldAutoplay) setShouldAutoplay(false); // Reset after using
           }
         }
       };

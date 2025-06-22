@@ -30,6 +30,7 @@ const Layout = ({ props }) => {
   const [isDraftPlaylistSaved, setIsDraftPlaylistSaved] = useState(false);
   const [viewMode, setViewMode] = useState("grid");
   const [sortOption, setSortOption] = useState("desc");
+  const [shouldAutoplay, setShouldAutoplay] = useState(false);
   const { setNotice, setAlert } = useFeedback();
 
   useEffect(() => {
@@ -97,9 +98,10 @@ const Layout = ({ props }) => {
     setDraftPlaylistMeta(initialDraftPlaylistMeta);
   };
 
-  const playTrack = (playlist, track) => {
+  const playTrack = (playlist, track, fromUrlParam = false) => {
     setActivePlaylist(playlist);
     setActiveTrack(track);
+    setShouldAutoplay(!fromUrlParam);
   };
 
   const openAppModal = (content) => {
@@ -163,6 +165,8 @@ const Layout = ({ props }) => {
         setActiveTrack={setActiveTrack}
         customPlaylist={customPlaylist}
         openAppModal={openAppModal}
+        shouldAutoplay={shouldAutoplay}
+        setShouldAutoplay={setShouldAutoplay}
       />
       <AppModal
         isOpen={isAppModalOpen}

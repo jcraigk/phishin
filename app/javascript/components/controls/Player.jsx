@@ -12,7 +12,7 @@ import TrackInfo from "./TrackInfo";
 import ProgressBar from "./ProgressBar";
 import { useFeedback } from "./FeedbackContext";
 
-const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, openAppModal }) => {
+const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, openAppModal, shouldAutoplay, setShouldAutoplay }) => {
   const location = useLocation();
   const [isPlayerCollapsed, setIsPlayerCollapsed] = useState(false);
   const [endTime, setEndTime] = useState(null);
@@ -63,7 +63,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     canSkipToNext,
     canScrubForward,
     handleScrubberClick,
-  } = useGaplessPlayer(activePlaylist, activeTrack, setActiveTrack, setNotice, setAlert, hasPlayedInitially ? null : initialStartTime);
+  } = useGaplessPlayer(activePlaylist, activeTrack, setActiveTrack, setNotice, setAlert, hasPlayedInitially ? null : initialStartTime, shouldAutoplay, setShouldAutoplay);
 
   const togglePlayerPosition = () => {
     setIsPlayerCollapsed(!isPlayerCollapsed);
