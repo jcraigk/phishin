@@ -65,11 +65,10 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
     const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
 
+    // If more than 3 seconds into track, go back to beginning
     if (currentPosition > 3) {
-      // If more than 3 seconds into track, go back to beginning
       gaplessPlayerRef.current.setPosition(0);
     } else {
-      // If less than 3 seconds, go to previous track
       const currentIndex = gaplessPlayerRef.current.getIndex();
       const previousIndex = currentIndex - 1;
       if (previousIndex >= 0) {
@@ -90,7 +89,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       if (type === 'loadedmetadata') {
         const wrappedListener = function(event) {
           try {
-            // Check if 'this' (the audio element) has valid properties before calling listener
             if (this && this.duration !== undefined && this.duration !== null) {
               listener.call(this, event);
             }
@@ -112,17 +110,13 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   // Initialize gapless player when activePlaylist changes
   useEffect(() => {
     if (activePlaylist && activePlaylist.length > 0) {
-      // Clean up existing player
       if (gaplessPlayerRef.current) {
         gaplessPlayerRef.current.stop();
         gaplessPlayerRef.current.removeAllTracks();
         gaplessPlayerRef.current = null;
       }
 
-      // Create track URLs array
       const trackUrls = activePlaylist.map(track => track.mp3_url);
-
-      // Find the index of the active track
       const activeIndex = activePlaylist.findIndex(track => track.id === activeTrack?.id);
       const validActiveIndex = activeIndex >= 0 && activeIndex < activePlaylist.length ? activeIndex : 0;
 
@@ -133,8 +127,8 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
           loop: false,
           singleMode: false,
           useWebAudio: true,
-          useHTML5Audio: true, // This ensures immediate playback capability
-          loadLimit: 3, // Limit concurrent loading to improve performance
+          useHTML5Audio: true,
+          loadLimit: 3,
           volume: 1.0,
           startingTrack: validActiveIndex
         });
@@ -144,14 +138,12 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         return;
       }
 
-      // Set up callbacks
       gaplessPlayerRef.current.ontimeupdate = (current_track_time, current_track_index) => {
         try {
           const timeInSeconds = current_track_time / 1000;
           setCurrentTime(timeInSeconds);
           setCurrentTrackIndex(current_track_index);
 
-          // Update progress bar with bounds checking
           if (current_track_index >= 0 && current_track_index < activePlaylist.length) {
             const currentTrack = activePlaylist[current_track_index];
             if (currentTrack && currentTrack.duration) {
@@ -187,7 +179,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
       gaplessPlayerRef.current.onplay = (track_path) => {
         try {
-          // Use setTimeout to ensure state updates happen after the play event
           setTimeout(() => {
             setIsPlaying(true);
             setIsLoading(false);
@@ -223,11 +214,8 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
           const newActiveTrack = activePlaylist[newIndex];
           if (newActiveTrack) {
-            // Force update even if it's the same track ID
             setCurrentTrackIndex(newIndex);
-            // Use a callback to ensure we're updating with the latest state
             setActiveTrack(prevTrack => {
-              // If it's the same track, create a new object reference to force React to re-render
               if (prevTrack && prevTrack.id === newActiveTrack.id) {
                 return { ...newActiveTrack };
               }
@@ -246,11 +234,8 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
           const newActiveTrack = activePlaylist[newIndex];
           if (newActiveTrack) {
-            // Force update even if it's the same track ID
             setCurrentTrackIndex(newIndex);
-            // Use a callback to ensure we're updating with the latest state
             setActiveTrack(prevTrack => {
-              // If it's the same track, create a new object reference to force React to re-render
               if (prevTrack && prevTrack.id === newActiveTrack.id) {
                 return { ...newActiveTrack };
               }
@@ -328,7 +313,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         });
       }
 
-      // Waveform image transition
       setFadeClass("fade-out");
       setIsFadeOutComplete(false);
       setIsImageLoaded(false);
@@ -341,7 +325,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       newImage.src = activeTrack.waveform_image_url;
       newImage.onload = () => setIsImageLoaded(true);
 
-      // Start/end time parameters
       const startTime = activeTrack.starts_at_second ?? parseTimeParam(new URLSearchParams(location.search).get("t"));
       const endTime = activeTrack.ends_at_second ?? parseTimeParam(new URLSearchParams(location.search).get("e"));
 
@@ -385,7 +368,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     }
   }, [activeTrack]);
 
-    // Waveform image fade effect
+  // Waveform image fade effect
   useEffect(() => {
     if (isFadeOutComplete && isImageLoaded && activeTrack) {
       scrubberRef.current.style.backgroundImage = `url(${activeTrack.waveform_image_url})`;
@@ -439,17 +422,14 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
   const handleScrubberClick = (e) => {
     if (gaplessPlayerRef.current && activeTrack) {
-      // Check if the audio is ready for seeking
       try {
         const currentPosition = gaplessPlayerRef.current.getPosition();
-        // If we can get the position, the audio is ready
         if (currentPosition >= 0) {
           const clickPosition = e.nativeEvent.offsetX / e.target.offsetWidth;
           const newTime = clickPosition * (activeTrack.duration / 1000);
           gaplessPlayerRef.current.setPosition(newTime * 1000);
         }
       } catch (error) {
-        // Audio not ready for seeking yet, ignore the click
         console.warn('Audio not ready for seeking:', error);
       }
     }
