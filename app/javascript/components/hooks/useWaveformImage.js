@@ -16,7 +16,7 @@ export const useWaveformImage = (activeTrack) => {
 
       const fadeOutTimer = setTimeout(() => {
         setIsFadeOutComplete(true);
-      }, PLAYER_CONSTANTS.FADE_DURATION);
+      }, PLAYER_CONSTANTS.WAV_FADE_DURATION);
 
       const newImage = new Image();
       newImage.src = activeTrack.waveform_image_url;

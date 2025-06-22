@@ -22,27 +22,21 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   const [urlEndTime, setUrlEndTime] = useState(null);
   const { setNotice, setAlert } = useFeedback();
 
-  // Parse URL parameters on initial load only
+  // Parse URL parameters on initial load
   useEffect(() => {
     if (!hasPlayedInitially) {
+      // Handle start/end times from URL
       const urlStartTimeString = new URLSearchParams(location.search).get("t");
       const urlEndTimeString = new URLSearchParams(location.search).get("e");
 
-      // Mark as initial URL play session if we have URL parameters
-      if (urlStartTimeString || urlEndTimeString) {
-        setIsInitialUrlPlaySession(true);
-      }
-
+      if (urlStartTimeString || urlEndTimeString) setIsInitialUrlPlaySession(true);
       if (urlStartTimeString) {
         const parsed = parseTimeParam(urlStartTimeString);
-        if (parsed !== null) {
-          setInitialStartTime(parsed);
-        }
+        if (parsed !== null) setInitialStartTime(parsed);
       } else if (activeTrack?.starts_at_second) {
         setInitialStartTime(activeTrack.starts_at_second);
       }
 
-      // Parse and store URL end time
       if (urlEndTimeString && activeTrack) {
         const parsed = parseTimeParam(urlEndTimeString);
         const trackDuration = activeTrack.duration / 1000;
@@ -75,7 +69,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     setIsPlayerCollapsed(!isPlayerCollapsed);
   };
 
-  // Handle play/pause and mark initial play as done
   const handleTogglePlayPause = () => {
     if (!isPlaying && !hasPlayedInitially) {
       setHasPlayedInitially(true);
@@ -83,7 +76,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     togglePlayPause();
   };
 
-  // Handle track skip - clears initial URL session
   const handleSkipToNext = () => {
     setIsInitialUrlPlaySession(false);
     skipToNextTrack();
