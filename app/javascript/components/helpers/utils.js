@@ -43,6 +43,12 @@ export const formatDate = (dateString) => {
   return formattedDate;
 };
 
+export const formatTime = (timeInSeconds) => {
+  const minutes = Math.floor(timeInSeconds / 60);
+  const seconds = Math.floor(timeInSeconds % 60).toString().padStart(2, "0");
+  return `${minutes}:${seconds}`;
+};
+
 export const toggleLike = async ({ id, type, isLiked }) => {
   const url = `/api/v2/likes?likable_type=${type}&likable_id=${id}`;
   const method = isLiked ? "DELETE" : "POST";

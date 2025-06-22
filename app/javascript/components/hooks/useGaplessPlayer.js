@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Gapless5 } from "@regosen/gapless-5";
 import { PLAYER_CONSTANTS } from "../helpers/playerConstants";
-import { getPlayerPosition } from "../helpers/playerUtils";
 
 export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, setNotice, setAlert, startTime) => {
   const gaplessPlayerRef = useRef(null);
@@ -10,6 +9,12 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
   const [currentTime, setCurrentTime] = useState(0);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [pendingStartTime, setPendingStartTime] = useState(null);
+
+  const getPlayerPosition = () => {
+    if (!gaplessPlayerRef.current) return 0;
+    const position = gaplessPlayerRef.current.getPosition();
+    return position >= 0 ? position / 1000 : 0;
+  };
 
   useEffect(() => {
     if (startTime !== null && startTime !== undefined) {
@@ -65,7 +70,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
 
   const scrub = (seconds) => {
     if (!gaplessPlayerRef.current || !activeTrack) return;
-    const currentPosition = getPlayerPosition(gaplessPlayerRef);
+    const currentPosition = getPlayerPosition();
 
     if (currentPosition >= 0) {
       const newTime = currentPosition + seconds;
@@ -90,7 +95,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
   const skipToPreviousTrack = () => {
     if (!gaplessPlayerRef.current || !activePlaylist) return;
 
-    const currentPosition = getPlayerPosition(gaplessPlayerRef);
+    const currentPosition = getPlayerPosition();
 
     if (currentPosition > PLAYER_CONSTANTS.PREVIOUS_TRACK_THRESHOLD) {
       gaplessPlayerRef.current.setPosition(0);
@@ -112,7 +117,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     if (!activePlaylist) return false;
     if (currentTrackIndex > 0) return true;
     if (!gaplessPlayerRef.current || isLoading) return false;
-    const currentPosition = getPlayerPosition(gaplessPlayerRef);
+    const currentPosition = getPlayerPosition();
     return currentPosition > PLAYER_CONSTANTS.PREVIOUS_TRACK_THRESHOLD;
   };
 
@@ -123,7 +128,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
 
   const canScrubForward = () => {
     if (!activeTrack || !gaplessPlayerRef.current) return false;
-    const currentPosition = getPlayerPosition(gaplessPlayerRef);
+    const currentPosition = getPlayerPosition();
     const trackDuration = activeTrack.duration / 1000;
 
     return trackDuration > PLAYER_CONSTANTS.SCRUB_SECONDS &&

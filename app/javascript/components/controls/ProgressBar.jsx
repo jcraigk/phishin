@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { formatTime } from "../helpers/playerUtils";
+import { formatTime } from "../helpers/utils";
 import { PLAYER_CONSTANTS } from "../helpers/playerConstants";
 import { useWaveformImage } from "../hooks/useWaveformImage";
 
