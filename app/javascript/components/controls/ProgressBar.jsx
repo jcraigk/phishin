@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { formatTime, updateProgressBar } from "../helpers/playerUtils";
+import { formatTime } from "../helpers/playerUtils";
 import { PLAYER_CONSTANTS } from "../helpers/playerConstants";
 import { useWaveformImage } from "../hooks/useWaveformImage";
 
@@ -9,11 +9,13 @@ const ProgressBar = ({ activeTrack, currentTime, currentTrackIndex, activePlayli
   useEffect(() => {
     if (currentTrackIndex >= 0 && currentTrackIndex < activePlaylist.length) {
       const currentTrack = activePlaylist[currentTrackIndex];
-      if (currentTrack && currentTrack.duration) {
-        updateProgressBar(progressBarRef, currentTime, currentTrack.duration / 1000);
+      if (currentTrack?.duration && progressBarRef.current) {
+        const duration = currentTrack.duration / 1000;
+        const progress = (currentTime / duration) * 100;
+        progressBarRef.current.style.background = `linear-gradient(to right, #03bbf2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
       }
     }
-  }, [currentTime, currentTrackIndex, activePlaylist]);
+  }, [currentTime, currentTrackIndex, activePlaylist, progressBarRef]);
 
   return (
     <div className="bottom-row">

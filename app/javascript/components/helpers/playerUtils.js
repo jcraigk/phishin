@@ -4,13 +4,6 @@ export const formatTime = (timeInSeconds) => {
   return `${minutes}:${seconds}`;
 };
 
-export const updateProgressBar = (progressBarRef, current, duration) => {
-  if (duration > 0 && progressBarRef.current) {
-    const progress = (current / duration) * 100;
-    progressBarRef.current.style.background = `linear-gradient(to right, #03bbf2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
-  }
-};
-
 export const getPlayerPosition = (gaplessPlayerRef) => {
   if (!gaplessPlayerRef.current) return 0;
   const position = gaplessPlayerRef.current.getPosition();
