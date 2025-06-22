@@ -25,6 +25,13 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   // Parse URL parameters on initial load
   useEffect(() => {
     if (!hasPlayedInitially) {
+      console.log('Parsing URL parameters, activeTrack:', {
+        id: activeTrack?.id,
+        title: activeTrack?.title,
+        starts_at_second: activeTrack?.starts_at_second,
+        ends_at_second: activeTrack?.ends_at_second
+      });
+
       // Handle start/end times from URL
       const urlStartTimeString = new URLSearchParams(location.search).get("t");
       const urlEndTimeString = new URLSearchParams(location.search).get("e");
@@ -32,8 +39,10 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       if (urlStartTimeString || urlEndTimeString) setIsInitialUrlPlaySession(true);
       if (urlStartTimeString) {
         const parsed = parseTimeParam(urlStartTimeString);
+        console.log('Parsed start time from URL:', parsed);
         if (parsed !== null) setInitialStartTime(parsed);
       } else if (activeTrack?.starts_at_second) {
+        console.log('Using track starts_at_second:', activeTrack.starts_at_second);
         setInitialStartTime(activeTrack.starts_at_second);
       }
 
@@ -41,6 +50,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         const parsed = parseTimeParam(urlEndTimeString);
         const trackDuration = activeTrack.duration / 1000;
         if (parsed !== null && parsed > 0 && parsed <= trackDuration) {
+          console.log('Parsed end time from URL:', parsed);
           setUrlEndTime(parsed);
         } else {
           setAlert("Invalid end time provided");
@@ -70,6 +80,21 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   };
 
   const handleTogglePlayPause = () => {
+    console.log('handleTogglePlayPause called:', {
+      isPlaying,
+      hasPlayedInitially,
+      currentTime,
+      endTime,
+      isInitialUrlPlaySession,
+      urlEndTime,
+      activeTrack: activeTrack ? {
+        id: activeTrack.id,
+        title: activeTrack.title,
+        starts_at_second: activeTrack.starts_at_second,
+        ends_at_second: activeTrack.ends_at_second
+      } : null
+    });
+
     if (!isPlaying && !hasPlayedInitially) {
       setHasPlayedInitially(true);
     }
@@ -95,9 +120,17 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
       // Set end time based on whether we're in initial URL play session
       if (isInitialUrlPlaySession && urlEndTime !== null) {
+        // Only use URL end time if it exists
+        console.log('Setting end time from URL:', urlEndTime);
         setEndTime(urlEndTime);
-      } else {
+      } else if (!isInitialUrlPlaySession && activeTrack.ends_at_second) {
+        // Only use track's end time if NOT in initial URL play session
+        console.log('Setting end time from track:', activeTrack.ends_at_second);
         setEndTime(activeTrack.ends_at_second);
+      } else {
+        // No end time restriction
+        console.log('No end time set');
+        setEndTime(null);
       }
 
       const trackIndex = activePlaylist.findIndex(track => track.id === activeTrack.id);
@@ -149,12 +182,15 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   // End time checking
   useEffect(() => {
     if (endTime !== null && currentTime >= endTime) {
+      console.log('End time check triggered:', { currentTime, endTime, isInitialUrlPlaySession, urlEndTime });
       if (isInitialUrlPlaySession && urlEndTime !== null) {
         // Initial play with URL end time - stop playback
+        console.log('Stopping playback due to URL end time');
         togglePlayPause();
         setIsInitialUrlPlaySession(false);
       } else {
         // Normal behavior: advance to next track
+        console.log('Advancing to next track');
         skipToNextTrack();
       }
     }
