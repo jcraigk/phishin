@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate, useNavigation, ScrollRestoration } from "react-router-dom";
 import Navbar from "./Navbar";
 import Loader from "../controls/Loader";
@@ -97,7 +97,7 @@ const Layout = ({ props }) => {
     setDraftPlaylistMeta(initialDraftPlaylistMeta);
   };
 
-  const playTrack = (playlist, track, autoplay = false) => {
+  const playTrack = (playlist, track) => {
     setActivePlaylist(playlist);
     setActiveTrack(track);
   };
