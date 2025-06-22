@@ -21,17 +21,6 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     if (startTime !== null && startTime !== undefined) {
       const trackDuration = activeTrack ? activeTrack.duration / 1000 : 0;
 
-      console.log('useGaplessPlayer startTime effect:', {
-        startTime,
-        trackDuration,
-        activeTrack: activeTrack ? {
-          id: activeTrack.id,
-          title: activeTrack.title,
-          starts_at_second: activeTrack.starts_at_second,
-          ends_at_second: activeTrack.ends_at_second
-        } : null
-      });
-
       if (startTime === null || startTime < 0 || (trackDuration > 0 && startTime > trackDuration)) {
 
         if (setAlert) {
@@ -71,48 +60,11 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
   const togglePlayPause = () => {
     if (!gaplessPlayerRef.current) return;
 
-    console.log('togglePlayPause - Player state before:', {
-      position: gaplessPlayerRef.current.getPosition(),
-      index: gaplessPlayerRef.current.getIndex(),
-      isPlaying: isPlaying
-    });
-
-    // Try to get more info about the player state
-    try {
-      const audioElements = document.getElementsByTagName('audio');
-      if (audioElements.length > 0) {
-        console.log('Audio element state:', {
-          readyState: audioElements[0].readyState,
-          paused: audioElements[0].paused,
-          currentTime: audioElements[0].currentTime,
-          duration: audioElements[0].duration,
-          buffered: audioElements[0].buffered.length > 0 ? {
-            start: audioElements[0].buffered.start(0),
-            end: audioElements[0].buffered.end(0)
-          } : 'no buffered ranges'
-        });
-      }
-    } catch (e) {
-      console.log('Could not get audio element state:', e);
-    }
-
-    console.log('togglePlayPause - about to call playpause, isPlaying:', isPlaying);
-
     try {
       gaplessPlayerRef.current.playpause();
     } catch (e) {
       console.error('Error in playpause:', e);
     }
-
-    // Check state immediately after
-    setTimeout(() => {
-      if (gaplessPlayerRef.current) {
-        console.log('togglePlayPause - Player state after:', {
-          position: gaplessPlayerRef.current.getPosition(),
-          index: gaplessPlayerRef.current.getIndex()
-        });
-      }
-    }, 100);
   };
 
   const scrub = (seconds) => {
@@ -226,10 +178,6 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       // Player callbacks
       gaplessPlayerRef.current.ontimeupdate = (current_track_time, current_track_index) => {
         const timeInSeconds = current_track_time / 1000;
-        // Only log significant time updates to avoid spam
-        if (Math.abs(timeInSeconds - currentTime) > 1) {
-          console.log('ontimeupdate:', { timeInSeconds, current_track_index, isPlaying });
-        }
         setCurrentTime(timeInSeconds);
         setCurrentTrackIndex(current_track_index);
       };
@@ -239,45 +187,36 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       };
 
       gaplessPlayerRef.current.onload = () => {
-        console.log('onload callback triggered');
         setIsLoading(false);
         if (gaplessPlayerRef.current) {
           if (pendingStartTime !== null) {
-            console.log('Setting position in onload to:', pendingStartTime * 1000);
             gaplessPlayerRef.current.setPosition(pendingStartTime * 1000);
             setPendingStartTime(null);
           }
           // Only autoplay if we should continue playing (user was already playing)
           // Don't autoplay on initial page load to avoid browser autoplay policy
           if (shouldContinuePlayingRef.current) {
-            console.log('Autoplaying because shouldContinuePlayingRef is true');
             gaplessPlayerRef.current.play();
-          } else {
-            console.log('Not autoplaying, shouldContinuePlayingRef is false');
           }
         }
       };
 
       gaplessPlayerRef.current.onplay = () => {
-        console.log('onplay callback triggered');
         setTimeout(() => {
           setIsPlaying(true);
           setIsLoading(false);
           // Track that user has started playing
           shouldContinuePlayingRef.current = true;
-          console.log('Play state set, shouldContinuePlayingRef:', true);
         }, 0);
       };
 
       gaplessPlayerRef.current.onpause = () => {
-        console.log('onpause callback triggered');
         setIsPlaying(false);
         // Track that user has paused
         shouldContinuePlayingRef.current = false;
       };
 
       gaplessPlayerRef.current.onstop = () => {
-        console.log('onstop callback triggered');
         setIsPlaying(false);
         setIsLoading(false);
         // Track that playback has stopped
@@ -310,10 +249,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
                                error?.message?.includes('Cannot read properties of null');
 
         if (!isDurationError) {
-          console.warn('Gapless player error:', error);
           console.error(`Error playing track: ${error}`);
-        } else {
-          console.log('Duration error (ignored):', error);
         }
 
         setIsPlaying(false);
