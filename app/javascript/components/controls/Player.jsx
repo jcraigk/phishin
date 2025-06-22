@@ -35,11 +35,20 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   };
 
   const scrub = (seconds) => {
-    if (!gaplessPlayerRef.current) return;
+    if (!gaplessPlayerRef.current || !activeTrack) return;
     const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
     if (currentPosition >= 0) {
-      const newTime = Math.max(currentPosition + seconds, 0);
-      gaplessPlayerRef.current.setPosition(newTime * 1000);
+      const newTime = currentPosition + seconds;
+      const trackDuration = activeTrack.duration / 1000;
+
+      // Don't scrub forward if we're within 10 seconds of the end
+      if (seconds > 0 && newTime >= trackDuration - 10) {
+        return;
+      }
+
+      // Don't scrub backward past the beginning
+      const clampedTime = Math.max(newTime, 0);
+      gaplessPlayerRef.current.setPosition(clampedTime * 1000);
     }
   };
 
@@ -119,7 +128,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
           singleMode: false,
           useWebAudio: true,
           useHTML5Audio: true,
-          loadLimit: 3,
+          loadLimit: 1,
           volume: 1.0,
           startingTrack: validActiveIndex
         });
@@ -176,33 +185,17 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
       gaplessPlayerRef.current.onnext = (from_track, to_track) => {
         const newIndex = gaplessPlayerRef.current.getIndex();
-        if (newIndex < 0 || newIndex >= activePlaylist.length) return;
-
-        const newActiveTrack = activePlaylist[newIndex];
-        if (newActiveTrack) {
+        if (newIndex >= 0 && newIndex < activePlaylist.length) {
           setCurrentTrackIndex(newIndex);
-          setActiveTrack(prevTrack => {
-            if (prevTrack && prevTrack.id === newActiveTrack.id) {
-              return { ...newActiveTrack };
-            }
-            return newActiveTrack;
-          });
+          setActiveTrack(activePlaylist[newIndex]);
         }
       };
 
       gaplessPlayerRef.current.onprev = (from_track, to_track) => {
         const newIndex = gaplessPlayerRef.current.getIndex();
-        if (newIndex < 0 || newIndex >= activePlaylist.length) return;
-
-        const newActiveTrack = activePlaylist[newIndex];
-        if (newActiveTrack) {
+        if (newIndex >= 0 && newIndex < activePlaylist.length) {
           setCurrentTrackIndex(newIndex);
-          setActiveTrack(prevTrack => {
-            if (prevTrack && prevTrack.id === newActiveTrack.id) {
-              return { ...newActiveTrack };
-            }
-            return newActiveTrack;
-          });
+          setActiveTrack(activePlaylist[newIndex]);
         }
       };
 
@@ -398,6 +391,16 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     return currentIndex < activePlaylist.length - 1;
   };
 
+  const canScrubForward = () => {
+    if (!activeTrack || !gaplessPlayerRef.current) return false;
+    const currentPosition = gaplessPlayerRef.current.getPosition();
+    const currentPositionSeconds = currentPosition >= 0 ? currentPosition / 1000 : 0;
+    const trackDuration = activeTrack.duration / 1000;
+
+    // Disable if track is 10 seconds or less, or if we're within 10 seconds of the end
+    return trackDuration > 10 && currentPositionSeconds < trackDuration - 10;
+  };
+
   return (
     <div className={`audio-player ${activeTrack ? 'visible' : ''} ${isPlayerCollapsed ? 'collapsed' : ''}`}>
       <div
@@ -475,7 +478,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
             <button
               className="scrub-btn scrub-forward"
               onClick={() => scrub(10)}
-              disabled={isLoading}
+              disabled={isLoading || !canScrubForward()}
             >
               <FontAwesomeIcon icon={faRotateRight} />
               <span>10</span>
