@@ -74,7 +74,6 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     if (currentPosition >= 0) {
       const trackDuration = activeTrack.duration / 1000;
 
-      // If near end of track, do nothing
       if (seconds > 0 && currentPosition >= trackDuration - PLAYER_CONSTANTS.SCRUB_SECONDS) return;
 
       const newTime = currentPosition + seconds;
@@ -146,7 +145,6 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     }
   };
 
-  // Initialize gapless player when activePlaylist changes
   useEffect(() => {
     if (activePlaylist && activePlaylist.length > 0) {
       if (gaplessPlayerRef.current) {
@@ -175,7 +173,6 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
         return;
       }
 
-      // Player callbacks
       gaplessPlayerRef.current.ontimeupdate = (current_track_time, current_track_index) => {
         const timeInSeconds = current_track_time / 1000;
         setCurrentTime(timeInSeconds);
@@ -193,7 +190,6 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
             gaplessPlayerRef.current.setPosition(pendingStartTime * 1000);
             setPendingStartTime(null);
           }
-          // Only autoplay if we should continue playing (user was already playing)
           // Don't autoplay on initial page load to avoid browser autoplay policy
           if (shouldContinuePlayingRef.current) {
             gaplessPlayerRef.current.play();
@@ -205,21 +201,18 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
         setTimeout(() => {
           setIsPlaying(true);
           setIsLoading(false);
-          // Track that user has started playing
           shouldContinuePlayingRef.current = true;
         }, 0);
       };
 
       gaplessPlayerRef.current.onpause = () => {
         setIsPlaying(false);
-        // Track that user has paused
         shouldContinuePlayingRef.current = false;
       };
 
       gaplessPlayerRef.current.onstop = () => {
         setIsPlaying(false);
         setIsLoading(false);
-        // Track that playback has stopped
         shouldContinuePlayingRef.current = false;
       };
 

@@ -26,7 +26,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   // Parse URL parameters on initial load
   useEffect(() => {
     if (!hasPlayedInitially) {
-      // Handle start/end times from URL
       const urlStartTimeString = new URLSearchParams(location.search).get("t");
       const urlEndTimeString = new URLSearchParams(location.search).get("e");
 
@@ -78,7 +77,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   };
 
   const handleSkipToNext = () => {
-    // Clear URL session and parameters when manually skipping
     setIsInitialUrlPlaySession(false);
     setInitialStartTime(null);
     setUrlEndTime(null);
@@ -87,7 +85,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   };
 
   const handleSkipToPrevious = () => {
-    // Clear URL session and parameters when manually skipping
     setIsInitialUrlPlaySession(false);
     setInitialStartTime(null);
     setUrlEndTime(null);
@@ -102,25 +99,21 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
       }
 
-      // Reset the end time processed flag for the new track
+      // Reset the flag for the new track to allow end time processing
       endTimeProcessedRef.current = false;
 
       // Set end time based on whether we're in initial URL play session
       if (isInitialUrlPlaySession && urlEndTime !== null) {
-        // Only use URL end time if it exists
         setEndTime(urlEndTime);
       } else if (!isInitialUrlPlaySession && activeTrack.ends_at_second) {
-        // Only use track's end time if NOT in initial URL play session
         setEndTime(activeTrack.ends_at_second);
       } else {
-        // No end time restriction
         setEndTime(null);
       }
 
       const trackIndex = activePlaylist.findIndex(track => track.id === activeTrack.id);
       if (trackIndex >= 0 && trackIndex !== currentTrackIndex) {
         gaplessPlayerRef.current.gotoTrack(trackIndex);
-        // If user manually selected a track, clear initial URL session
         if (hasPlayedInitially) {
           setIsInitialUrlPlaySession(false);
         }
@@ -128,7 +121,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     }
   }, [activeTrack, gaplessPlayerRef, activePlaylist, currentTrackIndex, isInitialUrlPlaySession, urlEndTime]);
 
-  // Media session integration
   useMediaSession(activeTrack, {
     onPlayPause: handleTogglePlayPause,
     onNext: handleSkipToNext,
@@ -165,9 +157,8 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
   // End time checking
   useEffect(() => {
-    // Only check if we have an end time and current time has reached it
     if (endTime === null || currentTime < endTime) {
-      endTimeProcessedRef.current = false; // Reset the flag when we're before end time
+      endTimeProcessedRef.current = false;
       return;
     }
 
@@ -181,15 +172,14 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     // Handle URL end time - stop playback completely
     if (isInitialUrlPlaySession && urlEndTime !== null && endTime === urlEndTime) {
       if (isPlaying) {
-        togglePlayPause(); // Stop playback
+        togglePlayPause();
       }
 
-      // Clear URL session and parameters
       setIsInitialUrlPlaySession(false);
       setInitialStartTime(null);
       setUrlEndTime(null);
       setHasPlayedInitially(true);
-      // Clear the end time so we don't trigger again
+      // Clear the end time to prevent retriggering
       setEndTime(null);
     }
     // Handle normal playlist/track end time - advance to next
