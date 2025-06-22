@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { formatDate, parseTimeParam } from "../helpers/utils";
-import { useFeedback } from "./FeedbackContext";
 import CoverArt from "../CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
@@ -14,7 +13,6 @@ import ProgressBar from "./ProgressBar";
 
 const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, openAppModal }) => {
   const location = useLocation();
-  const { setAlert } = useFeedback();
   const [isPlayerCollapsed, setIsPlayerCollapsed] = useState(false);
   const [endTime, setEndTime] = useState(null);
 
@@ -32,7 +30,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     canSkipToNext,
     canScrubForward,
     handleScrubberClick,
-  } = useGaplessPlayer(activePlaylist, activeTrack, setActiveTrack, setAlert);
+  } = useGaplessPlayer(activePlaylist, activeTrack, setActiveTrack);
 
   const togglePlayerPosition = () => {
     setIsPlayerCollapsed(!isPlayerCollapsed);

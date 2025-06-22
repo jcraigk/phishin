@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Gapless5 } from "@regosen/gapless-5";
 import { PLAYER_CONSTANTS } from "../helpers/playerConstants";
-import { getPlayerPosition, resetLoadingState, updateProgressBar } from "../helpers/playerUtils";
+import { getPlayerPosition } from "../helpers/playerUtils";
 
-export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, setAlert) => {
+export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack) => {
   const gaplessPlayerRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -21,14 +21,13 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
               listener.call(this, event);
             }
           } catch (error) {
-            // Silently handle duration-related errors that occur during rapid track changes
+            console.warn('Error in Audio.addEventListener', error);
           }
         };
         return originalAddEventListener.call(this, type, wrappedListener, options);
       }
       return originalAddEventListener.call(this, type, listener, options);
     };
-    // Note: We're not restoring the Audio prototype as it might affect other components
   }, []);
 
   const togglePlayPause = () => {
@@ -139,8 +138,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
           startingTrack: validActiveIndex
         });
       } catch (error) {
-        console.error('Error creating Gapless5 player:', error);
-        setAlert('Error initializing audio player');
+        console.error('Error initializing audio player');
         return;
       }
 
@@ -206,7 +204,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
 
         if (!isDurationError) {
           console.warn('Gapless player error:', error);
-          setAlert(`Error playing track: ${error}`);
+          console.error(`Error playing track: ${error}`);
         }
 
         setIsPlaying(false);
