@@ -6,7 +6,6 @@ import { useWaveformImage } from "../hooks/useWaveformImage";
 const ProgressBar = ({ activeTrack, currentTime, currentTrackIndex, activePlaylist, onScrubberClick, onScrub }) => {
   const { scrubberRef, progressBarRef, fadeClass } = useWaveformImage(activeTrack);
 
-  // Update progress bar when time changes
   useEffect(() => {
     if (currentTrackIndex >= 0 && currentTrackIndex < activePlaylist.length) {
       const currentTrack = activePlaylist[currentTrackIndex];

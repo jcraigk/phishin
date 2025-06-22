@@ -11,12 +11,10 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [pendingStartTime, setPendingStartTime] = useState(null);
 
-  // Set pending start time when startTime prop changes
   useEffect(() => {
     if (startTime !== null && startTime !== undefined) {
       const trackDuration = activeTrack ? activeTrack.duration / 1000 : 0;
 
-      // Check if startTime is valid
       if (startTime === null || startTime < 0 || (trackDuration > 0 && startTime > trackDuration)) {
 
         if (setAlert) {
@@ -53,7 +51,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     };
   }, []);
 
-          const togglePlayPause = () => {
+  const togglePlayPause = () => {
     if (!gaplessPlayerRef.current) return;
 
         // If we have a pending start time and we're about to play, apply it first
@@ -145,7 +143,6 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
 
   // Initialize gapless player when activePlaylist changes
   useEffect(() => {
-
     if (activePlaylist && activePlaylist.length > 0) {
       if (gaplessPlayerRef.current) {
         gaplessPlayerRef.current.stop();
@@ -173,7 +170,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
         return;
       }
 
-      // Setup player callbacks
+      // Player callbacks
       gaplessPlayerRef.current.ontimeupdate = (current_track_time, current_track_index) => {
         const timeInSeconds = current_track_time / 1000;
         setCurrentTime(timeInSeconds);
