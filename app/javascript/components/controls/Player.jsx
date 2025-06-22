@@ -130,136 +130,96 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       }
 
       gaplessPlayerRef.current.ontimeupdate = (current_track_time, current_track_index) => {
-        try {
-          const timeInSeconds = current_track_time / 1000;
-          setCurrentTime(timeInSeconds);
-          setCurrentTrackIndex(current_track_index);
+        const timeInSeconds = current_track_time / 1000;
+        setCurrentTime(timeInSeconds);
+        setCurrentTrackIndex(current_track_index);
 
-          if (current_track_index >= 0 && current_track_index < activePlaylist.length) {
-            const currentTrack = activePlaylist[current_track_index];
-            if (currentTrack && currentTrack.duration) {
-              updateProgressBar(timeInSeconds, currentTrack.duration / 1000);
-            }
+        if (current_track_index >= 0 && current_track_index < activePlaylist.length) {
+          const currentTrack = activePlaylist[current_track_index];
+          if (currentTrack && currentTrack.duration) {
+            updateProgressBar(timeInSeconds, currentTrack.duration / 1000);
           }
-        } catch (error) {
-          console.warn('Error in ontimeupdate callback:', error);
         }
       };
 
       gaplessPlayerRef.current.onloadstart = (track_path) => {
-        try {
-          setIsLoading(true);
-          setLoadingTrackPath(track_path);
-        } catch (error) {
-          console.warn('Error in onloadstart callback:', error);
-        }
+        setIsLoading(true);
+        setLoadingTrackPath(track_path);
       };
 
       gaplessPlayerRef.current.onload = (track_path, fully_loaded) => {
-        try {
-          setIsLoading(false);
-          setLoadingTrackPath(null);
-          setTimeout(() => {
-            if (!gaplessPlayerRef.current) return;
-            gaplessPlayerRef.current.play();
-          }, 50);
-        } catch (error) {
-          console.warn('Error in onload callback:', error);
-        }
+        setIsLoading(false);
+        setLoadingTrackPath(null);
+        setTimeout(() => {
+          if (!gaplessPlayerRef.current) return;
+          gaplessPlayerRef.current.play();
+        }, 50);
       };
 
       gaplessPlayerRef.current.onplay = (track_path) => {
-        try {
-          setTimeout(() => {
-            setIsPlaying(true);
-            setIsLoading(false);
-            setLoadingTrackPath(null);
-          }, 0);
-        } catch (error) {
-          console.warn('Error in onplay callback:', error);
-        }
+        setTimeout(() => {
+          setIsPlaying(true);
+          setIsLoading(false);
+          setLoadingTrackPath(null);
+        }, 0);
       };
 
       gaplessPlayerRef.current.onpause = (track_path) => {
-        try {
-          setIsPlaying(false);
-        } catch (error) {
-          console.warn('Error in onpause callback:', error);
-        }
+        setIsPlaying(false);
       };
 
       gaplessPlayerRef.current.onstop = (track_path) => {
-        try {
-          setIsPlaying(false);
-          setIsLoading(false);
-          setLoadingTrackPath(null);
-        } catch (error) {
-          console.warn('Error in onstop callback:', error);
-        }
+        setIsPlaying(false);
+        setIsLoading(false);
+        setLoadingTrackPath(null);
       };
 
       gaplessPlayerRef.current.onnext = (from_track, to_track) => {
-        try {
-          const newIndex = gaplessPlayerRef.current.getIndex();
-          if (newIndex < 0 || newIndex >= activePlaylist.length) return;
+        const newIndex = gaplessPlayerRef.current.getIndex();
+        if (newIndex < 0 || newIndex >= activePlaylist.length) return;
 
-          const newActiveTrack = activePlaylist[newIndex];
-          if (newActiveTrack) {
-            setCurrentTrackIndex(newIndex);
-            setActiveTrack(prevTrack => {
-              if (prevTrack && prevTrack.id === newActiveTrack.id) {
-                return { ...newActiveTrack };
-              }
-              return newActiveTrack;
-            });
-          }
-        } catch (error) {
-          console.warn('Error in onnext callback:', error);
+        const newActiveTrack = activePlaylist[newIndex];
+        if (newActiveTrack) {
+          setCurrentTrackIndex(newIndex);
+          setActiveTrack(prevTrack => {
+            if (prevTrack && prevTrack.id === newActiveTrack.id) {
+              return { ...newActiveTrack };
+            }
+            return newActiveTrack;
+          });
         }
       };
 
       gaplessPlayerRef.current.onprev = (from_track, to_track) => {
-        try {
-          const newIndex = gaplessPlayerRef.current.getIndex();
-          if (newIndex < 0 || newIndex >= activePlaylist.length) return;
+        const newIndex = gaplessPlayerRef.current.getIndex();
+        if (newIndex < 0 || newIndex >= activePlaylist.length) return;
 
-          const newActiveTrack = activePlaylist[newIndex];
-          if (newActiveTrack) {
-            setCurrentTrackIndex(newIndex);
-            setActiveTrack(prevTrack => {
-              if (prevTrack && prevTrack.id === newActiveTrack.id) {
-                return { ...newActiveTrack };
-              }
-              return newActiveTrack;
-            });
-          }
-        } catch (error) {
-          console.warn('Error in onprev callback:', error);
+        const newActiveTrack = activePlaylist[newIndex];
+        if (newActiveTrack) {
+          setCurrentTrackIndex(newIndex);
+          setActiveTrack(prevTrack => {
+            if (prevTrack && prevTrack.id === newActiveTrack.id) {
+              return { ...newActiveTrack };
+            }
+            return newActiveTrack;
+          });
         }
       };
 
       gaplessPlayerRef.current.onfinishedall = () => {
-        try {
-          setIsPlaying(false);
-          setIsLoading(false);
-          setLoadingTrackPath(null);
-        } catch (error) {
-          console.warn('Error in onfinishedall callback:', error);
-        }
+        setIsPlaying(false);
+        setIsLoading(false);
+        setLoadingTrackPath(null);
       };
 
       gaplessPlayerRef.current.onerror = (track_path, error) => {
-        try {
-          console.warn('Gapless player error:', error);
-          setIsPlaying(false);
-          setIsLoading(false);
-          setLoadingTrackPath(null);
-          // Only show user-facing errors for actual playback issues
-          if (error && !error.message?.includes('duration')) {
-            setAlert(`Error playing track: ${error}`);
-          }
-        } catch (err) {
-          console.warn('Error in onerror callback:', err);
+        console.warn('Gapless player error:', error);
+        setIsPlaying(false);
+        setIsLoading(false);
+        setLoadingTrackPath(null);
+        // Only show user-facing errors for actual playback issues
+        if (error && !error.message?.includes('duration')) {
+          setAlert(`Error playing track: ${error}`);
         }
       };
 
@@ -271,12 +231,8 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
     return () => {
       if (gaplessPlayerRef.current) {
-        try {
-          gaplessPlayerRef.current.stop();
-          gaplessPlayerRef.current.removeAllTracks();
-        } catch (error) {
-          console.warn('Error cleaning up gapless player:', error);
-        }
+        gaplessPlayerRef.current.stop();
+        gaplessPlayerRef.current.removeAllTracks();
         gaplessPlayerRef.current = null;
       }
     };
@@ -413,15 +369,11 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
 
   const handleScrubberClick = (e) => {
     if (gaplessPlayerRef.current && activeTrack) {
-      try {
-        const currentPosition = gaplessPlayerRef.current.getPosition();
-        if (currentPosition >= 0) {
-          const clickPosition = e.nativeEvent.offsetX / e.target.offsetWidth;
-          const newTime = clickPosition * (activeTrack.duration / 1000);
-          gaplessPlayerRef.current.setPosition(newTime * 1000);
-        }
-      } catch (error) {
-        console.warn('Audio not ready for seeking:', error);
+      const currentPosition = gaplessPlayerRef.current.getPosition();
+      if (currentPosition >= 0) {
+        const clickPosition = e.nativeEvent.offsetX / e.target.offsetWidth;
+        const newTime = clickPosition * (activeTrack.duration / 1000);
+        gaplessPlayerRef.current.setPosition(newTime * 1000);
       }
     }
   };
