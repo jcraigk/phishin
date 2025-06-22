@@ -3,12 +3,35 @@ import { Gapless5 } from "@regosen/gapless-5";
 import { PLAYER_CONSTANTS } from "../helpers/playerConstants";
 import { getPlayerPosition } from "../helpers/playerUtils";
 
-export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack) => {
+export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, setNotice, setAlert, startTime) => {
   const gaplessPlayerRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [pendingStartTime, setPendingStartTime] = useState(null);
+
+  // Set pending start time when startTime prop changes
+  useEffect(() => {
+    if (startTime !== null && startTime !== undefined) {
+      const trackDuration = activeTrack ? activeTrack.duration / 1000 : 0;
+
+      // Check if startTime is valid
+      if (startTime === null || startTime < 0 || (trackDuration > 0 && startTime > trackDuration)) {
+
+        if (setAlert) {
+          setAlert('Invalid start time provided');
+        }
+        setPendingStartTime(null);
+      } else if (startTime > 0) {
+
+        setPendingStartTime(startTime);
+        if (setNotice) {
+          setNotice('Press the Play button to listen');
+        }
+      }
+    }
+  }, [startTime, activeTrack, setNotice, setAlert]);
 
   // Patch Audio prototype to prevent null duration errors when skipping tracks quickly
   useEffect(() => {
@@ -30,8 +53,15 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack) =>
     };
   }, []);
 
-  const togglePlayPause = () => {
+          const togglePlayPause = () => {
     if (!gaplessPlayerRef.current) return;
+
+        // If we have a pending start time and we're about to play, apply it first
+    if (!isPlaying && pendingStartTime !== null) {
+      gaplessPlayerRef.current.setPosition(pendingStartTime * 1000);
+      setPendingStartTime(null);
+    }
+
     gaplessPlayerRef.current.playpause();
   };
 
@@ -115,6 +145,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack) =>
 
   // Initialize gapless player when activePlaylist changes
   useEffect(() => {
+
     if (activePlaylist && activePlaylist.length > 0) {
       if (gaplessPlayerRef.current) {
         gaplessPlayerRef.current.stop();
@@ -155,10 +186,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack) =>
 
       gaplessPlayerRef.current.onload = () => {
         setIsLoading(false);
-        setTimeout(() => {
-          if (!gaplessPlayerRef.current) return;
-          gaplessPlayerRef.current.play();
-        }, PLAYER_CONSTANTS.PLAY_DELAY);
+        // Don't autoplay - let user manually click play to avoid autoplay policy issues
       };
 
       gaplessPlayerRef.current.onplay = () => {

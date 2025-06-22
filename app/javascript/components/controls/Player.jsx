@@ -10,11 +10,26 @@ import { PLAYER_CONSTANTS } from "../helpers/playerConstants";
 import PlayerControls from "./PlayerControls";
 import TrackInfo from "./TrackInfo";
 import ProgressBar from "./ProgressBar";
+import { useFeedback } from "./FeedbackContext";
 
 const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, openAppModal }) => {
   const location = useLocation();
   const [isPlayerCollapsed, setIsPlayerCollapsed] = useState(false);
   const [endTime, setEndTime] = useState(null);
+  const { setNotice, setAlert } = useFeedback();
+
+  // Parse start time from URL or track data
+  const urlStartTimeString = new URLSearchParams(location.search).get("t");
+  let startTime = activeTrack?.starts_at_second;
+
+  if (urlStartTimeString) {
+    const parsed = parseTimeParam(urlStartTimeString);
+    if (parsed !== null) {
+      startTime = parsed;
+    }
+  }
+
+
 
   const {
     gaplessPlayerRef,
@@ -30,11 +45,13 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     canSkipToNext,
     canScrubForward,
     handleScrubberClick,
-  } = useGaplessPlayer(activePlaylist, activeTrack, setActiveTrack);
+  } = useGaplessPlayer(activePlaylist, activeTrack, setActiveTrack, setNotice, setAlert, startTime);
 
   const togglePlayerPosition = () => {
     setIsPlayerCollapsed(!isPlayerCollapsed);
   };
+
+
 
   // Handle activeTrack change (when user selects a different track)
   useEffect(() => {
@@ -43,24 +60,28 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
       }
 
-      const startTime = activeTrack.starts_at_second ?? parseTimeParam(new URLSearchParams(location.search).get("t"));
-      const endTime = activeTrack.ends_at_second ?? parseTimeParam(new URLSearchParams(location.search).get("e"));
+            // Parse and validate end time
+      const urlEndTimeString = new URLSearchParams(location.search).get("e");
+      const trackDuration = activeTrack.duration / 1000; // Convert to seconds
 
-      setEndTime(endTime);
+      if (urlEndTimeString) {
+        const urlEndTime = parseTimeParam(urlEndTimeString);
+        if (urlEndTime === null || urlEndTime < 0 || urlEndTime > trackDuration) {
+          setAlert("Invalid end time provided");
+          setEndTime(null);
+        } else {
+          setEndTime(urlEndTime);
+        }
+      } else {
+        setEndTime(activeTrack.ends_at_second);
+      }
 
       const trackIndex = activePlaylist.findIndex(track => track.id === activeTrack.id);
       if (trackIndex >= 0 && trackIndex !== currentTrackIndex) {
         gaplessPlayerRef.current.gotoTrack(trackIndex);
-
-        if (startTime && startTime > 0) {
-          setTimeout(() => {
-            if (!gaplessPlayerRef.current) return;
-            gaplessPlayerRef.current.setPosition(startTime * 1000);
-          }, PLAYER_CONSTANTS.POSITION_DELAY);
-        }
       }
     }
-  }, [activeTrack, gaplessPlayerRef, activePlaylist, currentTrackIndex]);
+  }, [activeTrack, gaplessPlayerRef, activePlaylist, currentTrackIndex, setAlert]);
 
   // Media session integration
   useMediaSession(activeTrack, {
