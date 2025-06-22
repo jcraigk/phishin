@@ -34,20 +34,11 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     gaplessPlayerRef.current.playpause();
   };
 
-  const scrubForward = () => {
+  const scrub = (seconds) => {
     if (!gaplessPlayerRef.current) return;
     const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
     if (currentPosition >= 0) {
-      const newTime = currentPosition + 10;
-      gaplessPlayerRef.current.setPosition(newTime * 1000);
-    }
-  };
-
-  const scrubBackward = () => {
-    if (!gaplessPlayerRef.current) return;
-    const currentPosition = gaplessPlayerRef.current.getPosition() / 1000;
-    if (currentPosition >= 0) {
-      const newTime = Math.max(currentPosition - 10, 0);
+      const newTime = Math.max(currentPosition + seconds, 0);
       gaplessPlayerRef.current.setPosition(newTime * 1000);
     }
   };
@@ -363,8 +354,8 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       navigator.mediaSession.setActionHandler('play', togglePlayPause);
       navigator.mediaSession.setActionHandler('pause', togglePlayPause);
       navigator.mediaSession.setActionHandler('stop', togglePlayPause);
-      navigator.mediaSession.setActionHandler('seekbackward', scrubBackward);
-      navigator.mediaSession.setActionHandler('seekforward', scrubForward);
+      navigator.mediaSession.setActionHandler('seekbackward', () => scrub(-10));
+      navigator.mediaSession.setActionHandler('seekforward', () => scrub(10));
     }
   }, [activeTrack]);
 
@@ -393,10 +384,10 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         skipToNextTrack();
       } else if (e.key === "ArrowLeft" && e.shiftKey) {
         e.preventDefault();
-        scrubBackward();
+        scrub(-10);
       } else if (e.key === "ArrowRight" && e.shiftKey) {
         e.preventDefault();
-        scrubForward();
+        scrub(10);
       }
     };
 
@@ -495,7 +486,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
             </button>
             <button
               className="scrub-btn scrub-back"
-              onClick={scrubBackward}
+              onClick={() => scrub(-10)}
               disabled={isLoading}
             >
               <FontAwesomeIcon icon={faRotateLeft} />
@@ -516,7 +507,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
             </button>
             <button
               className="scrub-btn scrub-forward"
-              onClick={scrubForward}
+              onClick={() => scrub(10)}
               disabled={isLoading}
             >
               <FontAwesomeIcon icon={faRotateRight} />
@@ -532,7 +523,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         </div>
       </div>
       <div className="bottom-row">
-        <p className="elapsed" onClick={scrubBackward}>
+        <p className="elapsed" onClick={() => scrub(-10)}>
           {formatTime(currentTime)}
         </p>
         <div
@@ -542,7 +533,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         >
           <div className="progress-bar" ref={progressBarRef}></div>
         </div>
-        <p className="remaining" onClick={scrubForward}>
+        <p className="remaining" onClick={() => scrub(10)}>
           {activeTrack ? `-${formatTime((activeTrack.duration / 1000) - currentTime)}` : "0:00"}
         </p>
       </div>
