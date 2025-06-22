@@ -51,7 +51,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     }
   };
 
-      const skipToNextTrack = () => {
+  const skipToNextTrack = () => {
     if (!gaplessPlayerRef.current || !activePlaylist) return;
     const currentIndex = gaplessPlayerRef.current.getIndex();
     const nextIndex = currentIndex + 1;
@@ -80,17 +80,10 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     }
   };
 
-      const canSkipToPrevious = () => {
+  const canSkipToPrevious = () => {
     if (!activePlaylist) return false;
-
-    // If we're not on the first track, always allow skip to previous
-    // This should work regardless of loading state or player state
     if (currentTrackIndex > 0) return true;
-
-    // We're on the first track (index 0)
-    // Can only "skip to previous" (restart) if we're playing and past the threshold
     if (!gaplessPlayerRef.current || isLoading) return false;
-
     const currentPosition = getPlayerPosition(gaplessPlayerRef);
     return currentPosition > PLAYER_CONSTANTS.PREVIOUS_TRACK_THRESHOLD;
   };
