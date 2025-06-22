@@ -73,12 +73,13 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     const currentPosition = getPlayerPosition();
 
     if (currentPosition >= 0) {
-      const newTime = currentPosition + seconds;
       const trackDuration = activeTrack.duration / 1000;
 
-      if (seconds > 0 && newTime >= trackDuration - PLAYER_CONSTANTS.SCRUB_SECONDS) return;
+      // If near end of track, do nothing
+      if (seconds > 0 && currentPosition >= trackDuration - PLAYER_CONSTANTS.SCRUB_SECONDS) return;
 
-      const clampedTime = Math.max(newTime, 0);
+      const newTime = currentPosition + seconds;
+      const clampedTime = Math.max(0, Math.min(newTime, trackDuration));
       gaplessPlayerRef.current.setPosition(clampedTime * 1000);
     }
   };
