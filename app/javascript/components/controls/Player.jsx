@@ -42,9 +42,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       const trackDuration = activeTrack.duration / 1000;
 
       // Don't scrub forward if we're within 10 seconds of the end
-      if (seconds > 0 && newTime >= trackDuration - 10) {
-        return;
-      }
+      if (seconds > 0 && newTime >= trackDuration - 10) return;
 
       // Don't scrub backward past the beginning
       const clampedTime = Math.max(newTime, 0);
@@ -101,10 +99,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       }
       return originalAddEventListener.call(this, type, listener, options);
     };
-
-    return () => {
-      // Note: We're not restoring the Audio prototype as it might affect other components
-    };
+    // Note: We're not restoring the Audio prototype as it might affect other components
   }, []);
 
   // Initialize gapless player when activePlaylist changes
