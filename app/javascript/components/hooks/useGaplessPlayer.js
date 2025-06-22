@@ -186,7 +186,13 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
 
       gaplessPlayerRef.current.onload = () => {
         setIsLoading(false);
-        // Don't autoplay - let user manually click play to avoid autoplay policy issues
+        if (gaplessPlayerRef.current) {
+          if (pendingStartTime !== null) {
+            gaplessPlayerRef.current.setPosition(pendingStartTime * 1000);
+            setPendingStartTime(null);
+          }
+          gaplessPlayerRef.current.play();
+        }
       };
 
       gaplessPlayerRef.current.onplay = () => {
@@ -252,7 +258,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
         gaplessPlayerRef.current = null;
       }
     };
-  }, [activePlaylist]);
+  }, [activePlaylist, pendingStartTime]);
 
   return {
     gaplessPlayerRef,

@@ -23,11 +23,11 @@ const Layout = ({ props }) => {
   const [appModalContent, setAppModalContent] = useState(null);
   const [isDraftPlaylistModalOpen, setIsDraftPlaylistModalOpen] = useState(false);
   const [activePlaylist, setActivePlaylist] = useState([]);
+  const [activeTrack, setActiveTrack] = useState(null);
   const [customPlaylist, setCustomPlaylist] = useState(null);
   const [draftPlaylist, setDraftPlaylist] = useState([]);
   const [draftPlaylistMeta, setDraftPlaylistMeta] = useState(initialDraftPlaylistMeta);
   const [isDraftPlaylistSaved, setIsDraftPlaylistSaved] = useState(false);
-  const [activeTrack, setActiveTrack] = useState(null);
   const [viewMode, setViewMode] = useState("grid");
   const [sortOption, setSortOption] = useState("desc");
   const { setNotice, setAlert } = useFeedback();
@@ -98,7 +98,6 @@ const Layout = ({ props }) => {
   };
 
   const playTrack = (playlist, track, autoplay = false) => {
-    if (activePlaylist.length > 0 && autoplay) return;
     setActivePlaylist(playlist);
     setActiveTrack(track);
   };
