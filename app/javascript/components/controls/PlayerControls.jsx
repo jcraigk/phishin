@@ -1,6 +1,7 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlay, faPause, faRotateRight, faRotateLeft, faForward, faBackward, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faPlay, faPause, faRotateRight, faRotateLeft, faForward, faBackward } from "@fortawesome/free-solid-svg-icons";
+import MoonLoader from "react-spinners/MoonLoader";
 import { PLAYER_CONSTANTS } from "../helpers/playerConstants";
 
 const PlayerControls = ({
@@ -37,7 +38,7 @@ const PlayerControls = ({
         disabled={isLoading}
       >
         {isLoading ? (
-          <FontAwesomeIcon icon={faSpinner} spin />
+          <MoonLoader color="#c7c8ca" size={24} />
         ) : isPlaying ? (
           <FontAwesomeIcon icon={faPause} />
         ) : (
