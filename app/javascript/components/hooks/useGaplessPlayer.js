@@ -44,7 +44,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       const newTime = currentPosition + seconds;
       const trackDuration = activeTrack.duration / 1000;
 
-      if (seconds > 0 && newTime >= trackDuration - PLAYER_CONSTANTS.TRACK_END_BUFFER) return;
+      if (seconds > 0 && newTime >= trackDuration - PLAYER_CONSTANTS.PRELOAD_THRESHOLD) return;
 
       const clampedTime = Math.max(newTime, 0);
       gaplessPlayerRef.current.setPosition(clampedTime * 1000);
@@ -105,8 +105,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     const currentPosition = getPlayerPosition(gaplessPlayerRef);
     const trackDuration = activeTrack.duration / 1000;
 
-    return trackDuration > PLAYER_CONSTANTS.MIN_TRACK_DURATION &&
-           currentPosition < trackDuration - PLAYER_CONSTANTS.TRACK_END_BUFFER;
+    return currentPosition < trackDuration - PLAYER_CONSTANTS.PRELOAD_THRESHOLD;
   };
 
   const handleScrubberClick = (e) => {
