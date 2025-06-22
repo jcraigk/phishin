@@ -83,22 +83,20 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     }
   };
 
-  // Global error handler and Audio prototype patching
+  // Patch Audio prototype to prevent null duration errors when skipping tracks quickly
   useEffect(() => {
-    // Patch Audio prototype to prevent null duration errors
     const originalAddEventListener = Audio.prototype.addEventListener;
     Audio.prototype.addEventListener = function(type, listener, options) {
       if (type === 'loadedmetadata') {
         const wrappedListener = function(event) {
           try {
-            // Check if 'this' (the audio element) has valid properties
+            // Check if 'this' (the audio element) has valid properties before calling listener
             if (this && this.duration !== undefined && this.duration !== null) {
               listener.call(this, event);
-            } else {
-              console.warn('Prevented loadedmetadata event on invalid audio element');
             }
           } catch (error) {
-            console.warn('Error in loadedmetadata listener:', error);
+            // Silently handle duration-related errors that occur during rapid track changes
+            // console.warn('Prevented audio duration error:', error.message);
           }
         };
         return originalAddEventListener.call(this, type, wrappedListener, options);
@@ -106,88 +104,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       return originalAddEventListener.call(this, type, listener, options);
     };
 
-    // Also patch the onloadedmetadata property setter
-    const audioProto = Audio.prototype;
-    const originalDescriptor = Object.getOwnPropertyDescriptor(audioProto, 'onloadedmetadata') ||
-                               Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype, 'onloadedmetadata');
-
-    if (originalDescriptor) {
-      Object.defineProperty(Audio.prototype, 'onloadedmetadata', {
-        set: function(handler) {
-          if (handler) {
-            const wrappedHandler = function(event) {
-              try {
-                if (this && this.duration !== undefined && this.duration !== null) {
-                  handler.call(this, event);
-                } else {
-                  console.warn('Prevented onloadedmetadata handler on invalid audio element');
-                }
-              } catch (error) {
-                console.warn('Error in onloadedmetadata handler:', error);
-              }
-            };
-            if (originalDescriptor.set) {
-              originalDescriptor.set.call(this, wrappedHandler);
-            } else {
-              this._onloadedmetadata = wrappedHandler;
-            }
-          } else {
-            if (originalDescriptor.set) {
-              originalDescriptor.set.call(this, handler);
-            } else {
-              this._onloadedmetadata = handler;
-            }
-          }
-        },
-        get: function() {
-          if (originalDescriptor.get) {
-            return originalDescriptor.get.call(this);
-          }
-          return this._onloadedmetadata;
-        },
-        configurable: true
-      });
-    }
-
-    const handleError = (event) => {
-      // Check if this is a Gapless5 related error
-      if (event.error && event.error.stack && event.error.stack.includes('Gapless')) {
-        console.warn('Caught Gapless5 error:', event.error.message);
-        event.preventDefault();
-        event.stopPropagation();
-        return false;
-      }
-
-      // Also catch the specific duration error
-      if (event.error && event.error.message &&
-          (event.error.message.includes("Cannot read properties of null") ||
-           event.error.message.includes("Cannot read property") ||
-           event.error.message.includes("duration"))) {
-        console.warn('Suppressed audio player error:', event.error.message);
-        event.preventDefault();
-        event.stopPropagation();
-        return false;
-      }
-    };
-
-    const handleUnhandledRejection = (event) => {
-      // Check if this is related to audio/Gapless5
-      if (event.reason && event.reason.message &&
-          (event.reason.message.includes("Cannot read properties of null") ||
-           event.reason.message.includes("duration") ||
-           event.reason.stack && event.reason.stack.includes('Gapless'))) {
-        console.warn('Suppressed unhandled audio promise rejection:', event.reason.message);
-        event.preventDefault();
-        return false;
-      }
-    };
-
-    window.addEventListener('error', handleError, true); // Use capture phase
-    window.addEventListener('unhandledrejection', handleUnhandledRejection);
-
     return () => {
-      window.removeEventListener('error', handleError, true);
-      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
       // Note: We're not restoring the Audio prototype as it might affect other components
     };
   }, []);
