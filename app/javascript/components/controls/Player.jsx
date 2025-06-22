@@ -384,6 +384,20 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     return `${minutes}:${seconds}`;
   };
 
+  const canSkipToPrevious = () => {
+    if (!activePlaylist || !gaplessPlayerRef.current) return false;
+    const currentIndex = currentTrackIndex;
+    const currentPosition = gaplessPlayerRef.current.getPosition();
+    const currentPositionSeconds = currentPosition >= 0 ? currentPosition / 1000 : 0;
+    return currentPositionSeconds > 3 || currentIndex > 0;
+  };
+
+  const canSkipToNext = () => {
+    if (!activePlaylist || !gaplessPlayerRef.current) return false;
+    const currentIndex = currentTrackIndex;
+    return currentIndex < activePlaylist.length - 1;
+  };
+
   return (
     <div className={`audio-player ${activeTrack ? 'visible' : ''} ${isPlayerCollapsed ? 'collapsed' : ''}`}>
       <div
@@ -433,6 +447,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
             <button
               className="skip-btn"
               onClick={skipToPreviousTrack}
+              disabled={!canSkipToPrevious()}
             >
               <FontAwesomeIcon icon={faBackward} />
             </button>
@@ -468,6 +483,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
             <button
               className="skip-btn"
               onClick={skipToNextTrack}
+              disabled={!canSkipToNext()}
             >
               <FontAwesomeIcon icon={faForward} />
             </button>

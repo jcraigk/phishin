@@ -138,8 +138,19 @@ main.with-player {
       }
     }
 
-    .skip-btn:hover {
-      color: $text-gray !important;
+    .skip-btn {
+      &:hover:not(:disabled) {
+        color: $text-gray !important;
+      }
+
+      &:disabled {
+        opacity: 0.2;
+        cursor: not-allowed;
+
+        &:hover {
+          color: inherit !important;
+        }
+      }
     }
 
     .scrub-btn {
