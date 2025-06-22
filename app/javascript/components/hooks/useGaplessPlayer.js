@@ -7,6 +7,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
   const gaplessPlayerRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [userIntentToPlay, setUserIntentToPlay] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
 
@@ -33,7 +34,16 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
 
   const togglePlayPause = () => {
     if (!gaplessPlayerRef.current) return;
-    gaplessPlayerRef.current.playpause();
+
+    if (isPlaying) {
+      // User wants to pause
+      setUserIntentToPlay(false);
+      gaplessPlayerRef.current.pause();
+    } else {
+      // User wants to play
+      setUserIntentToPlay(true);
+      gaplessPlayerRef.current.play();
+    }
   };
 
   const scrub = (seconds) => {
@@ -56,6 +66,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     const currentIndex = gaplessPlayerRef.current.getIndex();
     const nextIndex = currentIndex + 1;
     if (nextIndex >= activePlaylist.length) return;
+
     gaplessPlayerRef.current.next();
   };
 
@@ -142,6 +153,9 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
         return;
       }
 
+      // Set user intent to play when a new track is loaded
+      setUserIntentToPlay(true);
+
       // Setup player callbacks
       gaplessPlayerRef.current.ontimeupdate = (current_track_time, current_track_index) => {
         const timeInSeconds = current_track_time / 1000;
@@ -158,6 +172,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
 
       gaplessPlayerRef.current.onload = () => {
         setIsLoading(false);
+        // Let Gapless5 handle its own playback logic
         setTimeout(() => {
           if (!gaplessPlayerRef.current) return;
           gaplessPlayerRef.current.play();
@@ -172,11 +187,16 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       };
 
       gaplessPlayerRef.current.onpause = () => {
-        setIsPlaying(false);
+        // Only update isPlaying if user explicitly paused
+        if (!userIntentToPlay) {
+          setIsPlaying(false);
+        }
       };
 
       gaplessPlayerRef.current.onstop = () => {
-        resetLoadingState(setIsPlaying, setIsLoading);
+        setIsPlaying(false);
+        setIsLoading(false);
+        setUserIntentToPlay(false);
       };
 
       gaplessPlayerRef.current.onnext = () => {
@@ -196,7 +216,9 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       };
 
       gaplessPlayerRef.current.onfinishedall = () => {
-        resetLoadingState(setIsPlaying, setIsLoading);
+        setIsPlaying(false);
+        setIsLoading(false);
+        setUserIntentToPlay(false);
       };
 
       gaplessPlayerRef.current.onerror = (track_path, error) => {
@@ -208,7 +230,8 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
           setAlert(`Error playing track: ${error}`);
         }
 
-        resetLoadingState(setIsPlaying, setIsLoading);
+        setIsPlaying(false);
+        setIsLoading(false);
       };
 
       if (validActiveIndex >= 0) {
@@ -223,12 +246,13 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
         gaplessPlayerRef.current.removeAllTracks();
         gaplessPlayerRef.current = null;
       }
+      setUserIntentToPlay(false);
     };
   }, [activePlaylist, activeTrack, setActiveTrack, setAlert]);
 
   return {
     gaplessPlayerRef,
-    isPlaying,
+    isPlaying: userIntentToPlay,
     isLoading,
     currentTime,
     currentTrackIndex,
