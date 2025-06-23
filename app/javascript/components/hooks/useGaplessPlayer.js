@@ -2,16 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import { Gapless5 } from "@regosen/gapless-5";
 import { PLAYER_CONSTANTS } from "../helpers/playerConstants";
 
-// iOS detection helper
 const isIOS = () => {
   return /iPad|iPhone|iPod/.test(navigator.userAgent);
 };
-
-// iOS audio optimization notes:
-// - WebAudio requires full file loading before playback, causing delays
-// - HTML5 Audio can start playing immediately but has gaps between tracks
-// - On iOS, using HTML5 Audio only provides faster startup at the cost of gapless playback
-// - Disabling WebAudio also helps with background audio playback on iOS Safari
 
 export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, setNotice, setAlert, startTime, shouldAutoplay, setShouldAutoplay) => {
   const gaplessPlayerRef = useRef(null);
@@ -184,20 +177,16 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       const validActiveIndex = activeIndex >= 0 && activeIndex < activePlaylist.length ? activeIndex : 0;
 
       try {
-                const iosDevice = isIOS();
-
+        const iosDevice = isIOS();
         gaplessPlayerRef.current = new Gapless5({
           tracks: trackUrls,
           loop: false,
           singleMode: false,
-          // iOS optimization: disable WebAudio for faster startup and better background playback
           useWebAudio: !iosDevice,
           useHTML5Audio: true,
-          // iOS needs more aggressive preloading but limited to avoid memory issues
           loadLimit: iosDevice ? 2 : 1,
           volume: 1.0,
           startingTrack: validActiveIndex,
-          // iOS-specific optimizations
           ...(iosDevice && {
             // Small crossfade to handle potential gaps on iOS
             crossfade: 25
@@ -214,7 +203,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
         setCurrentTrackIndex(current_track_index);
       };
 
-            gaplessPlayerRef.current.onloadstart = () => {
+      gaplessPlayerRef.current.onloadstart = () => {
         setIsLoading(true);
 
         // iOS fix: Immediately attempt to play instead of waiting for onload
@@ -234,7 +223,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
         }
       };
 
-                  gaplessPlayerRef.current.onload = () => {
+      gaplessPlayerRef.current.onload = () => {
         setIsLoading(false);
         if (gaplessPlayerRef.current) {
           if (pendingStartTime !== null) {
@@ -291,8 +280,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       };
 
       gaplessPlayerRef.current.onerror = (track_path, error) => {
-        const isDurationError = error?.message?.includes('duration') ||
-                               error?.message?.includes('Cannot read properties of null');
+        const isDurationError = error?.message?.includes('duration') || error?.message?.includes('Cannot read properties of null');
 
         if (!isDurationError) {
           console.error(`Error playing track: ${error}`);
@@ -308,7 +296,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       }
     }
 
-        return () => {
+    return () => {
       if (gaplessPlayerRef.current) {
         gaplessPlayerRef.current.stop();
         gaplessPlayerRef.current.removeAllTracks();
