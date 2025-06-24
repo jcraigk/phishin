@@ -23,13 +23,11 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       const trackDuration = activeTrack ? activeTrack.duration / 1000 : 0;
 
       if (startTime === null || startTime < 0 || (trackDuration > 0 && startTime > trackDuration)) {
-
         if (setAlert) {
           setAlert('Invalid start time provided');
         }
         setPendingStartTime(null);
       } else if (startTime > 0) {
-
         setPendingStartTime(startTime);
         if (setNotice) {
           setNotice('Press the Play button to listen');
@@ -58,28 +56,14 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     };
   }, []);
 
-    const togglePlayPause = () => {
+  const togglePlayPause = () => {
     if (!gaplessPlayerRef.current) return;
 
-    try {
-      // iOS: If still loading on first interaction,
-      // force it to stop loading and try to play
-      if (isIOS() && isLoading) {
-        setIsLoading(false);
-        gaplessPlayerRef.current.play();
-      } else {
-        gaplessPlayerRef.current.playpause();
-      }
-    } catch (e) {
-      console.error('Error in playpause:', e);
-      // iOS: If playpause fails, try direct play
-      if (isIOS()) {
-        try {
-          gaplessPlayerRef.current.play();
-        } catch (playError) {
-          console.error('iOS play fallback also failed:', playError);
-        }
-      }
+    if (isIOS() && isLoading) {
+      setIsLoading(false);
+      gaplessPlayerRef.current.play();
+    } else {
+      gaplessPlayerRef.current.playpause();
     }
   };
 
@@ -173,22 +157,17 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       const activeIndex = activePlaylist.findIndex(track => track.id === activeTrack?.id);
       const validActiveIndex = activeIndex >= 0 && activeIndex < activePlaylist.length ? activeIndex : 0;
 
-      try {
-        const iosDevice = isIOS();
-        gaplessPlayerRef.current = new Gapless5({
-          tracks: trackUrls,
-          loop: false,
-          singleMode: false,
-          useWebAudio: !iosDevice,
-          useHTML5Audio: true,
-          loadLimit: iosDevice ? 2 : 1,
-          volume: 1.0,
-          startingTrack: validActiveIndex
-        });
-      } catch (error) {
-        console.error('Error initializing audio player');
-        return;
-      }
+      const iosDevice = isIOS();
+      gaplessPlayerRef.current = new Gapless5({
+        tracks: trackUrls,
+        loop: false,
+        singleMode: false,
+        useWebAudio: !iosDevice,
+        useHTML5Audio: true,
+        loadLimit: iosDevice ? 2 : 1,
+        volume: 1.0,
+        startingTrack: validActiveIndex
+      });
 
       gaplessPlayerRef.current.ontimeupdate = (current_track_time, current_track_index) => {
         const timeInSeconds = current_track_time / 1000;
@@ -199,19 +178,14 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       gaplessPlayerRef.current.onloadstart = () => {
         setIsLoading(true);
 
-        // iOS: Immediately play instead of waiting for onload
         if (isIOS() && (shouldAutoplay || shouldContinuePlayingRef.current)) {
           setTimeout(() => {
             if (gaplessPlayerRef.current) {
               setIsLoading(false);
-              try {
-                gaplessPlayerRef.current.play();
-                if (setShouldAutoplay) setShouldAutoplay(false);
-              } catch (e) {
-                console.warn('iOS: Immediate play attempt failed:', e);
-              }
+              gaplessPlayerRef.current.play();
+              if (setShouldAutoplay) setShouldAutoplay(false);
             }
-          }, 100); // Tiny delay to let audio element initialize
+          }, 100);
         }
       };
 
@@ -223,7 +197,6 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
             setPendingStartTime(null);
           }
 
-          // Autoplay if user clicked on a track, or if already playing (non-iOS or if iOS didn't already handle it)
           if ((shouldAutoplay || shouldContinuePlayingRef.current) && !isIOS()) {
             gaplessPlayerRef.current.play();
             if (setShouldAutoplay) setShouldAutoplay(false);
@@ -272,12 +245,6 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       };
 
       gaplessPlayerRef.current.onerror = (track_path, error) => {
-        const isDurationError = error?.message?.includes('duration') || error?.message?.includes('Cannot read properties of null');
-
-        if (!isDurationError) {
-          console.error(`Error playing track: ${error}`);
-        }
-
         setIsPlaying(false);
         setIsLoading(false);
       };

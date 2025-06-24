@@ -210,3 +210,15 @@ a {
   color: white !important;
   background-color: $google-blue;
 }
+
+/* Hide React error overlay in development */
+body > iframe {
+  display: none !important;
+}
+
+/* Also hide any error overlay containers */
+div[data-reactroot] iframe,
+#react-error-overlay,
+.react-error-overlay {
+  display: none !important;
+}

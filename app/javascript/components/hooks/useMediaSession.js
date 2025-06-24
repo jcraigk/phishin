@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { formatDate } from "../helpers/utils";
-import { PLAYER_CONSTANTS } from "../helpers/playerConstants";
+import { isIOS } from "../helpers/utils";
 
-export const useMediaSession = (activeTrack, controls) => {
+export const useMediaSession = (activeTrack, controls, isPlaying = false) => {
   useEffect(() => {
     if ('mediaSession' in navigator && activeTrack) {
       navigator.mediaSession.metadata = new MediaMetadata({
@@ -16,19 +16,27 @@ export const useMediaSession = (activeTrack, controls) => {
         }]
       });
 
-      const actionHandlers = {
-        'previoustrack': controls.onPrevious,
-        'nexttrack': controls.onNext,
-        'play': controls.onPlayPause,
-        'pause': controls.onPlayPause,
-        'stop': controls.onPlayPause,
-        'seekbackward': () => controls.onScrub(-PLAYER_CONSTANTS.SCRUB_SECONDS),
-        'seekforward': () => controls.onScrub(PLAYER_CONSTANTS.SCRUB_SECONDS),
-      };
+      navigator.mediaSession.setActionHandler('play', controls.onPlayPause);
+      navigator.mediaSession.setActionHandler('pause', controls.onPlayPause);
+      navigator.mediaSession.setActionHandler('previoustrack', controls.onPrevious);
+      navigator.mediaSession.setActionHandler('nexttrack', controls.onNext);
 
-      Object.entries(actionHandlers).forEach(([action, handler]) => {
-        navigator.mediaSession.setActionHandler(action, handler);
-      });
+      // Don't set scrub buttons for iOS devices as they interfere with next/prev buttons
+      if (!isIOS()) {
+        navigator.mediaSession.setActionHandler('seekbackward', (details) => {
+          controls.onScrub(-10);
+        });
+        navigator.mediaSession.setActionHandler('seekforward', (details) => {
+          controls.onScrub(10);
+        });
+      }
     }
   }, [activeTrack, controls]);
+
+  useEffect(() => {
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+    }
+  }, [isPlaying]);
 };
+

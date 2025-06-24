@@ -96,7 +96,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     onNext: handleSkipToNext,
     onPrevious: handleSkipToPrevious,
     onScrub: scrub,
-  });
+  }, isPlaying);
 
   // Keyboard shortcuts
   useEffect(() => {
