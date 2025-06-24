@@ -1,10 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Gapless5 } from "@regosen/gapless-5";
 import { PLAYER_CONSTANTS } from "../helpers/playerConstants";
-
-const isIOS = () => {
-  return /iPad|iPhone|iPod/.test(navigator.userAgent);
-};
+import { isIOS } from "../helpers/utils";
 
 export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, setNotice, setAlert, startTime, shouldAutoplay, setShouldAutoplay) => {
   const gaplessPlayerRef = useRef(null);
@@ -65,9 +62,9 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     if (!gaplessPlayerRef.current) return;
 
     try {
-      // iOS fix: If still loading on first interaction, force it to stop loading and try to play
+      // iOS: If still loading on first interaction,
+      // force it to stop loading and try to play
       if (isIOS() && isLoading) {
-        console.log('iOS: User interaction while loading, forcing play attempt');
         setIsLoading(false);
         gaplessPlayerRef.current.play();
       } else {
@@ -75,7 +72,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       }
     } catch (e) {
       console.error('Error in playpause:', e);
-      // iOS fallback: if playpause fails, try direct play
+      // iOS: If playpause fails, try direct play
       if (isIOS()) {
         try {
           gaplessPlayerRef.current.play();
@@ -186,11 +183,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
           useHTML5Audio: true,
           loadLimit: iosDevice ? 2 : 1,
           volume: 1.0,
-          startingTrack: validActiveIndex,
-          ...(iosDevice && {
-            // Small crossfade to handle potential gaps on iOS
-            crossfade: 25
-          })
+          startingTrack: validActiveIndex
         });
       } catch (error) {
         console.error('Error initializing audio player');
@@ -206,11 +199,10 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       gaplessPlayerRef.current.onloadstart = () => {
         setIsLoading(true);
 
-        // iOS fix: Immediately attempt to play instead of waiting for onload
+        // iOS: Immediately play instead of waiting for onload
         if (isIOS() && (shouldAutoplay || shouldContinuePlayingRef.current)) {
           setTimeout(() => {
             if (gaplessPlayerRef.current) {
-              console.log('iOS: Immediate play attempt on loadstart');
               setIsLoading(false);
               try {
                 gaplessPlayerRef.current.play();
@@ -219,7 +211,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
                 console.warn('iOS: Immediate play attempt failed:', e);
               }
             }
-          }, 100); // Just a tiny delay to let the audio element initialize
+          }, 100); // Tiny delay to let audio element initialize
         }
       };
 
@@ -234,7 +226,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
           // Autoplay if user clicked on a track, or if already playing (non-iOS or if iOS didn't already handle it)
           if ((shouldAutoplay || shouldContinuePlayingRef.current) && !isIOS()) {
             gaplessPlayerRef.current.play();
-            if (setShouldAutoplay) setShouldAutoplay(false); // Reset after using
+            if (setShouldAutoplay) setShouldAutoplay(false);
           }
         }
       };

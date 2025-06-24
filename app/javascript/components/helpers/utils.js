@@ -140,3 +140,7 @@ export const truncate = (str, n) => {
   if (!str) return "";
   return str.length > n ? str.slice(0, n) + "..." : str;
 };
+
+export const isIOS = () => {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent);
+};
