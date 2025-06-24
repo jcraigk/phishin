@@ -20,20 +20,18 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   const [initialStartTime, setInitialStartTime] = useState(null);
   const { setNotice, setAlert } = useFeedback();
 
-  // Parse URL parameters on initial load
+  // Parse URL "t" param on initial load
   useEffect(() => {
-    if (!hasPlayedInitially) {
-      const urlStartTimeString = new URLSearchParams(location.search).get("t");
+    const urlStartTimeString = new URLSearchParams(location.search).get("t");
 
-      if (urlStartTimeString) setIsInitialUrlPlaySession(true);
-      if (urlStartTimeString) {
-        const parsed = parseTimeParam(urlStartTimeString);
-        if (parsed !== null) setInitialStartTime(parsed);
-      } else if (activeTrack?.starts_at_second) {
-        setInitialStartTime(activeTrack.starts_at_second);
-      }
+    if (urlStartTimeString) {
+      setIsInitialUrlPlaySession(true);
+      const parsed = parseTimeParam(urlStartTimeString);
+      if (parsed !== null) setInitialStartTime(parsed);
+    } else if (activeTrack?.starts_at_second) {
+      setInitialStartTime(activeTrack.starts_at_second);
     }
-  }, [location.search, activeTrack, hasPlayedInitially, setAlert]);
+  }, []);
 
   const {
     gaplessPlayerRef,
