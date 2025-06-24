@@ -44,7 +44,7 @@ const Faq = () => {
       <h3>Can I share excerpts of tracks?</h3>
       <p>Yes, there are two ways to share excerpts of tracks.</p>
 
-      <p>You can add "t" and "e" params to an individual URL. For example https://phish.in/1993-04-01/llama?t=1:00&e=1:05 would start playing Llama at 1 minute and stop playing five seconds later.</p>
+      <p>You can add "t" param to an individual URL to start it at a specific second. For example https://phish.in/1993-04-01/llama?t=1:00 would start playing Llama at 1 minute.</p>
 
       <p>You can also create a playlist and set the start and end seconds on each track and then share the playlist.</p>
 

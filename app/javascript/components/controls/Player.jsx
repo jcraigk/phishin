@@ -15,36 +15,22 @@ import { useFeedback } from "./FeedbackContext";
 const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, openAppModal, shouldAutoplay, setShouldAutoplay }) => {
   const location = useLocation();
   const [isPlayerCollapsed, setIsPlayerCollapsed] = useState(false);
-  const [endTime, setEndTime] = useState(null);
   const [hasPlayedInitially, setHasPlayedInitially] = useState(false);
   const [isInitialUrlPlaySession, setIsInitialUrlPlaySession] = useState(false);
   const [initialStartTime, setInitialStartTime] = useState(null);
-  const [urlEndTime, setUrlEndTime] = useState(null);
-  const endTimeProcessedRef = useRef(false);
   const { setNotice, setAlert } = useFeedback();
 
   // Parse URL parameters on initial load
   useEffect(() => {
     if (!hasPlayedInitially) {
       const urlStartTimeString = new URLSearchParams(location.search).get("t");
-      const urlEndTimeString = new URLSearchParams(location.search).get("e");
 
-      if (urlStartTimeString || urlEndTimeString) setIsInitialUrlPlaySession(true);
+      if (urlStartTimeString) setIsInitialUrlPlaySession(true);
       if (urlStartTimeString) {
         const parsed = parseTimeParam(urlStartTimeString);
         if (parsed !== null) setInitialStartTime(parsed);
       } else if (activeTrack?.starts_at_second) {
         setInitialStartTime(activeTrack.starts_at_second);
-      }
-
-      if (urlEndTimeString && activeTrack) {
-        const parsed = parseTimeParam(urlEndTimeString);
-        const trackDuration = activeTrack.duration / 1000;
-        if (parsed !== null && parsed > 0 && parsed <= trackDuration) {
-          setUrlEndTime(parsed);
-        } else {
-          setAlert("Invalid end time provided");
-        }
       }
     }
   }, [location.search, activeTrack, hasPlayedInitially, setAlert]);
@@ -79,7 +65,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   const handleSkipToNext = () => {
     setIsInitialUrlPlaySession(false);
     setInitialStartTime(null);
-    setUrlEndTime(null);
     setHasPlayedInitially(true);
     skipToNextTrack();
   };
@@ -87,7 +72,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   const handleSkipToPrevious = () => {
     setIsInitialUrlPlaySession(false);
     setInitialStartTime(null);
-    setUrlEndTime(null);
     setHasPlayedInitially(true);
     skipToPreviousTrack();
   };
@@ -99,18 +83,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
       }
 
-      // Reset the flag for the new track to allow end time processing
-      endTimeProcessedRef.current = false;
-
-      // Set end time based on whether we're in initial URL play session
-      if (isInitialUrlPlaySession && urlEndTime !== null) {
-        setEndTime(urlEndTime);
-      } else if (!isInitialUrlPlaySession && activeTrack.ends_at_second) {
-        setEndTime(activeTrack.ends_at_second);
-      } else {
-        setEndTime(null);
-      }
-
       const trackIndex = activePlaylist.findIndex(track => track.id === activeTrack.id);
       if (trackIndex >= 0 && trackIndex !== currentTrackIndex) {
         gaplessPlayerRef.current.gotoTrack(trackIndex);
@@ -119,7 +91,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         }
       }
     }
-  }, [activeTrack, gaplessPlayerRef, activePlaylist, currentTrackIndex, isInitialUrlPlaySession, urlEndTime]);
+  }, [activeTrack, gaplessPlayerRef, activePlaylist, currentTrackIndex]);
 
   useMediaSession(activeTrack, {
     onPlayPause: handleTogglePlayPause,
@@ -154,39 +126,6 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleTogglePlayPause, handleSkipToPrevious, handleSkipToNext, scrub]);
-
-  // End time checking
-  useEffect(() => {
-    if (endTime === null || currentTime < endTime) {
-      endTimeProcessedRef.current = false;
-      return;
-    }
-
-    // Prevent processing the same end time multiple times
-    if (endTimeProcessedRef.current) {
-      return;
-    }
-
-    endTimeProcessedRef.current = true;
-
-    // Handle URL end time - stop playback completely
-    if (isInitialUrlPlaySession && urlEndTime !== null && endTime === urlEndTime) {
-      if (isPlaying) {
-        togglePlayPause();
-      }
-
-      setIsInitialUrlPlaySession(false);
-      setInitialStartTime(null);
-      setUrlEndTime(null);
-      setHasPlayedInitially(true);
-      // Clear the end time to prevent retriggering
-      setEndTime(null);
-    }
-    // Handle normal playlist/track end time - advance to next
-    else if (!isInitialUrlPlaySession && endTime !== null) {
-      skipToNextTrack();
-    }
-  }, [currentTime, endTime, isInitialUrlPlaySession, urlEndTime, isPlaying, togglePlayPause, skipToNextTrack]);
 
   return (
     <div className={`audio-player ${activeTrack ? 'visible' : ''} ${isPlayerCollapsed ? 'collapsed' : ''}`}>
