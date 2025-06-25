@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "./variables" as *;
 
 main.with-player {
@@ -137,12 +138,28 @@ main.with-player {
       }
     }
 
-    .skip-btn:hover {
-      color: $text-gray !important;
+    .skip-btn {
+      &:hover:not(:disabled) {
+        color: $text-gray !important;
+      }
+
+      &:disabled {
+        opacity: 0.2;
+        cursor: not-allowed;
+
+        &:hover {
+          color: inherit !important;
+        }
+      }
     }
 
     .scrub-btn {
       position: relative;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
 
       span {
         position: absolute;
@@ -170,8 +187,14 @@ main.with-player {
       background-color: $blue;
       margin-top: -0.3rem !important;
 
-      &:hover {
+      &:hover:not(:disabled) {
         color: white !important;
+      }
+
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        background-color: color.adjust($blue, $lightness: 10%);
       }
 
       svg {

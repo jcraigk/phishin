@@ -43,6 +43,12 @@ export const formatDate = (dateString) => {
   return formattedDate;
 };
 
+export const formatTime = (timeInSeconds) => {
+  const minutes = Math.floor(timeInSeconds / 60);
+  const seconds = Math.floor(timeInSeconds % 60).toString().padStart(2, "0");
+  return `${minutes}:${seconds}`;
+};
+
 export const toggleLike = async ({ id, type, isLiked }) => {
   const url = `/api/v2/likes?likable_type=${type}&likable_id=${id}`;
   const method = isLiked ? "DELETE" : "POST";
@@ -93,14 +99,48 @@ export const authFetch = async (url, options = {}) => {
 
 export const parseTimeParam = (t) => {
   if (!t) return null;
+
+  // Handle "1m30s" (e.g., "1m30s" = 90 seconds)
+  if (t.includes('m') || t.includes('s')) {
+    let totalSeconds = 0;
+
+    const minuteMatch = t.match(/(\d+(?:\.\d+)?)m/);
+    if (minuteMatch) {
+      totalSeconds += parseFloat(minuteMatch[1]) * 60;
+    }
+
+    const secondMatch = t.match(/(\d+(?:\.\d+)?)s/);
+    if (secondMatch) {
+      totalSeconds += parseFloat(secondMatch[1]);
+    }
+
+    return totalSeconds || null;
+  }
+
+  // Handle "1:30"
   if (t.includes(":")) {
-    const [minutes, seconds] = t.split(":").map(Number);
+    const parts = t.split(":");
+    if (parts.length !== 2) return null;
+
+    const [minutes, seconds] = parts.map(Number);
+
+    if (isNaN(minutes) || isNaN(seconds) || seconds >= 60 || seconds < 0 || minutes < 0) {
+      return null;
+    }
+
     return minutes * 60 + seconds;
   }
-  return Number(t);
+
+  // Handle plain number (seconds)
+  const num = Number(t);
+  return isNaN(num) ? null : num;
 };
 
 export const truncate = (str, n) => {
   if (!str) return "";
   return str.length > n ? str.slice(0, n) + "..." : str;
+};
+
+export const isIOS = () => {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent);
 };

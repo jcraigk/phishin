@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate, useNavigation, ScrollRestoration } from "react-router-dom";
 import Navbar from "./Navbar";
 import Loader from "../controls/Loader";
@@ -23,14 +23,14 @@ const Layout = ({ props }) => {
   const [appModalContent, setAppModalContent] = useState(null);
   const [isDraftPlaylistModalOpen, setIsDraftPlaylistModalOpen] = useState(false);
   const [activePlaylist, setActivePlaylist] = useState([]);
+  const [activeTrack, setActiveTrack] = useState(null);
   const [customPlaylist, setCustomPlaylist] = useState(null);
   const [draftPlaylist, setDraftPlaylist] = useState([]);
   const [draftPlaylistMeta, setDraftPlaylistMeta] = useState(initialDraftPlaylistMeta);
   const [isDraftPlaylistSaved, setIsDraftPlaylistSaved] = useState(false);
-  const [activeTrack, setActiveTrack] = useState(null);
   const [viewMode, setViewMode] = useState("grid");
   const [sortOption, setSortOption] = useState("desc");
-  const audioRef = useRef(null);
+  const [shouldAutoplay, setShouldAutoplay] = useState(false);
   const { setNotice, setAlert } = useFeedback();
 
   useEffect(() => {
@@ -98,10 +98,10 @@ const Layout = ({ props }) => {
     setDraftPlaylistMeta(initialDraftPlaylistMeta);
   };
 
-  const playTrack = (playlist, track, autoplay = false) => {
-    if (activePlaylist.length > 0 && autoplay) return;
+  const playTrack = (playlist, track, fromUrlParam = false) => {
     setActivePlaylist(playlist);
     setActiveTrack(track);
+    setShouldAutoplay(!fromUrlParam);
   };
 
   const openAppModal = (content) => {
@@ -148,7 +148,6 @@ const Layout = ({ props }) => {
             setIsDraftPlaylistSaved,
             activeTrack,
             playTrack,
-            audioRef,
             openAppModal,
             closeAppModal,
             openDraftPlaylistModal,
@@ -164,9 +163,10 @@ const Layout = ({ props }) => {
         activePlaylist={activePlaylist}
         activeTrack={activeTrack}
         setActiveTrack={setActiveTrack}
-        audioRef={audioRef}
         customPlaylist={customPlaylist}
         openAppModal={openAppModal}
+        shouldAutoplay={shouldAutoplay}
+        setShouldAutoplay={setShouldAutoplay}
       />
       <AppModal
         isOpen={isAppModalOpen}

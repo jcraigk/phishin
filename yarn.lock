@@ -1165,6 +1165,11 @@
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.28.tgz#d45e01c4a56f143ee69c54dd6b12eade9e270a73"
   integrity sha512-8LduaNlMZGwdZ6qWrKlfa+2M4gahzFkprZiAt2TF8uS0qQgBizKXpXURqvTJ4WtmupWxaLqjRb2UCTe72mu+Aw==
 
+"@regosen/gapless-5@^1.5.5":
+  version "1.5.5"
+  resolved "https://registry.yarnpkg.com/@regosen/gapless-5/-/gapless-5-1.5.5.tgz#1952f34036053bf7f3665f9564e97edc12ec1ae6"
+  integrity sha512-UvxF5oeZ1qsnJKzVxxYjMnx1izLsiNnKhA09BMMLupHUpZ75PPkdE+kCUjItxJN8IVByXwBHVqpZm356vR4WAA==
+
 "@remix-run/router@1.23.0":
   version "1.23.0"
   resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.23.0.tgz#35390d0e7779626c026b11376da6789eb8389242"
