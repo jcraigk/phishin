@@ -107,7 +107,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
             <span className="rightside-menu">
               <TrackContextMenu
                 track={track}
-                indexInPlaylist={track.position - 1}
+                indexInPlaylist={index}
                 highlight={highlight}
               />
             </span>
