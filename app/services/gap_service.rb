@@ -1,83 +1,79 @@
 class GapService < ApplicationService
+  BASE_URL = "https://api.phish.net/v5".freeze
+
   param :show
 
   def call
-    update_song_gaps_for_show
+    return unless api_key
+
+    populate_gaps_from_phishnet
   end
 
   private
 
-  def update_song_gaps_for_show
-    ActiveRecord::Base.transaction do
-      show.tracks.where.not(set: "S").each do |track|
-        track.songs.each do |song|
-          song_track = SongsTrack.find_by(track_id: track.id, song_id: song.id)
+  def populate_gaps_from_phishnet
+    setlist_data = fetch_phishnet_setlist
+    return if setlist_data.empty?
 
-          previous_performance = find_previous_performance(song, track)
-          song_track.previous_performance_gap = calculate_gap(previous_performance&.show&.date,
-track.show.date)
-          song_track.previous_performance_slug = build_slug(previous_performance)
+    setlist_data.each do |item|
+      next unless item["gap"] # Skip items without gap data
 
-          next_performance = find_next_performance(song, track)
-          song_track.next_performance_gap = calculate_gap(track.show.date,
-next_performance&.show&.date)
-          song_track.next_performance_slug = build_slug(next_performance)
+      # Find the corresponding track and song
+      track = find_matching_track(item)
+      next unless track
 
-          song_track.save!
-        end
-      end
+      song = Song.find_by(title: item["song"])
+      next unless song
+
+      songs_track = SongsTrack.find_by(track: track, song: song)
+      next unless songs_track
+
+      # Update the gap data from Phish.net
+      update_gap_data(songs_track, item, setlist_data)
     end
   end
 
-  def find_previous_performance(song, track)
-    previous_tracks = Track.joins(:show, :songs)
-                           .where(songs: { id: song.id })
-                           .where("tracks.set <> ?", "S")
-                           .where("shows.date < ?", track.show.date)
-                           .order("shows.date DESC, tracks.position DESC")
+  def fetch_phishnet_setlist
+    response = Typhoeus.get(phishnet_api_url)
+    return [] unless response.success?
 
-    previous_tracks_within_show = track.show
-                                       .tracks
-                                       .joins(:songs)
-                                       .where(songs: { id: song.id })
-                                       .where("tracks.set <> ?", "S")
-                                       .where("tracks.position < ?", track.position)
-                                       .order("tracks.position DESC")
+    data = JSON.parse(response.body)
+    return [] if data["error"] || data["data"].empty?
 
-    return previous_tracks_within_show.first if previous_tracks_within_show.exists?
-
-    previous_tracks.first
+    data["data"]
+  rescue JSON::ParserError, StandardError => e
+    Rails.logger.error "Failed to fetch Phish.net setlist for #{show.date}: #{e.message}"
+    []
   end
 
-  def find_next_performance(song, track)
-    next_tracks = Track.joins(:show, :songs)
-                       .where(songs: { id: song.id })
-                       .where("tracks.set <> ?", "S")
-                       .where("shows.date > ?", track.show.date)
-                       .order("shows.date ASC, tracks.position ASC")
+  def find_matching_track(setlist_item)
+    # Map Phish.net set notation to local notation
+    # Phish.net uses: 1, 2, E (encore), S (soundcheck)
+    # Local uses: 1, 2, 3 (encore), S (soundcheck)
+    set_mapping = { "E" => "3" }
+    mapped_set = set_mapping[setlist_item["set"]] || setlist_item["set"]
 
-    next_tracks_within_show = track.show
-                                   .tracks
-                                   .joins(:songs)
-                                   .where(songs: { id: song.id })
-                                   .where("tracks.set <> ?", "S")
-                                   .where("tracks.position > ?", track.position)
-                                   .order("tracks.position ASC")
-
-    return next_tracks_within_show.first if next_tracks_within_show.exists?
-
-    next_tracks.first
+    show.tracks.find_by(
+      position: setlist_item["position"],
+      set: mapped_set
+    )
   end
 
-  def calculate_gap(start_date, end_date)
-    return nil if start_date.nil? || end_date.nil?
-    return 0 if start_date == end_date
-    num = KnownDate.where(date: start_date..end_date).count - 1
-    num
+  def update_gap_data(songs_track, current_item, all_setlist_data)
+    gap = current_item["gap"]
+
+    # Update previous performance gap (this is the main gap data from Phish.net)
+    songs_track.update!(previous_performance_gap: gap)
+
+    # Note: next_performance_gap will be calculated in a separate pass
+    # after all shows have their previous gaps populated
   end
 
-  def build_slug(track)
-    return nil unless track
-    "#{track.show.date}/#{track.slug}"
+  def api_key
+    ENV.fetch("PNET_API_KEY", nil)
+  end
+
+  def phishnet_api_url
+    "#{BASE_URL}/setlists/showdate/#{show.date}.json?apikey=#{api_key}"
   end
 end
