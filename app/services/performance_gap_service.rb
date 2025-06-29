@@ -53,9 +53,11 @@ class PerformanceGapService < ApplicationService
       # Determine the gap for this performance
       gap = if seen_songs.include?(song.id)
               0 # Later instances of the same song in the same show have gap 0
-            else
-              item["gap"] # First instance gets the gap from Phish.net (could be nil for debuts)
-            end
+      else
+              # Check if this is a debut (first time this song has ever been played)
+              is_debut = !song_has_previous_performance?(song)
+              is_debut ? nil : item["gap"]
+      end
 
       # Update previous performance gap for current show
       songs_track.update!(previous_performance_gap: gap)
@@ -127,6 +129,15 @@ class PerformanceGapService < ApplicationService
                .where.not(tracks: { set: "S" }) # Exclude soundcheck
                .order("shows.date DESC, tracks.position DESC")
                .first
+  end
+
+  def song_has_previous_performance?(song)
+    # Check if this song has ever been performed before the current show
+    SongsTrack.joins(track: :show)
+               .where(song: song)
+               .where("shows.date < ?", show.date)
+               .where.not(tracks: { set: "S" }) # Exclude soundcheck
+               .exists?
   end
 
   def fetch_phishnet_setlist

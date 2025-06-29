@@ -17,8 +17,10 @@ RSpec.describe PerformanceGapService do
   let!(:track4) { create(:track, show:, position: 4, set: "1", title: "Tweezer > Harry Hood", songs: [ song3 ]) }
   let!(:track5) { create(:track, show:, position: 5, set: "1", title: "Tweezer", songs: [ song3 ]) } # Duplicate song
 
-  # Earlier show track
+  # Earlier show tracks - these songs have been played before so they're not debuts
   let!(:earlier_track) { create(:track, show: earlier_show, position: 1, set: "1", songs: [ song3 ]) }
+  let(:earlier_track2) { create(:track, show: earlier_show, position: 2, set: "1", songs: [ song1 ]) }
+  let(:earlier_track3) { create(:track, show: earlier_show, position: 3, set: "1", songs: [ song2 ]) }
 
   let(:phishnet_response) do
     {
@@ -71,6 +73,10 @@ RSpec.describe PerformanceGapService do
     # Set up API key first
     stub_const("ENV", ENV.to_hash.merge("PNET_API_KEY" => "test_api_key"))
 
+    # Create earlier performances so songs aren't treated as debuts
+    earlier_track2
+    earlier_track3
+
     # Stub the Phish.net API call
     allow(Typhoeus).to receive(:get).and_return(successful_response)
   end
@@ -99,6 +105,13 @@ RSpec.describe PerformanceGapService do
         # The second earlier show should not be updated since the duplicate gets gap 0
         earlier_songs_track2 = SongsTrack.find_by(track: earlier_track2, song: song3)
         expect(earlier_songs_track2.next_performance_gap).to be_nil
+      end
+
+      it "sets previous_performance_gap to nil for debuts" do
+        debut_song, debut_track = setup_debut_test
+        service
+        debut_songs_track = SongsTrack.find_by(track: debut_track, song: debut_song)
+        expect(debut_songs_track.previous_performance_gap).to be_nil
       end
 
       it "fetches gap data from Phish.net API" do
@@ -237,18 +250,19 @@ RSpec.describe PerformanceGapService do
 
   describe "#find_most_recent_previous_performance" do
     let(:service_instance) { described_class.new(show) }
+    let(:test_song) { create(:song, title: "Test Song") }
 
     it "finds the most recent previous performance" do
       show2 = create(:show, date: "2022-12-28", venue:)
-      create(:track, show: create(:show, date: "2022-12-25", venue:), position: 1, set: "1", songs: [ song1 ])
-      track_recent = create(:track, show: show2, position: 2, set: "1", songs: [ song1 ])
-      expect(service_instance.send(:find_most_recent_previous_performance, song1).track).to eq(track_recent)
+      create(:track, show: create(:show, date: "2022-12-25", venue:), position: 1, set: "1", songs: [ test_song ])
+      track_recent = create(:track, show: show2, position: 2, set: "1", songs: [ test_song ])
+      expect(service_instance.send(:find_most_recent_previous_performance, test_song).track).to eq(track_recent)
     end
 
     it "excludes soundcheck tracks" do
-      regular_track = create(:track, show: create(:show, date: "2022-12-25", venue:), position: 1, set: "1", songs: [ song1 ])
-      create(:track, show: create(:show, date: "2022-12-27", venue:), position: 1, set: "S", songs: [ song1 ])
-      expect(service_instance.send(:find_most_recent_previous_performance, song1).track).to eq(regular_track)
+      regular_track = create(:track, show: create(:show, date: "2022-12-25", venue:), position: 1, set: "1", songs: [ test_song ])
+      create(:track, show: create(:show, date: "2022-12-27", venue:), position: 1, set: "S", songs: [ test_song ])
+      expect(service_instance.send(:find_most_recent_previous_performance, test_song).track).to eq(regular_track)
     end
   end
 
@@ -290,5 +304,30 @@ RSpec.describe PerformanceGapService do
         }
       ]
     }
+  end
+
+  def setup_debut_test
+    debut_song = create(:song, title: "New Song Debut")
+    debut_track = create(:track, show:, position: 6, set: "1", title: "New Song Debut", songs: [ debut_song ])
+
+    debut_response = {
+      "error" => false,
+      "error_message" => "",
+      "data" => [
+        {
+          "songid" => 9999,
+          "position" => 1,
+          "set" => "1",
+          "gap" => 1500, # Large gap indicating debut
+          "song" => "New Song Debut"
+        }
+      ]
+    }
+
+    allow(Typhoeus).to receive(:get).and_return(
+      instance_double(Typhoeus::Response, success?: true, body: debut_response.to_json)
+    )
+
+    [ debut_song, debut_track ]
   end
 end
