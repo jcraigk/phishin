@@ -1,9 +1,4 @@
-namespace :gaps do
-  desc "Recalculate all gap data for all shows (alias for backfill)"
-  task recalculate_all: :environment do
-    Rake::Task["gaps:backfill"].invoke
-  end
-
+namespace :performance_gaps do
   desc "Backfill gap data by fetching setlists from Phish.net for all shows"
   task backfill: :environment do
     puts "Starting gap backfill for all shows..."
@@ -20,7 +15,7 @@ namespace :gaps do
 
     Show.published.order(:date).each do |show|
       begin
-        GapService.call(show)
+        PerformanceGapService.call(show)
         processed += 1
         pbar.increment
 
@@ -45,11 +40,11 @@ namespace :gaps do
   end
 
   desc "Recalculate gaps for a specific show"
-  task recalculate_show: :environment do
+  task update_show: :environment do
     date = ENV["DATE"]
 
     if date.blank?
-      puts "Usage: DATE=YYYY-MM-DD rake gaps:recalculate_show"
+      puts "Usage: DATE=YYYY-MM-DD rake performance_gaps:update_show"
       exit 1
     end
 
@@ -64,12 +59,10 @@ namespace :gaps do
     puts "--------"
 
     # Get gaps from Phish.net (also updates next gaps on earlier shows)
-    GapService.call(show)
+    PerformanceGapService.call(show)
 
     # Show results
     gap_count = SongsTrack.joins(:track).where(tracks: { show: show }).where.not(previous_performance_gap: nil).count
     puts "Updated gap data for #{gap_count} song performances"
   end
-
-
 end

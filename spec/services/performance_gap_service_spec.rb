@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe GapService do
+RSpec.describe PerformanceGapService do
   subject(:service) { described_class.call(show) }
 
   let!(:venue) { create(:venue, name: "Madison Square Garden") }
@@ -231,10 +231,10 @@ RSpec.describe GapService do
       end
     end
 
-        context "with encore sets" do
+    context "with encore sets" do
       let!(:encore_track) { create(:track, show:, position: 6, set: "E", songs: [song1]) }
 
-                  it "handles encore set notation" do
+      it "handles encore set notation" do
         service
 
         songs_track = SongsTrack.find_by(track: encore_track, song: song1)
@@ -253,23 +253,23 @@ RSpec.describe GapService do
         SongsTrack.find_by(track: track5, song: song3)
       ]
     end
-    let(:seen_songs) { Set.new }
+    let(:matched_songs_track_ids) { Set.new }
 
     it "matches songs by title case-insensitively" do
       setlist_item = { "song" => "BLAZE ON" }
-      songs_track = service_instance.send(:find_matching_songs_track, setlist_item, songs_tracks, seen_songs)
+      songs_track = service_instance.send(:find_matching_songs_track, setlist_item, songs_tracks, matched_songs_track_ids)
       expect(songs_track.song).to eq(song1)
     end
 
     it "matches the first occurrence of duplicate songs" do
       setlist_item = { "song" => "Tweezer" }
-      songs_track = service_instance.send(:find_matching_songs_track, setlist_item, songs_tracks, seen_songs)
+      songs_track = service_instance.send(:find_matching_songs_track, setlist_item, songs_tracks, matched_songs_track_ids)
       expect(songs_track.track).to eq(track4) # First Tweezer track
     end
 
     it "returns nil for non-matching songs" do
       setlist_item = { "song" => "Non-existent Song" }
-      songs_track = service_instance.send(:find_matching_songs_track, setlist_item, songs_tracks, seen_songs)
+      songs_track = service_instance.send(:find_matching_songs_track, setlist_item, songs_tracks, matched_songs_track_ids)
       expect(songs_track).to be_nil
     end
   end

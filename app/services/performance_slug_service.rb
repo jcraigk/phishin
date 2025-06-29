@@ -2,12 +2,24 @@ class PerformanceSlugService < ApplicationService
   param :show
 
   def call
-    update_slugs_and_next_gaps_for_show
+    update_slugs_for_show
   end
 
   private
 
-  def update_slugs_and_next_gaps_for_show
+  def update_slugs_for_show
+    puts "Processing performance slugs for show #{show.date}"
+
+    processed_songs = 0
+    total_songs = 0
+
+    # Count total songs first
+    show.tracks.where.not(set: "S").each do |track|
+      total_songs += track.songs.count
+    end
+
+    puts "Found #{total_songs} song performances to process (excluding soundcheck)"
+
     ActiveRecord::Base.transaction do
       show.tracks.where.not(set: "S").each do |track|
         track.songs.each do |song|
@@ -16,25 +28,24 @@ class PerformanceSlugService < ApplicationService
 
           # Set previous performance slug
           previous_performance = find_previous_performance(song, track)
-          song_track.previous_performance_slug = build_slug(previous_performance)
+          previous_slug = build_slug(previous_performance)
+          song_track.previous_performance_slug = previous_slug
 
-          # Set next performance slug and gap
+          # Set next performance slug
           next_performance = find_next_performance(song, track)
-          song_track.next_performance_slug = build_slug(next_performance)
-
-          # Calculate next gap based on the next performance's previous gap
-          if next_performance
-            next_songs_track = SongsTrack.find_by(track: next_performance, song: song)
-            if next_songs_track&.previous_performance_gap
-              # The next performance's gap from its previous show is our next gap
-              song_track.next_performance_gap = next_songs_track.previous_performance_gap
-            end
-          end
+          next_slug = build_slug(next_performance)
+          song_track.next_performance_slug = next_slug
 
           song_track.save!
+          processed_songs += 1
+
+          puts "💾 Updated slugs for '#{song.title}' (track #{track.position}): prev=#{previous_slug || 'nil'}, next=#{next_slug || 'nil'}"
         end
       end
     end
+
+    puts "✅ Completed processing performance slugs for show #{show.date}"
+    puts "Processed #{processed_songs} song performances"
   end
 
   def find_previous_performance(song, track)

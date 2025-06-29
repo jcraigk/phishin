@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe GapSlugService do
+RSpec.describe PerformanceSlugService do
   subject(:service) { described_class.call(current_show) }
 
   let!(:venue) { create(:venue, name: "Madison Square Garden") }
@@ -20,7 +20,7 @@ RSpec.describe GapSlugService do
   end
 
   before do
-    # Set up some previous performance gaps (as if GapService already ran)
+    # Set up some previous performance gaps (as if PerformanceGapService already ran)
     SongsTrack.find_by(track: tracks[0], song: song).update!(previous_performance_gap: 2)
     SongsTrack.find_by(track: tracks[1], song: song).update!(previous_performance_gap: 0)
     SongsTrack.find_by(track: tracks[2], song: song).update!(previous_performance_gap: 0)
@@ -53,15 +53,15 @@ RSpec.describe GapSlugService do
       expect(third_song_track.next_performance_slug).to eq("2023-01-05/#{tracks[4].slug}")
     end
 
-    it "calculates next performance gaps based on next performance's previous gap" do
+    it "does not modify next performance gaps" do
       first_song_track = SongsTrack.find_by(track: tracks[0], song: song)
-      expect(first_song_track.next_performance_gap).to eq(0) # Next performance has 0 gap
-
       second_song_track = SongsTrack.find_by(track: tracks[1], song: song)
-      expect(second_song_track.next_performance_gap).to eq(0) # Next performance has 0 gap
-
       third_song_track = SongsTrack.find_by(track: tracks[2], song: song)
-      expect(third_song_track.next_performance_gap).to eq(4) # Next performance has 4 gap
+
+      # Should not modify existing gap values
+      expect(first_song_track.next_performance_gap).to be_nil
+      expect(second_song_track.next_performance_gap).to be_nil
+      expect(third_song_track.next_performance_gap).to be_nil
     end
 
     it "skips soundcheck tracks" do
@@ -74,7 +74,6 @@ RSpec.describe GapSlugService do
 
       expect(songs_track.previous_performance_slug).to be_nil
       expect(songs_track.next_performance_slug).to be_nil
-      expect(songs_track.next_performance_gap).to be_nil
     end
 
     it "handles songs with no previous performance" do
@@ -94,7 +93,6 @@ RSpec.describe GapSlugService do
       described_class.call(next_show)
 
       expect(last_song_track.next_performance_slug).to be_nil
-      expect(last_song_track.next_performance_gap).to be_nil
     end
   end
 

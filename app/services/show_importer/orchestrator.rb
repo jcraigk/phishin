@@ -49,7 +49,7 @@ class ShowImporter::Orchestrator
 
     InteractiveCoverArtService.call(Show.where(id: show.id))
     DebutTagService.call(show)
-    save_song_gaps(show)
+    save_song_performance_data(show)
 
     show.update!(published: true)
 
@@ -99,11 +99,12 @@ class ShowImporter::Orchestrator
 
   private
 
-  def save_song_gaps(show)
-    puts "Calculating song gaps and applying bustout tag..."
-    GapService.call \
+  def save_song_performance_data(show)
+    puts "Calculating song performance data and applying bustout tag..."
+    PerformanceGapService.call \
       Show.where("date < ?", show.date).order(date: :desc).first
-    GapService.call(show)
+    PerformanceGapService.call(show)
+    PerformanceSlugService.call(show)
     BustoutTagService.call(show)
   end
 
