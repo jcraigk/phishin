@@ -1,4 +1,4 @@
-class GapService < ApplicationService
+class PerformanceGapService < ApplicationService
   BASE_URL = "https://api.phish.net/v5".freeze
 
   param :show
