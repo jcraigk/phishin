@@ -23,7 +23,7 @@ class BustoutTagService < ApplicationService
     ttag = track.track_tags.find do
       it.tag == bustout_tag && it.notes&.include?(song.title)
     end || track.track_tags.build(tag: bustout_tag)
-    ttag.notes = "First performance of #{song.title} in #{number_to_delimited(gap + 1)} shows"
+    ttag.notes = "First performance of #{song.title} in #{number_to_delimited(gap)} shows"
     ttag.save!
   end
 
