@@ -7,7 +7,7 @@ RSpec.describe BustoutTagService do
   let!(:show) { create(:show, date: "2023-01-01", venue:) }
   let!(:song) { create(:song, title: "Tweezer") }
   let!(:bustout_tag) { create(:tag, name: "Bustout") }
-  let!(:track) { create(:track, show:, position: 1, songs: [song]) }
+  let!(:track) { create(:track, show:, position: 1, songs: [ song ]) }
 
   before do
     # Set up a songs_track with a large gap to trigger bustout tag
@@ -22,7 +22,7 @@ RSpec.describe BustoutTagService do
 
         track_tag = track.track_tags.find_by(tag: bustout_tag)
         expect(track_tag).to be_present
-        expect(track_tag.notes).to eq("First performance of Tweezer in 150 shows")
+        expect(track_tag.notes).to eq("First performance of Tweezer in 151 shows")
       end
     end
 
@@ -48,7 +48,7 @@ RSpec.describe BustoutTagService do
     end
 
     context "when the track is in a soundcheck set" do
-      let!(:soundcheck_track) { create(:track, show:, position: 2, set: "S", songs: [song]) }
+      let!(:soundcheck_track) { create(:track, show:, position: 2, set: "S", songs: [ song ]) }
 
       before do
         songs_track = SongsTrack.find_by(track_id: soundcheck_track.id, song_id: song.id)

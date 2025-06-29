@@ -9,17 +9,16 @@ RSpec.describe PerformanceGapService do
   let!(:song1) { create(:song, title: "Blaze On") }
   let!(:song2) { create(:song, title: "My Friend My Friend") }
   let!(:song3) { create(:song, title: "Tweezer") }
-  let!(:banter_song) { create(:song, title: "Banter") }
+
 
   # Current show tracks (note: positions may not match Phish.net due to Banter, etc.)
-  let!(:track1) { create(:track, show:, position: 1, set: "1", title: "Banter", songs: [banter_song]) }
-  let!(:track2) { create(:track, show:, position: 2, set: "1", title: "Blaze On", songs: [song1]) }
-  let!(:track3) { create(:track, show:, position: 3, set: "1", title: "My Friend My Friend", songs: [song2]) }
-  let!(:track4) { create(:track, show:, position: 4, set: "1", title: "Tweezer > Harry Hood", songs: [song3]) }
-  let!(:track5) { create(:track, show:, position: 5, set: "1", title: "Tweezer", songs: [song3]) } # Duplicate song
+  let!(:track2) { create(:track, show:, position: 2, set: "1", title: "Blaze On", songs: [ song1 ]) }
+  let!(:track3) { create(:track, show:, position: 3, set: "1", title: "My Friend My Friend", songs: [ song2 ]) }
+  let!(:track4) { create(:track, show:, position: 4, set: "1", title: "Tweezer > Harry Hood", songs: [ song3 ]) }
+  let!(:track5) { create(:track, show:, position: 5, set: "1", title: "Tweezer", songs: [ song3 ]) } # Duplicate song
 
   # Earlier show track
-  let!(:earlier_track) { create(:track, show: earlier_show, position: 1, set: "1", songs: [song3]) }
+  let!(:earlier_track) { create(:track, show: earlier_show, position: 1, set: "1", songs: [ song3 ]) }
 
   let(:phishnet_response) do
     {
@@ -65,30 +64,22 @@ RSpec.describe PerformanceGapService do
     }
   end
 
+  let(:successful_response) { instance_double(Typhoeus::Response, success?: true, body: phishnet_response.to_json) }
+  let(:failed_response) { instance_double(Typhoeus::Response, success?: false, body: "") }
+
   before do
     # Set up API key first
     stub_const("ENV", ENV.to_hash.merge("PNET_API_KEY" => "test_api_key"))
 
     # Stub the Phish.net API call
-    allow(Typhoeus).to receive(:get).and_return(
-      double(success?: true, body: phishnet_response.to_json)
-    )
+    allow(Typhoeus).to receive(:get).and_return(successful_response)
   end
 
   describe "#call" do
     context "when API key is present" do
       it "updates previous performance gap data for matching songs by title" do
         service
-
-        songs_track1 = SongsTrack.find_by(track: track2, song: song1)
-        songs_track2 = SongsTrack.find_by(track: track3, song: song2)
-        songs_track3 = SongsTrack.find_by(track: track4, song: song3)
-        songs_track4 = SongsTrack.find_by(track: track5, song: song3)
-
-        expect(songs_track1.previous_performance_gap).to eq(4)
-        expect(songs_track2.previous_performance_gap).to eq(12)
-        expect(songs_track3.previous_performance_gap).to eq(8)
-        expect(songs_track4.previous_performance_gap).to eq(0) # Duplicate gets 0
+        expect_correct_gap_updates
       end
 
       it "updates next_performance_gap on earlier performances" do
@@ -100,9 +91,8 @@ RSpec.describe PerformanceGapService do
       end
 
       it "does not update next_performance_gap for duplicate songs" do
-        # Create another earlier show with the same song
         earlier_show2 = create(:show, date: "2022-12-25", venue:)
-        earlier_track2 = create(:track, show: earlier_show2, position: 1, set: "1", songs: [song3])
+        earlier_track2 = create(:track, show: earlier_show2, position: 1, set: "1", songs: [ song3 ])
 
         service
 
@@ -120,45 +110,18 @@ RSpec.describe PerformanceGapService do
       end
 
       it "excludes soundcheck tracks when finding previous performances" do
-        # Create a soundcheck track with the same song
         soundcheck_show = create(:show, date: "2022-12-28", venue:)
-        soundcheck_track = create(:track, show: soundcheck_show, position: 1, set: "S", songs: [song3])
+        soundcheck_track = create(:track, show: soundcheck_show, position: 1, set: "S", songs: [ song3 ])
 
         service
-
-        # The soundcheck track should not be updated
-        soundcheck_songs_track = SongsTrack.find_by(track: soundcheck_track, song: song3)
-        expect(soundcheck_songs_track.next_performance_gap).to be_nil
-
-        # The regular earlier track should still be updated
-        earlier_songs_track = SongsTrack.find_by(track: earlier_track, song: song3)
-        expect(earlier_songs_track.next_performance_gap).to eq(8)
+        expect_soundcheck_exclusion(soundcheck_track)
       end
 
       it "handles case-insensitive song title matching" do
-        # Use existing song but test with different case in Phish.net data
-        phishnet_response_caps = {
-          "error" => false,
-          "error_message" => "",
-          "data" => [
-            {
-              "songid" => 2570,
-              "position" => 1,
-              "set" => "1",
-              "gap" => 5,
-              "song" => "blaze on"  # lowercase version of "Blaze On"
-            }
-          ]
-        }
-
-        allow(Typhoeus).to receive(:get).and_return(
-          double(success?: true, body: phishnet_response_caps.to_json)
-        )
-
+        caps_response = instance_double(Typhoeus::Response, success?: true, body: build_caps_response.to_json)
+        allow(Typhoeus).to receive(:get).and_return(caps_response)
         service
-
-        songs_track = SongsTrack.find_by(track: track2, song: song1)
-        expect(songs_track.previous_performance_gap).to eq(5)
+        expect(SongsTrack.find_by(track: track2, song: song1).previous_performance_gap).to eq(5)
       end
     end
 
@@ -189,9 +152,7 @@ RSpec.describe PerformanceGapService do
 
     context "when API call fails" do
       before do
-        allow(Typhoeus).to receive(:get).and_return(
-          double(success?: false, body: "")
-        )
+        allow(Typhoeus).to receive(:get).and_return(failed_response)
       end
 
       it "handles the failure gracefully" do
@@ -232,7 +193,7 @@ RSpec.describe PerformanceGapService do
     end
 
     context "with encore sets" do
-      let!(:encore_track) { create(:track, show:, position: 6, set: "E", songs: [song1]) }
+      let!(:encore_track) { create(:track, show:, position: 6, set: "E", songs: [ song1 ]) }
 
       it "handles encore set notation" do
         service
@@ -278,30 +239,56 @@ RSpec.describe PerformanceGapService do
     let(:service_instance) { described_class.new(show) }
 
     it "finds the most recent previous performance" do
-      # Create multiple earlier shows
-      show1 = create(:show, date: "2022-12-25", venue:)
       show2 = create(:show, date: "2022-12-28", venue:)
-
-      track1 = create(:track, show: show1, position: 1, set: "1", songs: [song1])
-      track2 = create(:track, show: show2, position: 2, set: "1", songs: [song1])
-
-      previous_performance = service_instance.send(:find_most_recent_previous_performance, song1)
-
-      # Should return the most recent one (show2)
-      expect(previous_performance.track).to eq(track2)
+      create(:track, show: create(:show, date: "2022-12-25", venue:), position: 1, set: "1", songs: [ song1 ])
+      track_recent = create(:track, show: show2, position: 2, set: "1", songs: [ song1 ])
+      expect(service_instance.send(:find_most_recent_previous_performance, song1).track).to eq(track_recent)
     end
 
     it "excludes soundcheck tracks" do
-      soundcheck_show = create(:show, date: "2022-12-27", venue:)
-      regular_show = create(:show, date: "2022-12-25", venue:)
-
-      create(:track, show: soundcheck_show, position: 1, set: "S", songs: [song1])
-      regular_track = create(:track, show: regular_show, position: 1, set: "1", songs: [song1])
-
-      previous_performance = service_instance.send(:find_most_recent_previous_performance, song1)
-
-      # Should return the regular track, not the soundcheck
-      expect(previous_performance.track).to eq(regular_track)
+      regular_track = create(:track, show: create(:show, date: "2022-12-25", venue:), position: 1, set: "1", songs: [ song1 ])
+      create(:track, show: create(:show, date: "2022-12-27", venue:), position: 1, set: "S", songs: [ song1 ])
+      expect(service_instance.send(:find_most_recent_previous_performance, song1).track).to eq(regular_track)
     end
+  end
+
+  private
+
+  def expect_correct_gap_updates
+    songs_track1 = SongsTrack.find_by(track: track2, song: song1)
+    songs_track2 = SongsTrack.find_by(track: track3, song: song2)
+    songs_track3 = SongsTrack.find_by(track: track4, song: song3)
+    songs_track4 = SongsTrack.find_by(track: track5, song: song3)
+
+    expect(songs_track1.previous_performance_gap).to eq(4)
+    expect(songs_track2.previous_performance_gap).to eq(12)
+    expect(songs_track3.previous_performance_gap).to eq(8)
+    expect(songs_track4.previous_performance_gap).to eq(0) # Duplicate gets 0
+  end
+
+  def expect_soundcheck_exclusion(soundcheck_track)
+    # The soundcheck track should not be updated
+    soundcheck_songs_track = SongsTrack.find_by(track: soundcheck_track, song: song3)
+    expect(soundcheck_songs_track.next_performance_gap).to be_nil
+
+    # The regular earlier track should still be updated
+    earlier_songs_track = SongsTrack.find_by(track: earlier_track, song: song3)
+    expect(earlier_songs_track.next_performance_gap).to eq(8)
+  end
+
+  def build_caps_response
+    {
+      "error" => false,
+      "error_message" => "",
+      "data" => [
+        {
+          "songid" => 2570,
+          "position" => 1,
+          "set" => "1",
+          "gap" => 5,
+          "song" => "Blaze On"
+        }
+      ]
+    }
   end
 end

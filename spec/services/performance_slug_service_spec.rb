@@ -11,11 +11,11 @@ RSpec.describe PerformanceSlugService do
 
   let!(:tracks) do
     [
-      create(:track, show: current_show, position: 1, songs: [song]),
-      create(:track, show: current_show, position: 5, songs: [song]),
-      create(:track, show: current_show, position: 10, songs: [song]),
-      create(:track, show: previous_show, position: 1, songs: [song]),
-      create(:track, show: next_show, position: 1, songs: [song])
+      create(:track, show: current_show, position: 1, songs: [ song ]),
+      create(:track, show: current_show, position: 5, songs: [ song ]),
+      create(:track, show: current_show, position: 10, songs: [ song ]),
+      create(:track, show: previous_show, position: 1, songs: [ song ]),
+      create(:track, show: next_show, position: 1, songs: [ song ])
     ]
   end
 
@@ -32,40 +32,19 @@ RSpec.describe PerformanceSlugService do
 
   describe "#call" do
     it "sets previous performance slugs correctly" do
-      first_song_track = SongsTrack.find_by(track: tracks[0], song: song)
-      expect(first_song_track.previous_performance_slug).to eq("2022-12-30/#{tracks[3].slug}")
-
-      second_song_track = SongsTrack.find_by(track: tracks[1], song: song)
-      expect(second_song_track.previous_performance_slug).to eq("2023-01-01/#{tracks[0].slug}")
-
-      third_song_track = SongsTrack.find_by(track: tracks[2], song: song)
-      expect(third_song_track.previous_performance_slug).to eq("2023-01-01/#{tracks[1].slug}")
+      expect_correct_previous_slugs
     end
 
     it "sets next performance slugs correctly" do
-      first_song_track = SongsTrack.find_by(track: tracks[0], song: song)
-      expect(first_song_track.next_performance_slug).to eq("2023-01-01/#{tracks[1].slug}")
-
-      second_song_track = SongsTrack.find_by(track: tracks[1], song: song)
-      expect(second_song_track.next_performance_slug).to eq("2023-01-01/#{tracks[2].slug}")
-
-      third_song_track = SongsTrack.find_by(track: tracks[2], song: song)
-      expect(third_song_track.next_performance_slug).to eq("2023-01-05/#{tracks[4].slug}")
+      expect_correct_next_slugs
     end
 
     it "does not modify next performance gaps" do
-      first_song_track = SongsTrack.find_by(track: tracks[0], song: song)
-      second_song_track = SongsTrack.find_by(track: tracks[1], song: song)
-      third_song_track = SongsTrack.find_by(track: tracks[2], song: song)
-
-      # Should not modify existing gap values
-      expect(first_song_track.next_performance_gap).to be_nil
-      expect(second_song_track.next_performance_gap).to be_nil
-      expect(third_song_track.next_performance_gap).to be_nil
+      expect_gaps_unchanged
     end
 
     it "skips soundcheck tracks" do
-      soundcheck_track = create(:track, show: current_show, position: 20, set: "S", songs: [song])
+      soundcheck_track = create(:track, show: current_show, position: 20, set: "S", songs: [ song ])
 
       # Run the service again to process the new track
       described_class.call(current_show)
@@ -78,7 +57,7 @@ RSpec.describe PerformanceSlugService do
 
     it "handles songs with no previous performance" do
       new_song = create(:song, title: "New Song")
-      new_track = create(:track, show: current_show, position: 15, songs: [new_song])
+      new_track = create(:track, show: current_show, position: 15, songs: [ new_song ])
 
       described_class.call(current_show)
 
@@ -141,5 +120,40 @@ RSpec.describe PerformanceSlugService do
       slug = service_instance.send(:build_slug, nil)
       expect(slug).to be_nil
     end
+  end
+
+  private
+
+  def expect_correct_previous_slugs
+    first_song_track = SongsTrack.find_by(track: tracks[0], song: song)
+    expect(first_song_track.previous_performance_slug).to eq("2022-12-30/#{tracks[3].slug}")
+
+    second_song_track = SongsTrack.find_by(track: tracks[1], song: song)
+    expect(second_song_track.previous_performance_slug).to eq("2023-01-01/#{tracks[0].slug}")
+
+    third_song_track = SongsTrack.find_by(track: tracks[2], song: song)
+    expect(third_song_track.previous_performance_slug).to eq("2023-01-01/#{tracks[1].slug}")
+  end
+
+  def expect_correct_next_slugs
+    first_song_track = SongsTrack.find_by(track: tracks[0], song: song)
+    expect(first_song_track.next_performance_slug).to eq("2023-01-01/#{tracks[1].slug}")
+
+    second_song_track = SongsTrack.find_by(track: tracks[1], song: song)
+    expect(second_song_track.next_performance_slug).to eq("2023-01-01/#{tracks[2].slug}")
+
+    third_song_track = SongsTrack.find_by(track: tracks[2], song: song)
+    expect(third_song_track.next_performance_slug).to eq("2023-01-05/#{tracks[4].slug}")
+  end
+
+  def expect_gaps_unchanged
+    first_song_track = SongsTrack.find_by(track: tracks[0], song: song)
+    second_song_track = SongsTrack.find_by(track: tracks[1], song: song)
+    third_song_track = SongsTrack.find_by(track: tracks[2], song: song)
+
+    # Should not modify existing gap values
+    expect(first_song_track.next_performance_gap).to be_nil
+    expect(second_song_track.next_performance_gap).to be_nil
+    expect(third_song_track.next_performance_gap).to be_nil
   end
 end

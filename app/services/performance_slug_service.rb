@@ -8,7 +8,7 @@ class PerformanceSlugService < ApplicationService
   private
 
   def update_slugs_for_show
-    puts "Processing performance slugs for show #{show.date}"
+    log_info "Processing performance slugs for show #{show.date}"
 
     processed_songs = 0
     total_songs = 0
@@ -18,7 +18,7 @@ class PerformanceSlugService < ApplicationService
       total_songs += track.songs.count
     end
 
-    puts "Found #{total_songs} song performances to process (excluding soundcheck)"
+    log_info "Found #{total_songs} song performances to process (excluding soundcheck)"
 
     ActiveRecord::Base.transaction do
       show.tracks.where.not(set: "S").each do |track|
@@ -39,13 +39,13 @@ class PerformanceSlugService < ApplicationService
           song_track.save!
           processed_songs += 1
 
-          puts "💾 Updated slugs for '#{song.title}' (track #{track.position}): prev=#{previous_slug || 'nil'}, next=#{next_slug || 'nil'}"
+          log_info "💾 Updated slugs for '#{song.title}' (track #{track.position}): prev=#{previous_slug || 'nil'}, next=#{next_slug || 'nil'}"
         end
       end
     end
 
-    puts "✅ Completed processing performance slugs for show #{show.date}"
-    puts "Processed #{processed_songs} song performances"
+    log_info "✅ Completed processing performance slugs for show #{show.date}"
+    log_info "Processed #{processed_songs} song performances"
   end
 
   def find_previous_performance(song, track)
@@ -91,5 +91,9 @@ class PerformanceSlugService < ApplicationService
   def build_slug(track)
     return nil unless track
     "#{track.show.date}/#{track.slug}"
+  end
+
+  def log_info(message)
+    Rails.logger.info(message) unless Rails.env.test?
   end
 end

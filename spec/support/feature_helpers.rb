@@ -8,7 +8,7 @@ module FeatureHelpers
     # Wait for successful login by checking that we've navigated away from /login
     # and that the page no longer has the login form
     expect(page).to have_no_current_path("/login", wait: 10)
-    expect(page).to have_no_css('button[type="submit"]', text: "Login", wait: 10)
+    expect(page).to have_no_button("Login", wait: 10)
 
     # Additional check: wait for JWT to be present in localStorage
     # This ensures the authentication flow has completed
