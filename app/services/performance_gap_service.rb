@@ -11,7 +11,7 @@ class PerformanceGapService < ApplicationService
 
   private
 
-        def populate_gaps_from_phishnet
+  def populate_gaps_from_phishnet
     log_info "Processing show #{show.date}"
 
     setlist_data = fetch_phishnet_setlist
@@ -53,9 +53,9 @@ class PerformanceGapService < ApplicationService
       # Determine the gap for this performance
       gap = if seen_songs.include?(song.id)
               0 # Later instances of the same song in the same show have gap 0
-      else
+            else
               item["gap"] # First instance gets the gap from Phish.net (could be nil for debuts)
-      end
+            end
 
       # Update previous performance gap for current show
       songs_track.update!(previous_performance_gap: gap)
@@ -105,7 +105,7 @@ class PerformanceGapService < ApplicationService
     candidates.first
   end
 
-      def update_next_performance_gap(song, gap)
+  def update_next_performance_gap(song, gap)
     # Find the most recent show before this one that has this song
     previous_performance = find_most_recent_previous_performance(song)
 

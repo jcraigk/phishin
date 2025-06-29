@@ -13,7 +13,6 @@ class PerformanceSlugService < ApplicationService
     processed_songs = 0
     total_songs = 0
 
-    # Count total songs first
     show.tracks.where.not(set: "S").each do |track|
       total_songs += track.songs.count
     end
@@ -30,6 +29,17 @@ class PerformanceSlugService < ApplicationService
           previous_performance = find_previous_performance(song, track)
           previous_slug = build_slug(previous_performance)
           song_track.previous_performance_slug = previous_slug
+
+          # Ensure bidirectional linking: if we have a previous performance,
+          # make sure its next_performance_slug points to the current track
+          if previous_performance
+            current_slug = build_slug(track)
+            previous_songs_track = SongsTrack.find_by(track_id: previous_performance.id, song_id: song.id)
+            if previous_songs_track && previous_songs_track.next_performance_slug != current_slug
+              previous_songs_track.update!(next_performance_slug: current_slug)
+              log_info "🔗 Updated bidirectional link: previous performance next_performance_slug set to #{current_slug}"
+            end
+          end
 
           # Set next performance slug
           next_performance = find_next_performance(song, track)

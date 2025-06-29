@@ -101,8 +101,6 @@ class ShowImporter::Orchestrator
 
   def save_song_performance_data(show)
     puts "Calculating song performance data and applying bustout tag..."
-    PerformanceGapService.call \
-      Show.where("date < ?", show.date).order(date: :desc).first
     PerformanceGapService.call(show)
     PerformanceSlugService.call(show)
     BustoutTagService.call(show)
