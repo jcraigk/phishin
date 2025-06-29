@@ -8,7 +8,7 @@ namespace :tracks do
     )
 
     rel.each do |show|
-      GapService.call(show)
+      PerformanceGapService.call(show)
       pbar.increment
     end
 

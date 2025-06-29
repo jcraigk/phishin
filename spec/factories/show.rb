@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :show do
-    date { Faker::Date.unique.between(from: 40.years.ago, to: Time.zone.today) }
+    sequence(:date) { |n| Date.new(1983, 1, 1) + n.days }
     published { true }
     taper_notes { Faker::Lorem.paragraph }
 

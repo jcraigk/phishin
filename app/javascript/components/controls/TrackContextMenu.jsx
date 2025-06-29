@@ -138,7 +138,7 @@ const TrackContextMenu = ({ track, indexInPlaylist = null, highlight }) => {
                   Song: {song.title}
                 </Link>
 
-                {song.previous_performance_gap != null && song.previous_performance_gap > 0 && (
+                {song.previous_performance_slug && (
                   <Link
                     className="dropdown-item"
                     to={`/${song.previous_performance_slug}`}
@@ -146,11 +146,11 @@ const TrackContextMenu = ({ track, indexInPlaylist = null, highlight }) => {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <FontAwesomeIcon icon={faCircleChevronLeft} className="icon" />
-                    Previous Performance (gap: {song.previous_performance_gap})
+                    Previous Performance{song.previous_performance_gap != null && song.previous_performance_gap > 0 ? ` (gap: ${song.previous_performance_gap})` : ''}
                   </Link>
                 )}
 
-                {song.next_performance_gap != null && song.next_performance_gap > 0 && (
+                {song.next_performance_slug && (
                   <Link
                     className="dropdown-item"
                     to={`/${song.next_performance_slug}`}
@@ -158,7 +158,7 @@ const TrackContextMenu = ({ track, indexInPlaylist = null, highlight }) => {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <FontAwesomeIcon icon={faCircleChevronRight} className="icon" />
-                    Next Performance (gap: {song.next_performance_gap})
+                    Next Performance{song.next_performance_gap != null && song.next_performance_gap > 0 ? ` (gap: ${song.next_performance_gap})` : ''}
                   </Link>
                 )}
               </div>

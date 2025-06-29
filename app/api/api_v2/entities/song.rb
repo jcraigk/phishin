@@ -52,9 +52,8 @@ class ApiV2::Entities::Song < ApiV2::Entities::Base
   expose(
     :previous_performance_gap,
     if: ->(_, opts) { opts[:include_gaps] },
-    format_with: :iso8601,
     documentation: {
-      type: "String",
+      type: "Integer",
       desc: "Count of shows since the last performance of the song"
     }
   ) { _2[:songs_track].previous_performance_gap }
@@ -62,7 +61,6 @@ class ApiV2::Entities::Song < ApiV2::Entities::Base
   expose(
     :previous_performance_slug,
     if: ->(_, opts) { opts[:include_gaps] },
-    format_with: :iso8601,
     documentation: {
       type: "String",
       desc: "Slug of the last performance of the song"
@@ -72,9 +70,8 @@ class ApiV2::Entities::Song < ApiV2::Entities::Base
   expose(
     :next_performance_gap,
     if: ->(_, opts) { opts[:include_gaps] },
-    format_with: :iso8601,
     documentation: {
-      type: "String",
+      type: "Integer",
       desc: "Count of shows until the next performance of the song"
     }
   ) { _2[:songs_track].next_performance_gap }
@@ -82,7 +79,6 @@ class ApiV2::Entities::Song < ApiV2::Entities::Base
   expose(
     :next_performance_slug,
     if: ->(_, opts) { opts[:include_gaps] },
-    format_with: :iso8601,
     documentation: {
       type: "String",
       desc: "Slug of the next performance of the song"
