@@ -14,11 +14,11 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
 
   const handleTrackClick = (track) => {
     playTrack(tracks, track);
-    if (viewStyle === "playlist") {
-      setCustomPlaylist(tracks);
-    } else {
+    if (viewStyle !== "playlist") {
       setCustomPlaylist(null);
     }
+    // Don't reset customPlaylist when viewStyle === "playlist"
+    // as it's already set by the Playlist component
   };
 
   const calculateTrackDetails = (track) => {
