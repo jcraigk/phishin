@@ -230,12 +230,20 @@ class ApiV2::Playlists < ApiV2::Base
     end
 
     def sanitize_track_times(starts_at:, ends_at:, track_duration:)
-      if starts_at <= 0 ||
-         starts_at >= track_duration ||
-         starts_at >= ends_at
+      starts_at = starts_at.to_i
+      ends_at = ends_at.to_i
+
+      # starts_at must be positive and less than track duration
+      # If ends_at is also specified, starts_at must be less than ends_at
+      if starts_at <= 0 || starts_at >= track_duration || (ends_at > 0 && starts_at >= ends_at)
         starts_at = nil
       end
-      ends_at = nil if ends_at <= 0 || ends_at >= track_duration
+
+      # ends_at must be positive and not exceed track duration
+      if ends_at <= 0 || ends_at > track_duration
+        ends_at = nil
+      end
+
       [ starts_at, ends_at ]
     end
 

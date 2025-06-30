@@ -73,10 +73,22 @@ const DraftPlaylist = () => {
       <div className="hidden-phone">
         <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
         {formatDurationShow(draftPlaylist.reduce((total, track) => {
-          const start = track.starts_at_second || 0;
-          const end = track.ends_at_second || track.duration / 1000;
-          return total + (end - start);
-        }, 0) * 1000)}
+          const startSecond = parseInt(track.starts_at_second) || 0;
+          const endSecond = parseInt(track.ends_at_second) || 0;
+          let actualDuration;
+
+          if (startSecond > 0 && endSecond > 0) {
+            actualDuration = (endSecond - startSecond) * 1000;
+          } else if (startSecond > 0) {
+            actualDuration = track.duration - startSecond * 1000;
+          } else if (endSecond > 0) {
+            actualDuration = endSecond * 1000;
+          } else {
+            actualDuration = track.duration;
+          }
+
+          return total + actualDuration;
+        }, 0))}
       </div>
 
       <div className="playlist-description-container mt-3 mb-3 hidden-mobile">

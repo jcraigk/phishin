@@ -22,27 +22,22 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
   };
 
   const calculateTrackDetails = (track) => {
-    const isStartValid = Number.isFinite(track.starts_at_second);
-    const isEndValid = Number.isFinite(track.ends_at_second);
-    let actualDuration = track.duration;
+    const startSecond = parseInt(track.starts_at_second) || 0;
+    const endSecond = parseInt(track.ends_at_second) || 0;
+    let actualDuration;
     let isExcerpt = false;
 
-    if (isStartValid && isEndValid && track.ends_at_second > track.starts_at_second) {
-      actualDuration = (track.ends_at_second - track.starts_at_second) * 1000;
-      if (actualDuration < track.duration) {
-        isExcerpt = true;
-      }
-    } else if (isStartValid && track.ends_at_second === null) {
-      actualDuration = track.duration - track.starts_at_second * 1000;
-      if (actualDuration < track.duration) {
-        isExcerpt = true;
-      }
-    } else if (track.starts_at_second === null && isEndValid) {
-      actualDuration = track.ends_at_second * 1000;
-      if (actualDuration < track.duration) {
-        isExcerpt = true;
-      }
+    if (startSecond > 0 && endSecond > 0) {
+      actualDuration = (endSecond - startSecond) * 1000;
+    } else if (startSecond > 0) {
+      actualDuration = track.duration - startSecond * 1000;
+    } else if (endSecond > 0) {
+      actualDuration = endSecond * 1000;
+    } else {
+      actualDuration = track.duration;
     }
+
+    if (actualDuration < track.duration) isExcerpt = true;
 
     return { actualDuration, isExcerpt };
   };
@@ -135,7 +130,10 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
                     <div className="title-left">{setName}</div>
                     <span className="detail-right">
                       {formatDurationShow(
-                        setTracks.reduce((total, t) => total + t.duration, 0)
+                        setTracks.reduce((total, t) => {
+                          const { actualDuration } = calculateTrackDetails(t);
+                          return total + actualDuration;
+                        }, 0)
                       )}
                     </span>
                   </div>
