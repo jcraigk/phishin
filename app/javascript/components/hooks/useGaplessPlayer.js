@@ -18,6 +18,40 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     return position >= 0 ? position / 1000 : 0;
   };
 
+  // Get excerpt times for the current track
+  const getCurrentTrackExcerptTimes = () => {
+    if (!activePlaylist || currentTrackIndex < 0 || currentTrackIndex >= activePlaylist.length) {
+      return { startTime: 0, endTime: null };
+    }
+
+    const track = activePlaylist[currentTrackIndex];
+    const startSecond = parseInt(track.starts_at_second) || 0;
+    const endSecond = parseInt(track.ends_at_second) || 0;
+
+    return {
+      startTime: startSecond > 0 ? startSecond : 0,
+      endTime: endSecond > 0 ? endSecond : null
+    };
+  };
+
+  // Check if we should auto-advance to next track due to excerpt end time
+  const checkExcerptEndTime = () => {
+    if (!activePlaylist || !gaplessPlayerRef.current) return;
+
+    // Use the current track index from the player to avoid timing issues
+    const playerTrackIndex = gaplessPlayerRef.current.getIndex();
+    if (playerTrackIndex < 0 || playerTrackIndex >= activePlaylist.length) return;
+
+    const currentTrack = activePlaylist[playerTrackIndex];
+    const endSecond = parseInt(currentTrack.ends_at_second) || 0;
+    if (!endSecond) return;
+
+    const currentPosition = getPlayerPosition();
+    if (currentPosition >= endSecond) {
+      skipToNextTrack();
+    }
+  };
+
   useEffect(() => {
     if (startTime !== null && startTime !== undefined) {
       const trackDuration = activeTrack ? activeTrack.duration / 1000 : 0;
@@ -70,14 +104,17 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
   const scrub = (seconds) => {
     if (!gaplessPlayerRef.current || !activeTrack) return;
     const currentPosition = getPlayerPosition();
+    const { startTime, endTime } = getCurrentTrackExcerptTimes();
 
     if (currentPosition >= 0) {
       const trackDuration = activeTrack.duration / 1000;
+      const effectiveEndTime = endTime || trackDuration;
 
-      if (seconds > 0 && currentPosition >= trackDuration - PLAYER_CONSTANTS.SCRUB_SECONDS) return;
+      // Prevent scrubbing forward if we're near the end of the excerpt
+      if (seconds > 0 && currentPosition >= effectiveEndTime - PLAYER_CONSTANTS.SCRUB_SECONDS) return;
 
       const newTime = currentPosition + seconds;
-      const clampedTime = Math.max(0, Math.min(newTime, trackDuration));
+      const clampedTime = Math.max(startTime, Math.min(newTime, effectiveEndTime));
       gaplessPlayerRef.current.setPosition(clampedTime * 1000);
     }
   };
@@ -95,9 +132,11 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     if (!gaplessPlayerRef.current || !activePlaylist) return;
 
     const currentPosition = getPlayerPosition();
+    const { startTime } = getCurrentTrackExcerptTimes();
 
     if (currentPosition > PLAYER_CONSTANTS.PREVIOUS_TRACK_THRESHOLD) {
-      gaplessPlayerRef.current.setPosition(0);
+      // Reset to the start of the excerpt (or beginning if no excerpt)
+      gaplessPlayerRef.current.setPosition(startTime * 1000);
     } else {
       const currentIndex = gaplessPlayerRef.current.getIndex();
       const previousIndex = currentIndex - 1;
@@ -107,6 +146,16 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
         if (previousTrack) {
           setActiveTrack(previousTrack);
           setCurrentTrackIndex(previousIndex);
+
+          // Set excerpt start time for the previous track
+          const prevStartSecond = parseInt(previousTrack.starts_at_second) || 0;
+          if (prevStartSecond > 0) {
+            setTimeout(() => {
+              if (gaplessPlayerRef.current) {
+                gaplessPlayerRef.current.setPosition(prevStartSecond * 1000);
+              }
+            }, 100);
+          }
         }
       }
     }
@@ -128,19 +177,30 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
   const canScrubForward = () => {
     if (!activeTrack || !gaplessPlayerRef.current) return false;
     const currentPosition = getPlayerPosition();
+    const { startTime, endTime } = getCurrentTrackExcerptTimes();
     const trackDuration = activeTrack.duration / 1000;
+    const effectiveEndTime = endTime || trackDuration;
 
-    return trackDuration > PLAYER_CONSTANTS.SCRUB_SECONDS &&
-           currentPosition < trackDuration - PLAYER_CONSTANTS.SCRUB_SECONDS;
+    return effectiveEndTime > PLAYER_CONSTANTS.SCRUB_SECONDS &&
+           currentPosition < effectiveEndTime - PLAYER_CONSTANTS.SCRUB_SECONDS;
   };
 
   const handleScrubberClick = (e) => {
     if (gaplessPlayerRef.current && activeTrack) {
       const currentPosition = gaplessPlayerRef.current.getPosition();
+      const { startTime, endTime } = getCurrentTrackExcerptTimes();
+
       if (currentPosition >= 0) {
         const clickPosition = e.nativeEvent.offsetX / e.target.offsetWidth;
-        const newTime = clickPosition * (activeTrack.duration / 1000);
-        gaplessPlayerRef.current.setPosition(newTime * 1000);
+        const trackDuration = activeTrack.duration / 1000;
+        const effectiveEndTime = endTime || trackDuration;
+
+        // Calculate the new time within the excerpt range
+        const excerptDuration = effectiveEndTime - startTime;
+        const newTime = startTime + (clickPosition * excerptDuration);
+        const clampedTime = Math.max(startTime, Math.min(newTime, effectiveEndTime));
+
+        gaplessPlayerRef.current.setPosition(clampedTime * 1000);
       }
     }
   };
@@ -173,6 +233,9 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
         const timeInSeconds = current_track_time / 1000;
         setCurrentTime(timeInSeconds);
         setCurrentTrackIndex(current_track_index);
+
+        // Check if we should auto-advance due to excerpt end time
+        checkExcerptEndTime();
       };
 
       gaplessPlayerRef.current.onloadstart = () => {
@@ -192,8 +255,15 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       gaplessPlayerRef.current.onload = () => {
         setIsLoading(false);
         if (gaplessPlayerRef.current) {
+          // Handle excerpt start time or URL start time
+          const { startTime: excerptStartTime } = getCurrentTrackExcerptTimes();
+          const startTimeToUse = pendingStartTime !== null ? pendingStartTime : excerptStartTime;
+
+          if (startTimeToUse > 0) {
+            gaplessPlayerRef.current.setPosition(startTimeToUse * 1000);
+          }
+
           if (pendingStartTime !== null) {
-            gaplessPlayerRef.current.setPosition(pendingStartTime * 1000);
             setPendingStartTime(null);
           }
 
@@ -228,6 +298,17 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
         if (newIndex >= 0 && newIndex < activePlaylist.length) {
           setCurrentTrackIndex(newIndex);
           setActiveTrack(activePlaylist[newIndex]);
+
+          // Set excerpt start time for the new track
+          const track = activePlaylist[newIndex];
+          const startSecond = parseInt(track.starts_at_second) || 0;
+          if (startSecond > 0) {
+            setTimeout(() => {
+              if (gaplessPlayerRef.current) {
+                gaplessPlayerRef.current.setPosition(startSecond * 1000);
+              }
+            }, 100);
+          }
         }
       };
 
@@ -236,6 +317,17 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
         if (newIndex >= 0 && newIndex < activePlaylist.length) {
           setCurrentTrackIndex(newIndex);
           setActiveTrack(activePlaylist[newIndex]);
+
+          // Set excerpt start time for the new track
+          const track = activePlaylist[newIndex];
+          const startSecond = parseInt(track.starts_at_second) || 0;
+          if (startSecond > 0) {
+            setTimeout(() => {
+              if (gaplessPlayerRef.current) {
+                gaplessPlayerRef.current.setPosition(startSecond * 1000);
+              }
+            }, 100);
+          }
         }
       };
 

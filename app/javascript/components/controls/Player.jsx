@@ -84,6 +84,17 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       const trackIndex = activePlaylist.findIndex(track => track.id === activeTrack.id);
       if (trackIndex >= 0 && trackIndex !== currentTrackIndex) {
         gaplessPlayerRef.current.gotoTrack(trackIndex);
+
+        // Handle excerpt start time when manually selecting a track
+        const startSecond = parseInt(activeTrack.starts_at_second) || 0;
+        if (startSecond > 0) {
+          setTimeout(() => {
+            if (gaplessPlayerRef.current) {
+              gaplessPlayerRef.current.setPosition(startSecond * 1000);
+            }
+          }, 100);
+        }
+
         if (hasPlayedInitially) {
           setIsInitialUrlPlaySession(false);
         }

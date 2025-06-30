@@ -6,13 +6,16 @@ const TrackInfo = ({ activeTrack, customPlaylist }) => (
   <div className="track-details">
     <div className="track-title">
       <Link to={`/${activeTrack?.show_date}/${activeTrack?.slug}`}>
-        {activeTrack?.title}
+        {customPlaylist && activeTrack?.show_date
+          ? `${activeTrack?.title} - ${formatDate(activeTrack.show_date)}`
+          : activeTrack?.title
+        }
       </Link>
     </div>
     <div className="track-info">
       {customPlaylist ? (
-        <Link to={`/play/${customPlaylist.slug}`}>
-          {customPlaylist.name}
+        <Link to={customPlaylist.name ? `/play/${customPlaylist.slug}` : '/draft-playlist'}>
+          {customPlaylist.name || 'Draft Playlist'}
         </Link>
       ) : (
         <>

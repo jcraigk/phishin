@@ -20,16 +20,21 @@ class PlaylistTrack < ApplicationRecord
   def excerpt_duration
     start_second = starts_at_second.to_i
     end_second = ends_at_second.to_i
-    dur = if start_second <= 0 && end_second <= 0
+
+    duration = if start_second <= 0 && end_second <= 0
       track.duration
     elsif start_second > 0 && end_second > 0
       (end_second - start_second) * 1000
     elsif start_second > 0
-      (track.duration - (start_second * 1000))
+      track.duration - (start_second * 1000)
     elsif end_second > 0
       end_second * 1000
+    else
+      track.duration
     end
-    dur.negative? ? track.duration : dur
+
+    # Ensure we never return a negative duration
+    duration > 0 ? duration : track.duration
   end
 
   def save_playlist_duration
