@@ -49,6 +49,11 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
                type: Boolean,
                default: false,
                desc: "If true, fetch only those shows liked by the current user"
+      optional :audio_status,
+               type: String,
+               desc: "Filter by audio status: 'any' (default), 'complete', 'partial', 'missing', 'complete_or_partial'",
+               default: "any",
+               values: %w[any complete partial missing complete_or_partial]
     end
     get do
       page = page_of_shows
@@ -65,7 +70,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
       success ApiV2::Entities::Show
     end
     get "random" do
-      show = Show.published.order("RANDOM()").first
+      show = Show.published.where(audio_status: ['complete', 'partial']).order("RANDOM()").first
       present \
         show,
         with: ApiV2::Entities::Show,
@@ -134,6 +139,8 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
         error!({ message: "Album already generated" }, 409)
       elsif show.album_zip_requested_at.present?
         error!({ message: "Download already requested" }, 409)
+      elsif show.missing_audio?
+        error!({ message: "Cannot generate album for show with missing audio" }, 400)
       else
         show.update!(album_zip_requested_at: Time.current)
         AlbumZipJob.perform_async(show.id)
@@ -258,6 +265,8 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
           shows = shows.none
         end
       end
+
+      shows = apply_audio_status_filter(shows, params[:audio_status])
 
       shows
     end

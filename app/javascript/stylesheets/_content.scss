@@ -487,6 +487,19 @@ main {
     border-radius: $radius;
     max-width: 436px;
     background-color: $inactive-gray;
+
+    .audio-status-badge-container {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      z-index: 10;
+    }
+
+    &.faded {
+      .overlay {
+        background: rgba(0, 0, 0, 0.7);
+      }
+    }
   }
 
   @media (hover: hover) and (pointer: fine) {
@@ -794,5 +807,42 @@ main {
 @media (min-width: 421px) {
   .display-phone-only {
     display: none !important;
+  }
+}
+
+.audio-status-badge {
+  margin-left: 0.5rem;
+
+  &.is-small {
+    height: 1.5rem;
+    font-size: 0.75rem;
+  }
+
+  &.is-medium {
+    height: 2rem;
+    font-size: 0.875rem;
+  }
+
+  .icon {
+    margin-right: 0.25rem !important;
+  }
+}
+
+.faded {
+  opacity: 0.6;
+
+  &.no-audio {
+    cursor: default;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
+}
+
+.notification {
+  &.is-warning {
+    background-color: #fffbeb;
+    color: #92400e;
   }
 }

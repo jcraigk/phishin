@@ -21,6 +21,13 @@ class ApiV2::Entities::Tour < ApiV2::Entities::Base
     }
 
   expose \
+    :shows_with_audio_count,
+    documentation: {
+      type: "Integer",
+      desc: "Number of shows with available audio (complete or partial) associated with the tour"
+    }
+
+  expose \
     :starts_on,
     format_with: :iso8601,
     documentation: {

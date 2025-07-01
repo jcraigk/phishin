@@ -1,13 +1,10 @@
 class SearchService < ApplicationService
-  param :term
-  param :scope, default: proc { "all" }
+  option :term
+  option :scope, default: proc { "all" }
+  option :api_version, default: proc { "v2" }
 
   LIMIT = 50
   SCOPES = %w[all playlists shows songs tags tracks venues]
-
-  def initialize(term, scope = nil)
-    super(term, scope || "all") # Ensure scope defaults to "all" if nil
-  end
 
   def call
     return if term_too_short?
@@ -74,16 +71,19 @@ class SearchService < ApplicationService
 
   def show_on_date
     return unless term_is_date?
-    Show.published.includes(:venue).find_by(date:)
+    scope = Show.published
+    scope = scope.where.not(audio_status: 'missing') if api_version == "v1"
+    scope.includes(:venue).find_by(date:)
   end
 
   def shows_on_day_of_year
     return [] unless term_is_date?
-    Show.published
-        .on_day_of_year(date[5..6], date[8..9])
-        .where.not(date:)
-        .includes(:venue)
-        .order(date: :desc)
+    scope = Show.published
+    scope = scope.where.not(audio_status: 'missing') if api_version == "v1"
+    scope.on_day_of_year(date[5..6], date[8..9])
+         .where.not(date:)
+         .includes(:venue)
+         .order(date: :desc)
   end
 
   def songs
@@ -115,17 +115,19 @@ class SearchService < ApplicationService
   end
 
   def show_tags
-    ShowTag.includes(:tag, :show)
-           .where("notes ILIKE ?", "%#{term}%")
-           .order("tags.name, shows.date")
-           .limit(LIMIT)
+    scope = ShowTag.includes(:tag, :show)
+    scope = scope.joins(:show).where.not(shows: { audio_status: 'missing' }) if api_version == "v1"
+    scope.where("notes ILIKE ?", "%#{term}%")
+         .order("tags.name, shows.date")
+         .limit(LIMIT)
   end
 
   def track_tags
-    TrackTag.includes(:tag, track: :show)
-            .where("notes ILIKE ?", "%#{term}%")
-            .order("tags.name, shows.date, tracks.position")
-            .limit(LIMIT)
+    scope = TrackTag.includes(:tag, track: :show)
+    scope = scope.joins(track: :show).where.not(shows: { audio_status: 'missing' }) if api_version == "v1"
+    scope.where("notes ILIKE ?", "%#{term}%")
+         .order("tags.name, shows.date, tracks.position")
+         .limit(LIMIT)
   end
 
   def song_titles
@@ -137,7 +139,9 @@ class SearchService < ApplicationService
   end
 
   def tracks_by_title
-    Track.where("title ILIKE ?", "%#{term}%")
+    scope = Track.includes(:show)
+    scope = scope.joins(:show).where.not(shows: { audio_status: 'missing' }) if api_version == "v1"
+    scope.where("title ILIKE ?", "%#{term}%")
          .order(title: :asc)
          .limit(LIMIT)
   end

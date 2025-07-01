@@ -15,6 +15,13 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
       desc: "Date of the show"
     }
 
+  expose \
+    :audio_status,
+    documentation: {
+      type: "String",
+      desc: "Audio status of the show: 'complete', 'partial', or 'missing'"
+    }
+
   expose(
     :cover_art_urls,
     documentation: {
@@ -46,12 +53,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
       desc: "Duration of the show in milliseconds"
     }
 
-  expose \
-    :incomplete,
-    documentation: {
-      type: "Boolean",
-      desc: "Indicates if the audio recording of the show is incomplete"
-    }
+
 
   expose \
     :admin_notes,

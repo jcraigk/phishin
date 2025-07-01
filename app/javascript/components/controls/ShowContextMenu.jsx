@@ -98,10 +98,12 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
       >
         <div className={`dropdown-content context-dropdown-content ${css ? css : ""}`.trim()}>
 
-          <span className="dropdown-item">
-            <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
-            {formatDurationShow(show.duration)}
+          {show.audio_status !== 'missing' && (
+            <span className="dropdown-item">
+              <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
+              {formatDurationShow(show.duration)}
             </span>
+          )}
 
           <Link
             className="dropdown-item"
@@ -122,16 +124,20 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
             {truncate(show.venue.location, 25)}
           </Link>
 
-          <a className="dropdown-item" onClick={handleTaperNotesClick}>
-            <FontAwesomeIcon icon={faClipboard} className="icon" />
-            Taper Notes
-          </a>
+          {show.audio_status !== 'missing' && (
+            <a className="dropdown-item" onClick={handleTaperNotesClick}>
+              <FontAwesomeIcon icon={faClipboard} className="icon" />
+              Taper Notes
+            </a>
+          )}
 
           <hr className="dropdown-divider" />
 
-          <div className="dropdown-item display-phone-only">
-            <LikeButton likable={show} type="Show" />
-          </div>
+          {show.audio_status !== 'missing' && (
+            <div className="dropdown-item display-phone-only">
+              <LikeButton likable={show} type="Show" />
+            </div>
+          )}
 
           {show.tags?.length > 0 && (
             <div className="dropdown-item display-mobile-only">
@@ -144,19 +150,21 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
             Share
           </a>
 
-          {show.album_zip_url ? (
-            <a href={show.album_zip_url} className="dropdown-item" onClick={(e) => e.stopPropagation()}>
-              <FontAwesomeIcon icon={faDownload} className="icon" />
-              Download MP3s
-            </a>
-          ) : (
-            <a className="dropdown-item" onClick={(e) => {
-              e.stopPropagation();
-              handleRequestAlbumZip(show.id, setNotice, setAlert);
-            }}>
-              <FontAwesomeIcon icon={faDownload} className="icon" />
-              Request MP3 Download
-            </a>
+          {show.audio_status !== 'missing' && (
+            show.album_zip_url ? (
+              <a href={show.album_zip_url} className="dropdown-item" onClick={(e) => e.stopPropagation()}>
+                <FontAwesomeIcon icon={faDownload} className="icon" />
+                Download MP3s
+              </a>
+            ) : (
+              <a className="dropdown-item" onClick={(e) => {
+                e.stopPropagation();
+                handleRequestAlbumZip(show.id, setNotice, setAlert);
+              }}>
+                <FontAwesomeIcon icon={faDownload} className="icon" />
+                Request MP3 Download
+              </a>
+            )
           )}
           <a className="dropdown-item" onClick={openPhishNet}>
             <FontAwesomeIcon icon={faExternalLinkAlt} className="icon" />
@@ -190,11 +198,15 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
             </>
           )}
 
-          <hr className="dropdown-divider" />
-          <a className="dropdown-item" onClick={handleAddToPlaylist}>
-            <FontAwesomeIcon icon={faCirclePlus} className="icon" />
-            Add to playlist
-          </a>
+          {show.audio_status !== 'missing' && (
+            <>
+              <hr className="dropdown-divider" />
+              <a className="dropdown-item" onClick={handleAddToPlaylist}>
+                <FontAwesomeIcon icon={faCirclePlus} className="icon" />
+                Add to playlist
+              </a>
+            </>
+          )}
         </div>
       </div>
     </div>

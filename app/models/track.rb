@@ -1,6 +1,8 @@
 class Track < ApplicationRecord
   include TrackApiV1
 
+  AUDIO_STATUSES = %w[complete missing].freeze
+
   belongs_to :show, touch: true
   has_many :songs_tracks, dependent: :destroy
   has_many :songs, through: :songs_tracks
@@ -22,8 +24,11 @@ class Track < ApplicationRecord
   validates :position, :title, :set, presence: true
   validates :position, uniqueness: { scope: :show_id }
   validates :songs, length: { minimum: 1 }
+  validates :audio_status, inclusion: { in: AUDIO_STATUSES }
 
   before_save :generate_slug
+  after_save :update_show_audio_status
+  after_destroy :update_show_audio_status
 
   scope :chronological, -> { joins(:show).order("shows.date") }
   scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
@@ -42,6 +47,7 @@ class Track < ApplicationRecord
   end
 
   def apply_id3_tags
+    return if missing_audio?
     Id3TagService.call(self)
   end
 
@@ -51,10 +57,12 @@ class Track < ApplicationRecord
   end
 
   def mp3_url
+    return nil if missing_audio?
     blob_url(mp3_audio, placeholder: "audio.mp3", ext: :mp3)
   end
 
   def waveform_image_url
+    return nil if missing_audio?
     blob_url(png_waveform, placeholder: "waveform.png", ext: :png)
   end
 
@@ -67,21 +75,32 @@ class Track < ApplicationRecord
   end
 
   def generate_waveform_image(purge_cache: false)
+    return if missing_audio?
     WaveformImageService.call(self)
   end
 
   def process_mp3_audio
+    return if missing_audio?
     save_duration
     show.save_duration
     apply_id3_tags
     generate_waveform_image
   end
 
+  def missing_audio?
+    audio_status == 'missing'
+  end
+
   private
 
   def save_duration
+    return if missing_audio?
     mp3_audio.analyze unless mp3_audio.analyzed?
     duration_ms = (mp3_audio.blob.metadata[:duration] * 1000).round
     update_column(:duration, duration_ms)
+  end
+
+  def update_show_audio_status
+    show.update_audio_status_from_tracks!
   end
 end

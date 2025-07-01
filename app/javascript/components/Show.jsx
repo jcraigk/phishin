@@ -26,8 +26,9 @@ import LikeButton from "./controls/LikeButton";
 import Tracks from "./Tracks";
 import TagBadges from "./controls/TagBadges";
 import CoverArt from "./CoverArt";
+import AudioStatusBadge from "./controls/AudioStatusBadge";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 
 const Show = ({ trackSlug }) => {
   const show = useLoaderData();
@@ -36,12 +37,14 @@ const Show = ({ trackSlug }) => {
   const trackRefs = useRef([]);
   const { playTrack, openAppModal, closeAppModal } = useOutletContext();
   const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
-  const [showIncompleteNotification, setShowIncompleteNotification] = useState(show.incomplete);
   const [showAdminNotesNotification, setShowAdminNotesNotification] = useState(!!show.admin_notes);
+  const [showMissingAudioNotification, setShowMissingAudioNotification] = useState(show.audio_status === 'missing');
+  const [showPartialAudioNotification, setShowPartialAudioNotification] = useState(show.audio_status === 'partial');
 
   useEffect(() => {
     setTracks(show.tracks);
-    setShowIncompleteNotification(show.incomplete);
+    setShowMissingAudioNotification(show.audio_status === 'missing');
+    setShowPartialAudioNotification(show.audio_status === 'partial');
 
     const backgroundDiv = document.querySelector(".background-blur");
     if (show.cover_art_urls?.medium && backgroundDiv) {
@@ -53,7 +56,7 @@ const Show = ({ trackSlug }) => {
   useEffect(() => {
     let foundTrack;
     if (trackSlug) foundTrack = tracks.find((track) => track.slug === trackSlug);
-    if (foundTrack) {
+    if (foundTrack && foundTrack.audio_status !== 'missing') {
       playTrack(tracks, foundTrack, true);
       setMatchedTrack(foundTrack);
       const trackIndex = tracks.findIndex((track) => track.slug === foundTrack.slug);
@@ -71,16 +74,17 @@ const Show = ({ trackSlug }) => {
   }, [trackSlug, show, openAppModal]);
 
   const handleClose = (notificationType) => {
-    if (notificationType === "incomplete") setShowIncompleteNotification(false);
     if (notificationType === "adminNotes") setShowAdminNotesNotification(false);
+    if (notificationType === "missingAudio") setShowMissingAudioNotification(false);
+    if (notificationType === "partialAudio") setShowPartialAudioNotification(false);
   };
 
-  const infoBox = (message, onClose) => (
-    <div className="notification show-info">
+  const infoBox = (message, onClose, isWarning = false) => (
+    <div className={`notification show-info ${isWarning ? 'is-warning' : ''}`}>
       <button className="close-btn" onClick={onClose}>
         <FontAwesomeIcon icon={faCircleXmark} />
       </button>
-      <FontAwesomeIcon icon={faInfoCircle} className="mr-1" />
+      <FontAwesomeIcon icon={isWarning ? faExclamationCircle : faInfoCircle} className="mr-1" />
       {message}
     </div>
   );
@@ -120,10 +124,16 @@ const Show = ({ trackSlug }) => {
               </Link>
             </p>
 
+            {show.audio_status !== 'complete' && (
+              <p className="sidebar-info mt-2">
+                <AudioStatusBadge audioStatus={show.audio_status} size="large" />
+              </p>
+            )}
+
             <hr className="sidebar-hr" />
 
             <div className="sidebar-control-container">
-              <LikeButton likable={show} type="Show" />
+              {show.audio_status !== 'missing' && <LikeButton likable={show} type="Show" />}
               <ShowContextMenu show={show} />
             </div>
 
@@ -141,8 +151,15 @@ const Show = ({ trackSlug }) => {
         </aside>
 
         <section id="main-content">
-          {showIncompleteNotification && infoBox("This show's audio is incomplete", () => handleClose("incomplete"))}
+          {showMissingAudioNotification && infoBox("No known recording exists for this show", () => handleClose("missingAudio"), true)}
+          {showPartialAudioNotification && infoBox("This show has partial audio - some tracks are missing", () => handleClose("partialAudio"), true)}
           {showAdminNotesNotification && infoBox(show.admin_notes, () => handleClose("adminNotes"))}
+          {show.audio_status === 'missing' && tracks.length === 0 && (
+            <div className="notification is-info">
+              <FontAwesomeIcon icon={faInfoCircle} className="mr-1" />
+              The setlist for this date is unknown.
+            </div>
+          )}
 
           <div className="display-mobile-only mt-1">
             <div className="mobile-show-wrapper">
@@ -157,7 +174,12 @@ const Show = ({ trackSlug }) => {
                   />
                 </div>
                 <div className="mobile-show-info">
-                  <span className="mobile-show-date">{formatDate(show.date)}</span>
+                  <span className="mobile-show-date">
+                    {formatDate(show.date)}
+                    {show.audio_status !== 'complete' && (
+                      <AudioStatusBadge audioStatus={show.audio_status} size="small" />
+                    )}
+                  </span>
                   <span className="mobile-show-venue">
                     {show.venue_name}
                     <br />

@@ -84,7 +84,7 @@ RSpec.describe Venue do
         other_names: venue.other_names,
         latitude: venue.latitude.round(6),
         longitude: venue.longitude.round(6),
-        shows_count: venue.shows_count,
+        shows_count: venue.shows_with_audio_count,
         location: venue.location,
         slug: venue.slug,
         updated_at: venue.updated_at.iso8601
@@ -97,7 +97,7 @@ RSpec.describe Venue do
         other_names: venue.other_names,
         latitude: venue.latitude.round(6),
         longitude: venue.longitude.round(6),
-        shows_count: venue.shows_count,
+        shows_count: venue.shows_with_audio_count,
         location: venue.location,
         city: venue.city,
         state: venue.state,

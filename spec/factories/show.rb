@@ -3,6 +3,7 @@ FactoryBot.define do
     sequence(:date) { |n| Date.new(1983, 1, 1) + n.days }
     published { true }
     taper_notes { Faker::Lorem.paragraph }
+    audio_status { 'complete' }
 
     tour
     venue

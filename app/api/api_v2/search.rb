@@ -49,7 +49,7 @@ class ApiV2::Search < ApiV2::Base
   helpers do
     def fetch_results(term, scope)
       Rails.cache.fetch("api/v2/search/#{term}/#{scope}") do
-        SearchService.call(term, scope)
+        SearchService.call(term: term, scope: scope)
       end
     end
 

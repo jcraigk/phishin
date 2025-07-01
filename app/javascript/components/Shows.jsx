@@ -5,6 +5,7 @@ import TagBadges from "./controls/TagBadges";
 import LikeButton from "./controls/LikeButton";
 import ShowContextMenu from "./controls/ShowContextMenu";
 import CoverArt from "./CoverArt";
+import AudioStatusBadge from "./controls/AudioStatusBadge";
 
 const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list" }) => {
   const { activeTrack } = useOutletContext();
@@ -62,7 +63,9 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
     return (
       <li
         key={show.date}
-        className={`list-item ${show.date === activeTrack?.show_date ? "active-item" : ""}`}
+        className={`list-item ${show.date === activeTrack?.show_date ? "active-item" : ""} ${
+          show.audio_status === "missing" ? "faded" : ""
+        }`}
         onClick={() => handleShowClick(show.date)}
       >
         <div className="main-row">
@@ -70,15 +73,20 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
           <span className="leftside-primary">
             <CoverArt coverArtUrls={show.cover_art_urls} css="cover-art-small" />
             <span className="text date">{formatDate(show.date)}</span>
+            {show.audio_status !== "complete" && (
+              <AudioStatusBadge audioStatus={show.audio_status} size="small" />
+            )}
           </span>
           <span className="leftside-secondary">{show.venue_name}</span>
           <span className="leftside-tertiary">
             <TagBadges tags={show.tags} parentId={show.date} />
           </span>
           <div className="rightside-group">
-            <span className="rightside-primary">{formatDurationShow(show.duration)}</span>
+            <span className="rightside-primary">
+              {show.audio_status !== "missing" ? formatDurationShow(show.duration) : "--:--"}
+            </span>
             <span className="rightside-secondary">
-              <LikeButton likable={show} type="Show" />
+              {show.audio_status !== 'missing' && <LikeButton likable={show} type="Show" />}
             </span>
             <span className="rightside-menu">
               <ShowContextMenu show={show} adjacentLinks={false} />
@@ -95,7 +103,9 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
     return (
       <li
         key={show.date}
-        className={`grid-item ${!isLoaded ? "loading-shimmer" : ""}`}
+        className={`grid-item ${!isLoaded ? "loading-shimmer" : ""} ${
+          show.audio_status === "missing" ? "faded" : ""
+        }`}
         onClick={() => handleShowClick(show.date)}
         style={{
           backgroundImage: isLoaded ? `url(${show.cover_art_urls.medium})` : "none",
@@ -104,6 +114,11 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
       >
         {!isLoaded && <div className="loading-shimmer" />}
         <div className="overlay">
+          {show.audio_status !== "complete" && (
+            <div className="audio-status-badge-container">
+              <AudioStatusBadge audioStatus={show.audio_status} size="large" />
+            </div>
+          )}
           <p className="show-date">{formatDate(show.date)}</p>
           <p className="venue-name">{show.venue_name}</p>
           <p className="venue-location">{show.venue.location}</p>
