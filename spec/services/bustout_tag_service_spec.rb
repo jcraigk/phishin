@@ -22,7 +22,7 @@ RSpec.describe BustoutTagService do
 
         track_tag = track.track_tags.find_by(tag: bustout_tag)
         expect(track_tag).to be_present
-        expect(track_tag.notes).to eq("First performance of Tweezer in 151 shows")
+        expect(track_tag.notes).to eq("First performance of Tweezer in 150 shows")
       end
     end
 

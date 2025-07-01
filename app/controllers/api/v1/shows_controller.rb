@@ -5,7 +5,7 @@ class Api::V1::ShowsController < Api::V1::ApiController
   caches_action_params :on_day_of_year, %i[day]
 
   def index
-    shows = Show.published.where.not(audio_status: 'missing').includes(:venue, :tags, tracks: %i[songs tags])
+    shows = Show.published.where.not(audio_status: "missing").includes(:venue, :tags, tracks: %i[songs tags])
     shows = shows.tagged_with(params[:tag]) if params[:tag]
     respond_with_success get_data_for(shows)
   end
@@ -76,7 +76,7 @@ class Api::V1::ShowsController < Api::V1::ApiController
   end
 
   def show_scope
-    Show.published.where.not(audio_status: 'missing').includes(:venue, :tags, tracks: %i[songs tags])
+    Show.published.where.not(audio_status: "missing").includes(:venue, :tags, tracks: %i[songs tags])
   end
 
   def show_id_is_date?

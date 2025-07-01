@@ -70,7 +70,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
       success ApiV2::Entities::Show
     end
     get "random" do
-      show = Show.published.where(audio_status: ['complete', 'partial']).order("RANDOM()").first
+      show = Show.published.where(audio_status: [ "complete", "partial" ]).order("RANDOM()").first
       present \
         show,
         with: ApiV2::Entities::Show,

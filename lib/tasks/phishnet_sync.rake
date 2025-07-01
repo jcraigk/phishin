@@ -1,3 +1,4 @@
+# rubocop:disable Rake/MethodDefinitionInTask
 namespace :phishnet do
   desc "Sync all known Phish show dates from Phish.net"
   task sync_shows: :environment do
@@ -34,7 +35,7 @@ namespace :phishnet do
   end
 
   desc "Sync a specific date range from Phish.net"
-  task :sync_date_range, [:start_date, :end_date] => :environment do |t, args|
+  task :sync_date_range, [ :start_date, :end_date ] => :environment do |t, args|
     start_date = Date.parse(args[:start_date])
     end_date = Date.parse(args[:end_date])
 
@@ -71,10 +72,15 @@ namespace :phishnet do
     show.venue = venue if venue
     show.venue_name = pnet_show["venue"] || "Unknown Venue"
 
-    # Find or create tour
+    # Find existing tour
     if pnet_show["tourid"].present? && pnet_show["tourname"].present?
-      tour = find_or_create_tour(pnet_show)
-      show.tour = tour if tour
+      tour = find_tour(pnet_show)
+      if tour
+        show.tour = tour
+      else
+        puts "\nMissing tour: #{pnet_show['tourname']} for show #{pnet_show['showdate']}"
+        exit 1
+      end
     end
 
     # Set show as published but check audio status
@@ -102,12 +108,13 @@ namespace :phishnet do
     state = pnet_show["state"] || pnet_show["country"] || "Unknown"
     country = pnet_show["country"] || "USA"
 
-    # Try to find existing venue
-    venue = Venue.find_by(
-      "lower(name) = ? AND lower(city) = ?",
-      venue_name.downcase,
-      city.downcase
-    )
+    # Try to find existing venue, checking both current name and venue renames
+    venue = Venue.left_outer_joins(:venue_renames)
+                 .where(
+                   "(venues.name = :name OR venue_renames.name = :name) AND lower(venues.city) = :city",
+                   name: venue_name,
+                   city: city.downcase
+                 ).first
 
     return venue if venue
 
@@ -124,26 +131,9 @@ namespace :phishnet do
     nil
   end
 
-  def find_or_create_tour(pnet_show)
+  def find_tour(pnet_show)
     tour_name = pnet_show["tourname"]
-
-    tour = Tour.find_by(name: tour_name)
-    return tour if tour
-
-    # Try to determine tour dates from the tour name or use show date
-    year = pnet_show["showdate"][0..3]
-    starts_on = Date.parse("#{year}-01-01")
-    ends_on = Date.parse("#{year}-12-31")
-
-    Tour.create!(
-      name: tour_name,
-      starts_on: starts_on,
-      ends_on: ends_on,
-      slug: tour_name.parameterize
-    )
-  rescue ActiveRecord::RecordInvalid => e
-    puts "\nCould not create tour #{tour_name}: #{e.message}"
-    nil
+    Tour.find_by(name: tour_name)
   end
 
   def process_setlist(show, setlist_data)
@@ -152,13 +142,13 @@ namespace :phishnet do
     setlist_data.each do |set_data|
       set_name = set_data["name"] || "Set 1"
       set_code = case set_name.downcase
-                 when /encore|e$/i then "E"
-                 when /set\s*1|i$/i then "1"
-                 when /set\s*2|ii$/i then "2"
-                 when /set\s*3|iii$/i then "3"
-                 when /set\s*4|iv$/i then "4"
-                 else "S"
-                 end
+      when /encore|e$/i then "E"
+      when /set\s*1|i$/i then "1"
+      when /set\s*2|ii$/i then "2"
+      when /set\s*3|iii$/i then "3"
+      when /set\s*4|iv$/i then "4"
+      else "S"
+      end
 
       set_data["songs"].each do |song_data|
         song = find_or_create_song(song_data)
@@ -169,8 +159,7 @@ namespace :phishnet do
           title: song_data["song"] || song.title,
           position: position,
           set: set_code,
-          audio_status: "missing",
-          slug: "#{position}-#{song.slug}"
+          audio_status: "missing"
         )
 
         # Create song association
@@ -200,3 +189,4 @@ namespace :phishnet do
     nil
   end
 end
+# rubocop:enable Rake/MethodDefinitionInTask
