@@ -88,7 +88,7 @@ class Track < ApplicationRecord
   end
 
   def missing_audio?
-    audio_status == 'missing'
+    audio_status == "missing"
   end
 
   private
