@@ -47,4 +47,15 @@ module ApiV2::Helpers::SharedHelpers
   def authenticate!
     error!({ message: "Unauthorized" }, 401) unless current_user
   end
+
+  def apply_audio_status_filter(relation, audio_status)
+    case audio_status
+    when "complete", "partial", "missing"
+      relation.where(audio_status: audio_status)
+    when "complete_or_partial"
+      relation.where(audio_status: %w[complete partial])
+    else
+      relation
+    end
+  end
 end

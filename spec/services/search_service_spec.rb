@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe SearchService do
-  subject(:service) { described_class.new(term, scope) }
+  subject(:service) { described_class.new(term: term, scope: scope) }
 
   let(:term) { nil }
-  let(:scope) { nil }
+  let(:scope) { "all" }
 
   shared_examples 'expected results' do
     it 'returns expected results' do

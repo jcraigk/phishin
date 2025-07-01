@@ -13,6 +13,8 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
   const { playTrack, activeTrack, setCustomPlaylist  } = useOutletContext();
 
   const handleTrackClick = (track) => {
+    if (track.audio_status === 'missing') return;
+
     playTrack(tracks, track);
     if (viewStyle !== "playlist") {
       setCustomPlaylist(null);
@@ -44,6 +46,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
 
   const renderTrackItem = (track, index) => {
     const { actualDuration, isExcerpt } = calculateTrackDetails(track);
+    const hasMissingAudio = track.audio_status === 'missing';
 
     return (
       <li
@@ -52,7 +55,8 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
           "list-item",
           viewStyle === "show" ? "track-item" : "",
           track.id === activeTrack?.id ? "active-item" : "",
-          viewStyle === "show" && track.slug === trackSlug ? "focus" : ""
+          viewStyle === "show" && track.slug === trackSlug ? "focus" : "",
+          hasMissingAudio ? "faded no-audio" : ""
         ].filter(Boolean).join(" ")}
         onClick={() => handleTrackClick(track)}
         ref={trackRefs ? (el) => (trackRefs.current[track.position - 1] = el) : null}
@@ -93,18 +97,20 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
           </span>
           <div className="rightside-group">
             <span className={`rightside-primary ${isExcerpt ? "excerpt" : ""}`}>
-              {isExcerpt && <FontAwesomeIcon icon={faScissors} className="excerpt-icon" />}
-              {formatDurationTrack(actualDuration)}
+              {!hasMissingAudio && isExcerpt && <FontAwesomeIcon icon={faScissors} className="excerpt-icon" />}
+              {hasMissingAudio ? "--:--" : formatDurationTrack(actualDuration)}
             </span>
             <span className="rightside-secondary">
-              <LikeButton likable={track} type="Track" />
+              {!hasMissingAudio && <LikeButton likable={track} type="Track" />}
             </span>
             <span className="rightside-menu">
-              <TrackContextMenu
-                track={track}
-                indexInPlaylist={index}
-                highlight={highlight}
-              />
+              {!hasMissingAudio && (
+                <TrackContextMenu
+                  track={track}
+                  indexInPlaylist={index}
+                  highlight={highlight}
+                />
+              )}
             </span>
           </div>
         </div>
@@ -131,6 +137,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
                     <span className="detail-right">
                       {formatDurationShow(
                         setTracks.reduce((total, t) => {
+                          if (t.audio_status === 'missing') return total;
                           const { actualDuration } = calculateTrackDetails(t);
                           return total + actualDuration;
                         }, 0)

@@ -17,7 +17,9 @@ describe Api::V1::TracksController do
       subject { get('/api/v1/tracks', {}, auth_header) }
 
       it 'responds with expected data' do
-        expect(json_data).to match_array(tracks.map(&:as_json_api))
+        # v1 API only returns tracks from shows that don't have missing audio
+        expected_tracks = tracks.select { |t| t.show.audio_status != 'missing' }
+        expect(json_data).to match_array(expected_tracks.map(&:as_json_api))
       end
     end
 
