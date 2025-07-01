@@ -26,7 +26,7 @@ RSpec.describe Tour do
       {
         id: tour.id,
         name: tour.name,
-        shows_count: tour.shows_count,
+        shows_count: tour.shows_with_audio_count,
         starts_on: tour.starts_on.iso8601,
         ends_on: tour.ends_on.iso8601,
         slug: tour.slug,
@@ -38,7 +38,7 @@ RSpec.describe Tour do
       {
         id: tour.id,
         name: tour.name,
-        shows_count: tour.shows_count,
+        shows_count: tour.shows_with_audio_count,
         slug: tour.slug,
         starts_on: tour.starts_on.iso8601,
         ends_on: tour.ends_on.iso8601,

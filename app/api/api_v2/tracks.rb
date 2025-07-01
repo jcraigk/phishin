@@ -39,6 +39,11 @@ class ApiV2::Tracks < ApiV2::Base
       optional :year_range,
                type: String,
                desc: "Filter tracks from shows in a range of years (e.g., '1987-1988')"
+      optional :audio_status,
+               type: String,
+               desc: "Filter by audio status: 'any' (default), 'complete', 'missing'",
+               default: "any",
+               values: %w[any complete missing]
     end
     get do
       result = page_of_tracks
@@ -194,6 +199,8 @@ class ApiV2::Tracks < ApiV2::Base
           tracks = tracks.joins(:show).where("shows.date <= ?", end_date)
         end
       end
+
+      tracks = apply_audio_status_filter(tracks, params[:audio_status])
 
       tracks
     end

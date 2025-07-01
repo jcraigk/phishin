@@ -37,6 +37,9 @@ const ApiDocs = () => {
       <p>
         Version 1 of the API was released in 2013 and is considered legacy. It is still available for use, but it is recommended to use the newer version. You can browse the <a href="https://github.com/jcraigk/phishin/tree/main/app/controllers/api/v1" target="_blank">source on GitHub</a>. Below is documentation for the legacy API.
       </p>
+      <p className="notification is-warning">
+        <strong>Note:</strong> API v1 returns only shows and tracks with available audio recordings. For access to the complete catalog of known setlists (including shows without circulating recordings), use API v2.
+      </p>
 
       <p className="font-semibold mb-8">
         API keys can be requested via email:{" "}

@@ -58,7 +58,7 @@ class Venue < ApplicationRecord
       other_names:,
       latitude: latitude&.round(6),
       longitude: longitude&.round(6),
-      shows_count:,
+      shows_count: shows_with_audio_count,
       location:,
       created_at: created_at.iso8601,
       updated_at: updated_at.iso8601
@@ -77,7 +77,7 @@ class Venue < ApplicationRecord
       city:,
       state:,
       country:,
-      shows_count:,
+      shows_count: shows_with_audio_count,
       show_dates: shows_played_here.map { |x| x.date.iso8601 },
       show_ids: shows_played_here.map(&:id),
       created_at: created_at.iso8601,
@@ -95,6 +95,6 @@ class Venue < ApplicationRecord
   private
 
   def shows_played_here
-    @shows_played_here ||= shows.order(date: :asc)
+    @shows_played_here ||= shows.published.where.not(audio_status: "missing").order(date: :asc)
   end
 end

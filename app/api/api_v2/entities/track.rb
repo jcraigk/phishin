@@ -63,6 +63,13 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     }
 
   expose \
+    :audio_status,
+    documentation: {
+      type: "String",
+      desc: "Audio status of the track: 'complete' or 'missing'"
+    }
+
+  expose \
     :mp3_url,
     documentation: {
       type: "String",

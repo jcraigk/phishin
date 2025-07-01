@@ -158,7 +158,7 @@ RSpec.describe Show do
         id: show.id,
         date: show.date.iso8601,
         duration: show.duration,
-        incomplete: show.incomplete,
+        incomplete: show.audio_status != "complete",
         sbd: false, # Shim for RoboPhish/Android
         remastered: false, # Shim for RoboPhish/Android
         tour_id: show.tour_id,
@@ -188,7 +188,7 @@ RSpec.describe Show do
         id: show.id,
         date: show.date.iso8601,
         duration: show.duration,
-        incomplete: show.incomplete,
+        incomplete: show.audio_status != "complete",
         sbd: false, # Shim for RoboPhish/Android
         remastered: false, # Shim for RoboPhish/Android
         tags: tags.sort_by { |t| t[:priority] },

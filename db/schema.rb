@@ -74,16 +74,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_021513) do
     t.index ["user_id"], name: "index_authentications_on_user_id"
   end
 
-  create_table "known_dates", force: :cascade do |t|
-    t.date "date", null: false
-    t.string "phishnet_url"
-    t.string "location"
-    t.string "venue"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.index ["date"], name: "index_known_dates_on_date", unique: true
-  end
-
   create_table "likes", id: :serial, force: :cascade do |t|
     t.string "likable_type", limit: 255
     t.integer "likable_id"
@@ -146,7 +136,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_021513) do
     t.integer "venue_id"
     t.integer "tour_id"
     t.integer "likes_count", default: 0
-    t.boolean "incomplete", default: false
     t.text "admin_notes"
     t.integer "duration", default: 0, null: false
     t.text "taper_notes"
@@ -222,8 +211,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_021513) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.integer "shows_count", default: 0
+    t.integer "shows_with_audio_count", default: 0
     t.index ["ends_on"], name: "index_tours_on_ends_on", unique: true
     t.index ["name"], name: "index_tours_on_name", unique: true
+    t.index ["shows_with_audio_count"], name: "index_tours_on_shows_with_audio_count"
     t.index ["slug"], name: "index_tours_on_slug", unique: true
     t.index ["starts_on"], name: "index_tours_on_starts_on", unique: true
   end
@@ -301,7 +292,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_021513) do
     t.float "latitude"
     t.float "longitude"
     t.string "abbrev", limit: 255
+    t.integer "shows_with_audio_count", default: 0
     t.index ["name", "city"], name: "index_venues_on_name_and_city", unique: true
+    t.index ["shows_with_audio_count"], name: "index_venues_on_shows_with_audio_count"
     t.index ["slug"], name: "index_venues_on_slug", unique: true
   end
 
