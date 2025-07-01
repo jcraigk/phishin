@@ -8,7 +8,7 @@ namespace :phishnet do
     response = Typhoeus.get(
       "https://api.phish.net/v5/shows.json",
       params: {
-        apikey: Rails.application.credentials.dig(:phishnet, :api_key),
+        apikey: ENV.fetch("PNET_API_KEY", nil),
         order_by: "showdate"
       }
     )
@@ -72,15 +72,20 @@ namespace :phishnet do
     show.venue = venue if venue
     show.venue_name = pnet_show["venue"] || "Unknown Venue"
 
-    # Find existing tour
-    if pnet_show["tourid"].present? && pnet_show["tourname"].present?
+    # Find existing tour - tour is required for all shows
+    if pnet_show["tourname"].present?
       tour = find_tour(pnet_show)
-      if tour
-        show.tour = tour
-      else
+      unless tour
         puts "\nMissing tour: #{pnet_show['tourname']} for show #{pnet_show['showdate']}"
+        puts "Please create this tour manually and re-run the sync."
         exit 1
       end
+      show.tour = tour
+    else
+      puts "\nNo tour information provided for show #{pnet_show['showdate']}"
+      puts "Phish.net data: #{pnet_show.inspect}"
+      puts "Please investigate and handle manually."
+      exit 1
     end
 
     # Set show as published but check audio status
