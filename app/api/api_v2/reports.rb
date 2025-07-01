@@ -23,7 +23,7 @@ class ApiV2::Reports < ApiV2::Base
   helpers do
     def incomplete_show_details
       Show.published
-          .where(audio_status: 'partial')
+          .where(audio_status: "partial")
           .order(date: :desc)
           .map do |show|
         {
@@ -36,7 +36,7 @@ class ApiV2::Reports < ApiV2::Base
 
     def missing_show_details
       Show.published
-          .where(audio_status: 'missing')
+          .where(audio_status: "missing")
           .order(date: :desc)
           .map do |show|
         {
