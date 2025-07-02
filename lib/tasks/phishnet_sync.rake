@@ -4,9 +4,9 @@ namespace :phishnet do
   task sync_shows: :environment do
     puts "Starting Phish.net sync..."
 
-    # Get all known dates from Phish.net
+    # Get all known dates from Phish.net (artist-specific endpoint)
     response = Typhoeus.get(
-      "https://api.phish.net/v5/shows.json",
+      "https://api.phish.net/v5/shows/artist/phish.json",
       params: {
         apikey: ENV.fetch("PNET_API_KEY", nil),
         order_by: "showdate"
@@ -19,13 +19,20 @@ namespace :phishnet do
 
       puts "Found #{shows_data.length} shows on Phish.net"
 
+      # Create progress bar
+      progressbar = ProgressBar.create(
+        title: "Syncing",
+        total: shows_data.length,
+        format: "%a |%b>>%i| %p%% %t"
+      )
+
       shows_data.each_with_index do |pnet_show, index|
         begin
           process_phishnet_show(pnet_show)
-          print "." if index % 10 == 0
         rescue StandardError => e
           puts "\nError processing show #{pnet_show['showdate']}: #{e.message}"
         end
+        progressbar.increment
       end
 
       puts "\nSync complete!"
@@ -38,10 +45,18 @@ namespace :phishnet do
   task :sync_date_range, [ :start_date, :end_date ] => :environment do |t, args|
     start_date = Date.parse(args[:start_date])
     end_date = Date.parse(args[:end_date])
+    date_range = (start_date..end_date).to_a
 
     puts "Syncing shows from #{start_date} to #{end_date}..."
 
-    (start_date..end_date).each do |date|
+    # Create progress bar for date range
+    progressbar = ProgressBar.create(
+      title: "Syncing",
+      total: date_range.length,
+      format: "%a |%b>>%i| %p%% %t"
+    )
+
+    date_range.each do |date|
       response = Typhoeus.get(
         "https://api.phish.net/v5/shows/showdate/#{date.strftime('%Y-%m-%d')}.json",
         params: { apikey: Rails.application.credentials.dig(:phishnet, :api_key) }
@@ -51,9 +66,9 @@ namespace :phishnet do
         data = JSON.parse(response.body)
         if data["data"] && data["data"].any?
           process_phishnet_show(data["data"].first)
-          print "."
         end
       end
+      progressbar.increment
     end
 
     puts "\nSync complete!"
@@ -63,6 +78,21 @@ namespace :phishnet do
 
   def process_phishnet_show(pnet_show)
     date = Date.parse(pnet_show["showdate"])
+
+    # Skip future shows
+    if date > Date.current
+      # puts "  Skipping future show: #{pnet_show['showdate']}"
+      return
+    end
+
+    # Skip canceled tours
+    tour_name = pnet_show["tourname"] || pnet_show["tour_name"] || ""
+    canceled_tours = ["2020 Summer Tour"]
+    if canceled_tours.include?(tour_name)
+      # puts "  Skipping show from canceled tour: #{pnet_show['showdate']} (#{tour_name})"
+      return
+    end
+
     show = Show.find_or_initialize_by(date: date)
 
     # Find or create venue
@@ -73,20 +103,14 @@ namespace :phishnet do
     show.venue_name = pnet_show["venue"] || "Unknown Venue"
 
     # Find existing tour - tour is required for all shows
-    if pnet_show["tourname"].present?
-      tour = find_tour(pnet_show)
-      unless tour
-        puts "\nMissing tour: #{pnet_show['tourname']} for show #{pnet_show['showdate']}"
-        puts "Please create this tour manually and re-run the sync."
-        exit 1
-      end
-      show.tour = tour
-    else
-      puts "\nNo tour information provided for show #{pnet_show['showdate']}"
-      puts "Phish.net data: #{pnet_show.inspect}"
-      puts "Please investigate and handle manually."
+    tour_name = pnet_show["tourname"] || pnet_show["tour_name"] || "Not Part of a Tour"
+    tour = find_tour_by_name(tour_name)
+    unless tour
+      puts "\nMissing tour: #{tour_name} for show #{pnet_show['showdate']}"
+      puts "Please create this tour manually and re-run the sync."
       exit 1
     end
+    show.tour = tour
 
     # Set show as published but check audio status
     show.published = true
@@ -136,9 +160,106 @@ namespace :phishnet do
     nil
   end
 
-  def find_tour(pnet_show)
-    tour_name = pnet_show["tourname"]
-    Tour.find_by(name: tour_name)
+  def find_tour_by_name(tour_name)
+    # First try exact match
+    tour = Tour.find_by(name: tour_name)
+    return tour if tour
+
+    # Hardcoded mappings for specific tour names
+    hardcoded_mappings = {
+      "1997 Fall Tour (a.k.a. Phish Destroys America)" => "Fall Tour 1997",
+      "2003 20th Anniversary Run" => "20th Anniversary Run",
+      "2022 Madison Square Garden Spring Run" => "MSG Spring Run 2022"
+    }
+
+    if hardcoded_mappings.key?(tour_name)
+      alternative_name = hardcoded_mappings[tour_name]
+      tour = Tour.find_by(name: alternative_name)
+      return tour if tour
+    end
+
+    # puts "  Trying to match tour: '#{tour_name}'"
+
+    # Handle NYE Run patterns: various formats -> "New Years Run YYYY"
+    # Matches: "YYYY NYE Run", "YYYY NYE", "YYYY/YYYY+1 NYE Run", "YYYY/YYYY+1 Inverted NYE Run"
+    if match = tour_name.match(/^(\d{4})(?:\/\d{4})?\s+(?:Inverted\s+)?NYE(?:\s+Run)?$/i)
+      year = match[1]
+      alternative_name = "New Years Run #{year}"
+      # puts "  Trying NYE pattern: '#{alternative_name}'"
+      tour = Tour.find_by(name: alternative_name)
+      return tour if tour
+    end
+
+    # Handle "YYYY/YYYY+1 New Year's Run" pattern
+    if match = tour_name.match(/^(\d{4})(?:\/\d{4})?\s+New\s+Year'?s?\s+Run$/i)
+      year = match[1]
+      alternative_name = "New Years Run #{year}"
+      # puts "  Trying New Year's Run pattern: '#{alternative_name}'"
+      tour = Tour.find_by(name: alternative_name)
+      return tour if tour
+    end
+
+    # Also try with "New Year's" (with apostrophe)
+    if match = tour_name.match(/^(\d{4})(?:\/\d{4})?\s+(?:Inverted\s+)?NYE(?:\s+Run)?$/i)
+      year = match[1]
+      alternative_name = "New Year's Run #{year}"
+      # puts "  Trying NYE pattern with apostrophe: '#{alternative_name}'"
+      tour = Tour.find_by(name: alternative_name)
+      return tour if tour
+    end
+
+    if match = tour_name.match(/^New\s+Years\s+Run\s+(\d{4})$/i)
+      year = match[1]
+      alternative_name = "#{year} NYE Run"
+      # puts "  Trying reverse NYE pattern: '#{alternative_name}'"
+      tour = Tour.find_by(name: alternative_name)
+      return tour if tour
+    end
+
+    # Handle season patterns: "YYYY Season" -> "Season Tour YYYY"
+    if match = tour_name.match(/^(\d{4})\s+(Spring|Summer|Fall|Winter)$/i)
+      year = match[1]
+      season = match[2]
+      alternative_name = "#{season} Tour #{year}"
+      # puts "  Trying season pattern: '#{alternative_name}'"
+      tour = Tour.find_by(name: alternative_name)
+      return tour if tour
+    end
+
+    # Handle location patterns: "YYYY Location" -> "Location Run YYYY"
+    # Common locations: Mexico, Japan, Europe, etc.
+    if match = tour_name.match(/^(\d{4})\s+(Mexico|Japan|Europe|Asia|Australia|UK|Caribbean)$/i)
+      year = match[1]
+      location = match[2]
+      alternative_name = "#{location} Run #{year}"
+      # puts "  Trying location pattern: '#{alternative_name}'"
+      tour = Tour.find_by(name: alternative_name)
+      return tour if tour
+    end
+
+    # If tour name matches pattern "YYYY Tour Name", try "Tour Name YYYY" format
+    if tour_name.match?(/^\d{4}\s+(.+)/)
+      year = tour_name[0..3]
+      rest_of_name = tour_name[5..-1]
+      alternative_name = "#{rest_of_name} #{year}"
+      # puts "  Trying year-first pattern: '#{alternative_name}'"
+      tour = Tour.find_by(name: alternative_name)
+      return tour if tour
+    end
+
+    # If tour name matches pattern "Tour Name YYYY", try "YYYY Tour Name" format
+    if tour_name.match?(/^(.+)\s+\d{4}$/)
+      parts = tour_name.split
+      year = parts.last
+      rest_of_name = parts[0..-2].join(" ")
+      alternative_name = "#{year} #{rest_of_name}"
+      # puts "  Trying year-last pattern: '#{alternative_name}'"
+      tour = Tour.find_by(name: alternative_name)
+      return tour if tour
+    end
+
+    puts "  No match found for: '#{tour_name}'"
+    nil
   end
 
   def process_setlist(show, setlist_data)
