@@ -304,15 +304,7 @@ namespace :phishnet do
     song = Song.where("lower(title) = ?", song_title.downcase).first
     return song if song
 
-    # Create new song
-    Song.create!(
-      title: song_title,
-      slug: song_title.parameterize,
-      original: true # Default to original, can be updated later
-    )
-  rescue ActiveRecord::RecordInvalid => e
-    puts "\nCould not create song #{song_title}: #{e.message}"
-    nil
+    raise "Missing song: #{song_title}"
   end
 end
 # rubocop:enable Rake/MethodDefinitionInTask
