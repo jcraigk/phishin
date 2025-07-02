@@ -828,16 +828,8 @@ main {
   }
 }
 
-.faded {
-  opacity: 0.6;
-
-  &.no-audio {
-    cursor: default;
-
-    &:hover {
-      background-color: transparent;
-    }
-  }
+.no-audio {
+  cursor: default !important;
 }
 
 .notification {

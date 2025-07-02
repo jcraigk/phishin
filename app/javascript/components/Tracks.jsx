@@ -5,6 +5,7 @@ import TagBadges from "./controls/TagBadges";
 import HighlightedText from "./controls/HighlightedText";
 import LikeButton from "./controls/LikeButton";
 import TrackContextMenu from "./controls/TrackContextMenu";
+import AudioStatusBadge from "./controls/AudioStatusBadge";
 import CoverArt from "./CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faScissors } from "@fortawesome/free-solid-svg-icons";
@@ -56,7 +57,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
           viewStyle === "show" ? "track-item" : "",
           track.id === activeTrack?.id ? "active-item" : "",
           viewStyle === "show" && track.slug === trackSlug ? "focus" : "",
-          hasMissingAudio ? "faded no-audio" : ""
+          hasMissingAudio ? "no-audio" : ""
         ].filter(Boolean).join(" ")}
         onClick={() => handleTrackClick(track)}
         ref={trackRefs ? (el) => (trackRefs.current[track.position - 1] = el) : null}
@@ -98,19 +99,21 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
           <div className="rightside-group">
             <span className={`rightside-primary ${isExcerpt ? "excerpt" : ""}`}>
               {!hasMissingAudio && isExcerpt && <FontAwesomeIcon icon={faScissors} className="excerpt-icon" />}
-              {hasMissingAudio ? "--:--" : formatDurationTrack(actualDuration)}
+              {hasMissingAudio ? (
+                <AudioStatusBadge audioStatus="missing" size="small" />
+              ) : (
+                formatDurationTrack(actualDuration)
+              )}
             </span>
             <span className="rightside-secondary">
               {!hasMissingAudio && <LikeButton likable={track} type="Track" />}
             </span>
             <span className="rightside-menu">
-              {!hasMissingAudio && (
-                <TrackContextMenu
-                  track={track}
-                  indexInPlaylist={index}
-                  highlight={highlight}
-                />
-              )}
+              <TrackContextMenu
+                track={track}
+                indexInPlaylist={index}
+                highlight={highlight}
+              />
             </span>
           </div>
         </div>

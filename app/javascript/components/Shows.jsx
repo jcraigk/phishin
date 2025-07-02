@@ -63,9 +63,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
     return (
       <li
         key={show.date}
-        className={`list-item ${show.date === activeTrack?.show_date ? "active-item" : ""} ${
-          show.audio_status === "missing" ? "faded" : ""
-        }`}
+        className={`list-item ${show.date === activeTrack?.show_date ? "active-item" : ""}`}
         onClick={() => handleShowClick(show.date)}
       >
         <div className="main-row">
@@ -83,7 +81,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
           </span>
           <div className="rightside-group">
             <span className="rightside-primary">
-              {show.audio_status !== "missing" ? formatDurationShow(show.duration) : "--:--"}
+              {show.audio_status !== "missing" && formatDurationShow(show.duration)}
             </span>
             <span className="rightside-secondary">
               {show.audio_status !== 'missing' && <LikeButton likable={show} type="Show" />}
@@ -103,9 +101,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
     return (
       <li
         key={show.date}
-        className={`grid-item ${!isLoaded ? "loading-shimmer" : ""} ${
-          show.audio_status === "missing" ? "faded" : ""
-        }`}
+        className={`grid-item ${!isLoaded ? "loading-shimmer" : ""}`}
         onClick={() => handleShowClick(show.date)}
         style={{
           backgroundImage: isLoaded ? `url(${show.cover_art_urls.medium})` : "none",
