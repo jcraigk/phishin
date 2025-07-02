@@ -1,43 +1,96 @@
 # rubocop:disable Rake/MethodDefinitionInTask
 namespace :phishnet do
-  desc "Sync all known Phish show dates from Phish.net"
+    desc "Sync all known Phish show dates from Phish.net (use LIMIT env var to limit new shows, DATE env var for single date)"
   task sync_shows: :environment do
-    puts "Starting Phish.net sync..."
+    date_filter = ENV['DATE']
+    limit = ENV['LIMIT']&.to_i
 
-    # Get all known dates from Phish.net (artist-specific endpoint)
-    response = Typhoeus.get(
-      "https://api.phish.net/v5/shows/artist/phish.json",
-      params: {
-        apikey: ENV.fetch("PNET_API_KEY", nil),
-        order_by: "showdate"
-      }
-    )
+    if date_filter
+      puts "Starting Phish.net sync for specific date: #{date_filter}..."
 
-    if response.success?
-      data = JSON.parse(response.body)
-      shows_data = data["data"]
-
-      puts "Found #{shows_data.length} shows on Phish.net"
-
-      # Create progress bar
-      progressbar = ProgressBar.create(
-        title: "Syncing",
-        total: shows_data.length,
-        format: "%a |%b>>%i| %p%% %t"
+      # Get specific date from Phish.net
+      response = Typhoeus.get(
+        "https://api.phish.net/v5/shows/showdate/#{date_filter}.json",
+        params: { apikey: ENV.fetch("PNET_API_KEY", nil) }
       )
 
-      shows_data.each_with_index do |pnet_show, index|
-        begin
-          process_phishnet_show(pnet_show)
-        rescue StandardError => e
-          puts "\nError processing show #{pnet_show['showdate']}: #{e.message}"
-        end
-        progressbar.increment
-      end
+            if response.success?
+        data = JSON.parse(response.body)
+        if data["data"] && data["data"].any?
+          pnet_show = data["data"].first
+          puts "Found show for #{date_filter} on Phish.net"
 
-      puts "\nSync complete!"
-    else
-      puts "Error fetching data from Phish.net: #{response.code}"
+          begin
+            process_phishnet_show(pnet_show)
+            puts "Sync complete for #{date_filter}!"
+          rescue StandardError => e
+            puts "Error processing show #{date_filter}: #{e.message}"
+            raise e
+          end
+        else
+          puts "No show found for #{date_filter} on Phish.net"
+        end
+      else
+        puts "Error fetching data from Phish.net: #{response.code}"
+      end
+        else
+      puts "Starting Phish.net sync#{limit && limit > 0 ? " (limited to #{limit} new shows)" : ''}..."
+
+      # Get all known dates from Phish.net (artist-specific endpoint)
+      response = Typhoeus.get(
+        "https://api.phish.net/v5/shows/artist/phish.json",
+        params: {
+          apikey: ENV.fetch("PNET_API_KEY", nil),
+          order_by: "showdate"
+        }
+      )
+
+      if response.success?
+        data = JSON.parse(response.body)
+        shows_data = data["data"]
+
+        puts "Found #{shows_data.length} shows on Phish.net"
+
+        # Filter to only shows we don't have locally if limit is specified
+        if limit && limit > 0
+          new_shows_data = shows_data.select do |pnet_show|
+            date = Date.parse(pnet_show["showdate"])
+            !Show.exists?(date: date)
+          end
+
+          puts "Found #{new_shows_data.length} shows not in local database"
+
+          if new_shows_data.length > limit
+            new_shows_data = new_shows_data.first(limit)
+            puts "Limiting to first #{limit} new shows"
+          end
+
+          shows_to_process = new_shows_data
+        else
+          shows_to_process = shows_data
+        end
+
+        # Create progress bar
+        progressbar = ProgressBar.create(
+          title: "Syncing",
+          total: shows_to_process.length,
+          format: "%a |%b>>%i| %p%% %t"
+        )
+
+        shows_to_process.each_with_index do |pnet_show, index|
+          begin
+            process_phishnet_show(pnet_show)
+          rescue StandardError => e
+            puts "\nError processing show #{pnet_show['showdate']}: #{e.message}"
+            raise e # Re-raise to stop the process
+          end
+          progressbar.increment
+        end
+
+        puts "\nSync complete!"
+      else
+        puts "Error fetching data from Phish.net: #{response.code}"
+      end
     end
   end
 
@@ -123,9 +176,11 @@ namespace :phishnet do
 
     show.save!
 
-    # Process setlist if available and show has missing audio
-    if pnet_show["setlistdata"].present? && show.missing_audio?
-      process_setlist(show, pnet_show["setlistdata"])
+    # Fetch and process setlist if show has missing audio
+    if !show.has_audio?
+      fetch_and_process_setlist(show)
+    else
+      puts "  Show #{show.date} already has audio - skipping setlist processing"
     end
   end
 
@@ -262,38 +317,57 @@ namespace :phishnet do
     nil
   end
 
-  def process_setlist(show, setlist_data)
-    position = 1
+  def fetch_and_process_setlist(show)
+    # Fetch setlist data from dedicated setlists endpoint
+    response = Typhoeus.get(
+      "https://api.phish.net/v5/setlists/showdate/#{show.date.strftime('%Y-%m-%d')}.json",
+      params: { apikey: ENV.fetch("PNET_API_KEY", nil) }
+    )
 
-    setlist_data.each do |set_data|
-      set_name = set_data["name"] || "Set 1"
-      set_code = case set_name.downcase
-      when /encore|e$/i then "E"
-      when /set\s*1|i$/i then "1"
-      when /set\s*2|ii$/i then "2"
-      when /set\s*3|iii$/i then "3"
-      when /set\s*4|iv$/i then "4"
-      else "S"
+    if response.success?
+      data = JSON.parse(response.body)
+      if data["data"] && data["data"].any?
+        setlist_data = data["data"]
+        puts "  Processing setlist for #{show.date} (#{setlist_data.length} sets)"
+        process_setlist(show, setlist_data)
+      else
+        puts "  No setlist data available for #{show.date}"
       end
+    else
+      puts "  Error fetching setlist data for #{show.date}: #{response.code}"
+    end
+  end
 
-      set_data["songs"].each do |song_data|
-        song = find_or_create_song(song_data)
-        next unless song
+    def process_setlist(show, setlist_data)
+    tracks_created = 0
 
-        # Create track with missing audio
-        track = show.tracks.create!(
+    # setlist_data is a flat array of song records, each with position and set info
+    setlist_data.each do |song_data|
+      song = find_or_create_song(song_data)
+      next unless song
+
+      # Get set code from the song data
+      set_code = song_data["set"] || "1"
+
+      # Create track with missing audio and song association in transaction
+      track = nil
+      ActiveRecord::Base.transaction do
+        track = show.tracks.build(
           title: song_data["song"] || song.title,
-          position: position,
+          position: song_data["position"] || 1,
           set: set_code,
           audio_status: "missing"
         )
 
-        # Create song association
+        # Add song association before saving to satisfy validation
         track.songs << song
-
-        position += 1
+        track.save!
       end
+
+      tracks_created += 1
     end
+
+    puts "    Created #{tracks_created} tracks for #{show.date}"
   end
 
   def find_or_create_song(song_data)
