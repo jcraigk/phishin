@@ -113,16 +113,18 @@ const TrackContextMenu = ({ track, indexInPlaylist = null, highlight }) => {
               Share
             </a>
 
-            <a
-              className="dropdown-item"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDownload(e, track.id);
-              }}
-            >
-              <FontAwesomeIcon icon={faDownload} className="icon" />
-              Download MP3
-            </a>
+            {track.audio_status !== 'missing' && (
+              <a
+                className="dropdown-item"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDownload(e, track.id);
+                }}
+              >
+                <FontAwesomeIcon icon={faDownload} className="icon" />
+                Download MP3
+              </a>
+            )}
 
             {track.songs?.sort((a, b) => a.title.localeCompare(b.title)).map((song) => (
               <div key={`${track.id}-${song.slug}`}>
@@ -164,25 +166,29 @@ const TrackContextMenu = ({ track, indexInPlaylist = null, highlight }) => {
               </div>
             ))}
 
-            <hr className="dropdown-divider" />
+            {track.audio_status !== 'missing' && (
+              <>
+                <hr className="dropdown-divider" />
 
-            <a className="dropdown-item" onClick={handleAddToPlaylist}>
-              <FontAwesomeIcon icon={faCirclePlus} className="icon" />
-              Add to Draft Playlist
-            </a>
+                <a className="dropdown-item" onClick={handleAddToPlaylist}>
+                  <FontAwesomeIcon icon={faCirclePlus} className="icon" />
+                  Add to Draft Playlist
+                </a>
 
-            {draftPlaylist.includes(track) && (
-              <a className="dropdown-item" onClick={handleRemoveFromPlaylist}>
-                <FontAwesomeIcon icon={faTrashAlt} className="icon" />
-                Remove from Draft Playlist
-              </a>
-            )}
+                {draftPlaylist.includes(track) && (
+                  <a className="dropdown-item" onClick={handleRemoveFromPlaylist}>
+                    <FontAwesomeIcon icon={faTrashAlt} className="icon" />
+                    Remove from Draft Playlist
+                  </a>
+                )}
 
-            {draftPlaylist.includes(track) && (
-              <a className="dropdown-item" onClick={handlePlaylistEntry}>
-                <FontAwesomeIcon icon={faClock} className="icon" />
-                Edit Draft Playlist Entry
-              </a>
+                {draftPlaylist.includes(track) && (
+                  <a className="dropdown-item" onClick={handlePlaylistEntry}>
+                    <FontAwesomeIcon icon={faClock} className="icon" />
+                    Edit Draft Playlist Entry
+                  </a>
+                )}
+              </>
             )}
           </div>
         </div>
