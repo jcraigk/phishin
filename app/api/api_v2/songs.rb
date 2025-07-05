@@ -86,9 +86,13 @@ class ApiV2::Songs < ApiV2::Base
     def apply_audio_status_filter(songs)
       if params[:audio_status] == "complete_or_partial"
         # Only include songs that have at least one track with audio
-        songs = songs.joins(tracks: :show)
-                     .where.not(shows: { audio_status: "missing" })
-                     .distinct
+        # Use a subquery to avoid DISTINCT issues with ORDER BY
+        song_ids = Song.joins(tracks: :show)
+                      .where.not(shows: { audio_status: "missing" })
+                      .select(:id)
+                      .distinct
+                      .pluck(:id)
+        songs = songs.where(id: song_ids)
       end
       songs
     end
