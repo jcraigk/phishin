@@ -71,9 +71,6 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
           <span className="leftside-primary">
             <CoverArt coverArtUrls={show.cover_art_urls} css="cover-art-small" />
             <span className="text date">{formatDate(show.date)}</span>
-            {show.audio_status !== "complete" && (
-              <AudioStatusBadge audioStatus={show.audio_status} size="small" />
-            )}
           </span>
           <span className="leftside-secondary">{show.venue_name}</span>
           <span className="leftside-tertiary">
@@ -81,10 +78,16 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
           </span>
           <div className="rightside-group">
             <span className="rightside-primary">
-              {show.audio_status !== "missing" && formatDurationShow(show.duration)}
+              {show.audio_status === 'complete' ? (
+                formatDurationShow(show.duration)
+              ) : (
+                <AudioStatusBadge audioStatus={show.audio_status} size="small" />
+              )}
             </span>
             <span className="rightside-secondary">
-              {show.audio_status !== 'missing' && <LikeButton likable={show} type="Show" />}
+              {show.audio_status === 'complete' && (
+                <LikeButton likable={show} type="Show" />
+              )}
             </span>
             <span className="rightside-menu">
               <ShowContextMenu show={show} adjacentLinks={false} />
@@ -110,11 +113,6 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
       >
         {!isLoaded && <div className="loading-shimmer" />}
         <div className="overlay">
-          {show.audio_status !== "complete" && (
-            <div className="audio-status-badge-container">
-              <AudioStatusBadge audioStatus={show.audio_status} size="large" />
-            </div>
-          )}
           <p className="show-date">{formatDate(show.date)}</p>
           <p className="venue-name">{show.venue_name}</p>
           <p className="venue-location">{show.venue.location}</p>
