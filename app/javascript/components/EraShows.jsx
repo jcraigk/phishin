@@ -1,5 +1,5 @@
 import { authFetch } from "./helpers/utils";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useLoaderData, Link, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
@@ -38,13 +38,22 @@ const EraShows = () => {
   const [yearsData, setYearsData] = useState(null);
   const { showMissingAudio, getAudioStatusFilter } = useAudioFilter();
 
+  // Track the initial filter state to prevent unnecessary re-fetches
+  const initialFilterRef = useRef(getAudioStatusFilter());
+
   // Re-fetch data when audio filter changes
   useEffect(() => {
     const fetchShows = async () => {
+      const currentAudioStatusFilter = getAudioStatusFilter();
+
+      // If the filter hasn't changed from the initial value, don't re-fetch
+      if (currentAudioStatusFilter === initialFilterRef.current) {
+        return;
+      }
+
       setIsLoading(true);
       try {
-        const audioStatusFilter = getAudioStatusFilter();
-        let url = `/api/v2/shows?per_page=1000&audio_status=${audioStatusFilter}`;
+        let url = `/api/v2/shows?per_page=1000&audio_status=${currentAudioStatusFilter}`;
 
         if (year.includes("-")) {
           url += `&year_range=${year}`;
@@ -56,6 +65,8 @@ const EraShows = () => {
         if (!response.ok) throw response;
         const data = await response.json();
         setShows(data.shows);
+        // Update the ref to track the new filter state
+        initialFilterRef.current = currentAudioStatusFilter;
       } catch (error) {
         console.error("Error fetching shows:", error);
       } finally {
@@ -77,13 +88,7 @@ const EraShows = () => {
   useEffect(() => {
     const fetchYearsData = async () => {
       try {
-        const audioStatusFilter = getAudioStatusFilter();
-        const url = new URL("/api/v2/years", window.location.origin);
-        if (audioStatusFilter !== 'any') {
-          url.searchParams.set('audio_status', audioStatusFilter);
-        }
-
-        const response = await fetch(url.toString());
+        const response = await fetch("/api/v2/years");
         if (!response.ok) throw response;
         const data = await response.json();
         setYearsData(data);
@@ -92,7 +97,7 @@ const EraShows = () => {
       }
     };
     fetchYearsData();
-  }, [showMissingAudio, getAudioStatusFilter]);
+  }, []); // Empty dependency array since years data doesn't change based on audio filter
 
   const renderViewToggleButtons = () => (
     <div className="view-toggle buttons has-addons">

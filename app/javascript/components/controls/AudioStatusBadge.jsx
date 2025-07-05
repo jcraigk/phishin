@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faVolumeUp, faVolumeMute, faVolumeHalf } from '@fortawesome/free-solid-svg-icons';
+import { faVolumeUp, faVolumeMute, faVolumeDown } from '@fortawesome/free-solid-svg-icons';
 
 const AudioStatusBadge = ({ audioStatus, size = 'small' }) => {
   const getBadgeConfig = () => {
@@ -15,7 +15,7 @@ const AudioStatusBadge = ({ audioStatus, size = 'small' }) => {
         };
       case 'partial':
         return {
-          icon: faVolumeHalf,
+          icon: faVolumeDown,
           color: 'has-background-warning',
           textColor: 'has-text-dark',
           label: 'Partial Audio',

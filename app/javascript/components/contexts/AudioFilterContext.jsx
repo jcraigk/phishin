@@ -11,16 +11,13 @@ export const useAudioFilter = () => {
 };
 
 export const AudioFilterProvider = ({ children }) => {
-  // Default to false (don't show missing audio)
-  const [showMissingAudio, setShowMissingAudio] = useState(false);
-
-  // Persist setting in localStorage
-  useEffect(() => {
+  // Read localStorage synchronously during initialization to prevent double fetching
+  const getInitialShowMissingAudio = () => {
     const stored = localStorage.getItem('showMissingAudio');
-    if (stored !== null) {
-      setShowMissingAudio(JSON.parse(stored));
-    }
-  }, []);
+    return stored !== null ? JSON.parse(stored) : false;
+  };
+
+  const [showMissingAudio, setShowMissingAudio] = useState(getInitialShowMissingAudio);
 
   const toggleShowMissingAudio = () => {
     const newValue = !showMissingAudio;

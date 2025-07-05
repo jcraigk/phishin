@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { authFetch } from "./helpers/utils";
 import SearchResults from "./SearchResults";
@@ -17,6 +17,9 @@ const Search = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { getAudioStatusFilter, showMissingAudio } = useAudioFilter();
 
+  // Track the initial filter state to prevent unnecessary re-searches
+  const initialFilterRef = useRef(getAudioStatusFilter());
+
   useEffect(() => {
     setTerm(searchParams.get("term") || "");
     setScope(searchParams.get("scope") || "all");
@@ -29,7 +32,16 @@ const Search = () => {
   // Re-run search when audio filter changes
   useEffect(() => {
     if (submittedTerm) {
+      const currentAudioStatusFilter = getAudioStatusFilter();
+
+      // If the filter hasn't changed from the initial value, don't re-search
+      if (currentAudioStatusFilter === initialFilterRef.current) {
+        return;
+      }
+
       performSearch(submittedTerm, scope);
+      // Update the ref to track the new filter state
+      initialFilterRef.current = currentAudioStatusFilter;
     }
   }, [showMissingAudio]);
 
