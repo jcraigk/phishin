@@ -29,7 +29,7 @@ export const erasLoader = async () => {
   return erasData;
 };
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLoaderData, useOutletContext } from "react-router-dom";
 import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
@@ -37,12 +37,57 @@ import MobileApps from "./pages/MobileApps";
 import GitHubButton from "./pages/GitHubButton";
 import DiscordButton from "./pages/DiscordButton";
 import CoverArt from "./CoverArt";
+import Loader from "./controls/Loader";
+import { useAudioFilter } from "./contexts/AudioFilterContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList, faTh, faSortAmountDown, faSortAmountUp } from "@fortawesome/free-solid-svg-icons";
 
 const Eras = () => {
-  const eras = useLoaderData();
+  const initialEras = useLoaderData();
+  const [eras, setEras] = useState(initialEras);
+  const [isLoading, setIsLoading] = useState(false);
   const { viewMode, setViewMode, sortOption, setSortOption } = useOutletContext();
+  const { showMissingAudio, getAudioStatusFilter } = useAudioFilter();
+
+  // Re-fetch data when audio filter changes
+  useEffect(() => {
+    const fetchEras = async () => {
+      setIsLoading(true);
+      try {
+        const audioStatusFilter = getAudioStatusFilter();
+        const url = new URL("/api/v2/years", window.location.origin);
+        if (audioStatusFilter !== 'any') {
+          url.searchParams.set('audio_status', audioStatusFilter);
+        }
+
+        const response = await fetch(url.toString());
+        if (!response.ok) throw response;
+        const data = await response.json();
+
+        const erasData = data.reduce((acc, { era, period, shows_count, shows_duration, venues_count, cover_art_urls }) => {
+          if (!acc[era]) {
+            acc[era] = { periods: [], total_shows: 0, total_duration: 0 };
+          }
+          acc[era].periods.push({ period, shows_count, venues_count, cover_art_urls });
+          acc[era].total_shows += shows_count;
+          acc[era].total_duration += shows_duration;
+          return acc;
+        }, {});
+
+        Object.keys(erasData).forEach((era) => {
+          erasData[era].periods.sort((a, b) => b.period.localeCompare(a.period));
+        });
+
+        setEras(erasData);
+      } catch (error) {
+        console.error("Error fetching eras:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEras();
+  }, [showMissingAudio, getAudioStatusFilter]);
 
   const totalShows = Object.keys(eras).reduce((sum, era) => sum + eras[era].total_shows, 0);
   const totalDurationMs = Object.keys(eras).reduce((sum, era) => sum + eras[era].total_duration, 0);
@@ -151,6 +196,14 @@ const Eras = () => {
       <MobileApps />
     </div>
   );
+
+  if (isLoading) {
+    return (
+      <LayoutWrapper sidebarContent={sidebarContent}>
+        <Loader />
+      </LayoutWrapper>
+    );
+  }
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
