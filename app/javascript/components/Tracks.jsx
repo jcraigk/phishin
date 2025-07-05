@@ -98,15 +98,19 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
           </span>
           <div className="rightside-group">
             <span className={`rightside-primary ${isExcerpt ? "excerpt" : ""}`}>
-              {!hasMissingAudio && isExcerpt && <FontAwesomeIcon icon={faScissors} className="excerpt-icon" />}
-              {hasMissingAudio ? (
-                <AudioStatusBadge audioStatus="missing" size="small" />
+              {track.audio_status === 'complete' ? (
+                <>
+                  {isExcerpt && <FontAwesomeIcon icon={faScissors} className="excerpt-icon" />}
+                  {formatDurationTrack(actualDuration)}
+                </>
               ) : (
-                formatDurationTrack(actualDuration)
+                <AudioStatusBadge audioStatus={track.audio_status} size="small" />
               )}
             </span>
             <span className="rightside-secondary">
-              {!hasMissingAudio && <LikeButton likable={track} type="Track" />}
+              {track.audio_status === 'complete' && (
+                <LikeButton likable={track} type="Track" />
+              )}
             </span>
             <span className="rightside-menu">
               <TrackContextMenu
