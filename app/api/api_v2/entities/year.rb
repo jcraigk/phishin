@@ -35,6 +35,13 @@ class ApiV2::Entities::Year < ApiV2::Entities::Base
     }
 
   expose \
+    :venues_with_audio_count,
+    documentation: {
+      type: "Integer",
+      desc: "Unique number of venues that shows with audio were performed at during this period"
+    }
+
+  expose \
     :era,
     documentation: {
       type: "String",

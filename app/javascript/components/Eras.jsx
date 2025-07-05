@@ -16,6 +16,7 @@ export const erasLoader = async () => {
         shows_with_audio_count = 0,
         shows_duration = 0,
         venues_count = 0,
+        venues_with_audio_count = 0,
         cover_art_urls = {}
       } = yearData;
 
@@ -33,6 +34,7 @@ export const erasLoader = async () => {
         shows_count,
         shows_with_audio_count,
         venues_count,
+        venues_with_audio_count,
         cover_art_urls,
         display_count: shows_with_audio_count // Default to shows with audio
       });
@@ -94,7 +96,9 @@ const Eras = () => {
       rawEras[era].total_shows = 0;
       rawEras[era].periods.forEach((period) => {
         const displayCount = showMissingAudio ? period.shows_count : period.shows_with_audio_count;
+        const displayVenuesCount = showMissingAudio ? period.venues_count : period.venues_with_audio_count;
         period.display_count = displayCount;
+        period.display_venues_count = displayVenuesCount;
         rawEras[era].total_shows += displayCount;
         totalShows += displayCount;
       });
@@ -166,7 +170,7 @@ const Eras = () => {
     </div>
   );
 
-  const renderListItem = ({ period, shows_count = 0, shows_with_audio_count = 0, venues_count = 0, cover_art_urls = {}, display_count = 0 }) => (
+  const renderListItem = ({ period, shows_count = 0, shows_with_audio_count = 0, venues_count = 0, venues_with_audio_count = 0, cover_art_urls = {}, display_count = 0, display_venues_count = 0 }) => (
     <Link to={`/${period}`} key={period} className="list-item-link">
       <li className="list-item">
         <div className="main-row">
@@ -175,7 +179,7 @@ const Eras = () => {
             <span className="text has-text-weight-bold">{period}</span>
           </span>
           <span className="leftside-secondary">
-            {formatNumber(venues_count, "venue")}
+            {formatNumber(display_venues_count, "venue")}
           </span>
           <span className="rightside-group">
             {formatNumber(display_count, "show")}
@@ -185,13 +189,13 @@ const Eras = () => {
     </Link>
   );
 
-  const renderGridItem = ({ period, shows_count = 0, shows_with_audio_count = 0, venues_count = 0, cover_art_urls = {}, display_count = 0 }) => (
+  const renderGridItem = ({ period, shows_count = 0, shows_with_audio_count = 0, venues_count = 0, venues_with_audio_count = 0, cover_art_urls = {}, display_count = 0, display_venues_count = 0 }) => (
     <Link to={`/${period}`} key={period} className="list-item-link">
       <li className="grid-item" style={{ backgroundImage: `url(${cover_art_urls?.medium})` }}>
         <div className="overlay">
           <p className={`period ${period.includes("-") ? "period-range" : ""}`}>{period}</p>
           <p className="period-details">
-            {formatNumber(venues_count, "venue")} • {formatNumber(display_count, "show")}
+            {formatNumber(display_venues_count, "venue")} • {formatNumber(display_count, "show")}
           </p>
         </div>
       </li>
