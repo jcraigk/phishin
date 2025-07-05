@@ -59,13 +59,14 @@ class ApiV2::Years < ApiV2::Base
     def years_data
       ERAS.map do |era, periods|
         periods.map do |period|
-          shows_count, shows_with_audio_count, venues_count, shows_duration, cover_art_urls = stats_for(period)
+          shows_count, shows_with_audio_count, venues_count, venues_with_audio_count, shows_duration, cover_art_urls = stats_for(period)
           {
             period:,
             shows_count:,
             shows_with_audio_count:,
             shows_duration:,
             venues_count:,
+            venues_with_audio_count:,
             cover_art_urls:,
             era:
           }
@@ -91,6 +92,7 @@ class ApiV2::Years < ApiV2::Base
         all_shows.count,
         shows_with_audio.count,
         all_shows.select(:venue_id).distinct.count,
+        shows_with_audio.select(:venue_id).distinct.count,
         all_shows.sum(:duration),
         cover_art_urls
       ]
