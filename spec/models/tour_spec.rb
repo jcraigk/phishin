@@ -30,6 +30,7 @@ RSpec.describe Tour do
         starts_on: tour.starts_on.iso8601,
         ends_on: tour.ends_on.iso8601,
         slug: tour.slug,
+        created_at: tour.created_at.iso8601,
         updated_at: tour.updated_at.iso8601
       }
     end
@@ -42,6 +43,7 @@ RSpec.describe Tour do
         starts_on: tour.starts_on.iso8601,
         ends_on: tour.ends_on.iso8601,
         shows: tour.shows.sort_by(&:date).as_json,
+        created_at: tour.created_at.iso8601,
         updated_at: tour.updated_at.iso8601
       }
     end

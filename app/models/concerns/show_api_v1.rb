@@ -14,6 +14,7 @@ module ShowApiV1
         venue_id:,
         likes_count:,
         taper_notes:,
+        created_at: created_at.iso8601,
         updated_at: updated_at.iso8601,
         venue_name:,
         location: venue&.location
@@ -35,6 +36,7 @@ module ShowApiV1
         taper_notes:,
         likes_count:,
         tracks: tracks.sort_by(&:position).map(&:as_json_api),
+        created_at: created_at.iso8601,
         updated_at: updated_at.iso8601
       }
     end

@@ -16,6 +16,7 @@ class Tour < ApplicationRecord
       starts_on: starts_on.iso8601,
       ends_on: ends_on.iso8601,
       slug:,
+      created_at: created_at.iso8601,
       updated_at: updated_at.iso8601
     }
   end
@@ -29,6 +30,7 @@ class Tour < ApplicationRecord
       starts_on: starts_on.iso8601,
       ends_on: ends_on.iso8601,
       shows: shows.sort_by(&:date).as_json,
+      created_at: created_at.iso8601,
       updated_at: updated_at.iso8601
     }
   end

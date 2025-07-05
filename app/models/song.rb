@@ -40,6 +40,7 @@ class Song < ApplicationRecord
       artist:,
       lyrics:,
       tracks_count:,
+      created_at: created_at.iso8601,
       updated_at: updated_at.iso8601
     }
   end
@@ -54,6 +55,7 @@ class Song < ApplicationRecord
       artist:,
       lyrics:,
       tracks_count:,
+      created_at: created_at.iso8601,
       updated_at: updated_at.iso8601,
       tracks: tracks.map(&:as_json_api)
     }

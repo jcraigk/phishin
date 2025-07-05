@@ -33,6 +33,7 @@ RSpec.describe Tag do
         color: tag.color,
         priority: tag.priority,
         description: tag.description,
+        created_at: tag.created_at.iso8601,
         updated_at: tag.updated_at.iso8601
       }
     end
@@ -45,6 +46,7 @@ RSpec.describe Tag do
         color: tag.color,
         priority: tag.priority,
         description: tag.description,
+        created_at: tag.created_at.iso8601,
         updated_at: tag.updated_at.iso8601,
         show_ids: tag.shows.sort_by(&:id).map(&:id),
         track_ids: tag.tracks.sort_by(&:id).map(&:id)

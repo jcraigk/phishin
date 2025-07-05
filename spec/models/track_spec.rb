@@ -200,6 +200,7 @@ RSpec.describe Track do
         mp3: track.mp3_url,
         waveform_image: track.waveform_image_url,
         song_ids: track.songs.map(&:id),
+        created_at: track.created_at.iso8601,
         updated_at: track.updated_at.iso8601
       }
     end
@@ -237,6 +238,7 @@ RSpec.describe Track do
         mp3: track.mp3_url,
         waveform_image: track.waveform_image_url,
         song_ids: track.songs.map(&:id),
+        created_at: track.created_at.iso8601,
         updated_at: track.updated_at.iso8601
       }
     end

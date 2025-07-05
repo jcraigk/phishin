@@ -16,6 +16,7 @@ module TrackApiV1
         mp3: mp3_url,
         waveform_image: waveform_image_url,
         song_ids: songs.map(&:id),
+        created_at: created_at.iso8601,
         updated_at: updated_at.iso8601
       }
     end
@@ -39,6 +40,7 @@ module TrackApiV1
         mp3: mp3_url,
         waveform_image: waveform_image_url,
         song_ids: songs.map(&:id),
+        created_at: created_at.iso8601,
         updated_at: updated_at.iso8601
       }
     end

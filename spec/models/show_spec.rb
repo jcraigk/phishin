@@ -165,6 +165,7 @@ RSpec.describe Show do
         venue_id: show.venue_id,
         likes_count: show.likes_count,
         taper_notes: show.taper_notes,
+        created_at: show.created_at.iso8601,
         updated_at: show.updated_at.iso8601,
         venue_name: show.venue&.name,
         location: show.venue&.location
@@ -197,6 +198,7 @@ RSpec.describe Show do
         taper_notes: show.taper_notes,
         likes_count: show.likes_count,
         tracks: show.tracks.sort_by(&:position).map(&:as_json_api),
+        created_at: show.created_at.iso8601,
         updated_at: show.updated_at.iso8601
       }
     end

@@ -87,6 +87,7 @@ RSpec.describe Venue do
         shows_count: venue.shows_count,
         location: venue.location,
         slug: venue.slug,
+        created_at: venue.created_at.iso8601,
         updated_at: venue.updated_at.iso8601
       }
     end
@@ -105,6 +106,7 @@ RSpec.describe Venue do
         slug: venue.slug,
         show_dates: venue.shows.order(date: :asc).map { |x| x.date.iso8601 },
         show_ids: venue.shows.order(date: :asc).map(&:id),
+        created_at: venue.created_at.iso8601,
         updated_at: venue.updated_at.iso8601
       }
     end

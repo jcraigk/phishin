@@ -60,6 +60,7 @@ class Venue < ApplicationRecord
       longitude: longitude&.round(6),
       shows_count:,
       location:,
+      created_at: created_at.iso8601,
       updated_at: updated_at.iso8601
     }
   end
@@ -79,6 +80,7 @@ class Venue < ApplicationRecord
       shows_count:,
       show_dates: shows_played_here.map { |x| x.date.iso8601 },
       show_ids: shows_played_here.map(&:id),
+      created_at: created_at.iso8601,
       updated_at: updated_at.iso8601
     }
   end

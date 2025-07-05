@@ -19,6 +19,7 @@ class Tag < ApplicationRecord
       color:,
       priority:,
       description:,
+      created_at: created_at.iso8601,
       updated_at: updated_at.iso8601
     }
   end
@@ -32,6 +33,7 @@ class Tag < ApplicationRecord
       color:,
       priority:,
       description:,
+      created_at: created_at.iso8601,
       updated_at: updated_at.iso8601,
       show_ids: shows.sort_by(&:id).map(&:id),
       track_ids: tracks.sort_by(&:id).map(&:id)

@@ -92,6 +92,7 @@ RSpec.describe Playlist do
         name: playlist.name,
         duration: playlist.duration,
         track_count: playlist.playlist_tracks.size,
+        created_at: playlist.created_at.iso8601,
         updated_at: playlist.updated_at.iso8601
       }
     end
@@ -101,6 +102,7 @@ RSpec.describe Playlist do
         name: playlist.name,
         duration: playlist.duration,
         tracks: playlist.playlist_tracks.order(:position).map { |x| x.track.as_json_api },
+        created_at: playlist.created_at.iso8601,
         updated_at: playlist.updated_at.iso8601
       }
     end

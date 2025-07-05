@@ -37,6 +37,7 @@ class Playlist < ApplicationRecord
       name:,
       duration:,
       tracks: playlist_tracks.order(:position).map { |x| x.track.as_json_api },
+      created_at: created_at.iso8601,
       updated_at: updated_at.iso8601
     }
   end
@@ -47,6 +48,7 @@ class Playlist < ApplicationRecord
       name:,
       duration:,
       track_count: playlist_tracks.size,
+      created_at: created_at.iso8601,
       updated_at: updated_at.iso8601
     }
   end
