@@ -34,7 +34,7 @@ RSpec.describe "API v2 Shows" do
   describe "GET /shows/:date" do
     before do
       [ show1, previous_show, next_show ].each do |show|
-        PerformanceGapService.call(show)
+        GapService.call(show)
       end
     end
 

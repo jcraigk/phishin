@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 import PageWrapper from "./PageWrapper";
-import { useFeedback } from "../controls/FeedbackContext";
+import { useFeedback } from "../contexts/FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowAltCircleRight, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 

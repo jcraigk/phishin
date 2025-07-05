@@ -83,7 +83,7 @@ class ApiV2::Years < ApiV2::Base
         end
 
       # Calculate shows with audio (complete or partial)
-      shows_with_audio = all_shows.where(audio_status: ["complete", "partial"])
+      shows_with_audio = all_shows.where(audio_status: [ "complete", "partial" ])
 
       cover_art_urls = Show.find_by(date: COVER_ART[period])&.cover_art_urls
 

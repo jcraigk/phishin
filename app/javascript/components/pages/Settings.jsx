@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { authFetch } from "../helpers/utils";
-import { useFeedback } from "../controls/FeedbackContext";
+import { useFeedback } from "../contexts/FeedbackContext";
 import PageWrapper from "./PageWrapper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faCheckCircle, faCircleExclamation } from "@fortawesome/free-solid-svg-icons";

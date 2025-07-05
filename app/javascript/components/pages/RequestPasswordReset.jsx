@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PageWrapper from "./PageWrapper";
-import { useFeedback } from "../controls/FeedbackContext";
+import { useFeedback } from "../contexts/FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 

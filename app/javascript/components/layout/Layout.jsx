@@ -5,7 +5,7 @@ import Loader from "../controls/Loader";
 import Player from "../controls/Player";
 import AppModal from "../modals/AppModal";
 import DraftPlaylistModal from "../modals/DraftPlaylistModal";
-import { useFeedback } from "../controls/FeedbackContext";
+import { useFeedback } from "../contexts/FeedbackContext";
 import { AudioFilterProvider } from "../contexts/AudioFilterContext";
 
 const initialDraftPlaylistMeta = {

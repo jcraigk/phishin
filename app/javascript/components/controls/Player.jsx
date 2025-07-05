@@ -10,7 +10,7 @@ import { PLAYER_CONSTANTS } from "../helpers/playerConstants";
 import PlayerControls from "./PlayerControls";
 import TrackInfo from "./TrackInfo";
 import ProgressBar from "./ProgressBar";
-import { useFeedback } from "./FeedbackContext";
+import { useFeedback } from "../contexts/FeedbackContext";
 
 const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, openAppModal, shouldAutoplay, setShouldAutoplay }) => {
   const location = useLocation();

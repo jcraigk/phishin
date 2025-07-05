@@ -1,8 +1,10 @@
-class PerformanceGapService < ApplicationService
+class GapService < ApplicationService
   param :show
+  option :update_previous, default: -> { false }
 
   def call
     update_song_gaps_for_show
+    update_previous_occurrences if update_previous
   end
 
   private
@@ -46,6 +48,43 @@ class PerformanceGapService < ApplicationService
     end
 
     log_info "✅ Completed processing show #{show.date}"
+  end
+
+  def update_previous_occurrences
+    log_info "🔄 Updating previous occurrences for show #{show.date}"
+
+    ActiveRecord::Base.transaction do
+      show.tracks.where.not(set: "S").each do |track|
+        track.songs.each do |song|
+          # Find all previous performances of this song
+          previous_song_tracks = SongsTrack.joins(track: :show)
+                                          .where(song: song)
+                                          .where("shows.date < ?", show.date)
+                                          .where.not(tracks: { set: "S" })
+
+          previous_song_tracks.each do |previous_song_track|
+            previous_track = previous_song_track.track
+
+            # Update next performance gaps for the previous occurrence
+            next_performance = find_next_performance(song, previous_track)
+            previous_song_track.next_performance_gap = calculate_gap(previous_track.show.date, next_performance&.show&.date)
+            previous_song_track.next_performance_slug = build_slug(next_performance)
+
+            next_performance_with_audio = find_next_performance_with_audio(song, previous_track)
+            previous_song_track.next_performance_gap_with_audio = calculate_gap_with_audio(previous_track.show.date, next_performance_with_audio&.show&.date)
+            previous_song_track.next_performance_slug_with_audio = build_slug(next_performance_with_audio)
+
+            previous_song_track.save!
+
+            log_info "🔄 Updated next gaps for '#{song.title}' from #{previous_track.show.date}: " \
+                     "next=#{previous_song_track.next_performance_gap}, " \
+                     "next_audio=#{previous_song_track.next_performance_gap_with_audio}"
+          end
+        end
+      end
+    end
+
+    log_info "✅ Completed updating previous occurrences for show #{show.date}"
   end
 
   def find_previous_performance(song, track)
