@@ -25,7 +25,7 @@ export const songIndexLoader = async ({ request }) => {
   }
 };
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { formatNumber } from "./helpers/utils";
@@ -34,13 +34,26 @@ import Songs from "./Songs";
 import Pagination from "./controls/Pagination";
 import PhoneTitle from "./PhoneTitle";
 import { paginationHelper } from "./helpers/pagination";
+import { useAudioFilter } from "./contexts/AudioFilterContext";
+import Loader from "./controls/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const SongIndex = () => {
-  const { songs, totalPages, totalEntries, page, sortOption, perPage } = useLoaderData();
+  const initialData = useLoaderData();
+  const [songs, setSongs] = useState(initialData.songs);
+  const [totalPages, setTotalPages] = useState(initialData.totalPages);
+  const [totalEntries, setTotalEntries] = useState(initialData.totalEntries);
+
+  const { page, sortOption, perPage } = initialData;
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const { showMissingAudio, getAudioStatusFilter } = useAudioFilter();
+
+  // Track the initial filter state to prevent unnecessary re-fetches
+  const initialFilterRef = useRef(null);
+  const hasInitialized = useRef(false);
+
   const {
     tempPerPage,
     handlePageClick,
@@ -48,6 +61,63 @@ const SongIndex = () => {
     handlePerPageInputChange,
     handlePerPageBlurOrEnter
   } = paginationHelper(page, sortOption, perPage);
+
+  // Single fetch function for all data fetching needs
+  const fetchSongs = async (fetchPage = page + 1, fetchSort = sortOption, fetchPerPage = perPage, audioStatusFilter = getAudioStatusFilter()) => {
+    try {
+      const response = await fetch(`/api/v2/songs?page=${fetchPage}&sort=${fetchSort}&per_page=${fetchPerPage}&audio_status=${audioStatusFilter}`);
+      if (!response.ok) throw response;
+      const data = await response.json();
+
+      setSongs(data.songs);
+      setTotalPages(data.total_pages);
+      setTotalEntries(data.total_entries);
+
+      return data;
+    } catch (error) {
+      console.error("Error fetching songs:", error);
+      throw error;
+    }
+  };
+
+  // Re-fetch data when audio filter changes
+  useEffect(() => {
+    console.log('SongIndex useEffect triggered');
+    const currentAudioStatusFilter = getAudioStatusFilter();
+    console.log('Current filter:', currentAudioStatusFilter, 'Initial filter:', initialFilterRef.current, 'Has initialized:', hasInitialized.current);
+
+    // Initialize the ref on first run
+    if (!hasInitialized.current) {
+      console.log('Initializing filter ref');
+      initialFilterRef.current = currentAudioStatusFilter;
+      hasInitialized.current = true;
+      return;
+    }
+
+    // If the filter hasn't changed, don't re-fetch
+    if (currentAudioStatusFilter === initialFilterRef.current) {
+      console.log('Filter unchanged, skipping fetch');
+      return;
+    }
+
+    console.log('Filter changed, starting fetch');
+    const handleFilterChange = async () => {
+      try {
+        // Reset to page 1 when filter changes
+        await fetchSongs(1, sortOption, perPage, currentAudioStatusFilter);
+
+        // Update the ref to track the new filter state
+        initialFilterRef.current = currentAudioStatusFilter;
+
+        // Don't navigate when filter changes - just update the data
+        // The URL will be updated next time the user interacts with pagination
+      } catch (error) {
+        // Error already logged in fetchSongs
+      }
+    };
+
+    handleFilterChange();
+  }, [showMissingAudio, sortOption, perPage, navigate]);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -107,6 +177,7 @@ const SongIndex = () => {
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <PhoneTitle title="Songs" />
+
         <Songs songs={songs} />
         {totalPages > 1 && (
           <Pagination
