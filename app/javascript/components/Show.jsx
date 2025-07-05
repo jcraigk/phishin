@@ -32,6 +32,7 @@ import Tracks from "./Tracks";
 import TagBadges from "./controls/TagBadges";
 import CoverArt from "./CoverArt";
 import AudioStatusBadge from "./controls/AudioStatusBadge";
+import { useAudioFilter } from "./contexts/AudioFilterContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 
@@ -45,6 +46,7 @@ const Show = ({ trackSlug }) => {
   const [showAdminNotesNotification, setShowAdminNotesNotification] = useState(!!show.admin_notes);
   const [showMissingAudioNotification, setShowMissingAudioNotification] = useState(show.audio_status === 'missing');
   const [showPartialAudioNotification, setShowPartialAudioNotification] = useState(show.audio_status === 'partial');
+  const { showMissingAudio } = useAudioFilter();
 
   useEffect(() => {
     setTracks(show.tracks);
@@ -94,6 +96,23 @@ const Show = ({ trackSlug }) => {
     </div>
   );
 
+  // Get the appropriate navigation dates based on audio filter setting
+  const getNavigationDates = () => {
+    if (showMissingAudio) {
+      return {
+        previousShowDate: show.previous_show_date,
+        nextShowDate: show.next_show_date
+      };
+    } else {
+      return {
+        previousShowDate: show.previous_show_date_with_audio,
+        nextShowDate: show.next_show_date_with_audio
+      };
+    }
+  };
+
+  const { previousShowDate, nextShowDate } = getNavigationDates();
+
   return (
     <>
       <Helmet>
@@ -129,12 +148,6 @@ const Show = ({ trackSlug }) => {
               </Link>
             </p>
 
-            {show.audio_status !== 'complete' && (
-              <p className="sidebar-info mt-2">
-                <AudioStatusBadge audioStatus={show.audio_status} size="large" />
-              </p>
-            )}
-
             <hr className="sidebar-hr" />
 
             <div className="sidebar-control-container">
@@ -144,11 +157,11 @@ const Show = ({ trackSlug }) => {
 
             <TagBadges tags={show.tags} parentId={show.date} />
             <hr className="sidebar-hr" />
-            <Link to={`/${show.previous_show_date}`}>
+            <Link to={`/${previousShowDate}`}>
               <FontAwesomeIcon icon={faCircleChevronLeft} className="mr-1" />
               Previous show
             </Link>
-            <Link to={`/${show.next_show_date}`} className="is-pulled-right">
+            <Link to={`/${nextShowDate}`} className="is-pulled-right">
               Next show
               <FontAwesomeIcon icon={faCircleChevronRight} className="ml-1" />
             </Link>
@@ -156,13 +169,13 @@ const Show = ({ trackSlug }) => {
         </aside>
 
         <section id="main-content">
-          {showMissingAudioNotification && infoBox("No known recording exists for this show", () => handleClose("missingAudio"), true)}
-          {showPartialAudioNotification && infoBox("This show has partial audio - some tracks are missing", () => handleClose("partialAudio"), true)}
+          {showMissingAudioNotification && infoBox("No known audience recording exists for this show", () => handleClose("missingAudio"), true)}
+          {showPartialAudioNotification && infoBox("This show has partial audio", () => handleClose("partialAudio"), true)}
           {showAdminNotesNotification && infoBox(show.admin_notes, () => handleClose("adminNotes"))}
           {show.audio_status === 'missing' && tracks.length === 0 && (
             <div className="notification is-info">
               <FontAwesomeIcon icon={faInfoCircle} className="mr-1" />
-              The setlist for this date is unknown.
+              The setlist for this date is unknown
             </div>
           )}
 
@@ -181,9 +194,6 @@ const Show = ({ trackSlug }) => {
                 <div className="mobile-show-info">
                   <span className="mobile-show-date">
                     {formatDate(show.date)}
-                    {show.audio_status !== 'complete' && (
-                      <AudioStatusBadge audioStatus={show.audio_status} size="small" />
-                    )}
                   </span>
                   <span className="mobile-show-venue">
                     {show.venue_name}

@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 import { formatDate, formatDurationShow, truncate } from "../helpers/utils";
 import { useFeedback } from "./FeedbackContext";
+import { useAudioFilter } from "../contexts/AudioFilterContext";
 import LikeButton from "./LikeButton";
 import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,6 +15,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
   const { openAppModal } = useOutletContext();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const { user, draftPlaylist, setDraftPlaylist, setIsDraftPlaylistSaved } = useOutletContext();
+  const { showMissingAudio } = useAudioFilter();
 
   const hideDropdown = () => {
     setDropdownVisible(false);
@@ -83,6 +85,23 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
       setAlert("Sorry - album downloads are currently disabled");
     }
   };
+
+  // Get the appropriate navigation dates based on audio filter setting
+  const getNavigationDates = () => {
+    if (showMissingAudio) {
+      return {
+        previousShowDate: show.previous_show_date,
+        nextShowDate: show.next_show_date
+      };
+    } else {
+      return {
+        previousShowDate: show.previous_show_date_with_audio,
+        nextShowDate: show.next_show_date_with_audio
+      };
+    }
+  };
+
+  const { previousShowDate, nextShowDate } = getNavigationDates();
 
   return (
     <div className="dropdown context-dropdown is-right" ref={dropdownRef}>
@@ -175,7 +194,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
             <>
               <Link
                 className="dropdown-item"
-                to={`/${show.previous_show_date}`}
+                to={`/${previousShowDate}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   hideDropdown();
@@ -186,7 +205,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
               </Link>
               <Link
                 className="dropdown-item"
-                to={`/${show.next_show_date}`}
+                to={`/${nextShowDate}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   hideDropdown();

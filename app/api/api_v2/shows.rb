@@ -102,8 +102,10 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
         include_gaps: true,
         liked_by_user: current_user&.likes&.exists?(likable: show) || false,
         liked_track_ids: fetch_liked_track_ids(show),
-        next_show_date: next_show_date(show.date, params[:audio_status]),
-        previous_show_date: previous_show_date(show.date, params[:audio_status])
+        next_show_date: next_show_date(show.date, "any"),
+        previous_show_date: previous_show_date(show.date, "any"),
+        next_show_date_with_audio: next_show_date(show.date, "complete_or_partial"),
+        previous_show_date_with_audio: previous_show_date(show.date, "complete_or_partial")
     end
 
     desc "Fetch shows played on a day of the year" do
