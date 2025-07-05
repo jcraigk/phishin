@@ -7,6 +7,10 @@ export const tagShowsLoader = async ({ params, request }) => {
   const perPage = url.searchParams.get("per_page") || 10;
   const { tagSlug } = params;
 
+  // Check localStorage for audio filter setting
+  const showMissingAudio = JSON.parse(localStorage.getItem('showMissingAudio') || 'false');
+  const audioStatusFilter = showMissingAudio ? 'any' : 'complete_or_partial';
+
   try {
     const tagResponse = await fetch(`/api/v2/tags`);
     if (!tagResponse.ok) throw tagResponse;
@@ -15,7 +19,7 @@ export const tagShowsLoader = async ({ params, request }) => {
     if (!tag) throw new Response("Tag not found", { status: 404 });
 
     const showsResponse = await authFetch(
-      `/api/v2/shows?tag_slug=${tagSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}`
+      `/api/v2/shows?tag_slug=${tagSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`
     );
     if (!showsResponse.ok) throw showsResponse;
     const showsData = await showsResponse.json();

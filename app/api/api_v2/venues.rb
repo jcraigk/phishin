@@ -18,6 +18,11 @@ class ApiV2::Venues < ApiV2::Base
                desc: "Filter venues by the first character of the venue name (case-insensitive)",
                values: App.first_char_list,
                allow_blank: true
+      optional :audio_status,
+               type: String,
+               desc: "Filter by audio status: 'any' (default), 'complete_or_partial'",
+               default: "any",
+               values: %w[any complete_or_partial]
     end
     get do
       v = page_of_venues
@@ -46,6 +51,7 @@ class ApiV2::Venues < ApiV2::Base
         venues = Venue.unscoped
                       .then { |v| apply_proximity_filter(v) }
                       .then { |v| apply_first_char_filter(v) }
+                      .then { |v| apply_audio_status_filter(v) }
                       .then { |v| apply_sort(v) }
                       .paginate(page: params[:page], per_page: params[:per_page])
 
@@ -74,6 +80,13 @@ class ApiV2::Venues < ApiV2::Base
     def apply_proximity_filter(venues)
       if params[:lat].present? && params[:lng].present? && params[:distance].present?
         venues = venues.near([ params[:lat], params[:lng] ], params[:distance])
+      end
+      venues
+    end
+
+    def apply_audio_status_filter(venues)
+      if params[:audio_status] == "complete_or_partial"
+        venues = venues.where("shows_with_audio_count > 0")
       end
       venues
     end

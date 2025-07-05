@@ -1,5 +1,14 @@
 export const erasLoader = async () => {
-  const response = await fetch("/api/v2/years");
+  // We can't access React context in a loader, so we'll check localStorage directly
+  const showMissingAudio = JSON.parse(localStorage.getItem('showMissingAudio') || 'false');
+  const audioStatusFilter = showMissingAudio ? 'any' : 'complete_or_partial';
+
+  const url = new URL("/api/v2/years", window.location.origin);
+  if (audioStatusFilter !== 'any') {
+    url.searchParams.set('audio_status', audioStatusFilter);
+  }
+
+  const response = await fetch(url.toString());
   if (!response.ok) throw response;
   const data = await response.json();
 

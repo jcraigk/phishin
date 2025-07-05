@@ -3,7 +3,12 @@ import { createTaperNotesModalContent } from "./helpers/modals";
 
 export const showLoader = async ({ params }) => {
   const { date } = params;
-  const url = `/api/v2/shows/${date}`;
+
+  // Check localStorage for audio filter setting
+  const showMissingAudio = JSON.parse(localStorage.getItem('showMissingAudio') || 'false');
+  const audioStatusFilter = showMissingAudio ? 'any' : 'complete_or_partial';
+
+  const url = `/api/v2/shows/${date}?audio_status=${audioStatusFilter}`;
   try {
     const response = await authFetch(url);
     if (response.status === 404) {

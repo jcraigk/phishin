@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useSearchParams } from "react-router-dom";
 import { authFetch } from "./helpers/utils";
 import SearchResults from "./SearchResults";
@@ -6,6 +6,7 @@ import LayoutWrapper from "./layout/LayoutWrapper";
 import Loader from "./controls/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { useAudioFilter } from "./contexts/AudioFilterContext";
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -14,6 +15,7 @@ const Search = () => {
   const [results, setResults] = useState(null);
   const [submittedTerm, setSubmittedTerm] = useState(searchParams.get("term") || "");
   const [isLoading, setIsLoading] = useState(false);
+  const { getAudioStatusFilter, showMissingAudio } = useAudioFilter();
 
   useEffect(() => {
     setTerm(searchParams.get("term") || "");
@@ -24,12 +26,20 @@ const Search = () => {
     }
   }, [searchParams]);
 
+  // Re-run search when audio filter changes
+  useEffect(() => {
+    if (submittedTerm) {
+      performSearch(submittedTerm, scope);
+    }
+  }, [showMissingAudio]);
+
   const performSearch = async (searchTerm, searchScope) => {
     setResults(null);
     setIsLoading(true);
 
     try {
-      const response = await authFetch(`/api/v2/search/${searchTerm}?scope=${searchScope}`);
+      const audioStatus = getAudioStatusFilter();
+      const response = await authFetch(`/api/v2/search/${searchTerm}?scope=${searchScope}&audio_status=${audioStatus}`);
       const data = await response.json();
       setResults(data);
       setSubmittedTerm(searchTerm);

@@ -5,6 +5,10 @@ export const venueShowsLoader = async ({ params, request }) => {
   const url = new URL(request.url);
   const sortOption = url.searchParams.get("sort") || "date:desc";
 
+  // Check localStorage for audio filter setting
+  const showMissingAudio = JSON.parse(localStorage.getItem('showMissingAudio') || 'false');
+  const audioStatusFilter = showMissingAudio ? 'any' : 'complete_or_partial';
+
   try {
     const venueResponse = await fetch(`/api/v2/venues/${venueSlug}`);
     if (venueResponse.status === 404) {
@@ -13,7 +17,7 @@ export const venueShowsLoader = async ({ params, request }) => {
     if (!venueResponse.ok) throw venueResponse;
     const venueData = await venueResponse.json();
 
-    const showsResponse = await authFetch(`/api/v2/shows?venue_slug=${venueSlug}&sort=${sortOption}&per_page=1000`);
+    const showsResponse = await authFetch(`/api/v2/shows?venue_slug=${venueSlug}&sort=${sortOption}&per_page=1000&audio_status=${audioStatusFilter}`);
     if (!showsResponse.ok) showsResponse;
     const showsData = await showsResponse.json();
 

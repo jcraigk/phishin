@@ -44,6 +44,13 @@ class ApiV2::Years < ApiV2::Base
         "year, unique venues count, and selected cover art."
       success ApiV2::Entities::Year
     end
+    params do
+      optional :audio_status,
+               type: String,
+               desc: "Filter by audio status: 'any' (default), 'complete', 'partial', 'missing', 'complete_or_partial'",
+               default: "any",
+               values: %w[any complete partial missing complete_or_partial]
+    end
     get do
       present cached_years_data, with: ApiV2::Entities::Year
     end
@@ -51,7 +58,7 @@ class ApiV2::Years < ApiV2::Base
 
   helpers do
     def cached_years_data
-      Rails.cache.fetch("api/v2/years") do
+      Rails.cache.fetch("api/v2/years?#{params.to_query}") do
         years_data
       end
     end
@@ -80,8 +87,27 @@ class ApiV2::Years < ApiV2::Base
         else
           shows.during_year(period)
         end
+
+      # Apply audio status filter
+      shows = apply_audio_status_filter(shows, params[:audio_status])
+
       cover_art_urls = Show.find_by(date: COVER_ART[period])&.cover_art_urls
       [ shows.count, shows.select(:venue_id).distinct.count, shows.sum(:duration), cover_art_urls ]
+    end
+
+    def apply_audio_status_filter(shows, audio_status)
+      case audio_status
+      when "complete"
+        shows.where(audio_status: "complete")
+      when "partial"
+        shows.where(audio_status: "partial")
+      when "missing"
+        shows.where(audio_status: "missing")
+      when "complete_or_partial"
+        shows.where(audio_status: ["complete", "partial"])
+      else # "any"
+        shows
+      end
     end
   end
 end

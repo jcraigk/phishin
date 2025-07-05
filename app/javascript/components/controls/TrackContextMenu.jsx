@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useOutletContext, Link } from "react-router-dom";
 import { useFeedback } from "./FeedbackContext";
+import { useAudioFilter } from "../contexts/AudioFilterContext";
 import DraftPlaylistTrackModal from "../modals/DraftPlaylistTrackModal";
 import LikeButton from "./LikeButton";
 import TagBadges from "./TagBadges";
@@ -10,6 +11,7 @@ import { faEllipsis, faShareFromSquare, faCirclePlus, faDownload, faMusic, faCir
 const TrackContextMenu = ({ track, indexInPlaylist = null, highlight }) => {
   const dropdownRef = useRef(null);
   const { setNotice, setAlert } = useFeedback();
+  const { showMissingAudio } = useAudioFilter();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const { user, draftPlaylist, setDraftPlaylist, setIsDraftPlaylistSaved } = useOutletContext();
@@ -140,27 +142,33 @@ const TrackContextMenu = ({ track, indexInPlaylist = null, highlight }) => {
                   Song: {song.title}
                 </Link>
 
-                {song.previous_performance_slug && (
+                {(showMissingAudio ? song.previous_performance_slug : song.previous_performance_with_audio_slug) && (
                   <Link
                     className="dropdown-item"
-                    to={`/${song.previous_performance_slug}`}
+                    to={`/${showMissingAudio ? song.previous_performance_slug : song.previous_performance_with_audio_slug}`}
                     key={`${track.id}-${song.id}-previous-performance`}
                     onClick={(e) => e.stopPropagation()}
                   >
                     <FontAwesomeIcon icon={faCircleChevronLeft} className="icon" />
-                    Previous Performance{song.previous_performance_gap != null && song.previous_performance_gap > 0 ? ` (gap: ${song.previous_performance_gap})` : ''}
+                    Previous Performance{(() => {
+                      const gap = showMissingAudio ? song.previous_performance_gap : song.previous_performance_with_audio_gap;
+                      return gap != null && gap > 0 ? ` (gap: ${gap})` : '';
+                    })()}
                   </Link>
                 )}
 
-                {song.next_performance_slug && (
+                {(showMissingAudio ? song.next_performance_slug : song.next_performance_with_audio_slug) && (
                   <Link
                     className="dropdown-item"
-                    to={`/${song.next_performance_slug}`}
+                    to={`/${showMissingAudio ? song.next_performance_slug : song.next_performance_with_audio_slug}`}
                     key={`${track.id}-${song.id}-next-performance`}
                     onClick={(e) => e.stopPropagation()}
                   >
                     <FontAwesomeIcon icon={faCircleChevronRight} className="icon" />
-                    Next Performance{song.next_performance_gap != null && song.next_performance_gap > 0 ? ` (gap: ${song.next_performance_gap})` : ''}
+                    Next Performance{(() => {
+                      const gap = showMissingAudio ? song.next_performance_gap : song.next_performance_with_audio_gap;
+                      return gap != null && gap > 0 ? ` (gap: ${gap})` : '';
+                    })()}
                   </Link>
                 )}
               </div>
