@@ -4,6 +4,8 @@ import { useLoaderData, Link, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
+import Loader from "./controls/Loader";
+import { useAudioFilter } from "./contexts/AudioFilterContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList, faTh, faCircleChevronLeft, faCircleChevronRight, faSortAmountDown, faSortAmountUp } from "@fortawesome/free-solid-svg-icons";
 
@@ -30,10 +32,41 @@ export const eraShowsLoader = async ({ params }) => {
 
 const EraShows = () => {
   const { shows: initialShows, year } = useLoaderData();
+  const [shows, setShows] = useState(initialShows);
+  const [isLoading, setIsLoading] = useState(false);
   const { viewMode, setViewMode, sortOption, setSortOption } = useOutletContext();
   const [yearsData, setYearsData] = useState(null);
+  const { showMissingAudio, getAudioStatusFilter } = useAudioFilter();
 
-  const sortedShows = [...initialShows].sort((a, b) => {
+  // Re-fetch data when audio filter changes
+  useEffect(() => {
+    const fetchShows = async () => {
+      setIsLoading(true);
+      try {
+        const audioStatusFilter = getAudioStatusFilter();
+        let url = `/api/v2/shows?per_page=1000&audio_status=${audioStatusFilter}`;
+
+        if (year.includes("-")) {
+          url += `&year_range=${year}`;
+        } else {
+          url += `&year=${year}`;
+        }
+
+        const response = await authFetch(url);
+        if (!response.ok) throw response;
+        const data = await response.json();
+        setShows(data.shows);
+      } catch (error) {
+        console.error("Error fetching shows:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchShows();
+  }, [showMissingAudio, getAudioStatusFilter, year]);
+
+  const sortedShows = [...shows].sort((a, b) => {
     if (sortOption === "asc") {
       return new Date(a.date) - new Date(b.date);
     } else {
@@ -44,7 +77,13 @@ const EraShows = () => {
   useEffect(() => {
     const fetchYearsData = async () => {
       try {
-        const response = await fetch("/api/v2/years");
+        const audioStatusFilter = getAudioStatusFilter();
+        const url = new URL("/api/v2/years", window.location.origin);
+        if (audioStatusFilter !== 'any') {
+          url.searchParams.set('audio_status', audioStatusFilter);
+        }
+
+        const response = await fetch(url.toString());
         if (!response.ok) throw response;
         const data = await response.json();
         setYearsData(data);
@@ -53,7 +92,7 @@ const EraShows = () => {
       }
     };
     fetchYearsData();
-  }, []);
+  }, [showMissingAudio, getAudioStatusFilter]);
 
   const renderViewToggleButtons = () => (
     <div className="view-toggle buttons has-addons">
@@ -138,6 +177,19 @@ const EraShows = () => {
       <div className="hidden-mobile">{yearLinks()}</div>
     </div>
   );
+
+  if (isLoading) {
+    return (
+      <>
+        <Helmet>
+          <title>{year} - Phish.in</title>
+        </Helmet>
+        <LayoutWrapper sidebarContent={sidebarContent}>
+          <Loader />
+        </LayoutWrapper>
+      </>
+    );
+  }
 
   return (
     <>
