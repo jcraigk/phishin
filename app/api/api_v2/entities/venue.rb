@@ -70,10 +70,18 @@ class ApiV2::Entities::Venue < ApiV2::Entities::Base
     }
 
   expose \
+    :created_at,
+    format_with: :iso8601,
+    documentation: {
+      type: "String",
+      desc: "Timestamp of initial creation"
+    }
+
+  expose \
     :updated_at,
     format_with: :iso8601,
     documentation: {
       type: "String",
-      desc: "Timestamp of the last update to the venue"
+      desc: "Timestamp of most recent update"
     }
 end

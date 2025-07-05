@@ -18,7 +18,7 @@ class ApiV2::Entities::User < ApiV2::Entities::Base
     format_with: :iso8601,
     documentation: {
       type: "String",
-      desc: "Timestamp of when the user was created"
+      desc: "Timestamp of initial creation"
     }
 
   expose \

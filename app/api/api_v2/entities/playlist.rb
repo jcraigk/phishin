@@ -64,10 +64,19 @@ class ApiV2::Entities::Playlist < ApiV2::Entities::Base
     }
 
   expose \
-    :updated_at,
+    :created_at,
+    format_with: :iso8601,
     documentation: {
       type: "String",
-      desc: "The last update time of the playlist"
+      desc: "Timestamp of initial creation"
+    }
+
+  expose \
+    :updated_at,
+    format_with: :iso8601,
+    documentation: {
+      type: "String",
+      desc: "Timestamp of most recent update"
     }
 
   expose \

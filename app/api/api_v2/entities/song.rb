@@ -42,11 +42,19 @@ class ApiV2::Entities::Song < ApiV2::Entities::Base
     }
 
   expose \
+    :created_at,
+    format_with: :iso8601,
+    documentation: {
+      type: "String",
+      desc: "Timestamp of initial creation"
+    }
+
+  expose \
     :updated_at,
     format_with: :iso8601,
     documentation: {
       type: "String",
-      desc: "Timestamp of the last update to the song"
+      desc: "Timestamp of most recent update"
     }
 
   expose(
