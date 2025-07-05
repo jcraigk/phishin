@@ -44,13 +44,6 @@ class ApiV2::Years < ApiV2::Base
         "year, unique venues count, and selected cover art."
       success ApiV2::Entities::Year
     end
-    params do
-      optional :audio_status,
-               type: String,
-               desc: "Filter by audio status: 'any' (default), 'complete', 'partial', 'missing', 'complete_or_partial'",
-               default: "any",
-               values: %w[any complete partial missing complete_or_partial]
-    end
     get do
       present cached_years_data, with: ApiV2::Entities::Year
     end
@@ -58,7 +51,7 @@ class ApiV2::Years < ApiV2::Base
 
   helpers do
     def cached_years_data
-      Rails.cache.fetch("api/v2/years?#{params.to_query}") do
+      Rails.cache.fetch("api/v2/years") do
         years_data
       end
     end
@@ -66,10 +59,11 @@ class ApiV2::Years < ApiV2::Base
     def years_data
       ERAS.map do |era, periods|
         periods.map do |period|
-          shows_count, venues_count, shows_duration, cover_art_urls = stats_for(period)
+          shows_count, shows_with_audio_count, venues_count, shows_duration, cover_art_urls = stats_for(period)
           {
             period:,
             shows_count:,
+            shows_with_audio_count:,
             shows_duration:,
             venues_count:,
             cover_art_urls:,
@@ -80,34 +74,26 @@ class ApiV2::Years < ApiV2::Base
     end
 
     def stats_for(period)
-      shows = Show.published
-      shows =
+      all_shows = Show.published
+      all_shows =
         if period.include?("-")
-          shows.between_years(*period.split("-"))
+          all_shows.between_years(*period.split("-"))
         else
-          shows.during_year(period)
+          all_shows.during_year(period)
         end
 
-      # Apply audio status filter
-      shows = apply_audio_status_filter(shows, params[:audio_status])
+      # Calculate shows with audio (complete or partial)
+      shows_with_audio = all_shows.where(audio_status: ["complete", "partial"])
 
       cover_art_urls = Show.find_by(date: COVER_ART[period])&.cover_art_urls
-      [ shows.count, shows.select(:venue_id).distinct.count, shows.sum(:duration), cover_art_urls ]
-    end
 
-    def apply_audio_status_filter(shows, audio_status)
-      case audio_status
-      when "complete"
-        shows.where(audio_status: "complete")
-      when "partial"
-        shows.where(audio_status: "partial")
-      when "missing"
-        shows.where(audio_status: "missing")
-      when "complete_or_partial"
-        shows.where(audio_status: ["complete", "partial"])
-      else # "any"
-        shows
-      end
+      [
+        all_shows.count,
+        shows_with_audio.count,
+        all_shows.select(:venue_id).distinct.count,
+        all_shows.sum(:duration),
+        cover_art_urls
+      ]
     end
   end
 end

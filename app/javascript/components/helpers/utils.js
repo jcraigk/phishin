@@ -1,4 +1,9 @@
 export const formatNumber = (number, label = "") => {
+  // Handle undefined, null, or invalid numbers
+  if (number === undefined || number === null || isNaN(number)) {
+    return `0 ${label}${label ? "s" : ""}`;
+  }
+
   const formattedNumber = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return `${formattedNumber} ${label}${number !== 1 && label ? "s" : ""}`;
 };

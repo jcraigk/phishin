@@ -14,10 +14,17 @@ class ApiV2::Entities::Year < ApiV2::Entities::Base
     }
 
   expose \
+    :shows_with_audio_count,
+    documentation: {
+      type: "Integer",
+      desc: "Number of shows that were performed during this period for which known recordings exist"
+    }
+
+  expose \
     :shows_duration,
     documentation: {
       type: "Integer",
-      desc: "Number of shows that were performed during this period"
+      desc: "Total duration in milliseconds of all shows performed during this period"
     }
 
   expose \
