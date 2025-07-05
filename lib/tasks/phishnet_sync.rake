@@ -138,11 +138,9 @@ namespace :phishnet do
       return
     end
 
-    # Skip canceled tours
-    tour_name = pnet_show["tourname"] || pnet_show["tour_name"] || ""
-    canceled_tours = ["2020 Summer Tour"]
-    if canceled_tours.include?(tour_name)
-      # puts "  Skipping show from canceled tour: #{pnet_show['showdate']} (#{tour_name})"
+    # Skip canceled shows (check setlist_notes for cancellation)
+    setlist_notes = pnet_show["setlist_notes"] || ""
+    if setlist_notes.include?("performance was canceled")
       return
     end
 
