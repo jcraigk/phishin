@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_30_230813) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_05_191554) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -180,8 +180,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_30_230813) do
     t.string "previous_performance_slug"
     t.integer "next_performance_gap"
     t.string "next_performance_slug"
+    t.integer "previous_performance_gap_with_audio"
+    t.string "previous_performance_slug_with_audio"
+    t.integer "next_performance_gap_with_audio"
+    t.string "next_performance_slug_with_audio"
     t.index ["next_performance_gap"], name: "index_songs_tracks_on_next_performance_gap"
+    t.index ["next_performance_gap_with_audio"], name: "index_songs_tracks_on_next_performance_gap_with_audio"
     t.index ["previous_performance_gap"], name: "index_songs_tracks_on_previous_performance_gap"
+    t.index ["previous_performance_gap_with_audio"], name: "index_songs_tracks_on_previous_performance_gap_with_audio"
     t.index ["song_id"], name: "index_songs_tracks_on_song_id"
     t.index ["track_id", "song_id"], name: "index_songs_tracks_on_track_id_and_song_id", unique: true
     t.index ["track_id"], name: "index_songs_tracks_on_track_id"
