@@ -6,6 +6,7 @@ import Player from "../controls/Player";
 import AppModal from "../modals/AppModal";
 import DraftPlaylistModal from "../modals/DraftPlaylistModal";
 import { useFeedback } from "../controls/FeedbackContext";
+import { AudioFilterProvider } from "../contexts/AudioFilterContext";
 
 const initialDraftPlaylistMeta = {
   id: null,
@@ -123,7 +124,7 @@ const Layout = ({ props }) => {
   };
 
   return (
-    <>
+    <AudioFilterProvider>
       <ScrollRestoration />
       {navigation.state === "loading" && <Loader />}
       <Navbar user={user} handleLogout={handleLogout} />
@@ -179,11 +180,12 @@ const Layout = ({ props }) => {
         draftPlaylist={draftPlaylist}
         setDraftPlaylist={setDraftPlaylist}
         draftPlaylistMeta={draftPlaylistMeta}
-        setIsDraftPlaylistSaved={setIsDraftPlaylistSaved}
         setDraftPlaylistMeta={setDraftPlaylistMeta}
+        isDraftPlaylistSaved={isDraftPlaylistSaved}
+        setIsDraftPlaylistSaved={setIsDraftPlaylistSaved}
         resetDraftPlaylist={resetDraftPlaylist}
       />
-    </>
+    </AudioFilterProvider>
   );
 };
 

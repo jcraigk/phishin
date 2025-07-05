@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../../images/logo-full.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendar, faMicrophone, faMapMarkerAlt, faAward, faCalendarDay, faSearch, faAngleDown, faRecordVinyl, faGuitar, faChevronDown, faCircleXmark, faRightToBracket, faGear, faClipboardList, faListCheck, faListOl, faDiceFive, faLandmark, faRss } from "@fortawesome/free-solid-svg-icons";
+import { useAudioFilter } from "../contexts/AudioFilterContext";
 
 const Navbar = ({ user, handleLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,6 +15,7 @@ const Navbar = ({ user, handleLogout }) => {
   const infoDropdownRef = useRef(null);
   const contentDropdownRef = useRef(null);
   const userDropdownRef = useRef(null);
+  const { showMissingAudio, toggleShowMissingAudio } = useAudioFilter();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -86,6 +88,20 @@ const Navbar = ({ user, handleLogout }) => {
     { type: 'divider' },
     ...topLinks.map(link => ({ ...link, type: 'link' })),
   ];
+
+  const AudioFilterToggle = () => (
+    <div className="dropdown-item">
+      <label className="checkbox">
+        <input
+          type="checkbox"
+          checked={showMissingAudio}
+          onChange={toggleShowMissingAudio}
+          style={{ marginRight: '0.5rem' }}
+        />
+        Show missing audio
+      </label>
+    </div>
+  );
 
   return (
     <>
@@ -185,6 +201,8 @@ const Navbar = ({ user, handleLogout }) => {
                       <FontAwesomeIcon icon={faDiceFive} className="icon" />
                       Random Show
                     </a>
+                    <hr className="dropdown-divider" />
+                    <AudioFilterToggle />
                   </div>
                 </div>
               </div>

@@ -21,6 +21,11 @@ class ApiV2::Songs < ApiV2::Base
                type: String,
                desc: "Filter songs by the first character of the song title (case-insensitive)",
                values: App.first_char_list
+      optional :audio_status,
+               type: String,
+               desc: "Filter by audio status: 'any' (default), 'complete_or_partial'",
+               default: "any",
+               values: %w[any complete_or_partial]
     end
     get do
       s = page_of_songs
@@ -52,6 +57,7 @@ class ApiV2::Songs < ApiV2::Base
       Rails.cache.fetch("api/v2/songs?#{params.to_query}") do
         songs = Song.unscoped
                     .then { |s| apply_filter(s) }
+                    .then { |s| apply_audio_status_filter(s) }
                     .then { |s| apply_sort(s, :title, :asc) }
                     .paginate(page: params[:page], per_page: params[:per_page])
 
@@ -73,6 +79,16 @@ class ApiV2::Songs < ApiV2::Base
     def apply_filter(songs)
       if params[:first_char].present?
         songs = songs.title_starting_with(params[:first_char])
+      end
+      songs
+    end
+
+    def apply_audio_status_filter(songs)
+      if params[:audio_status] == "complete_or_partial"
+        # Only include songs that have at least one track with audio
+        songs = songs.joins(tracks: :show)
+                     .where.not(shows: { audio_status: "missing" })
+                     .distinct
       end
       songs
     end

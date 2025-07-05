@@ -17,11 +17,16 @@ class ApiV2::Search < ApiV2::Base
                values: SearchService::SCOPES,
                default: "all",
                desc: "Specifies the area of the site to search"
+      optional :audio_status,
+               type: String,
+               values: %w[any complete partial missing complete_or_partial],
+               default: "any",
+               desc: "Filter results by audio status"
     end
 
     get ":term" do
       return error!({ message: "Term too short" }, 400) if params[:term].length < 3
-      results = fetch_results(params[:term], params[:scope])
+      results = fetch_results(params[:term], params[:scope], params[:audio_status])
 
       # Add Show Tag matches to other_shows
       if results[:show_tags].present?
@@ -47,9 +52,9 @@ class ApiV2::Search < ApiV2::Base
   end
 
   helpers do
-    def fetch_results(term, scope)
-      Rails.cache.fetch("api/v2/search/#{term}/#{scope}") do
-        SearchService.call(term: term, scope: scope)
+    def fetch_results(term, scope, audio_status = "any")
+      Rails.cache.fetch("api/v2/search/#{term}/#{scope}/#{audio_status}") do
+        SearchService.call(term: term, scope: scope, audio_status: audio_status)
       end
     end
 

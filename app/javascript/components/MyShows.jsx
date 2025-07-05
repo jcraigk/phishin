@@ -6,8 +6,12 @@ export const myShowsLoader = async ({ request }) => {
   const sortOption = url.searchParams.get("sort") || "date:desc";
   const perPage = url.searchParams.get("per_page") || 10;
 
+  // Check localStorage for audio filter setting
+  const showMissingAudio = JSON.parse(localStorage.getItem('showMissingAudio') || 'false');
+  const audioStatusFilter = showMissingAudio ? 'any' : 'complete_or_partial';
+
   try {
-    const response = await authFetch(`/api/v2/shows?liked_by_user=true&sort=${sortOption}&page=${page}&per_page=${perPage}`);
+    const response = await authFetch(`/api/v2/shows?liked_by_user=true&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
     if (!response.ok) throw response;
     const data = await response.json();
     return {

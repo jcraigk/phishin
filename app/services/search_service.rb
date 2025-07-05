@@ -2,6 +2,7 @@ class SearchService < ApplicationService
   option :term
   option :scope, default: proc { "all" }
   option :api_version, default: proc { "v2" }
+  option :audio_status, default: proc { "any" }
 
   LIMIT = 50
   SCOPES = %w[all playlists shows songs tags tracks venues]
@@ -72,14 +73,14 @@ class SearchService < ApplicationService
   def show_on_date
     return unless term_is_date?
     scope = Show.published
-    scope = scope.where.not(audio_status: "missing") if api_version == "v1"
+    scope = apply_audio_status_filter(scope)
     scope.includes(:venue).find_by(date:)
   end
 
   def shows_on_day_of_year
     return [] unless term_is_date?
     scope = Show.published
-    scope = scope.where.not(audio_status: "missing") if api_version == "v1"
+    scope = apply_audio_status_filter(scope)
     scope.on_day_of_year(date[5..6], date[8..9])
          .where.not(date:)
          .includes(:venue)
@@ -88,17 +89,33 @@ class SearchService < ApplicationService
 
   def songs
     return [] if term_is_date?
-    Song.where("title ILIKE :term OR alias ILIKE :term", term: "%#{term}%")
-        .order(title: :asc)
-        .limit(LIMIT)
+    scope = Song.where("title ILIKE :term OR alias ILIKE :term", term: "%#{term}%")
+               .order(title: :asc)
+               .limit(LIMIT)
+
+    # Filter songs to only include those with audio if audio_status is complete_or_partial
+    if audio_status == "complete_or_partial"
+      scope = scope.joins(songs_tracks: { track: :show })
+                   .where.not(shows: { audio_status: "missing" })
+                   .distinct
+    end
+
+    scope
   end
 
   def venues
     return [] if term_is_date?
-    Venue.left_outer_joins(:venue_renames)
-         .where(venue_where_str, term: "%#{term}%")
-         .order(name: :asc)
-         .uniq
+    scope = Venue.left_outer_joins(:venue_renames)
+                 .where(venue_where_str, term: "%#{term}%")
+                 .order(name: :asc)
+                 .uniq
+
+    # Filter venues to only include those with shows with audio if audio_status is complete_or_partial
+    if audio_status == "complete_or_partial"
+      scope = scope.where("venues.shows_with_audio_count > 0")
+    end
+
+    scope
   end
 
   def venue_where_str
@@ -116,7 +133,7 @@ class SearchService < ApplicationService
 
   def show_tags
     scope = ShowTag.includes(:tag, :show)
-    scope = scope.joins(:show).where.not(shows: { audio_status: "missing" }) if api_version == "v1"
+    scope = scope.joins(:show).then { |s| apply_audio_status_filter(s, :show) }
     scope.where("notes ILIKE ?", "%#{term}%")
          .order("tags.name, shows.date")
          .limit(LIMIT)
@@ -124,7 +141,7 @@ class SearchService < ApplicationService
 
   def track_tags
     scope = TrackTag.includes(:tag, track: :show)
-    scope = scope.joins(track: :show).where.not(shows: { audio_status: "missing" }) if api_version == "v1"
+    scope = scope.joins(track: :show).then { |s| apply_audio_status_filter(s, :show) }
     scope.where("notes ILIKE ?", "%#{term}%")
          .order("tags.name, shows.date, tracks.position")
          .limit(LIMIT)
@@ -140,7 +157,7 @@ class SearchService < ApplicationService
 
   def tracks_by_title
     scope = Track.includes(:show)
-    scope = scope.joins(:show).where.not(shows: { audio_status: "missing" }) if api_version == "v1"
+    scope = scope.joins(:show).then { |s| apply_audio_status_filter(s, :show) }
     scope.where("title ILIKE ?", "%#{term}%")
          .order(title: :asc)
          .limit(LIMIT)
@@ -152,5 +169,36 @@ class SearchService < ApplicationService
             .where("name ILIKE :term OR description ILIKE :term", term: "%#{term}%")
             .order(name: :asc)
             .limit(LIMIT)
+  end
+
+  def apply_audio_status_filter(relation, table_prefix = nil)
+    return relation if api_version == "v1" && audio_status == "any"
+
+    # Handle legacy v1 API behavior
+    if api_version == "v1"
+      if table_prefix == :show
+        return relation.where.not(shows: { audio_status: "missing" })
+      else
+        return relation.where.not(audio_status: "missing")
+      end
+    end
+
+    # Handle v2 API audio_status filtering
+    case audio_status
+    when "complete", "partial", "missing"
+      if table_prefix == :show
+        relation.where(shows: { audio_status: audio_status })
+      else
+        relation.where(audio_status: audio_status)
+      end
+    when "complete_or_partial"
+      if table_prefix == :show
+        relation.where(shows: { audio_status: %w[complete partial] })
+      else
+        relation.where(audio_status: %w[complete partial])
+      end
+    else
+      relation
+    end
   end
 end

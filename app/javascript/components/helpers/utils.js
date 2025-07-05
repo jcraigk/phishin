@@ -144,3 +144,16 @@ export const truncate = (str, n) => {
 export const isIOS = () => {
   return /iPad|iPhone|iPod/.test(navigator.userAgent);
 };
+
+export const buildApiUrl = (baseUrl, audioStatusFilter = null) => {
+  if (!audioStatusFilter) return baseUrl;
+
+  const url = new URL(baseUrl, window.location.origin);
+  url.searchParams.set('audio_status', audioStatusFilter);
+  return url.toString();
+};
+
+export const authFetchWithAudioFilter = async (url, audioStatusFilter, options = {}) => {
+  const finalUrl = buildApiUrl(url, audioStatusFilter);
+  return authFetch(finalUrl, options);
+};

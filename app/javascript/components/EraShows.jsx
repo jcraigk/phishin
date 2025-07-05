@@ -9,7 +9,12 @@ import { faList, faTh, faCircleChevronLeft, faCircleChevronRight, faSortAmountDo
 
 export const eraShowsLoader = async ({ params }) => {
   const { year } = params;
-  let url = `/api/v2/shows?per_page=1000`;
+
+  // Check localStorage for audio filter setting
+  const showMissingAudio = JSON.parse(localStorage.getItem('showMissingAudio') || 'false');
+  const audioStatusFilter = showMissingAudio ? 'any' : 'complete_or_partial';
+
+  let url = `/api/v2/shows?per_page=1000&audio_status=${audioStatusFilter}`;
 
   if (year.includes("-")) {
     url += `&year_range=${year}`;
