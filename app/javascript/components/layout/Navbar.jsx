@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../images/logo-full.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendar, faMicrophone, faMapMarkerAlt, faAward, faCalendarDay, faSearch, faAngleDown, faRecordVinyl, faGuitar, faChevronDown, faCircleXmark, faRightToBracket, faGear, faClipboardList, faListCheck, faListOl, faDiceFive, faLandmark, faRss } from "@fortawesome/free-solid-svg-icons";
+import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendar, faMicrophone, faMapMarkerAlt, faAward, faCalendarDay, faSearch, faAngleDown, faRecordVinyl, faGuitar, faChevronDown, faCircleXmark, faRightToBracket, faGear, faClipboardList, faListCheck, faListOl, faDiceFive, faLandmark, faRss, faSquareCheck, faSquare } from "@fortawesome/free-solid-svg-icons";
 import { useAudioFilter } from "../contexts/AudioFilterContext";
 
 const Navbar = ({ user, handleLogout }) => {
@@ -90,16 +90,15 @@ const Navbar = ({ user, handleLogout }) => {
   ];
 
   const AudioFilterToggle = () => (
-    <div className="dropdown-item">
-      <label className="checkbox">
-        <input
-          type="checkbox"
-          checked={showMissingAudio}
-          onChange={toggleShowMissingAudio}
-          style={{ marginRight: '0.5rem' }}
-        />
-        Show missing audio
-      </label>
+    <div
+      className={`dropdown-item audio-filter-toggle ${showMissingAudio ? 'active' : ''}`}
+      onClick={toggleShowMissingAudio}
+    >
+      <FontAwesomeIcon
+        icon={showMissingAudio ? faSquareCheck : faSquare}
+        className="icon"
+      />
+      Include missing audio
     </div>
   );
 
@@ -168,6 +167,8 @@ const Navbar = ({ user, handleLogout }) => {
                 </div>
                 <div className="dropdown-menu" role="menu">
                   <div className="dropdown-content">
+                    <AudioFilterToggle />
+                    <hr className="dropdown-divider" />
                     {combinedLinks.map((item, index) => (
                       item.type === 'link' ? (
                         <Link
@@ -201,8 +202,6 @@ const Navbar = ({ user, handleLogout }) => {
                       <FontAwesomeIcon icon={faDiceFive} className="icon" />
                       Random Show
                     </a>
-                    <hr className="dropdown-divider" />
-                    <AudioFilterToggle />
                   </div>
                 </div>
               </div>

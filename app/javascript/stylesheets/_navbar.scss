@@ -83,6 +83,22 @@
       font-size: 1.2rem;
       line-height: 1.4rem;
     }
+
+    .audio-filter-toggle {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      font-size: 1.2rem;
+      line-height: 1.4rem;
+
+      .icon {
+        color: #dbdbdb;
+      }
+
+      &.active .icon {
+        color: #48c774;
+      }
+    }
   }
 
   .navbar-dropdown-label {
