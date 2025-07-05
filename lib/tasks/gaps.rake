@@ -34,7 +34,7 @@ namespace :gaps do
 
     shows.each do |show|
       begin
-        PerformanceGapService.call(show)
+        GapService.call(show)
         processed += 1
         pbar.increment
       rescue StandardError => e
@@ -65,6 +65,6 @@ namespace :gaps do
 
     puts "Recalculating gaps for show: #{show.date} at #{show.venue.name}"
 
-    PerformanceGapService.call(show)
+    GapService.call(show)
   end
 end

@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 import { formatDate, formatDurationShow, truncate } from "../helpers/utils";
-import { useFeedback } from "./FeedbackContext";
+import { useFeedback } from "../contexts/FeedbackContext";
 import { useAudioFilter } from "../contexts/AudioFilterContext";
 import LikeButton from "./LikeButton";
 import TagBadges from "./TagBadges";

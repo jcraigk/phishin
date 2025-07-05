@@ -101,8 +101,7 @@ class ShowImporter::Orchestrator
 
   def save_song_performance_data(show)
     puts "Calculating song performance data and applying bustout tag..."
-    PerformanceGapService.call(show)
-    PerformanceSlugService.call(show)
+    GapService.call(show, update_previous: true)
     BustoutTagService.call(show)
   end
 

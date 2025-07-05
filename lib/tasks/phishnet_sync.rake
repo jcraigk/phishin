@@ -2,8 +2,8 @@
 namespace :phishnet do
     desc "Sync all known Phish show dates from Phish.net (use LIMIT env var to limit new shows, DATE env var for single date)"
   task sync_shows: :environment do
-    date_filter = ENV['DATE']
-    limit = ENV['LIMIT']&.to_i
+    date_filter = ENV["DATE"]
+    limit = ENV["LIMIT"]&.to_i
 
     if date_filter
       puts "Starting Phish.net sync for specific date: #{date_filter}..."
@@ -30,10 +30,10 @@ namespace :phishnet do
         else
           puts "No show found for #{date_filter} on Phish.net"
         end
-      else
+            else
         puts "Error fetching data from Phish.net: #{response.code}"
-      end
-        else
+            end
+    else
       puts "Starting Phish.net sync#{limit && limit > 0 ? " (limited to #{limit} new shows)" : ''}..."
 
       # Get all known dates from Phish.net (artist-specific endpoint)
@@ -145,7 +145,7 @@ namespace :phishnet do
     end
 
     # Skip specific rained out shows
-    rained_out_shows = ["1996-07-02"]
+    rained_out_shows = [ "1996-07-02" ]
     if rained_out_shows.include?(pnet_show["showdate"])
       # puts "  Skipping rained out show: #{pnet_show['showdate']}"
       return
@@ -227,21 +227,21 @@ namespace :phishnet do
       "ALLTEL Pavilion" => "ALLTEL Pavilion at Walnut Creek",
       "Post-Gazette Pavilion" => "Post-Gazette Pavilion at Star Lake",
       "The Wharf Amphitheater" => "Amphitheater at the Wharf",
-      "Pine Knob Music Theatre" => "Pine Knob",
+      "Pine Knob Music Theatre" => "Pine Knob"
     }
 
     # Special venue and city mappings for cases where both name and city differ
     # Check both original (broken UTF-8) and fixed versions
     venue_city_mappings = {
-      ["Summerstage at Sugarbush North", "Fayston"] => ["Summer Stage at Sugarbush", "North Fayston"],
-      ["The Orpheum Theatre", "Vancouver, British Columbia"] => ["The Orpheum", "Vancouver"],
-      ["Hurricane Festival", "ScheeÃ\u009Fel"] => ["Hurricane Festival", "Scheeßel"],
-      ["GM Place", "Vancouver, British Columbia"] => ["GM Place", "Vancouver"],
-      ["Austin360 Amphitheater", "Del Valle"] => ["Austin360 Amphitheater", "Austin"]
+      [ "Summerstage at Sugarbush North", "Fayston" ] => [ "Summer Stage at Sugarbush", "North Fayston" ],
+      [ "The Orpheum Theatre", "Vancouver, British Columbia" ] => [ "The Orpheum", "Vancouver" ],
+      [ "Hurricane Festival", "ScheeÃ\u009Fel" ] => [ "Hurricane Festival", "Scheeßel" ],
+      [ "GM Place", "Vancouver, British Columbia" ] => [ "GM Place", "Vancouver" ],
+      [ "Austin360 Amphitheater", "Del Valle" ] => [ "Austin360 Amphitheater", "Austin" ]
     }
 
-        # Check for venue and city mapping first - use original (broken UTF-8) values for mapping
-    venue_city_key = [original_venue_name, original_city]
+    # Check for venue and city mapping first - use original (broken UTF-8) values for mapping
+    venue_city_key = [ original_venue_name, original_city ]
     if venue_city_mappings.key?(venue_city_key)
       mapped_venue_name, mapped_city = venue_city_mappings[venue_city_key]
       venue = Venue.where("lower(name) = ? AND lower(city) = ?", mapped_venue_name.downcase, mapped_city.downcase).first
@@ -506,32 +506,32 @@ namespace :phishnet do
 
     # Common UTF-8 encoding fixes
     utf8_fixes = {
-      'Ã¡' => 'á',  # á
-      'Ã©' => 'é',  # é
-      'Ã­' => 'í',  # í
-      'Ã³' => 'ó',  # ó
-      'Ãº' => 'ú',  # ú
-      'Ã±' => 'ñ',  # ñ
-      'Ã¼' => 'ü',  # ü
-      'Ã¤' => 'ä',  # ä
-      'Ã¶' => 'ö',  # ö
-      'Ã ' => 'à',  # à
-      'Ã¨' => 'è',  # è
-      'Ã¬' => 'ì',  # ì
-      'Ã²' => 'ò',  # ò
-      'Ã¹' => 'ù',  # ù
-      'Ã¢' => 'â',  # â
-      'Ãª' => 'ê',  # ê
-      'Ã®' => 'î',  # î
-      'Ã´' => 'ô',  # ô
-      'Ã»' => 'û',  # û
-      'Ã‡' => 'Ç',  # Ç
-      'Ã†' => 'Æ',  # Æ
-      'Ã˜' => 'Ø',  # Ø
-      'Ã…' => 'Å',  # Å
-      'ÃŸ' => 'ß',  # ß
-      'Ãe' => 'ße',  # ße (for ScheeÃel -> Scheeßel)
-      "Ã\u0089" => 'É',  # É (Unicode escape sequence)
+      "Ã¡" => "á",  # á
+      "Ã©" => "é",  # é
+      "Ã­" => "í",  # í
+      "Ã³" => "ó",  # ó
+      "Ãº" => "ú",  # ú
+      "Ã±" => "ñ",  # ñ
+      "Ã¼" => "ü",  # ü
+      "Ã¤" => "ä",  # ä
+      "Ã¶" => "ö",  # ö
+      "Ã " => "à",  # à
+      "Ã¨" => "è",  # è
+      "Ã¬" => "ì",  # ì
+      "Ã²" => "ò",  # ò
+      "Ã¹" => "ù",  # ù
+      "Ã¢" => "â",  # â
+      "Ãª" => "ê",  # ê
+      "Ã®" => "î",  # î
+      "Ã´" => "ô",  # ô
+      "Ã»" => "û",  # û
+      "Ã‡" => "Ç",  # Ç
+      "Ã†" => "Æ",  # Æ
+      "Ã˜" => "Ø",  # Ø
+      "Ã…" => "Å",  # Å
+      "ÃŸ" => "ß",  # ß
+      "Ãe" => "ße",  # ße (for ScheeÃel -> Scheeßel)
+      "Ã\u0089" => "É",  # É (Unicode escape sequence)
       "â\u0080\u0099" => "'"  # Right single quote (mangled UTF-8)
     }
 
@@ -566,7 +566,7 @@ namespace :phishnet do
     remote_setlist.each_with_index do |song_data, index|
       local_track = local_tracks[index]
 
-            # Compare track title (case insensitive, with whitespace trimmed)
+      # Compare track title (case insensitive, with whitespace trimmed)
       # We compare against track.title because that's what's actually stored when creating tracks
       remote_title = song_data["song"]&.downcase&.strip
       local_track_title = local_track.title&.downcase&.strip

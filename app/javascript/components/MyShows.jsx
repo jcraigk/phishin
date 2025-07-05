@@ -33,7 +33,7 @@ import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
 import Pagination from "./controls/Pagination";
 import { paginationHelper } from "./helpers/pagination";
-import { useFeedback } from "./controls/FeedbackContext";
+import { useFeedback } from "./contexts/FeedbackContext";
 
 const MyShows = () => {
   const { shows, totalPages, page, sortOption, perPage } = useLoaderData();
