@@ -1,6 +1,6 @@
 import { authFetch } from "./helpers/utils";
 import React, { useEffect, useState, useRef } from "react";
-import { useLoaderData, Link, useOutletContext } from "react-router-dom";
+import { useLoaderData, Link, useOutletContext, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
@@ -40,6 +40,11 @@ const EraShows = () => {
 
   // Track the initial filter state to prevent unnecessary re-fetches
   const initialFilterRef = useRef(getAudioStatusFilter());
+
+  // Update shows when loader data changes (handles year navigation)
+  useEffect(() => {
+    setShows(initialShows);
+  }, [initialShows]);
 
   // Re-fetch data when audio filter changes
   useEffect(() => {
