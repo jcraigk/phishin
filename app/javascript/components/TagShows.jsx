@@ -8,8 +8,8 @@ export const tagShowsLoader = async ({ params, request }) => {
   const { tagSlug } = params;
 
   // Check localStorage for audio filter setting
-  const showMissingAudio = JSON.parse(localStorage.getItem('showMissingAudio') || 'false');
-  const audioStatusFilter = showMissingAudio ? 'any' : 'complete_or_partial';
+  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
+  const audioStatusFilter = hideMissingAudio ? 'complete_or_partial' : 'any';
 
   try {
     const tagResponse = await fetch(`/api/v2/tags`);

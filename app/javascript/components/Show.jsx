@@ -5,8 +5,8 @@ export const showLoader = async ({ params }) => {
   const { date } = params;
 
   // Check localStorage for audio filter setting
-  const showMissingAudio = JSON.parse(localStorage.getItem('showMissingAudio') || 'false');
-  const audioStatusFilter = showMissingAudio ? 'any' : 'complete_or_partial';
+  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
+  const audioStatusFilter = hideMissingAudio ? 'complete_or_partial' : 'any';
 
   const url = `/api/v2/shows/${date}?audio_status=${audioStatusFilter}`;
   try {
@@ -45,7 +45,7 @@ const Show = ({ trackSlug }) => {
   const [showAdminNotesNotification, setShowAdminNotesNotification] = useState(!!show.admin_notes);
   const [showMissingAudioNotification, setShowMissingAudioNotification] = useState(show.audio_status === 'missing');
   const [showPartialAudioNotification, setShowPartialAudioNotification] = useState(show.audio_status === 'partial');
-  const { showMissingAudio } = useAudioFilter();
+  const { hideMissingAudio } = useAudioFilter();
 
   useEffect(() => {
     setTracks(show.tracks);
@@ -97,15 +97,15 @@ const Show = ({ trackSlug }) => {
 
   // Get the appropriate navigation dates based on audio filter setting
   const getNavigationDates = () => {
-    if (showMissingAudio) {
-      return {
-        previousShowDate: show.previous_show_date,
-        nextShowDate: show.next_show_date
-      };
-    } else {
+    if (hideMissingAudio) {
       return {
         previousShowDate: show.previous_show_date_with_audio,
         nextShowDate: show.next_show_date_with_audio
+      };
+    } else {
+      return {
+        previousShowDate: show.previous_show_date,
+        nextShowDate: show.next_show_date
       };
     }
   };

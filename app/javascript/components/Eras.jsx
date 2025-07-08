@@ -80,7 +80,7 @@ const Eras = () => {
   const initialEras = useLoaderData();
   const [eras, setEras] = useState(initialEras);
   const { viewMode, setViewMode, sortOption, setSortOption } = useOutletContext();
-  const { showMissingAudio } = useAudioFilter();
+  const { hideMissingAudio } = useAudioFilter();
 
   // Calculate display values based on current filter state
   const getDisplayErasData = () => {
@@ -95,8 +95,8 @@ const Eras = () => {
 
       rawEras[era].total_shows = 0;
       rawEras[era].periods.forEach((period) => {
-        const displayCount = showMissingAudio ? period.shows_count : period.shows_with_audio_count;
-        const displayVenuesCount = showMissingAudio ? period.venues_count : period.venues_with_audio_count;
+              const displayCount = hideMissingAudio ? period.shows_with_audio_count : period.shows_count;
+      const displayVenuesCount = hideMissingAudio ? period.venues_with_audio_count : period.venues_count;
         period.display_count = displayCount;
         period.display_venues_count = displayVenuesCount;
         rawEras[era].total_shows += displayCount;
@@ -111,7 +111,7 @@ const Eras = () => {
       ...rawEras._totals,
       totalShows,
       totalDuration,
-      showMissingAudio
+      hideMissingAudio
     };
 
     return rawEras;

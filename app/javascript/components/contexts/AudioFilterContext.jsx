@@ -12,27 +12,27 @@ export const useAudioFilter = () => {
 
 export const AudioFilterProvider = ({ children }) => {
   // Read localStorage synchronously during initialization to prevent double fetching
-  const getInitialShowMissingAudio = () => {
-    const stored = localStorage.getItem('showMissingAudio');
-    return stored !== null ? JSON.parse(stored) : false;
+  const getInitialHideMissingAudio = () => {
+    const stored = localStorage.getItem('hideMissingAudio');
+    return stored !== null ? JSON.parse(stored) : true; // Default to true (hide missing audio)
   };
 
-  const [showMissingAudio, setShowMissingAudio] = useState(getInitialShowMissingAudio);
+  const [hideMissingAudio, setHideMissingAudio] = useState(getInitialHideMissingAudio);
 
-  const toggleShowMissingAudio = () => {
-    const newValue = !showMissingAudio;
-    setShowMissingAudio(newValue);
-    localStorage.setItem('showMissingAudio', JSON.stringify(newValue));
+  const toggleHideMissingAudio = () => {
+    const newValue = !hideMissingAudio;
+    setHideMissingAudio(newValue);
+    localStorage.setItem('hideMissingAudio', JSON.stringify(newValue));
   };
 
   // Get the audio_status parameter for API calls
   const getAudioStatusFilter = () => {
-    return showMissingAudio ? 'any' : 'complete_or_partial';
+    return hideMissingAudio ? 'complete_or_partial' : 'any';
   };
 
   const value = {
-    showMissingAudio,
-    toggleShowMissingAudio,
+    hideMissingAudio,
+    toggleHideMissingAudio,
     getAudioStatusFilter,
   };
 

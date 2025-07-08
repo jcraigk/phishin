@@ -15,7 +15,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
   const { openAppModal } = useOutletContext();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const { user, draftPlaylist, setDraftPlaylist, setIsDraftPlaylistSaved } = useOutletContext();
-  const { showMissingAudio } = useAudioFilter();
+  const { hideMissingAudio } = useAudioFilter();
 
   const hideDropdown = () => {
     setDropdownVisible(false);
@@ -88,7 +88,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
 
   // Get the appropriate navigation dates based on audio filter setting
   const getNavigationDates = () => {
-    if (showMissingAudio) {
+    if (!hideMissingAudio) {
       return {
         previousShowDate: show.previous_show_date,
         nextShowDate: show.next_show_date

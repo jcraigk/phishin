@@ -5,7 +5,7 @@ import HighlightedText from "./controls/HighlightedText";
 import { useAudioFilter } from "./contexts/AudioFilterContext";
 
 const Songs = ({ songs, highlight }) => {
-  const { showMissingAudio } = useAudioFilter();
+  const { hideMissingAudio } = useAudioFilter();
 
   return (
     <ul>
@@ -22,7 +22,7 @@ const Songs = ({ songs, highlight }) => {
                 {song.original ? "Original" : "Cover"}
               </span>
               <span className="rightside-group">
-                {formatNumber(showMissingAudio ? song.tracks_count : song.tracks_with_audio_count, 'track')}
+                {formatNumber(hideMissingAudio ? song.tracks_with_audio_count : song.tracks_count, 'track')}
               </span>
             </div>
           </li>

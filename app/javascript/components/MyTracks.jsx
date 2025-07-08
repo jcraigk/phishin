@@ -7,8 +7,8 @@ export const myTracksLoader = async ({ request }) => {
   const perPage = url.searchParams.get("per_page") || 10;
 
   // Check localStorage for audio filter setting
-  const showMissingAudio = JSON.parse(localStorage.getItem('showMissingAudio') || 'false');
-  const audioStatusFilter = showMissingAudio ? 'any' : 'complete';
+  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
+  const audioStatusFilter = hideMissingAudio ? 'complete' : 'any';
 
   try {
     const response = await authFetch(`/api/v2/tracks?liked_by_user=true&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`);

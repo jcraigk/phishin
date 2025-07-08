@@ -5,8 +5,8 @@ export const songIndexLoader = async ({ request }) => {
   const perPage = url.searchParams.get("per_page") || 10;
 
   // Check localStorage for audio filter setting
-  const showMissingAudio = JSON.parse(localStorage.getItem('showMissingAudio') || 'false');
-  const audioStatusFilter = showMissingAudio ? 'any' : 'complete_or_partial';
+  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
+  const audioStatusFilter = hideMissingAudio ? 'complete_or_partial' : 'any';
 
   try {
     const response = await fetch(`/api/v2/songs?page=${page}&sort=${sortOption}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
@@ -48,7 +48,7 @@ const SongIndex = () => {
   const { page, sortOption, perPage } = initialData;
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const { showMissingAudio, getAudioStatusFilter } = useAudioFilter();
+  const { hideMissingAudio, getAudioStatusFilter } = useAudioFilter();
 
   // Track the initial filter state to prevent unnecessary re-fetches
   const initialFilterRef = useRef(null);
@@ -117,7 +117,7 @@ const SongIndex = () => {
     };
 
     handleFilterChange();
-  }, [showMissingAudio, sortOption, perPage, navigate]);
+  }, [hideMissingAudio, sortOption, perPage, navigate]);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
