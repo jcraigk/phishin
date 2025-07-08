@@ -42,6 +42,13 @@ class ApiV2::Entities::Song < ApiV2::Entities::Base
     }
 
   expose \
+    :tracks_with_audio_count,
+    documentation: {
+      type: "Integer",
+      desc: "Number of tracks with audio associated with the song"
+    }
+
+  expose \
     :created_at,
     format_with: :iso8601,
     documentation: {

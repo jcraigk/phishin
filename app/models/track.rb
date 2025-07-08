@@ -29,6 +29,9 @@ class Track < ApplicationRecord
   before_save :generate_slug
   after_save :update_show_audio_status
   after_destroy :update_show_audio_status
+  after_create :increment_tracks_with_audio_counter_caches
+  after_update :update_tracks_with_audio_counter_caches, if: :saved_change_to_audio_status?
+  after_destroy :decrement_tracks_with_audio_counter_caches
 
   scope :chronological, -> { joins(:show).order("shows.date") }
   scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
@@ -102,5 +105,36 @@ class Track < ApplicationRecord
 
   def update_show_audio_status
     show.update_audio_status_from_tracks!
+  end
+
+  def increment_tracks_with_audio_counter_caches
+    return if missing_audio?
+    increment_tracks_with_audio_counters
+  end
+
+  def update_tracks_with_audio_counter_caches
+    old_audio_status = saved_changes["audio_status"][0]
+    new_audio_status = saved_changes["audio_status"][1]
+
+    # If changing from missing to complete, increment counters
+    if old_audio_status == "missing" && new_audio_status == "complete"
+      increment_tracks_with_audio_counters
+    # If changing from complete to missing, decrement counters
+    elsif old_audio_status == "complete" && new_audio_status == "missing"
+      decrement_tracks_with_audio_counters
+    end
+  end
+
+  def decrement_tracks_with_audio_counter_caches
+    return if missing_audio?
+    decrement_tracks_with_audio_counters
+  end
+
+  def increment_tracks_with_audio_counters
+    songs.each { |song| song.increment!(:tracks_with_audio_count) }
+  end
+
+  def decrement_tracks_with_audio_counters
+    songs.each { |song| song.decrement!(:tracks_with_audio_count) }
   end
 end

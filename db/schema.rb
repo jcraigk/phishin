@@ -166,10 +166,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_021513) do
     t.string "alias"
     t.text "lyrics"
     t.string "artist"
+    t.integer "tracks_with_audio_count", default: 0
     t.index ["alias"], name: "index_songs_on_alias", unique: true
     t.index ["original"], name: "index_songs_on_original"
     t.index ["slug"], name: "index_songs_on_slug", unique: true
     t.index ["title"], name: "index_songs_on_title", unique: true
+    t.index ["tracks_with_audio_count"], name: "index_songs_on_tracks_with_audio_count"
   end
 
   create_table "songs_tracks", id: :serial, force: :cascade do |t|

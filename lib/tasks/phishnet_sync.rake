@@ -1,6 +1,65 @@
 # rubocop:disable Rake/MethodDefinitionInTask
 namespace :phishnet do
-    desc "Sync all known Phish show dates from Phish.net (use LIMIT env var to limit new shows, DATE env var for single date)"
+  # Venue duplication mappings - maps dupe venue name to keeper venue ID
+  VENUE_DUPES = {
+    "Post-Gazette Pavilion" => 635,
+    "ALLTEL Pavilion" => 733,
+    "The Agora Theatre" => 17,
+    "Beta Theta Pi Frat House Party, Denison University" => 79,
+    "Studio 8H, NBC Studios" => 465,
+    "Gymnasium, University of Vermont" => 900,
+    "1313 Club" => 2,
+    "23 East Caberet" => 4,
+    "86th Street Music Hall" => 959, # Vancouver with wrong state
+    "Aragon Entertainment Center" => 961,
+    "Atlantic Connection" => 930, # Oak Bluffs with encoding issue
+    "Berkeley Square" => 77,
+    "Broome County Arena" => 112,
+    "Burlington Boat House" => 894,
+    "Campus Pond, UMass Spring Concert, University of Massachusetts" => 888,
+    "Commodore Ballroom" => 172, # Vancouver with different formatting
+    "CoreStates Spectrum" => 729,
+    "Dane County Exposition Center" => 197,
+    "Galliard Auditorium" => 984,
+    "Hersheypark Arena" => 314,
+    "Ian McLean's Party, Connie Condon's Farm" => 329,
+    "McCullough Social Hall, McCullough Student Center, Middlebury College" => 421,
+    "Memorial Union Building, Granite State Room, University of New Hampshire" => 431,
+    "Pacific Coliseum" => 771, # Vancouver with different formatting
+    "Recreation Hall, University of California-Davis" => 562,
+    "Sigma Phi Fraternity, Hamilton College" => 607,
+    "Snivley Arena, University of New Hampshire" => 968,
+    "Starwood Ampitheater" => 971,
+    "The Agora Ballroom" => 17,
+    "The Base Lodge, Stearns Hall, Johnson State College" => 68,
+    "The Gathering Place, Norris University Center, Northwestern University" => 275,
+    "The Ranch" => 852, # South Burlington vs Shelburne
+    "Tree Cafe" => 689,
+    "UCSB Events Center, University of California-Santa Barbara" => 694,
+    "Valley Club Cafe" => 707,
+    "Vogue Theatre" => 728, # Vancouver with different formatting
+    "Wendell Recording Studio" => 743,
+    "William Randolph Hearst Greek Theatre, University of California, Berkeley" => 750,
+    "Worcester Memorial Auditorium" => 816, # Worcester vs Worcestor typo
+    "Zepp" => 764,
+    "Les Foufounes Ãlectriques" => 893,
+    "Les Foufounes Ã\u0089lectriques" => 893,
+    "Worcester Centrum Centre" => 757,
+    "The Fox Theatre" => 788,
+    "Harris-Millis Cafeteria - University of Vermont" => 306,
+    "Summerstage at Sugarbush North" => 652,
+    "Deer Creek Music Center" => 722,
+    "GTE Virginia Beach Amphitheater" => 726,
+    "The â\u0080\u009CEâ\u0080\u009D Center" => 225,
+    "Meadows Music Theatre" => 425,
+    "Blockbuster Desert Sky Pavilion" => 205,
+    "FirstMerit Bank Pavilion at Northerly Island" => 768,
+    "NBC Television Studios, Studio 6A" => 466,
+    "NBC Television Studios, Studio 6B" => 466,
+    "The Wharf Amphitheater" => 794,
+  }.freeze
+
+  desc "Sync all known Phish show dates from Phish.net (use LIMIT env var to limit new shows, DATE env var for single date)"
   task sync_shows: :environment do
     date_filter = ENV["DATE"]
     limit = ENV["LIMIT"]&.to_i
@@ -208,27 +267,25 @@ namespace :phishnet do
     state = pnet_show["state"] || pnet_show["country"] || "Unknown"
     country = pnet_show["country"] || "USA"
 
-    # Hardcoded venue mappings
-    venue_mappings = {
-      "Les Foufounes Ãlectriques" => "Les Foufounes Électriques",
-      "Les Foufounes Ã\u0089lectriques" => "Les Foufounes Électriques",
-      "Worcester Centrum Centre" => "The Centrum",
-      "The Fox Theatre" => "Fox Theatre",
-      "Harris-Millis Cafeteria - University of Vermont" => "Harris-Millis Cafeteria, University of Vermont",
-      "Summerstage at Sugarbush North" => "Summer Stage at Sugarbush",
-      "Deer Creek Music Center" => "Deer Creek",
-      "GTE Virginia Beach Amphitheater" => "Virginia Beach Amphitheater",
-      "The â\u0080\u009CEâ\u0080\u009D Center" => "The E Center",
-      "Meadows Music Theatre" => "The Meadows",
-      "Blockbuster Desert Sky Pavilion" => "Desert Sky Pavilion",
-      "FirstMerit Bank Pavilion at Northerly Island" => "Northerly Island",
-      "NBC Television Studios, Studio 6A" => "NBC Studios",
-      "NBC Television Studios, Studio 6B" => "NBC Studios",
-      "ALLTEL Pavilion" => "ALLTEL Pavilion at Walnut Creek",
-      "Post-Gazette Pavilion" => "Post-Gazette Pavilion at Star Lake",
-      "The Wharf Amphitheater" => "Amphitheater at the Wharf",
-      "Pine Knob Music Theatre" => "Pine Knob"
-    }
+    # If this venue matches a known duplicate, use the keeper instead
+    if VENUE_DUPES.key?(venue_name)
+      keeper_id = VENUE_DUPES[venue_name]
+      keeper_venue = Venue.find_by(id: keeper_id)
+      if keeper_venue
+        puts "  Substituting venue #{keeper_venue.name} (ID: #{keeper_id}) for #{venue_name}"
+        return keeper_venue
+      end
+    end
+
+    # Also check with original (pre-UTF8-fix) values
+    if VENUE_DUPES.key?(original_venue_name)
+      keeper_id = VENUE_DUPES[original_venue_name]
+      keeper_venue = Venue.find_by(id: keeper_id)
+      if keeper_venue
+        puts "  Using keeper venue: #{keeper_venue.name} (ID: #{keeper_id}) instead of potential dupe: #{original_venue_name}"
+        return keeper_venue
+      end
+    end
 
     # Special venue and city mappings for cases where both name and city differ
     # Check both original (broken UTF-8) and fixed versions
@@ -245,18 +302,6 @@ namespace :phishnet do
     if venue_city_mappings.key?(venue_city_key)
       mapped_venue_name, mapped_city = venue_city_mappings[venue_city_key]
       venue = Venue.where("lower(name) = ? AND lower(city) = ?", mapped_venue_name.downcase, mapped_city.downcase).first
-      return venue if venue
-    end
-
-    # Check if we have a hardcoded venue name mapping - use original venue name for mapping
-    if venue_mappings.key?(original_venue_name)
-      mapped_venue_name = venue_mappings[original_venue_name]
-      venue = Venue.left_outer_joins(:venue_renames)
-                   .where(
-                     "(venues.name = :name OR venue_renames.name = :name) AND lower(venues.city) = :city",
-                     name: mapped_venue_name,
-                     city: city.downcase
-                   ).first
       return venue if venue
     end
 
