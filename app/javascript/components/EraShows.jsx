@@ -13,8 +13,8 @@ export const eraShowsLoader = async ({ params }) => {
   const { year } = params;
 
   // Check localStorage for audio filter setting
-  const showMissingAudio = JSON.parse(localStorage.getItem('showMissingAudio') || 'false');
-  const audioStatusFilter = showMissingAudio ? 'any' : 'complete_or_partial';
+  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
+  const audioStatusFilter = hideMissingAudio ? 'complete_or_partial' : 'any';
 
   let url = `/api/v2/shows?per_page=1000&audio_status=${audioStatusFilter}`;
 
@@ -36,7 +36,7 @@ const EraShows = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { viewMode, setViewMode, sortOption, setSortOption } = useOutletContext();
   const [yearsData, setYearsData] = useState(null);
-  const { showMissingAudio, getAudioStatusFilter } = useAudioFilter();
+  const { hideMissingAudio, getAudioStatusFilter } = useAudioFilter();
 
   // Track the initial filter state to prevent unnecessary re-fetches
   const initialFilterRef = useRef(getAudioStatusFilter());
@@ -75,7 +75,7 @@ const EraShows = () => {
     };
 
     fetchShows();
-  }, [showMissingAudio, getAudioStatusFilter, year]);
+  }, [hideMissingAudio, getAudioStatusFilter, year]);
 
   const sortedShows = [...shows].sort((a, b) => {
     if (sortOption === "asc") {

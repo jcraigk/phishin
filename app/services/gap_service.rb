@@ -61,6 +61,7 @@ class GapService < ApplicationService
                                           .where(song: song)
                                           .where("shows.date < ?", show.date)
                                           .where.not(tracks: { set: "S" })
+                                          .where(shows: { exclude_from_stats: false })
 
           previous_song_tracks.each do |previous_song_track|
             previous_track = previous_song_track.track
@@ -92,6 +93,7 @@ class GapService < ApplicationService
                            .where(songs: { id: song.id })
                            .where("tracks.set <> ?", "S")
                            .where("shows.date < ?", track.show.date)
+                           .where(shows: { exclude_from_stats: false })
                            .order("shows.date DESC, tracks.position DESC")
 
     previous_tracks_within_show = track.show
@@ -112,6 +114,7 @@ class GapService < ApplicationService
                        .where(songs: { id: song.id })
                        .where("tracks.set <> ?", "S")
                        .where("shows.date > ?", track.show.date)
+                       .where(shows: { exclude_from_stats: false })
                        .order("shows.date ASC, tracks.position ASC")
 
     next_tracks_within_show = track.show
@@ -133,6 +136,7 @@ class GapService < ApplicationService
                            .where("tracks.set <> ?", "S")
                            .where("shows.date < ?", track.show.date)
                            .where.not(shows: { audio_status: "missing" })
+                           .where(shows: { exclude_from_stats: false })
                            .order("shows.date DESC, tracks.position DESC")
 
     previous_tracks_within_show = track.show
@@ -157,6 +161,7 @@ class GapService < ApplicationService
                        .where("tracks.set <> ?", "S")
                        .where("shows.date > ?", track.show.date)
                        .where.not(shows: { audio_status: "missing" })
+                       .where(shows: { exclude_from_stats: false })
                        .order("shows.date ASC, tracks.position ASC")
 
     next_tracks_within_show = track.show
@@ -180,7 +185,9 @@ class GapService < ApplicationService
     return 0 if start_date == end_date
 
     # Count shows between the dates (exclusive of start and end dates)
-    Show.where(date: start_date.next_day..end_date.prev_day).count
+    Show.where(date: start_date.next_day..end_date.prev_day)
+        .where(exclude_from_stats: false)
+        .count
   end
 
   def calculate_gap_with_audio(start_date, end_date)
@@ -190,6 +197,7 @@ class GapService < ApplicationService
     # Count shows with audio between the dates (exclusive of start and end dates)
     Show.where(date: start_date.next_day..end_date.prev_day)
         .where.not(audio_status: "missing")
+        .where(exclude_from_stats: false)
         .count
   end
 

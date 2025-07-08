@@ -15,7 +15,7 @@ const Search = () => {
   const [results, setResults] = useState(null);
   const [submittedTerm, setSubmittedTerm] = useState(searchParams.get("term") || "");
   const [isLoading, setIsLoading] = useState(false);
-  const { getAudioStatusFilter, showMissingAudio } = useAudioFilter();
+  const { getAudioStatusFilter, hideMissingAudio } = useAudioFilter();
 
   // Track the initial filter state to prevent unnecessary re-searches
   const initialFilterRef = useRef(getAudioStatusFilter());
@@ -43,7 +43,7 @@ const Search = () => {
       // Update the ref to track the new filter state
       initialFilterRef.current = currentAudioStatusFilter;
     }
-  }, [showMissingAudio]);
+  }, [hideMissingAudio]);
 
   const performSearch = async (searchTerm, searchScope) => {
     setResults(null);

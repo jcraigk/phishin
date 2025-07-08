@@ -15,7 +15,7 @@ const Navbar = ({ user, handleLogout }) => {
   const infoDropdownRef = useRef(null);
   const contentDropdownRef = useRef(null);
   const userDropdownRef = useRef(null);
-  const { showMissingAudio, toggleShowMissingAudio } = useAudioFilter();
+  const { hideMissingAudio, toggleHideMissingAudio } = useAudioFilter();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -91,14 +91,14 @@ const Navbar = ({ user, handleLogout }) => {
 
   const AudioFilterToggle = () => (
     <div
-      className={`dropdown-item audio-filter-toggle ${showMissingAudio ? 'active' : ''}`}
-      onClick={toggleShowMissingAudio}
+      className={`dropdown-item audio-filter-toggle ${hideMissingAudio ? 'active' : ''}`}
+      onClick={toggleHideMissingAudio}
     >
       <FontAwesomeIcon
-        icon={showMissingAudio ? faSquareCheck : faSquare}
+        icon={hideMissingAudio ? faSquareCheck : faSquare}
         className="icon"
       />
-      Include missing audio
+      Hide missing audio
     </div>
   );
 

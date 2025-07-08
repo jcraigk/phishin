@@ -6,8 +6,8 @@ export const venueShowsLoader = async ({ params, request }) => {
   const sortOption = url.searchParams.get("sort") || "date:desc";
 
   // Check localStorage for audio filter setting
-  const showMissingAudio = JSON.parse(localStorage.getItem('showMissingAudio') || 'false');
-  const audioStatusFilter = showMissingAudio ? 'any' : 'complete_or_partial';
+  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
+  const audioStatusFilter = hideMissingAudio ? 'complete_or_partial' : 'any';
 
   try {
     const venueResponse = await fetch(`/api/v2/venues/${venueSlug}`);

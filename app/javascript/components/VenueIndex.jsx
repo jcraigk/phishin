@@ -6,8 +6,8 @@ export const venueIndexLoader = async ({ request }) => {
   const perPage = url.searchParams.get("per_page") || 10;
 
   // Check localStorage for audio filter setting
-  const showMissingAudio = JSON.parse(localStorage.getItem('showMissingAudio') || 'false');
-  const audioStatusFilter = showMissingAudio ? 'any' : 'complete_or_partial';
+  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
+  const audioStatusFilter = hideMissingAudio ? 'complete_or_partial' : 'any';
 
   try {
     const response = await fetch(`/api/v2/venues?page=${page}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
@@ -52,7 +52,7 @@ const VenueIndex = () => {
   const { page, perPage, sortOption, firstChar } = initialData;
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const { showMissingAudio, getAudioStatusFilter } = useAudioFilter();
+  const { hideMissingAudio, getAudioStatusFilter } = useAudioFilter();
 
   // Track the initial filter state to prevent unnecessary re-fetches
   const initialFilterRef = useRef(null);
@@ -121,7 +121,7 @@ const VenueIndex = () => {
     };
 
     handleFilterChange();
-  }, [showMissingAudio, sortOption, firstChar, perPage, navigate]);
+  }, [hideMissingAudio, sortOption, firstChar, perPage, navigate]);
 
   const handleFirstCharChange = (event) => {
     navigate(`?page=1&sort=${sortOption}&first_char=${event.target.value}&per_page=${perPage}`);

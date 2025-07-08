@@ -8,8 +8,8 @@ export const songTracksLoader = async ({ params, request }) => {
   const { songSlug } = params;
 
   // Check localStorage for audio filter setting
-  const showMissingAudio = JSON.parse(localStorage.getItem('showMissingAudio') || 'false');
-  const audioStatusFilter = showMissingAudio ? 'any' : 'complete';
+  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
+  const audioStatusFilter = hideMissingAudio ? 'complete' : 'any';
 
   try {
     const songResponse = await fetch(`/api/v2/songs/${songSlug}`);

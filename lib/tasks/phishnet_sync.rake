@@ -59,6 +59,11 @@ namespace :phishnet do
     "The Wharf Amphitheater" => 794,
   }.freeze
 
+  # Date-specific tour overrides - maps show date to tour name
+  TOUR_DATE_OVERRIDES = {
+    "2025-01-28" => "Mexico Run 2025"
+  }.freeze
+
   desc "Sync all known Phish show dates from Phish.net (use LIMIT env var to limit new shows, DATE env var for single date)"
   task sync_shows: :environment do
     date_filter = ENV["DATE"]
@@ -210,7 +215,16 @@ namespace :phishnet do
       return
     end
 
+    # Handle exclude_from_stats field from Phish.net API
+    exclude_from_stats = pnet_show["exclude_from_stats"] == 1
+
     show = Show.find_or_initialize_by(date: date)
+
+    # If this is a new show and exclude_from_stats is true, skip importing it
+    if show.new_record? && exclude_from_stats
+      # puts "  Skipping show excluded from stats: #{pnet_show['showdate']}"
+      return
+    end
 
     # Find or create venue
     venue = find_or_create_venue(pnet_show)
@@ -220,17 +234,32 @@ namespace :phishnet do
     show.venue_name = pnet_show["venue"] || "Unknown Venue"
 
     # Find existing tour - tour is required for all shows
-    tour_name = pnet_show["tourname"] || pnet_show["tour_name"] || "Not Part of a Tour"
-    tour = find_tour_by_name(tour_name)
-    unless tour
-      puts "\nMissing tour: #{tour_name} for show #{pnet_show['showdate']}"
-      puts "Please create this tour manually and re-run the sync."
-      exit 1
+    # Check for date-specific overrides first
+    if TOUR_DATE_OVERRIDES.key?(pnet_show["showdate"])
+      override_tour_name = TOUR_DATE_OVERRIDES[pnet_show["showdate"]]
+      tour = Tour.find_by(name: override_tour_name)
+      unless tour
+        puts "\nMissing override tour: #{override_tour_name} for show #{pnet_show['showdate']}"
+        puts "Please create this tour manually and re-run the sync."
+        exit 1
+      end
+      puts "  Using tour override: #{override_tour_name} for show #{pnet_show['showdate']}"
+    else
+      tour_name = pnet_show["tourname"] || pnet_show["tour_name"] || "Not Part of a Tour"
+      tour = find_tour_by_name(tour_name)
+      unless tour
+        puts "\nMissing tour: #{tour_name} for show #{pnet_show['showdate']}"
+        puts "Please create this tour manually and re-run the sync."
+        exit 1
+      end
     end
     show.tour = tour
 
     # Set show as published but check audio status
     show.published = true
+
+    # Set exclude_from_stats based on Phish.net API data
+    show.exclude_from_stats = exclude_from_stats
 
     # If show is new and has no tracks, it's missing audio
     if show.new_record?
@@ -272,7 +301,7 @@ namespace :phishnet do
       keeper_id = VENUE_DUPES[venue_name]
       keeper_venue = Venue.find_by(id: keeper_id)
       if keeper_venue
-        puts "  Substituting venue #{keeper_venue.name} (ID: #{keeper_id}) for #{venue_name}"
+        puts "  Substituting venue ##{keeper_id} for #{venue_name}"
         return keeper_venue
       end
     end

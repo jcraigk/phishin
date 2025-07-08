@@ -9,8 +9,8 @@ export const todayShowsLoader = async ({ request }) => {
   const todayDate = `${new Date().getFullYear()}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
   // Check localStorage for audio filter setting
-  const showMissingAudio = JSON.parse(localStorage.getItem('showMissingAudio') || 'false');
-  const audioStatusFilter = showMissingAudio ? 'any' : 'complete_or_partial';
+  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
+  const audioStatusFilter = hideMissingAudio ? 'complete_or_partial' : 'any';
 
   try {
     const response = await authFetch(`/api/v2/shows/day_of_year/${todayDate}?sort=${sortBy}&audio_status=${audioStatusFilter}`);
