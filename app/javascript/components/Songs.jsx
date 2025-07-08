@@ -2,8 +2,11 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { formatNumber } from "./helpers/utils";
 import HighlightedText from "./controls/HighlightedText";
+import { useAudioFilter } from "./contexts/AudioFilterContext";
 
 const Songs = ({ songs, highlight }) => {
+  const { showMissingAudio } = useAudioFilter();
+
   return (
     <ul>
       {songs.map((song) => (
@@ -19,7 +22,7 @@ const Songs = ({ songs, highlight }) => {
                 {song.original ? "Original" : "Cover"}
               </span>
               <span className="rightside-group">
-                {formatNumber(song.tracks_count, 'track')}
+                {formatNumber(showMissingAudio ? song.tracks_count : song.tracks_with_audio_count, 'track')}
               </span>
             </div>
           </li>
