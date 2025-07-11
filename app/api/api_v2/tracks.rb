@@ -27,6 +27,18 @@ class ApiV2::Tracks < ApiV2::Base
                type: Boolean,
                desc: "Filter by tracks liked by the current user",
                default: false
+      optional :start_date,
+               type: String,
+               desc: "Filter tracks from shows starting from this date (inclusive)"
+      optional :end_date,
+               type: String,
+               desc: "Filter tracks from shows up to this date (inclusive)"
+      optional :year,
+               type: Integer,
+               desc: "Filter tracks from shows in a specific year"
+      optional :year_range,
+               type: String,
+               desc: "Filter tracks from shows in a range of years (e.g., '1987-1988')"
     end
     get do
       result = page_of_tracks
@@ -132,6 +144,15 @@ class ApiV2::Tracks < ApiV2::Base
     end
 
     def apply_filter(tracks)
+      if params[:year].present? && params[:year_range].present?
+        error!({ message: "Cannot specify both year and year_range" }, 400)
+      end
+
+      if (params[:year].present? || params[:year_range].present?) &&
+         (params[:start_date].present? || params[:end_date].present?)
+        error!({ message: "Cannot combine year/year_range with start_date/end_date" }, 400)
+      end
+
       if params[:tag_slug]
         track_ids = Track.joins(track_tags: :tag)
                          .where(tags: { slug: params[:tag_slug] })
@@ -152,6 +173,25 @@ class ApiV2::Tracks < ApiV2::Base
           tracks = tracks.where(id: liked_track_ids)
         else
           tracks = tracks.none
+        end
+      end
+
+      if params[:year]
+        tracks = tracks.joins(:show).where("extract(year from shows.date) = ?", params[:year])
+      elsif params[:year_range]
+        start_year, end_year = params[:year_range].split("-").map(&:to_i)
+        tracks = tracks.joins(:show).where("extract(year from shows.date) BETWEEN ? AND ?", start_year, end_year)
+      else
+        if params[:start_date].present? && params[:end_date].present?
+          start_date = Date.parse(params[:start_date])
+          end_date = Date.parse(params[:end_date])
+          tracks = tracks.joins(:show).where(shows: { date: start_date..end_date })
+        elsif params[:start_date].present?
+          start_date = Date.parse(params[:start_date])
+          tracks = tracks.joins(:show).where("shows.date >= ?", start_date)
+        elsif params[:end_date].present?
+          end_date = Date.parse(params[:end_date])
+          tracks = tracks.joins(:show).where("shows.date <= ?", end_date)
         end
       end
 
