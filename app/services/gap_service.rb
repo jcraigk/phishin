@@ -185,9 +185,11 @@ class GapService < ApplicationService
     return 0 if start_date == end_date
 
     # Count shows between the dates (exclusive of start and end dates)
-    Show.where(date: start_date.next_day..end_date.prev_day)
-        .where(exclude_from_stats: false)
-        .count
+    # Then add 1 to match PhishNet's inclusive counting methodology
+    gap = Show.where(date: start_date.next_day..end_date.prev_day)
+              .where(exclude_from_stats: false)
+              .count
+    gap + 1
   end
 
   def calculate_gap_with_audio(start_date, end_date)
@@ -195,10 +197,12 @@ class GapService < ApplicationService
     return 0 if start_date == end_date
 
     # Count shows with audio between the dates (exclusive of start and end dates)
-    Show.where(date: start_date.next_day..end_date.prev_day)
-        .where.not(audio_status: "missing")
-        .where(exclude_from_stats: false)
-        .count
+    # Then add 1 to match PhishNet's inclusive counting methodology
+    gap = Show.where(date: start_date.next_day..end_date.prev_day)
+              .where.not(audio_status: "missing")
+              .where(exclude_from_stats: false)
+              .count
+    gap + 1
   end
 
   def build_slug(track)

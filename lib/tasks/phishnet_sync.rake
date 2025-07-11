@@ -64,6 +64,73 @@ namespace :phishnet do
     "2025-01-28" => "Mexico Run 2025"
   }.freeze
 
+  desc "Report duplicate positions in PhishNet setlist data"
+  task report_duplicate_positions: :environment do
+    puts "Checking PhishNet setlist data for duplicate positions..."
+    puts "=" * 60
+
+    duplicate_count = 0
+    total_shows_checked = 0
+
+    Show.published.find_each do |show|
+      total_shows_checked += 1
+      print "." if total_shows_checked % 100 == 0
+
+      # Fetch setlist data from PhishNet for this show
+      response = Typhoeus.get(
+        "https://api.phish.net/v5/setlists/showdate/#{show.date.strftime('%Y-%m-%d')}.json",
+        params: { apikey: ENV.fetch("PNET_API_KEY", nil) }
+      )
+
+      next unless response.success?
+
+      begin
+        data = JSON.parse(response.body)
+        next unless data["data"] && data["data"].any?
+
+        # Filter to only include Phish tracks
+        phish_tracks = data["data"].select { |song_data| song_data["artist_slug"] == "phish" }
+        next if phish_tracks.empty?
+
+        # Check for duplicate positions
+        position_counts = Hash.new(0)
+        phish_tracks.each { |song_data| position_counts[song_data["position"]] += 1 }
+
+        duplicate_positions = position_counts.select { |pos, count| count > 1 }
+
+        if duplicate_positions.any?
+          duplicate_count += 1
+          puts "\n#{show.date} - #{show.venue_name}"
+          puts "  Duplicate positions: #{duplicate_positions.keys.sort.join(', ')}"
+
+          # Show the tracks at each duplicate position
+          duplicate_positions.keys.sort.each do |pos|
+            tracks_at_position = phish_tracks.select { |t| t["position"] == pos }
+            puts "    Position #{pos}:"
+            tracks_at_position.each do |track|
+              set_info = track["set"] ? " (set #{track['set']})" : ""
+              puts "      - #{track['song']}#{set_info}"
+            end
+          end
+          puts
+        end
+
+      rescue JSON::ParserError => e
+        puts "\nError parsing JSON for #{show.date}: #{e.message}"
+        next
+      rescue => e
+        puts "\nError processing #{show.date}: #{e.message}"
+        next
+      end
+    end
+
+    puts "\n" + "=" * 60
+    puts "Summary:"
+    puts "  Total shows checked: #{total_shows_checked}"
+    puts "  Shows with duplicate positions: #{duplicate_count}"
+    puts "  Percentage with duplicates: #{(duplicate_count.to_f / total_shows_checked * 100).round(2)}%"
+  end
+
   desc "Sync all known Phish show dates from Phish.net (use LIMIT env var to limit new shows, DATE env var for single date)"
   task sync_shows: :environment do
     date_filter = ENV["DATE"]
@@ -218,10 +285,16 @@ namespace :phishnet do
     # Handle exclude_from_stats field from Phish.net API
     exclude_from_stats = pnet_show["exclude_from_stats"] == 1
 
+    # Special case for 1994-06-18: force exclude_from_stats to false
+    # API returns two shows for this date, one irrelevant with exclude_from_stats=1
+    if pnet_show["showdate"] == "1994-06-18"
+      exclude_from_stats = false
+    end
+
     show = Show.find_or_initialize_by(date: date)
 
-    # If this is a new show and exclude_from_stats is true, skip importing it
-    if show.new_record? && exclude_from_stats
+    # If exclude_from_stats is true, skip importing/updating it (both new and existing shows)
+    if exclude_from_stats
       # puts "  Skipping show excluded from stats: #{pnet_show['showdate']}"
       return
     end
@@ -269,7 +342,9 @@ namespace :phishnet do
 
     show.save!
 
-    if !show.has_audio?
+    # Handle setlist synchronization based on audio status
+    if show.audio_status == "missing"
+      # Handle missing audio shows (destroy and replace)
       if show.tracks.any?
         if setlist_differs_from_local?(show)
           show.tracks.destroy_all
@@ -278,8 +353,14 @@ namespace :phishnet do
       else
         fetch_and_process_setlist(show)
       end
-    else
-      # puts "  Show #{show.date} already has audio - skipping setlist processing"
+    elsif show.audio_status == "partial"
+      # Handle partial audio shows (merge with existing)
+      if setlist_differs_from_local?(show)
+        merge_partial_setlist(show)
+      end
+    elsif show.audio_status == "complete"
+      # Skip setlist processing for complete audio shows
+      # puts "  Show #{show.date} has complete audio - skipping setlist processing"
     end
   end
 
@@ -378,6 +459,224 @@ namespace :phishnet do
 
     puts "Using venue: #{venue.name} (ID: #{venue.id})"
     venue
+  end
+
+  # New method to handle partial audio shows intelligently
+  def merge_partial_setlist(show)
+    # Fetch setlist data from PhishNet
+    response = Typhoeus.get(
+      "https://api.phish.net/v5/setlists/showdate/#{show.date.strftime('%Y-%m-%d')}.json",
+      params: { apikey: ENV.fetch("PNET_API_KEY", nil) }
+    )
+
+    unless response.success?
+      puts "  Error fetching setlist data for #{show.date}: #{response.code}"
+      return
+    end
+
+    data = JSON.parse(response.body)
+    unless data["data"] && data["data"].any?
+      puts "  No setlist data available for #{show.date}"
+      return
+    end
+
+    setlist_data = data["data"]
+    phish_tracks = setlist_data.select { |song_data| song_data["artist_slug"] == "phish" }
+
+    puts "  Merging partial setlist for #{show.date} (#{phish_tracks.length} tracks from PhishNet)"
+
+    # Get existing tracks
+    existing_tracks = show.tracks.includes(:songs).order(:position)
+    puts "    Existing tracks: #{existing_tracks.map { |t| "#{t.position}:#{t.title}" }.join(', ')}"
+
+    # Create a map of existing tracks by song title and set for easy lookup
+    existing_track_map = {}
+    existing_tracks.each do |track|
+      key = build_track_key(track.title, track.set)
+      existing_track_map[key] = track
+    end
+
+    # Also create a map by slug to handle slug conflicts
+    existing_slug_map = {}
+    existing_tracks.each do |track|
+      existing_slug_map[track.slug] = track
+    end
+
+    tracks_created = 0
+    tracks_repositioned = 0
+
+                ActiveRecord::Base.transaction do
+      # First, move all existing tracks to temporary positions to avoid conflicts
+      # Use a high temporary position that won't conflict with existing tracks
+      max_position = show.tracks.maximum(:position) || 0
+      temp_position_start = [max_position + 1000, 10000].max
+      existing_tracks.each_with_index do |track, index|
+        track.update_column(:position, temp_position_start + index)
+      end
+
+      # Process tracks in position order to handle insertions properly
+      phish_tracks_sorted = phish_tracks.sort_by { |song_data| song_data["position"] || 0 }
+
+      # Check for duplicate positions and fix them
+      position_counts = Hash.new(0)
+      phish_tracks_sorted.each { |song_data| position_counts[song_data["position"]] += 1 }
+
+            duplicate_positions = position_counts.select { |pos, count| count > 1 }
+      if duplicate_positions.any?
+        puts "    WARNING: Found duplicate positions in PhishNet data: #{duplicate_positions.keys.join(', ')}"
+        puts "    Adjusting positions to avoid conflicts..."
+
+        # More intelligent position reassignment
+        # Keep non-duplicate positions intact, only reassign the duplicates
+        current_position = 1
+        used_positions = Set.new
+
+        phish_tracks_sorted.each do |song_data|
+          original_position = song_data["position"]
+
+          # If this position is not a duplicate, try to keep it
+          if position_counts[original_position] == 1 && !used_positions.include?(original_position)
+            song_data["position"] = original_position
+            used_positions.add(original_position)
+          else
+            # Find the next available position
+            while used_positions.include?(current_position)
+              current_position += 1
+            end
+
+            puts "      Reassigning '#{song_data['song']}' from position #{original_position} to #{current_position}"
+            song_data["position"] = current_position
+            used_positions.add(current_position)
+            current_position += 1
+          end
+        end
+      end
+
+      phish_tracks_sorted.each_with_index do |song_data, index|
+        # Apply title mappings before song lookup
+        original_title = (song_data["song"] || "").strip
+        mapped_title = apply_title_mapping(original_title)
+
+        # Update song_data with mapped title for song lookup
+        song_data_with_mapping = song_data.dup
+        song_data_with_mapping["song"] = mapped_title
+
+        song = find_or_create_song(song_data_with_mapping, show)
+        next unless song
+
+        pnet_title = mapped_title
+        pnet_set = song_data["set"] || "1"
+        pnet_position = song_data["position"] || (index + 1)
+
+        track_key = build_track_key(pnet_title, pnet_set)
+        puts "    Processing: #{pnet_title} (set #{pnet_set}, position #{pnet_position})"
+
+        # Check if track exists by title/set combination
+        existing_track = existing_track_map[track_key]
+
+        # If not found by title/set, check if there's a slug conflict
+        if !existing_track
+          # Generate what the slug would be for this track
+          temp_track = Track.new(title: pnet_title, show: show)
+          temp_track.generate_slug
+          potential_slug = temp_track.slug
+
+          # Check if this slug already exists
+          if existing_slug_map[potential_slug]
+            puts "      Found existing track with same slug: #{potential_slug}"
+            existing_track = existing_slug_map[potential_slug]
+          end
+        end
+
+        if existing_track
+          # Track exists - move it to the correct position
+          puts "      Found existing track, moving to position #{pnet_position}"
+          existing_track.update!(position: pnet_position)
+          tracks_repositioned += 1
+        else
+          # Track doesn't exist - create it
+          puts "      Creating new track at position #{pnet_position}"
+
+          track = show.tracks.build(
+            title: pnet_title,
+            position: pnet_position,
+            set: pnet_set,
+            audio_status: "missing"
+          )
+
+          # Add song association
+          track.songs << song
+          track.save!
+          tracks_created += 1
+
+          # Update our existing_track_map to include the new track
+          existing_track_map[track_key] = track
+          existing_slug_map[track.slug] = track
+        end
+      end
+
+      # Ensure tight sequential ordering of all tracks (1, 2, 3, 4, etc.)
+      puts "    Reordering tracks to ensure tight sequential positions..."
+      final_tracks = show.tracks.reload.order(:position)
+      final_tracks.each_with_index do |track, index|
+        new_position = index + 1
+        if track.position != new_position
+          track.update_column(:position, new_position)
+        end
+      end
+      puts "    Final track positions: #{show.tracks.reload.order(:position).pluck(:position).join(', ')}"
+
+      # Remove any existing tracks that are no longer in the PhishNet setlist
+      # This handles cases where our local data had incorrect tracks
+      pnet_track_keys = phish_tracks.map do |song_data|
+        pnet_title = (song_data["song"] || song_data["title"] || "").strip
+        pnet_set = song_data["set"] || "1"
+        build_track_key(pnet_title, pnet_set)
+      end.compact
+
+      tracks_to_remove = existing_tracks.reject do |track|
+        track_key = build_track_key(track.title, track.set)
+        pnet_track_keys.include?(track_key)
+      end
+
+      tracks_removed = 0
+      tracks_to_remove.each do |track|
+        # Only remove tracks that have missing audio - preserve tracks with audio
+        if track.audio_status == "missing"
+          track.destroy!
+          tracks_removed += 1
+        else
+          puts "    Keeping track '#{track.title}' (set #{track.set}) with audio despite not being in PhishNet setlist"
+        end
+      end
+
+      puts "    Created #{tracks_created} tracks, repositioned #{tracks_repositioned} tracks, removed #{tracks_removed} tracks for #{show.date}"
+    end
+
+    # Update show's audio status based on final track composition
+    show.update_audio_status_from_tracks!
+  end
+
+
+
+    # Helper method to apply title mappings
+  def apply_title_mapping(title)
+    normalized_title = title.to_s.strip.downcase
+
+    # Hardcoded mappings for PhishNet titles that should match local titles
+    title_mappings = {
+      "digital delay loop jam" => "Jam"
+    }
+
+    title_mappings[normalized_title] || title
+  end
+
+  # Helper method to create consistent track keys for comparison
+  def build_track_key(title, set)
+    # Normalize title and set for comparison
+    normalized_title = title.to_s.strip.downcase
+    normalized_set = set.to_s.strip
+    "#{normalized_title}|#{normalized_set}"
   end
 
   def find_tour_by_name(tour_name)
@@ -633,8 +932,14 @@ namespace :phishnet do
     remote_setlist = data["data"].select { |song_data| song_data["artist_slug"] == "phish" }
     local_tracks = show.tracks.includes(:songs).order(:position)
 
-    # Compare track counts
-    return true if remote_setlist.length != local_tracks.length
+    # For partial audio shows, we need to be more lenient in comparison
+    # because we might have fewer tracks locally than PhishNet
+    if show.audio_status == "partial"
+      return partial_setlist_differs?(remote_setlist, local_tracks)
+    end
+
+    # For missing audio shows, use the existing logic
+    return false if remote_setlist.length != local_tracks.length
 
     # Compare each track
     remote_setlist.each_with_index do |song_data, index|
@@ -655,6 +960,39 @@ namespace :phishnet do
       # In process_setlist, we use song_data["position"] || (index + 1), so do the same here
       remote_position = song_data["position"] || (index + 1)
       return true if remote_position != local_track.position
+    end
+
+    false
+  end
+
+  # New method to determine if partial setlist differs
+  def partial_setlist_differs?(remote_setlist, local_tracks)
+    # Create maps for easier comparison
+    remote_track_map = {}
+    remote_setlist.each_with_index do |song_data, index|
+      title = song_data["song"]&.downcase&.strip
+      set = song_data["set"] || "1"
+      position = song_data["position"] || (index + 1)
+      key = build_track_key(title, set)
+      remote_track_map[key] = { title: title, set: set, position: position }
+    end
+
+    local_track_map = {}
+    local_tracks.each do |track|
+      key = build_track_key(track.title, track.set)
+      local_track_map[key] = { title: track.title.downcase.strip, set: track.set, position: track.position }
+    end
+
+    # Check if we're missing tracks from PhishNet
+    missing_tracks = remote_track_map.keys - local_track_map.keys
+    return true if missing_tracks.any?
+
+    # Check if existing tracks have different positions
+    local_track_map.each do |key, local_data|
+      if remote_track_map[key]
+        remote_data = remote_track_map[key]
+        return true if local_data[:position] != remote_data[:position]
+      end
     end
 
     false
