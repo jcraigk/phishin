@@ -22,7 +22,7 @@ Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and developmen
 ```bash
 # Copy SQL dump into PG container and run it
 $ docker cp /path/to/phishin-dev.sql phishin-pg-1:/docker-entrypoint-initdb.d/data.sql
-$ docker exec -u postgres phishin_pg_1 createdb phishin_development
+$ docker exec -u postgres phishin-pg-1 createdb phishin_development
 $ docker exec -u postgres phishin-pg-1 psql -d phishin_development -f docker-entrypoint-initdb.d/data.sql
 ```
 
