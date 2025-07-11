@@ -14,54 +14,64 @@ Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and developmen
 1. Install [Docker](https://www.docker.com/)
 
 2. Clone the repo to your local machine
+3. Create a `.env` file at the root of the repository
+4. Run `make services`
 
-3. Download the [Development SQL File](https://www.dropbox.com/scl/fi/6zv4bzxxcjgv3ouv8d3ek/phishin-dev.sql?rlkey=4trafp2vxcgc1iuuq36yhl9gc&st=74yocl1s) and import it:
+5. Download the [Development SQL File](https://www.dropbox.com/scl/fi/6zv4bzxxcjgv3ouv8d3ek/phishin-dev.sql?rlkey=4trafp2vxcgc1iuuq36yhl9gc&st=74yocl1s) and import it:
 
 ```bash
 # Copy SQL dump into PG container and run it
-docker cp /path/to/phishin-dev.sql phishin-pg-1:/docker-entrypoint-initdb.d/data.sql
-docker exec -u postgres phishin-pg-1 psql phishin postgres -f docker-entrypoint-initdb.d/data.sql
+$ docker cp /path/to/phishin-dev.sql phishin-pg-1:/docker-entrypoint-initdb.d/data.sql
+$ docker exec -u postgres phishin-pg-1 createdb phishin_development
+$ docker exec -u postgres phishin-pg-1 psql -d phishin_development -f docker-entrypoint-initdb.d/data.sql
 ```
 
 4. To present production content locally during development, set `PRODUCTION_CONTENT=true` in your local `.env` file.
 
 5. If you want to run the Postgres database in Docker and develop the app natively (recommended), you can spin it up like this:
 
+Install the correct ruby version:
 ```bash
-make services
-make dev
+$ brew install rbenv # if not already installed
+$ rbenv install 3.4.4 # or current version in `Gemfile`
+$ rbenv local 3.4.4
 ```
 
-If you are on a Mac ARM and the `ruby-audio` gem fails to install, try the following:
+Install dependencies:
+```bash
+$ gem install bundler foreman # if bundler and/or foreman are not already installed
+$ bundle install
+$ yarn install
+```
 
+Run the app:
+```bash
+$ make dev
 ```
-brew install libsndfile
-gem install ruby-audio -- --with-sndfile-dir=/opt/homebrew/opt/libsndfile
-```
+
+If you are on a Mac ARM and the `ruby-audio` gem fails to install, see the Troubleshooting section below.
 
 Alternatively, if you prefer to develop completely in Docker, build and start the containers like this:
 
 ```bash
-make up
+$ make up
 ```
-
 
 ## Testing
 
 To run the specs in Docker:
 
 ```bash
-make spec
+$ make spec
 ```
 
 To run the specs natively:
 
 ```bash
-make services
-bundle exec rails db:setup RAILS_ENV=test
-bundle exec rspec
+$ make services
+$ bundle exec rails db:setup RAILS_ENV=test
+$ bundle exec rspec
 ```
-
 
 ## Importing Content
 
@@ -77,6 +87,39 @@ bundle exec rails shows:import
 
 Use the interactive CLI to finish the import process then set `PRODUCTION_CONTENT=false`, restart the server, and visit `http://localhost:3000/<date>` to verify the import.
 
+
+## Troubleshooting (Appendix)
+
+### Postgres Connection Issues
+- If you get a `NoDatabaseError` or `connection to server at "localhost" failed`, make sure:
+  - No other Postgres server is running on your Mac (use `brew services list`, `ps aux | grep postgres`, or `lsof -i :5432`).
+  - Stop any native Postgres with `brew services stop postgresql` or by quitting Postgres.app.
+  - After stopping, restart your Docker Postgres:
+    ```sh
+    make services
+    ```
+  - You should see your database with:
+    ```sh
+    psql -h localhost -U postgres -l
+    ```
+  - If you do not see `phishin_development` in the list, re-import your SQL dump as described above.
+
+### Webpack Dev Server Port Conflict
+- If you see an error like `EADDRINUSE: address already in use 127.0.0.1:3035`, run:
+  ```sh
+  lsof -i :3035
+  ```
+  and kill any stray `node` processes:
+  ```sh
+  kill -9 <PID>
+  ```
+
+### Mac ARM: ruby-audio Gem Installation
+- If you are on a Mac ARM and the `ruby-audio` gem fails to install, try the following:
+  ```sh
+  brew install libsndfile
+  gem install ruby-audio -- --with-sndfile-dir=/opt/homebrew/opt/libsndfile
+  ```
 
 ## Contributions
 
