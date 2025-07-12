@@ -1,12 +1,12 @@
-name: Brakeman Scan
+name: Brakeman
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
 jobs:
-  brakeman-scan:
-    name: Brakeman Scan
+  brakeman:
+    name: Brakeman
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -15,16 +15,7 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.4.4'
-    - name: Setup Brakeman
-      env:
-        BRAKEMAN_VERSION: '5.4.0'
+        bundler-cache: true
+    - name: Run Brakeman
       run: |
-        gem install brakeman --version $BRAKEMAN_VERSION
-    - name: Scan
-      continue-on-error: true
-      run: |
-        brakeman -f sarif -o output.sarif.json .
-    - name: Upload SARIF
-      uses: github/codeql-action/upload-sarif@v2
-      with:
-        sarif_file: output.sarif.json
+        bundle exec brakeman --exit-on-warn
