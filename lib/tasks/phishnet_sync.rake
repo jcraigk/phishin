@@ -109,7 +109,8 @@ namespace :phishnet do
             puts "    Position #{pos}:"
             tracks_at_position.each do |track|
               set_info = track["set"] ? " (set #{track['set']})" : ""
-              puts "      - #{track['song']}#{set_info}"
+              showid_info = track["showid"] ? " [showid: #{track['showid']}]" : ""
+              puts "      - #{track['song']}#{set_info}#{showid_info}"
             end
           end
           puts
@@ -300,22 +301,39 @@ namespace :phishnet do
     puts "=" * 80
   end
 
+  # Helper method to fetch and filter setlist data for a specific show
+  def fetch_setlist_data_for_show(show_date, show_id)
+    response = Typhoeus.get(
+      "https://api.phish.net/v5/setlists/showdate/#{show_date.strftime('%Y-%m-%d')}.json",
+      params: { apikey: ENV.fetch("PNET_API_KEY", nil) }
+    )
+
+    return [] unless response.success?
+
+    data = JSON.parse(response.body)
+    return [] unless data["data"] && data["data"].any?
+
+    # Filter to only include Phish tracks for the specific show
+    data["data"].select do |song_data|
+      song_data["artist_slug"] == "phish" &&
+      song_data["showid"].to_s == show_id.to_s
+    end
+  rescue JSON::ParserError
+    []
+  end
+
   # Helper method to detect duplicate positions/sets in PhishNet setlist data
   def has_duplicate_positions_or_sets?(setlist_data)
     return false unless setlist_data && setlist_data.any?
 
-    # Filter to only include Phish tracks
-    phish_tracks = setlist_data.select { |song_data| song_data["artist_slug"] == "phish" }
-    return false if phish_tracks.empty?
-
     # Check for duplicate positions
     position_counts = Hash.new(0)
-    phish_tracks.each { |song_data| position_counts[song_data["position"]] += 1 }
+    setlist_data.each { |song_data| position_counts[song_data["position"]] += 1 }
     duplicate_positions = position_counts.select { |pos, count| count > 1 }
 
     # Check for duplicate position/set combinations
     position_set_counts = Hash.new(0)
-    phish_tracks.each do |song_data|
+    setlist_data.each do |song_data|
       key = "#{song_data['position']}-#{song_data['set']}"
       position_set_counts[key] += 1
     end
@@ -413,23 +431,19 @@ namespace :phishnet do
 
     show.save!
 
+    # Extract showid from pnet_show for filtering setlist data
+    show_id = pnet_show["showid"]
+
     # Check for duplicate positions/sets in PhishNet data before processing setlists
     if show.audio_status == "missing" || show.audio_status == "partial"
       # Fetch setlist data to check for duplicates
-      response = Typhoeus.get(
-        "https://api.phish.net/v5/setlists/showdate/#{show.date.strftime('%Y-%m-%d')}.json",
-        params: { apikey: ENV.fetch("PNET_API_KEY", nil) }
-      )
-
-      if response.success?
-        data = JSON.parse(response.body)
-        if data["data"] && data["data"].any?
-          duplicate_info = has_duplicate_positions_or_sets?(data["data"])
-          if duplicate_info
-                         puts "  ⚠️  Skipping show #{show.date} due to duplicate #{duplicate_info}"
-             add_skipped_show(show.date.to_s, "Duplicate #{duplicate_info}")
-            return
-          end
+      setlist_data = fetch_setlist_data_for_show(show.date, show_id)
+      if setlist_data.any?
+        duplicate_info = has_duplicate_positions_or_sets?(setlist_data)
+        if duplicate_info
+          puts "  ⚠️  Skipping show #{show.date} due to duplicate #{duplicate_info}"
+          add_skipped_show(show.date.to_s, "Duplicate #{duplicate_info}")
+          return
         end
       end
     end
@@ -438,17 +452,17 @@ namespace :phishnet do
     if show.audio_status == "missing"
       # Handle missing audio shows (destroy and replace)
       if show.tracks.any?
-        if setlist_differs_from_local?(show)
+        if setlist_differs_from_local?(show, show_id)
           show.tracks.destroy_all
-          fetch_and_process_setlist(show)
+          fetch_and_process_setlist(show, show_id)
         end
       else
-        fetch_and_process_setlist(show)
+        fetch_and_process_setlist(show, show_id)
       end
     elsif show.audio_status == "partial"
       # Handle partial audio shows (merge with existing)
-      if setlist_differs_from_local?(show)
-        merge_partial_setlist(show)
+      if setlist_differs_from_local?(show, show_id)
+        merge_partial_setlist(show, show_id)
       end
     elsif show.audio_status == "complete"
       # Skip setlist processing for complete audio shows
@@ -554,26 +568,14 @@ namespace :phishnet do
   end
 
   # New method to handle partial audio shows intelligently
-  def merge_partial_setlist(show)
-    # Fetch setlist data from PhishNet
-    response = Typhoeus.get(
-      "https://api.phish.net/v5/setlists/showdate/#{show.date.strftime('%Y-%m-%d')}.json",
-      params: { apikey: ENV.fetch("PNET_API_KEY", nil) }
-    )
+  def merge_partial_setlist(show, show_id)
+    # Fetch filtered setlist data for this specific show
+    phish_tracks = fetch_setlist_data_for_show(show.date, show_id)
 
-    unless response.success?
-      puts "  Error fetching setlist data for #{show.date}: #{response.code}"
-      return
-    end
-
-    data = JSON.parse(response.body)
-    unless data["data"] && data["data"].any?
+    unless phish_tracks.any?
       puts "  No setlist data available for #{show.date}"
       return
     end
-
-    setlist_data = data["data"]
-    phish_tracks = setlist_data.select { |song_data| song_data["artist_slug"] == "phish" }
 
     puts "  Merging partial setlist for #{show.date} (#{phish_tracks.length} tracks from PhishNet)"
 
@@ -596,7 +598,7 @@ namespace :phishnet do
     tracks_created = 0
     tracks_repositioned = 0
 
-                ActiveRecord::Base.transaction do
+    ActiveRecord::Base.transaction do
       # First, move all existing tracks to temporary positions to avoid conflicts
       # Use a high temporary position that won't conflict with existing tracks
       max_position = show.tracks.maximum(:position) || 0
@@ -607,9 +609,6 @@ namespace :phishnet do
 
       # Process tracks in position order to handle insertions properly
       phish_tracks_sorted = phish_tracks.sort_by { |song_data| song_data["position"] || 0 }
-
-      # Note: Duplicate position handling has been moved to process_phishnet_show
-      # Shows with duplicate positions/sets are now skipped entirely for manual review
 
       phish_tracks_sorted.each_with_index do |song_data, index|
         # Apply title mappings before song lookup
@@ -692,16 +691,16 @@ namespace :phishnet do
         pnet_track_keys.include?(track_key)
       end
 
-              tracks_removed = 0
-        tracks_to_remove.each do |track|
-          # Only remove tracks that have missing audio - preserve tracks with audio
-          if track.audio_status == "missing"
-            track.destroy!
-            tracks_removed += 1
-          end
+      tracks_removed = 0
+      tracks_to_remove.each do |track|
+        # Only remove tracks that have missing audio - preserve tracks with audio
+        if track.audio_status == "missing"
+          track.destroy!
+          tracks_removed += 1
         end
+      end
 
-        puts "    Created #{tracks_created} tracks, repositioned #{tracks_repositioned} tracks, removed #{tracks_removed} tracks for #{show.date}"
+      puts "    Created #{tracks_created} tracks, repositioned #{tracks_repositioned} tracks, removed #{tracks_removed} tracks for #{show.date}"
     end
 
     # Update show's audio status based on final track composition
@@ -832,34 +831,22 @@ namespace :phishnet do
     nil
   end
 
-  def fetch_and_process_setlist(show)
-    # Fetch setlist data from dedicated setlists endpoint
-    response = Typhoeus.get(
-      "https://api.phish.net/v5/setlists/showdate/#{show.date.strftime('%Y-%m-%d')}.json",
-      params: { apikey: ENV.fetch("PNET_API_KEY", nil) }
-    )
+  def fetch_and_process_setlist(show, show_id)
+    # Fetch filtered setlist data for this specific show
+    phish_tracks = fetch_setlist_data_for_show(show.date, show_id)
 
-    if response.success?
-      data = JSON.parse(response.body)
-      if data["data"] && data["data"].any?
-        setlist_data = data["data"]
-        # puts "  Processing setlist for #{show.date} (#{setlist_data.length} sets)"
-        process_setlist(show, setlist_data)
-      else
-        # puts "  No setlist data available for #{show.date}"
-      end
+    if phish_tracks.any?
+      # puts "  Processing setlist for #{show.date} (#{phish_tracks.length} tracks)"
+      process_setlist(show, phish_tracks)
     else
-      puts "  Error fetching setlist data for #{show.date}: #{response.code}"
+      # puts "  No setlist data available for #{show.date}"
     end
   end
 
-    def process_setlist(show, setlist_data)
+  def process_setlist(show, phish_tracks)
     tracks_created = 0
 
-    # Filter setlist_data to only include Phish tracks (exclude guest appearances)
-    phish_tracks = setlist_data.select { |song_data| song_data["artist_slug"] == "phish" }
-
-    # phish_tracks is a flat array of song records, each with position and set info
+    # phish_tracks is already filtered to only include Phish tracks for the specific show
     phish_tracks.each_with_index do |song_data, index|
       song = find_or_create_song(song_data, show)
       next unless song
@@ -967,20 +954,9 @@ namespace :phishnet do
     fixed_text
   end
 
-  def setlist_differs_from_local?(show)
-    # Fetch current setlist from Phish.net
-    response = Typhoeus.get(
-      "https://api.phish.net/v5/setlists/showdate/#{show.date.strftime('%Y-%m-%d')}.json",
-      params: { apikey: ENV.fetch("PNET_API_KEY", nil) }
-    )
-
-    return false unless response.success?
-
-    data = JSON.parse(response.body)
-    return false unless data["data"] && data["data"].any?
-
-    # Filter to only include Phish tracks (exclude guest appearances)
-    remote_setlist = data["data"].select { |song_data| song_data["artist_slug"] == "phish" }
+  def setlist_differs_from_local?(show, show_id)
+    # Fetch filtered setlist data for this specific show
+    remote_setlist = fetch_setlist_data_for_show(show.date, show_id)
     local_tracks = show.tracks.includes(:songs).order(:position)
 
     # For partial audio shows, we need to be more lenient in comparison
