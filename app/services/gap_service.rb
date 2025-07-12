@@ -14,6 +14,8 @@ class GapService < ApplicationService
 
     ActiveRecord::Base.transaction do
       show.tracks.where.not(set: "S").each do |track|
+        # Skip pre-show tracks that should be excluded from gap calculations
+        next if should_exclude_preshow_track?(track)
         track.songs.each do |song|
           song_track = SongsTrack.find_by(track_id: track.id, song_id: song.id)
           next unless song_track
@@ -55,6 +57,9 @@ class GapService < ApplicationService
 
     ActiveRecord::Base.transaction do
       show.tracks.where.not(set: "S").each do |track|
+        # Skip pre-show tracks that should be excluded from gap calculations
+        next if should_exclude_preshow_track?(track)
+
         track.songs.each do |song|
           # Find all previous performances of this song
           previous_song_tracks = SongsTrack.joins(track: :show)
@@ -385,12 +390,18 @@ class GapService < ApplicationService
                   4  # 4 separate performances
                 when Date.parse('1985-02-25')
                   2  # 2 separate performances (Doolin's + Private Party)
-                when Date.parse('2000-05-19')
+                                when Date.parse('2000-05-19')
                   2  # 2 separate performances (Key Club shows)
                 else
                   # Check if this show has pre-show tracks (set = "P")
                   has_preshow = show.tracks.exists?(set: "P")
-                  has_preshow ? 2 : 1
+
+                  # Check if this show's pre-show should be excluded from gap calculations
+                  if has_preshow && excluded_preshow_dates.include?(show.date)
+                    1  # Pre-show exists but should be excluded from gap calculations
+                  else
+                    has_preshow ? 2 : 1
+                  end
                 end
               end
     gap + 1
@@ -426,12 +437,18 @@ class GapService < ApplicationService
                   4  # 4 separate performances (but has audio_status: "missing" so won't be included)
                 when Date.parse('1985-02-25')
                   2  # 2 separate performances (Doolin's + Private Party)
-                when Date.parse('2000-05-19')
+                                when Date.parse('2000-05-19')
                   2  # 2 separate performances (Key Club shows)
                 else
                   # Check if this show has pre-show tracks (set = "P")
                   has_preshow = show.tracks.exists?(set: "P")
-                  has_preshow ? 2 : 1
+
+                  # Check if this show's pre-show should be excluded from gap calculations
+                  if has_preshow && excluded_preshow_dates.include?(show.date)
+                    1  # Pre-show exists but should be excluded from gap calculations
+                  else
+                    has_preshow ? 2 : 1
+                  end
                 end
               end
     gap + 1
@@ -444,5 +461,20 @@ class GapService < ApplicationService
 
   def log_info(message)
     Rails.logger.info(message) unless Rails.env.test?
+  end
+
+    def should_exclude_preshow_track?(track)
+    return false unless track.set == "P"
+    excluded_preshow_dates.include?(track.show.date)
+  end
+
+  def excluded_preshow_dates
+    @excluded_preshow_dates ||= [
+      Date.parse('1994-04-13'),  # Beacon Theatre - interviews/intro tracks not counted for stats
+      Date.parse('1997-02-26'),  # Longhorn - interviews/talk tracks not counted for stats
+      Date.parse('2014-06-24'),  # Ed Sullivan Theater - "The Line" pre-show not counted for stats
+      Date.parse('2023-08-25'),  # Saratoga Performing Arts Center - acoustic pre-show not counted for stats
+      Date.parse('2023-08-26')   # Saratoga Performing Arts Center - acoustic pre-show not counted for stats
+    ]
   end
 end
