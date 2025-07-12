@@ -156,7 +156,7 @@ namespace :phishnet do
           puts "Found show for #{date_filter} on Phish.net"
 
           begin
-            process_phishnet_show(pnet_show)
+            process_phishnet_show(pnet_show, [pnet_show])
             puts "Sync complete for #{date_filter}!"
           rescue StandardError => e
             puts "Error processing show #{date_filter}: #{e.message}"
@@ -174,7 +174,7 @@ namespace :phishnet do
     else
       puts "Starting Phish.net sync#{limit && limit > 0 ? " (limited to #{limit} new shows)" : ''}..."
 
-      # Get all known dates from Phish.net (artist-specific endpoint)
+            # Get all known dates from Phish.net (artist-specific endpoint)
       response = Typhoeus.get(
         "https://api.phish.net/v5/shows/artist/phish.json",
         params: {
@@ -217,7 +217,7 @@ namespace :phishnet do
 
         shows_to_process.each_with_index do |pnet_show, index|
           begin
-            process_phishnet_show(pnet_show)
+            process_phishnet_show(pnet_show, shows_data)
           rescue StandardError => e
             puts "\nError processing show #{pnet_show['showdate']}: #{e.message}"
             raise e # Re-raise to stop the process
@@ -225,7 +225,7 @@ namespace :phishnet do
           progressbar.increment
         end
 
-                puts "\nSync complete!"
+        puts "\nSync complete!"
 
         # Report any skipped shows
         report_skipped_shows
@@ -262,7 +262,7 @@ namespace :phishnet do
       if response.success?
         data = JSON.parse(response.body)
         if data["data"] && data["data"].any?
-          process_phishnet_show(data["data"].first)
+          process_phishnet_show(data["data"].first, data["data"])
         end
       end
       progressbar.increment
@@ -349,7 +349,7 @@ namespace :phishnet do
     false
   end
 
-  def process_phishnet_show(pnet_show)
+  def process_phishnet_show(pnet_show, all_shows_data = nil)
     date = Date.parse(pnet_show["showdate"])
 
     # Skip future shows
@@ -382,9 +382,26 @@ namespace :phishnet do
 
     show = Show.find_or_initialize_by(date: date)
 
-    # If exclude_from_stats is true, skip importing/updating it (both new and existing shows)
+    # Handle exclude_from_stats logic:
+    # - If exclude_from_stats is true and there's only one show on this date in remote data,
+    #   update the existing local show to mark it as excluded
+    # - If exclude_from_stats is true and there are multiple shows on this date, skip processing
     if exclude_from_stats
-      # puts "  Skipping show excluded from stats: #{pnet_show['showdate']}"
+      # Check if there are multiple shows on this date in the remote data
+      if all_shows_data
+        shows_on_date = all_shows_data.select { |s| s["showdate"] == pnet_show["showdate"] }
+        if shows_on_date.length > 1
+          # puts "  Skipping show excluded from stats (multiple shows on date): #{pnet_show['showdate']}"
+          return
+        end
+      end
+
+      # Only one show on this date - update existing local show to mark as excluded
+      if show.persisted?
+        show.exclude_from_stats = true
+        show.save!
+        # puts "  Updated existing show to exclude from stats: #{pnet_show['showdate']}"
+      end
       return
     end
 
