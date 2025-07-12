@@ -133,6 +133,9 @@ namespace :phishnet do
 
   desc "Sync all known Phish show dates from Phish.net (use LIMIT env var to limit new shows, DATE env var for single date)"
   task sync_shows: :environment do
+    # Reset skipped shows tracking at the beginning
+    reset_skipped_shows
+
     date_filter = ENV["DATE"]
     limit = ENV["LIMIT"]&.to_i
 
@@ -158,6 +161,9 @@ namespace :phishnet do
             puts "Error processing show #{date_filter}: #{e.message}"
             raise e
           end
+
+        # Report any skipped shows
+        report_skipped_shows
         else
           puts "No show found for #{date_filter} on Phish.net"
         end
@@ -218,7 +224,10 @@ namespace :phishnet do
           progressbar.increment
         end
 
-        puts "\nSync complete!"
+                puts "\nSync complete!"
+
+        # Report any skipped shows
+        report_skipped_shows
       else
         puts "Error fetching data from Phish.net: #{response.code}"
       end
@@ -227,6 +236,9 @@ namespace :phishnet do
 
   desc "Sync a specific date range from Phish.net"
   task :sync_date_range, [ :start_date, :end_date ] => :environment do |t, args|
+    # Reset skipped shows tracking at the beginning
+    reset_skipped_shows
+
     start_date = Date.parse(args[:start_date])
     end_date = Date.parse(args[:end_date])
     date_range = (start_date..end_date).to_a
@@ -255,10 +267,69 @@ namespace :phishnet do
       progressbar.increment
     end
 
-    puts "\nSync complete!"
+        puts "\nSync complete!"
+
+    # Report any skipped shows
+    report_skipped_shows
   end
 
   private
+
+  # Module variable to track shows skipped due to duplicate positions/sets
+  @skipped_shows_with_duplicates = []
+
+  def reset_skipped_shows
+    @skipped_shows_with_duplicates = []
+  end
+
+  def add_skipped_show(show_date, reason)
+    @skipped_shows_with_duplicates << { date: show_date, reason: reason }
+  end
+
+  def report_skipped_shows
+    return if @skipped_shows_with_duplicates.empty?
+
+    puts "\n" + "=" * 80
+    puts "⚠️  SHOWS SKIPPED DUE TO DUPLICATE POSITIONS/SETS:"
+    puts "=" * 80
+    @skipped_shows_with_duplicates.each do |skipped|
+      puts "#{skipped[:date]} - #{skipped[:reason]}"
+    end
+    puts "\nThese shows need manual review. The PhishNet maintainer suggests"
+    puts "using show ID instead of date for shows with multiple performances."
+    puts "=" * 80
+  end
+
+  # Helper method to detect duplicate positions/sets in PhishNet setlist data
+  def has_duplicate_positions_or_sets?(setlist_data)
+    return false unless setlist_data && setlist_data.any?
+
+    # Filter to only include Phish tracks
+    phish_tracks = setlist_data.select { |song_data| song_data["artist_slug"] == "phish" }
+    return false if phish_tracks.empty?
+
+    # Check for duplicate positions
+    position_counts = Hash.new(0)
+    phish_tracks.each { |song_data| position_counts[song_data["position"]] += 1 }
+    duplicate_positions = position_counts.select { |pos, count| count > 1 }
+
+    # Check for duplicate position/set combinations
+    position_set_counts = Hash.new(0)
+    phish_tracks.each do |song_data|
+      key = "#{song_data['position']}-#{song_data['set']}"
+      position_set_counts[key] += 1
+    end
+    duplicate_position_sets = position_set_counts.select { |key, count| count > 1 }
+
+    if duplicate_positions.any? || duplicate_position_sets.any?
+      duplicate_info = []
+      duplicate_info << "positions: #{duplicate_positions.keys.join(', ')}" if duplicate_positions.any?
+      duplicate_info << "position/set combos: #{duplicate_position_sets.keys.join(', ')}" if duplicate_position_sets.any?
+      return duplicate_info.join("; ")
+    end
+
+    false
+  end
 
   def process_phishnet_show(pnet_show)
     date = Date.parse(pnet_show["showdate"])
@@ -341,6 +412,27 @@ namespace :phishnet do
     end
 
     show.save!
+
+    # Check for duplicate positions/sets in PhishNet data before processing setlists
+    if show.audio_status == "missing" || show.audio_status == "partial"
+      # Fetch setlist data to check for duplicates
+      response = Typhoeus.get(
+        "https://api.phish.net/v5/setlists/showdate/#{show.date.strftime('%Y-%m-%d')}.json",
+        params: { apikey: ENV.fetch("PNET_API_KEY", nil) }
+      )
+
+      if response.success?
+        data = JSON.parse(response.body)
+        if data["data"] && data["data"].any?
+          duplicate_info = has_duplicate_positions_or_sets?(data["data"])
+          if duplicate_info
+                         puts "  ⚠️  Skipping show #{show.date} due to duplicate #{duplicate_info}"
+             add_skipped_show(show.date.to_s, "Duplicate #{duplicate_info}")
+            return
+          end
+        end
+      end
+    end
 
     # Handle setlist synchronization based on audio status
     if show.audio_status == "missing"
@@ -487,7 +579,6 @@ namespace :phishnet do
 
     # Get existing tracks
     existing_tracks = show.tracks.includes(:songs).order(:position)
-    puts "    Existing tracks: #{existing_tracks.map { |t| "#{t.position}:#{t.title}" }.join(', ')}"
 
     # Create a map of existing tracks by song title and set for easy lookup
     existing_track_map = {}
@@ -517,40 +608,8 @@ namespace :phishnet do
       # Process tracks in position order to handle insertions properly
       phish_tracks_sorted = phish_tracks.sort_by { |song_data| song_data["position"] || 0 }
 
-      # Check for duplicate positions and fix them
-      position_counts = Hash.new(0)
-      phish_tracks_sorted.each { |song_data| position_counts[song_data["position"]] += 1 }
-
-            duplicate_positions = position_counts.select { |pos, count| count > 1 }
-      if duplicate_positions.any?
-        puts "    WARNING: Found duplicate positions in PhishNet data: #{duplicate_positions.keys.join(', ')}"
-        puts "    Adjusting positions to avoid conflicts..."
-
-        # More intelligent position reassignment
-        # Keep non-duplicate positions intact, only reassign the duplicates
-        current_position = 1
-        used_positions = Set.new
-
-        phish_tracks_sorted.each do |song_data|
-          original_position = song_data["position"]
-
-          # If this position is not a duplicate, try to keep it
-          if position_counts[original_position] == 1 && !used_positions.include?(original_position)
-            song_data["position"] = original_position
-            used_positions.add(original_position)
-          else
-            # Find the next available position
-            while used_positions.include?(current_position)
-              current_position += 1
-            end
-
-            puts "      Reassigning '#{song_data['song']}' from position #{original_position} to #{current_position}"
-            song_data["position"] = current_position
-            used_positions.add(current_position)
-            current_position += 1
-          end
-        end
-      end
+      # Note: Duplicate position handling has been moved to process_phishnet_show
+      # Shows with duplicate positions/sets are now skipped entirely for manual review
 
       phish_tracks_sorted.each_with_index do |song_data, index|
         # Apply title mappings before song lookup
@@ -569,7 +628,6 @@ namespace :phishnet do
         pnet_position = song_data["position"] || (index + 1)
 
         track_key = build_track_key(pnet_title, pnet_set)
-        puts "    Processing: #{pnet_title} (set #{pnet_set}, position #{pnet_position})"
 
         # Check if track exists by title/set combination
         existing_track = existing_track_map[track_key]
@@ -583,19 +641,16 @@ namespace :phishnet do
 
           # Check if this slug already exists
           if existing_slug_map[potential_slug]
-            puts "      Found existing track with same slug: #{potential_slug}"
             existing_track = existing_slug_map[potential_slug]
           end
         end
 
         if existing_track
           # Track exists - move it to the correct position
-          puts "      Found existing track, moving to position #{pnet_position}"
           existing_track.update!(position: pnet_position)
           tracks_repositioned += 1
         else
           # Track doesn't exist - create it
-          puts "      Creating new track at position #{pnet_position}"
 
           track = show.tracks.build(
             title: pnet_title,
@@ -616,7 +671,6 @@ namespace :phishnet do
       end
 
       # Ensure tight sequential ordering of all tracks (1, 2, 3, 4, etc.)
-      puts "    Reordering tracks to ensure tight sequential positions..."
       final_tracks = show.tracks.reload.order(:position)
       final_tracks.each_with_index do |track, index|
         new_position = index + 1
@@ -624,7 +678,6 @@ namespace :phishnet do
           track.update_column(:position, new_position)
         end
       end
-      puts "    Final track positions: #{show.tracks.reload.order(:position).pluck(:position).join(', ')}"
 
       # Remove any existing tracks that are no longer in the PhishNet setlist
       # This handles cases where our local data had incorrect tracks
@@ -639,18 +692,16 @@ namespace :phishnet do
         pnet_track_keys.include?(track_key)
       end
 
-      tracks_removed = 0
-      tracks_to_remove.each do |track|
-        # Only remove tracks that have missing audio - preserve tracks with audio
-        if track.audio_status == "missing"
-          track.destroy!
-          tracks_removed += 1
-        else
-          puts "    Keeping track '#{track.title}' (set #{track.set}) with audio despite not being in PhishNet setlist"
+              tracks_removed = 0
+        tracks_to_remove.each do |track|
+          # Only remove tracks that have missing audio - preserve tracks with audio
+          if track.audio_status == "missing"
+            track.destroy!
+            tracks_removed += 1
+          end
         end
-      end
 
-      puts "    Created #{tracks_created} tracks, repositioned #{tracks_repositioned} tracks, removed #{tracks_removed} tracks for #{show.date}"
+        puts "    Created #{tracks_created} tracks, repositioned #{tracks_repositioned} tracks, removed #{tracks_removed} tracks for #{show.date}"
     end
 
     # Update show's audio status based on final track composition
