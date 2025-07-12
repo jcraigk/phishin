@@ -99,6 +99,8 @@ GEM
     bcrypt (3.1.20)
     benchmark (0.4.1)
     bigdecimal (3.2.2)
+    brakeman (7.0.2)
+      racc
     builder (3.3.0)
     bullet (8.0.8)
       activesupport (>= 3.0.0)
@@ -562,6 +564,7 @@ PLATFORMS
 DEPENDENCIES
   actionpack-action_caching
   aws-sdk-s3
+  brakeman
   bullet
   capybara
   capybara-email

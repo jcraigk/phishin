@@ -43,6 +43,7 @@ gem "waveform"
 gem "will_paginate"
 
 group :development do
+  gem "brakeman"
   gem "bullet"
   gem "dotenv-rails"
   gem "rubocop-capybara"
