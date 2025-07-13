@@ -1,7 +1,6 @@
 class Track < ApplicationRecord
   include TrackApiV1
-
-  AUDIO_STATUSES = %w[complete partial missing].freeze
+  include HasAudioStatus
 
   belongs_to :show, touch: true
   has_many :songs_tracks, dependent: :destroy
@@ -24,7 +23,6 @@ class Track < ApplicationRecord
   validates :position, :title, :set, presence: true
   validates :position, uniqueness: { scope: :show_id }
   validates :songs, length: { minimum: 1 }
-  validates :audio_status, inclusion: { in: AUDIO_STATUSES }
 
   before_save :generate_slug
   after_save :update_show_audio_status
@@ -88,10 +86,6 @@ class Track < ApplicationRecord
     show.save_duration
     apply_id3_tags
     generate_waveform_image
-  end
-
-  def missing_audio?
-    audio_status == "missing"
   end
 
   private

@@ -12,6 +12,8 @@ export const getAudioStatusFilterFromStorage = () => {
   return getHideMissingAudioFromStorage() ? 'complete_or_partial' : 'any';
 };
 
+// Deprecated: Use getAudioStatusFilterFromStorage() instead
+// This function is kept for backward compatibility but now returns the same values as getAudioStatusFilterFromStorage()
 export const getTrackAudioStatusFilterFromStorage = () => {
-  return getHideMissingAudioFromStorage() ? 'complete' : 'any';
+  return getAudioStatusFilterFromStorage();
 };

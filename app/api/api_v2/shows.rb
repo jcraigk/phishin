@@ -21,7 +21,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
       ]
     end
     params do
-      use :pagination, :proximity, :sort
+      use :pagination, :proximity, :sort, :audio_status
       optional :year,
                type: Integer,
                desc: "Filter shows by a specific year"
@@ -49,11 +49,6 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
                type: Boolean,
                default: false,
                desc: "If true, fetch only those shows liked by the current user"
-      optional :audio_status,
-               type: String,
-               desc: "Filter by audio status: 'any' (default), 'complete', 'partial', 'missing', 'complete_or_partial'",
-               default: "any",
-               values: %w[any complete partial missing complete_or_partial]
     end
     get do
       page = page_of_shows
@@ -87,12 +82,8 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
       ]
     end
     params do
+      use :audio_status
       requires :date, type: String, desc: "Date in the format YYYY-MM-DD"
-      optional :audio_status,
-               type: String,
-               desc: "Filter navigation by audio status: 'any' (default), 'complete', 'partial', 'missing', 'complete_or_partial'",
-               default: "any",
-               values: %w[any complete partial missing complete_or_partial]
     end
     get ":date" do
       show = show_by_date

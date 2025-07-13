@@ -11,7 +11,7 @@ class ApiV2::Songs < ApiV2::Base
       ]
     end
     params do
-      use :pagination
+      use :pagination, :audio_status
       optional :sort,
                type: String,
                desc: "Sort by attribute and direction (e.g., 'title:asc')",
@@ -21,11 +21,6 @@ class ApiV2::Songs < ApiV2::Base
                type: String,
                desc: "Filter songs by the first character of the song title (case-insensitive)",
                values: App.first_char_list
-      optional :audio_status,
-               type: String,
-               desc: "Filter by audio status: 'any' (default), 'complete_or_partial'",
-               default: "any",
-               values: %w[any complete_or_partial]
     end
     get do
       s = page_of_songs
@@ -84,17 +79,7 @@ class ApiV2::Songs < ApiV2::Base
     end
 
     def apply_audio_status_filter(songs)
-      if params[:audio_status] == "complete_or_partial"
-        # Only include songs that have at least one track with audio
-        # Use a subquery to avoid DISTINCT issues with ORDER BY
-        song_ids = Song.joins(tracks: :show)
-                      .where.not(shows: { audio_status: "missing" })
-                      .select(:id)
-                      .distinct
-                      .pluck(:id)
-        songs = songs.where(id: song_ids)
-      end
-      songs
+      apply_audio_status_filter_to_songs(songs, params[:audio_status])
     end
   end
 end

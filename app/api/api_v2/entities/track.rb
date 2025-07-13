@@ -59,7 +59,7 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     :audio_status,
     documentation: {
       type: "String",
-      desc: "Audio status of the track: 'complete' or 'missing'"
+      desc: "Audio status of the track: 'complete', 'partial', or 'missing'"
     }
 
   expose \

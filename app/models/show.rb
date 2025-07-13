@@ -1,8 +1,7 @@
 class Show < ApplicationRecord
   include HasCoverArt
   include ShowApiV1
-
-  AUDIO_STATUSES = %w[complete partial missing].freeze
+  include HasAudioStatus
 
   belongs_to :tour, counter_cache: true
   belongs_to :venue, counter_cache: true
@@ -28,7 +27,6 @@ class Show < ApplicationRecord
   friendly_id :date
 
   validates :date, presence: true, uniqueness: true
-  validates :audio_status, inclusion: { in: AUDIO_STATUSES }
 
   before_validation :cache_venue_name
   after_create :increment_shows_with_audio_counter_caches
@@ -62,10 +60,6 @@ class Show < ApplicationRecord
 
   def url
     "#{App.base_url}/#{date}"
-  end
-
-  def has_audio?
-    audio_status != "missing"
   end
 
   def update_audio_status_from_tracks!

@@ -11,7 +11,7 @@ class ApiV2::Tracks < ApiV2::Base
       ]
     end
     params do
-      use :pagination
+      use :pagination, :audio_status
       optional :sort,
                type: String,
                desc: "Sort by attribute and direction (e.g., 'id:asc')",
@@ -27,11 +27,6 @@ class ApiV2::Tracks < ApiV2::Base
                type: Boolean,
                desc: "Filter by tracks liked by the current user",
                default: false
-      optional :audio_status,
-               type: String,
-               desc: "Filter by audio status: 'any' (default), 'complete', 'missing'",
-               default: "any",
-               values: %w[any complete missing]
     end
     get do
       result = page_of_tracks

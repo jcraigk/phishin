@@ -9,6 +9,7 @@ class ApiV2::Search < ApiV2::Base
     end
 
     params do
+      use :audio_status
       requires :term,
                type: String,
                desc: "Search term (at least 3 characters long)"
@@ -17,11 +18,6 @@ class ApiV2::Search < ApiV2::Base
                values: SearchService::SCOPES,
                default: "all",
                desc: "Specifies the area of the site to search"
-      optional :audio_status,
-               type: String,
-               values: %w[any complete partial missing complete_or_partial],
-               default: "any",
-               desc: "Filter results by audio status"
     end
 
     get ":term" do
