@@ -352,8 +352,8 @@ namespace :phishnet do
   def process_phishnet_show(pnet_show, all_shows_data = nil)
     date = Date.parse(pnet_show["showdate"])
 
-    # Skip future shows
-    if date > Date.current
+    # Skip future shows (including today, since shows haven't happened yet)
+    if date >= Date.current
       # puts "Skipping future show: #{pnet_show['showdate']}"
       return
     end
