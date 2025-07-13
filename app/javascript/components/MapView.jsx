@@ -8,6 +8,7 @@ const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = 
   const mapContainer = useRef(null);
   const [map, setMap] = useState(null);
   const [mapboxgl, setMapboxgl] = useState(null);
+  const [currentMarkers, setCurrentMarkers] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,7 +48,14 @@ const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = 
     }
   }, [map, venues, mapboxgl]);
 
+  const clearMarkers = () => {
+    currentMarkers.forEach(marker => marker.remove());
+    setCurrentMarkers([]);
+  };
+
   const addMarkersToMap = (mapInstance, venues, mapboxglInstance) => {
+    clearMarkers();
+
     if (!mapInstance || venues.length === 0) {
       if (searchComplete) {
         new mapboxglInstance.Popup({ closeButton: false })
@@ -61,11 +69,11 @@ const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = 
     }
 
     const bounds = new mapboxglInstance.LngLatBounds();
+    const newMarkers = [];
 
     venues.forEach((venue) => {
       let marker;
 
-      // If single venue, use custom icon
       if (venues.length === 1) {
         const customIcon = document.createElement("div");
         customIcon.className = "custom-marker-icon";
@@ -110,8 +118,11 @@ const MapView = ({ mapboxToken, coordinates, venues, searchComplete, controls = 
       }
 
       marker.addTo(mapInstance);
+      newMarkers.push(marker);
       bounds.extend([venue.longitude, venue.latitude]);
     });
+
+    setCurrentMarkers(newMarkers);
 
     if (venues.length === 1) {
       mapInstance.setZoom(8);

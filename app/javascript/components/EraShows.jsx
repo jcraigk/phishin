@@ -43,17 +43,14 @@ const EraShows = () => {
   // Track the initial filter state to prevent unnecessary re-fetches
   const initialFilterRef = useRef(getAudioStatusFilter());
 
-  // Update shows when loader data changes (handles year navigation)
   useEffect(() => {
     setShows(initialShows);
   }, [initialShows]);
 
-  // Re-fetch data when audio filter changes
   useEffect(() => {
     const fetchShows = async () => {
       const currentAudioStatusFilter = getAudioStatusFilter();
 
-      // If the filter hasn't changed from the initial value, don't re-fetch
       if (currentAudioStatusFilter === initialFilterRef.current) {
         return;
       }
@@ -62,7 +59,6 @@ const EraShows = () => {
       const response = await authFetch(url);
       const data = await response.json();
       setShows(data.shows);
-      // Update the ref to track the new filter state
       initialFilterRef.current = currentAudioStatusFilter;
     };
 

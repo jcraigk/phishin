@@ -80,13 +80,11 @@ const SongIndex = () => {
     }
   };
 
-  // Re-fetch data when audio filter changes
   useEffect(() => {
     console.log('SongIndex useEffect triggered');
     const currentAudioStatusFilter = getAudioStatusFilter();
     console.log('Current filter:', currentAudioStatusFilter, 'Initial filter:', initialFilterRef.current, 'Has initialized:', hasInitialized.current);
 
-    // Initialize the ref on first run
     if (!hasInitialized.current) {
       console.log('Initializing filter ref');
       initialFilterRef.current = currentAudioStatusFilter;
@@ -94,7 +92,6 @@ const SongIndex = () => {
       return;
     }
 
-    // If the filter hasn't changed, don't re-fetch
     if (currentAudioStatusFilter === initialFilterRef.current) {
       console.log('Filter unchanged, skipping fetch');
       return;
@@ -103,14 +100,10 @@ const SongIndex = () => {
     console.log('Filter changed, starting fetch');
     const handleFilterChange = async () => {
       try {
-        // Reset to page 1 when filter changes
         await fetchSongs(1, sortOption, perPage, currentAudioStatusFilter);
 
-        // Update the ref to track the new filter state
         initialFilterRef.current = currentAudioStatusFilter;
 
-        // Don't navigate when filter changes - just update the data
-        // The URL will be updated next time the user interacts with pagination
       } catch (error) {
         // Error already logged in fetchSongs
       }
