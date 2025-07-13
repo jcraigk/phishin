@@ -7,6 +7,7 @@ RSpec.describe "Venues", :js do
       name: "Awesome Venue",
       city: "New York",
       shows_count: 15,
+      shows_with_audio_count: 15,
       slug: "awesome-venue"
     )
   end
@@ -16,6 +17,7 @@ RSpec.describe "Venues", :js do
       name: "Brilliant Venue",
       city: "Los Angeles",
       shows_count: 5,
+      shows_with_audio_count: 5,
       slug: "brilliant-venue"
     )
   end

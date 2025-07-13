@@ -386,31 +386,30 @@ class GapService < ApplicationService
     return 0 if start_date == end_date
 
     # Count shows between the dates (exclusive of start and end dates)
-    # Then add 1 to match PhishNet's inclusive counting methodology
-    gap = Show.where(date: start_date.next_day..end_date.prev_day)
-              .where(exclude_from_stats: false)
-              .sum do |show|
-                # Special cases: certain dates count as multiple performances for PhishNet compatibility
-                case show.date
-                when Date.parse('1985-05-01')
-                  4  # 4 separate performances
-                when Date.parse('1985-02-25')
-                  2  # 2 separate performances (Doolin's + Private Party)
-                                when Date.parse('2000-05-19')
-                  2  # 2 separate performances (Key Club shows)
-                else
-                  # Check if this show has pre-show tracks (set = "P")
-                  has_preshow = show.tracks.exists?(set: "P")
+    # PhishNet gap methodology: count shows between performances
+    Show.where(date: start_date.next_day..end_date.prev_day)
+        .where(exclude_from_stats: false)
+        .sum do |show|
+          # Special cases: certain dates count as multiple performances for PhishNet compatibility
+          case show.date
+          when Date.parse("1985-05-01")
+            4  # 4 separate performances
+          when Date.parse("1985-02-25")
+            2  # 2 separate performances (Doolin's + Private Party)
+          when Date.parse("2000-05-19")
+            2  # 2 separate performances (Key Club shows)
+          else
+            # Check if this show has pre-show tracks (set = "P")
+            has_preshow = show.tracks.exists?(set: "P")
 
-                  # Check if this show's pre-show should be excluded from gap calculations
-                  if has_preshow && excluded_preshow_dates.include?(show.date)
-                    1  # Pre-show exists but should be excluded from gap calculations
-                  else
-                    has_preshow ? 2 : 1
-                  end
-                end
-              end
-    gap + 1
+            # Check if this show's pre-show should be excluded from gap calculations
+            if has_preshow && excluded_preshow_dates.include?(show.date)
+              1  # Pre-show exists but should be excluded from gap calculations
+            else
+              has_preshow ? 2 : 1
+            end
+          end
+        end
   end
 
     def calculate_gap_with_audio(start_date, end_date, start_track = nil, end_track = nil)
@@ -432,32 +431,31 @@ class GapService < ApplicationService
     return 0 if start_date == end_date
 
     # Count shows with audio between the dates (exclusive of start and end dates)
-    # Then add 1 to match PhishNet's inclusive counting methodology
-    gap = Show.where(date: start_date.next_day..end_date.prev_day)
-              .where.not(audio_status: "missing")
-              .where(exclude_from_stats: false)
-              .sum do |show|
-                # Special cases: certain dates count as multiple performances for PhishNet compatibility
-                case show.date
-                when Date.parse('1985-05-01')
-                  4  # 4 separate performances (but has audio_status: "missing" so won't be included)
-                when Date.parse('1985-02-25')
-                  2  # 2 separate performances (Doolin's + Private Party)
-                                when Date.parse('2000-05-19')
-                  2  # 2 separate performances (Key Club shows)
-                else
-                  # Check if this show has pre-show tracks (set = "P")
-                  has_preshow = show.tracks.exists?(set: "P")
+    # PhishNet gap methodology: count shows between performances
+    Show.where(date: start_date.next_day..end_date.prev_day)
+        .where.not(audio_status: "missing")
+        .where(exclude_from_stats: false)
+        .sum do |show|
+          # Special cases: certain dates count as multiple performances for PhishNet compatibility
+          case show.date
+          when Date.parse("1985-05-01")
+            4  # 4 separate performances (but has audio_status: "missing" so won't be included)
+          when Date.parse("1985-02-25")
+            2  # 2 separate performances (Doolin's + Private Party)
+          when Date.parse("2000-05-19")
+            2  # 2 separate performances (Key Club shows)
+          else
+            # Check if this show has pre-show tracks (set = "P")
+            has_preshow = show.tracks.exists?(set: "P")
 
-                  # Check if this show's pre-show should be excluded from gap calculations
-                  if has_preshow && excluded_preshow_dates.include?(show.date)
-                    1  # Pre-show exists but should be excluded from gap calculations
-                  else
-                    has_preshow ? 2 : 1
-                  end
-                end
-              end
-    gap + 1
+            # Check if this show's pre-show should be excluded from gap calculations
+            if has_preshow && excluded_preshow_dates.include?(show.date)
+              1  # Pre-show exists but should be excluded from gap calculations
+            else
+              has_preshow ? 2 : 1
+            end
+          end
+        end
   end
 
   def build_slug(track)
@@ -476,17 +474,17 @@ class GapService < ApplicationService
 
   def excluded_preshow_dates
     @excluded_preshow_dates ||= [
-      Date.parse('1994-04-13'),  # Beacon Theatre - interviews/intro tracks not counted for stats
-      Date.parse('1997-02-26'),  # Longhorn - interviews/talk tracks not counted for stats
-      Date.parse('2014-06-24'),  # Ed Sullivan Theater - "The Line" pre-show not counted for stats
-      Date.parse('2023-08-25'),  # Saratoga Performing Arts Center - acoustic pre-show not counted for stats
-      Date.parse('2023-08-26')   # Saratoga Performing Arts Center - acoustic pre-show not counted for stats
+      Date.parse("1994-04-13"),  # Beacon Theatre - interviews/intro tracks not counted for stats
+      Date.parse("1997-02-26"),  # Longhorn - interviews/talk tracks not counted for stats
+      Date.parse("2014-06-24"),  # Ed Sullivan Theater - "The Line" pre-show not counted for stats
+      Date.parse("2023-08-25"),  # Saratoga Performing Arts Center - acoustic pre-show not counted for stats
+      Date.parse("2023-08-26")   # Saratoga Performing Arts Center - acoustic pre-show not counted for stats
     ]
   end
 
   def should_exclude_song_from_gaps?(song)
     # Exclude songs that are inconsistent between systems or not meaningful for gap calculations
-    excluded_song_titles = ['Intro', 'Outro', 'Jam']
+    excluded_song_titles = [ "Intro", "Outro", "Jam" ]
     excluded_song_titles.include?(song.title)
   end
 end

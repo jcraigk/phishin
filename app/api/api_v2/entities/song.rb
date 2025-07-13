@@ -45,7 +45,7 @@ class ApiV2::Entities::Song < ApiV2::Entities::Base
     :tracks_with_audio_count,
     documentation: {
       type: "Integer",
-      desc: "Number of tracks with audio associated with the song"
+      desc: "Number of tracks that have audio associated with the song"
     }
 
   expose \

@@ -17,7 +17,7 @@ class ApiV2::Entities::Year < ApiV2::Entities::Base
     :shows_with_audio_count,
     documentation: {
       type: "Integer",
-      desc: "Number of shows that were performed during this period for which known recordings exist"
+      desc: "Number of shows that have audio and were performed during this period"
     }
 
   expose \
@@ -38,7 +38,7 @@ class ApiV2::Entities::Year < ApiV2::Entities::Base
     :venues_with_audio_count,
     documentation: {
       type: "Integer",
-      desc: "Unique number of venues that shows with audio were performed at during this period"
+      desc: "Unique number of venues where shows that have audio were performed during this period"
     }
 
   expose \

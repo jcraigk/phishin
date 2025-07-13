@@ -175,7 +175,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
     documentation: {
       type: "String",
       format: "date",
-      desc: "Date of the previous show with audio (or last show with audio if none exists)"
+      desc: "Date of the previous show that has audio (or last show that has audio if none exists)"
     }
   ) { _2[:previous_show_date_with_audio] }
 
@@ -185,7 +185,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
     documentation: {
       type: "String",
       format: "date",
-      desc: "Date of the next show with audio (or first show with audio if none exists)"
+      desc: "Date of the next show that has audio (or first show that has audio if none exists)"
     }
   ) { _2[:next_show_date_with_audio] }
 end

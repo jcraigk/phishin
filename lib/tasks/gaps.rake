@@ -51,7 +51,7 @@ namespace :gaps do
   end
 
   desc "Recalculate gaps for a specific show"
-  task :recalculate, [:date] => :environment do |t, args|
+  task :recalculate, [ :date ] => :environment do |t, args|
     unless args[:date]
       puts "Usage: rake gaps:recalculate[YYYY-MM-DD]"
       exit 1
@@ -69,7 +69,7 @@ namespace :gaps do
   end
 
     desc "Generate comprehensive gap mismatch report against PhishNet API"
-  task :mismatch_report, [:bail_on_first, :limit] => :environment do |t, args|
+  task :mismatch_report, [ :bail_on_first, :limit ] => :environment do |t, args|
     bail_on_first = args[:bail_on_first] == "true"
     limit = args[:limit]&.to_i
 
@@ -148,7 +148,7 @@ namespace :gaps do
           next unless local_song
 
           # Skip songs that should be excluded from gap calculations
-          excluded_song_titles = ['intro', 'outro', 'jam']
+          excluded_song_titles = [ "intro", "outro", "jam" ]
           next if excluded_song_titles.include?(local_song.title.downcase)
 
           songs_track = local_track.songs_tracks.find { |st| st.song_id == local_song.id }
@@ -217,7 +217,7 @@ namespace :gaps do
               puts "🔧 Investigation command: rake gaps:investigate[#{show.date},'#{local_song.title}']"
               exit 0
             end
-          end
+                    end
         end
 
         # Rate limiting - be nice to PhishNet API
@@ -310,7 +310,7 @@ namespace :gaps do
       puts "   To investigate specific mismatches, use:"
       puts "   rake gaps:investigate[YYYY-MM-DD,'Song Title']"
       puts "   Example: rake gaps:investigate[#{mismatch_details.first[:show_date]},'#{mismatch_details.first[:song_title]}']"
-    end
+        end
 
     puts "\n🔧 RECOMMENDATIONS:"
     if total_mismatches > 0
@@ -326,7 +326,7 @@ namespace :gaps do
   end
 
   desc "Spot check local gaps against PhishNet API data"
-  task :spot_check_phishnet, [:limit] => :environment do |t, args|
+  task :spot_check_phishnet, [ :limit ] => :environment do |t, args|
     limit = args[:limit]&.to_i || ENV["LIMIT"]&.to_i || 10
 
     puts "🔍 Starting spot check of local gaps against PhishNet API..."
@@ -483,7 +483,7 @@ namespace :gaps do
   end
 
   desc "Check gap data integrity for a specific show"
-  task :check_show, [:date] => :environment do |t, args|
+  task :check_show, [ :date ] => :environment do |t, args|
     unless args[:date]
       puts "Usage: rake gaps:check_show[YYYY-MM-DD]"
       exit 1
