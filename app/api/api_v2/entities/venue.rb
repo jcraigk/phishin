@@ -73,7 +73,7 @@ class ApiV2::Entities::Venue < ApiV2::Entities::Base
     :shows_with_audio_count,
     documentation: {
       type: "Integer",
-      desc: "Number of shows with available audio (complete or partial) that have taken place at the venue"
+      desc: "Number of shows that have audio and have taken place at the venue"
     }
 
   expose \

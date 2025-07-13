@@ -78,7 +78,7 @@ class ApiV2::Api < ApiV2::Base
       },
       {
         name: "tracks",
-        description: "Tracks from live Phish shows, including both available recordings and placeholder entries without circulating audio"
+        description: "Tracks from live Phish shows, including links to audio if available"
       },
       {
         name: "venues",

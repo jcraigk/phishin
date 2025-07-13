@@ -1,7 +1,7 @@
 class Track < ApplicationRecord
   include TrackApiV1
 
-  AUDIO_STATUSES = %w[complete missing].freeze
+  AUDIO_STATUSES = %w[complete partial missing].freeze
 
   belongs_to :show, touch: true
   has_many :songs_tracks, dependent: :destroy

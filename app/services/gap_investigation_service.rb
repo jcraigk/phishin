@@ -222,7 +222,7 @@ class GapInvestigationService < ApplicationService
       end
 
       # Add individual show entries for detailed analysis
-      max_count = [pnet_count, local_count].max
+      max_count = [ pnet_count, local_count ].max
       (0...max_count).each do |index|
         pnet_show = pnet_shows_for_date[index]
         local_show = local_shows_for_date[index]

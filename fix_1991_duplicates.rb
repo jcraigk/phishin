@@ -5,7 +5,7 @@ puts 'Removing duplicate tracks with missing audio...'
 tracks_to_remove = []
 
 # Look for tracks that appear to be duplicates based on title and set
-track_groups = show.tracks.group_by { |t| [t.title.downcase.strip, t.set] }
+track_groups = show.tracks.group_by { |t| [ t.title.downcase.strip, t.set ] }
 track_groups.each do |key, tracks|
   if tracks.count > 1
     # Keep the track with audio if any, otherwise keep the first one

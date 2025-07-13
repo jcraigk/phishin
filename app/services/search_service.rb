@@ -1,7 +1,6 @@
 class SearchService < ApplicationService
   option :term
   option :scope, default: proc { "all" }
-  option :api_version, default: proc { "v2" }
   option :audio_status, default: proc { "any" }
 
   LIMIT = 50
@@ -89,8 +88,7 @@ class SearchService < ApplicationService
 
   def songs
     return [] if term_is_date?
-    scope = Song.where("title ILIKE :term OR alias ILIKE :term", term: "%#{term}%")
-               .order(title: :asc)
+    scope = Song.where("songs.title ILIKE :term OR songs.alias ILIKE :term", term: "%#{term}%")
                .limit(LIMIT)
 
     # Filter songs to only include those with audio if audio_status is complete_or_partial
@@ -98,6 +96,9 @@ class SearchService < ApplicationService
       scope = scope.joins(songs_tracks: { track: :show })
                    .where.not(shows: { audio_status: "missing" })
                    .distinct
+                   .order("songs.title ASC")
+    else
+      scope = scope.order(title: :asc)
     end
 
     scope
@@ -172,18 +173,6 @@ class SearchService < ApplicationService
   end
 
   def apply_audio_status_filter(relation, table_prefix = nil)
-    return relation if api_version == "v1" && audio_status == "any"
-
-    # Handle legacy v1 API behavior
-    if api_version == "v1"
-      if table_prefix == :show
-        return relation.where.not(shows: { audio_status: "missing" })
-      else
-        return relation.where.not(audio_status: "missing")
-      end
-    end
-
-    # Handle v2 API audio_status filtering
     case audio_status
     when "complete", "partial", "missing"
       if table_prefix == :show

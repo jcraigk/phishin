@@ -56,7 +56,7 @@ namespace :phishnet do
     "FirstMerit Bank Pavilion at Northerly Island" => 768,
     "NBC Television Studios, Studio 6A" => 466,
     "NBC Television Studios, Studio 6B" => 466,
-    "The Wharf Amphitheater" => 794,
+    "The Wharf Amphitheater" => 794
   }.freeze
 
   # Date-specific tour overrides - maps show date to tour name
@@ -156,7 +156,7 @@ namespace :phishnet do
           puts "Found show for #{date_filter} on Phish.net"
 
           begin
-            process_phishnet_show(pnet_show, [pnet_show])
+            process_phishnet_show(pnet_show, [ pnet_show ])
             puts "Sync complete for #{date_filter}!"
           rescue StandardError => e
             puts "Error processing show #{date_filter}: #{e.message}"
@@ -174,7 +174,7 @@ namespace :phishnet do
     else
       puts "Starting Phish.net sync#{limit && limit > 0 ? " (limited to #{limit} new shows)" : ''}..."
 
-            # Get all known dates from Phish.net (artist-specific endpoint)
+      # Get all known dates from Phish.net (artist-specific endpoint)
       response = Typhoeus.get(
         "https://api.phish.net/v5/shows/artist/phish.json",
         params: {
@@ -606,7 +606,6 @@ namespace :phishnet do
       track.songs.each do |song|
         key = build_track_key(song.title, track.set)
         existing_track_map[key] = track
-
       end
     end
 
@@ -625,7 +624,7 @@ namespace :phishnet do
       # First, move all existing tracks to temporary positions to avoid conflicts
       # Use a high temporary position that won't conflict with existing tracks
       max_position = show.tracks.maximum(:position) || 0
-      temp_position_start = [max_position + 1000, 10000].max
+      temp_position_start = [ max_position + 1000, 10000 ].max
       existing_tracks.each_with_index do |track, index|
         track.update_column(:position, temp_position_start + index)
       end
@@ -651,7 +650,7 @@ namespace :phishnet do
 
         track_key = build_track_key(pnet_title, pnet_set)
 
-                # Check if track exists by title/set combination
+        # Check if track exists by title/set combination
         existing_track = existing_track_map[track_key]
 
         # If not found by title/set, check if there's a slug conflict
@@ -735,7 +734,7 @@ namespace :phishnet do
 
 
 
-    # Helper method to apply title mappings
+  # Helper method to apply title mappings
   def apply_title_mapping(title)
     normalized_title = title.to_s.strip.downcase
 

@@ -1,6 +1,6 @@
 namespace :gaps do
   desc "Investigate gap discrepancy for a specific track"
-  task :investigate, [:date, :track_title] => :environment do |t, args|
+  task :investigate, [ :date, :track_title ] => :environment do |t, args|
     unless args[:date] && args[:track_title]
       puts "Usage: rake gaps:investigate[YYYY-MM-DD,'Track Title']"
       puts "Example: rake gaps:investigate[2003-02-18,'The Moma Dance']"
@@ -100,7 +100,7 @@ namespace :gaps do
   end
 
   desc "Batch investigate multiple tracks for gap discrepancies"
-  task :batch_investigate, [:file_path] => :environment do |t, args|
+  task :batch_investigate, [ :file_path ] => :environment do |t, args|
     unless args[:file_path]
       puts "Usage: rake gaps:batch_investigate[path/to/tracks.csv]"
       puts "CSV format: date,track_title"
@@ -123,8 +123,8 @@ namespace :gaps do
     investigations = []
 
     CSV.foreach(file_path, headers: true) do |row|
-      date = row['date']
-      track_title = row['track_title']
+      date = row["date"]
+      track_title = row["track_title"]
 
       next unless date && track_title
 
