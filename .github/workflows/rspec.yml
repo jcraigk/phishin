@@ -1,0 +1,67 @@
+name: RSpec
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  rspec:
+    name: RSpec
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: phishin_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:6
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    env:
+      RAILS_ENV: test
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGPORT: 5432
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/phishin_test
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libsndfile1-dev google-chrome-stable
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.4.4'
+        bundler-cache: true
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'yarn'
+    - name: Install JavaScript dependencies
+      run: yarn install --frozen-lockfile
+    - name: Setup database
+      run: |
+        bundle exec rails db:create
+        bundle exec rails db:migrate
+    - name: Precompile assets
+      run: bundle exec rails assets:precompile
+    - name: Run RSpec
+      run: bundle exec rspec

@@ -1,6 +1,7 @@
 .bundle
 .DS_Store
 .env
+.overmind.sock
 .yarn-integrity
 /.vscode
 /.yarn

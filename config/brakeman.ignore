@@ -1,0 +1,74 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Command Injection",
+      "warning_code": 14,
+      "fingerprint": "4608fc9884cf5b90ff0ee8be02514de80b25d5af5da74b461c4258d3a3da14c7",
+      "check_name": "Execute",
+      "message": "Possible command injection",
+      "file": "app/services/interactive_cover_art_service.rb",
+      "line": 163,
+      "link": "https://brakemanscanner.org/docs/warning_types/command_injection/",
+      "code": "system(\"timg --pixelation=iterm2 -g 120x120 \\\"#{image_url}\\\" 2>/dev/null\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "InteractiveCoverArtService",
+        "method": "display_image_in_terminal"
+      },
+      "user_input": "image_url",
+      "confidence": "Medium",
+      "cwe_id": [
+        77
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "bfb1825e20953246d5fa5c4682d2a40afb73c7ac06ce2bca98174a4253f20106",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/api/api_v2/helpers/shared_helpers.rb",
+      "line": 16,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Arel.sql((\"LOWER(#{relation.table_name}.#{attribute}) COLLATE \\\"C\\\" #{direction}\" or \"#{relation.table_name}.#{attribute} #{direction}\"))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "ApiV2::Helpers::SharedHelpers",
+        "method": "apply_sort"
+      },
+      "user_input": "attribute",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "ca522e1058d9c7155bd2bba6047982ca957b459e255d2130724c6022d1296776",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/api/api_v2/helpers/shared_helpers.rb",
+      "line": 27,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Arel.sql((\"LOWER(#{relation.table_name}.#{secondary_col}) COLLATE \\\"C\\\" #{secondary_dir}\" or \"#{relation.table_name}.#{secondary_col} #{secondary_dir}\"))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "ApiV2::Helpers::SharedHelpers",
+        "method": "apply_sort"
+      },
+      "user_input": "secondary_col",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": ""
+    }
+  ],
+  "brakeman_version": "7.0.2"
+}
