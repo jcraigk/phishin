@@ -5,6 +5,8 @@ import MapView from "./MapView";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { useAudioFilter } from "./contexts/AudioFilterContext";
+import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
 
 const usStates = [
   "(US State)", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME",
@@ -15,6 +17,7 @@ const usStates = [
 const MapSearch = () => {
   const location = useLocation();
   const { mapboxToken } = useOutletContext();
+  const { hideMissingAudio, getAudioStatusFilter } = useAudioFilter();
 
   const getQueryParams = () => {
     const params = new URLSearchParams(location.search);
@@ -42,6 +45,14 @@ const MapSearch = () => {
     }
   }, [mapboxToken]);
 
+  useEffect(() => {
+    if (formData.term !== "Burlington, VT" || formData.us_state !== "(US State)") {
+      handleSubmit(new Event("submit"));
+    } else {
+      initializeMap(defaultCoordinates.lat, defaultCoordinates.lng, defaultRadius);
+    }
+  }, [hideMissingAudio]);
+
   const initializeMap = async (lat, lng, radius) => {
     setSearchComplete(false);
     const fetchedVenues = await fetchShows(lat, lng, radius);
@@ -51,7 +62,8 @@ const MapSearch = () => {
 
   const fetchShows = async (lat, lng, distance) => {
     const { start_date, end_date, us_state } = formData;
-    let url = `/api/v2/shows?per_page=250&sort=date:desc&start_date=${start_date}&end_date=${end_date}`;
+    const audioStatusFilter = getAudioStatusFilter();
+    let url = `/api/v2/shows?per_page=250&sort=date:desc&start_date=${start_date}&end_date=${end_date}&audio_status=${audioStatusFilter}`;
 
     if (isStateSelected) {
       url += `&us_state=${us_state}`;
