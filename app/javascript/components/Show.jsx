@@ -43,13 +43,11 @@ const Show = ({ trackSlug }) => {
   const { playTrack, openAppModal, closeAppModal } = useOutletContext();
   const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
   const [showAdminNotesNotification, setShowAdminNotesNotification] = useState(!!show.admin_notes);
-  const [showMissingAudioNotification, setShowMissingAudioNotification] = useState(show.audio_status === 'missing');
   const [showPartialAudioNotification, setShowPartialAudioNotification] = useState(show.audio_status === 'partial');
   const { hideMissingAudio } = useAudioFilter();
 
   useEffect(() => {
     setTracks(show.tracks);
-    setShowMissingAudioNotification(show.audio_status === 'missing');
     setShowPartialAudioNotification(show.audio_status === 'partial');
 
     const backgroundDiv = document.querySelector(".background-blur");
@@ -81,7 +79,6 @@ const Show = ({ trackSlug }) => {
 
   const handleClose = (notificationType) => {
     if (notificationType === "adminNotes") setShowAdminNotesNotification(false);
-    if (notificationType === "missingAudio") setShowMissingAudioNotification(false);
     if (notificationType === "partialAudio") setShowPartialAudioNotification(false);
   };
 
@@ -168,7 +165,6 @@ const Show = ({ trackSlug }) => {
         </aside>
 
         <section id="main-content">
-          {showMissingAudioNotification && infoBox("No known audience recording exists for this show", () => handleClose("missingAudio"), true)}
           {showPartialAudioNotification && infoBox("This show has partial audio", () => handleClose("partialAudio"), true)}
           {showAdminNotesNotification && infoBox(show.admin_notes, () => handleClose("adminNotes"))}
           {show.audio_status === 'missing' && tracks.length === 0 && (

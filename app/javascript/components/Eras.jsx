@@ -4,10 +4,6 @@ export const erasLoader = async () => {
     if (!response.ok) throw response;
     const data = await response.json();
 
-    // Calculate base totals from backend data
-    const totalShowsWithAudio = data.reduce((sum, year) => sum + (year.shows_with_audio_count || 0), 0);
-    const totalDuration = data.reduce((sum, year) => sum + (year.shows_duration || 0), 0);
-
     const erasData = data.reduce((acc, yearData) => {
       const {
         era,
@@ -35,11 +31,10 @@ export const erasLoader = async () => {
         shows_with_audio_count,
         venues_count,
         venues_with_audio_count,
-        cover_art_urls,
-        display_count: shows_with_audio_count // Default to shows with audio
+        cover_art_urls
       });
 
-      acc[era].total_shows += shows_with_audio_count;
+      acc[era].total_shows += shows_count;
       acc[era].total_shows_with_audio += shows_with_audio_count;
       acc[era].total_duration += shows_duration;
 
@@ -50,13 +45,6 @@ export const erasLoader = async () => {
       erasData[era].periods.sort((a, b) => b.period.localeCompare(a.period));
     });
 
-    // Add global totals to the data
-    erasData._totals = {
-      totalShows: totalShowsWithAudio, // Default to shows with audio
-      totalShowsWithAudio,
-      totalDuration
-    };
-
     return erasData;
   } catch (error) {
     console.error("Error loading eras data:", error);
@@ -64,7 +52,7 @@ export const erasLoader = async () => {
   }
 };
 
-import React, { useState } from "react";
+import React from "react";
 import { Link, useLoaderData, useOutletContext } from "react-router-dom";
 import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
@@ -77,52 +65,34 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList, faTh, faSortAmountDown, faSortAmountUp } from "@fortawesome/free-solid-svg-icons";
 
 const Eras = () => {
-  const initialEras = useLoaderData();
-  const [eras, setEras] = useState(initialEras);
+  const eras = useLoaderData();
   const { viewMode, setViewMode, sortOption, setSortOption } = useOutletContext();
   const { hideMissingAudio } = useAudioFilter();
 
-  // Calculate display values based on current filter state
-  const getDisplayErasData = () => {
-    const rawEras = { ...eras };
-
-    // Recalculate totals based on current filter
+  // Calculate totals based on current filter
+  const calculateTotals = () => {
     let totalShows = 0;
     let totalDuration = 0;
 
-    Object.keys(rawEras).forEach((era) => {
-      if (era === '_totals') return;
-
-      rawEras[era].total_shows = 0;
-      rawEras[era].periods.forEach((period) => {
-              const displayCount = hideMissingAudio ? period.shows_with_audio_count : period.shows_count;
-      const displayVenuesCount = hideMissingAudio ? period.venues_with_audio_count : period.venues_count;
-        period.display_count = displayCount;
-        period.display_venues_count = displayVenuesCount;
-        rawEras[era].total_shows += displayCount;
-        totalShows += displayCount;
+    Object.keys(eras).forEach((era) => {
+      eras[era].periods.forEach((period) => {
+        const showCount = hideMissingAudio ? period.shows_with_audio_count : period.shows_count;
+        totalShows += showCount;
       });
+      totalDuration += eras[era].total_duration;
     });
 
-    // Keep original total duration
-    totalDuration = rawEras._totals?.totalDuration || 0;
-
-    rawEras._totals = {
-      ...rawEras._totals,
-      totalShows,
-      totalDuration,
-      hideMissingAudio
-    };
-
-    return rawEras;
+    return { totalShows, totalHours: Math.round(totalDuration / (1000 * 60 * 60)) };
   };
 
-  const displayEras = getDisplayErasData();
+  const { totalShows, totalHours } = calculateTotals();
 
-  // Use pre-calculated totals from the backend with fallback values
-  const totals = displayEras._totals || {};
-  const { totalShows = 0, totalShowsWithAudio = 0, totalDuration = 0 } = totals;
-  const totalHours = Math.round(totalDuration / (1000 * 60 * 60)) || 0;
+  const getDisplayCount = (period) => hideMissingAudio ? period.shows_with_audio_count : period.shows_count;
+  const getDisplayVenuesCount = (period) => hideMissingAudio ? period.venues_with_audio_count : period.venues_count;
+
+  const getEraTotal = (era) => {
+    return eras[era].periods.reduce((sum, period) => sum + getDisplayCount(period), 0);
+  };
 
   const renderViewToggleButtons = () => (
     <div className="view-toggle buttons has-addons">
@@ -170,32 +140,32 @@ const Eras = () => {
     </div>
   );
 
-  const renderListItem = ({ period, shows_count = 0, shows_with_audio_count = 0, venues_count = 0, venues_with_audio_count = 0, cover_art_urls = {}, display_count = 0, display_venues_count = 0 }) => (
-    <Link to={`/${period}`} key={period} className="list-item-link">
+  const renderListItem = (period) => (
+    <Link to={`/${period.period}`} key={period.period} className="list-item-link">
       <li className="list-item">
         <div className="main-row">
           <span className="leftside-primary">
-            <CoverArt coverArtUrls={cover_art_urls} css="cover-art-small" />
-            <span className="text has-text-weight-bold">{period}</span>
+            <CoverArt coverArtUrls={period.cover_art_urls} css="cover-art-small" />
+            <span className="text has-text-weight-bold">{period.period}</span>
           </span>
           <span className="leftside-secondary">
-            {formatNumber(display_venues_count, "venue")}
+            {formatNumber(getDisplayVenuesCount(period), "venue")}
           </span>
           <span className="rightside-group">
-            {formatNumber(display_count, "show")}
+            {formatNumber(getDisplayCount(period), "show")}
           </span>
         </div>
       </li>
     </Link>
   );
 
-  const renderGridItem = ({ period, shows_count = 0, shows_with_audio_count = 0, venues_count = 0, venues_with_audio_count = 0, cover_art_urls = {}, display_count = 0, display_venues_count = 0 }) => (
-    <Link to={`/${period}`} key={period} className="list-item-link">
-      <li className="grid-item" style={{ backgroundImage: `url(${cover_art_urls?.medium})` }}>
+  const renderGridItem = (period) => (
+    <Link to={`/${period.period}`} key={period.period} className="list-item-link">
+      <li className="grid-item" style={{ backgroundImage: `url(${period.cover_art_urls?.medium})` }}>
         <div className="overlay">
-          <p className={`period ${period.includes("-") ? "period-range" : ""}`}>{period}</p>
+          <p className={`period ${period.period.includes("-") ? "period-range" : ""}`}>{period.period}</p>
           <p className="period-details">
-            {formatNumber(display_venues_count, "venue")} • {formatNumber(display_count, "show")}
+            {formatNumber(getDisplayVenuesCount(period), "venue")} • {formatNumber(getDisplayCount(period), "show")}
           </p>
         </div>
       </li>
@@ -236,19 +206,18 @@ const Eras = () => {
       </div>
 
       <div>
-        {Object.keys(displayEras)
-          .filter(key => key !== '_totals') // Exclude the _totals key from rendering
+        {Object.keys(eras)
           .sort((a, b) => (sortOption === "asc" ? a.localeCompare(b) : b.localeCompare(a)))
           .map((era) => (
             <React.Fragment key={era}>
               <div className="section-title">
                 <div className="title-left">{era}</div>
-                <span className="detail-right">{formatNumber(displayEras[era].total_shows, "show")}</span>
+                <span className="detail-right">{formatNumber(getEraTotal(era), "show")}</span>
               </div>
-              <ul className={`${viewMode === "grid" ? "grid-view" : ""} ${viewMode === "grid" && (displayEras[era]?.periods?.length || 0) < 3 ? "limited-width" : ""}`}>
+              <ul className={`${viewMode === "grid" ? "grid-view" : ""} ${viewMode === "grid" && eras[era].periods.length < 3 ? "limited-width" : ""}`}>
                 {viewMode === "list"
-                  ? displayEras[era].periods.map(renderListItem)
-                  : displayEras[era].periods.map(renderGridItem)}
+                  ? eras[era].periods.map(renderListItem)
+                  : eras[era].periods.map(renderGridItem)}
               </ul>
             </React.Fragment>
           ))}
