@@ -11,7 +11,7 @@ class ApiV2::Tracks < ApiV2::Base
       ]
     end
     params do
-      use :pagination
+      use :pagination, :audio_status
       optional :sort,
                type: String,
                desc: "Sort by attribute and direction (e.g., 'id:asc')",
