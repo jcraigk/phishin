@@ -127,7 +127,7 @@ songs: [ songs[0], songs[1] ])
         get_api_authed(user, "/tracks", params: { year: 2023 })
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body, symbolize_names: true)
-        expect(json[:tracks].map { |t| t[:id] }).to match_array([tracks[0].id, tracks[3].id])
+        expect(json[:tracks].map { |t| t[:id] }).to contain_exactly(tracks[0].id, tracks[3].id)
       end
     end
 
@@ -136,7 +136,7 @@ songs: [ songs[0], songs[1] ])
         get_api_authed(user, "/tracks", params: { year_range: "2023-2024" })
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body, symbolize_names: true)
-        expect(json[:tracks].map { |t| t[:id] }).to match_array([tracks[0].id, tracks[1].id, tracks[3].id])
+        expect(json[:tracks].map { |t| t[:id] }).to contain_exactly(tracks[0].id, tracks[1].id, tracks[3].id)
       end
     end
 
@@ -145,21 +145,21 @@ songs: [ songs[0], songs[1] ])
         get_api_authed(user, "/tracks", params: { start_date: "2023-01-01", end_date: "2024-12-31" })
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body, symbolize_names: true)
-        expect(json[:tracks].map { |t| t[:id] }).to match_array([tracks[0].id, tracks[1].id, tracks[3].id])
+        expect(json[:tracks].map { |t| t[:id] }).to contain_exactly(tracks[0].id, tracks[1].id, tracks[3].id)
       end
 
       it "returns tracks from the specified start_date only" do
         get_api_authed(user, "/tracks", params: { start_date: "2024-01-01" })
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body, symbolize_names: true)
-        expect(json[:tracks].map { |t| t[:id] }).to match_array([tracks[1].id, tracks[2].id])
+        expect(json[:tracks].map { |t| t[:id] }).to contain_exactly(tracks[1].id, tracks[2].id)
       end
 
       it "returns tracks up to the specified end_date only" do
         get_api_authed(user, "/tracks", params: { end_date: "2023-12-31" })
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body, symbolize_names: true)
-        expect(json[:tracks].map { |t| t[:id] }).to match_array([tracks[0].id, tracks[3].id])
+        expect(json[:tracks].map { |t| t[:id] }).to contain_exactly(tracks[0].id, tracks[3].id)
       end
     end
 
