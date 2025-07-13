@@ -1,4 +1,5 @@
 import { authFetch } from "./helpers/utils";
+import { getTrackAudioStatusFilterFromStorage } from "./utils/audioFilter";
 
 export const myTracksLoader = async ({ request }) => {
   const url = new URL(request.url);
@@ -6,9 +7,7 @@ export const myTracksLoader = async ({ request }) => {
   const sortOption = url.searchParams.get("sort") || "date:desc";
   const perPage = url.searchParams.get("per_page") || 10;
 
-  // Check localStorage for audio filter setting
-  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
-  const audioStatusFilter = hideMissingAudio ? 'complete' : 'any';
+  const audioStatusFilter = getTrackAudioStatusFilterFromStorage();
 
   try {
     const response = await authFetch(`/api/v2/tracks?liked_by_user=true&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`);

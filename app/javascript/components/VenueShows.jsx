@@ -1,13 +1,12 @@
 import { authFetch, formatNumber } from "./helpers/utils";
+import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
 
 export const venueShowsLoader = async ({ params, request }) => {
   const { venueSlug } = params;
   const url = new URL(request.url);
   const sortOption = url.searchParams.get("sort") || "date:desc";
 
-  // Check localStorage for audio filter setting
-  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
-  const audioStatusFilter = hideMissingAudio ? 'complete_or_partial' : 'any';
+  const audioStatusFilter = getAudioStatusFilterFromStorage();
 
   try {
     const venueResponse = await fetch(`/api/v2/venues/${venueSlug}`);

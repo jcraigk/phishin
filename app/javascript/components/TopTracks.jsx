@@ -1,9 +1,8 @@
 import { authFetch } from "./helpers/utils";
+import { getTrackAudioStatusFilterFromStorage } from "./utils/audioFilter";
 
 export const topTracksLoader = async () => {
-  // Check localStorage for audio filter setting
-  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
-  const audioStatusFilter = hideMissingAudio ? 'complete' : 'any';
+  const audioStatusFilter = getTrackAudioStatusFilterFromStorage();
 
   try {
     const response = await authFetch(`/api/v2/tracks?per_page=46&sort=likes_count:desc&audio_status=${audioStatusFilter}`);

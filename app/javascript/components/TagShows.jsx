@@ -1,4 +1,5 @@
 import { authFetch } from "./helpers/utils";
+import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
 
 export const tagShowsLoader = async ({ params, request }) => {
   const url = new URL(request.url);
@@ -7,9 +8,7 @@ export const tagShowsLoader = async ({ params, request }) => {
   const perPage = url.searchParams.get("per_page") || 10;
   const { tagSlug } = params;
 
-  // Check localStorage for audio filter setting
-  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
-  const audioStatusFilter = hideMissingAudio ? 'complete_or_partial' : 'any';
+  const audioStatusFilter = getAudioStatusFilterFromStorage();
 
   try {
     const tagResponse = await fetch(`/api/v2/tags`);

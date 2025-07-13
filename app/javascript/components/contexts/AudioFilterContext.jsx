@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getHideMissingAudioFromStorage } from '../utils/audioFilter';
 
 const AudioFilterContext = createContext();
 
@@ -11,13 +12,7 @@ export const useAudioFilter = () => {
 };
 
 export const AudioFilterProvider = ({ children }) => {
-  // Read localStorage synchronously during initialization to prevent double fetching
-  const getInitialHideMissingAudio = () => {
-    const stored = localStorage.getItem('hideMissingAudio');
-    return stored !== null ? JSON.parse(stored) : true; // Default to true (hide missing audio)
-  };
-
-  const [hideMissingAudio, setHideMissingAudio] = useState(getInitialHideMissingAudio);
+  const [hideMissingAudio, setHideMissingAudio] = useState(getHideMissingAudioFromStorage);
 
   const toggleHideMissingAudio = () => {
     const newValue = !hideMissingAudio;
