@@ -396,7 +396,7 @@ main {
     background-size: cover;
     background-repeat: no-repeat;
 
-    &:not(:last-child):not(.focus):not(.active-item):not(:hover)::after {
+    &:not(:last-child):not(.focus):not(.active-item)::after {
       content: "";
       display: block;
       position: absolute;
@@ -405,6 +405,10 @@ main {
       right: 1rem;
       height: 1px;
       background-color: $navbar-gray;
+    }
+
+    &:not(:last-child):not(.focus):not(.active-item):not(.no-audio):hover::after {
+      display: none;
     }
 
     &:first-of-type {
@@ -600,7 +604,7 @@ main {
 }
 
 @media (hover: hover) {
-  .list-item:hover {
+  .list-item:hover:not(.no-audio) {
     background-color: white;
     background-image: none !important;
 
