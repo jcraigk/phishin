@@ -17,6 +17,9 @@ class GapService < ApplicationService
         # Skip pre-show tracks that should be excluded from gap calculations
         next if should_exclude_preshow_track?(track)
         track.songs.each do |song|
+          # Skip songs that should be excluded from gap calculations
+          next if should_exclude_song_from_gaps?(song)
+
           song_track = SongsTrack.find_by(track_id: track.id, song_id: song.id)
           next unless song_track
 
@@ -61,6 +64,9 @@ class GapService < ApplicationService
         next if should_exclude_preshow_track?(track)
 
         track.songs.each do |song|
+          # Skip songs that should be excluded from gap calculations
+          next if should_exclude_song_from_gaps?(song)
+
           # Find all previous performances of this song
           previous_song_tracks = SongsTrack.joins(track: :show)
                                           .where(song: song)
@@ -476,5 +482,11 @@ class GapService < ApplicationService
       Date.parse('2023-08-25'),  # Saratoga Performing Arts Center - acoustic pre-show not counted for stats
       Date.parse('2023-08-26')   # Saratoga Performing Arts Center - acoustic pre-show not counted for stats
     ]
+  end
+
+  def should_exclude_song_from_gaps?(song)
+    # Exclude songs that are inconsistent between systems or not meaningful for gap calculations
+    excluded_song_titles = ['Intro', 'Outro', 'Jam']
+    excluded_song_titles.include?(song.title)
   end
 end

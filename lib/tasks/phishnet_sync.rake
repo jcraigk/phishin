@@ -101,16 +101,16 @@ namespace :phishnet do
         if duplicate_positions.any?
           duplicate_count += 1
           puts "\n#{show.date} - #{show.venue_name}"
-          puts "  Duplicate positions: #{duplicate_positions.keys.sort.join(', ')}"
+          puts "Duplicate positions: #{duplicate_positions.keys.sort.join(', ')}"
 
           # Show the tracks at each duplicate position
           duplicate_positions.keys.sort.each do |pos|
             tracks_at_position = phish_tracks.select { |t| t["position"] == pos }
-            puts "    Position #{pos}:"
+            puts "Position #{pos}:"
             tracks_at_position.each do |track|
               set_info = track["set"] ? " (set #{track['set']})" : ""
               showid_info = track["showid"] ? " [showid: #{track['showid']}]" : ""
-              puts "      - #{track['song']}#{set_info}#{showid_info}"
+              puts " - #{track['song']}#{set_info}#{showid_info}"
             end
           end
           puts
@@ -127,9 +127,9 @@ namespace :phishnet do
 
     puts "\n" + "=" * 60
     puts "Summary:"
-    puts "  Total shows checked: #{total_shows_checked}"
-    puts "  Shows with duplicate positions: #{duplicate_count}"
-    puts "  Percentage with duplicates: #{(duplicate_count.to_f / total_shows_checked * 100).round(2)}%"
+    puts "Total shows checked: #{total_shows_checked}"
+    puts "Shows with duplicate positions: #{duplicate_count}"
+    puts "Percentage with duplicates: #{(duplicate_count.to_f / total_shows_checked * 100).round(2)}%"
   end
 
   desc "Sync all known Phish show dates from Phish.net (use LIMIT env var to limit new shows, DATE env var for single date)"
@@ -354,7 +354,7 @@ namespace :phishnet do
 
     # Skip future shows
     if date > Date.current
-      # puts "  Skipping future show: #{pnet_show['showdate']}"
+      # puts "Skipping future show: #{pnet_show['showdate']}"
       return
     end
 
@@ -367,7 +367,7 @@ namespace :phishnet do
     # Skip specific rained out shows
     rained_out_shows = [ "1996-07-02" ]
     if rained_out_shows.include?(pnet_show["showdate"])
-      # puts "  Skipping rained out show: #{pnet_show['showdate']}"
+      # puts "Skipping rained out show: #{pnet_show['showdate']}"
       return
     end
 
@@ -391,7 +391,7 @@ namespace :phishnet do
       if all_shows_data
         shows_on_date = all_shows_data.select { |s| s["showdate"] == pnet_show["showdate"] }
         if shows_on_date.length > 1
-          # puts "  Skipping show excluded from stats (multiple shows on date): #{pnet_show['showdate']}"
+          # puts "Skipping show excluded from stats (multiple shows on date): #{pnet_show['showdate']}"
           return
         end
       end
@@ -400,7 +400,7 @@ namespace :phishnet do
       if show.persisted?
         show.exclude_from_stats = true
         show.save!
-        # puts "  Updated existing show to exclude from stats: #{pnet_show['showdate']}"
+        # puts "Updated existing show to exclude from stats: #{pnet_show['showdate']}"
       end
       return
     end
@@ -422,7 +422,7 @@ namespace :phishnet do
         puts "Please create this tour manually and re-run the sync."
         exit 1
       end
-      puts "  Using tour override: #{override_tour_name} for show #{pnet_show['showdate']}"
+      puts "Using tour override: #{override_tour_name} for show #{pnet_show['showdate']}"
     else
       tour_name = pnet_show["tourname"] || pnet_show["tour_name"] || "Not Part of a Tour"
       tour = find_tour_by_name(tour_name)
@@ -458,7 +458,7 @@ namespace :phishnet do
       if setlist_data.any?
         duplicate_info = has_duplicate_positions_or_sets?(setlist_data)
         if duplicate_info
-          puts "  ⚠️  Skipping show #{show.date} due to duplicate #{duplicate_info}"
+          puts "⚠️  Skipping show #{show.date} due to duplicate #{duplicate_info}"
           add_skipped_show(show.date.to_s, "Duplicate #{duplicate_info}")
           return
         end
@@ -483,7 +483,7 @@ namespace :phishnet do
       end
     elsif show.audio_status == "complete"
       # Skip setlist processing for complete audio shows
-      # puts "  Show #{show.date} has complete audio - skipping setlist processing"
+      # puts "Show #{show.date} has complete audio - skipping setlist processing"
     end
   end
 
@@ -505,7 +505,7 @@ namespace :phishnet do
       keeper_id = VENUE_DUPES[venue_name]
       keeper_venue = Venue.find_by(id: keeper_id)
       if keeper_venue
-        puts "  Substituting venue ##{keeper_id} for #{venue_name}"
+        puts "Substituting venue ##{keeper_id} for #{venue_name}"
         return keeper_venue
       end
     end
@@ -515,7 +515,7 @@ namespace :phishnet do
       keeper_id = VENUE_DUPES[original_venue_name]
       keeper_venue = Venue.find_by(id: keeper_id)
       if keeper_venue
-        puts "  Using keeper venue: #{keeper_venue.name} (ID: #{keeper_id}) instead of potential dupe: #{original_venue_name}"
+        puts "Using keeper venue: #{keeper_venue.name} (ID: #{keeper_id}) instead of potential dupe: #{original_venue_name}"
         return keeper_venue
       end
     end
@@ -590,20 +590,24 @@ namespace :phishnet do
     phish_tracks = fetch_setlist_data_for_show(show.date, show_id)
 
     unless phish_tracks.any?
-      puts "  No setlist data available for #{show.date}"
+      puts "No setlist data available for #{show.date}"
       return
     end
 
-    puts "  Merging partial setlist for #{show.date} (#{phish_tracks.length} tracks from PhishNet)"
+    puts "Merging partial setlist for #{show.date} (#{phish_tracks.length} tracks from PhishNet)"
 
     # Get existing tracks
     existing_tracks = show.tracks.includes(:songs).order(:position)
 
     # Create a map of existing tracks by song title and set for easy lookup
+    # Each song within a track gets its own key pointing to the same track
     existing_track_map = {}
     existing_tracks.each do |track|
-      key = build_track_key(track.title, track.set)
-      existing_track_map[key] = track
+      track.songs.each do |song|
+        key = build_track_key(song.title, track.set)
+        existing_track_map[key] = track
+
+      end
     end
 
     # Also create a map by slug to handle slug conflicts
@@ -611,6 +615,8 @@ namespace :phishnet do
     existing_tracks.each do |track|
       existing_slug_map[track.slug] = track
     end
+
+
 
     tracks_created = 0
     tracks_repositioned = 0
@@ -645,7 +651,7 @@ namespace :phishnet do
 
         track_key = build_track_key(pnet_title, pnet_set)
 
-        # Check if track exists by title/set combination
+                # Check if track exists by title/set combination
         existing_track = existing_track_map[track_key]
 
         # If not found by title/set, check if there's a slug conflict
@@ -667,7 +673,6 @@ namespace :phishnet do
           tracks_repositioned += 1
         else
           # Track doesn't exist - create it
-
           track = show.tracks.build(
             title: pnet_title,
             position: pnet_position,
@@ -698,14 +703,18 @@ namespace :phishnet do
       # Remove any existing tracks that are no longer in the PhishNet setlist
       # This handles cases where our local data had incorrect tracks
       pnet_track_keys = phish_tracks.map do |song_data|
-        pnet_title = (song_data["song"] || song_data["title"] || "").strip
+        original_title = (song_data["song"] || song_data["title"] || "").strip
+        mapped_title = apply_title_mapping(original_title)
         pnet_set = song_data["set"] || "1"
-        build_track_key(pnet_title, pnet_set)
+        build_track_key(mapped_title, pnet_set)
       end.compact
 
       tracks_to_remove = existing_tracks.reject do |track|
-        track_key = build_track_key(track.title, track.set)
-        pnet_track_keys.include?(track_key)
+        # A track should be kept if ANY of its songs are in the PhishNet setlist
+        track.songs.any? do |song|
+          song_key = build_track_key(song.title, track.set)
+          pnet_track_keys.include?(song_key)
+        end
       end
 
       tracks_removed = 0
@@ -717,7 +726,7 @@ namespace :phishnet do
         end
       end
 
-      puts "    Created #{tracks_created} tracks, repositioned #{tracks_repositioned} tracks, removed #{tracks_removed} tracks for #{show.date}"
+      puts "Created #{tracks_created} tracks, repositioned #{tracks_repositioned} tracks, removed #{tracks_removed} tracks for #{show.date}"
     end
 
     # Update show's audio status based on final track composition
@@ -732,7 +741,8 @@ namespace :phishnet do
 
     # Hardcoded mappings for PhishNet titles that should match local titles
     title_mappings = {
-      "digital delay loop jam" => "Jam"
+      "digital delay loop jam" => "Jam",
+      "let's go" => "Let's Go (The Cars)"
     }
 
     title_mappings[normalized_title] || title
@@ -742,7 +752,7 @@ namespace :phishnet do
   def build_track_key(title, set)
     # Normalize title and set for comparison
     normalized_title = title.to_s.strip.downcase
-    normalized_set = set.to_s.strip
+    normalized_set = set.to_s.strip.upcase  # Normalize set to uppercase
     "#{normalized_title}|#{normalized_set}"
   end
 
@@ -764,14 +774,14 @@ namespace :phishnet do
       return tour if tour
     end
 
-    # puts "  Trying to match tour: '#{tour_name}'"
+    # puts "Trying to match tour: '#{tour_name}'"
 
     # Handle NYE Run patterns: various formats -> "New Years Run YYYY"
     # Matches: "YYYY NYE Run", "YYYY NYE", "YYYY/YYYY+1 NYE Run", "YYYY/YYYY+1 Inverted NYE Run"
     if match = tour_name.match(/^(\d{4})(?:\/\d{4})?\s+(?:Inverted\s+)?NYE(?:\s+Run)?$/i)
       year = match[1]
       alternative_name = "New Years Run #{year}"
-      # puts "  Trying NYE pattern: '#{alternative_name}'"
+      # puts "Trying NYE pattern: '#{alternative_name}'"
       tour = Tour.find_by(name: alternative_name)
       return tour if tour
     end
@@ -780,7 +790,7 @@ namespace :phishnet do
     if match = tour_name.match(/^(\d{4})(?:\/\d{4})?\s+New\s+Year'?s?\s+Run$/i)
       year = match[1]
       alternative_name = "New Years Run #{year}"
-      # puts "  Trying New Year's Run pattern: '#{alternative_name}'"
+      # puts "Trying New Year's Run pattern: '#{alternative_name}'"
       tour = Tour.find_by(name: alternative_name)
       return tour if tour
     end
@@ -789,7 +799,7 @@ namespace :phishnet do
     if match = tour_name.match(/^(\d{4})(?:\/\d{4})?\s+(?:Inverted\s+)?NYE(?:\s+Run)?$/i)
       year = match[1]
       alternative_name = "New Year's Run #{year}"
-      # puts "  Trying NYE pattern with apostrophe: '#{alternative_name}'"
+      # puts "Trying NYE pattern with apostrophe: '#{alternative_name}'"
       tour = Tour.find_by(name: alternative_name)
       return tour if tour
     end
@@ -797,7 +807,7 @@ namespace :phishnet do
     if match = tour_name.match(/^New\s+Years\s+Run\s+(\d{4})$/i)
       year = match[1]
       alternative_name = "#{year} NYE Run"
-      # puts "  Trying reverse NYE pattern: '#{alternative_name}'"
+      # puts "Trying reverse NYE pattern: '#{alternative_name}'"
       tour = Tour.find_by(name: alternative_name)
       return tour if tour
     end
@@ -807,7 +817,7 @@ namespace :phishnet do
       year = match[1]
       season = match[2]
       alternative_name = "#{season} Tour #{year}"
-      # puts "  Trying season pattern: '#{alternative_name}'"
+      # puts "Trying season pattern: '#{alternative_name}'"
       tour = Tour.find_by(name: alternative_name)
       return tour if tour
     end
@@ -818,7 +828,7 @@ namespace :phishnet do
       year = match[1]
       location = match[2]
       alternative_name = "#{location} Run #{year}"
-      # puts "  Trying location pattern: '#{alternative_name}'"
+      # puts "Trying location pattern: '#{alternative_name}'"
       tour = Tour.find_by(name: alternative_name)
       return tour if tour
     end
@@ -828,7 +838,7 @@ namespace :phishnet do
       year = tour_name[0..3]
       rest_of_name = tour_name[5..-1]
       alternative_name = "#{rest_of_name} #{year}"
-      # puts "  Trying year-first pattern: '#{alternative_name}'"
+      # puts "Trying year-first pattern: '#{alternative_name}'"
       tour = Tour.find_by(name: alternative_name)
       return tour if tour
     end
@@ -839,12 +849,12 @@ namespace :phishnet do
       year = parts.last
       rest_of_name = parts[0..-2].join(" ")
       alternative_name = "#{year} #{rest_of_name}"
-      # puts "  Trying year-last pattern: '#{alternative_name}'"
+      # puts "Trying year-last pattern: '#{alternative_name}'"
       tour = Tour.find_by(name: alternative_name)
       return tour if tour
     end
 
-    puts "  No match found for: '#{tour_name}'"
+    puts "No match found for: '#{tour_name}'"
     nil
   end
 
@@ -853,10 +863,10 @@ namespace :phishnet do
     phish_tracks = fetch_setlist_data_for_show(show.date, show_id)
 
     if phish_tracks.any?
-      # puts "  Processing setlist for #{show.date} (#{phish_tracks.length} tracks)"
+      # puts "Processing setlist for #{show.date} (#{phish_tracks.length} tracks)"
       process_setlist(show, phish_tracks)
     else
-      # puts "  No setlist data available for #{show.date}"
+      # puts "No setlist data available for #{show.date}"
     end
   end
 
@@ -889,7 +899,7 @@ namespace :phishnet do
       tracks_created += 1
     end
 
-    puts "    Created #{tracks_created} tracks for #{show.date}"
+    puts "Created #{tracks_created} tracks for #{show.date}"
   end
 
   def find_or_create_song(song_data, show)
@@ -990,8 +1000,10 @@ namespace :phishnet do
       local_track = local_tracks[index]
 
       # Compare track title (case insensitive, with whitespace trimmed)
-      # We compare against track.title because that's what's actually stored when creating tracks
-      remote_title = song_data["song"]&.downcase&.strip
+      # Apply title mappings consistently with merge_partial_setlist
+      original_title = (song_data["song"] || "").strip
+      mapped_title = apply_title_mapping(original_title)
+      remote_title = mapped_title.downcase.strip
       local_track_title = local_track.title&.downcase&.strip
 
       return true if remote_title != local_track_title
@@ -1014,7 +1026,10 @@ namespace :phishnet do
     # Create maps for easier comparison
     remote_track_map = {}
     remote_setlist.each_with_index do |song_data, index|
-      title = song_data["song"]&.downcase&.strip
+      # Apply title mappings consistently with merge_partial_setlist
+      original_title = (song_data["song"] || "").strip
+      mapped_title = apply_title_mapping(original_title)
+      title = mapped_title.downcase.strip
       set = song_data["set"] || "1"
       position = song_data["position"] || (index + 1)
       key = build_track_key(title, set)
@@ -1023,8 +1038,10 @@ namespace :phishnet do
 
     local_track_map = {}
     local_tracks.each do |track|
-      key = build_track_key(track.title, track.set)
-      local_track_map[key] = { title: track.title.downcase.strip, set: track.set, position: track.position }
+      track.songs.each do |song|
+        key = build_track_key(song.title, track.set)
+        local_track_map[key] = { title: song.title.downcase.strip, set: track.set, position: track.position }
+      end
     end
 
     # Check if we're missing tracks from PhishNet
