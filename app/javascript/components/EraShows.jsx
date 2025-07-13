@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
 import { useAudioFilter } from "./contexts/AudioFilterContext";
+import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList, faTh, faCircleChevronLeft, faCircleChevronRight, faSortAmountDown, faSortAmountUp } from "@fortawesome/free-solid-svg-icons";
 
@@ -23,10 +24,7 @@ const buildShowsUrl = (year, audioStatusFilter) => {
 export const eraShowsLoader = async ({ params }) => {
   const { year } = params;
 
-  // Check localStorage for audio filter setting
-  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
-  const audioStatusFilter = hideMissingAudio ? 'complete_or_partial' : 'any';
-
+  const audioStatusFilter = getAudioStatusFilterFromStorage();
   const url = buildShowsUrl(year, audioStatusFilter);
 
   const response = await authFetch(url);

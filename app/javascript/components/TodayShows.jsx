@@ -1,4 +1,5 @@
 import { authFetch } from "./helpers/utils";
+import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
 
 export const todayShowsLoader = async ({ request }) => {
   const url = new URL(request.url);
@@ -8,9 +9,7 @@ export const todayShowsLoader = async ({ request }) => {
 
   const todayDate = `${new Date().getFullYear()}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-  // Check localStorage for audio filter setting
-  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
-  const audioStatusFilter = hideMissingAudio ? 'complete_or_partial' : 'any';
+  const audioStatusFilter = getAudioStatusFilterFromStorage();
 
   try {
     const response = await authFetch(`/api/v2/shows/day_of_year/${todayDate}?sort=${sortBy}&audio_status=${audioStatusFilter}`);

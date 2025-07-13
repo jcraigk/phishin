@@ -1,12 +1,11 @@
 import { authFetch } from "./helpers/utils";
 import { createTaperNotesModalContent } from "./helpers/modals";
+import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
 
 export const showLoader = async ({ params }) => {
   const { date } = params;
 
-  // Check localStorage for audio filter setting
-  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
-  const audioStatusFilter = hideMissingAudio ? 'complete_or_partial' : 'any';
+  const audioStatusFilter = getAudioStatusFilterFromStorage();
 
   const url = `/api/v2/shows/${date}?audio_status=${audioStatusFilter}`;
   try {

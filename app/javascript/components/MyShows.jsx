@@ -1,4 +1,5 @@
 import { authFetch } from "./helpers/utils";
+import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
 
 export const myShowsLoader = async ({ request }) => {
   const url = new URL(request.url);
@@ -6,9 +7,7 @@ export const myShowsLoader = async ({ request }) => {
   const sortOption = url.searchParams.get("sort") || "date:desc";
   const perPage = url.searchParams.get("per_page") || 10;
 
-  // Check localStorage for audio filter setting
-  const hideMissingAudio = JSON.parse(localStorage.getItem('hideMissingAudio') || 'true');
-  const audioStatusFilter = hideMissingAudio ? 'complete_or_partial' : 'any';
+  const audioStatusFilter = getAudioStatusFilterFromStorage();
 
   try {
     const response = await authFetch(`/api/v2/shows?liked_by_user=true&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
