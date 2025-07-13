@@ -121,6 +121,70 @@ songs: [ songs[0], songs[1] ])
         expect(json[:tracks][1][:liked_by_user]).to be(false) # Track 2 is not liked
       end
     end
+
+    context "with year filter" do
+      it "returns tracks from the specified year" do
+        get_api_authed(user, "/tracks", params: { year: 2023 })
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:tracks].map { |t| t[:id] }).to contain_exactly(tracks[0].id, tracks[3].id)
+      end
+    end
+
+    context "with year_range filter" do
+      it "returns tracks from the specified year range" do
+        get_api_authed(user, "/tracks", params: { year_range: "2023-2024" })
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:tracks].map { |t| t[:id] }).to contain_exactly(tracks[0].id, tracks[1].id, tracks[3].id)
+      end
+    end
+
+    context "with start_date and end_date filters" do
+      it "returns tracks from the specified date range" do
+        get_api_authed(user, "/tracks", params: { start_date: "2023-01-01", end_date: "2024-12-31" })
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:tracks].map { |t| t[:id] }).to contain_exactly(tracks[0].id, tracks[1].id, tracks[3].id)
+      end
+
+      it "returns tracks from the specified start_date only" do
+        get_api_authed(user, "/tracks", params: { start_date: "2024-01-01" })
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:tracks].map { |t| t[:id] }).to contain_exactly(tracks[1].id, tracks[2].id)
+      end
+
+      it "returns tracks up to the specified end_date only" do
+        get_api_authed(user, "/tracks", params: { end_date: "2023-12-31" })
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:tracks].map { |t| t[:id] }).to contain_exactly(tracks[0].id, tracks[3].id)
+      end
+    end
+
+    context "with conflicting date filters" do
+      it "returns 400 if year and year_range are both present" do
+        get_api_authed(user, "/tracks", params: { year: 2023, year_range: "2023-2024" })
+        expect(response).to have_http_status(:bad_request)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:message]).to match(/Cannot specify both year and year_range/)
+      end
+
+      it "returns 400 if year and start_date are both present" do
+        get_api_authed(user, "/tracks", params: { year: 2023, start_date: "2023-01-01" })
+        expect(response).to have_http_status(:bad_request)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:message]).to match(/Cannot combine year\/year_range with start_date\/end_date/)
+      end
+
+      it "returns 400 if year_range and end_date are both present" do
+        get_api_authed(user, "/tracks", params: { year_range: "2023-2024", end_date: "2024-12-31" })
+        expect(response).to have_http_status(:bad_request)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:message]).to match(/Cannot combine year\/year_range with start_date\/end_date/)
+      end
+    end
   end
 
   describe "GET /tracks/:id" do
