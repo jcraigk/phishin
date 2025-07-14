@@ -109,7 +109,7 @@ class SearchService < ApplicationService
     scope = Venue.left_outer_joins(:venue_renames)
                  .where(venue_where_str, term: "%#{term}%")
                  .order(name: :asc)
-                 .uniq
+                 .distinct
 
     # Filter venues to only include those with shows with audio if audio_status is complete_or_partial
     if audio_status == "complete_or_partial"

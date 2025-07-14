@@ -15,7 +15,28 @@ export const useAudioFilteredData = (initialData, fetchFunction, dependencies = 
   useEffect(() => {
     const currentAudioStatusFilter = getAudioStatusFilter();
 
-    // Skip initial fetch if filter hasn't changed
+    // For initial load when no initialData is provided (like search), fetch data immediately
+    if (!hasInitialized.current && initialData === null) {
+      hasInitialized.current = true;
+      initialFilterRef.current = currentAudioStatusFilter;
+
+      const fetchData = async () => {
+        setIsFilterLoading(true);
+        try {
+          const newData = await fetchFunction(currentAudioStatusFilter);
+          setData(newData);
+        } catch (error) {
+          console.error('Error fetching initial data:', error);
+        } finally {
+          setIsFilterLoading(false);
+        }
+      };
+
+      fetchData();
+      return;
+    }
+
+    // Skip initial fetch if filter hasn't changed and we have initial data
     if (!hasInitialized.current) {
       initialFilterRef.current = currentAudioStatusFilter;
       hasInitialized.current = true;
@@ -42,7 +63,7 @@ export const useAudioFilteredData = (initialData, fetchFunction, dependencies = 
     };
 
     fetchData();
-  }, [hideMissingAudio, fetchFunction, setIsFilterLoading, ...dependencies]);
+  }, [hideMissingAudio, fetchFunction, setIsFilterLoading, initialData, ...dependencies]);
 
   // Update data when initial data changes (e.g., from loader)
   useEffect(() => {
