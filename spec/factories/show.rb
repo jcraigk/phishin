@@ -1,7 +1,6 @@
 FactoryBot.define do
   factory :show do
-    sequence(:date) { |n| Date.new(1983, 1, 1) + n.days }
-    published { true }
+    sequence(:date) { |n| Date.new(1985, 1, 1) + n.days }
     taper_notes { Faker::Lorem.paragraph }
     audio_status { 'complete' }
 

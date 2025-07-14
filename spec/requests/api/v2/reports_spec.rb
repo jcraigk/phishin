@@ -3,13 +3,13 @@ require "rails_helper"
 RSpec.describe "API v2 Reports" do
   let!(:venue1) { create(:venue, name: "Madison Square Garden", city: "New York", state: "NY") }
   let!(:venue2) { create(:venue, name: "The Roxy", city: "Atlanta", state: "GA") }
-  let!(:show3) { create(:show, date: "2023-06-10", audio_status: 'partial', published: true, venue: venue1) }
-  let!(:show4) { create(:show, date: "2023-05-01", audio_status: 'partial', published: true, venue: venue2) }
-  let!(:missing_show1) { create(:show, date: "2023-04-01", audio_status: 'missing', venue_name: "Red Rocks - Morrison, CO", published: true, venue: venue1) }
-  let!(:missing_show2) { create(:show, date: "2023-03-15", audio_status: 'missing', venue_name: "The Gorge - George, WA", published: true, venue: venue2) }
-  let!(:missing_show3) { create(:show, date: "2023-01-01", audio_status: 'missing', venue_name: "The Spectrum - Philadelphia, PA", published: true, venue: venue1) }
-  let(:show1) { create(:show, date: "2023-08-01", audio_status: 'complete', published: true, venue: venue1) }
-  let(:show2) { create(:show, date: "2023-07-15", audio_status: 'complete', published: true, venue: venue1) }
+  let!(:show3) { create(:show, date: "2023-06-10", audio_status: 'partial', venue: venue1) }
+  let!(:show4) { create(:show, date: "2023-05-01", audio_status: 'partial', venue: venue2) }
+  let!(:missing_show1) { create(:show, date: "2023-04-01", audio_status: 'missing', venue_name: "Red Rocks - Morrison, CO", venue: venue1) }
+  let!(:missing_show2) { create(:show, date: "2023-03-15", audio_status: 'missing', venue_name: "The Gorge - George, WA", venue: venue2) }
+  let!(:missing_show3) { create(:show, date: "2023-01-01", audio_status: 'missing', venue_name: "The Spectrum - Philadelphia, PA", venue: venue1) }
+  let(:show1) { create(:show, date: "2023-08-01", audio_status: 'complete', venue: venue1) }
+  let(:show2) { create(:show, date: "2023-07-15", audio_status: 'complete', venue: venue1) }
 
   before do
     show1

@@ -65,7 +65,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
       success ApiV2::Entities::Show
     end
     get "random" do
-      show = Show.published.where(audio_status: [ "complete", "partial" ]).order("RANDOM()").first
+      show = Show.with_audio.order("RANDOM()").first
       present \
         show,
         with: ApiV2::Entities::Show,
@@ -112,8 +112,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
     get "day_of_year/:date" do
       date = Date.parse(params[:date])
       shows =
-        Show.published
-            .where("extract(month from date) = ?", date.month)
+        Show.where("extract(month from date) = ?", date.month)
             .where("extract(day from date) = ?", date.day)
       shows = apply_audio_status_filter(shows, params[:audio_status])
       shows = apply_sort(shows, :date, :desc)
@@ -166,8 +165,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
     end
 
     def fetch_shows
-      Show.published
-          .includes(
+      Show.includes(
             :venue,
             :tour,
             :album_cover_attachment,
@@ -207,8 +205,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
     end
 
     def fetch_show_by_date
-      Show.published
-          .includes(
+      Show.includes(
             :venue,
             tracks: [
               :mp3_audio_attachment,
@@ -271,22 +268,22 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
     end
 
     def next_show_date(current_date, audio_status = "any")
-      shows = Show.published.where("date > ?", current_date)
+      shows = Show.where("date > ?", current_date)
       shows = apply_audio_status_filter(shows, audio_status)
       shows.order(date: :asc).pluck(:date).first ||
         begin
-          all_shows = Show.published
+          all_shows = Show.all
           all_shows = apply_audio_status_filter(all_shows, audio_status)
           all_shows.order(date: :asc).pluck(:date).first
         end
     end
 
     def previous_show_date(current_date, audio_status = "any")
-      shows = Show.published.where("date < ?", current_date)
+      shows = Show.where("date < ?", current_date)
       shows = apply_audio_status_filter(shows, audio_status)
       shows.order(date: :desc).pluck(:date).first ||
         begin
-          all_shows = Show.published
+          all_shows = Show.all
           all_shows = apply_audio_status_filter(all_shows, audio_status)
           all_shows.order(date: :desc).pluck(:date).first
         end

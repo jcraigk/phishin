@@ -31,14 +31,14 @@ class Api::V1::YearsController < Api::V1::ApiController
   end
 
   def shows_for_era(era)
-    scope = Show.published.with_audio
+    scope = Show.with_audio
     return scope.during_year(era) unless era == "1983-1987"
     scope.between_years("1983", "1987")
   end
 
   def shows_that_year
     @shows_that_year =
-      Show.published.with_audio.between_years(*requested_years)
+      Show.with_audio.between_years(*requested_years)
           .includes(:venue, :tags, tracks: %i[songs tags])
           .order(date: :asc)
   end
