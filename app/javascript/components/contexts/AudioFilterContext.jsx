@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getHideMissingAudioFromStorage } from '../utils/audioFilter';
+import { getAudioStatusFilter } from '../helpers/utils';
 
 const AudioFilterContext = createContext();
 
@@ -12,7 +12,7 @@ export const useAudioFilter = () => {
 };
 
 export const AudioFilterProvider = ({ children }) => {
-  const [hideMissingAudio, setHideMissingAudio] = useState(getHideMissingAudioFromStorage);
+  const [hideMissingAudio, setHideMissingAudio] = useState(() => getAudioStatusFilter() === 'complete_or_partial');
   const [isFilterLoading, setIsFilterLoading] = useState(false);
 
   const toggleHideMissingAudio = () => {
@@ -22,14 +22,14 @@ export const AudioFilterProvider = ({ children }) => {
   };
 
   // Get the audio_status parameter for API calls
-  const getAudioStatusFilter = () => {
-    return hideMissingAudio ? 'complete_or_partial' : 'any';
+  const getAudioStatusParam = () => {
+    return getAudioStatusFilter();
   };
 
   const value = {
     hideMissingAudio,
     toggleHideMissingAudio,
-    getAudioStatusFilter,
+    getAudioStatusParam,
     isFilterLoading,
     setIsFilterLoading,
   };

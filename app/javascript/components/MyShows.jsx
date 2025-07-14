@@ -1,5 +1,4 @@
-import { authFetch } from "./helpers/utils";
-import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
+import { authFetch, getAudioStatusFilter } from "./helpers/utils";
 
 export const myShowsLoader = async ({ request }) => {
   const url = new URL(request.url);
@@ -7,7 +6,7 @@ export const myShowsLoader = async ({ request }) => {
   const sortOption = url.searchParams.get("sort") || "date:desc";
   const perPage = url.searchParams.get("per_page") || 10;
 
-  const audioStatusFilter = getAudioStatusFilterFromStorage();
+  const audioStatusFilter = getAudioStatusFilter();
 
   try {
     const response = await authFetch(`/api/v2/shows?liked_by_user=true&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`);

@@ -6,7 +6,7 @@ import LayoutWrapper from "./layout/LayoutWrapper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useAudioFilter } from "./contexts/AudioFilterContext";
-import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
+import { getAudioStatusFilter } from "./helpers/utils";
 
 const usStates = [
   "(US State)", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME",
@@ -17,7 +17,7 @@ const usStates = [
 const MapSearch = () => {
   const location = useLocation();
   const { mapboxToken } = useOutletContext();
-  const { hideMissingAudio, getAudioStatusFilter } = useAudioFilter();
+  const { hideMissingAudio, getAudioStatusParam } = useAudioFilter();
 
   const getQueryParams = () => {
     const params = new URLSearchParams(location.search);
@@ -62,7 +62,7 @@ const MapSearch = () => {
 
   const fetchShows = async (lat, lng, distance) => {
     const { start_date, end_date, us_state } = formData;
-    const audioStatusFilter = getAudioStatusFilter();
+    const audioStatusFilter = getAudioStatusParam();
     let url = `/api/v2/shows?per_page=250&sort=date:desc&start_date=${start_date}&end_date=${end_date}&audio_status=${audioStatusFilter}`;
 
     if (isStateSelected) {

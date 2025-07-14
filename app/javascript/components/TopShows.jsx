@@ -1,8 +1,7 @@
-import { authFetch } from "./helpers/utils";
-import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
+import { authFetch, getAudioStatusFilter } from "./helpers/utils";
 
 export const topShowsLoader = async () => {
-  const audioStatusFilter = getAudioStatusFilterFromStorage();
+  const audioStatusFilter = getAudioStatusFilter();
 
   try {
     const response = await authFetch(`/api/v2/shows?per_page=46&sort=likes_count:desc&audio_status=${audioStatusFilter}`);

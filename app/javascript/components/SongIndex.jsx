@@ -1,4 +1,4 @@
-import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
+import { getAudioStatusFilter } from "./helpers/utils";
 
 export const songIndexLoader = async ({ request }) => {
   const url = new URL(request.url);
@@ -6,7 +6,7 @@ export const songIndexLoader = async ({ request }) => {
   const sortOption = url.searchParams.get("sort") || "title:asc";
   const perPage = url.searchParams.get("per_page") || 10;
 
-  const audioStatusFilter = getAudioStatusFilterFromStorage();
+  const audioStatusFilter = getAudioStatusFilter();
 
   try {
     const response = await fetch(`/api/v2/songs?page=${page}&sort=${sortOption}&per_page=${perPage}&audio_status=${audioStatusFilter}`);

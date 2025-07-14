@@ -1,12 +1,11 @@
-import { authFetch, formatNumber } from "./helpers/utils";
-import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
+import { authFetch, formatNumber, getAudioStatusFilter } from "./helpers/utils";
 
 export const venueShowsLoader = async ({ params, request }) => {
   const { venueSlug } = params;
   const url = new URL(request.url);
   const sortOption = url.searchParams.get("sort") || "date:desc";
 
-  const audioStatusFilter = getAudioStatusFilterFromStorage();
+  const audioStatusFilter = getAudioStatusFilter();
 
   try {
     const venueResponse = await fetch(`/api/v2/venues/${venueSlug}`);
