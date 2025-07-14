@@ -45,6 +45,10 @@ const Show = ({ trackSlug }) => {
   const [showPartialAudioNotification, setShowPartialAudioNotification] = useState(show.audio_status === 'partial');
   const { hideMissingAudio } = useAudioFilter();
 
+  const filteredTracks = hideMissingAudio
+    ? tracks.filter(track => track.audio_status !== 'missing')
+    : tracks;
+
   useEffect(() => {
     setTracks(show.tracks);
     setShowPartialAudioNotification(show.audio_status === 'partial');
@@ -67,10 +71,10 @@ const Show = ({ trackSlug }) => {
       }
 
       if (foundTrack.audio_status !== 'missing') {
-        playTrack(tracks, foundTrack, true);
+        playTrack(filteredTracks, foundTrack, true);
       }
     }
-  }, [trackSlug, tracks]);
+  }, [trackSlug, tracks, filteredTracks]);
 
   useEffect(() => {
     if (trackSlug === 'taper-notes' && !taperNotesModalClosed) {
@@ -94,7 +98,6 @@ const Show = ({ trackSlug }) => {
     </div>
   );
 
-  // Get the appropriate navigation dates based on audio filter setting
   const getNavigationDates = () => {
     if (hideMissingAudio) {
       return {
@@ -205,7 +208,7 @@ const Show = ({ trackSlug }) => {
             </div>
           </div>
 
-          <Tracks tracks={tracks} viewStyle="show" trackRefs={trackRefs} trackSlug={trackSlug} />
+          <Tracks tracks={filteredTracks} viewStyle="show" trackRefs={trackRefs} trackSlug={trackSlug} />
         </section>
       </div>
     </>
