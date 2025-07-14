@@ -158,7 +158,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
         end
 
       {
-        shows: shows,
+        shows:,
         total_pages: shows.total_pages,
         current_page: shows.current_page,
         total_entries: shows.total_entries

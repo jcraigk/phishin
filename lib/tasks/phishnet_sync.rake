@@ -193,7 +193,7 @@ namespace :phishnet do
         if limit && limit > 0
           new_shows_data = shows_data.select do |pnet_show|
             date = Date.parse(pnet_show["showdate"])
-            !Show.exists?(date: date)
+            !Show.exists?(date:)
           end
 
           puts "Found #{new_shows_data.length} shows not in local database"
@@ -284,7 +284,7 @@ namespace :phishnet do
   end
 
   def add_skipped_show(show_date, reason)
-    @skipped_shows_with_duplicates << { date: show_date, reason: reason }
+    @skipped_shows_with_duplicates << { date: show_date, reason: }
   end
 
   def report_skipped_shows
@@ -380,7 +380,7 @@ namespace :phishnet do
       exclude_from_stats = false
     end
 
-    show = Show.find_or_initialize_by(date: date)
+    show = Show.find_or_initialize_by(date:)
 
     # Handle exclude_from_stats logic:
     # - If exclude_from_stats is true and there's only one show on this date in remote data,
@@ -553,7 +553,7 @@ namespace :phishnet do
                    .where(
                      "(venues.name = :name OR venue_renames.name = :name) AND venues.country = :country",
                      name: venue_name,
-                     country: country
+                     country:
                    ).first
       return venue if venue
     else
@@ -656,7 +656,7 @@ namespace :phishnet do
         # If not found by title/set, check if there's a slug conflict
         if !existing_track
           # Generate what the slug would be for this track
-          temp_track = Track.new(title: pnet_title, show: show)
+          temp_track = Track.new(title: pnet_title, show:)
           temp_track.generate_slug
           potential_slug = temp_track.slug
 
@@ -1032,7 +1032,7 @@ namespace :phishnet do
       set = song_data["set"] || "1"
       position = song_data["position"] || (index + 1)
       key = build_track_key(title, set)
-      remote_track_map[key] = { title: title, set: set, position: position }
+      remote_track_map[key] = { title:, set:, position: }
     end
 
     local_track_map = {}

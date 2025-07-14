@@ -176,15 +176,15 @@ class SearchService < ApplicationService
     case audio_status
     when "complete", "partial", "missing"
       if table_prefix == :show
-        relation.where(shows: { audio_status: audio_status })
+        relation.where(shows: { audio_status: })
       else
-        relation.where(audio_status: audio_status)
+        relation.where(audio_status:)
       end
     when "complete_or_partial"
       if table_prefix == :show
         relation.where(shows: { audio_status: %w[complete partial] })
       else
-        relation.where(audio_status: %w[complete partial])
+        relation.with_audio
       end
     else
       relation

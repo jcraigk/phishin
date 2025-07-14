@@ -21,7 +21,7 @@ namespace :pnet do
       data.each do |song_data|
         next unless song_data.footnote.start_with?("Unfinished")
         show = Show.find_by(date: song_data.showdate)
-        track = Track.find_by(show: show, title: song_data.song)
+        track = Track.find_by(show:, title: song_data.song)
         next missing_tracks << "#{show.date} - #{song_data.song}" unless track
         next if track.tags.include?(unfinished_tag)
         track.tags << unfinished_tag
@@ -36,7 +36,7 @@ namespace :pnet do
   desc "Compare local setlists with Phish.net"
   task compare_setlists: :environment do
     shows = Show.published
-                .where(audio_status: %w[complete partial])
+                .with_audio
                 .where(matches_pnet: false)
                 .order(date: :asc)
 

@@ -50,7 +50,7 @@ class ApiV2::Search < ApiV2::Base
   helpers do
     def fetch_results(term, scope, audio_status = "any")
       Rails.cache.fetch("api/v2/search/#{term}/#{scope}/#{audio_status}") do
-        SearchService.call(term: term, scope: scope, audio_status: audio_status)
+        SearchService.call(term:, scope:, audio_status:)
       end
     end
 

@@ -57,7 +57,7 @@ class ApiV2::Songs < ApiV2::Base
                     .paginate(page: params[:page], per_page: params[:per_page])
 
         {
-          songs: songs,
+          songs:,
           total_pages: songs.total_pages,
           current_page: songs.current_page,
           total_entries: songs.total_entries
