@@ -1,5 +1,4 @@
-import { authFetch } from "./helpers/utils";
-import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
+import { authFetch, getAudioStatusFilter } from "./helpers/utils";
 
 export const tagShowsLoader = async ({ params, request }) => {
   const url = new URL(request.url);
@@ -8,7 +7,7 @@ export const tagShowsLoader = async ({ params, request }) => {
   const perPage = url.searchParams.get("per_page") || 10;
   const { tagSlug } = params;
 
-  const audioStatusFilter = getAudioStatusFilterFromStorage();
+  const audioStatusFilter = getAudioStatusFilter();
 
   try {
     const tagResponse = await fetch(`/api/v2/tags`);

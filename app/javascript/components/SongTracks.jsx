@@ -1,5 +1,4 @@
-import { authFetch } from "./helpers/utils";
-import { getTrackAudioStatusFilterFromStorage } from "./utils/audioFilter";
+import { authFetch, getAudioStatusFilter } from "./helpers/utils";
 
 export const songTracksLoader = async ({ params, request }) => {
   const url = new URL(request.url);
@@ -8,7 +7,7 @@ export const songTracksLoader = async ({ params, request }) => {
   const perPage = url.searchParams.get("per_page") || 10;
   const { songSlug } = params;
 
-  const audioStatusFilter = getTrackAudioStatusFilterFromStorage();
+  const audioStatusFilter = getAudioStatusFilter();
 
   try {
     const songResponse = await fetch(`/api/v2/songs/${songSlug}`);

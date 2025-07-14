@@ -6,7 +6,7 @@ import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
 import Loader from "./controls/Loader";
 import { useAudioFilteredData } from "./hooks/useAudioFilteredData";
-import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
+import { getAudioStatusFilter } from "./helpers/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList, faTh, faCircleChevronLeft, faCircleChevronRight, faSortAmountDown, faSortAmountUp } from "@fortawesome/free-solid-svg-icons";
 
@@ -25,7 +25,7 @@ const buildShowsUrl = (year, audioStatusFilter) => {
 export const eraShowsLoader = async ({ params }) => {
   const { year } = params;
 
-  const audioStatusFilter = getAudioStatusFilterFromStorage();
+  const audioStatusFilter = getAudioStatusFilter();
   const url = buildShowsUrl(year, audioStatusFilter);
 
   const response = await authFetch(url);

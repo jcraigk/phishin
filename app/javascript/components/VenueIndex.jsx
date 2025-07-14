@@ -1,4 +1,4 @@
-import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
+import { getAudioStatusFilter } from "./helpers/utils";
 
 export const venueIndexLoader = async ({ request }) => {
   const url = new URL(request.url);
@@ -7,7 +7,7 @@ export const venueIndexLoader = async ({ request }) => {
   const firstChar = url.searchParams.get("first_char") || "";
   const perPage = url.searchParams.get("per_page") || 10;
 
-  const audioStatusFilter = getAudioStatusFilterFromStorage();
+  const audioStatusFilter = getAudioStatusFilter();
 
   try {
     const response = await fetch(`/api/v2/venues?page=${page}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}&per_page=${perPage}&audio_status=${audioStatusFilter}`);

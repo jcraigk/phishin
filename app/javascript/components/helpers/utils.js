@@ -162,3 +162,9 @@ export const authFetchWithAudioFilter = async (url, audioStatusFilter, options =
   const finalUrl = buildApiUrl(url, audioStatusFilter);
   return authFetch(finalUrl, options);
 };
+
+export const getAudioStatusFilter = () => {
+  const stored = localStorage.getItem('hideMissingAudio');
+  const hideMissingAudio = stored !== null ? JSON.parse(stored) : true;
+  return hideMissingAudio ? 'complete_or_partial' : 'any';
+};

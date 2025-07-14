@@ -1,11 +1,10 @@
-import { authFetch } from "./helpers/utils";
+import { authFetch, getAudioStatusFilter } from "./helpers/utils";
 import { createTaperNotesModalContent } from "./helpers/modals";
-import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
 
 export const showLoader = async ({ params }) => {
   const { date } = params;
 
-  const audioStatusFilter = getAudioStatusFilterFromStorage();
+  const audioStatusFilter = getAudioStatusFilter();
 
   const url = `/api/v2/shows/${date}?audio_status=${audioStatusFilter}`;
   try {

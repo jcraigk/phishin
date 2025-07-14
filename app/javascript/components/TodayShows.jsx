@@ -1,5 +1,4 @@
-import { authFetch } from "./helpers/utils";
-import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
+import { authFetch, getAudioStatusFilter } from "./helpers/utils";
 
 const buildTodayShowsUrl = (month, day, sortBy, audioStatusFilter) => {
   const todayDate = `${new Date().getFullYear()}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
@@ -12,7 +11,7 @@ export const todayShowsLoader = async ({ request }) => {
   const day = url.searchParams.get("day") || new Date().getDate();
   const sortBy = url.searchParams.get("sort") || "date:desc";
 
-  const audioStatusFilter = getAudioStatusFilterFromStorage();
+  const audioStatusFilter = getAudioStatusFilter();
 
   try {
     const response = await authFetch(buildTodayShowsUrl(month, day, sortBy, audioStatusFilter));
