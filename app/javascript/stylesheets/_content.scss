@@ -433,7 +433,16 @@ main {
     }
 
     &.focus {
+      animation: pulse 3s infinite ease-in-out;
+      background-image: none !important;
+
       &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        bottom: 0;
+        left: 1rem;
+        right: 1rem;
         background-color: $highlight-blue;
         height: 2px;
       }

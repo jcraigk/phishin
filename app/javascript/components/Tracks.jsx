@@ -48,6 +48,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
   const renderTrackItem = (track, index) => {
     const { actualDuration, isExcerpt } = calculateTrackDetails(track);
     const hasMissingAudio = track.audio_status === 'missing';
+    const shouldFocus = viewStyle === "show" && track.slug === trackSlug;
 
     return (
       <li
@@ -56,7 +57,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
           "list-item",
           viewStyle === "show" ? "track-item" : "",
           track.id === activeTrack?.id ? "active-item" : "",
-          viewStyle === "show" && track.slug === trackSlug ? "focus" : "",
+          shouldFocus ? "focus" : "",
           hasMissingAudio ? "no-audio" : ""
         ].filter(Boolean).join(" ")}
         onClick={() => handleTrackClick(track)}

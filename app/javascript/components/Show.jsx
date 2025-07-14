@@ -59,12 +59,15 @@ const Show = ({ trackSlug }) => {
   useEffect(() => {
     let foundTrack;
     if (trackSlug) foundTrack = tracks.find((track) => track.slug === trackSlug);
-    if (foundTrack && foundTrack.audio_status !== 'missing') {
-      playTrack(tracks, foundTrack, true);
+    if (foundTrack) {
       setMatchedTrack(foundTrack);
       const trackIndex = tracks.findIndex((track) => track.slug === foundTrack.slug);
       if (trackRefs.current[trackIndex]) {
         trackRefs.current[trackIndex].scrollIntoView({ behavior: "smooth" });
+      }
+
+      if (foundTrack.audio_status !== 'missing') {
+        playTrack(tracks, foundTrack, true);
       }
     }
   }, [trackSlug, tracks]);
