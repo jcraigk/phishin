@@ -14,7 +14,7 @@ describe Api::V1::ApiController do
     let(:headers) { {} }
 
     it "returns a 401" do
-      expect(response.status).to eq(401)
+      expect(response).to have_http_status(:unauthorized)
     end
   end
 

@@ -95,6 +95,6 @@ class Venue < ApplicationRecord
   private
 
   def shows_played_here
-    @shows_played_here ||= shows.published.where.not(audio_status: "missing").order(date: :asc)
+    @shows_played_here ||= shows.published.with_audio.order(date: :asc)
   end
 end

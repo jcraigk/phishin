@@ -234,7 +234,7 @@ class GapService < ApplicationService
                            .where(songs: { id: song.id })
                            .where("tracks.set <> ?", "S")
                            .where("shows.date < ?", track.show.date)
-                           .where.not(shows: { audio_status: "missing" })
+                           .merge(Show.with_audio)
                            .where(shows: { exclude_from_stats: false })
                            .order("shows.date DESC, tracks.position DESC")
 
@@ -303,7 +303,7 @@ class GapService < ApplicationService
                        .where(songs: { id: song.id })
                        .where("tracks.set <> ?", "S")
                        .where("shows.date > ?", track.show.date)
-                       .where.not(shows: { audio_status: "missing" })
+                       .merge(Show.with_audio)
                        .where(shows: { exclude_from_stats: false })
                        .order("shows.date ASC, tracks.position ASC")
 
@@ -433,7 +433,7 @@ class GapService < ApplicationService
     # Count shows with audio between the dates (exclusive of start and end dates)
     # PhishNet gap methodology: count shows between performances
     Show.where(date: start_date.next_day..end_date.prev_day)
-        .where.not(audio_status: "missing")
+        .with_audio
         .where(exclude_from_stats: false)
         .sum do |show|
           # Special cases: certain dates count as multiple performances for PhishNet compatibility

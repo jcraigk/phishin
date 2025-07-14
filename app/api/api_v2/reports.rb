@@ -36,7 +36,7 @@ class ApiV2::Reports < ApiV2::Base
 
     def missing_show_details
       Show.published
-          .where(audio_status: "missing")
+          .missing_audio
           .order(date: :desc)
           .map do |show|
         {
