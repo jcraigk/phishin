@@ -28,7 +28,7 @@ class ShowImporter::Orchestrator
   end
 
   def show
-    @show ||= Show.new(date:, published: false)
+    @show ||= Show.new(date:)
   end
 
   def pp_list
@@ -51,7 +51,7 @@ class ShowImporter::Orchestrator
     DebutTagService.call(show)
     save_song_performance_data(show)
 
-    show.update!(published: true)
+
 
     create_announcement
   end

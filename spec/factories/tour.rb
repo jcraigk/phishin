@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :tour do
     sequence(:name) { |n| "Tour #{n}" }
-    starts_on { Faker::Date.unique.between(from: 500.years.ago, to: Time.zone.today) }
-    ends_on { Faker::Date.unique.between(from: 500.years.ago, to: Time.zone.today) }
+    sequence(:starts_on) { |n| Date.new(1985, 1, 1) + (n * 30).days }
+    sequence(:ends_on) { |n| Date.new(1985, 1, 1) + (n * 30 + 10).days }
 
     trait :with_shows do
       after(:build) do |tour|

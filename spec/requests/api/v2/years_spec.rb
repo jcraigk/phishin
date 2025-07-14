@@ -4,9 +4,9 @@ RSpec.describe "API v2 Years" do
   describe "GET /years" do
     let(:venue1) { create(:venue) }
     let(:venue2) { create(:venue) }
-    let!(:show1) { create(:show, date: "1987-05-01", published: true, venue: venue1) }
-    let!(:show2) { create(:show, date: "1986-07-15", published: true, venue: venue1) }
-    let!(:show3) { create(:show, date: "2003-12-01", published: true, venue: venue2) }
+      let!(:show1) { create(:show, date: "1987-05-01", venue: venue1) }
+  let!(:show2) { create(:show, date: "1986-07-15", venue: venue1) }
+  let!(:show3) { create(:show, date: "2003-12-01", venue: venue2) }
 
     it "returns a list of years with show counts, venue counts, and eras" do
       get_api "/years"

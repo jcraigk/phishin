@@ -5,6 +5,7 @@ FactoryBot.define do
     set { "1" }
     sequence(:position, 1)
     duration { 150_000 } # 2m 30s
+    audio_status { 'complete' }
 
     show
 

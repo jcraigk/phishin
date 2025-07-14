@@ -53,7 +53,7 @@ SitemapGenerator::Sitemap.create do # rubocop:disable Metrics/BlockLength
   end
 
   # Shows
-  Show.published.find_each do |show|
+  Show.find_each do |show|
     add "/#{show.date}", lastmod: show.updated_at
   end
 

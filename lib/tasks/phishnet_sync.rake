@@ -434,8 +434,7 @@ namespace :phishnet do
     end
     show.tour = tour
 
-    # Set show as published but check audio status
-    show.published = true
+    # Note: All shows are now considered published by default
 
     # Set exclude_from_stats based on Phish.net API data
     show.exclude_from_stats = exclude_from_stats

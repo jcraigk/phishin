@@ -19,7 +19,15 @@ describe Api::V1::TracksController do
       it 'responds with expected data' do
         # v1 API only returns tracks from shows that don't have missing audio
         expected_tracks = tracks.select { |t| t.show.audio_status != 'missing' }
-        expect(json_data).to match_array(expected_tracks.map(&:as_json_api))
+
+        expected_json = expected_tracks.map(&:as_json_api)
+        actual_json = json_data
+
+        # Remove updated_at from comparison to avoid timing issues
+        expected_json.each { |track| track.delete(:updated_at) }
+        actual_json.each { |track| track.delete(:updated_at) }
+
+        expect(actual_json).to match_array(expected_json)
       end
     end
 

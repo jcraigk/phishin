@@ -88,16 +88,7 @@ RSpec.describe Show do
       end
     end
 
-    describe '#published' do
-      let!(:show2) { create(:show, published: true) }
-      let!(:show3) { create(:show, published: true) }
 
-      before { create(:show, published: false) }
-
-      it 'returns published shows' do
-        expect(described_class.published.order(date: :asc)).to contain_exactly(show2, show3)
-      end
-    end
 
     describe "#random" do
       let!(:shows) { create_list(:show, 5) }

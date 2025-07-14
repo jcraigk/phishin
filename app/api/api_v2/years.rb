@@ -112,7 +112,7 @@ class ApiV2::Years < ApiV2::Base
             COUNT(DISTINCT CASE WHEN audio_status IN ('complete', 'partial') THEN venue_id END) as venues_with_audio_count,
             COALESCE(SUM(duration), 0) as shows_duration
           FROM shows
-          WHERE published = true AND (#{condition})
+          WHERE (#{condition})
         SQL
       end
 
