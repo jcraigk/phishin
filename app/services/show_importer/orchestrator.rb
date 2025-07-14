@@ -137,7 +137,7 @@ class ShowImporter::Orchestrator
     return show.venue = venue if venue.present?
 
     puts "No venue matched! Enter Venue ID:"
-    @venue = Venue.find($stdin.gets.chomp.to_i)
+    @venue = Venue.find($stdin.gets.chomp.strip.to_i)
     show.venue = venue
   end
 
@@ -145,7 +145,7 @@ class ShowImporter::Orchestrator
     return show.tour = tour if tour.present?
 
     puts "No tour matched! Enter Tour ID:"
-    @tour = Tour.find($stdin.gets.chomp.to_i)
+    @tour = Tour.find($stdin.gets.chomp.strip.to_i)
     show.tour = tour
   end
 
