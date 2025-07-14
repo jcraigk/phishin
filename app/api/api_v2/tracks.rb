@@ -91,7 +91,7 @@ class ApiV2::Tracks < ApiV2::Base
         end
 
       {
-        tracks: tracks,
+        tracks:,
         total_pages: tracks.total_pages,
         current_page: tracks.current_page,
         total_entries: tracks.total_entries

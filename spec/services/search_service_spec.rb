@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe SearchService do
-  subject(:service) { described_class.new(term: term, scope: scope) }
+  subject(:service) { described_class.new(term:, scope:) }
 
   let(:term) { nil }
   let(:scope) { "all" }

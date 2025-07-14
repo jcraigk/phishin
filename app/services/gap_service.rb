@@ -69,7 +69,7 @@ class GapService < ApplicationService
 
           # Find all previous performances of this song
           previous_song_tracks = SongsTrack.joins(track: :show)
-                                          .where(song: song)
+                                          .where(song:)
                                           .where("shows.date < ?", show.date)
                                           .where.not(tracks: { set: "S" })
                                           .where(shows: { exclude_from_stats: false })

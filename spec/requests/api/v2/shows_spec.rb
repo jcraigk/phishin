@@ -45,7 +45,7 @@ RSpec.describe "API v2 Shows" do
 
       # Set up some test gap data
       show.tracks.joins(:songs).where(songs: { title: "Tweezer" }).each_with_index do |track, index|
-        songs_track = SongsTrack.find_by(track: track, song: tweezer_song)
+        songs_track = SongsTrack.find_by(track:, song: tweezer_song)
         songs_track.update!(previous_performance_gap: index == 0 ? 5 : 0)
       end
 

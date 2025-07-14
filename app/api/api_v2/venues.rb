@@ -51,7 +51,7 @@ class ApiV2::Venues < ApiV2::Base
                       .paginate(page: params[:page], per_page: params[:per_page])
 
         {
-          venues: venues,
+          venues:,
           total_pages: venues.total_pages,
           current_page: venues.current_page,
           total_entries: venues.total_entries

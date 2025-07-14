@@ -192,8 +192,8 @@ namespace :gaps do
               track_position: local_track.position,
               track_set: local_track.set,
               song_title: local_song.title,
-              local_gap: local_gap,
-              pnet_gap: pnet_gap,
+              local_gap:,
+              pnet_gap:,
               difference: local_gap.to_i - pnet_gap.to_i
             }
 

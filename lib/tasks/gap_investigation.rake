@@ -135,8 +135,8 @@ namespace :gaps do
       if result[:error]
         puts "   ❌ Error: #{result[:error]}"
         investigations << {
-          date: date,
-          track_title: track_title,
+          date:,
+          track_title:,
           status: "error",
           error: result[:error]
         }
@@ -147,8 +147,8 @@ namespace :gaps do
       puts "   Local: #{data[:local_gap]}, Remote: #{data[:remote_gap]}"
 
       investigations << {
-        date: date,
-        track_title: track_title,
+        date:,
+        track_title:,
         status: data[:message] == "Gaps match - no discrepancy found" ? "match" : "discrepancy",
         local_gap: data[:local_gap],
         remote_gap: data[:remote_gap],

@@ -32,7 +32,7 @@ module HasCoverArt
     def album_cover_url
       placeholder = (respond_to?(:audio_status) && audio_status == "missing") ?
                     "missing-audio-cover-art-large.jpg" : "cover-art-large.jpg"
-      blob_url(album_cover, placeholder: placeholder, ext: :jpg)
+      blob_url(album_cover, placeholder:, ext: :jpg)
     end
 
     def album_zip_url
@@ -52,11 +52,11 @@ module HasCoverArt
     end
 
     def attach_cover_art_by_url(image_url, zoom: 0)
-      attach_cover_art(image_url: image_url, zoom: zoom)
+      attach_cover_art(image_url:, zoom:)
     end
 
     def attach_cover_art_by_path(file_path, zoom: 0)
-      attach_cover_art(file_path: file_path, zoom: zoom)
+      attach_cover_art(file_path:, zoom:)
     end
 
     private

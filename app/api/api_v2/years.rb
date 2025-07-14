@@ -77,14 +77,14 @@ class ApiV2::Years < ApiV2::Base
           cover_art_urls = get_cover_art_urls(period, cover_art_shows)
 
           {
-            period: period,
+            period:,
             shows_count: stats[:shows_count],
             shows_with_audio_count: stats[:shows_with_audio_count],
             shows_duration: stats[:shows_duration],
             venues_count: stats[:venues_count],
             venues_with_audio_count: stats[:venues_with_audio_count],
-            era: era,
-            cover_art_urls: cover_art_urls
+            era:,
+            cover_art_urls:
           }
         end
       end.flatten

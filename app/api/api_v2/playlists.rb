@@ -166,7 +166,7 @@ class ApiV2::Playlists < ApiV2::Base
         end
 
       {
-        playlists: playlists,
+        playlists:,
         total_pages: playlists.total_pages,
         current_page: playlists.current_page,
         total_entries: playlists.total_entries
@@ -221,7 +221,7 @@ class ApiV2::Playlists < ApiV2::Base
         )
 
         {
-          track_id: track_id,
+          track_id:,
           position: idx + 1,
           starts_at_second: starts_at,
           ends_at_second: ends_at

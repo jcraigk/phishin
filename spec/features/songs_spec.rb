@@ -13,8 +13,8 @@ RSpec.describe "Songs", :js do
     # Create actual tracks with shows that have audio
     5.times do |i|
       show = create(:show, audio_status: "complete")
-      track = create(:track, show: show, position: i + 1)
-      create(:songs_track, song: song, track: track)
+      track = create(:track, show:, position: i + 1)
+      create(:songs_track, song:, track:)
     end
     song
   end
@@ -30,8 +30,8 @@ RSpec.describe "Songs", :js do
     # Create actual tracks with shows that have audio
     10.times do |i|
       show = create(:show, audio_status: "complete")
-      track = create(:track, show: show, position: i + 1)
-      create(:songs_track, song: song, track: track)
+      track = create(:track, show:, position: i + 1)
+      create(:songs_track, song:, track:)
     end
     song
   end

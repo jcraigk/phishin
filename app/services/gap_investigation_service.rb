@@ -24,8 +24,8 @@ class GapInvestigationService < ApplicationService
     if local_gap == remote_gap
       return {
         message: "Gaps match - no discrepancy found",
-        local_gap: local_gap,
-        remote_gap: remote_gap
+        local_gap:,
+        remote_gap:
       }
     end
 
@@ -35,10 +35,10 @@ class GapInvestigationService < ApplicationService
 
     {
       message: "Gap discrepancy found",
-      local_gap: local_gap,
-      remote_gap: remote_gap,
-      local_shows: local_shows,
-      remote_shows: remote_shows,
+      local_gap:,
+      remote_gap:,
+      local_shows:,
+      remote_shows:,
       analysis: analyze_discrepancy(local_shows, remote_shows)
     }
   end
@@ -208,9 +208,9 @@ class GapInvestigationService < ApplicationService
       if pnet_count != local_count
         summary[:dates_with_mismatched_counts] += 1
         summary[:dates_with_count_mismatch] << {
-          date: date,
-          pnet_count: pnet_count,
-          local_count: local_count,
+          date:,
+          pnet_count:,
+          local_count:,
           difference: local_count - pnet_count
         }
       end
@@ -228,7 +228,7 @@ class GapInvestigationService < ApplicationService
         local_show = local_shows_for_date[index]
 
         shows << {
-          date: date,
+          date:,
           show_index: index + 1,
           total_shows_for_date: { pnet: pnet_count, local: local_count },
           pnet_data: pnet_show ? {
@@ -246,7 +246,7 @@ class GapInvestigationService < ApplicationService
       end
     end
 
-    { shows: shows, summary: summary }
+    { shows:, summary: }
   end
 
   def determine_match_status(pnet_show, local_show)

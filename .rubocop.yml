@@ -13,6 +13,9 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 3.4.4
 
+Style/HashSyntax:
+  EnforcedShorthandSyntax: always
+
 FactoryBot/ExcessiveCreateList:
   Enabled: false
 RSpec/ExampleLength:

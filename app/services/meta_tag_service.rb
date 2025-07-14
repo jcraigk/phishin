@@ -111,11 +111,11 @@ class MetaTagService < ApplicationService
   end
 
   def show_data
-    show = Show.includes(:tracks).find_by(date: date)
+    show = Show.includes(:tracks).find_by(date:)
     return not_found_meta unless show
 
     if slug
-      track = show.tracks.find_by(slug: slug)
+      track = show.tracks.find_by(slug:)
       if track
         title = "#{track.title} - #{short_date(show.date)}#{TITLE_SUFFIX}"
         og_title = "Listen to #{track.title} from #{long_date(show.date)}"
@@ -124,7 +124,7 @@ class MetaTagService < ApplicationService
         og_title = "Listen to #{long_date(show.date)}"
       end
       {
-        title: title,
+        title:,
         og: {
           title: og_title,
           type: "music.playlist",
@@ -179,7 +179,7 @@ class MetaTagService < ApplicationService
   end
 
   def tag_data
-    tag = Tag.find_by(slug: slug)
+    tag = Tag.find_by(slug:)
     return not_found_meta unless tag
 
     title_suffix = resource_type == "show-tags" ? "Shows" : "Tracks"

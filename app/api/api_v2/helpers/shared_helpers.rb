@@ -51,9 +51,9 @@ module ApiV2::Helpers::SharedHelpers
   def apply_audio_status_filter(relation, audio_status)
     case audio_status
     when "complete", "partial", "missing"
-      relation.where(audio_status: audio_status)
+      relation.where(audio_status:)
     when "complete_or_partial"
-      relation.where(audio_status: %w[complete partial])
+      relation.with_audio
     else
       relation
     end
@@ -64,14 +64,14 @@ module ApiV2::Helpers::SharedHelpers
     when "complete_or_partial"
       # Use a subquery to avoid DISTINCT issues with ORDER BY
       song_ids = Song.joins(:tracks)
-                    .where(tracks: { audio_status: %w[complete partial] })
+                    .merge(Track.with_audio)
                     .select(:id)
                     .distinct
                     .pluck(:id)
       songs.where(id: song_ids)
     when "complete", "partial", "missing"
       song_ids = Song.joins(:tracks)
-                    .where(tracks: { audio_status: audio_status })
+                    .where(tracks: { audio_status: })
                     .select(:id)
                     .distinct
                     .pluck(:id)
@@ -87,7 +87,7 @@ module ApiV2::Helpers::SharedHelpers
       venues.where("shows_with_audio_count > 0")
     when "complete", "partial", "missing"
       venue_ids = Venue.joins(:shows)
-                       .where(shows: { audio_status: audio_status })
+                       .where(shows: { audio_status: })
                        .select(:id)
                        .distinct
                        .pluck(:id)
