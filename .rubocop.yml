@@ -13,9 +13,6 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 3.4.4
 
-Style/HashSyntax:
-  EnforcedShorthandSyntax: always
-
 FactoryBot/ExcessiveCreateList:
   Enabled: false
 RSpec/ExampleLength:
@@ -33,5 +30,5 @@ RSpec/MultipleMemoizedHelpers:
   Enabled: false
 RSpec/NestedGroups:
   Max: 4
-RSpecRails/HaveHttpStatus: # We use Rack::MockResponse
-  Enabled: false
+Style/HashSyntax:
+  EnforcedShorthandSyntax: always

@@ -82,7 +82,7 @@ namespace :gaps do
     shows = Show.joins(:tracks)
                 .where.not(tracks: { set: "S" })
                 .where(exclude_from_stats: false)
-                .where.not(audio_status: "missing")
+                .with_audio
                 .distinct
                 .order(:date)
 
@@ -336,7 +336,7 @@ namespace :gaps do
     show_ids = Show.joins(:tracks)
                    .where.not(tracks: { set: "S" })
                    .where(exclude_from_stats: false)
-                   .where.not(audio_status: "missing")
+                   .with_audio
                    .distinct
                    .pluck(:id)
                    .sample(limit)

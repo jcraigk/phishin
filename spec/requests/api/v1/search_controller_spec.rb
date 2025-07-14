@@ -12,7 +12,7 @@ describe Api::V1::SearchController do
       let(:term) { 'a' }
 
       it 'returns 400' do
-        expect(response.status).to eq(400)
+        expect(response).to have_http_status(:bad_request)
       end
 
       it 'returns expected data' do
@@ -43,7 +43,7 @@ describe Api::V1::SearchController do
       before { tour }
 
       it 'returns 200' do
-        expect(response.status).to eq(200)
+        expect(response).to have_http_status(:ok)
       end
 
       it 'returns expected data' do

@@ -94,7 +94,7 @@ class SearchService < ApplicationService
     # Filter songs to only include those with audio if audio_status is complete_or_partial
     if audio_status == "complete_or_partial"
       scope = scope.joins(songs_tracks: { track: :show })
-                   .where.not(shows: { audio_status: "missing" })
+                   .merge(Show.with_audio)
                    .distinct
                    .order("songs.title ASC")
     else
