@@ -282,5 +282,38 @@ RSpec.describe "API v2 Shows" do
         expect(json["message"]).to eq("Invalid date format")
       end
     end
+
+    context "with audio_status filter" do
+      let!(:complete_show) { create(:show, date: "2020-07-15", venue:, audio_status: "complete") }
+      let!(:missing_show) { create(:show, date: "2019-07-15", venue:, audio_status: "missing") }
+
+      it "returns only shows with audio when audio_status=complete_or_partial" do
+        complete_show
+        missing_show
+
+        get_api_authed(user, "/shows/day_of_year/2020-07-15", params: { audio_status: "complete_or_partial" })
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+
+        expect(json[:shows].size).to eq(1)
+        expect(json[:shows].first[:id]).to eq(complete_show.id)
+        expect(json[:shows].first[:audio_status]).to eq("complete")
+      end
+
+      it "returns all shows when audio_status=any" do
+        complete_show
+        missing_show
+
+        get_api_authed(user, "/shows/day_of_year/2020-07-15", params: { audio_status: "any" })
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+
+        expect(json[:shows].size).to eq(2)
+        show_ids = json[:shows].map { |s| s[:id] }
+        expect(show_ids).to contain_exactly(complete_show.id, missing_show.id)
+      end
+    end
   end
 end

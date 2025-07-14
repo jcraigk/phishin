@@ -27,7 +27,7 @@ export const venueIndexLoader = async ({ request }) => {
   }
 };
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useCallback } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { formatNumber } from "./helpers/utils";
@@ -36,7 +36,7 @@ import Venues from "./Venues";
 import PhoneTitle from "./PhoneTitle";
 import Pagination from "./controls/Pagination";
 import { paginationHelper } from "./helpers/pagination";
-import { useAudioFilter } from "./contexts/AudioFilterContext";
+import { useAudioFilteredData } from "./hooks/useAudioFilteredData";
 import Loader from "./controls/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -45,18 +45,9 @@ const FIRST_CHAR_LIST = ["#", ...Array.from({ length: 26 }, (_, i) => String.fro
 
 const VenueIndex = () => {
   const initialData = useLoaderData();
-  const [venues, setVenues] = useState(initialData.venues);
-  const [totalPages, setTotalPages] = useState(initialData.totalPages);
-  const [totalEntries, setTotalEntries] = useState(initialData.totalEntries);
-
   const { page, perPage, sortOption, firstChar } = initialData;
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const { hideMissingAudio, getAudioStatusFilter } = useAudioFilter();
-
-  // Track the initial filter state to prevent unnecessary re-fetches
-  const initialFilterRef = useRef(null);
-  const hasInitialized = useRef(false);
 
   const {
     tempPerPage,
@@ -66,54 +57,24 @@ const VenueIndex = () => {
     handlePerPageBlurOrEnter
     } = paginationHelper(page, sortOption, perPage, firstChar);
 
-  // Single fetch function for all data fetching needs
-  const fetchVenues = async (fetchPage = page + 1, fetchSort = sortOption, fetchFirstChar = firstChar, fetchPerPage = perPage, audioStatusFilter = getAudioStatusFilter()) => {
+  // Simplified fetch function for audio filter integration
+  const fetchVenues = useCallback(async (audioStatusFilter) => {
     try {
-      const response = await fetch(`/api/v2/venues?page=${fetchPage}&sort=${fetchSort}&first_char=${encodeURIComponent(fetchFirstChar)}&per_page=${fetchPerPage}&audio_status=${audioStatusFilter}`);
+      const response = await fetch(`/api/v2/venues?page=${page + 1}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
       if (!response.ok) throw response;
       const data = await response.json();
-
-      setVenues(data.venues);
-      setTotalPages(data.total_pages);
-      setTotalEntries(data.total_entries);
-
       return data;
     } catch (error) {
       console.error("Error fetching venues:", error);
       throw error;
     }
-  };
+  }, [page, sortOption, firstChar, perPage]);
 
-  useEffect(() => {
-    console.log('VenueIndex useEffect triggered');
-    const currentAudioStatusFilter = getAudioStatusFilter();
-    console.log('Current filter:', currentAudioStatusFilter, 'Initial filter:', initialFilterRef.current, 'Has initialized:', hasInitialized.current);
+    const { data: venuesData, isLoading } = useAudioFilteredData(initialData, fetchVenues, [page, sortOption, firstChar, perPage]);
 
-    if (!hasInitialized.current) {
-      console.log('Initializing filter ref');
-      initialFilterRef.current = currentAudioStatusFilter;
-      hasInitialized.current = true;
-      return;
-    }
-
-    if (currentAudioStatusFilter === initialFilterRef.current) {
-      console.log('Filter unchanged, skipping fetch');
-      return;
-    }
-
-            console.log('Filter changed, starting fetch');
-    const handleFilterChange = async () => {
-      try {
-        await fetchVenues(1, sortOption, firstChar, perPage, currentAudioStatusFilter);
-
-        initialFilterRef.current = currentAudioStatusFilter;
-      } catch (error) {
-        // Error already logged in fetchVenues
-      }
-    };
-
-    handleFilterChange();
-  }, [hideMissingAudio, sortOption, firstChar, perPage, navigate]);
+  const venues = venuesData?.venues || initialData.venues;
+  const totalPages = venuesData?.total_pages || initialData.totalPages;
+  const totalEntries = venuesData?.total_entries || initialData.totalEntries;
 
   const handleFirstCharChange = (event) => {
     navigate(`?page=1&sort=${sortOption}&first_char=${event.target.value}&per_page=${perPage}`);
@@ -187,16 +148,21 @@ const VenueIndex = () => {
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <PhoneTitle title="Venues" />
-
-        <Venues venues={venues} />
-        <Pagination
-          totalPages={totalPages}
-          handlePageClick={handlePageClick}
-          currentPage={page}
-          perPage={tempPerPage}
-          handlePerPageInputChange={handlePerPageInputChange}
-          handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
-        />
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            <Venues venues={venues} />
+            <Pagination
+              totalPages={totalPages}
+              handlePageClick={handlePageClick}
+              currentPage={page}
+              perPage={tempPerPage}
+              handlePerPageInputChange={handlePerPageInputChange}
+              handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
+            />
+          </>
+        )}
       </LayoutWrapper>
     </>
   );

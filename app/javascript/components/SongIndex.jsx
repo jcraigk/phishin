@@ -25,7 +25,7 @@ export const songIndexLoader = async ({ request }) => {
   }
 };
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useCallback } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { formatNumber } from "./helpers/utils";
@@ -34,25 +34,16 @@ import Songs from "./Songs";
 import Pagination from "./controls/Pagination";
 import PhoneTitle from "./PhoneTitle";
 import { paginationHelper } from "./helpers/pagination";
-import { useAudioFilter } from "./contexts/AudioFilterContext";
+import { useAudioFilteredData } from "./hooks/useAudioFilteredData";
 import Loader from "./controls/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const SongIndex = () => {
   const initialData = useLoaderData();
-  const [songs, setSongs] = useState(initialData.songs);
-  const [totalPages, setTotalPages] = useState(initialData.totalPages);
-  const [totalEntries, setTotalEntries] = useState(initialData.totalEntries);
-
   const { page, sortOption, perPage } = initialData;
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const { hideMissingAudio, getAudioStatusFilter } = useAudioFilter();
-
-  // Track the initial filter state to prevent unnecessary re-fetches
-  const initialFilterRef = useRef(null);
-  const hasInitialized = useRef(false);
 
   const {
     tempPerPage,
@@ -62,55 +53,24 @@ const SongIndex = () => {
     handlePerPageBlurOrEnter
   } = paginationHelper(page, sortOption, perPage);
 
-  // Single fetch function for all data fetching needs
-  const fetchSongs = async (fetchPage = page + 1, fetchSort = sortOption, fetchPerPage = perPage, audioStatusFilter = getAudioStatusFilter()) => {
+  // Simplified fetch function for audio filter integration
+  const fetchSongs = useCallback(async (audioStatusFilter) => {
     try {
-      const response = await fetch(`/api/v2/songs?page=${fetchPage}&sort=${fetchSort}&per_page=${fetchPerPage}&audio_status=${audioStatusFilter}`);
+      const response = await fetch(`/api/v2/songs?page=${page + 1}&sort=${sortOption}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
       if (!response.ok) throw response;
       const data = await response.json();
-
-      setSongs(data.songs);
-      setTotalPages(data.total_pages);
-      setTotalEntries(data.total_entries);
-
       return data;
     } catch (error) {
       console.error("Error fetching songs:", error);
       throw error;
     }
-  };
+  }, [page, sortOption, perPage]);
 
-  useEffect(() => {
-    console.log('SongIndex useEffect triggered');
-    const currentAudioStatusFilter = getAudioStatusFilter();
-    console.log('Current filter:', currentAudioStatusFilter, 'Initial filter:', initialFilterRef.current, 'Has initialized:', hasInitialized.current);
+    const { data: songsData, isLoading } = useAudioFilteredData(initialData, fetchSongs, [page, sortOption, perPage]);
 
-    if (!hasInitialized.current) {
-      console.log('Initializing filter ref');
-      initialFilterRef.current = currentAudioStatusFilter;
-      hasInitialized.current = true;
-      return;
-    }
-
-    if (currentAudioStatusFilter === initialFilterRef.current) {
-      console.log('Filter unchanged, skipping fetch');
-      return;
-    }
-
-    console.log('Filter changed, starting fetch');
-    const handleFilterChange = async () => {
-      try {
-        await fetchSongs(1, sortOption, perPage, currentAudioStatusFilter);
-
-        initialFilterRef.current = currentAudioStatusFilter;
-
-      } catch (error) {
-        // Error already logged in fetchSongs
-      }
-    };
-
-    handleFilterChange();
-  }, [hideMissingAudio, sortOption, perPage, navigate]);
+  const songs = songsData?.songs || initialData.songs;
+  const totalPages = songsData?.total_pages || initialData.totalPages;
+  const totalEntries = songsData?.total_entries || initialData.totalEntries;
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -170,17 +130,22 @@ const SongIndex = () => {
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <PhoneTitle title="Songs" />
-
-        <Songs songs={songs} />
-        {totalPages > 1 && (
-          <Pagination
-            totalPages={totalPages}
-            handlePageClick={handlePageClick}
-            currentPage={page}
-            perPage={tempPerPage}
-            handlePerPageInputChange={handlePerPageInputChange}
-            handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
-          />
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            <Songs songs={songs} />
+            {totalPages > 1 && (
+              <Pagination
+                totalPages={totalPages}
+                handlePageClick={handlePageClick}
+                currentPage={page}
+                perPage={tempPerPage}
+                handlePerPageInputChange={handlePerPageInputChange}
+                handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
+              />
+            )}
+          </>
         )}
       </LayoutWrapper>
     </>

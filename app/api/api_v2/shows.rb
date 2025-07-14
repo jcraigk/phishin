@@ -106,7 +106,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
       success ApiV2::Entities::Show
     end
     params do
-      use :sort
+      use :sort, :audio_status
       requires :date, type: String, desc: "Date in the format YYYY-MM-DD"
     end
     get "day_of_year/:date" do
@@ -115,6 +115,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
         Show.published
             .where("extract(month from date) = ?", date.month)
             .where("extract(day from date) = ?", date.day)
+      shows = apply_audio_status_filter(shows, params[:audio_status])
       shows = apply_sort(shows, :date, :desc)
       liked_show_ids = fetch_liked_show_ids(shows)
       present \

@@ -1,18 +1,21 @@
 import { authFetch } from "./helpers/utils";
 import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
 
+const buildTodayShowsUrl = (month, day, sortBy, audioStatusFilter) => {
+  const todayDate = `${new Date().getFullYear()}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  return `/api/v2/shows/day_of_year/${todayDate}?sort=${sortBy}&audio_status=${audioStatusFilter}`;
+};
+
 export const todayShowsLoader = async ({ request }) => {
   const url = new URL(request.url);
   const month = url.searchParams.get("month") || new Date().getMonth() + 1;
   const day = url.searchParams.get("day") || new Date().getDate();
   const sortBy = url.searchParams.get("sort") || "date:desc";
 
-  const todayDate = `${new Date().getFullYear()}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-
   const audioStatusFilter = getAudioStatusFilterFromStorage();
 
   try {
-    const response = await authFetch(`/api/v2/shows/day_of_year/${todayDate}?sort=${sortBy}&audio_status=${audioStatusFilter}`);
+    const response = await authFetch(buildTodayShowsUrl(month, day, sortBy, audioStatusFilter));
     if (!response.ok) throw response;
     const data = await response.json();
 
@@ -27,16 +30,28 @@ export const todayShowsLoader = async ({ request }) => {
   }
 };
 
-import React from "react";
+import React, { useCallback } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
 import PhoneTiltSuggestion from "./PhoneTiltSuggestion";
+import Loader from "./controls/Loader";
+import { useAudioFilteredData } from "./hooks/useAudioFilteredData";
 
 const TodayShows = () => {
-  const { shows, month, day, sortBy } = useLoaderData();
+  const { shows: initialShows, month, day, sortBy } = useLoaderData();
   const navigate = useNavigate();
+
+  // Simplified data fetching with audio filter
+  const fetchShows = useCallback(async (audioStatusFilter) => {
+    const response = await authFetch(buildTodayShowsUrl(month, day, sortBy, audioStatusFilter));
+    if (!response.ok) throw response;
+    const data = await response.json();
+    return data.shows || [];
+  }, [month, day, sortBy]);
+
+  const { data: shows, isLoading } = useAudioFilteredData(initialShows, fetchShows, [month, day, sortBy]);
 
   const handleSortChange = (e) => {
     navigate(`?month=${month}&day=${day}&sort=${e.target.value}`);
@@ -108,7 +123,9 @@ const TodayShows = () => {
         <title>{getMonthDayDisplay()} - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        {shows.length === 0 ? (
+        {isLoading ? (
+          <Loader />
+        ) : shows.length === 0 ? (
           <h1 className="title">No shows found for {getMonthDayDisplay()}.</h1>
         ) : (
           <Shows shows={shows} tourHeaders={true} />

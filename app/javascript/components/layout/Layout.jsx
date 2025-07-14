@@ -6,7 +6,7 @@ import Player from "../controls/Player";
 import AppModal from "../modals/AppModal";
 import DraftPlaylistModal from "../modals/DraftPlaylistModal";
 import { useFeedback } from "../contexts/FeedbackContext";
-import { AudioFilterProvider } from "../contexts/AudioFilterContext";
+import { AudioFilterProvider, useAudioFilter } from "../contexts/AudioFilterContext";
 
 const initialDraftPlaylistMeta = {
   id: null,
@@ -16,7 +16,7 @@ const initialDraftPlaylistMeta = {
   published: false,
 };
 
-const Layout = ({ props }) => {
+const LayoutContent = ({ props }) => {
   const navigation = useNavigation();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -33,6 +33,7 @@ const Layout = ({ props }) => {
   const [sortOption, setSortOption] = useState("desc");
   const [shouldAutoplay, setShouldAutoplay] = useState(false);
   const { setNotice, setAlert } = useFeedback();
+  const { isFilterLoading } = useAudioFilter();
 
   useEffect(() => {
     // OAuth failure
@@ -124,9 +125,9 @@ const Layout = ({ props }) => {
   };
 
   return (
-    <AudioFilterProvider>
+    <>
       <ScrollRestoration />
-      {navigation.state === "loading" && <Loader />}
+      {(navigation.state === "loading" || isFilterLoading) && <Loader />}
       <Navbar user={user} handleLogout={handleLogout} />
       <main className={activeTrack ? "with-player" : ""}>
         <Outlet
@@ -185,6 +186,14 @@ const Layout = ({ props }) => {
         setIsDraftPlaylistSaved={setIsDraftPlaylistSaved}
         resetDraftPlaylist={resetDraftPlaylist}
       />
+    </>
+  );
+};
+
+const Layout = ({ props }) => {
+  return (
+    <AudioFilterProvider>
+      <LayoutContent props={props} />
     </AudioFilterProvider>
   );
 };

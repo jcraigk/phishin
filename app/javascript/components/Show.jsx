@@ -30,6 +30,7 @@ import LikeButton from "./controls/LikeButton";
 import Tracks from "./Tracks";
 import TagBadges from "./controls/TagBadges";
 import CoverArt from "./CoverArt";
+import { useClientSideAudioFilter } from "./hooks/useAudioFilteredData";
 import { useAudioFilter } from "./contexts/AudioFilterContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
@@ -45,9 +46,7 @@ const Show = ({ trackSlug }) => {
   const [showPartialAudioNotification, setShowPartialAudioNotification] = useState(show.audio_status === 'partial');
   const { hideMissingAudio } = useAudioFilter();
 
-  const filteredTracks = hideMissingAudio
-    ? tracks.filter(track => track.audio_status !== 'missing')
-    : tracks;
+  const filteredTracks = useClientSideAudioFilter(tracks, track => track.audio_status !== 'missing');
 
   useEffect(() => {
     setTracks(show.tracks);
