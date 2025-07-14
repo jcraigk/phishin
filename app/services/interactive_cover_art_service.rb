@@ -99,11 +99,11 @@ class InteractiveCoverArtService < ApplicationService
     txt = @urls.any? ? "Use (1-#{@urls.size}), " : ""
     txt += "E(x)it, (S)kip, New (i)mages, New (p)rompt, (U)RL, (F)ile, or custom prompt 👉 "
     print txt
-    $stdin.gets.chomp
+    $stdin.gets.chomp.strip
   end
 
   def process_input(show, input)
-    case input.downcase
+    case input.downcase.strip
     when "p"
       puts "Generating cover art prompt..."
       CoverArtPromptService.call(show)
@@ -136,14 +136,14 @@ class InteractiveCoverArtService < ApplicationService
 
   def attach_cover_art_from_url(show)
     print "URL 👉 "
-    url = $stdin.gets.chomp
+    url = $stdin.gets.chomp.strip
     zoom = prompt_for_zoom
     show.attach_cover_art_by_url(url, zoom:)
   end
 
   def attach_cover_art_from_file(show)
     print "File path 👉 "
-    path = $stdin.gets.chomp
+    path = $stdin.gets.chomp.strip
     zoom = prompt_for_zoom
     show.attach_cover_art_by_path(path, zoom:)
   end
