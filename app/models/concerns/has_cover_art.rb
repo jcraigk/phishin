@@ -8,12 +8,24 @@ module HasCoverArt
       placeholder_prefix = (respond_to?(:audio_status) && audio_status == "missing") ?
                           "missing-audio-cover-art" : "cover-art"
 
+      return %i[large medium small].index_with { |size| "/placeholders/#{placeholder_prefix}-#{size}.jpg" } unless cover_art.attached?
+
+      blob_key = cover_art.blob.key
+
       %i[large medium small].index_with do |size|
-        blob_url \
-          cover_art,
-          **(size == :large ? {} : { variant: size }),
-          placeholder: "#{placeholder_prefix}-#{size}.jpg",
-          ext: :jpg
+        if size == :large
+          # Large uses the original blob
+          "#{App.content_base_url}/blob/#{blob_key}.jpg"
+        else
+          # For medium and small, try to use preloaded variant records
+          variant_record = cover_art.blob.variant_records.find { |vr| vr.variation_digest == variant_digest_for_size(size) }
+          if variant_record&.image_attachment&.blob
+            "#{App.content_base_url}/blob/#{variant_record.image_attachment.blob.key}.jpg"
+          else
+            # Fallback to blob_url method
+            blob_url(cover_art, variant: size, ext: :jpg) || "/placeholders/#{placeholder_prefix}-#{size}.jpg"
+          end
+        end
       end
     end
 
@@ -48,6 +60,17 @@ module HasCoverArt
     end
 
     private
+
+    def variant_digest_for_size(size)
+      # Calculate the variation digest for the given size
+      # This matches what ActiveStorage uses internally
+      case size
+      when :medium
+        ActiveStorage::Variation.new(resize_to_limit: [ 256, 256 ]).digest
+      when :small
+        ActiveStorage::Variation.new(resize_to_limit: [ 40, 40 ]).digest
+      end
+    end
 
     def attach_cover_art(image_url: nil, file_path: nil, zoom: 0)
       Tempfile.create([ "cover_art_#{SecureRandom.hex}", ".jpg" ]) do |temp_jpg|

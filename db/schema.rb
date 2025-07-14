@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_08_042055) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_14_053500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -150,10 +150,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_08_042055) do
     t.datetime "album_zip_requested_at"
     t.string "audio_status", default: "complete", null: false
     t.boolean "exclude_from_stats", default: false, null: false
+    t.index "date_part('year'::text, date)", name: "index_shows_on_year_extracted"
     t.index ["audio_status"], name: "index_shows_on_audio_status"
     t.index ["date"], name: "index_shows_on_date", unique: true
     t.index ["duration"], name: "index_shows_on_duration"
     t.index ["likes_count"], name: "index_shows_on_likes_count"
+    t.index ["published", "audio_status", "venue_id"], name: "index_shows_on_published_audio_venue"
+    t.index ["published", "date"], name: "index_shows_on_published_and_date"
+    t.index ["published", "duration"], name: "index_shows_on_published_duration"
     t.index ["tour_id"], name: "index_shows_on_tour_id"
     t.index ["venue_id"], name: "index_shows_on_venue_id"
   end
