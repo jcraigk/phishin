@@ -13,6 +13,7 @@ export const useAudioFilter = () => {
 
 export const AudioFilterProvider = ({ children }) => {
   const [hideMissingAudio, setHideMissingAudio] = useState(getHideMissingAudioFromStorage);
+  const [isFilterLoading, setIsFilterLoading] = useState(false);
 
   const toggleHideMissingAudio = () => {
     const newValue = !hideMissingAudio;
@@ -29,6 +30,8 @@ export const AudioFilterProvider = ({ children }) => {
     hideMissingAudio,
     toggleHideMissingAudio,
     getAudioStatusFilter,
+    isFilterLoading,
+    setIsFilterLoading,
   };
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { authFetch } from "./helpers/utils";
 import SearchResults from "./SearchResults";
@@ -6,19 +6,32 @@ import LayoutWrapper from "./layout/LayoutWrapper";
 import Loader from "./controls/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { useAudioFilter } from "./contexts/AudioFilterContext";
+import { useAudioFilteredData } from "./hooks/useAudioFilteredData";
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [term, setTerm] = useState(searchParams.get("term") || "");
   const [scope, setScope] = useState(searchParams.get("scope") || "all");
-  const [results, setResults] = useState(null);
   const [submittedTerm, setSubmittedTerm] = useState(searchParams.get("term") || "");
-  const [isLoading, setIsLoading] = useState(false);
-  const { getAudioStatusFilter, hideMissingAudio } = useAudioFilter();
+  const [isSearching, setIsSearching] = useState(false);
 
-  // Track the initial filter state to prevent unnecessary re-searches
-  const initialFilterRef = useRef(getAudioStatusFilter());
+  // Simplified search function for audio filter integration
+  const performSearchWithFilter = useCallback(async (audioStatusFilter) => {
+    if (!submittedTerm) return null;
+
+    setIsSearching(true);
+    try {
+      const response = await authFetch(`/api/v2/search/${submittedTerm}?scope=${scope}&audio_status=${audioStatusFilter}`);
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      throw new Response("Error performing search", { status: 500 });
+    } finally {
+      setIsSearching(false);
+    }
+  }, [submittedTerm, scope]);
+
+  const { data: results, isLoading } = useAudioFilteredData(null, performSearchWithFilter, [submittedTerm, scope]);
 
   useEffect(() => {
     setTerm(searchParams.get("term") || "");
@@ -29,37 +42,10 @@ const Search = () => {
     }
   }, [searchParams]);
 
-  // Re-run search when audio filter changes
-  useEffect(() => {
-    if (submittedTerm) {
-      const currentAudioStatusFilter = getAudioStatusFilter();
-
-      // If the filter hasn't changed from the initial value, don't re-search
-      if (currentAudioStatusFilter === initialFilterRef.current) {
-        return;
-      }
-
-      performSearch(submittedTerm, scope);
-      // Update the ref to track the new filter state
-      initialFilterRef.current = currentAudioStatusFilter;
-    }
-  }, [hideMissingAudio]);
-
   const performSearch = async (searchTerm, searchScope) => {
-    setResults(null);
-    setIsLoading(true);
-
-    try {
-      const audioStatus = getAudioStatusFilter();
-      const response = await authFetch(`/api/v2/search/${searchTerm}?scope=${searchScope}&audio_status=${audioStatus}`);
-      const data = await response.json();
-      setResults(data);
-      setSubmittedTerm(searchTerm);
-    } catch (error) {
-      throw new Response("Error performing search", { status: 500 });
-    } finally {
-      setIsLoading(false);
-    }
+    setSubmittedTerm(searchTerm);
+    setScope(searchScope);
+    // The actual search will be triggered by the useAudioFilteredData hook
   };
 
   const handleSearch = async () => {
@@ -117,7 +103,7 @@ const Search = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      {isLoading ? (
+      {isLoading || isSearching ? (
         <Loader />
       ) : (
         results && <SearchResults results={results} term={submittedTerm} />

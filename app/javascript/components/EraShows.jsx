@@ -1,10 +1,11 @@
 import { authFetch } from "./helpers/utils";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useLoaderData, Link, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
-import { useAudioFilter } from "./contexts/AudioFilterContext";
+import Loader from "./controls/Loader";
+import { useAudioFilteredData } from "./hooks/useAudioFilteredData";
 import { getAudioStatusFilterFromStorage } from "./utils/audioFilter";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList, faTh, faCircleChevronLeft, faCircleChevronRight, faSortAmountDown, faSortAmountUp } from "@fortawesome/free-solid-svg-icons";
@@ -35,35 +36,18 @@ export const eraShowsLoader = async ({ params }) => {
 
 const EraShows = () => {
   const { shows: initialShows, year } = useLoaderData();
-  const [shows, setShows] = useState(initialShows);
   const { viewMode, setViewMode, sortOption, setSortOption } = useOutletContext();
   const [yearsData, setYearsData] = useState(null);
-  const { hideMissingAudio, getAudioStatusFilter } = useAudioFilter();
 
-  // Track the initial filter state to prevent unnecessary re-fetches
-  const initialFilterRef = useRef(getAudioStatusFilter());
+  // Simplified fetch function for audio filter integration
+  const fetchShows = useCallback(async (audioStatusFilter) => {
+    const url = buildShowsUrl(year, audioStatusFilter);
+    const response = await authFetch(url);
+    const data = await response.json();
+    return data.shows;
+  }, [year]);
 
-  useEffect(() => {
-    setShows(initialShows);
-  }, [initialShows]);
-
-  useEffect(() => {
-    const fetchShows = async () => {
-      const currentAudioStatusFilter = getAudioStatusFilter();
-
-      if (currentAudioStatusFilter === initialFilterRef.current) {
-        return;
-      }
-
-      const url = buildShowsUrl(year, currentAudioStatusFilter);
-      const response = await authFetch(url);
-      const data = await response.json();
-      setShows(data.shows);
-      initialFilterRef.current = currentAudioStatusFilter;
-    };
-
-    fetchShows();
-  }, [hideMissingAudio, getAudioStatusFilter, year]);
+  const { data: shows, isLoading } = useAudioFilteredData(initialShows, fetchShows, [year]);
 
   const sortedShows = [...shows].sort((a, b) => {
     if (sortOption === "asc") {
@@ -172,14 +156,20 @@ const EraShows = () => {
         <title>{year} - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        <div className="display-phone-only">
-          <div className="buttons mt-2 mb-2">
-            {renderViewToggleButtons()}
-            {renderSortButtons()}
-          </div>
-        </div>
-        <Shows shows={sortedShows} tourHeaders={true} viewMode={viewMode} />
-        {yearLinks()}
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            <div className="display-phone-only">
+              <div className="buttons mt-2 mb-2">
+                {renderViewToggleButtons()}
+                {renderSortButtons()}
+              </div>
+            </div>
+            <Shows shows={sortedShows} tourHeaders={true} viewMode={viewMode} />
+            {yearLinks()}
+          </>
+        )}
       </LayoutWrapper>
     </>
   );
