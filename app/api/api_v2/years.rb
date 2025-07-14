@@ -57,45 +57,86 @@ class ApiV2::Years < ApiV2::Base
     end
 
     def years_data
+      # Preload cover to avoid N+1 queries
+      cover_art_dates = COVER_ART.values.compact
+      cover_art_shows = Show.includes(
+        cover_art_attachment: {
+          blob: {
+            variant_records: { image_attachment: :blob }
+          }
+        }
+      ).where(date: cover_art_dates).index_by(&:date)
+
+      # Calculate all statistics in batches to reduce queries
+      all_periods = ERAS.values.flatten
+      batch_stats = calculate_batch_statistics(all_periods)
+
       ERAS.map do |era, periods|
         periods.map do |period|
-          shows_count, shows_with_audio_count, venues_count, venues_with_audio_count, shows_duration, cover_art_urls = stats_for(period)
+          stats = batch_stats[period]
+          cover_art_urls = get_cover_art_urls(period, cover_art_shows)
+
           {
-            period:,
-            shows_count:,
-            shows_with_audio_count:,
-            shows_duration:,
-            venues_count:,
-            venues_with_audio_count:,
-            cover_art_urls:,
-            era:
+            period: period,
+            shows_count: stats[:shows_count],
+            shows_with_audio_count: stats[:shows_with_audio_count],
+            shows_duration: stats[:shows_duration],
+            venues_count: stats[:venues_count],
+            venues_with_audio_count: stats[:venues_with_audio_count],
+            era: era,
+            cover_art_urls: cover_art_urls
           }
         end
       end.flatten
     end
 
-    def stats_for(period)
-      all_shows = Show.published
-      all_shows =
-        if period.include?("-")
-          all_shows.between_years(*period.split("-"))
+    private
+
+    def calculate_batch_statistics(periods)
+      stats_query = periods.map do |period|
+        condition = if period.include?("-")
+          year1, year2 = period.split("-")
+          date1 = Date.new(year1.to_i).beginning_of_year
+          date2 = Date.new(year2.to_i).end_of_year
+          "date BETWEEN '#{date1}' AND '#{date2}'"
         else
-          all_shows.during_year(period)
+          "date_part('year', date) = #{period}"
         end
 
-      # Calculate shows with audio (complete or partial)
-      shows_with_audio = all_shows.where(audio_status: [ "complete", "partial" ])
+        <<~SQL
+          SELECT
+            '#{period}' as period,
+            COUNT(*) as shows_count,
+            COUNT(CASE WHEN audio_status IN ('complete', 'partial') THEN 1 END) as shows_with_audio_count,
+            COUNT(DISTINCT venue_id) as venues_count,
+            COUNT(DISTINCT CASE WHEN audio_status IN ('complete', 'partial') THEN venue_id END) as venues_with_audio_count,
+            COALESCE(SUM(duration), 0) as shows_duration
+          FROM shows
+          WHERE published = true AND (#{condition})
+        SQL
+      end
 
-      cover_art_urls = Show.find_by(date: COVER_ART[period])&.cover_art_urls
+      union_query = stats_query.join(" UNION ALL ")
 
-      [
-        all_shows.count,
-        shows_with_audio.count,
-        all_shows.select(:venue_id).distinct.count,
-        shows_with_audio.select(:venue_id).distinct.count,
-        all_shows.sum(:duration),
-        cover_art_urls
-      ]
+      results = ActiveRecord::Base.connection.execute(union_query)
+
+      results.each_with_object({}) do |row, hash|
+        hash[row["period"]] = {
+          shows_count: row["shows_count"].to_i,
+          shows_with_audio_count: row["shows_with_audio_count"].to_i,
+          venues_count: row["venues_count"].to_i,
+          venues_with_audio_count: row["venues_with_audio_count"].to_i,
+          shows_duration: row["shows_duration"].to_i
+        }
+      end
+    end
+
+    def get_cover_art_urls(period, cover_art_shows)
+      cover_art_date_string = COVER_ART[period]
+      return nil unless cover_art_date_string
+
+      cover_art_date = Date.parse(cover_art_date_string)
+      cover_art_shows[cover_art_date]&.cover_art_urls
     end
   end
 end

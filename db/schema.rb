@@ -152,6 +152,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_021513) do
     t.index ["date"], name: "index_shows_on_date", unique: true
     t.index ["duration"], name: "index_shows_on_duration"
     t.index ["likes_count"], name: "index_shows_on_likes_count"
+    t.index ["published", "audio_status", "venue_id"], name: "index_shows_on_published_audio_venue"
+    t.index ["published", "date"], name: "index_shows_on_published_and_date"
+    t.index ["published", "duration"], name: "index_shows_on_published_duration"
     t.index ["tour_id"], name: "index_shows_on_tour_id"
     t.index ["venue_id"], name: "index_shows_on_venue_id"
   end
