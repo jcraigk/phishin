@@ -21,7 +21,7 @@ namespace :gaps do
     puts "📊 Step 2: Processing all shows with tracks chronologically..."
     shows = Show.joins(:tracks)
                 .where.not(tracks: { set: "S" })
-                .where(exclude_from_stats: false)
+                .where("performance_gap_value > 0")
                 .distinct
                 .order(:date)
 
@@ -81,7 +81,7 @@ namespace :gaps do
     # Get all shows that count for stats and have tracks, ordered chronologically
     shows = Show.joins(:tracks)
                 .where.not(tracks: { set: "S" })
-                .where(exclude_from_stats: false)
+                .where("performance_gap_value > 0")
                 .with_audio
                 .distinct
                 .order(:date)
@@ -335,8 +335,7 @@ namespace :gaps do
     # Get random sample of shows that count for stats and have tracks
     show_ids = Show.joins(:tracks)
                    .where.not(tracks: { set: "S" })
-                   .where(exclude_from_stats: false)
-                   .with_audio
+                   .where("performance_gap_value > 0")
                    .distinct
                    .pluck(:id)
                    .sample(limit)
@@ -474,7 +473,8 @@ namespace :gaps do
       puts "\n🔧 To fix specific mismatches, you can:"
       puts "   1. Run gap rebuild: rake gaps:rebuild"
       puts "   2. Recalculate specific shows: rake gaps:recalculate[YYYY-MM-DD]"
-      puts "   3. Check if shows are properly marked as exclude_from_stats"
+      puts "   3. Check if shows are properly marked with performance_gap_value"
+      puts "   4. Verify track exclusions (exclude_from_performance_gaps, Banter tracks)"
     end
 
     puts "\n📝 NOTE: This task assumes PhishNet API includes gap data in setlist responses."
@@ -499,7 +499,7 @@ namespace :gaps do
     puts "Show details:"
     puts "  Venue: #{show.venue_name}"
     puts "  Audio Status: #{show.audio_status}"
-    puts "  Exclude from Stats: #{show.exclude_from_stats}"
+    puts "  Performance Gap Value: #{show.performance_gap_value}"
     puts "  Track Count: #{show.tracks.count}"
 
     tracks_with_gaps = show.tracks.joins(:songs_tracks)

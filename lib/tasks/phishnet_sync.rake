@@ -64,6 +64,13 @@ namespace :phishnet do
     "2025-01-28" => "Mexico Run 2025"
   }.freeze
 
+  # Dates to skip during sync (manually managed)
+  MANUALLY_MANAGED_DATES = [
+    "1988-02-20",
+    "1990-04-19",
+    "2000-05-19"
+  ].freeze
+
   desc "Report duplicate positions in PhishNet setlist data"
   task report_duplicate_positions: :environment do
     puts "Checking PhishNet setlist data for duplicate positions..."
@@ -134,8 +141,57 @@ namespace :phishnet do
 
   desc "Sync all known Phish show dates from Phish.net (use LIMIT env var to limit new shows, DATE env var for single date)"
   task sync_shows: :environment do
-    # Reset skipped shows tracking at the beginning
+    # Reset tracking at the beginning
     reset_skipped_shows
+    reset_additional_local_tracks
+
+    # Set specific shows to missing audio status before sync
+    shows_to_mark_missing = [ "1985-02-25", "1985-05-01" ]
+    shows_to_mark_missing.each do |date|
+      show = Show.find_by(date:)
+      if show
+        show.update!(audio_status: "missing")
+        puts "Set https://phish.in/#{date} to missing audio status"
+      else
+        puts "Show not found: #{date}"
+      end
+    end
+
+    # Set specific show to partial audio status before sync
+    show_2000_05_19 = Show.find_by(date: "2000-05-19")
+    if show_2000_05_19
+      show_2000_05_19.update!(audio_status: "partial")
+      puts "Set https://phish.in/2000-05-19 to partial audio status"
+    else
+      puts "Show not found: 2000-05-19"
+    end
+
+    # Set specific tracks to missing audio status before sync
+    tracks_to_mark_missing = [
+      "https://phish.in/2000-05-19/funky-bitch",
+      "https://phish.in/2000-05-19/my-soul"
+    ]
+
+    tracks_to_mark_missing.each do |url|
+      track = Track.by_url(url)
+      if track
+        track.update!(audio_status: "missing")
+        puts "Set #{url} to missing audio status"
+      else
+        puts "Track not found: #{url}"
+      end
+    end
+
+    # Set all tracks with CUT tag to partial audio status
+    cut_tag = Tag.find_by(name: "CUT")
+    cut_tracks = Track.joins(:tags).where(tags: { id: cut_tag.id })
+    cut_tracks.each do |track|
+      if track.audio_status != "partial"
+        track.update!(audio_status: "partial")
+        puts "Set #{track.url} to partial audio status (has CUT tag)"
+      end
+    end
+    puts "Processed #{cut_tracks.count} tracks with CUT tag"
 
     date_filter = ENV["DATE"]
     limit = ENV["LIMIT"]&.to_i
@@ -149,7 +205,7 @@ namespace :phishnet do
         params: { apikey: ENV.fetch("PNET_API_KEY", nil) }
       )
 
-            if response.success?
+      if response.success?
         data = JSON.parse(response.body)
         if data["data"] && data["data"].any?
           pnet_show = data["data"].first
@@ -163,14 +219,15 @@ namespace :phishnet do
             raise e
           end
 
-        # Report any skipped shows
+        # Report any skipped shows and additional local tracks
         report_skipped_shows
+        report_additional_local_tracks
         else
           puts "No show found for #{date_filter} on Phish.net"
         end
-            else
+      else
         puts "Error fetching data from Phish.net: #{response.code}"
-            end
+      end
     else
       puts "Starting Phish.net sync#{limit && limit > 0 ? " (limited to #{limit} new shows)" : ''}..."
 
@@ -225,10 +282,11 @@ namespace :phishnet do
           progressbar.increment
         end
 
-        puts "\nSync complete!"
+                puts "\nSync complete!"
 
-        # Report any skipped shows
-        report_skipped_shows
+    # Report any skipped shows and additional local tracks
+    report_skipped_shows
+    report_additional_local_tracks
       else
         puts "Error fetching data from Phish.net: #{response.code}"
       end
@@ -237,8 +295,9 @@ namespace :phishnet do
 
   desc "Sync a specific date range from Phish.net"
   task :sync_date_range, [ :start_date, :end_date ] => :environment do |t, args|
-    # Reset skipped shows tracking at the beginning
+    # Reset tracking at the beginning
     reset_skipped_shows
+    reset_additional_local_tracks
 
     start_date = Date.parse(args[:start_date])
     end_date = Date.parse(args[:end_date])
@@ -268,23 +327,49 @@ namespace :phishnet do
       progressbar.increment
     end
 
-        puts "\nSync complete!"
+                puts "\nSync complete!"
 
-    # Report any skipped shows
-    report_skipped_shows
+        # Report any skipped shows and additional local tracks
+        report_skipped_shows
+        report_additional_local_tracks
   end
 
   private
 
-  # Module variable to track shows skipped due to duplicate positions/sets
+  # Module variables to track shows skipped due to duplicate positions/sets and additional local tracks
   @skipped_shows_with_duplicates = []
+  @additional_local_tracks = []
 
   def reset_skipped_shows
     @skipped_shows_with_duplicates = []
   end
 
+  def reset_additional_local_tracks
+    @additional_local_tracks = []
+  end
+
   def add_skipped_show(show_date, reason)
     @skipped_shows_with_duplicates << { date: show_date, reason: }
+  end
+
+            def add_additional_local_track(track)
+    # Filter out excluded track titles and song titles
+    excluded_titles = %w[intro outro jam banter interview]
+
+    # Check track title
+    normalized_track_title = track.title.downcase.strip
+    return if excluded_titles.include?(normalized_track_title)
+
+    # Check if any of the track's songs have excluded titles
+    track.songs.each do |song|
+      normalized_song_title = song.title.downcase.strip
+      return if excluded_titles.include?(normalized_song_title)
+    end
+
+    # Filter out soundcheck tracks (set "S")
+    return if track.set == "S"
+
+    @additional_local_tracks << track.url
   end
 
   def report_skipped_shows
@@ -298,6 +383,21 @@ namespace :phishnet do
     end
     puts "\nThese shows need manual review. The PhishNet maintainer suggests"
     puts "using show ID instead of date for shows with multiple performances."
+    puts "=" * 80
+  end
+
+    def report_additional_local_tracks
+    return if @additional_local_tracks.empty?
+
+    puts "\n" + "=" * 80
+    puts "📋 ADDITIONAL LOCAL TRACKS NOT IN PHISHNET:"
+    puts "=" * 80
+    puts "Found #{@additional_local_tracks.length} additional local tracks"
+    puts "=" * 80
+
+    @additional_local_tracks.sort.uniq.each do |url|
+      puts url
+    end
     puts "=" * 80
   end
 
@@ -371,14 +471,15 @@ namespace :phishnet do
       return
     end
 
+    # Skip manually managed dates
+    if MANUALLY_MANAGED_DATES.include?(pnet_show["showdate"])
+      # puts "Skipping manually managed show: #{pnet_show['showdate']}"
+      return
+    end
+
     # Handle exclude_from_stats field from Phish.net API
     exclude_from_stats = pnet_show["exclude_from_stats"] == 1
 
-    # Special case for 1994-06-18: force exclude_from_stats to false
-    # API returns two shows for this date, one irrelevant with exclude_from_stats=1
-    if pnet_show["showdate"] == "1994-06-18"
-      exclude_from_stats = false
-    end
 
     show = Show.find_or_initialize_by(date:)
 
@@ -398,7 +499,7 @@ namespace :phishnet do
 
       # Only one show on this date - update existing local show to mark as excluded
       if show.persisted?
-        show.exclude_from_stats = true
+        show.performance_gap_value = 0
         show.save!
         # puts "Updated existing show to exclude from stats: #{pnet_show['showdate']}"
       end
@@ -436,8 +537,10 @@ namespace :phishnet do
 
     # Note: All shows are now considered published by default
 
-    # Set exclude_from_stats based on Phish.net API data
-    show.exclude_from_stats = exclude_from_stats
+    # Set performance_gap_value to 0 for shows excluded from stats
+    if exclude_from_stats
+      show.performance_gap_value = 0
+    end
 
     # If show is new and has no tracks, it's missing audio
     if show.new_record?
@@ -715,8 +818,11 @@ namespace :phishnet do
         end
       end
 
-      tracks_removed = 0
+            tracks_removed = 0
       tracks_to_remove.each do |track|
+        # Track additional local tracks (all tracks that don't match PhishNet)
+        add_additional_local_track(track)
+
         # Only remove tracks that have missing audio - preserve tracks with audio
         if track.audio_status == "missing"
           track.destroy!
@@ -1045,6 +1151,24 @@ namespace :phishnet do
     # Check if we're missing tracks from PhishNet
     missing_tracks = remote_track_map.keys - local_track_map.keys
     return true if missing_tracks.any?
+
+    # Track additional local tracks that exist but aren't in PhishNet
+    additional_local_keys = local_track_map.keys - remote_track_map.keys
+    if additional_local_keys.any?
+      # Find the actual track objects for these additional tracks
+      additional_local_keys.each do |key|
+        # Find the track that matches this key
+        local_tracks.each do |track|
+          track.songs.each do |song|
+            track_key = build_track_key(song.title, track.set)
+            if track_key == key
+              add_additional_local_track(track)
+              break
+            end
+          end
+        end
+      end
+    end
 
     # Check if existing tracks have different positions
     local_track_map.each do |key, local_data|

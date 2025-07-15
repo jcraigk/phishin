@@ -53,7 +53,7 @@ namespace :gaps do
       if data[:local_shows][:shows_in_gap].any?
         data[:local_shows][:shows_in_gap].each_with_index do |show, idx|
           status_info = []
-          status_info << "excluded" if show[:exclude_from_stats]
+          status_info << "excluded" if show[:performance_gap_value] == 0
           status_info << show[:audio_status] if show[:audio_status] != "complete"
           status_suffix = status_info.any? ? " (#{status_info.join(', ')})" : ""
 
@@ -79,7 +79,7 @@ namespace :gaps do
       if data[:remote_shows][:shows_in_gap].any?
         data[:remote_shows][:shows_in_gap].each_with_index do |show, idx|
           status_info = []
-          status_info << "excluded" if show[:exclude_from_stats]
+          status_info << "excluded" if show[:performance_gap_value] == 0
           status_info << show[:audio_status] if show[:audio_status] != "complete"
           status_suffix = status_info.any? ? " (#{status_info.join(', ')})" : ""
 

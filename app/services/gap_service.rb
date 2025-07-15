@@ -2,6 +2,8 @@ class GapService < ApplicationService
   param :show
   option :update_previous, default: -> { false }
 
+  EXCLUDED_SONG_TITLES = %w[Intro Outro Banter Interview Jam]
+
   def call
     update_song_gaps_for_show
     update_previous_occurrences if update_previous
@@ -14,8 +16,9 @@ class GapService < ApplicationService
 
     ActiveRecord::Base.transaction do
       show.tracks.where.not(set: "S").each do |track|
-        # Skip pre-show tracks that should be excluded from gap calculations
-        next if should_exclude_preshow_track?(track)
+        # Skip tracks that should be excluded from gap calculations
+        next if should_exclude_track?(track)
+
         track.songs.each do |song|
           # Skip songs that should be excluded from gap calculations
           next if should_exclude_song_from_gaps?(song)
@@ -60,8 +63,8 @@ class GapService < ApplicationService
 
     ActiveRecord::Base.transaction do
       show.tracks.where.not(set: "S").each do |track|
-        # Skip pre-show tracks that should be excluded from gap calculations
-        next if should_exclude_preshow_track?(track)
+        # Skip tracks that should be excluded from gap calculations
+        next if should_exclude_track?(track)
 
         track.songs.each do |song|
           # Skip songs that should be excluded from gap calculations
@@ -71,11 +74,16 @@ class GapService < ApplicationService
           previous_song_tracks = SongsTrack.joins(track: :show)
                                           .where(song:)
                                           .where("shows.date < ?", show.date)
+                                          .joins("JOIN tracks ON tracks.id = songs_tracks.track_id")
                                           .where.not(tracks: { set: "S" })
-                                          .where(shows: { exclude_from_stats: false })
+                                          .where.not(tracks: { exclude_from_performance_gaps: true })
+                                          .where("shows.performance_gap_value > 0")
 
           previous_song_tracks.each do |previous_song_track|
             previous_track = previous_song_track.track
+
+            # Skip if this track should be excluded
+            next if should_exclude_track?(previous_track)
 
             # Update next performance gaps for the previous occurrence
             next_performance = find_next_performance(song, previous_track)
@@ -122,7 +130,8 @@ class GapService < ApplicationService
     base_query = Track.joins(:show, :songs)
                       .where(songs: { id: song.id })
                       .where("tracks.set <> ?", "S")
-                      .where(shows: { exclude_from_stats: false })
+                      .where.not(tracks: { exclude_from_performance_gaps: true })
+                      .where("shows.performance_gap_value > 0")
 
     # Add audio requirement if specified
     base_query = base_query.merge(Show.with_audio) if audio_required
@@ -157,26 +166,24 @@ class GapService < ApplicationService
     position_operator = direction == :previous ? "<" : ">"
     position_order = direction == :previous ? "DESC" : "ASC"
 
+    base_query = track.show
+                      .tracks
+                      .joins(:songs)
+                      .where(songs: { id: song.id })
+                      .where("tracks.set <> ?", "S")
+                      .where.not(tracks: { exclude_from_performance_gaps: true })
+                      .where("tracks.position #{position_operator} ?", track.position)
+
     if current_is_preshow
       # For pre-show tracks, look for other pre-show tracks only
-      tracks_within_show = track.show
-                                .tracks
-                                .joins(:songs)
-                                .where(songs: { id: song.id })
-                                .where("tracks.set <> ?", "S")
-                                .where("tracks.position #{position_operator} ?", track.position)
-                                .where("tracks.set = ?", "P")
-                                .order("tracks.position #{position_order}")
+      tracks_within_show = base_query
+                            .where("tracks.set = ?", "P")
+                            .order("tracks.position #{position_order}")
     else
       # For main show tracks, look for other main show tracks (1, 2, E)
-      tracks_within_show = track.show
-                                .tracks
-                                .joins(:songs)
-                                .where(songs: { id: song.id })
-                                .where("tracks.set <> ?", "S")
-                                .where("tracks.position #{position_operator} ?", track.position)
-                                .where("tracks.set <> ?", "P") # Not pre-show
-                                .order("tracks.position #{position_order}")
+      tracks_within_show = base_query
+                            .where("tracks.set <> ?", "P") # Not pre-show
+                            .order("tracks.position #{position_order}")
     end
 
     tracks_within_show.first
@@ -187,26 +194,24 @@ class GapService < ApplicationService
     position_operator = direction == :previous ? "<" : ">"
     position_order = direction == :previous ? "DESC" : "ASC"
 
+    base_query = track.show
+                      .tracks
+                      .joins(:songs)
+                      .where(songs: { id: song.id })
+                      .where("tracks.set <> ?", "S")
+                      .where.not(tracks: { exclude_from_performance_gaps: true })
+                      .where("tracks.position #{position_operator} ?", track.position)
+
     if current_is_preshow
       # For pre-show tracks, look for main show tracks
-      tracks_different_unit = track.show
-                                   .tracks
-                                   .joins(:songs)
-                                   .where(songs: { id: song.id })
-                                   .where("tracks.set <> ?", "S")
-                                   .where("tracks.position #{position_operator} ?", track.position)
-                                   .where("tracks.set <> ?", "P") # Main show tracks
-                                   .order("tracks.position #{position_order}")
+      tracks_different_unit = base_query
+                               .where("tracks.set <> ?", "P") # Main show tracks
+                               .order("tracks.position #{position_order}")
     else
       # For main show tracks, look for pre-show tracks
-      tracks_different_unit = track.show
-                                   .tracks
-                                   .joins(:songs)
-                                   .where(songs: { id: song.id })
-                                   .where("tracks.set <> ?", "S")
-                                   .where("tracks.position #{position_operator} ?", track.position)
-                                   .where("tracks.set = ?", "P") # Pre-show tracks
-                                   .order("tracks.position #{position_order}")
+      tracks_different_unit = base_query
+                               .where("tracks.set = ?", "P") # Pre-show tracks
+                               .order("tracks.position #{position_order}")
     end
 
     tracks_different_unit.first
@@ -224,13 +229,14 @@ class GapService < ApplicationService
     return 0 if start_date == end_date
 
     # Count shows between the dates (exclusive of start and end dates)
-    # PhishNet gap methodology: count shows between performances
+    # Use performance_gap_value to determine how much each show counts
+    # Add 1 to match PhishNet methodology (consecutive shows = gap of 1)
     shows_query = Show.where(date: start_date.next_day..end_date.prev_day)
-                      .where(exclude_from_stats: false)
+                      .where("performance_gap_value > 0")
 
     shows_query = shows_query.with_audio if audio_required
 
-    shows_query.sum { |show| count_performances_for_show(show) }
+    shows_query.sum(:performance_gap_value) + 1
   end
 
   def calculate_gap_with_audio(start_date, end_date, start_track = nil, end_track = nil)
@@ -244,25 +250,8 @@ class GapService < ApplicationService
   end
 
   def count_performances_for_show(show)
-    # Special cases: certain dates count as multiple performances for PhishNet compatibility
-    case show.date
-    when Date.parse("1985-05-01")
-      4  # 4 separate performances
-    when Date.parse("1985-02-25")
-      2  # 2 separate performances (Doolin's + Private Party)
-    when Date.parse("2000-05-19")
-      2  # 2 separate performances (Key Club shows)
-    else
-      # Check if this show has pre-show tracks (set = "P")
-      has_preshow = show.tracks.exists?(set: "P")
-
-      # Check if this show's pre-show should be excluded from gap calculations
-      if has_preshow && excluded_preshow_dates.include?(show.date)
-        1  # Pre-show exists but should be excluded from gap calculations
-      else
-        has_preshow ? 2 : 1
-      end
-    end
+    # Use the performance_gap_value directly - no more hardcoded dates
+    show.performance_gap_value
   end
 
   def build_slug(track)
@@ -274,24 +263,26 @@ class GapService < ApplicationService
     Rails.logger.info(message) unless Rails.env.test?
   end
 
-    def should_exclude_preshow_track?(track)
-    return false unless track.set == "P"
-    excluded_preshow_dates.include?(track.show.date)
+  def should_exclude_track?(track)
+    # Exclude tracks marked for exclusion from performance gaps
+    return true if track.exclude_from_performance_gaps?
+
+    # Exclude tracks with single song that has excluded titles
+    return true if single_song_with_excluded_title?(track)
+
+    false
   end
 
-  def excluded_preshow_dates
-    @excluded_preshow_dates ||= [
-      Date.parse("1994-04-13"),  # Beacon Theatre - interviews/intro tracks not counted for stats
-      Date.parse("1997-02-26"),  # Longhorn - interviews/talk tracks not counted for stats
-      Date.parse("2014-06-24"),  # Ed Sullivan Theater - "The Line" pre-show not counted for stats
-      Date.parse("2023-08-25"),  # Saratoga Performing Arts Center - acoustic pre-show not counted for stats
-      Date.parse("2023-08-26")   # Saratoga Performing Arts Center - acoustic pre-show not counted for stats
-    ]
+  def single_song_with_excluded_title?(track)
+    # Only check tracks with exactly one song
+    return false unless track.songs.count == 1
+
+    song_title = track.songs.first.title
+    EXCLUDED_SONG_TITLES.include?(song_title)
   end
 
   def should_exclude_song_from_gaps?(song)
     # Exclude songs that are inconsistent between systems or not meaningful for gap calculations
-    excluded_song_titles = [ "Intro", "Outro", "Jam" ]
-    excluded_song_titles.include?(song.title)
+    EXCLUDED_SONG_TITLES.include?(song.title)
   end
 end

@@ -93,7 +93,7 @@ class GapInvestigationService < ApplicationService
     end_date = @show.date
 
     shows_in_gap = Show.where(date: start_date.next_day..end_date.prev_day)
-                       .where(exclude_from_stats: false)
+                       .where("performance_gap_value > 0")
                        .order(:date)
 
     {
@@ -108,12 +108,12 @@ class GapInvestigationService < ApplicationService
         {
           date: show.date,
           venue: show.venue_name,
-          exclude_from_stats: show.exclude_from_stats,
+          performance_gap_value: show.performance_gap_value,
           audio_status: show.audio_status
         }
       end,
-      gap_calculation: "#{shows_in_gap.count} shows + 1 = #{shows_in_gap.count + 1}",
-      total_shows_in_gap: shows_in_gap.count
+      gap_calculation: "Sum of performance_gap_values: #{shows_in_gap.sum(:performance_gap_value)}",
+      total_shows_in_gap: shows_in_gap.sum(:performance_gap_value)
     }
   end
 
@@ -144,7 +144,7 @@ class GapInvestigationService < ApplicationService
     data = JSON.parse(response.body)
     all_pnet_shows = data["data"] || []
 
-    # Filter out shows with exclude_from_stats = 1 (same as PhishNet does for gap calculations)
+    # Filter out shows with exclude_from_stats = 1 (PhishNet API still uses this field)
     pnet_shows = all_pnet_shows.reject { |show| show["exclude_from_stats"] == 1 }
 
     # Filter PhishNet shows to only those in our gap range
@@ -156,7 +156,7 @@ class GapInvestigationService < ApplicationService
 
     # Get our local shows for the same date range
     local_shows_in_gap = Show.where(date: start_date.next_day..end_date.prev_day)
-                             .where(exclude_from_stats: false)
+                             .where("performance_gap_value > 0")
                              .order(:date)
 
     # Build detailed comparison data
@@ -173,7 +173,7 @@ class GapInvestigationService < ApplicationService
       shows_in_gap: comparison_data[:shows],
       gap_calculation: "#{pnet_shows_in_gap.count} shows + 1 = #{pnet_shows_in_gap.count + 1}",
       total_shows_in_gap: pnet_shows_in_gap.count,
-      note: "Shows filtered by exclude_from_stats=1, multiple shows per date preserved",
+      note: "PhishNet API uses exclude_from_stats=1, local uses performance_gap_value=0, multiple shows per date preserved",
       comparison_summary: comparison_data[:summary]
     }
   end
@@ -239,7 +239,7 @@ class GapInvestigationService < ApplicationService
           local_data: local_show ? {
             venue: local_show.venue_name,
             audio_status: local_show.audio_status,
-            exclude_from_stats: local_show.exclude_from_stats
+            performance_gap_value: local_show.performance_gap_value
           } : nil,
           match_status: determine_match_status(pnet_show, local_show)
         }
@@ -266,8 +266,9 @@ class GapInvestigationService < ApplicationService
     previous_tracks = Track.joins(:show, :songs)
                            .where(songs: { id: @song.id })
                            .where("tracks.set <> ?", "S")
+                           .where.not(tracks: { exclude_from_performance_gaps: true })
                            .where("shows.date < ?", @track.show.date)
-                           .where(shows: { exclude_from_stats: false })
+                           .where("shows.performance_gap_value > 0")
                            .order("shows.date DESC, tracks.position DESC")
 
     previous_tracks_within_show = @track.show
@@ -275,6 +276,7 @@ class GapInvestigationService < ApplicationService
                                         .joins(:songs)
                                         .where(songs: { id: @song.id })
                                         .where("tracks.set <> ?", "S")
+                                        .where.not(tracks: { exclude_from_performance_gaps: true })
                                         .where("tracks.position < ?", @track.position)
                                         .order("tracks.position DESC")
 

@@ -152,9 +152,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_021900) do
     t.index "date_part('year'::text, date)", name: "index_shows_on_year_extracted"
     t.index ["audio_status", "venue_id"], name: "index_shows_on_audio_venue"
     t.index ["audio_status"], name: "index_shows_on_audio_status"
+    t.index ["date", "performance_gap_value", "audio_status"], name: "index_shows_on_date_performance_gap_audio"
+    t.index ["date", "performance_gap_value"], name: "index_shows_with_audio_on_date_performance_gap", where: "((audio_status)::text = ANY ((ARRAY['complete'::character varying, 'partial'::character varying])::text[]))"
     t.index ["date"], name: "index_shows_on_date", unique: true
     t.index ["duration"], name: "index_shows_on_duration"
     t.index ["likes_count"], name: "index_shows_on_likes_count"
+    t.index ["performance_gap_value", "audio_status", "date"], name: "index_shows_on_performance_gap_audio_date"
     t.index ["tour_id"], name: "index_shows_on_tour_id"
     t.index ["venue_id"], name: "index_shows_on_venue_id"
   end
@@ -192,6 +195,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_021900) do
     t.index ["next_performance_gap_with_audio"], name: "index_songs_tracks_on_next_performance_gap_with_audio"
     t.index ["previous_performance_gap"], name: "index_songs_tracks_on_previous_performance_gap"
     t.index ["previous_performance_gap_with_audio"], name: "index_songs_tracks_on_previous_performance_gap_with_audio"
+    t.index ["song_id", "track_id"], name: "index_songs_tracks_on_song_track_optimized"
     t.index ["song_id"], name: "index_songs_tracks_on_song_id"
     t.index ["track_id", "song_id"], name: "index_songs_tracks_on_track_id_and_song_id", unique: true
     t.index ["track_id"], name: "index_songs_tracks_on_track_id"
@@ -260,7 +264,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_021900) do
     t.index ["audio_status"], name: "index_tracks_on_audio_status"
     t.index ["jam_starts_at_second"], name: "index_tracks_on_jam_starts_at_second"
     t.index ["likes_count"], name: "index_tracks_on_likes_count"
+    t.index ["set", "exclude_from_performance_gaps", "show_id", "position"], name: "index_tracks_on_set_exclude_show_position"
     t.index ["show_id", "position"], name: "index_tracks_on_show_id_and_position", unique: true
+    t.index ["show_id", "set", "exclude_from_performance_gaps", "position"], name: "index_tracks_on_show_set_exclude_position"
     t.index ["show_id", "slug"], name: "index_tracks_on_show_id_and_slug", unique: true
     t.index ["slug"], name: "index_tracks_on_slug"
   end
