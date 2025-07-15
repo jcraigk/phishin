@@ -100,286 +100,124 @@ class GapService < ApplicationService
   end
 
   def find_previous_performance(song, track)
-    previous_tracks = Track.joins(:show, :songs)
-                           .where(songs: { id: song.id })
-                           .where("tracks.set <> ?", "S")
-                           .where("shows.date < ?", track.show.date)
-                           .where(shows: { exclude_from_stats: false })
-                           .order("shows.date DESC, tracks.position DESC")
-
-    # Check for previous performance within the same show and same performance unit
-    # Pre-show ("P") is separate from main show ("1", "2", "E")
-    current_is_preshow = track.set == "P"
-
-    if current_is_preshow
-      # For pre-show tracks, look for other pre-show tracks only
-      previous_tracks_within_show = track.show
-                                         .tracks
-                                         .joins(:songs)
-                                         .where(songs: { id: song.id })
-                                         .where("tracks.set <> ?", "S")
-                                         .where("tracks.position < ?", track.position)
-                                         .where("tracks.set = ?", "P")
-                                         .order("tracks.position DESC")
-    else
-      # For main show tracks, look for other main show tracks (1, 2, E)
-      previous_tracks_within_show = track.show
-                                         .tracks
-                                         .joins(:songs)
-                                         .where(songs: { id: song.id })
-                                         .where("tracks.set <> ?", "S")
-                                         .where("tracks.position < ?", track.position)
-                                         .where("tracks.set <> ?", "P") # Not pre-show
-                                         .order("tracks.position DESC")
-    end
-
-    return previous_tracks_within_show.first if previous_tracks_within_show.exists?
-
-    # Check for previous performance within same show but different performance unit
-    # Only applies between pre-show and main show
-    if current_is_preshow
-      # For pre-show tracks, look for main show tracks
-      previous_tracks_different_unit = track.show
-                                            .tracks
-                                            .joins(:songs)
-                                            .where(songs: { id: song.id })
-                                            .where("tracks.set <> ?", "S")
-                                            .where("tracks.position < ?", track.position)
-                                            .where("tracks.set <> ?", "P") # Main show tracks
-                                            .order("tracks.position DESC")
-    else
-      # For main show tracks, look for pre-show tracks
-      previous_tracks_different_unit = track.show
-                                            .tracks
-                                            .joins(:songs)
-                                            .where(songs: { id: song.id })
-                                            .where("tracks.set <> ?", "S")
-                                            .where("tracks.position < ?", track.position)
-                                            .where("tracks.set = ?", "P") # Pre-show tracks
-                                            .order("tracks.position DESC")
-    end
-
-    return previous_tracks_different_unit.first if previous_tracks_different_unit.exists?
-
-    previous_tracks.first
+    find_performance(song, track, direction: :previous, audio_required: false)
   end
 
   def find_next_performance(song, track)
-    next_tracks = Track.joins(:show, :songs)
-                       .where(songs: { id: song.id })
-                       .where("tracks.set <> ?", "S")
-                       .where("shows.date > ?", track.show.date)
-                       .where(shows: { exclude_from_stats: false })
-                       .order("shows.date ASC, tracks.position ASC")
-
-    # Check for next performance within the same show and same performance unit
-    # Pre-show ("P") is separate from main show ("1", "2", "E")
-    current_is_preshow = track.set == "P"
-
-    if current_is_preshow
-      # For pre-show tracks, look for other pre-show tracks only
-      next_tracks_within_show = track.show
-                                     .tracks
-                                     .joins(:songs)
-                                     .where(songs: { id: song.id })
-                                     .where("tracks.set <> ?", "S")
-                                     .where("tracks.position > ?", track.position)
-                                     .where("tracks.set = ?", "P")
-                                     .order("tracks.position ASC")
-    else
-      # For main show tracks, look for other main show tracks (1, 2, E)
-      next_tracks_within_show = track.show
-                                     .tracks
-                                     .joins(:songs)
-                                     .where(songs: { id: song.id })
-                                     .where("tracks.set <> ?", "S")
-                                     .where("tracks.position > ?", track.position)
-                                     .where("tracks.set <> ?", "P") # Not pre-show
-                                     .order("tracks.position ASC")
-    end
-
-    return next_tracks_within_show.first if next_tracks_within_show.exists?
-
-    # Check for next performance within same show but different performance unit
-    # Only applies between pre-show and main show
-    if current_is_preshow
-      # For pre-show tracks, look for main show tracks
-      next_tracks_different_unit = track.show
-                                        .tracks
-                                        .joins(:songs)
-                                        .where(songs: { id: song.id })
-                                        .where("tracks.set <> ?", "S")
-                                        .where("tracks.position > ?", track.position)
-                                        .where("tracks.set <> ?", "P") # Main show tracks
-                                        .order("tracks.position ASC")
-    else
-      # For main show tracks, look for pre-show tracks
-      next_tracks_different_unit = track.show
-                                        .tracks
-                                        .joins(:songs)
-                                        .where(songs: { id: song.id })
-                                        .where("tracks.set <> ?", "S")
-                                        .where("tracks.position > ?", track.position)
-                                        .where("tracks.set = ?", "P") # Pre-show tracks
-                                        .order("tracks.position ASC")
-    end
-
-    return next_tracks_different_unit.first if next_tracks_different_unit.exists?
-
-    next_tracks.first
+    find_performance(song, track, direction: :next, audio_required: false)
   end
 
   def find_previous_performance_with_audio(song, track)
-    previous_tracks = Track.joins(:show, :songs)
-                           .where(songs: { id: song.id })
-                           .where("tracks.set <> ?", "S")
-                           .where("shows.date < ?", track.show.date)
-                           .merge(Show.with_audio)
-                           .where(shows: { exclude_from_stats: false })
-                           .order("shows.date DESC, tracks.position DESC")
-
-    # Only check within-show performances if current show has audio
-    if track.show.audio_status != "missing"
-      # Check for previous performance within the same show and same performance unit
-      # Pre-show ("P") is separate from main show ("1", "2", "E")
-      current_is_preshow = track.set == "P"
-
-      if current_is_preshow
-        # For pre-show tracks, look for other pre-show tracks only
-        previous_tracks_within_show = track.show
-                                           .tracks
-                                           .joins(:songs)
-                                           .where(songs: { id: song.id })
-                                           .where("tracks.set <> ?", "S")
-                                           .where("tracks.position < ?", track.position)
-                                           .where("tracks.set = ?", "P")
-                                           .order("tracks.position DESC")
-      else
-        # For main show tracks, look for other main show tracks (1, 2, E)
-        previous_tracks_within_show = track.show
-                                           .tracks
-                                           .joins(:songs)
-                                           .where(songs: { id: song.id })
-                                           .where("tracks.set <> ?", "S")
-                                           .where("tracks.position < ?", track.position)
-                                           .where("tracks.set <> ?", "P") # Not pre-show
-                                           .order("tracks.position DESC")
-      end
-
-      return previous_tracks_within_show.first if previous_tracks_within_show.exists?
-
-      # Check for previous performance within same show but different performance unit
-      # Only applies between pre-show and main show
-      if current_is_preshow
-        # For pre-show tracks, look for main show tracks
-        previous_tracks_different_unit = track.show
-                                              .tracks
-                                              .joins(:songs)
-                                              .where(songs: { id: song.id })
-                                              .where("tracks.set <> ?", "S")
-                                              .where("tracks.position < ?", track.position)
-                                              .where("tracks.set <> ?", "P") # Main show tracks
-                                              .order("tracks.position DESC")
-      else
-        # For main show tracks, look for pre-show tracks
-        previous_tracks_different_unit = track.show
-                                              .tracks
-                                              .joins(:songs)
-                                              .where(songs: { id: song.id })
-                                              .where("tracks.set <> ?", "S")
-                                              .where("tracks.position < ?", track.position)
-                                              .where("tracks.set = ?", "P") # Pre-show tracks
-                                              .order("tracks.position DESC")
-      end
-
-      return previous_tracks_different_unit.first if previous_tracks_different_unit.exists?
-    end
-
-    previous_tracks.first
+    find_performance(song, track, direction: :previous, audio_required: true)
   end
 
   def find_next_performance_with_audio(song, track)
-    next_tracks = Track.joins(:show, :songs)
-                       .where(songs: { id: song.id })
-                       .where("tracks.set <> ?", "S")
-                       .where("shows.date > ?", track.show.date)
-                       .merge(Show.with_audio)
-                       .where(shows: { exclude_from_stats: false })
-                       .order("shows.date ASC, tracks.position ASC")
-
-    # Only check within-show performances if current show has audio
-    if track.show.audio_status != "missing"
-      # Check for next performance within the same show and same performance unit
-      # Pre-show ("P") is separate from main show ("1", "2", "E")
-      current_is_preshow = track.set == "P"
-
-      if current_is_preshow
-        # For pre-show tracks, look for other pre-show tracks only
-        next_tracks_within_show = track.show
-                                       .tracks
-                                       .joins(:songs)
-                                       .where(songs: { id: song.id })
-                                       .where("tracks.set <> ?", "S")
-                                       .where("tracks.position > ?", track.position)
-                                       .where("tracks.set = ?", "P")
-                                       .order("tracks.position ASC")
-      else
-        # For main show tracks, look for other main show tracks (1, 2, E)
-        next_tracks_within_show = track.show
-                                       .tracks
-                                       .joins(:songs)
-                                       .where(songs: { id: song.id })
-                                       .where("tracks.set <> ?", "S")
-                                       .where("tracks.position > ?", track.position)
-                                       .where("tracks.set <> ?", "P") # Not pre-show
-                                       .order("tracks.position ASC")
-      end
-
-      return next_tracks_within_show.first if next_tracks_within_show.exists?
-
-      # Check for next performance within same show but different performance unit
-      # Only applies between pre-show and main show
-      if current_is_preshow
-        # For pre-show tracks, look for main show tracks
-        next_tracks_different_unit = track.show
-                                          .tracks
-                                          .joins(:songs)
-                                          .where(songs: { id: song.id })
-                                          .where("tracks.set <> ?", "S")
-                                          .where("tracks.position > ?", track.position)
-                                          .where("tracks.set <> ?", "P") # Main show tracks
-                                          .order("tracks.position ASC")
-      else
-        # For main show tracks, look for pre-show tracks
-        next_tracks_different_unit = track.show
-                                          .tracks
-                                          .joins(:songs)
-                                          .where(songs: { id: song.id })
-                                          .where("tracks.set <> ?", "S")
-                                          .where("tracks.position > ?", track.position)
-                                          .where("tracks.set = ?", "P") # Pre-show tracks
-                                          .order("tracks.position ASC")
-      end
-
-      return next_tracks_different_unit.first if next_tracks_different_unit.exists?
-    end
-
-    next_tracks.first
+    find_performance(song, track, direction: :next, audio_required: true)
   end
 
-    def calculate_gap(start_date, end_date, start_track = nil, end_track = nil)
+  private
+
+  def find_performance(song, track, direction:, audio_required: false)
+    # Base query for tracks across different shows
+    base_query = Track.joins(:show, :songs)
+                      .where(songs: { id: song.id })
+                      .where("tracks.set <> ?", "S")
+                      .where(shows: { exclude_from_stats: false })
+
+    # Add audio requirement if specified
+    base_query = base_query.merge(Show.with_audio) if audio_required
+
+    # Add date and ordering constraints based on direction
+    if direction == :previous
+      cross_show_tracks = base_query
+                            .where("shows.date < ?", track.show.date)
+                            .order("shows.date DESC, tracks.position DESC")
+    else # :next
+      cross_show_tracks = base_query
+                            .where("shows.date > ?", track.show.date)
+                            .order("shows.date ASC, tracks.position ASC")
+    end
+
+    # Only check within-show performances if audio not required OR current show has audio
+    if !audio_required || track.show.audio_status != "missing"
+      # Check for performance within the same show and same performance unit
+      within_show_track = find_tracks_within_show(song, track, direction)
+      return within_show_track if within_show_track
+
+      # Check for performance within same show but different performance unit
+      different_unit_track = find_tracks_different_unit(song, track, direction)
+      return different_unit_track if different_unit_track
+    end
+
+    cross_show_tracks.first
+  end
+
+  def find_tracks_within_show(song, track, direction)
+    current_is_preshow = track.set == "P"
+    position_operator = direction == :previous ? "<" : ">"
+    position_order = direction == :previous ? "DESC" : "ASC"
+
+    if current_is_preshow
+      # For pre-show tracks, look for other pre-show tracks only
+      tracks_within_show = track.show
+                                .tracks
+                                .joins(:songs)
+                                .where(songs: { id: song.id })
+                                .where("tracks.set <> ?", "S")
+                                .where("tracks.position #{position_operator} ?", track.position)
+                                .where("tracks.set = ?", "P")
+                                .order("tracks.position #{position_order}")
+    else
+      # For main show tracks, look for other main show tracks (1, 2, E)
+      tracks_within_show = track.show
+                                .tracks
+                                .joins(:songs)
+                                .where(songs: { id: song.id })
+                                .where("tracks.set <> ?", "S")
+                                .where("tracks.position #{position_operator} ?", track.position)
+                                .where("tracks.set <> ?", "P") # Not pre-show
+                                .order("tracks.position #{position_order}")
+    end
+
+    tracks_within_show.first
+  end
+
+  def find_tracks_different_unit(song, track, direction)
+    current_is_preshow = track.set == "P"
+    position_operator = direction == :previous ? "<" : ">"
+    position_order = direction == :previous ? "DESC" : "ASC"
+
+    if current_is_preshow
+      # For pre-show tracks, look for main show tracks
+      tracks_different_unit = track.show
+                                   .tracks
+                                   .joins(:songs)
+                                   .where(songs: { id: song.id })
+                                   .where("tracks.set <> ?", "S")
+                                   .where("tracks.position #{position_operator} ?", track.position)
+                                   .where("tracks.set <> ?", "P") # Main show tracks
+                                   .order("tracks.position #{position_order}")
+    else
+      # For main show tracks, look for pre-show tracks
+      tracks_different_unit = track.show
+                                   .tracks
+                                   .joins(:songs)
+                                   .where(songs: { id: song.id })
+                                   .where("tracks.set <> ?", "S")
+                                   .where("tracks.position #{position_operator} ?", track.position)
+                                   .where("tracks.set = ?", "P") # Pre-show tracks
+                                   .order("tracks.position #{position_order}")
+    end
+
+    tracks_different_unit.first
+  end
+
+  def calculate_gap(start_date, end_date, start_track = nil, end_track = nil, audio_required: false)
     return nil if start_date.nil? || end_date.nil?
 
     # Check if this is a same-show different-performance-unit scenario
     if start_date == end_date && start_track && end_track
-      # Only Pre-Show ("P") is treated as a separate performance unit from main show
-      # Set 1, Set 2, Encore are all part of the same performance unit
-      start_is_preshow = start_track.set == "P"
-      end_is_preshow = end_track.set == "P"
-
-      # Gap = 1 only if one track is pre-show and the other is main show
-      return 1 if start_is_preshow != end_is_preshow
-      # Same performance unit within same show
+      return 1 if different_performance_units?(start_track, end_track)
       return 0
     end
 
@@ -387,75 +225,44 @@ class GapService < ApplicationService
 
     # Count shows between the dates (exclusive of start and end dates)
     # PhishNet gap methodology: count shows between performances
-    Show.where(date: start_date.next_day..end_date.prev_day)
-        .where(exclude_from_stats: false)
-        .sum do |show|
-          # Special cases: certain dates count as multiple performances for PhishNet compatibility
-          case show.date
-          when Date.parse("1985-05-01")
-            4  # 4 separate performances
-          when Date.parse("1985-02-25")
-            2  # 2 separate performances (Doolin's + Private Party)
-          when Date.parse("2000-05-19")
-            2  # 2 separate performances (Key Club shows)
-          else
-            # Check if this show has pre-show tracks (set = "P")
-            has_preshow = show.tracks.exists?(set: "P")
+    shows_query = Show.where(date: start_date.next_day..end_date.prev_day)
+                      .where(exclude_from_stats: false)
 
-            # Check if this show's pre-show should be excluded from gap calculations
-            if has_preshow && excluded_preshow_dates.include?(show.date)
-              1  # Pre-show exists but should be excluded from gap calculations
-            else
-              has_preshow ? 2 : 1
-            end
-          end
-        end
+    shows_query = shows_query.with_audio if audio_required
+
+    shows_query.sum { |show| count_performances_for_show(show) }
   end
 
-    def calculate_gap_with_audio(start_date, end_date, start_track = nil, end_track = nil)
-    return nil if start_date.nil? || end_date.nil?
+  def calculate_gap_with_audio(start_date, end_date, start_track = nil, end_track = nil)
+    calculate_gap(start_date, end_date, start_track, end_track, audio_required: true)
+  end
 
-    # Check if this is a same-show different-performance-unit scenario
-    if start_date == end_date && start_track && end_track
-      # Only Pre-Show ("P") is treated as a separate performance unit from main show
-      # Set 1, Set 2, Encore are all part of the same performance unit
-      start_is_preshow = start_track.set == "P"
-      end_is_preshow = end_track.set == "P"
+  def different_performance_units?(track1, track2)
+    # Only Pre-Show ("P") is treated as a separate performance unit from main show
+    # Set 1, Set 2, Encore are all part of the same performance unit
+    (track1.set == "P") != (track2.set == "P")
+  end
 
-      # Gap = 1 only if one track is pre-show and the other is main show
-      return 1 if start_is_preshow != end_is_preshow
-      # Same performance unit within same show
-      return 0
+  def count_performances_for_show(show)
+    # Special cases: certain dates count as multiple performances for PhishNet compatibility
+    case show.date
+    when Date.parse("1985-05-01")
+      4  # 4 separate performances
+    when Date.parse("1985-02-25")
+      2  # 2 separate performances (Doolin's + Private Party)
+    when Date.parse("2000-05-19")
+      2  # 2 separate performances (Key Club shows)
+    else
+      # Check if this show has pre-show tracks (set = "P")
+      has_preshow = show.tracks.exists?(set: "P")
+
+      # Check if this show's pre-show should be excluded from gap calculations
+      if has_preshow && excluded_preshow_dates.include?(show.date)
+        1  # Pre-show exists but should be excluded from gap calculations
+      else
+        has_preshow ? 2 : 1
+      end
     end
-
-    return 0 if start_date == end_date
-
-    # Count shows with audio between the dates (exclusive of start and end dates)
-    # PhishNet gap methodology: count shows between performances
-    Show.where(date: start_date.next_day..end_date.prev_day)
-        .with_audio
-        .where(exclude_from_stats: false)
-        .sum do |show|
-          # Special cases: certain dates count as multiple performances for PhishNet compatibility
-          case show.date
-          when Date.parse("1985-05-01")
-            4  # 4 separate performances (but has audio_status: "missing" so won't be included)
-          when Date.parse("1985-02-25")
-            2  # 2 separate performances (Doolin's + Private Party)
-          when Date.parse("2000-05-19")
-            2  # 2 separate performances (Key Club shows)
-          else
-            # Check if this show has pre-show tracks (set = "P")
-            has_preshow = show.tracks.exists?(set: "P")
-
-            # Check if this show's pre-show should be excluded from gap calculations
-            if has_preshow && excluded_preshow_dates.include?(show.date)
-              1  # Pre-show exists but should be excluded from gap calculations
-            else
-              has_preshow ? 2 : 1
-            end
-          end
-        end
   end
 
   def build_slug(track)

@@ -153,15 +153,10 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
         if params[:liked_by_user] && current_user
           fetch_shows
         else
-          Rails.cache.fetch("api/v2/shows?#{params.to_query}") { fetch_shows }
+          Rails.cache.fetch(cache_key_for_collection("shows")) { fetch_shows }
         end
 
-      {
-        shows:,
-        total_pages: shows.total_pages,
-        current_page: shows.current_page,
-        total_entries: shows.total_entries
-      }
+      paginated_response(:shows, shows, shows)
     end
 
     def fetch_shows
@@ -175,33 +170,22 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
           )
           .then { |s| apply_filter(s) }
           .then { |s| apply_sort(s, :date, :desc) }
-          .paginate(page: params[:page], per_page: params[:per_page])
+          .then { |s| paginate_relation(s) }
     end
 
-    def fetch_liked_show_ids(shows)
-      return [] unless current_user && shows.any?
-      Like.where(
-        likable_type: "Show",
-        likable_id: shows.map(&:id),
-        user_id: current_user.id
-      ).pluck(:likable_id)
-    end
 
-    def fetch_liked_track_ids(show)
-      return [] unless current_user && show
-      Like.where(
-        likable_type: "Track",
-        likable_id: show.tracks.map(&:id),
-        user_id: current_user.id
-      ).pluck(:likable_id)
-    end
 
     def show_by_date
       if params[:liked_by_user] && current_user
         fetch_show_by_date
       else
-        Rails.cache.fetch("api/v2/shows/#{params[:date]}") { fetch_show_by_date }
+        Rails.cache.fetch(cache_key_for_resource("shows", params[:date])) { fetch_show_by_date }
       end
+    end
+
+    def fetch_liked_track_ids(show)
+      return [] unless current_user && show
+      fetch_liked_ids("Track", show.tracks)
     end
 
     def fetch_show_by_date

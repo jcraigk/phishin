@@ -1,4 +1,6 @@
 class ApiV2::Entities::Tour < ApiV2::Entities::Base
+  include ApiV2::Concerns::CountFieldsWithAudio
+
   expose \
     :slug,
     documentation: {
@@ -13,19 +15,7 @@ class ApiV2::Entities::Tour < ApiV2::Entities::Base
       desc: "Name of the tour"
     }
 
-  expose \
-    :shows_count,
-    documentation: {
-      type: "Integer",
-      desc: "Number of shows associated with the tour"
-    }
-
-  expose \
-    :shows_with_audio_count,
-    documentation: {
-      type: "Integer",
-      desc: "Number of shows that have audio associated with the tour"
-    }
+  expose_count_fields_with_audio :shows_count, "shows associated with the tour"
 
   expose \
     :starts_on,

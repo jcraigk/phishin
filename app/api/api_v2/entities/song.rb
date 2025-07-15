@@ -1,4 +1,6 @@
 class ApiV2::Entities::Song < ApiV2::Entities::Base
+  include ApiV2::Concerns::CountFieldsWithAudio
+
   expose \
     :slug,
     documentation: {
@@ -34,19 +36,7 @@ class ApiV2::Entities::Song < ApiV2::Entities::Base
       desc: "Artist associated with the song (if not original)"
     }
 
-  expose \
-    :tracks_count,
-    documentation: {
-      type: "Integer",
-      desc: "Number of tracks associated with the song"
-    }
-
-  expose \
-    :tracks_with_audio_count,
-    documentation: {
-      type: "Integer",
-      desc: "Number of tracks that have audio associated with the song"
-    }
+  expose_count_fields_with_audio :tracks_count, "tracks associated with the song"
 
   expose \
     :created_at,

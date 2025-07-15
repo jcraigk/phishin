@@ -42,25 +42,20 @@ class ApiV2::Venues < ApiV2::Base
 
   helpers do
     def page_of_venues
-      Rails.cache.fetch("api/v2/venues?#{params.to_query}") do
+      Rails.cache.fetch(cache_key_for_collection("venues")) do
         venues = Venue.unscoped
                       .then { |v| apply_proximity_filter(v) }
                       .then { |v| apply_first_char_filter(v) }
-                      .then { |v| apply_audio_status_filter(v) }
+                      .then { |v| apply_audio_status_filter_to_venues(v, params[:audio_status]) }
                       .then { |v| apply_sort(v) }
-                      .paginate(page: params[:page], per_page: params[:per_page])
+                      .then { |v| paginate_relation(v) }
 
-        {
-          venues:,
-          total_pages: venues.total_pages,
-          current_page: venues.current_page,
-          total_entries: venues.total_entries
-        }
+        paginated_response(:venues, venues, venues)
       end
     end
 
     def venue_by_slug
-      Rails.cache.fetch("api/v2/venues/#{params[:slug]}") do
+      Rails.cache.fetch(cache_key_for_resource("venues", params[:slug])) do
         Venue.find_by!(slug: params[:slug])
       end
     end
@@ -77,10 +72,6 @@ class ApiV2::Venues < ApiV2::Base
         venues = venues.near([ params[:lat], params[:lng] ], params[:distance])
       end
       venues
-    end
-
-    def apply_audio_status_filter(venues)
-      apply_audio_status_filter_to_venues(venues, params[:audio_status])
     end
   end
 end

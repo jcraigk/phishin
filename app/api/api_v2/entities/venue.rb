@@ -1,4 +1,6 @@
 class ApiV2::Entities::Venue < ApiV2::Entities::Base
+  include ApiV2::Concerns::CountFieldsWithAudio
+
   expose \
     :slug,
     documentation: {
@@ -62,19 +64,7 @@ class ApiV2::Entities::Venue < ApiV2::Entities::Base
       desc: "Full location of the venue (city, state, country)"
     }
 
-  expose \
-    :shows_count,
-    documentation: {
-      type: "Integer",
-      desc: "Number of shows that have taken place at the venue"
-    }
-
-  expose \
-    :shows_with_audio_count,
-    documentation: {
-      type: "Integer",
-      desc: "Number of shows that have audio and have taken place at the venue"
-    }
+  expose_count_fields_with_audio :shows_count, "shows that have taken place at the venue"
 
   expose \
     :created_at,

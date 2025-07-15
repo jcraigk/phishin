@@ -51,7 +51,7 @@ class ApiV2::Years < ApiV2::Base
 
   helpers do
     def cached_years_data
-      Rails.cache.fetch("api/v2/years") do
+      Rails.cache.fetch(cache_key_for_custom("years")) do
         years_data
       end
     end

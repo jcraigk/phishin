@@ -40,8 +40,13 @@ RSpec.describe "API v2 Tours" do
       expect(response).to have_http_status(:ok)
 
       json = JSON.parse(response.body, symbolize_names: true)
-      expected = ApiV2::Entities::Tour.represent([ tour1, tour3 ]).as_json
-      expect(json).to eq(expected)
+      expected_response = {
+        tours: ApiV2::Entities::Tour.represent([ tour1, tour3 ]).as_json.map(&:deep_symbolize_keys),
+        total_pages: 2,
+        current_page: 1,
+        total_entries: 3
+      }
+      expect(json).to eq(expected_response)
     end
 
     it "returns the tours sorted by name in descending order" do
@@ -50,9 +55,14 @@ RSpec.describe "API v2 Tours" do
 
       json = JSON.parse(response.body, symbolize_names: true)
       sorted_tours = [ tour2, tour3, tour1 ].sort_by(&:name).reverse
-      expected = ApiV2::Entities::Tour.represent(sorted_tours).as_json
+      expected_response = {
+        tours: ApiV2::Entities::Tour.represent(sorted_tours).as_json.map(&:deep_symbolize_keys),
+        total_pages: 1,
+        current_page: 1,
+        total_entries: 3
+      }
 
-      expect(json).to eq(expected)
+      expect(json).to eq(expected_response)
     end
 
     it "returns the tours sorted by shows_count in ascending order" do
@@ -61,9 +71,14 @@ RSpec.describe "API v2 Tours" do
 
       json = JSON.parse(response.body, symbolize_names: true)
       sorted_tours = [ tour2, tour1, tour3 ].sort_by(&:shows_count)
-      expected = ApiV2::Entities::Tour.represent(sorted_tours).as_json
+      expected_response = {
+        tours: ApiV2::Entities::Tour.represent(sorted_tours).as_json.map(&:deep_symbolize_keys),
+        total_pages: 1,
+        current_page: 1,
+        total_entries: 3
+      }
 
-      expect(json).to eq(expected)
+      expect(json).to eq(expected_response)
     end
 
     it "returns a 400 error for an invalid sort parameter" do
