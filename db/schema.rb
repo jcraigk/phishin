@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_15_021513) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_15_021900) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -148,6 +148,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_021513) do
     t.integer "cover_art_parent_show_id"
     t.datetime "album_zip_requested_at"
     t.integer "performance_gap_value", default: 1
+    t.string "audio_status", default: "complete", null: false
+    t.index "date_part('year'::text, date)", name: "index_shows_on_year_extracted"
+    t.index ["audio_status", "venue_id"], name: "index_shows_on_audio_venue"
+    t.index ["audio_status"], name: "index_shows_on_audio_status"
     t.index ["date"], name: "index_shows_on_date", unique: true
     t.index ["duration"], name: "index_shows_on_duration"
     t.index ["likes_count"], name: "index_shows_on_likes_count"
@@ -252,6 +256,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_021513) do
     t.integer "tags_count", default: 0
     t.integer "jam_starts_at_second"
     t.boolean "exclude_from_performance_gaps", default: false
+    t.string "audio_status", default: "complete", null: false
+    t.index ["audio_status"], name: "index_tracks_on_audio_status"
     t.index ["jam_starts_at_second"], name: "index_tracks_on_jam_starts_at_second"
     t.index ["likes_count"], name: "index_tracks_on_likes_count"
     t.index ["show_id", "position"], name: "index_tracks_on_show_id_and_position", unique: true
