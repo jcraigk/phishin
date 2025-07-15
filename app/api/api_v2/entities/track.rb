@@ -49,6 +49,13 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     }
 
   expose \
+    :exclude_from_performance_gaps,
+    documentation: {
+      type: "Boolean",
+      desc: "Whether this track should be excluded from performance gap calculations"
+    }
+
+  expose \
     :likes_count,
     documentation: {
       type: "Integer",
