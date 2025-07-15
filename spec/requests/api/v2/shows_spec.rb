@@ -236,6 +236,7 @@ RSpec.describe "API v2 Shows" do
       expect(json[:id]).to be_present
       expect(json[:date]).to be_present
       expect(json[:venue]).to be_present
+      expect(json[:performance_gap_value]).to eq(1)
     end
   end
 

@@ -100,6 +100,13 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
     }
 
   expose \
+    :performance_gap_value,
+    documentation: {
+      type: "Integer",
+      desc: "The value to use when calculating song performance gaps (default 1). Some records in the database represent multiple shows that took place on the same date (>1) while others were performances that don't count toward gaps and personal stats (0)."
+    }
+
+  expose \
     :created_at,
     format_with: :iso8601,
     documentation: {
