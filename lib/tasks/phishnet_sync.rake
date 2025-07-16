@@ -71,74 +71,6 @@ namespace :phishnet do
     "2000-05-19"
   ].freeze
 
-  desc "Report duplicate positions in PhishNet setlist data"
-  task report_duplicate_positions: :environment do
-    puts "Checking PhishNet setlist data for duplicate positions..."
-    puts "=" * 60
-
-    duplicate_count = 0
-    total_shows_checked = 0
-
-    Show.published.find_each do |show|
-      total_shows_checked += 1
-      print "." if total_shows_checked % 100 == 0
-
-      # Fetch setlist data from PhishNet for this show
-      response = Typhoeus.get(
-        "https://api.phish.net/v5/setlists/showdate/#{show.date.strftime('%Y-%m-%d')}.json",
-        params: { apikey: ENV.fetch("PNET_API_KEY", nil) }
-      )
-
-      next unless response.success?
-
-      begin
-        data = JSON.parse(response.body)
-        next unless data["data"] && data["data"].any?
-
-        # Filter to only include Phish tracks
-        phish_tracks = data["data"].select { |song_data| song_data["artist_slug"] == "phish" }
-        next if phish_tracks.empty?
-
-        # Check for duplicate positions
-        position_counts = Hash.new(0)
-        phish_tracks.each { |song_data| position_counts[song_data["position"]] += 1 }
-
-        duplicate_positions = position_counts.select { |pos, count| count > 1 }
-
-        if duplicate_positions.any?
-          duplicate_count += 1
-          puts "\n#{show.date} - #{show.venue_name}"
-          puts "Duplicate positions: #{duplicate_positions.keys.sort.join(', ')}"
-
-          # Show the tracks at each duplicate position
-          duplicate_positions.keys.sort.each do |pos|
-            tracks_at_position = phish_tracks.select { |t| t["position"] == pos }
-            puts "Position #{pos}:"
-            tracks_at_position.each do |track|
-              set_info = track["set"] ? " (set #{track['set']})" : ""
-              showid_info = track["showid"] ? " [showid: #{track['showid']}]" : ""
-              puts " - #{track['song']}#{set_info}#{showid_info}"
-            end
-          end
-          puts
-        end
-
-      rescue JSON::ParserError => e
-        puts "\nError parsing JSON for #{show.date}: #{e.message}"
-        next
-      rescue => e
-        puts "\nError processing #{show.date}: #{e.message}"
-        next
-      end
-    end
-
-    puts "\n" + "=" * 60
-    puts "Summary:"
-    puts "Total shows checked: #{total_shows_checked}"
-    puts "Shows with duplicate positions: #{duplicate_count}"
-    puts "Percentage with duplicates: #{(duplicate_count.to_f / total_shows_checked * 100).round(2)}%"
-  end
-
   desc "Sync all known Phish show dates from Phish.net (use LIMIT env var to limit new shows, DATE env var for single date)"
   task sync_shows: :environment do
     # Reset tracking at the beginning
@@ -282,56 +214,15 @@ namespace :phishnet do
           progressbar.increment
         end
 
-                puts "\nSync complete!"
-
-    # Report any skipped shows and additional local tracks
-    report_skipped_shows
-    report_additional_local_tracks
-      else
-        puts "Error fetching data from Phish.net: #{response.code}"
-      end
-    end
-  end
-
-  desc "Sync a specific date range from Phish.net"
-  task :sync_date_range, [ :start_date, :end_date ] => :environment do |t, args|
-    # Reset tracking at the beginning
-    reset_skipped_shows
-    reset_additional_local_tracks
-
-    start_date = Date.parse(args[:start_date])
-    end_date = Date.parse(args[:end_date])
-    date_range = (start_date..end_date).to_a
-
-    puts "Syncing shows from #{start_date} to #{end_date}..."
-
-    # Create progress bar for date range
-    progressbar = ProgressBar.create(
-      title: "Syncing",
-      total: date_range.length,
-      format: "%a |%b>>%i| %p%% %t"
-    )
-
-    date_range.each do |date|
-      response = Typhoeus.get(
-        "https://api.phish.net/v5/shows/showdate/#{date.strftime('%Y-%m-%d')}.json",
-        params: { apikey: Rails.application.credentials.dig(:phishnet, :api_key) }
-      )
-
-      if response.success?
-        data = JSON.parse(response.body)
-        if data["data"] && data["data"].any?
-          process_phishnet_show(data["data"].first, data["data"])
-        end
-      end
-      progressbar.increment
-    end
-
-                puts "\nSync complete!"
+        puts "\nSync complete!"
 
         # Report any skipped shows and additional local tracks
         report_skipped_shows
         report_additional_local_tracks
+      else
+        puts "Error fetching data from Phish.net: #{response.code}"
+      end
+    end
   end
 
   private
@@ -352,7 +243,7 @@ namespace :phishnet do
     @skipped_shows_with_duplicates << { date: show_date, reason: }
   end
 
-            def add_additional_local_track(track)
+  def add_additional_local_track(track)
     # Filter out excluded track titles and song titles
     excluded_titles = %w[intro outro jam banter interview]
 
@@ -386,7 +277,7 @@ namespace :phishnet do
     puts "=" * 80
   end
 
-    def report_additional_local_tracks
+  def report_additional_local_tracks
     return if @additional_local_tracks.empty?
 
     puts "\n" + "=" * 80
@@ -818,7 +709,7 @@ namespace :phishnet do
         end
       end
 
-            tracks_removed = 0
+      tracks_removed = 0
       tracks_to_remove.each do |track|
         # Track additional local tracks (all tracks that don't match PhishNet)
         add_additional_local_track(track)
