@@ -10,23 +10,17 @@ export const todayShowsLoader = async ({ request }) => {
   const month = url.searchParams.get("month") || new Date().getMonth() + 1;
   const day = url.searchParams.get("day") || new Date().getDate();
   const sortBy = url.searchParams.get("sort") || "date:desc";
-
   const audioStatusFilter = getAudioStatusFilter();
+  const response = await authFetch(buildTodayShowsUrl(month, day, sortBy, audioStatusFilter));
+  if (!response.ok) throw response;
+  const data = await response.json();
 
-  try {
-    const response = await authFetch(buildTodayShowsUrl(month, day, sortBy, audioStatusFilter));
-    if (!response.ok) throw response;
-    const data = await response.json();
-
-    return {
-      shows: data.shows || [],
-      month: Number(month),
-      day: Number(day),
-      sortBy,
-    };
-  } catch (error) {
-    throw new Response("Error fetching data", { status: 500 });
-  }
+  return {
+    shows: data.shows || [],
+    month: Number(month),
+    day: Number(day),
+    sortBy,
+  };
 };
 
 import React, { useCallback } from "react";
@@ -42,9 +36,8 @@ const TodayShows = () => {
   const { shows: initialShows, month, day, sortBy } = useLoaderData();
   const navigate = useNavigate();
 
-  // Simplified data fetching with audio filter
   const fetchShows = useCallback(async (audioStatusFilter) => {
-    const response = await authFetch(buildTodayShowsUrl(month, day, sortBy, audioStatusFilter));
+  const response = await authFetch(buildTodayShowsUrl(month, day, sortBy, audioStatusFilter));
     if (!response.ok) throw response;
     const data = await response.json();
     return data.shows || [];

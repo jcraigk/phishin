@@ -10,22 +10,17 @@ const RequestPasswordReset = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch(
-        "/api/v2/auth/request_password_reset",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email })
-        }
-      );
-      if (!response.ok) throw response;
-      const data = await response.json();
-      setNotice(data.message);
-    } catch (error) {
-      if (error instanceof Response) throw error;
-      throw new Response("Sorry, something went wrong", { status: 500 });
-    }
+    const response = await fetch(
+      "/api/v2/auth/request_password_reset",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      }
+    );
+    if (!response.ok) throw response;
+    const data = await response.json();
+    setNotice(data.message);
   };
 
   return (

@@ -15,20 +15,14 @@ const Search = () => {
   const [submittedTerm, setSubmittedTerm] = useState(searchParams.get("term") || "");
   const [isSearching, setIsSearching] = useState(false);
 
-  // Simplified search function for audio filter integration
   const performSearchWithFilter = useCallback(async (audioStatusFilter) => {
     if (!submittedTerm) return null;
 
     setIsSearching(true);
-    try {
-      const response = await authFetch(`/api/v2/search/${submittedTerm}?scope=${scope}&audio_status=${audioStatusFilter}`);
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      throw new Response("Error performing search", { status: 500 });
-    } finally {
-      setIsSearching(false);
-    }
+    const response = await authFetch(`/api/v2/search/${submittedTerm}?scope=${scope}&audio_status=${audioStatusFilter}`);
+    const data = await response.json();
+    setIsSearching(false);
+    return data;
   }, [submittedTerm, scope]);
 
   const { data: results, isLoading } = useAudioFilteredData(null, performSearchWithFilter, [submittedTerm, scope]);
@@ -45,7 +39,6 @@ const Search = () => {
   const performSearch = async (searchTerm, searchScope) => {
     setSubmittedTerm(searchTerm);
     setScope(searchScope);
-    // The actual search will be triggered by the useAudioFilteredData hook
   };
 
   const handleSearch = async () => {

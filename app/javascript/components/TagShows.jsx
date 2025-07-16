@@ -6,33 +6,26 @@ export const tagShowsLoader = async ({ params, request }) => {
   const sortOption = url.searchParams.get("sort") || "date:desc";
   const perPage = url.searchParams.get("per_page") || 10;
   const { tagSlug } = params;
-
   const audioStatusFilter = getAudioStatusFilter();
+  const tagResponse = await fetch(`/api/v2/tags`);
+  if (!tagResponse.ok) throw tagResponse;
+  const tagData = await tagResponse.json();
+  const tag = tagData.find(t => t.slug === tagSlug);
+  if (!tag) throw new Response("Tag not found", { status: 404 });
+  const showsResponse = await authFetch(
+    `/api/v2/shows?tag_slug=${tagSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`
+  );
+  if (!showsResponse.ok) throw showsResponse;
+  const showsData = await showsResponse.json();
 
-  try {
-    const tagResponse = await fetch(`/api/v2/tags`);
-    if (!tagResponse.ok) throw tagResponse;
-    const tagData = await tagResponse.json();
-    const tag = tagData.find(t => t.slug === tagSlug);
-    if (!tag) throw new Response("Tag not found", { status: 404 });
-
-    const showsResponse = await authFetch(
-      `/api/v2/shows?tag_slug=${tagSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`
-    );
-    if (!showsResponse.ok) throw showsResponse;
-    const showsData = await showsResponse.json();
-    return {
-      tag,
-      shows: showsData.shows,
-      totalPages: showsData.total_pages,
-      page: parseInt(page, 10) - 1,
-      sortOption,
-      perPage: parseInt(perPage)
-    };
-  } catch (error) {
-    if (error instanceof Response) throw error;
-    throw new Response("Error fetching data", { status: 500 });
-  }
+  return {
+    tag,
+    shows: showsData.shows,
+    totalPages: showsData.total_pages,
+    page: parseInt(page, 10) - 1,
+    sortOption,
+    perPage: parseInt(perPage)
+  };
 };
 
 import React from "react";

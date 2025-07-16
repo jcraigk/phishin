@@ -2,15 +2,13 @@ import { authFetch, getAudioStatusFilter } from "./helpers/utils";
 
 export const topShowsLoader = async () => {
   const audioStatusFilter = getAudioStatusFilter();
-
-  try {
-    const response = await authFetch(`/api/v2/shows?per_page=46&sort=likes_count:desc&audio_status=${audioStatusFilter}`);
-    if (!response.ok) throw response;
-    const data = await response.json();
-    return { shows: data.shows };
-  } catch (error) {
+  const response = await authFetch(`/api/v2/shows?per_page=46&sort=likes_count:desc&audio_status=${audioStatusFilter}`).catch(error => {
+    console.error("Error fetching top shows data:", error);
     throw new Response("Error fetching data", { status: 500 });
-  }
+  });
+  if (!response.ok) throw response;
+  const data = await response.json();
+  return { shows: data.shows };
 };
 
 import React from "react";

@@ -1,55 +1,53 @@
 export const erasLoader = async () => {
-  try {
-    const response = await fetch("/api/v2/years");
-    if (!response.ok) throw response;
-    const data = await response.json();
-
-    const erasData = data.reduce((acc, yearData) => {
-      const {
-        era,
-        period,
-        shows_count = 0,
-        shows_with_audio_count = 0,
-        shows_duration = 0,
-        venues_count = 0,
-        venues_with_audio_count = 0,
-        cover_art_urls = {}
-      } = yearData;
-
-      if (!acc[era]) {
-        acc[era] = {
-          periods: [],
-          total_shows: 0,
-          total_shows_with_audio: 0,
-          total_duration: 0
-        };
-      }
-
-      acc[era].periods.push({
-        period,
-        shows_count,
-        shows_with_audio_count,
-        venues_count,
-        venues_with_audio_count,
-        cover_art_urls
-      });
-
-      acc[era].total_shows += shows_count;
-      acc[era].total_shows_with_audio += shows_with_audio_count;
-      acc[era].total_duration += shows_duration;
-
-      return acc;
-    }, {});
-
-    Object.keys(erasData).forEach((era) => {
-      erasData[era].periods.sort((a, b) => b.period.localeCompare(a.period));
-    });
-
-    return erasData;
-  } catch (error) {
+  const response = await fetch("/api/v2/years").catch(error => {
     console.error("Error loading eras data:", error);
     throw error;
-  }
+  });
+  if (!response.ok) throw response;
+  const data = await response.json();
+
+  const erasData = data.reduce((acc, yearData) => {
+    const {
+      era,
+      period,
+      shows_count = 0,
+      shows_with_audio_count = 0,
+      shows_duration = 0,
+      venues_count = 0,
+      venues_with_audio_count = 0,
+      cover_art_urls = {}
+    } = yearData;
+
+    if (!acc[era]) {
+      acc[era] = {
+        periods: [],
+        total_shows: 0,
+        total_shows_with_audio: 0,
+        total_duration: 0
+      };
+    }
+
+    acc[era].periods.push({
+      period,
+      shows_count,
+      shows_with_audio_count,
+      venues_count,
+      venues_with_audio_count,
+      cover_art_urls
+    });
+
+    acc[era].total_shows += shows_count;
+    acc[era].total_shows_with_audio += shows_with_audio_count;
+    acc[era].total_duration += shows_duration;
+
+    return acc;
+  }, {});
+
+  Object.keys(erasData).forEach((era) => {
+    erasData[era].periods.sort((a, b) => b.period.localeCompare(a.period));
+  });
+
+  return erasData;
 };
 
 import React from "react";
@@ -69,7 +67,6 @@ const Eras = () => {
   const { viewMode, setViewMode, sortOption, setSortOption } = useOutletContext();
   const { hideMissingAudio } = useAudioFilter();
 
-  // Calculate totals based on current filter
   const calculateTotals = () => {
     let totalShows = 0;
     let totalDuration = 0;

@@ -63,20 +63,18 @@ export const toggleLike = async ({ id, type, isLiked }) => {
     token = localStorage.getItem("jwt");
   }
 
-  try {
-    const response = await fetch(url, {
-      method,
-      headers: { "X-Auth-Token": token },
-    });
-
-    if (response.ok) {
-      return { success: true, isLiked: !isLiked };
-    } else {
-      console.error("Failed to toggle like");
-      return { success: false };
-    }
-  } catch (error) {
+  const response = await fetch(url, {
+    method,
+    headers: { "X-Auth-Token": token },
+  }).catch(error => {
     console.error("Error toggling like:", error);
+    return { ok: false };
+  });
+
+  if (response.ok) {
+    return { success: true, isLiked: !isLiked };
+  } else {
+    console.error("Failed to toggle like");
     return { success: false };
   }
 };

@@ -39,7 +39,6 @@ const EraShows = () => {
   const { viewMode, setViewMode, sortOption, setSortOption } = useOutletContext();
   const [yearsData, setYearsData] = useState(null);
 
-  // Simplified fetch function for audio filter integration
   const fetchShows = useCallback(async (audioStatusFilter) => {
     const url = buildShowsUrl(year, audioStatusFilter);
     const response = await authFetch(url);

@@ -6,42 +6,32 @@ export const songTracksLoader = async ({ params, request }) => {
   const sortOption = url.searchParams.get("sort") || "date:desc";
   const perPage = url.searchParams.get("per_page") || 10;
   const { songSlug } = params;
-
   const audioStatusFilter = getAudioStatusFilter();
-
-  try {
-    const songResponse = await fetch(`/api/v2/songs/${songSlug}`);
-    if (songResponse.status === 404) {
-      throw new Response("Song not found", { status: 404 });
-    }
-    if (!songResponse.ok) throw songResponse;
-    const songData = await songResponse.json();
-
-    const songTitle = songData.title;
-    const originalInfo = songData.original
-      ? "Original composition"
-      : songData.artist;
-
-    const tracksResponse = await authFetch(
-      `/api/v2/tracks?song_slug=${songSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`
-    );
-    if (!tracksResponse.ok) throw tracksResponse;
-    const tracksData = await tracksResponse.json();
-
-    return {
-      songTitle,
-      originalInfo,
-      tracks: tracksData.tracks,
-      totalEntries: tracksData.total_entries,
-      totalPages: tracksData.total_pages,
-      page: parseInt(page, 10) - 1,
-      sortOption,
-      perPage: parseInt(perPage)
-    };
-  } catch (error) {
-    if (error instanceof Response) throw error;
-    throw new Response("Error fetching data", { status: 500 });
+  const songResponse = await fetch(`/api/v2/songs/${songSlug}`);
+  if (songResponse.status === 404) {
+    throw new Response("Song not found", { status: 404 });
   }
+  if (!songResponse.ok) throw songResponse;
+  const songData = await songResponse.json();
+  const songTitle = songData.title;
+  const originalInfo = songData.original
+    ? "Original composition"
+    : songData.artist;
+  const tracksResponse = await authFetch(
+    `/api/v2/tracks?song_slug=${songSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`
+  );
+  if (!tracksResponse.ok) throw tracksResponse;
+  const tracksData = await tracksResponse.json();
+  return {
+    songTitle,
+    originalInfo,
+    tracks: tracksData.tracks,
+    totalEntries: tracksData.total_entries,
+    totalPages: tracksData.total_pages,
+    page: parseInt(page, 10) - 1,
+    sortOption,
+    perPage: parseInt(perPage)
+  };
 };
 
 import React, { useState } from "react";

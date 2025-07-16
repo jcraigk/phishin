@@ -2,15 +2,13 @@ import { authFetch, getAudioStatusFilter } from "./helpers/utils";
 
 export const topTracksLoader = async () => {
   const audioStatusFilter = getAudioStatusFilter();
-
-  try {
-    const response = await authFetch(`/api/v2/tracks?per_page=46&sort=likes_count:desc&audio_status=${audioStatusFilter}`);
-    if (!response.ok) throw response;
-    const data = await response.json();
-    return { tracks: data.tracks };
-  } catch (error) {
+  const response = await authFetch(`/api/v2/tracks?per_page=46&sort=likes_count:desc&audio_status=${audioStatusFilter}`).catch(error => {
+    console.error("Error fetching top tracks data:", error);
     throw new Response("Error fetching data", { status: 500 });
-  }
+  });
+  if (!response.ok) throw response;
+  const data = await response.json();
+  return { tracks: data.tracks };
 };
 
 import React from "react";

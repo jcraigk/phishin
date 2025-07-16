@@ -3,21 +3,14 @@ import { createTaperNotesModalContent } from "./helpers/modals";
 
 export const showLoader = async ({ params }) => {
   const { date } = params;
-
   const audioStatusFilter = getAudioStatusFilter();
-
   const url = `/api/v2/shows/${date}?audio_status=${audioStatusFilter}`;
-  try {
-    const response = await authFetch(url);
-    if (response.status === 404) {
-      throw new Response("Show not found", { status: 404 });
-    }
-    let show = await response.json();
-    return show;
-  } catch (error) {
-    if (error instanceof Response) throw error;
-    throw new Response("Error fetching data", { status: 500 });
+  const response = await authFetch(url);
+  if (response.status === 404) {
+    throw new Response("Show not found", { status: 404 });
   }
+  let show = await response.json();
+  return show;
 };
 
 import React, { useState, useRef, useEffect } from "react";

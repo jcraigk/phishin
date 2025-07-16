@@ -189,14 +189,10 @@ const Navbar = ({ user, handleLogout }) => {
                       className="dropdown-item"
                       onClick={async () => {
                         closeMenus();
-                        try {
-                          const response = await fetch('/api/v2/shows/random');
-                          if (!response.ok) throw response;
-                          const show = await response.json();
-                          navigate(`/${show.date}`);
-                        } catch (error) {
-                          console.error('Error fetching random show:', error);
-                        }
+                        const response = await fetch('/api/v2/shows/random');
+                        if (!response.ok) throw response;
+                        const show = await response.json();
+                        navigate(`/${show.date}`);
                       }}
                     >
                       <FontAwesomeIcon icon={faDiceFive} className="icon" />

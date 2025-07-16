@@ -5,23 +5,17 @@ export const myShowsLoader = async ({ request }) => {
   const page = url.searchParams.get("page") || 1;
   const sortOption = url.searchParams.get("sort") || "date:desc";
   const perPage = url.searchParams.get("per_page") || 10;
-
   const audioStatusFilter = getAudioStatusFilter();
-
-  try {
-    const response = await authFetch(`/api/v2/shows?liked_by_user=true&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
-    if (!response.ok) throw response;
-    const data = await response.json();
-    return {
-      shows: data.shows,
-      totalPages: data.total_pages,
-      page: parseInt(page, 10) - 1,
-      sortOption,
-      perPage: parseInt(perPage)
-    };
-  } catch (error) {
-    throw new Response("Error fetching data", { status: 500 });
-  }
+  const response = await authFetch(`/api/v2/shows?liked_by_user=true&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
+  if (!response.ok) throw response;
+  const data = await response.json();
+  return {
+    shows: data.shows,
+    totalPages: data.total_pages,
+    page: parseInt(page, 10) - 1,
+    sortOption,
+    perPage: parseInt(perPage)
+  };
 };
 
 import React, { useEffect } from "react";

@@ -1,17 +1,16 @@
 export const missingContentLoader = async () => {
-  try {
-    const response = await fetch("/api/v2/reports/missing_content");
-    if (!response.ok) throw response;
-    const data = await response.json();
-    const combinedData = [
-      ...data.missing_shows.map((show) => ({ ...show, type: "Missing" })),
-      ...data.incomplete_shows.map((show) => ({ ...show, type: "Incomplete" }))
-    ];
-    combinedData.sort((a, b) => new Date(b.date) - new Date(a.date));
-    return combinedData;
-  } catch (error) {
+  const response = await fetch("/api/v2/reports/missing_content").catch(error => {
+    console.error("Error fetching missing content data:", error);
     throw new Response("Error fetching data", { status: 500 });
-  }
+  });
+  if (!response.ok) throw response;
+  const data = await response.json();
+  const combinedData = [
+    ...data.missing_shows.map((show) => ({ ...show, type: "Missing" })),
+    ...data.incomplete_shows.map((show) => ({ ...show, type: "Incomplete" }))
+  ];
+  combinedData.sort((a, b) => new Date(b.date) - new Date(a.date));
+  return combinedData;
 };
 
 import React from "react";

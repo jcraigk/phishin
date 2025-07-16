@@ -17,14 +17,12 @@ export const useAudioFilteredData = (initialData, fetchFunction, dependencies = 
 
       const fetchData = async () => {
         setIsFilterLoading(true);
-        try {
-          const newData = await fetchFunction(currentAudioStatusFilter);
-          setData(newData);
-        } catch (error) {
+        const newData = await fetchFunction(currentAudioStatusFilter).catch(error => {
           console.error('Error fetching initial data:', error);
-        } finally {
-          setIsFilterLoading(false);
-        }
+          return initialData;
+        });
+        setData(newData);
+        setIsFilterLoading(false);
       };
 
       fetchData();
@@ -41,15 +39,13 @@ export const useAudioFilteredData = (initialData, fetchFunction, dependencies = 
 
     const fetchData = async () => {
       setIsFilterLoading(true);
-      try {
-        const newData = await fetchFunction(currentAudioStatusFilter);
-        setData(newData);
-        initialFilterRef.current = currentAudioStatusFilter;
-      } catch (error) {
+      const newData = await fetchFunction(currentAudioStatusFilter).catch(error => {
         console.error('Error fetching filtered data:', error);
-      } finally {
-        setIsFilterLoading(false);
-      }
+        return data;
+      });
+      setData(newData);
+      initialFilterRef.current = currentAudioStatusFilter;
+      setIsFilterLoading(false);
     };
 
     fetchData();

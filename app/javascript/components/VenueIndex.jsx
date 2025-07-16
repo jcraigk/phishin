@@ -6,25 +6,20 @@ export const venueIndexLoader = async ({ request }) => {
   const sortOption = url.searchParams.get("sort") || "name:asc";
   const firstChar = url.searchParams.get("first_char") || "";
   const perPage = url.searchParams.get("per_page") || 10;
-
   const audioStatusFilter = getAudioStatusFilter();
+  const response = await fetch(`/api/v2/venues?page=${page}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
+  if (!response.ok) throw response;
+  const data = await response.json();
 
-  try {
-    const response = await fetch(`/api/v2/venues?page=${page}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
-    if (!response.ok) throw response;
-    const data = await response.json();
-    return {
-      venues: data.venues,
-      totalPages: data.total_pages,
-      totalEntries: data.total_entries,
-      page: parseInt(page, 10) - 1,
-      sortOption,
-      firstChar,
-      perPage: parseInt(perPage)
-    };
-  } catch (error) {
-    throw new Response("Error fetching data", { status: 500 });
-  }
+  return {
+    venues: data.venues,
+    totalPages: data.total_pages,
+    totalEntries: data.total_entries,
+    page: parseInt(page, 10) - 1,
+    sortOption,
+    firstChar,
+    perPage: parseInt(perPage)
+  };
 };
 
 import React, { useState, useCallback } from "react";
@@ -55,22 +50,16 @@ const VenueIndex = () => {
     handleSortChange,
     handlePerPageInputChange,
     handlePerPageBlurOrEnter
-    } = paginationHelper(page, sortOption, perPage, firstChar);
+  } = paginationHelper(page, sortOption, perPage, firstChar);
 
-  // Simplified fetch function for audio filter integration
   const fetchVenues = useCallback(async (audioStatusFilter) => {
-    try {
-      const response = await fetch(`/api/v2/venues?page=${page + 1}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
-      if (!response.ok) throw response;
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error fetching venues:", error);
-      throw error;
-    }
+    const response = await fetch(`/api/v2/venues?page=${page + 1}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
+    if (!response.ok) throw response;
+    const data = await response.json();
+    return data;
   }, [page, sortOption, firstChar, perPage]);
 
-    const { data: venuesData, isLoading } = useAudioFilteredData(initialData, fetchVenues, [page, sortOption, firstChar, perPage]);
+  const { data: venuesData, isLoading } = useAudioFilteredData(initialData, fetchVenues, [page, sortOption, firstChar, perPage]);
 
   const venues = venuesData?.venues || initialData.venues;
   const totalPages = venuesData?.total_pages || initialData.totalPages;

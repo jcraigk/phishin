@@ -5,24 +5,18 @@ export const songIndexLoader = async ({ request }) => {
   const page = url.searchParams.get("page") || 1;
   const sortOption = url.searchParams.get("sort") || "title:asc";
   const perPage = url.searchParams.get("per_page") || 10;
-
   const audioStatusFilter = getAudioStatusFilter();
-
-  try {
-    const response = await fetch(`/api/v2/songs?page=${page}&sort=${sortOption}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
-    if (!response.ok) throw response;
-    const data = await response.json();
-    return {
-      songs: data.songs,
-      totalPages: data.total_pages,
-      totalEntries: data.total_entries,
-      page: parseInt(page, 10) - 1,
-      sortOption,
-      perPage: parseInt(perPage)
-    };
-  } catch (error) {
-    throw new Response("Error fetching data", { status: 500 });
-  }
+  const response = await fetch(`/api/v2/songs?page=${page}&sort=${sortOption}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
+  if (!response.ok) throw response;
+  const data = await response.json();
+  return {
+    songs: data.songs,
+    totalPages: data.total_pages,
+    totalEntries: data.total_entries,
+    page: parseInt(page, 10) - 1,
+    sortOption,
+    perPage: parseInt(perPage)
+  };
 };
 
 import React, { useState, useCallback } from "react";
@@ -53,20 +47,14 @@ const SongIndex = () => {
     handlePerPageBlurOrEnter
   } = paginationHelper(page, sortOption, perPage);
 
-  // Simplified fetch function for audio filter integration
   const fetchSongs = useCallback(async (audioStatusFilter) => {
-    try {
-      const response = await fetch(`/api/v2/songs?page=${page + 1}&sort=${sortOption}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
-      if (!response.ok) throw response;
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error fetching songs:", error);
-      throw error;
-    }
+    const response = await fetch(`/api/v2/songs?page=${page + 1}&sort=${sortOption}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
+    if (!response.ok) throw response;
+    const data = await response.json();
+    return data;
   }, [page, sortOption, perPage]);
 
-    const { data: songsData, isLoading } = useAudioFilteredData(initialData, fetchSongs, [page, sortOption, perPage]);
+  const { data: songsData, isLoading } = useAudioFilteredData(initialData, fetchSongs, [page, sortOption, perPage]);
 
   const songs = songsData?.songs || initialData.songs;
   const totalPages = songsData?.total_pages || initialData.totalPages;

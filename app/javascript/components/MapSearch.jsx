@@ -71,36 +71,31 @@ const MapSearch = () => {
       url += `&lat=${lat}&lng=${lng}&distance=${distance}`;
     }
 
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
+    const response = await fetch(url);
+    const data = await response.json();
 
-      const uniqueVenues = data.shows.reduce((acc, show) => {
-        const venue = show.venue;
-        const isDuplicate = acc.some((v) => v.slug === venue.slug);
+    const uniqueVenues = data.shows.reduce((acc, show) => {
+      const venue = show.venue;
+      const isDuplicate = acc.some((v) => v.slug === venue.slug);
 
-        if (!isDuplicate && venue.latitude && venue.longitude) {
-          acc.push({
-            slug: venue.slug,
-            name: venue.name,
-            location: venue.location,
-            latitude: venue.latitude,
-            longitude: venue.longitude,
-            shows_count: venue.shows_count,
-            shows: [{ date: show.date }]
-          });
-        } else if (isDuplicate) {
-          const existingVenue = acc.find((v) => v.slug === venue.slug);
-          existingVenue.shows.push({ date: show.date });
-        }
-        return acc;
-      }, []);
+      if (!isDuplicate && venue.latitude && venue.longitude) {
+        acc.push({
+          slug: venue.slug,
+          name: venue.name,
+          location: venue.location,
+          latitude: venue.latitude,
+          longitude: venue.longitude,
+          shows_count: venue.shows_count,
+          shows: [{ date: show.date }]
+        });
+      } else if (isDuplicate) {
+        const existingVenue = acc.find((v) => v.slug === venue.slug);
+        existingVenue.shows.push({ date: show.date });
+      }
+      return acc;
+    }, []);
 
-      return uniqueVenues;
-    } catch (error) {
-      console.error("Error fetching shows:", error);
-      return [];
-    }
+    return uniqueVenues;
   };
 
   const handleInputChange = (e) => {
@@ -128,15 +123,10 @@ const MapSearch = () => {
 
   const geocodeSearchTerm = async (term) => {
     const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${term}.json?access_token=${mapboxToken}`;
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      const [lng, lat] = data.features[0].center;
-      return { lat, lng };
-    } catch (error) {
-      console.error("Error with geocoding:", error);
-      return null;
-    }
+    const response = await fetch(url);
+    const data = await response.json();
+    const [lng, lat] = data.features[0].center;
+    return { lat, lng };
   };
 
   const sidebarContent = (
