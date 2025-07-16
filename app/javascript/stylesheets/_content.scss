@@ -855,10 +855,3 @@ main {
 .no-audio {
   cursor: default !important;
 }
-
-.notification {
-  &.is-warning {
-    background-color: #fffbeb;
-    color: #92400e;
-  }
-}

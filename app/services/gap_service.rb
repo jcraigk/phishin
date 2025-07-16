@@ -1,3 +1,9 @@
+# This service is used to calculate the gaps between performances
+# of the same song across different shows.
+
+# If update_previous is true, it will also update the `next` gaps for
+# previous occurrences of songs that were played at specified show.
+
 class GapService < ApplicationService
   param :show
   option :update_previous, default: -> { false }
@@ -16,17 +22,14 @@ class GapService < ApplicationService
 
     ActiveRecord::Base.transaction do
       show.tracks.where.not(set: "S").each do |track|
-        # Skip tracks that should be excluded from gap calculations
         next if should_exclude_track?(track)
 
         track.songs.each do |song|
-          # Skip songs that should be excluded from gap calculations
           next if should_exclude_song_from_gaps?(song)
 
           song_track = SongsTrack.find_by(track_id: track.id, song_id: song.id)
           next unless song_track
 
-          # Calculate normal gaps (any audio_status)
           previous_performance = find_previous_performance(song, track)
           song_track.previous_performance_gap = calculate_gap(previous_performance&.show&.date, track.show.date, previous_performance, track)
           song_track.previous_performance_slug = build_slug(previous_performance)
@@ -35,7 +38,6 @@ class GapService < ApplicationService
           song_track.next_performance_gap = calculate_gap(track.show.date, next_performance&.show&.date, track, next_performance)
           song_track.next_performance_slug = build_slug(next_performance)
 
-          # Calculate gaps with audio (excluding shows with missing audio)
           previous_performance_with_audio = find_previous_performance_with_audio(song, track)
           song_track.previous_performance_gap_with_audio = calculate_gap_with_audio(previous_performance_with_audio&.show&.date, track.show.date, previous_performance_with_audio, track)
           song_track.previous_performance_slug_with_audio = build_slug(previous_performance_with_audio)
@@ -63,14 +65,11 @@ class GapService < ApplicationService
 
     ActiveRecord::Base.transaction do
       show.tracks.where.not(set: "S").each do |track|
-        # Skip tracks that should be excluded from gap calculations
         next if should_exclude_track?(track)
 
         track.songs.each do |song|
-          # Skip songs that should be excluded from gap calculations
           next if should_exclude_song_from_gaps?(song)
 
-          # Find all previous performances of this song
           previous_song_tracks = SongsTrack.joins(track: :show)
                                           .where(song:)
                                           .where("shows.date < ?", show.date)
@@ -82,10 +81,8 @@ class GapService < ApplicationService
           previous_song_tracks.each do |previous_song_track|
             previous_track = previous_song_track.track
 
-            # Skip if this track should be excluded
             next if should_exclude_track?(previous_track)
 
-            # Update next performance gaps for the previous occurrence
             next_performance = find_next_performance(song, previous_track)
             previous_song_track.next_performance_gap = calculate_gap(previous_track.show.date, next_performance&.show&.date, previous_track, next_performance)
             previous_song_track.next_performance_slug = build_slug(next_performance)
@@ -126,34 +123,28 @@ class GapService < ApplicationService
   private
 
   def find_performance(song, track, direction:, audio_required: false)
-    # Base query for tracks across different shows
     base_query = Track.joins(:show, :songs)
                       .where(songs: { id: song.id })
                       .where("tracks.set <> ?", "S")
                       .where.not(tracks: { exclude_from_performance_gaps: true })
                       .where("shows.performance_gap_value > 0")
 
-    # Add audio requirement if specified
     base_query = base_query.merge(Show.with_audio) if audio_required
 
-    # Add date and ordering constraints based on direction
     if direction == :previous
       cross_show_tracks = base_query
                             .where("shows.date < ?", track.show.date)
                             .order("shows.date DESC, tracks.position DESC")
-    else # :next
+    else
       cross_show_tracks = base_query
                             .where("shows.date > ?", track.show.date)
                             .order("shows.date ASC, tracks.position ASC")
     end
 
-    # Only check within-show performances if audio not required OR current show has audio
     if !audio_required || track.show.audio_status != "missing"
-      # Check for performance within the same show and same performance unit
       within_show_track = find_tracks_within_show(song, track, direction)
       return within_show_track if within_show_track
 
-      # Check for performance within same show but different performance unit
       different_unit_track = find_tracks_different_unit(song, track, direction)
       return different_unit_track if different_unit_track
     end
@@ -175,12 +166,10 @@ class GapService < ApplicationService
                       .where("tracks.position #{position_operator} ?", track.position)
 
     if current_is_preshow
-      # For pre-show tracks, look for other pre-show tracks only
       tracks_within_show = base_query
                             .where("tracks.set = ?", "P")
                             .order("tracks.position #{position_order}")
     else
-      # For main show tracks, look for other main show tracks (1, 2, E)
       tracks_within_show = base_query
                             .where("tracks.set <> ?", "P") # Not pre-show
                             .order("tracks.position #{position_order}")
@@ -203,12 +192,10 @@ class GapService < ApplicationService
                       .where("tracks.position #{position_operator} ?", track.position)
 
     if current_is_preshow
-      # For pre-show tracks, look for main show tracks
       tracks_different_unit = base_query
                                .where("tracks.set <> ?", "P") # Main show tracks
                                .order("tracks.position #{position_order}")
     else
-      # For main show tracks, look for pre-show tracks
       tracks_different_unit = base_query
                                .where("tracks.set = ?", "P") # Pre-show tracks
                                .order("tracks.position #{position_order}")
@@ -220,7 +207,6 @@ class GapService < ApplicationService
   def calculate_gap(start_date, end_date, start_track = nil, end_track = nil, audio_required: false)
     return nil if start_date.nil? || end_date.nil?
 
-    # Check if this is a same-show different-performance-unit scenario
     if start_date == end_date && start_track && end_track
       return 1 if different_performance_units?(start_track, end_track)
       return 0
@@ -250,7 +236,6 @@ class GapService < ApplicationService
   end
 
   def count_performances_for_show(show)
-    # Use the performance_gap_value directly - no more hardcoded dates
     show.performance_gap_value
   end
 
@@ -264,17 +249,10 @@ class GapService < ApplicationService
   end
 
   def should_exclude_track?(track)
-    # Exclude tracks marked for exclusion from performance gaps
-    return true if track.exclude_from_performance_gaps?
-
-    # Exclude tracks with single song that has excluded titles
-    return true if single_song_with_excluded_title?(track)
-
-    false
+    track.exclude_from_performance_gaps? || single_song_with_excluded_title?(track)
   end
 
   def single_song_with_excluded_title?(track)
-    # Only check tracks with exactly one song
     return false unless track.songs.count == 1
 
     song_title = track.songs.first.title
@@ -282,7 +260,6 @@ class GapService < ApplicationService
   end
 
   def should_exclude_song_from_gaps?(song)
-    # Exclude songs that are inconsistent between systems or not meaningful for gap calculations
     EXCLUDED_SONG_TITLES.include?(song.title)
   end
 end

@@ -110,11 +110,9 @@ class Track < ApplicationRecord
     old_audio_status = saved_changes["audio_status"][0]
     new_audio_status = saved_changes["audio_status"][1]
 
-    # If changing from missing to complete, increment counters
-    if old_audio_status == "missing" && new_audio_status == "complete"
+    if old_audio_status == "missing" && new_audio_status.in?(%w[complete partial])
       increment_tracks_with_audio_counters
-    # If changing from complete to missing, decrement counters
-    elsif old_audio_status == "complete" && new_audio_status == "missing"
+    elsif old_audio_status.in?(%w[complete partial]) && new_audio_status == "missing"
       decrement_tracks_with_audio_counters
     end
   end

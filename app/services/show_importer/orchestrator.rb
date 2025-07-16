@@ -40,19 +40,14 @@ class ShowImporter::Orchestrator
     pbar = ProgressBar.create(total: @tracks.size, format: "%a %B %c/%C %p%% %E")
 
     show.save!
-
     save_tracks(pbar)
-
-
     show.reload.save_duration
+
     pbar.finish
 
     InteractiveCoverArtService.call(Show.where(id: show.id))
     DebutTagService.call(show)
     save_song_performance_data(show)
-
-
-
     create_announcement
   end
 

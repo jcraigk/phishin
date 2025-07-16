@@ -2,10 +2,8 @@ class AddTracksWithAudioCountToSongs < ActiveRecord::Migration[8.0]
   def up
     add_column :songs, :tracks_with_audio_count, :integer, default: 0
 
-    # Add index for performance
     add_index :songs, :tracks_with_audio_count
 
-    # Populate the counter cache
     populate_tracks_with_audio_counts
   end
 
@@ -17,7 +15,6 @@ class AddTracksWithAudioCountToSongs < ActiveRecord::Migration[8.0]
   private
 
   def populate_tracks_with_audio_counts
-    # Populate song counter caches
     execute <<-SQL
       UPDATE songs
       SET tracks_with_audio_count = (

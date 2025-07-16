@@ -18,7 +18,7 @@ Rails.application.configure do
 
   # https://github.com/flyerhzm/bullet
   config.after_initialize do
-    Bullet.enable = false
+    Bullet.enable = true
     Bullet.bullet_logger = true # log/bullet.log
     Bullet.rails_logger = true
   end

@@ -107,7 +107,6 @@ class InteractiveCoverArtService < ApplicationService
     when "p"
       puts "Generating cover art prompt..."
       CoverArtPromptService.call(show)
-      show.reload
       puts "\e[35m💬 #{show.cover_art_prompt}\e[0m"
       nil
     when "i"

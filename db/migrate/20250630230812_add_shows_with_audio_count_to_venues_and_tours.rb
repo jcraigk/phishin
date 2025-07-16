@@ -3,11 +3,9 @@ class AddShowsWithAudioCountToVenuesAndTours < ActiveRecord::Migration[8.0]
     add_column :venues, :shows_with_audio_count, :integer, default: 0
     add_column :tours, :shows_with_audio_count, :integer, default: 0
 
-    # Add indexes for performance
     add_index :venues, :shows_with_audio_count
     add_index :tours, :shows_with_audio_count
 
-    # Populate the counter caches
     populate_shows_with_audio_counts
   end
 
@@ -21,7 +19,6 @@ class AddShowsWithAudioCountToVenuesAndTours < ActiveRecord::Migration[8.0]
   private
 
   def populate_shows_with_audio_counts
-    # Populate venue counter caches
     execute <<-SQL
       UPDATE venues
       SET shows_with_audio_count = (
@@ -32,7 +29,6 @@ class AddShowsWithAudioCountToVenuesAndTours < ActiveRecord::Migration[8.0]
       )
     SQL
 
-    # Populate tour counter caches
     execute <<-SQL
       UPDATE tours
       SET shows_with_audio_count = (
