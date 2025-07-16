@@ -17,7 +17,7 @@ describe Api::V1::TracksController do
       subject { get('/api/v1/tracks', {}, auth_header) }
 
       it 'responds with expected data' do
-        expect(json_data).to match_array(tracks.map(&:as_json_api))
+        expect(json_data).to match_array(tracks.sort_by(&:id).reverse.map(&:as_json_api))
       end
     end
 

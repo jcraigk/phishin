@@ -15,10 +15,14 @@ class AlbumCoverService < ApplicationService
     attach_album_cover
   end
 
-  private
-
   def composite_text_on_cover_art
-    @art = MiniMagick::Image.open(show.cover_art_path)
+    # Download the cover art to a temporary file
+    temp_file = Tempfile.new(['cover_art', '.jpg'])
+    temp_file.binmode
+    show.cover_art.download { |chunk| temp_file.write(chunk) }
+    temp_file.close
+
+    @art = MiniMagick::Image.open(temp_file.path)
     text_color = "#222222"
     bg_color = "#e5e5e5"
     font1 = Rails.root.join("lib/fonts/Molle-Italic.ttf")
@@ -26,18 +30,18 @@ class AlbumCoverService < ApplicationService
 
     # Solid color bg at bottom
     bg_block_path = Rails.root.join("tmp", "#{SecureRandom.hex}.png").to_s
-    MiniMagick::Tool::Convert.new do |cmd|
-      cmd.size "#{@art.width}x#{(@art.height * 0.2).to_i}"
-      cmd.canvas bg_color
-      cmd << bg_block_path
+    MiniMagick.convert do |convert|
+      convert.size "#{@art.width}x#{(@art.height * 0.2).to_i}"
+      convert << "canvas:#{bg_color}"
+      convert << bg_block_path
     end
 
     # Bg dropshadow
     gradient_path = Rails.root.join("tmp", "#{SecureRandom.hex}.png").to_s
-    MiniMagick::Tool::Convert.new do |cmd|
-      cmd.size "#{@art.width}x#{(@art.height * 0.015).to_i}"
-      cmd.gradient "none-rgba(34,34,34,0.55)"
-      cmd << gradient_path
+    MiniMagick.convert do |convert|
+      convert.size "#{@art.width}x#{(@art.height * 0.015).to_i}"
+      convert << "gradient:none-rgba(34,34,34,0.55)"
+      convert << gradient_path
     end
 
     # Composite the bg and gradient
@@ -88,6 +92,7 @@ class AlbumCoverService < ApplicationService
 
     File.delete(bg_block_path) if File.exist?(bg_block_path)
     File.delete(gradient_path) if File.exist?(gradient_path)
+    temp_file.unlink
   end
 
   # Remove any non-alphabetic characters before the omission
