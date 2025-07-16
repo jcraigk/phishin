@@ -7,7 +7,7 @@ module HasAudioStatus
     validates :audio_status, inclusion: { in: AUDIO_STATUSES }
 
     scope :with_audio, -> { where(audio_status: %w[complete partial]) }
-    scope :missing_audio, -> { where(audio_status: "missing") }
+    scope :without_audio, -> { where(audio_status: "missing") }
   end
 
   def has_audio?

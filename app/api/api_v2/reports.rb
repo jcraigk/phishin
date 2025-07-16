@@ -34,7 +34,7 @@ class ApiV2::Reports < ApiV2::Base
     end
 
     def missing_show_details
-      Show.missing_audio
+      Show.without_audio
           .order(date: :desc)
           .map do |show|
         {

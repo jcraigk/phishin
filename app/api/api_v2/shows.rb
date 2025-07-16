@@ -254,23 +254,23 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
     def next_show_date(current_date, audio_status = "any")
       shows = Show.where("date > ?", current_date)
       shows = apply_audio_status_filter(shows, audio_status)
-      shows.order(date: :asc).pluck(:date).first ||
-        begin
-          all_shows = Show.all
-          all_shows = apply_audio_status_filter(all_shows, audio_status)
-          all_shows.order(date: :asc).pluck(:date).first
-        end
+      shows.order(date: :asc).pluck(:date).first || first_show_date(audio_status)
     end
 
     def previous_show_date(current_date, audio_status = "any")
       shows = Show.where("date < ?", current_date)
       shows = apply_audio_status_filter(shows, audio_status)
-      shows.order(date: :desc).pluck(:date).first ||
-        begin
-          all_shows = Show.all
-          all_shows = apply_audio_status_filter(all_shows, audio_status)
-          all_shows.order(date: :desc).pluck(:date).first
-        end
+      shows.order(date: :desc).pluck(:date).first || last_show_date(audio_status)
+    end
+
+    def first_show_date(audio_status = "any")
+      shows = apply_audio_status_filter(Show.all, audio_status)
+      shows.order(date: :asc).pluck(:date).first
+    end
+
+    def last_show_date(audio_status = "any")
+      shows = apply_audio_status_filter(Show.all, audio_status)
+      shows.order(date: :desc).pluck(:date).first
     end
   end
 end

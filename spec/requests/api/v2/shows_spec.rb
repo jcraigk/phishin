@@ -16,7 +16,7 @@ RSpec.describe "API v2 Shows" do
       create(:track, show: next_show, position: 1, songs: [ song ], slug: 'tweezer-5')
     ]
   end
-  let(:shows_with_missing_audio) do
+  let(:shows_without_audio) do
     [
       create(:show, date: "2022-12-29", audio_status: 'missing'),
       create(:show, date: "2022-12-31", audio_status: 'missing'),
@@ -28,7 +28,7 @@ RSpec.describe "API v2 Shows" do
 
   before do
     tracks
-    shows_with_missing_audio
+    shows_without_audio
   end
 
   describe "GET /shows/:date" do

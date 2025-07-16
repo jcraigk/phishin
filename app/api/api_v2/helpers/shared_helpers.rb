@@ -100,7 +100,6 @@ module ApiV2::Helpers::SharedHelpers
   def fetch_liked_ids(likable_type, items)
     return [] unless current_user && items
 
-    # Handle arrays of IDs directly
     if items.is_a?(Array) && items.first.is_a?(Integer)
       item_ids = items
     else

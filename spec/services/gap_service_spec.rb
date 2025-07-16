@@ -296,9 +296,9 @@ RSpec.describe GapService do
     end
 
     context "with missing audio show" do
-      let!(:missing_audio_show) { create(:show, date: "2024-07-15", venue:, tour:, audio_status: "missing") }
+      let!(:show_without_audio) { create(:show, date: "2024-07-15", venue:, tour:, audio_status: "missing") }
       let!(:test_song) { create(:song, title: "Test Song") }
-      let!(:missing_track) { create(:track, show: missing_audio_show, position: 1, set: "1", songs: [ test_song ]) }
+      let!(:missing_track) { create(:track, show: show_without_audio, position: 1, set: "1", songs: [ test_song ]) }
 
       before do
         show1 = create(:show, date: "2024-06-01", venue:, tour:, audio_status: "complete")
@@ -308,7 +308,7 @@ RSpec.describe GapService do
       end
 
       it "skips within-show audio calculations for missing audio shows" do
-        described_class.call(missing_audio_show)
+        described_class.call(show_without_audio)
 
         songs_track = SongsTrack.find_by(track: missing_track, song: test_song)
         expect(songs_track.previous_performance_gap_with_audio).to eq(1)

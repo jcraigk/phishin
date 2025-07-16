@@ -64,6 +64,7 @@ module HasCoverArt
     def variant_digest_for_size(size)
       # Calculate the variation digest for the given size
       # This matches what ActiveStorage uses internally
+      # Reduces queries, eliminates N+1
       case size
       when :medium
         ActiveStorage::Variation.new(resize_to_limit: [ 256, 256 ]).digest
