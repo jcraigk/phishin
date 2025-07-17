@@ -17,7 +17,7 @@ class AlbumCoverService < ApplicationService
 
   def composite_text_on_cover_art
     # Download the cover art to a temporary file
-    temp_file = Tempfile.new(['cover_art', '.jpg'])
+    temp_file = Tempfile.new([ "cover_art", ".jpg" ])
     temp_file.binmode
     show.cover_art.download { |chunk| temp_file.write(chunk) }
     temp_file.close

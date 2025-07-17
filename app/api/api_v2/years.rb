@@ -60,11 +60,7 @@ class ApiV2::Years < ApiV2::Base
       # Preload cover to avoid N+1 queries
       cover_art_dates = COVER_ART.values.compact
       cover_art_shows = Show.includes(
-        cover_art_attachment: {
-          blob: {
-            variant_records: { image_attachment: :blob }
-          }
-        }
+        :cover_art_attachment
       ).where(date: cover_art_dates).index_by(&:date)
 
       # Calculate all statistics in batches to reduce queries

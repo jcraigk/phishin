@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_15_021900) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_16_051621) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -149,6 +149,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_15_021900) do
     t.datetime "album_zip_requested_at"
     t.integer "performance_gap_value", default: 1
     t.string "audio_status", default: "complete", null: false
+    t.index "EXTRACT(day FROM date)", name: "index_shows_on_day_extracted"
+    t.index "EXTRACT(month FROM date)", name: "index_shows_on_month_extracted"
+    t.index "EXTRACT(month FROM date), EXTRACT(day FROM date)", name: "index_shows_on_month_day_extracted"
     t.index "date_part('year'::text, date)", name: "index_shows_on_year_extracted"
     t.index ["audio_status", "venue_id"], name: "index_shows_on_audio_venue"
     t.index ["audio_status"], name: "index_shows_on_audio_status"

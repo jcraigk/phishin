@@ -111,14 +111,33 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
     end
     get "day_of_year/:date" do
       date = Date.parse(params[:date])
-      shows =
-        Show.where("extract(month from date) = ?", date.month)
-            .where("extract(day from date) = ?", date.day)
-      shows = apply_audio_status_filter(shows, params[:audio_status])
-      shows = apply_sort(shows, :date, :desc)
-      liked_show_ids = fetch_liked_show_ids(shows)
-      present \
-        shows: ApiV2::Entities::Show.represent(shows, liked_show_ids:)
+      cache_key = cache_key_for_custom("day_of_year/#{date.strftime('%m-%d')}/#{params[:audio_status]}/#{params[:sort]}")
+      result = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+        shows = Show.includes(
+                      { venue: :venue_renames },
+                      :tour,
+                      :cover_art_attachment,
+                      :album_cover_attachment,
+                      :album_zip_attachment,
+                      {
+                        tracks: [
+                          :mp3_audio_attachment,
+                          :png_waveform_attachment,
+                          { track_tags: :tag },
+                          :songs,
+                          :songs_tracks
+                        ]
+                      },
+                      { show_tags: :tag }
+                    )
+                    .on_day_of_year(date.month, date.day)
+        shows = apply_audio_status_filter(shows, params[:audio_status])
+        shows = apply_sort(shows, :date, :desc)
+        liked_show_ids = fetch_liked_show_ids(shows)
+        ApiV2::Entities::Show.represent(shows, liked_show_ids:)
+      end
+
+      present shows: result
     rescue ArgumentError
       error!({ message: "Invalid date format" }, 400)
     end

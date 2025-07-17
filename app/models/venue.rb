@@ -28,9 +28,10 @@ class Venue < ApplicationRecord
 
   def other_names
     @other_names ||=
-      venue_renames.order(renamed_on: :asc)
-                   .each_with_object([]) do |rename, other_names|
-        other_names << rename.name
+      if venue_renames.loaded?
+        venue_renames.sort_by(&:renamed_on).map(&:name)
+      else
+        venue_renames.order(renamed_on: :asc).pluck(:name)
       end
   end
 
