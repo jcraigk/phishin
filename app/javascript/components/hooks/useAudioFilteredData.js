@@ -1,12 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAudioFilter } from '../contexts/AudioFilterContext';
 
-export const useAudioFilteredData = (initialData, fetchFunction, dependencies = []) => {
+export const useAudioFilteredData = (initialData, fetchFunction, dependencies = [], initialFilter = null) => {
   const [data, setData] = useState(initialData);
   const [isLoading, setIsLoading] = useState(false);
   const { hideMissingAudio, getAudioStatusParam, setIsFilterLoading } = useAudioFilter();
-  const initialFilterRef = useRef(getAudioStatusParam());
+
+  const initialFilterRef = useRef();
   const hasInitialized = useRef(false);
+  const lastFetchedFilter = useRef();
+
+  if (initialFilterRef.current === undefined) {
+    initialFilterRef.current = initialFilter || getAudioStatusParam();
+  }
+  if (lastFetchedFilter.current === undefined) {
+    lastFetchedFilter.current = initialFilter || getAudioStatusParam();
+  }
 
   useEffect(() => {
     const currentAudioStatusFilter = getAudioStatusParam();
@@ -14,6 +23,7 @@ export const useAudioFilteredData = (initialData, fetchFunction, dependencies = 
     if (!hasInitialized.current && initialData === null) {
       hasInitialized.current = true;
       initialFilterRef.current = currentAudioStatusFilter;
+      lastFetchedFilter.current = currentAudioStatusFilter;
 
       const fetchData = async () => {
         setIsFilterLoading(true);
@@ -30,12 +40,18 @@ export const useAudioFilteredData = (initialData, fetchFunction, dependencies = 
     }
 
     if (!hasInitialized.current) {
-      initialFilterRef.current = currentAudioStatusFilter;
       hasInitialized.current = true;
-      return;
+      initialFilterRef.current = initialFilter || currentAudioStatusFilter;
+      lastFetchedFilter.current = initialFilter || currentAudioStatusFilter;
+
+      if (currentAudioStatusFilter === (initialFilter || currentAudioStatusFilter)) {
+        return;
+      }
     }
 
-    if (currentAudioStatusFilter === initialFilterRef.current) return;
+    if (currentAudioStatusFilter === lastFetchedFilter.current) {
+      return;
+    }
 
     const fetchData = async () => {
       setIsFilterLoading(true);
@@ -44,16 +60,18 @@ export const useAudioFilteredData = (initialData, fetchFunction, dependencies = 
         return data;
       });
       setData(newData);
-      initialFilterRef.current = currentAudioStatusFilter;
+      lastFetchedFilter.current = currentAudioStatusFilter;
       setIsFilterLoading(false);
     };
 
     fetchData();
-  }, [hideMissingAudio, fetchFunction, setIsFilterLoading, initialData, ...dependencies]);
+  }, [hideMissingAudio, fetchFunction, setIsFilterLoading, ...dependencies]);
 
   useEffect(() => {
-    setData(initialData);
-  }, [initialData]);
+    if (initialData && lastFetchedFilter.current === (initialFilter || getAudioStatusParam())) {
+      setData(initialData);
+    }
+  }, [initialData, initialFilter, getAudioStatusParam]);
 
   return { data, isLoading };
 };
