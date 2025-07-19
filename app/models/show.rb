@@ -51,7 +51,7 @@ class Show < ApplicationRecord
   delegate :name, to: :tour, prefix: true
 
   def save_duration
-    update_column(:duration, tracks.sum(&:duration))
+    update_column(:duration, tracks.where.not(set: %w[S P]).sum(&:duration))
   end
 
   def date_with_dots

@@ -13,7 +13,7 @@ export const showLoader = async ({ params }) => {
   return show;
 };
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Link, useLoaderData, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { formatDate } from "./helpers/utils";
@@ -22,7 +22,6 @@ import LikeButton from "./controls/LikeButton";
 import Tracks from "./Tracks";
 import TagBadges from "./controls/TagBadges";
 import CoverArt from "./CoverArt";
-import { useClientSideAudioFilter } from "./hooks/useAudioFilteredData";
 import { useAudioFilter } from "./contexts/AudioFilterContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
@@ -38,7 +37,9 @@ const Show = ({ trackSlug }) => {
   const [showPartialAudioNotification, setShowPartialAudioNotification] = useState(show.audio_status === 'partial');
   const { hideMissingAudio } = useAudioFilter();
 
-  const filteredTracks = useClientSideAudioFilter(tracks, track => track.audio_status !== 'missing');
+  const filteredTracks = useMemo(() => {
+    return hideMissingAudio ? tracks.filter(track => track.audio_status !== 'missing') : tracks;
+  }, [tracks, hideMissingAudio]);
 
   useEffect(() => {
     setTracks(show.tracks);
