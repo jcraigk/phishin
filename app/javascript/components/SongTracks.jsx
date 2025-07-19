@@ -1,5 +1,9 @@
 import { authFetch, getAudioStatusFilter } from "./helpers/utils";
 
+const buildSongTracksUrl = (songSlug, page, sortOption, perPage, audioStatusFilter) => {
+  return `/api/v2/tracks?song_slug=${songSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
+};
+
 export const songTracksLoader = async ({ params, request }) => {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
@@ -17,9 +21,7 @@ export const songTracksLoader = async ({ params, request }) => {
   const originalInfo = songData.original
     ? "Original composition"
     : songData.artist;
-  const tracksResponse = await authFetch(
-    `/api/v2/tracks?song_slug=${songSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`
-  );
+  const tracksResponse = await authFetch(buildSongTracksUrl(songSlug, page, sortOption, perPage, audioStatusFilter));
   if (!tracksResponse.ok) throw tracksResponse;
   const tracksData = await tracksResponse.json();
   return {
@@ -34,7 +36,7 @@ export const songTracksLoader = async ({ params, request }) => {
   };
 };
 
-import React, { useState } from "react";
+import React from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
@@ -53,6 +55,8 @@ const SongTracks = () => {
     handlePerPageInputChange,
     handlePerPageBlurOrEnter
   } = paginationHelper(page, sortOption, perPage);
+
+
 
   const sidebarContent = (
     <div className="sidebar-content">
@@ -82,20 +86,20 @@ const SongTracks = () => {
       <Helmet>
         <title>{songTitle} - Phish.in</title>
       </Helmet>
-      <LayoutWrapper sidebarContent={sidebarContent}>
-        <PhoneTitle title={songTitle} />
-        <Tracks tracks={tracks} />
-        {totalPages > 1 && (
-          <Pagination
-            totalPages={totalPages}
-            handlePageClick={handlePageClick}
-            currentPage={page}
-            perPage={tempPerPage}
-            handlePerPageInputChange={handlePerPageInputChange}
-            handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
-          />
-        )}
-      </LayoutWrapper>
+              <LayoutWrapper sidebarContent={sidebarContent}>
+          <PhoneTitle title={songTitle} />
+          <Tracks tracks={tracks} />
+          {totalPages > 1 && (
+            <Pagination
+              totalPages={totalPages}
+              handlePageClick={handlePageClick}
+              currentPage={page}
+              perPage={tempPerPage}
+              handlePerPageInputChange={handlePerPageInputChange}
+              handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
+            />
+          )}
+        </LayoutWrapper>
     </>
   );
 };

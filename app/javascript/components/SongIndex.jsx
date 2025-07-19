@@ -1,12 +1,16 @@
 import { getAudioStatusFilter } from "./helpers/utils";
 
+const buildSongsUrl = (page, sortOption, perPage, audioStatusFilter) => {
+  return `/api/v2/songs?page=${page}&sort=${sortOption}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
+};
+
 export const songIndexLoader = async ({ request }) => {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
   const sortOption = url.searchParams.get("sort") || "title:asc";
   const perPage = url.searchParams.get("per_page") || 10;
   const audioStatusFilter = getAudioStatusFilter();
-  const response = await fetch(`/api/v2/songs?page=${page}&sort=${sortOption}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
+  const response = await fetch(buildSongsUrl(page, sortOption, perPage, audioStatusFilter));
   if (!response.ok) throw response;
   const data = await response.json();
   return {
@@ -19,7 +23,7 @@ export const songIndexLoader = async ({ request }) => {
   };
 };
 
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { formatNumber } from "./helpers/utils";
@@ -28,14 +32,11 @@ import Songs from "./Songs";
 import Pagination from "./controls/Pagination";
 import PhoneTitle from "./PhoneTitle";
 import { paginationHelper } from "./helpers/pagination";
-import { useServerFilteredData } from "./hooks/useServerFilteredData";
-import Loader from "./controls/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const SongIndex = () => {
-  const initialData = useLoaderData();
-  const { page, sortOption, perPage } = initialData;
+  const { songs, totalPages, totalEntries, page, sortOption, perPage } = useLoaderData();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -46,19 +47,6 @@ const SongIndex = () => {
     handlePerPageInputChange,
     handlePerPageBlurOrEnter
   } = paginationHelper(page, sortOption, perPage);
-
-  const fetchSongs = useCallback(async (audioStatusFilter) => {
-    const response = await fetch(`/api/v2/songs?page=${page + 1}&sort=${sortOption}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
-    if (!response.ok) throw response;
-    const data = await response.json();
-    return data;
-  }, [page, sortOption, perPage]);
-
-  const { data: songsData, isRefetching } = useServerFilteredData(initialData, fetchSongs, [page, sortOption, perPage]);
-
-  const songs = songsData?.songs || initialData.songs;
-  const totalPages = songsData?.total_pages || initialData.totalPages;
-  const totalEntries = songsData?.total_entries || initialData.totalEntries;
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -116,25 +104,19 @@ const SongIndex = () => {
       <Helmet>
         <title>Songs - Phish.in</title>
       </Helmet>
-      <LayoutWrapper sidebarContent={sidebarContent}>
-        <PhoneTitle title="Songs" />
-        {isRefetching ? (
-          <Loader />
-        ) : (
-          <>
-            <Songs songs={songs} />
-            {totalPages > 1 && (
-              <Pagination
-                totalPages={totalPages}
-                handlePageClick={handlePageClick}
-                currentPage={page}
-                perPage={tempPerPage}
-                handlePerPageInputChange={handlePerPageInputChange}
-                handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
-              />
-            )}
-          </>
-        )}
+              <LayoutWrapper sidebarContent={sidebarContent}>
+          <PhoneTitle title="Songs" />
+                      <Songs songs={songs} />
+          {totalPages > 1 && (
+            <Pagination
+              totalPages={totalPages}
+              handlePageClick={handlePageClick}
+              currentPage={page}
+              perPage={tempPerPage}
+              handlePerPageInputChange={handlePerPageInputChange}
+              handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
+            />
+          )}
       </LayoutWrapper>
     </>
   );

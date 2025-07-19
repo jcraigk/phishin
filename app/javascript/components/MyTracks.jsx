@@ -1,12 +1,16 @@
 import { authFetch, getAudioStatusFilter } from "./helpers/utils";
 
+const buildMyTracksUrl = (page, sortOption, perPage, audioStatusFilter) => {
+  return `/api/v2/tracks?liked_by_user=true&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
+};
+
 export const myTracksLoader = async ({ request }) => {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
   const sortOption = url.searchParams.get("sort") || "date:desc";
   const perPage = url.searchParams.get("per_page") || 10;
   const audioStatusFilter = getAudioStatusFilter();
-  const response = await authFetch(`/api/v2/tracks?liked_by_user=true&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
+  const response = await authFetch(buildMyTracksUrl(page, sortOption, perPage, audioStatusFilter));
   if (!response.ok) throw response;
   const data = await response.json();
   return {
@@ -72,19 +76,19 @@ const MyTracks = () => {
       <Helmet>
         <title>My Tracks - Phish.in</title>
       </Helmet>
-      <LayoutWrapper sidebarContent={sidebarContent}>
-        <Tracks tracks={tracks} setTracks={() => {}} />
-        {totalPages > 1 && (
-          <Pagination
-            totalPages={totalPages}
-            handlePageClick={handlePageClick}
-            currentPage={page}
-            perPage={tempPerPage}
-            handlePerPageInputChange={handlePerPageInputChange}
-            handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
-          />
-        )}
-      </LayoutWrapper>
+              <LayoutWrapper sidebarContent={sidebarContent}>
+                      <Tracks tracks={tracks} setTracks={() => {}} />
+          {totalPages > 1 && (
+            <Pagination
+              totalPages={totalPages}
+              handlePageClick={handlePageClick}
+              currentPage={page}
+              perPage={tempPerPage}
+              handlePerPageInputChange={handlePerPageInputChange}
+              handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
+            />
+          )}
+        </LayoutWrapper>
     </>
   );
 };

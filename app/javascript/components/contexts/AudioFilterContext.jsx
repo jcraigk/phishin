@@ -11,7 +11,7 @@ export const useAudioFilter = () => {
   return context;
 };
 
-export const AudioFilterProvider = ({ children }) => {
+export const AudioFilterProvider = ({ children, navigate = null }) => {
   const [hideMissingAudio, setHideMissingAudio] = useState(() => getAudioStatusFilter() === 'complete_or_partial');
   const [isFilterLoading, setIsFilterLoading] = useState(false);
 
@@ -19,6 +19,20 @@ export const AudioFilterProvider = ({ children }) => {
     const newValue = !hideMissingAudio;
     setHideMissingAudio(newValue);
     localStorage.setItem('hideMissingAudio', JSON.stringify(newValue));
+
+    // If navigation is available, trigger a reload by navigating to current URL with page=1
+    if (navigate) {
+      const currentUrl = new URL(window.location.href);
+      const searchParams = new URLSearchParams(currentUrl.search);
+
+      // Reset to page 1 if this is a paginated route
+      if (searchParams.has('page')) {
+        searchParams.set('page', '1');
+      }
+
+      // Navigate to the same route to trigger loader refresh
+      navigate(`${currentUrl.pathname}?${searchParams.toString()}`);
+    }
   };
 
   const getAudioStatusParam = () => {

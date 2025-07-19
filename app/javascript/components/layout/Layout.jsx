@@ -16,9 +16,8 @@ const initialDraftPlaylistMeta = {
   published: false,
 };
 
-const LayoutContent = ({ props }) => {
+const LayoutContent = ({ props, navigate }) => {
   const navigation = useNavigation();
-  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isAppModalOpen, setIsAppModalOpen] = useState(false);
   const [appModalContent, setAppModalContent] = useState(null);
@@ -191,9 +190,11 @@ const LayoutContent = ({ props }) => {
 };
 
 const Layout = ({ props }) => {
+  const navigate = useNavigate();
+
   return (
-    <AudioFilterProvider>
-      <LayoutContent props={props} />
+    <AudioFilterProvider navigate={navigate}>
+      <LayoutContent props={props} navigate={navigate} />
     </AudioFilterProvider>
   );
 };

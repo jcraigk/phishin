@@ -1,5 +1,9 @@
 import { authFetch, getAudioStatusFilter } from "./helpers/utils";
 
+const buildTagShowsUrl = (tagSlug, page, sortOption, perPage, audioStatusFilter) => {
+  return `/api/v2/shows?tag_slug=${tagSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
+};
+
 export const tagShowsLoader = async ({ params, request }) => {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
@@ -12,9 +16,7 @@ export const tagShowsLoader = async ({ params, request }) => {
   const tagData = await tagResponse.json();
   const tag = tagData.find(t => t.slug === tagSlug);
   if (!tag) throw new Response("Tag not found", { status: 404 });
-  const showsResponse = await authFetch(
-    `/api/v2/shows?tag_slug=${tagSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`
-  );
+  const showsResponse = await authFetch(buildTagShowsUrl(tagSlug, page, sortOption, perPage, audioStatusFilter));
   if (!showsResponse.ok) throw showsResponse;
   const showsData = await showsResponse.json();
 
@@ -29,7 +31,7 @@ export const tagShowsLoader = async ({ params, request }) => {
 };
 
 import React from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
@@ -39,6 +41,7 @@ import { paginationHelper } from "./helpers/pagination";
 
 const TagShows = () => {
   const { tag, shows, totalPages, page, sortOption, perPage } = useLoaderData();
+  const navigate = useNavigate();
   const {
     tempPerPage,
     handlePageClick,
@@ -46,6 +49,8 @@ const TagShows = () => {
     handlePerPageInputChange,
     handlePerPageBlurOrEnter
   } = paginationHelper(page, sortOption, perPage);
+
+
 
   const sidebarContent = (
     <div className="sidebar-content">
@@ -71,20 +76,20 @@ const TagShows = () => {
       <Helmet>
         <title>{tag.name} - Shows - Phish.in</title>
       </Helmet>
-      <LayoutWrapper sidebarContent={sidebarContent}>
-        <PhoneTitle title={`${tag.name} Shows`} />
-        <Shows shows={shows} />
-        {totalPages > 1 && (
-          <Pagination
-            totalPages={totalPages}
-            handlePageClick={handlePageClick}
-            currentPage={page}
-            perPage={tempPerPage}
-            handlePerPageInputChange={handlePerPageInputChange}
-            handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
-          />
-        )}
-      </LayoutWrapper>
+              <LayoutWrapper sidebarContent={sidebarContent}>
+          <PhoneTitle title={`${tag.name} Shows`} />
+          <Shows shows={shows} />
+          {totalPages > 1 && (
+            <Pagination
+              totalPages={totalPages}
+              handlePageClick={handlePageClick}
+              currentPage={page}
+              perPage={tempPerPage}
+              handlePerPageInputChange={handlePerPageInputChange}
+              handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
+            />
+          )}
+        </LayoutWrapper>
     </>
   );
 };

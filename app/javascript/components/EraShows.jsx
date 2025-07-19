@@ -1,11 +1,9 @@
 import { authFetch } from "./helpers/utils";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { useLoaderData, Link, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
-import Loader from "./controls/Loader";
-import { useServerFilteredData } from "./hooks/useServerFilteredData";
 import { getAudioStatusFilter } from "./helpers/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList, faTh, faCircleChevronLeft, faCircleChevronRight, faSortAmountDown, faSortAmountUp } from "@fortawesome/free-solid-svg-icons";
@@ -31,22 +29,13 @@ export const eraShowsLoader = async ({ params }) => {
   const response = await authFetch(url);
   if (!response.ok) throw response;
   const data = await response.json();
-  return { shows: data.shows, year, initialFilter: audioStatusFilter };
+  return { shows: data.shows, year };
 };
 
 const EraShows = () => {
-  const { shows: initialShows, year, initialFilter } = useLoaderData();
+  const { shows, year } = useLoaderData();
   const { viewMode, setViewMode, sortOption, setSortOption } = useOutletContext();
   const [yearsData, setYearsData] = useState(null);
-
-  const fetchShows = useCallback(async (audioStatusFilter) => {
-    const url = buildShowsUrl(year, audioStatusFilter);
-    const response = await authFetch(url);
-    const data = await response.json();
-    return data.shows;
-  }, [year]);
-
-  const { data: shows, isRefetching } = useServerFilteredData(initialShows, fetchShows, [year]);
 
   const sortedShows = [...shows].sort((a, b) => {
     if (sortOption === "asc") {
@@ -154,11 +143,7 @@ const EraShows = () => {
       <Helmet>
         <title>{year} - Phish.in</title>
       </Helmet>
-      <LayoutWrapper sidebarContent={sidebarContent}>
-        {isRefetching ? (
-          <Loader />
-        ) : (
-          <>
+              <LayoutWrapper sidebarContent={sidebarContent}>
             <div className="display-phone-only">
               <div className="buttons mt-2 mb-2">
                 {renderViewToggleButtons()}
@@ -167,9 +152,7 @@ const EraShows = () => {
             </div>
             <Shows shows={sortedShows} tourHeaders={true} viewMode={viewMode} />
             {yearLinks()}
-          </>
-        )}
-      </LayoutWrapper>
+        </LayoutWrapper>
     </>
   );
 };

@@ -1,5 +1,9 @@
 import { getAudioStatusFilter } from "./helpers/utils";
 
+const buildVenuesUrl = (page, sortOption, firstChar, perPage, audioStatusFilter) => {
+  return `/api/v2/venues?page=${page}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
+};
+
 export const venueIndexLoader = async ({ request }) => {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
@@ -8,7 +12,7 @@ export const venueIndexLoader = async ({ request }) => {
   const perPage = url.searchParams.get("per_page") || 10;
   const audioStatusFilter = getAudioStatusFilter();
   console.log(`[${new Date().toISOString()}] VenueIndex Loader: Loading with filter: ${audioStatusFilter}, page: ${page}, sort: ${sortOption}, firstChar: ${firstChar}, perPage: ${perPage}`);
-  const response = await fetch(`/api/v2/venues?page=${page}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
+  const response = await fetch(buildVenuesUrl(page, sortOption, firstChar, perPage, audioStatusFilter));
   if (!response.ok) throw response;
   const data = await response.json();
   console.log(`[${new Date().toISOString()}] VenueIndex Loader: Loaded ${data.venues?.length || 0} venues`);
@@ -24,7 +28,7 @@ export const venueIndexLoader = async ({ request }) => {
   };
 };
 
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { formatNumber } from "./helpers/utils";
@@ -33,16 +37,13 @@ import Venues from "./Venues";
 import PhoneTitle from "./PhoneTitle";
 import Pagination from "./controls/Pagination";
 import { paginationHelper } from "./helpers/pagination";
-import { useServerFilteredData } from "./hooks/useServerFilteredData";
-import Loader from "./controls/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const FIRST_CHAR_LIST = ["#", ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))];
 
 const VenueIndex = () => {
-  const initialData = useLoaderData();
-  const { page, perPage, sortOption, firstChar } = initialData;
+  const { venues, totalPages, totalEntries, page, perPage, sortOption, firstChar } = useLoaderData();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -53,21 +54,6 @@ const VenueIndex = () => {
     handlePerPageInputChange,
     handlePerPageBlurOrEnter
   } = paginationHelper(page, sortOption, perPage, firstChar);
-
-  const fetchVenues = useCallback(async (audioStatusFilter) => {
-    console.log(`[${new Date().toISOString()}] VenueIndex: Fetching venues with filter: ${audioStatusFilter}, page: ${page + 1}, sort: ${sortOption}, firstChar: ${firstChar}, perPage: ${perPage}`);
-    const response = await fetch(`/api/v2/venues?page=${page + 1}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
-    if (!response.ok) throw response;
-    const data = await response.json();
-    console.log(`[${new Date().toISOString()}] VenueIndex: Received ${data.venues?.length || 0} venues`);
-    return data;
-  }, [page, sortOption, firstChar, perPage]);
-
-  const { data: venuesData, isRefetching } = useServerFilteredData(initialData, fetchVenues, [page, sortOption, firstChar, perPage]);
-
-  const venues = venuesData?.venues || initialData.venues;
-  const totalPages = venuesData?.total_pages || initialData.totalPages;
-  const totalEntries = venuesData?.total_entries || initialData.totalEntries;
 
   const handleFirstCharChange = (event) => {
     navigate(`?page=1&sort=${sortOption}&first_char=${event.target.value}&per_page=${perPage}`);
@@ -141,21 +127,15 @@ const VenueIndex = () => {
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <PhoneTitle title="Venues" />
-        {isRefetching ? (
-          <Loader />
-        ) : (
-          <>
-            <Venues venues={venues} />
-            <Pagination
-              totalPages={totalPages}
-              handlePageClick={handlePageClick}
-              currentPage={page}
-              perPage={tempPerPage}
-              handlePerPageInputChange={handlePerPageInputChange}
-              handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
-            />
-          </>
-        )}
+        <Venues venues={venues} />
+        <Pagination
+          totalPages={totalPages}
+          handlePageClick={handlePageClick}
+          currentPage={page}
+          perPage={tempPerPage}
+          handlePerPageInputChange={handlePerPageInputChange}
+          handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
+        />
       </LayoutWrapper>
     </>
   );

@@ -1,11 +1,15 @@
 import { getAudioStatusFilter } from "./helpers/utils";
 
+const buildShowsUrl = (page, perPage, audioStatusFilter) => {
+  return `/api/v2/shows?page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
+};
+
 export const coverArtInspectorLoader = async ({ request }) => {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
   const perPage = url.searchParams.get("per_page") || 50;
   const audioStatusFilter = getAudioStatusFilter();
-  const response = await fetch(`/api/v2/shows?page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
+  const response = await fetch(buildShowsUrl(page, perPage, audioStatusFilter));
   if (!response.ok) throw response;
   const data = await response.json();
   return {
@@ -17,7 +21,7 @@ export const coverArtInspectorLoader = async ({ request }) => {
   };
 };
 
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
@@ -25,11 +29,10 @@ import CoverArt from "./CoverArt";
 import Pagination from "./controls/Pagination";
 import { paginationHelper } from "./helpers/pagination";
 import { formatNumber } from "./helpers/utils";
-import { useServerFilteredData } from "./hooks/useServerFilteredData";
 
 const CoverArtInspector = () => {
-  const initialData = useLoaderData();
-  const { page, perPage } = initialData;
+  const { shows, totalPages, totalEntries, page, perPage } = useLoaderData();
+  const navigate = useNavigate();
   const { openAppModal, closeAppModal } = useOutletContext();
   const [selectedOption, setSelectedOption] = useState("coverArt");
   const {
@@ -38,19 +41,6 @@ const CoverArtInspector = () => {
     handlePerPageInputChange,
     handlePerPageBlurOrEnter
   } = paginationHelper(page, "", perPage);
-
-  const fetchShows = useCallback(async (audioStatusFilter) => {
-    const response = await fetch(`/api/v2/shows?page=${page + 1}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
-    if (!response.ok) throw response;
-    const data = await response.json();
-    return data;
-  }, [page, perPage]);
-
-  const { data: showsData, isRefetching } = useServerFilteredData(initialData, fetchShows, [page, perPage]);
-
-  const shows = showsData?.shows || initialData.shows;
-  const totalPages = showsData?.total_pages || initialData.totalPages;
-  const totalEntries = showsData?.total_entries || initialData.totalEntries;
 
   const handleOptionChange = (e) => {
     setSelectedOption(e.target.value);
@@ -74,19 +64,19 @@ const CoverArtInspector = () => {
       <Helmet>
         <title>Cover Art - Phish.in</title>
       </Helmet>
-      <LayoutWrapper sidebarContent={sidebarContent}>
-        <div className="cover-art-inspector-container">
-          {shows.map((show) => (
-            <CoverArt
-              key={show.id}
-              coverArtUrls={show.cover_art_urls}
-              albumCoverUrl={show.album_cover_url}
-              openAppModal={openAppModal}
-              closeAppModal={closeAppModal}
-              size="medium"
-              css="cover-art-inspector"
-              selectedOption={selectedOption}
-            />
+              <LayoutWrapper sidebarContent={sidebarContent}>
+            <div className="cover-art-inspector-container">
+              {shows.map((show) => (
+                <CoverArt
+                  key={show.id}
+                  coverArtUrls={show.cover_art_urls}
+                  albumCoverUrl={show.album_cover_url}
+                  openAppModal={openAppModal}
+                  closeAppModal={closeAppModal}
+                  size="medium"
+                  css="cover-art-inspector"
+                  selectedOption={selectedOption}
+                            />
           ))}
         </div>
         <Pagination

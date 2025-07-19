@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAudioFilter } from '../contexts/AudioFilterContext';
 
-export const useAudioFilteredData = (initialData, fetchFunction, dependencies = [], initialFilter = null) => {
+export const useAudioFilteredData = (initialData, fetchFunction, dependencies = [], initialFilter = null, navigate = null, currentPage = 0) => {
   const [data, setData] = useState(initialData);
   const [isLoading, setIsLoading] = useState(false);
   const { hideMissingAudio, getAudioStatusParam, setIsFilterLoading } = useAudioFilter();
@@ -31,6 +31,14 @@ export const useAudioFilteredData = (initialData, fetchFunction, dependencies = 
     const fetchData = async () => {
       setIsFilterLoading(true);
       try {
+        // If we have navigation and we're not on page 1, navigate to page 1 first
+        if (navigate && currentPage > 0) {
+          const urlParams = new URLSearchParams(window.location.search);
+          urlParams.set('page', '1');
+          navigate(`?${urlParams.toString()}`);
+          return;
+        }
+
         const newData = await fetchFunction(currentAudioStatusFilter);
         setData(newData);
         lastFetchedFilter.current = currentAudioStatusFilter;
@@ -42,7 +50,7 @@ export const useAudioFilteredData = (initialData, fetchFunction, dependencies = 
     };
 
     fetchData();
-  }, [hideMissingAudio, fetchFunction, setIsFilterLoading, initialData, initialFilter, getAudioStatusParam, ...dependencies]);
+  }, [hideMissingAudio, fetchFunction, setIsFilterLoading, initialData, initialFilter, getAudioStatusParam, navigate, currentPage, ...dependencies]);
 
   return { data, isLoading };
 };

@@ -1,12 +1,16 @@
 import { authFetch, getAudioStatusFilter } from "./helpers/utils";
 
+const buildMyShowsUrl = (page, sortOption, perPage, audioStatusFilter) => {
+  return `/api/v2/shows?liked_by_user=true&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
+};
+
 export const myShowsLoader = async ({ request }) => {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
   const sortOption = url.searchParams.get("sort") || "date:desc";
   const perPage = url.searchParams.get("per_page") || 10;
   const audioStatusFilter = getAudioStatusFilter();
-  const response = await authFetch(`/api/v2/shows?liked_by_user=true&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`);
+  const response = await authFetch(buildMyShowsUrl(page, sortOption, perPage, audioStatusFilter));
   if (!response.ok) throw response;
   const data = await response.json();
   return {
@@ -30,8 +34,8 @@ import { useFeedback } from "./contexts/FeedbackContext";
 const MyShows = () => {
   const { shows, totalPages, page, sortOption, perPage } = useLoaderData();
   const navigate = useNavigate();
-  const { setAlert } = useFeedback();
   const { user } = useOutletContext();
+  const { setAlert } = useFeedback();
   const {
     tempPerPage,
     handlePageClick,
@@ -70,19 +74,19 @@ const MyShows = () => {
       <Helmet>
         <title>My Shows - Phish.in</title>
       </Helmet>
-      <LayoutWrapper sidebarContent={sidebarContent}>
-        <Shows shows={shows} />
-        {totalPages > 1 && (
-          <Pagination
-            totalPages={totalPages}
-            handlePageClick={handlePageClick}
-            currentPage={page}
-            perPage={tempPerPage}
-            handlePerPageInputChange={handlePerPageInputChange}
-            handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
-          />
-        )}
-      </LayoutWrapper>
+              <LayoutWrapper sidebarContent={sidebarContent}>
+                      <Shows shows={shows} />
+          {totalPages > 1 && (
+            <Pagination
+              totalPages={totalPages}
+              handlePageClick={handlePageClick}
+              currentPage={page}
+              perPage={tempPerPage}
+              handlePerPageInputChange={handlePerPageInputChange}
+              handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
+            />
+          )}
+        </LayoutWrapper>
     </>
   );
 };
