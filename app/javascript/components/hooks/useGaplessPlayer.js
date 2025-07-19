@@ -360,7 +360,15 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
         gaplessPlayerRef.current = null;
       }
     };
-  }, [activePlaylist, pendingStartTime]);
+  }, [activePlaylist]);
+
+  // Handle timestamp changes after player is created
+  useEffect(() => {
+    if (gaplessPlayerRef.current && pendingStartTime !== null && pendingStartTime > 0) {
+      gaplessPlayerRef.current.setPosition(pendingStartTime * 1000);
+      setPendingStartTime(null);
+    }
+  }, [pendingStartTime]);
 
   return {
     gaplessPlayerRef,
