@@ -12,8 +12,9 @@ const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [term, setTerm] = useState(searchParams.get("term") || "");
   const [scope, setScope] = useState(searchParams.get("scope") || "all");
-  const [submittedTerm, setSubmittedTerm] = useState(searchParams.get("term") || "");
+  const [submittedTerm, setSubmittedTerm] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [results, setResults] = useState(null);
 
   const performSearchWithFilter = useCallback(async (audioStatusFilter) => {
     if (!submittedTerm) return null;
@@ -25,20 +26,34 @@ const Search = () => {
     return data;
   }, [submittedTerm, scope]);
 
-  const { data: results, isRefetching } = useServerFilteredData(null, performSearchWithFilter, [submittedTerm, scope]);
+    const { data: filteredResults, isRefetching } = useServerFilteredData(results, performSearchWithFilter, [submittedTerm, scope]);
 
   useEffect(() => {
-    setTerm(searchParams.get("term") || "");
-    setScope(searchParams.get("scope") || "all");
+    const urlTerm = searchParams.get("term") || "";
+    const urlScope = searchParams.get("scope") || "all";
 
-    if (searchParams.get("term")) {
-      performSearch(searchParams.get("term"), searchParams.get("scope") || "all");
+    setTerm(urlTerm);
+    setScope(urlScope);
+
+    if (urlTerm && urlTerm !== submittedTerm) {
+      performSearch(urlTerm, urlScope);
     }
   }, [searchParams]);
 
   const performSearch = async (searchTerm, searchScope) => {
     setSubmittedTerm(searchTerm);
     setScope(searchScope);
+
+    setIsSearching(true);
+    try {
+      const response = await authFetch(`/api/v2/search/${searchTerm}?scope=${searchScope}&audio_status=complete_or_partial`);
+      const data = await response.json();
+      setResults(data);
+    } catch (error) {
+      console.error('Search error:', error);
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   const handleSearch = async () => {
@@ -99,7 +114,7 @@ const Search = () => {
       {isRefetching || isSearching ? (
         <Loader />
       ) : (
-        results && <SearchResults results={results} term={submittedTerm} />
+        (filteredResults || results) && <SearchResults results={filteredResults || results} term={submittedTerm} />
       )}
     </LayoutWrapper>
   );

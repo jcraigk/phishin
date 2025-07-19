@@ -43,7 +43,7 @@ RSpec.describe "API v2 Shows" do
       show = Show.find_by(date: "2023-01-01")
       tweezer_song = Song.find_by(title: "Tweezer")
 
-      # Set up some test gap data
+      # Set up some test gap data after GapService has run
       show.tracks.joins(:songs).where(songs: { title: "Tweezer" }).each_with_index do |track, index|
         songs_track = SongsTrack.find_by(track:, song: tweezer_song)
         songs_track.update!(previous_performance_gap: index == 0 ? 5 : 0)

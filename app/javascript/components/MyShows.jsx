@@ -44,7 +44,7 @@ const MyShows = () => {
   useEffect(() => {
     if (user === "anonymous") {
       navigate("/");
-      setAlert("You must be logged in to view that page");
+      setAlert("You must login to do that");
     }
   }, [navigate, user]);
 
