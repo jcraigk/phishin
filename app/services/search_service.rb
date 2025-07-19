@@ -1,13 +1,10 @@
 class SearchService < ApplicationService
-  param :term
-  param :scope, default: proc { "all" }
+  option :term
+  option :scope, default: proc { "all" }
+  option :audio_status, default: proc { "any" }
 
   LIMIT = 50
   SCOPES = %w[all playlists shows songs tags tracks venues]
-
-  def initialize(term, scope = nil)
-    super(term, scope || "all") # Ensure scope defaults to "all" if nil
-  end
 
   def call
     return if term_too_short?
@@ -74,31 +71,52 @@ class SearchService < ApplicationService
 
   def show_on_date
     return unless term_is_date?
-    Show.published.includes(:venue).find_by(date:)
+    scope = Show.all
+    scope = apply_audio_status_filter(scope)
+    scope.includes(:venue).find_by(date:)
   end
 
   def shows_on_day_of_year
     return [] unless term_is_date?
-    Show.published
-        .on_day_of_year(date[5..6], date[8..9])
-        .where.not(date:)
-        .includes(:venue)
-        .order(date: :desc)
+    scope = Show.all
+    scope = apply_audio_status_filter(scope)
+    scope.on_day_of_year(date[5..6], date[8..9])
+         .where.not(date:)
+         .includes(:venue)
+         .order(date: :desc)
   end
 
   def songs
     return [] if term_is_date?
-    Song.where("title ILIKE :term OR alias ILIKE :term", term: "%#{term}%")
-        .order(title: :asc)
-        .limit(LIMIT)
+    scope = Song.where("songs.title ILIKE :term OR songs.alias ILIKE :term", term: "%#{term}%")
+               .limit(LIMIT)
+
+    # Filter songs to only include those with audio if audio_status is complete_or_partial
+    if audio_status == "complete_or_partial"
+      scope = scope.joins(songs_tracks: { track: :show })
+                   .merge(Show.with_audio)
+                   .distinct
+                   .order("songs.title ASC")
+    else
+      scope = scope.order(title: :asc)
+    end
+
+    scope
   end
 
   def venues
     return [] if term_is_date?
-    Venue.left_outer_joins(:venue_renames)
-         .where(venue_where_str, term: "%#{term}%")
-         .order(name: :asc)
-         .uniq
+    scope = Venue.left_outer_joins(:venue_renames)
+                 .where(venue_where_str, term: "%#{term}%")
+                 .order(name: :asc)
+                 .distinct
+
+    # Filter venues to only include those with shows with audio if audio_status is complete_or_partial
+    if audio_status == "complete_or_partial"
+      scope = scope.where("venues.shows_with_audio_count > 0")
+    end
+
+    scope
   end
 
   def venue_where_str
@@ -115,17 +133,19 @@ class SearchService < ApplicationService
   end
 
   def show_tags
-    ShowTag.includes(:tag, :show)
-           .where("notes ILIKE ?", "%#{term}%")
-           .order("tags.name, shows.date")
-           .limit(LIMIT)
+    scope = ShowTag.includes(:tag, :show)
+    scope = scope.joins(:show).then { |s| apply_audio_status_filter(s, :show) }
+    scope.where("notes ILIKE ?", "%#{term}%")
+         .order("tags.name, shows.date")
+         .limit(LIMIT)
   end
 
   def track_tags
-    TrackTag.includes(:tag, track: :show)
-            .where("notes ILIKE ?", "%#{term}%")
-            .order("tags.name, shows.date, tracks.position")
-            .limit(LIMIT)
+    scope = TrackTag.includes(:tag, track: :show)
+    scope = scope.joins(track: :show).then { |s| apply_audio_status_filter(s, :show) }
+    scope.where("notes ILIKE ?", "%#{term}%")
+         .order("tags.name, shows.date, tracks.position")
+         .limit(LIMIT)
   end
 
   def song_titles
@@ -137,7 +157,9 @@ class SearchService < ApplicationService
   end
 
   def tracks_by_title
-    Track.where("title ILIKE ?", "%#{term}%")
+    scope = Track.includes(:show)
+    scope = scope.joins(:show).then { |s| apply_audio_status_filter(s, :show) }
+    scope.where("title ILIKE ?", "%#{term}%")
          .order(title: :asc)
          .limit(LIMIT)
   end
@@ -148,5 +170,24 @@ class SearchService < ApplicationService
             .where("name ILIKE :term OR description ILIKE :term", term: "%#{term}%")
             .order(name: :asc)
             .limit(LIMIT)
+  end
+
+  def apply_audio_status_filter(relation, table_prefix = nil)
+    case audio_status
+    when "complete", "partial", "missing"
+      if table_prefix == :show
+        relation.where(shows: { audio_status: })
+      else
+        relation.where(audio_status:)
+      end
+    when "complete_or_partial"
+      if table_prefix == :show
+        relation.where(shows: { audio_status: %w[complete partial] })
+      else
+        relation.with_audio
+      end
+    else
+      relation
+    end
   end
 end

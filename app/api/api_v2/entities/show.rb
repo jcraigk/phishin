@@ -15,6 +15,13 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
       desc: "Date of the show"
     }
 
+  expose \
+    :audio_status,
+    documentation: {
+      type: "String",
+      desc: "Audio status of the show: 'complete', 'partial', or 'missing'"
+    }
+
   expose(
     :cover_art_urls,
     documentation: {
@@ -46,12 +53,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
       desc: "Duration of the show in milliseconds"
     }
 
-  expose \
-    :incomplete,
-    documentation: {
-      type: "Boolean",
-      desc: "Indicates if the audio recording of the show is incomplete"
-    }
+
 
   expose \
     :admin_notes,
@@ -160,7 +162,7 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
     documentation: {
       type: "String",
       format: "date",
-      desc: "Date of the previous show (or last show if none exists)"
+      desc: "Date of the previous show (including missing audio)"
     }
   ) { _2[:previous_show_date] }
 
@@ -170,7 +172,27 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
     documentation: {
       type: "String",
       format: "date",
-      desc: "Date of the next show (or first show if none exists)"
+      desc: "Date of the next show (including missing audio)"
     }
   ) { _2[:next_show_date] }
+
+  expose(
+    :previous_show_date_with_audio,
+    format_with: :iso8601,
+    documentation: {
+      type: "String",
+      format: "date",
+      desc: "Date of the previous show that has audio (or last show that has audio if none exists)"
+    }
+  ) { _2[:previous_show_date_with_audio] }
+
+  expose(
+    :next_show_date_with_audio,
+    format_with: :iso8601,
+    documentation: {
+      type: "String",
+      format: "date",
+      desc: "Date of the next show that has audio (or first show that has audio if none exists)"
+    }
+  ) { _2[:next_show_date_with_audio] }
 end

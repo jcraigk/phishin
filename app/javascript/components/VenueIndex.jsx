@@ -1,26 +1,31 @@
+import { getAudioStatusFilter } from "./helpers/utils";
+
+const buildFetchUrl = (page, sortOption, firstChar, perPage, audioStatusFilter) => {
+  return `/api/v2/venues?page=${page}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
+};
+
 export const venueIndexLoader = async ({ request }) => {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
   const sortOption = url.searchParams.get("sort") || "name:asc";
   const firstChar = url.searchParams.get("first_char") || "";
   const perPage = url.searchParams.get("per_page") || 10;
+  const audioStatusFilter = getAudioStatusFilter();
+  console.log(`[${new Date().toISOString()}] VenueIndex Loader: Loading with filter: ${audioStatusFilter}, page: ${page}, sort: ${sortOption}, firstChar: ${firstChar}, perPage: ${perPage}`);
+  const response = await fetch(buildFetchUrl(page, sortOption, firstChar, perPage, audioStatusFilter));
+  if (!response.ok) throw response;
+  const data = await response.json();
+  console.log(`[${new Date().toISOString()}] VenueIndex Loader: Loaded ${data.venues?.length || 0} venues`);
 
-  try {
-    const response = await fetch(`/api/v2/venues?page=${page}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}&per_page=${perPage}`);
-    if (!response.ok) throw response;
-    const data = await response.json();
-    return {
-      venues: data.venues,
-      totalPages: data.total_pages,
-      totalEntries: data.total_entries,
-      page: parseInt(page, 10) - 1,
-      sortOption,
-      firstChar,
-      perPage: parseInt(perPage)
-    };
-  } catch (error) {
-    throw new Response("Error fetching data", { status: 500 });
-  }
+  return {
+    venues: data.venues,
+    totalPages: data.total_pages,
+    totalEntries: data.total_entries,
+    page: parseInt(page, 10) - 1,
+    sortOption,
+    firstChar,
+    perPage: parseInt(perPage)
+  };
 };
 
 import React, { useState } from "react";
@@ -41,6 +46,7 @@ const VenueIndex = () => {
   const { venues, totalPages, totalEntries, page, perPage, sortOption, firstChar } = useLoaderData();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+
   const {
     tempPerPage,
     handlePageClick,

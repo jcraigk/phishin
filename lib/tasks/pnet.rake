@@ -1,29 +1,4 @@
 namespace :pnet do
-  desc "Populate known dates"
-  task known_dates: :environment do
-    puts "Fetching known dates from Phish.net API..."
-    url = "https://api.phish.net/v5/shows.json?apikey=#{ENV['PNET_API_KEY']}"
-    JSON.parse(Typhoeus.get(url).body)["data"].each do |entry|
-      next unless entry["artist_name"] == "Phish" &&
-                  entry["exclude_from_stats"] != "1"
-
-      setlist_url = "https://api.phish.net/v5/setlists/showdate/#{entry['showdate']}.json?apikey=#{ENV['PNET_API_KEY']}"
-      setlist_count = JSON.parse(Typhoeus.get(setlist_url).body)["data"].size
-      next if setlist_count.zero?
-
-      kdate = KnownDate.find_or_create_by(date: entry["showdate"])
-      location = entry["city"]
-      location += ", #{entry['state']}" if entry["state"].present?
-      location += ", #{entry['country']}" if entry["country"] != "USA"
-      kdate.update \
-        phishnet_url: entry["permalink"],
-        location:,
-        venue: entry["venue"]
-      print "."
-    end
-    puts "done"
-  end
-
   desc "Sync jamcharts data"
   task jamcharts: :environment do
     puts "Fetching Jamcharts data from Phish.net API..."
@@ -46,7 +21,7 @@ namespace :pnet do
       data.each do |song_data|
         next unless song_data.footnote.start_with?("Unfinished")
         show = Show.find_by(date: song_data.showdate)
-        track = Track.find_by(show: show, title: song_data.song)
+        track = Track.find_by(show:, title: song_data.song)
         next missing_tracks << "#{show.date} - #{song_data.song}" unless track
         next if track.tags.include?(unfinished_tag)
         track.tags << unfinished_tag
@@ -61,7 +36,7 @@ namespace :pnet do
   desc "Compare local setlists with Phish.net"
   task compare_setlists: :environment do
     shows = Show.published
-                .where(incomplete: false)
+                .with_audio
                 .where(matches_pnet: false)
                 .order(date: :asc)
 

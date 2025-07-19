@@ -1,6 +1,14 @@
 module ApiV2::Helpers::SharedParams
   extend Grape::API::Helpers
 
+  params :audio_status do
+    optional :audio_status,
+             type: String,
+             desc: "Filter by audio status: 'any' (default), 'complete', 'partial', 'missing', 'complete_or_partial'",
+             default: "any",
+             values: %w[any complete partial missing complete_or_partial].freeze
+  end
+
   params :pagination do
     optional :page,
             type: Integer,

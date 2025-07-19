@@ -12,7 +12,7 @@ class Tour < ApplicationRecord
     {
       id:,
       name:,
-      shows_count:,
+      shows_count: shows_with_audio_count,
       starts_on: starts_on.iso8601,
       ends_on: ends_on.iso8601,
       slug:,
@@ -25,7 +25,7 @@ class Tour < ApplicationRecord
     {
       id:,
       name:,
-      shows_count:,
+      shows_count: shows_with_audio_count,
       slug:,
       starts_on: starts_on.iso8601,
       ends_on: ends_on.iso8601,

@@ -11,7 +11,7 @@ class ApiV2::Announcements < ApiV2::Base
 
   helpers do
     def announcements
-      Rails.cache.fetch("api/v2/announcements") do
+      Rails.cache.fetch(cache_key_for_custom("announcements")) do
         Announcement.order(created_at: :desc).limit(100)
       end
     end

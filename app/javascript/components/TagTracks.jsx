@@ -1,4 +1,8 @@
-import { authFetch } from "./helpers/utils";
+import { authFetch, getAudioStatusFilter } from "./helpers/utils";
+
+const buildFetchUrl = (tagSlug, page, sortOption, perPage, audioStatusFilter) => {
+  return `/api/v2/tracks?tag_slug=${tagSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
+};
 
 export const tagTracksLoader = async ({ params, request }) => {
   const url = new URL(request.url);
@@ -6,35 +10,27 @@ export const tagTracksLoader = async ({ params, request }) => {
   const sortOption = url.searchParams.get("sort") || "date:desc";
   const perPage = url.searchParams.get("per_page") || 10;
   const { tagSlug } = params;
-
-  try {
-    const tagResponse = await fetch(`/api/v2/tags`);
-    if (!tagResponse.ok) throw tagResponse;
-    const tagData = await tagResponse.json();
-    const tag = tagData.find(t => t.slug === tagSlug);
-    if (!tag) throw new Response("Tag not found", { status: 404 });
-
-    const tracksResponse = await authFetch(
-      `/api/v2/tracks?tag_slug=${tagSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}`
-    );
-    if (!tracksResponse.ok) throw tracksResponse;
-    const tracksData = await tracksResponse.json();
-    return {
-      tag,
-      tracks: tracksData.tracks,
-      totalPages: tracksData.total_pages,
-      page: parseInt(page, 10) - 1,
-      sortOption,
-      perPage: parseInt(perPage)
-    };
-  } catch (error) {
-    if (error instanceof Response) throw error;
-    throw new Response("Error fetching data", { status: 500 });
-  }
+  const audioStatusFilter = getAudioStatusFilter();
+  const tagResponse = await fetch(`/api/v2/tags`);
+  if (!tagResponse.ok) throw tagResponse;
+  const tagData = await tagResponse.json();
+  const tag = tagData.find(t => t.slug === tagSlug);
+  if (!tag) throw new Response("Tag not found", { status: 404 });
+  const tracksResponse = await authFetch(buildFetchUrl(tagSlug, page, sortOption, perPage, audioStatusFilter));
+  if (!tracksResponse.ok) throw tracksResponse;
+  const tracksData = await tracksResponse.json();
+  return {
+    tag,
+    tracks: tracksData.tracks,
+    totalPages: tracksData.total_pages,
+    page: parseInt(page, 10) - 1,
+    sortOption,
+    perPage: parseInt(perPage)
+  };
 };
 
 import React from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
@@ -44,6 +40,7 @@ import { paginationHelper } from "./helpers/pagination";
 
 const TagTracks = () => {
   const { tag, tracks, totalPages, page, sortOption, perPage } = useLoaderData();
+  const navigate = useNavigate();
   const {
     tempPerPage,
     handlePageClick,
@@ -51,6 +48,8 @@ const TagTracks = () => {
     handlePerPageInputChange,
     handlePerPageBlurOrEnter
   } = paginationHelper(page, sortOption, perPage);
+
+
 
   const sidebarContent = (
     <div className="sidebar-content">
@@ -79,7 +78,7 @@ const TagTracks = () => {
         <title>{tag.name} - Tracks - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-      <PhoneTitle title={`${tag.name} Tracks`} />
+        <PhoneTitle title={`${tag.name} Tracks`} />
         <Tracks tracks={tracks} />
         {totalPages > 1 && (
           <Pagination

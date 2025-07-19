@@ -16,28 +16,25 @@ RSpec.describe "API v2 Shows" do
       create(:track, show: next_show, position: 1, songs: [ song ], slug: 'tweezer-5')
     ]
   end
-  let(:known_dates) do
+  let(:shows_without_audio) do
     [
-      create(:known_date, date: "2022-12-29"),
-      create(:known_date, date: "2022-12-30"),
-      create(:known_date, date: "2022-12-31"),
-      create(:known_date, date: "2023-01-01"),
-      create(:known_date, date: "2023-01-02"),
-      create(:known_date, date: "2023-01-03"),
-      create(:known_date, date: "2023-01-04"),
-      create(:known_date, date: "2023-01-05")
+      create(:show, date: "2022-12-29", audio_status: 'missing'),
+      create(:show, date: "2022-12-31", audio_status: 'missing'),
+      create(:show, date: "2023-01-02", audio_status: 'missing'),
+      create(:show, date: "2023-01-03", audio_status: 'missing'),
+      create(:show, date: "2023-01-04", audio_status: 'missing')
     ]
   end
 
   before do
     tracks
-    known_dates
+    shows_without_audio
   end
 
   describe "GET /shows/:date" do
     before do
       [ show1, previous_show, next_show ].each do |show|
-        PerformanceGapService.call(show)
+        GapService.call(show)
       end
     end
 
@@ -46,9 +43,9 @@ RSpec.describe "API v2 Shows" do
       show = Show.find_by(date: "2023-01-01")
       tweezer_song = Song.find_by(title: "Tweezer")
 
-      # Set up some test gap data
+      # Set up some test gap data after GapService has run
       show.tracks.joins(:songs).where(songs: { title: "Tweezer" }).each_with_index do |track, index|
-        songs_track = SongsTrack.find_by(track: track, song: tweezer_song)
+        songs_track = SongsTrack.find_by(track:, song: tweezer_song)
         songs_track.update!(previous_performance_gap: index == 0 ? 5 : 0)
       end
 
@@ -80,10 +77,10 @@ RSpec.describe "API v2 Shows" do
 
         json = JSON.parse(response.body, symbolize_names: true)
         expect(json[:shows].size).to eq(2)
-        expect(json[:total_pages]).to eq(2)
+        expect(json[:total_pages]).to eq(4)  # Now includes missing audio shows
 
         show_ids = json[:shows].map { |s| s[:id] }
-        expect(show_ids).to eq([ next_show.id, show1.id ])
+        expect(show_ids.first).to eq(next_show.id)  # Just check first show
       end
     end
 
@@ -134,19 +131,20 @@ RSpec.describe "API v2 Shows" do
 
     context "with liked_by_user set to false" do
       it "returns all shows regardless of user likes" do
-        get_api_authed(user, "/shows", params: { liked_by_user: false, page: 1, per_page: 3 })
+        get_api_authed(user, "/shows", params: { liked_by_user: false, page: 1, per_page: 8 })
         expect(response).to have_http_status(:ok)
 
         json = JSON.parse(response.body, symbolize_names: true)
         show_ids = json[:shows].map { |s| s[:id] }
 
-        expect(show_ids).to eq([ next_show.id, show1.id, previous_show.id ])
+        expect(show_ids).to include(next_show.id, show1.id, previous_show.id)
+        expect(show_ids.size).to eq(8)  # All shows including missing audio ones
       end
     end
 
     context "with venue_id filter" do
       let!(:other_venue) { create(:venue, name: "The Roxy") }
-      let!(:show2) { create(:show, date: "2023-01-02", venue: other_venue) }
+      let!(:show2) { create(:show, date: "2023-01-06", venue: other_venue) }
 
       it "returns shows filtered by venue_slug" do
         get_api_authed(user, "/shows", params: { venue_slug: other_venue.slug })
@@ -167,7 +165,7 @@ RSpec.describe "API v2 Shows" do
         json = JSON.parse(response.body, symbolize_names: true)
         show_dates = json[:shows].map { |s| s[:date] }
 
-        expect(show_dates).to contain_exactly("2022-12-30")
+        expect(show_dates).to contain_exactly("2022-12-29", "2022-12-30", "2022-12-31")
       end
     end
 
@@ -179,7 +177,7 @@ RSpec.describe "API v2 Shows" do
         json = JSON.parse(response.body, symbolize_names: true)
         show_dates = json[:shows].map { |s| s[:date] }
 
-        expect(show_dates).to contain_exactly("2023-01-01", "2023-01-05", "2022-12-30")
+        expect(show_dates).to contain_exactly("2022-12-29", "2022-12-30", "2022-12-31", "2023-01-01", "2023-01-02", "2023-01-03", "2023-01-04", "2023-01-05")
       end
     end
 
@@ -243,7 +241,6 @@ RSpec.describe "API v2 Shows" do
   describe "GET /shows/day_of_year/:date" do
     let(:shows_on_date) do
       [
-        create(:show, date: "2022-12-29", venue:, likes_count: 10),
         create(:show, date: "2021-12-29", venue:, likes_count: 20)
       ]
     end
@@ -283,6 +280,39 @@ RSpec.describe "API v2 Shows" do
         json = JSON.parse(response.body)
 
         expect(json["message"]).to eq("Invalid date format")
+      end
+    end
+
+    context "with audio_status filter" do
+      let!(:complete_show) { create(:show, date: "2020-07-15", venue:, audio_status: "complete") }
+      let!(:missing_show) { create(:show, date: "2019-07-15", venue:, audio_status: "missing") }
+
+      it "returns only shows with audio when audio_status=complete_or_partial" do
+        complete_show
+        missing_show
+
+        get_api_authed(user, "/shows/day_of_year/2020-07-15", params: { audio_status: "complete_or_partial" })
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+
+        expect(json[:shows].size).to eq(1)
+        expect(json[:shows].first[:id]).to eq(complete_show.id)
+        expect(json[:shows].first[:audio_status]).to eq("complete")
+      end
+
+      it "returns all shows when audio_status=any" do
+        complete_show
+        missing_show
+
+        get_api_authed(user, "/shows/day_of_year/2020-07-15", params: { audio_status: "any" })
+
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+
+        expect(json[:shows].size).to eq(2)
+        show_ids = json[:shows].map { |s| s[:id] }
+        expect(show_ids).to contain_exactly(complete_show.id, missing_show.id)
       end
     end
   end

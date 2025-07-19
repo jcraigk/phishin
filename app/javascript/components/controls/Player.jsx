@@ -10,7 +10,7 @@ import { PLAYER_CONSTANTS } from "../helpers/playerConstants";
 import PlayerControls from "./PlayerControls";
 import TrackInfo from "./TrackInfo";
 import ProgressBar from "./ProgressBar";
-import { useFeedback } from "./FeedbackContext";
+import { useFeedback } from "../contexts/FeedbackContext";
 
 const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, openAppModal, shouldAutoplay, setShouldAutoplay }) => {
   const location = useLocation();
@@ -74,18 +74,18 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     skipToPreviousTrack();
   };
 
-  // Handle activeTrack change (when user selects a different track)
   useEffect(() => {
     if (activeTrack && gaplessPlayerRef.current && activePlaylist) {
       if (typeof window !== "undefined") {
         document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
       }
 
-      const trackIndex = activePlaylist.findIndex(track => track.id === activeTrack.id);
+      const tracksWithAudio = activePlaylist.filter(track => track.mp3_url);
+      const trackIndex = tracksWithAudio.findIndex(track => track.id === activeTrack.id);
+
       if (trackIndex >= 0 && trackIndex !== currentTrackIndex) {
         gaplessPlayerRef.current.gotoTrack(trackIndex);
 
-        // Handle excerpt start time when manually selecting a track
         const startSecond = parseInt(activeTrack.starts_at_second) || 0;
         if (startSecond > 0) {
           setTimeout(() => {

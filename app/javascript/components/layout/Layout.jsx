@@ -5,7 +5,8 @@ import Loader from "../controls/Loader";
 import Player from "../controls/Player";
 import AppModal from "../modals/AppModal";
 import DraftPlaylistModal from "../modals/DraftPlaylistModal";
-import { useFeedback } from "../controls/FeedbackContext";
+import { useFeedback } from "../contexts/FeedbackContext";
+import { AudioFilterProvider, useAudioFilter } from "../contexts/AudioFilterContext";
 
 const initialDraftPlaylistMeta = {
   id: null,
@@ -15,9 +16,8 @@ const initialDraftPlaylistMeta = {
   published: false,
 };
 
-const Layout = ({ props }) => {
+const LayoutContent = ({ props, navigate }) => {
   const navigation = useNavigation();
-  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isAppModalOpen, setIsAppModalOpen] = useState(false);
   const [appModalContent, setAppModalContent] = useState(null);
@@ -32,6 +32,7 @@ const Layout = ({ props }) => {
   const [sortOption, setSortOption] = useState("desc");
   const [shouldAutoplay, setShouldAutoplay] = useState(false);
   const { setNotice, setAlert } = useFeedback();
+  const { isFilterLoading } = useAudioFilter();
 
   useEffect(() => {
     // OAuth failure
@@ -125,7 +126,7 @@ const Layout = ({ props }) => {
   return (
     <>
       <ScrollRestoration />
-      {navigation.state === "loading" && <Loader />}
+      {(navigation.state === "loading" || isFilterLoading) && <Loader />}
       <Navbar user={user} handleLogout={handleLogout} />
       <main className={activeTrack ? "with-player" : ""}>
         <Outlet
@@ -179,11 +180,22 @@ const Layout = ({ props }) => {
         draftPlaylist={draftPlaylist}
         setDraftPlaylist={setDraftPlaylist}
         draftPlaylistMeta={draftPlaylistMeta}
-        setIsDraftPlaylistSaved={setIsDraftPlaylistSaved}
         setDraftPlaylistMeta={setDraftPlaylistMeta}
+        isDraftPlaylistSaved={isDraftPlaylistSaved}
+        setIsDraftPlaylistSaved={setIsDraftPlaylistSaved}
         resetDraftPlaylist={resetDraftPlaylist}
       />
     </>
+  );
+};
+
+const Layout = ({ props }) => {
+  const navigate = useNavigate();
+
+  return (
+    <AudioFilterProvider navigate={navigate}>
+      <LayoutContent props={props} navigate={navigate} />
+    </AudioFilterProvider>
   );
 };
 

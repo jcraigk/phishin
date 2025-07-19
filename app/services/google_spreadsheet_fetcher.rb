@@ -78,7 +78,7 @@ class GoogleSpreadsheetFetcher < ApplicationService
       # Get the authorization URL
       auth_url = authorizer.get_authorization_url(
         base_url: redirect_uri,
-        state: state
+        state:
       )
 
       puts "Opening browser for authorization..."
@@ -126,7 +126,7 @@ class GoogleSpreadsheetFetcher < ApplicationService
       if code
         credentials = authorizer.get_credentials_from_code(
           user_id: "default",
-          code: code,
+          code:,
           base_url: redirect_uri
         )
 

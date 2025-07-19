@@ -1,27 +1,28 @@
-import { authFetch, formatNumber } from "./helpers/utils";
+import { authFetch, formatNumber, getAudioStatusFilter } from "./helpers/utils";
+
+const buildFetchUrl = (venueSlug, sortOption, audioStatusFilter) => {
+  return `/api/v2/shows?venue_slug=${venueSlug}&sort=${sortOption}&per_page=1000&audio_status=${audioStatusFilter}`;
+};
 
 export const venueShowsLoader = async ({ params, request }) => {
   const { venueSlug } = params;
   const url = new URL(request.url);
   const sortOption = url.searchParams.get("sort") || "date:desc";
-
-  try {
-    const venueResponse = await fetch(`/api/v2/venues/${venueSlug}`);
-    if (venueResponse.status === 404) {
-      throw new Response("Venue not found", { status: 404 });
-    }
-    if (!venueResponse.ok) throw venueResponse;
-    const venueData = await venueResponse.json();
-
-    const showsResponse = await authFetch(`/api/v2/shows?venue_slug=${venueSlug}&sort=${sortOption}&per_page=1000`);
-    if (!showsResponse.ok) showsResponse;
-    const showsData = await showsResponse.json();
-
-    return { shows: showsData.shows, venue: venueData, sortOption };
-  } catch (error) {
-    if (error instanceof Response) throw error;
-    throw new Response("Error fetching data", { status: 500 });
+  const audioStatusFilter = getAudioStatusFilter();
+  const venueResponse = await fetch(`/api/v2/venues/${venueSlug}`);
+  if (venueResponse.status === 404) {
+    throw new Response("Venue not found", { status: 404 });
   }
+  if (!venueResponse.ok) throw venueResponse;
+  const venueData = await venueResponse.json();
+  const showsResponse = await authFetch(buildFetchUrl(venueSlug, sortOption, audioStatusFilter));
+  if (!showsResponse.ok) throw showsResponse;
+  const showsData = await showsResponse.json();
+  return {
+    shows: showsData.shows,
+    venue: venueData,
+    sortOption
+  };
 };
 
 import React from "react";

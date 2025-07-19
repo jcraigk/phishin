@@ -6,23 +6,18 @@ export const playlistIndexLoader = async ({ request }) => {
   const sortOption = url.searchParams.get("sort") || "likes_count:desc";
   const filter = url.searchParams.get("filter") || "all";
   const perPage = url.searchParams.get("per_page") || 10;
-
-  try {
-    const response = await authFetch(`/api/v2/playlists?page=${page}&sort=${sortOption}&filter=${filter}&per_page=${perPage}`);
-    if (!response.ok) throw response;
-    const data = await response.json();
-    return {
-      playlists: data.playlists,
-      totalPages: data.total_pages,
-      totalEntries: data.total_entries,
-      page: parseInt(page, 10) - 1,
-      sortOption,
-      filter,
-      perPage: parseInt(perPage)
-    };
-  } catch (error) {
-    throw new Response("Error fetching data", { status: 500 });
-  }
+  const response = await authFetch(`/api/v2/playlists?page=${page}&sort=${sortOption}&filter=${filter}&per_page=${perPage}`);
+  if (!response.ok) throw response;
+  const data = await response.json();
+  return {
+    playlists: data.playlists,
+    totalPages: data.total_pages,
+    totalEntries: data.total_entries,
+    page: parseInt(page, 10) - 1,
+    sortOption,
+    filter,
+    perPage: parseInt(perPage)
+  };
 };
 
 

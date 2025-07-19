@@ -2,33 +2,49 @@ require "rails_helper"
 
 RSpec.describe "Songs", :js do
   let(:cover_song) do
-    create(
+    song = create(
       :song,
       title: "Cover Song",
       original: false,
       tracks_count: 5,
+      tracks_with_audio_count: 5,
       slug: "cover-song"
     )
+    # Create actual tracks with shows that have audio
+    5.times do |i|
+      show = create(:show, audio_status: "complete")
+      track = create(:track, show:, position: i + 1)
+      create(:songs_track, song:, track:)
+    end
+    song
   end
   let(:original_song) do
-    create(
+    song = create(
       :song,
       title: "Original Song",
       original: true,
       tracks_count: 10,
+      tracks_with_audio_count: 10,
       slug: "original-song"
     )
+    # Create actual tracks with shows that have audio
+    10.times do |i|
+      show = create(:show, audio_status: "complete")
+      track = create(:track, show:, position: i + 1)
+      create(:songs_track, song:, track:)
+    end
+    song
   end
 
-  before do
+    before do
     cover_song
     original_song
     visit "/songs"
   end
 
-  it "displays the sidebar with sorting and filtering options" do
+    it "displays the sidebar with sorting and filtering options" do
     expect(page).to have_css(".sidebar-title", text: "Songs")
-    expect(page).to have_css(".sidebar-subtitle", text: "2 total")
+    expect(page).to have_css(".sidebar-subtitle", text: "17 total")
     expect(page).to have_select("sort")
     expect(page).to have_field("search")
     expect(page).to have_button("Search")

@@ -4,18 +4,27 @@ import { useLoaderData, Link, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
+import { getAudioStatusFilter } from "./helpers/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList, faTh, faCircleChevronLeft, faCircleChevronRight, faSortAmountDown, faSortAmountUp } from "@fortawesome/free-solid-svg-icons";
 
-export const eraShowsLoader = async ({ params }) => {
-  const { year } = params;
-  let url = `/api/v2/shows?per_page=1000`;
+const buildFetchUrl = (year, audioStatusFilter) => {
+  let url = `/api/v2/shows?per_page=1000&audio_status=${audioStatusFilter}`;
 
   if (year.includes("-")) {
     url += `&year_range=${year}`;
   } else {
     url += `&year=${year}`;
   }
+
+  return url;
+};
+
+export const eraShowsLoader = async ({ params }) => {
+  const { year } = params;
+
+  const audioStatusFilter = getAudioStatusFilter();
+  const url = buildFetchUrl(year, audioStatusFilter);
 
   const response = await authFetch(url);
   if (!response.ok) throw response;
@@ -24,11 +33,11 @@ export const eraShowsLoader = async ({ params }) => {
 };
 
 const EraShows = () => {
-  const { shows: initialShows, year } = useLoaderData();
+  const { shows, year } = useLoaderData();
   const { viewMode, setViewMode, sortOption, setSortOption } = useOutletContext();
   const [yearsData, setYearsData] = useState(null);
 
-  const sortedShows = [...initialShows].sort((a, b) => {
+  const sortedShows = [...shows].sort((a, b) => {
     if (sortOption === "asc") {
       return new Date(a.date) - new Date(b.date);
     } else {
@@ -38,14 +47,9 @@ const EraShows = () => {
 
   useEffect(() => {
     const fetchYearsData = async () => {
-      try {
-        const response = await fetch("/api/v2/years");
-        if (!response.ok) throw response;
-        const data = await response.json();
-        setYearsData(data);
-      } catch (error) {
-        console.error("Error fetching years data", error);
-      }
+      const response = await fetch("/api/v2/years");
+      const data = await response.json();
+      setYearsData(data);
     };
     fetchYearsData();
   }, []);
@@ -139,16 +143,16 @@ const EraShows = () => {
       <Helmet>
         <title>{year} - Phish.in</title>
       </Helmet>
-      <LayoutWrapper sidebarContent={sidebarContent}>
-        <div className="display-phone-only">
-          <div className="buttons mt-2 mb-2">
-            {renderViewToggleButtons()}
-            {renderSortButtons()}
-          </div>
-        </div>
-        <Shows shows={sortedShows} tourHeaders={true} viewMode={viewMode} />
-        {yearLinks()}
-      </LayoutWrapper>
+              <LayoutWrapper sidebarContent={sidebarContent}>
+            <div className="display-phone-only">
+              <div className="buttons mt-2 mb-2">
+                {renderViewToggleButtons()}
+                {renderSortButtons()}
+              </div>
+            </div>
+            <Shows shows={sortedShows} tourHeaders={true} viewMode={viewMode} />
+            {yearLinks()}
+        </LayoutWrapper>
     </>
   );
 };

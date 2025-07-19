@@ -1,4 +1,8 @@
-import { authFetch } from "./helpers/utils";
+import { authFetch, getAudioStatusFilter } from "./helpers/utils";
+
+const buildFetchUrl = (songSlug, page, sortOption, perPage, audioStatusFilter) => {
+  return `/api/v2/tracks?song_slug=${songSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
+};
 
 export const songTracksLoader = async ({ params, request }) => {
   const url = new URL(request.url);
@@ -6,43 +10,33 @@ export const songTracksLoader = async ({ params, request }) => {
   const sortOption = url.searchParams.get("sort") || "date:desc";
   const perPage = url.searchParams.get("per_page") || 10;
   const { songSlug } = params;
-
-  try {
-    const songResponse = await fetch(`/api/v2/songs/${songSlug}`);
-    if (songResponse.status === 404) {
-      throw new Response("Song not found", { status: 404 });
-    }
-    if (!songResponse.ok) throw songResponse;
-    const songData = await songResponse.json();
-
-    const songTitle = songData.title;
-    const originalInfo = songData.original
-      ? "Original composition"
-      : songData.artist;
-
-    const tracksResponse = await authFetch(
-      `/api/v2/tracks?song_slug=${songSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}`
-    );
-    if (!tracksResponse.ok) throw tracksResponse;
-    const tracksData = await tracksResponse.json();
-
-    return {
-      songTitle,
-      originalInfo,
-      tracks: tracksData.tracks,
-      totalEntries: tracksData.total_entries,
-      totalPages: tracksData.total_pages,
-      page: parseInt(page, 10) - 1,
-      sortOption,
-      perPage: parseInt(perPage)
-    };
-  } catch (error) {
-    if (error instanceof Response) throw error;
-    throw new Response("Error fetching data", { status: 500 });
+  const audioStatusFilter = getAudioStatusFilter();
+  const songResponse = await fetch(`/api/v2/songs/${songSlug}`);
+  if (songResponse.status === 404) {
+    throw new Response("Song not found", { status: 404 });
   }
+  if (!songResponse.ok) throw songResponse;
+  const songData = await songResponse.json();
+  const songTitle = songData.title;
+  const originalInfo = songData.original
+    ? "Original composition"
+    : songData.artist;
+  const tracksResponse = await authFetch(buildFetchUrl(songSlug, page, sortOption, perPage, audioStatusFilter));
+  if (!tracksResponse.ok) throw tracksResponse;
+  const tracksData = await tracksResponse.json();
+  return {
+    songTitle,
+    originalInfo,
+    tracks: tracksData.tracks,
+    totalEntries: tracksData.total_entries,
+    totalPages: tracksData.total_pages,
+    page: parseInt(page, 10) - 1,
+    sortOption,
+    perPage: parseInt(perPage)
+  };
 };
 
-import React, { useState } from "react";
+import React from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
@@ -61,6 +55,8 @@ const SongTracks = () => {
     handlePerPageInputChange,
     handlePerPageBlurOrEnter
   } = paginationHelper(page, sortOption, perPage);
+
+
 
   const sidebarContent = (
     <div className="sidebar-content">
@@ -90,20 +86,20 @@ const SongTracks = () => {
       <Helmet>
         <title>{songTitle} - Phish.in</title>
       </Helmet>
-      <LayoutWrapper sidebarContent={sidebarContent}>
-        <PhoneTitle title={songTitle} />
-        <Tracks tracks={tracks} />
-        {totalPages > 1 && (
-          <Pagination
-            totalPages={totalPages}
-            handlePageClick={handlePageClick}
-            currentPage={page}
-            perPage={tempPerPage}
-            handlePerPageInputChange={handlePerPageInputChange}
-            handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
-          />
-        )}
-      </LayoutWrapper>
+              <LayoutWrapper sidebarContent={sidebarContent}>
+          <PhoneTitle title={songTitle} />
+          <Tracks tracks={tracks} />
+          {totalPages > 1 && (
+            <Pagination
+              totalPages={totalPages}
+              handlePageClick={handlePageClick}
+              currentPage={page}
+              perPage={tempPerPage}
+              handlePerPageInputChange={handlePerPageInputChange}
+              handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
+            />
+          )}
+        </LayoutWrapper>
     </>
   );
 };

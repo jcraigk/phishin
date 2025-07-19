@@ -1,4 +1,9 @@
 export const formatNumber = (number, label = "") => {
+  // Handle undefined, null, or invalid numbers
+  if (number === undefined || number === null || isNaN(number)) {
+    return `0 ${label}${label ? "s" : ""}`;
+  }
+
   const formattedNumber = number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   return `${formattedNumber} ${label}${number !== 1 && label ? "s" : ""}`;
 };
@@ -58,20 +63,18 @@ export const toggleLike = async ({ id, type, isLiked }) => {
     token = localStorage.getItem("jwt");
   }
 
-  try {
-    const response = await fetch(url, {
-      method,
-      headers: { "X-Auth-Token": token },
-    });
-
-    if (response.ok) {
-      return { success: true, isLiked: !isLiked };
-    } else {
-      console.error("Failed to toggle like");
-      return { success: false };
-    }
-  } catch (error) {
+  const response = await fetch(url, {
+    method,
+    headers: { "X-Auth-Token": token },
+  }).catch(error => {
     console.error("Error toggling like:", error);
+    return { ok: false };
+  });
+
+  if (response.ok) {
+    return { success: true, isLiked: !isLiked };
+  } else {
+    console.error("Failed to toggle like");
     return { success: false };
   }
 };
@@ -143,4 +146,23 @@ export const truncate = (str, n) => {
 
 export const isIOS = () => {
   return /iPad|iPhone|iPod/.test(navigator.userAgent);
+};
+
+export const buildApiUrl = (baseUrl, audioStatusFilter = null) => {
+  if (!audioStatusFilter) return baseUrl;
+
+  const url = new URL(baseUrl, window.location.origin);
+  url.searchParams.set('audio_status', audioStatusFilter);
+  return url.toString();
+};
+
+export const authFetchWithAudioFilter = async (url, audioStatusFilter, options = {}) => {
+  const finalUrl = buildApiUrl(url, audioStatusFilter);
+  return authFetch(finalUrl, options);
+};
+
+export const getAudioStatusFilter = () => {
+  const stored = localStorage.getItem('hideMissingAudio');
+  const hideMissingAudio = stored !== null ? JSON.parse(stored) : true;
+  return hideMissingAudio ? 'complete_or_partial' : 'any';
 };

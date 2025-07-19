@@ -101,7 +101,7 @@ module Backup
     def delete_s3_object(key)
       log_info("Attempting to delete S3 object: #{key} from bucket: #{s3_bucket_name}")
       begin
-        s3_client.delete_object(bucket: s3_bucket_name, key: key)
+        s3_client.delete_object(bucket: s3_bucket_name, key:)
         log_info("Successfully deleted S3 object: #{key}")
         true
       rescue => e

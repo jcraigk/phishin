@@ -162,41 +162,23 @@ class ApiV2::Playlists < ApiV2::Base
         if params[:filter].in?(%w[liked mine]) && current_user
           fetch_playlists
         else
-          Rails.cache.fetch("api/v2/playlists?#{params.to_query}") { fetch_playlists }
+          Rails.cache.fetch(cache_key_for_collection("playlists")) { fetch_playlists }
         end
 
-      {
-        playlists: playlists,
-        total_pages: playlists.total_pages,
-        current_page: playlists.current_page,
-        total_entries: playlists.total_entries
-      }
+      paginated_response(:playlists, playlists, playlists)
     end
 
     def fetch_playlists
       Playlist.includes(:user)
               .then { |p| apply_filter(p) }
               .then { |p| apply_sort(p, :name, :asc) }
-              .paginate(page: params[:page], per_page: params[:per_page])
-    end
-
-    def fetch_liked_playlist_ids(playlists)
-      return [] unless current_user
-      Like.where(
-        likable_type: "Playlist",
-        likable_id: playlists.map(&:id),
-        user_id: current_user.id
-      ).pluck(:likable_id)
+              .then { |p| paginate_relation(p) }
     end
 
     def fetch_liked_track_ids(playlists)
       return [] unless current_user
       track_ids = playlists.flat_map { |playlist| playlist.tracks.pluck(:id) }
-      Like.where(
-        likable_type: "Track",
-        likable_id: track_ids,
-        user_id: current_user.id
-      ).pluck(:likable_id)
+      fetch_liked_ids("Track", track_ids)
     end
 
     def apply_filter(playlists)
@@ -221,7 +203,7 @@ class ApiV2::Playlists < ApiV2::Base
         )
 
         {
-          track_id: track_id,
+          track_id:,
           position: idx + 1,
           starts_at_second: starts_at,
           ends_at_second: ends_at

@@ -5,6 +5,7 @@ import TagBadges from "./controls/TagBadges";
 import LikeButton from "./controls/LikeButton";
 import ShowContextMenu from "./controls/ShowContextMenu";
 import CoverArt from "./CoverArt";
+import AudioStatusBadge from "./controls/AudioStatusBadge";
 
 const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list" }) => {
   const { activeTrack } = useOutletContext();
@@ -76,9 +77,17 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
             <TagBadges tags={show.tags} parentId={show.date} />
           </span>
           <div className="rightside-group">
-            <span className="rightside-primary">{formatDurationShow(show.duration)}</span>
+            <span className="rightside-primary">
+              {show.audio_status === 'complete' ? (
+                formatDurationShow(show.duration)
+              ) : (
+                <AudioStatusBadge audioStatus={show.audio_status} size="small" />
+              )}
+            </span>
             <span className="rightside-secondary">
-              <LikeButton likable={show} type="Show" />
+              {show.audio_status === 'complete' && (
+                <LikeButton likable={show} type="Show" />
+              )}
             </span>
             <span className="rightside-menu">
               <ShowContextMenu show={show} adjacentLinks={false} />

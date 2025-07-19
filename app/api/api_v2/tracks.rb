@@ -11,7 +11,7 @@ class ApiV2::Tracks < ApiV2::Base
       ]
     end
     params do
-      use :pagination
+      use :pagination, :audio_status
       optional :sort,
                type: String,
                desc: "Sort by attribute and direction (e.g., 'id:asc')",
@@ -82,15 +82,10 @@ class ApiV2::Tracks < ApiV2::Base
         if params[:liked_by_user] && current_user
           fetch_tracks
         else
-          Rails.cache.fetch("api/v2/tracks?#{params.to_query}") { fetch_tracks }
+          Rails.cache.fetch(cache_key_for_collection("tracks")) { fetch_tracks }
         end
 
-      {
-        tracks: tracks,
-        total_pages: tracks.total_pages,
-        current_page: tracks.current_page,
-        total_entries: tracks.total_entries
-      }
+      paginated_response(:tracks, tracks, tracks)
     end
 
     def fetch_tracks
@@ -113,14 +108,14 @@ class ApiV2::Tracks < ApiV2::Base
             )
            .then { |t| apply_filter(t) }
            .then { |t| apply_track_sort(t) }
-           .paginate(page: params[:page], per_page: params[:per_page])
+           .then { |t| paginate_relation(t) }
     end
 
     def track_by_id
       if params[:liked_by_user] && current_user
         fetch_track_by_id
       else
-        Rails.cache.fetch("api/v2/tracks/#{params[:id]}") { fetch_track_by_id }
+        Rails.cache.fetch(cache_key_for_resource("tracks", params[:id])) { fetch_track_by_id }
       end
     end
 
@@ -133,15 +128,7 @@ class ApiV2::Tracks < ApiV2::Base
       ).find_by!(id: params[:id])
     end
 
-    def fetch_liked_track_ids(tracks)
-      return [] unless current_user
-      track_ids = tracks.map(&:id)
-      Like.where(
-        likable_type: "Track",
-        likable_id: track_ids,
-        user_id: current_user.id
-      ).pluck(:likable_id)
-    end
+
 
     def apply_filter(tracks)
       if params[:year].present? && params[:year_range].present?
@@ -194,6 +181,8 @@ class ApiV2::Tracks < ApiV2::Base
           tracks = tracks.joins(:show).where("shows.date <= ?", end_date)
         end
       end
+
+      tracks = apply_audio_status_filter(tracks, params[:audio_status])
 
       tracks
     end

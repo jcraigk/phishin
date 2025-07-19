@@ -1,24 +1,26 @@
+import { getAudioStatusFilter } from "./helpers/utils";
+
+const buildFetchUrl = (page, sortOption, perPage, audioStatusFilter) => {
+  return `/api/v2/songs?page=${page}&sort=${sortOption}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
+};
+
 export const songIndexLoader = async ({ request }) => {
   const url = new URL(request.url);
   const page = url.searchParams.get("page") || 1;
   const sortOption = url.searchParams.get("sort") || "title:asc";
   const perPage = url.searchParams.get("per_page") || 10;
-
-  try {
-    const response = await fetch(`/api/v2/songs?page=${page}&sort=${sortOption}&per_page=${perPage}`);
-    if (!response.ok) throw response;
-    const data = await response.json();
-    return {
-      songs: data.songs,
-      totalPages: data.total_pages,
-      totalEntries: data.total_entries,
-      page: parseInt(page, 10) - 1,
-      sortOption,
-      perPage: parseInt(perPage)
-    };
-  } catch (error) {
-    throw new Response("Error fetching data", { status: 500 });
-  }
+  const audioStatusFilter = getAudioStatusFilter();
+  const response = await fetch(buildFetchUrl(page, sortOption, perPage, audioStatusFilter));
+  if (!response.ok) throw response;
+  const data = await response.json();
+  return {
+    songs: data.songs,
+    totalPages: data.total_pages,
+    totalEntries: data.total_entries,
+    page: parseInt(page, 10) - 1,
+    sortOption,
+    perPage: parseInt(perPage)
+  };
 };
 
 import React, { useState } from "react";
@@ -37,6 +39,7 @@ const SongIndex = () => {
   const { songs, totalPages, totalEntries, page, sortOption, perPage } = useLoaderData();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+
   const {
     tempPerPage,
     handlePageClick,
@@ -101,19 +104,19 @@ const SongIndex = () => {
       <Helmet>
         <title>Songs - Phish.in</title>
       </Helmet>
-      <LayoutWrapper sidebarContent={sidebarContent}>
-        <PhoneTitle title="Songs" />
-        <Songs songs={songs} />
-        {totalPages > 1 && (
-          <Pagination
-            totalPages={totalPages}
-            handlePageClick={handlePageClick}
-            currentPage={page}
-            perPage={tempPerPage}
-            handlePerPageInputChange={handlePerPageInputChange}
-            handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
-          />
-        )}
+              <LayoutWrapper sidebarContent={sidebarContent}>
+          <PhoneTitle title="Songs" />
+                      <Songs songs={songs} />
+          {totalPages > 1 && (
+            <Pagination
+              totalPages={totalPages}
+              handlePageClick={handlePageClick}
+              currentPage={page}
+              perPage={tempPerPage}
+              handlePerPageInputChange={handlePerPageInputChange}
+              handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
+            />
+          )}
       </LayoutWrapper>
     </>
   );

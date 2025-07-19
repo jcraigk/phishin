@@ -21,12 +21,10 @@ class ApiV2::Reports < ApiV2::Base
   end
 
   helpers do
-    def complete_show_dates
-      Show.published.where(incomplete: false).pluck(:date)
-    end
-
     def incomplete_show_details
-      Show.published.where(incomplete: true).order(date: :desc).map do |show|
+      Show.where(audio_status: :partial)
+          .order(date: :desc)
+          .map do |show|
         {
           date: show.date,
           venue_name: show.venue_name,
@@ -36,14 +34,13 @@ class ApiV2::Reports < ApiV2::Base
     end
 
     def missing_show_details
-      KnownDate.where.not(date: complete_show_dates)
-               .where(date: ...Time.zone.today)
-               .order(date: :desc)
-               .map do |kd|
+      Show.without_audio
+          .order(date: :desc)
+          .map do |show|
         {
-          date: kd.date,
-          venue_name: kd.venue,
-          location: kd.location
+          date: show.date,
+          venue_name: show.venue_name,
+          location: show.venue.location
         }
       end
     end

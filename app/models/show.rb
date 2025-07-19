@@ -1,6 +1,7 @@
 class Show < ApplicationRecord
   include HasCoverArt
   include ShowApiV1
+  include HasAudioStatus
 
   belongs_to :tour, counter_cache: true
   belongs_to :venue, counter_cache: true
@@ -28,6 +29,8 @@ class Show < ApplicationRecord
   validates :date, presence: true, uniqueness: true
 
   before_validation :cache_venue_name
+  after_create :increment_shows_with_audio_counter_caches
+  after_destroy :decrement_shows_with_audio_counter_caches
 
   scope :between_years, lambda { |year1, year2|
     date1 = Date.new(year1.to_i).beginning_of_year
@@ -41,7 +44,7 @@ class Show < ApplicationRecord
     where("extract(month from date) = ?", month)
       .where("extract(day from date) = ?", day)
   }
-  scope :published, -> { where(published: true) }
+
   scope :random, ->(amt = 1) { order(Arel.sql("RANDOM()")).limit(amt) }
   scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
 
@@ -59,10 +62,50 @@ class Show < ApplicationRecord
     "#{App.base_url}/#{date}"
   end
 
+  def update_audio_status_from_tracks!
+    return if tracks.empty?
+
+    statuses = tracks.pluck(:audio_status).uniq
+    new_status =
+      if statuses == %w[missing]
+        "missing"
+      elsif statuses.include?("missing")
+        "partial"
+      else
+        "complete"
+      end
+
+    update_column(:audio_status, new_status) if audio_status != new_status
+  end
+
+  def incomplete
+    audio_status == "partial" # API v1 compatibility
+  end
+
   private
 
   def cache_venue_name
     return if venue_name.present?
     self.venue_name = venue.name_on(date)
+  end
+
+  def increment_shows_with_audio_counter_caches
+    return unless has_audio?
+    increment_shows_with_audio_counters
+  end
+
+  def decrement_shows_with_audio_counter_caches
+    return unless has_audio?
+    decrement_shows_with_audio_counters
+  end
+
+  def increment_shows_with_audio_counters
+    venue.increment!(:shows_with_audio_count)
+    tour.increment!(:shows_with_audio_count)
+  end
+
+  def decrement_shows_with_audio_counters
+    venue.decrement!(:shows_with_audio_count)
+    tour.decrement!(:shows_with_audio_count)
   end
 end

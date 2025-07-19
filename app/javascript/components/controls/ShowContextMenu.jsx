@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 import { formatDate, formatDurationShow, truncate } from "../helpers/utils";
-import { useFeedback } from "./FeedbackContext";
+import { useFeedback } from "../contexts/FeedbackContext";
+import { useAudioFilter } from "../contexts/AudioFilterContext";
 import LikeButton from "./LikeButton";
 import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,6 +15,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
   const { openAppModal } = useOutletContext();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const { user, draftPlaylist, setDraftPlaylist, setIsDraftPlaylistSaved } = useOutletContext();
+  const { hideMissingAudio } = useAudioFilter();
 
   const hideDropdown = () => {
     setDropdownVisible(false);
@@ -84,6 +86,23 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
     }
   };
 
+  // Get the appropriate navigation dates based on audio filter setting
+  const getNavigationDates = () => {
+    if (!hideMissingAudio) {
+      return {
+        previousShowDate: show.previous_show_date,
+        nextShowDate: show.next_show_date
+      };
+    } else {
+      return {
+        previousShowDate: show.previous_show_date_with_audio,
+        nextShowDate: show.next_show_date_with_audio
+      };
+    }
+  };
+
+  const { previousShowDate, nextShowDate } = getNavigationDates();
+
   return (
     <div className="dropdown context-dropdown is-right" ref={dropdownRef}>
       <div className="dropdown-trigger">
@@ -98,10 +117,12 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
       >
         <div className={`dropdown-content context-dropdown-content ${css ? css : ""}`.trim()}>
 
-          <span className="dropdown-item">
-            <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
-            {formatDurationShow(show.duration)}
+          {show.audio_status !== 'missing' && (
+            <span className="dropdown-item">
+              <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />
+              {formatDurationShow(show.duration)}
             </span>
+          )}
 
           <Link
             className="dropdown-item"
@@ -122,16 +143,20 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
             {truncate(show.venue.location, 25)}
           </Link>
 
-          <a className="dropdown-item" onClick={handleTaperNotesClick}>
-            <FontAwesomeIcon icon={faClipboard} className="icon" />
-            Taper Notes
-          </a>
+          {show.audio_status !== 'missing' && (
+            <a className="dropdown-item" onClick={handleTaperNotesClick}>
+              <FontAwesomeIcon icon={faClipboard} className="icon" />
+              Taper Notes
+            </a>
+          )}
 
           <hr className="dropdown-divider" />
 
-          <div className="dropdown-item display-phone-only">
-            <LikeButton likable={show} type="Show" />
-          </div>
+          {show.audio_status !== 'missing' && (
+            <div className="dropdown-item display-phone-only">
+              <LikeButton likable={show} type="Show" />
+            </div>
+          )}
 
           {show.tags?.length > 0 && (
             <div className="dropdown-item display-mobile-only">
@@ -144,19 +169,21 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
             Share
           </a>
 
-          {show.album_zip_url ? (
-            <a href={show.album_zip_url} className="dropdown-item" onClick={(e) => e.stopPropagation()}>
-              <FontAwesomeIcon icon={faDownload} className="icon" />
-              Download MP3s
-            </a>
-          ) : (
-            <a className="dropdown-item" onClick={(e) => {
-              e.stopPropagation();
-              handleRequestAlbumZip(show.id, setNotice, setAlert);
-            }}>
-              <FontAwesomeIcon icon={faDownload} className="icon" />
-              Request MP3 Download
-            </a>
+          {show.audio_status !== 'missing' && (
+            show.album_zip_url ? (
+              <a href={show.album_zip_url} className="dropdown-item" onClick={(e) => e.stopPropagation()}>
+                <FontAwesomeIcon icon={faDownload} className="icon" />
+                Download MP3s
+              </a>
+            ) : (
+              <a className="dropdown-item" onClick={(e) => {
+                e.stopPropagation();
+                handleRequestAlbumZip(show.id, setNotice, setAlert);
+              }}>
+                <FontAwesomeIcon icon={faDownload} className="icon" />
+                Request MP3 Download
+              </a>
+            )
           )}
           <a className="dropdown-item" onClick={openPhishNet}>
             <FontAwesomeIcon icon={faExternalLinkAlt} className="icon" />
@@ -167,7 +194,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
             <>
               <Link
                 className="dropdown-item"
-                to={`/${show.previous_show_date}`}
+                to={`/${previousShowDate}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   hideDropdown();
@@ -178,7 +205,7 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
               </Link>
               <Link
                 className="dropdown-item"
-                to={`/${show.next_show_date}`}
+                to={`/${nextShowDate}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   hideDropdown();
@@ -190,11 +217,15 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
             </>
           )}
 
-          <hr className="dropdown-divider" />
-          <a className="dropdown-item" onClick={handleAddToPlaylist}>
-            <FontAwesomeIcon icon={faCirclePlus} className="icon" />
-            Add to playlist
-          </a>
+          {show.audio_status !== 'missing' && (
+            <>
+              <hr className="dropdown-divider" />
+              <a className="dropdown-item" onClick={handleAddToPlaylist}>
+                <FontAwesomeIcon icon={faCirclePlus} className="icon" />
+                Add to playlist
+              </a>
+            </>
+          )}
         </div>
       </div>
     </div>

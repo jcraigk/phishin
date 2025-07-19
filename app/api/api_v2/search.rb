@@ -9,6 +9,7 @@ class ApiV2::Search < ApiV2::Base
     end
 
     params do
+      use :audio_status
       requires :term,
                type: String,
                desc: "Search term (at least 3 characters long)"
@@ -21,7 +22,7 @@ class ApiV2::Search < ApiV2::Base
 
     get ":term" do
       return error!({ message: "Term too short" }, 400) if params[:term].length < 3
-      results = fetch_results(params[:term], params[:scope])
+      results = fetch_results(params[:term], params[:scope], params[:audio_status])
 
       # Add Show Tag matches to other_shows
       if results[:show_tags].present?
@@ -47,37 +48,10 @@ class ApiV2::Search < ApiV2::Base
   end
 
   helpers do
-    def fetch_results(term, scope)
-      Rails.cache.fetch("api/v2/search/#{term}/#{scope}") do
-        SearchService.call(term, scope)
+    def fetch_results(term, scope, audio_status = "any")
+      Rails.cache.fetch(cache_key_for_custom("search/#{term}/#{scope}/#{audio_status}")) do
+        SearchService.call(term:, scope:, audio_status:)
       end
-    end
-
-    def fetch_liked_track_ids(tracks)
-      return [] unless current_user && tracks
-      Like.where(
-        likable_type: "Track",
-        likable_id: tracks.map(&:id),
-        user_id: current_user.id
-      ).pluck(:likable_id)
-    end
-
-    def fetch_liked_show_ids(shows)
-      return [] unless current_user && shows
-      Like.where(
-        likable_type: "Show",
-        likable_id: shows.map(&:id),
-        user_id: current_user.id
-      ).pluck(:likable_id)
-    end
-
-    def fetch_liked_playlist_ids(playlists)
-      return [] unless current_user && playlists
-      Like.where(
-        likable_type: "Playlist",
-        likable_id: playlists.map(&:id),
-        user_id: current_user.id
-      ).pluck(:likable_id)
     end
   end
 end

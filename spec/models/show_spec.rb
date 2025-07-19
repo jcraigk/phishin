@@ -88,16 +88,7 @@ RSpec.describe Show do
       end
     end
 
-    describe '#published' do
-      let!(:show2) { create(:show, published: true) }
-      let!(:show3) { create(:show, published: true) }
 
-      before { create(:show, published: false) }
-
-      it 'returns published shows' do
-        expect(described_class.published.order(date: :asc)).to contain_exactly(show2, show3)
-      end
-    end
 
     describe "#random" do
       let!(:shows) { create_list(:show, 5) }
@@ -158,7 +149,7 @@ RSpec.describe Show do
         id: show.id,
         date: show.date.iso8601,
         duration: show.duration,
-        incomplete: show.incomplete,
+        incomplete: show.audio_status != "complete",
         sbd: false, # Shim for RoboPhish/Android
         remastered: false, # Shim for RoboPhish/Android
         tour_id: show.tour_id,
@@ -188,7 +179,7 @@ RSpec.describe Show do
         id: show.id,
         date: show.date.iso8601,
         duration: show.duration,
-        incomplete: show.incomplete,
+        incomplete: show.audio_status != "complete",
         sbd: false, # Shim for RoboPhish/Android
         remastered: false, # Shim for RoboPhish/Android
         tags: tags.sort_by { |t| t[:priority] },

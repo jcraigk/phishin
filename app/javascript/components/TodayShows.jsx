@@ -1,39 +1,42 @@
 import { authFetch } from "./helpers/utils";
 
+const buildFetchUrl = (month, day, sortBy) => {
+  const todayDate = `${new Date().getFullYear()}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  const url = `/api/v2/shows/day_of_year/${todayDate}?sort=${sortBy}&audio_status=any`;
+  return url;
+};
+
 export const todayShowsLoader = async ({ request }) => {
   const url = new URL(request.url);
   const month = url.searchParams.get("month") || new Date().getMonth() + 1;
   const day = url.searchParams.get("day") || new Date().getDate();
   const sortBy = url.searchParams.get("sort") || "date:desc";
 
-  const todayDate = `${new Date().getFullYear()}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  const response = await authFetch(buildFetchUrl(month, day, sortBy));
+  if (!response.ok) throw response;
+  const data = await response.json();
 
-  try {
-    const response = await authFetch(`/api/v2/shows/day_of_year/${todayDate}?sort=${sortBy}`);
-    if (!response.ok) throw response;
-    const data = await response.json();
-
-    return {
-      shows: data.shows || [],
-      month: Number(month),
-      day: Number(day),
-      sortBy,
-    };
-  } catch (error) {
-    throw new Response("Error fetching data", { status: 500 });
-  }
+  return {
+    shows: data.shows || [],
+    month: Number(month),
+    day: Number(day),
+    sortBy,
+  };
 };
 
-import React from "react";
+import React, { useRef } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
 import PhoneTiltSuggestion from "./PhoneTiltSuggestion";
+import { useClientSideAudioFilter } from "./hooks/useAudioFilteredData";
 
 const TodayShows = () => {
-  const { shows, month, day, sortBy } = useLoaderData();
+  const { shows: allShows, month, day, sortBy } = useLoaderData();
   const navigate = useNavigate();
+
+  const shows = useClientSideAudioFilter(allShows, show => show.audio_status !== 'missing');
 
   const handleSortChange = (e) => {
     navigate(`?month=${month}&day=${day}&sort=${e.target.value}`);

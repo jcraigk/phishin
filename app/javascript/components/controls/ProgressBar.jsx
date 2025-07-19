@@ -7,8 +7,10 @@ const ProgressBar = ({ activeTrack, currentTime, currentTrackIndex, activePlayli
   const { scrubberRef, progressBarRef, fadeClass } = useWaveformImage(activeTrack);
 
   useEffect(() => {
-    if (currentTrackIndex >= 0 && currentTrackIndex < activePlaylist.length) {
-      const currentTrack = activePlaylist[currentTrackIndex];
+    const tracksWithAudio = activePlaylist ? activePlaylist.filter(track => track.mp3_url) : [];
+
+    if (currentTrackIndex >= 0 && currentTrackIndex < tracksWithAudio.length) {
+      const currentTrack = tracksWithAudio[currentTrackIndex];
       if (currentTrack?.duration && progressBarRef.current) {
         const duration = currentTrack.duration / 1000;
         const progress = (currentTime / duration) * 100;

@@ -3,7 +3,7 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
 import { formatDurationShow } from "./helpers/utils";
-import { useFeedback } from "./controls/FeedbackContext";
+import { useFeedback } from "./contexts/FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExclamationCircle, faClock, faGlobe, faLock, faEdit, faShareFromSquare, faCompactDisc, faCircleCheck, faFileImport } from "@fortawesome/free-solid-svg-icons";
 
@@ -34,7 +34,7 @@ const DraftPlaylist = () => {
   useEffect(() => {
     if (user === "anonymous") {
       navigate("/");
-      setAlert("You must be logged in to view that page");
+      setAlert("You must login to do that");
     }
   }, [navigate, user]);
 

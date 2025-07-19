@@ -21,7 +21,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
       ]
     end
     params do
-      use :pagination, :proximity, :sort
+      use :pagination, :proximity, :sort, :audio_status
       optional :year,
                type: Integer,
                desc: "Filter shows by a specific year"
@@ -65,7 +65,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
       success ApiV2::Entities::Show
     end
     get "random" do
-      show = Show.published.order("RANDOM()").first
+      show = Show.with_audio.order("RANDOM()").first
       present \
         show,
         with: ApiV2::Entities::Show,
@@ -82,6 +82,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
       ]
     end
     params do
+      use :audio_status
       requires :date, type: String, desc: "Date in the format YYYY-MM-DD"
     end
     get ":date" do
@@ -92,8 +93,10 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
         include_gaps: true,
         liked_by_user: current_user&.likes&.exists?(likable: show) || false,
         liked_track_ids: fetch_liked_track_ids(show),
-        next_show_date: next_show_date(show.date),
-        previous_show_date: previous_show_date(show.date)
+        next_show_date: next_show_date(show.date, "any"),
+        previous_show_date: previous_show_date(show.date, "any"),
+        next_show_date_with_audio: next_show_date(show.date, "complete_or_partial"),
+        previous_show_date_with_audio: previous_show_date(show.date, "complete_or_partial")
     end
 
     desc "Fetch shows played on a day of the year" do
@@ -103,19 +106,38 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
       success ApiV2::Entities::Show
     end
     params do
-      use :sort
+      use :sort, :audio_status
       requires :date, type: String, desc: "Date in the format YYYY-MM-DD"
     end
     get "day_of_year/:date" do
       date = Date.parse(params[:date])
-      shows =
-        Show.published
-            .where("extract(month from date) = ?", date.month)
-            .where("extract(day from date) = ?", date.day)
-      shows = apply_sort(shows, :date, :desc)
-      liked_show_ids = fetch_liked_show_ids(shows)
-      present \
-        shows: ApiV2::Entities::Show.represent(shows, liked_show_ids:)
+      cache_key = cache_key_for_custom("day_of_year/#{date.strftime('%m-%d')}/#{params[:audio_status]}/#{params[:sort]}")
+      result = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+        shows = Show.includes(
+                      { venue: :venue_renames },
+                      :tour,
+                      :cover_art_attachment,
+                      :album_cover_attachment,
+                      :album_zip_attachment,
+                      {
+                        tracks: [
+                          :mp3_audio_attachment,
+                          :png_waveform_attachment,
+                          { track_tags: :tag },
+                          :songs,
+                          :songs_tracks
+                        ]
+                      },
+                      { show_tags: :tag }
+                    )
+                    .on_day_of_year(date.month, date.day)
+        shows = apply_audio_status_filter(shows, params[:audio_status])
+        shows = apply_sort(shows, :date, :desc)
+        liked_show_ids = fetch_liked_show_ids(shows)
+        ApiV2::Entities::Show.represent(shows, liked_show_ids:)
+      end
+
+      present shows: result
     rescue ArgumentError
       error!({ message: "Invalid date format" }, 400)
     end
@@ -134,6 +156,8 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
         error!({ message: "Album already generated" }, 409)
       elsif show.album_zip_requested_at.present?
         error!({ message: "Download already requested" }, 409)
+      elsif show.missing_audio?
+        error!({ message: "Cannot generate album for show with missing audio" }, 400)
       else
         show.update!(album_zip_requested_at: Time.current)
         AlbumZipJob.perform_async(show.id)
@@ -148,20 +172,14 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
         if params[:liked_by_user] && current_user
           fetch_shows
         else
-          Rails.cache.fetch("api/v2/shows?#{params.to_query}") { fetch_shows }
+          Rails.cache.fetch(cache_key_for_collection("shows")) { fetch_shows }
         end
 
-      {
-        shows: shows,
-        total_pages: shows.total_pages,
-        current_page: shows.current_page,
-        total_entries: shows.total_entries
-      }
+      paginated_response(:shows, shows, shows)
     end
 
     def fetch_shows
-      Show.published
-          .includes(
+      Show.includes(
             :venue,
             :tour,
             :album_cover_attachment,
@@ -171,38 +189,26 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
           )
           .then { |s| apply_filter(s) }
           .then { |s| apply_sort(s, :date, :desc) }
-          .paginate(page: params[:page], per_page: params[:per_page])
+          .then { |s| paginate_relation(s) }
     end
 
-    def fetch_liked_show_ids(shows)
-      return [] unless current_user && shows.any?
-      Like.where(
-        likable_type: "Show",
-        likable_id: shows.map(&:id),
-        user_id: current_user.id
-      ).pluck(:likable_id)
-    end
 
-    def fetch_liked_track_ids(show)
-      return [] unless current_user && show
-      Like.where(
-        likable_type: "Track",
-        likable_id: show.tracks.map(&:id),
-        user_id: current_user.id
-      ).pluck(:likable_id)
-    end
 
     def show_by_date
       if params[:liked_by_user] && current_user
         fetch_show_by_date
       else
-        Rails.cache.fetch("api/v2/shows/#{params[:date]}") { fetch_show_by_date }
+        Rails.cache.fetch(cache_key_for_resource("shows", params[:date])) { fetch_show_by_date }
       end
     end
 
+    def fetch_liked_track_ids(show)
+      return [] unless current_user && show
+      fetch_liked_ids("Track", show.tracks)
+    end
+
     def fetch_show_by_date
-      Show.published
-          .includes(
+      Show.includes(
             :venue,
             tracks: [
               :mp3_audio_attachment,
@@ -259,23 +265,31 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
         end
       end
 
+      shows = apply_audio_status_filter(shows, params[:audio_status])
+
       shows
     end
 
-    def next_show_date(current_date)
-      Show.published
-          .where("date > ?", current_date)
-          .order(date: :asc)
-          .pluck(:date).first ||
-            Show.published.order(date: :asc).pluck(:date).first
+    def next_show_date(current_date, audio_status = "any")
+      shows = Show.where("date > ?", current_date)
+      shows = apply_audio_status_filter(shows, audio_status)
+      shows.order(date: :asc).pluck(:date).first || first_show_date(audio_status)
     end
 
-    def previous_show_date(current_date)
-      Show.published
-          .where("date < ?", current_date)
-          .order(date: :desc)
-          .pluck(:date).first ||
-            Show.published.order(date: :desc).pluck(:date).first
+    def previous_show_date(current_date, audio_status = "any")
+      shows = Show.where("date < ?", current_date)
+      shows = apply_audio_status_filter(shows, audio_status)
+      shows.order(date: :desc).pluck(:date).first || last_show_date(audio_status)
+    end
+
+    def first_show_date(audio_status = "any")
+      shows = apply_audio_status_filter(Show.all, audio_status)
+      shows.order(date: :asc).pluck(:date).first
+    end
+
+    def last_show_date(audio_status = "any")
+      shows = apply_audio_status_filter(Show.all, audio_status)
+      shows.order(date: :desc).pluck(:date).first
     end
   end
 end

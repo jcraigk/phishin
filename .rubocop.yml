@@ -30,5 +30,5 @@ RSpec/MultipleMemoizedHelpers:
   Enabled: false
 RSpec/NestedGroups:
   Max: 4
-RSpecRails/HaveHttpStatus: # We use Rack::MockResponse
-  Enabled: false
+Style/HashSyntax:
+  EnforcedShorthandSyntax: always

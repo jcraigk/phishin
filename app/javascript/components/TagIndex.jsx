@@ -1,12 +1,11 @@
 export const tagIndexLoader = async () => {
-  try {
-    const response = await fetch("/api/v2/tags");
-    if (!response.ok) throw response;
-    const tags = await response.json();
-    return { tags };
-  } catch (error) {
+  const response = await fetch("/api/v2/tags").catch(error => {
+    console.error("Error fetching tags data:", error);
     throw new Response("Error fetching data", { status: 500 });
-  }
+  });
+  if (!response.ok) throw response;
+  const tags = await response.json();
+  return { tags };
 };
 
 import React from "react";

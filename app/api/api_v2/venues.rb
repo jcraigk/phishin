@@ -7,7 +7,7 @@ class ApiV2::Venues < ApiV2::Base
       success ApiV2::Entities::Venue
     end
     params do
-      use :pagination, :proximity
+      use :pagination, :proximity, :audio_status
       optional :sort,
                type: String,
                desc: "Sort by attribute and direction (e.g., 'name:asc')",
@@ -42,24 +42,20 @@ class ApiV2::Venues < ApiV2::Base
 
   helpers do
     def page_of_venues
-      Rails.cache.fetch("api/v2/venues?#{params.to_query}") do
+      Rails.cache.fetch(cache_key_for_collection("venues")) do
         venues = Venue.unscoped
                       .then { |v| apply_proximity_filter(v) }
                       .then { |v| apply_first_char_filter(v) }
+                      .then { |v| apply_audio_status_filter_to_venues(v, params[:audio_status]) }
                       .then { |v| apply_sort(v) }
-                      .paginate(page: params[:page], per_page: params[:per_page])
+                      .then { |v| paginate_relation(v) }
 
-        {
-          venues: venues,
-          total_pages: venues.total_pages,
-          current_page: venues.current_page,
-          total_entries: venues.total_entries
-        }
+        paginated_response(:venues, venues, venues)
       end
     end
 
     def venue_by_slug
-      Rails.cache.fetch("api/v2/venues/#{params[:slug]}") do
+      Rails.cache.fetch(cache_key_for_resource("venues", params[:slug])) do
         Venue.find_by!(slug: params[:slug])
       end
     end

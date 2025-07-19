@@ -1,4 +1,6 @@
 class ApiV2::Entities::Year < ApiV2::Entities::Base
+  include ApiV2::Concerns::CountFieldsWithAudio
+
   expose \
     :period,
     documentation: {
@@ -6,26 +8,16 @@ class ApiV2::Entities::Year < ApiV2::Entities::Base
       desc: 'The year or period being represented (e.g. "1997", "1983-1987")'
     }
 
-  expose \
-    :shows_count,
-    documentation: {
-      type: "Integer",
-      desc: "Number of shows that were performed during this period"
-    }
+  expose_count_fields_with_audio :shows_count, "shows that were performed during this period"
 
   expose \
     :shows_duration,
     documentation: {
       type: "Integer",
-      desc: "Number of shows that were performed during this period"
+      desc: "Total duration in milliseconds of all shows performed during this period"
     }
 
-  expose \
-    :venues_count,
-    documentation: {
-      type: "Integer",
-      desc: "Unique number of venues that shows were performed at during this period"
-    }
+  expose_count_fields_with_audio :venues_count, "unique venues that shows were performed at during this period"
 
   expose \
     :era,

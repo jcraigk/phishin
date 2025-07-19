@@ -2,19 +2,13 @@ import { authFetch } from "./helpers/utils";
 
 export const playlistLoader = async ({ params }) => {
   const { playlistSlug } = params;
-
-  try {
-    const response = await authFetch(`/api/v2/playlists/${playlistSlug}`);
-    if (response.status === 404) {
-      throw new Response("Playlist not found", { status: 404 });
-    }
-    if (!response.ok) throw response;
-    let playlist = await response.json();
-    return playlist;
-  } catch (error) {
-    if (error instanceof Response) throw error;
-    throw new Response("Error fetching data", { status: 500 });
+  const response = await authFetch(`/api/v2/playlists/${playlistSlug}`);
+  if (response.status === 404) {
+    throw new Response("Playlist not found", { status: 404 });
   }
+  if (!response.ok) throw response;
+  let playlist = await response.json();
+  return playlist;
 };
 
 import React, { useState, useEffect } from "react";

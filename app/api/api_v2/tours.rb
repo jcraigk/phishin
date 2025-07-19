@@ -15,7 +15,12 @@ class ApiV2::Tours < ApiV2::Base
                values: SORT_COLS.map { |opt| [ "#{opt}:asc", "#{opt}:desc" ] }.flatten
     end
     get do
-      present page_of_tours, with: ApiV2::Entities::Tour
+      result = page_of_tours
+      present \
+        tours: ApiV2::Entities::Tour.represent(result[:tours]),
+        total_pages: result[:total_pages],
+        current_page: result[:current_page],
+        total_entries: result[:total_entries]
     end
 
     desc "Fetch a tour" do
@@ -32,15 +37,17 @@ class ApiV2::Tours < ApiV2::Base
 
   helpers do
     def page_of_tours
-      Rails.cache.fetch("api/v2/tours?#{params.to_query}") do
-        Tour.unscoped
-            .then { |t| apply_sort(t, :name, :asc) }
-            .paginate(page: params[:page], per_page: params[:per_page])
+      Rails.cache.fetch(cache_key_for_collection("tours")) do
+        tours = Tour.unscoped
+                    .then { |t| apply_sort(t, :name, :asc) }
+                    .then { |t| paginate_relation(t) }
+
+        paginated_response(:tours, tours, tours)
       end
     end
 
     def tour_by_slug
-      Rails.cache.fetch("api/v2/tours/#{params[:slug]}") do
+      Rails.cache.fetch(cache_key_for_resource("tours", params[:slug])) do
         Tour.includes(:shows).find_by!(slug: params[:slug])
       end
     end

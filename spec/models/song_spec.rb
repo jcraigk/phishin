@@ -68,6 +68,7 @@ RSpec.describe Song do
         artist: song.artist,
         lyrics: song.lyrics,
         tracks_count: song.tracks_count,
+        tracks_with_audio_count: song.tracks_with_audio_count,
         created_at: song.created_at.iso8601,
         updated_at: song.updated_at.iso8601
       }
@@ -82,6 +83,7 @@ RSpec.describe Song do
         artist: song.artist,
         lyrics: song.lyrics,
         tracks_count: song.tracks_count,
+        tracks_with_audio_count: song.tracks_with_audio_count,
         created_at: song.created_at.iso8601,
         updated_at: song.updated_at.iso8601,
         tracks: song.tracks.map(&:as_json_api)

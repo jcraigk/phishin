@@ -1,4 +1,8 @@
-import { authFetch } from "./helpers/utils";
+import { authFetch, getAudioStatusFilter } from "./helpers/utils";
+
+const buildFetchUrl = (tagSlug, page, sortOption, perPage, audioStatusFilter) => {
+  return `/api/v2/shows?tag_slug=${tagSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
+};
 
 export const tagShowsLoader = async ({ params, request }) => {
   const url = new URL(request.url);
@@ -6,35 +10,28 @@ export const tagShowsLoader = async ({ params, request }) => {
   const sortOption = url.searchParams.get("sort") || "date:desc";
   const perPage = url.searchParams.get("per_page") || 10;
   const { tagSlug } = params;
+  const audioStatusFilter = getAudioStatusFilter();
+  const tagResponse = await fetch(`/api/v2/tags`);
+  if (!tagResponse.ok) throw tagResponse;
+  const tagData = await tagResponse.json();
+  const tag = tagData.find(t => t.slug === tagSlug);
+  if (!tag) throw new Response("Tag not found", { status: 404 });
+  const showsResponse = await authFetch(buildFetchUrl(tagSlug, page, sortOption, perPage, audioStatusFilter));
+  if (!showsResponse.ok) throw showsResponse;
+  const showsData = await showsResponse.json();
 
-  try {
-    const tagResponse = await fetch(`/api/v2/tags`);
-    if (!tagResponse.ok) throw tagResponse;
-    const tagData = await tagResponse.json();
-    const tag = tagData.find(t => t.slug === tagSlug);
-    if (!tag) throw new Response("Tag not found", { status: 404 });
-
-    const showsResponse = await authFetch(
-      `/api/v2/shows?tag_slug=${tagSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}`
-    );
-    if (!showsResponse.ok) throw showsResponse;
-    const showsData = await showsResponse.json();
-    return {
-      tag,
-      shows: showsData.shows,
-      totalPages: showsData.total_pages,
-      page: parseInt(page, 10) - 1,
-      sortOption,
-      perPage: parseInt(perPage)
-    };
-  } catch (error) {
-    if (error instanceof Response) throw error;
-    throw new Response("Error fetching data", { status: 500 });
-  }
+  return {
+    tag,
+    shows: showsData.shows,
+    totalPages: showsData.total_pages,
+    page: parseInt(page, 10) - 1,
+    sortOption,
+    perPage: parseInt(perPage)
+  };
 };
 
 import React from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
@@ -44,6 +41,7 @@ import { paginationHelper } from "./helpers/pagination";
 
 const TagShows = () => {
   const { tag, shows, totalPages, page, sortOption, perPage } = useLoaderData();
+  const navigate = useNavigate();
   const {
     tempPerPage,
     handlePageClick,
@@ -51,6 +49,8 @@ const TagShows = () => {
     handlePerPageInputChange,
     handlePerPageBlurOrEnter
   } = paginationHelper(page, sortOption, perPage);
+
+
 
   const sidebarContent = (
     <div className="sidebar-content">
@@ -76,20 +76,20 @@ const TagShows = () => {
       <Helmet>
         <title>{tag.name} - Shows - Phish.in</title>
       </Helmet>
-      <LayoutWrapper sidebarContent={sidebarContent}>
-        <PhoneTitle title={`${tag.name} Shows`} />
-        <Shows shows={shows} />
-        {totalPages > 1 && (
-          <Pagination
-            totalPages={totalPages}
-            handlePageClick={handlePageClick}
-            currentPage={page}
-            perPage={tempPerPage}
-            handlePerPageInputChange={handlePerPageInputChange}
-            handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
-          />
-        )}
-      </LayoutWrapper>
+              <LayoutWrapper sidebarContent={sidebarContent}>
+          <PhoneTitle title={`${tag.name} Shows`} />
+          <Shows shows={shows} />
+          {totalPages > 1 && (
+            <Pagination
+              totalPages={totalPages}
+              handlePageClick={handlePageClick}
+              currentPage={page}
+              perPage={tempPerPage}
+              handlePerPageInputChange={handlePerPageInputChange}
+              handlePerPageBlurOrEnter={handlePerPageBlurOrEnter}
+            />
+          )}
+        </LayoutWrapper>
     </>
   );
 };

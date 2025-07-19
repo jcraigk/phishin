@@ -11,7 +11,7 @@ class ApiV2::Songs < ApiV2::Base
       ]
     end
     params do
-      use :pagination
+      use :pagination, :audio_status
       optional :sort,
                type: String,
                desc: "Sort by attribute and direction (e.g., 'title:asc')",
@@ -49,23 +49,19 @@ class ApiV2::Songs < ApiV2::Base
 
   helpers do
     def page_of_songs
-      Rails.cache.fetch("api/v2/songs?#{params.to_query}") do
+      Rails.cache.fetch(cache_key_for_collection("songs")) do
         songs = Song.unscoped
                     .then { |s| apply_filter(s) }
+                    .then { |s| apply_audio_status_filter_to_songs(s, params[:audio_status]) }
                     .then { |s| apply_sort(s, :title, :asc) }
-                    .paginate(page: params[:page], per_page: params[:per_page])
+                    .then { |s| paginate_relation(s) }
 
-        {
-          songs: songs,
-          total_pages: songs.total_pages,
-          current_page: songs.current_page,
-          total_entries: songs.total_entries
-        }
+        paginated_response(:songs, songs, songs)
       end
     end
 
     def song_by_slug
-      Rails.cache.fetch("api/v2/songs/#{params[:slug]}") do
+      Rails.cache.fetch(cache_key_for_resource("songs", params[:slug])) do
         Song.find_by!(slug: params[:slug])
       end
     end

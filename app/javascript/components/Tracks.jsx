@@ -5,6 +5,7 @@ import TagBadges from "./controls/TagBadges";
 import HighlightedText from "./controls/HighlightedText";
 import LikeButton from "./controls/LikeButton";
 import TrackContextMenu from "./controls/TrackContextMenu";
+import AudioStatusBadge from "./controls/AudioStatusBadge";
 import CoverArt from "./CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faScissors } from "@fortawesome/free-solid-svg-icons";
@@ -13,6 +14,8 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
   const { playTrack, activeTrack, setCustomPlaylist  } = useOutletContext();
 
   const handleTrackClick = (track) => {
+    if (track.audio_status === 'missing') return;
+
     playTrack(tracks, track);
     if (viewStyle !== "playlist") {
       setCustomPlaylist(null);
@@ -44,6 +47,8 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
 
   const renderTrackItem = (track, index) => {
     const { actualDuration, isExcerpt } = calculateTrackDetails(track);
+    const hasMissingAudio = track.audio_status === 'missing';
+    const shouldFocus = viewStyle === "show" && track.slug === trackSlug;
 
     return (
       <li
@@ -52,7 +57,8 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
           "list-item",
           viewStyle === "show" ? "track-item" : "",
           track.id === activeTrack?.id ? "active-item" : "",
-          viewStyle === "show" && track.slug === trackSlug ? "focus" : ""
+          shouldFocus ? "focus" : "",
+          hasMissingAudio ? "no-audio" : ""
         ].filter(Boolean).join(" ")}
         onClick={() => handleTrackClick(track)}
         ref={trackRefs ? (el) => (trackRefs.current[track.position - 1] = el) : null}
@@ -93,11 +99,19 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
           </span>
           <div className="rightside-group">
             <span className={`rightside-primary ${isExcerpt ? "excerpt" : ""}`}>
-              {isExcerpt && <FontAwesomeIcon icon={faScissors} className="excerpt-icon" />}
-              {formatDurationTrack(actualDuration)}
+              {track.audio_status === 'complete' ? (
+                <>
+                  {isExcerpt && <FontAwesomeIcon icon={faScissors} className="excerpt-icon" />}
+                  {formatDurationTrack(actualDuration)}
+                </>
+              ) : (
+                <AudioStatusBadge audioStatus={track.audio_status} size="small" />
+              )}
             </span>
             <span className="rightside-secondary">
-              <LikeButton likable={track} type="Track" />
+              {track.audio_status === 'complete' && (
+                <LikeButton likable={track} type="Track" />
+              )}
             </span>
             <span className="rightside-menu">
               <TrackContextMenu
@@ -131,6 +145,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
                     <span className="detail-right">
                       {formatDurationShow(
                         setTracks.reduce((total, t) => {
+                          if (t.audio_status === 'missing') return total;
                           const { actualDuration } = calculateTrackDetails(t);
                           return total + actualDuration;
                         }, 0)

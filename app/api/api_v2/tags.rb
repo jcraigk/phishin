@@ -12,7 +12,7 @@ class ApiV2::Tags < ApiV2::Base
 
   helpers do
     def tags
-      Rails.cache.fetch("api/v2/tags") do
+      Rails.cache.fetch(cache_key_for_custom("tags")) do
         Tag.order(name: :asc)
       end
     end

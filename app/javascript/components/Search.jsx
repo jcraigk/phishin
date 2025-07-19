@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { authFetch } from "./helpers/utils";
 import SearchResults from "./SearchResults";
@@ -6,37 +6,53 @@ import LayoutWrapper from "./layout/LayoutWrapper";
 import Loader from "./controls/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { useServerFilteredData } from "./hooks/useServerFilteredData";
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [term, setTerm] = useState(searchParams.get("term") || "");
   const [scope, setScope] = useState(searchParams.get("scope") || "all");
+  const [submittedTerm, setSubmittedTerm] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const [results, setResults] = useState(null);
-  const [submittedTerm, setSubmittedTerm] = useState(searchParams.get("term") || "");
-  const [isLoading, setIsLoading] = useState(false);
+
+  const performSearchWithFilter = useCallback(async (audioStatusFilter) => {
+    if (!submittedTerm) return null;
+
+    setIsSearching(true);
+    const response = await authFetch(`/api/v2/search/${submittedTerm}?scope=${scope}&audio_status=${audioStatusFilter}`);
+    const data = await response.json();
+    setIsSearching(false);
+    return data;
+  }, [submittedTerm, scope]);
+
+    const { data: filteredResults, isRefetching } = useServerFilteredData(results, performSearchWithFilter, [submittedTerm, scope]);
 
   useEffect(() => {
-    setTerm(searchParams.get("term") || "");
-    setScope(searchParams.get("scope") || "all");
+    const urlTerm = searchParams.get("term") || "";
+    const urlScope = searchParams.get("scope") || "all";
 
-    if (searchParams.get("term")) {
-      performSearch(searchParams.get("term"), searchParams.get("scope") || "all");
+    setTerm(urlTerm);
+    setScope(urlScope);
+
+    if (urlTerm && urlTerm !== submittedTerm) {
+      performSearch(urlTerm, urlScope);
     }
   }, [searchParams]);
 
   const performSearch = async (searchTerm, searchScope) => {
-    setResults(null);
-    setIsLoading(true);
+    setSubmittedTerm(searchTerm);
+    setScope(searchScope);
 
+    setIsSearching(true);
     try {
-      const response = await authFetch(`/api/v2/search/${searchTerm}?scope=${searchScope}`);
+      const response = await authFetch(`/api/v2/search/${searchTerm}?scope=${searchScope}&audio_status=complete_or_partial`);
       const data = await response.json();
       setResults(data);
-      setSubmittedTerm(searchTerm);
     } catch (error) {
-      throw new Response("Error performing search", { status: 500 });
+      console.error('Search error:', error);
     } finally {
-      setIsLoading(false);
+      setIsSearching(false);
     }
   };
 
@@ -95,10 +111,10 @@ const Search = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      {isLoading ? (
+      {isRefetching || isSearching ? (
         <Loader />
       ) : (
-        results && <SearchResults results={results} term={submittedTerm} />
+        (filteredResults || results) && <SearchResults results={filteredResults || results} term={submittedTerm} />
       )}
     </LayoutWrapper>
   );

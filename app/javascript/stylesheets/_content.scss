@@ -313,9 +313,10 @@ main {
     justify-content: flex-end;
     flex-shrink: 0;
     margin-left: auto;
+    width: 8rem;
   }
 
-  .rightside-primary {
+    .rightside-primary {
     font-size: 1.1rem;
     width: 3.5rem;
     text-align: right;
@@ -327,6 +328,7 @@ main {
     flex-shrink: 0;
     padding-right: 0.1rem;
     position: relative;
+    min-height: 1.1rem;
   }
 
   .rightside-primary-wide {
@@ -343,9 +345,18 @@ main {
     margin-right: 0.5rem;
   }
 
-  .rightside-secondary {
+      .rightside-secondary {
     font-size: 1.1rem;
     width: auto;
+    text-align: right;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rightside-menu {
+    width: 2rem;
     text-align: right;
     flex-shrink: 0;
     display: flex;
@@ -385,7 +396,7 @@ main {
     background-size: cover;
     background-repeat: no-repeat;
 
-    &:not(:last-child):not(.focus):not(.active-item):not(:hover)::after {
+    &:not(:last-child):not(.focus):not(.active-item)::after {
       content: "";
       display: block;
       position: absolute;
@@ -394,6 +405,10 @@ main {
       right: 1rem;
       height: 1px;
       background-color: $navbar-gray;
+    }
+
+    &:not(:last-child):not(.focus):not(.active-item):not(.no-audio):hover::after {
+      display: none;
     }
 
     &:first-of-type {
@@ -418,7 +433,16 @@ main {
     }
 
     &.focus {
+      animation: pulse 3s infinite ease-in-out;
+      background-image: none !important;
+
       &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        bottom: 0;
+        left: 1rem;
+        right: 1rem;
         background-color: $highlight-blue;
         height: 2px;
       }
@@ -487,6 +511,19 @@ main {
     border-radius: $radius;
     max-width: 436px;
     background-color: $inactive-gray;
+
+    .audio-status-badge-container {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      z-index: 10;
+    }
+
+    &.faded {
+      .overlay {
+        background: rgba(0, 0, 0, 0.7);
+      }
+    }
   }
 
   @media (hover: hover) and (pointer: fine) {
@@ -576,7 +613,7 @@ main {
 }
 
 @media (hover: hover) {
-  .list-item:hover {
+  .list-item:hover:not(.no-audio) {
     background-color: white;
     background-image: none !important;
 
@@ -795,4 +832,26 @@ main {
   .display-phone-only {
     display: none !important;
   }
+}
+
+.audio-status-badge {
+  margin-left: 0.5rem;
+
+  &.is-small {
+    height: 1.5rem;
+    font-size: 0.75rem;
+  }
+
+  &.is-medium {
+    height: 2rem;
+    font-size: 0.875rem;
+  }
+
+  .icon {
+    margin-right: 0.25rem !important;
+  }
+}
+
+.no-audio {
+  cursor: default !important;
 }

@@ -1,20 +1,16 @@
-import { authFetch } from "./helpers/utils";
+import { authFetch, getAudioStatusFilter } from "./helpers/utils";
 import { createTaperNotesModalContent } from "./helpers/modals";
 
 export const showLoader = async ({ params }) => {
   const { date } = params;
-  const url = `/api/v2/shows/${date}`;
-  try {
-    const response = await authFetch(url);
-    if (response.status === 404) {
-      throw new Response("Show not found", { status: 404 });
-    }
-    let show = await response.json();
-    return show;
-  } catch (error) {
-    if (error instanceof Response) throw error;
-    throw new Response("Error fetching data", { status: 500 });
+  const audioStatusFilter = getAudioStatusFilter();
+  const url = `/api/v2/shows/${date}?audio_status=${audioStatusFilter}`;
+  const response = await authFetch(url);
+  if (response.status === 404) {
+    throw new Response("Show not found", { status: 404 });
   }
+  let show = await response.json();
+  return show;
 };
 
 import React, { useState, useRef, useEffect } from "react";
@@ -26,8 +22,10 @@ import LikeButton from "./controls/LikeButton";
 import Tracks from "./Tracks";
 import TagBadges from "./controls/TagBadges";
 import CoverArt from "./CoverArt";
+import { useClientSideAudioFilter } from "./hooks/useAudioFilteredData";
+import { useAudioFilter } from "./contexts/AudioFilterContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCircleChevronLeft, faCircleChevronRight, faCircleXmark, faInfoCircle, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 
 const Show = ({ trackSlug }) => {
   const show = useLoaderData();
@@ -36,12 +34,15 @@ const Show = ({ trackSlug }) => {
   const trackRefs = useRef([]);
   const { playTrack, openAppModal, closeAppModal } = useOutletContext();
   const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
-  const [showIncompleteNotification, setShowIncompleteNotification] = useState(show.incomplete);
   const [showAdminNotesNotification, setShowAdminNotesNotification] = useState(!!show.admin_notes);
+  const [showPartialAudioNotification, setShowPartialAudioNotification] = useState(show.audio_status === 'partial');
+  const { hideMissingAudio } = useAudioFilter();
+
+  const filteredTracks = useClientSideAudioFilter(tracks, track => track.audio_status !== 'missing');
 
   useEffect(() => {
     setTracks(show.tracks);
-    setShowIncompleteNotification(show.incomplete);
+    setShowPartialAudioNotification(show.audio_status === 'partial');
 
     const backgroundDiv = document.querySelector(".background-blur");
     if (show.cover_art_urls?.medium && backgroundDiv) {
@@ -54,14 +55,17 @@ const Show = ({ trackSlug }) => {
     let foundTrack;
     if (trackSlug) foundTrack = tracks.find((track) => track.slug === trackSlug);
     if (foundTrack) {
-      playTrack(tracks, foundTrack, true);
       setMatchedTrack(foundTrack);
       const trackIndex = tracks.findIndex((track) => track.slug === foundTrack.slug);
       if (trackRefs.current[trackIndex]) {
         trackRefs.current[trackIndex].scrollIntoView({ behavior: "smooth" });
       }
+
+      if (foundTrack.audio_status !== 'missing') {
+        playTrack(filteredTracks, foundTrack, true);
+      }
     }
-  }, [trackSlug, tracks]);
+  }, [trackSlug, tracks, filteredTracks]);
 
   useEffect(() => {
     if (trackSlug === 'taper-notes' && !taperNotesModalClosed) {
@@ -71,19 +75,35 @@ const Show = ({ trackSlug }) => {
   }, [trackSlug, show, openAppModal]);
 
   const handleClose = (notificationType) => {
-    if (notificationType === "incomplete") setShowIncompleteNotification(false);
     if (notificationType === "adminNotes") setShowAdminNotesNotification(false);
+    if (notificationType === "partialAudio") setShowPartialAudioNotification(false);
   };
 
-  const infoBox = (message, onClose) => (
-    <div className="notification show-info">
+  const infoBox = (message, onClose, isWarning = false) => (
+    <div className={`notification show-info ${isWarning ? 'is-warning' : ''}`}>
       <button className="close-btn" onClick={onClose}>
         <FontAwesomeIcon icon={faCircleXmark} />
       </button>
-      <FontAwesomeIcon icon={faInfoCircle} className="mr-1" />
+      <FontAwesomeIcon icon={isWarning ? faExclamationCircle : faInfoCircle} className="mr-1" />
       {message}
     </div>
   );
+
+  const getNavigationDates = () => {
+    if (hideMissingAudio) {
+      return {
+        previousShowDate: show.previous_show_date_with_audio,
+        nextShowDate: show.next_show_date_with_audio
+      };
+    } else {
+      return {
+        previousShowDate: show.previous_show_date,
+        nextShowDate: show.next_show_date
+      };
+    }
+  };
+
+  const { previousShowDate, nextShowDate } = getNavigationDates();
 
   return (
     <>
@@ -123,17 +143,17 @@ const Show = ({ trackSlug }) => {
             <hr className="sidebar-hr" />
 
             <div className="sidebar-control-container">
-              <LikeButton likable={show} type="Show" />
+              {show.audio_status !== 'missing' && <LikeButton likable={show} type="Show" />}
               <ShowContextMenu show={show} />
             </div>
 
             <TagBadges tags={show.tags} parentId={show.date} />
             <hr className="sidebar-hr" />
-            <Link to={`/${show.previous_show_date}`}>
+            <Link to={`/${previousShowDate}`}>
               <FontAwesomeIcon icon={faCircleChevronLeft} className="mr-1" />
               Previous show
             </Link>
-            <Link to={`/${show.next_show_date}`} className="is-pulled-right">
+            <Link to={`/${nextShowDate}`} className="is-pulled-right">
               Next show
               <FontAwesomeIcon icon={faCircleChevronRight} className="ml-1" />
             </Link>
@@ -141,8 +161,14 @@ const Show = ({ trackSlug }) => {
         </aside>
 
         <section id="main-content">
-          {showIncompleteNotification && infoBox("This show's audio is incomplete", () => handleClose("incomplete"))}
+          {showPartialAudioNotification && infoBox("This show has partial audio", () => handleClose("partialAudio"), true)}
           {showAdminNotesNotification && infoBox(show.admin_notes, () => handleClose("adminNotes"))}
+          {show.audio_status === 'missing' && tracks.length === 0 && (
+            <div className="notification is-info">
+              <FontAwesomeIcon icon={faInfoCircle} className="mr-1" />
+              The setlist for this date is unknown
+            </div>
+          )}
 
           <div className="display-mobile-only mt-1">
             <div className="mobile-show-wrapper">
@@ -157,7 +183,9 @@ const Show = ({ trackSlug }) => {
                   />
                 </div>
                 <div className="mobile-show-info">
-                  <span className="mobile-show-date">{formatDate(show.date)}</span>
+                  <span className="mobile-show-date">
+                    {formatDate(show.date)}
+                  </span>
                   <span className="mobile-show-venue">
                     {show.venue_name}
                     <br />
@@ -171,7 +199,7 @@ const Show = ({ trackSlug }) => {
             </div>
           </div>
 
-          <Tracks tracks={tracks} viewStyle="show" trackRefs={trackRefs} trackSlug={trackSlug} />
+          <Tracks tracks={filteredTracks} viewStyle="show" trackRefs={trackRefs} trackSlug={trackSlug} />
         </section>
       </div>
     </>

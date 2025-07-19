@@ -19,6 +19,8 @@ class ApiV2::Api < ApiV2::Base
       description:
         "A RESTful API for accessing data and content on [Phish.in](#{App.base_url}), an " \
         "open source archive of live Phish audience recordings. " \
+        "This API returns the complete catalog of known Phish setlists, including shows " \
+        "without audience recordings (marked with audio_status: 'missing'). " \
         "See [GitHub](https://github.com/jcraigk/phishin) for development and issue tracking. " \
         "Access is provided free of charge and without warranty. Please be nice."
     },
@@ -60,7 +62,7 @@ class ApiV2::Api < ApiV2::Base
       },
       {
         name: "shows",
-        description: "Live shows performed by Phish, including audio track URLs"
+        description: "Live shows performed by Phish"
       },
       {
         name: "songs",
@@ -76,7 +78,7 @@ class ApiV2::Api < ApiV2::Base
       },
       {
         name: "tracks",
-        description: "Tracks of legal audio recordings from live Phish shows"
+        description: "Tracks from live Phish shows, including links to audio if available"
       },
       {
         name: "venues",

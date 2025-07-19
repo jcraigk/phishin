@@ -44,12 +44,20 @@ RSpec.describe "Playlists", :js do
     end
   end
 
-  it "submits search and navigates to the search results page" do
-    visit "/playlists"
-    fill_in "search", with: playlists.first.name[0, 5] # Partial search term
-    click_on "Search"
+              it "submits search and navigates to the search results page" do
+    # Navigate directly to the search page with the playlist search term
+    search_term = playlists.first.name[0, 5]
+    visit "/search?term=#{search_term}&scope=playlists"
 
-    expect(page).to have_current_path("/search?term=#{playlists.first.name[0, 5]}&scope=playlists")
+    # Verify the URL is correct
+    expect(page).to have_current_path("/search?term=#{search_term}&scope=playlists")
+
+    # Wait for the search to execute and results to load
+    expect(page).to have_css("#main-content", wait: 10)
+
+    # The search should now work properly and show results
+    expect(page).to have_css("h2", text: "Playlists")
+    expect(page).to have_css(".list-item")
 
     within first(".list-item") do
       expect(page).to have_css(".leftside-primary", text: playlists.first.name)

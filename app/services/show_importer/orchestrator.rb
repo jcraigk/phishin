@@ -28,7 +28,7 @@ class ShowImporter::Orchestrator
   end
 
   def show
-    @show ||= Show.new(date:, published: false)
+    @show ||= Show.new(date:)
   end
 
   def pp_list
@@ -40,19 +40,14 @@ class ShowImporter::Orchestrator
     pbar = ProgressBar.create(total: @tracks.size, format: "%a %B %c/%C %p%% %E")
 
     show.save!
-
     save_tracks(pbar)
-
-
     show.reload.save_duration
+
     pbar.finish
 
     InteractiveCoverArtService.call(Show.where(id: show.id))
     DebutTagService.call(show)
     save_song_performance_data(show)
-
-    show.update!(published: true)
-
     create_announcement
   end
 
@@ -101,8 +96,7 @@ class ShowImporter::Orchestrator
 
   def save_song_performance_data(show)
     puts "Calculating song performance data and applying bustout tag..."
-    PerformanceGapService.call(show)
-    PerformanceSlugService.call(show)
+    GapService.call(show, update_previous: true)
     BustoutTagService.call(show)
   end
 
@@ -138,7 +132,7 @@ class ShowImporter::Orchestrator
     return show.venue = venue if venue.present?
 
     puts "No venue matched! Enter Venue ID:"
-    @venue = Venue.find($stdin.gets.chomp.to_i)
+    @venue = Venue.find($stdin.gets.chomp.strip.to_i)
     show.venue = venue
   end
 
@@ -146,7 +140,7 @@ class ShowImporter::Orchestrator
     return show.tour = tour if tour.present?
 
     puts "No tour matched! Enter Tour ID:"
-    @tour = Tour.find($stdin.gets.chomp.to_i)
+    @tour = Tour.find($stdin.gets.chomp.strip.to_i)
     show.tour = tour
   end
 

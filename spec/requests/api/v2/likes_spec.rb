@@ -64,8 +64,8 @@ RSpec.describe "API v2 Likes" do
 
   describe "DELETE /likes" do
     before do
-      show.likes.create!(user: user)
-      track.likes.create!(user: user)
+      show.likes.create!(user:)
+      track.likes.create!(user:)
     end
 
     context "when unliking a show" do

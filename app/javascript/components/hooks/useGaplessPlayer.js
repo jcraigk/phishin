@@ -18,13 +18,14 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     return position >= 0 ? position / 1000 : 0;
   };
 
-  // Get excerpt times for the current track
   const getCurrentTrackExcerptTimes = () => {
-    if (!activePlaylist || currentTrackIndex < 0 || currentTrackIndex >= activePlaylist.length) {
+    const tracksWithAudio = activePlaylist ? activePlaylist.filter(track => track.mp3_url) : [];
+
+    if (!tracksWithAudio || currentTrackIndex < 0 || currentTrackIndex >= tracksWithAudio.length) {
       return { startTime: 0, endTime: null };
     }
 
-    const track = activePlaylist[currentTrackIndex];
+    const track = tracksWithAudio[currentTrackIndex];
     const startSecond = parseInt(track.starts_at_second) || 0;
     const endSecond = parseInt(track.ends_at_second) || 0;
 
@@ -34,15 +35,15 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     };
   };
 
-  // Check if we should auto-advance to next track due to excerpt end time
   const checkExcerptEndTime = () => {
     if (!activePlaylist || !gaplessPlayerRef.current) return;
 
-    // Use the current track index from the player to avoid timing issues
-    const playerTrackIndex = gaplessPlayerRef.current.getIndex();
-    if (playerTrackIndex < 0 || playerTrackIndex >= activePlaylist.length) return;
+    const tracksWithAudio = activePlaylist.filter(track => track.mp3_url);
 
-    const currentTrack = activePlaylist[playerTrackIndex];
+    const playerTrackIndex = gaplessPlayerRef.current.getIndex();
+    if (playerTrackIndex < 0 || playerTrackIndex >= tracksWithAudio.length) return;
+
+    const currentTrack = tracksWithAudio[playerTrackIndex];
     const endSecond = parseInt(currentTrack.ends_at_second) || 0;
     if (!endSecond) return;
 
@@ -131,6 +132,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
   const skipToPreviousTrack = () => {
     if (!gaplessPlayerRef.current || !activePlaylist) return;
 
+    const tracksWithAudio = activePlaylist.filter(track => track.mp3_url);
     const currentPosition = getPlayerPosition();
     const { startTime } = getCurrentTrackExcerptTimes();
 
@@ -142,7 +144,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       const previousIndex = currentIndex - 1;
       if (previousIndex >= 0) {
         gaplessPlayerRef.current.gotoTrack(previousIndex);
-        const previousTrack = activePlaylist[previousIndex];
+        const previousTrack = tracksWithAudio[previousIndex];
         if (previousTrack) {
           setActiveTrack(previousTrack);
           setCurrentTrackIndex(previousIndex);
@@ -171,7 +173,8 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
 
   const canSkipToNext = () => {
     if (!activePlaylist || !gaplessPlayerRef.current) return false;
-    return currentTrackIndex < activePlaylist.length - 1;
+    const tracksWithAudio = activePlaylist.filter(track => track.mp3_url);
+    return currentTrackIndex < tracksWithAudio.length - 1;
   };
 
   const canScrubForward = () => {
@@ -213,9 +216,12 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
         gaplessPlayerRef.current = null;
       }
 
-      const trackUrls = activePlaylist.map(track => track.mp3_url);
-      const activeIndex = activePlaylist.findIndex(track => track.id === activeTrack?.id);
-      const validActiveIndex = activeIndex >= 0 && activeIndex < activePlaylist.length ? activeIndex : 0;
+      const tracksWithAudio = activePlaylist.filter(track => track.mp3_url);
+      if (tracksWithAudio.length === 0) return;
+
+      const trackUrls = tracksWithAudio.map(track => track.mp3_url);
+      const activeIndex = tracksWithAudio.findIndex(track => track.id === activeTrack?.id);
+      const validActiveIndex = activeIndex >= 0 && activeIndex < tracksWithAudio.length ? activeIndex : 0;
 
       const iosDevice = isIOS();
       gaplessPlayerRef.current = new Gapless5({
@@ -295,12 +301,12 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
 
       gaplessPlayerRef.current.onnext = () => {
         const newIndex = gaplessPlayerRef.current.getIndex();
-        if (newIndex >= 0 && newIndex < activePlaylist.length) {
+        if (newIndex >= 0 && newIndex < tracksWithAudio.length) {
           setCurrentTrackIndex(newIndex);
-          setActiveTrack(activePlaylist[newIndex]);
+          setActiveTrack(tracksWithAudio[newIndex]);
 
           // Set excerpt start time for the new track
-          const track = activePlaylist[newIndex];
+          const track = tracksWithAudio[newIndex];
           const startSecond = parseInt(track.starts_at_second) || 0;
           if (startSecond > 0) {
             setTimeout(() => {
@@ -314,12 +320,12 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
 
       gaplessPlayerRef.current.onprev = () => {
         const newIndex = gaplessPlayerRef.current.getIndex();
-        if (newIndex >= 0 && newIndex < activePlaylist.length) {
+        if (newIndex >= 0 && newIndex < tracksWithAudio.length) {
           setCurrentTrackIndex(newIndex);
-          setActiveTrack(activePlaylist[newIndex]);
+          setActiveTrack(tracksWithAudio[newIndex]);
 
           // Set excerpt start time for the new track
-          const track = activePlaylist[newIndex];
+          const track = tracksWithAudio[newIndex];
           const startSecond = parseInt(track.starts_at_second) || 0;
           if (startSecond > 0) {
             setTimeout(() => {

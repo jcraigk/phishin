@@ -2,7 +2,8 @@ import React, { useRef, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../images/logo-full.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendar, faMicrophone, faMapMarkerAlt, faAward, faCalendarDay, faSearch, faAngleDown, faRecordVinyl, faGuitar, faChevronDown, faCircleXmark, faRightToBracket, faGear, faClipboardList, faListCheck, faListOl, faDiceFive, faLandmark, faRss } from "@fortawesome/free-solid-svg-icons";
+import { faQuestionCircle, faBook, faTags, faAddressBook, faUserShield, faFileContract, faCalendar, faMicrophone, faMapMarkerAlt, faAward, faCalendarDay, faSearch, faAngleDown, faRecordVinyl, faGuitar, faChevronDown, faCircleXmark, faRightToBracket, faGear, faClipboardList, faListCheck, faListOl, faDiceFive, faLandmark, faRss, faSquareCheck, faSquare } from "@fortawesome/free-solid-svg-icons";
+import { useAudioFilter } from "../contexts/AudioFilterContext";
 
 const Navbar = ({ user, handleLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,6 +15,7 @@ const Navbar = ({ user, handleLogout }) => {
   const infoDropdownRef = useRef(null);
   const contentDropdownRef = useRef(null);
   const userDropdownRef = useRef(null);
+  const { hideMissingAudio, toggleHideMissingAudio } = useAudioFilter();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -87,6 +89,19 @@ const Navbar = ({ user, handleLogout }) => {
     ...topLinks.map(link => ({ ...link, type: 'link' })),
   ];
 
+  const AudioFilterToggle = () => (
+    <div
+      className={`dropdown-item audio-filter-toggle ${hideMissingAudio ? 'active' : ''}`}
+      onClick={toggleHideMissingAudio}
+    >
+      <FontAwesomeIcon
+        icon={hideMissingAudio ? faSquareCheck : faSquare}
+        className="icon"
+      />
+      Hide missing audio
+    </div>
+  );
+
   return (
     <>
       <div id="navbar-background">
@@ -152,6 +167,8 @@ const Navbar = ({ user, handleLogout }) => {
                 </div>
                 <div className="dropdown-menu" role="menu">
                   <div className="dropdown-content">
+                    <AudioFilterToggle />
+                    <hr className="dropdown-divider" />
                     {combinedLinks.map((item, index) => (
                       item.type === 'link' ? (
                         <Link
@@ -172,14 +189,10 @@ const Navbar = ({ user, handleLogout }) => {
                       className="dropdown-item"
                       onClick={async () => {
                         closeMenus();
-                        try {
-                          const response = await fetch('/api/v2/shows/random');
-                          if (!response.ok) throw response;
-                          const show = await response.json();
-                          navigate(`/${show.date}`);
-                        } catch (error) {
-                          console.error('Error fetching random show:', error);
-                        }
+                        const response = await fetch('/api/v2/shows/random');
+                        if (!response.ok) throw response;
+                        const show = await response.json();
+                        navigate(`/${show.date}`);
                       }}
                     >
                       <FontAwesomeIcon icon={faDiceFive} className="icon" />
