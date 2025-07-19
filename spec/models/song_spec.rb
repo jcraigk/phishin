@@ -25,7 +25,7 @@ RSpec.describe Song do
 
     it { is_expected.to be_a(PgSearch::Model) }
 
-    it 'matches `Woflman`' do
+    it 'matches `Wolfman`' do
       expect(described_class.kinda_matching('Wolfman')).to eq([ song1 ])
     end
 
