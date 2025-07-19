@@ -75,7 +75,7 @@ class GapService < ApplicationService
                                           .where("shows.date < ?", show.date)
                                           .joins("JOIN tracks ON tracks.id = songs_tracks.track_id")
                                           .where.not(tracks: { set: "S" })
-                                          .where.not(tracks: { exclude_from_performance_gaps: true })
+                                          .where.not(tracks: { exclude_from_stats: true })
                                           .where("shows.performance_gap_value > 0")
 
           previous_song_tracks.each do |previous_song_track|
@@ -126,7 +126,7 @@ class GapService < ApplicationService
     base_query = Track.joins(:show, :songs)
                       .where(songs: { id: song.id })
                       .where("tracks.set <> ?", "S")
-                      .where.not(tracks: { exclude_from_performance_gaps: true })
+                      .where.not(tracks: { exclude_from_stats: true })
                       .where("shows.performance_gap_value > 0")
 
     base_query = base_query.merge(Show.with_audio) if audio_required
@@ -162,7 +162,7 @@ class GapService < ApplicationService
                       .joins(:songs)
                       .where(songs: { id: song.id })
                       .where("tracks.set <> ?", "S")
-                      .where.not(tracks: { exclude_from_performance_gaps: true })
+                      .where.not(tracks: { exclude_from_stats: true })
                       .where("tracks.position #{position_operator} ?", track.position)
 
     if current_is_preshow
@@ -188,7 +188,7 @@ class GapService < ApplicationService
                       .joins(:songs)
                       .where(songs: { id: song.id })
                       .where("tracks.set <> ?", "S")
-                      .where.not(tracks: { exclude_from_performance_gaps: true })
+                      .where.not(tracks: { exclude_from_stats: true })
                       .where("tracks.position #{position_operator} ?", track.position)
 
     if current_is_preshow
@@ -249,7 +249,7 @@ class GapService < ApplicationService
   end
 
   def should_exclude_track?(track)
-    track.exclude_from_performance_gaps? || single_song_with_excluded_title?(track)
+    track.exclude_from_stats? || single_song_with_excluded_title?(track)
   end
 
   def single_song_with_excluded_title?(track)

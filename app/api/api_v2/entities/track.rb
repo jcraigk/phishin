@@ -49,10 +49,10 @@ class ApiV2::Entities::Track < ApiV2::Entities::Base
     }
 
   expose \
-    :exclude_from_performance_gaps,
+    :exclude_from_stats,
     documentation: {
       type: "Boolean",
-      desc: "Whether this track should be excluded from performance gap calculations"
+      desc: "Whether this track should be excluded from performance gap and other stats calculations"
     }
 
   expose \

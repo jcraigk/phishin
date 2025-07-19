@@ -51,9 +51,9 @@ songs: [ songs[0], songs[1] ])
         track_ids = json[:tracks].map { |t| t[:id] }
         expect(track_ids).to eq([ tracks[0].id, tracks[1].id ])
 
-        # Verify exclude_from_performance_gaps field is included
-        expect(json[:tracks][0][:exclude_from_performance_gaps]).to be(false)
-        expect(json[:tracks][1][:exclude_from_performance_gaps]).to be(false)
+        # Verify exclude_from_stats field is included
+        expect(json[:tracks][0][:exclude_from_stats]).to be(false)
+        expect(json[:tracks][1][:exclude_from_stats]).to be(false)
       end
     end
 
@@ -212,19 +212,19 @@ songs: [ songs[0], songs[1] ])
       expect(json[:liked_by_user]).to be(false) # Track 2 is not liked by the user
     end
 
-    it "returns exclude_from_performance_gaps field for tracks" do
-      track_with_exclusion = create(:track, title: "Track with exclusion", position: 5, duration: 420, likes_count: 8, show: show2, songs: [ songs[2] ], exclude_from_performance_gaps: true)
+    it "returns exclude_from_stats field for tracks" do
+      track_with_exclusion = create(:track, title: "Track with exclusion", position: 5, duration: 420, likes_count: 8, show: show2, songs: [ songs[2] ], exclude_from_stats: true)
       track_without_exclusion = tracks.first # Track 1 has default false value
 
       get_api_authed(user, "/tracks/#{track_with_exclusion.id}")
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body, symbolize_names: true)
-      expect(json[:exclude_from_performance_gaps]).to be(true)
+      expect(json[:exclude_from_stats]).to be(true)
 
       get_api_authed(user, "/tracks/#{track_without_exclusion.id}")
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body, symbolize_names: true)
-      expect(json[:exclude_from_performance_gaps]).to be(false)
+      expect(json[:exclude_from_stats]).to be(false)
     end
 
     it "returns a 404 error if the track does not exist" do

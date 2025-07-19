@@ -5,7 +5,7 @@ FactoryBot.define do
     set { "1" }
     sequence(:position, 1)
     duration { 150_000 } # 2m 30s
-    exclude_from_performance_gaps { false }
+    exclude_from_stats { false }
     audio_status { 'complete' }
 
     show

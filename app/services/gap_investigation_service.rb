@@ -266,7 +266,7 @@ class GapInvestigationService < ApplicationService
     previous_tracks = Track.joins(:show, :songs)
                            .where(songs: { id: @song.id })
                            .where("tracks.set <> ?", "S")
-                           .where.not(tracks: { exclude_from_performance_gaps: true })
+                           .where.not(tracks: { exclude_from_stats: true })
                            .where("shows.date < ?", @track.show.date)
                            .where("shows.performance_gap_value > 0")
                            .order("shows.date DESC, tracks.position DESC")
@@ -276,7 +276,7 @@ class GapInvestigationService < ApplicationService
                                         .joins(:songs)
                                         .where(songs: { id: @song.id })
                                         .where("tracks.set <> ?", "S")
-                                        .where.not(tracks: { exclude_from_performance_gaps: true })
+                                        .where.not(tracks: { exclude_from_stats: true })
                                         .where("tracks.position < ?", @track.position)
                                         .order("tracks.position DESC")
 

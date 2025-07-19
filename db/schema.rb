@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_19_062231) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_19_062931) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -262,14 +262,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_19_062231) do
     t.string "slug", limit: 255, null: false
     t.integer "tags_count", default: 0
     t.integer "jam_starts_at_second"
-    t.boolean "exclude_from_performance_gaps", default: false
+    t.boolean "exclude_from_stats", default: false
     t.string "audio_status", default: "complete", null: false
     t.index ["audio_status"], name: "index_tracks_on_audio_status"
     t.index ["jam_starts_at_second"], name: "index_tracks_on_jam_starts_at_second"
     t.index ["likes_count"], name: "index_tracks_on_likes_count"
-    t.index ["set", "exclude_from_performance_gaps", "show_id", "position"], name: "index_tracks_on_set_exclude_show_position"
+    t.index ["set", "exclude_from_stats", "show_id", "position"], name: "index_tracks_on_set_exclude_show_position"
     t.index ["show_id", "position"], name: "index_tracks_on_show_id_and_position", unique: true
-    t.index ["show_id", "set", "exclude_from_performance_gaps", "position"], name: "index_tracks_on_show_set_exclude_position"
+    t.index ["show_id", "set", "exclude_from_stats", "position"], name: "index_tracks_on_show_set_exclude_position"
     t.index ["show_id", "slug"], name: "index_tracks_on_show_id_and_slug", unique: true
     t.index ["slug"], name: "index_tracks_on_slug"
   end

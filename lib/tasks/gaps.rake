@@ -474,7 +474,7 @@ namespace :gaps do
       puts "   1. Run gap rebuild: rake gaps:rebuild"
       puts "   2. Recalculate specific shows: rake gaps:recalculate[YYYY-MM-DD]"
       puts "   3. Check if shows are properly marked with performance_gap_value"
-      puts "   4. Verify track exclusions (exclude_from_performance_gaps, Banter tracks)"
+      puts "   4. Verify track exclusions (exclude_from_stats, Banter tracks)"
     end
 
     puts "\n📝 NOTE: This task assumes PhishNet API includes gap data in setlist responses."

@@ -84,7 +84,7 @@ RSpec.describe GapService do
     end
 
     context "with excluded tracks" do
-      let!(:excluded_track) { create(:track, show:, position: 1, set: "1", songs: [ song1 ], exclude_from_performance_gaps: true) }
+      let!(:excluded_track) { create(:track, show:, position: 1, set: "1", songs: [ song1 ], exclude_from_stats: true) }
       let!(:regular_track) { create(:track, show:, position: 2, set: "1", songs: [ song2 ]) }
 
       it "skips tracks marked for exclusion" do
@@ -328,7 +328,7 @@ RSpec.describe GapService do
       end
 
       context "with track marked for exclusion" do
-        let(:track) { create(:track, show:, position: 1, set: "1", songs: [ song1 ], exclude_from_performance_gaps: true) }
+        let(:track) { create(:track, show:, position: 1, set: "1", songs: [ song1 ], exclude_from_stats: true) }
 
         it { is_expected.to be true }
       end
