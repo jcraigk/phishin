@@ -1,6 +1,6 @@
 import { getAudioStatusFilter } from "./helpers/utils";
 
-const buildVenuesUrl = (page, sortOption, firstChar, perPage, audioStatusFilter) => {
+const buildFetchUrl = (page, sortOption, firstChar, perPage, audioStatusFilter) => {
   return `/api/v2/venues?page=${page}&sort=${sortOption}&first_char=${encodeURIComponent(firstChar)}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
 };
 
@@ -12,7 +12,7 @@ export const venueIndexLoader = async ({ request }) => {
   const perPage = url.searchParams.get("per_page") || 10;
   const audioStatusFilter = getAudioStatusFilter();
   console.log(`[${new Date().toISOString()}] VenueIndex Loader: Loading with filter: ${audioStatusFilter}, page: ${page}, sort: ${sortOption}, firstChar: ${firstChar}, perPage: ${perPage}`);
-  const response = await fetch(buildVenuesUrl(page, sortOption, firstChar, perPage, audioStatusFilter));
+  const response = await fetch(buildFetchUrl(page, sortOption, firstChar, perPage, audioStatusFilter));
   if (!response.ok) throw response;
   const data = await response.json();
   console.log(`[${new Date().toISOString()}] VenueIndex Loader: Loaded ${data.venues?.length || 0} venues`);

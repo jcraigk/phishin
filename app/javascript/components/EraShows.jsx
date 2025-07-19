@@ -8,7 +8,7 @@ import { getAudioStatusFilter } from "./helpers/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList, faTh, faCircleChevronLeft, faCircleChevronRight, faSortAmountDown, faSortAmountUp } from "@fortawesome/free-solid-svg-icons";
 
-const buildShowsUrl = (year, audioStatusFilter) => {
+const buildFetchUrl = (year, audioStatusFilter) => {
   let url = `/api/v2/shows?per_page=1000&audio_status=${audioStatusFilter}`;
 
   if (year.includes("-")) {
@@ -24,7 +24,7 @@ export const eraShowsLoader = async ({ params }) => {
   const { year } = params;
 
   const audioStatusFilter = getAudioStatusFilter();
-  const url = buildShowsUrl(year, audioStatusFilter);
+  const url = buildFetchUrl(year, audioStatusFilter);
 
   const response = await authFetch(url);
   if (!response.ok) throw response;

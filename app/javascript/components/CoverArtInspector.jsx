@@ -1,6 +1,6 @@
 import { getAudioStatusFilter } from "./helpers/utils";
 
-const buildShowsUrl = (page, perPage, audioStatusFilter) => {
+const buildFetchUrl = (page, perPage, audioStatusFilter) => {
   return `/api/v2/shows?page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
 };
 
@@ -9,7 +9,7 @@ export const coverArtInspectorLoader = async ({ request }) => {
   const page = url.searchParams.get("page") || 1;
   const perPage = url.searchParams.get("per_page") || 50;
   const audioStatusFilter = getAudioStatusFilter();
-  const response = await fetch(buildShowsUrl(page, perPage, audioStatusFilter));
+  const response = await fetch(buildFetchUrl(page, perPage, audioStatusFilter));
   if (!response.ok) throw response;
   const data = await response.json();
   return {

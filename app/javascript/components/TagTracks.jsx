@@ -1,6 +1,6 @@
 import { authFetch, getAudioStatusFilter } from "./helpers/utils";
 
-const buildTagTracksUrl = (tagSlug, page, sortOption, perPage, audioStatusFilter) => {
+const buildFetchUrl = (tagSlug, page, sortOption, perPage, audioStatusFilter) => {
   return `/api/v2/tracks?tag_slug=${tagSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
 };
 
@@ -16,7 +16,7 @@ export const tagTracksLoader = async ({ params, request }) => {
   const tagData = await tagResponse.json();
   const tag = tagData.find(t => t.slug === tagSlug);
   if (!tag) throw new Response("Tag not found", { status: 404 });
-  const tracksResponse = await authFetch(buildTagTracksUrl(tagSlug, page, sortOption, perPage, audioStatusFilter));
+  const tracksResponse = await authFetch(buildFetchUrl(tagSlug, page, sortOption, perPage, audioStatusFilter));
   if (!tracksResponse.ok) throw tracksResponse;
   const tracksData = await tracksResponse.json();
   return {

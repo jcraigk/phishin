@@ -1,6 +1,6 @@
 import { getAudioStatusFilter } from "./helpers/utils";
 
-const buildSongsUrl = (page, sortOption, perPage, audioStatusFilter) => {
+const buildFetchUrl = (page, sortOption, perPage, audioStatusFilter) => {
   return `/api/v2/songs?page=${page}&sort=${sortOption}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
 };
 
@@ -10,7 +10,7 @@ export const songIndexLoader = async ({ request }) => {
   const sortOption = url.searchParams.get("sort") || "title:asc";
   const perPage = url.searchParams.get("per_page") || 10;
   const audioStatusFilter = getAudioStatusFilter();
-  const response = await fetch(buildSongsUrl(page, sortOption, perPage, audioStatusFilter));
+  const response = await fetch(buildFetchUrl(page, sortOption, perPage, audioStatusFilter));
   if (!response.ok) throw response;
   const data = await response.json();
   return {

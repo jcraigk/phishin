@@ -1,6 +1,6 @@
 import { authFetch, getAudioStatusFilter } from "./helpers/utils";
 
-const buildSongTracksUrl = (songSlug, page, sortOption, perPage, audioStatusFilter) => {
+const buildFetchUrl = (songSlug, page, sortOption, perPage, audioStatusFilter) => {
   return `/api/v2/tracks?song_slug=${songSlug}&sort=${sortOption}&page=${page}&per_page=${perPage}&audio_status=${audioStatusFilter}`;
 };
 
@@ -21,7 +21,7 @@ export const songTracksLoader = async ({ params, request }) => {
   const originalInfo = songData.original
     ? "Original composition"
     : songData.artist;
-  const tracksResponse = await authFetch(buildSongTracksUrl(songSlug, page, sortOption, perPage, audioStatusFilter));
+  const tracksResponse = await authFetch(buildFetchUrl(songSlug, page, sortOption, perPage, audioStatusFilter));
   if (!tracksResponse.ok) throw tracksResponse;
   const tracksData = await tracksResponse.json();
   return {

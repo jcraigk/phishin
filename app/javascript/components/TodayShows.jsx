@@ -1,6 +1,6 @@
 import { authFetch } from "./helpers/utils";
 
-const buildTodayShowsUrl = (month, day, sortBy) => {
+const buildFetchUrl = (month, day, sortBy) => {
   const todayDate = `${new Date().getFullYear()}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
   const url = `/api/v2/shows/day_of_year/${todayDate}?sort=${sortBy}&audio_status=any`;
   return url;
@@ -12,7 +12,7 @@ export const todayShowsLoader = async ({ request }) => {
   const day = url.searchParams.get("day") || new Date().getDate();
   const sortBy = url.searchParams.get("sort") || "date:desc";
 
-  const response = await authFetch(buildTodayShowsUrl(month, day, sortBy));
+  const response = await authFetch(buildFetchUrl(month, day, sortBy));
   if (!response.ok) throw response;
   const data = await response.json();
 

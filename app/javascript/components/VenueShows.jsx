@@ -1,6 +1,6 @@
 import { authFetch, formatNumber, getAudioStatusFilter } from "./helpers/utils";
 
-const buildVenueShowsUrl = (venueSlug, sortOption, audioStatusFilter) => {
+const buildFetchUrl = (venueSlug, sortOption, audioStatusFilter) => {
   return `/api/v2/shows?venue_slug=${venueSlug}&sort=${sortOption}&per_page=1000&audio_status=${audioStatusFilter}`;
 };
 
@@ -15,7 +15,7 @@ export const venueShowsLoader = async ({ params, request }) => {
   }
   if (!venueResponse.ok) throw venueResponse;
   const venueData = await venueResponse.json();
-  const showsResponse = await authFetch(buildVenueShowsUrl(venueSlug, sortOption, audioStatusFilter));
+  const showsResponse = await authFetch(buildFetchUrl(venueSlug, sortOption, audioStatusFilter));
   if (!showsResponse.ok) throw showsResponse;
   const showsData = await showsResponse.json();
   return {
