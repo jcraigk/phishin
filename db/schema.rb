@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_16_051621) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_19_062231) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -156,7 +156,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_16_051621) do
     t.index ["audio_status", "venue_id"], name: "index_shows_on_audio_venue"
     t.index ["audio_status"], name: "index_shows_on_audio_status"
     t.index ["date", "performance_gap_value", "audio_status"], name: "index_shows_on_date_performance_gap_audio"
-    t.index ["date", "performance_gap_value"], name: "index_shows_with_audio_on_date_performance_gap", where: "((audio_status)::text = ANY ((ARRAY['complete'::character varying, 'partial'::character varying])::text[]))"
+    t.index ["date", "performance_gap_value"], name: "index_shows_with_audio_on_date_performance_gap", where: "((audio_status)::text = ANY (ARRAY[('complete'::character varying)::text, ('partial'::character varying)::text]))"
     t.index ["date"], name: "index_shows_on_date", unique: true
     t.index ["duration"], name: "index_shows_on_duration"
     t.index ["likes_count"], name: "index_shows_on_likes_count"
