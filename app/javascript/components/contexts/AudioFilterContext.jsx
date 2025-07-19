@@ -21,9 +21,8 @@ export const AudioFilterProvider = ({ children }) => {
     localStorage.setItem('hideMissingAudio', JSON.stringify(newValue));
   };
 
-  // Get the audio_status parameter for API calls
   const getAudioStatusParam = () => {
-    return getAudioStatusFilter();
+    return hideMissingAudio ? 'complete_or_partial' : 'any';
   };
 
   const value = {

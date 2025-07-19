@@ -28,7 +28,7 @@ import Songs from "./Songs";
 import Pagination from "./controls/Pagination";
 import PhoneTitle from "./PhoneTitle";
 import { paginationHelper } from "./helpers/pagination";
-import { useAudioFilteredData } from "./hooks/useAudioFilteredData";
+import { useServerFilteredData } from "./hooks/useServerFilteredData";
 import Loader from "./controls/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -54,7 +54,7 @@ const SongIndex = () => {
     return data;
   }, [page, sortOption, perPage]);
 
-  const { data: songsData, isLoading } = useAudioFilteredData(initialData, fetchSongs, [page, sortOption, perPage]);
+  const { data: songsData, isRefetching } = useServerFilteredData(initialData, fetchSongs, [page, sortOption, perPage]);
 
   const songs = songsData?.songs || initialData.songs;
   const totalPages = songsData?.total_pages || initialData.totalPages;
@@ -118,7 +118,7 @@ const SongIndex = () => {
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <PhoneTitle title="Songs" />
-        {isLoading ? (
+        {isRefetching ? (
           <Loader />
         ) : (
           <>

@@ -6,7 +6,7 @@ import LayoutWrapper from "./layout/LayoutWrapper";
 import Loader from "./controls/Loader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { useAudioFilteredData } from "./hooks/useAudioFilteredData";
+import { useServerFilteredData } from "./hooks/useServerFilteredData";
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -25,7 +25,7 @@ const Search = () => {
     return data;
   }, [submittedTerm, scope]);
 
-  const { data: results, isLoading } = useAudioFilteredData(null, performSearchWithFilter, [submittedTerm, scope]);
+  const { data: results, isRefetching } = useServerFilteredData(null, performSearchWithFilter, [submittedTerm, scope]);
 
   useEffect(() => {
     setTerm(searchParams.get("term") || "");
@@ -96,7 +96,7 @@ const Search = () => {
 
   return (
     <LayoutWrapper sidebarContent={sidebarContent}>
-      {isLoading || isSearching ? (
+      {isRefetching || isSearching ? (
         <Loader />
       ) : (
         results && <SearchResults results={results} term={submittedTerm} />

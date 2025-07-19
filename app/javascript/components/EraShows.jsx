@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";
 import Loader from "./controls/Loader";
-import { useAudioFilteredData } from "./hooks/useAudioFilteredData";
+import { useServerFilteredData } from "./hooks/useServerFilteredData";
 import { getAudioStatusFilter } from "./helpers/utils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList, faTh, faCircleChevronLeft, faCircleChevronRight, faSortAmountDown, faSortAmountUp } from "@fortawesome/free-solid-svg-icons";
@@ -31,11 +31,11 @@ export const eraShowsLoader = async ({ params }) => {
   const response = await authFetch(url);
   if (!response.ok) throw response;
   const data = await response.json();
-  return { shows: data.shows, year };
+  return { shows: data.shows, year, initialFilter: audioStatusFilter };
 };
 
 const EraShows = () => {
-  const { shows: initialShows, year } = useLoaderData();
+  const { shows: initialShows, year, initialFilter } = useLoaderData();
   const { viewMode, setViewMode, sortOption, setSortOption } = useOutletContext();
   const [yearsData, setYearsData] = useState(null);
 
@@ -46,7 +46,7 @@ const EraShows = () => {
     return data.shows;
   }, [year]);
 
-  const { data: shows, isLoading } = useAudioFilteredData(initialShows, fetchShows, [year]);
+  const { data: shows, isRefetching } = useServerFilteredData(initialShows, fetchShows, [year]);
 
   const sortedShows = [...shows].sort((a, b) => {
     if (sortOption === "asc") {
@@ -155,7 +155,7 @@ const EraShows = () => {
         <title>{year} - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
-        {isLoading ? (
+        {isRefetching ? (
           <Loader />
         ) : (
           <>
