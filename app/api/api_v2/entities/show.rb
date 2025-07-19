@@ -50,10 +50,8 @@ class ApiV2::Entities::Show < ApiV2::Entities::Base
     :duration,
     documentation: {
       type: "Integer",
-      desc: "Duration of the show in milliseconds"
+      desc: "Duration of the show in milliseconds. Excludes soundcheck (S) and pre-show (P) tracks."
     }
-
-
 
   expose \
     :admin_notes,
