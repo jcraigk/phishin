@@ -49,6 +49,7 @@ class ShowImporter::Orchestrator
     DebutTagService.call(show)
     save_song_performance_data(show)
     create_announcement
+    clear_rails_cache
   end
 
   def get_track(position)
@@ -226,5 +227,9 @@ class ShowImporter::Orchestrator
     end
 
     "1"
+  end
+
+  def clear_rails_cache
+    Rails.cache.clear
   end
 end

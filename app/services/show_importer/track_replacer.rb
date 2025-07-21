@@ -49,6 +49,7 @@ class ShowImporter::TrackReplacer
     pbar.finish
 
     show.save_duration
+    clear_rails_cache
   end
 
   def ensure_tracks_present
@@ -91,5 +92,9 @@ class ShowImporter::TrackReplacer
 
   def filenames
     @filenames ||= Dir.glob("#{base_path}/*.mp3")
+  end
+
+  def clear_rails_cache
+    Rails.cache.clear
   end
 end
