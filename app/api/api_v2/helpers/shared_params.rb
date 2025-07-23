@@ -14,26 +14,23 @@ module ApiV2::Helpers::SharedParams
             type: Integer,
             desc: "Page number for pagination",
             default: 1,
-            values: 1..100_000
+            values: (1..100_000).to_a
     optional :per_page,
             type: Integer,
             desc: "Number of items per page for pagination",
             default: 10,
-            values: 1..1_000
+            values: (1..1_000).to_a
   end
 
   params :proximity do
     optional :lat,
       type: Float,
-      desc: "Latitude for proximity search",
-      values: -90.0..90.0
+      desc: "Latitude for proximity search"
     optional :lng,
       type: Float,
-      desc: "Longitude for proximity search",
-      values: -180.0..180.0
+      desc: "Longitude for proximity search"
     optional :distance,
       type: Float,
-      desc: "Distance (in miles) for proximity search",
-      values: 0.0..12450.0
+      desc: "Distance (in miles) for proximity search"
   end
 end
