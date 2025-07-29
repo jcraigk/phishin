@@ -1,6 +1,10 @@
 require 'simplecov'
 SimpleCov.start
 
+# Suppress constant redefinition warnings from Bundler/RubyGems
+Warning[:deprecated] = false if Warning.respond_to?(:[]=)
+$VERBOSE = nil
+
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
