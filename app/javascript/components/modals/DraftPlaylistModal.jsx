@@ -90,8 +90,8 @@ const DraftPlaylistModal = ({ isOpen, onRequestClose, draftPlaylist, draftPlayli
       const body = JSON.stringify({
         ...draftPlaylistMeta,
         track_ids: draftPlaylist.map((track) => track.id),
-        starts_at_seconds: draftPlaylist.map((track) => track.starts_at_second ?? 0),
-        ends_at_seconds: draftPlaylist.map((track) => track.ends_at_second ?? 0),
+        starts_at_second: draftPlaylist.map((track) => track.starts_at_second ?? 0),
+        ends_at_second: draftPlaylist.map((track) => track.ends_at_second ?? 0),
       });
       const response = await authFetch(url, {
         method,

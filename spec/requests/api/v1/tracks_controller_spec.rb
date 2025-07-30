@@ -11,6 +11,7 @@ describe Api::V1::TracksController do
 
     before do
       tracks.each { |t| t.tags = create_list(:tag, 3) }
+      tracks.each(&:reload)
     end
 
     context 'without params' do

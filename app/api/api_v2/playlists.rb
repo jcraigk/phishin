@@ -20,12 +20,12 @@ class ApiV2::Playlists < ApiV2::Base
       requires :track_ids,
                type: Array[Integer],
                desc: "Array of track IDs that make up the playlist"
-      requires :starts_at_seconds,
+      requires :starts_at_second,
                type: Array[Integer],
                desc: \
                 "Array of starting positions of " \
                 "associated track selections in track_ids array"
-      requires :ends_at_seconds,
+      requires :ends_at_second,
                type: Array[Integer],
                desc:
                 "Array of ending positions of " \
@@ -197,8 +197,8 @@ class ApiV2::Playlists < ApiV2::Base
     def track_attrs_from_params
       params[:track_ids].compact.map.with_index do |track_id, idx|
         starts_at, ends_at = sanitize_track_times(
-          starts_at: params[:starts_at_seconds][idx],
-          ends_at: params[:ends_at_seconds][idx],
+          starts_at: params[:starts_at_second][idx],
+          ends_at: params[:ends_at_second][idx],
           track_duration: Track.find(track_id).duration / 1000
         )
 

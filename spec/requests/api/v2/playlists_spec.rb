@@ -121,8 +121,8 @@ RSpec.describe "API v2 Playlists" do
             description: "Road trip playlist",
             published: true,
             track_ids: [ track1.id, track2.id ],
-            starts_at_seconds: [ 0, 15 ],
-            ends_at_seconds: [ 120, 180 ]
+            starts_at_second: [ 0, 15 ],
+            ends_at_second: [ 120, 180 ]
           }
         )
 
@@ -145,8 +145,8 @@ RSpec.describe "API v2 Playlists" do
             description: "Road trip playlist",
             published: true,
             track_ids: [ track1.id, track2.id ],
-            starts_at_seconds: [ 0, 15 ],
-            ends_at_seconds: [ 120, 180 ]
+            starts_at_second: [ 0, 15 ],
+            ends_at_second: [ 120, 180 ]
           }
         )
 
@@ -170,8 +170,8 @@ RSpec.describe "API v2 Playlists" do
             slug: "winter-jams-2",
             published: false,
             track_ids: [ track2.id, track3.id ],
-            starts_at_seconds: [ 0, 15 ],
-            ends_at_seconds: [ 120, 180 ]
+            starts_at_second: [ 0, 15 ],
+            ends_at_second: [ 120, 180 ]
           }
         )
 
@@ -197,8 +197,8 @@ RSpec.describe "API v2 Playlists" do
             slug: "wj",
             published: true,
             track_ids: [],
-            starts_at_seconds: [],
-            ends_at_seconds: []
+            starts_at_second: [],
+            ends_at_second: []
           }
         )
         expect(response).to have_http_status(:unprocessable_entity)

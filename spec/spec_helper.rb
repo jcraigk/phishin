@@ -2,8 +2,8 @@ require 'simplecov'
 SimpleCov.start
 
 # Suppress constant redefinition warnings from Bundler/RubyGems
-Warning[:deprecated] = false if Warning.respond_to?(:[]=)
 $VERBOSE = nil
+Warning[:deprecated] = false if Warning.respond_to?(:[]=)
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
