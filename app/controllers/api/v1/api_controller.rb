@@ -74,7 +74,11 @@ class Api::V1::ApiController < ActionController::Base # rubocop:disable Rails/Ap
   end
 
   def sort_attr(relation)
-    params[:sort_attr].in?(relation.first.class.new.attributes.keys) ? params[:sort_attr] : "id"
+    if params[:sort_attr].in?(relation.first.class.new.attributes.keys)
+      params[:sort_attr]
+    else
+      "#{relation.table_name}.id"
+    end
   end
 
   def sort_dir
