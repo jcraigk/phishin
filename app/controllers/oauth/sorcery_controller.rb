@@ -1,12 +1,13 @@
 require "typhoeus"
 
 class Oauth::SorceryController < ApplicationController
+  before_action :ensure_allowed_provider, only: %i[login callback]
+
   def login
-    login_at(params[:provider])
+    login_at(provider)
   end
 
   def callback
-    provider = params[:provider]
     auth = build_auth_hash(provider)
     user = User.where(email: auth[:email]).first_or_initialize
     user.save! unless user.persisted?
@@ -24,6 +25,15 @@ class Oauth::SorceryController < ApplicationController
   end
 
   private
+
+  def provider
+    @provider ||= params[:provider].to_s
+  end
+
+  def ensure_allowed_provider
+    return if Array(Rails.application.config.sorcery.external_providers).map(&:to_s).include?(provider)
+    head :not_found
+  end
 
   def store_user_data_in_session(user)
     session[:jwt] = jwt_for(user)
