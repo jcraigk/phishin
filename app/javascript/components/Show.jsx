@@ -63,7 +63,7 @@ const Show = ({ trackSlug }) => {
       }
 
       if (foundTrack.audio_status !== 'missing') {
-        playTrack(filteredTracks, foundTrack, true);
+        playTrack(filteredTracks, foundTrack, false);
       }
     }
   }, [trackSlug, tracks, filteredTracks]);

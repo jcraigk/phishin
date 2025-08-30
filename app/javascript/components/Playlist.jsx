@@ -38,7 +38,7 @@ const Playlist = () => {
   useEffect(() => {
     if (!customPlaylist || customPlaylist.slug !== playlist.slug) {
       setCustomPlaylist(playlist);
-      playTrack(tracks, tracks[0], true);
+      playTrack(tracks, tracks[0], false);
     }
   }, [playlist, tracks, customPlaylist, setCustomPlaylist, playTrack]);
 
