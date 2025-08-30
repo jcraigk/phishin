@@ -245,9 +245,12 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       };
 
       gaplessPlayerRef.current.onloadstart = () => {
-        setIsLoading(true);
-
-        if (isIOS() && (shouldAutoplay || shouldContinuePlayingRef.current)) {
+        // Only set loading state if we're going to autoplay
+        if (!isIOS()) {
+          setIsLoading(true);
+        } else if (shouldAutoplay) {
+          // iOS needs special handling for autoplay
+          setIsLoading(true);
           setTimeout(() => {
             if (gaplessPlayerRef.current) {
               setIsLoading(false);
@@ -256,6 +259,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
             }
           }, 100);
         }
+        // Don't set loading state on iOS when not autoplaying
       };
 
       gaplessPlayerRef.current.onload = () => {
@@ -273,10 +277,12 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
             setPendingStartTime(null);
           }
 
-          if ((shouldAutoplay || shouldContinuePlayingRef.current) && !isIOS()) {
+          // For non-iOS, handle autoplay and continuing playback
+          if (!isIOS() && (shouldAutoplay || shouldContinuePlayingRef.current)) {
             gaplessPlayerRef.current.play();
             if (setShouldAutoplay) setShouldAutoplay(false);
           }
+          // iOS autoplay is handled in onloadstart
         }
       };
 
