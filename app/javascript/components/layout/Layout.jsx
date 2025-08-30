@@ -99,10 +99,10 @@ const LayoutContent = ({ props, navigate }) => {
     setDraftPlaylistMeta(initialDraftPlaylistMeta);
   };
 
-  const playTrack = (playlist, track, fromUrlParam = false) => {
+  const playTrack = (playlist, track, shouldAutoplay = true) => {
     setActivePlaylist(playlist);
     setActiveTrack(track);
-    setShouldAutoplay(!fromUrlParam);
+    setShouldAutoplay(shouldAutoplay);
   };
 
   const openAppModal = (content) => {
