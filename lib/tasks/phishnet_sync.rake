@@ -73,60 +73,63 @@ namespace :phishnet do
 
   desc "Sync all known Phish show dates from Phish.net (use LIMIT env var to limit new shows, DATE env var for single date)"
   task sync_shows: :environment do
-    # Reset tracking at the beginning
-    reset_skipped_shows
-    reset_additional_local_tracks
-
-    # Set specific shows to missing audio status before sync
-    shows_to_mark_missing = [ "1985-02-25", "1985-05-01" ]
-    shows_to_mark_missing.each do |date|
-      show = Show.find_by(date:)
-      if show
-        show.update!(audio_status: "missing")
-        puts "Set https://phish.in/#{date} to missing audio status"
-      else
-        puts "Show not found: #{date}"
-      end
-    end
-
-    # Set specific show to partial audio status before sync
-    show_2000_05_19 = Show.find_by(date: "2000-05-19")
-    if show_2000_05_19
-      show_2000_05_19.update!(audio_status: "partial")
-      puts "Set https://phish.in/2000-05-19 to partial audio status"
-    else
-      puts "Show not found: 2000-05-19"
-    end
-
-    # Set specific tracks to missing audio status before sync
-    tracks_to_mark_missing = [
-      "https://phish.in/2000-05-19/funky-bitch",
-      "https://phish.in/2000-05-19/my-soul"
-    ]
-
-    tracks_to_mark_missing.each do |url|
-      track = Track.by_url(url)
-      if track
-        track.update!(audio_status: "missing")
-        puts "Set #{url} to missing audio status"
-      else
-        puts "Track not found: #{url}"
-      end
-    end
-
-    # Set all tracks with CUT tag to partial audio status
-    cut_tag = Tag.find_by(name: "CUT")
-    cut_tracks = Track.joins(:tags).where(tags: { id: cut_tag.id })
-    cut_tracks.each do |track|
-      if track.audio_status != "partial"
-        track.update!(audio_status: "partial")
-        puts "Set #{track.url} to partial audio status (has CUT tag)"
-      end
-    end
-    puts "Processed #{cut_tracks.count} tracks with CUT tag"
-
     date_filter = ENV["DATE"]
     limit = ENV["LIMIT"]&.to_i
+
+    # Only run setup operations if not syncing a specific date
+    unless date_filter
+      # Reset tracking at the beginning
+      reset_skipped_shows
+      reset_additional_local_tracks
+
+      # Set specific shows to missing audio status before sync
+      shows_to_mark_missing = [ "1985-02-25", "1985-05-01" ]
+      shows_to_mark_missing.each do |date|
+        show = Show.find_by(date:)
+        if show
+          show.update!(audio_status: "missing")
+          puts "Set https://phish.in/#{date} to missing audio status"
+        else
+          puts "Show not found: #{date}"
+        end
+      end
+
+      # Set specific show to partial audio status before sync
+      show_2000_05_19 = Show.find_by(date: "2000-05-19")
+      if show_2000_05_19
+        show_2000_05_19.update!(audio_status: "partial")
+        puts "Set https://phish.in/2000-05-19 to partial audio status"
+      else
+        puts "Show not found: 2000-05-19"
+      end
+
+      # Set specific tracks to missing audio status before sync
+      tracks_to_mark_missing = [
+        "https://phish.in/2000-05-19/funky-bitch",
+        "https://phish.in/2000-05-19/my-soul"
+      ]
+
+      tracks_to_mark_missing.each do |url|
+        track = Track.by_url(url)
+        if track
+          track.update!(audio_status: "missing")
+          puts "Set #{url} to missing audio status"
+        else
+          puts "Track not found: #{url}"
+        end
+      end
+
+      # Set all tracks with CUT tag to partial audio status
+      cut_tag = Tag.find_by(name: "CUT")
+      cut_tracks = Track.joins(:tags).where(tags: { id: cut_tag.id })
+      cut_tracks.each do |track|
+        if track.audio_status != "partial"
+          track.update!(audio_status: "partial")
+          puts "Set #{track.url} to partial audio status (has CUT tag)"
+        end
+      end
+      puts "Processed #{cut_tracks.count} tracks with CUT tag"
+    end
 
     if date_filter
       puts "Starting Phish.net sync for specific date: #{date_filter}..."
@@ -760,7 +763,8 @@ namespace :phishnet do
     hardcoded_mappings = {
       "1997 Fall Tour (a.k.a. Phish Destroys America)" => "Fall Tour 1997",
       "2003 20th Anniversary Run" => "20th Anniversary Run",
-      "2022 Madison Square Garden Spring Run" => "MSG Spring Run 2022"
+      "2022 Madison Square Garden Spring Run" => "MSG Spring Run 2022",
+      "2025 Late Summer Tour" => "2025 Summer Tour"
     }
 
     if hardcoded_mappings.key?(tour_name)
