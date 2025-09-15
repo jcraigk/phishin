@@ -764,7 +764,7 @@ namespace :phishnet do
       "1997 Fall Tour (a.k.a. Phish Destroys America)" => "Fall Tour 1997",
       "2003 20th Anniversary Run" => "20th Anniversary Run",
       "2022 Madison Square Garden Spring Run" => "MSG Spring Run 2022",
-      "2025 Late Summer Tour" => "2025 Summer Tour"
+      "2025 Late Summer Tour" => "Summer Tour 2025"
     }
 
     if hardcoded_mappings.key?(tour_name)
