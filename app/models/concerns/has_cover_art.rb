@@ -8,7 +8,7 @@ module HasCoverArt
       placeholder_prefix = (respond_to?(:audio_status) && audio_status == "missing") ?
                           "missing-audio-cover-art" : "cover-art"
 
-      return %i[large medium small].index_with { |size| "/placeholders/#{placeholder_prefix}-#{size}.jpg" } unless cover_art.attached?
+      return %i[large medium small].index_with { |size| "#{App.base_url}/placeholders/#{placeholder_prefix}-#{size}.jpg" } unless cover_art.attached?
 
       blob_key = cover_art.blob.key
 
