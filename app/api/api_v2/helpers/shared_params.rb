@@ -12,14 +12,12 @@ module ApiV2::Helpers::SharedParams
   params :pagination do
     optional :page,
             type: Integer,
-            desc: "Page number for pagination",
-            default: 1,
-            values: (1..100_000).to_a
+            desc: "Page number for pagination (min: 1)",
+            default: 1
     optional :per_page,
             type: Integer,
-            desc: "Number of items per page for pagination",
-            default: 10,
-            values: (1..1_000).to_a
+            desc: "Number of items per page for pagination (min: 1, max: 1000)",
+            default: 10
   end
 
   params :proximity do
