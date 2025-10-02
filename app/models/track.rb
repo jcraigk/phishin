@@ -76,7 +76,7 @@ class Track < ApplicationRecord
   end
 
   def friendly_filename
-    "Phish #{show.date} #{title}.mp3"
+    "Phish #{show.date} #{format('%02d', position)} #{title}.mp3"
   end
 
   def generate_waveform_image(purge_cache: false)
