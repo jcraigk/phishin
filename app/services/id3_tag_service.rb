@@ -34,7 +34,7 @@ class Id3TagService < ApplicationService
   def reattach_modified_audio_file
     track.mp3_audio.attach \
       io: File.open(@temp_audio_file.path),
-      filename: "#{track.id}.mp3",
+      filename: track.friendly_filename,
       content_type: "audio/mpeg"
   end
 

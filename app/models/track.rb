@@ -75,6 +75,10 @@ class Track < ApplicationRecord
     }
   end
 
+  def friendly_filename
+    "Phish #{show.date} #{title}.mp3"
+  end
+
   def generate_waveform_image(purge_cache: false)
     return if missing_audio?
     WaveformImageService.call(self)

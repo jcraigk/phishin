@@ -42,7 +42,7 @@ class TrackInserter
     )
     track.slug = slug if slug.present?
     track.save!
-    track.mp3_audio.attach(io: File.open(file), filename: File.basename(file))
+    track.mp3_audio.attach(io: File.open(file), filename: track.friendly_filename)
     track.process_mp3_audio
   end
 

@@ -2,7 +2,7 @@ class DownloadsController < ApplicationController
   def download_track
     raise ActiveRecord::RecordNotFound if track.blank?
     return head(:not_found) unless track.mp3_audio.attached?
-    send_file_response(track.mp3_audio, "attachment", "Phish #{track.show.date} #{track.title}.mp3")
+    send_file_response(track.mp3_audio, "attachment", track.mp3_audio.blob.filename.to_s)
   end
 
   def download_blob

@@ -175,7 +175,7 @@ class ShowImporter::Orchestrator
     track.save!
     track.mp3_audio.attach \
       io: File.open("#{@fm.dir}/#{track.filename}"),
-      filename: track.filename,
+      filename: track.friendly_filename,
       content_type: "audio/mpeg"
     track.process_mp3_audio
   end

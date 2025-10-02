@@ -30,4 +30,27 @@ namespace :tracks do
 
     pbar.finish
   end
+
+  desc "Reset MP3 filenames on blobs to friendly download format"
+  task reset_mp3_filenames: :environment do
+    relation = Track.joins(:mp3_audio_attachment)
+                    .includes(:show, mp3_audio_attachment: :blob)
+
+    pbar = ProgressBar.create(
+      total: relation.count,
+      format: "%a %B %c/%C %p%% %E"
+    )
+
+    relation.find_each do |track|
+      friendly = track.friendly_filename
+
+      if track.mp3_audio.attached? && track.mp3_audio.blob.filename.to_s != friendly
+        track.mp3_audio.blob.update!(filename: friendly)
+      end
+
+      pbar.increment
+    end
+
+    pbar.finish
+  end
 end
