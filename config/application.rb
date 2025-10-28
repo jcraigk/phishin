@@ -45,7 +45,7 @@ module Phishin
       port: 587,
       authentication: :plain
     }
-    config.hosts.clear # Rely on dokku/nginx for host checking
+    config.hosts = nil # Rely on dokku/nginx for host checking
     config.active_storage.service = :local
     config.active_storage.variant_processor = :mini_magick
   end

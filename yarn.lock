@@ -4609,13 +4609,14 @@ setprototypeof@1.2.0:
   resolved "https://registry.yarnpkg.com/setprototypeof/-/setprototypeof-1.2.0.tgz#66c9a24a73f9fc28cbe66b09fed3d33dcaf1b424"
   integrity sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==
 
-shakapacker@8.4.0:
-  version "8.4.0"
-  resolved "https://registry.yarnpkg.com/shakapacker/-/shakapacker-8.4.0.tgz#be37a2adba5a090f581811b8c0c1a00f2e227580"
-  integrity sha512-ZfuxfHxy5tdjv7tCdRZHJKJQLDFwvFXOVBVUj150zgNuRKUlOAyXzOBp9/G5hUhu4MLzuPAif/fuKOdjnZeVtw==
+shakapacker@9.2.0:
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/shakapacker/-/shakapacker-9.2.0.tgz#130bbeef9e72f2bd7f8ce5b1316ca3c778201e97"
+  integrity sha512-eEjps0qlufHAFOYY1fixZaXkIXLOE+FgQdjwKHhARryHfv4KxYIZiSQTFU4I6BOEXaK32zkTfEXOdU46YQv2pg==
   dependencies:
     js-yaml "^4.1.0"
     path-complete-extname "^1.0.0"
+    webpack-merge "^5.8.0"
 
 shallow-clone@^3.0.0:
   version "3.0.1"
@@ -5171,7 +5172,7 @@ webpack-dev-server@4:
     webpack-dev-middleware "^5.3.4"
     ws "^8.13.0"
 
-webpack-merge@5, webpack-merge@^5.7.3:
+webpack-merge@5, webpack-merge@^5.7.3, webpack-merge@^5.8.0:
   version "5.10.0"
   resolved "https://registry.yarnpkg.com/webpack-merge/-/webpack-merge-5.10.0.tgz#a3ad5d773241e9c682803abf628d4cd62b8a4177"
   integrity sha512-+4zXKdx7UnO+1jaN4l2lHVD+mFvnlZQP/6ljaJVb4SZiwIKeUnrT5l0gkT8z+n4hKpC+jpOv6O9R+gLtag7pSA==

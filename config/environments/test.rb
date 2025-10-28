@@ -3,7 +3,7 @@ Rails.application.configure do
   config.action_controller.perform_caching = false
   config.action_dispatch.show_exceptions = false
   config.action_mailer.delivery_method = :test
-  config.active_support.deprecation = :stderr
+  config.active_support.deprecation = :silence
   config.cache_store = :null_store
   config.consider_all_requests_local = true
   config.eager_load = false

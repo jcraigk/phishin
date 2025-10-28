@@ -10,11 +10,11 @@ Sidekiq.configure_server do |config|
     Sentry.capture_exception(
       ex,
       extra: {
-        worker: job['class'],
-        job_id: job['jid'],
-        arguments: job['args'],
-        queue: job['queue'],
-        retry_count: job['retry_count'],
+        worker: job["class"],
+        job_id: job["jid"],
+        arguments: job["args"],
+        queue: job["queue"],
+        retry_count: job["retry_count"],
         failed_at: Time.now.iso8601
       }
     )
@@ -28,7 +28,7 @@ Sidekiq.configure_server do |config|
         job_id: context[:jid],
         arguments: context[:args],
         queue: context[:queue],
-        retry_count: context.dig(:job, 'retry_count') || 0,
+        retry_count: context.dig(:job, "retry_count") || 0,
         failed_at: Time.now.iso8601
       }
     )

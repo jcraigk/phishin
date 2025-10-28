@@ -33,8 +33,8 @@ $ docker exec -u postgres phishin-pg-1 psql -d phishin_development -f docker-ent
 Install the correct ruby version:
 ```bash
 $ brew install rbenv # if not already installed
-$ rbenv install 3.4.5 # or current version in `Gemfile`
-$ rbenv local 3.4.5
+$ rbenv install 3.4.7 # or current version in `Gemfile`
+$ rbenv local 3.4.7
 ```
 
 Install dependencies:
