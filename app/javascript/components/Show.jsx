@@ -50,6 +50,13 @@ const Show = ({ trackSlug }) => {
       const imageUrl = show.cover_art_urls.medium;
       backgroundDiv.style.backgroundImage = `url(${imageUrl})`;
     }
+
+    return () => {
+      const backgroundDiv = document.querySelector(".background-blur");
+      if (backgroundDiv) {
+        backgroundDiv.style.backgroundImage = '';
+      }
+    };
   }, [show]);
 
   useEffect(() => {
