@@ -7,6 +7,12 @@ require "action_view/railtie"
 require "active_record/railtie"
 require "active_storage/engine"
 
+original_warn = ActiveSupport::Deprecation.instance_method(:warn)
+ActiveSupport::Deprecation.define_method(:warn) do |message = nil, callstack = nil|
+  return if message&.include?("ActiveSupport::Configurable is deprecated")
+  original_warn.bind(self).call(message, callstack)
+end
+
 Bundler.require(*Rails.groups)
 
 module Phishin
