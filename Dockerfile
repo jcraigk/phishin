@@ -25,7 +25,7 @@ RUN apt-get update -qq && \
     && apt-get clean
 
 # Install Node and Yarn
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs
 RUN npm install -g yarn
 
