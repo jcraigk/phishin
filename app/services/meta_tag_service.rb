@@ -207,7 +207,12 @@ class MetaTagService < ApplicationService
   end
 
   def date
-    @date ||= Date.parse(segments[0]) if date?
+    return nil unless date?
+    @date ||= begin
+      Date.parse(segments[0])
+    rescue Date::Error
+      nil
+    end
   end
 
   def year?
