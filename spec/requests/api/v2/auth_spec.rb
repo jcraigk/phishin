@@ -46,7 +46,7 @@ RSpec.describe "API v2 Auth" do
           password: "password",
           password_confirmation: "differentpassword"
         }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
 
         json = JSON.parse(response.body)
         expect(json["message"]).to eq("Passwords do not match")
@@ -61,7 +61,7 @@ RSpec.describe "API v2 Auth" do
           password: "password",
           password_confirmation: "password"
         }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
 
         json = JSON.parse(response.body)
         expect(json["message"]).to include("Email is invalid")
@@ -187,7 +187,7 @@ RSpec.describe "API v2 Auth" do
           password: "newpassword",
           password_confirmation: "differentpassword"
         }
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
 
         json = JSON.parse(response.body)
         expect(json["message"]).to eq("Password reset failed")
@@ -225,7 +225,7 @@ RSpec.describe "API v2 Auth" do
 
       it "returns a 422 error" do
         patch_api_authed(user, "/auth/change_username/invalidusername")
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

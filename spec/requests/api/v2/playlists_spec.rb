@@ -150,7 +150,7 @@ RSpec.describe "API v2 Playlists" do
           }
         )
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         json = JSON.parse(response.body)
 
         expect(json["message"]).to include("Name is invalid")
@@ -201,7 +201,7 @@ RSpec.describe "API v2 Playlists" do
             ends_at_second: []
           }
         )
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         json = JSON.parse(response.body)
         expect(json["message"]).to include("Name is invalid")
       end
