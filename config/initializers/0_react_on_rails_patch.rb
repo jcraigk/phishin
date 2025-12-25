@@ -18,4 +18,3 @@ if defined?(ConnectionPool::VERSION) &&
     end
   end
 end
-
