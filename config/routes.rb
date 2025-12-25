@@ -3,6 +3,9 @@ require "sidekiq/web"
 Rails.application.routes.draw do
   get "/health", to: proc { [ 200, {}, [ "OK" ] ] }
 
+  # MCP endpoint (Model Context Protocol)
+  post "/mcp", to: "mcp#handle"
+
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
     ActiveSupport::SecurityUtils.secure_compare(
       ::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_USERNAME"])
