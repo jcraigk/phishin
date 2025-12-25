@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.4.7"
+ruby "3.4.8"
 
 gem "actionpack-action_caching"
 gem "aws-sdk-s3"
@@ -47,6 +47,7 @@ group :development do
   gem "brakeman"
   gem "bullet"
   gem "dotenv-rails"
+  gem "foreman"
   gem "rubocop-capybara"
   gem "rubocop-factory_bot"
   gem "rubocop-performance"

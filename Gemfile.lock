@@ -186,6 +186,8 @@ GEM
     ffi (1.17.2-arm64-darwin)
     ffi (1.17.2-x86_64-darwin)
     ffi (1.17.2-x86_64-linux-gnu)
+    foreman (0.90.0)
+      thor (~> 1.4)
     friendly_id (5.6.0)
       activerecord (>= 4.0.0)
     fugit (1.12.1)
@@ -594,6 +596,7 @@ DEPENDENCIES
   factory_bot
   factory_bot_rails
   faker
+  foreman
   friendly_id
   geocoder
   google-api-client
@@ -642,7 +645,7 @@ DEPENDENCIES
   will_paginate
 
 RUBY VERSION
-   ruby 3.4.7p58
+  ruby 3.4.8
 
 BUNDLED WITH
-   2.6.9
+  4.0.3

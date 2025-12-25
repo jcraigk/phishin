@@ -1,5 +1,5 @@
 [tools]
-ruby = "3.4.7"
+ruby = "3.4.8"
 
 [tasks.all]
 depends = ["build", "up"]
