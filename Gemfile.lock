@@ -170,7 +170,7 @@ GEM
       ffi (>= 1.15.0)
       logger
     execjs (2.10.0)
-    factory_bot (6.5.1)
+    factory_bot (6.5.6)
       activesupport (>= 6.1.0)
     factory_bot_rails (6.5.1)
       factory_bot (~> 6.5)
@@ -591,7 +591,7 @@ DEPENDENCIES
   dalli
   dotenv-rails
   dry-initializer
-  factory_bot (= 6.5.1)
+  factory_bot
   factory_bot_rails
   faker
   friendly_id

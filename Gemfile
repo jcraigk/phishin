@@ -61,7 +61,7 @@ group :test do
   gem "capybara"
   gem "capybara-email"
   gem "capybara-screenshot"
-  gem "factory_bot", "6.5.1" # TODO: Remove (rspec was crashing on 6.5.2)
+  gem "factory_bot"
   gem "factory_bot_rails"
   gem "faker"
   gem "rspec-rails"
