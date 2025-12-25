@@ -15,6 +15,8 @@ end
 
 Bundler.require(*Rails.groups)
 
+require_relative "initializers/react_on_rails_patch"
+
 module Phishin
   class Application < Rails::Application
     # Custom app config

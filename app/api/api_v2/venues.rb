@@ -21,11 +21,12 @@ class ApiV2::Venues < ApiV2::Base
     end
     get do
       v = page_of_venues
-      present \
+      {
         venues: ApiV2::Entities::Venue.represent(v[:venues]),
         total_pages: v[:total_pages],
         current_page: v[:current_page],
         total_entries: v[:total_entries]
+      }
     end
 
     desc "Fetch a venue" do

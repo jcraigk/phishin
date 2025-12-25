@@ -58,7 +58,7 @@ class ApiV2::Playlists < ApiV2::Base
       result = page_of_playlists
       liked_playlist_ids = fetch_liked_playlist_ids(result[:playlists])
       liked_track_ids = fetch_liked_track_ids(result[:playlists])
-      present \
+      {
         playlists: ApiV2::Entities::Playlist.represent(
           result[:playlists],
           liked_playlist_ids:,
@@ -68,6 +68,7 @@ class ApiV2::Playlists < ApiV2::Base
         total_pages: result[:total_pages],
         current_page: result[:current_page],
         total_entries: result[:total_entries]
+      }
     end
 
     desc "Fetch a playlist by slug" do

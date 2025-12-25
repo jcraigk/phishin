@@ -16,11 +16,12 @@ class ApiV2::Tours < ApiV2::Base
     end
     get do
       result = page_of_tours
-      present \
+      {
         tours: ApiV2::Entities::Tour.represent(result[:tours]),
         total_pages: result[:total_pages],
         current_page: result[:current_page],
         total_entries: result[:total_entries]
+      }
     end
 
     desc "Fetch a tour" do

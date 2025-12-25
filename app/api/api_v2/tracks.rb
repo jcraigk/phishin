@@ -43,7 +43,7 @@ class ApiV2::Tracks < ApiV2::Base
     get do
       result = page_of_tracks
       liked_track_ids = fetch_liked_track_ids(result[:tracks])
-      present \
+      {
         tracks: ApiV2::Entities::Track.represent(
           result[:tracks],
           liked_track_ids:,
@@ -53,6 +53,7 @@ class ApiV2::Tracks < ApiV2::Base
         total_pages: result[:total_pages],
         current_page: result[:current_page],
         total_entries: result[:total_entries]
+      }
     end
 
     desc "Fetch a track by ID" do

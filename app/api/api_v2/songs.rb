@@ -24,11 +24,12 @@ class ApiV2::Songs < ApiV2::Base
     end
     get do
       s = page_of_songs
-      present \
+      {
         songs: ApiV2::Entities::Song.represent(s[:songs]),
         total_pages: s[:total_pages],
         current_page: s[:current_page],
         total_entries: s[:total_entries]
+      }
     end
 
     desc "Fetch a song" do

@@ -1,0 +1,55 @@
+[tools]
+ruby = "3.4.7"
+
+[tasks.all]
+depends = ["build", "up"]
+
+[tasks.build]
+run = "docker compose build"
+
+[tasks.bash]
+run = "RAILS_ENV=test docker compose run --rm app bash"
+
+[tasks.clean]
+run = """
+docker compose down --remove-orphans
+docker compose rm
+docker image prune
+docker volume prune
+"""
+
+[tasks.cleanforce]
+run = """
+docker compose down -v
+docker image prune -af
+docker volume prune -f
+"""
+
+[tasks.dev]
+depends = ["services"]
+run = "foreman start -f Procfile.dev"
+
+[tasks.services]
+run = "docker compose up -d pg redis"
+
+[tasks.spec]
+depends = ["services"]
+run = "bundle exec rspec $@"
+
+[tasks.start]
+depends = ["services"]
+run = "docker compose up -d"
+
+[tasks.stop]
+run = "docker compose stop"
+
+[tasks.up]
+depends = ["services"]
+run = "docker compose up"
+
+[tasks.restart]
+run = """
+docker compose stop
+docker compose up -d
+"""
+

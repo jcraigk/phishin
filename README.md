@@ -15,7 +15,7 @@ Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and developmen
 
 2. Clone the repo to your local machine
 3. Create a `.env` file at the root of the repository
-4. Run `make services`
+4. Run `mise run services`
 
 5. Download the [Development SQL File](https://www.dropbox.com/scl/fi/6zv4bzxxcjgv3ouv8d3ek/phishin-dev.sql?rlkey=4trafp2vxcgc1iuuq36yhl9gc) and import it:
 
@@ -30,11 +30,10 @@ $ docker exec -u postgres phishin-pg-1 psql -d phishin_development -f docker-ent
 
 5. If you want to run the Postgres database in Docker and develop the app natively (recommended), you can spin it up like this:
 
-Install the correct ruby version:
+Install [mise](https://mise.jdx.dev/) for ruby version management (recommended):
 ```bash
-$ brew install rbenv # if not already installed
-$ rbenv install 3.4.7 # or current version in `Gemfile`
-$ rbenv local 3.4.7
+$ brew install mise
+$ mise install
 ```
 
 Install dependencies:
@@ -46,7 +45,7 @@ $ yarn install
 
 Run the app:
 ```bash
-$ make dev
+$ mise run dev
 ```
 
 If you are on a Mac ARM and the `ruby-audio` gem fails to install, see the Troubleshooting section below.
@@ -54,7 +53,7 @@ If you are on a Mac ARM and the `ruby-audio` gem fails to install, see the Troub
 Alternatively, if you prefer to develop completely in Docker, build and start the containers like this:
 
 ```bash
-$ make up
+$ mise run up
 ```
 
 ## Testing
@@ -62,13 +61,13 @@ $ make up
 To run the specs in Docker:
 
 ```bash
-$ make spec
+$ mise run spec
 ```
 
 To run the specs natively:
 
 ```bash
-$ make services
+$ mise run services
 $ bundle exec rails db:setup RAILS_ENV=test
 $ bundle exec rspec
 ```
@@ -79,7 +78,7 @@ The content import process uses the [Phish.net API](https://docs.phish.net/) for
 
 If running the Rails app natively, you may need to install `ffmpeg`.
 
-To import a new show or replace an existing one, name the MP3s according to the import format (`I 01 Harry Hood.mp3`) and place them in a folder named by date (`2018-08-12`). Place this folder in `./content/import` and run the following command (`make bash` first if you use Docker):
+To import a new show or replace an existing one, name the MP3s according to the import format (`I 01 Harry Hood.mp3`) and place them in a folder named by date (`2018-08-12`). Place this folder in `./content/import` and run the following command (`mise run bash` first if you use Docker):
 
 ```bash
 bundle exec rails shows:import
@@ -96,7 +95,7 @@ Use the interactive CLI to finish the import process then set `PRODUCTION_CONTEN
   - Stop any native Postgres with `brew services stop postgresql` or by quitting Postgres.app.
   - After stopping, restart your Docker Postgres:
     ```sh
-    make services
+    mise run services
     ```
   - You should see your database with:
     ```sh
