@@ -35,7 +35,7 @@ module Phishin
     config.album_disk_limit = ENV.fetch("ALBUM_DISK_LIMIT_GB", 250).to_i.gigabytes
 
     # Rails config
-    config.load_defaults 8.0
+    config.load_defaults 8.1
     config.active_job.queue_adapter = :sidekiq
     config.action_mailer.default_url_options = { host: config.base_url }
     config.action_mailer.smtp_settings = {
