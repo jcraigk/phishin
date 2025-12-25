@@ -27,6 +27,7 @@ gem "puma"
 gem "pstore"
 gem "rack-cors"
 gem "rails"
+# TODO: Remove 0_react_on_rails_patch.rb when gem supports connection_pool 3.0+
 gem "react_on_rails"
 gem "ruby-mp3info"
 gem "ruby-progressbar"
