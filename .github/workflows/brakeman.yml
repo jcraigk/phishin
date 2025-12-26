@@ -11,11 +11,16 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libsndfile1-dev pkg-config
     - name: Setup Ruby
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.4.8'
         bundler-cache: true
+        cache-version: 1
     - name: Run Brakeman
       run: |
         bundle exec brakeman --exit-on-warn
