@@ -36,8 +36,12 @@ run = "overmind start -f Procfile.dev -F overmind-local.tmux.conf"
 run = "docker compose up -d pg redis"
 
 [tasks.spec]
+alias = "test"
 depends = ["services"]
 run = "bundle exec rspec $@"
+
+[tasks.lint]
+run = "bundle exec rubocop $@"
 
 [tasks.start]
 depends = ["services"]
