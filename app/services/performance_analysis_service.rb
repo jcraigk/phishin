@@ -120,10 +120,13 @@ class PerformanceAnalysisService < ApplicationService
                         .sum(:performance_gap_value)
       next if shows_since < min_gap
 
+      last_played_date = song_data.last_played.iso8601
       {
         song: song_data.title,
         slug: song_data.slug,
-        last_played: song_data.last_played.iso8601,
+        url: McpHelpers.song_url(song_data.slug),
+        last_played: last_played_date,
+        last_played_show_url: McpHelpers.show_url(last_played_date),
         gap: shows_since,
         times_played: song_data.times_played
       }
@@ -174,7 +177,7 @@ class PerformanceAnalysisService < ApplicationService
       next unless adjacent_track
 
       adjacent_track.songs.each do |adjacent_song|
-        transitions[adjacent_song.slug] ||= { song: adjacent_song.title, slug: adjacent_song.slug, count: 0 }
+        transitions[adjacent_song.slug] ||= { song: adjacent_song.title, slug: adjacent_song.slug, url: adjacent_song.url, count: 0 }
         transitions[adjacent_song.slug][:count] += 1
       end
     end
@@ -187,6 +190,7 @@ class PerformanceAnalysisService < ApplicationService
 
     {
       song: song.title,
+      url: song.url,
       direction:,
       total_transitions: total,
       transitions: results
@@ -256,7 +260,8 @@ class PerformanceAnalysisService < ApplicationService
     results = tracks.map do |track|
       {
         date: track.show.date.iso8601,
-        slug: "#{track.show.date}/#{track.slug}",
+        url: track.url,
+        show_url: track.show.url,
         duration_ms: track.duration,
         duration_display: format_duration(track.duration)
       }
@@ -288,6 +293,7 @@ class PerformanceAnalysisService < ApplicationService
       {
         song: song_data.title,
         slug: song_data.slug,
+        url: McpHelpers.song_url(song_data.slug),
         avg_duration_ms: song_data.avg_duration.round,
         avg_duration_display: format_duration(song_data.avg_duration),
         max_duration_ms: song_data.max_duration,
@@ -327,11 +333,14 @@ class PerformanceAnalysisService < ApplicationService
                        .limit(limit)
                        .count
 
-    results = song_counts.map { |k, v| { song: k[0], slug: k[1], count: v } }
+    results = song_counts.map do |k, v|
+      { song: k[0], slug: k[1], url: McpHelpers.song_url(k[1]), count: v }
+    end
 
     {
       venue: venue.name,
       venue_slug: venue.slug,
+      url: venue.url,
       location: venue.location,
       show_count: show_ids.count,
       top_songs: results
@@ -346,6 +355,7 @@ class PerformanceAnalysisService < ApplicationService
       {
         venue: venue.name,
         slug: venue.slug,
+        url: venue.url,
         location: venue.location,
         show_count: venue.shows_count
       }
@@ -422,6 +432,7 @@ class PerformanceAnalysisService < ApplicationService
       {
         song: k[0],
         slug: k[1],
+        url: McpHelpers.song_url(k[1]),
         count: v,
         percentage: total > 0 ? (v.to_f / total * 100).round(1) : 0
       }
@@ -497,11 +508,14 @@ class PerformanceAnalysisService < ApplicationService
 
       avg_gap = calculate_average_gap(song_data.id, song_data.times_played)
       gap_ratio = avg_gap > 0 ? (gap.to_f / avg_gap) : 0
+      last_played_date = song_data.last_played.iso8601
 
       {
         song: song_data.title,
         slug: song_data.slug,
-        last_played: song_data.last_played.iso8601,
+        url: McpHelpers.song_url(song_data.slug),
+        last_played: last_played_date,
+        last_played_show_url: McpHelpers.show_url(last_played_date),
         current_gap: gap,
         times_played: song_data.times_played,
         avg_gap: avg_gap.round(1),
@@ -655,7 +669,7 @@ class PerformanceAnalysisService < ApplicationService
       streak = calculate_current_streak(song_id)
       next if streak < 3
 
-      { song: title, slug:, current_streak: streak }
+      { song: title, slug:, url: McpHelpers.song_url(slug), current_streak: streak }
     end.compact.sort_by { |s| -s[:current_streak] }.first(limit)
 
     { streaks:, as_of: latest_show.date.iso8601 }
@@ -772,7 +786,7 @@ class PerformanceAnalysisService < ApplicationService
                         .count
 
     results = covers.map do |k, v|
-      { song: k[0], slug: k[1], artist: k[2], count: v }
+      { song: k[0], slug: k[1], url: McpHelpers.song_url(k[1]), artist: k[2], count: v }
     end
 
     { covers: results }
@@ -908,7 +922,9 @@ class PerformanceAnalysisService < ApplicationService
             debuts << {
               song: song.title,
               slug: song.slug,
+              url: song.url,
               date: show.date.iso8601,
+              show_url: show.url,
               venue: show.venue_name
             }
           end
@@ -974,10 +990,10 @@ class PerformanceAnalysisService < ApplicationService
                     .count
 
     results = pairings.map do |k, v|
-      { song: k[0], slug: k[1], count: v, pct: (v.to_f / show_ids.count * 100).round(1) }
+      { song: k[0], slug: k[1], url: McpHelpers.song_url(k[1]), count: v, pct: (v.to_f / show_ids.count * 100).round(1) }
     end
 
-    { song: song.title, total_shows: show_ids.count, common_pairings: results }
+    { song: song.title, url: song.url, total_shows: show_ids.count, common_pairings: results }
   end
 
   def shows_with_song(song_id)

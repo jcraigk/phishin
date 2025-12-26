@@ -25,6 +25,10 @@ class Playlist < ApplicationRecord
 
   scope :published, -> { where(published: true) }
 
+  def url
+    "#{App.base_url}/play/#{slug}"
+  end
+
   after_save :save_duration
 
   def save_duration

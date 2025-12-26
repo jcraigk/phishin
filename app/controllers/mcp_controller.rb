@@ -3,7 +3,7 @@ class McpController < ApplicationController
 
   def handle
     body = request.body.read
-    response_json = McpServer.instance.handle_json(body)
+    response_json = Server.instance.handle_json(body)
 
     response.headers["Mcp-Session-Id"] = "stateless"
     render json: response_json || "{}"
