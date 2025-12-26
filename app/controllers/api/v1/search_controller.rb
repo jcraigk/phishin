@@ -7,7 +7,7 @@ class Api::V1::SearchController < Api::V1::ApiController
   private
 
   def results
-    @results ||= SearchService.call(term: params[:term], scope: "all", audio_status: "complete_or_partial")
+    @results ||= SearchService.call(term: params[:term], scope: "all", audio_status: "complete_or_partial")&.except(:tours)
   end
 
   def respond_with_invalid_term

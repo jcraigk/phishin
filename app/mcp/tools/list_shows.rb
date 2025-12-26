@@ -69,13 +69,13 @@ module Tools
 
         result = if date && show_list.size == 1
                    show_list.first
-                 else
+        else
                    {
                      total: show_list.size,
                      filters: { date:, dates:, year:, tour_slug:, venue_slug: }.compact,
                      shows: show_list
                    }
-                 end
+        end
 
         MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
       end
