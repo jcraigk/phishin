@@ -18,6 +18,6 @@ class CreateMcpToolCalls < ActiveRecord::Migration[8.1]
     add_index :mcp_tool_calls, :tool_name
     add_index :mcp_tool_calls, :analysis_type
     add_index :mcp_tool_calls, :created_at
-    add_index :mcp_tool_calls, [:tool_name, :analysis_type]
+    add_index :mcp_tool_calls, [ :tool_name, :analysis_type ]
   end
 end

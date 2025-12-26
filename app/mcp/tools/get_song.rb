@@ -20,14 +20,14 @@ module Mcp
           },
           limit: { type: "integer", description: "Max performances to return (default: 25)" }
         },
-        required: ["slug"]
+        required: [ "slug" ]
       )
 
       EXCLUDED_SETS = %w[S P].freeze
 
       class << self
         def call(slug:, sort_by: "date", sort_order: "desc", limit: 25)
-          song = Song.find_by(slug: slug)
+          song = Song.find_by(slug:)
           return error_response("Song not found") unless song
 
           tracks = Track.joins(:show, :songs)
@@ -72,10 +72,10 @@ module Mcp
             times_played: song.tracks_count,
             first_played: first_track&.show&.date&.iso8601,
             last_played: last_track&.show&.date&.iso8601,
-            performances: performances
+            performances:
           }
 
-          MCP::Tool::Response.new([{ type: "text", text: result.to_json }])
+          MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
         end
 
         private
@@ -105,10 +105,9 @@ module Mcp
         end
 
         def error_response(message)
-          MCP::Tool::Response.new([{ type: "text", text: "Error: #{message}" }], is_error: true)
+          MCP::Tool::Response.new([ { type: "text", text: "Error: #{message}" } ], is_error: true)
         end
       end
     end
   end
 end
-

@@ -9,11 +9,11 @@ class McpToolCall < ApplicationRecord
 
   def self.log_call(tool_name:, parameters: {}, result: nil, duration_ms: nil)
     create!(
-      tool_name: tool_name,
-      parameters: parameters,
+      tool_name:,
+      parameters:,
       result_summary: build_result_summary(result),
       result_count: extract_result_count(result),
-      duration_ms: duration_ms,
+      duration_ms:,
       error_message: result.is_a?(Hash) ? result[:error] : nil
     )
   rescue StandardError => e

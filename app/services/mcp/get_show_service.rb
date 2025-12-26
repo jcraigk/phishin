@@ -1,8 +1,6 @@
 module Mcp
   class GetShowService < ApplicationService
     option :date
-    option :include_tracks, default: -> { true }
-    option :include_gaps, default: -> { true }
     option :log_call, default: -> { false }
 
     TOOL_NAME = "get_show".freeze
@@ -27,13 +25,13 @@ module Mcp
       Show.includes(
         :venue,
         :tour,
-        tracks: [:songs, { track_tags: :tag }],
+        tracks: [ :songs, { track_tags: :tag } ],
         show_tags: :tag
-      ).find_by(date: date)
+      ).find_by(date:)
     end
 
     def build_response(show)
-      response = {
+      {
         id: show.id,
         date: show.date.iso8601,
         venue: venue_data(show),
@@ -43,13 +41,10 @@ module Mcp
         audio_status: show.audio_status,
         taper_notes: show.taper_notes,
         likes_count: show.likes_count,
-        tags: show.show_tags.map { |st| tag_data(st) }
+        tags: show.show_tags.map { |st| tag_data(st) },
+        tracks: tracks_data(show),
+        navigation: navigation_data(show)
       }
-
-      response[:tracks] = tracks_data(show) if include_tracks
-      response[:navigation] = navigation_data(show)
-
-      response
     end
 
     def venue_data(show)
@@ -72,7 +67,8 @@ module Mcp
 
     def tracks_data(show)
       show.tracks.sort_by(&:position).map do |track|
-        track_response = {
+        songs_track = track.songs_tracks.first
+        {
           position: track.position,
           title: track.title,
           slug: track.slug,
@@ -82,22 +78,14 @@ module Mcp
           duration_display: format_duration(track.duration),
           songs: track.songs.map { |s| { title: s.title, slug: s.slug } },
           tags: track.track_tags.map { |tt| { name: tt.tag.name, notes: tt.notes } },
-          likes_count: track.likes_count
+          likes_count: track.likes_count,
+          gap: songs_track && {
+            previous: songs_track.previous_performance_gap,
+            next: songs_track.next_performance_gap,
+            previous_slug: songs_track.previous_performance_slug,
+            next_slug: songs_track.next_performance_slug
+          }
         }
-
-        if include_gaps
-          songs_track = track.songs_tracks.first
-          if songs_track
-            track_response[:gap] = {
-              previous: songs_track.previous_performance_gap,
-              next: songs_track.next_performance_gap,
-              previous_slug: songs_track.previous_performance_slug,
-              next_slug: songs_track.next_performance_slug
-            }
-          end
-        end
-
-        track_response
       end
     end
 
@@ -154,15 +142,10 @@ module Mcp
 
       McpToolCall.log_call(
         tool_name: TOOL_NAME,
-        parameters: { date: date, include_tracks: include_tracks, include_gaps: include_gaps },
-        result: result,
-        duration_ms: duration_ms
+        parameters: { date: },
+        result:,
+        duration_ms:
       )
     end
   end
 end
-
-
-
-
-

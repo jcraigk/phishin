@@ -20,12 +20,12 @@ module Mcp
           },
           limit: { type: "integer", description: "Max shows to return (default: 25)" }
         },
-        required: ["slug"]
+        required: [ "slug" ]
       )
 
       class << self
         def call(slug:, sort_by: "date", sort_order: "desc", limit: 25)
-          venue = Venue.find_by(slug: slug)
+          venue = Venue.find_by(slug:)
           return error_response("Venue not found") unless venue
 
           shows = Show.where(venue_id: venue.id)
@@ -63,7 +63,7 @@ module Mcp
             shows: show_list
           }
 
-          MCP::Tool::Response.new([{ type: "text", text: result.to_json }])
+          MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
         end
 
         private
@@ -99,10 +99,9 @@ module Mcp
         end
 
         def error_response(message)
-          MCP::Tool::Response.new([{ type: "text", text: "Error: #{message}" }], is_error: true)
+          MCP::Tool::Response.new([ { type: "text", text: "Error: #{message}" } ], is_error: true)
         end
       end
     end
   end
 end
-

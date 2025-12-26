@@ -73,7 +73,7 @@ class SearchService < ApplicationService
     return unless term_is_date?
     scope = Show.all
     scope = apply_audio_status_filter(scope)
-    scope.includes(:venue).find_by(date:)
+    scope.includes(:venue, :tour, show_tags: :tag).find_by(date:)
   end
 
   def shows_on_day_of_year
@@ -82,7 +82,7 @@ class SearchService < ApplicationService
     scope = apply_audio_status_filter(scope)
     scope.on_day_of_year(date[5..6], date[8..9])
          .where.not(date:)
-         .includes(:venue)
+         .includes(:venue, :tour, show_tags: :tag)
          .order(date: :desc)
   end
 

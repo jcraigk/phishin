@@ -23,9 +23,8 @@ docker volume prune
 
 [tasks.cleanforce]
 run = """
-docker compose down -v
-docker image prune -af
-docker volume prune -f
+docker compose down -v --remove-orphans
+docker volume rm phishin_pg_data phishin_redis_data 2>/dev/null || true
 """
 
 [tasks.dev]

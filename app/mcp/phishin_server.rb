@@ -23,8 +23,3 @@ class PhishinServer
     )
   end
 end
-
-
-
-
-

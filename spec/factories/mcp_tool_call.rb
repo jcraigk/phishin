@@ -8,7 +8,7 @@ FactoryBot.define do
 
     trait :failed do
       error_message { "Song not found" }
-      result_summary { { error: "Song not found", keys: ["error"] } }
+      result_summary { { error: "Song not found", keys: [ "error" ] } }
       result_count { nil }
     end
 

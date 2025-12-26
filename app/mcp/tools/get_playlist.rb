@@ -8,12 +8,12 @@ module Mcp
         properties: {
           slug: { type: "string", description: "Playlist slug" }
         },
-        required: ["slug"]
+        required: [ "slug" ]
       )
 
       class << self
         def call(slug:)
-          playlist = Playlist.published.find_by(slug: slug)
+          playlist = Playlist.published.find_by(slug:)
           return error_response("Playlist not found") unless playlist
 
           tracks = playlist.playlist_tracks.order(:position).includes(track: { show: :venue })
@@ -43,7 +43,7 @@ module Mcp
             tracks: track_list
           }
 
-          MCP::Tool::Response.new([{ type: "text", text: result.to_json }])
+          MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
         end
 
         private
@@ -64,10 +64,9 @@ module Mcp
         end
 
         def error_response(message)
-          MCP::Tool::Response.new([{ type: "text", text: "Error: #{message}" }], is_error: true)
+          MCP::Tool::Response.new([ { type: "text", text: "Error: #{message}" } ], is_error: true)
         end
       end
     end
   end
 end
-

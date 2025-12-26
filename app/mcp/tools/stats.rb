@@ -27,7 +27,7 @@ module Mcp
           compare_to: { type: "object", description: "Second era for comparison (year or year_range)" },
           limit: { type: "integer", description: "Limit results (default: 25)" }
         },
-        required: ["stat_type"]
+        required: [ "stat_type" ]
       )
 
       class << self
@@ -39,9 +39,9 @@ module Mcp
           )
 
           if result[:error]
-            MCP::Tool::Response.new([{ type: "text", text: "Error: #{result[:error]}" }], is_error: true)
+            MCP::Tool::Response.new([ { type: "text", text: "Error: #{result[:error]}" } ], is_error: true)
           else
-            MCP::Tool::Response.new([{ type: "text", text: result.to_json }])
+            MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
           end
         end
       end

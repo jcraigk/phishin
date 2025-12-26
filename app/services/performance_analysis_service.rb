@@ -187,7 +187,7 @@ class PerformanceAnalysisService < ApplicationService
 
     {
       song: song.title,
-      direction: direction,
+      direction:,
       total_transitions: total,
       transitions: results
     }
@@ -221,10 +221,10 @@ class PerformanceAnalysisService < ApplicationService
 
       {
         from: from_song.title,
-        from_slug: from_slug,
+        from_slug:,
         to: to_song.title,
-        to_slug: to_slug,
-        count: count
+        to_slug:,
+        count:
       }
     end.compact.sort_by { |r| -r[:count] }.first(limit)
 
@@ -351,7 +351,7 @@ class PerformanceAnalysisService < ApplicationService
       }
     end
 
-    { venues: venues }
+    { venues: }
   end
 
   # Analysis Type 5: Set Positions
@@ -463,8 +463,8 @@ class PerformanceAnalysisService < ApplicationService
       song: song.title,
       total_performances: total,
       by_set: SET_NAMES.keys.map { |s| { set: SET_NAMES[s], count: by_set[s] || 0 } },
-      opener_count: opener_count,
-      closer_count: closer_count,
+      opener_count:,
+      closer_count:,
       opener_pct: total > 0 ? (opener_count.to_f / total * 100).round(1) : 0,
       closer_pct: total > 0 ? (closer_count.to_f / total * 100).round(1) : 0
     }
@@ -573,7 +573,7 @@ class PerformanceAnalysisService < ApplicationService
 
     {
       song: song.title,
-      current_streak: current_streak,
+      current_streak:,
       longest_streak: longest_streak[:length],
       longest_streak_dates: longest_streak[:length] > 0 ? "#{longest_streak[:start_date]} to #{longest_streak[:end_date]}" : nil,
       all_streaks: streaks.sort_by { |s| -s[:length] }.first(10)
@@ -655,10 +655,10 @@ class PerformanceAnalysisService < ApplicationService
       streak = calculate_current_streak(song_id)
       next if streak < 3
 
-      { song: title, slug: slug, current_streak: streak }
+      { song: title, slug:, current_streak: streak }
     end.compact.sort_by { |s| -s[:current_streak] }.first(limit)
 
-    { streaks: streaks, as_of: latest_show.date.iso8601 }
+    { streaks:, as_of: latest_show.date.iso8601 }
   end
 
   def calculate_current_streak(song_id)
@@ -726,8 +726,8 @@ class PerformanceAnalysisService < ApplicationService
 
     {
       era: era_filter.is_a?(Array) ? "#{era_filter[0]}-#{era_filter[1]}" : era_filter.to_s,
-      show_count: show_count,
-      unique_songs: unique_songs,
+      show_count:,
+      unique_songs:,
       total_performances: total_tracks,
       avg_track_duration_ms: avg_duration,
       avg_track_duration_display: format_duration(avg_duration),
@@ -735,7 +735,7 @@ class PerformanceAnalysisService < ApplicationService
       covers_count: covers,
       original_pct: total_tracks > 0 ? (originals.to_f / total_tracks * 100).round(1) : 0,
       cover_pct: total_tracks > 0 ? (covers.to_f / total_tracks * 100).round(1) : 0,
-      top_songs: top_songs
+      top_songs:
     }
   end
 
@@ -795,10 +795,10 @@ class PerformanceAnalysisService < ApplicationService
       total = originals + covers
 
       {
-        year: year,
-        originals: originals,
-        covers: covers,
-        total: total,
+        year:,
+        originals:,
+        covers:,
+        total:,
         cover_pct: total > 0 ? (covers.to_f / total * 100).round(1) : 0
       }
     end
@@ -808,13 +808,13 @@ class PerformanceAnalysisService < ApplicationService
 
   def analyze_covers_by_artist
     artist_counts = base_tracks.where(songs: { original: false })
-                               .where.not(songs: { artist: [nil, ""] })
+                               .where.not(songs: { artist: [ nil, "" ] })
                                .group("songs.artist")
                                .order("count_all DESC")
                                .limit(limit)
                                .count
 
-    results = artist_counts.map { |artist, count| { artist: artist, count: count } }
+    results = artist_counts.map { |artist, count| { artist:, count: } }
 
     { artists: results }
   end
@@ -843,7 +843,7 @@ class PerformanceAnalysisService < ApplicationService
                        .order("count_all DESC")
                        .count
 
-    results = state_counts.map { |state, count| { state: state, show_count: count } }
+    results = state_counts.map { |state, count| { state:, show_count: count } }
 
     { states: results }
   end
@@ -853,7 +853,7 @@ class PerformanceAnalysisService < ApplicationService
     return { error: "state required" } unless state
 
     shows_in_state = Show.joins(:venue)
-                         .where(venues: { state: state })
+                         .where(venues: { state: })
                          .where("shows.performance_gap_value > 0")
                          .pluck(:id)
 
@@ -883,7 +883,7 @@ class PerformanceAnalysisService < ApplicationService
       { song: song.title, slug: song.slug, times_played_elsewhere: song.times_played }
     end
 
-    { state: state, never_played_songs: results }
+    { state:, never_played_songs: results }
   end
 
   def analyze_state_debuts
@@ -891,7 +891,7 @@ class PerformanceAnalysisService < ApplicationService
     return { error: "state required" } unless state
 
     shows_in_state = Show.joins(:venue)
-                         .where(venues: { state: state })
+                         .where(venues: { state: })
                          .where("shows.performance_gap_value > 0")
                          .order(:date)
 
@@ -916,7 +916,7 @@ class PerformanceAnalysisService < ApplicationService
       end
     end
 
-    { state: state, debuts: debuts.last(limit).reverse }
+    { state:, debuts: debuts.last(limit).reverse }
   end
 
   # Analysis Type 11: Co-occurrence (Song Pairings in Same Show)
@@ -1012,9 +1012,8 @@ class PerformanceAnalysisService < ApplicationService
     McpToolCall.log_call(
       tool_name: "stats",
       parameters: { analysis_type: analysis_type.to_s }.merge(filters),
-      result: result,
-      duration_ms: duration_ms
+      result:,
+      duration_ms:
     )
   end
 end
-

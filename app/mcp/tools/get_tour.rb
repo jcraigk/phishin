@@ -20,12 +20,12 @@ module Mcp
           },
           limit: { type: "integer", description: "Max shows to return (default: all shows on tour)" }
         },
-        required: ["slug"]
+        required: [ "slug" ]
       )
 
       class << self
         def call(slug:, sort_by: "date", sort_order: nil, limit: nil)
-          tour = Tour.find_by(slug: slug)
+          tour = Tour.find_by(slug:)
           return error_response("Tour not found") unless tour
 
           shows = Show.where(tour_id: tour.id).includes(:venue)
@@ -54,7 +54,7 @@ module Mcp
             shows: show_list
           }
 
-          MCP::Tool::Response.new([{ type: "text", text: result.to_json }])
+          MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
         end
 
         private
@@ -90,10 +90,9 @@ module Mcp
         end
 
         def error_response(message)
-          MCP::Tool::Response.new([{ type: "text", text: "Error: #{message}" }], is_error: true)
+          MCP::Tool::Response.new([ { type: "text", text: "Error: #{message}" } ], is_error: true)
         end
       end
     end
   end
 end
-

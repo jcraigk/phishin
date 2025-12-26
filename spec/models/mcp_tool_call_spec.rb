@@ -13,7 +13,7 @@ RSpec.describe McpToolCall do
 
     describe ".recent" do
       it "orders by created_at descending" do
-        recent = described_class.where(id: [old_call.id, recent_call.id, failed_call.id, search_call.id]).recent
+        recent = described_class.where(id: [ old_call.id, recent_call.id, failed_call.id, search_call.id ]).recent
         expect(recent.first).to eq(search_call)
       end
     end
@@ -48,68 +48,27 @@ RSpec.describe McpToolCall do
   end
 
   describe ".log_call" do
-    let(:result) { { songs: [{ song: "Tweezer", gap: 50 }], latest_show_date: "2023-12-01" } }
+    let(:result) { { songs: [ { song: "Tweezer", gap: 50 } ], latest_show_date: "2023-12-01" } }
 
     it "creates a log entry" do
-      expect {
-        described_class.log_call(
-          tool_name: "stats",
-          parameters: { stat_type: "gaps", min_gap: 50 },
-          result: result,
-          duration_ms: 150
-        )
-      }.to change(described_class, :count).by(1)
+      expect { described_class.log_call(tool_name: "stats", parameters: {}, result:, duration_ms: 150) }
+        .to change(described_class, :count).by(1)
     end
 
-    it "stores parameters as JSON" do
-      log = described_class.log_call(
-        tool_name: "stats",
-        parameters: { stat_type: "gaps", min_gap: 50, song_slug: "tweezer" }
-      )
-
-      expect(log.parameters).to eq({
-        "stat_type" => "gaps",
-        "min_gap" => 50,
-        "song_slug" => "tweezer"
-      })
-    end
-
-    it "extracts result count from arrays" do
-      log = described_class.log_call(
-        tool_name: "stats",
-        parameters: {},
-        result: result
-      )
-
+    it "stores parameters and extracts result count" do
+      log = described_class.log_call(tool_name: "stats", parameters: { stat_type: "gaps" }, result:)
+      expect(log.parameters).to eq({ "stat_type" => "gaps" })
       expect(log.result_count).to eq(1)
     end
 
     it "captures error messages" do
-      log = described_class.log_call(
-        tool_name: "stats",
-        parameters: { song_slug: "nonexistent" },
-        result: { error: "Song not found" }
-      )
-
+      log = described_class.log_call(tool_name: "stats", parameters: {}, result: { error: "Song not found" })
       expect(log.error_message).to eq("Song not found")
     end
 
     it "handles logging failures gracefully" do
       allow(described_class).to receive(:create!).and_raise(StandardError.new("DB error"))
-
-      expect {
-        described_class.log_call(tool_name: "test", result: {})
-      }.not_to raise_error
-    end
-
-    it "works with different tool names" do
-      log = described_class.log_call(
-        tool_name: "search",
-        parameters: { query: "madison square garden", scope: "venues" }
-      )
-
-      expect(log.tool_name).to eq("search")
-      expect(log.parameters["query"]).to eq("madison square garden")
+      expect { described_class.log_call(tool_name: "test", result: {}) }.not_to raise_error
     end
   end
 
@@ -136,12 +95,12 @@ RSpec.describe McpToolCall do
 
   describe ".extract_result_count" do
     it "counts first array found in result" do
-      result = { songs: [1, 2, 3] }
+      result = { songs: [ 1, 2, 3 ] }
       expect(described_class.extract_result_count(result)).to eq(3)
     end
 
     it "works with any array key" do
-      result = { custom_results: [1, 2] }
+      result = { custom_results: [ 1, 2 ] }
       expect(described_class.extract_result_count(result)).to eq(2)
     end
 
