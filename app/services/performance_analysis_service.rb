@@ -21,15 +21,12 @@ class PerformanceAnalysisService < ApplicationService
     result = case analysis_type.to_sym
     when :gaps then analyze_gaps
     when :transitions then analyze_transitions
-    when :durations then analyze_durations
-    when :venue_patterns then analyze_venue_patterns
     when :set_positions then analyze_set_positions
     when :predictions then analyze_predictions
     when :streaks then analyze_streaks
-    when :era_comparison then analyze_era_comparison
-    when :covers then analyze_covers
     when :geographic then analyze_geographic
     when :co_occurrence then analyze_co_occurrence
+    when :song_frequency then analyze_song_frequency
     else
       { error: "Unknown analysis type: #{analysis_type}" }
     end
@@ -235,136 +232,7 @@ class PerformanceAnalysisService < ApplicationService
     { transitions: results }
   end
 
-  # Analysis Type 3: Durations (Epic Jams)
-  def analyze_durations
-    scope = base_tracks
-
-    if filters[:song_slug]
-      analyze_song_durations(scope)
-    else
-      analyze_longest_songs(scope)
-    end
-  end
-
-  def analyze_song_durations(scope)
-    song = Song.find_by(slug: filters[:song_slug])
-    return { error: "Song not found" } unless song
-
-    tracks = scope.where(songs: { id: song.id })
-                  .includes(:show)
-                  .order(duration: :desc)
-                  .limit(limit)
-
-    avg_duration = scope.where(songs: { id: song.id }).average(:duration)&.round || 0
-
-    results = tracks.map do |track|
-      {
-        date: track.show.date.iso8601,
-        url: track.url,
-        show_url: track.show.url,
-        duration_ms: track.duration,
-        duration_display: format_duration(track.duration)
-      }
-    end
-
-    {
-      song: song.title,
-      average_duration_ms: avg_duration,
-      average_duration_display: format_duration(avg_duration),
-      performances: results
-    }
-  end
-
-  def analyze_longest_songs(scope)
-    song_durations = scope.group("songs.id", "songs.title", "songs.slug")
-                          .select(
-                            "songs.id",
-                            "songs.title",
-                            "songs.slug",
-                            "AVG(tracks.duration) as avg_duration",
-                            "MAX(tracks.duration) as max_duration",
-                            "COUNT(tracks.id) as performance_count"
-                          )
-                          .having("COUNT(tracks.id) >= ?", filters[:min_performances] || 5)
-                          .order("avg_duration DESC")
-                          .limit(limit)
-
-    results = song_durations.map do |song_data|
-      {
-        song: song_data.title,
-        slug: song_data.slug,
-        url: McpHelpers.song_url(song_data.slug),
-        avg_duration_ms: song_data.avg_duration.round,
-        avg_duration_display: format_duration(song_data.avg_duration),
-        max_duration_ms: song_data.max_duration,
-        max_duration_display: format_duration(song_data.max_duration),
-        performance_count: song_data.performance_count
-      }
-    end
-
-    { songs: results }
-  end
-
-  # Analysis Type 4: Venue Patterns
-  def analyze_venue_patterns
-    venue_slug = filters[:venue_slug]
-
-    if venue_slug
-      analyze_single_venue(venue_slug)
-    else
-      analyze_venue_rankings
-    end
-  end
-
-  def analyze_single_venue(venue_slug)
-    venue = Venue.find_by(slug: venue_slug)
-    return { error: "Venue not found" } unless venue
-
-    show_ids = Show.where(venue_id: venue.id)
-                   .where("performance_gap_value > 0")
-                   .pluck(:id)
-
-    song_counts = Track.joins(:songs)
-                       .where(show_id: show_ids)
-                       .where.not(set: EXCLUDED_SETS)
-                       .where(exclude_from_stats: false)
-                       .group("songs.title", "songs.slug")
-                       .order("count_all DESC")
-                       .limit(limit)
-                       .count
-
-    results = song_counts.map do |k, v|
-      { song: k[0], slug: k[1], url: McpHelpers.song_url(k[1]), count: v }
-    end
-
-    {
-      venue: venue.name,
-      venue_slug: venue.slug,
-      url: venue.url,
-      location: venue.location,
-      show_count: show_ids.count,
-      top_songs: results
-    }
-  end
-
-  def analyze_venue_rankings
-    venues = Venue.where("shows_count > 0")
-                  .order(shows_count: :desc)
-                  .limit(limit)
-                  .map do |venue|
-      {
-        venue: venue.name,
-        slug: venue.slug,
-        url: venue.url,
-        location: venue.location,
-        show_count: venue.shows_count
-      }
-    end
-
-    { venues: }
-  end
-
-  # Analysis Type 5: Set Positions
+  # Analysis Type 3: Set Positions
   def analyze_set_positions
     position_type = filters[:position]
 
@@ -481,7 +349,7 @@ class PerformanceAnalysisService < ApplicationService
     }
   end
 
-  # Analysis Type 6: Predictions
+  # Analysis Type 4: Predictions
   def analyze_predictions
     top_n = filters[:limit] || 15
 
@@ -551,7 +419,7 @@ class PerformanceAnalysisService < ApplicationService
     shows_in_range.to_f / times_played
   end
 
-  # Analysis Type 7: Streaks
+  # Analysis Type 5: Streaks
   def analyze_streaks
     song_slug = filters[:song_slug]
     streak_type = filters[:streak_type] || "current"
@@ -695,145 +563,7 @@ class PerformanceAnalysisService < ApplicationService
     streak
   end
 
-  # Analysis Type 8: Era Comparison
-  def analyze_era_comparison
-    era1 = filters[:year] || filters[:year_range]
-    era2 = filters[:compare_to]
-
-    return { error: "Both era and compare_to required" } unless era1 && era2
-
-    era1_stats = calculate_era_stats(era1)
-    era2_stats = calculate_era_stats(era2[:year] || era2[:year_range] || era2)
-
-    {
-      era1: era1_stats,
-      era2: era2_stats,
-      comparison: compare_eras(era1_stats, era2_stats)
-    }
-  end
-
-  def calculate_era_stats(era_filter)
-    scope = Track.joins(:show, :songs)
-                 .where.not(set: EXCLUDED_SETS)
-                 .where(exclude_from_stats: false)
-                 .where("shows.performance_gap_value > 0")
-
-    scope = if era_filter.is_a?(Array)
-      scope.where("EXTRACT(year FROM shows.date) BETWEEN ? AND ?", era_filter[0], era_filter[1])
-    else
-      scope.where("EXTRACT(year FROM shows.date) = ?", era_filter)
-    end
-
-    show_count = scope.select("DISTINCT shows.id").count
-    unique_songs = scope.select("DISTINCT songs.id").count
-    total_tracks = scope.count
-    avg_duration = scope.average(:duration)&.round || 0
-
-    originals = scope.where(songs: { original: true }).select("DISTINCT tracks.id").count
-    covers = scope.where(songs: { original: false }).select("DISTINCT tracks.id").count
-
-    top_songs = scope.group("songs.title", "songs.slug")
-                     .order("count_all DESC")
-                     .limit(10)
-                     .count
-                     .map { |k, v| { song: k[0], slug: k[1], count: v } }
-
-    {
-      era: era_filter.is_a?(Array) ? "#{era_filter[0]}-#{era_filter[1]}" : era_filter.to_s,
-      show_count:,
-      unique_songs:,
-      total_performances: total_tracks,
-      avg_track_duration_ms: avg_duration,
-      avg_track_duration_display: format_duration(avg_duration),
-      originals_count: originals,
-      covers_count: covers,
-      original_pct: total_tracks > 0 ? (originals.to_f / total_tracks * 100).round(1) : 0,
-      cover_pct: total_tracks > 0 ? (covers.to_f / total_tracks * 100).round(1) : 0,
-      top_songs:
-    }
-  end
-
-  def compare_eras(era1, era2)
-    {
-      show_count_diff: era1[:show_count] - era2[:show_count],
-      unique_songs_diff: era1[:unique_songs] - era2[:unique_songs],
-      avg_duration_diff_ms: era1[:avg_track_duration_ms] - era2[:avg_track_duration_ms],
-      original_pct_diff: (era1[:original_pct] - era2[:original_pct]).round(1)
-    }
-  end
-
-  # Analysis Type 9: Covers
-  def analyze_covers
-    cover_type = filters[:cover_type] || "frequency"
-
-    case cover_type
-    when "frequency"
-      analyze_cover_frequency
-    when "ratio"
-      analyze_cover_ratio
-    when "by_artist"
-      analyze_covers_by_artist
-    else
-      { error: "Unknown cover_type" }
-    end
-  end
-
-  def analyze_cover_frequency
-    covers = base_tracks.where(songs: { original: false })
-                        .group("songs.title", "songs.slug", "songs.artist")
-                        .order("count_all DESC")
-                        .limit(limit)
-                        .count
-
-    results = covers.map do |k, v|
-      { song: k[0], slug: k[1], url: McpHelpers.song_url(k[1]), artist: k[2], count: v }
-    end
-
-    { covers: results }
-  end
-
-  def analyze_cover_ratio
-    scope = Track.joins(:show, :songs)
-                 .where.not(set: EXCLUDED_SETS)
-                 .where(exclude_from_stats: false)
-                 .where("shows.performance_gap_value > 0")
-
-    years = scope.select("DISTINCT EXTRACT(year FROM shows.date) as year")
-                 .order("year")
-                 .map { |r| r.year.to_i }
-
-    ratios = years.map do |year|
-      year_scope = scope.where("EXTRACT(year FROM shows.date) = ?", year)
-      originals = year_scope.where(songs: { original: true }).count
-      covers = year_scope.where(songs: { original: false }).count
-      total = originals + covers
-
-      {
-        year:,
-        originals:,
-        covers:,
-        total:,
-        cover_pct: total > 0 ? (covers.to_f / total * 100).round(1) : 0
-      }
-    end
-
-    { by_year: ratios }
-  end
-
-  def analyze_covers_by_artist
-    artist_counts = base_tracks.where(songs: { original: false })
-                               .where.not(songs: { artist: [ nil, "" ] })
-                               .group("songs.artist")
-                               .order("count_all DESC")
-                               .limit(limit)
-                               .count
-
-    results = artist_counts.map { |artist, count| { artist:, count: } }
-
-    { artists: results }
-  end
-
-  # Analysis Type 10: Geographic
+  # Analysis Type 6: Geographic
   def analyze_geographic
     geo_type = filters[:geo_type] || "state_frequency"
 
@@ -935,7 +665,7 @@ class PerformanceAnalysisService < ApplicationService
     { state:, debuts: debuts.last(limit).reverse }
   end
 
-  # Analysis Type 11: Co-occurrence (Song Pairings in Same Show)
+  # Analysis Type 7: Co-occurrence (Song Pairings in Same Show)
   def analyze_co_occurrence
     song_a_slug = filters[:song_slug]
     song_b_slug = filters[:song_b_slug]
@@ -1011,6 +741,41 @@ class PerformanceAnalysisService < ApplicationService
         .limit(limit)
         .pluck(:date)
         .map(&:iso8601)
+  end
+
+  # Analysis Type 8: Song Frequency
+  def analyze_song_frequency
+    song_counts = base_tracks.group("songs.id", "songs.title", "songs.slug")
+                             .select(
+                               "songs.id",
+                               "songs.title",
+                               "songs.slug",
+                               "COUNT(DISTINCT tracks.id) as times_played"
+                             )
+                             .order("times_played DESC")
+                             .limit(limit)
+
+    results = song_counts.map do |song_data|
+      {
+        song: song_data.title,
+        slug: song_data.slug,
+        url: McpHelpers.song_url(song_data.slug),
+        times_played: song_data.times_played
+      }
+    end
+
+    filter_description = build_filter_description
+    { songs: results, filter: filter_description }
+  end
+
+  def build_filter_description
+    parts = []
+    parts << "year: #{filters[:year]}" if filters[:year]
+    parts << "years: #{filters[:year_range].join('-')}" if filters[:year_range]
+    parts << "tour: #{filters[:tour_slug]}" if filters[:tour_slug]
+    parts << "venue: #{filters[:venue_slug]}" if filters[:venue_slug]
+    parts << "state: #{filters[:state]}" if filters[:state]
+    parts.empty? ? "all time" : parts.join(", ")
   end
 
   def format_duration(ms)

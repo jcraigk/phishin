@@ -1,0 +1,5 @@
+pre-commit:
+  commands:
+    check:
+      run: mise run check
+

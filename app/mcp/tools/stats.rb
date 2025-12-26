@@ -3,15 +3,15 @@ module Tools
     tool_name "stats"
 
     description "Statistical analysis of Phish performances. Supports gaps (bustouts), " \
-                "transitions, durations, venue patterns, set positions, predictions, " \
-                "streaks, era comparisons, covers, geographic patterns, and co-occurrence. " \
-                "Results include public website URLs where applicable - always share these links with users!"
+                "transitions, set positions, predictions, streaks, geographic patterns, " \
+                "co-occurrence, and song frequency. " \
+                "Results include public website URLs where applicable - include URLs when referencing specific shows or performances."
 
     input_schema(
       properties: {
         stat_type: {
           type: "string",
-          enum: %w[gaps transitions durations venue_patterns set_positions predictions streaks era_comparison covers geographic co_occurrence],
+          enum: %w[gaps transitions set_positions predictions streaks geographic co_occurrence song_frequency],
           description: "Type of statistic to compute"
         },
         song_slug: { type: "string", description: "Song slug for song-specific analysis" },
@@ -24,9 +24,7 @@ module Tools
         min_gap: { type: "integer", description: "Minimum show gap for bustout queries" },
         position: { type: "string", enum: %w[opener closer encore], description: "Set position filter" },
         direction: { type: "string", enum: %w[before after], description: "Transition direction" },
-        cover_type: { type: "string", enum: %w[frequency ratio by_artist], description: "Cover analysis type" },
         geo_type: { type: "string", enum: %w[state_frequency never_played state_debuts], description: "Geographic analysis type" },
-        compare_to: { type: "object", description: "Second era for comparison (year or year_range)" },
         limit: { type: "integer", description: "Limit results (default: 25)" }
       },
       required: [ "stat_type" ]

@@ -1,5 +1,6 @@
 [tools]
 ruby = "3.4.8"
+lefthook = "latest"
 
 [tasks.default]
 depends = ["dev"]
@@ -41,6 +42,10 @@ run = "bundle exec rspec $@"
 
 [tasks.lint]
 run = "bundle exec rubocop $@"
+
+[tasks.check]
+alias = "ci"
+depends = ["lint", "spec"]
 
 [tasks.start]
 depends = ["services"]

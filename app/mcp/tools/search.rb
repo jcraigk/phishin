@@ -3,7 +3,7 @@ module Tools
     tool_name "search"
 
     description "Search across Phish shows, songs, venues, tours, tags, and playlists. " \
-                "Returns results with public website URLs for each item - always share these links with users!"
+                "Returns results with public website URLs for each item - include relevant URLs to help users access the content directly."
 
     input_schema(
       properties: {

@@ -7,7 +7,7 @@ module Tools
     description "Get detailed information about a Phish song including performance history. " \
                 "Returns song metadata and a list of performances with dates, venues, " \
                 "durations, and likes. " \
-                "Includes public website URLs for the song page and each performance - always share these links with users!"
+                "Includes public website URLs for the song page and each performance - include URLs when helpful, especially when listing specific performances."
 
     input_schema(
       properties: {

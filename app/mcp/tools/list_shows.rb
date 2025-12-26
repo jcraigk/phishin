@@ -6,7 +6,7 @@ module Tools
                 "Filter by year, tour, venue, or specific date(s). " \
                 "Use include_tracks=true for full setlists. " \
                 "At least one filter is required. " \
-                "Includes public website URLs - always share these links with users!"
+                "Includes public website URLs - include show URLs when listing or referencing specific shows."
 
     input_schema(
       properties: {

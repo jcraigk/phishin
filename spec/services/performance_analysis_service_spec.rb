@@ -95,90 +95,6 @@ RSpec.describe PerformanceAnalysisService do
     end
   end
 
-  describe "durations analysis" do
-    subject(:result) { described_class.call(analysis_type: :durations, filters:) }
-
-    let!(:show1) { create(:show, date: "2023-07-01", venue:, tour: tour2, performance_gap_value: 1) }
-    let!(:show2) { create(:show, date: "2023-07-02", venue:, tour: tour2, performance_gap_value: 1) }
-
-    before do
-      create(:track, show: show1, position: 1, set: "1", songs: [ original_song ], duration: 900_000)
-      create(:track, show: show2, position: 1, set: "2", songs: [ original_song ], duration: 1_200_000)
-      create(:track, show: show1, position: 2, set: "1", songs: [ original_song2 ], duration: 600_000)
-    end
-
-    context "with song_slug filter" do
-      let(:filters) { { song_slug: original_song.slug } }
-
-      it "returns duration data with average", :aggregate_failures do
-        expect(result).to include(song: "Tweezer", average_duration_ms: 1_050_000)
-        expect(result[:performances].length).to eq(2)
-        expect(result[:performances].first[:duration_display]).to eq("20:00")
-      end
-    end
-
-    context "without song_slug (longest songs)" do
-      let(:filters) { { min_performances: 1 } }
-
-      it "returns songs sorted by average duration" do
-        expect(result[:songs]).to be_an(Array)
-        first_song = result[:songs].first
-        expect(first_song).to include(:avg_duration_ms, :max_duration_ms)
-      end
-    end
-
-    context "with non-existent song" do
-      let(:filters) { { song_slug: "nonexistent-song" } }
-
-      it "returns an error" do
-        expect(result[:error]).to eq("Song not found")
-      end
-    end
-  end
-
-  describe "venue_patterns analysis" do
-    subject(:result) { described_class.call(analysis_type: :venue_patterns, filters:) }
-
-    let!(:show1) { create(:show, date: "2023-07-01", venue:, tour: tour2, performance_gap_value: 1) }
-    let!(:show2) { create(:show, date: "2023-07-02", venue:, tour: tour2, performance_gap_value: 1) }
-    let!(:show3) { create(:show, date: "2023-07-03", venue: venue2, tour: tour2, performance_gap_value: 1) }
-
-    before do
-      create(:track, show: show1, position: 1, set: "1", songs: [ original_song ])
-      create(:track, show: show2, position: 1, set: "1", songs: [ original_song ])
-      create(:track, show: show3, position: 1, set: "1", songs: [ original_song2 ])
-    end
-
-    context "with venue_slug filter" do
-      let(:filters) { { venue_slug: venue.slug } }
-
-      it "returns venue-specific song data with most played songs" do
-        expect(result[:venue]).to eq(venue.name)
-        expect(result[:show_count]).to eq(2)
-        expect(result[:top_songs]).to be_an(Array)
-        tweezer = result[:top_songs].find { |s| s[:song] == "Tweezer" }
-        expect(tweezer[:count]).to eq(2)
-      end
-    end
-
-    context "without venue_slug (venue rankings)" do
-      let(:filters) { {} }
-
-      it "returns venues sorted by show count" do
-        expect(result[:venues]).to be_an(Array)
-        expect(result[:venues].first).to include(:venue, :show_count)
-      end
-    end
-
-    context "with non-existent venue" do
-      let(:filters) { { venue_slug: "nonexistent-venue" } }
-
-      it "returns an error" do
-        expect(result[:error]).to eq("Venue not found")
-      end
-    end
-  end
-
   describe "set_positions analysis" do
     subject(:result) { described_class.call(analysis_type: :set_positions, filters:) }
 
@@ -301,95 +217,6 @@ RSpec.describe PerformanceAnalysisService do
     end
   end
 
-  describe "era_comparison analysis" do
-    subject(:result) { described_class.call(analysis_type: :era_comparison, filters:) }
-
-    before do
-      5.times do |i|
-        show = create(:show, date: "1997-07-#{(i + 1).to_s.rjust(2, '0')}", venue:, tour:, performance_gap_value: 1)
-        create(:track, show:, position: 1, set: "1", songs: [ original_song ], duration: 1_200_000)
-        create(:track, show:, position: 2, set: "1", songs: [ cover_song ], duration: 600_000)
-      end
-
-      5.times do |i|
-        show = create(:show, date: "2023-09-#{(i + 1).to_s.rjust(2, '0')}", venue:, tour: tour2, performance_gap_value: 1)
-        create(:track, show:, position: 1, set: "1", songs: [ original_song ], duration: 900_000)
-        create(:track, show:, position: 2, set: "1", songs: [ original_song2 ], duration: 800_000)
-      end
-    end
-
-    context "with valid eras" do
-      let(:filters) { { year: 1997, compare_to: { year: 2023 } } }
-
-      it "returns stats for both eras with comparison data", :aggregate_failures do
-        expect(result[:era1]).to include(era: "1997", show_count: 5)
-        expect(result[:era2]).to include(era: "2023", show_count: 5)
-        expect(result[:comparison]).to include(:show_count_diff, :avg_duration_diff_ms)
-      end
-    end
-
-    context "with year ranges" do
-      let(:filters) { { year_range: [ 1995, 1999 ], compare_to: { year_range: [ 2020, 2025 ] } } }
-
-      it "handles year ranges" do
-        expect(result[:era1][:era]).to eq("1995-1999")
-        expect(result[:era2][:era]).to eq("2020-2025")
-      end
-    end
-
-    context "without compare_to" do
-      let(:filters) { { year: 1997 } }
-
-      it "returns an error" do
-        expect(result[:error]).to eq("Both era and compare_to required")
-      end
-    end
-  end
-
-  describe "covers analysis" do
-    subject(:result) { described_class.call(analysis_type: :covers, filters:) }
-
-    before do
-      show = create(:show, date: "2023-07-01", venue:, tour: tour2, performance_gap_value: 1)
-      create(:track, show:, position: 1, set: "1", songs: [ cover_song ])
-      create(:track, show:, position: 2, set: "1", songs: [ cover_song2 ])
-      create(:track, show:, position: 3, set: "1", songs: [ original_song ])
-
-      show2 = create(:show, date: "2023-07-02", venue:, tour: tour2, performance_gap_value: 1)
-      create(:track, show: show2, position: 1, set: "1", songs: [ cover_song ])
-    end
-
-    context "with cover_type frequency" do
-      let(:filters) { { cover_type: "frequency" } }
-
-      it "returns covers sorted by frequency" do
-        expect(result[:covers]).to be_an(Array)
-        cap = result[:covers].find { |c| c[:song] == "Crosseyed and Painless" }
-        expect(cap).to include(count: 2, artist: "Talking Heads")
-      end
-    end
-
-    context "with cover_type ratio" do
-      let(:filters) { { cover_type: "ratio" } }
-
-      it "returns cover ratio by year" do
-        expect(result[:by_year]).to be_an(Array)
-        year_2023 = result[:by_year].find { |y| y[:year] == 2023 }
-        expect(year_2023[:cover_pct]).to be > 0
-      end
-    end
-
-    context "with cover_type by_artist" do
-      let(:filters) { { cover_type: "by_artist" } }
-
-      it "returns covers grouped by artist" do
-        expect(result[:artists]).to be_an(Array)
-        talking_heads = result[:artists].find { |a| a[:artist] == "Talking Heads" }
-        expect(talking_heads[:count]).to eq(3)
-      end
-    end
-  end
-
   describe "geographic analysis" do
     subject(:result) { described_class.call(analysis_type: :geographic, filters:) }
 
@@ -442,38 +269,84 @@ RSpec.describe PerformanceAnalysisService do
     end
   end
 
+  describe "song_frequency analysis" do
+    subject(:result) { described_class.call(analysis_type: :song_frequency, filters:) }
+
+    let!(:show1) { create(:show, date: "2003-07-01", venue:, tour: tour2, performance_gap_value: 1) }
+    let!(:show2) { create(:show, date: "2003-07-02", venue:, tour: tour2, performance_gap_value: 1) }
+    let!(:show3) { create(:show, date: "2003-07-03", venue:, tour: tour2, performance_gap_value: 1) }
+
+    before do
+      create(:track, show: show1, position: 1, set: "1", songs: [ original_song ])
+      create(:track, show: show1, position: 2, set: "1", songs: [ original_song2 ])
+      create(:track, show: show2, position: 1, set: "1", songs: [ original_song ])
+      create(:track, show: show2, position: 2, set: "1", songs: [ original_song ])
+      create(:track, show: show3, position: 1, set: "1", songs: [ original_song2 ])
+    end
+
+    context "without filters" do
+      let(:filters) { {} }
+
+      it "returns songs ranked by play count", :aggregate_failures do
+        expect(result[:songs].first[:song]).to eq("Tweezer")
+        expect(result[:songs].find { |s| s[:song] == "Tweezer" }[:times_played]).to eq(3)
+        expect(result[:songs].find { |s| s[:song] == "You Enjoy Myself" }[:times_played]).to eq(2)
+        expect(result[:filter]).to eq("all time")
+      end
+    end
+
+    context "with year filter" do
+      let(:filters) { { year: 2003 } }
+
+      it "filters by year and includes filter description", :aggregate_failures do
+        expect(result[:songs]).to be_an(Array)
+        expect(result[:filter]).to eq("year: 2003")
+      end
+    end
+
+    context "with year_range filter" do
+      let(:filters) { { year_range: [ 2002, 2004 ] } }
+
+      it "filters by year range", :aggregate_failures do
+        expect(result[:songs]).to be_an(Array)
+        expect(result[:filter]).to eq("years: 2002-2004")
+      end
+    end
+  end
+
   describe "filtering" do
     let!(:show_1997) { create(:show, date: "1997-07-01", venue:, tour:, performance_gap_value: 1) }
     let!(:show_2023) { create(:show, date: "2023-09-01", venue:, tour: tour2, performance_gap_value: 1) }
 
     before do
-      create(:track, show: show_1997, position: 1, set: "1", songs: [ original_song ], duration: 1_200_000)
-      create(:track, show: show_2023, position: 1, set: "1", songs: [ original_song ], duration: 900_000)
+      create(:track, show: show_1997, position: 1, set: "1", songs: [ original_song ])
+      create(:track, show: show_2023, position: 1, set: "1", songs: [ original_song2 ])
     end
 
     context "with year filter" do
-      subject(:result) { described_class.call(analysis_type: :durations, filters: { song_slug: original_song.slug, year: 1997 }) }
+      subject(:result) { described_class.call(analysis_type: :song_frequency, filters: { year: 1997 }) }
 
       it "filters by year" do
-        expect(result[:performances].length).to eq(1)
-        expect(result[:performances].first[:date]).to start_with("1997")
+        expect(result[:songs].length).to eq(1)
+        expect(result[:songs].first[:song]).to eq("Tweezer")
       end
     end
 
     context "with year_range filter" do
-      subject(:result) { described_class.call(analysis_type: :durations, filters: { song_slug: original_song.slug, year_range: [ 2020, 2025 ] }) }
+      subject(:result) { described_class.call(analysis_type: :song_frequency, filters: { year_range: [ 2020, 2025 ] }) }
 
       it "filters by year range" do
-        expect(result[:performances].length).to eq(1)
-        expect(result[:performances].first[:date]).to start_with("2023")
+        expect(result[:songs].length).to eq(1)
+        expect(result[:songs].first[:song]).to eq("You Enjoy Myself")
       end
     end
 
     context "with tour_slug filter" do
-      subject(:result) { described_class.call(analysis_type: :durations, filters: { song_slug: original_song.slug, tour_slug: tour.slug }) }
+      subject(:result) { described_class.call(analysis_type: :song_frequency, filters: { tour_slug: tour.slug }) }
 
       it "filters by tour" do
-        expect(result[:performances].length).to eq(1)
+        expect(result[:songs].length).to eq(1)
+        expect(result[:songs].first[:song]).to eq("Tweezer")
       end
     end
   end
@@ -549,7 +422,7 @@ RSpec.describe PerformanceAnalysisService do
   end
 
   describe "#format_duration" do
-    subject(:formatted) { described_class.new(analysis_type: :durations).send(:format_duration, ms) }
+    subject(:formatted) { described_class.new(analysis_type: :song_frequency).send(:format_duration, ms) }
 
     context "with nil" do
       let(:ms) { nil }

@@ -4,7 +4,7 @@ module Tools
 
     description "Get detailed information about a user-created playlist. " \
                 "Returns playlist metadata and track listing with show dates and durations. " \
-                "Includes public website URLs for the playlist and each track - always share these links with users!"
+                "Includes public website URLs for the playlist and each track - include the playlist URL in responses, and track URLs when discussing specific tracks."
 
     input_schema(
       properties: {
