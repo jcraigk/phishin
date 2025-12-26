@@ -1,6 +1,9 @@
 [tools]
 ruby = "3.4.8"
 
+[tasks.default]
+depends = ["dev"]
+
 [tasks.all]
 depends = ["build", "up"]
 
@@ -27,7 +30,7 @@ docker volume prune -f
 
 [tasks.dev]
 depends = ["services"]
-run = "foreman start -f Procfile.dev"
+run = "overmind start -f Procfile.dev -F overmind-local.tmux.conf"
 
 [tasks.services]
 run = "docker compose up -d pg redis"

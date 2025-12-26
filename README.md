@@ -38,7 +38,8 @@ $ mise install
 
 Install dependencies:
 ```bash
-$ gem install bundler foreman # if bundler and/or foreman are not already installed
+$ brew install overmind # process manager (requires tmux)
+$ gem install bundler
 $ bundle install
 $ yarn install
 ```

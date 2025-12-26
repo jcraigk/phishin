@@ -47,7 +47,6 @@ group :development do
   gem "brakeman"
   gem "bullet"
   gem "dotenv-rails"
-  gem "foreman"
   gem "rubocop-capybara"
   gem "rubocop-factory_bot"
   gem "rubocop-performance"
