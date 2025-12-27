@@ -12,6 +12,46 @@ const ApiDocs = () => {
     <PageWrapper>
       <h1 className="title">API Documentation</h1>
       <p>Phish.in provides programmatic access to content for free via a RESTful JSON API. There are two versions of the API. Version 2 is the latest stable version and is recommended. However, version 1 will remain supported for the foreseeable future.</p>
+      <p>Additionally, an MCP (Model Context Protocol) server is available for AI assistant integration.</p>
+
+      <hr className="mt-6 mb-6" />
+
+      <h2 className="title">MCP Server</h2>
+      <h3 className="subtitle">AI Integration</h3>
+      <p>
+        Phish.in exposes data through a{" "}
+        <a href="https://modelcontextprotocol.io/" target="_blank">Model Context Protocol (MCP)</a>{" "}
+        server, enabling AI assistants and other MCP clients to interact with the platform using natural language.
+        The server is read-only and does not require authentication.
+      </p>
+
+      <h4 className="title is-5 mt-4">Endpoint</h4>
+      <pre className="box bg-gray-100 p-4 rounded-lg overflow-x-auto mb-4">
+        POST https://phish.in/mcp
+      </pre>
+
+      <h4 className="title is-5">Available Tools</h4>
+      <ul className="list-disc list-inside mb-4">
+        <li><strong>search</strong> - Search across shows, songs, venues, tours, tags, and playlists</li>
+        <li><strong>list_shows</strong> - List shows with optional setlist details, filtered by year, tour, venue, or date</li>
+        <li><strong>list_songs</strong> - List songs with performance statistics</li>
+        <li><strong>list_venues</strong> - List venues with geographic filtering</li>
+        <li><strong>list_tours</strong> - List tours with date ranges and show counts</li>
+        <li><strong>list_years</strong> - List years/periods with show counts and era designations</li>
+        <li><strong>get_song</strong> - Get detailed song information including performances and lyrics</li>
+        <li><strong>get_venue</strong> - Get venue details with show history</li>
+        <li><strong>get_tour</strong> - Get tour details with associated shows</li>
+        <li><strong>get_playlist</strong> - Get public playlist details</li>
+        <li><strong>stats</strong> - Statistical analysis: gaps/bustouts, transitions, set positions, predictions, streaks, geographic patterns, co-occurrence, song frequency</li>
+      </ul>
+
+      <h4 className="title is-5">Usage</h4>
+      <p>
+        The MCP endpoint accepts JSON-RPC 2.0 requests. MCP clients like{" "}
+        <a href="https://claude.ai" target="_blank">Claude</a>,{" "}
+        <a href="https://cursor.sh" target="_blank">Cursor</a>, or other compatible AI tools can connect to the server
+        using the streamable HTTP transport at <code>https://phish.in/mcp</code>.
+      </p>
 
       <hr className="mt-6 mb-6" />
 

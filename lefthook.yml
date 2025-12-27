@@ -1,5 +1,5 @@
 pre-commit:
   commands:
-    check:
-      run: mise run check
+    lint:
+      run: mise run lint
 
