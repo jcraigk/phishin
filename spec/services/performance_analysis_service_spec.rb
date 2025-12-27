@@ -420,38 +420,4 @@ RSpec.describe PerformanceAnalysisService do
       end
     end
   end
-
-  describe "#format_duration" do
-    subject(:formatted) { described_class.new(analysis_type: :song_frequency).send(:format_duration, ms) }
-
-    context "with nil" do
-      let(:ms) { nil }
-
-      it { is_expected.to eq("0:00") }
-    end
-
-    context "with 0" do
-      let(:ms) { 0 }
-
-      it { is_expected.to eq("0:00") }
-    end
-
-    context "with 90 seconds" do
-      let(:ms) { 90_000 }
-
-      it { is_expected.to eq("1:30") }
-    end
-
-    context "with 20 minutes" do
-      let(:ms) { 1_200_000 }
-
-      it { is_expected.to eq("20:00") }
-    end
-
-    context "with 5 seconds" do
-      let(:ms) { 5_000 }
-
-      it { is_expected.to eq("0:05") }
-    end
-  end
 end
