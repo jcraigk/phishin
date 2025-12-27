@@ -88,7 +88,7 @@ const Faq = () => {
       <p>
         Yes! Phish.in provides an <a href="https://modelcontextprotocol.io/" target="_blank">MCP (Model Context Protocol)</a> server
         that allows AI assistants like Claude, ChatGPT, and other MCP-compatible clients to access Phish data through natural language queries.
-        The server is available at <code>https://phish.in/mcp</code> and is read-only.
+        The server is available at https://phish.in/mcp and is read-only.
       </p>
       <p>Example questions you can ask an AI assistant connected to Phish.in MCP:</p>
       <ul className="list-disc list-inside mb-4">
