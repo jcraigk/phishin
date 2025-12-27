@@ -102,7 +102,7 @@ GEM
     base64 (0.3.0)
     bcrypt (3.1.20)
     bigdecimal (3.3.1)
-    brakeman (7.1.1)
+    brakeman (7.1.2)
       racc
     builder (3.3.0)
     bullet (8.1.0)
@@ -260,6 +260,10 @@ GEM
       reline (>= 0.4.2)
     jmespath (1.6.2)
     json (2.18.0)
+    json-schema (6.1.0)
+      addressable (~> 2.8)
+      bigdecimal (>= 3.1, < 5)
+    json_rpc_handler (0.1.1)
     jwt (3.1.2)
       base64
     language_server-protocol (3.17.0.5)
@@ -280,12 +284,15 @@ GEM
       net-smtp
     marcel (1.1.0)
     matrix (0.4.3)
+    mcp (0.4.0)
+      json-schema (>= 4.1)
+      json_rpc_handler (~> 0.1)
     mini_magick (5.3.1)
       logger
     mini_mime (1.1.5)
     minitest (6.0.0)
       prism (~> 1.5)
-    multi_json (1.18.0)
+    multi_json (1.19.0)
     multi_xml (0.8.0)
       bigdecimal (>= 3.1, < 5)
     mustermann (3.0.4)
@@ -605,6 +612,7 @@ DEPENDENCIES
   htmlentities
   image_processing
   jwt
+  mcp
   nokogiri
   ostruct
   pg

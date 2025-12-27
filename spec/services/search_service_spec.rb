@@ -32,7 +32,8 @@ RSpec.describe SearchService do
         show_tags: [ show_tag ],
         track_tags: [ track_tag ],
         tracks: [],
-        playlists: []
+        playlists: [],
+        tours: []
       }
     end
     let!(:show1) { create(:show, date:) }
@@ -82,7 +83,8 @@ RSpec.describe SearchService do
         show_tags: [ show_tag ],
         track_tags: [ track_tag ],
         tracks: [ track ],
-        playlists: []
+        playlists: [],
+        tours: []
       }
     end
     let!(:show_tag) { create(:show_tag, notes: "... blah #{term} ...") }

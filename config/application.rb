@@ -25,9 +25,10 @@ module Phishin
     config.oauth_google_key = ENV.fetch("OAUTH_GOOGLE_KEY", nil)
     config.oauth_google_secret = ENV.fetch("OAUTH_GOOGLE_SECRET", nil)
     config.content_import_path = ENV.fetch("IMPORT_PATH", "/content/import")
+    config.production_base_url = "https://phish.in"
     config.content_base_url =
       if ENV.fetch("PRODUCTION_CONTENT", nil) == "true"
-        "https://phish.in"
+        config.production_base_url
       else
         config.base_url
       end

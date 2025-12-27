@@ -10,6 +10,10 @@ class Song < ApplicationRecord
 
   alias_attribute :name, :title
 
+  def url
+    "#{App.base_url}/songs/#{slug}"
+  end
+
   include PgSearch::Model
   pg_search_scope(
     :kinda_matching,

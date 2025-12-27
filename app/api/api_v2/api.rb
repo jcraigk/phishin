@@ -22,7 +22,11 @@ class ApiV2::Api < ApiV2::Base
         "This API returns the complete catalog of known Phish setlists, including shows " \
         "without audience recordings (marked with audio_status: 'missing'). " \
         "See [GitHub](https://github.com/jcraigk/phishin) for development and issue tracking. " \
-        "Access is provided free of charge and without warranty. Please be nice."
+        "Access is provided free of charge and without warranty. Please be nice.\n\n" \
+        "**MCP Server:** An [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) " \
+        "server is also available at `POST #{App.base_url}/mcp` for AI assistant integration. " \
+        "Tools include: search, list_shows, list_songs, list_venues, list_tours, list_years, " \
+        "get_song, get_venue, get_tour, get_playlist, and stats."
     },
     # security_definitions: {
     #   api_key: {
