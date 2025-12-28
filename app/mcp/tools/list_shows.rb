@@ -2,35 +2,21 @@ module Tools
   class ListShows < MCP::Tool
     tool_name "list_shows"
 
-    description "List Phish shows with optional setlist details. " \
-                "Filter by year, tour, venue, or specific date(s). " \
-                "Use include_tracks=true for full setlists. " \
+    description "Browse multiple shows by year, date range, tour, or venue. " \
+                "Returns a list of shows WITHOUT setlists. " \
+                "Use get_show instead when you need a specific show's full setlist. " \
                 "At least one filter is required. " \
-                "DISPLAY: In markdown, link dates to show url, venues to venue.url, and songs to track url. " \
-                "Example: | [Jul 4, 2023](show_url) | [MSG](venue_url) | [Tweezer](track_url) |. " \
+                "DISPLAY: In markdown, link dates to show url and venues to venue url. " \
+                "Example: | [Jul 4, 2023](show_url) | [MSG](venue_url) |. " \
                 "Format dates readably (e.g., 'Jul 4, 2023')."
 
     input_schema(
       properties: {
-        date: { type: "string", description: "Single show date (YYYY-MM-DD)" },
-        dates: {
-          type: "array",
-          items: { type: "string" },
-          description: "Multiple show dates (YYYY-MM-DD format)"
-        },
         year: { type: "integer", description: "Filter by year (e.g., 1997)" },
         start_date: { type: "string", description: "Start date for range filter (YYYY-MM-DD)" },
         end_date: { type: "string", description: "End date for range filter (YYYY-MM-DD)" },
         tour_slug: { type: "string", description: "Filter by tour slug (e.g., 'fall-tour-1997')" },
         venue_slug: { type: "string", description: "Filter by venue slug (e.g., 'madison-square-garden')" },
-        include_tracks: {
-          type: "boolean",
-          description: "Include full setlist with track details (default: false)"
-        },
-        include_taper_notes: {
-          type: "boolean",
-          description: "Include taper/source notes (default: false)"
-        },
         sort_by: {
           type: "string",
           enum: %w[date likes duration random],
@@ -48,58 +34,41 @@ module Tools
 
     class << self
       def call(
-        date: nil,
-        dates: nil,
         year: nil,
         start_date: nil,
         end_date: nil,
         tour_slug: nil,
         venue_slug: nil,
-        include_tracks: false,
-        include_taper_notes: false,
         sort_by: "date",
         sort_order: nil,
         limit: 50
       )
-        has_filter = date || dates&.any? || year || start_date || end_date || tour_slug || venue_slug
-        return error_response("At least one filter required: date, dates, year, start_date, end_date, tour_slug, or venue_slug") unless has_filter
+        has_filter = year || start_date || end_date || tour_slug || venue_slug
+        return error_response("At least one filter required: year, start_date, end_date, tour_slug, or venue_slug") unless has_filter
 
-        shows = build_query(date, dates, year, start_date, end_date, tour_slug, venue_slug, include_tracks)
+        shows = build_query(year, start_date, end_date, tour_slug, venue_slug)
         return error_response("No shows found") if shows.empty?
 
         sort_order ||= sort_by == "date" ? "asc" : "desc"
         shows = apply_sort(shows, sort_by, sort_order)
-        shows = shows.limit(limit) if limit && !date
+        shows = shows.limit(limit) if limit
 
-        show_list = shows.map { |show| build_show_data(show, include_tracks, include_taper_notes) }
+        show_list = shows.map { |show| build_show_data(show) }
 
-        result = if date && show_list.size == 1
-                   show_list.first
-        else
-                   {
-                     total: show_list.size,
-                     filters: { date:, dates:, year:, start_date:, end_date:, tour_slug:, venue_slug: }.compact,
-                     shows: show_list
-                   }
-        end
+        result = {
+          total: show_list.size,
+          filters: { year:, start_date:, end_date:, tour_slug:, venue_slug: }.compact,
+          shows: show_list
+        }
 
         MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
       end
 
       private
 
-      def build_query(date, dates, year, start_date, end_date, tour_slug, venue_slug, include_tracks)
+      def build_query(year, start_date, end_date, tour_slug, venue_slug)
         shows = Show.includes(:venue, :tour)
 
-        if include_tracks
-          shows = shows.includes(
-            tracks: [ :songs, { track_tags: :tag, songs_tracks: {} } ],
-            show_tags: :tag
-          )
-        end
-
-        shows = shows.where(date:) if date
-        shows = shows.where(date: dates) if dates&.any?
         shows = shows.where("EXTRACT(YEAR FROM date) = ?", year) if year
         shows = shows.where("date >= ?", start_date) if start_date
         shows = shows.where("date <= ?", end_date) if end_date
@@ -109,11 +78,12 @@ module Tools
         shows
       end
 
-      def build_show_data(show, include_tracks, include_taper_notes)
-        data = {
+      def build_show_data(show)
+        {
           date: show.date.iso8601,
           url: show.url,
-          venue: include_tracks ? venue_data(show) : show.venue_name,
+          venue: show.venue_name,
+          venue_url: show.venue&.url,
           location: show.venue&.location,
           tour: show.tour&.name,
           duration_ms: show.duration,
@@ -121,59 +91,6 @@ module Tools
           likes: show.likes_count,
           audio_status: show.audio_status
         }
-
-        if include_tracks
-          data[:tags] = show.show_tags.map { |st| tag_data(st) }
-          data[:tracks] = tracks_data(show)
-        end
-
-        data[:taper_notes] = show.taper_notes if include_taper_notes
-
-        data
-      end
-
-      def venue_data(show)
-        {
-          name: show.venue_name,
-          slug: show.venue.slug,
-          url: show.venue.url,
-          city: show.venue.city,
-          state: show.venue.state,
-          country: show.venue.country
-        }
-      end
-
-      def tag_data(show_tag)
-        {
-          name: show_tag.tag.name,
-          slug: show_tag.tag.slug,
-          notes: show_tag.notes
-        }
-      end
-
-      def tracks_data(show)
-        show.tracks.sort_by(&:position).map do |track|
-          songs_track = track.songs_tracks.first
-          {
-            position: track.position,
-            title: track.title,
-            slug: track.slug,
-            url: track.url,
-            set: track.set,
-            set_name: track.set_name,
-            duration_ms: track.duration,
-            duration_display: McpHelpers.format_duration(track.duration),
-            songs: track.songs.map { |s| { title: s.title, slug: s.slug, url: s.url } },
-            tags: track.track_tags.map { |tt| { name: tt.tag.name, notes: tt.notes } },
-            likes_count: track.likes_count,
-            gap: songs_track && {
-              previous: songs_track.previous_performance_gap,
-              next: songs_track.next_performance_gap,
-              previous_slug: songs_track.previous_performance_slug,
-              next_slug: songs_track.next_performance_slug
-            }
-          }
-        end
       end
 
       def apply_tour_filter(shows, tour_slug)

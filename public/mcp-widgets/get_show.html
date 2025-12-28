@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phish.in Show</title>
+  <style>
+    @font-face {
+  font-family: 'Open Sans Condensed';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('{{WIDGET_ASSET_HOST}}/fonts/open-sans-condensed-latin-300-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Open Sans Condensed';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('{{WIDGET_ASSET_HOST}}/fonts/open-sans-condensed-latin-700-normal.woff2') format('woff2');
+}
+
+    @font-face {
+  font-family: 'Open Sans Condensed';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('{{WIDGET_ASSET_HOST}}/fonts/open-sans-condensed-latin-300-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Open Sans Condensed';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('{{WIDGET_ASSET_HOST}}/fonts/open-sans-condensed-latin-700-normal.woff2') format('woff2');
+}
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: "Open Sans Condensed", "Arial Narrow", sans-serif !important;
+      background: transparent;
+      color: #515152;
+      font-weight: 300;
+    }
+    
+    #root, #root * {
+      font-family: "Open Sans Condensed", "Arial Narrow", sans-serif !important;
+    }
+    
+    .show-card {
+      position: relative;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      max-width: 400px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      background: #d4d5d7;
+    }
+    
+    .background-blur {
+      position: absolute;
+      top: -30px;
+      left: -30px;
+      right: -30px;
+      bottom: -30px;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: blur(50px);
+      opacity: 0.9;
+      z-index: 0;
+    }
+    
+    .card-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .show-header {
+      display: flex;
+      gap: 12px;
+      padding: 14px;
+      background: rgba(212, 213, 215, 0.88);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    
+    .cover-art {
+      width: 88px;
+      height: 88px;
+      border-radius: 0.5rem;
+      object-fit: cover;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    
+    .show-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+    }
+    
+    .show-date {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 2rem;
+      margin-bottom: 4px;
+      color: #515152;
+    }
+    
+    .venue-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #515152;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.4rem;
+    }
+    
+    .location {
+      font-size: 1.1rem;
+      color: #515152;
+      margin-top: 2px;
+    }
+    
+    .track-list {
+      max-height: 300px;
+      overflow-y: auto;
+      background: rgba(212, 213, 215, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    
+    .section-title {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 12px 14px 8px;
+      background: rgba(199, 200, 202, 0.9);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      position: sticky;
+      top: 0;
+    }
+    
+    .title-left {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #515152;
+    }
+    
+    .detail-right {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #515152;
+    }
+    
+    .set-group:not(:first-child) .section-title {
+      border-top: 1px solid rgba(200, 200, 200, 0.5);
+    }
+    
+    .track {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      font-size: 1.3rem;
+      background: rgba(255, 255, 255, 0.8);
+      color: #6d6f71;
+      min-height: 3rem;
+    }
+    
+    .track:not(:last-child) {
+      border-bottom: 1px solid rgba(212, 213, 215, 0.6);
+    }
+    
+    .track-title {
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-right: 1rem;
+    }
+    
+    .track-duration {
+      font-size: 1.1rem;
+      color: #6d6f71;
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+    }
+    
+    .listen-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px;
+      background: rgba(3, 187, 242, 0.95);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.2rem;
+      transition: background 0.2s;
+    }
+    
+    .listen-button:hover {
+      background: rgba(2, 158, 204, 0.95);
+    }
+
+    .listen-button svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .loader-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 48px 24px;
+      background: rgba(212, 213, 215, 0.9);
+      border-radius: 0.5rem;
+    }
+    
+    .moon-loader {
+      width: 50px;
+      height: 50px;
+      position: relative;
+      animation: moon-rotate 0.6s linear infinite;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #6d6f71;
+      box-sizing: border-box;
+    }
+    
+    @keyframes moon-rotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error {
+      padding: 24px;
+      text-align: center;
+      color: #b65b5b;
+      font-size: 1.1rem;
+      background: rgba(212, 213, 215, 0.9);
+      border-radius: 0.5rem;
+    }
+    
+    .track-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .track-list::-webkit-scrollbar-track {
+      background: rgba(212, 213, 215, 0.5);
+    }
+    
+    .track-list::-webkit-scrollbar-thumb {
+      background: rgba(109, 111, 113, 0.5);
+      border-radius: 3px;
+    }
+    
+    .track-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(109, 111, 113, 0.7);
+    }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div class="loader-container">
+      <div class="moon-loader"></div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      function formatDate(dateString) {
+        if (!dateString) return "";
+        const datePart = dateString.slice(0, 10);
+        const [year, month, day] = datePart.split("-").map(Number);
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return `${monthNames[month - 1]} ${day}, ${year}`;
+      }
+
+      function formatDurationShow(milliseconds) {
+        const totalMinutes = Math.floor(milliseconds / 60000);
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        if (hours > 0) {
+          return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+        }
+        return `${minutes}m`;
+      }
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function parseDuration(durationStr) {
+        if (!durationStr) return 0;
+        const parts = durationStr.split(':').map(Number);
+        if (parts.length === 3) {
+          return (parts[0] * 3600 + parts[1] * 60 + parts[2]) * 1000;
+        } else if (parts.length === 2) {
+          return (parts[0] * 60 + parts[1]) * 1000;
+        }
+        return 0;
+      }
+
+      function renderShow(show) {
+        const tracksBySet = {};
+        (show.tracks || []).forEach(track => {
+          const setName = track.set || 'Set';
+          if (!tracksBySet[setName]) tracksBySet[setName] = [];
+          tracksBySet[setName].push(track);
+        });
+
+        let tracksHtml = '';
+        Object.entries(tracksBySet).forEach(([setName, tracks]) => {
+          const setDurationMs = tracks.reduce((sum, t) => sum + parseDuration(t.duration), 0);
+          const setDuration = formatDurationShow(setDurationMs);
+          
+          tracksHtml += `
+            <div class="set-group">
+              <div class="section-title">
+                <div class="title-left">${escapeHtml(setName)}</div>
+                <span class="detail-right">${setDuration}</span>
+              </div>
+          `;
+          tracks.forEach((track) => {
+            tracksHtml += `
+              <div class="track">
+                <span class="track-title">${escapeHtml(track.title)}</span>
+                <span class="track-duration">${track.duration || ''}</span>
+              </div>
+            `;
+          });
+          tracksHtml += '</div>';
+        });
+
+        const coverArtUrl = show.cover_art_url || '';
+
+        return `
+          <div class="show-card">
+            <div class="background-blur" id="bg-blur"></div>
+            <div class="card-content">
+              <div class="show-header">
+                <img src="${escapeHtml(coverArtUrl)}" alt="Cover" class="cover-art" id="cover-img" />
+                <div class="show-info">
+                  <div class="show-date">${formatDate(show.date)}</div>
+                  <div class="venue-name">${escapeHtml(show.venue)}</div>
+                  <div class="location">${escapeHtml(show.location || '')}</div>
+                </div>
+              </div>
+              ${tracksHtml ? `<div class="track-list">${tracksHtml}</div>` : ''}
+              <a href="${escapeHtml(show.show_url)}" target="_blank" rel="noopener" class="listen-button">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                Listen on Phish.in
+              </a>
+            </div>
+          </div>
+        `;
+      }
+
+      function setupBackgroundBlur(coverArtUrl) {
+        if (!coverArtUrl) return;
+        
+        const coverImg = document.getElementById('cover-img');
+        if (coverImg) {
+          coverImg.onload = function() {
+            const bgEl = document.getElementById('bg-blur');
+            if (bgEl) {
+              bgEl.style.backgroundImage = `url("${coverArtUrl}")`;
+            }
+          };
+        }
+      }
+
+      const MAX_POLL_ATTEMPTS = 100;
+      const POLL_INTERVAL_MS = 100;
+
+      function getData() {
+        if (window._widgetData) return window._widgetData;
+        const oa = window.openai || {};
+        return oa.toolOutput?.structuredContent 
+            || oa.toolOutput 
+            || oa.widget?.props 
+            || oa.view?.params
+            || null;
+      }
+
+      function isDataComplete(data) {
+        return data && data.date && Array.isArray(data.tracks) && data.tracks.length > 0;
+      }
+
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      async function waitForData() {
+        for (let i = 0; i < MAX_POLL_ATTEMPTS; i++) {
+          const data = getData();
+          if (isDataComplete(data)) return data;
+          await sleep(POLL_INTERVAL_MS);
+        }
+        return getData();
+      }
+
+      async function render() {
+        const root = document.getElementById('root');
+        
+        try {
+          const data = await waitForData();
+          const oa = window.openai || {};
+
+          if (!data) {
+            const debug = {
+              hasOpenai: !!window.openai,
+              toolOutputType: typeof oa.toolOutput,
+              toolOutput: oa.toolOutput,
+              widgetProps: oa.widget?.props,
+              viewParams: oa.view?.params
+            };
+            root.innerHTML = '<div class="error">No show data available<br><small style="word-break:break-all">' + escapeHtml(JSON.stringify(debug)) + '</small></div>';
+            return;
+          }
+
+          if (data.date) {
+            root.innerHTML = renderShow(data);
+            setupBackgroundBlur(data.cover_art_url);
+          } else {
+            root.innerHTML = '<div class="error">Invalid data format<br><small style="word-break:break-all">' + escapeHtml(JSON.stringify(data)) + '</small></div>';
+          }
+        } catch (e) {
+          root.innerHTML = `<div class="error">Error: ${escapeHtml(e.message)}</div>`;
+        }
+      }
+
+      window.addEventListener('message', (event) => {
+        if (event.data?.type === 'tool_output' || event.data?.structuredContent || event.data?.date) {
+          window._widgetData = event.data.structuredContent || event.data;
+          render();
+        }
+      });
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', render);
+      } else {
+        render();
+      }
+    })();
+  </script>
+</body>
+</html>
