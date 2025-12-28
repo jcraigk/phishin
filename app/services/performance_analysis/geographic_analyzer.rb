@@ -54,6 +54,7 @@ module PerformanceAnalysis
       never_played_ids = all_played_songs - songs_played_in_state
 
       songs = Song.where(id: never_played_ids)
+                  .where.not(slug: EXCLUDED_SONGS)
                   .joins(:tracks)
                   .group("songs.id", "songs.title", "songs.slug")
                   .having("COUNT(tracks.id) >= ?", 10)
@@ -85,6 +86,7 @@ module PerformanceAnalysis
           next if EXCLUDED_SETS.include?(track.set)
 
           track.songs.each do |song|
+            next if EXCLUDED_SONGS.include?(song.slug)
             unless songs_seen.include?(song.id)
               songs_seen.add(song.id)
               debuts << {

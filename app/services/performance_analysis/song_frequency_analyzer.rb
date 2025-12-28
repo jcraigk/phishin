@@ -1,7 +1,8 @@
 module PerformanceAnalysis
   class SongFrequencyAnalyzer < BaseAnalyzer
     def call
-      song_counts = base_tracks.group("songs.id", "songs.title", "songs.slug")
+      song_counts = base_tracks.where.not(songs: { slug: EXCLUDED_SONGS })
+                               .group("songs.id", "songs.title", "songs.slug")
                                .select(
                                  "songs.id",
                                  "songs.title",

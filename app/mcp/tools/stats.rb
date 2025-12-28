@@ -5,8 +5,8 @@ module Tools
     description "Statistical analysis of Phish performances. Supports gaps (bustouts), " \
                 "transitions, set positions, geographic patterns, " \
                 "co-occurrence, and song frequency. " \
-                "DISPLAY: In markdown, link song names to their url field and example dates to their url. " \
-                "Example: | [Tweezer](song_url) | 42 | [Dec 31, 1995](example_url) |. " \
+                "DISPLAY: In markdown, link song names to their url field and dates to their track url. " \
+                "Example: | [Tweezer](song_url) | 42 | [Dec 31, 1995](track_url) |. " \
                 "Format dates readably (e.g., 'Jul 4, 2023')."
 
     input_schema(
@@ -24,6 +24,7 @@ module Tools
         tour_slug: { type: "string", description: "Filter to specific tour" },
         state: { type: "string", description: "US state code for geographic analysis" },
         min_gap: { type: "integer", description: "Minimum show gap for bustout queries" },
+        min_plays: { type: "integer", description: "Minimum times played to include (default: 2)" },
         position: { type: "string", enum: %w[opener closer encore], description: "Set position filter" },
         set: { type: "string", enum: %w[1 2 3 4], description: "Set number for opener/closer analysis (default: 1 for openers, 2 for closers)" },
         direction: { type: "string", enum: %w[before after], description: "Transition direction" },

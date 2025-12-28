@@ -59,6 +59,7 @@ module PerformanceAnalysis
     def count_songs_in_tracks(track_ids, position_name, set_name)
       song_counts = Track.joins(:songs)
                          .where(id: track_ids)
+                         .where.not(songs: { slug: EXCLUDED_SONGS })
                          .group("songs.title", "songs.slug")
                          .order("count_all DESC")
                          .limit(limit)

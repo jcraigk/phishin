@@ -1,6 +1,7 @@
 module PerformanceAnalysis
   class BaseAnalyzer
     EXCLUDED_SETS = %w[S P].freeze
+    EXCLUDED_SONGS = %w[soundcheck].freeze
 
     attr_reader :filters
 
