@@ -103,10 +103,17 @@ module Tools
         {
           date: show.date.iso8601,
           venue: show.venue_name,
+          venue_slug: show.venue&.slug,
           location: show.venue&.location,
+          duration_ms: show.duration,
+          taper_notes: show.taper_notes,
           cover_art_url: show.cover_art_urls[:medium],
+          cover_art_url_large: show.cover_art_urls[:large],
+          album_cover_url: show.album_cover_url,
           show_url: show.url,
           tracks: show.tracks.sort_by(&:position).map do |track|
+            songs_track = track.songs_tracks.first
+            song = track.songs.first
             {
               title: track.title,
               set: track.set_name,
@@ -114,14 +121,24 @@ module Tools
               duration_ms: track.duration,
               url: track.url,
               mp3_url: track.mp3_url,
-              waveform_image_url: track.waveform_image_url
+              waveform_image_url: track.waveform_image_url,
+              song: song && { title: song.title, slug: song.slug },
+              gap: songs_track && {
+                previous: songs_track.previous_performance_gap,
+                next: songs_track.next_performance_gap,
+                previous_slug: songs_track.previous_performance_slug,
+                next_slug: songs_track.next_performance_slug
+              }
             }
           end
         }
       end
 
       def error_response(message)
-        MCP::Tool::Response.new([ { type: "text", text: "Error: #{message}" } ], error: true)
+        MCP::Tool::Response.new(
+          [ { type: "text", text: "Error: #{message}" } ],
+          structured_content: { error: true, message: }
+        )
       end
     end
   end

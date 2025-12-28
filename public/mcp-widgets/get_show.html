@@ -99,54 +99,149 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
       align-items: center;
       border-radius: 0.5rem 0.5rem 0 0;
+      position: relative;
+      z-index: 10;
     }
 
-    .date-row {
+    .context-menu-wrapper {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 60;
+    }
+
+    .context-menu-btn {
       display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .external-link {
-      display: inline-flex;
       align-items: center;
       justify-content: center;
       color: #515152;
-      text-decoration: none;
+      background: none;
+      border: none;
       transition: color 0.2s;
-      position: relative;
       cursor: pointer;
-      margin-left: 4px;
+      padding: 8px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      line-height: 1;
     }
 
-    .external-link:hover {
+    .context-menu-btn:hover {
       color: #03BBF2;
     }
 
-    .external-link svg {
-      width: 22px;
-      height: 22px;
-    }
-
-    .external-link .tooltip {
+    .context-dropdown {
       position: absolute;
-      bottom: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #333;
-      color: white;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
-      margin-bottom: 4px;
+      top: 100%;
+      right: 0;
+      margin-top: 4px;
+      background-color: #ffffff;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      min-width: 200px;
+      z-index: 9999;
+      display: none;
+      overflow: hidden;
+      isolation: isolate;
     }
 
-    .external-link .tooltip.show {
+    .context-dropdown.visible {
+      display: block;
+    }
+
+    .context-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      color: #515152;
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: background-color 0.15s, color 0.15s;
+      cursor: pointer;
+      border: none;
+      background-color: #ffffff;
+      width: 100%;
+      text-align: left;
+    }
+
+    .context-dropdown-item:hover {
+      background-color: #e8f7fc;
+      color: #03BBF2;
+    }
+
+    .context-dropdown-item.no-hover {
+      cursor: default;
+    }
+
+    .context-dropdown-item.no-hover:hover {
+      background-color: #ffffff;
+      color: #515152;
+    }
+
+    .context-dropdown-item svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .taper-notes-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(212, 213, 215, 0.98);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      overflow-y: auto;
+      border-radius: 0.5rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0s 0.3s;
+    }
+
+    .taper-notes-modal.visible {
       opacity: 1;
+      visibility: visible;
+      transition: opacity 0.3s ease, visibility 0s 0s;
+    }
+
+    .taper-notes-modal.with-player {
+      bottom: 96px;
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .taper-notes-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .taper-notes-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #515152;
+    }
+
+    .taper-notes-header .modal-close-btn {
+      position: static;
+    }
+
+    .taper-notes-content {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 0.5rem;
+      padding: 16px;
+      font-size: 1.1rem;
+      color: #515152;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      flex: 1;
+      overflow-y: auto;
     }
 
     .cover-art-container {
@@ -204,6 +299,8 @@
       flex-direction: column;
       justify-content: center;
       min-width: 0;
+      flex: 1;
+      padding-right: 30px;
     }
     
     .show-date {
@@ -354,6 +451,95 @@
       flex-shrink: 0;
     }
 
+    .track-no-audio-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #9a9b9d;
+    }
+
+    .track-no-audio-icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .track-menu-wrapper {
+      position: relative;
+      flex-shrink: 0;
+      margin-left: 8px;
+    }
+
+    .track-menu-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: #6d6f71;
+      cursor: pointer;
+      padding: 4px;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      transition: color 0.15s;
+    }
+
+    .track-menu-btn:hover {
+      color: #03BBF2;
+    }
+
+    .track-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 2px;
+      background-color: #ffffff;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      min-width: 160px;
+      z-index: 9999;
+      display: none;
+      overflow: hidden;
+    }
+
+    .track-dropdown.visible {
+      display: block;
+    }
+
+    .track-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      color: #515152;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background-color 0.15s, color 0.15s;
+      cursor: pointer;
+      border: none;
+      background-color: #ffffff;
+      width: 100%;
+      text-align: left;
+    }
+
+    .track-dropdown-item:hover {
+      background-color: #e8f7fc;
+      color: #03BBF2;
+    }
+
+    .track-dropdown-item svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
+    .track-dropdown-item.disabled {
+      opacity: 0.4;
+      cursor: default;
+      pointer-events: none;
+    }
+
     .loader-container {
       display: flex;
       justify-content: center;
@@ -387,6 +573,38 @@
       font-size: 1.1rem;
       background: rgba(212, 213, 215, 0.9);
       border-radius: 0.5rem;
+    }
+
+    .not-found {
+      padding: 16px 20px;
+      text-align: center;
+      background: rgba(212, 213, 215, 0.9);
+      border-radius: 0.5rem;
+      max-width: 400px;
+    }
+
+    .not-found-icons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      margin-bottom: 8px;
+    }
+
+    .not-found-icon {
+      width: 32px;
+      height: 32px;
+    }
+
+    .not-found-qmark {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #6d6f71;
+    }
+
+    .not-found-detail {
+      font-size: 1.3rem;
+      color: #515152;
     }
     
     .track-list::-webkit-scrollbar {
@@ -431,7 +649,7 @@
       display: flex;
       align-items: center;
       padding: 6px 14px 6px 19px;
-      gap: 10px;
+      gap: 5px;
     }
 
     .player-track-info {
@@ -607,6 +825,98 @@
     @keyframes spin {
       to { transform: translate(-50%, -50%) rotate(360deg); }
     }
+
+    .cover-art-container.clickable {
+      cursor: pointer;
+    }
+
+    .cover-art-container.clickable:hover .cover-art {
+      box-shadow: 0 4px 16px rgba(3, 187, 242, 0.4);
+    }
+
+    .cover-art-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 96px;
+      background: rgba(212, 213, 215, 0.98);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 16px;
+      overflow-y: auto;
+      border-radius: 0.5rem 0.5rem 0 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0s 0.3s;
+    }
+
+    .cover-art-modal.visible {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.3s ease, visibility 0s 0s;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      transition: background 0.15s;
+      z-index: 101;
+    }
+
+    .modal-close-btn:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-close-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .modal-images {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .modal-image-container {
+      width: 100%;
+      max-width: 280px;
+    }
+
+    .modal-image {
+      width: 100%;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-info-box {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 0.5rem;
+      padding: 12px 16px;
+      margin-top: 12px;
+      font-size: 1rem;
+      color: #515152;
+      text-align: center;
+      max-width: 280px;
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
@@ -702,10 +1012,59 @@
           `;
           tracks.forEach((track) => {
             const hasTrackAudio = !!track.mp3_url;
+            const song = track.song;
+            const gap = track.gap;
+            const hasPrev = gap && gap.previous_slug;
+            const hasNext = gap && gap.next_slug;
+            
+            let trackMenuHtml = '';
+            if (song || hasPrev || hasNext) {
+              trackMenuHtml = `
+                <div class="track-menu-wrapper">
+                  <button class="track-menu-btn" data-track-index="${track.globalIndex}" title="Track options">•••</button>
+                  <div class="track-dropdown" id="track-dropdown-${track.globalIndex}">
+                    ${song ? `
+                      <a href="https://phish.in/songs/${escapeHtml(song.slug)}" target="_blank" rel="noopener" class="track-dropdown-item">
+                        <svg viewBox="0 0 512 512" fill="currentColor">
+                          <path d="M499.1 6.3c8.1 6 12.9 15.6 12.9 25.7v72V368c0 44.2-43 80-96 80s-96-35.8-96-80s43-80 96-80c11.2 0 22 1.6 32 4.6V147L192 223.8V432c0 44.2-43 80-96 80s-96-35.8-96-80s43-80 96-80c11.2 0 22 1.6 32 4.6V200 128c0-14.1 9.3-26.6 22.8-30.7l320-96c9.7-2.9 20.2-1.1 28.3 5z"/>
+                        </svg>
+                        <span>${escapeHtml(song.title)}</span>
+                      </a>
+                    ` : ''}
+                    ${hasPrev ? `
+                      <a href="https://phish.in/${escapeHtml(gap.previous_slug)}" target="_blank" rel="noopener" class="track-dropdown-item">
+                        <svg viewBox="0 0 512 512" fill="currentColor">
+                          <path d="M512 256A256 256 0 1 0 0 256a256 256 0 1 0 512 0zM271 135c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-87 87 87 87c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0L167 273c-9.4-9.4-9.4-24.6 0-33.9L271 135z"/>
+                        </svg>
+                        <span>Previous (${gap.previous} show${gap.previous === 1 ? '' : 's'})</span>
+                      </a>
+                    ` : ''}
+                    ${hasNext ? `
+                      <a href="https://phish.in/${escapeHtml(gap.next_slug)}" target="_blank" rel="noopener" class="track-dropdown-item">
+                        <svg viewBox="0 0 512 512" fill="currentColor">
+                          <path d="M0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM241 377c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l87-87-87-87c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0L345 239c9.4 9.4 9.4 24.6 0 33.9L241 377z"/>
+                        </svg>
+                        <span>Next (${gap.next} show${gap.next === 1 ? '' : 's'})</span>
+                      </a>
+                    ` : ''}
+                  </div>
+                </div>
+              `;
+            }
+            
             tracksHtml += `
               <div class="track ${hasTrackAudio ? '' : 'no-audio'}" data-index="${track.globalIndex}" ${hasTrackAudio ? '' : 'title="No audio available"'}>
                 <span class="track-title">${escapeHtml(track.title)}</span>
-                <span class="track-duration">${track.duration || ''}</span>
+                ${hasTrackAudio ? `
+                  <span class="track-duration">${track.duration || ''}</span>
+                ` : `
+                  <span class="track-no-audio-icon" title="No audio available">
+                    <svg viewBox="0 0 576 512" fill="currentColor">
+                      <path d="M301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.6-34.4-5.4L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-9 22.9-10.8 34.4-5.4zM425 167l55 55 55-55c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-55 55 55 55c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-55-55-55 55c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l55-55-55-55c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0z"/>
+                    </svg>
+                  </span>
+                `}
+                ${trackMenuHtml}
               </div>
             `;
           });
@@ -713,9 +1072,48 @@
         });
 
         const coverArtUrl = show.cover_art_url || '';
+        const coverArtUrlLarge = show.cover_art_url_large || '';
+        const albumCoverUrl = show.album_cover_url || '';
 
         let playerHtml = '';
+        let modalHtml = '';
+        let taperNotesModalHtml = '';
+
+        if (show.taper_notes) {
+          taperNotesModalHtml = `
+            <div class="taper-notes-modal" id="taper-notes-modal">
+              <div class="taper-notes-header">
+                <span class="taper-notes-title">Taper Notes</span>
+                <button class="modal-close-btn" id="taper-notes-close-btn" title="Close">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+              <div class="taper-notes-content">${escapeHtml(show.taper_notes)}</div>
+            </div>
+          `;
+        }
+
         if (hasAudio) {
+          modalHtml = `
+            <div class="cover-art-modal" id="cover-art-modal">
+              <button class="modal-close-btn" id="modal-close-btn" title="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+              <div class="modal-images">
+                ${coverArtUrlLarge ? `<div class="modal-image-container"><img src="${escapeHtml(coverArtUrlLarge)}" alt="Cover art" class="modal-image" /></div>` : ''}
+                ${albumCoverUrl ? `<div class="modal-image-container"><img src="${escapeHtml(albumCoverUrl)}" alt="Album cover" class="modal-image" /></div>` : ''}
+              </div>
+              <div class="modal-info-box">
+                Images generated by DALL-E
+              </div>
+            </div>
+          `;
           playerHtml = `
             <div class="audio-player" id="audio-player">
               <div class="player-top-row">
@@ -769,23 +1167,60 @@
                   </button>` : ''}
                 </div>
                 <div class="show-info">
-                  <div class="date-row">
-                    <div class="show-date">${formatDate(show.date)}</div>
-                    ${showUrl ? `<a href="${escapeHtml(showUrl)}" target="_blank" rel="noopener" class="external-link" id="external-link" data-url="${escapeHtml(showUrl)}" title="View on phish.in">
+                  <div class="show-date">${formatDate(show.date)}</div>
+                  <div class="venue-name">${escapeHtml(show.venue)}</div>
+                  <div class="location">${escapeHtml(show.location || '')}</div>
+                </div>
+                <div class="context-menu-wrapper">
+                  <button class="context-menu-btn" id="context-menu-btn" title="Show options">•••</button>
+                  <div class="context-dropdown" id="context-dropdown">
+                    ${show.duration_ms ? `
+                      <span class="context-dropdown-item no-hover">
+                        <svg viewBox="0 0 512 512" fill="currentColor">
+                          <path d="M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/>
+                        </svg>
+                        <span>${formatDurationShow(show.duration_ms)}</span>
+                      </span>
+                    ` : ''}
+                    ${show.venue_slug ? `
+                      <a href="https://phish.in/venues/${escapeHtml(show.venue_slug)}" target="_blank" rel="noopener" class="context-dropdown-item">
+                        <svg viewBox="0 0 384 512" fill="currentColor">
+                          <path d="M48 0C21.5 0 0 21.5 0 48V464c0 26.5 21.5 48 48 48h96V432c0-26.5 21.5-48 48-48s48 21.5 48 48v80h96c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48H48zM64 240c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V240zm112-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V240c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V240zM80 96h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V112zM272 96h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16z"/>
+                        </svg>
+                        <span>${escapeHtml(show.venue)}</span>
+                      </a>
+                    ` : ''}
+                    ${show.location ? `
+                      <a href="https://phish.in/map?term=${encodeURIComponent(show.location)}" target="_blank" rel="noopener" class="context-dropdown-item">
+                        <svg viewBox="0 0 384 512" fill="currentColor">
+                          <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
+                        </svg>
+                        <span>${escapeHtml(show.location)}</span>
+                      </a>
+                    ` : ''}
+                    ${show.taper_notes ? `
+                      <button class="context-dropdown-item" id="taper-notes-btn">
+                        <svg viewBox="0 0 384 512" fill="currentColor">
+                          <path d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 192H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
+                        </svg>
+                        <span>Taper Notes</span>
+                      </button>
+                    ` : ''}
+                    <a href="${escapeHtml(showUrl)}" target="_blank" rel="noopener" class="context-dropdown-item">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                         <polyline points="15 3 21 3 21 9"/>
                         <line x1="10" y1="14" x2="21" y2="3"/>
                       </svg>
-                      <span class="tooltip" id="link-tooltip">URL copied!</span>
-                    </a>` : ''}
+                      <span>Phish.in website</span>
+                    </a>
                   </div>
-                  <div class="venue-name">${escapeHtml(show.venue)}</div>
-                  <div class="location">${escapeHtml(show.location || '')}</div>
                 </div>
               </div>
               ${tracksHtml ? `<div class="track-list">${tracksHtml}</div>` : ''}
             </div>
+            ${taperNotesModalHtml}
+            ${modalHtml}
             ${playerHtml}
           </div>
         `;
@@ -818,28 +1253,133 @@
         if (card) {
           card.classList.add('player-visible');
         }
+        const coverArtContainer = document.querySelector('.cover-art-container');
+        if (coverArtContainer) {
+          coverArtContainer.classList.add('clickable');
+        }
       }
 
-      function initExternalLink() {
-        const link = document.getElementById('external-link');
-        if (!link) return;
+      function initCoverArtModal() {
+        const coverArtContainer = document.querySelector('.cover-art-container');
+        const modal = document.getElementById('cover-art-modal');
+        const closeBtn = document.getElementById('modal-close-btn');
 
-        link.addEventListener('click', async (e) => {
-          e.preventDefault();
-          const url = link.dataset.url;
-          
-          const opened = window.open(url, '_blank');
-          if (!opened) {
-            try {
-              await navigator.clipboard.writeText(url);
-              const tooltip = document.getElementById('link-tooltip');
-              if (tooltip) {
-                tooltip.classList.add('show');
-                setTimeout(() => tooltip.classList.remove('show'), 1500);
-              }
-            } catch (err) {
-              console.log('Could not copy URL:', err);
+        if (!coverArtContainer || !modal) return;
+
+        coverArtContainer.addEventListener('click', (e) => {
+          if (!coverArtContainer.classList.contains('clickable')) return;
+          const playBtn = document.getElementById('header-play-btn');
+          if (playBtn && !playBtn.classList.contains('fade-out')) return;
+          e.stopPropagation();
+          modal.classList.add('visible');
+        });
+
+        closeBtn?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          modal.classList.remove('visible');
+        });
+
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.classList.remove('visible');
+          }
+        });
+      }
+
+      function initContextMenu() {
+        const btn = document.getElementById('context-menu-btn');
+        const dropdown = document.getElementById('context-dropdown');
+        if (!btn || !dropdown) return;
+
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dropdown.classList.toggle('visible');
+        });
+
+        dropdown.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!dropdown.contains(e.target) && e.target !== btn) {
+            dropdown.classList.remove('visible');
+          }
+        });
+
+        dropdown.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.classList.remove('visible');
+          });
+        });
+      }
+
+      function initTrackMenus() {
+        const trackMenuBtns = document.querySelectorAll('.track-menu-btn');
+        let openDropdown = null;
+
+        trackMenuBtns.forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const trackIndex = btn.dataset.trackIndex;
+            const dropdown = document.getElementById(`track-dropdown-${trackIndex}`);
+            
+            if (openDropdown && openDropdown !== dropdown) {
+              openDropdown.classList.remove('visible');
             }
+            
+            dropdown.classList.toggle('visible');
+            openDropdown = dropdown.classList.contains('visible') ? dropdown : null;
+          });
+        });
+
+        document.addEventListener('click', (e) => {
+          if (openDropdown && !e.target.closest('.track-menu-wrapper')) {
+            openDropdown.classList.remove('visible');
+            openDropdown = null;
+          }
+        });
+
+        document.querySelectorAll('.track-dropdown a').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (openDropdown) {
+              openDropdown.classList.remove('visible');
+              openDropdown = null;
+            }
+          });
+        });
+      }
+
+      function initTaperNotesModal() {
+        const taperNotesBtn = document.getElementById('taper-notes-btn');
+        const taperNotesModal = document.getElementById('taper-notes-modal');
+        const taperNotesCloseBtn = document.getElementById('taper-notes-close-btn');
+        if (!taperNotesBtn || !taperNotesModal) return;
+
+        taperNotesBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const dropdown = document.getElementById('context-dropdown');
+          if (dropdown) dropdown.classList.remove('visible');
+          
+          const player = document.getElementById('audio-player');
+          if (player && player.classList.contains('visible')) {
+            taperNotesModal.classList.add('with-player');
+          } else {
+            taperNotesModal.classList.remove('with-player');
+          }
+          
+          taperNotesModal.classList.add('visible');
+        });
+
+        taperNotesCloseBtn?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          taperNotesModal.classList.remove('visible');
+        });
+
+        taperNotesModal.addEventListener('click', (e) => {
+          if (e.target === taperNotesModal) {
+            taperNotesModal.classList.remove('visible');
           }
         });
       }
@@ -873,7 +1413,8 @@
         nextBtn?.addEventListener('click', playNext);
         scrubBackBtn?.addEventListener('click', () => scrub(-10));
         scrubForwardBtn?.addEventListener('click', () => scrub(10));
-        headerPlayBtn?.addEventListener('click', () => {
+        headerPlayBtn?.addEventListener('click', (e) => {
+          e.stopPropagation();
           showPlayer();
           playTrackAtIndex(findFirstPlayableIndex());
         });
@@ -1099,7 +1640,9 @@
       }
 
       function isDataComplete(data) {
-        return data && data.date && Array.isArray(data.tracks) && data.tracks.length > 0;
+        if (!data) return false;
+        if (data.error) return true;
+        return data.date && Array.isArray(data.tracks) && data.tracks.length > 0;
       }
 
       function sleep(ms) {
@@ -1115,6 +1658,44 @@
         return getData();
       }
 
+      function renderNotFound(detail) {
+        let displayMessage = 'Show not found';
+        
+        if (detail) {
+          const dateMatch = detail.match(/(\d{4}-\d{2}-\d{2})/);
+          if (dateMatch) {
+            const formattedDate = formatDate(dateMatch[1]);
+            displayMessage = `Show not found for ${formattedDate}`;
+          } else {
+            displayMessage = detail;
+          }
+        }
+
+        return `
+          <div class="not-found">
+            <div class="not-found-icons">
+              <svg class="not-found-icon" viewBox="0 0 32 32">
+                <!-- Donut base -->
+                <circle cx="16" cy="16" r="13" fill="#8a8b8d"/>
+                <!-- Frosting layer -->
+                <circle cx="16" cy="16" r="12" fill="#6d6f71"/>
+                <!-- Donut hole -->
+                <circle cx="16" cy="16" r="4.5" fill="#d4d5d7"/>
+                <!-- Sprinkles -->
+                <rect x="9" y="7" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(-25 9.75 8.75)"/>
+                <rect x="19" y="6" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(30 19.75 7.75)"/>
+                <rect x="23" y="14" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(65 23.75 15.75)"/>
+                <rect x="18" y="22" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(-20 18.75 23.75)"/>
+                <rect x="8" y="20" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(40 8.75 21.75)"/>
+                <rect x="5" y="12" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(-50 5.75 13.75)"/>
+              </svg>
+              <span class="not-found-qmark">?</span>
+            </div>
+            <div class="not-found-detail">${escapeHtml(displayMessage)}</div>
+          </div>
+        `;
+      }
+
       async function render() {
         const root = document.getElementById('root');
         
@@ -1123,14 +1704,12 @@
           const oa = window.openai || {};
 
           if (!data) {
-            const debug = {
-              hasOpenai: !!window.openai,
-              toolOutputType: typeof oa.toolOutput,
-              toolOutput: oa.toolOutput,
-              widgetProps: oa.widget?.props,
-              viewParams: oa.view?.params
-            };
-            root.innerHTML = '<div class="error">No show data available<br><small style="word-break:break-all">' + escapeHtml(JSON.stringify(debug)) + '</small></div>';
+            root.innerHTML = renderNotFound('No show data available');
+            return;
+          }
+
+          if (data.error) {
+            root.innerHTML = renderNotFound(data.message || 'Show not found');
             return;
           }
 
@@ -1138,12 +1717,15 @@
             root.innerHTML = renderShow(data);
             setupBackgroundBlur(data.cover_art_url);
             initAudioPlayer();
-            initExternalLink();
+            initContextMenu();
+            initTrackMenus();
+            initTaperNotesModal();
+            initCoverArtModal();
           } else {
-            root.innerHTML = '<div class="error">Invalid data format<br><small style="word-break:break-all">' + escapeHtml(JSON.stringify(data)) + '</small></div>';
+            root.innerHTML = renderNotFound('Show not found');
           }
         } catch (e) {
-          root.innerHTML = `<div class="error">Error: ${escapeHtml(e.message)}</div>`;
+          root.innerHTML = renderNotFound(e.message);
         }
       }
 
