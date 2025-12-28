@@ -3,7 +3,10 @@ module Tools
     tool_name "search"
 
     description "Search across Phish shows, songs, venues, tours, tags, and playlists. " \
-                "Returns results with public website URLs for each item - include relevant URLs to help users access the content directly."
+                "DISPLAY: In markdown, link results to their url field - dates for shows, " \
+                "titles for songs, names for venues/playlists. " \
+                "Example: [Jul 4, 2023](show_url) or [Tweezer](song_url) or [MSG](venue_url). " \
+                "Format dates readably (e.g., 'Jul 4, 2023')."
 
     input_schema(
       properties: {

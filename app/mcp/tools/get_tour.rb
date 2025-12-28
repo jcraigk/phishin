@@ -4,7 +4,8 @@ module Tools
 
     description "Get detailed information about a Phish tour. " \
                 "Returns tour metadata including date range and show count. " \
-                "Use list_shows with tour_slug to get the list of shows on this tour."
+                "Use list_shows with tour_slug to get the list of shows on this tour. " \
+                "Format dates readably (e.g., 'Jul 4, 2023')."
 
     input_schema(
       properties: {

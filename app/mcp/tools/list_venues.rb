@@ -4,7 +4,9 @@ module Tools
 
     description "List Phish venues with optional geographic filtering. " \
                 "Returns venue names, slugs, locations, and show counts. " \
-                "Use this to discover venue slugs before calling get_venue."
+                "Use this to discover venue slugs before calling get_venue. " \
+                "DISPLAY: In markdown, link venue names to their url field. " \
+                "Example: [Madison Square Garden](url)."
 
     input_schema(
       properties: {
@@ -42,6 +44,7 @@ module Tools
           {
             name: venue.name,
             slug: venue.slug,
+            url: venue.url,
             city: venue.city,
             state: venue.state,
             country: venue.country,

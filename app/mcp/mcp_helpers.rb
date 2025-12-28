@@ -13,6 +13,14 @@ module McpHelpers
     "#{base_url}/songs/#{slug}"
   end
 
+  def track_url(date, track_slug)
+    "#{base_url}/#{date}/#{track_slug}"
+  end
+
+  def year_url(period)
+    "#{base_url}/#{period}"
+  end
+
   def format_duration(ms)
     return "0:00" unless ms&.positive?
 

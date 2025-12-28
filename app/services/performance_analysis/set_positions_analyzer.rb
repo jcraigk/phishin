@@ -65,13 +65,17 @@ module PerformanceAnalysis
                          .count
 
       total = song_counts.values.sum
+      song_slugs = song_counts.keys.map { |k| k[1] }
+      examples_by_slug = fetch_position_examples(track_ids, song_slugs)
+
       results = song_counts.map do |k, v|
         {
           song: k[0],
           slug: k[1],
           url: McpHelpers.song_url(k[1]),
           count: v,
-          percentage: total > 0 ? (v.to_f / total * 100).round(1) : 0
+          percentage: total > 0 ? (v.to_f / total * 100).round(1) : 0,
+          examples: examples_by_slug[k[1]] || []
         }
       end
 
@@ -81,6 +85,49 @@ module PerformanceAnalysis
         total_shows: track_ids.count,
         songs: results
       }
+    end
+
+    def fetch_position_examples(track_ids, song_slugs, examples_per_song: 3)
+      return {} if song_slugs.empty? || track_ids.empty?
+
+      quoted_slugs = song_slugs.map { |s| ActiveRecord::Base.connection.quote(s) }.join(", ")
+
+      sql = <<~SQL
+        WITH unique_shows AS (
+          SELECT DISTINCT
+            s.slug AS song_slug,
+            t.slug AS track_slug,
+            sh.date
+          FROM tracks t
+          INNER JOIN songs_tracks st ON st.track_id = t.id
+          INNER JOIN songs s ON s.id = st.song_id
+          INNER JOIN shows sh ON sh.id = t.show_id
+          WHERE t.id IN (#{track_ids.join(',')})
+            AND s.slug IN (#{quoted_slugs})
+        ),
+        position_shows AS (
+          SELECT
+            song_slug,
+            track_slug,
+            date,
+            ROW_NUMBER() OVER (PARTITION BY song_slug ORDER BY date DESC) AS rn
+          FROM unique_shows
+        )
+        SELECT song_slug, track_slug, date
+        FROM position_shows
+        WHERE rn <= #{examples_per_song}
+        ORDER BY song_slug, date DESC
+      SQL
+
+      results = ActiveRecord::Base.connection.execute(sql).to_a
+      results.each_with_object({}) do |row, hash|
+        slug = row["song_slug"]
+        hash[slug] ||= []
+        hash[slug] << {
+          date: row["date"].to_s,
+          url: McpHelpers.track_url(row["date"], row["track_slug"])
+        }
+      end
     end
 
     def analyze_song_position_distribution

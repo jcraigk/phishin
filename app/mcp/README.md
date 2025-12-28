@@ -52,9 +52,11 @@ Analyzes where songs appear in setlists (openers, closers, encores).
 
 **Example questions:**
 - "What are the most common Set 1 openers?"
+- "What are the most common Set 2 openers?"
+- "What songs close Set 1 most often?"
 - "How often does Slave to the Traffic Light close a set?"
 
-**Key parameters:** `position` (opener/closer/encore), `set`, `song_slug`
+**Key parameters:** `position` (opener/closer/encore), `set` (1/2/3/4), `song_slug`
 
 ---
 

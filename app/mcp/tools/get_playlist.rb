@@ -4,7 +4,9 @@ module Tools
 
     description "Get detailed information about a user-created playlist. " \
                 "Returns playlist metadata and track listing with show dates and durations. " \
-                "Includes public website URLs for the playlist and each track - include the playlist URL in responses, and track URLs when discussing specific tracks."
+                "DISPLAY: In markdown, link playlist name to playlist url and track titles to track url. " \
+                "Example: | [Tweezer](track_url) | [Jul 4, 2023](show_url) |. " \
+                "Format dates readably (e.g., 'Jul 4, 2023')."
 
     input_schema(
       properties: {

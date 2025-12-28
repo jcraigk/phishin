@@ -5,9 +5,10 @@ module Tools
     tool_name "get_song"
 
     description "Get detailed information about a Phish song including performance history. " \
-                "Returns song metadata and a list of performances with dates, venues, " \
-                "durations, and likes. " \
-                "Includes public website URLs for the song page and each performance - include URLs when helpful, especially when listing specific performances."
+                "Returns song metadata and a list of performances with dates, venues, durations, and likes. " \
+                "DISPLAY: In markdown, link dates to show_url and song titles to track_url. " \
+                "Example: | [Jul 4, 2023](show_url) | [Tweezer](track_url) |. " \
+                "Format dates readably (e.g., 'Jul 4, 2023')."
 
     input_schema(
       properties: {

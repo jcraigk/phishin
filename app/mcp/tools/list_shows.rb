@@ -6,7 +6,9 @@ module Tools
                 "Filter by year, tour, venue, or specific date(s). " \
                 "Use include_tracks=true for full setlists. " \
                 "At least one filter is required. " \
-                "Includes public website URLs - include show URLs when listing or referencing specific shows."
+                "DISPLAY: In markdown, link dates to show url, venues to venue.url, and songs to track url. " \
+                "Example: | [Jul 4, 2023](show_url) | [MSG](venue_url) | [Tweezer](track_url) |. " \
+                "Format dates readably (e.g., 'Jul 4, 2023')."
 
     input_schema(
       properties: {

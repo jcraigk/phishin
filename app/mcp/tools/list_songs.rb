@@ -4,7 +4,9 @@ module Tools
 
     description "List Phish songs with optional filtering and sorting. " \
                 "Returns song names, slugs, play counts, and cover/original status. " \
-                "Use this to discover songs before calling get_song for detailed performance history."
+                "Use this to discover songs before calling get_song for detailed performance history. " \
+                "DISPLAY: In markdown, link song titles to their url field. " \
+                "Example: [Tweezer](url)."
 
     input_schema(
       properties: {
