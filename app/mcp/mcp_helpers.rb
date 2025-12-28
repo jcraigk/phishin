@@ -5,6 +5,18 @@ module McpHelpers
     App.base_url
   end
 
+  def cache_key_for_resource(resource_name, identifier)
+    "mcp/#{resource_name}/#{identifier}"
+  end
+
+  def cache_key_for_collection(resource_name, params)
+    "mcp/#{resource_name}?#{params.compact.to_query}"
+  end
+
+  def cache_key_for_custom(path)
+    "mcp/#{path}"
+  end
+
   def show_url(date)
     "#{base_url}/#{date}"
   end

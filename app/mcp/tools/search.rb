@@ -27,20 +27,29 @@ module Tools
         start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         return error_response("Query must be at least 2 characters") if query.to_s.length < 2
 
-        raw = ::SearchService.call(term: query, scope: "all") || {}
-        results = {
-          query:,
-          shows: serialize_shows(raw, limit),
-          songs: raw[:songs]&.first(limit)&.map { |s| serialize_song(s) } || [],
-          venues: raw[:venues]&.first(limit)&.map { |v| serialize_venue(v) } || [],
-          tours: raw[:tours]&.first(limit)&.map { |t| serialize_tour(t) } || [],
-          tags: raw[:tags]&.first(limit)&.map { |t| serialize(:tag, t, :name, :slug, :description, :shows_count, :tracks_count) } || [],
-          playlists: raw[:playlists]&.first(limit)&.map { |p| serialize_playlist(p) } || []
-        }
-        results[:total_results] = results.except(:query).values.sum(&:count)
+        results = fetch_search_results(query, limit)
         log_call(query, limit, results, start_time)
 
         MCP::Tool::Response.new([ { type: "text", text: results.to_json } ])
+      end
+
+      def fetch_search_results(query, limit)
+        cache_key = McpHelpers.cache_key_for_custom("search/#{query}/#{limit}")
+
+        Rails.cache.fetch(cache_key) do
+          raw = ::SearchService.call(term: query, scope: "all") || {}
+          results = {
+            query:,
+            shows: serialize_shows(raw, limit),
+            songs: raw[:songs]&.first(limit)&.map { |s| serialize_song(s) } || [],
+            venues: raw[:venues]&.first(limit)&.map { |v| serialize_venue(v) } || [],
+            tours: raw[:tours]&.first(limit)&.map { |t| serialize_tour(t) } || [],
+            tags: raw[:tags]&.first(limit)&.map { |t| serialize(:tag, t, :name, :slug, :description, :shows_count, :tracks_count) } || [],
+            playlists: raw[:playlists]&.first(limit)&.map { |p| serialize_playlist(p) } || []
+          }
+          results[:total_results] = results.except(:query).values.sum(&:count)
+          results
+        end
       end
 
       private

@@ -38,16 +38,24 @@ module Tools
 
     class << self
       def call(stat_type:, **options)
-        result = PerformanceAnalysisService.call(
-          analysis_type: stat_type,
-          filters: options.compact,
-          log_call: true
-        )
+        result = fetch_stats(stat_type, options.compact)
 
         if result[:error]
           MCP::Tool::Response.new([ { type: "text", text: "Error: #{result[:error]}" } ], is_error: true)
         else
           MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+        end
+      end
+
+      def fetch_stats(stat_type, filters)
+        cache_key = McpHelpers.cache_key_for_collection("stats/#{stat_type}", filters)
+
+        Rails.cache.fetch(cache_key) do
+          PerformanceAnalysisService.call(
+            analysis_type: stat_type,
+            filters:,
+            log_call: true
+          )
         end
       end
     end

@@ -23,26 +23,31 @@ module Tools
         venue = Venue.find_by(slug:)
         return venue_not_found_error(slug) unless venue
 
-        first_show = Show.where(venue_id: venue.id).order(date: :asc).first
-        last_show = Show.where(venue_id: venue.id).order(date: :desc).first
-
-        result = {
-          name: venue.name,
-          slug: venue.slug,
-          url: venue.url,
-          city: venue.city,
-          state: venue.state,
-          country: venue.country,
-          location: venue.location,
-          other_names: venue.other_names,
-          latitude: venue.latitude&.round(6),
-          longitude: venue.longitude&.round(6),
-          shows_count: venue.shows_count,
-          first_show: first_show&.date&.iso8601,
-          last_show: last_show&.date&.iso8601
-        }
-
+        result = fetch_venue_data(venue)
         MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+      end
+
+      def fetch_venue_data(venue)
+        Rails.cache.fetch(McpHelpers.cache_key_for_resource("venues", venue.slug)) do
+          first_show = Show.where(venue_id: venue.id).order(date: :asc).first
+          last_show = Show.where(venue_id: venue.id).order(date: :desc).first
+
+          {
+            name: venue.name,
+            slug: venue.slug,
+            url: venue.url,
+            city: venue.city,
+            state: venue.state,
+            country: venue.country,
+            location: venue.location,
+            other_names: venue.other_names,
+            latitude: venue.latitude&.round(6),
+            longitude: venue.longitude&.round(6),
+            shows_count: venue.shows_count,
+            first_show: first_show&.date&.iso8601,
+            last_show: last_show&.date&.iso8601
+          }
+        end
       end
 
       private

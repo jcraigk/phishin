@@ -49,22 +49,42 @@ module Tools
         has_filter = year || start_date || end_date || tour_slug || venue_slug
         return error_response("At least one filter required: year, start_date, end_date, tour_slug, or venue_slug") unless has_filter
 
-        shows = build_query(year, start_date, end_date, tour_slug, venue_slug)
-        return error_response("No shows found") if shows.empty?
-
         sort_order ||= sort_by == "date" ? "asc" : "desc"
+
+        result = fetch_shows(year, start_date, end_date, tour_slug, venue_slug, sort_by, sort_order, limit)
+        return error_response("No shows found") unless result
+
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+      end
+
+      def fetch_shows(year, start_date, end_date, tour_slug, venue_slug, sort_by, sort_order, limit)
+        if sort_by == "random"
+          build_shows_result(year, start_date, end_date, tour_slug, venue_slug, sort_by, sort_order, limit)
+        else
+          cache_key = McpHelpers.cache_key_for_collection("shows", {
+            year:, start_date:, end_date:, tour_slug:, venue_slug:, sort_by:, sort_order:, limit:
+          })
+
+          Rails.cache.fetch(cache_key) do
+            build_shows_result(year, start_date, end_date, tour_slug, venue_slug, sort_by, sort_order, limit)
+          end
+        end
+      end
+
+      def build_shows_result(year, start_date, end_date, tour_slug, venue_slug, sort_by, sort_order, limit)
+        shows = build_query(year, start_date, end_date, tour_slug, venue_slug)
+        return nil if shows.empty?
+
         shows = apply_sort(shows, sort_by, sort_order)
         shows = shows.limit(limit) if limit
 
         show_list = shows.map { |show| build_show_data(show) }
 
-        result = {
+        {
           total: show_list.size,
           filters: { year:, start_date:, end_date:, tour_slug:, venue_slug: }.compact,
           shows: show_list
         }
-
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
       end
 
       private

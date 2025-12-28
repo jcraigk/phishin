@@ -37,7 +37,7 @@
     .show-card {
       position: relative;
       border-radius: 0.5rem;
-      max-width: 400px;
+      width: 100%;
       box-shadow: 0 2px 12px rgba(0,0,0,0.2);
       background: #d4d5d7;
       overflow: visible;
@@ -153,12 +153,12 @@
     .context-dropdown-item {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
+      gap: 8px;
+      padding: 8px 12px;
       color: #515152;
       text-decoration: none;
-      font-size: 1.1rem;
-      transition: background-color 0.15s, color 0.15s;
+      font-size: 1rem;
+      transition: background-color 0.15s;
       cursor: pointer;
       border: none;
       background-color: #ffffff;
@@ -167,8 +167,7 @@
     }
 
     .context-dropdown-item:hover {
-      background-color: #e8f7fc;
-      color: #03BBF2;
+      background-color: #f5f5f5;
     }
 
     .context-dropdown-item.no-hover {
@@ -177,12 +176,11 @@
 
     .context-dropdown-item.no-hover:hover {
       background-color: #ffffff;
-      color: #515152;
     }
 
     .context-dropdown-item svg {
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       flex-shrink: 0;
     }
 
@@ -367,7 +365,6 @@
     .track {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       padding: 8px 14px;
       font-size: 1.3rem;
       background: rgba(255, 255, 255, 0.8);
@@ -377,6 +374,20 @@
       text-decoration: none;
       transition: background 0.15s ease;
       cursor: pointer;
+      gap: 0.5rem;
+    }
+
+    .track-left {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .track-right {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      gap: 0.75rem;
     }
 
     .section-title + .track {
@@ -436,12 +447,9 @@
     }
     
     .track-title {
-      flex: 1;
-      min-width: 0;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      padding-right: 1rem;
     }
     
     .track-duration {
@@ -449,6 +457,8 @@
       color: #6d6f71;
       font-variant-numeric: tabular-nums;
       flex-shrink: 0;
+      width: 3.5rem;
+      text-align: right;
     }
 
     .track-no-audio-icon {
@@ -524,8 +534,7 @@
     }
 
     .track-dropdown-item:hover {
-      background-color: #e8f7fc;
-      color: #03BBF2;
+      background-color: #f5f5f5;
     }
 
     .track-dropdown-item svg {
@@ -547,7 +556,7 @@
       padding: 48px 24px;
       background: rgba(212, 213, 215, 0.9);
       border-radius: 0.5rem;
-      max-width: 400px;
+      width: 100%;
     }
     
     .moon-loader {
@@ -580,7 +589,7 @@
       text-align: center;
       background: rgba(212, 213, 215, 0.9);
       border-radius: 0.5rem;
-      max-width: 400px;
+      width: 100%;
     }
 
     .not-found-icons {
@@ -917,6 +926,147 @@
       max-width: 280px;
       line-height: 1.4;
     }
+
+    .tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px 12px;
+      background-color: #ffffff;
+      align-items: center;
+    }
+
+    .tags-row-icon {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      color: #515152;
+    }
+
+    .tags-row.clickable {
+      cursor: pointer;
+      transition: background-color 0.15s;
+    }
+
+    .tags-row.clickable:hover {
+      background-color: #f5f5f5;
+    }
+
+    .tag-badge {
+      display: inline-block;
+      padding: 0.1rem 0.4rem;
+      background-color: #6d6f71;
+      color: white;
+      border-radius: 0.25rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .track-inline-tags {
+      display: none;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      gap: 0.2rem;
+      overflow: hidden;
+      width: 180px;
+      flex-shrink: 0;
+    }
+
+    .track-inline-tags .tag-badge {
+      font-size: 0.65rem;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: background-color 0.2s;
+    }
+
+    .track-inline-tags .tag-badge:hover {
+      background-color: #f5f5f5;
+      color: #6d6f71;
+    }
+
+    @media (min-width: 500px) {
+      .track-inline-tags {
+        display: flex;
+      }
+    }
+
+    .tag-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(212, 213, 215, 0.98);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      overflow-y: auto;
+      border-radius: 0.5rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0s 0.3s;
+    }
+
+    .tag-modal.visible {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.3s ease, visibility 0s 0s;
+    }
+
+    .tag-modal.with-player {
+      bottom: 96px;
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .tag-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .tag-modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #515152;
+    }
+
+    .tag-modal-header .modal-close-btn {
+      position: static;
+    }
+
+    .tag-modal-content {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 0.5rem;
+      padding: 16px;
+      font-size: 1.1rem;
+      color: #515152;
+      line-height: 1.5;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .tag-modal-section {
+      margin-bottom: 12px;
+    }
+
+    .tag-modal-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .tag-modal-section-title {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      background-color: #6d6f71;
+      color: white;
+      border-radius: 0.25rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
   </style>
 </head>
 <body>
@@ -1016,13 +1166,22 @@
             const gap = track.gap;
             const hasPrev = gap && gap.previous_slug;
             const hasNext = gap && gap.next_slug;
+            const trackTags = track.tags || [];
             
             let trackMenuHtml = '';
-            if (song || hasPrev || hasNext) {
+            if (song || hasPrev || hasNext || trackTags.length > 0) {
               trackMenuHtml = `
                 <div class="track-menu-wrapper">
                   <button class="track-menu-btn" data-track-index="${track.globalIndex}" title="Track options">•••</button>
                   <div class="track-dropdown" id="track-dropdown-${track.globalIndex}">
+                    ${trackTags.length > 0 ? `
+                      <div class="tags-row clickable" data-tags='${JSON.stringify(trackTags).replace(/'/g, "&#39;")}'>
+                        <svg class="tags-row-icon" viewBox="0 0 448 512" fill="currentColor">
+                          <path d="M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/>
+                        </svg>
+                        ${trackTags.map(tag => `<span class="tag-badge">${escapeHtml(tag.name)}</span>`).join('')}
+                      </div>
+                    ` : ''}
                     ${song ? `
                       <a href="https://phish.in/songs/${escapeHtml(song.slug)}" target="_blank" rel="noopener" class="track-dropdown-item">
                         <svg viewBox="0 0 512 512" fill="currentColor">
@@ -1052,19 +1211,30 @@
               `;
             }
             
+            const inlineTagsHtml = `
+              <div class="track-inline-tags"${trackTags.length > 0 ? ` data-tags='${JSON.stringify(trackTags).replace(/'/g, "&#39;")}'` : ''}>
+                ${trackTags.map(tag => `<span class="tag-badge">${escapeHtml(tag.name)}</span>`).join('')}
+              </div>
+            `;
+            
             tracksHtml += `
               <div class="track ${hasTrackAudio ? '' : 'no-audio'}" data-index="${track.globalIndex}" ${hasTrackAudio ? '' : 'title="No audio available"'}>
-                <span class="track-title">${escapeHtml(track.title)}</span>
-                ${hasTrackAudio ? `
-                  <span class="track-duration">${track.duration || ''}</span>
-                ` : `
-                  <span class="track-no-audio-icon" title="No audio available">
-                    <svg viewBox="0 0 576 512" fill="currentColor">
-                      <path d="M301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.6-34.4-5.4L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-9 22.9-10.8 34.4-5.4zM425 167l55 55 55-55c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-55 55 55 55c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-55-55-55 55c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l55-55-55-55c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0z"/>
-                    </svg>
-                  </span>
-                `}
-                ${trackMenuHtml}
+                <div class="track-left">
+                  <span class="track-title">${escapeHtml(track.title)}</span>
+                </div>
+                <div class="track-right">
+                  ${inlineTagsHtml}
+                  ${hasTrackAudio ? `
+                    <span class="track-duration">${track.duration || ''}</span>
+                  ` : `
+                    <span class="track-no-audio-icon" title="No audio available">
+                      <svg viewBox="0 0 576 512" fill="currentColor">
+                        <path d="M301.1 34.8C312.6 40 320 51.4 320 64V448c0 12.6-7.4 24-18.9 29.2s-25 3.6-34.4-5.4L131.8 352H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64h67.8L266.7 40.1c9.4-9 22.9-10.8 34.4-5.4zM425 167l55 55 55-55c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-55 55 55 55c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-55-55-55 55c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l55-55-55-55c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0z"/>
+                      </svg>
+                    </span>
+                  `}
+                  ${trackMenuHtml}
+                </div>
               </div>
             `;
           });
@@ -1095,6 +1265,21 @@
             </div>
           `;
         }
+
+        const tagModalHtml = `
+          <div class="tag-modal" id="tag-modal">
+            <div class="tag-modal-header">
+              <span class="tag-modal-title" id="tag-modal-title"></span>
+              <button class="modal-close-btn" id="tag-modal-close-btn" title="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="tag-modal-content" id="tag-modal-content"></div>
+          </div>
+        `;
 
         if (hasAudio) {
           modalHtml = `
@@ -1182,6 +1367,14 @@
                         <span>${formatDurationShow(show.duration_ms)}</span>
                       </span>
                     ` : ''}
+                    ${show.tags && show.tags.length > 0 ? `
+                      <div class="tags-row clickable" data-tags='${JSON.stringify(show.tags).replace(/'/g, "&#39;")}'>
+                        <svg class="tags-row-icon" viewBox="0 0 448 512" fill="currentColor">
+                          <path d="M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/>
+                        </svg>
+                        ${show.tags.map(tag => `<span class="tag-badge">${escapeHtml(tag.name)}</span>`).join('')}
+                      </div>
+                    ` : ''}
                     ${show.venue_slug ? `
                       <a href="https://phish.in/venues/${escapeHtml(show.venue_slug)}" target="_blank" rel="noopener" class="context-dropdown-item">
                         <svg viewBox="0 0 384 512" fill="currentColor">
@@ -1220,6 +1413,7 @@
               ${tracksHtml ? `<div class="track-list">${tracksHtml}</div>` : ''}
             </div>
             ${taperNotesModalHtml}
+            ${tagModalHtml}
             ${modalHtml}
             ${playerHtml}
           </div>
@@ -1380,6 +1574,79 @@
         taperNotesModal.addEventListener('click', (e) => {
           if (e.target === taperNotesModal) {
             taperNotesModal.classList.remove('visible');
+          }
+        });
+      }
+
+      function initTagModal() {
+        const tagModal = document.getElementById('tag-modal');
+        const tagModalTitle = document.getElementById('tag-modal-title');
+        const tagModalContent = document.getElementById('tag-modal-content');
+        const tagModalCloseBtn = document.getElementById('tag-modal-close-btn');
+        if (!tagModal) return;
+
+        function openTagModal(tags) {
+          tagModalTitle.textContent = tags.length === 1 ? 'Tag' : 'Tags';
+          
+          let contentHtml = '';
+          tags.forEach((tag, index) => {
+            const hasDescription = tag.description && tag.description.trim();
+            const hasNotes = tag.notes && tag.notes.trim();
+            
+            contentHtml += `<div class="tag-modal-section">`;
+            contentHtml += `<div class="tag-modal-section-title">${escapeHtml(tag.name)}</div>`;
+            
+            if (hasDescription) {
+              contentHtml += `<div style="margin-bottom: ${hasNotes ? '8px' : '0'}">${escapeHtml(tag.description)}</div>`;
+            }
+            if (hasNotes) {
+              contentHtml += `<div style="font-style: italic; color: #6d6f71;">${escapeHtml(tag.notes)}</div>`;
+            }
+            if (!hasDescription && !hasNotes) {
+              contentHtml += `<div style="color: #9a9b9d;">No additional details available.</div>`;
+            }
+            
+            contentHtml += `</div>`;
+          });
+          
+          tagModalContent.innerHTML = contentHtml;
+          
+          document.querySelectorAll('.context-dropdown, .track-dropdown').forEach(d => d.classList.remove('visible'));
+          
+          const player = document.getElementById('audio-player');
+          if (player && player.classList.contains('visible')) {
+            tagModal.classList.add('with-player');
+          } else {
+            tagModal.classList.remove('with-player');
+          }
+          
+          tagModal.classList.add('visible');
+        }
+
+        document.querySelectorAll('.tags-row.clickable, .track-inline-tags').forEach(row => {
+          row.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            let tags = [];
+            try {
+              tags = JSON.parse(row.dataset.tags || '[]');
+            } catch (err) {
+              console.error('Failed to parse tags:', err);
+              return;
+            }
+            
+            openTagModal(tags);
+          });
+        });
+
+        tagModalCloseBtn?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          tagModal.classList.remove('visible');
+        });
+
+        tagModal.addEventListener('click', (e) => {
+          if (e.target === tagModal) {
+            tagModal.classList.remove('visible');
           }
         });
       }
@@ -1720,6 +1987,7 @@
             initContextMenu();
             initTrackMenus();
             initTaperNotesModal();
+            initTagModal();
             initCoverArtModal();
           } else {
             root.innerHTML = renderNotFound('Show not found');

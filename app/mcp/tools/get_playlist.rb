@@ -27,6 +27,21 @@ module Tools
         end
         return error_response("Playlist not found") unless playlist
 
+        result = fetch_playlist_data(playlist, cache: slug.present?)
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+      end
+
+      def fetch_playlist_data(playlist, cache: true)
+        if cache
+          Rails.cache.fetch(McpHelpers.cache_key_for_resource("playlists", playlist.slug)) do
+            build_playlist_data(playlist)
+          end
+        else
+          build_playlist_data(playlist)
+        end
+      end
+
+      def build_playlist_data(playlist)
         tracks = playlist.playlist_tracks.order(:position).includes(track: { show: :venue })
 
         track_list = tracks.map do |pt|
@@ -46,7 +61,7 @@ module Tools
           }
         end
 
-        result = {
+        {
           name: playlist.name,
           slug: playlist.slug,
           url: playlist.url,
@@ -56,8 +71,6 @@ module Tools
           track_count: tracks.size,
           tracks: track_list
         }
-
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
       end
 
       private

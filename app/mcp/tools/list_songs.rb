@@ -38,46 +38,56 @@ module Tools
 
     class << self
       def call(song_type: "all", sort_by: "name", sort_order: nil, min_plays: nil, limit: 50)
-        songs = Song.all
-
-        case song_type
-        when "original"
-          songs = songs.where(original: true)
-        when "cover"
-          songs = songs.where(original: false)
-        end
-
-        songs = songs.where("tracks_count >= ?", min_plays) if min_plays
-
         sort_order ||= sort_by == "times_played" ? "desc" : "asc"
-        direction = sort_order == "desc" ? :desc : :asc
 
-        songs = case sort_by
-        when "times_played"
-          songs.order(tracks_count: direction)
-        else
-          songs.order(title: direction)
-        end
+        result = fetch_songs(song_type, sort_by, sort_order, min_plays, limit)
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+      end
 
-        songs = songs.limit(limit)
+      def fetch_songs(song_type, sort_by, sort_order, min_plays, limit)
+        cache_key = McpHelpers.cache_key_for_collection("songs", {
+          song_type:, sort_by:, sort_order:, min_plays:, limit:
+        })
 
-        song_list = songs.map do |song|
+        Rails.cache.fetch(cache_key) do
+          songs = Song.all
+
+          case song_type
+          when "original"
+            songs = songs.where(original: true)
+          when "cover"
+            songs = songs.where(original: false)
+          end
+
+          songs = songs.where("tracks_count >= ?", min_plays) if min_plays
+
+          direction = sort_order == "desc" ? :desc : :asc
+
+          songs = case sort_by
+          when "times_played"
+            songs.order(tracks_count: direction)
+          else
+            songs.order(title: direction)
+          end
+
+          songs = songs.limit(limit)
+
+          song_list = songs.map do |song|
+            {
+              title: song.title,
+              slug: song.slug,
+              original: song.original,
+              artist: song.artist,
+              times_played: song.tracks_count,
+              url: song.url
+            }
+          end
+
           {
-            title: song.title,
-            slug: song.slug,
-            original: song.original,
-            artist: song.artist,
-            times_played: song.tracks_count,
-            url: song.url
+            total: song_list.size,
+            songs: song_list
           }
         end
-
-        result = {
-          total: song_list.size,
-          songs: song_list
-        }
-
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
       end
     end
   end

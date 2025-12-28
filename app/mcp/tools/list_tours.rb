@@ -17,30 +17,37 @@ module Tools
 
     class << self
       def call(year: nil)
-        tours = Tour.all
+        result = fetch_tours(year)
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+      end
 
-        if year
-          tours = tours.where("EXTRACT(YEAR FROM starts_on) = ? OR EXTRACT(YEAR FROM ends_on) = ?", year, year)
-        end
+      def fetch_tours(year)
+        cache_key = McpHelpers.cache_key_for_collection("tours", { year: })
 
-        tours = tours.order(starts_on: :asc)
+        Rails.cache.fetch(cache_key) do
+          tours = Tour.all
 
-        tour_list = tours.map do |tour|
+          if year
+            tours = tours.where("EXTRACT(YEAR FROM starts_on) = ? OR EXTRACT(YEAR FROM ends_on) = ?", year, year)
+          end
+
+          tours = tours.order(starts_on: :asc)
+
+          tour_list = tours.map do |tour|
+            {
+              name: tour.name,
+              slug: tour.slug,
+              starts_on: tour.starts_on.iso8601,
+              ends_on: tour.ends_on.iso8601,
+              shows_count: tour.shows_count
+            }
+          end
+
           {
-            name: tour.name,
-            slug: tour.slug,
-            starts_on: tour.starts_on.iso8601,
-            ends_on: tour.ends_on.iso8601,
-            shows_count: tour.shows_count
+            total: tour_list.size,
+            tours: tour_list
           }
         end
-
-        result = {
-          total: tour_list.size,
-          tours: tour_list
-        }
-
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
       end
     end
   end

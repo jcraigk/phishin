@@ -35,55 +35,65 @@ module Tools
         song = Song.find_by(slug:)
         return error_response("Song not found") unless song
 
-        tracks = Track.joins(:show, :songs)
-                      .where(songs: { id: song.id })
-                      .where.not(set: EXCLUDED_SETS)
-                      .where(exclude_from_stats: false)
-                      .includes(show: :venue)
+        result = fetch_song_data(song, sort_by, sort_order, limit)
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+      end
 
-        tracks = apply_sort(tracks, sort_by, sort_order)
-        tracks = tracks.limit(limit)
+      def fetch_song_data(song, sort_by, sort_order, limit)
+        cache_key = McpHelpers.cache_key_for_collection(
+          "songs/#{song.slug}",
+          { sort_by:, sort_order:, limit: }
+        )
 
-        performances = tracks.map do |track|
+        Rails.cache.fetch(cache_key) do
+          tracks = Track.joins(:show, :songs)
+                        .where(songs: { id: song.id })
+                        .where.not(set: EXCLUDED_SETS)
+                        .where(exclude_from_stats: false)
+                        .includes(show: :venue)
+
+          tracks = apply_sort(tracks, sort_by, sort_order)
+          tracks = tracks.limit(limit)
+
+          performances = tracks.map do |track|
+            {
+              date: track.show.date.iso8601,
+              venue: track.show.venue_name,
+              location: track.show.venue&.location,
+              duration_ms: track.duration,
+              duration_display: McpHelpers.format_duration(track.duration),
+              likes: track.likes_count,
+              set: track.set,
+              show_url: track.show.url,
+              track_url: track.url
+            }
+          end
+
+          first_track = Track.joins(:show, :songs)
+                             .where(songs: { id: song.id })
+                             .where.not(set: EXCLUDED_SETS)
+                             .order("shows.date ASC")
+                             .first
+
+          last_track = Track.joins(:show, :songs)
+                            .where(songs: { id: song.id })
+                            .where.not(set: EXCLUDED_SETS)
+                            .order("shows.date DESC")
+                            .first
+
           {
-            date: track.show.date.iso8601,
-            venue: track.show.venue_name,
-            location: track.show.venue&.location,
-            duration_ms: track.duration,
-            duration_display: McpHelpers.format_duration(track.duration),
-            likes: track.likes_count,
-            set: track.set,
-            show_url: track.show.url,
-            track_url: track.url
+            title: song.title,
+            slug: song.slug,
+            url: song.url,
+            original: song.original,
+            artist: song.artist,
+            alias: song.alias,
+            times_played: song.tracks_count,
+            first_played: first_track&.show&.date&.iso8601,
+            last_played: last_track&.show&.date&.iso8601,
+            performances:
           }
         end
-
-        first_track = Track.joins(:show, :songs)
-                           .where(songs: { id: song.id })
-                           .where.not(set: EXCLUDED_SETS)
-                           .order("shows.date ASC")
-                           .first
-
-        last_track = Track.joins(:show, :songs)
-                          .where(songs: { id: song.id })
-                          .where.not(set: EXCLUDED_SETS)
-                          .order("shows.date DESC")
-                          .first
-
-        result = {
-          title: song.title,
-          slug: song.slug,
-          url: song.url,
-          original: song.original,
-          artist: song.artist,
-          alias: song.alias,
-          times_played: song.tracks_count,
-          first_played: first_track&.show&.date&.iso8601,
-          last_played: last_track&.show&.date&.iso8601,
-          performances:
-        }
-
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
       end
 
       private

@@ -18,13 +18,18 @@ module Tools
 
     class << self
       def call
-        result = {
-          total_shows: Show.count,
-          total_shows_with_audio: Show.where(audio_status: %w[complete partial]).count,
-          years: years_data
-        }
-
+        result = fetch_years_data
         MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+      end
+
+      def fetch_years_data
+        Rails.cache.fetch(McpHelpers.cache_key_for_custom("years")) do
+          {
+            total_shows: Show.count,
+            total_shows_with_audio: Show.where(audio_status: %w[complete partial]).count,
+            years: years_data
+          }
+        end
       end
 
       private

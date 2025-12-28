@@ -31,12 +31,7 @@ module Tools
 
     class << self
       def call(date:)
-        show = Show.includes(
-          :venue, :tour,
-          tracks: [ :songs, { track_tags: :tag, songs_tracks: {} } ],
-          show_tags: :tag
-        ).find_by(date:)
-
+        show = fetch_show(date)
         return error_response("Show not found for date: #{date}") unless show
 
         result = build_show_data(show)
@@ -45,6 +40,16 @@ module Tools
           [ { type: "text", text: result.to_json } ],
           structured_content: build_widget_data(show)
         )
+      end
+
+      def fetch_show(date)
+        Rails.cache.fetch(McpHelpers.cache_key_for_resource("shows", date)) do
+          Show.includes(
+            :venue, :tour,
+            tracks: [ :songs, { track_tags: :tag, songs_tracks: {} } ],
+            show_tags: :tag
+          ).find_by(date:)
+        end
       end
 
       private
@@ -111,6 +116,7 @@ module Tools
           cover_art_url_large: show.cover_art_urls[:large],
           album_cover_url: show.album_cover_url,
           show_url: show.url,
+          tags: show.show_tags.map { |st| { name: st.tag.name, slug: st.tag.slug, description: st.tag.description, notes: st.notes } },
           tracks: show.tracks.sort_by(&:position).map do |track|
             songs_track = track.songs_tracks.first
             song = track.songs.first
@@ -123,6 +129,7 @@ module Tools
               mp3_url: track.mp3_url,
               waveform_image_url: track.waveform_image_url,
               song: song && { title: song.title, slug: song.slug },
+              tags: track.track_tags.map { |tt| { name: tt.tag.name, slug: tt.tag.slug, description: tt.tag.description, notes: tt.notes } },
               gap: songs_track && {
                 previous: songs_track.previous_performance_gap,
                 next: songs_track.next_performance_gap,

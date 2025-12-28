@@ -32,36 +32,46 @@ module Tools
 
     class << self
       def call(city: nil, state: nil, country: nil, sort_by: "name", sort_order: nil, limit: 50)
-        venues = Venue.all
-
-        venues = venues.where("city ILIKE ?", "%#{city}%") if city
-        venues = venues.where("state ILIKE ?", "%#{state}%") if state
-        venues = venues.where("country ILIKE ?", "%#{country}%") if country
-
         sort_order ||= sort_by == "shows_count" ? "desc" : "asc"
-        venues = apply_sort(venues, sort_by, sort_order)
-        venues = venues.limit(limit) if limit
 
-        venue_list = venues.map do |venue|
+        result = fetch_venues(city, state, country, sort_by, sort_order, limit)
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+      end
+
+      def fetch_venues(city, state, country, sort_by, sort_order, limit)
+        cache_key = McpHelpers.cache_key_for_collection("venues", {
+          city:, state:, country:, sort_by:, sort_order:, limit:
+        })
+
+        Rails.cache.fetch(cache_key) do
+          venues = Venue.all
+
+          venues = venues.where("city ILIKE ?", "%#{city}%") if city
+          venues = venues.where("state ILIKE ?", "%#{state}%") if state
+          venues = venues.where("country ILIKE ?", "%#{country}%") if country
+
+          venues = apply_sort(venues, sort_by, sort_order)
+          venues = venues.limit(limit) if limit
+
+          venue_list = venues.map do |venue|
+            {
+              name: venue.name,
+              slug: venue.slug,
+              url: venue.url,
+              city: venue.city,
+              state: venue.state,
+              country: venue.country,
+              location: venue.location,
+              shows_count: venue.shows_count
+            }
+          end
+
           {
-            name: venue.name,
-            slug: venue.slug,
-            url: venue.url,
-            city: venue.city,
-            state: venue.state,
-            country: venue.country,
-            location: venue.location,
-            shows_count: venue.shows_count
+            total: venue_list.size,
+            filters: { city:, state:, country: }.compact,
+            venues: venue_list
           }
         end
-
-        result = {
-          total: venue_list.size,
-          filters: { city:, state:, country: }.compact,
-          venues: venue_list
-        }
-
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
       end
 
       private

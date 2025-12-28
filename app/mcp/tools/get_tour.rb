@@ -21,15 +21,20 @@ module Tools
         tour = Tour.find_by(slug:)
         return tour_not_found_error(slug) unless tour
 
-        result = {
-          name: tour.name,
-          slug: tour.slug,
-          starts_on: tour.starts_on.iso8601,
-          ends_on: tour.ends_on.iso8601,
-          shows_count: tour.shows_count
-        }
-
+        result = fetch_tour_data(tour)
         MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+      end
+
+      def fetch_tour_data(tour)
+        Rails.cache.fetch(McpHelpers.cache_key_for_resource("tours", tour.slug)) do
+          {
+            name: tour.name,
+            slug: tour.slug,
+            starts_on: tour.starts_on.iso8601,
+            ends_on: tour.ends_on.iso8601,
+            shows_count: tour.shows_count
+          }
+        end
       end
 
       private
