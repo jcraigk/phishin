@@ -9,6 +9,8 @@ module Tools
                 "Example: [Madison Square Garden](url). " \
                 "Format dates readably (e.g., 'Jul 4, 2023')."
 
+    annotations(read_only_hint: true, destructive_hint: false)
+
     input_schema(
       properties: {
         slug: { type: "string", description: "Venue slug (e.g., 'madison-square-garden')" }

@@ -10,6 +10,8 @@ module Tools
                 "Example: | [Jul 4, 2023](show_url) | [Tweezer](track_url) |. " \
                 "Format dates readably (e.g., 'Jul 4, 2023')."
 
+    annotations(read_only_hint: true, destructive_hint: false)
+
     input_schema(
       properties: {
         slug: { type: "string", description: "Song slug (e.g., 'tweezer', 'you-enjoy-myself')" },

@@ -9,6 +9,8 @@ module Tools
                 "DISPLAY: In markdown, link years/periods to their url field. " \
                 "Example: [1995](url) or [1983-1987](url)."
 
+    annotations(read_only_hint: true, destructive_hint: false)
+
     input_schema(
       properties: {},
       required: []

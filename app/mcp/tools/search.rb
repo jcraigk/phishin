@@ -5,10 +5,14 @@ module Tools
     description "Search across Phish shows, songs, venues, tours, tags, and playlists. " \
                 "If the user asks for a specific show date (e.g., 'Halloween 95', 'NYE 99'), " \
                 "use get_show directly instead of searching. " \
+                "FOLLOW-UP: If search returns a single show or user wants details about a show, " \
+                "call get_show with that date to display the interactive widget. " \
                 "DISPLAY: In markdown, link results to their url field - dates for shows, " \
                 "titles for songs, names for venues/playlists. " \
                 "Example: [Jul 4, 2023](show_url) or [Tweezer](song_url) or [MSG](venue_url). " \
                 "Format dates readably (e.g., 'Jul 4, 2023')."
+
+    annotations(read_only_hint: true, destructive_hint: false)
 
     input_schema(
       properties: {

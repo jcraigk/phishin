@@ -8,6 +8,8 @@ module Tools
                 "DISPLAY: In markdown, link song titles to their url field. " \
                 "Example: [Tweezer](url)."
 
+    annotations(read_only_hint: true, destructive_hint: false)
+
     input_schema(
       properties: {
         song_type: {

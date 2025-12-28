@@ -8,6 +8,8 @@ module Tools
                 "DISPLAY: In markdown, link venue names to their url field. " \
                 "Example: [Madison Square Garden](url)."
 
+    annotations(read_only_hint: true, destructive_hint: false)
+
     input_schema(
       properties: {
         city: { type: "string", description: "Filter by city name" },

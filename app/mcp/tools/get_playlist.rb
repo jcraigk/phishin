@@ -9,6 +9,8 @@ module Tools
                 "Format dates readably (e.g., 'Jul 4, 2023'). " \
                 "Display a maximum of 10 tracks in chat."
 
+    annotations(read_only_hint: true, destructive_hint: false)
+
     input_schema(
       properties: {
         slug: { type: "string", description: "Playlist slug (omit for random playlist)" }

@@ -2,13 +2,14 @@ module Tools
   class GetShow < MCP::Tool
     tool_name "get_show"
 
-    description "Get full details for a single Phish show when you know the date. " \
-                "Use this for specific dates like 'Halloween 1995' (1995-10-31) or '12/31/99'. " \
+    description "Get full details for a single Phish show and display an interactive widget with audio player. " \
+                "WHEN TO USE: For specific dates ('Halloween 1995', '12/31/99'), " \
+                "or as a follow-up to list_shows/search when the user wants details on a single show. " \
                 "Returns setlist with all tracks, venue, tags, and gaps. " \
                 "DISPLAY: In markdown, link the date to show url and songs to track url. " \
-                "Format dates readably (e.g., 'Jul 4, 2023')." \
+                "Format dates readably (e.g., 'Jul 4, 2023'). " \
                 "WIDGET: If a widget is displayed, provide only a brief 1-2 sentence summary. " \
-                "Do NOT list tracks - the widget returned by the tool displays the full setlist."
+                "Do NOT list tracks - the widget displays the full setlist with playback controls."
 
     meta({
       "openai/outputTemplate" => Server.widget_uri("get_show"),
@@ -18,6 +19,8 @@ module Tools
                              "Instead, provide a brief 1-2 sentence summary of notable moments, historical context, " \
                              "or why this show is significant. Keep your response very short."
     })
+
+    annotations(read_only_hint: true, destructive_hint: false)
 
     input_schema(
       properties: {
@@ -108,7 +111,10 @@ module Tools
               title: track.title,
               set: track.set_name,
               duration: McpHelpers.format_duration(track.duration),
-              url: track.url
+              duration_ms: track.duration,
+              url: track.url,
+              mp3_url: track.mp3_url,
+              waveform_image_url: track.waveform_image_url
             }
           end
         }

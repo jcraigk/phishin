@@ -6,6 +6,8 @@ module Tools
                 "Returns tour names, slugs, and date ranges. " \
                 "Use this to discover available tours before calling get_tour."
 
+    annotations(read_only_hint: true, destructive_hint: false)
+
     input_schema(
       properties: {
         year: { type: "integer", description: "Filter tours by year (e.g., 1997)" }

@@ -9,6 +9,8 @@ module Tools
                 "Example: | [Tweezer](song_url) | 42 | [Dec 31, 1995](track_url) |. " \
                 "Format dates readably (e.g., 'Jul 4, 2023')."
 
+    annotations(read_only_hint: true, destructive_hint: false)
+
     input_schema(
       properties: {
         stat_type: {

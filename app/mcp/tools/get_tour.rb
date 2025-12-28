@@ -7,6 +7,8 @@ module Tools
                 "Use list_shows with tour_slug to get the list of shows on this tour. " \
                 "Format dates readably (e.g., 'Jul 4, 2023')."
 
+    annotations(read_only_hint: true, destructive_hint: false)
+
     input_schema(
       properties: {
         slug: { type: "string", description: "Tour slug (e.g., 'fall-tour-1997', 'summer-tour-2023')" }
