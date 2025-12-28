@@ -7,8 +7,6 @@ class PerformanceAnalysisService < ApplicationService
     gaps: PerformanceAnalysis::GapsAnalyzer,
     transitions: PerformanceAnalysis::TransitionsAnalyzer,
     set_positions: PerformanceAnalysis::SetPositionsAnalyzer,
-    predictions: PerformanceAnalysis::PredictionsAnalyzer,
-    streaks: PerformanceAnalysis::StreaksAnalyzer,
     geographic: PerformanceAnalysis::GeographicAnalyzer,
     co_occurrence: PerformanceAnalysis::CoOccurrenceAnalyzer,
     song_frequency: PerformanceAnalysis::SongFrequencyAnalyzer

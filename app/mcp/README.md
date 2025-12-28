@@ -60,30 +60,6 @@ Analyzes where songs appear in setlists (openers, closers, encores).
 
 ---
 
-### predictions
-
-Scores songs by likelihood of being played based on historical patterns.
-
-**Example questions:**
-- "What songs are most likely to be played at the next show?"
-- "Which songs are statistically overdue based on their typical rotation?"
-
-**Key parameters:** `limit`
-
----
-
-### streaks
-
-Tracks consecutive show appearances for songs.
-
-**Example questions:**
-- "What's the longest streak of consecutive shows with You Enjoy Myself?"
-- "Which songs are currently on hot streaks?"
-
-**Key parameters:** `song_slug`, `streak_type`
-
----
-
 ### geographic
 
 Analyzes performances by location.

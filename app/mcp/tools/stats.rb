@@ -3,7 +3,7 @@ module Tools
     tool_name "stats"
 
     description "Statistical analysis of Phish performances. Supports gaps (bustouts), " \
-                "transitions, set positions, predictions, streaks, geographic patterns, " \
+                "transitions, set positions, geographic patterns, " \
                 "co-occurrence, and song frequency. " \
                 "DISPLAY: In markdown, link song names to their url field and example dates to their url. " \
                 "Example: | [Tweezer](song_url) | 42 | [Dec 31, 1995](example_url) |. " \
@@ -13,7 +13,7 @@ module Tools
       properties: {
         stat_type: {
           type: "string",
-          enum: %w[gaps transitions set_positions predictions streaks geographic co_occurrence song_frequency],
+          enum: %w[gaps transitions set_positions geographic co_occurrence song_frequency],
           description: "Type of statistic to compute"
         },
         song_slug: { type: "string", description: "Song slug for song-specific analysis" },

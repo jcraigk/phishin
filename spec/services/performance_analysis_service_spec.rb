@@ -157,66 +157,6 @@ RSpec.describe PerformanceAnalysisService do
     end
   end
 
-  describe "predictions analysis" do
-    subject(:result) { described_class.call(analysis_type: :predictions, filters:) }
-
-    let(:filters) { { limit: 10 } }
-
-    before do
-      20.times do |i|
-        show = create(:show, date: "2023-01-#{(i + 1).to_s.rjust(2, '0')}", venue:, tour: tour2, performance_gap_value: 1)
-        create(:track, show:, position: 1, set: "1", songs: [ original_song ])
-        create(:track, show:, position: 2, set: "1", songs: [ original_song2 ]) if i < 15
-      end
-    end
-
-    it "returns predictions with scores and gap ratio", :aggregate_failures do
-      expect(result[:predictions]).to be_an(Array)
-      expect(result[:predictions].first).to include(:song, :score, :current_gap, :avg_gap)
-      expect(result[:predictions].first[:gap_ratio]).to be_a(Numeric)
-    end
-  end
-
-  describe "streaks analysis" do
-    subject(:result) { described_class.call(analysis_type: :streaks, filters:) }
-
-    before do
-      10.times do |i|
-        show = create(:show, date: "2023-07-#{(i + 1).to_s.rjust(2, '0')}", venue:, tour: tour2, performance_gap_value: 1)
-        create(:track, show:, position: 1, set: "1", songs: [ original_song ])
-        create(:track, show:, position: 2, set: "1", songs: [ original_song2 ]) if i < 5
-      end
-    end
-
-    context "with song_slug" do
-      let(:filters) { { song_slug: original_song.slug } }
-
-      it "returns streak data for song" do
-        expect(result[:song]).to eq("Tweezer")
-        expect(result[:current_streak]).to eq(10)
-        expect(result[:longest_streak]).to eq(10)
-      end
-    end
-
-    context "without song_slug (active streaks)" do
-      let(:filters) { {} }
-
-      it "returns songs with active streaks" do
-        expect(result[:streaks]).to be_an(Array)
-        tweezer = result[:streaks].find { |s| s[:song] == "Tweezer" }
-        expect(tweezer[:current_streak]).to eq(10)
-      end
-    end
-
-    context "with non-existent song" do
-      let(:filters) { { song_slug: "nonexistent-song" } }
-
-      it "returns an error" do
-        expect(result[:error]).to eq("Song not found")
-      end
-    end
-  end
-
   describe "geographic analysis" do
     subject(:result) { described_class.call(analysis_type: :geographic, filters:) }
 
