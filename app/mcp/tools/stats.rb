@@ -25,7 +25,7 @@ module Tools
         position: { type: "string", enum: %w[opener closer encore], description: "Set position filter" },
         direction: { type: "string", enum: %w[before after], description: "Transition direction" },
         geo_type: { type: "string", enum: %w[state_frequency never_played state_debuts], description: "Geographic analysis type" },
-        limit: { type: "integer", description: "Limit results (default: 25)" }
+        limit: { type: "integer", description: "Max results to return (default: 25). Set this to match how many results you intend to display." }
       },
       required: [ "stat_type" ]
     )
