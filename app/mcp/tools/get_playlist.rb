@@ -6,18 +6,23 @@ module Tools
                 "Returns playlist metadata and track listing with show dates and durations. " \
                 "DISPLAY: In markdown, link playlist name to playlist url and track titles to track url. " \
                 "Example: | [Tweezer](track_url) | [Jul 4, 2023](show_url) |. " \
-                "Format dates readably (e.g., 'Jul 4, 2023')."
+                "Format dates readably (e.g., 'Jul 4, 2023'). " \
+                "Display a maximum of 10 tracks in chat."
 
     input_schema(
       properties: {
-        slug: { type: "string", description: "Playlist slug" }
+        slug: { type: "string", description: "Playlist slug (omit for random playlist)" }
       },
-      required: [ "slug" ]
+      required: []
     )
 
     class << self
-      def call(slug:)
-        playlist = Playlist.published.find_by(slug:)
+      def call(slug: nil)
+        playlist = if slug
+          Playlist.published.find_by(slug:)
+        else
+          Playlist.published.order(Arel.sql("RANDOM()")).first
+        end
         return error_response("Playlist not found") unless playlist
 
         tracks = playlist.playlist_tracks.order(:position).includes(track: { show: :venue })

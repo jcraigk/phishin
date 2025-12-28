@@ -19,6 +19,8 @@ module Tools
           description: "Multiple show dates (YYYY-MM-DD format)"
         },
         year: { type: "integer", description: "Filter by year (e.g., 1997)" },
+        start_date: { type: "string", description: "Start date for range filter (YYYY-MM-DD)" },
+        end_date: { type: "string", description: "End date for range filter (YYYY-MM-DD)" },
         tour_slug: { type: "string", description: "Filter by tour slug (e.g., 'fall-tour-1997')" },
         venue_slug: { type: "string", description: "Filter by venue slug (e.g., 'madison-square-garden')" },
         include_tracks: {
@@ -31,8 +33,8 @@ module Tools
         },
         sort_by: {
           type: "string",
-          enum: %w[date likes duration],
-          description: "Sort by date (default), likes, or duration"
+          enum: %w[date likes duration random],
+          description: "Sort by date (default), likes, duration, or random"
         },
         sort_order: {
           type: "string",
@@ -49,6 +51,8 @@ module Tools
         date: nil,
         dates: nil,
         year: nil,
+        start_date: nil,
+        end_date: nil,
         tour_slug: nil,
         venue_slug: nil,
         include_tracks: false,
@@ -57,10 +61,10 @@ module Tools
         sort_order: nil,
         limit: 50
       )
-        has_filter = date || dates&.any? || year || tour_slug || venue_slug
-        return error_response("At least one filter required: date, dates, year, tour_slug, or venue_slug") unless has_filter
+        has_filter = date || dates&.any? || year || start_date || end_date || tour_slug || venue_slug
+        return error_response("At least one filter required: date, dates, year, start_date, end_date, tour_slug, or venue_slug") unless has_filter
 
-        shows = build_query(date, dates, year, tour_slug, venue_slug, include_tracks)
+        shows = build_query(date, dates, year, start_date, end_date, tour_slug, venue_slug, include_tracks)
         return error_response("No shows found") if shows.empty?
 
         sort_order ||= sort_by == "date" ? "asc" : "desc"
@@ -74,7 +78,7 @@ module Tools
         else
                    {
                      total: show_list.size,
-                     filters: { date:, dates:, year:, tour_slug:, venue_slug: }.compact,
+                     filters: { date:, dates:, year:, start_date:, end_date:, tour_slug:, venue_slug: }.compact,
                      shows: show_list
                    }
         end
@@ -84,7 +88,7 @@ module Tools
 
       private
 
-      def build_query(date, dates, year, tour_slug, venue_slug, include_tracks)
+      def build_query(date, dates, year, start_date, end_date, tour_slug, venue_slug, include_tracks)
         shows = Show.includes(:venue, :tour)
 
         if include_tracks
@@ -97,6 +101,8 @@ module Tools
         shows = shows.where(date:) if date
         shows = shows.where(date: dates) if dates&.any?
         shows = shows.where("EXTRACT(YEAR FROM date) = ?", year) if year
+        shows = shows.where("date >= ?", start_date) if start_date
+        shows = shows.where("date <= ?", end_date) if end_date
         shows = apply_tour_filter(shows, tour_slug) if tour_slug
         shows = apply_venue_filter(shows, venue_slug) if venue_slug
 
@@ -190,6 +196,8 @@ module Tools
           scope.order(likes_count: direction)
         when "duration"
           scope.order(duration: direction)
+        when "random"
+          scope.order(Arel.sql("RANDOM()"))
         else
           scope.order(date: direction)
         end
