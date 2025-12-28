@@ -45,7 +45,6 @@
 
     .show-card.has-player {
       padding-bottom: 0;
-      transition: padding-bottom 0.5s ease;
     }
 
     .show-card.has-player.player-visible {
@@ -61,23 +60,17 @@
       overflow: hidden;
       border-radius: 0.5rem;
       pointer-events: none;
-      transition: bottom 0.5s ease, border-radius 0.5s ease;
     }
 
-    .show-card.player-visible .blur-wrapper {
-      bottom: 96px;
-      border-radius: 0.5rem 0.5rem 0 0;
-    }
-    
     .background-blur {
       position: absolute;
       top: -50px;
       left: -50px;
       right: -50px;
-      bottom: -50px;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
+      height: 2000px;
+      background-size: 100% auto;
+      background-position: top center;
+      background-repeat: repeat-y;
       filter: blur(100px);
       opacity: 0.8;
       z-index: 0;
@@ -104,31 +97,33 @@
     }
 
     .context-menu-wrapper {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 60;
+      position: relative;
+      display: inline-block;
+      margin-left: 8px;
+      vertical-align: top;
     }
 
     .context-menu-btn {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       color: #515152;
-      background: none;
+      background: rgba(0, 0, 0, 0.1);
       border: none;
-      transition: color 0.2s;
+      border-radius: 4px;
+      transition: background 0.15s;
       cursor: pointer;
-      padding: 8px;
-      font-size: 1.4rem;
+      padding: 2px 6px;
+      font-size: 0.9rem;
       font-weight: 700;
-      letter-spacing: 2px;
+      letter-spacing: 1px;
       line-height: 1;
+      position: relative;
+      top: -0.35rem;
     }
 
     .context-menu-btn:hover {
-      color: #03BBF2;
+      background: rgba(0, 0, 0, 0.2);
     }
 
     .context-dropdown {
@@ -144,6 +139,7 @@
       display: none;
       overflow: hidden;
       isolation: isolate;
+      font-weight: 300;
     }
 
     .context-dropdown.visible {
@@ -158,6 +154,8 @@
       color: #515152;
       text-decoration: none;
       font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.2;
       transition: background-color 0.15s;
       cursor: pointer;
       border: none;
@@ -298,7 +296,6 @@
       justify-content: center;
       min-width: 0;
       flex: 1;
-      padding-right: 30px;
     }
     
     .show-date {
@@ -333,6 +330,51 @@
       padding: 4px 12px 12px;
       position: relative;
       z-index: 2;
+      transition: max-height 0.3s ease;
+    }
+
+    .show-card.expanded .track-list {
+      max-height: none;
+    }
+
+    .expand-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 24px;
+      height: 24px;
+      background: rgba(0, 0, 0, 0.2);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      z-index: 20;
+      transition: background 0.15s;
+      padding: 0;
+    }
+
+    .expand-btn:hover {
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .expand-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .expand-btn .collapse-icon {
+      display: none;
+    }
+
+    .show-card.expanded .expand-btn .expand-icon {
+      display: none;
+    }
+
+    .show-card.expanded .expand-btn .collapse-icon {
+      display: block;
     }
     
     .section-title {
@@ -643,15 +685,11 @@
       border-radius: 0 0 0.5rem 0.5rem;
       overflow: hidden;
       box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
-      transform: translateY(100%);
-      visibility: hidden;
-      transition: transform 0.5s ease, visibility 0s 0.5s;
+      display: none;
     }
 
     .audio-player.visible {
-      transform: translateY(0);
-      visibility: visible;
-      transition: transform 0.5s ease, visibility 0s 0s;
+      display: block;
     }
 
     .player-top-row {
@@ -768,6 +806,28 @@
 
     .play-pause-btn .play-icon {
       margin-left: 3px;
+    }
+
+    .player-close-btn {
+      background: none;
+      border: none;
+      padding: 6px;
+      cursor: pointer;
+      color: #6d6f71;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s;
+      margin-left: 4px;
+    }
+
+    .player-close-btn:hover {
+      color: #515152;
+    }
+
+    .player-close-btn svg {
+      width: 16px;
+      height: 16px;
     }
 
     .player-bottom-row {
@@ -934,6 +994,8 @@
       padding: 8px 12px;
       background-color: #ffffff;
       align-items: center;
+      font-weight: 300;
+      line-height: 1.2;
     }
 
     .tags-row-icon {
@@ -1322,6 +1384,9 @@
                   <button class="skip-btn" id="next-btn" disabled title="Next track">
                     <svg viewBox="0 0 512 512" fill="currentColor"><path d="M52.5 440.6c-9.5 7.9-22.8 9.7-34.1 4.4S0 428.4 0 416V96C0 83.6 7.2 72.3 18.4 67s24.5-3.6 34.1 4.4L224 214.3V96c0-12.4 7.2-23.7 18.4-29s24.5-3.6 34.1 4.4l192 160c7.3 6.1 11.5 15.1 11.5 24.6s-4.2 18.5-11.5 24.6l-192 160c-9.5 7.9-22.8 9.7-34.1 4.4s-18.4-16.6-18.4-29V297.7L52.5 440.6z"/></svg>
                   </button>
+                  <button class="player-close-btn" id="player-close-btn" title="Close player">
+                    <svg viewBox="0 0 384 512" fill="currentColor"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+                  </button>
                 </div>
               </div>
               <div class="player-bottom-row">
@@ -1343,6 +1408,14 @@
             <div class="blur-wrapper">
               <div class="background-blur" id="bg-blur"></div>
             </div>
+            <button class="expand-btn" id="expand-btn" title="Expand">
+              <svg class="expand-icon" viewBox="0 0 448 512" fill="currentColor">
+                <path d="M32 32C14.3 32 0 46.3 0 64v96c0 17.7 14.3 32 32 32s32-14.3 32-32V96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H64V352zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32V64c0-17.7-14.3-32-32-32H320zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V352z"/>
+              </svg>
+              <svg class="collapse-icon" viewBox="0 0 448 512" fill="currentColor">
+                <path d="M160 64c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V64zM32 320c-17.7 0-32 14.3-32 32s14.3 32 32 32H96v64c0 17.7 14.3 32 32 32s32-14.3 32-32V352c0-17.7-14.3-32-32-32H32zM352 64c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H352V64zM320 320c-17.7 0-32 14.3-32 32v96c0 17.7 14.3 32 32 32s32-14.3 32-32V384h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H320z"/>
+              </svg>
+            </button>
             <div class="card-content">
               <div class="show-header">
                 <div class="cover-art-container">
@@ -1352,62 +1425,64 @@
                   </button>` : ''}
                 </div>
                 <div class="show-info">
-                  <div class="show-date">${formatDate(show.date)}</div>
+                  <div class="show-date">
+                    ${formatDate(show.date)}
+                    <div class="context-menu-wrapper">
+                      <button class="context-menu-btn" id="context-menu-btn" title="Show options">•••</button>
+                      <div class="context-dropdown" id="context-dropdown">
+                        ${show.duration_ms ? `
+                          <span class="context-dropdown-item no-hover">
+                            <svg viewBox="0 0 512 512" fill="currentColor">
+                              <path d="M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/>
+                            </svg>
+                            <span>${formatDurationShow(show.duration_ms)}</span>
+                          </span>
+                        ` : ''}
+                        ${show.tags && show.tags.length > 0 ? `
+                          <div class="tags-row clickable" data-tags='${JSON.stringify(show.tags).replace(/'/g, "&#39;")}'>
+                            <svg class="tags-row-icon" viewBox="0 0 448 512" fill="currentColor">
+                              <path d="M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/>
+                            </svg>
+                            ${show.tags.map(tag => `<span class="tag-badge">${escapeHtml(tag.name)}</span>`).join('')}
+                          </div>
+                        ` : ''}
+                        ${show.venue_slug ? `
+                          <a href="https://phish.in/venues/${escapeHtml(show.venue_slug)}" target="_blank" rel="noopener" class="context-dropdown-item">
+                            <svg viewBox="0 0 384 512" fill="currentColor">
+                              <path d="M48 0C21.5 0 0 21.5 0 48V464c0 26.5 21.5 48 48 48h96V432c0-26.5 21.5-48 48-48s48 21.5 48 48v80h96c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48H48zM64 240c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V240zm112-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V240c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V240zM80 96h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V112zM272 96h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16z"/>
+                            </svg>
+                            <span>${escapeHtml(show.venue)}</span>
+                          </a>
+                        ` : ''}
+                        ${show.location ? `
+                          <a href="https://phish.in/map?term=${encodeURIComponent(show.location)}" target="_blank" rel="noopener" class="context-dropdown-item">
+                            <svg viewBox="0 0 384 512" fill="currentColor">
+                              <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
+                            </svg>
+                            <span>${escapeHtml(show.location)}</span>
+                          </a>
+                        ` : ''}
+                        ${show.taper_notes ? `
+                          <button class="context-dropdown-item" id="taper-notes-btn">
+                            <svg viewBox="0 0 384 512" fill="currentColor">
+                              <path d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 192H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
+                            </svg>
+                            <span>Taper Notes</span>
+                          </button>
+                        ` : ''}
+                        <a href="${escapeHtml(showUrl)}" target="_blank" rel="noopener" class="context-dropdown-item">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                            <polyline points="15 3 21 3 21 9"/>
+                            <line x1="10" y1="14" x2="21" y2="3"/>
+                          </svg>
+                          <span>Phish.in website</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
                   <div class="venue-name">${escapeHtml(show.venue)}</div>
                   <div class="location">${escapeHtml(show.location || '')}</div>
-                </div>
-                <div class="context-menu-wrapper">
-                  <button class="context-menu-btn" id="context-menu-btn" title="Show options">•••</button>
-                  <div class="context-dropdown" id="context-dropdown">
-                    ${show.duration_ms ? `
-                      <span class="context-dropdown-item no-hover">
-                        <svg viewBox="0 0 512 512" fill="currentColor">
-                          <path d="M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/>
-                        </svg>
-                        <span>${formatDurationShow(show.duration_ms)}</span>
-                      </span>
-                    ` : ''}
-                    ${show.tags && show.tags.length > 0 ? `
-                      <div class="tags-row clickable" data-tags='${JSON.stringify(show.tags).replace(/'/g, "&#39;")}'>
-                        <svg class="tags-row-icon" viewBox="0 0 448 512" fill="currentColor">
-                          <path d="M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/>
-                        </svg>
-                        ${show.tags.map(tag => `<span class="tag-badge">${escapeHtml(tag.name)}</span>`).join('')}
-                      </div>
-                    ` : ''}
-                    ${show.venue_slug ? `
-                      <a href="https://phish.in/venues/${escapeHtml(show.venue_slug)}" target="_blank" rel="noopener" class="context-dropdown-item">
-                        <svg viewBox="0 0 384 512" fill="currentColor">
-                          <path d="M48 0C21.5 0 0 21.5 0 48V464c0 26.5 21.5 48 48 48h96V432c0-26.5 21.5-48 48-48s48 21.5 48 48v80h96c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48H48zM64 240c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V240zm112-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V240c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V240zM80 96h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V112zM272 96h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16z"/>
-                        </svg>
-                        <span>${escapeHtml(show.venue)}</span>
-                      </a>
-                    ` : ''}
-                    ${show.location ? `
-                      <a href="https://phish.in/map?term=${encodeURIComponent(show.location)}" target="_blank" rel="noopener" class="context-dropdown-item">
-                        <svg viewBox="0 0 384 512" fill="currentColor">
-                          <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
-                        </svg>
-                        <span>${escapeHtml(show.location)}</span>
-                      </a>
-                    ` : ''}
-                    ${show.taper_notes ? `
-                      <button class="context-dropdown-item" id="taper-notes-btn">
-                        <svg viewBox="0 0 384 512" fill="currentColor">
-                          <path d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 192H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
-                        </svg>
-                        <span>Taper Notes</span>
-                      </button>
-                    ` : ''}
-                    <a href="${escapeHtml(showUrl)}" target="_blank" rel="noopener" class="context-dropdown-item">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                        <polyline points="15 3 21 3 21 9"/>
-                        <line x1="10" y1="14" x2="21" y2="3"/>
-                      </svg>
-                      <span>Phish.in website</span>
-                    </a>
-                  </div>
                 </div>
               </div>
               ${tracksHtml ? `<div class="track-list">${tracksHtml}</div>` : ''}
@@ -1451,6 +1526,18 @@
         if (coverArtContainer) {
           coverArtContainer.classList.add('clickable');
         }
+      }
+
+      function initExpandButton() {
+        const expandBtn = document.getElementById('expand-btn');
+        const showCard = document.querySelector('.show-card');
+        if (!expandBtn || !showCard) return;
+
+        expandBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          showCard.classList.toggle('expanded');
+          expandBtn.title = showCard.classList.contains('expanded') ? 'Collapse' : 'Expand';
+        });
       }
 
       function initCoverArtModal() {
@@ -1651,6 +1738,32 @@
         });
       }
 
+      function hidePlayer() {
+        if (audioPlayer) {
+          audioPlayer.pause();
+          audioPlayer.src = '';
+        }
+        
+        currentTrackIndex = -1;
+        isPlaying = false;
+        
+        const player = document.getElementById('audio-player');
+        if (player) player.classList.remove('visible');
+        
+        const headerPlayBtn = document.getElementById('header-play-btn');
+        if (headerPlayBtn) headerPlayBtn.classList.remove('fade-out');
+        
+        const card = document.querySelector('.show-card');
+        if (card) card.classList.remove('player-visible');
+        
+        const coverArtContainer = document.querySelector('.cover-art-container');
+        if (coverArtContainer) coverArtContainer.classList.remove('clickable');
+        
+        document.querySelectorAll('.track').forEach(el => el.classList.remove('active-item'));
+        
+        updatePlayPauseIcon();
+      }
+
       function initAudioPlayer() {
         if (!hasAnyAudio(allTracks)) return;
 
@@ -1662,6 +1775,7 @@
         const nextBtn = document.getElementById('next-btn');
         const headerPlayBtn = document.getElementById('header-play-btn');
         const scrubber = document.getElementById('scrubber');
+        const playerCloseBtn = document.getElementById('player-close-btn');
 
         audioPlayer.addEventListener('timeupdate', updateProgress);
         audioPlayer.addEventListener('loadedmetadata', onMetadataLoaded);
@@ -1686,6 +1800,7 @@
           playTrackAtIndex(findFirstPlayableIndex());
         });
         scrubber?.addEventListener('click', onScrubberClick);
+        playerCloseBtn?.addEventListener('click', hidePlayer);
 
         document.querySelectorAll('.track:not(.no-audio)').forEach(el => {
           el.addEventListener('click', () => {
@@ -1983,6 +2098,7 @@
           if (data.date) {
             root.innerHTML = renderShow(data);
             setupBackgroundBlur(data.cover_art_url);
+            initExpandButton();
             initAudioPlayer();
             initContextMenu();
             initTrackMenus();
