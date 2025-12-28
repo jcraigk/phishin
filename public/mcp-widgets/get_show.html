@@ -685,11 +685,17 @@
       border-radius: 0 0 0.5rem 0.5rem;
       overflow: hidden;
       box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
-      display: none;
+      transform: translateY(100%);
+      opacity: 0;
+      visibility: hidden;
+      transition: transform 0.5s ease, opacity 0.3s ease, visibility 0s 0.5s;
     }
 
     .audio-player.visible {
-      display: block;
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+      transition: transform 0.5s ease, opacity 0.3s ease, visibility 0s 0s;
     }
 
     .player-top-row {
