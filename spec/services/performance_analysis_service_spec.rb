@@ -332,32 +332,4 @@ RSpec.describe PerformanceAnalysisService do
       end
     end
   end
-
-  describe "logging" do
-    let!(:show) { create(:show, date: "2023-07-01", venue:, tour: tour2, performance_gap_value: 1) }
-
-    before do
-      create(:track, show:, position: 1, set: "1", songs: [ original_song ])
-    end
-
-    context "when log_call is true" do
-      subject(:result) { described_class.call(analysis_type: :gaps, filters: { min_gap: 1 }, log_call: true) }
-
-      it "logs the call with parameters and duration" do
-        expect { result }.to change(McpToolCall, :count).by(1)
-        log = McpToolCall.last
-        expect(log.parameters).to include("analysis_type" => "gaps", "min_gap" => 1)
-        expect(log.duration_ms).to be_a(Integer)
-        expect(log.duration_ms).to be >= 0
-      end
-    end
-
-    context "when log_call is false" do
-      subject(:result) { described_class.call(analysis_type: :gaps, filters: { min_gap: 1 }, log_call: false) }
-
-      it "does not log the call" do
-        expect { result }.not_to change(McpToolCall, :count)
-      end
-    end
-  end
 end

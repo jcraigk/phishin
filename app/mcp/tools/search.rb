@@ -26,12 +26,10 @@ module Tools
 
     class << self
       def call(query:, limit: 25)
-        start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         return error_response("Query must be at least 2 characters") if query.to_s.length < 2
         return error_response("Query must be #{MAX_QUERY_LENGTH} characters or fewer") if query.to_s.length > MAX_QUERY_LENGTH
 
         results = fetch_search_results(query, limit)
-        log_call(query, limit, results, start_time)
 
         MCP::Tool::Response.new([ { type: "text", text: results.to_json } ])
       end
@@ -57,11 +55,6 @@ module Tools
       end
 
       private
-
-      def log_call(query, limit, results, start_time)
-        duration_ms = ((Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time) * 1000).round
-        McpToolCall.log_call(tool_name: "search", parameters: { query:, limit: }, result: results, duration_ms:)
-      end
 
       def serialize_shows(raw, limit)
         shows = []

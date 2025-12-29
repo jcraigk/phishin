@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_25_070019) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_29_014210) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -83,19 +83,6 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_25_070019) do
     t.index ["likable_id"], name: "index_likes_on_likable_id"
     t.index ["likable_type"], name: "index_likes_on_likable_type"
     t.index ["user_id"], name: "index_likes_on_user_id"
-  end
-
-  create_table "mcp_tool_calls", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.integer "duration_ms"
-    t.string "error_message"
-    t.jsonb "parameters", default: {}
-    t.integer "result_count"
-    t.jsonb "result_summary", default: {}
-    t.string "tool_name", null: false
-    t.datetime "updated_at", null: false
-    t.index ["created_at"], name: "index_mcp_tool_calls_on_created_at"
-    t.index ["tool_name"], name: "index_mcp_tool_calls_on_tool_name"
   end
 
   create_table "playlist_tracks", id: :serial, force: :cascade do |t|
