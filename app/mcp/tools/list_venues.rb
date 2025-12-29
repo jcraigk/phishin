@@ -2,11 +2,7 @@ module Tools
   class ListVenues < MCP::Tool
     tool_name "list_venues"
 
-    description "List Phish venues with optional geographic filtering. " \
-                "Returns venue names, slugs, locations, and show counts. " \
-                "Use this to discover venue slugs before calling get_venue. " \
-                "DISPLAY: In markdown, link venue names to their url field. " \
-                "Example: [Madison Square Garden](url)."
+    description Descriptions::BASE[:list_venues]
 
     annotations(read_only_hint: true, destructive_hint: false)
 

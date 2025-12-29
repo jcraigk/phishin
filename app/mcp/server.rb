@@ -14,37 +14,43 @@ class Server
     }
   }.freeze
 
-  def self.instance
-    @instance ||= build_server
-  end
+  VALID_CLIENTS = %i[default openai].freeze
 
-  def self.build_server
-    server = MCP::Server.new(
-      name: "phishin",
-      version: "1.0.0",
-      tools: [
-        Tools::GetPlaylist,
-        Tools::GetShow,
-        Tools::GetSong,
-        Tools::GetTour,
-        Tools::GetVenue,
-        Tools::ListShows,
-        Tools::ListSongs,
-        Tools::ListTours,
-        Tools::ListVenues,
-        Tools::ListYears,
-        Tools::Search,
-        Tools::Stats
-      ],
-      resources: widget_resources,
-      configuration: MCP::Configuration.new(protocol_version: "2025-03-26")
-    )
+  class << self
+    def for_client(client)
+      client_sym = client.to_sym
+      raise ArgumentError, "Invalid client: #{client}" unless VALID_CLIENTS.include?(client_sym)
 
-    server.resources_read_handler do |params|
-      read_widget(params[:uri])
+      @instances ||= {}
+      @instances[client_sym] ||= build_server(client_sym)
     end
 
-    server
+    def reset!
+      @instances = {}
+    end
+
+    private
+
+    def build_server(client)
+      tools = ToolBuilder.build_tools(client:)
+      resources = client == :openai ? widget_resources : []
+
+      server = MCP::Server.new(
+        name: "phishin",
+        version: "1.0.0",
+        tools:,
+        resources:,
+        configuration: MCP::Configuration.new(protocol_version: "2025-03-26")
+      )
+
+      if client == :openai
+        server.resources_read_handler do |params|
+          read_widget(params[:uri])
+        end
+      end
+
+      server
+    end
   end
 
   def self.widget_resources

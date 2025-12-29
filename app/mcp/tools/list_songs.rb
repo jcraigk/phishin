@@ -2,11 +2,7 @@ module Tools
   class ListSongs < MCP::Tool
     tool_name "list_songs"
 
-    description "List Phish songs with optional filtering and sorting. " \
-                "Returns song names, slugs, play counts, and cover/original status. " \
-                "Use this to discover songs before calling get_song for detailed performance history. " \
-                "DISPLAY: In markdown, link song titles to their url field. " \
-                "Example: [Tweezer](url)."
+    description Descriptions::BASE[:list_songs]
 
     annotations(read_only_hint: true, destructive_hint: false)
 

@@ -2,23 +2,7 @@ module Tools
   class GetShow < MCP::Tool
     tool_name "get_show"
 
-    description "Get full details for a single Phish show and display an interactive widget with audio player. " \
-                "WHEN TO USE: For specific dates ('Halloween 1995', '12/31/99'), " \
-                "or as a follow-up to list_shows/search when the user wants details on a single show. " \
-                "Returns setlist with all tracks, venue, tags, and gaps. " \
-                "DISPLAY: In markdown, link the date to show url and songs to track url. " \
-                "Format dates readably (e.g., 'Jul 4, 2023'). " \
-                "WIDGET: If a widget is displayed, provide only a brief 1-2 sentence summary. " \
-                "Do NOT list tracks - the widget displays the full setlist with playback controls."
-
-    meta({
-      "openai/outputTemplate" => Server.widget_uri("get_show"),
-      "openai/widgetAccessible" => true,
-      "openai/widgetDescription" => "Interactive show card with album art and full setlist",
-      "openai/outputHint" => "The widget above displays the complete setlist. DO NOT list tracks or songs. " \
-                             "Instead, provide a brief 1-2 sentence summary of notable moments, historical context, " \
-                             "or why this show is significant. Keep your response very short."
-    })
+    description Descriptions::BASE[:get_show]
 
     annotations(read_only_hint: true, destructive_hint: false)
 
@@ -29,17 +13,33 @@ module Tools
       required: [ "date" ]
     )
 
+    def self.openai_meta
+      {
+        "openai/outputTemplate" => Server.widget_uri("get_show"),
+        "openai/widgetAccessible" => true,
+        "openai/widgetDescription" => "Interactive show card with album art and full setlist",
+        "openai/outputHint" => "The widget above displays the complete setlist. DO NOT list tracks or songs. " \
+                               "Instead, provide a brief 1-2 sentence summary of notable moments, historical context, " \
+                               "or why this show is significant. Keep your response very short."
+      }
+    end
+
     class << self
       def call(date:)
         show = fetch_show(date)
         return error_response("Show not found for date: #{date}") unless show
 
         result = build_show_data(show)
+        structured = mcp_client == :openai ? build_widget_data(show) : nil
 
         MCP::Tool::Response.new(
           [ { type: "text", text: result.to_json } ],
-          structured_content: build_widget_data(show)
+          structured_content: structured
         )
+      end
+
+      def mcp_client
+        :default
       end
 
       def fetch_show(date)

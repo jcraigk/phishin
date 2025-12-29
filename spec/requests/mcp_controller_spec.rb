@@ -24,6 +24,25 @@ RSpec.describe "MCP Controller" do
         tool_names = json["result"]["tools"].map { |t| t["name"] }
         expect(tool_names).to include("search", "get_show", "list_shows", "stats")
       end
+
+      it "returns widget-free descriptions on default endpoint" do
+        post("/mcp", params: json_rpc_request(rpc_method: "tools/list"), headers:)
+
+        tools = response.parsed_body.dig("result", "tools")
+        get_show = tools.find { |t| t["name"] == "get_show" }
+
+        expect(get_show["description"]).not_to include("widget")
+      end
+
+      it "returns widget descriptions on openai endpoint" do
+        post("/mcp/openai", params: json_rpc_request(rpc_method: "tools/list"), headers:)
+
+        tools = response.parsed_body.dig("result", "tools")
+        get_show = tools.find { |t| t["name"] == "get_show" }
+
+        expect(get_show["description"]).to include("widget")
+        expect(get_show["_meta"]).to include("openai/outputTemplate")
+      end
     end
 
     describe "tools/call" do
@@ -101,8 +120,8 @@ RSpec.describe "MCP Controller" do
           expect(result["tracks"]).to be_an(Array)
         end
 
-        it "returns structured_content for widget" do
-          post("/mcp", params: json_rpc_request(
+        it "returns structured_content for widget on openai endpoint" do
+          post("/mcp/openai", params: json_rpc_request(
             rpc_method: "tools/call",
             params: { name: "get_show", arguments: { date: show.date.to_s } }
           ), headers:)
@@ -111,6 +130,17 @@ RSpec.describe "MCP Controller" do
           structured_content = json.dig("result", "structuredContent")
           expect(structured_content["date"]).to eq("2023-07-04")
           expect(structured_content["tracks"]).to be_an(Array)
+        end
+
+        it "does not return structured_content on default endpoint" do
+          post("/mcp", params: json_rpc_request(
+            rpc_method: "tools/call",
+            params: { name: "get_show", arguments: { date: show.date.to_s } }
+          ), headers:)
+
+          json = response.parsed_body
+          structured_content = json.dig("result", "structuredContent")
+          expect(structured_content).to be_nil
         end
 
         it "returns error for non-existent show" do

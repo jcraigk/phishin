@@ -2,12 +2,7 @@ module Tools
   class ListYears < MCP::Tool
     tool_name "list_years"
 
-    description "List all years/periods when Phish performed, with show counts and era designations. " \
-                "Eras: 1.0 (1983-2000), 2.0 (2002-2004), 3.0 (2009-2020), 4.0 (2021-present). " \
-                "Note: Some fans consider all post-2.0 shows to be 3.0 (no distinction between 3.0/4.0). " \
-                "Use this to discover available years before calling list_shows. " \
-                "DISPLAY: In markdown, link years/periods to their url field. " \
-                "Example: [1995](url) or [1983-1987](url)."
+    description Descriptions::BASE[:list_years]
 
     annotations(read_only_hint: true, destructive_hint: false)
 

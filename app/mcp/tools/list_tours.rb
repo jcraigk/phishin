@@ -2,9 +2,7 @@ module Tools
   class ListTours < MCP::Tool
     tool_name "list_tours"
 
-    description "List all Phish tours with optional year filtering. " \
-                "Returns tour names, slugs, and date ranges. " \
-                "Use this to discover available tours before calling get_tour."
+    description Descriptions::BASE[:list_tours]
 
     annotations(read_only_hint: true, destructive_hint: false)
 

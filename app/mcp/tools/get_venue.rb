@@ -2,12 +2,7 @@ module Tools
   class GetVenue < MCP::Tool
     tool_name "get_venue"
 
-    description "Get detailed information about a venue. " \
-                "Returns venue metadata including location, show count, and date range. " \
-                "Use list_shows with venue_slug to get the list of shows at this venue. " \
-                "DISPLAY: In markdown, link the venue name to its url field. " \
-                "Example: [Madison Square Garden](url). " \
-                "Format dates readably (e.g., 'Jul 4, 2023')."
+    description Descriptions::BASE[:get_venue]
 
     annotations(read_only_hint: true, destructive_hint: false)
 

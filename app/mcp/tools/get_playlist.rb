@@ -2,12 +2,7 @@ module Tools
   class GetPlaylist < MCP::Tool
     tool_name "get_playlist"
 
-    description "Get detailed information about a user-created playlist. " \
-                "Returns playlist metadata and track listing with show dates and durations. " \
-                "DISPLAY: In markdown, link playlist name to playlist url and track titles to track url. " \
-                "Example: | [Tweezer](track_url) | [Jul 4, 2023](show_url) |. " \
-                "Format dates readably (e.g., 'Jul 4, 2023'). " \
-                "Display a maximum of 10 tracks in chat."
+    description Descriptions::BASE[:get_playlist]
 
     annotations(read_only_hint: true, destructive_hint: false)
 

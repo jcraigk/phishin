@@ -2,12 +2,7 @@ module Tools
   class Stats < MCP::Tool
     tool_name "stats"
 
-    description "Statistical analysis of Phish performances. Supports gaps (bustouts), " \
-                "transitions, set positions, geographic patterns, " \
-                "co-occurrence, and song frequency. " \
-                "DISPLAY: In markdown, link song names to their url field and dates to their track url. " \
-                "Example: | [Tweezer](song_url) | 42 | [Dec 31, 1995](track_url) |. " \
-                "Format dates readably (e.g., 'Jul 4, 2023')."
+    description Descriptions::BASE[:stats]
 
     annotations(read_only_hint: true, destructive_hint: false)
 

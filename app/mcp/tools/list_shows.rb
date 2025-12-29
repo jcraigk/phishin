@@ -2,14 +2,7 @@ module Tools
   class ListShows < MCP::Tool
     tool_name "list_shows"
 
-    description "Browse multiple shows by year, date range, tour, or venue. " \
-                "Returns a list of shows WITHOUT setlists. " \
-                "At least one filter is required. " \
-                "FOLLOW-UP: If the result is a single show, or the user wants a random/specific show, " \
-                "ALWAYS call get_show with that date to display the interactive widget with setlist and audio player. " \
-                "DISPLAY: In markdown, link dates to show url and venues to venue url. " \
-                "Example: | [Jul 4, 2023](show_url) | [MSG](venue_url) |. " \
-                "Format dates readably (e.g., 'Jul 4, 2023')."
+    description Descriptions::BASE[:list_shows]
 
     annotations(read_only_hint: true, destructive_hint: false)
 
