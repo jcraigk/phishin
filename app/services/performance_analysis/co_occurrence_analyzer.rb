@@ -93,13 +93,13 @@ module PerformanceAnalysis
     def fetch_show_examples(show_ids, song_a_id, song_b_id, examples_count: 3)
       return [] if show_ids.empty?
 
-      sql = <<~SQL
+      sql_template = <<~SQL
         WITH show_dates AS (
           SELECT id, date
           FROM shows
-          WHERE id IN (#{show_ids.join(',')})
+          WHERE id IN (:show_ids)
           ORDER BY date DESC
-          LIMIT #{examples_count}
+          LIMIT :limit
         ),
         track_a AS (
           SELECT DISTINCT ON (t.show_id)
@@ -107,7 +107,7 @@ module PerformanceAnalysis
             t.slug AS track_slug
           FROM tracks t
           INNER JOIN songs_tracks st ON st.track_id = t.id
-          WHERE st.song_id = #{song_a_id}
+          WHERE st.song_id = :song_a_id
             AND t.show_id IN (SELECT id FROM show_dates)
           ORDER BY t.show_id, t.position
         ),
@@ -117,7 +117,7 @@ module PerformanceAnalysis
             t.slug AS track_slug
           FROM tracks t
           INNER JOIN songs_tracks st ON st.track_id = t.id
-          WHERE st.song_id = #{song_b_id}
+          WHERE st.song_id = :song_b_id
             AND t.show_id IN (SELECT id FROM show_dates)
           ORDER BY t.show_id, t.position
         )
@@ -130,6 +130,11 @@ module PerformanceAnalysis
         INNER JOIN track_b tb ON tb.show_id = sd.id
         ORDER BY sd.date DESC
       SQL
+
+      sql = ActiveRecord::Base.sanitize_sql_array([
+        sql_template,
+        { show_ids:, song_a_id:, song_b_id:, limit: examples_count }
+      ])
 
       ActiveRecord::Base.connection.execute(sql).to_a.map do |row|
         date_str = row["date"].to_s
@@ -144,9 +149,7 @@ module PerformanceAnalysis
     def fetch_pairing_examples(song_id, show_ids, paired_song_slugs, examples_per_song: 3)
       return {} if paired_song_slugs.empty? || show_ids.empty?
 
-      quoted_slugs = paired_song_slugs.map { |s| ActiveRecord::Base.connection.quote(s) }.join(", ")
-
-      sql = <<~SQL
+      sql_template = <<~SQL
         WITH paired_tracks AS (
           SELECT DISTINCT ON (s.slug, sh.id)
             s.slug AS song_slug,
@@ -156,9 +159,9 @@ module PerformanceAnalysis
           INNER JOIN songs_tracks st ON st.track_id = t.id
           INNER JOIN songs s ON s.id = st.song_id
           INNER JOIN shows sh ON sh.id = t.show_id
-          WHERE t.show_id IN (#{show_ids.join(',')})
-            AND s.slug IN (#{quoted_slugs})
-            AND s.id != #{song_id}
+          WHERE t.show_id IN (:show_ids)
+            AND s.slug IN (:slugs)
+            AND s.id != :song_id
           ORDER BY s.slug, sh.id, t.position
         ),
         ranked_tracks AS (
@@ -171,9 +174,14 @@ module PerformanceAnalysis
         )
         SELECT song_slug, track_slug, date
         FROM ranked_tracks
-        WHERE rn <= #{examples_per_song}
+        WHERE rn <= :limit
         ORDER BY song_slug, date DESC
       SQL
+
+      sql = ActiveRecord::Base.sanitize_sql_array([
+        sql_template,
+        { show_ids:, slugs: paired_song_slugs, song_id:, limit: examples_per_song }
+      ])
 
       results = ActiveRecord::Base.connection.execute(sql).to_a
       results.each_with_object({}) do |row, hash|

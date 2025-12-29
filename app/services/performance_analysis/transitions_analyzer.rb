@@ -1,5 +1,10 @@
 module PerformanceAnalysis
   class TransitionsAnalyzer < BaseAnalyzer
+    DIRECTION_CONFIG = {
+      "after" => { comparison: ">", order: "ASC" },
+      "before" => { comparison: "<", order: "DESC" }
+    }.freeze
+
     def call
       song_slug = filters[:song_slug]
       direction = filters[:direction] || "after"
@@ -53,16 +58,15 @@ module PerformanceAnalysis
     end
 
     def fetch_song_transition_counts(song_id, direction)
-      position_comparison = direction == "after" ? ">" : "<"
-      position_order = direction == "after" ? "ASC" : "DESC"
+      config = DIRECTION_CONFIG[direction] || DIRECTION_CONFIG["after"]
 
-      sql = <<~SQL
+      sql_template = <<~SQL
         WITH source_tracks AS (
           SELECT t.id, t.show_id, t.position
           FROM tracks t
           INNER JOIN songs_tracks st ON st.track_id = t.id
           INNER JOIN shows s ON s.id = t.show_id
-          WHERE st.song_id = #{song_id}
+          WHERE st.song_id = :song_id
             AND t.set NOT IN ('S', 'P')
             AND t.exclude_from_stats = FALSE
             AND s.performance_gap_value > 0
@@ -73,9 +77,9 @@ module PerformanceAnalysis
             adj.id AS adjacent_track_id
           FROM source_tracks src
           INNER JOIN tracks adj ON adj.show_id = src.show_id
-            AND adj.position #{position_comparison} src.position
+            AND adj.position %{comparison} src.position
             AND adj.set NOT IN ('S', 'P')
-          ORDER BY src.id, adj.position #{position_order}
+          ORDER BY src.id, adj.position %{order}
         )
         SELECT
           s.slug AS adjacent_slug,
@@ -87,23 +91,24 @@ module PerformanceAnalysis
         ORDER BY count DESC
       SQL
 
+      sql_with_operators = sql_template % { comparison: config[:comparison], order: config[:order] }
+      sql = ActiveRecord::Base.sanitize_sql_array([ sql_with_operators, { song_id: } ])
+
       ActiveRecord::Base.connection.execute(sql).to_a
     end
 
     def fetch_song_transition_examples(song_id, direction, adjacent_slugs, examples_per_song: 3)
       return {} if adjacent_slugs.empty?
 
-      position_comparison = direction == "after" ? ">" : "<"
-      position_order = direction == "after" ? "ASC" : "DESC"
-      quoted_slugs = adjacent_slugs.map { |s| ActiveRecord::Base.connection.quote(s) }.join(", ")
+      config = DIRECTION_CONFIG[direction] || DIRECTION_CONFIG["after"]
 
-      sql = <<~SQL
+      sql_template = <<~SQL
         WITH source_tracks AS (
           SELECT t.id, t.show_id, t.position
           FROM tracks t
           INNER JOIN songs_tracks st ON st.track_id = t.id
           INNER JOIN shows s ON s.id = t.show_id
-          WHERE st.song_id = #{song_id}
+          WHERE st.song_id = :song_id
             AND t.set NOT IN ('S', 'P')
             AND t.exclude_from_stats = FALSE
             AND s.performance_gap_value > 0
@@ -115,9 +120,9 @@ module PerformanceAnalysis
             src.show_id
           FROM source_tracks src
           INNER JOIN tracks adj ON adj.show_id = src.show_id
-            AND adj.position #{position_comparison} src.position
+            AND adj.position %{comparison} src.position
             AND adj.set NOT IN ('S', 'P')
-          ORDER BY src.id, adj.position #{position_order}
+          ORDER BY src.id, adj.position %{order}
         ),
         transition_shows AS (
           SELECT
@@ -128,13 +133,19 @@ module PerformanceAnalysis
           INNER JOIN songs_tracks st ON st.track_id = at.adjacent_track_id
           INNER JOIN songs s ON s.id = st.song_id
           INNER JOIN shows sh ON sh.id = at.show_id
-          WHERE s.slug IN (#{quoted_slugs})
+          WHERE s.slug IN (:slugs)
         )
         SELECT adjacent_slug, date
         FROM transition_shows
-        WHERE rn <= #{examples_per_song}
+        WHERE rn <= :limit
         ORDER BY adjacent_slug, date DESC
       SQL
+
+      sql_with_operators = sql_template % { comparison: config[:comparison], order: config[:order] }
+      sql = ActiveRecord::Base.sanitize_sql_array([
+        sql_with_operators,
+        { song_id:, slugs: adjacent_slugs, limit: examples_per_song }
+      ])
 
       results = ActiveRecord::Base.connection.execute(sql).to_a
       results.each_with_object({}) do |row, hash|
@@ -177,7 +188,7 @@ module PerformanceAnalysis
     end
 
     def fetch_transition_counts
-      sql = <<~SQL
+      sql_template = <<~SQL
         WITH ordered_tracks AS (
           SELECT
             t.id,
@@ -214,20 +225,20 @@ module PerformanceAnalysis
         SELECT from_slug, to_slug, count
         FROM transitions
         ORDER BY count DESC
-        LIMIT #{limit * 2}
+        LIMIT :limit
       SQL
 
+      sql = ActiveRecord::Base.sanitize_sql_array([ sql_template, { limit: limit * 2 } ])
       ActiveRecord::Base.connection.execute(sql).to_a
     end
 
     def fetch_transition_examples(transition_pairs, examples_per_pair: 3)
       return {} if transition_pairs.empty?
 
-      pair_conditions = transition_pairs.map do |from_slug, to_slug|
-        "(s1.slug = #{ActiveRecord::Base.connection.quote(from_slug)} AND s2.slug = #{ActiveRecord::Base.connection.quote(to_slug)})"
-      end.join(" OR ")
+      from_slugs = transition_pairs.map(&:first)
+      to_slugs = transition_pairs.map(&:last)
 
-      sql = <<~SQL
+      sql_template = <<~SQL
         WITH ordered_tracks AS (
           SELECT
             t.id,
@@ -262,13 +273,18 @@ module PerformanceAnalysis
           INNER JOIN songs_tracks st2 ON st2.track_id = tp.track2_id
           INNER JOIN songs s2 ON s2.id = st2.song_id
           INNER JOIN shows sh ON sh.id = tp.show_id
-          WHERE #{pair_conditions}
+          WHERE s1.slug IN (:from_slugs) AND s2.slug IN (:to_slugs)
         )
         SELECT from_slug, to_slug, date
         FROM transition_shows
-        WHERE rn <= #{examples_per_pair}
+        WHERE rn <= :limit
         ORDER BY from_slug, to_slug, date DESC
       SQL
+
+      sql = ActiveRecord::Base.sanitize_sql_array([
+        sql_template,
+        { from_slugs:, to_slugs:, limit: examples_per_pair }
+      ])
 
       results = ActiveRecord::Base.connection.execute(sql).to_a
       results.each_with_object({}) do |row, hash|

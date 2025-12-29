@@ -91,9 +91,7 @@ module PerformanceAnalysis
     def fetch_position_examples(track_ids, song_slugs, examples_per_song: 3)
       return {} if song_slugs.empty? || track_ids.empty?
 
-      quoted_slugs = song_slugs.map { |s| ActiveRecord::Base.connection.quote(s) }.join(", ")
-
-      sql = <<~SQL
+      sql_template = <<~SQL
         WITH unique_shows AS (
           SELECT DISTINCT
             s.slug AS song_slug,
@@ -103,8 +101,8 @@ module PerformanceAnalysis
           INNER JOIN songs_tracks st ON st.track_id = t.id
           INNER JOIN songs s ON s.id = st.song_id
           INNER JOIN shows sh ON sh.id = t.show_id
-          WHERE t.id IN (#{track_ids.join(',')})
-            AND s.slug IN (#{quoted_slugs})
+          WHERE t.id IN (:track_ids)
+            AND s.slug IN (:slugs)
         ),
         position_shows AS (
           SELECT
@@ -116,9 +114,14 @@ module PerformanceAnalysis
         )
         SELECT song_slug, track_slug, date
         FROM position_shows
-        WHERE rn <= #{examples_per_song}
+        WHERE rn <= :limit
         ORDER BY song_slug, date DESC
       SQL
+
+      sql = ActiveRecord::Base.sanitize_sql_array([
+        sql_template,
+        { track_ids:, slugs: song_slugs, limit: examples_per_song }
+      ])
 
       results = ActiveRecord::Base.connection.execute(sql).to_a
       results.each_with_object({}) do |row, hash|

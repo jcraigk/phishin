@@ -68,7 +68,82 @@
         89
       ],
       "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "052776400a351738a89202211b1c6bd6577bb3fa7cba7a6a579dcfa7eba86a2d",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/services/performance_analysis/co_occurrence_analyzer.rb",
+      "line": 139,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": "All IDs are explicitly cast to integers with .to_i before interpolation"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "55106fb58aa2af0ebb3dbe421652b33cd1215ca5a28d58cd2f5e10ea145f4565",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/services/performance_analysis/co_occurrence_analyzer.rb",
+      "line": 187,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": "IDs cast to integers, strings properly quoted with connection.quote()"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "f8079d7797d9f9f5fd73ef94b4052555669e148c1115f6562fa4f573fc5f32c0",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/services/performance_analysis/set_positions_analyzer.rb",
+      "line": 126,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": "IDs cast to integers, strings properly quoted with connection.quote()"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "3402b901af603f36190c78a6c6cbcb3b304318ce05571786df90a0891ea11de8",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/services/performance_analysis/transitions_analyzer.rb",
+      "line": 143,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": "IDs cast to integers, strings quoted, operators hardcoded via ternary"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "c72e57fc04bc394f428460eb2cb129f77b40676656106c1dbb5396e17c4ed976",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/services/performance_analysis/transitions_analyzer.rb",
+      "line": 282,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "confidence": "Medium",
+      "cwe_id": [
+        89
+      ],
+      "note": "IDs cast to integers, strings properly quoted with connection.quote()"
     }
   ],
-  "brakeman_version": "7.0.2"
+  "brakeman_version": "7.1.2"
 }
