@@ -1,4 +1,4 @@
-require "readline"
+require "reline"
 
 class ShowImporter::Cli
   attr_reader :orch
@@ -62,7 +62,7 @@ class ShowImporter::Cli
 
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
   def process_pos(pos)
-    while (line = Readline.readline("👉 ", false))
+    while (line = Reline.readline("👉 ", false))
       case line.downcase
       when "u"
         puts(
@@ -94,17 +94,17 @@ class ShowImporter::Cli
 
   def insert_new_track
     puts
-    line = Readline.readline("Before track # 👉 ", true)
+    line = Reline.readline("Before track # 👉 ", true)
     orch.insert_before(line.to_i)
   end
 
   def delete_track
-    line = Readline.readline("Delete track # 👉 ", true)
+    line = Reline.readline("Delete track # 👉 ", true)
     orch.delete(line.to_i)
   end
 
   def update_song_for_pos(pos)
-    line = Readline.readline("Song title 👉 ", true)
+    line = Reline.readline("Song title 👉 ", true)
     matched = orch.fm.find_song(line, exact: true)
     if matched
       puts "Found \"#{matched.title}\". Adding Song."
@@ -115,20 +115,20 @@ class ShowImporter::Cli
   end
 
   def update_title_for_pos(pos)
-    line = Readline.readline("Title 👉 ", true)
+    line = Reline.readline("Title 👉 ", true)
     orch.get_track(pos).title = line
     puts
   end
 
   def update_set_for_pos(pos)
-    line = Readline.readline("Set [S,1,2,3,4,E,E2,E3] 👉 ", true)
+    line = Reline.readline("Set [S,1,2,3,4,E,E2,E3] 👉 ", true)
     orch.get_track(pos).set = line
     puts
   end
 
   def update_file_for_pos(pos) # rubocop:disable Metrics/MethodLength
     filenames = print_filenames
-    while (line = Readline.readline("File 1-#{filenames.length} 👉 "))
+    while (line = Reline.readline("File 1-#{filenames.length} 👉 "))
       choice = line.to_i
       next unless choice.positive?
       new_filename = filenames[choice - 1]
@@ -144,7 +144,7 @@ class ShowImporter::Cli
 
   def repl
     main_menu
-    while (line = Readline.readline("👉 ", true))
+    while (line = Reline.readline("👉 ", true))
       process(line)
       break if line.in?(%w[s x])
     end
