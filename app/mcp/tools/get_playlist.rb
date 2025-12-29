@@ -13,17 +13,37 @@ module Tools
       required: []
     )
 
+    def self.openai_meta
+      {
+        "openai/outputTemplate" => Server.widget_uri("get_playlist"),
+        "openai/widgetAccessible" => true,
+        "openai/widgetDescription" => "Interactive playlist card with track listing",
+        "openai/outputHint" => "The widget above displays the playlist with all tracks. DO NOT list tracks. " \
+                               "Instead, provide a brief 1-2 sentence description of the playlist theme or highlights. " \
+                               "Keep your response very short."
+      }
+    end
+
     class << self
       def call(slug: nil)
         playlist = if slug
-          Playlist.published.find_by(slug:)
+          Playlist.published.includes(:user).find_by(slug:)
         else
-          Playlist.published.order(Arel.sql("RANDOM()")).first
+          Playlist.published.includes(:user).order(Arel.sql("RANDOM()")).first
         end
         return error_response("Playlist not found") unless playlist
 
         result = fetch_playlist_data(playlist, cache: slug.present?)
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+        structured = mcp_client == :openai ? build_widget_data(playlist) : nil
+
+        MCP::Tool::Response.new(
+          [ { type: "text", text: result.to_json } ],
+          structured_content: structured
+        )
+      end
+
+      def mcp_client
+        :default
       end
 
       def fetch_playlist_data(playlist, cache: true)
@@ -68,10 +88,47 @@ module Tools
         }
       end
 
+      def build_widget_data(playlist)
+        tracks = playlist.playlist_tracks.order(:position).includes(
+          track: [ :mp3_audio_attachment, :png_waveform_attachment, { track_tags: :tag, show: :venue } ]
+        )
+
+        {
+          name: playlist.name,
+          slug: playlist.slug,
+          url: playlist.url,
+          description: playlist.description,
+          duration_ms: playlist.duration,
+          duration_display: McpHelpers.format_duration(playlist.duration),
+          track_count: tracks.size,
+          username: playlist.user&.username,
+          tracks: tracks.map do |pt|
+            track = pt.track
+            {
+              position: pt.position,
+              title: track.title,
+              date: track.show.date.iso8601,
+              show_url: track.show.url,
+              venue: track.show.venue_name,
+              venue_url: track.show.venue&.url,
+              location: track.show.venue&.location,
+              duration_display: McpHelpers.format_duration(track.duration),
+              url: track.url,
+              mp3_url: track.mp3_url,
+              waveform_image_url: track.waveform_image_url,
+              tags: track.track_tags.map { |tt| { name: tt.tag.name, slug: tt.tag.slug } }
+            }
+          end
+        }
+      end
+
       private
 
       def error_response(message)
-        MCP::Tool::Response.new([ { type: "text", text: "Error: #{message}" } ], error: true)
+        MCP::Tool::Response.new(
+          [ { type: "text", text: "Error: #{message}" } ],
+          structured_content: { error: true, message: }
+        )
       end
     end
   end

@@ -108,6 +108,9 @@ class Server
     filename = parts.last&.split("?")&.first
     return [] if filename.blank?
 
+    widget_name = File.basename(filename, ".html")
+    compile_widget_if_stale(widget_name) if Rails.env.development?
+
     file_path = WIDGETS_DIR.join(filename)
     return [] unless File.exist?(file_path)
 
@@ -124,5 +127,11 @@ class Server
         "openai/widgetCSP" => widget_csp
       }
     } ]
+  end
+
+  def self.compile_widget_if_stale(widget_name)
+    WidgetCompiler.compile_if_stale(widget_name)
+  rescue StandardError => e
+    Rails.logger.error "[WidgetCompiler] Failed to compile #{widget_name}: #{e.message}"
   end
 end

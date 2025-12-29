@@ -1,0 +1,116 @@
+@font-face {
+  font-family: 'Open Sans Condensed';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('<%= asset_host_placeholder %>/mcp-widgets/fonts/open-sans-condensed-latin-300-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Open Sans Condensed';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('<%= asset_host_placeholder %>/mcp-widgets/fonts/open-sans-condensed-latin-700-normal.woff2') format('woff2');
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  overflow: hidden;
+}
+
+body {
+  font-family: "Open Sans Condensed", "Arial Narrow", sans-serif !important;
+  background: transparent;
+  color: #515152;
+  font-weight: 300;
+}
+
+#root, #root * {
+  font-family: "Open Sans Condensed", "Arial Narrow", sans-serif !important;
+}
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  min-height: 400px;
+  background: rgba(212, 213, 215, 0.9);
+  border-radius: 0.5rem;
+  width: 100%;
+}
+
+.loader-logo {
+  width: 180px;
+  height: auto;
+  opacity: 0.85;
+}
+
+.loader-text {
+  font-size: 1.3rem;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  background: linear-gradient(
+    90deg,
+    #515152 0%,
+    #515152 40%,
+    #8a8b8d 50%,
+    #515152 60%,
+    #515152 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: text-shimmer 1.5s infinite linear;
+}
+
+@keyframes text-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: -100% 50%; }
+}
+
+.error {
+  padding: 24px;
+  text-align: center;
+  color: #b65b5b;
+  font-size: 1.1rem;
+  background: rgba(212, 213, 215, 0.9);
+  border-radius: 0.5rem;
+}
+
+.not-found {
+  padding: 16px 20px;
+  text-align: center;
+  background: rgba(212, 213, 215, 0.9);
+  border-radius: 0.5rem;
+  width: 100%;
+}
+
+.not-found-icons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.not-found-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.not-found-qmark {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #6d6f71;
+}
+
+.not-found-detail {
+  font-size: 1.3rem;
+  color: #515152;
+}
+
