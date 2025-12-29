@@ -60,7 +60,7 @@ RSpec.describe Show do
       end
 
       it 'returns expected objects' do
-        expect(described_class.between_years(2014, 2015)).to eq([ show1, show2 ])
+        expect(described_class.between_years(2014, 2015)).to contain_exactly(show1, show2)
       end
     end
 
