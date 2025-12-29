@@ -24,7 +24,7 @@ RSpec.describe PerformanceAnalysisService do
   describe "gaps analysis" do
     subject(:result) { described_class.call(analysis_type: :gaps, filters:) }
 
-    let(:filters) { { min_gap: 5 } }
+    let(:filters) { { min_gap: 5, min_plays: 1 } }
 
     let!(:show1) { create(:show, date: "2023-01-01", venue:, tour: tour2, performance_gap_value: 1) }
     let!(:show3) { create(:show, date: "2023-12-01", venue:, tour: tour2, performance_gap_value: 1) }
