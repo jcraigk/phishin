@@ -88,6 +88,11 @@ bundle exec rails shows:import
 Use the interactive CLI to finish the import process then set `PRODUCTION_CONTENT=false`, restart the server, and visit `http://localhost:3000/<date>` to verify the import.
 
 
+## MCP Development
+
+The app exposes an MCP (Model Context Protocol) endpoint at `POST /mcp` for AI assistant integration. Tools and widgets are defined in `app/mcp/`. See [app/mcp/README.md](app/mcp/README.md) for available tools and usage details.
+
+
 ## Troubleshooting (Appendix)
 
 ### Postgres Connection Issues

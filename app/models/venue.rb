@@ -19,6 +19,10 @@ class Venue < ApplicationRecord
     will_save_change_to_attribute?(:name) || super
   end
 
+  def url
+    "#{App.base_url}/venues/#{slug}"
+  end
+
   def long_name
     str = name
     str += " (#{abbrev})" if abbrev.present?

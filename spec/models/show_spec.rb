@@ -60,7 +60,7 @@ RSpec.describe Show do
       end
 
       it 'returns expected objects' do
-        expect(described_class.between_years(2014, 2015)).to eq([ show1, show2 ])
+        expect(described_class.between_years(2014, 2015)).to contain_exactly(show1, show2)
       end
     end
 
@@ -129,6 +129,50 @@ RSpec.describe Show do
 
   it 'provides #date_with_dots' do
     expect(show.date_with_dots).to eq(show.date.strftime('%Y.%m.%d'))
+  end
+
+  describe '.previous_show_date' do
+    let!(:earlier_show) { create(:show, date: show.date - 10.days) }
+    let!(:much_earlier_show) { create(:show, date: show.date - 30.days, audio_status: 'missing') }
+
+    it 'returns the closest earlier show date' do
+      expect(described_class.previous_show_date(show.date)).to eq(earlier_show.date)
+    end
+
+    it 'returns nil when there is no earlier show' do
+      expect(described_class.previous_show_date(much_earlier_show.date)).to be_nil
+    end
+
+    it 'filters by audio_status' do
+      expect(described_class.previous_show_date(show.date, audio_status: 'missing')).to eq(much_earlier_show.date)
+    end
+  end
+
+  describe '.next_show_date' do
+    let!(:later_show) { create(:show, date: show.date + 10.days) }
+    let!(:much_later_show) { create(:show, date: show.date + 30.days, audio_status: 'missing') }
+
+    it 'returns the closest later show date' do
+      expect(described_class.next_show_date(show.date)).to eq(later_show.date)
+    end
+
+    it 'returns nil when there is no later show' do
+      expect(described_class.next_show_date(much_later_show.date)).to be_nil
+    end
+
+    it 'filters by audio_status' do
+      expect(described_class.next_show_date(show.date, audio_status: 'missing')).to eq(much_later_show.date)
+    end
+  end
+
+  describe '#previous_show_date / #next_show_date' do
+    let!(:earlier_show) { create(:show, date: show.date - 10.days) }
+    let!(:later_show) { create(:show, date: show.date + 10.days) }
+
+    it 'delegates to class methods' do
+      expect(show.previous_show_date).to eq(earlier_show.date)
+      expect(show.next_show_date).to eq(later_show.date)
+    end
   end
 
   describe '#save_duration' do

@@ -4,7 +4,7 @@ class SearchService < ApplicationService
   option :audio_status, default: proc { "any" }
 
   LIMIT = 50
-  SCOPES = %w[all playlists shows songs tags tracks venues]
+  SCOPES = %w[all playlists shows songs tags tours tracks venues]
 
   def call
     return if term_too_short?
@@ -46,6 +46,8 @@ class SearchService < ApplicationService
       { tracks: tracks_filtered_by_songs }
     when "playlists"
       { playlists: }
+    when "tours"
+      { tours: }
     else
       {
         songs:,
@@ -54,7 +56,8 @@ class SearchService < ApplicationService
         show_tags:,
         track_tags:,
         tracks: tracks_filtered_by_songs,
-        playlists:
+        playlists:,
+        tours:
       }
     end
   end
@@ -73,7 +76,7 @@ class SearchService < ApplicationService
     return unless term_is_date?
     scope = Show.all
     scope = apply_audio_status_filter(scope)
-    scope.includes(:venue).find_by(date:)
+    scope.includes(:venue, :tour, show_tags: :tag).find_by(date:)
   end
 
   def shows_on_day_of_year
@@ -82,7 +85,7 @@ class SearchService < ApplicationService
     scope = apply_audio_status_filter(scope)
     scope.on_day_of_year(date[5..6], date[8..9])
          .where.not(date:)
-         .includes(:venue)
+         .includes(:venue, :tour, show_tags: :tag)
          .order(date: :desc)
   end
 
@@ -170,6 +173,12 @@ class SearchService < ApplicationService
             .where("name ILIKE :term OR description ILIKE :term", term: "%#{term}%")
             .order(name: :asc)
             .limit(LIMIT)
+  end
+
+  def tours
+    Tour.where("name ILIKE :term OR slug ILIKE :term", term: "%#{term}%")
+        .order(starts_on: :desc)
+        .limit(LIMIT)
   end
 
   def apply_audio_status_filter(relation, table_prefix = nil)

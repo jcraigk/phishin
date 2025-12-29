@@ -32,19 +32,17 @@ RSpec.describe SearchService do
         show_tags: [ show_tag ],
         track_tags: [ track_tag ],
         tracks: [],
-        playlists: []
+        playlists: [],
+        tours: []
       }
     end
-    let!(:show1) { create(:show, date:) }
-    let!(:show2) { create(:show, date: date - 1.year) }
-    let!(:show3) { create(:show, date: date - 2.years) }
-    let!(:tag) { create(:tag, name: "Date #{term}") }
-    let!(:show_tag) { create(:show_tag, notes: "... blah #{term} ...") }
-    let!(:track_tag) { create(:track_tag, notes: "... blah blah #{term} blah..") }
-
-    before do
-      create(:show, date: date - 1.day)
-    end
+  let!(:show1) { create(:show, date:) }
+  let!(:show2) { create(:show, date: date - 1.year) }
+  let!(:show3) { create(:show, date: date - 2.years) }
+  let!(:non_matching_show) { create(:show, date: date - 1.day) }
+  let!(:tag) { create(:tag, name: "Date #{term}") }
+  let!(:show_tag) { create(:show_tag, notes: "... blah #{term} ...", show: non_matching_show) }
+  let!(:track_tag) { create(:track_tag, notes: "... blah blah #{term} blah..", track: create(:track, show: non_matching_show)) }
 
     context 'with exact is8601 date' do
       let(:term) { "2024-10-31" }
@@ -82,7 +80,8 @@ RSpec.describe SearchService do
         show_tags: [ show_tag ],
         track_tags: [ track_tag ],
         tracks: [ track ],
-        playlists: []
+        playlists: [],
+        tours: []
       }
     end
     let!(:show_tag) { create(:show_tag, notes: "... blah #{term} ...") }

@@ -84,6 +84,27 @@ const Faq = () => {
       <h3>What technologies power the site?</h3>
       <p>Ruby on Rails, React, and Postgres are the primary technologies used.</p>
 
+      <h3>Is there an MCP server for AI assistants?</h3>
+      <p>
+        Yes! Phish.in provides an <a href="https://modelcontextprotocol.io/" target="_blank">MCP (Model Context Protocol)</a> server
+        that allows AI assistants like Claude, ChatGPT, and other MCP-compatible clients to access Phish data through natural language queries.
+        The server is available at https://phish.in/mcp and is read-only.
+      </p>
+      <p>Example questions you can ask an AI assistant connected to Phish.in MCP:</p>
+      <ul className="list-disc list-inside mb-4">
+        <li>"What songs did Phish play at MSG on 12/31/1995?"</li>
+        <li>"When was the last time Phish played Fluffhead?"</li>
+        <li>"What are the biggest bustouts from the 2024 tour?"</li>
+        <li>"How many times has Phish played at Red Rocks?"</li>
+        <li>"What songs are most commonly played as encore openers?"</li>
+        <li>"Show me the setlist from the Island Tour"</li>
+        <li>"What's the longest Tweezer ever played?"</li>
+        <li>"Which venues has Phish played most often in California?"</li>
+        <li>"What songs typically follow Crosseyed and Painless?"</li>
+        <li>"List shows from Fall Tour 1997"</li>
+      </ul>
+      <p>See the <Link to="/api-docs">API Documentation</Link> for more details on MCP integration.</p>
+
       <h3>How is album cover art created?</h3>
       <p>Album covers are generated with a combination of automation scripts and the assistance of ChatGPT and Dall-E.</p>
       <Link to="/cover-art" className="button mt-2">Browse All Art</Link>

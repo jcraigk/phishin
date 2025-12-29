@@ -1,5 +1,6 @@
 [tools]
 ruby = "3.4.8"
+lefthook = "latest"
 
 [tasks.default]
 depends = ["dev"]
@@ -23,9 +24,8 @@ docker volume prune
 
 [tasks.cleanforce]
 run = """
-docker compose down -v
-docker image prune -af
-docker volume prune -f
+docker compose down -v --remove-orphans
+docker volume rm phishin_pg_data phishin_redis_data 2>/dev/null || true
 """
 
 [tasks.dev]
@@ -36,8 +36,17 @@ run = "overmind start -f Procfile.dev -F overmind-local.tmux.conf"
 run = "docker compose up -d pg redis"
 
 [tasks.spec]
+alias = "test"
 depends = ["services"]
 run = "bundle exec rspec $@"
+raw = true
+
+[tasks.lint]
+run = "bundle exec rubocop $@"
+
+[tasks.check]
+alias = "ci"
+depends = ["lint", "spec"]
 
 [tasks.start]
 depends = ["services"]

@@ -50,6 +50,28 @@ class Show < ApplicationRecord
 
   delegate :name, to: :tour, prefix: true
 
+  def self.previous_show_date(current_date, audio_status: "any")
+    where("date < ?", current_date)
+      .audio_status_filter(audio_status)
+      .order(date: :desc)
+      .pick(:date)
+  end
+
+  def self.next_show_date(current_date, audio_status: "any")
+    where("date > ?", current_date)
+      .audio_status_filter(audio_status)
+      .order(date: :asc)
+      .pick(:date)
+  end
+
+  def self.first_show_date(audio_status: "any")
+    audio_status_filter(audio_status).order(date: :asc).pick(:date)
+  end
+
+  def self.last_show_date(audio_status: "any")
+    audio_status_filter(audio_status).order(date: :desc).pick(:date)
+  end
+
   def save_duration
     update_column(:duration, tracks.where.not(set: %w[S P]).sum(&:duration))
   end
@@ -80,6 +102,14 @@ class Show < ApplicationRecord
 
   def incomplete
     audio_status == "partial" # API v1 compatibility
+  end
+
+  def previous_show_date(audio_status: "any")
+    self.class.previous_show_date(date, audio_status:)
+  end
+
+  def next_show_date(audio_status: "any")
+    self.class.next_show_date(date, audio_status:)
   end
 
   private
