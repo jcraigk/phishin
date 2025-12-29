@@ -1,0 +1,131 @@
+function formatDate(dateString) {
+  if (!dateString) return "";
+  const datePart = dateString.slice(0, 10);
+  const [year, month, day] = datePart.split("-").map(Number);
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  return `${monthNames[month - 1]} ${day}, ${year}`;
+}
+
+function formatDuration(milliseconds) {
+  const totalMinutes = Math.floor(milliseconds / 60000);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  if (hours > 0) {
+    return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+  }
+  return `${minutes}m`;
+}
+
+function formatTime(seconds) {
+  if (!seconds || seconds < 0) return "0:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function parseDuration(durationStr) {
+  if (!durationStr) return 0;
+  const parts = durationStr.split(':').map(Number);
+  if (parts.length === 3) {
+    return (parts[0] * 3600 + parts[1] * 60 + parts[2]) * 1000;
+  } else if (parts.length === 2) {
+    return (parts[0] * 60 + parts[1]) * 1000;
+  }
+  return 0;
+}
+
+const MAX_POLL_ATTEMPTS = 100;
+const POLL_INTERVAL_MS = 100;
+
+function getData() {
+  if (window._widgetData) return window._widgetData;
+  const oa = window.openai || {};
+  return oa.toolOutput?.structuredContent 
+      || oa.toolOutput 
+      || oa.widget?.props 
+      || oa.view?.params
+      || null;
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function waitForData(isComplete) {
+  for (let i = 0; i < MAX_POLL_ATTEMPTS; i++) {
+    const data = getData();
+    if (isComplete(data)) return data;
+    await sleep(POLL_INTERVAL_MS);
+  }
+  return getData();
+}
+
+function renderNotFound(detail, entityName = "Item") {
+  let displayMessage = `${entityName} not found`;
+  
+  if (detail) {
+    const dateMatch = detail.match(/(\d{4}-\d{2}-\d{2})/);
+    if (dateMatch) {
+      const formattedDate = formatDate(dateMatch[1]);
+      displayMessage = `${entityName} not found for ${formattedDate}`;
+    } else {
+      displayMessage = detail;
+    }
+  }
+
+  return `
+    <div class="not-found">
+      <div class="not-found-icons">
+        <svg class="not-found-icon" viewBox="0 0 32 32">
+          <circle cx="16" cy="16" r="13" fill="#8a8b8d"/>
+          <circle cx="16" cy="16" r="12" fill="#6d6f71"/>
+          <circle cx="16" cy="16" r="4.5" fill="#d4d5d7"/>
+          <rect x="9" y="7" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(-25 9.75 8.75)"/>
+          <rect x="19" y="6" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(30 19.75 7.75)"/>
+          <rect x="23" y="14" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(65 23.75 15.75)"/>
+          <rect x="18" y="22" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(-20 18.75 23.75)"/>
+          <rect x="8" y="20" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(40 8.75 21.75)"/>
+          <rect x="5" y="12" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(-50 5.75 13.75)"/>
+        </svg>
+        <span class="not-found-qmark">?</span>
+      </div>
+      <div class="not-found-detail">${escapeHtml(displayMessage)}</div>
+    </div>
+  `;
+}
+
+function setupBackgroundBlur(imageUrl, imgElementId = 'cover-img', blurElementId = 'bg-blur') {
+  if (!imageUrl) return;
+  
+  const coverImg = document.getElementById(imgElementId);
+  if (coverImg) {
+    coverImg.onload = function() {
+      const bgEl = document.getElementById(blurElementId);
+      if (bgEl) {
+        bgEl.style.backgroundImage = `url("${imageUrl}")`;
+      }
+    };
+  }
+}
+
+function initExpandButton() {
+  const expandBtn = document.getElementById('expand-btn');
+  const card = document.querySelector('.card');
+  if (!expandBtn || !card) return;
+
+  expandBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    card.classList.toggle('expanded');
+    expandBtn.title = card.classList.contains('expanded') ? 'Collapse' : 'Expand';
+  });
+}
+

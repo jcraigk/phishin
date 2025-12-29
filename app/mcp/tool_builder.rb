@@ -27,6 +27,7 @@ module ToolBuilder
       Tools::GetSong,
       Tools::GetTour,
       Tools::GetVenue,
+      Tools::ListPlaylists,
       Tools::ListShows,
       Tools::ListSongs,
       Tools::ListTours,

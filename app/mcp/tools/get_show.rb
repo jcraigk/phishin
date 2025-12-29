@@ -46,8 +46,10 @@ module Tools
         Rails.cache.fetch(McpHelpers.cache_key_for_resource("shows", date)) do
           Show.includes(
             :venue, :tour,
-            tracks: [ :songs, { track_tags: :tag, songs_tracks: {} } ],
-            show_tags: :tag
+            tracks: [ :songs, :mp3_audio_attachment, :png_waveform_attachment, { track_tags: :tag, songs_tracks: {} } ],
+            show_tags: :tag,
+            cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } },
+            album_cover_attachment: :blob
           ).find_by(date:)
         end
       end

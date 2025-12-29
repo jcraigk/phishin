@@ -2,4 +2,7 @@ pre-commit:
   commands:
     lint:
       run: mise run lint
+    widgets:
+      glob: "app/mcp/widgets/**/*.erb"
+      run: bundle exec rake widgets:compile
 

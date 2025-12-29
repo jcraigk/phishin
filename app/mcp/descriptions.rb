@@ -1,5 +1,11 @@
 module Descriptions
   BASE = {
+    list_playlists: "List user-created playlists with optional sorting. " \
+                    "Returns playlist names, slugs, descriptions, durations, and track counts. " \
+                    "Use this to discover playlists before calling get_playlist for full track listing. " \
+                    "DISPLAY: In markdown, link playlist names to their url field. " \
+                    "Example: [My Favorite Jams](url).",
+
     get_playlist: "Get detailed information about a user-created playlist. " \
                   "Returns playlist metadata and track listing with show dates and durations. " \
                   "DISPLAY: In markdown, link playlist name to playlist url and track titles to track url. " \
@@ -91,6 +97,11 @@ module Descriptions
               "Format dates readably (e.g., 'Jul 4, 2023'). " \
               "WIDGET: If a widget is displayed, provide only a brief 1-2 sentence summary. " \
               "Do NOT list tracks - the widget displays the full setlist with playback controls.",
+
+    get_playlist: "Get detailed information about a user-created playlist and display an interactive widget. " \
+                  "Returns playlist metadata and track listing with show dates and durations. " \
+                  "WIDGET: If a widget is displayed, provide only a brief 1-2 sentence summary. " \
+                  "Do NOT list tracks - the widget displays the full track listing.",
 
     list_shows: "Browse multiple shows by year, date range, tour, or venue. " \
                 "Returns a list of shows WITHOUT setlists. " \
