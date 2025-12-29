@@ -1,5 +1,7 @@
 module Tools
   class Search < MCP::Tool
+    MAX_QUERY_LENGTH = 200
+
     tool_name "search"
 
     description "Search across Phish shows, songs, venues, tours, tags, and playlists. " \
@@ -16,7 +18,7 @@ module Tools
 
     input_schema(
       properties: {
-        query: { type: "string", description: "Search query (min 2 characters)" },
+        query: { type: "string", description: "Search query (2-200 characters)" },
         limit: { type: "integer", description: "Max results per category (default: 25)" }
       },
       required: [ "query" ]
@@ -26,6 +28,7 @@ module Tools
       def call(query:, limit: 25)
         start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         return error_response("Query must be at least 2 characters") if query.to_s.length < 2
+        return error_response("Query must be #{MAX_QUERY_LENGTH} characters or fewer") if query.to_s.length > MAX_QUERY_LENGTH
 
         results = fetch_search_results(query, limit)
         log_call(query, limit, results, start_time)
@@ -34,7 +37,8 @@ module Tools
       end
 
       def fetch_search_results(query, limit)
-        cache_key = McpHelpers.cache_key_for_custom("search/#{query}/#{limit}")
+        truncated_query = query.to_s[0, MAX_QUERY_LENGTH]
+        cache_key = McpHelpers.cache_key_for_custom("search/#{Digest::SHA256.hexdigest(truncated_query)}/#{limit}")
 
         Rails.cache.fetch(cache_key) do
           raw = ::SearchService.call(term: query, scope: "all") || {}
