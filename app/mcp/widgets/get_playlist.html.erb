@@ -235,7 +235,7 @@
               <div class="card-header">
                 <div class="logo-container">
                   <a href="${escapeHtml(playlistUrl)}" target="_blank" rel="noopener" class="playlist-logo-link" title="View on Phish.in">
-                    <img src="<%= asset_host_placeholder %>/mcp-widgets/logo-square.png" alt="Phish.in" class="playlist-logo" id="logo-img" />
+                    <img src="<%= asset_host_placeholder %>/mcp-widgets/images/logo-square.png" alt="Phish.in" class="playlist-logo" id="logo-img" />
                   </a>
                   ${hasAudio ? `<button class="play-button" id="header-play-btn" title="Play playlist">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
@@ -300,7 +300,7 @@
             setupBackgroundBlur(null, 'logo-img', 'bg-blur');
             const bgEl = document.getElementById('bg-blur');
             if (bgEl) {
-              bgEl.style.backgroundImage = 'url(<%= asset_host_placeholder %>/mcp-widgets/logo-square.png)';
+              bgEl.style.backgroundImage = 'url(<%= asset_host_placeholder %>/mcp-widgets/images/logo-square.png)';
             }
             initExpandButton();
             initAudioPlayer();
