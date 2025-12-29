@@ -39,6 +39,7 @@ run = "docker compose up -d pg redis"
 alias = "test"
 depends = ["services"]
 run = "bundle exec rspec $@"
+raw = true
 
 [tasks.lint]
 run = "bundle exec rubocop $@"

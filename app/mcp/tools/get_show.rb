@@ -57,6 +57,8 @@ module Tools
       def build_show_data(show)
         {
           date: show.date.iso8601,
+          previous_show_date: show.previous_show_date&.iso8601,
+          next_show_date: show.next_show_date&.iso8601,
           url: show.url,
           venue: {
             name: show.venue_name,
@@ -107,6 +109,8 @@ module Tools
       def build_widget_data(show)
         {
           date: show.date.iso8601,
+          previous_show_date: show.previous_show_date&.iso8601,
+          next_show_date: show.next_show_date&.iso8601,
           venue: show.venue_name,
           venue_slug: show.venue&.slug,
           location: show.venue&.location,

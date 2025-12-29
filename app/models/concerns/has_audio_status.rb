@@ -8,6 +8,16 @@ module HasAudioStatus
 
     scope :with_audio, -> { where(audio_status: %w[complete partial]) }
     scope :without_audio, -> { where(audio_status: "missing") }
+    scope :audio_status_filter, ->(status) {
+      case status&.to_s
+      when "complete", "partial", "missing"
+        where(audio_status: status)
+      when "complete_or_partial"
+        with_audio
+      else
+        all
+      end
+    }
   end
 
   def has_audio?

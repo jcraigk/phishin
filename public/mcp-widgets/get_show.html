@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Phish.in Show</title>
+  <link rel="preload" href="{{WIDGET_ASSET_HOST}}/mcp-widgets/fonts/open-sans-condensed-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{WIDGET_ASSET_HOST}}/mcp-widgets/fonts/open-sans-condensed-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
   <style>
     @font-face {
       font-family: 'Open Sans Condensed';
@@ -23,6 +25,10 @@
     
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
+    html, body {
+      overflow: hidden;
+    }
+
     body {
       font-family: "Open Sans Condensed", "Arial Narrow", sans-serif !important;
       background: transparent;
@@ -593,28 +599,44 @@
 
     .loader-container {
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 48px 24px;
+      gap: 24px;
+      min-height: 400px;
       background: rgba(212, 213, 215, 0.9);
       border-radius: 0.5rem;
       width: 100%;
     }
-    
-    .moon-loader {
-      width: 50px;
-      height: 50px;
-      position: relative;
-      animation: moon-rotate 0.6s linear infinite;
-      border-radius: 50%;
-      border: 3px solid transparent;
-      border-top-color: #6d6f71;
-      box-sizing: border-box;
+
+    .loader-logo {
+      width: 180px;
+      height: auto;
+      opacity: 0.85;
     }
-    
-    @keyframes moon-rotate {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+
+    .loader-text {
+      font-size: 1.3rem;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      background: linear-gradient(
+        90deg,
+        #515152 0%,
+        #515152 40%,
+        #8a8b8d 50%,
+        #515152 60%,
+        #515152 100%
+      );
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: text-shimmer 1.5s infinite linear;
+    }
+
+    @keyframes text-shimmer {
+      0% { background-position: 100% 50%; }
+      100% { background-position: -100% 50%; }
     }
 
     .error {
@@ -1140,7 +1162,8 @@
 <body>
   <div id="root">
     <div class="loader-container">
-      <div class="moon-loader"></div>
+      <img src="{{WIDGET_ASSET_HOST}}/mcp-widgets/logo-full.png" alt="Phish.in" class="loader-logo" />
+      <div class="loader-text">Loading...</div>
     </div>
   </div>
 
