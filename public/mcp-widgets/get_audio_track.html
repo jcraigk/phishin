@@ -127,6 +127,57 @@ body {
 
 
 
+    .loader-container {
+      min-height: 96px;
+      gap: 0;
+    }
+
+    .loader-text {
+      display: none;
+    }
+
+    .loader-logo-wrapper {
+      position: relative;
+      display: inline-block;
+      line-height: 0;
+    }
+
+    .loader-logo {
+      display: block;
+    }
+
+    .loader-logo-wrapper::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        transparent 40%,
+        rgba(255, 255, 255, 0.7) 50%,
+        transparent 60%,
+        transparent 100%
+      );
+      background-size: 200% 100%;
+      animation: logo-shimmer 1.5s infinite linear;
+      -webkit-mask-image: url('{{WIDGET_ASSET_HOST}}/mcp-widgets/images/logo-full.png');
+      mask-image: url('{{WIDGET_ASSET_HOST}}/mcp-widgets/images/logo-full.png');
+      -webkit-mask-size: 100% 100%;
+      mask-size: 100% 100%;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: top left;
+      mask-position: top left;
+    }
+
+    @keyframes logo-shimmer {
+      0% { background-position: 100% 50%; }
+      100% { background-position: -100% 50%; }
+    }
+
     .audio-player {
       position: relative;
       background: #c7c8ca;
@@ -506,12 +557,11 @@ body {
 <body>
 <div id="root">
   <div class="loader-container">
-    <img src="{{WIDGET_ASSET_HOST}}/mcp-widgets/images/logo-full.png" alt="Phish.in" class="loader-logo" />
-    <div class="loader-text">Loading...</div>
+    <div class="loader-logo-wrapper">
+      <img src="{{WIDGET_ASSET_HOST}}/mcp-widgets/images/logo-full.png" alt="Phish.in" class="loader-logo" />
+    </div>
   </div>
 </div>
-
-
 
   <script>
     (function() {
