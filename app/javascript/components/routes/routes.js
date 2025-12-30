@@ -179,6 +179,18 @@ const routes = (props) => [
         element: <Search />,
       },
       {
+        path: "/random",
+        loader: async () => {
+          const response = await fetch("/api/v2/shows/random");
+          if (!response.ok) throw response;
+          const show = await response.json();
+          return new Response(null, {
+            status: 302,
+            headers: { Location: `/${show.date}` },
+          });
+        },
+      },
+      {
         path: "/settings",
         element: <Settings />,
       },
