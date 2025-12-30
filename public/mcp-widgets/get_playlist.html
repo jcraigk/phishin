@@ -1034,6 +1034,7 @@ let allTracks = [];
 let currentTrackIndex = -1;
 let isPlaying = false;
 let isLoading = false;
+let showMetadata = null;
 
 function hasAnyAudio(tracks) {
   return tracks && tracks.some(t => t.mp3_url);
@@ -1087,6 +1088,10 @@ function hidePlayer() {
 function initAudioPlayer(options = {}) {
   if (!hasAnyAudio(allTracks)) return;
 
+  if (options.showMetadata) {
+    showMetadata = options.showMetadata;
+  }
+
   audioPlayer = new Audio();
   audioPlayer.preload = 'metadata';
 
@@ -1100,8 +1105,16 @@ function initAudioPlayer(options = {}) {
   audioPlayer.addEventListener('timeupdate', updateProgress);
   audioPlayer.addEventListener('loadedmetadata', onMetadataLoaded);
   audioPlayer.addEventListener('ended', onTrackEnded);
-  audioPlayer.addEventListener('play', () => { isPlaying = true; updatePlayPauseIcon(); });
-  audioPlayer.addEventListener('pause', () => { isPlaying = false; updatePlayPauseIcon(); });
+  audioPlayer.addEventListener('play', () => { 
+    isPlaying = true; 
+    updatePlayPauseIcon();
+    updateMediaSessionPlaybackState();
+  });
+  audioPlayer.addEventListener('pause', () => { 
+    isPlaying = false; 
+    updatePlayPauseIcon();
+    updateMediaSessionPlaybackState();
+  });
   audioPlayer.addEventListener('waiting', () => { showLoadingSpinner(true); });
   audioPlayer.addEventListener('canplay', () => { showLoadingSpinner(false); });
   audioPlayer.addEventListener('error', onAudioError);
@@ -1150,6 +1163,7 @@ function playTrackAtIndex(index) {
   updateWaveformImage(track.waveform_image_url);
   highlightPlayingTrack(index);
   updateNavigationButtons();
+  updateMediaSession(track);
 }
 
 function updateTrackDisplay(track) {
@@ -1337,6 +1351,57 @@ function showLoadingSpinner(show) {
   isLoading = show;
 }
 
+function isIOSDevice() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
+function updateMediaSession(track) {
+  if (!('mediaSession' in navigator) || !track) return;
+
+  let formattedDate, venue, coverArtUrl, album;
+
+  if (showMetadata?.isPlaylist) {
+    formattedDate = track.date ? formatDate(track.date) : '';
+    venue = track.venue || '';
+    coverArtUrl = track.cover_art_url || showMetadata.cover_art_url || '';
+    album = showMetadata.name || 'Playlist';
+  } else if (showMetadata) {
+    formattedDate = showMetadata.date ? formatDate(showMetadata.date) : '';
+    venue = showMetadata.venue || '';
+    coverArtUrl = showMetadata.cover_art_url || '';
+    album = `${formattedDate} - ${venue}`;
+  } else {
+    return;
+  }
+
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: track.title,
+    artist: `Phish - ${formattedDate}`,
+    album: album,
+    artwork: coverArtUrl ? [{
+      src: coverArtUrl,
+      sizes: '256x256',
+      type: 'image/jpeg'
+    }] : []
+  });
+
+  navigator.mediaSession.setActionHandler('play', togglePlayPause);
+  navigator.mediaSession.setActionHandler('pause', togglePlayPause);
+  navigator.mediaSession.setActionHandler('previoustrack', findPrevPlayableIndex() !== -1 ? playPrevious : null);
+  navigator.mediaSession.setActionHandler('nexttrack', findNextPlayableIndex() !== -1 ? playNext : null);
+
+  if (!isIOSDevice()) {
+    navigator.mediaSession.setActionHandler('seekbackward', () => scrub(-10));
+    navigator.mediaSession.setActionHandler('seekforward', () => scrub(10));
+  }
+}
+
+function updateMediaSessionPlaybackState() {
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+  }
+}
+
 
 
       function renderPlaylist(playlist) {
@@ -1499,7 +1564,13 @@ function showLoadingSpinner(show) {
             root.innerHTML = renderPlaylist(data);
             setupBackgroundBlur(data.cover_art_url);
             initExpandButton();
-            initAudioPlayer();
+            initAudioPlayer({
+              showMetadata: {
+                name: data.name,
+                cover_art_url: data.cover_art_url,
+                isPlaylist: true
+              }
+            });
           } else {
             root.innerHTML = renderNotFound('Playlist not found', 'Playlist');
           }

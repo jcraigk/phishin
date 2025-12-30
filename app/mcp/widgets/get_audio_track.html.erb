@@ -470,8 +470,17 @@
 
         audioPlayer.addEventListener('timeupdate', updateProgress);
         audioPlayer.addEventListener('loadedmetadata', onMetadataLoaded);
-        audioPlayer.addEventListener('play', () => { isPlaying = true; updatePlayPauseIcon(); fadeOutCoverPlayButton(); });
-        audioPlayer.addEventListener('pause', () => { isPlaying = false; updatePlayPauseIcon(); });
+        audioPlayer.addEventListener('play', () => { 
+          isPlaying = true; 
+          updatePlayPauseIcon(); 
+          fadeOutCoverPlayButton();
+          updateMediaSessionPlaybackState();
+        });
+        audioPlayer.addEventListener('pause', () => { 
+          isPlaying = false; 
+          updatePlayPauseIcon();
+          updateMediaSessionPlaybackState();
+        });
         audioPlayer.addEventListener('waiting', () => { showLoadingSpinner(true); });
         audioPlayer.addEventListener('canplay', () => { showLoadingSpinner(false); });
         audioPlayer.addEventListener('error', (e) => console.error('Audio error:', e));
@@ -488,6 +497,7 @@
         if (scrubForwardBtn) scrubForwardBtn.disabled = true;
 
         initCoverPlayButton();
+        initMediaSession(track);
       }
 
       function updateWaveformImage(waveformUrl) {
@@ -611,6 +621,45 @@
       function showLoadingSpinner(show) {
         const spinner = document.getElementById('loading-spinner');
         if (spinner) spinner.style.display = show ? 'block' : 'none';
+      }
+
+      function isIOSDevice() {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      }
+
+      function initMediaSession(track) {
+        if (!('mediaSession' in navigator) || !track) return;
+
+        const formattedDate = track.date ? formatDate(track.date) : '';
+        const venue = track.venue || '';
+        const coverArtUrl = track.cover_art_url || '';
+
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: track.title,
+          artist: `Phish - ${formattedDate}`,
+          album: `${formattedDate} - ${venue}`,
+          artwork: coverArtUrl ? [{
+            src: coverArtUrl,
+            sizes: '256x256',
+            type: 'image/jpeg'
+          }] : []
+        });
+
+        navigator.mediaSession.setActionHandler('play', togglePlayPause);
+        navigator.mediaSession.setActionHandler('pause', togglePlayPause);
+        navigator.mediaSession.setActionHandler('previoustrack', null);
+        navigator.mediaSession.setActionHandler('nexttrack', null);
+
+        if (!isIOSDevice()) {
+          navigator.mediaSession.setActionHandler('seekbackward', () => scrub(-10));
+          navigator.mediaSession.setActionHandler('seekforward', () => scrub(10));
+        }
+      }
+
+      function updateMediaSessionPlaybackState() {
+        if ('mediaSession' in navigator) {
+          navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+        }
       }
 
       function renderPlayer(track) {

@@ -1082,7 +1082,14 @@
             root.innerHTML = renderShow(data);
             setupBackgroundBlur(data.cover_art_url);
             initExpandButton();
-            initAudioPlayer();
+            initAudioPlayer({
+              showMetadata: {
+                date: data.date,
+                venue: data.venue,
+                location: data.location,
+                cover_art_url: data.cover_art_url
+              }
+            });
             initContextMenu();
             initTrackMenus();
             initTaperNotesModal();

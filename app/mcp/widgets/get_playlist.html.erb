@@ -365,7 +365,13 @@
             root.innerHTML = renderPlaylist(data);
             setupBackgroundBlur(data.cover_art_url);
             initExpandButton();
-            initAudioPlayer();
+            initAudioPlayer({
+              showMetadata: {
+                name: data.name,
+                cover_art_url: data.cover_art_url,
+                isPlaylist: true
+              }
+            });
           } else {
             root.innerHTML = renderNotFound('Playlist not found', 'Playlist');
           }
