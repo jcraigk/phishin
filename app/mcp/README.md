@@ -11,10 +11,12 @@ This folder contains Model Context Protocol (MCP) tools that enable AI assistant
 | `list_shows` | List shows with various filters |
 | `list_songs` | List all songs |
 | `list_venues` | List venues |
-| `get_song` | Get song details and performance history |
-| `get_tour` | Get tour details |
-| `get_venue` | Get venue details and show history |
-| `get_playlist` | Get playlist details |
+| `get_show` | Get show details with setlist (supports random) |
+| `get_song` | Get song details and performance history (supports random) |
+| `get_audio_track` | Play a song performance with audio player (supports random) |
+| `get_tour` | Get tour details (supports random) |
+| `get_venue` | Get venue details and show history (supports random) |
+| `get_playlist` | Get playlist details (supports random) |
 | `search` | Full-text search across shows, songs, venues, tours |
 | `stats` | Statistical analysis of performances |
 

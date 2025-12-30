@@ -8,11 +8,22 @@ module ToolBuilder
     desc = Descriptions.for(tool_name_str, client)
     tool_meta = client == :openai ? base_class.try(:openai_meta) : nil
     base_schema = base_class.try(:input_schema_value)
+    base_annotations = base_class.try(:annotations_value)
 
     Class.new(base_class) do
       tool_name tool_name_str
       description desc
       input_schema(base_schema) if base_schema.present?
+
+      if base_annotations.present?
+        annotations(
+          read_only_hint: base_annotations.read_only_hint,
+          destructive_hint: base_annotations.destructive_hint,
+          idempotent_hint: base_annotations.idempotent_hint,
+          open_world_hint: base_annotations.open_world_hint,
+          title: base_annotations.title
+        )
+      end
 
       meta(tool_meta) if tool_meta.present?
 
@@ -22,6 +33,7 @@ module ToolBuilder
 
   def self.base_tools
     [
+      Tools::GetAudioTrack,
       Tools::GetPlaylist,
       Tools::GetShow,
       Tools::GetSong,
