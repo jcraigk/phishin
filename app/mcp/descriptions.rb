@@ -1,5 +1,17 @@
 module Descriptions
   BASE = {
+    list_tags: "List all available tags with show and track counts. " \
+               "Tags categorize content: Jamcharts (notable jams), Costume (costume shows), " \
+               "Guest (guest musicians), Debut (song debuts), and more. " \
+               "Use this to discover tag slugs before calling get_tag for tagged items.",
+
+    get_tag: "Get shows or tracks associated with a specific tag. " \
+             "Use type='show' for tagged shows (e.g., costume shows) or type='track' for tagged tracks (e.g., jamcharts). " \
+             "Returns tag metadata plus list of associated shows or tracks with sorting options. " \
+             "DISPLAY: In markdown, link dates to show/track urls. " \
+             "Example: | [Tweezer](track_url) | [Jul 4, 2023](show_url) |. " \
+             "Format dates readably (e.g., 'Jul 4, 2023').",
+
     list_playlists: "List user-created playlists with optional sorting. " \
                     "Returns playlist names, slugs, descriptions, durations, and track counts. " \
                     "Use this to discover playlists before calling get_playlist for full track listing. " \

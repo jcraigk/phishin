@@ -1,98 +1,291 @@
-# MCP Tools
+# Phish.in MCP Tools Demo Script
 
-This folder contains Model Context Protocol (MCP) tools that enable AI assistants to query Phish performance data.
-
-## Available Tools
-
-| Tool | Purpose |
-|------|---------|
-| `list_years` | List available years |
-| `list_tours` | List tours, optionally filtered by year |
-| `list_shows` | List shows with various filters |
-| `list_songs` | List all songs |
-| `list_venues` | List venues |
-| `get_show` | Get show details with setlist (supports random) |
-| `get_song` | Get song details and performance history (supports random) |
-| `get_audio_track` | Play a song performance with audio player (supports random) |
-| `get_tour` | Get tour details (supports random) |
-| `get_venue` | Get venue details and show history (supports random) |
-| `get_playlist` | Get playlist details (supports random) |
-| `search` | Full-text search across shows, songs, venues, tours |
-| `stats` | Statistical analysis of performances |
-
-## Stats Tool - Analysis Types
-
-The `stats` tool provides deep statistical analysis. Each analysis type answers different questions.
-
-### gaps
-
-Finds songs that haven't been played recently (bustout candidates).
-
-**Example questions:**
-- "What songs haven't been played in over 50 shows?"
-- "Which commonly-played songs are overdue for a performance?"
-
-**Key parameters:** `min_gap`, `limit`
+Use these exact prompts to demonstrate each tool. Copy/paste them verbatim for consistent results.
 
 ---
 
-### transitions
+## 1. list_years
+**Vague Prompt:**
+What years of Phish shows are available in the archive?
 
-Analyzes what songs come before/after other songs.
-
-**Example questions:**
-- "What songs typically follow Tweezer?"
-- "What are the most common song-to-song transitions in Phish history?"
-
-**Key parameters:** `song_slug`, `direction` (before/after)
+**Explicit Prompt:**
+Call the `list_years` tool to show all available years of Phish performances.
 
 ---
 
-### set_positions
+## 2. list_tours
+**Vague Prompt:**
+What tours did Phish do in 1997?
 
-Analyzes where songs appear in setlists (openers, closers, encores).
-
-**Example questions:**
-- "What are the most common Set 1 openers?"
-- "What are the most common Set 2 openers?"
-- "What songs close Set 1 most often?"
-- "How often does Slave to the Traffic Light close a set?"
-
-**Key parameters:** `position` (opener/closer/encore), `set` (1/2/3/4), `song_slug`
+**Explicit Prompt:**
+Call the `list_tours` tool with year set to 1997 to show all tours from that year.
 
 ---
 
-### geographic
+## 3. list_shows
+**Vague Prompt:**
+What were the top ten most popular shows played in 1997?
 
-Analyzes performances by location.
-
-**Example questions:**
-- "What states has Phish played the most shows in?"
-- "What songs have never been played in Colorado?"
-
-**Key parameters:** `geo_type` (state_frequency/never_played/state_debuts), `state`
+**Explicit Prompt:**
+Call the `list_shows` tool with year set to 1997, sort_by set to "likes", sort_order set to "desc", and limit set to 10.
 
 ---
 
-### co_occurrence
+## 4. list_songs
+**Vague Prompt:**
+What are the top ten most played original Phish songs?
 
-Analyzes which songs appear together in the same show.
-
-**Example questions:**
-- "What songs most frequently appear in the same show as Reba?"
-- "How often do Harry Hood and Slave to the Traffic Light appear together?"
-
-**Key parameters:** `song_slug`, `song_b_slug`
+**Explicit Prompt:**
+Call the `list_songs` tool with sort_by set to "times_played", sort_order set to "desc", song_type set to "original", and limit set to 10.
 
 ---
 
-### song_frequency
+## 5. list_venues
+**Vague Prompt:**
+What New York venues has Phish played the most?
 
-Counts how often songs are played within filters.
+**Explicit Prompt:**
+Call the `list_venues` tool with state set to "NY", sort_by set to "shows_count", sort_order set to "desc", and limit set to 10.
 
-**Example questions:**
-- "What were the most played songs in 2023?"
-- "What songs has Phish played the most at MSG?"
+---
 
-**Key parameters:** `year`, `year_range`, `tour_slug`, `venue_slug`, `state`
+## 6. list_playlists
+**Vague Prompt:**
+What are the most liked user playlists?
 
+**Explicit Prompt:**
+Call the `list_playlists` tool with sort_by set to "likes_count", sort_order set to "desc", and limit set to 10.
+
+---
+
+## 7. list_tags
+**Vague Prompt:**
+What tags are available to categorize shows and tracks?
+
+**Explicit Prompt:**
+Call the `list_tags` tool to show all available tags with their show and track counts.
+
+---
+
+## 8. get_show (specific date)
+**Vague Prompt:**
+Show me the setlist from Nov 22, 1997.
+
+**Explicit Prompt:**
+Call the `get_show` tool with date set to "1997-11-22" to show the famous Denver show.
+
+---
+
+## 9. get_show (random)
+**Vague Prompt:**
+Surprise me with a random Phish show.
+
+**Explicit Prompt:**
+Call the `get_show` tool with random set to true.
+
+---
+
+## 10. get_song (specific)
+**Vague Prompt:**
+What are the longest Tweezer performances ever?
+
+**Explicit Prompt:**
+Call the `get_song` tool with slug set to "tweezer", sort_by set to "duration", sort_order set to "desc", and limit set to 10.
+
+---
+
+## 11. get_song (random)
+**Vague Prompt:**
+Tell me about a random Phish song.
+
+**Explicit Prompt:**
+Call the `get_song` tool with random set to true.
+
+---
+
+## 12. get_audio_track (specific)
+**Vague Prompt:**
+Play me the famous Tweezer from Nov 22, 1997
+
+**Explicit Prompt:**
+Call the `get_audio_track` tool with slug set to "1997-11-22/tweezer" to play the famous Tweezer.
+
+---
+
+## 13. get_audio_track (random)
+**Vague Prompt:**
+Play me a random Phish track.
+
+**Explicit Prompt:**
+Call the `get_audio_track` tool with random set to true.
+
+---
+
+## 13b. get_audio_track (no audio available)
+**Explicit Prompt:**
+Call the `get_audio_track` tool with slug set to "1987-10-10/prep-school-hippie" to test the missing audio state.
+
+---
+
+## 14. get_tour
+**Vague Prompt:**
+Tell me about Fall Tour 1997.
+
+**Explicit Prompt:**
+Call the `get_tour` tool with slug set to "fall-tour-1997".
+
+---
+
+## 15. get_venue
+**Vague Prompt:**
+Tell me about Phish at Madison Square Garden.
+
+**Explicit Prompt:**
+Call the `get_venue` tool with slug set to "madison-square-garden".
+
+---
+
+## 16. get_tag (tracks by likes)
+**Vague Prompt:**
+What are the most liked tracks marked with the jamcharts tag?
+
+**Explicit Prompt:**
+Call the `get_tag` tool with slug set to "jamcharts", type set to "track", sort_by set to "likes", sort_order set to "desc", and limit set to 10.
+
+---
+
+## 17. get_tag (shows random)
+**Vague Prompt:**
+Show me a random show marked with the costume tag.
+
+**Explicit Prompt:**
+Call the `get_tag` tool with slug set to "costume", type set to "show", sort_by set to "random", and limit set to 1.
+
+---
+
+## 18. get_tag (tracks by duration)
+**Vague Prompt:**
+What are the longest performances marked with a jamcharts tag?
+
+**Explicit Prompt:**
+Call the `get_tag` tool with slug set to "jamcharts", type set to "track", sort_by set to "duration", sort_order set to "desc", and limit set to 10.
+
+---
+
+## 19. get_playlist (random)
+**Vague Prompt:**
+Show me a random user playlist.
+
+**Explicit Prompt:**
+Call the `get_playlist` tool with no parameters to get a random playlist.
+
+---
+
+## 20. search
+**Vague Prompt:**
+Search for anything related to Red.
+
+**Explicit Prompt:**
+Call the `search` tool with query set to "red" and limit set to 5.
+
+---
+
+## 21. stats - gaps (bustout candidates)
+**Vague Prompt:**
+What commonly-played songs haven't been performed in over 100 shows?
+
+**Explicit Prompt:**
+Call the `stats` tool with stat_type set to "gaps", min_gap set to 100, min_plays set to 10, and limit set to 10.
+
+---
+
+## 22. stats - transitions
+**Vague Prompt:**
+What songs typically follow Tweezer?
+
+**Explicit Prompt:**
+Call the `stats` tool with stat_type set to "transitions", song_slug set to "tweezer", direction set to "after", and limit set to 10.
+
+---
+
+## 23. stats - set_positions (openers)
+**Vague Prompt:**
+What are the most common Set 2 openers?
+
+**Explicit Prompt:**
+Call the `stats` tool with stat_type set to "set_positions", position set to "opener", set set to "2", and limit set to 10.
+
+---
+
+## 24. stats - set_positions (closers)
+**Vague Prompt:**
+What songs close Set 2 most often?
+
+**Explicit Prompt:**
+Call the `stats` tool with stat_type set to "set_positions", position set to "closer", set set to "2", and limit set to 10.
+
+---
+
+## 25. stats - geographic (state frequency)
+**Vague Prompt:**
+What states has Phish played the most shows in?
+
+**Explicit Prompt:**
+Call the `stats` tool with stat_type set to "geographic", geo_type set to "state_frequency", and limit set to 10.
+
+---
+
+## 26. stats - geographic (never played in state)
+**Vague Prompt:**
+What popular songs has Phish never played in Colorado?
+
+**Explicit Prompt:**
+Call the `stats` tool with stat_type set to "geographic", geo_type set to "never_played", state set to "CO", min_plays set to 50, and limit set to 10.
+
+---
+
+## 27. stats - co_occurrence
+**Vague Prompt:**
+What songs frequently appear in the same show as You Enjoy Myself?
+
+**Explicit Prompt:**
+Call the `stats` tool with stat_type set to "co_occurrence", song_slug set to "you-enjoy-myself", and limit set to 10.
+
+---
+
+## 28. stats - song_frequency (by year)
+**Vague Prompt:**
+What were the most played songs in 2023?
+
+**Explicit Prompt:**
+Call the `stats` tool with stat_type set to "song_frequency", year set to 2023, and limit set to 10.
+
+---
+
+## 29. stats - song_frequency (at venue)
+**Vague Prompt:**
+What songs has Phish played the most at Madison Square Garden?
+
+**Explicit Prompt:**
+Call the `stats` tool with stat_type set to "song_frequency", venue_slug set to "madison-square-garden", and limit set to 10.
+
+---
+
+## Demo Flow Suggestion
+
+For a cohesive video narrative, consider this order:
+
+1. **Introduction**: `list_years` → Show the scope of the archive
+2. **Browse by Year**: `list_tours` (1997) → `list_shows` (1997, by likes)
+3. **Show Details**: `get_show` (1997-11-22) → Display the widget with setlist
+4. **Play Audio**: `get_audio_track` (1997-11-22/tweezer) → Audio player widget
+5. **Song Deep Dive**: `get_song` (tweezer, by duration) → Show performance history
+6. **Discovery**: `get_show` (random) → Surprise the viewer
+7. **Tags**: `list_tags` → `get_tag` (jamcharts, top liked tracks)
+8. **Search**: `search` ("madison square garden")
+9. **Venue Info**: `get_venue` (madison-square-garden)
+10. **Analytics**: 
+   - `stats` (set_positions, Set 2 openers)
+   - `stats` (transitions, what follows Tweezer)
+   - `stats` (gaps, bustout candidates)
+11. **Playlists**: `list_playlists` → `get_playlist` (random)

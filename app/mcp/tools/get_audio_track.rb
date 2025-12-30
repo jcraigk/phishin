@@ -60,6 +60,7 @@ module Tools
 
       def fetch_random_track
         track_includes
+          .joins(:mp3_audio_attachment)
           .where.not(set: %w[S P])
           .where(exclude_from_stats: false)
           .order(Arel.sql("RANDOM()"))
