@@ -10,7 +10,8 @@ module Tools
 
     input_schema(
       properties: {
-        slug: { type: "string", description: "Song slug (e.g., 'tweezer', 'you-enjoy-myself')" },
+        slug: { type: "string", description: "Song slug (e.g., 'tweezer', 'you-enjoy-myself'). Omit for random song." },
+        random: { type: "boolean", description: "Set to true for a random song (ignores slug)" },
         sort_by: {
           type: "string",
           enum: %w[date likes duration random],
@@ -23,12 +24,16 @@ module Tools
         },
         limit: { type: "integer", description: "Max performances to return (default: 25)" }
       },
-      required: [ "slug" ]
+      required: []
     )
 
     class << self
-      def call(slug:, sort_by: "date", sort_order: "desc", limit: 25)
-        song = Song.find_by(slug:)
+      def call(slug: nil, random: false, sort_by: "date", sort_order: "desc", limit: 25)
+        song = if random || slug.nil?
+          Song.where("tracks_count > 0").order(Arel.sql("RANDOM()")).first
+        else
+          Song.find_by(slug:)
+        end
         return error_response("Song not found") unless song
 
         result = fetch_song_data(song, sort_by, sort_order, limit)

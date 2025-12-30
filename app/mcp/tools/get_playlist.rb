@@ -90,8 +90,11 @@ module Tools
 
       def build_widget_data(playlist)
         tracks = playlist.playlist_tracks.order(:position).includes(
-          track: [ :mp3_audio_attachment, :png_waveform_attachment, { track_tags: :tag, show: :venue } ]
+          track: [ :mp3_audio_attachment, :png_waveform_attachment, { track_tags: :tag, show: [ :venue, cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } } ] } ]
         )
+
+        first_track = tracks.first&.track
+        cover_art_url = first_track&.show&.cover_art_urls&.dig(:medium)
 
         {
           name: playlist.name,
@@ -102,6 +105,7 @@ module Tools
           duration_display: McpHelpers.format_duration(playlist.duration),
           track_count: tracks.size,
           username: playlist.user&.username,
+          cover_art_url:,
           tracks: tracks.map do |pt|
             track = pt.track
             {

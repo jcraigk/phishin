@@ -8,15 +8,20 @@ module Tools
 
     input_schema(
       properties: {
-        slug: { type: "string", description: "Venue slug (e.g., 'madison-square-garden')" }
+        slug: { type: "string", description: "Venue slug (e.g., 'madison-square-garden'). Omit for random venue." },
+        random: { type: "boolean", description: "Set to true for a random venue (ignores slug)" }
       },
-      required: [ "slug" ]
+      required: []
     )
 
     class << self
-      def call(slug:)
-        venue = Venue.find_by(slug:)
-        return venue_not_found_error(slug) unless venue
+      def call(slug: nil, random: false)
+        venue = if random || slug.nil?
+          Venue.where("shows_count > 0").order(Arel.sql("RANDOM()")).first
+        else
+          Venue.find_by(slug:)
+        end
+        return error_response("Venue not found") unless venue
 
         result = fetch_venue_data(venue)
         MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
@@ -46,20 +51,6 @@ module Tools
       end
 
       private
-
-      def venue_not_found_error(slug)
-        all_slugs = Venue.pluck(:slug)
-        checker = DidYouMean::SpellChecker.new(dictionary: all_slugs)
-        suggestions = checker.correct(slug)
-
-        message = "Venue not found for slug: #{slug}"
-        if suggestions.any?
-          message += ". Did you mean: #{suggestions.first(3).join(', ')}?"
-        end
-        message += " Use list_venues to discover venue slugs."
-
-        error_response(message)
-      end
 
       def error_response(message)
         MCP::Tool::Response.new([ { type: "text", text: "Error: #{message}" } ], error: true)

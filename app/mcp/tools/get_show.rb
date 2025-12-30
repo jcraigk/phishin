@@ -8,9 +8,10 @@ module Tools
 
     input_schema(
       properties: {
-        date: { type: "string", description: "Show date (YYYY-MM-DD)" }
+        date: { type: "string", description: "Show date (YYYY-MM-DD). Omit for random show." },
+        random: { type: "boolean", description: "Set to true for a random show (ignores date)" }
       },
-      required: [ "date" ]
+      required: []
     )
 
     def self.openai_meta
@@ -25,9 +26,13 @@ module Tools
     end
 
     class << self
-      def call(date:)
-        show = fetch_show(date)
-        return error_response("Show not found for date: #{date}") unless show
+      def call(date: nil, random: false)
+        show = if random || date.nil?
+          fetch_random_show
+        else
+          fetch_show(date)
+        end
+        return error_response("Show not found") unless show
 
         result = build_show_data(show)
         structured = mcp_client == :openai ? build_widget_data(show) : nil
@@ -44,14 +49,22 @@ module Tools
 
       def fetch_show(date)
         Rails.cache.fetch(McpHelpers.cache_key_for_resource("shows", date)) do
-          Show.includes(
-            :venue, :tour,
-            tracks: [ :songs, :mp3_audio_attachment, :png_waveform_attachment, { track_tags: :tag, songs_tracks: {} } ],
-            show_tags: :tag,
-            cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } },
-            album_cover_attachment: :blob
-          ).find_by(date:)
+          show_includes.find_by(date:)
         end
+      end
+
+      def fetch_random_show
+        show_includes.with_audio.order(Arel.sql("RANDOM()")).first
+      end
+
+      def show_includes
+        Show.includes(
+          :venue, :tour,
+          tracks: [ :songs, :mp3_audio_attachment, :png_waveform_attachment, { track_tags: :tag, songs_tracks: {} } ],
+          show_tags: :tag,
+          cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } },
+          album_cover_attachment: :blob
+        )
       end
 
       private

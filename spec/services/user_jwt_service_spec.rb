@@ -18,9 +18,9 @@ RSpec.describe UserJwtService do
     it "sets the expiration time to 1 year from now" do
       token = service
       decoded_token = JWT.decode(token, secret_key, true, { algorithm: "HS256" })
-      exp = Time.at(decoded_token.first["exp"])
+      exp = Time.at(decoded_token.first["exp"]).utc
 
-      expect(exp).to be_within(1.second).of(1.year.from_now)
+      expect(exp).to be_within(1.second).of(1.year.from_now.utc)
     end
 
     it "uses the HS256 algorithm" do

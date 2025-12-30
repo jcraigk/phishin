@@ -126,6 +126,53 @@ body {
 }
 
 
+
+    .loader-text {
+      display: none;
+    }
+
+    .loader-logo-wrapper {
+      position: relative;
+      display: inline-block;
+      line-height: 0;
+    }
+
+    .loader-logo {
+      display: block;
+    }
+
+    .loader-logo-wrapper::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        transparent 40%,
+        rgba(255, 255, 255, 0.7) 50%,
+        transparent 60%,
+        transparent 100%
+      );
+      background-size: 200% 100%;
+      animation: logo-shimmer 1.5s infinite linear;
+      -webkit-mask-image: url('{{WIDGET_ASSET_HOST}}/mcp-widgets/images/logo-full.png');
+      mask-image: url('{{WIDGET_ASSET_HOST}}/mcp-widgets/images/logo-full.png');
+      -webkit-mask-size: 100% 100%;
+      mask-size: 100% 100%;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: top left;
+      mask-position: top left;
+    }
+
+    @keyframes logo-shimmer {
+      0% { background-position: 100% 50%; }
+      100% { background-position: -100% 50%; }
+    }
+
 .card {
   position: relative;
   border-radius: 0.5rem;
@@ -168,8 +215,8 @@ body {
 
 .card-header {
   display: flex;
-  gap: 12px;
-  padding: 14px;
+  gap: 8px;
+  padding: 10px;
   background: rgba(180, 180, 180, 0.5);
   backdrop-filter: blur(12px) saturate(1.3);
   -webkit-backdrop-filter: blur(12px) saturate(1.3);
@@ -647,25 +694,41 @@ body {
 
 
 
+    .playlist-header {
+      height: 96px;
+    }
+
     .playlist-info {
       display: flex;
       flex-direction: column;
       justify-content: center;
       min-width: 0;
       flex: 1;
+      overflow: hidden;
     }
 
     .playlist-name {
-      font-size: 1.8rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      line-height: 2rem;
-      margin-bottom: 4px;
-      color: #515152;
+      color: #3a3a3a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .playlist-name a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .playlist-name a:hover {
+      color: #03BBF2;
     }
 
     .playlist-meta {
-      font-size: 1.1rem;
-      color: #6d6f71;
+      font-size: 0.95rem;
+      color: #3a3a3a;
       display: flex;
       gap: 12px;
       align-items: center;
@@ -683,24 +746,21 @@ body {
     }
 
     .playlist-description {
-      font-size: 1rem;
-      color: #515152;
-      margin-top: 6px;
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
+      font-size: 0.95rem;
+      color: #6d6f71;
+      white-space: nowrap;
       overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .playlist-logo-link {
       display: block;
-      width: 88px;
-      height: 88px;
+      width: 76px;
+      height: 76px;
       flex-shrink: 0;
-      border-radius: 0.5rem;
+      border-radius: 4px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
       transition: box-shadow 0.2s, transform 0.2s;
     }
 
@@ -748,11 +808,11 @@ body {
 
     .track-inline-tags .tag-badge {
       display: inline-block;
-      padding: 0.1rem 0.4rem;
+      padding: 0.1rem 0.35rem;
       background-color: #6d6f71;
       color: white;
-      border-radius: 0.25rem;
-      font-size: 0.65rem;
+      border-radius: 0.2rem;
+      font-size: 0.6rem;
       font-weight: 700;
       white-space: nowrap;
     }
@@ -813,8 +873,8 @@ body {
 
     .logo-container {
       position: relative;
-      width: 88px;
-      height: 88px;
+      width: 76px;
+      height: 76px;
       flex-shrink: 0;
     }
   </style>
@@ -822,12 +882,11 @@ body {
 <body>
 <div id="root">
   <div class="loader-container">
-    <img src="{{WIDGET_ASSET_HOST}}/mcp-widgets/images/logo-full.png" alt="Phish.in" class="loader-logo" />
-    <div class="loader-text">Loading...</div>
+    <div class="loader-logo-wrapper">
+      <img src="{{WIDGET_ASSET_HOST}}/mcp-widgets/images/logo-full.png" alt="Phish.in" class="loader-logo" />
+    </div>
   </div>
 </div>
-
-
 
   <script>
     (function() {
@@ -863,6 +922,11 @@ function escapeHtml(str) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+function truncateText(str, maxLength) {
+  if (!str || str.length <= maxLength) return escapeHtml(str);
+  return escapeHtml(str.slice(0, maxLength).trim()) + '…';
 }
 
 function parseDuration(durationStr) {
@@ -939,14 +1003,16 @@ function renderNotFound(detail, entityName = "Item") {
 function setupBackgroundBlur(imageUrl, imgElementId = 'cover-img', blurElementId = 'bg-blur') {
   if (!imageUrl) return;
   
+  const bgEl = document.getElementById(blurElementId);
+  if (!bgEl) return;
+
   const coverImg = document.getElementById(imgElementId);
-  if (coverImg) {
+  if (coverImg && !coverImg.complete) {
     coverImg.onload = function() {
-      const bgEl = document.getElementById(blurElementId);
-      if (bgEl) {
-        bgEl.style.backgroundImage = `url("${imageUrl}")`;
-      }
+      bgEl.style.backgroundImage = `url("${imageUrl}")`;
     };
+  } else {
+    bgEl.style.backgroundImage = `url("${imageUrl}")`;
   }
 }
 
@@ -968,6 +1034,7 @@ let allTracks = [];
 let currentTrackIndex = -1;
 let isPlaying = false;
 let isLoading = false;
+let showMetadata = null;
 
 function hasAnyAudio(tracks) {
   return tracks && tracks.some(t => t.mp3_url);
@@ -1021,6 +1088,10 @@ function hidePlayer() {
 function initAudioPlayer(options = {}) {
   if (!hasAnyAudio(allTracks)) return;
 
+  if (options.showMetadata) {
+    showMetadata = options.showMetadata;
+  }
+
   audioPlayer = new Audio();
   audioPlayer.preload = 'metadata';
 
@@ -1034,8 +1105,16 @@ function initAudioPlayer(options = {}) {
   audioPlayer.addEventListener('timeupdate', updateProgress);
   audioPlayer.addEventListener('loadedmetadata', onMetadataLoaded);
   audioPlayer.addEventListener('ended', onTrackEnded);
-  audioPlayer.addEventListener('play', () => { isPlaying = true; updatePlayPauseIcon(); });
-  audioPlayer.addEventListener('pause', () => { isPlaying = false; updatePlayPauseIcon(); });
+  audioPlayer.addEventListener('play', () => { 
+    isPlaying = true; 
+    updatePlayPauseIcon();
+    updateMediaSessionPlaybackState();
+  });
+  audioPlayer.addEventListener('pause', () => { 
+    isPlaying = false; 
+    updatePlayPauseIcon();
+    updateMediaSessionPlaybackState();
+  });
   audioPlayer.addEventListener('waiting', () => { showLoadingSpinner(true); });
   audioPlayer.addEventListener('canplay', () => { showLoadingSpinner(false); });
   audioPlayer.addEventListener('error', onAudioError);
@@ -1084,6 +1163,7 @@ function playTrackAtIndex(index) {
   updateWaveformImage(track.waveform_image_url);
   highlightPlayingTrack(index);
   updateNavigationButtons();
+  updateMediaSession(track);
 }
 
 function updateTrackDisplay(track) {
@@ -1271,6 +1351,57 @@ function showLoadingSpinner(show) {
   isLoading = show;
 }
 
+function isIOSDevice() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+}
+
+function updateMediaSession(track) {
+  if (!('mediaSession' in navigator) || !track) return;
+
+  let formattedDate, venue, coverArtUrl, album;
+
+  if (showMetadata?.isPlaylist) {
+    formattedDate = track.date ? formatDate(track.date) : '';
+    venue = track.venue || '';
+    coverArtUrl = track.cover_art_url || showMetadata.cover_art_url || '';
+    album = showMetadata.name || 'Playlist';
+  } else if (showMetadata) {
+    formattedDate = showMetadata.date ? formatDate(showMetadata.date) : '';
+    venue = showMetadata.venue || '';
+    coverArtUrl = showMetadata.cover_art_url || '';
+    album = `${formattedDate} - ${venue}`;
+  } else {
+    return;
+  }
+
+  navigator.mediaSession.metadata = new MediaMetadata({
+    title: track.title,
+    artist: `Phish - ${formattedDate}`,
+    album: album,
+    artwork: coverArtUrl ? [{
+      src: coverArtUrl,
+      sizes: '256x256',
+      type: 'image/jpeg'
+    }] : []
+  });
+
+  navigator.mediaSession.setActionHandler('play', togglePlayPause);
+  navigator.mediaSession.setActionHandler('pause', togglePlayPause);
+  navigator.mediaSession.setActionHandler('previoustrack', findPrevPlayableIndex() !== -1 ? playPrevious : null);
+  navigator.mediaSession.setActionHandler('nexttrack', findNextPlayableIndex() !== -1 ? playNext : null);
+
+  if (!isIOSDevice()) {
+    navigator.mediaSession.setActionHandler('seekbackward', () => scrub(-10));
+    navigator.mediaSession.setActionHandler('seekforward', () => scrub(10));
+  }
+}
+
+function updateMediaSessionPlaybackState() {
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+  }
+}
+
 
 
       function renderPlaylist(playlist) {
@@ -1328,7 +1459,7 @@ function showLoadingSpinner(show) {
             
             
             <div class="card-content">
-              <div class="card-header">
+              <div class="card-header playlist-header">
                 <div class="logo-container">
                   <a href="${escapeHtml(playlistUrl)}" target="_blank" rel="noopener" class="playlist-logo-link" title="View on Phish.in">
                     <img src="{{WIDGET_ASSET_HOST}}/mcp-widgets/images/logo-square.png" alt="Phish.in" class="playlist-logo" id="logo-img" />
@@ -1338,7 +1469,7 @@ function showLoadingSpinner(show) {
                   </button>` : ''}
                 </div>
                 <div class="playlist-info">
-                  <div class="playlist-name">${escapeHtml(playlist.name)}</div>
+                  <div class="playlist-name"><a href="${escapeHtml(playlistUrl)}" target="_blank" rel="noopener">${truncateText(playlist.name, 100)}</a></div>
                   <div class="playlist-meta">
                     <span class="playlist-meta-item">
                       <svg viewBox="0 0 512 512" fill="currentColor">
@@ -1431,13 +1562,15 @@ function showLoadingSpinner(show) {
 
           if (data.name) {
             root.innerHTML = renderPlaylist(data);
-            setupBackgroundBlur(null, 'logo-img', 'bg-blur');
-            const bgEl = document.getElementById('bg-blur');
-            if (bgEl) {
-              bgEl.style.backgroundImage = 'url({{WIDGET_ASSET_HOST}}/mcp-widgets/images/logo-square.png)';
-            }
+            setupBackgroundBlur(data.cover_art_url);
             initExpandButton();
-            initAudioPlayer();
+            initAudioPlayer({
+              showMetadata: {
+                name: data.name,
+                cover_art_url: data.cover_art_url,
+                isPlaylist: true
+              }
+            });
           } else {
             root.innerHTML = renderNotFound('Playlist not found', 'Playlist');
           }

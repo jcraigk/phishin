@@ -2,15 +2,62 @@
 <%= partial("head") %>
   <style>
 <%= partial("base_styles") %>
+
+    .loader-text {
+      display: none;
+    }
+
+    .loader-logo-wrapper {
+      position: relative;
+      display: inline-block;
+      line-height: 0;
+    }
+
+    .loader-logo {
+      display: block;
+    }
+
+    .loader-logo-wrapper::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        transparent 40%,
+        rgba(255, 255, 255, 0.7) 50%,
+        transparent 60%,
+        transparent 100%
+      );
+      background-size: 200% 100%;
+      animation: logo-shimmer 1.5s infinite linear;
+      -webkit-mask-image: url('<%= asset_host_placeholder %>/mcp-widgets/images/logo-full.png');
+      mask-image: url('<%= asset_host_placeholder %>/mcp-widgets/images/logo-full.png');
+      -webkit-mask-size: 100% 100%;
+      mask-size: 100% 100%;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: top left;
+      mask-position: top left;
+    }
+
+    @keyframes logo-shimmer {
+      0% { background-position: 100% 50%; }
+      100% { background-position: -100% 50%; }
+    }
+
 <%= partial("card_styles") %>
 <%= partial("track_styles") %>
 <%= partial("audio_player_styles") %>
 
     .context-menu-wrapper {
       position: relative;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
       margin-left: 8px;
-      vertical-align: top;
     }
 
     .context-menu-btn {
@@ -28,8 +75,6 @@
       font-weight: 700;
       letter-spacing: 1px;
       line-height: 1;
-      position: relative;
-      top: -0.35rem;
     }
 
     .context-menu-btn:hover {
@@ -152,17 +197,17 @@
 
     .cover-art-container {
       position: relative;
-      width: 88px;
-      height: 88px;
+      width: 76px;
+      height: 76px;
       flex-shrink: 0;
     }
 
     .cover-art {
-      width: 88px;
-      height: 88px;
-      border-radius: 0.5rem;
+      width: 76px;
+      height: 76px;
+      border-radius: 4px;
       object-fit: cover;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     }
 
     .play-button {
@@ -209,27 +254,26 @@
     }
     
     .show-date {
-      font-size: 2rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      line-height: 2rem;
-      margin-bottom: 4px;
-      color: #515152;
+      color: #3a3a3a;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
     }
     
     .venue-name {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #515152;
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: #3a3a3a;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      line-height: 1.4rem;
     }
     
     .location {
-      font-size: 1.1rem;
-      color: #515152;
-      margin-top: 2px;
+      font-size: 0.95rem;
+      color: #3a3a3a;
     }
 
     .track-menu-wrapper {
@@ -428,11 +472,11 @@
 
     .tag-badge {
       display: inline-block;
-      padding: 0.1rem 0.4rem;
+      padding: 0.1rem 0.35rem;
       background-color: #6d6f71;
       color: white;
-      border-radius: 0.25rem;
-      font-size: 0.8rem;
+      border-radius: 0.2rem;
+      font-size: 0.6rem;
       font-weight: 700;
       white-space: nowrap;
       pointer-events: none;
@@ -449,7 +493,8 @@
     }
 
     .track-inline-tags .tag-badge {
-      font-size: 0.65rem;
+      font-size: 0.6rem;
+      font-weight: 700;
       cursor: pointer;
       pointer-events: auto;
       transition: background-color 0.2s;
@@ -544,7 +589,13 @@
   </style>
 </head>
 <body>
-<%= partial("loader") %>
+<div id="root">
+  <div class="loader-container">
+    <div class="loader-logo-wrapper">
+      <img src="<%= asset_host_placeholder %>/mcp-widgets/images/logo-full.png" alt="Phish.in" class="loader-logo" />
+    </div>
+  </div>
+</div>
 
   <script>
     (function() {
@@ -587,7 +638,7 @@
             const trackTags = track.tags || [];
             
             let trackMenuHtml = '';
-            if (song || hasPrev || hasNext || trackTags.length > 0) {
+            if (hasTrackAudio && (song || hasPrev || hasNext || trackTags.length > 0)) {
               trackMenuHtml = `
                 <div class="track-menu-wrapper">
                   <button class="track-menu-btn" data-track-index="${track.globalIndex}" title="Track options">•••</button>
@@ -1031,7 +1082,14 @@
             root.innerHTML = renderShow(data);
             setupBackgroundBlur(data.cover_art_url);
             initExpandButton();
-            initAudioPlayer();
+            initAudioPlayer({
+              showMetadata: {
+                date: data.date,
+                venue: data.venue,
+                location: data.location,
+                cover_art_url: data.cover_art_url
+              }
+            });
             initContextMenu();
             initTrackMenus();
             initTaperNotesModal();

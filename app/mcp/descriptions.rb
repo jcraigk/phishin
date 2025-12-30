@@ -1,5 +1,17 @@
 module Descriptions
   BASE = {
+    list_tags: "List all available tags with show and track counts. " \
+               "Tags categorize content: Jamcharts (notable jams), Costume (costume shows), " \
+               "Guest (guest musicians), Debut (song debuts), and more. " \
+               "Use this to discover tag slugs before calling get_tag for tagged items.",
+
+    get_tag: "Get shows or tracks associated with a specific tag. " \
+             "Use type='show' for tagged shows (e.g., costume shows) or type='track' for tagged tracks (e.g., jamcharts). " \
+             "Returns tag metadata plus list of associated shows or tracks with sorting options. " \
+             "DISPLAY: In markdown, link dates to show/track urls. " \
+             "Example: | [Tweezer](track_url) | [Jul 4, 2023](show_url) |. " \
+             "Format dates readably (e.g., 'Jul 4, 2023').",
+
     list_playlists: "List user-created playlists with optional sorting. " \
                     "Returns playlist names, slugs, descriptions, durations, and track counts. " \
                     "Use this to discover playlists before calling get_playlist for full track listing. " \
@@ -13,29 +25,36 @@ module Descriptions
                   "Format dates readably (e.g., 'Jul 4, 2023'). " \
                   "Display a maximum of 10 tracks in chat.",
 
-    get_show: "Get full details for a single Phish show. " \
-              "WHEN TO USE: For specific dates ('Halloween 1995', '12/31/99'), " \
-              "or as a follow-up to list_shows/search when the user wants details on a single show. " \
+    get_audio_track: "Play a song performance with audio player widget. Supports random. " \
+                     "USE THIS when user wants to LISTEN to a specific performance or random track. " \
+                     "WHEN TO USE: 'play [song]', 'random track', 'random performance', 'listen to', " \
+                     "'surprise me', or when user selects a specific performance from get_song results. " \
+                     "For random: call with random=true. " \
+                     "For specific: use slug 'YYYY-MM-DD/track-slug' (e.g., '1997-11-22/tweezer').",
+
+    get_show: "Get a Phish show with full setlist. Supports random. " \
+              "WHEN TO USE: 'random show', specific dates ('Halloween 1995', '12/31/99'), " \
+              "or follow-up to list_shows/search. " \
+              "For random: call with random=true (no date needed). " \
               "Returns setlist with all tracks, venue, tags, and gaps. " \
-              "DISPLAY: In markdown, link the date to show url and songs to track url. " \
               "Format dates readably (e.g., 'Jul 4, 2023').",
 
-    get_song: "Get detailed information about a Phish song including performance history. " \
-              "Returns song metadata and a list of performances with dates, venues, durations, and likes. " \
-              "DISPLAY: In markdown, link dates to show_url and song titles to track_url. " \
-              "Example: | [Jul 4, 2023](show_url) | [Tweezer](track_url) |. " \
+    get_song: "Get a Phish song with performance history. Supports random. " \
+              "WHEN TO USE: 'random song' or specific song by slug. " \
+              "For random: call with random=true (no slug needed). " \
+              "Returns song metadata and list of performances. " \
               "Format dates readably (e.g., 'Jul 4, 2023').",
 
-    get_tour: "Get detailed information about a Phish tour. " \
+    get_tour: "Get a Phish tour. Supports random. " \
+              "For random: call with random=true (no slug needed). " \
               "Returns tour metadata including date range and show count. " \
-              "Use list_shows with tour_slug to get the list of shows on this tour. " \
+              "Use list_shows with tour_slug to get shows on this tour. " \
               "Format dates readably (e.g., 'Jul 4, 2023').",
 
-    get_venue: "Get detailed information about a venue. " \
+    get_venue: "Get a venue. Supports random. " \
+               "For random: call with random=true (no slug needed). " \
                "Returns venue metadata including location, show count, and date range. " \
-               "Use list_shows with venue_slug to get the list of shows at this venue. " \
-               "DISPLAY: In markdown, link the venue name to its url field. " \
-               "Example: [Madison Square Garden](url). " \
+               "Use list_shows with venue_slug to get shows at this venue. " \
                "Format dates readably (e.g., 'Jul 4, 2023').",
 
     list_shows: "Browse multiple shows by year, date range, tour, or venue. " \
@@ -89,14 +108,16 @@ module Descriptions
   }.freeze
 
   OPENAI_OVERRIDES = {
-    get_show: "Get full details for a single Phish show and display an interactive widget with audio player. " \
-              "WHEN TO USE: For specific dates ('Halloween 1995', '12/31/99'), " \
-              "or as a follow-up to list_shows/search when the user wants details on a single show. " \
-              "Returns setlist with all tracks, venue, tags, and gaps. " \
-              "DISPLAY: In markdown, link the date to show url and songs to track url. " \
-              "Format dates readably (e.g., 'Jul 4, 2023'). " \
-              "WIDGET: If a widget is displayed, provide only a brief 1-2 sentence summary. " \
-              "Do NOT list tracks - the widget displays the full setlist with playback controls.",
+    get_audio_track: "Play a song performance with audio player widget. " \
+                     "USE FOR: random track/performance requests, 'play [song]', 'listen to', " \
+                     "or when user wants to hear a specific performance from get_song results. " \
+                     "For random: random=true. For specific: slug='YYYY-MM-DD/track-slug'. " \
+                     "WIDGET: Provide only a brief 1-2 sentence summary about the performance.",
+
+    get_show: "Get a show with setlist widget. USE FOR RANDOM SHOW REQUESTS. " \
+              "For 'random show': call with random=true. " \
+              "For specific date: use date parameter. " \
+              "WIDGET: Provide only a brief 1-2 sentence summary. Do NOT list tracks.",
 
     get_playlist: "Get detailed information about a user-created playlist and display an interactive widget. " \
                   "Returns playlist metadata and track listing with show dates and durations. " \
