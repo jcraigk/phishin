@@ -53,20 +53,26 @@
 <%= partial("track_styles") %>
 <%= partial("audio_player_styles") %>
 
+    .playlist-header {
+      height: 96px;
+    }
+
     .playlist-info {
       display: flex;
       flex-direction: column;
       justify-content: center;
       min-width: 0;
       flex: 1;
+      overflow: hidden;
     }
 
     .playlist-name {
-      font-size: 1.8rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      line-height: 2rem;
-      margin-bottom: 4px;
       color: #3a3a3a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .playlist-name a {
@@ -80,8 +86,8 @@
     }
 
     .playlist-meta {
-      font-size: 1.1rem;
-      color: #515152;
+      font-size: 0.95rem;
+      color: #3a3a3a;
       display: flex;
       gap: 12px;
       align-items: center;
@@ -99,24 +105,21 @@
     }
 
     .playlist-description {
-      font-size: 1rem;
-      color: #3a3a3a;
-      margin-top: 6px;
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
+      font-size: 0.95rem;
+      color: #6d6f71;
+      white-space: nowrap;
       overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .playlist-logo-link {
       display: block;
-      width: 88px;
-      height: 88px;
+      width: 76px;
+      height: 76px;
       flex-shrink: 0;
-      border-radius: 0.5rem;
+      border-radius: 4px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
       transition: box-shadow 0.2s, transform 0.2s;
     }
 
@@ -229,8 +232,8 @@
 
     .logo-container {
       position: relative;
-      width: 88px;
-      height: 88px;
+      width: 76px;
+      height: 76px;
       flex-shrink: 0;
     }
   </style>
@@ -295,7 +298,7 @@
             </div>
             <%= partial("expand_icons").gsub("\n", "\n            ") %>
             <div class="card-content">
-              <div class="card-header">
+              <div class="card-header playlist-header">
                 <div class="logo-container">
                   <a href="${escapeHtml(playlistUrl)}" target="_blank" rel="noopener" class="playlist-logo-link" title="View on Phish.in">
                     <img src="<%= asset_host_placeholder %>/mcp-widgets/images/logo-square.png" alt="Phish.in" class="playlist-logo" id="logo-img" />
@@ -305,7 +308,7 @@
                   </button>` : ''}
                 </div>
                 <div class="playlist-info">
-                  <div class="playlist-name"><a href="${escapeHtml(playlistUrl)}" target="_blank" rel="noopener">${escapeHtml(playlist.name)}</a></div>
+                  <div class="playlist-name"><a href="${escapeHtml(playlistUrl)}" target="_blank" rel="noopener">${truncateText(playlist.name, 100)}</a></div>
                   <div class="playlist-meta">
                     <span class="playlist-meta-item">
                       <svg viewBox="0 0 512 512" fill="currentColor">

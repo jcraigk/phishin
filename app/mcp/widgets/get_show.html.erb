@@ -55,9 +55,9 @@
 
     .context-menu-wrapper {
       position: relative;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
       margin-left: 8px;
-      vertical-align: top;
     }
 
     .context-menu-btn {
@@ -75,8 +75,6 @@
       font-weight: 700;
       letter-spacing: 1px;
       line-height: 1;
-      position: relative;
-      top: -0.35rem;
     }
 
     .context-menu-btn:hover {
@@ -199,17 +197,17 @@
 
     .cover-art-container {
       position: relative;
-      width: 88px;
-      height: 88px;
+      width: 76px;
+      height: 76px;
       flex-shrink: 0;
     }
 
     .cover-art {
-      width: 88px;
-      height: 88px;
-      border-radius: 0.5rem;
+      width: 76px;
+      height: 76px;
+      border-radius: 4px;
       object-fit: cover;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     }
 
     .play-button {
@@ -256,27 +254,26 @@
     }
     
     .show-date {
-      font-size: 2rem;
+      font-size: 1.5rem;
       font-weight: 700;
-      line-height: 2rem;
-      margin-bottom: 4px;
       color: #3a3a3a;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
     }
     
     .venue-name {
-      font-size: 1.2rem;
-      font-weight: 700;
+      font-size: 0.95rem;
+      font-weight: 400;
       color: #3a3a3a;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      line-height: 1.4rem;
     }
     
     .location {
-      font-size: 1.1rem;
-      color: #515152;
-      margin-top: 2px;
+      font-size: 0.95rem;
+      color: #3a3a3a;
     }
 
     .track-menu-wrapper {
@@ -641,7 +638,7 @@
             const trackTags = track.tags || [];
             
             let trackMenuHtml = '';
-            if (song || hasPrev || hasNext || trackTags.length > 0) {
+            if (hasTrackAudio && (song || hasPrev || hasNext || trackTags.length > 0)) {
               trackMenuHtml = `
                 <div class="track-menu-wrapper">
                   <button class="track-menu-btn" data-track-index="${track.globalIndex}" title="Track options">•••</button>

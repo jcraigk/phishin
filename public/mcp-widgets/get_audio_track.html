@@ -409,6 +409,14 @@ body {
       align-items: center;
       gap: 4px;
       flex-shrink: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .player-controls.visible {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     .scrub-btn {
@@ -597,6 +605,11 @@ function escapeHtml(str) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+function truncateText(str, maxLength) {
+  if (!str || str.length <= maxLength) return escapeHtml(str);
+  return escapeHtml(str.slice(0, maxLength).trim()) + '…';
 }
 
 function parseDuration(durationStr) {
@@ -819,6 +832,10 @@ function initExpandButton() {
         const coverPlayBtn = document.getElementById('cover-play-btn');
         if (coverPlayBtn) {
           coverPlayBtn.classList.add('fade-out');
+        }
+        const playerControls = document.querySelector('.player-controls');
+        if (playerControls) {
+          playerControls.classList.add('visible');
         }
       }
 

@@ -285,6 +285,14 @@
       align-items: center;
       gap: 4px;
       flex-shrink: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .player-controls.visible {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     .scrub-btn {
@@ -562,6 +570,10 @@
         const coverPlayBtn = document.getElementById('cover-play-btn');
         if (coverPlayBtn) {
           coverPlayBtn.classList.add('fade-out');
+        }
+        const playerControls = document.querySelector('.player-controls');
+        if (playerControls) {
+          playerControls.classList.add('visible');
         }
       }
 

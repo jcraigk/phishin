@@ -32,6 +32,11 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+function truncateText(str, maxLength) {
+  if (!str || str.length <= maxLength) return escapeHtml(str);
+  return escapeHtml(str.slice(0, maxLength).trim()) + '…';
+}
+
 function parseDuration(durationStr) {
   if (!durationStr) return 0;
   const parts = durationStr.split(':').map(Number);
