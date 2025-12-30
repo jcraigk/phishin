@@ -54,7 +54,7 @@ module Tools
       end
 
       def fetch_random_show
-        show_includes.order(Arel.sql("RANDOM()")).first
+        show_includes.with_audio.order(Arel.sql("RANDOM()")).first
       end
 
       def show_includes
