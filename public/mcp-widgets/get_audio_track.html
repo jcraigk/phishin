@@ -287,8 +287,8 @@ body {
       background-color: #6d6f71;
       color: white;
       border-radius: 0.2rem;
-      font-size: 0.7rem;
-      font-weight: 300;
+      font-size: 0.6rem;
+      font-weight: 700;
       white-space: nowrap;
       vertical-align: middle;
       margin-left: 2px;
@@ -395,6 +395,7 @@ body {
       background-position: center;
       opacity: 0.5;
       transition: opacity 0.3s ease;
+      margin-left: -6px;
     }
 
     .scrubber-container.loaded {
@@ -555,14 +556,16 @@ function renderNotFound(detail, entityName = "Item") {
 function setupBackgroundBlur(imageUrl, imgElementId = 'cover-img', blurElementId = 'bg-blur') {
   if (!imageUrl) return;
   
+  const bgEl = document.getElementById(blurElementId);
+  if (!bgEl) return;
+
   const coverImg = document.getElementById(imgElementId);
-  if (coverImg) {
+  if (coverImg && !coverImg.complete) {
     coverImg.onload = function() {
-      const bgEl = document.getElementById(blurElementId);
-      if (bgEl) {
-        bgEl.style.backgroundImage = `url("${imageUrl}")`;
-      }
+      bgEl.style.backgroundImage = `url("${imageUrl}")`;
     };
+  } else {
+    bgEl.style.backgroundImage = `url("${imageUrl}")`;
   }
 }
 

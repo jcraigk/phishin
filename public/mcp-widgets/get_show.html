@@ -1073,8 +1073,8 @@ body {
       background-color: #6d6f71;
       color: white;
       border-radius: 0.2rem;
-      font-size: 0.7rem;
-      font-weight: 300;
+      font-size: 0.6rem;
+      font-weight: 700;
       white-space: nowrap;
       pointer-events: none;
     }
@@ -1091,7 +1091,7 @@ body {
 
     .track-inline-tags .tag-badge {
       font-size: 0.6rem;
-      font-weight: 300;
+      font-weight: 700;
       cursor: pointer;
       pointer-events: auto;
       transition: background-color 0.2s;
@@ -1305,14 +1305,16 @@ function renderNotFound(detail, entityName = "Item") {
 function setupBackgroundBlur(imageUrl, imgElementId = 'cover-img', blurElementId = 'bg-blur') {
   if (!imageUrl) return;
   
+  const bgEl = document.getElementById(blurElementId);
+  if (!bgEl) return;
+
   const coverImg = document.getElementById(imgElementId);
-  if (coverImg) {
+  if (coverImg && !coverImg.complete) {
     coverImg.onload = function() {
-      const bgEl = document.getElementById(blurElementId);
-      if (bgEl) {
-        bgEl.style.backgroundImage = `url("${imageUrl}")`;
-      }
+      bgEl.style.backgroundImage = `url("${imageUrl}")`;
     };
+  } else {
+    bgEl.style.backgroundImage = `url("${imageUrl}")`;
   }
 }
 

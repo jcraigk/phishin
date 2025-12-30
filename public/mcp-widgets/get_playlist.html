@@ -663,6 +663,16 @@ body {
       color: #3a3a3a;
     }
 
+    .playlist-name a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .playlist-name a:hover {
+      color: #03BBF2;
+    }
+
     .playlist-meta {
       font-size: 1.1rem;
       color: #515152;
@@ -753,7 +763,7 @@ body {
       color: white;
       border-radius: 0.2rem;
       font-size: 0.6rem;
-      font-weight: 300;
+      font-weight: 700;
       white-space: nowrap;
     }
 
@@ -939,14 +949,16 @@ function renderNotFound(detail, entityName = "Item") {
 function setupBackgroundBlur(imageUrl, imgElementId = 'cover-img', blurElementId = 'bg-blur') {
   if (!imageUrl) return;
   
+  const bgEl = document.getElementById(blurElementId);
+  if (!bgEl) return;
+
   const coverImg = document.getElementById(imgElementId);
-  if (coverImg) {
+  if (coverImg && !coverImg.complete) {
     coverImg.onload = function() {
-      const bgEl = document.getElementById(blurElementId);
-      if (bgEl) {
-        bgEl.style.backgroundImage = `url("${imageUrl}")`;
-      }
+      bgEl.style.backgroundImage = `url("${imageUrl}")`;
     };
+  } else {
+    bgEl.style.backgroundImage = `url("${imageUrl}")`;
   }
 }
 
@@ -1338,7 +1350,7 @@ function showLoadingSpinner(show) {
                   </button>` : ''}
                 </div>
                 <div class="playlist-info">
-                  <div class="playlist-name">${escapeHtml(playlist.name)}</div>
+                  <div class="playlist-name"><a href="${escapeHtml(playlistUrl)}" target="_blank" rel="noopener">${escapeHtml(playlist.name)}</a></div>
                   <div class="playlist-meta">
                     <span class="playlist-meta-item">
                       <svg viewBox="0 0 512 512" fill="currentColor">
@@ -1431,11 +1443,7 @@ function showLoadingSpinner(show) {
 
           if (data.name) {
             root.innerHTML = renderPlaylist(data);
-            setupBackgroundBlur(null, 'logo-img', 'bg-blur');
-            const bgEl = document.getElementById('bg-blur');
-            if (bgEl) {
-              bgEl.style.backgroundImage = 'url({{WIDGET_ASSET_HOST}}/mcp-widgets/images/logo-square.png)';
-            }
+            setupBackgroundBlur(data.cover_art_url);
             initExpandButton();
             initAudioPlayer();
           } else {

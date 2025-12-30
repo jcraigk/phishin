@@ -106,14 +106,16 @@ function renderNotFound(detail, entityName = "Item") {
 function setupBackgroundBlur(imageUrl, imgElementId = 'cover-img', blurElementId = 'bg-blur') {
   if (!imageUrl) return;
   
+  const bgEl = document.getElementById(blurElementId);
+  if (!bgEl) return;
+
   const coverImg = document.getElementById(imgElementId);
-  if (coverImg) {
+  if (coverImg && !coverImg.complete) {
     coverImg.onload = function() {
-      const bgEl = document.getElementById(blurElementId);
-      if (bgEl) {
-        bgEl.style.backgroundImage = `url("${imageUrl}")`;
-      }
+      bgEl.style.backgroundImage = `url("${imageUrl}")`;
     };
+  } else {
+    bgEl.style.backgroundImage = `url("${imageUrl}")`;
   }
 }
 
