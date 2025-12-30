@@ -31,7 +31,7 @@ const Show = ({ trackSlug }) => {
   const [tracks, setTracks] = useState(show.tracks);
   const [taperNotesModalClosed, setTaperNotesModalClosed] = useState(false);
   const trackRefs = useRef([]);
-  const { playTrack, openAppModal, closeAppModal } = useOutletContext();
+  const { playTrack, activeTrack, openAppModal, closeAppModal } = useOutletContext();
   const [matchedTrack, setMatchedTrack] = useState(tracks[0]);
   const [showAdminNotesNotification, setShowAdminNotesNotification] = useState(!!show.admin_notes);
   const [showPartialAudioNotification, setShowPartialAudioNotification] = useState(show.audio_status === 'partial');
@@ -69,7 +69,7 @@ const Show = ({ trackSlug }) => {
         trackRefs.current[trackIndex].scrollIntoView({ behavior: "smooth" });
       }
 
-      if (foundTrack.audio_status !== 'missing') {
+      if (foundTrack.audio_status !== 'missing' && !activeTrack) {
         playTrack(filteredTracks, foundTrack, false);
       }
     }

@@ -143,45 +143,41 @@ const TrackContextMenu = ({ track, indexInPlaylist = null, highlight }) => {
                 </Link>
 
                 {(() => {
-                  const previousSlug = hideMissingAudio
-                    ? (song.previous_performance_with_audio_slug || song.previous_performance_slug)
+                  const targetSlug = hideMissingAudio
+                    ? song.previous_performance_slug_with_audio
                     : song.previous_performance_slug;
-                  return previousSlug && (
+                  const gap = hideMissingAudio
+                    ? song.previous_performance_gap_with_audio
+                    : song.previous_performance_gap;
+                  return targetSlug && (
                     <Link
                       className="dropdown-item"
-                      to={`/${previousSlug}`}
+                      to={`/${targetSlug}`}
                       key={`${track.id}-${song.id}-previous-performance`}
                       onClick={(e) => e.stopPropagation()}
                     >
                       <FontAwesomeIcon icon={faCircleChevronLeft} className="icon" />
-                      Previous Performance{(() => {
-                        const gap = hideMissingAudio
-                          ? (song.previous_performance_with_audio_gap || song.previous_performance_gap)
-                          : song.previous_performance_gap;
-                        return gap != null && gap > 0 ? ` (gap: ${gap})` : '';
-                      })()}
+                      Previous Performance{gap != null && gap > 0 ? ` (gap: ${gap})` : ''}
                     </Link>
                   );
                 })()}
 
                 {(() => {
-                  const nextSlug = hideMissingAudio
-                    ? (song.next_performance_with_audio_slug || song.next_performance_slug)
+                  const targetSlug = hideMissingAudio
+                    ? song.next_performance_slug_with_audio
                     : song.next_performance_slug;
-                  return nextSlug && (
+                  const gap = hideMissingAudio
+                    ? song.next_performance_gap_with_audio
+                    : song.next_performance_gap;
+                  return targetSlug && (
                     <Link
                       className="dropdown-item"
-                      to={`/${nextSlug}`}
+                      to={`/${targetSlug}`}
                       key={`${track.id}-${song.id}-next-performance`}
                       onClick={(e) => e.stopPropagation()}
                     >
                       <FontAwesomeIcon icon={faCircleChevronRight} className="icon" />
-                      Next Performance{(() => {
-                        const gap = hideMissingAudio
-                          ? (song.next_performance_with_audio_gap || song.next_performance_gap)
-                          : song.next_performance_gap;
-                        return gap != null && gap > 0 ? ` (gap: ${gap})` : '';
-                      })()}
+                      Next Performance{gap != null && gap > 0 ? ` (gap: ${gap})` : ''}
                     </Link>
                   );
                 })()}
