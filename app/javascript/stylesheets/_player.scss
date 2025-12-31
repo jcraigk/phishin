@@ -252,6 +252,9 @@ main.with-player {
       -webkit-mask-size: 100% 100%;
       -webkit-mask-position: 0 0;
       -webkit-mask-repeat: no-repeat;
+
+      filter: none !important;
+      mix-blend-mode: normal !important;
     }
   }
 
