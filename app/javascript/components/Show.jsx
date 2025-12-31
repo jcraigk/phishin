@@ -16,7 +16,7 @@ export const showLoader = async ({ params }) => {
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Link, useLoaderData, useOutletContext } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { formatDate } from "./helpers/utils";
+import { formatDate, formatMonthDay, parseDateParts } from "./helpers/utils";
 import ShowContextMenu from "./controls/ShowContextMenu";
 import LikeButton from "./controls/LikeButton";
 import Tracks from "./Tracks";
@@ -113,6 +113,17 @@ const Show = ({ trackSlug }) => {
 
   const { previousShowDate, nextShowDate } = getNavigationDates();
 
+  const dateParts = parseDateParts(show.date);
+  const LinkedDate = () => (
+    <>
+      <Link to={`/today?month=${dateParts.month}&day=${dateParts.day}`}>
+        {formatMonthDay(show.date)}
+      </Link>
+      ,{" "}
+      <Link to={`/${dateParts.year}`}>{dateParts.year}</Link>
+    </>
+  );
+
   return (
     <>
       <Helmet>
@@ -133,7 +144,7 @@ const Show = ({ trackSlug }) => {
             </div>
 
             <div className="sidebar-title show-cover-title">
-              {formatDate(show.date)}
+              <LinkedDate />
             </div>
 
             <p className="sidebar-info">
@@ -192,7 +203,7 @@ const Show = ({ trackSlug }) => {
                 </div>
                 <div className="mobile-show-info">
                   <span className="mobile-show-date">
-                    {formatDate(show.date)}
+                    <LinkedDate />
                   </span>
                   <span className="mobile-show-venue">
                     {show.venue_name}

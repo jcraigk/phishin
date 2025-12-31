@@ -49,6 +49,14 @@ main {
       font-weight: bold;
       line-height: 2rem;
       margin-bottom: 0.4rem;
+
+      &.show-cover-title a {
+        color: inherit;
+
+        &:hover {
+          color: $blue;
+        }
+      }
     }
 
     .sidebar-info {
@@ -726,6 +734,14 @@ main {
         &.show-cover-title {
           position: relative;
           top: -8px;
+
+          a {
+            color: inherit;
+
+            &:hover {
+              color: $blue;
+            }
+          }
         }
       }
       .sidebar-subtitle {

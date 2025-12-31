@@ -36,16 +36,25 @@ export const formatDurationTrack = (milliseconds) => {
   }
 };
 
-export const formatDate = (dateString) => {
-  if (!dateString) return "";
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-  // Extract the first 10 characters to get the YYYY-MM-DD format
+export const parseDateParts = (dateString) => {
+  if (!dateString) return null;
   const datePart = dateString.slice(0, 10);
   const [year, month, day] = datePart.split("-").map(Number);
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  return { year, month, day, monthName: monthNames[month - 1] };
+};
 
-  const formattedDate = `${monthNames[month - 1]} ${day}, ${year}`;
-  return formattedDate;
+export const formatDate = (dateString) => {
+  const parts = parseDateParts(dateString);
+  if (!parts) return "";
+  return `${parts.monthName} ${parts.day}, ${parts.year}`;
+};
+
+export const formatMonthDay = (dateString) => {
+  const parts = parseDateParts(dateString);
+  if (!parts) return "";
+  return `${parts.monthName} ${parts.day}`;
 };
 
 export const formatTime = (timeInSeconds) => {

@@ -34,6 +34,14 @@
       .mobile-show-date {
         font-size: 1.8rem;
         font-weight: bold;
+
+        a {
+          color: inherit;
+
+          &:hover {
+            color: $blue;
+          }
+        }
       }
 
       .mobile-show-venue {
