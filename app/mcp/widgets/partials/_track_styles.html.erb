@@ -3,10 +3,13 @@
   overflow-y: auto;
   overflow-x: hidden;
   background: transparent;
-  padding: 4px 12px 12px;
+  padding: 4px 3px 12px 12px;
   position: relative;
   z-index: 2;
   transition: max-height 0.3s ease;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(109, 111, 113, 0.4) transparent;
+  scrollbar-gutter: stable;
 }
 
 .card.expanded .track-list {
@@ -17,7 +20,7 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  padding: 8px 4px 8px;
+  padding: 6px 4px 6px;
 }
 
 .set-group:first-child .section-title {
@@ -25,13 +28,13 @@
 }
 
 .title-left {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #515152;
 }
 
 .detail-right {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: #515152;
 }
@@ -43,11 +46,11 @@
 .track {
   display: flex;
   align-items: center;
-  padding: 8px 14px;
-  font-size: 1.3rem;
+  padding: 6px 12px;
+  font-size: 1.15rem;
   background: rgba(255, 255, 255, 0.8);
   color: #6d6f71;
-  min-height: 3rem;
+  min-height: 2.25rem;
   position: relative;
   text-decoration: none;
   transition: background 0.15s ease;
@@ -131,7 +134,7 @@
 }
 
 .track-duration {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   color: #6d6f71;
   font-variant-numeric: tabular-nums;
   flex-shrink: 0;

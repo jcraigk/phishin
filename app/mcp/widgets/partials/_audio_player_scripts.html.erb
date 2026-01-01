@@ -382,7 +382,18 @@ function onScrubberClick(e) {
 
 function showLoadingSpinner(show) {
   const spinner = document.getElementById('loading-spinner');
+  const playIcon = document.getElementById('play-icon');
+  const pauseIcon = document.getElementById('pause-icon');
+  
   if (spinner) spinner.style.display = show ? 'block' : 'none';
+  
+  if (show) {
+    if (playIcon) playIcon.style.display = 'none';
+    if (pauseIcon) pauseIcon.style.display = 'none';
+  } else {
+    updatePlayPauseIcon();
+  }
+  
   isLoading = show;
 }
 

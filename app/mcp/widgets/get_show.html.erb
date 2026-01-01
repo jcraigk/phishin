@@ -53,97 +53,12 @@
 <%= partial("track_styles") %>
 <%= partial("audio_player_styles") %>
 
-    .context-menu-wrapper {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      margin-left: 8px;
-    }
-
-    .context-menu-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      color: #515152;
-      background: rgba(0, 0, 0, 0.1);
-      border: none;
-      border-radius: 4px;
-      transition: background 0.15s;
-      cursor: pointer;
-      padding: 2px 6px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      line-height: 1;
-    }
-
-    .context-menu-btn:hover {
-      background: rgba(0, 0, 0, 0.2);
-    }
-
-    .context-dropdown {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      margin-top: 4px;
-      background-color: #ffffff;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-      min-width: 200px;
-      z-index: 9999;
-      display: none;
-      overflow: hidden;
-      isolation: isolate;
-      font-weight: 300;
-    }
-
-    .context-dropdown.visible {
-      display: block;
-    }
-
-    .context-dropdown-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      color: #515152;
-      text-decoration: none;
-      font-size: 1rem;
-      font-weight: 300;
-      line-height: 1.2;
-      transition: background-color 0.15s;
-      cursor: pointer;
-      border: none;
-      background-color: #ffffff;
-      width: 100%;
-      text-align: left;
-    }
-
-    .context-dropdown-item:hover {
-      background-color: #f5f5f5;
-    }
-
-    .context-dropdown-item.no-hover {
-      cursor: default;
-    }
-
-    .context-dropdown-item.no-hover:hover {
-      background-color: #ffffff;
-    }
-
-    .context-dropdown-item svg {
-      width: 14px;
-      height: 14px;
-      flex-shrink: 0;
-    }
-
     .taper-notes-modal {
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(212, 213, 215, 0.98);
       z-index: 100;
       display: flex;
       flex-direction: column;
@@ -153,6 +68,38 @@
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.3s ease, visibility 0s 0.3s;
+    }
+
+    .modal-blur-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      border-radius: 0.5rem;
+      background: #d4d5d7;
+    }
+
+    .modal-blur {
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      right: -20px;
+      bottom: -20px;
+      background-size: cover;
+      background-position: center;
+      filter: blur(40px) saturate(1.4);
+    }
+
+    .modal-blur::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(212, 213, 215, 0.6);
     }
 
     .taper-notes-modal.visible {
@@ -171,6 +118,8 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
     }
 
     .taper-notes-title {
@@ -186,6 +135,8 @@
     .taper-notes-content {
       background: rgba(255, 255, 255, 0.9);
       border-radius: 0.5rem;
+      position: relative;
+      z-index: 1;
       padding: 16px;
       font-size: 1.1rem;
       color: #515152;
@@ -261,6 +212,16 @@
       display: flex;
       align-items: center;
     }
+
+    .show-date-link {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .show-date-link:hover {
+      color: #03BBF2;
+    }
     
     .venue-name {
       font-size: 0.95rem;
@@ -270,10 +231,76 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    
-    .location {
-      font-size: 0.95rem;
+
+    .venue-name-link {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .venue-name-link:hover {
+      color: #03BBF2;
+    }
+
+    .location-link {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .location-link:hover {
+      color: #03BBF2;
+    }
+
+    .show-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
       color: #3a3a3a;
+      flex-wrap: wrap;
+    }
+
+    .show-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .show-meta-item svg {
+      width: 12px;
+      height: 12px;
+      flex-shrink: 0;
+    }
+
+    .show-meta-item.clickable {
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .show-meta-item.clickable:hover {
+      color: #03BBF2;
+    }
+
+    .show-meta-tags {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: wrap;
+      cursor: pointer;
+      position: relative;
+      top: 1px;
+    }
+
+    .show-meta-tags .tag-badge {
+      cursor: pointer;
+      color: #6d6f71;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .show-meta-tags .tag-badge:hover {
+      background-color: rgba(3, 187, 242, 0.2);
+      color: #03BBF2;
     }
 
     .track-menu-wrapper {
@@ -288,7 +315,7 @@
       justify-content: center;
       background: none;
       border: none;
-      color: #6d6f71;
+      color: #a0a1a3;
       cursor: pointer;
       padding: 4px;
       font-size: 1rem;
@@ -364,19 +391,35 @@
       top: 0;
       left: 0;
       right: 0;
-      bottom: 96px;
-      background: rgba(212, 213, 215, 0.98);
+      bottom: 0;
       z-index: 100;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 16px;
-      overflow-y: auto;
-      border-radius: 0.5rem 0.5rem 0 0;
+      border-radius: 0.5rem;
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.3s ease, visibility 0s 0.3s;
+      overflow: hidden;
+    }
+
+    .cover-art-modal.with-player {
+      bottom: 96px;
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .cover-art-modal.with-player .modal-blur-wrapper {
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .cover-art-modal-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      overflow-y: auto;
+      flex: 1;
     }
 
     .cover-art-modal.visible {
@@ -400,7 +443,7 @@
       justify-content: center;
       color: white;
       transition: background 0.15s;
-      z-index: 101;
+      z-index: 10;
     }
 
     .modal-close-btn:hover {
@@ -473,10 +516,10 @@
     .tag-badge {
       display: inline-block;
       padding: 0.1rem 0.35rem;
-      background-color: #6d6f71;
-      color: white;
+      background-color: rgba(109, 111, 113, 0.25);
+      color: #6d6f71;
       border-radius: 0.2rem;
-      font-size: 0.6rem;
+      font-size: 0.55rem;
       font-weight: 700;
       white-space: nowrap;
       pointer-events: none;
@@ -493,16 +536,16 @@
     }
 
     .track-inline-tags .tag-badge {
-      font-size: 0.6rem;
+      font-size: 0.55rem;
       font-weight: 700;
       cursor: pointer;
       pointer-events: auto;
-      transition: background-color 0.2s;
+      transition: background-color 0.2s, color 0.2s;
     }
 
     .track-inline-tags .tag-badge:hover {
-      background-color: #f5f5f5;
-      color: #6d6f71;
+      background-color: rgba(3, 187, 242, 0.2);
+      color: #03BBF2;
     }
 
     @media (min-width: 500px) {
@@ -517,7 +560,6 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(212, 213, 215, 0.98);
       z-index: 100;
       display: flex;
       flex-direction: column;
@@ -545,6 +587,8 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
     }
 
     .tag-modal-title {
@@ -566,6 +610,8 @@
       line-height: 1.5;
       flex: 1;
       overflow-y: auto;
+      position: relative;
+      z-index: 1;
     }
 
     .tag-modal-section {
@@ -721,8 +767,9 @@
         if (show.taper_notes) {
           taperNotesModalHtml = `
             <div class="taper-notes-modal" id="taper-notes-modal">
+              <div class="modal-blur-wrapper"><div class="modal-blur" id="taper-notes-blur"></div></div>
               <div class="taper-notes-header">
-                <span class="taper-notes-title">Taper Notes</span>
+                <span class="taper-notes-title"><svg viewBox="0 0 384 512" fill="currentColor" style="width: 18px; height: 18px; margin-right: 8px; vertical-align: -2px;"><path d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 192H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>Taper Notes</span>
                 <button class="modal-close-btn" id="taper-notes-close-btn" title="Close">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -737,6 +784,7 @@
 
         const tagModalHtml = `
           <div class="tag-modal" id="tag-modal">
+            <div class="modal-blur-wrapper"><div class="modal-blur" id="tag-modal-blur"></div></div>
             <div class="tag-modal-header">
               <span class="tag-modal-title" id="tag-modal-title"></span>
               <button class="modal-close-btn" id="tag-modal-close-btn" title="Close">
@@ -753,18 +801,21 @@
         if (hasAudio) {
           modalHtml = `
             <div class="cover-art-modal" id="cover-art-modal">
+              <div class="modal-blur-wrapper"><div class="modal-blur" id="cover-art-blur"></div></div>
               <button class="modal-close-btn" id="modal-close-btn" title="Close">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
               </button>
-              <div class="modal-images">
-                ${coverArtUrlLarge ? `<div class="modal-image-container"><img src="${escapeHtml(coverArtUrlLarge)}" alt="Cover art" class="modal-image" /></div>` : ''}
-                ${albumCoverUrl ? `<div class="modal-image-container"><img src="${escapeHtml(albumCoverUrl)}" alt="Album cover" class="modal-image" /></div>` : ''}
-              </div>
-              <div class="modal-info-box">
-                Images generated by DALL-E
+              <div class="cover-art-modal-content">
+                <div class="modal-images">
+                  ${coverArtUrlLarge ? `<div class="modal-image-container"><img src="${escapeHtml(coverArtUrlLarge)}" alt="Cover art" class="modal-image" /></div>` : ''}
+                  ${albumCoverUrl ? `<div class="modal-image-container"><img src="${escapeHtml(albumCoverUrl)}" alt="Album cover" class="modal-image" /></div>` : ''}
+                </div>
+                <div class="modal-info-box">
+                  Images generated by DALL-E
+                </div>
               </div>
             </div>
           `;
@@ -789,63 +840,32 @@
                 </div>
                 <div class="show-info">
                   <div class="show-date">
-                    ${formatDate(show.date)}
-                    <div class="context-menu-wrapper">
-                      <button class="context-menu-btn" id="context-menu-btn" title="Show options">•••</button>
-                      <div class="context-dropdown" id="context-dropdown">
-                        ${show.duration_ms ? `
-                          <span class="context-dropdown-item no-hover">
-                            <svg viewBox="0 0 512 512" fill="currentColor">
-                              <path d="M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/>
-                            </svg>
-                            <span>${formatDuration(show.duration_ms)}</span>
-                          </span>
-                        ` : ''}
-                        ${show.tags && show.tags.length > 0 ? `
-                          <div class="tags-row clickable" data-tags='${JSON.stringify(show.tags).replace(/'/g, "&#39;")}'>
-                            <svg class="tags-row-icon" viewBox="0 0 448 512" fill="currentColor">
-                              <path d="M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/>
-                            </svg>
-                            ${show.tags.map(tag => `<span class="tag-badge">${escapeHtml(tag.name)}</span>`).join('')}
-                          </div>
-                        ` : ''}
-                        ${show.venue_slug ? `
-                          <a href="https://phish.in/venues/${escapeHtml(show.venue_slug)}" target="_blank" rel="noopener" class="context-dropdown-item">
-                            <svg viewBox="0 0 384 512" fill="currentColor">
-                              <path d="M48 0C21.5 0 0 21.5 0 48V464c0 26.5 21.5 48 48 48h96V432c0-26.5 21.5-48 48-48s48 21.5 48 48v80h96c26.5 0 48-21.5 48-48V48c0-26.5-21.5-48-48-48H48zM64 240c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V240zm112-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V240c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V240zM80 96h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H80c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16zm80 16c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V112zM272 96h32c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H272c-8.8 0-16-7.2-16-16V112c0-8.8 7.2-16 16-16z"/>
-                            </svg>
-                            <span>${escapeHtml(show.venue)}</span>
-                          </a>
-                        ` : ''}
-                        ${show.location ? `
-                          <a href="https://phish.in/map?term=${encodeURIComponent(show.location)}" target="_blank" rel="noopener" class="context-dropdown-item">
-                            <svg viewBox="0 0 384 512" fill="currentColor">
-                              <path d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z"/>
-                            </svg>
-                            <span>${escapeHtml(show.location)}</span>
-                          </a>
-                        ` : ''}
-                        ${show.taper_notes ? `
-                          <button class="context-dropdown-item" id="taper-notes-btn">
-                            <svg viewBox="0 0 384 512" fill="currentColor">
-                              <path d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 192H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
-                            </svg>
-                            <span>Taper Notes</span>
-                          </button>
-                        ` : ''}
-                        <a href="${escapeHtml(showUrl)}" target="_blank" rel="noopener" class="context-dropdown-item">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                            <polyline points="15 3 21 3 21 9"/>
-                            <line x1="10" y1="14" x2="21" y2="3"/>
-                          </svg>
-                          <span>Phish.in website</span>
-                        </a>
-                      </div>
-                    </div>
+                    <a href="${escapeHtml(showUrl)}" target="_blank" rel="noopener" class="show-date-link">${formatDate(show.date)}</a>
                   </div>
-                  <div class="venue-name">${escapeHtml(show.venue)}</div>
-                  <div class="location">${escapeHtml(show.location || '')}</div>
+                  <div class="venue-name">${show.venue_slug ? `<a href="https://phish.in/venues/${escapeHtml(show.venue_slug)}" target="_blank" rel="noopener" class="venue-name-link">${escapeHtml(show.venue)}</a>` : escapeHtml(show.venue)}${show.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(show.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(show.location)}</a>` : ''}</div>
+                  <div class="show-meta-row">
+                    ${show.duration_ms ? `
+                      <span class="show-meta-item">
+                        <svg viewBox="0 0 512 512" fill="currentColor">
+                          <path d="M256 0a256 256 0 1 1 0 512A256 256 0 1 1 256 0zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/>
+                        </svg>
+                        <span>${formatDuration(show.duration_ms)}</span>
+                      </span>
+                    ` : ''}
+                    ${show.taper_notes ? `
+                      <span class="show-meta-item clickable" id="taper-notes-btn">
+                        <svg viewBox="0 0 384 512" fill="currentColor">
+                          <path d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 192H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/>
+                        </svg>
+                        <span>Notes</span>
+                      </span>
+                    ` : ''}
+                    ${show.tags && show.tags.length > 0 ? `
+                      <div class="show-meta-tags" data-tags='${JSON.stringify(show.tags).replace(/'/g, "&#39;")}'>
+                        ${show.tags.map(tag => `<span class="tag-badge">${escapeHtml(tag.name)}</span>`).join('')}
+                      </div>
+                    ` : ''}
+                  </div>
                 </div>
               </div>
               ${tracksHtml ? `<div class="track-list">${tracksHtml}</div>` : ''}
@@ -865,13 +885,34 @@
 
         if (!coverArtContainer || !modal) return;
 
+        function updateModalPosition() {
+          const player = document.getElementById('audio-player');
+          if (player && player.classList.contains('visible')) {
+            modal.classList.add('with-player');
+          } else {
+            modal.classList.remove('with-player');
+          }
+        }
+
         coverArtContainer.addEventListener('click', (e) => {
           if (!coverArtContainer.classList.contains('clickable')) return;
           const playBtn = document.getElementById('header-play-btn');
           if (playBtn && !playBtn.classList.contains('fade-out')) return;
           e.stopPropagation();
+          updateModalPosition();
           modal.classList.add('visible');
         });
+
+        // Listen for player visibility changes
+        const player = document.getElementById('audio-player');
+        if (player) {
+          const observer = new MutationObserver(() => {
+            if (modal.classList.contains('visible')) {
+              updateModalPosition();
+            }
+          });
+          observer.observe(player, { attributes: true, attributeFilter: ['class'] });
+        }
 
         closeBtn?.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -882,34 +923,6 @@
           if (e.target === modal) {
             modal.classList.remove('visible');
           }
-        });
-      }
-
-      function initContextMenu() {
-        const btn = document.getElementById('context-menu-btn');
-        const dropdown = document.getElementById('context-dropdown');
-        if (!btn || !dropdown) return;
-
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          dropdown.classList.toggle('visible');
-        });
-
-        dropdown.addEventListener('click', (e) => {
-          e.stopPropagation();
-        });
-
-        document.addEventListener('click', (e) => {
-          if (!dropdown.contains(e.target) && e.target !== btn) {
-            dropdown.classList.remove('visible');
-          }
-        });
-
-        dropdown.querySelectorAll('a').forEach(link => {
-          link.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdown.classList.remove('visible');
-          });
         });
       }
 
@@ -958,8 +971,6 @@
 
         taperNotesBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          const dropdown = document.getElementById('context-dropdown');
-          if (dropdown) dropdown.classList.remove('visible');
           
           const player = document.getElementById('audio-player');
           if (player && player.classList.contains('visible')) {
@@ -991,7 +1002,8 @@
         if (!tagModal) return;
 
         function openTagModal(tags) {
-          tagModalTitle.textContent = tags.length === 1 ? 'Tag' : 'Tags';
+          const tagIcon = '<svg viewBox="0 0 448 512" fill="currentColor" style="width: 18px; height: 18px; margin-right: 8px; vertical-align: -2px;"><path d="M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>';
+          tagModalTitle.innerHTML = tagIcon + (tags.length === 1 ? 'Tag' : 'Tags');
           
           let contentHtml = '';
           tags.forEach((tag, index) => {
@@ -1028,7 +1040,7 @@
           tagModal.classList.add('visible');
         }
 
-        document.querySelectorAll('.tags-row.clickable, .track-inline-tags').forEach(row => {
+        document.querySelectorAll('.tags-row.clickable, .track-inline-tags, .show-meta-tags').forEach(row => {
           row.addEventListener('click', (e) => {
             e.stopPropagation();
             
@@ -1081,6 +1093,16 @@
           if (data.date) {
             root.innerHTML = renderShow(data);
             setupBackgroundBlur(data.cover_art_url);
+            
+            // Apply blur to modal backgrounds
+            const coverArtUrl = data.cover_art_url;
+            if (coverArtUrl) {
+              ['taper-notes-blur', 'tag-modal-blur', 'cover-art-blur'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.backgroundImage = `url("${coverArtUrl}")`;
+              });
+            }
+            
             initExpandButton();
             initAudioPlayer({
               showMetadata: {
@@ -1090,7 +1112,6 @@
                 cover_art_url: data.cover_art_url
               }
             });
-            initContextMenu();
             initTrackMenus();
             initTaperNotesModal();
             initTagModal();
