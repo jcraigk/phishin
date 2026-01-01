@@ -47,6 +47,8 @@ class MetaTagService < ApplicationService
     return dynamic_meta_data if date? || year? || year_range?
     return playlist_data if playlist?
     return tag_data if tag_related?
+    return song_data if song?
+    return venue_data if venue?
 
     { title: resource_title || BASE_TITLE, og: {}, status: resource_title ? :ok : :not_found }
   end
@@ -190,6 +192,38 @@ class MetaTagService < ApplicationService
     }
   end
 
+  def song_data
+    return { title: "Songs#{TITLE_SUFFIX}", og: {}, status: :ok } if slug.nil?
+
+    song = Song.find_by(slug:)
+    return not_found_meta unless song
+
+    {
+      title: "#{song.name}#{TITLE_SUFFIX}",
+      og: {
+        title: "Explore performances of #{song.name}",
+        card_type: :summary
+      },
+      status: :ok
+    }
+  end
+
+  def venue_data
+    return { title: "Venues#{TITLE_SUFFIX}", og: {}, status: :ok } if slug.nil?
+
+    venue = Venue.find_by(slug:)
+    return not_found_meta unless venue
+
+    {
+      title: "#{venue.name}#{TITLE_SUFFIX}",
+      og: {
+        title: "Explore shows at #{venue.name}",
+        card_type: :summary
+      },
+      status: :ok
+    }
+  end
+
   def not_found_meta
     { title: "404 - Phish.in", og: {}, status: :not_found }
   end
@@ -229,6 +263,14 @@ class MetaTagService < ApplicationService
 
   def tag_related?
     resource_type.in?(%w[show-tags track-tags])
+  end
+
+  def song?
+    resource_type == "songs"
+  end
+
+  def venue?
+    resource_type == "venues"
   end
 
   def segments

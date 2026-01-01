@@ -4,10 +4,19 @@
 
 <meta property="og:type" content="<%= @meta.dig(:og, :type) || "website" %>">
 <meta property="og:url" content="<%= request.original_url %>">
+<% if @meta.dig(:og, :card_type) != :summary %>
 <meta property="og:image" content="<%= @meta.dig(:og, :image) || image_pack_url("static/images/logo-square-512.png") %>">
-<meta property="og:description" content="An open source archive of live Phish audience recordings">
 <meta property="og:image:alt" content="<%= App.app_name %> image">
+<% end %>
+<meta property="og:description" content="An open source archive of live Phish audience recordings">
 <meta property="og:title" content="<%= @meta.dig(:og, :title) || App.app_name %>">
 <% if @meta.dig(:og, :audio).present? %>
   <meta property="og:audio" content="<%= @meta.dig(:og, :audio) %>">
+<% end %>
+
+<meta name="twitter:card" content="<%= @meta.dig(:og, :card_type) == :summary ? "summary" : "summary_large_image" %>">
+<meta name="twitter:title" content="<%= @meta.dig(:og, :title) || App.app_name %>">
+<meta name="twitter:description" content="An open source archive of live Phish audience recordings">
+<% if @meta.dig(:og, :card_type) != :summary %>
+<meta name="twitter:image" content="<%= @meta.dig(:og, :image) || image_pack_url("static/images/logo-square-512.png") %>">
 <% end %>

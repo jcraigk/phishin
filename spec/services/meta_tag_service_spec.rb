@@ -155,4 +155,46 @@ RSpec.describe MetaTagService do
       expect(service[:status]).to eq(:not_found)
     end
   end
+
+  context "when the path is a song with a valid slug" do
+    let!(:song) { create(:song) }
+    let(:path) { "/songs/#{song.slug}" }
+
+    it "returns the song title and og tags" do
+      expect(service[:title]).to eq("#{song.name}#{title_suffix}")
+      expect(service[:og][:title]).to eq("Explore performances of #{song.name}")
+      expect(service[:og][:card_type]).to eq(:summary)
+      expect(service[:status]).to eq(:ok)
+    end
+  end
+
+  context "when the path is a song with an invalid slug" do
+    let(:path) { "/songs/invalid-slug" }
+
+    it "returns 404 not found" do
+      expect(service[:title]).to eq("404 - Phish.in")
+      expect(service[:status]).to eq(:not_found)
+    end
+  end
+
+  context "when the path is a venue with a valid slug" do
+    let!(:venue) { create(:venue) }
+    let(:path) { "/venues/#{venue.slug}" }
+
+    it "returns the venue title and og tags" do
+      expect(service[:title]).to eq("#{venue.name}#{title_suffix}")
+      expect(service[:og][:title]).to eq("Explore shows at #{venue.name}")
+      expect(service[:og][:card_type]).to eq(:summary)
+      expect(service[:status]).to eq(:ok)
+    end
+  end
+
+  context "when the path is a venue with an invalid slug" do
+    let(:path) { "/venues/invalid-slug" }
+
+    it "returns 404 not found" do
+      expect(service[:title]).to eq("404 - Phish.in")
+      expect(service[:status]).to eq(:not_found)
+    end
+  end
 end
