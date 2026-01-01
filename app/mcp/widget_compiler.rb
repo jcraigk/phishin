@@ -83,5 +83,10 @@ class WidgetCompiler
     def asset_host_placeholder
       "{{WIDGET_ASSET_HOST}}"
     end
+
+    def gapless5_script
+      path = Rails.root.join("node_modules", "@regosen", "gapless-5", "gapless5.js")
+      File.read(path)
+    end
   end
 end

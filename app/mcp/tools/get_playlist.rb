@@ -116,6 +116,7 @@ module Tools
               venue: track.show.venue_name,
               venue_url: track.show.venue&.url,
               location: track.show.venue&.location,
+              duration_ms: track.duration,
               duration_display: McpHelpers.format_duration(track.duration),
               url: track.url,
               mp3_url: track.mp3_url,

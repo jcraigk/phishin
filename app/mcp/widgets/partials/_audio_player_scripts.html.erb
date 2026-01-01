@@ -1,4 +1,4 @@
-let audioPlayer = null;
+let gaplessPlayer = null;
 let allTracks = [];
 let currentTrackIndex = -1;
 let isPlaying = false;
@@ -7,6 +7,10 @@ let showMetadata = null;
 
 function hasAnyAudio(tracks) {
   return tracks && tracks.some(t => t.mp3_url);
+}
+
+function getTracksWithAudio() {
+  return allTracks.filter(t => t.mp3_url);
 }
 
 function showPlayer() {
@@ -29,9 +33,8 @@ function showPlayer() {
 }
 
 function hidePlayer() {
-  if (audioPlayer) {
-    audioPlayer.pause();
-    audioPlayer.src = '';
+  if (gaplessPlayer) {
+    gaplessPlayer.stop();
   }
   
   currentTrackIndex = -1;
@@ -61,8 +64,109 @@ function initAudioPlayer(options = {}) {
     showMetadata = options.showMetadata;
   }
 
-  audioPlayer = new Audio();
-  audioPlayer.preload = 'metadata';
+  const tracksWithAudio = getTracksWithAudio();
+  if (tracksWithAudio.length === 0) return;
+
+  const trackUrls = tracksWithAudio.map(track => track.mp3_url);
+  const iosDevice = isIOSDevice();
+
+  gaplessPlayer = new Gapless5({
+    tracks: trackUrls,
+    loop: false,
+    singleMode: false,
+    useWebAudio: !iosDevice,
+    useHTML5Audio: true,
+    loadLimit: iosDevice ? 2 : 1,
+    volume: 1.0
+  });
+
+  gaplessPlayer.ontimeupdate = (currentTimeMs, trackIndex) => {
+    const currentTime = currentTimeMs / 1000;
+    const track = tracksWithAudio[trackIndex];
+    if (!track) return;
+
+    const duration = track.duration_ms ? track.duration_ms / 1000 : 0;
+    if (duration <= 0) return;
+
+    const progress = (currentTime / duration) * 100;
+
+    const progressOverlay = document.getElementById('progress-overlay');
+    if (progressOverlay) {
+      progressOverlay.style.background = `linear-gradient(to right, #03BBF2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
+    }
+
+    const elapsedEl = document.getElementById('elapsed-time');
+    const remainingEl = document.getElementById('remaining-time');
+    if (elapsedEl) elapsedEl.textContent = formatTime(currentTime);
+    if (remainingEl) remainingEl.textContent = `-${formatTime(duration - currentTime)}`;
+
+    const scrubForwardBtn = document.getElementById('scrub-forward-btn');
+    if (scrubForwardBtn) scrubForwardBtn.disabled = currentTime >= duration - 10;
+  };
+
+  gaplessPlayer.onloadstart = () => {
+    showLoadingSpinner(true);
+  };
+
+  gaplessPlayer.onload = () => {
+    showLoadingSpinner(false);
+  };
+
+  gaplessPlayer.onplay = () => {
+    isPlaying = true;
+    isLoading = false;
+    updatePlayPauseIcon();
+    updateMediaSessionPlaybackState();
+  };
+
+  gaplessPlayer.onpause = () => {
+    isPlaying = false;
+    updatePlayPauseIcon();
+    updateMediaSessionPlaybackState();
+  };
+
+  gaplessPlayer.onstop = () => {
+    isPlaying = false;
+    isLoading = false;
+    updatePlayPauseIcon();
+  };
+
+  gaplessPlayer.onnext = () => {
+    const newIndex = gaplessPlayer.getIndex();
+    if (newIndex >= 0 && newIndex < tracksWithAudio.length) {
+      const track = tracksWithAudio[newIndex];
+      currentTrackIndex = findOriginalTrackIndex(track);
+      updateTrackDisplay(track);
+      updateWaveformImage(track.waveform_image_url);
+      highlightPlayingTrack(currentTrackIndex);
+      updateNavigationButtons();
+      updateMediaSession(track);
+    }
+  };
+
+  gaplessPlayer.onprev = () => {
+    const newIndex = gaplessPlayer.getIndex();
+    if (newIndex >= 0 && newIndex < tracksWithAudio.length) {
+      const track = tracksWithAudio[newIndex];
+      currentTrackIndex = findOriginalTrackIndex(track);
+      updateTrackDisplay(track);
+      updateWaveformImage(track.waveform_image_url);
+      highlightPlayingTrack(currentTrackIndex);
+      updateNavigationButtons();
+      updateMediaSession(track);
+    }
+  };
+
+  gaplessPlayer.onfinishedall = () => {
+    isPlaying = false;
+    isLoading = false;
+    updatePlayPauseIcon();
+  };
+
+  gaplessPlayer.onerror = (trackPath, error) => {
+    console.error('Audio error:', trackPath, error);
+    showLoadingSpinner(false);
+  };
 
   const playPauseBtn = document.getElementById('play-pause-btn');
   const prevBtn = document.getElementById('prev-btn');
@@ -70,24 +174,6 @@ function initAudioPlayer(options = {}) {
   const headerPlayBtn = document.getElementById('header-play-btn');
   const scrubber = document.getElementById('scrubber');
   const playerCloseBtn = document.getElementById('player-close-btn');
-
-  audioPlayer.addEventListener('timeupdate', updateProgress);
-  audioPlayer.addEventListener('loadedmetadata', onMetadataLoaded);
-  audioPlayer.addEventListener('ended', onTrackEnded);
-  audioPlayer.addEventListener('play', () => { 
-    isPlaying = true; 
-    updatePlayPauseIcon();
-    updateMediaSessionPlaybackState();
-  });
-  audioPlayer.addEventListener('pause', () => { 
-    isPlaying = false; 
-    updatePlayPauseIcon();
-    updateMediaSessionPlaybackState();
-  });
-  audioPlayer.addEventListener('waiting', () => { showLoadingSpinner(true); });
-  audioPlayer.addEventListener('canplay', () => { showLoadingSpinner(false); });
-  audioPlayer.addEventListener('error', onAudioError);
-
   const scrubBackBtn = document.getElementById('scrub-back-btn');
   const scrubForwardBtn = document.getElementById('scrub-forward-btn');
 
@@ -114,6 +200,10 @@ function initAudioPlayer(options = {}) {
   });
 }
 
+function findOriginalTrackIndex(track) {
+  return allTracks.findIndex(t => t.mp3_url === track.mp3_url);
+}
+
 function findFirstPlayableIndex() {
   return allTracks.findIndex(t => t.mp3_url);
 }
@@ -124,9 +214,14 @@ function playTrackAtIndex(index) {
   if (!track.mp3_url) return;
 
   currentTrackIndex = index;
-  audioPlayer.src = track.mp3_url;
-  audioPlayer.load();
-  audioPlayer.play().catch(e => console.log('Autoplay blocked:', e));
+
+  const tracksWithAudio = getTracksWithAudio();
+  const gaplessIndex = tracksWithAudio.findIndex(t => t.mp3_url === track.mp3_url);
+  
+  if (gaplessIndex >= 0) {
+    gaplessPlayer.gotoTrack(gaplessIndex);
+    gaplessPlayer.play();
+  }
 
   updateTrackDisplay(track);
   updateWaveformImage(track.waveform_image_url);
@@ -192,48 +287,8 @@ function highlightPlayingTrack(index) {
   }
 }
 
-function updateProgress() {
-  if (!audioPlayer || !audioPlayer.duration) return;
-  
-  const current = audioPlayer.currentTime;
-  const duration = audioPlayer.duration;
-  const progress = (current / duration) * 100;
-
-  const progressOverlay = document.getElementById('progress-overlay');
-  if (progressOverlay) {
-    progressOverlay.style.background = `linear-gradient(to right, #03BBF2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
-  }
-
-  const elapsedEl = document.getElementById('elapsed-time');
-  const remainingEl = document.getElementById('remaining-time');
-  if (elapsedEl) elapsedEl.textContent = formatTime(current);
-  if (remainingEl) remainingEl.textContent = `-${formatTime(duration - current)}`;
-
-  const scrubForwardBtn = document.getElementById('scrub-forward-btn');
-  if (scrubForwardBtn) scrubForwardBtn.disabled = !canScrubForward();
-}
-
-function onMetadataLoaded() {
-  updateProgress();
-}
-
-function onTrackEnded() {
-  const nextIndex = findNextPlayableIndex();
-  if (nextIndex !== -1) {
-    playTrackAtIndex(nextIndex);
-  } else {
-    isPlaying = false;
-    updatePlayPauseIcon();
-  }
-}
-
-function onAudioError(e) {
-  console.error('Audio error:', e);
-  showLoadingSpinner(false);
-}
-
 function togglePlayPause() {
-  if (!audioPlayer) return;
+  if (!gaplessPlayer) return;
   
   if (currentTrackIndex === -1) {
     showPlayer();
@@ -241,11 +296,7 @@ function togglePlayPause() {
     return;
   }
 
-  if (isPlaying) {
-    audioPlayer.pause();
-  } else {
-    audioPlayer.play().catch(e => console.log('Play blocked:', e));
-  }
+  gaplessPlayer.playpause();
 }
 
 function updatePlayPauseIcon() {
@@ -272,25 +323,32 @@ function findPrevPlayableIndex() {
 }
 
 function playNext() {
-  const nextIndex = findNextPlayableIndex();
-  if (nextIndex !== -1) playTrackAtIndex(nextIndex);
+  if (!gaplessPlayer) return;
+  gaplessPlayer.next();
 }
 
 function playPrevious() {
-  const prevIndex = findPrevPlayableIndex();
-  if (prevIndex !== -1) playTrackAtIndex(prevIndex);
+  if (!gaplessPlayer) return;
+  gaplessPlayer.prev();
 }
 
 function scrub(seconds) {
-  if (!audioPlayer || !audioPlayer.duration) return;
+  if (!gaplessPlayer) return;
   
-  const newTime = audioPlayer.currentTime + seconds;
-  audioPlayer.currentTime = Math.max(0, Math.min(newTime, audioPlayer.duration));
-}
+  const currentPosition = gaplessPlayer.getPosition();
+  if (currentPosition < 0) return;
+  
+  const tracksWithAudio = getTracksWithAudio();
+  const gaplessIndex = gaplessPlayer.getIndex();
+  const track = tracksWithAudio[gaplessIndex];
+  if (!track) return;
 
-function canScrubForward() {
-  if (!audioPlayer || !audioPlayer.duration) return false;
-  return audioPlayer.currentTime < audioPlayer.duration - 10;
+  const duration = track.duration_ms ? track.duration_ms / 1000 : 0;
+  const currentTime = currentPosition / 1000;
+  const newTime = currentTime + seconds;
+  const clampedTime = Math.max(0, Math.min(newTime, duration));
+  
+  gaplessPlayer.setPosition(clampedTime * 1000);
 }
 
 function updateNavigationButtons() {
@@ -302,16 +360,24 @@ function updateNavigationButtons() {
   if (prevBtn) prevBtn.disabled = findPrevPlayableIndex() === -1;
   if (nextBtn) nextBtn.disabled = findNextPlayableIndex() === -1;
   if (scrubBackBtn) scrubBackBtn.disabled = currentTrackIndex === -1;
-  if (scrubForwardBtn) scrubForwardBtn.disabled = currentTrackIndex === -1 || !canScrubForward();
+  if (scrubForwardBtn) scrubForwardBtn.disabled = currentTrackIndex === -1;
 }
 
 function onScrubberClick(e) {
-  if (!audioPlayer || !audioPlayer.duration) return;
+  if (!gaplessPlayer) return;
+  
+  const tracksWithAudio = getTracksWithAudio();
+  const gaplessIndex = gaplessPlayer.getIndex();
+  const track = tracksWithAudio[gaplessIndex];
+  if (!track) return;
+
+  const duration = track.duration_ms ? track.duration_ms / 1000 : 0;
+  if (duration <= 0) return;
   
   const rect = e.currentTarget.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const percent = x / rect.width;
-  audioPlayer.currentTime = percent * audioPlayer.duration;
+  gaplessPlayer.setPosition(percent * duration * 1000);
 }
 
 function showLoadingSpinner(show) {
@@ -370,4 +436,3 @@ function updateMediaSessionPlaybackState() {
     navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
   }
 }
-

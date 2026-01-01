@@ -8,6 +8,7 @@
 /coverage
 /log
 /node_modules
+/public/mcp-widgets/*.html
 /public/packs
 /public/packs-test
 /public/sitemap
