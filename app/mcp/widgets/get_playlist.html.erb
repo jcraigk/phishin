@@ -104,14 +104,6 @@
       height: 14px;
     }
 
-    .playlist-description {
-      font-size: 0.95rem;
-      color: #6d6f71;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
     .playlist-logo-link {
       display: block;
       width: 76px;
@@ -155,6 +147,50 @@
       color: #03BBF2;
     }
 
+    .modal-blur-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      border-radius: 0.5rem;
+      background: #d4d5d7;
+    }
+
+    .modal-blur {
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      right: -20px;
+      bottom: -20px;
+      background-size: cover;
+      background-position: center;
+      filter: blur(40px) saturate(1.4);
+    }
+
+    .modal-blur::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(212, 213, 215, 0.6);
+    }
+
+    .tag-badge {
+      display: inline-block;
+      padding: 0.1rem 0.35rem;
+      background-color: rgba(109, 111, 113, 0.25);
+      color: #6d6f71;
+      border-radius: 0.2rem;
+      font-size: 0.55rem;
+      font-weight: 700;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
     .track-inline-tags {
       display: none;
       flex-wrap: nowrap;
@@ -166,20 +202,203 @@
     }
 
     .track-inline-tags .tag-badge {
-      display: inline-block;
-      padding: 0.1rem 0.35rem;
-      background-color: #6d6f71;
-      color: white;
-      border-radius: 0.2rem;
-      font-size: 0.6rem;
+      font-size: 0.55rem;
       font-weight: 700;
-      white-space: nowrap;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    .track-inline-tags .tag-badge:hover {
+      background-color: rgba(3, 187, 242, 0.2);
+      color: #03BBF2;
     }
 
     @media (min-width: 500px) {
       .track-inline-tags {
         display: flex;
       }
+    }
+
+    .tag-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      overflow-y: auto;
+      border-radius: 0.5rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0s 0.3s;
+    }
+
+    .tag-modal.visible {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.3s ease, visibility 0s 0s;
+    }
+
+    .tag-modal.with-player {
+      bottom: 96px;
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .tag-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag-modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #515152;
+    }
+
+    .tag-modal-header .modal-close-btn {
+      position: static;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      transition: background 0.15s;
+      z-index: 10;
+    }
+
+    .modal-close-btn:hover {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-close-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .tag-modal-content {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 0.5rem;
+      padding: 16px;
+      font-size: 1.1rem;
+      color: #515152;
+      line-height: 1.5;
+      flex: 1;
+      overflow-y: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tag-modal-section {
+      margin-bottom: 12px;
+    }
+
+    .tag-modal-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .tag-modal-section-title {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      background-color: #6d6f71;
+      color: white;
+      border-radius: 0.25rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .playlist-description {
+      font-size: 0.95rem;
+      color: #6d6f71;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+
+    .playlist-description:hover {
+      color: #03BBF2;
+    }
+
+    .description-modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      overflow-y: auto;
+      border-radius: 0.5rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0s 0.3s;
+    }
+
+    .description-modal.visible {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.3s ease, visibility 0s 0s;
+    }
+
+    .description-modal.with-player {
+      bottom: 96px;
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .description-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .description-modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #515152;
+    }
+
+    .description-modal-header .modal-close-btn {
+      position: static;
+    }
+
+    .description-modal-content {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 0.5rem;
+      position: relative;
+      z-index: 1;
+      padding: 16px;
+      font-size: 1.1rem;
+      color: #515152;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      flex: 1;
+      overflow-y: auto;
     }
 
     .track:first-child {
@@ -269,7 +488,7 @@
           });
 
           const tagsHtml = trackTags.length > 0 ? `
-            <div class="track-inline-tags">
+            <div class="track-inline-tags" data-tags='${JSON.stringify(trackTags).replace(/'/g, "&#39;")}'>
               ${trackTags.map(tag => `<span class="tag-badge">${escapeHtml(tag.name)}</span>`).join('')}
             </div>
           ` : '';
@@ -290,6 +509,38 @@
         });
 
         const playlistUrl = playlist.url || 'https://phish.in';
+
+        const tagModalHtml = `
+          <div class="tag-modal" id="tag-modal">
+            <div class="modal-blur-wrapper"><div class="modal-blur" id="tag-modal-blur"></div></div>
+            <div class="tag-modal-header">
+              <span class="tag-modal-title" id="tag-modal-title"></span>
+              <button class="modal-close-btn" id="tag-modal-close-btn" title="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="tag-modal-content" id="tag-modal-content"></div>
+          </div>
+        `;
+
+        const descriptionModalHtml = playlist.description ? `
+          <div class="description-modal" id="description-modal">
+            <div class="modal-blur-wrapper"><div class="modal-blur" id="description-modal-blur"></div></div>
+            <div class="description-modal-header">
+              <span class="description-modal-title"><svg viewBox="0 0 512 512" fill="currentColor" style="width: 18px; height: 18px; margin-right: 8px; vertical-align: -2px;"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>Description</span>
+              <button class="modal-close-btn" id="description-modal-close-btn" title="Close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+            <div class="description-modal-content">${escapeHtml(playlist.description)}</div>
+          </div>
+        ` : '';
 
         return `
           <div class="card ${hasAudio ? 'has-player' : ''}">
@@ -329,14 +580,121 @@
                       ${escapeHtml(playlist.username)}
                     </span>` : ''}
                   </div>
-                  ${playlist.description ? `<div class="playlist-description">${escapeHtml(playlist.description)}</div>` : ''}
+                  ${playlist.description ? `<div class="playlist-description" id="playlist-description" title="Click to read full description">${escapeHtml(playlist.description)}</div>` : ''}
                 </div>
               </div>
               ${tracksHtml ? `<div class="track-list">${tracksHtml}</div>` : ''}
             </div>
+            ${descriptionModalHtml}
+            ${tagModalHtml}
             ${hasAudio ? `<%= partial("audio_player_html").gsub("\n", "\n            ") %>` : ''}
           </div>
         `;
+      }
+
+      function initDescriptionModal() {
+        const descriptionEl = document.getElementById('playlist-description');
+        const descriptionModal = document.getElementById('description-modal');
+        const descriptionCloseBtn = document.getElementById('description-modal-close-btn');
+        if (!descriptionEl || !descriptionModal) return;
+
+        descriptionEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          
+          const player = document.getElementById('audio-player');
+          if (player && player.classList.contains('visible')) {
+            descriptionModal.classList.add('with-player');
+          } else {
+            descriptionModal.classList.remove('with-player');
+          }
+          
+          descriptionModal.classList.add('visible');
+        });
+
+        descriptionCloseBtn?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          descriptionModal.classList.remove('visible');
+        });
+
+        descriptionModal.addEventListener('click', (e) => {
+          if (e.target === descriptionModal) {
+            descriptionModal.classList.remove('visible');
+          }
+        });
+      }
+
+      function initTagModal() {
+        const tagModal = document.getElementById('tag-modal');
+        const tagModalTitle = document.getElementById('tag-modal-title');
+        const tagModalContent = document.getElementById('tag-modal-content');
+        const tagModalCloseBtn = document.getElementById('tag-modal-close-btn');
+        if (!tagModal) return;
+
+        function openTagModal(tags) {
+          const tagIcon = '<svg viewBox="0 0 448 512" fill="currentColor" style="width: 18px; height: 18px; margin-right: 8px; vertical-align: -2px;"><path d="M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>';
+          tagModalTitle.innerHTML = tagIcon + (tags.length === 1 ? 'Tag' : 'Tags');
+          
+          let contentHtml = '';
+          tags.forEach((tag, index) => {
+            const hasDescription = tag.description && tag.description.trim();
+            const hasNotes = tag.notes && tag.notes.trim();
+            
+            contentHtml += `<div class="tag-modal-section">`;
+            contentHtml += `<div class="tag-modal-section-title">${escapeHtml(tag.name)}</div>`;
+            
+            if (hasDescription) {
+              contentHtml += `<div style="margin-bottom: ${hasNotes ? '8px' : '0'}">${escapeHtml(tag.description)}</div>`;
+            }
+            if (hasNotes) {
+              contentHtml += `<div style="font-style: italic; color: #6d6f71;">${escapeHtml(tag.notes)}</div>`;
+            }
+            if (!hasDescription && !hasNotes) {
+              contentHtml += `<div style="color: #9a9b9d;">No additional details available.</div>`;
+            }
+            
+            contentHtml += `</div>`;
+          });
+          
+          tagModalContent.innerHTML = contentHtml;
+          
+          const player = document.getElementById('audio-player');
+          if (player && player.classList.contains('visible')) {
+            tagModal.classList.add('with-player');
+          } else {
+            tagModal.classList.remove('with-player');
+          }
+          
+          tagModal.classList.add('visible');
+        }
+
+        document.querySelectorAll('.track-inline-tags').forEach(row => {
+          row.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            let tags = [];
+            try {
+              tags = JSON.parse(row.dataset.tags || '[]');
+            } catch (err) {
+              console.error('Failed to parse tags:', err);
+              return;
+            }
+            
+            if (tags.length > 0) {
+              openTagModal(tags);
+            }
+          });
+        });
+
+        tagModalCloseBtn?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          tagModal.classList.remove('visible');
+        });
+
+        tagModal.addEventListener('click', (e) => {
+          if (e.target === tagModal) {
+            tagModal.classList.remove('visible');
+          }
+        });
       }
 
       function isDataComplete(data) {
@@ -364,6 +722,15 @@
           if (data.name) {
             root.innerHTML = renderPlaylist(data);
             setupBackgroundBlur(data.cover_art_url);
+            
+            const coverArtUrl = data.cover_art_url;
+            if (coverArtUrl) {
+              ['tag-modal-blur', 'description-modal-blur'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.backgroundImage = `url("${coverArtUrl}")`;
+              });
+            }
+            
             initExpandButton();
             initAudioPlayer({
               showMetadata: {
@@ -372,6 +739,8 @@
                 isPlaylist: true
               }
             });
+            initDescriptionModal();
+            initTagModal();
           } else {
             root.innerHTML = renderNotFound('Playlist not found', 'Playlist');
           }
