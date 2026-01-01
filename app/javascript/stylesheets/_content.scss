@@ -267,14 +267,13 @@ main {
   }
 
   .leftside-primary {
-    flex-grow: 1;
+    flex: 1 1 0;
+    min-width: 0;
     font-size: 1.5rem;
     color: $text-gray;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    min-width: 1rem;
-    max-width: 60%;
     padding-right: 1rem;
     display: flex;
     align-items: center;
