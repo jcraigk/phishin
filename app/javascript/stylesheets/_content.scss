@@ -113,6 +113,11 @@ main {
     .sidebar-map {
       height: 20rem;
     }
+
+    .sidebar-map .venue-map-img {
+      width: 100%;
+      border-radius: $radius;
+    }
   }
 }
 

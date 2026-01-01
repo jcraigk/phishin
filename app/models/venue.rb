@@ -2,6 +2,8 @@ class Venue < ApplicationRecord
   has_many :shows, dependent: :nullify
   has_many :venue_renames, dependent: :destroy
 
+  has_one_attached :map_image
+
   extend FriendlyId
   friendly_id :name, use: :slugged
 
@@ -10,6 +12,8 @@ class Venue < ApplicationRecord
   validates :city, presence: true
   validates :country, presence: true
   validates :name, presence: true, uniqueness: { scope: :city }
+
+  after_commit :enqueue_map_snapshot_job, on: %i[create update], if: :location_changed_for_maps?
 
   scope :name_starting_with, lambda { |char|
     where("LOWER(name) SIMILAR TO ?", "#{char == '#' ? '[0-9]' : char.downcase}%")
@@ -97,9 +101,25 @@ class Venue < ApplicationRecord
                  &.name || name
   end
 
+  def map_url
+    blob_url(map_image, placeholder: "venue-map.png", ext: :png)
+  end
+
+  def has_coordinates?
+    latitude.present? && longitude.present?
+  end
+
   private
 
   def shows_played_here
     @shows_played_here ||= shows.with_audio.order(date: :asc)
+  end
+
+  def location_changed_for_maps?
+    saved_change_to_latitude? || saved_change_to_longitude?
+  end
+
+  def enqueue_map_snapshot_job
+    VenueMapSnapshotJob.perform_async(id)
   end
 end

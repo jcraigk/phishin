@@ -67,15 +67,11 @@ const VenueShows = () => {
         </div>
       </div>
 
-      {/* <div className="sidebar-map mt-3 hidden-mobile">
-        <MapView
-          mapboxToken={mapboxToken}
-          coordinates={{ lat: venue.latitude, lng: venue.longitude }}
-          venues={[venue]}
-          searchComplete={true}
-          controls={false}
-        />
-      </div> */}
+      {venue.map_url && (
+        <div className="sidebar-map mt-3 hidden-mobile">
+          <img src={venue.map_url} alt={`${venue.name} map`} className="venue-map-img" />
+        </div>
+      )}
     </div>
   );
 
