@@ -598,18 +598,30 @@
         const descriptionCloseBtn = document.getElementById('description-modal-close-btn');
         if (!descriptionEl || !descriptionModal) return;
 
-        descriptionEl.addEventListener('click', (e) => {
-          e.stopPropagation();
-          
+        function updateModalPosition() {
           const player = document.getElementById('audio-player');
           if (player && player.classList.contains('visible')) {
             descriptionModal.classList.add('with-player');
           } else {
             descriptionModal.classList.remove('with-player');
           }
-          
+        }
+
+        descriptionEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          updateModalPosition();
           descriptionModal.classList.add('visible');
         });
+
+        const player = document.getElementById('audio-player');
+        if (player) {
+          const observer = new MutationObserver(() => {
+            if (descriptionModal.classList.contains('visible')) {
+              updateModalPosition();
+            }
+          });
+          observer.observe(player, { attributes: true, attributeFilter: ['class'] });
+        }
 
         descriptionCloseBtn?.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -629,6 +641,15 @@
         const tagModalContent = document.getElementById('tag-modal-content');
         const tagModalCloseBtn = document.getElementById('tag-modal-close-btn');
         if (!tagModal) return;
+
+        function updateModalPosition() {
+          const player = document.getElementById('audio-player');
+          if (player && player.classList.contains('visible')) {
+            tagModal.classList.add('with-player');
+          } else {
+            tagModal.classList.remove('with-player');
+          }
+        }
 
         function openTagModal(tags) {
           const tagIcon = '<svg viewBox="0 0 448 512" fill="currentColor" style="width: 18px; height: 18px; margin-right: 8px; vertical-align: -2px;"><path d="M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>';
@@ -657,14 +678,18 @@
           
           tagModalContent.innerHTML = contentHtml;
           
-          const player = document.getElementById('audio-player');
-          if (player && player.classList.contains('visible')) {
-            tagModal.classList.add('with-player');
-          } else {
-            tagModal.classList.remove('with-player');
-          }
-          
+          updateModalPosition();
           tagModal.classList.add('visible');
+        }
+
+        const player = document.getElementById('audio-player');
+        if (player) {
+          const observer = new MutationObserver(() => {
+            if (tagModal.classList.contains('visible')) {
+              updateModalPosition();
+            }
+          });
+          observer.observe(player, { attributes: true, attributeFilter: ['class'] });
         }
 
         document.querySelectorAll('.track-inline-tags').forEach(row => {
