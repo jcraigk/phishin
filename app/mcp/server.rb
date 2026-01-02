@@ -81,7 +81,7 @@ class Server
   end
 
   def self.widget_asset_host
-    ENV.fetch("MCP_WIDGET_ASSET_HOST", "https://phish.in").to_s
+    ENV.fetch("MCP_WIDGET_ASSET_HOST", App.base_url).to_s
   end
 
   def self.widget_csp

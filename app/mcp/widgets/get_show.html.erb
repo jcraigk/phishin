@@ -587,7 +587,7 @@
       justify-content: flex-start;
       gap: 0.2rem;
       overflow: hidden;
-      width: 180px;
+      width: 140px;
       flex-shrink: 0;
     }
 
@@ -688,6 +688,7 @@
       font-weight: 700;
       margin-bottom: 8px;
     }
+
   </style>
 </head>
 <body>
@@ -880,6 +881,8 @@
 
         const showUrl = show.show_url || '';
 
+        const shareButton = renderShareButton();
+
         return `
           <div class="card ${hasAudio ? 'has-player' : ''}">
             <div class="blur-wrapper">
@@ -896,7 +899,7 @@
                 </div>
                 <div class="show-info">
                   <div class="show-date">
-                    <a href="${escapeHtml(showUrl)}" target="_blank" rel="noopener" class="show-date-link">${formatDate(show.date)}</a>
+                    <a href="${escapeHtml(showUrl)}" target="_blank" rel="noopener" class="show-date-link">${formatDate(show.date)}</a>${shareButton}
                   </div>
                   <div class="venue-name">${show.venue_slug ? `<a href="https://phish.in/venues/${escapeHtml(show.venue_slug)}" target="_blank" rel="noopener" class="venue-name-link" id="venue-link">${escapeHtml(show.venue)}</a>` : escapeHtml(show.venue)}${show.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(show.location)}" target="_blank" rel="noopener" class="location-link" id="location-link">${escapeHtml(show.location)}</a>` : ''}</div>
                   ${show.map_snapshot_url ? `<div class="map-popover" id="venue-map-popover"><img src="${escapeHtml(show.map_snapshot_url)}" alt="" /></div>` : ''}
@@ -932,6 +935,7 @@
             ${modalHtml}
             ${playerHtml}
           </div>
+          ${renderToast()}
         `;
       }
 
@@ -1189,6 +1193,8 @@
         });
       }
 
+      let showData = null;
+
       function isDataComplete(data) {
         if (!data) return false;
         if (data.error) return true;
@@ -1212,6 +1218,7 @@
           }
 
           if (data.date) {
+            showData = data;
             root.innerHTML = renderShow(data);
             setupBackgroundBlur(data.cover_art_url);
             
@@ -1238,6 +1245,7 @@
             initTagModal();
             initCoverArtModal();
             initMapPopovers();
+            initShareButton(() => showData ? `https://phish.in/${showData.date}` : null);
           } else {
             root.innerHTML = renderNotFound('Show not found', 'Show');
           }

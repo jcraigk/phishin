@@ -186,6 +186,8 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
     }
 
     .player-track-title a {
@@ -474,6 +476,7 @@
     @keyframes spin {
       to { transform: translate(-50%, -50%) rotate(360deg); }
     }
+
   </style>
 </head>
 <body>
@@ -491,6 +494,7 @@
 
       let audioPlayer = null;
       let isPlaying = false;
+      let isLoading = false;
       let trackData = null;
 
       function initSingleTrackPlayer(track) {
@@ -609,8 +613,13 @@
         const playIcon = document.getElementById('play-icon');
         const pauseIcon = document.getElementById('pause-icon');
         if (playIcon && pauseIcon) {
-          playIcon.style.display = isPlaying ? 'none' : 'block';
-          pauseIcon.style.display = isPlaying ? 'block' : 'none';
+          if (isLoading) {
+            playIcon.style.display = 'none';
+            pauseIcon.style.display = 'none';
+          } else {
+            playIcon.style.display = isPlaying ? 'none' : 'block';
+            pauseIcon.style.display = isPlaying ? 'block' : 'none';
+          }
         }
       }
 
@@ -661,6 +670,7 @@
         const playIcon = document.getElementById('play-icon');
         const pauseIcon = document.getElementById('pause-icon');
         
+        isLoading = show;
         if (spinner) spinner.style.display = show ? 'block' : 'none';
         
         if (show) {
@@ -777,13 +787,14 @@
               <div class="player-main">
                 <div class="player-top-row">
                   <div class="player-track-info">
-                    <div class="player-track-title"><a href="${escapeHtml(track.url)}" target="_blank" rel="noopener">${escapeHtml(track.title)}</a></div>
+                    <div class="player-track-title"><a href="${escapeHtml(track.url)}" target="_blank" rel="noopener">${escapeHtml(track.title)}</a>${renderShareButton()}</div>
                     <div class="player-track-subtitle">${subtitleHtml}</div>${noAudioMessage}
                   </div>${playerControls}
                 </div>${bottomRow}
               </div>
             </div>
           </div>
+          ${renderToast()}
         `;
       }
 
@@ -837,6 +848,7 @@
             root.innerHTML = renderPlayer(data);
             setupBackgroundBlur(data.cover_art_url);
             initMapPopovers();
+            initShareButton(() => trackData ? `https://phish.in/${trackData.date}/${trackData.slug}` : null);
             if (data.mp3_url) {
               initSingleTrackPlayer(data);
             }

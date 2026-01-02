@@ -73,6 +73,8 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
     }
 
     .playlist-name a {
@@ -197,7 +199,7 @@
       justify-content: flex-start;
       gap: 0.2rem;
       overflow: hidden;
-      width: 180px;
+      width: 140px;
       flex-shrink: 0;
     }
 
@@ -526,6 +528,8 @@
           </div>
         `;
 
+        const shareButton = renderShareButton();
+
         const descriptionModalHtml = playlist.description ? `
           <div class="description-modal" id="description-modal">
             <div class="modal-blur-wrapper"><div class="modal-blur" id="description-modal-blur"></div></div>
@@ -559,7 +563,7 @@
                   </button>` : ''}
                 </div>
                 <div class="playlist-info">
-                  <div class="playlist-name"><a href="${escapeHtml(playlistUrl)}" target="_blank" rel="noopener">${truncateText(playlist.name, 100)}</a></div>
+                  <div class="playlist-name"><a href="${escapeHtml(playlistUrl)}" target="_blank" rel="noopener">${truncateText(playlist.name, 100)}</a>${shareButton}</div>
                   <div class="playlist-meta">
                     <span class="playlist-meta-item">
                       <svg viewBox="0 0 512 512" fill="currentColor">
@@ -589,6 +593,7 @@
             ${tagModalHtml}
             ${hasAudio ? `<%= partial("audio_player_html").gsub("\n", "\n            ") %>` : ''}
           </div>
+          ${renderToast()}
         `;
       }
 
@@ -722,6 +727,8 @@
         });
       }
 
+      let playlistData = null;
+
       function isDataComplete(data) {
         if (!data) return false;
         if (data.error) return true;
@@ -745,6 +752,7 @@
           }
 
           if (data.name) {
+            playlistData = data;
             root.innerHTML = renderPlaylist(data);
             setupBackgroundBlur(data.cover_art_url);
             
@@ -766,6 +774,7 @@
             });
             initDescriptionModal();
             initTagModal();
+            initShareButton(() => playlistData ? `https://phish.in/playlists/${playlistData.slug}` : null);
           } else {
             root.innerHTML = renderNotFound('Playlist not found', 'Playlist');
           }

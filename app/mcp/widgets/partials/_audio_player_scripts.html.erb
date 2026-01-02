@@ -114,7 +114,6 @@ function initAudioPlayer(options = {}) {
 
   gaplessPlayer.onplay = () => {
     isPlaying = true;
-    isLoading = false;
     updatePlayPauseIcon();
     updateMediaSessionPlaybackState();
   };
@@ -303,8 +302,13 @@ function updatePlayPauseIcon() {
   const playIcon = document.getElementById('play-icon');
   const pauseIcon = document.getElementById('pause-icon');
   if (playIcon && pauseIcon) {
-    playIcon.style.display = isPlaying ? 'none' : 'block';
-    pauseIcon.style.display = isPlaying ? 'block' : 'none';
+    if (isLoading) {
+      playIcon.style.display = 'none';
+      pauseIcon.style.display = 'none';
+    } else {
+      playIcon.style.display = isPlaying ? 'none' : 'block';
+      pauseIcon.style.display = isPlaying ? 'block' : 'none';
+    }
   }
 }
 
@@ -381,6 +385,8 @@ function onScrubberClick(e) {
 }
 
 function showLoadingSpinner(show) {
+  isLoading = show;
+  
   const spinner = document.getElementById('loading-spinner');
   const playIcon = document.getElementById('play-icon');
   const pauseIcon = document.getElementById('pause-icon');
@@ -393,8 +399,6 @@ function showLoadingSpinner(show) {
   } else {
     updatePlayPauseIcon();
   }
-  
-  isLoading = show;
 }
 
 function isIOSDevice() {
