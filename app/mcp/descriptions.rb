@@ -89,7 +89,7 @@ module Descriptions
                 "DISPLAY: In markdown, link years/periods to their url field. " \
                 "Example: [1995](url) or [1983-1987](url).",
 
-    search: "Search across Phish shows, songs, venues, tours, tags, and playlists. " \
+    search: "Simple case-insensitive substring search (not semantic) across Phish shows, songs, venues, tours, tags, and playlists. " \
             "If the user asks for a specific show date (e.g., 'Halloween 95', 'NYE 99'), " \
             "use get_show directly instead of searching. " \
             "FOLLOW-UP: If search returns a single show or user wants details about a show, " \
@@ -97,14 +97,16 @@ module Descriptions
             "DISPLAY: In markdown, link results to their url field - dates for shows, " \
             "titles for songs, names for venues/playlists. " \
             "Example: [Jul 4, 2023](show_url) or [Tweezer](song_url) or [MSG](venue_url). " \
-            "Format dates readably (e.g., 'Jul 4, 2023').",
+            "Format dates readably (e.g., 'Jul 4, 2023'). " \
+            "REST API: For programmatic queries beyond these tools, see https://phish.in/api/v2/swagger_doc (no API key required).",
 
     stats: "Statistical analysis of Phish performances. Supports gaps (bustouts), " \
            "transitions, set positions, geographic patterns, " \
            "co-occurrence, and song frequency. " \
            "DISPLAY: In markdown, link song names to their url field and dates to their track url. " \
            "Example: | [Tweezer](song_url) | 42 | [Dec 31, 1995](track_url) |. " \
-           "Format dates readably (e.g., 'Jul 4, 2023')."
+           "Format dates readably (e.g., 'Jul 4, 2023'). " \
+           "REST API: For custom analysis beyond built-in stats, see https://phish.in/api/v2/swagger_doc (no API key required)."
   }.freeze
 
   OPENAI_OVERRIDES = {
