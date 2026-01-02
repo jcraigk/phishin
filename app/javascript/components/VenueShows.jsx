@@ -45,17 +45,12 @@ const VenueShows = () => {
   const sidebarContent = (
     <div className="sidebar-content">
       <p className="sidebar-title">{venue.name}</p>
-      <p className="sidebar-subtitle hidden-mobile">
-        <Link to={`/map?term=${venue.location}`}>
-            {venue.location}
-        </Link>
-      </p>
       <p className="sidebar-subtitle">
         {formatNumber(venue.shows_count, 'show')}
       </p>
 
       <div className="sidebar-filters">
-        <div className="select">
+        <div className="select is-fullwidth">
           <select id="sort" value={sortOption} onChange={handleSortChange}>
             <option value="date:desc">Sort by Date (Newest First)</option>
             <option value="date:asc">Sort by Date (Oldest First)</option>
@@ -68,8 +63,15 @@ const VenueShows = () => {
       </div>
 
       {venue.map_url && (
-        <div className="sidebar-map mt-3 hidden-mobile">
-          <img src={venue.map_url} alt={`${venue.name} map`} className="venue-map-img" />
+        <div className="sidebar-map-container hidden-mobile">
+          <p className="sidebar-map-title">
+            <Link to={`/map?term=${venue.location}`}>
+              {venue.location}
+            </Link>
+          </p>
+          <Link to={`/map?term=${venue.location}`}>
+            <img src={venue.map_url} alt={`${venue.name} map`} className="venue-map-img" />
+          </Link>
         </div>
       )}
     </div>
