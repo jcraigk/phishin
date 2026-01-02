@@ -3,7 +3,7 @@ class ShowImporter::Orchestrator
 
   SET_MAP = {
     "3" => %w[III],
-    "E" => %w[E e I-e II-e],
+    "E" => %w[E e I-e II-e III-e],
     "2" => %w[II],
     "1" => %w[I],
     "S" => %w[(Check)]

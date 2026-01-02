@@ -120,10 +120,10 @@ class MetaTagService < ApplicationService
       track = show.tracks.find_by(slug:)
       if track
         title = "#{track.title} - #{short_date(show.date)}#{TITLE_SUFFIX}"
-        og_title = "Listen to #{track.title} from #{long_date(show.date)}"
+        og_title = "Listen to Phish perform #{track.title} on #{long_date(show.date)}"
       else
         title = "#{short_date(show.date)}#{TITLE_SUFFIX}"
-        og_title = "Listen to #{long_date(show.date)}"
+        og_title = "Listen to Phish perform on #{long_date(show.date)}"
       end
       {
         title:,
@@ -144,7 +144,7 @@ class MetaTagService < ApplicationService
     {
       title: "#{short_date(show.date)}#{TITLE_SUFFIX}",
       og: {
-        title: "Listen to #{long_date(show.date)}",
+        title: "Listen to Phish perform on #{long_date(show.date)}",
         type: "music.playlist",
         audio: show.tracks.order(:position).first&.mp3_url,
         image: show&.album_cover_url
@@ -200,10 +200,7 @@ class MetaTagService < ApplicationService
 
     {
       title: "#{song.name}#{TITLE_SUFFIX}",
-      og: {
-        title: "Explore performances of #{song.name}",
-        card_type: :summary
-      },
+      og: { title: "Listen to Phish perform #{song.name}", image: false },
       status: :ok
     }
   end
@@ -216,10 +213,7 @@ class MetaTagService < ApplicationService
 
     {
       title: "#{venue.name}#{TITLE_SUFFIX}",
-      og: {
-        title: "Explore shows at #{venue.name}",
-        card_type: :summary
-      },
+      og: { title: "Listen to Phish perform at #{venue.name}", image: false },
       status: :ok
     }
   end
