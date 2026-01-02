@@ -157,7 +157,7 @@
       align-items: center;
       gap: 8px;
       flex: 1;
-      padding: 10px 12px 6px 0;
+      padding: 8px 12px 4px 0;
       position: relative;
     }
 
@@ -275,6 +275,48 @@
       border-right-color: #515152;
     }
 
+    .venue-link-wrapper {
+      position: relative;
+      display: inline;
+    }
+
+    .map-popover {
+      position: fixed;
+      width: 76px;
+      height: 76px;
+      background: #fff;
+      border-radius: 0.35rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.15s, visibility 0.15s;
+      z-index: 100;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .map-popover::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 100%;
+      transform: translateY(-50%);
+      border: 6px solid transparent;
+      border-right-color: #fff;
+    }
+
+    .map-popover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .venue-link-wrapper:hover .map-popover.positioned {
+      opacity: 1;
+      visibility: visible;
+    }
+
     .player-controls {
       display: flex;
       align-items: center;
@@ -355,8 +397,8 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      height: 44px;
-      padding: 0 12px 8px 0;
+      height: 34px;
+      padding: 0 12px 4px 0;
     }
 
     .no-audio-message {
@@ -672,8 +714,13 @@
         const coverArtUrl = track.cover_art_url || '';
         const tags = track.tags || [];
         const hasAudio = !!track.mp3_url;
+        const mapSnapshotUrl = track.map_snapshot_url || '';
 
-        let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a> · <a href="https://phish.in/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>`;
+        const venueLink = mapSnapshotUrl
+          ? `<span class="venue-link-wrapper"><a href="https://phish.in/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a><span class="map-popover"><img src="${escapeHtml(mapSnapshotUrl)}" alt="" /></span></span>`
+          : `<a href="https://phish.in/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>`;
+
+        let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a> · ${venueLink}`;
 
         if (tags.length > 0) {
           subtitleHtml += ' · ' + tags.map(tag => {
@@ -725,7 +772,7 @@
             </div>
             <div class="player-content">
               <div class="player-cover-art-container">
-                <img src="${escapeHtml(coverArtUrl)}" alt="Cover" class="player-cover-art" id="cover-img" />${coverPlayButton}
+                <img src="${escapeHtml(coverArtUrl)}" alt="" class="player-cover-art" id="cover-img" />${coverPlayButton}
               </div>
               <div class="player-main">
                 <div class="player-top-row">
@@ -738,6 +785,30 @@
             </div>
           </div>
         `;
+      }
+
+      function initMapPopovers() {
+        document.querySelectorAll('.venue-link-wrapper').forEach(wrapper => {
+          const popover = wrapper.querySelector('.map-popover');
+          if (!popover) return;
+
+          wrapper.addEventListener('mouseenter', () => {
+            const rect = wrapper.getBoundingClientRect();
+            const player = document.getElementById('audio-player');
+            const playerRect = player ? player.getBoundingClientRect() : { top: rect.top, height: 96 };
+            const size = 76;
+
+            popover.style.width = size + 'px';
+            popover.style.height = size + 'px';
+            popover.style.left = (rect.right + 8) + 'px';
+            popover.style.top = (playerRect.top + playerRect.height / 2 - size / 2) + 'px';
+            popover.classList.add('positioned');
+          });
+
+          wrapper.addEventListener('mouseleave', () => {
+            popover.classList.remove('positioned');
+          });
+        });
       }
 
       function isDataComplete(data) {
@@ -765,6 +836,7 @@
           if (data.title) {
             root.innerHTML = renderPlayer(data);
             setupBackgroundBlur(data.cover_art_url);
+            initMapPopovers();
             if (data.mp3_url) {
               initSingleTrackPlayer(data);
             }
