@@ -74,8 +74,9 @@ module Tools
           songs_tracks: {},
           track_tags: :tag,
           show: [
-            :venue, :tour,
-            cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } }
+            :tour,
+            cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } },
+            venue: :map_snapshot_attachment
           ]
         )
       end
@@ -142,6 +143,7 @@ module Tools
           venue: track.show.venue_name,
           venue_slug: track.show.venue&.slug,
           location: track.show.venue&.location,
+          map_snapshot_url: track.show.venue&.map_snapshot_url,
           cover_art_url: track.show.cover_art_urls[:medium],
           song: song && {
             title: song.title,

@@ -96,6 +96,15 @@ main {
         margin-top: 0.8rem;
         margin-right: 0.8rem;
       }
+
+      .select.is-fullwidth {
+        width: 100%;
+        margin-right: 0;
+
+        select {
+          width: 100%;
+        }
+      }
     }
 
     .sidebar-control-container {
@@ -110,8 +119,33 @@ main {
       cursor: pointer;
     }
 
-    .sidebar-map {
-      height: 20rem;
+    .sidebar-map-container {
+      margin-top: 1rem;
+
+      .sidebar-map-title {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: $title-gray;
+        margin-bottom: 0.5rem;
+
+        a {
+          color: $title-gray;
+
+          &:hover {
+            color: $blue;
+          }
+        }
+      }
+
+      .venue-map-img {
+        width: 100%;
+        border-radius: $radius;
+        display: block;
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
     }
   }
 }

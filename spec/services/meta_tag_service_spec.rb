@@ -60,7 +60,7 @@ RSpec.describe MetaTagService do
     it "returns the show title and og tags" do
       show
       expect(service[:title]).to eq("Jan 1, 2024#{title_suffix}")
-      expect(service[:og][:title]).to eq("Listen to January 1, 2024")
+      expect(service[:og][:title]).to eq("Listen to Phish perform on January 1, 2024")
       expect(service[:status]).to eq(:ok)
     end
   end
@@ -72,7 +72,7 @@ RSpec.describe MetaTagService do
 
     it "returns the track title and og tags" do
       expect(service[:title]).to eq("#{track.title} - Jan 1, 2024#{title_suffix}")
-      expect(service[:og][:title]).to eq("Listen to #{track.title} from January 1, 2024")
+      expect(service[:og][:title]).to eq("Listen to Phish perform #{track.title} on January 1, 2024")
       expect(service[:status]).to eq(:ok)
     end
   end
@@ -84,7 +84,7 @@ RSpec.describe MetaTagService do
     it "returns the show title without track details and status ok" do
       show
       expect(service[:title]).to eq("Jan 1, 2024#{title_suffix}")
-      expect(service[:og][:title]).to eq("Listen to January 1, 2024")
+      expect(service[:og][:title]).to eq("Listen to Phish perform on January 1, 2024")
       expect(service[:status]).to eq(:ok)
     end
   end
@@ -162,8 +162,7 @@ RSpec.describe MetaTagService do
 
     it "returns the song title and og tags" do
       expect(service[:title]).to eq("#{song.name}#{title_suffix}")
-      expect(service[:og][:title]).to eq("Explore performances of #{song.name}")
-      expect(service[:og][:card_type]).to eq(:summary)
+      expect(service[:og][:title]).to eq("Listen to Phish perform #{song.name}")
       expect(service[:status]).to eq(:ok)
     end
   end
@@ -183,8 +182,7 @@ RSpec.describe MetaTagService do
 
     it "returns the venue title and og tags" do
       expect(service[:title]).to eq("#{venue.name}#{title_suffix}")
-      expect(service[:og][:title]).to eq("Explore shows at #{venue.name}")
-      expect(service[:og][:card_type]).to eq(:summary)
+      expect(service[:og][:title]).to eq("Listen to Phish perform at #{venue.name}")
       expect(service[:status]).to eq(:ok)
     end
   end

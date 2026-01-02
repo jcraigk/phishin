@@ -64,6 +64,14 @@ class ApiV2::Entities::Venue < ApiV2::Entities::Base
       desc: "Full location of the venue (city, state, country)"
     }
 
+  expose(
+    :map_snapshot_url,
+    documentation: {
+      type: "String",
+      desc: "URL for venue map snapshot image"
+    }
+  )
+
   expose_count_fields_with_audio :shows_count, "shows that have taken place at the venue"
 
   expose \
