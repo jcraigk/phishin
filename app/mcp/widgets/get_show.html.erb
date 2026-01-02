@@ -242,52 +242,7 @@
       color: #03BBF2;
     }
 
-    .location-link {
-      color: inherit;
-      text-decoration: none;
-      transition: color 0.15s;
-    }
-
-    .location-link:hover {
-      color: #03BBF2;
-    }
-
-    .map-popover {
-      position: fixed;
-      width: 70px;
-      height: 70px;
-      background: #fff;
-      border-radius: 0.35rem;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.15s, visibility 0.15s;
-      z-index: 100;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .map-popover.visible {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .map-popover::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      right: 100%;
-      transform: translateY(-50%);
-      border: 6px solid transparent;
-      border-right-color: #fff;
-    }
-
-    .map-popover img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
+<%= partial("map_popover_styles") %>
 
     .show-meta-row {
       display: flex;
@@ -704,6 +659,7 @@
     (function() {
 <%= partial("base_scripts") %>
 <%= partial("audio_player_scripts") %>
+<%= partial("map_popover_scripts") %>
 
       function renderShow(show) {
         const tracksBySet = {};
@@ -901,8 +857,7 @@
                   <div class="show-date">
                     <a href="${escapeHtml(showUrl)}" target="_blank" rel="noopener" class="show-date-link">${formatDate(show.date)}</a>${shareButton}
                   </div>
-                  <div class="venue-name">${show.venue_slug ? `<a href="https://phish.in/venues/${escapeHtml(show.venue_slug)}" target="_blank" rel="noopener" class="venue-name-link" id="venue-link">${escapeHtml(show.venue)}</a>` : escapeHtml(show.venue)}${show.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(show.location)}" target="_blank" rel="noopener" class="location-link" id="location-link">${escapeHtml(show.location)}</a>` : ''}</div>
-                  ${show.map_snapshot_url ? `<div class="map-popover" id="venue-map-popover"><img src="${escapeHtml(show.map_snapshot_url)}" alt="" /></div>` : ''}
+                  <div class="venue-name">${show.map_snapshot_url ? `<span class="location-link-wrapper">${show.venue_slug ? `<a href="https://phish.in/venues/${escapeHtml(show.venue_slug)}" target="_blank" rel="noopener" class="venue-name-link">${escapeHtml(show.venue)}</a>` : escapeHtml(show.venue)}${show.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(show.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(show.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(show.map_snapshot_url)}" alt="" /></span></span>` : `${show.venue_slug ? `<a href="https://phish.in/venues/${escapeHtml(show.venue_slug)}" target="_blank" rel="noopener" class="venue-name-link">${escapeHtml(show.venue)}</a>` : escapeHtml(show.venue)}${show.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(show.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(show.location)}</a>` : ''}`}</div>
                   <div class="show-meta-row">
                     ${show.duration_ms ? `
                       <span class="show-meta-item">
@@ -1151,45 +1106,6 @@
           if (e.target === tagModal) {
             tagModal.classList.remove('visible');
           }
-        });
-      }
-
-      function initMapPopovers() {
-        const popover = document.getElementById('venue-map-popover');
-        const venueLink = document.getElementById('venue-link');
-        const locationLink = document.getElementById('location-link');
-        if (!popover) return;
-
-        const header = document.querySelector('.card-header');
-        const card = document.querySelector('.card');
-        const triggers = [venueLink, locationLink].filter(Boolean);
-
-        function showPopover() {
-          if (!locationLink) return;
-          const linkRect = locationLink.getBoundingClientRect();
-          const headerRect = header ? header.getBoundingClientRect() : linkRect;
-          const cardRect = card ? card.getBoundingClientRect() : { right: window.innerWidth };
-          const size = 70;
-
-          let left = linkRect.right + 8;
-          if (left + size > cardRect.right - 8) {
-            left = cardRect.right - size - 8;
-          }
-
-          popover.style.width = size + 'px';
-          popover.style.height = size + 'px';
-          popover.style.left = left + 'px';
-          popover.style.top = (headerRect.top + headerRect.height / 2 - size / 2) + 'px';
-          popover.classList.add('visible');
-        }
-
-        function hidePopover() {
-          popover.classList.remove('visible');
-        }
-
-        triggers.forEach(trigger => {
-          trigger.addEventListener('mouseenter', showPopover);
-          trigger.addEventListener('mouseleave', hidePopover);
         });
       }
 

@@ -1,0 +1,34 @@
+function initMapPopovers() {
+  document.querySelectorAll('.location-link-wrapper').forEach(wrapper => {
+    const popover = wrapper.querySelector('.map-popover');
+    if (!popover) return;
+
+    const showPopover = () => {
+      const locationLink = wrapper.querySelector('.location-link');
+      const link = locationLink || wrapper.querySelector('a');
+      if (!link) return;
+
+      const linkRect = link.getBoundingClientRect();
+      const size = parseInt(popover.style.width) || 70;
+
+      let left = linkRect.right + 8;
+      if (left + size > window.innerWidth - 8) {
+        left = window.innerWidth - size - 8;
+      }
+
+      popover.style.left = left + 'px';
+      popover.style.top = (linkRect.top + linkRect.height / 2 - size / 2) + 'px';
+      popover.classList.add('visible');
+    };
+
+    const hidePopover = () => {
+      popover.classList.remove('visible');
+    };
+
+    wrapper.querySelectorAll('a').forEach(link => {
+      link.addEventListener('mouseenter', showPopover);
+      link.addEventListener('mouseleave', hidePopover);
+    });
+  });
+}
+

@@ -1,0 +1,52 @@
+.map-popover {
+  position: fixed;
+  width: 70px;
+  height: 70px;
+  background: #fff;
+  border-radius: 0.35rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s, visibility 0.15s;
+  z-index: 100;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.map-popover.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.map-popover::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-right-color: #fff;
+}
+
+.map-popover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.location-link-wrapper {
+  position: relative;
+  display: inline;
+}
+
+.location-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.location-link:hover {
+  color: #03BBF2;
+}
+

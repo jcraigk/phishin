@@ -52,6 +52,7 @@
 <%= partial("card_styles") %>
 <%= partial("track_styles") %>
 <%= partial("audio_player_styles") %>
+<%= partial("map_popover_styles") %>
 
     .playlist-header {
       height: 96px;
@@ -472,6 +473,7 @@
     (function() {
 <%= partial("base_scripts") %>
 <%= partial("audio_player_scripts") %>
+<%= partial("map_popover_scripts") %>
 
       function renderPlaylist(playlist) {
         const tracks = playlist.tracks || [];
@@ -495,12 +497,16 @@
             </div>
           ` : '';
           
+          const venueLocationHtml = track.map_snapshot_url
+            ? `<span class="location-link-wrapper"><a href="${escapeHtml(track.venue_url || '')}" target="_blank" rel="noopener" class="track-venue-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(track.map_snapshot_url)}" alt="" /></span></span>`
+            : `<a href="${escapeHtml(track.venue_url || '')}" target="_blank" rel="noopener" class="track-venue-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
+
           tracksHtml += `
             <div class="track ${hasTrackAudio ? '' : 'no-audio'}" data-index="${index}" ${hasTrackAudio ? '' : 'title="No audio available"'}>
               <span class="track-position">${track.position || index + 1}</span>
               <div class="track-left">
                 <div class="track-title">${escapeHtml(track.title)}</div>
-                <div class="track-subtitle"><a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="track-date-link">${formatDate(track.date)}</a> · <a href="${escapeHtml(track.venue_url || '')}" target="_blank" rel="noopener" class="track-venue-link">${escapeHtml(track.venue)}</a></div>
+                <div class="track-subtitle"><a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="track-date-link">${formatDate(track.date)}</a> · ${venueLocationHtml}</div>
               </div>
               ${tagsHtml}
               <div class="track-right">
@@ -774,6 +780,7 @@
             });
             initDescriptionModal();
             initTagModal();
+            initMapPopovers();
             initShareButton(() => playlistData ? `https://phish.in/playlists/${playlistData.slug}` : null);
           } else {
             root.innerHTML = renderNotFound('Playlist not found', 'Playlist');
