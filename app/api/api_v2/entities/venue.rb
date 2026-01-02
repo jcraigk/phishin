@@ -65,10 +65,10 @@ class ApiV2::Entities::Venue < ApiV2::Entities::Base
     }
 
   expose(
-    :map_url,
+    :map_snapshot_url,
     documentation: {
       type: "String",
-      desc: "URL for venue map image"
+      desc: "URL for venue map snapshot image"
     }
   )
 

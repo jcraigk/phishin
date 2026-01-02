@@ -2,7 +2,7 @@ class Venue < ApplicationRecord
   has_many :shows, dependent: :nullify
   has_many :venue_renames, dependent: :destroy
 
-  has_one_attached :map_image
+  has_one_attached :map_snapshot
 
   extend FriendlyId
   friendly_id :name, use: :slugged
@@ -101,8 +101,8 @@ class Venue < ApplicationRecord
                  &.name || name
   end
 
-  def map_url
-    blob_url(map_image, placeholder: "venue-map.png", ext: :png)
+  def map_snapshot_url
+    blob_url(map_snapshot, placeholder: "venue-map-snapshot.png", ext: :png)
   end
 
   def has_coordinates?

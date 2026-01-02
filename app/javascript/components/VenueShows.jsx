@@ -62,7 +62,7 @@ const VenueShows = () => {
         </div>
       </div>
 
-      {venue.map_url && (
+      {venue.map_snapshot_url && (
         <div className="sidebar-map-container hidden-mobile">
           <p className="sidebar-map-title">
             <Link to={`/map?term=${venue.location}`}>
@@ -70,7 +70,7 @@ const VenueShows = () => {
             </Link>
           </p>
           <Link to={`/map?term=${venue.location}`}>
-            <img src={venue.map_url} alt={`${venue.name} map`} className="venue-map-img" />
+            <img src={venue.map_snapshot_url} alt={`${venue.name} map`} className="venue-map-img" />
           </Link>
         </div>
       )}
