@@ -72,6 +72,8 @@
     .player-content {
       display: flex;
       flex: 1;
+      min-width: 0;
+      overflow: hidden;
       position: relative;
       z-index: 1;
       background: rgba(180, 180, 180, 0.5);
@@ -153,6 +155,7 @@
     .player-main {
       flex: 1;
       min-width: 0;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
       position: relative;
@@ -164,6 +167,7 @@
       align-items: center;
       gap: 8px;
       flex: 1;
+      min-width: 0;
       padding: 6px 10px 2px 0;
       position: relative;
     }
@@ -179,8 +183,8 @@
       z-index: 1;
       display: flex;
       align-items: center;
-      min-width: 92px;
-      min-height: 92px;
+      width: 92px;
+      height: 92px;
     }
 
     .cover-loading-overlay {
@@ -226,6 +230,8 @@
       color: #3a3a3a;
       display: flex;
       align-items: center;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .player-track-title a {
@@ -235,6 +241,8 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      flex: 1;
+      min-width: 0;
     }
 
     .player-track-title a:hover {
@@ -439,6 +447,7 @@
       align-items: center;
       gap: 8px;
       height: 32px;
+      min-width: 0;
       padding: 0 10px 2px 0;
     }
 
@@ -454,6 +463,7 @@
       color: #505050;
       font-variant-numeric: tabular-nums;
       min-width: 38px;
+      flex-shrink: 0;
       text-align: left;
     }
 
@@ -463,6 +473,7 @@
 
     .scrubber-container {
       flex: 1;
+      min-width: 0;
       height: 100%;
       position: relative;
       cursor: pointer;
