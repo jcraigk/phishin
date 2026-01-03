@@ -741,7 +741,7 @@
         };
       }
 
-      function updateWaveformImage(waveformUrl) {
+      function updateWaveformImage(waveformUrl, onComplete) {
         const scrubber = document.getElementById('scrubber');
         const progressOverlay = document.getElementById('progress-overlay');
 
@@ -754,6 +754,7 @@
             progressOverlay.style.maskImage = '';
             progressOverlay.style.webkitMaskImage = '';
           }
+          if (onComplete) onComplete();
           return;
         }
 
@@ -769,6 +770,10 @@
             progressOverlay.style.maskImage = `url(${waveformUrl})`;
             progressOverlay.style.webkitMaskImage = `url(${waveformUrl})`;
           }
+          if (onComplete) onComplete();
+        };
+        img.onerror = () => {
+          if (onComplete) onComplete();
         };
         img.src = waveformUrl;
       }
@@ -986,28 +991,56 @@
         }
       }
 
+      function renderLoader() {
+        return `
+          <div class="loader-container">
+            <div class="loader-logo-wrapper">
+              <img src="${baseUrl}/mcp-widgets/images/logo-full.png" alt="Phish.in" class="loader-logo" />
+            </div>
+          </div>
+        `;
+      }
+
       async function requestAdjacentShow(direction) {
-        if (!showData?.date || isNavigating) return;
+        if (!showData?.date || isNavigating) {
+          console.log('[NAV] Blocked - date:', showData?.date, 'isNavigating:', isNavigating);
+          return;
+        }
         
         isNavigating = true;
-        showCoverLoadingOverlay(true);
+        
+        // 1. Stop current audio and show loader immediately
+        if (gaplessPlayer) {
+          gaplessPlayer.stop();
+          gaplessPlayer = null;
+        }
+        isPlaying = false;
+        isAudioLoading = false;
+        
+        const root = document.getElementById('root');
+        root.innerHTML = renderLoader();
+        
+        const t0 = performance.now();
+        console.log('[NAV] Starting adjacent show load:', direction);
         
         try {
+          // 2. Fetch current show to get adjacent date
           const currentShowResponse = await fetch(`${baseUrl}/api/v2/shows/${showData.date}`);
           if (!currentShowResponse.ok) throw new Error('Failed to fetch current show');
-          
           const currentShow = await currentShowResponse.json();
+          
           const adjacentDate = direction === 'next' 
             ? currentShow.next_show_date_with_audio 
             : currentShow.previous_show_date_with_audio;
-          
           if (!adjacentDate) throw new Error('No adjacent show found');
+          console.log('[NAV] Adjacent date:', adjacentDate);
           
+          // 3. Fetch adjacent show data
           const adjacentShowResponse = await fetch(`${baseUrl}/api/v2/shows/${adjacentDate}`);
           if (!adjacentShowResponse.ok) throw new Error('Failed to fetch adjacent show');
-          
           const adjacentShow = await adjacentShowResponse.json();
           
+          // 4. Build new show data
           const newShowData = {
             date: adjacentShow.date,
             show_url: `${baseUrl}/${adjacentShow.date}`,
@@ -1015,7 +1048,7 @@
             venue_slug: adjacentShow.venue?.slug,
             location: adjacentShow.venue ? `${adjacentShow.venue.city}, ${adjacentShow.venue.state || adjacentShow.venue.country}` : '',
             map_snapshot_url: adjacentShow.venue?.map_snapshot_url || null,
-            cover_art_url: adjacentShow.cover_art_urls?.medium || adjacentShow.cover_art_urls?.small,
+            cover_art_url: adjacentShow.cover_art_urls?.medium,
             duration_ms: adjacentShow.duration,
             tracks: (adjacentShow.tracks || []).filter(t => t.mp3_url).map(t => ({
               id: t.id,
@@ -1031,43 +1064,61 @@
             }))
           };
           
-          if (newShowData.cover_art_url) {
-            await preloadImage(newShowData.cover_art_url);
-          }
+          const targetTrackIndex = direction === 'next' ? 0 : newShowData.tracks.length - 1;
+          const targetTrack = newShowData.tracks[targetTrackIndex];
+          if (!targetTrack) throw new Error('No playable tracks in adjacent show');
           
-          if (gaplessPlayer) {
-            gaplessPlayer.stop();
-            gaplessPlayer = null;
-          }
-          isPlaying = false;
-          isAudioLoading = false;
-          
+          // 5. Update state (skip preloading - let DOM handle it)
           showData = newShowData;
-          currentTrackIndex = direction === 'next' ? 0 : newShowData.tracks.length - 1;
+          currentTrackIndex = targetTrackIndex;
+          updateCurrentTrackData(targetTrack);
           
-          const track = newShowData.tracks[currentTrackIndex];
-          if (!track) throw new Error('No playable tracks in adjacent show');
-          
-          updateCurrentTrackData(track);
-          
-          const root = document.getElementById('root');
+          // 6. Render player - images will load naturally via DOM
           root.innerHTML = renderPlayer(trackData);
-          setupBackgroundBlur(trackData.cover_art_url);
-          initMapPopovers();
+          
+          // 7. Set up background blur to apply when cover loads
+          const coverImg = document.getElementById('cover-img');
+          const bgEl = document.getElementById('bg-blur');
+          
+          const applyBlur = () => {
+            if (bgEl && trackData.cover_art_url) {
+              bgEl.style.backgroundImage = `url("${trackData.cover_art_url}")`;
+              const player = document.getElementById('audio-player');
+              if (player) {
+                player.style.setProperty('--player-bg-image', `url("${trackData.cover_art_url}")`);
+              }
+            }
+          };
+          
+          if (coverImg) {
+            if (coverImg.complete && coverImg.naturalWidth > 0) {
+              applyBlur();
+            } else {
+              coverImg.onload = applyBlur;
+            }
+          }
+          
+          // 8. Apply waveform (will load via updateWaveformImage's Image object)
           updateWaveformImage(trackData.waveform_image_url);
           
-          if (track.mp3_url) {
+          initMapPopovers();
+          
+          // 9. Init audio player (don't auto-play to avoid connection contention)
+          if (targetTrack.mp3_url) {
             const gaplessIndex = findGaplessIndex(currentTrackIndex);
             initGaplessPlayer(trackData, gaplessIndex);
-            showLoadingSpinner(true);
-            gaplessPlayer?.play();
+            // Don't auto-play - let user click to avoid bandwidth contention with images
           }
           
+          console.log('[NAV] TOTAL TIME:', (performance.now() - t0).toFixed(0), 'ms');
+          
         } catch (e) {
-          console.error('Error fetching adjacent show:', e);
+          console.error('[NAV] ERROR:', e);
+          if (showData && trackData) {
+            root.innerHTML = renderPlayer(trackData);
+          }
         } finally {
           isNavigating = false;
-          showCoverLoadingOverlay(false);
         }
       }
 
@@ -1174,7 +1225,7 @@
             </div>
             <div class="player-content">
               <div class="player-cover-art-container">
-                <img src="${escapeHtml(coverArtUrl)}" alt="" class="player-cover-art" id="cover-img" onerror="this.style.display='none'" />
+                <img src="${escapeHtml(coverArtUrl)}" alt="" class="player-cover-art" id="cover-img" fetchpriority="high" loading="eager" onerror="this.style.display='none'" />
                 <div class="cover-loading-overlay" id="cover-loading-overlay"><div class="cover-loading-spinner"></div></div>${coverPlayButton}
               </div>
               <div class="player-main">

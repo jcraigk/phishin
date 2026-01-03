@@ -206,11 +206,13 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
     def fetch_show_by_date
       Show.includes(
             :venue,
+            { cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } } },
             tracks: [
               :mp3_audio_attachment,
               :png_waveform_attachment,
               { track_tags: :tag },
-              { songs: :songs_tracks }
+              :songs,
+              :songs_tracks
             ],
             show_tags: :tag
           )
