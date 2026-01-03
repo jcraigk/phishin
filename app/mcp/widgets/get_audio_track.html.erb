@@ -178,8 +178,8 @@
       position: absolute;
       top: 8px;
       left: 8px;
-      width: 76px;
-      height: 76px;
+      right: 8px;
+      bottom: 8px;
       border-radius: 4px;
       background: rgba(0, 0, 0, 0.5);
       display: none;
@@ -208,6 +208,7 @@
     .player-track-info {
       flex: 1;
       min-width: 0;
+      overflow: hidden;
     }
 
     .player-track-title {
@@ -217,7 +218,7 @@
       display: flex;
       align-items: center;
       min-width: 0;
-      overflow: hidden;
+      max-width: 100%;
     }
 
     .player-track-title a {
@@ -227,7 +228,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      flex: 1;
       min-width: 0;
     }
 
@@ -334,7 +334,7 @@
       border: none;
       padding: 6px;
       cursor: pointer;
-      color: #6d6f71;
+      color: #505050;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -360,7 +360,7 @@
       border: none;
       padding: 6px;
       cursor: pointer;
-      color: #6d6f71;
+      color: #505050;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -433,7 +433,7 @@
 
     .time-display {
       font-size: 0.95rem;
-      color: #3a3a3a;
+      color: #505050;
       font-variant-numeric: tabular-nums;
       min-width: 38px;
       text-align: left;
