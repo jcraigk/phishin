@@ -9,15 +9,25 @@ function initMapPopovers() {
       if (!link) return;
 
       const linkRect = link.getBoundingClientRect();
-      const size = parseInt(popover.style.width) || 70;
+      const popoverWidth = 70;
+      const popoverHeight = 70;
 
       let left = linkRect.right + 8;
-      if (left + size > window.innerWidth - 8) {
-        left = window.innerWidth - size - 8;
+      if (left + popoverWidth > window.innerWidth - 8) {
+        left = window.innerWidth - popoverWidth - 8;
+      }
+
+      const player = document.getElementById('audio-player');
+      let top;
+      if (player) {
+        const playerRect = player.getBoundingClientRect();
+        top = playerRect.top + (playerRect.height - popoverHeight) / 2;
+      } else {
+        top = linkRect.top + linkRect.height / 2 - popoverHeight / 2;
       }
 
       popover.style.left = left + 'px';
-      popover.style.top = (linkRect.top + linkRect.height / 2 - size / 2) + 'px';
+      popover.style.top = top + 'px';
       popover.classList.add('visible');
     };
 

@@ -4,6 +4,7 @@
 <%= partial("base_styles") %>
 
     .loader-container {
+      height: 92px;
       min-height: 92px;
       gap: 0;
     }
@@ -60,6 +61,8 @@
       border-radius: 0.5rem;
       box-shadow: 0 2px 12px rgba(0,0,0,0.2);
       display: flex;
+      height: 92px;
+      min-height: 92px;
     }
 
     .player-content {
@@ -172,6 +175,8 @@
       z-index: 1;
       display: flex;
       align-items: center;
+      min-width: 92px;
+      min-height: 92px;
     }
 
     .cover-loading-overlay {
@@ -208,7 +213,6 @@
     .player-track-info {
       flex: 1;
       min-width: 0;
-      overflow: hidden;
     }
 
     .player-track-title {
@@ -217,8 +221,7 @@
       color: #3a3a3a;
       display: flex;
       align-items: center;
-      min-width: 0;
-      max-width: 100%;
+      max-width: calc(100% - 180px);
     }
 
     .player-track-title a {
@@ -228,7 +231,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      min-width: 0;
     }
 
     .player-track-title a:hover {
@@ -239,6 +241,9 @@
       font-size: 0.95rem;
       color: #3a3a3a;
       line-height: 1.4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .player-track-subtitle .player-link {
@@ -262,6 +267,7 @@
       white-space: nowrap;
       vertical-align: middle;
       margin-left: 2px;
+      margin-top: -2px;
       position: relative;
     }
 
@@ -276,6 +282,14 @@
     .tag-badge[data-tooltip]:hover .tag-tooltip {
       opacity: 1;
       visibility: visible;
+    }
+
+    .player-track-subtitle:has(.tag-badge:hover) {
+      overflow: visible;
+    }
+
+    .player-track-info:has(.tag-badge:hover) {
+      overflow: visible;
     }
 
     .tag-tooltip {
@@ -763,6 +777,7 @@
         trackData = newTrackData;
         
         updateTrackDisplay(newTrackData);
+        initMapPopovers();
         updateWaveformImage(track.waveform_image_url);
         updateNavigationButtons();
         
@@ -1041,7 +1056,7 @@
             </div>
             <div class="player-content">
               <div class="player-cover-art-container">
-                <img src="${escapeHtml(coverArtUrl)}" alt="" class="player-cover-art" id="cover-img" />
+                <img src="${escapeHtml(coverArtUrl)}" alt="" class="player-cover-art" id="cover-img" onerror="this.style.display='none'" />
                 <div class="cover-loading-overlay" id="cover-loading-overlay"><div class="cover-loading-spinner"></div></div>${coverPlayButton}
               </div>
               <div class="player-main">
