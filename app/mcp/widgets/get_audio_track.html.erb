@@ -4,7 +4,7 @@
 <%= partial("base_styles") %>
 
     .loader-container {
-      min-height: 96px;
+      min-height: 92px;
       gap: 0;
     }
 
@@ -157,7 +157,7 @@
       align-items: center;
       gap: 8px;
       flex: 1;
-      padding: 8px 12px 4px 0;
+      padding: 6px 10px 2px 0;
       position: relative;
     }
 
@@ -168,10 +168,41 @@
     .player-cover-art-container {
       position: relative;
       flex-shrink: 0;
-      padding: 10px;
+      padding: 8px;
       z-index: 1;
       display: flex;
       align-items: center;
+    }
+
+    .cover-loading-overlay {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 76px;
+      height: 76px;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+    }
+
+    .cover-loading-overlay.visible {
+      display: flex;
+    }
+
+    .cover-loading-spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: cover-spin 0.6s linear infinite;
+    }
+
+    @keyframes cover-spin {
+      to { transform: rotate(360deg); }
     }
 
     .player-track-info {
@@ -183,17 +214,21 @@
       font-size: 1.5rem;
       font-weight: 700;
       color: #3a3a3a;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
       display: flex;
       align-items: center;
+      min-width: 0;
+      overflow: hidden;
     }
 
     .player-track-title a {
       color: inherit;
       text-decoration: none;
       transition: color 0.15s;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+      min-width: 0;
     }
 
     .player-track-title a:hover {
@@ -294,6 +329,32 @@
       pointer-events: auto;
     }
 
+    .skip-btn {
+      background: none;
+      border: none;
+      padding: 6px;
+      cursor: pointer;
+      color: #6d6f71;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s;
+    }
+
+    .skip-btn:hover:not(:disabled) {
+      color: #03BBF2;
+    }
+
+    .skip-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .skip-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
     .scrub-btn {
       background: none;
       border: none;
@@ -359,8 +420,8 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      height: 34px;
-      padding: 0 12px 4px 0;
+      height: 32px;
+      padding: 0 10px 2px 0;
     }
 
     .no-audio-message {
@@ -455,8 +516,11 @@
 
       let audioPlayer = null;
       let isPlaying = false;
-      let isLoading = false;
+      let isAudioLoading = false;
+      let isNavigating = false;
       let trackData = null;
+      let showData = null;
+      let currentTrackIndex = 0;
 
       function initSingleTrackPlayer(track) {
         if (!track.mp3_url) return;
@@ -470,6 +534,8 @@
         const scrubber = document.getElementById('scrubber');
         const scrubBackBtn = document.getElementById('scrub-back-btn');
         const scrubForwardBtn = document.getElementById('scrub-forward-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
 
         audioPlayer.addEventListener('timeupdate', updateProgress);
         audioPlayer.addEventListener('loadedmetadata', onMetadataLoaded);
@@ -486,12 +552,15 @@
         });
         audioPlayer.addEventListener('waiting', () => { showLoadingSpinner(true); });
         audioPlayer.addEventListener('canplay', () => { showLoadingSpinner(false); });
+        audioPlayer.addEventListener('ended', onTrackEnded);
         audioPlayer.addEventListener('error', (e) => console.error('Audio error:', e));
 
         playPauseBtn?.addEventListener('click', togglePlayPause);
         scrubBackBtn?.addEventListener('click', () => scrub(-10));
         scrubForwardBtn?.addEventListener('click', () => scrub(10));
         scrubber?.addEventListener('click', onScrubberClick);
+        prevBtn?.addEventListener('click', playPrev);
+        nextBtn?.addEventListener('click', playNext);
 
         updateWaveformImage(track.waveform_image_url);
 
@@ -501,6 +570,7 @@
 
         initCoverPlayButton();
         initMediaSession(track);
+        updateNavigationButtons();
       }
 
       function updateWaveformImage(waveformUrl) {
@@ -574,7 +644,7 @@
         const playIcon = document.getElementById('play-icon');
         const pauseIcon = document.getElementById('pause-icon');
         if (playIcon && pauseIcon) {
-          if (isLoading) {
+          if (isAudioLoading && !isPlaying) {
             playIcon.style.display = 'none';
             pauseIcon.style.display = 'none';
           } else {
@@ -628,17 +698,239 @@
 
       function showLoadingSpinner(show) {
         const spinner = document.getElementById('loading-spinner');
-        const playIcon = document.getElementById('play-icon');
-        const pauseIcon = document.getElementById('pause-icon');
         
-        isLoading = show;
-        if (spinner) spinner.style.display = show ? 'block' : 'none';
+        isAudioLoading = show;
         
-        if (show) {
-          if (playIcon) playIcon.style.display = 'none';
-          if (pauseIcon) pauseIcon.style.display = 'none';
+        if (show && !isPlaying) {
+          if (spinner) spinner.style.display = 'block';
         } else {
-          updatePlayPauseIcon();
+          if (spinner) spinner.style.display = 'none';
+        }
+        
+        updatePlayPauseIcon();
+      }
+
+      function showCoverLoadingOverlay(show) {
+        const overlay = document.getElementById('cover-loading-overlay');
+        if (overlay) {
+          overlay.classList.toggle('visible', show);
+        }
+      }
+
+      function preloadImage(url) {
+        return new Promise((resolve) => {
+          if (!url) {
+            resolve();
+            return;
+          }
+          const img = new Image();
+          img.onload = () => resolve();
+          img.onerror = () => resolve();
+          img.src = url;
+        });
+      }
+
+      function updateNavigationButtons() {
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        if (prevBtn) prevBtn.disabled = false;
+        if (nextBtn) nextBtn.disabled = false;
+      }
+
+      function playTrackAtIndex(index) {
+        if (!showData?.tracks || index < 0 || index >= showData.tracks.length) return;
+        
+        currentTrackIndex = index;
+        const track = showData.tracks[index];
+        
+        const newTrackData = {
+          title: track.title,
+          slug: track.slug,
+          url: track.url,
+          date: showData.date,
+          show_url: showData.show_url,
+          mp3_url: track.mp3_url,
+          duration_ms: track.duration_ms,
+          waveform_image_url: track.waveform_image_url,
+          venue: showData.venue,
+          venue_slug: showData.venue_slug,
+          location: showData.location,
+          map_snapshot_url: showData.map_snapshot_url,
+          cover_art_url: showData.cover_art_url,
+          tags: track.tags || []
+        };
+        
+        trackData = newTrackData;
+        
+        updateTrackDisplay(newTrackData);
+        updateWaveformImage(track.waveform_image_url);
+        updateNavigationButtons();
+        
+        if (audioPlayer) {
+          audioPlayer.pause();
+        }
+        
+        if (track.mp3_url) {
+          audioPlayer = new Audio();
+          audioPlayer.preload = 'metadata';
+          audioPlayer.src = track.mp3_url;
+          
+          audioPlayer.addEventListener('timeupdate', updateProgress);
+          audioPlayer.addEventListener('loadedmetadata', onMetadataLoaded);
+          audioPlayer.addEventListener('play', () => { 
+            isPlaying = true; 
+            updatePlayPauseIcon();
+            updateMediaSessionPlaybackState();
+          });
+          audioPlayer.addEventListener('pause', () => { 
+            isPlaying = false; 
+            updatePlayPauseIcon();
+            updateMediaSessionPlaybackState();
+          });
+          audioPlayer.addEventListener('waiting', () => { showLoadingSpinner(true); });
+          audioPlayer.addEventListener('canplay', () => { showLoadingSpinner(false); });
+          audioPlayer.addEventListener('ended', onTrackEnded);
+          audioPlayer.addEventListener('error', (e) => console.error('Audio error:', e));
+          
+          audioPlayer.play().catch(e => console.log('Play blocked:', e));
+          initMediaSession(newTrackData);
+        }
+      }
+
+      function updateTrackDisplay(track) {
+        const titleEl = document.querySelector('.player-track-title a');
+        if (titleEl) {
+          titleEl.textContent = track.title;
+          titleEl.href = track.url;
+        }
+        
+        const subtitleEl = document.querySelector('.player-track-subtitle');
+        if (subtitleEl) {
+          const mapSnapshotUrl = track.map_snapshot_url || '';
+          const venueLocationHtml = mapSnapshotUrl
+            ? `<span class="location-link-wrapper"><a href="https://phish.in/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(mapSnapshotUrl)}" alt="" /></span></span>`
+            : `<a href="https://phish.in/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
+          subtitleEl.innerHTML = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a> · ${venueLocationHtml}`;
+        }
+      }
+
+      function onTrackEnded() {
+        playNext();
+      }
+
+      async function playPrev() {
+        if (showData?.tracks && currentTrackIndex > 0) {
+          playTrackAtIndex(currentTrackIndex - 1);
+        } else {
+          await requestAdjacentShow('prev');
+        }
+      }
+
+      async function playNext() {
+        if (showData?.tracks && currentTrackIndex < showData.tracks.length - 1) {
+          playTrackAtIndex(currentTrackIndex + 1);
+        } else {
+          await requestAdjacentShow('next');
+        }
+      }
+
+      async function requestAdjacentShow(direction) {
+        if (!showData?.date) return;
+        
+        isNavigating = true;
+        showCoverLoadingOverlay(true);
+        
+        try {
+          const currentShowResponse = await fetch(`https://phish.in/api/v2/shows/${showData.date}`);
+          if (!currentShowResponse.ok) throw new Error('Failed to fetch current show');
+          
+          const currentShow = await currentShowResponse.json();
+          const adjacentDate = direction === 'next' 
+            ? currentShow.next_show_date_with_audio 
+            : currentShow.previous_show_date_with_audio;
+          
+          if (!adjacentDate) throw new Error('No adjacent show found');
+          
+          const adjacentShowResponse = await fetch(`https://phish.in/api/v2/shows/${adjacentDate}`);
+          if (!adjacentShowResponse.ok) throw new Error('Failed to fetch adjacent show');
+          
+          const adjacentShow = await adjacentShowResponse.json();
+          
+          const newShowData = {
+            date: adjacentShow.date,
+            show_url: `https://phish.in/${adjacentShow.date}`,
+            venue: adjacentShow.venue_name,
+            venue_slug: adjacentShow.venue?.slug,
+            location: adjacentShow.venue ? `${adjacentShow.venue.city}, ${adjacentShow.venue.state || adjacentShow.venue.country}` : '',
+            map_snapshot_url: null,
+            cover_art_url: adjacentShow.cover_art_urls?.medium || adjacentShow.cover_art_urls?.small,
+            duration_ms: adjacentShow.duration,
+            tracks: (adjacentShow.tracks || []).filter(t => t.mp3_url).map(t => ({
+              id: t.id,
+              title: t.title,
+              slug: t.slug,
+              url: `https://phish.in/${adjacentShow.date}/${t.slug}`,
+              set: t.set_name,
+              position: t.position,
+              duration_ms: t.duration,
+              mp3_url: t.mp3_url,
+              waveform_image_url: t.waveform_image_url,
+              tags: (t.tags || []).map(tag => ({ name: tag.name, slug: tag.slug, description: tag.description, notes: tag.notes }))
+            }))
+          };
+          
+          if (newShowData.cover_art_url) {
+            await preloadImage(newShowData.cover_art_url);
+          }
+          
+          if (audioPlayer) {
+            audioPlayer.pause();
+            audioPlayer = null;
+          }
+          isPlaying = false;
+          isAudioLoading = false;
+          
+          showData = newShowData;
+          currentTrackIndex = direction === 'next' ? 0 : newShowData.tracks.length - 1;
+          
+          const track = newShowData.tracks[currentTrackIndex];
+          if (!track) throw new Error('No playable tracks in adjacent show');
+          
+          const newTrackData = {
+            title: track.title,
+            slug: track.slug,
+            url: track.url,
+            date: newShowData.date,
+            show_url: newShowData.show_url,
+            mp3_url: track.mp3_url,
+            duration_ms: track.duration_ms,
+            waveform_image_url: track.waveform_image_url,
+            venue: newShowData.venue,
+            venue_slug: newShowData.venue_slug,
+            location: newShowData.location,
+            map_snapshot_url: newShowData.map_snapshot_url,
+            cover_art_url: newShowData.cover_art_url,
+            tags: track.tags || []
+          };
+          
+          trackData = newTrackData;
+          
+          const root = document.getElementById('root');
+          root.innerHTML = renderPlayer(newTrackData);
+          setupBackgroundBlur(newTrackData.cover_art_url);
+          initMapPopovers();
+          initShareButton(() => trackData ? `https://phish.in/${trackData.date}/${trackData.slug}` : null);
+          
+          if (track.mp3_url) {
+            initSingleTrackPlayer(newTrackData);
+            audioPlayer?.play().catch(e => console.log('Play blocked:', e));
+          }
+          
+        } catch (e) {
+          console.error('Error fetching adjacent show:', e);
+        } finally {
+          isNavigating = false;
+          showCoverLoadingOverlay(false);
         }
       }
 
@@ -666,8 +958,8 @@
 
         navigator.mediaSession.setActionHandler('play', togglePlayPause);
         navigator.mediaSession.setActionHandler('pause', togglePlayPause);
-        navigator.mediaSession.setActionHandler('previoustrack', null);
-        navigator.mediaSession.setActionHandler('nexttrack', null);
+        navigator.mediaSession.setActionHandler('previoustrack', playPrev);
+        navigator.mediaSession.setActionHandler('nexttrack', playNext);
 
         if (!isIOSDevice()) {
           navigator.mediaSession.setActionHandler('seekbackward', () => scrub(-10));
@@ -711,6 +1003,9 @@
 
         const playerControls = hasAudio ? `
                 <div class="player-controls">
+                  <button class="skip-btn" id="prev-btn" title="Previous track">
+                    <svg viewBox="0 0 512 512" fill="currentColor"><path d="M459.5 440.6c9.5 7.9 22.8 9.7 34.1 4.4s18.4-16.6 18.4-29V96c0-12.4-7.2-23.7-18.4-29s-24.5-3.6-34.1 4.4L288 214.3V96c0-12.4-7.2-23.7-18.4-29s-24.5-3.6-34.1 4.4l-192 160c-7.3 6.1-11.5 15.1-11.5 24.6s4.2 18.5 11.5 24.6l192 160c9.5 7.9 22.8 9.7 34.1 4.4s18.4-16.6 18.4-29V297.7l171.5 142.9z"/></svg>
+                  </button>
                   <button class="scrub-btn scrub-back" id="scrub-back-btn" disabled title="Back 10 seconds">
                     <svg viewBox="0 0 512 512" fill="currentColor"><path d="M48.5 224H40c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2L98.6 96.6c87.6-86.5 228.7-86.2 315.8 1c87.5 87.5 87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3c-62.2-62.2-162.7-62.5-225.3-1L185 183c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H48.5z"/></svg>
                   </button>
@@ -721,6 +1016,9 @@
                   </button>
                   <button class="scrub-btn scrub-forward" id="scrub-forward-btn" disabled title="Forward 10 seconds">
                     <svg viewBox="0 0 512 512" fill="currentColor"><path d="M463.5 224H472c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1c-87.5 87.5-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8h119.5z"/></svg>
+                  </button>
+                  <button class="skip-btn" id="next-btn" title="Next track">
+                    <svg viewBox="0 0 512 512" fill="currentColor"><path d="M52.5 440.6c-9.5 7.9-22.8 9.7-34.1 4.4S0 428.4 0 416V96C0 83.6 7.2 72.3 18.4 67s24.5-3.6 34.1 4.4L224 214.3V96c0-12.4 7.2-23.7 18.4-29s24.5-3.6 34.1 4.4l192 160c7.3 6.1 11.5 15.1 11.5 24.6s-4.2 18.5-11.5 24.6l-192 160c-9.5 7.9-22.8 9.7-34.1 4.4s-18.4-16.6-18.4-29V297.7L52.5 440.6z"/></svg>
                   </button>
                 </div>` : '';
 
@@ -743,7 +1041,8 @@
             </div>
             <div class="player-content">
               <div class="player-cover-art-container">
-                <img src="${escapeHtml(coverArtUrl)}" alt="" class="player-cover-art" id="cover-img" />${coverPlayButton}
+                <img src="${escapeHtml(coverArtUrl)}" alt="" class="player-cover-art" id="cover-img" />
+                <div class="cover-loading-overlay" id="cover-loading-overlay"><div class="cover-loading-spinner"></div></div>${coverPlayButton}
               </div>
               <div class="player-main">
                 <div class="player-top-row">
@@ -762,26 +1061,61 @@
       function isDataComplete(data) {
         if (!data) return false;
         if (data.error) return true;
-        return data.title && data.date;
+        if (data.title && data.date) return true;
+        if (data.show?.tracks?.length > 0) return true;
+        return false;
+      }
+
+      function extractTrackData(data) {
+        if (data.title) return data;
+        
+        if (data.show?.tracks?.length > 0) {
+          showData = data.show;
+          currentTrackIndex = data.current_track_index || 0;
+          
+          const track = data.show.tracks[currentTrackIndex];
+          if (!track) return null;
+          
+          return {
+            title: track.title,
+            slug: track.slug,
+            url: track.url,
+            date: data.show.date,
+            show_url: data.show.show_url,
+            mp3_url: track.mp3_url,
+            duration_ms: track.duration_ms,
+            waveform_image_url: track.waveform_image_url,
+            venue: data.show.venue,
+            venue_slug: data.show.venue_slug,
+            location: data.show.location,
+            map_snapshot_url: data.show.map_snapshot_url,
+            cover_art_url: data.show.cover_art_url,
+            tags: track.tags || []
+          };
+        }
+        
+        return null;
       }
 
       async function render() {
         const root = document.getElementById('root');
 
         try {
-          const data = await waitForData(isDataComplete);
+          const rawData = await waitForData(isDataComplete);
 
-          if (!data) {
+          if (!rawData) {
             root.innerHTML = renderNotFound('No track data available', 'Track');
             return;
           }
 
-          if (data.error) {
-            root.innerHTML = renderNotFound(data.message || 'Track not found', 'Track');
+          if (rawData.error) {
+            root.innerHTML = renderNotFound(rawData.message || 'Track not found', 'Track');
             return;
           }
 
-          if (data.title) {
+          const data = extractTrackData(rawData);
+          
+          if (data) {
             root.innerHTML = renderPlayer(data);
             setupBackgroundBlur(data.cover_art_url);
             initMapPopovers();
@@ -797,10 +1131,35 @@
         }
       }
 
-      window.addEventListener('message', (event) => {
-        if (event.data?.type === 'tool_output' || event.data?.structuredContent || event.data?.title) {
-          window._widgetData = event.data.structuredContent || event.data;
-          render();
+      window.addEventListener('message', async (event) => {
+        if (event.data?.type === 'tool_output' || event.data?.structuredContent || event.data?.title || event.data?.show) {
+          const newData = event.data.structuredContent || event.data;
+          const newCoverArtUrl = newData?.show?.cover_art_url || newData?.cover_art_url;
+          const currentCoverImg = document.getElementById('cover-img');
+          const currentCoverArtUrl = currentCoverImg?.src;
+          
+          const isShowChange = newCoverArtUrl && currentCoverArtUrl && newCoverArtUrl !== currentCoverArtUrl;
+          
+          if (isShowChange) {
+            isNavigating = true;
+            showCoverLoadingOverlay(true);
+            await preloadImage(newCoverArtUrl);
+            
+            if (audioPlayer) {
+              audioPlayer.pause();
+              audioPlayer = null;
+            }
+            isPlaying = false;
+            isAudioLoading = false;
+          }
+          
+          window._widgetData = newData;
+          await render();
+          
+          if (isShowChange) {
+            isNavigating = false;
+            showCoverLoadingOverlay(false);
+          }
         }
       });
 
