@@ -481,7 +481,6 @@
       background-size: 100% 100%;
       background-repeat: no-repeat;
       background-position: center;
-      filter: brightness(0.6);
       margin-left: -6px;
     }
 
@@ -498,7 +497,6 @@
       -webkit-mask-size: 100% 100%;
       -webkit-mask-repeat: no-repeat;
       -webkit-mask-position: center;
-      filter: brightness(1.18);
     }
 
     .play-pause-btn {
@@ -622,16 +620,9 @@
           if (scrubForwardBtn) scrubForwardBtn.disabled = currentTime >= duration - 10;
         };
 
-        gaplessPlayer.onloadstart = () => {
-          showLoadingSpinner(true);
-        };
-
-        gaplessPlayer.onload = () => {
-          showLoadingSpinner(false);
-        };
-
         gaplessPlayer.onplay = () => {
           isPlaying = true;
+          showLoadingSpinner(false);
           updatePlayPauseIcon();
           fadeOutCoverPlayButton();
           updateMediaSessionPlaybackState();
@@ -779,6 +770,9 @@
 
       function togglePlayPause() {
         if (!gaplessPlayer) return;
+        if (!isPlaying) {
+          showLoadingSpinner(true);
+        }
         gaplessPlayer.playpause();
       }
 
@@ -813,6 +807,7 @@
           coverPlayBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             if (!isPlaying) {
+              showLoadingSpinner(true);
               gaplessPlayer.play();
             }
           });
@@ -851,8 +846,30 @@
 
         const rect = e.currentTarget.getBoundingClientRect();
         const x = e.clientX - rect.left;
-        const percent = x / rect.width;
-        gaplessPlayer.setPosition(percent * duration * 1000);
+        const percent = Math.max(0, Math.min(1, x / rect.width));
+        const newTime = percent * duration;
+
+        const progress = percent * 100;
+        const progressOverlay = document.getElementById('progress-overlay');
+        if (progressOverlay) {
+          progressOverlay.style.background = `linear-gradient(to right, #03BBF2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
+        }
+
+        const elapsedEl = document.getElementById('elapsed-time');
+        const remainingEl = document.getElementById('remaining-time');
+        if (elapsedEl) elapsedEl.textContent = formatTime(newTime);
+        if (remainingEl) remainingEl.textContent = `-${formatTime(duration - newTime)}`;
+
+        const scrubForwardBtn = document.getElementById('scrub-forward-btn');
+        if (scrubForwardBtn) scrubForwardBtn.disabled = newTime >= duration - 10;
+
+        gaplessPlayer.setPosition(newTime * 1000);
+
+        if (!isPlaying) {
+          showLoadingSpinner(true);
+          gaplessPlayer.play();
+          fadeOutCoverPlayButton();
+        }
       }
 
       function showLoadingSpinner(show) {
@@ -910,6 +927,7 @@
         
         const gaplessIndex = findGaplessIndex(index);
         if (gaplessIndex >= 0) {
+          showLoadingSpinner(true);
           gaplessPlayer.gotoTrack(gaplessIndex, true);
         }
       }
@@ -1018,6 +1036,7 @@
           
           if (track.mp3_url) {
             initGaplessPlayer(trackData);
+            showLoadingSpinner(true);
             gaplessPlayer?.play();
           }
           
@@ -1144,7 +1163,6 @@
                 </div>${bottomRow}
               </div>
             </div>
-            ${renderToast()}
           </div>
         `;
       }
