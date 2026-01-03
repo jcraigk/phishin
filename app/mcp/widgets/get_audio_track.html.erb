@@ -170,6 +170,7 @@
       min-width: 0;
       padding: 6px 10px 2px 0;
       position: relative;
+      overflow: hidden;
     }
 
     .player-top-row:has(.tag-badge:hover) {
@@ -228,21 +229,15 @@
       font-size: 1.5rem;
       font-weight: 700;
       color: #3a3a3a;
-      display: flex;
-      align-items: center;
-      min-width: 0;
+      white-space: nowrap;
       overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .player-track-title a {
       color: inherit;
       text-decoration: none;
       transition: color 0.15s;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      flex: 1;
-      min-width: 0;
     }
 
     .player-track-title a:hover {
@@ -348,11 +343,17 @@
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s ease;
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
     }
 
     .player-controls.visible {
       opacity: 1;
       pointer-events: auto;
+      position: static;
+      transform: none;
     }
 
     .skip-btn {
@@ -1014,7 +1015,6 @@
           root.innerHTML = renderPlayer(trackData);
           setupBackgroundBlur(trackData.cover_art_url);
           initMapPopovers();
-          initShareButton(() => trackData ? `${baseUrl}/${trackData.date}/${trackData.slug}` : null);
           
           if (track.mp3_url) {
             initGaplessPlayer(trackData);
@@ -1138,7 +1138,7 @@
               <div class="player-main">
                 <div class="player-top-row">
                   <div class="player-track-info">
-                    <div class="player-track-title"><a href="${escapeHtml(track.url)}" target="_blank" rel="noopener">${escapeHtml(track.title)}</a>${renderShareButton()}</div>
+                    <div class="player-track-title"><a href="${escapeHtml(track.url)}" target="_blank" rel="noopener">${escapeHtml(track.title)}</a></div>
                     <div class="player-track-subtitle">${subtitleHtml}</div>${noAudioMessage}
                   </div>${playerControls}
                 </div>${bottomRow}
@@ -1211,7 +1211,6 @@
             root.innerHTML = renderPlayer(data);
             setupBackgroundBlur(data.cover_art_url);
             initMapPopovers();
-            initShareButton(() => trackData ? `${baseUrl}/${trackData.date}/${trackData.slug}` : null);
             if (data.mp3_url) {
               initGaplessPlayer(data);
             }
