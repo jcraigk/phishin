@@ -656,7 +656,7 @@
         const playIcon = document.getElementById('play-icon');
         const pauseIcon = document.getElementById('pause-icon');
         if (playIcon && pauseIcon) {
-          if (isAudioLoading && !isPlaying) {
+          if (isAudioLoading) {
             playIcon.style.display = 'none';
             pauseIcon.style.display = 'none';
           } else {
@@ -713,11 +713,7 @@
         
         isAudioLoading = show;
         
-        if (show && !isPlaying) {
-          if (spinner) spinner.style.display = 'block';
-        } else {
-          if (spinner) spinner.style.display = 'none';
-        }
+        if (spinner) spinner.style.display = show ? 'block' : 'none';
         
         updatePlayPauseIcon();
       }

@@ -86,7 +86,12 @@ class WidgetCompiler
 
     def gapless5_script
       path = Rails.root.join("node_modules", "@regosen", "gapless-5", "gapless5.js")
-      File.read(path)
+      script = File.read(path)
+      # Remove iOS silent audio hack that triggers CSP violations - we handle user interaction ourselves
+      script.gsub(
+        /const silenceWavData = .*?stubAudio\.load\(\);/m,
+        "// iOS silent audio hack removed for CSP compatibility"
+      )
     end
   end
 end
