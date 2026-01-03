@@ -575,7 +575,7 @@
         return showData.tracks.findIndex(t => t.mp3_url === track.mp3_url);
       }
 
-      function initGaplessPlayer(initialTrack, startingIndex = 0) {
+      function initGaplessPlayer(initialTrack, startingIndex = 0, autoPlay = false) {
         if (!initialTrack?.mp3_url) return;
 
         trackData = initialTrack;
@@ -716,10 +716,12 @@
         initCoverPlayButton();
         initMediaSession(initialTrack);
         updateNavigationButtons();
+        updateWaveformImage(initialTrack.waveform_image_url);
 
-        requestAnimationFrame(() => {
-          updateWaveformImage(initialTrack.waveform_image_url);
-        });
+        if (autoPlay && gaplessPlayer) {
+          showLoadingSpinner(true);
+          gaplessPlayer.play();
+        }
       }
 
       function updateCurrentTrackData(track) {
@@ -1009,7 +1011,6 @@
         
         isNavigating = true;
         
-        // 1. Stop current audio and show loader immediately
         if (gaplessPlayer) {
           gaplessPlayer.stop();
           gaplessPlayer = null;
@@ -1024,7 +1025,6 @@
         console.log('[NAV] Starting adjacent show load:', direction);
         
         try {
-          // 2. Fetch current show to get adjacent date
           const currentShowResponse = await fetch(`${baseUrl}/api/v2/shows/${showData.date}`);
           if (!currentShowResponse.ok) throw new Error('Failed to fetch current show');
           const currentShow = await currentShowResponse.json();
@@ -1035,12 +1035,10 @@
           if (!adjacentDate) throw new Error('No adjacent show found');
           console.log('[NAV] Adjacent date:', adjacentDate);
           
-          // 3. Fetch adjacent show data
           const adjacentShowResponse = await fetch(`${baseUrl}/api/v2/shows/${adjacentDate}`);
           if (!adjacentShowResponse.ok) throw new Error('Failed to fetch adjacent show');
           const adjacentShow = await adjacentShowResponse.json();
           
-          // 4. Build new show data
           const newShowData = {
             date: adjacentShow.date,
             show_url: `${baseUrl}/${adjacentShow.date}`,
@@ -1068,47 +1066,21 @@
           const targetTrack = newShowData.tracks[targetTrackIndex];
           if (!targetTrack) throw new Error('No playable tracks in adjacent show');
           
-          // 5. Update state (skip preloading - let DOM handle it)
           showData = newShowData;
           currentTrackIndex = targetTrackIndex;
           updateCurrentTrackData(targetTrack);
           
-          // 6. Render player - images will load naturally via DOM
-          root.innerHTML = renderPlayer(trackData);
+          const gaplessIndex = findGaplessIndex(currentTrackIndex);
+          await initAudioOnly(trackData, gaplessIndex);
           
-          // 7. Set up background blur to apply when cover loads
-          const coverImg = document.getElementById('cover-img');
-          const bgEl = document.getElementById('bg-blur');
+          root.innerHTML = renderPlayerPlaying(trackData);
           
-          const applyBlur = () => {
-            if (bgEl && trackData.cover_art_url) {
-              bgEl.style.backgroundImage = `url("${trackData.cover_art_url}")`;
-              const player = document.getElementById('audio-player');
-              if (player) {
-                player.style.setProperty('--player-bg-image', `url("${trackData.cover_art_url}")`);
-              }
-            }
-          };
-          
-          if (coverImg) {
-            if (coverImg.complete && coverImg.naturalWidth > 0) {
-              applyBlur();
-            } else {
-              coverImg.onload = applyBlur;
-            }
-          }
-          
-          // 8. Apply waveform (will load via updateWaveformImage's Image object)
-          updateWaveformImage(trackData.waveform_image_url);
-          
+          setupBackgroundBlur(trackData.cover_art_url);
           initMapPopovers();
-          
-          // 9. Init audio player (don't auto-play to avoid connection contention)
-          if (targetTrack.mp3_url) {
-            const gaplessIndex = findGaplessIndex(currentTrackIndex);
-            initGaplessPlayer(trackData, gaplessIndex);
-            // Don't auto-play - let user click to avoid bandwidth contention with images
-          }
+          wireUpPlayerControls();
+          updateWaveformImage(targetTrack.waveform_image_url);
+          initMediaSession(trackData);
+          updateNavigationButtons();
           
           console.log('[NAV] TOTAL TIME:', (performance.now() - t0).toFixed(0), 'ms');
           
@@ -1116,10 +1088,247 @@
           console.error('[NAV] ERROR:', e);
           if (showData && trackData) {
             root.innerHTML = renderPlayer(trackData);
+            if (trackData.mp3_url) {
+              const gaplessIndex = findGaplessIndex(currentTrackIndex);
+              initGaplessPlayer(trackData, gaplessIndex, false);
+            }
           }
         } finally {
           isNavigating = false;
         }
+      }
+      
+      function initAudioOnly(track, startingIndex) {
+        return new Promise((resolve) => {
+          if (!track?.mp3_url) {
+            resolve();
+            return;
+          }
+          
+          trackData = track;
+          const tracksWithAudio = getTracksWithAudio();
+          if (tracksWithAudio.length === 0) {
+            resolve();
+            return;
+          }
+          
+          const trackUrls = tracksWithAudio.map(t => t.mp3_url);
+          const iosDevice = isIOSDevice();
+          const gaplessIndex = startingIndex >= 0 && startingIndex < tracksWithAudio.length ? startingIndex : 0;
+          
+          gaplessPlayer = new Gapless5({
+            tracks: trackUrls,
+            startingTrack: gaplessIndex,
+            loop: false,
+            singleMode: false,
+            useWebAudio: !iosDevice,
+            useHTML5Audio: true,
+            loadLimit: iosDevice ? 2 : 1,
+            volume: 1.0
+          });
+          
+          gaplessPlayer.ontimeupdate = (currentTimeMs, idx) => {
+            const currentTrack = tracksWithAudio[idx];
+            if (!currentTrack) return;
+            const currentTime = currentTimeMs / 1000;
+            const duration = currentTrack.duration_ms ? currentTrack.duration_ms / 1000 : 0;
+            if (duration <= 0) return;
+            const progress = (currentTime / duration) * 100;
+            const progressOverlay = document.getElementById('progress-overlay');
+            if (progressOverlay) {
+              progressOverlay.style.background = `linear-gradient(to right, #03BBF2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
+            }
+            const elapsedEl = document.getElementById('elapsed-time');
+            const remainingEl = document.getElementById('remaining-time');
+            if (elapsedEl) elapsedEl.textContent = formatTime(currentTime);
+            if (remainingEl) remainingEl.textContent = `-${formatTime(duration - currentTime)}`;
+            const scrubForwardBtn = document.getElementById('scrub-forward-btn');
+            if (scrubForwardBtn) scrubForwardBtn.disabled = currentTime >= duration - 10;
+          };
+          
+          gaplessPlayer.onplay = () => {
+            isPlaying = true;
+            isAudioLoading = false;
+            updatePlayPauseIcon();
+            updateMediaSessionPlaybackState();
+            resolve();
+          };
+          
+          gaplessPlayer.onpause = () => {
+            isPlaying = false;
+            updatePlayPauseIcon();
+            updateMediaSessionPlaybackState();
+          };
+          
+          gaplessPlayer.onstop = () => {
+            isPlaying = false;
+            isAudioLoading = false;
+            updatePlayPauseIcon();
+          };
+          
+          gaplessPlayer.onnext = () => {
+            const idx = gaplessPlayer.getIndex();
+            const originalIndex = findOriginalIndex(idx);
+            if (originalIndex >= 0) {
+              currentTrackIndex = originalIndex;
+              const nextTrack = showData.tracks[originalIndex];
+              updateCurrentTrackData(nextTrack);
+              updateTrackDisplay(trackData);
+              initMapPopovers();
+              updateWaveformImage(nextTrack.waveform_image_url);
+              updateNavigationButtons();
+              initMediaSession(trackData);
+            }
+          };
+          
+          gaplessPlayer.onprev = () => {
+            const idx = gaplessPlayer.getIndex();
+            const originalIndex = findOriginalIndex(idx);
+            if (originalIndex >= 0) {
+              currentTrackIndex = originalIndex;
+              const prevTrack = showData.tracks[originalIndex];
+              updateCurrentTrackData(prevTrack);
+              updateTrackDisplay(trackData);
+              initMapPopovers();
+              updateWaveformImage(prevTrack.waveform_image_url);
+              updateNavigationButtons();
+              initMediaSession(trackData);
+            }
+          };
+          
+          gaplessPlayer.onfinishedtrack = () => {
+            const idx = gaplessPlayer.getIndex();
+            const tracks = getTracksWithAudio();
+            if (idx >= tracks.length - 1) {
+              playNext();
+            }
+          };
+          
+          gaplessPlayer.onfinishedall = () => {
+            playNext();
+          };
+          
+          gaplessPlayer.onerror = (trackPath, error) => {
+            console.error('Audio error:', trackPath, error);
+            resolve();
+          };
+          
+          isAudioLoading = true;
+          gaplessPlayer.play();
+        });
+      }
+      
+      function wireUpPlayerControls() {
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const scrubber = document.getElementById('scrubber');
+        const scrubBackBtn = document.getElementById('scrub-back-btn');
+        const scrubForwardBtn = document.getElementById('scrub-forward-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        
+        playPauseBtn?.addEventListener('click', togglePlayPause);
+        scrubBackBtn?.addEventListener('click', () => scrub(-10));
+        scrubForwardBtn?.addEventListener('click', () => scrub(10));
+        scrubber?.addEventListener('click', onScrubberClick);
+        prevBtn?.addEventListener('click', playPrev);
+        nextBtn?.addEventListener('click', playNext);
+        
+        if (playPauseBtn) playPauseBtn.disabled = false;
+        if (scrubBackBtn) scrubBackBtn.disabled = false;
+        if (scrubForwardBtn) scrubForwardBtn.disabled = true;
+      }
+      
+      function applyPreloadedWaveform(waveformUrl) {
+        if (!waveformUrl) return;
+        const scrubber = document.getElementById('scrubber');
+        const progressOverlay = document.getElementById('progress-overlay');
+        if (scrubber) {
+          scrubber.style.backgroundImage = `url(${waveformUrl})`;
+          scrubber.classList.add('loaded');
+        }
+        if (progressOverlay) {
+          progressOverlay.style.maskImage = `url(${waveformUrl})`;
+          progressOverlay.style.webkitMaskImage = `url(${waveformUrl})`;
+        }
+      }
+      
+      function renderPlayerPlaying(track) {
+        const coverArtUrl = track.cover_art_url || '';
+        const tags = track.tags || [];
+        const hasAudio = !!track.mp3_url;
+        const mapSnapshotUrl = track.map_snapshot_url || '';
+
+        const venueLocationHtml = mapSnapshotUrl
+          ? `<span class="location-link-wrapper"><a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(mapSnapshotUrl)}" alt="" /></span></span>`
+          : `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
+
+        let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a> · ${venueLocationHtml}`;
+
+        if (tags.length > 0) {
+          subtitleHtml += ' · ' + tags.map(tag => {
+            const tooltipText = tag.notes || tag.description || '';
+            if (tooltipText) {
+              const truncated = tooltipText.length > 100 ? tooltipText.slice(0, 100).trim() + '...' : tooltipText;
+              return `<span class="tag-badge" data-tooltip><span class="tag-tooltip">${escapeHtml(truncated)}</span>${escapeHtml(tag.name)}</span>`;
+            }
+            return `<span class="tag-badge">${escapeHtml(tag.name)}</span>`;
+          }).join(' ');
+        }
+
+        const playerControls = hasAudio ? `
+                <div class="player-controls visible">
+                  <button class="skip-btn" id="prev-btn" title="Previous track">
+                    <svg viewBox="0 0 512 512" fill="currentColor"><path d="M459.5 440.6c9.5 7.9 22.8 9.7 34.1 4.4s18.4-16.6 18.4-29V96c0-12.4-7.2-23.7-18.4-29s-24.5-3.6-34.1 4.4L288 214.3V96c0-12.4-7.2-23.7-18.4-29s-24.5-3.6-34.1 4.4l-192 160c-7.3 6.1-11.5 15.1-11.5 24.6s4.2 18.5 11.5 24.6l192 160c9.5 7.9 22.8 9.7 34.1 4.4s18.4-16.6 18.4-29V297.7l171.5 142.9z"/></svg>
+                  </button>
+                  <button class="scrub-btn scrub-back" id="scrub-back-btn" disabled title="Back 10 seconds">
+                    <svg viewBox="0 0 512 512" fill="currentColor"><path d="M48.5 224H40c-13.3 0-24-10.7-24-24V72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2L98.6 96.6c87.6-86.5 228.7-86.2 315.8 1c87.5 87.5 87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3c-62.2-62.2-162.7-62.5-225.3-1L185 183c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8H48.5z"/></svg>
+                  </button>
+                  <button class="play-pause-btn" id="play-pause-btn" title="Pause">
+                    <svg class="play-icon" viewBox="0 0 384 512" fill="currentColor" id="play-icon" style="display:none"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg>
+                    <svg class="pause-icon" viewBox="0 0 320 512" fill="currentColor" id="pause-icon"><path d="M48 64C21.5 64 0 85.5 0 112V400c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H48zm192 0c-26.5 0-48 21.5-48 48V400c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H240z"/></svg>
+                    <div class="loading-spinner" id="loading-spinner" style="display:none"></div>
+                  </button>
+                  <button class="scrub-btn scrub-forward" id="scrub-forward-btn" disabled title="Forward 10 seconds">
+                    <svg viewBox="0 0 512 512" fill="currentColor"><path d="M463.5 224H472c13.3 0 24-10.7 24-24V72c0-9.7-5.8-18.5-14.8-22.2s-19.3-1.7-26.2 5.2L413.4 96.6c-87.6-86.5-228.7-86.2-315.8 1c-87.5 87.5-87.5 229.3 0 316.8s229.3 87.5 316.8 0c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0c-62.5 62.5-163.8 62.5-226.3 0s-62.5-163.8 0-226.3c62.2-62.2 162.7-62.5 225.3-1L327 183c-6.9 6.9-8.9 17.2-5.2 26.2s12.5 14.8 22.2 14.8h119.5z"/></svg>
+                  </button>
+                  <button class="skip-btn" id="next-btn" title="Next track">
+                    <svg viewBox="0 0 512 512" fill="currentColor"><path d="M52.5 440.6c-9.5 7.9-22.8 9.7-34.1 4.4S0 428.4 0 416V96C0 83.6 7.2 72.3 18.4 67s24.5-3.6 34.1 4.4L224 214.3V96c0-12.4 7.2-23.7 18.4-29s24.5-3.6 34.1 4.4l192 160c7.3 6.1 11.5 15.1 11.5 24.6s-4.2 18.5-11.5 24.6l-192 160c-9.5 7.9-22.8 9.7-34.1 4.4s-18.4-16.6-18.4-29V297.7L52.5 440.6z"/></svg>
+                  </button>
+                </div>` : '';
+
+        const noAudioMessage = hasAudio ? '' : `
+                  <div class="no-audio-message">No audio available</div>`;
+
+        const bottomRow = hasAudio ? `
+              <div class="player-bottom-row">
+                <span class="time-display" id="elapsed-time">0:00</span>
+                <div class="scrubber-container" id="scrubber">
+                  <div class="progress-overlay" id="progress-overlay"></div>
+                </div>
+                <span class="time-display remaining" id="remaining-time">-0:00</span>
+              </div>` : '';
+
+        return `
+          <div class="audio-player" id="audio-player">
+            <div class="blur-wrapper">
+              <div class="background-blur" id="bg-blur"></div>
+            </div>
+            <div class="player-content">
+              <div class="player-cover-art-container">
+                <img src="${escapeHtml(coverArtUrl)}" alt="" class="player-cover-art" id="cover-img" fetchpriority="high" loading="eager" onerror="this.style.display='none'" />
+                <div class="cover-loading-overlay" id="cover-loading-overlay"><div class="cover-loading-spinner"></div></div>
+              </div>
+              <div class="player-main">
+                <div class="player-top-row">
+                  <div class="player-track-info">
+                    <div class="player-track-title"><a href="${escapeHtml(track.url)}" target="_blank" rel="noopener">${escapeHtml(track.title)}</a></div>
+                    <div class="player-track-subtitle">${subtitleHtml}</div>${noAudioMessage}
+                  </div>${playerControls}
+                </div>${bottomRow}
+              </div>
+            </div>
+          </div>
+        `;
       }
 
       function initMediaSession(track) {
@@ -1303,10 +1512,9 @@
             root.innerHTML = renderPlayer(data);
             setupBackgroundBlur(data.cover_art_url);
             initMapPopovers();
-            updateWaveformImage(data.waveform_image_url);
             if (data.mp3_url) {
               const gaplessIndex = findGaplessIndex(currentTrackIndex);
-              initGaplessPlayer(data, gaplessIndex);
+              initGaplessPlayer(data, gaplessIndex, false);
             }
           } else {
             root.innerHTML = renderNotFound('Track not found', 'Track');
