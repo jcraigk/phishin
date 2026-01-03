@@ -88,10 +88,24 @@ class WidgetCompiler
       path = Rails.root.join("node_modules", "@regosen", "gapless-5", "gapless5.js")
       script = File.read(path)
       # Remove iOS silent audio hack that triggers CSP violations - we handle user interaction ourselves
-      script.gsub(
-        /const silenceWavData = .*?stubAudio\.load\(\);/m,
-        "// iOS silent audio hack removed for CSP compatibility"
-      )
+      # This removes the silenceWavData, playAllowed, stubAudio declarations and the onPlayAllowed function
+      script
+        .gsub(
+          /const silenceWavData = .*?stubAudio\.load\(\);/m,
+          "// iOS silent audio hack removed for CSP compatibility"
+        )
+        .gsub(
+          /this\.onPlayAllowed = \(\) => \{.*?\n  \};/m,
+          "this.onPlayAllowed = () => {}; // no-op for CSP compatibility"
+        )
+        .gsub(
+          /const onLoadedHTML5Metadata = \(\) => \{\n\s*endpos = audio\.duration/,
+          "const onLoadedHTML5Metadata = () => {\n    if (!audio) return;\n    endpos = audio.duration"
+        )
+        .gsub(
+          /const onLoadedHTML5Audio = \(\) => \{\n\s*if \(state !== Gapless5State\.Loading\)/,
+          "const onLoadedHTML5Audio = () => {\n    if (!audio) return;\n    if (state !== Gapless5State.Loading)"
+        )
     end
   end
 end

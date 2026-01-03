@@ -217,6 +217,7 @@
     .player-track-info {
       flex: 1;
       min-width: 0;
+      overflow: hidden;
     }
 
     .player-track-title {
@@ -225,7 +226,6 @@
       color: #3a3a3a;
       display: flex;
       align-items: center;
-      max-width: calc(100% - 180px);
     }
 
     .player-track-title a {
@@ -271,7 +271,7 @@
       white-space: nowrap;
       vertical-align: middle;
       margin-left: 2px;
-      margin-top: -2px;
+      margin-top: -4px;
       position: relative;
     }
 
@@ -469,7 +469,7 @@
       background-size: 100% 100%;
       background-repeat: no-repeat;
       background-position: center;
-      filter: brightness(0.85);
+      filter: brightness(0.6);
       margin-left: -6px;
     }
 
@@ -526,21 +526,163 @@
 <%= partial("base_scripts") %>
 <%= partial("map_popover_scripts") %>
 
-      let audioPlayer = null;
+      let gaplessPlayer = null;
       let isPlaying = false;
       let isAudioLoading = false;
       let isNavigating = false;
       let trackData = null;
       let showData = null;
       let currentTrackIndex = 0;
+      let baseUrl = 'https://phish.in';
 
-      function initSingleTrackPlayer(track) {
-        if (!track.mp3_url) return;
+      function isIOSDevice() {
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      }
 
-        trackData = track;
-        audioPlayer = new Audio();
-        audioPlayer.preload = 'metadata';
-        audioPlayer.src = track.mp3_url;
+      function getTracksWithAudio() {
+        if (!showData?.tracks) return [];
+        return showData.tracks.filter(t => t.mp3_url);
+      }
+
+      function findGaplessIndex(originalIndex) {
+        if (!showData?.tracks) return -1;
+        const track = showData.tracks[originalIndex];
+        if (!track?.mp3_url) return -1;
+        const tracksWithAudio = getTracksWithAudio();
+        return tracksWithAudio.findIndex(t => t.mp3_url === track.mp3_url);
+      }
+
+      function findOriginalIndex(gaplessIndex) {
+        const tracksWithAudio = getTracksWithAudio();
+        if (gaplessIndex < 0 || gaplessIndex >= tracksWithAudio.length) return -1;
+        const track = tracksWithAudio[gaplessIndex];
+        if (!showData?.tracks) return -1;
+        return showData.tracks.findIndex(t => t.mp3_url === track.mp3_url);
+      }
+
+      function initGaplessPlayer(initialTrack) {
+        if (!initialTrack?.mp3_url) return;
+
+        trackData = initialTrack;
+
+        const tracksWithAudio = getTracksWithAudio();
+        if (tracksWithAudio.length === 0) return;
+
+        const trackUrls = tracksWithAudio.map(t => t.mp3_url);
+        const iosDevice = isIOSDevice();
+
+        if (gaplessPlayer) {
+          gaplessPlayer.stop();
+          gaplessPlayer = null;
+        }
+
+        gaplessPlayer = new Gapless5({
+          tracks: trackUrls,
+          loop: false,
+          singleMode: false,
+          useWebAudio: !iosDevice,
+          useHTML5Audio: true,
+          loadLimit: iosDevice ? 2 : 1,
+          volume: 1.0
+        });
+
+        gaplessPlayer.ontimeupdate = (currentTimeMs, gaplessIndex) => {
+          const track = tracksWithAudio[gaplessIndex];
+          if (!track) return;
+
+          const currentTime = currentTimeMs / 1000;
+          const duration = track.duration_ms ? track.duration_ms / 1000 : 0;
+          if (duration <= 0) return;
+
+          const progress = (currentTime / duration) * 100;
+
+          const progressOverlay = document.getElementById('progress-overlay');
+          if (progressOverlay) {
+            progressOverlay.style.background = `linear-gradient(to right, #03BBF2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
+          }
+
+          const elapsedEl = document.getElementById('elapsed-time');
+          const remainingEl = document.getElementById('remaining-time');
+          if (elapsedEl) elapsedEl.textContent = formatTime(currentTime);
+          if (remainingEl) remainingEl.textContent = `-${formatTime(duration - currentTime)}`;
+
+          const scrubForwardBtn = document.getElementById('scrub-forward-btn');
+          if (scrubForwardBtn) scrubForwardBtn.disabled = currentTime >= duration - 10;
+        };
+
+        gaplessPlayer.onloadstart = () => {
+          showLoadingSpinner(true);
+        };
+
+        gaplessPlayer.onload = () => {
+          showLoadingSpinner(false);
+        };
+
+        gaplessPlayer.onplay = () => {
+          isPlaying = true;
+          updatePlayPauseIcon();
+          fadeOutCoverPlayButton();
+          updateMediaSessionPlaybackState();
+        };
+
+        gaplessPlayer.onpause = () => {
+          isPlaying = false;
+          updatePlayPauseIcon();
+          updateMediaSessionPlaybackState();
+        };
+
+        gaplessPlayer.onstop = () => {
+          isPlaying = false;
+          isAudioLoading = false;
+          updatePlayPauseIcon();
+        };
+
+        gaplessPlayer.onnext = () => {
+          const gaplessIndex = gaplessPlayer.getIndex();
+          const originalIndex = findOriginalIndex(gaplessIndex);
+          if (originalIndex >= 0) {
+            currentTrackIndex = originalIndex;
+            const track = showData.tracks[originalIndex];
+            updateCurrentTrackData(track);
+            updateTrackDisplay(trackData);
+            initMapPopovers();
+            updateWaveformImage(track.waveform_image_url);
+            updateNavigationButtons();
+            initMediaSession(trackData);
+          }
+        };
+
+        gaplessPlayer.onprev = () => {
+          const gaplessIndex = gaplessPlayer.getIndex();
+          const originalIndex = findOriginalIndex(gaplessIndex);
+          if (originalIndex >= 0) {
+            currentTrackIndex = originalIndex;
+            const track = showData.tracks[originalIndex];
+            updateCurrentTrackData(track);
+            updateTrackDisplay(trackData);
+            initMapPopovers();
+            updateWaveformImage(track.waveform_image_url);
+            updateNavigationButtons();
+            initMediaSession(trackData);
+          }
+        };
+
+        gaplessPlayer.onfinishedtrack = () => {
+          const gaplessIndex = gaplessPlayer.getIndex();
+          const tracksWithAudio = getTracksWithAudio();
+          if (gaplessIndex >= tracksWithAudio.length - 1) {
+            playNext();
+          }
+        };
+
+        gaplessPlayer.onfinishedall = () => {
+          playNext();
+        };
+
+        gaplessPlayer.onerror = (trackPath, error) => {
+          console.error('Audio error:', trackPath, error);
+          showLoadingSpinner(false);
+        };
 
         const playPauseBtn = document.getElementById('play-pause-btn');
         const scrubber = document.getElementById('scrubber');
@@ -549,24 +691,6 @@
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
 
-        audioPlayer.addEventListener('timeupdate', updateProgress);
-        audioPlayer.addEventListener('loadedmetadata', onMetadataLoaded);
-        audioPlayer.addEventListener('play', () => { 
-          isPlaying = true; 
-          updatePlayPauseIcon(); 
-          fadeOutCoverPlayButton();
-          updateMediaSessionPlaybackState();
-        });
-        audioPlayer.addEventListener('pause', () => { 
-          isPlaying = false; 
-          updatePlayPauseIcon();
-          updateMediaSessionPlaybackState();
-        });
-        audioPlayer.addEventListener('waiting', () => { showLoadingSpinner(true); });
-        audioPlayer.addEventListener('canplay', () => { showLoadingSpinner(false); });
-        audioPlayer.addEventListener('ended', onTrackEnded);
-        audioPlayer.addEventListener('error', (e) => console.error('Audio error:', e));
-
         playPauseBtn?.addEventListener('click', togglePlayPause);
         scrubBackBtn?.addEventListener('click', () => scrub(-10));
         scrubForwardBtn?.addEventListener('click', () => scrub(10));
@@ -574,15 +698,39 @@
         prevBtn?.addEventListener('click', playPrev);
         nextBtn?.addEventListener('click', playNext);
 
-        updateWaveformImage(track.waveform_image_url);
+        updateWaveformImage(initialTrack.waveform_image_url);
 
         if (playPauseBtn) playPauseBtn.disabled = false;
         if (scrubBackBtn) scrubBackBtn.disabled = false;
         if (scrubForwardBtn) scrubForwardBtn.disabled = true;
 
         initCoverPlayButton();
-        initMediaSession(track);
+        initMediaSession(initialTrack);
         updateNavigationButtons();
+
+        const gaplessIndex = findGaplessIndex(currentTrackIndex);
+        if (gaplessIndex >= 0) {
+          gaplessPlayer.gotoTrack(gaplessIndex, false);
+        }
+      }
+
+      function updateCurrentTrackData(track) {
+        trackData = {
+          title: track.title,
+          slug: track.slug,
+          url: track.url,
+          date: showData.date,
+          show_url: showData.show_url,
+          mp3_url: track.mp3_url,
+          duration_ms: track.duration_ms,
+          waveform_image_url: track.waveform_image_url,
+          venue: showData.venue,
+          venue_slug: showData.venue_slug,
+          location: showData.location,
+          map_snapshot_url: showData.map_snapshot_url,
+          cover_art_url: showData.cover_art_url,
+          tags: track.tags || []
+        };
       }
 
       function updateWaveformImage(waveformUrl) {
@@ -617,39 +765,9 @@
         img.src = waveformUrl;
       }
 
-      function updateProgress() {
-        if (!audioPlayer || !audioPlayer.duration) return;
-
-        const current = audioPlayer.currentTime;
-        const duration = audioPlayer.duration;
-        const progress = (current / duration) * 100;
-
-        const progressOverlay = document.getElementById('progress-overlay');
-        if (progressOverlay) {
-          progressOverlay.style.background = `linear-gradient(to right, #03BBF2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
-        }
-
-        const elapsedEl = document.getElementById('elapsed-time');
-        const remainingEl = document.getElementById('remaining-time');
-        if (elapsedEl) elapsedEl.textContent = formatTime(current);
-        if (remainingEl) remainingEl.textContent = `-${formatTime(duration - current)}`;
-
-        const scrubForwardBtn = document.getElementById('scrub-forward-btn');
-        if (scrubForwardBtn) scrubForwardBtn.disabled = !canScrubForward();
-      }
-
-      function onMetadataLoaded() {
-        updateProgress();
-      }
-
       function togglePlayPause() {
-        if (!audioPlayer) return;
-
-        if (isPlaying) {
-          audioPlayer.pause();
-        } else {
-          audioPlayer.play().catch(e => console.log('Play blocked:', e));
-        }
+        if (!gaplessPlayer) return;
+        gaplessPlayer.playpause();
       }
 
       function updatePlayPauseIcon() {
@@ -679,33 +797,50 @@
 
       function initCoverPlayButton() {
         const coverPlayBtn = document.getElementById('cover-play-btn');
-        if (coverPlayBtn && audioPlayer) {
+        if (coverPlayBtn && gaplessPlayer) {
           coverPlayBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             if (!isPlaying) {
-              audioPlayer.play().catch(e => console.log('Play blocked:', e));
+              gaplessPlayer.play();
             }
           });
         }
       }
 
-      function scrub(seconds) {
-        if (!audioPlayer || !audioPlayer.duration) return;
-        const newTime = audioPlayer.currentTime + seconds;
-        audioPlayer.currentTime = Math.max(0, Math.min(newTime, audioPlayer.duration));
+      function getCurrentTrackDuration() {
+        const tracksWithAudio = getTracksWithAudio();
+        if (!gaplessPlayer || tracksWithAudio.length === 0) return 0;
+        const gaplessIndex = gaplessPlayer.getIndex();
+        const track = tracksWithAudio[gaplessIndex];
+        return track?.duration_ms ? track.duration_ms / 1000 : 0;
       }
 
-      function canScrubForward() {
-        if (!audioPlayer || !audioPlayer.duration) return false;
-        return audioPlayer.currentTime < audioPlayer.duration - 10;
+      function scrub(seconds) {
+        if (!gaplessPlayer) return;
+
+        const currentPosition = gaplessPlayer.getPosition();
+        if (currentPosition < 0) return;
+
+        const duration = getCurrentTrackDuration();
+        if (duration <= 0) return;
+
+        const currentTime = currentPosition / 1000;
+        const newTime = currentTime + seconds;
+        const clampedTime = Math.max(0, Math.min(newTime, duration));
+
+        gaplessPlayer.setPosition(clampedTime * 1000);
       }
 
       function onScrubberClick(e) {
-        if (!audioPlayer || !audioPlayer.duration) return;
+        if (!gaplessPlayer) return;
+
+        const duration = getCurrentTrackDuration();
+        if (duration <= 0) return;
+
         const rect = e.currentTarget.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const percent = x / rect.width;
-        audioPlayer.currentTime = percent * audioPlayer.duration;
+        gaplessPlayer.setPosition(percent * duration * 1000);
       }
 
       function showLoadingSpinner(show) {
@@ -747,62 +882,23 @@
 
       function playTrackAtIndex(index) {
         if (!showData?.tracks || index < 0 || index >= showData.tracks.length) return;
-        
-        currentTrackIndex = index;
+        if (!gaplessPlayer) return;
+
         const track = showData.tracks[index];
+        if (!track.mp3_url) return;
+
+        currentTrackIndex = index;
+        updateCurrentTrackData(track);
         
-        const newTrackData = {
-          title: track.title,
-          slug: track.slug,
-          url: track.url,
-          date: showData.date,
-          show_url: showData.show_url,
-          mp3_url: track.mp3_url,
-          duration_ms: track.duration_ms,
-          waveform_image_url: track.waveform_image_url,
-          venue: showData.venue,
-          venue_slug: showData.venue_slug,
-          location: showData.location,
-          map_snapshot_url: showData.map_snapshot_url,
-          cover_art_url: showData.cover_art_url,
-          tags: track.tags || []
-        };
-        
-        trackData = newTrackData;
-        
-        updateTrackDisplay(newTrackData);
+        updateTrackDisplay(trackData);
         initMapPopovers();
         updateWaveformImage(track.waveform_image_url);
         updateNavigationButtons();
+        initMediaSession(trackData);
         
-        if (audioPlayer) {
-          audioPlayer.pause();
-        }
-        
-        if (track.mp3_url) {
-          audioPlayer = new Audio();
-          audioPlayer.preload = 'metadata';
-          audioPlayer.src = track.mp3_url;
-          
-          audioPlayer.addEventListener('timeupdate', updateProgress);
-          audioPlayer.addEventListener('loadedmetadata', onMetadataLoaded);
-          audioPlayer.addEventListener('play', () => { 
-            isPlaying = true; 
-            updatePlayPauseIcon();
-            updateMediaSessionPlaybackState();
-          });
-          audioPlayer.addEventListener('pause', () => { 
-            isPlaying = false; 
-            updatePlayPauseIcon();
-            updateMediaSessionPlaybackState();
-          });
-          audioPlayer.addEventListener('waiting', () => { showLoadingSpinner(true); });
-          audioPlayer.addEventListener('canplay', () => { showLoadingSpinner(false); });
-          audioPlayer.addEventListener('ended', onTrackEnded);
-          audioPlayer.addEventListener('error', (e) => console.error('Audio error:', e));
-          
-          audioPlayer.play().catch(e => console.log('Play blocked:', e));
-          initMediaSession(newTrackData);
+        const gaplessIndex = findGaplessIndex(index);
+        if (gaplessIndex >= 0) {
+          gaplessPlayer.gotoTrack(gaplessIndex, true);
         }
       }
 
@@ -817,14 +913,10 @@
         if (subtitleEl) {
           const mapSnapshotUrl = track.map_snapshot_url || '';
           const venueLocationHtml = mapSnapshotUrl
-            ? `<span class="location-link-wrapper"><a href="https://phish.in/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(mapSnapshotUrl)}" alt="" /></span></span>`
-            : `<a href="https://phish.in/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
+            ? `<span class="location-link-wrapper"><a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(mapSnapshotUrl)}" alt="" /></span></span>`
+            : `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
           subtitleEl.innerHTML = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a> · ${venueLocationHtml}`;
         }
-      }
-
-      function onTrackEnded() {
-        playNext();
       }
 
       async function playPrev() {
@@ -850,7 +942,7 @@
         showCoverLoadingOverlay(true);
         
         try {
-          const currentShowResponse = await fetch(`https://phish.in/api/v2/shows/${showData.date}`);
+          const currentShowResponse = await fetch(`${baseUrl}/api/v2/shows/${showData.date}`);
           if (!currentShowResponse.ok) throw new Error('Failed to fetch current show');
           
           const currentShow = await currentShowResponse.json();
@@ -860,14 +952,14 @@
           
           if (!adjacentDate) throw new Error('No adjacent show found');
           
-          const adjacentShowResponse = await fetch(`https://phish.in/api/v2/shows/${adjacentDate}`);
+          const adjacentShowResponse = await fetch(`${baseUrl}/api/v2/shows/${adjacentDate}`);
           if (!adjacentShowResponse.ok) throw new Error('Failed to fetch adjacent show');
           
           const adjacentShow = await adjacentShowResponse.json();
           
           const newShowData = {
             date: adjacentShow.date,
-            show_url: `https://phish.in/${adjacentShow.date}`,
+            show_url: `${baseUrl}/${adjacentShow.date}`,
             venue: adjacentShow.venue_name,
             venue_slug: adjacentShow.venue?.slug,
             location: adjacentShow.venue ? `${adjacentShow.venue.city}, ${adjacentShow.venue.state || adjacentShow.venue.country}` : '',
@@ -878,7 +970,7 @@
               id: t.id,
               title: t.title,
               slug: t.slug,
-              url: `https://phish.in/${adjacentShow.date}/${t.slug}`,
+              url: `${baseUrl}/${adjacentShow.date}/${t.slug}`,
               set: t.set_name,
               position: t.position,
               duration_ms: t.duration,
@@ -892,9 +984,9 @@
             await preloadImage(newShowData.cover_art_url);
           }
           
-          if (audioPlayer) {
-            audioPlayer.pause();
-            audioPlayer = null;
+          if (gaplessPlayer) {
+            gaplessPlayer.stop();
+            gaplessPlayer = null;
           }
           isPlaying = false;
           isAudioLoading = false;
@@ -905,34 +997,17 @@
           const track = newShowData.tracks[currentTrackIndex];
           if (!track) throw new Error('No playable tracks in adjacent show');
           
-          const newTrackData = {
-            title: track.title,
-            slug: track.slug,
-            url: track.url,
-            date: newShowData.date,
-            show_url: newShowData.show_url,
-            mp3_url: track.mp3_url,
-            duration_ms: track.duration_ms,
-            waveform_image_url: track.waveform_image_url,
-            venue: newShowData.venue,
-            venue_slug: newShowData.venue_slug,
-            location: newShowData.location,
-            map_snapshot_url: newShowData.map_snapshot_url,
-            cover_art_url: newShowData.cover_art_url,
-            tags: track.tags || []
-          };
-          
-          trackData = newTrackData;
+          updateCurrentTrackData(track);
           
           const root = document.getElementById('root');
-          root.innerHTML = renderPlayer(newTrackData);
-          setupBackgroundBlur(newTrackData.cover_art_url);
+          root.innerHTML = renderPlayer(trackData);
+          setupBackgroundBlur(trackData.cover_art_url);
           initMapPopovers();
-          initShareButton(() => trackData ? `https://phish.in/${trackData.date}/${trackData.slug}` : null);
+          initShareButton(() => trackData ? `${baseUrl}/${trackData.date}/${trackData.slug}` : null);
           
           if (track.mp3_url) {
-            initSingleTrackPlayer(newTrackData);
-            audioPlayer?.play().catch(e => console.log('Play blocked:', e));
+            initGaplessPlayer(trackData);
+            gaplessPlayer?.play();
           }
           
         } catch (e) {
@@ -941,10 +1016,6 @@
           isNavigating = false;
           showCoverLoadingOverlay(false);
         }
-      }
-
-      function isIOSDevice() {
-        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
       }
 
       function initMediaSession(track) {
@@ -989,8 +1060,8 @@
         const mapSnapshotUrl = track.map_snapshot_url || '';
 
         const venueLocationHtml = mapSnapshotUrl
-          ? `<span class="location-link-wrapper"><a href="https://phish.in/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(mapSnapshotUrl)}" alt="" /></span></span>`
-          : `<a href="https://phish.in/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
+          ? `<span class="location-link-wrapper"><a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(mapSnapshotUrl)}" alt="" /></span></span>`
+          : `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
 
         let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a> · ${venueLocationHtml}`;
 
@@ -1079,6 +1150,7 @@
         if (data.title) return data;
         
         if (data.show?.tracks?.length > 0) {
+          if (data.base_url) baseUrl = data.base_url;
           showData = data.show;
           currentTrackIndex = data.current_track_index || 0;
           
@@ -1128,9 +1200,9 @@
             root.innerHTML = renderPlayer(data);
             setupBackgroundBlur(data.cover_art_url);
             initMapPopovers();
-            initShareButton(() => trackData ? `https://phish.in/${trackData.date}/${trackData.slug}` : null);
+            initShareButton(() => trackData ? `${baseUrl}/${trackData.date}/${trackData.slug}` : null);
             if (data.mp3_url) {
-              initSingleTrackPlayer(data);
+              initGaplessPlayer(data);
             }
           } else {
             root.innerHTML = renderNotFound('Track not found', 'Track');
@@ -1154,9 +1226,9 @@
             showCoverLoadingOverlay(true);
             await preloadImage(newCoverArtUrl);
             
-            if (audioPlayer) {
-              audioPlayer.pause();
-              audioPlayer = null;
+            if (gaplessPlayer) {
+              gaplessPlayer.stop();
+              gaplessPlayer = null;
             }
             isPlaying = false;
             isAudioLoading = false;

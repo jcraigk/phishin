@@ -138,6 +138,7 @@ module Tools
         last_track = ChronologicalTrackNavigator.last_track
 
         {
+          base_url: App.base_url,
           current_track_index: current_index,
           is_library_start: track.id == first_track&.id,
           is_library_end: track.id == last_track&.id,
