@@ -75,6 +75,7 @@ module Tools
           track_tags: :tag,
           show: [
             :tour,
+            :tracks,
             cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } },
             venue: :map_snapshot_attachment
           ]
@@ -126,37 +127,64 @@ module Tools
       end
 
       def build_widget_data(track)
-        songs_track = track.songs_tracks.first
-        song = track.songs.first
+        show = track.show
+        playable_tracks = ChronologicalTrackNavigator.playable_tracks_for_show(show)
+        current_index = playable_tracks.find_index { |t| t.id == track.id } || 0
+
+        prev_show = ChronologicalTrackNavigator.adjacent_show(show, direction: :prev)
+        next_show = ChronologicalTrackNavigator.adjacent_show(show, direction: :next)
+
+        first_track = ChronologicalTrackNavigator.first_track
+        last_track = ChronologicalTrackNavigator.last_track
 
         {
+          current_track_index: current_index,
+          is_library_start: track.id == first_track&.id,
+          is_library_end: track.id == last_track&.id,
+          show: build_show_data(show, playable_tracks),
+          prev_show: prev_show && build_adjacent_show_data(prev_show, :last),
+          next_show: next_show && build_adjacent_show_data(next_show, :first)
+        }
+      end
+
+      def build_show_data(show, playable_tracks)
+        {
+          date: show.date.iso8601,
+          show_url: show.url,
+          venue: show.venue_name,
+          venue_slug: show.venue&.slug,
+          location: show.venue&.location,
+          map_snapshot_url: show.venue&.map_snapshot_url,
+          cover_art_url: show.cover_art_urls[:medium],
+          duration_ms: show.duration,
+          tracks: playable_tracks.map { |t| build_track_item(t) }
+        }
+      end
+
+      def build_track_item(track)
+        {
+          id: track.id,
           title: track.title,
           slug: track.slug,
           url: track.url,
-          date: track.show.date.iso8601,
-          show_url: track.show.url,
           set: track.set_name,
-          duration: McpHelpers.format_duration(track.duration),
+          position: track.position,
           duration_ms: track.duration,
           mp3_url: track.mp3_url,
           waveform_image_url: track.waveform_image_url,
-          venue: track.show.venue_name,
-          venue_slug: track.show.venue&.slug,
-          location: track.show.venue&.location,
-          map_snapshot_url: track.show.venue&.map_snapshot_url,
-          cover_art_url: track.show.cover_art_urls[:medium],
-          song: song && {
-            title: song.title,
-            slug: song.slug,
-            url: song.url
-          },
-          tags: track.track_tags.map { |tt| { name: tt.tag.name, slug: tt.tag.slug, description: tt.tag.description, notes: tt.notes } },
-          gap: songs_track && {
-            previous: songs_track.previous_performance_gap,
-            next: songs_track.next_performance_gap,
-            previous_slug: songs_track.previous_performance_slug,
-            next_slug: songs_track.next_performance_slug
-          }
+          tags: track.track_tags.map { |tt| { name: tt.tag.name, slug: tt.tag.slug, description: tt.tag.description, notes: tt.notes } }
+        }
+      end
+
+      def build_adjacent_show_data(show, track_position)
+        playable = ChronologicalTrackNavigator.playable_tracks_for_show(show)
+        target_track = track_position == :first ? playable.first : playable.last
+
+        {
+          date: show.date.iso8601,
+          venue: show.venue_name,
+          track_count: playable.count,
+          target_track_slug: "#{show.date}/#{target_track&.slug}"
         }
       end
 

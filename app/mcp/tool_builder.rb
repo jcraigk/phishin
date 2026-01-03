@@ -33,6 +33,7 @@ module ToolBuilder
 
   def self.base_tools
     [
+      Tools::GetAdjacentShow,
       Tools::GetAudioTrack,
       Tools::GetPlaylist,
       Tools::GetShow,

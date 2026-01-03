@@ -20,10 +20,10 @@ namespace :sets do
     sets_by_unordered = Hash.new { |h, k| h[k] = [] }
 
     set_data.each do |show_id, set, ordered_sig, unordered_sig, date|
-      key = [set, ordered_sig]
+      key = [ set, ordered_sig ]
       sets_by_ordered[key] << { show_id:, date:, set: }
 
-      key_unordered = [set, unordered_sig]
+      key_unordered = [ set, unordered_sig ]
       sets_by_unordered[key_unordered] << { show_id:, date:, set:, ordered_sig: }
     end
 
@@ -85,4 +85,3 @@ namespace :sets do
     puts "Same songs, different order: #{same_songs_only.size}"
   end
 end
-
