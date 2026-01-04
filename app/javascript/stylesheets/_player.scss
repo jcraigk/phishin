@@ -184,17 +184,30 @@ main.with-player {
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      background-color: $blue;
+      background-color: $title-gray;
       margin-top: -0.3rem !important;
 
       &:hover:not(:disabled) {
         color: white !important;
+        background-color: color.adjust($title-gray, $lightness: -5%);
       }
 
       &:disabled {
         opacity: 0.7;
         cursor: not-allowed;
-        background-color: color.adjust($blue, $lightness: 10%);
+        background-color: color.adjust($title-gray, $lightness: 10%);
+      }
+
+      &.playing {
+        background-color: $blue;
+
+        &:hover:not(:disabled) {
+          background-color: color.adjust($blue, $lightness: -5%);
+        }
+
+        &:disabled {
+          background-color: color.adjust($blue, $lightness: 10%);
+        }
       }
 
       svg {
@@ -248,6 +261,7 @@ main.with-player {
       mask-size: 100% 100%;
       mask-position: 0 0;
       mask-repeat: no-repeat;
+      mask-mode: alpha;
 
       -webkit-mask-size: 100% 100%;
       -webkit-mask-position: 0 0;
