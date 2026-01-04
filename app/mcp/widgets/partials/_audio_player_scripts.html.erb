@@ -5,6 +5,26 @@ let isPlaying = false;
 let isLoading = false;
 let showMetadata = null;
 
+function updatePlayerColors() {
+  const isDark = typeof getColorScheme === 'function' && getColorScheme() === 'dark';
+  const playBtn = document.getElementById('play-pause-btn');
+  if (playBtn) {
+    if (isPlaying) {
+      playBtn.style.setProperty('background', isDark ? '#5bcefa' : '#03BBF2', 'important');
+    } else {
+      playBtn.style.setProperty('background', isDark ? '#404040' : '#505050', 'important');
+    }
+  }
+  const progressOverlay = document.getElementById('progress-overlay');
+  if (progressOverlay && currentTrackIndex >= 0) {
+    const progressColor = isPlaying ? (isDark ? '#5bcefa' : '#03BBF2') : (isDark ? '#e0e0e0' : '#b0b0b0');
+    const currentStyle = progressOverlay.style.background || '';
+    const match = currentStyle.match(/(\d+(?:\.\d+)?)%/);
+    const progress = match ? match[1] : '0';
+    progressOverlay.style.setProperty('background', `linear-gradient(to right, ${progressColor} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
+  }
+}
+
 function hasAnyAudio(tracks) {
   return tracks && tracks.some(t => t.mp3_url);
 }
@@ -30,6 +50,7 @@ function showPlayer() {
   if (coverArtContainer) {
     coverArtContainer.classList.add('clickable');
   }
+  updatePlayerColors();
 }
 
 function hidePlayer() {
@@ -95,7 +116,9 @@ function initAudioPlayer(options = {}) {
 
     const progressOverlay = document.getElementById('progress-overlay');
     if (progressOverlay) {
-      progressOverlay.style.setProperty('background', `linear-gradient(to right, var(--progress-color, #b0b0b0) ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
+      const isDark = getColorScheme() === 'dark';
+      const progressColor = isPlaying ? (isDark ? '#5bcefa' : '#03BBF2') : (isDark ? '#e0e0e0' : '#b0b0b0');
+      progressOverlay.style.setProperty('background', `linear-gradient(to right, ${progressColor} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
     }
 
     const elapsedEl = document.getElementById('elapsed-time');
@@ -119,6 +142,7 @@ function initAudioPlayer(options = {}) {
     isPlaying = true;
     document.querySelector('.card')?.classList.add('audio-playing');
     updatePlayPauseIcon();
+    updatePlayerColors();
     updateMediaSessionPlaybackState();
   };
 
@@ -126,6 +150,7 @@ function initAudioPlayer(options = {}) {
     isPlaying = false;
     document.querySelector('.card')?.classList.remove('audio-playing');
     updatePlayPauseIcon();
+    updatePlayerColors();
     updateMediaSessionPlaybackState();
   };
 
@@ -134,6 +159,7 @@ function initAudioPlayer(options = {}) {
     isLoading = false;
     document.querySelector('.card')?.classList.remove('audio-playing');
     updatePlayPauseIcon();
+    updatePlayerColors();
   };
 
   gaplessPlayer.onnext = () => {

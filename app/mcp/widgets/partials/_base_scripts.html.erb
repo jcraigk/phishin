@@ -239,32 +239,51 @@ const DARK_READER_CONFIG = {
       mix-blend-mode: normal !important;
     }
     .scrubber-container::before {
-      background: #a0a0a0 !important;
+      background: #707070 !important;
+      background-color: #707070 !important;
     }
     .progress-overlay {
-      --progress-color: #d0d0d0 !important;
+      --progress-color: #e0e0e0 !important;
     }
     .audio-player.audio-playing .progress-overlay,
     .card.audio-playing .progress-overlay {
-      --progress-color: #03BBF2 !important;
+      --progress-color: #5bcefa !important;
+    }
+    #audio-player .progress-overlay {
+      --progress-color: #e0e0e0 !important;
+    }
+    #audio-player.audio-playing .progress-overlay,
+    .card.audio-playing #audio-player .progress-overlay {
+      --progress-color: #5bcefa !important;
     }
     
-    /* Preserve blue play button when playing */
-    .play-pause-btn {
+    /* Preserve play button styling */
+    .play-pause-btn,
+    .audio-player .play-pause-btn,
+    .card .play-pause-btn,
+    .card:not(.audio-playing) .play-pause-btn {
+      background: #404040 !important;
+      background-color: #404040 !important;
       filter: none !important;
       -webkit-filter: none !important;
     }
+    .play-pause-btn:hover:not(:disabled),
+    .audio-player .play-pause-btn:hover:not(:disabled),
+    .card .play-pause-btn:hover:not(:disabled) {
+      background: #353535 !important;
+      background-color: #353535 !important;
+    }
     .audio-player.audio-playing .play-pause-btn,
     .card.audio-playing .play-pause-btn {
-      background: #03BBF2 !important;
-      background-color: #03BBF2 !important;
+      background: #5bcefa !important;
+      background-color: #5bcefa !important;
       filter: none !important;
       -webkit-filter: none !important;
     }
     .audio-player.audio-playing .play-pause-btn:hover:not(:disabled),
     .card.audio-playing .play-pause-btn:hover:not(:disabled) {
-      background: #02a8da !important;
-      background-color: #02a8da !important;
+      background: #4ab8e8 !important;
+      background-color: #4ab8e8 !important;
     }
     .play-pause-btn svg,
     .play-pause-btn .play-icon,

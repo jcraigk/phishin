@@ -561,7 +561,7 @@
       position: absolute;
       inset: 0;
       border-radius: 0.5rem;
-      padding: 4px;
+      padding: 3px;
       background: conic-gradient(
         from var(--border-angle),
         transparent 0%,
@@ -640,6 +640,26 @@
       let showData = null;
       let currentTrackIndex = 0;
       let baseUrl = 'https://phish.in';
+
+      function updatePlayerColors() {
+        const isDark = typeof getColorScheme === 'function' && getColorScheme() === 'dark';
+        const playBtn = document.getElementById('play-pause-btn');
+        if (playBtn) {
+          if (isPlaying) {
+            playBtn.style.setProperty('background', isDark ? '#5bcefa' : '#03BBF2', 'important');
+          } else {
+            playBtn.style.setProperty('background', isDark ? '#404040' : '#505050', 'important');
+          }
+        }
+        const progressOverlay = document.getElementById('progress-overlay');
+        if (progressOverlay) {
+          const progressColor = isPlaying ? (isDark ? '#5bcefa' : '#03BBF2') : (isDark ? '#e0e0e0' : '#b0b0b0');
+          const currentStyle = progressOverlay.style.background || '';
+          const match = currentStyle.match(/(\d+(?:\.\d+)?)%/);
+          const progress = match ? match[1] : '0';
+          progressOverlay.style.setProperty('background', `linear-gradient(to right, ${progressColor} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
+        }
+      }
 
       function isIOSDevice() {
         return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -724,7 +744,9 @@
 
           const progressOverlay = document.getElementById('progress-overlay');
           if (progressOverlay) {
-            progressOverlay.style.setProperty('background', `linear-gradient(to right, var(--progress-color, #b0b0b0) ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
+            const isDark = getColorScheme() === 'dark';
+            const progressColor = isPlaying ? (isDark ? '#5bcefa' : '#03BBF2') : (isDark ? '#e0e0e0' : '#b0b0b0');
+            progressOverlay.style.setProperty('background', `linear-gradient(to right, ${progressColor} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
           }
 
           const elapsedEl = document.getElementById('elapsed-time');
@@ -741,6 +763,7 @@
           document.getElementById('audio-player')?.classList.add('audio-playing');
           showLoadingSpinner(false);
           updatePlayPauseIcon();
+          updatePlayerColors();
           fadeOutCoverPlayButton();
           updateMediaSessionPlaybackState();
         };
@@ -749,6 +772,7 @@
           isPlaying = false;
           document.getElementById('audio-player')?.classList.remove('audio-playing');
           updatePlayPauseIcon();
+          updatePlayerColors();
           updateMediaSessionPlaybackState();
         };
 
@@ -757,6 +781,7 @@
           isAudioLoading = false;
           document.getElementById('audio-player')?.classList.remove('audio-playing');
           updatePlayPauseIcon();
+          updatePlayerColors();
         };
 
         gaplessPlayer.onnext = () => {
@@ -875,7 +900,9 @@
 
         scrubber?.classList.remove('loaded');
         if (progressOverlay) {
-          progressOverlay.style.setProperty('background', 'linear-gradient(to right, var(--progress-color, #b0b0b0) 0%, rgba(255,255,255,0) 0%)', 'important');
+          const isDark = getColorScheme() === 'dark';
+          const progressColor = isPlaying ? (isDark ? '#5bcefa' : '#03BBF2') : (isDark ? '#e0e0e0' : '#b0b0b0');
+          progressOverlay.style.setProperty('background', `linear-gradient(to right, ${progressColor} 0%, rgba(255,255,255,0) 0%)`, 'important');
         }
 
         const img = new Image();
@@ -934,6 +961,7 @@
         if (playerControls) {
           playerControls.classList.add('visible');
         }
+        updatePlayerColors();
       }
 
       function initCoverPlayButton() {
@@ -987,7 +1015,9 @@
         const progress = percent * 100;
         const progressOverlay = document.getElementById('progress-overlay');
         if (progressOverlay) {
-          progressOverlay.style.setProperty('background', `linear-gradient(to right, var(--progress-color, #b0b0b0) ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
+          const isDark = getColorScheme() === 'dark';
+          const progressColor = isPlaying ? (isDark ? '#5bcefa' : '#03BBF2') : (isDark ? '#e0e0e0' : '#b0b0b0');
+          progressOverlay.style.setProperty('background', `linear-gradient(to right, ${progressColor} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
         }
 
         const elapsedEl = document.getElementById('elapsed-time');
@@ -1241,7 +1271,9 @@
           const progress = (currentTime / duration) * 100;
           const progressOverlay = document.getElementById('progress-overlay');
           if (progressOverlay) {
-            progressOverlay.style.setProperty('background', `linear-gradient(to right, var(--progress-color, #b0b0b0) ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
+            const isDark = getColorScheme() === 'dark';
+            const progressColor = isPlaying ? (isDark ? '#5bcefa' : '#03BBF2') : (isDark ? '#e0e0e0' : '#b0b0b0');
+            progressOverlay.style.setProperty('background', `linear-gradient(to right, ${progressColor} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
           }
           const elapsedEl = document.getElementById('elapsed-time');
           const remainingEl = document.getElementById('remaining-time');
@@ -1257,6 +1289,7 @@
           document.getElementById('audio-player')?.classList.add('audio-playing');
           showLoadingSpinner(false);
           updatePlayPauseIcon();
+          updatePlayerColors();
           updateMediaSessionPlaybackState();
         };
         
@@ -1264,6 +1297,7 @@
           isPlaying = false;
           document.getElementById('audio-player')?.classList.remove('audio-playing');
           updatePlayPauseIcon();
+          updatePlayerColors();
           updateMediaSessionPlaybackState();
         };
         
@@ -1271,6 +1305,7 @@
           isPlaying = false;
           isAudioLoading = false;
           document.getElementById('audio-player')?.classList.remove('audio-playing');
+          updatePlayerColors();
           updatePlayPauseIcon();
         };
         
