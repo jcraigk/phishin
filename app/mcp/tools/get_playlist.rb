@@ -90,7 +90,7 @@ module Tools
 
       def build_widget_data(playlist)
         tracks = playlist.playlist_tracks.order(:position).includes(
-          track: [ :mp3_audio_attachment, :png_waveform_attachment, { track_tags: :tag, show: [ { venue: :map_snapshot_attachment }, cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } } ] } ]
+          track: [ :mp3_audio_attachment, :png_waveform_attachment, { track_tags: :tag, show: [ :venue, cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } } ] } ]
         )
 
         first_track = tracks.first&.track
@@ -117,7 +117,6 @@ module Tools
               venue_slug: track.show.venue&.slug,
               venue_url: track.show.venue&.url,
               location: track.show.venue&.location,
-              map_snapshot_url: track.show.venue&.map_snapshot_url,
               duration_ms: track.duration,
               duration_display: McpHelpers.format_duration(track.duration),
               url: track.url,

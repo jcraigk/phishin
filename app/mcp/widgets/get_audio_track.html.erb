@@ -366,7 +366,6 @@
       border-right-color: #515152;
     }
 
-<%= partial("map_popover_styles") %>
 
     .player-controls {
       display: flex;
@@ -643,7 +642,6 @@
   <script>
     (function() {
 <%= partial("base_scripts") %>
-<%= partial("map_popover_scripts") %>
 
       function initTagTooltips() {
         document.querySelectorAll('.tag-badge[data-tooltip]').forEach(badge => {
@@ -834,17 +832,9 @@
           }
         };
 
-        gaplessPlayer.onfinishedtrack = () => {
-          const gaplessIndex = gaplessPlayer.getIndex();
-          const tracksWithAudio = getTracksWithAudio();
-          if (gaplessIndex >= tracksWithAudio.length - 1) {
-            playNext();
-          }
-        };
+        gaplessPlayer.onfinishedtrack = () => {};
 
-        gaplessPlayer.onfinishedall = () => {
-          playNext();
-        };
+        gaplessPlayer.onfinishedall = () => {};
 
         gaplessPlayer.onerror = (trackPath, error) => {
           console.error('Audio error:', trackPath, error);
@@ -893,7 +883,6 @@
           venue: showData.venue,
           venue_slug: showData.venue_slug,
           location: showData.location,
-          map_snapshot_url: showData.map_snapshot_url,
           cover_art_url: showData.cover_art_url,
           tags: track.tags || [],
           set: track.set,
@@ -1146,10 +1135,7 @@
         
         const subtitleEl = document.querySelector('.player-track-subtitle');
         if (subtitleEl) {
-          const mapSnapshotUrl = track.map_snapshot_url || '';
-          const venueLocationHtml = mapSnapshotUrl
-            ? `<span class="location-link-wrapper"><a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(mapSnapshotUrl)}" alt="" /></span></span>`
-            : `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
+          const venueLocationHtml = `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
           const setPos = formatSetPosition(track.set, track.position, true);
           let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a>${setPos ? ` · ${setPos}` : ''} · ${venueLocationHtml}`;
           
@@ -1241,7 +1227,6 @@
             venue: adjacentShow.venue_name,
             venue_slug: adjacentShow.venue?.slug,
             location: adjacentShow.venue ? `${adjacentShow.venue.city}, ${adjacentShow.venue.state || adjacentShow.venue.country}` : '',
-            map_snapshot_url: adjacentShow.venue?.map_snapshot_url || null,
             cover_art_url: adjacentShow.cover_art_urls?.medium,
             duration_ms: adjacentShow.duration,
             tracks: rawTracks.map((t, idx) => ({
@@ -1401,17 +1386,9 @@
           }
         };
         
-        gaplessPlayer.onfinishedtrack = () => {
-          const idx = gaplessPlayer.getIndex();
-          const tracks = getTracksWithAudio();
-          if (idx >= tracks.length - 1) {
-            playNext();
-          }
-        };
+        gaplessPlayer.onfinishedtrack = () => {};
         
-        gaplessPlayer.onfinishedall = () => {
-          playNext();
-        };
+        gaplessPlayer.onfinishedall = () => {};
         
         gaplessPlayer.onerror = (trackPath, error) => {
           console.error('Audio error:', trackPath, error);
@@ -1451,11 +1428,8 @@
         const coverArtUrl = track.cover_art_url || '';
         const tags = track.tags || [];
         const hasAudio = !!track.mp3_url;
-        const mapSnapshotUrl = track.map_snapshot_url || '';
 
-        const venueLocationHtml = mapSnapshotUrl
-          ? `<span class="location-link-wrapper"><a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(mapSnapshotUrl)}" alt="" /></span></span>`
-          : `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
+        const venueLocationHtml = `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
 
         const setPos = formatSetPosition(track.set, track.position, true);
         let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a>${setPos ? ` · ${setPos}` : ''} · ${venueLocationHtml}`;
@@ -1566,11 +1540,8 @@
         const coverArtUrl = track.cover_art_url || '';
         const tags = track.tags || [];
         const hasAudio = !!track.mp3_url;
-        const mapSnapshotUrl = track.map_snapshot_url || '';
 
-        const venueLocationHtml = mapSnapshotUrl
-          ? `<span class="location-link-wrapper"><a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(mapSnapshotUrl)}" alt="" /></span></span>`
-          : `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
+        const venueLocationHtml = `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
 
         const setPos = formatSetPosition(track.set, track.position, true);
         let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a>${setPos ? ` · ${setPos}` : ''} · ${venueLocationHtml}`;
@@ -1677,7 +1648,6 @@
             venue: data.show.venue,
             venue_slug: data.show.venue_slug,
             location: data.show.location,
-            map_snapshot_url: data.show.map_snapshot_url,
             cover_art_url: data.show.cover_art_url,
             tags: track.tags || [],
             set: track.set,

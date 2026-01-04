@@ -242,7 +242,6 @@
       color: #03BBF2;
     }
 
-<%= partial("map_popover_styles") %>
 
     .show-meta-row {
       display: flex;
@@ -659,7 +658,6 @@
     (function() {
 <%= partial("base_scripts") %>
 <%= partial("audio_player_scripts") %>
-<%= partial("map_popover_scripts") %>
 
       function renderShow(show) {
         const tracksBySet = {};
@@ -855,7 +853,7 @@
                   <div class="show-date">
                     <a href="${escapeHtml(showUrl)}" target="_blank" rel="noopener" class="show-date-link">${formatDate(show.date)}</a>
                   </div>
-                  <div class="venue-name">${show.map_snapshot_url ? `<span class="location-link-wrapper">${show.venue_slug ? `<a href="https://phish.in/venues/${escapeHtml(show.venue_slug)}" target="_blank" rel="noopener" class="venue-name-link">${escapeHtml(show.venue)}</a>` : escapeHtml(show.venue)}${show.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(show.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(show.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(show.map_snapshot_url)}" alt="" /></span></span>` : `${show.venue_slug ? `<a href="https://phish.in/venues/${escapeHtml(show.venue_slug)}" target="_blank" rel="noopener" class="venue-name-link">${escapeHtml(show.venue)}</a>` : escapeHtml(show.venue)}${show.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(show.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(show.location)}</a>` : ''}`}</div>
+                  <div class="venue-name">${show.venue_slug ? `<a href="https://phish.in/venues/${escapeHtml(show.venue_slug)}" target="_blank" rel="noopener" class="venue-name-link">${escapeHtml(show.venue)}</a>` : escapeHtml(show.venue)}${show.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(show.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(show.location)}</a>` : ''}</div>
                   <div class="show-meta-row">
                     ${show.duration_ms ? `
                       <span class="show-meta-item">

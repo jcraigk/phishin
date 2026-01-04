@@ -60,7 +60,6 @@ module Tools
       def show_includes
         Show.includes(
           :tour,
-          venue: :map_snapshot_attachment,
           tracks: [ :songs, :mp3_audio_attachment, :png_waveform_attachment, { track_tags: :tag, songs_tracks: {} } ],
           show_tags: :tag,
           cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } },
@@ -130,7 +129,6 @@ module Tools
           venue: show.venue_name,
           venue_slug: show.venue&.slug,
           location: show.venue&.location,
-          map_snapshot_url: show.venue&.map_snapshot_url,
           duration_ms: show.duration,
           taper_notes: show.taper_notes,
           cover_art_url: show.cover_art_urls[:medium],

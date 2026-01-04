@@ -52,7 +52,6 @@
 <%= partial("card_styles") %>
 <%= partial("track_styles") %>
 <%= partial("audio_player_styles") %>
-<%= partial("map_popover_styles") %>
 
     .playlist-header {
       height: 96px;
@@ -569,7 +568,6 @@
     (function() {
 <%= partial("base_scripts") %>
 <%= partial("audio_player_scripts") %>
-<%= partial("map_popover_scripts") %>
 
       function renderPlaylist(playlist) {
         const tracks = playlist.tracks || [];
@@ -613,9 +611,7 @@
             `;
           }
           
-          const venueLocationHtml = track.map_snapshot_url
-            ? `<span class="location-link-wrapper"><a href="${escapeHtml(track.venue_url || '')}" target="_blank" rel="noopener" class="track-venue-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(track.map_snapshot_url)}" alt="" /></span></span>`
-            : `<a href="${escapeHtml(track.venue_url || '')}" target="_blank" rel="noopener" class="track-venue-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
+          const venueLocationHtml = `<a href="${escapeHtml(track.venue_url || '')}" target="_blank" rel="noopener" class="track-venue-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
 
           tracksHtml += `
             <div class="track ${hasTrackAudio ? '' : 'no-audio'}" data-index="${index}" ${hasTrackAudio ? '' : 'title="No audio available"'}>
