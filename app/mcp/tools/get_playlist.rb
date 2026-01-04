@@ -132,9 +132,10 @@ module Tools
       private
 
       def error_response(message)
+        hint = "Try using 'list_playlists' to browse available playlists, or 'search' to find playlists by name."
         MCP::Tool::Response.new(
-          [ { type: "text", text: "Error: #{message}" } ],
-          structured_content: { error: true, message: }
+          [ { type: "text", text: "#{message}. #{hint}" } ],
+          error: true
         )
       end
     end

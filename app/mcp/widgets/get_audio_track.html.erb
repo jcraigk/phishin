@@ -1505,7 +1505,6 @@
 
       function isDataComplete(data) {
         if (!data) return false;
-        if (data.error) return true;
         if (data.title && data.date) return true;
         if (data.show?.tracks?.length > 0) return true;
         return false;
@@ -1545,36 +1544,17 @@
 
       async function render() {
         const root = document.getElementById('root');
+        const rawData = await waitForData(isDataComplete);
+        const data = extractTrackData(rawData);
+        if (!data) return;
 
-        try {
-          const rawData = await waitForData(isDataComplete);
-
-          if (!rawData) {
-            root.innerHTML = renderNotFound('No track data available', 'Track');
-            return;
-          }
-
-          if (rawData.error) {
-            root.innerHTML = renderNotFound(rawData.message || 'Track not found', 'Track');
-            return;
-          }
-
-          const data = extractTrackData(rawData);
-          
-          if (data) {
-            root.innerHTML = renderPlayer(data);
-            setupBackgroundBlur(data.cover_art_url);
-            initMapPopovers();
-            initTagTooltips();
-            if (data.mp3_url) {
-              const gaplessIndex = findGaplessIndex(currentTrackIndex);
-              initGaplessPlayer(data, gaplessIndex, false);
-            }
-          } else {
-            root.innerHTML = renderNotFound('Track not found', 'Track');
-          }
-        } catch (e) {
-          root.innerHTML = renderNotFound(e.message, 'Track');
+        root.innerHTML = renderPlayer(data);
+        setupBackgroundBlur(data.cover_art_url);
+        initMapPopovers();
+        initTagTooltips();
+        if (data.mp3_url) {
+          const gaplessIndex = findGaplessIndex(currentTrackIndex);
+          initGaplessPlayer(data, gaplessIndex, false);
         }
       }
 

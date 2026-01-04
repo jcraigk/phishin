@@ -74,40 +74,6 @@ async function waitForData(isComplete) {
   return getData();
 }
 
-function renderNotFound(detail, entityName = "Item") {
-  let displayMessage = `${entityName} not found`;
-  
-  if (detail) {
-    const dateMatch = detail.match(/(\d{4}-\d{2}-\d{2})/);
-    if (dateMatch) {
-      const formattedDate = formatDate(dateMatch[1]);
-      displayMessage = `${entityName} not found for ${formattedDate}`;
-    } else {
-      displayMessage = detail;
-    }
-  }
-
-  return `
-    <div class="not-found">
-      <div class="not-found-icons">
-        <svg class="not-found-icon" viewBox="0 0 32 32">
-          <circle cx="16" cy="16" r="13" fill="#8a8b8d"/>
-          <circle cx="16" cy="16" r="12" fill="#6d6f71"/>
-          <circle cx="16" cy="16" r="4.5" fill="#d4d5d7"/>
-          <rect x="9" y="7" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(-25 9.75 8.75)"/>
-          <rect x="19" y="6" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(30 19.75 7.75)"/>
-          <rect x="23" y="14" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(65 23.75 15.75)"/>
-          <rect x="18" y="22" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(-20 18.75 23.75)"/>
-          <rect x="8" y="20" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(40 8.75 21.75)"/>
-          <rect x="5" y="12" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(-50 5.75 13.75)"/>
-        </svg>
-        <span class="not-found-qmark">?</span>
-      </div>
-      <div class="not-found-detail">${escapeHtml(displayMessage)}</div>
-    </div>
-  `;
-}
-
 function setupBackgroundBlur(imageUrl, imgElementId = 'cover-img', blurElementId = 'bg-blur') {
   if (!imageUrl) return;
   

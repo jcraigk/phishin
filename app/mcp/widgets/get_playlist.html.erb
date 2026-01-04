@@ -921,58 +921,39 @@
 
       function isDataComplete(data) {
         if (!data) return false;
-        if (data.error) return true;
         return data.name && Array.isArray(data.tracks);
       }
 
       async function render() {
         const root = document.getElementById('root');
+        const data = await waitForData(isDataComplete);
+        if (!data?.name) return;
+
+        playlistData = data;
+        root.innerHTML = renderPlaylist(data);
+        setupBackgroundBlur(data.cover_art_url);
         
-        try {
-          const data = await waitForData(isDataComplete);
-
-          if (!data) {
-            root.innerHTML = renderNotFound('No playlist data available', 'Playlist');
-            return;
-          }
-
-          if (data.error) {
-            root.innerHTML = renderNotFound(data.message || 'Playlist not found', 'Playlist');
-            return;
-          }
-
-          if (data.name) {
-            playlistData = data;
-            root.innerHTML = renderPlaylist(data);
-            setupBackgroundBlur(data.cover_art_url);
-            
-            const coverArtUrl = data.cover_art_url;
-            if (coverArtUrl) {
-              ['tag-modal-blur', 'description-modal-blur'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.backgroundImage = `url("${coverArtUrl}")`;
-              });
-            }
-            
-            initExpandButton();
-            initAudioPlayer({
-              showMetadata: {
-                name: data.name,
-                cover_art_url: data.cover_art_url,
-                isPlaylist: true
-              }
-            });
-            initTrackMenus();
-            initDescriptionModal();
-            initTagModal();
-            initMapPopovers();
-            initShareButton(() => playlistData ? `https://phish.in/playlists/${playlistData.slug}` : null);
-          } else {
-            root.innerHTML = renderNotFound('Playlist not found', 'Playlist');
-          }
-        } catch (e) {
-          root.innerHTML = renderNotFound(e.message, 'Playlist');
+        const coverArtUrl = data.cover_art_url;
+        if (coverArtUrl) {
+          ['tag-modal-blur', 'description-modal-blur'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.backgroundImage = `url("${coverArtUrl}")`;
+          });
         }
+        
+        initExpandButton();
+        initAudioPlayer({
+          showMetadata: {
+            name: data.name,
+            cover_art_url: data.cover_art_url,
+            isPlaylist: true
+          }
+        });
+        initTrackMenus();
+        initDescriptionModal();
+        initTagModal();
+        initMapPopovers();
+        initShareButton(() => playlistData ? `https://phish.in/playlists/${playlistData.slug}` : null);
       }
 
       window.addEventListener('message', (event) => {

@@ -1134,61 +1134,41 @@
 
       function isDataComplete(data) {
         if (!data) return false;
-        if (data.error) return true;
         return data.date && Array.isArray(data.tracks) && data.tracks.length > 0;
       }
 
       async function render() {
         const root = document.getElementById('root');
+        const data = await waitForData(isDataComplete);
+        if (!data?.date) return;
+
+        showData = data;
+        root.innerHTML = renderShow(data);
+        setupBackgroundBlur(data.cover_art_url);
         
-        try {
-          const data = await waitForData(isDataComplete);
-
-          if (!data) {
-            root.innerHTML = renderNotFound('No show data available', 'Show');
-            return;
-          }
-
-          if (data.error) {
-            root.innerHTML = renderNotFound(data.message || 'Show not found', 'Show');
-            return;
-          }
-
-          if (data.date) {
-            showData = data;
-            root.innerHTML = renderShow(data);
-            setupBackgroundBlur(data.cover_art_url);
-            
-            // Apply blur to modal backgrounds
-            const coverArtUrl = data.cover_art_url;
-            if (coverArtUrl) {
-              ['taper-notes-blur', 'tag-modal-blur', 'cover-art-blur'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.backgroundImage = `url("${coverArtUrl}")`;
-              });
-            }
-            
-            initExpandButton();
-            initAudioPlayer({
-              showMetadata: {
-                date: data.date,
-                venue: data.venue,
-                location: data.location,
-                cover_art_url: data.cover_art_url
-              }
-            });
-            initTrackMenus();
-            initTaperNotesModal();
-            initTagModal();
-            initCoverArtModal();
-            initMapPopovers();
-            initShareButton(() => showData ? `https://phish.in/${showData.date}` : null);
-          } else {
-            root.innerHTML = renderNotFound('Show not found', 'Show');
-          }
-        } catch (e) {
-          root.innerHTML = renderNotFound(e.message, 'Show');
+        const coverArtUrl = data.cover_art_url;
+        if (coverArtUrl) {
+          ['taper-notes-blur', 'tag-modal-blur', 'cover-art-blur'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.backgroundImage = `url("${coverArtUrl}")`;
+          });
         }
+        
+        initExpandButton();
+        initAudioPlayer({
+          showMetadata: {
+            date: data.date,
+            venue: data.venue,
+            location: data.location,
+            cover_art_url: data.cover_art_url
+          }
+        });
+        initTrackMenus();
+        initTaperNotesModal();
+        initTagModal();
+        initCoverArtModal();
+        initMapPopovers();
+        initShareButton(() => showData ? `https://phish.in/${showData.date}` : null);
       }
 
       window.addEventListener('message', (event) => {

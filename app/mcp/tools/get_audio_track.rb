@@ -190,9 +190,10 @@ module Tools
       end
 
       def error_response(message)
+        hint = "Try using 'search' to find tracks, or 'get_show' with a valid date to see available tracks."
         MCP::Tool::Response.new(
-          [ { type: "text", text: "Error: #{message}" } ],
-          structured_content: { error: true, message: }
+          [ { type: "text", text: "#{message}. #{hint}" } ],
+          error: true
         )
       end
     end
