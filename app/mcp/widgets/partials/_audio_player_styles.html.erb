@@ -305,3 +305,42 @@
   to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.card.audio-playing::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 0.5rem;
+  padding: 4px;
+  background: conic-gradient(
+    from var(--border-angle),
+    transparent 0%,
+    transparent 11%,
+    rgba(3, 187, 242, 0.3) 20%,
+    rgba(3, 187, 242, 0.6) 35%,
+    rgba(225, 245, 255, 0.9) 50%,
+    rgba(3, 187, 242, 0.6) 65%,
+    rgba(3, 187, 242, 0.3) 80%,
+    transparent 89%,
+    transparent 100%
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 100;
+  animation: rotate-gradient 3.2s linear infinite;
+}
+
+@keyframes rotate-gradient {
+  from { --border-angle: 0deg; }
+  to { --border-angle: 360deg; }
+}
+

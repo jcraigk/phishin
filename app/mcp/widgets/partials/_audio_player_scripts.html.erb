@@ -47,7 +47,10 @@ function hidePlayer() {
   if (headerPlayBtn) headerPlayBtn.classList.remove('fade-out');
   
   const card = document.querySelector('.card');
-  if (card) card.classList.remove('player-visible');
+  if (card) {
+    card.classList.remove('player-visible');
+    card.classList.remove('audio-playing');
+  }
   
   const coverArtContainer = document.querySelector('.cover-art-container');
   if (coverArtContainer) coverArtContainer.classList.remove('clickable');
@@ -114,12 +117,14 @@ function initAudioPlayer(options = {}) {
 
   gaplessPlayer.onplay = () => {
     isPlaying = true;
+    document.querySelector('.card')?.classList.add('audio-playing');
     updatePlayPauseIcon();
     updateMediaSessionPlaybackState();
   };
 
   gaplessPlayer.onpause = () => {
     isPlaying = false;
+    document.querySelector('.card')?.classList.remove('audio-playing');
     updatePlayPauseIcon();
     updateMediaSessionPlaybackState();
   };
@@ -127,6 +132,7 @@ function initAudioPlayer(options = {}) {
   gaplessPlayer.onstop = () => {
     isPlaying = false;
     isLoading = false;
+    document.querySelector('.card')?.classList.remove('audio-playing');
     updatePlayPauseIcon();
   };
 
@@ -159,6 +165,7 @@ function initAudioPlayer(options = {}) {
   gaplessPlayer.onfinishedall = () => {
     isPlaying = false;
     isLoading = false;
+    document.querySelector('.card')?.classList.remove('audio-playing');
     updatePlayPauseIcon();
   };
 
