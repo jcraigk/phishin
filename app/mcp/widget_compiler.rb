@@ -107,5 +107,10 @@ class WidgetCompiler
           "const onLoadedHTML5Audio = () => {\n    if (!audio) return;\n    if (state !== Gapless5State.Loading)"
         )
     end
+
+    def darkreader_script
+      path = Rails.root.join("node_modules", "darkreader", "darkreader.js")
+      File.read(path)
+    end
   end
 end

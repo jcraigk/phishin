@@ -170,3 +170,51 @@ function renderToast() {
   return `<div class="toast" id="toast"></div>`;
 }
 
+const DARK_READER_CONFIG = {
+  brightness: 100,
+  contrast: 90,
+  sepia: 10
+};
+
+function getColorScheme() {
+  const oa = window.openai || {};
+  const scheme = oa.appearance?.colorScheme
+    || oa.view?.appearance?.colorScheme
+    || oa.theme?.colorScheme;
+  if (scheme) return scheme;
+
+  if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
+    return 'dark';
+  }
+  return 'light';
+}
+
+function initDarkMode() {
+  if (typeof DarkReader === 'undefined') return;
+
+  const applyTheme = (scheme) => {
+    if (scheme === 'dark') {
+      DarkReader.enable(DARK_READER_CONFIG);
+    } else {
+      DarkReader.disable();
+    }
+  };
+
+  applyTheme(getColorScheme());
+
+  const mediaQuery = window.matchMedia?.('(prefers-color-scheme: dark)');
+  if (mediaQuery?.addEventListener) {
+    mediaQuery.addEventListener('change', (e) => {
+      const oa = window.openai || {};
+      const explicitScheme = oa.appearance?.colorScheme
+        || oa.view?.appearance?.colorScheme
+        || oa.theme?.colorScheme;
+      if (!explicitScheme) {
+        applyTheme(e.matches ? 'dark' : 'light');
+      }
+    });
+  }
+}
+
+initDarkMode();
+

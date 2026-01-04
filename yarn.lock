@@ -1175,6 +1175,16 @@
   resolved "https://registry.yarnpkg.com/@remix-run/router/-/router-1.23.0.tgz#35390d0e7779626c026b11376da6789eb8389242"
   integrity sha512-O3rHJzAQKamUz1fvE0Qaw0xSFqsA/yafi2iqeE0pvdFtCO1viYx8QL6f3Ln/aCCTLxs68SLf0KPM9eSeM8yBnA==
 
+"@rollup/rollup-linux-x64-gnu@4.53.3":
+  version "4.53.3"
+  resolved "https://registry.yarnpkg.com/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-4.53.3.tgz#fd0dea3bb9aa07e7083579f25e1c2285a46cb9fa"
+  integrity sha512-3EhFi1FU6YL8HTUJZ51imGJWEX//ajQPfqWLI3BQq4TlvHy4X0MOr5q3D2Zof/ka0d5FNdPwZXm3Yyib/UEd+w==
+
+"@rollup/rollup-win32-x64-msvc@4.53.3":
+  version "4.53.3"
+  resolved "https://registry.yarnpkg.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.53.3.tgz#38ae84f4c04226c1d56a3b17296ef1e0460ecdfe"
+  integrity sha512-UhTd8u31dXadv0MopwGgNOBpUVROFKWVQgAg5N1ESyCz8AuBcMqm4AuTjrwgQKGDfoFuz02EuMRHQIw/frmYKQ==
+
 "@sinclair/typebox@^0.27.8":
   version "0.27.8"
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.27.8.tgz#6667fac16c436b5434a387a34dedb013198f6e6e"
@@ -2290,6 +2300,16 @@ csso@^5.0.5:
   integrity sha512-0LrrStPOdJj+SPCCrGhzryycLjwcgUSHBtxNA8aIDxf0GLsRh1cKYhB00Gd1lDOS4yGH69+SNn13+TWbVHETFQ==
   dependencies:
     css-tree "~2.2.0"
+
+darkreader@^4.9.118:
+  version "4.9.118"
+  resolved "https://registry.yarnpkg.com/darkreader/-/darkreader-4.9.118.tgz#f21737c4ed9cf1468d3435418b715f0fc1b55e64"
+  integrity sha512-pnA7WmlgPm515h+nNyZ6X3/rSQPNNo5LbMVbKTpNOBhaumYWYSgh1rMuVwtqiODpa9juTVEBQDVJTx5auWYuuA==
+  dependencies:
+    malevic "0.20.2"
+  optionalDependencies:
+    "@rollup/rollup-linux-x64-gnu" "4.53.3"
+    "@rollup/rollup-win32-x64-msvc" "4.53.3"
 
 debounce@^1.2.1:
   version "1.2.1"
@@ -3407,6 +3427,11 @@ make-dir@^3.0.2, make-dir@^3.1.0:
   integrity sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw==
   dependencies:
     semver "^6.0.0"
+
+malevic@0.20.2:
+  version "0.20.2"
+  resolved "https://registry.yarnpkg.com/malevic/-/malevic-0.20.2.tgz#2d8ab54a5d9f4bebc21fc1cc0c6eec1e77d13530"
+  integrity sha512-s44yEUyfDaONt7nPT7NDQ+Z2oAswErG70ok2Q95bJFh1Bdcn4dZQVMrLE02ZIjTtYfQ/LFOVxF+yB3bdGw/GtQ==
 
 map-obj@^1.0.0:
   version "1.0.1"
