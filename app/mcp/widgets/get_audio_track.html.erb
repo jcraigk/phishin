@@ -483,10 +483,23 @@
       height: 100%;
       position: relative;
       cursor: pointer;
-      background-size: 100% 100%;
-      background-repeat: no-repeat;
-      background-position: center;
       margin-left: -6px;
+      --waveform-url: none;
+    }
+
+    .scrubber-container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: #3a3a3a;
+      mask-image: var(--waveform-url);
+      mask-size: 100% 90%;
+      mask-repeat: no-repeat;
+      mask-position: center;
+      -webkit-mask-image: var(--waveform-url);
+      -webkit-mask-size: 100% 90%;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center;
     }
 
     .progress-overlay {
@@ -496,10 +509,10 @@
       height: 100%;
       width: 100%;
       background: linear-gradient(to right, #03BBF2 0%, rgba(255,255,255,0) 0%);
-      mask-size: 100% 100%;
+      mask-size: 100% 90%;
       mask-repeat: no-repeat;
       mask-position: center;
-      -webkit-mask-size: 100% 100%;
+      -webkit-mask-size: 100% 90%;
       -webkit-mask-repeat: no-repeat;
       -webkit-mask-position: center;
     }
@@ -749,7 +762,7 @@
 
         if (!waveformUrl) {
           if (scrubber) {
-            scrubber.style.backgroundImage = '';
+            scrubber.style.setProperty('--waveform-url', 'none');
             scrubber.classList.remove('loaded');
           }
           if (progressOverlay) {
@@ -765,7 +778,7 @@
         const img = new Image();
         img.onload = () => {
           if (scrubber) {
-            scrubber.style.backgroundImage = `url(${waveformUrl})`;
+            scrubber.style.setProperty('--waveform-url', `url(${waveformUrl})`);
             scrubber.classList.add('loaded');
           }
           if (progressOverlay) {
@@ -1070,10 +1083,11 @@
           currentTrackIndex = targetTrackIndex;
           updateCurrentTrackData(targetTrack);
           
-          const gaplessIndex = findGaplessIndex(currentTrackIndex);
-          await initAudioOnly(trackData, gaplessIndex);
-          
           root.innerHTML = renderPlayerPlaying(trackData);
+          showLoadingSpinner(true);
+          
+          const gaplessIndex = findGaplessIndex(currentTrackIndex);
+          initAudioOnly(trackData, gaplessIndex);
           
           setupBackgroundBlur(trackData.cover_art_url);
           initMapPopovers();
@@ -1099,123 +1113,119 @@
       }
       
       function initAudioOnly(track, startingIndex) {
-        return new Promise((resolve) => {
-          if (!track?.mp3_url) {
-            resolve();
-            return;
-          }
-          
-          trackData = track;
-          const tracksWithAudio = getTracksWithAudio();
-          if (tracksWithAudio.length === 0) {
-            resolve();
-            return;
-          }
-          
-          const trackUrls = tracksWithAudio.map(t => t.mp3_url);
-          const iosDevice = isIOSDevice();
-          const gaplessIndex = startingIndex >= 0 && startingIndex < tracksWithAudio.length ? startingIndex : 0;
-          
-          gaplessPlayer = new Gapless5({
-            tracks: trackUrls,
-            startingTrack: gaplessIndex,
-            loop: false,
-            singleMode: false,
-            useWebAudio: !iosDevice,
-            useHTML5Audio: true,
-            loadLimit: iosDevice ? 2 : 1,
-            volume: 1.0
-          });
-          
-          gaplessPlayer.ontimeupdate = (currentTimeMs, idx) => {
-            const currentTrack = tracksWithAudio[idx];
-            if (!currentTrack) return;
-            const currentTime = currentTimeMs / 1000;
-            const duration = currentTrack.duration_ms ? currentTrack.duration_ms / 1000 : 0;
-            if (duration <= 0) return;
-            const progress = (currentTime / duration) * 100;
-            const progressOverlay = document.getElementById('progress-overlay');
-            if (progressOverlay) {
-              progressOverlay.style.background = `linear-gradient(to right, #03BBF2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
-            }
-            const elapsedEl = document.getElementById('elapsed-time');
-            const remainingEl = document.getElementById('remaining-time');
-            if (elapsedEl) elapsedEl.textContent = formatTime(currentTime);
-            if (remainingEl) remainingEl.textContent = `-${formatTime(duration - currentTime)}`;
-            const scrubForwardBtn = document.getElementById('scrub-forward-btn');
-            if (scrubForwardBtn) scrubForwardBtn.disabled = currentTime >= duration - 10;
-          };
-          
-          gaplessPlayer.onplay = () => {
-            isPlaying = true;
-            isAudioLoading = false;
-            updatePlayPauseIcon();
-            updateMediaSessionPlaybackState();
-            resolve();
-          };
-          
-          gaplessPlayer.onpause = () => {
-            isPlaying = false;
-            updatePlayPauseIcon();
-            updateMediaSessionPlaybackState();
-          };
-          
-          gaplessPlayer.onstop = () => {
-            isPlaying = false;
-            isAudioLoading = false;
-            updatePlayPauseIcon();
-          };
-          
-          gaplessPlayer.onnext = () => {
-            const idx = gaplessPlayer.getIndex();
-            const originalIndex = findOriginalIndex(idx);
-            if (originalIndex >= 0) {
-              currentTrackIndex = originalIndex;
-              const nextTrack = showData.tracks[originalIndex];
-              updateCurrentTrackData(nextTrack);
-              updateTrackDisplay(trackData);
-              initMapPopovers();
-              updateWaveformImage(nextTrack.waveform_image_url);
-              updateNavigationButtons();
-              initMediaSession(trackData);
-            }
-          };
-          
-          gaplessPlayer.onprev = () => {
-            const idx = gaplessPlayer.getIndex();
-            const originalIndex = findOriginalIndex(idx);
-            if (originalIndex >= 0) {
-              currentTrackIndex = originalIndex;
-              const prevTrack = showData.tracks[originalIndex];
-              updateCurrentTrackData(prevTrack);
-              updateTrackDisplay(trackData);
-              initMapPopovers();
-              updateWaveformImage(prevTrack.waveform_image_url);
-              updateNavigationButtons();
-              initMediaSession(trackData);
-            }
-          };
-          
-          gaplessPlayer.onfinishedtrack = () => {
-            const idx = gaplessPlayer.getIndex();
-            const tracks = getTracksWithAudio();
-            if (idx >= tracks.length - 1) {
-              playNext();
-            }
-          };
-          
-          gaplessPlayer.onfinishedall = () => {
-            playNext();
-          };
-          
-          gaplessPlayer.onerror = (trackPath, error) => {
-            console.error('Audio error:', trackPath, error);
-            resolve();
-          };
-          
-          isAudioLoading = true;
-          gaplessPlayer.play();
+        if (!track?.mp3_url) {
+          return;
+        }
+        
+        trackData = track;
+        const tracksWithAudio = getTracksWithAudio();
+        if (tracksWithAudio.length === 0) {
+          return;
+        }
+        
+        const trackUrls = tracksWithAudio.map(t => t.mp3_url);
+        const iosDevice = isIOSDevice();
+        const gaplessIndex = startingIndex >= 0 && startingIndex < tracksWithAudio.length ? startingIndex : 0;
+        
+        gaplessPlayer = new Gapless5({
+          tracks: trackUrls,
+          startingTrack: gaplessIndex,
+          loop: false,
+          singleMode: false,
+          useWebAudio: !iosDevice,
+          useHTML5Audio: true,
+          loadLimit: iosDevice ? 2 : 1,
+          volume: 1.0
         });
+        
+        gaplessPlayer.ontimeupdate = (currentTimeMs, idx) => {
+          const currentTrack = tracksWithAudio[idx];
+          if (!currentTrack) return;
+          const currentTime = currentTimeMs / 1000;
+          const duration = currentTrack.duration_ms ? currentTrack.duration_ms / 1000 : 0;
+          if (duration <= 0) return;
+          const progress = (currentTime / duration) * 100;
+          const progressOverlay = document.getElementById('progress-overlay');
+          if (progressOverlay) {
+            progressOverlay.style.background = `linear-gradient(to right, #03BBF2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
+          }
+          const elapsedEl = document.getElementById('elapsed-time');
+          const remainingEl = document.getElementById('remaining-time');
+          if (elapsedEl) elapsedEl.textContent = formatTime(currentTime);
+          if (remainingEl) remainingEl.textContent = `-${formatTime(duration - currentTime)}`;
+          const scrubForwardBtn = document.getElementById('scrub-forward-btn');
+          if (scrubForwardBtn) scrubForwardBtn.disabled = currentTime >= duration - 10;
+        };
+        
+        gaplessPlayer.onplay = () => {
+          isPlaying = true;
+          isAudioLoading = false;
+          showLoadingSpinner(false);
+          updatePlayPauseIcon();
+          updateMediaSessionPlaybackState();
+        };
+        
+        gaplessPlayer.onpause = () => {
+          isPlaying = false;
+          updatePlayPauseIcon();
+          updateMediaSessionPlaybackState();
+        };
+        
+        gaplessPlayer.onstop = () => {
+          isPlaying = false;
+          isAudioLoading = false;
+          updatePlayPauseIcon();
+        };
+        
+        gaplessPlayer.onnext = () => {
+          const idx = gaplessPlayer.getIndex();
+          const originalIndex = findOriginalIndex(idx);
+          if (originalIndex >= 0) {
+            currentTrackIndex = originalIndex;
+            const nextTrack = showData.tracks[originalIndex];
+            updateCurrentTrackData(nextTrack);
+            updateTrackDisplay(trackData);
+            initMapPopovers();
+            updateWaveformImage(nextTrack.waveform_image_url);
+            updateNavigationButtons();
+            initMediaSession(trackData);
+          }
+        };
+        
+        gaplessPlayer.onprev = () => {
+          const idx = gaplessPlayer.getIndex();
+          const originalIndex = findOriginalIndex(idx);
+          if (originalIndex >= 0) {
+            currentTrackIndex = originalIndex;
+            const prevTrack = showData.tracks[originalIndex];
+            updateCurrentTrackData(prevTrack);
+            updateTrackDisplay(trackData);
+            initMapPopovers();
+            updateWaveformImage(prevTrack.waveform_image_url);
+            updateNavigationButtons();
+            initMediaSession(trackData);
+          }
+        };
+        
+        gaplessPlayer.onfinishedtrack = () => {
+          const idx = gaplessPlayer.getIndex();
+          const tracks = getTracksWithAudio();
+          if (idx >= tracks.length - 1) {
+            playNext();
+          }
+        };
+        
+        gaplessPlayer.onfinishedall = () => {
+          playNext();
+        };
+        
+        gaplessPlayer.onerror = (trackPath, error) => {
+          console.error('Audio error:', trackPath, error);
+          showLoadingSpinner(false);
+        };
+        
+        isAudioLoading = true;
+        gaplessPlayer.play();
       }
       
       function wireUpPlayerControls() {
@@ -1243,7 +1253,7 @@
         const scrubber = document.getElementById('scrubber');
         const progressOverlay = document.getElementById('progress-overlay');
         if (scrubber) {
-          scrubber.style.backgroundImage = `url(${waveformUrl})`;
+          scrubber.style.setProperty('--waveform-url', `url(${waveformUrl})`);
           scrubber.classList.add('loaded');
         }
         if (progressOverlay) {
