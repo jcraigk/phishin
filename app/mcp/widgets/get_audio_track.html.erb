@@ -641,6 +641,20 @@
       let currentTrackIndex = 0;
       let baseUrl = 'https://phish.in';
 
+      function getProgressColor() {
+        const isDark = typeof getColorScheme === 'function' && getColorScheme() === 'dark';
+        return isPlaying 
+          ? (isDark ? '#5bcefa' : '#03BBF2') 
+          : (isDark ? '#e0e0e0' : '#b0b0b0');
+      }
+
+      function updateProgressBar(progress) {
+        const progressOverlay = document.getElementById('progress-overlay');
+        if (progressOverlay) {
+          progressOverlay.style.setProperty('background', `linear-gradient(to right, ${getProgressColor()} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
+        }
+      }
+
       function updatePlayerColors() {
         const isDark = typeof getColorScheme === 'function' && getColorScheme() === 'dark';
         const playBtn = document.getElementById('play-pause-btn');
@@ -653,11 +667,10 @@
         }
         const progressOverlay = document.getElementById('progress-overlay');
         if (progressOverlay) {
-          const progressColor = isPlaying ? (isDark ? '#5bcefa' : '#03BBF2') : (isDark ? '#e0e0e0' : '#b0b0b0');
           const currentStyle = progressOverlay.style.background || '';
           const match = currentStyle.match(/(\d+(?:\.\d+)?)%/);
           const progress = match ? match[1] : '0';
-          progressOverlay.style.setProperty('background', `linear-gradient(to right, ${progressColor} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
+          updateProgressBar(progress);
         }
       }
 
@@ -742,12 +755,7 @@
 
           const progress = (currentTime / duration) * 100;
 
-          const progressOverlay = document.getElementById('progress-overlay');
-          if (progressOverlay) {
-            const isDark = getColorScheme() === 'dark';
-            const progressColor = isPlaying ? (isDark ? '#5bcefa' : '#03BBF2') : (isDark ? '#e0e0e0' : '#b0b0b0');
-            progressOverlay.style.setProperty('background', `linear-gradient(to right, ${progressColor} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
-          }
+          updateProgressBar(progress);
 
           const elapsedEl = document.getElementById('elapsed-time');
           const remainingEl = document.getElementById('remaining-time');
@@ -816,13 +824,7 @@
           }
         };
 
-        gaplessPlayer.onfinishedtrack = () => {};
-
-        gaplessPlayer.onfinishedall = () => {};
-
-        gaplessPlayer.onerror = () => {
-          showLoadingSpinner(false);
-        };
+        gaplessPlayer.onerror = () => showLoadingSpinner(false);
 
         const playPauseBtn = document.getElementById('play-pause-btn');
         const scrubber = document.getElementById('scrubber');
@@ -900,9 +902,7 @@
 
         scrubber?.classList.remove('loaded');
         if (progressOverlay) {
-          const isDark = getColorScheme() === 'dark';
-          const progressColor = isPlaying ? (isDark ? '#5bcefa' : '#03BBF2') : (isDark ? '#e0e0e0' : '#b0b0b0');
-          progressOverlay.style.setProperty('background', `linear-gradient(to right, ${progressColor} 0%, rgba(255,255,255,0) 0%)`, 'important');
+          updateProgressBar(0);
         }
 
         const img = new Image();
@@ -1013,12 +1013,7 @@
         const newTime = percent * duration;
 
         const progress = percent * 100;
-        const progressOverlay = document.getElementById('progress-overlay');
-        if (progressOverlay) {
-          const isDark = getColorScheme() === 'dark';
-          const progressColor = isPlaying ? (isDark ? '#5bcefa' : '#03BBF2') : (isDark ? '#e0e0e0' : '#b0b0b0');
-          progressOverlay.style.setProperty('background', `linear-gradient(to right, ${progressColor} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
-        }
+        updateProgressBar(progress);
 
         const elapsedEl = document.getElementById('elapsed-time');
         const remainingEl = document.getElementById('remaining-time');
@@ -1269,12 +1264,7 @@
           const duration = currentTrack.duration_ms ? currentTrack.duration_ms / 1000 : 0;
           if (duration <= 0) return;
           const progress = (currentTime / duration) * 100;
-          const progressOverlay = document.getElementById('progress-overlay');
-          if (progressOverlay) {
-            const isDark = getColorScheme() === 'dark';
-            const progressColor = isPlaying ? (isDark ? '#5bcefa' : '#03BBF2') : (isDark ? '#e0e0e0' : '#b0b0b0');
-            progressOverlay.style.setProperty('background', `linear-gradient(to right, ${progressColor} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
-          }
+          updateProgressBar(progress);
           const elapsedEl = document.getElementById('elapsed-time');
           const remainingEl = document.getElementById('remaining-time');
           if (elapsedEl) elapsedEl.textContent = formatTime(currentTime);
@@ -1341,13 +1331,7 @@
           }
         };
         
-        gaplessPlayer.onfinishedtrack = () => {};
-        
-        gaplessPlayer.onfinishedall = () => {};
-        
-        gaplessPlayer.onerror = () => {
-          showLoadingSpinner(false);
-        };
+        gaplessPlayer.onerror = () => showLoadingSpinner(false);
         
         isAudioLoading = true;
         gaplessPlayer.play();

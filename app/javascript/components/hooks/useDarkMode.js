@@ -1,94 +1,19 @@
 import { useEffect } from "react";
 import { enable, disable, setFetchMethod } from "darkreader";
 
-const DARK_MODE_FIXES_ID = 'dark-mode-fixes';
-
-const DARK_MODE_CSS = `
-  /* Fix form element borders - remove red outlines */
-  .select select,
-  .input,
-  .textarea {
-    border-color: #4a4a4a !important;
-  }
-  .select select:focus,
-  .select select:active,
-  .input:focus,
-  .input:active {
-    border-color: #6d6f71 !important;
-    box-shadow: none !important;
-    outline: none !important;
-  }
-  
-  /* Button styling */
-  .button {
-    background-color: #515152 !important;
-    border-color: #4a4a4a !important;
-    color: #e0e0e0 !important;
-  }
-  .button:hover {
-    background-color: #03BBF2 !important;
-    border-color: #03BBF2 !important;
-    color: white !important;
-  }
-  .button.is-active {
-    background-color: #03BBF2 !important;
-    border-color: #03BBF2 !important;
-    color: white !important;
-  }
-  
-  /* Audio player play button */
-  .play-pause-btn {
-    background: #515152 !important;
-    background-color: #515152 !important;
-  }
-  .play-pause-btn.playing {
-    background: #03BBF2 !important;
-    background-color: #03BBF2 !important;
-  }
-  .play-pause-btn svg {
-    color: white !important;
-  }
-  
-  /* Progress bar */
-  .scrubber-bar,
-  .progress-bar {
-    filter: none !important;
-  }
-  
-  /* Blue hover colors */
-  .controls button:hover:not(:disabled),
-  .audio-player a:hover {
-    color: #03BBF2 !important;
-  }
-`;
-
-const injectDarkModeCSS = () => {
-  if (document.getElementById(DARK_MODE_FIXES_ID)) return;
-  
-  const style = document.createElement('style');
-  style.id = DARK_MODE_FIXES_ID;
-  style.textContent = DARK_MODE_CSS;
-  document.head.appendChild(style);
-};
-
-const removeDarkModeCSS = () => {
-  const style = document.getElementById(DARK_MODE_FIXES_ID);
-  if (style) style.remove();
-};
-
 const DARK_READER_CONFIG = {
   brightness: 100,
   contrast: 90,
   sepia: 10,
   css: `
     /* Preserve waveform scrubber and progress bar */
-    .scrubber-bar {
+    .scrubber-container {
       filter: none !important;
       -webkit-filter: none !important;
       mix-blend-mode: normal !important;
       isolation: isolate !important;
     }
-    .progress-bar {
+    .progress-overlay {
       filter: none !important;
       -webkit-filter: none !important;
       mix-blend-mode: normal !important;
@@ -205,10 +130,8 @@ const useDarkMode = () => {
     const applyTheme = (isDark) => {
       if (isDark) {
         enable(DARK_READER_CONFIG);
-        setTimeout(injectDarkModeCSS, 100);
       } else {
         disable();
-        removeDarkModeCSS();
       }
     };
 
@@ -221,7 +144,6 @@ const useDarkMode = () => {
     return () => {
       mediaQuery.removeEventListener('change', handleChange);
       disable();
-      removeDarkModeCSS();
     };
   }, []);
 };

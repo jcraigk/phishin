@@ -5,6 +5,20 @@ let isPlaying = false;
 let isLoading = false;
 let showMetadata = null;
 
+function getProgressColor() {
+  const isDark = typeof getColorScheme === 'function' && getColorScheme() === 'dark';
+  return isPlaying 
+    ? (isDark ? '#5bcefa' : '#03BBF2') 
+    : (isDark ? '#e0e0e0' : '#b0b0b0');
+}
+
+function updateProgressBar(progress) {
+  const progressOverlay = document.getElementById('progress-overlay');
+  if (progressOverlay) {
+    progressOverlay.style.setProperty('background', `linear-gradient(to right, ${getProgressColor()} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
+  }
+}
+
 function updatePlayerColors() {
   const isDark = typeof getColorScheme === 'function' && getColorScheme() === 'dark';
   const playBtn = document.getElementById('play-pause-btn');
@@ -17,11 +31,10 @@ function updatePlayerColors() {
   }
   const progressOverlay = document.getElementById('progress-overlay');
   if (progressOverlay && currentTrackIndex >= 0) {
-    const progressColor = isPlaying ? (isDark ? '#5bcefa' : '#03BBF2') : (isDark ? '#e0e0e0' : '#b0b0b0');
     const currentStyle = progressOverlay.style.background || '';
     const match = currentStyle.match(/(\d+(?:\.\d+)?)%/);
     const progress = match ? match[1] : '0';
-    progressOverlay.style.setProperty('background', `linear-gradient(to right, ${progressColor} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
+    updateProgressBar(progress);
   }
 }
 
@@ -113,13 +126,7 @@ function initAudioPlayer(options = {}) {
     if (duration <= 0) return;
 
     const progress = (currentTime / duration) * 100;
-
-    const progressOverlay = document.getElementById('progress-overlay');
-    if (progressOverlay) {
-      const isDark = getColorScheme() === 'dark';
-      const progressColor = isPlaying ? (isDark ? '#5bcefa' : '#03BBF2') : (isDark ? '#e0e0e0' : '#b0b0b0');
-      progressOverlay.style.setProperty('background', `linear-gradient(to right, ${progressColor} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
-    }
+    updateProgressBar(progress);
 
     const elapsedEl = document.getElementById('elapsed-time');
     const remainingEl = document.getElementById('remaining-time');
