@@ -95,7 +95,7 @@ function initAudioPlayer(options = {}) {
 
     const progressOverlay = document.getElementById('progress-overlay');
     if (progressOverlay) {
-      progressOverlay.style.background = `linear-gradient(to right, #03BBF2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
+      progressOverlay.style.background = `linear-gradient(to right, var(--progress-color, #b0b0b0) ${progress}%, rgba(255,255,255,0) ${progress}%)`;
     }
 
     const elapsedEl = document.getElementById('elapsed-time');
