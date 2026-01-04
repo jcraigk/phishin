@@ -258,10 +258,11 @@
       content: '';
       position: absolute;
       top: 50%;
-      right: 100%;
-      transform: translateY(-50%);
-      border: 5px solid transparent;
-      border-right-color: #515152;
+      left: -4px;
+      transform: translateY(-50%) rotate(45deg);
+      width: 8px;
+      height: 8px;
+      background-color: inherit;
     }
 
     .tag-badge {
@@ -317,10 +318,11 @@
       content: '';
       position: absolute;
       top: 50%;
-      right: 100%;
-      transform: translateY(-50%);
-      border: 5px solid transparent;
-      border-right-color: #515152;
+      left: -4px;
+      transform: translateY(-50%) rotate(45deg);
+      width: 8px;
+      height: 8px;
+      background-color: inherit;
     }
 
 
@@ -1081,14 +1083,7 @@
           
           const tags = track.tags || [];
           if (tags.length > 0) {
-            subtitleHtml += ' · ' + tags.map(tag => {
-              const tooltipText = tag.notes || tag.description || '';
-              if (tooltipText) {
-                const truncated = tooltipText.length > 100 ? tooltipText.slice(0, 100).trim() + '...' : tooltipText;
-                return `<span class="tag-badge" data-tooltip><span class="tag-tooltip">${escapeHtml(truncated)}</span>${escapeHtml(tag.name)}</span>`;
-              }
-              return `<span class="tag-badge">${escapeHtml(tag.name)}</span>`;
-            }).join(' ');
+            subtitleHtml += ' · ' + renderGroupedTagBadges(tags, true);
           }
           
           subtitleEl.innerHTML = subtitleHtml;
@@ -1354,14 +1349,7 @@
         let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a>${setPos ? ` · ${setPos}` : ''} · ${venueLocationHtml}`;
 
         if (tags.length > 0) {
-          subtitleHtml += ' · ' + tags.map(tag => {
-            const tooltipText = tag.notes || tag.description || '';
-            if (tooltipText) {
-              const truncated = tooltipText.length > 100 ? tooltipText.slice(0, 100).trim() + '...' : tooltipText;
-              return `<span class="tag-badge" data-tooltip><span class="tag-tooltip">${escapeHtml(truncated)}</span>${escapeHtml(tag.name)}</span>`;
-            }
-            return `<span class="tag-badge">${escapeHtml(tag.name)}</span>`;
-          }).join(' ');
+          subtitleHtml += ' · ' + renderGroupedTagBadges(tags, true);
         }
 
         const playerControls = hasAudio ? `
@@ -1466,14 +1454,7 @@
         let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a>${setPos ? ` · ${setPos}` : ''} · ${venueLocationHtml}`;
 
         if (tags.length > 0) {
-          subtitleHtml += ' · ' + tags.map(tag => {
-            const tooltipText = tag.notes || tag.description || '';
-            if (tooltipText) {
-              const truncated = tooltipText.length > 100 ? tooltipText.slice(0, 100).trim() + '...' : tooltipText;
-              return `<span class="tag-badge" data-tooltip><span class="tag-tooltip">${escapeHtml(truncated)}</span>${escapeHtml(tag.name)}</span>`;
-            }
-            return `<span class="tag-badge">${escapeHtml(tag.name)}</span>`;
-          }).join(' ');
+          subtitleHtml += ' · ' + renderGroupedTagBadges(tags, true);
         }
 
         const coverPlayButton = hasAudio ? `

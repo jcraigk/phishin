@@ -48,6 +48,59 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+function groupTags(tags) {
+  return tags
+    .sort((a, b) => (a.priority || 0) - (b.priority || 0) || (a.starts_at_second || 0) - (b.starts_at_second || 0))
+    .reduce((acc, tag) => {
+      const group = acc[tag.name] || [];
+      group.push(tag);
+      acc[tag.name] = group;
+      return acc;
+    }, {});
+}
+
+function formatTagTimestamp(seconds) {
+  if (!seconds) return null;
+  const minutes = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${minutes}:${secs.toString().padStart(2, '0')}`;
+}
+
+function formatTagTimeRange(tag) {
+  if (!tag.starts_at_second && !tag.ends_at_second) return '';
+  const start = formatTagTimestamp(tag.starts_at_second);
+  const end = formatTagTimestamp(tag.ends_at_second);
+  return start && end ? `between ${start} and ${end}` : start ? `at ${start}` : '';
+}
+
+function tooltipForTagStack(tagGroup) {
+  const hasNotesOrTranscript = tagGroup.some(tag => tag.notes || tag.transcript);
+  if (!hasNotesOrTranscript) {
+    return tagGroup[0].description || '';
+  }
+  return tagGroup.map(tag => {
+    let timeRange = formatTagTimeRange(tag);
+    let tooltipPart = tag.notes ? `${tag.notes} ${timeRange}`.trim() : '';
+    return tooltipPart.trim();
+  }).filter(Boolean).join(', ');
+}
+
+function renderGroupedTagBadges(tags, withTooltips = false) {
+  const grouped = groupTags(tags);
+  return Object.entries(grouped).map(([tagName, tagGroup]) => {
+    const count = tagGroup.length;
+    const title = count > 1 ? `${tagName} (${count})` : tagName;
+    if (withTooltips) {
+      const tooltipText = tooltipForTagStack(tagGroup);
+      if (tooltipText) {
+        const truncated = tooltipText.length > 100 ? tooltipText.slice(0, 100).trim() + '...' : tooltipText;
+        return `<span class="tag-badge" data-tooltip><span class="tag-tooltip">${escapeHtml(truncated)}</span>${escapeHtml(title)}</span>`;
+      }
+    }
+    return `<span class="tag-badge">${escapeHtml(title)}</span>`;
+  }).join(withTooltips ? ' ' : '');
+}
+
 function truncateText(str, maxLength) {
   if (!str || str.length <= maxLength) return escapeHtml(str);
   return escapeHtml(str.slice(0, maxLength).trim()) + '…';
@@ -252,6 +305,21 @@ const DARK_READER_CONFIG = {
     .skip-btn:hover:not(:disabled),
     .scrub-btn:hover:not(:disabled) {
       color: #03BBF2 !important;
+    }
+    
+    /* Preserve tooltip styling */
+    .tag-tooltip,
+    .set-position-tooltip {
+      background-color: #515152 !important;
+      color: white !important;
+      filter: none !important;
+      -webkit-filter: none !important;
+    }
+    .tag-tooltip::before,
+    .set-position-tooltip::before {
+      background-color: #515152 !important;
+      filter: none !important;
+      -webkit-filter: none !important;
     }
     
     /* Preserve blue tag hover */
