@@ -844,15 +844,16 @@
         };
       }
 
-      let currentWaveformAbort = null;
+      let currentWaveformImage = null;
       
       function updateWaveformImage(waveformUrl, onComplete) {
         const scrubber = document.getElementById('scrubber');
         const progressOverlay = document.getElementById('progress-overlay');
 
-        if (currentWaveformAbort) {
-          currentWaveformAbort.abort();
-          currentWaveformAbort = null;
+        if (currentWaveformImage) {
+          currentWaveformImage.onload = null;
+          currentWaveformImage.onerror = null;
+          currentWaveformImage = null;
         }
 
         if (!waveformUrl) {
@@ -861,46 +862,41 @@
             scrubber.classList.remove('loaded');
           }
           if (progressOverlay) {
-            progressOverlay.style.maskImage = '';
-            progressOverlay.style.webkitMaskImage = '';
+            progressOverlay.style.maskImage = 'none';
+            progressOverlay.style.webkitMaskImage = 'none';
           }
           if (onComplete) onComplete();
           return;
         }
 
         scrubber?.classList.remove('loaded');
+        if (progressOverlay) {
+          progressOverlay.style.background = 'linear-gradient(to right, var(--progress-color, #b0b0b0) 0%, rgba(255,255,255,0) 0%)';
+        }
 
-        const abortController = new AbortController();
-        currentWaveformAbort = abortController;
-        const startTime = performance.now();
-
-        fetch(waveformUrl, { 
-          signal: abortController.signal,
-          mode: 'cors'
-        })
-          .then(response => {
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            return response.blob();
-          })
-          .then(blob => {
-            if (abortController.signal.aborted) return;
-            
-            const objectUrl = URL.createObjectURL(blob);
-            
-            if (scrubber) {
-              scrubber.style.setProperty('--waveform-url', `url(${objectUrl})`);
-              scrubber.classList.add('loaded');
-            }
-            if (progressOverlay) {
-              progressOverlay.style.maskImage = `url(${objectUrl})`;
-              progressOverlay.style.webkitMaskImage = `url(${objectUrl})`;
-            }
-            if (onComplete) onComplete();
-          })
-          .catch(err => {
-            if (err.name === 'AbortError') return;
-            if (onComplete) onComplete();
-          });
+        const img = new Image();
+        currentWaveformImage = img;
+        
+        img.onload = () => {
+          if (currentWaveformImage !== img) return;
+          
+          const maskUrl = `url(${waveformUrl})`;
+          if (scrubber) {
+            scrubber.style.setProperty('--waveform-url', maskUrl);
+            scrubber.classList.add('loaded');
+          }
+          if (progressOverlay) {
+            progressOverlay.style.maskImage = maskUrl;
+            progressOverlay.style.webkitMaskImage = maskUrl;
+          }
+          if (onComplete) onComplete();
+        };
+        
+        img.onerror = () => {
+          if (onComplete) onComplete();
+        };
+        
+        img.src = waveformUrl;
       }
 
       function togglePlayPause() {
