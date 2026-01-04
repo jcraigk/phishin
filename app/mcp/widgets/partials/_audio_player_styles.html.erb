@@ -58,7 +58,7 @@
 .player-top-row {
   display: flex;
   align-items: center;
-  padding: 4px 14px 4px 19px;
+  padding: 8px 14px 4px 19px;
   gap: 5px;
   position: relative;
   z-index: 1;
@@ -109,7 +109,7 @@
   border: none;
   padding: 6px;
   cursor: pointer;
-  color: #6d6f71;
+  color: #505050;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -135,7 +135,7 @@
   border: none;
   padding: 6px;
   cursor: pointer;
-  color: #6d6f71;
+  color: #505050;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -196,7 +196,7 @@
   border: none;
   padding: 6px;
   cursor: pointer;
-  color: #6d6f71;
+  color: #505050;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -225,7 +225,7 @@
 
 .time-display {
   font-size: 0.95rem;
-  color: #6d6f71;
+  color: #505050;
   font-variant-numeric: tabular-nums;
   min-width: 38px;
   text-align: center;
@@ -237,9 +237,28 @@
   height: 100%;
   position: relative;
   cursor: pointer;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
+  --waveform-url: none;
+}
+
+.scrubber-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #505050;
+  mask-image: var(--waveform-url);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: var(--waveform-url);
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.scrubber-container.loaded::before {
+  opacity: 1;
 }
 
 .progress-overlay {
@@ -249,12 +268,20 @@
   height: 100%;
   width: 100%;
   background: linear-gradient(to right, #03BBF2 0%, rgba(255,255,255,0) 0%);
+  mask-image: var(--waveform-url);
   mask-size: 100% 100%;
   mask-repeat: no-repeat;
   mask-position: center;
+  -webkit-mask-image: var(--waveform-url);
   -webkit-mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.scrubber-container.loaded .progress-overlay {
+  opacity: 1;
 }
 
 .play-pause-btn {

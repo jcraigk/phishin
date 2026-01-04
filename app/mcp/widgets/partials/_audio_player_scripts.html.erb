@@ -247,16 +247,11 @@ function updateTrackDisplay(track) {
 
 function updateWaveformImage(waveformUrl) {
   const scrubber = document.getElementById('scrubber');
-  const progressOverlay = document.getElementById('progress-overlay');
   
   if (!waveformUrl) {
     if (scrubber) {
-      scrubber.style.backgroundImage = '';
+      scrubber.style.setProperty('--waveform-url', 'none');
       scrubber.classList.remove('loaded');
-    }
-    if (progressOverlay) {
-      progressOverlay.style.maskImage = '';
-      progressOverlay.style.webkitMaskImage = '';
     }
     return;
   }
@@ -266,12 +261,8 @@ function updateWaveformImage(waveformUrl) {
   const img = new Image();
   img.onload = () => {
     if (scrubber) {
-      scrubber.style.backgroundImage = `url(${waveformUrl})`;
+      scrubber.style.setProperty('--waveform-url', `url(${waveformUrl})`);
       scrubber.classList.add('loaded');
-    }
-    if (progressOverlay) {
-      progressOverlay.style.maskImage = `url(${waveformUrl})`;
-      progressOverlay.style.webkitMaskImage = `url(${waveformUrl})`;
     }
   };
   img.src = waveformUrl;
