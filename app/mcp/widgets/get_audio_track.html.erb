@@ -173,10 +173,6 @@
       overflow: hidden;
     }
 
-    .player-top-row:has(.tag-badge:hover) {
-      z-index: 10;
-    }
-
     .player-cover-art-container {
       position: relative;
       flex-shrink: 0;
@@ -296,19 +292,8 @@
       visibility: visible;
     }
 
-    .player-track-subtitle:has(.tag-badge:hover) {
-      overflow: visible;
-    }
-
-    .player-track-info:has(.tag-badge:hover) {
-      overflow: visible;
-    }
-
     .tag-tooltip {
-      position: absolute;
-      top: 50%;
-      left: calc(100% + 8px);
-      transform: translateY(-50%);
+      position: fixed;
       background-color: #515152;
       color: white;
       padding: 0.5rem 0.75rem;
@@ -317,7 +302,7 @@
       font-weight: 400;
       line-height: 1.3em;
       white-space: normal;
-      width: 180px;
+      max-width: 200px;
       text-align: left;
       opacity: 0;
       visibility: hidden;
@@ -328,7 +313,7 @@
       word-wrap: break-word;
     }
 
-    .tag-tooltip::after {
+    .tag-tooltip::before {
       content: '';
       position: absolute;
       top: 50%;
@@ -566,6 +551,20 @@
 <%= partial("base_scripts") %>
 <%= partial("map_popover_scripts") %>
 
+      function initTagTooltips() {
+        document.querySelectorAll('.tag-badge[data-tooltip]').forEach(badge => {
+          const tooltip = badge.querySelector('.tag-tooltip');
+          if (!tooltip) return;
+
+          badge.addEventListener('mouseenter', () => {
+            const rect = badge.getBoundingClientRect();
+            tooltip.style.left = (rect.right + 8) + 'px';
+            tooltip.style.top = (rect.top + rect.height / 2) + 'px';
+            tooltip.style.transform = 'translateY(-50%)';
+          });
+        });
+      }
+
       let gaplessPlayer = null;
       let isPlaying = false;
       let isAudioLoading = false;
@@ -682,6 +681,7 @@
             updateCurrentTrackData(track);
             updateTrackDisplay(trackData);
             initMapPopovers();
+            initTagTooltips();
             updateWaveformImage(track.waveform_image_url);
             updateNavigationButtons();
             initMediaSession(trackData);
@@ -697,6 +697,7 @@
             updateCurrentTrackData(track);
             updateTrackDisplay(trackData);
             initMapPopovers();
+            initTagTooltips();
             updateWaveformImage(track.waveform_image_url);
             updateNavigationButtons();
             initMediaSession(trackData);
@@ -991,6 +992,7 @@
         
         updateTrackDisplay(trackData);
         initMapPopovers();
+        initTagTooltips();
         updateWaveformImage(track.waveform_image_url);
         updateNavigationButtons();
         initMediaSession(trackData);
@@ -1136,6 +1138,7 @@
           
           setupBackgroundBlur(trackData.cover_art_url);
           initMapPopovers();
+          initTagTooltips();
           wireUpPlayerControls();
           console.log('[NAV] targetTrack:', targetTrack);
           console.log('[NAV] waveform_image_url:', targetTrack.waveform_image_url);
@@ -1233,6 +1236,7 @@
             updateCurrentTrackData(nextTrack);
             updateTrackDisplay(trackData);
             initMapPopovers();
+            initTagTooltips();
             updateWaveformImage(nextTrack.waveform_image_url);
             updateNavigationButtons();
             initMediaSession(trackData);
@@ -1248,6 +1252,7 @@
             updateCurrentTrackData(prevTrack);
             updateTrackDisplay(trackData);
             initMapPopovers();
+            initTagTooltips();
             updateWaveformImage(prevTrack.waveform_image_url);
             updateNavigationButtons();
             initMediaSession(trackData);
@@ -1560,6 +1565,7 @@
             root.innerHTML = renderPlayer(data);
             setupBackgroundBlur(data.cover_art_url);
             initMapPopovers();
+            initTagTooltips();
             if (data.mp3_url) {
               const gaplessIndex = findGaplessIndex(currentTrackIndex);
               initGaplessPlayer(data, gaplessIndex, false);
