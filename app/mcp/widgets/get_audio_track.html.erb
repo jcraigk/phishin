@@ -491,15 +491,21 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: #3a3a3a;
+      background: #505050;
       mask-image: var(--waveform-url);
-      mask-size: 100% 90%;
+      mask-size: 100% 80%;
       mask-repeat: no-repeat;
-      mask-position: center;
+      mask-position: top center;
       -webkit-mask-image: var(--waveform-url);
-      -webkit-mask-size: 100% 90%;
+      -webkit-mask-size: 100% 80%;
       -webkit-mask-repeat: no-repeat;
-      -webkit-mask-position: center;
+      -webkit-mask-position: top center;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .scrubber-container.loaded::before {
+      opacity: 1;
     }
 
     .progress-overlay {
@@ -509,12 +515,18 @@
       height: 100%;
       width: 100%;
       background: linear-gradient(to right, #03BBF2 0%, rgba(255,255,255,0) 0%);
-      mask-size: 100% 90%;
+      mask-size: 100% 80%;
       mask-repeat: no-repeat;
-      mask-position: center;
-      -webkit-mask-size: 100% 90%;
+      mask-position: top center;
+      -webkit-mask-size: 100% 80%;
       -webkit-mask-repeat: no-repeat;
-      -webkit-mask-position: center;
+      -webkit-mask-position: top center;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .scrubber-container.loaded .progress-overlay {
+      opacity: 1;
     }
 
     .play-pause-btn {
@@ -756,11 +768,22 @@
         };
       }
 
+      let currentWaveformAbort = null;
+      
       function updateWaveformImage(waveformUrl, onComplete) {
         const scrubber = document.getElementById('scrubber');
         const progressOverlay = document.getElementById('progress-overlay');
 
+        console.log('[WAVEFORM] updateWaveformImage called with:', waveformUrl);
+
+        if (currentWaveformAbort) {
+          console.log('[WAVEFORM] Aborting previous load');
+          currentWaveformAbort.abort();
+          currentWaveformAbort = null;
+        }
+
         if (!waveformUrl) {
+          console.log('[WAVEFORM] No waveform URL provided');
           if (scrubber) {
             scrubber.style.setProperty('--waveform-url', 'none');
             scrubber.classList.remove('loaded');
@@ -775,22 +798,44 @@
 
         scrubber?.classList.remove('loaded');
 
-        const img = new Image();
-        img.onload = () => {
-          if (scrubber) {
-            scrubber.style.setProperty('--waveform-url', `url(${waveformUrl})`);
-            scrubber.classList.add('loaded');
-          }
-          if (progressOverlay) {
-            progressOverlay.style.maskImage = `url(${waveformUrl})`;
-            progressOverlay.style.webkitMaskImage = `url(${waveformUrl})`;
-          }
-          if (onComplete) onComplete();
-        };
-        img.onerror = () => {
-          if (onComplete) onComplete();
-        };
-        img.src = waveformUrl;
+        const abortController = new AbortController();
+        currentWaveformAbort = abortController;
+        const startTime = performance.now();
+
+        fetch(waveformUrl, { 
+          signal: abortController.signal,
+          mode: 'cors'
+        })
+          .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.blob();
+          })
+          .then(blob => {
+            if (abortController.signal.aborted) return;
+            
+            const objectUrl = URL.createObjectURL(blob);
+            console.log('[WAVEFORM] Fetched in', (performance.now() - startTime).toFixed(0), 'ms');
+            
+            if (scrubber) {
+              scrubber.style.setProperty('--waveform-url', `url(${objectUrl})`);
+              scrubber.classList.add('loaded');
+              console.log('[WAVEFORM] Applied to scrubber, loaded class added');
+            }
+            if (progressOverlay) {
+              progressOverlay.style.maskImage = `url(${objectUrl})`;
+              progressOverlay.style.webkitMaskImage = `url(${objectUrl})`;
+              console.log('[WAVEFORM] Applied to progressOverlay');
+            }
+            if (onComplete) onComplete();
+          })
+          .catch(err => {
+            if (err.name === 'AbortError') {
+              console.log('[WAVEFORM] Load aborted');
+              return;
+            }
+            console.error('[WAVEFORM] Fetch error:', err);
+            if (onComplete) onComplete();
+          });
       }
 
       function togglePlayPause() {
@@ -1092,6 +1137,8 @@
           setupBackgroundBlur(trackData.cover_art_url);
           initMapPopovers();
           wireUpPlayerControls();
+          console.log('[NAV] targetTrack:', targetTrack);
+          console.log('[NAV] waveform_image_url:', targetTrack.waveform_image_url);
           updateWaveformImage(targetTrack.waveform_image_url);
           initMediaSession(trackData);
           updateNavigationButtons();
@@ -1250,16 +1297,7 @@
       
       function applyPreloadedWaveform(waveformUrl) {
         if (!waveformUrl) return;
-        const scrubber = document.getElementById('scrubber');
-        const progressOverlay = document.getElementById('progress-overlay');
-        if (scrubber) {
-          scrubber.style.setProperty('--waveform-url', `url(${waveformUrl})`);
-          scrubber.classList.add('loaded');
-        }
-        if (progressOverlay) {
-          progressOverlay.style.maskImage = `url(${waveformUrl})`;
-          progressOverlay.style.webkitMaskImage = `url(${waveformUrl})`;
-        }
+        updateWaveformImage(waveformUrl);
       }
       
       function renderPlayerPlaying(track) {

@@ -9,7 +9,8 @@ class Server
         "https://phish.in"
       ],
       resource_domains: [
-        "https://phish.in"
+        "https://phish.in",
+        "blob:"
       ]
     }
   }.freeze
