@@ -1,0 +1,88 @@
+function initTagModal() {
+  const tagModal = document.getElementById('tag-modal');
+  const tagModalTitle = document.getElementById('tag-modal-title');
+  const tagModalContent = document.getElementById('tag-modal-content');
+  const tagModalCloseBtn = document.getElementById('tag-modal-close-btn');
+  if (!tagModal) return;
+
+  function updateModalPosition() {
+    const player = document.getElementById('audio-player');
+    if (player && player.classList.contains('visible')) {
+      tagModal.classList.add('with-player');
+    } else {
+      tagModal.classList.remove('with-player');
+    }
+  }
+
+  function openTagModal(tags) {
+    const tagIcon = '<svg viewBox="0 0 448 512" fill="currentColor" style="width: 18px; height: 18px; margin-right: 8px; vertical-align: -2px;"><path d="M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>';
+    tagModalTitle.innerHTML = tagIcon + (tags.length === 1 ? 'Tag' : 'Tags');
+    
+    let contentHtml = '';
+    tags.forEach((tag) => {
+      const hasDescription = tag.description && tag.description.trim();
+      const hasNotes = tag.notes && tag.notes.trim();
+      
+      contentHtml += `<div class="tag-modal-section">`;
+      contentHtml += `<div class="tag-modal-section-title">${escapeHtml(tag.name)}</div>`;
+      
+      if (hasDescription) {
+        contentHtml += `<div style="margin-bottom: ${hasNotes ? '8px' : '0'}">${escapeHtml(tag.description)}</div>`;
+      }
+      if (hasNotes) {
+        contentHtml += `<div style="font-style: italic; color: #6d6f71;">${escapeHtml(tag.notes)}</div>`;
+      }
+      if (!hasDescription && !hasNotes) {
+        contentHtml += `<div style="color: #9a9b9d;">No additional details available.</div>`;
+      }
+      
+      contentHtml += `</div>`;
+    });
+    
+    tagModalContent.innerHTML = contentHtml;
+    
+    document.querySelectorAll('.context-dropdown, .track-dropdown').forEach(d => d.classList.remove('visible'));
+    
+    updateModalPosition();
+    tagModal.classList.add('visible');
+  }
+
+  const player = document.getElementById('audio-player');
+  if (player) {
+    const observer = new MutationObserver(() => {
+      if (tagModal.classList.contains('visible')) {
+        updateModalPosition();
+      }
+    });
+    observer.observe(player, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  document.querySelectorAll('.tags-row.clickable, .track-inline-tags, .show-meta-tags').forEach(row => {
+    row.addEventListener('click', (e) => {
+      e.stopPropagation();
+      
+      let tags = [];
+      try {
+        tags = JSON.parse(row.dataset.tags || '[]');
+      } catch (err) {
+        return;
+      }
+      
+      if (tags.length > 0) {
+        openTagModal(tags);
+      }
+    });
+  });
+
+  tagModalCloseBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    tagModal.classList.remove('visible');
+  });
+
+  tagModal.addEventListener('click', (e) => {
+    if (e.target === tagModal) {
+      tagModal.classList.remove('visible');
+    }
+  });
+}
+

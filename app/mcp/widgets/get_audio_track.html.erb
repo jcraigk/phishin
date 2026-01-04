@@ -2,6 +2,7 @@
 <%= partial("head") %>
   <style>
 <%= partial("base_styles") %>
+<%= partial("loader_shimmer_styles") %>
 
     .loader-container {
       height: 92px;
@@ -9,52 +10,6 @@
       max-height: 92px;
       gap: 0;
       overflow: hidden;
-    }
-
-    .loader-text {
-      display: none;
-    }
-
-    .loader-logo-wrapper {
-      position: relative;
-      display: inline-block;
-      line-height: 0;
-    }
-
-    .loader-logo {
-      display: block;
-    }
-
-    .loader-logo-wrapper::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        transparent 40%,
-        rgba(255, 255, 255, 0.7) 50%,
-        transparent 60%,
-        transparent 100%
-      );
-      background-size: 200% 100%;
-      animation: logo-shimmer 1.5s infinite linear;
-      -webkit-mask-image: url('<%= asset_host_placeholder %>/mcp-widgets/images/logo-full.png');
-      mask-image: url('<%= asset_host_placeholder %>/mcp-widgets/images/logo-full.png');
-      -webkit-mask-size: 100% 100%;
-      mask-size: 100% 100%;
-      -webkit-mask-repeat: no-repeat;
-      mask-repeat: no-repeat;
-      -webkit-mask-position: top left;
-      mask-position: top left;
-    }
-
-    @keyframes logo-shimmer {
-      0% { background-position: 100% 50%; }
-      100% { background-position: -100% 50%; }
     }
 
     .audio-player {
@@ -808,7 +763,6 @@
             const track = showData.tracks[originalIndex];
             updateCurrentTrackData(track);
             updateTrackDisplay(trackData);
-            initMapPopovers();
             initTagTooltips();
             initSetPositionTooltips();
             updateWaveformImage(track.waveform_image_url);
@@ -825,7 +779,6 @@
             const track = showData.tracks[originalIndex];
             updateCurrentTrackData(track);
             updateTrackDisplay(trackData);
-            initMapPopovers();
             initTagTooltips();
             initSetPositionTooltips();
             updateWaveformImage(track.waveform_image_url);
@@ -838,8 +791,7 @@
 
         gaplessPlayer.onfinishedall = () => {};
 
-        gaplessPlayer.onerror = (trackPath, error) => {
-          console.error('Audio error:', trackPath, error);
+        gaplessPlayer.onerror = () => {
           showLoadingSpinner(false);
         };
 
@@ -898,16 +850,12 @@
         const scrubber = document.getElementById('scrubber');
         const progressOverlay = document.getElementById('progress-overlay');
 
-        console.log('[WAVEFORM] updateWaveformImage called with:', waveformUrl);
-
         if (currentWaveformAbort) {
-          console.log('[WAVEFORM] Aborting previous load');
           currentWaveformAbort.abort();
           currentWaveformAbort = null;
         }
 
         if (!waveformUrl) {
-          console.log('[WAVEFORM] No waveform URL provided');
           if (scrubber) {
             scrubber.style.setProperty('--waveform-url', 'none');
             scrubber.classList.remove('loaded');
@@ -938,26 +886,19 @@
             if (abortController.signal.aborted) return;
             
             const objectUrl = URL.createObjectURL(blob);
-            console.log('[WAVEFORM] Fetched in', (performance.now() - startTime).toFixed(0), 'ms');
             
             if (scrubber) {
               scrubber.style.setProperty('--waveform-url', `url(${objectUrl})`);
               scrubber.classList.add('loaded');
-              console.log('[WAVEFORM] Applied to scrubber, loaded class added');
             }
             if (progressOverlay) {
               progressOverlay.style.maskImage = `url(${objectUrl})`;
               progressOverlay.style.webkitMaskImage = `url(${objectUrl})`;
-              console.log('[WAVEFORM] Applied to progressOverlay');
             }
             if (onComplete) onComplete();
           })
           .catch(err => {
-            if (err.name === 'AbortError') {
-              console.log('[WAVEFORM] Load aborted');
-              return;
-            }
-            console.error('[WAVEFORM] Fetch error:', err);
+            if (err.name === 'AbortError') return;
             if (onComplete) onComplete();
           });
       }
@@ -1114,7 +1055,6 @@
         updateCurrentTrackData(track);
         
         updateTrackDisplay(trackData);
-        initMapPopovers();
         initTagTooltips();
         initSetPositionTooltips();
         updateWaveformImage(track.waveform_image_url);
@@ -1186,10 +1126,7 @@
       }
 
       async function requestAdjacentShow(direction) {
-        if (!showData?.date || isNavigating) {
-          console.log('[NAV] Blocked - date:', showData?.date, 'isNavigating:', isNavigating);
-          return;
-        }
+        if (!showData?.date || isNavigating) return;
         
         isNavigating = true;
         
@@ -1203,9 +1140,6 @@
         const root = document.getElementById('root');
         root.innerHTML = renderLoader();
         
-        const t0 = performance.now();
-        console.log('[NAV] Starting adjacent show load:', direction);
-        
         try {
           const currentShowResponse = await fetch(`${baseUrl}/api/v2/shows/${showData.date}`);
           if (!currentShowResponse.ok) throw new Error('Failed to fetch current show');
@@ -1215,7 +1149,6 @@
             ? currentShow.next_show_date_with_audio 
             : currentShow.previous_show_date_with_audio;
           if (!adjacentDate) throw new Error('No adjacent show found');
-          console.log('[NAV] Adjacent date:', adjacentDate);
           
           const adjacentShowResponse = await fetch(`${baseUrl}/api/v2/shows/${adjacentDate}`);
           if (!adjacentShowResponse.ok) throw new Error('Failed to fetch adjacent show');
@@ -1260,20 +1193,14 @@
           initAudioOnly(trackData, gaplessIndex);
           
           setupBackgroundBlur(trackData.cover_art_url);
-          initMapPopovers();
           initTagTooltips();
           initSetPositionTooltips();
           wireUpPlayerControls();
-          console.log('[NAV] targetTrack:', targetTrack);
-          console.log('[NAV] waveform_image_url:', targetTrack.waveform_image_url);
           updateWaveformImage(targetTrack.waveform_image_url);
           initMediaSession(trackData);
           updateNavigationButtons();
           
-          console.log('[NAV] TOTAL TIME:', (performance.now() - t0).toFixed(0), 'ms');
-          
         } catch (e) {
-          console.error('[NAV] ERROR:', e);
           if (showData && trackData) {
             root.innerHTML = renderPlayer(trackData);
             if (trackData.mp3_url) {
@@ -1362,7 +1289,6 @@
             const nextTrack = showData.tracks[originalIndex];
             updateCurrentTrackData(nextTrack);
             updateTrackDisplay(trackData);
-            initMapPopovers();
             initTagTooltips();
             initSetPositionTooltips();
             updateWaveformImage(nextTrack.waveform_image_url);
@@ -1379,7 +1305,6 @@
             const prevTrack = showData.tracks[originalIndex];
             updateCurrentTrackData(prevTrack);
             updateTrackDisplay(trackData);
-            initMapPopovers();
             initTagTooltips();
             initSetPositionTooltips();
             updateWaveformImage(prevTrack.waveform_image_url);
@@ -1392,8 +1317,7 @@
         
         gaplessPlayer.onfinishedall = () => {};
         
-        gaplessPlayer.onerror = (trackPath, error) => {
-          console.error('Audio error:', trackPath, error);
+        gaplessPlayer.onerror = () => {
           showLoadingSpinner(false);
         };
         
@@ -1419,11 +1343,6 @@
         if (playPauseBtn) playPauseBtn.disabled = false;
         if (scrubBackBtn) scrubBackBtn.disabled = false;
         if (scrubForwardBtn) scrubForwardBtn.disabled = true;
-      }
-      
-      function applyPreloadedWaveform(waveformUrl) {
-        if (!waveformUrl) return;
-        updateWaveformImage(waveformUrl);
       }
       
       function renderPlayerPlaying(track) {
@@ -1668,7 +1587,6 @@
 
         root.innerHTML = renderPlayer(data);
         setupBackgroundBlur(data.cover_art_url);
-        initMapPopovers();
         initTagTooltips();
         initSetPositionTooltips();
         if (data.mp3_url) {

@@ -2,56 +2,13 @@
 <%= partial("head") %>
   <style>
 <%= partial("base_styles") %>
-
-    .loader-text {
-      display: none;
-    }
-
-    .loader-logo-wrapper {
-      position: relative;
-      display: inline-block;
-      line-height: 0;
-    }
-
-    .loader-logo {
-      display: block;
-    }
-
-    .loader-logo-wrapper::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        transparent 40%,
-        rgba(255, 255, 255, 0.7) 50%,
-        transparent 60%,
-        transparent 100%
-      );
-      background-size: 200% 100%;
-      animation: logo-shimmer 1.5s infinite linear;
-      -webkit-mask-image: url('<%= asset_host_placeholder %>/mcp-widgets/images/logo-full.png');
-      mask-image: url('<%= asset_host_placeholder %>/mcp-widgets/images/logo-full.png');
-      -webkit-mask-size: 100% 100%;
-      mask-size: 100% 100%;
-      -webkit-mask-repeat: no-repeat;
-      mask-repeat: no-repeat;
-      -webkit-mask-position: top left;
-      mask-position: top left;
-    }
-
-    @keyframes logo-shimmer {
-      0% { background-position: 100% 50%; }
-      100% { background-position: -100% 50%; }
-    }
-
+<%= partial("loader_shimmer_styles") %>
 <%= partial("card_styles") %>
 <%= partial("track_styles") %>
 <%= partial("audio_player_styles") %>
+<%= partial("modal_common_styles") %>
+<%= partial("tag_styles") %>
+<%= partial("track_menu_styles") %>
 
     .taper-notes-modal {
       position: absolute;
@@ -68,38 +25,6 @@
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.3s ease, visibility 0s 0.3s;
-    }
-
-    .modal-blur-wrapper {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      overflow: hidden;
-      border-radius: 0.5rem;
-      background: #d4d5d7;
-    }
-
-    .modal-blur {
-      position: absolute;
-      top: -20px;
-      left: -20px;
-      right: -20px;
-      bottom: -20px;
-      background-size: cover;
-      background-position: center;
-      filter: blur(40px) saturate(1.4);
-    }
-
-    .modal-blur::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(212, 213, 215, 0.6);
     }
 
     .taper-notes-modal.visible {
@@ -296,81 +221,6 @@
       color: #03BBF2;
     }
 
-    .track-menu-wrapper {
-      position: relative;
-      flex-shrink: 0;
-      margin-left: 8px;
-    }
-
-    .track-menu-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: none;
-      border: none;
-      color: #a0a1a3;
-      cursor: pointer;
-      padding: 4px;
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      transition: color 0.15s;
-    }
-
-    .track-menu-btn:hover {
-      color: #03BBF2;
-    }
-
-    .track-dropdown {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      margin-top: 2px;
-      background-color: #ffffff;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-      min-width: 160px;
-      z-index: 9999;
-      display: none;
-      overflow: hidden;
-    }
-
-    .track-dropdown.visible {
-      display: block;
-    }
-
-    .track-dropdown-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      color: #515152;
-      text-decoration: none;
-      font-size: 1rem;
-      transition: background-color 0.15s, color 0.15s;
-      cursor: pointer;
-      border: none;
-      background-color: #ffffff;
-      width: 100%;
-      text-align: left;
-    }
-
-    .track-dropdown-item:hover {
-      background-color: #f5f5f5;
-    }
-
-    .track-dropdown-item svg {
-      width: 14px;
-      height: 14px;
-      flex-shrink: 0;
-    }
-
-    .track-dropdown-item.disabled {
-      opacity: 0.4;
-      cursor: default;
-      pointer-events: none;
-    }
-
     .cover-art-container.clickable {
       cursor: pointer;
     }
@@ -440,33 +290,6 @@
       transition: opacity 0.3s ease, visibility 0s 0s;
     }
 
-    .modal-close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 32px;
-      height: 32px;
-      border: none;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      transition: background 0.15s;
-      z-index: 10;
-    }
-
-    .modal-close-btn:hover {
-      background: rgba(0, 0, 0, 0.5);
-    }
-
-    .modal-close-btn svg {
-      width: 16px;
-      height: 16px;
-    }
-
     .modal-images {
       display: flex;
       flex-direction: column;
@@ -498,153 +321,6 @@
       line-height: 1.4;
     }
 
-    .tags-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      padding: 8px 12px;
-      background-color: #ffffff;
-      align-items: center;
-      font-weight: 300;
-      line-height: 1.2;
-    }
-
-    .tags-row-icon {
-      width: 14px;
-      height: 14px;
-      flex-shrink: 0;
-      color: #515152;
-    }
-
-    .tags-row.clickable {
-      cursor: pointer;
-      transition: background-color 0.15s;
-    }
-
-    .tags-row.clickable:hover {
-      background-color: #f5f5f5;
-    }
-
-    .tag-badge {
-      display: inline-block;
-      padding: 0.1rem 0.35rem;
-      background-color: rgba(109, 111, 113, 0.25);
-      color: #6d6f71;
-      border-radius: 0.2rem;
-      font-size: 0.55rem;
-      font-weight: 700;
-      white-space: nowrap;
-      pointer-events: none;
-    }
-
-    .track-inline-tags {
-      display: none;
-      flex-wrap: nowrap;
-      justify-content: flex-start;
-      gap: 0.2rem;
-      overflow: hidden;
-      width: 140px;
-      flex-shrink: 0;
-    }
-
-    .track-inline-tags .tag-badge {
-      font-size: 0.55rem;
-      font-weight: 700;
-      cursor: pointer;
-      pointer-events: auto;
-      transition: background-color 0.2s, color 0.2s;
-    }
-
-    .track-inline-tags .tag-badge:hover {
-      background-color: rgba(3, 187, 242, 0.2);
-      color: #03BBF2;
-    }
-
-    @media (min-width: 500px) {
-      .track-inline-tags {
-        display: flex;
-      }
-    }
-
-    .tag-modal {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 100;
-      display: flex;
-      flex-direction: column;
-      padding: 16px;
-      overflow-y: auto;
-      border-radius: 0.5rem;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0s 0.3s;
-    }
-
-    .tag-modal.visible {
-      opacity: 1;
-      visibility: visible;
-      transition: opacity 0.3s ease, visibility 0s 0s;
-    }
-
-    .tag-modal.with-player {
-      bottom: 96px;
-      border-radius: 0.5rem 0.5rem 0 0;
-    }
-
-    .tag-modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .tag-modal-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #515152;
-    }
-
-    .tag-modal-header .modal-close-btn {
-      position: static;
-    }
-
-    .tag-modal-content {
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 0.5rem;
-      padding: 16px;
-      font-size: 1.1rem;
-      color: #515152;
-      line-height: 1.5;
-      flex: 1;
-      overflow-y: auto;
-      position: relative;
-      z-index: 1;
-    }
-
-    .tag-modal-section {
-      margin-bottom: 12px;
-    }
-
-    .tag-modal-section:last-child {
-      margin-bottom: 0;
-    }
-
-    .tag-modal-section-title {
-      display: inline-block;
-      padding: 0.2rem 0.6rem;
-      background-color: #6d6f71;
-      color: white;
-      border-radius: 0.25rem;
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
   </style>
 </head>
 <body>
@@ -660,6 +336,8 @@
     (function() {
 <%= partial("base_scripts") %>
 <%= partial("audio_player_scripts") %>
+<%= partial("init_track_menus") %>
+<%= partial("init_tag_modal") %>
 
       function renderShow(show) {
         const tracksBySet = {};
@@ -947,55 +625,6 @@
         });
       }
 
-      function initTrackMenus() {
-        const trackMenuBtns = document.querySelectorAll('.track-menu-btn');
-        let openDropdown = null;
-
-        trackMenuBtns.forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const trackIndex = btn.dataset.trackIndex;
-            const dropdown = document.getElementById(`track-dropdown-${trackIndex}`);
-            
-            if (openDropdown && openDropdown !== dropdown) {
-              openDropdown.classList.remove('visible');
-            }
-            
-            dropdown.classList.toggle('visible');
-            openDropdown = dropdown.classList.contains('visible') ? dropdown : null;
-          });
-        });
-
-        document.addEventListener('click', (e) => {
-          if (openDropdown && !e.target.closest('.track-menu-wrapper')) {
-            openDropdown.classList.remove('visible');
-            openDropdown = null;
-          }
-        });
-
-        document.querySelectorAll('.track-dropdown a').forEach(link => {
-          link.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (openDropdown) {
-              openDropdown.classList.remove('visible');
-              openDropdown = null;
-            }
-          });
-        });
-
-        document.querySelectorAll('.share-link-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const url = btn.dataset.url;
-            if (url) copyToClipboard(url);
-            if (openDropdown) {
-              openDropdown.classList.remove('visible');
-              openDropdown = null;
-            }
-          });
-        });
-      }
-
       function initTaperNotesModal() {
         const taperNotesBtn = document.getElementById('taper-notes-btn');
         const taperNotesModal = document.getElementById('taper-notes-modal');
@@ -1039,93 +668,6 @@
         });
       }
 
-      function initTagModal() {
-        const tagModal = document.getElementById('tag-modal');
-        const tagModalTitle = document.getElementById('tag-modal-title');
-        const tagModalContent = document.getElementById('tag-modal-content');
-        const tagModalCloseBtn = document.getElementById('tag-modal-close-btn');
-        if (!tagModal) return;
-
-        function updateModalPosition() {
-          const player = document.getElementById('audio-player');
-          if (player && player.classList.contains('visible')) {
-            tagModal.classList.add('with-player');
-          } else {
-            tagModal.classList.remove('with-player');
-          }
-        }
-
-        function openTagModal(tags) {
-          const tagIcon = '<svg viewBox="0 0 448 512" fill="currentColor" style="width: 18px; height: 18px; margin-right: 8px; vertical-align: -2px;"><path d="M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>';
-          tagModalTitle.innerHTML = tagIcon + (tags.length === 1 ? 'Tag' : 'Tags');
-          
-          let contentHtml = '';
-          tags.forEach((tag, index) => {
-            const hasDescription = tag.description && tag.description.trim();
-            const hasNotes = tag.notes && tag.notes.trim();
-            
-            contentHtml += `<div class="tag-modal-section">`;
-            contentHtml += `<div class="tag-modal-section-title">${escapeHtml(tag.name)}</div>`;
-            
-            if (hasDescription) {
-              contentHtml += `<div style="margin-bottom: ${hasNotes ? '8px' : '0'}">${escapeHtml(tag.description)}</div>`;
-            }
-            if (hasNotes) {
-              contentHtml += `<div style="font-style: italic; color: #6d6f71;">${escapeHtml(tag.notes)}</div>`;
-            }
-            if (!hasDescription && !hasNotes) {
-              contentHtml += `<div style="color: #9a9b9d;">No additional details available.</div>`;
-            }
-            
-            contentHtml += `</div>`;
-          });
-          
-          tagModalContent.innerHTML = contentHtml;
-          
-          document.querySelectorAll('.context-dropdown, .track-dropdown').forEach(d => d.classList.remove('visible'));
-          
-          updateModalPosition();
-          tagModal.classList.add('visible');
-        }
-
-        const player = document.getElementById('audio-player');
-        if (player) {
-          const observer = new MutationObserver(() => {
-            if (tagModal.classList.contains('visible')) {
-              updateModalPosition();
-            }
-          });
-          observer.observe(player, { attributes: true, attributeFilter: ['class'] });
-        }
-
-        document.querySelectorAll('.tags-row.clickable, .track-inline-tags, .show-meta-tags').forEach(row => {
-          row.addEventListener('click', (e) => {
-            e.stopPropagation();
-            
-            let tags = [];
-            try {
-              tags = JSON.parse(row.dataset.tags || '[]');
-            } catch (err) {
-              console.error('Failed to parse tags:', err);
-              return;
-            }
-            
-            openTagModal(tags);
-          });
-        });
-
-        tagModalCloseBtn?.addEventListener('click', (e) => {
-          e.stopPropagation();
-          tagModal.classList.remove('visible');
-        });
-
-        tagModal.addEventListener('click', (e) => {
-          if (e.target === tagModal) {
-            tagModal.classList.remove('visible');
-          }
-        });
-      }
-
       let showData = null;
 
       function isDataComplete(data) {
@@ -1163,7 +705,6 @@
         initTaperNotesModal();
         initTagModal();
         initCoverArtModal();
-        initMapPopovers();
       }
 
       window.addEventListener('message', (event) => {

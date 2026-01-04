@@ -1,0 +1,147 @@
+.tag-badge {
+  display: inline-block;
+  padding: 0.1rem 0.35rem;
+  background-color: rgba(109, 111, 113, 0.25);
+  color: #6d6f71;
+  border-radius: 0.2rem;
+  font-size: 0.55rem;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.track-inline-tags {
+  display: none;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: 0.2rem;
+  overflow: hidden;
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.track-inline-tags .tag-badge {
+  font-size: 0.55rem;
+  font-weight: 700;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.track-inline-tags .tag-badge:hover {
+  background-color: rgba(3, 187, 242, 0.2);
+  color: #03BBF2;
+}
+
+@media (min-width: 500px) {
+  .track-inline-tags {
+    display: flex;
+  }
+}
+
+.tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 12px;
+  background-color: #ffffff;
+  align-items: center;
+  font-weight: 300;
+  line-height: 1.2;
+}
+
+.tags-row-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: #515152;
+}
+
+.tags-row.clickable {
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.tags-row.clickable:hover {
+  background-color: #f5f5f5;
+}
+
+.tag-modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  overflow-y: auto;
+  border-radius: 0.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0s 0.3s;
+}
+
+.tag-modal.visible {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0s 0s;
+}
+
+.tag-modal.with-player {
+  bottom: 96px;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.tag-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.tag-modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #515152;
+}
+
+.tag-modal-header .modal-close-btn {
+  position: static;
+}
+
+.tag-modal-content {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 0.5rem;
+  padding: 16px;
+  font-size: 1.1rem;
+  color: #515152;
+  line-height: 1.5;
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.tag-modal-section {
+  margin-bottom: 12px;
+}
+
+.tag-modal-section:last-child {
+  margin-bottom: 0;
+}
+
+.tag-modal-section-title {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  background-color: #6d6f71;
+  color: white;
+  border-radius: 0.25rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+

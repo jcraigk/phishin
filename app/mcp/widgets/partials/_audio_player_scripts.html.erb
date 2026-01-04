@@ -169,8 +169,7 @@ function initAudioPlayer(options = {}) {
     updatePlayPauseIcon();
   };
 
-  gaplessPlayer.onerror = (trackPath, error) => {
-    console.error('Audio error:', trackPath, error);
+  gaplessPlayer.onerror = () => {
     showLoadingSpinner(false);
   };
 
