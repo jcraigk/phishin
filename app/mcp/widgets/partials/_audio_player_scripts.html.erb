@@ -324,7 +324,20 @@ function playNext() {
 
 function playPrevious() {
   if (!gaplessPlayer) return;
-  gaplessPlayer.prev();
+  
+  const currentPosition = gaplessPlayer.getPosition();
+  const thresholdMs = 3000;
+  
+  if (currentPosition > thresholdMs) {
+    gaplessPlayer.setPosition(0);
+  } else {
+    const prevIndex = findPrevPlayableIndex();
+    if (prevIndex !== -1) {
+      playTrackAtIndex(prevIndex);
+    } else {
+      gaplessPlayer.setPosition(0);
+    }
+  }
 }
 
 function scrub(seconds) {
@@ -352,7 +365,7 @@ function updateNavigationButtons() {
   const scrubBackBtn = document.getElementById('scrub-back-btn');
   const scrubForwardBtn = document.getElementById('scrub-forward-btn');
   
-  if (prevBtn) prevBtn.disabled = findPrevPlayableIndex() === -1;
+  if (prevBtn) prevBtn.disabled = currentTrackIndex === -1;
   if (nextBtn) nextBtn.disabled = findNextPlayableIndex() === -1;
   if (scrubBackBtn) scrubBackBtn.disabled = currentTrackIndex === -1;
   if (scrubForwardBtn) scrubForwardBtn.disabled = currentTrackIndex === -1;
@@ -428,7 +441,7 @@ function updateMediaSession(track) {
 
   navigator.mediaSession.setActionHandler('play', togglePlayPause);
   navigator.mediaSession.setActionHandler('pause', togglePlayPause);
-  navigator.mediaSession.setActionHandler('previoustrack', findPrevPlayableIndex() !== -1 ? playPrevious : null);
+  navigator.mediaSession.setActionHandler('previoustrack', playPrevious);
   navigator.mediaSession.setActionHandler('nexttrack', findNextPlayableIndex() !== -1 ? playNext : null);
 
   if (!isIOSDevice()) {
