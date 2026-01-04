@@ -1,6 +1,69 @@
 import { useEffect } from "react";
 import { enable, disable, setFetchMethod } from "darkreader";
 
+const DARK_MODE_FIXES_ID = 'dark-mode-fixes';
+
+const DARK_MODE_FIXES_CSS = `
+  .select select,
+  .input,
+  .textarea {
+    border-color: #4a4a4a !important;
+  }
+  .select select:focus,
+  .select select:active,
+  .input:focus,
+  .input:active {
+    border-color: #6d6f71 !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  .button {
+    background-color: #515152 !important;
+    border-color: #4a4a4a !important;
+    color: #e0e0e0 !important;
+  }
+  .button:hover {
+    background-color: #03BBF2 !important;
+    border-color: #03BBF2 !important;
+    color: white !important;
+  }
+  .button.is-active {
+    background-color: #03BBF2 !important;
+    border-color: #03BBF2 !important;
+    color: white !important;
+  }
+  .play-pause-btn {
+    background: #515152 !important;
+  }
+  .play-pause-btn.playing {
+    background: #03BBF2 !important;
+  }
+  .play-pause-btn svg {
+    color: white !important;
+  }
+  .scrubber-container,
+  .progress-overlay {
+    filter: none !important;
+  }
+  .controls button:hover:not(:disabled),
+  .audio-player a:hover {
+    color: #03BBF2 !important;
+  }
+`;
+
+const injectDarkModeFixes = () => {
+  if (document.getElementById(DARK_MODE_FIXES_ID)) return;
+  const style = document.createElement('style');
+  style.id = DARK_MODE_FIXES_ID;
+  style.textContent = DARK_MODE_FIXES_CSS;
+  document.head.appendChild(style);
+};
+
+const removeDarkModeFixes = () => {
+  const style = document.getElementById(DARK_MODE_FIXES_ID);
+  if (style) style.remove();
+};
+
 const DARK_READER_CONFIG = {
   brightness: 100,
   contrast: 90,
@@ -130,8 +193,10 @@ const useDarkMode = () => {
     const applyTheme = (isDark) => {
       if (isDark) {
         enable(DARK_READER_CONFIG);
+        setTimeout(injectDarkModeFixes, 100);
       } else {
         disable();
+        removeDarkModeFixes();
       }
     };
 
@@ -144,6 +209,7 @@ const useDarkMode = () => {
     return () => {
       mediaQuery.removeEventListener('change', handleChange);
       disable();
+      removeDarkModeFixes();
     };
   }, []);
 };
