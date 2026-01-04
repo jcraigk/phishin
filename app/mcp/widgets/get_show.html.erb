@@ -1178,9 +1178,13 @@
       });
 
       if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', render);
+        document.addEventListener('DOMContentLoaded', () => {
+          render();
+          initKeyboardShortcuts();
+        });
       } else {
         render();
+        initKeyboardShortcuts();
       }
     })();
   </script>

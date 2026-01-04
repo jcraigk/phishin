@@ -1604,10 +1604,39 @@
         }
       });
 
+      function initKeyboardShortcuts() {
+        document.addEventListener('keydown', (e) => {
+          if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName) || document.activeElement?.isContentEditable) return;
+          if (!gaplessPlayer) return;
+
+          if (e.key === ' ' && !e.shiftKey) {
+            e.preventDefault();
+            togglePlayPause();
+            fadeOutCoverPlayButton();
+          } else if (e.key === 'ArrowLeft' && !e.shiftKey) {
+            e.preventDefault();
+            playPrev();
+          } else if (e.key === 'ArrowRight' && !e.shiftKey) {
+            e.preventDefault();
+            playNext();
+          } else if (e.key === 'ArrowLeft' && e.shiftKey) {
+            e.preventDefault();
+            scrub(-10);
+          } else if (e.key === 'ArrowRight' && e.shiftKey) {
+            e.preventDefault();
+            scrub(10);
+          }
+        });
+      }
+
       if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', render);
+        document.addEventListener('DOMContentLoaded', () => {
+          render();
+          initKeyboardShortcuts();
+        });
       } else {
         render();
+        initKeyboardShortcuts();
       }
     })();
   </script>
