@@ -23,6 +23,22 @@ function formatTime(seconds) {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
+function formatSetPosition(set, position, asHtml = false) {
+  if (!set || !position) return '';
+  let abbrev = set;
+  if (set.toLowerCase().startsWith('set ')) {
+    abbrev = 'S' + set.slice(4);
+  } else if (set.toLowerCase() === 'encore') {
+    abbrev = 'E';
+  } else if (set.toLowerCase().startsWith('encore ')) {
+    abbrev = 'E' + set.slice(7);
+  }
+  const short = `${abbrev}:${position}`;
+  if (!asHtml) return short;
+  const full = `${set}, Track ${position}`;
+  return `<span class="set-position" data-tooltip><span class="set-position-tooltip">${full}</span>${short}</span>`;
+}
+
 function escapeHtml(str) {
   if (!str) return '';
   return String(str)

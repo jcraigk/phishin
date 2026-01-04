@@ -264,6 +264,49 @@
       color: #03BBF2;
     }
 
+    .set-position {
+      cursor: pointer;
+      border-bottom: 1px dotted #888;
+      position: relative;
+    }
+
+    .set-position[data-tooltip]:hover {
+      z-index: 100;
+    }
+
+    .set-position[data-tooltip]:hover .set-position-tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .set-position-tooltip {
+      position: fixed;
+      background-color: #515152;
+      color: white;
+      padding: 0.4rem 0.6rem;
+      border-radius: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 400;
+      line-height: 1.3em;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.15s, visibility 0.15s;
+      z-index: 9999;
+      pointer-events: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+
+    .set-position-tooltip::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 100%;
+      transform: translateY(-50%);
+      border: 5px solid transparent;
+      border-right-color: #515152;
+    }
+
     .tag-badge {
       display: inline-block;
       padding: 0.1rem 0.35rem;
@@ -565,6 +608,20 @@
         });
       }
 
+      function initSetPositionTooltips() {
+        document.querySelectorAll('.set-position[data-tooltip]').forEach(el => {
+          const tooltip = el.querySelector('.set-position-tooltip');
+          if (!tooltip) return;
+
+          el.addEventListener('mouseenter', () => {
+            const rect = el.getBoundingClientRect();
+            tooltip.style.left = (rect.right + 8) + 'px';
+            tooltip.style.top = (rect.top + rect.height / 2) + 'px';
+            tooltip.style.transform = 'translateY(-50%)';
+          });
+        });
+      }
+
       let gaplessPlayer = null;
       let isPlaying = false;
       let isAudioLoading = false;
@@ -597,6 +654,23 @@
         const track = tracksWithAudio[gaplessIndex];
         if (!showData?.tracks) return -1;
         return showData.tracks.findIndex(t => t.mp3_url === track.mp3_url);
+      }
+
+      function computeSetPositions(tracks) {
+        const setGroups = {};
+        tracks.forEach((t, idx) => {
+          const set = t.set || t.set_name || '';
+          if (!setGroups[set]) setGroups[set] = [];
+          setGroups[set].push({ idx, position: t.position });
+        });
+        const positions = {};
+        Object.values(setGroups).forEach(group => {
+          group.sort((a, b) => a.position - b.position);
+          group.forEach((item, setIdx) => {
+            positions[item.idx] = setIdx + 1;
+          });
+        });
+        return positions;
       }
 
       function initGaplessPlayer(initialTrack, startingIndex = 0, autoPlay = false) {
@@ -682,6 +756,7 @@
             updateTrackDisplay(trackData);
             initMapPopovers();
             initTagTooltips();
+            initSetPositionTooltips();
             updateWaveformImage(track.waveform_image_url);
             updateNavigationButtons();
             initMediaSession(trackData);
@@ -698,6 +773,7 @@
             updateTrackDisplay(trackData);
             initMapPopovers();
             initTagTooltips();
+            initSetPositionTooltips();
             updateWaveformImage(track.waveform_image_url);
             updateNavigationButtons();
             initMediaSession(trackData);
@@ -765,7 +841,9 @@
           location: showData.location,
           map_snapshot_url: showData.map_snapshot_url,
           cover_art_url: showData.cover_art_url,
-          tags: track.tags || []
+          tags: track.tags || [],
+          set: track.set,
+          position: track.position
         };
       }
 
@@ -993,6 +1071,7 @@
         updateTrackDisplay(trackData);
         initMapPopovers();
         initTagTooltips();
+        initSetPositionTooltips();
         updateWaveformImage(track.waveform_image_url);
         updateNavigationButtons();
         initMediaSession(trackData);
@@ -1017,7 +1096,8 @@
           const venueLocationHtml = mapSnapshotUrl
             ? `<span class="location-link-wrapper"><a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(mapSnapshotUrl)}" alt="" /></span></span>`
             : `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
-          let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a> · ${venueLocationHtml}`;
+          const setPos = formatSetPosition(track.set, track.position, true);
+          let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a>${setPos ? ` · ${setPos}` : ''} · ${venueLocationHtml}`;
           
           const tags = track.tags || [];
           if (tags.length > 0) {
@@ -1099,6 +1179,8 @@
           if (!adjacentShowResponse.ok) throw new Error('Failed to fetch adjacent show');
           const adjacentShow = await adjacentShowResponse.json();
           
+          const rawTracks = (adjacentShow.tracks || []).filter(t => t.mp3_url);
+          const setPositions = computeSetPositions(rawTracks);
           const newShowData = {
             date: adjacentShow.date,
             show_url: `${baseUrl}/${adjacentShow.date}`,
@@ -1108,13 +1190,13 @@
             map_snapshot_url: adjacentShow.venue?.map_snapshot_url || null,
             cover_art_url: adjacentShow.cover_art_urls?.medium,
             duration_ms: adjacentShow.duration,
-            tracks: (adjacentShow.tracks || []).filter(t => t.mp3_url).map(t => ({
+            tracks: rawTracks.map((t, idx) => ({
               id: t.id,
               title: t.title,
               slug: t.slug,
               url: `${baseUrl}/${adjacentShow.date}/${t.slug}`,
               set: t.set_name,
-              position: t.position,
+              position: setPositions[idx] || t.position,
               duration_ms: t.duration,
               mp3_url: t.mp3_url,
               waveform_image_url: t.waveform_image_url,
@@ -1139,6 +1221,7 @@
           setupBackgroundBlur(trackData.cover_art_url);
           initMapPopovers();
           initTagTooltips();
+          initSetPositionTooltips();
           wireUpPlayerControls();
           console.log('[NAV] targetTrack:', targetTrack);
           console.log('[NAV] waveform_image_url:', targetTrack.waveform_image_url);
@@ -1237,6 +1320,7 @@
             updateTrackDisplay(trackData);
             initMapPopovers();
             initTagTooltips();
+            initSetPositionTooltips();
             updateWaveformImage(nextTrack.waveform_image_url);
             updateNavigationButtons();
             initMediaSession(trackData);
@@ -1253,6 +1337,7 @@
             updateTrackDisplay(trackData);
             initMapPopovers();
             initTagTooltips();
+            initSetPositionTooltips();
             updateWaveformImage(prevTrack.waveform_image_url);
             updateNavigationButtons();
             initMediaSession(trackData);
@@ -1315,7 +1400,8 @@
           ? `<span class="location-link-wrapper"><a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(mapSnapshotUrl)}" alt="" /></span></span>`
           : `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
 
-        let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a> · ${venueLocationHtml}`;
+        const setPos = formatSetPosition(track.set, track.position, true);
+        let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a>${setPos ? ` · ${setPos}` : ''} · ${venueLocationHtml}`;
 
         if (tags.length > 0) {
           subtitleHtml += ' · ' + tags.map(tag => {
@@ -1429,7 +1515,8 @@
           ? `<span class="location-link-wrapper"><a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(mapSnapshotUrl)}" alt="" /></span></span>`
           : `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
 
-        let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a> · ${venueLocationHtml}`;
+        const setPos = formatSetPosition(track.set, track.position, true);
+        let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a>${setPos ? ` · ${setPos}` : ''} · ${venueLocationHtml}`;
 
         if (tags.length > 0) {
           subtitleHtml += ' · ' + tags.map(tag => {
@@ -1535,7 +1622,9 @@
             location: data.show.location,
             map_snapshot_url: data.show.map_snapshot_url,
             cover_art_url: data.show.cover_art_url,
-            tags: track.tags || []
+            tags: track.tags || [],
+            set: track.set,
+            position: track.position
           };
         }
         
@@ -1552,6 +1641,7 @@
         setupBackgroundBlur(data.cover_art_url);
         initMapPopovers();
         initTagTooltips();
+        initSetPositionTooltips();
         if (data.mp3_url) {
           const gaplessIndex = findGaplessIndex(currentTrackIndex);
           initGaplessPlayer(data, gaplessIndex, false);

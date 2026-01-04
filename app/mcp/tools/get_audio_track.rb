@@ -149,6 +149,7 @@ module Tools
       end
 
       def build_show_data(show, playable_tracks)
+        set_positions = compute_set_positions(playable_tracks)
         {
           date: show.date.iso8601,
           show_url: show.url,
@@ -158,18 +159,28 @@ module Tools
           map_snapshot_url: show.venue&.map_snapshot_url,
           cover_art_url: show.cover_art_urls[:medium],
           duration_ms: show.duration,
-          tracks: playable_tracks.map { |t| build_track_item(t) }
+          tracks: playable_tracks.map { |t| build_track_item(t, set_positions[t.id]) }
         }
       end
 
-      def build_track_item(track)
+      def compute_set_positions(tracks)
+        positions = {}
+        tracks.group_by(&:set).each_value do |set_tracks|
+          set_tracks.sort_by(&:position).each_with_index do |track, idx|
+            positions[track.id] = idx + 1
+          end
+        end
+        positions
+      end
+
+      def build_track_item(track, set_position = nil)
         {
           id: track.id,
           title: track.title,
           slug: track.slug,
           url: track.url,
           set: track.set_name,
-          position: track.position,
+          position: set_position || track.position,
           duration_ms: track.duration,
           mp3_url: track.mp3_url,
           waveform_image_url: track.waveform_image_url,
