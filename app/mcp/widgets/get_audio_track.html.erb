@@ -488,6 +488,7 @@
       mask-size: 100% 80%;
       mask-repeat: no-repeat;
       mask-position: top center;
+      mask-mode: alpha;
       -webkit-mask-image: var(--waveform-url);
       -webkit-mask-size: 100% 80%;
       -webkit-mask-repeat: no-repeat;
@@ -510,6 +511,7 @@
       mask-size: 100% 80%;
       mask-repeat: no-repeat;
       mask-position: top center;
+      mask-mode: alpha;
       -webkit-mask-size: 100% 80%;
       -webkit-mask-repeat: no-repeat;
       -webkit-mask-position: top center;
@@ -720,7 +722,7 @@
 
           const progressOverlay = document.getElementById('progress-overlay');
           if (progressOverlay) {
-            progressOverlay.style.background = `linear-gradient(to right, var(--progress-color, #b0b0b0) ${progress}%, rgba(255,255,255,0) ${progress}%)`;
+            progressOverlay.style.setProperty('background', `linear-gradient(to right, var(--progress-color, #b0b0b0) ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
           }
 
           const elapsedEl = document.getElementById('elapsed-time');
@@ -871,7 +873,7 @@
 
         scrubber?.classList.remove('loaded');
         if (progressOverlay) {
-          progressOverlay.style.background = 'linear-gradient(to right, var(--progress-color, #b0b0b0) 0%, rgba(255,255,255,0) 0%)';
+          progressOverlay.style.setProperty('background', 'linear-gradient(to right, var(--progress-color, #b0b0b0) 0%, rgba(255,255,255,0) 0%)', 'important');
         }
 
         const img = new Image();
@@ -983,7 +985,7 @@
         const progress = percent * 100;
         const progressOverlay = document.getElementById('progress-overlay');
         if (progressOverlay) {
-          progressOverlay.style.background = `linear-gradient(to right, var(--progress-color, #b0b0b0) ${progress}%, rgba(255,255,255,0) ${progress}%)`;
+          progressOverlay.style.setProperty('background', `linear-gradient(to right, var(--progress-color, #b0b0b0) ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
         }
 
         const elapsedEl = document.getElementById('elapsed-time');
@@ -1244,7 +1246,7 @@
           const progress = (currentTime / duration) * 100;
           const progressOverlay = document.getElementById('progress-overlay');
           if (progressOverlay) {
-            progressOverlay.style.background = `linear-gradient(to right, var(--progress-color, #b0b0b0) ${progress}%, rgba(255,255,255,0) ${progress}%)`;
+            progressOverlay.style.setProperty('background', `linear-gradient(to right, var(--progress-color, #b0b0b0) ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
           }
           const elapsedEl = document.getElementById('elapsed-time');
           const remainingEl = document.getElementById('remaining-time');

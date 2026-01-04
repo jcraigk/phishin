@@ -173,7 +173,29 @@ function renderToast() {
 const DARK_READER_CONFIG = {
   brightness: 100,
   contrast: 90,
-  sepia: 10
+  sepia: 10,
+  css: `
+    .scrubber-container {
+      isolation: isolate !important;
+    }
+    .scrubber-container,
+    .scrubber-container::before,
+    .progress-overlay {
+      filter: none !important;
+      -webkit-filter: none !important;
+      mix-blend-mode: normal !important;
+    }
+    .scrubber-container::before {
+      background: #a0a0a0 !important;
+    }
+    .progress-overlay {
+      --progress-color: #d0d0d0 !important;
+    }
+    .audio-player.audio-playing .progress-overlay,
+    .card.audio-playing .progress-overlay {
+      --progress-color: #03BBF2 !important;
+    }
+  `
 };
 
 function getColorScheme() {
