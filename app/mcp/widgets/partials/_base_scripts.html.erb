@@ -195,6 +195,75 @@ const DARK_READER_CONFIG = {
     .card.audio-playing .progress-overlay {
       --progress-color: #03BBF2 !important;
     }
+    
+    /* Preserve blue play button when playing */
+    .play-pause-btn {
+      filter: none !important;
+      -webkit-filter: none !important;
+    }
+    .audio-player.audio-playing .play-pause-btn,
+    .card.audio-playing .play-pause-btn {
+      background: #03BBF2 !important;
+      background-color: #03BBF2 !important;
+      filter: none !important;
+      -webkit-filter: none !important;
+    }
+    .audio-player.audio-playing .play-pause-btn:hover:not(:disabled),
+    .card.audio-playing .play-pause-btn:hover:not(:disabled) {
+      background: #02a8da !important;
+      background-color: #02a8da !important;
+    }
+    .play-pause-btn svg,
+    .play-pause-btn .play-icon,
+    .play-pause-btn .pause-icon {
+      fill: white !important;
+      color: white !important;
+    }
+    
+    /* Preserve cover play button */
+    .cover-play-button {
+      filter: none !important;
+      -webkit-filter: none !important;
+    }
+    .cover-play-button:hover {
+      background: rgba(3, 187, 242, 0.7) !important;
+    }
+    .cover-play-button svg {
+      fill: rgba(255, 255, 255, 0.95) !important;
+    }
+    
+    /* Preserve blue border animation when playing */
+    .audio-player.audio-playing .player-content::after,
+    .card.audio-playing::before {
+      filter: none !important;
+      -webkit-filter: none !important;
+    }
+    
+    /* Preserve blue hover color on links and buttons */
+    .player-track-title a:hover,
+    .player-track-subtitle .player-link:hover,
+    .player-track-subtitle .location-link:hover,
+    .show-date-link:hover,
+    .location-link:hover,
+    .playlist-name a:hover,
+    .playlist-description:hover,
+    .show-meta-item.clickable:hover,
+    .track-menu-btn:hover,
+    .skip-btn:hover:not(:disabled),
+    .scrub-btn:hover:not(:disabled) {
+      color: #03BBF2 !important;
+    }
+    
+    /* Preserve blue tag hover */
+    .track-inline-tags .tag-badge:hover {
+      background-color: rgba(3, 187, 242, 0.2) !important;
+      color: #03BBF2 !important;
+    }
+    
+    /* Preserve cover art hover glow */
+    .cover-art-container.clickable:hover .cover-art {
+      box-shadow: 0 4px 16px rgba(3, 187, 242, 0.4) !important;
+    }
   `
 };
 
@@ -213,6 +282,8 @@ function getColorScheme() {
 
 function initDarkMode() {
   if (typeof DarkReader === 'undefined') return;
+
+  DarkReader.setFetchMethod(window.fetch);
 
   const applyTheme = (scheme) => {
     if (scheme === 'dark') {
