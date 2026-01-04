@@ -23,6 +23,22 @@ function formatTime(seconds) {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
+function formatSetPosition(set, position, asHtml = false) {
+  if (!set || !position) return '';
+  let abbrev = set;
+  if (set.toLowerCase().startsWith('set ')) {
+    abbrev = 'S' + set.slice(4);
+  } else if (set.toLowerCase() === 'encore') {
+    abbrev = 'E';
+  } else if (set.toLowerCase().startsWith('encore ')) {
+    abbrev = 'E' + set.slice(7);
+  }
+  const short = `${abbrev}:${position}`;
+  if (!asHtml) return short;
+  const full = `${set}, Track ${position}`;
+  return `<span class="set-position" data-tooltip><span class="set-position-tooltip">${full}</span>${short}</span>`;
+}
+
 function escapeHtml(str) {
   if (!str) return '';
   return String(str)
@@ -74,40 +90,6 @@ async function waitForData(isComplete) {
   return getData();
 }
 
-function renderNotFound(detail, entityName = "Item") {
-  let displayMessage = `${entityName} not found`;
-  
-  if (detail) {
-    const dateMatch = detail.match(/(\d{4}-\d{2}-\d{2})/);
-    if (dateMatch) {
-      const formattedDate = formatDate(dateMatch[1]);
-      displayMessage = `${entityName} not found for ${formattedDate}`;
-    } else {
-      displayMessage = detail;
-    }
-  }
-
-  return `
-    <div class="not-found">
-      <div class="not-found-icons">
-        <svg class="not-found-icon" viewBox="0 0 32 32">
-          <circle cx="16" cy="16" r="13" fill="#8a8b8d"/>
-          <circle cx="16" cy="16" r="12" fill="#6d6f71"/>
-          <circle cx="16" cy="16" r="4.5" fill="#d4d5d7"/>
-          <rect x="9" y="7" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(-25 9.75 8.75)"/>
-          <rect x="19" y="6" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(30 19.75 7.75)"/>
-          <rect x="23" y="14" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(65 23.75 15.75)"/>
-          <rect x="18" y="22" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(-20 18.75 23.75)"/>
-          <rect x="8" y="20" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(40 8.75 21.75)"/>
-          <rect x="5" y="12" width="1.5" height="3.5" rx="0.75" fill="#a0a1a3" transform="rotate(-50 5.75 13.75)"/>
-        </svg>
-        <span class="not-found-qmark">?</span>
-      </div>
-      <div class="not-found-detail">${escapeHtml(displayMessage)}</div>
-    </div>
-  `;
-}
-
 function setupBackgroundBlur(imageUrl, imgElementId = 'cover-img', blurElementId = 'bg-blur') {
   if (!imageUrl) return;
   
@@ -153,13 +135,6 @@ function showToast(message) {
 }
 
 function showCopiedFeedback() {
-  const shareBtn = document.getElementById('share-btn');
-  if (shareBtn) {
-    shareBtn.classList.add('copied');
-    setTimeout(() => {
-      shareBtn.classList.remove('copied');
-    }, 1500);
-  }
   showToast("URL copied to clipboard");
 }
 
@@ -189,21 +164,6 @@ function copyToClipboard(url) {
   } else {
     fallbackCopyToClipboard(url, showCopiedFeedback);
   }
-}
-
-function initShareButton(getShareUrl) {
-  const shareBtn = document.getElementById('share-btn');
-  if (shareBtn && getShareUrl) {
-    shareBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const url = getShareUrl();
-      if (url) copyToClipboard(url);
-    });
-  }
-}
-
-function renderShareButton() {
-  return `<button class="share-btn" id="share-btn" title="Share"><svg class="share-icon" viewBox="0 0 512 512" fill="currentColor"><path d="M307 34.8c-11.5 5.1-19 16.6-19 29.2v64H176C78.8 128 0 206.8 0 304C0 417.3 81.5 467.9 100.2 478.1c2.5 1.4 5.3 1.9 8.1 1.9c10.9 0 19.7-8.9 19.7-19.7c0-7.5-4.3-14.4-9.8-19.5C108.8 431.9 96 414.4 96 384c0-53 43-96 96-96h96v64c0 12.6 7.4 24.1 19 29.2s25 3 34.4-5.4l160-144c6.7-6.1 10.6-14.7 10.6-23.8s-3.8-17.7-10.6-23.8l-160-144c-9.4-8.5-22.9-10.6-34.4-5.4z"/></svg><svg class="check-icon" viewBox="0 0 512 512" fill="currentColor"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg></button>`;
 }
 
 function renderToast() {

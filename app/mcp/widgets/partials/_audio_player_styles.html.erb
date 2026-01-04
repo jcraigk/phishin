@@ -33,7 +33,7 @@
   background-size: cover;
   background-position: center;
   filter: blur(55px) saturate(0.9);
-  opacity: 0.5;
+  opacity: 0.7;
   z-index: 0;
 }
 
@@ -44,7 +44,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(175, 176, 178, 0.65);
+  background: rgba(175, 176, 178, 0.5);
   z-index: 0;
 }
 
@@ -58,7 +58,7 @@
 .player-top-row {
   display: flex;
   align-items: center;
-  padding: 4px 14px 4px 19px;
+  padding: 8px 14px 4px 19px;
   gap: 5px;
   position: relative;
   z-index: 1;
@@ -109,7 +109,7 @@
   border: none;
   padding: 6px;
   cursor: pointer;
-  color: #6d6f71;
+  color: #505050;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -135,7 +135,7 @@
   border: none;
   padding: 6px;
   cursor: pointer;
-  color: #6d6f71;
+  color: #505050;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -158,9 +158,9 @@
 }
 
 .play-pause-btn {
-  width: 44px;
-  height: 44px;
-  background: #03BBF2;
+  width: 38px;
+  height: 38px;
+  background: #505050;
   border: none;
   border-radius: 50%;
   cursor: pointer;
@@ -173,18 +173,26 @@
 }
 
 .play-pause-btn:hover:not(:disabled) {
-  background: #02a8da;
+  background: #404040;
 }
 
 .play-pause-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
-  background: #4dc9f5;
+  background: #707070;
+}
+
+.card.audio-playing .play-pause-btn {
+  background: #03BBF2;
+}
+
+.card.audio-playing .play-pause-btn:hover:not(:disabled) {
+  background: #02a8da;
 }
 
 .play-pause-btn svg {
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
 }
 
 .play-pause-btn .play-icon {
@@ -196,7 +204,7 @@
   border: none;
   padding: 6px;
   cursor: pointer;
-  color: #6d6f71;
+  color: #505050;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -225,7 +233,7 @@
 
 .time-display {
   font-size: 0.95rem;
-  color: #6d6f71;
+  color: #505050;
   font-variant-numeric: tabular-nums;
   min-width: 38px;
   text-align: center;
@@ -237,14 +245,27 @@
   height: 100%;
   position: relative;
   cursor: pointer;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  opacity: 0.5;
-  transition: opacity 0.3s ease;
+  --waveform-url: none;
 }
 
-.scrubber-container.loaded {
+.scrubber-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #505050;
+  mask-image: var(--waveform-url);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: var(--waveform-url);
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.scrubber-container.loaded::before {
   opacity: 1;
 }
 
@@ -254,13 +275,25 @@
   left: 0;
   height: 100%;
   width: 100%;
-  background: linear-gradient(to right, #03BBF2 0%, rgba(255,255,255,0) 0%);
+  background: linear-gradient(to right, var(--progress-color, #b0b0b0) 0%, rgba(255,255,255,0) 0%);
+  mask-image: var(--waveform-url);
   mask-size: 100% 100%;
   mask-repeat: no-repeat;
   mask-position: center;
+  -webkit-mask-image: var(--waveform-url);
   -webkit-mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.card.audio-playing .progress-overlay {
+  --progress-color: #03BBF2;
+}
+
+.scrubber-container.loaded .progress-overlay {
+  opacity: 1;
 }
 
 .play-pause-btn {
@@ -272,8 +305,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 22px;
-  height: 22px;
+  width: 18px;
+  height: 18px;
   border: 2.5px solid rgba(255, 255, 255, 0.3);
   border-top-color: white;
   border-radius: 50%;
@@ -282,5 +315,44 @@
 
 @keyframes spin {
   to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.card.audio-playing::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 0.5rem;
+  padding: 4px;
+  background: conic-gradient(
+    from var(--border-angle),
+    transparent 0%,
+    transparent 11%,
+    rgba(3, 187, 242, 0.3) 20%,
+    rgba(3, 187, 242, 0.6) 35%,
+    rgba(225, 245, 255, 0.9) 50%,
+    rgba(3, 187, 242, 0.6) 65%,
+    rgba(3, 187, 242, 0.3) 80%,
+    transparent 89%,
+    transparent 100%
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 100;
+  animation: rotate-gradient 3.2s linear infinite;
+}
+
+@keyframes rotate-gradient {
+  from { --border-angle: 0deg; }
+  to { --border-angle: 360deg; }
 }
 

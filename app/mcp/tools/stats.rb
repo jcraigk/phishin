@@ -36,7 +36,7 @@ module Tools
         result = fetch_stats(stat_type, options.compact)
 
         if result[:error]
-          MCP::Tool::Response.new([ { type: "text", text: "Error: #{result[:error]}" } ], is_error: true)
+          MCP::Tool::Response.new([ { type: "text", text: "Error: #{result[:error]}" } ], error: true)
         else
           MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
         end

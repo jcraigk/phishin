@@ -163,9 +163,10 @@ module Tools
       end
 
       def error_response(message)
+        hint = "Try using 'search' to find shows by keyword, or 'list_shows' with year/date filters to browse available shows."
         MCP::Tool::Response.new(
-          [ { type: "text", text: "Error: #{message}" } ],
-          structured_content: { error: true, message: }
+          [ { type: "text", text: "#{message}. #{hint}" } ],
+          error: true
         )
       end
     end

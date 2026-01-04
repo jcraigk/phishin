@@ -458,6 +458,102 @@
       height: 76px;
       flex-shrink: 0;
     }
+
+    .track-menu-wrapper {
+      position: relative;
+      flex-shrink: 0;
+      margin-left: 8px;
+    }
+
+    .track-menu-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: #a0a1a3;
+      cursor: pointer;
+      padding: 4px;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      transition: color 0.15s;
+    }
+
+    .track-menu-btn:hover {
+      color: #03BBF2;
+    }
+
+    .track-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 2px;
+      background-color: #ffffff;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      min-width: 160px;
+      z-index: 9999;
+      display: none;
+      overflow: hidden;
+    }
+
+    .track-dropdown.visible {
+      display: block;
+    }
+
+    .track-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      color: #515152;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background-color 0.15s, color 0.15s;
+      cursor: pointer;
+      border: none;
+      background-color: #ffffff;
+      width: 100%;
+      text-align: left;
+    }
+
+    .track-dropdown-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    .track-dropdown-item svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+
+    .tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px 12px;
+      background-color: #ffffff;
+      align-items: center;
+      font-weight: 300;
+      line-height: 1.2;
+    }
+
+    .tags-row-icon {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      color: #515152;
+    }
+
+    .tags-row.clickable {
+      cursor: pointer;
+      transition: background-color 0.15s;
+    }
+
+    .tags-row.clickable:hover {
+      background-color: #f5f5f5;
+    }
   </style>
 </head>
 <body>
@@ -496,6 +592,26 @@
               ${trackTags.map(tag => `<span class="tag-badge">${escapeHtml(tag.name)}</span>`).join('')}
             </div>
           ` : '';
+
+          const trackUrl = track.url || '';
+          let trackMenuHtml = '';
+          if (hasTrackAudio) {
+            trackMenuHtml = `
+              <div class="track-menu-wrapper">
+                <button class="track-menu-btn" data-track-index="${index}" title="Track options">•••</button>
+                <div class="track-dropdown" id="track-dropdown-${index}">
+                  ${trackTags.length > 0 ? `
+                    <div class="tags-row clickable" data-tags='${JSON.stringify(trackTags).replace(/'/g, "&#39;")}'>
+                      <svg class="tags-row-icon" viewBox="0 0 448 512" fill="currentColor">
+                        <path d="M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/>
+                      </svg>
+                      ${trackTags.map(tag => `<span class="tag-badge">${escapeHtml(tag.name)}</span>`).join('')}
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            `;
+          }
           
           const venueLocationHtml = track.map_snapshot_url
             ? `<span class="location-link-wrapper"><a href="${escapeHtml(track.venue_url || '')}" target="_blank" rel="noopener" class="track-venue-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="https://phish.in/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(track.map_snapshot_url)}" alt="" /></span></span>`
@@ -511,6 +627,7 @@
               ${tagsHtml}
               <div class="track-right">
                 <span class="track-duration">${track.duration_display || ''}</span>
+                ${trackMenuHtml}
               </div>
             </div>
           `;
@@ -533,8 +650,6 @@
             <div class="tag-modal-content" id="tag-modal-content"></div>
           </div>
         `;
-
-        const shareButton = renderShareButton();
 
         const descriptionModalHtml = playlist.description ? `
           <div class="description-modal" id="description-modal">
@@ -569,7 +684,7 @@
                   </button>` : ''}
                 </div>
                 <div class="playlist-info">
-                  <div class="playlist-name"><a href="${escapeHtml(playlistUrl)}" target="_blank" rel="noopener">${truncateText(playlist.name, 100)}</a>${shareButton}</div>
+                  <div class="playlist-name"><a href="${escapeHtml(playlistUrl)}" target="_blank" rel="noopener">${truncateText(playlist.name, 100)}</a></div>
                   <div class="playlist-meta">
                     <span class="playlist-meta-item">
                       <svg viewBox="0 0 512 512" fill="currentColor">
@@ -646,6 +761,53 @@
         });
       }
 
+      function initTrackMenus() {
+        const trackMenuBtns = document.querySelectorAll('.track-menu-btn');
+        let openDropdown = null;
+
+        trackMenuBtns.forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const trackIndex = btn.dataset.trackIndex;
+            const dropdown = document.getElementById(`track-dropdown-${trackIndex}`);
+            
+            if (openDropdown && openDropdown !== dropdown) {
+              openDropdown.classList.remove('visible');
+            }
+            
+            dropdown.classList.toggle('visible');
+            openDropdown = dropdown.classList.contains('visible') ? dropdown : null;
+          });
+        });
+
+        document.addEventListener('click', (e) => {
+          if (openDropdown && !e.target.closest('.track-menu-wrapper')) {
+            openDropdown.classList.remove('visible');
+            openDropdown = null;
+          }
+        });
+
+        document.querySelectorAll('.track-dropdown a').forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (openDropdown) {
+              openDropdown.classList.remove('visible');
+              openDropdown = null;
+            }
+          });
+        });
+
+        document.querySelectorAll('.track-dropdown .tags-row.clickable').forEach(row => {
+          row.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (openDropdown) {
+              openDropdown.classList.remove('visible');
+              openDropdown = null;
+            }
+          });
+        });
+      }
+
       function initTagModal() {
         const tagModal = document.getElementById('tag-modal');
         const tagModalTitle = document.getElementById('tag-modal-title');
@@ -703,7 +865,7 @@
           observer.observe(player, { attributes: true, attributeFilter: ['class'] });
         }
 
-        document.querySelectorAll('.track-inline-tags').forEach(row => {
+        document.querySelectorAll('.track-inline-tags, .tags-row.clickable').forEach(row => {
           row.addEventListener('click', (e) => {
             e.stopPropagation();
             
@@ -737,57 +899,38 @@
 
       function isDataComplete(data) {
         if (!data) return false;
-        if (data.error) return true;
         return data.name && Array.isArray(data.tracks);
       }
 
       async function render() {
         const root = document.getElementById('root');
+        const data = await waitForData(isDataComplete);
+        if (!data?.name) return;
+
+        playlistData = data;
+        root.innerHTML = renderPlaylist(data);
+        setupBackgroundBlur(data.cover_art_url);
         
-        try {
-          const data = await waitForData(isDataComplete);
-
-          if (!data) {
-            root.innerHTML = renderNotFound('No playlist data available', 'Playlist');
-            return;
-          }
-
-          if (data.error) {
-            root.innerHTML = renderNotFound(data.message || 'Playlist not found', 'Playlist');
-            return;
-          }
-
-          if (data.name) {
-            playlistData = data;
-            root.innerHTML = renderPlaylist(data);
-            setupBackgroundBlur(data.cover_art_url);
-            
-            const coverArtUrl = data.cover_art_url;
-            if (coverArtUrl) {
-              ['tag-modal-blur', 'description-modal-blur'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.backgroundImage = `url("${coverArtUrl}")`;
-              });
-            }
-            
-            initExpandButton();
-            initAudioPlayer({
-              showMetadata: {
-                name: data.name,
-                cover_art_url: data.cover_art_url,
-                isPlaylist: true
-              }
-            });
-            initDescriptionModal();
-            initTagModal();
-            initMapPopovers();
-            initShareButton(() => playlistData ? `https://phish.in/playlists/${playlistData.slug}` : null);
-          } else {
-            root.innerHTML = renderNotFound('Playlist not found', 'Playlist');
-          }
-        } catch (e) {
-          root.innerHTML = renderNotFound(e.message, 'Playlist');
+        const coverArtUrl = data.cover_art_url;
+        if (coverArtUrl) {
+          ['tag-modal-blur', 'description-modal-blur'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.backgroundImage = `url("${coverArtUrl}")`;
+          });
         }
+        
+        initExpandButton();
+        initAudioPlayer({
+          showMetadata: {
+            name: data.name,
+            cover_art_url: data.cover_art_url,
+            isPlaylist: true
+          }
+        });
+        initTrackMenus();
+        initDescriptionModal();
+        initTagModal();
+        initMapPopovers();
       }
 
       window.addEventListener('message', (event) => {
@@ -798,9 +941,13 @@
       });
 
       if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', render);
+        document.addEventListener('DOMContentLoaded', () => {
+          render();
+          initKeyboardShortcuts();
+        });
       } else {
         render();
+        initKeyboardShortcuts();
       }
     })();
   </script>
