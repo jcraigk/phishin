@@ -1,0 +1,75 @@
+.track-menu-wrapper {
+  position: relative;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
+.track-menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #a0a1a3;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  transition: color 0.15s;
+}
+
+.track-menu-btn:hover {
+  color: #03BBF2;
+}
+
+.track-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 2px;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  min-width: 160px;
+  z-index: 9999;
+  display: none;
+  overflow: hidden;
+}
+
+.track-dropdown.visible {
+  display: block;
+}
+
+.track-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  color: #515152;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: background-color 0.15s, color 0.15s;
+  cursor: pointer;
+  border: none;
+  background-color: #ffffff;
+  width: 100%;
+  text-align: left;
+}
+
+.track-dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+.track-dropdown-item svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.track-dropdown-item.disabled {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+

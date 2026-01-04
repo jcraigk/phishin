@@ -48,6 +48,59 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+function groupTags(tags) {
+  return tags
+    .sort((a, b) => (a.priority || 0) - (b.priority || 0) || (a.starts_at_second || 0) - (b.starts_at_second || 0))
+    .reduce((acc, tag) => {
+      const group = acc[tag.name] || [];
+      group.push(tag);
+      acc[tag.name] = group;
+      return acc;
+    }, {});
+}
+
+function formatTagTimestamp(seconds) {
+  if (!seconds) return null;
+  const minutes = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${minutes}:${secs.toString().padStart(2, '0')}`;
+}
+
+function formatTagTimeRange(tag) {
+  if (!tag.starts_at_second && !tag.ends_at_second) return '';
+  const start = formatTagTimestamp(tag.starts_at_second);
+  const end = formatTagTimestamp(tag.ends_at_second);
+  return start && end ? `between ${start} and ${end}` : start ? `at ${start}` : '';
+}
+
+function tooltipForTagStack(tagGroup) {
+  const hasNotesOrTranscript = tagGroup.some(tag => tag.notes || tag.transcript);
+  if (!hasNotesOrTranscript) {
+    return tagGroup[0].description || '';
+  }
+  return tagGroup.map(tag => {
+    let timeRange = formatTagTimeRange(tag);
+    let tooltipPart = tag.notes ? `${tag.notes} ${timeRange}`.trim() : '';
+    return tooltipPart.trim();
+  }).filter(Boolean).join(', ');
+}
+
+function renderGroupedTagBadges(tags, withTooltips = false) {
+  const grouped = groupTags(tags);
+  return Object.entries(grouped).map(([tagName, tagGroup]) => {
+    const count = tagGroup.length;
+    const title = count > 1 ? `${tagName} (${count})` : tagName;
+    if (withTooltips) {
+      const tooltipText = tooltipForTagStack(tagGroup);
+      if (tooltipText) {
+        const truncated = tooltipText.length > 100 ? tooltipText.slice(0, 100).trim() + '...' : tooltipText;
+        return `<span class="tag-badge" data-tooltip><span class="tag-tooltip">${escapeHtml(truncated)}</span>${escapeHtml(title)}</span>`;
+      }
+    }
+    return `<span class="tag-badge">${escapeHtml(title)}</span>`;
+  }).join(withTooltips ? ' ' : '');
+}
+
 function truncateText(str, maxLength) {
   if (!str || str.length <= maxLength) return escapeHtml(str);
   return escapeHtml(str.slice(0, maxLength).trim()) + '…';
@@ -173,7 +226,132 @@ function renderToast() {
 const DARK_READER_CONFIG = {
   brightness: 100,
   contrast: 90,
-  sepia: 10
+  sepia: 10,
+  css: `
+    .scrubber-container {
+      isolation: isolate !important;
+    }
+    .scrubber-container,
+    .scrubber-container::before,
+    .progress-overlay {
+      filter: none !important;
+      -webkit-filter: none !important;
+      mix-blend-mode: normal !important;
+    }
+    .scrubber-container::before {
+      background: #707070 !important;
+      background-color: #707070 !important;
+    }
+    .progress-overlay {
+      --progress-color: #e0e0e0 !important;
+    }
+    .audio-player.audio-playing .progress-overlay,
+    .card.audio-playing .progress-overlay {
+      --progress-color: #5bcefa !important;
+    }
+    #audio-player .progress-overlay {
+      --progress-color: #e0e0e0 !important;
+    }
+    #audio-player.audio-playing .progress-overlay,
+    .card.audio-playing #audio-player .progress-overlay {
+      --progress-color: #5bcefa !important;
+    }
+    
+    /* Preserve play button styling */
+    .play-pause-btn,
+    .audio-player .play-pause-btn,
+    .card .play-pause-btn,
+    .card:not(.audio-playing) .play-pause-btn {
+      background: #404040 !important;
+      background-color: #404040 !important;
+      filter: none !important;
+      -webkit-filter: none !important;
+    }
+    .play-pause-btn:hover:not(:disabled),
+    .audio-player .play-pause-btn:hover:not(:disabled),
+    .card .play-pause-btn:hover:not(:disabled) {
+      background: #353535 !important;
+      background-color: #353535 !important;
+    }
+    .audio-player.audio-playing .play-pause-btn,
+    .card.audio-playing .play-pause-btn {
+      background: #5bcefa !important;
+      background-color: #5bcefa !important;
+      filter: none !important;
+      -webkit-filter: none !important;
+    }
+    .audio-player.audio-playing .play-pause-btn:hover:not(:disabled),
+    .card.audio-playing .play-pause-btn:hover:not(:disabled) {
+      background: #4ab8e8 !important;
+      background-color: #4ab8e8 !important;
+    }
+    .play-pause-btn svg,
+    .play-pause-btn .play-icon,
+    .play-pause-btn .pause-icon {
+      fill: white !important;
+      color: white !important;
+    }
+    
+    /* Preserve cover play button */
+    .cover-play-button {
+      filter: none !important;
+      -webkit-filter: none !important;
+    }
+    .cover-play-button:hover {
+      background: rgba(3, 187, 242, 0.7) !important;
+    }
+    .cover-play-button svg {
+      fill: rgba(255, 255, 255, 0.95) !important;
+    }
+    
+    /* Preserve blue border animation when playing */
+    .audio-player.audio-playing .player-content::after,
+    .card.audio-playing::before {
+      filter: none !important;
+      -webkit-filter: none !important;
+    }
+    
+    /* Preserve blue hover color on links and buttons */
+    .player-track-title a:hover,
+    .player-track-subtitle .player-link:hover,
+    .player-track-subtitle .location-link:hover,
+    .show-date-link:hover,
+    .location-link:hover,
+    .playlist-name a:hover,
+    .playlist-description:hover,
+    .show-meta-item.clickable:hover,
+    .track-menu-btn:hover,
+    .skip-btn:hover:not(:disabled),
+    .scrub-btn:hover:not(:disabled) {
+      color: #03BBF2 !important;
+    }
+    
+    /* Preserve tooltip styling */
+    .tag-tooltip,
+    .set-position-tooltip {
+      background-color: #515152 !important;
+      color: white !important;
+      filter: none !important;
+      -webkit-filter: none !important;
+    }
+    .tag-tooltip::before,
+    .set-position-tooltip::before {
+      background-color: #515152 !important;
+      filter: none !important;
+      -webkit-filter: none !important;
+    }
+    
+    /* Preserve blue tag hover */
+    .track-inline-tags .tag-badge:hover {
+      background-color: rgba(3, 187, 242, 0.2) !important;
+      color: #03BBF2 !important;
+    }
+    
+    /* Preserve cover art hover glow */
+    .cover-art-container.clickable:hover .cover-art {
+      box-shadow: 0 4px 16px rgba(3, 187, 242, 0.4) !important;
+    }
+  `
 };
 
 function getColorScheme() {
@@ -191,6 +369,8 @@ function getColorScheme() {
 
 function initDarkMode() {
   if (typeof DarkReader === 'undefined') return;
+
+  DarkReader.setFetchMethod(window.fetch);
 
   const applyTheme = (scheme) => {
     if (scheme === 'dark') {

@@ -33,7 +33,7 @@ const PlayerControls = ({
         <span>{PLAYER_CONSTANTS.SCRUB_SECONDS}</span>
       </button>
       <button
-        className="play-pause-btn"
+        className={`play-pause-btn ${isPlaying ? 'playing' : ''}`}
         onClick={onPlayPause}
         disabled={isLoading}
       >

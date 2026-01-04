@@ -176,6 +176,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
         activePlaylist={activePlaylist}
         onScrubberClick={handleScrubberClick}
         onScrub={scrub}
+        isPlaying={isPlaying}
       />
     </div>
   );

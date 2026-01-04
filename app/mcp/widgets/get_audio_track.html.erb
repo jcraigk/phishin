@@ -2,6 +2,7 @@
 <%= partial("head") %>
   <style>
 <%= partial("base_styles") %>
+<%= partial("loader_shimmer_styles") %>
 
     .loader-container {
       height: 92px;
@@ -9,52 +10,6 @@
       max-height: 92px;
       gap: 0;
       overflow: hidden;
-    }
-
-    .loader-text {
-      display: none;
-    }
-
-    .loader-logo-wrapper {
-      position: relative;
-      display: inline-block;
-      line-height: 0;
-    }
-
-    .loader-logo {
-      display: block;
-    }
-
-    .loader-logo-wrapper::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        transparent 40%,
-        rgba(255, 255, 255, 0.7) 50%,
-        transparent 60%,
-        transparent 100%
-      );
-      background-size: 200% 100%;
-      animation: logo-shimmer 1.5s infinite linear;
-      -webkit-mask-image: url('<%= asset_host_placeholder %>/mcp-widgets/images/logo-full.png');
-      mask-image: url('<%= asset_host_placeholder %>/mcp-widgets/images/logo-full.png');
-      -webkit-mask-size: 100% 100%;
-      mask-size: 100% 100%;
-      -webkit-mask-repeat: no-repeat;
-      mask-repeat: no-repeat;
-      -webkit-mask-position: top left;
-      mask-position: top left;
-    }
-
-    @keyframes logo-shimmer {
-      0% { background-position: 100% 50%; }
-      100% { background-position: -100% 50%; }
     }
 
     .audio-player {
@@ -254,13 +209,15 @@
       text-overflow: ellipsis;
     }
 
-    .player-track-subtitle .player-link {
+    .player-track-subtitle .player-link,
+    .player-track-subtitle .location-link {
       color: #3a3a3a;
       text-decoration: none;
       transition: color 0.15s;
     }
 
-    .player-track-subtitle .player-link:hover {
+    .player-track-subtitle .player-link:hover,
+    .player-track-subtitle .location-link:hover {
       color: #03BBF2;
     }
 
@@ -301,10 +258,11 @@
       content: '';
       position: absolute;
       top: 50%;
-      right: 100%;
-      transform: translateY(-50%);
-      border: 5px solid transparent;
-      border-right-color: #515152;
+      left: -4px;
+      transform: translateY(-50%) rotate(45deg);
+      width: 8px;
+      height: 8px;
+      background-color: inherit;
     }
 
     .tag-badge {
@@ -360,13 +318,13 @@
       content: '';
       position: absolute;
       top: 50%;
-      right: 100%;
-      transform: translateY(-50%);
-      border: 5px solid transparent;
-      border-right-color: #515152;
+      left: -4px;
+      transform: translateY(-50%) rotate(45deg);
+      width: 8px;
+      height: 8px;
+      background-color: inherit;
     }
 
-<%= partial("map_popover_styles") %>
 
     .player-controls {
       display: flex;
@@ -532,6 +490,7 @@
       mask-size: 100% 80%;
       mask-repeat: no-repeat;
       mask-position: top center;
+      mask-mode: alpha;
       -webkit-mask-image: var(--waveform-url);
       -webkit-mask-size: 100% 80%;
       -webkit-mask-repeat: no-repeat;
@@ -554,6 +513,7 @@
       mask-size: 100% 80%;
       mask-repeat: no-repeat;
       mask-position: top center;
+      mask-mode: alpha;
       -webkit-mask-size: 100% 80%;
       -webkit-mask-repeat: no-repeat;
       -webkit-mask-position: top center;
@@ -601,7 +561,7 @@
       position: absolute;
       inset: 0;
       border-radius: 0.5rem;
-      padding: 4px;
+      padding: 3px;
       background: conic-gradient(
         from var(--border-angle),
         transparent 0%,
@@ -643,7 +603,6 @@
   <script>
     (function() {
 <%= partial("base_scripts") %>
-<%= partial("map_popover_scripts") %>
 
       function initTagTooltips() {
         document.querySelectorAll('.tag-badge[data-tooltip]').forEach(badge => {
@@ -681,6 +640,39 @@
       let showData = null;
       let currentTrackIndex = 0;
       let baseUrl = 'https://phish.in';
+
+      function getProgressColor() {
+        const isDark = typeof getColorScheme === 'function' && getColorScheme() === 'dark';
+        return isPlaying 
+          ? (isDark ? '#5bcefa' : '#03BBF2') 
+          : (isDark ? '#e0e0e0' : '#b0b0b0');
+      }
+
+      function updateProgressBar(progress) {
+        const progressOverlay = document.getElementById('progress-overlay');
+        if (progressOverlay) {
+          progressOverlay.style.setProperty('background', `linear-gradient(to right, ${getProgressColor()} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
+        }
+      }
+
+      function updatePlayerColors() {
+        const isDark = typeof getColorScheme === 'function' && getColorScheme() === 'dark';
+        const playBtn = document.getElementById('play-pause-btn');
+        if (playBtn) {
+          if (isPlaying) {
+            playBtn.style.setProperty('background', isDark ? '#5bcefa' : '#03BBF2', 'important');
+          } else {
+            playBtn.style.setProperty('background', isDark ? '#404040' : '#505050', 'important');
+          }
+        }
+        const progressOverlay = document.getElementById('progress-overlay');
+        if (progressOverlay) {
+          const currentStyle = progressOverlay.style.background || '';
+          const match = currentStyle.match(/(\d+(?:\.\d+)?)%/);
+          const progress = match ? match[1] : '0';
+          updateProgressBar(progress);
+        }
+      }
 
       function isIOSDevice() {
         return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -763,10 +755,7 @@
 
           const progress = (currentTime / duration) * 100;
 
-          const progressOverlay = document.getElementById('progress-overlay');
-          if (progressOverlay) {
-            progressOverlay.style.background = `linear-gradient(to right, var(--progress-color, #b0b0b0) ${progress}%, rgba(255,255,255,0) ${progress}%)`;
-          }
+          updateProgressBar(progress);
 
           const elapsedEl = document.getElementById('elapsed-time');
           const remainingEl = document.getElementById('remaining-time');
@@ -782,6 +771,7 @@
           document.getElementById('audio-player')?.classList.add('audio-playing');
           showLoadingSpinner(false);
           updatePlayPauseIcon();
+          updatePlayerColors();
           fadeOutCoverPlayButton();
           updateMediaSessionPlaybackState();
         };
@@ -790,6 +780,7 @@
           isPlaying = false;
           document.getElementById('audio-player')?.classList.remove('audio-playing');
           updatePlayPauseIcon();
+          updatePlayerColors();
           updateMediaSessionPlaybackState();
         };
 
@@ -798,6 +789,7 @@
           isAudioLoading = false;
           document.getElementById('audio-player')?.classList.remove('audio-playing');
           updatePlayPauseIcon();
+          updatePlayerColors();
         };
 
         gaplessPlayer.onnext = () => {
@@ -808,7 +800,6 @@
             const track = showData.tracks[originalIndex];
             updateCurrentTrackData(track);
             updateTrackDisplay(trackData);
-            initMapPopovers();
             initTagTooltips();
             initSetPositionTooltips();
             updateWaveformImage(track.waveform_image_url);
@@ -825,7 +816,6 @@
             const track = showData.tracks[originalIndex];
             updateCurrentTrackData(track);
             updateTrackDisplay(trackData);
-            initMapPopovers();
             initTagTooltips();
             initSetPositionTooltips();
             updateWaveformImage(track.waveform_image_url);
@@ -834,22 +824,7 @@
           }
         };
 
-        gaplessPlayer.onfinishedtrack = () => {
-          const gaplessIndex = gaplessPlayer.getIndex();
-          const tracksWithAudio = getTracksWithAudio();
-          if (gaplessIndex >= tracksWithAudio.length - 1) {
-            playNext();
-          }
-        };
-
-        gaplessPlayer.onfinishedall = () => {
-          playNext();
-        };
-
-        gaplessPlayer.onerror = (trackPath, error) => {
-          console.error('Audio error:', trackPath, error);
-          showLoadingSpinner(false);
-        };
+        gaplessPlayer.onerror = () => showLoadingSpinner(false);
 
         const playPauseBtn = document.getElementById('play-pause-btn');
         const scrubber = document.getElementById('scrubber');
@@ -893,7 +868,6 @@
           venue: showData.venue,
           venue_slug: showData.venue_slug,
           location: showData.location,
-          map_snapshot_url: showData.map_snapshot_url,
           cover_art_url: showData.cover_art_url,
           tags: track.tags || [],
           set: track.set,
@@ -901,74 +875,59 @@
         };
       }
 
-      let currentWaveformAbort = null;
+      let currentWaveformImage = null;
       
       function updateWaveformImage(waveformUrl, onComplete) {
         const scrubber = document.getElementById('scrubber');
         const progressOverlay = document.getElementById('progress-overlay');
 
-        console.log('[WAVEFORM] updateWaveformImage called with:', waveformUrl);
-
-        if (currentWaveformAbort) {
-          console.log('[WAVEFORM] Aborting previous load');
-          currentWaveformAbort.abort();
-          currentWaveformAbort = null;
+        if (currentWaveformImage) {
+          currentWaveformImage.onload = null;
+          currentWaveformImage.onerror = null;
+          currentWaveformImage = null;
         }
 
         if (!waveformUrl) {
-          console.log('[WAVEFORM] No waveform URL provided');
           if (scrubber) {
             scrubber.style.setProperty('--waveform-url', 'none');
             scrubber.classList.remove('loaded');
           }
           if (progressOverlay) {
-            progressOverlay.style.maskImage = '';
-            progressOverlay.style.webkitMaskImage = '';
+            progressOverlay.style.maskImage = 'none';
+            progressOverlay.style.webkitMaskImage = 'none';
           }
           if (onComplete) onComplete();
           return;
         }
 
         scrubber?.classList.remove('loaded');
+        if (progressOverlay) {
+          updateProgressBar(0);
+        }
 
-        const abortController = new AbortController();
-        currentWaveformAbort = abortController;
-        const startTime = performance.now();
-
-        fetch(waveformUrl, { 
-          signal: abortController.signal,
-          mode: 'cors'
-        })
-          .then(response => {
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            return response.blob();
-          })
-          .then(blob => {
-            if (abortController.signal.aborted) return;
-            
-            const objectUrl = URL.createObjectURL(blob);
-            console.log('[WAVEFORM] Fetched in', (performance.now() - startTime).toFixed(0), 'ms');
-            
-            if (scrubber) {
-              scrubber.style.setProperty('--waveform-url', `url(${objectUrl})`);
-              scrubber.classList.add('loaded');
-              console.log('[WAVEFORM] Applied to scrubber, loaded class added');
-            }
-            if (progressOverlay) {
-              progressOverlay.style.maskImage = `url(${objectUrl})`;
-              progressOverlay.style.webkitMaskImage = `url(${objectUrl})`;
-              console.log('[WAVEFORM] Applied to progressOverlay');
-            }
-            if (onComplete) onComplete();
-          })
-          .catch(err => {
-            if (err.name === 'AbortError') {
-              console.log('[WAVEFORM] Load aborted');
-              return;
-            }
-            console.error('[WAVEFORM] Fetch error:', err);
-            if (onComplete) onComplete();
-          });
+        const img = new Image();
+        currentWaveformImage = img;
+        
+        img.onload = () => {
+          if (currentWaveformImage !== img) return;
+          
+          const maskUrl = `url(${waveformUrl})`;
+          if (scrubber) {
+            scrubber.style.setProperty('--waveform-url', maskUrl);
+            scrubber.classList.add('loaded');
+          }
+          if (progressOverlay) {
+            progressOverlay.style.maskImage = maskUrl;
+            progressOverlay.style.webkitMaskImage = maskUrl;
+          }
+          if (onComplete) onComplete();
+        };
+        
+        img.onerror = () => {
+          if (onComplete) onComplete();
+        };
+        
+        img.src = waveformUrl;
       }
 
       function togglePlayPause() {
@@ -1002,6 +961,7 @@
         if (playerControls) {
           playerControls.classList.add('visible');
         }
+        updatePlayerColors();
       }
 
       function initCoverPlayButton() {
@@ -1053,10 +1013,7 @@
         const newTime = percent * duration;
 
         const progress = percent * 100;
-        const progressOverlay = document.getElementById('progress-overlay');
-        if (progressOverlay) {
-          progressOverlay.style.background = `linear-gradient(to right, var(--progress-color, #b0b0b0) ${progress}%, rgba(255,255,255,0) ${progress}%)`;
-        }
+        updateProgressBar(progress);
 
         const elapsedEl = document.getElementById('elapsed-time');
         const remainingEl = document.getElementById('remaining-time');
@@ -1123,7 +1080,6 @@
         updateCurrentTrackData(track);
         
         updateTrackDisplay(trackData);
-        initMapPopovers();
         initTagTooltips();
         initSetPositionTooltips();
         updateWaveformImage(track.waveform_image_url);
@@ -1146,23 +1102,13 @@
         
         const subtitleEl = document.querySelector('.player-track-subtitle');
         if (subtitleEl) {
-          const mapSnapshotUrl = track.map_snapshot_url || '';
-          const venueLocationHtml = mapSnapshotUrl
-            ? `<span class="location-link-wrapper"><a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(mapSnapshotUrl)}" alt="" /></span></span>`
-            : `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
+          const venueLocationHtml = `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
           const setPos = formatSetPosition(track.set, track.position, true);
           let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a>${setPos ? ` · ${setPos}` : ''} · ${venueLocationHtml}`;
           
           const tags = track.tags || [];
           if (tags.length > 0) {
-            subtitleHtml += ' · ' + tags.map(tag => {
-              const tooltipText = tag.notes || tag.description || '';
-              if (tooltipText) {
-                const truncated = tooltipText.length > 100 ? tooltipText.slice(0, 100).trim() + '...' : tooltipText;
-                return `<span class="tag-badge" data-tooltip><span class="tag-tooltip">${escapeHtml(truncated)}</span>${escapeHtml(tag.name)}</span>`;
-              }
-              return `<span class="tag-badge">${escapeHtml(tag.name)}</span>`;
-            }).join(' ');
+            subtitleHtml += ' · ' + renderGroupedTagBadges(tags, true);
           }
           
           subtitleEl.innerHTML = subtitleHtml;
@@ -1198,10 +1144,7 @@
       }
 
       async function requestAdjacentShow(direction) {
-        if (!showData?.date || isNavigating) {
-          console.log('[NAV] Blocked - date:', showData?.date, 'isNavigating:', isNavigating);
-          return;
-        }
+        if (!showData?.date || isNavigating) return;
         
         isNavigating = true;
         
@@ -1215,9 +1158,6 @@
         const root = document.getElementById('root');
         root.innerHTML = renderLoader();
         
-        const t0 = performance.now();
-        console.log('[NAV] Starting adjacent show load:', direction);
-        
         try {
           const currentShowResponse = await fetch(`${baseUrl}/api/v2/shows/${showData.date}`);
           if (!currentShowResponse.ok) throw new Error('Failed to fetch current show');
@@ -1227,7 +1167,6 @@
             ? currentShow.next_show_date_with_audio 
             : currentShow.previous_show_date_with_audio;
           if (!adjacentDate) throw new Error('No adjacent show found');
-          console.log('[NAV] Adjacent date:', adjacentDate);
           
           const adjacentShowResponse = await fetch(`${baseUrl}/api/v2/shows/${adjacentDate}`);
           if (!adjacentShowResponse.ok) throw new Error('Failed to fetch adjacent show');
@@ -1241,7 +1180,6 @@
             venue: adjacentShow.venue_name,
             venue_slug: adjacentShow.venue?.slug,
             location: adjacentShow.venue ? `${adjacentShow.venue.city}, ${adjacentShow.venue.state || adjacentShow.venue.country}` : '',
-            map_snapshot_url: adjacentShow.venue?.map_snapshot_url || null,
             cover_art_url: adjacentShow.cover_art_urls?.medium,
             duration_ms: adjacentShow.duration,
             tracks: rawTracks.map((t, idx) => ({
@@ -1273,20 +1211,14 @@
           initAudioOnly(trackData, gaplessIndex);
           
           setupBackgroundBlur(trackData.cover_art_url);
-          initMapPopovers();
           initTagTooltips();
           initSetPositionTooltips();
           wireUpPlayerControls();
-          console.log('[NAV] targetTrack:', targetTrack);
-          console.log('[NAV] waveform_image_url:', targetTrack.waveform_image_url);
           updateWaveformImage(targetTrack.waveform_image_url);
           initMediaSession(trackData);
           updateNavigationButtons();
           
-          console.log('[NAV] TOTAL TIME:', (performance.now() - t0).toFixed(0), 'ms');
-          
         } catch (e) {
-          console.error('[NAV] ERROR:', e);
           if (showData && trackData) {
             root.innerHTML = renderPlayer(trackData);
             if (trackData.mp3_url) {
@@ -1332,10 +1264,7 @@
           const duration = currentTrack.duration_ms ? currentTrack.duration_ms / 1000 : 0;
           if (duration <= 0) return;
           const progress = (currentTime / duration) * 100;
-          const progressOverlay = document.getElementById('progress-overlay');
-          if (progressOverlay) {
-            progressOverlay.style.background = `linear-gradient(to right, var(--progress-color, #b0b0b0) ${progress}%, rgba(255,255,255,0) ${progress}%)`;
-          }
+          updateProgressBar(progress);
           const elapsedEl = document.getElementById('elapsed-time');
           const remainingEl = document.getElementById('remaining-time');
           if (elapsedEl) elapsedEl.textContent = formatTime(currentTime);
@@ -1350,6 +1279,7 @@
           document.getElementById('audio-player')?.classList.add('audio-playing');
           showLoadingSpinner(false);
           updatePlayPauseIcon();
+          updatePlayerColors();
           updateMediaSessionPlaybackState();
         };
         
@@ -1357,6 +1287,7 @@
           isPlaying = false;
           document.getElementById('audio-player')?.classList.remove('audio-playing');
           updatePlayPauseIcon();
+          updatePlayerColors();
           updateMediaSessionPlaybackState();
         };
         
@@ -1364,6 +1295,7 @@
           isPlaying = false;
           isAudioLoading = false;
           document.getElementById('audio-player')?.classList.remove('audio-playing');
+          updatePlayerColors();
           updatePlayPauseIcon();
         };
         
@@ -1375,7 +1307,6 @@
             const nextTrack = showData.tracks[originalIndex];
             updateCurrentTrackData(nextTrack);
             updateTrackDisplay(trackData);
-            initMapPopovers();
             initTagTooltips();
             initSetPositionTooltips();
             updateWaveformImage(nextTrack.waveform_image_url);
@@ -1392,7 +1323,6 @@
             const prevTrack = showData.tracks[originalIndex];
             updateCurrentTrackData(prevTrack);
             updateTrackDisplay(trackData);
-            initMapPopovers();
             initTagTooltips();
             initSetPositionTooltips();
             updateWaveformImage(prevTrack.waveform_image_url);
@@ -1401,22 +1331,7 @@
           }
         };
         
-        gaplessPlayer.onfinishedtrack = () => {
-          const idx = gaplessPlayer.getIndex();
-          const tracks = getTracksWithAudio();
-          if (idx >= tracks.length - 1) {
-            playNext();
-          }
-        };
-        
-        gaplessPlayer.onfinishedall = () => {
-          playNext();
-        };
-        
-        gaplessPlayer.onerror = (trackPath, error) => {
-          console.error('Audio error:', trackPath, error);
-          showLoadingSpinner(false);
-        };
+        gaplessPlayer.onerror = () => showLoadingSpinner(false);
         
         isAudioLoading = true;
         gaplessPlayer.play();
@@ -1442,33 +1357,18 @@
         if (scrubForwardBtn) scrubForwardBtn.disabled = true;
       }
       
-      function applyPreloadedWaveform(waveformUrl) {
-        if (!waveformUrl) return;
-        updateWaveformImage(waveformUrl);
-      }
-      
       function renderPlayerPlaying(track) {
         const coverArtUrl = track.cover_art_url || '';
         const tags = track.tags || [];
         const hasAudio = !!track.mp3_url;
-        const mapSnapshotUrl = track.map_snapshot_url || '';
 
-        const venueLocationHtml = mapSnapshotUrl
-          ? `<span class="location-link-wrapper"><a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(mapSnapshotUrl)}" alt="" /></span></span>`
-          : `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
+        const venueLocationHtml = `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
 
         const setPos = formatSetPosition(track.set, track.position, true);
         let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a>${setPos ? ` · ${setPos}` : ''} · ${venueLocationHtml}`;
 
         if (tags.length > 0) {
-          subtitleHtml += ' · ' + tags.map(tag => {
-            const tooltipText = tag.notes || tag.description || '';
-            if (tooltipText) {
-              const truncated = tooltipText.length > 100 ? tooltipText.slice(0, 100).trim() + '...' : tooltipText;
-              return `<span class="tag-badge" data-tooltip><span class="tag-tooltip">${escapeHtml(truncated)}</span>${escapeHtml(tag.name)}</span>`;
-            }
-            return `<span class="tag-badge">${escapeHtml(tag.name)}</span>`;
-          }).join(' ');
+          subtitleHtml += ' · ' + renderGroupedTagBadges(tags, true);
         }
 
         const playerControls = hasAudio ? `
@@ -1566,24 +1466,14 @@
         const coverArtUrl = track.cover_art_url || '';
         const tags = track.tags || [];
         const hasAudio = !!track.mp3_url;
-        const mapSnapshotUrl = track.map_snapshot_url || '';
 
-        const venueLocationHtml = mapSnapshotUrl
-          ? `<span class="location-link-wrapper"><a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}<span class="map-popover"><img src="${escapeHtml(mapSnapshotUrl)}" alt="" /></span></span>`
-          : `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
+        const venueLocationHtml = `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
 
         const setPos = formatSetPosition(track.set, track.position, true);
         let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a>${setPos ? ` · ${setPos}` : ''} · ${venueLocationHtml}`;
 
         if (tags.length > 0) {
-          subtitleHtml += ' · ' + tags.map(tag => {
-            const tooltipText = tag.notes || tag.description || '';
-            if (tooltipText) {
-              const truncated = tooltipText.length > 100 ? tooltipText.slice(0, 100).trim() + '...' : tooltipText;
-              return `<span class="tag-badge" data-tooltip><span class="tag-tooltip">${escapeHtml(truncated)}</span>${escapeHtml(tag.name)}</span>`;
-            }
-            return `<span class="tag-badge">${escapeHtml(tag.name)}</span>`;
-          }).join(' ');
+          subtitleHtml += ' · ' + renderGroupedTagBadges(tags, true);
         }
 
         const coverPlayButton = hasAudio ? `
@@ -1677,7 +1567,6 @@
             venue: data.show.venue,
             venue_slug: data.show.venue_slug,
             location: data.show.location,
-            map_snapshot_url: data.show.map_snapshot_url,
             cover_art_url: data.show.cover_art_url,
             tags: track.tags || [],
             set: track.set,
@@ -1696,7 +1585,6 @@
 
         root.innerHTML = renderPlayer(data);
         setupBackgroundBlur(data.cover_art_url);
-        initMapPopovers();
         initTagTooltips();
         initSetPositionTooltips();
         if (data.mp3_url) {

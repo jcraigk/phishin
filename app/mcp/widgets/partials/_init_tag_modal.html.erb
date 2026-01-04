@@ -1,0 +1,115 @@
+function initTagModal() {
+  const tagModal = document.getElementById('tag-modal');
+  const tagModalTitle = document.getElementById('tag-modal-title');
+  const tagModalContent = document.getElementById('tag-modal-content');
+  const tagModalCloseBtn = document.getElementById('tag-modal-close-btn');
+  if (!tagModal) return;
+
+  function updateModalPosition() {
+    const player = document.getElementById('audio-player');
+    if (player && player.classList.contains('visible')) {
+      tagModal.classList.add('with-player');
+    } else {
+      tagModal.classList.remove('with-player');
+    }
+  }
+
+  function openTagModal(tags) {
+    const tagIcon = '<svg viewBox="0 0 448 512" fill="currentColor" style="width: 18px; height: 18px; margin-right: 8px; vertical-align: -2px;"><path d="M0 80V229.5c0 17 6.7 33.3 18.7 45.3l176 176c25 25 65.5 25 90.5 0L418.7 317.3c25-25 25-65.5 0-90.5l-176-176c-12-12-28.3-18.7-45.3-18.7H48C21.5 32 0 53.5 0 80zm112 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/></svg>';
+    
+    const grouped = groupTags(tags);
+    const uniqueTagCount = Object.keys(grouped).length;
+    tagModalTitle.innerHTML = tagIcon + (uniqueTagCount === 1 ? 'Tag' : 'Tags');
+    
+    let contentHtml = '';
+    Object.entries(grouped).forEach(([tagName, tagGroup]) => {
+      const count = tagGroup.length;
+      const title = count > 1 ? `${tagName} (${count})` : tagName;
+      const firstTag = tagGroup[0];
+      const hasDescription = firstTag.description && firstTag.description.trim();
+      
+      contentHtml += `<div class="tag-modal-section">`;
+      contentHtml += `<div class="tag-modal-section-title">${escapeHtml(title)}</div>`;
+      
+      if (hasDescription) {
+        contentHtml += `<div style="margin-bottom: 8px">${escapeHtml(firstTag.description)}</div>`;
+      }
+      
+      tagGroup.forEach((tag, idx) => {
+        const hasNotes = tag.notes && tag.notes.trim();
+        const hasTranscript = tag.transcript && tag.transcript.trim();
+        const timeRange = formatTagTimeRange(tag);
+        
+        if (hasNotes || hasTranscript) {
+          if (count > 1) {
+            contentHtml += `<div style="margin-top: ${idx > 0 ? '12px' : '4px'}; padding-left: 8px; border-left: 2px solid #3d3f42;">`;
+          }
+          if (hasNotes) {
+            const noteText = timeRange ? `${tag.notes} ${timeRange}` : tag.notes;
+            contentHtml += `<div style="font-style: italic; color: #6d6f71;">${escapeHtml(noteText)}</div>`;
+          }
+          if (hasTranscript) {
+            contentHtml += `<div style="margin-top: 8px;"><strong>TRANSCRIPT:</strong></div>`;
+            contentHtml += `<div style="margin-top: 4px; padding: 8px; background: rgba(0,0,0,0.1); border-radius: 4px; white-space: pre-wrap;">${escapeHtml(tag.transcript)}</div>`;
+          }
+          if (count > 1) {
+            contentHtml += `</div>`;
+          }
+        }
+      });
+      
+      const hasAnyNotes = tagGroup.some(t => (t.notes && t.notes.trim()) || (t.transcript && t.transcript.trim()));
+      if (!hasDescription && !hasAnyNotes) {
+        contentHtml += `<div style="color: #9a9b9d;">No additional details available.</div>`;
+      }
+      
+      contentHtml += `</div>`;
+    });
+    
+    tagModalContent.innerHTML = contentHtml;
+    
+    document.querySelectorAll('.context-dropdown, .track-dropdown').forEach(d => d.classList.remove('visible'));
+    
+    updateModalPosition();
+    tagModal.classList.add('visible');
+  }
+
+  const player = document.getElementById('audio-player');
+  if (player) {
+    const observer = new MutationObserver(() => {
+      if (tagModal.classList.contains('visible')) {
+        updateModalPosition();
+      }
+    });
+    observer.observe(player, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  document.querySelectorAll('.tags-row.clickable, .track-inline-tags, .show-meta-tags').forEach(row => {
+    row.addEventListener('click', (e) => {
+      e.stopPropagation();
+      
+      let tags = [];
+      try {
+        tags = JSON.parse(row.dataset.tags || '[]');
+      } catch (err) {
+        return;
+      }
+      
+      if (tags.length > 0) {
+        openTagModal(tags);
+      }
+    });
+  });
+
+  tagModalCloseBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    tagModal.classList.remove('visible');
+  });
+
+  tagModal.addEventListener('click', (e) => {
+    if (e.target === tagModal) {
+      tagModal.classList.remove('visible');
+    }
+  });
+}
+

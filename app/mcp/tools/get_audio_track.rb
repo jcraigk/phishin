@@ -76,8 +76,8 @@ module Tools
           show: [
             :tour,
             :tracks,
-            cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } },
-            venue: :map_snapshot_attachment
+            :venue,
+            cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } }
           ]
         )
       end
@@ -156,7 +156,6 @@ module Tools
           venue: show.venue_name,
           venue_slug: show.venue&.slug,
           location: show.venue&.location,
-          map_snapshot_url: show.venue&.map_snapshot_url,
           cover_art_url: show.cover_art_urls[:medium],
           duration_ms: show.duration,
           tracks: playable_tracks.map { |t| build_track_item(t, set_positions[t.id]) }

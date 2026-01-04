@@ -87,13 +87,15 @@
   text-overflow: ellipsis;
 }
 
-.player-track-subtitle .player-link {
+.player-track-subtitle .player-link,
+.player-track-subtitle .location-link {
   color: #3a3a3a;
   text-decoration: none;
   transition: color 0.15s;
 }
 
-.player-track-subtitle .player-link:hover {
+.player-track-subtitle .player-link:hover,
+.player-track-subtitle .location-link:hover {
   color: #03BBF2;
 }
 
@@ -257,6 +259,7 @@
   mask-size: 100% 100%;
   mask-repeat: no-repeat;
   mask-position: center;
+  mask-mode: alpha;
   -webkit-mask-image: var(--waveform-url);
   -webkit-mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
@@ -276,11 +279,10 @@
   height: 100%;
   width: 100%;
   background: linear-gradient(to right, var(--progress-color, #b0b0b0) 0%, rgba(255,255,255,0) 0%);
-  mask-image: var(--waveform-url);
   mask-size: 100% 100%;
   mask-repeat: no-repeat;
   mask-position: center;
-  -webkit-mask-image: var(--waveform-url);
+  mask-mode: alpha;
   -webkit-mask-size: 100% 100%;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
@@ -328,7 +330,7 @@
   position: absolute;
   inset: 0;
   border-radius: 0.5rem;
-  padding: 4px;
+  padding: 3px;
   background: conic-gradient(
     from var(--border-angle),
     transparent 0%,

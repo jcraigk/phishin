@@ -3,7 +3,7 @@ import { formatTime } from "../helpers/utils";
 import { PLAYER_CONSTANTS } from "../helpers/playerConstants";
 import { useWaveformImage } from "../hooks/useWaveformImage";
 
-const ProgressBar = ({ activeTrack, currentTime, currentTrackIndex, activePlaylist, onScrubberClick, onScrub }) => {
+const ProgressBar = ({ activeTrack, currentTime, currentTrackIndex, activePlaylist, onScrubberClick, onScrub, isPlaying }) => {
   const { scrubberRef, progressBarRef, fadeClass } = useWaveformImage(activeTrack);
 
   useEffect(() => {
@@ -14,10 +14,11 @@ const ProgressBar = ({ activeTrack, currentTime, currentTrackIndex, activePlayli
       if (currentTrack?.duration && progressBarRef.current) {
         const duration = currentTrack.duration / 1000;
         const progress = (currentTime / duration) * 100;
-        progressBarRef.current.style.background = `linear-gradient(to right, #03bbf2 ${progress}%, rgba(255,255,255,0) ${progress}%)`;
+        const progressColor = isPlaying ? '#03bbf2' : '#b0b0b0';
+        progressBarRef.current.style.setProperty('background', `linear-gradient(to right, ${progressColor} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
       }
     }
-  }, [currentTime, currentTrackIndex, activePlaylist, progressBarRef]);
+  }, [currentTime, currentTrackIndex, activePlaylist, progressBarRef, isPlaying]);
 
   return (
     <div className="bottom-row">

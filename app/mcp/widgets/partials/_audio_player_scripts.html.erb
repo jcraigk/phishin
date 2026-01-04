@@ -5,6 +5,39 @@ let isPlaying = false;
 let isLoading = false;
 let showMetadata = null;
 
+function getProgressColor() {
+  const isDark = typeof getColorScheme === 'function' && getColorScheme() === 'dark';
+  return isPlaying 
+    ? (isDark ? '#5bcefa' : '#03BBF2') 
+    : (isDark ? '#e0e0e0' : '#b0b0b0');
+}
+
+function updateProgressBar(progress) {
+  const progressOverlay = document.getElementById('progress-overlay');
+  if (progressOverlay) {
+    progressOverlay.style.setProperty('background', `linear-gradient(to right, ${getProgressColor()} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
+  }
+}
+
+function updatePlayerColors() {
+  const isDark = typeof getColorScheme === 'function' && getColorScheme() === 'dark';
+  const playBtn = document.getElementById('play-pause-btn');
+  if (playBtn) {
+    if (isPlaying) {
+      playBtn.style.setProperty('background', isDark ? '#5bcefa' : '#03BBF2', 'important');
+    } else {
+      playBtn.style.setProperty('background', isDark ? '#404040' : '#505050', 'important');
+    }
+  }
+  const progressOverlay = document.getElementById('progress-overlay');
+  if (progressOverlay && currentTrackIndex >= 0) {
+    const currentStyle = progressOverlay.style.background || '';
+    const match = currentStyle.match(/(\d+(?:\.\d+)?)%/);
+    const progress = match ? match[1] : '0';
+    updateProgressBar(progress);
+  }
+}
+
 function hasAnyAudio(tracks) {
   return tracks && tracks.some(t => t.mp3_url);
 }
@@ -30,6 +63,7 @@ function showPlayer() {
   if (coverArtContainer) {
     coverArtContainer.classList.add('clickable');
   }
+  updatePlayerColors();
 }
 
 function hidePlayer() {
@@ -92,11 +126,7 @@ function initAudioPlayer(options = {}) {
     if (duration <= 0) return;
 
     const progress = (currentTime / duration) * 100;
-
-    const progressOverlay = document.getElementById('progress-overlay');
-    if (progressOverlay) {
-      progressOverlay.style.background = `linear-gradient(to right, var(--progress-color, #b0b0b0) ${progress}%, rgba(255,255,255,0) ${progress}%)`;
-    }
+    updateProgressBar(progress);
 
     const elapsedEl = document.getElementById('elapsed-time');
     const remainingEl = document.getElementById('remaining-time');
@@ -119,6 +149,7 @@ function initAudioPlayer(options = {}) {
     isPlaying = true;
     document.querySelector('.card')?.classList.add('audio-playing');
     updatePlayPauseIcon();
+    updatePlayerColors();
     updateMediaSessionPlaybackState();
   };
 
@@ -126,6 +157,7 @@ function initAudioPlayer(options = {}) {
     isPlaying = false;
     document.querySelector('.card')?.classList.remove('audio-playing');
     updatePlayPauseIcon();
+    updatePlayerColors();
     updateMediaSessionPlaybackState();
   };
 
@@ -134,6 +166,7 @@ function initAudioPlayer(options = {}) {
     isLoading = false;
     document.querySelector('.card')?.classList.remove('audio-playing');
     updatePlayPauseIcon();
+    updatePlayerColors();
   };
 
   gaplessPlayer.onnext = () => {
@@ -169,8 +202,7 @@ function initAudioPlayer(options = {}) {
     updatePlayPauseIcon();
   };
 
-  gaplessPlayer.onerror = (trackPath, error) => {
-    console.error('Audio error:', trackPath, error);
+  gaplessPlayer.onerror = () => {
     showLoadingSpinner(false);
   };
 
@@ -254,11 +286,16 @@ function updateTrackDisplay(track) {
 
 function updateWaveformImage(waveformUrl) {
   const scrubber = document.getElementById('scrubber');
+  const progressOverlay = document.getElementById('progress-overlay');
   
   if (!waveformUrl) {
     if (scrubber) {
       scrubber.style.setProperty('--waveform-url', 'none');
       scrubber.classList.remove('loaded');
+    }
+    if (progressOverlay) {
+      progressOverlay.style.maskImage = 'none';
+      progressOverlay.style.webkitMaskImage = 'none';
     }
     return;
   }
@@ -267,9 +304,14 @@ function updateWaveformImage(waveformUrl) {
   
   const img = new Image();
   img.onload = () => {
+    const maskUrl = `url(${waveformUrl})`;
     if (scrubber) {
-      scrubber.style.setProperty('--waveform-url', `url(${waveformUrl})`);
+      scrubber.style.setProperty('--waveform-url', maskUrl);
       scrubber.classList.add('loaded');
+    }
+    if (progressOverlay) {
+      progressOverlay.style.maskImage = maskUrl;
+      progressOverlay.style.webkitMaskImage = maskUrl;
     }
   };
   img.src = waveformUrl;
