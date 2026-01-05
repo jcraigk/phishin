@@ -308,6 +308,7 @@ class StageNotesSyncService < ApplicationService
       - If the SAME CONTENT (even worded differently) appears in an existing tag, do not include it
       - Common tag types and what they cover:
         - Alt Rig: Alternate equipment like megaphones, different guitars, drum kits, etc.
+        - Alt Lyric: Alternate or additional lyrics
         - Banter: Verbal interactions, thanks, dedications, announcements
         - Tease: Musical references to other songs
         - Jamcharts: Notable improvisational segments
@@ -339,10 +340,12 @@ class StageNotesSyncService < ApplicationService
         - BAD: "During Tweezer, dancers exited the freezer" (redundant song name)
         - BAD: "Tweezer featured dancers exiting the freezer" (redundant song name)
         - BAD: "Send in the Clowns was sung a cappella" (redundant song name)
+        - BAD: "Rocky Top was played for the Drebbers" (redundant song name - transform to track note)
         - BAD: "The song was sung a cappella" (redundant "the song")
         - BAD: "Trey was lifted up while performing the song" (redundant "while performing the song")
         - BAD: "then came onstage appearing as Zamfir" (orphaned "then" - doesn't make sense without prior context)
         - GOOD: "Sung a cappella with lyrics changed to Send in the Clones"
+        - GOOD: "Played for the Drebbers, who had just gotten married" (transformed from "[Song] was played for...")
         - GOOD: "Trey and Mike were lifted up in the air as dancers appeared with giant inflatable objects"
         - GOOD: "White coils that had been suspended over the stage began to descend as screens lit up"
         - GOOD: "Dancers dressed as 'conjurors of thunder' with yellow fabric sang along"
