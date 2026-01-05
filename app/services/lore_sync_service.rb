@@ -15,6 +15,7 @@ class LoreSyncService < ApplicationService
   def call
     validate_options!
     @lore_tag = Tag.find_by!(slug: "lore")
+    @banter_tag = Tag.find_by!(slug: "banter")
     shows = fetch_shows
 
     puts "Analyzing #{shows.count} show(s)#{dry_run ? ' (DRY RUN)' : ''}..."
@@ -82,57 +83,66 @@ class LoreSyncService < ApplicationService
     @existing_tag_notes = gather_existing_tag_notes(show)
     analysis = analyze_with_llm(notes, track_info, @existing_tag_notes, show.date)
 
-    show_notes = normalize_quotes(analysis[:show_notes])
-    track_notes = (analysis[:track_notes].presence || []).each { |tn| tn["notes"] = normalize_quotes(tn["notes"]) }
+    # Handle show-level tags
+    lore_show = analysis[:lore_show].presence
+    banter_show = analysis[:banter_show].presence
 
-    # Filter out Banter tracks - they already explain the content
-    track_notes = track_notes.reject { |tn| tn["song_title"].downcase == "banter" }
+    apply_show_tag(show, normalize_quotes(lore_show), @lore_tag, "Lore") if lore_show.present?
+    apply_show_tag(show, normalize_quotes(banter_show), @banter_tag, "Banter") if banter_show.present?
 
-    apply_show_tag(show, show_notes) if show_notes.present?
-    apply_track_tags(show, track_notes) if track_notes.any?
+    # Handle track-level tags
+    lore_tracks = (analysis[:lore_tracks].presence || [])
+      .reject { |tn| tn["song_title"].downcase == "banter" }
+      .each { |tn| tn["notes"] = normalize_quotes(tn["notes"]) }
+    banter_tracks = (analysis[:banter_tracks].presence || [])
+      .reject { |tn| tn["song_title"].downcase == "banter" }
+      .each { |tn| tn["notes"] = normalize_quotes(tn["notes"]) }
 
-    @skipped += 1 if show_notes.blank? && track_notes.empty?
+    apply_track_tags(show, lore_tracks, @lore_tag, "Lore") if lore_tracks.any?
+    apply_track_tags(show, banter_tracks, @banter_tag, "Banter") if banter_tracks.any?
+
+    @skipped += 1 if lore_show.blank? && banter_show.blank? && lore_tracks.empty? && banter_tracks.empty?
   rescue StandardError => e
     puts "\n✗ Error processing #{show.date}: #{e.message}"
     @skipped += 1
   end
 
-  def apply_show_tag(show, extracted_notes)
-    existing = ShowTag.find_by(show:, tag: @lore_tag)
+  def apply_show_tag(show, extracted_notes, tag, tag_name)
+    existing = ShowTag.find_by(show:, tag:)
     show_url = "https://phish.in/#{show.date}"
 
     if existing
       return if existing.notes == extracted_notes
       if dry_run
-        puts "\n[DRY RUN] Would update show: #{show_url}"
+        puts "\n🏟️ [DRY RUN] Would update show #{tag_name}: #{show_url}"
         puts "  Old: \e[36m#{existing.notes}\e[0m"
         puts "  New: \e[36m#{extracted_notes}\e[0m"
       else
         existing.update!(notes: extracted_notes)
-        puts "\n🏟️ Show updated: #{show_url}"
+        puts "\n🏟️ Show #{tag_name} updated: #{show_url}"
         puts "  \e[36m#{extracted_notes}\e[0m" if verbose
       end
       @show_updated += 1
     else
       if dry_run
-        puts "\n[DRY RUN] Would tag show: #{show_url}"
+        puts "\n🏟️ [DRY RUN] Would tag show #{tag_name}: #{show_url}"
         puts "  \e[36m#{extracted_notes}\e[0m"
       else
-        ShowTag.create!(show:, tag: @lore_tag, notes: extracted_notes)
-        puts "\n🏟️ Show tagged: #{show_url}"
+        ShowTag.create!(show:, tag:, notes: extracted_notes)
+        puts "\n🏟️ Show #{tag_name} tagged: #{show_url}"
         puts "  \e[36m#{extracted_notes}\e[0m" if verbose
       end
       @show_tagged += 1
     end
   end
 
-  def apply_track_tags(show, track_notes)
+  def apply_track_tags(show, track_notes, tag, tag_name)
     track_notes = track_notes.uniq { |tn| tn["song_title"] }
     track_notes.each do |track_note|
       track = find_track(show, track_note["song_title"])
       next unless track
 
-      existing = TrackTag.find_by(track:, tag: @lore_tag)
+      existing = TrackTag.find_by(track:, tag:)
       notes = track_note["notes"]
 
       track_url = "https://phish.in/#{show.date}/#{track.slug}"
@@ -140,22 +150,22 @@ class LoreSyncService < ApplicationService
       if existing
         next if existing.notes == notes
         if dry_run
-          puts "\n[DRY RUN] Would update track: #{track_url}"
+          puts "\n🎸 [DRY RUN] Would update track #{tag_name}: #{track_url}"
           puts "  Old: \e[36m#{existing.notes}\e[0m"
           puts "  New: \e[36m#{notes}\e[0m"
         else
           existing.update!(notes:)
-          puts "\n🎸 Track updated: #{track_url}"
+          puts "\n🎸 Track #{tag_name} updated: #{track_url}"
           puts "  \e[36m#{notes}\e[0m" if verbose
         end
         @track_updated += 1
       else
         if dry_run
-          puts "\n[DRY RUN] Would tag track: #{track_url}"
+          puts "\n🎸 [DRY RUN] Would tag track #{tag_name}: #{track_url}"
           puts "  \e[36m#{notes}\e[0m"
         else
-          TrackTag.create!(track:, tag: @lore_tag, notes:)
-          puts "\n🎸 Track tagged: #{track_url}"
+          TrackTag.create!(track:, tag:, notes:)
+          puts "\n🎸 Track #{tag_name} tagged: #{track_url}"
           puts "  \e[36m#{notes}\e[0m" if verbose
         end
         @track_tagged += 1
@@ -193,8 +203,8 @@ class LoreSyncService < ApplicationService
   def normalize_quotes(text)
     return nil if text.nil?
     text
-      .gsub(/[""]/, '"')
-      .gsub(/'/, "'")
+      .gsub(/[“”]/, '"')
+      .gsub(/‘’/, "'")
       .gsub(/<[^>]+>/, "")
       .then { |t| CGI.unescapeHTML(t) }
   end
@@ -237,8 +247,10 @@ class LoreSyncService < ApplicationService
       puts "🤖 #{show_date} [#{input.to_fs(:delimited)} in / #{output.to_fs(:delimited)} out / $#{format_cost(cost)} / total: $#{format_cost(calculate_cost)}]"
       content = JSON.parse(result["choices"].first["message"]["content"])
       {
-        show_notes: content["show_notes"].presence,
-        track_notes: content["track_notes"].presence || []
+        lore_show: content["lore_show"].presence,
+        lore_tracks: content["lore_tracks"].presence || [],
+        banter_show: content["banter_show"].presence,
+        banter_tracks: content["banter_tracks"].presence || []
       }
     else
       raise "OpenAI API error: #{response.body}"
@@ -276,8 +288,10 @@ class LoreSyncService < ApplicationService
       json_str = json_match ? json_match[1] : text
       content = JSON.parse(json_str)
       {
-        show_notes: content["show_notes"].presence,
-        track_notes: content["track_notes"].presence || []
+        lore_show: content["lore_show"].presence,
+        lore_tracks: content["lore_tracks"].presence || [],
+        banter_show: content["banter_show"].presence,
+        banter_tracks: content["banter_tracks"].presence || []
       }
     else
       raise "Anthropic API error: #{response.body}"
@@ -293,6 +307,8 @@ class LoreSyncService < ApplicationService
 
       CRITICAL: Preserve the original wording as much as possible. You may make minor edits to ensure the extracted text reads naturally as a standalone description (e.g., remove orphaned words like "then" at the start of a sentence that no longer makes sense after omissions). Do NOT summarize or condense the content.
 
+      CRITICAL: When notes contain BOTH content to omit (like teases) AND content to include (like giveaways), you MUST still extract the includable content. Do not skip the entire note just because part of it should be omitted.
+
       The Lore tag should be applied for:
       - Stage productions or theatrical performances
       - Props, costumes worn by band members, or special stage setups
@@ -302,33 +318,37 @@ class LoreSyncService < ApplicationService
       - Birthday celebrations, weddings, or other ceremonies on stage
       - Pranks or elaborate jokes performed during the show
       - Unusual circumstances or improvised solutions (e.g., makeshift equipment, notable between-set activities)
-      - Interesting non-musical events or anecdotes about the performance environment
+      - Unusual giveaways of significant items (e.g., giving away the band's van, a car, Fish's vacuum, or any vehicle/valuable item to a fan - these are RARE and MEMORABLE events)
+      - Interesting non-musical events that fans would find memorable
 
-      OMIT from extracted notes (these are covered by other tags):
-      - Song teases (e.g., "YEM contained Fuego teases")
+      ALWAYS OMIT these (handled by separate tag systems, regardless of whether tags exist):
+      - Song teases (e.g., "YEM contained Fuego teases", "Page teased Speed Racer", "Page teased Charge!")
       - Debut information (e.g., "This show featured the Phish debut of...")
       - Bustout/gap info (e.g., "performed for the first time since X date (N shows)")
       - Segue descriptions
       - Lyrics changes or alternate versions
       - Guest musicians
       - Weather events
-      - Brief banter or standard audience interaction
-      - Technical issues or audio quality notes (but DO include interesting anecdotes like venue conflicts or unusual circumstances)
+      - Technical issues or audio quality notes
       - Setlist structure notes (e.g., "no encore break", "announced as the start of the encore")
-      - Solo references (e.g., "Fish took a drum solo", "Trey soloed")
-      - Content already captured in existing tags (provided in the prompt) - do NOT duplicate
-      - If the SAME CONTENT (even worded differently) appears in an existing tag, do not include it
-      - Common tag types and what they cover:
-        - Alt Rig: Alternate equipment like megaphones, different guitars, drum kits, etc.
-        - Alt Lyric: Alternate or additional lyrics
-        - Banter: Verbal interactions, thanks, dedications, announcements
-        - Tease: Musical references to other songs
-        - Jamcharts: Notable improvisational segments
-        - Gamehendge: The Gamehendge musical suite/narration - if this tag exists, Gamehendge content is already covered
-        - Costume: Halloween costume sets - if this tag exists, costume-related content is already covered
-      - If ALL theatrical content is already covered by existing tags, return null for both show_notes and track_notes
+      - Personal anecdotes or comments not related to stage action (e.g., "Trey said it was his childhood dream to play for the Bruins")
+      - Routine dedications without interesting context (e.g., "Dedicated to Brad Sands", "played for mom")
+      - Simple birthday wishes without ceremony (e.g., "Trey wished happy birthday to Jim")
 
-      If an ommission causes the overall note to lack detail, it's okay to duplicate some of these, but such cases should be minimized.
+      ALWAYS INCLUDE (even if mixed with content you'd normally omit):
+      - Giving away vehicles or valuable items to fans (e.g., "Fish's minivan was given away" - MAJOR event!)
+      - Weddings, anniversaries, or ceremonies where the band performs a role
+      - Costume contests, unusual competitions, or fan participation events
+      - Pranks, elaborate jokes, or unusual stage antics
+
+      OMIT ONLY THE SPECIFIC CONTENT already covered by an existing tag:
+      - If an existing tag covers a tease, omit the tease portion but KEEP other content
+      - If an existing tag covers banter, omit that banter but KEEP other content
+      - Only omit the exact content that's duplicated - not the entire note
+      - Common tag types: Alt Rig, Alt Lyric, Banter, Tease, Jamcharts, Gamehendge, Costume
+      - EXCEPTION: If an existing Lore tag exists at the SHOW level but describes song-specific content, you SHOULD still output track_notes for that content.
+
+      ONLY return null for both show_notes and track_notes if EVERY piece of content either falls into "ALWAYS OMIT" categories OR is covered by existing tags. If ANY Lore-worthy content remains after filtering, include it.
 
       OUTPUT RULES:
       - show_notes: Use when theatrical content:
@@ -368,74 +388,112 @@ class LoreSyncService < ApplicationService
 
       Respond with JSON in this exact format:
       {
-        "show_notes": "Show-level theatrical description (null if only a single track with brief content)",
-        "track_notes": [
-          {"song_title": "Song Name", "notes": "Self-contained description of what happened during this song"}
+        "lore_show": "Show-level Lore description (null if none)",
+        "lore_tracks": [
+          {"song_title": "Song Name", "notes": "Lore content for this song"}
+        ],
+        "banter_show": "Show-level Banter description (null if none)",
+        "banter_tracks": [
+          {"song_title": "Song Name", "notes": "Banter content for this song"}
         ]
       }
 
-      IMPORTANT: Only include show_notes when there are multiple theatrical elements OR when context spanning multiple songs is needed. A single track with a brief note should ONLY have a track_note.
+      CATEGORIZATION RULES:
+      - LORE: Stage productions, props, costumes, theatrical elements, unusual giveaways, ceremonies, pranks, visual effects
+      - BANTER: Verbal introductions, nicknames, dedications, thank-yous, jokes between band members, announcements
 
-      EXAMPLE:
-      Input: "YEM contained Fuego teases. Throughout the show, white coils turned while suspended over the stage. During Pillow Jets, the coils descended and dancers came out. The dancers sang during What's Going Through Your Mind. Spock's Brain was performed for the first time since 2019 (238 shows)."
+      CRITICAL: Before creating a track entry, check if the song exists in the provided setlist. If a song mentioned in the notes is NOT in the setlist, put the content in the show-level field instead.
+
+      IMPORTANT: Only include show-level notes when content spans multiple songs, happens between songs, OR when the referenced song is not in the setlist.
+
+      EXAMPLE 1 (theatrical Lore with track-level content):
+      Input: "Throughout the show, white coils turned while suspended over the stage. During Pillow Jets, the coils descended and dancers came out."
 
       Output:
       {
-        "show_notes": "Throughout the show, white coils turned while suspended over the stage. During Pillow Jets, the coils descended and dancers came out. The dancers sang during What's Going Through Your Mind.",
-        "track_notes": [
-          {"song_title": "Pillow Jets", "notes": "White coils that had been suspended over the stage descended and dancers came out."},
-          {"song_title": "What's Going Through Your Mind", "notes": "Dancers from the Pillow Jets segment sang."}
+        "lore_show": "Throughout the show, white coils turned while suspended over the stage. During Pillow Jets, the coils descended and dancers came out.",
+        "lore_tracks": [
+          {"song_title": "Pillow Jets", "notes": "White coils that had been suspended over the stage descended and dancers came out."}
+        ],
+        "banter_show": null,
+        "banter_tracks": []
+      }
+
+      EXAMPLE 2 (Banter - Fish nickname):
+      Input: "Before Hold Your Head Up, Trey introduced Fish as \"Captain Zero.\""
+
+      Output:
+      {
+        "lore_show": null,
+        "lore_tracks": [],
+        "banter_show": null,
+        "banter_tracks": [
+          {"song_title": "Hold Your Head Up", "notes": "Trey introduced Fish as \"Captain Zero.\""}
         ]
       }
 
-      Notice how each track_note re-introduces elements: "White coils that had been suspended" instead of "the coils", and "Dancers from the Pillow Jets segment" instead of "the dancers".
+      Fish introductions/nicknames are BANTER, not Lore.
 
-      EXAMPLE 2 (preserving double quotes):
-      Input: "Trey introduced Fish as \"The Man Mulcahy.\""
-
-      Output:
-      {
-        "show_notes": "Trey introduced Fish as \"The Man Mulcahy.\"",
-        "track_notes": []
-      }
-
-      Notice the double quotes around "The Man Mulcahy" are preserved using JSON escaping (\").
-
-      EXAMPLE 3 (ALL content already covered by existing tags - return null for BOTH):
-      Existing tags: Fee [Alt Rig]: Trey on megaphone
-      Input: "Fee featured Trey on megaphone."
+      EXAMPLE 3 (Lore - unusual giveaway, song not in setlist):
+      Existing tags: McGrupp [Tease]: Theme from Jeopardy! by Merv Griffin
+      Setlist: My Sweet One, McGrupp, Reba, Stash, Mike's Song, Weekapaug Groove (note: NO "I Didn't Know")
+      Input: "McGrupp featured a Jeopardy! theme tease from Page. During I Didn't Know, Fish's family minivan that the band had been traveling in was given away to a fan in the audience."
 
       Output:
       {
-        "show_notes": null,
-        "track_notes": []
+        "lore_show": "During I Didn't Know, Fish's family minivan that the band had been traveling in was given away to a fan in the audience.",
+        "lore_tracks": [],
+        "banter_show": null,
+        "banter_tracks": []
       }
 
-      The megaphone content is already covered by the Alt Rig tag, so we return null for BOTH.
+      IMPORTANT: The tease is covered by existing Tease tag. "I Didn't Know" is NOT in the provided setlist, so the minivan content goes in lore_show (not lore_tracks). The minivan is LORE - a major memorable event.
 
-      EXAMPLE 4 (single track - track_note only, no show_notes regardless of length):
+      EXAMPLE 4 (mixed Lore and Banter):
+      Input: "Trey ran around the stage with a megaphone during Antelope. During Catapult, Fish took a verbal jab at Trey about his upcoming wedding."
+
+      Output:
+      {
+        "lore_show": null,
+        "lore_tracks": [
+          {"song_title": "Run Like an Antelope", "notes": "Trey ran around the stage with a megaphone."}
+        ],
+        "banter_show": null,
+        "banter_tracks": [
+          {"song_title": "Catapult", "notes": "Fish took a verbal jab at Trey about his upcoming wedding."}
+        ]
+      }
+
+      Megaphone usage is LORE (theatrical prop). Wedding jab is BANTER (verbal joke).
+
+      EXAMPLE 5 (all content covered by existing tags):
+      Existing tags: Catapult [Jamcharts]: Humorous version with wedding banter
+      Input: "During Catapult, Fish took a verbal jab at Trey about his wedding."
+
+      Output:
+      {
+        "lore_show": null,
+        "lore_tracks": [],
+        "banter_show": null,
+        "banter_tracks": []
+      }
+
+      The wedding banter is already mentioned in the Jamcharts tag, so we don't duplicate it.
+
+      EXAMPLE 6 (single track content - track only, NO show duplication):
       Input: "During the jam, cartoons were shown behind the band on six television screens. The cartoons got faster and faster while the band did the same."
 
       Output:
       {
-        "show_notes": null,
-        "track_notes": [
+        "lore_show": null,
+        "lore_tracks": [
           {"song_title": "Jam", "notes": "Cartoons were shown behind the band on six television screens. The cartoons got faster and faster while the band did the same."}
-        ]
+        ],
+        "banter_show": null,
+        "banter_tracks": []
       }
 
-      Even though this is a longer description, it only applies to ONE track (Jam), so we return ONLY the track_note. Adding "During the jam" to show_notes would be redundant since the track association already provides that context.
-
-      EXAMPLE 5 (show-level only - content doesn't belong to any specific track):
-      Input: "The band was short on equipment, so a hockey stick was used as a microphone stand. Between sets, the DJ spun some Michael Jackson and Trey drummed along to the album."
-
-      Output:
-      {
-        "show_notes": "The band was short on equipment, so a hockey stick was used as a microphone stand. Between sets, the DJ spun some Michael Jackson and Trey drummed along to the album.",
-        "track_notes": []
-      }
-
-      This content describes show setup and between-set activities - it doesn't happen DURING any specific track, so it goes in show_notes only.
+      CRITICAL: This content only applies to ONE track (Jam). Do NOT duplicate it at show level. When content is track-specific, only populate the track array.
     PROMPT
   end
 
