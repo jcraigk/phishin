@@ -392,18 +392,18 @@ class StageNotesSyncService < ApplicationService
 
       The megaphone content is already covered by the Alt Rig tag, so we return null for BOTH.
 
-      EXAMPLE 4 (single track with brief content - track_note only, no show_notes):
-      Input: "Fluffhead was a birthday dedication to Sarah."
+      EXAMPLE 4 (single track - track_note only, no show_notes regardless of length):
+      Input: "During the jam, cartoons were shown behind the band on six television screens. The cartoons got faster and faster while the band did the same."
 
       Output:
       {
         "show_notes": null,
         "track_notes": [
-          {"song_title": "Fluffhead", "notes": "Birthday dedication to Sarah."}
+          {"song_title": "Jam", "notes": "Cartoons were shown behind the band on six television screens. The cartoons got faster and faster while the band did the same."}
         ]
       }
 
-      Since there's only one track with a brief note, we return ONLY the track_note without duplicating to show_notes.
+      Even though this is a longer description, it only applies to ONE track (Jam), so we return ONLY the track_note. Adding "During the jam" to show_notes would be redundant since the track association already provides that context.
     PROMPT
   end
 
