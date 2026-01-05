@@ -184,7 +184,12 @@ class StageNotesSyncService < ApplicationService
     data = JSON.parse(response.body)
     return nil unless data["data"]&.any?
 
-    data["data"].first["setlist_notes"]
+    normalize_quotes(data["data"].first["setlist_notes"])
+  end
+
+  def normalize_quotes(text)
+    return nil if text.nil?
+    text.gsub(/[“”]/, '"').gsub(/’/, "'")
   end
 
   def analyze_with_llm(notes, track_info, existing_tag_notes, show_date)
