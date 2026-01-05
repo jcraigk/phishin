@@ -7,7 +7,7 @@ class StageNotesSyncService < ApplicationService
   option :dry_run, default: -> { false }
   option :verbose, default: -> { false }
   option :model, default: -> { "claude-opus-4-5-20251101" }
-  option :delay, default: -> { 0 }
+  option :delay, default: -> { 3 }
 
   def call
     validate_options!

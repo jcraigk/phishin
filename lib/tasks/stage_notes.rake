@@ -10,7 +10,7 @@ namespace :stage_notes do
       dry_run: ENV["DRY_RUN"] == "true",
       verbose: ENV["VERBOSE"] == "true",
       model: ENV.fetch("MODEL", "gpt-4o"),
-      delay: ENV.fetch("DELAY", "0").to_f
+      delay: ENV.fetch("DELAY", "3").to_f
     )
   end
 end
