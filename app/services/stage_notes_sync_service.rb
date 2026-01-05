@@ -6,7 +6,7 @@ class StageNotesSyncService < ApplicationService
   option :all, default: -> { false }
   option :dry_run, default: -> { false }
   option :verbose, default: -> { false }
-  option :model, default: -> { "gpt-4o" }
+  option :model, default: -> { "claude-opus-4-5-20251101" }
   option :delay, default: -> { 0 }
 
   def call
@@ -22,6 +22,8 @@ class StageNotesSyncService < ApplicationService
     @track_tagged = 0
     @track_updated = 0
     @skipped = 0
+    @input_tokens = 0
+    @output_tokens = 0
 
     shows.each do |show|
       process_show(show)
@@ -33,13 +35,15 @@ class StageNotesSyncService < ApplicationService
     puts "  Shows:  Tagged: #{@show_tagged}, Updated: #{@show_updated}"
     puts "  Tracks: Tagged: #{@track_tagged}, Updated: #{@track_updated}"
     puts "  Skipped: #{@skipped}"
+    puts "  Tokens: #{@input_tokens.to_fs(:delimited)} input, #{@output_tokens.to_fs(:delimited)} output"
+    puts "  Cost:   $#{format_cost(calculate_cost)}"
   end
 
   private
 
   def validate_options!
-    return if date || dates || (start_date && end_date) || all
-    raise ArgumentError, "Must specify DATE, DATES, START_DATE+END_DATE, or ALL=true"
+    return if date || dates || start_date || end_date || all
+    raise ArgumentError, "Must specify DATE, DATES, START_DATE, END_DATE, or ALL=true"
   end
 
   def fetch_shows
@@ -49,6 +53,10 @@ class StageNotesSyncService < ApplicationService
       Show.where(date: dates.split(",").map(&:strip))
     elsif start_date && end_date
       Show.where(date: start_date..end_date)
+    elsif start_date
+      Show.where("date >= ?", start_date)
+    elsif end_date
+      Show.where("date <= ?", end_date)
     else
       Show.all
     end
@@ -64,7 +72,7 @@ class StageNotesSyncService < ApplicationService
 
     track_info = show.tracks.order(:position).map { |t| { title: t.title, set: t.set_name } }
     @existing_tag_notes = gather_existing_tag_notes(show)
-    analysis = analyze_with_llm(notes, track_info, @existing_tag_notes)
+    analysis = analyze_with_llm(notes, track_info, @existing_tag_notes, show.date)
 
     show_notes = analysis[:show_notes]
     track_notes = analysis[:track_notes].presence || []
@@ -171,17 +179,17 @@ class StageNotesSyncService < ApplicationService
     data["data"].first["setlist_notes"]
   end
 
-  def analyze_with_llm(notes, track_info, existing_tag_notes)
+  def analyze_with_llm(notes, track_info, existing_tag_notes, show_date)
     prompt = build_prompt(notes, track_info, existing_tag_notes)
 
     if model.start_with?("claude")
-      analyze_with_claude(prompt)
+      analyze_with_claude(prompt, show_date)
     else
-      analyze_with_openai(prompt)
+      analyze_with_openai(prompt, show_date)
     end
   end
 
-  def analyze_with_openai(prompt)
+  def analyze_with_openai(prompt, show_date)
     response = Typhoeus.post(
       "https://api.openai.com/v1/chat/completions",
       headers: {
@@ -201,6 +209,12 @@ class StageNotesSyncService < ApplicationService
 
     if response.success?
       result = JSON.parse(response.body)
+      input = result.dig("usage", "prompt_tokens").to_i
+      output = result.dig("usage", "completion_tokens").to_i
+      @input_tokens += input
+      @output_tokens += output
+      cost = (input * 2.5 / 1_000_000) + (output * 10.0 / 1_000_000)
+      puts "  #{show_date} [#{input.to_fs(:delimited)} in / #{output.to_fs(:delimited)} out / $#{format_cost(cost)} / total: $#{format_cost(calculate_cost)}]"
       content = JSON.parse(result["choices"].first["message"]["content"])
       {
         show_notes: content["show_notes"].presence,
@@ -211,7 +225,7 @@ class StageNotesSyncService < ApplicationService
     end
   end
 
-  def analyze_with_claude(prompt)
+  def analyze_with_claude(prompt, show_date)
     response = Typhoeus.post(
       "https://api.anthropic.com/v1/messages",
       headers: {
@@ -231,8 +245,13 @@ class StageNotesSyncService < ApplicationService
 
     if response.success?
       result = JSON.parse(response.body)
+      input = result.dig("usage", "input_tokens").to_i
+      output = result.dig("usage", "output_tokens").to_i
+      @input_tokens += input
+      @output_tokens += output
+      cost = (input * 15.0 / 1_000_000) + (output * 75.0 / 1_000_000)
+      puts "  #{show_date} [#{input.to_fs(:delimited)} in / #{output.to_fs(:delimited)} out / $#{format_cost(cost)} / total: $#{format_cost(calculate_cost)}]"
       text = result["content"].first["text"]
-      # Extract JSON from potential markdown code blocks
       json_match = text.match(/```(?:json)?\s*(.*?)\s*```/m)
       json_str = json_match ? json_match[1] : text
       content = JSON.parse(json_str)
@@ -409,5 +428,20 @@ class StageNotesSyncService < ApplicationService
 
   def anthropic_api_token
     @anthropic_api_token ||= ENV.fetch("ANTHROPIC_API_KEY")
+  end
+
+  def calculate_cost
+    if model.start_with?("claude")
+      (@input_tokens * 15.0 / 1_000_000) + (@output_tokens * 75.0 / 1_000_000)
+    else
+      (@input_tokens * 2.5 / 1_000_000) + (@output_tokens * 10.0 / 1_000_000)
+    end
+  end
+
+  def format_cost(cost)
+    return "0.00" if cost.zero?
+    return format("%.2f", cost) if cost >= 0.01
+    precision = -Math.log10(cost).floor
+    format("%.#{precision}f", cost)
   end
 end
