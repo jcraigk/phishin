@@ -28,10 +28,10 @@ class StageNotesSyncService < ApplicationService
     @input_tokens = 0
     @output_tokens = 0
 
-    shows.each do |show|
+    shows.each_with_index do |show, index|
       process_show(show)
       pbar.increment
-      sleep(delay) if delay.positive?
+      sleep(delay) if delay.positive? && index < shows.size - 1
     end
 
     puts "\nComplete!"
