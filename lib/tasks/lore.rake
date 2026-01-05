@@ -1,7 +1,7 @@
-namespace :stage_notes do
-  desc "Analyze setlist notes and apply Stage Notes tag where warranted"
+namespace :lore do
+  desc "Analyze setlist notes and apply Lore tag where warranted"
   task sync: :environment do
-    StageNotesSyncService.call(
+    LoreSyncService.call(
       date: ENV["DATE"],
       dates: ENV["DATES"],
       start_date: ENV["START_DATE"],
