@@ -1,9 +1,13 @@
 class StageNotesSyncService < ApplicationService
   option :date, default: -> { nil }
+  option :dates, default: -> { nil }
   option :start_date, default: -> { nil }
   option :end_date, default: -> { nil }
   option :all, default: -> { false }
   option :dry_run, default: -> { false }
+  option :verbose, default: -> { false }
+  option :model, default: -> { "gpt-4o" }
+  option :delay, default: -> { 0 }
 
   def call
     validate_options!
@@ -22,6 +26,7 @@ class StageNotesSyncService < ApplicationService
     shows.each do |show|
       process_show(show)
       pbar.increment
+      sleep(delay) if delay.positive?
     end
 
     puts "\nComplete!"
@@ -33,13 +38,15 @@ class StageNotesSyncService < ApplicationService
   private
 
   def validate_options!
-    return if date || (start_date && end_date) || all
-    raise ArgumentError, "Must specify DATE, START_DATE+END_DATE, or ALL=true"
+    return if date || dates || (start_date && end_date) || all
+    raise ArgumentError, "Must specify DATE, DATES, START_DATE+END_DATE, or ALL=true"
   end
 
   def fetch_shows
     scope = if date
       Show.where(date:)
+    elsif dates
+      Show.where(date: dates.split(",").map(&:strip))
     elsif start_date && end_date
       Show.where(date: start_date..end_date)
     else
@@ -56,13 +63,19 @@ class StageNotesSyncService < ApplicationService
     end
 
     track_info = show.tracks.order(:position).map { |t| { title: t.title, set: t.set_name } }
-    existing_tags = show.tags.pluck(:slug)
-    analysis = analyze_with_chatgpt(notes, track_info, existing_tags)
+    @existing_tag_notes = gather_existing_tag_notes(show)
+    analysis = analyze_with_llm(notes, track_info, @existing_tag_notes)
 
-    apply_show_tag(show, analysis[:show_notes]) if analysis[:show_notes].present?
-    apply_track_tags(show, analysis[:track_notes]) if analysis[:track_notes].present?
+    show_notes = analysis[:show_notes]
+    track_notes = analysis[:track_notes].presence || []
 
-    @skipped += 1 if analysis[:show_notes].blank? && analysis[:track_notes].blank?
+    # Filter out Banter tracks - they already explain the content
+    track_notes = track_notes.reject { |tn| tn["song_title"].downcase == "banter" }
+
+    apply_show_tag(show, show_notes) if show_notes.present?
+    apply_track_tags(show, track_notes) if track_notes.any?
+
+    @skipped += 1 if show_notes.blank? && track_notes.empty?
   rescue StandardError => e
     puts "\n✗ Error processing #{show.date}: #{e.message}"
     @skipped += 1
@@ -73,24 +86,24 @@ class StageNotesSyncService < ApplicationService
 
     if existing
       return if existing.notes == extracted_notes
-      unless dry_run
-        existing.update!(notes: extracted_notes)
-        puts "\n↻ Show updated: #{show.date}"
-        puts "  Notes: #{extracted_notes.truncate(100)}"
-      else
+      if dry_run
         puts "\n[DRY RUN] Would update show: #{show.date}"
         puts "  Old: #{existing.notes}"
         puts "  New: #{extracted_notes}"
+      else
+        existing.update!(notes: extracted_notes)
+        puts "\n↻ Show updated: #{show.date}"
+        puts "  Notes: #{extracted_notes}" if verbose
       end
       @show_updated += 1
     else
-      unless dry_run
-        ShowTag.create!(show:, tag: @stage_notes_tag, notes: extracted_notes)
-        puts "\n✓ Show tagged: #{show.date}"
-        puts "  Notes: #{extracted_notes.truncate(100)}"
-      else
+      if dry_run
         puts "\n[DRY RUN] Would tag show: #{show.date}"
         puts "  Notes: #{extracted_notes}"
+      else
+        ShowTag.create!(show:, tag: @stage_notes_tag, notes: extracted_notes)
+        puts "\n✓ Show tagged: #{show.date}"
+        puts "  Notes: #{extracted_notes}" if verbose
       end
       @show_tagged += 1
     end
@@ -107,24 +120,24 @@ class StageNotesSyncService < ApplicationService
 
       if existing
         next if existing.notes == notes
-        unless dry_run
-          existing.update!(notes:)
-          puts "\n↻ Track updated: #{show.date} - #{track.title}"
-          puts "  Notes: #{notes.truncate(100)}"
-        else
+        if dry_run
           puts "\n[DRY RUN] Would update track: #{show.date} - #{track.title}"
           puts "  Old: #{existing.notes}"
           puts "  New: #{notes}"
+        else
+          existing.update!(notes:)
+          puts "\n↻ Track updated: #{show.date} - #{track.title}"
+          puts "  Notes: #{notes}" if verbose
         end
         @track_updated += 1
       else
-        unless dry_run
-          TrackTag.create!(track:, tag: @stage_notes_tag, notes:)
-          puts "\n✓ Track tagged: #{show.date}"
-          puts "  Notes: #{notes.truncate(100)}"
-        else
+        if dry_run
           puts "\n[DRY RUN] Would tag track: #{show.date} - #{track.title}"
           puts "  Notes: #{notes}"
+        else
+          TrackTag.create!(track:, tag: @stage_notes_tag, notes:)
+          puts "\n✓ Track tagged: #{show.date} - #{track.title}"
+          puts "  Notes: #{notes}" if verbose
         end
         @track_tagged += 1
       end
@@ -135,6 +148,16 @@ class StageNotesSyncService < ApplicationService
     show.tracks.find { |t| t.title.downcase == song_title.downcase } ||
       show.tracks.find { |t| t.title.downcase.include?(song_title.downcase) } ||
       show.tracks.find { |t| song_title.downcase.include?(t.title.downcase) }
+  end
+
+  def gather_existing_tag_notes(show)
+    show_tags = ShowTag.includes(:tag).where(show:)
+    track_tags = TrackTag.includes(:tag, :track).where(track: show.tracks)
+
+    {
+      show: show_tags.map { |st| { tag: st.tag.name, notes: st.notes.presence } },
+      tracks: track_tags.map { |tt| { track: tt.track.title, tag: tt.tag.name, notes: tt.notes.presence } }
+    }
   end
 
   def fetch_setlist_notes(show_date)
@@ -148,9 +171,17 @@ class StageNotesSyncService < ApplicationService
     data["data"].first["setlist_notes"]
   end
 
-  def analyze_with_chatgpt(notes, track_info, existing_tags)
-    prompt = build_prompt(notes, track_info, existing_tags)
+  def analyze_with_llm(notes, track_info, existing_tag_notes)
+    prompt = build_prompt(notes, track_info, existing_tag_notes)
 
+    if model.start_with?("claude")
+      analyze_with_claude(prompt)
+    else
+      analyze_with_openai(prompt)
+    end
+  end
+
+  def analyze_with_openai(prompt)
     response = Typhoeus.post(
       "https://api.openai.com/v1/chat/completions",
       headers: {
@@ -158,7 +189,7 @@ class StageNotesSyncService < ApplicationService
         "Content-Type" => "application/json"
       },
       body: {
-        model: "gpt-4o-mini",
+        model:,
         messages: [
           { role: "system", content: system_prompt },
           { role: "user", content: prompt }
@@ -176,7 +207,41 @@ class StageNotesSyncService < ApplicationService
         track_notes: content["track_notes"].presence || []
       }
     else
-      raise "ChatGPT API error: #{response.body}"
+      raise "OpenAI API error: #{response.body}"
+    end
+  end
+
+  def analyze_with_claude(prompt)
+    response = Typhoeus.post(
+      "https://api.anthropic.com/v1/messages",
+      headers: {
+        "x-api-key" => anthropic_api_token,
+        "anthropic-version" => "2023-06-01",
+        "Content-Type" => "application/json"
+      },
+      body: {
+        model:,
+        max_tokens: 4096,
+        system: system_prompt,
+        messages: [
+          { role: "user", content: prompt }
+        ]
+      }.to_json
+    )
+
+    if response.success?
+      result = JSON.parse(response.body)
+      text = result["content"].first["text"]
+      # Extract JSON from potential markdown code blocks
+      json_match = text.match(/```(?:json)?\s*(.*?)\s*```/m)
+      json_str = json_match ? json_match[1] : text
+      content = JSON.parse(json_str)
+      {
+        show_notes: content["show_notes"].presence,
+        track_notes: content["track_notes"].presence || []
+      }
+    else
+      raise "Anthropic API error: #{response.body}"
     end
   end
 
@@ -184,8 +249,10 @@ class StageNotesSyncService < ApplicationService
     <<~PROMPT
       You are an expert on Phish concerts. Your task is to analyze setlist notes and:
       1. Determine if they describe physical/theatrical elements warranting a "Stage Notes" tag
-      2. Extract ONLY the portions describing those theatrical elements
+      2. Extract ONLY the portions describing those theatrical elements - PRESERVE THE ORIGINAL WORDING, do not summarize or paraphrase
       3. Optionally identify song-specific notes that can stand alone
+
+      CRITICAL: Preserve the original wording as much as possible. You may make minor edits to ensure the extracted text reads naturally as a standalone description (e.g., remove orphaned words like "then" at the start of a sentence that no longer makes sense after omissions). Do NOT summarize or condense the content.
 
       The Stage Notes tag should be applied for:
       - Stage productions or theatrical performances
@@ -206,14 +273,29 @@ class StageNotesSyncService < ApplicationService
       - Weather events
       - Brief banter or standard audience interaction
       - Technical issues or audio quality notes
+      - Setlist structure notes (e.g., "no encore break", "announced as the start of the encore")
+      - Solo references (e.g., "Fish took a drum solo", "Trey soloed")
+      - Content already captured in existing tags (provided in the prompt) - do NOT duplicate
+      - If the SAME CONTENT (even worded differently) appears in an existing tag, do not include it
+      - Common tag types and what they cover:
+        - Alt Rig: Alternate equipment like megaphones, different guitars, drum kits, etc.
+        - Banter: Verbal interactions, thanks, dedications, announcements
+        - Tease: Musical references to other songs
+        - Jamcharts: Notable improvisational segments
+      - If ALL theatrical content is already covered by existing tags, return null for both show_notes and track_notes
 
       If an ommission causes the overall note to lack detail, it's okay to duplicate some of these, but such cases should be minimized.
 
       OUTPUT RULES:
-      - show_notes: ALWAYS include the COMPLETE theatrical description here. This is the full narrative of all stage/theatrical elements.
+      - show_notes: ALWAYS include the COMPLETE theatrical description here. This is the full narrative with "During [song]..." context.
+        - If you are returning ANY track_notes, you MUST also return show_notes.
+        - show_notes should include phrases like "During Fee, Trey used a megaphone" to provide context.
+        - show_notes should be COHERENT and readable as a standalone narrative. Include context from banter or other content if needed to make the narrative flow properly. For example, if banter sets up a theatrical element, include that setup in show_notes.
       - track_notes: If theatrical content happens during a SPECIFIC SONG, that song SHOULD get a track_note.
         - Even if it's the only theatrical element in the show, the song still gets a track_note.
+        - If notes say something spans a RANGE of songs (e.g., "For First Tube through Tweezer Reprise"), create a track_note for EVERY song in that range using the provided track listing.
         - The track_note content should be the same as in show_notes, but WITHOUT the "During [song]" prefix.
+        - Each track_note must read naturally in isolation. Remove orphaned words like "then" that don't make sense without prior context.
         - Each track note MUST re-introduce any props, costumes, or elements it references.
         - Never use "the" to reference something only defined in show_notes (e.g., "the coils", "the dancers").
         - Do NOT reference the song name, "the song", or "while performing" - the song association is already known from the tag.
@@ -224,21 +306,25 @@ class StageNotesSyncService < ApplicationService
         - BAD: "Send in the Clowns was sung a cappella" (redundant song name)
         - BAD: "The song was sung a cappella" (redundant "the song")
         - BAD: "Trey was lifted up while performing the song" (redundant "while performing the song")
+        - BAD: "then came onstage appearing as Zamfir" (orphaned "then" - doesn't make sense without prior context)
         - GOOD: "Sung a cappella with lyrics changed to Send in the Clones"
         - GOOD: "Trey and Mike were lifted up in the air as dancers appeared with giant inflatable objects"
         - GOOD: "White coils that had been suspended over the stage began to descend as screens lit up"
         - GOOD: "Dancers dressed as 'conjurors of thunder' with yellow fabric sang along"
         - GOOD: "Dancers from past NYE gags exited the freezer and performed the Meatstick dance"
+        - GOOD: "Richard Glasgow (a.k.a. Dickie Scotland) came onstage appearing as Zamfir" (removed orphaned "then")
         - Preserve double quotes from the original notes (escape them properly in JSON as \").
         - Only ONE track_note per song. Do not create multiple entries for the same song.
 
       Respond with JSON in this exact format:
       {
-        "show_notes": "Complete theatrical description for the whole show, or null if none",
+        "show_notes": "Complete theatrical description for the whole show - REQUIRED if track_notes is non-empty",
         "track_notes": [
           {"song_title": "Song Name", "notes": "Self-contained description of what happened during this song"}
         ]
       }
+
+      IMPORTANT: If track_notes contains ANY entries, show_notes MUST NOT be null. The show_notes should contain the full verbatim text (with omissions applied) that provides context like "During [song]..." for each theatrical element.
 
       EXAMPLE:
       Input: "YEM contained Fuego teases. Throughout the show, white coils turned while suspended over the stage. During Pillow Jets, the coils descended and dancers came out. The dancers sang during What's Going Through Your Mind. Spock's Brain was performed for the first time since 2019 (238 shows)."
@@ -253,18 +339,61 @@ class StageNotesSyncService < ApplicationService
       }
 
       Notice how each track_note re-introduces elements: "White coils that had been suspended" instead of "the coils", and "Dancers from the Pillow Jets segment" instead of "the dancers".
+
+      EXAMPLE 2 (preserving double quotes):
+      Input: "Trey introduced Fish as \"The Man Mulcahy.\""
+
+      Output:
+      {
+        "show_notes": "Trey introduced Fish as \"The Man Mulcahy.\"",
+        "track_notes": []
+      }
+
+      Notice the double quotes around "The Man Mulcahy" are preserved using JSON escaping (\").
+
+      EXAMPLE 3 (ALL content already covered by existing tags - return null for BOTH):
+      Existing tags: Fee [Alt Rig]: Trey on megaphone
+      Input: "Fee featured Trey on megaphone."
+
+      Output:
+      {
+        "show_notes": null,
+        "track_notes": []
+      }
+
+      The megaphone content is already covered by the Alt Rig tag, so we return null for BOTH.
+      NOTE: You may ONLY return show_notes: null when track_notes is ALSO empty. If track_notes has any entries, show_notes MUST be provided.
     PROMPT
   end
 
-  def build_prompt(notes, track_info, existing_tags)
-    tags_context = existing_tags.any? ? "\n\nExisting tags: #{existing_tags.join(', ')}" : ""
+  def build_prompt(notes, track_info, existing_tag_notes)
     tracks_list = track_info.map { |t| "#{t[:set]}: #{t[:title]}" }.join("\n")
     tracks_context = "\n\nSetlist (with set info):\n#{tracks_list}"
+
+    existing_context = ""
+    if existing_tag_notes[:show].any? || existing_tag_notes[:tracks].any?
+      parts = []
+      existing_tag_notes[:show].each do |st|
+        parts << if st[:notes]
+          "Show [#{st[:tag]}]: #{st[:notes]}"
+        else
+          "Show [#{st[:tag]}]"
+        end
+      end
+      existing_tag_notes[:tracks].each do |tt|
+        parts << if tt[:notes]
+          "#{tt[:track]} [#{tt[:tag]}]: #{tt[:notes]}"
+        else
+          "#{tt[:track]} [#{tt[:tag]}]"
+        end
+      end
+      existing_context = "\n\nExisting tags (DO NOT duplicate or suggest content already covered by these tags):\n#{parts.join("\n")}"
+    end
 
     <<~PROMPT
       Analyze these Phish show setlist notes:
 
-      #{notes}#{tracks_context}#{tags_context}
+      #{notes}#{tracks_context}#{existing_context}
 
       Extract theatrical content and categorize it as show-level or track-level.
     PROMPT
@@ -276,5 +405,9 @@ class StageNotesSyncService < ApplicationService
 
   def openai_api_token
     @openai_api_token ||= ENV.fetch("OPENAI_API_TOKEN")
+  end
+
+  def anthropic_api_token
+    @anthropic_api_token ||= ENV.fetch("ANTHROPIC_API_KEY")
   end
 end
