@@ -309,6 +309,8 @@ class StageNotesSyncService < ApplicationService
         - Banter: Verbal interactions, thanks, dedications, announcements
         - Tease: Musical references to other songs
         - Jamcharts: Notable improvisational segments
+        - Gamehendge: The Gamehendge musical suite/narration - if this tag exists, Gamehendge content is already covered
+        - Costume: Halloween costume sets - if this tag exists, costume-related content is already covered
       - If ALL theatrical content is already covered by existing tags, return null for both show_notes and track_notes
 
       If an ommission causes the overall note to lack detail, it's okay to duplicate some of these, but such cases should be minimized.
