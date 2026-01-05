@@ -99,26 +99,27 @@ class StageNotesSyncService < ApplicationService
 
   def apply_show_tag(show, extracted_notes)
     existing = ShowTag.find_by(show:, tag: @stage_notes_tag)
+    show_url = "https://phish.in/#{show.date}"
 
     if existing
       return if existing.notes == extracted_notes
       if dry_run
-        puts "\n[DRY RUN] Would update show: #{show.date}"
+        puts "\n[DRY RUN] Would update show: #{show_url}"
         puts "  Old: \e[36m#{existing.notes}\e[0m"
         puts "  New: \e[36m#{extracted_notes}\e[0m"
       else
         existing.update!(notes: extracted_notes)
-        puts "\n🏟️ Show updated: #{show.date}"
+        puts "\n🏟️ Show updated: #{show_url}"
         puts "  \e[36m#{extracted_notes}\e[0m" if verbose
       end
       @show_updated += 1
     else
       if dry_run
-        puts "\n[DRY RUN] Would tag show: #{show.date}"
+        puts "\n[DRY RUN] Would tag show: #{show_url}"
         puts "  \e[36m#{extracted_notes}\e[0m"
       else
         ShowTag.create!(show:, tag: @stage_notes_tag, notes: extracted_notes)
-        puts "\n🏟️ Show tagged: #{show.date}"
+        puts "\n🏟️ Show tagged: #{show_url}"
         puts "  \e[36m#{extracted_notes}\e[0m" if verbose
       end
       @show_tagged += 1
@@ -134,25 +135,27 @@ class StageNotesSyncService < ApplicationService
       existing = TrackTag.find_by(track:, tag: @stage_notes_tag)
       notes = track_note["notes"]
 
+      track_url = "https://phish.in/#{show.date}/#{track.slug}"
+
       if existing
         next if existing.notes == notes
         if dry_run
-          puts "\n[DRY RUN] Would update track: #{show.date} - #{track.title}"
+          puts "\n[DRY RUN] Would update track: #{track_url}"
           puts "  Old: \e[36m#{existing.notes}\e[0m"
           puts "  New: \e[36m#{notes}\e[0m"
         else
           existing.update!(notes:)
-          puts "\n🎸 Track updated: #{show.date} - #{track.title}"
+          puts "\n🎸 Track updated: #{track_url}"
           puts "  \e[36m#{notes}\e[0m" if verbose
         end
         @track_updated += 1
       else
         if dry_run
-          puts "\n[DRY RUN] Would tag track: #{show.date} - #{track.title}"
+          puts "\n[DRY RUN] Would tag track: #{track_url}"
           puts "  \e[36m#{notes}\e[0m"
         else
           TrackTag.create!(track:, tag: @stage_notes_tag, notes:)
-          puts "\n🎸 Track tagged: #{show.date} - #{track.title}"
+          puts "\n🎸 Track tagged: #{track_url}"
           puts "  \e[36m#{notes}\e[0m" if verbose
         end
         @track_tagged += 1
