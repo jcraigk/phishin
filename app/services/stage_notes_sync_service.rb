@@ -289,6 +289,8 @@ class StageNotesSyncService < ApplicationService
       - Interactive audience participation events organized by the band
       - Birthday celebrations, weddings, or other ceremonies on stage
       - Pranks or elaborate jokes performed during the show
+      - Unusual circumstances or improvised solutions (e.g., makeshift equipment, notable between-set activities)
+      - Interesting non-musical events or anecdotes about the performance environment
 
       OMIT from extracted notes (these are covered by other tags):
       - Song teases (e.g., "YEM contained Fuego teases")
@@ -299,7 +301,7 @@ class StageNotesSyncService < ApplicationService
       - Guest musicians
       - Weather events
       - Brief banter or standard audience interaction
-      - Technical issues or audio quality notes
+      - Technical issues or audio quality notes (but DO include interesting anecdotes like venue conflicts or unusual circumstances)
       - Setlist structure notes (e.g., "no encore break", "announced as the start of the encore")
       - Solo references (e.g., "Fish took a drum solo", "Trey soloed")
       - Content already captured in existing tags (provided in the prompt) - do NOT duplicate
@@ -316,12 +318,16 @@ class StageNotesSyncService < ApplicationService
       If an ommission causes the overall note to lack detail, it's okay to duplicate some of these, but such cases should be minimized.
 
       OUTPUT RULES:
-      - show_notes: Include show-level notes ONLY when theatrical content spans multiple songs or provides important show-wide context.
-        - If theatrical content applies to only ONE track, return ONLY the track_note with null show_notes - do NOT duplicate the content at the show level, regardless of how long the description is.
-        - When show_notes IS warranted (multiple tracks involved), include phrases like "During Fee, Trey used a megaphone" to provide context.
-        - show_notes should be COHERENT and readable as a standalone narrative. Include context from banter or other content if needed to make the narrative flow properly.
-      - track_notes: If theatrical content happens during a SPECIFIC SONG, that song SHOULD get a track_note.
-        - Even if it's the only theatrical element in the show, the song still gets a track_note (but without duplicating to show_notes if it's brief).
+      - show_notes: Use when theatrical content:
+        - Spans multiple songs
+        - Happens BETWEEN songs or sets (not during any specific track)
+        - Describes show setup, equipment, or environment that doesn't belong to a track
+        - Provides important show-wide context
+        - When show_notes IS warranted, include phrases like "During Fee, Trey used a megaphone" to provide context for track-specific portions.
+        - show_notes should be COHERENT and readable as a standalone narrative.
+      - track_notes: Use when theatrical content happens DURING a specific song.
+        - If content applies to only ONE track and happens DURING that track's performance, return ONLY the track_note with null show_notes - do NOT duplicate at show level.
+        - If notes say something spans a RANGE of songs (e.g., "For First Tube through Tweezer Reprise"), create a track_note for EVERY song in that range.
         - If notes say something spans a RANGE of songs (e.g., "For First Tube through Tweezer Reprise"), create a track_note for EVERY song in that range using the provided track listing.
         - The track_note content should be the same as in show_notes, but WITHOUT the "During [song]" prefix.
         - Each track_note must read naturally in isolation. Remove orphaned words like "then" that don't make sense without prior context.
@@ -404,6 +410,17 @@ class StageNotesSyncService < ApplicationService
       }
 
       Even though this is a longer description, it only applies to ONE track (Jam), so we return ONLY the track_note. Adding "During the jam" to show_notes would be redundant since the track association already provides that context.
+
+      EXAMPLE 5 (show-level only - content doesn't belong to any specific track):
+      Input: "The band was short on equipment, so a hockey stick was used as a microphone stand. Between sets, the DJ spun some Michael Jackson and Trey drummed along to the album."
+
+      Output:
+      {
+        "show_notes": "The band was short on equipment, so a hockey stick was used as a microphone stand. Between sets, the DJ spun some Michael Jackson and Trey drummed along to the album.",
+        "track_notes": []
+      }
+
+      This content describes show setup and between-set activities - it doesn't happen DURING any specific track, so it goes in show_notes only.
     PROMPT
   end
 
