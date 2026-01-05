@@ -1,4 +1,7 @@
 class StageNotesSyncService < ApplicationService
+  # TODO: Remove when phish.net corrects 1989-10-13 setlist
+  SKIP_DATES = %w[1989-10-13].freeze
+
   option :date, default: -> { nil }
   option :dates, default: -> { nil }
   option :start_date, default: -> { nil }
@@ -64,6 +67,11 @@ class StageNotesSyncService < ApplicationService
   end
 
   def process_show(show)
+    if SKIP_DATES.include?(show.date.to_s)
+      @skipped += 1
+      return
+    end
+
     notes = fetch_setlist_notes(show.date)
     if notes.blank?
       @skipped += 1
@@ -306,12 +314,12 @@ class StageNotesSyncService < ApplicationService
       If an ommission causes the overall note to lack detail, it's okay to duplicate some of these, but such cases should be minimized.
 
       OUTPUT RULES:
-      - show_notes: ALWAYS include the COMPLETE theatrical description here. This is the full narrative with "During [song]..." context.
-        - If you are returning ANY track_notes, you MUST also return show_notes.
-        - show_notes should include phrases like "During Fee, Trey used a megaphone" to provide context.
-        - show_notes should be COHERENT and readable as a standalone narrative. Include context from banter or other content if needed to make the narrative flow properly. For example, if banter sets up a theatrical element, include that setup in show_notes.
+      - show_notes: Include show-level notes ONLY when theatrical content spans multiple songs or provides important show-wide context.
+        - If there is only ONE track with a brief/simple theatrical note (single sentence), return ONLY the track_note with null show_notes - do NOT duplicate the content at the show level.
+        - When show_notes IS warranted, include phrases like "During Fee, Trey used a megaphone" to provide context.
+        - show_notes should be COHERENT and readable as a standalone narrative. Include context from banter or other content if needed to make the narrative flow properly.
       - track_notes: If theatrical content happens during a SPECIFIC SONG, that song SHOULD get a track_note.
-        - Even if it's the only theatrical element in the show, the song still gets a track_note.
+        - Even if it's the only theatrical element in the show, the song still gets a track_note (but without duplicating to show_notes if it's brief).
         - If notes say something spans a RANGE of songs (e.g., "For First Tube through Tweezer Reprise"), create a track_note for EVERY song in that range using the provided track listing.
         - The track_note content should be the same as in show_notes, but WITHOUT the "During [song]" prefix.
         - Each track_note must read naturally in isolation. Remove orphaned words like "then" that don't make sense without prior context.
@@ -337,13 +345,13 @@ class StageNotesSyncService < ApplicationService
 
       Respond with JSON in this exact format:
       {
-        "show_notes": "Complete theatrical description for the whole show - REQUIRED if track_notes is non-empty",
+        "show_notes": "Show-level theatrical description (null if only a single track with brief content)",
         "track_notes": [
           {"song_title": "Song Name", "notes": "Self-contained description of what happened during this song"}
         ]
       }
 
-      IMPORTANT: If track_notes contains ANY entries, show_notes MUST NOT be null. The show_notes should contain the full verbatim text (with omissions applied) that provides context like "During [song]..." for each theatrical element.
+      IMPORTANT: Only include show_notes when there are multiple theatrical elements OR when context spanning multiple songs is needed. A single track with a brief note should ONLY have a track_note.
 
       EXAMPLE:
       Input: "YEM contained Fuego teases. Throughout the show, white coils turned while suspended over the stage. During Pillow Jets, the coils descended and dancers came out. The dancers sang during What's Going Through Your Mind. Spock's Brain was performed for the first time since 2019 (238 shows)."
@@ -381,7 +389,19 @@ class StageNotesSyncService < ApplicationService
       }
 
       The megaphone content is already covered by the Alt Rig tag, so we return null for BOTH.
-      NOTE: You may ONLY return show_notes: null when track_notes is ALSO empty. If track_notes has any entries, show_notes MUST be provided.
+
+      EXAMPLE 4 (single track with brief content - track_note only, no show_notes):
+      Input: "Fluffhead was a birthday dedication to Sarah."
+
+      Output:
+      {
+        "show_notes": null,
+        "track_notes": [
+          {"song_title": "Fluffhead", "notes": "Birthday dedication to Sarah."}
+        ]
+      }
+
+      Since there's only one track with a brief note, we return ONLY the track_note without duplicating to show_notes.
     PROMPT
   end
 
