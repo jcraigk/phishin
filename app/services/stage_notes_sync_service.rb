@@ -192,7 +192,11 @@ class StageNotesSyncService < ApplicationService
 
   def normalize_quotes(text)
     return nil if text.nil?
-    text.gsub(/[“”]/, '"').gsub(/’/, "'")
+    text
+      .gsub(/[“”]/, '"')
+      .gsub(/’/, "'")
+      .gsub(/<[^>]+>/, "")
+      .then { |t| CGI.unescapeHTML(t) }
   end
 
   def analyze_with_llm(notes, track_info, existing_tag_notes, show_date)
