@@ -82,8 +82,8 @@ class StageNotesSyncService < ApplicationService
     @existing_tag_notes = gather_existing_tag_notes(show)
     analysis = analyze_with_llm(notes, track_info, @existing_tag_notes, show.date)
 
-    show_notes = analysis[:show_notes]
-    track_notes = analysis[:track_notes].presence || []
+    show_notes = normalize_quotes(analysis[:show_notes])
+    track_notes = (analysis[:track_notes].presence || []).each { |tn| tn["notes"] = normalize_quotes(tn["notes"]) }
 
     # Filter out Banter tracks - they already explain the content
     track_notes = track_notes.reject { |tn| tn["song_title"].downcase == "banter" }
