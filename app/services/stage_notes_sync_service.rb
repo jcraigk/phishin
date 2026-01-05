@@ -55,9 +55,9 @@ class StageNotesSyncService < ApplicationService
       return
     end
 
-    track_titles = show.tracks.order(:position).pluck(:title)
+    track_info = show.tracks.order(:position).map { |t| { title: t.title, set: t.set_name } }
     existing_tags = show.tags.pluck(:slug)
-    analysis = analyze_with_chatgpt(notes, track_titles, existing_tags)
+    analysis = analyze_with_chatgpt(notes, track_info, existing_tags)
 
     apply_show_tag(show, analysis[:show_notes]) if analysis[:show_notes].present?
     apply_track_tags(show, analysis[:track_notes]) if analysis[:track_notes].present?
@@ -97,6 +97,7 @@ class StageNotesSyncService < ApplicationService
   end
 
   def apply_track_tags(show, track_notes)
+    track_notes = track_notes.uniq { |tn| tn["song_title"] }
     track_notes.each do |track_note|
       track = find_track(show, track_note["song_title"])
       next unless track
@@ -147,8 +148,8 @@ class StageNotesSyncService < ApplicationService
     data["data"].first["setlist_notes"]
   end
 
-  def analyze_with_chatgpt(notes, track_titles, existing_tags)
-    prompt = build_prompt(notes, track_titles, existing_tags)
+  def analyze_with_chatgpt(notes, track_info, existing_tags)
+    prompt = build_prompt(notes, track_info, existing_tags)
 
     response = Typhoeus.post(
       "https://api.openai.com/v1/chat/completions",
@@ -162,7 +163,7 @@ class StageNotesSyncService < ApplicationService
           { role: "system", content: system_prompt },
           { role: "user", content: prompt }
         ],
-        temperature: 0.1,
+        temperature: 0,
         response_format: { type: "json_object" }
       }.to_json
     )
@@ -228,6 +229,8 @@ class StageNotesSyncService < ApplicationService
         - GOOD: "White coils that had been suspended over the stage began to descend as screens lit up"
         - GOOD: "Dancers dressed as 'conjurors of thunder' with yellow fabric sang along"
         - GOOD: "Dancers from past NYE gags exited the freezer and performed the Meatstick dance"
+        - Preserve double quotes from the original notes (escape them properly in JSON as \").
+        - Only ONE track_note per song. Do not create multiple entries for the same song.
 
       Respond with JSON in this exact format:
       {
@@ -253,9 +256,10 @@ class StageNotesSyncService < ApplicationService
     PROMPT
   end
 
-  def build_prompt(notes, track_titles, existing_tags)
+  def build_prompt(notes, track_info, existing_tags)
     tags_context = existing_tags.any? ? "\n\nExisting tags: #{existing_tags.join(', ')}" : ""
-    tracks_context = "\n\nSongs played at this show:\n#{track_titles.join("\n")}"
+    tracks_list = track_info.map { |t| "#{t[:set]}: #{t[:title]}" }.join("\n")
+    tracks_context = "\n\nSetlist (with set info):\n#{tracks_list}"
 
     <<~PROMPT
       Analyze these Phish show setlist notes:
