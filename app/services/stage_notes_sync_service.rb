@@ -315,8 +315,8 @@ class StageNotesSyncService < ApplicationService
 
       OUTPUT RULES:
       - show_notes: Include show-level notes ONLY when theatrical content spans multiple songs or provides important show-wide context.
-        - If there is only ONE track with a brief/simple theatrical note (single sentence), return ONLY the track_note with null show_notes - do NOT duplicate the content at the show level.
-        - When show_notes IS warranted, include phrases like "During Fee, Trey used a megaphone" to provide context.
+        - If theatrical content applies to only ONE track, return ONLY the track_note with null show_notes - do NOT duplicate the content at the show level, regardless of how long the description is.
+        - When show_notes IS warranted (multiple tracks involved), include phrases like "During Fee, Trey used a megaphone" to provide context.
         - show_notes should be COHERENT and readable as a standalone narrative. Include context from banter or other content if needed to make the narrative flow properly.
       - track_notes: If theatrical content happens during a SPECIFIC SONG, that song SHOULD get a track_note.
         - Even if it's the only theatrical element in the show, the song still gets a track_note (but without duplicating to show_notes if it's brief).
