@@ -96,22 +96,22 @@ class StageNotesSyncService < ApplicationService
       return if existing.notes == extracted_notes
       if dry_run
         puts "\n[DRY RUN] Would update show: #{show.date}"
-        puts "  Old: #{existing.notes}"
-        puts "  New: #{extracted_notes}"
+        puts "  Old: \e[36m#{existing.notes}\e[0m"
+        puts "  New: \e[36m#{extracted_notes}\e[0m"
       else
         existing.update!(notes: extracted_notes)
-        puts "\n↻ Show updated: #{show.date}"
-        puts "  Notes: #{extracted_notes}" if verbose
+        puts "\n🏟️ Show updated: #{show.date}"
+        puts "  \e[36m#{extracted_notes}\e[0m" if verbose
       end
       @show_updated += 1
     else
       if dry_run
         puts "\n[DRY RUN] Would tag show: #{show.date}"
-        puts "  Notes: #{extracted_notes}"
+        puts "  \e[36m#{extracted_notes}\e[0m"
       else
         ShowTag.create!(show:, tag: @stage_notes_tag, notes: extracted_notes)
-        puts "\n✓ Show tagged: #{show.date}"
-        puts "  Notes: #{extracted_notes}" if verbose
+        puts "\n🏟️ Show tagged: #{show.date}"
+        puts "  \e[36m#{extracted_notes}\e[0m" if verbose
       end
       @show_tagged += 1
     end
@@ -130,22 +130,22 @@ class StageNotesSyncService < ApplicationService
         next if existing.notes == notes
         if dry_run
           puts "\n[DRY RUN] Would update track: #{show.date} - #{track.title}"
-          puts "  Old: #{existing.notes}"
-          puts "  New: #{notes}"
+          puts "  Old: \e[36m#{existing.notes}\e[0m"
+          puts "  New: \e[36m#{notes}\e[0m"
         else
           existing.update!(notes:)
-          puts "\n↻ Track updated: #{show.date} - #{track.title}"
-          puts "  Notes: #{notes}" if verbose
+          puts "\n🎸 Track updated: #{show.date} - #{track.title}"
+          puts "  \e[36m#{notes}\e[0m" if verbose
         end
         @track_updated += 1
       else
         if dry_run
           puts "\n[DRY RUN] Would tag track: #{show.date} - #{track.title}"
-          puts "  Notes: #{notes}"
+          puts "  \e[36m#{notes}\e[0m"
         else
           TrackTag.create!(track:, tag: @stage_notes_tag, notes:)
-          puts "\n✓ Track tagged: #{show.date} - #{track.title}"
-          puts "  Notes: #{notes}" if verbose
+          puts "\n🎸 Track tagged: #{show.date} - #{track.title}"
+          puts "  \e[36m#{notes}\e[0m" if verbose
         end
         @track_tagged += 1
       end
@@ -214,7 +214,7 @@ class StageNotesSyncService < ApplicationService
       @input_tokens += input
       @output_tokens += output
       cost = (input * 2.5 / 1_000_000) + (output * 10.0 / 1_000_000)
-      puts "  #{show_date} [#{input.to_fs(:delimited)} in / #{output.to_fs(:delimited)} out / $#{format_cost(cost)} / total: $#{format_cost(calculate_cost)}]"
+      puts "🤖 #{show_date} [#{input.to_fs(:delimited)} in / #{output.to_fs(:delimited)} out / $#{format_cost(cost)} / total: $#{format_cost(calculate_cost)}]"
       content = JSON.parse(result["choices"].first["message"]["content"])
       {
         show_notes: content["show_notes"].presence,
@@ -250,7 +250,7 @@ class StageNotesSyncService < ApplicationService
       @input_tokens += input
       @output_tokens += output
       cost = (input * 15.0 / 1_000_000) + (output * 75.0 / 1_000_000)
-      puts "  #{show_date} [#{input.to_fs(:delimited)} in / #{output.to_fs(:delimited)} out / $#{format_cost(cost)} / total: $#{format_cost(calculate_cost)}]"
+      puts "🤖 #{show_date} [#{input.to_fs(:delimited)} in / #{output.to_fs(:delimited)} out / $#{format_cost(cost)} / total: $#{format_cost(calculate_cost)}]"
       text = result["content"].first["text"]
       json_match = text.match(/```(?:json)?\s*(.*?)\s*```/m)
       json_str = json_match ? json_match[1] : text
