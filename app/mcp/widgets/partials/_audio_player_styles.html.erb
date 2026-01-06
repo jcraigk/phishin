@@ -11,41 +11,47 @@
   bottom: 0;
   left: 0;
   right: 0;
-  background: #c7c8ca;
   z-index: 10;
   border-radius: 0 0 0.5rem 0.5rem;
   overflow: hidden;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
   transform: translateY(100%);
   opacity: 0;
   visibility: hidden;
   transition: transform 0.5s ease, opacity 0.3s ease, visibility 0s 0.5s;
 }
 
-.audio-player::before {
-  content: '';
+.player-blur-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  border-radius: 0 0 0.5rem 0.5rem;
+  background: #1a1a1c;
+}
+
+.player-blur {
   position: absolute;
   top: -50px;
   left: -50px;
   right: -50px;
   bottom: -50px;
-  background-image: var(--player-bg-image);
   background-size: cover;
   background-position: center;
-  filter: blur(55px) saturate(0.9);
-  opacity: 0.7;
-  z-index: 0;
+  filter: blur(55px) saturate(1.2);
+  opacity: 0.5;
 }
 
-.audio-player::after {
+.player-blur::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(175, 176, 178, 0.5);
-  z-index: 0;
+  background: rgba(20, 20, 22, 0.65);
 }
 
 .audio-player.visible {
@@ -73,7 +79,7 @@
 .player-track-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #3a3a3a;
+  color: rgba(255, 255, 255, 0.95);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -81,7 +87,7 @@
 
 .player-track-subtitle {
   font-size: 0.95rem;
-  color: #3a3a3a;
+  color: rgba(255, 255, 255, 0.75);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -89,14 +95,14 @@
 
 .player-track-subtitle .player-link,
 .player-track-subtitle .location-link {
-  color: #3a3a3a;
+  color: rgba(255, 255, 255, 0.75);
   text-decoration: none;
   transition: color 0.15s;
 }
 
 .player-track-subtitle .player-link:hover,
 .player-track-subtitle .location-link:hover {
-  color: #03BBF2;
+  color: #5bcefa;
 }
 
 .player-controls {
@@ -111,7 +117,7 @@
   border: none;
   padding: 6px;
   cursor: pointer;
-  color: #505050;
+  color: rgba(255, 255, 255, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -119,7 +125,7 @@
 }
 
 .skip-btn:hover:not(:disabled) {
-  color: #03BBF2;
+  color: #5bcefa;
 }
 
 .skip-btn:disabled {
@@ -137,7 +143,7 @@
   border: none;
   padding: 6px;
   cursor: pointer;
-  color: #505050;
+  color: rgba(255, 255, 255, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -146,7 +152,7 @@
 }
 
 .scrub-btn:hover:not(:disabled) {
-  color: #03BBF2;
+  color: #5bcefa;
 }
 
 .scrub-btn:disabled {
@@ -162,7 +168,7 @@
 .play-pause-btn {
   width: 38px;
   height: 38px;
-  background: #505050;
+  background: rgba(255, 255, 255, 0.15);
   border: none;
   border-radius: 50%;
   cursor: pointer;
@@ -175,21 +181,21 @@
 }
 
 .play-pause-btn:hover:not(:disabled) {
-  background: #404040;
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .play-pause-btn:disabled {
-  opacity: 0.7;
+  opacity: 0.5;
   cursor: not-allowed;
-  background: #707070;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .card.audio-playing .play-pause-btn {
-  background: #03BBF2;
+  background: #5bcefa;
 }
 
 .card.audio-playing .play-pause-btn:hover:not(:disabled) {
-  background: #02a8da;
+  background: #4ab8e8;
 }
 
 .play-pause-btn svg {
@@ -206,7 +212,7 @@
   border: none;
   padding: 6px;
   cursor: pointer;
-  color: #505050;
+  color: rgba(255, 255, 255, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -215,7 +221,7 @@
 }
 
 .player-close-btn:hover {
-  color: #515152;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .player-close-btn svg {
@@ -235,7 +241,7 @@
 
 .time-display {
   font-size: 0.95rem;
-  color: #505050;
+  color: rgba(255, 255, 255, 0.7);
   font-variant-numeric: tabular-nums;
   min-width: 38px;
   text-align: center;
@@ -254,7 +260,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: #505050;
+  background: rgba(255, 255, 255, 0.35);
   mask-image: var(--waveform-url);
   mask-size: 100% 100%;
   mask-repeat: no-repeat;
@@ -278,7 +284,7 @@
   left: 0;
   height: 100%;
   width: 100%;
-  background: linear-gradient(to right, var(--progress-color, #b0b0b0) 0%, rgba(255,255,255,0) 0%);
+  background: linear-gradient(to right, var(--progress-color, rgba(255, 255, 255, 0.7)) 0%, rgba(255,255,255,0) 0%);
   mask-size: 100% 100%;
   mask-repeat: no-repeat;
   mask-position: center;
@@ -291,7 +297,7 @@
 }
 
 .card.audio-playing .progress-overlay {
-  --progress-color: #03BBF2;
+  --progress-color: #5bcefa;
 }
 
 .scrubber-container.loaded .progress-overlay {

@@ -151,9 +151,9 @@ function setupBackgroundBlur(imageUrl, imgElementId = 'cover-img', blurElementId
 
   const applyBlur = () => {
     bgEl.style.backgroundImage = `url("${imageUrl}")`;
-    const player = document.getElementById('audio-player');
-    if (player) {
-      player.style.setProperty('--player-bg-image', `url("${imageUrl}")`);
+    const playerBlur = document.getElementById('player-blur');
+    if (playerBlur) {
+      playerBlur.style.backgroundImage = `url("${imageUrl}")`;
     }
   };
 
@@ -228,6 +228,30 @@ const DARK_READER_CONFIG = {
   contrast: 90,
   sepia: 10,
   css: `
+    /* Audio player is already dark themed - protect from Dark Reader */
+    .audio-player {
+      filter: none !important;
+      -webkit-filter: none !important;
+    }
+    .player-blur-wrapper {
+      background: #1a1a1c !important;
+      background-color: #1a1a1c !important;
+      filter: none !important;
+      -webkit-filter: none !important;
+    }
+    .player-blur {
+      filter: blur(55px) saturate(1.2) !important;
+      -webkit-filter: blur(55px) saturate(1.2) !important;
+      opacity: 0.5 !important;
+    }
+    .player-blur::after {
+      background: rgba(20, 20, 22, 0.65) !important;
+      background-color: rgba(20, 20, 22, 0.65) !important;
+      filter: none !important;
+      -webkit-filter: none !important;
+    }
+    
+    /* Preserve scrubber styling */
     .scrubber-container {
       isolation: isolate !important;
     }
@@ -239,51 +263,46 @@ const DARK_READER_CONFIG = {
       mix-blend-mode: normal !important;
     }
     .scrubber-container::before {
-      background: #707070 !important;
-      background-color: #707070 !important;
-    }
-    .progress-overlay {
-      --progress-color: #e0e0e0 !important;
-    }
-    .audio-player.audio-playing .progress-overlay,
-    .card.audio-playing .progress-overlay {
-      --progress-color: #5bcefa !important;
-    }
-    #audio-player .progress-overlay {
-      --progress-color: #e0e0e0 !important;
-    }
-    #audio-player.audio-playing .progress-overlay,
-    .card.audio-playing #audio-player .progress-overlay {
-      --progress-color: #5bcefa !important;
+      background: rgba(255, 255, 255, 0.35) !important;
+      background-color: rgba(255, 255, 255, 0.35) !important;
     }
     
-    /* Preserve play button styling */
-    .play-pause-btn,
+    /* Player text colors */
+    .player-track-title {
+      color: rgba(255, 255, 255, 0.95) !important;
+    }
+    .player-track-subtitle,
+    .player-track-subtitle .player-link,
+    .player-track-subtitle .location-link {
+      color: rgba(255, 255, 255, 0.75) !important;
+    }
+    .time-display {
+      color: rgba(255, 255, 255, 0.7) !important;
+    }
+    .skip-btn,
+    .scrub-btn {
+      color: rgba(255, 255, 255, 0.7) !important;
+    }
+    .player-close-btn {
+      color: rgba(255, 255, 255, 0.6) !important;
+    }
+    
+    /* Preserve play button styling - player is already dark themed */
     .audio-player .play-pause-btn,
     .card .play-pause-btn,
     .card:not(.audio-playing) .play-pause-btn {
-      background: #404040 !important;
-      background-color: #404040 !important;
+      background: rgba(255, 255, 255, 0.15) !important;
+      background-color: rgba(255, 255, 255, 0.15) !important;
       filter: none !important;
       -webkit-filter: none !important;
     }
-    .play-pause-btn:hover:not(:disabled),
-    .audio-player .play-pause-btn:hover:not(:disabled),
-    .card .play-pause-btn:hover:not(:disabled) {
-      background: #353535 !important;
-      background-color: #353535 !important;
-    }
     .audio-player.audio-playing .play-pause-btn,
-    .card.audio-playing .play-pause-btn {
+    .card.audio-playing .play-pause-btn,
+    .card.audio-playing .audio-player .play-pause-btn {
       background: #5bcefa !important;
       background-color: #5bcefa !important;
       filter: none !important;
       -webkit-filter: none !important;
-    }
-    .audio-player.audio-playing .play-pause-btn:hover:not(:disabled),
-    .card.audio-playing .play-pause-btn:hover:not(:disabled) {
-      background: #4ab8e8 !important;
-      background-color: #4ab8e8 !important;
     }
     .play-pause-btn svg,
     .play-pause-btn .play-icon,
@@ -311,18 +330,22 @@ const DARK_READER_CONFIG = {
       -webkit-filter: none !important;
     }
     
-    /* Preserve blue hover color on links and buttons */
-    .player-track-title a:hover,
+    /* Preserve hover colors */
     .player-track-subtitle .player-link:hover,
     .player-track-subtitle .location-link:hover,
+    .skip-btn:hover:not(:disabled),
+    .scrub-btn:hover:not(:disabled) {
+      color: #5bcefa !important;
+    }
+    .player-close-btn:hover {
+      color: rgba(255, 255, 255, 0.9) !important;
+    }
     .show-date-link:hover,
     .location-link:hover,
     .playlist-name a:hover,
     .playlist-description:hover,
     .show-meta-item.clickable:hover,
-    .track-menu-btn:hover,
-    .skip-btn:hover:not(:disabled),
-    .scrub-btn:hover:not(:disabled) {
+    .track-menu-btn:hover {
       color: #03BBF2 !important;
     }
     
