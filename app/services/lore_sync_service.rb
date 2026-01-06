@@ -550,6 +550,11 @@ class LoreSyncService < ApplicationService
         BAD output: lore_show: "Before Sleeping Monkey, Trey pulled a woman from the crowd..." AND lore_tracks: [{"song_title": "Sleeping Monkey", "notes": "..."}]
         CORRECT output: lore_show: null, lore_tracks: [{"song_title": "Sleeping Monkey", "notes": "Trey pulled a woman from the crowd; the band then played the song for her."}]
         REASON: This content applies to ONE track only. Keep the track tag, discard the show tag.
+      - WRONG: Duplicating content across multiple tag categories
+        Input: "Trey added 'from Goddard College' after the final 'cause I got a degree' lyric."
+        BAD output: lore_tracks: [{"song_title": "Alumni Blues", "notes": "..."}] AND alt_lyric_tracks: [{"song_title": "Alumni Blues", "notes": "..."}]
+        CORRECT output: alt_lyric_tracks: [{"song_title": "Alumni Blues", "notes": "Trey added 'from Goddard College' after the final 'cause I got a degree' lyric."}]
+        REASON: This is a lyric change, so it belongs ONLY in Alt Lyric. Do NOT also tag as Lore. Each piece of content belongs to exactly ONE category.
     PROMPT
   end
 
