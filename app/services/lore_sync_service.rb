@@ -331,7 +331,6 @@ class LoreSyncService < ApplicationService
       - Weather events
       - Technical issues or audio quality notes
       - Setlist structure notes (e.g., "no encore break", "announced as the start of the encore")
-      - Personal anecdotes or comments not related to stage action (e.g., "Trey said it was his childhood dream to play for the Bruins")
       - Routine dedications without interesting context (e.g., "Dedicated to Brad Sands", "played for mom")
       - Simple birthday wishes without ceremony (e.g., "Trey wished happy birthday to Jim")
 
@@ -392,15 +391,15 @@ class LoreSyncService < ApplicationService
         "lore_tracks": [
           {"song_title": "Song Name", "notes": "Lore content for this song"}
         ],
-        "banter_show": "Show-level Banter description (null if none)",
+        "banter_show": null,
         "banter_tracks": [
           {"song_title": "Song Name", "notes": "Banter content for this song"}
         ]
       }
 
       CATEGORIZATION RULES:
-      - LORE: Stage productions, props, costumes, theatrical elements, unusual giveaways, ceremonies, pranks, visual effects
-      - BANTER: Verbal introductions, nicknames, dedications, thank-yous, jokes between band members, announcements
+      - LORE: Stage productions, props, costumes, theatrical elements, unusual giveaways, ceremonies, pranks, visual effects, historically significant context about milestone shows
+      - BANTER: Verbal introductions, nicknames, dedications, thank-yous, jokes between band members, announcements (TRACK-LEVEL ONLY - banter_show must always be null)
 
       CRITICAL: Before creating a track entry, check if the song exists in the provided setlist. If a song mentioned in the notes is NOT in the setlist, put the content in the show-level field instead.
 
