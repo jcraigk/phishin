@@ -309,6 +309,8 @@ class LoreSyncService < ApplicationService
 
       CRITICAL: When notes contain BOTH content to omit (like teases) AND content to include (like giveaways), you MUST still extract the includable content. Do not skip the entire note just because part of it should be omitted.
 
+      FORMATTING: Convert single quotes used as quotation marks to double quotes (e.g., 'Blackwood Convention' becomes "Blackwood Convention"). Keep apostrophes in contractions as single quotes (e.g., "band's", "wasn't").
+
       The Lore tag should be applied for:
       - Stage productions or theatrical performances
       - Props, costumes worn by band members, or special stage setups
