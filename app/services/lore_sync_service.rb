@@ -21,7 +21,7 @@ class LoreSyncService < ApplicationService
     shows = fetch_shows
 
     puts "Analyzing #{shows.count} show(s)#{dry_run ? ' (DRY RUN)' : ''}..."
-    pbar = ProgressBar.create(total: shows.count, format: "%a %B %c/%C %p%% %E")
+    @pbar = ProgressBar.create(total: shows.count, format: "%a %B %c/%C %p%% %E")
 
     @show_tagged = 0
     @show_updated = 0
@@ -33,7 +33,7 @@ class LoreSyncService < ApplicationService
 
     shows.each_with_index do |show, index|
       process_show(show)
-      pbar.increment
+      @pbar.increment
       sleep(delay) if delay.positive? && index < shows.size - 1
     end
 
@@ -113,7 +113,7 @@ class LoreSyncService < ApplicationService
 
     @skipped += 1 if lore_show.blank? && banter_show.blank? && lore_tracks.empty? && banter_tracks.empty? && alt_rig_tracks.empty? && alt_lyric_tracks.empty?
   rescue StandardError => e
-    puts "\n✗ Error processing #{show.date}: #{e.message}"
+    @pbar.log "✗ Error processing #{show.date}: #{e.message}"
     @skipped += 1
   end
 
@@ -125,23 +125,18 @@ class LoreSyncService < ApplicationService
     if existing
       return if existing.notes == extracted_notes
       if dry_run
-        puts "\n🏟️ [DRY RUN] Would update show #{colored_tag}: #{show_url}"
-        puts "  Old: \e[36m#{existing.notes}\e[0m"
-        puts "  New: \e[36m#{extracted_notes}\e[0m"
+        @pbar.log "🏟️ [DRY RUN] Would update show #{colored_tag}: #{show_url}\n  Old: \e[36m#{existing.notes}\e[0m\n  New: \e[36m#{extracted_notes}\e[0m"
       else
         existing.update!(notes: extracted_notes)
-        puts "\n🏟️ Show #{colored_tag} updated: #{show_url}"
-        puts "  \e[36m#{extracted_notes}\e[0m" if verbose
+        @pbar.log "🏟️ Show #{colored_tag} updated: #{show_url}#{verbose ? "\n  \e[36m#{extracted_notes}\e[0m" : ""}"
       end
       @show_updated += 1
     else
       if dry_run
-        puts "\n🏟️ [DRY RUN] Would tag show #{colored_tag}: #{show_url}"
-        puts "  \e[36m#{extracted_notes}\e[0m"
+        @pbar.log "🏟️ [DRY RUN] Would tag show #{colored_tag}: #{show_url}\n  \e[36m#{extracted_notes}\e[0m"
       else
         ShowTag.create!(show:, tag:, notes: extracted_notes)
-        puts "\n🏟️ Show #{colored_tag} tagged: #{show_url}"
-        puts "  \e[36m#{extracted_notes}\e[0m" if verbose
+        @pbar.log "🏟️ Show #{colored_tag} tagged: #{show_url}#{verbose ? "\n  \e[36m#{extracted_notes}\e[0m" : ""}"
       end
       @show_tagged += 1
     end
@@ -162,23 +157,18 @@ class LoreSyncService < ApplicationService
       if existing
         next if existing.notes == notes
         if dry_run
-          puts "\n🎸 [DRY RUN] Would update track #{colored_tag}: #{track_url}"
-          puts "  Old: \e[36m#{existing.notes}\e[0m"
-          puts "  New: \e[36m#{notes}\e[0m"
+          @pbar.log "🎸 [DRY RUN] Would update track #{colored_tag}: #{track_url}\n  Old: \e[36m#{existing.notes}\e[0m\n  New: \e[36m#{notes}\e[0m"
         else
           existing.update!(notes:)
-          puts "\n🎸 Track #{colored_tag} updated: #{track_url}"
-          puts "  \e[36m#{notes}\e[0m" if verbose
+          @pbar.log "🎸 Track #{colored_tag} updated: #{track_url}#{verbose ? "\n  \e[36m#{notes}\e[0m" : ""}"
         end
         @track_updated += 1
       else
         if dry_run
-          puts "\n🎸 [DRY RUN] Would tag track #{colored_tag}: #{track_url}"
-          puts "  \e[36m#{notes}\e[0m"
+          @pbar.log "🎸 [DRY RUN] Would tag track #{colored_tag}: #{track_url}\n  \e[36m#{notes}\e[0m"
         else
           TrackTag.create!(track:, tag:, notes:)
-          puts "\n🎸 Track #{colored_tag} tagged: #{track_url}"
-          puts "  \e[36m#{notes}\e[0m" if verbose
+          @pbar.log "🎸 Track #{colored_tag} tagged: #{track_url}#{verbose ? "\n  \e[36m#{notes}\e[0m" : ""}"
         end
         @track_tagged += 1
       end
@@ -256,7 +246,7 @@ class LoreSyncService < ApplicationService
       @input_tokens += input
       @output_tokens += output
       cost = (input * 2.5 / 1_000_000) + (output * 10.0 / 1_000_000)
-      puts "🤖 #{show_date} [#{input.to_fs(:delimited)} in / #{output.to_fs(:delimited)} out / $#{format_cost(cost)} / total: $#{format_cost(calculate_cost)}]"
+      @pbar.log "🤖 #{show_date} [#{input.to_fs(:delimited)} in / #{output.to_fs(:delimited)} out / $#{format_cost(cost)} / total: $#{format_cost(calculate_cost)}]"
       content = JSON.parse(result["choices"].first["message"]["content"])
       {
         lore_show: content["lore_show"].presence,
@@ -296,7 +286,7 @@ class LoreSyncService < ApplicationService
       @input_tokens += input
       @output_tokens += output
       cost = (input * 15.0 / 1_000_000) + (output * 75.0 / 1_000_000)
-      puts "🤖 #{show_date} [#{input.to_fs(:delimited)} in / #{output.to_fs(:delimited)} out / $#{format_cost(cost)} / total: $#{format_cost(calculate_cost)}]"
+      @pbar.log "🤖 #{show_date} [#{input.to_fs(:delimited)} in / #{output.to_fs(:delimited)} out / $#{format_cost(cost)} / total: $#{format_cost(calculate_cost)}]"
       text = result["content"].first["text"]
       json_match = text.match(/```(?:json)?\s*(.*?)\s*```/m)
       json_str = json_match ? json_match[1] : text
