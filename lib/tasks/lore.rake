@@ -9,8 +9,8 @@ namespace :lore do
       all: ENV["ALL"] == "true",
       dry_run: ENV["DRY_RUN"] == "true",
       verbose: ENV["VERBOSE"] == "true",
-      model: ENV.fetch("MODEL", "gpt-4o"),
-      delay: ENV.fetch("DELAY", "0").to_f
+      model: ENV.fetch("MODEL", nil),
+      delay: ENV.fetch("DELAY", nil).to_f
     )
   end
 end

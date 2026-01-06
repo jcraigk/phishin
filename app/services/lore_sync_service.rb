@@ -105,6 +105,7 @@ class LoreSyncService < ApplicationService
     alt_rig_tracks = (analysis[:alt_rig_tracks].presence || [])
       .reject { |tn| tn["song_title"].downcase == "banter" }
       .each { |tn| tn["notes"] = normalize_quotes(tn["notes"]) }
+      .select { |tn| tn["notes"].present? }
     alt_lyric_tracks = (analysis[:alt_lyric_tracks].presence || [])
       .reject { |tn| tn["song_title"].downcase == "banter" }
       .each { |tn| tn["notes"] = normalize_quotes(tn["notes"]) }
