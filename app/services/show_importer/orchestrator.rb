@@ -47,6 +47,7 @@ class ShowImporter::Orchestrator
 
     InteractiveCoverArtService.call(Show.where(id: show.id))
     DebutTagService.call(show)
+    LoreSyncService.call(date: show.date.to_s)
     save_song_performance_data(show)
     create_announcement
     clear_rails_cache
