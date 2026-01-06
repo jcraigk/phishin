@@ -116,7 +116,7 @@ class LoreSyncService < ApplicationService
       .each { |tn| tn["notes"] = nil }
     unfinished_tracks = (analysis[:unfinished_tracks].presence || [])
       .reject { |tn| tn["song_title"].downcase == "banter" }
-      .each { |tn| tn["notes"] = nil }
+      .each { |tn| tn["notes"] = normalize_quotes(tn["notes"]) }
 
     apply_track_tags(show, lore_tracks, @lore_tag, "Lore") if lore_tracks.any?
     apply_track_tags(show, banter_tracks, @banter_tag, "Banter") if banter_tracks.any?
@@ -438,7 +438,7 @@ class LoreSyncService < ApplicationService
           {"song_title": "Song Name", "notes": null}
         ],
         "unfinished_tracks": [
-          {"song_title": "Song Name", "notes": null}
+          {"song_title": "Song Name", "notes": "Description of what was unfinished (optional)"}
         ]
       }
 
