@@ -32,14 +32,42 @@ const DARK_MODE_FIXES_CSS = `
     border-color: #03BBF2 !important;
     color: white !important;
   }
+  .context-dropdown .button {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    color: inherit !important;
+  }
+  .context-dropdown .button:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-color: transparent !important;
+    color: inherit !important;
+  }
   .play-pause-btn {
-    background: #515152 !important;
+    background: #404040 !important;
+    background-color: #404040 !important;
+    filter: none !important;
+    -webkit-filter: none !important;
+  }
+  .play-pause-btn:hover:not(:disabled) {
+    background: #353535 !important;
+    background-color: #353535 !important;
   }
   .play-pause-btn.playing {
-    background: #03BBF2 !important;
+    background: #03bbf2 !important;
+    background-color: #03bbf2 !important;
+  }
+  .play-pause-btn.playing:hover:not(:disabled) {
+    background: #02a8da !important;
+    background-color: #02a8da !important;
   }
   .play-pause-btn svg {
     color: white !important;
+    fill: white !important;
+  }
+  .play-pause-btn .loading-spinner {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    border-top-color: white !important;
   }
   .scrubber-container,
   .progress-overlay {
@@ -84,34 +112,45 @@ const DARK_READER_CONFIG = {
     }
     
     /* Preserve play button colors */
-    .play-pause-btn {
-      background: #515152 !important;
-      background-color: #515152 !important;
+    .play-pause-btn,
+    .audio-player .play-pause-btn,
+    .controls .play-pause-btn {
+      background: #404040 !important;
+      background-color: #404040 !important;
       filter: none !important;
       -webkit-filter: none !important;
     }
-    .play-pause-btn:hover:not(:disabled) {
-      background: #424243 !important;
-      background-color: #424243 !important;
+    .play-pause-btn:hover:not(:disabled),
+    .audio-player .play-pause-btn:hover:not(:disabled),
+    .controls .play-pause-btn:hover:not(:disabled) {
+      background: #353535 !important;
+      background-color: #353535 !important;
     }
-    .play-pause-btn.playing {
-      background: #03BBF2 !important;
-      background-color: #03BBF2 !important;
+    .play-pause-btn.playing,
+    .audio-player .play-pause-btn.playing,
+    .controls .play-pause-btn.playing {
+      background: #03bbf2 !important;
+      background-color: #03bbf2 !important;
+      filter: none !important;
+      -webkit-filter: none !important;
     }
-    .play-pause-btn.playing:hover:not(:disabled) {
+    .play-pause-btn.playing:hover:not(:disabled),
+    .audio-player .play-pause-btn.playing:hover:not(:disabled),
+    .controls .play-pause-btn.playing:hover:not(:disabled) {
       background: #02a8da !important;
       background-color: #02a8da !important;
     }
-    .play-pause-btn:disabled {
-      background: #6a6a6b !important;
-      background-color: #6a6a6b !important;
-    }
-    .play-pause-btn.playing:disabled {
-      background: #3dcbf5 !important;
-      background-color: #3dcbf5 !important;
-    }
-    .play-pause-btn svg {
+    .play-pause-btn svg,
+    .play-pause-btn .play-icon,
+    .play-pause-btn .pause-icon {
+      fill: white !important;
       color: white !important;
+    }
+    .play-pause-btn .loading-spinner {
+      border-color: rgba(255, 255, 255, 0.5) !important;
+      border-top-color: white !important;
+      filter: none !important;
+      -webkit-filter: none !important;
     }
     
     /* Preserve blue hover on control buttons */
@@ -182,6 +221,31 @@ const DARK_READER_CONFIG = {
       background-color: #03BBF2 !important;
       --darkreader-inline-bgcolor: #03BBF2 !important;
       border-color: #03BBF2 !important;
+    }
+    
+    /* Context menu ellipsis buttons - transparent background */
+    .context-dropdown .button {
+      background-color: transparent !important;
+      --darkreader-inline-bgcolor: transparent !important;
+      border-color: transparent !important;
+      --darkreader-inline-border-top: transparent !important;
+      --darkreader-inline-border-right: transparent !important;
+      --darkreader-inline-border-bottom: transparent !important;
+      --darkreader-inline-border-left: transparent !important;
+      box-shadow: none !important;
+      color: inherit !important;
+      --darkreader-inline-color: inherit !important;
+    }
+    .context-dropdown .button:hover {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+      --darkreader-inline-bgcolor: rgba(255, 255, 255, 0.1) !important;
+      border-color: transparent !important;
+      --darkreader-inline-border-top: transparent !important;
+      --darkreader-inline-border-right: transparent !important;
+      --darkreader-inline-border-bottom: transparent !important;
+      --darkreader-inline-border-left: transparent !important;
+      color: inherit !important;
+      --darkreader-inline-color: inherit !important;
     }
   `
 };

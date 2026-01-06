@@ -186,6 +186,7 @@ main.with-player {
       border-radius: 50%;
       background-color: $title-gray;
       margin-top: -0.3rem !important;
+      position: relative;
 
       &:hover:not(:disabled) {
         color: white !important;
@@ -213,7 +214,20 @@ main.with-player {
       svg {
         font-size: 2rem;
       }
+
+      .loading-spinner {
+        width: 24px;
+        height: 24px;
+        border: 3px solid rgba(255, 255, 255, 0.5);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+      }
     }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
   }
 
   .bottom-row {
