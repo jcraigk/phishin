@@ -10,7 +10,7 @@ class LoreSyncService < ApplicationService
   option :dry_run, default: -> { false }
   option :verbose, default: -> { false }
   option :model, default: -> { "claude-opus-4-5-20251101" }
-  option :delay, default: -> { 0.1 }
+  option :delay, default: -> { 0 }
 
   def call
     validate_options!
