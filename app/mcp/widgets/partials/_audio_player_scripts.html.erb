@@ -6,10 +6,7 @@ let isLoading = false;
 let showMetadata = null;
 
 function getProgressColor() {
-  const isDark = typeof getColorScheme === 'function' && getColorScheme() === 'dark';
-  return isPlaying 
-    ? (isDark ? '#5bcefa' : '#03BBF2') 
-    : (isDark ? '#e0e0e0' : '#b0b0b0');
+  return isPlaying ? '#5bcefa' : 'rgba(255, 255, 255, 0.7)';
 }
 
 function updateProgressBar(progress) {
@@ -20,13 +17,12 @@ function updateProgressBar(progress) {
 }
 
 function updatePlayerColors() {
-  const isDark = typeof getColorScheme === 'function' && getColorScheme() === 'dark';
   const playBtn = document.getElementById('play-pause-btn');
   if (playBtn) {
     if (isPlaying) {
-      playBtn.style.setProperty('background', isDark ? '#5bcefa' : '#03BBF2', 'important');
+      playBtn.style.setProperty('background', '#5bcefa', 'important');
     } else {
-      playBtn.style.setProperty('background', isDark ? '#404040' : '#505050', 'important');
+      playBtn.style.setProperty('background', 'rgba(255, 255, 255, 0.15)', 'important');
     }
   }
   const progressOverlay = document.getElementById('progress-overlay');
