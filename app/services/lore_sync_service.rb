@@ -204,7 +204,7 @@ class LoreSyncService < ApplicationService
     return nil if text.nil?
     text
       .gsub(/[“”]/, '"')
-      .gsub(/‘’/, "'")
+      .gsub(/[‘’]/, "'")
       .gsub(/<[^>]+>/, "")
       .then { |t| CGI.unescapeHTML(t) }
   end
