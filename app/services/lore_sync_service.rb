@@ -10,12 +10,14 @@ class LoreSyncService < ApplicationService
   option :dry_run, default: -> { false }
   option :verbose, default: -> { false }
   option :model, default: -> { "claude-opus-4-5-20251101" }
-  option :delay, default: -> { 3 }
+  option :delay, default: -> { 0.1 }
 
   def call
     validate_options!
     @lore_tag = Tag.find_by!(slug: "lore")
     @banter_tag = Tag.find_by!(slug: "banter")
+    @alt_rig_tag = Tag.find_by!(slug: "alt-rig")
+    @alt_lyric_tag = Tag.find_by!(slug: "alt-lyric")
     shows = fetch_shows
 
     puts "Analyzing #{shows.count} show(s)#{dry_run ? ' (DRY RUN)' : ''}..."
@@ -97,11 +99,19 @@ class LoreSyncService < ApplicationService
     banter_tracks = (analysis[:banter_tracks].presence || [])
       .reject { |tn| tn["song_title"].downcase == "banter" }
       .each { |tn| tn["notes"] = normalize_quotes(tn["notes"]) }
+    alt_rig_tracks = (analysis[:alt_rig_tracks].presence || [])
+      .reject { |tn| tn["song_title"].downcase == "banter" }
+      .each { |tn| tn["notes"] = normalize_quotes(tn["notes"]) }
+    alt_lyric_tracks = (analysis[:alt_lyric_tracks].presence || [])
+      .reject { |tn| tn["song_title"].downcase == "banter" }
+      .each { |tn| tn["notes"] = normalize_quotes(tn["notes"]) }
 
     apply_track_tags(show, lore_tracks, @lore_tag, "Lore") if lore_tracks.any?
     apply_track_tags(show, banter_tracks, @banter_tag, "Banter") if banter_tracks.any?
+    apply_track_tags(show, alt_rig_tracks, @alt_rig_tag, "Alt Rig") if alt_rig_tracks.any?
+    apply_track_tags(show, alt_lyric_tracks, @alt_lyric_tag, "Alt Lyric") if alt_lyric_tracks.any?
 
-    @skipped += 1 if lore_show.blank? && banter_show.blank? && lore_tracks.empty? && banter_tracks.empty?
+    @skipped += 1 if lore_show.blank? && banter_show.blank? && lore_tracks.empty? && banter_tracks.empty? && alt_rig_tracks.empty? && alt_lyric_tracks.empty?
   rescue StandardError => e
     puts "\n✗ Error processing #{show.date}: #{e.message}"
     @skipped += 1
@@ -110,26 +120,27 @@ class LoreSyncService < ApplicationService
   def apply_show_tag(show, extracted_notes, tag, tag_name)
     existing = ShowTag.find_by(show:, tag:)
     show_url = "https://phish.in/#{show.date}"
+    colored_tag = colorize(tag_name, tag.color)
 
     if existing
       return if existing.notes == extracted_notes
       if dry_run
-        puts "\n🏟️ [DRY RUN] Would update show #{tag_name}: #{show_url}"
+        puts "\n🏟️ [DRY RUN] Would update show #{colored_tag}: #{show_url}"
         puts "  Old: \e[36m#{existing.notes}\e[0m"
         puts "  New: \e[36m#{extracted_notes}\e[0m"
       else
         existing.update!(notes: extracted_notes)
-        puts "\n🏟️ Show #{tag_name} updated: #{show_url}"
+        puts "\n🏟️ Show #{colored_tag} updated: #{show_url}"
         puts "  \e[36m#{extracted_notes}\e[0m" if verbose
       end
       @show_updated += 1
     else
       if dry_run
-        puts "\n🏟️ [DRY RUN] Would tag show #{tag_name}: #{show_url}"
+        puts "\n🏟️ [DRY RUN] Would tag show #{colored_tag}: #{show_url}"
         puts "  \e[36m#{extracted_notes}\e[0m"
       else
         ShowTag.create!(show:, tag:, notes: extracted_notes)
-        puts "\n🏟️ Show #{tag_name} tagged: #{show_url}"
+        puts "\n🏟️ Show #{colored_tag} tagged: #{show_url}"
         puts "  \e[36m#{extracted_notes}\e[0m" if verbose
       end
       @show_tagged += 1
@@ -138,6 +149,7 @@ class LoreSyncService < ApplicationService
 
   def apply_track_tags(show, track_notes, tag, tag_name)
     track_notes = track_notes.uniq { |tn| tn["song_title"] }
+    colored_tag = colorize(tag_name, tag.color)
     track_notes.each do |track_note|
       track = find_track(show, track_note["song_title"])
       next unless track
@@ -150,22 +162,22 @@ class LoreSyncService < ApplicationService
       if existing
         next if existing.notes == notes
         if dry_run
-          puts "\n🎸 [DRY RUN] Would update track #{tag_name}: #{track_url}"
+          puts "\n🎸 [DRY RUN] Would update track #{colored_tag}: #{track_url}"
           puts "  Old: \e[36m#{existing.notes}\e[0m"
           puts "  New: \e[36m#{notes}\e[0m"
         else
           existing.update!(notes:)
-          puts "\n🎸 Track #{tag_name} updated: #{track_url}"
+          puts "\n🎸 Track #{colored_tag} updated: #{track_url}"
           puts "  \e[36m#{notes}\e[0m" if verbose
         end
         @track_updated += 1
       else
         if dry_run
-          puts "\n🎸 [DRY RUN] Would tag track #{tag_name}: #{track_url}"
+          puts "\n🎸 [DRY RUN] Would tag track #{colored_tag}: #{track_url}"
           puts "  \e[36m#{notes}\e[0m"
         else
           TrackTag.create!(track:, tag:, notes:)
-          puts "\n🎸 Track #{tag_name} tagged: #{track_url}"
+          puts "\n🎸 Track #{colored_tag} tagged: #{track_url}"
           puts "  \e[36m#{notes}\e[0m" if verbose
         end
         @track_tagged += 1
@@ -250,7 +262,9 @@ class LoreSyncService < ApplicationService
         lore_show: content["lore_show"].presence,
         lore_tracks: content["lore_tracks"].presence || [],
         banter_show: content["banter_show"].presence,
-        banter_tracks: content["banter_tracks"].presence || []
+        banter_tracks: content["banter_tracks"].presence || [],
+        alt_rig_tracks: content["alt_rig_tracks"].presence || [],
+        alt_lyric_tracks: content["alt_lyric_tracks"].presence || []
       }
     else
       raise "OpenAI API error: #{response.body}"
@@ -291,7 +305,9 @@ class LoreSyncService < ApplicationService
         lore_show: content["lore_show"].presence,
         lore_tracks: content["lore_tracks"].presence || [],
         banter_show: content["banter_show"].presence,
-        banter_tracks: content["banter_tracks"].presence || []
+        banter_tracks: content["banter_tracks"].presence || [],
+        alt_rig_tracks: content["alt_rig_tracks"].presence || [],
+        alt_lyric_tracks: content["alt_lyric_tracks"].presence || []
       }
     else
       raise "Anthropic API error: #{response.body}"
@@ -328,7 +344,6 @@ class LoreSyncService < ApplicationService
       - Debut information (e.g., "This show featured the Phish debut of...")
       - Bustout/gap info (e.g., "performed for the first time since X date (N shows)")
       - Segue descriptions
-      - Lyrics changes or alternate versions
       - Guest musicians
       - Weather events
       - Technical issues or audio quality notes
@@ -396,12 +411,20 @@ class LoreSyncService < ApplicationService
         "banter_show": null,
         "banter_tracks": [
           {"song_title": "Song Name", "notes": "Banter content for this song"}
+        ],
+        "alt_rig_tracks": [
+          {"song_title": "Song Name", "notes": "Alt Rig content for this song"}
+        ],
+        "alt_lyric_tracks": [
+          {"song_title": "Song Name", "notes": "Alt Lyric content for this song"}
         ]
       }
 
       CATEGORIZATION RULES:
       - LORE: Stage productions, props, costumes, theatrical elements, unusual giveaways, ceremonies, pranks, visual effects, historically significant context about milestone shows
       - BANTER: Verbal introductions, nicknames, dedications, thank-yous, jokes between band members, announcements (TRACK-LEVEL ONLY - banter_show must always be null)
+      - ALT RIG: Band members playing non-standard instruments or equipment (e.g., Fish on washboard, Trey on marimba, acoustic instruments when unusual) (TRACK-LEVEL ONLY)
+      - ALT LYRIC: Modified, alternate, or improvised lyrics (e.g., changed words, personalized verses, humorous substitutions) (TRACK-LEVEL ONLY)
 
       CRITICAL: Before creating a track entry, check if the song exists in the provided setlist. If a song mentioned in the notes is NOT in the setlist, put the content in the show-level field instead.
 
@@ -556,5 +579,11 @@ class LoreSyncService < ApplicationService
     return format("%.2f", cost) if cost >= 0.01
     precision = -Math.log10(cost).floor
     format("%.#{precision}f", cost)
+  end
+
+  def colorize(text, hex_color)
+    return text unless hex_color&.start_with?("#")
+    r, g, b = hex_color[1..6].scan(/../).map { |c| c.to_i(16) }
+    "\e[38;2;#{r};#{g};#{b}m#{text}\e[0m"
   end
 end
