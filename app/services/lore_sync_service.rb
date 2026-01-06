@@ -442,11 +442,11 @@ class LoreSyncService < ApplicationService
         ]
       }
 
-      CATEGORIZATION RULES:
-      - LORE: Stage productions, props, costumes, theatrical elements, unusual giveaways, ceremonies, pranks, visual effects, historically significant context about milestone shows
+      CATEGORIZATION RULES (MUTUALLY EXCLUSIVE - each piece of content goes in ONE category only):
+      - LORE: Stage productions, props, costumes, theatrical elements, unusual giveaways, ceremonies, pranks, visual effects, historically significant context about milestone shows. NOT for lyric changes, instrument changes, or verbal banter.
       - BANTER: Verbal introductions, nicknames, dedications, thank-yous, jokes between band members, announcements (TRACK-LEVEL ONLY - banter_show must always be null)
       - ALT RIG: Band members playing non-standard instruments or equipment (e.g., Fish on washboard, Trey on marimba, acoustic instruments when unusual) (TRACK-LEVEL ONLY)
-      - ALT LYRIC: Modified, alternate, or improvised lyrics (e.g., changed words, personalized verses, humorous substitutions) (TRACK-LEVEL ONLY)
+      - ALT LYRIC: Modified, alternate, or improvised lyrics (e.g., changed words, personalized verses, humorous substitutions) (TRACK-LEVEL ONLY). If lyrics were changed, this is the ONLY tag to use - never also Lore.
       - A CAPPELLA: Sung a cappella, meaning vocals without instrumental accompaniment (TRACK-LEVEL ONLY)
       - ACOUSTIC: Performed on acoustic instruments (TRACK-LEVEL ONLY)
       - UNFINISHED: Song performed incompletely, missing verses, sections, or cut short (TRACK-LEVEL ONLY)
