@@ -543,6 +543,13 @@ class LoreSyncService < ApplicationService
       }
 
       CRITICAL: This content only applies to ONE track (Jam). Do NOT duplicate it at show level. When content is track-specific, only populate the track array.
+
+      COMMON MISTAKES TO AVOID:
+      - WRONG: Duplicating single-track content at both show and track level
+        Input: "Before Sleeping Monkey, Trey pulled a woman from the crowd; the band then played the song for her."
+        BAD output: lore_show: "Before Sleeping Monkey, Trey pulled a woman from the crowd..." AND lore_tracks: [{"song_title": "Sleeping Monkey", "notes": "..."}]
+        CORRECT output: lore_show: null, lore_tracks: [{"song_title": "Sleeping Monkey", "notes": "Trey pulled a woman from the crowd; the band then played the song for her."}]
+        REASON: This content applies to ONE track only. Keep the track tag, discard the show tag.
     PROMPT
   end
 
