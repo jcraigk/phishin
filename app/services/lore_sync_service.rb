@@ -354,7 +354,7 @@ class LoreSyncService < ApplicationService
       - Setlist structure notes (e.g., "no encore break", "announced as the start of the encore")
       - Routine dedications without interesting context (e.g., "Dedicated to Brad Sands", "played for mom")
       - Simple birthday wishes without ceremony (e.g., "Trey wished happy birthday to Jim")
-      - Microphone usage or lack thereof (e.g., "sung without microphones", "performed unplugged")
+      - Microphone/amplification usage or lack thereof (e.g., "sung without microphones", "performed without amplification", "performed unplugged")
       - Acoustic performances (handled by Acoustic tag)
 
       ALWAYS INCLUDE (even if mixed with content you'd normally omit):
