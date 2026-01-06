@@ -113,7 +113,7 @@ class LoreSyncService < ApplicationService
       .each { |tn| tn["notes"] = nil }
     acoustic_tracks = (analysis[:acoustic_tracks].presence || [])
       .reject { |tn| tn["song_title"].downcase == "banter" }
-      .each { |tn| tn["notes"] = normalize_quotes(tn["notes"]) }
+      .each { |tn| tn["notes"] = nil }
     unfinished_tracks = (analysis[:unfinished_tracks].presence || [])
       .reject { |tn| tn["song_title"].downcase == "banter" }
       .each { |tn| tn["notes"] = nil }
@@ -435,7 +435,7 @@ class LoreSyncService < ApplicationService
           {"song_title": "Song Name", "notes": null}
         ],
         "acoustic_tracks": [
-          {"song_title": "Song Name", "notes": "Acoustic content for this song"}
+          {"song_title": "Song Name", "notes": null}
         ],
         "unfinished_tracks": [
           {"song_title": "Song Name", "notes": null}
