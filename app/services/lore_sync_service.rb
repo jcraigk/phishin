@@ -20,6 +20,7 @@ class LoreSyncService < ApplicationService
     @alt_lyric_tag = Tag.find_by!(slug: "alt-lyric")
     @a_cappella_tag = Tag.find_by!(slug: "a-cappella")
     @acoustic_tag = Tag.find_by!(slug: "acoustic")
+    @incomplete_tag = Tag.find_by!(slug: "incomplete")
     shows = fetch_shows
 
     puts "Analyzing #{shows.count} show(s)#{dry_run ? ' (DRY RUN)' : ''}..."
@@ -113,6 +114,9 @@ class LoreSyncService < ApplicationService
     acoustic_tracks = (analysis[:acoustic_tracks].presence || [])
       .reject { |tn| tn["song_title"].downcase == "banter" }
       .each { |tn| tn["notes"] = normalize_quotes(tn["notes"]) }
+    incomplete_tracks = (analysis[:incomplete_tracks].presence || [])
+      .reject { |tn| tn["song_title"].downcase == "banter" }
+      .each { |tn| tn["notes"] = normalize_quotes(tn["notes"]) }
 
     apply_track_tags(show, lore_tracks, @lore_tag, "Lore") if lore_tracks.any?
     apply_track_tags(show, banter_tracks, @banter_tag, "Banter") if banter_tracks.any?
@@ -120,8 +124,9 @@ class LoreSyncService < ApplicationService
     apply_track_tags(show, alt_lyric_tracks, @alt_lyric_tag, "Alt Lyric") if alt_lyric_tracks.any?
     apply_track_tags(show, a_cappella_tracks, @a_cappella_tag, "A Cappella") if a_cappella_tracks.any?
     apply_track_tags(show, acoustic_tracks, @acoustic_tag, "Acoustic") if acoustic_tracks.any?
+    apply_track_tags(show, incomplete_tracks, @incomplete_tag, "Incomplete") if incomplete_tracks.any?
 
-    @skipped += 1 if lore_show.blank? && banter_show.blank? && lore_tracks.empty? && banter_tracks.empty? && alt_rig_tracks.empty? && alt_lyric_tracks.empty? && a_cappella_tracks.empty? && acoustic_tracks.empty?
+    @skipped += 1 if lore_show.blank? && banter_show.blank? && lore_tracks.empty? && banter_tracks.empty? && alt_rig_tracks.empty? && alt_lyric_tracks.empty? && a_cappella_tracks.empty? && acoustic_tracks.empty? && incomplete_tracks.empty?
   rescue StandardError => e
     @pbar.log "✗ Error processing #{show.date}: #{e.message}"
     @skipped += 1
@@ -266,7 +271,8 @@ class LoreSyncService < ApplicationService
         alt_rig_tracks: content["alt_rig_tracks"].presence || [],
         alt_lyric_tracks: content["alt_lyric_tracks"].presence || [],
         a_cappella_tracks: content["a_cappella_tracks"].presence || [],
-        acoustic_tracks: content["acoustic_tracks"].presence || []
+        acoustic_tracks: content["acoustic_tracks"].presence || [],
+        incomplete_tracks: content["incomplete_tracks"].presence || []
       }
     else
       raise "OpenAI API error: #{response.body}"
@@ -311,7 +317,8 @@ class LoreSyncService < ApplicationService
         alt_rig_tracks: content["alt_rig_tracks"].presence || [],
         alt_lyric_tracks: content["alt_lyric_tracks"].presence || [],
         a_cappella_tracks: content["a_cappella_tracks"].presence || [],
-        acoustic_tracks: content["acoustic_tracks"].presence || []
+        acoustic_tracks: content["acoustic_tracks"].presence || [],
+        incomplete_tracks: content["incomplete_tracks"].presence || []
       }
     else
       raise "Anthropic API error: #{response.body}"
@@ -367,7 +374,7 @@ class LoreSyncService < ApplicationService
       - If an existing tag covers a tease, omit the tease portion but KEEP other content
       - If an existing tag covers banter, omit that banter but KEEP other content
       - Only omit the exact content that's duplicated - not the entire note
-      - Common tag types: Alt Rig, Alt Lyric, Banter, Tease, Jamcharts, Gamehendge, Costume, A Cappella, Acoustic
+      - Common tag types: Alt Rig, Alt Lyric, Banter, Tease, Jamcharts, Gamehendge, Costume, A Cappella, Acoustic, Incomplete
       - EXCEPTION: If an existing Lore tag exists at the SHOW level but describes song-specific content, you SHOULD still output track_notes for that content.
 
       ONLY return null for both show_notes and track_notes if EVERY piece of content either falls into "ALWAYS OMIT" categories OR is covered by existing tags. If ANY Lore-worthy content remains after filtering, include it.
@@ -429,6 +436,9 @@ class LoreSyncService < ApplicationService
         ],
         "acoustic_tracks": [
           {"song_title": "Song Name", "notes": "Acoustic content for this song"}
+        ],
+        "incomplete_tracks": [
+          {"song_title": "Song Name", "notes": "Incomplete content for this song"}
         ]
       }
 
@@ -439,6 +449,7 @@ class LoreSyncService < ApplicationService
       - ALT LYRIC: Modified, alternate, or improvised lyrics (e.g., changed words, personalized verses, humorous substitutions) (TRACK-LEVEL ONLY)
       - A CAPPELLA: Sung a cappella, meaning vocals without instrumental accompaniment (TRACK-LEVEL ONLY)
       - ACOUSTIC: Performed on acoustic instruments (TRACK-LEVEL ONLY)
+      - INCOMPLETE: Song performed incompletely, missing verses, sections, or cut short (TRACK-LEVEL ONLY)
 
       CRITICAL: Before creating a track entry, check if the song exists in the provided setlist. If a song mentioned in the notes is NOT in the setlist, put the content in the show-level field instead.
 
