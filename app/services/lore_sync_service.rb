@@ -175,7 +175,7 @@ class LoreSyncService < ApplicationService
           @pbar.log "🎸 [DRY RUN] Would update track #{colored_tag}: #{track_url}\n  Old: \e[36m#{existing.notes}\e[0m\n  New: \e[36m#{notes}\e[0m"
         else
           existing.update!(notes:)
-          @pbar.log "🎸 Track #{colored_tag} updated: #{track_url}#{verbose ? "\n  \e[36m#{notes}\e[0m" : ""}"
+          @pbar.log "🎸 Track #{colored_tag} updated: #{track_url}#{verbose && notes.present? ? "\n  \e[36m#{notes}\e[0m" : ""}"
         end
         @track_updated += 1
       else
@@ -183,7 +183,7 @@ class LoreSyncService < ApplicationService
           @pbar.log "🎸 [DRY RUN] Would tag track #{colored_tag}: #{track_url}\n  \e[36m#{notes}\e[0m"
         else
           TrackTag.create!(track:, tag:, notes:)
-          @pbar.log "🎸 Track #{colored_tag} tagged: #{track_url}#{verbose ? "\n  \e[36m#{notes}\e[0m" : ""}"
+          @pbar.log "🎸 Track #{colored_tag} tagged: #{track_url}#{verbose && notes.present? ? "\n  \e[36m#{notes}\e[0m" : ""}"
         end
         @track_tagged += 1
       end
