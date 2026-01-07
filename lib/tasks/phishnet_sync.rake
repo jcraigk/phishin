@@ -71,6 +71,92 @@ namespace :phishnet do
     "2000-05-19"
   ].freeze
 
+  desc "Find shows marked complete but missing songs from PhishNet (use FIX=1 to auto-fix)"
+  task audit_incomplete: :environment do
+    auto_fix = ENV["FIX"] == "1"
+    puts "Auditing shows marked 'complete' for missing songs..."
+    puts "Auto-fix mode: #{auto_fix ? 'ON' : 'OFF (use FIX=1 to enable)'}\n\n"
+
+    shows = Show.where(audio_status: "complete").order(:date)
+    mismatches = []
+
+    progressbar = ProgressBar.create(
+      title: "Checking",
+      total: shows.count,
+      format: "%a |%b>>%i| %p%% %t"
+    )
+
+    shows.each do |show|
+      response = Typhoeus.get(
+        "https://api.phish.net/v5/setlists/showdate/#{show.date}.json",
+        params: { apikey: ENV.fetch("PNET_API_KEY", nil) }
+      )
+
+      if response.success?
+        data = JSON.parse(response.body)
+        pnet_tracks = (data["data"] || []).select { |d| d["artist_slug"] == "phish" }
+
+        # Build set of PhishNet song titles (normalized, ignoring set)
+        pnet_songs = Set.new
+        pnet_tracks.each do |song_data|
+          original_title = (song_data["song"] || "").strip
+          fixed_title = fix_utf8_encoding(original_title)
+          mapped_title = apply_title_mapping(fixed_title)
+          pnet_songs << mapped_title.downcase.strip
+        end
+
+        # Build set of local song titles from:
+        # 1. Song associations
+        # 2. Track titles (to catch segue tracks like "Harpua > Vibration > Harpua")
+        local_songs = Set.new
+        show.tracks.includes(:songs).each do |track|
+          # Add associated songs
+          track.songs.each { |song| local_songs << song.title.downcase.strip }
+
+          # Parse track title for segued songs (split on " > ")
+          track.title.split(" > ").each do |part|
+            local_songs << part.downcase.strip
+          end
+        end
+
+        # Find songs in PhishNet but not locally
+        missing_songs = pnet_songs - local_songs
+
+        if missing_songs.any?
+          mismatches << {
+            date: show.date,
+            missing_songs: missing_songs.to_a.sort
+          }
+
+          if auto_fix
+            show.update!(audio_status: "partial")
+          end
+        end
+      end
+
+      progressbar.increment
+    end
+
+    puts "\n\n#{'=' * 80}"
+    if mismatches.any?
+      puts "Found #{mismatches.length} shows with missing songs:\n\n"
+      mismatches.each do |m|
+        status = auto_fix ? "[FIXED]" : "[NEEDS FIX]"
+        puts "  #{status} #{m[:date]}: #{m[:missing_songs].join(', ')}"
+      end
+
+      unless auto_fix
+        puts "\nTo fix these shows, run: rake phishnet:audit_incomplete FIX=1"
+        puts "Then run: rake phishnet:sync_shows"
+      else
+        puts "\nShows marked as partial. Now run: rake phishnet:sync_shows"
+      end
+    else
+      puts "All 'complete' shows have matching songs with PhishNet."
+    end
+    puts "=" * 80
+  end
+
   desc "Sync all known Phish show dates from Phish.net (use LIMIT env var to limit new shows, DATE env var for single date)"
   task sync_shows: :environment do
     date_filter = ENV["DATE"]
@@ -740,7 +826,10 @@ namespace :phishnet do
     # Hardcoded mappings for PhishNet titles that should match local titles
     title_mappings = {
       "digital delay loop jam" => "Jam",
-      "let's go" => "Let's Go (The Cars)"
+      "sneakin' sally thru the alley" => "Sneakin' Sally Through the Alley",
+      "everybody's got something to hide except me and my monkey" => "Everybody's Got Something to Hide Except...",
+      "revolution 1" => "Revolution",
+      "i can't turn you loose" => "I Can't Turn You Loose Jam"
     }
 
     title_mappings[normalized_title] || title
