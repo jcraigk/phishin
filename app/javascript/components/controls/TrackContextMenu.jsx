@@ -105,7 +105,7 @@ const TrackContextMenu = ({ track, indexInPlaylist = null, highlight }) => {
             </div>
 
             {track.tags?.length > 0 && (
-              <div className="dropdown-item display-mobile-only">
+              <div className="dropdown-item">
                 <TagBadges tags={track.tags} parentId={track.id} highlight={highlight} />
               </div>
             )}
