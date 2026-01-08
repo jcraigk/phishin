@@ -137,7 +137,26 @@ module Tools
         first_track = ChronologicalTrackNavigator.first_track
         last_track = ChronologicalTrackNavigator.last_track
 
+        set_positions = compute_set_positions(playable_tracks)
+
         {
+          # Selected track info at top level for immediate display
+          # This encourages LLM to respond with this track info
+          title: track.title,
+          slug: track.slug,
+          url: track.url,
+          date: show.date.iso8601,
+          show_url: show.url,
+          mp3_url: track.mp3_url,
+          duration_ms: track.duration,
+          waveform_image_url: track.waveform_image_url,
+          venue: show.venue_name,
+          venue_slug: show.venue&.slug,
+          location: show.venue&.location,
+          cover_art_url: show.cover_art_urls[:medium],
+          tags: track.track_tags.map { |tt| { name: tt.tag.name, slug: tt.tag.slug, description: tt.tag.description, notes: tt.notes } },
+          set: track.set_name,
+          position: set_positions[track.id] || track.position,
           base_url: App.base_url,
           current_track_index: current_index,
           is_library_start: track.id == first_track&.id,

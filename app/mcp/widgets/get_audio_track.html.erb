@@ -1401,13 +1401,16 @@
         const noAudioMessage = hasAudio ? '' : `
                   <div class="no-audio-message">No audio available</div>`;
 
+        const durationSeconds = track.duration_ms ? Math.floor(track.duration_ms / 1000) : 0;
+        const initialRemainingTime = durationSeconds > 0 ? `-${formatTime(durationSeconds)}` : '-0:00';
+
         const bottomRow = hasAudio ? `
               <div class="player-bottom-row">
                 <span class="time-display" id="elapsed-time">0:00</span>
                 <div class="scrubber-container" id="scrubber">
                   <div class="progress-overlay" id="progress-overlay"></div>
                 </div>
-                <span class="time-display remaining" id="remaining-time">-0:00</span>
+                <span class="time-display remaining" id="remaining-time">${initialRemainingTime}</span>
               </div>` : '';
 
         return `
@@ -1511,13 +1514,16 @@
         const noAudioMessage = hasAudio ? '' : `
                   <div class="no-audio-message">No audio available</div>`;
 
+        const durationSeconds = track.duration_ms ? Math.floor(track.duration_ms / 1000) : 0;
+        const initialRemainingTime = durationSeconds > 0 ? `-${formatTime(durationSeconds)}` : '-0:00';
+
         const bottomRow = hasAudio ? `
               <div class="player-bottom-row">
                 <span class="time-display" id="elapsed-time">0:00</span>
                 <div class="scrubber-container" id="scrubber">
                   <div class="progress-overlay" id="progress-overlay"></div>
                 </div>
-                <span class="time-display remaining" id="remaining-time">-0:00</span>
+                <span class="time-display remaining" id="remaining-time">${initialRemainingTime}</span>
               </div>` : '';
 
         return `
@@ -1551,8 +1557,18 @@
       }
 
       function extractTrackData(data) {
+        // Handle structured content with track info at top level (random track selection)
+        if (data.title && data.show?.tracks?.length > 0) {
+          if (data.base_url) baseUrl = data.base_url;
+          showData = data.show;
+          currentTrackIndex = data.current_track_index || 0;
+          return data;
+        }
+
+        // Handle legacy format with title but no show data
         if (data.title) return data;
 
+        // Handle structured content where we need to extract from show.tracks
         if (data.show?.tracks?.length > 0) {
           if (data.base_url) baseUrl = data.base_url;
           showData = data.show;
