@@ -574,8 +574,8 @@
         transparent 89%,
         transparent 100%
       );
-      -webkit-mask: 
-        linear-gradient(#fff 0 0) content-box, 
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
         linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask-composite: exclude;
@@ -587,6 +587,12 @@
     @keyframes rotate-gradient {
       from { --border-angle: 0deg; }
       to { --border-angle: 360deg; }
+    }
+
+    @media (max-width: 520px) {
+      .scrub-btn {
+        display: none;
+      }
     }
 
   </style>
@@ -643,8 +649,8 @@
 
       function getProgressColor() {
         const isDark = typeof getColorScheme === 'function' && getColorScheme() === 'dark';
-        return isPlaying 
-          ? (isDark ? '#5bcefa' : '#03BBF2') 
+        return isPlaying
+          ? (isDark ? '#5bcefa' : '#03BBF2')
           : (isDark ? '#e0e0e0' : '#b0b0b0');
       }
 
@@ -876,7 +882,7 @@
       }
 
       let currentWaveformImage = null;
-      
+
       function updateWaveformImage(waveformUrl, onComplete) {
         const scrubber = document.getElementById('scrubber');
         const progressOverlay = document.getElementById('progress-overlay');
@@ -907,10 +913,10 @@
 
         const img = new Image();
         currentWaveformImage = img;
-        
+
         img.onload = () => {
           if (currentWaveformImage !== img) return;
-          
+
           const maskUrl = `url(${waveformUrl})`;
           if (scrubber) {
             scrubber.style.setProperty('--waveform-url', maskUrl);
@@ -922,11 +928,11 @@
           }
           if (onComplete) onComplete();
         };
-        
+
         img.onerror = () => {
           if (onComplete) onComplete();
         };
-        
+
         img.src = waveformUrl;
       }
 
@@ -1034,11 +1040,11 @@
 
       function showLoadingSpinner(show) {
         const spinner = document.getElementById('loading-spinner');
-        
+
         isAudioLoading = show;
-        
+
         if (spinner) spinner.style.display = show ? 'block' : 'none';
-        
+
         updatePlayPauseIcon();
       }
 
@@ -1078,14 +1084,14 @@
 
         currentTrackIndex = index;
         updateCurrentTrackData(track);
-        
+
         updateTrackDisplay(trackData);
         initTagTooltips();
         initSetPositionTooltips();
         updateWaveformImage(track.waveform_image_url);
         updateNavigationButtons();
         initMediaSession(trackData);
-        
+
         const gaplessIndex = findGaplessIndex(index);
         if (gaplessIndex >= 0) {
           showLoadingSpinner(true);
@@ -1099,18 +1105,18 @@
           titleEl.textContent = track.title;
           titleEl.href = track.url;
         }
-        
+
         const subtitleEl = document.querySelector('.player-track-subtitle');
         if (subtitleEl) {
           const venueLocationHtml = `<a href="${baseUrl}/venues/${escapeHtml(track.venue_slug || '')}" target="_blank" rel="noopener" class="player-link">${escapeHtml(track.venue)}</a>${track.location ? ` · <a href="${baseUrl}/map?term=${encodeURIComponent(track.location)}" target="_blank" rel="noopener" class="location-link">${escapeHtml(track.location)}</a>` : ''}`;
           const setPos = formatSetPosition(track.set, track.position, true);
           let subtitleHtml = `<a href="${escapeHtml(track.show_url)}" target="_blank" rel="noopener" class="player-link">${formatDate(track.date)}</a>${setPos ? ` · ${setPos}` : ''} · ${venueLocationHtml}`;
-          
+
           const tags = track.tags || [];
           if (tags.length > 0) {
             subtitleHtml += ' · ' + renderGroupedTagBadges(tags, true);
           }
-          
+
           subtitleEl.innerHTML = subtitleHtml;
         }
       }
@@ -1145,33 +1151,33 @@
 
       async function requestAdjacentShow(direction) {
         if (!showData?.date || isNavigating) return;
-        
+
         isNavigating = true;
-        
+
         if (gaplessPlayer) {
           gaplessPlayer.stop();
           gaplessPlayer = null;
         }
         isPlaying = false;
         isAudioLoading = false;
-        
+
         const root = document.getElementById('root');
         root.innerHTML = renderLoader();
-        
+
         try {
           const currentShowResponse = await fetch(`${baseUrl}/api/v2/shows/${showData.date}`);
           if (!currentShowResponse.ok) throw new Error('Failed to fetch current show');
           const currentShow = await currentShowResponse.json();
-          
-          const adjacentDate = direction === 'next' 
-            ? currentShow.next_show_date_with_audio 
+
+          const adjacentDate = direction === 'next'
+            ? currentShow.next_show_date_with_audio
             : currentShow.previous_show_date_with_audio;
           if (!adjacentDate) throw new Error('No adjacent show found');
-          
+
           const adjacentShowResponse = await fetch(`${baseUrl}/api/v2/shows/${adjacentDate}`);
           if (!adjacentShowResponse.ok) throw new Error('Failed to fetch adjacent show');
           const adjacentShow = await adjacentShowResponse.json();
-          
+
           const rawTracks = (adjacentShow.tracks || []).filter(t => t.mp3_url);
           const setPositions = computeSetPositions(rawTracks);
           const newShowData = {
@@ -1195,21 +1201,21 @@
               tags: (t.tags || []).map(tag => ({ name: tag.name, slug: tag.slug, description: tag.description, notes: tag.notes }))
             }))
           };
-          
+
           const targetTrackIndex = direction === 'next' ? 0 : newShowData.tracks.length - 1;
           const targetTrack = newShowData.tracks[targetTrackIndex];
           if (!targetTrack) throw new Error('No playable tracks in adjacent show');
-          
+
           showData = newShowData;
           currentTrackIndex = targetTrackIndex;
           updateCurrentTrackData(targetTrack);
-          
+
           root.innerHTML = renderPlayerPlaying(trackData);
           showLoadingSpinner(true);
-          
+
           const gaplessIndex = findGaplessIndex(currentTrackIndex);
           initAudioOnly(trackData, gaplessIndex);
-          
+
           setupBackgroundBlur(trackData.cover_art_url);
           initTagTooltips();
           initSetPositionTooltips();
@@ -1217,7 +1223,7 @@
           updateWaveformImage(targetTrack.waveform_image_url);
           initMediaSession(trackData);
           updateNavigationButtons();
-          
+
         } catch (e) {
           if (showData && trackData) {
             root.innerHTML = renderPlayer(trackData);
@@ -1230,22 +1236,22 @@
           isNavigating = false;
         }
       }
-      
+
       function initAudioOnly(track, startingIndex) {
         if (!track?.mp3_url) {
           return;
         }
-        
+
         trackData = track;
         const tracksWithAudio = getTracksWithAudio();
         if (tracksWithAudio.length === 0) {
           return;
         }
-        
+
         const trackUrls = tracksWithAudio.map(t => t.mp3_url);
         const iosDevice = isIOSDevice();
         const gaplessIndex = startingIndex >= 0 && startingIndex < tracksWithAudio.length ? startingIndex : 0;
-        
+
         gaplessPlayer = new Gapless5({
           tracks: trackUrls,
           startingTrack: gaplessIndex,
@@ -1256,7 +1262,7 @@
           loadLimit: iosDevice ? 2 : 1,
           volume: 1.0
         });
-        
+
         gaplessPlayer.ontimeupdate = (currentTimeMs, idx) => {
           const currentTrack = tracksWithAudio[idx];
           if (!currentTrack) return;
@@ -1272,7 +1278,7 @@
           const scrubForwardBtn = document.getElementById('scrub-forward-btn');
           if (scrubForwardBtn) scrubForwardBtn.disabled = currentTime >= duration - 10;
         };
-        
+
         gaplessPlayer.onplay = () => {
           isPlaying = true;
           isAudioLoading = false;
@@ -1282,7 +1288,7 @@
           updatePlayerColors();
           updateMediaSessionPlaybackState();
         };
-        
+
         gaplessPlayer.onpause = () => {
           isPlaying = false;
           document.getElementById('audio-player')?.classList.remove('audio-playing');
@@ -1290,7 +1296,7 @@
           updatePlayerColors();
           updateMediaSessionPlaybackState();
         };
-        
+
         gaplessPlayer.onstop = () => {
           isPlaying = false;
           isAudioLoading = false;
@@ -1298,7 +1304,7 @@
           updatePlayerColors();
           updatePlayPauseIcon();
         };
-        
+
         gaplessPlayer.onnext = () => {
           const idx = gaplessPlayer.getIndex();
           const originalIndex = findOriginalIndex(idx);
@@ -1314,7 +1320,7 @@
             initMediaSession(trackData);
           }
         };
-        
+
         gaplessPlayer.onprev = () => {
           const idx = gaplessPlayer.getIndex();
           const originalIndex = findOriginalIndex(idx);
@@ -1330,13 +1336,13 @@
             initMediaSession(trackData);
           }
         };
-        
+
         gaplessPlayer.onerror = () => showLoadingSpinner(false);
-        
+
         isAudioLoading = true;
         gaplessPlayer.play();
       }
-      
+
       function wireUpPlayerControls() {
         const playPauseBtn = document.getElementById('play-pause-btn');
         const scrubber = document.getElementById('scrubber');
@@ -1344,19 +1350,19 @@
         const scrubForwardBtn = document.getElementById('scrub-forward-btn');
         const prevBtn = document.getElementById('prev-btn');
         const nextBtn = document.getElementById('next-btn');
-        
+
         playPauseBtn?.addEventListener('click', togglePlayPause);
         scrubBackBtn?.addEventListener('click', () => scrub(-10));
         scrubForwardBtn?.addEventListener('click', () => scrub(10));
         scrubber?.addEventListener('click', onScrubberClick);
         prevBtn?.addEventListener('click', playPrev);
         nextBtn?.addEventListener('click', playNext);
-        
+
         if (playPauseBtn) playPauseBtn.disabled = false;
         if (scrubBackBtn) scrubBackBtn.disabled = false;
         if (scrubForwardBtn) scrubForwardBtn.disabled = true;
       }
-      
+
       function renderPlayerPlaying(track) {
         const coverArtUrl = track.cover_art_url || '';
         const tags = track.tags || [];
@@ -1546,15 +1552,15 @@
 
       function extractTrackData(data) {
         if (data.title) return data;
-        
+
         if (data.show?.tracks?.length > 0) {
           if (data.base_url) baseUrl = data.base_url;
           showData = data.show;
           currentTrackIndex = data.current_track_index || 0;
-          
+
           const track = data.show.tracks[currentTrackIndex];
           if (!track) return null;
-          
+
           return {
             title: track.title,
             slug: track.slug,
@@ -1573,7 +1579,7 @@
             position: track.position
           };
         }
-        
+
         return null;
       }
 
@@ -1599,14 +1605,14 @@
           const newCoverArtUrl = newData?.show?.cover_art_url || newData?.cover_art_url;
           const currentCoverImg = document.getElementById('cover-img');
           const currentCoverArtUrl = currentCoverImg?.src;
-          
+
           const isShowChange = newCoverArtUrl && currentCoverArtUrl && newCoverArtUrl !== currentCoverArtUrl;
-          
+
           if (isShowChange) {
             isNavigating = true;
             showCoverLoadingOverlay(true);
             await preloadImage(newCoverArtUrl);
-            
+
             if (gaplessPlayer) {
               gaplessPlayer.stop();
               gaplessPlayer = null;
@@ -1614,10 +1620,10 @@
             isPlaying = false;
             isAudioLoading = false;
           }
-          
+
           window._widgetData = newData;
           await render();
-          
+
           if (isShowChange) {
             isNavigating = false;
             showCoverLoadingOverlay(false);
