@@ -80,7 +80,6 @@ TAGIN_TAGS = [
   "Alt Version",
   "Audience",
   "Banter",
-  "Famous",
   "Guest",
   "Narration",
   "Signal",
