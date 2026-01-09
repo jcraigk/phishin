@@ -38,7 +38,8 @@ module Tools
             songs: raw[:songs]&.first(limit)&.map { |s| serialize_song(s) } || [],
             venues: raw[:venues]&.first(limit)&.map { |v| serialize_venue(v) } || [],
             tours: raw[:tours]&.first(limit)&.map { |t| serialize_tour(t) } || [],
-            tags: raw[:tags]&.first(limit)&.map { |t| serialize(:tag, t, :name, :slug, :description, :shows_count, :tracks_count) } || [],
+            tags: raw[:tags]&.first(limit)&.map { |t| serialize(t, :name, :slug, :description, :shows_count, :tracks_count) } || [],
+            tracks: raw[:tracks]&.first(limit)&.map { |t| serialize_track(t) } || [],
             playlists: raw[:playlists]&.first(limit)&.map { |p| serialize_playlist(p) } || []
           }
           results[:total_results] = results.except(:query).values.sum(&:count)
@@ -57,7 +58,6 @@ module Tools
 
       def serialize_show(show)
         {
-          type: :show,
           date: show.date.iso8601,
           url: show.url,
           venue_name: show.venue_name,
@@ -72,7 +72,6 @@ module Tools
 
       def serialize_song(song)
         {
-          type: :song,
           title: song.title,
           slug: song.slug,
           url: song.url,
@@ -84,7 +83,6 @@ module Tools
 
       def serialize_venue(venue)
         {
-          type: :venue,
           name: venue.name,
           slug: venue.slug,
           url: venue.url,
@@ -95,7 +93,6 @@ module Tools
 
       def serialize_playlist(playlist)
         {
-          type: :playlist,
           name: playlist.name,
           slug: playlist.slug,
           url: playlist.url,
@@ -107,7 +104,6 @@ module Tools
 
       def serialize_tour(tour)
         {
-          type: :tour,
           name: tour.name,
           slug: tour.slug,
           starts_on: tour.starts_on.iso8601,
@@ -116,8 +112,21 @@ module Tools
         }
       end
 
-      def serialize(type, obj, *attrs)
-        { type: }.merge(attrs.to_h { |a| [ a, obj.public_send(a) ] })
+      def serialize_track(track)
+        {
+          title: track.title,
+          slug: track.slug,
+          url: track.url,
+          show_date: track.show.date.iso8601,
+          show_url: track.show.url,
+          duration_ms: track.duration,
+          position: track.position,
+          set: track.set
+        }
+      end
+
+      def serialize(obj, *attrs)
+        attrs.to_h { |a| [ a, obj.public_send(a) ] }
       end
 
       def error_response(message)

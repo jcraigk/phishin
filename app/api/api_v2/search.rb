@@ -24,18 +24,6 @@ class ApiV2::Search < ApiV2::Base
       return error!({ message: "Term too short" }, 400) if params[:term].length < 3
       results = fetch_results(params[:term], params[:scope], params[:audio_status])
 
-      # Add Show Tag matches to other_shows
-      if results[:show_tags].present?
-        ids = results[:show_tags].map(&:show_id) + (results[:other_shows]&.map(&:id) || [])
-        results[:other_shows] = Show.where(id: ids)
-      end
-
-      # Add Track Tag matches to tracks
-      if results[:track_tags].present?
-        ids = results[:track_tags].map(&:track_id) + (results[:tracks]&.map(&:id) || [])
-        results[:tracks] = Track.where(id: ids)
-      end
-
       all_matched_shows = (Array(results[:exact_show]) + Array(results[:other_shows])).compact
 
       present \

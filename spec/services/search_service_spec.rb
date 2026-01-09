@@ -22,27 +22,28 @@ RSpec.describe SearchService do
 
   context 'with date-based terms' do
     let(:date) { Date.parse("2024-10-31") }
+    let!(:show1) { create(:show, date:) }
+    let!(:show2) { create(:show, date: date - 1.year) }
+    let!(:show3) { create(:show, date: date - 2.years) }
+    let!(:non_matching_show) { create(:show, date: date - 1.day) }
+    let!(:tag) { create(:tag, name: "Date #{term}") }
+    let!(:show_tag) { create(:show_tag, notes: "... blah #{term} ...", show: non_matching_show) }
+    let!(:track) { create(:track, show: non_matching_show) }
+    let!(:track_tag) { create(:track_tag, notes: "... blah blah #{term} blah..", track:) }
     let(:expected_results) do
       {
         exact_show: show1,
-        other_shows: [ show2, show3 ],
+        other_shows: Show.where(id: [ show2, show3, non_matching_show ].map(&:id)),
         songs: [],
         venues: [],
         tags: [ tag ],
         show_tags: [ show_tag ],
         track_tags: [ track_tag ],
-        tracks: [],
+        tracks: Track.where(id: [ track ].map(&:id)),
         playlists: [],
         tours: []
       }
     end
-  let!(:show1) { create(:show, date:) }
-  let!(:show2) { create(:show, date: date - 1.year) }
-  let!(:show3) { create(:show, date: date - 2.years) }
-  let!(:non_matching_show) { create(:show, date: date - 1.day) }
-  let!(:tag) { create(:tag, name: "Date #{term}") }
-  let!(:show_tag) { create(:show_tag, notes: "... blah #{term} ...", show: non_matching_show) }
-  let!(:track_tag) { create(:track_tag, notes: "... blah blah #{term} blah..", track: create(:track, show: non_matching_show)) }
 
     context 'with exact is8601 date' do
       let(:term) { "2024-10-31" }
@@ -55,7 +56,7 @@ RSpec.describe SearchService do
       let(:expected_results) do
         super().merge \
           exact_show: nil,
-          other_shows: [ show1, show2, show3 ]
+          other_shows: Show.where(id: [ show1, show2, show3, non_matching_show ].map(&:id))
       end
 
       it_behaves_like 'expected results'
@@ -70,20 +71,6 @@ RSpec.describe SearchService do
 
   context 'with text-based term' do
     let(:term) { 'hood' }
-    let(:expected_results) do
-      {
-        exact_show: nil,
-        other_shows: [],
-        songs: [ song1, song2 ],
-        venues: [ venue1, venue3 ],
-        tags: [ tag2, tag1 ],
-        show_tags: [ show_tag ],
-        track_tags: [ track_tag ],
-        tracks: [ track ],
-        playlists: [],
-        tours: []
-      }
-    end
     let!(:show_tag) { create(:show_tag, notes: "... blah #{term} ...") }
     let!(:song1) { create(:song, title: 'Harry Hood') }
     let!(:song2) { create(:song, title: 'Hoodenstein') }
@@ -93,6 +80,20 @@ RSpec.describe SearchService do
     let!(:venue1) { create(:venue, name: 'Hood\'s Place') }
     let!(:venue3) { create(:venue, name: 'Hoody') }
     let!(:track) { create(:track, title: "Foo #{term.upcase}") }
+    let(:expected_results) do
+      {
+        exact_show: nil,
+        other_shows: Show.where(id: [ show_tag.show ].map(&:id)),
+        songs: [ song1, song2 ],
+        venues: [ venue1, venue3 ],
+        tags: [ tag2, tag1 ],
+        show_tags: [ show_tag ],
+        track_tags: [ track_tag ],
+        tracks: Track.where(id: [ track, track_tag.track ].map(&:id)),
+        playlists: [],
+        tours: []
+      }
+    end
 
     before do
       create(:venue, name: 'Nectar\'s')
@@ -106,16 +107,18 @@ RSpec.describe SearchService do
   context 'with scope set to "tags"' do
     let(:term) { 'tag_search' }
     let(:scope) { 'tags' }
+    let!(:tag) { create(:tag, name: "Tag #{term}") }
+    let!(:show_tag) { create(:show_tag, notes: "Tagged show #{term}") }
+    let!(:track_tag) { create(:track_tag, notes: "Tagged track #{term}") }
     let(:expected_results) do
       {
         tags: [ tag ],
         show_tags: [ show_tag ],
-        track_tags: [ track_tag ]
+        track_tags: [ track_tag ],
+        other_shows: Show.where(id: [ show_tag.show ].map(&:id)),
+        tracks: Track.where(id: [ track_tag.track ].map(&:id))
       }
     end
-    let!(:tag) { create(:tag, name: "Tag #{term}") }
-    let!(:show_tag) { create(:show_tag, notes: "Tagged show #{term}") }
-    let!(:track_tag) { create(:track_tag, notes: "Tagged track #{term}") }
 
     it_behaves_like 'expected results'
   end

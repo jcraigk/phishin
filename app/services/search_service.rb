@@ -8,13 +8,29 @@ class SearchService < ApplicationService
 
   def call
     return if term_too_short?
-    search_results
+    results = search_results
+    merge_tag_matches(results)
+    results
   end
 
   private
 
   def term_too_short?
     term.size.to_i < App.min_search_term_length
+  end
+
+  def merge_tag_matches(results)
+    # Add Show Tag matches to other_shows
+    if results[:show_tags].present?
+      ids = results[:show_tags].map(&:show_id) + (results[:other_shows]&.map(&:id) || [])
+      results[:other_shows] = Show.includes(:venue, :tour, show_tags: :tag).where(id: ids)
+    end
+
+    # Add Track Tag matches to tracks
+    if results[:track_tags].present?
+      ids = results[:track_tags].map(&:track_id) + (results[:tracks]&.map(&:id) || [])
+      results[:tracks] = Track.includes(:show).where(id: ids)
+    end
   end
 
   def search_results
