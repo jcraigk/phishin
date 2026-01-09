@@ -1123,6 +1123,18 @@
 
       async function playPrev() {
         if (isNavigating) return;
+        if (!gaplessPlayer) return;
+
+        const currentPosition = gaplessPlayer.getPosition();
+        const thresholdMs = 3000;
+
+        // If past 3 seconds, restart current track
+        if (currentPosition > thresholdMs) {
+          gaplessPlayer.setPosition(0);
+          return;
+        }
+
+        // Otherwise go to previous track
         if (showData?.tracks && currentTrackIndex > 0) {
           playTrackAtIndex(currentTrackIndex - 1);
         } else {
