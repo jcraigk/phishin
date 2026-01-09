@@ -1569,6 +1569,8 @@
       }
 
       function extractTrackData(data) {
+        if (!data) return null;
+
         // Handle structured content with track info at top level (random track selection)
         if (data.title && data.show?.tracks?.length > 0) {
           if (data.base_url) baseUrl = data.base_url;
