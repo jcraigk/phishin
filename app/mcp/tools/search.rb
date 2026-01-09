@@ -6,7 +6,7 @@ module Tools
 
     description Descriptions::BASE[:search]
 
-    annotations(read_only_hint: true, destructive_hint: false)
+    annotations(read_only_hint: true, destructive_hint: false, open_world_hint: false)
 
     input_schema(
       properties: {
