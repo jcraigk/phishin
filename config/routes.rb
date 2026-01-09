@@ -2,6 +2,7 @@ require "sidekiq/web"
 
 Rails.application.routes.draw do
   get "/health", to: proc { [ 200, {}, [ "OK" ] ] }
+  get "/.well-known/openai-apps-challenge", to: proc { [ 200, {}, [ ENV.fetch("OPENAI_VERIFICATION_TOKEN", "") ] ] }
 
   post "/mcp", to: "mcp#handle"
   post "/mcp/openai", to: "mcp#handle"
