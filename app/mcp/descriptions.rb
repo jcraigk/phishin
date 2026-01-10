@@ -1,4 +1,7 @@
 module Descriptions
+  # IMPORTANT: When linking to tracks, always use the web 'url' field (e.g., https://phish.in/1997-11-22/tweezer),
+  # NOT the 'mp3_url' blob field. The web URL provides a better user experience with context, artwork, and navigation.
+
   BASE = {
     list_tags: "List all tags with show and track counts. " \
                "Tags categorize content: Jamcharts (notable jams), Costume, Guest, Debut, and more. " \
@@ -6,7 +9,7 @@ module Descriptions
 
     get_tag: "Get shows or tracks associated with a specific tag. " \
              "params: type='show' for tagged shows (e.g., costume); type='track' for tagged tracks (e.g., jamcharts). " \
-             "display: Link dates to show URLs, song names to track URLs. Format dates as 'Jul 4, 2023'. " \
+             "display: Link dates to show URLs, song names to track web URLs (use 'url', not 'mp3_url'). Format dates as 'Jul 4, 2023'. " \
              "Example: | [Tweezer](track_url) | [Jul 4, 2023](show_url) |",
 
     list_playlists: "List user-created playlists with optional sorting. " \
@@ -14,25 +17,26 @@ module Descriptions
                     "display: Link playlist names to their URLs. Example: [My Favorite Jams](url)",
 
     get_playlist: "Get a playlist with track listing, show dates, and durations. " \
-                  "display: Link playlist name to playlist URL, track titles to track URLs. " \
+                  "display: Link playlist name to playlist URL, track titles to track web URLs (use 'url', not 'mp3_url'). " \
                   "Format dates as 'Jul 4, 2023'. Show max 10 tracks. " \
                   "Example: | [Tweezer](track_url) | [Jul 4, 2023](show_url) |",
 
     get_audio_track: "Get a song performance with audio URL. " \
                      "triggers: 'play [song]', 'random track', 'listen to', 'surprise me', " \
                      "or when user selects a performance from get_song results. " \
-                     "params: random=true for random; slug='YYYY-MM-DD/track-slug' for specific.",
+                     "params: random=true for random; slug='YYYY-MM-DD/track-slug' for specific. " \
+                     "display: Link to track web URL (use 'url', not 'mp3_url'). The web page provides artwork, context, and navigation.",
 
     get_show: "Get a Phish show with full setlist, venue, tags, and gaps. " \
               "triggers: 'random show', specific dates ('Halloween 1995', '12/31/99'), " \
               "or follow-up to list_shows/search. " \
               "params: random=true for random; date='YYYY-MM-DD' for specific. " \
-              "display: Format dates as 'Jul 4, 2023'.",
+              "display: Format dates as 'Jul 4, 2023'. Link tracks to web URLs (use 'url', not 'mp3_url').",
 
     get_song: "Get a Phish song with performance history. " \
               "triggers: 'random song' or specific song by slug. " \
               "params: random=true for random; slug='song-slug' for specific. " \
-              "display: Format dates as 'Jul 4, 2023'.",
+              "display: Format dates as 'Jul 4, 2023'. Link tracks to web URLs (use 'url', not 'mp3_url').",
 
     get_tour: "Get a Phish tour with date range and show count. " \
               "params: random=true for random; slug='tour-slug' for specific. " \
@@ -75,7 +79,7 @@ module Descriptions
 
     stats: "Statistical analysis: gaps (bustouts), transitions, set positions, " \
            "geographic patterns, co-occurrence, and song frequency. " \
-           "display: Link song names to song URLs, dates to track URLs. Format dates as 'Jul 4, 2023'. " \
+           "display: Link song names to song URLs, dates to track web URLs (use 'url', not 'mp3_url'). Format dates as 'Jul 4, 2023'. " \
            "Example: | [Tweezer](song_url) | 42 | [Dec 31, 1995](track_url) | " \
            "api: https://phish.in/api/v2/swagger_doc (no key required)"
   }.freeze
@@ -85,17 +89,19 @@ module Descriptions
                      "triggers: 'play [song]', 'random track', 'listen to', 'surprise me', " \
                      "or when user selects a performance from get_song results. " \
                      "params: random=true for random; slug='YYYY-MM-DD/track-slug' for specific. " \
-                     "display: Widget renders audio player; provide only a brief 1-2 sentence summary.",
+                     "display: Widget renders audio player; provide only a brief 1-2 sentence summary. " \
+                     "Link to track web URL (use 'url', not 'mp3_url').",
 
     get_show: "Get a Phish show with setlist widget. " \
               "triggers: 'random show', specific dates ('Halloween 1995', '12/31/99'), " \
               "or follow-up to list_shows/search. " \
               "params: random=true for random; date='YYYY-MM-DD' for specific. " \
-              "display: Widget renders setlist; provide only a brief 1-2 sentence summary. Do NOT list tracks.",
+              "display: Widget renders setlist; provide only a brief 1-2 sentence summary. Do NOT list tracks. " \
+              "Link tracks to web URLs (use 'url', not 'mp3_url').",
 
     get_playlist: "Get a playlist with interactive widget. " \
                   "display: Widget renders track listing; provide only a brief 1-2 sentence summary. " \
-                  "Do NOT list tracks.",
+                  "Do NOT list tracks. Link tracks to web URLs (use 'url', not 'mp3_url').",
 
     list_shows: "Browse shows by year, date range, tour, or venue. Returns shows WITHOUT setlists. " \
                 "params: At least one filter required. " \
