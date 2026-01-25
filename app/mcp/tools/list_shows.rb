@@ -24,8 +24,7 @@ module Tools
           description: "Sort order: asc (default for date) or desc"
         },
         limit: { type: "integer", description: "Max shows to return (default: 50)" }
-      },
-      required: []
+      }
     )
 
     class << self

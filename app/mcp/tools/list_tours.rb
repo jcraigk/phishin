@@ -9,8 +9,7 @@ module Tools
     input_schema(
       properties: {
         year: { type: "integer", description: "Filter tours by year (e.g., 1997)" }
-      },
-      required: []
+      }
     )
 
     class << self

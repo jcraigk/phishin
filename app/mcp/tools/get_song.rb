@@ -23,8 +23,7 @@ module Tools
           description: "Sort order: asc or desc (default: desc)"
         },
         limit: { type: "integer", description: "Max performances to return (default: 25)" }
-      },
-      required: []
+      }
     )
 
     class << self

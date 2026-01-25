@@ -10,8 +10,7 @@ module Tools
       properties: {
         slug: { type: "string", description: "Tour slug (e.g., 'fall-tour-1997', 'summer-tour-2023'). Omit for random tour." },
         random: { type: "boolean", description: "Set to true for a random tour (ignores slug)" }
-      },
-      required: []
+      }
     )
 
     class << self

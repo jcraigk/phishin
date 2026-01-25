@@ -10,8 +10,7 @@ module Tools
       properties: {
         slug: { type: "string", description: "Venue slug (e.g., 'madison-square-garden'). Omit for random venue." },
         random: { type: "boolean", description: "Set to true for a random venue (ignores slug)" }
-      },
-      required: []
+      }
     )
 
     class << self

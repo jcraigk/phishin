@@ -7,8 +7,7 @@ module Tools
     annotations(read_only_hint: true, destructive_hint: false, open_world_hint: false)
 
     input_schema(
-      properties: {},
-      required: []
+      properties: {}
     )
 
     class << self

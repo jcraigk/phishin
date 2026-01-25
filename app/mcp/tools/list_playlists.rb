@@ -19,8 +19,7 @@ module Tools
           description: "Sort order: asc or desc (default)"
         },
         limit: { type: "integer", description: "Max playlists to return (default: 50)" }
-      },
-      required: []
+      }
     )
 
     class << self

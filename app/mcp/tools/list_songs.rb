@@ -28,8 +28,7 @@ module Tools
           description: "Minimum number of performances (filters out rarely played songs)"
         },
         limit: { type: "integer", description: "Max songs to return (default: 50)" }
-      },
-      required: []
+      }
     )
 
     class << self

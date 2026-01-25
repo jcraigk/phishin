@@ -11,7 +11,7 @@ plugins:
 
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 4.0.0
+  TargetRubyVersion: 4.0.1
 
 FactoryBot/ExcessiveCreateList:
   Enabled: false

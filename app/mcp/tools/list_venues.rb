@@ -22,8 +22,7 @@ module Tools
           description: "Sort order: asc (default for name) or desc (default for shows_count)"
         },
         limit: { type: "integer", description: "Max venues to return (default: 50)" }
-      },
-      required: []
+      }
     )
 
     class << self

@@ -9,8 +9,7 @@ module Tools
     input_schema(
       properties: {
         slug: { type: "string", description: "Playlist slug (omit for random playlist)" }
-      },
-      required: []
+      }
     )
 
     def self.openai_meta

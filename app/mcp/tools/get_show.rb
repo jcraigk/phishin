@@ -10,8 +10,7 @@ module Tools
       properties: {
         date: { type: "string", description: "Show date (YYYY-MM-DD). Omit for random show." },
         random: { type: "boolean", description: "Set to true for a random show (ignores date)" }
-      },
-      required: []
+      }
     )
 
     def self.openai_meta

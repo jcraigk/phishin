@@ -10,8 +10,7 @@ module Tools
       properties: {
         slug: { type: "string", description: "Track slug: 'YYYY-MM-DD/track-slug' (e.g., '1997-11-22/tweezer'). Omit for random." },
         random: { type: "boolean", description: "Set to true for a random audio track" }
-      },
-      required: []
+      }
     )
 
     def self.openai_meta
