@@ -1,12 +1,10 @@
 require "sidekiq/web"
 
 Rails.application.routes.draw do
+  # Health check
   get "/health", to: proc { [ 200, {}, [ "OK" ] ] }
-  get "/.well-known/openai-apps-challenge", to: proc { [ 200, {}, [ ENV.fetch("OPENAI_VERIFICATION_TOKEN", "") ] ] }
 
-  post "/mcp", to: "mcp#handle"
-  post "/mcp/openai", to: "mcp#handle"
-
+  # Sidekiq admin
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
     ActiveSupport::SecurityUtils.secure_compare(
       ::Digest::SHA256.hexdigest(username), ::Digest::SHA256.hexdigest(ENV["SIDEKIQ_USERNAME"])
@@ -16,16 +14,28 @@ Rails.application.routes.draw do
   end
   mount Sidekiq::Web, at: "/sidekiq"
 
+  # RSS
   get "feeds/rss", to: "feeds#rss", format: "xml", as: :rss_feed
 
+  # MCP / AI Connectors
+  post "/mcp(/:client)",
+    to: "mcp#handle",
+    defaults: { client: "default" },
+    constraints: { client: Regexp.union((Server::VALID_CLIENTS - [ :default ]).map(&:to_s)) }
+  get "/.well-known/openai-apps-challenge",
+    to: proc { [ 200, {}, [ ENV.fetch("OPENAI_VERIFICATION_TOKEN", "") ] ] }
+
+  # Authentication
   namespace :oauth do
     get "callback/:provider", to: "sorcery#callback"
     get ":provider", to: "sorcery#login", as: :at_provider
   end
 
+  # File attachments / downloads
   get "/download-track/:id" => "downloads#download_track"
   get "/blob/:key" => "downloads#download_blob"
 
+  # API v1
   namespace :api do
     namespace :v1 do
       resources :eras,      only: %i[index show]
@@ -45,11 +55,10 @@ Rails.application.routes.draw do
     end
   end
 
+  # API v2
   mount ApiV2::Api => "/api/v2"
 
+  # React harness
   root to: "application#application"
   get "/(:path(/:arg))", to: "application#application"
-
-  # Test env: disable content file requests
-  get "/audio/*mp3", to: "static_pages#faq" if Rails.env.test?
 end

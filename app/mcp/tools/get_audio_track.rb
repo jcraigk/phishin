@@ -24,6 +24,15 @@ module Tools
       }
     end
 
+    def self.anthropic_meta
+      {
+        ui: {
+          resourceUri: Server.widget_uri("get_audio_track"),
+          visibility: %w[app model]
+        }
+      }
+    end
+
     class << self
       def call(slug: nil, random: false)
         track = if random || slug.nil?
@@ -34,7 +43,7 @@ module Tools
         return error_response("Track not found") unless track
 
         result = build_track_data(track)
-        structured = mcp_client == :openai ? build_widget_data(track) : nil
+        structured = Server::WIDGET_CLIENTS.include?(mcp_client) ? build_widget_data(track) : nil
 
         MCP::Tool::Response.new(
           [ { type: "text", text: result.to_json } ],

@@ -112,5 +112,13 @@ class WidgetCompiler
       path = Rails.root.join("node_modules", "darkreader", "darkreader.js")
       File.read(path)
     end
+
+    def mcp_apps_sdk_script
+      path = Rails.root.join("public", "mcp-widgets", "mcp-apps-sdk.js")
+      unless path.exist?
+        raise "MCP Apps SDK not found. Run: node scripts/bundle-mcp-apps-sdk.mjs"
+      end
+      File.read(path)
+    end
   end
 end

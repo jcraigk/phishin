@@ -24,6 +24,15 @@ module Tools
       }
     end
 
+    def self.anthropic_meta
+      {
+        ui: {
+          resourceUri: Server.widget_uri("get_show"),
+          visibility: %w[app model]
+        }
+      }
+    end
+
     class << self
       def call(date: nil, random: false)
         show = if random || date.nil?
@@ -34,7 +43,7 @@ module Tools
         return error_response("Show not found") unless show
 
         result = build_show_data(show)
-        structured = mcp_client == :openai ? build_widget_data(show) : nil
+        structured = Server::WIDGET_CLIENTS.include?(mcp_client) ? build_widget_data(show) : nil
 
         MCP::Tool::Response.new(
           [ { type: "text", text: result.to_json } ],

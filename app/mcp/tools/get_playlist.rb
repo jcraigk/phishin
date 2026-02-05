@@ -23,6 +23,15 @@ module Tools
       }
     end
 
+    def self.anthropic_meta
+      {
+        ui: {
+          resourceUri: Server.widget_uri("get_playlist"),
+          visibility: %w[app model]
+        }
+      }
+    end
+
     class << self
       def call(slug: nil)
         playlist = if slug
@@ -33,7 +42,7 @@ module Tools
         return error_response("Playlist not found") unless playlist
 
         result = fetch_playlist_data(playlist, cache: slug.present?)
-        structured = mcp_client == :openai ? build_widget_data(playlist) : nil
+        structured = Server::WIDGET_CLIENTS.include?(mcp_client) ? build_widget_data(playlist) : nil
 
         MCP::Tool::Response.new(
           [ { type: "text", text: result.to_json } ],

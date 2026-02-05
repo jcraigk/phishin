@@ -1,3 +1,49 @@
+<%= mcp_apps_sdk_script %>
+
+// MCP Apps SDK initialization
+// Auto-detects OpenAI vs Anthropic environments
+(function() {
+  if (typeof McpExtApps === 'undefined') {
+    console.warn('MCP Apps SDK not loaded, falling back to polling');
+    return;
+  }
+
+  const app = new McpExtApps.App({ name: 'Phish.in Widget', version: '1.0.0' });
+  window._mcpApp = app;
+
+  // Handle tool result - provides widget data
+  app.ontoolresult = (result) => {
+    window._widgetData = result.structuredContent || result.content?.[0]?.text;
+    // Trigger any waiting promises
+    if (window._dataResolver) {
+      window._dataResolver(window._widgetData);
+      window._dataResolver = null;
+    }
+  };
+
+  // Handle host context changes (theme, etc.)
+  app.onhostcontextchanged = (ctx) => {
+    if (ctx.theme) {
+      window._hostTheme = ctx.theme;
+      // Re-apply theme if DarkReader is already initialized
+      if (typeof window._applyHostTheme === 'function') {
+        window._applyHostTheme(ctx.theme);
+      }
+    }
+  };
+
+  // Connect to host (auto-detects OpenAI vs MCP)
+  app.connect().then(() => {
+    // Check initial host context for theme
+    const ctx = app.getHostContext?.();
+    if (ctx?.theme) {
+      window._hostTheme = ctx.theme;
+    }
+  }).catch((err) => {
+    console.warn('MCP App connection failed:', err);
+  });
+})();
+
 function formatDate(dateString) {
   if (!dateString) return "";
   const datePart = dateString.slice(0, 10);
@@ -121,7 +167,9 @@ const MAX_POLL_ATTEMPTS = 100;
 const POLL_INTERVAL_MS = 100;
 
 function getData() {
+  // First check if SDK has provided data
   if (window._widgetData) return window._widgetData;
+  // Fall back to OpenAI's window.openai for legacy support
   const oa = window.openai || {};
   return oa.toolOutput?.structuredContent 
       || oa.toolOutput 
@@ -135,12 +183,37 @@ function sleep(ms) {
 }
 
 async function waitForData(isComplete) {
-  for (let i = 0; i < MAX_POLL_ATTEMPTS; i++) {
-    const data = getData();
-    if (isComplete(data)) return data;
-    await sleep(POLL_INTERVAL_MS);
-  }
-  return getData();
+  // If data already available, return immediately
+  const existingData = getData();
+  if (isComplete(existingData)) return existingData;
+  
+  // Create a promise that resolves when SDK delivers data
+  const sdkPromise = new Promise((resolve) => {
+    window._dataResolver = resolve;
+    // Timeout after polling period to avoid hanging
+    setTimeout(() => {
+      if (window._dataResolver === resolve) {
+        window._dataResolver = null;
+        resolve(null);
+      }
+    }, MAX_POLL_ATTEMPTS * POLL_INTERVAL_MS);
+  });
+  
+  // Also poll for OpenAI's window.openai as fallback
+  const pollingPromise = (async () => {
+    for (let i = 0; i < MAX_POLL_ATTEMPTS; i++) {
+      const data = getData();
+      if (isComplete(data)) return data;
+      await sleep(POLL_INTERVAL_MS);
+    }
+    return getData();
+  })();
+  
+  // Race: whichever delivers data first
+  return Promise.race([
+    sdkPromise.then((data) => isComplete(data) ? data : pollingPromise),
+    pollingPromise
+  ]);
 }
 
 function setupBackgroundBlur(imageUrl, imgElementId = 'cover-img', blurElementId = 'bg-blur') {
@@ -378,12 +451,23 @@ const DARK_READER_CONFIG = {
 };
 
 function getColorScheme() {
+  // Check SDK-provided theme first
+  if (window._hostTheme) return window._hostTheme;
+  
+  // Check MCP App context
+  if (window._mcpApp?.getHostContext) {
+    const ctx = window._mcpApp.getHostContext();
+    if (ctx?.theme) return ctx.theme;
+  }
+  
+  // Fall back to OpenAI's window.openai
   const oa = window.openai || {};
   const scheme = oa.appearance?.colorScheme
     || oa.view?.appearance?.colorScheme
     || oa.theme?.colorScheme;
   if (scheme) return scheme;
 
+  // Fall back to system preference
   if (window.matchMedia?.('(prefers-color-scheme: dark)').matches) {
     return 'dark';
   }
@@ -403,11 +487,17 @@ function initDarkMode() {
     }
   };
 
+  // Expose for MCP Apps SDK host context changes
+  window._applyHostTheme = applyTheme;
+
   applyTheme(getColorScheme());
 
   const mediaQuery = window.matchMedia?.('(prefers-color-scheme: dark)');
   if (mediaQuery?.addEventListener) {
     mediaQuery.addEventListener('change', (e) => {
+      // Don't override if host explicitly set a theme
+      if (window._hostTheme) return;
+      
       const oa = window.openai || {};
       const explicitScheme = oa.appearance?.colorScheme
         || oa.view?.appearance?.colorScheme

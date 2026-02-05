@@ -15,7 +15,8 @@ class Server
     }
   }.freeze
 
-  VALID_CLIENTS = %i[default openai].freeze
+  VALID_CLIENTS = %i[default openai anthropic].freeze
+  WIDGET_CLIENTS = %i[openai anthropic].freeze
 
   class << self
     def for_client(client)
@@ -34,7 +35,7 @@ class Server
 
     def build_server(client)
       tools = ToolBuilder.build_tools(client:)
-      resources = client == :openai ? widget_resources : []
+      resources = WIDGET_CLIENTS.include?(client) ? widget_resources(client:) : []
 
       server = MCP::Server.new(
         name: "phishin",
@@ -44,9 +45,9 @@ class Server
         configuration: MCP::Configuration.new(protocol_version: "2025-03-26")
       )
 
-      if client == :openai
+      if WIDGET_CLIENTS.include?(client)
         server.resources_read_handler do |params|
-          read_widget(params[:uri])
+          read_widget(params[:uri], client:)
         end
       end
 
@@ -54,7 +55,7 @@ class Server
     end
   end
 
-  def self.widget_resources
+  def self.widget_resources(client:)
     return [] unless Dir.exist?(WIDGETS_DIR)
 
     Dir.glob(WIDGETS_DIR.join("*.html").to_s).map do |file_path|
@@ -65,9 +66,13 @@ class Server
         uri: widget_uri_for_file(filename),
         name: "#{widget_name} Widget",
         description: "Interactive #{widget_name.downcase} display",
-        mime_type: "text/html+skybridge"
+        mime_type: widget_mime_type(client:)
       )
     end
+  end
+
+  def self.widget_mime_type(client:)
+    client == :openai ? "text/html+skybridge" : "text/html;profile=mcp-app"
   end
 
   def self.widget_uri(tool_name)
@@ -101,7 +106,7 @@ class Server
     csp
   end
 
-  def self.read_widget(uri)
+  def self.read_widget(uri, client:)
     return [] unless uri.to_s.start_with?("ui://widget/")
 
     uri_without_scheme = uri.to_s.sub("ui://widget/", "")
@@ -121,13 +126,41 @@ class Server
 
     [ {
       uri:,
-      mimeType: "text/html+skybridge",
+      mimeType: widget_mime_type(client:),
       text:,
-      _meta: {
+      _meta: widget_meta(client:)
+    } ]
+  end
+
+  def self.widget_meta(client:)
+    case client
+    when :openai
+      {
         "openai/widgetDomain" => WIDGET_CONFIG[:domain],
         "openai/widgetCSP" => widget_csp
       }
-    } ]
+    else
+      {
+        ui: {
+          domain: anthropic_widget_domain,
+          csp: widget_csp_mcp
+        }
+      }
+    end
+  end
+
+  def self.anthropic_widget_domain
+    endpoint_url = "#{App.base_url}/mcp/anthropic"
+    hash = Digest::SHA256.hexdigest(endpoint_url)[0, 32]
+    "#{hash}.claudemcpcontent.com"
+  end
+
+  def self.widget_csp_mcp
+    csp = widget_csp
+    {
+      resourceDomains: csp[:resource_domains],
+      connectDomains: csp[:connect_domains]
+    }
   end
 
   def self.compile_widget_if_stale(widget_name)

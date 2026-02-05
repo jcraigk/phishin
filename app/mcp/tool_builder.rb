@@ -6,7 +6,7 @@ module ToolBuilder
   def self.build_tool(base_class, client:)
     tool_name_str = base_class.name_value
     desc = Descriptions.for(tool_name_str, client)
-    tool_meta = client == :openai ? base_class.try(:openai_meta) : nil
+    tool_meta = base_class.try(:"#{client}_meta")
     base_schema = base_class.try(:input_schema_value)
     base_annotations = base_class.try(:annotations_value)
 
