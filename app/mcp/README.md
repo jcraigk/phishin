@@ -2,7 +2,9 @@
 
 [Phish.in](https://phish.in) is a community archive of live Phish recordings. This MCP server provides read-only access to the full archive including shows, songs, setlists, venues, tours, tags, playlists, audio streaming, and statistical analysis spanning every era of the band (1983-present).
 
-## Server Configuration
+## Setup
+
+### Server Configuration
 
 | Field | Value |
 |---|---|
@@ -12,6 +14,32 @@
 | **Session** | Stateless |
 
 All tools are **read-only** and **non-destructive**.
+
+### Client Configuration
+
+To connect to the Phish.in MCP server, add the following to your MCP client configuration:
+
+```json
+{
+  "mcpServers": {
+    "phishin": {
+      "url": "https://phish.in/mcp"
+    }
+  }
+}
+```
+
+No API key or authentication is needed. The server accepts standard MCP JSON-RPC 2.0 requests over HTTP POST.
+
+### Client-Specific Endpoints
+
+| Client | Endpoint |
+|---|---|
+| Default | `https://phish.in/mcp` |
+| OpenAI | `https://phish.in/mcp/openai` |
+| Anthropic | `https://phish.in/mcp/anthropic` |
+
+The OpenAI and Anthropic endpoints include enhanced tool descriptions and interactive widget support (audio player, show cards, playlist cards).
 
 ---
 
@@ -226,6 +254,39 @@ Statistical analysis covering gaps (bustouts), transitions, set positions, geogr
 - **geographic** — Analyze geographic patterns. Requires `geo_type`. Use `state` with `never_played` to find songs unplayed in a state.
 - **co_occurrence** — Find songs that frequently appear in the same show as a given song. Requires `song_slug`.
 - **song_frequency** — Find most-played songs filtered by `year`, `venue_slug`, or `tour_slug`.
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+| Problem | Cause | Solution |
+|---|---|---|
+| Connection refused | Server unreachable | Verify the endpoint URL is `https://phish.in/mcp` (HTTPS required) |
+| Empty response for `list_shows` | Missing required filter | Provide at least one filter: `year`, `start_date`, `end_date`, `tour_slug`, or `venue_slug` |
+| No audio URL in `get_audio_track` response | Recording not yet digitized | Not all known performances have audio available; try a different track |
+| `search` returns error | Query too short or too long | Query must be between 2 and 200 characters |
+| `get_tag` returns error | Missing required params | Both `slug` and `type` are required |
+| Unexpected sort order | Default varies by tool | Check the tool's `sort_order` default — some default to `asc`, others to `desc` |
+| Slug not found | Incorrect slug format | Use `search` or the corresponding `list_*` tool to find the correct slug |
+
+### Slug Formats
+
+Slugs are URL-friendly identifiers used across most tools. Common formats:
+
+- **Songs**: lowercase hyphenated (e.g., `you-enjoy-myself`, `tweezer`)
+- **Venues**: lowercase hyphenated (e.g., `madison-square-garden`)
+- **Tours**: lowercase hyphenated with year (e.g., `fall-tour-1997`)
+- **Tracks**: `YYYY-MM-DD/song-slug` (e.g., `1997-11-22/tweezer`)
+- **Tags**: lowercase hyphenated (e.g., `jamcharts`, `costume`)
+
+Use the `search` tool to look up slugs if you're unsure of the exact format.
+
+### Getting Help
+
+- Browse the archive at [phish.in](https://phish.in)
+- Report issues at [github.com/jcraigk/phishin](https://github.com/jcraigk/phishin/issues)
 
 ---
 
