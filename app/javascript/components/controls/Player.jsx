@@ -12,7 +12,7 @@ import TrackInfo from "./TrackInfo";
 import ProgressBar from "./ProgressBar";
 import { useFeedback } from "../contexts/FeedbackContext";
 
-const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, openAppModal, shouldAutoplay, setShouldAutoplay }) => {
+const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, openAppModal, shouldAutoplay, setShouldAutoplay, onPlayingChange }) => {
   const location = useLocation();
   const [isPlayerCollapsed, setIsPlayerCollapsed] = useState(false);
   const [hasPlayedInitially, setHasPlayedInitially] = useState(false);
@@ -48,6 +48,10 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     canScrubForward,
     handleScrubberClick,
   } = useGaplessPlayer(activePlaylist, activeTrack, setActiveTrack, setNotice, setAlert, hasPlayedInitially ? null : initialStartTime, shouldAutoplay, setShouldAutoplay);
+
+  useEffect(() => {
+    if (onPlayingChange) onPlayingChange(isPlaying);
+  }, [isPlaying, onPlayingChange]);
 
   const togglePlayerPosition = () => {
     setIsPlayerCollapsed(!isPlayerCollapsed);

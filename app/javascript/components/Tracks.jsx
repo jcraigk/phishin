@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useOutletContext, Link } from "react-router-dom";
 import { formatDurationTrack, formatDurationShow, formatDate, truncate } from "./helpers/utils";
 import TagBadges from "./controls/TagBadges";
@@ -10,8 +10,32 @@ import CoverArt from "./CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faScissors } from "@fortawesome/free-solid-svg-icons";
 
+const SHIMMER_GRADIENT = 'linear-gradient(90deg, transparent 0%, transparent 20%, rgba(171, 217, 255, 0.45) 45%, rgba(171, 217, 255, 0.45) 55%, transparent 80%, transparent 100%)';
+const FOCUS_BOX_SHADOW = 'inset 0 -3px 0 #ABD9FF';
+
 const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, highlight, trackRefs, trackSlug }) => {
-  const { playTrack, activeTrack, setCustomPlaylist  } = useOutletContext();
+  const { playTrack, activeTrack, setCustomPlaylist, isPlaying } = useOutletContext();
+  const [isDarkMode, setIsDarkMode] = useState(
+    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches
+  );
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e) => setIsDarkMode(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  // Override DarkReader's color modifications, matching the play button's approach
+  useEffect(() => {
+    if (!isDarkMode) return;
+    document.querySelectorAll('.track-shimmer').forEach(el => {
+      el.style.setProperty('background', SHIMMER_GRADIENT, 'important');
+    });
+    document.querySelectorAll('.track-item.focus').forEach(el => {
+      el.style.setProperty('box-shadow', FOCUS_BOX_SHADOW, 'important');
+    });
+  }, [isDarkMode, activeTrack?.id, trackSlug, isPlaying]);
 
   const handleTrackClick = (track) => {
     if (track.audio_status === 'missing') return;
@@ -49,6 +73,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
     const { actualDuration, isExcerpt } = calculateTrackDetails(track);
     const hasMissingAudio = track.audio_status === 'missing';
     const shouldFocus = viewStyle === "show" && track.slug === trackSlug;
+    const isActive = track.id === activeTrack?.id;
 
     return (
       <li
@@ -56,13 +81,14 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
         className={[
           "list-item",
           viewStyle === "show" ? "track-item" : "",
-          track.id === activeTrack?.id ? "active-item" : "",
+          isActive ? "active-item" : "",
           shouldFocus ? "focus" : "",
           hasMissingAudio ? "no-audio" : ""
         ].filter(Boolean).join(" ")}
         onClick={() => handleTrackClick(track)}
         ref={trackRefs ? (el) => (trackRefs.current[track.position - 1] = el) : null}
       >
+        {isActive && isPlaying && <span className="track-shimmer" />}
         <div className="main-row">
           {numbering && <span className="leftside-numbering">#{index + 1}</span>}
           <span className="leftside-primary">
