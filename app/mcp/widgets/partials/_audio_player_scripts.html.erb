@@ -86,6 +86,7 @@ function hidePlayer() {
   if (coverArtContainer) coverArtContainer.classList.remove('clickable');
   
   document.querySelectorAll('.track').forEach(el => el.classList.remove('active-item'));
+  removeAllShimmers();
   
   updatePlayPauseIcon();
 }
@@ -144,6 +145,8 @@ function initAudioPlayer(options = {}) {
   gaplessPlayer.onplay = () => {
     isPlaying = true;
     document.querySelector('.card')?.classList.add('audio-playing');
+    const activeEl = document.querySelector('.track.active-item');
+    if (activeEl) addShimmer(activeEl);
     updatePlayPauseIcon();
     updatePlayerColors();
     updateMediaSessionPlaybackState();
@@ -152,6 +155,7 @@ function initAudioPlayer(options = {}) {
   gaplessPlayer.onpause = () => {
     isPlaying = false;
     document.querySelector('.card')?.classList.remove('audio-playing');
+    removeAllShimmers();
     updatePlayPauseIcon();
     updatePlayerColors();
     updateMediaSessionPlaybackState();
@@ -161,6 +165,7 @@ function initAudioPlayer(options = {}) {
     isPlaying = false;
     isLoading = false;
     document.querySelector('.card')?.classList.remove('audio-playing');
+    removeAllShimmers();
     updatePlayPauseIcon();
     updatePlayerColors();
   };
@@ -195,6 +200,7 @@ function initAudioPlayer(options = {}) {
     isPlaying = false;
     isLoading = false;
     document.querySelector('.card')?.classList.remove('audio-playing');
+    removeAllShimmers();
     updatePlayPauseIcon();
   };
 
@@ -315,11 +321,25 @@ function updateWaveformImage(waveformUrl) {
 
 function highlightPlayingTrack(index) {
   document.querySelectorAll('.track').forEach(el => el.classList.remove('active-item'));
+  removeAllShimmers();
   const trackEl = document.querySelector(`.track[data-index="${index}"]`);
   if (trackEl) {
     trackEl.classList.add('active-item');
+    if (isPlaying) addShimmer(trackEl);
     trackEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
+}
+
+function addShimmer(trackEl) {
+  if (trackEl.querySelector('.track-shimmer')) return;
+  const shimmer = document.createElement('span');
+  shimmer.className = 'track-shimmer';
+  shimmer.style.setProperty('background', 'linear-gradient(90deg, transparent 0%, transparent 20%, rgba(171, 217, 255, 0.45) 45%, rgba(171, 217, 255, 0.45) 55%, transparent 80%, transparent 100%)', 'important');
+  trackEl.insertBefore(shimmer, trackEl.firstChild);
+}
+
+function removeAllShimmers() {
+  document.querySelectorAll('.track-shimmer').forEach(el => el.remove());
 }
 
 function togglePlayPause() {
