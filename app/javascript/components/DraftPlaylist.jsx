@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";
 import { formatDurationShow } from "./helpers/utils";

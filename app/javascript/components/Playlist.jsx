@@ -12,7 +12,7 @@ export const playlistLoader = async ({ params }) => {
 };
 
 import React, { useState, useEffect } from "react";
-import { useLoaderData, useOutletContext, useNavigate } from "react-router-dom";
+import { useLoaderData, useOutletContext, useNavigate } from "react-router";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";

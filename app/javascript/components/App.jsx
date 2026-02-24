@@ -1,6 +1,6 @@
 import React from "react";
 import { HelmetProvider } from "react-helmet-async";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router";
 import routes from "./routes/routes";
 import { FeedbackProvider } from "./contexts/FeedbackContext";
 import useDarkMode from "./hooks/useDarkMode";
@@ -8,17 +8,13 @@ import useDarkMode from "./hooks/useDarkMode";
 const App = (props) => {
   useDarkMode();
   const helmetContext = {};
-  const router = createBrowserRouter(routes(props), {
-    future: {
-      v7_relativeSplatPath: true,
-    },
-  });
+  const router = createBrowserRouter(routes(props));
 
   return (
     <HelmetProvider context={helmetContext}>
       <FeedbackProvider>
         <div className="root-layout">
-          <RouterProvider router={router} future={{ v7_startTransition: true }} />
+          <RouterProvider router={router} />
         </div>
       </FeedbackProvider>
     </HelmetProvider>

@@ -22,7 +22,7 @@ export const playlistIndexLoader = async ({ request }) => {
 
 
 import React, { useState } from "react";
-import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
+import { useLoaderData, useNavigate, useOutletContext } from "react-router";
 import { Helmet } from "react-helmet-async";
 import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";

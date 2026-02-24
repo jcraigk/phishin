@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import PageWrapper from "./PageWrapper";
 import { useFeedback } from "../contexts/FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

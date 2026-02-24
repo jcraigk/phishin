@@ -1,5 +1,5 @@
 import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router";
 import EraShows from "../EraShows";
 import Show from "../Show";
 import ErrorPage from "../pages/ErrorPage";

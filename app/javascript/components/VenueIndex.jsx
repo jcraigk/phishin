@@ -29,7 +29,7 @@ export const venueIndexLoader = async ({ request }) => {
 };
 
 import React, { useState } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router";
 import { Helmet } from "react-helmet-async";
 import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";

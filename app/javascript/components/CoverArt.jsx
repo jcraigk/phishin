@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 const CoverArt = ({ coverArtUrls, albumCoverUrl, openAppModal, closeAppModal, size = "small", css, selectedOption }) => {
   const [isLoaded, setIsLoaded] = useState(false);

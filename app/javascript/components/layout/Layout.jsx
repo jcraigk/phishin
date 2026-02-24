@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Outlet, useNavigate, useNavigation, ScrollRestoration } from "react-router-dom";
+import { Outlet, useNavigate, useNavigation, ScrollRestoration } from "react-router";
 import Navbar from "./Navbar";
 import Loader from "../controls/Loader";
 import Player from "../controls/Player";

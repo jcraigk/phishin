@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useOutletContext } from "react-router-dom";
+import { useLocation, useOutletContext } from "react-router";
 import { Helmet } from "react-helmet-async";
 import MapView from "./MapView";
 import LayoutWrapper from "./layout/LayoutWrapper";

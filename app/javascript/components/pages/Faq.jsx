@@ -1,6 +1,6 @@
 import React from "react";
 import PageWrapper from "./PageWrapper";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import MobileApps from "./MobileApps";
 import DiscordButton from "./DiscordButton";
 import GitHubButton from "./GitHubButton";

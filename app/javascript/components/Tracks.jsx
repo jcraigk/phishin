@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useOutletContext, Link } from "react-router-dom";
+import { useOutletContext, Link } from "react-router";
 import { formatDurationTrack, formatDurationShow, formatDate, truncate } from "./helpers/utils";
 import TagBadges from "./controls/TagBadges";
 import HighlightedText from "./controls/HighlightedText";

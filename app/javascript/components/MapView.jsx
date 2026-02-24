@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { formatNumber } from "./helpers/utils";
 import Loader from "./controls/Loader";
 import PhoneTiltSuggestion from "./PhoneTiltSuggestion";

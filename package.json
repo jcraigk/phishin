@@ -34,7 +34,7 @@
     "react-modal": "^3.16.1",
     "react-on-rails": "16.2.1",
     "react-paginate": "^8.2.0",
-    "react-router-dom": "^6.26.2",
+    "react-router": "^7.1.1",
     "react-spinners": "^0.14.1",
     "react-tooltip": "^5.28.0",
     "sass": "^1.68.0",

@@ -51,7 +51,7 @@ export const erasLoader = async () => {
 };
 
 import React from "react";
-import { Link, useLoaderData, useOutletContext } from "react-router-dom";
+import { Link, useLoaderData, useOutletContext } from "react-router";
 import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import MobileApps from "./pages/MobileApps";

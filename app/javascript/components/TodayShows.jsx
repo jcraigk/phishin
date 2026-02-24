@@ -25,7 +25,7 @@ export const todayShowsLoader = async ({ request }) => {
 };
 
 import React, { useRef } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";

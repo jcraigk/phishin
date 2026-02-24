@@ -12,7 +12,7 @@ export const topShowsLoader = async () => {
 };
 
 import React from "react";
-import { useLoaderData, Link } from "react-router-dom";
+import { useLoaderData, Link } from "react-router";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";

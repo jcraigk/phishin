@@ -3,6 +3,7 @@
 .env
 .overmind.sock
 .yarn-integrity
+/.claude
 /.vscode
 /.yarn
 /coverage

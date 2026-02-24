@@ -30,7 +30,7 @@ export const tagTracksLoader = async ({ params, request }) => {
 };
 
 import React from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";

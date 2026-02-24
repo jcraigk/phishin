@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router";
 import { authFetch } from "../helpers/utils";
 import { useFeedback } from "../contexts/FeedbackContext";
 import PageWrapper from "./PageWrapper";

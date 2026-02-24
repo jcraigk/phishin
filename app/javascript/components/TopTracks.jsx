@@ -12,7 +12,7 @@ export const topTracksLoader = async () => {
 };
 
 import React from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData } from "react-router";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Tracks from "./Tracks";

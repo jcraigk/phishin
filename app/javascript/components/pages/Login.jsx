@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useOutletContext } from "react-router-dom";
+import { Link, useOutletContext } from "react-router";
 import PageWrapper from "./PageWrapper";
 import { useFeedback } from "../contexts/FeedbackContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

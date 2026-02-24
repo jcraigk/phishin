@@ -1,6 +1,6 @@
 import { authFetch } from "./helpers/utils";
 import React, { useEffect, useState } from "react";
-import { useLoaderData, Link, useOutletContext } from "react-router-dom";
+import { useLoaderData, Link, useOutletContext } from "react-router";
 import { Helmet } from "react-helmet-async";
 import LayoutWrapper from "./layout/LayoutWrapper";
 import Shows from "./Shows";

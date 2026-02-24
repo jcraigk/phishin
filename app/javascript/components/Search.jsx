@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import { authFetch } from "./helpers/utils";
 import SearchResults from "./SearchResults";
 import LayoutWrapper from "./layout/LayoutWrapper";
