@@ -84,6 +84,18 @@ class WidgetCompiler
       "{{WIDGET_ASSET_HOST}}"
     end
 
+    def app_name_placeholder
+      "{{MCP_APP_NAME}}"
+    end
+
+    def logo_full_placeholder
+      "{{MCP_LOGO_FULL}}"
+    end
+
+    def logo_square_placeholder
+      "{{MCP_LOGO_SQUARE}}"
+    end
+
     def gapless5_script
       path = Rails.root.join("node_modules", "@regosen", "gapless-5", "gapless5.js")
       script = File.read(path)

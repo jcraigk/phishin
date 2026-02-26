@@ -1,4 +1,4 @@
-<% @title = "Phish.in Playlist" -%>
+<% @title = "#{app_name_placeholder} Playlist" -%>
 <%= partial("head") %>
   <style>
 <%= partial("base_styles") %>
@@ -244,7 +244,7 @@
 <div id="root">
   <div class="loader-container">
     <div class="loader-logo-wrapper">
-      <img src="<%= asset_host_placeholder %>/mcp-widgets/images/logo-full.png" alt="Phish.in" class="loader-logo" />
+      <img src="<%= asset_host_placeholder %>/mcp-widgets/images/<%= logo_full_placeholder %>" alt="<%= app_name_placeholder %>" class="loader-logo" />
     </div>
   </div>
 </div>
@@ -365,8 +365,8 @@
             <div class="card-content">
               <div class="card-header playlist-header">
                 <div class="logo-container">
-                  <a href="${escapeHtml(playlistUrl)}" target="_blank" rel="noopener" class="playlist-logo-link" title="View on Phish.in">
-                    <img src="<%= asset_host_placeholder %>/mcp-widgets/images/logo-square.png" alt="Phish.in" class="playlist-logo" id="logo-img" />
+                  <a href="${escapeHtml(playlistUrl)}" target="_blank" rel="noopener" class="playlist-logo-link" title="View on <%= app_name_placeholder %>">
+                    <img src="<%= asset_host_placeholder %>/mcp-widgets/images/<%= logo_square_placeholder %>" alt="<%= app_name_placeholder %>" class="playlist-logo" id="logo-img" />
                   </a>
                   ${hasAudio ? `<button class="play-button" id="header-play-btn" title="Play playlist">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>

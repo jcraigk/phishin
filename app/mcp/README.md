@@ -2,6 +2,8 @@
 
 [Phish.in](https://phish.in) is a community archive of live Phish recordings. This MCP server provides read-only access to the full archive including shows, songs, setlists, venues, tours, tags, playlists, audio streaming, and statistical analysis spanning every era of the band (1983-present).
 
+> **Note:** In the ChatGPT GPT Store, this app is listed as **Subtle Sounds** to avoid trademark concerns with the band name. The underlying MCP server and all functionality remain the same.
+
 ## Setup
 
 ### Server Configuration

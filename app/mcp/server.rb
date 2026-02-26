@@ -1,6 +1,22 @@
 class Server
   WIDGETS_DIR = Rails.root.join("public", "mcp-widgets")
   WIDGET_ASSET_HOST_PLACEHOLDER = "{{WIDGET_ASSET_HOST}}"
+  APP_NAME_PLACEHOLDER = "{{MCP_APP_NAME}}"
+  LOGO_FULL_PLACEHOLDER = "{{MCP_LOGO_FULL}}"
+  LOGO_SQUARE_PLACEHOLDER = "{{MCP_LOGO_SQUARE}}"
+
+  CLIENT_BRANDING = {
+    openai: {
+      app_name: -> { App.app_name_mcp },
+      logo_full: "logo-full-mcp.png",
+      logo_square: "logo-square-mcp.png"
+    },
+    default: {
+      app_name: -> { App.app_name },
+      logo_full: "logo-full.png",
+      logo_square: "logo-square.png"
+    }
+  }.freeze
 
   WIDGET_CONFIG = {
     domain: "phishin",
@@ -123,6 +139,11 @@ class Server
     text = File.read(file_path)
     asset_host = widget_asset_host
     text = text.gsub(WIDGET_ASSET_HOST_PLACEHOLDER, asset_host) if asset_host.present?
+
+    branding = CLIENT_BRANDING[client] || CLIENT_BRANDING[:default]
+    text = text.gsub(APP_NAME_PLACEHOLDER, branding[:app_name].call)
+    text = text.gsub(LOGO_FULL_PLACEHOLDER, branding[:logo_full])
+    text = text.gsub(LOGO_SQUARE_PLACEHOLDER, branding[:logo_square])
 
     [ {
       uri:,

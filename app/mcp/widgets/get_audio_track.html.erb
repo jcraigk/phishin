@@ -1,4 +1,4 @@
-<% @title = "Phish.in Track" -%>
+<% @title = "#{app_name_placeholder} Track" -%>
 <%= partial("head") %>
   <style>
 <%= partial("base_styles") %>
@@ -601,7 +601,7 @@
 <div id="root">
   <div class="loader-container">
     <div class="loader-logo-wrapper">
-      <img src="<%= asset_host_placeholder %>/mcp-widgets/images/logo-full.png" alt="Phish.in" class="loader-logo" />
+      <img src="<%= asset_host_placeholder %>/mcp-widgets/images/<%= logo_full_placeholder %>" alt="<%= app_name_placeholder %>" class="loader-logo" />
     </div>
   </div>
 </div>
@@ -1155,7 +1155,7 @@
         return `
           <div class="loader-container">
             <div class="loader-logo-wrapper">
-              <img src="${baseUrl}/mcp-widgets/images/logo-full.png" alt="Phish.in" class="loader-logo" />
+              <img src="${baseUrl}/mcp-widgets/images/<%= logo_full_placeholder %>" alt="<%= app_name_placeholder %>" class="loader-logo" />
             </div>
           </div>
         `;

@@ -13,6 +13,7 @@ module Phishin
   class Application < Rails::Application
     # Custom app config
     config.app_name = "Phish.in"
+    config.app_name_mcp = "Subtle Sounds"
     config.web_host = ENV.fetch("WEB_HOST", nil)
     config.base_url =
       "#{config.web_host ? "https" : "http"}://#{config.web_host || "localhost:3000"}"
