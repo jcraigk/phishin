@@ -25,6 +25,14 @@ Rails.application.routes.draw do
   get "/.well-known/openai-apps-challenge",
     to: proc { [ 200, {}, [ ENV.fetch("OPENAI_VERIFICATION_TOKEN", "") ] ] }
 
+  # MCP OAuth passthrough (satisfies client-side OAuth discovery for no-auth servers)
+  get ".well-known/oauth-protected-resource/*path", to: "mcp_oauth#protected_resource"
+  get ".well-known/oauth-protected-resource", to: "mcp_oauth#protected_resource"
+  get ".well-known/oauth-authorization-server", to: "mcp_oauth#authorization_server"
+  get "authorize", to: "mcp_oauth#authorize"
+  post "register", to: "mcp_oauth#register"
+  post "token", to: "mcp_oauth#token"
+
   # Authentication
   namespace :oauth do
     get "callback/:provider", to: "sorcery#callback"
