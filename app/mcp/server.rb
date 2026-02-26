@@ -9,7 +9,7 @@ class Server
     openai: {
       app_name: -> { App.app_name_mcp },
       logo_full: "logo-full-mcp.png",
-      logo_square: "logo-square-mcp.png"
+      logo_square: "logo-square.png"
     },
     default: {
       app_name: -> { App.app_name },
