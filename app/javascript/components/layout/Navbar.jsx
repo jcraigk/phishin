@@ -46,7 +46,7 @@ const Navbar = ({ user, handleLogout }) => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchTerm) {
-      navigate(`/search?term=${searchTerm}`);
+      navigate(`/search?term=${encodeURIComponent(searchTerm)}`);
       closeMenus();
     }
   };

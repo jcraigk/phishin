@@ -20,7 +20,7 @@ const Search = () => {
     if (!submittedTerm) return null;
 
     setIsSearching(true);
-    const response = await authFetch(`/api/v2/search/${submittedTerm}?scope=${scope}&audio_status=${audioStatusFilter}`);
+    const response = await authFetch(`/api/v2/search/${encodeURIComponent(submittedTerm)}?scope=${scope}&audio_status=${audioStatusFilter}`);
     const data = await response.json();
     setIsSearching(false);
     return data;
@@ -46,7 +46,7 @@ const Search = () => {
 
     setIsSearching(true);
     try {
-      const response = await authFetch(`/api/v2/search/${searchTerm}?scope=${searchScope}&audio_status=complete_or_partial`);
+      const response = await authFetch(`/api/v2/search/${encodeURIComponent(searchTerm)}?scope=${searchScope}&audio_status=complete_or_partial`);
       const data = await response.json();
       setResults(data);
     } catch (error) {
