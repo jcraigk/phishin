@@ -14,16 +14,14 @@ const PrivacyPolicy = () => {
         (both powered by the Phish.in MCP server).
       </p>
 
-      <h3>Data We Collect</h3>
-
-      <h4>Website Accounts</h4>
+      <h3>Website Accounts</h3>
       <p>
         When you sign in via Google OAuth, we store your email address, display name, and
         authentication tokens solely to maintain your account. No other Google profile data is
         accessed or stored.
       </p>
 
-      <h4>MCP Integrations (Subtle Sounds / Phish.in Claude App)</h4>
+      <h3>MCP Integrations (Subtle Sounds / Phish.in Claude App)</h3>
       <p>
         The Subtle Sounds ChatGPT app and the Phish.in Claude app both communicate with our MCP
         server at phish.in/mcp. This server is stateless and requires no authentication. We do not
@@ -33,7 +31,7 @@ const PrivacyPolicy = () => {
         in real time and discarded immediately after the response is returned.
       </p>
 
-      <h4>Standard Server Logs</h4>
+      <h3>Standard Server Logs</h3>
       <p>
         Our web server may record standard HTTP access logs (IP address, request path, timestamp,
         user agent) for operational and security purposes. These logs are retained for up to 30
