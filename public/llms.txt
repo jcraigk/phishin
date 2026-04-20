@@ -1,0 +1,34 @@
+# Phish.in
+
+> An open archive for streaming live Phish audience recordings, with a web player, JSON API, and MCP server.
+
+Phish.in has hosted live Phish audio since 2013. All content is MP3, sourced from public taper uploads and complies with Phish's official taping policy. The site is open source and privately funded.
+
+## Web app
+
+- [phish.in](https://phish.in): browse shows, songs, venues, tours, and tags; gapless audio player with keyboard shortcuts; user accounts for creating, sharing, and liking playlists
+- [Native mobile apps](https://phish.in/faq): iOS and Android apps linked from the FAQ
+
+## API
+
+- [API v2 documentation (OpenAPI/Swagger)](https://phish.in/api/v2/swagger_doc): JSON API for shows, tracks, songs, venues, tours, and search; supports user signup, login, playlist creation, and likes via authenticated endpoints
+- [API documentation page](https://phish.in/api-docs): human-readable overview and endpoint reference
+
+## MCP (Model Context Protocol)
+
+- [MCP endpoint](https://phish.in/mcp): default streamable HTTP endpoint for MCP-compatible clients
+- [ChatGPT connector endpoint](https://phish.in/mcp/openai): use when adding Phish.in as a connector in ChatGPT
+- [Claude connector endpoint](https://phish.in/mcp/anthropic): use when adding Phish.in as a custom connector in Claude
+- [FAQ: connector install instructions](https://phish.in/faq): step-by-step setup for ChatGPT and Claude
+
+## Content
+
+- [Sitemap](https://phish.in/sitemap/sitemap.xml.gz): canonical list of show, song, venue, and tour URLs
+- [Missing Content Report](https://phish.in/missing-content): shows and tracks not yet in the archive
+- [Cover Art](https://phish.in/cover-art): generated album covers for every show
+- [FAQ](https://phish.in/faq): project background, audio sourcing, keyboard shortcuts, sharing
+
+## Source
+
+- [GitHub repository](https://github.com/jcraigk/phishin): Ruby on Rails, React, PostgreSQL; MIT licensed
+- [Discord](https://discord.gg/KZWFsNN): community discussion and development
