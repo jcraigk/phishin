@@ -23,20 +23,20 @@
   overflow: hidden;
 
   &.notice {
-    background-color: $bg-blue;
-    border: 1px solid $blue;
+    background-color: var(--bg-blue);
+    border: 1px solid var(--blue);
 
     .progress-bar {
-      background-color: $blue;
+      background-color: var(--blue);
     }
   }
 
   &.alert {
-    background-color: $bg-red;
-    border: 1px solid $alert-red;
+    background-color: var(--bg-red);
+    border: 1px solid var(--alert-red);
 
     .progress-bar {
-      background-color: $alert-red;
+      background-color: var(--alert-red);
     }
   }
 
@@ -45,7 +45,7 @@
     bottom: 0;
     left: 0;
     height: 4px;
-    background-color: $header-gray;
+    background-color: var(--header-gray);
     animation: progress 5s linear forwards;
     // margin: 0 -1rem -1rem -1rem;
   }
@@ -54,10 +54,10 @@
 .notification {
   font-size: 1.3rem;
   padding: 1rem;
-  border: 1px solid $inactive-gray;
+  border: 1px solid var(--inactive-gray);
 
   &.show-info {
-    background-color: $bg-blue;
+    background-color: var(--bg-blue);
     padding: 0.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
     border: none;
@@ -65,7 +65,7 @@
 
   &.playlist-info {
     font-size: 1rem;
-    background-color: white;
+    background-color: var(--card-bg);
     padding: 0.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   }

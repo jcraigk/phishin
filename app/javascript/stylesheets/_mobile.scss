@@ -28,7 +28,7 @@
       justify-content: center;
 
       * {
-        color: $dark-gray;
+        color: var(--dark-gray);
       }
 
       .mobile-show-date {
@@ -39,7 +39,7 @@
           color: inherit;
 
           &:hover {
-            color: $blue;
+            color: var(--blue);
           }
         }
       }

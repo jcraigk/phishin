@@ -15,6 +15,7 @@
 @use "~bulma/sass/helpers/float";
 @use "~bulma/sass/helpers/spacing";
 @use "~bulma/sass/themes/light";
+@use "~bulma/sass/themes/dark";
 @use "~bulma/sass/themes/setup";
 
 :root {
@@ -22,21 +23,55 @@
   @include setup.setup-theme;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    @include dark.dark-theme;
+  }
+}
+
 .dropdown-menu {
   z-index: 101; /* Higher than audio player */
 }
 
 .dropdown-content {
-  background-color: white;
+  background-color: var(--card-bg);
 }
 
 .input, .button {
-  border-color: $border-gray;
-  color: $text-gray;
+  border-color: var(--border-gray);
+  color: var(--text-gray);
 
   &:focus {
-    border-color: $control-gray;
+    border-color: var(--control-gray);
     box-shadow: none;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .button {
+    background-color: #515152;
+    color: #e0e0e0;
+
+    &:hover {
+      background-color: var(--blue);
+      border-color: var(--blue);
+      color: white;
+    }
+
+    &.is-active {
+      background-color: var(--blue);
+      border-color: var(--blue);
+      color: white;
+    }
+  }
+
+  .input, .textarea, .select select {
+    background-color: #2c2c2e;
+    color: #e0e0e0;
+
+    &:focus, &:active {
+      border-color: #6d6f71;
+    }
   }
 }
 
@@ -51,12 +86,12 @@
   }
 
   &:hover {
-    background-color: rgba($blue, 0.3) !important;
+    background-color: color-mix(in srgb, var(--blue) 30%, transparent) !important;
   }
 }
 
 select {
-  color: $title-gray !important;
+  color: var(--title-gray) !important;
 }
 
 .section {
@@ -70,7 +105,7 @@ select {
   max-width: 1200px !important;
 
   hr {
-    border: 1px solid $header-gray;
+    border: 1px solid var(--header-gray);
   }
 
   p {
@@ -82,14 +117,14 @@ select {
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    color: $title-gray;
+    color: var(--title-gray);
   }
 
   h2 {
     font-size: 1.7rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    color: $title-gray;
+    color: var(--title-gray);
   }
 
   h3 {
@@ -97,7 +132,7 @@ select {
     font-weight: 700;
     margin-bottom: 1.5rem;
     margin-top: 3rem !important;
-    color: $title-gray;
+    color: var(--title-gray);
 
     &::before {
       font-size: 1.1rem;

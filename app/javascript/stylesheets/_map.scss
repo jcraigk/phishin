@@ -16,7 +16,7 @@
 .show-badge {
   font-family: 'Open Sans Condensed', sans-serif;
   font-size: 1.2rem;
-  background-color: $text-gray;
+  background-color: var(--badge-bg);
   margin-right: 0.3rem;
   margin-bottom: 0.3rem;
   border-radius: 3px;
@@ -26,8 +26,8 @@
   border: none !important;
 
   &:hover {
-    background-color: $control-gray;
-    color: $text-gray;
+    background-color: var(--control-gray);
+    color: var(--text-gray);
   }
 }
 
@@ -35,8 +35,8 @@
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 50%;
-  background-color: rgba($blue, 0.15);
-  border: 2px solid $blue;
+  background-color: color-mix(in srgb, var(--blue) 15%, transparent);
+  border: 2px solid var(--blue);
 }
 
 .map-search-results {

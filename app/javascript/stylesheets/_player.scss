@@ -1,4 +1,3 @@
-@use "sass:color";
 @use "./variables" as *;
 
 main.with-player {
@@ -9,7 +8,7 @@ main.with-player {
   position: fixed;
   bottom: -160px;
   width: 100%;
-  background-color: $header-gray;
+  background-color: var(--header-gray);
   z-index: 100;
   box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.3);
   transition: bottom 0.5s ease;
@@ -19,11 +18,11 @@ main.with-player {
   }
 
   .chevron-button {
-    background-color: $control-gray;
+    background-color: var(--control-gray);
     border-radius: 50%;
     font-size: 1.3rem;
     padding: 0.3rem 0.7rem;
-    color: $text-gray;
+    color: var(--text-gray);
     box-shadow: 0 0px 10px rgba(0, 0, 0, 0.3);
     position: absolute;
     top: -20px;
@@ -94,7 +93,7 @@ main.with-player {
     text-overflow: ellipsis;
 
     a {
-      color: $title-gray;
+      color: var(--title-gray);
     }
   }
 
@@ -102,10 +101,10 @@ main.with-player {
     font-size: 1.2rem;
     position: relative;
     top: -0.2rem;
-    color: $title-gray;
+    color: var(--title-gray);
 
     a {
-      color: $title-gray !important;
+      color: var(--title-gray) !important;
     }
   }
 
@@ -123,11 +122,11 @@ main.with-player {
       margin: 0 0.6rem;
 
       &:hover {
-        color: $blue !important;
+        color: var(--blue) !important;
       }
 
       &:focus {
-        color: $text-gray !important;
+        color: var(--text-gray) !important;
         outline: none;
       }
 
@@ -140,7 +139,7 @@ main.with-player {
 
     .skip-btn {
       &:hover:not(:disabled) {
-        color: $text-gray !important;
+        color: var(--text-gray) !important;
       }
 
       &:disabled {
@@ -184,30 +183,30 @@ main.with-player {
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      background-color: $title-gray;
+      background-color: var(--play-pause-btn-bg);
       margin-top: -0.3rem !important;
       position: relative;
 
       &:hover:not(:disabled) {
         color: white !important;
-        background-color: color.adjust($title-gray, $lightness: -5%);
+        background-color: var(--play-pause-btn-bg-hover);
       }
 
       &:disabled {
         opacity: 0.7;
         cursor: not-allowed;
-        background-color: color.adjust($title-gray, $lightness: 10%);
+        background-color: var(--play-pause-btn-bg-disabled);
       }
 
       &.playing {
-        background-color: $blue;
+        background-color: var(--play-pause-btn-playing-bg);
 
         &:hover:not(:disabled) {
-          background-color: color.adjust($blue, $lightness: -5%);
+          background-color: var(--play-pause-btn-playing-bg-hover);
         }
 
         &:disabled {
-          background-color: color.adjust($blue, $lightness: 10%);
+          background-color: var(--play-pause-btn-playing-bg-disabled);
         }
       }
 

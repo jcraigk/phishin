@@ -1,7 +1,7 @@
 @use "./variables" as *;
 
 #navbar-background {
-  background-color: $navbar-gray;
+  background-color: var(--navbar-gray);
   width: 100%;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   z-index: 2;
@@ -14,16 +14,16 @@
   margin: 0 auto;
 
   .navbar-start, .navbar-end {
-    background-color: $navbar-gray;
+    background-color: var(--navbar-gray);
   }
 
   .navbar-burger {
-    color: $text-gray;
+    color: var(--text-gray);
   }
 
   .navbar-brand {
     padding-left: 0.5rem;
-    background-color: $navbar-gray;
+    background-color: var(--navbar-gray);
 
     a:hover {
       background-color: transparent;
@@ -35,7 +35,7 @@
     }
 
     a:focus-visible {
-      outline: 2px solid $control-gray;
+      outline: 2px solid var(--control-gray);
       background-color: transparent;
     }
 
@@ -49,25 +49,25 @@
   }
 
   .login-btn {
-    background-color: $control-gray;
+    background-color: var(--control-gray);
 
     &:hover {
-      background-color: $bg-gray;
+      background-color: var(--bg-gray);
 
       .icon {
-        color: $text-gray;
+        color: var(--text-gray);
       }
     }
 
     .icon {
-      color: $inactive-gray;
+      color: var(--inactive-gray);
       margin-right: 0.1rem !important;
     }
   }
 
   .dropdown-trigger button {
     width: 8rem;
-    background-color: $control-gray
+    background-color: var(--control-gray)
   }
 
   .dropdown-menu {
@@ -75,7 +75,7 @@
 
     .icon {
       margin-right: 0.5rem !important;
-      color: $text-gray;
+      color: var(--text-gray);
       width: 1.2rem;
     }
 
@@ -103,18 +103,18 @@
 
   .navbar-dropdown-label {
     font-size: 0.9rem;
-    color: $text-gray;
+    color: var(--text-gray);
     font-weight: bold;
     opacity: 0.8;
   }
 
   .search-term {
     width: 8rem;
-    background-color: $control-gray;
+    background-color: var(--control-gray);
   }
 
   .user-dropdown button {
-    background-color: $inactive-gray;
+    background-color: var(--inactive-gray);
     border: none;
   }
 

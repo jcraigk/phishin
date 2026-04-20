@@ -6,7 +6,7 @@ $bg-blue: #cbf3ff;
 $blue: #03BBF2;
 $google-blue: #5385ed;
 $highlight-blue: #ABD9FF;
-$bg-gray: #f2f3f5;
+$bg-gray: #e3e4e7;
 $border-gray: #e3e3e3;
 $control-gray: #f5f5f5;
 $dark-gray: #3a3a3a;
@@ -16,3 +16,89 @@ $inactive-gray: #d9dbdc;
 $text-gray: #6d6f71;
 $title-gray: #515152;
 $radius: 0.5rem;
+
+:root {
+  color-scheme: light dark;
+
+  --alert-red: #{$alert-red};
+  --bg-red: #{$bg-red};
+  --error-red: #{$error-red};
+  --highlight-orange: #{$highlight-orange};
+  --bg-blue: #{$bg-blue};
+  --blue: #{$blue};
+  --google-blue: #{$google-blue};
+  --highlight-blue: #{$highlight-blue};
+  --bg-gray: #{$bg-gray};
+  --border-gray: #{$border-gray};
+  --control-gray: #{$control-gray};
+  --dark-gray: #{$dark-gray};
+  --header-gray: #{$header-gray};
+  --navbar-gray: #{$navbar-gray};
+  --inactive-gray: #{$inactive-gray};
+  --text-gray: #{$text-gray};
+  --title-gray: #{$title-gray};
+
+  --play-pause-btn-bg: #{$title-gray};
+  --play-pause-btn-bg-hover: #3f4040;
+  --play-pause-btn-bg-disabled: #6a6b6c;
+  --play-pause-btn-playing-bg: #{$blue};
+  --play-pause-btn-playing-bg-hover: #02a8da;
+  --play-pause-btn-playing-bg-disabled: #4ccaf3;
+
+  --list-item-bg: #{$bg-gray};
+  --list-item-bg-hover: #ffffff;
+  --track-item-bg: rgba(255, 255, 255, 0.8);
+  --grid-overlay-bg: rgba(229, 229, 229, 0.85);
+  --api-doc-bg: #ffffff;
+  --api-doc-border: #cccccc;
+
+  --card-bg: #ffffff;
+  --badge-bg: #{$text-gray};
+  --list-item-link-color: #000000;
+  --sidebar-bg: #{$navbar-gray};
+  --track-divider: #{$navbar-gray};
+  --tooltip-bg: #{$title-gray};
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --alert-red: #b35d56;
+    --bg-red: #3a2020;
+    --error-red: #c47878;
+    --highlight-orange: #ff9d15;
+    --bg-blue: #1a3a4a;
+    --blue: #03BBF2;
+    --google-blue: #5385ed;
+    --highlight-blue: #ABD9FF;
+    --bg-gray: #383838;
+    --border-gray: #4a4a4a;
+    --control-gray: #4a4a4c;
+    --dark-gray: #c5c5c5;
+    --header-gray: #3a3a3c;
+    --navbar-gray: #2e2e30;
+    --inactive-gray: #3a3a3a;
+    --text-gray: #909090;
+    --title-gray: #909090;
+
+    --play-pause-btn-bg: #404040;
+    --play-pause-btn-bg-hover: #353535;
+    --play-pause-btn-bg-disabled: #555555;
+    --play-pause-btn-playing-bg: #03BBF2;
+    --play-pause-btn-playing-bg-hover: #02a8da;
+    --play-pause-btn-playing-bg-disabled: #1a8fb0;
+
+    --list-item-bg: rgba(48, 48, 50, 0.78);
+    --list-item-bg-hover: rgba(64, 64, 68, 0.85);
+    --track-item-bg: rgba(48, 48, 50, 0.78);
+    --grid-overlay-bg: rgba(20, 20, 20, 0.85);
+    --api-doc-bg: #2a2a2c;
+    --api-doc-border: #4a4a4a;
+
+    --card-bg: #2c2c2e;
+    --badge-bg: #4a4a4a;
+    --list-item-link-color: #e0e0e0;
+    --sidebar-bg: rgba(0, 0, 0, 0.2);
+    --track-divider: rgba(255, 255, 255, 0.05);
+    --tooltip-bg: #3a3a3a;
+  }
+}

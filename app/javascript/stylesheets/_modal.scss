@@ -1,7 +1,7 @@
 @use "./variables" as *;
 
 .modal-content {
-  background: white;
+  background: var(--card-bg);
   padding: 1.5rem;
   border-radius: $radius;
   margin: 1rem auto auto auto;
@@ -19,13 +19,13 @@
   input, select {
     font-size: 1rem;
     border-radius: $radius;
-    border-color: $border-gray;
+    border-color: var(--border-gray);
     padding: 0.5rem;
   }
 
   button {
     font-size: 1rem;
-    border: 1px solid $header-gray !important;
+    border: 1px solid var(--header-gray) !important;
     border-radius: $radius;
     padding: 0.5rem 1rem;
     margin-top: 1rem;

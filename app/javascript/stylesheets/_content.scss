@@ -22,7 +22,7 @@ main {
 }
 
 #sidebar {
-  background-color: $navbar-gray;
+  background-color: var(--sidebar-bg);
   padding: 1rem;
   flex: 0 0 16rem;
   border-radius: $radius;
@@ -38,7 +38,7 @@ main {
 
     hr {
       height: 1px;
-      background-color: $text-gray;
+      background-color: var(--text-gray);
       opacity: 0.2;
       margin-top: 1rem;
       margin-bottom: 0.8rem;
@@ -54,7 +54,7 @@ main {
         color: inherit;
 
         &:hover {
-          color: $blue;
+          color: var(--blue);
         }
       }
     }
@@ -62,10 +62,10 @@ main {
     .sidebar-info {
       font-size: 1.2rem;
       margin-top: 0.3rem;
-      color: $title-gray;
+      color: var(--title-gray);
 
       a {
-        color: $title-gray !important;
+        color: var(--title-gray) !important;
       }
     }
 
@@ -76,7 +76,7 @@ main {
     .sidebar-subtitle {
       font-size: 1.3rem;
       font-weight: bold;
-      color: $title-gray;
+      color: var(--title-gray);
 
       &:last-of-type {
         margin-bottom: 1rem;
@@ -125,14 +125,14 @@ main {
       .sidebar-map-title {
         font-size: 1.1rem;
         font-weight: bold;
-        color: $title-gray;
+        color: var(--title-gray);
         margin-bottom: 0.5rem;
 
         a {
-          color: $title-gray;
+          color: var(--title-gray);
 
           &:hover {
-            color: $blue;
+            color: var(--blue);
           }
         }
       }
@@ -178,7 +178,7 @@ main {
 
 .cover-art {
   border-radius: $radius;
-  background-color: $inactive-gray;
+  background-color: var(--inactive-gray);
   position: relative;
   overflow: hidden;
 
@@ -224,21 +224,21 @@ main {
     font-size: 1.7rem;
     font-weight: 700;
     line-height: 1.3rem;
-    color: $title-gray;
+    color: var(--title-gray);
   }
 
   .detail-right {
     font-size: 1rem;
     font-weight: bold;
-    color: $text-gray;
+    color: var(--text-gray);
     line-height: 1rem;
-    color: $title-gray;
+    color: var(--title-gray);
   }
 }
 
 .list-item-link {
   text-decoration: none;
-  color: black;
+  color: var(--list-item-link-color);
 }
 
 .date-link {
@@ -253,7 +253,7 @@ main {
   }
 
   a {
-    color: $text-gray !important;
+    color: var(--text-gray) !important;
   }
 }
 
@@ -269,7 +269,7 @@ main {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
   min-height: 3.5rem;
   cursor: pointer;
-  background-color: $bg-gray;
+  background-color: var(--bg-gray);
   background-size: cover;
   background-repeat: no-repeat;
 
@@ -329,7 +329,7 @@ main {
     flex: 1 1 0;
     min-width: 0;
     font-size: 1.5rem;
-    color: $text-gray;
+    color: var(--text-gray);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -458,7 +458,7 @@ main {
     box-shadow: none;
     min-height: 3.5rem;
     cursor: pointer;
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--track-item-bg);
     background-size: cover;
     background-repeat: no-repeat;
 
@@ -470,7 +470,7 @@ main {
       left: 1rem;
       right: 1rem;
       height: 1px;
-      background-color: $navbar-gray;
+      background-color: var(--track-divider);
     }
 
     &:not(:last-child):not(.focus):not(.active-item):not(.no-audio):hover::after {
@@ -564,7 +564,7 @@ main {
     cursor: pointer;
     border-radius: $radius;
     max-width: 436px;
-    background-color: $inactive-gray;
+    background-color: var(--inactive-gray);
 
     .audio-status-badge-container {
       position: absolute;
@@ -592,7 +592,7 @@ main {
     left: 0;
     width: 100%;
     height: 50%;
-    background-color: rgba(#e5e5e5, 0.85);
+    background-color: var(--grid-overlay-bg);
     padding: 4px;
     box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.15);
     display: flex;
@@ -602,7 +602,7 @@ main {
     text-align: center;
     font-size: 1rem;
     font-weight: bold;
-    color: $title-gray;
+    color: var(--title-gray);
     border-radius: 0 0 $radius $radius;
 
     .show-date {
@@ -661,7 +661,7 @@ main {
 
 @media (hover: hover) {
   .list-item:hover:not(.no-audio) {
-    background-color: white;
+    background-color: var(--list-item-bg-hover);
     background-image: none !important;
 
     &::before {
@@ -731,7 +731,7 @@ main {
     width: 100%;
     flex: none !important;
     padding: 0.3rem;
-    background-color: $navbar-gray;
+    background-color: var(--sidebar-bg);
 
     .sidebar-content {
       display: flex;
@@ -778,7 +778,7 @@ main {
             color: inherit;
 
             &:hover {
-              color: $blue;
+              color: var(--blue);
             }
           }
         }

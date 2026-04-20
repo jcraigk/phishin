@@ -39,7 +39,7 @@ const Faq = () => {
       <p>Yes. To control audio playback, use Spacebar to toggle play/pause, left/right arrow keys to skip tracks, and hold shift and press left/right arrow keys to seek by 10 seconds.</p>
 
       <h3>Is there a dark mode?</h3>
-      <p>No, there's no native dark mode, but the site works well with <a href="https://chromewebstore.google.com/detail/dark-reader/eimadpbcbfnmbkopoojfekhnkhdbieeh?hl=en-US&pli=1" target="_blank">Dark Reader</a>.</p>
+      <p>Yes. The site automatically follows your operating system's color scheme preference.</p>
 
       <h3>Can I share excerpts of tracks?</h3>
       <p>Yes, there are two ways to share excerpts of tracks.</p>

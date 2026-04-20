@@ -24,7 +24,7 @@
 
 html, body {
   margin: 0;
-  background-color: $bg-gray;
+  background-color: var(--bg-gray);
   font-family: "Open Sans Condensed", sans-serif;
 }
 
@@ -45,11 +45,11 @@ input, textarea, select, button {
 
 button {
   border: none !important;
-  color: $text-gray !important;
+  color: var(--text-gray) !important;
 }
 
 a {
-  color: $text-gray;
+  color: var(--text-gray);
   text-decoration: none !important;
 }
 
@@ -58,11 +58,11 @@ a {
 }
 
 .select::after {
-  border-color: $border-gray !important; /* Bulma dropdown chevron color */
+  border-color: var(--border-gray) !important; /* Bulma dropdown chevron color */
 }
 
 .label {
-  color: $text-gray;
+  color: var(--text-gray);
   margin-top: 0.5rem;
   margin-bottom: 0.1rem !important;
 }
@@ -72,7 +72,7 @@ a {
   box-shadow: none;
 
   &:hover {
-    background-color: $control-gray;
+    background-color: var(--control-gray);
   }
 }
 .context-nudge-right {
@@ -81,7 +81,7 @@ a {
 }
 
 .text-gray {
-  color: $text-gray;
+  color: var(--text-gray);
 }
 
 .context-dropdown-content {
@@ -89,7 +89,7 @@ a {
     margin-right: 0.4rem;
     position: relative;
     top: 3px;
-    color: $text-gray;
+    color: var(--text-gray);
     width: 1rem;
   }
   .dropdown-item {
@@ -154,11 +154,11 @@ a {
 
 .hilite {
   background-color: transparent !important;
-  box-shadow: 0px 4px 0px $highlight-orange !important;
+  box-shadow: 0px 4px 0px var(--highlight-orange) !important;
 }
 
 .hilite-badge {
-  background-color: $highlight-orange !important;
+  background-color: var(--highlight-orange) !important;
 }
 
 .section {
@@ -169,19 +169,19 @@ a {
   margin: 0.5rem 0;
   display: block;
   border-radius: 0.25rem;
-  border: 1px dashed #ccc;
+  border: 1px dashed var(--api-doc-border);
   padding: 0.5rem;
   font-size: 1rem;
-  background-color: #ffffff;
+  background-color: var(--api-doc-bg);
 }
 .api-inline {
   margin: 0.5rem;
   display: inline-block;
   border-radius: 0.25rem;
-  border: 1px dashed #ccc;
+  border: 1px dashed var(--api-doc-border);
   padding: 0.5rem;
   font-size: 1rem;
-  background-color: #ffffff;
+  background-color: var(--api-doc-bg);
 }
 .api-doc {
   display: block;
@@ -209,7 +209,7 @@ a {
 }
 .google-btn {
   color: white !important;
-  background-color: $google-blue;
+  background-color: var(--google-blue);
 }
 
 /* Hide React error overlay in development */
