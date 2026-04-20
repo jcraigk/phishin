@@ -4,6 +4,13 @@ Rails.application.routes.draw do
   # Health check
   get "/health", to: proc { [ 200, {}, [ "OK" ] ] }
 
+  # Agent / bot discovery endpoints
+  get "/sitemap.xml", to: "sitemap#show", as: :sitemap_xml, format: false
+  get "/.well-known/mcp/server-card.json", to: "well_known#mcp_server_card"
+  get "/.well-known/api-catalog", to: "well_known#api_catalog"
+  get "/.well-known/agent-card.json", to: "well_known#a2a_agent_card"
+  get "/.well-known/agent-skills/index.json", to: "well_known#agent_skills_index"
+
   # Sidekiq admin
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
     ActiveSupport::SecurityUtils.secure_compare(

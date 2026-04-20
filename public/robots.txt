@@ -1,1 +1,57 @@
+# Phish.in — robots policy
+# Non-commercial archive of live Phish audience recordings.
+
+User-agent: *
+Allow: /
+Disallow: /sidekiq
+Disallow: /api/v1/
+Disallow: /api/v2/
+
+# AI crawlers: content may be used for search and as real-time input to
+# assistants. Training on the corpus is not permitted.
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+User-agent: Claude-SearchBot
+Allow: /
+User-agent: Claude-User
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Perplexity-User
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+User-agent: CCBot
+Disallow: /
+User-agent: Bytespider
+Disallow: /
+User-agent: Meta-ExternalAgent
+Allow: /
+User-agent: FacebookBot
+Allow: /
+User-agent: cohere-ai
+Allow: /
+User-agent: Amazonbot
+Allow: /
+User-agent: omgilibot
+Disallow: /
+User-agent: Diffbot
+Allow: /
+
+# Cloudflare Content Signals (see https://developers.cloudflare.com/ai-audit/content-signals/)
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+Sitemap: https://phish.in/sitemap.xml
 Sitemap: https://phish.in/sitemap/sitemap.xml.gz
