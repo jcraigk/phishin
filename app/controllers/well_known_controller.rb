@@ -4,17 +4,23 @@ class WellKnownController < ActionController::Base
   def mcp_server_card
     cache_json(
       schema_version: "2025-06-18",
+      protocolVersion: "2025-03-26",
       name: "phishin",
       title: App.app_name,
       description: App.app_desc,
       version: "1.0.0",
+      serverInfo: { name: "phishin", version: "1.0.0", title: App.app_name },
       vendor: { name: App.app_name, url: App.base_url },
       homepage: App.base_url,
       documentation: "#{App.base_url}/llms.txt",
+      url: "#{App.base_url}/mcp",
+      transport: "streamable-http",
+      authentication: { type: "none" },
       icons: [
         { src: "#{App.base_url}/logo.svg", mime_type: "image/svg+xml", purpose: "logo" },
         { src: "#{App.base_url}/favicon.ico", mime_type: "image/x-icon", purpose: "favicon" }
       ],
+      capabilities: { tools: true, resources: Server::WIDGET_CLIENTS.any?, prompts: false },
       servers: Server::VALID_CLIENTS.map { |client|
         endpoint = client == :default ? "#{App.base_url}/mcp" : "#{App.base_url}/mcp/#{client}"
         {
@@ -25,8 +31,7 @@ class WellKnownController < ActionController::Base
           protocol_version: "2025-03-26",
           authentication: { type: "none" }
         }
-      },
-      capabilities: { tools: true, resources: Server::WIDGET_CLIENTS.any?, prompts: false }
+      }
     )
   end
 
@@ -59,24 +64,42 @@ class WellKnownController < ActionController::Base
   def a2a_agent_card
     cache_json(
       schema_version: "0.3.0",
+      protocolVersion: "0.3.0",
       name: "phishin",
       description: "Agent interface for the Phish.in live Phish audio archive. " \
                    "Browse and play shows, songs, venues, tours, tags, and playlists.",
       url: "#{App.base_url}/mcp",
+      preferredTransport: "MCP",
+      supportedInterfaces: [
+        { transport: "MCP", url: "#{App.base_url}/mcp", protocolVersion: "2025-03-26" },
+        { transport: "MCP", url: "#{App.base_url}/mcp/anthropic", protocolVersion: "2025-03-26" },
+        { transport: "MCP", url: "#{App.base_url}/mcp/openai", protocolVersion: "2025-03-26" },
+        { transport: "HTTPS+JSON", url: "#{App.base_url}/api/v2", protocolVersion: "2.0" }
+      ],
+      additionalInterfaces: [
+        { transport: "MCP", url: "#{App.base_url}/mcp/anthropic" },
+        { transport: "MCP", url: "#{App.base_url}/mcp/openai" }
+      ],
       provider: { organization: App.app_name, url: App.base_url },
       version: "1.0.0",
       documentation_url: "#{App.base_url}/llms.txt",
+      documentationUrl: "#{App.base_url}/llms.txt",
       icon_url: "#{App.base_url}/logo.svg",
+      iconUrl: "#{App.base_url}/logo.svg",
       capabilities: { streaming: false, push_notifications: false, state_transition_history: false },
       default_input_modes: %w[text/plain application/json],
+      defaultInputModes: %w[text/plain application/json],
       default_output_modes: %w[text/plain application/json],
+      defaultOutputModes: %w[text/plain application/json],
       skills: skill_summaries.map { |s|
         {
           id: s[:id],
           name: s[:id].to_s,
           description: s[:description],
           tags: s[:tags],
-          examples: s[:examples]
+          examples: s[:examples],
+          inputModes: %w[text/plain application/json],
+          outputModes: %w[text/plain application/json]
         }
       }
     )

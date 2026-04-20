@@ -1,0 +1,108 @@
+<script>
+(function () {
+  function register(mc) {
+    var apiBase = location.origin + "/api/v2";
+    function getJson(path) {
+      return fetch(path, { headers: { Accept: "application/json" } }).then(function (r) { return r.json(); });
+    }
+    function text(payload) {
+      return { content: [{ type: "text", text: JSON.stringify(payload) }] };
+    }
+    var tools = [
+      {
+        name: "search",
+        description: "Search Phish.in for shows, songs, venues, tours, tags, and playlists.",
+        inputSchema: {
+          type: "object",
+          properties: { query: { type: "string", description: "Search term (min 3 chars)" } },
+          required: ["query"]
+        },
+        execute: function (args) {
+          return getJson(apiBase + "/search/" + encodeURIComponent(args.query)).then(text);
+        }
+      },
+      {
+        name: "get_show",
+        description: "Get a Phish show with full setlist. Provide a date in YYYY-MM-DD format.",
+        inputSchema: {
+          type: "object",
+          properties: { date: { type: "string", description: "Show date (YYYY-MM-DD)" } },
+          required: ["date"]
+        },
+        execute: function (args) {
+          return getJson(apiBase + "/shows/" + encodeURIComponent(args.date)).then(text);
+        }
+      },
+      {
+        name: "random_show",
+        description: "Get a random Phish show with full setlist.",
+        inputSchema: { type: "object", properties: {} },
+        execute: function () {
+          return getJson(apiBase + "/shows/random").then(text);
+        }
+      },
+      {
+        name: "list_shows_in_year",
+        description: "List all Phish shows in a given year.",
+        inputSchema: {
+          type: "object",
+          properties: { year: { type: "integer", description: "Year (e.g. 1997)" } },
+          required: ["year"]
+        },
+        execute: function (args) {
+          return getJson(apiBase + "/shows?year=" + encodeURIComponent(args.year) + "&per_page=500").then(text);
+        }
+      },
+      {
+        name: "get_song",
+        description: "Get a Phish song with performance history by slug.",
+        inputSchema: {
+          type: "object",
+          properties: { slug: { type: "string", description: "Song slug (e.g. 'tweezer')" } },
+          required: ["slug"]
+        },
+        execute: function (args) {
+          return getJson(apiBase + "/songs/" + encodeURIComponent(args.slug)).then(text);
+        }
+      },
+      {
+        name: "get_venue",
+        description: "Get a Phish venue with show history by slug.",
+        inputSchema: {
+          type: "object",
+          properties: { slug: { type: "string", description: "Venue slug (e.g. 'madison-square-garden')" } },
+          required: ["slug"]
+        },
+        execute: function (args) {
+          return getJson(apiBase + "/venues/" + encodeURIComponent(args.slug)).then(text);
+        }
+      }
+    ];
+
+    try {
+      if (typeof mc.provideContext === "function") {
+        mc.provideContext({ tools: tools });
+      } else if (typeof mc.registerTool === "function") {
+        tools.forEach(function (t) { mc.registerTool(t); });
+      } else if (typeof mc.tools !== "undefined" && typeof mc.tools.register === "function") {
+        tools.forEach(function (t) { mc.tools.register(t); });
+      }
+    } catch (e) {
+      if (window.console) { console.warn("webmcp registration failed", e); }
+    }
+  }
+
+  function boot() {
+    if (typeof navigator === "undefined") return;
+    var mc = navigator.modelContext;
+    if (!mc) return;
+    register(mc);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+})();
+</script>
