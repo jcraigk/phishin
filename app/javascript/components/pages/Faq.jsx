@@ -104,9 +104,10 @@ const Faq = () => {
 
       <h3>How do I add Phish.in to ChatGPT?</h3>
       <p>
-        Available on ChatGPT Pro, Team, Enterprise, and Edu plans. In ChatGPT, open Settings,
-        go to Apps & Connectors, open Advanced settings, and enable Developer Mode. Then,
-        under Connectors, click Create and add the URL <span className="tag">https://phish.in/mcp/openai</span>.
+        Phish.in is available as an app in the{" "}
+        <a href="https://chatgpt.com/apps/phish-in/asdk_app_6951d356aaec819184a53d81982be134" target="_blank">
+          ChatGPT app directory
+        </a>. Open the link and click Try to add it to your ChatGPT account.
       </p>
 
       <h3>How do I add Phish.in to Claude?</h3>

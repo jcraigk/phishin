@@ -54,7 +54,9 @@ import React from "react";
 import { Link, useLoaderData, useOutletContext } from "react-router";
 import { formatNumber } from "./helpers/utils";
 import LayoutWrapper from "./layout/LayoutWrapper";
-import MobileApps from "./pages/MobileApps";
+import chatgptIcon from "../images/icon-chatgpt.svg";
+import relistenIcon from "../images/icon-relisten.png";
+import { Tooltip } from "react-tooltip";
 import GitHubButton from "./pages/GitHubButton";
 import DiscordButton from "./pages/DiscordButton";
 import CoverArt from "./CoverArt";
@@ -190,8 +192,34 @@ const Eras = () => {
         <DiscordButton />
       </div>
 
-      <p className="has-text-weight-bold mb-2 mt-5">Download mobile app</p>
-      <MobileApps />
+      <p className="has-text-weight-bold mb-2 mt-5">Related apps</p>
+      <div className="mobile-apps">
+        <a
+          href="https://relisten.net/app"
+          target="_blank"
+          className="mr-3"
+        >
+          <img
+            src={relistenIcon}
+            alt="Relisten"
+            data-tooltip-id="tooltip-relisten"
+            data-tooltip-content="Relisten (iOS / Android)"
+          />
+          <Tooltip id="tooltip-relisten" className="custom-tooltip" />
+        </a>
+        <a
+          href="https://chatgpt.com/apps/phish-in/asdk_app_6951d356aaec819184a53d81982be134"
+          target="_blank"
+        >
+          <img
+            src={chatgptIcon}
+            alt="ChatGPT app"
+            data-tooltip-id="tooltip-chatgpt"
+            data-tooltip-content="Phish.in on ChatGPT"
+          />
+          <Tooltip id="tooltip-chatgpt" className="custom-tooltip" />
+        </a>
+      </div>
     </div>
   );
 
