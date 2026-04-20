@@ -25,7 +25,6 @@
   app.onhostcontextchanged = (ctx) => {
     if (ctx.theme) {
       window._hostTheme = ctx.theme;
-      // Re-apply theme if DarkReader is already initialized
       if (typeof window._applyHostTheme === 'function') {
         window._applyHostTheme(ctx.theme);
       }
@@ -296,170 +295,16 @@ function renderToast() {
   return `<div class="toast" id="toast"></div>`;
 }
 
-const DARK_READER_CONFIG = {
-  brightness: 100,
-  contrast: 90,
-  sepia: 10,
-  css: `
-    /* Audio player is already dark themed - protect from Dark Reader */
-    .audio-player {
-      filter: none !important;
-      -webkit-filter: none !important;
-    }
-    .player-blur-wrapper {
-      background: #1a1a1c !important;
-      background-color: #1a1a1c !important;
-      filter: none !important;
-      -webkit-filter: none !important;
-    }
-    .player-blur {
-      filter: blur(55px) saturate(1.2) !important;
-      -webkit-filter: blur(55px) saturate(1.2) !important;
-      opacity: 0.5 !important;
-    }
-    .player-blur::after {
-      background: rgba(20, 20, 22, 0.65) !important;
-      background-color: rgba(20, 20, 22, 0.65) !important;
-      filter: none !important;
-      -webkit-filter: none !important;
-    }
-    
-    /* Preserve scrubber styling */
-    .scrubber-container {
-      isolation: isolate !important;
-    }
-    .scrubber-container,
-    .scrubber-container::before,
-    .progress-overlay {
-      filter: none !important;
-      -webkit-filter: none !important;
-      mix-blend-mode: normal !important;
-    }
-    .scrubber-container::before {
-      background: rgba(255, 255, 255, 0.35) !important;
-      background-color: rgba(255, 255, 255, 0.35) !important;
-    }
-    
-    /* Player text colors */
-    .player-track-title {
-      color: rgba(255, 255, 255, 0.95) !important;
-    }
-    .player-track-subtitle,
-    .player-track-subtitle .player-link,
-    .player-track-subtitle .location-link {
-      color: rgba(255, 255, 255, 0.75) !important;
-    }
-    .time-display {
-      color: rgba(255, 255, 255, 0.7) !important;
-    }
-    .skip-btn,
-    .scrub-btn {
-      color: rgba(255, 255, 255, 0.7) !important;
-    }
-    .player-close-btn {
-      color: rgba(255, 255, 255, 0.6) !important;
-    }
-    
-    /* Preserve play button styling - player is already dark themed */
-    .audio-player .play-pause-btn,
-    .card .play-pause-btn,
-    .card:not(.audio-playing) .play-pause-btn {
-      background: rgba(255, 255, 255, 0.15) !important;
-      background-color: rgba(255, 255, 255, 0.15) !important;
-      filter: none !important;
-      -webkit-filter: none !important;
-    }
-    .audio-player.audio-playing .play-pause-btn,
-    .card.audio-playing .play-pause-btn,
-    .card.audio-playing .audio-player .play-pause-btn {
-      background: #5bcefa !important;
-      background-color: #5bcefa !important;
-      filter: none !important;
-      -webkit-filter: none !important;
-    }
-    .play-pause-btn svg,
-    .play-pause-btn .play-icon,
-    .play-pause-btn .pause-icon {
-      fill: white !important;
-      color: white !important;
-    }
-    
-    /* Preserve cover play button */
-    .cover-play-button {
-      filter: none !important;
-      -webkit-filter: none !important;
-    }
-    .cover-play-button:hover {
-      background: rgba(3, 187, 242, 0.7) !important;
-    }
-    .cover-play-button svg {
-      fill: rgba(255, 255, 255, 0.95) !important;
-    }
-    
-    /* Preserve blue border animation when playing */
-    .audio-player.audio-playing .player-content::after,
-    .card.audio-playing::before {
-      filter: none !important;
-      -webkit-filter: none !important;
-    }
-    
-    /* Preserve hover colors */
-    .player-track-subtitle .player-link:hover,
-    .player-track-subtitle .location-link:hover,
-    .skip-btn:hover:not(:disabled),
-    .scrub-btn:hover:not(:disabled) {
-      color: #5bcefa !important;
-    }
-    .player-close-btn:hover {
-      color: rgba(255, 255, 255, 0.9) !important;
-    }
-    .show-date-link:hover,
-    .location-link:hover,
-    .playlist-name a:hover,
-    .playlist-description:hover,
-    .show-meta-item.clickable:hover,
-    .track-menu-btn:hover {
-      color: #03BBF2 !important;
-    }
-    
-    /* Preserve tooltip styling */
-    .tag-tooltip,
-    .set-position-tooltip {
-      background-color: #515152 !important;
-      color: white !important;
-      filter: none !important;
-      -webkit-filter: none !important;
-    }
-    .tag-tooltip::before,
-    .set-position-tooltip::before {
-      background-color: #515152 !important;
-      filter: none !important;
-      -webkit-filter: none !important;
-    }
-    
-    /* Preserve blue tag hover */
-    .track-inline-tags .tag-badge:hover {
-      background-color: rgba(3, 187, 242, 0.2) !important;
-      color: #03BBF2 !important;
-    }
-    
-    /* Preserve cover art hover glow */
-    .cover-art-container.clickable:hover .cover-art {
-      box-shadow: 0 4px 16px rgba(3, 187, 242, 0.4) !important;
-    }
-  `
-};
-
 function getColorScheme() {
   // Check SDK-provided theme first
   if (window._hostTheme) return window._hostTheme;
-  
+
   // Check MCP App context
   if (window._mcpApp?.getHostContext) {
     const ctx = window._mcpApp.getHostContext();
     if (ctx?.theme) return ctx.theme;
   }
-  
+
   // Fall back to OpenAI's window.openai
   const oa = window.openai || {};
   const scheme = oa.appearance?.colorScheme
@@ -475,16 +320,8 @@ function getColorScheme() {
 }
 
 function initDarkMode() {
-  if (typeof DarkReader === 'undefined') return;
-
-  DarkReader.setFetchMethod(window.fetch);
-
   const applyTheme = (scheme) => {
-    if (scheme === 'dark') {
-      DarkReader.enable(DARK_READER_CONFIG);
-    } else {
-      DarkReader.disable();
-    }
+    document.documentElement.setAttribute('data-theme', scheme === 'dark' ? 'dark' : 'light');
   };
 
   // Expose for MCP Apps SDK host context changes
@@ -497,7 +334,7 @@ function initDarkMode() {
     mediaQuery.addEventListener('change', (e) => {
       // Don't override if host explicitly set a theme
       if (window._hostTheme) return;
-      
+
       const oa = window.openai || {};
       const explicitScheme = oa.appearance?.colorScheme
         || oa.view?.appearance?.colorScheme

@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation } from "react-router";
+import { useLocation, Link } from "react-router";
 import PageWrapper from "./PageWrapper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
@@ -45,6 +45,12 @@ const ApiDocs = () => {
       <pre className="box bg-gray-100 p-4 rounded-lg overflow-x-auto mb-4">
         POST https://phish.in/mcp
       </pre>
+      <p>
+        Client-specific endpoints are also available with richer rendering (interactive widgets, branded tool descriptions):
+        {" "}<span className="tag">/mcp/openai</span> for ChatGPT and{" "}
+        <span className="tag">/mcp/anthropic</span> for Claude.
+        See the <Link to="/faq">FAQ</Link> for setup instructions.
+      </p>
 
       <h4 className="title is-5">Available Tools</h4>
       <ul className="list-disc list-inside mb-4">

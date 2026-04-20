@@ -1,0 +1,151 @@
+/* === Dark mode overrides === */
+/* Activated by [data-theme="dark"] on <html> */
+/* The audio player is already dark-themed in light mode, so most player styles are unchanged here. */
+
+/* Body / surfaces */
+[data-theme="dark"] body {
+  color: #909090;
+}
+
+[data-theme="dark"] .loader-container,
+[data-theme="dark"] .error {
+  background: rgba(40, 40, 42, 0.9);
+}
+
+[data-theme="dark"] .loader-text {
+  background: linear-gradient(
+    90deg,
+    #909090 0%,
+    #909090 40%,
+    #707072 50%,
+    #909090 60%,
+    #909090 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Card */
+[data-theme="dark"] .card {
+  background: #2a2a2c;
+}
+
+[data-theme="dark"] .card-header {
+  background: rgba(60, 60, 62, 0.6);
+}
+
+/* Track list */
+[data-theme="dark"] .title-left,
+[data-theme="dark"] .detail-right {
+  color: #909090;
+}
+
+[data-theme="dark"] .track {
+  background: rgba(48, 48, 50, 0.78);
+  color: #909090;
+}
+
+[data-theme="dark"] .track:not(.no-audio):hover {
+  background: rgba(64, 64, 68, 0.9);
+}
+
+[data-theme="dark"] .track:not(:last-child):not(.active-item)::after {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .track-duration {
+  color: #909090;
+}
+
+[data-theme="dark"] .track-no-audio-icon {
+  color: #707070;
+}
+
+/* Track menu */
+[data-theme="dark"] .track-menu-btn {
+  color: #909090;
+}
+
+[data-theme="dark"] .track-dropdown {
+  background-color: #2c2c2e;
+}
+
+[data-theme="dark"] .track-dropdown-item {
+  background-color: #2c2c2e;
+  color: #909090;
+}
+
+[data-theme="dark"] .track-dropdown-item:hover {
+  background-color: #3a3a3c;
+}
+
+/* Tags */
+[data-theme="dark"] .tag-badge {
+  color: #909090;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .tags-row {
+  background-color: #2c2c2e;
+}
+
+[data-theme="dark"] .tags-row.clickable:hover {
+  background-color: #3a3a3c;
+}
+
+[data-theme="dark"] .tags-row-icon {
+  color: #909090;
+}
+
+[data-theme="dark"] .tag-modal-title,
+[data-theme="dark"] .tag-modal-content {
+  color: #909090;
+}
+
+[data-theme="dark"] .tag-modal-content {
+  background: rgba(40, 40, 42, 0.9);
+}
+
+[data-theme="dark"] .tag-modal-section-title {
+  background-color: #4a4a4c;
+}
+
+/* Modal common */
+[data-theme="dark"] .modal-blur-wrapper {
+  background: #2a2a2c;
+}
+
+[data-theme="dark"] .modal-blur::after {
+  background: rgba(20, 20, 20, 0.6);
+}
+
+/* Widget-specific text colors (used across get_playlist, get_show, get_audio_track) */
+[data-theme="dark"] .playlist-name,
+[data-theme="dark"] .playlist-meta,
+[data-theme="dark"] .playlist-description,
+[data-theme="dark"] .show-title,
+[data-theme="dark"] .show-date-link,
+[data-theme="dark"] .show-meta-link,
+[data-theme="dark"] .track-page-title,
+[data-theme="dark"] .show-link,
+[data-theme="dark"] .location-link,
+[data-theme="dark"] .show-meta-item,
+[data-theme="dark"] .tour-link,
+[data-theme="dark"] .venue-name,
+[data-theme="dark"] .taper-info {
+  color: #909090;
+}
+
+[data-theme="dark"] .show-info-text {
+  color: #909090;
+}
+
+[data-theme="dark"] .playlist-description-text,
+[data-theme="dark"] .show-info-row {
+  background: rgba(40, 40, 42, 0.85);
+  color: #909090;
+}
+
+/* Tooltips - already use dark backgrounds with white text in light mode, keep */

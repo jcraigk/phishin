@@ -3,9 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
   <title><%= @title || app_name_placeholder %></title>
   <link rel="preload" href="<%= asset_host_placeholder %>/mcp-widgets/fonts/open-sans-condensed-latin-300-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="<%= asset_host_placeholder %>/mcp-widgets/fonts/open-sans-condensed-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <script>
+    // Set initial data-theme synchronously to avoid FOUC. Host SDK may override later.
+    (function() {
+      try {
+        var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+      } catch (e) {}
+    })();
+  </script>
   <script><%= gapless5_script %></script>
-  <script><%= darkreader_script %></script>
 

@@ -120,11 +120,6 @@ class WidgetCompiler
         )
     end
 
-    def darkreader_script
-      path = Rails.root.join("node_modules", "darkreader", "darkreader.js")
-      File.read(path)
-    end
-
     def mcp_apps_sdk_script
       path = Rails.root.join("public", "mcp-widgets", "mcp-apps-sdk.js")
       unless path.exist?

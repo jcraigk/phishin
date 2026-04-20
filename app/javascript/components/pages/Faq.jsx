@@ -38,9 +38,6 @@ const Faq = () => {
       <h3>Are there any keyboard shortcuts?</h3>
       <p>Yes. To control audio playback, use Spacebar to toggle play/pause, left/right arrow keys to skip tracks, and hold shift and press left/right arrow keys to seek by 10 seconds.</p>
 
-      <h3>Is there a dark mode?</h3>
-      <p>Yes. The site automatically follows your operating system's color scheme preference.</p>
-
       <h3>Can I share excerpts of tracks?</h3>
       <p>Yes, there are two ways to share excerpts of tracks.</p>
 
@@ -104,6 +101,21 @@ const Faq = () => {
         <li>"List shows from Fall Tour 1997"</li>
       </ul>
       <p>See the <Link to="/api-docs">API Documentation</Link> for more details on MCP integration.</p>
+
+      <h3>How do I add Phish.in to ChatGPT?</h3>
+      <p>
+        Available on ChatGPT Pro, Team, Enterprise, and Edu plans. In ChatGPT, open Settings,
+        go to Apps & Connectors, open Advanced settings, and enable Developer Mode. Then,
+        under Connectors, click Create and add the URL <span className="tag">https://phish.in/mcp/openai</span>.
+      </p>
+
+      <h3>How do I add Phish.in to Claude?</h3>
+      <p>
+        In Claude on the web, click your profile icon and open Settings, then Connectors.
+        Scroll to "Add custom connector", enter <span className="tag">https://phish.in/mcp/anthropic</span>,
+        and click Add. Available on Free, Pro, Max, Team, and Enterprise plans (Free is
+        limited to one custom connector).
+      </p>
 
       <h3>How is album cover art created?</h3>
       <p>Album covers are generated with a combination of automation scripts and the assistance of ChatGPT and Dall-E.</p>
