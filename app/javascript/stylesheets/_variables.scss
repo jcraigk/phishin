@@ -55,7 +55,7 @@ $radius: 0.5rem;
   --card-bg: #ffffff;
   --badge-bg: #{$text-gray};
   --list-item-link-color: #000000;
-  --sidebar-bg: #{$navbar-gray};
+  --sidebar-bg: rgba(255, 255, 255, 0.8);
   --track-divider: #{$navbar-gray};
   --tooltip-bg: #{$title-gray};
 }
@@ -97,7 +97,7 @@ $radius: 0.5rem;
     --card-bg: #2c2c2e;
     --badge-bg: #4a4a4a;
     --list-item-link-color: #e0e0e0;
-    --sidebar-bg: rgba(0, 0, 0, 0.2);
+    --sidebar-bg: rgba(48, 48, 50, 0.78);
     --track-divider: rgba(255, 255, 255, 0.05);
     --tooltip-bg: #3a3a3a;
   }
