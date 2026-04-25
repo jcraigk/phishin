@@ -7,12 +7,10 @@ class Server
 
   CLIENT_BRANDING = {
     openai: {
-      app_name: -> { App.app_name_mcp },
       logo_full: "logo-full-mcp.png",
       logo_square: "logo-square.png"
     },
     default: {
-      app_name: -> { App.app_name },
       logo_full: "logo-full.png",
       logo_square: "logo-square.png"
     }
@@ -141,7 +139,7 @@ class Server
     text = text.gsub(WIDGET_ASSET_HOST_PLACEHOLDER, asset_host) if asset_host.present?
 
     branding = CLIENT_BRANDING[client] || CLIENT_BRANDING[:default]
-    text = text.gsub(APP_NAME_PLACEHOLDER, branding[:app_name].call)
+    text = text.gsub(APP_NAME_PLACEHOLDER, App.app_name)
     text = text.gsub(LOGO_FULL_PLACEHOLDER, branding[:logo_full])
     text = text.gsub(LOGO_SQUARE_PLACEHOLDER, branding[:logo_square])
 

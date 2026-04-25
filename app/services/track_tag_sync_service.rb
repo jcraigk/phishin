@@ -56,9 +56,18 @@ class TrackTagSyncService < ApplicationService
       notes: row["Notes"]
   end
 
+  MOJIBAKE_MARKERS = /√[°©≠≥∫±ºÅâçìöÑú]|‚Ä[îìúùòô¶¢]|¬[©®∞]/
+
   def sanitize_str(str)
     return if str.nil?
-    sanitize(str.gsub(/[”“]/, '"').gsub(/[‘’]/, "'"))
+    sanitize(repair_mojibake(str).gsub(/[”“]/, '"').gsub(/[‘’]/, "'"))
+  end
+
+  def repair_mojibake(str)
+    return str unless str.match?(MOJIBAKE_MARKERS)
+    str.encode(Encoding::MACROMAN).force_encoding(Encoding::UTF_8)
+  rescue Encoding::UndefinedConversionError
+    str
   end
 
   def create_track_tag(row)

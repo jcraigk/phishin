@@ -10,7 +10,7 @@ const PrivacyPolicy = () => {
       <p>
         Phish.in (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is a community archive of live Phish
         audience recordings. This policy covers the Phish.in website, API, and all MCP
-        integrations including the Subtle Sounds ChatGPT app and the Phish.in Claude app
+        integrations including the Phish.in ChatGPT app and the Phish.in Claude app
         (both powered by the Phish.in MCP server).
       </p>
 
@@ -21,9 +21,9 @@ const PrivacyPolicy = () => {
         accessed or stored.
       </p>
 
-      <h3>MCP Integrations (Subtle Sounds / Phish.in Claude App)</h3>
+      <h3>MCP Integrations (Phish.in ChatGPT App / Phish.in Claude App)</h3>
       <p>
-        The Subtle Sounds ChatGPT app and the Phish.in Claude app both communicate with our MCP
+        The Phish.in ChatGPT app and the Phish.in Claude app both communicate with our MCP
         server at phish.in/mcp. This server is stateless and requires no authentication. We do not
         collect, store, or log any user inputs (such as search queries, song slugs, or parameter
         values) submitted through the MCP server. No conversation content, IP addresses, or device
@@ -61,7 +61,7 @@ const PrivacyPolicy = () => {
       <h3>User Controls</h3>
       <ul>
         <li>You may delete your Phish.in account and all associated data by contacting us.</li>
-        <li>The Subtle Sounds and Phish.in Claude apps require no account and store no user data, so there is nothing to delete on our end.</li>
+        <li>The Phish.in ChatGPT and Phish.in Claude apps require no account and store no user data, so there is nothing to delete on our end.</li>
       </ul>
 
       <h3>Children</h3>

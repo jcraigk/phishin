@@ -54,7 +54,7 @@ const Navbar = ({ user, handleLogout }) => {
   const staticLinks = [
     { path: "/faq", label: "FAQ", icon: faQuestionCircle },
     { path: "/api-docs", label: "API Docs", icon: faBook },
-    { path: "/rss", label: "RSS Feed", icon: faRss },
+    { path: "/feeds/rss", label: "RSS Feed", icon: faRss, external: true },
     { path: "/tagin-project", label: "Tagin' Project", icon: faTags },
     { path: "/contact-info", label: "Contact Info", icon: faAddressBook },
     { path: "/privacy", label: "Privacy Policy", icon: faUserShield },
@@ -142,15 +142,27 @@ const Navbar = ({ user, handleLogout }) => {
                 <div className="dropdown-menu" role="menu">
                   <div className="dropdown-content">
                     {staticLinks.map((item, index) => (
-                      <Link
-                        key={item.path}
-                        to={item.path}
-                        className="dropdown-item"
-                        onClick={() => closeMenus()}
-                      >
-                        <FontAwesomeIcon icon={item.icon} className="icon" />
-                        {item.label}
-                      </Link>
+                      item.external ? (
+                        <a
+                          key={item.path}
+                          href={item.path}
+                          className="dropdown-item"
+                          onClick={() => closeMenus()}
+                        >
+                          <FontAwesomeIcon icon={item.icon} className="icon" />
+                          {item.label}
+                        </a>
+                      ) : (
+                        <Link
+                          key={item.path}
+                          to={item.path}
+                          className="dropdown-item"
+                          onClick={() => closeMenus()}
+                        >
+                          <FontAwesomeIcon icon={item.icon} className="icon" />
+                          {item.label}
+                        </Link>
+                      )
                     ))}
                   </div>
                 </div>
