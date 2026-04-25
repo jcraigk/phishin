@@ -280,35 +280,36 @@ main {
   background-size: cover;
   background-repeat: no-repeat;
 
-  .track-shimmer-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: inherit;
-    overflow: hidden;
+  .track-eq {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 1.1rem;
+    width: 1.4rem;
+    margin-right: 0.6rem;
+    flex-shrink: 0;
     pointer-events: none;
-    z-index: 1;
+    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--blue) 70%, transparent));
   }
 
-  .track-shimmer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+  .track-eq-bar {
+    width: 3px;
+    height: 40%;
     background: linear-gradient(
-      90deg,
-      transparent 0%,
-      transparent 20%,
-      rgba(171, 217, 255, 0.45) 45%,
-      rgba(171, 217, 255, 0.45) 55%,
-      transparent 80%,
-      transparent 100%
+      to top,
+      var(--blue) 0%,
+      color-mix(in srgb, var(--blue) 55%, white) 100%
     );
-    animation: track-shimmer 2.25s infinite linear;
+    border-radius: 1px 1px 0 0;
+    transform-origin: bottom;
+    animation: track-eq-bounce 0.9s ease-in-out infinite;
   }
+
+  .track-eq-bar:nth-child(1) { animation-delay: -0.15s; }
+  .track-eq-bar:nth-child(2) { animation-delay: -0.55s; }
+  .track-eq-bar:nth-child(3) { animation-delay: -0.30s; }
+  .track-eq-bar:nth-child(4) { animation-delay: -0.70s; }
+
 
   .cover-art {
     display: inline-block;
@@ -469,7 +470,7 @@ main {
     background-size: cover;
     background-repeat: no-repeat;
 
-    &:not(:last-child):not(.focus)::after {
+    &:not(:last-child)::after {
       content: "";
       display: block;
       position: absolute;
@@ -480,7 +481,7 @@ main {
       background-color: var(--track-divider);
     }
 
-    &:not(:last-child):not(.focus):not(.active-item):not(.no-audio):hover::after {
+    &:not(:last-child):not(.active-item):not(.no-audio):hover::after {
       display: none;
     }
 
@@ -505,8 +506,11 @@ main {
       }
     }
 
-    &.focus {
-      box-shadow: inset 0 -3px 0 #ABD9FF;
+    &.focus .leftside-primary {
+      text-decoration: underline;
+      text-decoration-color: var(--blue);
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
     }
   }
 }
@@ -652,9 +656,11 @@ main {
   }
 }
 
-@keyframes track-shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+@keyframes track-eq-bounce {
+  0%, 100% { height: 18%; }
+  20%      { height: 65%; }
+  45%      { height: 95%; }
+  70%      { height: 40%; }
 }
 
 @keyframes shimmer {

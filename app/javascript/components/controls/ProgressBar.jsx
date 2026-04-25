@@ -14,7 +14,8 @@ const ProgressBar = ({ activeTrack, currentTime, currentTrackIndex, activePlayli
       if (currentTrack?.duration && progressBarRef.current) {
         const duration = currentTrack.duration / 1000;
         const progress = (currentTime / duration) * 100;
-        const progressColor = isPlaying ? '#03bbf2' : '#b0b0b0';
+        const blue = getComputedStyle(document.documentElement).getPropertyValue('--blue').trim() || '#03bbf2';
+        const progressColor = isPlaying ? blue : '#b0b0b0';
         progressBarRef.current.style.setProperty('background', `linear-gradient(to right, ${progressColor} ${progress}%, rgba(255,255,255,0) ${progress}%)`, 'important');
       }
     }

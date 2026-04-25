@@ -64,12 +64,15 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
         onClick={() => handleTrackClick(track)}
         ref={trackRefs ? (el) => (trackRefs.current[track.position - 1] = el) : null}
       >
-        {isActive && isPlaying && (
-          <span className="track-shimmer-container">
-            <span className="track-shimmer" />
-          </span>
-        )}
         <div className="main-row">
+          {isActive && isPlaying && (
+            <span className="track-eq" aria-hidden="true">
+              <span className="track-eq-bar" />
+              <span className="track-eq-bar" />
+              <span className="track-eq-bar" />
+              <span className="track-eq-bar" />
+            </span>
+          )}
           {numbering && <span className="leftside-numbering">#{index + 1}</span>}
           <span className="leftside-primary">
             {!viewStyle && (
