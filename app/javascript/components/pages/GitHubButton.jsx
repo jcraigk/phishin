@@ -4,7 +4,7 @@ import { faCodeBranch } from "@fortawesome/free-solid-svg-icons";
 
 const GitHubButton = ({ className }) => (
   <a
-    href="https://github.com/jcraigk/phishin/issues"
+    href="https://github.com/jcraigk/phishin"
     className={`button ${className}`}
     target="_blank"
   >
