@@ -24,6 +24,34 @@
   font-size: 1.2rem;
 }
 
+.transcript-quote {
+  position: relative;
+  margin: 0.5rem 0 0 0;
+  padding: 3rem 1.5rem 1.5rem 1.75rem;
+  border-left: 3px solid var(--blue);
+  border-radius: 0 $radius $radius 0;
+  background: linear-gradient(
+    to right,
+    rgba(3, 187, 242, 0.08),
+    rgba(3, 187, 242, 0) 40%
+  );
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--title-gray);
+
+  &::before {
+    content: "\201C";
+    position: absolute;
+    top: 0.75rem;
+    left: 1rem;
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--blue);
+    opacity: 0.55;
+    font-family: Georgia, "Times New Roman", serif;
+  }
+}
+
 #app-modal {
   .tag-badge {
     font-size: 1.2rem !important;

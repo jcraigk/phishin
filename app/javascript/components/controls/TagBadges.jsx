@@ -19,7 +19,7 @@ const TagBadges = ({ tags, parentId, highlight }) => {
     event.preventDefault();
 
     const modalContent = (
-      <>
+      <div className="wide-modal">
         <div className="tags-container">
           {Object.entries(groupedTags).map(([tagName, tagGroup], index) => (
             <div key={index} className="tag-group mb-4">
@@ -32,11 +32,10 @@ const TagBadges = ({ tags, parentId, highlight }) => {
                     {tag.transcript ? (
                       <>
                         <p className="mb-4">{tag.notes || tag.description}</p>
-                        <p className="has-text-weight-bold mb-2">TRANSCRIPT:</p>
-                        <div
-                          className="box"
+                        <blockquote
+                          className="transcript-quote"
                           dangerouslySetInnerHTML={{ __html: tag.transcript.replace(/\n/g, "<br />") }}
-                        ></div>
+                        ></blockquote>
                       </>
                     ) : (
                       <ul className="notes-list">
@@ -49,7 +48,7 @@ const TagBadges = ({ tags, parentId, highlight }) => {
             </div>
           ))}
         </div>
-      </>
+      </div>
     );
 
     openAppModal(modalContent);

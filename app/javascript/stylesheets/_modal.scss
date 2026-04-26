@@ -54,4 +54,8 @@
   .modal-content {
     min-width: 500px;
   }
+
+  .modal-content:has(.wide-modal) {
+    width: 800px;
+  }
 }
