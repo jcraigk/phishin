@@ -4,10 +4,16 @@ class Oauth::SorceryController < ApplicationController
   before_action :ensure_allowed_provider, only: %i[login callback]
 
   def login
-    login_at(provider)
+    state = SecureRandom.hex(32)
+    session[:oauth_state] = state
+    login_at(provider, state:)
   end
 
   def callback
+    expected_state = session.delete(:oauth_state)
+    raise "OAuth state mismatch" if expected_state.blank? ||
+                                    !ActiveSupport::SecurityUtils.secure_compare(expected_state, params[:state].to_s)
+
     auth = build_auth_hash(provider)
     user = User.where(email: auth[:email]).first_or_initialize
     user.save! unless user.persisted?
@@ -58,6 +64,7 @@ class Oauth::SorceryController < ApplicationController
       "https://www.googleapis.com/oauth2/v2/userinfo",
       headers: { Authorization: "Bearer #{fetch_access_token}" }
     data = JSON.parse(response.body)
+    raise "Google email not verified" unless data["verified_email"] == true
     {
       uid: data["id"],
       email: data["email"]

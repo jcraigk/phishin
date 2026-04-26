@@ -9,6 +9,13 @@
 class McpOauthController < ApplicationController
   skip_before_action :verify_authenticity_token
 
+  ALLOWED_REDIRECT_HOSTS = %w[
+    claude.ai
+    claude.com
+    chatgpt.com
+    chat.openai.com
+  ].freeze
+
   def protected_resource
     render json: {
       resource: "#{base_url}/mcp/anthropic",
@@ -31,7 +38,9 @@ class McpOauthController < ApplicationController
   end
 
   def authorize
-    redirect_uri = params[:redirect_uri]
+    redirect_uri = params[:redirect_uri].to_s
+    return head(:bad_request) unless valid_redirect_uri?(redirect_uri)
+
     state = params[:state]
     code = SecureRandom.hex(32)
 
@@ -65,5 +74,13 @@ class McpOauthController < ApplicationController
 
   def base_url
     App.base_url
+  end
+
+  def valid_redirect_uri?(uri_string)
+    return false if uri_string.blank?
+    uri = URI.parse(uri_string)
+    uri.scheme == "https" && ALLOWED_REDIRECT_HOSTS.include?(uri.host)
+  rescue URI::InvalidURIError
+    false
   end
 end
