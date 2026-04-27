@@ -327,10 +327,16 @@ main {
     font-family: 'Marck Script', cursive;
     font-size: 1.4rem;
     margin-right: 0.8rem;
+    margin-left: 0.5rem;
     position: relative;
     top: 3px;
     width: 2rem;
     text-align: right;
+
+    .track-eq {
+      margin-right: 0;
+      vertical-align: middle;
+    }
   }
 
   .leftside-primary {

@@ -65,15 +65,29 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
         ref={trackRefs ? (el) => (trackRefs.current[track.position - 1] = el) : null}
       >
         <div className="main-row">
-          {isActive && isPlaying && (
-            <span className="track-eq" aria-hidden="true">
-              <span className="track-eq-bar" />
-              <span className="track-eq-bar" />
-              <span className="track-eq-bar" />
-              <span className="track-eq-bar" />
+          {numbering ? (
+            <span className="leftside-numbering">
+              {isActive && isPlaying ? (
+                <span className="track-eq" aria-hidden="true">
+                  <span className="track-eq-bar" />
+                  <span className="track-eq-bar" />
+                  <span className="track-eq-bar" />
+                  <span className="track-eq-bar" />
+                </span>
+              ) : (
+                `#${index + 1}`
+              )}
             </span>
+          ) : (
+            isActive && isPlaying && (
+              <span className="track-eq" aria-hidden="true">
+                <span className="track-eq-bar" />
+                <span className="track-eq-bar" />
+                <span className="track-eq-bar" />
+                <span className="track-eq-bar" />
+              </span>
+            )
           )}
-          {numbering && <span className="leftside-numbering">#{index + 1}</span>}
           <span className="leftside-primary">
             {!viewStyle && (
               <>
@@ -138,7 +152,7 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
   return (
     <>
       {tracks.length === 0 ? (
-        <h2 className="title">No tracks found</h2>
+        <h2 className="title">{viewStyle === "playlist" ? "No tracks added" : "No tracks found"}</h2>
       ) : (
         <ul>
           {viewStyle === "show"
