@@ -215,10 +215,9 @@ RSpec.describe "MCP Controller" do
           expect(response).to have_http_status(:ok)
 
           json = response.parsed_body
-          # MCP gem returns schema validation errors in the result content
-          content = json.dig("result", "content")
-          text_content = content&.find { |c| c["type"] == "text" }
-          expect(text_content["text"]).to include("Invalid")
+          # MCP gem returns schema validation errors as a JSON-RPC error
+          expect(json["error"]).to be_present
+          expect(json.dig("error", "message")).to include("Invalid")
         end
       end
 
