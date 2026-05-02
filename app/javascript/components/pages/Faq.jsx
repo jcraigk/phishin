@@ -5,6 +5,8 @@ import MobileApps from "./MobileApps";
 import DiscordButton from "./DiscordButton";
 import GitHubButton from "./GitHubButton";
 import EmailButton from "./EmailButton";
+import { Tooltip } from "react-tooltip";
+import helpingFriendlyIcon from "../../images/icon-helping-friendly.png";
 
 const Faq = () => {
   return (
@@ -19,6 +21,23 @@ const Faq = () => {
       <h3>Are there native mobile apps?</h3>
       <p>Yes, there are native apps for iOS and Android. Follow the links below.</p>
       <MobileApps />
+
+      <h3>Are there related web apps?</h3>
+      <p>Yes, check out The Helping Friendly App for Phish setlists, song statistics, venue history, and more.</p>
+      <div className="mobile-apps">
+        <a
+          href="https://thehelpingfriendly.app"
+          target="_blank"
+        >
+          <img
+            src={helpingFriendlyIcon}
+            alt="The Helping Friendly App"
+            data-tooltip-id="tooltip-thfa"
+            data-tooltip-content="The Helping Friendly App"
+          />
+          <Tooltip id="tooltip-thfa" className="custom-tooltip" />
+        </a>
+      </div>
 
       <h3>Is this site legal?</h3>
       <p>
