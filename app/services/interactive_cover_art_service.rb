@@ -5,7 +5,7 @@ class InteractiveCoverArtService < ApplicationService
 
   param :relation
 
-  NUM_IMAGES = 2
+  NUM_IMAGES = 1
   def prompt_for_zoom
     print "Zoom (0-50)% 👉 "
     $stdin.gets.chomp.to_i
@@ -113,7 +113,7 @@ class InteractiveCoverArtService < ApplicationService
   end
 
   def prompt_user_for_action
-    txt = @urls.any? ? "Use (1-#{@urls.size}), " : ""
+    txt = @urls.any? ? "Use (1-#{@urls.size}), (e)dit #, " : ""
     txt += "E(x)it, (S)kip, New (i)mages, New (p)rompt, (U)RL, (F)ile, or custom prompt 👉 "
     print txt
     $stdin.gets.chomp.strip
@@ -135,7 +135,15 @@ class InteractiveCoverArtService < ApplicationService
     when "f"
       attach_cover_art_from_file(show)
       true
-    when /\d+/
+    when /\Ae(\d+)\z/
+      edit_candidate(show, Regexp.last_match(1).to_i)
+      nil
+    when "e"
+      print "Edit which # 👉 "
+      n = $stdin.gets.chomp.strip.to_i
+      n.positive? ? edit_candidate(show, n) : puts("Cancelled")
+      nil
+    when /\A\d+\z/
       zoom = prompt_for_zoom
       show.attach_cover_art_by_url(@urls[input.to_i - 1], zoom:)
       true
@@ -169,12 +177,35 @@ class InteractiveCoverArtService < ApplicationService
 
     NUM_IMAGES.times do |i|
       image_url = CoverArtImageService.call(show, dry_run: true)
-      @urls << image_url
-      key = image_url[%r{/blob/([^/]+)\.png\z}, 1]
-      @candidate_blob_keys << key if key
-      puts "Image ##{@urls.size}: #{image_url}"
-      display_image_in_terminal(image_url)
+      record_candidate(image_url)
     end
+  end
+
+  def edit_candidate(show, n)
+    key = @candidate_blob_keys[n - 1]
+    return puts "❌ No candidate ##{n}" unless key
+
+    print "Edit prompt 👉 "
+    prompt = $stdin.gets.chomp.strip
+    return puts "Cancelled" if prompt.empty?
+
+    puts "\e[35m💬 Editing ##{n}: #{prompt}\e[0m"
+    puts "Generating edit..."
+    image_url = CoverArtImageService.call(
+      show,
+      dry_run: true,
+      source_blob_key: key,
+      edit_prompt: prompt
+    )
+    record_candidate(image_url)
+  end
+
+  def record_candidate(image_url)
+    @urls << image_url
+    key = image_url[%r{/blob/([^/]+)\.png\z}, 1]
+    @candidate_blob_keys << key if key
+    puts "Image ##{@urls.size}: #{image_url}"
+    display_image_in_terminal(image_url)
   end
 
   def display_image_in_terminal(image_url)
