@@ -43,7 +43,10 @@ namespace :shows do
     dates = Dir.entries(App.content_import_path).grep(/\d{4}\-\d{1,2}\-\d{1,2}\z/).sort
     next puts "❌ No shows found in #{App.content_import_path}" unless dates.any?
 
+    exclude_from_stats = ENV["EXCLUDE_FROM_STATS"].present?
+
+    puts "🚫 EXCLUDE_FROM_STATS set" if exclude_from_stats
     puts "📂 #{pluralize(dates.size, 'folder')} found"
-    dates.each { |date| ShowImporter::Cli.new(date) }
+    dates.each { |date| ShowImporter::Cli.new(date, exclude_from_stats:) }
   end
 end

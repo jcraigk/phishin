@@ -3,10 +3,10 @@ require "reline"
 class ShowImporter::Cli
   attr_reader :orch
 
-  def initialize(date)
+  def initialize(date, exclude_from_stats: false)
     puts "📅 Preparing #{date}"
 
-    @orch = ShowImporter::Orchestrator.new(date)
+    @orch = ShowImporter::Orchestrator.new(date, exclude_from_stats:)
     ShowImporter::TrackReplacer.new(date) && return if orch.show_found
 
     repl
@@ -15,7 +15,7 @@ class ShowImporter::Cli
   def main_menu
     print_header
     orch.pp_list
-    puts "\n\nTrack #, (f)ilenames, (l)ist, (i)nsert, (d)elete, (s)ave, e(x)it"
+    puts "\n\nTrack #, (i)nsert, (s)ave, e(x)it"
   end
 
   def print_header
@@ -57,7 +57,7 @@ class ShowImporter::Cli
   end
 
   def help_str
-    @help_str ||= "Combine (u)p, (S)ong, (F)ile, S(e)t, (T)itle, (L)ist"
+    @help_str ||= "Combine (u)p, (S)ong, (F)ile, S(e)t, (T)itle, (D)elete, (B)ack"
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
@@ -74,17 +74,30 @@ class ShowImporter::Cli
         break
       when "s"
         update_song_for_pos(pos)
+        main_menu
+        break
       when "f"
         update_file_for_pos(pos)
+        main_menu
+        break
       when "e"
         update_set_for_pos(pos)
+        main_menu
+        break
       when "t"
         update_title_for_pos(pos)
+        main_menu
+        break
+      when "d"
+        puts "Deleting (#{pos}) #{orch.get_track(pos).title}"
+        orch.delete(pos)
+        main_menu
+        break
       when "?"
         track = orch.get_track(pos)
         puts orch.track_display(track)
         puts help_str
-      when "l"
+      when "b"
         main_menu
         break
       end
@@ -94,13 +107,10 @@ class ShowImporter::Cli
 
   def insert_new_track
     puts
-    line = Reline.readline("Before track # 👉 ", true)
-    orch.insert_before(line.to_i)
-  end
-
-  def delete_track
-    line = Reline.readline("Delete track # 👉 ", true)
-    orch.delete(line.to_i)
+    line = Reline.readline("Before track # (enter to cancel) 👉 ", true)
+    pos = line.to_i
+    return puts "Cancelled" unless pos.positive? && orch.get_track(pos)
+    orch.insert_before(pos)
   end
 
   def update_song_for_pos(pos)
@@ -152,24 +162,26 @@ class ShowImporter::Cli
 
   def process(line)
     pos = line.to_i
-    return edit_for_pos(pos) if pos.positive?
+    if pos.positive?
+      return edit_for_pos(pos) if orch.get_track(pos)
+      return invalid_input
+    end
+    return invalid_input unless line.in?(%w[i s x])
     menu_branch(line)
   end
 
-  def menu_branch(line) # rubocop:disable Metrics/MethodLength
+  def menu_branch(line)
     case line
-    when "d"
-      delete_track
-      main_menu
-    when "f"
-      print_filenames
     when "i"
       insert_new_track
-      main_menu
-    when "l"
       main_menu
     when "s"
       orch.save
     end
+  end
+
+  def invalid_input
+    main_menu
+    puts "❌ Invalid input"
   end
 end

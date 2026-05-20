@@ -9,13 +9,14 @@ class ShowImporter::Orchestrator
     "S" => %w[(Check)]
   }.freeze
 
-  def initialize(date) # rubocop:disable Metrics/MethodLength
+  def initialize(date, exclude_from_stats: false) # rubocop:disable Metrics/MethodLength
     Track.attr_accessor(:filename)
 
     @date = date
     @path = "#{App.content_import_path}/#{date}"
     @show_info = ShowImporter::ShowInfo.new(date)
     @used_files = []
+    @exclude_from_stats = exclude_from_stats
 
     analyze_filenames
 
@@ -39,6 +40,7 @@ class ShowImporter::Orchestrator
     print "🍩 Processing..."
     pbar = ProgressBar.create(total: @tracks.size, format: "%a %B %c/%C %p%% %E")
 
+    show.performance_gap_value = 0 if @exclude_from_stats
     show.save!
     save_tracks(pbar)
     show.reload.save_duration
@@ -173,6 +175,7 @@ class ShowImporter::Orchestrator
 
   def save_track(track)
     track.show = show
+    track.exclude_from_stats = true if @exclude_from_stats
     track.save!
     track.mp3_audio.attach \
       io: File.open("#{@fm.dir}/#{track.filename}"),
