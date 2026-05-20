@@ -81,8 +81,11 @@ class ShowImporter::Cli
         main_menu
         break
       when "e"
-        update_set_for_pos(pos)
-        main_menu
+        if update_set_for_pos(pos)
+          main_menu
+        else
+          invalid_input
+        end
         break
       when "t"
         update_title_for_pos(pos)
@@ -130,10 +133,14 @@ class ShowImporter::Cli
     puts
   end
 
+  VALID_SETS = %w[S 1 2 3 4 E E2 E3].freeze
+
   def update_set_for_pos(pos)
     line = Reline.readline("Set [S,1,2,3,4,E,E2,E3] 👉 ", true)
+    return false unless VALID_SETS.include?(line)
     orch.get_track(pos).set = line
     puts
+    true
   end
 
   def update_file_for_pos(pos) # rubocop:disable Metrics/MethodLength
