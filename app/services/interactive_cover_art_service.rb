@@ -120,7 +120,7 @@ class InteractiveCoverArtService < ApplicationService
       true
     when /\d+/
       zoom = prompt_for_zoom
-      show.attach_cover_art_by_url(@urls[input.to_i - 1], zoom:)
+      show.attach_cover_art_by_path(@urls[input.to_i - 1], zoom:)
       true
     when "s"
       puts "Skipping..."
