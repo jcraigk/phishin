@@ -34,14 +34,17 @@ class CoverArtImageService < ApplicationService
     raise "Failed to generate cover art: #{response.body}" unless response.success?
 
     result = JSON.parse(response.body)
-    path = write_temp_image(result["data"].first["b64_json"])
-    show.attach_cover_art_by_path(path) unless dry_run
-    path
+    url = upload_candidate(result["data"].first["b64_json"])
+    show.attach_cover_art_by_url(url) unless dry_run
+    url
   end
 
-  def write_temp_image(b64)
-    path = Rails.root.join("tmp", "cover_art_#{SecureRandom.hex}.png").to_s
-    File.binwrite(path, Base64.decode64(b64))
-    path
+  def upload_candidate(b64)
+    blob = ActiveStorage::Blob.create_and_upload!(
+      io: StringIO.new(Base64.decode64(b64)),
+      filename: "cover_art_candidate_#{SecureRandom.hex}.png",
+      content_type: "image/png"
+    )
+    "#{App.base_url}/blob/#{blob.key}.png"
   end
 end

@@ -30,19 +30,36 @@ class InteractiveCoverArtService < ApplicationService
   def interactive_cli
     relation.each_with_index do |show, index|
       @urls = []
+      @candidate_blob_keys = []
 
-      display_show_info(show)
-      handle_cover_art_prompt(show)
+      begin
+        display_show_info(show)
+        handle_cover_art_prompt(show)
 
-      if handle_cover_art_images(show)
-        apply_album_cover_and_id3_tags(show)
-        apply_cover_art_to_children(show)
+        if handle_cover_art_images(show)
+          apply_album_cover_and_id3_tags(show)
+          apply_cover_art_to_children(show)
+        end
+      ensure
+        purge_candidate_blobs
       end
 
       @pbar.increment if @pbar
     end
 
     @pbar.finish if @pbar
+  end
+
+  def purge_candidate_blobs
+    return if @candidate_blob_keys.blank?
+    purged = 0
+    @candidate_blob_keys.each do |key|
+      blob = ActiveStorage::Blob.find_by(key:)
+      next unless blob
+      blob.purge
+      purged += 1
+    end
+    puts "🧹 Purged #{pluralize(purged, 'candidate blob')}" if purged > 0
   end
 
   def display_show_info(show)
@@ -120,7 +137,7 @@ class InteractiveCoverArtService < ApplicationService
       true
     when /\d+/
       zoom = prompt_for_zoom
-      show.attach_cover_art_by_path(@urls[input.to_i - 1], zoom:)
+      show.attach_cover_art_by_url(@urls[input.to_i - 1], zoom:)
       true
     when "s"
       puts "Skipping..."
@@ -153,6 +170,8 @@ class InteractiveCoverArtService < ApplicationService
     NUM_IMAGES.times do |i|
       image_url = CoverArtImageService.call(show, dry_run: true)
       @urls << image_url
+      key = image_url[%r{/blob/([^/]+)\.png\z}, 1]
+      @candidate_blob_keys << key if key
       puts "Image ##{@urls.size}: #{image_url}"
       display_image_in_terminal(image_url)
     end
