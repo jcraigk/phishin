@@ -8,12 +8,14 @@ module ToolBuilder
     desc = Descriptions.for(tool_name_str, client)
     tool_meta = base_class.try(:"#{client}_meta")
     base_schema = base_class.try(:input_schema_value)
+    base_output_schema = base_class.try(:output_schema_value)
     base_annotations = base_class.try(:annotations_value)
 
     Class.new(base_class) do
       tool_name tool_name_str
       description desc
       input_schema(base_schema) if base_schema.present?
+      output_schema(base_output_schema) if base_output_schema.present?
 
       if base_annotations.present?
         annotations(

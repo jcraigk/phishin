@@ -43,6 +43,16 @@ RSpec.describe "MCP Controller" do
         expect(get_show["description"]).to include("widget")
         expect(get_show["_meta"]).to include("openai/outputTemplate")
       end
+
+      it "includes outputSchema for every tool" do
+        post("/mcp/openai", params: json_rpc_request(rpc_method: "tools/list"), headers:)
+
+        tools = response.parsed_body.dig("result", "tools")
+        tools_without_schema = tools.reject { |t| t["outputSchema"].is_a?(Hash) }
+
+        expect(tools_without_schema).to be_empty,
+          "Tools missing outputSchema: #{tools_without_schema.map { |t| t['name'] }.join(', ')}"
+      end
     end
 
     describe "tools/call" do
