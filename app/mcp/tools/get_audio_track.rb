@@ -13,6 +13,8 @@ module Tools
       }
     )
 
+    output_schema OutputSchemas::GET_AUDIO_TRACK
+
     def self.openai_meta
       {
         "openai/outputTemplate" => Server.widget_uri("get_audio_track"),

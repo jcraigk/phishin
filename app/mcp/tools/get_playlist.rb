@@ -12,6 +12,8 @@ module Tools
       }
     )
 
+    output_schema OutputSchemas::GET_PLAYLIST
+
     def self.openai_meta
       {
         "openai/outputTemplate" => Server.widget_uri("get_playlist"),

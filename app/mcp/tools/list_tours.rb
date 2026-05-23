@@ -12,10 +12,12 @@ module Tools
       }
     )
 
+    output_schema OutputSchemas::LIST_TOURS
+
     class << self
       def call(year: nil)
         result = fetch_tours(year)
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ], structured_content: result)
       end
 
       def fetch_tours(year)

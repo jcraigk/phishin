@@ -16,6 +16,8 @@ module Tools
       required: [ "query" ]
     )
 
+    output_schema OutputSchemas::SEARCH
+
     class << self
       def call(query:, limit: 25)
         return error_response("Query must be at least 2 characters") if query.to_s.length < 2
@@ -23,7 +25,7 @@ module Tools
 
         results = fetch_search_results(query, limit)
 
-        MCP::Tool::Response.new([ { type: "text", text: results.to_json } ])
+        MCP::Tool::Response.new([ { type: "text", text: results.to_json } ], structured_content: results)
       end
 
       def fetch_search_results(query, limit)

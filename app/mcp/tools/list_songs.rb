@@ -31,12 +31,14 @@ module Tools
       }
     )
 
+    output_schema OutputSchemas::LIST_SONGS
+
     class << self
       def call(song_type: "all", sort_by: "name", sort_order: nil, min_plays: nil, limit: 50)
         sort_order ||= sort_by == "times_played" ? "desc" : "asc"
 
         result = fetch_songs(song_type, sort_by, sort_order, min_plays, limit)
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ], structured_content: result)
       end
 
       def fetch_songs(song_type, sort_by, sort_order, min_plays, limit)

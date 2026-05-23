@@ -27,6 +27,8 @@ module Tools
       }
     )
 
+    output_schema OutputSchemas::LIST_SHOWS
+
     class << self
       def call(
         year: nil,
@@ -46,7 +48,7 @@ module Tools
         result = fetch_shows(year, start_date, end_date, tour_slug, venue_slug, sort_by, sort_order, limit)
         return error_response("No shows found") unless result
 
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ], structured_content: result)
       end
 
       def fetch_shows(year, start_date, end_date, tour_slug, venue_slug, sort_by, sort_order, limit)

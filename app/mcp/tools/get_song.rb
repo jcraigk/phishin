@@ -26,6 +26,8 @@ module Tools
       }
     )
 
+    output_schema OutputSchemas::GET_SONG
+
     class << self
       def call(slug: nil, random: false, sort_by: "date", sort_order: "desc", limit: 25)
         song = if random || slug.nil?
@@ -36,7 +38,7 @@ module Tools
         return error_response("Song not found") unless song
 
         result = fetch_song_data(song, sort_by, sort_order, limit)
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ], structured_content: result)
       end
 
       def fetch_song_data(song, sort_by, sort_order, limit)

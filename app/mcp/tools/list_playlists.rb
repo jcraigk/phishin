@@ -22,10 +22,12 @@ module Tools
       }
     )
 
+    output_schema OutputSchemas::LIST_PLAYLISTS
+
     class << self
       def call(sort_by: "likes_count", sort_order: "desc", limit: 50)
         result = fetch_playlists(sort_by, sort_order, limit)
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ], structured_content: result)
       end
 
       def fetch_playlists(sort_by, sort_order, limit)

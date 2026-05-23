@@ -13,6 +13,8 @@ module Tools
       }
     )
 
+    output_schema OutputSchemas::GET_VENUE
+
     class << self
       def call(slug: nil, random: false)
         venue = if random || slug.nil?
@@ -23,7 +25,7 @@ module Tools
         return error_response("Venue not found") unless venue
 
         result = fetch_venue_data(venue)
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ], structured_content: result)
       end
 
       def fetch_venue_data(venue)

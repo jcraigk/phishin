@@ -31,6 +31,8 @@ module Tools
       required: [ "stat_type" ]
     )
 
+    output_schema OutputSchemas::STATS
+
     class << self
       def call(stat_type:, **options)
         result = fetch_stats(stat_type, options.compact)
@@ -38,7 +40,7 @@ module Tools
         if result[:error]
           MCP::Tool::Response.new([ { type: "text", text: "Error: #{result[:error]}" } ], error: true)
         else
-          MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+          MCP::Tool::Response.new([ { type: "text", text: result.to_json } ], structured_content: result)
         end
       end
 

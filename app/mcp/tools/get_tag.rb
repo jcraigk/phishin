@@ -29,6 +29,8 @@ module Tools
       required: %w[slug type]
     )
 
+    output_schema OutputSchemas::GET_TAG
+
     class << self
       def call(slug:, type:, sort_by: "date", sort_order: "desc", limit: 25)
         tag = Tag.find_by(slug:)
@@ -41,7 +43,7 @@ module Tools
           fetch_tracks_data(tag, sort_by, sort_order, limit)
         end
 
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ], structured_content: result)
       end
 
       private

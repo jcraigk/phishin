@@ -13,6 +13,8 @@ module Tools
       }
     )
 
+    output_schema OutputSchemas::GET_TOUR
+
     class << self
       def call(slug: nil, random: false)
         tour = if random || slug.nil?
@@ -23,7 +25,7 @@ module Tools
         return error_response("Tour not found") unless tour
 
         result = fetch_tour_data(tour)
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ], structured_content: result)
       end
 
       def fetch_tour_data(tour)

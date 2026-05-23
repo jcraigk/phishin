@@ -25,12 +25,14 @@ module Tools
       }
     )
 
+    output_schema OutputSchemas::LIST_VENUES
+
     class << self
       def call(city: nil, state: nil, country: nil, sort_by: "name", sort_order: nil, limit: 50)
         sort_order ||= sort_by == "shows_count" ? "desc" : "asc"
 
         result = fetch_venues(city, state, country, sort_by, sort_order, limit)
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ], structured_content: result)
       end
 
       def fetch_venues(city, state, country, sort_by, sort_order, limit)

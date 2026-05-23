@@ -8,10 +8,12 @@ module Tools
 
     input_schema(properties: {})
 
+    output_schema OutputSchemas::LIST_TAGS
+
     class << self
       def call
         result = fetch_tags
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ], structured_content: result)
       end
 
       def fetch_tags

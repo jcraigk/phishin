@@ -10,10 +10,12 @@ module Tools
       properties: {}
     )
 
+    output_schema OutputSchemas::LIST_YEARS
+
     class << self
       def call
         result = fetch_years_data
-        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ])
+        MCP::Tool::Response.new([ { type: "text", text: result.to_json } ], structured_content: result)
       end
 
       def fetch_years_data
