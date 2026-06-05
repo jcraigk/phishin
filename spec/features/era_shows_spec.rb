@@ -30,8 +30,8 @@ RSpec.describe "Era Shows", :js do
     visit "/2024"
 
     shows.each do |show|
-      expect(page).to have_content(show.date.strftime("%b %-d, %Y"))
-      expect(page).to have_content(show.venue_name)
+      expect(page).to have_text(show.date.strftime("%b %-d, %Y"))
+      expect(page).to have_text(show.venue_name)
     end
   end
 
@@ -40,7 +40,7 @@ RSpec.describe "Era Shows", :js do
 
     # Assuming each show belongs to a tour with a tour name
     shows.each do |show|
-      expect(page).to have_content(show.tour.name)
+      expect(page).to have_text(show.tour.name)
     end
   end
 end

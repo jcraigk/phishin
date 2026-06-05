@@ -67,6 +67,6 @@ RSpec.describe "Playlists", :js do
     find(".list-item", text: first_playlist.name).click
 
     expect(page).to have_current_path("/play/#{first_playlist.slug}")
-    expect(page).to have_content(first_playlist.name)
+    expect(page).to have_text(first_playlist.name)
   end
 end

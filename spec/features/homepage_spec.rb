@@ -46,9 +46,9 @@ describe "Homepage", :js do
     end
 
     within("#sidebar") do
-      expect(page).to have_content("#{shows.count} shows")
+      expect(page).to have_text("#{shows.count} shows")
       total_hours = (shows.sum(&:duration) / (1000 * 60 * 60)).round
-      expect(page).to have_content("#{total_hours} hours of music")
+      expect(page).to have_text("#{total_hours} hours of music")
       expect(page).to have_css(".mobile-apps")
       expect(page).to have_link("GitHub")
       expect(page).to have_link("Discord")
@@ -58,16 +58,16 @@ describe "Homepage", :js do
       # Handle the grouped years (1983-1987)
       grouped_years = (1983..1987)
       shows_in_group = shows.select { |show| grouped_years.include?(show.date.year) }
-      expect(page).to have_content("1983-1987")
-      expect(page).to have_content("#{shows_in_group.count} shows")
+      expect(page).to have_text("1983-1987")
+      expect(page).to have_text("#{shows_in_group.count} shows")
       expect(page).to have_link("1983-1987", href: "/1983-1987")
 
       # Handle the rest of the individual years
       shows.group_by { |show| show.date.year }.each do |year, shows_in_year|
         next if grouped_years.include?(year)  # Skip the grouped years
 
-        expect(page).to have_content(year.to_s)
-        expect(page).to have_content("#{shows_in_year.count} shows")
+        expect(page).to have_text(year.to_s)
+        expect(page).to have_text("#{shows_in_year.count} shows")
         expect(page).to have_link(year.to_s, href: "/#{year}")
       end
     end
@@ -77,8 +77,8 @@ describe "Homepage", :js do
     sleep 1
     expect(page).to have_current_path("/#{most_recent_year}")
     within("#sidebar") do
-      expect(page).to have_content(most_recent_year)
-      expect(page).to have_content("3 shows")
+      expect(page).to have_text(most_recent_year)
+      expect(page).to have_text("3 shows")
     end
     within("#main-content") do
       items = page.all(".grid-item")

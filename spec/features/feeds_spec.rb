@@ -6,7 +6,7 @@ describe "RSS Feed" do
   it "click My Shows, display/sorting of shows" do
     visit rss_feed_path
 
-    expect(page).to have_content(announcements.first.title)
-    expect(page).to have_content(announcements.second.title)
+    expect(page).to have_text(announcements.first.title)
+    expect(page).to have_text(announcements.second.title)
   end
 end

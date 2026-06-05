@@ -18,7 +18,7 @@ RSpec.describe "Top Tracks", :js do
       within all(".list-item")[idx] do
         expect(page).to have_css(".leftside-primary", text: track.title)
         within(".like-container") do
-          expect(page).to have_content(track.likes_count)
+          expect(page).to have_text(track.likes_count)
         end
         expect(page).to have_css(".leftside-numbering", text: "##{idx + 1}")
       end

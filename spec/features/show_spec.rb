@@ -30,23 +30,23 @@ RSpec.describe "Shows", :js do
 
   it "displays the correct sidebar content" do
     within(".sidebar-content") do
-      expect(page).to have_content("Aug 1, 2023")
+      expect(page).to have_text("Aug 1, 2023")
       expect(page).to have_link("Madison Square Garden", href: "/venues/madison-square-garden")
       within(".like-container") do
-        expect(page).to have_content("3")
+        expect(page).to have_text("3")
       end
     end
   end
 
   it "displays tracks grouped by set with correct headers" do
     within("#main-content") do
-      expect(page).to have_content("Set 1")
+      expect(page).to have_text("Set 1")
       set_1_tracks.each do |track|
-        expect(page).to have_content(track.title)
+        expect(page).to have_text(track.title)
       end
-      expect(page).to have_content("Set 2")
+      expect(page).to have_text("Set 2")
       set_2_tracks.each do |track|
-        expect(page).to have_content(track.title)
+        expect(page).to have_text(track.title)
       end
     end
   end

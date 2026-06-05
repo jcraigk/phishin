@@ -12,7 +12,7 @@ describe "Reset Password", :js do
     click_on("Forgot your password?")
     fill_in("email", with: user.email)
     click_on("Request password reset")
-    expect(page).to have_content \
+    expect(page).to have_text \
       "Password reset instructions will be sent to the email if it exists"
 
     # Open the email, click link
@@ -26,7 +26,7 @@ describe "Reset Password", :js do
     fill_in("password", with: new_password)
     fill_in("passwordConfirmation", with: new_password)
     click_on("Reset password")
-    expect(page).to have_content("Password reset successfully")
+    expect(page).to have_text("Password reset successfully")
 
     # User's password is changed
     expect(user.reload.valid_password?(new_password)).to be(true)

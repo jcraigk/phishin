@@ -172,21 +172,21 @@ songs: [ songs[0], songs[1] ])
         get_api_authed(user, "/tracks", params: { year: 2023, year_range: "2023-2024" })
         expect(response).to have_http_status(:bad_request)
         json = JSON.parse(response.body, symbolize_names: true)
-        expect(json[:message]).to match(/Cannot specify both year and year_range/)
+        expect(json[:message]).to include('Cannot specify both year and year_range')
       end
 
       it "returns 400 if year and start_date are both present" do
         get_api_authed(user, "/tracks", params: { year: 2023, start_date: "2023-01-01" })
         expect(response).to have_http_status(:bad_request)
         json = JSON.parse(response.body, symbolize_names: true)
-        expect(json[:message]).to match(/Cannot combine year\/year_range with start_date\/end_date/)
+        expect(json[:message]).to include('Cannot combine year/year_range with start_date/end_date')
       end
 
       it "returns 400 if year_range and end_date are both present" do
         get_api_authed(user, "/tracks", params: { year_range: "2023-2024", end_date: "2024-12-31" })
         expect(response).to have_http_status(:bad_request)
         json = JSON.parse(response.body, symbolize_names: true)
-        expect(json[:message]).to match(/Cannot combine year\/year_range with start_date\/end_date/)
+        expect(json[:message]).to include('Cannot combine year/year_range with start_date/end_date')
       end
     end
   end
