@@ -26,14 +26,14 @@
     "js-yaml": "^4.1.0",
     "mapbox-gl": "^3.6.0",
     "mini-css-extract-plugin": "^2.9.1",
-    "postcss": "^8.4.47",
+    "postcss": "^8.5.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-helmet-async": "^2.0.5",
     "react-modal": "^3.16.1",
     "react-on-rails": "16.6.0",
     "react-paginate": "^8.2.0",
-    "react-router": "^7.1.1",
+    "react-router": "^7.15.0",
     "react-spinners": "^0.14.1",
     "react-tooltip": "^5.28.0",
     "sass": "^1.68.0",
@@ -43,7 +43,7 @@
     "terser-webpack-plugin": "5",
     "webpack": "5",
     "webpack-assets-manifest": "5",
-    "webpack-cli": "4",
+    "webpack-cli": "6",
     "webpack-merge": "5"
   },
   "version": "0.1.0",
@@ -60,6 +60,13 @@
     "esbuild": "^0.27.2",
     "react-refresh": "^0.14.2",
     "webpack-bundle-analyzer": "^4.10.2",
-    "webpack-dev-server": "4"
+    "webpack-dev-server": "^5.2.2"
+  },
+  "resolutions": {
+    "serialize-javascript": "^7.0.5",
+    "fast-uri": "^3.1.2",
+    "@babel/plugin-transform-modules-systemjs": "^7.29.4",
+    "postcss": "^8.5.10",
+    "uuid": "^11.1.1"
   }
 }
