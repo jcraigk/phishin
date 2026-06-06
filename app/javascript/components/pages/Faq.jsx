@@ -7,6 +7,9 @@ import GitHubButton from "./GitHubButton";
 import EmailButton from "./EmailButton";
 import { Tooltip } from "react-tooltip";
 import helpingFriendlyIcon from "../../images/icon-helping-friendly.png";
+import inphiniteIcon from "../../images/icon-inphinite.png";
+import kodiIcon from "../../images/icon-kodi.png";
+import volumioIcon from "../../images/icon-volumio.png";
 
 const Faq = () => {
   return (
@@ -19,15 +22,16 @@ const Faq = () => {
       </p>
 
       <h3>Are there native mobile apps?</h3>
-      <p>Yes, there are native apps for iOS and Android. Follow the links below.</p>
+      <p>Yes, there are third party native apps for iOS and Android. Follow the links below.</p>
       <MobileApps />
 
       <h3>Are there related web apps?</h3>
-      <p>Yes, check out The Helping Friendly App for Phish setlists, song statistics, venue history, and more.</p>
+      <p>Yes, check out the following third party apps.</p>
       <div className="mobile-apps">
         <a
           href="https://thehelpingfriendly.app"
           target="_blank"
+          className="mr-3"
         >
           <img
             src={helpingFriendlyIcon}
@@ -36,6 +40,44 @@ const Faq = () => {
             data-tooltip-content="The Helping Friendly App"
           />
           <Tooltip id="tooltip-thfa" className="custom-tooltip" />
+        </a>
+        <a
+          href="https://inphinite.sammarshall.us"
+          target="_blank"
+          className="mr-3"
+        >
+          <img
+            src={inphiniteIcon}
+            alt="Inphinite"
+            data-tooltip-id="tooltip-inphinite"
+            data-tooltip-content="Inphinite (setlist generator)"
+          />
+          <Tooltip id="tooltip-inphinite" className="custom-tooltip" />
+        </a>
+        <a
+          href="https://kodi.wiki/view/Add-on:Phish.in"
+          target="_blank"
+          className="mr-3"
+        >
+          <img
+            src={kodiIcon}
+            alt="Phish.in add-on for Kodi"
+            data-tooltip-id="tooltip-kodi"
+            data-tooltip-content="Phish.in add-on for Kodi"
+          />
+          <Tooltip id="tooltip-kodi" className="custom-tooltip" />
+        </a>
+        <a
+          href="https://github.com/lostmyshape/volumio-phishin"
+          target="_blank"
+        >
+          <img
+            src={volumioIcon}
+            alt="Volumio plugin"
+            data-tooltip-id="tooltip-volumio"
+            data-tooltip-content="Volumio plugin"
+          />
+          <Tooltip id="tooltip-volumio" className="custom-tooltip" />
         </a>
       </div>
 
