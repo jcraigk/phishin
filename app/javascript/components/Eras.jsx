@@ -61,6 +61,7 @@ import { Tooltip } from "react-tooltip";
 import GitHubButton from "./pages/GitHubButton";
 import DiscordButton from "./pages/DiscordButton";
 import CoverArt from "./CoverArt";
+import CoverArtTile from "./CoverArtTile";
 import { useAudioFilter } from "./contexts/AudioFilterContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faList, faTh, faSortAmountDown, faSortAmountUp } from "@fortawesome/free-solid-svg-icons";
@@ -160,16 +161,16 @@ const Eras = () => {
   );
 
   const renderGridItem = (period) => (
-    <Link to={`/${period.period}`} key={period.period} className="list-item-link">
-      <li className="grid-item" style={{ backgroundImage: `url(${period.cover_art_urls?.medium})` }}>
-        <div className="overlay">
-          <p className={`period ${period.period.includes("-") ? "period-range" : ""}`}>{period.period}</p>
-          <p className="period-details">
-            {formatNumber(getDisplayVenuesCount(period), "venue")} • {formatNumber(getDisplayCount(period), "show")}
-          </p>
-        </div>
-      </li>
-    </Link>
+    <CoverArtTile
+      key={period.period}
+      to={`/${period.period}`}
+      imageUrl={period.cover_art_urls?.medium}
+    >
+      <p className={`period ${period.period.includes("-") ? "period-range" : ""}`}>{period.period}</p>
+      <p className="period-details">
+        {formatNumber(getDisplayVenuesCount(period), "venue")} • {formatNumber(getDisplayCount(period), "show")}
+      </p>
+    </CoverArtTile>
   );
 
   const sidebarContent = (

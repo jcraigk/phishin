@@ -1,35 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useOutletContext, useNavigate } from "react-router";
 import { formatDurationShow, formatDate, formatNumber } from "./helpers/utils";
 import TagBadges from "./controls/TagBadges";
 import LikeButton from "./controls/LikeButton";
 import ShowContextMenu from "./controls/ShowContextMenu";
 import CoverArt from "./CoverArt";
+import CoverArtTile from "./CoverArtTile";
 import AudioStatusBadge from "./controls/AudioStatusBadge";
 
 const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list" }) => {
   const { activeTrack } = useOutletContext();
   const navigate = useNavigate();
-  const [loadedImages, setLoadedImages] = useState({});
   let itemNumber = 1;
 
   const handleShowClick = (showDate) => {
     navigate(`/${showDate}`);
   };
-
-  useEffect(() => {
-    if (viewMode === "grid") {
-      shows.forEach((show) => {
-        if (!loadedImages[show.date]) {
-          const img = new Image();
-          img.src = show.cover_art_urls.medium;
-          img.onload = () => {
-            setLoadedImages((prev) => ({ ...prev, [show.date]: true }));
-          };
-        }
-      });
-    }
-  }, [viewMode, shows, loadedImages]);
 
   if (shows.length === 0) {
     return <h1 className="title">No shows found</h1>;
@@ -98,28 +84,17 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
     );
   };
 
-  const renderGridItem = (show) => {
-    const isLoaded = loadedImages[show.date] || false;
-
-    return (
-      <li
-        key={show.date}
-        className={`grid-item ${!isLoaded ? "loading-shimmer" : ""}`}
-        onClick={() => handleShowClick(show.date)}
-        style={{
-          backgroundImage: isLoaded ? `url(${show.cover_art_urls.medium})` : "none",
-          opacity: isLoaded ? 1 : 0.9, // Force re-render to fix iOS Safari bug
-        }}
-      >
-        {!isLoaded && <div className="loading-shimmer" />}
-        <div className="overlay">
-          <p className="show-date">{formatDate(show.date)}</p>
-          <p className="venue-name">{show.venue_name}</p>
-          <p className="venue-location">{show.venue.location}</p>
-        </div>
-      </li>
-    );
-  };
+  const renderGridItem = (show) => (
+    <CoverArtTile
+      key={show.date}
+      onClick={() => handleShowClick(show.date)}
+      imageUrl={show.cover_art_urls.medium}
+    >
+      <p className="show-date">{formatDate(show.date)}</p>
+      <p className="venue-name">{show.venue_name}</p>
+      <p className="venue-location">{show.venue.location}</p>
+    </CoverArtTile>
+  );
 
   // Group shows by tour
   const tours = shows.reduce((acc, show) => {
