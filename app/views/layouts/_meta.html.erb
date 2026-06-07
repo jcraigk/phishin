@@ -1,16 +1,20 @@
-<meta name="Description" content="<%= App.app_desc %>">
+<% description = @meta[:description].presence || App.app_desc %>
+<% og_title = @meta.dig(:og, :title).presence || @meta[:title].presence || App.app_name %>
+<% og_description = @meta.dig(:og, :description).presence || description %>
+<% og_image = @meta.dig(:og, :image).presence || "#{request.base_url}/placeholders/cover-art-medium.jpg" %>
+
+<meta name="description" content="<%= description %>">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 
 <meta property="og:type" content="<%= @meta.dig(:og, :type) || "website" %>">
 <meta property="og:url" content="<%= request.original_url %>">
-<% unless @meta.dig(:og, :image) == false %>
-<meta property="og:image" content="<%= @meta.dig(:og, :image) || image_pack_url("static/images/logo-square-512.png") %>">
-<meta property="og:image:alt" content="<%= App.app_name %> image">
-<% end %>
-<meta property="og:description" content="An open source archive of live Phish audience recordings">
-<meta property="og:title" content="<%= @meta.dig(:og, :title) || App.app_name %>">
+<meta property="og:site_name" content="<%= App.app_name %>">
+<meta property="og:image" content="<%= og_image %>">
+<meta property="og:image:alt" content="<%= og_title %>">
+<meta property="og:description" content="<%= og_description %>">
+<meta property="og:title" content="<%= og_title %>">
 <% if @meta.dig(:og, :audio).present? %>
   <meta property="og:audio" content="<%= @meta.dig(:og, :audio) %>">
 <% end %>

@@ -19,7 +19,7 @@ const TagIndex = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">Content Tags</p>
+      <h1 className="sidebar-title">Content Tags</h1>
       <p className="sidebar-detail hidden-mobile">
         Tags are used to annotate and highlight content. The tag associations seen here have been pulled from various Phish.net projects as well as crowd-sourcing through the{" "}
         <Link to="/tagin-project">Tagin' Project</Link>.
@@ -30,7 +30,7 @@ const TagIndex = () => {
   return (
     <>
       <Helmet>
-        <title>Tags - Phish.in</title>
+        <title>Phish Tags - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <Tags tags={tags} group={true} />

@@ -60,7 +60,7 @@ const SongTracks = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">{songTitle}</p>
+      <h1 className="sidebar-title">{songTitle}</h1>
       <p className="sidebar-subtitle hidden-mobile">
         {originalInfo}<br />
         Total Tracks: {totalEntries}
@@ -84,7 +84,7 @@ const SongTracks = () => {
   return (
     <>
       <Helmet>
-        <title>{songTitle} - Phish.in</title>
+        <title>{`${songTitle} by Phish - Phish.in`}</title>
       </Helmet>
               <LayoutWrapper sidebarContent={sidebarContent}>
           <PhoneTitle title={songTitle} />

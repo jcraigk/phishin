@@ -127,7 +127,7 @@ const Show = ({ trackSlug }) => {
   return (
     <>
       <Helmet>
-        <title>{matchedTrack ? `${matchedTrack.title} - ${formatDate(show.date)} - Phish.in` : `${formatDate(show.date)} - Phish.in`}</title>
+        <title>{matchedTrack ? `${matchedTrack.title} by Phish - ${formatDate(show.date)} - Phish.in` : `Phish at ${show.venue_name}, ${formatDate(show.date)} - Phish.in`}</title>
       </Helmet>
       <div className="background-blur"></div>
       <div id="layout-container">
@@ -143,9 +143,9 @@ const Show = ({ trackSlug }) => {
               />
             </div>
 
-            <div className="sidebar-title show-cover-title">
+            <h1 className="sidebar-title show-cover-title">
               <LinkedDate />
-            </div>
+            </h1>
 
             <p className="sidebar-info">
               <Link to={`/venues/${show.venue.slug}`}>{show.venue_name}</Link>

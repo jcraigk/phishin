@@ -19,6 +19,7 @@ class ApplicationController < ActionController::Base
     end
 
     @meta = MetaTagService.call(request.path)
+    @structured_data = StructuredDataService.call(request.path)
     @react_props = {
       # OAuth login
       jwt: session[:jwt],

@@ -27,7 +27,7 @@ SitemapGenerator::Sitemap.create do # rubocop:disable Metrics/BlockLength
   add "/top-tracks"
 
   # Years
-  ERAS.values.flatten.each do |year|
+  Show.distinct.pluck(Arel.sql("EXTRACT(YEAR FROM date)::integer")).sort.each do |year|
     add "/#{year}"
   end
 

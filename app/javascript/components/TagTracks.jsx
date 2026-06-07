@@ -53,7 +53,7 @@ const TagTracks = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">"{tag.name}" Tracks</p>
+      <h1 className="sidebar-title">"{tag.name}" Tracks</h1>
 
       <div className="sidebar-filters">
         <div className="select">

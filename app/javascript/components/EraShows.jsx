@@ -126,7 +126,7 @@ const EraShows = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">{year}</p>
+      <h1 className="sidebar-title">{year}</h1>
       <p className="sidebar-subtitle">{sortedShows.length} shows</p>
 
       <div className="buttons mb-0">
@@ -141,7 +141,7 @@ const EraShows = () => {
   return (
     <>
       <Helmet>
-        <title>{year} - Phish.in</title>
+        <title>{`Phish ${year} - Phish.in`}</title>
       </Helmet>
               <LayoutWrapper sidebarContent={sidebarContent}>
             <div className="display-phone-only">

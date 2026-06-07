@@ -23,7 +23,7 @@ const TopTracks = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">Top 46 Tracks</p>
+      <h1 className="sidebar-title">Top 46 Tracks</h1>
       <p className="sidebar-detail mb-5 hidden-mobile">
         An aggregated list of the top tracks, ranked by user likes from the Phish.in community.
       </p>
@@ -33,7 +33,7 @@ const TopTracks = () => {
   return (
     <>
       <Helmet>
-        <title>Top Tracks - Phish.in</title>
+        <title>Best Phish Tracks - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <PhoneTitle title="Top 46 Tracks" />

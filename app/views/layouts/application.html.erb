@@ -10,6 +10,9 @@
    <%= javascript_pack_tag "application" %>
    <%= stylesheet_pack_tag "application" %>
    <%= render "layouts/meta" %>
+   <% Array(@structured_data).each do |graph| %>
+     <%= json_ld_tag(graph) %>
+   <% end %>
  </head>
  <%= render "analytics/google" %>
  <body>

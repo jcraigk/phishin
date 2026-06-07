@@ -44,7 +44,7 @@ const VenueShows = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">{venue.name}</p>
+      <h1 className="sidebar-title">{venue.name}</h1>
       <p className="sidebar-subtitle">
         {formatNumber(venue.shows_count, 'show')}
       </p>
@@ -80,7 +80,7 @@ const VenueShows = () => {
   return (
     <>
       <Helmet>
-        <title>{venue.name} - Phish.in</title>
+        <title>{`Phish at ${venue.name} - Phish.in`}</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <PhoneTitle title={venue.name} />

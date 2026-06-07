@@ -76,7 +76,7 @@ const PlaylistIndex = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">Playlists</p>
+      <h1 className="sidebar-title">Playlists</h1>
       <p className="sidebar-subtitle">{formatNumber(totalEntries)} total</p>
 
       <div className="sidebar-filters">

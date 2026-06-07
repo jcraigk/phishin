@@ -34,7 +34,7 @@ const MissingContentReport = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">Missing and Incomplete Content</p>
+      <h1 className="sidebar-title">Missing and Incomplete Content</h1>
       <p className="sidebar-subtitle">{totalIssues} total issues</p>
       <p className="sidebar-subtitle">{incompleteCount} incomplete shows</p>
       <p className="sidebar-subtitle">{missingCount} missing shows</p>

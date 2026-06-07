@@ -73,7 +73,7 @@ const Playlist = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">{playlist.name}</p>
+      <h1 className="sidebar-title">{playlist.name}</h1>
       <p className="sidebar-info hidden-mobile mb-3">By {playlist.username}</p>
       <div className="mr-1 hidden-phone">
         <FontAwesomeIcon icon={faClock} className="mr-1 text-gray" />

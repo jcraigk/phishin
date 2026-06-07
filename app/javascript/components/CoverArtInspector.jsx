@@ -48,7 +48,7 @@ const CoverArtInspector = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">Cover Art</p>
+      <h1 className="sidebar-title">Cover Art</h1>
       <p className="sidebar-subtitle">{formatNumber(totalEntries)} total</p>
       <div className="dropdown mt-3">
         <select id="coverArtOption" value={selectedOption} onChange={handleOptionChange} className="input">

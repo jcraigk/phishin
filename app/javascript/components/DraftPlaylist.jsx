@@ -42,7 +42,7 @@ const DraftPlaylist = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">Draft Playlist</p>
+      <h1 className="sidebar-title">Draft Playlist</h1>
 
       {!isEmpty && (
         <div className="mt-3 mb-3 hidden-phone">

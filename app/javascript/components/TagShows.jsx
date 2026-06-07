@@ -54,7 +54,7 @@ const TagShows = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">"{tag.name}" Shows</p>
+      <h1 className="sidebar-title">"{tag.name}" Shows</h1>
 
       <div className="sidebar-filters">
         <div className="select">

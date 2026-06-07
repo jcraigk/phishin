@@ -54,7 +54,7 @@ const MyShows = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">My Shows</p>
+      <h1 className="sidebar-title">My Shows</h1>
 
       <div className="sidebar-filters">
         <div className="select">

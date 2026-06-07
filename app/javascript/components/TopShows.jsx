@@ -23,7 +23,7 @@ const TopShows = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">Top 46 Shows</p>
+      <h1 className="sidebar-title">Top 46 Shows</h1>
       <p className="sidebar-detail mb-5 hidden-mobile">
         An aggregated list of the top shows, ranked by user likes from the Phish.in community.
       </p>
@@ -33,7 +33,7 @@ const TopShows = () => {
   return (
     <>
       <Helmet>
-        <title>Top Shows - Phish.in</title>
+        <title>Best Phish Shows - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <PhoneTitle title="Top 46 Shows" />

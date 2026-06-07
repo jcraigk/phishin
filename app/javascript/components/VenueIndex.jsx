@@ -11,11 +11,9 @@ export const venueIndexLoader = async ({ request }) => {
   const firstChar = url.searchParams.get("first_char") || "";
   const perPage = url.searchParams.get("per_page") || 10;
   const audioStatusFilter = getAudioStatusFilter();
-  console.log(`[${new Date().toISOString()}] VenueIndex Loader: Loading with filter: ${audioStatusFilter}, page: ${page}, sort: ${sortOption}, firstChar: ${firstChar}, perPage: ${perPage}`);
   const response = await fetch(buildFetchUrl(page, sortOption, firstChar, perPage, audioStatusFilter));
   if (!response.ok) throw response;
   const data = await response.json();
-  console.log(`[${new Date().toISOString()}] VenueIndex Loader: Loaded ${data.venues?.length || 0} venues`);
 
   return {
     venues: data.venues,
@@ -77,7 +75,7 @@ const VenueIndex = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">Venues</p>
+      <h1 className="sidebar-title">Venues</h1>
       <p className="sidebar-subtitle">{formatNumber(totalEntries)} total</p>
 
       <div className="sidebar-filters">
@@ -123,7 +121,7 @@ const VenueIndex = () => {
   return (
     <>
       <Helmet>
-        <title>Venues - Phish.in</title>
+        <title>Phish Venues - Phish.in</title>
       </Helmet>
       <LayoutWrapper sidebarContent={sidebarContent}>
         <PhoneTitle title="Venues" />

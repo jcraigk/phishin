@@ -66,7 +66,7 @@ const SongIndex = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">Songs</p>
+      <h1 className="sidebar-title">Songs</h1>
       <p className="sidebar-subtitle">{formatNumber(totalEntries)} total</p>
 
       <div className="sidebar-filters">
@@ -102,7 +102,7 @@ const SongIndex = () => {
   return (
     <>
       <Helmet>
-        <title>Songs - Phish.in</title>
+        <title>Phish Songs - Phish.in</title>
       </Helmet>
               <LayoutWrapper sidebarContent={sidebarContent}>
           <PhoneTitle title="Songs" />

@@ -65,7 +65,7 @@ const TodayShows = () => {
 
   const sidebarContent = (
     <div className="sidebar-content">
-      <p className="sidebar-title">Today in History</p>
+      <h1 className="sidebar-title">Today in History</h1>
 
       <div className="sidebar-filters">
         <div className="select">
