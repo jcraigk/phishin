@@ -19,7 +19,7 @@ module Phishin
     config.app_desc =
       "#{config.app_name} is an open source archive of live Phish audience recordings"
     config.first_char_list = ("A".."Z").to_a + [ "#" ]
-    config.max_playlists_per_user = 46
+    config.max_playlists_per_user = 100
     config.min_search_term_length = 3
     config.time_zone = "Eastern Time (US & Canada)"
     config.oauth_google_key = ENV.fetch("OAUTH_GOOGLE_KEY", nil)
