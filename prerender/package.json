@@ -1,0 +1,9 @@
+{
+  "name": "phishin-prerender",
+  "private": true,
+  "description": "Self-hosted prerender service (headless Chrome) for dynamic rendering to crawlers",
+  "dependencies": {
+    "prerender": "^5.7.0",
+    "prerender-memory-cache": "^1.0.0"
+  }
+}

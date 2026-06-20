@@ -37,6 +37,13 @@ services:
     volumes:
       - redis_data:/data
 
+  # Self-hosted prerender service for dynamic rendering (see docs/dynamic_rendering.md).
+  # Point the app at it with PRERENDER_SERVICE_URL=http://localhost:3001
+  prerender:
+    build: ./prerender
+    ports:
+      - 3001:3000
+
 volumes:
   pg_data:
   redis_data:

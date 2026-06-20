@@ -49,6 +49,11 @@ module Phishin
     config.hosts = nil # Rely on dokku/nginx for host checking
     config.active_storage.service = :local
     config.active_storage.variant_processor = :mini_magick
+
+    # Dynamic rendering: serve crawlers fully-rendered HTML from a prerender service.
+    # No-op unless PRERENDER_SERVICE_URL is set (see lib/prerender_middleware.rb).
+    require_relative "../lib/prerender_middleware"
+    config.middleware.use PrerenderMiddleware
   end
 end
 
