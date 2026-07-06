@@ -26,10 +26,11 @@ RSpec.describe StructuredDataService do
 
   context "when the path is a show date" do
     let!(:venue) { create(:venue, city: "New York", state: "NY", country: "USA", latitude: 40.7, longitude: -74.0) }
-    let!(:show) { create(:show, :with_tracks, date: "2024-01-01", venue:) }
+    let(:show) { create(:show, :with_tracks, date: "2024-01-01", venue:) }
     let(:path) { "/2024-01-01" }
 
     it "emits a MusicEvent with performer, date, and located venue geo" do
+      show
       event = graph_of("MusicEvent")
 
       expect(event).to be_present

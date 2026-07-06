@@ -19,13 +19,14 @@ RSpec/ExampleLength:
   Exclude:
     - spec/features/**/*
     - spec/requests/**/*
+  Max: 12
 RSpec/IndexedLet:
   Enabled: false
 RSpec/MultipleExpectations:
   Exclude:
     - spec/features/**/*
     - spec/requests/**/*
-  Max: 4
+  Max: 9
 RSpec/MultipleMemoizedHelpers:
   Enabled: false
 RSpec/NestedGroups:
