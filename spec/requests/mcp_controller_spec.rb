@@ -187,6 +187,7 @@ RSpec.describe "MCP Controller" do
           result = JSON.parse(text_content["text"])
 
           expect(result["years"]).to be_an(Array)
+          expect(result["years"].map { |y| y["period"] }).to eq([ "1997" ])
           expect(result["total_shows"]).to be_a(Integer)
         end
       end

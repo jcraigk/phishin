@@ -69,8 +69,9 @@ class ApiV2::Years < ApiV2::Base
       batch_stats = calculate_batch_statistics(all_periods)
 
       ERAS.map do |era, periods|
-        periods.map do |period|
+        periods.filter_map do |period|
           stats = batch_stats[period]
+          next if stats[:shows_count].zero?
           cover_art_urls = get_cover_art_urls(period, cover_art_shows)
 
           {

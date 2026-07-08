@@ -35,5 +35,13 @@ RSpec.describe "API v2 Years" do
         "era" => "2.0"
       )
     end
+
+    it "excludes periods that have no shows" do
+      get_api "/years"
+
+      json = JSON.parse(response.body)
+
+      expect(json.map { |period| period["period"] }).to contain_exactly("1983-1987", "2003")
+    end
   end
 end

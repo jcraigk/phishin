@@ -34,8 +34,9 @@ module Tools
         batch_stats = calculate_batch_statistics
 
         ERAS.flat_map do |era, periods|
-          periods.map do |period|
+          periods.filter_map do |period|
             stats = batch_stats[period] || empty_stats
+            next if stats[:shows_count].zero?
             {
               period:,
               url: McpHelpers.year_url(period),
