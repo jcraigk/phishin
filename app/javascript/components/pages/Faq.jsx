@@ -180,7 +180,7 @@ const Faq = () => {
       </p>
 
       <h3>How is album cover art created?</h3>
-      <p>Album covers are generated with a combination of automation scripts and the assistance of ChatGPT and Dall-E.</p>
+      <p>Album cover art is generated with a combination of automation scripts and the assistance of various AI models.</p>
       <Link to="/cover-art" className="button mt-2">Browse All Art</Link>
 
       <h3>How can I contribute?</h3>

@@ -19,7 +19,7 @@ class CoverArtPromptService < ApplicationService
   ]
   CATEGORIES = %w[animals plants foods misc_objects time_concepts phish]
   BASE_PROMPT = <<~TXT
-    I want you to generate a series of objects and ideas in specific categories associated with a venue, time, and city/state I provide below. I want the answer in JSON format. The keys should be animals, plants, foods, misc_objects (miscellaneous objects), time_concepts (concepts related to time, season, social atmosphere, etc), and phish (explained below). I want you to give me ten words or phrases representing those categories. Avoid references that DALL-E might reject as inappropriate. Avoid images of humans, human forms, or faces.
+    I want you to generate a series of objects and ideas in specific categories associated with a venue, time, and city/state I provide below. I want the answer in JSON format. The keys should be animals, plants, foods, misc_objects (miscellaneous objects), time_concepts (concepts related to time, season, social atmosphere, etc), and phish (explained below). I want you to give me ten words or phrases representing those categories. Avoid references that an image generation model might reject as inappropriate. Avoid images of humans, human forms, or faces.
 
     The subjects in every category should reflect the time and place as well as content pulled from song titles. So, for example, if it's winter in New York, you wouldn't mention insects or other animals/plants not found during that time of year in that place. The "foods" key should similary be restricted to items that are commonly found in the area and are associated with the time of year. Take note of Halloween, Christmas, New Year's, and other holiday seasons.
 
