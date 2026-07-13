@@ -1,5 +1,10 @@
 import React from "react";
 import { formatDate } from "./utils";
+import ShowTimelineModal from "../modals/ShowTimelineModal";
+
+export const createShowTimelineModalContent = (show) => {
+  return <ShowTimelineModal show={show} />;
+};
 
 export const createTaperNotesModalContent = (show) => {
   return (

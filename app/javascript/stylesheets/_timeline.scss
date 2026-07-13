@@ -1,0 +1,71 @@
+@use "./variables" as *;
+
+.show-timeline {
+  .timeline-set {
+    margin-top: 1.5rem;
+  }
+
+  .timeline-set-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.3rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--title-gray);
+  }
+
+  .timeline-set-duration {
+    color: var(--text-gray);
+    font-weight: normal;
+  }
+
+  .timeline-segments {
+    display: flex;
+    height: 3rem;
+    border-radius: $radius;
+    overflow: hidden;
+  }
+
+  .timeline-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    overflow: hidden;
+    color: #2c2c2e;
+    font-size: 0.95rem;
+    font-weight: bold;
+
+    & + .timeline-segment {
+      border-left: 1px solid var(--card-bg);
+    }
+  }
+
+  .timeline-segment-title {
+    padding: 0 0.3rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .timeline-durations {
+    display: flex;
+    margin-top: 0.2rem;
+  }
+
+  .timeline-segment-duration {
+    min-width: 0;
+    overflow: hidden;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 0.85rem;
+    /* Darken the pastel segment colors for legibility on the light card background */
+    filter: brightness(0.55) saturate(1.6);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .show-timeline .timeline-segment-duration {
+    filter: none;
+  }
+}

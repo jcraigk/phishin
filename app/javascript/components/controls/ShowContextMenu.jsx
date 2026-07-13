@@ -6,8 +6,8 @@ import { useAudioFilter } from "../contexts/AudioFilterContext";
 import LikeButton from "./LikeButton";
 import TagBadges from "./TagBadges";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight, faDownload, faClock } from "@fortawesome/free-solid-svg-icons";
-import { createTaperNotesModalContent } from "../helpers/modals";
+import { faEllipsis, faShareFromSquare, faExternalLinkAlt, faClipboard, faCirclePlus, faMapMarkerAlt, faLandmark, faCircleChevronLeft, faCircleChevronRight, faDownload, faClock, faChartGantt } from "@fortawesome/free-solid-svg-icons";
+import { createShowTimelineModalContent, createTaperNotesModalContent } from "../helpers/modals";
 
 const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
   const dropdownRef = useRef(null);
@@ -37,6 +37,11 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
 
   const handleTaperNotesClick = () => {
     openAppModal(createTaperNotesModalContent(show));
+  };
+
+  const handleTimelineClick = () => {
+    openAppModal(createShowTimelineModalContent(show));
+    hideDropdown();
   };
 
   const toggleDropdownVisibility = (e) => {
@@ -147,6 +152,13 @@ const ShowContextMenu = ({ show, adjacentLinks = true, css }) => {
             <a className="dropdown-item" onClick={handleTaperNotesClick}>
               <FontAwesomeIcon icon={faClipboard} className="icon" />
               Taper Notes
+            </a>
+          )}
+
+          {show.audio_status !== 'missing' && (
+            <a className="dropdown-item" onClick={handleTimelineClick}>
+              <FontAwesomeIcon icon={faChartGantt} className="icon" />
+              Timeline
             </a>
           )}
 
