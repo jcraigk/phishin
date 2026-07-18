@@ -501,7 +501,8 @@ main {
       background-color: var(--track-divider);
     }
 
-    &:not(:last-child):not(.active-item):not(.no-audio):hover::after {
+    &:not(:last-child):not(.active-item):not(.no-audio):hover::after,
+    &:has(+ .track-item:not(.active-item):not(.no-audio):hover)::after {
       display: none;
     }
 
