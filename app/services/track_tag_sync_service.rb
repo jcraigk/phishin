@@ -53,7 +53,7 @@ class TrackTagSyncService < ApplicationService
     TrackTag.find_by \
       tag:,
       track:,
-      notes: row["Notes"]
+      notes: sanitize_str(row["Notes"])
   end
 
   MOJIBAKE_MARKERS = /√[°©≠≥∫±ºÅâçìöÑú]|‚Ä[îìúùòô¶¢]|¬[©®∞]/

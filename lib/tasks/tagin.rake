@@ -16,6 +16,11 @@ namespace :tagin do
     end
   end
 
+  desc "Remove exact duplicate track tags"
+  task dedupe: :environment do
+    TrackTagDedupeService.call
+  end
+
   desc "Sync jam_starts_at_second data from spreadsheet"
   task jamstart: :environment do
     data = GoogleSpreadsheetFetcher.call(ENV["TAGIN_GSHEET_ID"], "JAMSTART!A1:G5000", headers: true)
