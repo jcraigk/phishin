@@ -53,4 +53,21 @@ RSpec.describe ShowImporter::TrackReplacer do
     service
     expect(WaveformImageService).to have_received(:call).twice
   end
+
+  context "when a file doesn't match any track" do
+    before do
+      FileUtils.mv(
+        "#{import_path}/#{date}/I 02 Harry_Hood.mp3",
+        "#{import_path}/#{date}/I 02 Hrry_Hod.mp3"
+      )
+    end
+
+    it "aborts listing the unmatched track's position and title" do
+      expect { service }.to raise_error(SystemExit, /2\. Harry Hood/)
+    end
+
+    it "aborts listing the unmatched filename" do
+      expect { service }.to raise_error(SystemExit, /I 02 Hrry_Hod\.mp3/)
+    end
+  end
 end

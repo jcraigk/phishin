@@ -63,11 +63,26 @@ class ShowImporter::TrackReplacer
 
   def ensure_all_tracks_matched
     return if unmatched_tracks.empty?
-    abort "❌ #{@show.date} => Not all tracks matched: #{unmatched_tracks}"
+    abort \
+      "❌ #{@show.date} => Not all tracks matched!\n" \
+      "Unmatched tracks: #{unmatched_tracks_list}\n" \
+      "Unmatched files: #{unmatched_files_list}"
   end
 
   def unmatched_tracks
     @unmatched_tracks ||= show.track_ids - track_hash.values.map(&:id)
+  end
+
+  def unmatched_tracks_list
+    show.tracks
+        .where(id: unmatched_tracks)
+        .order(:position)
+        .map { |track| "#{track.position}. #{track.title}" }
+        .join(", ")
+  end
+
+  def unmatched_files_list
+    (filenames - track_hash.keys).map { |filename| File.basename(filename) }.join(", ")
   end
 
   def scrub_filename(filename)
