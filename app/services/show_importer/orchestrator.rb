@@ -205,6 +205,9 @@ class ShowImporter::Orchestrator
         filename:
       )
       track.songs << song if song.present?
+    elsif (song = fm.find_song(title, exact: true))
+      track = Track.new(position:, title: song.title)
+      track.songs << song
     else
       track = Track.new(position:, title:)
     end
@@ -214,7 +217,7 @@ class ShowImporter::Orchestrator
   # rubocop:enable Metrics/MethodLength
 
   def fn_match?(title)
-    unused_matches.find { |_k, v| !v.nil? && v.title == title }.tap do |k, _v|
+    unused_matches.find { |_k, v| !v.nil? && v.title.casecmp?(title) }.tap do |k, _v|
       @used_files << k
     end
   end
