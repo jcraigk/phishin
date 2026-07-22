@@ -32,6 +32,13 @@ Production-style first pass (set/encore enders only, with review page):
   uv run scripts/audio_edge_analysis.py --show 1996-11-02 --edges trailing \\
     --trim-dir tmp/trimmed --plot-dir tmp/plots --json tmp/report.json --html tmp/review.html
 
+Full catalog, one self-contained review bundle per year:
+  for y in $(seq 1983 2025); do
+    uv run scripts/audio_edge_analysis.py --year $y --edges trailing --stream \\
+      --trim-dir out/$y/trimmed --plot-dir out/$y/plots \\
+      --json out/$y/report.json --html out/$y/review.html
+  done
+
 Requires ffmpeg/ffprobe on PATH.
 """
 
@@ -506,11 +513,22 @@ def fetch_show_jobs(date, args):
     return jobs
 
 
+def fetch_year_dates(year):
+    resp = requests.get(f"{API_BASE}/shows", params={"year": year, "per_page": 500}, timeout=30)
+    resp.raise_for_status()
+    shows = resp.json()["shows"]
+    dates = sorted(s["date"] for s in shows if s["audio_status"] != "missing")
+    print(f"{year}: {len(dates)} shows with audio", file=sys.stderr)
+    return dates
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("inputs", nargs="*", help="Local mp3 paths or URLs")
     p.add_argument("--show", action="append", default=[], metavar="YYYY-MM-DD",
                    help="Analyze set-boundary tracks of a phish.in show (repeatable)")
+    p.add_argument("--year", action="append", default=[], type=int,
+                   help="Analyze every show with audio in this year (repeatable)")
     p.add_argument("--all-edges", action="store_true",
                    help="With --show, analyze both edges of every track instead of set boundaries only")
     p.add_argument("--edges", choices=["leading", "trailing", "both"], default="both",
@@ -547,8 +565,11 @@ def main():
                         "when extending the trim point (default: 30)")
     args = p.parse_args()
 
-    if not args.inputs and not args.show:
-        p.error("provide mp3 paths/URLs or --show YYYY-MM-DD")
+    if not args.inputs and not args.show and not args.year:
+        p.error("provide mp3 paths/URLs, --show YYYY-MM-DD, or --year YYYY")
+
+    for year in args.year:
+        args.show.extend(fetch_year_dates(year))
 
     storage_dirs = args.storage_dir + STORAGE_CANDIDATES
     jobs = []
