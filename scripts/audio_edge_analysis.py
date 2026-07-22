@@ -573,8 +573,13 @@ def main():
 
     storage_dirs = args.storage_dir + STORAGE_CANDIDATES
     jobs = []
+    failures = []
     for date in args.show:
-        jobs.extend(fetch_show_jobs(date, args))
+        try:
+            jobs.extend(fetch_show_jobs(date, args))
+        except Exception as e:
+            print(f"  ERROR fetching {date}: {e}", file=sys.stderr)
+            failures.append(f"{date}: {e}")
     for inp in args.inputs:
         edges = ["leading", "trailing"] if args.edges == "both" else [args.edges]
         jobs.append((Path(inp).name, inp, edges, []))
@@ -583,22 +588,26 @@ def main():
     banter_finder = None if args.no_transcribe else LazyBanterFinder()
     results = []
     trim_info = {}
-    for label, src, edges, songs in jobs:
-        if re.match(r"https?://", src):
-            path = local_blob_path(src, storage_dirs) or (src if args.stream else download_audio(src))
-        else:
-            path = Path(src)
-        duration = probe_duration(path)
-        track_results = []
-        for edge in edges:
-            print(f"Analyzing {label} [{edge}]...", file=sys.stderr)
-            track_results.append(analyze_edge(yamnet, banter_finder, path, duration, edge, args,
-                                              label, songs, src if re.match(r"https?://", src) else ""))
-        results.extend(track_results)
-        if args.trim_dir:
-            info = trim_track(path, duration, track_results, args, label)
-            if info:
-                trim_info[label] = info
+    for i, (label, src, edges, songs) in enumerate(jobs, 1):
+        try:
+            if re.match(r"https?://", src):
+                path = local_blob_path(src, storage_dirs) or (src if args.stream else download_audio(src))
+            else:
+                path = Path(src)
+            duration = probe_duration(path)
+            track_results = []
+            for edge in edges:
+                print(f"[{i}/{len(jobs)}] Analyzing {label} [{edge}]...", file=sys.stderr)
+                track_results.append(analyze_edge(yamnet, banter_finder, path, duration, edge, args,
+                                                  label, songs, src if re.match(r"https?://", src) else ""))
+            results.extend(track_results)
+            if args.trim_dir:
+                info = trim_track(path, duration, track_results, args, label)
+                if info:
+                    trim_info[label] = info
+        except Exception as e:
+            print(f"  ERROR on {label}: {e}", file=sys.stderr)
+            failures.append(f"{label}: {e}")
 
     results.sort(key=lambda r: r.nonmusic_run_s, reverse=True)
     print(f"\n{'FLAG':4} {'RUN(s)':>7} {'EDGE':8} {'CHARACTER':28} {'BOUNDARY':>8}  TRACK")
@@ -617,6 +626,12 @@ def main():
 
     if args.html:
         write_review_html(args.html, results, trim_info, args)
+
+    if failures:
+        print(f"\n{len(failures)} failure(s) — rerun these after investigating:", file=sys.stderr)
+        for f in failures:
+            print(f"  {f}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
