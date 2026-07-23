@@ -54,6 +54,26 @@ RSpec.describe ShowImporter::TrackReplacer do
     expect(WaveformImageService).to have_received(:call).twice
   end
 
+  context "when notes.txt is present in the import folder" do
+    before do
+      File.write("#{import_path}/#{date}/notes.txt", "Updated taper notes")
+    end
+
+    it "updates the show's taper_notes" do
+      service
+      expect(show.reload.taper_notes).to eq("Updated taper notes")
+    end
+  end
+
+  context "when notes.txt is absent from the import folder" do
+    let(:show) { create(:show, taper_notes: "Original taper notes") }
+
+    it "leaves the show's taper_notes unchanged" do
+      service
+      expect(show.reload.taper_notes).to eq("Original taper notes")
+    end
+  end
+
   context "when a track is currently missing audio" do
     let(:track2) do
       create(:track, show:, title: "Harry Hood", position: 2, duration: 999, audio_status: "missing")

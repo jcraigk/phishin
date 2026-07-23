@@ -9,7 +9,9 @@ class ShowImporter::TrackReplacer
     ensure_tracks_present
     ensure_all_tracks_matched
 
-    replace_audio_on_tracks if prompt_for_replacement == "Y"
+    return unless prompt_for_replacement == "Y"
+    replace_audio_on_tracks
+    update_taper_notes
   end
 
   def match_files_to_tracks
@@ -84,6 +86,15 @@ class ShowImporter::TrackReplacer
 
   def unmatched_files_list
     (filenames - track_hash.keys).map { |filename| File.basename(filename) }.join(", ")
+  end
+
+  def update_taper_notes
+    return unless File.exist?(notes_file)
+    show.update!(taper_notes: File.read(notes_file))
+  end
+
+  def notes_file
+    "#{base_path}/notes.txt"
   end
 
   def scrub_filename(filename)
