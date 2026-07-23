@@ -58,6 +58,7 @@ import numpy as np
 import requests
 
 API_BASE = "https://phish.in/api/v2"
+SITE_BASE = "https://phish.in"
 SAMPLE_RATE = 16000
 FRAME_HOP_S = 0.48  # YAMNet score hop
 FRAME_WIN_S = 0.96  # YAMNet score window
@@ -90,6 +91,7 @@ class EdgeResult:
     banter: list = field(default_factory=list)  # [{start, end, text}] on-mic speech in the region
     songs: list = field(default_factory=list)
     mp3_url: str = ""
+    share_url: str = ""  # e.g. https://phish.in/1996-11-02/sweet-adeline
 
 
 def run(cmd, **kw):
@@ -179,16 +181,33 @@ def trim_track(path, duration_s, edge_results, args, label):
         clip_dir.mkdir(exist_ok=True)
         clip_start = max(0.0, flagged["trailing"].music_boundary_s - 10 - start)
         clip = clip_dir / f"{safe_label}_audition.mp3"
-        run(["ffmpeg", "-y", "-v", "error", "-ss", f"{clip_start:.2f}",
-             "-i", str(out_path), "-c", "copy", str(clip)])
-        info["audition"] = clip
+        if render_clip(["ffmpeg", "-y", "-v", "error", "-ss", f"{clip_start:.2f}",
+                        "-i", str(out_path), "-c", "copy", str(clip)], label):
+            info["audition"] = clip
         # What's being cut, for comparison (first 40s of the removed region).
         orig_clip = clip_dir / f"{safe_label}_original.mp3"
-        run(["ffmpeg", "-y", "-v", "error",
-             "-ss", f"{max(0.0, flagged['trailing'].music_boundary_s - 10):.2f}", "-t", "50",
-             "-i", str(path), "-b:a", "128k", str(orig_clip)])
-        info["original"] = orig_clip
+        # aresample forces the filtergraph to rebuffer frames; without it,
+        # ffmpeg 8 libmp3lame rejects some mp3 decoder output ("inadequate
+        # AVFrame plane padding").
+        if render_clip(["ffmpeg", "-y", "-v", "error",
+                        "-ss", f"{max(0.0, flagged['trailing'].music_boundary_s - 10):.2f}", "-t", "50",
+                        "-i", str(path), "-af", "aresample=osf=s16p",
+                        "-b:a", "128k", str(orig_clip)], label):
+            info["original"] = orig_clip
     return info
+
+
+def render_clip(cmd, label):
+    """Render an audition clip, retrying once; clips are conveniences, so a
+    failure (e.g. transient HTTP error on a streamed source) only warns."""
+    for attempt in (1, 2):
+        try:
+            run(cmd)
+            return True
+        except subprocess.CalledProcessError as e:
+            if attempt == 2:
+                print(f"  WARNING clip render failed for {label}: {e}", file=sys.stderr)
+    return False
 
 
 def write_review_html(html_path, results, trim_info, args):
@@ -199,11 +218,20 @@ def write_review_html(html_path, results, trim_info, args):
         return os.path.relpath(p, html_path.parent)
 
     rows = []
+    skipped = []
     for r in results:
         if not r.flagged:
             continue
         info = trim_info.get(r.label, {})
         esc = html_escape.escape
+        if info.get("end") is None:
+            # Flagged but nothing actionable (cut below minimum, usually
+            # banter running to the end of the track). Footnote only.
+            link = (f'<a href="{esc(r.share_url, quote=True)}" target="_blank">{esc(r.label)}</a>'
+                    if r.share_url else esc(r.label))
+            skipped.append(f'<div class="meta">{link} &middot; run {r.nonmusic_run_s}s, '
+                           f'cut {info.get("cut_s", "?")}s &mdash; left untouched</div>')
+            continue
         banter = "".join(
             f'<div class="banter">{s["start"]:.1f}-{s["end"]:.1f}s: &ldquo;{esc(s["text"])}&rdquo;</div>'
             for s in r.banter)
@@ -221,15 +249,17 @@ def write_review_html(html_path, results, trim_info, args):
                 plot = f'<img src="{rel(p)}" loading="lazy">'
         payload = esc(json.dumps({
             "label": r.label, "edge": r.edge, "mp3_url": r.mp3_url,
-            "music_boundary_s": r.music_boundary_s,
+            "share_url": r.share_url, "music_boundary_s": r.music_boundary_s,
             "trim_start": info.get("start"), "trim_end": info.get("end"),
         }), quote=True)
         char = ", ".join(f"{k} {v:.0%}" for k, v in r.character.items() if v > 0)
+        title = (f'<a href="{esc(r.share_url, quote=True)}" target="_blank">{esc(r.label)}</a>'
+                 if r.share_url else esc(r.label))
         rows.append(f"""
 <div class="row">
   <div class="head">
     <input type="checkbox" data-payload="{payload}">
-    <strong>{esc(r.label)}</strong>
+    <strong>{title}</strong>
     <span class="meta">{r.edge} edge &middot; run {r.nonmusic_run_s}s &middot;
       cut {info.get("cut_s", "?")}s &middot; boundary {r.music_boundary_s}s &middot; {char}</span>
   </div>
@@ -256,6 +286,7 @@ def write_review_html(html_path, results, trim_info, args):
 <button id="export">Export approved.json</button>
 <h1>Track edge trim review ({len(rows)} candidates)</h1>
 {"".join(rows)}
+{f'<h2>Flagged but not trimmed ({len(skipped)})</h2>{"".join(skipped)}' if skipped else ""}
 <script>
 document.getElementById("export").onclick = () => {{
   const approved = [...document.querySelectorAll("input:checked")]
@@ -383,7 +414,7 @@ def frame_rms_db(waveform, n_frames):
     return 20 * np.log10(rms + 1e-10)
 
 
-def analyze_edge(yamnet, banter_finder, path, duration_s, edge, args, label, songs, url):
+def analyze_edge(yamnet, banter_finder, path, duration_s, edge, args, label, songs, url, share_url=""):
     window_s = min(args.window, duration_s)
     offset_s = 0.0 if edge == "leading" else duration_s - window_s
     waveform = decode_segment(path, offset_s, window_s)
@@ -451,6 +482,7 @@ def analyze_edge(yamnet, banter_finder, path, duration_s, edge, args, label, son
         banter=banter,
         songs=songs,
         mp3_url=url,
+        share_url=share_url,
     )
 
     if args.plot_dir:
@@ -495,6 +527,8 @@ def fetch_show_jobs(date, args):
 
     jobs = []
     for set_name, set_tracks in by_set.items():
+        if set_name == "Soundcheck":
+            continue
         for t in set_tracks:
             allowed = {"leading", "trailing"} if args.edges == "both" else {args.edges}
             edges = []
@@ -509,8 +543,95 @@ def fetch_show_jobs(date, args):
                 print(f"  skipping {label} (no mp3_url)", file=sys.stderr)
                 continue
             songs = [s["title"] for s in t.get("songs", [])]
-            jobs.append((label, t["mp3_url"], edges, songs))
+            share = f"{SITE_BASE}/{date}/{t['slug']}" if t.get("slug") else ""
+            jobs.append((label, t["mp3_url"], edges, songs, share))
     return jobs
+
+
+def backfill_share_urls(results):
+    """Fill in share_url on results from older reports by refetching show data."""
+    slug_maps = {}
+    for r in results:
+        if r.share_url:
+            continue
+        m = re.match(r"(\d{4}-\d{2}-\d{2}) .+? t(\d+) ", r.label)
+        if not m:
+            continue
+        date, position = m.group(1), int(m.group(2))
+        if date not in slug_maps:
+            resp = requests.get(f"{API_BASE}/shows/{date}", timeout=30)
+            resp.raise_for_status()
+            slug_maps[date] = {t["position"]: t.get("slug") for t in resp.json()["tracks"]}
+        slug = slug_maps[date].get(position)
+        if slug:
+            r.share_url = f"{SITE_BASE}/{date}/{slug}"
+
+
+def reconstruct_trim_info(results, args):
+    """Rebuild the trim_info dict from report data using the same math as
+    trim_track, without rendering. Clip paths are included only if the files
+    from the original run still exist."""
+    by_label = {}
+    for r in results:
+        by_label.setdefault(r.label, []).append(r)
+
+    trim_info = {}
+    for label, group in by_label.items():
+        flagged = {r.edge: r for r in group if r.flagged}
+        if not flagged:
+            continue
+        duration_s = group[0].track_duration_s
+        start, end = 0.0, duration_s
+        if "leading" in flagged:
+            start = max(0.0, effective_boundary(flagged["leading"], args.banter_gap) - args.keep_lead)
+        if "trailing" in flagged:
+            boundary = effective_boundary(flagged["trailing"], args.banter_gap)
+            end = min(duration_s, boundary + args.fade_delay + args.fade_out)
+        cut_s = duration_s - (end - start)
+        if cut_s < MIN_CUT_S:
+            trim_info[label] = {"cut_s": round(cut_s, 1), "skipped": True}
+            continue
+        info = {"start": start, "end": end, "cut_s": round(cut_s, 1)}
+        safe = re.sub(r"[^\w.-]+", "_", label)
+        for key, path in [("trimmed", args.trim_dir / f"{safe}_trimmed.mp3"),
+                          ("audition", args.trim_dir / "clips" / f"{safe}_audition.mp3"),
+                          ("original", args.trim_dir / "clips" / f"{safe}_original.mp3")]:
+            if path.exists():
+                info[key] = path
+        trim_info[label] = info
+    return trim_info
+
+
+def rebuild_dir(dir_path, args):
+    """Regenerate review.html (and re-save report.json) from an existing
+    report, backfilling share urls. No audio is analyzed or rendered."""
+    report_path = dir_path / "report.json"
+    if not report_path.exists():
+        print(f"  no report.json in {dir_path}, skipping", file=sys.stderr)
+        return
+    results = [EdgeResult(**e) for e in json.loads(report_path.read_text())]
+    args.trim_dir = dir_path / "trimmed"
+    args.plot_dir = dir_path / "plots"
+
+    # Soundcheck sets are excluded from new scans; scrub them from old reports
+    # along with any files rendered for them.
+    soundchecks = {r.label for r in results if re.search(r" Soundcheck t\d", r.label)}
+    if soundchecks:
+        print(f"  dropping {len(soundchecks)} soundcheck track(s)", file=sys.stderr)
+        results = [r for r in results if r.label not in soundchecks]
+        for label in soundchecks:
+            safe = re.sub(r"[^\w.-]+", "_", label)
+            for p in [args.trim_dir / f"{safe}_trimmed.mp3",
+                      args.trim_dir / "clips" / f"{safe}_audition.mp3",
+                      args.trim_dir / "clips" / f"{safe}_original.mp3",
+                      args.plot_dir / f"{safe}_leading.png",
+                      args.plot_dir / f"{safe}_trailing.png"]:
+                p.unlink(missing_ok=True)
+
+    backfill_share_urls(results)
+    trim_info = reconstruct_trim_info(results, args)
+    report_path.write_text(json.dumps([asdict(r) for r in results], indent=2))
+    write_review_html(dir_path / "review.html", results, trim_info, args)
 
 
 def fetch_year_dates(year):
@@ -563,7 +684,16 @@ def main():
     p.add_argument("--banter-gap", type=float, default=30,
                    help="Chain banter segments within this many seconds of the music boundary "
                         "when extending the trim point (default: 30)")
+    p.add_argument("--rebuild", type=Path, action="append", default=[], metavar="DIR",
+                   help="Regenerate review.html from DIR/report.json (backfills share urls; "
+                        "no audio analyzed). Repeatable.")
     args = p.parse_args()
+
+    if args.rebuild:
+        for dir_path in args.rebuild:
+            print(f"Rebuilding {dir_path}...", file=sys.stderr)
+            rebuild_dir(dir_path, args)
+        return
 
     if not args.inputs and not args.show and not args.year:
         p.error("provide mp3 paths/URLs, --show YYYY-MM-DD, or --year YYYY")
@@ -582,13 +712,17 @@ def main():
             failures.append(f"{date}: {e}")
     for inp in args.inputs:
         edges = ["leading", "trailing"] if args.edges == "both" else [args.edges]
-        jobs.append((Path(inp).name, inp, edges, []))
+        jobs.append((Path(inp).name, inp, edges, [], ""))
+
+    if not jobs:
+        print("No tracks to analyze; no report written.", file=sys.stderr)
+        sys.exit(1 if failures else 0)
 
     yamnet = Yamnet()
     banter_finder = None if args.no_transcribe else LazyBanterFinder()
     results = []
     trim_info = {}
-    for i, (label, src, edges, songs) in enumerate(jobs, 1):
+    for i, (label, src, edges, songs, share) in enumerate(jobs, 1):
         try:
             if re.match(r"https?://", src):
                 path = local_blob_path(src, storage_dirs) or (src if args.stream else download_audio(src))
@@ -599,7 +733,8 @@ def main():
             for edge in edges:
                 print(f"[{i}/{len(jobs)}] Analyzing {label} [{edge}]...", file=sys.stderr)
                 track_results.append(analyze_edge(yamnet, banter_finder, path, duration, edge, args,
-                                                  label, songs, src if re.match(r"https?://", src) else ""))
+                                                  label, songs, src if re.match(r"https?://", src) else "",
+                                                  share))
             results.extend(track_results)
             if args.trim_dir:
                 info = trim_track(path, duration, track_results, args, label)
