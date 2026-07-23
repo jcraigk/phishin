@@ -44,6 +44,7 @@ class ShowImporter::TrackReplacer
     track_hash.sort_by { |_k, v| v.position }
               .each do |filename, track|
       track.mp3_audio.attach(io: File.open(filename), filename: File.basename(filename))
+      track.update!(audio_status: "complete")
       track.process_mp3_audio
       pbar.increment
     end

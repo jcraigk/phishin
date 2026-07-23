@@ -54,6 +54,31 @@ RSpec.describe ShowImporter::TrackReplacer do
     expect(WaveformImageService).to have_received(:call).twice
   end
 
+  context "when a track is currently missing audio" do
+    let(:track2) do
+      create(:track, show:, title: "Harry Hood", position: 2, duration: 999, audio_status: "missing")
+    end
+
+    it "marks the track's audio as complete" do
+      service
+      expect(track2.reload.audio_status).to eq("complete")
+    end
+
+    it "attaches the new audio" do
+      service
+      expect(track2.reload.mp3_audio).to be_attached
+    end
+
+    it "updates the track's duration from the new audio" do
+      expect { service }.to change { track2.reload.duration }.from(999)
+    end
+
+    it "marks the show's audio as complete" do
+      service
+      expect(show.reload.audio_status).to eq("complete")
+    end
+  end
+
   context "when a file doesn't match any track" do
     before do
       FileUtils.mv(
