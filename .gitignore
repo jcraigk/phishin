@@ -17,3 +17,4 @@
 /tmp
 /yarn-error.log
 yarn-debug.log*
+__pycache__/
