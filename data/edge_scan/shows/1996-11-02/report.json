@@ -1,0 +1,86 @@
+[
+  {
+    "label": "1996-11-02 Set 2 t15 Sweet Adeline",
+    "edge": "trailing",
+    "track_duration_s": 280.0,
+    "nonmusic_run_s": 163.7,
+    "music_boundary_s": 116.2,
+    "region": [
+      116.2,
+      280.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.25,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.087,
+    "mean_rms_db": -27.4,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 122.6,
+        "end": 124.7,
+        "text": "It's a lot of really good time, thank you."
+      }
+    ],
+    "songs": [
+      "Sweet Adeline"
+    ],
+    "mp3_url": "https://phish.in/blob/kcstqnq3xfgn5osan68jh07ya71b.mp3",
+    "share_url": "https://phish.in/1996-11-02/sweet-adeline"
+  },
+  {
+    "label": "1996-11-02 Encore t16 Funky Bitch",
+    "edge": "trailing",
+    "track_duration_s": 518.6,
+    "nonmusic_run_s": 20.2,
+    "music_boundary_s": 498.0,
+    "region": [
+      498.0,
+      518.6
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.1,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.022,
+    "mean_crowd_score": 0.071,
+    "mean_rms_db": -26.9,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Funky Bitch"
+    ],
+    "mp3_url": "https://phish.in/blob/78qdt03ilw1t571ozp0pop2bdzmh.mp3",
+    "share_url": "https://phish.in/1996-11-02/funky-bitch"
+  },
+  {
+    "label": "1996-11-02 Set 1 t09 Johnny B. Goode",
+    "edge": "trailing",
+    "track_duration_s": 313.7,
+    "nonmusic_run_s": 14.9,
+    "music_boundary_s": 298.4,
+    "region": [
+      298.4,
+      313.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.23,
+      "speech": 0.77
+    },
+    "mean_music_score": 0.021,
+    "mean_crowd_score": 0.077,
+    "mean_rms_db": -23.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Johnny B. Goode"
+    ],
+    "mp3_url": "https://phish.in/blob/pkbc4ojankwwmk77c3zja49q6flj.mp3",
+    "share_url": "https://phish.in/1996-11-02/johnny-b-goode"
+  }
+]

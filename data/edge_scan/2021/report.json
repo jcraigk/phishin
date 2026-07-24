@@ -1,0 +1,2755 @@
+[
+  {
+    "label": "2021-08-14 Set 1 t09 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 599.4,
+    "nonmusic_run_s": 34.6,
+    "music_boundary_s": 564.4,
+    "region": [
+      564.4,
+      599.4
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.5,
+      "speech": 0.46
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.166,
+    "mean_rms_db": -24.0,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 586.6,
+        "end": 589.1,
+        "text": "Please don't go anywhere, we will be back."
+      },
+      {
+        "start": 589.1,
+        "end": 589.5,
+        "text": "Thank you."
+      }
+    ],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/l22uenc91mt0dxgwdt3w49w86cl2.mp3",
+    "share_url": "https://phish.in/2021-08-14/the-squirming-coil"
+  },
+  {
+    "label": "2021-08-10 Set 1 t11 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 625.8,
+    "nonmusic_run_s": 33.1,
+    "music_boundary_s": 592.2,
+    "region": [
+      592.2,
+      625.8
+    ],
+    "character": {
+      "silence": 0.22,
+      "crowd": 0.06,
+      "speech": 0.72
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.025,
+    "mean_rms_db": -37.4,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/xzyslnxvi42na53pzcgh7zdd4rgh.mp3",
+    "share_url": "https://phish.in/2021-08-10/run-like-an-antelope"
+  },
+  {
+    "label": "2021-08-03 Set 1 t12 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 585.1,
+    "nonmusic_run_s": 29.8,
+    "music_boundary_s": 554.9,
+    "region": [
+      554.9,
+      585.1
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.19,
+      "speech": 0.76
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.125,
+    "mean_rms_db": -28.0,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 575.4,
+        "end": 576.8,
+        "text": "We'll be right back, thank you."
+      }
+    ],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/rf5vdi73icgendmw3cd8oeezv1hc.mp3",
+    "share_url": "https://phish.in/2021-08-03/the-squirming-coil"
+  },
+  {
+    "label": "2021-10-31 Set 2 t21 Outro",
+    "edge": "trailing",
+    "track_duration_s": 171.3,
+    "nonmusic_run_s": 19.7,
+    "music_boundary_s": 151.2,
+    "region": [
+      151.2,
+      171.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.27,
+      "speech": 0.73
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.178,
+    "mean_rms_db": -26.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Outro"
+    ],
+    "mp3_url": "https://phish.in/blob/wk782tfg07c8ikmalbwmt0l3rc31.mp3",
+    "share_url": "https://phish.in/2021-10-31/outro"
+  },
+  {
+    "label": "2021-10-23 Encore t15 First Tube",
+    "edge": "trailing",
+    "track_duration_s": 458.3,
+    "nonmusic_run_s": 19.2,
+    "music_boundary_s": 438.6,
+    "region": [
+      438.6,
+      458.3
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.23,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.074,
+    "mean_rms_db": -26.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "First Tube"
+    ],
+    "mp3_url": "https://phish.in/blob/tylzlzbrvx8cfigunhurybemjwww.mp3",
+    "share_url": "https://phish.in/2021-10-23/first-tube"
+  },
+  {
+    "label": "2021-08-11 Set 1 t09 Maze",
+    "edge": "trailing",
+    "track_duration_s": 674.4,
+    "nonmusic_run_s": 18.7,
+    "music_boundary_s": 655.2,
+    "region": [
+      655.2,
+      674.4
+    ],
+    "character": {
+      "silence": 0.23,
+      "crowd": 0.05,
+      "speech": 0.72
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.039,
+    "mean_rms_db": -37.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Maze"
+    ],
+    "mp3_url": "https://phish.in/blob/sll0eamxvkbxif9wvpn5o4rdaqf3.mp3",
+    "share_url": "https://phish.in/2021-08-11/maze"
+  },
+  {
+    "label": "2021-07-30 Encore t20 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 405.2,
+    "nonmusic_run_s": 18.2,
+    "music_boundary_s": 386.5,
+    "region": [
+      386.5,
+      405.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.08,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.039,
+    "mean_crowd_score": 0.051,
+    "mean_rms_db": -22.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/gqd66ac1sek9gv715tu30xeo2h3l.mp3",
+    "share_url": "https://phish.in/2021-07-30/character-zero"
+  },
+  {
+    "label": "2021-07-28 Set 1 t09 Drift While You're Sleeping",
+    "edge": "trailing",
+    "track_duration_s": 751.8,
+    "nonmusic_run_s": 17.8,
+    "music_boundary_s": 733.6,
+    "region": [
+      733.6,
+      751.8
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.38,
+      "speech": 0.59
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.14,
+    "mean_rms_db": -25.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Drift While You're Sleeping"
+    ],
+    "mp3_url": "https://phish.in/blob/r3j02y3rtn8bslskm0lnu3ckbska.mp3",
+    "share_url": "https://phish.in/2021-07-28/drift-while-youre-sleeping"
+  },
+  {
+    "label": "2021-07-30 Set 1 t10 Walls of the Cave",
+    "edge": "trailing",
+    "track_duration_s": 721.6,
+    "nonmusic_run_s": 17.3,
+    "music_boundary_s": 703.8,
+    "region": [
+      703.8,
+      721.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.11,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.073,
+    "mean_rms_db": -24.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Walls of the Cave"
+    ],
+    "mp3_url": "https://phish.in/blob/xmpgmubqrejf1v7f7x92ip989ic2.mp3",
+    "share_url": "https://phish.in/2021-07-30/walls-of-the-cave"
+  },
+  {
+    "label": "2021-08-08 Set 1 t10 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 711.3,
+    "nonmusic_run_s": 16.8,
+    "music_boundary_s": 694.0,
+    "region": [
+      694.0,
+      711.3
+    ],
+    "character": {
+      "silence": 0.17,
+      "crowd": 0.23,
+      "speech": 0.6
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.065,
+    "mean_rms_db": -34.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/28wf2uljr118jcm36duhfg6tr0ug.mp3",
+    "share_url": "https://phish.in/2021-08-08/david-bowie"
+  },
+  {
+    "label": "2021-08-13 Set 1 t08 Sand",
+    "edge": "trailing",
+    "track_duration_s": 565.5,
+    "nonmusic_run_s": 14.9,
+    "music_boundary_s": 550.1,
+    "region": [
+      550.1,
+      565.5
+    ],
+    "character": {
+      "silence": 0.29,
+      "crowd": 0.19,
+      "speech": 0.52
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.082,
+    "mean_rms_db": -43.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sand"
+    ],
+    "mp3_url": "https://phish.in/blob/e7pibjigsu0t0l4di7xju1kc8os7.mp3",
+    "share_url": "https://phish.in/2021-08-13/sand"
+  },
+  {
+    "label": "2021-08-11 Encore t18 Say It to Me S.A.N.T.O.S.",
+    "edge": "trailing",
+    "track_duration_s": 330.4,
+    "nonmusic_run_s": 14.4,
+    "music_boundary_s": 315.5,
+    "region": [
+      315.5,
+      330.4
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.07,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.057,
+    "mean_rms_db": -33.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Say It to Me S.A.N.T.O.S."
+    ],
+    "mp3_url": "https://phish.in/blob/ebonogrwvb54jccparbyth4ugwaj.mp3",
+    "share_url": "https://phish.in/2021-08-11/say-it-to-me-s-a-n-t-o-s"
+  },
+  {
+    "label": "2021-09-04 Set 1 t11 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 718.2,
+    "nonmusic_run_s": 14.4,
+    "music_boundary_s": 703.4,
+    "region": [
+      703.4,
+      718.2
+    ],
+    "character": {
+      "silence": 0.17,
+      "crowd": 0.23,
+      "speech": 0.6
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.094,
+    "mean_rms_db": -34.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/x9nuskcgade3jbvqx74v0k9jinfo.mp3",
+    "share_url": "https://phish.in/2021-09-04/david-bowie"
+  },
+  {
+    "label": "2021-10-28 Encore t17 Grind",
+    "edge": "trailing",
+    "track_duration_s": 110.4,
+    "nonmusic_run_s": 14.4,
+    "music_boundary_s": 96.0,
+    "region": [
+      96.0,
+      110.9
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.2,
+      "speech": 0.77
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.177,
+    "mean_rms_db": -25.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Grind"
+    ],
+    "mp3_url": "https://phish.in/blob/bdl38ht9o6yseldu4ncpkwuyv3t8.mp3",
+    "share_url": "https://phish.in/2021-10-28/grind"
+  },
+  {
+    "label": "2021-10-30 Encore t25 Possum",
+    "edge": "trailing",
+    "track_duration_s": 594.1,
+    "nonmusic_run_s": 13.9,
+    "music_boundary_s": 579.7,
+    "region": [
+      579.7,
+      594.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.052,
+    "mean_rms_db": -26.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/itn6q1oj64chf5ueu4yu8qq8i38i.mp3",
+    "share_url": "https://phish.in/2021-10-30/possum"
+  },
+  {
+    "label": "2021-09-03 Set 1 t10 Carini",
+    "edge": "trailing",
+    "track_duration_s": 1320.8,
+    "nonmusic_run_s": 13.4,
+    "music_boundary_s": 1306.9,
+    "region": [
+      1306.9,
+      1320.8
+    ],
+    "character": {
+      "silence": 0.14,
+      "crowd": 0.07,
+      "speech": 0.79
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.054,
+    "mean_rms_db": -34.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Carini"
+    ],
+    "mp3_url": "https://phish.in/blob/aoki8p6ekc3fydpljevlyzvhlhln.mp3",
+    "share_url": "https://phish.in/2021-09-03/carini"
+  },
+  {
+    "label": "2021-09-03 Encore t22 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 373.5,
+    "nonmusic_run_s": 13.4,
+    "music_boundary_s": 359.5,
+    "region": [
+      359.5,
+      373.5
+    ],
+    "character": {
+      "silence": 0.14,
+      "crowd": 0.21,
+      "speech": 0.64
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.089,
+    "mean_rms_db": -32.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/9cnhzka3qjp2b9whnb4huz082uce.mp3",
+    "share_url": "https://phish.in/2021-09-03/good-times-bad-times"
+  },
+  {
+    "label": "2021-10-30 Set 1 t13 I Am the Walrus",
+    "edge": "trailing",
+    "track_duration_s": 443.3,
+    "nonmusic_run_s": 13.4,
+    "music_boundary_s": 429.4,
+    "region": [
+      429.4,
+      443.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.063,
+    "mean_rms_db": -25.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "I Am the Walrus"
+    ],
+    "mp3_url": "https://phish.in/blob/g127nv6hjjbbfcvfgcmol4cos8fd.mp3",
+    "share_url": "https://phish.in/2021-10-30/i-am-the-walrus"
+  },
+  {
+    "label": "2021-10-28 Set 1 t06 Twenty Years Later",
+    "edge": "trailing",
+    "track_duration_s": 991.4,
+    "nonmusic_run_s": 13.0,
+    "music_boundary_s": 978.0,
+    "region": [
+      978.0,
+      991.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.039,
+    "mean_rms_db": -25.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Twenty Years Later"
+    ],
+    "mp3_url": "https://phish.in/blob/o6hh4urv79clv8dsw4lwizm8h0b9.mp3",
+    "share_url": "https://phish.in/2021-10-28/twenty-years-later"
+  },
+  {
+    "label": "2021-10-29 Set 1 t07 I Always Wanted It This Way",
+    "edge": "trailing",
+    "track_duration_s": 816.5,
+    "nonmusic_run_s": 13.0,
+    "music_boundary_s": 803.1,
+    "region": [
+      803.1,
+      816.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.11,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.072,
+    "mean_rms_db": -24.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "I Always Wanted It This Way"
+    ],
+    "mp3_url": "https://phish.in/blob/9nr6kxo2e4e4p0iedpnsxu26xg9q.mp3",
+    "share_url": "https://phish.in/2021-10-29/i-always-wanted-it-this-way"
+  },
+  {
+    "label": "2021-10-29 Encore t17 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 212.6,
+    "nonmusic_run_s": 12.5,
+    "music_boundary_s": 199.7,
+    "region": [
+      199.7,
+      212.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.19,
+      "speech": 0.81
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.098,
+    "mean_rms_db": -23.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/u5913ueee7ngg1orm6h3thmi0wii.mp3",
+    "share_url": "https://phish.in/2021-10-29/tweezer-reprise"
+  },
+  {
+    "label": "2021-10-31 Set 1 t07 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 738.8,
+    "nonmusic_run_s": 12.5,
+    "music_boundary_s": 725.8,
+    "region": [
+      725.8,
+      738.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.08,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.048,
+    "mean_rms_db": -26.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/64cxow5fm4l5u6x2y9lyshamzqhj.mp3",
+    "share_url": "https://phish.in/2021-10-31/david-bowie"
+  },
+  {
+    "label": "2021-10-31 Encore t28 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 812.6,
+    "nonmusic_run_s": 12.5,
+    "music_boundary_s": 799.6,
+    "region": [
+      799.6,
+      812.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.12,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.057,
+    "mean_rms_db": -22.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/h87ny5s7xz5dtdrfmijfcnoxtm58.mp3",
+    "share_url": "https://phish.in/2021-10-31/harry-hood"
+  },
+  {
+    "label": "2021-09-04 Set 2 t18 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1152.7,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 1140.3,
+    "region": [
+      1140.3,
+      1152.7
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.04,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.02,
+    "mean_crowd_score": 0.053,
+    "mean_rms_db": -31.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/2uoxp0zo0wm5u6q9x3tgi4ytsrav.mp3",
+    "share_url": "https://phish.in/2021-09-04/you-enjoy-myself"
+  },
+  {
+    "label": "2021-09-04 Encore t19 Bold as Love",
+    "edge": "trailing",
+    "track_duration_s": 382.5,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 370.0,
+    "region": [
+      370.0,
+      382.5
+    ],
+    "character": {
+      "silence": 0.2,
+      "crowd": 0.36,
+      "speech": 0.44
+    },
+    "mean_music_score": 0.02,
+    "mean_crowd_score": 0.086,
+    "mean_rms_db": -40.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Bold as Love"
+    ],
+    "mp3_url": "https://phish.in/blob/8b9rr5i2f3pdkcekl0fv3gtyn9hq.mp3",
+    "share_url": "https://phish.in/2021-09-04/bold-as-love"
+  },
+  {
+    "label": "2021-10-24 Encore t23 Bathtub Gin",
+    "edge": "trailing",
+    "track_duration_s": 838.1,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 825.6,
+    "region": [
+      825.6,
+      838.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.12,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.054,
+    "mean_rms_db": -29.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Bathtub Gin"
+    ],
+    "mp3_url": "https://phish.in/blob/4pi88xuxtcakt83nwmwg4u6v79zo.mp3",
+    "share_url": "https://phish.in/2021-10-24/bathtub-gin"
+  },
+  {
+    "label": "2021-10-30 Set 2 t22 Farmhouse",
+    "edge": "trailing",
+    "track_duration_s": 351.7,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 339.2,
+    "region": [
+      339.2,
+      351.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.28,
+      "speech": 0.72
+    },
+    "mean_music_score": 0.059,
+    "mean_crowd_score": 0.041,
+    "mean_rms_db": -25.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Farmhouse"
+    ],
+    "mp3_url": "https://phish.in/blob/oprl3vd80wsr7c0ghk1kh5fit108.mp3",
+    "share_url": "https://phish.in/2021-10-30/farmhouse"
+  },
+  {
+    "label": "2021-10-22 Encore t18 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 301.8,
+    "nonmusic_run_s": 11.5,
+    "music_boundary_s": 289.8,
+    "region": [
+      289.8,
+      301.8
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.12,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.066,
+    "mean_rms_db": -29.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/h9uvvpiilmndxpo1vxezc8wc7nzb.mp3",
+    "share_url": "https://phish.in/2021-10-22/cavern"
+  },
+  {
+    "label": "2021-10-26 Set 1 t08 Set Your Soul Free",
+    "edge": "trailing",
+    "track_duration_s": 812.7,
+    "nonmusic_run_s": 11.5,
+    "music_boundary_s": 800.7,
+    "region": [
+      800.7,
+      812.7
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.12,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.104,
+    "mean_rms_db": -30.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Set Your Soul Free"
+    ],
+    "mp3_url": "https://phish.in/blob/i2a49nmayfj3okhlynymla7dto25.mp3",
+    "share_url": "https://phish.in/2021-10-26/set-your-soul-free"
+  },
+  {
+    "label": "2021-10-26 Encore t20 A Life Beyond the Dream",
+    "edge": "trailing",
+    "track_duration_s": 460.4,
+    "nonmusic_run_s": 11.5,
+    "music_boundary_s": 448.4,
+    "region": [
+      448.4,
+      460.4
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.25,
+      "speech": 0.71
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.124,
+    "mean_rms_db": -29.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "A Life Beyond the Dream"
+    ],
+    "mp3_url": "https://phish.in/blob/j3rtn7fi8o54i1pje0s8wxlsfx65.mp3",
+    "share_url": "https://phish.in/2021-10-26/a-life-beyond-the-dream"
+  },
+  {
+    "label": "2021-07-28 Set 2 t20 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 623.3,
+    "nonmusic_run_s": 10.6,
+    "music_boundary_s": 612.2,
+    "region": [
+      612.2,
+      623.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.27,
+      "speech": 0.73
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.042,
+    "mean_rms_db": -27.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/l0zu28s3x6e8yo1uhuijb09pz70s.mp3",
+    "share_url": "https://phish.in/2021-07-28/slave-to-the-traffic-light"
+  },
+  {
+    "label": "2021-08-29 Encore t20 First Tube",
+    "edge": "trailing",
+    "track_duration_s": 511.3,
+    "nonmusic_run_s": 10.6,
+    "music_boundary_s": 500.3,
+    "region": [
+      500.3,
+      511.3
+    ],
+    "character": {
+      "silence": 0.14,
+      "crowd": 0.0,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.094,
+    "mean_crowd_score": 0.002,
+    "mean_rms_db": -45.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "First Tube"
+    ],
+    "mp3_url": "https://phish.in/blob/gmqos4moqad5h69ik3740bcp2hn0.mp3",
+    "share_url": "https://phish.in/2021-08-29/first-tube"
+  },
+  {
+    "label": "2021-10-22 Set 1 t08 Ghost",
+    "edge": "trailing",
+    "track_duration_s": 860.9,
+    "nonmusic_run_s": 10.1,
+    "music_boundary_s": 850.3,
+    "region": [
+      850.3,
+      860.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.023,
+    "mean_rms_db": -27.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Ghost"
+    ],
+    "mp3_url": "https://phish.in/blob/rkl4g7rev2i9sc86ifbzpqsltlig.mp3",
+    "share_url": "https://phish.in/2021-10-22/ghost"
+  },
+  {
+    "label": "2021-10-24 Set 1 t09 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 637.6,
+    "nonmusic_run_s": 10.1,
+    "music_boundary_s": 627.0,
+    "region": [
+      627.0,
+      637.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.05,
+      "speech": 0.95
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.024,
+    "mean_rms_db": -25.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/0ca3le8qixfh1mdqwskoocngks0s.mp3",
+    "share_url": "https://phish.in/2021-10-24/run-like-an-antelope"
+  },
+  {
+    "label": "2021-07-28 Encore t22 Say It to Me S.A.N.T.O.S.",
+    "edge": "trailing",
+    "track_duration_s": 303.2,
+    "nonmusic_run_s": 9.6,
+    "music_boundary_s": 293.1,
+    "region": [
+      293.1,
+      303.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.4,
+      "speech": 0.6
+    },
+    "mean_music_score": 0.038,
+    "mean_crowd_score": 0.107,
+    "mean_rms_db": -25.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Say It to Me S.A.N.T.O.S."
+    ],
+    "mp3_url": "https://phish.in/blob/p10wf2azde44cchao6asa1mw83cf.mp3",
+    "share_url": "https://phish.in/2021-07-28/say-it-to-me-s-a-n-t-o-s"
+  },
+  {
+    "label": "2021-08-03 Set 2 t19 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1090.1,
+    "nonmusic_run_s": 9.6,
+    "music_boundary_s": 1080.0,
+    "region": [
+      1080.0,
+      1090.1
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.3,
+      "speech": 0.65
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.169,
+    "mean_rms_db": -32.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/q0jjuwml5b6udbesdo0rp77hiikh.mp3",
+    "share_url": "https://phish.in/2021-08-03/you-enjoy-myself"
+  },
+  {
+    "label": "2021-08-15 Set 1 t11 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1179.7,
+    "nonmusic_run_s": 9.6,
+    "music_boundary_s": 1169.7,
+    "region": [
+      1169.7,
+      1179.7
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.3,
+      "speech": 0.65
+    },
+    "mean_music_score": 0.028,
+    "mean_crowd_score": 0.112,
+    "mean_rms_db": -31.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/xghc81uz48deoum39zoql797zgip.mp3",
+    "share_url": "https://phish.in/2021-08-15/you-enjoy-myself"
+  },
+  {
+    "label": "2021-08-11 Set 2 t16 Chalk Dust Torture",
+    "edge": "trailing",
+    "track_duration_s": 535.0,
+    "nonmusic_run_s": 9.1,
+    "music_boundary_s": 525.4,
+    "region": [
+      525.4,
+      535.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.26,
+      "speech": 0.74
+    },
+    "mean_music_score": 0.015,
+    "mean_crowd_score": 0.075,
+    "mean_rms_db": -22.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Chalk Dust Torture"
+    ],
+    "mp3_url": "https://phish.in/blob/m8lmvpupft7vpxlnqxc98qn13h4l.mp3",
+    "share_url": "https://phish.in/2021-08-11/chalk-dust-torture"
+  },
+  {
+    "label": "2021-10-23 Set 1 t07 Rise/Come Together",
+    "edge": "trailing",
+    "track_duration_s": 376.0,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 366.9,
+    "region": [
+      366.9,
+      376.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.44,
+      "speech": 0.56
+    },
+    "mean_music_score": 0.02,
+    "mean_crowd_score": 0.13,
+    "mean_rms_db": -23.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Rise/Come Together"
+    ],
+    "mp3_url": "https://phish.in/blob/ya4dzkwj5s8silepqwsdk4jdf8qb.mp3",
+    "share_url": "https://phish.in/2021-10-23/rise-come-together"
+  },
+  {
+    "label": "2021-07-31 Set 2 t17 Weekapaug Groove",
+    "edge": "trailing",
+    "track_duration_s": 551.2,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 542.6,
+    "region": [
+      542.6,
+      551.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.29,
+      "speech": 0.71
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.053,
+    "mean_rms_db": -27.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Weekapaug Groove"
+    ],
+    "mp3_url": "https://phish.in/blob/5t8rxoqjegw6y4efffvo19zicdgb.mp3",
+    "share_url": "https://phish.in/2021-07-31/weekapaug-groove"
+  },
+  {
+    "label": "2021-08-07 Set 1 t11 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 290.2,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 281.8,
+    "region": [
+      281.8,
+      290.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.06,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.056,
+    "mean_rms_db": -26.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/6qfvxrjiveexktdjqw26qwtu4ewx.mp3",
+    "share_url": "https://phish.in/2021-08-07/cavern"
+  },
+  {
+    "label": "2021-08-08 Encore t24 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 633.6,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 625.0,
+    "region": [
+      625.0,
+      633.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.47,
+      "speech": 0.53
+    },
+    "mean_music_score": 0.058,
+    "mean_crowd_score": 0.057,
+    "mean_rms_db": -24.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/9xxxu725gdhwi5o1v8azpzby1x9b.mp3",
+    "share_url": "https://phish.in/2021-08-08/slave-to-the-traffic-light"
+  },
+  {
+    "label": "2021-08-10 Set 2 t21 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 352.9,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 344.2,
+    "region": [
+      344.2,
+      352.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.037,
+    "mean_rms_db": -26.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/cjvzvx3amed8rehig8w9hb2bs8wd.mp3",
+    "share_url": "https://phish.in/2021-08-10/character-zero"
+  },
+  {
+    "label": "2021-08-15 Encore t22 Backwards Down the Number Line",
+    "edge": "trailing",
+    "track_duration_s": 504.4,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 495.8,
+    "region": [
+      495.8,
+      504.4
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.59,
+      "speech": 0.35
+    },
+    "mean_music_score": 0.016,
+    "mean_crowd_score": 0.155,
+    "mean_rms_db": -32.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Backwards Down the Number Line"
+    ],
+    "mp3_url": "https://phish.in/blob/z3xkfiwzgyod369n7yq4flq6lqcj.mp3",
+    "share_url": "https://phish.in/2021-08-15/backwards-down-the-number-line"
+  },
+  {
+    "label": "2021-09-01 Set 2 t17 Backwards Down the Number Line",
+    "edge": "trailing",
+    "track_duration_s": 499.9,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 491.3,
+    "region": [
+      491.3,
+      499.9
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.06,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.009,
+    "mean_crowd_score": 0.017,
+    "mean_rms_db": -33.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Backwards Down the Number Line"
+    ],
+    "mp3_url": "https://phish.in/blob/j9uzpcdvgg6f9jpz7znou3yeodvl.mp3",
+    "share_url": "https://phish.in/2021-09-01/backwards-down-the-number-line"
+  },
+  {
+    "label": "2021-08-01 Set 1 t11 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 674.8,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 666.6,
+    "region": [
+      666.6,
+      674.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.12,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.069,
+    "mean_crowd_score": 0.035,
+    "mean_rms_db": -23.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/185l0fwfz8vp4s0hjyjznresi9ln.mp3",
+    "share_url": "https://phish.in/2021-08-01/run-like-an-antelope"
+  },
+  {
+    "label": "2021-08-03 Encore t20 Loving Cup",
+    "edge": "trailing",
+    "track_duration_s": 418.1,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 409.9,
+    "region": [
+      409.9,
+      418.1
+    ],
+    "character": {
+      "silence": 0.12,
+      "crowd": 0.12,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.071,
+    "mean_rms_db": -36.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Loving Cup"
+    ],
+    "mp3_url": "https://phish.in/blob/w4tzjj9xlbtsoh3c8xy5mydi5706.mp3",
+    "share_url": "https://phish.in/2021-08-03/loving-cup"
+  },
+  {
+    "label": "2021-08-06 Encore t20 Say It to Me S.A.N.T.O.S.",
+    "edge": "trailing",
+    "track_duration_s": 358.5,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 350.3,
+    "region": [
+      350.3,
+      358.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.06,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.042,
+    "mean_crowd_score": 0.034,
+    "mean_rms_db": -30.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Say It to Me S.A.N.T.O.S."
+    ],
+    "mp3_url": "https://phish.in/blob/n4ty7hbc9j4xl0xngzkfox5hq2x0.mp3",
+    "share_url": "https://phish.in/2021-08-06/say-it-to-me-s-a-n-t-o-s"
+  },
+  {
+    "label": "2021-08-08 Set 2 t22 Bathtub Gin",
+    "edge": "trailing",
+    "track_duration_s": 68.8,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 61.0,
+    "region": [
+      61.0,
+      69.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.19,
+      "speech": 0.81
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.04,
+    "mean_rms_db": -25.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Bathtub Gin"
+    ],
+    "mp3_url": "https://phish.in/blob/iksr9i46udvs14x4l5nz8wobu38l.mp3",
+    "share_url": "https://phish.in/2021-08-08/bathtub-gin-2"
+  },
+  {
+    "label": "2021-09-01 Set 1 t10 Fluffhead",
+    "edge": "trailing",
+    "track_duration_s": 927.1,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 918.9,
+    "region": [
+      918.9,
+      927.1
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.0,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.071,
+    "mean_crowd_score": 0.008,
+    "mean_rms_db": -25.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fluffhead"
+    ],
+    "mp3_url": "https://phish.in/blob/ohjv6ekeoujjvysts0u7adq15suc.mp3",
+    "share_url": "https://phish.in/2021-09-01/fluffhead"
+  },
+  {
+    "label": "2021-09-05 Set 2 t17 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 685.9,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 677.7,
+    "region": [
+      677.7,
+      685.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.19,
+      "speech": 0.81
+    },
+    "mean_music_score": 0.052,
+    "mean_crowd_score": 0.028,
+    "mean_rms_db": -27.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/84xrm4ypztdgh8mw2m3e4z95u7ok.mp3",
+    "share_url": "https://phish.in/2021-09-05/harry-hood"
+  },
+  {
+    "label": "2021-10-17 Encore t15 Wolfman's Brother",
+    "edge": "trailing",
+    "track_duration_s": 816.5,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 808.3,
+    "region": [
+      808.3,
+      816.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.25,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.032,
+    "mean_crowd_score": 0.075,
+    "mean_rms_db": -22.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Wolfman's Brother"
+    ],
+    "mp3_url": "https://phish.in/blob/j22fvlnp5461l9yj5e7enr0153xc.mp3",
+    "share_url": "https://phish.in/2021-10-17/wolfmans-brother"
+  },
+  {
+    "label": "2021-07-30 Set 2 t17 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 708.8,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 701.1,
+    "region": [
+      701.1,
+      708.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.009,
+    "mean_crowd_score": 0.061,
+    "mean_rms_db": -24.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/jrbbrfqrhuf2s0j9l3s43dkn3hk6.mp3",
+    "share_url": "https://phish.in/2021-07-30/harry-hood"
+  },
+  {
+    "label": "2021-07-31 Set 1 t08 Bathtub Gin",
+    "edge": "trailing",
+    "track_duration_s": 677.9,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 670.2,
+    "region": [
+      670.2,
+      677.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.032,
+    "mean_rms_db": -26.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Bathtub Gin"
+    ],
+    "mp3_url": "https://phish.in/blob/h4pt2gfelarluzm6m4l4d09cl3vj.mp3",
+    "share_url": "https://phish.in/2021-07-31/bathtub-gin"
+  },
+  {
+    "label": "2021-07-31 Encore t19 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 307.4,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 299.7,
+    "region": [
+      299.7,
+      307.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.05,
+    "mean_rms_db": -25.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/2wn7yhs5yld9akgyvyyjuuxgpvbo.mp3",
+    "share_url": "https://phish.in/2021-07-31/cavern"
+  },
+  {
+    "label": "2021-08-04 Set 2 t17 Split Open and Melt",
+    "edge": "trailing",
+    "track_duration_s": 995.8,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 988.2,
+    "region": [
+      988.2,
+      995.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.13,
+      "speech": 0.87
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.064,
+    "mean_rms_db": -29.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Split Open and Melt"
+    ],
+    "mp3_url": "https://phish.in/blob/ym7gr3aq3w2400397kb56squorh2.mp3",
+    "share_url": "https://phish.in/2021-08-04/split-open-and-melt"
+  },
+  {
+    "label": "2021-08-07 Encore t19 Drift While You're Sleeping",
+    "edge": "trailing",
+    "track_duration_s": 744.4,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 736.7,
+    "region": [
+      736.7,
+      744.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.04,
+    "mean_rms_db": -28.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Drift While You're Sleeping"
+    ],
+    "mp3_url": "https://phish.in/blob/zxtzow0vzt1vbtlfrl8zs586km0z.mp3",
+    "share_url": "https://phish.in/2021-08-07/drift-while-youre-sleeping"
+  },
+  {
+    "label": "2021-08-14 Encore t19 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 197.7,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 190.1,
+    "region": [
+      190.1,
+      197.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.6,
+      "speech": 0.4
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.169,
+    "mean_rms_db": -28.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/7lcjpa58q3wwk1xhk05nfhb0dup3.mp3",
+    "share_url": "https://phish.in/2021-08-14/tweezer-reprise"
+  },
+  {
+    "label": "2021-08-15 Set 2 t20 First Tube",
+    "edge": "trailing",
+    "track_duration_s": 423.1,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 415.4,
+    "region": [
+      415.4,
+      423.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.53,
+      "speech": 0.47
+    },
+    "mean_music_score": 0.02,
+    "mean_crowd_score": 0.173,
+    "mean_rms_db": -27.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "First Tube"
+    ],
+    "mp3_url": "https://phish.in/blob/orz8se6h2kxvrygyxvwwcbk41r4w.mp3",
+    "share_url": "https://phish.in/2021-08-15/first-tube"
+  },
+  {
+    "label": "2021-08-27 Set 1 t11 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 307.8,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 300.1,
+    "region": [
+      300.1,
+      307.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.27,
+      "speech": 0.73
+    },
+    "mean_music_score": 0.104,
+    "mean_crowd_score": 0.077,
+    "mean_rms_db": -24.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/n25zs354s2wh2yqmglxdrcx9ondk.mp3",
+    "share_url": "https://phish.in/2021-08-27/golgi-apparatus"
+  },
+  {
+    "label": "2021-08-01 Encore t20 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 189.1,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 181.9,
+    "region": [
+      181.9,
+      189.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.02,
+    "mean_rms_db": -26.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/qdoh1wresburh619urffx51a9wct.mp3",
+    "share_url": "https://phish.in/2021-08-01/tweezer-reprise"
+  },
+  {
+    "label": "2021-08-04 Set 1 t11 Fluffhead",
+    "edge": "trailing",
+    "track_duration_s": 1030.7,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 1023.5,
+    "region": [
+      1023.5,
+      1030.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.02,
+    "mean_crowd_score": 0.039,
+    "mean_rms_db": -27.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fluffhead"
+    ],
+    "mp3_url": "https://phish.in/blob/eklk34sybwmxnqe1k4c0lxobrx3l.mp3",
+    "share_url": "https://phish.in/2021-08-04/fluffhead"
+  },
+  {
+    "label": "2021-08-04 Encore t18 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 432.5,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 425.3,
+    "region": [
+      425.3,
+      432.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.43,
+      "speech": 0.57
+    },
+    "mean_music_score": 0.029,
+    "mean_crowd_score": 0.108,
+    "mean_rms_db": -27.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/03ncy8brpw4bh1v1jc56nymm04b2.mp3",
+    "share_url": "https://phish.in/2021-08-04/character-zero"
+  },
+  {
+    "label": "2021-08-06 Set 1 t11 Walls of the Cave",
+    "edge": "trailing",
+    "track_duration_s": 756.1,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 748.9,
+    "region": [
+      748.9,
+      756.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.14,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.03,
+    "mean_crowd_score": 0.047,
+    "mean_rms_db": -25.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Walls of the Cave"
+    ],
+    "mp3_url": "https://phish.in/blob/e4q9p4r9yf963syg2934elou93pm.mp3",
+    "share_url": "https://phish.in/2021-08-06/walls-of-the-cave"
+  },
+  {
+    "label": "2021-08-13 Encore t17 Loving Cup",
+    "edge": "trailing",
+    "track_duration_s": 448.0,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 440.8,
+    "region": [
+      440.8,
+      448.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.5,
+      "speech": 0.5
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.184,
+    "mean_rms_db": -26.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Loving Cup"
+    ],
+    "mp3_url": "https://phish.in/blob/7r25acjub2hkd34jmo2kbbrylu7v.mp3",
+    "share_url": "https://phish.in/2021-08-13/loving-cup"
+  },
+  {
+    "label": "2021-08-27 Encore t19 Drift While You're Sleeping",
+    "edge": "trailing",
+    "track_duration_s": 724.3,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 717.1,
+    "region": [
+      717.1,
+      724.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.21,
+      "speech": 0.79
+    },
+    "mean_music_score": 0.023,
+    "mean_crowd_score": 0.051,
+    "mean_rms_db": -29.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Drift While You're Sleeping"
+    ],
+    "mp3_url": "https://phish.in/blob/gpqrbk4f2m20uh1fbnlqc8c14v5g.mp3",
+    "share_url": "https://phish.in/2021-08-27/drift-while-youre-sleeping"
+  },
+  {
+    "label": "2021-09-03 Set 2 t19 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 685.3,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 678.1,
+    "region": [
+      678.1,
+      685.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.29,
+      "speech": 0.71
+    },
+    "mean_music_score": 0.019,
+    "mean_crowd_score": 0.09,
+    "mean_rms_db": -30.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/l51x92sfqdsbnc9zajwps9jyf6a8.mp3",
+    "share_url": "https://phish.in/2021-09-03/slave-to-the-traffic-light"
+  },
+  {
+    "label": "2021-09-05 Set 1 t08 Bathtub Gin",
+    "edge": "trailing",
+    "track_duration_s": 833.2,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 826.0,
+    "region": [
+      826.0,
+      833.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.031,
+    "mean_rms_db": -29.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Bathtub Gin"
+    ],
+    "mp3_url": "https://phish.in/blob/3fv8banjm0vs2qtoko0z7r8yu0cn.mp3",
+    "share_url": "https://phish.in/2021-09-05/bathtub-gin"
+  },
+  {
+    "label": "2021-09-05 Encore t19 Say It to Me S.A.N.T.O.S.",
+    "edge": "trailing",
+    "track_duration_s": 320.3,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 313.1,
+    "region": [
+      313.1,
+      320.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.43,
+      "speech": 0.57
+    },
+    "mean_music_score": 0.076,
+    "mean_crowd_score": 0.054,
+    "mean_rms_db": -28.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Say It to Me S.A.N.T.O.S."
+    ],
+    "mp3_url": "https://phish.in/blob/knvarf5bvolt0oj6uf9q4dp6a0l3.mp3",
+    "share_url": "https://phish.in/2021-09-05/say-it-to-me-s-a-n-t-o-s"
+  },
+  {
+    "label": "2021-10-16 Set 2 t14 The Moma Dance",
+    "edge": "trailing",
+    "track_duration_s": 694.3,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 687.1,
+    "region": [
+      687.1,
+      694.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.083,
+    "mean_rms_db": -23.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Moma Dance"
+    ],
+    "mp3_url": "https://phish.in/blob/qaiqdvi5vlar406uotf4tlh6l3jr.mp3",
+    "share_url": "https://phish.in/2021-10-16/the-moma-dance"
+  },
+  {
+    "label": "2021-10-16 Encore t15 Carini",
+    "edge": "trailing",
+    "track_duration_s": 1130.3,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 1123.1,
+    "region": [
+      1123.1,
+      1130.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.14,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.091,
+    "mean_rms_db": -22.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Carini"
+    ],
+    "mp3_url": "https://phish.in/blob/3ww6a8tprtuejq2snswpq0fe7kzq.mp3",
+    "share_url": "https://phish.in/2021-10-16/carini"
+  },
+  {
+    "label": "2021-10-17 Set 1 t09 I Never Needed You Like This Before",
+    "edge": "trailing",
+    "track_duration_s": 357.9,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 350.7,
+    "region": [
+      350.7,
+      357.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.14,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.036,
+    "mean_rms_db": -23.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "I Never Needed You Like This Before"
+    ],
+    "mp3_url": "https://phish.in/blob/1j22ta9drxc6i3j6jpl9ny0mnvv2.mp3",
+    "share_url": "https://phish.in/2021-10-17/i-never-needed-you-like-this-before"
+  },
+  {
+    "label": "2021-08-10 Encore t22 Rock and Roll",
+    "edge": "trailing",
+    "track_duration_s": 446.6,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 439.8,
+    "region": [
+      439.8,
+      446.6
+    ],
+    "character": {
+      "silence": 0.08,
+      "crowd": 0.15,
+      "speech": 0.77
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.081,
+    "mean_rms_db": -32.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Rock and Roll"
+    ],
+    "mp3_url": "https://phish.in/blob/fs1601z5nguhx41acgovkaq7ye53.mp3",
+    "share_url": "https://phish.in/2021-08-10/rock-and-roll"
+  },
+  {
+    "label": "2021-08-13 Set 2 t16 More",
+    "edge": "trailing",
+    "track_duration_s": 335.1,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 328.4,
+    "region": [
+      328.4,
+      335.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.23,
+      "speech": 0.77
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.084,
+    "mean_rms_db": -24.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "More"
+    ],
+    "mp3_url": "https://phish.in/blob/dvs36l8smnwmny85hifz1a0gl1qi.mp3",
+    "share_url": "https://phish.in/2021-08-13/more"
+  },
+  {
+    "label": "2021-08-28 Encore t19 About to Run",
+    "edge": "trailing",
+    "track_duration_s": 421.0,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 414.3,
+    "region": [
+      414.3,
+      421.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.31,
+      "speech": 0.69
+    },
+    "mean_music_score": 0.018,
+    "mean_crowd_score": 0.036,
+    "mean_rms_db": -31.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "About to Run"
+    ],
+    "mp3_url": "https://phish.in/blob/jmkcqsbwwi1ev23w7b0rax6md5hn.mp3",
+    "share_url": "https://phish.in/2021-08-28/about-to-run"
+  },
+  {
+    "label": "2021-08-29 Set 1 t10 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 527.1,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 520.4,
+    "region": [
+      520.4,
+      527.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.105,
+    "mean_crowd_score": 0.017,
+    "mean_rms_db": -35.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/6pokno4jceca8g8zwbtrtojrnapb.mp3",
+    "share_url": "https://phish.in/2021-08-29/character-zero"
+  },
+  {
+    "label": "2021-08-31 Set 2 t18 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 860.4,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 853.7,
+    "region": [
+      853.7,
+      860.4
+    ],
+    "character": {
+      "silence": 0.08,
+      "crowd": 0.0,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.02,
+    "mean_rms_db": -34.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/d8m0u4dyj64omd18qx0lftcf9b1b.mp3",
+    "share_url": "https://phish.in/2021-08-31/harry-hood"
+  },
+  {
+    "label": "2021-10-15 Set 1 t09 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 336.2,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 329.5,
+    "region": [
+      329.5,
+      336.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.08,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.03,
+    "mean_rms_db": -25.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/tfiupvpjsua5g3dpg001uevrbii4.mp3",
+    "share_url": "https://phish.in/2021-10-15/character-zero"
+  },
+  {
+    "label": "2021-10-19 Set 2 t17 Sigma Oasis",
+    "edge": "trailing",
+    "track_duration_s": 545.6,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 538.9,
+    "region": [
+      538.9,
+      545.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.08,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.075,
+    "mean_rms_db": -21.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sigma Oasis"
+    ],
+    "mp3_url": "https://phish.in/blob/hx10qfu6julq7yupdmy4ynn6bs5t.mp3",
+    "share_url": "https://phish.in/2021-10-19/sigma-oasis"
+  },
+  {
+    "label": "2021-08-14 Set 2 t17 Suzy Greenberg",
+    "edge": "trailing",
+    "track_duration_s": 394.8,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 388.5,
+    "region": [
+      388.5,
+      394.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.58,
+      "speech": 0.42
+    },
+    "mean_music_score": 0.02,
+    "mean_crowd_score": 0.083,
+    "mean_rms_db": -30.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Suzy Greenberg"
+    ],
+    "mp3_url": "https://phish.in/blob/c3xa5zh2pz82tndgc8psmnyst9ih.mp3",
+    "share_url": "https://phish.in/2021-08-14/suzy-greenberg"
+  },
+  {
+    "label": "2021-08-28 Set 1 t09 Say It to Me S.A.N.T.O.S.",
+    "edge": "trailing",
+    "track_duration_s": 384.7,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 378.4,
+    "region": [
+      378.4,
+      384.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.08,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.026,
+    "mean_crowd_score": 0.038,
+    "mean_rms_db": -26.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Say It to Me S.A.N.T.O.S."
+    ],
+    "mp3_url": "https://phish.in/blob/9pxh7i168s6crhmm6wupdbrcmhhv.mp3",
+    "share_url": "https://phish.in/2021-08-28/say-it-to-me-s-a-n-t-o-s"
+  },
+  {
+    "label": "2021-08-28 Set 2 t16 Possum",
+    "edge": "trailing",
+    "track_duration_s": 644.6,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 638.4,
+    "region": [
+      638.4,
+      644.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.17,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.033,
+    "mean_rms_db": -31.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/e4iyscnifdm54loxvegbtdn84cmt.mp3",
+    "share_url": "https://phish.in/2021-08-28/possum"
+  },
+  {
+    "label": "2021-10-20 Set 1 t07 Split Open and Melt > End of Session > Split Open and Melt",
+    "edge": "trailing",
+    "track_duration_s": 1194.8,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 1188.5,
+    "region": [
+      1188.5,
+      1194.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.25,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.13,
+    "mean_rms_db": -16.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Split Open and Melt",
+      "End of Session"
+    ],
+    "mp3_url": "https://phish.in/blob/7pexna83g8ihvh809n6vzpi638wn.mp3",
+    "share_url": "https://phish.in/2021-10-20/split-open-and-melt-end-of-session-split-open-and-melt"
+  },
+  {
+    "label": "2021-10-20 Set 2 t12 Backwards Down the Number Line",
+    "edge": "trailing",
+    "track_duration_s": 583.8,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 577.5,
+    "region": [
+      577.5,
+      583.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.17,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.151,
+    "mean_rms_db": -17.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Backwards Down the Number Line"
+    ],
+    "mp3_url": "https://phish.in/blob/oddu08dkpeooxz555qxfxcuuynqk.mp3",
+    "share_url": "https://phish.in/2021-10-20/backwards-down-the-number-line"
+  },
+  {
+    "label": "2021-08-27 Set 2 t18 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 544.3,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 538.5,
+    "region": [
+      538.5,
+      544.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.27,
+      "speech": 0.73
+    },
+    "mean_music_score": 0.035,
+    "mean_crowd_score": 0.095,
+    "mean_rms_db": -28.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/kmwh67s7f2np825t65tk2dxdhbl4.mp3",
+    "share_url": "https://phish.in/2021-08-27/slave-to-the-traffic-light"
+  },
+  {
+    "label": "2021-08-29 Set 2 t18 I Always Wanted It This Way",
+    "edge": "trailing",
+    "track_duration_s": 622.6,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 616.8,
+    "region": [
+      616.8,
+      622.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.18,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.03,
+    "mean_crowd_score": 0.047,
+    "mean_rms_db": -29.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "I Always Wanted It This Way"
+    ],
+    "mp3_url": "https://phish.in/blob/0l07iut1lgiyyc7wjj27o06vtyg4.mp3",
+    "share_url": "https://phish.in/2021-08-29/i-always-wanted-it-this-way"
+  },
+  {
+    "label": "2021-08-31 Set 1 t12 Moonage Daydream",
+    "edge": "trailing",
+    "track_duration_s": 444.3,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 438.5,
+    "region": [
+      438.5,
+      444.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.09,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.057,
+    "mean_rms_db": -30.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Moonage Daydream"
+    ],
+    "mp3_url": "https://phish.in/blob/strcwn7m4wlssvxt54kft3w60vam.mp3",
+    "share_url": "https://phish.in/2021-08-31/moonage-daydream"
+  },
+  {
+    "label": "2021-10-15 Set 2 t27 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 303.9,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 298.2,
+    "region": [
+      298.2,
+      303.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.09,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.087,
+    "mean_rms_db": -25.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/nxg393b5gi9cc8ks2s988hryhkkm.mp3",
+    "share_url": "https://phish.in/2021-10-15/golgi-apparatus"
+  },
+  {
+    "label": "2021-10-15 Encore t28 Sand",
+    "edge": "trailing",
+    "track_duration_s": 622.9,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 617.2,
+    "region": [
+      617.2,
+      622.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.45,
+      "speech": 0.55
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.157,
+    "mean_rms_db": -25.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sand"
+    ],
+    "mp3_url": "https://phish.in/blob/22em4tqgybetjtcvkseli710m4v4.mp3",
+    "share_url": "https://phish.in/2021-10-15/sand"
+  },
+  {
+    "label": "2021-10-16 Set 1 t09 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 603.0,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 597.3,
+    "region": [
+      597.3,
+      603.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.09,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.031,
+    "mean_crowd_score": 0.054,
+    "mean_rms_db": -21.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/7wd3vy8511e38c0lep7nwgy9tndt.mp3",
+    "share_url": "https://phish.in/2021-10-16/run-like-an-antelope"
+  },
+  {
+    "label": "2021-08-31 Encore t20 Wilson",
+    "edge": "trailing",
+    "track_duration_s": 306.1,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 300.8,
+    "region": [
+      300.8,
+      306.1
+    ],
+    "character": {
+      "silence": 0.1,
+      "crowd": 0.1,
+      "speech": 0.8
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.027,
+    "mean_rms_db": -33.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Wilson"
+    ],
+    "mp3_url": "https://phish.in/blob/9va47z3egd94vv3qbfo2394ya3we.mp3",
+    "share_url": "https://phish.in/2021-08-31/wilson"
+  },
+  {
+    "label": "2021-10-17 Set 2 t13 Chalk Dust Torture",
+    "edge": "trailing",
+    "track_duration_s": 1374.4,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 1369.1,
+    "region": [
+      1369.1,
+      1374.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.1,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.045,
+    "mean_crowd_score": 0.048,
+    "mean_rms_db": -23.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Chalk Dust Torture"
+    ],
+    "mp3_url": "https://phish.in/blob/zqkeiw1e9i7uybthq9fpen26n7bh.mp3",
+    "share_url": "https://phish.in/2021-10-17/chalk-dust-torture"
+  },
+  {
+    "label": "2021-10-19 Set 1 t09 Walls of the Cave",
+    "edge": "trailing",
+    "track_duration_s": 667.6,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 662.3,
+    "region": [
+      662.3,
+      667.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.072,
+    "mean_rms_db": -22.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Walls of the Cave"
+    ],
+    "mp3_url": "https://phish.in/blob/m5yiq4pg6oybw08r2jdu5q1m191h.mp3",
+    "share_url": "https://phish.in/2021-10-19/walls-of-the-cave"
+  },
+  {
+    "label": "2021-10-19 Encore t18 Drift While You're Sleeping",
+    "edge": "trailing",
+    "track_duration_s": 743.9,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 738.6,
+    "region": [
+      738.6,
+      743.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.2,
+      "speech": 0.8
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.054,
+    "mean_rms_db": -24.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Drift While You're Sleeping"
+    ],
+    "mp3_url": "https://phish.in/blob/nq7fw67w0xv47128k8f6jki0sxjl.mp3",
+    "share_url": "https://phish.in/2021-10-19/drift-while-youre-sleeping"
+  },
+  {
+    "label": "2021-10-20 Encore t14 Say It to Me S.A.N.T.O.S.",
+    "edge": "trailing",
+    "track_duration_s": 355.8,
+    "nonmusic_run_s": 3.4,
+    "music_boundary_s": 352.0,
+    "region": [
+      352.0,
+      355.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.14,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.032,
+    "mean_crowd_score": 0.044,
+    "mean_rms_db": -21.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Say It to Me S.A.N.T.O.S."
+    ],
+    "mp3_url": "https://phish.in/blob/ixcnpw8007hqfpyplhaxvgi11r4o.mp3",
+    "share_url": "https://phish.in/2021-10-20/say-it-to-me-s-a-n-t-o-s"
+  },
+  {
+    "label": "2021-09-01 Encore t19 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 171.7,
+    "nonmusic_run_s": 2.9,
+    "music_boundary_s": 168.5,
+    "region": [
+      168.5,
+      171.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.17,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.052,
+    "mean_crowd_score": 0.019,
+    "mean_rms_db": -32.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/t0ze4zepnobt7oub9d3lwqvtdxso.mp3",
+    "share_url": "https://phish.in/2021-09-01/tweezer-reprise"
+  },
+  {
+    "label": "2021-10-24 Set 2 t21 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 187.7,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 186.2,
+    "region": [
+      186.2,
+      188.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.67,
+      "speech": 0.33
+    },
+    "mean_music_score": 0.015,
+    "mean_crowd_score": 0.066,
+    "mean_rms_db": -31.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/6cslh18s3c5u249lduhlql7rcz1o.mp3",
+    "share_url": "https://phish.in/2021-10-24/tweezer-reprise"
+  },
+  {
+    "label": "2021-10-28 Set 2 t15 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 436.6,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 434.6,
+    "region": [
+      434.6,
+      436.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.056,
+    "mean_crowd_score": 0.039,
+    "mean_rms_db": -20.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/fsciqvqvunin201jdalj72u70au4.mp3",
+    "share_url": "https://phish.in/2021-10-28/character-zero"
+  },
+  {
+    "label": "2021-10-22 Set 2 t16 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 855.5,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 854.1,
+    "region": [
+      854.1,
+      855.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.026,
+    "mean_crowd_score": 0.019,
+    "mean_rms_db": -22.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/lemcb4pkozdgmvv3vrr36hf5rhc5.mp3",
+    "share_url": "https://phish.in/2021-10-22/harry-hood"
+  },
+  {
+    "label": "2021-10-26 Set 2 t16 Sigma Oasis",
+    "edge": "trailing",
+    "track_duration_s": 484.7,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 483.2,
+    "region": [
+      483.2,
+      484.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.039,
+    "mean_rms_db": -21.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sigma Oasis"
+    ],
+    "mp3_url": "https://phish.in/blob/56cm2jomcakp8ufuvu7k4xzxpo3l.mp3",
+    "share_url": "https://phish.in/2021-10-26/sigma-oasis"
+  },
+  {
+    "label": "2021-10-29 Set 2 t15 Walk Away",
+    "edge": "trailing",
+    "track_duration_s": 494.3,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 492.8,
+    "region": [
+      492.8,
+      494.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.5,
+      "speech": 0.5
+    },
+    "mean_music_score": 0.009,
+    "mean_crowd_score": 0.065,
+    "mean_rms_db": -17.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Walk Away"
+    ],
+    "mp3_url": "https://phish.in/blob/svqu7w6oszwuxusmug8u5c6ei9bb.mp3",
+    "share_url": "https://phish.in/2021-10-29/walk-away"
+  },
+  {
+    "label": "2021-10-31 Set 3 t27 Drift While You're Sleeping",
+    "edge": "trailing",
+    "track_duration_s": 726.5,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 725.1,
+    "region": [
+      725.1,
+      726.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.059,
+    "mean_rms_db": -19.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Drift While You're Sleeping"
+    ],
+    "mp3_url": "https://phish.in/blob/sxvp3u2u08mb02pzdr02uufdufaj.mp3",
+    "share_url": "https://phish.in/2021-10-31/drift-while-youre-sleeping"
+  },
+  {
+    "label": "2021-10-23 Set 2 t13 Scents and Subtle Sounds",
+    "edge": "trailing",
+    "track_duration_s": 706.9,
+    "nonmusic_run_s": 0.5,
+    "music_boundary_s": 705.9,
+    "region": [
+      705.9,
+      706.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 1.0,
+      "speech": 0.0
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.138,
+    "mean_rms_db": -21.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Scents and Subtle Sounds"
+    ],
+    "mp3_url": "https://phish.in/blob/n5ddvv4mokpayfdz21wv8qgf7brz.mp3",
+    "share_url": "https://phish.in/2021-10-23/scents-and-subtle-sounds"
+  },
+  {
+    "label": "2021-08-01 Set 2 t18 First Tube",
+    "edge": "trailing",
+    "track_duration_s": 386.3,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 386.3,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "First Tube"
+    ],
+    "mp3_url": "https://phish.in/blob/232gysjlk45blz6zs5npb67ofzr0.mp3",
+    "share_url": "https://phish.in/2021-08-01/first-tube"
+  },
+  {
+    "label": "2021-08-06 Set 2 t17 I Never Needed You Like This Before",
+    "edge": "trailing",
+    "track_duration_s": 279.3,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 279.3,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "I Never Needed You Like This Before"
+    ],
+    "mp3_url": "https://phish.in/blob/i68zcsu0pgo530vlkxoxdnf5ro00.mp3",
+    "share_url": "https://phish.in/2021-08-06/i-never-needed-you-like-this-before"
+  },
+  {
+    "label": "2021-08-07 Set 2 t18 Possum",
+    "edge": "trailing",
+    "track_duration_s": 619.0,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 619.0,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/513likzvrbq02xzb7clapij5nmx5.mp3",
+    "share_url": "https://phish.in/2021-08-07/possum"
+  }
+]

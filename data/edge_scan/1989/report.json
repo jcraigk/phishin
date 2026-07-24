@@ -1,0 +1,3751 @@
+[
+  {
+    "label": "1989-05-28 Set 1 t08 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1122.1,
+    "nonmusic_run_s": 140.2,
+    "music_boundary_s": 981.5,
+    "region": [
+      981.5,
+      1122.1
+    ],
+    "character": {
+      "silence": 0.01,
+      "crowd": 0.0,
+      "speech": 0.99
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -29.8,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 1008.5,
+        "end": 1011.7,
+        "text": "We can poop and we'll be right back."
+      },
+      {
+        "start": 1012.4,
+        "end": 1014.1,
+        "text": "We'll be right back with some break-dancing."
+      },
+      {
+        "start": 1035.1,
+        "end": 1035.9,
+        "text": "There's an announcement."
+      },
+      {
+        "start": 1092.7,
+        "end": 1093.5,
+        "text": "I'm sober."
+      },
+      {
+        "start": 1093.5,
+        "end": 1094.1,
+        "text": "I'm sober."
+      },
+      {
+        "start": 1095.2,
+        "end": 1098.5,
+        "text": "I'm sober."
+      },
+      {
+        "start": 1102.2,
+        "end": 1106.3,
+        "text": "Hey uh, hey you know, I'll drive."
+      },
+      {
+        "start": 1108.7,
+        "end": 1111.5,
+        "text": "I'm sober, not that that makes a difference."
+      }
+    ],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/hl355pok7duah7uc7weobnjtnvk9.mp3",
+    "share_url": "https://phish.in/1989-05-28/you-enjoy-myself"
+  },
+  {
+    "label": "1989-03-03 Set 1 t26 Banter",
+    "edge": "trailing",
+    "track_duration_s": 113.2,
+    "nonmusic_run_s": 112.8,
+    "music_boundary_s": 0.0,
+    "region": [
+      0.0,
+      113.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.09,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.009,
+    "mean_crowd_score": 0.057,
+    "mean_rms_db": -16.7,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 52.7,
+        "end": 59.0,
+        "text": "It won't be long now, it's getting a little warm over there."
+      },
+      {
+        "start": 102.9,
+        "end": 103.2,
+        "text": "Okay."
+      },
+      {
+        "start": 110.0,
+        "end": 111.1,
+        "text": "See, there's a little one up here."
+      }
+    ],
+    "songs": [
+      "Banter"
+    ],
+    "mp3_url": "https://phish.in/blob/wt5oxhi4vwdatnyzxh1t0ntjbl4f.mp3",
+    "share_url": "https://phish.in/1989-03-03/banter-2"
+  },
+  {
+    "label": "1989-10-22 Encore t28 Banter",
+    "edge": "trailing",
+    "track_duration_s": 123.5,
+    "nonmusic_run_s": 83.0,
+    "music_boundary_s": 40.3,
+    "region": [
+      40.3,
+      123.8
+    ],
+    "character": {
+      "silence": 0.01,
+      "crowd": 0.0,
+      "speech": 0.99
+    },
+    "mean_music_score": 0.038,
+    "mean_crowd_score": 0.002,
+    "mean_rms_db": -33.9,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 37.3,
+        "end": 61.2,
+        "text": "about two weeks we never stop having fun here trail paper any damages have been"
+      },
+      {
+        "start": 61.2,
+        "end": 66.1,
+        "text": "done tonight you know what's a good it's a good thing slow night here at the"
+      },
+      {
+        "start": 89.8,
+        "end": 91.0,
+        "text": "Mike, come back, Mike."
+      },
+      {
+        "start": 97.4,
+        "end": 101.0,
+        "text": "Oh, dead silence."
+      },
+      {
+        "start": 104.5,
+        "end": 107.0,
+        "text": "Fish will now narrate the silence."
+      },
+      {
+        "start": 109.1,
+        "end": 111.5,
+        "text": "Trey Sombrily tries to fix his amp."
+      },
+      {
+        "start": 113.0,
+        "end": 114.5,
+        "text": "He Sombrily puts on his guitar."
+      },
+      {
+        "start": 116.8,
+        "end": 118.4,
+        "text": "And Sombrily makes a sound!"
+      }
+    ],
+    "songs": [
+      "Banter"
+    ],
+    "mp3_url": "https://phish.in/blob/wdn67a330gr4yspwmq7k16vt4t92.mp3",
+    "share_url": "https://phish.in/1989-10-22/banter-2"
+  },
+  {
+    "label": "1989-12-31 Set 2 t18 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 335.4,
+    "nonmusic_run_s": 49.4,
+    "music_boundary_s": 285.5,
+    "region": [
+      285.5,
+      335.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.33,
+      "speech": 0.67
+    },
+    "mean_music_score": 0.021,
+    "mean_crowd_score": 0.101,
+    "mean_rms_db": -23.6,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 295.3,
+        "end": 298.4,
+        "text": "Thank you all very much for coming down."
+      }
+    ],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/6yyklpnqx4hiwhtajjni5jkni54u.mp3",
+    "share_url": "https://phish.in/1989-12-31/golgi-apparatus"
+  },
+  {
+    "label": "1989-11-10 Set 1 t11 La Grange",
+    "edge": "trailing",
+    "track_duration_s": 333.8,
+    "nonmusic_run_s": 48.0,
+    "music_boundary_s": 285.3,
+    "region": [
+      285.3,
+      333.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.007,
+    "mean_rms_db": -30.4,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 282.3,
+        "end": 282.7,
+        "text": "Go away."
+      }
+    ],
+    "songs": [
+      "La Grange"
+    ],
+    "mp3_url": "https://phish.in/blob/qoeodfj1uiblrrkfzv2df3vmdm78.mp3",
+    "share_url": "https://phish.in/1989-11-10/la-grange"
+  },
+  {
+    "label": "1989-12-07 Encore t22 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 309.1,
+    "nonmusic_run_s": 41.3,
+    "music_boundary_s": 267.3,
+    "region": [
+      267.3,
+      309.1
+    ],
+    "character": {
+      "silence": 0.67,
+      "crowd": 0.01,
+      "speech": 0.31
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.006,
+    "mean_rms_db": -61.9,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 267.8,
+        "end": 271.2,
+        "text": "Thank you, and we'll see you next time."
+      },
+      {
+        "start": 271.3,
+        "end": 272.7,
+        "text": "Thank you to the great audience."
+      },
+      {
+        "start": 273.5,
+        "end": 275.0,
+        "text": "I'm happy to play here in Baltimore,"
+      },
+      {
+        "start": 275.4,
+        "end": 276.7,
+        "text": "but we can come back next October."
+      },
+      {
+        "start": 277.1,
+        "end": 277.5,
+        "text": "Thanks a lot."
+      }
+    ],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/2b6bo0jftffkhfg1kbfpxf6etqrf.mp3",
+    "share_url": "https://phish.in/1989-12-07/golgi-apparatus"
+  },
+  {
+    "label": "1989-12-30 Set 2 t11 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 312.0,
+    "nonmusic_run_s": 40.3,
+    "music_boundary_s": 271.2,
+    "region": [
+      271.2,
+      312.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.05,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -37.1,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 271.2,
+        "end": 275.7,
+        "text": "Thank you, we'll see you next time, happy new year!"
+      },
+      {
+        "start": 288.7,
+        "end": 290.9,
+        "text": "Is everybody on vacation or what?"
+      },
+      {
+        "start": 299.7,
+        "end": 303.2,
+        "text": "Well, it's officially New Year's Eve right now, so..."
+      },
+      {
+        "start": 305.6,
+        "end": 307.0,
+        "text": "Happy New Year's Eve!"
+      }
+    ],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/1wh2c563qt18e6st8gw7n7bh5j7d.mp3",
+    "share_url": "https://phish.in/1989-12-30/golgi-apparatus"
+  },
+  {
+    "label": "1989-05-27 Set 1 t11 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 324.0,
+    "nonmusic_run_s": 37.4,
+    "music_boundary_s": 286.1,
+    "region": [
+      286.1,
+      324.0
+    ],
+    "character": {
+      "silence": 0.09,
+      "crowd": 0.0,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -43.8,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 287.1,
+        "end": 289.3,
+        "text": "Thank you. We're gonna take a quick break."
+      },
+      {
+        "start": 290.4,
+        "end": 291.1,
+        "text": "It's the ground."
+      }
+    ],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/rzjeimca1aaflbo6p5jo58rxwwy0.mp3",
+    "share_url": "https://phish.in/1989-05-27/good-times-bad-times"
+  },
+  {
+    "label": "1989-05-13 Encore t22 Whipping Post",
+    "edge": "trailing",
+    "track_duration_s": 789.7,
+    "nonmusic_run_s": 35.5,
+    "music_boundary_s": 753.7,
+    "region": [
+      753.7,
+      789.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.03,
+      "speech": 0.97
+    },
+    "mean_music_score": 0.025,
+    "mean_crowd_score": 0.014,
+    "mean_rms_db": -28.6,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 750.7,
+        "end": 751.3,
+        "text": "See you later!"
+      }
+    ],
+    "songs": [
+      "Whipping Post"
+    ],
+    "mp3_url": "https://phish.in/blob/rxcshus7kcoy9g745rc8gcj1qwsp.mp3",
+    "share_url": "https://phish.in/1989-05-13/whipping-post"
+  },
+  {
+    "label": "1989-05-28 Set 2 t21 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 809.4,
+    "nonmusic_run_s": 35.5,
+    "music_boundary_s": 773.4,
+    "region": [
+      773.4,
+      809.4
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.0,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.002,
+    "mean_rms_db": -39.1,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 782.2,
+        "end": 785.6,
+        "text": "Okay, so anyway the cops are here, so"
+      },
+      {
+        "start": 798.3,
+        "end": 799.9,
+        "text": "Don't worry about it"
+      }
+    ],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/ktej4v1sgvyrqs7v5041s06de0cv.mp3",
+    "share_url": "https://phish.in/1989-05-28/harry-hood"
+  },
+  {
+    "label": "1989-11-02 Set 2 t19 Highway to Hell",
+    "edge": "trailing",
+    "track_duration_s": 252.9,
+    "nonmusic_run_s": 32.6,
+    "music_boundary_s": 219.8,
+    "region": [
+      219.8,
+      253.0
+    ],
+    "character": {
+      "silence": 0.22,
+      "crowd": 0.16,
+      "speech": 0.62
+    },
+    "mean_music_score": 0.015,
+    "mean_crowd_score": 0.054,
+    "mean_rms_db": -38.0,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 216.8,
+        "end": 217.5,
+        "text": "Oh"
+      }
+    ],
+    "songs": [
+      "Highway to Hell"
+    ],
+    "mp3_url": "https://phish.in/blob/hfpt43hh7x118o1knit7wt4unugt.mp3",
+    "share_url": "https://phish.in/1989-11-02/highway-to-hell"
+  },
+  {
+    "label": "1989-04-15 Set 2 t23 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 403.0,
+    "nonmusic_run_s": 28.3,
+    "music_boundary_s": 374.2,
+    "region": [
+      374.2,
+      403.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.03,
+      "speech": 0.97
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.026,
+    "mean_rms_db": -24.0,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 375.5,
+        "end": 379.4,
+        "text": "Thanks a lot, good night!"
+      }
+    ],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/oiy15gybyrbuww49u6yfys3e0wpy.mp3",
+    "share_url": "https://phish.in/1989-04-15/good-times-bad-times"
+  },
+  {
+    "label": "1989-08-23 Set 2 t07 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1094.8,
+    "nonmusic_run_s": 27.8,
+    "music_boundary_s": 1066.5,
+    "region": [
+      1066.5,
+      1094.8
+    ],
+    "character": {
+      "silence": 0.72,
+      "crowd": 0.0,
+      "speech": 0.28
+    },
+    "mean_music_score": 0.019,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -55.4,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 1082.8,
+        "end": 1087.7,
+        "text": "How hard do you think you could blow into a trombone if you had to pass really bad?"
+      },
+      {
+        "start": 1089.7,
+        "end": 1092.6,
+        "text": "Not too hard, but watch this."
+      }
+    ],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/svhyne6k9mihb2wv2gw5rvxcakm8.mp3",
+    "share_url": "https://phish.in/1989-08-23/you-enjoy-myself"
+  },
+  {
+    "label": "1989-02-24 Set 2 t13 Camel Walk",
+    "edge": "trailing",
+    "track_duration_s": 220.1,
+    "nonmusic_run_s": 26.9,
+    "music_boundary_s": 193.0,
+    "region": [
+      193.0,
+      220.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.007,
+    "mean_rms_db": -33.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Camel Walk"
+    ],
+    "mp3_url": "https://phish.in/blob/bp5zfe6nmc2igcunp157yp4sng21.mp3",
+    "share_url": "https://phish.in/1989-02-24/camel-walk"
+  },
+  {
+    "label": "1989-01-26 Set 1 t10 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 364.0,
+    "nonmusic_run_s": 25.0,
+    "music_boundary_s": 338.5,
+    "region": [
+      338.5,
+      364.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.21,
+      "speech": 0.79
+    },
+    "mean_music_score": 0.017,
+    "mean_crowd_score": 0.05,
+    "mean_rms_db": -26.6,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 339.8,
+        "end": 341.3,
+        "text": "Thank you for taking a good break!"
+      },
+      {
+        "start": 341.7,
+        "end": 342.4,
+        "text": "Pass on!"
+      }
+    ],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/bbeov7cjowc8e4r9dtzq270at2ci.mp3",
+    "share_url": "https://phish.in/1989-01-26/good-times-bad-times"
+  },
+  {
+    "label": "1989-12-07 Set 1 t11 Rhombus Narration > Divided Sky",
+    "edge": "trailing",
+    "track_duration_s": 865.3,
+    "nonmusic_run_s": 24.5,
+    "music_boundary_s": 840.3,
+    "region": [
+      840.3,
+      865.3
+    ],
+    "character": {
+      "silence": 0.2,
+      "crowd": 0.04,
+      "speech": 0.76
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.006,
+    "mean_rms_db": -35.9,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 841.8,
+        "end": 850.7,
+        "text": "Thank you, everything a very short brief intermission, please stick around and have a couple of drinks and we'll be right back."
+      },
+      {
+        "start": 857.2,
+        "end": 860.8,
+        "text": "And sign the mailing list on the way out and we'll get lots of fun mail."
+      }
+    ],
+    "songs": [
+      "Divided Sky",
+      "Rhombus Narration"
+    ],
+    "mp3_url": "https://phish.in/blob/uelfnu61niza4mrg9lqigfl8iuqe.mp3",
+    "share_url": "https://phish.in/1989-12-07/rhombus-narration-divided-sky"
+  },
+  {
+    "label": "1989-12-15 Set 1 t10 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 381.3,
+    "nonmusic_run_s": 23.5,
+    "music_boundary_s": 357.3,
+    "region": [
+      357.3,
+      381.3
+    ],
+    "character": {
+      "silence": 0.1,
+      "crowd": 0.06,
+      "speech": 0.84
+    },
+    "mean_music_score": 0.019,
+    "mean_crowd_score": 0.019,
+    "mean_rms_db": -30.9,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 357.6,
+        "end": 363.6,
+        "text": "Thank you, Blues Traveler, up right now, we're going to switch off, we'll be back again"
+      },
+      {
+        "start": 363.6,
+        "end": 368.2,
+        "text": "later, so stick around, thanks for coming down."
+      }
+    ],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/lbmvlnc0iw2ftp1zt38iot2xh374.mp3",
+    "share_url": "https://phish.in/1989-12-15/good-times-bad-times"
+  },
+  {
+    "label": "1989-06-23 Encore t20 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 318.6,
+    "nonmusic_run_s": 22.1,
+    "music_boundary_s": 296.0,
+    "region": [
+      296.0,
+      318.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.02,
+      "speech": 0.98
+    },
+    "mean_music_score": 0.034,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -28.7,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 297.2,
+        "end": 298.4,
+        "text": "This is what I could wait!"
+      }
+    ],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/xotp1e1csidqhwqflx5o1saaqzp3.mp3",
+    "share_url": "https://phish.in/1989-06-23/good-times-bad-times"
+  },
+  {
+    "label": "1989-02-06 Set 1 t07 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 888.8,
+    "nonmusic_run_s": 21.1,
+    "music_boundary_s": 867.2,
+    "region": [
+      867.2,
+      888.8
+    ],
+    "character": {
+      "silence": 0.18,
+      "crowd": 0.0,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -32.6,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 864.2,
+        "end": 864.4,
+        "text": "Oh"
+      },
+      {
+        "start": 883.2,
+        "end": 884.3,
+        "text": "Really what great"
+      }
+    ],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/uez0nwfn3parv9qdjfqy8pi1w8im.mp3",
+    "share_url": "https://phish.in/1989-02-06/you-enjoy-myself"
+  },
+  {
+    "label": "1989-11-02 Set 1 t09 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 397.4,
+    "nonmusic_run_s": 21.1,
+    "music_boundary_s": 375.8,
+    "region": [
+      375.8,
+      397.4
+    ],
+    "character": {
+      "silence": 0.11,
+      "crowd": 0.2,
+      "speech": 0.68
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.061,
+    "mean_rms_db": -32.3,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 372.8,
+        "end": 374.4,
+        "text": "I love you"
+      },
+      {
+        "start": 376.9,
+        "end": 379.6,
+        "text": "Thank you, Yolanda, for the show, ladies."
+      },
+      {
+        "start": 380.1,
+        "end": 381.5,
+        "text": "We got Sery, Bracey."
+      }
+    ],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/yrl81elb78rozrft3ckptp30xzac.mp3",
+    "share_url": "https://phish.in/1989-11-02/good-times-bad-times"
+  },
+  {
+    "label": "1989-12-09 Set 1 t10 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 300.0,
+    "nonmusic_run_s": 18.2,
+    "music_boundary_s": 281.3,
+    "region": [
+      281.3,
+      300.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.037,
+    "mean_crowd_score": 0.004,
+    "mean_rms_db": -30.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/j8esze8wn8hq8vydc8yvyo75unig.mp3",
+    "share_url": "https://phish.in/1989-12-09/golgi-apparatus"
+  },
+  {
+    "label": "1989-02-07 Set 3 t24 Whipping Post",
+    "edge": "trailing",
+    "track_duration_s": 210.2,
+    "nonmusic_run_s": 17.8,
+    "music_boundary_s": 192.0,
+    "region": [
+      192.0,
+      210.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.025,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -42.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Whipping Post"
+    ],
+    "mp3_url": "https://phish.in/blob/ab5intpqbtk7wzdfm5ocfgf5qqkh.mp3",
+    "share_url": "https://phish.in/1989-02-07/whipping-post"
+  },
+  {
+    "label": "1989-04-20 Set 1 t12 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 708.8,
+    "nonmusic_run_s": 17.8,
+    "music_boundary_s": 690.6,
+    "region": [
+      690.6,
+      708.8
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.05,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.037,
+    "mean_crowd_score": 0.008,
+    "mean_rms_db": -26.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/2wht4kur5cddpeo5z8th8fvbqmoa.mp3",
+    "share_url": "https://phish.in/1989-04-20/david-bowie"
+  },
+  {
+    "label": "1989-05-20 Set 1 t08 Possum",
+    "edge": "trailing",
+    "track_duration_s": 504.9,
+    "nonmusic_run_s": 17.8,
+    "music_boundary_s": 486.6,
+    "region": [
+      486.6,
+      504.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.007,
+    "mean_rms_db": -31.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/32e8clkm2ys8f9mfjmrywusw0mof.mp3",
+    "share_url": "https://phish.in/1989-05-20/possum"
+  },
+  {
+    "label": "1989-05-28 Set 3 t26 Jesus Just Left Chicago",
+    "edge": "trailing",
+    "track_duration_s": 595.8,
+    "nonmusic_run_s": 17.8,
+    "music_boundary_s": 577.5,
+    "region": [
+      577.5,
+      595.8
+    ],
+    "character": {
+      "silence": 0.14,
+      "crowd": 0.0,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.027,
+    "mean_crowd_score": 0.003,
+    "mean_rms_db": -48.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Jesus Just Left Chicago"
+    ],
+    "mp3_url": "https://phish.in/blob/5nxznfv92i0l9zqyi97s8vb5o0a0.mp3",
+    "share_url": "https://phish.in/1989-05-28/jesus-just-left-chicago"
+  },
+  {
+    "label": "1989-10-26 Set 1 t11 Weekapaug Groove",
+    "edge": "trailing",
+    "track_duration_s": 342.5,
+    "nonmusic_run_s": 16.8,
+    "music_boundary_s": 325.2,
+    "region": [
+      325.2,
+      342.5
+    ],
+    "character": {
+      "silence": 0.51,
+      "crowd": 0.0,
+      "speech": 0.49
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -51.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Weekapaug Groove"
+    ],
+    "mp3_url": "https://phish.in/blob/qp153m1esnspsrv4i3e6qs3nof4n.mp3",
+    "share_url": "https://phish.in/1989-10-26/weekapaug-groove"
+  },
+  {
+    "label": "1989-04-14 Set 1 t09 Fire",
+    "edge": "trailing",
+    "track_duration_s": 374.7,
+    "nonmusic_run_s": 16.3,
+    "music_boundary_s": 357.9,
+    "region": [
+      357.9,
+      374.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.06,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.017,
+    "mean_crowd_score": 0.015,
+    "mean_rms_db": -25.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/kun0o3cbt0dyk5vwg9uzhicd5miq.mp3",
+    "share_url": "https://phish.in/1989-04-14/fire"
+  },
+  {
+    "label": "1989-04-14 Set 2 t19 Esther",
+    "edge": "trailing",
+    "track_duration_s": 587.8,
+    "nonmusic_run_s": 15.4,
+    "music_boundary_s": 572.0,
+    "region": [
+      572.0,
+      587.8
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.09,
+      "speech": 0.84
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.035,
+    "mean_rms_db": -30.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Esther"
+    ],
+    "mp3_url": "https://phish.in/blob/ssrls4ukle9ocer6eplphzvnwo48.mp3",
+    "share_url": "https://phish.in/1989-04-14/esther"
+  },
+  {
+    "label": "1989-12-09 Set 2 t19 Weekapaug Groove",
+    "edge": "trailing",
+    "track_duration_s": 497.2,
+    "nonmusic_run_s": 15.4,
+    "music_boundary_s": 481.3,
+    "region": [
+      481.3,
+      497.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.093,
+    "mean_crowd_score": 0.003,
+    "mean_rms_db": -34.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Weekapaug Groove"
+    ],
+    "mp3_url": "https://phish.in/blob/grmx9zoyxp9pvl8emszc82a34jyz.mp3",
+    "share_url": "https://phish.in/1989-12-09/weekapaug-groove"
+  },
+  {
+    "label": "1989-02-06 Set 2 t14 I Didn't Know",
+    "edge": "trailing",
+    "track_duration_s": 230.9,
+    "nonmusic_run_s": 14.9,
+    "music_boundary_s": 215.5,
+    "region": [
+      215.5,
+      230.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.1,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.051,
+    "mean_crowd_score": 0.023,
+    "mean_rms_db": -30.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "I Didn't Know"
+    ],
+    "mp3_url": "https://phish.in/blob/95yvlptm0rg8rr7vdalh1dtyzbi5.mp3",
+    "share_url": "https://phish.in/1989-02-06/i-didnt-know"
+  },
+  {
+    "label": "1989-12-01 Set 1 t09 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 405.9,
+    "nonmusic_run_s": 14.9,
+    "music_boundary_s": 390.6,
+    "region": [
+      390.6,
+      405.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.13,
+      "speech": 0.87
+    },
+    "mean_music_score": 0.017,
+    "mean_crowd_score": 0.019,
+    "mean_rms_db": -27.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/t0wbkfpm1gdqypll35ipb0xamt8v.mp3",
+    "share_url": "https://phish.in/1989-12-01/good-times-bad-times"
+  },
+  {
+    "label": "1989-12-03 Encore t25 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 295.4,
+    "nonmusic_run_s": 14.9,
+    "music_boundary_s": 280.3,
+    "region": [
+      280.3,
+      295.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.1,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.079,
+    "mean_crowd_score": 0.012,
+    "mean_rms_db": -36.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/ggaxkswutj8rjxw8l1ma35jhx5dl.mp3",
+    "share_url": "https://phish.in/1989-12-03/golgi-apparatus"
+  },
+  {
+    "label": "1989-08-26 Set 2 t17 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 888.9,
+    "nonmusic_run_s": 14.4,
+    "music_boundary_s": 874.0,
+    "region": [
+      874.0,
+      888.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -18.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/kize4w6u04t8bse4bpvj12ug1bgu.mp3",
+    "share_url": "https://phish.in/1989-08-26/david-bowie"
+  },
+  {
+    "label": "1989-11-11 Set 1 t08 Frankenstein",
+    "edge": "trailing",
+    "track_duration_s": 284.7,
+    "nonmusic_run_s": 14.4,
+    "music_boundary_s": 270.2,
+    "region": [
+      270.2,
+      285.1
+    ],
+    "character": {
+      "silence": 0.5,
+      "crowd": 0.0,
+      "speech": 0.5
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.003,
+    "mean_rms_db": -49.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Frankenstein"
+    ],
+    "mp3_url": "https://phish.in/blob/t9u1o9ulkg8k9ro1uywe6k0uxfiq.mp3",
+    "share_url": "https://phish.in/1989-11-11/frankenstein"
+  },
+  {
+    "label": "1989-08-17 Encore t27 Fire",
+    "edge": "trailing",
+    "track_duration_s": 259.4,
+    "nonmusic_run_s": 13.9,
+    "music_boundary_s": 245.3,
+    "region": [
+      245.3,
+      259.7
+    ],
+    "character": {
+      "silence": 0.21,
+      "crowd": 0.0,
+      "speech": 0.79
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.007,
+    "mean_rms_db": -42.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/h8czwgvipqr3p7r3uobdpymx2ibe.mp3",
+    "share_url": "https://phish.in/1989-08-17/fire"
+  },
+  {
+    "label": "1989-10-01 Encore t24 Highway to Hell",
+    "edge": "trailing",
+    "track_duration_s": 236.7,
+    "nonmusic_run_s": 13.9,
+    "music_boundary_s": 222.7,
+    "region": [
+      222.7,
+      237.1
+    ],
+    "character": {
+      "silence": 0.14,
+      "crowd": 0.03,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.021,
+    "mean_crowd_score": 0.041,
+    "mean_rms_db": -32.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Highway to Hell"
+    ],
+    "mp3_url": "https://phish.in/blob/fd455rofvzacwrwmpn503z2pemoo.mp3",
+    "share_url": "https://phish.in/1989-10-01/highway-to-hell"
+  },
+  {
+    "label": "1989-12-01 Encore t21 Possum",
+    "edge": "trailing",
+    "track_duration_s": 521.2,
+    "nonmusic_run_s": 13.9,
+    "music_boundary_s": 506.8,
+    "region": [
+      506.8,
+      521.2
+    ],
+    "character": {
+      "silence": 0.07,
+      "crowd": 0.1,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.05,
+    "mean_crowd_score": 0.009,
+    "mean_rms_db": -29.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/qnog73rpjvm3oehazzu5m3chpn2c.mp3",
+    "share_url": "https://phish.in/1989-12-01/possum"
+  },
+  {
+    "label": "1989-10-10 Encore t13 Swing Low, Sweet Chariot",
+    "edge": "trailing",
+    "track_duration_s": 148.4,
+    "nonmusic_run_s": 13.4,
+    "music_boundary_s": 134.9,
+    "region": [
+      134.9,
+      148.8
+    ],
+    "character": {
+      "silence": 0.07,
+      "crowd": 0.11,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.044,
+    "mean_crowd_score": 0.01,
+    "mean_rms_db": -36.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Swing Low, Sweet Chariot"
+    ],
+    "mp3_url": "https://phish.in/blob/9feyio3ps06d96ruq5npn8e6o0yr.mp3",
+    "share_url": "https://phish.in/1989-10-10/swing-low-sweet-chariot"
+  },
+  {
+    "label": "1989-10-13 Encore t12 Swing Low, Sweet Chariot",
+    "edge": "trailing",
+    "track_duration_s": 148.4,
+    "nonmusic_run_s": 13.4,
+    "music_boundary_s": 134.9,
+    "region": [
+      134.9,
+      148.8
+    ],
+    "character": {
+      "silence": 0.07,
+      "crowd": 0.11,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.044,
+    "mean_crowd_score": 0.01,
+    "mean_rms_db": -36.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Swing Low, Sweet Chariot"
+    ],
+    "mp3_url": "https://phish.in/blob/fyhp97nobcpr161as0equfz46t8n.mp3",
+    "share_url": "https://phish.in/1989-10-13/swing-low-sweet-chariot"
+  },
+  {
+    "label": "1989-11-10 Encore 2 t29 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 693.9,
+    "nonmusic_run_s": 13.4,
+    "music_boundary_s": 680.0,
+    "region": [
+      680.0,
+      693.9
+    ],
+    "character": {
+      "silence": 0.07,
+      "crowd": 0.36,
+      "speech": 0.57
+    },
+    "mean_music_score": 0.149,
+    "mean_crowd_score": 0.048,
+    "mean_rms_db": -29.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/ei3z32nalqredhbdiq57q0xzo3y3.mp3",
+    "share_url": "https://phish.in/1989-11-10/run-like-an-antelope"
+  },
+  {
+    "label": "1989-02-07 Set 2 t18 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 618.3,
+    "nonmusic_run_s": 13.0,
+    "music_boundary_s": 604.8,
+    "region": [
+      604.8,
+      618.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.054,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -31.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/9vxfqha5iqusul79emdffedux881.mp3",
+    "share_url": "https://phish.in/1989-02-07/run-like-an-antelope"
+  },
+  {
+    "label": "1989-08-23 Set 1 t01 Weekapaug Groove",
+    "edge": "trailing",
+    "track_duration_s": 286.9,
+    "nonmusic_run_s": 13.0,
+    "music_boundary_s": 273.6,
+    "region": [
+      273.6,
+      287.0
+    ],
+    "character": {
+      "silence": 0.52,
+      "crowd": 0.15,
+      "speech": 0.33
+    },
+    "mean_music_score": 0.03,
+    "mean_crowd_score": 0.022,
+    "mean_rms_db": -38.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Weekapaug Groove"
+    ],
+    "mp3_url": "https://phish.in/blob/cnhr3ls27dhymhynjlisscweccrp.mp3",
+    "share_url": "https://phish.in/1989-08-23/weekapaug-groove"
+  },
+  {
+    "label": "1989-12-01 Set 2 t19 Highway to Hell",
+    "edge": "trailing",
+    "track_duration_s": 250.5,
+    "nonmusic_run_s": 13.0,
+    "music_boundary_s": 237.1,
+    "region": [
+      237.1,
+      250.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.103,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -31.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Highway to Hell"
+    ],
+    "mp3_url": "https://phish.in/blob/5867qykub2evsqmv3a7jn0uz0yuz.mp3",
+    "share_url": "https://phish.in/1989-12-01/highway-to-hell"
+  },
+  {
+    "label": "1989-09-09 Set 1 t11 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 945.8,
+    "nonmusic_run_s": 12.5,
+    "music_boundary_s": 932.9,
+    "region": [
+      932.9,
+      945.8
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.0,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.025,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -35.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/nn60fiuzwujxcujc5r5v3o8u5qsi.mp3",
+    "share_url": "https://phish.in/1989-09-09/david-bowie"
+  },
+  {
+    "label": "1989-12-15 Set 2 t18 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 696.4,
+    "nonmusic_run_s": 12.5,
+    "music_boundary_s": 683.5,
+    "region": [
+      683.5,
+      696.4
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.0,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.021,
+    "mean_crowd_score": 0.003,
+    "mean_rms_db": -29.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/8ayyg7iz7v08d8v9619jr25cqvsk.mp3",
+    "share_url": "https://phish.in/1989-12-15/david-bowie"
+  },
+  {
+    "label": "1989-06-23 Set 1 t11 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 591.7,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 579.3,
+    "region": [
+      579.3,
+      591.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.073,
+    "mean_crowd_score": 0.003,
+    "mean_rms_db": -27.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/bo3dpbqi4qel6jadlu4pcazqr1gl.mp3",
+    "share_url": "https://phish.in/1989-06-23/run-like-an-antelope"
+  },
+  {
+    "label": "1989-11-10 Encore t27 Highway to Hell",
+    "edge": "trailing",
+    "track_duration_s": 210.5,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 198.2,
+    "region": [
+      198.2,
+      210.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.08,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.045,
+    "mean_crowd_score": 0.017,
+    "mean_rms_db": -22.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Highway to Hell"
+    ],
+    "mp3_url": "https://phish.in/blob/xuoflj2qpk2h7jk2w7r6yz6xwul5.mp3",
+    "share_url": "https://phish.in/1989-11-10/highway-to-hell"
+  },
+  {
+    "label": "1989-11-16 Set 1 t11 Frankenstein",
+    "edge": "trailing",
+    "track_duration_s": 283.2,
+    "nonmusic_run_s": 11.5,
+    "music_boundary_s": 271.2,
+    "region": [
+      271.2,
+      283.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.04,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.084,
+    "mean_crowd_score": 0.009,
+    "mean_rms_db": -33.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Frankenstein"
+    ],
+    "mp3_url": "https://phish.in/blob/fh6jtvm4xrabd3bd8hsh7cwxgguz.mp3",
+    "share_url": "https://phish.in/1989-11-16/frankenstein"
+  },
+  {
+    "label": "1989-05-20 Encore t18 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 300.6,
+    "nonmusic_run_s": 11.0,
+    "music_boundary_s": 289.1,
+    "region": [
+      289.1,
+      300.6
+    ],
+    "character": {
+      "silence": 0.17,
+      "crowd": 0.0,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.036,
+    "mean_crowd_score": 0.008,
+    "mean_rms_db": -33.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/s74bcf8csdqu3xd567ztgxler6v5.mp3",
+    "share_url": "https://phish.in/1989-05-20/good-times-bad-times"
+  },
+  {
+    "label": "1989-05-26 Encore t20 The Practical Song",
+    "edge": "trailing",
+    "track_duration_s": 66.5,
+    "nonmusic_run_s": 10.6,
+    "music_boundary_s": 55.7,
+    "region": [
+      55.7,
+      66.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.05,
+      "speech": 0.95
+    },
+    "mean_music_score": 0.046,
+    "mean_crowd_score": 0.01,
+    "mean_rms_db": -35.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Practical Song"
+    ],
+    "mp3_url": "https://phish.in/blob/mbqifvp4yn0qnmza8526vbzx00nz.mp3",
+    "share_url": "https://phish.in/1989-05-26/the-practical-song"
+  },
+  {
+    "label": "1989-09-09 Set 2 t20 Possum",
+    "edge": "trailing",
+    "track_duration_s": 504.7,
+    "nonmusic_run_s": 10.6,
+    "music_boundary_s": 493.7,
+    "region": [
+      493.7,
+      504.7
+    ],
+    "character": {
+      "silence": 0.09,
+      "crowd": 0.0,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.079,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -37.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/p3dbk24jbvzht5b3tw8ctqcoigi3.mp3",
+    "share_url": "https://phish.in/1989-09-09/possum"
+  },
+  {
+    "label": "1989-12-29 Set 1 t10 Weekapaug Groove",
+    "edge": "trailing",
+    "track_duration_s": 351.2,
+    "nonmusic_run_s": 10.6,
+    "music_boundary_s": 340.2,
+    "region": [
+      340.2,
+      351.2
+    ],
+    "character": {
+      "silence": 0.09,
+      "crowd": 0.09,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.038,
+    "mean_rms_db": -35.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Weekapaug Groove"
+    ],
+    "mp3_url": "https://phish.in/blob/a3gair40tbcmoquzo24doc71h39f.mp3",
+    "share_url": "https://phish.in/1989-12-29/weekapaug-groove"
+  },
+  {
+    "label": "1989-05-26 Set 2 t15 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 275.0,
+    "nonmusic_run_s": 10.1,
+    "music_boundary_s": 264.5,
+    "region": [
+      264.5,
+      275.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.008,
+    "mean_rms_db": -25.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/xzqcb5ulbypi4jkly298gh0cv1g7.mp3",
+    "share_url": "https://phish.in/1989-05-26/golgi-apparatus"
+  },
+  {
+    "label": "1989-10-20 Set 3 t22 La Grange",
+    "edge": "trailing",
+    "track_duration_s": 354.0,
+    "nonmusic_run_s": 10.1,
+    "music_boundary_s": 343.4,
+    "region": [
+      343.4,
+      354.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.1,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.034,
+    "mean_crowd_score": 0.02,
+    "mean_rms_db": -31.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "La Grange"
+    ],
+    "mp3_url": "https://phish.in/blob/gt3ffprfrvm1csxrtrcb8ywg6xfp.mp3",
+    "share_url": "https://phish.in/1989-10-20/la-grange"
+  },
+  {
+    "label": "1989-12-31 Set 1 t10 Highway to Hell",
+    "edge": "trailing",
+    "track_duration_s": 217.1,
+    "nonmusic_run_s": 10.1,
+    "music_boundary_s": 206.9,
+    "region": [
+      206.9,
+      217.4
+    ],
+    "character": {
+      "silence": 0.19,
+      "crowd": 0.19,
+      "speech": 0.62
+    },
+    "mean_music_score": 0.043,
+    "mean_crowd_score": 0.045,
+    "mean_rms_db": -32.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Highway to Hell"
+    ],
+    "mp3_url": "https://phish.in/blob/0bin9l60c3sdiqvyovaw1ejp0ojp.mp3",
+    "share_url": "https://phish.in/1989-12-31/highway-to-hell"
+  },
+  {
+    "label": "1989-02-06 Encore t24 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 722.5,
+    "nonmusic_run_s": 9.6,
+    "music_boundary_s": 712.4,
+    "region": [
+      712.4,
+      722.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.052,
+    "mean_crowd_score": 0.009,
+    "mean_rms_db": -34.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/850abuuheel2acnzvz1hpi92b07j.mp3",
+    "share_url": "https://phish.in/1989-02-06/david-bowie"
+  },
+  {
+    "label": "1989-03-30 Encore t23 Makisupa Policeman",
+    "edge": "trailing",
+    "track_duration_s": 396.3,
+    "nonmusic_run_s": 9.6,
+    "music_boundary_s": 386.3,
+    "region": [
+      386.3,
+      396.3
+    ],
+    "character": {
+      "silence": 0.3,
+      "crowd": 0.05,
+      "speech": 0.65
+    },
+    "mean_music_score": 0.072,
+    "mean_crowd_score": 0.002,
+    "mean_rms_db": -44.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Makisupa Policeman"
+    ],
+    "mp3_url": "https://phish.in/blob/64in0anb0vvajbpbv1fy9ik63xld.mp3",
+    "share_url": "https://phish.in/1989-03-30/makisupa-policeman"
+  },
+  {
+    "label": "1989-04-27 Set 1 t09 Whipping Post",
+    "edge": "trailing",
+    "track_duration_s": 661.0,
+    "nonmusic_run_s": 9.6,
+    "music_boundary_s": 650.9,
+    "region": [
+      650.9,
+      661.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.4,
+      "speech": 0.6
+    },
+    "mean_music_score": 0.12,
+    "mean_crowd_score": 0.042,
+    "mean_rms_db": -21.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Whipping Post"
+    ],
+    "mp3_url": "https://phish.in/blob/drdsajt1wcipw38utyx8ihre6vz3.mp3",
+    "share_url": "https://phish.in/1989-04-27/whipping-post"
+  },
+  {
+    "label": "1989-05-26 Set 1 t09 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1154.8,
+    "nonmusic_run_s": 9.6,
+    "music_boundary_s": 1144.7,
+    "region": [
+      1144.7,
+      1154.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.015,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -30.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/qdwh66lwcbpiqr8txj29bue0v1za.mp3",
+    "share_url": "https://phish.in/1989-05-26/you-enjoy-myself"
+  },
+  {
+    "label": "1989-03-30 Set 2 t16 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 279.5,
+    "nonmusic_run_s": 9.1,
+    "music_boundary_s": 270.2,
+    "region": [
+      270.2,
+      279.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.021,
+    "mean_crowd_score": 0.002,
+    "mean_rms_db": -32.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/14j4iubo6jc34cl4cpvatgslqwly.mp3",
+    "share_url": "https://phish.in/1989-03-30/golgi-apparatus"
+  },
+  {
+    "label": "1989-03-30 Set 3 t22 Rocky Top",
+    "edge": "trailing",
+    "track_duration_s": 143.8,
+    "nonmusic_run_s": 9.1,
+    "music_boundary_s": 134.4,
+    "region": [
+      134.4,
+      144.0
+    ],
+    "character": {
+      "silence": 0.16,
+      "crowd": 0.05,
+      "speech": 0.79
+    },
+    "mean_music_score": 0.009,
+    "mean_crowd_score": 0.009,
+    "mean_rms_db": -36.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Rocky Top"
+    ],
+    "mp3_url": "https://phish.in/blob/dio6gkqgun2t89zgo7win9onnmya.mp3",
+    "share_url": "https://phish.in/1989-03-30/rocky-top"
+  },
+  {
+    "label": "1989-04-30 Encore t11 Possum",
+    "edge": "trailing",
+    "track_duration_s": 482.2,
+    "nonmusic_run_s": 9.1,
+    "music_boundary_s": 472.6,
+    "region": [
+      472.6,
+      482.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.42,
+      "speech": 0.58
+    },
+    "mean_music_score": 0.074,
+    "mean_crowd_score": 0.218,
+    "mean_rms_db": -19.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/6b2mm557do0hb0mr3xo3imne30rn.mp3",
+    "share_url": "https://phish.in/1989-04-30/possum"
+  },
+  {
+    "label": "1989-08-12 Set 2 t20 Possum",
+    "edge": "trailing",
+    "track_duration_s": 421.5,
+    "nonmusic_run_s": 9.1,
+    "music_boundary_s": 411.9,
+    "region": [
+      411.9,
+      421.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.003,
+    "mean_rms_db": -26.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/a8d41d799nysqhxpk5g4bug83ayo.mp3",
+    "share_url": "https://phish.in/1989-08-12/possum"
+  },
+  {
+    "label": "1989-10-31 Set 1 t09 Possum",
+    "edge": "trailing",
+    "track_duration_s": 510.1,
+    "nonmusic_run_s": 9.1,
+    "music_boundary_s": 500.5,
+    "region": [
+      500.5,
+      510.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.026,
+    "mean_crowd_score": 0.005,
+    "mean_rms_db": -21.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/m2hnq9d8c9qal9d6bwr1d8ktcu1m.mp3",
+    "share_url": "https://phish.in/1989-10-31/possum"
+  },
+  {
+    "label": "1989-03-03 Set 2 t23 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 439.1,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 430.0,
+    "region": [
+      430.0,
+      439.1
+    ],
+    "character": {
+      "silence": 0.17,
+      "crowd": 0.44,
+      "speech": 0.39
+    },
+    "mean_music_score": 0.016,
+    "mean_crowd_score": 0.126,
+    "mean_rms_db": -33.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/cni1owwn7fxhr4ujv2p6j91vr9oq.mp3",
+    "share_url": "https://phish.in/1989-03-03/david-bowie"
+  },
+  {
+    "label": "1989-09-14 Set 1 t09 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 836.2,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 827.1,
+    "region": [
+      827.1,
+      836.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.06,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.013,
+    "mean_rms_db": -30.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/w1fw2vt64yu6on24qtolo8z0i35m.mp3",
+    "share_url": "https://phish.in/1989-09-14/david-bowie"
+  },
+  {
+    "label": "1989-10-21 Set 2 t21 Highway to Hell",
+    "edge": "trailing",
+    "track_duration_s": 238.5,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 229.4,
+    "region": [
+      229.4,
+      238.6
+    ],
+    "character": {
+      "silence": 0.17,
+      "crowd": 0.0,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.129,
+    "mean_crowd_score": 0.004,
+    "mean_rms_db": -32.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Highway to Hell"
+    ],
+    "mp3_url": "https://phish.in/blob/y1vd7n3jjtt855udjm0vsh40pybx.mp3",
+    "share_url": "https://phish.in/1989-10-21/highway-to-hell"
+  },
+  {
+    "label": "1989-11-30 Set 2 t22 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 848.9,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 839.8,
+    "region": [
+      839.8,
+      848.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.5,
+      "speech": 0.5
+    },
+    "mean_music_score": 0.07,
+    "mean_crowd_score": 0.049,
+    "mean_rms_db": -23.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/ravodknxi9828vsny5fcxxe19cg9.mp3",
+    "share_url": "https://phish.in/1989-11-30/david-bowie"
+  },
+  {
+    "label": "1989-12-03 Set 1 t09 Frankenstein",
+    "edge": "trailing",
+    "track_duration_s": 313.1,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 304.0,
+    "region": [
+      304.0,
+      313.1
+    ],
+    "character": {
+      "silence": 0.33,
+      "crowd": 0.0,
+      "speech": 0.67
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.003,
+    "mean_rms_db": -41.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Frankenstein"
+    ],
+    "mp3_url": "https://phish.in/blob/f7d7fmwfmbfamc1tu381imwyi6rh.mp3",
+    "share_url": "https://phish.in/1989-12-03/frankenstein"
+  },
+  {
+    "label": "1989-10-14 Set 1 t11 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 306.9,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 298.3,
+    "region": [
+      298.3,
+      306.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.18,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.094,
+    "mean_crowd_score": 0.011,
+    "mean_rms_db": -25.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/pwu2jax3vog2srbae3p8acys3ckm.mp3",
+    "share_url": "https://phish.in/1989-10-14/good-times-bad-times"
+  },
+  {
+    "label": "1989-02-07 Encore t25 Fire",
+    "edge": "trailing",
+    "track_duration_s": 316.8,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 308.7,
+    "region": [
+      308.7,
+      316.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.002,
+    "mean_rms_db": -31.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/pe0rl0m2w2ikxa68z6iuhf3b9xhv.mp3",
+    "share_url": "https://phish.in/1989-02-07/fire"
+  },
+  {
+    "label": "1989-11-09 Set 1 t09 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 333.1,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 325.0,
+    "region": [
+      325.0,
+      333.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.004,
+    "mean_rms_db": -26.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/b11fgufmyl0w7d8c4cn3m0o8qy4g.mp3",
+    "share_url": "https://phish.in/1989-11-09/good-times-bad-times"
+  },
+  {
+    "label": "1989-11-10 Set 2 t24 Possum",
+    "edge": "trailing",
+    "track_duration_s": 483.0,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 474.8,
+    "region": [
+      474.8,
+      483.0
+    ],
+    "character": {
+      "silence": 0.5,
+      "crowd": 0.0,
+      "speech": 0.5
+    },
+    "mean_music_score": 0.134,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -64.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/x5v932rgvigtgext0xwqa6e51ff7.mp3",
+    "share_url": "https://phish.in/1989-11-10/possum"
+  },
+  {
+    "label": "1989-02-18 Set 1 t10 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 215.2,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 207.8,
+    "region": [
+      207.8,
+      215.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.2,
+      "speech": 0.8
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.073,
+    "mean_rms_db": -16.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/efxi7aa8xid55jr1w3rlzcmgfx15.mp3",
+    "share_url": "https://phish.in/1989-02-18/good-times-bad-times"
+  },
+  {
+    "label": "1989-03-04 Set 1 t08 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 312.3,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 304.6,
+    "region": [
+      304.6,
+      312.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.039,
+    "mean_crowd_score": 0.005,
+    "mean_rms_db": -27.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/a6qcb3310jiprksgku9209t0zgg3.mp3",
+    "share_url": "https://phish.in/1989-03-04/good-times-bad-times"
+  },
+  {
+    "label": "1989-05-20 Set 2 t17 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 428.3,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 420.6,
+    "region": [
+      420.6,
+      428.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.018,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -34.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/2q8dxgfyh4lj17fqqr0ytz2m6qfb.mp3",
+    "share_url": "https://phish.in/1989-05-20/golgi-apparatus"
+  },
+  {
+    "label": "1989-10-01 Set 1 t12 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 580.0,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 572.3,
+    "region": [
+      572.3,
+      580.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.014,
+    "mean_rms_db": -32.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/shzlrqlyh7cvromtn36f4z9tta9a.mp3",
+    "share_url": "https://phish.in/1989-10-01/run-like-an-antelope"
+  },
+  {
+    "label": "1989-10-22 Set 1 t14 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 358.1,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 350.4,
+    "region": [
+      350.4,
+      358.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.019,
+    "mean_rms_db": -27.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/8d48ctrtp8mk91vedsttbq201775.mp3",
+    "share_url": "https://phish.in/1989-10-22/good-times-bad-times"
+  },
+  {
+    "label": "1989-12-30 Encore t15 Weekapaug Groove",
+    "edge": "trailing",
+    "track_duration_s": 368.7,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 361.0,
+    "region": [
+      361.0,
+      368.7
+    ],
+    "character": {
+      "silence": 0.2,
+      "crowd": 0.0,
+      "speech": 0.8
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -43.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Weekapaug Groove"
+    ],
+    "mp3_url": "https://phish.in/blob/3mimk4t636fdo1szh8x95blt8sn5.mp3",
+    "share_url": "https://phish.in/1989-12-30/weekapaug-groove"
+  },
+  {
+    "label": "1989-03-24 Set 1 t10 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 669.3,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 662.1,
+    "region": [
+      662.1,
+      669.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.43,
+      "speech": 0.57
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.048,
+    "mean_rms_db": -19.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/7nw5zxusc0al5jtc3nnzt3hzvzt9.mp3",
+    "share_url": "https://phish.in/1989-03-24/david-bowie"
+  },
+  {
+    "label": "1989-05-01 Set 1 t11 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 366.9,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 359.7,
+    "region": [
+      359.7,
+      366.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -30.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/dv1h42ckwpxyqv0apd67242auvjq.mp3",
+    "share_url": "https://phish.in/1989-05-01/good-times-bad-times"
+  },
+  {
+    "label": "1989-08-17 Set 1 t09 Weekapaug Groove",
+    "edge": "trailing",
+    "track_duration_s": 341.4,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 334.7,
+    "region": [
+      334.7,
+      341.4
+    ],
+    "character": {
+      "silence": 0.15,
+      "crowd": 0.0,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.002,
+    "mean_rms_db": -35.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Weekapaug Groove"
+    ],
+    "mp3_url": "https://phish.in/blob/7ia8csnvwimaq512g22rn9bnfkqz.mp3",
+    "share_url": "https://phish.in/1989-08-17/weekapaug-groove"
+  },
+  {
+    "label": "1989-10-20 Set 2 t18 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 713.1,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 706.4,
+    "region": [
+      706.4,
+      713.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.012,
+    "mean_rms_db": -30.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/2niaswb1f8dkpwtbbnhgl275wkqu.mp3",
+    "share_url": "https://phish.in/1989-10-20/run-like-an-antelope"
+  },
+  {
+    "label": "1989-02-18 Set 2 t18 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 690.7,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 684.5,
+    "region": [
+      684.5,
+      690.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.08,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.037,
+    "mean_rms_db": -14.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/zvx1ww0thdjnrg0d9qozeda6opa3.mp3",
+    "share_url": "https://phish.in/1989-02-18/david-bowie"
+  },
+  {
+    "label": "1989-08-17 Set 2 t15 The Lizards",
+    "edge": "trailing",
+    "track_duration_s": 578.5,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 572.3,
+    "region": [
+      572.3,
+      578.5
+    ],
+    "character": {
+      "silence": 0.17,
+      "crowd": 0.08,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.007,
+    "mean_rms_db": -31.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Lizards"
+    ],
+    "mp3_url": "https://phish.in/blob/kobb6en7scs4si1ca8179r4xly71.mp3",
+    "share_url": "https://phish.in/1989-08-17/the-lizards"
+  },
+  {
+    "label": "1989-08-26 Set 3 t22 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 823.1,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 816.9,
+    "region": [
+      816.9,
+      823.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.08,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.03,
+    "mean_crowd_score": 0.002,
+    "mean_rms_db": -21.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/dn3hhzezbvms6ts40my0gx3m4vyh.mp3",
+    "share_url": "https://phish.in/1989-08-26/run-like-an-antelope"
+  },
+  {
+    "label": "1989-12-07 Set 2 t21 Undun",
+    "edge": "trailing",
+    "track_duration_s": 280.0,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 274.1,
+    "region": [
+      274.1,
+      280.3
+    ],
+    "character": {
+      "silence": 0.5,
+      "crowd": 0.0,
+      "speech": 0.5
+    },
+    "mean_music_score": 0.053,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -44.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Undun"
+    ],
+    "mp3_url": "https://phish.in/blob/dubxw4vyclpq3ebzrtcd9d1bf5kr.mp3",
+    "share_url": "https://phish.in/1989-12-07/undun"
+  },
+  {
+    "label": "1989-12-08 Set 1 t11 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 599.8,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 593.5,
+    "region": [
+      593.5,
+      599.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.08,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.08,
+    "mean_crowd_score": 0.003,
+    "mean_rms_db": -22.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/22hoy6d48ray8mgj8q8kpmf4ocdp.mp3",
+    "share_url": "https://phish.in/1989-12-08/run-like-an-antelope"
+  },
+  {
+    "label": "1989-06-30 Set 1 t07 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 612.8,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 607.0,
+    "region": [
+      607.0,
+      612.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.18,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.044,
+    "mean_rms_db": -34.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/i7bc5vv6twnajrchyl8t064yblub.mp3",
+    "share_url": "https://phish.in/1989-06-30/run-like-an-antelope"
+  },
+  {
+    "label": "1989-10-01 Set 2 t23 The Lizards",
+    "edge": "trailing",
+    "track_duration_s": 626.7,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 620.9,
+    "region": [
+      620.9,
+      626.7
+    ],
+    "character": {
+      "silence": 0.18,
+      "crowd": 0.18,
+      "speech": 0.64
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.032,
+    "mean_rms_db": -35.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Lizards"
+    ],
+    "mp3_url": "https://phish.in/blob/n027z56nzh845vbfh98rfybj4blr.mp3",
+    "share_url": "https://phish.in/1989-10-01/the-lizards"
+  },
+  {
+    "label": "1989-11-09 Encore t19 Highway to Hell",
+    "edge": "trailing",
+    "track_duration_s": 236.7,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 231.8,
+    "region": [
+      231.8,
+      237.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.1,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.122,
+    "mean_crowd_score": 0.006,
+    "mean_rms_db": -22.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Highway to Hell"
+    ],
+    "mp3_url": "https://phish.in/blob/lm5gojn34x72ccaqgw9zgp59kzh4.mp3",
+    "share_url": "https://phish.in/1989-11-09/highway-to-hell"
+  },
+  {
+    "label": "1989-03-30 Set 1 t08 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 562.7,
+    "nonmusic_run_s": 4.3,
+    "music_boundary_s": 557.9,
+    "region": [
+      557.9,
+      562.7
+    ],
+    "character": {
+      "silence": 0.22,
+      "crowd": 0.0,
+      "speech": 0.78
+    },
+    "mean_music_score": 0.026,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -42.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/k1gn9yoqgstfuq348kequfoitcv1.mp3",
+    "share_url": "https://phish.in/1989-03-30/run-like-an-antelope"
+  },
+  {
+    "label": "1989-11-30 Set 1 t11 Frankenstein",
+    "edge": "trailing",
+    "track_duration_s": 278.2,
+    "nonmusic_run_s": 4.3,
+    "music_boundary_s": 273.6,
+    "region": [
+      273.6,
+      278.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.11,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.03,
+    "mean_crowd_score": 0.015,
+    "mean_rms_db": -21.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Frankenstein"
+    ],
+    "mp3_url": "https://phish.in/blob/otofrd0k2cnbyb2zoxkfdj85hg8m.mp3",
+    "share_url": "https://phish.in/1989-11-30/frankenstein"
+  },
+  {
+    "label": "1989-12-08 Encore t20 Fire",
+    "edge": "trailing",
+    "track_duration_s": 295.9,
+    "nonmusic_run_s": 4.3,
+    "music_boundary_s": 291.4,
+    "region": [
+      291.4,
+      296.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.13,
+    "mean_crowd_score": 0.004,
+    "mean_rms_db": -28.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/9tj049wbkqbzdczsri126kvcdulm.mp3",
+    "share_url": "https://phish.in/1989-12-08/fire"
+  },
+  {
+    "label": "1989-02-06 Set 3 t23 Corinna",
+    "edge": "trailing",
+    "track_duration_s": 308.6,
+    "nonmusic_run_s": 3.8,
+    "music_boundary_s": 304.3,
+    "region": [
+      304.3,
+      308.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.5,
+      "speech": 0.5
+    },
+    "mean_music_score": 0.141,
+    "mean_crowd_score": 0.02,
+    "mean_rms_db": -32.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Corinna"
+    ],
+    "mp3_url": "https://phish.in/blob/4ppa8yfhdghl3v4y0v7a3hm2vpjq.mp3",
+    "share_url": "https://phish.in/1989-02-06/corinna"
+  },
+  {
+    "label": "1989-05-13 Set 2 t21 Fire",
+    "edge": "trailing",
+    "track_duration_s": 293.7,
+    "nonmusic_run_s": 3.8,
+    "music_boundary_s": 289.4,
+    "region": [
+      289.4,
+      293.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.12,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.039,
+    "mean_crowd_score": 0.027,
+    "mean_rms_db": -15.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/nixue6sctgptwv235mu0lwe1zrd1.mp3",
+    "share_url": "https://phish.in/1989-05-13/fire"
+  },
+  {
+    "label": "1989-09-21 Set 1 t09 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 744.5,
+    "nonmusic_run_s": 3.8,
+    "music_boundary_s": 740.2,
+    "region": [
+      740.2,
+      744.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.38,
+      "speech": 0.62
+    },
+    "mean_music_score": 0.121,
+    "mean_crowd_score": 0.019,
+    "mean_rms_db": -36.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/malsqchfngvta6nbkflws8gjlnrt.mp3",
+    "share_url": "https://phish.in/1989-09-21/david-bowie"
+  },
+  {
+    "label": "1989-05-05 Set 2 t12 McGrupp and the Watchful Hosemasters",
+    "edge": "trailing",
+    "track_duration_s": 581.5,
+    "nonmusic_run_s": 3.4,
+    "music_boundary_s": 577.7,
+    "region": [
+      577.7,
+      581.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.1,
+    "mean_crowd_score": 0.022,
+    "mean_rms_db": -32.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "McGrupp and the Watchful Hosemasters"
+    ],
+    "mp3_url": "https://phish.in/blob/yd3o1tbg692qxnp0imr8z6v9ayo2.mp3",
+    "share_url": "https://phish.in/1989-05-05/mcgrupp"
+  },
+  {
+    "label": "1989-06-10 Set 1 t07 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 337.9,
+    "nonmusic_run_s": 3.4,
+    "music_boundary_s": 334.0,
+    "region": [
+      334.0,
+      337.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.067,
+    "mean_crowd_score": 0.002,
+    "mean_rms_db": -31.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/3yeid5x707gk2lvgfl0iutvyj2oe.mp3",
+    "share_url": "https://phish.in/1989-06-10/good-times-bad-times"
+  },
+  {
+    "label": "1989-12-31 Encore t19 Contact",
+    "edge": "trailing",
+    "track_duration_s": 500.1,
+    "nonmusic_run_s": 3.4,
+    "music_boundary_s": 496.2,
+    "region": [
+      496.2,
+      500.1
+    ],
+    "character": {
+      "silence": 1.0,
+      "crowd": 0.0,
+      "speech": 0.0
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -69.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Contact"
+    ],
+    "mp3_url": "https://phish.in/blob/tvgl8px08o171zngtvphgove0p2e.mp3",
+    "share_url": "https://phish.in/1989-12-31/contact"
+  },
+  {
+    "label": "1989-03-12 Set 1 t10 Foam",
+    "edge": "trailing",
+    "track_duration_s": 350.8,
+    "nonmusic_run_s": 2.9,
+    "music_boundary_s": 347.5,
+    "region": [
+      347.5,
+      350.8
+    ],
+    "character": {
+      "silence": 0.33,
+      "crowd": 0.0,
+      "speech": 0.67
+    },
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -44.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Foam"
+    ],
+    "mp3_url": "https://phish.in/blob/iqmh9d2ameeuypdfczfkp0z693ly.mp3",
+    "share_url": "https://phish.in/1989-03-12/foam"
+  },
+  {
+    "label": "1989-04-27 Encore t11 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 749.7,
+    "nonmusic_run_s": 2.9,
+    "music_boundary_s": 746.3,
+    "region": [
+      746.3,
+      749.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.021,
+    "mean_crowd_score": 0.01,
+    "mean_rms_db": -33.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/8qciddqm3cdfkwa2oyhccxsbxzhn.mp3",
+    "share_url": "https://phish.in/1989-04-27/david-bowie"
+  },
+  {
+    "label": "1989-10-21 Set 1 t10 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 732.4,
+    "nonmusic_run_s": 2.9,
+    "music_boundary_s": 729.0,
+    "region": [
+      729.0,
+      732.4
+    ],
+    "character": {
+      "silence": 0.5,
+      "crowd": 0.0,
+      "speech": 0.5
+    },
+    "mean_music_score": 0.097,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -42.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/9r9025lno4krn4ss6tduiyutrl3w.mp3",
+    "share_url": "https://phish.in/1989-10-21/david-bowie"
+  },
+  {
+    "label": "1989-05-06 Set 2 t21 Divided Sky",
+    "edge": "trailing",
+    "track_duration_s": 743.3,
+    "nonmusic_run_s": 1.9,
+    "music_boundary_s": 740.9,
+    "region": [
+      740.9,
+      743.3
+    ],
+    "character": {
+      "silence": 1.0,
+      "crowd": 0.0,
+      "speech": 0.0
+    },
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -100.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Divided Sky"
+    ],
+    "mp3_url": "https://phish.in/blob/7ankbsrtjbnj8ejtwt2umxkc9jkv.mp3",
+    "share_url": "https://phish.in/1989-05-06/divided-sky"
+  },
+  {
+    "label": "1989-03-14 Set 1 t12 Foam",
+    "edge": "trailing",
+    "track_duration_s": 257.4,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 255.8,
+    "region": [
+      255.8,
+      257.8
+    ],
+    "character": {
+      "silence": 1.0,
+      "crowd": 0.0,
+      "speech": 0.0
+    },
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -128.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Foam"
+    ],
+    "mp3_url": "https://phish.in/blob/q8zy1wzzll71t6vj2nqyf91ny1f3.mp3",
+    "share_url": "https://phish.in/1989-03-14/foam"
+  },
+  {
+    "label": "1989-04-30 Set 1 t10 Terrapin",
+    "edge": "trailing",
+    "track_duration_s": 316.7,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 314.8,
+    "region": [
+      314.8,
+      316.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.009,
+    "mean_rms_db": -34.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Terrapin"
+    ],
+    "mp3_url": "https://phish.in/blob/m4dt5dzykplwrfry9wjprj5pd6us.mp3",
+    "share_url": "https://phish.in/1989-04-30/terrapin"
+  },
+  {
+    "label": "1989-05-05 Set 1 t08 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 523.1,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 521.2,
+    "region": [
+      521.2,
+      523.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.016,
+    "mean_crowd_score": 0.016,
+    "mean_rms_db": -31.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/sqdr26w39okedhipg3yoqyg1nv1v.mp3",
+    "share_url": "https://phish.in/1989-05-05/run-like-an-antelope"
+  },
+  {
+    "label": "1989-12-09 Encore t21 Big Black Furry Creature From Mars",
+    "edge": "trailing",
+    "track_duration_s": 205.9,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 204.0,
+    "region": [
+      204.0,
+      205.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.044,
+    "mean_crowd_score": 0.006,
+    "mean_rms_db": -33.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Big Black Furry Creature From Mars"
+    ],
+    "mp3_url": "https://phish.in/blob/cg4r3x35y6mz336y6207glkktrf9.mp3",
+    "share_url": "https://phish.in/1989-12-09/bbfcfm"
+  },
+  {
+    "label": "1989-05-06 Set 1 t13 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 649.6,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 648.2,
+    "region": [
+      648.2,
+      649.6
+    ],
+    "character": {
+      "silence": 0.5,
+      "crowd": 0.0,
+      "speech": 0.5
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -44.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/cjgqz4pfvidi159mcqwe561b8anr.mp3",
+    "share_url": "https://phish.in/1989-05-06/david-bowie"
+  },
+  {
+    "label": "1989-06-30 Set 2 t15 Weekapaug Groove",
+    "edge": "trailing",
+    "track_duration_s": 347.0,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 345.5,
+    "region": [
+      345.5,
+      347.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.008,
+    "mean_rms_db": -31.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Weekapaug Groove"
+    ],
+    "mp3_url": "https://phish.in/blob/2kexxdij8yys4y2uybv8x4g348eq.mp3",
+    "share_url": "https://phish.in/1989-06-30/weekapaug-groove"
+  },
+  {
+    "label": "1989-08-17 Set 3 t25 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 508.3,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 506.9,
+    "region": [
+      506.9,
+      508.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.5,
+      "speech": 0.5
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.144,
+    "mean_rms_db": -30.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/d6eq5l9zm4jtrajd14gafc39jjga.mp3",
+    "share_url": "https://phish.in/1989-08-17/run-like-an-antelope"
+  },
+  {
+    "label": "1989-10-22 Set 2 t23 Possum",
+    "edge": "trailing",
+    "track_duration_s": 487.6,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 486.1,
+    "region": [
+      486.1,
+      487.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.018,
+    "mean_crowd_score": 0.006,
+    "mean_rms_db": -37.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/x0voezmhjjcyl2nu07ckfp1t3klb.mp3",
+    "share_url": "https://phish.in/1989-10-22/possum"
+  },
+  {
+    "label": "1989-10-31 Encore t21 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 404.8,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 403.4,
+    "region": [
+      403.4,
+      404.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.062,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -35.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/6vr3kcfhs2n1eajys8p2mtxnej2o.mp3",
+    "share_url": "https://phish.in/1989-10-31/run-like-an-antelope"
+  },
+  {
+    "label": "1989-12-03 Set 2 t23 Weekapaug Groove",
+    "edge": "trailing",
+    "track_duration_s": 540.7,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 539.2,
+    "region": [
+      539.2,
+      540.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.556,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -34.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Weekapaug Groove"
+    ],
+    "mp3_url": "https://phish.in/blob/ogkyp6sdx3ti9mxl7tykyiaha68s.mp3",
+    "share_url": "https://phish.in/1989-12-03/weekapaug-groove"
+  },
+  {
+    "label": "1989-12-16 Set 1 t09 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 401.8,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 400.4,
+    "region": [
+      400.4,
+      401.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.021,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -28.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/x3zcuguyxywfg8yotnbp6n0uqlyw.mp3",
+    "share_url": "https://phish.in/1989-12-16/golgi-apparatus"
+  },
+  {
+    "label": "1989-12-16 Encore t10 Possum",
+    "edge": "trailing",
+    "track_duration_s": 564.5,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 563.1,
+    "region": [
+      563.1,
+      564.5
+    ],
+    "character": {
+      "silence": 1.0,
+      "crowd": 0.0,
+      "speech": 0.0
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -66.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/4gp6rwi3d7t0fztw2hi8kpbipxta.mp3",
+    "share_url": "https://phish.in/1989-12-16/possum"
+  },
+  {
+    "label": "1989-05-26 Set 3 t19 Possum",
+    "edge": "trailing",
+    "track_duration_s": 679.3,
+    "nonmusic_run_s": 0.5,
+    "music_boundary_s": 678.3,
+    "region": [
+      678.3,
+      679.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.069,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -27.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/aapsxhjvqtolxnrzbtmukdd4fbi6.mp3",
+    "share_url": "https://phish.in/1989-05-26/possum"
+  },
+  {
+    "label": "1989-10-14 Set 2 t15 Harpua",
+    "edge": "trailing",
+    "track_duration_s": 436.9,
+    "nonmusic_run_s": 0.5,
+    "music_boundary_s": 436.0,
+    "region": [
+      436.0,
+      436.9
+    ],
+    "character": {
+      "silence": 1.0,
+      "crowd": 0.0,
+      "speech": 0.0
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -52.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harpua"
+    ],
+    "mp3_url": "https://phish.in/blob/4yytw3msxise3h98wk0vd8y2lnbg.mp3",
+    "share_url": "https://phish.in/1989-10-14/harpua"
+  },
+  {
+    "label": "1989-12-08 Set 2 t21 Vocal Jam",
+    "edge": "trailing",
+    "track_duration_s": 45.3,
+    "nonmusic_run_s": 0.5,
+    "music_boundary_s": 44.6,
+    "region": [
+      44.6,
+      45.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.037,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -20.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Jam"
+    ],
+    "mp3_url": "https://phish.in/blob/mgt140ps3pxucn0zld7oufjwrqgm.mp3",
+    "share_url": "https://phish.in/1989-12-08/vocal-jam"
+  },
+  {
+    "label": "1989-02-07 Set 1 t09 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 301.6,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 301.6,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/vx5it5h2dtrhutwich6qximc5zgw.mp3",
+    "share_url": "https://phish.in/1989-02-07/golgi-apparatus"
+  },
+  {
+    "label": "1989-02-18 Set 3 t21 AC/DC Bag",
+    "edge": "trailing",
+    "track_duration_s": 204.2,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 204.2,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "AC/DC Bag"
+    ],
+    "mp3_url": "https://phish.in/blob/f0zcf24fe1jylykzwserwy8v06uu.mp3",
+    "share_url": "https://phish.in/1989-02-18/ac-dc-bag"
+  },
+  {
+    "label": "1989-02-24 Set 1 t14 The Man Who Stepped Into Yesterday",
+    "edge": "trailing",
+    "track_duration_s": 193.2,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 193.2,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Man Who Stepped Into Yesterday"
+    ],
+    "mp3_url": "https://phish.in/blob/aahdep7kxrre6lbaymw9vh856ocp.mp3",
+    "share_url": "https://phish.in/1989-02-24/tmwsiy"
+  },
+  {
+    "label": "1989-03-04 Set 2 t13 Contact",
+    "edge": "trailing",
+    "track_duration_s": 263.4,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 263.4,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Contact"
+    ],
+    "mp3_url": "https://phish.in/blob/0an56v2rmy3s0ljn1h4f1y192c17.mp3",
+    "share_url": "https://phish.in/1989-03-04/contact"
+  },
+  {
+    "label": "1989-04-20 Set 2 t22 Harpua",
+    "edge": "trailing",
+    "track_duration_s": 813.7,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 813.7,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harpua"
+    ],
+    "mp3_url": "https://phish.in/blob/cfgo4xixpktg4159kaumlug686mh.mp3",
+    "share_url": "https://phish.in/1989-04-20/harpua"
+  },
+  {
+    "label": "1989-05-09 Set 1 t09 Divided Sky",
+    "edge": "trailing",
+    "track_duration_s": 725.1,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 725.1,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Divided Sky"
+    ],
+    "mp3_url": "https://phish.in/blob/cwfhfqtu0emxwsuvyw660rlhtjzc.mp3",
+    "share_url": "https://phish.in/1989-05-09/divided-sky"
+  },
+  {
+    "label": "1989-05-09 Set 2 t22 I Didn't Know",
+    "edge": "trailing",
+    "track_duration_s": 157.7,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 157.7,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "I Didn't Know"
+    ],
+    "mp3_url": "https://phish.in/blob/0jy5mpsnjl09597fj1l3pyfvr2td.mp3",
+    "share_url": "https://phish.in/1989-05-09/i-didnt-know"
+  },
+  {
+    "label": "1989-05-13 Set 1 t14 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 416.3,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 416.3,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/jfuzrwcw3ykn126tl7bofuxh9suv.mp3",
+    "share_url": "https://phish.in/1989-05-13/david-bowie"
+  },
+  {
+    "label": "1989-05-21 Set 1 t13 Divided Sky",
+    "edge": "trailing",
+    "track_duration_s": 653.5,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 653.5,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Divided Sky"
+    ],
+    "mp3_url": "https://phish.in/blob/tkoojf911ebonzij47dv5wmwz3k7.mp3",
+    "share_url": "https://phish.in/1989-05-21/divided-sky"
+  },
+  {
+    "label": "1989-06-29 Set 1 t03 Foam",
+    "edge": "trailing",
+    "track_duration_s": 406.7,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 406.7,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Foam"
+    ],
+    "mp3_url": "https://phish.in/blob/p68k2wy0f6o7tr6cuy4f2os9ogf5.mp3",
+    "share_url": "https://phish.in/1989-06-29/foam"
+  },
+  {
+    "label": "1989-10-07 Set 1 t11 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 385.8,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 385.8,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/jc758l6mp6fqwjetddy5pi6pjia5.mp3",
+    "share_url": "https://phish.in/1989-10-07/good-times-bad-times"
+  },
+  {
+    "label": "1989-10-10 Set 1 t12 Weekapaug Groove",
+    "edge": "trailing",
+    "track_duration_s": 178.5,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 178.5,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Weekapaug Groove"
+    ],
+    "mp3_url": "https://phish.in/blob/z0s4897t3usxn6wuxga3iofkhbx7.mp3",
+    "share_url": "https://phish.in/1989-10-10/weekapaug-groove"
+  },
+  {
+    "label": "1989-10-13 Set 2 t10 The Lizards",
+    "edge": "trailing",
+    "track_duration_s": 659.0,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 659.0,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Lizards"
+    ],
+    "mp3_url": "https://phish.in/blob/2h5z2x8hqgrf40nl4kg9gjsw1rib.mp3",
+    "share_url": "https://phish.in/1989-10-13/the-lizards"
+  },
+  {
+    "label": "1989-10-20 Set 1 t09 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 250.0,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 250.0,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/khobc5m5z2q4dhq1a6nhf7txnekw.mp3",
+    "share_url": "https://phish.in/1989-10-20/golgi-apparatus"
+  },
+  {
+    "label": "1989-10-26 Set 2 t26 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 1070.0,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 1070.0,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/1zk2iwb0uhtskv25ovx7z7b4geiz.mp3",
+    "share_url": "https://phish.in/1989-10-26/david-bowie"
+  },
+  {
+    "label": "1989-10-31 Set 2 t22 Alumni Blues",
+    "edge": "trailing",
+    "track_duration_s": 166.6,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 166.6,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Alumni Blues"
+    ],
+    "mp3_url": "https://phish.in/blob/inj9nak6sxzf2514xcy70jq5kyy3.mp3",
+    "share_url": "https://phish.in/1989-10-31/alumni-blues"
+  },
+  {
+    "label": "1989-11-03 Set 1 t10 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 295.0,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 295.0,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/4tes7b4i5sw9h2ee5a4b7pbmf8vk.mp3",
+    "share_url": "https://phish.in/1989-11-03/golgi-apparatus"
+  },
+  {
+    "label": "1989-11-09 Set 2 t18 Weekapaug Groove",
+    "edge": "trailing",
+    "track_duration_s": 463.5,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 463.5,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Weekapaug Groove"
+    ],
+    "mp3_url": "https://phish.in/blob/p463eua6y10492vc1pa0l3jvqdft.mp3",
+    "share_url": "https://phish.in/1989-11-09/weekapaug-groove"
+  },
+  {
+    "label": "1989-11-16 Set 2 t15 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 747.4,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 747.4,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/dnmakfx8foh4hadp5krza2gfqp4e.mp3",
+    "share_url": "https://phish.in/1989-11-16/david-bowie"
+  },
+  {
+    "label": "1989-11-30 Encore t24 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 283.9,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 283.9,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/pghsrn4dlifvooh4hdqe7ftda5da.mp3",
+    "share_url": "https://phish.in/1989-11-30/golgi-apparatus"
+  }
+]

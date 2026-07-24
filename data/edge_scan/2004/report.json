@@ -1,0 +1,1498 @@
+[
+  {
+    "label": "2004-06-26 Set 2 t14 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 968.3,
+    "nonmusic_run_s": 253.9,
+    "music_boundary_s": 713.9,
+    "region": [
+      713.9,
+      968.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.047,
+    "mean_rms_db": -28.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/i8gy8jjre9nyxjcceaz4sdbdembz.mp3",
+    "share_url": "https://phish.in/2004-06-26/harry-hood"
+  },
+  {
+    "label": "2004-08-09 Set 2 t15 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 714.6,
+    "nonmusic_run_s": 236.6,
+    "music_boundary_s": 477.5,
+    "region": [
+      477.5,
+      714.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.18,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.084,
+    "mean_rms_db": -30.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/d7xte46ty36901j7disldkqbid9a.mp3",
+    "share_url": "https://phish.in/2004-08-09/character-zero"
+  },
+  {
+    "label": "2004-06-18 Set 2 t16 Taste",
+    "edge": "trailing",
+    "track_duration_s": 881.8,
+    "nonmusic_run_s": 229.9,
+    "music_boundary_s": 651.4,
+    "region": [
+      651.4,
+      881.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.03,
+      "speech": 0.97
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.024,
+    "mean_rms_db": -35.7,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 865.6,
+        "end": 866.3,
+        "text": "the"
+      },
+      {
+        "start": 868.7,
+        "end": 870.1,
+        "text": "the"
+      },
+      {
+        "start": 870.1,
+        "end": 870.2,
+        "text": "the"
+      },
+      {
+        "start": 870.2,
+        "end": 872.6,
+        "text": "the"
+      },
+      {
+        "start": 874.1,
+        "end": 875.5,
+        "text": "the"
+      }
+    ],
+    "songs": [
+      "Taste"
+    ],
+    "mp3_url": "https://phish.in/blob/kp2t29wm7lsqju05iwo2m4gy8yt1.mp3",
+    "share_url": "https://phish.in/2004-06-18/taste"
+  },
+  {
+    "label": "2004-06-24 Set 2 t14 Walls of the Cave",
+    "edge": "trailing",
+    "track_duration_s": 966.1,
+    "nonmusic_run_s": 223.7,
+    "music_boundary_s": 741.9,
+    "region": [
+      741.9,
+      966.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.044,
+    "mean_rms_db": -31.0,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Walls of the Cave"
+    ],
+    "mp3_url": "https://phish.in/blob/j08q8vm5ilzq2svbnypekenb8g65.mp3",
+    "share_url": "https://phish.in/2004-06-24/walls-of-the-cave"
+  },
+  {
+    "label": "2004-06-17 Set 2 t20 Weekapaug Groove",
+    "edge": "trailing",
+    "track_duration_s": 864.7,
+    "nonmusic_run_s": 151.7,
+    "music_boundary_s": 712.5,
+    "region": [
+      712.5,
+      864.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.04,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.032,
+    "mean_rms_db": -35.8,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 789.9,
+        "end": 791.3,
+        "text": "Hello, everybody."
+      },
+      {
+        "start": 794.6,
+        "end": 797.4,
+        "text": "Hello, everybody."
+      },
+      {
+        "start": 799.5,
+        "end": 799.5,
+        "text": "How are you?"
+      }
+    ],
+    "songs": [
+      "Weekapaug Groove"
+    ],
+    "mp3_url": "https://phish.in/blob/gro20jrr551v2tdzjqcbszpnm4j6.mp3",
+    "share_url": "https://phish.in/2004-06-17/weekapaug-groove"
+  },
+  {
+    "label": "2004-08-12 Set 2 t14 Scents and Subtle Sounds",
+    "edge": "trailing",
+    "track_duration_s": 1390.9,
+    "nonmusic_run_s": 123.4,
+    "music_boundary_s": 1267.0,
+    "region": [
+      1267.0,
+      1390.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.06,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.041,
+    "mean_rms_db": -36.0,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 1364.6,
+        "end": 1372.8,
+        "text": "Thank you very much."
+      }
+    ],
+    "songs": [
+      "Scents and Subtle Sounds"
+    ],
+    "mp3_url": "https://phish.in/blob/pf6ycv04qhxde80j1suj076ryk0g.mp3",
+    "share_url": "https://phish.in/2004-08-12/scents-and-subtle-sounds"
+  },
+  {
+    "label": "2004-06-21 Set 1 t07 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 292.8,
+    "nonmusic_run_s": 109.4,
+    "music_boundary_s": 182.9,
+    "region": [
+      182.9,
+      292.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.009,
+    "mean_crowd_score": 0.027,
+    "mean_rms_db": -36.1,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 199.3,
+        "end": 199.7,
+        "text": "I"
+      },
+      {
+        "start": 199.7,
+        "end": 200.7,
+        "text": "Hope you passed the audition"
+      }
+    ],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/veb6q7vscqhdud9qqguh6ubfa6ym.mp3",
+    "share_url": "https://phish.in/2004-06-21/tweezer-reprise"
+  },
+  {
+    "label": "2004-06-20 Set 1 t09 Drowned",
+    "edge": "trailing",
+    "track_duration_s": 1406.1,
+    "nonmusic_run_s": 102.7,
+    "music_boundary_s": 1302.9,
+    "region": [
+      1302.9,
+      1406.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.05,
+      "speech": 0.95
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.019,
+    "mean_rms_db": -33.5,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Drowned"
+    ],
+    "mp3_url": "https://phish.in/blob/mau9h9xyje5usx9syeiha6h5g1r0.mp3",
+    "share_url": "https://phish.in/2004-06-20/drowned"
+  },
+  {
+    "label": "2004-08-15 Encore t26 The Curtain With",
+    "edge": "trailing",
+    "track_duration_s": 1083.0,
+    "nonmusic_run_s": 73.0,
+    "music_boundary_s": 1009.6,
+    "region": [
+      1009.6,
+      1083.0
+    ],
+    "character": {
+      "silence": 0.01,
+      "crowd": 0.29,
+      "speech": 0.7
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.178,
+    "mean_rms_db": -34.5,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "The Curtain With"
+    ],
+    "mp3_url": "https://phish.in/blob/zkqh3td5u37mj8oq4uaoy64p5cp6.mp3",
+    "share_url": "https://phish.in/2004-08-15/the-curtain-with"
+  },
+  {
+    "label": "2004-08-14 Set 3 t22 Friday",
+    "edge": "trailing",
+    "track_duration_s": 498.0,
+    "nonmusic_run_s": 62.4,
+    "music_boundary_s": 435.1,
+    "region": [
+      435.1,
+      498.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.1,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.043,
+    "mean_rms_db": -35.2,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Friday"
+    ],
+    "mp3_url": "https://phish.in/blob/fx3o012srtes3u62x7u326snk957.mp3",
+    "share_url": "https://phish.in/2004-08-14/friday"
+  },
+  {
+    "label": "2004-06-24 Encore t15 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 561.0,
+    "nonmusic_run_s": 55.7,
+    "music_boundary_s": 504.8,
+    "region": [
+      504.8,
+      561.0
+    ],
+    "character": {
+      "silence": 0.07,
+      "crowd": 0.16,
+      "speech": 0.78
+    },
+    "mean_music_score": 0.027,
+    "mean_crowd_score": 0.105,
+    "mean_rms_db": -28.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/72ghz2zn45i1rj42v5vlr0jmmkb4.mp3",
+    "share_url": "https://phish.in/2004-06-24/the-squirming-coil"
+  },
+  {
+    "label": "2004-08-12 Set 1 t07 Pebbles and Marbles",
+    "edge": "trailing",
+    "track_duration_s": 643.7,
+    "nonmusic_run_s": 49.0,
+    "music_boundary_s": 594.2,
+    "region": [
+      594.2,
+      643.7
+    ],
+    "character": {
+      "silence": 0.19,
+      "crowd": 0.05,
+      "speech": 0.76
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.023,
+    "mean_rms_db": -40.9,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Pebbles and Marbles"
+    ],
+    "mp3_url": "https://phish.in/blob/ba7ukryiizf8l7nhnyuiy71uol7h.mp3",
+    "share_url": "https://phish.in/2004-08-12/pebbles-and-marbles"
+  },
+  {
+    "label": "2004-06-24 Set 1 t07 Rock and Roll",
+    "edge": "trailing",
+    "track_duration_s": 592.7,
+    "nonmusic_run_s": 46.1,
+    "music_boundary_s": 546.2,
+    "region": [
+      546.2,
+      592.7
+    ],
+    "character": {
+      "silence": 0.11,
+      "crowd": 0.03,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.038,
+    "mean_rms_db": -36.2,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Rock and Roll"
+    ],
+    "mp3_url": "https://phish.in/blob/p31heoodn22949l7ro7oyky2fd4g.mp3",
+    "share_url": "https://phish.in/2004-06-24/rock-and-roll"
+  },
+  {
+    "label": "2004-06-25 Encore t18 Sample in a Jar",
+    "edge": "trailing",
+    "track_duration_s": 336.9,
+    "nonmusic_run_s": 37.9,
+    "music_boundary_s": 298.5,
+    "region": [
+      298.5,
+      336.9
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.15,
+      "speech": 0.81
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.113,
+    "mean_rms_db": -26.9,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Sample in a Jar"
+    ],
+    "mp3_url": "https://phish.in/blob/otsl6lfrp0rmyqv4dq8f6synb6gn.mp3",
+    "share_url": "https://phish.in/2004-06-25/sample-in-a-jar"
+  },
+  {
+    "label": "2004-08-09 Encore t16 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 786.6,
+    "nonmusic_run_s": 36.5,
+    "music_boundary_s": 749.6,
+    "region": [
+      749.6,
+      786.6
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.45,
+      "speech": 0.53
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.146,
+    "mean_rms_db": -28.0,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/pzm26q3323ispunkfhsns4ijjqk4.mp3",
+    "share_url": "https://phish.in/2004-08-09/david-bowie"
+  },
+  {
+    "label": "2004-08-10 Set 1 t06 Birds of a Feather",
+    "edge": "trailing",
+    "track_duration_s": 1272.6,
+    "nonmusic_run_s": 35.0,
+    "music_boundary_s": 1237.1,
+    "region": [
+      1237.1,
+      1272.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.031,
+    "mean_crowd_score": 0.055,
+    "mean_rms_db": -31.0,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Birds of a Feather"
+    ],
+    "mp3_url": "https://phish.in/blob/i8t4cvy0e7crq68gbthk1jlebdrz.mp3",
+    "share_url": "https://phish.in/2004-08-10/birds-of-a-feather"
+  },
+  {
+    "label": "2004-06-18 Encore t18 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 208.6,
+    "nonmusic_run_s": 31.2,
+    "music_boundary_s": 177.1,
+    "region": [
+      177.1,
+      208.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.22,
+      "speech": 0.78
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.081,
+    "mean_rms_db": -28.2,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 204.1,
+        "end": 205.4,
+        "text": "Here you go, here you go."
+      },
+      {
+        "start": 205.4,
+        "end": 205.8,
+        "text": "Woo!"
+      }
+    ],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/jqml37bymojn4fspuzkuntmekuuh.mp3",
+    "share_url": "https://phish.in/2004-06-18/tweezer-reprise"
+  },
+  {
+    "label": "2004-06-23 Encore t17 Waste",
+    "edge": "trailing",
+    "track_duration_s": 371.1,
+    "nonmusic_run_s": 29.8,
+    "music_boundary_s": 340.8,
+    "region": [
+      340.8,
+      371.1
+    ],
+    "character": {
+      "silence": 0.13,
+      "crowd": 0.13,
+      "speech": 0.74
+    },
+    "mean_music_score": 0.02,
+    "mean_crowd_score": 0.035,
+    "mean_rms_db": -31.3,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Waste"
+    ],
+    "mp3_url": "https://phish.in/blob/exjnc9ngglvgvknrw3rb9atpy67g.mp3",
+    "share_url": "https://phish.in/2004-06-23/waste"
+  },
+  {
+    "label": "2004-06-17 Set 1 t09 Frankenstein",
+    "edge": "trailing",
+    "track_duration_s": 313.0,
+    "nonmusic_run_s": 26.9,
+    "music_boundary_s": 285.6,
+    "region": [
+      285.6,
+      313.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.04,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.033,
+    "mean_rms_db": -33.7,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Frankenstein"
+    ],
+    "mp3_url": "https://phish.in/blob/4ln3q8s2jzlrwvpqh2m92ue3drr7.mp3",
+    "share_url": "https://phish.in/2004-06-17/frankenstein"
+  },
+  {
+    "label": "2004-06-23 Set 1 t07 Split Open and Melt",
+    "edge": "trailing",
+    "track_duration_s": 864.6,
+    "nonmusic_run_s": 25.9,
+    "music_boundary_s": 838.2,
+    "region": [
+      838.2,
+      864.6
+    ],
+    "character": {
+      "silence": 0.13,
+      "crowd": 0.17,
+      "speech": 0.7
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.095,
+    "mean_rms_db": -35.3,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Split Open and Melt"
+    ],
+    "mp3_url": "https://phish.in/blob/e3sdrea0yhjxpbihwbue5auwgnip.mp3",
+    "share_url": "https://phish.in/2004-06-23/split-open-and-melt"
+  },
+  {
+    "label": "2004-06-26 Encore t15 Possum",
+    "edge": "trailing",
+    "track_duration_s": 697.5,
+    "nonmusic_run_s": 25.0,
+    "music_boundary_s": 672.0,
+    "region": [
+      672.0,
+      697.5
+    ],
+    "character": {
+      "silence": 0.1,
+      "crowd": 0.0,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.03,
+    "mean_crowd_score": 0.003,
+    "mean_rms_db": -37.5,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/2l5gra7xjf3i9grclyz4buppall8.mp3",
+    "share_url": "https://phish.in/2004-06-26/possum"
+  },
+  {
+    "label": "2004-06-19 Set 1 t07 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 742.5,
+    "nonmusic_run_s": 24.5,
+    "music_boundary_s": 717.5,
+    "region": [
+      717.5,
+      742.5
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.04,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.06,
+    "mean_rms_db": -25.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/cs5hbepyh8x05f59t6z9t4nhob3d.mp3",
+    "share_url": "https://phish.in/2004-06-19/david-bowie"
+  },
+  {
+    "label": "2004-04-16 Set 1 t09 Taste",
+    "edge": "trailing",
+    "track_duration_s": 735.0,
+    "nonmusic_run_s": 23.5,
+    "music_boundary_s": 711.0,
+    "region": [
+      711.0,
+      735.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.14,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.044,
+    "mean_rms_db": -20.0,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Taste"
+    ],
+    "mp3_url": "https://phish.in/blob/m2g3ag8z3sqg1n8gswc6lb5fbxkv.mp3",
+    "share_url": "https://phish.in/2004-04-16/taste"
+  },
+  {
+    "label": "2004-06-26 Set 1 t08 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 444.1,
+    "nonmusic_run_s": 23.5,
+    "music_boundary_s": 420.1,
+    "region": [
+      420.1,
+      444.1
+    ],
+    "character": {
+      "silence": 0.12,
+      "crowd": 0.1,
+      "speech": 0.78
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.074,
+    "mean_rms_db": -32.2,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/wr40esupffhtopgr2l85tua8bftt.mp3",
+    "share_url": "https://phish.in/2004-06-26/character-zero"
+  },
+  {
+    "label": "2004-08-15 Set 2 t16 Ghost",
+    "edge": "trailing",
+    "track_duration_s": 1089.8,
+    "nonmusic_run_s": 23.5,
+    "music_boundary_s": 1065.8,
+    "region": [
+      1065.8,
+      1089.8
+    ],
+    "character": {
+      "silence": 0.1,
+      "crowd": 0.0,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.033,
+    "mean_rms_db": -35.5,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 1063.8,
+        "end": 1065.1,
+        "text": "Thank you."
+      },
+      {
+        "start": 1076.1,
+        "end": 1077.9,
+        "text": "Thank you very much."
+      }
+    ],
+    "songs": [
+      "Ghost"
+    ],
+    "mp3_url": "https://phish.in/blob/qxj8rb6a1d8nur5sbm1djq8cmifv.mp3",
+    "share_url": "https://phish.in/2004-08-15/ghost"
+  },
+  {
+    "label": "2004-08-09 Set 1 t05 Loving Cup",
+    "edge": "trailing",
+    "track_duration_s": 424.0,
+    "nonmusic_run_s": 23.0,
+    "music_boundary_s": 400.4,
+    "region": [
+      400.4,
+      424.0
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.27,
+      "speech": 0.69
+    },
+    "mean_music_score": 0.038,
+    "mean_crowd_score": 0.068,
+    "mean_rms_db": -26.5,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Loving Cup"
+    ],
+    "mp3_url": "https://phish.in/blob/z389zu2kzjcijzn0e34usdcm0rmi.mp3",
+    "share_url": "https://phish.in/2004-08-09/loving-cup"
+  },
+  {
+    "label": "2004-08-12 Encore t16 Frankenstein",
+    "edge": "trailing",
+    "track_duration_s": 308.7,
+    "nonmusic_run_s": 21.6,
+    "music_boundary_s": 286.6,
+    "region": [
+      286.6,
+      308.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.07,
+    "mean_rms_db": -25.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Frankenstein"
+    ],
+    "mp3_url": "https://phish.in/blob/dzwc7u0e6rnep9njvdotzey48hhm.mp3",
+    "share_url": "https://phish.in/2004-08-12/frankenstein"
+  },
+  {
+    "label": "2004-08-15 Set 1 t10 Taste",
+    "edge": "trailing",
+    "track_duration_s": 610.1,
+    "nonmusic_run_s": 20.2,
+    "music_boundary_s": 589.5,
+    "region": [
+      589.5,
+      610.1
+    ],
+    "character": {
+      "silence": 0.07,
+      "crowd": 0.07,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.049,
+    "mean_rms_db": -33.5,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 592.2,
+        "end": 596.1,
+        "text": "That sounds like a great one, we have a lot more music, so please have fun."
+      }
+    ],
+    "songs": [
+      "Taste"
+    ],
+    "mp3_url": "https://phish.in/blob/h4ydt7tf9be2fuc36v7hq9d2b87h.mp3",
+    "share_url": "https://phish.in/2004-08-15/taste"
+  },
+  {
+    "label": "2004-06-20 Encore t14 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 447.2,
+    "nonmusic_run_s": 19.2,
+    "music_boundary_s": 427.5,
+    "region": [
+      427.5,
+      447.2
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.03,
+      "speech": 0.95
+    },
+    "mean_music_score": 0.042,
+    "mean_crowd_score": 0.007,
+    "mean_rms_db": -35.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/8qzo84777yx0nqwx835legx01bm9.mp3",
+    "share_url": "https://phish.in/2004-06-20/good-times-bad-times"
+  },
+  {
+    "label": "2004-06-25 Set 1 t08 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 292.3,
+    "nonmusic_run_s": 19.2,
+    "music_boundary_s": 272.6,
+    "region": [
+      272.6,
+      292.3
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.12,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.074,
+    "mean_rms_db": -23.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/5qqf7pdqn8cozw2qywnouy5zmybl.mp3",
+    "share_url": "https://phish.in/2004-06-25/golgi-apparatus"
+  },
+  {
+    "label": "2004-06-18 Set 1 t09 Tweezer",
+    "edge": "trailing",
+    "track_duration_s": 913.1,
+    "nonmusic_run_s": 18.2,
+    "music_boundary_s": 894.3,
+    "region": [
+      894.3,
+      913.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.13,
+      "speech": 0.87
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.069,
+    "mean_rms_db": -27.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer"
+    ],
+    "mp3_url": "https://phish.in/blob/w5iqzeo54ai64hd3wib9ywsvkk9n.mp3",
+    "share_url": "https://phish.in/2004-06-18/tweezer"
+  },
+  {
+    "label": "2004-08-14 Encore t23 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 1355.2,
+    "nonmusic_run_s": 15.8,
+    "music_boundary_s": 1338.9,
+    "region": [
+      1338.9,
+      1355.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.27,
+      "speech": 0.73
+    },
+    "mean_music_score": 0.026,
+    "mean_crowd_score": 0.08,
+    "mean_rms_db": -25.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/d5lwk2ovqsobh4gbfxesav6sxct1.mp3",
+    "share_url": "https://phish.in/2004-08-14/harry-hood"
+  },
+  {
+    "label": "2004-06-19 Encore t13 Wading in the Velvet Sea",
+    "edge": "trailing",
+    "track_duration_s": 486.1,
+    "nonmusic_run_s": 14.4,
+    "music_boundary_s": 471.3,
+    "region": [
+      471.3,
+      486.1
+    ],
+    "character": {
+      "silence": 0.07,
+      "crowd": 0.0,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.037,
+    "mean_crowd_score": 0.003,
+    "mean_rms_db": -39.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Wading in the Velvet Sea"
+    ],
+    "mp3_url": "https://phish.in/blob/fjz3g5mq3m48nbu09weoaq3hjnup.mp3",
+    "share_url": "https://phish.in/2004-06-19/wading-in-the-velvet-sea"
+  },
+  {
+    "label": "2004-08-11 Set 1 t08 Mexican Cousin",
+    "edge": "trailing",
+    "track_duration_s": 255.0,
+    "nonmusic_run_s": 14.4,
+    "music_boundary_s": 240.5,
+    "region": [
+      240.5,
+      255.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.13,
+      "speech": 0.87
+    },
+    "mean_music_score": 0.028,
+    "mean_crowd_score": 0.056,
+    "mean_rms_db": -28.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Mexican Cousin"
+    ],
+    "mp3_url": "https://phish.in/blob/wyjm481tqr7sluvonomwrleqmfeb.mp3",
+    "share_url": "https://phish.in/2004-08-11/mexican-cousin"
+  },
+  {
+    "label": "2004-08-11 Encore t20 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 241.7,
+    "nonmusic_run_s": 14.4,
+    "music_boundary_s": 227.0,
+    "region": [
+      227.0,
+      241.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.13,
+      "speech": 0.87
+    },
+    "mean_music_score": 0.057,
+    "mean_crowd_score": 0.06,
+    "mean_rms_db": -23.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/e9mnjhqujuw4lmbxcskdq1q0tgb4.mp3",
+    "share_url": "https://phish.in/2004-08-11/tweezer-reprise"
+  },
+  {
+    "label": "2004-04-17 Encore t19 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 504.2,
+    "nonmusic_run_s": 12.5,
+    "music_boundary_s": 491.3,
+    "region": [
+      491.3,
+      504.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.23,
+      "speech": 0.77
+    },
+    "mean_music_score": 0.049,
+    "mean_crowd_score": 0.101,
+    "mean_rms_db": -16.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/d7a0lvp2rqirtohrdc33pab61mpx.mp3",
+    "share_url": "https://phish.in/2004-04-17/the-squirming-coil"
+  },
+  {
+    "label": "2004-06-19 Set 2 t12 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 300.6,
+    "nonmusic_run_s": 11.0,
+    "music_boundary_s": 289.1,
+    "region": [
+      289.1,
+      300.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.09,
+    "mean_rms_db": -22.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/llpuwmzwcuzve0w29bqh88tla67b.mp3",
+    "share_url": "https://phish.in/2004-06-19/cavern"
+  },
+  {
+    "label": "2004-04-15 Encore t22 Sneakin' Sally Through the Alley",
+    "edge": "trailing",
+    "track_duration_s": 713.1,
+    "nonmusic_run_s": 10.1,
+    "music_boundary_s": 702.5,
+    "region": [
+      702.5,
+      713.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.079,
+    "mean_rms_db": -22.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sneakin' Sally Through the Alley"
+    ],
+    "mp3_url": "https://phish.in/blob/8p3u2tq04arozx9qih06u2xjqncu.mp3",
+    "share_url": "https://phish.in/2004-04-15/sneakin-sally-through-the-alley"
+  },
+  {
+    "label": "2004-04-16 Encore t22 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 1178.0,
+    "nonmusic_run_s": 9.6,
+    "music_boundary_s": 1167.9,
+    "region": [
+      1167.9,
+      1178.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.1,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.095,
+    "mean_rms_db": -20.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/u7gkx89hd0jlk17ahcb1e3gyjuti.mp3",
+    "share_url": "https://phish.in/2004-04-16/harry-hood"
+  },
+  {
+    "label": "2004-04-11 Set 1 t02 Chalk Dust Torture",
+    "edge": "trailing",
+    "track_duration_s": 498.3,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 489.6,
+    "region": [
+      489.6,
+      498.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.015,
+    "mean_crowd_score": 0.02,
+    "mean_rms_db": -41.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Chalk Dust Torture"
+    ],
+    "mp3_url": "https://phish.in/blob/4syzt539a535vt34vw84jr7xbmr9.mp3",
+    "share_url": "https://phish.in/2004-04-11/chalk-dust-torture"
+  },
+  {
+    "label": "2004-06-20 Set 2 t13 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1418.8,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 1410.7,
+    "region": [
+      1410.7,
+      1418.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.018,
+    "mean_rms_db": -32.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/bezemti4c62bjc7wqimna10jwdr6.mp3",
+    "share_url": "https://phish.in/2004-06-20/you-enjoy-myself"
+  },
+  {
+    "label": "2004-08-15 Set 3 t24 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 655.0,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 647.8,
+    "region": [
+      647.8,
+      655.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.055,
+    "mean_rms_db": -29.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/93abt0kg3gimfbhmz0t6f1428wqv.mp3",
+    "share_url": "https://phish.in/2004-08-15/slave-to-the-traffic-light"
+  },
+  {
+    "label": "2004-04-15 Set 1 t10 Timber (Jerry the Mule)",
+    "edge": "trailing",
+    "track_duration_s": 469.1,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 462.9,
+    "region": [
+      462.9,
+      469.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.33,
+      "speech": 0.67
+    },
+    "mean_music_score": 0.016,
+    "mean_crowd_score": 0.151,
+    "mean_rms_db": -18.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Timber (Jerry the Mule)"
+    ],
+    "mp3_url": "https://phish.in/blob/0g6srkqfrir0wb6gfai5b7yrqsz0.mp3",
+    "share_url": "https://phish.in/2004-04-15/timber-jerry-the-mule"
+  },
+  {
+    "label": "2004-06-17 Encore t21 Divided Sky",
+    "edge": "trailing",
+    "track_duration_s": 905.5,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 900.2,
+    "region": [
+      900.2,
+      905.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.2,
+      "speech": 0.8
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.081,
+    "mean_rms_db": -22.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Divided Sky"
+    ],
+    "mp3_url": "https://phish.in/blob/9ynuvepthkcqp3qpp6rn4u5swiv1.mp3",
+    "share_url": "https://phish.in/2004-06-17/divided-sky"
+  },
+  {
+    "label": "2004-08-14 Set 1 t09 Fire",
+    "edge": "trailing",
+    "track_duration_s": 479.9,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 474.7,
+    "region": [
+      474.7,
+      479.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.1,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.055,
+    "mean_rms_db": -24.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/hh4yntpmbzm44rmr6hdguugkyrra.mp3",
+    "share_url": "https://phish.in/2004-08-14/fire"
+  },
+  {
+    "label": "2004-08-14 Set 2 t15 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 548.8,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 543.5,
+    "region": [
+      543.5,
+      548.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.3,
+      "speech": 0.7
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.134,
+    "mean_rms_db": -22.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/l1yggxtiny3mrsb6u9jkfy9rl0hh.mp3",
+    "share_url": "https://phish.in/2004-08-14/character-zero"
+  },
+  {
+    "label": "2004-08-11 Set 2 t18 Sample in a Jar",
+    "edge": "trailing",
+    "track_duration_s": 281.3,
+    "nonmusic_run_s": 3.4,
+    "music_boundary_s": 277.4,
+    "region": [
+      277.4,
+      281.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.43,
+      "speech": 0.57
+    },
+    "mean_music_score": 0.028,
+    "mean_crowd_score": 0.066,
+    "mean_rms_db": -22.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sample in a Jar"
+    ],
+    "mp3_url": "https://phish.in/blob/nvj8f6jovefr443loxi39cxvm0qb.mp3",
+    "share_url": "https://phish.in/2004-08-11/sample-in-a-jar"
+  },
+  {
+    "label": "2004-06-23 Set 2 t16 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 481.9,
+    "nonmusic_run_s": 1.9,
+    "music_boundary_s": 479.5,
+    "region": [
+      479.5,
+      481.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.234,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -39.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/p39rf0g29yub15j23ozvwmgtnxkc.mp3",
+    "share_url": "https://phish.in/2004-06-23/cavern"
+  },
+  {
+    "label": "2004-04-16 Set 2 t21 Loving Cup",
+    "edge": "trailing",
+    "track_duration_s": 439.6,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 438.2,
+    "region": [
+      438.2,
+      439.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.032,
+    "mean_rms_db": -20.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Loving Cup"
+    ],
+    "mp3_url": "https://phish.in/blob/zz20efvpek548d3c49d34r05p33f.mp3",
+    "share_url": "https://phish.in/2004-04-16/loving-cup"
+  },
+  {
+    "label": "2004-08-10 Set 2 t15 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 756.6,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 755.1,
+    "region": [
+      755.1,
+      756.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.016,
+    "mean_crowd_score": 0.002,
+    "mean_rms_db": -18.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/rwxcf51y81j5ohf0j5s59v2rtpgq.mp3",
+    "share_url": "https://phish.in/2004-08-10/harry-hood"
+  },
+  {
+    "label": "2004-04-17 Set 2 t17 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 226.3,
+    "nonmusic_run_s": 0.5,
+    "music_boundary_s": 225.6,
+    "region": [
+      225.6,
+      226.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.022,
+    "mean_rms_db": -17.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/43dkz6cwtn6jtnfyjfpvlzpi2vsq.mp3",
+    "share_url": "https://phish.in/2004-04-17/tweezer-reprise"
+  },
+  {
+    "label": "2004-08-10 Encore t16 Possum",
+    "edge": "trailing",
+    "track_duration_s": 400.9,
+    "nonmusic_run_s": 0.5,
+    "music_boundary_s": 399.9,
+    "region": [
+      399.9,
+      400.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.195,
+    "mean_crowd_score": 0.026,
+    "mean_rms_db": -23.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/jn17g8otafjdh2tb1znozshbmkcv.mp3",
+    "share_url": "https://phish.in/2004-08-10/possum"
+  },
+  {
+    "label": "2004-04-15 Set 2 t21 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 710.1,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 710.1,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/h9li2so2ymlqq9ldbaix9rizqtbe.mp3",
+    "share_url": "https://phish.in/2004-04-15/slave-to-the-traffic-light"
+  },
+  {
+    "label": "2004-04-17 Set 1 t09 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 876.1,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 876.1,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/v4obgyu9uynt0naatxzw2ril1wxx.mp3",
+    "share_url": "https://phish.in/2004-04-17/david-bowie"
+  },
+  {
+    "label": "2004-06-25 Set 2 t17 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 406.9,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 406.9,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/ix6mhsa43sfm0yrkce3z1s9xi306.mp3",
+    "share_url": "https://phish.in/2004-06-25/you-enjoy-myself-2"
+  }
+]

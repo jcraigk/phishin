@@ -20,3 +20,8 @@
 yarn-debug.log*
 __pycache__/
 .agents/
+
+# Audio edge scan: track reports, ignore regenerable audio/plots/logs
+data/edge_scan/**/trimmed/
+data/edge_scan/**/plots/
+data/edge_scan/*.log

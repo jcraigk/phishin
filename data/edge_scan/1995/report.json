@@ -1,0 +1,6795 @@
+[
+  {
+    "label": "1995-11-22 Set 2 t16 Strange Design",
+    "edge": "trailing",
+    "track_duration_s": 357.4,
+    "nonmusic_run_s": 184.8,
+    "music_boundary_s": 172.1,
+    "region": [
+      172.1,
+      357.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.1,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.056,
+    "mean_rms_db": -25.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Strange Design"
+    ],
+    "mp3_url": "https://phish.in/blob/ueevyyy7s4hbrvxter4mocectm1a.mp3",
+    "share_url": "https://phish.in/1995-11-22/strange-design"
+  },
+  {
+    "label": "1995-10-06 Set 2 t17 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 817.0,
+    "nonmusic_run_s": 163.2,
+    "music_boundary_s": 653.3,
+    "region": [
+      653.3,
+      817.0
+    ],
+    "character": {
+      "silence": 0.21,
+      "crowd": 0.19,
+      "speech": 0.59
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.107,
+    "mean_rms_db": -39.0,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/b66x3dzhpk0cisd4u942798n3ve7.mp3",
+    "share_url": "https://phish.in/1995-10-06/slave-to-the-traffic-light"
+  },
+  {
+    "label": "1995-11-11 Set 2 t21 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 862.4,
+    "nonmusic_run_s": 152.6,
+    "music_boundary_s": 709.3,
+    "region": [
+      709.3,
+      862.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.13,
+      "speech": 0.87
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.13,
+    "mean_rms_db": -19.5,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/h1889rjx6aqxwayejkz7yp1qewxp.mp3",
+    "share_url": "https://phish.in/1995-11-11/run-like-an-antelope"
+  },
+  {
+    "label": "1995-12-09 Set 2 t19 Sweet Adeline",
+    "edge": "trailing",
+    "track_duration_s": 231.5,
+    "nonmusic_run_s": 143.5,
+    "music_boundary_s": 87.8,
+    "region": [
+      87.8,
+      231.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.16,
+      "speech": 0.84
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.077,
+    "mean_rms_db": -25.4,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 84.8,
+        "end": 89.6,
+        "text": "Sweet out of line, sweet out of line."
+      },
+      {
+        "start": 89.6,
+        "end": 90.3,
+        "text": "Oh!"
+      },
+      {
+        "start": 95.3,
+        "end": 96.3,
+        "text": "Thanks a lot."
+      }
+    ],
+    "songs": [
+      "Sweet Adeline"
+    ],
+    "mp3_url": "https://phish.in/blob/9m8vzoobxvix2jctwvuc7rp7butw.mp3",
+    "share_url": "https://phish.in/1995-12-09/sweet-adeline"
+  },
+  {
+    "label": "1995-10-15 Set 2 t18 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 309.1,
+    "nonmusic_run_s": 135.4,
+    "music_boundary_s": 173.2,
+    "region": [
+      173.2,
+      309.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.5,
+      "speech": 0.5
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.317,
+    "mean_rms_db": -22.7,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/13d7jz8pbtnqjnhlkgg8d4ft643z.mp3",
+    "share_url": "https://phish.in/1995-10-15/tweezer-reprise"
+  },
+  {
+    "label": "1995-10-13 Set 2 t19 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 738.2,
+    "nonmusic_run_s": 129.6,
+    "music_boundary_s": 608.1,
+    "region": [
+      608.1,
+      738.2
+    ],
+    "character": {
+      "silence": 0.07,
+      "crowd": 0.27,
+      "speech": 0.66
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.156,
+    "mean_rms_db": -35.2,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 726.0,
+        "end": 727.4,
+        "text": "."
+      },
+      {
+        "start": 727.4,
+        "end": 729.1,
+        "text": "."
+      },
+      {
+        "start": 729.1,
+        "end": 730.9,
+        "text": "."
+      },
+      {
+        "start": 733.3,
+        "end": 734.7,
+        "text": "."
+      }
+    ],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/al41fqpl1rp4ds14rkcemufdwcj2.mp3",
+    "share_url": "https://phish.in/1995-10-13/the-squirming-coil"
+  },
+  {
+    "label": "1995-10-07 Set 2 t18 Sweet Adeline",
+    "edge": "trailing",
+    "track_duration_s": 126.6,
+    "nonmusic_run_s": 126.2,
+    "music_boundary_s": 0.0,
+    "region": [
+      0.0,
+      126.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.14,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.031,
+    "mean_crowd_score": 0.08,
+    "mean_rms_db": -37.7,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 10.1,
+        "end": 16.4,
+        "text": "You're the flower of my heart, sweet Adeline, sweet Adeline."
+      },
+      {
+        "start": 18.7,
+        "end": 23.8,
+        "text": "In the evening when I sit alone and dreaming of days gone by,"
+      },
+      {
+        "start": 24.0,
+        "end": 27.3,
+        "text": "love to me so dear, so dear."
+      },
+      {
+        "start": 47.3,
+        "end": 50.8,
+        "text": "For the sighing wind and nightingale are singing,"
+      },
+      {
+        "start": 51.4,
+        "end": 55.5,
+        "text": "Our breathing only, your own sweet name."
+      },
+      {
+        "start": 56.0,
+        "end": 58.4,
+        "text": "Your own sweet name."
+      },
+      {
+        "start": 58.7,
+        "end": 60.0,
+        "text": "Sweet Adela."
+      },
+      {
+        "start": 60.6,
+        "end": 62.8,
+        "text": "Sweet Adela."
+      },
+      {
+        "start": 80.9,
+        "end": 89.8,
+        "text": "At night, dear heart, at night, dear heart, for you are mine."
+      },
+      {
+        "start": 89.8,
+        "end": 97.6,
+        "text": "For you are fine in all my dreams, in all my dreams."
+      },
+      {
+        "start": 98.5,
+        "end": 103.8,
+        "text": "Your bare face beams, your bare face beams."
+      },
+      {
+        "start": 104.4,
+        "end": 110.9,
+        "text": "You're the flower of my heart, sweet Adelaide, sweet Adelaide."
+      },
+      {
+        "start": 113.1,
+        "end": 113.7,
+        "text": "Thank you."
+      }
+    ],
+    "songs": [
+      "Sweet Adeline"
+    ],
+    "mp3_url": "https://phish.in/blob/jy3gbxjaj18qmrrgcjsf1bi33v51.mp3",
+    "share_url": "https://phish.in/1995-10-07/sweet-adeline"
+  },
+  {
+    "label": "1995-06-15 Set 2 t18 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 883.1,
+    "nonmusic_run_s": 120.5,
+    "music_boundary_s": 762.2,
+    "region": [
+      762.2,
+      883.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.17,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.098,
+    "mean_rms_db": -28.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/u90emrlnak96cepxgsbw41x3samh.mp3",
+    "share_url": "https://phish.in/1995-06-15/slave-to-the-traffic-light"
+  },
+  {
+    "label": "1995-11-12 Set 2 t18 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 289.2,
+    "nonmusic_run_s": 117.1,
+    "music_boundary_s": 171.8,
+    "region": [
+      171.8,
+      289.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.21,
+      "speech": 0.79
+    },
+    "mean_music_score": 0.009,
+    "mean_crowd_score": 0.065,
+    "mean_rms_db": -25.4,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/kd8w7b9hdc6n8purebntponi7x91.mp3",
+    "share_url": "https://phish.in/1995-11-12/tweezer-reprise"
+  },
+  {
+    "label": "1995-11-29 Set 2 t20 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 799.3,
+    "nonmusic_run_s": 111.8,
+    "music_boundary_s": 687.0,
+    "region": [
+      687.0,
+      799.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.06,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.052,
+    "mean_rms_db": -31.4,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/pol75czfwhydhng63wvurlhp9li2.mp3",
+    "share_url": "https://phish.in/1995-11-29/slave-to-the-traffic-light"
+  },
+  {
+    "label": "1995-11-10 Set 2 t18 Sweet Adeline",
+    "edge": "trailing",
+    "track_duration_s": 110.4,
+    "nonmusic_run_s": 109.9,
+    "music_boundary_s": 0.0,
+    "region": [
+      0.0,
+      110.4
+    ],
+    "character": {
+      "silence": 0.76,
+      "crowd": 0.01,
+      "speech": 0.24
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.008,
+    "mean_rms_db": -53.5,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 0.0,
+        "end": 7.8,
+        "text": "You're the flower of my heart, sweet Adelaide, sweet Adelaide."
+      },
+      {
+        "start": 8.3,
+        "end": 15.8,
+        "text": "In the evening when I sit alone and I'm dreaming, love day's gone by, love to me so dear."
+      },
+      {
+        "start": 17.5,
+        "end": 23.4,
+        "text": "There's a picture that fancy off the peering, brings back the time long."
+      },
+      {
+        "start": 26.9,
+        "end": 36.8,
+        "text": "It is then I wonder where you are, my darling, and if your heart to me is still the same, still the same."
+      },
+      {
+        "start": 37.2,
+        "end": 45.2,
+        "text": "For the sign with the night together singing, our breathing only, your own sweet name."
+      },
+      {
+        "start": 100.3,
+        "end": 110.3,
+        "text": "Thank you."
+      }
+    ],
+    "songs": [
+      "Sweet Adeline"
+    ],
+    "mp3_url": "https://phish.in/blob/p36t1yxbm3frjfuyjhhoiyt6x2y4.mp3",
+    "share_url": "https://phish.in/1995-11-10/sweet-adeline"
+  },
+  {
+    "label": "1995-10-14 Set 2 t18 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 391.2,
+    "nonmusic_run_s": 106.1,
+    "music_boundary_s": 284.6,
+    "region": [
+      284.6,
+      391.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.31,
+      "speech": 0.69
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.202,
+    "mean_rms_db": -25.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/d5b74h7otvmyt7ms6rz1oa05ztoq.mp3",
+    "share_url": "https://phish.in/1995-10-14/cavern"
+  },
+  {
+    "label": "1995-06-29 Set 2 t16 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 433.6,
+    "nonmusic_run_s": 104.2,
+    "music_boundary_s": 328.9,
+    "region": [
+      328.9,
+      433.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.23,
+      "speech": 0.77
+    },
+    "mean_music_score": 0.015,
+    "mean_crowd_score": 0.059,
+    "mean_rms_db": -39.2,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/yf2jssdp6lnx72bzqd9ewqyc2e8d.mp3",
+    "share_url": "https://phish.in/1995-06-29/a-day-in-the-life"
+  },
+  {
+    "label": "1995-06-10 Set 2 t16 Sample in a Jar",
+    "edge": "trailing",
+    "track_duration_s": 397.3,
+    "nonmusic_run_s": 99.8,
+    "music_boundary_s": 297.0,
+    "region": [
+      297.0,
+      397.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.03,
+      "speech": 0.97
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.018,
+    "mean_rms_db": -31.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Sample in a Jar"
+    ],
+    "mp3_url": "https://phish.in/blob/b5eso79o29oncn49wqi6hlf4u0yc.mp3",
+    "share_url": "https://phish.in/1995-06-10/sample-in-a-jar"
+  },
+  {
+    "label": "1995-07-01 Set 2 t18 Suzy Greenberg",
+    "edge": "trailing",
+    "track_duration_s": 481.4,
+    "nonmusic_run_s": 96.0,
+    "music_boundary_s": 384.9,
+    "region": [
+      384.9,
+      481.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.23,
+      "speech": 0.78
+    },
+    "mean_music_score": 0.023,
+    "mean_crowd_score": 0.056,
+    "mean_rms_db": -13.8,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 381.9,
+        "end": 387.6,
+        "text": "Thanks all of you, we've never had a great time with the two guys, it was really great. Thank you very much."
+      },
+      {
+        "start": 464.9,
+        "end": 470.0,
+        "text": "And this is, thank you all, everybody would see me for coming out and having a good time with us."
+      },
+      {
+        "start": 470.1,
+        "end": 472.7,
+        "text": "We're really proud of what you do and we thank you very much."
+      }
+    ],
+    "songs": [
+      "Suzy Greenberg"
+    ],
+    "mp3_url": "https://phish.in/blob/jr98zuct1tgiqrftnri5kngr8f8l.mp3",
+    "share_url": "https://phish.in/1995-07-01/suzy-greenberg"
+  },
+  {
+    "label": "1995-12-02 Set 2 t19 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 259.0,
+    "nonmusic_run_s": 87.4,
+    "music_boundary_s": 171.4,
+    "region": [
+      171.4,
+      259.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.09,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.06,
+    "mean_rms_db": -22.9,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/3px3isg049fsb6zud3ql703e1l7x.mp3",
+    "share_url": "https://phish.in/1995-12-02/tweezer-reprise"
+  },
+  {
+    "label": "1995-06-30 Set 2 t17 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 769.8,
+    "nonmusic_run_s": 78.2,
+    "music_boundary_s": 691.1,
+    "region": [
+      691.1,
+      769.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.15,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.055,
+    "mean_rms_db": -26.0,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 703.8,
+        "end": 707.8,
+        "text": "Thank you so much, we had a great time today, thanks."
+      }
+    ],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/g4abwr310b5d87nieef70r0j0trv.mp3",
+    "share_url": "https://phish.in/1995-06-30/the-squirming-coil"
+  },
+  {
+    "label": "1995-10-17 Set 1 t10 Amazing Grace",
+    "edge": "trailing",
+    "track_duration_s": 415.0,
+    "nonmusic_run_s": 71.5,
+    "music_boundary_s": 343.0,
+    "region": [
+      343.0,
+      415.0
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.12,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.023,
+    "mean_crowd_score": 0.024,
+    "mean_rms_db": -35.4,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 340.0,
+        "end": 348.3,
+        "text": "We face the gun."
+      },
+      {
+        "start": 349.0,
+        "end": 350.8,
+        "text": "Everybody sing amazing grace with me, come on."
+      },
+      {
+        "start": 350.8,
+        "end": 363.3,
+        "text": "Ah, praise me, praise me, how sweet the sound"
+      },
+      {
+        "start": 363.8,
+        "end": 372.6,
+        "text": "that saved the French like me."
+      },
+      {
+        "start": 397.2,
+        "end": 400.7,
+        "text": "See you!"
+      },
+      {
+        "start": 403.7,
+        "end": 404.3,
+        "text": "Yes!"
+      },
+      {
+        "start": 405.2,
+        "end": 405.5,
+        "text": "Yes!"
+      },
+      {
+        "start": 409.2,
+        "end": 411.8,
+        "text": "This will give you about 15 minutes."
+      }
+    ],
+    "songs": [
+      "Amazing Grace"
+    ],
+    "mp3_url": "https://phish.in/blob/r7g4oxc57pcc2w80uu28iwqkzjpx.mp3",
+    "share_url": "https://phish.in/1995-10-17/amazing-grace"
+  },
+  {
+    "label": "1995-11-18 Set 2 t19 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 342.9,
+    "nonmusic_run_s": 65.8,
+    "music_boundary_s": 276.7,
+    "region": [
+      276.7,
+      342.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.12,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.046,
+    "mean_rms_db": -26.3,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 318.6,
+        "end": 318.7,
+        "text": "I don't know."
+      },
+      {
+        "start": 320.6,
+        "end": 321.6,
+        "text": "I don't know anything."
+      },
+      {
+        "start": 322.2,
+        "end": 322.8,
+        "text": "I don't know anything."
+      }
+    ],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/34jwsxz381736vvh74e7kzwirj0c.mp3",
+    "share_url": "https://phish.in/1995-11-18/cavern"
+  },
+  {
+    "label": "1995-10-27 Set 2 t18 Possum",
+    "edge": "trailing",
+    "track_duration_s": 896.5,
+    "nonmusic_run_s": 60.5,
+    "music_boundary_s": 835.5,
+    "region": [
+      835.5,
+      896.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.17,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.07,
+    "mean_rms_db": -23.3,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/hhuwtqfplx75ku8d8k3o69g9plj5.mp3",
+    "share_url": "https://phish.in/1995-10-27/possum"
+  },
+  {
+    "label": "1995-10-03 Set 1 t11 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1219.9,
+    "nonmusic_run_s": 56.2,
+    "music_boundary_s": 1163.3,
+    "region": [
+      1163.3,
+      1219.9
+    ],
+    "character": {
+      "silence": 0.09,
+      "crowd": 0.11,
+      "speech": 0.79
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.065,
+    "mean_rms_db": -40.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/17jv92w7h5i0zjlaudee0r92ofuk.mp3",
+    "share_url": "https://phish.in/1995-10-03/you-enjoy-myself"
+  },
+  {
+    "label": "1995-12-28 Encore t20 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 225.2,
+    "nonmusic_run_s": 54.7,
+    "music_boundary_s": 170.4,
+    "region": [
+      170.4,
+      225.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.04,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.02,
+    "mean_crowd_score": 0.03,
+    "mean_rms_db": -34.2,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/xcdzufd20yy3ktm5i53m9d4dcq8x.mp3",
+    "share_url": "https://phish.in/1995-12-28/tweezer-reprise"
+  },
+  {
+    "label": "1995-10-31 Encore t32 My Generation",
+    "edge": "trailing",
+    "track_duration_s": 292.0,
+    "nonmusic_run_s": 52.3,
+    "music_boundary_s": 239.5,
+    "region": [
+      239.5,
+      292.3
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.13,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.075,
+    "mean_rms_db": -26.4,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "My Generation"
+    ],
+    "mp3_url": "https://phish.in/blob/ejiex3hphfk999nbw6j87msdfn4q.mp3",
+    "share_url": "https://phish.in/1995-10-31/my-generation"
+  },
+  {
+    "label": "1995-09-28 Encore t18 Fire",
+    "edge": "trailing",
+    "track_duration_s": 279.3,
+    "nonmusic_run_s": 49.9,
+    "music_boundary_s": 229.0,
+    "region": [
+      229.0,
+      279.4
+    ],
+    "character": {
+      "silence": 0.07,
+      "crowd": 0.13,
+      "speech": 0.8
+    },
+    "mean_music_score": 0.025,
+    "mean_crowd_score": 0.052,
+    "mean_rms_db": -30.1,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/4db3o55p5b6ncclekpm5c74cyxne.mp3",
+    "share_url": "https://phish.in/1995-09-28/fire"
+  },
+  {
+    "label": "1995-11-25 Encore t23 Fire",
+    "edge": "trailing",
+    "track_duration_s": 351.3,
+    "nonmusic_run_s": 49.0,
+    "music_boundary_s": 301.8,
+    "region": [
+      301.8,
+      351.3
+    ],
+    "character": {
+      "silence": 0.01,
+      "crowd": 0.06,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.042,
+    "mean_rms_db": -35.5,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 348.4,
+        "end": 351.2,
+        "text": "Thank you."
+      }
+    ],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/a97iyyrxnqe345bovrsbghxqbpxx.mp3",
+    "share_url": "https://phish.in/1995-11-25/fire"
+  },
+  {
+    "label": "1995-11-30 Encore t19 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 958.0,
+    "nonmusic_run_s": 47.0,
+    "music_boundary_s": 910.5,
+    "region": [
+      910.5,
+      958.0
+    ],
+    "character": {
+      "silence": 0.1,
+      "crowd": 0.06,
+      "speech": 0.84
+    },
+    "mean_music_score": 0.018,
+    "mean_crowd_score": 0.057,
+    "mean_rms_db": -34.0,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/3fcnp9z0asaqnwtlmedq9kt26xhu.mp3",
+    "share_url": "https://phish.in/1995-11-30/harry-hood"
+  },
+  {
+    "label": "1995-06-09 Encore t18 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 646.9,
+    "nonmusic_run_s": 45.1,
+    "music_boundary_s": 601.3,
+    "region": [
+      601.3,
+      646.9
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.06,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.023,
+    "mean_rms_db": -34.1,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 615.4,
+        "end": 619.7,
+        "text": "we had a great time tonight please come see us tomorrow"
+      },
+      {
+        "start": 629.0,
+        "end": 629.8,
+        "text": "Stop it!"
+      },
+      {
+        "start": 636.0,
+        "end": 637.6,
+        "text": "Stop it!"
+      },
+      {
+        "start": 637.6,
+        "end": 638.4,
+        "text": "Stop it!"
+      },
+      {
+        "start": 638.4,
+        "end": 639.1,
+        "text": "Stop it!"
+      }
+    ],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/y2hmbkgk11xytag2yv9axvqoo03e.mp3",
+    "share_url": "https://phish.in/1995-06-09/the-squirming-coil"
+  },
+  {
+    "label": "1995-06-17 Set 1 t09 Stash",
+    "edge": "trailing",
+    "track_duration_s": 1045.0,
+    "nonmusic_run_s": 44.6,
+    "music_boundary_s": 999.9,
+    "region": [
+      999.9,
+      1045.0
+    ],
+    "character": {
+      "silence": 0.01,
+      "crowd": 0.05,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.033,
+    "mean_rms_db": -38.6,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 1004.6,
+        "end": 1007.2,
+        "text": "So we've got about 15 minutes, don't go away, thank you."
+      }
+    ],
+    "songs": [
+      "Stash"
+    ],
+    "mp3_url": "https://phish.in/blob/8xcvnlh73qnw25bwhke2vgghr7pd.mp3",
+    "share_url": "https://phish.in/1995-06-17/stash"
+  },
+  {
+    "label": "1995-06-26 Set 2 t16 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 722.4,
+    "nonmusic_run_s": 41.3,
+    "music_boundary_s": 680.7,
+    "region": [
+      680.7,
+      722.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.08,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.039,
+    "mean_crowd_score": 0.036,
+    "mean_rms_db": -27.4,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 678.6,
+        "end": 680.7,
+        "text": "We'll see you next time. Thank you."
+      }
+    ],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/o17aycztg4g4nkhvsmdizd26rn8m.mp3",
+    "share_url": "https://phish.in/1995-06-26/run-like-an-antelope"
+  },
+  {
+    "label": "1995-12-30 Encore t19 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 353.6,
+    "nonmusic_run_s": 41.3,
+    "music_boundary_s": 311.8,
+    "region": [
+      311.8,
+      353.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.19,
+      "speech": 0.81
+    },
+    "mean_music_score": 0.009,
+    "mean_crowd_score": 0.033,
+    "mean_rms_db": -23.9,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/ptu0dnfbskgpo3e5iwo63tic7fab.mp3",
+    "share_url": "https://phish.in/1995-12-30/a-day-in-the-life"
+  },
+  {
+    "label": "1995-06-15 Set 1 t10 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 774.3,
+    "nonmusic_run_s": 39.8,
+    "music_boundary_s": 733.9,
+    "region": [
+      733.9,
+      774.3
+    ],
+    "character": {
+      "silence": 0.01,
+      "crowd": 0.08,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.02,
+    "mean_crowd_score": 0.037,
+    "mean_rms_db": -31.6,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 771.4,
+        "end": 774.2,
+        "text": "Thank you very much."
+      }
+    ],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/izbdtgck681ejge69v4g4bz219nr.mp3",
+    "share_url": "https://phish.in/1995-06-15/run-like-an-antelope"
+  },
+  {
+    "label": "1995-12-30 Set 2 t18 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 637.5,
+    "nonmusic_run_s": 39.8,
+    "music_boundary_s": 597.2,
+    "region": [
+      597.2,
+      637.5
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.23,
+      "speech": 0.73
+    },
+    "mean_music_score": 0.047,
+    "mean_crowd_score": 0.035,
+    "mean_rms_db": -21.5,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/m4daqckvk9hqy8haw8bo6l7vsg1x.mp3",
+    "share_url": "https://phish.in/1995-12-30/run-like-an-antelope"
+  },
+  {
+    "label": "1995-06-17 Encore t21 Three Little Birds",
+    "edge": "trailing",
+    "track_duration_s": 370.5,
+    "nonmusic_run_s": 39.4,
+    "music_boundary_s": 330.6,
+    "region": [
+      330.6,
+      370.5
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.07,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.073,
+    "mean_rms_db": -32.3,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 353.3,
+        "end": 354.7,
+        "text": "I"
+      }
+    ],
+    "songs": [
+      "Three Little Birds"
+    ],
+    "mp3_url": "https://phish.in/blob/muhw36j8inihv0lm2o6zq9vpak2q.mp3",
+    "share_url": "https://phish.in/1995-06-17/three-little-birds"
+  },
+  {
+    "label": "1995-11-22 Set 1 t10 Sweet Adeline",
+    "edge": "trailing",
+    "track_duration_s": 133.3,
+    "nonmusic_run_s": 39.4,
+    "music_boundary_s": 93.6,
+    "region": [
+      93.6,
+      133.4
+    ],
+    "character": {
+      "silence": 0.01,
+      "crowd": 0.23,
+      "speech": 0.76
+    },
+    "mean_music_score": 0.016,
+    "mean_crowd_score": 0.117,
+    "mean_rms_db": -30.3,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 90.6,
+        "end": 96.7,
+        "text": "You're the flower of my heart, sweet and alive, sweet and alive!"
+      }
+    ],
+    "songs": [
+      "Sweet Adeline"
+    ],
+    "mp3_url": "https://phish.in/blob/i35v17st99uo6tktsjgenki9bior.mp3",
+    "share_url": "https://phish.in/1995-11-22/sweet-adeline"
+  },
+  {
+    "label": "1995-11-24 Encore t23 Rocky Top",
+    "edge": "trailing",
+    "track_duration_s": 181.3,
+    "nonmusic_run_s": 38.9,
+    "music_boundary_s": 142.1,
+    "region": [
+      142.1,
+      181.4
+    ],
+    "character": {
+      "silence": 0.51,
+      "crowd": 0.01,
+      "speech": 0.48
+    },
+    "mean_music_score": 0.016,
+    "mean_crowd_score": 0.024,
+    "mean_rms_db": -116.0,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 149.1,
+        "end": 150.5,
+        "text": "You"
+      }
+    ],
+    "songs": [
+      "Rocky Top"
+    ],
+    "mp3_url": "https://phish.in/blob/vad18wudvvup938u3a3wocpj5st1.mp3",
+    "share_url": "https://phish.in/1995-11-24/rocky-top"
+  },
+  {
+    "label": "1995-11-29 Encore t21 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 313.1,
+    "nonmusic_run_s": 37.9,
+    "music_boundary_s": 274.7,
+    "region": [
+      274.7,
+      313.1
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.09,
+      "speech": 0.87
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.094,
+    "mean_rms_db": -37.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/9cga197b9wdqzapzvw6u29ixi0qc.mp3",
+    "share_url": "https://phish.in/1995-11-29/a-day-in-the-life"
+  },
+  {
+    "label": "1995-12-31 Set 1 t10 Chalk Dust Torture",
+    "edge": "trailing",
+    "track_duration_s": 473.3,
+    "nonmusic_run_s": 37.9,
+    "music_boundary_s": 434.9,
+    "region": [
+      434.9,
+      473.3
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.06,
+      "speech": 0.87
+    },
+    "mean_music_score": 0.025,
+    "mean_crowd_score": 0.015,
+    "mean_rms_db": -31.9,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Chalk Dust Torture"
+    ],
+    "mp3_url": "https://phish.in/blob/juy559ls8b7uyl1xqkjp57mctzte.mp3",
+    "share_url": "https://phish.in/1995-12-31/chalk-dust-torture"
+  },
+  {
+    "label": "1995-10-24 Encore t22 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 310.5,
+    "nonmusic_run_s": 36.5,
+    "music_boundary_s": 273.6,
+    "region": [
+      273.6,
+      310.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.11,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.025,
+    "mean_crowd_score": 0.054,
+    "mean_rms_db": -25.9,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/veb7si1p5eqsi73elgoy347dfu2g.mp3",
+    "share_url": "https://phish.in/1995-10-24/a-day-in-the-life"
+  },
+  {
+    "label": "1995-06-19 Set 2 t18 Possum",
+    "edge": "trailing",
+    "track_duration_s": 856.0,
+    "nonmusic_run_s": 34.1,
+    "music_boundary_s": 821.4,
+    "region": [
+      821.4,
+      856.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.03,
+      "speech": 0.97
+    },
+    "mean_music_score": 0.058,
+    "mean_crowd_score": 0.013,
+    "mean_rms_db": -19.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/duuyp9xk1ix1h94ewoa0t1uyodzt.mp3",
+    "share_url": "https://phish.in/1995-06-19/possum"
+  },
+  {
+    "label": "1995-12-07 Set 2 t21 Amazing Grace",
+    "edge": "trailing",
+    "track_duration_s": 123.1,
+    "nonmusic_run_s": 34.1,
+    "music_boundary_s": 88.8,
+    "region": [
+      88.8,
+      123.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.59,
+      "speech": 0.41
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.308,
+    "mean_rms_db": -22.7,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 93.2,
+        "end": 94.2,
+        "text": "Thank you very much."
+      }
+    ],
+    "songs": [
+      "Amazing Grace"
+    ],
+    "mp3_url": "https://phish.in/blob/8kkdbnba9ybv2k80vb1zhgppy9jy.mp3",
+    "share_url": "https://phish.in/1995-12-07/amazing-grace"
+  },
+  {
+    "label": "1995-06-25 Set 2 t18 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 295.2,
+    "nonmusic_run_s": 33.6,
+    "music_boundary_s": 261.1,
+    "region": [
+      261.1,
+      295.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.1,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.016,
+    "mean_crowd_score": 0.012,
+    "mean_rms_db": -37.0,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/olczz8un0ivyyofezkd8o1dghqun.mp3",
+    "share_url": "https://phish.in/1995-06-25/cavern"
+  },
+  {
+    "label": "1995-12-07 Encore t22 Uncle Pen",
+    "edge": "trailing",
+    "track_duration_s": 285.7,
+    "nonmusic_run_s": 32.2,
+    "music_boundary_s": 253.4,
+    "region": [
+      253.4,
+      286.1
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.34,
+      "speech": 0.6
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.188,
+    "mean_rms_db": -30.5,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 257.7,
+        "end": 260.0,
+        "text": "Thanks a lot everybody guys, great time, thank you very much."
+      }
+    ],
+    "songs": [
+      "Uncle Pen"
+    ],
+    "mp3_url": "https://phish.in/blob/0j8okpdm32zi50jgxn47a2awivs8.mp3",
+    "share_url": "https://phish.in/1995-12-07/uncle-pen"
+  },
+  {
+    "label": "1995-09-29 Encore t17 Chalk Dust Torture",
+    "edge": "trailing",
+    "track_duration_s": 409.8,
+    "nonmusic_run_s": 31.7,
+    "music_boundary_s": 377.6,
+    "region": [
+      377.6,
+      409.8
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.08,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.047,
+    "mean_rms_db": -31.4,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Chalk Dust Torture"
+    ],
+    "mp3_url": "https://phish.in/blob/rhlsjuafvikxy3mtij97q4gajp7l.mp3",
+    "share_url": "https://phish.in/1995-09-29/chalk-dust-torture"
+  },
+  {
+    "label": "1995-06-28 Set 2 t16 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 208.3,
+    "nonmusic_run_s": 31.2,
+    "music_boundary_s": 176.6,
+    "region": [
+      176.6,
+      208.3
+    ],
+    "character": {
+      "silence": 0.09,
+      "crowd": 0.12,
+      "speech": 0.78
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.056,
+    "mean_rms_db": -36.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/ahhalkkxzate3gw1y50h6w43f9ik.mp3",
+    "share_url": "https://phish.in/1995-06-28/tweezer-reprise"
+  },
+  {
+    "label": "1995-10-06 Encore t19 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 303.9,
+    "nonmusic_run_s": 31.2,
+    "music_boundary_s": 272.3,
+    "region": [
+      272.3,
+      303.9
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.48,
+      "speech": 0.51
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.248,
+    "mean_rms_db": -31.4,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/d4xkg39z5005h5tk0awgwqotalhq.mp3",
+    "share_url": "https://phish.in/1995-10-06/a-day-in-the-life"
+  },
+  {
+    "label": "1995-10-08 Encore t22 Rocky Top",
+    "edge": "trailing",
+    "track_duration_s": 184.2,
+    "nonmusic_run_s": 31.2,
+    "music_boundary_s": 152.6,
+    "region": [
+      152.6,
+      184.3
+    ],
+    "character": {
+      "silence": 0.63,
+      "crowd": 0.05,
+      "speech": 0.32
+    },
+    "mean_music_score": 0.018,
+    "mean_crowd_score": 0.025,
+    "mean_rms_db": -132.3,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Rocky Top"
+    ],
+    "mp3_url": "https://phish.in/blob/xiz8lh5k0zefxuy8tdo4irf0ooqd.mp3",
+    "share_url": "https://phish.in/1995-10-08/rocky-top"
+  },
+  {
+    "label": "1995-11-24 Set 1 t09 Suzy Greenberg",
+    "edge": "trailing",
+    "track_duration_s": 379.4,
+    "nonmusic_run_s": 31.2,
+    "music_boundary_s": 347.8,
+    "region": [
+      347.8,
+      379.4
+    ],
+    "character": {
+      "silence": 0.63,
+      "crowd": 0.02,
+      "speech": 0.35
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.018,
+    "mean_rms_db": -136.7,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Suzy Greenberg"
+    ],
+    "mp3_url": "https://phish.in/blob/0iv7ud56b1s4k3zwux1ex63420oz.mp3",
+    "share_url": "https://phish.in/1995-11-24/suzy-greenberg"
+  },
+  {
+    "label": "1995-12-09 Encore t20 Loving Cup",
+    "edge": "trailing",
+    "track_duration_s": 346.6,
+    "nonmusic_run_s": 31.2,
+    "music_boundary_s": 314.9,
+    "region": [
+      314.9,
+      346.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.14,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.02,
+    "mean_crowd_score": 0.09,
+    "mean_rms_db": -26.4,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Loving Cup"
+    ],
+    "mp3_url": "https://phish.in/blob/60zov71q9xnsfoyzyqtkx0vwc82y.mp3",
+    "share_url": "https://phish.in/1995-12-09/loving-cup"
+  },
+  {
+    "label": "1995-10-11 Set 2 t20 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 303.6,
+    "nonmusic_run_s": 30.7,
+    "music_boundary_s": 272.4,
+    "region": [
+      272.4,
+      303.6
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.14,
+      "speech": 0.81
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.106,
+    "mean_rms_db": -33.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/asf3cti8n8gra24r05ype2e54fqj.mp3",
+    "share_url": "https://phish.in/1995-10-11/a-day-in-the-life"
+  },
+  {
+    "label": "1995-12-28 Set 1 t09 Possum",
+    "edge": "trailing",
+    "track_duration_s": 797.0,
+    "nonmusic_run_s": 30.7,
+    "music_boundary_s": 765.8,
+    "region": [
+      765.8,
+      797.0
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.02,
+      "speech": 0.97
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.028,
+    "mean_rms_db": -34.1,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/35wpdvrjhauelo5edzgq03xs792z.mp3",
+    "share_url": "https://phish.in/1995-12-28/possum"
+  },
+  {
+    "label": "1995-11-29 Set 1 t09 Split Open and Melt",
+    "edge": "trailing",
+    "track_duration_s": 699.2,
+    "nonmusic_run_s": 30.2,
+    "music_boundary_s": 668.5,
+    "region": [
+      668.5,
+      699.2
+    ],
+    "character": {
+      "silence": 0.25,
+      "crowd": 0.02,
+      "speech": 0.73
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.052,
+    "mean_rms_db": -72.0,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 676.7,
+        "end": 678.1,
+        "text": "You"
+      }
+    ],
+    "songs": [
+      "Split Open and Melt"
+    ],
+    "mp3_url": "https://phish.in/blob/ibv5l5l7fca4k1b9qjzkamq2kpc5.mp3",
+    "share_url": "https://phish.in/1995-11-29/split-open-and-melt"
+  },
+  {
+    "label": "1995-06-10 Encore t17 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 333.0,
+    "nonmusic_run_s": 29.8,
+    "music_boundary_s": 302.8,
+    "region": [
+      302.8,
+      333.0
+    ],
+    "character": {
+      "silence": 0.19,
+      "crowd": 0.05,
+      "speech": 0.76
+    },
+    "mean_music_score": 0.026,
+    "mean_crowd_score": 0.021,
+    "mean_rms_db": -43.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/c47kz90f89d4tcx39atmkebptas8.mp3",
+    "share_url": "https://phish.in/1995-06-10/a-day-in-the-life"
+  },
+  {
+    "label": "1995-12-08 Encore t17 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 281.4,
+    "nonmusic_run_s": 29.3,
+    "music_boundary_s": 252.0,
+    "region": [
+      252.0,
+      281.8
+    ],
+    "character": {
+      "silence": 0.18,
+      "crowd": 0.23,
+      "speech": 0.59
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.1,
+    "mean_rms_db": -32.3,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/yudeinsepfw1ctd7dsow8yuj9a94.mp3",
+    "share_url": "https://phish.in/1995-12-08/a-day-in-the-life"
+  },
+  {
+    "label": "1995-12-30 Set 1 t09 Sample in a Jar",
+    "edge": "trailing",
+    "track_duration_s": 307.1,
+    "nonmusic_run_s": 29.3,
+    "music_boundary_s": 277.3,
+    "region": [
+      277.3,
+      307.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.18,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.048,
+    "mean_crowd_score": 0.04,
+    "mean_rms_db": -25.4,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 301.4,
+        "end": 304.2,
+        "text": "Thank you very much."
+      }
+    ],
+    "songs": [
+      "Sample in a Jar"
+    ],
+    "mp3_url": "https://phish.in/blob/duyilirtdurvgr092gj3sl9ejvtp.mp3",
+    "share_url": "https://phish.in/1995-12-30/sample-in-a-jar"
+  },
+  {
+    "label": "1995-11-16 Encore t20 Brown Eyed Girl",
+    "edge": "trailing",
+    "track_duration_s": 293.6,
+    "nonmusic_run_s": 28.8,
+    "music_boundary_s": 264.5,
+    "region": [
+      264.5,
+      293.8
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.07,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.024,
+    "mean_crowd_score": 0.081,
+    "mean_rms_db": -25.7,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Brown Eyed Girl"
+    ],
+    "mp3_url": "https://phish.in/blob/4b9roq5ib3miw0h3y53fxof5v428.mp3",
+    "share_url": "https://phish.in/1995-11-16/brown-eyed-girl"
+  },
+  {
+    "label": "1995-06-08 Set 1 t09 Chalk Dust Torture",
+    "edge": "trailing",
+    "track_duration_s": 503.3,
+    "nonmusic_run_s": 28.3,
+    "music_boundary_s": 474.5,
+    "region": [
+      474.5,
+      503.3
+    ],
+    "character": {
+      "silence": 0.36,
+      "crowd": 0.24,
+      "speech": 0.41
+    },
+    "mean_music_score": 0.088,
+    "mean_crowd_score": 0.02,
+    "mean_rms_db": -80.1,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Chalk Dust Torture"
+    ],
+    "mp3_url": "https://phish.in/blob/wa9w9m4o7kdvhq2gs3uyjud1nafn.mp3",
+    "share_url": "https://phish.in/1995-06-08/chalk-dust-torture"
+  },
+  {
+    "label": "1995-06-22 Encore t16 While My Guitar Gently Weeps",
+    "edge": "trailing",
+    "track_duration_s": 402.7,
+    "nonmusic_run_s": 28.3,
+    "music_boundary_s": 373.9,
+    "region": [
+      373.9,
+      402.7
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.05,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.02,
+    "mean_rms_db": -31.4,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "While My Guitar Gently Weeps"
+    ],
+    "mp3_url": "https://phish.in/blob/c6bal6f20doqe0245we41hbrkhat.mp3",
+    "share_url": "https://phish.in/1995-06-22/while-my-guitar-gently-weeps"
+  },
+  {
+    "label": "1995-10-22 Set 2 t23 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 300.3,
+    "nonmusic_run_s": 28.3,
+    "music_boundary_s": 271.5,
+    "region": [
+      271.5,
+      300.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.02,
+      "speech": 0.98
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.019,
+    "mean_rms_db": -23.9,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/3bpk6x4ncw2d4lkc47m25ngczont.mp3",
+    "share_url": "https://phish.in/1995-10-22/cavern"
+  },
+  {
+    "label": "1995-10-13 Encore t20 Bold as Love",
+    "edge": "trailing",
+    "track_duration_s": 330.2,
+    "nonmusic_run_s": 27.8,
+    "music_boundary_s": 301.9,
+    "region": [
+      301.9,
+      330.2
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.24,
+      "speech": 0.72
+    },
+    "mean_music_score": 0.027,
+    "mean_crowd_score": 0.133,
+    "mean_rms_db": -30.5,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Bold as Love"
+    ],
+    "mp3_url": "https://phish.in/blob/xn3ar2990b9sur4fna43amvj5lpl.mp3",
+    "share_url": "https://phish.in/1995-10-13/bold-as-love"
+  },
+  {
+    "label": "1995-10-15 Set 1 t10 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 1070.0,
+    "nonmusic_run_s": 27.8,
+    "music_boundary_s": 1041.7,
+    "region": [
+      1041.7,
+      1070.0
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.43,
+      "speech": 0.55
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.253,
+    "mean_rms_db": -26.9,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/bkb3686uak9iy6jgf7ec3bi644wg.mp3",
+    "share_url": "https://phish.in/1995-10-15/david-bowie"
+  },
+  {
+    "label": "1995-11-09 Set 1 t08 Sample in a Jar",
+    "edge": "trailing",
+    "track_duration_s": 315.9,
+    "nonmusic_run_s": 27.4,
+    "music_boundary_s": 288.1,
+    "region": [
+      288.1,
+      315.9
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.19,
+      "speech": 0.79
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.148,
+    "mean_rms_db": -35.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Sample in a Jar"
+    ],
+    "mp3_url": "https://phish.in/blob/fcm9sombdn7eab8me9it1cmolrhe.mp3",
+    "share_url": "https://phish.in/1995-11-09/sample-in-a-jar"
+  },
+  {
+    "label": "1995-12-08 Set 1 t09 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 367.8,
+    "nonmusic_run_s": 27.4,
+    "music_boundary_s": 340.0,
+    "region": [
+      340.0,
+      367.8
+    ],
+    "character": {
+      "silence": 0.12,
+      "crowd": 0.19,
+      "speech": 0.68
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.114,
+    "mean_rms_db": -32.0,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/l4tgu2eefm9nfgywigyw312milfz.mp3",
+    "share_url": "https://phish.in/1995-12-08/good-times-bad-times"
+  },
+  {
+    "label": "1995-10-19 Encore t22 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 297.1,
+    "nonmusic_run_s": 26.9,
+    "music_boundary_s": 269.8,
+    "region": [
+      269.8,
+      297.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.23,
+      "speech": 0.77
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.131,
+    "mean_rms_db": -17.2,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/jy2bwjxbx8yudrbx7lrkndyob47e.mp3",
+    "share_url": "https://phish.in/1995-10-19/a-day-in-the-life"
+  },
+  {
+    "label": "1995-12-31 Encore t24 Johnny B. Goode",
+    "edge": "trailing",
+    "track_duration_s": 296.3,
+    "nonmusic_run_s": 26.9,
+    "music_boundary_s": 269.3,
+    "region": [
+      269.3,
+      296.6
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.02,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.051,
+    "mean_rms_db": -27.2,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 293.4,
+        "end": 296.2,
+        "text": "CHEERING AND APPLAUSE"
+      }
+    ],
+    "songs": [
+      "Johnny B. Goode"
+    ],
+    "mp3_url": "https://phish.in/blob/o02pzqryaka3k4fa3pquge32ixcd.mp3",
+    "share_url": "https://phish.in/1995-12-31/johnny-b-goode"
+  },
+  {
+    "label": "1995-06-20 Encore t22 Amazing Grace",
+    "edge": "trailing",
+    "track_duration_s": 117.4,
+    "nonmusic_run_s": 26.4,
+    "music_boundary_s": 90.7,
+    "region": [
+      90.7,
+      117.6
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.15,
+      "speech": 0.8
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.049,
+    "mean_rms_db": -29.4,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 87.7,
+        "end": 90.1,
+        "text": "Can we first begin?"
+      },
+      {
+        "start": 90.1,
+        "end": 91.6,
+        "text": "Oh"
+      }
+    ],
+    "songs": [
+      "Amazing Grace"
+    ],
+    "mp3_url": "https://phish.in/blob/hb04c83hjsg0licmvsvx8tvdxvsp.mp3",
+    "share_url": "https://phish.in/1995-06-20/amazing-grace"
+  },
+  {
+    "label": "1995-12-01 Encore t18 Suzy Greenberg",
+    "edge": "trailing",
+    "track_duration_s": 391.4,
+    "nonmusic_run_s": 26.4,
+    "music_boundary_s": 364.5,
+    "region": [
+      364.5,
+      391.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.31,
+      "speech": 0.69
+    },
+    "mean_music_score": 0.023,
+    "mean_crowd_score": 0.104,
+    "mean_rms_db": -21.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Suzy Greenberg"
+    ],
+    "mp3_url": "https://phish.in/blob/nwllmwoyfb2187k70i34f6nblpdb.mp3",
+    "share_url": "https://phish.in/1995-12-01/suzy-greenberg"
+  },
+  {
+    "label": "1995-10-02 Set 2 t20 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 677.2,
+    "nonmusic_run_s": 25.9,
+    "music_boundary_s": 650.8,
+    "region": [
+      650.8,
+      677.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.09,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.017,
+    "mean_crowd_score": 0.047,
+    "mean_rms_db": -30.5,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/hiiy2y1un1uuccvr8ahkfgyxqssj.mp3",
+    "share_url": "https://phish.in/1995-10-02/run-like-an-antelope"
+  },
+  {
+    "label": "1995-11-28 Encore t21 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 660.1,
+    "nonmusic_run_s": 25.9,
+    "music_boundary_s": 633.7,
+    "region": [
+      633.7,
+      660.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.17,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.097,
+    "mean_rms_db": -28.3,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 647.3,
+        "end": 653.8,
+        "text": "We had a really good time, thank you, and to all the family here, guys and everyone."
+      }
+    ],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/c6yb4am580af7l0qeyrj3457nfit.mp3",
+    "share_url": "https://phish.in/1995-11-28/the-squirming-coil"
+  },
+  {
+    "label": "1995-06-14 Set 2 t17 While My Guitar Gently Weeps",
+    "edge": "trailing",
+    "track_duration_s": 364.2,
+    "nonmusic_run_s": 25.4,
+    "music_boundary_s": 338.3,
+    "region": [
+      338.3,
+      364.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.19,
+      "speech": 0.81
+    },
+    "mean_music_score": 0.043,
+    "mean_crowd_score": 0.044,
+    "mean_rms_db": -24.9,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "While My Guitar Gently Weeps"
+    ],
+    "mp3_url": "https://phish.in/blob/vh9yc5y4vse4noglo1yi6syoz0fl.mp3",
+    "share_url": "https://phish.in/1995-06-14/while-my-guitar-gently-weeps"
+  },
+  {
+    "label": "1995-09-27 Set 1 t09 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 702.3,
+    "nonmusic_run_s": 25.4,
+    "music_boundary_s": 676.4,
+    "region": [
+      676.4,
+      702.3
+    ],
+    "character": {
+      "silence": 0.09,
+      "crowd": 0.02,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.015,
+    "mean_rms_db": -33.5,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 689.8,
+        "end": 693.8,
+        "text": "We're taking a very short break, let's stick around."
+      },
+      {
+        "start": 693.8,
+        "end": 694.7,
+        "text": "Thank you."
+      }
+    ],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/c1x6ceqr08jhz70ie1xl5yh3cst8.mp3",
+    "share_url": "https://phish.in/1995-09-27/the-squirming-coil"
+  },
+  {
+    "label": "1995-10-21 Set 1 t12 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 103.9,
+    "nonmusic_run_s": 25.0,
+    "music_boundary_s": 78.7,
+    "region": [
+      78.7,
+      104.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.08,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.028,
+    "mean_rms_db": -29.1,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/s0vwi5k9dhct9wbyf06t5yk9cgjz.mp3",
+    "share_url": "https://phish.in/1995-10-21/tweezer-reprise-2"
+  },
+  {
+    "label": "1995-05-16 Encore t14 Gloria",
+    "edge": "trailing",
+    "track_duration_s": 121.4,
+    "nonmusic_run_s": 24.5,
+    "music_boundary_s": 96.5,
+    "region": [
+      96.5,
+      121.4
+    ],
+    "character": {
+      "silence": 0.08,
+      "crowd": 0.45,
+      "speech": 0.47
+    },
+    "mean_music_score": 0.059,
+    "mean_crowd_score": 0.219,
+    "mean_rms_db": -33.1,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Gloria"
+    ],
+    "mp3_url": "https://phish.in/blob/h1yansi0rflnfxpzj0n9rn3luknt.mp3",
+    "share_url": "https://phish.in/1995-05-16/gloria"
+  },
+  {
+    "label": "1995-06-16 Encore t16 Bold as Love",
+    "edge": "trailing",
+    "track_duration_s": 343.3,
+    "nonmusic_run_s": 24.5,
+    "music_boundary_s": 318.3,
+    "region": [
+      318.3,
+      343.3
+    ],
+    "character": {
+      "silence": 0.08,
+      "crowd": 0.02,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.015,
+    "mean_rms_db": -41.0,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Bold as Love"
+    ],
+    "mp3_url": "https://phish.in/blob/1bsbrfb1q389176fj4npm5pdwwik.mp3",
+    "share_url": "https://phish.in/1995-06-16/bold-as-love"
+  },
+  {
+    "label": "1995-06-22 Set 1 t10 Sweet Adeline",
+    "edge": "trailing",
+    "track_duration_s": 129.0,
+    "nonmusic_run_s": 24.5,
+    "music_boundary_s": 104.2,
+    "region": [
+      104.2,
+      129.1
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.1,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.088,
+    "mean_crowd_score": 0.024,
+    "mean_rms_db": -30.9,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 112.0,
+        "end": 119.1,
+        "text": "You're the power of my heart, sweet out of line, sweet out of line!"
+      }
+    ],
+    "songs": [
+      "Sweet Adeline"
+    ],
+    "mp3_url": "https://phish.in/blob/bgruvgppchr8grluobwep6sw2sws.mp3",
+    "share_url": "https://phish.in/1995-06-22/sweet-adeline"
+  },
+  {
+    "label": "1995-11-30 Set 1 t10 Fire",
+    "edge": "trailing",
+    "track_duration_s": 298.7,
+    "nonmusic_run_s": 24.5,
+    "music_boundary_s": 274.1,
+    "region": [
+      274.1,
+      299.0
+    ],
+    "character": {
+      "silence": 0.2,
+      "crowd": 0.06,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.02,
+    "mean_crowd_score": 0.048,
+    "mean_rms_db": -41.1,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/vjj3kcg484jn0g15l8efb9nthzx9.mp3",
+    "share_url": "https://phish.in/1995-11-30/fire"
+  },
+  {
+    "label": "1995-06-14 Encore t20 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 191.2,
+    "nonmusic_run_s": 23.5,
+    "music_boundary_s": 167.5,
+    "region": [
+      167.5,
+      191.5
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.06,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.065,
+    "mean_rms_db": -25.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/vohuk8b6gjzpotbfi59qppd28ub7.mp3",
+    "share_url": "https://phish.in/1995-06-14/tweezer-reprise"
+  },
+  {
+    "label": "1995-10-22 Encore t25 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 653.9,
+    "nonmusic_run_s": 23.5,
+    "music_boundary_s": 629.9,
+    "region": [
+      629.9,
+      653.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.04,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.044,
+    "mean_rms_db": -21.6,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 642.6,
+        "end": 646.2,
+        "text": "You're a great time of the night, thanks for coming, see us again for the next one."
+      }
+    ],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/q3c8ceoejhjftbmb3ahhc6yssif8.mp3",
+    "share_url": "https://phish.in/1995-10-22/the-squirming-coil"
+  },
+  {
+    "label": "1995-10-22 Set 1 t12 Stash",
+    "edge": "trailing",
+    "track_duration_s": 773.7,
+    "nonmusic_run_s": 23.0,
+    "music_boundary_s": 750.2,
+    "region": [
+      750.2,
+      773.7
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.02,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.015,
+    "mean_rms_db": -27.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Stash"
+    ],
+    "mp3_url": "https://phish.in/blob/eem586zbxqhmblhlv6u0eg47vmv4.mp3",
+    "share_url": "https://phish.in/1995-10-22/stash"
+  },
+  {
+    "label": "1995-12-07 Set 1 t10 Hello My Baby",
+    "edge": "trailing",
+    "track_duration_s": 95.6,
+    "nonmusic_run_s": 23.0,
+    "music_boundary_s": 72.5,
+    "region": [
+      72.5,
+      96.0
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.46,
+      "speech": 0.5
+    },
+    "mean_music_score": 0.04,
+    "mean_crowd_score": 0.164,
+    "mean_rms_db": -24.0,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 69.5,
+        "end": 75.0,
+        "text": "that are in your arms."
+      },
+      {
+        "start": 80.2,
+        "end": 82.8,
+        "text": "So we have about 15 minutes. Thank you."
+      }
+    ],
+    "songs": [
+      "Hello My Baby"
+    ],
+    "mp3_url": "https://phish.in/blob/v1s4p1g8dmd87cgch8ue5hz0wvhc.mp3",
+    "share_url": "https://phish.in/1995-12-07/hello-my-baby"
+  },
+  {
+    "label": "1995-12-11 Encore t25 While My Guitar Gently Weeps",
+    "edge": "trailing",
+    "track_duration_s": 425.2,
+    "nonmusic_run_s": 23.0,
+    "music_boundary_s": 401.6,
+    "region": [
+      401.6,
+      425.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.23,
+      "speech": 0.77
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.183,
+    "mean_rms_db": -24.3,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 409.2,
+        "end": 411.2,
+        "text": "It's our warring hands, I tell ya."
+      }
+    ],
+    "songs": [
+      "While My Guitar Gently Weeps"
+    ],
+    "mp3_url": "https://phish.in/blob/x7hymkb52scuwq587ke7o8vgjhxj.mp3",
+    "share_url": "https://phish.in/1995-12-11/while-my-guitar-gently-weeps"
+  },
+  {
+    "label": "1995-11-22 Encore t18 Frankenstein",
+    "edge": "trailing",
+    "track_duration_s": 317.6,
+    "nonmusic_run_s": 22.6,
+    "music_boundary_s": 294.5,
+    "region": [
+      294.5,
+      317.6
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.17,
+      "speech": 0.81
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.079,
+    "mean_rms_db": -27.3,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 302.8,
+        "end": 304.2,
+        "text": "You"
+      }
+    ],
+    "songs": [
+      "Frankenstein"
+    ],
+    "mp3_url": "https://phish.in/blob/d92h1zchoa4nfw44khkxxnbkx2v5.mp3",
+    "share_url": "https://phish.in/1995-11-22/frankenstein"
+  },
+  {
+    "label": "1995-10-19 Set 1 t11 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 288.0,
+    "nonmusic_run_s": 22.1,
+    "music_boundary_s": 265.4,
+    "region": [
+      265.4,
+      288.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.15,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.026,
+    "mean_crowd_score": 0.051,
+    "mean_rms_db": -19.3,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/lvrxx5lszdmvh03c7cmrwjgflsf8.mp3",
+    "share_url": "https://phish.in/1995-10-19/cavern"
+  },
+  {
+    "label": "1995-10-27 Set 1 t09 Suspicious Minds > Hold Your Head Up",
+    "edge": "trailing",
+    "track_duration_s": 439.9,
+    "nonmusic_run_s": 22.1,
+    "music_boundary_s": 417.4,
+    "region": [
+      417.4,
+      439.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.28,
+      "speech": 0.72
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.074,
+    "mean_rms_db": -25.5,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Hold Your Head Up",
+      "Suspicious Minds"
+    ],
+    "mp3_url": "https://phish.in/blob/38hw32sxpxiuv6e3cpr6oal8kivo.mp3",
+    "share_url": "https://phish.in/1995-10-27/suspicious-minds-hyhu"
+  },
+  {
+    "label": "1995-11-12 Set 1 t10 Hello My Baby",
+    "edge": "trailing",
+    "track_duration_s": 164.3,
+    "nonmusic_run_s": 22.1,
+    "music_boundary_s": 142.1,
+    "region": [
+      142.1,
+      164.6
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.35,
+      "speech": 0.61
+    },
+    "mean_music_score": 0.03,
+    "mean_crowd_score": 0.163,
+    "mean_rms_db": -30.9,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 139.1,
+        "end": 141.2,
+        "text": "and I am your"
+      },
+      {
+        "start": 142.5,
+        "end": 147.5,
+        "text": "O-o-o-o-o-o-o-o-o-o-o-o-o-o!"
+      },
+      {
+        "start": 163.2,
+        "end": 164.2,
+        "text": "Whoops!"
+      }
+    ],
+    "songs": [
+      "Hello My Baby"
+    ],
+    "mp3_url": "https://phish.in/blob/3xfjhlkk7d030v1r70knb2s73u47.mp3",
+    "share_url": "https://phish.in/1995-11-12/hello-my-baby"
+  },
+  {
+    "label": "1995-10-07 Set 1 t09 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 720.3,
+    "nonmusic_run_s": 21.6,
+    "music_boundary_s": 698.2,
+    "region": [
+      698.2,
+      720.3
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.38,
+      "speech": 0.6
+    },
+    "mean_music_score": 0.027,
+    "mean_crowd_score": 0.161,
+    "mean_rms_db": -23.1,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 695.2,
+        "end": 696.6,
+        "text": "That's it, that's it!"
+      }
+    ],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/fr7tj4tk3rj1cjigd5j2rur0mqxa.mp3",
+    "share_url": "https://phish.in/1995-10-07/run-like-an-antelope"
+  },
+  {
+    "label": "1995-11-19 Set 1 t10 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 689.5,
+    "nonmusic_run_s": 21.6,
+    "music_boundary_s": 667.4,
+    "region": [
+      667.4,
+      689.5
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.11,
+      "speech": 0.87
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.062,
+    "mean_rms_db": -30.4,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 681.6,
+        "end": 684.0,
+        "text": "We're taking a really short break today."
+      }
+    ],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/ihkekfyk1izuqvzwvaj9j8v209b2.mp3",
+    "share_url": "https://phish.in/1995-11-19/the-squirming-coil"
+  },
+  {
+    "label": "1995-12-31 Set 3 t23 Frankenstein",
+    "edge": "trailing",
+    "track_duration_s": 296.7,
+    "nonmusic_run_s": 21.6,
+    "music_boundary_s": 275.0,
+    "region": [
+      275.0,
+      297.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.09,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.086,
+    "mean_rms_db": -24.0,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 280.4,
+        "end": 281.7,
+        "text": "Thank you everybody, thank you."
+      }
+    ],
+    "songs": [
+      "Frankenstein"
+    ],
+    "mp3_url": "https://phish.in/blob/v649l9g2k8v9xomvcg0h5o5ia9cy.mp3",
+    "share_url": "https://phish.in/1995-12-31/frankenstein"
+  },
+  {
+    "label": "1995-06-15 Encore t20 Frankenstein",
+    "edge": "trailing",
+    "track_duration_s": 299.3,
+    "nonmusic_run_s": 21.1,
+    "music_boundary_s": 277.9,
+    "region": [
+      277.9,
+      299.5
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.2,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.121,
+    "mean_rms_db": -26.7,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Frankenstein"
+    ],
+    "mp3_url": "https://phish.in/blob/47p7m3yox12icoohnmlx5rgvplmm.mp3",
+    "share_url": "https://phish.in/1995-06-15/frankenstein"
+  },
+  {
+    "label": "1995-10-02 Encore t21 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 304.6,
+    "nonmusic_run_s": 21.1,
+    "music_boundary_s": 283.0,
+    "region": [
+      283.0,
+      304.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.16,
+      "speech": 0.84
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.095,
+    "mean_rms_db": -33.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/7wmrj6jnk72dekq60my1vm54mcfx.mp3",
+    "share_url": "https://phish.in/1995-10-02/a-day-in-the-life"
+  },
+  {
+    "label": "1995-10-05 Encore t21 While My Guitar Gently Weeps",
+    "edge": "trailing",
+    "track_duration_s": 385.0,
+    "nonmusic_run_s": 21.1,
+    "music_boundary_s": 363.4,
+    "region": [
+      363.4,
+      385.0
+    ],
+    "character": {
+      "silence": 0.16,
+      "crowd": 0.16,
+      "speech": 0.68
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.082,
+    "mean_rms_db": -43.2,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "While My Guitar Gently Weeps"
+    ],
+    "mp3_url": "https://phish.in/blob/gi5og64vsd16vvmxqztlhgstncc5.mp3",
+    "share_url": "https://phish.in/1995-10-05/while-my-guitar-gently-weeps"
+  },
+  {
+    "label": "1995-11-21 Encore t22 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 369.2,
+    "nonmusic_run_s": 21.1,
+    "music_boundary_s": 347.6,
+    "region": [
+      347.6,
+      369.2
+    ],
+    "character": {
+      "silence": 0.11,
+      "crowd": 0.23,
+      "speech": 0.66
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.077,
+    "mean_rms_db": -38.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/4oae8n713cs2gspl2lhi457e2xml.mp3",
+    "share_url": "https://phish.in/1995-11-21/good-times-bad-times"
+  },
+  {
+    "label": "1995-06-10 Set 1 t10 Suzy Greenberg",
+    "edge": "trailing",
+    "track_duration_s": 409.0,
+    "nonmusic_run_s": 20.6,
+    "music_boundary_s": 387.9,
+    "region": [
+      387.9,
+      409.0
+    ],
+    "character": {
+      "silence": 0.3,
+      "crowd": 0.0,
+      "speech": 0.7
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.011,
+    "mean_rms_db": -48.7,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Suzy Greenberg"
+    ],
+    "mp3_url": "https://phish.in/blob/3lxggzhsu90srhfsxjzypqob14l0.mp3",
+    "share_url": "https://phish.in/1995-06-10/suzy-greenberg"
+  },
+  {
+    "label": "1995-06-24 Set 1 t10 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 660.3,
+    "nonmusic_run_s": 20.6,
+    "music_boundary_s": 639.2,
+    "region": [
+      639.2,
+      660.3
+    ],
+    "character": {
+      "silence": 0.07,
+      "crowd": 0.09,
+      "speech": 0.84
+    },
+    "mean_music_score": 0.029,
+    "mean_crowd_score": 0.045,
+    "mean_rms_db": -29.6,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 636.2,
+        "end": 636.9,
+        "text": "Oh"
+      }
+    ],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/s0std0ppxwbmsh7o8sl5shx0p4na.mp3",
+    "share_url": "https://phish.in/1995-06-24/the-squirming-coil"
+  },
+  {
+    "label": "1995-10-02 Set 1 t10 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 889.4,
+    "nonmusic_run_s": 20.6,
+    "music_boundary_s": 868.3,
+    "region": [
+      868.3,
+      889.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.21,
+      "speech": 0.79
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.101,
+    "mean_rms_db": -31.9,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 873.4,
+        "end": 875.3,
+        "text": "It's not back in 15 minutes, thank you."
+      }
+    ],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/ldhzpuu0juvcrcx10jlhiugz1hdz.mp3",
+    "share_url": "https://phish.in/1995-10-02/david-bowie"
+  },
+  {
+    "label": "1995-11-15 Set 1 t09 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 734.0,
+    "nonmusic_run_s": 20.6,
+    "music_boundary_s": 712.9,
+    "region": [
+      712.9,
+      734.0
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.19,
+      "speech": 0.77
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.053,
+    "mean_rms_db": -33.3,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 726.1,
+        "end": 729.2,
+        "text": "We're going to take a 15 minute break, don't go away."
+      }
+    ],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/s6cbad44tqgxigabs80hb99q730b.mp3",
+    "share_url": "https://phish.in/1995-11-15/the-squirming-coil"
+  },
+  {
+    "label": "1995-06-13 Encore t19 Julius",
+    "edge": "trailing",
+    "track_duration_s": 489.7,
+    "nonmusic_run_s": 19.7,
+    "music_boundary_s": 469.5,
+    "region": [
+      469.5,
+      489.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.15,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.078,
+    "mean_rms_db": -27.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Julius"
+    ],
+    "mp3_url": "https://phish.in/blob/6exwco1o588cgjpzg1kpwfsbjlf0.mp3",
+    "share_url": "https://phish.in/1995-06-13/julius"
+  },
+  {
+    "label": "1995-09-30 Encore t20 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 337.6,
+    "nonmusic_run_s": 19.7,
+    "music_boundary_s": 317.5,
+    "region": [
+      317.5,
+      337.6
+    ],
+    "character": {
+      "silence": 0.1,
+      "crowd": 0.05,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.037,
+    "mean_rms_db": -34.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/6h1ortjxpez0eu1a9b635iqhhkh9.mp3",
+    "share_url": "https://phish.in/1995-09-30/good-times-bad-times"
+  },
+  {
+    "label": "1995-11-19 Encore t20 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 190.9,
+    "nonmusic_run_s": 19.7,
+    "music_boundary_s": 170.9,
+    "region": [
+      170.9,
+      191.0
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.2,
+      "speech": 0.76
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.075,
+    "mean_rms_db": -30.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/p0q6guvhkjsd3sup0kegsx1vdsaa.mp3",
+    "share_url": "https://phish.in/1995-11-19/tweezer-reprise"
+  },
+  {
+    "label": "1995-10-08 Set 1 t09 Free",
+    "edge": "trailing",
+    "track_duration_s": 556.0,
+    "nonmusic_run_s": 19.2,
+    "music_boundary_s": 536.3,
+    "region": [
+      536.3,
+      556.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.1,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.079,
+    "mean_rms_db": -29.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Free"
+    ],
+    "mp3_url": "https://phish.in/blob/ojt4f0gxvxalhts7tzp8zx4a9g0l.mp3",
+    "share_url": "https://phish.in/1995-10-08/free"
+  },
+  {
+    "label": "1995-11-19 Set 2 t18 Suzy Greenberg",
+    "edge": "trailing",
+    "track_duration_s": 401.6,
+    "nonmusic_run_s": 19.2,
+    "music_boundary_s": 382.0,
+    "region": [
+      382.0,
+      401.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.15,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.031,
+    "mean_crowd_score": 0.034,
+    "mean_rms_db": -23.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Suzy Greenberg"
+    ],
+    "mp3_url": "https://phish.in/blob/tpolm41fgqbgdgol2p0vhbor45li.mp3",
+    "share_url": "https://phish.in/1995-11-19/suzy-greenberg"
+  },
+  {
+    "label": "1995-06-19 Set 1 t10 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 672.6,
+    "nonmusic_run_s": 18.7,
+    "music_boundary_s": 653.4,
+    "region": [
+      653.4,
+      672.6
+    ],
+    "character": {
+      "silence": 0.08,
+      "crowd": 0.0,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.041,
+    "mean_crowd_score": 0.008,
+    "mean_rms_db": -32.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/iadh9zuvbq6utneoysfnh2xf0335.mp3",
+    "share_url": "https://phish.in/1995-06-19/run-like-an-antelope"
+  },
+  {
+    "label": "1995-11-11 Set 1 t12 Chalk Dust Torture",
+    "edge": "trailing",
+    "track_duration_s": 409.5,
+    "nonmusic_run_s": 18.7,
+    "music_boundary_s": 390.3,
+    "region": [
+      390.3,
+      409.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.31,
+      "speech": 0.69
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.179,
+    "mean_rms_db": -24.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Chalk Dust Torture"
+    ],
+    "mp3_url": "https://phish.in/blob/nngk4c4qzv6m8pku19r2tnzgww7p.mp3",
+    "share_url": "https://phish.in/1995-11-11/chalk-dust-torture"
+  },
+  {
+    "label": "1995-12-15 Set 1 t11 Possum",
+    "edge": "trailing",
+    "track_duration_s": 811.2,
+    "nonmusic_run_s": 18.7,
+    "music_boundary_s": 792.0,
+    "region": [
+      792.0,
+      811.2
+    ],
+    "character": {
+      "silence": 0.1,
+      "crowd": 0.05,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.039,
+    "mean_crowd_score": 0.028,
+    "mean_rms_db": -32.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/ib2yheka514xnk5ao1p2psn7jhnk.mp3",
+    "share_url": "https://phish.in/1995-12-15/possum"
+  },
+  {
+    "label": "1995-10-08 Set 2 t20 Keyboard Army",
+    "edge": "trailing",
+    "track_duration_s": 121.3,
+    "nonmusic_run_s": 18.2,
+    "music_boundary_s": 102.7,
+    "region": [
+      102.7,
+      121.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.16,
+      "speech": 0.84
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.106,
+    "mean_rms_db": -21.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Keyboard Army"
+    ],
+    "mp3_url": "https://phish.in/blob/yqxqk43vji2dg5whjj0w7uzfkr6c.mp3",
+    "share_url": "https://phish.in/1995-10-08/keyboard-army-2"
+  },
+  {
+    "label": "1995-10-13 Set 1 t09 Life on Mars?",
+    "edge": "trailing",
+    "track_duration_s": 225.8,
+    "nonmusic_run_s": 18.2,
+    "music_boundary_s": 207.4,
+    "region": [
+      207.4,
+      226.1
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.05,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.038,
+    "mean_crowd_score": 0.075,
+    "mean_rms_db": -32.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Life on Mars?"
+    ],
+    "mp3_url": "https://phish.in/blob/6q9dyjis3vb3rqrh4ghoh26ykvdx.mp3",
+    "share_url": "https://phish.in/1995-10-13/life-on-mars"
+  },
+  {
+    "label": "1995-06-25 Encore t20 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 585.8,
+    "nonmusic_run_s": 17.8,
+    "music_boundary_s": 567.5,
+    "region": [
+      567.5,
+      585.8
+    ],
+    "character": {
+      "silence": 0.35,
+      "crowd": 0.05,
+      "speech": 0.59
+    },
+    "mean_music_score": 0.024,
+    "mean_crowd_score": 0.002,
+    "mean_rms_db": -44.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/i8ql2ngrfr85llapq8xo0h1rjyba.mp3",
+    "share_url": "https://phish.in/1995-06-25/slave-to-the-traffic-light"
+  },
+  {
+    "label": "1995-10-03 Encore t21 Rocky Top",
+    "edge": "trailing",
+    "track_duration_s": 179.5,
+    "nonmusic_run_s": 17.8,
+    "music_boundary_s": 161.8,
+    "region": [
+      161.8,
+      180.0
+    ],
+    "character": {
+      "silence": 0.08,
+      "crowd": 0.22,
+      "speech": 0.7
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.166,
+    "mean_rms_db": -33.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Rocky Top"
+    ],
+    "mp3_url": "https://phish.in/blob/ry0ky4934moyf3jpo57mp87tassp.mp3",
+    "share_url": "https://phish.in/1995-10-03/rocky-top"
+  },
+  {
+    "label": "1995-11-18 Encore t20 Bill Bailey, Won't You Please Come Home?",
+    "edge": "trailing",
+    "track_duration_s": 209.8,
+    "nonmusic_run_s": 17.8,
+    "music_boundary_s": 192.0,
+    "region": [
+      192.0,
+      210.2
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.08,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.069,
+    "mean_rms_db": -28.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Bill Bailey, Won't You Please Come Home?"
+    ],
+    "mp3_url": "https://phish.in/blob/ws15lbaev4djh6d4i5p0r4p5gwvh.mp3",
+    "share_url": "https://phish.in/1995-11-18/bill-bailey-wont-you-please-come-home"
+  },
+  {
+    "label": "1995-06-19 Encore t19 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 386.9,
+    "nonmusic_run_s": 17.3,
+    "music_boundary_s": 369.1,
+    "region": [
+      369.1,
+      386.9
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.0,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.023,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -34.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/iqv2rs4lemzdjfz6mxmyui1nulxw.mp3",
+    "share_url": "https://phish.in/1995-06-19/a-day-in-the-life"
+  },
+  {
+    "label": "1995-11-16 Set 1 t10 Funky Bitch",
+    "edge": "trailing",
+    "track_duration_s": 341.8,
+    "nonmusic_run_s": 17.3,
+    "music_boundary_s": 324.0,
+    "region": [
+      324.0,
+      341.8
+    ],
+    "character": {
+      "silence": 0.08,
+      "crowd": 0.0,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.009,
+    "mean_crowd_score": 0.028,
+    "mean_rms_db": -30.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Funky Bitch"
+    ],
+    "mp3_url": "https://phish.in/blob/lvsbtbj6ffmndqufqk4fv6c4y637.mp3",
+    "share_url": "https://phish.in/1995-11-16/funky-bitch"
+  },
+  {
+    "label": "1995-12-09 Set 1 t10 Chalk Dust Torture",
+    "edge": "trailing",
+    "track_duration_s": 471.6,
+    "nonmusic_run_s": 17.3,
+    "music_boundary_s": 453.9,
+    "region": [
+      453.9,
+      471.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.06,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.057,
+    "mean_rms_db": -22.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Chalk Dust Torture"
+    ],
+    "mp3_url": "https://phish.in/blob/vzia3lfxbhkgiuwzx0u76v5hm17x.mp3",
+    "share_url": "https://phish.in/1995-12-09/chalk-dust-torture"
+  },
+  {
+    "label": "1995-06-13 Set 1 t10 Chalk Dust Torture",
+    "edge": "trailing",
+    "track_duration_s": 445.8,
+    "nonmusic_run_s": 16.8,
+    "music_boundary_s": 428.5,
+    "region": [
+      428.5,
+      445.8
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.2,
+      "speech": 0.74
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.073,
+    "mean_rms_db": -29.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Chalk Dust Torture"
+    ],
+    "mp3_url": "https://phish.in/blob/m2a899wb0nf9si7iryd1ncahocsw.mp3",
+    "share_url": "https://phish.in/1995-06-13/chalk-dust-torture"
+  },
+  {
+    "label": "1995-06-23 Set 1 t08 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1509.7,
+    "nonmusic_run_s": 16.8,
+    "music_boundary_s": 1492.4,
+    "region": [
+      1492.4,
+      1509.7
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.0,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.017,
+    "mean_rms_db": -35.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/a815f3dwirrnbzufbmllbgoy2jl1.mp3",
+    "share_url": "https://phish.in/1995-06-23/you-enjoy-myself"
+  },
+  {
+    "label": "1995-09-28 Set 1 t09 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 659.6,
+    "nonmusic_run_s": 16.8,
+    "music_boundary_s": 642.3,
+    "region": [
+      642.3,
+      659.6
+    ],
+    "character": {
+      "silence": 0.2,
+      "crowd": 0.0,
+      "speech": 0.8
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.039,
+    "mean_rms_db": -37.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/122psdu4ysle6omah8dss6cw2zdp.mp3",
+    "share_url": "https://phish.in/1995-09-28/slave-to-the-traffic-light"
+  },
+  {
+    "label": "1995-12-05 Encore t18 Sweet Adeline",
+    "edge": "trailing",
+    "track_duration_s": 115.8,
+    "nonmusic_run_s": 16.8,
+    "music_boundary_s": 98.9,
+    "region": [
+      98.9,
+      116.2
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.03,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.037,
+    "mean_rms_db": -31.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sweet Adeline"
+    ],
+    "mp3_url": "https://phish.in/blob/52v7434l8r7906nwmhltszwzpqnn.mp3",
+    "share_url": "https://phish.in/1995-12-05/sweet-adeline"
+  },
+  {
+    "label": "1995-06-08 Encore t18 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 374.6,
+    "nonmusic_run_s": 15.8,
+    "music_boundary_s": 358.3,
+    "region": [
+      358.3,
+      374.6
+    ],
+    "character": {
+      "silence": 0.61,
+      "crowd": 0.15,
+      "speech": 0.24
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.031,
+    "mean_rms_db": -125.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/9bdt9hp4mm22nxc7dgos8hxiw1dx.mp3",
+    "share_url": "https://phish.in/1995-06-08/good-times-bad-times"
+  },
+  {
+    "label": "1995-06-29 Encore t17 Theme From the Bottom",
+    "edge": "trailing",
+    "track_duration_s": 606.9,
+    "nonmusic_run_s": 15.8,
+    "music_boundary_s": 590.6,
+    "region": [
+      590.6,
+      606.9
+    ],
+    "character": {
+      "silence": 0.33,
+      "crowd": 0.12,
+      "speech": 0.55
+    },
+    "mean_music_score": 0.028,
+    "mean_crowd_score": 0.045,
+    "mean_rms_db": -50.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Theme From the Bottom"
+    ],
+    "mp3_url": "https://phish.in/blob/4lajqr7c5cyhp3scyrpods8ygd1o.mp3",
+    "share_url": "https://phish.in/1995-06-29/theme-from-the-bottom"
+  },
+  {
+    "label": "1995-10-07 Encore t19 Fire",
+    "edge": "trailing",
+    "track_duration_s": 246.3,
+    "nonmusic_run_s": 15.8,
+    "music_boundary_s": 230.4,
+    "region": [
+      230.4,
+      246.7
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.18,
+      "speech": 0.79
+    },
+    "mean_music_score": 0.063,
+    "mean_crowd_score": 0.036,
+    "mean_rms_db": -22.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/ih7mevqgclhp4u24zs5tcshjs8s2.mp3",
+    "share_url": "https://phish.in/1995-10-07/fire"
+  },
+  {
+    "label": "1995-10-15 Encore t19 Funky Bitch",
+    "edge": "trailing",
+    "track_duration_s": 335.7,
+    "nonmusic_run_s": 15.8,
+    "music_boundary_s": 319.4,
+    "region": [
+      319.4,
+      335.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.27,
+      "speech": 0.73
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.155,
+    "mean_rms_db": -17.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Funky Bitch"
+    ],
+    "mp3_url": "https://phish.in/blob/vfbbh1825rveh3b5hkutwirx14ux.mp3",
+    "share_url": "https://phish.in/1995-10-15/funky-bitch"
+  },
+  {
+    "label": "1995-06-28 Set 1 t08 Chalk Dust Torture",
+    "edge": "trailing",
+    "track_duration_s": 487.4,
+    "nonmusic_run_s": 15.4,
+    "music_boundary_s": 471.5,
+    "region": [
+      471.5,
+      487.4
+    ],
+    "character": {
+      "silence": 0.16,
+      "crowd": 0.06,
+      "speech": 0.78
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.045,
+    "mean_rms_db": -39.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Chalk Dust Torture"
+    ],
+    "mp3_url": "https://phish.in/blob/gd73jp1k63vscsj0p1j56bxledlt.mp3",
+    "share_url": "https://phish.in/1995-06-28/chalk-dust-torture"
+  },
+  {
+    "label": "1995-06-28 Encore t18 While My Guitar Gently Weeps",
+    "edge": "trailing",
+    "track_duration_s": 403.8,
+    "nonmusic_run_s": 15.4,
+    "music_boundary_s": 388.0,
+    "region": [
+      388.0,
+      403.8
+    ],
+    "character": {
+      "silence": 0.22,
+      "crowd": 0.03,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.048,
+    "mean_rms_db": -40.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "While My Guitar Gently Weeps"
+    ],
+    "mp3_url": "https://phish.in/blob/fok5ftv4nsvnfn15s32z8gz23063.mp3",
+    "share_url": "https://phish.in/1995-06-28/while-my-guitar-gently-weeps"
+  },
+  {
+    "label": "1995-11-18 Set 1 t08 Sample in a Jar",
+    "edge": "trailing",
+    "track_duration_s": 306.4,
+    "nonmusic_run_s": 15.4,
+    "music_boundary_s": 290.6,
+    "region": [
+      290.6,
+      306.4
+    ],
+    "character": {
+      "silence": 0.12,
+      "crowd": 0.0,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.038,
+    "mean_rms_db": -34.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sample in a Jar"
+    ],
+    "mp3_url": "https://phish.in/blob/3ae44h04xcda58zgw7lgi84hpsvg.mp3",
+    "share_url": "https://phish.in/1995-11-18/sample-in-a-jar"
+  },
+  {
+    "label": "1995-06-29 Set 1 t10 Carolina",
+    "edge": "trailing",
+    "track_duration_s": 84.1,
+    "nonmusic_run_s": 14.9,
+    "music_boundary_s": 69.1,
+    "region": [
+      69.1,
+      84.5
+    ],
+    "character": {
+      "silence": 0.39,
+      "crowd": 0.32,
+      "speech": 0.29
+    },
+    "mean_music_score": 0.019,
+    "mean_crowd_score": 0.119,
+    "mean_rms_db": -49.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Carolina"
+    ],
+    "mp3_url": "https://phish.in/blob/6mo3r6frgedp9sjbhlnv95xx0x6f.mp3",
+    "share_url": "https://phish.in/1995-06-29/carolina"
+  },
+  {
+    "label": "1995-12-29 Set 1 t09 Sweet Adeline",
+    "edge": "trailing",
+    "track_duration_s": 150.2,
+    "nonmusic_run_s": 14.9,
+    "music_boundary_s": 134.9,
+    "region": [
+      134.9,
+      150.2
+    ],
+    "character": {
+      "silence": 0.1,
+      "crowd": 0.19,
+      "speech": 0.71
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.097,
+    "mean_rms_db": -30.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sweet Adeline"
+    ],
+    "mp3_url": "https://phish.in/blob/iluy6w97ib6jthlkzaezxm0vnmk3.mp3",
+    "share_url": "https://phish.in/1995-12-29/sweet-adeline"
+  },
+  {
+    "label": "1995-06-23 Set 2 t16 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 339.1,
+    "nonmusic_run_s": 14.4,
+    "music_boundary_s": 324.2,
+    "region": [
+      324.2,
+      339.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.03,
+      "speech": 0.97
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.046,
+    "mean_rms_db": -32.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/jb4fqmrd1xjiucso9tb0pgiv94af.mp3",
+    "share_url": "https://phish.in/1995-06-23/good-times-bad-times"
+  },
+  {
+    "label": "1995-10-05 Set 1 t11 Suzy Greenberg",
+    "edge": "trailing",
+    "track_duration_s": 487.4,
+    "nonmusic_run_s": 14.4,
+    "music_boundary_s": 472.5,
+    "region": [
+      472.5,
+      487.4
+    ],
+    "character": {
+      "silence": 0.17,
+      "crowd": 0.1,
+      "speech": 0.73
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.03,
+    "mean_rms_db": -36.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Suzy Greenberg"
+    ],
+    "mp3_url": "https://phish.in/blob/g2zdduxs3h0qzlhdczfv8m8stdry.mp3",
+    "share_url": "https://phish.in/1995-10-05/suzy-greenberg"
+  },
+  {
+    "label": "1995-10-29 Set 1 t12 Sweet Adeline",
+    "edge": "trailing",
+    "track_duration_s": 101.3,
+    "nonmusic_run_s": 14.4,
+    "music_boundary_s": 86.9,
+    "region": [
+      86.9,
+      101.8
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.3,
+      "speech": 0.67
+    },
+    "mean_music_score": 0.026,
+    "mean_crowd_score": 0.122,
+    "mean_rms_db": -27.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sweet Adeline"
+    ],
+    "mp3_url": "https://phish.in/blob/347040j98xxhddzlsux72zs6l99c.mp3",
+    "share_url": "https://phish.in/1995-10-29/sweet-adeline"
+  },
+  {
+    "label": "1995-10-11 Encore t21 Chalk Dust Torture",
+    "edge": "trailing",
+    "track_duration_s": 363.6,
+    "nonmusic_run_s": 13.9,
+    "music_boundary_s": 349.2,
+    "region": [
+      349.2,
+      363.6
+    ],
+    "character": {
+      "silence": 0.14,
+      "crowd": 0.17,
+      "speech": 0.69
+    },
+    "mean_music_score": 0.054,
+    "mean_crowd_score": 0.048,
+    "mean_rms_db": -42.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Chalk Dust Torture"
+    ],
+    "mp3_url": "https://phish.in/blob/vl7mxr9qr7lela1d0hhjhrchue8b.mp3",
+    "share_url": "https://phish.in/1995-10-11/chalk-dust-torture"
+  },
+  {
+    "label": "1995-11-10 Encore t19 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 1068.7,
+    "nonmusic_run_s": 13.9,
+    "music_boundary_s": 1054.3,
+    "region": [
+      1054.3,
+      1068.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.029,
+    "mean_rms_db": -23.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/hv8xadbekhuv7vl0dtj0tcsr09ni.mp3",
+    "share_url": "https://phish.in/1995-11-10/harry-hood"
+  },
+  {
+    "label": "1995-11-30 Set 2 t18 Amazing Grace",
+    "edge": "trailing",
+    "track_duration_s": 101.1,
+    "nonmusic_run_s": 13.9,
+    "music_boundary_s": 86.9,
+    "region": [
+      86.9,
+      101.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.45,
+      "speech": 0.55
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.135,
+    "mean_rms_db": -24.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Amazing Grace"
+    ],
+    "mp3_url": "https://phish.in/blob/6jcdip7223d414oiwxxuohwfqikd.mp3",
+    "share_url": "https://phish.in/1995-11-30/amazing-grace"
+  },
+  {
+    "label": "1995-06-07 Set 2 t19 Suzy Greenberg",
+    "edge": "trailing",
+    "track_duration_s": 357.3,
+    "nonmusic_run_s": 13.4,
+    "music_boundary_s": 343.3,
+    "region": [
+      343.3,
+      357.3
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.0,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.037,
+    "mean_rms_db": -25.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Suzy Greenberg"
+    ],
+    "mp3_url": "https://phish.in/blob/16jimokoc5vtdkzga6x01uhtznak.mp3",
+    "share_url": "https://phish.in/1995-06-07/suzy-greenberg"
+  },
+  {
+    "label": "1995-06-20 Set 1 t09 Split Open and Melt",
+    "edge": "trailing",
+    "track_duration_s": 839.3,
+    "nonmusic_run_s": 13.4,
+    "music_boundary_s": 825.4,
+    "region": [
+      825.4,
+      839.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.043,
+    "mean_rms_db": -26.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Split Open and Melt"
+    ],
+    "mp3_url": "https://phish.in/blob/st952e2pvokm8915pxoeu5xd91m4.mp3",
+    "share_url": "https://phish.in/1995-06-20/split-open-and-melt"
+  },
+  {
+    "label": "1995-12-14 Set 1 t10 Frankenstein",
+    "edge": "trailing",
+    "track_duration_s": 290.2,
+    "nonmusic_run_s": 13.4,
+    "music_boundary_s": 276.5,
+    "region": [
+      276.5,
+      290.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.073,
+    "mean_rms_db": -28.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Frankenstein"
+    ],
+    "mp3_url": "https://phish.in/blob/7cqzr49w8nig25e8kefruegqstfe.mp3",
+    "share_url": "https://phish.in/1995-12-14/frankenstein"
+  },
+  {
+    "label": "1995-12-14 Encore t20 Bold as Love",
+    "edge": "trailing",
+    "track_duration_s": 322.9,
+    "nonmusic_run_s": 13.4,
+    "music_boundary_s": 309.0,
+    "region": [
+      309.0,
+      322.9
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.07,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.082,
+    "mean_rms_db": -31.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Bold as Love"
+    ],
+    "mp3_url": "https://phish.in/blob/rq8dhfs3v5kb6043u1uc7e97zuhu.mp3",
+    "share_url": "https://phish.in/1995-12-14/bold-as-love"
+  },
+  {
+    "label": "1995-12-15 Set 2 t19 Sweet Adeline",
+    "edge": "trailing",
+    "track_duration_s": 100.8,
+    "nonmusic_run_s": 13.4,
+    "music_boundary_s": 87.4,
+    "region": [
+      87.4,
+      101.3
+    ],
+    "character": {
+      "silence": 0.07,
+      "crowd": 0.29,
+      "speech": 0.64
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.043,
+    "mean_rms_db": -25.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sweet Adeline"
+    ],
+    "mp3_url": "https://phish.in/blob/nbx0ag862hgz1elre773cuh8jpnd.mp3",
+    "share_url": "https://phish.in/1995-12-15/sweet-adeline"
+  },
+  {
+    "label": "1995-10-24 Set 2 t21 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 278.0,
+    "nonmusic_run_s": 13.0,
+    "music_boundary_s": 265.0,
+    "region": [
+      265.0,
+      278.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.11,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.067,
+    "mean_rms_db": -22.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/k9ws549jhoverqd66yicsv1f8lu0.mp3",
+    "share_url": "https://phish.in/1995-10-24/cavern"
+  },
+  {
+    "label": "1995-10-28 Encore t18 While My Guitar Gently Weeps",
+    "edge": "trailing",
+    "track_duration_s": 361.0,
+    "nonmusic_run_s": 13.0,
+    "music_boundary_s": 347.5,
+    "region": [
+      347.5,
+      361.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.26,
+      "speech": 0.74
+    },
+    "mean_music_score": 0.068,
+    "mean_crowd_score": 0.065,
+    "mean_rms_db": -22.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "While My Guitar Gently Weeps"
+    ],
+    "mp3_url": "https://phish.in/blob/rmco316zy1f3ndwrj9t8nlx6bq38.mp3",
+    "share_url": "https://phish.in/1995-10-28/while-my-guitar-gently-weeps"
+  },
+  {
+    "label": "1995-10-31 Set 2 t26 Love, Reign O'er Me",
+    "edge": "trailing",
+    "track_duration_s": 378.3,
+    "nonmusic_run_s": 13.0,
+    "music_boundary_s": 364.9,
+    "region": [
+      364.9,
+      378.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.15,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.057,
+    "mean_rms_db": -25.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Love, Reign O'er Me"
+    ],
+    "mp3_url": "https://phish.in/blob/vgzm5wm9phggbzvyzcvqeezmmwtd.mp3",
+    "share_url": "https://phish.in/1995-10-31/love-reign-oer-me"
+  },
+  {
+    "label": "1995-10-17 Encore t18 I'm Blue, I'm Lonesome",
+    "edge": "trailing",
+    "track_duration_s": 159.8,
+    "nonmusic_run_s": 12.5,
+    "music_boundary_s": 146.9,
+    "region": [
+      146.9,
+      159.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.46,
+      "speech": 0.54
+    },
+    "mean_music_score": 0.027,
+    "mean_crowd_score": 0.245,
+    "mean_rms_db": -24.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "I'm Blue, I'm Lonesome"
+    ],
+    "mp3_url": "https://phish.in/blob/1go0bz1kqutx1rzzwreftf2d5h3k.mp3",
+    "share_url": "https://phish.in/1995-10-17/im-blue-im-lonesome"
+  },
+  {
+    "label": "1995-11-10 Set 1 t09 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 297.0,
+    "nonmusic_run_s": 12.5,
+    "music_boundary_s": 284.2,
+    "region": [
+      284.2,
+      297.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.036,
+    "mean_crowd_score": 0.03,
+    "mean_rms_db": -26.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/me2u7qwsbjt782gcybz4k4yd8ci2.mp3",
+    "share_url": "https://phish.in/1995-11-10/cavern"
+  },
+  {
+    "label": "1995-06-14 Set 1 t12 Split Open and Melt",
+    "edge": "trailing",
+    "track_duration_s": 708.6,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 696.1,
+    "region": [
+      696.1,
+      708.6
+    ],
+    "character": {
+      "silence": 0.08,
+      "crowd": 0.08,
+      "speech": 0.84
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.035,
+    "mean_rms_db": -32.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Split Open and Melt"
+    ],
+    "mp3_url": "https://phish.in/blob/of6kyz0mxephuj6ovqo7b2lhk6io.mp3",
+    "share_url": "https://phish.in/1995-06-14/split-open-and-melt"
+  },
+  {
+    "label": "1995-06-17 Set 2 t20 Sample in a Jar",
+    "edge": "trailing",
+    "track_duration_s": 305.0,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 292.5,
+    "region": [
+      292.5,
+      305.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.036,
+    "mean_rms_db": -29.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sample in a Jar"
+    ],
+    "mp3_url": "https://phish.in/blob/9lzp8e97szpum69vbhwinzblruvh.mp3",
+    "share_url": "https://phish.in/1995-06-17/sample-in-a-jar"
+  },
+  {
+    "label": "1995-06-22 Set 2 t14 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 175.6,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 163.2,
+    "region": [
+      163.2,
+      175.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.028,
+    "mean_rms_db": -23.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/hqidt18ba9hb4oc1m1dad452r7bv.mp3",
+    "share_url": "https://phish.in/1995-06-22/tweezer-reprise"
+  },
+  {
+    "label": "1995-10-11 Set 1 t09 Sample in a Jar",
+    "edge": "trailing",
+    "track_duration_s": 306.4,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 293.9,
+    "region": [
+      293.9,
+      306.4
+    ],
+    "character": {
+      "silence": 0.2,
+      "crowd": 0.04,
+      "speech": 0.76
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.081,
+    "mean_rms_db": -50.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sample in a Jar"
+    ],
+    "mp3_url": "https://phish.in/blob/wplh4rb8rimrfaftuo5qtv5jwprm.mp3",
+    "share_url": "https://phish.in/1995-10-11/sample-in-a-jar"
+  },
+  {
+    "label": "1995-10-14 Encore t19 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 287.0,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 274.6,
+    "region": [
+      274.6,
+      287.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.68,
+      "speech": 0.32
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.405,
+    "mean_rms_db": -23.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/6609atd55iww0uedizwbu75blxtb.mp3",
+    "share_url": "https://phish.in/1995-10-14/a-day-in-the-life"
+  },
+  {
+    "label": "1995-10-28 Set 1 t10 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 723.5,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 711.0,
+    "region": [
+      711.0,
+      723.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.28,
+      "speech": 0.72
+    },
+    "mean_music_score": 0.015,
+    "mean_crowd_score": 0.094,
+    "mean_rms_db": -24.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/upapanrconcw0vq8enqo1ksdwq1n.mp3",
+    "share_url": "https://phish.in/1995-10-28/run-like-an-antelope"
+  },
+  {
+    "label": "1995-11-25 Set 1 t09 Runaway Jim",
+    "edge": "trailing",
+    "track_duration_s": 532.3,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 519.9,
+    "region": [
+      519.9,
+      532.3
+    ],
+    "character": {
+      "silence": 0.36,
+      "crowd": 0.08,
+      "speech": 0.56
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.048,
+    "mean_rms_db": -51.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Runaway Jim"
+    ],
+    "mp3_url": "https://phish.in/blob/lti0kf4phg24budjck0ubwnhw14q.mp3",
+    "share_url": "https://phish.in/1995-11-25/runaway-jim"
+  },
+  {
+    "label": "1995-12-04 Set 1 t10 While My Guitar Gently Weeps",
+    "edge": "trailing",
+    "track_duration_s": 381.8,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 369.3,
+    "region": [
+      369.3,
+      381.8
+    ],
+    "character": {
+      "silence": 0.08,
+      "crowd": 0.4,
+      "speech": 0.52
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.126,
+    "mean_rms_db": -32.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "While My Guitar Gently Weeps"
+    ],
+    "mp3_url": "https://phish.in/blob/oo68ptc8j30kr5wk0ifhxf83q8mb.mp3",
+    "share_url": "https://phish.in/1995-12-04/while-my-guitar-gently-weeps"
+  },
+  {
+    "label": "1995-12-04 Encore t21 Rocky Top",
+    "edge": "trailing",
+    "track_duration_s": 163.8,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 151.7,
+    "region": [
+      151.7,
+      164.2
+    ],
+    "character": {
+      "silence": 0.08,
+      "crowd": 0.12,
+      "speech": 0.8
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.066,
+    "mean_rms_db": -31.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Rocky Top"
+    ],
+    "mp3_url": "https://phish.in/blob/kgf3pwgi2l20d9pgk62rs0n2bovq.mp3",
+    "share_url": "https://phish.in/1995-12-04/rocky-top"
+  },
+  {
+    "label": "1995-12-05 Set 1 t08 I'm Blue, I'm Lonesome",
+    "edge": "trailing",
+    "track_duration_s": 152.7,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 140.6,
+    "region": [
+      140.6,
+      153.1
+    ],
+    "character": {
+      "silence": 0.08,
+      "crowd": 0.12,
+      "speech": 0.8
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.14,
+    "mean_rms_db": -33.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "I'm Blue, I'm Lonesome"
+    ],
+    "mp3_url": "https://phish.in/blob/gp8dq36ougnq3mfjnxz49og9hyd2.mp3",
+    "share_url": "https://phish.in/1995-12-05/im-blue-im-lonesome"
+  },
+  {
+    "label": "1995-06-07 Encore t20 While My Guitar Gently Weeps",
+    "edge": "trailing",
+    "track_duration_s": 396.7,
+    "nonmusic_run_s": 11.5,
+    "music_boundary_s": 384.7,
+    "region": [
+      384.7,
+      396.7
+    ],
+    "character": {
+      "silence": 0.17,
+      "crowd": 0.17,
+      "speech": 0.67
+    },
+    "mean_music_score": 0.037,
+    "mean_crowd_score": 0.038,
+    "mean_rms_db": -32.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "While My Guitar Gently Weeps"
+    ],
+    "mp3_url": "https://phish.in/blob/o60ekl3opijd67xzmu9abxiivbf1.mp3",
+    "share_url": "https://phish.in/1995-06-07/while-my-guitar-gently-weeps"
+  },
+  {
+    "label": "1995-06-23 Encore t17 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 318.5,
+    "nonmusic_run_s": 11.5,
+    "music_boundary_s": 306.5,
+    "region": [
+      306.5,
+      318.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.12,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.029,
+    "mean_crowd_score": 0.042,
+    "mean_rms_db": -38.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/u2uoai7y85ip55kyrtzdt2zzkuft.mp3",
+    "share_url": "https://phish.in/1995-06-23/a-day-in-the-life"
+  },
+  {
+    "label": "1995-09-27 Encore t18 Possum",
+    "edge": "trailing",
+    "track_duration_s": 666.8,
+    "nonmusic_run_s": 11.5,
+    "music_boundary_s": 654.8,
+    "region": [
+      654.8,
+      666.8
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.21,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.133,
+    "mean_rms_db": -31.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/363s4bt3r4zcsnra1bujy1087nvt.mp3",
+    "share_url": "https://phish.in/1995-09-27/possum"
+  },
+  {
+    "label": "1995-11-09 Set 2 t17 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 638.1,
+    "nonmusic_run_s": 11.5,
+    "music_boundary_s": 626.1,
+    "region": [
+      626.1,
+      638.1
+    ],
+    "character": {
+      "silence": 0.12,
+      "crowd": 0.25,
+      "speech": 0.62
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.184,
+    "mean_rms_db": -38.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/53n7jgmn9g7p753n24qkhr3etbmh.mp3",
+    "share_url": "https://phish.in/1995-11-09/the-squirming-coil"
+  },
+  {
+    "label": "1995-11-25 Set 2 t21 Poor Heart",
+    "edge": "trailing",
+    "track_duration_s": 306.9,
+    "nonmusic_run_s": 11.5,
+    "music_boundary_s": 294.9,
+    "region": [
+      294.9,
+      306.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.25,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.031,
+    "mean_crowd_score": 0.102,
+    "mean_rms_db": -27.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Poor Heart"
+    ],
+    "mp3_url": "https://phish.in/blob/udtt71tu5s9vthmybde01g9i886o.mp3",
+    "share_url": "https://phish.in/1995-11-25/poor-heart-2"
+  },
+  {
+    "label": "1995-10-25 Encore t20 Fire",
+    "edge": "trailing",
+    "track_duration_s": 293.0,
+    "nonmusic_run_s": 11.0,
+    "music_boundary_s": 281.8,
+    "region": [
+      281.8,
+      293.3
+    ],
+    "character": {
+      "silence": 0.13,
+      "crowd": 0.13,
+      "speech": 0.74
+    },
+    "mean_music_score": 0.043,
+    "mean_crowd_score": 0.058,
+    "mean_rms_db": -33.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/jid531ccprixkeckclmyup9mbyqm.mp3",
+    "share_url": "https://phish.in/1995-10-25/fire"
+  },
+  {
+    "label": "1995-06-09 Set 1 t09 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 641.6,
+    "nonmusic_run_s": 10.6,
+    "music_boundary_s": 630.5,
+    "region": [
+      630.5,
+      641.6
+    ],
+    "character": {
+      "silence": 0.09,
+      "crowd": 0.0,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.015,
+    "mean_rms_db": -32.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/ddq27fwdgzogr6zixu90i2cea04r.mp3",
+    "share_url": "https://phish.in/1995-06-09/run-like-an-antelope"
+  },
+  {
+    "label": "1995-07-02 Encore t20 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 184.2,
+    "nonmusic_run_s": 10.6,
+    "music_boundary_s": 173.3,
+    "region": [
+      173.3,
+      184.3
+    ],
+    "character": {
+      "silence": 0.18,
+      "crowd": 0.23,
+      "speech": 0.59
+    },
+    "mean_music_score": 0.015,
+    "mean_crowd_score": 0.069,
+    "mean_rms_db": -54.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/i8gh6v7pz2io34v6lsqp8nkumt4u.mp3",
+    "share_url": "https://phish.in/1995-07-02/tweezer-reprise"
+  },
+  {
+    "label": "1995-09-29 Set 1 t08 Suzy Greenberg",
+    "edge": "trailing",
+    "track_duration_s": 393.9,
+    "nonmusic_run_s": 10.6,
+    "music_boundary_s": 382.8,
+    "region": [
+      382.8,
+      393.9
+    ],
+    "character": {
+      "silence": 0.18,
+      "crowd": 0.0,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.009,
+    "mean_crowd_score": 0.02,
+    "mean_rms_db": -40.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Suzy Greenberg"
+    ],
+    "mp3_url": "https://phish.in/blob/lz019ifurddh6y7nqh1njfu095fb.mp3",
+    "share_url": "https://phish.in/1995-09-29/suzy-greenberg"
+  },
+  {
+    "label": "1995-12-11 Set 1 t15 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 276.0,
+    "nonmusic_run_s": 10.6,
+    "music_boundary_s": 265.0,
+    "region": [
+      265.0,
+      276.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.14,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.08,
+    "mean_rms_db": -25.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/vgrsh33i7pe9laf34lja21k3xelq.mp3",
+    "share_url": "https://phish.in/1995-12-11/cavern"
+  },
+  {
+    "label": "1995-06-16 Set 1 t10 Split Open and Melt",
+    "edge": "trailing",
+    "track_duration_s": 882.0,
+    "nonmusic_run_s": 10.1,
+    "music_boundary_s": 871.4,
+    "region": [
+      871.4,
+      882.0
+    ],
+    "character": {
+      "silence": 0.19,
+      "crowd": 0.0,
+      "speech": 0.81
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.017,
+    "mean_rms_db": -40.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Split Open and Melt"
+    ],
+    "mp3_url": "https://phish.in/blob/f3fw18fsnuyk4pxdmtkea7w1gevg.mp3",
+    "share_url": "https://phish.in/1995-06-16/split-open-and-melt"
+  },
+  {
+    "label": "1995-12-02 Set 1 t10 Possum",
+    "edge": "trailing",
+    "track_duration_s": 827.2,
+    "nonmusic_run_s": 10.1,
+    "music_boundary_s": 816.7,
+    "region": [
+      816.7,
+      827.2
+    ],
+    "character": {
+      "silence": 0.1,
+      "crowd": 0.1,
+      "speech": 0.81
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.078,
+    "mean_rms_db": -30.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/xvipjk4ss2ar3ob0lrswqevihvq0.mp3",
+    "share_url": "https://phish.in/1995-12-02/possum"
+  },
+  {
+    "label": "1995-06-26 Encore t18 Rocky Top",
+    "edge": "trailing",
+    "track_duration_s": 157.2,
+    "nonmusic_run_s": 9.6,
+    "music_boundary_s": 147.4,
+    "region": [
+      147.4,
+      157.4
+    ],
+    "character": {
+      "silence": 0.1,
+      "crowd": 0.1,
+      "speech": 0.8
+    },
+    "mean_music_score": 0.032,
+    "mean_crowd_score": 0.041,
+    "mean_rms_db": -33.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Rocky Top"
+    ],
+    "mp3_url": "https://phish.in/blob/ulxakdey2odmjohowqryu2a48nik.mp3",
+    "share_url": "https://phish.in/1995-06-26/rocky-top"
+  },
+  {
+    "label": "1995-07-03 Set 1 t11 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 270.2,
+    "nonmusic_run_s": 9.1,
+    "music_boundary_s": 260.6,
+    "region": [
+      260.6,
+      270.2
+    ],
+    "character": {
+      "silence": 0.21,
+      "crowd": 0.05,
+      "speech": 0.74
+    },
+    "mean_music_score": 0.031,
+    "mean_crowd_score": 0.05,
+    "mean_rms_db": -56.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/tqia8qb56u09wwq6t1wz3cmxrxml.mp3",
+    "share_url": "https://phish.in/1995-07-03/cavern"
+  },
+  {
+    "label": "1995-10-20 Set 2 t20 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 675.6,
+    "nonmusic_run_s": 9.1,
+    "music_boundary_s": 666.0,
+    "region": [
+      666.0,
+      675.6
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.37,
+      "speech": 0.58
+    },
+    "mean_music_score": 0.064,
+    "mean_crowd_score": 0.096,
+    "mean_rms_db": -19.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/fmzrctiewpa0hic3xuk5m43e5zrq.mp3",
+    "share_url": "https://phish.in/1995-10-20/run-like-an-antelope"
+  },
+  {
+    "label": "1995-10-29 Encore t23 Funky Bitch",
+    "edge": "trailing",
+    "track_duration_s": 322.9,
+    "nonmusic_run_s": 9.1,
+    "music_boundary_s": 313.3,
+    "region": [
+      313.3,
+      322.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.32,
+      "speech": 0.68
+    },
+    "mean_music_score": 0.017,
+    "mean_crowd_score": 0.117,
+    "mean_rms_db": -31.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Funky Bitch"
+    ],
+    "mp3_url": "https://phish.in/blob/gxz3b08hwpbh4jmvbq33vpp2nad9.mp3",
+    "share_url": "https://phish.in/1995-10-29/funky-bitch"
+  },
+  {
+    "label": "1995-12-17 Encore t19 Runaway Jim",
+    "edge": "trailing",
+    "track_duration_s": 459.1,
+    "nonmusic_run_s": 9.1,
+    "music_boundary_s": 449.5,
+    "region": [
+      449.5,
+      459.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.05,
+      "speech": 0.95
+    },
+    "mean_music_score": 0.104,
+    "mean_crowd_score": 0.043,
+    "mean_rms_db": -30.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Runaway Jim"
+    ],
+    "mp3_url": "https://phish.in/blob/4fyknr4prq73gcgjxwo3cwc0s7im.mp3",
+    "share_url": "https://phish.in/1995-12-17/runaway-jim"
+  },
+  {
+    "label": "1995-06-09 Set 2 t17 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 702.1,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 693.0,
+    "region": [
+      693.0,
+      702.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.038,
+    "mean_rms_db": -30.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/m3ctq1l22ly4yulb8k60jhepp1z9.mp3",
+    "share_url": "https://phish.in/1995-06-09/slave-to-the-traffic-light"
+  },
+  {
+    "label": "1995-06-24 Encore t20 Bold as Love",
+    "edge": "trailing",
+    "track_duration_s": 361.0,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 351.9,
+    "region": [
+      351.9,
+      361.0
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.06,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.05,
+    "mean_crowd_score": 0.033,
+    "mean_rms_db": -31.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Bold as Love"
+    ],
+    "mp3_url": "https://phish.in/blob/nt72c1z593eqbybx1v69uexy35wp.mp3",
+    "share_url": "https://phish.in/1995-06-24/bold-as-love"
+  },
+  {
+    "label": "1995-07-02 Set 1 t10 While My Guitar Gently Weeps",
+    "edge": "trailing",
+    "track_duration_s": 358.9,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 349.8,
+    "region": [
+      349.8,
+      358.9
+    ],
+    "character": {
+      "silence": 0.28,
+      "crowd": 0.5,
+      "speech": 0.22
+    },
+    "mean_music_score": 0.009,
+    "mean_crowd_score": 0.161,
+    "mean_rms_db": -63.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "While My Guitar Gently Weeps"
+    ],
+    "mp3_url": "https://phish.in/blob/g570orfqaw7ggojwkvlronm2zm6c.mp3",
+    "share_url": "https://phish.in/1995-07-02/while-my-guitar-gently-weeps"
+  },
+  {
+    "label": "1995-10-14 Set 1 t12 Runaway Jim",
+    "edge": "trailing",
+    "track_duration_s": 552.3,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 543.2,
+    "region": [
+      543.2,
+      552.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.17,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.046,
+    "mean_crowd_score": 0.103,
+    "mean_rms_db": -22.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Runaway Jim"
+    ],
+    "mp3_url": "https://phish.in/blob/h5xk44h4urmbd2nrdo2hnv3hstuo.mp3",
+    "share_url": "https://phish.in/1995-10-14/runaway-jim"
+  },
+  {
+    "label": "1995-10-20 Set 1 t09 Amazing Grace",
+    "edge": "trailing",
+    "track_duration_s": 358.9,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 349.8,
+    "region": [
+      349.8,
+      358.9
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.11,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.107,
+    "mean_rms_db": -25.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Amazing Grace"
+    ],
+    "mp3_url": "https://phish.in/blob/le7j2xg6vu9vzam14c98svu9ueh0.mp3",
+    "share_url": "https://phish.in/1995-10-20/amazing-grace"
+  },
+  {
+    "label": "1995-10-21 Encore t23 Highway to Hell",
+    "edge": "trailing",
+    "track_duration_s": 227.0,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 217.9,
+    "region": [
+      217.9,
+      227.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.039,
+    "mean_rms_db": -31.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Highway to Hell"
+    ],
+    "mp3_url": "https://phish.in/blob/rwv0ygpkv1tdtc660hjexn6534ai.mp3",
+    "share_url": "https://phish.in/1995-10-21/highway-to-hell"
+  },
+  {
+    "label": "1995-10-25 Set 1 t10 Chalk Dust Torture",
+    "edge": "trailing",
+    "track_duration_s": 531.8,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 522.7,
+    "region": [
+      522.7,
+      531.8
+    ],
+    "character": {
+      "silence": 0.17,
+      "crowd": 0.0,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.111,
+    "mean_crowd_score": 0.01,
+    "mean_rms_db": -36.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Chalk Dust Torture"
+    ],
+    "mp3_url": "https://phish.in/blob/kuy65gqhy05gnt53wi078mc4vx43.mp3",
+    "share_url": "https://phish.in/1995-10-25/chalk-dust-torture"
+  },
+  {
+    "label": "1995-12-12 Encore t18 Fire",
+    "edge": "trailing",
+    "track_duration_s": 278.0,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 269.3,
+    "region": [
+      269.3,
+      278.4
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.33,
+      "speech": 0.61
+    },
+    "mean_music_score": 0.016,
+    "mean_crowd_score": 0.09,
+    "mean_rms_db": -25.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/46as0yy08egeleh1j1lbjtpilhbj.mp3",
+    "share_url": "https://phish.in/1995-12-12/fire"
+  },
+  {
+    "label": "1995-12-29 Set 2 t20 Fire",
+    "edge": "trailing",
+    "track_duration_s": 249.8,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 241.0,
+    "region": [
+      241.0,
+      250.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.22,
+      "speech": 0.78
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.068,
+    "mean_rms_db": -24.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/zfp2yfp4obllcohet7k5ke1hmgkc.mp3",
+    "share_url": "https://phish.in/1995-12-29/fire"
+  },
+  {
+    "label": "1995-12-31 Set 2 t17 Mike's Song > Digital Delay Loop Jam",
+    "edge": "trailing",
+    "track_duration_s": 1197.3,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 1188.1,
+    "region": [
+      1188.1,
+      1197.3
+    ],
+    "character": {
+      "silence": 0.28,
+      "crowd": 0.0,
+      "speech": 0.72
+    },
+    "mean_music_score": 0.036,
+    "mean_crowd_score": 0.002,
+    "mean_rms_db": -42.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Mike's Song",
+      "Jam"
+    ],
+    "mp3_url": "https://phish.in/blob/uupld1pq7udv1sl26vqr70zyh299.mp3",
+    "share_url": "https://phish.in/1995-12-31/mikes-song-digital-delay-loop-jam"
+  },
+  {
+    "label": "1995-07-01 Encore t19 Funky Bitch",
+    "edge": "trailing",
+    "track_duration_s": 318.8,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 310.1,
+    "region": [
+      310.1,
+      318.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.35,
+      "speech": 0.65
+    },
+    "mean_music_score": 0.082,
+    "mean_crowd_score": 0.057,
+    "mean_rms_db": -17.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Funky Bitch"
+    ],
+    "mp3_url": "https://phish.in/blob/nx1x6n009acrzb5hfbr5fkj179hl.mp3",
+    "share_url": "https://phish.in/1995-07-01/funky-bitch"
+  },
+  {
+    "label": "1995-07-13 Set 1 t01 Julius",
+    "edge": "trailing",
+    "track_duration_s": 239.1,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 230.9,
+    "region": [
+      230.9,
+      239.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.59,
+      "speech": 0.41
+    },
+    "mean_music_score": 0.041,
+    "mean_crowd_score": 0.282,
+    "mean_rms_db": -23.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Julius"
+    ],
+    "mp3_url": "https://phish.in/blob/40tqsarkeu4olxvnlf68bic66cn0.mp3",
+    "share_url": "https://phish.in/1995-07-13/julius"
+  },
+  {
+    "label": "1995-06-07 Set 1 t10 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 652.9,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 644.7,
+    "region": [
+      644.7,
+      652.9
+    ],
+    "character": {
+      "silence": 0.25,
+      "crowd": 0.06,
+      "speech": 0.69
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.032,
+    "mean_rms_db": -34.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/6m8d9e6m7x33eyh6bzqcbxt4t6u3.mp3",
+    "share_url": "https://phish.in/1995-06-07/slave-to-the-traffic-light"
+  },
+  {
+    "label": "1995-09-27 Set 2 t17 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 312.2,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 304.0,
+    "region": [
+      304.0,
+      312.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.31,
+      "speech": 0.69
+    },
+    "mean_music_score": 0.122,
+    "mean_crowd_score": 0.034,
+    "mean_rms_db": -25.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/zmgh8pgzfzh9wg1fh6pl29i4v4sh.mp3",
+    "share_url": "https://phish.in/1995-09-27/a-day-in-the-life"
+  },
+  {
+    "label": "1995-10-17 Set 2 t16 Jam",
+    "edge": "trailing",
+    "track_duration_s": 2183.0,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 2174.8,
+    "region": [
+      2174.8,
+      2183.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.81,
+      "speech": 0.19
+    },
+    "mean_music_score": 0.056,
+    "mean_crowd_score": 0.274,
+    "mean_rms_db": -19.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Jam"
+    ],
+    "mp3_url": "https://phish.in/blob/8r86v6uuhrvvrsc8ecsvl8mdj3g7.mp3",
+    "share_url": "https://phish.in/1995-10-17/jam"
+  },
+  {
+    "label": "1995-10-20 Encore t22 Rocky Top",
+    "edge": "trailing",
+    "track_duration_s": 145.2,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 137.3,
+    "region": [
+      137.3,
+      145.4
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.12,
+      "speech": 0.81
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.074,
+    "mean_rms_db": -23.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Rocky Top"
+    ],
+    "mp3_url": "https://phish.in/blob/4o5ctj24jy5uz2rh6si4bj48aii5.mp3",
+    "share_url": "https://phish.in/1995-10-20/rocky-top"
+  },
+  {
+    "label": "1995-10-31 Set 1 t09 Harpua",
+    "edge": "trailing",
+    "track_duration_s": 861.5,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 853.4,
+    "region": [
+      853.4,
+      861.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.12,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.031,
+    "mean_rms_db": -26.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harpua"
+    ],
+    "mp3_url": "https://phish.in/blob/ux0si04ohgfz5i02h2wzzosooi09.mp3",
+    "share_url": "https://phish.in/1995-10-31/harpua"
+  },
+  {
+    "label": "1995-12-16 Encore t19 Fire",
+    "edge": "trailing",
+    "track_duration_s": 265.8,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 257.8,
+    "region": [
+      257.8,
+      265.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.06,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.033,
+    "mean_rms_db": -24.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/g25x1dsrn47b2bueeuk6msxg7u7u.mp3",
+    "share_url": "https://phish.in/1995-12-16/fire"
+  },
+  {
+    "label": "1995-07-01 Set 1 t09 Chalk Dust Torture",
+    "edge": "trailing",
+    "track_duration_s": 482.7,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 475.0,
+    "region": [
+      475.0,
+      482.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.13,
+      "speech": 0.87
+    },
+    "mean_music_score": 0.094,
+    "mean_crowd_score": 0.02,
+    "mean_rms_db": -17.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Chalk Dust Torture"
+    ],
+    "mp3_url": "https://phish.in/blob/0lm4mx16ivmzbwtf5ir0kmmlai2q.mp3",
+    "share_url": "https://phish.in/1995-07-01/chalk-dust-torture"
+  },
+  {
+    "label": "1995-07-03 Set 2 t19 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 667.4,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 659.7,
+    "region": [
+      659.7,
+      667.4
+    ],
+    "character": {
+      "silence": 0.2,
+      "crowd": 0.27,
+      "speech": 0.53
+    },
+    "mean_music_score": 0.055,
+    "mean_crowd_score": 0.077,
+    "mean_rms_db": -58.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/t3e7t6rs0zbcqirdw1ny5rp06sw1.mp3",
+    "share_url": "https://phish.in/1995-07-03/the-squirming-coil"
+  },
+  {
+    "label": "1995-07-03 Encore t21 Amazing Grace",
+    "edge": "trailing",
+    "track_duration_s": 105.7,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 98.4,
+    "region": [
+      98.4,
+      106.1
+    ],
+    "character": {
+      "silence": 0.27,
+      "crowd": 0.0,
+      "speech": 0.73
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.038,
+    "mean_rms_db": -62.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Amazing Grace"
+    ],
+    "mp3_url": "https://phish.in/blob/yszof4e02zsbst22kia2gpg5b112.mp3",
+    "share_url": "https://phish.in/1995-07-03/amazing-grace"
+  },
+  {
+    "label": "1995-10-03 Set 2 t20 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 570.6,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 562.9,
+    "region": [
+      562.9,
+      570.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.47,
+      "speech": 0.53
+    },
+    "mean_music_score": 0.02,
+    "mean_crowd_score": 0.326,
+    "mean_rms_db": -30.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/nh5ju6esp799dvqajpp218jerb83.mp3",
+    "share_url": "https://phish.in/1995-10-03/the-squirming-coil"
+  },
+  {
+    "label": "1995-12-17 Set 1 t09 Chalk Dust Torture",
+    "edge": "trailing",
+    "track_duration_s": 536.9,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 529.3,
+    "region": [
+      529.3,
+      536.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.028,
+    "mean_rms_db": -32.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Chalk Dust Torture"
+    ],
+    "mp3_url": "https://phish.in/blob/a7kwptlpqz5fcu818dhxil5mcqz5.mp3",
+    "share_url": "https://phish.in/1995-12-17/chalk-dust-torture"
+  },
+  {
+    "label": "1995-06-30 Set 1 t09 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 781.7,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 774.5,
+    "region": [
+      774.5,
+      781.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.29,
+      "speech": 0.71
+    },
+    "mean_music_score": 0.072,
+    "mean_crowd_score": 0.073,
+    "mean_rms_db": -20.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/euo3ujgdv4y60p75zd1vsedoewlv.mp3",
+    "share_url": "https://phish.in/1995-06-30/run-like-an-antelope"
+  },
+  {
+    "label": "1995-11-28 Set 1 t09 Sample in a Jar",
+    "edge": "trailing",
+    "track_duration_s": 302.3,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 295.1,
+    "region": [
+      295.1,
+      302.3
+    ],
+    "character": {
+      "silence": 0.07,
+      "crowd": 0.07,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.052,
+    "mean_rms_db": -32.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sample in a Jar"
+    ],
+    "mp3_url": "https://phish.in/blob/qipt4gq03n84pt129exieo9rb0jv.mp3",
+    "share_url": "https://phish.in/1995-11-28/sample-in-a-jar"
+  },
+  {
+    "label": "1995-06-13 Set 2 t17 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 285.4,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 278.9,
+    "region": [
+      278.9,
+      285.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.08,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.166,
+    "mean_crowd_score": 0.049,
+    "mean_rms_db": -24.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/4s943e429yn8df0vlmg3cjwhylna.mp3",
+    "share_url": "https://phish.in/1995-06-13/golgi-apparatus"
+  },
+  {
+    "label": "1995-10-06 Set 1 t09 Sample in a Jar",
+    "edge": "trailing",
+    "track_duration_s": 302.5,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 295.8,
+    "region": [
+      295.8,
+      302.5
+    ],
+    "character": {
+      "silence": 0.08,
+      "crowd": 0.0,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.027,
+    "mean_rms_db": -32.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sample in a Jar"
+    ],
+    "mp3_url": "https://phish.in/blob/lspn9mkw0g8miun6639riq3u998a.mp3",
+    "share_url": "https://phish.in/1995-10-06/sample-in-a-jar"
+  },
+  {
+    "label": "1995-11-14 Encore t20 Rocky Top",
+    "edge": "trailing",
+    "track_duration_s": 156.0,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 149.8,
+    "region": [
+      149.8,
+      156.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.15,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.023,
+    "mean_crowd_score": 0.038,
+    "mean_rms_db": -27.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Rocky Top"
+    ],
+    "mp3_url": "https://phish.in/blob/6ipuuzxylsyaa72i3lblkf2u00v4.mp3",
+    "share_url": "https://phish.in/1995-11-14/rocky-top"
+  },
+  {
+    "label": "1995-12-11 Set 2 t24 Funky Bitch",
+    "edge": "trailing",
+    "track_duration_s": 389.8,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 383.1,
+    "region": [
+      383.1,
+      389.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.15,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.062,
+    "mean_crowd_score": 0.034,
+    "mean_rms_db": -17.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Funky Bitch"
+    ],
+    "mp3_url": "https://phish.in/blob/cyeslkt45cqr043ba7wjgsdym1we.mp3",
+    "share_url": "https://phish.in/1995-12-11/funky-bitch"
+  },
+  {
+    "label": "1995-12-29 Encore t21 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 286.4,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 279.8,
+    "region": [
+      279.8,
+      286.6
+    ],
+    "character": {
+      "silence": 0.15,
+      "crowd": 0.15,
+      "speech": 0.69
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.049,
+    "mean_rms_db": -33.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/vrhoe70u74rnlkk18ns4uw6sstqr.mp3",
+    "share_url": "https://phish.in/1995-12-29/golgi-apparatus"
+  },
+  {
+    "label": "1995-10-24 Set 1 t13 Split Open and Melt",
+    "edge": "trailing",
+    "track_duration_s": 742.5,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 736.2,
+    "region": [
+      736.2,
+      742.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.022,
+    "mean_rms_db": -22.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Split Open and Melt"
+    ],
+    "mp3_url": "https://phish.in/blob/f5mrvg0mk3vveit9ba4wfhi272tk.mp3",
+    "share_url": "https://phish.in/1995-10-24/split-open-and-melt"
+  },
+  {
+    "label": "1995-10-29 Set 2 t22 Amazing Grace",
+    "edge": "trailing",
+    "track_duration_s": 93.7,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 87.8,
+    "region": [
+      87.8,
+      94.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.33,
+      "speech": 0.67
+    },
+    "mean_music_score": 0.009,
+    "mean_crowd_score": 0.068,
+    "mean_rms_db": -19.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Amazing Grace"
+    ],
+    "mp3_url": "https://phish.in/blob/b6s1z2w9fiyibqyrj5t6ufgq71l9.mp3",
+    "share_url": "https://phish.in/1995-10-29/amazing-grace"
+  },
+  {
+    "label": "1995-11-09 Encore t18 Loving Cup",
+    "edge": "trailing",
+    "track_duration_s": 357.3,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 351.0,
+    "region": [
+      351.0,
+      357.3
+    ],
+    "character": {
+      "silence": 0.17,
+      "crowd": 0.33,
+      "speech": 0.5
+    },
+    "mean_music_score": 0.092,
+    "mean_crowd_score": 0.11,
+    "mean_rms_db": -43.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Loving Cup"
+    ],
+    "mp3_url": "https://phish.in/blob/3z8u2sl6qwitqweqk1z7bzkxvdeg.mp3",
+    "share_url": "https://phish.in/1995-11-09/loving-cup"
+  },
+  {
+    "label": "1995-12-12 Set 1 t10 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 638.0,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 631.7,
+    "region": [
+      631.7,
+      638.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.08,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.046,
+    "mean_rms_db": -22.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/06stat3fe8cxp3vjjh9tlllze9e8.mp3",
+    "share_url": "https://phish.in/1995-12-12/the-squirming-coil"
+  },
+  {
+    "label": "1995-12-15 Encore t21 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 156.9,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 150.7,
+    "region": [
+      150.7,
+      157.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.42,
+      "speech": 0.58
+    },
+    "mean_music_score": 0.046,
+    "mean_crowd_score": 0.068,
+    "mean_rms_db": -26.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/0ivl0nbenavpggbv2p3x8ips6ui6.mp3",
+    "share_url": "https://phish.in/1995-12-15/tweezer-reprise-2"
+  },
+  {
+    "label": "1995-10-28 Set 2 t17 Chalk Dust Torture",
+    "edge": "trailing",
+    "track_duration_s": 511.6,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 505.9,
+    "region": [
+      505.9,
+      511.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.73,
+      "speech": 0.27
+    },
+    "mean_music_score": 0.077,
+    "mean_crowd_score": 0.194,
+    "mean_rms_db": -17.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Chalk Dust Torture"
+    ],
+    "mp3_url": "https://phish.in/blob/vzts0amuu4hpedpzc23lsz4x6xgp.mp3",
+    "share_url": "https://phish.in/1995-10-28/chalk-dust-torture"
+  },
+  {
+    "label": "1995-11-21 Set 2 t21 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 317.4,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 311.7,
+    "region": [
+      311.7,
+      317.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.085,
+    "mean_crowd_score": 0.007,
+    "mean_rms_db": -40.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/hdamhe06ji6u8yoxm54lwkgqfvm8.mp3",
+    "share_url": "https://phish.in/1995-11-21/a-day-in-the-life"
+  },
+  {
+    "label": "1995-12-01 Set 1 t10 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 269.5,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 264.0,
+    "region": [
+      264.0,
+      269.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.18,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.033,
+    "mean_crowd_score": 0.044,
+    "mean_rms_db": -20.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/cqj214cqneb6jjgl26qovaqaj75u.mp3",
+    "share_url": "https://phish.in/1995-12-01/cavern"
+  },
+  {
+    "label": "1995-12-16 Set 1 t09 Suzy Greenberg",
+    "edge": "trailing",
+    "track_duration_s": 378.5,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 372.8,
+    "region": [
+      372.8,
+      378.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.018,
+    "mean_crowd_score": 0.013,
+    "mean_rms_db": -23.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Suzy Greenberg"
+    ],
+    "mp3_url": "https://phish.in/blob/d2u7mpd2n6iby8v55a90kbuobx9n.mp3",
+    "share_url": "https://phish.in/1995-12-16/suzy-greenberg"
+  },
+  {
+    "label": "1995-06-16 Set 2 t15 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 633.1,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 627.8,
+    "region": [
+      627.8,
+      633.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.1,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.029,
+    "mean_crowd_score": 0.028,
+    "mean_rms_db": -35.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/xt32z7brhfwo9w61xckubhx7lsxq.mp3",
+    "share_url": "https://phish.in/1995-06-16/the-squirming-coil"
+  },
+  {
+    "label": "1995-06-25 Set 1 t09 Split Open and Melt",
+    "edge": "trailing",
+    "track_duration_s": 667.4,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 662.2,
+    "region": [
+      662.2,
+      667.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.073,
+    "mean_crowd_score": 0.011,
+    "mean_rms_db": -36.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Split Open and Melt"
+    ],
+    "mp3_url": "https://phish.in/blob/py6inlso6u8a5c6mvczw62gs6v6u.mp3",
+    "share_url": "https://phish.in/1995-06-25/split-open-and-melt"
+  },
+  {
+    "label": "1995-06-30 Encore t19 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 275.5,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 270.7,
+    "region": [
+      270.7,
+      276.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.034,
+    "mean_rms_db": -22.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/es82e78fq4xwtxocanwfsx7yckfn.mp3",
+    "share_url": "https://phish.in/1995-06-30/golgi-apparatus"
+  },
+  {
+    "label": "1995-09-30 Set 1 t09 Sample in a Jar",
+    "edge": "trailing",
+    "track_duration_s": 298.5,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 293.3,
+    "region": [
+      293.3,
+      298.6
+    ],
+    "character": {
+      "silence": 0.1,
+      "crowd": 0.0,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.024,
+    "mean_rms_db": -34.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sample in a Jar"
+    ],
+    "mp3_url": "https://phish.in/blob/eecl5tr2l5gv6lrqnsnujnw7zhdi.mp3",
+    "share_url": "https://phish.in/1995-09-30/sample-in-a-jar"
+  },
+  {
+    "label": "1995-10-05 Set 2 t20 Amazing Grace",
+    "edge": "trailing",
+    "track_duration_s": 99.4,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 94.6,
+    "region": [
+      94.6,
+      99.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.02,
+    "mean_rms_db": -20.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Amazing Grace"
+    ],
+    "mp3_url": "https://phish.in/blob/p1zjhoi8cxzc12auv2lzasdxu54a.mp3",
+    "share_url": "https://phish.in/1995-10-05/amazing-grace"
+  },
+  {
+    "label": "1995-11-12 Encore t19 Fire",
+    "edge": "trailing",
+    "track_duration_s": 264.0,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 258.7,
+    "region": [
+      258.7,
+      264.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.052,
+    "mean_rms_db": -21.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/849phnolkrj2576nj880vda36ojb.mp3",
+    "share_url": "https://phish.in/1995-11-12/fire"
+  },
+  {
+    "label": "1995-11-15 Encore t18 Suzy Greenberg",
+    "edge": "trailing",
+    "track_duration_s": 375.9,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 370.6,
+    "region": [
+      370.6,
+      375.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.017,
+    "mean_crowd_score": 0.026,
+    "mean_rms_db": -32.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Suzy Greenberg"
+    ],
+    "mp3_url": "https://phish.in/blob/e0thbcveeyivaw6i8q0tdk35x7lg.mp3",
+    "share_url": "https://phish.in/1995-11-15/suzy-greenberg"
+  },
+  {
+    "label": "1995-11-28 Set 2 t20 Funky Bitch",
+    "edge": "trailing",
+    "track_duration_s": 342.2,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 336.9,
+    "region": [
+      336.9,
+      342.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.022,
+    "mean_rms_db": -26.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Funky Bitch"
+    ],
+    "mp3_url": "https://phish.in/blob/eptcxioda4pk56s9uvwwox2ejlny.mp3",
+    "share_url": "https://phish.in/1995-11-28/funky-bitch"
+  },
+  {
+    "label": "1995-09-29 Set 2 t16 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 284.8,
+    "nonmusic_run_s": 4.3,
+    "music_boundary_s": 280.3,
+    "region": [
+      280.3,
+      285.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.062,
+    "mean_crowd_score": 0.032,
+    "mean_rms_db": -29.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/if9ehnsnqx6ffpjcdplavegse64p.mp3",
+    "share_url": "https://phish.in/1995-09-29/a-day-in-the-life"
+  },
+  {
+    "label": "1995-10-21 Set 2 t22 Suzy Greenberg",
+    "edge": "trailing",
+    "track_duration_s": 391.0,
+    "nonmusic_run_s": 4.3,
+    "music_boundary_s": 386.2,
+    "region": [
+      386.2,
+      391.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.11,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.069,
+    "mean_rms_db": -26.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Suzy Greenberg"
+    ],
+    "mp3_url": "https://phish.in/blob/8ozq7ukcnua1qzylqbpxvxp67i4o.mp3",
+    "share_url": "https://phish.in/1995-10-21/suzy-greenberg"
+  },
+  {
+    "label": "1995-11-14 Set 1 t09 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 275.6,
+    "nonmusic_run_s": 4.3,
+    "music_boundary_s": 271.2,
+    "region": [
+      271.2,
+      276.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.031,
+    "mean_rms_db": -26.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/zc9qtgogycpkyusru3nv6k0trznx.mp3",
+    "share_url": "https://phish.in/1995-11-14/cavern"
+  },
+  {
+    "label": "1995-11-11 Encore t23 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 374.7,
+    "nonmusic_run_s": 3.8,
+    "music_boundary_s": 370.4,
+    "region": [
+      370.4,
+      374.7
+    ],
+    "character": {
+      "silence": 0.12,
+      "crowd": 0.0,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.046,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -44.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/f0bi3aiuqmm6ln5pbapxsvtvzna8.mp3",
+    "share_url": "https://phish.in/1995-11-11/good-times-bad-times"
+  },
+  {
+    "label": "1995-12-16 Set 2 t18 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 631.8,
+    "nonmusic_run_s": 3.8,
+    "music_boundary_s": 627.5,
+    "region": [
+      627.5,
+      631.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.25,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.057,
+    "mean_rms_db": -29.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/dm68k1u77ts0xcq9kqj920m1zvq6.mp3",
+    "share_url": "https://phish.in/1995-12-16/the-squirming-coil"
+  },
+  {
+    "label": "1995-12-28 Set 2 t18 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 651.0,
+    "nonmusic_run_s": 3.8,
+    "music_boundary_s": 646.7,
+    "region": [
+      646.7,
+      651.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.12,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.055,
+    "mean_crowd_score": 0.028,
+    "mean_rms_db": -23.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/v7v26eeg2uxvv5iw1re46y5ksc7a.mp3",
+    "share_url": "https://phish.in/1995-12-28/slave-to-the-traffic-light"
+  },
+  {
+    "label": "1995-06-26 Set 1 t10 Possum",
+    "edge": "trailing",
+    "track_duration_s": 851.6,
+    "nonmusic_run_s": 3.4,
+    "music_boundary_s": 847.7,
+    "region": [
+      847.7,
+      851.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.29,
+      "speech": 0.71
+    },
+    "mean_music_score": 0.018,
+    "mean_crowd_score": 0.041,
+    "mean_rms_db": -32.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/mvp9n5m1abkacn5uwwiqinhn3hwe.mp3",
+    "share_url": "https://phish.in/1995-06-26/possum"
+  },
+  {
+    "label": "1995-10-19 Set 2 t21 Possum",
+    "edge": "trailing",
+    "track_duration_s": 763.6,
+    "nonmusic_run_s": 3.4,
+    "music_boundary_s": 759.7,
+    "region": [
+      759.7,
+      763.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.29,
+      "speech": 0.71
+    },
+    "mean_music_score": 0.113,
+    "mean_crowd_score": 0.018,
+    "mean_rms_db": -26.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/mqffd71smtbyfeqazw5tqkayyrd7.mp3",
+    "share_url": "https://phish.in/1995-10-19/possum"
+  },
+  {
+    "label": "1995-10-31 Set 3 t31 Suzy Greenberg",
+    "edge": "trailing",
+    "track_duration_s": 447.9,
+    "nonmusic_run_s": 3.4,
+    "music_boundary_s": 444.0,
+    "region": [
+      444.0,
+      447.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.57,
+      "speech": 0.43
+    },
+    "mean_music_score": 0.199,
+    "mean_crowd_score": 0.036,
+    "mean_rms_db": -19.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Suzy Greenberg"
+    ],
+    "mp3_url": "https://phish.in/blob/cgarx6wtpv1nrj42wsig9oqqsk4p.mp3",
+    "share_url": "https://phish.in/1995-10-31/suzy-greenberg"
+  },
+  {
+    "label": "1995-11-14 Set 2 t18 You Enjoy Myself > Immigrant Song > You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1366.3,
+    "nonmusic_run_s": 3.4,
+    "music_boundary_s": 1362.5,
+    "region": [
+      1362.5,
+      1366.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.089,
+    "mean_crowd_score": 0.01,
+    "mean_rms_db": -40.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself",
+      "Immigrant Song"
+    ],
+    "mp3_url": "https://phish.in/blob/qccx2pv9qqgzeenap8qe279y3dst.mp3",
+    "share_url": "https://phish.in/1995-11-14/you-enjoy-myself-immigrant-song-you-enjoy-myself"
+  },
+  {
+    "label": "1995-07-02 Set 2 t18 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 660.0,
+    "nonmusic_run_s": 2.9,
+    "music_boundary_s": 656.6,
+    "region": [
+      656.6,
+      660.0
+    ],
+    "character": {
+      "silence": 0.5,
+      "crowd": 0.0,
+      "speech": 0.5
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.004,
+    "mean_rms_db": -116.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/ke6ddxs1iktffh5qyxxi40e158cb.mp3",
+    "share_url": "https://phish.in/1995-07-02/slave-to-the-traffic-light"
+  },
+  {
+    "label": "1995-11-21 Set 1 t10 Runaway Jim",
+    "edge": "trailing",
+    "track_duration_s": 563.5,
+    "nonmusic_run_s": 2.9,
+    "music_boundary_s": 560.1,
+    "region": [
+      560.1,
+      563.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.17,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.026,
+    "mean_crowd_score": 0.021,
+    "mean_rms_db": -21.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Runaway Jim"
+    ],
+    "mp3_url": "https://phish.in/blob/mdwrij6jdkqiql0a1yb6o2ti01py.mp3",
+    "share_url": "https://phish.in/1995-11-21/runaway-jim"
+  },
+  {
+    "label": "1995-11-24 Set 2 t21 Julius",
+    "edge": "trailing",
+    "track_duration_s": 518.4,
+    "nonmusic_run_s": 2.9,
+    "music_boundary_s": 515.1,
+    "region": [
+      515.1,
+      518.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.007,
+    "mean_rms_db": -35.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Julius"
+    ],
+    "mp3_url": "https://phish.in/blob/1vcn70jx2bh57dp8m8fuuwi1hiba.mp3",
+    "share_url": "https://phish.in/1995-11-24/julius"
+  },
+  {
+    "label": "1995-12-04 Set 2 t19 Frankenstein",
+    "edge": "trailing",
+    "track_duration_s": 287.8,
+    "nonmusic_run_s": 2.9,
+    "music_boundary_s": 284.6,
+    "region": [
+      284.6,
+      288.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.17,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.015,
+    "mean_crowd_score": 0.039,
+    "mean_rms_db": -23.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Frankenstein"
+    ],
+    "mp3_url": "https://phish.in/blob/76t4alivljzy3ehrv3hqqjwg1bkt.mp3",
+    "share_url": "https://phish.in/1995-12-04/frankenstein"
+  },
+  {
+    "label": "1995-12-17 Set 2 t17 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 169.7,
+    "nonmusic_run_s": 2.9,
+    "music_boundary_s": 166.6,
+    "region": [
+      166.6,
+      169.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.17,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.049,
+    "mean_rms_db": -23.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/2bu5vfljmvaps7kyj7xrhpjwybu9.mp3",
+    "share_url": "https://phish.in/1995-12-17/tweezer-reprise"
+  },
+  {
+    "label": "1995-06-24 Set 2 t19 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 276.5,
+    "nonmusic_run_s": 2.4,
+    "music_boundary_s": 274.1,
+    "region": [
+      274.1,
+      277.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.028,
+    "mean_rms_db": -23.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/4vbniie885mi88q1iq48nwpb02ll.mp3",
+    "share_url": "https://phish.in/1995-06-24/golgi-apparatus"
+  },
+  {
+    "label": "1995-11-16 Set 2 t19 Possum",
+    "edge": "trailing",
+    "track_duration_s": 494.9,
+    "nonmusic_run_s": 2.4,
+    "music_boundary_s": 492.1,
+    "region": [
+      492.1,
+      494.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.4,
+      "speech": 0.6
+    },
+    "mean_music_score": 0.04,
+    "mean_crowd_score": 0.074,
+    "mean_rms_db": -23.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/d8e9dvzs2y2ottm2zjg6xli6dsac.mp3",
+    "share_url": "https://phish.in/1995-11-16/possum"
+  },
+  {
+    "label": "1995-05-16 Set 1 t12 Sample in a Jar",
+    "edge": "trailing",
+    "track_duration_s": 346.4,
+    "nonmusic_run_s": 1.9,
+    "music_boundary_s": 344.0,
+    "region": [
+      344.0,
+      346.4
+    ],
+    "character": {
+      "silence": 0.75,
+      "crowd": 0.0,
+      "speech": 0.25
+    },
+    "mean_music_score": 0.015,
+    "mean_crowd_score": 0.002,
+    "mean_rms_db": -159.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sample in a Jar"
+    ],
+    "mp3_url": "https://phish.in/blob/nkrx8p17lcf66nv7mdgm2rljgfzl.mp3",
+    "share_url": "https://phish.in/1995-05-16/sample-in-a-jar"
+  },
+  {
+    "label": "1995-06-20 Set 2 t20 Highway to Hell",
+    "edge": "trailing",
+    "track_duration_s": 208.7,
+    "nonmusic_run_s": 1.9,
+    "music_boundary_s": 206.4,
+    "region": [
+      206.4,
+      208.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.01,
+    "mean_rms_db": -20.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Highway to Hell"
+    ],
+    "mp3_url": "https://phish.in/blob/51cdjhf7yk7z45hi2ncaw19e44a9.mp3",
+    "share_url": "https://phish.in/1995-06-20/highway-to-hell"
+  },
+  {
+    "label": "1995-09-28 Set 2 t17 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 622.5,
+    "nonmusic_run_s": 1.9,
+    "music_boundary_s": 620.1,
+    "region": [
+      620.1,
+      622.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.25,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.07,
+    "mean_rms_db": -19.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/zf3o0yo4hfemq9pa2uf7ua24fi2b.mp3",
+    "share_url": "https://phish.in/1995-09-28/run-like-an-antelope"
+  },
+  {
+    "label": "1995-10-25 Set 2 t19 Crossroads",
+    "edge": "trailing",
+    "track_duration_s": 169.1,
+    "nonmusic_run_s": 1.9,
+    "music_boundary_s": 167.0,
+    "region": [
+      167.0,
+      169.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.25,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.056,
+    "mean_rms_db": -25.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Crossroads"
+    ],
+    "mp3_url": "https://phish.in/blob/nu0y6ylc3xnr6jw97fwxt9vuplbw.mp3",
+    "share_url": "https://phish.in/1995-10-25/crossroads"
+  },
+  {
+    "label": "1995-06-08 Set 2 t17 Julius",
+    "edge": "trailing",
+    "track_duration_s": 454.3,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 452.3,
+    "region": [
+      452.3,
+      454.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.023,
+    "mean_crowd_score": 0.023,
+    "mean_rms_db": -19.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Julius"
+    ],
+    "mp3_url": "https://phish.in/blob/ibpoijcifcynooknt39bcjfqj2kf.mp3",
+    "share_url": "https://phish.in/1995-06-08/julius"
+  },
+  {
+    "label": "1995-09-30 Set 2 t18 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 268.4,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 266.9,
+    "region": [
+      266.9,
+      268.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.013,
+    "mean_rms_db": -31.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/3e9ez22yx4e9x6xcc8103v8ibay0.mp3",
+    "share_url": "https://phish.in/1995-09-30/cavern"
+  },
+  {
+    "label": "1995-11-15 Set 2 t17 While My Guitar Gently Weeps",
+    "edge": "trailing",
+    "track_duration_s": 365.3,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 363.4,
+    "region": [
+      363.4,
+      365.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.043,
+    "mean_crowd_score": 0.013,
+    "mean_rms_db": -30.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "While My Guitar Gently Weeps"
+    ],
+    "mp3_url": "https://phish.in/blob/hwhjclbezse8v7phm1ga7m28n7qh.mp3",
+    "share_url": "https://phish.in/1995-11-15/while-my-guitar-gently-weeps"
+  },
+  {
+    "label": "1995-12-05 Set 2 t16 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 275.7,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 274.1,
+    "region": [
+      274.1,
+      276.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.043,
+    "mean_rms_db": -23.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/xfdmup9gb3o25txdlxt70qsatwiv.mp3",
+    "share_url": "https://phish.in/1995-12-05/cavern"
+  },
+  {
+    "label": "1995-12-12 Set 2 t17 Runaway Jim",
+    "edge": "trailing",
+    "track_duration_s": 545.1,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 543.2,
+    "region": [
+      543.2,
+      545.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.017,
+    "mean_rms_db": -20.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Runaway Jim"
+    ],
+    "mp3_url": "https://phish.in/blob/0yk33okvh5medzq3f9kp2ntm4fy0.mp3",
+    "share_url": "https://phish.in/1995-12-12/runaway-jim"
+  },
+  {
+    "label": "1995-12-14 Set 2 t18 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 645.7,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 643.8,
+    "region": [
+      643.8,
+      645.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.023,
+    "mean_rms_db": -23.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/g0kudm7dllnql5zeid4og71ylgmm.mp3",
+    "share_url": "https://phish.in/1995-12-14/slave-to-the-traffic-light"
+  },
+  {
+    "label": "1995-12-01 Set 2 t17 David Bowie > Catapult > David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 819.3,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 817.9,
+    "region": [
+      817.9,
+      819.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.014,
+    "mean_rms_db": -15.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Catapult",
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/fjws2hx693v1do1586p1oyi3kftd.mp3",
+    "share_url": "https://phish.in/1995-12-01/david-bowie-catapult-david-bowie"
+  },
+  {
+    "label": "1995-12-02 Encore t20 Bold as Love",
+    "edge": "trailing",
+    "track_duration_s": 365.4,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 363.9,
+    "region": [
+      363.9,
+      365.4
+    ],
+    "character": {
+      "silence": 1.0,
+      "crowd": 0.0,
+      "speech": 0.0
+    },
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -79.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Bold as Love"
+    ],
+    "mp3_url": "https://phish.in/blob/wttwzyhsovt7mmmt5ik1vq4q80lc.mp3",
+    "share_url": "https://phish.in/1995-12-02/bold-as-love"
+  },
+  {
+    "label": "1995-12-08 Set 2 t15 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 983.1,
+    "nonmusic_run_s": 0.5,
+    "music_boundary_s": 982.2,
+    "region": [
+      982.2,
+      983.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.008,
+    "mean_rms_db": -32.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/k3xavd8kc45stwsghshx1qhcxree.mp3",
+    "share_url": "https://phish.in/1995-12-08/run-like-an-antelope"
+  },
+  {
+    "label": "1995-10-27 Encore t19 Life on Mars?",
+    "edge": "trailing",
+    "track_duration_s": 299.2,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 299.2,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Life on Mars?"
+    ],
+    "mp3_url": "https://phish.in/blob/kqwhrwha2yi9bnpj9onp7kjlpwlq.mp3",
+    "share_url": "https://phish.in/1995-10-27/life-on-mars"
+  }
+]

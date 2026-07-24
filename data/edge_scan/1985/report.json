@@ -1,0 +1,156 @@
+[
+  {
+    "label": "1985-05-03 Encore t18 Anarchy",
+    "edge": "trailing",
+    "track_duration_s": 33.4,
+    "nonmusic_run_s": 19.2,
+    "music_boundary_s": 13.9,
+    "region": [
+      13.9,
+      33.6
+    ],
+    "character": {
+      "silence": 0.57,
+      "crowd": 0.0,
+      "speech": 0.42
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -45.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Anarchy"
+    ],
+    "mp3_url": "https://phish.in/blob/4y1bhnw1rgnrmtrzhmhlwk3zg75p.mp3",
+    "share_url": "https://phish.in/1985-05-03/anarchy"
+  },
+  {
+    "label": "1985-03-04 Set 1 t05 In the Midnight Hour",
+    "edge": "trailing",
+    "track_duration_s": 316.9,
+    "nonmusic_run_s": 10.6,
+    "music_boundary_s": 305.9,
+    "region": [
+      305.9,
+      316.9
+    ],
+    "character": {
+      "silence": 0.59,
+      "crowd": 0.0,
+      "speech": 0.41
+    },
+    "mean_music_score": 0.077,
+    "mean_crowd_score": 0.002,
+    "mean_rms_db": -40.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "In the Midnight Hour"
+    ],
+    "mp3_url": "https://phish.in/blob/wfxar8ayykti3ym3x6ddlu80hs3m.mp3",
+    "share_url": "https://phish.in/1985-03-04/in-the-midnight-hour"
+  },
+  {
+    "label": "1985-05-03 Set 3 t17 The Other One",
+    "edge": "trailing",
+    "track_duration_s": 893.8,
+    "nonmusic_run_s": 2.4,
+    "music_boundary_s": 890.9,
+    "region": [
+      890.9,
+      893.8
+    ],
+    "character": {
+      "silence": 1.0,
+      "crowd": 0.0,
+      "speech": 0.0
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -50.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Other One"
+    ],
+    "mp3_url": "https://phish.in/blob/zvez2jrmhxaq2vscynaq8l575o4b.mp3",
+    "share_url": "https://phish.in/1985-05-03/the-other-one"
+  },
+  {
+    "label": "1985-10-17 Set 1 t09 McGrupp and the Watchful Hosemasters",
+    "edge": "trailing",
+    "track_duration_s": 565.8,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 565.8,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "McGrupp and the Watchful Hosemasters"
+    ],
+    "mp3_url": "https://phish.in/blob/qvv6rvx61nijmzpockgzqd3twa6a.mp3",
+    "share_url": "https://phish.in/1985-10-17/mcgrupp"
+  },
+  {
+    "label": "1985-10-30 Set 1 t12 Skippy the Wondermouse",
+    "edge": "trailing",
+    "track_duration_s": 932.7,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 932.7,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Skippy the Wondermouse"
+    ],
+    "mp3_url": "https://phish.in/blob/gjdbke5s7lvvy88oppukoedrao7v.mp3",
+    "share_url": "https://phish.in/1985-10-30/skippy-the-wondermouse"
+  },
+  {
+    "label": "1985-11-14 Set 1 t08 Makisupa Policeman",
+    "edge": "trailing",
+    "track_duration_s": 302.5,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 302.5,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Makisupa Policeman"
+    ],
+    "mp3_url": "https://phish.in/blob/19b0ss9n63eszmzk09ke0nn9hegi.mp3",
+    "share_url": "https://phish.in/1985-11-14/makisupa-policeman"
+  },
+  {
+    "label": "1985-11-23 Set 2 t05 Dave's Energy Guide",
+    "edge": "trailing",
+    "track_duration_s": 222.7,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 222.7,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Dave's Energy Guide"
+    ],
+    "mp3_url": "https://phish.in/blob/ofqk1fi0v5zataqjbsj2ww42hqpk.mp3",
+    "share_url": "https://phish.in/1985-11-23/daves-energy-guide"
+  }
+]

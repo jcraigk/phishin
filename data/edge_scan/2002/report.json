@@ -1,0 +1,151 @@
+[
+  {
+    "label": "2002-12-31 Set 2 t15 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 461.1,
+    "nonmusic_run_s": 13.9,
+    "music_boundary_s": 446.7,
+    "region": [
+      446.7,
+      461.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.036,
+    "mean_rms_db": -24.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/3m5kh8s32q697zdktoar3xc6r9y9.mp3",
+    "share_url": "https://phish.in/2002-12-31/character-zero"
+  },
+  {
+    "label": "2002-12-31 Set 1 t08 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 733.7,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 724.6,
+    "region": [
+      724.6,
+      733.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.11,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.044,
+    "mean_rms_db": -18.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/5ezndcbc4bl0fh76lj9x2z590s4u.mp3",
+    "share_url": "https://phish.in/2002-12-31/david-bowie"
+  },
+  {
+    "label": "2002-12-14 Set 1 t02 Chalk Dust Torture",
+    "edge": "trailing",
+    "track_duration_s": 251.0,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 242.4,
+    "region": [
+      242.4,
+      251.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.59,
+      "speech": 0.41
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.297,
+    "mean_rms_db": -17.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Chalk Dust Torture"
+    ],
+    "mp3_url": "https://phish.in/blob/gfoag176r8qc5kz4u7xjlyvq3ywh.mp3",
+    "share_url": "https://phish.in/2002-12-14/chalk-dust-torture"
+  },
+  {
+    "label": "2002-12-31 Encore t24 Wading in the Velvet Sea",
+    "edge": "trailing",
+    "track_duration_s": 444.5,
+    "nonmusic_run_s": 1.9,
+    "music_boundary_s": 442.1,
+    "region": [
+      442.1,
+      444.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.027,
+    "mean_rms_db": -22.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Wading in the Velvet Sea"
+    ],
+    "mp3_url": "https://phish.in/blob/en37z55jrjgwbk6rax3ihxdsjk9v.mp3",
+    "share_url": "https://phish.in/2002-12-31/wading-in-the-velvet-sea"
+  },
+  {
+    "label": "2002-12-31 Set 3 t23 Walls of the Cave",
+    "edge": "trailing",
+    "track_duration_s": 1099.4,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 1097.9,
+    "region": [
+      1097.9,
+      1099.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.5,
+      "speech": 0.5
+    },
+    "mean_music_score": 0.034,
+    "mean_crowd_score": 0.049,
+    "mean_rms_db": -20.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Walls of the Cave"
+    ],
+    "mp3_url": "https://phish.in/blob/ql0gyge31lvudnpsthfgkv401g2v.mp3",
+    "share_url": "https://phish.in/2002-12-31/walls-of-the-cave"
+  },
+  {
+    "label": "2002-12-19 Set 1 t01 All of These Dreams",
+    "edge": "trailing",
+    "track_duration_s": 226.5,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 226.5,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "All of These Dreams"
+    ],
+    "mp3_url": "https://phish.in/blob/jjaxsbu3xtq68v7e08c9oj1uxg7c.mp3",
+    "share_url": "https://phish.in/2002-12-19/all-of-these-dreams"
+  }
+]

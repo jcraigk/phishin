@@ -1,0 +1,281 @@
+[
+  {
+    "label": "2020-02-20 Encore t17 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1052.9,
+    "nonmusic_run_s": 29.3,
+    "music_boundary_s": 1023.2,
+    "region": [
+      1023.2,
+      1052.9
+    ],
+    "character": {
+      "silence": 0.18,
+      "crowd": 0.07,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.045,
+    "mean_rms_db": -38.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/jekexzzrsaetme5tcxy5elkvvnlz.mp3",
+    "share_url": "https://phish.in/2020-02-20/you-enjoy-myself"
+  },
+  {
+    "label": "2020-02-22 Set 1 t12 Twist",
+    "edge": "trailing",
+    "track_duration_s": 516.8,
+    "nonmusic_run_s": 23.0,
+    "music_boundary_s": 493.3,
+    "region": [
+      493.3,
+      516.8
+    ],
+    "character": {
+      "silence": 0.19,
+      "crowd": 0.02,
+      "speech": 0.79
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.033,
+    "mean_rms_db": -37.7,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Twist"
+    ],
+    "mp3_url": "https://phish.in/blob/z9ixh9l07hw5lr64ajgvjv1yejis.mp3",
+    "share_url": "https://phish.in/2020-02-22/twist"
+  },
+  {
+    "label": "2020-02-21 Set 1 t12 Possum",
+    "edge": "trailing",
+    "track_duration_s": 599.4,
+    "nonmusic_run_s": 22.6,
+    "music_boundary_s": 576.3,
+    "region": [
+      576.3,
+      599.4
+    ],
+    "character": {
+      "silence": 0.13,
+      "crowd": 0.04,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.06,
+    "mean_rms_db": -33.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/sawmebfg8vtpnj7xb1r3mbd35hig.mp3",
+    "share_url": "https://phish.in/2020-02-21/possum"
+  },
+  {
+    "label": "2020-02-21 Encore t23 Shafty",
+    "edge": "trailing",
+    "track_duration_s": 48.1,
+    "nonmusic_run_s": 10.6,
+    "music_boundary_s": 37.4,
+    "region": [
+      37.4,
+      48.5
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.14,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.037,
+    "mean_crowd_score": 0.024,
+    "mean_rms_db": -29.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Shafty"
+    ],
+    "mp3_url": "https://phish.in/blob/mn9f0hwmhzdaf12gq4mk03z4jy7m.mp3",
+    "share_url": "https://phish.in/2020-02-21/shafty-4"
+  },
+  {
+    "label": "2020-02-23 Set 2 t17 Passing Through",
+    "edge": "trailing",
+    "track_duration_s": 642.7,
+    "nonmusic_run_s": 10.1,
+    "music_boundary_s": 632.1,
+    "region": [
+      632.1,
+      642.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.05,
+      "speech": 0.95
+    },
+    "mean_music_score": 0.031,
+    "mean_crowd_score": 0.038,
+    "mean_rms_db": -31.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Passing Through"
+    ],
+    "mp3_url": "https://phish.in/blob/8t6strguzonknb8tqosguc74x03x.mp3",
+    "share_url": "https://phish.in/2020-02-23/passing-through"
+  },
+  {
+    "label": "2020-02-21 Set 2 t20 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 299.9,
+    "nonmusic_run_s": 9.6,
+    "music_boundary_s": 289.9,
+    "region": [
+      289.9,
+      300.0
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.05,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.065,
+    "mean_rms_db": -30.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/swx8087cmawpyiy3v9kk4lqrlc20.mp3",
+    "share_url": "https://phish.in/2020-02-21/good-times-bad-times"
+  },
+  {
+    "label": "2020-02-22 Encore t22 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 184.7,
+    "nonmusic_run_s": 9.1,
+    "music_boundary_s": 175.2,
+    "region": [
+      175.2,
+      184.8
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.21,
+      "speech": 0.74
+    },
+    "mean_music_score": 0.037,
+    "mean_crowd_score": 0.052,
+    "mean_rms_db": -33.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/xv7tyykm37nc2tc36vthhrif6rsk.mp3",
+    "share_url": "https://phish.in/2020-02-22/tweezer-reprise"
+  },
+  {
+    "label": "2020-02-23 Set 1 t11 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 833.5,
+    "nonmusic_run_s": 9.1,
+    "music_boundary_s": 823.9,
+    "region": [
+      823.9,
+      833.5
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.05,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.033,
+    "mean_rms_db": -32.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/177h0yjbuktp15e82pv81sr11yyt.mp3",
+    "share_url": "https://phish.in/2020-02-23/david-bowie"
+  },
+  {
+    "label": "2020-02-23 Encore t23 More",
+    "edge": "trailing",
+    "track_duration_s": 372.6,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 363.5,
+    "region": [
+      363.5,
+      372.6
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.22,
+      "speech": 0.72
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.058,
+    "mean_rms_db": -30.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "More"
+    ],
+    "mp3_url": "https://phish.in/blob/47i0f4sben9tm0egtug6awai005f.mp3",
+    "share_url": "https://phish.in/2020-02-23/more"
+  },
+  {
+    "label": "2020-02-20 Set 1 t16 Say It to Me S.A.N.T.O.S.",
+    "edge": "trailing",
+    "track_duration_s": 341.0,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 332.4,
+    "region": [
+      332.4,
+      341.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.12,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.047,
+    "mean_crowd_score": 0.034,
+    "mean_rms_db": -33.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Say It to Me S.A.N.T.O.S."
+    ],
+    "mp3_url": "https://phish.in/blob/6tzt5dg0eoydyrtvq55ex8jkyjsk.mp3",
+    "share_url": "https://phish.in/2020-02-20/say-it-to-me-s-a-n-t-o-s"
+  },
+  {
+    "label": "2020-02-22 Set 2 t20 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 850.8,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 850.8,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/lzwi17ylwqqkhf3yggt1wp4v2fs1.mp3",
+    "share_url": "https://phish.in/2020-02-22/harry-hood"
+  }
+]

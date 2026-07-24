@@ -1,0 +1,1012 @@
+[
+  {
+    "label": "1987-08-21 Set 2 t18 Skin It Back > Low Rider > Back Porch Boogie Blues > The Sloth",
+    "edge": "trailing",
+    "track_duration_s": 1798.3,
+    "nonmusic_run_s": 40.3,
+    "music_boundary_s": 1757.5,
+    "region": [
+      1757.5,
+      1798.3
+    ],
+    "character": {
+      "silence": 0.9,
+      "crowd": 0.0,
+      "speech": 0.1
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -66.0,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 1759.8,
+        "end": 1761.2,
+        "text": "Quiet!"
+      }
+    ],
+    "songs": [
+      "Low Rider",
+      "Back Porch Boogie Blues",
+      "Skin It Back",
+      "The Sloth"
+    ],
+    "mp3_url": "https://phish.in/blob/xhouszoyum31orbc84s4h0ygrnfi.mp3",
+    "share_url": "https://phish.in/1987-08-21/skin-it-back-low-rider-back-porch-boogie-blues-the-sloth"
+  },
+  {
+    "label": "1987-05-20 Set 1 t08 Alumni Blues",
+    "edge": "trailing",
+    "track_duration_s": 664.7,
+    "nonmusic_run_s": 25.4,
+    "music_boundary_s": 638.8,
+    "region": [
+      638.8,
+      664.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.04,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.029,
+    "mean_crowd_score": 0.014,
+    "mean_rms_db": -24.1,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Alumni Blues"
+    ],
+    "mp3_url": "https://phish.in/blob/wmxrqkt17zfhhluge5ndym5kdt2e.mp3",
+    "share_url": "https://phish.in/1987-05-20/alumni-blues"
+  },
+  {
+    "label": "1987-08-21 Set 3 t24 Swing Low, Sweet Chariot",
+    "edge": "trailing",
+    "track_duration_s": 134.3,
+    "nonmusic_run_s": 20.2,
+    "music_boundary_s": 113.8,
+    "region": [
+      113.8,
+      134.4
+    ],
+    "character": {
+      "silence": 0.48,
+      "crowd": 0.0,
+      "speech": 0.52
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -48.9,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 115.5,
+        "end": 116.9,
+        "text": "Oh"
+      }
+    ],
+    "songs": [
+      "Swing Low, Sweet Chariot"
+    ],
+    "mp3_url": "https://phish.in/blob/wk5qt37c5w9b6fpb5dqcaibvfnqu.mp3",
+    "share_url": "https://phish.in/1987-08-21/swing-low-sweet-chariot"
+  },
+  {
+    "label": "1987-04-24 Set 1 t12 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 359.3,
+    "nonmusic_run_s": 17.8,
+    "music_boundary_s": 341.1,
+    "region": [
+      341.1,
+      359.3
+    ],
+    "character": {
+      "silence": 0.32,
+      "crowd": 0.0,
+      "speech": 0.68
+    },
+    "mean_music_score": 0.032,
+    "mean_crowd_score": 0.012,
+    "mean_rms_db": -64.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/1udc66hicf418lxig6ttraobemee.mp3",
+    "share_url": "https://phish.in/1987-04-24/slave-to-the-traffic-light"
+  },
+  {
+    "label": "1987-04-29 Set 3 t32 Who Do? We Do!",
+    "edge": "trailing",
+    "track_duration_s": 135.5,
+    "nonmusic_run_s": 17.3,
+    "music_boundary_s": 118.1,
+    "region": [
+      118.1,
+      135.8
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.03,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.039,
+    "mean_crowd_score": 0.022,
+    "mean_rms_db": -30.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Who Do? We Do!"
+    ],
+    "mp3_url": "https://phish.in/blob/szlwz49qwqi2fzalq3s303ve719c.mp3",
+    "share_url": "https://phish.in/1987-04-29/who-do-we-do"
+  },
+  {
+    "label": "1987-10-31 Set 2 t29 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 754.6,
+    "nonmusic_run_s": 12.5,
+    "music_boundary_s": 741.7,
+    "region": [
+      741.7,
+      754.6
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.31,
+      "speech": 0.65
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.225,
+    "mean_rms_db": -23.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/nchws3frwji40opw1lylvg54ltxw.mp3",
+    "share_url": "https://phish.in/1987-10-31/david-bowie"
+  },
+  {
+    "label": "1987-03-23 Set 1 t05 Sparks",
+    "edge": "trailing",
+    "track_duration_s": 145.1,
+    "nonmusic_run_s": 11.5,
+    "music_boundary_s": 133.4,
+    "region": [
+      133.4,
+      145.4
+    ],
+    "character": {
+      "silence": 0.12,
+      "crowd": 0.04,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.022,
+    "mean_crowd_score": 0.015,
+    "mean_rms_db": -34.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sparks"
+    ],
+    "mp3_url": "https://phish.in/blob/49plhi81abyqw9s0jfsxnttltipn.mp3",
+    "share_url": "https://phish.in/1987-03-23/sparks"
+  },
+  {
+    "label": "1987-08-10 Set 3 t24 Dear Mrs. Reagan",
+    "edge": "trailing",
+    "track_duration_s": 200.0,
+    "nonmusic_run_s": 9.1,
+    "music_boundary_s": 190.6,
+    "region": [
+      190.6,
+      200.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.11,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.022,
+    "mean_crowd_score": 0.043,
+    "mean_rms_db": -27.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Dear Mrs. Reagan"
+    ],
+    "mp3_url": "https://phish.in/blob/x3ig8cl9yx8ho8te3evzs3n9d5qw.mp3",
+    "share_url": "https://phish.in/1987-08-10/dear-mrs-reagan"
+  },
+  {
+    "label": "1987-04-29 Encore t33 Fuck Your Face",
+    "edge": "trailing",
+    "track_duration_s": 204.9,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 195.8,
+    "region": [
+      195.8,
+      205.0
+    ],
+    "character": {
+      "silence": 0.17,
+      "crowd": 0.17,
+      "speech": 0.67
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.042,
+    "mean_rms_db": -38.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fuck Your Face"
+    ],
+    "mp3_url": "https://phish.in/blob/vhblceb3jedo9gftfj3lv62akbmv.mp3",
+    "share_url": "https://phish.in/1987-04-29/fuck-your-face"
+  },
+  {
+    "label": "1987-08-21 Set 1 t11 Camel Walk",
+    "edge": "trailing",
+    "track_duration_s": 314.4,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 305.3,
+    "region": [
+      305.3,
+      314.4
+    ],
+    "character": {
+      "silence": 0.44,
+      "crowd": 0.0,
+      "speech": 0.56
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -46.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Camel Walk"
+    ],
+    "mp3_url": "https://phish.in/blob/lnddi2kzgxm9q9ded579zo95o0fa.mp3",
+    "share_url": "https://phish.in/1987-08-21/camel-walk"
+  },
+  {
+    "label": "1987-09-02 Set 1 t13 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 318.2,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 309.1,
+    "region": [
+      309.1,
+      318.2
+    ],
+    "character": {
+      "silence": 1.0,
+      "crowd": 0.0,
+      "speech": 0.0
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -99.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/vzh46ctm3o74o1rm14tt3sagwhda.mp3",
+    "share_url": "https://phish.in/1987-09-02/you-enjoy-myself"
+  },
+  {
+    "label": "1987-11-18 Set 1 t14 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 370.3,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 361.2,
+    "region": [
+      361.2,
+      370.3
+    ],
+    "character": {
+      "silence": 0.22,
+      "crowd": 0.11,
+      "speech": 0.67
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.028,
+    "mean_rms_db": -40.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/mdhfdjnfnpbzf2pb6b9sxhnil9xq.mp3",
+    "share_url": "https://phish.in/1987-11-18/good-times-bad-times"
+  },
+  {
+    "label": "1987-11-19 Set 1 t07 Fire",
+    "edge": "trailing",
+    "track_duration_s": 281.5,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 272.6,
+    "region": [
+      272.6,
+      281.8
+    ],
+    "character": {
+      "silence": 0.44,
+      "crowd": 0.0,
+      "speech": 0.56
+    },
+    "mean_music_score": 0.015,
+    "mean_crowd_score": 0.002,
+    "mean_rms_db": -42.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/zx8146xvrhmwyjx748obgyijj4ta.mp3",
+    "share_url": "https://phish.in/1987-11-19/fire"
+  },
+  {
+    "label": "1987-08-10 Set 1 t07 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 300.3,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 291.7,
+    "region": [
+      291.7,
+      300.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.35,
+      "speech": 0.65
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.193,
+    "mean_rms_db": -22.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/4xph07358t9n9glbnc4cqe555vlg.mp3",
+    "share_url": "https://phish.in/1987-08-10/good-times-bad-times"
+  },
+  {
+    "label": "1987-09-21 Set 1 t11 Possum",
+    "edge": "trailing",
+    "track_duration_s": 320.1,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 311.5,
+    "region": [
+      311.5,
+      320.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.06,
+    "mean_crowd_score": 0.005,
+    "mean_rms_db": -35.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/peey1eq9fzc6cl1a2yqryfzp6695.mp3",
+    "share_url": "https://phish.in/1987-09-21/possum"
+  },
+  {
+    "label": "1987-03-06 Set 1 t06 Sneakin' Sally Through the Alley",
+    "edge": "trailing",
+    "track_duration_s": 332.4,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 324.7,
+    "region": [
+      324.7,
+      332.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.13,
+      "speech": 0.87
+    },
+    "mean_music_score": 0.08,
+    "mean_crowd_score": 0.05,
+    "mean_rms_db": -28.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Sneakin' Sally Through the Alley"
+    ],
+    "mp3_url": "https://phish.in/blob/li5qas41acm25i6qi1hk56g839ds.mp3",
+    "share_url": "https://phish.in/1987-03-06/sneakin-sally-through-the-alley"
+  },
+  {
+    "label": "1987-11-19 Set 3 t27 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 410.6,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 402.9,
+    "region": [
+      402.9,
+      410.6
+    ],
+    "character": {
+      "silence": 0.93,
+      "crowd": 0.0,
+      "speech": 0.07
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -50.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/ufco11zlrrnd91we5dw6mj2t0noc.mp3",
+    "share_url": "https://phish.in/1987-11-19/slave-to-the-traffic-light"
+  },
+  {
+    "label": "1987-02-13 Set 1 t11 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 266.0,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 259.2,
+    "region": [
+      259.2,
+      266.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.038,
+    "mean_rms_db": -29.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/tma7enc898xyw0gwecv90ozvxm8w.mp3",
+    "share_url": "https://phish.in/1987-02-13/good-times-bad-times"
+  },
+  {
+    "label": "1987-04-29 Set 1 t10 Lushington",
+    "edge": "trailing",
+    "track_duration_s": 368.0,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 360.8,
+    "region": [
+      360.8,
+      368.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.14,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.108,
+    "mean_rms_db": -33.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Lushington"
+    ],
+    "mp3_url": "https://phish.in/blob/yis9uy2vt0ayfu681nye2smsly94.mp3",
+    "share_url": "https://phish.in/1987-04-29/lushington"
+  },
+  {
+    "label": "1987-08-29 Set 1 t15 The Man Who Stepped Into Yesterday",
+    "edge": "trailing",
+    "track_duration_s": 94.4,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 87.8,
+    "region": [
+      87.8,
+      94.6
+    ],
+    "character": {
+      "silence": 0.85,
+      "crowd": 0.0,
+      "speech": 0.15
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -64.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Man Who Stepped Into Yesterday"
+    ],
+    "mp3_url": "https://phish.in/blob/t232e0hxfgttl8wfddr4wtemziy7.mp3",
+    "share_url": "https://phish.in/1987-08-29/tmwsiy-2"
+  },
+  {
+    "label": "1987-10-14 Set 1 t09 Possum",
+    "edge": "trailing",
+    "track_duration_s": 345.5,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 338.8,
+    "region": [
+      338.8,
+      345.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -41.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/ja44wnmbogr6ikwatn08fyigj36h.mp3",
+    "share_url": "https://phish.in/1987-10-14/possum"
+  },
+  {
+    "label": "1987-11-19 Set 2 t13 Alumni Blues > Letter to Jimmy Page > Alumni Blues",
+    "edge": "trailing",
+    "track_duration_s": 354.0,
+    "nonmusic_run_s": 5.8,
+    "music_boundary_s": 347.7,
+    "region": [
+      347.7,
+      354.0
+    ],
+    "character": {
+      "silence": 0.25,
+      "crowd": 0.0,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.021,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -39.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Alumni Blues",
+      "Letter to Jimmy Page"
+    ],
+    "mp3_url": "https://phish.in/blob/pp608f1i1kgb5jrg4gqis1jwhsr3.mp3",
+    "share_url": "https://phish.in/1987-11-19/alumni-blues-letter-to-jimmy-page-alumni-blues"
+  },
+  {
+    "label": "1987-02-21 Set 2 t17 Alumni Blues > Letter to Jimmy Page > Alumni Blues",
+    "edge": "trailing",
+    "track_duration_s": 398.8,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 393.1,
+    "region": [
+      393.1,
+      398.8
+    ],
+    "character": {
+      "silence": 0.27,
+      "crowd": 0.27,
+      "speech": 0.45
+    },
+    "mean_music_score": 0.027,
+    "mean_crowd_score": 0.056,
+    "mean_rms_db": -35.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Alumni Blues",
+      "Letter to Jimmy Page"
+    ],
+    "mp3_url": "https://phish.in/blob/dds8qnt64icnd2smy1aryl1b0c3w.mp3",
+    "share_url": "https://phish.in/1987-02-21/alumni-blues-letter-to-jimmy-page-alumni-blues"
+  },
+  {
+    "label": "1987-08-09 Set 1 t11 Funky Bitch",
+    "edge": "trailing",
+    "track_duration_s": 300.8,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 295.0,
+    "region": [
+      295.0,
+      300.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.09,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.066,
+    "mean_crowd_score": 0.003,
+    "mean_rms_db": -35.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Funky Bitch"
+    ],
+    "mp3_url": "https://phish.in/blob/siy6jrxm2qmt1l9k37f1a4zu35da.mp3",
+    "share_url": "https://phish.in/1987-08-09/funky-bitch"
+  },
+  {
+    "label": "1987-04-29 Set 2 t17 AC/DC Bag",
+    "edge": "trailing",
+    "track_duration_s": 311.8,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 306.5,
+    "region": [
+      306.5,
+      311.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.2,
+      "speech": 0.8
+    },
+    "mean_music_score": 0.029,
+    "mean_crowd_score": 0.081,
+    "mean_rms_db": -24.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "AC/DC Bag"
+    ],
+    "mp3_url": "https://phish.in/blob/dngf96kofhxhght1l6hl2jx8x0xt.mp3",
+    "share_url": "https://phish.in/1987-04-29/ac-dc-bag"
+  },
+  {
+    "label": "1987-11-18 Set 2 t18 AC/DC Bag",
+    "edge": "trailing",
+    "track_duration_s": 77.1,
+    "nonmusic_run_s": 4.3,
+    "music_boundary_s": 72.5,
+    "region": [
+      72.5,
+      77.3
+    ],
+    "character": {
+      "silence": 0.89,
+      "crowd": 0.0,
+      "speech": 0.11
+    },
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -60.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "AC/DC Bag"
+    ],
+    "mp3_url": "https://phish.in/blob/fjxb2iyplaui6z4zqph4aso48o96.mp3",
+    "share_url": "https://phish.in/1987-11-18/ac-dc-bag"
+  },
+  {
+    "label": "1987-08-29 Set 2 t28 Harpua",
+    "edge": "trailing",
+    "track_duration_s": 166.1,
+    "nonmusic_run_s": 3.8,
+    "music_boundary_s": 162.2,
+    "region": [
+      162.2,
+      166.6
+    ],
+    "character": {
+      "silence": 0.12,
+      "crowd": 0.0,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.003,
+    "mean_rms_db": -43.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harpua"
+    ],
+    "mp3_url": "https://phish.in/blob/7lwuvqsx3ggxskumfgf3scczxupo.mp3",
+    "share_url": "https://phish.in/1987-08-29/harpua-2"
+  },
+  {
+    "label": "1987-09-21 Set 2 t18 Alumni Blues",
+    "edge": "trailing",
+    "track_duration_s": 41.0,
+    "nonmusic_run_s": 3.8,
+    "music_boundary_s": 37.0,
+    "region": [
+      37.0,
+      41.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.009,
+    "mean_crowd_score": 0.033,
+    "mean_rms_db": -29.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Alumni Blues"
+    ],
+    "mp3_url": "https://phish.in/blob/2uaautjwm8q884jpwpk9ozfo7kun.mp3",
+    "share_url": "https://phish.in/1987-09-21/alumni-blues-2"
+  },
+  {
+    "label": "1987-03-23 Set 2 t14 Swing Low, Sweet Chariot",
+    "edge": "trailing",
+    "track_duration_s": 114.8,
+    "nonmusic_run_s": 3.4,
+    "music_boundary_s": 111.4,
+    "region": [
+      111.4,
+      115.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.14,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.009,
+    "mean_crowd_score": 0.017,
+    "mean_rms_db": -37.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Swing Low, Sweet Chariot"
+    ],
+    "mp3_url": "https://phish.in/blob/wr2yb9gp43w5naate23kzevo23hh.mp3",
+    "share_url": "https://phish.in/1987-03-23/swing-low-sweet-chariot"
+  },
+  {
+    "label": "1987-02-13 Set 2 t16 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 584.3,
+    "nonmusic_run_s": 2.9,
+    "music_boundary_s": 581.0,
+    "region": [
+      581.0,
+      584.3
+    ],
+    "character": {
+      "silence": 0.33,
+      "crowd": 0.0,
+      "speech": 0.67
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.018,
+    "mean_rms_db": -34.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/cbglumh7ig3h4kfpcqksceeird06.mp3",
+    "share_url": "https://phish.in/1987-02-13/harry-hood"
+  },
+  {
+    "label": "1987-05-11 Set 1 t21 The Man Who Stepped Into Yesterday",
+    "edge": "trailing",
+    "track_duration_s": 135.3,
+    "nonmusic_run_s": 2.4,
+    "music_boundary_s": 132.5,
+    "region": [
+      132.5,
+      135.4
+    ],
+    "character": {
+      "silence": 1.0,
+      "crowd": 0.0,
+      "speech": 0.0
+    },
+    "mean_music_score": 0.049,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -62.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Man Who Stepped Into Yesterday"
+    ],
+    "mp3_url": "https://phish.in/blob/dpjkam8hyqkzx2g03etvaqhuygzt.mp3",
+    "share_url": "https://phish.in/1987-05-11/the-man-who-stepped-into-yesterday"
+  },
+  {
+    "label": "1987-08-29 Set 3 t36 Jesus Just Left Chicago",
+    "edge": "trailing",
+    "track_duration_s": 383.3,
+    "nonmusic_run_s": 2.4,
+    "music_boundary_s": 380.5,
+    "region": [
+      380.5,
+      383.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.2,
+      "speech": 0.8
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.122,
+    "mean_rms_db": -32.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Jesus Just Left Chicago"
+    ],
+    "mp3_url": "https://phish.in/blob/0ei5p6d9f5clh0adlhoq41u8jpfe.mp3",
+    "share_url": "https://phish.in/1987-08-29/jesus-just-left-chicago"
+  },
+  {
+    "label": "1987-05-11 Set 2 t22 Harpua",
+    "edge": "trailing",
+    "track_duration_s": 113.3,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 111.8,
+    "region": [
+      111.8,
+      113.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.006,
+    "mean_rms_db": -26.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harpua"
+    ],
+    "mp3_url": "https://phish.in/blob/s381yxtyljaabe6t3vcgt3g8mygy.mp3",
+    "share_url": "https://phish.in/1987-05-11/harpua"
+  },
+  {
+    "label": "1987-08-10 Set 2 t17 La Grange",
+    "edge": "trailing",
+    "track_duration_s": 213.3,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 211.7,
+    "region": [
+      211.7,
+      213.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.67,
+      "speech": 0.33
+    },
+    "mean_music_score": 0.368,
+    "mean_crowd_score": 0.023,
+    "mean_rms_db": -21.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "La Grange"
+    ],
+    "mp3_url": "https://phish.in/blob/foyfrz0g4z5ocmvg5ul8g7mmuc61.mp3",
+    "share_url": "https://phish.in/1987-08-10/la-grange"
+  },
+  {
+    "label": "1987-08-29 Encore t37 She Caught the Katy and Left Me a Mule to Ride",
+    "edge": "trailing",
+    "track_duration_s": 146.1,
+    "nonmusic_run_s": 0.5,
+    "music_boundary_s": 145.4,
+    "region": [
+      145.4,
+      146.4
+    ],
+    "character": {
+      "silence": 1.0,
+      "crowd": 0.0,
+      "speech": 0.0
+    },
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -53.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "She Caught the Katy and Left Me a Mule to Ride"
+    ],
+    "mp3_url": "https://phish.in/blob/39b7ticpisuwlsib16uce3p93k2d.mp3",
+    "share_url": "https://phish.in/1987-08-29/she-caught-the-katy"
+  },
+  {
+    "label": "1987-10-14 Set 2 t15 Makisupa Policeman",
+    "edge": "trailing",
+    "track_duration_s": 202.1,
+    "nonmusic_run_s": 0.5,
+    "music_boundary_s": 201.1,
+    "region": [
+      201.1,
+      202.1
+    ],
+    "character": {
+      "silence": 1.0,
+      "crowd": 0.0,
+      "speech": 0.0
+    },
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -90.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Makisupa Policeman"
+    ],
+    "mp3_url": "https://phish.in/blob/4u6l4yqhy9nstl0jo9twxergbnqt.mp3",
+    "share_url": "https://phish.in/1987-10-14/makisupa-policeman"
+  },
+  {
+    "label": "1987-03-06 Set 2 t13 Wilson",
+    "edge": "trailing",
+    "track_duration_s": 232.7,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 232.7,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Wilson"
+    ],
+    "mp3_url": "https://phish.in/blob/gq21lz6hletirpg7oijt6s4xmgob.mp3",
+    "share_url": "https://phish.in/1987-03-06/wilson"
+  },
+  {
+    "label": "1987-09-21 Set 3 t33 Fluffhead",
+    "edge": "trailing",
+    "track_duration_s": 236.4,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 236.4,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fluffhead"
+    ],
+    "mp3_url": "https://phish.in/blob/kwubvpaffb86gvghibkdyfgv0rxk.mp3",
+    "share_url": "https://phish.in/1987-09-21/fluffhead"
+  },
+  {
+    "label": "1987-10-31 Set 1 t11 Big Black Furry Creature From Mars",
+    "edge": "trailing",
+    "track_duration_s": 172.9,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 172.9,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Big Black Furry Creature From Mars"
+    ],
+    "mp3_url": "https://phish.in/blob/js06wn8iqj19yhejllqcm6kv1yod.mp3",
+    "share_url": "https://phish.in/1987-10-31/bbfcfm"
+  }
+]

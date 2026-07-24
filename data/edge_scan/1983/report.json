@@ -1,0 +1,28 @@
+[
+  {
+    "label": "1983-12-02 Set 2 t08 Fire on the Mountain",
+    "edge": "trailing",
+    "track_duration_s": 473.0,
+    "nonmusic_run_s": 11.5,
+    "music_boundary_s": 461.0,
+    "region": [
+      461.0,
+      473.0
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.0,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.063,
+    "mean_crowd_score": 0.02,
+    "mean_rms_db": -22.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fire on the Mountain"
+    ],
+    "mp3_url": "https://phish.in/blob/kh5fwy2fhego39jnpmmlzw7k44cq.mp3",
+    "share_url": "https://phish.in/1983-12-02/fire-on-the-mountain"
+  }
+]

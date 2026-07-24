@@ -1,0 +1,61 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Track edge trim review</title>
+<style>
+  body { font: 14px/1.5 -apple-system, sans-serif; margin: 2rem auto; max-width: 1100px; }
+  .row { border-bottom: 1px solid #ccc; padding: 1rem 0; }
+  .head { display: flex; gap: .6rem; align-items: baseline; flex-wrap: wrap; }
+  .meta { color: #666; }
+  .banter { color: #205080; margin: .3rem 0 .3rem 1.6rem; }
+  .audio { display: flex; gap: 1rem; align-items: center; margin: .4rem 0; flex-wrap: wrap; }
+  .audio label { color: #666; font-size: 12px; }
+  img { max-width: 100%; }
+  #export { position: fixed; top: 1rem; right: 1rem; padding: .5rem 1rem; }
+</style>
+<button id="export">Export approved.json</button>
+<h1>Track edge trim review (3 candidates)</h1>
+
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;2023-07-19 Set 2 t14 Scents and Subtle Sounds&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/tmnix0iucc8ytxjuqpdta8paoqra.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/2023-07-19/scents-and-subtle-sounds&quot;, &quot;music_boundary_s&quot;: 179.5, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 186.8}">
+    <strong><a href="https://phish.in/2023-07-19/scents-and-subtle-sounds" target="_blank">2023-07-19 Set 2 t14 Scents and Subtle Sounds</a></strong>
+    <span class="meta">trailing edge &middot; run 73.4s &middot;
+      cut 66.5s &middot; boundary 179.5s &middot; crowd 4%, speech 96%</span>
+  </div>
+  <div class="banter">243.8-248.9s: &ldquo;Yeah, I guess the beer has to get covered up.&rdquo;</div><div class="banter">249.5-250.2s: &ldquo;I think I know about it.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/2023-07-19_Set_2_t14_Scents_and_Subtle_Sounds_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/2023-07-19_Set_2_t14_Scents_and_Subtle_Sounds_original.mp3"></audio></div>
+  <img src="plots/2023-07-19_Set_2_t14_Scents_and_Subtle_Sounds_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;2023-08-31 Encore t16 Say It to Me S.A.N.T.O.S.&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/w4jopo0sga6hakv1qjrm3hzezd95.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/2023-08-31/say-it-to-me-s-a-n-t-o-s&quot;, &quot;music_boundary_s&quot;: 325.0, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 332.3}">
+    <strong><a href="https://phish.in/2023-08-31/say-it-to-me-s-a-n-t-o-s" target="_blank">2023-08-31 Encore t16 Say It to Me S.A.N.T.O.S.</a></strong>
+    <span class="meta">trailing edge &middot; run 36.5s &middot;
+      cut 29.7s &middot; boundary 325.0s &middot; crowd 4%, speech 96%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/2023-08-31_Encore_t16_Say_It_to_Me_S.A.N.T.O.S._audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/2023-08-31_Encore_t16_Say_It_to_Me_S.A.N.T.O.S._original.mp3"></audio></div>
+  <img src="plots/2023-08-31_Encore_t16_Say_It_to_Me_S.A.N.T.O.S._trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;2023-10-08 Set 2 t17 You Enjoy Myself&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/0ap7m47puz79c7xp3ldv9ml90bxm.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/2023-10-08/you-enjoy-myself&quot;, &quot;music_boundary_s&quot;: 1047.0, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 1054.3}">
+    <strong><a href="https://phish.in/2023-10-08/you-enjoy-myself" target="_blank">2023-10-08 Set 2 t17 You Enjoy Myself</a></strong>
+    <span class="meta">trailing edge &middot; run 25.0s &middot;
+      cut 18.2s &middot; boundary 1047.0s &middot; crowd 4%, speech 96%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/2023-10-08_Set_2_t17_You_Enjoy_Myself_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/2023-10-08_Set_2_t17_You_Enjoy_Myself_original.mp3"></audio></div>
+  <img src="plots/2023-10-08_Set_2_t17_You_Enjoy_Myself_trailing.png" loading="lazy">
+</div>
+<h2>Flagged but not trimmed (2)</h2><div class="meta"><a href="https://phish.in/2023-08-26/possum" target="_blank">2023-08-26 Encore t23 Possum</a> &middot; run 25.9s, cut 1.8s &mdash; left untouched</div><div class="meta"><a href="https://phish.in/2023-04-22/the-squirming-coil" target="_blank">2023-04-22 Set 1 t08 The Squirming Coil</a> &middot; run 25.4s, cut 0.0s &mdash; left untouched</div>
+<script>
+document.getElementById("export").onclick = () => {
+  const approved = [...document.querySelectorAll("input:checked")]
+    .map(cb => JSON.parse(cb.dataset.payload));
+  const blob = new Blob([JSON.stringify(approved, null, 2)], {type: "application/json"});
+  const a = Object.assign(document.createElement("a"),
+    {href: URL.createObjectURL(blob), download: "approved.json"});
+  a.click();
+};
+</script>

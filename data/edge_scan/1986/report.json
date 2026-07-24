@@ -1,0 +1,361 @@
+[
+  {
+    "label": "1986-04-01 Set 1 t06 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 825.3,
+    "nonmusic_run_s": 33.1,
+    "music_boundary_s": 791.7,
+    "region": [
+      791.7,
+      825.3
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.13,
+      "speech": 0.84
+    },
+    "mean_music_score": 0.046,
+    "mean_crowd_score": 0.042,
+    "mean_rms_db": -18.5,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 815.6,
+        "end": 816.1,
+        "text": "Thank you."
+      },
+      {
+        "start": 816.9,
+        "end": 817.7,
+        "text": "Thank you very much."
+      }
+    ],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/fcgk2w05hs7jezcpw5rkovo9ab77.mp3",
+    "share_url": "https://phish.in/1986-04-01/you-enjoy-myself"
+  },
+  {
+    "label": "1986-10-15 Encore t27 Clod",
+    "edge": "trailing",
+    "track_duration_s": 438.5,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 429.4,
+    "region": [
+      429.4,
+      438.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.023,
+    "mean_crowd_score": 0.006,
+    "mean_rms_db": -38.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Clod"
+    ],
+    "mp3_url": "https://phish.in/blob/re9694s2uf9oj0nvlzsfgia647oq.mp3",
+    "share_url": "https://phish.in/1986-10-15/clod"
+  },
+  {
+    "label": "1986-10-31 Set 1 t10 Fluffhead",
+    "edge": "trailing",
+    "track_duration_s": 574.7,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 566.5,
+    "region": [
+      566.5,
+      574.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.81,
+      "speech": 0.19
+    },
+    "mean_music_score": 0.015,
+    "mean_crowd_score": 0.47,
+    "mean_rms_db": -28.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fluffhead"
+    ],
+    "mp3_url": "https://phish.in/blob/th77tyo6488341ypqzuv6dllnenp.mp3",
+    "share_url": "https://phish.in/1986-10-31/fluffhead"
+  },
+  {
+    "label": "1986-10-15 Set 1 t09 Lushington",
+    "edge": "trailing",
+    "track_duration_s": 352.9,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 347.1,
+    "region": [
+      347.1,
+      352.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.031,
+    "mean_rms_db": -29.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Lushington"
+    ],
+    "mp3_url": "https://phish.in/blob/m86yh6d94sbviz24j2ftx16au3w4.mp3",
+    "share_url": "https://phish.in/1986-10-15/lushington"
+  },
+  {
+    "label": "1986-12-06 Set 1 t05 Fluffhead",
+    "edge": "trailing",
+    "track_duration_s": 719.3,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 714.0,
+    "region": [
+      714.0,
+      719.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.6,
+      "speech": 0.4
+    },
+    "mean_music_score": 0.081,
+    "mean_crowd_score": 0.189,
+    "mean_rms_db": -39.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fluffhead"
+    ],
+    "mp3_url": "https://phish.in/blob/7j3o9a6p31izfmv2c1zgpc1sd48h.mp3",
+    "share_url": "https://phish.in/1986-12-06/fluffhead"
+  },
+  {
+    "label": "1986-10-12 Set 1 t07 Makisupa Policeman",
+    "edge": "trailing",
+    "track_duration_s": 435.2,
+    "nonmusic_run_s": 2.9,
+    "music_boundary_s": 431.9,
+    "region": [
+      431.9,
+      435.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.042,
+    "mean_crowd_score": 0.006,
+    "mean_rms_db": -30.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Makisupa Policeman"
+    ],
+    "mp3_url": "https://phish.in/blob/keog9fxk21dp9tbgzi7q0qw30jsp.mp3",
+    "share_url": "https://phish.in/1986-10-12/makisupa-policeman"
+  },
+  {
+    "label": "1986-10-31 Set 2 t21 Alumni Blues",
+    "edge": "trailing",
+    "track_duration_s": 371.4,
+    "nonmusic_run_s": 2.9,
+    "music_boundary_s": 368.0,
+    "region": [
+      368.0,
+      371.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.67,
+      "speech": 0.33
+    },
+    "mean_music_score": 0.129,
+    "mean_crowd_score": 0.093,
+    "mean_rms_db": -28.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Alumni Blues"
+    ],
+    "mp3_url": "https://phish.in/blob/ycul1kypaskpjc9ryq0ouiouspdq.mp3",
+    "share_url": "https://phish.in/1986-10-31/alumni-blues"
+  },
+  {
+    "label": "1986-04-01 Encore t13 Not Fade Away",
+    "edge": "trailing",
+    "track_duration_s": 129.9,
+    "nonmusic_run_s": 2.4,
+    "music_boundary_s": 127.2,
+    "region": [
+      127.2,
+      130.1
+    ],
+    "character": {
+      "silence": 0.6,
+      "crowd": 0.0,
+      "speech": 0.4
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.004,
+    "mean_rms_db": -104.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Not Fade Away"
+    ],
+    "mp3_url": "https://phish.in/blob/llaq20l3r4stqdpftgjvnhf8tmo2.mp3",
+    "share_url": "https://phish.in/1986-04-01/not-fade-away"
+  },
+  {
+    "label": "1986-04-25 Set 1 t16 Alumni Blues",
+    "edge": "trailing",
+    "track_duration_s": 76.9,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 75.4,
+    "region": [
+      75.4,
+      77.3
+    ],
+    "character": {
+      "silence": 1.0,
+      "crowd": 0.0,
+      "speech": 0.0
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -65.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Alumni Blues"
+    ],
+    "mp3_url": "https://phish.in/blob/m1j8997izqme5v5csby0y9jaeoc6.mp3",
+    "share_url": "https://phish.in/1986-04-25/alumni-blues-2"
+  },
+  {
+    "label": "1986-02-03 Set 1 t13 Alumni Blues",
+    "edge": "trailing",
+    "track_duration_s": 421.8,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 421.8,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Alumni Blues"
+    ],
+    "mp3_url": "https://phish.in/blob/ne36n79mcqoizf6o45cpn0ij4f0b.mp3",
+    "share_url": "https://phish.in/1986-02-03/alumni-blues"
+  },
+  {
+    "label": "1986-04-01 Set 2 t12 Dear Mrs. Reagan",
+    "edge": "trailing",
+    "track_duration_s": 373.9,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 373.9,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Dear Mrs. Reagan"
+    ],
+    "mp3_url": "https://phish.in/blob/rfu0g3a2dz1kzw95h14dzmudtztw.mp3",
+    "share_url": "https://phish.in/1986-04-01/dear-mrs-reagan"
+  },
+  {
+    "label": "1986-10-15 Set 2 t23 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 567.5,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 567.5,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/bj5w4fxo5z7smxas04u84ni3pslf.mp3",
+    "share_url": "https://phish.in/1986-10-15/harry-hood"
+  },
+  {
+    "label": "1986-10-15 Set 3 t26 Anarchy",
+    "edge": "trailing",
+    "track_duration_s": 33.6,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 33.6,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Anarchy"
+    ],
+    "mp3_url": "https://phish.in/blob/1uvkij8zfro990u6s3uuu8rkx6yt.mp3",
+    "share_url": "https://phish.in/1986-10-15/anarchy"
+  },
+  {
+    "label": "1986-12-06 Set 2 t19 Cities",
+    "edge": "trailing",
+    "track_duration_s": 213.2,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 213.2,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cities"
+    ],
+    "mp3_url": "https://phish.in/blob/s2f0kh3fln3d04wum9mue8f6elhe.mp3",
+    "share_url": "https://phish.in/1986-12-06/cities"
+  },
+  {
+    "label": "1986-12-06 Set 3 t32 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 231.9,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 231.9,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/yrk9x5zu3kubn3ax12iq97yn9b34.mp3",
+    "share_url": "https://phish.in/1986-12-06/david-bowie"
+  }
+]

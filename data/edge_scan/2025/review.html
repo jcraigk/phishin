@@ -1,0 +1,28 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Track edge trim review</title>
+<style>
+  body { font: 14px/1.5 -apple-system, sans-serif; margin: 2rem auto; max-width: 1100px; }
+  .row { border-bottom: 1px solid #ccc; padding: 1rem 0; }
+  .head { display: flex; gap: .6rem; align-items: baseline; flex-wrap: wrap; }
+  .meta { color: #666; }
+  .banter { color: #205080; margin: .3rem 0 .3rem 1.6rem; }
+  .audio { display: flex; gap: 1rem; align-items: center; margin: .4rem 0; flex-wrap: wrap; }
+  .audio label { color: #666; font-size: 12px; }
+  img { max-width: 100%; }
+  #export { position: fixed; top: 1rem; right: 1rem; padding: .5rem 1rem; }
+</style>
+<button id="export">Export approved.json</button>
+<h1>Track edge trim review (0 candidates)</h1>
+
+<h2>Flagged but not trimmed (2)</h2><div class="meta"><a href="https://phish.in/2025-04-26/the-squirming-coil" target="_blank">2025-04-26 Set 1 t08 The Squirming Coil</a> &middot; run 24.5s, cut 0.2s &mdash; left untouched</div><div class="meta"><a href="https://phish.in/2025-09-16/the-squirming-coil" target="_blank">2025-09-16 Set 1 t11 The Squirming Coil</a> &middot; run 24.0s, cut 0.5s &mdash; left untouched</div>
+<script>
+document.getElementById("export").onclick = () => {
+  const approved = [...document.querySelectorAll("input:checked")]
+    .map(cb => JSON.parse(cb.dataset.payload));
+  const blob = new Blob([JSON.stringify(approved, null, 2)], {type: "application/json"});
+  const a = Object.assign(document.createElement("a"),
+    {href: URL.createObjectURL(blob), download: "approved.json"});
+  a.click();
+};
+</script>

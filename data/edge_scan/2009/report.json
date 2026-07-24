@@ -1,0 +1,3952 @@
+[
+  {
+    "label": "2009-03-08 Set 2 t26 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 811.8,
+    "nonmusic_run_s": 230.4,
+    "music_boundary_s": 580.9,
+    "region": [
+      580.9,
+      811.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.13,
+      "speech": 0.87
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.067,
+    "mean_rms_db": -31.0,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/v2z1vgsqw2gz0qd8ur0iac539pxp.mp3",
+    "share_url": "https://phish.in/2009-03-08/slave-to-the-traffic-light"
+  },
+  {
+    "label": "2009-03-07 Set 2 t26 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 598.7,
+    "nonmusic_run_s": 215.5,
+    "music_boundary_s": 382.7,
+    "region": [
+      382.7,
+      598.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.05,
+      "speech": 0.95
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.035,
+    "mean_rms_db": -29.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/ro3i3845pzmbmkue93rfmspeicac.mp3",
+    "share_url": "https://phish.in/2009-03-07/character-zero"
+  },
+  {
+    "label": "2009-06-07 Set 2 t19 Tweezer",
+    "edge": "trailing",
+    "track_duration_s": 1027.2,
+    "nonmusic_run_s": 201.1,
+    "music_boundary_s": 825.6,
+    "region": [
+      825.6,
+      1027.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.03,
+      "speech": 0.97
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.023,
+    "mean_rms_db": -32.7,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Tweezer"
+    ],
+    "mp3_url": "https://phish.in/blob/nduqycukb6ezxry9y527pta4ncpi.mp3",
+    "share_url": "https://phish.in/2009-06-07/tweezer"
+  },
+  {
+    "label": "2009-11-24 Set 2 t19 Weekapaug Groove",
+    "edge": "trailing",
+    "track_duration_s": 746.4,
+    "nonmusic_run_s": 196.3,
+    "music_boundary_s": 549.6,
+    "region": [
+      549.6,
+      746.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.02,
+      "speech": 0.98
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.028,
+    "mean_rms_db": -30.5,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Weekapaug Groove"
+    ],
+    "mp3_url": "https://phish.in/blob/2eyc7b0ol2zucn3hng0t6f2w5avw.mp3",
+    "share_url": "https://phish.in/2009-11-24/weekapaug-groove"
+  },
+  {
+    "label": "2009-11-22 Set 2 t23 First Tube",
+    "edge": "trailing",
+    "track_duration_s": 606.5,
+    "nonmusic_run_s": 175.7,
+    "music_boundary_s": 430.4,
+    "region": [
+      430.4,
+      606.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.09,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.037,
+    "mean_rms_db": -36.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "First Tube"
+    ],
+    "mp3_url": "https://phish.in/blob/8ktlvwnr5rjn4xqi16qfqoe600gf.mp3",
+    "share_url": "https://phish.in/2009-11-22/first-tube"
+  },
+  {
+    "label": "2009-08-14 Set 2 t21 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1110.2,
+    "nonmusic_run_s": 170.4,
+    "music_boundary_s": 939.3,
+    "region": [
+      939.3,
+      1110.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.13,
+      "speech": 0.87
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.08,
+    "mean_rms_db": -30.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/gf237uoacc4773i2vrn0revqt5xx.mp3",
+    "share_url": "https://phish.in/2009-08-14/you-enjoy-myself"
+  },
+  {
+    "label": "2009-07-30 Set 2 t19 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 857.3,
+    "nonmusic_run_s": 153.1,
+    "music_boundary_s": 703.7,
+    "region": [
+      703.7,
+      857.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.05,
+      "speech": 0.95
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.033,
+    "mean_rms_db": -31.1,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/56mjqn3censo429eypsodvpgx4cc.mp3",
+    "share_url": "https://phish.in/2009-07-30/david-bowie"
+  },
+  {
+    "label": "2009-08-01 Set 2 t15 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 1023.7,
+    "nonmusic_run_s": 144.5,
+    "music_boundary_s": 878.7,
+    "region": [
+      878.7,
+      1023.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.04,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.034,
+    "mean_rms_db": -32.4,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/ma50tekqol79h7w6f0072x0m47ca.mp3",
+    "share_url": "https://phish.in/2009-08-01/harry-hood"
+  },
+  {
+    "label": "2009-07-31 Set 2 t16 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 409.7,
+    "nonmusic_run_s": 129.1,
+    "music_boundary_s": 280.1,
+    "region": [
+      280.1,
+      409.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.06,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.034,
+    "mean_rms_db": -36.9,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 406.9,
+        "end": 409.7,
+        "text": "Thank you very much."
+      }
+    ],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/z60ma0ybm2bhwxp85qjoii3fx6ob.mp3",
+    "share_url": "https://phish.in/2009-07-31/a-day-in-the-life"
+  },
+  {
+    "label": "2009-06-02 Set 2 t18 Loving Cup",
+    "edge": "trailing",
+    "track_duration_s": 561.9,
+    "nonmusic_run_s": 127.7,
+    "music_boundary_s": 433.7,
+    "region": [
+      433.7,
+      561.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.02,
+      "speech": 0.98
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.028,
+    "mean_rms_db": -31.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Loving Cup"
+    ],
+    "mp3_url": "https://phish.in/blob/dl0uosj02cxw3v0wa1z15p5hzc77.mp3",
+    "share_url": "https://phish.in/2009-06-02/loving-cup"
+  },
+  {
+    "label": "2009-06-05 Encore t19 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 368.1,
+    "nonmusic_run_s": 90.7,
+    "music_boundary_s": 276.9,
+    "region": [
+      276.9,
+      368.1
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.02,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.027,
+    "mean_rms_db": -32.5,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/2w99kbvoa872pikvf1tpf2f7xooq.mp3",
+    "share_url": "https://phish.in/2009-06-05/a-day-in-the-life"
+  },
+  {
+    "label": "2009-06-05 Set 1 t10 Split Open and Melt",
+    "edge": "trailing",
+    "track_duration_s": 773.4,
+    "nonmusic_run_s": 62.4,
+    "music_boundary_s": 710.5,
+    "region": [
+      710.5,
+      773.4
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.11,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.018,
+    "mean_crowd_score": 0.042,
+    "mean_rms_db": -37.2,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Split Open and Melt"
+    ],
+    "mp3_url": "https://phish.in/blob/ki4vspyiv56cz7uemexqwmx7z4ry.mp3",
+    "share_url": "https://phish.in/2009-06-05/split-open-and-melt"
+  },
+  {
+    "label": "2009-12-05 Encore t23 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 295.8,
+    "nonmusic_run_s": 60.5,
+    "music_boundary_s": 235.2,
+    "region": [
+      235.2,
+      296.2
+    ],
+    "character": {
+      "silence": 0.2,
+      "crowd": 0.03,
+      "speech": 0.77
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.027,
+    "mean_rms_db": -37.9,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/2bbl9hfbufdmkr12ly59az01gp9d.mp3",
+    "share_url": "https://phish.in/2009-12-05/tweezer-reprise"
+  },
+  {
+    "label": "2009-06-10 Encore t22 Frankenstein",
+    "edge": "trailing",
+    "track_duration_s": 350.0,
+    "nonmusic_run_s": 59.0,
+    "music_boundary_s": 290.4,
+    "region": [
+      290.4,
+      350.0
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.07,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.04,
+    "mean_rms_db": -28.2,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Frankenstein"
+    ],
+    "mp3_url": "https://phish.in/blob/2gx4088wdjok5gra76eox6kqeocc.mp3",
+    "share_url": "https://phish.in/2009-06-10/frankenstein"
+  },
+  {
+    "label": "2009-06-04 Set 1 t09 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 643.1,
+    "nonmusic_run_s": 52.3,
+    "music_boundary_s": 590.3,
+    "region": [
+      590.3,
+      643.1
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.01,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.033,
+    "mean_rms_db": -33.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/ldjmasymk9y6qpsgwxwcjchs94l9.mp3",
+    "share_url": "https://phish.in/2009-06-04/run-like-an-antelope"
+  },
+  {
+    "label": "2009-03-07 Encore t27 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 338.4,
+    "nonmusic_run_s": 50.4,
+    "music_boundary_s": 287.5,
+    "region": [
+      287.5,
+      338.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.14,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.084,
+    "mean_rms_db": -27.2,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 326.6,
+        "end": 337.2,
+        "text": "Thank you very much."
+      }
+    ],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/wkm2hpa5von4a9cq65ok9wee2twv.mp3",
+    "share_url": "https://phish.in/2009-03-07/a-day-in-the-life"
+  },
+  {
+    "label": "2009-06-04 Encore t17 Rock and Roll",
+    "edge": "trailing",
+    "track_duration_s": 523.3,
+    "nonmusic_run_s": 49.9,
+    "music_boundary_s": 472.9,
+    "region": [
+      472.9,
+      523.3
+    ],
+    "character": {
+      "silence": 0.13,
+      "crowd": 0.03,
+      "speech": 0.84
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.03,
+    "mean_rms_db": -37.1,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Rock and Roll"
+    ],
+    "mp3_url": "https://phish.in/blob/1ejxqim0jmzrzx18imuhi530uy80.mp3",
+    "share_url": "https://phish.in/2009-06-04/rock-and-roll"
+  },
+  {
+    "label": "2009-03-08 Encore t30 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 242.5,
+    "nonmusic_run_s": 45.1,
+    "music_boundary_s": 197.3,
+    "region": [
+      197.3,
+      242.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.065,
+    "mean_rms_db": -26.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/959i3s4n8h0i9l23hplczffkajcw.mp3",
+    "share_url": "https://phish.in/2009-03-08/tweezer-reprise"
+  },
+  {
+    "label": "2009-12-04 Set 1 t12 First Tube",
+    "edge": "trailing",
+    "track_duration_s": 484.6,
+    "nonmusic_run_s": 40.8,
+    "music_boundary_s": 443.3,
+    "region": [
+      443.3,
+      484.6
+    ],
+    "character": {
+      "silence": 0.01,
+      "crowd": 0.39,
+      "speech": 0.6
+    },
+    "mean_music_score": 0.046,
+    "mean_crowd_score": 0.05,
+    "mean_rms_db": -17.9,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "First Tube"
+    ],
+    "mp3_url": "https://phish.in/blob/0w6jupblajxggd2jidjbb3bnfows.mp3",
+    "share_url": "https://phish.in/2009-12-04/first-tube"
+  },
+  {
+    "label": "2009-08-16 Encore t24 Highway to Hell",
+    "edge": "trailing",
+    "track_duration_s": 277.4,
+    "nonmusic_run_s": 39.4,
+    "music_boundary_s": 237.6,
+    "region": [
+      237.6,
+      277.4
+    ],
+    "character": {
+      "silence": 0.07,
+      "crowd": 0.3,
+      "speech": 0.62
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.195,
+    "mean_rms_db": -34.1,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Highway to Hell"
+    ],
+    "mp3_url": "https://phish.in/blob/2dk9vi4jl19a35souu3wcr6rcqzs.mp3",
+    "share_url": "https://phish.in/2009-08-16/highway-to-hell"
+  },
+  {
+    "label": "2009-11-25 Set 1 t10 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 722.6,
+    "nonmusic_run_s": 39.4,
+    "music_boundary_s": 682.8,
+    "region": [
+      682.8,
+      722.6
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.02,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.028,
+    "mean_rms_db": -35.5,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/wmrauhyfvw54dddc3zivgstp9yhr.mp3",
+    "share_url": "https://phish.in/2009-11-25/run-like-an-antelope"
+  },
+  {
+    "label": "2009-06-09 Encore t21 Loving Cup",
+    "edge": "trailing",
+    "track_duration_s": 473.5,
+    "nonmusic_run_s": 36.5,
+    "music_boundary_s": 436.5,
+    "region": [
+      436.5,
+      473.5
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.05,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.017,
+    "mean_crowd_score": 0.049,
+    "mean_rms_db": -29.0,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Loving Cup"
+    ],
+    "mp3_url": "https://phish.in/blob/j78lo02akgfnwbw7e9lj836oiw63.mp3",
+    "share_url": "https://phish.in/2009-06-09/loving-cup"
+  },
+  {
+    "label": "2009-11-28 Set 1 t12 Backwards Down the Number Line",
+    "edge": "trailing",
+    "track_duration_s": 475.7,
+    "nonmusic_run_s": 35.0,
+    "music_boundary_s": 440.1,
+    "region": [
+      440.1,
+      475.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.04,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.036,
+    "mean_rms_db": -31.3,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Backwards Down the Number Line"
+    ],
+    "mp3_url": "https://phish.in/blob/085f0zqdw003dbo82omoqcleghrl.mp3",
+    "share_url": "https://phish.in/2009-11-28/backwards-down-the-number-line"
+  },
+  {
+    "label": "2009-07-30 Encore t20 Loving Cup",
+    "edge": "trailing",
+    "track_duration_s": 432.2,
+    "nonmusic_run_s": 33.6,
+    "music_boundary_s": 398.1,
+    "region": [
+      398.1,
+      432.2
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.03,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.041,
+    "mean_rms_db": -29.9,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 425.1,
+        "end": 425.2,
+        "text": "Thank you!"
+      }
+    ],
+    "songs": [
+      "Loving Cup"
+    ],
+    "mp3_url": "https://phish.in/blob/af34966a1o1zb476r4rorb4ug2mh.mp3",
+    "share_url": "https://phish.in/2009-07-30/loving-cup"
+  },
+  {
+    "label": "2009-08-14 Encore t22 While My Guitar Gently Weeps",
+    "edge": "trailing",
+    "track_duration_s": 409.6,
+    "nonmusic_run_s": 32.6,
+    "music_boundary_s": 376.5,
+    "region": [
+      376.5,
+      409.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.25,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.009,
+    "mean_crowd_score": 0.146,
+    "mean_rms_db": -30.1,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "While My Guitar Gently Weeps"
+    ],
+    "mp3_url": "https://phish.in/blob/2db96d5nlkeet6vm5c1n4i384dne.mp3",
+    "share_url": "https://phish.in/2009-08-14/while-my-guitar-gently-weeps"
+  },
+  {
+    "label": "2009-08-14 Set 1 t11 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 446.5,
+    "nonmusic_run_s": 32.2,
+    "music_boundary_s": 413.8,
+    "region": [
+      413.8,
+      446.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.13,
+      "speech": 0.87
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.084,
+    "mean_rms_db": -27.3,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/yjya5bjeickm9rgokjez0yj7s0rr.mp3",
+    "share_url": "https://phish.in/2009-08-14/character-zero"
+  },
+  {
+    "label": "2009-08-05 Set 1 t10 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 744.0,
+    "nonmusic_run_s": 31.7,
+    "music_boundary_s": 711.9,
+    "region": [
+      711.9,
+      744.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.02,
+      "speech": 0.98
+    },
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.025,
+    "mean_rms_db": -30.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/nhsbu4qeeqfm7luqcrljm49p71zj.mp3",
+    "share_url": "https://phish.in/2009-08-05/david-bowie"
+  },
+  {
+    "label": "2009-08-05 Encore t21 Bold as Love",
+    "edge": "trailing",
+    "track_duration_s": 404.3,
+    "nonmusic_run_s": 30.7,
+    "music_boundary_s": 373.1,
+    "region": [
+      373.1,
+      404.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.03,
+      "speech": 0.97
+    },
+    "mean_music_score": 0.015,
+    "mean_crowd_score": 0.037,
+    "mean_rms_db": -31.9,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Bold as Love"
+    ],
+    "mp3_url": "https://phish.in/blob/pw6jdsbarccc9d6wnjf84hl7rfhc.mp3",
+    "share_url": "https://phish.in/2009-08-05/bold-as-love"
+  },
+  {
+    "label": "2009-08-02 Set 2 t20 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 496.0,
+    "nonmusic_run_s": 30.2,
+    "music_boundary_s": 465.3,
+    "region": [
+      465.3,
+      496.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.17,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.078,
+    "mean_rms_db": -27.9,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/0z42rk92jx7jrdt1srpfshoa4ze7.mp3",
+    "share_url": "https://phish.in/2009-08-02/character-zero"
+  },
+  {
+    "label": "2009-08-16 Set 1 t12 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 584.9,
+    "nonmusic_run_s": 30.2,
+    "music_boundary_s": 554.2,
+    "region": [
+      554.2,
+      584.9
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.11,
+      "speech": 0.84
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.093,
+    "mean_rms_db": -31.9,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/f4eczuda2v8p5u8mkuq30r637c5i.mp3",
+    "share_url": "https://phish.in/2009-08-16/run-like-an-antelope"
+  },
+  {
+    "label": "2009-12-05 Set 1 t12 Bold as Love",
+    "edge": "trailing",
+    "track_duration_s": 398.7,
+    "nonmusic_run_s": 30.2,
+    "music_boundary_s": 368.0,
+    "region": [
+      368.0,
+      398.7
+    ],
+    "character": {
+      "silence": 0.21,
+      "crowd": 0.0,
+      "speech": 0.79
+    },
+    "mean_music_score": 0.017,
+    "mean_crowd_score": 0.015,
+    "mean_rms_db": -39.7,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Bold as Love"
+    ],
+    "mp3_url": "https://phish.in/blob/wl6ntb1y6797wq52wq55zrf0qsx7.mp3",
+    "share_url": "https://phish.in/2009-12-05/bold-as-love"
+  },
+  {
+    "label": "2009-03-08 Set 1 t16 Frankenstein",
+    "edge": "trailing",
+    "track_duration_s": 329.2,
+    "nonmusic_run_s": 28.3,
+    "music_boundary_s": 300.4,
+    "region": [
+      300.4,
+      329.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.08,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.044,
+    "mean_rms_db": -27.5,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Frankenstein"
+    ],
+    "mp3_url": "https://phish.in/blob/l3f2hkklrnzcjcvz5lbe4p49hcso.mp3",
+    "share_url": "https://phish.in/2009-03-08/frankenstein"
+  },
+  {
+    "label": "2009-11-24 Encore t20 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 351.7,
+    "nonmusic_run_s": 27.8,
+    "music_boundary_s": 323.4,
+    "region": [
+      323.4,
+      351.7
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.03,
+      "speech": 0.95
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.037,
+    "mean_rms_db": -29.4,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/ip7jyvql9bka3981mrggs7c4i835.mp3",
+    "share_url": "https://phish.in/2009-11-24/a-day-in-the-life"
+  },
+  {
+    "label": "2009-11-25 Encore t18 Oh! Sweet Nuthin'",
+    "edge": "trailing",
+    "track_duration_s": 464.7,
+    "nonmusic_run_s": 27.4,
+    "music_boundary_s": 436.8,
+    "region": [
+      436.8,
+      464.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.12,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.083,
+    "mean_rms_db": -29.0,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Oh! Sweet Nuthin'"
+    ],
+    "mp3_url": "https://phish.in/blob/s5nvzood2vjwvg8vnzmkf3470x5l.mp3",
+    "share_url": "https://phish.in/2009-11-25/oh-sweet-nuthin"
+  },
+  {
+    "label": "2009-12-31 Set 2 t21 Suzy Greenberg",
+    "edge": "trailing",
+    "track_duration_s": 398.3,
+    "nonmusic_run_s": 26.9,
+    "music_boundary_s": 370.9,
+    "region": [
+      370.9,
+      398.3
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.05,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.032,
+    "mean_rms_db": -28.5,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 372.6,
+        "end": 374.0,
+        "text": "You"
+      }
+    ],
+    "songs": [
+      "Suzy Greenberg"
+    ],
+    "mp3_url": "https://phish.in/blob/mj81b3fe6yafok1ev41eivd9bpnp.mp3",
+    "share_url": "https://phish.in/2009-12-31/suzy-greenberg"
+  },
+  {
+    "label": "2009-11-18 Set 1 t11 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 671.8,
+    "nonmusic_run_s": 26.4,
+    "music_boundary_s": 644.9,
+    "region": [
+      644.9,
+      671.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.04,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.045,
+    "mean_rms_db": -22.2,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/umni7u4z30rc2g59d5xoirdzxqp9.mp3",
+    "share_url": "https://phish.in/2009-11-18/david-bowie"
+  },
+  {
+    "label": "2009-03-07 Set 1 t15 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 601.5,
+    "nonmusic_run_s": 25.9,
+    "music_boundary_s": 575.1,
+    "region": [
+      575.1,
+      601.5
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.09,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.065,
+    "mean_rms_db": -23.9,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 577.7,
+        "end": 578.6,
+        "text": "Thank you, man."
+      }
+    ],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/crs1l82b7dt7vae41vfm5ranjpr7.mp3",
+    "share_url": "https://phish.in/2009-03-07/run-like-an-antelope"
+  },
+  {
+    "label": "2009-08-05 Set 2 t19 Weekapaug Groove",
+    "edge": "trailing",
+    "track_duration_s": 385.7,
+    "nonmusic_run_s": 24.5,
+    "music_boundary_s": 360.8,
+    "region": [
+      360.8,
+      385.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.04,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.042,
+    "mean_rms_db": -27.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Weekapaug Groove"
+    ],
+    "mp3_url": "https://phish.in/blob/agomp61zt7g7ss7y5xylygwdjgqu.mp3",
+    "share_url": "https://phish.in/2009-08-05/weekapaug-groove"
+  },
+  {
+    "label": "2009-08-01 Encore t17 First Tube",
+    "edge": "trailing",
+    "track_duration_s": 529.4,
+    "nonmusic_run_s": 24.0,
+    "music_boundary_s": 505.0,
+    "region": [
+      505.0,
+      529.4
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.1,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.073,
+    "mean_rms_db": -29.0,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "First Tube"
+    ],
+    "mp3_url": "https://phish.in/blob/r30pgvxpmitdcy6nvt2nh05nlx0f.mp3",
+    "share_url": "https://phish.in/2009-08-01/first-tube"
+  },
+  {
+    "label": "2009-11-18 Encore t23 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 471.4,
+    "nonmusic_run_s": 23.5,
+    "music_boundary_s": 447.4,
+    "region": [
+      447.4,
+      471.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.16,
+      "speech": 0.84
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.082,
+    "mean_rms_db": -23.3,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/v9nb84mj6hq30tqk6v8jrb0oot4h.mp3",
+    "share_url": "https://phish.in/2009-11-18/character-zero"
+  },
+  {
+    "label": "2009-06-04 Set 2 t16 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1256.4,
+    "nonmusic_run_s": 22.6,
+    "music_boundary_s": 1233.4,
+    "region": [
+      1233.4,
+      1256.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.13,
+      "speech": 0.87
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.125,
+    "mean_rms_db": -28.2,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 1235.9,
+        "end": 1237.3,
+        "text": "you"
+      }
+    ],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/e2hn65emaj0v267frus97rvp7vi4.mp3",
+    "share_url": "https://phish.in/2009-06-04/you-enjoy-myself"
+  },
+  {
+    "label": "2009-06-10 Set 1 t11 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 478.5,
+    "nonmusic_run_s": 22.1,
+    "music_boundary_s": 456.0,
+    "region": [
+      456.0,
+      478.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.034,
+    "mean_rms_db": -23.9,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/2u6yyz597arx9swj26c3w4se19t3.mp3",
+    "share_url": "https://phish.in/2009-06-10/character-zero"
+  },
+  {
+    "label": "2009-06-12 Set 1 t19 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 425.3,
+    "nonmusic_run_s": 21.6,
+    "music_boundary_s": 403.3,
+    "region": [
+      403.3,
+      425.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.024,
+    "mean_crowd_score": 0.07,
+    "mean_rms_db": -26.1,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 400.3,
+        "end": 401.0,
+        "text": "You"
+      }
+    ],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/g7vme2r6px76b0irqul13d4dxkua.mp3",
+    "share_url": "https://phish.in/2009-06-12/you-enjoy-myself-2"
+  },
+  {
+    "label": "2009-07-31 Encore t18 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 231.6,
+    "nonmusic_run_s": 21.6,
+    "music_boundary_s": 209.8,
+    "region": [
+      209.8,
+      231.8
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.04,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.05,
+    "mean_rms_db": -28.8,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/uqojw0104fst2xfrjhbbp9lf6dfp.mp3",
+    "share_url": "https://phish.in/2009-07-31/tweezer-reprise"
+  },
+  {
+    "label": "2009-11-18 Set 2 t22 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 312.3,
+    "nonmusic_run_s": 21.6,
+    "music_boundary_s": 290.3,
+    "region": [
+      290.3,
+      312.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.16,
+      "speech": 0.84
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.072,
+    "mean_rms_db": -21.8,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 298.6,
+        "end": 300.0,
+        "text": "You"
+      }
+    ],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/56mw5256fnd2y1cv4g5ixh1167iy.mp3",
+    "share_url": "https://phish.in/2009-11-18/cavern"
+  },
+  {
+    "label": "2009-08-16 Set 2 t21 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1217.0,
+    "nonmusic_run_s": 21.1,
+    "music_boundary_s": 1195.4,
+    "region": [
+      1195.4,
+      1217.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.41,
+      "speech": 0.59
+    },
+    "mean_music_score": 0.028,
+    "mean_crowd_score": 0.258,
+    "mean_rms_db": -32.8,
+    "flagged": true,
+    "banter": [
+      {
+        "start": 1215.6,
+        "end": 1217.0,
+        "text": "I'm going to do what I'm supposed to do, so I'll do what I can, but I'm not gonna do"
+      }
+    ],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/qw5wo17r7dvmfoxndgrucbuni3am.mp3",
+    "share_url": "https://phish.in/2009-08-16/you-enjoy-myself"
+  },
+  {
+    "label": "2009-08-01 Set 1 t09 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 762.3,
+    "nonmusic_run_s": 20.6,
+    "music_boundary_s": 741.2,
+    "region": [
+      741.2,
+      762.3
+    ],
+    "character": {
+      "silence": 0.02,
+      "crowd": 0.02,
+      "speech": 0.95
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.055,
+    "mean_rms_db": -28.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/7da3xm568yqxqn009v3q8yypcorm.mp3",
+    "share_url": "https://phish.in/2009-08-01/run-like-an-antelope"
+  },
+  {
+    "label": "2009-06-16 Set 1 t11 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 589.1,
+    "nonmusic_run_s": 19.7,
+    "music_boundary_s": 569.0,
+    "region": [
+      569.0,
+      589.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.02,
+      "speech": 0.98
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.043,
+    "mean_rms_db": -29.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/44do31txkb5rzw6ssnhvakzmykqb.mp3",
+    "share_url": "https://phish.in/2009-06-16/slave-to-the-traffic-light"
+  },
+  {
+    "label": "2009-07-30 Set 1 t10 Possum",
+    "edge": "trailing",
+    "track_duration_s": 511.9,
+    "nonmusic_run_s": 19.7,
+    "music_boundary_s": 491.8,
+    "region": [
+      491.8,
+      511.9
+    ],
+    "character": {
+      "silence": 0.07,
+      "crowd": 0.17,
+      "speech": 0.76
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.072,
+    "mean_rms_db": -31.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/jy3s31w1qz0idokzg7ujdcfbah42.mp3",
+    "share_url": "https://phish.in/2009-07-30/possum"
+  },
+  {
+    "label": "2009-06-02 Encore t19 Suzy Greenberg",
+    "edge": "trailing",
+    "track_duration_s": 423.9,
+    "nonmusic_run_s": 19.2,
+    "music_boundary_s": 404.2,
+    "region": [
+      404.2,
+      423.9
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.12,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.045,
+    "mean_rms_db": -27.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Suzy Greenberg"
+    ],
+    "mp3_url": "https://phish.in/blob/tm4ju692ogtebrhcs3p91azfxrdv.mp3",
+    "share_url": "https://phish.in/2009-06-02/suzy-greenberg"
+  },
+  {
+    "label": "2009-06-05 Set 2 t18 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 632.4,
+    "nonmusic_run_s": 18.7,
+    "music_boundary_s": 613.2,
+    "region": [
+      613.2,
+      632.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.15,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.077,
+    "mean_rms_db": -26.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/v5ncyzx4xqdg1vz095owx340tu1x.mp3",
+    "share_url": "https://phish.in/2009-06-05/slave-to-the-traffic-light"
+  },
+  {
+    "label": "2009-06-16 Set 2 t21 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 417.6,
+    "nonmusic_run_s": 18.7,
+    "music_boundary_s": 398.4,
+    "region": [
+      398.4,
+      417.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.03,
+      "speech": 0.97
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.076,
+    "mean_rms_db": -27.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/xlfnmt399g3j708uwdpae5yq7oh9.mp3",
+    "share_url": "https://phish.in/2009-06-16/character-zero"
+  },
+  {
+    "label": "2009-10-30 Encore t22 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 494.6,
+    "nonmusic_run_s": 18.2,
+    "music_boundary_s": 475.9,
+    "region": [
+      475.9,
+      494.6
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.16,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.06,
+    "mean_crowd_score": 0.048,
+    "mean_rms_db": -28.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/rw31ab72si88eyf8vevc5z4oi73a.mp3",
+    "share_url": "https://phish.in/2009-10-30/character-zero"
+  },
+  {
+    "label": "2009-12-28 Encore t22 First Tube",
+    "edge": "trailing",
+    "track_duration_s": 554.5,
+    "nonmusic_run_s": 17.3,
+    "music_boundary_s": 536.7,
+    "region": [
+      536.7,
+      554.5
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.11,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.044,
+    "mean_crowd_score": 0.046,
+    "mean_rms_db": -28.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "First Tube"
+    ],
+    "mp3_url": "https://phish.in/blob/idmpo7hp814i6utcjtp1kdpnq1jx.mp3",
+    "share_url": "https://phish.in/2009-12-28/first-tube"
+  },
+  {
+    "label": "2009-12-31 Set 1 t13 Julius",
+    "edge": "trailing",
+    "track_duration_s": 499.9,
+    "nonmusic_run_s": 17.3,
+    "music_boundary_s": 482.1,
+    "region": [
+      482.1,
+      499.9
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.06,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.021,
+    "mean_rms_db": -26.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Julius"
+    ],
+    "mp3_url": "https://phish.in/blob/tocdnmps3lmw7gsl9c5dfb1fkihj.mp3",
+    "share_url": "https://phish.in/2009-12-31/julius"
+  },
+  {
+    "label": "2009-08-02 Set 1 t12 Kill Devil Falls",
+    "edge": "trailing",
+    "track_duration_s": 623.9,
+    "nonmusic_run_s": 16.8,
+    "music_boundary_s": 606.6,
+    "region": [
+      606.6,
+      623.9
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.09,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.032,
+    "mean_rms_db": -31.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Kill Devil Falls"
+    ],
+    "mp3_url": "https://phish.in/blob/0aa1w6u0cvuyk9u8u2k24rmt0qtp.mp3",
+    "share_url": "https://phish.in/2009-08-02/kill-devil-falls"
+  },
+  {
+    "label": "2009-08-15 Encore t22 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 224.2,
+    "nonmusic_run_s": 16.8,
+    "music_boundary_s": 207.4,
+    "region": [
+      207.4,
+      224.6
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.06,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.059,
+    "mean_rms_db": -27.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/oa89nq3e7wwz4krmpbl9vqjfb0ec.mp3",
+    "share_url": "https://phish.in/2009-08-15/tweezer-reprise"
+  },
+  {
+    "label": "2009-11-25 Set 2 t17 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 218.7,
+    "nonmusic_run_s": 16.3,
+    "music_boundary_s": 202.1,
+    "region": [
+      202.1,
+      218.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.06,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.051,
+    "mean_rms_db": -28.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/ka1pwqyj5ssa4f2zc2t03rtmikg7.mp3",
+    "share_url": "https://phish.in/2009-11-25/tweezer-reprise"
+  },
+  {
+    "label": "2009-12-30 Set 1 t12 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 681.9,
+    "nonmusic_run_s": 16.3,
+    "music_boundary_s": 665.1,
+    "region": [
+      665.1,
+      681.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.09,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.034,
+    "mean_crowd_score": 0.072,
+    "mean_rms_db": -23.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/83ggbzg1d02pes39aqcsyihtkegt.mp3",
+    "share_url": "https://phish.in/2009-12-30/david-bowie"
+  },
+  {
+    "label": "2009-12-02 Set 1 t11 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 291.0,
+    "nonmusic_run_s": 15.8,
+    "music_boundary_s": 275.0,
+    "region": [
+      275.0,
+      291.4
+    ],
+    "character": {
+      "silence": 0.09,
+      "crowd": 0.0,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.02,
+    "mean_rms_db": -30.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/qnpwvhoen6yimq38beknxo9rw35g.mp3",
+    "share_url": "https://phish.in/2009-12-02/cavern"
+  },
+  {
+    "label": "2009-12-30 Encore t24 Frankenstein",
+    "edge": "trailing",
+    "track_duration_s": 288.1,
+    "nonmusic_run_s": 15.8,
+    "music_boundary_s": 272.2,
+    "region": [
+      272.2,
+      288.5
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.12,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.084,
+    "mean_rms_db": -29.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Frankenstein"
+    ],
+    "mp3_url": "https://phish.in/blob/wq7p3oun3m5q8m5b7j3e1am2ga60.mp3",
+    "share_url": "https://phish.in/2009-12-30/frankenstein"
+  },
+  {
+    "label": "2009-08-15 Set 1 t13 Time Turns Elastic",
+    "edge": "trailing",
+    "track_duration_s": 984.9,
+    "nonmusic_run_s": 15.4,
+    "music_boundary_s": 969.1,
+    "region": [
+      969.1,
+      984.9
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.09,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.025,
+    "mean_crowd_score": 0.045,
+    "mean_rms_db": -29.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Time Turns Elastic"
+    ],
+    "mp3_url": "https://phish.in/blob/sv3hn9w5b1a70fi5i63ruh96c23p.mp3",
+    "share_url": "https://phish.in/2009-08-15/time-turns-elastic"
+  },
+  {
+    "label": "2009-11-01 Encore t41 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 219.6,
+    "nonmusic_run_s": 15.4,
+    "music_boundary_s": 204.0,
+    "region": [
+      204.0,
+      219.8
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.16,
+      "speech": 0.78
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.074,
+    "mean_rms_db": -31.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/obk7fqg6dlgprcjgpaol1vik6ghq.mp3",
+    "share_url": "https://phish.in/2009-11-01/tweezer-reprise"
+  },
+  {
+    "label": "2009-12-03 Encore t19 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 393.2,
+    "nonmusic_run_s": 15.4,
+    "music_boundary_s": 377.3,
+    "region": [
+      377.3,
+      393.2
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.03,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.036,
+    "mean_rms_db": -29.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/dyfzrnclsqekhsmoage38mzqdrqp.mp3",
+    "share_url": "https://phish.in/2009-12-03/character-zero"
+  },
+  {
+    "label": "2009-12-04 Encore t23 Shine a Light",
+    "edge": "trailing",
+    "track_duration_s": 333.3,
+    "nonmusic_run_s": 15.4,
+    "music_boundary_s": 317.5,
+    "region": [
+      317.5,
+      333.3
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.06,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.043,
+    "mean_rms_db": -27.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Shine a Light"
+    ],
+    "mp3_url": "https://phish.in/blob/1apg2n6h2juo4rsq2g8tfm987mos.mp3",
+    "share_url": "https://phish.in/2009-12-04/shine-a-light"
+  },
+  {
+    "label": "2009-12-28 Set 1 t11 Possum",
+    "edge": "trailing",
+    "track_duration_s": 521.7,
+    "nonmusic_run_s": 15.4,
+    "music_boundary_s": 505.9,
+    "region": [
+      505.9,
+      521.7
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.06,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.033,
+    "mean_rms_db": -30.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/ml1rqsj56r6gli5ha0twcjlkd41k.mp3",
+    "share_url": "https://phish.in/2009-12-28/possum"
+  },
+  {
+    "label": "2009-12-29 Set 1 t10 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 284.6,
+    "nonmusic_run_s": 15.4,
+    "music_boundary_s": 268.8,
+    "region": [
+      268.8,
+      284.6
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.03,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.02,
+    "mean_crowd_score": 0.042,
+    "mean_rms_db": -27.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/xcinaq14z85wih21qb48ktg9ylpk.mp3",
+    "share_url": "https://phish.in/2009-12-29/cavern"
+  },
+  {
+    "label": "2009-12-29 Encore t21 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 236.9,
+    "nonmusic_run_s": 15.4,
+    "music_boundary_s": 221.3,
+    "region": [
+      221.3,
+      237.1
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.06,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.042,
+    "mean_rms_db": -28.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/1bj6zb4ige6mg1718qjyxz00ub7y.mp3",
+    "share_url": "https://phish.in/2009-12-29/tweezer-reprise"
+  },
+  {
+    "label": "2009-08-11 Encore t20 Loving Cup",
+    "edge": "trailing",
+    "track_duration_s": 431.2,
+    "nonmusic_run_s": 14.9,
+    "music_boundary_s": 415.8,
+    "region": [
+      415.8,
+      431.2
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.06,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.05,
+    "mean_rms_db": -32.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Loving Cup"
+    ],
+    "mp3_url": "https://phish.in/blob/0f6jzxv4tn8lxm4uujji4snq5dl1.mp3",
+    "share_url": "https://phish.in/2009-08-11/loving-cup"
+  },
+  {
+    "label": "2009-10-31 Encore t33 Suzy Greenberg",
+    "edge": "trailing",
+    "track_duration_s": 711.1,
+    "nonmusic_run_s": 14.9,
+    "music_boundary_s": 695.8,
+    "region": [
+      695.8,
+      711.1
+    ],
+    "character": {
+      "silence": 0.06,
+      "crowd": 0.03,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.029,
+    "mean_rms_db": -34.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Suzy Greenberg"
+    ],
+    "mp3_url": "https://phish.in/blob/5vqhx17gej6csqilcnys2cfnykwz.mp3",
+    "share_url": "https://phish.in/2009-10-31/suzy-greenberg"
+  },
+  {
+    "label": "2009-11-01 Set 2 t28 Split Open and Melt",
+    "edge": "trailing",
+    "track_duration_s": 729.8,
+    "nonmusic_run_s": 14.9,
+    "music_boundary_s": 714.4,
+    "region": [
+      714.4,
+      729.8
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.13,
+      "speech": 0.84
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.06,
+    "mean_rms_db": -32.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Split Open and Melt"
+    ],
+    "mp3_url": "https://phish.in/blob/7sxcx8azk7j3qx1z5kgv80cplfzx.mp3",
+    "share_url": "https://phish.in/2009-11-01/split-open-and-melt"
+  },
+  {
+    "label": "2009-11-20 Set 1 t09 Fluffhead",
+    "edge": "trailing",
+    "track_duration_s": 908.6,
+    "nonmusic_run_s": 14.9,
+    "music_boundary_s": 893.2,
+    "region": [
+      893.2,
+      908.6
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.0,
+      "speech": 0.97
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.018,
+    "mean_rms_db": -26.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fluffhead"
+    ],
+    "mp3_url": "https://phish.in/blob/1jtrh86njzsjyj5ita97tl5mf20i.mp3",
+    "share_url": "https://phish.in/2009-11-20/fluffhead"
+  },
+  {
+    "label": "2009-11-20 Encore t19 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 222.7,
+    "nonmusic_run_s": 14.9,
+    "music_boundary_s": 207.4,
+    "region": [
+      207.4,
+      222.7
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.03,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.038,
+    "mean_rms_db": -27.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/65sp3c0067hcipb40p5lz500z1by.mp3",
+    "share_url": "https://phish.in/2009-11-20/tweezer-reprise"
+  },
+  {
+    "label": "2009-12-02 Encore t23 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 227.3,
+    "nonmusic_run_s": 14.9,
+    "music_boundary_s": 212.2,
+    "region": [
+      212.2,
+      227.5
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.06,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.05,
+    "mean_rms_db": -29.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/63nuj2idst7amitoush9u4k2u47l.mp3",
+    "share_url": "https://phish.in/2009-12-02/tweezer-reprise"
+  },
+  {
+    "label": "2009-12-03 Set 1 t10 Julius",
+    "edge": "trailing",
+    "track_duration_s": 505.8,
+    "nonmusic_run_s": 14.9,
+    "music_boundary_s": 490.4,
+    "region": [
+      490.4,
+      505.8
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.03,
+      "speech": 0.94
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.026,
+    "mean_rms_db": -26.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Julius"
+    ],
+    "mp3_url": "https://phish.in/blob/cw6ndelrtpq41ikm01c0nkxdatfu.mp3",
+    "share_url": "https://phish.in/2009-12-03/julius"
+  },
+  {
+    "label": "2009-12-31 Encore t31 Loving Cup",
+    "edge": "trailing",
+    "track_duration_s": 381.7,
+    "nonmusic_run_s": 14.9,
+    "music_boundary_s": 366.3,
+    "region": [
+      366.3,
+      381.7
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.06,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.061,
+    "mean_rms_db": -28.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Loving Cup"
+    ],
+    "mp3_url": "https://phish.in/blob/5mjp8gr2ij7ju9dig1qhzifqpggq.mp3",
+    "share_url": "https://phish.in/2009-12-31/loving-cup"
+  },
+  {
+    "label": "2009-05-31 Set 1 t13 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 483.3,
+    "nonmusic_run_s": 14.4,
+    "music_boundary_s": 468.4,
+    "region": [
+      468.4,
+      483.3
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.0,
+      "speech": 0.97
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.019,
+    "mean_rms_db": -32.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/yn3338vskc1ywu0opfpvfz54f6jc.mp3",
+    "share_url": "https://phish.in/2009-05-31/character-zero"
+  },
+  {
+    "label": "2009-10-31 Set 2 t27 Soul Survivor",
+    "edge": "trailing",
+    "track_duration_s": 409.8,
+    "nonmusic_run_s": 14.4,
+    "music_boundary_s": 394.9,
+    "region": [
+      394.9,
+      409.8
+    ],
+    "character": {
+      "silence": 0.43,
+      "crowd": 0.17,
+      "speech": 0.4
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.044,
+    "mean_rms_db": -56.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Soul Survivor"
+    ],
+    "mp3_url": "https://phish.in/blob/y7bot3rju1ktsqyqoziegp7n3767.mp3",
+    "share_url": "https://phish.in/2009-10-31/soul-survivor"
+  },
+  {
+    "label": "2009-03-06 Set 2 t25 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1196.8,
+    "nonmusic_run_s": 13.9,
+    "music_boundary_s": 1182.4,
+    "region": [
+      1182.4,
+      1196.8
+    ],
+    "character": {
+      "silence": 0.03,
+      "crowd": 0.03,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.043,
+    "mean_crowd_score": 0.042,
+    "mean_rms_db": -34.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/3vqdjhydmwrclqxncdkk9d2b1kej.mp3",
+    "share_url": "https://phish.in/2009-03-06/you-enjoy-myself"
+  },
+  {
+    "label": "2009-06-07 Set 1 t11 First Tube",
+    "edge": "trailing",
+    "track_duration_s": 543.0,
+    "nonmusic_run_s": 13.9,
+    "music_boundary_s": 528.6,
+    "region": [
+      528.6,
+      543.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.056,
+    "mean_rms_db": -23.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "First Tube"
+    ],
+    "mp3_url": "https://phish.in/blob/z2zx0ioa5lqcg3x0ddn6eohly0wl.mp3",
+    "share_url": "https://phish.in/2009-06-07/first-tube"
+  },
+  {
+    "label": "2009-06-19 Encore t22 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 247.6,
+    "nonmusic_run_s": 13.9,
+    "music_boundary_s": 233.3,
+    "region": [
+      233.3,
+      247.7
+    ],
+    "character": {
+      "silence": 0.07,
+      "crowd": 0.34,
+      "speech": 0.59
+    },
+    "mean_music_score": 0.044,
+    "mean_crowd_score": 0.065,
+    "mean_rms_db": -25.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/19qoaw4jv54rht7y091udzx5gd2k.mp3",
+    "share_url": "https://phish.in/2009-06-19/tweezer-reprise"
+  },
+  {
+    "label": "2009-08-08 Encore t21 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 209.9,
+    "nonmusic_run_s": 13.9,
+    "music_boundary_s": 195.8,
+    "region": [
+      195.8,
+      210.2
+    ],
+    "character": {
+      "silence": 0.1,
+      "crowd": 0.07,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.034,
+    "mean_rms_db": -34.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/xqe8ewqc6tmj1ixh3vbci84q4l83.mp3",
+    "share_url": "https://phish.in/2009-08-08/tweezer-reprise"
+  },
+  {
+    "label": "2009-06-02 Set 1 t10 If I Could",
+    "edge": "trailing",
+    "track_duration_s": 479.1,
+    "nonmusic_run_s": 13.4,
+    "music_boundary_s": 465.2,
+    "region": [
+      465.2,
+      479.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.18,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.035,
+    "mean_crowd_score": 0.068,
+    "mean_rms_db": -30.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "If I Could"
+    ],
+    "mp3_url": "https://phish.in/blob/8402z9ebitjlpbur6zrhgugxt5gc.mp3",
+    "share_url": "https://phish.in/2009-06-02/if-i-could"
+  },
+  {
+    "label": "2009-08-08 Set 1 t11 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 642.4,
+    "nonmusic_run_s": 13.4,
+    "music_boundary_s": 628.5,
+    "region": [
+      628.5,
+      642.4
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.14,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.041,
+    "mean_crowd_score": 0.049,
+    "mean_rms_db": -32.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/0fexk90hq1ncnm1uz5ka5klqscib.mp3",
+    "share_url": "https://phish.in/2009-08-08/run-like-an-antelope"
+  },
+  {
+    "label": "2009-08-11 Set 1 t10 Time Turns Elastic",
+    "edge": "trailing",
+    "track_duration_s": 1034.8,
+    "nonmusic_run_s": 13.4,
+    "music_boundary_s": 1020.9,
+    "region": [
+      1020.9,
+      1034.8
+    ],
+    "character": {
+      "silence": 0.07,
+      "crowd": 0.0,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.016,
+    "mean_crowd_score": 0.013,
+    "mean_rms_db": -35.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Time Turns Elastic"
+    ],
+    "mp3_url": "https://phish.in/blob/ldde786jnhviqgu3dz60uy7rkhdh.mp3",
+    "share_url": "https://phish.in/2009-08-11/time-turns-elastic"
+  },
+  {
+    "label": "2009-10-30 Set 1 t12 Time Turns Elastic",
+    "edge": "trailing",
+    "track_duration_s": 1012.1,
+    "nonmusic_run_s": 13.4,
+    "music_boundary_s": 998.2,
+    "region": [
+      998.2,
+      1012.1
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.11,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.06,
+    "mean_rms_db": -35.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Time Turns Elastic"
+    ],
+    "mp3_url": "https://phish.in/blob/gjhg4oroe3im4wtz2yogwiryq3cf.mp3",
+    "share_url": "https://phish.in/2009-10-30/time-turns-elastic"
+  },
+  {
+    "label": "2009-11-21 Set 1 t12 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 574.6,
+    "nonmusic_run_s": 13.4,
+    "music_boundary_s": 560.7,
+    "region": [
+      560.7,
+      574.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.04,
+      "speech": 0.96
+    },
+    "mean_music_score": 0.024,
+    "mean_crowd_score": 0.022,
+    "mean_rms_db": -24.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/7x3pdf78t25mfp8g8ohvau4dm5lp.mp3",
+    "share_url": "https://phish.in/2009-11-21/run-like-an-antelope"
+  },
+  {
+    "label": "2009-11-21 Encore t22 Axilla",
+    "edge": "trailing",
+    "track_duration_s": 230.8,
+    "nonmusic_run_s": 13.0,
+    "music_boundary_s": 217.4,
+    "region": [
+      217.4,
+      230.9
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.07,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.03,
+    "mean_rms_db": -29.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Axilla"
+    ],
+    "mp3_url": "https://phish.in/blob/53st8k1oopx1zd3vrsqqky7wlz9a.mp3",
+    "share_url": "https://phish.in/2009-11-21/axilla"
+  },
+  {
+    "label": "2009-11-29 Encore t25 Waste",
+    "edge": "trailing",
+    "track_duration_s": 342.4,
+    "nonmusic_run_s": 12.5,
+    "music_boundary_s": 329.5,
+    "region": [
+      329.5,
+      342.4
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.12,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.031,
+    "mean_crowd_score": 0.087,
+    "mean_rms_db": -31.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Waste"
+    ],
+    "mp3_url": "https://phish.in/blob/ofrz24dxix5jzrxaekq16yzml4fe.mp3",
+    "share_url": "https://phish.in/2009-11-29/waste"
+  },
+  {
+    "label": "2009-06-18 Set 2 t19 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1164.7,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 1152.2,
+    "region": [
+      1152.2,
+      1164.7
+    ],
+    "character": {
+      "silence": 0.08,
+      "crowd": 0.04,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.014,
+    "mean_crowd_score": 0.028,
+    "mean_rms_db": -33.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/5hbgu5d2o1urh01rj6iu34mlrhjc.mp3",
+    "share_url": "https://phish.in/2009-06-18/you-enjoy-myself"
+  },
+  {
+    "label": "2009-10-31 Set 1 t09 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 668.0,
+    "nonmusic_run_s": 12.0,
+    "music_boundary_s": 655.5,
+    "region": [
+      655.5,
+      668.0
+    ],
+    "character": {
+      "silence": 0.08,
+      "crowd": 0.2,
+      "speech": 0.72
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.064,
+    "mean_rms_db": -32.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/hsrcj46r6nrmws43w4s58g09f2ex.mp3",
+    "share_url": "https://phish.in/2009-10-31/run-like-an-antelope"
+  },
+  {
+    "label": "2009-06-18 Encore t23 Loving Cup",
+    "edge": "trailing",
+    "track_duration_s": 430.1,
+    "nonmusic_run_s": 11.5,
+    "music_boundary_s": 418.1,
+    "region": [
+      418.1,
+      430.1
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.04,
+      "speech": 0.92
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.02,
+    "mean_rms_db": -31.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Loving Cup"
+    ],
+    "mp3_url": "https://phish.in/blob/qdpbbnch67wwltn2bk6o4sdxwesc.mp3",
+    "share_url": "https://phish.in/2009-06-18/loving-cup"
+  },
+  {
+    "label": "2009-06-19 Set 1 t12 Fluffhead",
+    "edge": "trailing",
+    "track_duration_s": 896.9,
+    "nonmusic_run_s": 11.5,
+    "music_boundary_s": 884.9,
+    "region": [
+      884.9,
+      896.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.17,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.103,
+    "mean_crowd_score": 0.023,
+    "mean_rms_db": -23.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fluffhead"
+    ],
+    "mp3_url": "https://phish.in/blob/8tvlj8zitpjo4cxvdx9328umq88r.mp3",
+    "share_url": "https://phish.in/2009-06-19/fluffhead"
+  },
+  {
+    "label": "2009-06-09 Set 1 t11 Bold as Love",
+    "edge": "trailing",
+    "track_duration_s": 349.1,
+    "nonmusic_run_s": 11.0,
+    "music_boundary_s": 337.5,
+    "region": [
+      337.5,
+      349.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.027,
+    "mean_rms_db": -28.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Bold as Love"
+    ],
+    "mp3_url": "https://phish.in/blob/tztd2fbad2vwp6r8el9oe3u32k05.mp3",
+    "share_url": "https://phish.in/2009-06-09/bold-as-love"
+  },
+  {
+    "label": "2009-11-01 Set 1 t18 Secret Smile",
+    "edge": "trailing",
+    "track_duration_s": 383.6,
+    "nonmusic_run_s": 11.0,
+    "music_boundary_s": 372.1,
+    "region": [
+      372.1,
+      383.6
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.22,
+      "speech": 0.74
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.147,
+    "mean_rms_db": -35.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Secret Smile"
+    ],
+    "mp3_url": "https://phish.in/blob/6nlqnpnax92tc41eavmcqssv5yqa.mp3",
+    "share_url": "https://phish.in/2009-11-01/secret-smile"
+  },
+  {
+    "label": "2009-11-29 Set 1 t13 Weekapaug Groove",
+    "edge": "trailing",
+    "track_duration_s": 429.3,
+    "nonmusic_run_s": 11.0,
+    "music_boundary_s": 417.7,
+    "region": [
+      417.7,
+      429.3
+    ],
+    "character": {
+      "silence": 0.04,
+      "crowd": 0.04,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.058,
+    "mean_rms_db": -29.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Weekapaug Groove"
+    ],
+    "mp3_url": "https://phish.in/blob/htvnqbznuerdxxpxh32wbj5eizul.mp3",
+    "share_url": "https://phish.in/2009-11-29/weekapaug-groove"
+  },
+  {
+    "label": "2009-06-21 Set 2 t21 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 711.9,
+    "nonmusic_run_s": 10.6,
+    "music_boundary_s": 700.9,
+    "region": [
+      700.9,
+      711.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.09,
+      "speech": 0.91
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.049,
+    "mean_rms_db": -31.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/wemygs54wksi5a5ai0r0o7upufup.mp3",
+    "share_url": "https://phish.in/2009-06-21/slave-to-the-traffic-light"
+  },
+  {
+    "label": "2009-08-13 Set 2 t21 Fluffhead",
+    "edge": "trailing",
+    "track_duration_s": 928.5,
+    "nonmusic_run_s": 10.6,
+    "music_boundary_s": 917.5,
+    "region": [
+      917.5,
+      928.5
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.09,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.079,
+    "mean_rms_db": -29.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fluffhead"
+    ],
+    "mp3_url": "https://phish.in/blob/vhl4hr560thzqh0zeaxl1ntvm72q.mp3",
+    "share_url": "https://phish.in/2009-08-13/fluffhead"
+  },
+  {
+    "label": "2009-11-24 Set 1 t10 Stealing Time From the Faulty Plan",
+    "edge": "trailing",
+    "track_duration_s": 406.5,
+    "nonmusic_run_s": 10.6,
+    "music_boundary_s": 395.4,
+    "region": [
+      395.4,
+      406.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.034,
+    "mean_rms_db": -29.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Stealing Time From the Faulty Plan"
+    ],
+    "mp3_url": "https://phish.in/blob/3humc4qgt9gzfwpbenz1gpg2cgks.mp3",
+    "share_url": "https://phish.in/2009-11-24/stealing-time-from-the-faulty-plan"
+  },
+  {
+    "label": "2009-06-09 Set 2 t20 Possum",
+    "edge": "trailing",
+    "track_duration_s": 723.5,
+    "nonmusic_run_s": 10.1,
+    "music_boundary_s": 713.0,
+    "region": [
+      713.0,
+      723.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.011,
+    "mean_rms_db": -36.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/nuk79bo8csr9e6dr0xpn0p6bmvib.mp3",
+    "share_url": "https://phish.in/2009-06-09/possum"
+  },
+  {
+    "label": "2009-08-07 Set 1 t09 Cavern",
+    "edge": "trailing",
+    "track_duration_s": 279.4,
+    "nonmusic_run_s": 10.1,
+    "music_boundary_s": 269.3,
+    "region": [
+      269.3,
+      279.8
+    ],
+    "character": {
+      "silence": 0.14,
+      "crowd": 0.1,
+      "speech": 0.76
+    },
+    "mean_music_score": 0.01,
+    "mean_crowd_score": 0.04,
+    "mean_rms_db": -34.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Cavern"
+    ],
+    "mp3_url": "https://phish.in/blob/giw3l81636whmq59p03zj0zz17iu.mp3",
+    "share_url": "https://phish.in/2009-08-07/cavern"
+  },
+  {
+    "label": "2009-08-07 Encore t17 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 602.9,
+    "nonmusic_run_s": 10.1,
+    "music_boundary_s": 592.3,
+    "region": [
+      592.3,
+      602.9
+    ],
+    "character": {
+      "silence": 0.14,
+      "crowd": 0.05,
+      "speech": 0.81
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.032,
+    "mean_rms_db": -34.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/we7291n1nnyqgij7wqj4pfux34ak.mp3",
+    "share_url": "https://phish.in/2009-08-07/slave-to-the-traffic-light"
+  },
+  {
+    "label": "2009-06-20 Set 2 t21 Fire",
+    "edge": "trailing",
+    "track_duration_s": 253.9,
+    "nonmusic_run_s": 9.6,
+    "music_boundary_s": 243.8,
+    "region": [
+      243.8,
+      253.9
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.05,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.03,
+    "mean_rms_db": -30.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/obpx0pjohveb7hec09nk7egbr0h5.mp3",
+    "share_url": "https://phish.in/2009-06-20/fire"
+  },
+  {
+    "label": "2009-06-21 Encore t23 Frankenstein",
+    "edge": "trailing",
+    "track_duration_s": 324.4,
+    "nonmusic_run_s": 9.6,
+    "music_boundary_s": 314.3,
+    "region": [
+      314.3,
+      324.4
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.05,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.058,
+    "mean_rms_db": -29.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Frankenstein"
+    ],
+    "mp3_url": "https://phish.in/blob/znqrp9nrqzleszr9slw3rool3x17.mp3",
+    "share_url": "https://phish.in/2009-06-21/frankenstein"
+  },
+  {
+    "label": "2009-11-27 Set 1 t12 Light",
+    "edge": "trailing",
+    "track_duration_s": 566.1,
+    "nonmusic_run_s": 9.6,
+    "music_boundary_s": 556.0,
+    "region": [
+      556.0,
+      566.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.023,
+    "mean_rms_db": -28.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Light"
+    ],
+    "mp3_url": "https://phish.in/blob/qs5q005bsa3d7i8zxdkts3w33euo.mp3",
+    "share_url": "https://phish.in/2009-11-27/light"
+  },
+  {
+    "label": "2009-06-19 Set 2 t20 Possum",
+    "edge": "trailing",
+    "track_duration_s": 513.7,
+    "nonmusic_run_s": 9.1,
+    "music_boundary_s": 504.1,
+    "region": [
+      504.1,
+      513.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.11,
+      "speech": 0.89
+    },
+    "mean_music_score": 0.048,
+    "mean_crowd_score": 0.047,
+    "mean_rms_db": -31.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Possum"
+    ],
+    "mp3_url": "https://phish.in/blob/e3b0hk7t8zrmw40ik1z87hb46ugg.mp3",
+    "share_url": "https://phish.in/2009-06-19/possum"
+  },
+  {
+    "label": "2009-06-20 Encore t22 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 448.1,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 439.0,
+    "region": [
+      439.0,
+      448.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.027,
+    "mean_rms_db": -30.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/be9lfvhazheh09l095yn8xi4kuus.mp3",
+    "share_url": "https://phish.in/2009-06-20/character-zero"
+  },
+  {
+    "label": "2009-11-28 Set 2 t19 Julius",
+    "edge": "trailing",
+    "track_duration_s": 471.4,
+    "nonmusic_run_s": 8.6,
+    "music_boundary_s": 462.3,
+    "region": [
+      462.3,
+      471.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.22,
+      "speech": 0.78
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.138,
+    "mean_rms_db": -23.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Julius"
+    ],
+    "mp3_url": "https://phish.in/blob/t3hu1hr47kcupy275z3xea02kqk8.mp3",
+    "share_url": "https://phish.in/2009-11-28/julius"
+  },
+  {
+    "label": "2009-05-31 Set 2 t21 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1270.9,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 1262.2,
+    "region": [
+      1262.2,
+      1270.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.18,
+      "speech": 0.82
+    },
+    "mean_music_score": 0.062,
+    "mean_crowd_score": 0.014,
+    "mean_rms_db": -26.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/0p5xh2qj9hr7khkdaxyavqkogw6w.mp3",
+    "share_url": "https://phish.in/2009-05-31/you-enjoy-myself"
+  },
+  {
+    "label": "2009-11-27 Set 2 t23 I Been Around",
+    "edge": "trailing",
+    "track_duration_s": 140.0,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 131.5,
+    "region": [
+      131.5,
+      140.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.032,
+    "mean_crowd_score": 0.016,
+    "mean_rms_db": -28.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "I Been Around"
+    ],
+    "mp3_url": "https://phish.in/blob/wsnezyhkid81jes1gnsgk8h4b3q7.mp3",
+    "share_url": "https://phish.in/2009-11-27/i-been-around"
+  },
+  {
+    "label": "2009-03-06 Set 1 t16 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 603.9,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 595.7,
+    "region": [
+      595.7,
+      603.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.25,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.072,
+    "mean_crowd_score": 0.098,
+    "mean_rms_db": -26.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/ghu5xdhu565il2puoi49repxw6w4.mp3",
+    "share_url": "https://phish.in/2009-03-06/david-bowie"
+  },
+  {
+    "label": "2009-06-18 Set 1 t11 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 634.1,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 625.9,
+    "region": [
+      625.9,
+      634.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.12,
+      "speech": 0.88
+    },
+    "mean_music_score": 0.025,
+    "mean_crowd_score": 0.067,
+    "mean_rms_db": -28.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/5sm9znh0hzcwywh958bg2vjudos6.mp3",
+    "share_url": "https://phish.in/2009-06-18/david-bowie"
+  },
+  {
+    "label": "2009-08-11 Set 2 t19 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 552.2,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 544.5,
+    "region": [
+      544.5,
+      552.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.022,
+    "mean_rms_db": -30.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/6dkehvy5bng2hkr8p6zxo6n1as2g.mp3",
+    "share_url": "https://phish.in/2009-08-11/the-squirming-coil"
+  },
+  {
+    "label": "2009-08-13 Encore t23 First Tube",
+    "edge": "trailing",
+    "track_duration_s": 488.2,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 480.5,
+    "region": [
+      480.5,
+      488.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.13,
+      "speech": 0.87
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.098,
+    "mean_rms_db": -29.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "First Tube"
+    ],
+    "mp3_url": "https://phish.in/blob/w3hosva3ureahq2yhwarbyq7h1qs.mp3",
+    "share_url": "https://phish.in/2009-08-13/first-tube"
+  },
+  {
+    "label": "2009-03-06 Encore t28 Loving Cup",
+    "edge": "trailing",
+    "track_duration_s": 406.3,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 399.1,
+    "region": [
+      399.1,
+      406.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.04,
+    "mean_rms_db": -32.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Loving Cup"
+    ],
+    "mp3_url": "https://phish.in/blob/0j1zn9rs9wyj0lkb1e36kcmpclpd.mp3",
+    "share_url": "https://phish.in/2009-03-06/loving-cup"
+  },
+  {
+    "label": "2009-06-20 Set 1 t10 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 613.0,
+    "nonmusic_run_s": 6.7,
+    "music_boundary_s": 605.8,
+    "region": [
+      605.8,
+      613.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.14,
+      "speech": 0.86
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.03,
+    "mean_rms_db": -25.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/qrukweylpnuko9k4n1t7hogotslf.mp3",
+    "share_url": "https://phish.in/2009-06-20/run-like-an-antelope"
+  },
+  {
+    "label": "2009-08-13 Set 1 t12 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 272.1,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 265.4,
+    "region": [
+      265.4,
+      272.2
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.15,
+      "speech": 0.85
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.06,
+    "mean_rms_db": -28.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/hlld50sbrz8r6oskw10mwpczevex.mp3",
+    "share_url": "https://phish.in/2009-08-13/golgi-apparatus"
+  },
+  {
+    "label": "2009-11-29 Set 2 t22 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 613.6,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 606.9,
+    "region": [
+      606.9,
+      613.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.115,
+    "mean_rms_db": -24.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/6mw13awmr6hb4y0a0e86bmukm12k.mp3",
+    "share_url": "https://phish.in/2009-11-29/run-like-an-antelope"
+  },
+  {
+    "label": "2009-12-31 Set 3 t29 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1105.7,
+    "nonmusic_run_s": 6.2,
+    "music_boundary_s": 1099.0,
+    "region": [
+      1099.0,
+      1105.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.085,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -30.3,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/wvndpol783eakdw88m4rco953rbl.mp3",
+    "share_url": "https://phish.in/2009-12-31/you-enjoy-myself"
+  },
+  {
+    "label": "2009-06-07 Encore t23 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 195.1,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 189.6,
+    "region": [
+      189.6,
+      195.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.36,
+      "speech": 0.64
+    },
+    "mean_music_score": 0.011,
+    "mean_crowd_score": 0.082,
+    "mean_rms_db": -25.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/0p8ooa7d7om1u4034693kfpxeyng.mp3",
+    "share_url": "https://phish.in/2009-06-07/tweezer-reprise"
+  },
+  {
+    "label": "2009-11-22 Encore t24 Good Times Bad Times",
+    "edge": "trailing",
+    "track_duration_s": 448.5,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 442.7,
+    "region": [
+      442.7,
+      448.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.27,
+      "speech": 0.73
+    },
+    "mean_music_score": 0.006,
+    "mean_crowd_score": 0.037,
+    "mean_rms_db": -26.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Good Times Bad Times"
+    ],
+    "mp3_url": "https://phish.in/blob/38qwgf0suihpaihbozx2464sncqq.mp3",
+    "share_url": "https://phish.in/2009-11-22/good-times-bad-times"
+  },
+  {
+    "label": "2009-11-27 Encore t24 Fire",
+    "edge": "trailing",
+    "track_duration_s": 292.7,
+    "nonmusic_run_s": 5.3,
+    "music_boundary_s": 287.0,
+    "region": [
+      287.0,
+      292.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.27,
+      "speech": 0.73
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.061,
+    "mean_rms_db": -29.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fire"
+    ],
+    "mp3_url": "https://phish.in/blob/9lnuw8fmxj0070rhyqvhnug4ewc6.mp3",
+    "share_url": "https://phish.in/2009-11-27/fire"
+  },
+  {
+    "label": "2009-11-21 Set 2 t20 The Squirming Coil",
+    "edge": "trailing",
+    "track_duration_s": 555.1,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 549.8,
+    "region": [
+      549.8,
+      555.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.1,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.143,
+    "mean_crowd_score": 0.037,
+    "mean_rms_db": -24.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "The Squirming Coil"
+    ],
+    "mp3_url": "https://phish.in/blob/cm8qcmq1vw9j1f0gobvot8i0u5zu.mp3",
+    "share_url": "https://phish.in/2009-11-21/the-squirming-coil"
+  },
+  {
+    "label": "2009-11-22 Set 1 t12 Stash",
+    "edge": "trailing",
+    "track_duration_s": 758.6,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 753.3,
+    "region": [
+      753.3,
+      758.6
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.1,
+      "speech": 0.9
+    },
+    "mean_music_score": 0.001,
+    "mean_crowd_score": 0.043,
+    "mean_rms_db": -22.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Stash"
+    ],
+    "mp3_url": "https://phish.in/blob/j3n6k6o1nmarhd7j867anqv1za4a.mp3",
+    "share_url": "https://phish.in/2009-11-22/stash"
+  },
+  {
+    "label": "2009-06-10 Set 2 t21 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 778.0,
+    "nonmusic_run_s": 3.4,
+    "music_boundary_s": 774.2,
+    "region": [
+      774.2,
+      778.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.43,
+      "speech": 0.57
+    },
+    "mean_music_score": 0.154,
+    "mean_crowd_score": 0.087,
+    "mean_rms_db": -20.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/urxx8rtrzu652053g41rgcdy2bqz.mp3",
+    "share_url": "https://phish.in/2009-06-10/harry-hood"
+  },
+  {
+    "label": "2009-06-21 Set 1 t14 Time Turns Elastic",
+    "edge": "trailing",
+    "track_duration_s": 1002.1,
+    "nonmusic_run_s": 3.4,
+    "music_boundary_s": 998.2,
+    "region": [
+      998.2,
+      1002.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.008,
+    "mean_crowd_score": 0.015,
+    "mean_rms_db": -34.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Time Turns Elastic"
+    ],
+    "mp3_url": "https://phish.in/blob/i3o9zdq00zwk1jhge4o5kktaekrq.mp3",
+    "share_url": "https://phish.in/2009-06-21/time-turns-elastic"
+  },
+  {
+    "label": "2009-12-04 Set 2 t22 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1265.0,
+    "nonmusic_run_s": 3.4,
+    "music_boundary_s": 1261.2,
+    "region": [
+      1261.2,
+      1265.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.029,
+    "mean_crowd_score": 0.027,
+    "mean_rms_db": -33.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/wabwle2bvs7ipgkk68fg91e2ewdm.mp3",
+    "share_url": "https://phish.in/2009-12-04/you-enjoy-myself"
+  },
+  {
+    "label": "2009-11-20 Set 2 t16 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1219.1,
+    "nonmusic_run_s": 2.9,
+    "music_boundary_s": 1215.7,
+    "region": [
+      1215.7,
+      1219.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.17,
+      "speech": 0.83
+    },
+    "mean_music_score": 0.012,
+    "mean_crowd_score": 0.004,
+    "mean_rms_db": -28.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/3aa9xva4561vjmy4prpiaqwy0pei.mp3",
+    "share_url": "https://phish.in/2009-11-20/you-enjoy-myself"
+  },
+  {
+    "label": "2009-12-30 Set 2 t23 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 580.1,
+    "nonmusic_run_s": 2.9,
+    "music_boundary_s": 576.7,
+    "region": [
+      576.7,
+      580.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.021,
+    "mean_crowd_score": 0.032,
+    "mean_rms_db": -20.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/rup3f0v7n0a9rlyid1b130jl6b0v.mp3",
+    "share_url": "https://phish.in/2009-12-30/run-like-an-antelope"
+  },
+  {
+    "label": "2009-08-08 Set 2 t19 Grind",
+    "edge": "trailing",
+    "track_duration_s": 80.8,
+    "nonmusic_run_s": 2.4,
+    "music_boundary_s": 78.2,
+    "region": [
+      78.2,
+      81.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.214,
+    "mean_crowd_score": 0.014,
+    "mean_rms_db": -33.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Grind"
+    ],
+    "mp3_url": "https://phish.in/blob/kqc69652afwx0fwi0d2sdsqynsz8.mp3",
+    "share_url": "https://phish.in/2009-08-08/grind"
+  },
+  {
+    "label": "2009-06-06 Set 2 t18 Bug",
+    "edge": "trailing",
+    "track_duration_s": 493.3,
+    "nonmusic_run_s": 1.9,
+    "music_boundary_s": 490.9,
+    "region": [
+      490.9,
+      493.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.25,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.052,
+    "mean_crowd_score": 0.009,
+    "mean_rms_db": -15.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Bug"
+    ],
+    "mp3_url": "https://phish.in/blob/zy4z8y73l3d0ez16oc3wrdfz0n31.mp3",
+    "share_url": "https://phish.in/2009-06-06/bug"
+  },
+  {
+    "label": "2009-06-14 Set 1 t14 Glory Days",
+    "edge": "trailing",
+    "track_duration_s": 405.8,
+    "nonmusic_run_s": 1.9,
+    "music_boundary_s": 403.4,
+    "region": [
+      403.4,
+      405.8
+    ],
+    "character": {
+      "silence": 1.0,
+      "crowd": 0.0,
+      "speech": 0.0
+    },
+    "mean_music_score": 0.049,
+    "mean_crowd_score": 0.001,
+    "mean_rms_db": -54.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Glory Days"
+    ],
+    "mp3_url": "https://phish.in/blob/sdohad31xi2tskt7p234bz20wbya.mp3",
+    "share_url": "https://phish.in/2009-06-14/glory-days"
+  },
+  {
+    "label": "2009-05-31 Encore t24 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 189.9,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 188.2,
+    "region": [
+      188.2,
+      190.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.005,
+    "mean_crowd_score": 0.012,
+    "mean_rms_db": -29.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/r2mee3p8jybja1y2xjcvwkru02jw.mp3",
+    "share_url": "https://phish.in/2009-05-31/tweezer-reprise"
+  },
+  {
+    "label": "2009-06-14 Encore t24 Tweezer Reprise",
+    "edge": "trailing",
+    "track_duration_s": 250.3,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 248.6,
+    "region": [
+      248.6,
+      250.6
+    ],
+    "character": {
+      "silence": 1.0,
+      "crowd": 0.0,
+      "speech": 0.0
+    },
+    "mean_music_score": 0.029,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -52.9,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Tweezer Reprise"
+    ],
+    "mp3_url": "https://phish.in/blob/vub0ghyp2vjqx61vtom7zxxghf0z.mp3",
+    "share_url": "https://phish.in/2009-06-14/tweezer-reprise"
+  },
+  {
+    "label": "2009-08-07 Set 2 t16 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 971.3,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 969.3,
+    "region": [
+      969.3,
+      971.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.053,
+    "mean_crowd_score": 0.003,
+    "mean_rms_db": -31.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/lr4jkt5p3scks8u2rms23csozoxd.mp3",
+    "share_url": "https://phish.in/2009-08-07/harry-hood"
+  },
+  {
+    "label": "2009-08-15 Set 2 t20 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 822.4,
+    "nonmusic_run_s": 1.4,
+    "music_boundary_s": 820.5,
+    "region": [
+      820.5,
+      822.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.67,
+      "speech": 0.33
+    },
+    "mean_music_score": 0.083,
+    "mean_crowd_score": 0.02,
+    "mean_rms_db": -18.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/iit2cnjpxtxf649zvnlu1dhjig31.mp3",
+    "share_url": "https://phish.in/2009-08-15/harry-hood"
+  },
+  {
+    "label": "2009-10-31 Set 3 t32 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1296.8,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 1295.4,
+    "region": [
+      1295.4,
+      1296.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.033,
+    "mean_rms_db": -32.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/65djcr90v6rlbmqn1948w6ok00ab.mp3",
+    "share_url": "https://phish.in/2009-10-31/you-enjoy-myself"
+  },
+  {
+    "label": "2009-12-02 Set 2 t21 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 548.5,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 547.0,
+    "region": [
+      547.0,
+      548.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.009,
+    "mean_rms_db": -17.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/niy3ug2xhrdoze5kn8wjlu8mqigm.mp3",
+    "share_url": "https://phish.in/2009-12-02/run-like-an-antelope"
+  },
+  {
+    "label": "2009-12-03 Set 2 t18 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 610.7,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 609.3,
+    "region": [
+      609.3,
+      610.7
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.045,
+    "mean_rms_db": -17.5,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/3cg8xwmhte50oksd59x76pvk8bh8.mp3",
+    "share_url": "https://phish.in/2009-12-03/david-bowie"
+  },
+  {
+    "label": "2009-12-29 Set 2 t19 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 542.3,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 540.9,
+    "region": [
+      540.9,
+      542.3
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.004,
+    "mean_crowd_score": 0.009,
+    "mean_rms_db": -18.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/0t9yuf1p1y743ua3kcxkrsi83i58.mp3",
+    "share_url": "https://phish.in/2009-12-29/slave-to-the-traffic-light"
+  },
+  {
+    "label": "2009-06-14 Set 2 t22 First Tube",
+    "edge": "trailing",
+    "track_duration_s": 495.0,
+    "nonmusic_run_s": 0.5,
+    "music_boundary_s": 494.0,
+    "region": [
+      494.0,
+      495.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.046,
+    "mean_rms_db": -22.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "First Tube"
+    ],
+    "mp3_url": "https://phish.in/blob/7c3dtzf2gjnu5aryw4fc96w13e28.mp3",
+    "share_url": "https://phish.in/2009-06-14/first-tube"
+  },
+  {
+    "label": "2009-10-30 Set 2 t21 Golgi Apparatus",
+    "edge": "trailing",
+    "track_duration_s": 277.2,
+    "nonmusic_run_s": 0.5,
+    "music_boundary_s": 276.5,
+    "region": [
+      276.5,
+      277.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.013,
+    "mean_crowd_score": 0.024,
+    "mean_rms_db": -26.2,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Golgi Apparatus"
+    ],
+    "mp3_url": "https://phish.in/blob/09plqxbpkc9v7cvdmcyvhaa7k2bb.mp3",
+    "share_url": "https://phish.in/2009-10-30/golgi-apparatus"
+  },
+  {
+    "label": "2009-12-05 Set 2 t21 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 609.9,
+    "nonmusic_run_s": 0.5,
+    "music_boundary_s": 608.9,
+    "region": [
+      608.9,
+      609.9
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.039,
+    "mean_crowd_score": 0.002,
+    "mean_rms_db": -16.6,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/vpg4eyj8wg9lmy21gwudx3wcbpc0.mp3",
+    "share_url": "https://phish.in/2009-12-05/run-like-an-antelope"
+  },
+  {
+    "label": "2009-12-28 Set 2 t21 Character Zero",
+    "edge": "trailing",
+    "track_duration_s": 498.5,
+    "nonmusic_run_s": 0.5,
+    "music_boundary_s": 497.6,
+    "region": [
+      497.6,
+      498.5
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.053,
+    "mean_crowd_score": 0.003,
+    "mean_rms_db": -20.4,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Character Zero"
+    ],
+    "mp3_url": "https://phish.in/blob/32zag4bww8rhk9n2wszcs7p2oqdg.mp3",
+    "share_url": "https://phish.in/2009-12-28/character-zero"
+  },
+  {
+    "label": "2009-06-06 Set 1 t11 Prince Caspian",
+    "edge": "trailing",
+    "track_duration_s": 463.3,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 463.3,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Prince Caspian"
+    ],
+    "mp3_url": "https://phish.in/blob/3yvev7tefr29hdygg7g50rlbfx4k.mp3",
+    "share_url": "https://phish.in/2009-06-06/prince-caspian"
+  },
+  {
+    "label": "2009-06-06 Encore t20 Julius",
+    "edge": "trailing",
+    "track_duration_s": 483.8,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 483.8,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Julius"
+    ],
+    "mp3_url": "https://phish.in/blob/lbyu1s65kznojtkgn809t1u48lm0.mp3",
+    "share_url": "https://phish.in/2009-06-06/julius"
+  },
+  {
+    "label": "2009-06-12 Encore t20 A Day in the Life",
+    "edge": "trailing",
+    "track_duration_s": 458.5,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 458.5,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "A Day in the Life"
+    ],
+    "mp3_url": "https://phish.in/blob/y697hqlikremyoycg9fqbdzcylap.mp3",
+    "share_url": "https://phish.in/2009-06-12/a-day-in-the-life"
+  },
+  {
+    "label": "2009-06-16 Encore t24 While My Guitar Gently Weeps",
+    "edge": "trailing",
+    "track_duration_s": 467.7,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 467.7,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "While My Guitar Gently Weeps"
+    ],
+    "mp3_url": "https://phish.in/blob/hnh0mxmcyfwqlnjl1xpm9z69gq27.mp3",
+    "share_url": "https://phish.in/2009-06-16/while-my-guitar-gently-weeps"
+  },
+  {
+    "label": "2009-07-31 Set 1 t08 Split Open and Melt",
+    "edge": "trailing",
+    "track_duration_s": 714.7,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 714.7,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Split Open and Melt"
+    ],
+    "mp3_url": "https://phish.in/blob/pa5h0mezmhue45mx4mgzezzc97s8.mp3",
+    "share_url": "https://phish.in/2009-07-31/split-open-and-melt"
+  },
+  {
+    "label": "2009-08-02 Encore t23 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 625.9,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 625.9,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/9szsivdnmji3c4jabbt76jez5g5i.mp3",
+    "share_url": "https://phish.in/2009-08-02/slave-to-the-traffic-light"
+  },
+  {
+    "label": "2009-11-01 Set 3 t38 Slave to the Traffic Light",
+    "edge": "trailing",
+    "track_duration_s": 633.5,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 633.5,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Slave to the Traffic Light"
+    ],
+    "mp3_url": "https://phish.in/blob/btgcmxcjcgqkwivzd0tvl2u79dbm.mp3",
+    "share_url": "https://phish.in/2009-11-01/slave-to-the-traffic-light"
+  },
+  {
+    "label": "2009-11-28 Encore t20 You Enjoy Myself",
+    "edge": "trailing",
+    "track_duration_s": 1172.6,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 1172.6,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "You Enjoy Myself"
+    ],
+    "mp3_url": "https://phish.in/blob/4kw66qkrdej3cpaeexig5f0ejlpx.mp3",
+    "share_url": "https://phish.in/2009-11-28/you-enjoy-myself"
+  }
+]

@@ -1,0 +1,81 @@
+[
+  {
+    "label": "1984-12-01 Encore t18 Eyes of the World",
+    "edge": "trailing",
+    "track_duration_s": 809.0,
+    "nonmusic_run_s": 14.4,
+    "music_boundary_s": 794.1,
+    "region": [
+      794.1,
+      809.0
+    ],
+    "character": {
+      "silence": 0.8,
+      "crowd": 0.1,
+      "speech": 0.1
+    },
+    "mean_music_score": 0.042,
+    "mean_crowd_score": 0.009,
+    "mean_rms_db": -80.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Eyes of the World"
+    ],
+    "mp3_url": "https://phish.in/blob/u4revi8m8pxr1c57wgsffk4elhsh.mp3",
+    "share_url": "https://phish.in/1984-12-01/eyes-of-the-world"
+  },
+  {
+    "label": "1984-11-03 Set 1 t07 Whipping Post > Drums",
+    "edge": "trailing",
+    "track_duration_s": 961.4,
+    "nonmusic_run_s": 4.8,
+    "music_boundary_s": 956.1,
+    "region": [
+      956.1,
+      961.4
+    ],
+    "character": {
+      "silence": 0.6,
+      "crowd": 0.0,
+      "speech": 0.4
+    },
+    "mean_music_score": 0.015,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -50.8,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Drums",
+      "Whipping Post"
+    ],
+    "mp3_url": "https://phish.in/blob/u0a6ncnh0pp0envebnmbowbxszgd.mp3",
+    "share_url": "https://phish.in/1984-11-03/whipping-post-drums"
+  },
+  {
+    "label": "1984-12-01 Set 1 t17 Fluffhead",
+    "edge": "trailing",
+    "track_duration_s": 384.8,
+    "nonmusic_run_s": 1.0,
+    "music_boundary_s": 383.4,
+    "region": [
+      383.4,
+      384.8
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.033,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": -44.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Fluffhead"
+    ],
+    "mp3_url": "https://phish.in/blob/tavw0z07kdoecmhict2x0ybqkdah.mp3",
+    "share_url": "https://phish.in/1984-12-01/fluffhead"
+  }
+]

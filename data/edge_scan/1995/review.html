@@ -1,0 +1,952 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Track edge trim review</title>
+<style>
+  body { font: 14px/1.5 -apple-system, sans-serif; margin: 2rem auto; max-width: 1100px; }
+  .row { border-bottom: 1px solid #ccc; padding: 1rem 0; }
+  .head { display: flex; gap: .6rem; align-items: baseline; flex-wrap: wrap; }
+  .meta { color: #666; }
+  .banter { color: #205080; margin: .3rem 0 .3rem 1.6rem; }
+  .audio { display: flex; gap: 1rem; align-items: center; margin: .4rem 0; flex-wrap: wrap; }
+  .audio label { color: #666; font-size: 12px; }
+  img { max-width: 100%; }
+  #export { position: fixed; top: 1rem; right: 1rem; padding: .5rem 1rem; }
+</style>
+<button id="export">Export approved.json</button>
+<h1>Track edge trim review (84 candidates)</h1>
+
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-22 Set 2 t16 Strange Design&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/ueevyyy7s4hbrvxter4mocectm1a.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-22/strange-design&quot;, &quot;music_boundary_s&quot;: 172.1, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 179.4}">
+    <strong><a href="https://phish.in/1995-11-22/strange-design" target="_blank">1995-11-22 Set 2 t16 Strange Design</a></strong>
+    <span class="meta">trailing edge &middot; run 184.8s &middot;
+      cut 178.0s &middot; boundary 172.1s &middot; crowd 10%, speech 90%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-22_Set_2_t16_Strange_Design_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-22_Set_2_t16_Strange_Design_original.mp3"></audio></div>
+  <img src="plots/1995-11-22_Set_2_t16_Strange_Design_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-06 Set 2 t17 Slave to the Traffic Light&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/b66x3dzhpk0cisd4u942798n3ve7.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-06/slave-to-the-traffic-light&quot;, &quot;music_boundary_s&quot;: 653.3, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 660.5999999999999}">
+    <strong><a href="https://phish.in/1995-10-06/slave-to-the-traffic-light" target="_blank">1995-10-06 Set 2 t17 Slave to the Traffic Light</a></strong>
+    <span class="meta">trailing edge &middot; run 163.2s &middot;
+      cut 156.4s &middot; boundary 653.3s &middot; silence 21%, crowd 19%, speech 59%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-06_Set_2_t17_Slave_to_the_Traffic_Light_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-06_Set_2_t17_Slave_to_the_Traffic_Light_original.mp3"></audio></div>
+  <img src="plots/1995-10-06_Set_2_t17_Slave_to_the_Traffic_Light_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-11 Set 2 t21 Run Like an Antelope&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/h1889rjx6aqxwayejkz7yp1qewxp.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-11/run-like-an-antelope&quot;, &quot;music_boundary_s&quot;: 709.3, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 716.5999999999999}">
+    <strong><a href="https://phish.in/1995-11-11/run-like-an-antelope" target="_blank">1995-11-11 Set 2 t21 Run Like an Antelope</a></strong>
+    <span class="meta">trailing edge &middot; run 152.6s &middot;
+      cut 145.8s &middot; boundary 709.3s &middot; crowd 13%, speech 87%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-11_Set_2_t21_Run_Like_an_Antelope_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-11_Set_2_t21_Run_Like_an_Antelope_original.mp3"></audio></div>
+  <img src="plots/1995-11-11_Set_2_t21_Run_Like_an_Antelope_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-12-09 Set 2 t19 Sweet Adeline&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/9m8vzoobxvix2jctwvuc7rp7butw.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-12-09/sweet-adeline&quot;, &quot;music_boundary_s&quot;: 87.8, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 103.6}">
+    <strong><a href="https://phish.in/1995-12-09/sweet-adeline" target="_blank">1995-12-09 Set 2 t19 Sweet Adeline</a></strong>
+    <span class="meta">trailing edge &middot; run 143.5s &middot;
+      cut 127.9s &middot; boundary 87.8s &middot; crowd 16%, speech 84%</span>
+  </div>
+  <div class="banter">84.8-89.6s: &ldquo;Sweet out of line, sweet out of line.&rdquo;</div><div class="banter">89.6-90.3s: &ldquo;Oh!&rdquo;</div><div class="banter">95.3-96.3s: &ldquo;Thanks a lot.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-12-09_Set_2_t19_Sweet_Adeline_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-12-09_Set_2_t19_Sweet_Adeline_original.mp3"></audio></div>
+  <img src="plots/1995-12-09_Set_2_t19_Sweet_Adeline_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-15 Set 2 t18 Tweezer Reprise&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/13d7jz8pbtnqjnhlkgg8d4ft643z.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-15/tweezer-reprise&quot;, &quot;music_boundary_s&quot;: 173.2, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 180.5}">
+    <strong><a href="https://phish.in/1995-10-15/tweezer-reprise" target="_blank">1995-10-15 Set 2 t18 Tweezer Reprise</a></strong>
+    <span class="meta">trailing edge &middot; run 135.4s &middot;
+      cut 128.6s &middot; boundary 173.2s &middot; crowd 50%, speech 50%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-15_Set_2_t18_Tweezer_Reprise_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-15_Set_2_t18_Tweezer_Reprise_original.mp3"></audio></div>
+  <img src="plots/1995-10-15_Set_2_t18_Tweezer_Reprise_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-13 Set 2 t19 The Squirming Coil&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/al41fqpl1rp4ds14rkcemufdwcj2.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-13/the-squirming-coil&quot;, &quot;music_boundary_s&quot;: 608.1, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 615.4}">
+    <strong><a href="https://phish.in/1995-10-13/the-squirming-coil" target="_blank">1995-10-13 Set 2 t19 The Squirming Coil</a></strong>
+    <span class="meta">trailing edge &middot; run 129.6s &middot;
+      cut 122.8s &middot; boundary 608.1s &middot; silence 7%, crowd 27%, speech 66%</span>
+  </div>
+  <div class="banter">726.0-727.4s: &ldquo;.&rdquo;</div><div class="banter">727.4-729.1s: &ldquo;.&rdquo;</div><div class="banter">729.1-730.9s: &ldquo;.&rdquo;</div><div class="banter">733.3-734.7s: &ldquo;.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-13_Set_2_t19_The_Squirming_Coil_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-13_Set_2_t19_The_Squirming_Coil_original.mp3"></audio></div>
+  <img src="plots/1995-10-13_Set_2_t19_The_Squirming_Coil_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-07 Set 2 t18 Sweet Adeline&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/jy3gbxjaj18qmrrgcjsf1bi33v51.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-07/sweet-adeline&quot;, &quot;music_boundary_s&quot;: 0.0, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 121.0}">
+    <strong><a href="https://phish.in/1995-10-07/sweet-adeline" target="_blank">1995-10-07 Set 2 t18 Sweet Adeline</a></strong>
+    <span class="meta">trailing edge &middot; run 126.2s &middot;
+      cut 5.6s &middot; boundary 0.0s &middot; crowd 14%, speech 86%</span>
+  </div>
+  <div class="banter">10.1-16.4s: &ldquo;You&#x27;re the flower of my heart, sweet Adeline, sweet Adeline.&rdquo;</div><div class="banter">18.7-23.8s: &ldquo;In the evening when I sit alone and dreaming of days gone by,&rdquo;</div><div class="banter">24.0-27.3s: &ldquo;love to me so dear, so dear.&rdquo;</div><div class="banter">47.3-50.8s: &ldquo;For the sighing wind and nightingale are singing,&rdquo;</div><div class="banter">51.4-55.5s: &ldquo;Our breathing only, your own sweet name.&rdquo;</div><div class="banter">56.0-58.4s: &ldquo;Your own sweet name.&rdquo;</div><div class="banter">58.7-60.0s: &ldquo;Sweet Adela.&rdquo;</div><div class="banter">60.6-62.8s: &ldquo;Sweet Adela.&rdquo;</div><div class="banter">80.9-89.8s: &ldquo;At night, dear heart, at night, dear heart, for you are mine.&rdquo;</div><div class="banter">89.8-97.6s: &ldquo;For you are fine in all my dreams, in all my dreams.&rdquo;</div><div class="banter">98.5-103.8s: &ldquo;Your bare face beams, your bare face beams.&rdquo;</div><div class="banter">104.4-110.9s: &ldquo;You&#x27;re the flower of my heart, sweet Adelaide, sweet Adelaide.&rdquo;</div><div class="banter">113.1-113.7s: &ldquo;Thank you.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-07_Set_2_t18_Sweet_Adeline_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-07_Set_2_t18_Sweet_Adeline_original.mp3"></audio></div>
+  <img src="plots/1995-10-07_Set_2_t18_Sweet_Adeline_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-15 Set 2 t18 Slave to the Traffic Light&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/u90emrlnak96cepxgsbw41x3samh.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-15/slave-to-the-traffic-light&quot;, &quot;music_boundary_s&quot;: 762.2, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 769.5}">
+    <strong><a href="https://phish.in/1995-06-15/slave-to-the-traffic-light" target="_blank">1995-06-15 Set 2 t18 Slave to the Traffic Light</a></strong>
+    <span class="meta">trailing edge &middot; run 120.5s &middot;
+      cut 113.6s &middot; boundary 762.2s &middot; crowd 17%, speech 83%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-15_Set_2_t18_Slave_to_the_Traffic_Light_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-15_Set_2_t18_Slave_to_the_Traffic_Light_original.mp3"></audio></div>
+  <img src="plots/1995-06-15_Set_2_t18_Slave_to_the_Traffic_Light_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-12 Set 2 t18 Tweezer Reprise&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/kd8w7b9hdc6n8purebntponi7x91.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-12/tweezer-reprise&quot;, &quot;music_boundary_s&quot;: 171.8, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 179.10000000000002}">
+    <strong><a href="https://phish.in/1995-11-12/tweezer-reprise" target="_blank">1995-11-12 Set 2 t18 Tweezer Reprise</a></strong>
+    <span class="meta">trailing edge &middot; run 117.1s &middot;
+      cut 110.1s &middot; boundary 171.8s &middot; crowd 21%, speech 79%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-12_Set_2_t18_Tweezer_Reprise_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-12_Set_2_t18_Tweezer_Reprise_original.mp3"></audio></div>
+  <img src="plots/1995-11-12_Set_2_t18_Tweezer_Reprise_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-29 Set 2 t20 Slave to the Traffic Light&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/pol75czfwhydhng63wvurlhp9li2.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-29/slave-to-the-traffic-light&quot;, &quot;music_boundary_s&quot;: 687.0, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 694.3}">
+    <strong><a href="https://phish.in/1995-11-29/slave-to-the-traffic-light" target="_blank">1995-11-29 Set 2 t20 Slave to the Traffic Light</a></strong>
+    <span class="meta">trailing edge &middot; run 111.8s &middot;
+      cut 105.0s &middot; boundary 687.0s &middot; crowd 6%, speech 94%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-29_Set_2_t20_Slave_to_the_Traffic_Light_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-29_Set_2_t20_Slave_to_the_Traffic_Light_original.mp3"></audio></div>
+  <img src="plots/1995-11-29_Set_2_t20_Slave_to_the_Traffic_Light_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-10 Set 2 t18 Sweet Adeline&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/p36t1yxbm3frjfuyjhhoiyt6x2y4.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-10/sweet-adeline&quot;, &quot;music_boundary_s&quot;: 0.0, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 52.5}">
+    <strong><a href="https://phish.in/1995-11-10/sweet-adeline" target="_blank">1995-11-10 Set 2 t18 Sweet Adeline</a></strong>
+    <span class="meta">trailing edge &middot; run 109.9s &middot;
+      cut 57.9s &middot; boundary 0.0s &middot; silence 76%, crowd 1%, speech 24%</span>
+  </div>
+  <div class="banter">0.0-7.8s: &ldquo;You&#x27;re the flower of my heart, sweet Adelaide, sweet Adelaide.&rdquo;</div><div class="banter">8.3-15.8s: &ldquo;In the evening when I sit alone and I&#x27;m dreaming, love day&#x27;s gone by, love to me so dear.&rdquo;</div><div class="banter">17.5-23.4s: &ldquo;There&#x27;s a picture that fancy off the peering, brings back the time long.&rdquo;</div><div class="banter">26.9-36.8s: &ldquo;It is then I wonder where you are, my darling, and if your heart to me is still the same, still the same.&rdquo;</div><div class="banter">37.2-45.2s: &ldquo;For the sign with the night together singing, our breathing only, your own sweet name.&rdquo;</div><div class="banter">100.3-110.3s: &ldquo;Thank you.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-10_Set_2_t18_Sweet_Adeline_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-10_Set_2_t18_Sweet_Adeline_original.mp3"></audio></div>
+  <img src="plots/1995-11-10_Set_2_t18_Sweet_Adeline_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-14 Set 2 t18 Cavern&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/d5b74h7otvmyt7ms6rz1oa05ztoq.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-14/cavern&quot;, &quot;music_boundary_s&quot;: 284.6, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 291.90000000000003}">
+    <strong><a href="https://phish.in/1995-10-14/cavern" target="_blank">1995-10-14 Set 2 t18 Cavern</a></strong>
+    <span class="meta">trailing edge &middot; run 106.1s &middot;
+      cut 99.3s &middot; boundary 284.6s &middot; crowd 31%, speech 69%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-14_Set_2_t18_Cavern_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-14_Set_2_t18_Cavern_original.mp3"></audio></div>
+  <img src="plots/1995-10-14_Set_2_t18_Cavern_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-29 Set 2 t16 A Day in the Life&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/yf2jssdp6lnx72bzqd9ewqyc2e8d.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-29/a-day-in-the-life&quot;, &quot;music_boundary_s&quot;: 328.9, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 336.2}">
+    <strong><a href="https://phish.in/1995-06-29/a-day-in-the-life" target="_blank">1995-06-29 Set 2 t16 A Day in the Life</a></strong>
+    <span class="meta">trailing edge &middot; run 104.2s &middot;
+      cut 97.4s &middot; boundary 328.9s &middot; crowd 23%, speech 77%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-29_Set_2_t16_A_Day_in_the_Life_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-29_Set_2_t16_A_Day_in_the_Life_original.mp3"></audio></div>
+  <img src="plots/1995-06-29_Set_2_t16_A_Day_in_the_Life_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-10 Set 2 t16 Sample in a Jar&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/b5eso79o29oncn49wqi6hlf4u0yc.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-10/sample-in-a-jar&quot;, &quot;music_boundary_s&quot;: 297.0, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 304.3}">
+    <strong><a href="https://phish.in/1995-06-10/sample-in-a-jar" target="_blank">1995-06-10 Set 2 t16 Sample in a Jar</a></strong>
+    <span class="meta">trailing edge &middot; run 99.8s &middot;
+      cut 93.0s &middot; boundary 297.0s &middot; crowd 3%, speech 97%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-10_Set_2_t16_Sample_in_a_Jar_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-10_Set_2_t16_Sample_in_a_Jar_original.mp3"></audio></div>
+  <img src="plots/1995-06-10_Set_2_t16_Sample_in_a_Jar_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-07-01 Set 2 t18 Suzy Greenberg&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/jr98zuct1tgiqrftnri5kngr8f8l.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-07-01/suzy-greenberg&quot;, &quot;music_boundary_s&quot;: 384.9, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 394.90000000000003}">
+    <strong><a href="https://phish.in/1995-07-01/suzy-greenberg" target="_blank">1995-07-01 Set 2 t18 Suzy Greenberg</a></strong>
+    <span class="meta">trailing edge &middot; run 96.0s &middot;
+      cut 86.5s &middot; boundary 384.9s &middot; crowd 23%, speech 78%</span>
+  </div>
+  <div class="banter">381.9-387.6s: &ldquo;Thanks all of you, we&#x27;ve never had a great time with the two guys, it was really great. Thank you very much.&rdquo;</div><div class="banter">464.9-470.0s: &ldquo;And this is, thank you all, everybody would see me for coming out and having a good time with us.&rdquo;</div><div class="banter">470.1-472.7s: &ldquo;We&#x27;re really proud of what you do and we thank you very much.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-07-01_Set_2_t18_Suzy_Greenberg_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-07-01_Set_2_t18_Suzy_Greenberg_original.mp3"></audio></div>
+  <img src="plots/1995-07-01_Set_2_t18_Suzy_Greenberg_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-12-02 Set 2 t19 Tweezer Reprise&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/3px3isg049fsb6zud3ql703e1l7x.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-12-02/tweezer-reprise&quot;, &quot;music_boundary_s&quot;: 171.4, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 178.70000000000002}">
+    <strong><a href="https://phish.in/1995-12-02/tweezer-reprise" target="_blank">1995-12-02 Set 2 t19 Tweezer Reprise</a></strong>
+    <span class="meta">trailing edge &middot; run 87.4s &middot;
+      cut 80.3s &middot; boundary 171.4s &middot; crowd 9%, speech 91%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-12-02_Set_2_t19_Tweezer_Reprise_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-12-02_Set_2_t19_Tweezer_Reprise_original.mp3"></audio></div>
+  <img src="plots/1995-12-02_Set_2_t19_Tweezer_Reprise_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-30 Set 2 t17 The Squirming Coil&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/g4abwr310b5d87nieef70r0j0trv.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-30/the-squirming-coil&quot;, &quot;music_boundary_s&quot;: 691.1, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 715.0999999999999}">
+    <strong><a href="https://phish.in/1995-06-30/the-squirming-coil" target="_blank">1995-06-30 Set 2 t17 The Squirming Coil</a></strong>
+    <span class="meta">trailing edge &middot; run 78.2s &middot;
+      cut 54.7s &middot; boundary 691.1s &middot; crowd 15%, speech 85%</span>
+  </div>
+  <div class="banter">703.8-707.8s: &ldquo;Thank you so much, we had a great time today, thanks.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-30_Set_2_t17_The_Squirming_Coil_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-30_Set_2_t17_The_Squirming_Coil_original.mp3"></audio></div>
+  <img src="plots/1995-06-30_Set_2_t17_The_Squirming_Coil_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-18 Set 2 t19 Cavern&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/34jwsxz381736vvh74e7kzwirj0c.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-18/cavern&quot;, &quot;music_boundary_s&quot;: 276.7, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 284.0}">
+    <strong><a href="https://phish.in/1995-11-18/cavern" target="_blank">1995-11-18 Set 2 t19 Cavern</a></strong>
+    <span class="meta">trailing edge &middot; run 65.8s &middot;
+      cut 58.9s &middot; boundary 276.7s &middot; crowd 12%, speech 88%</span>
+  </div>
+  <div class="banter">318.6-318.7s: &ldquo;I don&#x27;t know.&rdquo;</div><div class="banter">320.6-321.6s: &ldquo;I don&#x27;t know anything.&rdquo;</div><div class="banter">322.2-322.8s: &ldquo;I don&#x27;t know anything.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-18_Set_2_t19_Cavern_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-18_Set_2_t19_Cavern_original.mp3"></audio></div>
+  <img src="plots/1995-11-18_Set_2_t19_Cavern_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-27 Set 2 t18 Possum&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/hhuwtqfplx75ku8d8k3o69g9plj5.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-27/possum&quot;, &quot;music_boundary_s&quot;: 835.5, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 842.8}">
+    <strong><a href="https://phish.in/1995-10-27/possum" target="_blank">1995-10-27 Set 2 t18 Possum</a></strong>
+    <span class="meta">trailing edge &middot; run 60.5s &middot;
+      cut 53.7s &middot; boundary 835.5s &middot; crowd 17%, speech 83%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-27_Set_2_t18_Possum_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-27_Set_2_t18_Possum_original.mp3"></audio></div>
+  <img src="plots/1995-10-27_Set_2_t18_Possum_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-03 Set 1 t11 You Enjoy Myself&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/17jv92w7h5i0zjlaudee0r92ofuk.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-03/you-enjoy-myself&quot;, &quot;music_boundary_s&quot;: 1163.3, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 1170.6}">
+    <strong><a href="https://phish.in/1995-10-03/you-enjoy-myself" target="_blank">1995-10-03 Set 1 t11 You Enjoy Myself</a></strong>
+    <span class="meta">trailing edge &middot; run 56.2s &middot;
+      cut 49.3s &middot; boundary 1163.3s &middot; silence 9%, crowd 11%, speech 79%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-03_Set_1_t11_You_Enjoy_Myself_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-03_Set_1_t11_You_Enjoy_Myself_original.mp3"></audio></div>
+  <img src="plots/1995-10-03_Set_1_t11_You_Enjoy_Myself_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-12-28 Encore t20 Tweezer Reprise&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/xcdzufd20yy3ktm5i53m9d4dcq8x.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-12-28/tweezer-reprise&quot;, &quot;music_boundary_s&quot;: 170.4, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 177.70000000000002}">
+    <strong><a href="https://phish.in/1995-12-28/tweezer-reprise" target="_blank">1995-12-28 Encore t20 Tweezer Reprise</a></strong>
+    <span class="meta">trailing edge &middot; run 54.7s &middot;
+      cut 47.5s &middot; boundary 170.4s &middot; crowd 4%, speech 96%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-12-28_Encore_t20_Tweezer_Reprise_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-12-28_Encore_t20_Tweezer_Reprise_original.mp3"></audio></div>
+  <img src="plots/1995-12-28_Encore_t20_Tweezer_Reprise_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-31 Encore t32 My Generation&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/ejiex3hphfk999nbw6j87msdfn4q.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-31/my-generation&quot;, &quot;music_boundary_s&quot;: 239.5, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 246.8}">
+    <strong><a href="https://phish.in/1995-10-31/my-generation" target="_blank">1995-10-31 Encore t32 My Generation</a></strong>
+    <span class="meta">trailing edge &middot; run 52.3s &middot;
+      cut 45.2s &middot; boundary 239.5s &middot; silence 2%, crowd 13%, speech 85%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-31_Encore_t32_My_Generation_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-31_Encore_t32_My_Generation_original.mp3"></audio></div>
+  <img src="plots/1995-10-31_Encore_t32_My_Generation_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-09-28 Encore t18 Fire&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/4db3o55p5b6ncclekpm5c74cyxne.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-09-28/fire&quot;, &quot;music_boundary_s&quot;: 229.0, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 236.3}">
+    <strong><a href="https://phish.in/1995-09-28/fire" target="_blank">1995-09-28 Encore t18 Fire</a></strong>
+    <span class="meta">trailing edge &middot; run 49.9s &middot;
+      cut 43.0s &middot; boundary 229.0s &middot; silence 7%, crowd 13%, speech 80%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-09-28_Encore_t18_Fire_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-09-28_Encore_t18_Fire_original.mp3"></audio></div>
+  <img src="plots/1995-09-28_Encore_t18_Fire_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-25 Encore t23 Fire&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/a97iyyrxnqe345bovrsbghxqbpxx.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-25/fire&quot;, &quot;music_boundary_s&quot;: 301.8, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 309.1}">
+    <strong><a href="https://phish.in/1995-11-25/fire" target="_blank">1995-11-25 Encore t23 Fire</a></strong>
+    <span class="meta">trailing edge &middot; run 49.0s &middot;
+      cut 42.2s &middot; boundary 301.8s &middot; silence 1%, crowd 6%, speech 93%</span>
+  </div>
+  <div class="banter">348.4-351.2s: &ldquo;Thank you.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-25_Encore_t23_Fire_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-25_Encore_t23_Fire_original.mp3"></audio></div>
+  <img src="plots/1995-11-25_Encore_t23_Fire_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-30 Encore t19 Harry Hood&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/3fcnp9z0asaqnwtlmedq9kt26xhu.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-30/harry-hood&quot;, &quot;music_boundary_s&quot;: 910.5, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 917.8}">
+    <strong><a href="https://phish.in/1995-11-30/harry-hood" target="_blank">1995-11-30 Encore t19 Harry Hood</a></strong>
+    <span class="meta">trailing edge &middot; run 47.0s &middot;
+      cut 40.2s &middot; boundary 910.5s &middot; silence 10%, crowd 6%, speech 84%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-30_Encore_t19_Harry_Hood_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-30_Encore_t19_Harry_Hood_original.mp3"></audio></div>
+  <img src="plots/1995-11-30_Encore_t19_Harry_Hood_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-17 Set 1 t09 Stash&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/8xcvnlh73qnw25bwhke2vgghr7pd.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-17/stash&quot;, &quot;music_boundary_s&quot;: 999.9, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 1014.5}">
+    <strong><a href="https://phish.in/1995-06-17/stash" target="_blank">1995-06-17 Set 1 t09 Stash</a></strong>
+    <span class="meta">trailing edge &middot; run 44.6s &middot;
+      cut 30.5s &middot; boundary 999.9s &middot; silence 1%, crowd 5%, speech 94%</span>
+  </div>
+  <div class="banter">1004.6-1007.2s: &ldquo;So we&#x27;ve got about 15 minutes, don&#x27;t go away, thank you.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-17_Set_1_t09_Stash_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-17_Set_1_t09_Stash_original.mp3"></audio></div>
+  <img src="plots/1995-06-17_Set_1_t09_Stash_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-26 Set 2 t16 Run Like an Antelope&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/o17aycztg4g4nkhvsmdizd26rn8m.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-26/run-like-an-antelope&quot;, &quot;music_boundary_s&quot;: 680.7, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 688.0}">
+    <strong><a href="https://phish.in/1995-06-26/run-like-an-antelope" target="_blank">1995-06-26 Set 2 t16 Run Like an Antelope</a></strong>
+    <span class="meta">trailing edge &middot; run 41.3s &middot;
+      cut 34.4s &middot; boundary 680.7s &middot; crowd 8%, speech 92%</span>
+  </div>
+  <div class="banter">678.6-680.7s: &ldquo;We&#x27;ll see you next time. Thank you.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-26_Set_2_t16_Run_Like_an_Antelope_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-26_Set_2_t16_Run_Like_an_Antelope_original.mp3"></audio></div>
+  <img src="plots/1995-06-26_Set_2_t16_Run_Like_an_Antelope_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-12-30 Encore t19 A Day in the Life&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/ptu0dnfbskgpo3e5iwo63tic7fab.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-12-30/a-day-in-the-life&quot;, &quot;music_boundary_s&quot;: 311.8, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 319.1}">
+    <strong><a href="https://phish.in/1995-12-30/a-day-in-the-life" target="_blank">1995-12-30 Encore t19 A Day in the Life</a></strong>
+    <span class="meta">trailing edge &middot; run 41.3s &middot;
+      cut 34.5s &middot; boundary 311.8s &middot; crowd 19%, speech 81%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-12-30_Encore_t19_A_Day_in_the_Life_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-12-30_Encore_t19_A_Day_in_the_Life_original.mp3"></audio></div>
+  <img src="plots/1995-12-30_Encore_t19_A_Day_in_the_Life_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-15 Set 1 t10 Run Like an Antelope&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/izbdtgck681ejge69v4g4bz219nr.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-15/run-like-an-antelope&quot;, &quot;music_boundary_s&quot;: 733.9, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 741.1999999999999}">
+    <strong><a href="https://phish.in/1995-06-15/run-like-an-antelope" target="_blank">1995-06-15 Set 1 t10 Run Like an Antelope</a></strong>
+    <span class="meta">trailing edge &middot; run 39.8s &middot;
+      cut 33.1s &middot; boundary 733.9s &middot; silence 1%, crowd 8%, speech 90%</span>
+  </div>
+  <div class="banter">771.4-774.2s: &ldquo;Thank you very much.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-15_Set_1_t10_Run_Like_an_Antelope_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-15_Set_1_t10_Run_Like_an_Antelope_original.mp3"></audio></div>
+  <img src="plots/1995-06-15_Set_1_t10_Run_Like_an_Antelope_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-12-30 Set 2 t18 Run Like an Antelope&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/m4daqckvk9hqy8haw8bo6l7vsg1x.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-12-30/run-like-an-antelope&quot;, &quot;music_boundary_s&quot;: 597.2, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 604.5}">
+    <strong><a href="https://phish.in/1995-12-30/run-like-an-antelope" target="_blank">1995-12-30 Set 2 t18 Run Like an Antelope</a></strong>
+    <span class="meta">trailing edge &middot; run 39.8s &middot;
+      cut 33.0s &middot; boundary 597.2s &middot; silence 4%, crowd 23%, speech 73%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-12-30_Set_2_t18_Run_Like_an_Antelope_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-12-30_Set_2_t18_Run_Like_an_Antelope_original.mp3"></audio></div>
+  <img src="plots/1995-12-30_Set_2_t18_Run_Like_an_Antelope_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-17 Encore t21 Three Little Birds&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/muhw36j8inihv0lm2o6zq9vpak2q.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-17/three-little-birds&quot;, &quot;music_boundary_s&quot;: 330.6, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 362.0}">
+    <strong><a href="https://phish.in/1995-06-17/three-little-birds" target="_blank">1995-06-17 Encore t21 Three Little Birds</a></strong>
+    <span class="meta">trailing edge &middot; run 39.4s &middot;
+      cut 8.5s &middot; boundary 330.6s &middot; silence 4%, crowd 7%, speech 89%</span>
+  </div>
+  <div class="banter">353.3-354.7s: &ldquo;I&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-17_Encore_t21_Three_Little_Birds_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-17_Encore_t21_Three_Little_Birds_original.mp3"></audio></div>
+  <img src="plots/1995-06-17_Encore_t21_Three_Little_Birds_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-22 Set 1 t10 Sweet Adeline&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/i35v17st99uo6tktsjgenki9bior.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-22/sweet-adeline&quot;, &quot;music_boundary_s&quot;: 93.6, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 104.0}">
+    <strong><a href="https://phish.in/1995-11-22/sweet-adeline" target="_blank">1995-11-22 Set 1 t10 Sweet Adeline</a></strong>
+    <span class="meta">trailing edge &middot; run 39.4s &middot;
+      cut 29.3s &middot; boundary 93.6s &middot; silence 1%, crowd 23%, speech 76%</span>
+  </div>
+  <div class="banter">90.6-96.7s: &ldquo;You&#x27;re the flower of my heart, sweet and alive, sweet and alive!&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-22_Set_1_t10_Sweet_Adeline_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-22_Set_1_t10_Sweet_Adeline_original.mp3"></audio></div>
+  <img src="plots/1995-11-22_Set_1_t10_Sweet_Adeline_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-24 Encore t23 Rocky Top&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/vad18wudvvup938u3a3wocpj5st1.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-24/rocky-top&quot;, &quot;music_boundary_s&quot;: 142.1, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 157.8}">
+    <strong><a href="https://phish.in/1995-11-24/rocky-top" target="_blank">1995-11-24 Encore t23 Rocky Top</a></strong>
+    <span class="meta">trailing edge &middot; run 38.9s &middot;
+      cut 23.5s &middot; boundary 142.1s &middot; silence 51%, crowd 1%, speech 48%</span>
+  </div>
+  <div class="banter">149.1-150.5s: &ldquo;You&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-24_Encore_t23_Rocky_Top_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-24_Encore_t23_Rocky_Top_original.mp3"></audio></div>
+  <img src="plots/1995-11-24_Encore_t23_Rocky_Top_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-29 Encore t21 A Day in the Life&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/9cga197b9wdqzapzvw6u29ixi0qc.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-29/a-day-in-the-life&quot;, &quot;music_boundary_s&quot;: 274.7, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 282.0}">
+    <strong><a href="https://phish.in/1995-11-29/a-day-in-the-life" target="_blank">1995-11-29 Encore t21 A Day in the Life</a></strong>
+    <span class="meta">trailing edge &middot; run 37.9s &middot;
+      cut 31.1s &middot; boundary 274.7s &middot; silence 4%, crowd 9%, speech 87%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-29_Encore_t21_A_Day_in_the_Life_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-29_Encore_t21_A_Day_in_the_Life_original.mp3"></audio></div>
+  <img src="plots/1995-11-29_Encore_t21_A_Day_in_the_Life_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-12-31 Set 1 t10 Chalk Dust Torture&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/juy559ls8b7uyl1xqkjp57mctzte.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-12-31/chalk-dust-torture&quot;, &quot;music_boundary_s&quot;: 434.9, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 442.2}">
+    <strong><a href="https://phish.in/1995-12-31/chalk-dust-torture" target="_blank">1995-12-31 Set 1 t10 Chalk Dust Torture</a></strong>
+    <span class="meta">trailing edge &middot; run 37.9s &middot;
+      cut 31.1s &middot; boundary 434.9s &middot; silence 6%, crowd 6%, speech 87%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-12-31_Set_1_t10_Chalk_Dust_Torture_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-12-31_Set_1_t10_Chalk_Dust_Torture_original.mp3"></audio></div>
+  <img src="plots/1995-12-31_Set_1_t10_Chalk_Dust_Torture_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-24 Encore t22 A Day in the Life&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/veb7si1p5eqsi73elgoy347dfu2g.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-24/a-day-in-the-life&quot;, &quot;music_boundary_s&quot;: 273.6, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 280.90000000000003}">
+    <strong><a href="https://phish.in/1995-10-24/a-day-in-the-life" target="_blank">1995-10-24 Encore t22 A Day in the Life</a></strong>
+    <span class="meta">trailing edge &middot; run 36.5s &middot;
+      cut 29.6s &middot; boundary 273.6s &middot; crowd 11%, speech 89%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-24_Encore_t22_A_Day_in_the_Life_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-24_Encore_t22_A_Day_in_the_Life_original.mp3"></audio></div>
+  <img src="plots/1995-10-24_Encore_t22_A_Day_in_the_Life_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-19 Set 2 t18 Possum&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/duuyp9xk1ix1h94ewoa0t1uyodzt.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-19/possum&quot;, &quot;music_boundary_s&quot;: 821.4, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 828.6999999999999}">
+    <strong><a href="https://phish.in/1995-06-19/possum" target="_blank">1995-06-19 Set 2 t18 Possum</a></strong>
+    <span class="meta">trailing edge &middot; run 34.1s &middot;
+      cut 27.3s &middot; boundary 821.4s &middot; crowd 3%, speech 97%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-19_Set_2_t18_Possum_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-19_Set_2_t18_Possum_original.mp3"></audio></div>
+  <img src="plots/1995-06-19_Set_2_t18_Possum_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-12-07 Set 2 t21 Amazing Grace&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/8kkdbnba9ybv2k80vb1zhgppy9jy.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-12-07/amazing-grace&quot;, &quot;music_boundary_s&quot;: 88.8, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 101.5}">
+    <strong><a href="https://phish.in/1995-12-07/amazing-grace" target="_blank">1995-12-07 Set 2 t21 Amazing Grace</a></strong>
+    <span class="meta">trailing edge &middot; run 34.1s &middot;
+      cut 21.6s &middot; boundary 88.8s &middot; crowd 59%, speech 41%</span>
+  </div>
+  <div class="banter">93.2-94.2s: &ldquo;Thank you very much.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-12-07_Set_2_t21_Amazing_Grace_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-12-07_Set_2_t21_Amazing_Grace_original.mp3"></audio></div>
+  <img src="plots/1995-12-07_Set_2_t21_Amazing_Grace_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-25 Set 2 t18 Cavern&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/olczz8un0ivyyofezkd8o1dghqun.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-25/cavern&quot;, &quot;music_boundary_s&quot;: 261.1, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 268.40000000000003}">
+    <strong><a href="https://phish.in/1995-06-25/cavern" target="_blank">1995-06-25 Set 2 t18 Cavern</a></strong>
+    <span class="meta">trailing edge &middot; run 33.6s &middot;
+      cut 26.8s &middot; boundary 261.1s &middot; crowd 10%, speech 90%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-25_Set_2_t18_Cavern_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-25_Set_2_t18_Cavern_original.mp3"></audio></div>
+  <img src="plots/1995-06-25_Set_2_t18_Cavern_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-12-07 Encore t22 Uncle Pen&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/0j8okpdm32zi50jgxn47a2awivs8.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-12-07/uncle-pen&quot;, &quot;music_boundary_s&quot;: 253.4, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 267.3}">
+    <strong><a href="https://phish.in/1995-12-07/uncle-pen" target="_blank">1995-12-07 Encore t22 Uncle Pen</a></strong>
+    <span class="meta">trailing edge &middot; run 32.2s &middot;
+      cut 18.4s &middot; boundary 253.4s &middot; silence 6%, crowd 34%, speech 60%</span>
+  </div>
+  <div class="banter">257.7-260.0s: &ldquo;Thanks a lot everybody guys, great time, thank you very much.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-12-07_Encore_t22_Uncle_Pen_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-12-07_Encore_t22_Uncle_Pen_original.mp3"></audio></div>
+  <img src="plots/1995-12-07_Encore_t22_Uncle_Pen_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-09-29 Encore t17 Chalk Dust Torture&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/rhlsjuafvikxy3mtij97q4gajp7l.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-09-29/chalk-dust-torture&quot;, &quot;music_boundary_s&quot;: 377.6, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 384.90000000000003}">
+    <strong><a href="https://phish.in/1995-09-29/chalk-dust-torture" target="_blank">1995-09-29 Encore t17 Chalk Dust Torture</a></strong>
+    <span class="meta">trailing edge &middot; run 31.7s &middot;
+      cut 24.9s &middot; boundary 377.6s &middot; silence 5%, crowd 8%, speech 88%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-09-29_Encore_t17_Chalk_Dust_Torture_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-09-29_Encore_t17_Chalk_Dust_Torture_original.mp3"></audio></div>
+  <img src="plots/1995-09-29_Encore_t17_Chalk_Dust_Torture_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-28 Set 2 t16 Tweezer Reprise&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/ahhalkkxzate3gw1y50h6w43f9ik.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-28/tweezer-reprise&quot;, &quot;music_boundary_s&quot;: 176.6, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 183.9}">
+    <strong><a href="https://phish.in/1995-06-28/tweezer-reprise" target="_blank">1995-06-28 Set 2 t16 Tweezer Reprise</a></strong>
+    <span class="meta">trailing edge &middot; run 31.2s &middot;
+      cut 24.4s &middot; boundary 176.6s &middot; silence 9%, crowd 12%, speech 78%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-28_Set_2_t16_Tweezer_Reprise_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-28_Set_2_t16_Tweezer_Reprise_original.mp3"></audio></div>
+  <img src="plots/1995-06-28_Set_2_t16_Tweezer_Reprise_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-06 Encore t19 A Day in the Life&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/d4xkg39z5005h5tk0awgwqotalhq.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-06/a-day-in-the-life&quot;, &quot;music_boundary_s&quot;: 272.3, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 279.6}">
+    <strong><a href="https://phish.in/1995-10-06/a-day-in-the-life" target="_blank">1995-10-06 Encore t19 A Day in the Life</a></strong>
+    <span class="meta">trailing edge &middot; run 31.2s &middot;
+      cut 24.3s &middot; boundary 272.3s &middot; silence 2%, crowd 48%, speech 51%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-06_Encore_t19_A_Day_in_the_Life_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-06_Encore_t19_A_Day_in_the_Life_original.mp3"></audio></div>
+  <img src="plots/1995-10-06_Encore_t19_A_Day_in_the_Life_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-08 Encore t22 Rocky Top&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/xiz8lh5k0zefxuy8tdo4irf0ooqd.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-08/rocky-top&quot;, &quot;music_boundary_s&quot;: 152.6, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 159.9}">
+    <strong><a href="https://phish.in/1995-10-08/rocky-top" target="_blank">1995-10-08 Encore t22 Rocky Top</a></strong>
+    <span class="meta">trailing edge &middot; run 31.2s &middot;
+      cut 24.3s &middot; boundary 152.6s &middot; silence 63%, crowd 5%, speech 32%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-08_Encore_t22_Rocky_Top_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-08_Encore_t22_Rocky_Top_original.mp3"></audio></div>
+  <img src="plots/1995-10-08_Encore_t22_Rocky_Top_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-24 Set 1 t09 Suzy Greenberg&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/0iv7ud56b1s4k3zwux1ex63420oz.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-24/suzy-greenberg&quot;, &quot;music_boundary_s&quot;: 347.8, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 355.1}">
+    <strong><a href="https://phish.in/1995-11-24/suzy-greenberg" target="_blank">1995-11-24 Set 1 t09 Suzy Greenberg</a></strong>
+    <span class="meta">trailing edge &middot; run 31.2s &middot;
+      cut 24.3s &middot; boundary 347.8s &middot; silence 63%, crowd 2%, speech 35%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-24_Set_1_t09_Suzy_Greenberg_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-24_Set_1_t09_Suzy_Greenberg_original.mp3"></audio></div>
+  <img src="plots/1995-11-24_Set_1_t09_Suzy_Greenberg_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-12-09 Encore t20 Loving Cup&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/60zov71q9xnsfoyzyqtkx0vwc82y.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-12-09/loving-cup&quot;, &quot;music_boundary_s&quot;: 314.9, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 322.2}">
+    <strong><a href="https://phish.in/1995-12-09/loving-cup" target="_blank">1995-12-09 Encore t20 Loving Cup</a></strong>
+    <span class="meta">trailing edge &middot; run 31.2s &middot;
+      cut 24.4s &middot; boundary 314.9s &middot; crowd 14%, speech 86%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-12-09_Encore_t20_Loving_Cup_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-12-09_Encore_t20_Loving_Cup_original.mp3"></audio></div>
+  <img src="plots/1995-12-09_Encore_t20_Loving_Cup_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-11 Set 2 t20 A Day in the Life&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/asf3cti8n8gra24r05ype2e54fqj.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-11/a-day-in-the-life&quot;, &quot;music_boundary_s&quot;: 272.4, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 279.7}">
+    <strong><a href="https://phish.in/1995-10-11/a-day-in-the-life" target="_blank">1995-10-11 Set 2 t20 A Day in the Life</a></strong>
+    <span class="meta">trailing edge &middot; run 30.7s &middot;
+      cut 23.9s &middot; boundary 272.4s &middot; silence 5%, crowd 14%, speech 81%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-11_Set_2_t20_A_Day_in_the_Life_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-11_Set_2_t20_A_Day_in_the_Life_original.mp3"></audio></div>
+  <img src="plots/1995-10-11_Set_2_t20_A_Day_in_the_Life_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-12-28 Set 1 t09 Possum&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/35wpdvrjhauelo5edzgq03xs792z.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-12-28/possum&quot;, &quot;music_boundary_s&quot;: 765.8, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 773.0999999999999}">
+    <strong><a href="https://phish.in/1995-12-28/possum" target="_blank">1995-12-28 Set 1 t09 Possum</a></strong>
+    <span class="meta">trailing edge &middot; run 30.7s &middot;
+      cut 23.9s &middot; boundary 765.8s &middot; silence 2%, crowd 2%, speech 97%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-12-28_Set_1_t09_Possum_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-12-28_Set_1_t09_Possum_original.mp3"></audio></div>
+  <img src="plots/1995-12-28_Set_1_t09_Possum_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-29 Set 1 t09 Split Open and Melt&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/ibv5l5l7fca4k1b9qjzkamq2kpc5.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-29/split-open-and-melt&quot;, &quot;music_boundary_s&quot;: 668.5, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 685.4}">
+    <strong><a href="https://phish.in/1995-11-29/split-open-and-melt" target="_blank">1995-11-29 Set 1 t09 Split Open and Melt</a></strong>
+    <span class="meta">trailing edge &middot; run 30.2s &middot;
+      cut 13.8s &middot; boundary 668.5s &middot; silence 25%, crowd 2%, speech 73%</span>
+  </div>
+  <div class="banter">676.7-678.1s: &ldquo;You&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-29_Set_1_t09_Split_Open_and_Melt_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-29_Set_1_t09_Split_Open_and_Melt_original.mp3"></audio></div>
+  <img src="plots/1995-11-29_Set_1_t09_Split_Open_and_Melt_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-10 Encore t17 A Day in the Life&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/c47kz90f89d4tcx39atmkebptas8.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-10/a-day-in-the-life&quot;, &quot;music_boundary_s&quot;: 302.8, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 310.1}">
+    <strong><a href="https://phish.in/1995-06-10/a-day-in-the-life" target="_blank">1995-06-10 Encore t17 A Day in the Life</a></strong>
+    <span class="meta">trailing edge &middot; run 29.8s &middot;
+      cut 22.9s &middot; boundary 302.8s &middot; silence 19%, crowd 5%, speech 76%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-10_Encore_t17_A_Day_in_the_Life_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-10_Encore_t17_A_Day_in_the_Life_original.mp3"></audio></div>
+  <img src="plots/1995-06-10_Encore_t17_A_Day_in_the_Life_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-12-08 Encore t17 A Day in the Life&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/yudeinsepfw1ctd7dsow8yuj9a94.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-12-08/a-day-in-the-life&quot;, &quot;music_boundary_s&quot;: 252.0, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 259.3}">
+    <strong><a href="https://phish.in/1995-12-08/a-day-in-the-life" target="_blank">1995-12-08 Encore t17 A Day in the Life</a></strong>
+    <span class="meta">trailing edge &middot; run 29.3s &middot;
+      cut 22.1s &middot; boundary 252.0s &middot; silence 18%, crowd 23%, speech 59%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-12-08_Encore_t17_A_Day_in_the_Life_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-12-08_Encore_t17_A_Day_in_the_Life_original.mp3"></audio></div>
+  <img src="plots/1995-12-08_Encore_t17_A_Day_in_the_Life_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-16 Encore t20 Brown Eyed Girl&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/4b9roq5ib3miw0h3y53fxof5v428.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-16/brown-eyed-girl&quot;, &quot;music_boundary_s&quot;: 264.5, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 271.8}">
+    <strong><a href="https://phish.in/1995-11-16/brown-eyed-girl" target="_blank">1995-11-16 Encore t20 Brown Eyed Girl</a></strong>
+    <span class="meta">trailing edge &middot; run 28.8s &middot;
+      cut 21.8s &middot; boundary 264.5s &middot; silence 2%, crowd 7%, speech 92%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-16_Encore_t20_Brown_Eyed_Girl_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-16_Encore_t20_Brown_Eyed_Girl_original.mp3"></audio></div>
+  <img src="plots/1995-11-16_Encore_t20_Brown_Eyed_Girl_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-08 Set 1 t09 Chalk Dust Torture&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/wa9w9m4o7kdvhq2gs3uyjud1nafn.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-08/chalk-dust-torture&quot;, &quot;music_boundary_s&quot;: 474.5, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 481.8}">
+    <strong><a href="https://phish.in/1995-06-08/chalk-dust-torture" target="_blank">1995-06-08 Set 1 t09 Chalk Dust Torture</a></strong>
+    <span class="meta">trailing edge &middot; run 28.3s &middot;
+      cut 21.5s &middot; boundary 474.5s &middot; silence 36%, crowd 24%, speech 41%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-08_Set_1_t09_Chalk_Dust_Torture_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-08_Set_1_t09_Chalk_Dust_Torture_original.mp3"></audio></div>
+  <img src="plots/1995-06-08_Set_1_t09_Chalk_Dust_Torture_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-22 Encore t16 While My Guitar Gently Weeps&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/c6bal6f20doqe0245we41hbrkhat.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-22/while-my-guitar-gently-weeps&quot;, &quot;music_boundary_s&quot;: 373.9, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 381.2}">
+    <strong><a href="https://phish.in/1995-06-22/while-my-guitar-gently-weeps" target="_blank">1995-06-22 Encore t16 While My Guitar Gently Weeps</a></strong>
+    <span class="meta">trailing edge &middot; run 28.3s &middot;
+      cut 21.5s &middot; boundary 373.9s &middot; silence 5%, crowd 5%, speech 90%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-22_Encore_t16_While_My_Guitar_Gently_Weeps_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-22_Encore_t16_While_My_Guitar_Gently_Weeps_original.mp3"></audio></div>
+  <img src="plots/1995-06-22_Encore_t16_While_My_Guitar_Gently_Weeps_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-22 Set 2 t23 Cavern&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/3bpk6x4ncw2d4lkc47m25ngczont.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-22/cavern&quot;, &quot;music_boundary_s&quot;: 271.5, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 278.8}">
+    <strong><a href="https://phish.in/1995-10-22/cavern" target="_blank">1995-10-22 Set 2 t23 Cavern</a></strong>
+    <span class="meta">trailing edge &middot; run 28.3s &middot;
+      cut 21.5s &middot; boundary 271.5s &middot; crowd 2%, speech 98%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-22_Set_2_t23_Cavern_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-22_Set_2_t23_Cavern_original.mp3"></audio></div>
+  <img src="plots/1995-10-22_Set_2_t23_Cavern_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-13 Encore t20 Bold as Love&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/xn3ar2990b9sur4fna43amvj5lpl.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-13/bold-as-love&quot;, &quot;music_boundary_s&quot;: 301.9, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 309.2}">
+    <strong><a href="https://phish.in/1995-10-13/bold-as-love" target="_blank">1995-10-13 Encore t20 Bold as Love</a></strong>
+    <span class="meta">trailing edge &middot; run 27.8s &middot;
+      cut 21.0s &middot; boundary 301.9s &middot; silence 3%, crowd 24%, speech 72%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-13_Encore_t20_Bold_as_Love_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-13_Encore_t20_Bold_as_Love_original.mp3"></audio></div>
+  <img src="plots/1995-10-13_Encore_t20_Bold_as_Love_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-15 Set 1 t10 David Bowie&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/bkb3686uak9iy6jgf7ec3bi644wg.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-15/david-bowie&quot;, &quot;music_boundary_s&quot;: 1041.7, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 1049.0}">
+    <strong><a href="https://phish.in/1995-10-15/david-bowie" target="_blank">1995-10-15 Set 1 t10 David Bowie</a></strong>
+    <span class="meta">trailing edge &middot; run 27.8s &middot;
+      cut 21.0s &middot; boundary 1041.7s &middot; silence 2%, crowd 43%, speech 55%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-15_Set_1_t10_David_Bowie_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-15_Set_1_t10_David_Bowie_original.mp3"></audio></div>
+  <img src="plots/1995-10-15_Set_1_t10_David_Bowie_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-09 Set 1 t08 Sample in a Jar&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/fcm9sombdn7eab8me9it1cmolrhe.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-09/sample-in-a-jar&quot;, &quot;music_boundary_s&quot;: 288.1, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 295.40000000000003}">
+    <strong><a href="https://phish.in/1995-11-09/sample-in-a-jar" target="_blank">1995-11-09 Set 1 t08 Sample in a Jar</a></strong>
+    <span class="meta">trailing edge &middot; run 27.4s &middot;
+      cut 20.5s &middot; boundary 288.1s &middot; silence 2%, crowd 19%, speech 79%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-09_Set_1_t08_Sample_in_a_Jar_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-09_Set_1_t08_Sample_in_a_Jar_original.mp3"></audio></div>
+  <img src="plots/1995-11-09_Set_1_t08_Sample_in_a_Jar_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-12-08 Set 1 t09 Good Times Bad Times&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/l4tgu2eefm9nfgywigyw312milfz.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-12-08/good-times-bad-times&quot;, &quot;music_boundary_s&quot;: 340.0, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 347.3}">
+    <strong><a href="https://phish.in/1995-12-08/good-times-bad-times" target="_blank">1995-12-08 Set 1 t09 Good Times Bad Times</a></strong>
+    <span class="meta">trailing edge &middot; run 27.4s &middot;
+      cut 20.5s &middot; boundary 340.0s &middot; silence 12%, crowd 19%, speech 68%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-12-08_Set_1_t09_Good_Times_Bad_Times_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-12-08_Set_1_t09_Good_Times_Bad_Times_original.mp3"></audio></div>
+  <img src="plots/1995-12-08_Set_1_t09_Good_Times_Bad_Times_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-19 Encore t22 A Day in the Life&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/jy2bwjxbx8yudrbx7lrkndyob47e.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-19/a-day-in-the-life&quot;, &quot;music_boundary_s&quot;: 269.8, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 277.1}">
+    <strong><a href="https://phish.in/1995-10-19/a-day-in-the-life" target="_blank">1995-10-19 Encore t22 A Day in the Life</a></strong>
+    <span class="meta">trailing edge &middot; run 26.9s &middot;
+      cut 20.0s &middot; boundary 269.8s &middot; crowd 23%, speech 77%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-19_Encore_t22_A_Day_in_the_Life_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-19_Encore_t22_A_Day_in_the_Life_original.mp3"></audio></div>
+  <img src="plots/1995-10-19_Encore_t22_A_Day_in_the_Life_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-20 Encore t22 Amazing Grace&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/hb04c83hjsg0licmvsvx8tvdxvsp.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-20/amazing-grace&quot;, &quot;music_boundary_s&quot;: 90.7, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 98.89999999999999}">
+    <strong><a href="https://phish.in/1995-06-20/amazing-grace" target="_blank">1995-06-20 Encore t22 Amazing Grace</a></strong>
+    <span class="meta">trailing edge &middot; run 26.4s &middot;
+      cut 18.5s &middot; boundary 90.7s &middot; silence 5%, crowd 15%, speech 80%</span>
+  </div>
+  <div class="banter">87.7-90.1s: &ldquo;Can we first begin?&rdquo;</div><div class="banter">90.1-91.6s: &ldquo;Oh&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-20_Encore_t22_Amazing_Grace_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-20_Encore_t22_Amazing_Grace_original.mp3"></audio></div>
+  <img src="plots/1995-06-20_Encore_t22_Amazing_Grace_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-12-01 Encore t18 Suzy Greenberg&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/nwllmwoyfb2187k70i34f6nblpdb.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-12-01/suzy-greenberg&quot;, &quot;music_boundary_s&quot;: 364.5, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 371.8}">
+    <strong><a href="https://phish.in/1995-12-01/suzy-greenberg" target="_blank">1995-12-01 Encore t18 Suzy Greenberg</a></strong>
+    <span class="meta">trailing edge &middot; run 26.4s &middot;
+      cut 19.6s &middot; boundary 364.5s &middot; crowd 31%, speech 69%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-12-01_Encore_t18_Suzy_Greenberg_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-12-01_Encore_t18_Suzy_Greenberg_original.mp3"></audio></div>
+  <img src="plots/1995-12-01_Encore_t18_Suzy_Greenberg_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-02 Set 2 t20 Run Like an Antelope&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/hiiy2y1un1uuccvr8ahkfgyxqssj.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-02/run-like-an-antelope&quot;, &quot;music_boundary_s&quot;: 650.8, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 658.0999999999999}">
+    <strong><a href="https://phish.in/1995-10-02/run-like-an-antelope" target="_blank">1995-10-02 Set 2 t20 Run Like an Antelope</a></strong>
+    <span class="meta">trailing edge &middot; run 25.9s &middot;
+      cut 19.1s &middot; boundary 650.8s &middot; crowd 9%, speech 91%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-02_Set_2_t20_Run_Like_an_Antelope_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-02_Set_2_t20_Run_Like_an_Antelope_original.mp3"></audio></div>
+  <img src="plots/1995-10-02_Set_2_t20_Run_Like_an_Antelope_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-14 Set 2 t17 While My Guitar Gently Weeps&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/vh9yc5y4vse4noglo1yi6syoz0fl.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-14/while-my-guitar-gently-weeps&quot;, &quot;music_boundary_s&quot;: 338.3, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 345.6}">
+    <strong><a href="https://phish.in/1995-06-14/while-my-guitar-gently-weeps" target="_blank">1995-06-14 Set 2 t17 While My Guitar Gently Weeps</a></strong>
+    <span class="meta">trailing edge &middot; run 25.4s &middot;
+      cut 18.6s &middot; boundary 338.3s &middot; crowd 19%, speech 81%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-14_Set_2_t17_While_My_Guitar_Gently_Weeps_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-14_Set_2_t17_While_My_Guitar_Gently_Weeps_original.mp3"></audio></div>
+  <img src="plots/1995-06-14_Set_2_t17_While_My_Guitar_Gently_Weeps_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-21 Set 1 t12 Tweezer Reprise&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/s0vwi5k9dhct9wbyf06t5yk9cgjz.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-21/tweezer-reprise-2&quot;, &quot;music_boundary_s&quot;: 78.7, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 86.0}">
+    <strong><a href="https://phish.in/1995-10-21/tweezer-reprise-2" target="_blank">1995-10-21 Set 1 t12 Tweezer Reprise</a></strong>
+    <span class="meta">trailing edge &middot; run 25.0s &middot;
+      cut 17.9s &middot; boundary 78.7s &middot; crowd 8%, speech 92%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-21_Set_1_t12_Tweezer_Reprise_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-21_Set_1_t12_Tweezer_Reprise_original.mp3"></audio></div>
+  <img src="plots/1995-10-21_Set_1_t12_Tweezer_Reprise_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-05-16 Encore t14 Gloria&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/h1yansi0rflnfxpzj0n9rn3luknt.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-05-16/gloria&quot;, &quot;music_boundary_s&quot;: 96.5, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 103.8}">
+    <strong><a href="https://phish.in/1995-05-16/gloria" target="_blank">1995-05-16 Encore t14 Gloria</a></strong>
+    <span class="meta">trailing edge &middot; run 24.5s &middot;
+      cut 17.6s &middot; boundary 96.5s &middot; silence 8%, crowd 45%, speech 47%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-05-16_Encore_t14_Gloria_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-05-16_Encore_t14_Gloria_original.mp3"></audio></div>
+  <img src="plots/1995-05-16_Encore_t14_Gloria_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-16 Encore t16 Bold as Love&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/1bsbrfb1q389176fj4npm5pdwwik.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-16/bold-as-love&quot;, &quot;music_boundary_s&quot;: 318.3, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 325.6}">
+    <strong><a href="https://phish.in/1995-06-16/bold-as-love" target="_blank">1995-06-16 Encore t16 Bold as Love</a></strong>
+    <span class="meta">trailing edge &middot; run 24.5s &middot;
+      cut 17.7s &middot; boundary 318.3s &middot; silence 8%, crowd 2%, speech 90%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-16_Encore_t16_Bold_as_Love_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-16_Encore_t16_Bold_as_Love_original.mp3"></audio></div>
+  <img src="plots/1995-06-16_Encore_t16_Bold_as_Love_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-30 Set 1 t10 Fire&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/vjj3kcg484jn0g15l8efb9nthzx9.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-30/fire&quot;, &quot;music_boundary_s&quot;: 274.1, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 281.40000000000003}">
+    <strong><a href="https://phish.in/1995-11-30/fire" target="_blank">1995-11-30 Set 1 t10 Fire</a></strong>
+    <span class="meta">trailing edge &middot; run 24.5s &middot;
+      cut 17.3s &middot; boundary 274.1s &middot; silence 20%, crowd 6%, speech 75%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-30_Set_1_t10_Fire_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-30_Set_1_t10_Fire_original.mp3"></audio></div>
+  <img src="plots/1995-11-30_Set_1_t10_Fire_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-14 Encore t20 Tweezer Reprise&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/vohuk8b6gjzpotbfi59qppd28ub7.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-14/tweezer-reprise&quot;, &quot;music_boundary_s&quot;: 167.5, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 174.8}">
+    <strong><a href="https://phish.in/1995-06-14/tweezer-reprise" target="_blank">1995-06-14 Encore t20 Tweezer Reprise</a></strong>
+    <span class="meta">trailing edge &middot; run 23.5s &middot;
+      cut 16.4s &middot; boundary 167.5s &middot; silence 2%, crowd 6%, speech 92%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-14_Encore_t20_Tweezer_Reprise_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-14_Encore_t20_Tweezer_Reprise_original.mp3"></audio></div>
+  <img src="plots/1995-06-14_Encore_t20_Tweezer_Reprise_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-22 Set 1 t12 Stash&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/eem586zbxqhmblhlv6u0eg47vmv4.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-22/stash&quot;, &quot;music_boundary_s&quot;: 750.2, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 757.5}">
+    <strong><a href="https://phish.in/1995-10-22/stash" target="_blank">1995-10-22 Set 1 t12 Stash</a></strong>
+    <span class="meta">trailing edge &middot; run 23.0s &middot;
+      cut 16.2s &middot; boundary 750.2s &middot; silence 4%, crowd 2%, speech 94%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-22_Set_1_t12_Stash_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-22_Set_1_t12_Stash_original.mp3"></audio></div>
+  <img src="plots/1995-10-22_Set_1_t12_Stash_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-12-07 Set 1 t10 Hello My Baby&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/v1s4p1g8dmd87cgch8ue5hz0wvhc.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-12-07/hello-my-baby&quot;, &quot;music_boundary_s&quot;: 72.5, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 90.1}">
+    <strong><a href="https://phish.in/1995-12-07/hello-my-baby" target="_blank">1995-12-07 Set 1 t10 Hello My Baby</a></strong>
+    <span class="meta">trailing edge &middot; run 23.0s &middot;
+      cut 5.5s &middot; boundary 72.5s &middot; silence 4%, crowd 46%, speech 50%</span>
+  </div>
+  <div class="banter">69.5-75.0s: &ldquo;that are in your arms.&rdquo;</div><div class="banter">80.2-82.8s: &ldquo;So we have about 15 minutes. Thank you.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-12-07_Set_1_t10_Hello_My_Baby_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-12-07_Set_1_t10_Hello_My_Baby_original.mp3"></audio></div>
+  <img src="plots/1995-12-07_Set_1_t10_Hello_My_Baby_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-12-11 Encore t25 While My Guitar Gently Weeps&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/x7hymkb52scuwq587ke7o8vgjhxj.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-12-11/while-my-guitar-gently-weeps&quot;, &quot;music_boundary_s&quot;: 401.6, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 418.5}">
+    <strong><a href="https://phish.in/1995-12-11/while-my-guitar-gently-weeps" target="_blank">1995-12-11 Encore t25 While My Guitar Gently Weeps</a></strong>
+    <span class="meta">trailing edge &middot; run 23.0s &middot;
+      cut 6.7s &middot; boundary 401.6s &middot; crowd 23%, speech 77%</span>
+  </div>
+  <div class="banter">409.2-411.2s: &ldquo;It&#x27;s our warring hands, I tell ya.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-12-11_Encore_t25_While_My_Guitar_Gently_Weeps_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-12-11_Encore_t25_While_My_Guitar_Gently_Weeps_original.mp3"></audio></div>
+  <img src="plots/1995-12-11_Encore_t25_While_My_Guitar_Gently_Weeps_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-22 Encore t18 Frankenstein&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/d92h1zchoa4nfw44khkxxnbkx2v5.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-22/frankenstein&quot;, &quot;music_boundary_s&quot;: 294.5, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 311.5}">
+    <strong><a href="https://phish.in/1995-11-22/frankenstein" target="_blank">1995-11-22 Encore t18 Frankenstein</a></strong>
+    <span class="meta">trailing edge &middot; run 22.6s &middot;
+      cut 6.1s &middot; boundary 294.5s &middot; silence 2%, crowd 17%, speech 81%</span>
+  </div>
+  <div class="banter">302.8-304.2s: &ldquo;You&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-22_Encore_t18_Frankenstein_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-22_Encore_t18_Frankenstein_original.mp3"></audio></div>
+  <img src="plots/1995-11-22_Encore_t18_Frankenstein_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-19 Set 1 t11 Cavern&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/lvrxx5lszdmvh03c7cmrwjgflsf8.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-19/cavern&quot;, &quot;music_boundary_s&quot;: 265.4, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 272.7}">
+    <strong><a href="https://phish.in/1995-10-19/cavern" target="_blank">1995-10-19 Set 1 t11 Cavern</a></strong>
+    <span class="meta">trailing edge &middot; run 22.1s &middot;
+      cut 15.3s &middot; boundary 265.4s &middot; crowd 15%, speech 85%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-19_Set_1_t11_Cavern_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-19_Set_1_t11_Cavern_original.mp3"></audio></div>
+  <img src="plots/1995-10-19_Set_1_t11_Cavern_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-27 Set 1 t09 Suspicious Minds &gt; Hold Your Head Up&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/38hw32sxpxiuv6e3cpr6oal8kivo.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-27/suspicious-minds-hyhu&quot;, &quot;music_boundary_s&quot;: 417.4, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 424.7}">
+    <strong><a href="https://phish.in/1995-10-27/suspicious-minds-hyhu" target="_blank">1995-10-27 Set 1 t09 Suspicious Minds &gt; Hold Your Head Up</a></strong>
+    <span class="meta">trailing edge &middot; run 22.1s &middot;
+      cut 15.2s &middot; boundary 417.4s &middot; crowd 28%, speech 72%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-27_Set_1_t09_Suspicious_Minds_Hold_Your_Head_Up_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-27_Set_1_t09_Suspicious_Minds_Hold_Your_Head_Up_original.mp3"></audio></div>
+  <img src="plots/1995-10-27_Set_1_t09_Suspicious_Minds_Hold_Your_Head_Up_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-07 Set 1 t09 Run Like an Antelope&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/fr7tj4tk3rj1cjigd5j2rur0mqxa.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-07/run-like-an-antelope&quot;, &quot;music_boundary_s&quot;: 698.2, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 705.5}">
+    <strong><a href="https://phish.in/1995-10-07/run-like-an-antelope" target="_blank">1995-10-07 Set 1 t09 Run Like an Antelope</a></strong>
+    <span class="meta">trailing edge &middot; run 21.6s &middot;
+      cut 14.8s &middot; boundary 698.2s &middot; silence 2%, crowd 38%, speech 60%</span>
+  </div>
+  <div class="banter">695.2-696.6s: &ldquo;That&#x27;s it, that&#x27;s it!&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-07_Set_1_t09_Run_Like_an_Antelope_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-07_Set_1_t09_Run_Like_an_Antelope_original.mp3"></audio></div>
+  <img src="plots/1995-10-07_Set_1_t09_Run_Like_an_Antelope_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-12-31 Set 3 t23 Frankenstein&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/v649l9g2k8v9xomvcg0h5o5ia9cy.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-12-31/frankenstein&quot;, &quot;music_boundary_s&quot;: 275.0, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 289.0}">
+    <strong><a href="https://phish.in/1995-12-31/frankenstein" target="_blank">1995-12-31 Set 3 t23 Frankenstein</a></strong>
+    <span class="meta">trailing edge &middot; run 21.6s &middot;
+      cut 7.7s &middot; boundary 275.0s &middot; crowd 9%, speech 91%</span>
+  </div>
+  <div class="banter">280.4-281.7s: &ldquo;Thank you everybody, thank you.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-12-31_Set_3_t23_Frankenstein_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-12-31_Set_3_t23_Frankenstein_original.mp3"></audio></div>
+  <img src="plots/1995-12-31_Set_3_t23_Frankenstein_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-15 Encore t20 Frankenstein&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/47p7m3yox12icoohnmlx5rgvplmm.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-15/frankenstein&quot;, &quot;music_boundary_s&quot;: 277.9, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 285.2}">
+    <strong><a href="https://phish.in/1995-06-15/frankenstein" target="_blank">1995-06-15 Encore t20 Frankenstein</a></strong>
+    <span class="meta">trailing edge &middot; run 21.1s &middot;
+      cut 14.1s &middot; boundary 277.9s &middot; silence 5%, crowd 20%, speech 75%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-15_Encore_t20_Frankenstein_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-15_Encore_t20_Frankenstein_original.mp3"></audio></div>
+  <img src="plots/1995-06-15_Encore_t20_Frankenstein_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-02 Encore t21 A Day in the Life&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/7wmrj6jnk72dekq60my1vm54mcfx.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-02/a-day-in-the-life&quot;, &quot;music_boundary_s&quot;: 283.0, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 290.3}">
+    <strong><a href="https://phish.in/1995-10-02/a-day-in-the-life" target="_blank">1995-10-02 Encore t21 A Day in the Life</a></strong>
+    <span class="meta">trailing edge &middot; run 21.1s &middot;
+      cut 14.3s &middot; boundary 283.0s &middot; crowd 16%, speech 84%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-02_Encore_t21_A_Day_in_the_Life_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-02_Encore_t21_A_Day_in_the_Life_original.mp3"></audio></div>
+  <img src="plots/1995-10-02_Encore_t21_A_Day_in_the_Life_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-05 Encore t21 While My Guitar Gently Weeps&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/gi5og64vsd16vvmxqztlhgstncc5.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-05/while-my-guitar-gently-weeps&quot;, &quot;music_boundary_s&quot;: 363.4, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 370.7}">
+    <strong><a href="https://phish.in/1995-10-05/while-my-guitar-gently-weeps" target="_blank">1995-10-05 Encore t21 While My Guitar Gently Weeps</a></strong>
+    <span class="meta">trailing edge &middot; run 21.1s &middot;
+      cut 14.3s &middot; boundary 363.4s &middot; silence 16%, crowd 16%, speech 68%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-05_Encore_t21_While_My_Guitar_Gently_Weeps_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-05_Encore_t21_While_My_Guitar_Gently_Weeps_original.mp3"></audio></div>
+  <img src="plots/1995-10-05_Encore_t21_While_My_Guitar_Gently_Weeps_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-11-21 Encore t22 Good Times Bad Times&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/4oae8n713cs2gspl2lhi457e2xml.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-11-21/good-times-bad-times&quot;, &quot;music_boundary_s&quot;: 347.6, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 354.90000000000003}">
+    <strong><a href="https://phish.in/1995-11-21/good-times-bad-times" target="_blank">1995-11-21 Encore t22 Good Times Bad Times</a></strong>
+    <span class="meta">trailing edge &middot; run 21.1s &middot;
+      cut 14.3s &middot; boundary 347.6s &middot; silence 11%, crowd 23%, speech 66%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-11-21_Encore_t22_Good_Times_Bad_Times_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-11-21_Encore_t22_Good_Times_Bad_Times_original.mp3"></audio></div>
+  <img src="plots/1995-11-21_Encore_t22_Good_Times_Bad_Times_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-10 Set 1 t10 Suzy Greenberg&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/3lxggzhsu90srhfsxjzypqob14l0.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-10/suzy-greenberg&quot;, &quot;music_boundary_s&quot;: 387.9, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 395.2}">
+    <strong><a href="https://phish.in/1995-06-10/suzy-greenberg" target="_blank">1995-06-10 Set 1 t10 Suzy Greenberg</a></strong>
+    <span class="meta">trailing edge &middot; run 20.6s &middot;
+      cut 13.8s &middot; boundary 387.9s &middot; silence 30%, speech 70%</span>
+  </div>
+  
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-10_Set_1_t10_Suzy_Greenberg_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-10_Set_1_t10_Suzy_Greenberg_original.mp3"></audio></div>
+  <img src="plots/1995-06-10_Set_1_t10_Suzy_Greenberg_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-06-24 Set 1 t10 The Squirming Coil&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/s0std0ppxwbmsh7o8sl5shx0p4na.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-06-24/the-squirming-coil&quot;, &quot;music_boundary_s&quot;: 639.2, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 646.5}">
+    <strong><a href="https://phish.in/1995-06-24/the-squirming-coil" target="_blank">1995-06-24 Set 1 t10 The Squirming Coil</a></strong>
+    <span class="meta">trailing edge &middot; run 20.6s &middot;
+      cut 13.8s &middot; boundary 639.2s &middot; silence 7%, crowd 9%, speech 84%</span>
+  </div>
+  <div class="banter">636.2-636.9s: &ldquo;Oh&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-06-24_Set_1_t10_The_Squirming_Coil_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-06-24_Set_1_t10_The_Squirming_Coil_original.mp3"></audio></div>
+  <img src="plots/1995-06-24_Set_1_t10_The_Squirming_Coil_trailing.png" loading="lazy">
+</div>
+<div class="row">
+  <div class="head">
+    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;1995-10-02 Set 1 t10 David Bowie&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/ldhzpuu0juvcrcx10jlhiugz1hdz.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/1995-10-02/david-bowie&quot;, &quot;music_boundary_s&quot;: 868.3, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 882.5999999999999}">
+    <strong><a href="https://phish.in/1995-10-02/david-bowie" target="_blank">1995-10-02 Set 1 t10 David Bowie</a></strong>
+    <span class="meta">trailing edge &middot; run 20.6s &middot;
+      cut 6.8s &middot; boundary 868.3s &middot; crowd 21%, speech 79%</span>
+  </div>
+  <div class="banter">873.4-875.3s: &ldquo;It&#x27;s not back in 15 minutes, thank you.&rdquo;</div>
+  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/1995-10-02_Set_1_t10_David_Bowie_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/1995-10-02_Set_1_t10_David_Bowie_original.mp3"></audio></div>
+  <img src="plots/1995-10-02_Set_1_t10_David_Bowie_trailing.png" loading="lazy">
+</div>
+<h2>Flagged but not trimmed (11)</h2><div class="meta"><a href="https://phish.in/1995-10-17/amazing-grace" target="_blank">1995-10-17 Set 1 t10 Amazing Grace</a> &middot; run 71.5s, cut 0.0s &mdash; left untouched</div><div class="meta"><a href="https://phish.in/1995-06-09/the-squirming-coil" target="_blank">1995-06-09 Encore t18 The Squirming Coil</a> &middot; run 45.1s, cut 0.5s &mdash; left untouched</div><div class="meta"><a href="https://phish.in/1995-12-30/sample-in-a-jar" target="_blank">1995-12-30 Set 1 t09 Sample in a Jar</a> &middot; run 29.3s, cut 0.0s &mdash; left untouched</div><div class="meta"><a href="https://phish.in/1995-12-31/johnny-b-goode" target="_blank">1995-12-31 Encore t24 Johnny B. Goode</a> &middot; run 26.9s, cut 0.0s &mdash; left untouched</div><div class="meta"><a href="https://phish.in/1995-11-28/the-squirming-coil" target="_blank">1995-11-28 Encore t21 The Squirming Coil</a> &middot; run 25.9s, cut 0.0s &mdash; left untouched</div><div class="meta"><a href="https://phish.in/1995-09-27/the-squirming-coil" target="_blank">1995-09-27 Set 1 t09 The Squirming Coil</a> &middot; run 25.4s, cut 0.3s &mdash; left untouched</div><div class="meta"><a href="https://phish.in/1995-06-22/sweet-adeline" target="_blank">1995-06-22 Set 1 t10 Sweet Adeline</a> &middot; run 24.5s, cut 2.6s &mdash; left untouched</div><div class="meta"><a href="https://phish.in/1995-10-22/the-squirming-coil" target="_blank">1995-10-22 Encore t25 The Squirming Coil</a> &middot; run 23.5s, cut 0.4s &mdash; left untouched</div><div class="meta"><a href="https://phish.in/1995-11-12/hello-my-baby" target="_blank">1995-11-12 Set 1 t10 Hello My Baby</a> &middot; run 22.1s, cut 0.0s &mdash; left untouched</div><div class="meta"><a href="https://phish.in/1995-11-19/the-squirming-coil" target="_blank">1995-11-19 Set 1 t10 The Squirming Coil</a> &middot; run 21.6s, cut 0.0s &mdash; left untouched</div><div class="meta"><a href="https://phish.in/1995-11-15/the-squirming-coil" target="_blank">1995-11-15 Set 1 t09 The Squirming Coil</a> &middot; run 20.6s, cut 0.0s &mdash; left untouched</div>
+<script>
+document.getElementById("export").onclick = () => {
+  const approved = [...document.querySelectorAll("input:checked")]
+    .map(cb => JSON.parse(cb.dataset.payload));
+  const blob = new Blob([JSON.stringify(approved, null, 2)], {type: "application/json"});
+  const a = Object.assign(document.createElement("a"),
+    {href: URL.createObjectURL(blob), download: "approved.json"});
+  a.click();
+};
+</script>

@@ -2,7 +2,7 @@ require "shellwords"
 
 module AudioEdgeScan
   SCAN_SCRIPT = "scripts/audio_edge_analysis.py".freeze
-  SCAN_ROOT = "tmp/edge_scan".freeze
+  SCAN_ROOT = "data/edge_scan".freeze
 
   def self.run(selector, out_dir, log_path: nil)
     unless system("which uv > /dev/null 2>&1")
