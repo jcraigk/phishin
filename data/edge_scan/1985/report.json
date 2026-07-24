@@ -30,7 +30,7 @@
     "edge": "trailing",
     "track_duration_s": 316.9,
     "nonmusic_run_s": 10.6,
-    "music_boundary_s": 305.9,
+    "music_boundary_s": 316.9,
     "region": [
       305.9,
       316.9

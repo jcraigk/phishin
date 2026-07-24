@@ -4,7 +4,7 @@
     "edge": "trailing",
     "track_duration_s": 1242.7,
     "nonmusic_run_s": 175.2,
-    "music_boundary_s": 1067.0,
+    "music_boundary_s": 1067.9,
     "region": [
       1067.0,
       1242.7
@@ -113,7 +113,133 @@
     "mean_crowd_score": 0.039,
     "mean_rms_db": -34.3,
     "flagged": true,
-    "banter": [],
+    "banter": [
+      {
+        "start": 580.7,
+        "end": 581.5,
+        "text": "Okay, we're fine."
+      },
+      {
+        "start": 589.3,
+        "end": 590.4,
+        "text": "Come on, come on!"
+      },
+      {
+        "start": 591.0,
+        "end": 592.0,
+        "text": "Come on!"
+      },
+      {
+        "start": 593.2,
+        "end": 593.7,
+        "text": "Come on!"
+      },
+      {
+        "start": 593.7,
+        "end": 594.5,
+        "text": "That was so sick!"
+      },
+      {
+        "start": 595.4,
+        "end": 595.7,
+        "text": "Come on, come on!"
+      },
+      {
+        "start": 596.2,
+        "end": 598.3,
+        "text": "Come on!"
+      },
+      {
+        "start": 599.5,
+        "end": 601.5,
+        "text": "Come on!"
+      },
+      {
+        "start": 638.6,
+        "end": 639.6,
+        "text": "I'm really excited that you saw the G solely learn basics and"
+      },
+      {
+        "start": 639.6,
+        "end": 640.1,
+        "text": "Woo!"
+      },
+      {
+        "start": 640.1,
+        "end": 640.8,
+        "text": "Woo!"
+      },
+      {
+        "start": 640.8,
+        "end": 642.0,
+        "text": "Woo!"
+      },
+      {
+        "start": 642.0,
+        "end": 643.0,
+        "text": "Woo!"
+      },
+      {
+        "start": 643.0,
+        "end": 643.8,
+        "text": "Woo!"
+      },
+      {
+        "start": 643.8,
+        "end": 644.9,
+        "text": "Woo!"
+      },
+      {
+        "start": 644.9,
+        "end": 645.3,
+        "text": "Woo!"
+      },
+      {
+        "start": 645.3,
+        "end": 646.3,
+        "text": "Woo!"
+      },
+      {
+        "start": 646.5,
+        "end": 647.9,
+        "text": "Woo!"
+      },
+      {
+        "start": 648.0,
+        "end": 648.8,
+        "text": "Woo!"
+      },
+      {
+        "start": 648.9,
+        "end": 650.1,
+        "text": "Woo!"
+      },
+      {
+        "start": 650.1,
+        "end": 650.7,
+        "text": "Woo!"
+      },
+      {
+        "start": 650.7,
+        "end": 651.4,
+        "text": "Woo!"
+      },
+      {
+        "start": 651.4,
+        "end": 651.8,
+        "text": "Woo!"
+      },
+      {
+        "start": 651.8,
+        "end": 652.6,
+        "text": "Woo!"
+      },
+      {
+        "start": 652.6,
+        "end": 653.7,
+        "text": "Woo!"
+      }
+    ],
     "songs": [
       "First Tube"
     ],
@@ -151,7 +277,7 @@
     "edge": "trailing",
     "track_duration_s": 349.0,
     "nonmusic_run_s": 138.2,
-    "music_boundary_s": 210.3,
+    "music_boundary_s": 211.8,
     "region": [
       210.3,
       349.0
@@ -177,7 +303,7 @@
     "edge": "trailing",
     "track_duration_s": 1264.7,
     "nonmusic_run_s": 103.2,
-    "music_boundary_s": 1161.0,
+    "music_boundary_s": 1259.9,
     "region": [
       1161.0,
       1264.7
@@ -251,29 +377,39 @@
     "flagged": true,
     "banter": [
       {
-        "start": 2857.9,
-        "end": 2858.6,
-        "text": "The"
+        "start": 2860.3,
+        "end": 2861.3,
+        "text": "and the"
       },
       {
-        "start": 2860.4,
-        "end": 2861.1,
-        "text": "the"
-      },
-      {
-        "start": 2861.1,
+        "start": 2861.3,
         "end": 2861.4,
-        "text": "the"
+        "text": "and"
       },
       {
         "start": 2861.4,
-        "end": 2861.5,
-        "text": "the"
+        "end": 2861.4,
+        "text": "and"
       },
       {
-        "start": 2861.5,
-        "end": 2861.8,
-        "text": "the"
+        "start": 2862.7,
+        "end": 2863.3,
+        "text": "and"
+      },
+      {
+        "start": 2881.1,
+        "end": 2881.6,
+        "text": "and"
+      },
+      {
+        "start": 2881.6,
+        "end": 2881.7,
+        "text": "and"
+      },
+      {
+        "start": 2881.7,
+        "end": 2881.7,
+        "text": "and"
       }
     ],
     "songs": [
@@ -495,7 +631,7 @@
     "edge": "trailing",
     "track_duration_s": 470.0,
     "nonmusic_run_s": 56.6,
-    "music_boundary_s": 412.9,
+    "music_boundary_s": 413.9,
     "region": [
       412.9,
       470.0
@@ -547,7 +683,7 @@
     "edge": "trailing",
     "track_duration_s": 318.8,
     "nonmusic_run_s": 52.8,
-    "music_boundary_s": 265.5,
+    "music_boundary_s": 266.5,
     "region": [
       265.5,
       318.8
@@ -573,7 +709,7 @@
     "edge": "trailing",
     "track_duration_s": 362.3,
     "nonmusic_run_s": 48.5,
-    "music_boundary_s": 313.4,
+    "music_boundary_s": 314.3,
     "region": [
       313.4,
       362.3
@@ -724,13 +860,8 @@
         "text": "Thank you."
       },
       {
-        "start": 647.7,
-        "end": 649.1,
-        "text": "Thank you."
-      },
-      {
-        "start": 649.1,
-        "end": 651.6,
+        "start": 660.1,
+        "end": 662.9,
         "text": "Thank you."
       }
     ],
@@ -823,7 +954,7 @@
     "edge": "trailing",
     "track_duration_s": 636.8,
     "nonmusic_run_s": 41.3,
-    "music_boundary_s": 595.0,
+    "music_boundary_s": 596.5,
     "region": [
       595.0,
       636.8
@@ -933,7 +1064,7 @@
     "edge": "trailing",
     "track_duration_s": 120.7,
     "nonmusic_run_s": 39.4,
-    "music_boundary_s": 81.1,
+    "music_boundary_s": 90.2,
     "region": [
       81.1,
       121.0
@@ -1131,7 +1262,7 @@
     "edge": "trailing",
     "track_duration_s": 646.3,
     "nonmusic_run_s": 35.0,
-    "music_boundary_s": 610.7,
+    "music_boundary_s": 611.7,
     "region": [
       610.7,
       646.3
@@ -1168,7 +1299,7 @@
     "edge": "trailing",
     "track_duration_s": 325.6,
     "nonmusic_run_s": 35.0,
-    "music_boundary_s": 290.1,
+    "music_boundary_s": 291.1,
     "region": [
       290.1,
       325.6
@@ -1194,7 +1325,7 @@
     "edge": "trailing",
     "track_duration_s": 392.7,
     "nonmusic_run_s": 34.1,
-    "music_boundary_s": 358.1,
+    "music_boundary_s": 360.1,
     "region": [
       358.1,
       392.7
@@ -1220,7 +1351,7 @@
     "edge": "trailing",
     "track_duration_s": 669.1,
     "nonmusic_run_s": 34.1,
-    "music_boundary_s": 634.5,
+    "music_boundary_s": 635.5,
     "region": [
       634.5,
       669.1
@@ -1246,7 +1377,7 @@
     "edge": "trailing",
     "track_duration_s": 410.8,
     "nonmusic_run_s": 31.7,
-    "music_boundary_s": 378.7,
+    "music_boundary_s": 379.6,
     "region": [
       378.7,
       410.8
@@ -1298,7 +1429,7 @@
     "edge": "trailing",
     "track_duration_s": 1284.1,
     "nonmusic_run_s": 29.3,
-    "music_boundary_s": 1254.3,
+    "music_boundary_s": 1255.3,
     "region": [
       1254.3,
       1284.1
@@ -1330,7 +1461,7 @@
     "edge": "trailing",
     "track_duration_s": 241.8,
     "nonmusic_run_s": 28.8,
-    "music_boundary_s": 212.6,
+    "music_boundary_s": 213.6,
     "region": [
       212.6,
       241.9
@@ -1356,7 +1487,7 @@
     "edge": "trailing",
     "track_duration_s": 755.3,
     "nonmusic_run_s": 28.3,
-    "music_boundary_s": 726.5,
+    "music_boundary_s": 728.4,
     "region": [
       726.5,
       755.3
@@ -1370,43 +1501,7 @@
     "mean_crowd_score": 0.013,
     "mean_rms_db": -45.2,
     "flagged": true,
-    "banter": [
-      {
-        "start": 723.5,
-        "end": 724.4,
-        "text": "Wee!"
-      },
-      {
-        "start": 727.2,
-        "end": 728.1,
-        "text": "Wee!"
-      },
-      {
-        "start": 732.7,
-        "end": 733.4,
-        "text": "Wee!"
-      },
-      {
-        "start": 733.4,
-        "end": 734.0,
-        "text": "Wee!"
-      },
-      {
-        "start": 735.9,
-        "end": 737.3,
-        "text": "Wee!"
-      },
-      {
-        "start": 740.0,
-        "end": 741.4,
-        "text": "Wee!"
-      },
-      {
-        "start": 742.9,
-        "end": 743.3,
-        "text": "Thank you."
-      }
-    ],
+    "banter": [],
     "songs": [
       "Run Like an Antelope"
     ],
@@ -1548,7 +1643,7 @@
     "edge": "trailing",
     "track_duration_s": 221.6,
     "nonmusic_run_s": 22.6,
-    "music_boundary_s": 198.7,
+    "music_boundary_s": 199.7,
     "region": [
       198.7,
       221.8
@@ -1574,7 +1669,7 @@
     "edge": "trailing",
     "track_duration_s": 464.7,
     "nonmusic_run_s": 22.6,
-    "music_boundary_s": 441.6,
+    "music_boundary_s": 442.6,
     "region": [
       441.6,
       464.7
@@ -1620,43 +1715,7 @@
     "mean_crowd_score": 0.084,
     "mean_rms_db": -28.0,
     "flagged": true,
-    "banter": [
-      {
-        "start": 523.8,
-        "end": 523.9,
-        "text": "chick"
-      },
-      {
-        "start": 526.7,
-        "end": 527.4,
-        "text": "whoo"
-      },
-      {
-        "start": 531.8,
-        "end": 533.2,
-        "text": "whoo"
-      },
-      {
-        "start": 539.2,
-        "end": 539.9,
-        "text": "whoo"
-      },
-      {
-        "start": 540.6,
-        "end": 540.8,
-        "text": "whoo"
-      },
-      {
-        "start": 540.8,
-        "end": 542.3,
-        "text": "whoo"
-      },
-      {
-        "start": 542.3,
-        "end": 543.8,
-        "text": "whoo"
-      }
-    ],
+    "banter": [],
     "songs": [
       "Theme From the Bottom"
     ],
@@ -1682,7 +1741,13 @@
     "mean_crowd_score": 0.02,
     "mean_rms_db": -36.3,
     "flagged": true,
-    "banter": [],
+    "banter": [
+      {
+        "start": 367.5,
+        "end": 368.9,
+        "text": "you"
+      }
+    ],
     "songs": [
       "Loving Cup"
     ],
@@ -1902,7 +1967,7 @@
     "edge": "trailing",
     "track_duration_s": 476.4,
     "nonmusic_run_s": 11.5,
-    "music_boundary_s": 464.4,
+    "music_boundary_s": 465.4,
     "region": [
       464.4,
       476.4
@@ -2032,7 +2097,7 @@
     "edge": "trailing",
     "track_duration_s": 683.0,
     "nonmusic_run_s": 8.2,
-    "music_boundary_s": 674.4,
+    "music_boundary_s": 675.4,
     "region": [
       674.4,
       683.0
@@ -2214,7 +2279,7 @@
     "edge": "trailing",
     "track_duration_s": 629.7,
     "nonmusic_run_s": 6.2,
-    "music_boundary_s": 623.0,
+    "music_boundary_s": 624.0,
     "region": [
       623.0,
       629.7
@@ -2266,7 +2331,7 @@
     "edge": "trailing",
     "track_duration_s": 220.3,
     "nonmusic_run_s": 6.2,
-    "music_boundary_s": 213.6,
+    "music_boundary_s": 214.6,
     "region": [
       213.6,
       220.3

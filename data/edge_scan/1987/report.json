@@ -4,7 +4,7 @@
     "edge": "trailing",
     "track_duration_s": 1798.3,
     "nonmusic_run_s": 40.3,
-    "music_boundary_s": 1757.5,
+    "music_boundary_s": 1759.0,
     "region": [
       1757.5,
       1798.3
@@ -39,7 +39,7 @@
     "edge": "trailing",
     "track_duration_s": 664.7,
     "nonmusic_run_s": 25.4,
-    "music_boundary_s": 638.8,
+    "music_boundary_s": 645.5,
     "region": [
       638.8,
       664.7
@@ -97,7 +97,7 @@
     "edge": "trailing",
     "track_duration_s": 359.3,
     "nonmusic_run_s": 17.8,
-    "music_boundary_s": 341.1,
+    "music_boundary_s": 347.8,
     "region": [
       341.1,
       359.3
@@ -201,7 +201,7 @@
     "edge": "trailing",
     "track_duration_s": 200.0,
     "nonmusic_run_s": 9.1,
-    "music_boundary_s": 190.6,
+    "music_boundary_s": 191.5,
     "region": [
       190.6,
       200.2
@@ -383,7 +383,7 @@
     "edge": "trailing",
     "track_duration_s": 320.1,
     "nonmusic_run_s": 8.2,
-    "music_boundary_s": 311.5,
+    "music_boundary_s": 312.9,
     "region": [
       311.5,
       320.1
@@ -409,7 +409,7 @@
     "edge": "trailing",
     "track_duration_s": 332.4,
     "nonmusic_run_s": 7.2,
-    "music_boundary_s": 324.7,
+    "music_boundary_s": 325.7,
     "region": [
       324.7,
       332.4
@@ -592,7 +592,7 @@
     "edge": "trailing",
     "track_duration_s": 398.8,
     "nonmusic_run_s": 5.3,
-    "music_boundary_s": 393.1,
+    "music_boundary_s": 394.0,
     "region": [
       393.1,
       398.8
@@ -619,7 +619,7 @@
     "edge": "trailing",
     "track_duration_s": 300.8,
     "nonmusic_run_s": 5.3,
-    "music_boundary_s": 295.0,
+    "music_boundary_s": 296.0,
     "region": [
       295.0,
       300.8
@@ -645,7 +645,7 @@
     "edge": "trailing",
     "track_duration_s": 311.8,
     "nonmusic_run_s": 4.8,
-    "music_boundary_s": 306.5,
+    "music_boundary_s": 307.5,
     "region": [
       306.5,
       311.8
@@ -879,7 +879,7 @@
     "edge": "trailing",
     "track_duration_s": 213.3,
     "nonmusic_run_s": 1.4,
-    "music_boundary_s": 211.7,
+    "music_boundary_s": 213.6,
     "region": [
       211.7,
       213.6

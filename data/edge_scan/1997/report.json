@@ -30,7 +30,7 @@
     "edge": "trailing",
     "track_duration_s": 709.7,
     "nonmusic_run_s": 200.6,
-    "music_boundary_s": 508.6,
+    "music_boundary_s": 611.8,
     "region": [
       508.6,
       709.7
@@ -44,13 +44,7 @@
     "mean_crowd_score": 0.127,
     "mean_rms_db": -31.2,
     "flagged": true,
-    "banter": [
-      {
-        "start": 706.6,
-        "end": 709.6,
-        "text": "Thank you very much."
-      }
-    ],
+    "banter": [],
     "songs": [
       "Poor Heart"
     ],
@@ -88,7 +82,7 @@
     "edge": "trailing",
     "track_duration_s": 726.2,
     "nonmusic_run_s": 193.4,
-    "music_boundary_s": 532.3,
+    "music_boundary_s": 543.8,
     "region": [
       532.3,
       726.2
@@ -140,7 +134,7 @@
     "edge": "trailing",
     "track_duration_s": 482.6,
     "nonmusic_run_s": 150.7,
-    "music_boundary_s": 331.4,
+    "music_boundary_s": 334.8,
     "region": [
       331.4,
       482.6
@@ -218,7 +212,7 @@
     "edge": "trailing",
     "track_duration_s": 511.0,
     "nonmusic_run_s": 140.2,
-    "music_boundary_s": 370.4,
+    "music_boundary_s": 493.2,
     "region": [
       370.4,
       511.0
@@ -244,7 +238,7 @@
     "edge": "trailing",
     "track_duration_s": 594.7,
     "nonmusic_run_s": 137.8,
-    "music_boundary_s": 456.4,
+    "music_boundary_s": 459.8,
     "region": [
       456.4,
       594.7
@@ -296,7 +290,7 @@
     "edge": "trailing",
     "track_duration_s": 983.0,
     "nonmusic_run_s": 117.6,
-    "music_boundary_s": 864.9,
+    "music_boundary_s": 865.9,
     "region": [
       864.9,
       983.0
@@ -322,7 +316,7 @@
     "edge": "trailing",
     "track_duration_s": 462.2,
     "nonmusic_run_s": 117.1,
-    "music_boundary_s": 344.6,
+    "music_boundary_s": 461.2,
     "region": [
       344.6,
       462.2
@@ -374,7 +368,7 @@
     "edge": "trailing",
     "track_duration_s": 1326.7,
     "nonmusic_run_s": 99.8,
-    "music_boundary_s": 1226.3,
+    "music_boundary_s": 1231.1,
     "region": [
       1226.3,
       1326.7
@@ -391,13 +385,18 @@
     "banter": [
       {
         "start": 1223.3,
-        "end": 1226.4,
-        "text": "Oh, oh, oh."
+        "end": 1227.5,
+        "text": "Oh, oh, oh, oh."
       },
       {
-        "start": 1248.3,
-        "end": 1248.7,
-        "text": "Oh, oh, oh."
+        "start": 1229.0,
+        "end": 1230.1,
+        "text": "Come on, let's go!"
+      },
+      {
+        "start": 1230.1,
+        "end": 1250.0,
+        "text": "Thank you."
       }
     ],
     "songs": [
@@ -411,7 +410,7 @@
     "edge": "trailing",
     "track_duration_s": 98.3,
     "nonmusic_run_s": 97.9,
-    "music_boundary_s": 0.0,
+    "music_boundary_s": 64.8,
     "region": [
       0.0,
       98.4
@@ -503,7 +502,7 @@
     "edge": "trailing",
     "track_duration_s": 99.9,
     "nonmusic_run_s": 97.4,
-    "music_boundary_s": 1.9,
+    "music_boundary_s": 23.0,
     "region": [
       1.9,
       99.8
@@ -635,7 +634,43 @@
     "mean_crowd_score": 0.02,
     "mean_rms_db": -33.4,
     "flagged": true,
-    "banter": [],
+    "banter": [
+      {
+        "start": 382.3,
+        "end": 382.5,
+        "text": "Hello."
+      },
+      {
+        "start": 387.2,
+        "end": 387.7,
+        "text": "Hello."
+      },
+      {
+        "start": 391.0,
+        "end": 392.1,
+        "text": "Anything."
+      },
+      {
+        "start": 395.8,
+        "end": 397.3,
+        "text": "Can somebody say something?"
+      },
+      {
+        "start": 398.0,
+        "end": 398.4,
+        "text": "Hello."
+      },
+      {
+        "start": 399.0,
+        "end": 399.5,
+        "text": "Say something."
+      },
+      {
+        "start": 400.2,
+        "end": 400.6,
+        "text": "Hello."
+      }
+    ],
     "songs": [
       "Crossroads"
     ],
@@ -673,7 +708,7 @@
     "edge": "trailing",
     "track_duration_s": 174.0,
     "nonmusic_run_s": 87.4,
-    "music_boundary_s": 86.4,
+    "music_boundary_s": 87.4,
     "region": [
       86.4,
       174.2
@@ -736,7 +771,7 @@
     "edge": "trailing",
     "track_duration_s": 106.5,
     "nonmusic_run_s": 75.8,
-    "music_boundary_s": 30.2,
+    "music_boundary_s": 79.7,
     "region": [
       30.2,
       106.6
@@ -798,7 +833,7 @@
     "edge": "trailing",
     "track_duration_s": 128.5,
     "nonmusic_run_s": 75.8,
-    "music_boundary_s": 52.3,
+    "music_boundary_s": 121.4,
     "region": [
       52.3,
       128.6
@@ -839,9 +874,9 @@
         "text": "Tell me that I'm your own."
       },
       {
-        "start": 92.2,
-        "end": 95.0,
-        "text": "Thank you."
+        "start": 79.2,
+        "end": 80.7,
+        "text": "We're back in 15 minutes, huh?"
       },
       {
         "start": 103.3,
@@ -886,7 +921,7 @@
     "edge": "trailing",
     "track_duration_s": 110.4,
     "nonmusic_run_s": 54.2,
-    "music_boundary_s": 56.2,
+    "music_boundary_s": 62.9,
     "region": [
       56.2,
       110.9
@@ -1006,7 +1041,7 @@
     "edge": "trailing",
     "track_duration_s": 745.0,
     "nonmusic_run_s": 48.0,
-    "music_boundary_s": 696.5,
+    "music_boundary_s": 697.5,
     "region": [
       696.5,
       745.0
@@ -1032,7 +1067,7 @@
     "edge": "trailing",
     "track_duration_s": 108.8,
     "nonmusic_run_s": 45.1,
-    "music_boundary_s": 63.4,
+    "music_boundary_s": 88.3,
     "region": [
       63.4,
       109.0
@@ -1094,7 +1129,7 @@
     "edge": "trailing",
     "track_duration_s": 1274.4,
     "nonmusic_run_s": 43.7,
-    "music_boundary_s": 1230.2,
+    "music_boundary_s": 1231.2,
     "region": [
       1230.2,
       1274.4
@@ -1120,7 +1155,7 @@
     "edge": "trailing",
     "track_duration_s": 449.3,
     "nonmusic_run_s": 42.7,
-    "music_boundary_s": 406.1,
+    "music_boundary_s": 416.1,
     "region": [
       406.1,
       449.3
@@ -1134,18 +1169,7 @@
     "mean_crowd_score": 0.085,
     "mean_rms_db": -17.6,
     "flagged": true,
-    "banter": [
-      {
-        "start": 403.1,
-        "end": 410.8,
-        "text": "But I don't know who I am"
-      },
-      {
-        "start": 425.8,
-        "end": 427.0,
-        "text": "Captain Matthew!"
-      }
-    ],
+    "banter": [],
     "songs": [
       "Chalk Dust Torture"
     ],
@@ -1199,19 +1223,29 @@
     "flagged": true,
     "banter": [
       {
-        "start": 432.6,
-        "end": 432.7,
-        "text": "Thank you for watching."
+        "start": 430.1,
+        "end": 432.9,
+        "text": "Oh, shit."
       },
       {
-        "start": 432.7,
-        "end": 433.2,
-        "text": "I'll see you next time."
+        "start": 434.6,
+        "end": 435.2,
+        "text": "Come on."
       },
       {
         "start": 436.1,
-        "end": 437.9,
-        "text": "Woo hoo!"
+        "end": 438.0,
+        "text": "Woo-hoo!"
+      },
+      {
+        "start": 439.2,
+        "end": 443.5,
+        "text": "Oh, shit."
+      },
+      {
+        "start": 443.6,
+        "end": 445.3,
+        "text": "Come on."
       }
     ],
     "songs": [
@@ -1225,7 +1259,7 @@
     "edge": "trailing",
     "track_duration_s": 685.4,
     "nonmusic_run_s": 40.8,
-    "music_boundary_s": 644.1,
+    "music_boundary_s": 646.5,
     "region": [
       644.1,
       685.4
@@ -1288,7 +1322,7 @@
     "edge": "trailing",
     "track_duration_s": 296.4,
     "nonmusic_run_s": 39.8,
-    "music_boundary_s": 256.3,
+    "music_boundary_s": 257.3,
     "region": [
       256.3,
       296.6
@@ -1302,23 +1336,7 @@
     "mean_crowd_score": 0.015,
     "mean_rms_db": -53.4,
     "flagged": true,
-    "banter": [
-      {
-        "start": 257.0,
-        "end": 258.4,
-        "text": "Z"
-      },
-      {
-        "start": 281.6,
-        "end": 283.0,
-        "text": "Z"
-      },
-      {
-        "start": 283.0,
-        "end": 283.3,
-        "text": "Z"
-      }
-    ],
+    "banter": [],
     "songs": [
       "Izabella"
     ],
@@ -1330,7 +1348,7 @@
     "edge": "trailing",
     "track_duration_s": 644.8,
     "nonmusic_run_s": 39.8,
-    "music_boundary_s": 604.5,
+    "music_boundary_s": 622.3,
     "region": [
       604.5,
       644.8
@@ -1388,7 +1406,7 @@
     "edge": "trailing",
     "track_duration_s": 976.7,
     "nonmusic_run_s": 38.9,
-    "music_boundary_s": 937.4,
+    "music_boundary_s": 973.8,
     "region": [
       937.4,
       976.7
@@ -1440,7 +1458,7 @@
     "edge": "trailing",
     "track_duration_s": 374.1,
     "nonmusic_run_s": 36.0,
-    "music_boundary_s": 337.6,
+    "music_boundary_s": 373.2,
     "region": [
       337.6,
       374.1
@@ -1454,13 +1472,7 @@
     "mean_crowd_score": 0.217,
     "mean_rms_db": -26.0,
     "flagged": true,
-    "banter": [
-      {
-        "start": 370.4,
-        "end": 373.2,
-        "text": "\u00a9 BF-WATCH TV 2021"
-      }
-    ],
+    "banter": [],
     "songs": [
       "Loving Cup"
     ],
@@ -1472,7 +1484,7 @@
     "edge": "trailing",
     "track_duration_s": 310.0,
     "nonmusic_run_s": 35.0,
-    "music_boundary_s": 274.5,
+    "music_boundary_s": 309.5,
     "region": [
       274.5,
       310.0
@@ -1504,7 +1516,7 @@
     "edge": "trailing",
     "track_duration_s": 1111.3,
     "nonmusic_run_s": 34.6,
-    "music_boundary_s": 1076.2,
+    "music_boundary_s": 1077.2,
     "region": [
       1076.2,
       1111.3
@@ -1556,7 +1568,7 @@
     "edge": "trailing",
     "track_duration_s": 356.3,
     "nonmusic_run_s": 34.1,
-    "music_boundary_s": 321.7,
+    "music_boundary_s": 323.1,
     "region": [
       321.7,
       356.3
@@ -1682,9 +1694,9 @@
     "flagged": true,
     "banter": [
       {
-        "start": 167.3,
-        "end": 172.8,
-        "text": "Thank you very much."
+        "start": 158.0,
+        "end": 159.4,
+        "text": "You"
       }
     ],
     "songs": [
@@ -1750,7 +1762,7 @@
     "edge": "trailing",
     "track_duration_s": 312.7,
     "nonmusic_run_s": 27.8,
-    "music_boundary_s": 284.4,
+    "music_boundary_s": 286.3,
     "region": [
       284.4,
       312.7
@@ -1897,7 +1909,7 @@
     "edge": "trailing",
     "track_duration_s": 282.0,
     "nonmusic_run_s": 25.4,
-    "music_boundary_s": 256.3,
+    "music_boundary_s": 257.3,
     "region": [
       256.3,
       282.2
@@ -1987,7 +1999,7 @@
     "edge": "trailing",
     "track_duration_s": 817.8,
     "nonmusic_run_s": 25.0,
-    "music_boundary_s": 792.4,
+    "music_boundary_s": 800.5,
     "region": [
       792.4,
       817.8
@@ -2044,7 +2056,7 @@
     "edge": "trailing",
     "track_duration_s": 463.7,
     "nonmusic_run_s": 24.5,
-    "music_boundary_s": 438.7,
+    "music_boundary_s": 439.7,
     "region": [
       438.7,
       463.7
@@ -2070,7 +2082,7 @@
     "edge": "trailing",
     "track_duration_s": 415.8,
     "nonmusic_run_s": 24.5,
-    "music_boundary_s": 390.8,
+    "music_boundary_s": 392.7,
     "region": [
       390.8,
       415.8
@@ -2138,29 +2150,9 @@
     "flagged": true,
     "banter": [
       {
-        "start": 568.4,
-        "end": 570.9,
-        "text": "Oh-oh-oh-oh-oh-oh."
-      },
-      {
-        "start": 570.9,
-        "end": 572.0,
-        "text": "Oh-oh-oh-oh-oh-oh."
-      },
-      {
-        "start": 572.0,
-        "end": 572.9,
-        "text": "Woo-hoo!"
-      },
-      {
-        "start": 573.9,
-        "end": 575.0,
-        "text": "That's a lot, everybody."
-      },
-      {
-        "start": 591.7,
-        "end": 594.6,
-        "text": "Thank you very much."
+        "start": 572.2,
+        "end": 573.6,
+        "text": "I"
       }
     ],
     "songs": [
@@ -2200,7 +2192,7 @@
     "edge": "trailing",
     "track_duration_s": 831.9,
     "nonmusic_run_s": 22.6,
-    "music_boundary_s": 808.8,
+    "music_boundary_s": 813.1,
     "region": [
       808.8,
       831.9
@@ -2336,7 +2328,7 @@
     "edge": "trailing",
     "track_duration_s": 196.1,
     "nonmusic_run_s": 21.1,
-    "music_boundary_s": 174.7,
+    "music_boundary_s": 175.7,
     "region": [
       174.7,
       196.3
@@ -2352,9 +2344,9 @@
     "flagged": true,
     "banter": [
       {
-        "start": 173.2,
-        "end": 173.9,
-        "text": "Oh"
+        "start": 175.8,
+        "end": 177.2,
+        "text": "you"
       }
     ],
     "songs": [
@@ -2410,9 +2402,9 @@
     "flagged": true,
     "banter": [
       {
-        "start": 407.1,
-        "end": 409.1,
-        "text": "I'm so glad you're 15 years old."
+        "start": 407.3,
+        "end": 408.7,
+        "text": "I'm sure we're going to make it to New York."
       }
     ],
     "songs": [
@@ -2493,7 +2485,7 @@
     "edge": "trailing",
     "track_duration_s": 449.7,
     "nonmusic_run_s": 20.6,
-    "music_boundary_s": 428.6,
+    "music_boundary_s": 429.6,
     "region": [
       428.6,
       449.7
@@ -2603,7 +2595,7 @@
     "edge": "trailing",
     "track_duration_s": 438.8,
     "nonmusic_run_s": 18.7,
-    "music_boundary_s": 419.6,
+    "music_boundary_s": 423.0,
     "region": [
       419.6,
       438.8
@@ -2629,7 +2621,7 @@
     "edge": "trailing",
     "track_duration_s": 1128.3,
     "nonmusic_run_s": 18.2,
-    "music_boundary_s": 1109.6,
+    "music_boundary_s": 1111.0,
     "region": [
       1109.6,
       1128.3
@@ -2681,7 +2673,7 @@
     "edge": "trailing",
     "track_duration_s": 439.8,
     "nonmusic_run_s": 18.2,
-    "music_boundary_s": 421.1,
+    "music_boundary_s": 422.0,
     "region": [
       421.1,
       439.8
@@ -2733,7 +2725,7 @@
     "edge": "trailing",
     "track_duration_s": 382.3,
     "nonmusic_run_s": 17.8,
-    "music_boundary_s": 364.1,
+    "music_boundary_s": 365.5,
     "region": [
       364.1,
       382.3
@@ -2785,7 +2777,7 @@
     "edge": "trailing",
     "track_duration_s": 495.3,
     "nonmusic_run_s": 17.8,
-    "music_boundary_s": 477.1,
+    "music_boundary_s": 478.1,
     "region": [
       477.1,
       495.3
@@ -2889,7 +2881,7 @@
     "edge": "trailing",
     "track_duration_s": 357.3,
     "nonmusic_run_s": 17.3,
-    "music_boundary_s": 339.5,
+    "music_boundary_s": 346.3,
     "region": [
       339.5,
       357.3
@@ -2941,7 +2933,7 @@
     "edge": "trailing",
     "track_duration_s": 726.6,
     "nonmusic_run_s": 17.3,
-    "music_boundary_s": 708.8,
+    "music_boundary_s": 715.5,
     "region": [
       708.8,
       726.6
@@ -3045,7 +3037,7 @@
     "edge": "trailing",
     "track_duration_s": 401.2,
     "nonmusic_run_s": 16.3,
-    "music_boundary_s": 384.4,
+    "music_boundary_s": 385.4,
     "region": [
       384.4,
       401.2
@@ -3097,7 +3089,7 @@
     "edge": "trailing",
     "track_duration_s": 276.2,
     "nonmusic_run_s": 16.3,
-    "music_boundary_s": 259.7,
+    "music_boundary_s": 260.6,
     "region": [
       259.7,
       276.5
@@ -3123,7 +3115,7 @@
     "edge": "trailing",
     "track_duration_s": 537.5,
     "nonmusic_run_s": 16.3,
-    "music_boundary_s": 520.7,
+    "music_boundary_s": 524.5,
     "region": [
       520.7,
       537.5
@@ -3175,7 +3167,7 @@
     "edge": "trailing",
     "track_duration_s": 538.7,
     "nonmusic_run_s": 15.8,
-    "music_boundary_s": 522.3,
+    "music_boundary_s": 523.3,
     "region": [
       522.3,
       538.7
@@ -3227,7 +3219,7 @@
     "edge": "trailing",
     "track_duration_s": 754.4,
     "nonmusic_run_s": 15.8,
-    "music_boundary_s": 738.1,
+    "music_boundary_s": 753.0,
     "region": [
       738.1,
       754.4
@@ -3331,7 +3323,7 @@
     "edge": "trailing",
     "track_duration_s": 582.7,
     "nonmusic_run_s": 15.4,
-    "music_boundary_s": 566.9,
+    "music_boundary_s": 569.7,
     "region": [
       566.9,
       582.7
@@ -3357,7 +3349,7 @@
     "edge": "trailing",
     "track_duration_s": 876.9,
     "nonmusic_run_s": 15.4,
-    "music_boundary_s": 861.1,
+    "music_boundary_s": 863.0,
     "region": [
       861.1,
       876.9
@@ -3383,7 +3375,7 @@
     "edge": "trailing",
     "track_duration_s": 500.0,
     "nonmusic_run_s": 15.4,
-    "music_boundary_s": 484.2,
+    "music_boundary_s": 485.1,
     "region": [
       484.2,
       500.0
@@ -3409,7 +3401,7 @@
     "edge": "trailing",
     "track_duration_s": 78.2,
     "nonmusic_run_s": 15.4,
-    "music_boundary_s": 62.4,
+    "music_boundary_s": 63.8,
     "region": [
       62.4,
       78.2
@@ -3513,7 +3505,7 @@
     "edge": "trailing",
     "track_duration_s": 514.9,
     "nonmusic_run_s": 14.9,
-    "music_boundary_s": 499.5,
+    "music_boundary_s": 500.5,
     "region": [
       499.5,
       514.9
@@ -3643,7 +3635,7 @@
     "edge": "trailing",
     "track_duration_s": 364.6,
     "nonmusic_run_s": 14.4,
-    "music_boundary_s": 349.7,
+    "music_boundary_s": 350.6,
     "region": [
       349.7,
       364.6
@@ -3695,7 +3687,7 @@
     "edge": "trailing",
     "track_duration_s": 332.7,
     "nonmusic_run_s": 13.9,
-    "music_boundary_s": 318.3,
+    "music_boundary_s": 319.2,
     "region": [
       318.3,
       332.7
@@ -3721,7 +3713,7 @@
     "edge": "trailing",
     "track_duration_s": 307.3,
     "nonmusic_run_s": 13.9,
-    "music_boundary_s": 292.9,
+    "music_boundary_s": 294.4,
     "region": [
       292.9,
       307.3
@@ -3877,7 +3869,7 @@
     "edge": "trailing",
     "track_duration_s": 447.9,
     "nonmusic_run_s": 13.4,
-    "music_boundary_s": 434.0,
+    "music_boundary_s": 435.0,
     "region": [
       434.0,
       447.9
@@ -3955,7 +3947,7 @@
     "edge": "trailing",
     "track_duration_s": 99.5,
     "nonmusic_run_s": 13.0,
-    "music_boundary_s": 86.4,
+    "music_boundary_s": 87.4,
     "region": [
       86.4,
       99.8
@@ -4007,7 +3999,7 @@
     "edge": "trailing",
     "track_duration_s": 166.3,
     "nonmusic_run_s": 13.0,
-    "music_boundary_s": 153.1,
+    "music_boundary_s": 154.1,
     "region": [
       153.1,
       166.6
@@ -4059,7 +4051,7 @@
     "edge": "trailing",
     "track_duration_s": 1789.3,
     "nonmusic_run_s": 12.5,
-    "music_boundary_s": 1776.3,
+    "music_boundary_s": 1777.3,
     "region": [
       1776.3,
       1789.3
@@ -4137,7 +4129,7 @@
     "edge": "trailing",
     "track_duration_s": 448.8,
     "nonmusic_run_s": 12.5,
-    "music_boundary_s": 435.9,
+    "music_boundary_s": 448.8,
     "region": [
       435.9,
       448.8
@@ -4215,7 +4207,7 @@
     "edge": "trailing",
     "track_duration_s": 336.1,
     "nonmusic_run_s": 12.0,
-    "music_boundary_s": 323.6,
+    "music_boundary_s": 324.5,
     "region": [
       323.6,
       336.1
@@ -4241,7 +4233,7 @@
     "edge": "trailing",
     "track_duration_s": 282.0,
     "nonmusic_run_s": 11.5,
-    "music_boundary_s": 270.2,
+    "music_boundary_s": 271.7,
     "region": [
       270.2,
       282.2
@@ -4397,7 +4389,7 @@
     "edge": "trailing",
     "track_duration_s": 958.9,
     "nonmusic_run_s": 11.0,
-    "music_boundary_s": 947.4,
+    "music_boundary_s": 955.6,
     "region": [
       947.4,
       958.9
@@ -4449,7 +4441,7 @@
     "edge": "trailing",
     "track_duration_s": 458.0,
     "nonmusic_run_s": 10.6,
-    "music_boundary_s": 446.9,
+    "music_boundary_s": 447.9,
     "region": [
       446.9,
       458.0
@@ -4501,7 +4493,7 @@
     "edge": "trailing",
     "track_duration_s": 215.0,
     "nonmusic_run_s": 10.1,
-    "music_boundary_s": 204.5,
+    "music_boundary_s": 209.3,
     "region": [
       204.5,
       215.0
@@ -4527,7 +4519,7 @@
     "edge": "trailing",
     "track_duration_s": 509.0,
     "nonmusic_run_s": 10.1,
-    "music_boundary_s": 498.4,
+    "music_boundary_s": 504.7,
     "region": [
       498.4,
       509.0
@@ -4579,7 +4571,7 @@
     "edge": "trailing",
     "track_duration_s": 645.0,
     "nonmusic_run_s": 10.1,
-    "music_boundary_s": 634.5,
+    "music_boundary_s": 635.4,
     "region": [
       634.5,
       645.0
@@ -4631,7 +4623,7 @@
     "edge": "trailing",
     "track_duration_s": 76.9,
     "nonmusic_run_s": 9.6,
-    "music_boundary_s": 67.2,
+    "music_boundary_s": 68.6,
     "region": [
       67.2,
       77.3
@@ -4657,7 +4649,7 @@
     "edge": "trailing",
     "track_duration_s": 1073.0,
     "nonmusic_run_s": 9.6,
-    "music_boundary_s": 1062.9,
+    "music_boundary_s": 1063.9,
     "region": [
       1062.9,
       1073.0
@@ -4709,7 +4701,7 @@
     "edge": "trailing",
     "track_duration_s": 630.4,
     "nonmusic_run_s": 9.1,
-    "music_boundary_s": 620.8,
+    "music_boundary_s": 621.7,
     "region": [
       620.8,
       630.4
@@ -4735,7 +4727,7 @@
     "edge": "trailing",
     "track_duration_s": 375.0,
     "nonmusic_run_s": 8.6,
-    "music_boundary_s": 365.8,
+    "music_boundary_s": 366.8,
     "region": [
       365.8,
       375.0
@@ -4787,7 +4779,7 @@
     "edge": "trailing",
     "track_duration_s": 711.7,
     "nonmusic_run_s": 8.2,
-    "music_boundary_s": 703.1,
+    "music_boundary_s": 704.1,
     "region": [
       703.1,
       711.7
@@ -4865,7 +4857,7 @@
     "edge": "trailing",
     "track_duration_s": 426.7,
     "nonmusic_run_s": 8.2,
-    "music_boundary_s": 418.1,
+    "music_boundary_s": 419.1,
     "region": [
       418.1,
       426.7
@@ -4917,7 +4909,7 @@
     "edge": "trailing",
     "track_duration_s": 865.8,
     "nonmusic_run_s": 7.7,
-    "music_boundary_s": 857.7,
+    "music_boundary_s": 859.6,
     "region": [
       857.7,
       865.8
@@ -4969,7 +4961,7 @@
     "edge": "trailing",
     "track_duration_s": 859.0,
     "nonmusic_run_s": 7.2,
-    "music_boundary_s": 851.4,
+    "music_boundary_s": 852.8,
     "region": [
       851.4,
       859.0
@@ -5021,7 +5013,7 @@
     "edge": "trailing",
     "track_duration_s": 805.0,
     "nonmusic_run_s": 7.2,
-    "music_boundary_s": 797.3,
+    "music_boundary_s": 798.3,
     "region": [
       797.3,
       805.0
@@ -5047,7 +5039,7 @@
     "edge": "trailing",
     "track_duration_s": 529.2,
     "nonmusic_run_s": 7.2,
-    "music_boundary_s": 521.5,
+    "music_boundary_s": 522.5,
     "region": [
       521.5,
       529.2
@@ -5073,7 +5065,7 @@
     "edge": "trailing",
     "track_duration_s": 575.3,
     "nonmusic_run_s": 6.7,
-    "music_boundary_s": 568.1,
+    "music_boundary_s": 569.1,
     "region": [
       568.1,
       575.3
@@ -5099,7 +5091,7 @@
     "edge": "trailing",
     "track_duration_s": 1310.2,
     "nonmusic_run_s": 6.7,
-    "music_boundary_s": 1303.0,
+    "music_boundary_s": 1303.9,
     "region": [
       1303.0,
       1310.2
@@ -5125,7 +5117,7 @@
     "edge": "trailing",
     "track_duration_s": 158.6,
     "nonmusic_run_s": 6.7,
-    "music_boundary_s": 151.7,
+    "music_boundary_s": 152.6,
     "region": [
       151.7,
       158.9
@@ -5151,7 +5143,7 @@
     "edge": "trailing",
     "track_duration_s": 710.8,
     "nonmusic_run_s": 6.7,
-    "music_boundary_s": 703.6,
+    "music_boundary_s": 705.1,
     "region": [
       703.6,
       710.8
@@ -5255,7 +5247,7 @@
     "edge": "trailing",
     "track_duration_s": 206.3,
     "nonmusic_run_s": 6.2,
-    "music_boundary_s": 199.7,
+    "music_boundary_s": 200.6,
     "region": [
       199.7,
       206.4
@@ -5281,7 +5273,7 @@
     "edge": "trailing",
     "track_duration_s": 440.3,
     "nonmusic_run_s": 6.2,
-    "music_boundary_s": 433.6,
+    "music_boundary_s": 434.5,
     "region": [
       433.6,
       440.3
@@ -5463,7 +5455,7 @@
     "edge": "trailing",
     "track_duration_s": 812.6,
     "nonmusic_run_s": 4.8,
-    "music_boundary_s": 807.3,
+    "music_boundary_s": 809.2,
     "region": [
       807.3,
       812.6
@@ -5489,7 +5481,7 @@
     "edge": "trailing",
     "track_duration_s": 445.3,
     "nonmusic_run_s": 4.3,
-    "music_boundary_s": 440.5,
+    "music_boundary_s": 441.5,
     "region": [
       440.5,
       445.3
@@ -5541,7 +5533,7 @@
     "edge": "trailing",
     "track_duration_s": 320.5,
     "nonmusic_run_s": 4.3,
-    "music_boundary_s": 315.7,
+    "music_boundary_s": 316.7,
     "region": [
       315.7,
       320.5
@@ -5567,7 +5559,7 @@
     "edge": "trailing",
     "track_duration_s": 535.2,
     "nonmusic_run_s": 3.8,
-    "music_boundary_s": 530.9,
+    "music_boundary_s": 531.8,
     "region": [
       530.9,
       535.2
@@ -5749,7 +5741,7 @@
     "edge": "trailing",
     "track_duration_s": 465.8,
     "nonmusic_run_s": 2.4,
-    "music_boundary_s": 462.9,
+    "music_boundary_s": 463.9,
     "region": [
       462.9,
       465.8
@@ -5801,7 +5793,7 @@
     "edge": "trailing",
     "track_duration_s": 399.9,
     "nonmusic_run_s": 2.4,
-    "music_boundary_s": 397.0,
+    "music_boundary_s": 398.0,
     "region": [
       397.0,
       399.9
@@ -5853,7 +5845,7 @@
     "edge": "trailing",
     "track_duration_s": 725.9,
     "nonmusic_run_s": 1.9,
-    "music_boundary_s": 723.5,
+    "music_boundary_s": 724.4,
     "region": [
       723.5,
       725.9
@@ -5879,7 +5871,7 @@
     "edge": "trailing",
     "track_duration_s": 349.4,
     "nonmusic_run_s": 1.9,
-    "music_boundary_s": 347.0,
+    "music_boundary_s": 347.9,
     "region": [
       347.0,
       349.4
@@ -5905,7 +5897,7 @@
     "edge": "trailing",
     "track_duration_s": 342.5,
     "nonmusic_run_s": 1.9,
-    "music_boundary_s": 340.1,
+    "music_boundary_s": 341.1,
     "region": [
       340.1,
       342.5
@@ -6035,7 +6027,7 @@
     "edge": "trailing",
     "track_duration_s": 323.3,
     "nonmusic_run_s": 1.4,
-    "music_boundary_s": 321.4,
+    "music_boundary_s": 323.3,
     "region": [
       321.4,
       323.3
@@ -6087,7 +6079,7 @@
     "edge": "trailing",
     "track_duration_s": 285.7,
     "nonmusic_run_s": 1.4,
-    "music_boundary_s": 284.2,
+    "music_boundary_s": 285.1,
     "region": [
       284.2,
       286.1
@@ -6113,7 +6105,7 @@
     "edge": "trailing",
     "track_duration_s": 86.1,
     "nonmusic_run_s": 1.4,
-    "music_boundary_s": 84.5,
+    "music_boundary_s": 86.4,
     "region": [
       84.5,
       86.4
@@ -6243,7 +6235,7 @@
     "edge": "trailing",
     "track_duration_s": 436.3,
     "nonmusic_run_s": 1.0,
-    "music_boundary_s": 434.9,
+    "music_boundary_s": 435.9,
     "region": [
       434.9,
       436.3
@@ -6269,7 +6261,7 @@
     "edge": "trailing",
     "track_duration_s": 361.8,
     "nonmusic_run_s": 1.0,
-    "music_boundary_s": 360.4,
+    "music_boundary_s": 361.3,
     "region": [
       360.4,
       361.8
@@ -6347,7 +6339,7 @@
     "edge": "trailing",
     "track_duration_s": 693.9,
     "nonmusic_run_s": 0.5,
-    "music_boundary_s": 692.9,
+    "music_boundary_s": 693.9,
     "region": [
       692.9,
       693.9

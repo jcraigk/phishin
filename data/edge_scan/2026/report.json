@@ -4,7 +4,7 @@
     "edge": "trailing",
     "track_duration_s": 362.5,
     "nonmusic_run_s": 17.8,
-    "music_boundary_s": 344.3,
+    "music_boundary_s": 345.7,
     "region": [
       344.3,
       362.5
@@ -30,7 +30,7 @@
     "edge": "trailing",
     "track_duration_s": 339.5,
     "nonmusic_run_s": 16.8,
-    "music_boundary_s": 322.2,
+    "music_boundary_s": 332.3,
     "region": [
       322.2,
       339.5
@@ -56,7 +56,7 @@
     "edge": "trailing",
     "track_duration_s": 435.7,
     "nonmusic_run_s": 15.4,
-    "music_boundary_s": 419.9,
+    "music_boundary_s": 420.8,
     "region": [
       419.9,
       435.7
@@ -82,7 +82,7 @@
     "edge": "trailing",
     "track_duration_s": 582.8,
     "nonmusic_run_s": 14.9,
-    "music_boundary_s": 567.5,
+    "music_boundary_s": 569.4,
     "region": [
       567.5,
       582.8
@@ -108,7 +108,7 @@
     "edge": "trailing",
     "track_duration_s": 442.2,
     "nonmusic_run_s": 14.4,
-    "music_boundary_s": 427.3,
+    "music_boundary_s": 431.7,
     "region": [
       427.3,
       442.2
@@ -160,7 +160,7 @@
     "edge": "trailing",
     "track_duration_s": 1047.0,
     "nonmusic_run_s": 13.4,
-    "music_boundary_s": 1033.1,
+    "music_boundary_s": 1036.9,
     "region": [
       1033.1,
       1047.0
@@ -186,7 +186,7 @@
     "edge": "trailing",
     "track_duration_s": 181.6,
     "nonmusic_run_s": 10.6,
-    "music_boundary_s": 170.9,
+    "music_boundary_s": 171.8,
     "region": [
       170.9,
       181.9
@@ -212,7 +212,7 @@
     "edge": "trailing",
     "track_duration_s": 582.3,
     "nonmusic_run_s": 10.6,
-    "music_boundary_s": 571.3,
+    "music_boundary_s": 573.2,
     "region": [
       571.3,
       582.3
@@ -264,7 +264,7 @@
     "edge": "trailing",
     "track_duration_s": 575.5,
     "nonmusic_run_s": 10.1,
-    "music_boundary_s": 564.9,
+    "music_boundary_s": 566.3,
     "region": [
       564.9,
       575.5
@@ -316,7 +316,7 @@
     "edge": "trailing",
     "track_duration_s": 634.3,
     "nonmusic_run_s": 9.6,
-    "music_boundary_s": 624.2,
+    "music_boundary_s": 626.1,
     "region": [
       624.2,
       634.3
@@ -342,7 +342,7 @@
     "edge": "trailing",
     "track_duration_s": 628.8,
     "nonmusic_run_s": 9.6,
-    "music_boundary_s": 618.7,
+    "music_boundary_s": 619.7,
     "region": [
       618.7,
       628.8
@@ -368,7 +368,7 @@
     "edge": "trailing",
     "track_duration_s": 480.5,
     "nonmusic_run_s": 9.6,
-    "music_boundary_s": 470.4,
+    "music_boundary_s": 471.4,
     "region": [
       470.4,
       480.5
@@ -394,7 +394,7 @@
     "edge": "trailing",
     "track_duration_s": 646.2,
     "nonmusic_run_s": 9.6,
-    "music_boundary_s": 636.2,
+    "music_boundary_s": 638.1,
     "region": [
       636.2,
       646.2
@@ -446,7 +446,7 @@
     "edge": "trailing",
     "track_duration_s": 798.2,
     "nonmusic_run_s": 9.1,
-    "music_boundary_s": 788.6,
+    "music_boundary_s": 789.6,
     "region": [
       788.6,
       798.2
@@ -498,7 +498,7 @@
     "edge": "trailing",
     "track_duration_s": 759.4,
     "nonmusic_run_s": 8.6,
-    "music_boundary_s": 750.3,
+    "music_boundary_s": 751.2,
     "region": [
       750.3,
       759.4
@@ -576,7 +576,7 @@
     "edge": "trailing",
     "track_duration_s": 417.2,
     "nonmusic_run_s": 8.6,
-    "music_boundary_s": 408.1,
+    "music_boundary_s": 409.1,
     "region": [
       408.1,
       417.2
@@ -602,7 +602,7 @@
     "edge": "trailing",
     "track_duration_s": 169.5,
     "nonmusic_run_s": 8.6,
-    "music_boundary_s": 160.8,
+    "music_boundary_s": 161.8,
     "region": [
       160.8,
       169.9
@@ -732,7 +732,7 @@
     "edge": "trailing",
     "track_duration_s": 630.0,
     "nonmusic_run_s": 8.2,
-    "music_boundary_s": 621.4,
+    "music_boundary_s": 622.3,
     "region": [
       621.4,
       630.0
@@ -888,7 +888,7 @@
     "edge": "trailing",
     "track_duration_s": 347.4,
     "nonmusic_run_s": 8.2,
-    "music_boundary_s": 338.7,
+    "music_boundary_s": 339.7,
     "region": [
       338.7,
       347.4
@@ -960,6 +960,32 @@
     ],
     "mp3_url": "https://phish.in/blob/oyiqdp8i6880vb3c5ylkcp8sw500.mp3",
     "share_url": "https://phish.in/2026-07-10/bouncing-around-the-room"
+  },
+  {
+    "label": "2026-07-22 Set 2 t23 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 721.1,
+    "nonmusic_run_s": 8.2,
+    "music_boundary_s": 712.4,
+    "region": [
+      712.4,
+      721.1
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.0,
+      "speech": 1.0
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.047,
+    "mean_rms_db": -25.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/ft5g4ghlgax3c74j8xftvx2x3re7.mp3",
+    "share_url": "https://phish.in/2026-07-22/harry-hood"
   },
   {
     "label": "2026-01-30 Set 2 t15 First Tube",
@@ -1096,7 +1122,7 @@
     "edge": "trailing",
     "track_duration_s": 1069.5,
     "nonmusic_run_s": 7.7,
-    "music_boundary_s": 1061.4,
+    "music_boundary_s": 1062.3,
     "region": [
       1061.4,
       1069.5
@@ -1118,11 +1144,37 @@
     "share_url": "https://phish.in/2026-07-12/fluffhead"
   },
   {
+    "label": "2026-07-22 Encore t27 Run Like an Antelope",
+    "edge": "trailing",
+    "track_duration_s": 633.4,
+    "nonmusic_run_s": 7.7,
+    "music_boundary_s": 625.3,
+    "region": [
+      625.3,
+      633.4
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.25,
+      "speech": 0.75
+    },
+    "mean_music_score": 0.007,
+    "mean_crowd_score": 0.076,
+    "mean_rms_db": -26.7,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Run Like an Antelope"
+    ],
+    "mp3_url": "https://phish.in/blob/fhah6imfetgtzmvk0jrob7i83s5y.mp3",
+    "share_url": "https://phish.in/2026-07-22/run-like-an-antelope"
+  },
+  {
     "label": "2026-01-28 Set 2 t16 Character Zero",
     "edge": "trailing",
     "track_duration_s": 401.0,
     "nonmusic_run_s": 7.2,
-    "music_boundary_s": 393.3,
+    "music_boundary_s": 394.2,
     "region": [
       393.3,
       401.0
@@ -1200,7 +1252,7 @@
     "edge": "trailing",
     "track_duration_s": 400.2,
     "nonmusic_run_s": 7.2,
-    "music_boundary_s": 392.5,
+    "music_boundary_s": 393.4,
     "region": [
       392.5,
       400.2
@@ -1300,6 +1352,32 @@
     "share_url": "https://phish.in/2026-07-07/suzy-greenberg"
   },
   {
+    "label": "2026-07-22 Set 1 t15 David Bowie",
+    "edge": "trailing",
+    "track_duration_s": 595.0,
+    "nonmusic_run_s": 7.2,
+    "music_boundary_s": 587.3,
+    "region": [
+      587.3,
+      595.0
+    ],
+    "character": {
+      "silence": 0.0,
+      "crowd": 0.07,
+      "speech": 0.93
+    },
+    "mean_music_score": 0.003,
+    "mean_crowd_score": 0.06,
+    "mean_rms_db": -24.1,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "David Bowie"
+    ],
+    "mp3_url": "https://phish.in/blob/6s7e8dcmzfx9qgdqcwb1adyctdhc.mp3",
+    "share_url": "https://phish.in/2026-07-22/david-bowie-2"
+  },
+  {
     "label": "2026-01-29 Set 2 t15 What's Going Through Your Mind",
     "edge": "trailing",
     "track_duration_s": 875.6,
@@ -1356,7 +1434,7 @@
     "edge": "trailing",
     "track_duration_s": 707.4,
     "nonmusic_run_s": 6.7,
-    "music_boundary_s": 700.2,
+    "music_boundary_s": 701.2,
     "region": [
       700.2,
       707.4
@@ -1408,7 +1486,7 @@
     "edge": "trailing",
     "track_duration_s": 373.8,
     "nonmusic_run_s": 6.7,
-    "music_boundary_s": 366.6,
+    "music_boundary_s": 367.5,
     "region": [
       366.6,
       373.8
@@ -1434,7 +1512,7 @@
     "edge": "trailing",
     "track_duration_s": 726.7,
     "nonmusic_run_s": 6.7,
-    "music_boundary_s": 719.5,
+    "music_boundary_s": 720.4,
     "region": [
       719.5,
       726.7
@@ -1460,7 +1538,7 @@
     "edge": "trailing",
     "track_duration_s": 302.7,
     "nonmusic_run_s": 6.7,
-    "music_boundary_s": 295.5,
+    "music_boundary_s": 296.4,
     "region": [
       295.5,
       302.7
@@ -1616,7 +1694,7 @@
     "edge": "trailing",
     "track_duration_s": 630.1,
     "nonmusic_run_s": 5.8,
-    "music_boundary_s": 623.8,
+    "music_boundary_s": 624.8,
     "region": [
       623.8,
       630.1
@@ -1668,7 +1746,7 @@
     "edge": "trailing",
     "track_duration_s": 532.8,
     "nonmusic_run_s": 5.3,
-    "music_boundary_s": 527.0,
+    "music_boundary_s": 528.0,
     "region": [
       527.0,
       532.8

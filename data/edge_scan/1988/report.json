@@ -4,7 +4,7 @@
     "edge": "trailing",
     "track_duration_s": 463.3,
     "nonmusic_run_s": 106.1,
-    "music_boundary_s": 356.8,
+    "music_boundary_s": 440.3,
     "region": [
       356.8,
       463.3
@@ -30,49 +30,9 @@
         "text": "night at 8 p.m. to benefit the Progressive Student Network."
       },
       {
-        "start": 375.9,
-        "end": 377.0,
-        "text": "in the back."
-      },
-      {
-        "start": 378.5,
-        "end": 379.9,
-        "text": "Savoy Truffle and Ali in the"
-      },
-      {
-        "start": 379.9,
-        "end": 380.0,
-        "text": "picture."
-      },
-      {
-        "start": 382.9,
-        "end": 384.1,
-        "text": "Here we go."
-      },
-      {
-        "start": 385.5,
-        "end": 386.1,
-        "text": "Here we go."
-      },
-      {
-        "start": 387.8,
-        "end": 388.9,
-        "text": "Here we go."
-      },
-      {
-        "start": 388.9,
-        "end": 390.2,
-        "text": "Here we go."
-      },
-      {
-        "start": 392.4,
-        "end": 394.3,
-        "text": "Here we go."
-      },
-      {
         "start": 403.2,
-        "end": 424.3,
-        "text": "We're going to get gears back up here to put a little bit more trumpet for this next"
+        "end": 405.9,
+        "text": "We're going to get gears back up here to play a little bit more trumpet."
       }
     ],
     "songs": [
@@ -86,7 +46,7 @@
     "edge": "trailing",
     "track_duration_s": 671.0,
     "nonmusic_run_s": 50.9,
-    "music_boundary_s": 619.7,
+    "music_boundary_s": 671.0,
     "region": [
       619.7,
       671.0
@@ -128,7 +88,7 @@
     "edge": "trailing",
     "track_duration_s": 545.6,
     "nonmusic_run_s": 40.8,
-    "music_boundary_s": 504.3,
+    "music_boundary_s": 534.5,
     "region": [
       504.3,
       545.6
@@ -239,7 +199,7 @@
     "edge": "trailing",
     "track_duration_s": 570.3,
     "nonmusic_run_s": 34.6,
-    "music_boundary_s": 535.2,
+    "music_boundary_s": 536.7,
     "region": [
       535.2,
       570.3
@@ -266,11 +226,11 @@
       },
       {
         "start": 563.3,
-        "end": 563.9,
-        "text": "Woo!"
+        "end": 563.6,
+        "text": "Yeah!"
       },
       {
-        "start": 564.9,
+        "start": 564.8,
         "end": 566.1,
         "text": "Good last bit!"
       }
@@ -286,7 +246,7 @@
     "edge": "trailing",
     "track_duration_s": 754.6,
     "nonmusic_run_s": 33.6,
-    "music_boundary_s": 720.5,
+    "music_boundary_s": 721.5,
     "region": [
       720.5,
       754.6
@@ -323,7 +283,7 @@
     "edge": "trailing",
     "track_duration_s": 910.7,
     "nonmusic_run_s": 31.7,
-    "music_boundary_s": 878.5,
+    "music_boundary_s": 904.9,
     "region": [
       878.5,
       910.7
@@ -491,7 +451,7 @@
     "edge": "trailing",
     "track_duration_s": 371.0,
     "nonmusic_run_s": 25.0,
-    "music_boundary_s": 345.5,
+    "music_boundary_s": 346.5,
     "region": [
       345.5,
       371.0
@@ -586,7 +546,7 @@
     "edge": "trailing",
     "track_duration_s": 1548.4,
     "nonmusic_run_s": 22.1,
-    "music_boundary_s": 1525.8,
+    "music_boundary_s": 1526.8,
     "region": [
       1525.8,
       1548.4
@@ -686,7 +646,7 @@
     "edge": "trailing",
     "track_duration_s": 600.3,
     "nonmusic_run_s": 19.2,
-    "music_boundary_s": 580.6,
+    "music_boundary_s": 581.5,
     "region": [
       580.6,
       600.3
@@ -712,7 +672,7 @@
     "edge": "trailing",
     "track_duration_s": 281.9,
     "nonmusic_run_s": 18.7,
-    "music_boundary_s": 263.0,
+    "music_boundary_s": 275.0,
     "region": [
       263.0,
       282.2
@@ -764,7 +724,7 @@
     "edge": "trailing",
     "track_duration_s": 442.4,
     "nonmusic_run_s": 17.8,
-    "music_boundary_s": 424.2,
+    "music_boundary_s": 425.2,
     "region": [
       424.2,
       442.4
@@ -816,7 +776,7 @@
     "edge": "trailing",
     "track_duration_s": 519.7,
     "nonmusic_run_s": 16.3,
-    "music_boundary_s": 502.9,
+    "music_boundary_s": 503.8,
     "region": [
       502.9,
       519.7
@@ -894,7 +854,7 @@
     "edge": "trailing",
     "track_duration_s": 409.9,
     "nonmusic_run_s": 15.8,
-    "music_boundary_s": 393.5,
+    "music_boundary_s": 395.0,
     "region": [
       393.5,
       409.9
@@ -920,7 +880,7 @@
     "edge": "trailing",
     "track_duration_s": 391.8,
     "nonmusic_run_s": 15.4,
-    "music_boundary_s": 376.0,
+    "music_boundary_s": 383.6,
     "region": [
       376.0,
       391.8
@@ -998,7 +958,7 @@
     "edge": "trailing",
     "track_duration_s": 338.0,
     "nonmusic_run_s": 13.9,
-    "music_boundary_s": 323.6,
+    "music_boundary_s": 325.1,
     "region": [
       323.6,
       338.0
@@ -1128,7 +1088,7 @@
     "edge": "trailing",
     "track_duration_s": 714.0,
     "nonmusic_run_s": 11.0,
-    "music_boundary_s": 702.5,
+    "music_boundary_s": 703.4,
     "region": [
       702.5,
       714.0
@@ -1180,7 +1140,7 @@
     "edge": "trailing",
     "track_duration_s": 1562.6,
     "nonmusic_run_s": 10.1,
-    "music_boundary_s": 1552.1,
+    "music_boundary_s": 1553.0,
     "region": [
       1552.1,
       1562.6
@@ -1284,7 +1244,7 @@
     "edge": "trailing",
     "track_duration_s": 759.7,
     "nonmusic_run_s": 9.1,
-    "music_boundary_s": 750.1,
+    "music_boundary_s": 752.5,
     "region": [
       750.1,
       759.7
@@ -1336,7 +1296,7 @@
     "edge": "trailing",
     "track_duration_s": 591.3,
     "nonmusic_run_s": 8.6,
-    "music_boundary_s": 582.2,
+    "music_boundary_s": 583.7,
     "region": [
       582.2,
       591.3
@@ -1466,7 +1426,7 @@
     "edge": "trailing",
     "track_duration_s": 667.1,
     "nonmusic_run_s": 7.2,
-    "music_boundary_s": 659.4,
+    "music_boundary_s": 660.4,
     "region": [
       659.4,
       667.1
@@ -1544,7 +1504,7 @@
     "edge": "trailing",
     "track_duration_s": 610.1,
     "nonmusic_run_s": 7.2,
-    "music_boundary_s": 602.4,
+    "music_boundary_s": 603.4,
     "region": [
       602.4,
       610.1
@@ -1648,7 +1608,7 @@
     "edge": "trailing",
     "track_duration_s": 697.3,
     "nonmusic_run_s": 6.2,
-    "music_boundary_s": 690.6,
+    "music_boundary_s": 692.0,
     "region": [
       690.6,
       697.3
@@ -1674,7 +1634,7 @@
     "edge": "trailing",
     "track_duration_s": 360.3,
     "nonmusic_run_s": 5.8,
-    "music_boundary_s": 354.0,
+    "music_boundary_s": 355.0,
     "region": [
       354.0,
       360.3
@@ -1726,7 +1686,7 @@
     "edge": "trailing",
     "track_duration_s": 383.5,
     "nonmusic_run_s": 5.8,
-    "music_boundary_s": 377.3,
+    "music_boundary_s": 378.3,
     "region": [
       377.3,
       383.5
@@ -1804,7 +1764,7 @@
     "edge": "trailing",
     "track_duration_s": 514.7,
     "nonmusic_run_s": 4.8,
-    "music_boundary_s": 509.4,
+    "music_boundary_s": 510.4,
     "region": [
       509.4,
       514.7
@@ -1831,7 +1791,7 @@
     "edge": "trailing",
     "track_duration_s": 376.4,
     "nonmusic_run_s": 4.3,
-    "music_boundary_s": 371.6,
+    "music_boundary_s": 373.5,
     "region": [
       371.6,
       376.4
@@ -1883,7 +1843,7 @@
     "edge": "trailing",
     "track_duration_s": 103.9,
     "nonmusic_run_s": 4.3,
-    "music_boundary_s": 99.4,
+    "music_boundary_s": 101.3,
     "region": [
       99.4,
       104.2
@@ -1909,7 +1869,7 @@
     "edge": "trailing",
     "track_duration_s": 41.7,
     "nonmusic_run_s": 3.8,
-    "music_boundary_s": 37.4,
+    "music_boundary_s": 38.9,
     "region": [
       37.4,
       41.8
@@ -1961,7 +1921,7 @@
     "edge": "trailing",
     "track_duration_s": 884.7,
     "nonmusic_run_s": 3.4,
-    "music_boundary_s": 880.9,
+    "music_boundary_s": 881.8,
     "region": [
       880.9,
       884.7
@@ -2091,7 +2051,7 @@
     "edge": "trailing",
     "track_duration_s": 909.1,
     "nonmusic_run_s": 1.4,
-    "music_boundary_s": 907.2,
+    "music_boundary_s": 908.2,
     "region": [
       907.2,
       909.1
@@ -2169,7 +2129,7 @@
     "edge": "trailing",
     "track_duration_s": 279.0,
     "nonmusic_run_s": 0.5,
-    "music_boundary_s": 278.4,
+    "music_boundary_s": 279.4,
     "region": [
       278.4,
       279.4

@@ -58,32 +58,6 @@
     "share_url": "https://phish.in/2024-07-20/say-it-to-me-s-a-n-t-o-s"
   },
   {
-    "label": "2024-08-16 Set 3 t23 Mondegreen Ambient Jam",
-    "edge": "trailing",
-    "track_duration_s": 3362.0,
-    "nonmusic_run_s": 30.2,
-    "music_boundary_s": 3332.3,
-    "region": [
-      3331.3,
-      3362.0
-    ],
-    "character": {
-      "silence": 0.02,
-      "crowd": 0.13,
-      "speech": 0.86
-    },
-    "mean_music_score": 0.025,
-    "mean_crowd_score": 0.029,
-    "mean_rms_db": -32.2,
-    "flagged": true,
-    "banter": [],
-    "songs": [
-      "Jam"
-    ],
-    "mp3_url": "https://phish.in/blob/2siv3yz5yv4mvvnntq8lz67cdgjz.mp3",
-    "share_url": "https://phish.in/2024-08-16/mondegreen-ambient-jam"
-  },
-  {
     "label": "2024-07-19 Encore t16 Harry Hood",
     "edge": "trailing",
     "track_duration_s": 715.7,

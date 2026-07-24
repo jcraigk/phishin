@@ -1,0 +1,4 @@
+# Tracks excluded from edge analysis and trimming, one share URL per line.
+# These are left alone by new scans; audio_edges:rebuild scrubs them from
+# existing reports.
+https://phish.in/2024-08-16/mondegreen-ambient-jam

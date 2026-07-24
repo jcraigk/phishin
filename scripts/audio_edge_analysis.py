@@ -73,6 +73,18 @@ STORAGE_CANDIDATES = [
     Path("/content/active_storage"),
 ]
 CACHE_DIR = REPO_ROOT / "tmp" / "audio_cache"
+IGNORE_FILE = REPO_ROOT / "data" / "edge_scan" / "ignore.txt"
+
+
+def load_ignore_urls(path):
+    """Share URLs of tracks to leave alone, one per line, # comments allowed."""
+    if not path.exists():
+        return set()
+    return {
+        line.strip().rstrip("/")
+        for line in path.read_text().splitlines()
+        if line.strip() and not line.strip().startswith("#")
+    }
 
 
 @dataclass
@@ -272,6 +284,7 @@ def write_review_html(html_path, results, trim_info, args):
     html_path.write_text(f"""<!doctype html>
 <meta charset="utf-8">
 <title>Track edge trim review</title>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">&#x2702;&#xFE0F;</text></svg>'>
 <style>
   body {{ font: 14px/1.5 -apple-system, sans-serif; margin: 2rem auto; max-width: 1100px; }}
   .row {{ border-bottom: 1px solid #ccc; padding: 1rem 0; }}
@@ -557,6 +570,9 @@ def fetch_show_jobs(date, args):
                 continue
             songs = [s["title"] for s in t.get("songs", [])]
             share = f"{SITE_BASE}/{date}/{t['slug']}" if t.get("slug") else ""
+            if share and share in args.ignore_urls:
+                print(f"  skipping {label} (in ignore list)", file=sys.stderr)
+                continue
             jobs.append((label, t["mp3_url"], edges, songs, share))
     return jobs
 
@@ -626,13 +642,16 @@ def rebuild_dir(dir_path, args):
     args.trim_dir = dir_path / "trimmed"
     args.plot_dir = dir_path / "plots"
 
-    # Soundcheck sets are excluded from new scans; scrub them from old reports
-    # along with any files rendered for them.
-    soundchecks = {r.label for r in results if re.search(r" Soundcheck t\d", r.label)}
-    if soundchecks:
-        print(f"  dropping {len(soundchecks)} soundcheck track(s)", file=sys.stderr)
-        results = [r for r in results if r.label not in soundchecks]
-        for label in soundchecks:
+    # Soundcheck sets and ignore-listed tracks are excluded from new scans;
+    # scrub them from old reports along with any files rendered for them.
+    drop = {r.label for r in results if re.search(r" Soundcheck t\d", r.label)}
+    ignored = {r.label for r in results if r.share_url.rstrip("/") in args.ignore_urls}
+    if ignored:
+        print(f"  dropping {len(ignored)} ignore-listed track(s)", file=sys.stderr)
+        drop |= ignored
+    if drop:
+        results = [r for r in results if r.label not in drop]
+        for label in drop:
             safe = re.sub(r"[^\w.-]+", "_", label)
             for p in [args.trim_dir / f"{safe}_trimmed.mp3",
                       args.trim_dir / "clips" / f"{safe}_audition.mp3",
@@ -669,6 +688,9 @@ def main():
                    help="Restrict which edges are analyzed, for all input modes. "
                         "'trailing' with --show means set closers / encore enders only (default: both)")
     p.add_argument("--window", type=float, default=300, help="Seconds to analyze at each edge (default: 300)")
+    p.add_argument("--ignore-file", type=Path, default=IGNORE_FILE,
+                   help="File of track share URLs to leave alone, one per line "
+                        f"(default: {IGNORE_FILE})")
     p.add_argument("--ring-threshold", type=float, default=0.1,
                    help="Frames in the nonmusic run scoring above this are treated as "
                         "ring-out; the cut boundary moves past the last of them (default: 0.1)")
@@ -704,6 +726,9 @@ def main():
                    help="Regenerate review.html from DIR/report.json (backfills share urls; "
                         "no audio analyzed). Repeatable.")
     args = p.parse_args()
+    args.ignore_urls = load_ignore_urls(args.ignore_file)
+    if args.ignore_urls:
+        print(f"Ignore list: {len(args.ignore_urls)} track(s) from {args.ignore_file}", file=sys.stderr)
 
     if args.rebuild:
         for dir_path in args.rebuild:
