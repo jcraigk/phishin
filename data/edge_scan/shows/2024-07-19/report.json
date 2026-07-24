@@ -1,0 +1,73 @@
+[
+  {
+    "label": "2024-07-19 Set 1 t08 46 Days",
+    "edge": "trailing",
+    "track_duration_s": 470.5,
+    "nonmusic_run_s": 36.0,
+    "music_boundary_s": 446.0,
+    "region": [
+      434.0,
+      470.5
+    ],
+    "character": {
+      "silence": 0.05,
+      "crowd": 0.31,
+      "speech": 0.64
+    },
+    "mean_music_score": 0.052,
+    "mean_crowd_score": 0.108,
+    "mean_rms_db": -21.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "46 Days"
+    ],
+    "mp3_url": "https://phish.in/blob/5hk5zbs6dp0mimmbbx25gujogq22.mp3",
+    "share_url": "https://phish.in/2024-07-19/46-days"
+  },
+  {
+    "label": "2024-07-19 Encore t16 Harry Hood",
+    "edge": "trailing",
+    "track_duration_s": 715.7,
+    "nonmusic_run_s": 25.9,
+    "music_boundary_s": 689.3,
+    "region": [
+      689.3,
+      715.7
+    ],
+    "character": {
+      "silence": 0.09,
+      "crowd": 0.44,
+      "speech": 0.46
+    },
+    "mean_music_score": 0.002,
+    "mean_crowd_score": 0.227,
+    "mean_rms_db": -27.6,
+    "flagged": true,
+    "banter": [],
+    "songs": [
+      "Harry Hood"
+    ],
+    "mp3_url": "https://phish.in/blob/fpt78aodgy9ixo08t404a7sx9su5.mp3",
+    "share_url": "https://phish.in/2024-07-19/harry-hood"
+  },
+  {
+    "label": "2024-07-19 Set 2 t15 Split Open and Melt",
+    "edge": "trailing",
+    "track_duration_s": 889.3,
+    "nonmusic_run_s": 0.0,
+    "music_boundary_s": 889.3,
+    "region": [],
+    "character": {},
+    "mean_music_score": 0.0,
+    "mean_crowd_score": 0.0,
+    "mean_rms_db": 0.0,
+    "flagged": false,
+    "banter": [],
+    "songs": [
+      "Split Open and Melt"
+    ],
+    "mp3_url": "https://phish.in/blob/fak89j7i5s8p13qc65hbz7wnwt3h.mp3",
+    "share_url": "https://phish.in/2024-07-19/split-open-and-melt"
+  }
+]

@@ -13,7 +13,7 @@
   #export { position: fixed; top: 1rem; right: 1rem; padding: .5rem 1rem; }
 </style>
 <button id="export">Export approved.json</button>
-<h1>Track edge trim review (4 candidates)</h1>
+<h1>Track edge trim review (2 candidates)</h1>
 
 <div class="row">
   <div class="head">
@@ -28,28 +28,6 @@
 </div>
 <div class="row">
   <div class="head">
-    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;2024-07-20 Encore t19 Say It to Me S.A.N.T.O.S.&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/9t3rulk4y3s2wkore82aibu0u0mf.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/2024-07-20/say-it-to-me-s-a-n-t-o-s&quot;, &quot;music_boundary_s&quot;: 384.0, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 391.3}">
-    <strong><a href="https://phish.in/2024-07-20/say-it-to-me-s-a-n-t-o-s" target="_blank">2024-07-20 Encore t19 Say It to Me S.A.N.T.O.S.</a></strong>
-    <span class="meta">trailing edge &middot; run 30.2s &middot;
-      cut 23.4s &middot; boundary 384.0s &middot; silence 11%, crowd 14%, speech 75%</span>
-  </div>
-  <div class="banter">381.0-382.6s: &ldquo;Oh&rdquo;</div>
-  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/2024-07-20_Encore_t19_Say_It_to_Me_S.A.N.T.O.S._audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/2024-07-20_Encore_t19_Say_It_to_Me_S.A.N.T.O.S._original.mp3"></audio></div>
-  <img src="plots/2024-07-20_Encore_t19_Say_It_to_Me_S.A.N.T.O.S._trailing.png" loading="lazy">
-</div>
-<div class="row">
-  <div class="head">
-    <input type="checkbox" data-payload="{&quot;label&quot;: &quot;2024-08-16 Set 3 t23 Mondegreen Ambient Jam&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/2siv3yz5yv4mvvnntq8lz67cdgjz.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/2024-08-16/mondegreen-ambient-jam&quot;, &quot;music_boundary_s&quot;: 3332.3, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 3339.6000000000004}">
-    <strong><a href="https://phish.in/2024-08-16/mondegreen-ambient-jam" target="_blank">2024-08-16 Set 3 t23 Mondegreen Ambient Jam</a></strong>
-    <span class="meta">trailing edge &middot; run 30.2s &middot;
-      cut 22.4s &middot; boundary 3332.3s &middot; silence 2%, crowd 13%, speech 86%</span>
-  </div>
-  
-  <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/2024-08-16_Set_3_t23_Mondegreen_Ambient_Jam_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/2024-08-16_Set_3_t23_Mondegreen_Ambient_Jam_original.mp3"></audio></div>
-  <img src="plots/2024-08-16_Set_3_t23_Mondegreen_Ambient_Jam_trailing.png" loading="lazy">
-</div>
-<div class="row">
-  <div class="head">
     <input type="checkbox" data-payload="{&quot;label&quot;: &quot;2024-07-19 Encore t16 Harry Hood&quot;, &quot;edge&quot;: &quot;trailing&quot;, &quot;mp3_url&quot;: &quot;https://phish.in/blob/fpt78aodgy9ixo08t404a7sx9su5.mp3&quot;, &quot;share_url&quot;: &quot;https://phish.in/2024-07-19/harry-hood&quot;, &quot;music_boundary_s&quot;: 689.3, &quot;trim_start&quot;: 0.0, &quot;trim_end&quot;: 696.5999999999999}">
     <strong><a href="https://phish.in/2024-07-19/harry-hood" target="_blank">2024-07-19 Encore t16 Harry Hood</a></strong>
     <span class="meta">trailing edge &middot; run 25.9s &middot;
@@ -59,7 +37,7 @@
   <div class="audio"><label>Trimmed result</label><audio controls preload="none" src="trimmed/clips/2024-07-19_Encore_t16_Harry_Hood_audition.mp3"></audio><label>Original tail</label><audio controls preload="none" src="trimmed/clips/2024-07-19_Encore_t16_Harry_Hood_original.mp3"></audio></div>
   <img src="plots/2024-07-19_Encore_t16_Harry_Hood_trailing.png" loading="lazy">
 </div>
-<h2>Flagged but not trimmed (2)</h2><div class="meta"><a href="https://phish.in/2024-12-31/the-squirming-coil" target="_blank">2024-12-31 Set 1 t10 The Squirming Coil</a> &middot; run 24.5s, cut 0.0s &mdash; left untouched</div><div class="meta"><a href="https://phish.in/2024-07-31/the-squirming-coil" target="_blank">2024-07-31 Set 1 t10 The Squirming Coil</a> &middot; run 24.0s, cut 0.0s &mdash; left untouched</div>
+
 <script>
 document.getElementById("export").onclick = () => {
   const approved = [...document.querySelectorAll("input:checked")]
