@@ -58,6 +58,8 @@ module AudioEdgeScan
       <!doctype html>
       <meta charset="utf-8">
       <title>Track edge trim reports</title>
+      <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">✂️</text></svg>'>
+
       <style>
         body { font: 14px/1.5 -apple-system, sans-serif; margin: 2rem auto; max-width: 700px; }
         table { border-collapse: collapse; width: 100%; }
@@ -193,8 +195,11 @@ namespace :audio_edges do
           dry_run:
         )
         applied += 1
+        track = attachment.record
+        share_url = entry["share_url"].presence || "https://phish.in/#{track.show.date}/#{track.slug}"
         status = result[:applied] ? "APPLIED" : "RENDERED"
         puts "#{status}  #{label}: kept #{result[:kept_s]}s, cut #{result[:cut_s]}s"
+        puts "  track:   #{share_url}"
         puts "  listen:  #{result[:output_path]}"
         puts "  backup:  #{result[:backup_path]}" if result[:backup_path]
       rescue AudioEdgeTrimService::Error => e
