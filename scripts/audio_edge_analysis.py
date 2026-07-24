@@ -458,6 +458,18 @@ def analyze_edge(yamnet, banter_finder, path, duration_s, edge, args, label, son
     boundary = region[1] if edge == "leading" and region else (
         region[0] if region else (0.0 if edge == "leading" else duration_s))
 
+    if run_frames:
+        # Hysteresis for the cut point: frames inside the run that still score
+        # above ring_threshold are usually ring-out/sustain decay (YAMNet is
+        # ~10-20% confident on decaying notes), not crowd. Push the boundary
+        # outward past the last of them so fades never clip the end of the music.
+        ringing = [i for i in run_frames if music_sm[i] >= args.ring_threshold]
+        if ringing:
+            if edge == "leading":
+                boundary = min(boundary, offset_s + min(ringing) * FRAME_HOP_S)
+            else:
+                boundary = max(boundary, offset_s + max(ringing) * FRAME_HOP_S + FRAME_WIN_S)
+
     banter = []
     if banter_finder and region and run_s >= args.min_duration:
         # Transcribe a bit past the region edges so speech straddling the music
@@ -507,6 +519,7 @@ def plot_edge(plot_dir, result, offset_s, music, crowd, rms_db, region):
     ax2.set_ylabel("RMS (dB)")
     if region:
         ax.axvspan(region[0], region[1], color="red", alpha=0.15)
+        ax.axvline(result.music_boundary_s, color="red", linestyle="--", alpha=0.7)
     ax.legend(loc="upper left")
     ax.set_title(f"{result.label} [{result.edge}] run={result.nonmusic_run_s}s")
     plot_dir.mkdir(parents=True, exist_ok=True)
@@ -656,6 +669,9 @@ def main():
                    help="Restrict which edges are analyzed, for all input modes. "
                         "'trailing' with --show means set closers / encore enders only (default: both)")
     p.add_argument("--window", type=float, default=300, help="Seconds to analyze at each edge (default: 300)")
+    p.add_argument("--ring-threshold", type=float, default=0.1,
+                   help="Frames in the nonmusic run scoring above this are treated as "
+                        "ring-out; the cut boundary moves past the last of them (default: 0.1)")
     p.add_argument("--music-threshold", type=float, default=0.2,
                    help="Music score below this = non-music frame (default: 0.2)")
     p.add_argument("--min-duration", type=float, default=20,
