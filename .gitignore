@@ -8,6 +8,7 @@
 /.vscode
 /.yarn
 /coverage
+/data
 /log
 /node_modules
 /public/mcp-widgets/*.html
