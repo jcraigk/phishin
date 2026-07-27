@@ -4807,10 +4807,10 @@ react-modal@^3.16.1:
     react-lifecycles-compat "^3.0.0"
     warning "^4.0.3"
 
-react-on-rails@16.6.0:
-  version "16.6.0"
-  resolved "https://registry.yarnpkg.com/react-on-rails/-/react-on-rails-16.6.0.tgz#da7f117fec14f420f7f6ffe6bdb34b7fc2e01b3a"
-  integrity sha512-LqLi7A0n0Tv5c3yMYlwS9s6rE82gvXNMj3sscmK2LOgIJ+mLQlOX65n0Jq5ZJ4Nsl9SRgxEOOQmcrfvDeB9F1g==
+react-on-rails@17.0.0:
+  version "17.0.0"
+  resolved "https://registry.yarnpkg.com/react-on-rails/-/react-on-rails-17.0.0.tgz#5bc518fb73c6c250fb8cbf1aa4d3bc36b0093c1f"
+  integrity sha512-jVJmaXJaVsCVoZCWMQ3ePACWaGkq3hOlmbeR0LniQKLr8+kDDgL0RbZ/6D1J2tMAsd1CxS+sOu0PCyO0ZfAQ+g==
 
 react-paginate@^8.2.0:
   version "8.3.0"

@@ -16,6 +16,8 @@ RSpec.describe ShowImporter::TrackReplacer do
     allow(Id3TagService).to receive(:call)
     allow(Rails.cache).to receive(:clear)
     allow($stdin).to receive(:gets).and_return("Y")
+    allow($stdout).to receive(:write)
+    allow($stderr).to receive(:write)
 
     FileUtils.mkdir_p("#{import_path}/#{date}")
     FileUtils.cp(placeholder_audio, "#{import_path}/#{date}/I 01 Tweezer.mp3")

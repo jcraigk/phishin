@@ -27,6 +27,8 @@ RSpec.describe ShowImporter::Orchestrator do
 
     allow(App).to receive(:content_import_path).and_return(import_path)
     allow(ShowImporter::ShowInfo).to receive(:new).with(date).and_return(show_info)
+    allow($stdout).to receive(:write)
+    allow($stderr).to receive(:write)
 
     FileUtils.mkdir_p("#{import_path}/#{date}")
     FileUtils.cp(placeholder_audio, "#{import_path}/#{date}/I 01 Bold_as_Love.mp3")
