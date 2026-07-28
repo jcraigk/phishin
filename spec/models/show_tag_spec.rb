@@ -9,4 +9,6 @@ RSpec.describe ShowTag do
   it { is_expected.to belong_to(:tag).counter_cache(:shows_count) }
 
   it { is_expected.to validate_uniqueness_of(:show).scoped_to(:tag_id) }
+
+  it_behaves_like "normalizes notes"
 end

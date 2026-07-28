@@ -134,6 +134,7 @@ class LoreSyncService < ApplicationService
   end
 
   def apply_show_tag(show, extracted_notes, tag, tag_name)
+    extracted_notes = ShowTag.normalize_value_for(:notes, extracted_notes)
     existing = ShowTag.find_by(show:, tag:)
     show_url = "https://phish.in/#{show.date}"
     colored_tag = colorize(tag_name, tag.color)
@@ -166,7 +167,7 @@ class LoreSyncService < ApplicationService
       next unless track
 
       existing = TrackTag.find_by(track:, tag:)
-      notes = track_note["notes"]
+      notes = TrackTag.normalize_value_for(:notes, track_note["notes"])
 
       track_url = "https://phish.in/#{show.date}/#{track.slug}"
 

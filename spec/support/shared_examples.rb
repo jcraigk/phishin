@@ -1,3 +1,35 @@
+RSpec.shared_examples "normalizes notes" do
+  it "strips the trailing period from a single-sentence note" do
+    subject.notes = "Trey on a mini drum kit."
+    expect(subject.notes).to eq("Trey on a mini drum kit")
+  end
+
+  it "keeps the trailing period on a multi-sentence note" do
+    subject.notes = "White coils descended. Dancers appeared."
+    expect(subject.notes).to eq("White coils descended. Dancers appeared.")
+  end
+
+  it "keeps a trailing ellipsis" do
+    subject.notes = "The jam trailed off..."
+    expect(subject.notes).to eq("The jam trailed off...")
+  end
+
+  it "keeps other terminal punctuation" do
+    subject.notes = "Happy birthday, Fish!"
+    expect(subject.notes).to eq("Happy birthday, Fish!")
+  end
+
+  it "strips surrounding whitespace" do
+    subject.notes = " Trey on marimba. "
+    expect(subject.notes).to eq("Trey on marimba")
+  end
+
+  it "leaves nil untouched" do
+    subject.notes = nil
+    expect(subject.notes).to be_nil
+  end
+end
+
 RSpec.shared_examples 'responds with 404' do
   let(:json) { JSON[subject.body].deep_symbolize_keys }
 

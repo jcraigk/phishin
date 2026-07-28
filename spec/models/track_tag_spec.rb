@@ -7,4 +7,6 @@ RSpec.describe TrackTag do
 
   it { is_expected.to belong_to(:track).counter_cache(:tags_count) }
   it { is_expected.to belong_to(:tag).counter_cache(:tracks_count) }
+
+  it_behaves_like "normalizes notes"
 end
