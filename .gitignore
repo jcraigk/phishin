@@ -20,3 +20,6 @@
 yarn-debug.log*
 __pycache__/
 .agents/
+
+# Audio edge scan reports live on the audio-edge-analysis branch only
+data/edge_scan/
