@@ -14,7 +14,7 @@ Join the [Discord](https://discord.gg/KZWFsNN) to discuss content and developmen
 1. Install [Docker](https://www.docker.com/)
 
 2. Clone the repo to your local machine
-3. Create a `.env` file at the root of the repository
+3. Create a `.env` file at the root of the repository (copy `.env.example` for the available settings)
 4. Run `mise run services`
 
 5. Download the [Development SQL File](https://www.dropbox.com/scl/fi/6zv4bzxxcjgv3ouv8d3ek/phishin-dev.sql?rlkey=4trafp2vxcgc1iuuq36yhl9gc) and import it:
