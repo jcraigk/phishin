@@ -84,7 +84,8 @@ class ApiV2::Playlists < ApiV2::Base
       present \
         playlist,
         with: ApiV2::Entities::Playlist,
-        liked_by_user: current_user&.likes&.exists?(likable: playlist) || false
+        liked_by_user: current_user&.likes&.exists?(likable: playlist) || false,
+        liked_track_ids: fetch_liked_track_ids([ playlist ])
     end
 
     desc "Create a new playlist" do

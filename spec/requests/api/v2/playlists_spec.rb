@@ -107,6 +107,34 @@ RSpec.describe "API v2 Playlists" do
       expect(json[:entries].size).to eq(2)
       expect(json[:entries].map { it[:track][:slug] }).to contain_exactly(track1.slug, track2.slug)
     end
+
+    context "when the user has liked a track but not the playlist" do
+      before { create(:like, user:, likable: track1) }
+
+      it "returns liked_by_user based on each track's own likes" do
+        get_api_authed(user, "/playlists/#{playlist.slug}")
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        entries = json[:entries].index_by { it[:track][:slug] }
+
+        expect(json[:liked_by_user]).to be(false)
+        expect(entries[track1.slug][:track][:liked_by_user]).to be(true)
+        expect(entries[track2.slug][:track][:liked_by_user]).to be(false)
+      end
+    end
+
+    context "when the user has liked the playlist but none of its tracks" do
+      before { create(:like, user:, likable: playlist) }
+
+      it "does not report tracks as liked" do
+        get_api_authed(user, "/playlists/#{playlist.slug}")
+
+        json = JSON.parse(response.body, symbolize_names: true)
+
+        expect(json[:liked_by_user]).to be(true)
+        expect(json[:entries].map { it[:track][:liked_by_user] }).to all(be(false))
+      end
+    end
   end
 
   describe "POST /playlists" do
