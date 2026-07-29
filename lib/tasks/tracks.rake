@@ -93,6 +93,43 @@ namespace :tracks do
     end
   end
 
+  desc "Retag a single track with full error output (IDS=253)"
+  task retag_one: :environment do
+    track = Track.find(ENV.fetch("IDS").split(",").first)
+    show = track.show
+
+    puts "track #{track.id} #{show.date} #{track.title}"
+    puts "before_checker=#{Id3AlbumArtChecker.call(track)}"
+    puts "key_before=#{track.mp3_audio.blob.key}"
+    puts "cover_attached=#{show.album_cover.attached?}"
+
+    begin
+      variant = show.album_cover.variant(:id3).processed
+      data = variant.download
+      puts "variant_bytes=#{data&.bytesize.inspect}"
+    rescue StandardError => e
+      puts "VARIANT RAISED #{e.class}: #{e.message}"
+      puts e.backtrace.first(5)
+    end
+
+    begin
+      Id3TagService.call(track)
+      puts "tag_service=completed"
+    rescue StandardError => e
+      puts "TAG SERVICE RAISED #{e.class}: #{e.message}"
+      puts e.backtrace.first(5)
+    end
+
+    fresh = Track.find(track.id)
+    puts "key_after=#{fresh.mp3_audio.blob.key}"
+    puts "after_checker=#{Id3AlbumArtChecker.call(fresh)}"
+
+    path = ActiveStorage::Blob.service.path_for(fresh.mp3_audio.blob.key)
+    puts "file_exists=#{File.exist?(path)}"
+    require "mp3info"
+    Mp3Info.open(path) { |mp3| puts "pictures_after=#{mp3.tag2.pictures.size}" }
+  end
+
   desc "Report tracks whose MP3 files have no embedded album art (set FIX=true to retag them)"
   task audit_album_art: :environment do
     fix = ENV["FIX"] == "true"
