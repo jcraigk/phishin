@@ -39,6 +39,17 @@ RSpec.describe TrackInserter do
     end
   end
 
+  context 'when the track is inserted' do
+    before do
+      allow(Rails.cache).to receive(:clear)
+      service.call
+    end
+
+    it 'clears the Rails cache' do
+      expect(Rails.cache).to have_received(:clear)
+    end
+  end
+
   context 'with valid options' do
     context 'when file does not exist' do
       let(:file) { '/nonexistent/file' }

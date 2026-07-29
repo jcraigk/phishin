@@ -17,6 +17,7 @@ class TrackInserter
   def call
     shift_track_positions
     insert_new_track
+    clear_rails_cache
   end
 
   private
@@ -62,5 +63,9 @@ class TrackInserter
 
   def song
     @song ||= Song.find_by(id: song_id)
+  end
+
+  def clear_rails_cache
+    Rails.cache.clear
   end
 end
