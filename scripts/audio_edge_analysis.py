@@ -66,6 +66,7 @@ CROWD_CLASSES = ["Applause", "Cheering", "Crowd", "Clapping", "Chatter"]
 SPEECH_CLASSES = ["Speech"]
 SILENCE_RMS_DB = -48.0
 MIN_CUT_S = 5.0  # skip trims that would remove less than this
+CLIP_LEAD_S = 3.0  # music kept before the boundary in review clips
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 STORAGE_CANDIDATES = [
@@ -99,7 +100,7 @@ class EdgeResult:
     mean_music_score: float
     mean_crowd_score: float
     mean_rms_db: float
-    flagged: bool
+    flagged: bool = False  # internal screening state; recomputed on load, kept out of report.json
     banter: list = field(default_factory=list)  # [{start, end, text}] on-mic speech in the region
     songs: list = field(default_factory=list)
     mp3_url: str = ""
@@ -125,6 +126,14 @@ def probe_bitrate(path):
     ])
     raw = out.stdout.decode().strip()
     return f"{round(int(raw) / 1000)}k" if raw.isdigit() else "192k"
+
+
+def report_json(results):
+    """Serialize results for report.json. `flagged` is internal screening state
+    (run length vs --min-duration) and stays out of the report."""
+    return json.dumps(
+        [{k: v for k, v in asdict(r).items() if k != "flagged"} for r in results],
+        indent=2)
 
 
 def effective_boundary(result, gap_s):
@@ -191,18 +200,20 @@ def trim_track(path, duration_s, edge_results, args, label):
         # Audition clip: last notes, kept crowd/banter, and the full fade-out.
         clip_dir = args.trim_dir / "clips"
         clip_dir.mkdir(exist_ok=True)
-        clip_start = max(0.0, flagged["trailing"].music_boundary_s - 10 - start)
+        boundary = flagged["trailing"].music_boundary_s
+        clip_start = max(0.0, boundary - CLIP_LEAD_S - start)
         clip = clip_dir / f"{safe_label}_audition.mp3"
         if render_clip(["ffmpeg", "-y", "-v", "error", "-ss", f"{clip_start:.2f}",
                         "-i", str(out_path), "-c", "copy", str(clip)], label):
             info["audition"] = clip
-        # What's being cut, for comparison (first 40s of the removed region).
+        # What's being cut, for comparison (the removed region from the same
+        # lead-in, long enough to hear whether it's crowd noise or banter).
         orig_clip = clip_dir / f"{safe_label}_original.mp3"
         # aresample forces the filtergraph to rebuffer frames; without it,
         # ffmpeg 8 libmp3lame rejects some mp3 decoder output ("inadequate
         # AVFrame plane padding").
         if render_clip(["ffmpeg", "-y", "-v", "error",
-                        "-ss", f"{max(0.0, flagged['trailing'].music_boundary_s - 10):.2f}", "-t", "50",
+                        "-ss", f"{max(0.0, boundary - CLIP_LEAD_S):.2f}", "-t", "50",
                         "-i", str(path), "-af", "aresample=osf=s16p",
                         "-b:a", "128k", str(orig_clip)], label):
             info["original"] = orig_clip
@@ -299,7 +310,7 @@ def write_review_html(html_path, results, trim_info, args):
 <button id="export">Export approved.json</button>
 <h1>Track edge trim review ({len(rows)} candidates)</h1>
 {"".join(rows)}
-{f'<h2>Flagged but not trimmed ({len(skipped)})</h2>{"".join(skipped)}' if skipped else ""}
+{f'<h2>Not trimmed ({len(skipped)})</h2>{"".join(skipped)}' if skipped else ""}
 <script>
 document.getElementById("export").onclick = () => {{
   const approved = [...document.querySelectorAll("input:checked")]
@@ -638,7 +649,12 @@ def rebuild_dir(dir_path, args):
     if not report_path.exists():
         print(f"  no report.json in {dir_path}, skipping", file=sys.stderr)
         return
-    results = [EdgeResult(**e) for e in json.loads(report_path.read_text())]
+    results = []
+    for entry in json.loads(report_path.read_text()):
+        entry.pop("flagged", None)  # older reports carried it; recompute either way
+        result = EdgeResult(**entry)
+        result.flagged = result.nonmusic_run_s >= args.min_duration
+        results.append(result)
     args.trim_dir = dir_path / "trimmed"
     args.plot_dir = dir_path / "plots"
 
@@ -662,7 +678,7 @@ def rebuild_dir(dir_path, args):
 
     backfill_share_urls(results)
     trim_info = reconstruct_trim_info(results, args)
-    report_path.write_text(json.dumps([asdict(r) for r in results], indent=2))
+    report_path.write_text(report_json(results))
     write_review_html(dir_path / "review.html", results, trim_info, args)
 
 
@@ -712,9 +728,9 @@ def main():
                    help="Seconds of crowd noise to keep before music starts when trimming (default: 3)")
     p.add_argument("--fade-in", type=float, default=1.0,
                    help="Fade-in seconds on a trimmed leading edge (default: 1.0)")
-    p.add_argument("--fade-delay", type=float, default=1.3,
+    p.add_argument("--fade-delay", type=float, default=2.0,
                    help="Seconds of untouched crowd noise after the music/banter boundary "
-                        "before the fade-out starts (default: 1.3)")
+                        "before the fade-out starts (default: 2.0)")
     p.add_argument("--fade-out", type=float, default=6.0,
                    help="Fade-out seconds on a trimmed trailing edge (default: 6.0)")
     p.add_argument("--no-transcribe", action="store_true",
@@ -786,18 +802,17 @@ def main():
             failures.append(f"{label}: {e}")
 
     results.sort(key=lambda r: r.nonmusic_run_s, reverse=True)
-    print(f"\n{'FLAG':4} {'RUN(s)':>7} {'EDGE':8} {'CHARACTER':28} {'BOUNDARY':>8}  TRACK")
+    print(f"\n{'RUN(s)':>7} {'EDGE':8} {'CHARACTER':28} {'BOUNDARY':>8}  TRACK")
     for r in results:
-        flag = "*" if r.flagged else ""
         segue = " [multi-song]" if len(r.songs) > 1 else ""
         char = ", ".join(f"{k}:{v:.0%}" for k, v in r.character.items() if v > 0) or "-"
-        print(f"{flag:4} {r.nonmusic_run_s:7.1f} {r.edge:8} {char:28} {r.music_boundary_s:8.1f}  {r.label}{segue}")
+        print(f"{r.nonmusic_run_s:7.1f} {r.edge:8} {char:28} {r.music_boundary_s:8.1f}  {r.label}{segue}")
         for seg in r.banter:
-            print(f"{'':4} {'':7} {'':8}   banter {seg['start']:.1f}-{seg['end']:.1f}s: \"{seg['text']}\"")
+            print(f"{'':7} {'':8}   banter {seg['start']:.1f}-{seg['end']:.1f}s: \"{seg['text']}\"")
 
     if args.json:
         args.json.parent.mkdir(parents=True, exist_ok=True)
-        args.json.write_text(json.dumps([asdict(r) for r in results], indent=2))
+        args.json.write_text(report_json(results))
         print(f"\nReport written to {args.json}", file=sys.stderr)
 
     if args.html:

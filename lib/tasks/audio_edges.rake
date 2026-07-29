@@ -39,19 +39,17 @@ module AudioEdgeScan
       year = File.basename(dir)
       report_path = File.join(dir, "report.json")
       unless File.exist?(report_path)
-        next %(<tr><td>#{year}</td><td colspan="4" class="pending">no report yet (scan running or failed)</td></tr>)
+        next %(<tr><td>#{year}</td><td colspan="3" class="pending">no report yet (scan running or failed)</td></tr>)
       end
 
       entries = JSON.parse(File.read(report_path))
-      flagged = entries.count { |e| e["flagged"] }
       trims = Dir.glob(File.join(dir, "trimmed", "*_trimmed.mp3")).size
       approved = File.exist?(File.join(dir, "approved.json"))
       totals[:entries] += entries.size
-      totals[:flagged] += flagged
       totals[:trims] += trims
       totals[:approved] += 1 if approved
       %(<tr><td><a href="#{year}/review.html">#{year}</a></td><td>#{entries.size}</td>) +
-        %(<td>#{flagged}</td><td>#{trims}</td><td>#{approved ? 'yes' : ''}</td></tr>)
+        %(<td>#{trims}</td><td>#{approved ? 'yes' : ''}</td></tr>)
     end
 
     File.write("#{SCAN_ROOT}/index.html", <<~HTML)
@@ -73,11 +71,11 @@ module AudioEdgeScan
       <p class="meta">Generated #{Time.now.strftime('%Y-%m-%d %H:%M')}</p>
       <table>
         <thead>
-          <tr><th>Year</th><th>Edges analyzed</th><th>Flagged</th><th>Trims rendered</th><th>Approved</th></tr>
+          <tr><th>Year</th><th>Edges analyzed</th><th>Trims rendered</th><th>Approved</th></tr>
         </thead>
         <tbody>#{rows.join("\n")}</tbody>
         <tfoot>
-          <tr><td>Total</td><td>#{totals[:entries]}</td><td>#{totals[:flagged]}</td>
+          <tr><td>Total</td><td>#{totals[:entries]}</td>
           <td>#{totals[:trims]}</td><td>#{totals[:approved]} year(s)</td></tr>
         </tfoot>
       </table>
