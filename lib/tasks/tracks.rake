@@ -93,6 +93,36 @@ namespace :tracks do
     end
   end
 
+  desc "Diagnose the :id3 album cover variant for a show (DATE=1987-04-29)"
+  task diagnose_variant: :environment do
+    show = Show.find_by!(date: ENV.fetch("DATE"))
+    cover = show.album_cover
+
+    puts "show #{show.date} cover_attached=#{cover.attached?}"
+    blob = cover.blob
+    puts "blob key=#{blob.key} content_type=#{blob.content_type} byte_size=#{blob.byte_size}"
+    puts "analyzed=#{blob.analyzed?} metadata=#{blob.metadata.inspect}"
+
+    src = ActiveStorage::Blob.service.path_for(blob.key)
+    puts "source_exists=#{File.exist?(src)} actual_size=#{File.exist?(src) ? File.size(src) : 'n/a'}"
+    puts "magic_bytes=#{File.binread(src, 4).unpack1('H*')}" if File.exist?(src)
+
+    puts "variant_processor=#{Rails.application.config.active_storage.variant_processor}"
+    puts "imagemagick=#{`which convert magick 2>/dev/null`.strip.inspect}"
+
+    variant = cover.variant(:id3)
+    begin
+      processed = variant.processed
+      puts "processed_ok key=#{processed.key}"
+      puts "variant_service_exists=#{ActiveStorage::Blob.service.exist?(processed.key)}"
+      data = processed.download
+      puts "download_bytes=#{data&.bytesize.inspect}"
+    rescue StandardError => e
+      puts "VARIANT RAISED #{e.class}: #{e.message}"
+      puts e.backtrace.first(8)
+    end
+  end
+
   desc "Retag a single track with full error output (IDS=253)"
   task retag_one: :environment do
     track = Track.find(ENV.fetch("IDS").split(",").first)
