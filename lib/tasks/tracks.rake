@@ -68,6 +68,28 @@ namespace :tracks do
       rescue StandardError => e
         puts "  download RAISED #{e.class}: #{e.message}"
       end
+
+      next unless track.mp3_audio.attached?
+
+      path = ActiveStorage::Blob.service.path_for(track.mp3_audio.blob.key)
+      header = File.binread(path, 10).to_s
+      puts "  first3=#{header[0, 3].inspect} version=2.#{header.getbyte(3)}.#{header.getbyte(4)}"
+      size_bytes = header[6, 4].to_s.unpack("C4")
+      puts "  size_bytes=#{size_bytes.inspect} syncsafe_ok=#{size_bytes.compact.none? { |b| b > 0x7f }}"
+
+      require "mp3info"
+      begin
+        Mp3Info.open(path) do |mp3|
+          puts "  mp3info_v2_present=#{mp3.hastag2?} frames=#{mp3.tag2.keys.sort.join(',')}"
+          puts "  mp3info_pictures=#{mp3.tag2.pictures.size}"
+        end
+      rescue StandardError => e
+        puts "  mp3info RAISED #{e.class}: #{e.message}"
+      end
+
+      # Does the APIC bytestring appear anywhere in the first 4MB?
+      head = File.binread(path, 4_000_000).to_s
+      puts "  apic_in_head=#{head.include?('APIC')} at=#{head.index('APIC').inspect}"
     end
   end
 
