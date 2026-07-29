@@ -31,6 +31,46 @@ namespace :tracks do
     pbar.finish
   end
 
+  desc "Diagnose why specific tracks are missing album art (IDS=253,275,330)"
+  task diagnose_album_art: :environment do
+    ids = ENV["IDS"].to_s.split(",").map(&:strip).reject(&:empty?)
+    if ids.empty?
+      puts "Provide track ids, e.g. IDS=253,275,330"
+      next
+    end
+
+    puts "storage service: #{ActiveStorage::Blob.service.class}"
+
+    Track.where(id: ids).includes(:show).find_each do |track|
+      show = track.show
+      puts "\ntrack #{track.id} #{show.date} #{track.title}"
+      puts "  audio_status=#{track.audio_status}"
+      puts "  mp3_attached=#{track.mp3_audio.attached?}"
+
+      if track.mp3_audio.attached?
+        blob = track.mp3_audio.blob
+        path = ActiveStorage::Blob.service.path_for(blob.key)
+        puts "  mp3_file_exists=#{File.exist?(path)} db_byte_size=#{blob.byte_size}"
+        puts "  mp3_path=#{path}"
+      end
+
+      puts "  album_cover_attached=#{show.album_cover.attached?}"
+      if show.album_cover.attached?
+        cover_path = ActiveStorage::Blob.service.path_for(show.album_cover.blob.key)
+        puts "  cover_file_exists=#{File.exist?(cover_path)}"
+      end
+
+      puts "  checker=#{Id3AlbumArtChecker.call(track)}"
+
+      begin
+        Id3TagService.new(track).send(:temp_audio_file_path)
+        puts "  download=OK"
+      rescue StandardError => e
+        puts "  download RAISED #{e.class}: #{e.message}"
+      end
+    end
+  end
+
   desc "Report tracks whose MP3 files have no embedded album art (set FIX=true to retag them)"
   task audit_album_art: :environment do
     fix = ENV["FIX"] == "true"
@@ -70,11 +110,23 @@ namespace :tracks do
 
     puts "\nRe-applying ID3 tags to #{missing.size} tracks..."
     fix_bar = ProgressBar.create(total: missing.size, format: "%a %B %c/%C %p%% %E")
+    still_missing = []
+
     missing.each do |track|
       track.apply_id3_tags
+      # apply_id3_tags re-attaches a new blob, so re-read the track before
+      # re-checking rather than trusting the stale in-memory attachment.
+      still_missing << track if Id3AlbumArtChecker.call(Track.find(track.id)) != :present
       fix_bar.increment
     end
+
     fix_bar.finish
+
+    puts "Repaired: #{missing.size - still_missing.size}"
+    next if still_missing.empty?
+
+    puts "Still missing after retagging: #{still_missing.size}"
+    still_missing.first(50).each { |t| puts "  #{t.show.date} #{t.position} #{t.title} (id #{t.id})" }
   end
 
   desc "Reset MP3 filenames on blobs to friendly download format"
