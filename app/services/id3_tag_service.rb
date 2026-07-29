@@ -67,18 +67,29 @@ class Id3TagService < ApplicationService
   def apply_album_art(mp3)
     return unless show.album_cover.attached?
 
-    # Process and download the ID3 variant
-    album_cover_variant = show.album_cover.variant(:id3).processed
-    return unless album_art_data = album_cover_variant.download
+    # Process and download the ID3 variant. A previous run may have left an
+    # orphaned VariantRecord behind (row present, image attachment gone), which
+    # yields a blank key and no data, so purge and regenerate when that happens.
+    album_art_data = processed_id3_variant_data
+    return if album_art_data.blank?
 
-    # Attach album art to ID3 tag
     mp3.tag2.add_picture(album_art_data)
+  end
 
-    # Remove the processed variant file
-    ActiveStorage::VariantRecord.find_by(
-      blob_id: album_cover_variant.blob.id,
-      variation_digest: album_cover_variant.variation.digest
-    )&.destroy
+  def processed_id3_variant_data
+    variant = show.album_cover.variant(:id3).processed
+    return variant.download if variant.key.present?
+
+    purge_orphaned_variant_record
+    show.album_cover.reload
+    show.album_cover.variant(:id3).processed.download
+  end
+
+  def purge_orphaned_variant_record
+    variation_digest = show.album_cover.variant(:id3).variation.digest
+    ActiveStorage::VariantRecord
+      .where(blob_id: show.album_cover.blob.id, variation_digest:)
+      .destroy_all
   end
 
   def comments

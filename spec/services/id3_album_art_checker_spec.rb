@@ -33,6 +33,27 @@ RSpec.describe Id3AlbumArtChecker do
     end
   end
 
+  context "when a previous run orphaned the id3 variant record" do
+    before do
+      attach_placeholder_audio
+      attach_album_cover
+
+      variant = show.album_cover.variant(:id3).processed
+      ActiveStorage::VariantRecord.find_by(
+        blob_id: variant.blob.id,
+        variation_digest: variant.variation.digest
+      ).image_attachment.delete
+      show.reload
+
+      Id3TagService.call(track)
+      track.reload
+    end
+
+    it "regenerates the variant and still embeds the album art" do
+      expect(result).to eq(:present)
+    end
+  end
+
   def attach_placeholder_audio
     track.mp3_audio.attach(
       io: File.open(Rails.root.join("public/placeholders/audio.mp3")),
