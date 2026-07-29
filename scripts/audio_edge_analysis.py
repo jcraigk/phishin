@@ -66,7 +66,7 @@ CROWD_CLASSES = ["Applause", "Cheering", "Crowd", "Clapping", "Chatter"]
 SPEECH_CLASSES = ["Speech"]
 SILENCE_RMS_DB = -48.0
 MIN_CUT_S = 5.0  # skip trims that would remove less than this
-CLIP_LEAD_S = 3.0  # audio kept before the fade starts in review clips
+CLIP_LEAD_S = 5.0  # audio kept before the fade starts in review clips
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 STORAGE_CANDIDATES = [
