@@ -66,7 +66,7 @@ CROWD_CLASSES = ["Applause", "Cheering", "Crowd", "Clapping", "Chatter"]
 SPEECH_CLASSES = ["Speech"]
 SILENCE_RMS_DB = -48.0
 MIN_CUT_S = 5.0  # skip trims that would remove less than this
-CLIP_LEAD_S = 3.0  # music kept before the boundary in review clips
+CLIP_LEAD_S = 3.0  # audio kept before the fade starts in review clips
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 STORAGE_CANDIDATES = [
@@ -197,23 +197,25 @@ def trim_track(path, duration_s, edge_results, args, label):
     info = {"trimmed": out_path, "start": start, "end": end,
             "cut_s": round(duration_s - (end - start), 1)}
     if "trailing" in flagged:
-        # Audition clip: last notes, kept crowd/banter, and the full fade-out.
+        # Audition clip: the last seconds before the fade, then the full fade-out.
+        # Anchored to the fade, not the music boundary — with trailing banter the
+        # two can be a minute apart, and the fade is what needs reviewing.
         clip_dir = args.trim_dir / "clips"
         clip_dir.mkdir(exist_ok=True)
-        boundary = flagged["trailing"].music_boundary_s
-        clip_start = max(0.0, boundary - CLIP_LEAD_S - start)
+        fade_start = end - min(args.fade_out, end - start)
+        clip_start = max(0.0, fade_start - CLIP_LEAD_S - start)
         clip = clip_dir / f"{safe_label}_audition.mp3"
         if render_clip(["ffmpeg", "-y", "-v", "error", "-ss", f"{clip_start:.2f}",
                         "-i", str(out_path), "-c", "copy", str(clip)], label):
             info["audition"] = clip
-        # What's being cut, for comparison (the removed region from the same
-        # lead-in, long enough to hear whether it's crowd noise or banter).
+        # What's being cut, for comparison: the same lead-in against the untrimmed
+        # audio, running past the cut so you hear what the fade replaces.
         orig_clip = clip_dir / f"{safe_label}_original.mp3"
         # aresample forces the filtergraph to rebuffer frames; without it,
         # ffmpeg 8 libmp3lame rejects some mp3 decoder output ("inadequate
         # AVFrame plane padding").
         if render_clip(["ffmpeg", "-y", "-v", "error",
-                        "-ss", f"{max(0.0, boundary - CLIP_LEAD_S):.2f}", "-t", "50",
+                        "-ss", f"{max(0.0, fade_start - CLIP_LEAD_S):.2f}", "-t", "50",
                         "-i", str(path), "-af", "aresample=osf=s16p",
                         "-b:a", "128k", str(orig_clip)], label):
             info["original"] = orig_clip
