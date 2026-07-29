@@ -300,10 +300,9 @@ main {
     gap: 2px;
     height: 1.1rem;
     width: 1.4rem;
-    margin-right: 0.6rem;
+    margin-right: 0.3rem;
     flex-shrink: 0;
     pointer-events: none;
-    filter: drop-shadow(0 0 5px color-mix(in srgb, var(--blue) 70%, transparent));
   }
 
   .track-eq-bar {
