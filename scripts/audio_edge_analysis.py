@@ -67,6 +67,21 @@ SPEECH_CLASSES = ["Speech"]
 SILENCE_RMS_DB = -48.0
 MIN_CUT_S = 5.0  # skip trims that would remove less than this
 CLIP_LEAD_S = 5.0  # audio kept before the fade starts in review clips
+MAX_CHAIN_S = 60.0  # furthest banter chaining may extend past the raw music boundary
+# A cappella repertoire: YAMNet scores quiet unaccompanied singing as speech,
+# so the music boundary lands mid-performance and any proposed trim would cut
+# the song itself. Tracks with these song slugs are still scanned, but never
+# auto-trimmed; flagged ones get their own manual-review section in review.html.
+A_CAPPELLA_SLUGS = {
+    "amazing-grace",
+    "carolina",
+    "free-bird",
+    "grind",
+    "hello-my-baby",
+    "memories",
+    "sweet-adeline",
+    "the-star-spangled-banner",
+}
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 STORAGE_CANDIDATES = [
@@ -136,19 +151,26 @@ def report_json(results):
         indent=2)
 
 
+def track_slug(share_url):
+    return share_url.rstrip("/").rsplit("/", 1)[-1]
+
+
 def effective_boundary(result, gap_s):
     """Music boundary pushed outward past adjacent on-mic banter.
 
     Banter segments are chained: each one within gap_s of the current boundary
-    extends it, so a thank-you 20s after the last note is still kept."""
+    extends it, so a thank-you 20s after the last note is still kept. A segment
+    is only chained if it fits within MAX_CHAIN_S of the raw boundary."""
     boundary = result.music_boundary_s
     if result.edge == "trailing":
+        limit = boundary + MAX_CHAIN_S
         for seg in sorted(result.banter, key=lambda s: s["start"]):
-            if seg["start"] <= boundary + gap_s:
+            if seg["start"] <= boundary + gap_s and seg["end"] <= limit:
                 boundary = max(boundary, seg["end"])
     else:
+        limit = boundary - MAX_CHAIN_S
         for seg in sorted(result.banter, key=lambda s: s["end"], reverse=True):
-            if seg["end"] >= boundary - gap_s:
+            if seg["end"] >= boundary - gap_s and seg["start"] >= limit:
                 boundary = min(boundary, seg["start"])
     return boundary
 
@@ -159,6 +181,9 @@ def trim_track(path, duration_s, edge_results, args, label):
     original file is never modified."""
     flagged = {r.edge: r for r in edge_results if r.flagged}
     if not flagged:
+        return
+    if track_slug(edge_results[0].share_url) in A_CAPPELLA_SLUGS:
+        print(f"  skipping {label}: a cappella, listed for manual review", file=sys.stderr)
         return
     start = 0.0
     end = duration_s
@@ -244,22 +269,43 @@ def write_review_html(html_path, results, trim_info, args):
 
     rows = []
     skipped = []
+    acappella = []
     for r in results:
         if not r.flagged:
             continue
         info = trim_info.get(r.label, {})
         esc = html_escape.escape
-        if info.get("end") is None:
-            # Flagged but nothing actionable (cut below minimum, usually
-            # banter running to the end of the track). Footnote only.
-            link = (f'<a href="{esc(r.share_url, quote=True)}" target="_blank">{esc(r.label)}</a>'
-                    if r.share_url else esc(r.label))
-            skipped.append(f'<div class="meta">{link} &middot; run {r.nonmusic_run_s}s, '
-                           f'cut {info.get("cut_s", "?")}s &mdash; left untouched</div>')
-            continue
+        link = (f'<a href="{esc(r.share_url, quote=True)}" target="_blank">{esc(r.label)}</a>'
+                if r.share_url else esc(r.label))
         banter = "".join(
             f'<div class="banter">{s["start"]:.1f}-{s["end"]:.1f}s: &ldquo;{esc(s["text"])}&rdquo;</div>'
             for s in r.banter)
+        char = ", ".join(f"{k} {v:.0%}" for k, v in r.character.items() if v > 0)
+        plot = ""
+        if args.plot_dir:
+            p = args.plot_dir / (re.sub(r"[^\w.-]+", "_", f"{r.label}_{r.edge}") + ".png")
+            if p.exists():
+                plot = f'<img src="{rel(p)}" loading="lazy">'
+        if track_slug(r.share_url) in A_CAPPELLA_SLUGS:
+            # Never auto-trimmed: the music detector misreads unaccompanied
+            # singing. Listed without an approve checkbox for manual review.
+            acappella.append(f"""
+<div class="row">
+  <div class="head">
+    <strong>{link}</strong>
+    <span class="meta">{r.edge} edge &middot; run {r.nonmusic_run_s}s &middot;
+      boundary {r.music_boundary_s}s &middot; {char}</span>
+  </div>
+  {banter}
+  {plot}
+</div>""")
+            continue
+        if info.get("end") is None:
+            # Flagged but nothing actionable (cut below minimum, usually
+            # banter running to the end of the track). Footnote only.
+            skipped.append(f'<div class="meta">{link} &middot; run {r.nonmusic_run_s}s, '
+                           f'cut {info.get("cut_s", "?")}s &mdash; left untouched</div>')
+            continue
         audio = ""
         if info.get("audition"):
             audio += (f'<label>Trimmed result</label>'
@@ -267,24 +313,16 @@ def write_review_html(html_path, results, trim_info, args):
         if info.get("original"):
             audio += (f'<label>Original tail</label>'
                       f'<audio controls preload="none" src="{rel(info["original"])}"></audio>')
-        plot = ""
-        if args.plot_dir:
-            p = args.plot_dir / (re.sub(r"[^\w.-]+", "_", f"{r.label}_{r.edge}") + ".png")
-            if p.exists():
-                plot = f'<img src="{rel(p)}" loading="lazy">'
         payload = esc(json.dumps({
             "label": r.label, "edge": r.edge, "mp3_url": r.mp3_url,
             "share_url": r.share_url, "music_boundary_s": r.music_boundary_s,
             "trim_start": info.get("start"), "trim_end": info.get("end"),
         }), quote=True)
-        char = ", ".join(f"{k} {v:.0%}" for k, v in r.character.items() if v > 0)
-        title = (f'<a href="{esc(r.share_url, quote=True)}" target="_blank">{esc(r.label)}</a>'
-                 if r.share_url else esc(r.label))
         rows.append(f"""
 <div class="row">
   <div class="head">
     <input type="checkbox" data-payload="{payload}">
-    <strong>{title}</strong>
+    <strong>{link}</strong>
     <span class="meta">{r.edge} edge &middot; run {r.nonmusic_run_s}s &middot;
       cut {info.get("cut_s", "?")}s &middot; boundary {r.music_boundary_s}s &middot; {char}</span>
   </div>
@@ -312,6 +350,7 @@ def write_review_html(html_path, results, trim_info, args):
 <button id="export">Export approved.json</button>
 <h1>Track edge trim review ({len(rows)} candidates)</h1>
 {"".join(rows)}
+{f'<h2>A cappella ({len(acappella)}) &mdash; not auto-trimmed, review manually</h2>{"".join(acappella)}' if acappella else ""}
 {f'<h2>Not trimmed ({len(skipped)})</h2>{"".join(skipped)}' if skipped else ""}
 <script>
 document.getElementById("export").onclick = () => {{
@@ -485,16 +524,19 @@ def analyze_edge(yamnet, banter_finder, path, duration_s, edge, args, label, son
         region[0] if region else (0.0 if edge == "leading" else duration_s))
 
     if run_frames:
-        # Hysteresis for the cut point: frames inside the run that still score
-        # above ring_threshold are usually ring-out/sustain decay (YAMNet is
-        # ~10-20% confident on decaying notes), not crowd. Push the boundary
-        # outward past the last of them so fades never clip the end of the music.
-        ringing = [i for i in run_frames if music_sm[i] >= args.ring_threshold]
-        if ringing:
+        # Hysteresis for the cut point: frames just inside the run that still
+        # score above ring_threshold are usually ring-out/sustain decay (YAMNet
+        # is ~10-20% confident on decaying notes), not crowd. Walk the boundary
+        # outward through consecutive ringing frames so fades never clip the end
+        # of the music, stopping at the first quiet frame — an isolated blip of
+        # music-ish crowd noise deep in the run must not drag the boundary out.
+        for i in reversed(run_frames):  # run_frames ends at the music-side edge
+            if music_sm[i] < args.ring_threshold:
+                break
             if edge == "leading":
-                boundary = min(boundary, offset_s + min(ringing) * FRAME_HOP_S)
+                boundary = min(boundary, offset_s + i * FRAME_HOP_S)
             else:
-                boundary = max(boundary, offset_s + max(ringing) * FRAME_HOP_S + FRAME_WIN_S)
+                boundary = max(boundary, offset_s + i * FRAME_HOP_S + FRAME_WIN_S)
 
     banter = []
     if banter_finder and region and run_s >= args.min_duration:
@@ -622,6 +664,8 @@ def reconstruct_trim_info(results, args):
         flagged = {r.edge: r for r in group if r.flagged}
         if not flagged:
             continue
+        if track_slug(group[0].share_url) in A_CAPPELLA_SLUGS:
+            continue
         duration_s = group[0].track_duration_s
         start, end = 0.0, duration_s
         if "leading" in flagged:
@@ -667,6 +711,18 @@ def rebuild_dir(dir_path, args):
     if ignored:
         print(f"  dropping {len(ignored)} ignore-listed track(s)", file=sys.stderr)
         drop |= ignored
+    # A cappella tracks stay in the report (they get a manual-review section)
+    # but are never auto-trimmed; clear any trim files rendered before that
+    # policy. Plots stay: the manual-review section displays them.
+    acappella = {r.label for r in results if track_slug(r.share_url) in A_CAPPELLA_SLUGS}
+    if acappella:
+        print(f"  clearing rendered trims for {len(acappella)} a cappella track(s)", file=sys.stderr)
+        for label in acappella:
+            safe = re.sub(r"[^\w.-]+", "_", label)
+            for p in [args.trim_dir / f"{safe}_trimmed.mp3",
+                      args.trim_dir / "clips" / f"{safe}_audition.mp3",
+                      args.trim_dir / "clips" / f"{safe}_original.mp3"]:
+                p.unlink(missing_ok=True)
     if drop:
         results = [r for r in results if r.label not in drop]
         for label in drop:
@@ -737,9 +793,9 @@ def main():
                    help="Fade-out seconds on a trimmed trailing edge (default: 6.0)")
     p.add_argument("--no-transcribe", action="store_true",
                    help="Skip Whisper banter detection on flagged regions")
-    p.add_argument("--banter-gap", type=float, default=30,
+    p.add_argument("--banter-gap", type=float, default=25,
                    help="Chain banter segments within this many seconds of the music boundary "
-                        "when extending the trim point (default: 30)")
+                        "when extending the trim point (default: 25)")
     p.add_argument("--rebuild", type=Path, action="append", default=[], metavar="DIR",
                    help="Regenerate review.html from DIR/report.json (backfills share urls; "
                         "no audio analyzed). Repeatable.")
