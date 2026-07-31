@@ -28,6 +28,21 @@ RSpec.shared_examples "normalizes notes" do
     subject.notes = nil
     expect(subject.notes).to be_nil
   end
+
+  it "decodes HTML entities" do
+    subject.notes = "Big Head Todd &amp; the Monsters played &quot;NICU&quot;"
+    expect(subject.notes).to eq('Big Head Todd & the Monsters played "NICU"')
+  end
+
+  it "decodes double-encoded and numeric entities" do
+    subject.notes = "Fish&#39;s vacuum solo &amp;amp; more"
+    expect(subject.notes).to eq("Fish's vacuum solo & more")
+  end
+
+  it "leaves plain ampersands unchanged" do
+    subject.notes = "Mike & Trey trade licks; R&B jam"
+    expect(subject.notes).to eq("Mike & Trey trade licks; R&B jam")
+  end
 end
 
 RSpec.shared_examples 'responds with 404' do
