@@ -289,16 +289,8 @@ def write_review_html(html_path, results, trim_info, args):
         if track_slug(r.share_url) in A_CAPPELLA_SLUGS:
             # Never auto-trimmed: the music detector misreads unaccompanied
             # singing. Listed without an approve checkbox for manual review.
-            acappella.append(f"""
-<div class="row">
-  <div class="head">
-    <strong>{link}</strong>
-    <span class="meta">{r.edge} edge &middot; run {r.nonmusic_run_s}s &middot;
-      boundary {r.music_boundary_s}s &middot; {char}</span>
-  </div>
-  {banter}
-  {plot}
-</div>""")
+            acappella.append(f'<div class="meta">{link} &middot; {r.edge} edge &middot; '
+                             f'run {r.nonmusic_run_s}s &middot; {char}</div>')
             continue
         if info.get("end") is None:
             # Flagged but nothing actionable (cut below minimum, usually
@@ -713,7 +705,7 @@ def rebuild_dir(dir_path, args):
         drop |= ignored
     # A cappella tracks stay in the report (they get a manual-review section)
     # but are never auto-trimmed; clear any trim files rendered before that
-    # policy. Plots stay: the manual-review section displays them.
+    # policy.
     acappella = {r.label for r in results if track_slug(r.share_url) in A_CAPPELLA_SLUGS}
     if acappella:
         print(f"  clearing rendered trims for {len(acappella)} a cappella track(s)", file=sys.stderr)
