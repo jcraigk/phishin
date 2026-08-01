@@ -67,6 +67,7 @@ SPEECH_CLASSES = ["Speech"]
 SILENCE_RMS_DB = -48.0
 MIN_CUT_S = 5.0  # skip trims that would remove less than this
 CLIP_LEAD_S = 5.0  # audio kept before the fade starts in review clips
+LOUD_TAIL_DROP_DB = 6.0  # badge candidates whose cut side stays within this of the music level
 MAX_CHAIN_S = 60.0  # furthest banter chaining may extend past the raw music boundary
 # A cappella repertoire: YAMNet scores quiet unaccompanied singing as speech,
 # so the music boundary lands mid-performance and any proposed trim would cut
@@ -120,6 +121,7 @@ class EdgeResult:
     songs: list = field(default_factory=list)
     mp3_url: str = ""
     share_url: str = ""  # e.g. https://phish.in/1996-11-02/sweet-adeline
+    boundary_rms_drop_db: float | None = None  # music-side minus cut-side loudness at the boundary
 
 
 def run(cmd, **kw):
@@ -310,6 +312,10 @@ def write_review_html(html_path, results, trim_info, args):
             "share_url": r.share_url, "music_boundary_s": r.music_boundary_s,
             "trim_start": info.get("start"), "trim_end": info.get("end"),
         }), quote=True)
+        warn = ""
+        if r.boundary_rms_drop_db is not None and r.boundary_rms_drop_db < LOUD_TAIL_DROP_DB:
+            warn = (f'<span class="warn">&#9888;&#xFE0F; still loud past boundary '
+                    f'(drop {r.boundary_rms_drop_db:.1f} dB)</span>')
         rows.append(f"""
 <div class="row">
   <div class="head">
@@ -317,6 +323,7 @@ def write_review_html(html_path, results, trim_info, args):
     <strong>{link}</strong>
     <span class="meta">{r.edge} edge &middot; run {r.nonmusic_run_s}s &middot;
       cut {info.get("cut_s", "?")}s &middot; boundary {r.music_boundary_s}s &middot; {char}</span>
+    {warn}
   </div>
   {banter}
   <div class="audio">{audio}</div>
@@ -334,6 +341,7 @@ def write_review_html(html_path, results, trim_info, args):
   .head {{ display: flex; gap: .6rem; align-items: baseline; flex-wrap: wrap; }}
   .meta {{ color: #666; }}
   .banter {{ color: #205080; margin: .3rem 0 .3rem 1.6rem; }}
+  .warn {{ color: #b00020; font-weight: 600; }}
   .audio {{ display: flex; gap: 1rem; align-items: center; margin: .4rem 0; flex-wrap: wrap; }}
   .audio label {{ color: #666; font-size: 12px; }}
   img {{ max-width: 100%; }}
@@ -530,6 +538,22 @@ def analyze_edge(yamnet, banter_finder, path, duration_s, edge, args, label, son
             else:
                 boundary = max(boundary, offset_s + i * FRAME_HOP_S + FRAME_WIN_S)
 
+    # Sanity signal for review: how much quieter the cut side of the boundary
+    # is than the music side (median RMS over ~10s windows). A near-zero drop
+    # means a fade would start while the audio is still at song level, e.g.
+    # shouted vocals that YAMNet classifies as speech.
+    b_idx = int(round((boundary - offset_s) / FRAME_HOP_S))
+    w = max(1, int(round(10.0 / FRAME_HOP_S)))
+    if edge == "trailing":
+        music_win = rms_db[max(0, b_idx - w):b_idx]
+        cut_win = rms_db[b_idx:b_idx + w]
+    else:
+        music_win = rms_db[b_idx:b_idx + w]
+        cut_win = rms_db[max(0, b_idx - w):b_idx]
+    rms_drop = None
+    if len(music_win) and len(cut_win):
+        rms_drop = round(float(np.median(music_win) - np.median(cut_win)), 1)
+
     banter = []
     if banter_finder and region and run_s >= args.min_duration:
         # Transcribe a bit past the region edges so speech straddling the music
@@ -555,6 +579,7 @@ def analyze_edge(yamnet, banter_finder, path, duration_s, edge, args, label, son
         songs=songs,
         mp3_url=url,
         share_url=share_url,
+        boundary_rms_drop_db=rms_drop,
     )
 
     if args.plot_dir:

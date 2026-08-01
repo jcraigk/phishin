@@ -195,21 +195,23 @@ class ShowImporter::Orchestrator
 
   # rubocop:disable Metrics/MethodLength
   def process_track(position, title)
+    set = show_info.sets[position]
+
     if (match = fn_match?(title))
       filename = match.first
       song = match.second
       track = Track.new(
-        set: musical_set_from_fn(filename),
+        set: set || musical_set_from_fn(filename),
         position:,
         title: song.title,
         filename:
       )
       track.songs << song if song.present?
     elsif (song = fm.find_song(title, exact: true))
-      track = Track.new(position:, title: song.title)
+      track = Track.new(position:, title: song.title, set:)
       track.songs << song
     else
-      track = Track.new(position:, title:)
+      track = Track.new(position:, title:, set:)
     end
 
     @tracks << track

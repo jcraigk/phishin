@@ -4,12 +4,13 @@ class ShowImporter::ShowInfo
   BASE_URL = "https://api.phish.net/v5".freeze
   API_KEY = ENV.fetch("PNET_API_KEY", nil)
 
-  attr_reader :date, :data, :songs
+  attr_reader :date, :data, :songs, :sets
 
   def initialize(date)
     @date = date
     @data = fetch_pnet_data
-    @songs ||= {}
+    @songs = {}
+    @sets = {}
 
     abort "Date \"#{date}\" not found on Phish.net" if data.none?
 
@@ -27,7 +28,10 @@ class ShowImporter::ShowInfo
   private
 
   def populate_songs
-    data.each { |t| @songs[t.position] = t.song }
+    data.each do |t|
+      @songs[t.position] = t.song
+      @sets[t.position] = t.set.to_s.upcase.presence
+    end
   end
 
   def fetch_pnet_data
