@@ -14,6 +14,9 @@ namespace :tagin do
       data = GoogleSpreadsheetFetcher.call(ENV["TAGIN_GSHEET_ID"], range, headers: true)
       TrackTagSyncService.call(tag_name, data)
     end
+
+    puts "Clearing Rails cache..."
+    Rails.cache.clear
   end
 
   desc "Sync jam_starts_at_second data from spreadsheet"

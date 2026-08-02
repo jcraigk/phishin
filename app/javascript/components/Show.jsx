@@ -64,13 +64,17 @@ const Show = ({ trackSlug }) => {
     if (trackSlug) foundTrack = tracks.find((track) => track.slug === trackSlug);
     if (foundTrack) {
       setMatchedTrack(foundTrack);
-      const trackIndex = tracks.findIndex((track) => track.slug === foundTrack.slug);
-      if (trackRefs.current[trackIndex]) {
-        trackRefs.current[trackIndex].scrollIntoView({ behavior: "smooth" });
-      }
 
       if (foundTrack.audio_status !== 'missing' && !activeTrack) {
         playTrack(filteredTracks, foundTrack, false);
+      }
+
+      const trackIndex = tracks.findIndex((track) => track.slug === foundTrack.slug);
+      const trackEl = trackRefs.current[trackIndex];
+      if (trackEl) {
+        setTimeout(() => {
+          trackEl.scrollIntoView({ behavior: "smooth" });
+        }, 100);
       }
     }
   }, [trackSlug, tracks, filteredTracks]);
