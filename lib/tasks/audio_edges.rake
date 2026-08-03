@@ -168,8 +168,9 @@ namespace :audio_edges do
     applied = 0
     failures = []
 
-    entries.each do |entry|
+    entries.each_with_index do |entry, idx|
       label = entry["label"]
+      progress = "[#{idx + 1}/#{entries.size}]"
       if entry["trim_end"].blank?
         failures << [ label, "no trim_end (render was skipped during scan)" ]
         next
@@ -196,7 +197,8 @@ namespace :audio_edges do
         track = attachment.record
         share_url = entry["share_url"].presence || "https://phish.in/#{track.show.date}/#{track.slug}"
         status = result[:applied] ? "APPLIED" : "RENDERED"
-        puts "#{status}  #{label}: kept #{result[:kept_s]}s, cut #{result[:cut_s]}s"
+        display = label.sub(/\A(\d{4}-\d{2}-\d{2} .*?) t\d+ /, '\1 ')
+        puts "#{status} #{progress}  #{display}: kept #{result[:kept_s]}s, cut #{result[:cut_s]}s"
         puts "  track:   #{share_url}"
         puts "  listen:  #{result[:output_path]}"
         puts "  backup:  #{result[:backup_path]}" if result[:backup_path]

@@ -157,6 +157,19 @@ def track_slug(share_url):
     return share_url.rstrip("/").rsplit("/", 1)[-1]
 
 
+def fmt_ts(seconds):
+    """Seconds as m:ss (or h:mm:ss), matching what audio players display."""
+    seconds = int(round(float(seconds)))
+    m, s = divmod(seconds, 60)
+    h, m = divmod(m, 60)
+    return f"{h}:{m:02d}:{s:02d}" if h else f"{m}:{s:02d}"
+
+
+def display_label(label):
+    """Label without the tNN position token, for human-facing pages."""
+    return re.sub(r"^(\d{4}-\d{2}-\d{2} .*?) t\d+ ", r"\1 ", label)
+
+
 def effective_boundary(result, gap_s):
     """Music boundary pushed outward past adjacent on-mic banter.
 
@@ -185,7 +198,7 @@ def trim_track(path, duration_s, edge_results, args, label):
     if not flagged:
         return
     if track_slug(edge_results[0].share_url) in A_CAPPELLA_SLUGS:
-        print(f"  skipping {label}: a cappella, listed for manual review", file=sys.stderr)
+        print(f"  skipping {display_label(label)}: a cappella, listed for manual review", file=sys.stderr)
         return
     start = 0.0
     end = duration_s
@@ -206,7 +219,7 @@ def trim_track(path, duration_s, edge_results, args, label):
     if cut_s < MIN_CUT_S:
         # Nothing meaningful to remove (e.g. banter runs to the end of the
         # track); re-encoding would only add a fade over kept content.
-        print(f"  skipping {label}: only {cut_s:.1f}s would be cut", file=sys.stderr)
+        print(f"  skipping {display_label(label)}: only {cut_s:.1f}s would be cut", file=sys.stderr)
         return {"cut_s": round(cut_s, 1), "skipped": True}
 
     args.trim_dir.mkdir(parents=True, exist_ok=True)
@@ -217,7 +230,7 @@ def trim_track(path, duration_s, edge_results, args, label):
         "-af", ",".join(filters), "-map_metadata", "0", "-id3v2_version", "3",
         "-b:a", probe_bitrate(path), str(out_path),
     ])
-    print(f"  trimmed {label}: kept {start:.1f}s to {end:.1f}s "
+    print(f"  trimmed {display_label(label)}: kept {start:.1f}s to {end:.1f}s "
           f"(cut {duration_s - (end - start):.1f}s of {duration_s:.1f}s) -> {out_path}",
           file=sys.stderr)
 
@@ -235,17 +248,6 @@ def trim_track(path, duration_s, edge_results, args, label):
         if render_clip(["ffmpeg", "-y", "-v", "error", "-ss", f"{clip_start:.2f}",
                         "-i", str(out_path), "-c", "copy", str(clip)], label):
             info["audition"] = clip
-        # What's being cut, for comparison: the same lead-in against the untrimmed
-        # audio, running past the cut so you hear what the fade replaces.
-        orig_clip = clip_dir / f"{safe_label}_original.mp3"
-        # aresample forces the filtergraph to rebuffer frames; without it,
-        # ffmpeg 8 libmp3lame rejects some mp3 decoder output ("inadequate
-        # AVFrame plane padding").
-        if render_clip(["ffmpeg", "-y", "-v", "error",
-                        "-ss", f"{max(0.0, fade_start - CLIP_LEAD_S):.2f}", "-t", "50",
-                        "-i", str(path), "-af", "aresample=osf=s16p",
-                        "-b:a", "128k", str(orig_clip)], label):
-            info["original"] = orig_clip
     return info
 
 
@@ -262,8 +264,19 @@ def render_clip(cmd, label):
     return False
 
 
-def write_review_html(html_path, results, trim_info, args):
-    """Static review page: audition clip, original tail, plot, transcript, and
+def write_outputs(results, trim_info, args):
+    """Write report.json and review.html for the results so far, ordered by
+    run length. Called after every track so a running scan can be reviewed."""
+    ordered = sorted(results, key=lambda r: r.nonmusic_run_s, reverse=True)
+    if args.json:
+        args.json.parent.mkdir(parents=True, exist_ok=True)
+        args.json.write_text(report_json(ordered))
+    if args.html:
+        write_review_html(args.html, ordered, trim_info, args, quiet=True)
+
+
+def write_review_html(html_path, results, trim_info, args, quiet=False):
+    """Static review page: audition clip, plot, transcript, and
     an approve checkbox per candidate. Export writes approved.json for the
     apply step. Open locally; audio/img paths are relative to this file."""
     def rel(p):
@@ -277,11 +290,23 @@ def write_review_html(html_path, results, trim_info, args):
             continue
         info = trim_info.get(r.label, {})
         esc = html_escape.escape
-        link = (f'<a href="{esc(r.share_url, quote=True)}" target="_blank">{esc(r.label)}</a>'
-                if r.share_url else esc(r.label))
-        banter = "".join(
-            f'<div class="banter">{s["start"]:.1f}-{s["end"]:.1f}s: &ldquo;{esc(s["text"])}&rdquo;</div>'
-            for s in r.banter)
+        shown = display_label(r.label)
+        link = (f'<a href="{esc(r.share_url, quote=True)}" target="_blank">{esc(shown)}</a>'
+                if r.share_url else esc(shown))
+        cut_at = info.get("end") if r.edge == "trailing" else info.get("start")
+        segs = []
+        for s in r.banter:
+            if cut_at is None:
+                kept = True
+            elif r.edge == "trailing":
+                kept = s["end"] <= cut_at
+            else:
+                kept = s["start"] >= cut_at
+            segs.append(
+                f'<span class="seg {"kept" if kept else "cut"}" '
+                f'title="{fmt_ts(s["start"])}&ndash;{fmt_ts(s["end"])}">'
+                f'{fmt_ts(s["start"])} &ldquo;{esc(s["text"])}&rdquo;</span>')
+        banter = f'<div class="banter">{"".join(segs)}</div>' if segs else ""
         char = ", ".join(f"{k} {v:.0%}" for k, v in r.character.items() if v > 0)
         plot = ""
         if args.plot_dir:
@@ -291,22 +316,19 @@ def write_review_html(html_path, results, trim_info, args):
         if track_slug(r.share_url) in A_CAPPELLA_SLUGS:
             # Never auto-trimmed: the music detector misreads unaccompanied
             # singing. Listed without an approve checkbox for manual review.
-            acappella.append(f'<div class="meta">{link} &middot; {r.edge} edge &middot; '
-                             f'run {r.nonmusic_run_s}s &middot; {char}</div>')
+            acappella.append(f'<div class="meta">{link} &middot; '
+                             f'run {fmt_ts(r.nonmusic_run_s)} &middot; {char}</div>')
             continue
         if info.get("end") is None:
             # Flagged but nothing actionable (cut below minimum, usually
             # banter running to the end of the track). Footnote only.
-            skipped.append(f'<div class="meta">{link} &middot; run {r.nonmusic_run_s}s, '
-                           f'cut {info.get("cut_s", "?")}s &mdash; left untouched</div>')
+            cut = fmt_ts(info["cut_s"]) if info.get("cut_s") is not None else "?"
+            skipped.append(f'<div class="meta">{link} &middot; run {fmt_ts(r.nonmusic_run_s)}, '
+                           f'cut {cut} &mdash; left untouched</div>')
             continue
         audio = ""
         if info.get("audition"):
-            audio += (f'<label>Trimmed result</label>'
-                      f'<audio controls preload="none" src="{rel(info["audition"])}"></audio>')
-        if info.get("original"):
-            audio += (f'<label>Original tail</label>'
-                      f'<audio controls preload="none" src="{rel(info["original"])}"></audio>')
+            audio += f'<audio controls preload="none" src="{rel(info["audition"])}"></audio>'
         payload = esc(json.dumps({
             "label": r.label, "edge": r.edge, "mp3_url": r.mp3_url,
             "share_url": r.share_url, "music_boundary_s": r.music_boundary_s,
@@ -314,15 +336,13 @@ def write_review_html(html_path, results, trim_info, args):
         }), quote=True)
         warn = ""
         if r.boundary_rms_drop_db is not None and r.boundary_rms_drop_db < LOUD_TAIL_DROP_DB:
-            warn = (f'<span class="warn">&#9888;&#xFE0F; still loud past boundary '
-                    f'(drop {r.boundary_rms_drop_db:.1f} dB)</span>')
+            warn = '<span class="warn">&#9888;&#xFE0F; Loud past boundary</span>'
         rows.append(f"""
 <div class="row">
   <div class="head">
     <input type="checkbox" data-payload="{payload}">
     <strong>{link}</strong>
-    <span class="meta">{r.edge} edge &middot; run {r.nonmusic_run_s}s &middot;
-      cut {info.get("cut_s", "?")}s &middot; boundary {r.music_boundary_s}s &middot; {char}</span>
+    <span class="meta">{fmt_ts(r.track_duration_s)} / {fmt_ts(info["cut_s"])}</span>
     {warn}
   </div>
   {banter}
@@ -340,10 +360,13 @@ def write_review_html(html_path, results, trim_info, args):
   .row {{ border-bottom: 1px solid #ccc; padding: 1rem 0; }}
   .head {{ display: flex; gap: .6rem; align-items: baseline; flex-wrap: wrap; }}
   .meta {{ color: #666; }}
-  .banter {{ color: #205080; margin: .3rem 0 .3rem 1.6rem; }}
+  .banter {{ display: flex; flex-wrap: wrap; gap: .3rem .4rem; margin: .4rem 0 .4rem 1.6rem; }}
+  .banter .seg {{ padding: .05rem .45rem; border-radius: 3px; font-size: 13px; }}
+  .banter .seg.kept {{ background: #dcefe1; color: #1a6b2f; }}
+  .banter .seg.cut {{ background: #f3dada; color: #a02020; text-decoration: line-through; }}
   .warn {{ color: #b00020; font-weight: 600; }}
   .audio {{ display: flex; gap: 1rem; align-items: center; margin: .4rem 0; flex-wrap: wrap; }}
-  .audio label {{ color: #666; font-size: 12px; }}
+  input[type="checkbox"] {{ width: 1.3rem; height: 1.3rem; }}
   img {{ max-width: 100%; }}
   #export {{ position: fixed; top: 1rem; right: 1rem; padding: .5rem 1rem; }}
 </style>
@@ -363,7 +386,8 @@ document.getElementById("export").onclick = () => {{
 }};
 </script>
 """)
-    print(f"Review page written to {html_path}", file=sys.stderr)
+    if not quiet:
+        print(f"Review page written to {html_path}", file=sys.stderr)
 
 
 def decode_segment(path, start_s, dur_s):
@@ -583,30 +607,54 @@ def analyze_edge(yamnet, banter_finder, path, duration_s, edge, args, label, son
     )
 
     if args.plot_dir:
-        plot_edge(args.plot_dir, result, offset_s, music_sm, crowd, rms_db, region)
+        fade = None
+        if result.flagged:
+            # Same math as trim_track: fade placement relative to the
+            # banter-extended boundary.
+            eff = effective_boundary(result, args.banter_gap)
+            if edge == "trailing":
+                fade_end = min(duration_s, eff + args.fade_delay + args.fade_out)
+                fade = (max(0.0, fade_end - args.fade_out), fade_end)
+            else:
+                fade_start = max(0.0, eff - args.keep_lead)
+                fade = (fade_start, min(duration_s, fade_start + args.fade_in))
+        plot_edge(args.plot_dir, result, offset_s, music_sm, crowd, rms_db, region, fade)
     return result
 
 
-def plot_edge(plot_dir, result, offset_s, music, crowd, rms_db, region):
+def plot_edge(plot_dir, result, offset_s, music, crowd, rms_db, region, fade=None):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    plt.style.use("dark_background")
 
     t = offset_s + np.arange(len(music)) * FRAME_HOP_S
-    fig, ax = plt.subplots(figsize=(14, 4))
+    fig, ax = plt.subplots(figsize=(14, 3.1))
+    fig.set_facecolor("#222222")
+    ax.set_facecolor("#222222")
     ax.plot(t, music, label="music score", color="tab:blue")
     ax.plot(t, crowd, label="crowd score", color="tab:orange", alpha=0.7)
     ax.set_ylim(0, 1)
-    ax.set_xlabel("track time (s)")
+    ax.set_xlabel("time")
     ax.set_ylabel("YAMNet score")
+    ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: fmt_ts(x)))
     ax2 = ax.twinx()
     ax2.plot(t, rms_db, label="RMS dB", color="tab:gray", alpha=0.4)
     ax2.set_ylabel("RMS (dB)")
     if region:
         ax.axvspan(region[0], region[1], color="red", alpha=0.15)
         ax.axvline(result.music_boundary_s, color="red", linestyle="--", alpha=0.7)
-    ax.legend(loc="upper left")
-    ax.set_title(f"{result.label} [{result.edge}] run={result.nonmusic_run_s}s")
+    if fade:
+        ax.axvline(fade[0], color="tab:green", linestyle=":", alpha=0.9, label="fade start")
+        ax.axvline(fade[1], color="tab:blue", linestyle=":", alpha=0.9, label="fade end")
+    for k, seg in enumerate(result.banter):
+        xs = np.arange(seg["start"], seg["end"] + 0.25, 0.5)
+        ax.plot(xs, np.full(len(xs), 0.02), "o", color="tab:green", markersize=3,
+                label="whisper speech" if k == 0 else None)
+    handles, labels = ax.get_legend_handles_labels()
+    h2, l2 = ax2.get_legend_handles_labels()
+    ax.legend(handles + h2, labels + l2, loc="upper left", fontsize=7, ncol=2, framealpha=0.5)
+    ax.set_title(f"{display_label(result.label)} [{result.edge}] run={fmt_ts(result.nonmusic_run_s)}")
     plot_dir.mkdir(parents=True, exist_ok=True)
     safe = re.sub(r"[^\w.-]+", "_", f"{result.label}_{result.edge}")
     fig.tight_layout()
@@ -638,12 +686,12 @@ def fetch_show_jobs(date, args):
                 continue
             label = f"{date} {set_name} t{t['position']:02d} {t['title']}"
             if not t.get("mp3_url"):
-                print(f"  skipping {label} (no mp3_url)", file=sys.stderr)
+                print(f"  skipping {display_label(label)} (no mp3_url)", file=sys.stderr)
                 continue
             songs = [s["title"] for s in t.get("songs", [])]
             share = f"{SITE_BASE}/{date}/{t['slug']}" if t.get("slug") else ""
             if share and share in args.ignore_urls:
-                print(f"  skipping {label} (in ignore list)", file=sys.stderr)
+                print(f"  skipping {display_label(label)} (in ignore list)", file=sys.stderr)
                 continue
             jobs.append((label, t["mp3_url"], edges, songs, share))
     return jobs
@@ -697,8 +745,7 @@ def reconstruct_trim_info(results, args):
         info = {"start": start, "end": end, "cut_s": round(cut_s, 1)}
         safe = re.sub(r"[^\w.-]+", "_", label)
         for key, path in [("trimmed", args.trim_dir / f"{safe}_trimmed.mp3"),
-                          ("audition", args.trim_dir / "clips" / f"{safe}_audition.mp3"),
-                          ("original", args.trim_dir / "clips" / f"{safe}_original.mp3")]:
+                          ("audition", args.trim_dir / "clips" / f"{safe}_audition.mp3")]:
             if path.exists():
                 info[key] = path
         trim_info[label] = info
@@ -737,8 +784,7 @@ def rebuild_dir(dir_path, args):
         for label in acappella:
             safe = re.sub(r"[^\w.-]+", "_", label)
             for p in [args.trim_dir / f"{safe}_trimmed.mp3",
-                      args.trim_dir / "clips" / f"{safe}_audition.mp3",
-                      args.trim_dir / "clips" / f"{safe}_original.mp3"]:
+                      args.trim_dir / "clips" / f"{safe}_audition.mp3"]:
                 p.unlink(missing_ok=True)
     if drop:
         results = [r for r in results if r.label not in drop]
@@ -746,7 +792,6 @@ def rebuild_dir(dir_path, args):
             safe = re.sub(r"[^\w.-]+", "_", label)
             for p in [args.trim_dir / f"{safe}_trimmed.mp3",
                       args.trim_dir / "clips" / f"{safe}_audition.mp3",
-                      args.trim_dir / "clips" / f"{safe}_original.mp3",
                       args.plot_dir / f"{safe}_leading.png",
                       args.plot_dir / f"{safe}_trailing.png"]:
                 p.unlink(missing_ok=True)
@@ -863,7 +908,7 @@ def main():
             duration = probe_duration(path)
             track_results = []
             for edge in edges:
-                print(f"[{i}/{len(jobs)}] Analyzing {label} [{edge}]...", file=sys.stderr)
+                print(f"[{i}/{len(jobs)}] {display_label(label)}...", file=sys.stderr)
                 track_results.append(analyze_edge(yamnet, banter_finder, path, duration, edge, args,
                                                   label, songs, src if re.match(r"https?://", src) else "",
                                                   share))
@@ -873,25 +918,24 @@ def main():
                 if info:
                     trim_info[label] = info
         except Exception as e:
-            print(f"  ERROR on {label}: {e}", file=sys.stderr)
-            failures.append(f"{label}: {e}")
+            print(f"  ERROR on {display_label(label)}: {e}", file=sys.stderr)
+            failures.append(f"{display_label(label)}: {e}")
+        write_outputs(results, trim_info, args)
 
     results.sort(key=lambda r: r.nonmusic_run_s, reverse=True)
     print(f"\n{'RUN(s)':>7} {'EDGE':8} {'CHARACTER':28} {'BOUNDARY':>8}  TRACK")
     for r in results:
         segue = " [multi-song]" if len(r.songs) > 1 else ""
         char = ", ".join(f"{k}:{v:.0%}" for k, v in r.character.items() if v > 0) or "-"
-        print(f"{r.nonmusic_run_s:7.1f} {r.edge:8} {char:28} {r.music_boundary_s:8.1f}  {r.label}{segue}")
+        print(f"{r.nonmusic_run_s:7.1f} {r.edge:8} {char:28} {r.music_boundary_s:8.1f}  {display_label(r.label)}{segue}")
         for seg in r.banter:
             print(f"{'':7} {'':8}   banter {seg['start']:.1f}-{seg['end']:.1f}s: \"{seg['text']}\"")
 
+    write_outputs(results, trim_info, args)
     if args.json:
-        args.json.parent.mkdir(parents=True, exist_ok=True)
-        args.json.write_text(report_json(results))
         print(f"\nReport written to {args.json}", file=sys.stderr)
-
     if args.html:
-        write_review_html(args.html, results, trim_info, args)
+        print(f"Review page written to {args.html}", file=sys.stderr)
 
     if failures:
         print(f"\n{len(failures)} failure(s) — rerun these after investigating:", file=sys.stderr)
