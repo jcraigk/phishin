@@ -49,6 +49,7 @@ import html as html_escape
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 from dataclasses import asdict, dataclass, field
@@ -894,6 +895,13 @@ def main():
     if not jobs:
         print("No tracks to analyze; no report written.", file=sys.stderr)
         sys.exit(1 if failures else 0)
+
+    # Start fresh: clear rendered trims/clips/plots from any previous run so
+    # stale files don't linger (and inflate index counts) for tracks that are
+    # no longer flagged.
+    for d in (args.trim_dir, args.plot_dir):
+        if d and d.exists():
+            shutil.rmtree(d)
 
     yamnet = Yamnet()
     banter_finder = None if args.no_transcribe else LazyBanterFinder()
