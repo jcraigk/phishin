@@ -37,19 +37,16 @@ module AudioEdgeScan
     totals = Hash.new(0)
     rows = year_dirs.map do |dir|
       year = File.basename(dir)
-      report_path = File.join(dir, "report.json")
-      unless File.exist?(report_path)
+      summary_path = File.join(dir, "summary.json")
+      unless File.exist?(summary_path)
         next %(<tr><td>#{year}</td><td colspan="3" class="pending">no report yet (scan running or failed)</td></tr>)
       end
 
-      entries = JSON.parse(File.read(report_path))
-      trims = Dir.glob(File.join(dir, "trimmed", "*_trimmed.mp3")).size
-      approved = File.exist?(File.join(dir, "approved.json"))
-      totals[:entries] += entries.size
-      totals[:trims] += trims
-      totals[:approved] += 1 if approved
-      %(<tr><td><a href="#{year}/review.html">#{year}</a></td><td>#{entries.size}</td>) +
-        %(<td>#{trims}</td><td>#{approved ? 'yes' : ''}</td></tr>)
+      summary = JSON.parse(File.read(summary_path))
+      counts = %w[trims a_cappella not_trimmed].map { |k| summary.fetch(k, 0) }
+      %w[trims a_cappella not_trimmed].each_with_index { |k, i| totals[k] += counts[i] }
+      %(<tr><td><a href="#{year}/review.html">#{year}</a></td>) +
+        counts.map { |c| %(<td>#{c}</td>) }.join + "</tr>"
     end
 
     File.write("#{SCAN_ROOT}/index.html", <<~HTML)
@@ -71,12 +68,12 @@ module AudioEdgeScan
       <p class="meta">Generated #{Time.now.strftime('%Y-%m-%d %H:%M')}</p>
       <table>
         <thead>
-          <tr><th>Year</th><th>Edges analyzed</th><th>Trims rendered</th><th>Approved</th></tr>
+          <tr><th>Year</th><th>Trims</th><th>A cappellas</th><th>Not trimmed</th></tr>
         </thead>
         <tbody>#{rows.join("\n")}</tbody>
         <tfoot>
-          <tr><td>Total</td><td>#{totals[:entries]}</td>
-          <td>#{totals[:trims]}</td><td>#{totals[:approved]} year(s)</td></tr>
+          <tr><td>Total</td><td>#{totals['trims']}</td>
+          <td>#{totals['a_cappella']}</td><td>#{totals['not_trimmed']}</td></tr>
         </tfoot>
       </table>
     HTML

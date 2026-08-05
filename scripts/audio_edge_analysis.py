@@ -387,6 +387,8 @@ document.getElementById("export").onclick = () => {{
 }};
 </script>
 """)
+    html_path.with_name("summary.json").write_text(json.dumps(
+        {"trims": len(rows), "a_cappella": len(acappella), "not_trimmed": len(skipped)}))
     if not quiet:
         print(f"Review page written to {html_path}", file=sys.stderr)
 
