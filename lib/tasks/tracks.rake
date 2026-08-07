@@ -1,4 +1,37 @@
 namespace :tracks do
+  desc "Find shows whose track positions regress to an earlier set (breaks player order)"
+  task audit_set_order: :environment do
+    set_ranks = SET_NAMES.keys.each_with_index.to_h
+
+    rows = Track.joins(:show)
+                .order("shows.date", :position)
+                .pluck(Arel.sql("shows.date"), :show_id, :position, :set, :title)
+
+    flagged = 0
+    rows.group_by { |date, _| date }.each do |date, tracks|
+      unknown = tracks.reject { |_, _, _, set, _| set_ranks.key?(set) }
+      if unknown.any?
+        puts "#{date}: unknown set value(s): #{unknown.map { |t| "#{t[4]} (set=#{t[3].inspect})" }.join(', ')}"
+        flagged += 1
+        next
+      end
+
+      regressions = tracks.each_cons(2).select do |(_, _, _, prev_set, _), (_, _, _, set, _)|
+        set_ranks[set] < set_ranks[prev_set]
+      end
+      next if regressions.none?
+
+      flagged += 1
+      puts date
+      regressions.each do |(_, _, prev_pos, prev_set, prev_title), (_, _, pos, set, title)|
+        puts "  position #{prev_pos} #{prev_title} (#{SET_NAMES[prev_set]}) is followed by " \
+             "position #{pos} #{title} (#{SET_NAMES[set]})"
+      end
+    end
+
+    puts flagged.zero? ? "No set order problems found." : "\n#{flagged} show(s) flagged."
+  end
+
   desc "Populate song performance gaps"
   task populate_gaps: :environment do
     rel = Show.published.order(date: :asc)
