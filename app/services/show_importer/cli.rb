@@ -15,7 +15,7 @@ class ShowImporter::Cli
   def main_menu
     print_header
     orch.pp_list
-    puts "\n\nTrack #, (i)nsert, (s)ave, e(x)it"
+    puts "\n\nTrack #, (i)nsert, \"save\", e(x)it"
   end
 
   def print_header
@@ -162,8 +162,7 @@ class ShowImporter::Cli
   def repl
     main_menu
     while (line = Reline.readline("👉 ", true))
-      process(line)
-      break if line.in?(%w[s x])
+      break if process(line) == :exit
     end
   end
 
@@ -173,7 +172,8 @@ class ShowImporter::Cli
       return edit_for_pos(pos) if orch.get_track(pos)
       return invalid_input
     end
-    return invalid_input unless line.in?(%w[i s x])
+    return :exit if line == "x"
+    return invalid_input unless line.in?(%w[i save])
     menu_branch(line)
   end
 
@@ -182,8 +182,9 @@ class ShowImporter::Cli
     when "i"
       insert_new_track
       main_menu
-    when "s"
+    when "save"
       orch.save
+      :exit
     end
   end
 
