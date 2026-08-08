@@ -90,6 +90,12 @@ RSpec.describe "API v2 Songs" do
       expect(json).to eq(expected_response)
     end
 
+    it "exposes the numeric ID of the song" do
+      get "/api/v2/songs/#{song.slug}"
+      json = JSON.parse(response.body, symbolize_names: true)
+      expect(json[:id]).to eq(song.id)
+    end
+
     it "returns a 404 if the song does not exist" do
       get "/api/v2/songs/non-existent-song"
       expect(response).to have_http_status(:not_found)

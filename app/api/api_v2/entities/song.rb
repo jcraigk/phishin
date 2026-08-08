@@ -2,6 +2,13 @@ class ApiV2::Entities::Song < ApiV2::Entities::Base
   include ApiV2::Concerns::CountFieldsWithAudio
 
   expose \
+    :id,
+    documentation: {
+      type: "Integer",
+      desc: "ID of the song"
+    }
+
+  expose \
     :slug,
     documentation: {
       type: "String",

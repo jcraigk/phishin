@@ -11,8 +11,12 @@ class GapService < ApplicationService
   EXCLUDED_SONG_TITLES = %w[Intro Outro Banter Interview Jam]
 
   def call
-    update_song_gaps_for_show
-    update_previous_occurrences if update_previous
+    # Gap columns are derived data; recalculating them must not cascade
+    # touch timestamps to tracks and shows (SongsTrack touches its track)
+    ActiveRecord::Base.no_touching do
+      update_song_gaps_for_show
+      update_previous_occurrences if update_previous
+    end
   end
 
   private

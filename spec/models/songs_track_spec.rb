@@ -26,4 +26,28 @@ RSpec.describe SongsTrack do
       expect(song.reload.tracks_count).to eq(0)
     end
   end
+
+  describe 'touch behavior' do
+    let(:track) { create(:track) }
+
+    it 'touches the track when created' do
+      track.update_column(:updated_at, 1.day.ago)
+      create(:songs_track, track:)
+      expect(track.reload.updated_at).to be > 1.minute.ago
+    end
+
+    it 'touches the track\'s show when created' do
+      show = track.show
+      show.update_column(:updated_at, 1.day.ago)
+      create(:songs_track, track:)
+      expect(show.reload.updated_at).to be > 1.minute.ago
+    end
+
+    it 'touches the track when destroyed' do
+      songs_track = create(:songs_track, track:)
+      track.update_column(:updated_at, 1.day.ago)
+      songs_track.destroy
+      expect(track.reload.updated_at).to be > 1.minute.ago
+    end
+  end
 end

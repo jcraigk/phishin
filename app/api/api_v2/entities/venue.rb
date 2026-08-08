@@ -2,6 +2,13 @@ class ApiV2::Entities::Venue < ApiV2::Entities::Base
   include ApiV2::Concerns::CountFieldsWithAudio
 
   expose \
+    :id,
+    documentation: {
+      type: "Integer",
+      desc: "ID of the venue"
+    }
+
+  expose \
     :slug,
     documentation: {
       type: "String",

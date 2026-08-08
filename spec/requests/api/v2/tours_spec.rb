@@ -117,6 +117,12 @@ RSpec.describe "API v2 Tours" do
       expect(json).to eq(expected)
     end
 
+    it "exposes the numeric ID of the tour" do
+      get_api "/tours/#{tour1.slug}"
+      json = JSON.parse(response.body, symbolize_names: true)
+      expect(json[:id]).to eq(tour1.id)
+    end
+
     it "returns a 404 if the tour does not exist" do
       get_api "/tours/non-existent-slug"
       expect(response).to have_http_status(:not_found)

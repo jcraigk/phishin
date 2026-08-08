@@ -2,6 +2,13 @@ class ApiV2::Entities::Tour < ApiV2::Entities::Base
   include ApiV2::Concerns::CountFieldsWithAudio
 
   expose \
+    :id,
+    documentation: {
+      type: "Integer",
+      desc: "ID of the tour"
+    }
+
+  expose \
     :slug,
     documentation: {
       type: "String",

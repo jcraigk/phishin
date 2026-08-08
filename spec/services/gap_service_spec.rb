@@ -43,6 +43,27 @@ RSpec.describe GapService do
       end
     end
 
+    context "when saving gap data" do
+      let!(:track1) { create(:track, show:, position: 1, set: "1", songs: [ song1 ]) }
+
+      before do
+        earlier_show = create(:show, date: "2023-06-01", venue:, tour:, performance_gap_value: 1)
+        create(:track, show: earlier_show, position: 1, set: "1", songs: [ song1 ])
+      end
+
+      it "writes gap data without touching track timestamps" do
+        track1.update_column(:updated_at, 1.day.ago)
+        service.call
+        expect(track1.reload.updated_at).to be < 23.hours.ago
+      end
+
+      it "writes gap data without touching show timestamps" do
+        show.update_column(:updated_at, 1.day.ago)
+        service.call
+        expect(show.reload.updated_at).to be < 23.hours.ago
+      end
+    end
+
     context "with excluded song titles" do
       let!(:intro_track) { create(:track, show:, position: 1, set: "1", songs: [ song3 ]) }
       let!(:regular_track) { create(:track, show:, position: 2, set: "1", songs: [ song1 ]) }

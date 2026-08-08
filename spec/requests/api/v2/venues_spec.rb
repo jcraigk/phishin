@@ -119,6 +119,12 @@ RSpec.describe "API v2 Venues" do
       expect(json).to eq(expected_response)
     end
 
+    it "exposes the numeric ID of the venue" do
+      get "/api/v2/venues/#{venue.slug}"
+      json = JSON.parse(response.body, symbolize_names: true)
+      expect(json[:id]).to eq(venue.id)
+    end
+
     it "returns a 404 if the venue does not exist" do
       get "/api/v2/venues/non-existent-venue"
       expect(response).to have_http_status(:not_found)
