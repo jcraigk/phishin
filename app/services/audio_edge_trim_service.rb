@@ -8,6 +8,7 @@ class AudioEdgeTrimService < ApplicationService
   option :trim_start, default: -> { 0.0 }
   option :fade_in, default: -> { 1.0 }
   option :fade_out, default: -> { 6.0 }
+  option :min_cut, default: -> { MIN_CUT_S }
   option :dry_run, default: -> { false }
 
   MIN_CUT_S = 5.0
@@ -74,9 +75,9 @@ class AudioEdgeTrimService < ApplicationService
   end
 
   def ensure_meaningful_cut
-    return if cut_s >= MIN_CUT_S
+    return if cut_s >= min_cut
     raise TrimTooSmallError,
-          "#{label}: only #{cut_s.round(1)}s would be cut (minimum #{MIN_CUT_S}s)"
+          "#{label}: only #{cut_s.round(1)}s would be cut (minimum #{min_cut}s)"
   end
 
   def filters

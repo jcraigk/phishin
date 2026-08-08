@@ -84,6 +84,28 @@ RSpec.describe AudioEdgeTrimService do
     end
   end
 
+  context "with a custom min_cut" do
+    subject(:result) { described_class.call(track, trim_end:, min_cut: 1.5, dry_run: true) }
+
+    let(:trim_end) { 28.0 }
+
+    it "allows cuts above the custom minimum" do
+      expect(File.exist?(result[:output_path])).to be(true)
+    end
+  end
+
+  context "with a leading trim" do
+    subject(:result) do
+      described_class.call(
+        track, trim_start: 6.0, trim_end: 30.0, fade_in: 0.2, fade_out: 0.0, dry_run: true
+      )
+    end
+
+    it "trims audio from the requested start" do
+      expect(probe_duration(result[:output_path])).to be_within(0.2).of(24.0)
+    end
+  end
+
   context "when the track has no audio" do
     let(:dry_run) { true }
 

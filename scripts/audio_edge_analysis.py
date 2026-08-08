@@ -65,9 +65,20 @@ FRAME_HOP_S = 0.48  # YAMNet score hop
 FRAME_WIN_S = 0.96  # YAMNet score window
 CROWD_CLASSES = ["Applause", "Cheering", "Crowd", "Clapping", "Chatter"]
 SPEECH_CLASSES = ["Speech"]
+# Whisper hallucinates caption-style sound descriptions on crowd noise
+# ("CHEERING", "[Music]"); a segment that is exactly one of these, once
+# lowercased and stripped of punctuation, is not banter.
+HALLUCINATED_CAPTIONS = {
+    "music", "music playing", "instrumental", "singing", "whistling",
+    "cheering", "cheers", "applause", "clapping", "laughter", "laughing",
+    "shouting", "screaming", "crowd", "crowd noise", "crowd cheering",
+    "crowd chatter", "audience", "audience cheering",
+}
 SILENCE_RMS_DB = -48.0
-MIN_CUT_S = 5.0  # skip trims that would remove less than this
+MIN_CUT_S = 5.0  # default for --min-cut: skip trims that would remove less than this
 CLIP_LEAD_S = 5.0  # audio kept before the fade starts in review clips
+LEAD_CLIP_MUSIC_S = 10.0  # music kept after the boundary in leading review clips
+MUSIC_SUSTAIN_S = 4.0  # music must hold above threshold this long to end a non-music run
 LOUD_TAIL_DROP_DB = 6.0  # badge candidates whose cut side stays within this of the music level
 MAX_CHAIN_S = 60.0  # furthest banter chaining may extend past the raw music boundary
 # A cappella repertoire: YAMNet scores quiet unaccompanied singing as speech,
@@ -217,7 +228,7 @@ def trim_track(path, duration_s, edge_results, args, label):
     filters[0] = f"atrim=start={start:.2f}:end={end:.2f}"
 
     cut_s = duration_s - (end - start)
-    if cut_s < MIN_CUT_S:
+    if cut_s < args.min_cut:
         # Nothing meaningful to remove (e.g. banter runs to the end of the
         # track); re-encoding would only add a fade over kept content.
         print(f"  skipping {display_label(label)}: only {cut_s:.1f}s would be cut", file=sys.stderr)
@@ -237,6 +248,18 @@ def trim_track(path, duration_s, edge_results, args, label):
 
     info = {"trimmed": out_path, "start": start, "end": end,
             "cut_s": round(duration_s - (end - start), 1)}
+    if "leading" in flagged:
+        # Audition clip from the start of the trimmed file: fade-in, any kept
+        # banter/crowd, then past the music boundary — with kept banter the
+        # boundary can be well beyond the trim point, and hearing the music
+        # arrive is what the review is for.
+        clip_dir = args.trim_dir / "clips"
+        clip_dir.mkdir(exist_ok=True)
+        clip_len = (flagged["leading"].music_boundary_s - start) + LEAD_CLIP_MUSIC_S
+        clip = clip_dir / f"{safe_label}_lead_audition.mp3"
+        if render_clip(["ffmpeg", "-y", "-v", "error", "-i", str(out_path),
+                        "-t", f"{clip_len:.2f}", "-c", "copy", str(clip)], label):
+            info["audition_lead"] = clip
     if "trailing" in flagged:
         # Audition clip: the last seconds before the fade, then the full fade-out.
         # Anchored to the fade, not the music boundary — with trailing banter the
@@ -283,10 +306,16 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
     def rel(p):
         return os.path.relpath(p, html_path.parent)
 
+    def seconds_cut(r):
+        """The page displays the cut, so order by it; rows without a rendered
+        trim (a cappella, skipped) fall back to the non-music run length."""
+        cut = trim_info.get(r.label, {}).get("cut_s")
+        return cut if cut is not None else r.nonmusic_run_s
+
     rows = []
     skipped = []
     acappella = []
-    for r in results:
+    for r in sorted(results, key=seconds_cut, reverse=True):
         if not r.flagged:
             continue
         info = trim_info.get(r.label, {})
@@ -328,12 +357,15 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
                            f'cut {cut} &mdash; left untouched</div>')
             continue
         audio = ""
-        if info.get("audition"):
-            audio += f'<audio controls preload="none" src="{rel(info["audition"])}"></audio>'
+        for key in ("audition_lead", "audition"):
+            if info.get(key):
+                audio += f'<audio controls preload="none" src="{rel(info[key])}"></audio>'
         payload = esc(json.dumps({
             "label": r.label, "edge": r.edge, "mp3_url": r.mp3_url,
             "share_url": r.share_url, "music_boundary_s": r.music_boundary_s,
             "trim_start": info.get("start"), "trim_end": info.get("end"),
+            "fade_in": args.fade_in if r.edge == "leading" else 0.0,
+            "fade_out": args.fade_out if r.edge == "trailing" else 0.0,
         }), quote=True)
         warn = ""
         if r.boundary_rms_drop_db is not None and r.boundary_rms_drop_db < LOUD_TAIL_DROP_DB:
@@ -463,7 +495,13 @@ class BanterFinder:
         banter = []
         for s in segments:
             text = s.text.strip()
-            if text and s.no_speech_prob < 0.6 and s.avg_logprob > -1.5:
+            # Hallucinated punctuation/symbols ("." / "∂∂") on crowd noise pass
+            # the probability filters; only transcriptions with letters count.
+            if not re.search(r"[A-Za-z]", text):
+                continue
+            if re.sub(r"[^a-z ]", "", text.lower()).strip() in HALLUCINATED_CAPTIONS:
+                continue
+            if s.no_speech_prob < 0.6 and s.avg_logprob > -1.5:
                 # Word timings are far more accurate than segment bounds on
                 # noisy crowd audio; use them for the region edges.
                 start = s.words[0].start if s.words else s.start
@@ -520,11 +558,20 @@ def analyze_edge(yamnet, banter_finder, path, duration_s, edge, args, label, son
     music_sm = median_smooth(music, k=5)
     nonmusic = music_sm < args.music_threshold
 
-    # Walk inward from the edge; median smoothing has already removed short blips.
+    # Walk inward from the edge; median smoothing has already removed short
+    # blips. A surviving blip (a few music-ish seconds of crowd noise) must not
+    # end the run either, so a music frame only terminates it when the score
+    # holds up over the next MUSIC_SUSTAIN_S of audio.
+    look = max(1, int(round(MUSIC_SUSTAIN_S / FRAME_HOP_S)))
+
+    def sustained(i):
+        w = music_sm[i:i + look] if edge == "leading" else music_sm[max(0, i - look + 1):i + 1]
+        return float(np.median(w)) >= args.music_threshold
+
     order = range(n) if edge == "leading" else range(n - 1, -1, -1)
     run_frames = []
     for i in order:
-        if not nonmusic[i]:
+        if not nonmusic[i] and sustained(i):
             break
         run_frames.append(i)
 
@@ -742,13 +789,14 @@ def reconstruct_trim_info(results, args):
             boundary = effective_boundary(flagged["trailing"], args.banter_gap)
             end = min(duration_s, boundary + args.fade_delay + args.fade_out)
         cut_s = duration_s - (end - start)
-        if cut_s < MIN_CUT_S:
+        if cut_s < args.min_cut:
             trim_info[label] = {"cut_s": round(cut_s, 1), "skipped": True}
             continue
         info = {"start": start, "end": end, "cut_s": round(cut_s, 1)}
         safe = re.sub(r"[^\w.-]+", "_", label)
         for key, path in [("trimmed", args.trim_dir / f"{safe}_trimmed.mp3"),
-                          ("audition", args.trim_dir / "clips" / f"{safe}_audition.mp3")]:
+                          ("audition", args.trim_dir / "clips" / f"{safe}_audition.mp3"),
+                          ("audition_lead", args.trim_dir / "clips" / f"{safe}_lead_audition.mp3")]:
             if path.exists():
                 info[key] = path
         trim_info[label] = info
@@ -787,7 +835,8 @@ def rebuild_dir(dir_path, args):
         for label in acappella:
             safe = re.sub(r"[^\w.-]+", "_", label)
             for p in [args.trim_dir / f"{safe}_trimmed.mp3",
-                      args.trim_dir / "clips" / f"{safe}_audition.mp3"]:
+                      args.trim_dir / "clips" / f"{safe}_audition.mp3",
+                      args.trim_dir / "clips" / f"{safe}_lead_audition.mp3"]:
                 p.unlink(missing_ok=True)
     if drop:
         results = [r for r in results if r.label not in drop]
@@ -795,6 +844,7 @@ def rebuild_dir(dir_path, args):
             safe = re.sub(r"[^\w.-]+", "_", label)
             for p in [args.trim_dir / f"{safe}_trimmed.mp3",
                       args.trim_dir / "clips" / f"{safe}_audition.mp3",
+                      args.trim_dir / "clips" / f"{safe}_lead_audition.mp3",
                       args.plot_dir / f"{safe}_leading.png",
                       args.plot_dir / f"{safe}_trailing.png"]:
                 p.unlink(missing_ok=True)
@@ -837,6 +887,9 @@ def main():
                    help="Music score below this = non-music frame (default: 0.2)")
     p.add_argument("--min-duration", type=float, default=20,
                    help="Flag edges with non-music runs at least this long (default: 20s)")
+    p.add_argument("--min-cut", type=float, default=MIN_CUT_S,
+                   help="Skip trims that would remove less than this many seconds "
+                        f"(default: {MIN_CUT_S})")
     p.add_argument("--storage-dir", type=Path, action="append", default=[],
                    help="Extra Active Storage root dir to check for local blobs")
     p.add_argument("--stream", action="store_true",
