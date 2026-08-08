@@ -270,6 +270,7 @@ class Track:
     head: np.ndarray | None = None
     tail: np.ndarray | None = None
     floater: bool = False
+    auto: bool = False  # flagged by broken junctions, not human-nominated
 
     @property
     def has_audio(self):
@@ -471,7 +472,11 @@ def proposed_order(tracks, final, include_ambiguous=False):
     (ambiguous ones only when include_ambiguous). Anchors are non-floater
     tracks, so this works even when a floater currently sits far from the
     rest of its set. Chained floaters are inserted together in chain order."""
-    moves = {f: d for f, d in final.items() if include_ambiguous or not d["ambiguous"]}
+    # Auto-flagged tracks (broken edges, often patched tape sources whose
+    # current position is fine) never move without an explicit human pin or
+    # selection - their "best slot" is unreliable when every junction is bad.
+    moves = {f: d for f, d in final.items()
+             if (include_ambiguous or not d["ambiguous"]) and not (f.auto and not d.get("pinned"))}
     placed = [t for t in tracks if t not in moves]
     done = set()
     for f, d in moves.items():
@@ -530,6 +535,7 @@ def write_review(out_dir, date, junctions, placements, clip_specs, current_order
         f = p["floater"]
         d = p.get("final")
         status = ("PINNED" if d and d.get("pinned")
+                  else "AUTO-FLAGGED (edges look cut/patched - verify before moving)" if f.auto
                   else "AMBIGUOUS" if p["ambiguous"] else "PLACED")
         if d:
             decision = (f"after {esc(d['prev'].label()) if d['prev'] else '(start of set)'}, "
@@ -556,7 +562,8 @@ def write_review(out_dir, date, junctions, placements, clip_specs, current_order
                 "after_id": r["prev"].id if r["prev"] else None,
                 "before_id": r["next"].id if r["next"] else None,
             }))
-            checked = " checked" if d and r["prev"] is d["prev"] and r["next"] is d["next"] else ""
+            checked = (" checked" if not f.auto and d
+                       and r["prev"] is d["prev"] and r["next"] is d["next"] else "")
             items.append(
                 f'<li><label><input type="radio" name="floater-{f.id}" '
                 f'data-payload="{payload}"{checked}> <b>#{rank}</b> score {r["score"]:.2f} — '
@@ -564,8 +571,9 @@ def write_review(out_dir, date, junctions, placements, clip_specs, current_order
                 f"<br><small>{esc(parts)}</small><br>{''.join(clips)}</li>"
             )
         items.append(
-            f'<li><label><input type="radio" name="floater-{f.id}"> '
-            "leave unplaced (decide later)</label></li>"
+            f'<li><label><input type="radio" name="floater-{f.id}"'
+            f'{" checked" if f.auto else ""}> '
+            "leave unplaced (keep current position)</label></li>"
         )
         floater_html.append(
             f"<h3>{esc(f.label())} — {status} (margin {p['margin']:.2f})</h3>"
@@ -668,6 +676,7 @@ def main():
                 and all(v == "BROKEN" for v in verdicts)):
             print(f"  auto-floating (both junctions broken): {t.title}", file=sys.stderr)
             t.floater = True
+            t.auto = True
             floaters.append(t)
 
     pins = {}
@@ -787,6 +796,7 @@ def main():
         else:
             where = "no scorable slots"
         state = ("PINNED" if d and d.get("pinned")
+                 else "AUTO-FLAGGED, not moving" if pl["floater"].auto
                  else "AMBIGUOUS" if pl["ambiguous"] else "PLACED")
         print(f"Floater {pl['floater'].label()}: {state} {where} (margin {pl['margin']:.2f})")
     print(f"Proposed order {'CHANGED' if report['changed'] else 'unchanged'}")
