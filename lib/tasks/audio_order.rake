@@ -31,8 +31,12 @@ namespace :tracks do
     if arg.end_with?(".json")
       selections_arg = Pathname.new(arg)
       abort "No such file: #{selections_arg}" unless selections_arg.exist?
-      date = JSON.parse(selections_arg.read)["date"] ||
-             abort("#{selections_arg} has no date field - re-export from review.html")
+      parsed = JSON.parse(selections_arg.read)
+      unless parsed.is_a?(Hash) && parsed["date"].present?
+        abort "#{selections_arg} is not a review export with a date field - " \
+              "old exports lack it; re-export from the current review.html"
+      end
+      date = parsed["date"]
     else
       date = arg
       selections_arg = (task_args[:selections] || ENV["SELECTIONS"]).presence&.then { |p| Pathname.new(p) }
