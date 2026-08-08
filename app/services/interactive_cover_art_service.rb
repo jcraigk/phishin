@@ -113,7 +113,14 @@ class InteractiveCoverArtService < ApplicationService
   end
 
   def prompt_user_for_action
-    txt = @urls.any? ? "Use (1-#{@urls.size}), (e)dit #, " : ""
+    txt =
+      if @urls.size == 1
+        "Use (1), (e)dit 1, "
+      elsif @urls.any?
+        "Use (1-#{@urls.size}), (e)dit #, "
+      else
+        ""
+      end
     txt += "E(x)it, (S)kip, New (i)mages, New (p)rompt, (U)RL, (F)ile, or custom prompt 👉 "
     print txt
     $stdin.gets.chomp.strip
