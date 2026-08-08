@@ -511,7 +511,7 @@ def esc(s):
     return html.escape(str(s))
 
 
-def write_review(out_dir, date, junctions, placements, clip_specs):
+def write_review(out_dir, date, junctions, placements, clip_specs, current_order):
     rows = []
     for jr in junctions:
         j = jr["junction"]
@@ -595,18 +595,23 @@ def write_review(out_dir, date, junctions, placements, clip_specs):
 {''.join(rows)}
 </table>
 <h2>Floater placements</h2>
-<p>Pick one slot per floater (the analysis pick is pre-selected), then Export
-and save the file as <code>selections.json</code> next to this page. Apply
-with: <code>APPLY=true bin/rails "tracks:audio_order[{esc(date)}]"</code></p>
+<p>Pick one slot per floater (the analysis pick is pre-selected), then Export.
+The download ({esc(date)}.json) is self-contained - upload it and apply with:
+<code>bin/rails "tracks:audio_order[{esc(date)},/path/to/{esc(date)}.json]"</code></p>
 {''.join(floater_html) or '<p>None requested or flagged.</p>'}
 <script>
 document.getElementById("export").onclick = () => {{
   const selections = [...document.querySelectorAll("input[type=radio]:checked")]
     .filter(rb => rb.dataset.payload)
     .map(rb => JSON.parse(rb.dataset.payload));
-  const blob = new Blob([JSON.stringify(selections, null, 2)], {{type: "application/json"}});
+  const payload = {{
+    date: {json.dumps(date)},
+    current_order: {json.dumps(current_order)},
+    selections,
+  }};
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {{type: "application/json"}});
   const a = Object.assign(document.createElement("a"),
-    {{href: URL.createObjectURL(blob), download: "selections.json"}});
+    {{href: URL.createObjectURL(blob), download: {json.dumps(date + ".json")}}});
   a.click();
 }};
 </script>
@@ -766,7 +771,8 @@ def main():
         ],
     }
     (out_dir / "proposed.json").write_text(json.dumps(report, indent=2))
-    review = write_review(out_dir, args.show, junctions, placements, clip_specs)
+    review = write_review(out_dir, args.show, junctions, placements, clip_specs,
+                          report["current_order"])
 
     print(f"\nJunctions: " + ", ".join(
         f"{v}={sum(1 for j in junctions if j['verdict'] == v)}"
