@@ -23,3 +23,4 @@ __pycache__/
 
 # Audio edge scan reports live on the audio-edge-analysis branch only
 data/edge_scan/
+data/audio_order/
