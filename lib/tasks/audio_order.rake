@@ -8,12 +8,12 @@
 #     PINS=id-or-slug:rank,... locks floaters to reviewed candidates (CLI
 #     alternative to the review-page radio buttons).
 #
-#   bin/rails "tracks:audio_order[1991-03-17,/content/import/1991-03-17.json]"
+#   bin/rails "tracks:audio_order[/content/import/1991-03-17.json]"
 #     Renumber the show's tracks after human review. Passing a JSON path
-#     implies apply. The preferred input is the file exported from
-#     review.html's radio buttons (named <date>.json, self-contained: date +
-#     current order + slot choices); with selections there is no ambiguity
-#     gate - the choices are the review.
+#     implies apply, and the show date is read from the file. The input is
+#     the file exported from review.html's radio buttons (named <date>.json,
+#     self-contained: date + current order + slot choices); with selections
+#     there is no ambiguity gate - the choices are the review.
 #
 #     APPLY=true (no path) applies from the default data/audio_order/<date>/
 #     location. Without a selections file, apply falls back to proposed.json
@@ -24,18 +24,28 @@
 namespace :tracks do
   desc "Analyze (or APPLY=true fix) a show's track order via audio junction continuity"
   task :audio_order, [ :date, :selections, :proposal ] => :environment do |_t, task_args|
-    date = task_args[:date] || abort("Usage: bin/rails \"tracks:audio_order[YYYY-MM-DD]\"")
+    arg = task_args[:date] || abort("Usage: bin/rails \"tracks:audio_order[YYYY-MM-DD]\" " \
+                                    "or bin/rails \"tracks:audio_order[/path/to/YYYY-MM-DD.json]\"")
+
+    # A .json first argument is a review export; the date comes from the file.
+    if arg.end_with?(".json")
+      selections_arg = Pathname.new(arg)
+      abort "No such file: #{selections_arg}" unless selections_arg.exist?
+      date = JSON.parse(selections_arg.read)["date"] ||
+             abort("#{selections_arg} has no date field - re-export from review.html")
+    else
+      date = arg
+      selections_arg = (task_args[:selections] || ENV["SELECTIONS"]).presence&.then { |p| Pathname.new(p) }
+    end
     out_dir = Rails.root.join("data/audio_order", date)
 
     # Passing a JSON file (arg or env) means "apply it"; APPLY=true covers
     # applying from the default data/audio_order/<date>/ location.
-    apply = ENV["APPLY"] == "true" ||
-            [ task_args[:selections], task_args[:proposal],
-              ENV["SELECTIONS"], ENV["PROPOSAL"] ].any?(&:present?)
+    apply = ENV["APPLY"] == "true" || selections_arg.present? ||
+            [ task_args[:proposal], ENV["PROPOSAL"] ].any?(&:present?)
 
     if apply
-      selections_path = (task_args[:selections] || ENV["SELECTIONS"]).presence&.then { |p| Pathname.new(p) } ||
-                        out_dir.join("#{date}.json")
+      selections_path = selections_arg || out_dir.join("#{date}.json")
 
       if selections_path.exist?
         # Human-reviewed slot choices exported from review.html; no ambiguity gate.

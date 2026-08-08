@@ -597,7 +597,7 @@ def write_review(out_dir, date, junctions, placements, clip_specs, current_order
 <h2>Floater placements</h2>
 <p>Pick one slot per floater (the analysis pick is pre-selected), then Export.
 The download ({esc(date)}.json) is self-contained - upload it and apply with:
-<code>bin/rails "tracks:audio_order[{esc(date)},/path/to/{esc(date)}.json]"</code></p>
+<code>bin/rails "tracks:audio_order[/path/to/{esc(date)}.json]"</code></p>
 {''.join(floater_html) or '<p>None requested or flagged.</p>'}
 <script>
 document.getElementById("export").onclick = () => {{
