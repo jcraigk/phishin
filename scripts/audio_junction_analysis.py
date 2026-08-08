@@ -270,7 +270,6 @@ class Track:
     head: np.ndarray | None = None
     tail: np.ndarray | None = None
     floater: bool = False
-    auto: bool = False  # flagged by broken junctions, not human-nominated
 
     @property
     def has_audio(self):
@@ -472,11 +471,7 @@ def proposed_order(tracks, final, include_ambiguous=False):
     (ambiguous ones only when include_ambiguous). Anchors are non-floater
     tracks, so this works even when a floater currently sits far from the
     rest of its set. Chained floaters are inserted together in chain order."""
-    # Auto-flagged tracks (broken edges, often patched tape sources whose
-    # current position is fine) never move without an explicit human pin or
-    # selection - their "best slot" is unreliable when every junction is bad.
-    moves = {f: d for f, d in final.items()
-             if (include_ambiguous or not d["ambiguous"]) and not (f.auto and not d.get("pinned"))}
+    moves = {f: d for f, d in final.items() if include_ambiguous or not d["ambiguous"]}
     placed = [t for t in tracks if t not in moves]
     done = set()
     for f, d in moves.items():
@@ -516,7 +511,7 @@ def esc(s):
     return html.escape(str(s))
 
 
-def write_review(out_dir, date, junctions, placements, clip_specs, current_order):
+def write_review(out_dir, date, junctions, placements, clip_specs, current_order, patched):
     rows = []
     for jr in junctions:
         j = jr["junction"]
@@ -535,7 +530,6 @@ def write_review(out_dir, date, junctions, placements, clip_specs, current_order
         f = p["floater"]
         d = p.get("final")
         status = ("PINNED" if d and d.get("pinned")
-                  else "AUTO-FLAGGED (edges look cut/patched - verify before moving)" if f.auto
                   else "AMBIGUOUS" if p["ambiguous"] else "PLACED")
         if d:
             decision = (f"after {esc(d['prev'].label()) if d['prev'] else '(start of set)'}, "
@@ -562,7 +556,7 @@ def write_review(out_dir, date, junctions, placements, clip_specs, current_order
                 "after_id": r["prev"].id if r["prev"] else None,
                 "before_id": r["next"].id if r["next"] else None,
             }))
-            checked = (" checked" if not f.auto and d
+            checked = (" checked" if d
                        and r["prev"] is d["prev"] and r["next"] is d["next"] else "")
             items.append(
                 f'<li><label><input type="radio" name="floater-{f.id}" '
@@ -571,8 +565,7 @@ def write_review(out_dir, date, junctions, placements, clip_specs, current_order
                 f"<br><small>{esc(parts)}</small><br>{''.join(clips)}</li>"
             )
         items.append(
-            f'<li><label><input type="radio" name="floater-{f.id}"'
-            f'{" checked" if f.auto else ""}> '
+            f'<li><label><input type="radio" name="floater-{f.id}"> '
             "leave unplaced (keep current position)</label></li>"
         )
         floater_html.append(
@@ -597,6 +590,9 @@ def write_review(out_dir, date, junctions, placements, clip_specs, current_order
 </style>
 <button id="export">Export selections.json</button>
 <h1>{esc(date)} junction review</h1>
+{f'<p><b>&#9888;&#65039; Broken edges on both sides:</b> ' + ", ".join(esc(t.label()) for t in patched) +
+ ' - likely a patched tape source or a missing neighbor; kept in place. '
+ 'Re-run with it in --floaters to search placements.</p>' if patched else ''}
 <h2>Junctions (current order, within sets)</h2>
 <table>
 <tr><th>Track A</th><th>Track B</th><th>Score</th><th>Verdict</th><th>Detail</th><th>Splice</th></tr>
@@ -666,18 +662,22 @@ def main():
     sequences = in_set_sequences(tracks)
     junctions = verify_pass(sequences)
 
-    # Auto-float: audio tracks broken on every scored junction (and not at a set edge)
+    # Tracks broken on every scored junction are usually patched tape sources
+    # or have a missing neighbor (an unplaced floater). They stay as anchors -
+    # moving them based on universally bad junction scores is unreliable - but
+    # get called out for human attention. Pass them in --floaters to actually
+    # search placements for one.
     for jr in junctions:
         jr["a"].__dict__.setdefault("_verdicts", []).append(jr["verdict"])
         jr["b"].__dict__.setdefault("_verdicts", []).append(jr["verdict"])
+    patched = []
     for t in tracks:
         verdicts = [v for v in getattr(t, "_verdicts", []) if v != "NO_AUDIO"]
         if (t.has_audio and not t.floater and len(verdicts) >= 2
                 and all(v == "BROKEN" for v in verdicts)):
-            print(f"  auto-floating (both junctions broken): {t.title}", file=sys.stderr)
-            t.floater = True
-            t.auto = True
-            floaters.append(t)
+            print(f"  warning: broken edges on both sides of {t.title} "
+                  "(patched source? missing neighbor?)", file=sys.stderr)
+            patched.append(t)
 
     pins = {}
     for spec in (s.strip() for s in args.pins.split(",") if s.strip()):
@@ -749,6 +749,7 @@ def main():
         "proposed_order_full": order_full,
         "changed": order != [t.id for t in tracks],
         "ambiguous_floaters": [p["floater"].id for p in placements if p["ambiguous"]],
+        "suspect_patched": [{"id": t.id, "title": t.title} for t in patched],
         "junctions": [
             {"a_id": jr["a"].id, "a": jr["a"].title, "b_id": jr["b"].id, "b": jr["b"].title,
              "verdict": jr["verdict"],
@@ -781,7 +782,7 @@ def main():
     }
     (out_dir / "proposed.json").write_text(json.dumps(report, indent=2))
     review = write_review(out_dir, args.show, junctions, placements, clip_specs,
-                          report["current_order"])
+                          report["current_order"], patched)
 
     print(f"\nJunctions: " + ", ".join(
         f"{v}={sum(1 for j in junctions if j['verdict'] == v)}"
@@ -796,9 +797,11 @@ def main():
         else:
             where = "no scorable slots"
         state = ("PINNED" if d and d.get("pinned")
-                 else "AUTO-FLAGGED, not moving" if pl["floater"].auto
                  else "AMBIGUOUS" if pl["ambiguous"] else "PLACED")
         print(f"Floater {pl['floater'].label()}: {state} {where} (margin {pl['margin']:.2f})")
+    for t in patched:
+        print(f"Warning: {t.label()} has broken edges on both sides "
+              "(patched source? missing neighbor?) - kept in place")
     print(f"Proposed order {'CHANGED' if report['changed'] else 'unchanged'}")
     print(f"Report: {out_dir / 'proposed.json'}")
     print(f"Review: {review}")
