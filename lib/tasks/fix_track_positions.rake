@@ -6,6 +6,8 @@
 # the IDs of its correct neighbors).
 #
 # Run: bin/rails tracks:fix_positions
+#   INCLUDE_REVIEW=true          also apply the 7 judgment-call shows
+#   ONLY=1989-03-03,1992-05-12   apply only the named dates (implies review approval)
 #
 # Each show is verified by ID set before touching it and skipped with a
 # warning if its tracks don't match expectations. Already-correct shows are
@@ -71,10 +73,17 @@ namespace :tracks do
     }
 
     include_review = ENV["INCLUDE_REVIEW"] == "true"
+    only_dates = ENV["ONLY"]&.split(",")&.map(&:strip)
+    if only_dates && (unknown = only_dates - fixes.keys).any?
+      abort "Unknown date(s) in ONLY: #{unknown.join(', ')}"
+    end
     fixed = skipped = ok = deferred = 0
 
     fixes.each do |date, ids|
-      if review_dates.include?(date) && !include_review
+      next if only_dates && !only_dates.include?(date)
+
+      # Naming a date in ONLY counts as review approval for that show
+      if review_dates.include?(date) && !include_review && only_dates.nil?
         puts "DEFER #{date}: needs manual review (run with INCLUDE_REVIEW=true to apply)"
         deferred += 1
         next
