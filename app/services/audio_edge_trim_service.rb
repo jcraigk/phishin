@@ -1,7 +1,8 @@
 # Applies an approved edge trim to a track's audio: renders a trimmed MP3
-# with ffmpeg (same filter chain as scripts/audio_edge_analysis.py), backs up
-# the original file, replaces the attachment, and reprocesses duration, ID3
-# tags, and waveform. With dry_run: true it only renders the file for review.
+# with ffmpeg, backs up the original file, replaces the attachment, and
+# reprocesses duration, ID3 tags, and waveform. With dry_run: true it only
+# renders the file for review. The filter chain is kept in lockstep with
+# scripts/audio_edge_analysis.py by audio_edge_trim_service_parity_spec.rb.
 class AudioEdgeTrimService < ApplicationService
   param :track
   option :trim_end
@@ -18,6 +19,21 @@ class AudioEdgeTrimService < ApplicationService
   class Error < StandardError; end
   class MissingAudioError < Error; end
   class TrimTooSmallError < Error; end
+
+  # Mirror of trim_filters() in scripts/audio_edge_analysis.py. Both must build
+  # the same chain for the same inputs or a lead-scan preview stops matching
+  # what actually gets applied; spec/services/audio_edge_trim_service_parity_spec.rb
+  # fails if they drift.
+  def self.filters(trim_start:, trim_end:, fade_in:, fade_out:)
+    kept = trim_end - trim_start
+    list = [ format("atrim=start=%.2f:end=%.2f", trim_start, trim_end), "asetpts=PTS-STARTPTS" ]
+    list << format("afade=t=in:st=0:d=%.2f", fade_in) if trim_start.positive? && fade_in.positive?
+    if fade_out.positive?
+      fade = [ fade_out, kept ].min
+      list << format("afade=t=out:st=%.2f:d=%.2f", kept - fade, fade)
+    end
+    list
+  end
 
   def call
     raise MissingAudioError, "#{label} has no audio attached" if track.missing_audio?
@@ -81,14 +97,10 @@ class AudioEdgeTrimService < ApplicationService
   end
 
   def filters
-    kept = kept_end - trim_start
-    list = [ format("atrim=start=%.2f:end=%.2f", trim_start, kept_end), "asetpts=PTS-STARTPTS" ]
-    list << format("afade=t=in:st=0:d=%.2f", fade_in) if trim_start.positive? && fade_in.positive?
-    if kept_end < duration_s - 0.1 && fade_out.positive?
-      fade = [ fade_out, kept ].min
-      list << format("afade=t=out:st=%.2f:d=%.2f", kept - fade, fade)
-    end
-    list
+    self.class.filters(
+      trim_start:, trim_end: kept_end, fade_in:,
+      fade_out: kept_end < duration_s - 0.1 ? fade_out : 0.0
+    )
   end
 
   def output_path
