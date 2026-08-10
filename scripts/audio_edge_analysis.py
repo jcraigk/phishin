@@ -177,6 +177,15 @@ def fmt_ts(seconds):
     return f"{h}:{m:02d}:{s:02d}" if h else f"{m}:{s:02d}"
 
 
+def fmt_tenths(seconds):
+    """Seconds as m:ss.s, the editable form on the review page (e.g. 1:03.2)."""
+    # Round before splitting: 59.99 must render 1:00.0, not 0:60.0 (which the
+    # page's own parser would then reject).
+    tenths = max(0, round(float(seconds) * 10))
+    m, s = divmod(tenths, 600)
+    return f"{m}:{s / 10:04.1f}"
+
+
 def display_label(label):
     """Label without the tNN position token, for human-facing pages."""
     return re.sub(r"^(\d{4}-\d{2}-\d{2} .*?) t\d+ ", r"\1 ", label)
@@ -202,6 +211,35 @@ def effective_boundary(result, gap_s):
     return boundary
 
 
+def trim_filters(start, end, fade_in, fade_out):
+    """Build the ffmpeg -af chain for a trim. Single source of truth for the
+    filter chain: the scan renderer, the preview server, and the Ruby
+    AudioEdgeTrimService must all produce this exact string for the same inputs
+    (see spec/services/audio_edge_trim_service_parity_spec.rb)."""
+    filters = [f"atrim=start={start:.2f}:end={end:.2f}", "asetpts=PTS-STARTPTS"]
+    if start > 0 and fade_in > 0:
+        filters.append(f"afade=t=in:st=0:d={fade_in:.2f}")
+    # NOTE: a leading edge whose boundary is under --keep-lead clamps to
+    # start=0.0, where there is no splice to smooth. Ruby has always skipped
+    # the fade there (trim_start.positive?); this now matches. See
+    # spec/services/audio_edge_trim_service_parity_spec.rb.
+    if fade_out > 0:
+        fade = min(fade_out, end - start)
+        filters.append(f"afade=t=out:st={end - start - fade:.2f}:d={fade:.2f}")
+    return filters
+
+
+def trim_command(src, out_path, start, end, fade_in, fade_out, bitrate=None):
+    """Full ffmpeg argv for rendering a trim. Shared by the scan and the
+    preview server so a preview is byte-identical to what gets applied."""
+    return [
+        "ffmpeg", "-y", "-v", "error", "-i", str(src),
+        "-af", ",".join(trim_filters(start, end, fade_in, fade_out)),
+        "-map_metadata", "0", "-id3v2_version", "3",
+        "-b:a", bitrate or probe_bitrate(src), str(out_path),
+    ]
+
+
 def trim_track(path, duration_s, edge_results, args, label):
     """Render a trimmed mp3 for flagged edges: cut at the music boundary plus a
     few seconds of kept crowd noise, with fades. Writes to --trim-dir; the
@@ -214,18 +252,15 @@ def trim_track(path, duration_s, edge_results, args, label):
         return
     start = 0.0
     end = duration_s
-    filters = [None, "asetpts=PTS-STARTPTS"]
     if "leading" in flagged:
         start = max(0.0, effective_boundary(flagged["leading"], args.banter_gap) - args.keep_lead)
-        if args.fade_in > 0:
-            filters.append(f"afade=t=in:st=0:d={args.fade_in:.2f}")
     if "trailing" in flagged:
         boundary = effective_boundary(flagged["trailing"], args.banter_gap)
         end = min(duration_s, boundary + args.fade_delay + args.fade_out)
-        if args.fade_out > 0:
-            fade = min(args.fade_out, end - start)
-            filters.append(f"afade=t=out:st={end - start - fade:.2f}:d={fade:.2f}")
-    filters[0] = f"atrim=start={start:.2f}:end={end:.2f}"
+    # Fades only apply on edges that were actually flagged for trimming.
+    fade_in = args.fade_in if "leading" in flagged else 0.0
+    fade_out = args.fade_out if "trailing" in flagged else 0.0
+    filters = trim_filters(start, end, fade_in, fade_out)
 
     cut_s = duration_s - (end - start)
     if cut_s < args.min_cut:
@@ -237,11 +272,7 @@ def trim_track(path, duration_s, edge_results, args, label):
     args.trim_dir.mkdir(parents=True, exist_ok=True)
     safe_label = re.sub(r"[^\w.-]+", "_", label)
     out_path = args.trim_dir / f"{safe_label}_trimmed.mp3"
-    run([
-        "ffmpeg", "-y", "-v", "error", "-i", str(path),
-        "-af", ",".join(filters), "-map_metadata", "0", "-id3v2_version", "3",
-        "-b:a", probe_bitrate(path), str(out_path),
-    ])
+    run(trim_command(path, out_path, start, end, fade_in, fade_out))
     print(f"  trimmed {display_label(label)}: kept {start:.1f}s to {end:.1f}s "
           f"(cut {duration_s - (end - start):.1f}s of {duration_s:.1f}s) -> {out_path}",
           file=sys.stderr)
@@ -379,6 +410,13 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
     {warn}
   </div>
   {banter}
+  <div class="tune">
+    <label>start <input class="start" type="text" value="{fmt_tenths(info["start"])}"
+      size="8" spellcheck="false"></label>
+    <button class="nudge" data-step="-1" title="1 second earlier">&minus;1s</button>
+    <button class="nudge" data-step="1" title="1 second later">+1s</button>
+    <span class="status"></span>
+  </div>
   <div class="audio">{audio}</div>
   {plot}
 </div>""")
@@ -402,6 +440,18 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
   input[type="checkbox"] {{ width: 1.3rem; height: 1.3rem; }}
   img {{ max-width: 100%; }}
   #export {{ position: fixed; top: 1rem; right: 1rem; padding: .5rem 1rem; }}
+  .tune {{ display: flex; gap: .6rem; align-items: center; margin: .4rem 0 .4rem 1.6rem; }}
+  .tune input {{ font: inherit; padding: .1rem .3rem; width: 6rem; }}
+  .tune input.invalid {{ border-color: #b00020; background: #fdf0f0; }}
+  .tune .nudge {{ font: inherit; padding: .1rem .5rem; cursor: pointer; }}
+  .tune .status {{ color: #666; font-size: 13px; }}
+  .tune .status.err {{ color: #b00020; }}
+  .offline {{ background: #fff4d6; border: 1px solid #d9ad4a; color: #6b4e00;
+             padding: .6rem .8rem; margin-bottom: 1rem; border-radius: 4px; }}
+  .audio .replay {{ font: inherit; padding: .1rem .5rem; cursor: pointer; }}
+  .tune .status.done {{ background: #dcefe1; color: #1a6b2f; font-weight: 600;
+                        padding: .1rem .5rem; border-radius: 3px; }}
+  .row.edited .tune input {{ border-color: #b8860b; }}
 </style>
 <button id="export">Export approved.json</button>
 <h1>Track edge trim review ({len(rows)} candidates)</h1>
@@ -409,8 +459,156 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
 {f'<h2>A cappella ({len(acappella)}) &mdash; not auto-trimmed, review manually</h2>{"".join(acappella)}' if acappella else ""}
 {f'<h2>Not trimmed ({len(skipped)})</h2>{"".join(skipped)}' if skipped else ""}
 <script>
+const YEAR = {json.dumps(html_path.resolve().parent.name)};
+
+// Accepts "1:03.2", "63.2", "1:03". Returns null on anything else so a typo
+// is rejected visibly rather than silently trimming at the wrong place.
+function parseTime(raw) {{
+  const s = raw.trim();
+  if (!s) return null;
+  // With a colon the seconds field is clock-style and capped at 59; bare input
+  // is a plain seconds count, so "63.2" and "1:03.2" both mean 63.2s.
+  const clock = s.match(/^(\\d+):([0-5]?\\d(?:\\.\\d+)?)$/);
+  if (clock) {{
+    return Math.round((parseInt(clock[1], 10) * 60 + parseFloat(clock[2])) * 10) / 10;
+  }}
+  const plain = s.match(/^\\d+(?:\\.\\d+)?$/);
+  return plain ? Math.round(parseFloat(s) * 10) / 10 : null;
+}}
+
+function fmtTime(sec) {{
+  const m = Math.floor(sec / 60);
+  return m + ":" + (sec - m * 60).toFixed(1).padStart(4, "0");
+}}
+
+// Previews render server-side with the same ffmpeg chain as the real trim, so
+// what you hear is what lead_scan:apply writes. Without the server (opened over
+// file://) the field still edits the export; only the preview is unavailable.
+async function renderPreview(row) {{
+  const cb = row.querySelector("input[type=checkbox]");
+  const input = row.querySelector("input.start");
+  const status = row.querySelector(".status");
+  const payload = JSON.parse(cb.dataset.payload);
+  const secs = parseTime(input.value);
+  if (secs === null) return;
+
+  status.textContent = "rendering...";
+  status.classList.remove("err", "done");
+  // The field stays editable during a render: the debounce already prevents
+  // pile-up, and locking it would swallow clicks mid-render.
+  try {{
+    const resp = await fetch("/preview", {{
+      method: "POST",
+      headers: {{"Content-Type": "application/json"}},
+      body: JSON.stringify({{
+        mp3_url: payload.mp3_url, trim_start: secs, trim_end: payload.trim_end,
+        fade_in: payload.fade_in, fade_out: payload.fade_out
+      }})
+    }});
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || resp.statusText);
+    // A slower earlier render must not clobber a newer one.
+    if (parseTime(input.value) !== secs) return;
+    // One player per row: the preview supersedes the scan-time audition clips,
+    // which were rendered at the original start and would only be confusing to
+    // leave alongside it.
+    const box = row.querySelector(".audio");
+    let audio = box.querySelector("audio.preview");
+    if (!audio) {{
+      box.replaceChildren();
+      audio = Object.assign(document.createElement("audio"),
+        {{controls: true, className: "preview"}});
+      box.append(audio);
+      const replay = Object.assign(document.createElement("button"),
+        {{className: "replay", textContent: "\\u21ba restart", title: "play from the start"}});
+      replay.addEventListener("click", () => {{
+        audio.currentTime = 0;
+        audio.play();
+      }});
+      box.append(replay);
+    }}
+    audio.src = data.url + "?t=" + Date.now();
+    // Autoplay: the reviewer asked for this render, so it is not a surprise.
+    // Browsers may still block it without prior interaction; ignore that.
+    audio.play().catch(() => {{}});
+    status.textContent = "preview of " + fmtTime(secs);
+    status.classList.add("done");
+  }} catch (e) {{
+    // A TypeError from fetch means nothing answered: almost always the page
+    // was opened over file:// instead of through `rake lead_scan:serve`.
+    status.textContent = (e instanceof TypeError || location.protocol === "file:")
+      ? "no preview server \\u2014 run: rake lead_scan:serve[" + (YEAR || "YYYY") + "]"
+      : "preview failed: " + e.message;
+    status.classList.add("err");
+  }}
+}}
+
+if (location.protocol === "file:") {{
+  const b = document.createElement("div");
+  b.className = "offline";
+  b.textContent = "Opened as a file \\u2014 previews need the server. "
+    + "Run: rake lead_scan:serve[" + YEAR + "] and open the http:// URL. "
+    + "Editing start times still works and still exports.";
+  document.body.prepend(b);
+}}
+
+document.querySelectorAll(".row").forEach(row => {{
+  const cb = row.querySelector("input[type=checkbox]");
+  const input = row.querySelector("input.start");
+  if (!cb || !input) return;
+  const original = JSON.parse(cb.dataset.payload).trim_start;
+  const payloadEnd = JSON.parse(cb.dataset.payload).trim_end;
+
+  // The export payload updates on every commit, but rendering waits for a
+  // pause so a burst of +1s clicks costs one ffmpeg run, not one per click.
+  let renderTimer = null;
+  const scheduleRender = () => {{
+    clearTimeout(renderTimer);
+    row.querySelector(".status").textContent = "waiting...";
+    row.querySelector(".status").classList.remove("err", "done");
+    renderTimer = setTimeout(() => renderPreview(row), 450);
+  }};
+
+  const commit = () => {{
+    const secs = parseTime(input.value);
+    input.classList.toggle("invalid", secs === null);
+    if (secs === null) {{
+      clearTimeout(renderTimer);
+      row.querySelector(".status").textContent = "use m:ss.s (e.g. 1:03.2)";
+      row.querySelector(".status").classList.remove("done");
+      row.querySelector(".status").classList.add("err");
+      return;
+    }}
+    // The checkbox payload is the single source of truth for the export.
+    const payload = JSON.parse(cb.dataset.payload);
+    if (payload.trim_start === secs) return;
+    payload.trim_start = secs;
+    cb.dataset.payload = JSON.stringify(payload);
+    // Highlight the control only. The plot is a static scan-time PNG and is
+    // never redrawn, so nothing about it should look active.
+    row.classList.toggle("edited", Math.abs(secs - original) > 0.05);
+    scheduleRender();
+  }};
+
+  input.addEventListener("change", commit);
+  input.addEventListener("keydown", e => {{ if (e.key === "Enter") {{ e.preventDefault(); commit(); }} }});
+
+  // Nudge from whatever is currently in the field so repeated clicks compound;
+  // an unparseable field falls back to the committed value rather than 0.
+  row.querySelectorAll("button.nudge").forEach(btn => {{
+    btn.addEventListener("click", () => {{
+      const base = parseTime(input.value) ?? JSON.parse(cb.dataset.payload).trim_start;
+      const next = Math.max(0, Math.round((base + Number(btn.dataset.step)) * 10) / 10);
+      if (next > payloadEnd - 0.1) return;  // never past the trim end
+      input.value = fmtTime(next);
+      input.classList.remove("invalid");
+      commit();
+    }});
+  }});
+}});
+
 document.getElementById("export").onclick = () => {{
-  const approved = [...document.querySelectorAll("input:checked")]
+  const approved = [...document.querySelectorAll("input[type=checkbox]:checked")]
     .map(cb => JSON.parse(cb.dataset.payload));
   const blob = new Blob([JSON.stringify(approved, null, 2)], {{type: "application/json"}});
   const a = Object.assign(document.createElement("a"),

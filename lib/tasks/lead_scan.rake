@@ -124,10 +124,26 @@ namespace :lead_scan do
     LeadScan.write_index
   end
 
-  desc "Regenerate all review pages from existing reports (backfills track links; no audio analyzed)"
-  task :rebuild do
-    dirs = Dir.glob("#{LeadScan::SCAN_ROOT}/{[0-9][0-9][0-9][0-9],shows/*}")
-               .select { |d| File.exist?("#{d}/report.json") }
+  desc "Serve a review dir with live trim previews (rake lead_scan:serve[2025])"
+  task :serve, [ :year, :port ] => :environment do |_t, args|
+    abort "Usage: rake lead_scan:serve[YYYY]" unless args[:year]
+    dir = "#{LeadScan::SCAN_ROOT}/#{args[:year]}"
+    abort "No review page at #{dir}/review.html" unless File.exist?("#{dir}/review.html")
+    cmd = [ "uv", "run", "scripts/lead_scan_server.py", "--dir", dir ]
+    cmd += [ "--port", args[:port] ] if args[:port]
+    system(*cmd)
+  end
+
+  desc "Regenerate review pages from existing reports (rake lead_scan:rebuild or " \
+       "lead_scan:rebuild[2025]); no audio analyzed"
+  task :rebuild, [ :year ] do |_t, args|
+    dirs =
+      if args[:year]
+        [ "#{LeadScan::SCAN_ROOT}/#{args[:year]}" ].select { |d| File.exist?("#{d}/report.json") }
+      else
+        Dir.glob("#{LeadScan::SCAN_ROOT}/{[0-9][0-9][0-9][0-9],shows/*}")
+           .select { |d| File.exist?("#{d}/report.json") }
+      end
     abort "No reports found under #{LeadScan::SCAN_ROOT}" if dirs.empty?
     cmd = [ "uv", "run", LeadScan::SCAN_SCRIPT, *LeadScan::TUNING_FLAGS ] +
           dirs.flat_map { |d| [ "--rebuild", d ] }
