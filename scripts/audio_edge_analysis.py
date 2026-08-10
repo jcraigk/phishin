@@ -497,14 +497,24 @@ async function renderPreview(row) {{
   // The field stays editable during a render: the debounce already prevents
   // pile-up, and locking it would swallow clicks mid-render.
   try {{
-    const resp = await fetch("/preview", {{
-      method: "POST",
-      headers: {{"Content-Type": "application/json"}},
-      body: JSON.stringify({{
-        mp3_url: payload.mp3_url, trim_start: secs, trim_end: payload.trim_end,
-        fade_in: payload.fade_in, fade_out: payload.fade_out
-      }})
-    }});
+    // Without a timeout a dropped request leaves the row on "rendering..."
+    // forever, with no way to tell a slow render from a dead one.
+    const ctl = new AbortController();
+    const timeout = setTimeout(() => ctl.abort(), 180000);
+    let resp;
+    try {{
+      resp = await fetch("/preview", {{
+        method: "POST",
+        signal: ctl.signal,
+        headers: {{"Content-Type": "application/json"}},
+        body: JSON.stringify({{
+          mp3_url: payload.mp3_url, trim_start: secs, trim_end: payload.trim_end,
+          fade_in: payload.fade_in, fade_out: payload.fade_out
+        }})
+      }});
+    }} finally {{
+      clearTimeout(timeout);
+    }}
     const data = await resp.json();
     if (!resp.ok) throw new Error(data.error || resp.statusText);
     // A slower earlier render must not clobber a newer one.
@@ -536,9 +546,11 @@ async function renderPreview(row) {{
   }} catch (e) {{
     // A TypeError from fetch means nothing answered: almost always the page
     // was opened over file:// instead of through `rake lead_scan:serve`.
-    status.textContent = (e instanceof TypeError || location.protocol === "file:")
-      ? "no preview server \\u2014 run: rake lead_scan:serve[" + (YEAR || "YYYY") + "]"
-      : "preview failed: " + e.message;
+    status.textContent =
+      e.name === "AbortError" ? "render timed out \\u2014 retry, or check the server"
+      : (e instanceof TypeError || location.protocol === "file:")
+        ? "no preview server \\u2014 run: rake lead_scan:serve[" + (YEAR || "YYYY") + "]"
+        : "preview failed: " + e.message;
     status.classList.add("err");
   }}
 }}

@@ -124,11 +124,13 @@ namespace :lead_scan do
     LeadScan.write_index
   end
 
-  desc "Serve a review dir with live trim previews (rake lead_scan:serve[2025])"
+  desc "Serve review pages with live trim previews (rake lead_scan:serve for all " \
+       "years, or lead_scan:serve[2025] for one)"
   task :serve, [ :year, :port ] => :environment do |_t, args|
-    abort "Usage: rake lead_scan:serve[YYYY]" unless args[:year]
-    dir = "#{LeadScan::SCAN_ROOT}/#{args[:year]}"
-    abort "No review page at #{dir}/review.html" unless File.exist?("#{dir}/review.html")
+    dir = args[:year] ? "#{LeadScan::SCAN_ROOT}/#{args[:year]}" : LeadScan::SCAN_ROOT
+    if args[:year] && !File.exist?("#{dir}/review.html")
+      abort "No review page at #{dir}/review.html"
+    end
     cmd = [ "uv", "run", "scripts/lead_scan_server.py", "--dir", dir ]
     cmd += [ "--port", args[:port] ] if args[:port]
     system(*cmd)
@@ -224,7 +226,10 @@ namespace :lead_scan do
           trim_end: entry["trim_end"].to_f,
           fade_in: entry.fetch("fade_in", LeadScan::FADE_IN).to_f,
           fade_out: entry.fetch("fade_out", 0.0).to_f,
-          min_cut: LeadScan::MIN_CUT,
+          # MIN_CUT screens candidates during the scan. By the time an entry is
+          # in approved.json a human has picked its start time, so enforcing a
+          # minimum here would just reject deliberate small trims.
+          min_cut: 0.0,
           dry_run:
         )
         applied += 1
