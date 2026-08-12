@@ -17,8 +17,9 @@ class McpOauthController < ApplicationController
   ].freeze
 
   def protected_resource
+    path = params[:path].presence || "mcp"
     render json: {
-      resource: "#{base_url}/mcp/anthropic",
+      resource: "#{base_url}/#{path}",
       authorization_servers: [ base_url ]
     }
   end
