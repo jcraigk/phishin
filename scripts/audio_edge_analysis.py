@@ -907,7 +907,17 @@ document.addEventListener("keydown", e => {{
   // working after clicking a control or pressing "w".
   const typing = (t === "INPUT" && e.target.type !== "checkbox")
     || t === "TEXTAREA" || (e.target && e.target.isContentEditable);
-  if (typing) return;
+  // The only text field on the page is the m:ss.s start time, where a letter is
+  // never valid input. So letters stay shortcuts even with the field focused -
+  // "w" approves instead of typing a w - while digits, ":", "." and the editing
+  // keys still reach the field normally.
+  const isLetter = e.key.length === 1 && /[a-z]/i.test(e.key);
+  if (typing && !(t === "INPUT" && isLetter)) return;
+  // A letter reaching this point is a shortcut, not text. Swallow it up front:
+  // the branches below only preventDefault once they know they can act, and an
+  // unhandled letter ("q", or "c" with no row) would otherwise still be typed
+  // into the field we are about to leave.
+  if (typing && isLetter) e.preventDefault();
   if (e.target && e.target.blur && (t === "AUDIO" || t === "INPUT" || t === "BUTTON")) {{
     e.target.blur();
   }}
@@ -1007,13 +1017,23 @@ document.querySelectorAll(".row").forEach(row => {{
   // whenever it is shown, arm a timer that clears it if nothing else has.
   const armWatchdog = () => {{
     clearTimeout(row._watchdog);
-    row._watchdog = setTimeout(() => {{
-      if (row._pending > 0) return armWatchdog();   // still working, re-arm
+    // Real renders are ~1.5s but a cold network read has been seen at 86s,
+    // so the deadline has to clear genuine hangs without cutting off slow
+    // work. Source tracks are cached after first use, making these rare.
+    row._deadline = Date.now() + 120000;
+    row._watchdog = setTimeout(function tick() {{
       const st = row.querySelector(".status");
-      if (st.classList.contains("busy")) {{
-        st.textContent = "";
-        st.classList.remove("busy");
+      if (!st.classList.contains("busy")) return;
+      // Re-arm while work is genuinely in flight, but never past the deadline:
+      // a request that hangs keeps _pending above zero forever, and deferring
+      // to it is what let "rendering..." stick around indefinitely.
+      if (row._pending > 0 && Date.now() < row._deadline) {{
+        row._watchdog = setTimeout(tick, 4000);
+        return;
       }}
+      st.textContent = "";
+      st.classList.remove("busy");
+      row._pending = 0;
     }}, 8000);
   }};
 

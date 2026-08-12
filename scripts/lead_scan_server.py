@@ -30,6 +30,8 @@ import re
 import subprocess
 import sys
 import threading
+
+import requests
 import time
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -58,21 +60,48 @@ aea = load_scan_module()
 # so a tight limit just makes edits queue behind each other. Cap generously -
 # enough to keep a burst from thrashing, loose enough that no edit waits.
 _render_sem = threading.Semaphore(8)
+_warming = set()   # urls with a cache fetch already in flight
+
+
+def _warm_cache(mp3_url, dest):
+    """Fetch a track into the cache once, in the background.
+
+    Streaming from http keeps the first render fast, but every later edit to
+    the same track re-reads over the network, and those reads occasionally
+    stall for over a minute. One background fetch makes every render after it
+    local and predictable."""
+    tmp = dest.with_suffix(".part")
+    try:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        resp = requests.get(mp3_url, timeout=180)
+        resp.raise_for_status()
+        tmp.write_bytes(resp.content)
+        tmp.replace(dest)          # atomic: readers never see a partial file
+    except Exception as e:         # noqa: BLE001 - caching is best effort
+        tmp.unlink(missing_ok=True)
+        print(f"  cache warm failed for {mp3_url}: {e}", file=sys.stderr)
+    finally:
+        _warming.discard(mp3_url)
 
 
 def source_for(mp3_url, storage_dirs):
     """Local Active Storage blob, an already-cached download, or the url itself.
 
-    Downloading a whole 15MB track to trim a few seconds off the front is the
-    slowest thing this server does - minutes on a slow link, during which the
-    page just says "rendering...". ffmpeg reads http directly and only pulls
-    what the trim needs, so stream unless the file is already on disk."""
+    Downloading a whole 15MB track before the first render would make it slow,
+    so the first read streams from http and a background fetch warms the cache
+    for everything after it."""
     local = aea.local_blob_path(mp3_url, storage_dirs)
     if local:
         return local
     key = Path(mp3_url.split("?")[0]).stem
     cached = aea.CACHE_DIR / f"{key}.mp3"
-    return cached if cached.exists() else mp3_url
+    if cached.exists():
+        return cached
+    if mp3_url not in _warming:
+        _warming.add(mp3_url)
+        threading.Thread(target=_warm_cache, args=(mp3_url, cached),
+                         daemon=True).start()
+    return mp3_url
 
 
 def render_preview(mp3_url, trim_start, trim_end, fade_in, fade_out, storage_dirs,
