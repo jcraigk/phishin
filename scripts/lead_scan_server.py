@@ -30,6 +30,7 @@ import re
 import subprocess
 import sys
 import threading
+import time
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -37,6 +38,8 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SCAN_SCRIPT = REPO_ROOT / "scripts" / "audio_edge_analysis.py"
 PREVIEW_DIR = REPO_ROOT / "tmp" / "lead_scan_previews"
+# Previews audition the splice at the start, not the whole performance.
+PREVIEW_HEAD_S = 30.0
 
 
 def load_scan_module():
@@ -51,26 +54,34 @@ def load_scan_module():
 
 
 aea = load_scan_module()
-_render_sem = threading.Semaphore(2)
-_fetch_lock = threading.Lock()
-_url_locks = {}
+# Previews are short (PREVIEW_HEAD_S) and dominated by network reads, not CPU,
+# so a tight limit just makes edits queue behind each other. Cap generously -
+# enough to keep a burst from thrashing, loose enough that no edit waits.
+_render_sem = threading.Semaphore(8)
 
 
 def source_for(mp3_url, storage_dirs):
-    """Local Active Storage blob if we have one, else the cached download.
+    """Local Active Storage blob, an already-cached download, or the url itself.
 
-    Downloads are per-url locked, not globally: fetching a 25MB track must not
-    block previews for tracks that are already cached."""
+    Downloading a whole 15MB track to trim a few seconds off the front is the
+    slowest thing this server does - minutes on a slow link, during which the
+    page just says "rendering...". ffmpeg reads http directly and only pulls
+    what the trim needs, so stream unless the file is already on disk."""
     local = aea.local_blob_path(mp3_url, storage_dirs)
     if local:
         return local
-    with _fetch_lock:
-        lock = _url_locks.setdefault(mp3_url, threading.Lock())
-    with lock:
-        return aea.download_audio(mp3_url)
+    key = Path(mp3_url.split("?")[0]).stem
+    cached = aea.CACHE_DIR / f"{key}.mp3"
+    return cached if cached.exists() else mp3_url
 
 
-def render_preview(mp3_url, trim_start, trim_end, fade_in, fade_out, storage_dirs):
+def render_preview(mp3_url, trim_start, trim_end, fade_in, fade_out, storage_dirs,
+                   head_s=PREVIEW_HEAD_S):
+    # What is being judged is the splice at the start, so render only the first
+    # head_s of the kept audio. Encoding all 7 minutes of a track to audition a
+    # 2-second edit is what made rapid edits queue up behind slow renders.
+    if head_s and trim_end - trim_start > head_s:
+        trim_end = trim_start + head_s
     stamp = hashlib.sha1(
         f"{mp3_url}|{trim_start:.2f}|{trim_end:.2f}|{fade_in:.2f}|{fade_out:.2f}".encode()
     ).hexdigest()[:16]
@@ -80,14 +91,24 @@ def render_preview(mp3_url, trim_start, trim_end, fade_in, fade_out, storage_dir
     if out_path.exists():
         return out_path
 
+    t0 = time.monotonic()
     src = source_for(mp3_url, storage_dirs)
     PREVIEW_DIR.mkdir(parents=True, exist_ok=True)
-    cmd = aea.trim_command(src, out_path, trim_start, trim_end, fade_in, fade_out)
+    # seek_input: previews are re-rendered constantly while a start time is
+    # tuned, and decoding a 20-minute track from 0 each time is what makes the
+    # page look stuck. Same audio out, it just skips to the region first.
+    cmd = aea.trim_command(src, out_path, trim_start, trim_end, fade_in, fade_out,
+                           seek_input=True)
+    t_probe = time.monotonic()
     # ffmpeg is CPU-bound and previews are user-triggered; cap concurrency so a
     # burst of edits cannot thrash the box, but allow a few at once so one slow
     # render does not stall the whole page.
     with _render_sem:
+        t_slot = time.monotonic()
         proc = subprocess.run(cmd, capture_output=True)
+    t_done = time.monotonic()
+    print(f"  render {trim_start:.1f}s: probe={t_probe - t0:.2f}s "
+          f"wait={t_slot - t_probe:.2f}s ffmpeg={t_done - t_slot:.2f}s", file=sys.stderr)
     if proc.returncode != 0:
         out_path.unlink(missing_ok=True)
         raise RuntimeError(proc.stderr.decode()[-400:] or "ffmpeg failed")
@@ -131,7 +152,11 @@ class Handler(SimpleHTTPRequestHandler):
         except Exception as e:  # noqa: BLE001 - surfaced to the reviewer verbatim
             return self._json(500, {"error": str(e)})
 
-        self._json(200, {"url": f"/_preview/{out_path.name}"})
+        truncated = trim_end - trim_start > PREVIEW_HEAD_S
+        self._json(200, {
+            "url": f"/_preview/{out_path.name}",
+            "head_s": int(PREVIEW_HEAD_S) if truncated else None,
+        })
 
     def translate_path(self, path):
         clean = path.split("?", 1)[0].split("#", 1)[0]

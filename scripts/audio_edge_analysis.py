@@ -43,6 +43,7 @@ Requires ffmpeg/ffprobe on PATH.
 """
 
 import argparse
+import base64
 import csv
 import hashlib
 import html as html_escape
@@ -134,6 +135,7 @@ class EdgeResult:
     mp3_url: str = ""
     share_url: str = ""  # e.g. https://phish.in/1996-11-02/sweet-adeline
     boundary_rms_drop_db: float | None = None  # music-side minus cut-side loudness at the boundary
+    waveform_url: str = ""  # full-track waveform png, for the in-page player
 
 
 def run(cmd, **kw):
@@ -187,7 +189,11 @@ def fmt_tenths(seconds):
 
 
 def display_label(label):
-    """Label without the tNN position token, for human-facing pages."""
+    """Label for human-facing pages: drops the tNN position token and separates
+    date, set and song with dashes (1999-07-21 - Set 1 - AC/DC Bag)."""
+    m = re.match(r"^(\d{4}-\d{2}-\d{2}) (.*?) t\d+ (.*)$", label)
+    if m:
+        return f"{m.group(1)} - {m.group(2)} - {m.group(3)}"
     return re.sub(r"^(\d{4}-\d{2}-\d{2} .*?) t\d+ ", r"\1 ", label)
 
 
@@ -198,16 +204,16 @@ def effective_boundary(result, gap_s):
     extends it, so a thank-you 20s after the last note is still kept. A segment
     is only chained if it fits within MAX_CHAIN_S of the raw boundary."""
     boundary = result.music_boundary_s
-    if result.edge == "trailing":
-        limit = boundary + MAX_CHAIN_S
-        for seg in sorted(result.banter, key=lambda s: s["start"]):
-            if seg["start"] <= boundary + gap_s and seg["end"] <= limit:
-                boundary = max(boundary, seg["end"])
-    else:
-        limit = boundary - MAX_CHAIN_S
-        for seg in sorted(result.banter, key=lambda s: s["end"], reverse=True):
-            if seg["end"] >= boundary - gap_s and seg["start"] >= limit:
-                boundary = min(boundary, seg["start"])
+    # Leading edges ignore banter: what precedes a set opener is crowd noise and
+    # tuning, not speech worth keeping, and pulling the cut earlier to preserve
+    # it just leaves more junk in. Trailing edges still chain it, where a
+    # thank-you after the last note is the whole point.
+    if result.edge != "trailing":
+        return boundary
+    limit = boundary + MAX_CHAIN_S
+    for seg in sorted(result.banter, key=lambda s: s["start"]):
+        if seg["start"] <= boundary + gap_s and seg["end"] <= limit:
+            boundary = max(boundary, seg["end"])
     return boundary
 
 
@@ -229,11 +235,33 @@ def trim_filters(start, end, fade_in, fade_out):
     return filters
 
 
-def trim_command(src, out_path, start, end, fade_in, fade_out, bitrate=None):
+def trim_command(src, out_path, start, end, fade_in, fade_out, bitrate=None,
+                 seek_input=False):
     """Full ffmpeg argv for rendering a trim. Shared by the scan and the
-    preview server so a preview is byte-identical to what gets applied."""
+    preview server so a preview is byte-identical to what gets applied.
+
+    seek_input adds an input-side -ss so ffmpeg jumps to the trim instead of
+    decoding (and, over http, downloading) everything before it. A 20-minute
+    track trimmed at 0:35 otherwise costs a minute of pointless decoding. The
+    filter chain is rebased onto the seek so the output is the same audio; it
+    is off by default because the apply path renders from a local file where
+    the saving is small and exactness is pinned by the parity spec."""
+    src = str(src)
+    # Reading straight from http avoids downloading a whole track to trim a few
+    # seconds; reconnect so a dropped connection retries instead of failing.
+    reconnect = ([
+        "-reconnect", "1", "-reconnect_streamed", "1",
+        "-reconnect_delay_max", "5",
+    ] if src.startswith(("http://", "https://")) else [])
+    pre = []
+    if seek_input and start > 0:
+        # Seek slightly early and let atrim do the exact cut: -ss on a
+        # compressed stream lands on a frame boundary, not a sample.
+        seek = max(0.0, start - 1.0)
+        pre = ["-ss", f"{seek:.2f}"]
+        start, end = start - seek, end - seek
     return [
-        "ffmpeg", "-y", "-v", "error", "-i", str(src),
+        "ffmpeg", "-y", "-v", "error", *reconnect, *pre, "-i", src,
         "-af", ",".join(trim_filters(start, end, fade_in, fade_out)),
         "-map_metadata", "0", "-id3v2_version", "3",
         "-b:a", bitrate or probe_bitrate(src), str(out_path),
@@ -330,6 +358,30 @@ def write_outputs(results, trim_info, args):
         write_review_html(args.html, ordered, trim_info, args, quiet=True)
 
 
+FONT_DIR = REPO_ROOT / "node_modules" / "@fontsource" / "open-sans-condensed" / "files"
+
+
+def embedded_fonts():
+    """@font-face rules with the font inlined as data URIs.
+
+    phish.in's own body font, but the review page has to work over file:// with
+    no network, so the bytes go in the html rather than a link. Silently yields
+    nothing if node_modules is absent - the stack falls back to system sans."""
+    faces = []
+    for weight in (300, 700):
+        path = FONT_DIR / f"open-sans-condensed-latin-{weight}-normal.woff2"
+        if not path.exists():
+            return ""
+        b64 = base64.b64encode(path.read_bytes()).decode()
+        # Literal CSS: this is interpolated into the f-string template, so the
+        # braces must NOT be doubled the way they are inside the template.
+        src = f"url(data:font/woff2;base64,{b64}) format(\"woff2\")"
+        faces.append(
+            '@font-face { font-family: "Open Sans Condensed"; font-style: normal; '
+            f'font-weight: {weight}; font-display: swap; src: {src}; ' + "}")
+    return "\n  ".join(faces)
+
+
 def write_review_html(html_path, results, trim_info, args, quiet=False):
     """Static review page: audition clip, plot, transcript, and
     an approve checkbox per candidate. Export writes approved.json for the
@@ -356,7 +408,9 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
                 if r.share_url else esc(shown))
         cut_at = info.get("end") if r.edge == "trailing" else info.get("start")
         segs = []
-        for s in r.banter:
+        # Transcripts only earn their space on trailing edges, where the words
+        # decide where the cut lands. Before a set opener it is crowd noise.
+        for s in (r.banter if r.edge == "trailing" else []):
             if cut_at is None:
                 kept = True
             elif r.edge == "trailing":
@@ -369,28 +423,51 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
                 f'{fmt_ts(s["start"])} &ldquo;{esc(s["text"])}&rdquo;</span>')
         banter = f'<div class="banter">{"".join(segs)}</div>' if segs else ""
         char = ", ".join(f"{k} {v:.0%}" for k, v in r.character.items() if v > 0)
+        # Charts earn their place on trailing edges, where the fade-out shape
+        # matters. On leading edges the typed start plus the preview tell you
+        # everything, and 100+ plots per page is a lot of weight for nothing.
         plot = ""
-        if args.plot_dir:
+        if args.plot_dir and r.edge != "leading":
             p = args.plot_dir / (re.sub(r"[^\w.-]+", "_", f"{r.label}_{r.edge}") + ".png")
             if p.exists():
                 plot = f'<img src="{rel(p)}" loading="lazy">'
-        if track_slug(r.share_url) in A_CAPPELLA_SLUGS:
+        # On leading-edge reports every flagged track is reviewable: the start
+        # time is typed and previewed by hand, so the reasons to sideline a
+        # track (a cappella misdetection, a computed cut below the screening
+        # minimum) no longer apply - they just need a human to pick the time.
+        leading_review = r.edge == "leading"
+        if track_slug(r.share_url) in A_CAPPELLA_SLUGS and not leading_review:
             # Never auto-trimmed: the music detector misreads unaccompanied
             # singing. Listed without an approve checkbox for manual review.
             acappella.append(f'<div class="meta">{link} &middot; '
                              f'run {fmt_ts(r.nonmusic_run_s)} &middot; {char}</div>')
             continue
         if info.get("end") is None:
-            # Flagged but nothing actionable (cut below minimum, usually
-            # banter running to the end of the track). Footnote only.
-            cut = fmt_ts(info["cut_s"]) if info.get("cut_s") is not None else "?"
-            skipped.append(f'<div class="meta">{link} &middot; run {fmt_ts(r.nonmusic_run_s)}, '
-                           f'cut {cut} &mdash; left untouched</div>')
-            continue
+            if not leading_review:
+                # Flagged but nothing actionable (cut below minimum, usually
+                # banter running to the end of the track). Footnote only.
+                cut = fmt_ts(info["cut_s"]) if info.get("cut_s") is not None else "?"
+                skipped.append(f'<div class="meta">{link} &middot; run {fmt_ts(r.nonmusic_run_s)}, '
+                               f'cut {cut} &mdash; left untouched</div>')
+                continue
+            # Seed the field from the detected boundary the same way the normal
+            # path does, so there is a sensible starting point to adjust from.
+            info = dict(info)
+            info.setdefault(
+                "start", max(0.0, effective_boundary(r, args.banter_gap) - args.keep_lead))
+            info.setdefault("end", r.track_duration_s)
+            info["cut_s"] = round(
+                r.track_duration_s - (info["end"] - info["start"]), 1)
+        # Leading edges get an empty player: the scan-time audition clips were
+        # cut with whatever boundary logic was current when the scan ran, so
+        # they go stale as soon as the trim math or the start time changes. The
+        # preview server renders the real thing in about a second, and the page
+        # asks for it on load. Trailing reports still ship their clips.
         audio = ""
-        for key in ("audition_lead", "audition"):
-            if info.get(key):
-                audio += f'<audio controls preload="none" src="{rel(info[key])}"></audio>'
+        if r.edge != "leading":
+            for key in ("audition_lead", "audition"):
+                if info.get(key):
+                    audio += f'<audio controls preload="none" src="{rel(info[key])}"></audio>'
         payload = esc(json.dumps({
             "label": r.label, "edge": r.edge, "mp3_url": r.mp3_url,
             "share_url": r.share_url, "music_boundary_s": r.music_boundary_s,
@@ -398,26 +475,53 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
             "fade_in": args.fade_in if r.edge == "leading" else 0.0,
             "fade_out": args.fade_out if r.edge == "trailing" else 0.0,
         }), quote=True)
+        # A loud cut side matters on a trailing edge, where it means the fade
+        # may clip the end of the music. Before a set opener it is just a noisy
+        # room, which is the normal case and not worth flagging.
         warn = ""
-        if r.boundary_rms_drop_db is not None and r.boundary_rms_drop_db < LOUD_TAIL_DROP_DB:
+        if (r.edge == "trailing" and r.boundary_rms_drop_db is not None
+                and r.boundary_rms_drop_db < LOUD_TAIL_DROP_DB):
             warn = '<span class="warn">&#9888;&#xFE0F; Loud past boundary</span>'
+        # Full-track player: the waveform spans the whole track, so clicking it
+        # seeks the original audio. Saves opening the track on phish.in just to
+        # hear context around the cut.
+        track_player = ""
+        if r.waveform_url:
+            track_player = (
+                f'<div class="track" data-src="{esc(r.mp3_url, quote=True)}" '
+                f'data-duration="{r.track_duration_s}">'
+                f'<div class="tctl">'
+                f'<button class="tplay" title="play the full track">&#9654;</button>'
+                f'<button class="tt" title="use this position as the trim start">0:00</button>'
+                f'</div>'
+                f'<div class="wave"><img src="{esc(r.waveform_url, quote=True)}" loading="lazy">'
+                f'<span class="cut"></span><span class="pos"></span></div></div>')
         rows.append(f"""
 <div class="row">
   <div class="head">
     <input type="checkbox" data-payload="{payload}">
     <strong>{link}</strong>
-    <span class="meta">{fmt_ts(r.track_duration_s)} / {fmt_ts(info["cut_s"])}</span>
+    <span class="dur">{fmt_ts(r.track_duration_s)}</span>
+    <span class="chosen"></span>
     {warn}
-  </div>
-  {banter}
-  <div class="tune">
-    <label>start <input class="start" type="text" value="{fmt_tenths(info["start"])}"
-      size="8" spellcheck="false"></label>
-    <button class="nudge" data-step="-1" title="1 second earlier">&minus;1s</button>
-    <button class="nudge" data-step="1" title="1 second later">+1s</button>
     <span class="status"></span>
   </div>
-  <div class="audio">{audio}</div>
+  {banter}
+  <div class="body">
+    <div class="controls">
+      <div class="tune">
+        <button class="replay" title="restart the preview clip (r)">&#x21ba;</button>
+        <input class="start" type="text" value="{fmt_tenths(info["start"])}"
+          size="8" spellcheck="false" title="trim start">
+        <button class="nudge" data-step="-1" title="1 second earlier">&minus;1</button>
+        <button class="nudge" data-step="-0.3" title="0.3 seconds earlier">&minus;.3</button>
+        <button class="nudge" data-step="0.3" title="0.3 seconds later">+.3</button>
+        <button class="nudge" data-step="1" title="1 second later">+1</button>
+      </div>
+      <div class="audio">{audio}</div>
+    </div>
+    {track_player}
+  </div>
   {plot}
 </div>""")
 
@@ -427,31 +531,142 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
 <title>Track edge trim review</title>
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">&#x2702;&#xFE0F;</text></svg>'>
 <style>
-  body {{ font: 14px/1.5 -apple-system, sans-serif; margin: 2rem auto; max-width: 1100px; }}
-  .row {{ border-bottom: 1px solid #ccc; padding: 1rem 0; }}
-  .head {{ display: flex; gap: .6rem; align-items: baseline; flex-wrap: wrap; }}
-  .meta {{ color: #666; }}
+  {embedded_fonts()}
+  :root {{
+    --bg: #ffffff; --fg: #1c1c1e; --muted: #6b6b70;
+    --line: #e3e3e7; --card: #fafafa; --sel: #eef2f8; --sel-line: #b9cbe6;
+    --accent: #b8860b; --ok: #1a6b2f; --err: #b00020;
+    --btn: #f2f2f4; --btn-line: #d8d8dd; --link: #2f6fd0;
+    --wave-filter: sepia(.45) saturate(2.2) hue-rotate(165deg) brightness(.95) opacity(.88);
+    --btn-hover: #e8e8ec;
+  }}
+  @media (prefers-color-scheme: dark) {{
+    :root {{
+      /* Cool slate rather than neutral grey: enough hue to feel considered,
+         not enough to distract from the waveforms. */
+      --bg: #14171d; --fg: #e6e9ef; --muted: #8b95a7;
+      --line: #262b35; --card: #1a1e26; --sel: #1e2836; --sel-line: #3a5578;
+      --accent: #e0a92e; --ok: #5fce85; --err: #ff6b81;
+      --btn: #2e3644; --btn-line: #4a5568; --link: #7fb3f0;
+      --wave-filter: sepia(.5) saturate(1.9) hue-rotate(168deg) brightness(.82) opacity(.86);
+      --btn-hover: #3a4354;
+    }}
+  }}
+  * {{ box-sizing: border-box; }}
+  body {{ font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+          margin: 2rem auto; max-width: 1300px; padding: 0 1.5rem;
+          background: var(--bg); color: var(--fg);
+          -webkit-font-smoothing: antialiased; }}
+  h1 {{ font-family: "Open Sans Condensed", -apple-system, sans-serif;
+        font-size: 30px; font-weight: 700; letter-spacing: .01em; margin: 0 0 1.2rem; }}
+  h2 {{ font-family: "Open Sans Condensed", -apple-system, sans-serif;
+        font-size: 21px; font-weight: 700; color: var(--muted); margin-top: 2rem; }}
+  a {{ color: var(--link); text-decoration-color: color-mix(in srgb, var(--link) 45%, transparent);
+       text-underline-offset: 2px; }}
+  a:hover {{ text-decoration-color: currentColor; }}
+  .row {{ border: 1px solid transparent; border-bottom-color: var(--line);
+          border-radius: 10px; padding: .85rem 1rem; transition: background .12s ease; }}
+  .row:hover {{ background: var(--card); }}
+  /* Approved rows collapse to just the title line: the work is done, and a
+     long page of finished rows should stay scannable. */
+  .row.done .body {{ display: none; }}
+  .row.done .head {{ margin-bottom: 0; }}
+  /* Track length: always visible, muted so it never competes with the title. */
+  .dur {{ color: var(--muted); font-variant-numeric: tabular-nums; font-size: 14px; }}
+  .chosen {{ display: none; font-variant-numeric: tabular-nums; font-weight: 600;
+             color: var(--ok); font-size: 15px; }}
+  .row.done .chosen {{ display: inline; }}
+  /* Center, not baseline: the checkbox is a fixed-size box and baseline
+     alignment leaves it sitting above the text. */
+  .head {{ display: flex; gap: .6rem; align-items: center; flex-wrap: wrap;
+           margin-bottom: .5rem; }}
+  .head strong {{ font-family: "Open Sans Condensed", -apple-system, sans-serif;
+                  font-size: 21px; font-weight: 700; letter-spacing: .01em; }}
+  .meta {{ color: var(--muted); }}
+  /* One button treatment everywhere: nudge, restart, waveform play. */
+  .tune .nudge, .tune .replay, .track .tplay, .track .tt, #export {{
+    background: var(--btn); color: var(--fg); border: 1px solid var(--btn-line);
+    border-radius: 7px; transition: background .12s ease, border-color .12s ease;
+  }}
+  .tune .nudge:hover, .tune .replay:hover, .track .tplay:hover, .track .tt:hover,
+  #export:hover {{ background: var(--btn-hover); border-color: var(--muted); }}
+  .tune .nudge:active, .tune .replay:active, .track .tplay:active,
+  .track .tt:active {{ transform: translateY(1px); }}
   .banter {{ display: flex; flex-wrap: wrap; gap: .3rem .4rem; margin: .4rem 0 .4rem 1.6rem; }}
   .banter .seg {{ padding: .05rem .45rem; border-radius: 3px; font-size: 13px; }}
   .banter .seg.kept {{ background: #dcefe1; color: #1a6b2f; }}
   .banter .seg.cut {{ background: #f3dada; color: #a02020; text-decoration: line-through; }}
-  .warn {{ color: #b00020; font-weight: 600; }}
+  .warn {{ color: var(--err); font-weight: 600; }}
   .audio {{ display: flex; gap: 1rem; align-items: center; margin: .4rem 0; flex-wrap: wrap; }}
-  input[type="checkbox"] {{ width: 1.3rem; height: 1.3rem; }}
+  input[type="checkbox"] {{ width: 1.15rem; height: 1.15rem; cursor: pointer;
+                            accent-color: var(--link); }}
   img {{ max-width: 100%; }}
-  #export {{ position: fixed; top: 1rem; right: 1rem; padding: .5rem 1rem; }}
+  #export {{ position: fixed; top: 1rem; right: 1rem; padding: .5rem 1.1rem;
+             font: inherit; font-weight: 600; cursor: pointer; z-index: 5;
+             box-shadow: 0 2px 8px rgba(0,0,0,.15); }}
   .tune {{ display: flex; gap: .6rem; align-items: center; margin: .4rem 0 .4rem 1.6rem; }}
-  .tune input {{ font: inherit; padding: .1rem .3rem; width: 6rem; }}
-  .tune input.invalid {{ border-color: #b00020; background: #fdf0f0; }}
+  .tune input {{ font: inherit; font-size: 17px; font-variant-numeric: tabular-nums;
+                 padding: .18rem .3rem; width: 5.2rem; text-align: center;
+                 background: var(--bg); color: var(--fg);
+                 border: 1px solid var(--btn-line); border-radius: 7px; }}
+  .tune input:focus {{ outline: none; border-color: var(--accent);
+                       box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }}
+  .tune input.invalid {{ border-color: var(--err); }}
   .tune .nudge {{ font: inherit; padding: .1rem .5rem; cursor: pointer; }}
-  .tune .status {{ color: #666; font-size: 13px; }}
-  .tune .status.err {{ color: #b00020; }}
+  /* Status lives in the header row, which spans the full width: its text
+     changes length constantly and must never push the waveform column. */
+  .head .status {{ color: var(--muted); font-size: 13px; }}
+  .head .status.err {{ color: var(--err); }}
+  /* In-progress reads as a pill so it is obvious at a glance which rows are
+     still rendering; success says nothing at all. */
+  .head .status.busy {{ background: color-mix(in srgb, var(--accent) 22%, transparent);
+                        color: var(--accent); font-weight: 600;
+                        border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+                        padding: .12rem .65rem; border-radius: 999px;
+                        font-size: 12px; letter-spacing: .01em; }}
   .offline {{ background: #fff4d6; border: 1px solid #d9ad4a; color: #6b4e00;
              padding: .6rem .8rem; margin-bottom: 1rem; border-radius: 4px; }}
-  .audio .replay {{ font: inherit; padding: .1rem .5rem; cursor: pointer; }}
-  .tune .status.done {{ background: #dcefe1; color: #1a6b2f; font-weight: 600;
-                        padding: .1rem .5rem; border-radius: 3px; }}
-  .row.edited .tune input {{ border-color: #b8860b; }}
+  .tune .replay {{ font: inherit; font-size: 15px; line-height: 1; cursor: pointer;
+                   padding: .15rem .35rem; }}
+  /* Controls left, full-height waveform filling the right. */
+  .body {{ display: flex; gap: .5rem; align-items: stretch; }}
+  .controls audio {{ width: 100%; height: 34px; }}
+  @media (prefers-color-scheme: dark) {{
+    .controls audio {{ color-scheme: dark; }}
+  }}
+  /* Fixed width so the waveform column starts at the same x on every row,
+     sized to the widest control (the audio element) and no wider. */
+  .controls {{ flex: 0 0 22rem; min-width: 0; }}
+  .track {{ display: flex; align-items: center; gap: .35rem; flex: 1 1 auto; min-width: 280px; }}
+  /* Play stacked above the position readout, left of the waveform. */
+  .track .tctl {{ display: flex; flex-direction: column; align-items: stretch;
+                  justify-content: center; gap: .25rem; flex: 0 0 auto; }}
+  .track .tplay {{ font: inherit; padding: .1rem .55rem; cursor: pointer; }}
+  .track .wave {{ position: relative; flex: 1; cursor: pointer; line-height: 0;
+                  display: flex; align-items: stretch; border-radius: 8px;
+                  overflow: hidden; background: var(--card); height: 96px; }}
+  /* The waveform png is grey; hue-rotate tints it toward the accent without
+     needing a recoloured image. */
+  /* Width is set inline per row so the visible window fills the strip; .wave
+     already has overflow:hidden, which clips the rest of the track. */
+  .track .wave img {{ width: 100%; height: 96px; display: block;
+                      object-fit: fill; filter: var(--wave-filter);
+                      flex: 0 0 auto; max-width: none; }}
+  /* Cut marker: where the trim starts, in whole-track time. */
+  /* Hairline markers, translucent so the waveform reads through them. */
+  .track .cut {{ position: absolute; top: 0; bottom: 0; width: 1px;
+                 background: color-mix(in srgb, var(--accent) 65%, transparent);
+                 pointer-events: none; }}
+  .track .pos {{ position: absolute; top: 0; bottom: 0; width: 1px;
+                 background: color-mix(in srgb, var(--ok) 65%, transparent);
+                 pointer-events: none; display: none; }}
+  .track .tt {{ font: inherit; font-size: 17px; font-variant-numeric: tabular-nums;
+                min-width: 4rem; cursor: pointer; padding: .15rem .4rem; }}
+  .row.edited .tune input {{ border-color: var(--accent); }}
+  /* Selected row: subtle, and set with a box-shadow so it does not shift
+     anything. Up/down moves the selection; space plays, c adopts the time. */
+  .row.sel {{ background: var(--sel); border-color: var(--sel-line);
+              box-shadow: inset 3px 0 0 var(--link); }}
 </style>
 <button id="export">Export approved.json</button>
 <h1>Track edge trim review ({len(rows)} candidates)</h1>
@@ -459,6 +674,8 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
 {f'<h2>A cappella ({len(acappella)}) &mdash; not auto-trimmed, review manually</h2>{"".join(acappella)}' if acappella else ""}
 {f'<h2>Not trimmed ({len(skipped)})</h2>{"".join(skipped)}' if skipped else ""}
 <script>
+// Seconds of the track shown in the waveform strip.
+const WAVE_WINDOW_S = 120;
 const YEAR = {json.dumps(html_path.resolve().parent.name)};
 
 // Accepts "1:03.2", "63.2", "1:03". Returns null on anything else so a typo
@@ -481,6 +698,38 @@ function fmtTime(sec) {{
   return m + ":" + (sec - m * 60).toFixed(1).padStart(4, "0");
 }}
 
+// Stop whichever full-track player is playing. Called when a preview starts so
+// the two audio sources never overlap.
+function stopFullTrack() {{
+  const cur = window._playing;
+  if (!cur || cur.audio.paused) return;
+  cur.audio.pause();
+  if (cur.playBtn) cur.playBtn.textContent = "\\u25B6";
+}}
+
+// Only one waveform at a time: starting one stops any other row's.
+function stopOtherFullTracks(keep) {{
+  const cur = window._playing;
+  if (!cur || cur.audio === keep || cur.audio.paused) return;
+  cur.audio.pause();
+  if (cur.playBtn) cur.playBtn.textContent = "\\u25B6";
+}}
+
+// Mirror of stopFullTrack: starting a waveform silences every preview clip on
+// the page. Both are hung off the "play" event so clicking a control and
+// pressing a shortcut behave identically.
+function stopPreviewClips() {{
+  document.querySelectorAll(".audio audio").forEach(a => {{
+    if (!a.paused) a.pause();
+  }});
+}}
+
+// Whole seconds, for the full-track player readout.
+function fmtClock(sec) {{
+  const m = Math.floor(sec / 60);
+  return m + ":" + String(Math.floor(sec - m * 60)).padStart(2, "0");
+}}
+
 // Previews render server-side with the same ffmpeg chain as the real trim, so
 // what you hear is what lead_scan:apply writes. Without the server (opened over
 // file://) the field still edits the export; only the preview is unavailable.
@@ -493,13 +742,20 @@ async function renderPreview(row) {{
   if (secs === null) return;
 
   status.textContent = "rendering...";
-  status.classList.remove("err", "done");
+  status.classList.remove("err");
+  status.classList.add("busy");
+  if (row._armWatchdog) row._armWatchdog();
+  // Without a timeout a dropped request leaves the row on "rendering..."
+  // forever, with no way to tell a slow render from a dead one.
+  const ctl = new AbortController();
+  // Drop any render this row already had in flight: it is for a start time the
+  // reviewer has moved past, and it would hold a server slot.
+  if (row._inflight) row._inflight.abort();
+  row._inflight = ctl;
+  row._pending = (row._pending || 0) + 1;
   // The field stays editable during a render: the debounce already prevents
   // pile-up, and locking it would swallow clicks mid-render.
   try {{
-    // Without a timeout a dropped request leaves the row on "rendering..."
-    // forever, with no way to tell a slow render from a dead one.
-    const ctl = new AbortController();
     const timeout = setTimeout(() => ctl.abort(), 180000);
     let resp;
     try {{
@@ -517,43 +773,213 @@ async function renderPreview(row) {{
     }}
     const data = await resp.json();
     if (!resp.ok) throw new Error(data.error || resp.statusText);
-    // A slower earlier render must not clobber a newer one.
-    if (parseTime(input.value) !== secs) return;
+    // A newer render is already in flight: let it own the player and status.
+    // Note we do NOT bail merely because the field text moved on - if nothing
+    // superseded this request, dropping it here would strand the row on
+    // "rendering..." forever (type a value, correct it before the first render
+    // lands, and no successor ever arrives).
+    if (row._inflight !== ctl) {{
+      // Same guard as the abort path: only hand the pill over if another
+      // render is genuinely still running. Discount this one, which has not
+      // hit its finally block yet.
+      if (Math.max(0, (row._pending || 1) - 1) === 0) {{
+        status.textContent = "";
+        status.classList.remove("busy");
+      }}
+      return;
+    }}
     // One player per row: the preview supersedes the scan-time audition clips,
     // which were rendered at the original start and would only be confusing to
     // leave alongside it.
     const box = row.querySelector(".audio");
     let audio = box.querySelector("audio.preview");
     if (!audio) {{
+      // Drop the scan-time audition clips, but keep the full-track waveform
+      // player: it is a permanent control, not a clip.
+      const keep = [...box.children].filter(el => el.classList.contains("track"));
       box.replaceChildren();
       audio = Object.assign(document.createElement("audio"),
         {{controls: true, className: "preview"}});
+      // Never two sources at once: starting a preview stops the full track,
+      // whether it was autoplay, restart, or the player's own controls.
+      audio.addEventListener("play", stopFullTrack);
       box.append(audio);
-      const replay = Object.assign(document.createElement("button"),
-        {{className: "replay", textContent: "\\u21ba restart", title: "play from the start"}});
-      replay.addEventListener("click", () => {{
-        audio.currentTime = 0;
-        audio.play();
-      }});
-      box.append(replay);
+      keep.forEach(el => box.append(el));
     }}
     audio.src = data.url + "?t=" + Date.now();
-    // Autoplay: the reviewer asked for this render, so it is not a surprise.
-    // Browsers may still block it without prior interaction; ignore that.
-    audio.play().catch(() => {{}});
-    status.textContent = "preview of " + fmtTime(secs);
-    status.classList.add("done");
+    // Autoplay only in the highlighted row: a render that finishes after the
+    // reviewer has moved on must not start talking from off-screen. Browsers
+    // may still block it without prior interaction; ignore that.
+    if (window._sel === row) audio.play().catch(() => {{}});
+    // Nothing to say on success: the audio is there and the field shows the
+    // time. Only the in-progress and error states need words.
+    status.textContent = "";
+    status.classList.remove("busy");
   }} catch (e) {{
     // A TypeError from fetch means nothing answered: almost always the page
     // was opened over file:// instead of through `rake lead_scan:serve`.
+    // Superseded by a newer edit: that render owns the status now. Hand the
+    // pill over only if a successor is genuinely running - otherwise this abort
+    // would leave "rendering..." on screen with nothing left to clear it.
+    if (e.name === "AbortError" && row._inflight !== ctl) {{
+      // Discount this request: what matters is whether any OTHER render is
+      // still running to take ownership of the pill.
+      if (Math.max(0, (row._pending || 1) - 1) > 0) return;
+      status.textContent = "";
+      status.classList.remove("busy");
+      return;
+    }}
     status.textContent =
       e.name === "AbortError" ? "render timed out \\u2014 retry, or check the server"
       : (e instanceof TypeError || location.protocol === "file:")
         ? "no preview server \\u2014 run: rake lead_scan:serve[" + (YEAR || "YYYY") + "]"
         : "preview failed: " + e.message;
+    status.classList.remove("busy");
     status.classList.add("err");
+  }} finally {{
+    row._pending = Math.max(0, (row._pending || 1) - 1);
   }}
 }}
+
+// Audio only ever plays in the highlighted row, so moving the highlight
+// silences whatever the old row was playing - both its preview clip and its
+// waveform. Without this you can walk away from a row and still hear it.
+function stopRowAudio(row) {{
+  if (!row) return;
+  row.querySelectorAll(".audio audio").forEach(a => {{ if (!a.paused) a.pause(); }});
+  const cur = window._playing;
+  if (cur && cur.row === row && !cur.audio.paused) {{
+    cur.audio.pause();
+    cur.playBtn.textContent = "\\u25B6";
+  }}
+}}
+
+function selectRow(row) {{
+  if (window._sel === row) return;
+  if (window._sel) {{
+    stopRowAudio(window._sel);
+    window._sel.classList.remove("sel");
+  }}
+  window._sel = row;
+  if (!row) return;
+  row.classList.add("sel");
+  // Arriving at a row starts its waveform: the review loop is listen, adjust,
+  // approve, and this removes a keypress from every single pass. Approved rows
+  // are collapsed and already dealt with, so they stay quiet.
+  if (row._startTrack && !row.classList.contains("done")) row._startTrack();
+  // Deliberately no auto-render on arrival: it would seize playback from the
+  // waveform every time the selection moved. A preview is rendered only when
+  // asked for - "c", or an edit to the start time.
+}}
+
+function moveSelection(delta) {{
+  const rows = [...document.querySelectorAll(".row")];
+  if (!rows.length) return;
+  const i = window._sel ? rows.indexOf(window._sel) : -1;
+  const next = rows[Math.min(rows.length - 1, Math.max(0, i < 0 ? 0 : i + delta))];
+  selectRow(next);
+  // selectRow no-ops when the row is already selected, so start playback here
+  // too: landing on a row must always play it, however we arrived.
+  if (next._startTrack && !next.classList.contains("done")) next._startTrack();
+  if (next.scrollIntoView) next.scrollIntoView({{block: "nearest"}});
+}}
+
+// Keyboard: up/down moves the row selection, space plays the selected row's
+// full track, c adopts its playhead as the trim start, left/right scrub
+// whatever is playing. All ignored while typing so the time field is normal.
+document.addEventListener("keydown", e => {{
+  // Never intercept browser shortcuts: cmd-F, ctrl-R, cmd-A and friends must
+  // keep working. Every shortcut here is an unmodified keypress.
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const t = e.target && e.target.tagName;
+  // Up/down always move between rows, even from inside the time field: they
+  // are navigation, and a text input has nothing vertical to do with them.
+  // Leaving the field commits whatever was typed.
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") {{
+    e.preventDefault();
+    if (e.target && e.target.blur) e.target.blur();
+    return moveSelection(e.key === "ArrowDown" ? 1 : -1);
+  }}
+
+  // Every other key: only *text* entry keeps it. A checkbox is an INPUT too,
+  // but it is not typing - and a focused checkbox or <audio> would otherwise
+  // swallow the arrows (the browser scrolls instead), so navigation would stop
+  // working after clicking a control or pressing "w".
+  const typing = (t === "INPUT" && e.target.type !== "checkbox")
+    || t === "TEXTAREA" || (e.target && e.target.isContentEditable);
+  if (typing) return;
+  if (e.target && e.target.blur && (t === "AUDIO" || t === "INPUT" || t === "BUTTON")) {{
+    e.target.blur();
+  }}
+  if (e.key === " " || e.key === "Spacebar") {{
+    // Always swallow space: letting it through scrolls the page, which is
+    // never what is wanted here. With no row selected it simply does nothing.
+    e.preventDefault();
+    if (!window._sel || !window._sel._toggle) return;
+    return window._sel._toggle();
+  }}
+  if (e.key === "c" || e.key === "C") {{
+    if (!window._sel || !window._sel._adopt) return;
+    e.preventDefault();
+    return window._sel._adopt();
+  }}
+  if (e.key === "r" || e.key === "R") {{
+    if (!window._sel || !window._sel._restart) return;
+    e.preventDefault();
+    return window._sel._restart();
+  }}
+  // a s d f mirror the four nudge buttons left to right: -1, -.3, +.3, +1.
+  const nudgeKeys = {{a: -1, s: -0.3, d: 0.3, f: 1}};
+  const nudgeStep = nudgeKeys[e.key.toLowerCase()];
+  if (nudgeStep !== undefined) {{
+    if (!window._sel || !window._sel._nudge) return;
+    e.preventDefault();
+    window._sel._nudge(nudgeStep);
+    return;
+  }}
+  // "w" approves/unapproves the selected row.
+  if (e.key === "w" || e.key === "W") {{
+    if (!window._sel) return;
+    const box = window._sel.querySelector("input[type=checkbox]");
+    if (!box) return;
+    e.preventDefault();
+    // Approve and move on: "w" is the commit step of the review loop, not a
+    // toggle. Unchecking is still available via the checkbox itself.
+    box.checked = true;
+    // Setting .checked in script does not fire "change", so collapse by hand.
+    if (window._sel._syncDone) window._sel._syncDone();
+    return moveSelection(1);
+  }}
+  // "e" toggles the preview clip - the left-hand player. Arrows stay entirely
+  // on the waveform so scrubbing never fights with clip playback.
+  if (e.key === "e" || e.key === "E") {{
+    if (!window._sel) return;
+    const clip = window._sel.querySelector(".audio audio");
+    if (!clip || !clip.src) return;
+    e.preventDefault();
+    if (clip.paused) clip.play().catch(() => {{}});
+    else clip.pause();
+    return;
+  }}
+  if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+
+  const cur = window._playing;
+  // Right starts the selected row's waveform when nothing is playing yet,
+  // rather than doing nothing.
+  if ((!cur || cur.audio.paused) && e.key === "ArrowRight"
+      && window._sel && window._sel._toggle) {{
+    e.preventDefault();
+    return window._sel._toggle();
+  }}
+  if (!cur) return;
+  e.preventDefault();
+  const step = (e.shiftKey ? 5 : 1) * (e.key === "ArrowRight" ? 1 : -1);
+  const d = cur.audio.duration || cur.duration || 0;
+  const next = Math.min(d || Infinity, Math.max(0, cur.audio.currentTime + step));
+  cur.audio.currentTime = next;
+  if (cur.mark) cur.mark(next);
+  cur.label.textContent = fmtClock(next);
+}});
 
 if (location.protocol === "file:") {{
   const b = document.createElement("div");
@@ -574,10 +1000,29 @@ document.querySelectorAll(".row").forEach(row => {{
   // The export payload updates on every commit, but rendering waits for a
   // pause so a burst of +1s clicks costs one ffmpeg run, not one per click.
   let renderTimer = null;
+  // Watchdog: the busy pill has several exit paths (success, superseded
+  // success, abort, no-op commit, a request that never leaves the browser) and
+  // any one of them going wrong strands "rendering..." on screen forever.
+  // Rather than guard each path, guarantee the pill cannot outlive the work:
+  // whenever it is shown, arm a timer that clears it if nothing else has.
+  const armWatchdog = () => {{
+    clearTimeout(row._watchdog);
+    row._watchdog = setTimeout(() => {{
+      if (row._pending > 0) return armWatchdog();   // still working, re-arm
+      const st = row.querySelector(".status");
+      if (st.classList.contains("busy")) {{
+        st.textContent = "";
+        st.classList.remove("busy");
+      }}
+    }}, 8000);
+  }};
+
   const scheduleRender = () => {{
     clearTimeout(renderTimer);
+    armWatchdog();
     row.querySelector(".status").textContent = "waiting...";
-    row.querySelector(".status").classList.remove("err", "done");
+    row.querySelector(".status").classList.remove("err");
+    row.querySelector(".status").classList.add("busy");
     renderTimer = setTimeout(() => renderPreview(row), 450);
   }};
 
@@ -587,36 +1032,206 @@ document.querySelectorAll(".row").forEach(row => {{
     if (secs === null) {{
       clearTimeout(renderTimer);
       row.querySelector(".status").textContent = "use m:ss.s (e.g. 1:03.2)";
-      row.querySelector(".status").classList.remove("done");
+      row.querySelector(".status").classList.remove("busy");
       row.querySelector(".status").classList.add("err");
       return;
     }}
     // The checkbox payload is the single source of truth for the export.
     const payload = JSON.parse(cb.dataset.payload);
-    if (payload.trim_start === secs) return;
+    if (payload.trim_start === secs) {{
+      // Nothing to render, but a pill may be showing from an earlier edit that
+      // this one just cancelled - clear it rather than strand it.
+      if (!row._pending) {{
+        clearTimeout(renderTimer);
+        const st = row.querySelector(".status");
+        if (!st.classList.contains("err")) {{
+          st.textContent = "";
+          st.classList.remove("busy");
+        }}
+      }}
+      return;
+    }}
     payload.trim_start = secs;
     cb.dataset.payload = JSON.stringify(payload);
     // Highlight the control only. The plot is a static scan-time PNG and is
     // never redrawn, so nothing about it should look active.
     row.classList.toggle("edited", Math.abs(secs - original) > 0.05);
+    if (row._markCut) row._markCut(secs);
+    if (row._syncDone) row._syncDone();
     scheduleRender();
   }};
 
   input.addEventListener("change", commit);
   input.addEventListener("keydown", e => {{ if (e.key === "Enter") {{ e.preventDefault(); commit(); }} }});
 
-  // Nudge from whatever is currently in the field so repeated clicks compound;
-  // an unparseable field falls back to the committed value rather than 0.
-  row.querySelectorAll("button.nudge").forEach(btn => {{
-    btn.addEventListener("click", () => {{
-      const base = parseTime(input.value) ?? JSON.parse(cb.dataset.payload).trim_start;
-      const next = Math.max(0, Math.round((base + Number(btn.dataset.step)) * 10) / 10);
-      if (next > payloadEnd - 0.1) return;  // never past the trim end
-      input.value = fmtTime(next);
+  // Full-track player. Streams the original mp3 straight from phish.in and
+  // scrubs on the waveform, so context around a cut can be checked without
+  // leaving the page. Separate from the preview clip, which is the short
+  // render used to judge the splice itself.
+  const track = row.querySelector(".track");
+  if (track) {{
+    const wave = track.querySelector(".wave");
+    const posEl = track.querySelector(".pos");
+    const cutEl = track.querySelector(".cut");
+    const label = track.querySelector(".tt");
+    const playBtn = track.querySelector(".tplay");
+    const duration = parseFloat(track.dataset.duration) || 0;
+    let full = null;
+
+    // Only the opening WAVE_WINDOW_S are shown, stretched across the full
+    // width. The trim is always within the first few seconds, so rendering
+    // twenty minutes of waveform wastes almost all of the space. The png still
+    // covers the whole track, so it is scaled up and clipped by .wave.
+    const shown = Math.min(duration || WAVE_WINDOW_S, WAVE_WINDOW_S);
+    if (duration > shown) {{
+      const img = track.querySelector("img");
+      if (img) img.style.width = (duration / shown * 100) + "%";
+    }}
+    // Fraction of the visible width for a time in track seconds.
+    const frac = secs => (shown > 0 ? Math.min(1, Math.max(0, secs / shown)) : 0);
+
+    const markCut = secs => {{
+      cutEl.style.left = (frac(secs) * 100) + "%";
+      cutEl.style.display = secs > shown ? "none" : "block";
+    }};
+    markCut(original);
+    row._markCut = markCut;
+    // Exact playhead, since the label is rounded to whole seconds.
+    let atSecs = 0;
+
+    // Clicking the readout adopts that position as the trim start.
+    const adopt = () => {{
+      const was = JSON.parse(cb.dataset.payload).trim_start;
+      input.value = fmtTime(Math.round(atSecs * 10) / 10);
       input.classList.remove("invalid");
       commit();
+      // Adopting is an explicit request to hear it, so render even when the
+      // value did not actually change (commit no-ops in that case).
+      if (JSON.parse(cb.dataset.payload).trim_start === was) scheduleRender();
+    }};
+    label.addEventListener("click", adopt);
+    // Exposed for the keyboard shortcuts on the selected row.
+    row._adopt = adopt;
+
+    // Created on first use so a page of 100 rows opens no connections.
+    const ensure = () => {{
+      if (full) return full;
+      full = new Audio(track.dataset.src);
+      full.preload = "none";
+      // Arrow-key scrubbing acts on whichever track is playing.
+      full.addEventListener("play", () => {{
+        stopOtherFullTracks(full);
+        window._playing = {{audio: full, label, posEl, duration, playBtn, row,
+          mark: t => {{
+            posEl.style.display = t > shown ? "none" : "block";
+            posEl.style.left = (frac(t) * 100) + "%";
+          }}}};
+        stopPreviewClips();
+      }});
+      full.addEventListener("timeupdate", () => {{
+        const d = full.duration || duration;
+        if (!d) return;
+        posEl.style.display = full.currentTime > shown ? "none" : "block";
+        posEl.style.left = (frac(full.currentTime) * 100) + "%";
+        atSecs = full.currentTime;
+        label.textContent = fmtClock(full.currentTime);
+      }});
+      full.addEventListener("ended", () => {{ playBtn.textContent = "\\u25B6"; }});
+      return full;
+    }};
+
+    const togglePlay = () => {{
+      const a = ensure();
+      if (a.paused) {{
+        a.play().catch(() => {{}});
+        playBtn.textContent = "\\u23F8";
+      }} else {{
+        a.pause();
+        playBtn.textContent = "\\u25B6";
+      }}
+    }};
+    playBtn.addEventListener("click", togglePlay);
+    row._toggle = togglePlay;
+    // Play-only, for arriving at a row: never pauses something already going.
+    row._startTrack = () => {{
+      const a = ensure();
+      if (!a.paused) return;
+      a.play().catch(() => {{}});
+      playBtn.textContent = "\\u23F8";
+    }};
+
+    wave.addEventListener("click", e => {{
+      const a = ensure();
+      const rect = wave.getBoundingClientRect();
+      const at = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width)) * shown;
+      a.currentTime = at;
+      atSecs = at;
+      label.textContent = fmtClock(at);
+      if (a.paused) {{
+        a.play().catch(() => {{}});
+        playBtn.textContent = "\\u23F8";
+      }}
     }});
+  }}
+
+  // Clicking anywhere in a row selects it, so the keyboard shortcuts have an
+  // obvious target. Buttons and inputs still do their own thing.
+  row.addEventListener("mousedown", () => selectRow(row));
+
+  // Approving collapses the row to its title plus the chosen time; unchecking
+  // restores the full controls. Anything playing in it stops on collapse.
+  const chosen = row.querySelector(".chosen");
+  const syncDone = () => {{
+    const on = cb.checked;
+    row.classList.toggle("done", on);
+    if (chosen) chosen.textContent = on ? input.value : "";
+    if (on) stopRowAudio(row);
+  }};
+  // Ticking the box is the same commit step as "w": collapse and move on.
+  // Unticking just restores the row without moving the selection.
+  cb.addEventListener("change", () => {{
+    syncDone();
+    if (cb.checked) return moveSelection(1);
+    // Un-approved and expanded again: treat it like arriving at the row.
+    selectRow(row);
+    if (row._startTrack) row._startTrack();
   }});
+  row._syncDone = syncDone;
+
+  // Scan-audition clips are in the markup, so they need the same guard the
+  // preview element gets when it is created.
+  row.querySelectorAll(".audio audio").forEach(
+    el => el.addEventListener("play", stopFullTrack));
+
+  // Restart replays whichever clip the row currently shows - the scan audition
+  // before a preview exists, the preview after.
+  const restart = () => {{
+    const audio = row.querySelector(".audio audio");
+    if (!audio) return;
+    audio.currentTime = 0;
+    audio.play().catch(() => {{}});
+  }};
+  const replay = row.querySelector("button.replay");
+  if (replay) replay.addEventListener("click", restart);
+  // Exposed so "r" can restart the selected row's clip.
+  row._restart = restart;
+
+  // Nudge from whatever is currently in the field so repeated clicks compound;
+  // an unparseable field falls back to the committed value rather than 0.
+  const nudgeBy = amount => {{
+    const base = parseTime(input.value) ?? JSON.parse(cb.dataset.payload).trim_start;
+    const next = Math.max(0, Math.round((base + amount) * 10) / 10);
+    if (next > payloadEnd - 0.1) return;  // never past the trim end
+    input.value = fmtTime(next);
+    input.classList.remove("invalid");
+    commit();
+  }};
+  row.querySelectorAll("button.nudge").forEach(btn => {{
+    btn.addEventListener("click", () => nudgeBy(Number(btn.dataset.step)));
+  }});
+  // Exposed so a s d f can drive the same steps from the keyboard.
+  row._nudge = nudgeBy;
+  row._armWatchdog = armWatchdog;
 }});
 
 document.getElementById("export").onclick = () => {{
@@ -958,22 +1573,32 @@ def fetch_show_jobs(date, args):
 
 
 def backfill_share_urls(results):
-    """Fill in share_url on results from older reports by refetching show data."""
-    slug_maps = {}
-    for r in results:
-        if r.share_url:
-            continue
+    """Fill in share_url and waveform_url on results from older reports by
+    refetching show data. Both come from the same API call, so reports written
+    before a field existed pick it up on a plain rebuild - no re-scan."""
+    todo = [r for r in results if not (r.share_url and r.waveform_url)]
+    if not todo:
+        return
+    dates_needed = len({m.group(1) for r in todo
+                        if (m := re.match(r"(\d{4}-\d{2}-\d{2}) ", r.label))})
+    print(f"  backfilling {len(todo)} result(s) from {dates_needed} show(s)...", file=sys.stderr)
+    track_maps = {}
+    for r in todo:
         m = re.match(r"(\d{4}-\d{2}-\d{2}) .+? t(\d+) ", r.label)
         if not m:
             continue
         date, position = m.group(1), int(m.group(2))
-        if date not in slug_maps:
+        if date not in track_maps:
             resp = requests.get(f"{API_BASE}/shows/{date}", timeout=30)
             resp.raise_for_status()
-            slug_maps[date] = {t["position"]: t.get("slug") for t in resp.json()["tracks"]}
-        slug = slug_maps[date].get(position)
-        if slug:
-            r.share_url = f"{SITE_BASE}/{date}/{slug}"
+            track_maps[date] = {t["position"]: t for t in resp.json()["tracks"]}
+            if len(track_maps) % 25 == 0:
+                print(f"    {len(track_maps)}/{dates_needed} shows", file=sys.stderr)
+        track = track_maps[date].get(position) or {}
+        if not r.share_url and track.get("slug"):
+            r.share_url = f"{SITE_BASE}/{date}/{track['slug']}"
+        if not r.waveform_url:
+            r.waveform_url = track.get("waveform_image_url") or ""
 
 
 def reconstruct_trim_info(results, args):
@@ -1061,8 +1686,20 @@ def rebuild_dir(dir_path, args):
 
     backfill_share_urls(results)
     trim_info = reconstruct_trim_info(results, args)
+    # report.json always keeps every result; only the review page is narrowed.
     report_path.write_text(report_json(results))
-    write_review_html(dir_path / "review.html", results, trim_info, args)
+    page_results = results
+    if args.only_unreviewed:
+        # A rendered trim file means this candidate was reviewable before, so it
+        # has already been through a review pass. Keep the rest.
+        def already_reviewed(result):
+            safe = re.sub(r"[^\w.-]+", "_", result.label)
+            return (args.trim_dir / f"{safe}_trimmed.mp3").exists()
+
+        page_results = [r for r in results if not already_reviewed(r)]
+        print(f"  only-unreviewed: {len(page_results)} of {len(results)} candidates",
+              file=sys.stderr)
+    write_review_html(dir_path / "review.html", page_results, trim_info, args)
 
 
 def fetch_year_dates(year):
@@ -1127,6 +1764,9 @@ def main():
     p.add_argument("--rebuild", type=Path, action="append", default=[], metavar="DIR",
                    help="Regenerate review.html from DIR/report.json (backfills share urls; "
                         "no audio analyzed). Repeatable.")
+    p.add_argument("--only-unreviewed", action="store_true",
+                   help="On rebuild, keep only candidates with no rendered trim file: the ones "
+                        "newly promoted into review, skipping any you already worked through.")
     args = p.parse_args()
     args.ignore_urls = load_ignore_urls(args.ignore_file)
     if args.ignore_urls:

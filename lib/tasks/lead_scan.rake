@@ -47,8 +47,27 @@ module LeadScan
     ok
   end
 
+  # Years already reviewed, one per line (ranges like "1983-1990" allowed, #
+  # comments ignored). They stay on disk and stay servable by direct url; the
+  # index just stops listing them so what is left is what still needs work.
+  def self.done_years
+    path = "#{SCAN_ROOT}/done.txt"
+    return Set.new unless File.exist?(path)
+    File.readlines(path, chomp: true).each_with_object(Set.new) do |line, set|
+      line = line.sub(/#.*/, "").strip
+      next if line.empty?
+      if (m = line.match(/\A(\d{4})\s*-\s*(\d{4})\z/))
+        (m[1].to_i..m[2].to_i).each { set << it.to_s }
+      else
+        set << line
+      end
+    end
+  end
+
   def self.write_index
+    done = done_years
     year_dirs = Dir.glob("#{SCAN_ROOT}/[0-9][0-9][0-9][0-9]").sort
+                   .reject { done.include?(File.basename(it)) }
     return puts("No year folders under #{SCAN_ROOT}; nothing to index") if year_dirs.empty?
 
     totals = Hash.new(0)
@@ -56,14 +75,15 @@ module LeadScan
       year = File.basename(dir)
       summary_path = File.join(dir, "summary.json")
       unless File.exist?(summary_path)
-        next %(<tr><td>#{year}</td><td colspan="3" class="pending">no report yet (scan running or failed)</td></tr>)
+        next %(<tr><td>#{year}</td><td class="pending">no report yet (scan running or failed)</td></tr>)
       end
 
       summary = JSON.parse(File.read(summary_path))
-      counts = %w[trims a_cappella not_trimmed].map { |k| summary.fetch(k, 0) }
-      %w[trims a_cappella not_trimmed].each_with_index { |k, i| totals[k] += counts[i] }
-      %(<tr><td><a href="#{year}/review.html">#{year}</a></td>) +
-        counts.map { |c| %(<td>#{c}</td>) }.join + "</tr>"
+      # A cappella and not-trimmed counts are always zero now that both are
+      # folded into the reviewable list, so only the trim count is shown.
+      trims = summary.fetch("trims", 0)
+      totals["trims"] += trims
+      %(<tr><td><a href="#{year}/review.html">#{year}</a></td><td>#{trims}</td></tr>)
     end
 
     File.write("#{SCAN_ROOT}/index.html", <<~HTML)
@@ -85,12 +105,11 @@ module LeadScan
       <p class="meta">Generated #{Time.now.strftime('%Y-%m-%d %H:%M')}</p>
       <table>
         <thead>
-          <tr><th>Year</th><th>Trims</th><th>A cappellas</th><th>Not trimmed</th></tr>
+          <tr><th>Year</th><th>Trims</th></tr>
         </thead>
         <tbody>#{rows.join("\n")}</tbody>
         <tfoot>
-          <tr><td>Total</td><td>#{totals['trims']}</td>
-          <td>#{totals['a_cappella']}</td><td>#{totals['not_trimmed']}</td></tr>
+          <tr><td>Total</td><td>#{totals['trims']}</td></tr>
         </tfoot>
       </table>
     HTML
@@ -137,7 +156,8 @@ namespace :lead_scan do
   end
 
   desc "Regenerate review pages from existing reports (rake lead_scan:rebuild or " \
-       "lead_scan:rebuild[2025]); no audio analyzed"
+       "lead_scan:rebuild[2025]); no audio analyzed. ONLY_UNREVIEWED=1 keeps just the " \
+       "candidates you have not been through yet"
   task :rebuild, [ :year ] do |_t, args|
     dirs =
       if args[:year]
@@ -149,6 +169,7 @@ namespace :lead_scan do
     abort "No reports found under #{LeadScan::SCAN_ROOT}" if dirs.empty?
     cmd = [ "uv", "run", LeadScan::SCAN_SCRIPT, *LeadScan::TUNING_FLAGS ] +
           dirs.flat_map { |d| [ "--rebuild", d ] }
+    cmd << "--only-unreviewed" if ENV["ONLY_UNREVIEWED"] == "1"
     system(*cmd) || abort("Rebuild failed")
     LeadScan.write_index
   end
