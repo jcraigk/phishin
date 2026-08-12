@@ -4835,10 +4835,10 @@ react-modal@^3.16.1:
     react-lifecycles-compat "^3.0.0"
     warning "^4.0.3"
 
-react-on-rails@17.0.0:
-  version "17.0.0"
-  resolved "https://registry.yarnpkg.com/react-on-rails/-/react-on-rails-17.0.0.tgz#5bc518fb73c6c250fb8cbf1aa4d3bc36b0093c1f"
-  integrity sha512-jVJmaXJaVsCVoZCWMQ3ePACWaGkq3hOlmbeR0LniQKLr8+kDDgL0RbZ/6D1J2tMAsd1CxS+sOu0PCyO0ZfAQ+g==
+react-on-rails@17.0.1:
+  version "17.0.1"
+  resolved "https://registry.yarnpkg.com/react-on-rails/-/react-on-rails-17.0.1.tgz#9efa3987cf404d8ed7de9830ae688a9c2f34cc0c"
+  integrity sha512-8Y6CpWC9gI30o+EZHZoB2mQh5nF8g9JCjyQNReALRpXvnJV8OoC5dQvbzMNtpS8X6P1bhuGSMFhsbYek5hpKpg==
 
 react-paginate@^8.2.0:
   version "8.3.0"
@@ -5218,10 +5218,10 @@ setprototypeof@1.2.0, setprototypeof@~1.2.0:
   resolved "https://registry.yarnpkg.com/setprototypeof/-/setprototypeof-1.2.0.tgz#66c9a24a73f9fc28cbe66b09fed3d33dcaf1b424"
   integrity sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==
 
-shakapacker@^10.3.0:
-  version "10.3.0"
-  resolved "https://registry.yarnpkg.com/shakapacker/-/shakapacker-10.3.0.tgz#6c6a76bf3175d80a5a234109d3255c6774a482a0"
-  integrity sha512-+MsocLZYaOPoE5giLygxiIF/xpdfl4nsoENtcCI2RPEM50OX4Jb6LKqrJdsK3leJiXXcbVOy6YYCbIqasduTzQ==
+shakapacker@10.3.1:
+  version "10.3.1"
+  resolved "https://registry.yarnpkg.com/shakapacker/-/shakapacker-10.3.1.tgz#f92047ac89534cbedd8ac01864facc122e128b22"
+  integrity sha512-yYSbA+JaFisZQL9ImB9IMmPNKUzm0Ycw/wUnwf88f7BeHX9k/M4FIa/4syq/0xx18JqgEL3MIJmsM0RaXQ5zuA==
   dependencies:
     js-yaml "^4.1.0"
     pack-config-diff "^0.1.0"
