@@ -191,4 +191,53 @@ RSpec.describe "API v2 Admin Shows" do
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  describe "POST /api/v2/admin/shows/:date/import" do
+    let!(:show) { create(:show, date: "2025-08-01", published: false, audio_status: "missing") }
+
+    it "returns 401 without a token" do
+      post "/api/v2/admin/shows/2025-08-01/import"
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin user" do
+      post "/api/v2/admin/shows/2025-08-01/import",
+           headers: { "X-Auth-Token" => token_for(user) }
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "enqueues the import job" do
+      expect {
+        post "/api/v2/admin/shows/2025-08-01/import", headers: admin_headers
+      }.to change(Admin::ImportShowJob.jobs, :size).by(1)
+
+      expect(response).to have_http_status(:created)
+      job_id = JSON.parse(response.body)["job_id"]
+      job = AdminJob.find(job_id)
+      expect(job.kind).to eq("import")
+      expect(job.show).to eq(show)
+      expect(Admin::ImportShowJob.jobs.last["args"]).to eq([ show.id, job.id ])
+    end
+
+    it "422s for a published show" do
+      show.update!(published: true)
+      expect {
+        post "/api/v2/admin/shows/2025-08-01/import", headers: admin_headers
+      }.not_to change(Admin::ImportShowJob.jobs, :size)
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it "422s when the show already has tracks" do
+      create(:track, show:, position: 1)
+      expect {
+        post "/api/v2/admin/shows/2025-08-01/import", headers: admin_headers
+      }.not_to change(Admin::ImportShowJob.jobs, :size)
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it "404s for an unknown date" do
+      post "/api/v2/admin/shows/1980-01-01/import", headers: admin_headers
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end

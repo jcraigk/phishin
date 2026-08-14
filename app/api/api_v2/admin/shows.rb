@@ -46,6 +46,17 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         { staged_audio: staged_audio_payload(show.reload) }
       end
 
+      desc "Run Phish.net matching against staged audio", hidden: true
+      post ":date/import", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+        show = admin_show
+        error!({ message: "Show is already published" }, 422) if show.published?
+        error!({ message: "Show already has tracks" }, 422) if show.tracks.exists?
+        job = AdminJob.create!(kind: "import", show:)
+        Admin::ImportShowJob.perform_async(show.id, job.id)
+        status 201
+        { job_id: job.id }
+      end
+
       desc "Remove a staged audio file", hidden: true
       delete ":date/staged_audio/:attachment_id", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
         show = admin_show
