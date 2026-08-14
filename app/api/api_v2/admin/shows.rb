@@ -57,6 +57,33 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         { job_id: job.id }
       end
 
+      desc "Update show attributes", hidden: true
+      params do
+        optional :venue_id, type: Integer
+        optional :tour_id, type: Integer
+        optional :taper_notes, type: String
+        optional :admin_notes, type: String
+        optional :performance_gap_value, type: Integer
+        optional :matches_pnet, type: Boolean
+      end
+      patch ":date", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+        show = admin_show
+        show.update!(show_updates)
+        editor_payload(show.reload)
+      end
+
+      # Destroy cascades to tracks, likes and show_tags, and enqueues an
+      # ActiveStorage::PurgeJob per attachment. Purging a blob that a surviving
+      # attachment still references is safe: the attachments foreign key makes the
+      # blob's destroy raise InvalidForeignKey, which purge rescues, leaving the row
+      # and the stored file intact. Never replace that with a bare blob delete.
+      desc "Delete a show", hidden: true
+      delete ":date", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+        admin_show.destroy!
+        status 204
+        body false
+      end
+
       desc "Remove a staged audio file", hidden: true
       delete ":date/staged_audio/:attachment_id", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
         show = admin_show
@@ -74,6 +101,19 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
   helpers do
     def admin_show
       Show.find_by!(date: params[:date])
+    end
+
+    # Grape keeps explicitly supplied nils, so a nil venue_id or tour_id clears the
+    # association rather than being ignored. Unknown ids raise RecordNotFound (404).
+    def show_updates
+      updates = declared(params, include_missing: false).except(:date).symbolize_keys
+      updates[:venue] = lookup_or_nil(Venue, updates.delete(:venue_id)) if updates.key?(:venue_id)
+      updates[:tour] = lookup_or_nil(Tour, updates.delete(:tour_id)) if updates.key?(:tour_id)
+      updates
+    end
+
+    def lookup_or_nil(klass, id)
+      id.nil? ? nil : klass.find(id)
     end
 
     def staged_audio_payload(show)
