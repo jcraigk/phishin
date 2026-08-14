@@ -148,7 +148,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
       requires :date, type: String, desc: "Date in the format YYYY-MM-DD"
     end
     post "request_album_zip" do
-      show = Show.find_by!(date: params[:date])
+      show = Show.published.find_by!(date: params[:date])
       if show.album_zip.attached?
         error!({ message: "Album already generated" }, 409)
       elsif show.album_zip_requested_at.present?

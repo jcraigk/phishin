@@ -158,7 +158,7 @@ class MarkdownViewService < ApplicationService
     lines << ""
     lines << "## Tracks"
     lines << ""
-    playlist.tracks.each do |t|
+    playlist.tracks.select { |t| t.show.published? }.each do |t|
       lines << "- [#{t.title} (#{long_date(t.show.date)})](#{t.url}) — #{format_duration(t.duration)}"
     end
     lines.join("\n")

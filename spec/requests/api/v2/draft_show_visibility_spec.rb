@@ -122,6 +122,57 @@ RSpec.describe "Draft show visibility" do
     expect(graphs.first[:name]).to include(venue.name)
   end
 
+  describe "stats MCP tool" do
+    let!(:stats_venue) { create(:venue, state: "ZZ", country: "USA") }
+    let!(:stats_draft_show) do
+      create(:show, date: "2024-06-01", venue: stats_venue, published: false,
+                    performance_gap_value: 1)
+    end
+
+    before do
+      create(:track, show: stats_draft_show, position: 1, set: "1", songs: [ song ],
+                     slug: "cdt-3", exclude_from_stats: false)
+    end
+
+    it "excludes draft shows from geographic state frequency counts" do
+      result = Tools::Stats.fetch_stats("geographic", { geo_type: "state_frequency" })
+      states = result[:states].map { |s| s[:state] }
+      expect(states).not_to include("ZZ")
+    end
+
+    it "excludes draft-show tracks from song frequency counts" do
+      result = Tools::Stats.fetch_stats("song_frequency", { state: "ZZ" })
+      expect(result[:songs]).to be_empty
+    end
+  end
+
+  describe "request_album_zip" do
+    it "404s a draft show's date" do
+      post "/api/v2/shows/request_album_zip", params: { date: "2024-01-02" }
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "does not 404 a published show's date" do
+      post "/api/v2/shows/request_album_zip", params: { date: "2024-01-01" }
+      expect(response).not_to have_http_status(:not_found)
+    end
+  end
+
+  describe "playlist markdown" do
+    before do
+      playlist = create(:playlist, slug: "mixed-playlist")
+      playlist.playlist_tracks.destroy_all
+      create(:playlist_track, playlist:, track: published_track, position: 1)
+      create(:playlist_track, playlist:, track: draft_track, position: 2)
+    end
+
+    it "omits draft-show tracks while rendering published ones" do
+      body = MarkdownViewService.call("/play/mixed-playlist")
+      expect(body).to include(published_track.title)
+      expect(body).not_to include("Jan 2, 2024")
+    end
+  end
+
   describe "chronological track navigation" do
     let!(:early_show) { create(:show, date: "2023-01-01", venue:) }
     let!(:early_track) do

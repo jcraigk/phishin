@@ -33,6 +33,7 @@ module PerformanceAnalysis
       encore_track_ids = Track.joins(:show)
                               .where(set: %w[E E2])
                               .where.not(exclude_from_stats: true)
+                              .where(shows: { published: true })
                               .where("shows.performance_gap_value > 0")
       encore_track_ids = apply_date_filters(encore_track_ids)
       encore_track_ids = apply_tour_filter(encore_track_ids)
@@ -45,6 +46,7 @@ module PerformanceAnalysis
       scope = Track.joins(:show)
                    .where(set: set_filter)
                    .where(exclude_from_stats: false)
+                   .where(shows: { published: true })
                    .where("shows.performance_gap_value > 0")
 
       scope = apply_date_filters(scope)

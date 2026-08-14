@@ -8,6 +8,7 @@ module PerformanceAnalysis
                       .where.not(tracks: { set: EXCLUDED_SETS })
                       .where.not(songs: { slug: EXCLUDED_SONGS })
                       .where(tracks: { exclude_from_stats: false })
+                      .where(shows: { published: true })
                       .where("shows.performance_gap_value > 0")
                       .where("songs.tracks_count >= ?", min_plays)
                       .group("songs.id", "songs.title", "songs.slug", "songs.tracks_count")
@@ -19,17 +20,18 @@ module PerformanceAnalysis
                         "MAX(shows.date) as last_played"
                       )
 
-      latest_show = Show.where("performance_gap_value > 0").order(date: :desc).first
+      latest_show = Show.published.where("performance_gap_value > 0").order(date: :desc).first
       return { songs: [], latest_show_date: nil } unless latest_show
 
       results = song_gaps.map do |song_data|
-        shows_since = Show.where("date > ? AND performance_gap_value > 0", song_data.last_played)
+        shows_since = Show.published
+                          .where("date > ? AND performance_gap_value > 0", song_data.last_played)
                           .sum(:performance_gap_value)
         next if shows_since < min_gap
 
         last_played_date = song_data.last_played.iso8601
         last_track = Track.joins(:show, :songs)
-                          .where(shows: { date: song_data.last_played })
+                          .where(shows: { date: song_data.last_played, published: true })
                           .find_by(songs: { id: song_data.id })
         {
           song: song_data.title,
