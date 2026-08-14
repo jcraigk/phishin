@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_14_202542) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_14_210900) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -41,6 +41,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_14_202542) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "admin_jobs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "kind", null: false
+    t.text "message"
+    t.jsonb "payload", default: {}, null: false
+    t.integer "progress", default: 0, null: false
+    t.integer "show_id"
+    t.string "status", default: "queued", null: false
+    t.integer "track_id"
+    t.datetime "updated_at", null: false
+    t.index ["show_id", "kind", "created_at"], name: "index_admin_jobs_on_show_id_and_kind_and_created_at"
   end
 
   create_table "announcements", force: :cascade do |t|
