@@ -1,4 +1,5 @@
 class ApiV2::Api < ApiV2::Base
+  mount ApiV2::Admin::Catalog
   mount ApiV2::Admin::Jobs
   mount ApiV2::Admin::Shows
   mount ApiV2::Admin::Tracks
