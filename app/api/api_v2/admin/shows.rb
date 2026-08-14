@@ -72,6 +72,55 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         editor_payload(show.reload)
       end
 
+      # Positions carry a uniqueness validation and a unique index scoped to the show,
+      # so assigning final positions row by row would collide with a row that has not
+      # moved yet. Every row is parked in the negative mirror of its target position
+      # first (a range no real row occupies), then flipped positive.
+      desc "Reorder tracks", hidden: true
+      params do
+        requires :track_ids, type: Array[Integer]
+      end
+      put ":date/track_order", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+        show = admin_show
+        if params[:track_ids].sort != show.tracks.pluck(:id).sort
+          error!({ message: "track_ids must include every track exactly once" }, 422)
+        end
+        ActiveRecord::Base.transaction do
+          params[:track_ids].each_with_index do |id, index|
+            Track.where(id:).update_all(position: -(index + 1))
+          end
+          show.tracks.where(position: ...0).each do |track|
+            track.update_columns(position: -track.position)
+          end
+        end
+        editor_payload(show.reload)
+      end
+
+      desc "Insert a track", hidden: true
+      params do
+        requires :position, type: Integer
+        requires :title, type: String
+        requires :set, type: String, values: ApiV2::Admin::Tracks::VALID_SETS
+      end
+      post ":date/tracks", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+        show = admin_show
+        ActiveRecord::Base.transaction do
+          # Descending order means each row moves into a slot the row above it has
+          # already vacated, so no intermediate state duplicates a position.
+          show.tracks.where(position: params[:position]..).order(position: :desc).each do |track|
+            track.update!(position: track.position + 1)
+          end
+          show.tracks.create!(
+            position: params[:position],
+            title: params[:title],
+            set: params[:set],
+            audio_status: "missing"
+          )
+        end
+        status 201
+        editor_payload(show.reload)
+      end
+
       # Destroy cascades to tracks, likes and show_tags, and enqueues an
       # ActiveStorage::PurgeJob per attachment. Purging a blob that a surviving
       # attachment still references is safe: the attachments foreign key makes the
@@ -99,10 +148,6 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
   end
 
   helpers do
-    def admin_show
-      Show.find_by!(date: params[:date])
-    end
-
     # Grape keeps explicitly supplied nils, so a nil venue_id or tour_id clears the
     # association rather than being ignored. Unknown ids raise RecordNotFound (404).
     def show_updates
@@ -114,59 +159,6 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
 
     def lookup_or_nil(klass, id)
       id.nil? ? nil : klass.find(id)
-    end
-
-    def staged_audio_payload(show)
-      show.staged_audio_attachments.includes(:blob).map do |attachment|
-        {
-          attachment_id: attachment.id,
-          filename: Show.original_filename(attachment.blob),
-          byte_size: attachment.blob.byte_size
-        }
-      end
-    end
-
-    def editor_payload(show)
-      show_summary(show).merge(
-        taper_notes: show.taper_notes,
-        admin_notes: show.admin_notes,
-        venue_id: show.venue_id,
-        tour_id: show.tour_id,
-        exclude_from_stats: show.performance_gap_value.zero?,
-        performance_gap_value: show.performance_gap_value,
-        matches_pnet: show.matches_pnet,
-        staged_audio: staged_audio_payload(show),
-        tracks: show.tracks.order(:position).map { |track| track_payload(track) }
-      )
-    end
-
-    def track_payload(track)
-      {
-        id: track.id,
-        position: track.position,
-        set: track.set,
-        title: track.title,
-        slug: track.slug,
-        duration: track.duration,
-        audio_status: track.audio_status,
-        jam_starts_at_second: track.jam_starts_at_second,
-        exclude_from_stats: track.exclude_from_stats,
-        songs: track.songs.map { |song| { id: song.id, title: song.title } },
-        mp3_url: track.mp3_url,
-        waveform_url: track.waveform_image_url
-      }
-    end
-
-    def show_summary(show)
-      {
-        id: show.id,
-        date: show.date.iso8601,
-        venue_name: show.venue_name,
-        published: show.published,
-        audio_status: show.audio_status,
-        tracks_count: show.tracks.count,
-        duration: show.duration
-      }
     end
   end
 end

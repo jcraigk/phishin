@@ -1,0 +1,389 @@
+require "rails_helper"
+
+RSpec.describe "API v2 Admin Tracks" do
+  let(:admin) { create(:user, :admin) }
+  let(:user) { create(:user) }
+  let!(:show) { create(:show, date: "2025-08-01", published: false) }
+  let!(:song_a) { create(:song, title: "Ghost") }
+  let!(:song_b) { create(:song, title: "Free") }
+  let!(:track1) { create(:track, show:, position: 1, title: "Ghost", set: "1", songs: [ song_a ]) }
+  let!(:track2) { create(:track, show:, position: 2, title: "Free", set: "1", songs: [ song_b ]) }
+  let!(:track3) { create(:track, show:, position: 3, title: "Banter", set: "1", songs: [ song_a ]) }
+
+  def token_for(u)
+    UserJwtService.call(u)
+  end
+
+  def admin_headers
+    {
+      "X-Auth-Token" => token_for(admin),
+      "CONTENT_TYPE" => "application/json"
+    }
+  end
+
+  def user_headers
+    { "X-Auth-Token" => token_for(user), "CONTENT_TYPE" => "application/json" }
+  end
+
+  def json
+    JSON.parse(response.body, symbolize_names: true)
+  end
+
+  def positions_for(show)
+    show.tracks.reload.order(:position).pluck(:position)
+  end
+
+  describe "PATCH /api/v2/admin/tracks/:id" do
+    it "returns 401 without a token" do
+      patch "/api/v2/admin/tracks/#{track1.id}",
+            params: { title: "Nope" }.to_json,
+            headers: { "CONTENT_TYPE" => "application/json" }
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin user" do
+      patch "/api/v2/admin/tracks/#{track1.id}",
+            params: { title: "Nope" }.to_json, headers: user_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "updates title, set, and songs" do
+      patch "/api/v2/admin/tracks/#{track1.id}",
+            params: { title: "Ghost Jam", set: "2", song_ids: [ song_b.id ] }.to_json,
+            headers: admin_headers
+      expect(response).to have_http_status(:ok)
+      track1.reload
+      expect(track1.title).to eq("Ghost Jam")
+      expect(track1.set).to eq("2")
+      expect(track1.songs).to eq([ song_b ])
+    end
+
+    it "returns the track payload" do
+      patch "/api/v2/admin/tracks/#{track1.id}",
+            params: { title: "Ghost Jam" }.to_json, headers: admin_headers
+      expect(json).to include(id: track1.id, position: 1, title: "Ghost Jam")
+    end
+
+    it "regenerates the slug on a draft show" do
+      patch "/api/v2/admin/tracks/#{track1.id}",
+            params: { title: "Ghost Jam" }.to_json, headers: admin_headers
+      expect(track1.reload.slug).to eq("ghost-jam")
+    end
+
+    it "preserves the slug on a published show" do
+      show.update!(published: true)
+      original_slug = track1.slug
+      patch "/api/v2/admin/tracks/#{track1.id}",
+            params: { title: "Ghost Jam" }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:ok)
+      track1.reload
+      expect(track1.title).to eq("Ghost Jam")
+      expect(track1.slug).to eq(original_slug)
+    end
+
+    it "updates jam_starts_at_second and exclude_from_stats" do
+      patch "/api/v2/admin/tracks/#{track1.id}",
+            params: { jam_starts_at_second: 120, exclude_from_stats: true }.to_json,
+            headers: admin_headers
+      track1.reload
+      expect(track1.jam_starts_at_second).to eq(120)
+      expect(track1.exclude_from_stats).to be(true)
+    end
+
+    it "clears jam_starts_at_second when passed null" do
+      track1.update!(jam_starts_at_second: 90)
+      patch "/api/v2/admin/tracks/#{track1.id}",
+            params: { jam_starts_at_second: nil }.to_json, headers: admin_headers
+      expect(track1.reload.jam_starts_at_second).to be_nil
+    end
+
+    it "rejects invalid sets" do
+      patch "/api/v2/admin/tracks/#{track1.id}",
+            params: { set: "9" }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it "404s for an unknown track" do
+      patch "/api/v2/admin/tracks/0",
+            params: { title: "Nope" }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "422s when clearing songs on a published show" do
+      show.update!(published: true)
+      patch "/api/v2/admin/tracks/#{track1.id}",
+            params: { song_ids: [] }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+  end
+
+  describe "PUT /api/v2/admin/shows/:date/track_order" do
+    it "returns 401 without a token" do
+      put "/api/v2/admin/shows/2025-08-01/track_order",
+          params: { track_ids: [ track1.id ] }.to_json,
+          headers: { "CONTENT_TYPE" => "application/json" }
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin user" do
+      put "/api/v2/admin/shows/2025-08-01/track_order",
+          params: { track_ids: [ track1.id ] }.to_json, headers: user_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "reorders tracks" do
+      put "/api/v2/admin/shows/2025-08-01/track_order",
+          params: { track_ids: [ track3.id, track1.id, track2.id ] }.to_json,
+          headers: admin_headers
+      expect(response).to have_http_status(:ok)
+      expect(track3.reload.position).to eq(1)
+      expect(track1.reload.position).to eq(2)
+      expect(track2.reload.position).to eq(3)
+    end
+
+    # A naive implementation that assigns final positions one row at a time collides
+    # with the (show_id, position) uniqueness validation partway through this move.
+    it "moves the first track to last across five tracks without colliding" do
+      track4 = create(:track, show:, position: 4, title: "Fourth", set: "1")
+      track5 = create(:track, show:, position: 5, title: "Fifth", set: "1")
+      order = [ track2, track3, track4, track5, track1 ]
+
+      put "/api/v2/admin/shows/2025-08-01/track_order",
+          params: { track_ids: order.map(&:id) }.to_json, headers: admin_headers
+
+      expect(response).to have_http_status(:ok)
+      expect(order.map { |t| t.reload.position }).to eq([ 1, 2, 3, 4, 5 ])
+      expect(positions_for(show)).to eq([ 1, 2, 3, 4, 5 ])
+    end
+
+    it "moves the last track to first without colliding" do
+      track4 = create(:track, show:, position: 4, title: "Fourth", set: "1")
+      track5 = create(:track, show:, position: 5, title: "Fifth", set: "1")
+      order = [ track5, track1, track2, track3, track4 ]
+
+      put "/api/v2/admin/shows/2025-08-01/track_order",
+          params: { track_ids: order.map(&:id) }.to_json, headers: admin_headers
+
+      expect(response).to have_http_status(:ok)
+      expect(order.map { |t| t.reload.position }).to eq([ 1, 2, 3, 4, 5 ])
+    end
+
+    it "returns tracks in the new order in the editor payload" do
+      put "/api/v2/admin/shows/2025-08-01/track_order",
+          params: { track_ids: [ track3.id, track1.id, track2.id ] }.to_json,
+          headers: admin_headers
+      expect(json[:tracks].map { |t| t[:id] }).to eq([ track3.id, track1.id, track2.id ])
+    end
+
+    it "rejects a partial list" do
+      put "/api/v2/admin/shows/2025-08-01/track_order",
+          params: { track_ids: [ track1.id ] }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(positions_for(show)).to eq([ 1, 2, 3 ])
+    end
+
+    it "rejects a list containing a track from another show" do
+      other = create(:track, position: 1, set: "1")
+      put "/api/v2/admin/shows/2025-08-01/track_order",
+          params: { track_ids: [ track1.id, track2.id, other.id ] }.to_json,
+          headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(track1.reload.position).to eq(1)
+    end
+
+    it "rejects a list with duplicate ids" do
+      put "/api/v2/admin/shows/2025-08-01/track_order",
+          params: { track_ids: [ track1.id, track1.id, track2.id ] }.to_json,
+          headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+  end
+
+  describe "POST /api/v2/admin/tracks/:id/combine_up" do
+    it "returns 401 without a token" do
+      post "/api/v2/admin/tracks/#{track2.id}/combine_up"
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin user" do
+      post "/api/v2/admin/tracks/#{track2.id}/combine_up", headers: user_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "merges into the previous track and renumbers" do
+      post "/api/v2/admin/tracks/#{track2.id}/combine_up", headers: admin_headers
+      expect(response).to have_http_status(:ok)
+      track1.reload
+      expect(track1.title).to eq("Ghost > Free")
+      expect(track1.songs).to contain_exactly(song_a, song_b)
+      expect(Track.exists?(track2.id)).to be(false)
+      expect(track3.reload.position).to eq(2)
+    end
+
+    it "leaves positions contiguous from 1 across a longer show" do
+      create(:track, show:, position: 4, title: "Fourth", set: "1")
+      create(:track, show:, position: 5, title: "Fifth", set: "1")
+      post "/api/v2/admin/tracks/#{track2.id}/combine_up", headers: admin_headers
+      expect(positions_for(show)).to eq([ 1, 2, 3, 4 ])
+    end
+
+    it "does not duplicate a song present on both tracks" do
+      track2.songs = [ song_a, song_b ]
+      post "/api/v2/admin/tracks/#{track2.id}/combine_up", headers: admin_headers
+      expect(track1.reload.songs).to contain_exactly(song_a, song_b)
+    end
+
+    it "destroys the subsumed track's likes" do
+      create(:like, likable: track2)
+      expect { post "/api/v2/admin/tracks/#{track2.id}/combine_up", headers: admin_headers }
+        .to change(Like, :count).by(-1)
+    end
+
+    it "422s on the first track" do
+      post "/api/v2/admin/tracks/#{track1.id}/combine_up", headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(positions_for(show)).to eq([ 1, 2, 3 ])
+    end
+
+    it "404s for an unknown track" do
+      post "/api/v2/admin/tracks/0/combine_up", headers: admin_headers
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe "POST /api/v2/admin/shows/:date/tracks" do
+    it "returns 401 without a token" do
+      post "/api/v2/admin/shows/2025-08-01/tracks",
+           params: { position: 2, title: "Tuning", set: "1" }.to_json,
+           headers: { "CONTENT_TYPE" => "application/json" }
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin user" do
+      post "/api/v2/admin/shows/2025-08-01/tracks",
+           params: { position: 2, title: "Tuning", set: "1" }.to_json,
+           headers: user_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "inserts an empty draft track and shifts positions" do
+      post "/api/v2/admin/shows/2025-08-01/tracks",
+           params: { position: 2, title: "Tuning", set: "1" }.to_json,
+           headers: admin_headers
+      expect(response).to have_http_status(:created)
+      expect(show.tracks.reload.find_by(position: 2).title).to eq("Tuning")
+      expect(track2.reload.position).to eq(3)
+      expect(track3.reload.position).to eq(4)
+    end
+
+    # Inserting at the front shifts every existing row; done ascending it collides.
+    it "inserts before position 1 without colliding" do
+      create(:track, show:, position: 4, title: "Fourth", set: "1")
+      create(:track, show:, position: 5, title: "Fifth", set: "1")
+
+      post "/api/v2/admin/shows/2025-08-01/tracks",
+           params: { position: 1, title: "Intro", set: "1" }.to_json,
+           headers: admin_headers
+
+      expect(response).to have_http_status(:created)
+      expect(positions_for(show)).to eq([ 1, 2, 3, 4, 5, 6 ])
+      expect(show.tracks.reload.find_by(position: 1).title).to eq("Intro")
+      expect(track1.reload.position).to eq(2)
+    end
+
+    it "appends at the end" do
+      post "/api/v2/admin/shows/2025-08-01/tracks",
+           params: { position: 4, title: "Encore", set: "E" }.to_json,
+           headers: admin_headers
+      expect(response).to have_http_status(:created)
+      expect(positions_for(show)).to eq([ 1, 2, 3, 4 ])
+      expect(show.tracks.reload.find_by(position: 4).title).to eq("Encore")
+    end
+
+    it "creates the track with no songs and missing audio" do
+      post "/api/v2/admin/shows/2025-08-01/tracks",
+           params: { position: 2, title: "Tuning", set: "1" }.to_json,
+           headers: admin_headers
+      track = show.tracks.reload.find_by(position: 2)
+      expect(track.songs).to be_empty
+      expect(track.audio_status).to eq("missing")
+    end
+
+    it "422s on a published show because a published track requires songs" do
+      show.update!(published: true)
+      post "/api/v2/admin/shows/2025-08-01/tracks",
+           params: { position: 2, title: "Tuning", set: "1" }.to_json,
+           headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json[:message]).to include("Songs")
+    end
+
+    it "does not leave shifted positions behind when the insert fails" do
+      show.update!(published: true)
+      post "/api/v2/admin/shows/2025-08-01/tracks",
+           params: { position: 2, title: "Tuning", set: "1" }.to_json,
+           headers: admin_headers
+      expect(positions_for(show)).to eq([ 1, 2, 3 ])
+      expect(track2.reload.position).to eq(2)
+      expect(track3.reload.position).to eq(3)
+    end
+
+    it "rejects an invalid set" do
+      post "/api/v2/admin/shows/2025-08-01/tracks",
+           params: { position: 2, title: "Tuning", set: "9" }.to_json,
+           headers: admin_headers
+      expect(response).to have_http_status(:bad_request)
+    end
+  end
+
+  describe "DELETE /api/v2/admin/tracks/:id" do
+    it "returns 401 without a token" do
+      delete "/api/v2/admin/tracks/#{track2.id}"
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin user" do
+      delete "/api/v2/admin/tracks/#{track2.id}", headers: user_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "destroys and renumbers" do
+      delete "/api/v2/admin/tracks/#{track2.id}", headers: admin_headers
+      expect(response).to have_http_status(:ok)
+      expect(track3.reload.position).to eq(2)
+    end
+
+    it "leaves positions contiguous from 1 after deleting the first track" do
+      create(:track, show:, position: 4, title: "Fourth", set: "1")
+      create(:track, show:, position: 5, title: "Fifth", set: "1")
+      delete "/api/v2/admin/tracks/#{track1.id}", headers: admin_headers
+      expect(positions_for(show)).to eq([ 1, 2, 3, 4 ])
+      expect(track2.reload.position).to eq(1)
+    end
+
+    it "closes pre-existing position gaps" do
+      track2.update!(position: 10)
+      track3.update!(position: 4)
+      create(:track, show:, position: 5, title: "Fifth", set: "1")
+
+      delete "/api/v2/admin/tracks/#{track1.id}", headers: admin_headers
+
+      expect(response).to have_http_status(:ok)
+      expect(positions_for(show)).to eq([ 1, 2, 3 ])
+      expect(track2.reload.position).to eq(3)
+    end
+
+    it "destroys the track's likes and playlist entries" do
+      create(:like, likable: track2)
+      create(:playlist_track, track: track2)
+      expect { delete "/api/v2/admin/tracks/#{track2.id}", headers: admin_headers }
+        .to change(Like, :count).by(-1)
+        .and change(PlaylistTrack, :count).by(-1)
+    end
+
+    it "404s for an unknown track" do
+      delete "/api/v2/admin/tracks/0", headers: admin_headers
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+end
