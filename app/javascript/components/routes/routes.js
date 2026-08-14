@@ -220,6 +220,13 @@ const routes = (props) => [
               return { Component };
             },
           },
+          {
+            path: "shows/:date",
+            lazy: async () => {
+              const { default: Component } = await import("../admin/AdminShowEditor");
+              return { Component };
+            },
+          },
         ],
       },
       {

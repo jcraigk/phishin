@@ -97,3 +97,257 @@
     flex-shrink: 0;
   }
 }
+
+.admin-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: $radius;
+  background-color: var(--highlight-orange);
+  color: var(--dark-gray);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  vertical-align: middle;
+}
+
+.admin-attention {
+  color: var(--error-red);
+  font-weight: 600;
+}
+
+.admin-invalid {
+  color: var(--error-red);
+  font-weight: 700;
+  cursor: help;
+}
+
+.admin-danger {
+  border-color: var(--error-red);
+  color: var(--error-red);
+}
+
+.admin-show-editor {
+  input[type="text"],
+  input[type="number"],
+  select,
+  textarea {
+    padding: 0.3rem;
+    border: 1px solid var(--border-gray);
+    border-radius: 4px;
+    background-color: var(--card-bg);
+    color: var(--list-item-link-color);
+  }
+
+  button {
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--border-gray);
+    border-radius: 4px;
+    background-color: var(--control-gray);
+    color: var(--list-item-link-color);
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+}
+
+.admin-show-panel {
+  margin-bottom: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-gray);
+
+  .admin-panel-body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    align-items: flex-start;
+  }
+
+  .admin-field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 16rem;
+
+    label {
+      font-weight: 600;
+    }
+
+    textarea {
+      width: 100%;
+    }
+  }
+
+  .admin-current-value {
+    margin: 0;
+  }
+
+  .admin-inline-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+
+    input {
+      width: 8rem;
+    }
+  }
+}
+
+.admin-venue-results,
+.admin-song-results {
+  position: absolute;
+  z-index: 10;
+  max-height: 14rem;
+  min-width: 14rem;
+  overflow-y: auto;
+  border: 1px solid var(--border-gray);
+  border-radius: 4px;
+  background-color: var(--card-bg);
+
+  li button {
+    display: block;
+    width: 100%;
+    padding: 0.3rem 0.5rem;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    text-align: left;
+
+    &:hover {
+      background-color: var(--list-item-bg-hover);
+    }
+  }
+}
+
+.admin-venue-results {
+  top: 100%;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border-gray);
+
+  button {
+    border: 0;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    background: none;
+    padding: 0.4rem 0.75rem;
+
+    &.active {
+      border-bottom-color: var(--blue);
+      font-weight: 700;
+    }
+  }
+}
+
+.admin-tracks-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.admin-staged-summary {
+  color: var(--text-gray);
+}
+
+.admin-tracks-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    padding: 0.35rem 0.4rem;
+    border-bottom: 1px solid var(--border-gray);
+    text-align: left;
+    font-size: 0.8rem;
+    color: var(--text-gray);
+  }
+
+  td {
+    padding: 0.35rem 0.4rem;
+    border-bottom: 1px solid var(--track-divider);
+    vertical-align: top;
+  }
+
+  .admin-track-row {
+    &.is-drag-over {
+      background-color: var(--bg-blue);
+    }
+  }
+
+  .admin-track-handle {
+    color: var(--text-gray);
+    cursor: grab;
+  }
+
+  .admin-track-position,
+  .admin-track-validity {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .admin-track-title input {
+    width: 100%;
+    min-width: 12rem;
+  }
+
+  .admin-track-songs {
+    position: relative;
+    min-width: 14rem;
+  }
+
+  .admin-track-audio {
+    white-space: nowrap;
+  }
+
+  .admin-track-jam {
+    width: 5rem;
+  }
+
+  .admin-track-actions {
+    display: flex;
+    gap: 0.35rem;
+    white-space: nowrap;
+  }
+}
+
+.admin-song-picker {
+  input[type="text"] {
+    width: 100%;
+    min-width: 8rem;
+  }
+}
+
+.admin-song-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-bottom: 0.25rem;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: $radius;
+    background-color: var(--list-item-bg);
+    font-size: 0.85rem;
+  }
+
+  button {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--text-gray);
+    line-height: 1;
+  }
+}
