@@ -22,6 +22,7 @@ class Show < ApplicationRecord
     attachable.variant :id3, resize_to_limit: [ 600, 600 ]
   end
   has_one_attached :album_zip
+  has_many_attached :staged_audio
 
   extend FriendlyId
   friendly_id :date
@@ -74,6 +75,17 @@ class Show < ApplicationRecord
 
   def self.last_show_date(audio_status: "any")
     published.audio_status_filter(audio_status).order(date: :desc).pick(:date)
+  end
+
+  # ActiveStorage sanitizes characters like ">" out of Filename#to_s, but the
+  # unsanitized value survives in the column. Track filenames carry segue markers
+  # that the importer matches on, so read the column directly.
+  def self.original_filename(blob)
+    blob.read_attribute(:filename)
+  end
+
+  def staged_audio_filenames
+    staged_audio_attachments.includes(:blob).map { |a| self.class.original_filename(a.blob) }
   end
 
   def save_duration

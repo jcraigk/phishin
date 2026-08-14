@@ -49,6 +49,7 @@ Rails.application.routes.draw do
   # File attachments / downloads
   get "/download-track/:id" => "downloads#download_track"
   get "/blob/:key" => "downloads#download_blob"
+  post "/admin/direct_uploads", to: "admin/direct_uploads#create"
 
   # API v1
   namespace :api do
