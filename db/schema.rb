@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_29_014210) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_14_201919) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -276,6 +276,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_29_014210) do
 
   create_table "users", id: :serial, force: :cascade do |t|
     t.integer "access_count_to_reset_password_page", default: 0
+    t.boolean "admin", default: false, null: false
     t.datetime "created_at", precision: nil, null: false
     t.string "crypted_password"
     t.string "email", limit: 255, default: "", null: false

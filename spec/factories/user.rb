@@ -8,5 +8,9 @@ FactoryBot.define do
     trait :with_likes do
       likes { create_list(:like, 3) }
     end
+
+    trait :admin do
+      admin { true }
+    end
   end
 end
