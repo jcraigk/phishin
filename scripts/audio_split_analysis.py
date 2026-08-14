@@ -37,9 +37,11 @@ import requests
 API_BASE = "https://phish.in/api/v2"
 SITE_BASE = "https://phish.in"
 REPO_ROOT = Path(__file__).resolve().parent.parent
-# Seconds of audio auditioned on each side of the cut. Long enough to hear the
-# phrase resolve, short enough that a render is nearly instant.
-CLIP_S = 5.0
+# Seconds of audio auditioned on each side of the cut. The tail of the first
+# song only has to confirm the phrase resolves; the head of the second is what
+# the cut is judged on, so it runs long enough to hear the new song settle in.
+CLIP_BEFORE_S = 5.0
+CLIP_AFTER_S = 20.0
 # Both halves must be at least this long for a cut to be plausible; mirrors
 # TrackSplitService::MIN_PART_S, which rejects anything shorter on apply.
 MIN_PART_S = 10.0
@@ -257,7 +259,7 @@ def write_review_html(html_path, candidates, multi, quiet=False):
   <div class="body">
     <div class="controls">
       <div class="tune">
-        <button class="replay" title="replay both audition clips (r)">&#x21ba;</button>
+        <button class="replay" title="replay both audition clips (e)">&#x21ba;</button>
         <input class="cut" type="text" value="{fmt_tenths(c.cut_s)}"
           size="8" spellcheck="false" title="cut point">
         <button class="nudge" data-step="-1" title="1 second earlier (a)">&minus;1</button>
@@ -267,11 +269,11 @@ def write_review_html(html_path, candidates, multi, quiet=False):
       </div>
       <div class="parts">
         <div class="part" data-side="before">
-          <span class="plabel">end of {esc(c.part_titles[0])}</span>
+          <span class="plabel">end of <b>{esc(c.part_titles[0])}</b></span>
           <div class="audio"></div>
         </div>
         <div class="part" data-side="after">
-          <span class="plabel">start of {esc(c.part_titles[1])}</span>
+          <span class="plabel">start of <b>{esc(c.part_titles[1])}</b></span>
           <div class="audio"></div>
         </div>
       </div>
@@ -422,6 +424,7 @@ def write_review_html(html_path, candidates, multi, quiet=False):
   .part .plabel {{ display: block; color: var(--muted); font-size: 12px;
                    text-transform: uppercase; letter-spacing: .04em;
                    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+  .part .plabel b {{ color: var(--fg); font-weight: 700; }}
   .controls audio {{ width: 100%; height: 34px; }}
   @media (prefers-color-scheme: dark) {{
     .controls audio {{ color-scheme: dark; }}
@@ -437,10 +440,11 @@ def write_review_html(html_path, candidates, multi, quiet=False):
                       object-fit: fill; filter: var(--wave-filter);
                       flex: 0 0 auto; max-width: none; }}
   /* Cut marker: unlike the lead scan, the whole track is shown, because the cut
-     can be anywhere in it. Thicker than the playhead - it is the thing being
-     placed, and it has to be findable at a glance on a 96px strip. */
-  .track .cut {{ position: absolute; top: 0; bottom: 0; width: 2px;
-                 background: var(--accent); pointer-events: none; }}
+     can be anywhere in it. Same hairline weight as the playhead so neither
+     marker buries the waveform under it. */
+  .track .cut {{ position: absolute; top: 0; bottom: 0; width: 1px;
+                 background: color-mix(in srgb, var(--accent) 65%, transparent);
+                 pointer-events: none; }}
   .track .pos {{ position: absolute; top: 0; bottom: 0; width: 1px;
                  background: color-mix(in srgb, var(--ok) 65%, transparent);
                  pointer-events: none; display: none; }}
@@ -477,8 +481,9 @@ def write_review_html(html_path, candidates, multi, quiet=False):
 {footnote}
 <script>
 const YEAR = {json.dumps(html_path.resolve().parent.name)};
-// Seconds auditioned on each side of the cut. Matches CLIP_S in the scanner.
-const CLIP_S = {CLIP_S};
+// Seconds auditioned on each side of the cut. Matches the scanner's constants.
+const CLIP_BEFORE_S = {CLIP_BEFORE_S};
+const CLIP_AFTER_S = {CLIP_AFTER_S};
 
 // Accepts "1:03.2", "63.2", "1:03". Returns null on anything else so a typo is
 // rejected visibly rather than silently splitting at the wrong place.
@@ -547,8 +552,9 @@ async function renderPreview(row) {{
   const dur = payload.duration_s || 0;
   // Two clips, one per side of the cut, clamped to the track.
   const sides = [
-    {{side: "before", start: Math.max(0, secs - CLIP_S), end: secs}},
-    {{side: "after", start: secs, end: dur ? Math.min(dur, secs + CLIP_S) : secs + CLIP_S}},
+    {{side: "before", start: Math.max(0, secs - CLIP_BEFORE_S), end: secs}},
+    {{side: "after", start: secs,
+     end: dur ? Math.min(dur, secs + CLIP_AFTER_S) : secs + CLIP_AFTER_S}},
   ];
   try {{
     const timeout = setTimeout(() => ctl.abort(), 90000);
@@ -1105,7 +1111,18 @@ document.querySelectorAll(".row").forEach(row => {{
     before.play().catch(() => {{}});
   }};
   row._playPair = playPair;
-  row._restart = playPair;
+  // "r" replays only the second half: a cut is judged on whether the next song
+  // starts cleanly, so that is the clip worth hearing again on its own.
+  row._restart = () => {{
+    const after = row.querySelector('.part[data-side="after"] audio');
+    if (!after || !after.src) return;
+    const before = row.querySelector('.part[data-side="before"] audio');
+    // Drop a pending hand-off from a pair playback, or the pair would restart
+    // the "after" clip a second time when the first half runs out.
+    if (before) {{ before.onended = null; if (!before.paused) before.pause(); }}
+    after.currentTime = 0;
+    after.play().catch(() => {{}});
+  }};
   const replay = row.querySelector("button.replay");
   if (replay) replay.addEventListener("click", playPair);
 
