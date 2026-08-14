@@ -1,3 +1,4 @@
+require "base64"
 require "shellwords"
 
 # Leading-edge counterpart to audio_edges.rake: scans set/encore openers for
@@ -64,6 +65,23 @@ module LeadScan
     end
   end
 
+  FONT_DIR = "node_modules/@fontsource/open-sans-condensed/files".freeze
+
+  # Ruby-side twin of embedded_fonts() in audio_edge_analysis.py: the index has
+  # to look like the review pages, and those inline the font so they work over
+  # file:// with no network. Yields nothing if node_modules is absent, in which
+  # case the stack falls back to system sans.
+  def self.embedded_fonts
+    [ 300, 700 ].filter_map do |weight|
+      path = "#{FONT_DIR}/open-sans-condensed-latin-#{weight}-normal.woff2"
+      next unless File.exist?(path)
+      b64 = Base64.strict_encode64(File.binread(path))
+      %(@font-face { font-family: "Open Sans Condensed"; font-style: normal; ) +
+        %(font-weight: #{weight}; font-display: swap; ) +
+        %(src: url(data:font/woff2;base64,#{b64}) format("woff2"); })
+    end.join("\n    ")
+  end
+
   def self.write_index
     done = done_years
     year_dirs = Dir.glob("#{SCAN_ROOT}/[0-9][0-9][0-9][0-9]").sort
@@ -93,13 +111,43 @@ module LeadScan
       <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🎬</text></svg>'>
 
       <style>
-        body { font: 14px/1.5 -apple-system, sans-serif; margin: 2rem auto; max-width: 700px; }
+        #{embedded_fonts}
+        /* Same tokens as the review pages, so moving between them feels like
+           one app rather than two tools. */
+        :root {
+          --bg: #ffffff; --fg: #1c1c1e; --muted: #6b6b70;
+          --line: #e3e3e7; --card: #fafafa; --link: #2f6fd0;
+        }
+        @media (prefers-color-scheme: dark) {
+          :root {
+            --bg: #14171d; --fg: #e6e9ef; --muted: #8b95a7;
+            --line: #262b35; --card: #1a1e26; --link: #7fb3f0;
+          }
+        }
+        * { box-sizing: border-box; }
+        body { font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+               margin: 2rem auto; max-width: 700px; padding: 0 1.5rem;
+               background: var(--bg); color: var(--fg);
+               -webkit-font-smoothing: antialiased; }
+        h1 { font-family: "Open Sans Condensed", -apple-system, sans-serif;
+             font-size: 30px; font-weight: 700; letter-spacing: .01em; margin: 0 0 1.2rem; }
+        a { color: var(--link);
+            text-decoration-color: color-mix(in srgb, var(--link) 45%, transparent);
+            text-underline-offset: 2px; }
+        a:hover { text-decoration-color: currentColor; }
         table { border-collapse: collapse; width: 100%; }
-        th, td { text-align: left; padding: .4rem .8rem; border-bottom: 1px solid #ccc; }
-        th { border-bottom: 2px solid #333; }
-        tfoot td { font-weight: bold; border-bottom: none; }
-        .pending { color: #999; }
-        .meta { color: #666; }
+        th, td { text-align: left; padding: .5rem .8rem; border-bottom: 1px solid var(--line); }
+        th { font-family: "Open Sans Condensed", -apple-system, sans-serif;
+             font-size: 15px; font-weight: 700; color: var(--muted);
+             text-transform: uppercase; letter-spacing: .04em; }
+        /* Counts read as data, so they get the same tabular figures the review
+           page uses for times. */
+        td + td, th + th { text-align: right; font-variant-numeric: tabular-nums; }
+        tbody tr:hover { background: var(--card); }
+        tfoot td { font-weight: 700; border-bottom: none; }
+        /* Prose, not a count - it keeps the left alignment the numbers give up. */
+        .pending { color: var(--muted); text-align: left; font-style: italic; }
+        .meta { color: var(--muted); margin: -.6rem 0 1.4rem; }
       </style>
       <h1>Track lead-in trim reports</h1>
       <p class="meta">Generated #{Time.now.strftime('%Y-%m-%d %H:%M')}</p>

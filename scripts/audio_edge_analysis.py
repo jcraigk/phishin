@@ -150,11 +150,16 @@ def probe_duration(path):
     return float(out.stdout.decode().strip())
 
 
-def probe_bitrate(path):
+def probe_bitrate(path, timeout=None):
+    """Source bitrate, so a trim re-encodes at the quality it came in at.
+
+    timeout bounds the call for callers reading over http, where a stalled
+    connection would otherwise hang here indefinitely. Left unset for local
+    files and the scan path, which have nothing to stall on."""
     out = run([
         "ffprobe", "-v", "error", "-show_entries", "format=bit_rate",
         "-of", "csv=p=0", str(path),
-    ])
+    ], timeout=timeout)
     raw = out.stdout.decode().strip()
     return f"{round(int(raw) / 1000)}k" if raw.isdigit() else "192k"
 
@@ -236,7 +241,7 @@ def trim_filters(start, end, fade_in, fade_out):
 
 
 def trim_command(src, out_path, start, end, fade_in, fade_out, bitrate=None,
-                 seek_input=False):
+                 seek_input=False, probe_timeout=None):
     """Full ffmpeg argv for rendering a trim. Shared by the scan and the
     preview server so a preview is byte-identical to what gets applied.
 
@@ -264,7 +269,7 @@ def trim_command(src, out_path, start, end, fade_in, fade_out, bitrate=None,
         "ffmpeg", "-y", "-v", "error", *reconnect, *pre, "-i", src,
         "-af", ",".join(trim_filters(start, end, fade_in, fade_out)),
         "-map_metadata", "0", "-id3v2_version", "3",
-        "-b:a", bitrate or probe_bitrate(src), str(out_path),
+        "-b:a", bitrate or probe_bitrate(src, timeout=probe_timeout), str(out_path),
     ]
 
 
@@ -499,7 +504,9 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
         rows.append(f"""
 <div class="row">
   <div class="head">
-    <input type="checkbox" data-payload="{payload}">
+    <input type="checkbox" class="approve" data-payload="{payload}"
+      title="approve this trim (w)">
+    <input type="checkbox" class="skip" title="no changes needed (x or k)">
     <strong>{link}</strong>
     <span class="dur">{fmt_ts(r.track_duration_s)}</span>
     <span class="chosen"></span>
@@ -513,10 +520,12 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
         <button class="replay" title="restart the preview clip (r)">&#x21ba;</button>
         <input class="start" type="text" value="{fmt_tenths(info["start"])}"
           size="8" spellcheck="false" title="trim start">
-        <button class="nudge" data-step="-1" title="1 second earlier">&minus;1</button>
-        <button class="nudge" data-step="-0.3" title="0.3 seconds earlier">&minus;.3</button>
-        <button class="nudge" data-step="0.3" title="0.3 seconds later">+.3</button>
-        <button class="nudge" data-step="1" title="1 second later">+1</button>
+        <button class="nudge" data-step="-1" title="1 second earlier (a)">&minus;1</button>
+        <button class="nudge" data-step="-0.3" title="0.3 seconds earlier (s)">&minus;.3</button>
+        <button class="nudge" data-step="-0.1" title="0.1 seconds earlier (d or [)">&minus;.1</button>
+        <button class="nudge" data-step="0.1" title="0.1 seconds later (f or ])">+.1</button>
+        <button class="nudge" data-step="0.3" title="0.3 seconds later (g)">+.3</button>
+        <button class="nudge" data-step="1" title="1 second later (h)">+1</button>
       </div>
       <div class="audio">{audio}</div>
     </div>
@@ -533,7 +542,7 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
 <style>
   {embedded_fonts()}
   :root {{
-    --bg: #ffffff; --fg: #1c1c1e; --muted: #6b6b70;
+    --bg: #ffffff; --header: #f4f4f6; --fg: #1c1c1e; --muted: #6b6b70;
     --line: #e3e3e7; --card: #fafafa; --sel: #eef2f8; --sel-line: #b9cbe6;
     --accent: #b8860b; --ok: #1a6b2f; --err: #b00020;
     --btn: #f2f2f4; --btn-line: #d8d8dd; --link: #2f6fd0;
@@ -544,8 +553,8 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
     :root {{
       /* Cool slate rather than neutral grey: enough hue to feel considered,
          not enough to distract from the waveforms. */
-      --bg: #14171d; --fg: #e6e9ef; --muted: #8b95a7;
-      --line: #262b35; --card: #1a1e26; --sel: #1e2836; --sel-line: #3a5578;
+      --bg: #1b1f27; --header: #12151b; --fg: #e6e9ef; --muted: #8b95a7;
+      --line: #2f3542; --card: #232833; --sel: #26313f; --sel-line: #3a5578;
       --accent: #e0a92e; --ok: #5fce85; --err: #ff6b81;
       --btn: #2e3644; --btn-line: #4a5568; --link: #7fb3f0;
       --wave-filter: sepia(.5) saturate(1.9) hue-rotate(168deg) brightness(.82) opacity(.86);
@@ -554,7 +563,7 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
   }}
   * {{ box-sizing: border-box; }}
   body {{ font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-          margin: 2rem auto; max-width: 1300px; padding: 0 1.5rem;
+          margin: 0 auto 2rem; max-width: 1300px; padding: 4.8rem 1.5rem 0;
           background: var(--bg); color: var(--fg);
           -webkit-font-smoothing: antialiased; }}
   h1 {{ font-family: "Open Sans Condensed", -apple-system, sans-serif;
@@ -568,14 +577,30 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
           border-radius: 10px; padding: .85rem 1rem; transition: background .12s ease; }}
   .row:hover {{ background: var(--card); }}
   /* Approved rows collapse to just the title line: the work is done, and a
-     long page of finished rows should stay scannable. */
-  .row.done .body {{ display: none; }}
-  .row.done .head {{ margin-bottom: 0; }}
+     long page of finished rows should stay scannable. Selecting one expands it
+     again without unapproving it, so a finished row can be revisited; it
+     re-collapses on its own as soon as the selection moves away. */
+  .row.done:not(.sel) .body {{ display: none; }}
+  .row.done:not(.sel) .head {{ margin-bottom: 0; }}
   /* Track length: always visible, muted so it never competes with the title. */
   .dur {{ color: var(--muted); font-variant-numeric: tabular-nums; font-size: 14px; }}
   .chosen {{ display: none; font-variant-numeric: tabular-nums; font-weight: 600;
              color: var(--ok); font-size: 15px; }}
-  .row.done .chosen {{ display: inline; }}
+  /* The summary time stands in for the collapsed controls, so it goes away
+     when those controls are back on screen. */
+  .row.done:not(.sel) .chosen {{ display: inline; }}
+  /* Skipped rows collapse the same way but read dimmer than approved ones:
+     they are settled work with no edit behind them, so they should recede
+     further than a row that produced a trim. The struck-through title says
+     "left alone" on its own, so no summary text is needed beside it. */
+  .row.skipped:not(.sel) {{ opacity: .55; }}
+  /* The title is a link, and links here carry a translucent underline colour.
+     Pin the strike to currentColor or it inherits that wash and barely shows. */
+  .row.skipped:not(.sel) .head strong,
+  .row.skipped:not(.sel) .head strong a {{ text-decoration: line-through;
+                                           text-decoration-color: currentColor;
+                                           text-decoration-thickness: 1px; }}
+  .skip {{ accent-color: var(--muted); }}
   /* Center, not baseline: the checkbox is a fixed-size box and baseline
      alignment leaves it sitting above the text. */
   .head {{ display: flex; gap: .6rem; align-items: center; flex-wrap: wrap;
@@ -601,10 +626,48 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
   input[type="checkbox"] {{ width: 1.15rem; height: 1.15rem; cursor: pointer;
                             accent-color: var(--link); }}
   img {{ max-width: 100%; }}
-  #export {{ position: fixed; top: 1rem; right: 1rem; padding: .5rem 1.1rem;
-             font: inherit; font-weight: 600; cursor: pointer; z-index: 5;
-             box-shadow: 0 2px 8px rgba(0,0,0,.15); }}
-  .tune {{ display: flex; gap: .6rem; align-items: center; margin: .4rem 0 .4rem 1.6rem; }}
+  #export {{ padding: .4rem 1rem; font: inherit; font-weight: 600;
+             cursor: pointer; flex: 0 0 auto; }}
+  /* Fixed header: title, progress and export in one bar, with the progress
+     bar spanning the full width underneath. Replaces a floating legend that
+     overlapped the title on narrow windows. */
+  #topbar {{ position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+             background: var(--header); border-bottom: 1px solid var(--line);
+             padding: .55rem 1.5rem .35rem; }}
+  #topbar .row1 {{ display: flex; align-items: center; gap: 1rem;
+                   max-width: 1300px; margin: 0 auto; }}
+  #topbar h1 {{ font-size: 21px; margin: 0; flex: 1 1 auto; min-width: 0;
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+  #topbar h1 .count {{ color: var(--muted); font-weight: 400; font-size: 15px; }}
+  #legend {{ display: flex; align-items: baseline; gap: .9rem; flex: 0 0 auto;
+             font-size: 13px; font-variant-numeric: tabular-nums; }}
+  #legend .pct {{ font-size: 20px; font-weight: 700;
+                  font-family: "Open Sans Condensed", -apple-system, sans-serif; }}
+  #legend .k {{ color: var(--muted); margin-right: .3rem; }}
+  #legend .v {{ font-weight: 600; }}
+  #topbar .bar {{ height: 4px; border-radius: 2px; background: var(--line);
+                  margin: .45rem auto 0; max-width: 1300px;
+                  overflow: hidden; font-size: 0; }}
+  /* Inline-block, not flex: a flex item's basis is its content, and these are
+     empty, so flex sized them from nothing and ignored the exact percentage
+     widths set on them - the bar never reached the end. */
+  #topbar .bar i {{ display: inline-block; height: 100%; vertical-align: top; }}
+  #topbar .bar .fill-ok {{ background: var(--ok); }}
+  /* Skipped must not read as unfilled track: grey-on-grey made a full bar look
+     three-quarters done. Tint it toward the accent so both segments clearly
+     count as progress. */
+  #topbar .bar .fill-skip {{ background: var(--accent); opacity: .55; }}
+  /* Narrow windows: the per-stat labels go first, then the counts. */
+  @media (max-width: 860px) {{ #legend .k {{ display: none; }} }}
+  @media (max-width: 640px) {{ #legend .stat {{ display: none; }} }}
+  /* Six nudge buttons now, so the row is tighter than it was with four: the
+     gap and the button padding both give up a little rather than letting the
+     controls run wide and crowd the waveform beside them. */
+  .tune {{ display: flex; gap: .35rem; align-items: center; margin: .4rem 0 .4rem 1.6rem; }}
+  /* The nudges are one control, not six: closing them into a strip makes the
+     step sequence read as a single scale. The .tune gap still separates that
+     strip from the replay button and the time field on either side. */
+  .tune .nudge + .nudge {{ margin-left: -.28rem; }}
   .tune input {{ font: inherit; font-size: 17px; font-variant-numeric: tabular-nums;
                  padding: .18rem .3rem; width: 5.2rem; text-align: center;
                  background: var(--bg); color: var(--fg);
@@ -612,7 +675,8 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
   .tune input:focus {{ outline: none; border-color: var(--accent);
                        box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }}
   .tune input.invalid {{ border-color: var(--err); }}
-  .tune .nudge {{ font: inherit; padding: .1rem .5rem; cursor: pointer; }}
+  .tune .nudge {{ font: inherit; font-size: 13px; padding: .1rem .38rem;
+                  cursor: pointer; }}
   /* Status lives in the header row, which spans the full width: its text
      changes length constantly and must never push the waveform column. */
   .head .status {{ color: var(--muted); font-size: 13px; }}
@@ -637,7 +701,9 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
   /* Fixed width so the waveform column starts at the same x on every row,
      sized to the widest control (the audio element) and no wider. */
   .controls {{ flex: 0 0 22rem; min-width: 0; }}
-  .track {{ display: flex; align-items: center; gap: .35rem; flex: 1 1 auto; min-width: 280px; }}
+  /* The waveform needs room to breathe from the transport controls beside it -
+     at a tight gap the play button reads as sitting on the waveform. */
+  .track {{ display: flex; align-items: center; gap: 1rem; flex: 1 1 auto; min-width: 280px; }}
   /* Play stacked above the position readout, left of the waveform. */
   .track .tctl {{ display: flex; flex-direction: column; align-items: stretch;
                   justify-content: center; gap: .25rem; flex: 0 0 auto; }}
@@ -662,20 +728,46 @@ def write_review_html(html_path, results, trim_info, args, quiet=False):
                  pointer-events: none; display: none; }}
   .track .tt {{ font: inherit; font-size: 17px; font-variant-numeric: tabular-nums;
                 min-width: 4rem; cursor: pointer; padding: .15rem .4rem; }}
+  /* Buffering the streamed mp3: the glyph is replaced by a dotted ring that
+     spins, so a slow start reads as loading rather than as a dead button. The
+     ring is a pseudo-element so only it rotates - spinning the button itself
+     would drag its border round with it and fight the :active nudge. Fixed
+     size, so nothing shifts on a 100-row page. */
+  .track .tplay.loading {{ color: transparent; position: relative; }}
+  .track .tplay.loading::after {{ content: ""; position: absolute;
+    top: 50%; left: 50%; width: .82em; height: .82em; margin: -.41em 0 0 -.41em;
+    border: 2px solid color-mix(in srgb, var(--muted) 35%, transparent);
+    border-top-color: var(--muted); border-radius: 50%;
+    animation: tspin .7s linear infinite; }}
+  @keyframes tspin {{ to {{ transform: rotate(360deg); }} }}
+  @media (prefers-reduced-motion: reduce) {{
+    .track .tplay.loading::after {{ animation-duration: 2.4s; }}
+  }}
   .row.edited .tune input {{ border-color: var(--accent); }}
   /* Selected row: subtle, and set with a box-shadow so it does not shift
      anything. Up/down moves the selection; space plays, c adopts the time. */
   .row.sel {{ background: var(--sel); border-color: var(--sel-line);
               box-shadow: inset 3px 0 0 var(--link); }}
 </style>
-<button id="export">Export approved.json</button>
-<h1>Track edge trim review ({len(rows)} candidates)</h1>
+<header id="topbar">
+  <div class="row1">
+    <h1>Track edge trim review <span class="count">{len(rows)} candidates</span></h1>
+    <div id="legend">
+      <span class="pct">0%</span>
+      <span class="stat"><span class="k">Approved</span><span class="v" id="n-approved">0</span></span>
+      <span class="stat"><span class="k">Skipped</span><span class="v" id="n-skipped">0</span></span>
+      <span class="stat"><span class="k">Total</span><span class="v" id="n-total">0</span></span>
+    </div>
+    <button id="export">Export JSON</button>
+  </div>
+  <div class="bar"><i class="fill-ok"></i><i class="fill-skip"></i></div>
+</header>
 {"".join(rows)}
 {f'<h2>A cappella ({len(acappella)}) &mdash; not auto-trimmed, review manually</h2>{"".join(acappella)}' if acappella else ""}
 {f'<h2>Not trimmed ({len(skipped)})</h2>{"".join(skipped)}' if skipped else ""}
 <script>
-// Seconds of the track shown in the waveform strip.
-const WAVE_WINDOW_S = 120;
+// Seconds of the track shown in the waveform strip (2.5 minutes).
+const WAVE_WINDOW_S = 150;
 const YEAR = {json.dumps(html_path.resolve().parent.name)};
 
 // Accepts "1:03.2", "63.2", "1:03". Returns null on anything else so a typo
@@ -704,7 +796,7 @@ function stopFullTrack() {{
   const cur = window._playing;
   if (!cur || cur.audio.paused) return;
   cur.audio.pause();
-  if (cur.playBtn) cur.playBtn.textContent = "\\u25B6";
+  if (cur.playBtn) {{ cur.playBtn.classList.remove("loading"); cur.playBtn.textContent = "\\u25B6"; }}
 }}
 
 // Only one waveform at a time: starting one stops any other row's.
@@ -712,7 +804,7 @@ function stopOtherFullTracks(keep) {{
   const cur = window._playing;
   if (!cur || cur.audio === keep || cur.audio.paused) return;
   cur.audio.pause();
-  if (cur.playBtn) cur.playBtn.textContent = "\\u25B6";
+  if (cur.playBtn) {{ cur.playBtn.classList.remove("loading"); cur.playBtn.textContent = "\\u25B6"; }}
 }}
 
 // Mirror of stopFullTrack: starting a waveform silences every preview clip on
@@ -734,7 +826,7 @@ function fmtClock(sec) {{
 // what you hear is what lead_scan:apply writes. Without the server (opened over
 // file://) the field still edits the export; only the preview is unavailable.
 async function renderPreview(row) {{
-  const cb = row.querySelector("input[type=checkbox]");
+  const cb = row.querySelector("input.approve");
   const input = row.querySelector("input.start");
   const status = row.querySelector(".status");
   const payload = JSON.parse(cb.dataset.payload);
@@ -756,7 +848,10 @@ async function renderPreview(row) {{
   // The field stays editable during a render: the debounce already prevents
   // pile-up, and locking it would swallow clicks mid-render.
   try {{
-    const timeout = setTimeout(() => ctl.abort(), 180000);
+    // Must fire inside the watchdog deadline, or the watchdog silently clears
+    // the pill while the request is still live and the reviewer never learns
+    // the render died - it just looks like nothing happened.
+    const timeout = setTimeout(() => ctl.abort(), 90000);
     let resp;
     try {{
       resp = await fetch("/preview", {{
@@ -838,6 +933,17 @@ async function renderPreview(row) {{
     status.classList.add("err");
   }} finally {{
     row._pending = Math.max(0, (row._pending || 1) - 1);
+    // Last request out turns the light off. Ownership games between
+    // superseded and superseding renders are what kept stranding the pill:
+    // whoever finishes last is unambiguously the one that should clear it.
+    if (row._pending === 0) {{
+      clearTimeout(row._watchdog);
+      const st = row.querySelector(".status");
+      if (st.classList.contains("busy")) {{
+        st.textContent = "";
+        st.classList.remove("busy");
+      }}
+    }}
   }}
 }}
 
@@ -850,6 +956,7 @@ function stopRowAudio(row) {{
   const cur = window._playing;
   if (cur && cur.row === row && !cur.audio.paused) {{
     cur.audio.pause();
+    cur.playBtn.classList.remove("loading");
     cur.playBtn.textContent = "\\u25B6";
   }}
 }}
@@ -865,7 +972,9 @@ function selectRow(row) {{
   row.classList.add("sel");
   // Arriving at a row starts its waveform: the review loop is listen, adjust,
   // approve, and this removes a keypress from every single pass. Approved rows
-  // are collapsed and already dealt with, so they stay quiet.
+  // expand on arrival so they can be re-checked, but stay silent - they are
+  // already dealt with, and arrowing back over finished work should be quiet.
+  // Space still plays one on demand.
   if (row._startTrack && !row.classList.contains("done")) row._startTrack();
   // Deliberately no auto-render on arrival: it would seize playback from the
   // waveform every time the selection moved. A preview is rendered only when
@@ -907,17 +1016,19 @@ document.addEventListener("keydown", e => {{
   // working after clicking a control or pressing "w".
   const typing = (t === "INPUT" && e.target.type !== "checkbox")
     || t === "TEXTAREA" || (e.target && e.target.isContentEditable);
-  // The only text field on the page is the m:ss.s start time, where a letter is
-  // never valid input. So letters stay shortcuts even with the field focused -
-  // "w" approves instead of typing a w - while digits, ":", "." and the editing
-  // keys still reach the field normally.
-  const isLetter = e.key.length === 1 && /[a-z]/i.test(e.key);
-  if (typing && !(t === "INPUT" && isLetter)) return;
-  // A letter reaching this point is a shortcut, not text. Swallow it up front:
+  // The only text field on the page is the m:ss.s start time, so the only
+  // characters it can ever need are digits, ":" and ".". Every other printable
+  // key is a shortcut even with the field focused - ";" approves rather than
+  // typing a semicolon - while the editing keys (arrows, backspace, tab...)
+  // are multi-character names and still reach the field normally.
+  const isTimeChar = e.key.length === 1 && /[0-9.:]/.test(e.key);
+  const isShortcutChar = e.key.length === 1 && !isTimeChar;
+  if (typing && !(t === "INPUT" && isShortcutChar)) return;
+  // A shortcut character reaching this point is not text. Swallow it up front:
   // the branches below only preventDefault once they know they can act, and an
-  // unhandled letter ("q", or "c" with no row) would otherwise still be typed
+  // unhandled key ("q", or ";" with no row) would otherwise still be typed
   // into the field we are about to leave.
-  if (typing && isLetter) e.preventDefault();
+  if (typing && isShortcutChar) e.preventDefault();
   if (e.target && e.target.blur && (t === "AUDIO" || t === "INPUT" || t === "BUTTON")) {{
     e.target.blur();
   }}
@@ -928,35 +1039,53 @@ document.addEventListener("keydown", e => {{
     if (!window._sel || !window._sel._toggle) return;
     return window._sel._toggle();
   }}
-  if (e.key === "c" || e.key === "C") {{
+  // Right-hand aliases so the whole loop is reachable without moving hands:
+  // / = c (adopt), ; = w (approve), ' = k (skip). The nudge pair , and . keep
+  // meaning -.3 and +.3 - they alias the steps, not the letters, because the
+  // letter for +.3 moved when a s d f g h took the whole button row.
+  const RIGHT_HAND = {{"/": "c", ",": "s", ".": "g", ";": "w", "'": "k"}};
+  const key = RIGHT_HAND[e.key] || e.key;
+
+  if (key === "c" || key === "C") {{
     if (!window._sel || !window._sel._adopt) return;
     e.preventDefault();
     return window._sel._adopt();
   }}
-  if (e.key === "r" || e.key === "R") {{
+  if (key === "r" || key === "R") {{
     if (!window._sel || !window._sel._restart) return;
     e.preventDefault();
     return window._sel._restart();
   }}
-  // a s d f mirror the four nudge buttons left to right: -1, -.3, +.3, +1.
-  const nudgeKeys = {{a: -1, s: -0.3, d: 0.3, f: 1}};
-  const nudgeStep = nudgeKeys[e.key.toLowerCase()];
+  // a s d f g h map straight onto the six nudge buttons left to right, so the
+  // home row is the button row. [ and ] stay as right-hand aliases for the
+  // fine pair, which is the step used most while dialling a cut in.
+  const nudgeKeys = {{
+    a: -1, s: -0.3, d: -0.1, f: 0.1, g: 0.3, h: 1,
+    "[": -0.1, "]": 0.1,
+  }};
+  const nudgeStep = nudgeKeys[key.toLowerCase()];
   if (nudgeStep !== undefined) {{
     if (!window._sel || !window._sel._nudge) return;
     e.preventDefault();
     window._sel._nudge(nudgeStep);
     return;
   }}
-  // "w" approves/unapproves the selected row.
-  if (e.key === "w" || e.key === "W") {{
+  // "w" approves the selected row; "x" or "k" marks it as needing no changes.
+  // Both are the commit step of the review loop, not toggles: answer and move
+  // on. Reversing an answer is still available via the checkbox itself.
+  const answerKeys = {{w: "approve", x: "skip", k: "skip"}};
+  const answer = answerKeys[key.toLowerCase()];
+  if (answer) {{
     if (!window._sel) return;
-    const box = window._sel.querySelector("input[type=checkbox]");
+    const box = window._sel.querySelector("input." + answer);
     if (!box) return;
     e.preventDefault();
-    // Approve and move on: "w" is the commit step of the review loop, not a
-    // toggle. Unchecking is still available via the checkbox itself.
+    // The two answers are exclusive, and setting .checked in script fires no
+    // "change" - so clear the other box and collapse by hand.
+    const other = window._sel.querySelector(
+      "input." + (answer === "approve" ? "skip" : "approve"));
+    if (other) other.checked = false;
     box.checked = true;
-    // Setting .checked in script does not fire "change", so collapse by hand.
     if (window._sel._syncDone) window._sel._syncDone();
     return moveSelection(1);
   }}
@@ -1000,8 +1129,83 @@ if (location.protocol === "file:") {{
   document.body.prepend(b);
 }}
 
+// Progress legend. Approved and skipped are both "answered": the percentage is
+// how much of this year's review is behind you, which is the number you want
+// when deciding whether to keep going.
+function updateLegend() {{
+  const rows = [...document.querySelectorAll(".row")];
+  const total = rows.length;
+  const approved = rows.filter(r => {{
+    const b = r.querySelector("input.approve");
+    return b && b.checked;
+  }}).length;
+  const skipped = rows.filter(r => {{
+    const b = r.querySelector("input.skip");
+    return b && b.checked;
+  }}).length;
+  const pct = total ? Math.round(((approved + skipped) / total) * 100) : 0;
+  const set = (id, v) => {{
+    const el = document.getElementById(id);
+    if (el) el.textContent = v;
+  }};
+  set("n-approved", approved);
+  set("n-skipped", skipped);
+  set("n-total", total);
+  const pctEl = document.querySelector("#legend .pct");
+  if (pctEl) pctEl.textContent = pct + "%";
+  // Two segments in one bar: approved and skipped stack to the same total the
+  // percentage reports, so the bar and the number can never disagree.
+  const ok = document.querySelector("#topbar .fill-ok");
+  const sk = document.querySelector("#topbar .fill-skip");
+  if (ok) ok.style.width = (total ? (approved / total) * 100 : 0) + "%";
+  if (sk) sk.style.width = (total ? (skipped / total) * 100 : 0) + "%";
+  saveProgress();
+}}
+
+// Progress survives a reload: a year is a long pass and losing it to a stray
+// cmd-R is brutal. Keyed by share url so it follows the track even if the page
+// is rebuilt and the rows reorder. Skips are page-only - they never reach
+// approved.json - so this is the only place they persist.
+const STORE_KEY = "leadscan:progress:" + YEAR;
+function rowKey(row) {{
+  const b = row.querySelector("input.approve");
+  if (!b) return null;
+  try {{ return JSON.parse(b.dataset.payload).share_url || null; }}
+  catch (e) {{ return null; }}
+}}
+function saveProgress() {{
+  const state = {{}};
+  document.querySelectorAll(".row").forEach(row => {{
+    const key = rowKey(row);
+    if (!key) return;
+    const a = row.querySelector("input.approve");
+    const s = row.querySelector("input.skip");
+    // Only answered rows are stored, so the blob stays small and a cleared
+    // answer actually disappears instead of lingering as false.
+    if (a && a.checked) state[key] = "a";
+    else if (s && s.checked) state[key] = "s";
+  }});
+  try {{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }}
+  catch (e) {{ /* private mode or full quota: progress just stops persisting */ }}
+}}
+function restoreProgress() {{
+  let state = null;
+  try {{ state = JSON.parse(localStorage.getItem(STORE_KEY) || "null"); }}
+  catch (e) {{ return; }}
+  if (!state) return;
+  document.querySelectorAll(".row").forEach(row => {{
+    const mark = state[rowKey(row)];
+    if (!mark) return;
+    const box = row.querySelector(mark === "a" ? "input.approve" : "input.skip");
+    if (!box) return;
+    box.checked = true;
+    // Setting .checked in script fires no "change", so collapse by hand.
+    if (row._syncDone) row._syncDone();
+  }});
+}}
+
 document.querySelectorAll(".row").forEach(row => {{
-  const cb = row.querySelector("input[type=checkbox]");
+  const cb = row.querySelector("input.approve");
   const input = row.querySelector("input.start");
   if (!cb || !input) return;
   const original = JSON.parse(cb.dataset.payload).trim_start;
@@ -1128,16 +1332,58 @@ document.querySelectorAll(".row").forEach(row => {{
       // Adopting is an explicit request to hear it, so render even when the
       // value did not actually change (commit no-ops in that case).
       if (JSON.parse(cb.dataset.payload).trim_start === was) scheduleRender();
+      // The point has been made once a few seconds of the kept audio have
+      // played: adopting picks the cut, and letting the whole rest of the track
+      // run on from there just has to be stopped by hand. The preview clip that
+      // the render produces is the thing to listen to next.
+      if (full && !full.paused) {{
+        clearTimeout(row._adoptStop);
+        const from = full.currentTime;
+        row._adoptStop = setTimeout(() => {{
+          if (!full || full.paused) return;
+          // Only stop the run this adopt started. If the reviewer seeked or
+          // restarted meanwhile the playhead will not be where simply playing
+          // on from `from` would have left it, and that is their playback to
+          // keep - so leave it running.
+          const expected = from + 3;
+          if (Math.abs(full.currentTime - expected) > 1) return;
+          full.pause();
+          if (row._paintBtn) row._paintBtn();
+        }}, 3000);
+      }}
     }};
     label.addEventListener("click", adopt);
     // Exposed for the keyboard shortcuts on the selected row.
     row._adopt = adopt;
+
+    // The mp3 streams from phish.in, so there is a real wait between asking for
+    // playback and hearing it. One place decides what the button shows, so the
+    // spinner cannot be left behind by whichever path started the audio.
+    const paintBtn = () => {{
+      playBtn.textContent = (full && !full.paused) ? "\\u23F8" : "\\u25B6";
+    }};
+    // The spinner is drawn by CSS over a transparent glyph, so the button keeps
+    // its width and the underlying play/pause state stays correct underneath.
+    const setLoading = on => {{
+      playBtn.classList.toggle("loading", on);
+      paintBtn();
+    }};
+    row._paintBtn = paintBtn;
 
     // Created on first use so a page of 100 rows opens no connections.
     const ensure = () => {{
       if (full) return full;
       full = new Audio(track.dataset.src);
       full.preload = "none";
+      // Buffering is the whole reason for the indicator: "waiting" fires when
+      // playback stalls for data, and it can happen mid-track too, not just on
+      // the first press.
+      full.addEventListener("waiting", () => setLoading(true));
+      full.addEventListener("stalled", () => setLoading(true));
+      // Any of these means we have audio again. "playing" is the one that fires
+      // when sound actually starts, which is what the spinner was waiting for.
+      ["playing", "canplay", "error", "pause", "ended"].forEach(
+        ev => full.addEventListener(ev, () => setLoading(false)));
       // Arrow-key scrubbing acts on whichever track is playing.
       full.addEventListener("play", () => {{
         stopOtherFullTracks(full);
@@ -1156,18 +1402,26 @@ document.querySelectorAll(".row").forEach(row => {{
         atSecs = full.currentTime;
         label.textContent = fmtClock(full.currentTime);
       }});
-      full.addEventListener("ended", () => {{ playBtn.textContent = "\\u25B6"; }});
+      full.addEventListener("ended", () => {{ paintBtn(); }});
       return full;
+    }};
+
+    // Starting playback always goes through here, so the spinner appears on the
+    // press rather than waiting for a "waiting" event that may never fire if the
+    // browser buffers silently. It clears on "playing" - or on "error", so a
+    // dead url does not spin forever.
+    const start = a => {{
+      if (a.readyState < 3) setLoading(true);  // < HAVE_FUTURE_DATA
+      a.play().then(() => setLoading(false)).catch(() => setLoading(false));
     }};
 
     const togglePlay = () => {{
       const a = ensure();
       if (a.paused) {{
-        a.play().catch(() => {{}});
-        playBtn.textContent = "\\u23F8";
+        start(a);
       }} else {{
         a.pause();
-        playBtn.textContent = "\\u25B6";
+        setLoading(false);
       }}
     }};
     playBtn.addEventListener("click", togglePlay);
@@ -1176,8 +1430,7 @@ document.querySelectorAll(".row").forEach(row => {{
     row._startTrack = () => {{
       const a = ensure();
       if (!a.paused) return;
-      a.play().catch(() => {{}});
-      playBtn.textContent = "\\u23F8";
+      start(a);
     }};
 
     wave.addEventListener("click", e => {{
@@ -1187,10 +1440,7 @@ document.querySelectorAll(".row").forEach(row => {{
       a.currentTime = at;
       atSecs = at;
       label.textContent = fmtClock(at);
-      if (a.paused) {{
-        a.play().catch(() => {{}});
-        playBtn.textContent = "\\u23F8";
-      }}
+      if (a.paused) start(a);
     }});
   }}
 
@@ -1198,25 +1448,53 @@ document.querySelectorAll(".row").forEach(row => {{
   // obvious target. Buttons and inputs still do their own thing.
   row.addEventListener("mousedown", () => selectRow(row));
 
-  // Approving collapses the row to its title plus the chosen time; unchecking
-  // restores the full controls. Anything playing in it stops on collapse.
+  // Approving marks the row done - it collapses to its title plus the chosen
+  // time once the selection leaves it; unchecking restores the full controls.
+  // Anything playing in it stops on approval. Skipping is the same motion for
+  // the other answer: this track needs no trim at all.
   const chosen = row.querySelector(".chosen");
+  const skipBox = row.querySelector("input.skip");
   const syncDone = () => {{
-    const on = cb.checked;
+    const skipped = skipBox && skipBox.checked;
+    const on = cb.checked || skipped;
+    // One collapse class for both answers: "done" means settled, either way.
     row.classList.toggle("done", on);
-    if (chosen) chosen.textContent = on ? input.value : "";
-    if (on) stopRowAudio(row);
+    row.classList.toggle("skipped", !!skipped);
+    // A skipped row has no chosen time to show, and the struck-through title
+    // already says so - anything here would just be a stale timestamp for a cut
+    // that is never going to happen.
+    if (chosen) chosen.textContent = (on && !skipped) ? input.value : "";
+    if (on) {{
+      stopRowAudio(row);
+      // Answering settles the row, so any render still claiming to be in flight
+      // is moot - drop it rather than leave a "rendering..." pill on a finished
+      // row with nothing left to clear it.
+      if (row._inflight) row._inflight.abort();
+      clearTimeout(row._watchdog);
+      row._pending = 0;
+      const st = row.querySelector(".status");
+      if (st && st.classList.contains("busy")) {{
+        st.textContent = "";
+        st.classList.remove("busy");
+      }}
+    }}
+    updateLegend();
   }};
-  // Ticking the box is the same commit step as "w": collapse and move on.
-  // Unticking just restores the row without moving the selection.
-  cb.addEventListener("change", () => {{
+  // The two answers are mutually exclusive: a track is either getting a trim or
+  // being left alone, never both. Checking one clears the other.
+  const settle = (box, other) => box.addEventListener("change", () => {{
+    if (box.checked && other) other.checked = false;
     syncDone();
-    if (cb.checked) return moveSelection(1);
-    // Un-approved and expanded again: treat it like arriving at the row.
+    // Answering is the commit step, same as "w": collapse and move on.
+    if (box.checked) return moveSelection(1);
+    // Unanswered and expanded again: treat it like arriving at the row.
     selectRow(row);
     if (row._startTrack) row._startTrack();
   }});
+  settle(cb, skipBox);
+  if (skipBox) settle(skipBox, cb);
   row._syncDone = syncDone;
+  row._skipBox = skipBox;
 
   // Scan-audition clips are in the markup, so they need the same guard the
   // preview element gets when it is created.
@@ -1254,8 +1532,12 @@ document.querySelectorAll(".row").forEach(row => {{
   row._armWatchdog = armWatchdog;
 }});
 
+// Rows are wired up by now, so restoring can reuse their own collapse logic.
+restoreProgress();
+updateLegend();
+
 document.getElementById("export").onclick = () => {{
-  const approved = [...document.querySelectorAll("input[type=checkbox]:checked")]
+  const approved = [...document.querySelectorAll("input.approve:checked")]
     .map(cb => JSON.parse(cb.dataset.payload));
   const blob = new Blob([JSON.stringify(approved, null, 2)], {{type: "application/json"}});
   const a = Object.assign(document.createElement("a"),

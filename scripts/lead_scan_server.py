@@ -42,6 +42,12 @@ SCAN_SCRIPT = REPO_ROOT / "scripts" / "audio_edge_analysis.py"
 PREVIEW_DIR = REPO_ROOT / "tmp" / "lead_scan_previews"
 # Previews audition the splice at the start, not the whole performance.
 PREVIEW_HEAD_S = 30.0
+# Hard ceiling on one preview render. A cold source is read over http, and those
+# reads occasionally stall outright - ffmpeg's -reconnect retries forever and
+# ffprobe has no timeout of its own, so without this the request never answers
+# and the page sits on "rendering..." until its own watchdog gives up. Well
+# above a normal cold render (a few seconds; ~86s has been seen on a bad read).
+RENDER_TIMEOUT_S = 100
 
 
 def load_scan_module():
@@ -126,15 +132,31 @@ def render_preview(mp3_url, trim_start, trim_end, fade_in, fade_out, storage_dir
     # seek_input: previews are re-rendered constantly while a start time is
     # tuned, and decoding a 20-minute track from 0 each time is what makes the
     # page look stuck. Same audio out, it just skips to the region first.
-    cmd = aea.trim_command(src, out_path, trim_start, trim_end, fade_in, fade_out,
-                           seek_input=True)
+    # trim_command probes the source for its bitrate, and that ffprobe is itself
+    # a network read on a cold track - so it gets the same deadline as the
+    # render rather than being allowed to hang before ffmpeg even starts.
+    try:
+        cmd = aea.trim_command(src, out_path, trim_start, trim_end, fade_in, fade_out,
+                               seek_input=True, probe_timeout=RENDER_TIMEOUT_S)
+    except subprocess.TimeoutExpired:
+        raise RuntimeError(
+            f"source probe timed out after {RENDER_TIMEOUT_S}s - the track is "
+            "still downloading; retry in a moment") from None
     t_probe = time.monotonic()
     # ffmpeg is CPU-bound and previews are user-triggered; cap concurrency so a
     # burst of edits cannot thrash the box, but allow a few at once so one slow
     # render does not stall the whole page.
     with _render_sem:
         t_slot = time.monotonic()
-        proc = subprocess.run(cmd, capture_output=True)
+        try:
+            proc = subprocess.run(cmd, capture_output=True, timeout=RENDER_TIMEOUT_S)
+        except subprocess.TimeoutExpired:
+            # A half-written mp3 would be served as a valid preview, so drop it.
+            out_path.unlink(missing_ok=True)
+            raise RuntimeError(
+                f"render timed out after {RENDER_TIMEOUT_S}s - the source read "
+                "stalled; the track is caching now, so a retry should be fast"
+            ) from None
     t_done = time.monotonic()
     print(f"  render {trim_start:.1f}s: probe={t_probe - t0:.2f}s "
           f"wait={t_slot - t_probe:.2f}s ffmpeg={t_done - t_slot:.2f}s", file=sys.stderr)
