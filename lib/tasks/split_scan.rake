@@ -165,10 +165,14 @@ module SplitScan
   # track that held them. Recompute the show, then every show holding the next
   # performance of an affected song, so their `previous_performance_*` columns
   # stop naming a slug that no longer exists.
+  # Only the split songs can have moved, so every recompute is scoped to them:
+  # unscoped, each call would rework the whole set list, and update_previous
+  # would rewrite the entire performance history of every song in the show.
   def self.refresh_gaps(show, songs)
-    next_shows = songs.uniq.filter_map do |song|
+    song_ids = songs.map(&:id).uniq
+    next_shows = song_ids.filter_map do |song_id|
       Track.joins(:show, :songs)
-           .where(songs: { id: song.id })
+           .where(songs: { id: song_id })
            .where("tracks.set <> ?", "S")
            .where.not(tracks: { exclude_from_stats: true })
            .where("shows.performance_gap_value > 0")
@@ -177,8 +181,8 @@ module SplitScan
            .first&.show
     end.uniq
 
-    GapService.call(show, update_previous: true)
-    next_shows.each { GapService.call(it) }
+    GapService.call(show, update_previous: true, song_ids:)
+    next_shows.each { GapService.call(it, song_ids:) }
     next_shows
   end
 end

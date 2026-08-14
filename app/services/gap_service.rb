@@ -4,9 +4,16 @@
 # If update_previous is true, it will also update the `next` gaps for
 # previous occurrences of songs that were played at specified show.
 
+# If song_ids is given, only those songs are recalculated instead of every song
+# in the show. A caller that changed a known handful of songs - a track split,
+# say - would otherwise pay for the whole set list, and for update_previous the
+# entire performance history of every song in it. An empty or absent list means
+# "all songs", so the unscoped callers are unaffected.
+
 class GapService < ApplicationService
   param :show
   option :update_previous, default: -> { false }
+  option :song_ids, default: -> { [] }
 
   EXCLUDED_SONG_TITLES = %w[Intro Outro Banter Interview Jam]
 
@@ -21,15 +28,32 @@ class GapService < ApplicationService
 
   private
 
+  def scoped_song_ids
+    @scoped_song_ids ||= Array(song_ids).compact.map(&:to_i)
+  end
+
+  def in_scope?(song)
+    scoped_song_ids.empty? || scoped_song_ids.include?(song.id)
+  end
+
+  # Tracks holding none of the scoped songs cannot have a gap that changed, so
+  # they are dropped in SQL rather than loaded and skipped one at a time.
+  def scoped_tracks
+    tracks = show.tracks.where.not(set: "S")
+    return tracks if scoped_song_ids.empty?
+    tracks.joins(:songs).where(songs: { id: scoped_song_ids }).distinct
+  end
+
   def update_song_gaps_for_show
     log_info "Processing show #{show.date}"
 
     ActiveRecord::Base.transaction do
-      show.tracks.where.not(set: "S").each do |track|
+      scoped_tracks.each do |track|
         next if should_exclude_track?(track)
 
         track.songs.each do |song|
           next if should_exclude_song_from_gaps?(song)
+          next unless in_scope?(song)
 
           song_track = SongsTrack.find_by(track_id: track.id, song_id: song.id)
           next unless song_track
@@ -68,11 +92,12 @@ class GapService < ApplicationService
     log_info "🔄 Updating previous occurrences for show #{show.date}"
 
     ActiveRecord::Base.transaction do
-      show.tracks.where.not(set: "S").each do |track|
+      scoped_tracks.each do |track|
         next if should_exclude_track?(track)
 
         track.songs.each do |song|
           next if should_exclude_song_from_gaps?(song)
+          next unless in_scope?(song)
 
           previous_song_tracks = SongsTrack.joins(track: :show)
                                           .where(song:)

@@ -5,7 +5,8 @@
 #
 # Gaps are NOT recomputed here. A show can hold several splits, and recomputing
 # per split would work from a half-changed set list; lib/tasks/split_scan.rake
-# runs GapService once per show after all of its splits are in.
+# runs GapService once per show after all of its splits are in, scoped to the
+# songs those splits touched (see SplitScan.refresh_gaps).
 #
 # The filter chain matches trim_filters() in scripts/audio_edge_analysis.py for
 # a fadeless trim, which is what the review page auditions - see

@@ -336,6 +336,73 @@ RSpec.describe GapService do
         expect(songs_track.next_performance_gap_with_audio).to eq(1)
       end
     end
+
+    context "when scoped to specific songs" do
+      subject(:service) { described_class.new(show, song_ids: [ song1.id ]) }
+
+      let!(:earlier_show) do
+        create(:show, date: "2023-06-01", venue:, tour:, performance_gap_value: 1)
+      end
+      let!(:earlier_track1) do
+        create(:track, show: earlier_show, position: 1, set: "1", songs: [ song1 ])
+      end
+      let!(:earlier_track2) do
+        create(:track, show: earlier_show, position: 2, set: "1", songs: [ song2 ])
+      end
+      let!(:track1) { create(:track, show:, position: 1, set: "1", songs: [ song1 ]) }
+      let!(:track2) { create(:track, show:, position: 2, set: "1", songs: [ song2 ]) }
+
+      it "updates gaps for the named song" do
+        service.call
+
+        songs_track = SongsTrack.find_by(track: track1, song: song1)
+        expect(songs_track.previous_performance_gap).to eq(1)
+      end
+
+      it "leaves other songs in the show untouched" do
+        SongsTrack.find_by(track: track2, song: song2)
+                  .update!(previous_performance_gap: 99)
+
+        service.call
+
+        songs_track = SongsTrack.find_by(track: track2, song: song2)
+        expect(songs_track.previous_performance_gap).to eq(99)
+      end
+
+      context "with update_previous" do
+        subject(:service) do
+          described_class.new(show, update_previous: true, song_ids: [ song1.id ])
+        end
+
+        it "updates next gaps on earlier performances of the named song" do
+          service.call
+
+          songs_track = SongsTrack.find_by(track: earlier_track1, song: song1)
+          expect(songs_track.next_performance_gap).to eq(1)
+        end
+
+        it "leaves earlier performances of other songs untouched" do
+          SongsTrack.find_by(track: earlier_track2, song: song2)
+                    .update!(next_performance_gap: 99)
+
+          service.call
+
+          songs_track = SongsTrack.find_by(track: earlier_track2, song: song2)
+          expect(songs_track.next_performance_gap).to eq(99)
+        end
+      end
+
+      context "when song_ids is empty" do
+        subject(:service) { described_class.new(show, song_ids: []) }
+
+        it "processes every song, the same as an unscoped run" do
+          service.call
+
+          songs_track = SongsTrack.find_by(track: track2, song: song2)
+          expect(songs_track.previous_performance_gap).to eq(1)
+        end
+      end
+    end
   end
 
   describe "private methods" do
