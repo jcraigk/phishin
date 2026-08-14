@@ -269,5 +269,47 @@ RSpec.describe Show do
       expect(described_class.published).to include(published)
       expect(described_class.published).not_to include(draft)
     end
+
+    it "creates a draft with audio and no venue or tour" do
+      expect do
+        create(:show, published: false, venue: nil, tour: nil, audio_status: "complete")
+      end.not_to raise_error
+    end
+
+    it "destroys a draft with audio and no venue or tour" do
+      show = create(:show, published: false, venue: nil, tour: nil, audio_status: "complete")
+      expect { show.destroy }.not_to raise_error
+    end
+
+    it "increments the counter of whichever association a draft has" do
+      venue = create(:venue)
+      show = create(:show, published: false, venue:, tour: nil, audio_status: "complete")
+      expect { show.destroy }.not_to raise_error
+      expect(venue.reload.shows_with_audio_count).to eq(0)
+    end
+  end
+
+  describe "shows_with_audio counter caches" do
+    let(:venue) { create(:venue) }
+    let(:tour) { create(:tour) }
+
+    it "increments both counters when a published show with audio is created" do
+      create(:show, venue:, tour:, audio_status: "complete")
+      expect(venue.reload.shows_with_audio_count).to eq(1)
+      expect(tour.reload.shows_with_audio_count).to eq(1)
+    end
+
+    it "decrements both counters when a published show with audio is destroyed" do
+      show = create(:show, venue:, tour:, audio_status: "complete")
+      show.destroy
+      expect(venue.reload.shows_with_audio_count).to eq(0)
+      expect(tour.reload.shows_with_audio_count).to eq(0)
+    end
+
+    it "leaves the counters alone for a show without audio" do
+      create(:show, venue:, tour:, audio_status: "missing")
+      expect(venue.reload.shows_with_audio_count).to eq(0)
+      expect(tour.reload.shows_with_audio_count).to eq(0)
+    end
   end
 end

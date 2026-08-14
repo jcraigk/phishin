@@ -146,13 +146,14 @@ class Show < ApplicationRecord
     decrement_shows_with_audio_counters
   end
 
+  # Drafts may have no venue or tour yet, so count whichever is already set.
   def increment_shows_with_audio_counters
-    venue.increment!(:shows_with_audio_count)
-    tour.increment!(:shows_with_audio_count)
+    venue&.increment!(:shows_with_audio_count)
+    tour&.increment!(:shows_with_audio_count)
   end
 
   def decrement_shows_with_audio_counters
-    venue.decrement!(:shows_with_audio_count)
-    tour.decrement!(:shows_with_audio_count)
+    venue&.decrement!(:shows_with_audio_count)
+    tour&.decrement!(:shows_with_audio_count)
   end
 end
