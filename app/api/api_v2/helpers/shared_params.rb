@@ -20,6 +20,13 @@ module ApiV2::Helpers::SharedParams
             default: 10
   end
 
+  params :trim_params do
+    optional :trim_start, type: Float, default: 0.0
+    requires :trim_end, type: Float
+    optional :fade_in, type: Float, default: 0.2
+    optional :fade_out, type: Float, default: 6.0
+  end
+
   params :proximity do
     optional :lat,
       type: Float,

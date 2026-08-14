@@ -67,6 +67,18 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
         editor_payload(show.reload)
       end
 
+      desc "Render a trim preview without altering the track", hidden: true
+      params { use :trim_params }
+      post ":id/trim_preview" do
+        enqueue_trim("trim_preview", false)
+      end
+
+      desc "Apply a trim to the track's audio", hidden: true
+      params { use :trim_params }
+      post ":id/trim_apply" do
+        enqueue_trim("trim_apply", true)
+      end
+
       desc "Delete a track", hidden: true
       delete ":id" do
         track = Track.find(params[:id])
@@ -81,6 +93,19 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
   end
 
   helpers do
+    # Preview and apply differ only in the dry_run flag handed to the job, so both
+    # audition and commit run the same render through the same service.
+    def enqueue_trim(kind, apply)
+      track = Track.find(params[:id])
+      error!({ message: "Track has no audio" }, 422) unless track.mp3_audio.attached?
+      job = AdminJob.create!(kind:, track:, show: track.show)
+      opts = declared(params, include_missing: false)
+             .slice(:trim_start, :trim_end, :fade_in, :fade_out).to_json
+      Admin::TrimJob.perform_async(track.id, job.id, opts, apply)
+      status 201
+      { job_id: job.id }
+    end
+
     def attach_staged_audio(track, attachment_id)
       attachment = track.show.staged_audio_attachments.find(attachment_id)
       track.mp3_audio.attach(attachment.blob)

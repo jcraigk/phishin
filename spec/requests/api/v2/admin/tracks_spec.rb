@@ -336,6 +336,116 @@ RSpec.describe "API v2 Admin Tracks" do
     end
   end
 
+  describe "trim endpoints" do
+    before do
+      track1.mp3_audio.attach(
+        io: StringIO.new("bytes"), filename: "a.mp3", content_type: "audio/mpeg"
+      )
+    end
+
+    it "returns 401 without a token" do
+      post "/api/v2/admin/tracks/#{track1.id}/trim_preview",
+           params: { trim_end: 100.0 }.to_json,
+           headers: { "CONTENT_TYPE" => "application/json" }
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin user" do
+      post "/api/v2/admin/tracks/#{track1.id}/trim_preview",
+           params: { trim_end: 100.0 }.to_json, headers: user_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "returns 401 without a token on apply" do
+      post "/api/v2/admin/tracks/#{track1.id}/trim_apply",
+           params: { trim_end: 100.0 }.to_json,
+           headers: { "CONTENT_TYPE" => "application/json" }
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin user on apply" do
+      post "/api/v2/admin/tracks/#{track1.id}/trim_apply",
+           params: { trim_end: 100.0 }.to_json, headers: user_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "enqueues a preview job" do
+      expect {
+        post "/api/v2/admin/tracks/#{track1.id}/trim_preview",
+             params: { trim_end: 100.0 }.to_json, headers: admin_headers
+      }.to change(Admin::TrimJob.jobs, :size).by(1)
+      expect(response).to have_http_status(:created)
+      expect(AdminJob.last.kind).to eq("trim_preview")
+      expect(json[:job_id]).to eq(AdminJob.last.id)
+    end
+
+    it "enqueues the preview as a dry run" do
+      post "/api/v2/admin/tracks/#{track1.id}/trim_preview",
+           params: { trim_end: 100.0 }.to_json, headers: admin_headers
+      expect(Admin::TrimJob.jobs.last["args"].last).to be(false)
+    end
+
+    it "enqueues an apply job that commits" do
+      expect {
+        post "/api/v2/admin/tracks/#{track1.id}/trim_apply",
+             params: { trim_end: 100.0 }.to_json, headers: admin_headers
+      }.to change(Admin::TrimJob.jobs, :size).by(1)
+      expect(response).to have_http_status(:created)
+      expect(AdminJob.last.kind).to eq("trim_apply")
+      expect(Admin::TrimJob.jobs.last["args"].last).to be(true)
+    end
+
+    it "passes the trim options through to the job" do
+      post "/api/v2/admin/tracks/#{track1.id}/trim_preview",
+           params: { trim_start: 3.5, trim_end: 100.0, fade_in: 0.5, fade_out: 4.0 }.to_json,
+           headers: admin_headers
+      opts = JSON.parse(Admin::TrimJob.jobs.last["args"][2])
+      expect(opts).to eq(
+        "trim_start" => 3.5, "trim_end" => 100.0, "fade_in" => 0.5, "fade_out" => 4.0
+      )
+    end
+
+    it "applies default fades when omitted" do
+      post "/api/v2/admin/tracks/#{track1.id}/trim_preview",
+           params: { trim_end: 100.0 }.to_json, headers: admin_headers
+      opts = JSON.parse(Admin::TrimJob.jobs.last["args"][2])
+      expect(opts).to eq(
+        "trim_start" => 0.0, "trim_end" => 100.0, "fade_in" => 0.2, "fade_out" => 6.0
+      )
+    end
+
+    it "links the job to the track and its show" do
+      post "/api/v2/admin/tracks/#{track1.id}/trim_preview",
+           params: { trim_end: 100.0 }.to_json, headers: admin_headers
+      expect(AdminJob.last).to have_attributes(track_id: track1.id, show_id: show.id)
+    end
+
+    it "422s without audio" do
+      post "/api/v2/admin/tracks/#{track3.id}/trim_preview",
+           params: { trim_end: 100.0 }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it "does not enqueue a job without audio" do
+      expect {
+        post "/api/v2/admin/tracks/#{track3.id}/trim_preview",
+             params: { trim_end: 100.0 }.to_json, headers: admin_headers
+      }.not_to change(Admin::TrimJob.jobs, :size)
+    end
+
+    it "400s without trim_end" do
+      post "/api/v2/admin/tracks/#{track1.id}/trim_preview",
+           params: {}.to_json, headers: admin_headers
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it "404s for an unknown track" do
+      post "/api/v2/admin/tracks/0/trim_preview",
+           params: { trim_end: 100.0 }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe "DELETE /api/v2/admin/tracks/:id" do
     it "returns 401 without a token" do
       delete "/api/v2/admin/tracks/#{track2.id}"
