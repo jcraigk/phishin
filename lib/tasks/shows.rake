@@ -47,6 +47,10 @@ namespace :shows do
 
     puts "🚫 EXCLUDE_FROM_STATS set" if exclude_from_stats
     puts "📂 #{pluralize(dates.size, 'folder')} found"
-    dates.each { |date| ShowImporter::Cli.new(date, exclude_from_stats:) }
+    dates.each do |date|
+      ShowImporter::Cli.new(date, exclude_from_stats:)
+    rescue ShowImporter::ShowInfo::NotFoundError => e
+      puts "❌ #{e.message}"
+    end
   end
 end

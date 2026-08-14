@@ -1,6 +1,8 @@
 require "ostruct"
 
 class ShowImporter::ShowInfo
+  class NotFoundError < StandardError; end
+
   BASE_URL = "https://api.phish.net/v5".freeze
   API_KEY = ENV.fetch("PNET_API_KEY", nil)
 
@@ -12,7 +14,7 @@ class ShowImporter::ShowInfo
     @songs = {}
     @sets = {}
 
-    abort "Date \"#{date}\" not found on Phish.net" if data.none?
+    raise NotFoundError, "Date \"#{date}\" not found on Phish.net" if data.none?
 
     populate_songs
   end
