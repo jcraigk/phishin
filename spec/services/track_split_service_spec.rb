@@ -380,6 +380,58 @@ RSpec.describe TrackSplitService do
         expect { result }.to raise_error(described_class::SongNotFoundError)
         expect(Open3).not_to have_received(:capture3).with("ffmpeg", *any_args)
       end
+
+      it "names the unmatched part on the error" do
+        expect { result }.to raise_error(
+          an_instance_of(described_class::SongNotFoundError)
+            .and(having_attributes(part_title: "Nonexistent Song"))
+        )
+      end
+    end
+
+    context "with a song override for an unmatched part" do
+      subject(:result) do
+        described_class.call(track, cut_s:, dry_run:, song_overrides:)
+      end
+
+      let(:replacement) { create(:song, title: "Icculus") }
+      let(:song_overrides) { { "Nonexistent Song" => replacement.id } }
+
+      before { track.update!(title: "Mike's Song > Nonexistent Song") }
+
+      it "resolves the part to the overridden song" do
+        expect(result[:song_ids]).to eq([ song1.id, replacement.id ])
+      end
+
+      context "when applied" do
+        let(:dry_run) { false }
+
+        it "assigns the overridden song to the new track" do
+          new_track = Track.find(result[:new_track_id])
+          expect(new_track.songs).to eq([ replacement ])
+        end
+
+        it "keeps the part title from the track, not the song" do
+          new_track = Track.find(result[:new_track_id])
+          expect(new_track.title).to eq("Nonexistent Song")
+        end
+      end
+
+      context "when the override names a song that does not exist" do
+        let(:song_overrides) { { "Nonexistent Song" => 0 } }
+
+        it "still raises" do
+          expect { result }.to raise_error(described_class::SongNotFoundError)
+        end
+      end
+
+      context "when the override is keyed with different casing" do
+        let(:song_overrides) { { "nonexistent song" => replacement.id } }
+
+        it "matches case insensitively" do
+          expect(result[:song_ids]).to eq([ song1.id, replacement.id ])
+        end
+      end
     end
 
     context "when the track has no audio" do

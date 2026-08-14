@@ -165,6 +165,43 @@ module SplitScan
   # track that held them. Recompute the show, then every show holding the next
   # performance of an affected song, so their `previous_performance_*` columns
   # stop naming a slug that no longer exists.
+  def self.prompt_for_song(part_title, label)
+    unless $stdin.tty?
+      puts "  no song matches #{part_title.inspect} (not a tty, skipping)"
+      return nil
+    end
+
+    puts "\n  No song matches #{part_title.inspect} in #{label}"
+    print "  Enter a song id, or press enter to skip: "
+
+    answer = $stdin.gets.to_s.strip
+    return nil if answer.empty?
+
+    song = Song.find_by(id: answer.to_i)
+    unless song
+      puts "  No song found for #{answer.inspect}, skipping"
+      return nil
+    end
+    puts "  Using #{song.title} (id=#{song.id})"
+    song.id
+  end
+
+  def self.split_with_prompts(track, cut_s, dry_run, label)
+    overrides = {}
+    asked = Set.new
+    begin
+      TrackSplitService.call(track, cut_s:, dry_run:, song_overrides: overrides)
+    rescue TrackSplitService::SongNotFoundError => e
+      part = e.part_title
+      raise if part.nil? || asked.include?(part.downcase)
+      asked << part.downcase
+      song_id = prompt_for_song(part, label)
+      return nil if song_id.nil?
+      overrides[part] = song_id
+      retry
+    end
+  end
+
   # Only the split songs can have moved, so every recompute is scoped to them:
   # unscoped, each call would rework the whole set list, and update_previous
   # would rewrite the entire performance history of every song in the show.
@@ -287,7 +324,8 @@ namespace :split_scan do
       end
 
       begin
-        result = TrackSplitService.call(track, cut_s: entry["cut_s"].to_f, dry_run:)
+        result = SplitScan.split_with_prompts(track, entry["cut_s"].to_f, dry_run, label)
+        next failures << [ label, "skipped: unmatched song" ] if result.nil?
         applied += 1
         status = result[:applied] ? "APPLIED" : "RENDERED"
         display = label.sub(/\A(\d{4}-\d{2}-\d{2} .*?) t\d+ /, '\1 ')

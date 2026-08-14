@@ -15,6 +15,7 @@ class TrackSplitService < ApplicationService
   param :track
   option :cut_s
   option :dry_run, default: -> { false }
+  option :song_overrides, default: -> { {} }
 
   # Both halves must be at least this long. A cut nearer either end is a
   # mis-click, not a segue; audio_split_analysis.py screens for the same bound.
@@ -28,7 +29,15 @@ class TrackSplitService < ApplicationService
   class MissingAudioError < Error; end
   class TitleError < Error; end
   class CutOutOfRangeError < Error; end
-  class SongNotFoundError < Error; end
+
+  class SongNotFoundError < Error
+    attr_reader :part_title
+
+    def initialize(message, part_title: nil)
+      super(message)
+      @part_title = part_title
+    end
+  end
 
   # Mirror of trim_filters() in scripts/audio_edge_analysis.py with both fades
   # off. The two halves come from one continuous recording, so the cut is butt
@@ -90,10 +99,18 @@ class TrackSplitService < ApplicationService
   # case where a part was never associated (e.g. a renamed jam).
   def songs
     @songs ||= part_titles.map do |title|
-      track.songs.find { it.title.downcase == title.downcase } ||
+      override_song(title) ||
+        track.songs.find { it.title.downcase == title.downcase } ||
         Song.where("LOWER(title) = ?", title.downcase).first ||
-        raise(SongNotFoundError, "#{label}: no song matches #{title.inspect}")
+        raise(SongNotFoundError.new(
+          "#{label}: no song matches #{title.inspect}", part_title: title
+        ))
     end
+  end
+
+  def override_song(title)
+    id = song_overrides.find { |k, _| k.to_s.downcase == title.downcase }&.last
+    id && Song.find_by(id:)
   end
 
   def download_original
