@@ -18,6 +18,7 @@ RSpec.describe "API v2 Auth" do
         expect(json[:jwt]).to be_present
         expect(json[:username]).to eq("newuser")
         expect(json[:email]).to eq("new@example.com")
+        expect(json[:admin]).to be(false)
       end
     end
 
@@ -79,6 +80,19 @@ RSpec.describe "API v2 Auth" do
         expect(json[:jwt]).to be_present
         expect(json[:username]).to eq(user.username)
         expect(json[:email]).to eq(user.email)
+        expect(json[:admin]).to be(false)
+      end
+    end
+
+    context "with admin credentials" do
+      let!(:admin_user) { create(:user, :admin, password: "password") }
+
+      it "includes the admin flag in the login response" do
+        post_api "/auth/login", params: { email: admin_user.email, password: "password" }
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:admin]).to be(true)
       end
     end
 
@@ -102,6 +116,19 @@ RSpec.describe "API v2 Auth" do
         json = JSON.parse(response.body, symbolize_names: true)
         expect(json[:username]).to eq(user.username)
         expect(json[:email]).to eq(user.email)
+        expect(json[:admin]).to be(false)
+      end
+    end
+
+    context "with an admin token" do
+      let!(:admin_user) { create(:user, :admin) }
+
+      it "returns the admin flag as true" do
+        get_api "/auth/user", headers: user_auth_header(admin_user)
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:admin]).to be(true)
       end
     end
 

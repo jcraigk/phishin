@@ -26,6 +26,7 @@ class ApplicationController < ActionController::Base
       username: session[:username],
       usernameUpdatedAt: session[:username_updated_at],
       email: session[:email],
+      admin: session[:admin],
       alert: flash[:alert],
 
       # Misc
@@ -40,6 +41,7 @@ class ApplicationController < ActionController::Base
     session.delete(:username)
     session.delete(:username_updated_at)
     session.delete(:email)
+    session.delete(:admin)
 
     # Render layout + React app
     render html: "", layout: "application", status: @meta[:status]

@@ -42,7 +42,7 @@ class ApiV2::Auth < ApiV2::Base
         status 201
         jwt = UserJwtService.call(user)
         present(
-          { jwt:, username: user.username, email: user.email },
+          { jwt:, username: user.username, email: user.email, admin: user.admin? },
           with: ApiV2::Entities::LoginResponse
         )
       else
@@ -65,7 +65,7 @@ class ApiV2::Auth < ApiV2::Base
       user, jwt = authenticate_user!(params[:email], params[:password])
       status 200
       present(
-        { jwt:, username: user.username, email: user.email },
+        { jwt:, username: user.username, email: user.email, admin: user.admin? },
         with: ApiV2::Entities::LoginResponse
       )
     end

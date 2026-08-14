@@ -47,22 +47,25 @@ const LayoutContent = ({ props, navigate }) => {
         username: props.username,
         usernameUpdatedAt: props.usernameUpdatedAt,
         email: props.email,
+        admin: props.admin === true || props.admin === "true",
       }, "Google login successful");
     } else {
       let jwt = "";
       let username = "";
       let email = "";
       let usernameUpdatedAt = "";
+      let admin = "";
 
       if (typeof window !== "undefined") {
         jwt = localStorage.getItem("jwt");
         username = localStorage.getItem("username");
         usernameUpdatedAt = localStorage.getItem("usernameUpdatedAt");
         email = localStorage.getItem("email");
+        admin = localStorage.getItem("admin");
       }
 
       if (jwt && username && email) {
-        setUser({ jwt, username, usernameUpdatedAt, email });
+        setUser({ jwt, username, usernameUpdatedAt, email, admin: admin === "true" });
       } else {
         setUser("anonymous");
       }
@@ -75,6 +78,7 @@ const LayoutContent = ({ props, navigate }) => {
       localStorage.setItem("username", userData.username);
       localStorage.setItem("usernameUpdatedAt", userData.usernameUpdatedAt);
       localStorage.setItem("email", userData.email);
+      localStorage.setItem("admin", userData.admin ? "true" : "false");
 
       const redirectPath = localStorage.getItem("redirectAfterLogin") || "/";
       localStorage.removeItem("redirectAfterLogin");
@@ -90,6 +94,7 @@ const LayoutContent = ({ props, navigate }) => {
       localStorage.removeItem("username");
       localStorage.removeItem("usernameUpdatedAt");
       localStorage.removeItem("email");
+      localStorage.removeItem("admin");
     }
     navigate("/");
     setUser("anonymous");
