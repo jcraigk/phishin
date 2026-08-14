@@ -79,6 +79,18 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
         enqueue_trim("trim_apply", true)
       end
 
+      desc "Render a split preview without altering the track", hidden: true
+      params { requires :cut_s, type: Float }
+      post ":id/split_preview" do
+        enqueue_split("split_preview", false)
+      end
+
+      desc "Split the track into two at the cut point", hidden: true
+      params { requires :cut_s, type: Float }
+      post ":id/split_apply" do
+        enqueue_split("split_apply", true)
+      end
+
       desc "Delete a track", hidden: true
       delete ":id" do
         track = Track.find(params[:id])
@@ -102,6 +114,22 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
       opts = declared(params, include_missing: false)
              .slice(:trim_start, :trim_end, :fade_in, :fade_out).to_json
       Admin::TrimJob.perform_async(track.id, job.id, opts, apply)
+      status 201
+      { job_id: job.id }
+    end
+
+    # Same shape as enqueue_trim: preview and apply differ only in the flag the job
+    # hands the service. The title check mirrors TrackSplitService's own so a segue
+    # the service would accept is never rejected here, and an obviously unsplittable
+    # title fails at the click rather than in a background job.
+    def enqueue_split(kind, apply)
+      track = Track.find(params[:id])
+      error!({ message: "Track has no audio" }, 422) unless track.mp3_audio.attached?
+      unless track.title.count(">") == 1
+        error!({ message: "Title needs exactly one '>' to split" }, 422)
+      end
+      job = AdminJob.create!(kind:, track:, show: track.show)
+      Admin::SplitJob.perform_async(track.id, job.id, params[:cut_s], apply)
       status 201
       { job_id: job.id }
     end

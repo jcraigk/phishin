@@ -446,6 +446,142 @@ RSpec.describe "API v2 Admin Tracks" do
     end
   end
 
+  describe "POST /api/v2/admin/tracks/:id/split_preview and split_apply" do
+    let!(:segue) do
+      create(
+        :track, show:, position: 4, title: "Ghost > Free", set: "1",
+                songs: [ song_a, song_b ]
+      ).tap do |track|
+        track.mp3_audio.attach(
+          io: StringIO.new("bytes"), filename: "a.mp3", content_type: "audio/mpeg"
+        )
+      end
+    end
+
+    it "returns 401 without a token" do
+      post "/api/v2/admin/tracks/#{segue.id}/split_preview",
+           params: { cut_s: 30.0 }.to_json,
+           headers: { "CONTENT_TYPE" => "application/json" }
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin user" do
+      post "/api/v2/admin/tracks/#{segue.id}/split_preview",
+           params: { cut_s: 30.0 }.to_json, headers: user_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "returns 401 without a token on apply" do
+      post "/api/v2/admin/tracks/#{segue.id}/split_apply",
+           params: { cut_s: 30.0 }.to_json,
+           headers: { "CONTENT_TYPE" => "application/json" }
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin user on apply" do
+      post "/api/v2/admin/tracks/#{segue.id}/split_apply",
+           params: { cut_s: 30.0 }.to_json, headers: user_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "does not touch the track when an unauthorized apply is rejected" do
+      expect {
+        post "/api/v2/admin/tracks/#{segue.id}/split_apply",
+             params: { cut_s: 30.0 }.to_json, headers: user_headers
+      }.not_to change { [ show.tracks.reload.count, segue.reload.title ] }
+    end
+
+    it "does not enqueue a job for an unauthorized apply" do
+      expect {
+        post "/api/v2/admin/tracks/#{segue.id}/split_apply",
+             params: { cut_s: 30.0 }.to_json, headers: user_headers
+      }.not_to change(Admin::SplitJob.jobs, :size)
+    end
+
+    it "enqueues a preview job" do
+      expect {
+        post "/api/v2/admin/tracks/#{segue.id}/split_preview",
+             params: { cut_s: 30.0 }.to_json, headers: admin_headers
+      }.to change(Admin::SplitJob.jobs, :size).by(1)
+      expect(response).to have_http_status(:created)
+      expect(AdminJob.last.kind).to eq("split_preview")
+      expect(json[:job_id]).to eq(AdminJob.last.id)
+    end
+
+    it "enqueues the preview as a dry run" do
+      post "/api/v2/admin/tracks/#{segue.id}/split_preview",
+           params: { cut_s: 30.0 }.to_json, headers: admin_headers
+      expect(Admin::SplitJob.jobs.last["args"]).to eq([ segue.id, AdminJob.last.id, 30.0, false ])
+    end
+
+    it "enqueues an apply job that commits" do
+      expect {
+        post "/api/v2/admin/tracks/#{segue.id}/split_apply",
+             params: { cut_s: 30.0 }.to_json, headers: admin_headers
+      }.to change(Admin::SplitJob.jobs, :size).by(1)
+      expect(response).to have_http_status(:created)
+      expect(AdminJob.last.kind).to eq("split_apply")
+      expect(Admin::SplitJob.jobs.last["args"].last).to be(true)
+    end
+
+    it "links the job to the track and its show" do
+      post "/api/v2/admin/tracks/#{segue.id}/split_preview",
+           params: { cut_s: 30.0 }.to_json, headers: admin_headers
+      expect(AdminJob.last).to have_attributes(track_id: segue.id, show_id: show.id)
+    end
+
+    it "422s for a title without a segue" do
+      segue.update!(title: "Ghost")
+      post "/api/v2/admin/tracks/#{segue.id}/split_preview",
+           params: { cut_s: 30.0 }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json[:message]).to include("exactly one")
+    end
+
+    it "does not enqueue a job for a title without a segue" do
+      segue.update!(title: "Ghost")
+      expect {
+        post "/api/v2/admin/tracks/#{segue.id}/split_preview",
+             params: { cut_s: 30.0 }.to_json, headers: admin_headers
+      }.not_to change(Admin::SplitJob.jobs, :size)
+    end
+
+    it "422s for a title with two segues" do
+      segue.update!(title: "Ghost > Free > Ghost")
+      post "/api/v2/admin/tracks/#{segue.id}/split_preview",
+           params: { cut_s: 30.0 }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    # The service splits on "->" as readily as ">", so the endpoint's guard must
+    # not turn away a title it would have accepted.
+    it "accepts the arrow form of a segue" do
+      segue.update!(title: "Ghost -> Free")
+      post "/api/v2/admin/tracks/#{segue.id}/split_preview",
+           params: { cut_s: 30.0 }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:created)
+    end
+
+    it "422s without audio" do
+      no_audio = create(:track, show:, position: 5, title: "Ghost > Free", set: "1")
+      post "/api/v2/admin/tracks/#{no_audio.id}/split_preview",
+           params: { cut_s: 30.0 }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it "400s without cut_s" do
+      post "/api/v2/admin/tracks/#{segue.id}/split_preview",
+           params: {}.to_json, headers: admin_headers
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it "404s for an unknown track" do
+      post "/api/v2/admin/tracks/0/split_preview",
+           params: { cut_s: 30.0 }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe "DELETE /api/v2/admin/tracks/:id" do
     it "returns 401 without a token" do
       delete "/api/v2/admin/tracks/#{track2.id}"

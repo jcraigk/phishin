@@ -110,4 +110,63 @@ RSpec.describe "API v2 Admin Jobs" do
       expect(response.body.bytesize).to eq(File.size(job.payload["audio_paths"].first))
     end
   end
+
+  # A split renders two files, so both halves have to be auditionable through the
+  # one endpoint by index before an admin commits to the cut.
+  describe "streaming a completed split preview" do
+    let(:show) { create(:show, date: "2024-07-19") }
+    let(:mikes) { create(:song, title: "Mike's Song") }
+    let(:hydrogen) { create(:song, title: "I Am Hydrogen") }
+    let(:track) do
+      create(
+        :track, show:, position: 1, title: "Mike's Song > I Am Hydrogen",
+                songs: [ mikes, hydrogen ], slug: "mikes-hydrogen"
+      )
+    end
+    let(:source) { Rails.root.join("tmp/spec/audio_60s.mp3") }
+
+    before do
+      FileUtils.mkdir_p(source.dirname)
+      unless File.exist?(source)
+        system(
+          "ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i",
+          "sine=frequency=440:duration=60", "-b:a", "128k", source.to_s,
+          exception: true
+        )
+      end
+      track.mp3_audio.attach(
+        io: File.open(source), filename: "audio.mp3", content_type: "audio/mpeg"
+      )
+    end
+
+    it "streams each half by index" do
+      job = create(:admin_job, kind: "split_preview", track:, show:)
+      Admin::SplitJob.new.perform(track.id, job.id, 30.0, false)
+      expect(job.reload.status).to eq("done")
+
+      GC.start
+      [ 0, 1 ].each do |index|
+        get "/api/v2/admin/jobs/#{job.id}/audio",
+            params: { index: }, headers: admin_headers
+
+        expect(response).to have_http_status(:ok)
+        expect(response.media_type).to eq("audio/mpeg")
+        expect(response.body[0, 3]).to eq("ID3")
+        expect(response.body.bytesize)
+          .to eq(File.size(job.payload["audio_paths"][index]))
+      end
+    end
+
+    it "serves different audio for each half" do
+      job = create(:admin_job, kind: "split_preview", track:, show:)
+      Admin::SplitJob.new.perform(track.id, job.id, 20.0, false)
+
+      get "/api/v2/admin/jobs/#{job.id}/audio", params: { index: 0 }, headers: admin_headers
+      first = response.body
+      get "/api/v2/admin/jobs/#{job.id}/audio", params: { index: 1 }, headers: admin_headers
+
+      expect(response.body).not_to eq(first)
+      expect(response.body.bytesize).to be > first.bytesize
+    end
+  end
 end

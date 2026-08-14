@@ -202,6 +202,44 @@ RSpec.describe "API v2 Admin Shows" do
     end
   end
 
+  describe "POST /api/v2/admin/shows/:date/recompute_gaps" do
+    let!(:show) { create(:show, date: "2025-08-01", published: true) }
+
+    it "returns 401 without a token" do
+      post "/api/v2/admin/shows/2025-08-01/recompute_gaps"
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin user" do
+      post "/api/v2/admin/shows/2025-08-01/recompute_gaps",
+           headers: { "X-Auth-Token" => token_for(user) }
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "does not enqueue a job for a non-admin user" do
+      expect {
+        post "/api/v2/admin/shows/2025-08-01/recompute_gaps",
+             headers: { "X-Auth-Token" => token_for(user) }
+      }.not_to change(Admin::RecomputeGapsJob.jobs, :size)
+    end
+
+    it "enqueues the recompute job" do
+      expect {
+        post "/api/v2/admin/shows/2025-08-01/recompute_gaps", headers: admin_headers
+      }.to change(Admin::RecomputeGapsJob.jobs, :size).by(1)
+
+      expect(response).to have_http_status(:created)
+      job = AdminJob.find(JSON.parse(response.body)["job_id"])
+      expect(job).to have_attributes(kind: "recompute_gaps", show:)
+      expect(Admin::RecomputeGapsJob.jobs.last["args"]).to eq([ show.id, job.id ])
+    end
+
+    it "404s for an unknown date" do
+      post "/api/v2/admin/shows/1980-01-01/recompute_gaps", headers: admin_headers
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe "POST /api/v2/admin/shows/:date/import" do
     let!(:show) { create(:show, date: "2025-08-01", published: false, audio_status: "missing") }
 

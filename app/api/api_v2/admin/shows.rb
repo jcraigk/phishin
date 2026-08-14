@@ -57,6 +57,18 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         { job_id: job.id }
       end
 
+      # Splits do not recompute gaps: a show can take several splits, and running
+      # per split would work from a half-changed set list. The editor offers this
+      # once the splits are in; publishing a draft recomputes them anyway.
+      desc "Recompute gap data for a show", hidden: true
+      post ":date/recompute_gaps", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+        show = admin_show
+        job = AdminJob.create!(kind: "recompute_gaps", show:)
+        Admin::RecomputeGapsJob.perform_async(show.id, job.id)
+        status 201
+        { job_id: job.id }
+      end
+
       desc "Update show attributes", hidden: true
       params do
         optional :venue_id, type: Integer
