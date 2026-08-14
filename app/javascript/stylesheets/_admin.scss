@@ -1,0 +1,27 @@
+@use "./variables" as *;
+
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+
+  .admin-nav {
+    width: 200px;
+    padding: 1.5rem 1rem;
+    border-right: 1px solid var(--border-gray);
+
+    a {
+      display: block;
+      padding: 0.4rem 0;
+      color: var(--list-item-link-color);
+    }
+  }
+
+  .admin-content {
+    flex: 1;
+    padding: 1.5rem 2rem;
+  }
+}
+
+.admin-error {
+  color: var(--error-red);
+}

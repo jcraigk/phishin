@@ -200,6 +200,22 @@ const routes = (props) => [
         loader: coverArtInspectorLoader,
       },
       {
+        path: "/admin",
+        lazy: async () => {
+          const { default: Component } = await import("../admin/AdminLayout");
+          return { Component };
+        },
+        children: [
+          {
+            index: true,
+            lazy: async () => {
+              const { default: Component } = await import("../admin/AdminDashboard");
+              return { Component };
+            },
+          },
+        ],
+      },
+      {
         path: "*",
         element: <DynamicRoute />,
         loader: dynamicLoader,
