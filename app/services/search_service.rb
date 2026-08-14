@@ -23,13 +23,13 @@ class SearchService < ApplicationService
     # Add Show Tag matches to other_shows
     if results[:show_tags].present?
       ids = results[:show_tags].map(&:show_id) + (results[:other_shows]&.map(&:id) || [])
-      results[:other_shows] = Show.includes(:venue, :tour, show_tags: :tag).where(id: ids)
+      results[:other_shows] = Show.published.includes(:venue, :tour, show_tags: :tag).where(id: ids)
     end
 
     # Add Track Tag matches to tracks
     if results[:track_tags].present?
       ids = results[:track_tags].map(&:track_id) + (results[:tracks]&.map(&:id) || [])
-      results[:tracks] = Track.includes(:show).where(id: ids)
+      results[:tracks] = Track.joins(:show).merge(Show.published).includes(:show).where(id: ids)
     end
   end
 
@@ -90,14 +90,14 @@ class SearchService < ApplicationService
 
   def show_on_date
     return unless term_is_date?
-    scope = Show.all
+    scope = Show.published
     scope = apply_audio_status_filter(scope)
     scope.includes(:venue, :tour, show_tags: :tag).find_by(date:)
   end
 
   def shows_on_day_of_year
     return [] unless term_is_date?
-    scope = Show.all
+    scope = Show.published
     scope = apply_audio_status_filter(scope)
     scope.on_day_of_year(date[5..6], date[8..9])
          .where.not(date:)
@@ -113,7 +113,7 @@ class SearchService < ApplicationService
     # Filter songs to only include those with audio if audio_status is complete_or_partial
     if audio_status == "complete_or_partial"
       scope = scope.joins(songs_tracks: { track: :show })
-                   .merge(Show.with_audio)
+                   .merge(Show.published.with_audio)
                    .distinct
                    .order("songs.title ASC")
     else
@@ -153,7 +153,7 @@ class SearchService < ApplicationService
 
   def show_tags
     scope = ShowTag.includes(:tag, :show)
-    scope = scope.joins(:show).then { |s| apply_audio_status_filter(s, :show) }
+    scope = scope.joins(:show).where(shows: { published: true }).then { |s| apply_audio_status_filter(s, :show) }
     scope.where("notes ILIKE ?", "%#{term}%")
          .order("tags.name, shows.date")
          .limit(LIMIT)
@@ -161,7 +161,7 @@ class SearchService < ApplicationService
 
   def track_tags
     scope = TrackTag.includes(:tag, track: :show)
-    scope = scope.joins(track: :show).then { |s| apply_audio_status_filter(s, :show) }
+    scope = scope.joins(track: :show).where(shows: { published: true }).then { |s| apply_audio_status_filter(s, :show) }
     scope.where("notes ILIKE ?", "%#{term}%")
          .order("tags.name, shows.date, tracks.position")
          .limit(LIMIT)
@@ -177,7 +177,7 @@ class SearchService < ApplicationService
 
   def tracks_by_title
     scope = Track.includes(:show)
-    scope = scope.joins(:show).then { |s| apply_audio_status_filter(s, :show) }
+    scope = scope.joins(:show).where(shows: { published: true }).then { |s| apply_audio_status_filter(s, :show) }
     scope.where("title ILIKE ?", "%#{term}%")
          .order(title: :asc)
          .limit(LIMIT)

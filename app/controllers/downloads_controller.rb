@@ -25,7 +25,7 @@ class DownloadsController < ApplicationController
   end
 
   def track
-    @track ||= Track.includes(show: :venue).find_by(id: params[:id])
+    @track ||= Track.joins(:show).merge(Show.published).includes(show: :venue).find_by(id: params[:id])
   end
 
   def blob

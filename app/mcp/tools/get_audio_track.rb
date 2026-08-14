@@ -64,12 +64,14 @@ module Tools
         date, track_slug = parts
 
         Rails.cache.fetch(McpHelpers.cache_key_for_resource("tracks", slug)) do
-          track_includes.joins(:show).find_by(shows: { date: }, slug: track_slug)
+          track_includes.joins(:show).where(shows: { published: true }).find_by(shows: { date: }, slug: track_slug)
         end
       end
 
       def fetch_random_track
         track_includes
+          .joins(:show)
+          .where(shows: { published: true })
           .where(audio_status: %w[complete partial])
           .where.not(set: %w[S P])
           .where(exclude_from_stats: false)

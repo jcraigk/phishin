@@ -53,25 +53,27 @@ class Show < ApplicationRecord
   delegate :name, to: :tour, prefix: true
 
   def self.previous_show_date(current_date, audio_status: "any")
-    where("date < ?", current_date)
+    published
+      .where("date < ?", current_date)
       .audio_status_filter(audio_status)
       .order(date: :desc)
       .pick(:date)
   end
 
   def self.next_show_date(current_date, audio_status: "any")
-    where("date > ?", current_date)
+    published
+      .where("date > ?", current_date)
       .audio_status_filter(audio_status)
       .order(date: :asc)
       .pick(:date)
   end
 
   def self.first_show_date(audio_status: "any")
-    audio_status_filter(audio_status).order(date: :asc).pick(:date)
+    published.audio_status_filter(audio_status).order(date: :asc).pick(:date)
   end
 
   def self.last_show_date(audio_status: "any")
-    audio_status_filter(audio_status).order(date: :desc).pick(:date)
+    published.audio_status_filter(audio_status).order(date: :desc).pick(:date)
   end
 
   def save_duration

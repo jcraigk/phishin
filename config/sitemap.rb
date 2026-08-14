@@ -27,7 +27,7 @@ SitemapGenerator::Sitemap.create do # rubocop:disable Metrics/BlockLength
   add "/top-tracks"
 
   # Years
-  Show.distinct.pluck(Arel.sql("EXTRACT(YEAR FROM date)::integer")).sort.each do |year|
+  Show.published.distinct.pluck(Arel.sql("EXTRACT(YEAR FROM date)::integer")).sort.each do |year|
     add "/#{year}"
   end
 
@@ -53,12 +53,12 @@ SitemapGenerator::Sitemap.create do # rubocop:disable Metrics/BlockLength
   end
 
   # Shows
-  Show.find_each do |show|
+  Show.published.find_each do |show|
     add "/#{show.date}", lastmod: show.updated_at
   end
 
   # Tracks
-  Track.includes(:show).find_each do |track|
+  Track.joins(:show).merge(Show.published).includes(:show).find_each do |track|
     add "/#{track.show.date}/#{track.slug}", lastmod: track.updated_at
   end
 

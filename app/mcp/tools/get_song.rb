@@ -49,6 +49,7 @@ module Tools
 
         Rails.cache.fetch(cache_key) do
           tracks = Track.joins(:show, :songs)
+                        .where(shows: { published: true })
                         .where(songs: { id: song.id })
                         .where.not(set: EXCLUDED_SETS)
                         .where(exclude_from_stats: false)
@@ -72,12 +73,14 @@ module Tools
           end
 
           first_track = Track.joins(:show, :songs)
+                             .where(shows: { published: true })
                              .where(songs: { id: song.id })
                              .where.not(set: EXCLUDED_SETS)
                              .order("shows.date ASC")
                              .first
 
           last_track = Track.joins(:show, :songs)
+                            .where(shows: { published: true })
                             .where(songs: { id: song.id })
                             .where.not(set: EXCLUDED_SETS)
                             .order("shows.date DESC")

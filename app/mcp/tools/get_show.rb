@@ -68,7 +68,7 @@ module Tools
       end
 
       def show_includes
-        Show.includes(
+        Show.published.includes(
           :tour,
           tracks: [ :songs, :mp3_audio_attachment, :png_waveform_attachment, { track_tags: :tag, songs_tracks: {} } ],
           show_tags: :tag,

@@ -21,8 +21,8 @@ module Tools
       def fetch_years_data
         Rails.cache.fetch(McpHelpers.cache_key_for_custom("years")) do
           {
-            total_shows: Show.count,
-            total_shows_with_audio: Show.where(audio_status: %w[complete partial]).count,
+            total_shows: Show.published.count,
+            total_shows_with_audio: Show.published.where(audio_status: %w[complete partial]).count,
             years: years_data
           }
         end
@@ -71,7 +71,7 @@ module Tools
               COUNT(DISTINCT venue_id) as venues_count,
               COALESCE(SUM(duration), 0) as shows_duration
             FROM shows
-            WHERE (#{condition})
+            WHERE (#{condition}) AND published = true
           SQL
         end
 

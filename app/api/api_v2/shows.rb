@@ -66,7 +66,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
       success ApiV2::Entities::Show
     end
     get "random" do
-      show = Show.with_audio.order("RANDOM()").first
+      show = Show.published.with_audio.order("RANDOM()").first
       present \
         show,
         with: ApiV2::Entities::Show,
@@ -129,6 +129,7 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
                     },
                     { show_tags: :tag }
                   )
+                  .published
                   .on_day_of_year(date.month, date.day)
       shows = apply_audio_status_filter(shows, params[:audio_status])
       shows = apply_sort(shows, :date, :desc)
@@ -175,7 +176,8 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
     end
 
     def fetch_shows
-      Show.includes(
+      Show.published
+          .includes(
             :venue,
             :tour,
             :album_cover_attachment,
@@ -204,7 +206,8 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
     end
 
     def fetch_show_by_date
-      Show.includes(
+      Show.published
+          .includes(
             :venue,
             { cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } } },
             tracks: [

@@ -18,12 +18,12 @@ class MarkdownViewService < ApplicationService
   private
 
   def homepage_markdown
-    shows_count = Show.count
-    tracks_count = Track.count
+    shows_count = Show.published.count
+    tracks_count = Track.joins(:show).merge(Show.published).count
     songs_count = Song.count
     venues_count = Venue.count
-    first_year = Show.order(:date).limit(1).pick(:date)&.year
-    last_year = Show.order(date: :desc).limit(1).pick(:date)&.year
+    first_year = Show.published.order(:date).limit(1).pick(:date)&.year
+    last_year = Show.published.order(date: :desc).limit(1).pick(:date)&.year
 
     <<~MD
       # #{App.app_name}
@@ -60,7 +60,7 @@ class MarkdownViewService < ApplicationService
   end
 
   def show_markdown
-    show = Show.includes(tracks: { track_tags: :tag }, show_tags: :tag, venue: {}).find_by(date:)
+    show = Show.published.includes(tracks: { track_tags: :tag }, show_tags: :tag, venue: {}).find_by(date:)
     return not_found("Show not found for #{date}") unless show
 
     lines = []
@@ -91,7 +91,7 @@ class MarkdownViewService < ApplicationService
   end
 
   def track_markdown
-    show = Show.find_by(date:)
+    show = Show.published.find_by(date:)
     return not_found("Show not found for #{date}") unless show
     track = show.tracks.includes(:songs, track_tags: :tag).find_by(slug:)
     return not_found("Track not found: #{slug}") unless track
@@ -112,7 +112,7 @@ class MarkdownViewService < ApplicationService
     song = Song.find_by(slug:)
     return not_found("Song not found: #{slug}") unless song
 
-    recent = song.tracks.includes(:show).joins(:show).order("shows.date DESC").limit(10)
+    recent = song.tracks.includes(:show).joins(:show).merge(Show.published).order("shows.date DESC").limit(10)
     lines = []
     lines << "# #{song.title}"
     lines << ""
@@ -166,7 +166,7 @@ class MarkdownViewService < ApplicationService
 
   def year_markdown
     year = segments[0].to_i
-    shows = Show.where("EXTRACT(YEAR FROM date) = ?", year).order(:date)
+    shows = Show.published.where("EXTRACT(YEAR FROM date) = ?", year).order(:date)
     return not_found("No shows in #{year}") if shows.empty?
 
     lines = [ "# Phish #{year}", "", "- Shows: #{shows.size}", "" ]

@@ -30,8 +30,8 @@ module Tools
 
       def fetch_venue_data(venue)
         Rails.cache.fetch(McpHelpers.cache_key_for_resource("venues", venue.slug)) do
-          first_show = Show.where(venue_id: venue.id).order(date: :asc).first
-          last_show = Show.where(venue_id: venue.id).order(date: :desc).first
+          first_show = Show.published.where(venue_id: venue.id).order(date: :asc).first
+          last_show = Show.published.where(venue_id: venue.id).order(date: :desc).first
 
           {
             name: venue.name,
