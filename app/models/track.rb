@@ -22,7 +22,7 @@ class Track < ApplicationRecord
 
   validates :position, :title, :set, presence: true
   validates :position, uniqueness: { scope: :show_id }
-  validates :songs, length: { minimum: 1 }
+  validates :songs, length: { minimum: 1 }, if: :songs_required?
 
   before_save :generate_slug
   after_save :update_show_audio_status
@@ -137,5 +137,10 @@ class Track < ApplicationRecord
 
   def decrement_tracks_with_audio_counters
     songs.each { |song| song.decrement!(:tracks_with_audio_count) }
+  end
+
+  # show.nil? keeps the CLI importer behavior for in-memory tracks and any track built without a show.
+  def songs_required?
+    show.nil? || show.published?
   end
 end

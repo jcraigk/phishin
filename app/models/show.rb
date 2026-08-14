@@ -3,8 +3,8 @@ class Show < ApplicationRecord
   include ShowApiV1
   include HasAudioStatus
 
-  belongs_to :tour, counter_cache: true
-  belongs_to :venue, counter_cache: true
+  belongs_to :tour, counter_cache: true, optional: true
+  belongs_to :venue, counter_cache: true, optional: true
   has_many :tracks, dependent: :destroy
   has_many :likes, as: :likable, dependent: :destroy
   has_many :show_tags, dependent: :destroy
@@ -27,6 +27,7 @@ class Show < ApplicationRecord
   friendly_id :date
 
   validates :date, presence: true, uniqueness: true
+  validates :venue, :tour, presence: true, if: :published?
 
   before_validation :cache_venue_name
   after_create :increment_shows_with_audio_counter_caches
@@ -47,6 +48,7 @@ class Show < ApplicationRecord
 
   scope :random, ->(amt = 1) { order(Arel.sql("RANDOM()")).limit(amt) }
   scope :tagged_with, ->(tag_slug) { joins(:tags).where(tags: { slug: tag_slug }) }
+  scope :published, -> { where(published: true) }
 
   delegate :name, to: :tour, prefix: true
 
@@ -115,6 +117,7 @@ class Show < ApplicationRecord
   private
 
   def cache_venue_name
+    return if venue.blank?
     return if venue_name.present?
     self.venue_name = venue.name_on(date)
   end

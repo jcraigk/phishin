@@ -5,8 +5,12 @@ RSpec.describe Show do
 
   it { is_expected.to be_an(ApplicationRecord) }
 
-  it { is_expected.to belong_to(:tour) }
-  it { is_expected.to belong_to(:venue) }
+  context "when unpublished" do
+    subject(:show) { build(:show, published: false) }
+
+    it { is_expected.to belong_to(:tour).optional }
+    it { is_expected.to belong_to(:venue).optional }
+  end
 
   it { is_expected.to have_many(:tracks).dependent(:destroy) }
   it { is_expected.to have_many(:likes).dependent(:destroy) }
@@ -244,6 +248,26 @@ RSpec.describe Show do
 
     it 'provides #as_json_api' do
       expect(show.as_json_api).to eq(expected_as_json_api)
+    end
+  end
+
+  describe "draft (unpublished) shows" do
+    it "allows a draft show without venue and tour" do
+      show = build(:show, published: false, venue: nil, tour: nil)
+      expect(show).to be_valid
+    end
+
+    it "requires venue and tour when published" do
+      show = build(:show, published: true, venue: nil, tour: nil)
+      expect(show).not_to be_valid
+      expect(show.errors.attribute_names).to include(:venue, :tour)
+    end
+
+    it "excludes drafts from the published scope" do
+      draft = create(:show, published: false)
+      published = create(:show)
+      expect(described_class.published).to include(published)
+      expect(described_class.published).not_to include(draft)
     end
   end
 end

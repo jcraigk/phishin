@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_14_201919) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_14_202542) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -143,6 +143,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_14_201919) do
     t.integer "likes_count", default: 0
     t.boolean "matches_pnet", default: false
     t.integer "performance_gap_value", default: 1
+    t.boolean "published", default: true, null: false
     t.integer "tags_count", default: 0
     t.text "taper_notes"
     t.integer "tour_id"

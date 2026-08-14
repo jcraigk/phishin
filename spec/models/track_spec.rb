@@ -278,4 +278,17 @@ RSpec.describe Track do
       expect(track.as_json_api).to eq(expected_as_json_api)
     end
   end
+
+  describe "songs requirement" do
+    it "allows zero songs on a draft show's track" do
+      show = create(:show, published: false)
+      track = build(:track, show:, songs: [])
+      expect(track).to be_valid
+    end
+
+    it "requires songs on a published show's track" do
+      track = build(:track, songs: [])
+      expect(track).not_to be_valid
+    end
+  end
 end
