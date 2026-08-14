@@ -25,3 +25,75 @@
 .admin-error {
   color: var(--error-red);
 }
+
+.admin-import-step {
+  max-width: 40rem;
+
+  label {
+    display: block;
+    margin-top: 1rem;
+    font-weight: 600;
+  }
+
+  input[type="date"],
+  textarea {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    padding: 0.4rem;
+    border: 1px solid var(--border-gray);
+    border-radius: 4px;
+  }
+
+  button {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-gray);
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  progress {
+    width: 100%;
+    margin-top: 1rem;
+  }
+}
+
+.admin-dropzone {
+  margin-top: 1rem;
+  padding: 2rem;
+  border: 2px dashed var(--border-gray);
+  border-radius: 6px;
+  text-align: center;
+
+  &.is-dragging {
+    border-color: var(--list-item-link-color);
+  }
+}
+
+.admin-file-list {
+  margin-top: 1rem;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid var(--border-gray);
+  }
+
+  .admin-file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .admin-file-status {
+    flex-shrink: 0;
+  }
+}
