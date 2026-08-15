@@ -597,3 +597,104 @@
   color: var(--text-gray);
   font-size: 0.85rem;
 }
+
+.admin-art-current {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-art-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.5rem;
+  border: 1px solid var(--border-gray);
+  border-radius: $radius;
+  background-color: var(--card-bg);
+
+  img {
+    display: block;
+    width: 100%;
+    max-width: 16rem;
+    border-radius: $radius;
+  }
+
+  figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.85rem;
+  }
+}
+
+.admin-art-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 10rem;
+  height: 10rem;
+  border: 1px dashed var(--border-gray);
+  border-radius: $radius;
+  color: var(--text-gray);
+}
+
+.admin-art-prompt {
+  max-width: 40rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border-gray);
+  border-radius: $radius;
+  background-color: var(--card-bg);
+}
+
+.admin-art-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.admin-art-upload {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.admin-art-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.admin-art-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--text-gray);
+  }
+
+  input[type="number"] {
+    width: 4rem;
+  }
+}
+
+.admin-art-edit-form {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+
+  input[type="text"] {
+    flex: 1;
+    min-width: 0;
+  }
+}

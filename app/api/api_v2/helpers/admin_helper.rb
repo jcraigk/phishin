@@ -31,6 +31,7 @@ module ApiV2::Helpers::AdminHelper
       style: show.cover_art_style,
       parent_show_id: show.cover_art_parent_show_id,
       current_url: show.cover_art.attached? ? show.cover_art_urls[:large] : nil,
+      current_blob_key: show.cover_art.attached? ? show.cover_art.blob.key : nil,
       album_cover_url: show.album_cover.attached? ? show.album_cover_url : nil,
       candidates: show.cover_art_candidates_attachments.includes(:blob).map do |attachment|
         {

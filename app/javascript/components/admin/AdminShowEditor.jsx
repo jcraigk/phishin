@@ -3,6 +3,7 @@ import { useParams } from "react-router";
 import { adminGet } from "./adminApi";
 import TracksTab from "./TracksTab";
 import AudioTab from "./AudioTab";
+import ArtTab from "./ArtTab";
 import ShowPanel from "./ShowPanel";
 
 export const EditorContext = createContext(null);
@@ -84,7 +85,8 @@ const AdminShowEditor = () => {
         </nav>
         {tab === "Tracks" && <TracksTab />}
         {tab === "Audio" && <AudioTab />}
-        {tab !== "Tracks" && tab !== "Audio" && <p>Coming soon</p>}
+        {tab === "Art" && <ArtTab />}
+        {tab === "Tags" && <p>Coming soon</p>}
       </div>
     </EditorContext.Provider>
   );
