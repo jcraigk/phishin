@@ -18,6 +18,37 @@ RSpec.describe "API v2 Admin Jobs" do
     expect(response).to have_http_status(:unauthorized)
   end
 
+  describe "GET /api/v2/admin/jobs" do
+    it "lists recent jobs newest first" do
+      old = create(:admin_job, kind: "import", created_at: 2.days.ago)
+      recent = create(:admin_job, kind: "publish")
+      get "/api/v2/admin/jobs", headers: admin_headers
+      ids = JSON.parse(response.body)["jobs"].map { |j| j["id"] }
+      expect(ids.first).to eq(recent.id)
+      expect(ids).to include(old.id)
+    end
+
+    it "honors the limit" do
+      create_list(:admin_job, 3)
+      get "/api/v2/admin/jobs", params: { limit: 2 }, headers: admin_headers
+      expect(JSON.parse(response.body)["jobs"].size).to eq(2)
+    end
+
+    # The dashboard links a row to its show by date, so the date has to be in the
+    # payload rather than only the id.
+    it "includes the show date when the job has a show" do
+      show = create(:show, date: "2024-07-19")
+      create(:admin_job, kind: "publish", show:)
+      get "/api/v2/admin/jobs", headers: admin_headers
+      expect(JSON.parse(response.body)["jobs"].first["show_date"]).to eq("2024-07-19")
+    end
+
+    it "requires admin" do
+      get "/api/v2/admin/jobs"
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
   describe "GET /api/v2/admin/jobs/:id/audio" do
     let(:user) { create(:user) }
     let(:user_headers) { { "X-Auth-Token" => UserJwtService.call(user) } }

@@ -6,6 +6,7 @@ import AudioTab from "./AudioTab";
 import ArtTab from "./ArtTab";
 import TagsTab from "./TagsTab";
 import ShowPanel from "./ShowPanel";
+import PublishPanel from "./PublishPanel";
 
 export const EditorContext = createContext(null);
 
@@ -80,6 +81,7 @@ const AdminShowEditor = () => {
         </header>
         {error && <p className="admin-error">{error}</p>}
         <ShowPanel />
+        <PublishPanel />
         <nav className="admin-tabs">
           {TABS.map((t) => (
             <button
