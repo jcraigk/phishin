@@ -516,3 +516,84 @@
   border-radius: $radius;
   background-color: var(--bg-blue);
 }
+
+.admin-bulk-audio {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border-gray);
+  border-radius: $radius;
+  background-color: var(--card-bg);
+
+  h3 {
+    font-weight: 700;
+  }
+
+  h4 {
+    margin-top: 0.75rem;
+    font-weight: 700;
+  }
+
+  button {
+    margin-right: 0.5rem;
+  }
+}
+
+.admin-bulk-plan {
+  margin-top: 0.75rem;
+}
+
+.admin-bulk-matches {
+  margin-bottom: 0.75rem;
+
+  li {
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+    padding: 0.3rem 0.5rem;
+    border-bottom: 1px solid var(--border-gray);
+    border-left: 3px solid transparent;
+  }
+
+  li.is-replace {
+    border-left-color: var(--highlight-orange);
+  }
+
+  li.is-fill {
+    border-left-color: var(--blue);
+  }
+
+  .admin-bulk-position {
+    flex-shrink: 0;
+    min-width: 2rem;
+    color: var(--text-gray);
+  }
+
+  .admin-bulk-title {
+    flex: 1 1 40%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .admin-bulk-filename {
+    flex: 1 1 40%;
+    overflow: hidden;
+    color: var(--text-gray);
+    font-size: 0.85rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .admin-bulk-action {
+    flex-shrink: 0;
+    color: var(--text-gray);
+    font-size: 0.85rem;
+  }
+}
+
+.admin-bulk-unmatched,
+.admin-bulk-gaps {
+  margin-bottom: 0.75rem;
+  color: var(--text-gray);
+  font-size: 0.85rem;
+}

@@ -528,4 +528,198 @@ RSpec.describe "API v2 Admin Shows" do
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  describe "bulk audio upsert" do
+    let!(:show) { create(:show, date: "2025-08-01") }
+    let!(:with_audio) { create(:track, show:, position: 1, title: "Ghost") }
+    let!(:without_audio) do
+      create(:track, show:, position: 2, title: "Bathtub Gin", audio_status: "missing")
+    end
+    let(:source) { Rails.root.join("tmp/spec/audio_20s_880.mp3") }
+
+    before do
+      allow(WaveformImageService).to receive(:call)
+      allow(Id3TagService).to receive(:call)
+      FileUtils.mkdir_p(source.dirname)
+      unless File.exist?(source)
+        system(
+          "ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i",
+          "sine=frequency=880:duration=20", "-b:a", "128k", source.to_s, exception: true
+        )
+      end
+      with_audio.mp3_audio.attach(
+        io: File.open(source), filename: "existing.mp3", content_type: "audio/mpeg"
+      )
+      with_audio.update!(audio_status: "complete")
+    end
+
+    def upload(filename)
+      ActiveStorage::Blob.create_and_upload!(
+        io: File.open(source), filename:, content_type: "audio/mpeg"
+      )
+    end
+
+    describe "POST /api/v2/admin/shows/:date/bulk_audio_match" do
+      let(:signed_ids) { [ upload("01 Ghost.mp3").signed_id ] }
+
+      it "returns 401 without a token" do
+        post "/api/v2/admin/shows/2025-08-01/bulk_audio_match", params: { signed_ids: }
+        expect(response).to have_http_status(:unauthorized)
+      end
+
+      it "returns 403 for a non-admin user" do
+        post "/api/v2/admin/shows/2025-08-01/bulk_audio_match",
+             params: { signed_ids: }, headers: { "X-Auth-Token" => token_for(user) }
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it "changes no track audio for an unauthorized caller" do
+        key = with_audio.mp3_audio.blob.key
+        post "/api/v2/admin/shows/2025-08-01/bulk_audio_match", params: { signed_ids: }
+        post "/api/v2/admin/shows/2025-08-01/bulk_audio_match",
+             params: { signed_ids: }, headers: { "X-Auth-Token" => token_for(user) }
+        expect(with_audio.reload.mp3_audio.blob.key).to eq(key)
+        expect(without_audio.reload.mp3_audio.attached?).to be(false)
+      end
+
+      it "returns a plan splitting replaces from fills" do
+        post "/api/v2/admin/shows/2025-08-01/bulk_audio_match",
+             params: {
+               signed_ids: [
+                 upload("01 Ghost.mp3").signed_id,
+                 upload("02 Bathtub Gin.mp3").signed_id
+               ]
+             },
+             headers: admin_headers
+
+        expect(response).to have_http_status(:ok)
+        matches = JSON.parse(response.body)["matches"]
+        expect(matches.map { |m| [ m["track_id"], m["action"] ] })
+          .to eq([ [ with_audio.id, "replace" ], [ without_audio.id, "fill" ] ])
+      end
+
+      it "lists files that matched nothing" do
+        post "/api/v2/admin/shows/2025-08-01/bulk_audio_match",
+             params: { signed_ids: [ upload("88 Unknown Jam.mp3").signed_id ] },
+             headers: admin_headers
+        expect(JSON.parse(response.body)["unmatched_filenames"]).to eq([ "88 Unknown Jam.mp3" ])
+      end
+
+      it "lists the tracks still without audio" do
+        post "/api/v2/admin/shows/2025-08-01/bulk_audio_match",
+             params: { signed_ids: }, headers: admin_headers
+        expect(JSON.parse(response.body)["tracks_without_audio"].map { |t| t["track_id"] })
+          .to eq([ without_audio.id ])
+      end
+
+      # The whole reason the plan exists: an admin sees what would be overwritten
+      # before anything is.
+      it "mutates no track audio" do
+        key = with_audio.mp3_audio.blob.key
+        post "/api/v2/admin/shows/2025-08-01/bulk_audio_match",
+             params: {
+               signed_ids: [
+                 upload("01 Ghost.mp3").signed_id,
+                 upload("02 Bathtub Gin.mp3").signed_id
+               ]
+             },
+             headers: admin_headers
+        expect(with_audio.reload.mp3_audio.blob.key).to eq(key)
+        expect(without_audio.reload.mp3_audio.attached?).to be(false)
+      end
+
+      it "enqueues no job" do
+        expect {
+          post "/api/v2/admin/shows/2025-08-01/bulk_audio_match",
+               params: { signed_ids: }, headers: admin_headers
+        }.not_to change(Admin::BulkReplaceAudioJob.jobs, :size)
+      end
+
+      it "422s on an unknown signed id" do
+        post "/api/v2/admin/shows/2025-08-01/bulk_audio_match",
+             params: { signed_ids: [ "nonsense" ] }, headers: admin_headers
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+    end
+
+    describe "POST /api/v2/admin/shows/:date/bulk_audio_apply" do
+      let(:assignments) do
+        [ { signed_id: upload("01 Ghost.mp3").signed_id, track_id: with_audio.id } ]
+      end
+
+      it "returns 401 without a token" do
+        post "/api/v2/admin/shows/2025-08-01/bulk_audio_apply", params: { assignments: }
+        expect(response).to have_http_status(:unauthorized)
+      end
+
+      it "returns 403 for a non-admin user" do
+        post "/api/v2/admin/shows/2025-08-01/bulk_audio_apply",
+             params: { assignments: }, headers: { "X-Auth-Token" => token_for(user) }
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it "enqueues no job for an unauthorized caller" do
+        expect {
+          post "/api/v2/admin/shows/2025-08-01/bulk_audio_apply", params: { assignments: }
+          post "/api/v2/admin/shows/2025-08-01/bulk_audio_apply",
+               params: { assignments: }, headers: { "X-Auth-Token" => token_for(user) }
+        }.not_to change(Admin::BulkReplaceAudioJob.jobs, :size)
+      end
+
+      it "changes no track audio for an unauthorized caller" do
+        key = with_audio.mp3_audio.blob.key
+        post "/api/v2/admin/shows/2025-08-01/bulk_audio_apply", params: { assignments: }
+        post "/api/v2/admin/shows/2025-08-01/bulk_audio_apply",
+             params: { assignments: }, headers: { "X-Auth-Token" => token_for(user) }
+        expect(with_audio.reload.mp3_audio.blob.key).to eq(key)
+        expect(without_audio.reload.mp3_audio.attached?).to be(false)
+      end
+
+      it "enqueues the bulk job with the assignments" do
+        list = [
+          { signed_id: upload("01 Ghost.mp3").signed_id, track_id: with_audio.id },
+          { signed_id: upload("02 Bathtub Gin.mp3").signed_id, track_id: without_audio.id }
+        ]
+        expect {
+          post "/api/v2/admin/shows/2025-08-01/bulk_audio_apply",
+               params: { assignments: list }, headers: admin_headers
+        }.to change(Admin::BulkReplaceAudioJob.jobs, :size).by(1)
+
+        expect(response).to have_http_status(:created)
+        job = AdminJob.find(JSON.parse(response.body)["job_id"])
+        expect(job).to have_attributes(kind: "bulk_replace_audio", show:)
+        args = Admin::BulkReplaceAudioJob.jobs.last["args"]
+        expect(args.first(2)).to eq([ show.id, job.id ])
+        expect(args.last.map { |a| a["track_id"] }).to eq([ with_audio.id, without_audio.id ])
+      end
+
+      it "422s when a track belongs to another show" do
+        other = create(:track, show: create(:show, date: "2025-09-09"), position: 1)
+        post "/api/v2/admin/shows/2025-08-01/bulk_audio_apply",
+             params: {
+               assignments: [ { signed_id: upload("x.mp3").signed_id, track_id: other.id } ]
+             },
+             headers: admin_headers
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it "422s when two files target the same track" do
+        post "/api/v2/admin/shows/2025-08-01/bulk_audio_apply",
+             params: {
+               assignments: [
+                 { signed_id: upload("a.mp3").signed_id, track_id: with_audio.id },
+                 { signed_id: upload("b.mp3").signed_id, track_id: with_audio.id }
+               ]
+             },
+             headers: admin_headers
+        expect(response).to have_http_status(:unprocessable_content)
+      end
+
+      it "404s for an unknown date" do
+        post "/api/v2/admin/shows/1980-01-01/bulk_audio_apply",
+             params: { assignments: }, headers: admin_headers
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+  end
 end

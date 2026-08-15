@@ -69,6 +69,39 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         { job_id: job.id }
       end
 
+      # A dry run on purpose: an admin dropping a folder onto a show that already
+      # has audio is about to overwrite files, so the editor shows what would
+      # happen and waits for an explicit apply. Nothing here writes.
+      desc "Plan a bulk audio upsert against a show's tracks", hidden: true
+      params do
+        requires :signed_ids, type: Array[String]
+      end
+      post ":date/bulk_audio_match", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+        show = admin_show
+        blobs = params[:signed_ids].map { |id| find_signed_blob(id) }
+        status 200
+        BulkAudioMatcher.call(show:, blobs:)
+      end
+
+      desc "Apply a planned bulk audio upsert", hidden: true
+      params do
+        requires :assignments, type: Array do
+          requires :signed_id, type: String
+          requires :track_id, type: Integer
+        end
+      end
+      post ":date/bulk_audio_apply", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+        show = admin_show
+        assignments = declared(params)[:assignments].map do |a|
+          { "signed_id" => a[:signed_id], "track_id" => a[:track_id] }
+        end
+        validate_assignments!(show, assignments)
+        job = AdminJob.create!(kind: "bulk_replace_audio", show:)
+        Admin::BulkReplaceAudioJob.perform_async(show.id, job.id, assignments)
+        status 201
+        { job_id: job.id }
+      end
+
       desc "Update show attributes", hidden: true
       params do
         optional :venue_id, type: Integer
@@ -171,6 +204,29 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
 
     def lookup_or_nil(klass, id)
       id.nil? ? nil : klass.find(id)
+    end
+
+    # A signed id the verifier rejects would otherwise surface as a 500 from deep
+    # inside the matcher, with nothing telling the admin which of forty files was
+    # the bad one.
+    def find_signed_blob(signed_id)
+      ActiveStorage::Blob.find_signed!(signed_id)
+    rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveRecord::RecordNotFound
+      error!({ message: "Unknown upload: #{signed_id}" }, 422)
+    end
+
+    # Reject the whole batch rather than let the job discover mid-run that a
+    # track belongs to another show, and refuse to point two files at one track:
+    # both would be applied, and the second would silently win.
+    def validate_assignments!(show, assignments)
+      track_ids = assignments.map { |a| a["track_id"] }
+      if track_ids.uniq.size != track_ids.size
+        error!({ message: "Each track may appear only once" }, 422)
+      end
+      known = show.tracks.where(id: track_ids).pluck(:id)
+      missing = track_ids - known
+      return if missing.empty?
+      error!({ message: "Tracks not on #{show.date}: #{missing.join(', ')}" }, 422)
     end
   end
 end

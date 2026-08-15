@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, Link } from "react-router";
 import { adminPost, adminPatch, pollJob, isPollAbort } from "./adminApi";
-import { uploadFile } from "./DirectUploader";
+import { uploadFile, collectFiles } from "./DirectUploader";
 
 let nextFileId = 0;
 
@@ -145,10 +145,15 @@ const AdminImport = () => {
             onDrop={(e) => {
               e.preventDefault();
               setDragging(false);
-              addFiles(e.dataTransfer.files);
+              // The entries the collector reads are cleared once this handler
+              // returns, so capture the transfer before the first await.
+              const { dataTransfer } = e;
+              collectFiles(dataTransfer)
+                .then(addFiles)
+                .catch((err) => setError(err.message));
             }}
           >
-            <p>Drop mp3 files here, or</p>
+            <p>Drop a show folder or mp3 files here, or</p>
             <input
               ref={fileInputRef}
               type="file"

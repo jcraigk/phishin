@@ -3,6 +3,7 @@ import { EditorContext } from "./AdminShowEditor";
 import TrimPanel from "./TrimPanel";
 import SplitPanel, { isSegueTitle } from "./SplitPanel";
 import ReplacePanel from "./ReplacePanel";
+import BulkAudioDrop from "./BulkAudioDrop";
 import useJobRunner from "./useJobRunner";
 import { adminPost } from "./adminApi";
 
@@ -82,6 +83,7 @@ const AudioTab = () => {
   return (
     <div className="admin-audio-tab">
       {gapsStale && <GapBanner />}
+      {show.tracks.length > 0 && <BulkAudioDrop />}
       {show.tracks.length === 0 ? (
         <p>This show has no tracks yet.</p>
       ) : (
