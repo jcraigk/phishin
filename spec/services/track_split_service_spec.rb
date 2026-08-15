@@ -124,6 +124,25 @@ RSpec.describe TrackSplitService do
         end
       end
 
+      context "when the first part duplicates an existing title" do
+        before do
+          create(:track, show:, title: "Mike's Song", songs: [ song1 ],
+                         position: 8, set: "1")
+        end
+
+        it "does not raise on the unique slug index" do
+          expect { result }.not_to raise_error
+        end
+
+        it "numbers the first part's slugs in position order" do
+          result
+          slugs = show.tracks.reload.order(:position)
+                      .select { it.title == "Mike's Song" }
+                      .map { [ it.position, it.slug ] }
+          expect(slugs).to eq([ [ 5, "mikes-song" ], [ 9, "mikes-song-2" ] ])
+        end
+      end
+
       context "with no duplicate" do
         it "leaves the new track's slug unsuffixed" do
           result

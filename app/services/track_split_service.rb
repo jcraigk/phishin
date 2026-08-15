@@ -198,8 +198,8 @@ class TrackSplitService < ApplicationService
   def reslug_duplicate_titles
     @reslugged = []
     siblings = track.show.tracks.reload.order(:position)
-                    .select { part_titles[1].casecmp?(it.title) }
-    return if siblings.size < 2
+                    .select { |t| part_titles.any? { it.casecmp?(t.title) } }
+    return if siblings.empty?
 
     was = siblings.to_h { [ it.id, it.slug ] }
     # Two phases: (show_id, slug) is unique, and the final slugs permute among
@@ -208,10 +208,11 @@ class TrackSplitService < ApplicationService
     siblings.each_with_index do |sibling, i|
       sibling.update_columns(slug: "tmp-#{track.id}-#{i}-#{SecureRandom.hex(4)}")
     end
+    split_ids = [ track.id, @new_track&.id ].compact
     siblings.each do |sibling|
       sibling.generate_slug(force: true)
       sibling.save!
-      next if sibling.slug == was[sibling.id]
+      next if sibling.slug == was[sibling.id] || split_ids.include?(sibling.id)
       @reslugged << { track_id: sibling.id, from: was[sibling.id], to: sibling.slug }
     end
   end
@@ -239,10 +240,12 @@ class TrackSplitService < ApplicationService
   # The original keeps its position and its id, so anything pointing at it (a
   # like, a playlist) still resolves. Its slug is regenerated from the new
   # title, which is why external links to the combined track break.
+  # Slug is parked, not computed: the new title may already belong to another
+  # track in the show. reslug_duplicate_titles assigns the real one.
   def rewrite_original
     track.title = part_titles[0]
     track.songs = [ songs[0] ]
-    track.generate_slug(force: true)
+    track.slug = "tmp-#{track.id}-orig-#{SecureRandom.hex(4)}"
     track.save!
   end
 
