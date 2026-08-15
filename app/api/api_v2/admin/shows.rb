@@ -42,6 +42,24 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         Admin::ShowReadiness.call(admin_show)
       end
 
+      # Readiness is checked here so the editor gets the issue list synchronously
+      # instead of enqueueing a job that only fails. The job re-checks: a draft can
+      # lose a file between this call and Sidekiq picking it up, and only the job
+      # is close enough to the publish to catch that.
+      desc "Publish a draft show", hidden: true
+      post ":date/publish", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+        show = admin_show
+        error!({ message: "Show is already published" }, 422) if show.published?
+        readiness = Admin::ShowReadiness.call(show)
+        unless readiness[:ready]
+          error!({ message: "Not ready to publish", issues: readiness[:issues] }, 422)
+        end
+        job = AdminJob.create!(kind: "publish", show:)
+        Admin::PublishShowJob.perform_async(show.id, job.id)
+        status 201
+        { job_id: job.id }
+      end
+
       desc "Attach staged audio files", hidden: true
       params do
         requires :signed_ids, type: Array[String]

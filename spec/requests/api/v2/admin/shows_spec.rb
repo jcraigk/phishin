@@ -796,4 +796,130 @@ RSpec.describe "API v2 Admin Shows" do
       expect(response).to have_http_status(:not_found)
     end
   end
+
+  describe "POST /api/v2/admin/shows/:date/publish" do
+    let!(:show) { create(:show, date: "2025-08-01", published: false) }
+
+    def make_ready
+      show.cover_art.attach(
+        io: StringIO.new("img"), filename: "a.png", content_type: "image/png"
+      )
+      show.album_cover.attach(
+        io: StringIO.new("img"), filename: "b.png", content_type: "image/png"
+      )
+      track = create(:track, show:, position: 1, songs: [ create(:song) ])
+      track.mp3_audio.attach(
+        io: StringIO.new("mp3"), filename: "a.mp3", content_type: "audio/mpeg"
+      )
+      track.png_waveform.attach(
+        io: StringIO.new("png"), filename: "a.png", content_type: "image/png"
+      )
+      track.update!(duration: 100_000, audio_status: "complete")
+      show.reload
+    end
+
+    it "returns 401 without a token" do
+      make_ready
+      expect {
+        post "/api/v2/admin/shows/2025-08-01/publish"
+      }.not_to change(Admin::PublishShowJob.jobs, :size)
+      expect(response).to have_http_status(:unauthorized)
+      expect(show.reload.published).to be(false)
+      expect(Announcement.count).to eq(0)
+    end
+
+    it "returns 403 for a non-admin user" do
+      make_ready
+      expect {
+        post "/api/v2/admin/shows/2025-08-01/publish",
+             headers: { "X-Auth-Token" => token_for(user) }
+      }.not_to change(Admin::PublishShowJob.jobs, :size)
+      expect(response).to have_http_status(:forbidden)
+      expect(show.reload.published).to be(false)
+      expect(Announcement.count).to eq(0)
+    end
+
+    it "enqueues the publish job for a ready draft" do
+      make_ready
+      expect {
+        post "/api/v2/admin/shows/2025-08-01/publish", headers: admin_headers
+      }.to change(Admin::PublishShowJob.jobs, :size).by(1)
+
+      expect(response).to have_http_status(:created)
+      job = AdminJob.find(JSON.parse(response.body)["job_id"])
+      expect(job.kind).to eq("publish")
+      expect(job.show).to eq(show)
+      expect(Admin::PublishShowJob.jobs.last["args"]).to eq([ show.id, job.id ])
+    end
+
+    it "leaves the show unpublished until the job runs" do
+      make_ready
+      post "/api/v2/admin/shows/2025-08-01/publish", headers: admin_headers
+      expect(show.reload.published).to be(false)
+    end
+
+    it "422s with the issue list for an unready draft" do
+      expect {
+        post "/api/v2/admin/shows/2025-08-01/publish", headers: admin_headers
+      }.not_to change(Admin::PublishShowJob.jobs, :size)
+
+      expect(response).to have_http_status(:unprocessable_content)
+      json = JSON.parse(response.body)
+      expect(json["message"]).to eq("Not ready to publish")
+      expect(json["issues"]).to include("No tracks", "No cover art selected")
+      expect(show.reload.published).to be(false)
+    end
+
+    it "422s for a show whose track lost its audio" do
+      make_ready
+      show.tracks.first.mp3_audio.detach
+      post "/api/v2/admin/shows/2025-08-01/publish", headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(JSON.parse(response.body)["issues"].join("\n")).to include("no audio")
+    end
+
+    it "422s for an already published show" do
+      make_ready
+      show.update!(published: true)
+      expect {
+        post "/api/v2/admin/shows/2025-08-01/publish", headers: admin_headers
+      }.not_to change(Admin::PublishShowJob.jobs, :size)
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(JSON.parse(response.body)["message"]).to eq("Show is already published")
+    end
+
+    it "404s for an unknown date" do
+      post "/api/v2/admin/shows/1980-01-01/publish", headers: admin_headers
+      expect(response).to have_http_status(:not_found)
+    end
+
+    # The point of the whole feature: a draft is invisible to the public API until
+    # this runs, and visible the moment it finishes.
+    it "puts the show on the public API once the job runs" do
+      allow(LoreSyncService).to receive(:call)
+      create(:tag, name: "Debut")
+      create(:tag, name: "Bustout")
+      make_ready
+      # The public show serializer builds cover art variants, which need a real image
+      # behind the attachment rather than the placeholder make_ready uses.
+      show.cover_art.attach(
+        io: file_fixture("cover-art-large.jpg").open,
+        filename: "cover.jpg",
+        content_type: "image/jpeg"
+      )
+
+      get "/api/v2/shows/2025-08-01"
+      expect(response).to have_http_status(:not_found)
+
+      post "/api/v2/admin/shows/2025-08-01/publish", headers: admin_headers
+      expect(response).to have_http_status(:created)
+      args = Admin::PublishShowJob.jobs.last["args"]
+      Admin::PublishShowJob.new.perform(*args)
+
+      get "/api/v2/shows/2025-08-01"
+      expect(response).to have_http_status(:ok)
+      expect(JSON.parse(response.body)["date"]).to eq("2025-08-01")
+      expect(Announcement.last.title).to include("2025-08-01")
+    end
+  end
 end
