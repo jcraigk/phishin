@@ -6,7 +6,10 @@ class ApiV2::Admin::Taggings < ApiV2::Admin::Base
   namespace :admin do
     desc "List all tags", hidden: true
     get :tags do
-      { tags: Tag.order(:name).map { |tag| { id: tag.id, name: tag.name, group: tag.group } } }
+      {
+        tags: Tag.order(:name).map { |tag| { id: tag.id, name: tag.name, group: tag.group } },
+        tagin_tags: TAGIN_TAGS
+      }
     end
 
     resource :shows do

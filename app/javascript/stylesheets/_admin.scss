@@ -698,3 +698,189 @@
     min-width: 0;
   }
 }
+
+.admin-tags-tab {
+  h3 {
+    margin: 1rem 0 0.5rem;
+    font-weight: 700;
+  }
+}
+
+.admin-tag-rows {
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+}
+
+.admin-tag-row {
+  border-bottom: 1px solid var(--track-divider);
+  padding: 0.4rem 0;
+}
+
+.admin-tag-row-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+
+  input[type="number"] {
+    width: 5rem;
+  }
+}
+
+.admin-tag-name {
+  min-width: 8rem;
+  font-weight: 700;
+}
+
+.admin-tag-managed {
+  padding: 0.1rem 0.4rem;
+  border-radius: $radius;
+  background-color: var(--bg-blue);
+  color: var(--text-gray);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.admin-tag-notes {
+  flex: 1;
+  min-width: 8rem;
+}
+
+.admin-tag-transcript {
+  width: 100%;
+  margin-top: 0.35rem;
+}
+
+.admin-tag-add {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+
+  input[type="number"] {
+    width: 5rem;
+  }
+}
+
+.admin-tag-tracks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-tag-track {
+  border-bottom: 1px solid var(--track-divider);
+  padding: 0.35rem 0;
+}
+
+.admin-tag-track-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-tag-editor {
+  padding: 0.5rem 0 0.25rem 2rem;
+}
+
+.admin-tagin-panel {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border-gray);
+  border-radius: $radius;
+  background-color: var(--card-bg);
+}
+
+.admin-tagin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-tagin-progress {
+  width: 8rem;
+}
+
+.admin-tagin-note {
+  margin-top: 0.5rem;
+  color: var(--text-gray);
+  font-size: 0.85rem;
+}
+
+.admin-drift-report {
+  margin-top: 0.75rem;
+}
+
+.admin-drift-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem;
+
+  h3 {
+    font-weight: 700;
+  }
+}
+
+.admin-drift-errors {
+  list-style: none;
+  margin: 0.5rem 0;
+  padding: 0;
+}
+
+.admin-drift-tag {
+  margin-top: 0.75rem;
+
+  h4 {
+    margin-bottom: 0.3rem;
+    font-weight: 700;
+  }
+}
+
+.admin-drift-category {
+  margin-bottom: 0.3rem;
+
+  button.active {
+    background-color: var(--bg-blue);
+  }
+}
+
+.admin-drift-entries {
+  list-style: none;
+  margin: 0.35rem 0 0.35rem 1rem;
+  padding: 0;
+
+  li {
+    padding: 0.25rem 0;
+  }
+}
+
+.admin-drift-notes {
+  display: block;
+  color: var(--text-gray);
+  font-size: 0.85rem;
+}
+
+.admin-drift-diffs {
+  margin-top: 0.2rem;
+  font-size: 0.85rem;
+
+  th {
+    padding-right: 0.75rem;
+    color: var(--text-gray);
+    font-weight: 400;
+    text-align: left;
+  }
+
+  td {
+    padding-right: 0.75rem;
+  }
+}

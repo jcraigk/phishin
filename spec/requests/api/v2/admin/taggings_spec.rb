@@ -44,6 +44,11 @@ RSpec.describe "API v2 Admin Taggings" do
       entry = json[:tags].find { |t| t[:name] == "SBD" }
       expect(entry).to include(id: tag.id, name: "SBD", group: tag.group)
     end
+
+    it "reports the sheet-managed tag names so the UI can flag them" do
+      get "/api/v2/admin/tags", headers: admin_headers
+      expect(json[:tagin_tags]).to eq(TAGIN_TAGS)
+    end
   end
 
   describe "POST /api/v2/admin/shows/:date/show_tags" do

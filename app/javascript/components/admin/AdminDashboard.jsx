@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { adminGet } from "./adminApi";
+import TaginPanel from "./TaginPanel";
 
 const AdminDashboard = () => {
   const [drafts, setDrafts] = useState([]);
@@ -29,6 +30,8 @@ const AdminDashboard = () => {
           ))}
         </ul>
       )}
+      <h2>Tags</h2>
+      <TaginPanel />
     </div>
   );
 };
