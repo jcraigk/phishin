@@ -8,7 +8,7 @@ import CoverArt from "./CoverArt";
 import CoverArtTile from "./CoverArtTile";
 import AudioStatusBadge from "./controls/AudioStatusBadge";
 
-const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list" }) => {
+const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list", highlight }) => {
   const { activeTrack } = useOutletContext();
   const navigate = useNavigate();
   let itemNumber = 1;
@@ -60,7 +60,7 @@ const Shows = ({ shows, numbering = false, tourHeaders = false, viewMode = "list
           </span>
           <span className="leftside-secondary">{show.venue_name}</span>
           <span className="leftside-tertiary">
-            <TagBadges tags={show.tags} parentId={show.date} />
+            <TagBadges tags={show.tags} parentId={show.date} highlight={highlight} />
           </span>
           <div className="rightside-group">
             <span className="rightside-primary">

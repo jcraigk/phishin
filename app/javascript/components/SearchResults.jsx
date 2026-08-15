@@ -26,25 +26,6 @@ const SearchResults = ({ results, term }) => {
 
   return (
     <>
-      {exactShow && (
-        <>
-          <h2 className="title section-title">Show on Date</h2>
-          <Shows shows={[exactShow]} />
-        </>
-      )}
-
-      {otherShows?.length > 0 && (
-        <>
-          <h2 className="title section-title">Matched Shows</h2>
-          <Shows shows={showMoreOtherShows ? otherShows : otherShows.slice(0, 10)} />
-          {otherShows.length > 10 && (
-            <button className="button" onClick={() => setShowMoreOtherShows(!showMoreOtherShows)}>
-              {showMoreOtherShows ? "Show fewer..." : "Show more..."}
-            </button>
-          )}
-        </>
-      )}
-
       {songs?.length > 0 && (
         <>
           <h2 className="title section-title">Songs</h2>
@@ -52,6 +33,48 @@ const SearchResults = ({ results, term }) => {
           {songs.length > 10 && (
             <button className="button" onClick={() => setShowMoreSongs(!showMoreSongs)}>
               {showMoreSongs ? "Show fewer..." : "Show more..."}
+            </button>
+          )}
+        </>
+      )}
+
+      {venues?.length > 0 && (
+        <>
+          <h2 className="title section-title">Venues</h2>
+          <Venues venues={showMoreVenues ? venues : venues.slice(0, 10)} highlight={term} />
+          {venues.length > 10 && (
+            <button className="button" onClick={() => setShowMoreVenues(!showMoreVenues)}>
+              {showMoreVenues ? "Show fewer..." : "Show more..."}
+            </button>
+          )}
+      {tags?.length > 0 && (
+        <>
+          <h2 className="title section-title">Tags</h2>
+          <Tags tags={showMoreTags ? tags : tags.slice(0, 10)} highlight={term} />
+          {tags.length > 10 && (
+            <button className="button" onClick={() => setShowMoreTags(!showMoreTags)}>
+              {showMoreTags ? "Show fewer..." : "Show more..."}
+            </button>
+          )}
+        </>
+      )}
+        </>
+      )}
+
+      {exactShow && (
+        <>
+          <h2 className="title section-title">Show on Date</h2>
+          <Shows shows={[exactShow]} highlight={term} />
+        </>
+      )}
+
+      {otherShows?.length > 0 && (
+        <>
+          <h2 className="title section-title">Shows</h2>
+          <Shows shows={showMoreOtherShows ? otherShows : otherShows.slice(0, 10)} highlight={term} />
+          {otherShows.length > 10 && (
+            <button className="button" onClick={() => setShowMoreOtherShows(!showMoreOtherShows)}>
+              {showMoreOtherShows ? "Show fewer..." : "Show more..."}
             </button>
           )}
         </>
@@ -69,29 +92,6 @@ const SearchResults = ({ results, term }) => {
         </>
       )}
 
-      {tags?.length > 0 && (
-        <>
-          <h2 className="title section-title">Tags</h2>
-          <Tags tags={showMoreTags ? tags : tags.slice(0, 10)} highlight={term} />
-          {tags.length > 10 && (
-            <button className="button" onClick={() => setShowMoreTags(!showMoreTags)}>
-              {showMoreTags ? "Show fewer..." : "Show more..."}
-            </button>
-          )}
-        </>
-      )}
-
-      {venues?.length > 0 && (
-        <>
-          <h2 className="title section-title">Venues</h2>
-          <Venues venues={showMoreVenues ? venues : venues.slice(0, 10)} highlight={term} />
-          {venues.length > 10 && (
-            <button className="button" onClick={() => setShowMoreVenues(!showMoreVenues)}>
-              {showMoreVenues ? "Show fewer..." : "Show more..."}
-            </button>
-          )}
-        </>
-      )}
 
       {playlists?.length > 0 && (
         <>
