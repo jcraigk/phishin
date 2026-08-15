@@ -79,7 +79,7 @@ module SplitScan
       year = File.basename(dir)
       summary_path = File.join(dir, "summary.json")
       unless File.exist?(summary_path)
-        next %(<tr><td>#{year}</td><td class="pending">no report yet (scan running or failed)</td><td></td></tr>)
+        next %(<tr><td>#{year}</td><td class="pending" colspan="3">no report yet (scan running or failed)</td></tr>)
       end
 
       summary = JSON.parse(File.read(summary_path))
@@ -87,7 +87,11 @@ module SplitScan
       multi = summary.fetch("multi_segue", 0)
       totals["candidates"] += candidates
       totals["multi_segue"] += multi
-      %(<tr><td><a href="#{year}/review.html">#{year}</a></td>) +
+      %(<tr data-year="#{year}" data-total="#{candidates}">) +
+        %(<td><a href="#{year}/review.html">#{year}</a></td>) +
+        %(<td class="prog"><span><span class="bar">) +
+        %(<i class="fill-ok"></i><i class="fill-skip"></i></span>) +
+        %(<span class="pct"></span></span></td>) +
         %(<td>#{candidates}</td><td>#{multi}</td></tr>)
     end
 
@@ -104,11 +108,13 @@ module SplitScan
         :root {
           --bg: #ffffff; --fg: #1c1c1e; --muted: #6b6b70;
           --line: #e3e3e7; --card: #fafafa; --link: #2f6fd0;
+          --ok: #1a6b2f; --accent: #b8860b;
         }
         @media (prefers-color-scheme: dark) {
           :root {
             --bg: #14171d; --fg: #e6e9ef; --muted: #8b95a7;
             --line: #262b35; --card: #1a1e26; --link: #7fb3f0;
+            --ok: #5fce85; --accent: #e0a92e;
           }
         }
         * { box-sizing: border-box; }
@@ -132,18 +138,76 @@ module SplitScan
         tfoot td { font-weight: 700; border-bottom: none; }
         .pending { color: var(--muted); text-align: left; font-style: italic; }
         .meta { color: var(--muted); margin: -.6rem 0 1.4rem; }
+        td.prog, th.prog-h { text-align: left; width: 45%; }
+        td.prog > span { display: flex; align-items: center; gap: .6rem; }
+        .bar { height: 4px; border-radius: 2px; background: var(--line);
+               overflow: hidden; font-size: 0; flex: 1; min-width: 60px; }
+        .bar i { display: inline-block; height: 100%; vertical-align: top;
+                 width: 0; transition: width .2s ease; }
+        .bar .fill-ok { background: var(--ok); }
+        .bar .fill-skip { background: var(--accent); opacity: .55; }
+        .pct { font-variant-numeric: tabular-nums; font-size: 13px;
+               color: var(--muted); flex: 0 0 2.6rem; text-align: right; }
+        tr.done .pct { color: var(--ok); font-weight: 700; }
+        tr.done td:first-child::after { content: " \\2713"; color: var(--ok);
+                                        font-weight: 700; }
       </style>
       <h1>Track split reports</h1>
       <p class="meta">Generated #{Time.now.strftime('%Y-%m-%d %H:%M')}</p>
       <table>
         <thead>
-          <tr><th>Year</th><th>Candidates</th><th>Multi-segue</th></tr>
+          <tr><th>Year</th><th class="prog-h">Progress</th><th>Candidates</th><th>Multi-segue</th></tr>
         </thead>
         <tbody>#{rows.join("\n")}</tbody>
         <tfoot>
-          <tr><td>Total</td><td>#{totals['candidates']}</td><td>#{totals['multi_segue']}</td></tr>
+          <tr><td>Total</td><td class="prog"><span><span class="bar">
+            <i class="fill-ok"></i><i class="fill-skip"></i></span>
+            <span class="pct"></span></span></td>
+            <td>#{totals['candidates']}</td><td>#{totals['multi_segue']}</td></tr>
         </tfoot>
       </table>
+      <script>
+        (function () {
+          var totals = { approved: 0, skipped: 0, total: 0 };
+          document.querySelectorAll("tr[data-year]").forEach(function (row) {
+            var total = parseInt(row.dataset.total, 10) || 0;
+            var state = {};
+            try {
+              state = JSON.parse(
+                localStorage.getItem("splitscan:progress:" + row.dataset.year) || "{}"
+              ) || {};
+            } catch (e) { state = {}; }
+            var marks = Object.keys(state).map(function (k) {
+              return state[k] && state[k].mark;
+            });
+            var approved = Math.min(
+              marks.filter(function (m) { return m === "a"; }).length, total);
+            var skipped = Math.min(
+              marks.filter(function (m) { return m === "s"; }).length, total - approved);
+            totals.approved += approved;
+            totals.skipped += skipped;
+            totals.total += total;
+            paint(row, approved, skipped, total);
+          });
+          paint(document.querySelector("tfoot tr"),
+                totals.approved, totals.skipped, totals.total);
+
+          function paint(row, approved, skipped, total) {
+            if (!row) return;
+            var ok = row.querySelector(".fill-ok");
+            var sk = row.querySelector(".fill-skip");
+            var pct = row.querySelector(".pct");
+            if (!ok || !sk || !pct) return;
+            var a = Math.min(approved, total);
+            var s = Math.min(skipped, total - a);
+            ok.style.width = total ? (a / total) * 100 + "%" : "100%";
+            sk.style.width = total ? (s / total) * 100 + "%" : "0%";
+            var done = a + s;
+            pct.textContent = (total ? Math.round((done / total) * 100) : 100) + "%";
+            if (done >= total) row.classList.add("done");
+          }
+        })();
+      </script>
     HTML
     puts "Index written to #{SCAN_ROOT}/index.html"
   end
@@ -160,11 +224,6 @@ module SplitScan
     [ attachment.record, nil ]
   end
 
-  # Gap columns of the songs involved point at their neighbouring performances,
-  # and a split changes both which songs a show contains and the slug of the
-  # track that held them. Recompute the show, then every show holding the next
-  # performance of an affected song, so their `previous_performance_*` columns
-  # stop naming a slug that no longer exists.
   def self.prompt_for_song(part_title, label)
     unless $stdin.tty?
       puts "  no song matches #{part_title.inspect} (not a tty, skipping)"
@@ -186,11 +245,13 @@ module SplitScan
     song.id
   end
 
-  def self.split_with_prompts(track, cut_s, dry_run, label)
+  def self.split_with_prompts(track, cut_s, dry_run, label, tag_sides = {})
     overrides = {}
     asked = Set.new
     begin
-      TrackSplitService.call(track, cut_s:, dry_run:, song_overrides: overrides)
+      TrackSplitService.call(
+        track, cut_s:, dry_run:, song_overrides: overrides, tag_sides:
+      )
     rescue TrackSplitService::SongNotFoundError => e
       part = e.part_title
       raise if part.nil? || asked.include?(part.downcase)
@@ -324,7 +385,9 @@ namespace :split_scan do
       end
 
       begin
-        result = SplitScan.split_with_prompts(track, entry["cut_s"].to_f, dry_run, label)
+        result = SplitScan.split_with_prompts(
+          track, entry["cut_s"].to_f, dry_run, label, entry["tag_sides"] || {}
+        )
         next failures << [ label, "skipped: unmatched song" ] if result.nil?
         applied += 1
         status = result[:applied] ? "APPLIED" : "RENDERED"
@@ -341,6 +404,12 @@ namespace :split_scan do
           puts "  moved:   #{result[:likes_copied]} like(s), " \
                "#{result[:tags_copied]} tag(s), " \
                "#{result[:playlist_entries]} playlist entr(ies)"
+          if entry["tag_sides"].present?
+            entry["tag_sides"].each { |name, side| puts "  tag:     #{name} -> #{side}" }
+          end
+          result[:reslugged].each do |r|
+            puts "  reslug:  #{r[:from]} -> #{r[:to]} (track #{r[:track_id]})"
+          end
           result[:notes].each { puts "  note:    #{it}" }
           touched[track.show] |= result[:song_ids].map { Song.find(it) }
         end

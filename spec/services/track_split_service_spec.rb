@@ -75,6 +75,81 @@ RSpec.describe TrackSplitService do
       expect { result }.not_to change { track.reload.position }
     end
 
+    context "when the split introduces a duplicate title" do
+      let(:sibling_title) { "I Am Hydrogen" }
+
+      def hydrogen_slugs
+        show.tracks.reload.order(:position)
+            .select { it.title == sibling_title }
+            .map { [ it.position, it.slug ] }
+      end
+
+      context "with an existing instance earlier in the show" do
+        before do
+          create(:track, show:, title: sibling_title, songs: [ song2 ],
+                         position: 2, set: "1")
+        end
+
+        it "numbers the slugs in position order" do
+          result
+          expect(hydrogen_slugs).to eq([ [ 2, "i-am-hydrogen" ], [ 6, "i-am-hydrogen-2" ] ])
+        end
+      end
+
+      context "with an existing instance later in the show" do
+        before do
+          create(:track, show:, title: sibling_title, songs: [ song2 ],
+                         position: 8, set: "1")
+        end
+
+        it "numbers the slugs in position order" do
+          result
+          expect(hydrogen_slugs).to eq([ [ 6, "i-am-hydrogen" ], [ 9, "i-am-hydrogen-2" ] ])
+        end
+      end
+
+      context "with instances on both sides of the split" do
+        before do
+          create(:track, show:, title: sibling_title, songs: [ song2 ],
+                         position: 2, set: "1")
+          create(:track, show:, title: sibling_title, songs: [ song2 ],
+                         position: 8, set: "1")
+        end
+
+        it "numbers every instance in position order" do
+          result
+          expect(hydrogen_slugs).to eq(
+            [ [ 2, "i-am-hydrogen" ], [ 6, "i-am-hydrogen-2" ], [ 9, "i-am-hydrogen-3" ] ]
+          )
+        end
+      end
+
+      context "with no duplicate" do
+        it "leaves the new track's slug unsuffixed" do
+          result
+          expect(Track.find(result[:new_track_id]).slug).to eq("i-am-hydrogen")
+        end
+
+        it "reports no renames" do
+          expect(result[:reslugged]).to be_empty
+        end
+      end
+
+      context "when an untouched track's slug changes" do
+        let!(:sibling) do
+          create(:track, show:, title: sibling_title, songs: [ song2 ],
+                         position: 8, set: "1")
+        end
+
+        it "reports the untouched track's moved url" do
+          expect(result[:reslugged]).to include(
+            hash_including(track_id: sibling.id, from: "i-am-hydrogen",
+                           to: "i-am-hydrogen-2")
+          )
+        end
+      end
+    end
+
     it "associates the original track with only the first song" do
       result
       expect(track.reload.songs).to eq([ song1 ])
@@ -178,6 +253,77 @@ RSpec.describe TrackSplitService do
       it "keeps the tag on the original track" do
         result
         expect(track.reload.tags).to eq([ tag ])
+      end
+    end
+
+    context "with a tag_sides choice" do
+      subject(:result) do
+        described_class.call(track, cut_s:, dry_run:, tag_sides:)
+      end
+
+      before { create(:track_tag, track:, tag:) }
+
+      context "when set to first" do
+        let(:tag_sides) { { "SBD" => "first" } }
+
+        it "keeps the tag on the original track" do
+          result
+          expect(track.reload.tags).to eq([ tag ])
+        end
+
+        it "does not copy it to the new track" do
+          result
+          expect(Track.find(result[:new_track_id]).tags).to be_empty
+        end
+      end
+
+      context "when set to second" do
+        let(:tag_sides) { { "SBD" => "second" } }
+
+        it "moves the tag to the new track" do
+          result
+          expect(Track.find(result[:new_track_id]).tags).to eq([ tag ])
+        end
+
+        it "removes it from the original track" do
+          result
+          expect(track.reload.tags).to be_empty
+        end
+      end
+
+      context "when set to both" do
+        let(:tag_sides) { { "SBD" => "both" } }
+
+        it "tags both tracks" do
+          result
+          expect(track.reload.tags).to eq([ tag ])
+          expect(Track.find(result[:new_track_id]).tags).to eq([ tag ])
+        end
+      end
+
+      context "when the choice names a tag that is not on the track" do
+        let(:tag_sides) { { "Jamcharts" => "second" } }
+
+        it "leaves the untimestamped default in place" do
+          result
+          expect(track.reload.tags).to eq([ tag ])
+          expect(Track.find(result[:new_track_id]).tags).to eq([ tag ])
+        end
+      end
+
+      context "when a timestamped tag is named" do
+        let(:tag_sides) { { "SBD" => "second" } }
+
+        before do
+          track.track_tags.destroy_all
+          create(:track_tag, track:, tag:, starts_at_second: 5, ends_at_second: 8)
+        end
+
+        it "ignores the choice and follows the audio" do
+          result
+          expect(track.reload.track_tags.count).to eq(1)
+          expect(Track.find(result[:new_track_id]).track_tags).to be_empty
+        end
       end
     end
 

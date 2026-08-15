@@ -80,6 +80,7 @@ class SplitCandidate:
     duration_s: float
     cut_s: float  # default cut point; the reviewer moves it
     unmatched_parts: list = field(default_factory=list)
+    tags: list = field(default_factory=list)
 
 
 def fmt_ts(seconds):
@@ -168,8 +169,19 @@ def fetch_show_candidates(date, ignore_urls):
             # every row is expected to be moved by hand.
             cut_s=round(duration_s / 2, 1),
             unmatched_parts=unmatched_parts(parts, songs),
+            tags=untimestamped_tags(t.get("tags") or []),
         ))
     return candidates, multi
+
+
+def untimestamped_tags(tags):
+    return [
+        {"name": t.get("name") or "", "color": t.get("color") or "",
+         "notes": t.get("notes") or ""}
+        for t in tags
+        if t.get("starts_at_second") is None and t.get("ends_at_second") is None
+        and t.get("name")
+    ]
 
 
 def fetch_year_dates(year):
@@ -202,6 +214,31 @@ def embedded_fonts():
             '@font-face { font-family: "Open Sans Condensed"; font-style: normal; '
             f'font-weight: {weight}; font-display: swap; src: {src}; ' + "}")
     return "\n  ".join(faces)
+
+
+def tag_picker(c, esc):
+    if not c.tags:
+        return ""
+    rows = []
+    for i, tag in enumerate(c.tags):
+        name = tag.get("name", "")
+        notes = tag.get("notes") or ""
+        color = tag.get("color") or ""
+        swatch = (f'<i class="swatch" style="background:{esc(color, quote=True)}"></i>'
+                  if color.startswith("#") else "")
+        title = f"{name}: {notes}" if notes else name
+        label = (f'<span class="tname{" has-notes" if notes else ""}" '
+                 f'title="{esc(title, quote=True)}">{swatch}{esc(name)}</span>')
+        choices = "".join(
+            f'<label class="tchoice"><input type="radio" '
+            f'name="tag-{esc(c.share_url, quote=True)}-{i}" value="{side}"'
+            f'{" checked" if side == "both" else ""}>'
+            f'<span>{text}</span></label>'
+            for side, text in (("both", "both"), ("first", "1st"), ("second", "2nd")))
+        rows.append(f'<div class="trow" data-tag="{esc(name, quote=True)}">'
+                    f'{label}<span class="tchoices">{choices}</span></div>')
+    return ('<div class="tags"><span class="tags-h">tags</span>'
+            + "".join(rows) + '</div>')
 
 
 def write_review_html(html_path, candidates, multi, quiet=False):
@@ -277,6 +314,7 @@ def write_review_html(html_path, candidates, multi, quiet=False):
           <div class="audio"></div>
         </div>
       </div>
+      {tag_picker(c, esc)}
     </div>
     {track_player}
   </div>
@@ -425,6 +463,32 @@ def write_review_html(html_path, candidates, multi, quiet=False):
                    text-transform: uppercase; letter-spacing: .04em;
                    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
   .part .plabel b {{ color: var(--fg); font-weight: 700; }}
+  .tags {{ margin: .5rem 0 0 1.6rem; }}
+  .tags-h {{ display: block; color: var(--muted); font-size: 12px;
+             text-transform: uppercase; letter-spacing: .04em; margin-bottom: .15rem; }}
+  .trow {{ display: flex; align-items: center; gap: .5rem; padding: .1rem 0; }}
+  .tname {{ flex: 1 1 auto; min-width: 0; font-size: 13px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+  .tname .swatch {{ display: inline-block; width: .55rem; height: .55rem;
+                    border-radius: 50%; margin-right: .35rem; vertical-align: baseline; }}
+  .tname.has-notes {{ text-decoration: underline dotted
+                      color-mix(in srgb, var(--muted) 70%, transparent);
+                      text-underline-offset: 3px; cursor: help; }}
+  .tchoices {{ display: flex; gap: .1rem; flex: 0 0 auto; }}
+  .tchoice {{ cursor: pointer; }}
+  .tchoice input {{ position: absolute; opacity: 0; pointer-events: none; }}
+  .tchoice span {{ display: inline-block; font-size: 12px; line-height: 1;
+                   padding: .22rem .45rem; border: 1px solid var(--btn-line);
+                   background: var(--btn); color: var(--muted);
+                   transition: background .12s ease, color .12s ease; }}
+  .tchoice:first-child span {{ border-radius: 6px 0 0 6px; }}
+  .tchoice:last-child span {{ border-radius: 0 6px 6px 0; }}
+  .tchoice + .tchoice span {{ border-left: none; }}
+  .tchoice input:checked + span {{ background: var(--link); color: #fff;
+                                   border-color: var(--link); }}
+  .tchoice:hover span {{ color: var(--fg); }}
+  .tchoice input:focus-visible + span {{ outline: 2px solid var(--accent);
+                                         outline-offset: 1px; }}
   .controls audio {{ width: 100%; height: 34px; }}
   @media (prefers-color-scheme: dark) {{
     .controls audio {{ color-scheme: dark; }}
@@ -842,6 +906,10 @@ function saveProgress() {{
     }} else if (s && s.checked) {{
       state[key] = {{mark: "s"}};
     }}
+    const tags = tagChoices(row);
+    if (Object.keys(tags).length) {{
+      state[key] = Object.assign(state[key] || {{mark: null}}, {{tag_sides: tags}});
+    }}
   }});
   try {{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }}
   catch (e) {{ /* private mode or full quota: progress just stops persisting */ }}
@@ -854,6 +922,16 @@ function restoreProgress() {{
   document.querySelectorAll(".row").forEach(row => {{
     const saved = state[rowKey(row)];
     if (!saved) return;
+    if (saved.tag_sides) {{
+      Object.keys(saved.tag_sides).forEach(name => {{
+        const trow = [...row.querySelectorAll(".trow")]
+          .find(t => t.dataset.tag === name);
+        if (!trow) return;
+        const pick = trow.querySelector('input[value="' + saved.tag_sides[name] + '"]');
+        if (pick) pick.checked = true;
+      }});
+    }}
+    if (!saved.mark) return;
     const box = row.querySelector(saved.mark === "a" ? "input.approve" : "input.skip");
     if (!box) return;
     box.checked = true;
@@ -1091,6 +1169,10 @@ document.querySelectorAll(".row").forEach(row => {{
   if (skipBox) settle(skipBox, cb);
   row._syncDone = syncDone;
 
+  row.querySelectorAll(".trow input[type=radio]").forEach(radio => {{
+    radio.addEventListener("change", saveProgress);
+  }});
+
   // Play both clips back to back, so one press auditions the whole cut the way
   // the audio will actually run once the track is split.
   const playPair = () => {{
@@ -1147,14 +1229,26 @@ document.querySelectorAll(".row").forEach(row => {{
 restoreProgress();
 updateLegend();
 
+function tagChoices(row) {{
+  const out = {{}};
+  row.querySelectorAll(".trow").forEach(trow => {{
+    const picked = trow.querySelector("input:checked");
+    if (picked && picked.value !== "both") out[trow.dataset.tag] = picked.value;
+  }});
+  return out;
+}}
+
 document.getElementById("export").onclick = () => {{
   const approved = [...document.querySelectorAll("input.approve:checked")]
     .map(cb => {{
       const p = JSON.parse(cb.dataset.payload);
       // The apply step needs the track, the cut, and a label to report; the
       // rest is review-page bookkeeping.
-      return {{label: p.label, mp3_url: p.mp3_url, share_url: p.share_url,
+      const entry = {{label: p.label, mp3_url: p.mp3_url, share_url: p.share_url,
                cut_s: p.cut_s}};
+      const tags = tagChoices(cb.closest(".row"));
+      if (Object.keys(tags).length) entry.tag_sides = tags;
+      return entry;
     }});
   const blob = new Blob([JSON.stringify(approved, null, 2)], {{type: "application/json"}});
   const a = Object.assign(document.createElement("a"),

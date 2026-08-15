@@ -16,6 +16,7 @@ class TrackSplitService < ApplicationService
   option :cut_s
   option :dry_run, default: -> { false }
   option :song_overrides, default: -> { {} }
+  option :tag_sides, default: -> { {} }
 
   # Both halves must be at least this long. A cut nearer either end is a
   # mis-click, not a segue; audio_split_analysis.py screens for the same bound.
@@ -186,10 +187,32 @@ class TrackSplitService < ApplicationService
       shift_later_positions
       @new_track = build_second_track
       rewrite_original
+      reslug_duplicate_titles
       copy_likes
       split_tags
       move_jam_start
       split_playlist_entries
+    end
+  end
+
+  def reslug_duplicate_titles
+    @reslugged = []
+    siblings = track.show.tracks.reload.order(:position)
+                    .select { part_titles[1].casecmp?(it.title) }
+    return if siblings.size < 2
+
+    was = siblings.to_h { [ it.id, it.slug ] }
+    # Two phases: (show_id, slug) is unique, and the final slugs permute among
+    # these same rows, so assigning them directly would collide with a row that
+    # has not been renumbered yet.
+    siblings.each_with_index do |sibling, i|
+      sibling.update_columns(slug: "tmp-#{track.id}-#{i}-#{SecureRandom.hex(4)}")
+    end
+    siblings.each do |sibling|
+      sibling.generate_slug(force: true)
+      sibling.save!
+      next if sibling.slug == was[sibling.id]
+      @reslugged << { track_id: sibling.id, from: was[sibling.id], to: sibling.slug }
     end
   end
 
@@ -242,7 +265,15 @@ class TrackSplitService < ApplicationService
       starts = tag.starts_at_second
       ends = tag.ends_at_second
       if starts.nil? && ends.nil?
-        copy_tag(tag)
+        case tag_side_for(tag)
+        when "first"
+          nil
+        when "second"
+          tag.update!(track: @new_track)
+          @tags_copied += 1
+        else
+          copy_tag(tag)
+        end
         next
       end
       if ends && starts && starts < cut && ends > cut
@@ -263,6 +294,11 @@ class TrackSplitService < ApplicationService
       )
       @tags_copied += 1
     end
+  end
+
+  def tag_side_for(track_tag)
+    name = track_tag.tag.name
+    tag_sides.find { |k, _| k.to_s.casecmp?(name) }&.last
   end
 
   def copy_tag(tag, **overrides)
@@ -359,6 +395,7 @@ class TrackSplitService < ApplicationService
       tags_copied: @tags_copied.to_i,
       playlist_entries: @playlist_entries.to_i,
       notes: @notes || [],
+      reslugged: @reslugged || [],
       applied: !dry_run
     }
   end
