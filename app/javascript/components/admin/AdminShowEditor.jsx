@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { adminGet } from "./adminApi";
 import TracksTab from "./TracksTab";
+import AudioTab from "./AudioTab";
 import ShowPanel from "./ShowPanel";
 
 export const EditorContext = createContext(null);
@@ -13,6 +14,7 @@ const AdminShowEditor = () => {
   const [show, setShow] = useState(null);
   const [tab, setTab] = useState("Tracks");
   const [error, setError] = useState(null);
+  const [gapsStale, setGapsStale] = useState(false);
 
   const reload = useCallback(async () => {
     try {
@@ -48,7 +50,17 @@ const AdminShowEditor = () => {
   }
 
   return (
-    <EditorContext.Provider value={{ show, setShow, setTrack, reload, setError }}>
+    <EditorContext.Provider
+      value={{
+        show,
+        setShow,
+        setTrack,
+        reload,
+        setError,
+        gapsStale,
+        setGapsStale,
+      }}
+    >
       <div className="admin-show-editor">
         <header>
           <h1>
@@ -70,7 +82,9 @@ const AdminShowEditor = () => {
             </button>
           ))}
         </nav>
-        {tab === "Tracks" ? <TracksTab /> : <p>Coming soon</p>}
+        {tab === "Tracks" && <TracksTab />}
+        {tab === "Audio" && <AudioTab />}
+        {tab !== "Tracks" && tab !== "Audio" && <p>Coming soon</p>}
       </div>
     </EditorContext.Provider>
   );

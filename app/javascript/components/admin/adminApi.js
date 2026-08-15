@@ -31,6 +31,16 @@ export const adminPatch = (path, body = {}) => request("PATCH", path, body);
 export const adminPut = (path, body = {}) => request("PUT", path, body);
 export const adminDelete = (path) => request("DELETE", path);
 
+// An <audio> tag cannot send the admin auth header, so rendered previews are
+// fetched here and handed to the player as an object URL. Callers own the URL
+// and must revoke it once the player is done with it.
+export const fetchJobAudio = async (jobId, index = 0) => {
+  const response = await authFetch(`${BASE}/jobs/${jobId}/audio?index=${index}`);
+  if (!response.ok) throw new Error(`Audio fetch failed (${response.status})`);
+  const blob = await response.blob();
+  return URL.createObjectURL(blob);
+};
+
 export const POLL_TIMEOUT_MS = 15 * 60 * 1000;
 export const POLL_INTERVAL_MS = 1500;
 const MAX_CONSECUTIVE_POLL_ERRORS = 3;

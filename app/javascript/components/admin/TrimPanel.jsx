@@ -1,0 +1,137 @@
+import React, { useContext, useRef, useState } from "react";
+import { EditorContext } from "./AdminShowEditor";
+import WaveformScrubber from "./WaveformScrubber";
+import PreviewPlayer from "./PreviewPlayer";
+import useJobRunner from "./useJobRunner";
+import { adminPost, fetchJobAudio } from "./adminApi";
+
+const round = (value) => Math.round(value * 10) / 10;
+
+const TrimPanel = ({ track }) => {
+  const { reload } = useContext(EditorContext);
+  const duration = (track.duration || 0) / 1000;
+  const [trimStart, setTrimStart] = useState(0);
+  const [trimEnd, setTrimEnd] = useState(round(duration));
+  const [fadeIn, setFadeIn] = useState(0.2);
+  const [fadeOut, setFadeOut] = useState(6.0);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [previewedAt, setPreviewedAt] = useState(null);
+  const [playhead, setPlayhead] = useState(0);
+  const audioRef = useRef(null);
+  const { run, busy, status, error } = useJobRunner();
+
+  const values = { trim_start: trimStart, trim_end: trimEnd, fade_in: fadeIn, fade_out: fadeOut };
+  const signature = JSON.stringify(values);
+  const previewCurrent = previewedAt === signature;
+
+  const clearPreview = () => {
+    setPreviewUrl(null);
+    setPreviewedAt(null);
+  };
+
+  const setValue = (setter) => (value) => {
+    setter(value);
+    clearPreview();
+  };
+
+  const moveMarker = (name, seconds) => {
+    if (name === "start") setValue(setTrimStart)(round(Math.min(seconds, trimEnd)));
+    else setValue(setTrimEnd)(round(Math.max(seconds, trimStart)));
+  };
+
+  const renderPreview = () =>
+    run(
+      () => adminPost(`/tracks/${track.id}/trim_preview`, values),
+      async (job) => {
+        setPreviewUrl(await fetchJobAudio(job.id));
+        setPreviewedAt(signature);
+      }
+    );
+
+  const applyTrim = () => {
+    if (!window.confirm(`Apply this trim to "${track.title}"? The original is backed up.`)) return;
+    run(
+      () => adminPost(`/tracks/${track.id}/trim_apply`, values),
+      async () => {
+        clearPreview();
+        await reload();
+      }
+    );
+  };
+
+  const numberField = (label, value, setter, extra = {}) => (
+    <label className="admin-audio-field">
+      <span>{label}</span>
+      <input
+        type="number"
+        step="0.1"
+        min="0"
+        value={value}
+        disabled={busy}
+        onChange={(e) => setValue(setter)(Number(e.target.value))}
+        {...extra}
+      />
+    </label>
+  );
+
+  return (
+    <div className="admin-audio-panel">
+      <h4>Trim</h4>
+      <WaveformScrubber
+        waveformUrl={track.waveform_url}
+        duration={duration}
+        playheadSeconds={playhead}
+        markers={[
+          { name: "start", seconds: trimStart, color: "var(--blue)" },
+          { name: "end", seconds: trimEnd, color: "var(--alert-red)" },
+        ]}
+        onMarkerChange={moveMarker}
+        onSeek={(seconds) => {
+          if (audioRef.current) audioRef.current.currentTime = seconds;
+          setPlayhead(seconds);
+        }}
+      />
+
+      <div className="admin-audio-fields">
+        {numberField("Trim start", trimStart, setTrimStart, { max: trimEnd })}
+        {numberField("Trim end", trimEnd, setTrimEnd, { max: round(duration) })}
+        {numberField("Fade in", fadeIn, setFadeIn)}
+        {numberField("Fade out", fadeOut, setFadeOut)}
+      </div>
+
+      <div className="admin-preview-player">
+        <span className="admin-preview-label">Original</span>
+        <audio
+          ref={audioRef}
+          controls
+          src={track.mp3_url}
+          onTimeUpdate={(e) => setPlayhead(e.target.currentTime)}
+        />
+      </div>
+
+      <PreviewPlayer
+        label="Preview - this exact audio will be committed"
+        url={previewUrl}
+      />
+
+      <div className="admin-audio-actions">
+        <button type="button" onClick={renderPreview} disabled={busy}>
+          Render Preview
+        </button>
+        <button type="button" onClick={applyTrim} disabled={busy || !previewCurrent}>
+          Apply Trim
+        </button>
+        {previewUrl && !previewCurrent && (
+          <span className="admin-audio-status">
+            Values changed. Render a new preview before applying.
+          </span>
+        )}
+        {status && <span className="admin-audio-status">{status}</span>}
+      </div>
+
+      {error && <p className="admin-error">{error}</p>}
+    </div>
+  );
+};
+
+export default TrimPanel;
