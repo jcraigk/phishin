@@ -498,7 +498,7 @@ RSpec.describe TrackSplitService do
     let(:dry_run) { true }
 
     context "when the cut is too near the start" do
-      let(:cut_s) { 5.0 }
+      let(:cut_s) { 1.0 }
 
       it "refuses to split" do
         expect { result }.to raise_error(described_class::CutOutOfRangeError)
@@ -506,10 +506,18 @@ RSpec.describe TrackSplitService do
     end
 
     context "when the cut is too near the end" do
-      let(:cut_s) { 55.0 }
+      let(:cut_s) { 59.0 }
 
       it "refuses to split" do
         expect { result }.to raise_error(described_class::CutOutOfRangeError)
+      end
+    end
+
+    context "when a part is short but above the minimum" do
+      let(:cut_s) { 5.0 }
+
+      it "allows the split" do
+        expect { result }.not_to raise_error
       end
     end
 

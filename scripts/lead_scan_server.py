@@ -110,17 +110,40 @@ def source_for(mp3_url, storage_dirs):
     return mp3_url
 
 
+def wav_trim_command(src, out_path, start, end, fade_in, fade_out):
+    """Same trim as aea.trim_command, rendered to PCM. An mp3 carries encoder
+    delay and padding, which a browser plays as a short fade at the tail; a wav
+    is sample exact, so an audition ends exactly where the cut does. Previews
+    are ephemeral, so the size costs nothing."""
+    src = str(src)
+    reconnect = ([
+        "-reconnect", "1", "-reconnect_streamed", "1",
+        "-reconnect_delay_max", "5",
+    ] if src.startswith(("http://", "https://")) else [])
+    pre = []
+    if start > 0:
+        seek = max(0.0, start - 1.0)
+        pre = ["-ss", f"{seek:.2f}"]
+        start, end = start - seek, end - seek
+    return [
+        "ffmpeg", "-y", "-v", "error", *reconnect, *pre, "-i", src,
+        "-af", ",".join(aea.trim_filters(start, end, fade_in, fade_out)),
+        "-map_metadata", "-1", "-c:a", "pcm_s16le", str(out_path),
+    ]
+
+
 def render_preview(mp3_url, trim_start, trim_end, fade_in, fade_out, storage_dirs,
-                   head_s=PREVIEW_HEAD_S):
+                   head_s=PREVIEW_HEAD_S, fmt="mp3"):
     # What is being judged is the splice at the start, so render only the first
     # head_s of the kept audio. Encoding all 7 minutes of a track to audition a
     # 2-second edit is what made rapid edits queue up behind slow renders.
     if head_s and trim_end - trim_start > head_s:
         trim_end = trim_start + head_s
     stamp = hashlib.sha1(
-        f"{mp3_url}|{trim_start:.2f}|{trim_end:.2f}|{fade_in:.2f}|{fade_out:.2f}".encode()
+        f"{mp3_url}|{trim_start:.2f}|{trim_end:.2f}|{fade_in:.2f}|{fade_out:.2f}"
+        f"|{fmt}".encode()
     ).hexdigest()[:16]
-    out_path = PREVIEW_DIR / f"{stamp}.mp3"
+    out_path = PREVIEW_DIR / f"{stamp}.{fmt}"
     # Check the cache before touching the source: a re-request of something
     # already rendered should never wait on a download or a lock.
     if out_path.exists():
@@ -136,8 +159,13 @@ def render_preview(mp3_url, trim_start, trim_end, fade_in, fade_out, storage_dir
     # a network read on a cold track - so it gets the same deadline as the
     # render rather than being allowed to hang before ffmpeg even starts.
     try:
-        cmd = aea.trim_command(src, out_path, trim_start, trim_end, fade_in, fade_out,
-                               seek_input=True, probe_timeout=RENDER_TIMEOUT_S)
+        if fmt == "wav":
+            cmd = wav_trim_command(src, out_path, trim_start, trim_end,
+                                   fade_in, fade_out)
+        else:
+            cmd = aea.trim_command(src, out_path, trim_start, trim_end,
+                                   fade_in, fade_out, seek_input=True,
+                                   probe_timeout=RENDER_TIMEOUT_S)
     except subprocess.TimeoutExpired:
         raise RuntimeError(
             f"source probe timed out after {RENDER_TIMEOUT_S}s - the track is "
@@ -191,15 +219,20 @@ class Handler(SimpleHTTPRequestHandler):
             trim_end = float(req["trim_end"])
             fade_in = float(req.get("fade_in", 0.0))
             fade_out = float(req.get("fade_out", 0.0))
+            fmt = str(req.get("fmt", "mp3")).lower()
         except (KeyError, TypeError, ValueError, json.JSONDecodeError) as e:
             return self._json(400, {"error": f"bad request: {e}"})
+
+        if fmt not in ("mp3", "wav"):
+            return self._json(400, {"error": "fmt must be mp3 or wav"})
 
         if trim_end <= trim_start:
             return self._json(400, {"error": "trim_end must be after trim_start"})
 
         try:
             out_path = render_preview(
-                mp3_url, trim_start, trim_end, fade_in, fade_out, self.storage_dirs)
+                mp3_url, trim_start, trim_end, fade_in, fade_out, self.storage_dirs,
+                fmt=fmt)
         except Exception as e:  # noqa: BLE001 - surfaced to the reviewer verbatim
             return self._json(500, {"error": str(e)})
 
@@ -215,7 +248,7 @@ class Handler(SimpleHTTPRequestHandler):
             name = Path(clean).name
             # Rendered names are hex digests; refuse anything else so this
             # cannot be walked out of the preview dir.
-            if not re.fullmatch(r"[0-9a-f]{16}\.mp3", name):
+            if not re.fullmatch(r"[0-9a-f]{16}\.(mp3|wav)", name):
                 return str(PREVIEW_DIR / "missing")
             return str(PREVIEW_DIR / name)
         return super().translate_path(path)

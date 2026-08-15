@@ -44,7 +44,7 @@ CLIP_BEFORE_S = 5.0
 CLIP_AFTER_S = 20.0
 # Both halves must be at least this long for a cut to be plausible; mirrors
 # TrackSplitService::MIN_PART_S, which rejects anything shorter on apply.
-MIN_PART_S = 10.0
+MIN_PART_S = 2.0
 # Splits "A > B" and "A -> B" alike. Both mark a segue; the arrow form means
 # seamless, a distinction the split does not preserve (see the design doc).
 SEGUE_RE = re.compile(r"\s*-?>\s*")
@@ -116,16 +116,41 @@ def split_title(title):
     return [p.strip() for p in SEGUE_RE.split(title, maxsplit=1)]
 
 
-def unmatched_parts(part_titles, songs):
-    """Part titles with no song of that name on the track.
+def unmatched_parts(part_titles, songs, catalog=None):
+    """Part titles that apply will not be able to resolve to a Song.
 
-    An early warning: apply resolves each half to a Song record, and a part that
-    matches nothing here will need a catalog lookup or a human at that point."""
+    Mirrors TrackSplitService#songs: the track's own associations first, then
+    the catalog by title. A part like "Jam" is routinely absent from the track
+    while the song exists, so checking the track alone flags rows that would
+    have applied cleanly."""
     known = {s.strip().casefold() for s in songs}
+    if catalog:
+        known |= catalog
     return [p for p in part_titles if p.casefold() not in known]
 
 
-def fetch_show_candidates(date, ignore_urls):
+def fetch_song_titles():
+    """Every song title in the catalog, casefolded. Empty on failure, which
+    just restores the old track-only check rather than blocking a scan."""
+    titles, page = set(), 1
+    try:
+        while True:
+            resp = requests.get(f"{API_BASE}/songs",
+                                params={"page": page, "per_page": 500}, timeout=30)
+            resp.raise_for_status()
+            data = resp.json()
+            titles |= {s["title"].strip().casefold() for s in data.get("songs", [])}
+            if page >= data.get("total_pages", 1):
+                break
+            page += 1
+    except requests.RequestException as e:
+        print(f"  song catalog fetch failed ({e}); "
+              "falling back to track associations only", file=sys.stderr)
+        return set()
+    return titles
+
+
+def fetch_show_candidates(date, ignore_urls, catalog=None):
     """(candidates, multi_segue) for one show, from its API payload."""
     resp = requests.get(f"{API_BASE}/shows/{date}", timeout=30)
     resp.raise_for_status()
@@ -168,7 +193,7 @@ def fetch_show_candidates(date, ignore_urls):
             # The midpoint is a neutral starting point, not a guess at the segue;
             # every row is expected to be moved by hand.
             cut_s=round(duration_s / 2, 1),
-            unmatched_parts=unmatched_parts(parts, songs),
+            unmatched_parts=unmatched_parts(parts, songs, catalog),
             tags=untimestamped_tags(t.get("tags") or []),
         ))
     return candidates, multi
@@ -300,10 +325,10 @@ def write_review_html(html_path, candidates, multi, quiet=False):
         <button class="replay" title="replay both audition clips (e)">&#x21ba;</button>
         <input class="cut" type="text" value="{fmt_tenths(c.cut_s)}"
           size="8" spellcheck="false" title="cut point">
-        <button class="nudge" data-step="-1" title="1 second earlier (a)">&minus;1</button>
+        <button class="nudge" data-step="-1" title="1 second earlier (a or ,)">&minus;1</button>
         <button class="nudge" data-step="-0.1" title="0.1 seconds earlier (s or [)">&minus;.1</button>
         <button class="nudge" data-step="0.1" title="0.1 seconds later (d or ])">+.1</button>
-        <button class="nudge" data-step="1" title="1 second later (f)">+1</button>
+        <button class="nudge" data-step="1" title="1 second later (f or .)">+1</button>
       </div>
       <div class="parts">
         <div class="part" data-side="before">
@@ -637,7 +662,8 @@ async function renderPreview(row) {{
             mp3_url: payload.mp3_url, trim_start: s.start, trim_end: s.end,
             // Butt cut, no fades: the two halves come from one continuous
             // recording, and the apply step joins nothing - it just cuts.
-            fade_in: 0, fade_out: 0
+            fade_in: 0, fade_out: 0,
+            fmt: "wav"
           }})
         }});
         const data = await resp.json();
@@ -737,6 +763,15 @@ function selectRow(row) {{
   if (row._startTrack && !row.classList.contains("done")) row._startTrack();
 }}
 
+function rowForShortcut(e) {{
+  const focused = e.target && e.target.closest && e.target.closest(".row");
+  if (focused) {{
+    if (window._sel !== focused) selectRow(focused);
+    return focused;
+  }}
+  return window._sel;
+}}
+
 function moveSelection(delta) {{
   const rows = [...document.querySelectorAll(".row")];
   if (!rows.length) return;
@@ -756,37 +791,37 @@ document.addEventListener("keydown", e => {{
     return moveSelection(e.key === "ArrowDown" ? 1 : -1);
   }}
 
-  const typing = (t === "INPUT" && e.target.type !== "checkbox")
+  const typing = (t === "INPUT" && e.target.type === "text")
     || t === "TEXTAREA" || (e.target && e.target.isContentEditable);
-  // The only text field is the m:ss.s cut time, so digits, ":" and "." are the
-  // only characters it can need; every other printable key stays a shortcut.
   const isTimeChar = e.key.length === 1 && /[0-9.:]/.test(e.key);
   const isShortcutChar = e.key.length === 1 && !isTimeChar;
-  if (typing && !(t === "INPUT" && isShortcutChar)) return;
+  if (typing && !isShortcutChar) return;
   if (typing && isShortcutChar) e.preventDefault();
   if (e.target && e.target.blur && (t === "AUDIO" || t === "INPUT" || t === "BUTTON")) {{
     e.target.blur();
   }}
   if (e.key === " " || e.key === "Spacebar") {{
     e.preventDefault();
-    if (!window._sel || !window._sel._toggle) return;
-    return window._sel._toggle();
+    const row = rowForShortcut(e);
+    if (!row || !row._toggle) return;
+    return row._toggle();
   }}
   // Right-hand aliases so the whole loop is reachable without moving hands:
-  // / = c (adopt), ; = w (approve), ' = k (skip). The nudge pair , and . alias
-  // the fine steps, the ones used most while dialling a cut in.
-  const RIGHT_HAND = {{"/": "c", ",": "s", ".": "d", ";": "w", "'": "k"}};
+  // / = c (adopt), ; = w (approve), ' = k (skip); , . are seconds, [ ] tenths.
+  const RIGHT_HAND = {{"/": "c", ",": "a", ".": "f", ";": "w", "'": "k"}};
   const key = RIGHT_HAND[e.key] || e.key;
 
   if (key === "c" || key === "C") {{
-    if (!window._sel || !window._sel._adopt) return;
+    const row = rowForShortcut(e);
+    if (!row || !row._adopt) return;
     e.preventDefault();
-    return window._sel._adopt();
+    return row._adopt();
   }}
   if (key === "r" || key === "R") {{
-    if (!window._sel || !window._sel._restart) return;
+    const row = rowForShortcut(e);
+    if (!row || !row._restart) return;
     e.preventDefault();
-    return window._sel._restart();
+    return row._restart();
   }}
   // a s d f map straight onto the four nudge buttons left to right, so the
   // home row is the button row. [ and ] stay as right-hand aliases for the
@@ -797,44 +832,49 @@ document.addEventListener("keydown", e => {{
   }};
   const nudgeStep = nudgeKeys[key.toLowerCase()];
   if (nudgeStep !== undefined) {{
-    if (!window._sel || !window._sel._nudge) return;
+    const row = rowForShortcut(e);
+    if (!row || !row._nudge) return;
     e.preventDefault();
-    window._sel._nudge(nudgeStep);
+    row._nudge(nudgeStep);
     return;
   }}
   const answerKeys = {{w: "approve", x: "skip", k: "skip"}};
   const answer = answerKeys[key.toLowerCase()];
   if (answer) {{
-    if (!window._sel) return;
-    const box = window._sel.querySelector("input." + answer);
+    const row = rowForShortcut(e);
+    if (!row) return;
+    const box = row.querySelector("input." + answer);
     if (!box) return;
     e.preventDefault();
-    const other = window._sel.querySelector(
+    const other = row.querySelector(
       "input." + (answer === "approve" ? "skip" : "approve"));
     if (other) other.checked = false;
     box.checked = true;
-    if (window._sel._syncDone) window._sel._syncDone();
+    if (row._syncDone) row._syncDone();
     return moveSelection(1);
   }}
   // "e" toggles the clips: the pair plays in order, before then after, so one
   // key auditions the whole cut.
   if (e.key === "e" || e.key === "E") {{
-    if (!window._sel) return;
-    const clips = [...window._sel.querySelectorAll(".audio audio")];
+    const row = rowForShortcut(e);
+    if (!row) return;
+    const clips = [...row.querySelectorAll(".audio audio")];
     if (!clips.length) return;
     e.preventDefault();
     const playing = clips.find(c => !c.paused);
     if (playing) return playing.pause();
-    if (window._sel._playPair) window._sel._playPair();
+    if (row._playPair) row._playPair();
     return;
   }}
   if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
 
   const cur = window._playing;
-  if ((!cur || cur.audio.paused) && e.key === "ArrowRight"
-      && window._sel && window._sel._toggle) {{
-    e.preventDefault();
-    return window._sel._toggle();
+  if (!cur || cur.audio.paused) {{
+    const row = e.key === "ArrowRight" && rowForShortcut(e);
+    if (row && row._toggle) {{
+      e.preventDefault();
+      return row._toggle();
+    }}
   }}
   if (!cur) return;
   e.preventDefault();
@@ -1215,7 +1255,23 @@ document.querySelectorAll(".row").forEach(row => {{
     const base = parseTime(input.value) ?? JSON.parse(cb.dataset.payload).cut_s;
     const next = Math.max(0, Math.round((base + amount) * 10) / 10);
     // Both halves must survive the cut, the same bound the apply step enforces.
-    if (duration && (next < {MIN_PART_S} || next > duration - {MIN_PART_S})) return;
+    if (duration && (next < {MIN_PART_S} || next > duration - {MIN_PART_S})) {{
+      const status = row.querySelector(".status");
+      if (status) {{
+        status.textContent =
+          "cut must leave {MIN_PART_S}s on each side (max " +
+          fmtTime(Math.round((duration - {MIN_PART_S}) * 10) / 10) + ")";
+        status.classList.add("err");
+        clearTimeout(row._limitMsg);
+        row._limitMsg = setTimeout(() => {{
+          if (status.classList.contains("err")) {{
+            status.textContent = "";
+            status.classList.remove("err");
+          }}
+        }}, 2500);
+      }}
+      return;
+    }}
     input.value = fmtTime(next);
     input.classList.remove("invalid");
     commit();
@@ -1324,10 +1380,14 @@ def main():
     if not dates:
         p.error("nothing to scan: pass --year, --show, or --rebuild")
 
+    catalog = fetch_song_titles()
+    print(f"song catalog: {len(catalog)} titles", file=sys.stderr)
+
     candidates, multi = [], []
     ordered = sorted(set(dates))
     with ThreadPoolExecutor(max_workers=FETCH_WORKERS) as pool:
-        results = pool.map(lambda d: fetch_show_candidates(d, ignore_urls), ordered)
+        results = pool.map(
+            lambda d: fetch_show_candidates(d, ignore_urls, catalog), ordered)
         for i, (date, (found, found_multi)) in enumerate(zip(ordered, results), 1):
             print(f"[{i}/{len(ordered)}] {date}", file=sys.stderr)
             for c in found:

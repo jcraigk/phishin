@@ -20,7 +20,7 @@ class TrackSplitService < ApplicationService
 
   # Both halves must be at least this long. A cut nearer either end is a
   # mis-click, not a segue; audio_split_analysis.py screens for the same bound.
-  MIN_PART_S = 10.0
+  MIN_PART_S = 2.0
   OUTPUT_DIR = Rails.root.join("tmp/track_splits")
   BACKUP_DIR = Rails.root.join("tmp/track_split_backups")
   # Splits "A > B" and "A -> B" alike; mirrors SEGUE_RE in the scan script.
