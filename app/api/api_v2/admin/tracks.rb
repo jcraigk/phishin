@@ -40,31 +40,14 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
         track_payload(track.reload)
       end
 
+      desc "Render a combine preview without altering either track", hidden: true
+      post ":id/combine_preview" do
+        enqueue_combine("combine_preview", false)
+      end
+
       desc "Merge a track into the previous track", hidden: true
-      post ":id/combine_up" do
-        track = Track.find(params[:id])
-        show = track.show
-        previous = show.tracks.find_by(position: track.position - 1)
-        error!({ message: "No previous track to combine into" }, 422) if previous.nil?
-
-        ActiveRecord::Base.transaction do
-          previous.title = "#{previous.title} > #{track.title}"
-          previous.generate_slug(force: true) unless show.published?
-          previous.songs = (previous.songs + track.songs).uniq
-          if !previous.mp3_audio.attached? && track.mp3_audio.attached?
-            previous.mp3_audio.attach(track.mp3_audio.blob)
-            previous.audio_status = "complete"
-          end
-          previous.save!
-          track.destroy!
-          renumber(show)
-        end
-        previous.process_mp3_audio if previous.mp3_audio.attached?
-
-        # Grape defaults POST to 201; this modifies existing tracks rather than
-        # creating a resource, so it reports 200.
-        status 200
-        editor_payload(show.reload)
+      post ":id/combine_apply" do
+        enqueue_combine("combine_apply", true)
       end
 
       desc "Render a trim preview without altering the track", hidden: true
@@ -140,6 +123,22 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
       end
       job = AdminJob.create!(kind:, track:, show: track.show)
       Admin::SplitJob.perform_async(track.id, job.id, params[:cut_s], apply)
+      status 201
+      { job_id: job.id }
+    end
+
+    # Combining replaced an inline endpoint that merged metadata in the request
+    # and threw the second track's audio away. Joining two files is an ffmpeg
+    # render, so it runs as a job on the preview-then-apply pattern trim and
+    # split use, and the preview lets an admin hear the seam before a track row
+    # is destroyed. The missing-previous check runs here so the first track in a
+    # show fails at the click rather than in a background job.
+    def enqueue_combine(kind, apply)
+      track = Track.find(params[:id])
+      previous = track.show.tracks.find_by(position: track.position - 1)
+      error!({ message: "No previous track to combine into" }, 422) if previous.nil?
+      job = AdminJob.create!(kind:, track:, show: track.show)
+      Admin::CombineTracksJob.perform_async(track.id, job.id, apply)
       status 201
       { job_id: job.id }
     end

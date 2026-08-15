@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import SongPicker from "./SongPicker";
-import { adminPatch, adminPost, adminDelete } from "./adminApi";
+import { adminPatch, adminDelete } from "./adminApi";
 
 const SETS = ["S", "1", "2", "3", "4", "E", "E2", "E3"];
 
@@ -180,15 +180,6 @@ const TrackRow = ({
         />
       </td>
       <td className="admin-track-actions">
-        <button
-          type="button"
-          disabled={busy || track.position <= 1}
-          onClick={() =>
-            replaceShow(() => adminPost(`/tracks/${track.id}/combine_up`))
-          }
-        >
-          Combine Up
-        </button>
         <button type="button" disabled={busy} onClick={deleteTrack}>
           Delete
         </button>

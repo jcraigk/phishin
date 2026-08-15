@@ -199,54 +199,90 @@ RSpec.describe "API v2 Admin Tracks" do
     end
   end
 
-  describe "POST /api/v2/admin/tracks/:id/combine_up" do
+  describe "POST /api/v2/admin/tracks/:id/combine_preview and combine_apply" do
     it "returns 401 without a token" do
-      post "/api/v2/admin/tracks/#{track2.id}/combine_up"
+      post "/api/v2/admin/tracks/#{track2.id}/combine_preview"
       expect(response).to have_http_status(:unauthorized)
     end
 
     it "returns 403 for a non-admin user" do
-      post "/api/v2/admin/tracks/#{track2.id}/combine_up", headers: user_headers
+      post "/api/v2/admin/tracks/#{track2.id}/combine_preview", headers: user_headers
       expect(response).to have_http_status(:forbidden)
     end
 
-    it "merges into the previous track and renumbers" do
-      post "/api/v2/admin/tracks/#{track2.id}/combine_up", headers: admin_headers
-      expect(response).to have_http_status(:ok)
-      track1.reload
-      expect(track1.title).to eq("Ghost > Free")
-      expect(track1.songs).to contain_exactly(song_a, song_b)
-      expect(Track.exists?(track2.id)).to be(false)
-      expect(track3.reload.position).to eq(2)
+    it "returns 401 without a token on apply" do
+      post "/api/v2/admin/tracks/#{track2.id}/combine_apply"
+      expect(response).to have_http_status(:unauthorized)
     end
 
-    it "leaves positions contiguous from 1 across a longer show" do
-      create(:track, show:, position: 4, title: "Fourth", set: "1")
-      create(:track, show:, position: 5, title: "Fifth", set: "1")
-      post "/api/v2/admin/tracks/#{track2.id}/combine_up", headers: admin_headers
-      expect(positions_for(show)).to eq([ 1, 2, 3, 4 ])
+    it "returns 403 for a non-admin user on apply" do
+      post "/api/v2/admin/tracks/#{track2.id}/combine_apply", headers: user_headers
+      expect(response).to have_http_status(:forbidden)
     end
 
-    it "does not duplicate a song present on both tracks" do
-      track2.songs = [ song_a, song_b ]
-      post "/api/v2/admin/tracks/#{track2.id}/combine_up", headers: admin_headers
-      expect(track1.reload.songs).to contain_exactly(song_a, song_b)
+    # Combine destroys a track row, so a rejected request has to leave the show
+    # exactly as it found it - anonymous and non-admin alike.
+    it "destroys no track when an unauthenticated apply is rejected" do
+      expect {
+        post "/api/v2/admin/tracks/#{track2.id}/combine_apply"
+      }.not_to change { [ show.tracks.reload.count, track1.reload.title, positions_for(show) ] }
     end
 
-    it "destroys the subsumed track's likes" do
-      create(:like, likable: track2)
-      expect { post "/api/v2/admin/tracks/#{track2.id}/combine_up", headers: admin_headers }
-        .to change(Like, :count).by(-1)
+    it "destroys no track when a non-admin apply is rejected" do
+      expect {
+        post "/api/v2/admin/tracks/#{track2.id}/combine_apply", headers: user_headers
+      }.not_to change { [ show.tracks.reload.count, track1.reload.title, positions_for(show) ] }
+    end
+
+    it "does not enqueue a job for an unauthorized apply" do
+      expect {
+        post "/api/v2/admin/tracks/#{track2.id}/combine_apply", headers: user_headers
+      }.not_to change(Admin::CombineTracksJob.jobs, :size)
+    end
+
+    it "returns a job id for a preview" do
+      post "/api/v2/admin/tracks/#{track2.id}/combine_preview", headers: admin_headers
+      expect(response).to have_http_status(:created)
+      expect(json[:job_id]).to eq(AdminJob.last.id)
+    end
+
+    it "enqueues the preview without applying" do
+      post "/api/v2/admin/tracks/#{track2.id}/combine_preview", headers: admin_headers
+      expect(Admin::CombineTracksJob.jobs.last["args"])
+        .to eq([ track2.id, AdminJob.last.id, false ])
+    end
+
+    it "records the preview job kind" do
+      post "/api/v2/admin/tracks/#{track2.id}/combine_preview", headers: admin_headers
+      expect(AdminJob.last).to have_attributes(kind: "combine_preview", track_id: track2.id)
+    end
+
+    it "enqueues the apply with the apply flag set" do
+      post "/api/v2/admin/tracks/#{track2.id}/combine_apply", headers: admin_headers
+      expect(Admin::CombineTracksJob.jobs.last["args"])
+        .to eq([ track2.id, AdminJob.last.id, true ])
+    end
+
+    # The endpoint only enqueues, so the merge itself has to wait for the worker.
+    it "changes nothing in the request itself" do
+      expect {
+        post "/api/v2/admin/tracks/#{track2.id}/combine_apply", headers: admin_headers
+      }.not_to change { [ show.tracks.reload.count, track1.reload.title ] }
     end
 
     it "422s on the first track" do
-      post "/api/v2/admin/tracks/#{track1.id}/combine_up", headers: admin_headers
+      post "/api/v2/admin/tracks/#{track1.id}/combine_preview", headers: admin_headers
       expect(response).to have_http_status(:unprocessable_content)
-      expect(positions_for(show)).to eq([ 1, 2, 3 ])
+    end
+
+    it "enqueues nothing for the first track" do
+      expect {
+        post "/api/v2/admin/tracks/#{track1.id}/combine_apply", headers: admin_headers
+      }.not_to change(Admin::CombineTracksJob.jobs, :size)
     end
 
     it "404s for an unknown track" do
-      post "/api/v2/admin/tracks/0/combine_up", headers: admin_headers
+      post "/api/v2/admin/tracks/0/combine_preview", headers: admin_headers
       expect(response).to have_http_status(:not_found)
     end
   end
