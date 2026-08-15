@@ -287,6 +287,183 @@ RSpec.describe "API v2 Admin Tracks" do
     end
   end
 
+  describe "POST /api/v2/admin/tracks/:id/shift_boundary_preview and _apply" do
+    def tone
+      path = Rails.root.join("tmp/spec/boundary_request_tone.mp3")
+      FileUtils.mkdir_p(path.dirname)
+      unless File.exist?(path)
+        system(
+          "ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i",
+          "sine=frequency=440:duration=2", "-b:a", "128k", path.to_s, exception: true
+        )
+      end
+      path
+    end
+
+    def attach_audio(track, duration_ms)
+      track.mp3_audio.attach(
+        io: File.open(tone), filename: "audio.mp3", content_type: "audio/mpeg"
+      )
+      track.update_columns(duration: duration_ms)
+    end
+
+    let(:body) { { delta_s: 2.0 }.to_json }
+
+    before do
+      attach_audio(track1, 10_000)
+      attach_audio(track2, 6_000)
+    end
+
+    it "returns 401 without a token" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
+           params: body, headers: { "CONTENT_TYPE" => "application/json" }
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin user" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
+           params: body, headers: user_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "returns 401 without a token on apply" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: body, headers: { "CONTENT_TYPE" => "application/json" }
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin user on apply" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: body, headers: user_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    # A rejected request has to leave the audio exactly as it found it, whether
+    # it was anonymous or merely unprivileged.
+    it "changes no audio when an unauthenticated apply is rejected" do
+      keys = [ track1.mp3_audio.blob.key, track2.mp3_audio.blob.key ]
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: body, headers: { "CONTENT_TYPE" => "application/json" }
+      expect([ track1.reload.mp3_audio.blob.key, track2.reload.mp3_audio.blob.key ])
+        .to eq(keys)
+    end
+
+    it "changes no audio when a non-admin apply is rejected" do
+      keys = [ track1.mp3_audio.blob.key, track2.mp3_audio.blob.key ]
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: body, headers: user_headers
+      expect([ track1.reload.mp3_audio.blob.key, track2.reload.mp3_audio.blob.key ])
+        .to eq(keys)
+    end
+
+    it "does not enqueue a job for an unauthorized apply" do
+      expect {
+        post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+             params: body, headers: user_headers
+      }.not_to change(Admin::ShiftBoundaryJob.jobs, :size)
+    end
+
+    it "returns a job id for a preview" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
+           params: body, headers: admin_headers
+      expect(response).to have_http_status(:created)
+      expect(json[:job_id]).to eq(AdminJob.last.id)
+    end
+
+    it "enqueues the preview without applying" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
+           params: body, headers: admin_headers
+      expect(Admin::ShiftBoundaryJob.jobs.last["args"])
+        .to eq([ track1.id, AdminJob.last.id, 2.0, false ])
+    end
+
+    it "records the preview job kind" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
+           params: body, headers: admin_headers
+      expect(AdminJob.last)
+        .to have_attributes(kind: "shift_boundary_preview", track_id: track1.id)
+    end
+
+    it "enqueues the apply with the apply flag set" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: body, headers: admin_headers
+      expect(Admin::ShiftBoundaryJob.jobs.last["args"])
+        .to eq([ track1.id, AdminJob.last.id, 2.0, true ])
+    end
+
+    it "passes a negative delta through unchanged" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: { delta_s: -2.0 }.to_json, headers: admin_headers
+      expect(Admin::ShiftBoundaryJob.jobs.last["args"].third).to eq(-2.0)
+    end
+
+    # A delta past the second track's far edge would leave it zero-length.
+    it "422s on a delta past the end of the second track" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: { delta_s: 8.0 }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it "names the allowed range when the delta is too large" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: { delta_s: 8.0 }.to_json, headers: admin_headers
+      expect(json[:message]).to eq("Boundary shift must be between -9.0s and 5.0s")
+    end
+
+    it "422s on a delta past the start of the first track" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: { delta_s: -12.0 }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it "names the allowed range when the delta is too negative" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: { delta_s: -12.0 }.to_json, headers: admin_headers
+      expect(json[:message]).to eq("Boundary shift must be between -9.0s and 5.0s")
+    end
+
+    it "enqueues nothing for an out-of-range delta" do
+      expect {
+        post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+             params: { delta_s: 8.0 }.to_json, headers: admin_headers
+      }.not_to change(Admin::ShiftBoundaryJob.jobs, :size)
+    end
+
+    it "422s on the last track of the show" do
+      post "/api/v2/admin/tracks/#{track3.id}/shift_boundary_preview",
+           params: body, headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it "422s when a side has no audio" do
+      track2.mp3_audio.purge
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
+           params: body, headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    it "requires a delta" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
+           params: {}.to_json, headers: admin_headers
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    # The endpoint only enqueues; the render itself waits for the worker.
+    it "changes no audio in the request itself" do
+      keys = [ track1.mp3_audio.blob.key, track2.mp3_audio.blob.key ]
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: body, headers: admin_headers
+      expect([ track1.reload.mp3_audio.blob.key, track2.reload.mp3_audio.blob.key ])
+        .to eq(keys)
+    end
+
+    it "404s for an unknown track" do
+      post "/api/v2/admin/tracks/0/shift_boundary_preview",
+           params: body, headers: admin_headers
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe "POST /api/v2/admin/shows/:date/tracks" do
     it "returns 401 without a token" do
       post "/api/v2/admin/shows/2025-08-01/tracks",

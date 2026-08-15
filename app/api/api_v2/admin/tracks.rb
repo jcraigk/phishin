@@ -50,6 +50,19 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
         enqueue_combine("combine_apply", true)
       end
 
+      desc "Render both sides of a moved boundary without altering either track",
+           hidden: true
+      params { requires :delta_s, type: Float }
+      post ":id/shift_boundary_preview" do
+        enqueue_shift_boundary("shift_boundary_preview", false)
+      end
+
+      desc "Move the boundary between this track and the next", hidden: true
+      params { requires :delta_s, type: Float }
+      post ":id/shift_boundary_apply" do
+        enqueue_shift_boundary("shift_boundary_apply", true)
+      end
+
       desc "Render a trim preview without altering the track", hidden: true
       params { use :trim_params }
       post ":id/trim_preview" do
@@ -141,6 +154,37 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
       Admin::CombineTracksJob.perform_async(track.id, job.id, apply)
       status 201
       { job_id: job.id }
+    end
+
+    # The boundary shift is the same preview-then-apply job pair as trim and
+    # split. The range check runs here, off the stored durations, so a delta
+    # that would leave a zero-length side comes back as a 422 naming what is
+    # allowed rather than as a failed background job. The job re-checks against
+    # the probed audio, which is the authority.
+    def enqueue_shift_boundary(kind, apply)
+      track = Track.find(params[:id])
+      following = track.show.tracks.find_by(position: track.position + 1)
+      error!({ message: "No following track to share a boundary with" }, 422) if following.nil?
+      unless track.mp3_audio.attached? && following.mp3_audio.attached?
+        error!({ message: "Both tracks need audio to shift the boundary" }, 422)
+      end
+      ensure_delta_in_range!(track, following)
+
+      job = AdminJob.create!(kind:, track:, show: track.show)
+      Admin::ShiftBoundaryJob.perform_async(track.id, job.id, params[:delta_s], apply)
+      status 201
+      { job_id: job.id }
+    end
+
+    def ensure_delta_in_range!(track, following)
+      min = Admin::ShiftBoundaryJob::MIN_PART_S
+      low = (min - track.duration.to_i / 1000.0).round(1)
+      high = (following.duration.to_i / 1000.0 - min).round(1)
+      return if params[:delta_s] >= low && params[:delta_s] <= high
+      error!(
+        { message: "Boundary shift must be between #{low}s and #{high}s" },
+        422
+      )
     end
 
     def attach_staged_audio(track, attachment_id)
