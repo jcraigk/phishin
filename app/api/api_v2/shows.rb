@@ -192,8 +192,10 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
 
 
 
+    # Admins may preview an unpublished show here, and only here. The cache is
+    # bypassed for them so a draft never lands in the shared public cache entry.
     def show_by_date
-      if params[:liked_by_user] && current_user
+      if (params[:liked_by_user] && current_user) || current_user&.admin?
         fetch_show_by_date
       else
         Rails.cache.fetch(cache_key_for_resource("shows", params[:date])) { fetch_show_by_date }
@@ -206,20 +208,19 @@ class ApiV2::Shows < ApiV2::Base # rubocop:disable Metrics/ClassLength
     end
 
     def fetch_show_by_date
-      Show.published
-          .includes(
-            :venue,
-            { cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } } },
-            tracks: [
-              :mp3_audio_attachment,
-              :png_waveform_attachment,
-              { track_tags: :tag },
-              :songs,
-              :songs_tracks
-            ],
-            show_tags: :tag
-          )
-          .find_by!(date: params[:date])
+      scope = current_user&.admin? ? Show.all : Show.published
+      scope.includes(
+        :venue,
+        { cover_art_attachment: { blob: { variant_records: { image_attachment: :blob } } } },
+        tracks: [
+          :mp3_audio_attachment,
+          :png_waveform_attachment,
+          { track_tags: :tag },
+          :songs,
+          :songs_tracks
+        ],
+        show_tags: :tag
+      ).find_by!(date: params[:date])
     end
 
     def apply_filter(shows)

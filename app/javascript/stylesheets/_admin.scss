@@ -128,6 +128,17 @@
 }
 
 .admin-show-editor {
+  > header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .admin-preview-link {
+    font-size: 0.9rem;
+    text-decoration: underline;
+  }
+
   input[type="text"],
   input[type="number"],
   select,

@@ -173,6 +173,82 @@ RSpec.describe "Draft show visibility" do
     end
   end
 
+  describe "admin preview" do
+    let(:admin) { create(:user, :admin) }
+    let(:non_admin) { create(:user) }
+    let(:admin_header) { { "X-Auth-Token" => UserJwtService.call(admin) } }
+    let(:non_admin_header) { { "X-Auth-Token" => UserJwtService.call(non_admin) } }
+
+    it "allows an admin to fetch a draft by date" do
+      get "/api/v2/shows/2024-01-02", headers: admin_header
+      expect(response).to have_http_status(:ok)
+      expect(JSON.parse(response.body)["date"]).to eq("2024-01-02")
+    end
+
+    it "404s a draft by date for an anonymous request" do
+      get "/api/v2/shows/2024-01-02"
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "404s a draft by date for a logged-in non-admin" do
+      get "/api/v2/shows/2024-01-02", headers: non_admin_header
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "does not cache the admin preview for later anonymous requests" do
+      get "/api/v2/shows/2024-01-02", headers: admin_header
+      expect(response).to have_http_status(:ok)
+      get "/api/v2/shows/2024-01-02"
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "still serves a published show to an admin" do
+      get "/api/v2/shows/2024-01-01", headers: admin_header
+      expect(response).to have_http_status(:ok)
+      expect(JSON.parse(response.body)["date"]).to eq("2024-01-01")
+    end
+
+    it "excludes drafts from the v2 shows index for an admin" do
+      get "/api/v2/shows", headers: admin_header
+      dates = JSON.parse(response.body)["shows"].map { |s| s["date"] }
+      expect(dates).to include("2024-01-01")
+      expect(dates).not_to include("2024-01-02")
+    end
+
+    it "excludes draft tracks from the v2 tracks index for an admin" do
+      get "/api/v2/tracks", headers: admin_header
+      slugs = JSON.parse(response.body)["tracks"].map { |t| t["slug"] }
+      expect(slugs).not_to include("cdt-2")
+    end
+
+    it "excludes drafts from the v1 shows index for an admin" do
+      get "/api/v1/shows", headers: auth_header.merge(admin_header)
+      expect(response.body).to include("2024-01-01")
+      expect(response.body).not_to include("2024-01-02")
+    end
+
+    it "404s a draft in v1 for an admin" do
+      get "/api/v1/shows/2024-01-02", headers: auth_header.merge(admin_header)
+      expect(response).to have_http_status(:not_found)
+    end
+
+    it "excludes drafts from the sitemap for an admin" do
+      get "/sitemap.xml", headers: admin_header
+      expect(response.body).not_to include("2024-01-02")
+    end
+
+    it "excludes a draft from the markdown view for an admin" do
+      get "/2024-01-02", headers: admin_header.merge("Accept" => "text/markdown")
+      expect(response.body).not_to include("Chalk Dust Torture")
+      expect(response.body).to include("Not found")
+    end
+
+    it "404s a draft album zip request for an admin" do
+      post "/api/v2/shows/request_album_zip", params: { date: "2024-01-02" }, headers: admin_header
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe "chronological track navigation" do
     let!(:early_show) { create(:show, date: "2023-01-01", venue:) }
     let!(:early_track) do

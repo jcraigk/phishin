@@ -69,6 +69,14 @@ const AdminShowEditor = () => {
             {show.date} {show.venue_name}
             {!show.published && <span className="admin-badge">DRAFT</span>}
           </h1>
+          <a
+            className="admin-preview-link"
+            href={`/${show.date}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Preview
+          </a>
         </header>
         {error && <p className="admin-error">{error}</p>}
         <ShowPanel />
