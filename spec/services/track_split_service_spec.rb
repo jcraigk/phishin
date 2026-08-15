@@ -301,6 +301,24 @@ RSpec.describe TrackSplitService do
         end
       end
 
+      context "when set to neither" do
+        let(:tag_sides) { { "SBD" => "neither" } }
+
+        it "removes the tag from the original track" do
+          result
+          expect(track.reload.tags).to be_empty
+        end
+
+        it "does not tag the new track" do
+          result
+          expect(Track.find(result[:new_track_id]).tags).to be_empty
+        end
+
+        it "destroys the track_tag rather than orphaning it" do
+          expect { result }.to change(TrackTag, :count).by(-1)
+        end
+      end
+
       context "when the choice names a tag that is not on the track" do
         let(:tag_sides) { { "Jamcharts" => "second" } }
 

@@ -404,6 +404,9 @@ namespace :split_scan do
           puts "  moved:   #{result[:likes_copied]} like(s), " \
                "#{result[:tags_copied]} tag(s), " \
                "#{result[:playlist_entries]} playlist entr(ies)"
+          if result[:tags_removed].to_i.positive?
+            puts "  removed: #{result[:tags_removed]} tag(s) set to neither"
+          end
           if entry["tag_sides"].present?
             entry["tag_sides"].each { |name, side| puts "  tag:     #{name} -> #{side}" }
           end

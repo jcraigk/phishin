@@ -234,7 +234,8 @@ def tag_picker(c, esc):
             f'name="tag-{esc(c.share_url, quote=True)}-{i}" value="{side}"'
             f'{" checked" if side == "both" else ""}>'
             f'<span>{text}</span></label>'
-            for side, text in (("both", "both"), ("first", "1st"), ("second", "2nd")))
+            for side, text in (("both", "both"), ("first", "1st"),
+                               ("second", "2nd"), ("neither", "none")))
         rows.append(f'<div class="trow" data-tag="{esc(name, quote=True)}">'
                     f'{label}<span class="tchoices">{choices}</span></div>')
     return ('<div class="tags"><span class="tags-h">tags</span>'

@@ -259,6 +259,7 @@ class TrackSplitService < ApplicationService
   # friends) describe the whole recording, so both halves get them.
   def split_tags
     @tags_copied = 0
+    @tags_removed = 0
     @notes = []
     cut = cut_s
     track.track_tags.find_each do |tag|
@@ -271,6 +272,9 @@ class TrackSplitService < ApplicationService
         when "second"
           tag.update!(track: @new_track)
           @tags_copied += 1
+        when "neither"
+          tag.destroy!
+          @tags_removed += 1
         else
           copy_tag(tag)
         end
@@ -393,6 +397,7 @@ class TrackSplitService < ApplicationService
       part2_url: @new_track&.url,
       likes_copied: @likes_copied.to_i,
       tags_copied: @tags_copied.to_i,
+      tags_removed: @tags_removed.to_i,
       playlist_entries: @playlist_entries.to_i,
       notes: @notes || [],
       reslugged: @reslugged || [],
