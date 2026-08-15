@@ -35,6 +35,13 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         editor_payload(admin_show)
       end
 
+      # Read-only on purpose. It reports what would stop a publish; it never
+      # repairs anything, so the editor can poll it while an admin works.
+      desc "Publish readiness check", hidden: true
+      get ":date/readiness", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
+        Admin::ShowReadiness.call(admin_show)
+      end
+
       desc "Attach staged audio files", hidden: true
       params do
         requires :signed_ids, type: Array[String]

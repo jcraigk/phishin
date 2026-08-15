@@ -722,4 +722,78 @@ RSpec.describe "API v2 Admin Shows" do
       end
     end
   end
+
+  describe "GET /api/v2/admin/shows/:date/readiness" do
+    let!(:show) { create(:show, date: "2025-08-01", published: false) }
+
+    def make_ready
+      show.cover_art.attach(
+        io: StringIO.new("img"), filename: "a.png", content_type: "image/png"
+      )
+      show.album_cover.attach(
+        io: StringIO.new("img"), filename: "b.png", content_type: "image/png"
+      )
+      track = create(:track, show:, position: 1, songs: [ create(:song) ])
+      track.mp3_audio.attach(
+        io: StringIO.new("mp3"), filename: "a.mp3", content_type: "audio/mpeg"
+      )
+      track.png_waveform.attach(
+        io: StringIO.new("png"), filename: "a.png", content_type: "image/png"
+      )
+      track.update!(duration: 100_000, audio_status: "complete")
+    end
+
+    it "returns 401 without a token" do
+      get "/api/v2/admin/shows/2025-08-01/readiness"
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin user" do
+      get "/api/v2/admin/shows/2025-08-01/readiness",
+          headers: { "X-Auth-Token" => token_for(user) }
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "reports issues for an incomplete draft" do
+      get "/api/v2/admin/shows/2025-08-01/readiness", headers: admin_headers
+      expect(response).to have_http_status(:ok)
+      json = JSON.parse(response.body)
+      expect(json["ready"]).to be(false)
+      expect(json["issues"]).to include("No tracks", "No cover art selected")
+    end
+
+    it "reports ready for a complete draft" do
+      make_ready
+      get "/api/v2/admin/shows/2025-08-01/readiness", headers: admin_headers
+      json = JSON.parse(response.body)
+      expect(json["issues"]).to eq([])
+      expect(json["ready"]).to be(true)
+    end
+
+    it "names the offending track in a problem entry" do
+      make_ready
+      show.tracks.first.songs_tracks.destroy_all
+      get "/api/v2/admin/shows/2025-08-01/readiness", headers: admin_headers
+      problem = JSON.parse(response.body)["problems"].find { |p| p["code"] == "track_no_songs" }
+      expect(problem["track_id"]).to eq(show.tracks.first.id)
+      expect(problem["position"]).to eq(1)
+    end
+
+    it "changes nothing" do
+      make_ready
+      before_attrs = show.reload.attributes
+      before_tracks = show.tracks.order(:position).map(&:attributes)
+      expect {
+        get "/api/v2/admin/shows/2025-08-01/readiness", headers: admin_headers
+      }.not_to change(Track, :count)
+      expect(show.reload.attributes).to eq(before_attrs)
+      expect(show.tracks.order(:position).map(&:attributes)).to eq(before_tracks)
+      expect(show.reload.published).to be(false)
+    end
+
+    it "404s for an unknown date" do
+      get "/api/v2/admin/shows/1980-01-01/readiness", headers: admin_headers
+      expect(response).to have_http_status(:not_found)
+    end
+  end
 end
