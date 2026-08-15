@@ -91,6 +91,16 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
         enqueue_split("split_apply", true)
       end
 
+      desc "Replace a track's audio file", hidden: true
+      params { requires :signed_id, type: String }
+      post ":id/replace_audio" do
+        track = Track.find(params[:id])
+        job = AdminJob.create!(kind: "replace_audio", track:, show: track.show)
+        Admin::ReplaceAudioJob.perform_async(track.id, job.id, params[:signed_id])
+        status 201
+        { job_id: job.id }
+      end
+
       desc "Delete a track", hidden: true
       delete ":id" do
         track = Track.find(params[:id])

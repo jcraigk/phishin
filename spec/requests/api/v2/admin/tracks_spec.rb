@@ -582,6 +582,82 @@ RSpec.describe "API v2 Admin Tracks" do
     end
   end
 
+  describe "POST /api/v2/admin/tracks/:id/replace_audio" do
+    let(:blob) do
+      ActiveStorage::Blob.create_and_upload!(
+        io: StringIO.new("new bytes"), filename: "new.mp3", content_type: "audio/mpeg"
+      )
+    end
+
+    before do
+      track1.mp3_audio.attach(
+        io: StringIO.new("old bytes"), filename: "old.mp3", content_type: "audio/mpeg"
+      )
+    end
+
+    it "returns 401 without a token" do
+      post "/api/v2/admin/tracks/#{track1.id}/replace_audio",
+           params: { signed_id: blob.signed_id }.to_json,
+           headers: { "CONTENT_TYPE" => "application/json" }
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin user" do
+      post "/api/v2/admin/tracks/#{track1.id}/replace_audio",
+           params: { signed_id: blob.signed_id }.to_json, headers: user_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "does not touch the track's audio when an unauthorized request is rejected" do
+      expect {
+        post "/api/v2/admin/tracks/#{track1.id}/replace_audio",
+             params: { signed_id: blob.signed_id }.to_json, headers: user_headers
+      }.not_to change { track1.reload.mp3_audio.blob.key }
+    end
+
+    it "does not enqueue a job for an unauthorized request" do
+      expect {
+        post "/api/v2/admin/tracks/#{track1.id}/replace_audio",
+             params: { signed_id: blob.signed_id }.to_json, headers: user_headers
+      }.not_to change(Admin::ReplaceAudioJob.jobs, :size)
+    end
+
+    it "enqueues the replace job" do
+      expect {
+        post "/api/v2/admin/tracks/#{track1.id}/replace_audio",
+             params: { signed_id: blob.signed_id }.to_json, headers: admin_headers
+      }.to change(Admin::ReplaceAudioJob.jobs, :size).by(1)
+      expect(response).to have_http_status(:created)
+      expect(json[:job_id]).to eq(AdminJob.last.id)
+    end
+
+    it "hands the job the track and the signed id" do
+      post "/api/v2/admin/tracks/#{track1.id}/replace_audio",
+           params: { signed_id: blob.signed_id }.to_json, headers: admin_headers
+      expect(Admin::ReplaceAudioJob.jobs.last["args"])
+        .to eq([ track1.id, AdminJob.last.id, blob.signed_id ])
+    end
+
+    it "links the job to the track and its show" do
+      post "/api/v2/admin/tracks/#{track1.id}/replace_audio",
+           params: { signed_id: blob.signed_id }.to_json, headers: admin_headers
+      expect(AdminJob.last)
+        .to have_attributes(kind: "replace_audio", track_id: track1.id, show_id: show.id)
+    end
+
+    it "400s without a signed id" do
+      post "/api/v2/admin/tracks/#{track1.id}/replace_audio",
+           params: {}.to_json, headers: admin_headers
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it "404s for an unknown track" do
+      post "/api/v2/admin/tracks/0/replace_audio",
+           params: { signed_id: blob.signed_id }.to_json, headers: admin_headers
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe "DELETE /api/v2/admin/tracks/:id" do
     it "returns 401 without a token" do
       delete "/api/v2/admin/tracks/#{track2.id}"
