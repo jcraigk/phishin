@@ -3,6 +3,7 @@ class ApiV2::Api < ApiV2::Base
   mount ApiV2::Admin::CoverArt
   mount ApiV2::Admin::Jobs
   mount ApiV2::Admin::Shows
+  mount ApiV2::Admin::Taggings
   mount ApiV2::Admin::Tracks
   mount ApiV2::Announcements
   mount ApiV2::Auth

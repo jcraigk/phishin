@@ -53,8 +53,34 @@ module ApiV2::Helpers::AdminHelper
       performance_gap_value: show.performance_gap_value,
       matches_pnet: show.matches_pnet,
       staged_audio: staged_audio_payload(show),
+      show_tags: show_tags_payload(show),
       tracks: show.tracks.order(:position).map { |track| track_payload(track) }
     )
+  end
+
+  def show_tags_payload(show)
+    show.show_tags.includes(:tag).map do |show_tag|
+      {
+        id: show_tag.id,
+        tag_id: show_tag.tag_id,
+        tag_name: show_tag.tag.name,
+        notes: show_tag.notes
+      }
+    end
+  end
+
+  def track_tags_payload(track)
+    track.track_tags.includes(:tag).map do |track_tag|
+      {
+        id: track_tag.id,
+        tag_id: track_tag.tag_id,
+        tag_name: track_tag.tag.name,
+        notes: track_tag.notes,
+        starts_at_second: track_tag.starts_at_second,
+        ends_at_second: track_tag.ends_at_second,
+        transcript: track_tag.transcript
+      }
+    end
   end
 
   def track_payload(track)
@@ -69,6 +95,7 @@ module ApiV2::Helpers::AdminHelper
       jam_starts_at_second: track.jam_starts_at_second,
       exclude_from_stats: track.exclude_from_stats,
       songs: track.songs.map { |song| { id: song.id, title: song.title } },
+      track_tags: track_tags_payload(track),
       mp3_url: track.mp3_url,
       waveform_url: track.waveform_image_url
     }
