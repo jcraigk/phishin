@@ -63,4 +63,42 @@ RSpec.describe "API v2 Admin Tagin" do
       expect(TaginSyncService).not_to have_received(:call)
     end
   end
+
+  describe "POST /api/v2/admin/tagin_drift" do
+    let(:path) { "/api/v2/admin/tagin_drift" }
+
+    it "creates a tagin drift job" do
+      post path, headers: admin_headers
+      expect(response).to have_http_status(:created)
+      expect(AdminJob.last).to have_attributes(kind: "tagin_drift", status: "queued")
+    end
+
+    it "returns the job id" do
+      post path, headers: admin_headers
+      expect(json[:job_id]).to eq(AdminJob.last.id)
+    end
+
+    it "enqueues the drift job" do
+      post path, headers: admin_headers
+      expect(Admin::TaginDriftJob.jobs.size).to eq(1)
+    end
+
+    it "returns 401 without a token and fetches nothing" do
+      allow(GoogleSpreadsheetFetcher).to receive(:call)
+      post path, headers: anon_headers
+      expect(response).to have_http_status(:unauthorized)
+      expect(AdminJob.count).to eq(0)
+      expect(Admin::TaginDriftJob.jobs).to be_empty
+      expect(GoogleSpreadsheetFetcher).not_to have_received(:call)
+    end
+
+    it "returns 403 for a non-admin user and fetches nothing" do
+      allow(GoogleSpreadsheetFetcher).to receive(:call)
+      post path, headers: user_headers
+      expect(response).to have_http_status(:forbidden)
+      expect(AdminJob.count).to eq(0)
+      expect(Admin::TaginDriftJob.jobs).to be_empty
+      expect(GoogleSpreadsheetFetcher).not_to have_received(:call)
+    end
+  end
 end

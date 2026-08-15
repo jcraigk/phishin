@@ -1,7 +1,9 @@
 require "csv"
 
 class TrackTagSyncService < ApplicationService
-  include ActionView::Helpers::SanitizeHelper
+  # Shared with Admin::TaginDriftJob so the drift report compares sheet values
+  # the same way this service writes them.
+  delegate :sanitize_str, :seconds_or_nil, to: TaginRowNormalizer
 
   attr_reader :track, :created_ids, :updated_ids, :missing_tracks
 
@@ -56,20 +58,6 @@ class TrackTagSyncService < ApplicationService
       notes: sanitize_str(row["Notes"])
   end
 
-  MOJIBAKE_MARKERS = /√[°©≠≥∫±ºÅâçìöÑú]|‚Ä[îìúùòô¶¢]|¬[©®∞]/
-
-  def sanitize_str(str)
-    return if str.nil?
-    sanitize(repair_mojibake(str).gsub(/[”“]/, '"').gsub(/[‘’]/, "'"))
-  end
-
-  def repair_mojibake(str)
-    return str unless str.match?(MOJIBAKE_MARKERS)
-    str.encode(Encoding::MACROMAN).force_encoding(Encoding::UTF_8)
-  rescue Encoding::UndefinedConversionError
-    str
-  end
-
   def create_track_tag(row)
     if track.blank?
       @missing_tracks << row["URL"]
@@ -100,11 +88,5 @@ class TrackTagSyncService < ApplicationService
       transcript: sanitize_str(row["Transcript"])
     )
     @updated_ids << track_tag.id
-  end
-
-  def seconds_or_nil(str)
-    return if str.blank?
-    min, sec = str.split(":")
-    (min.to_i * 60) + sec.to_i
   end
 end
