@@ -64,6 +64,24 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
             status 201
             { job_id: job.id }
           end
+
+          # The candidate must be one this show holds; the job re-checks the key
+          # for itself, but rejecting it here saves the admin a failed job.
+          desc "Apply a candidate as the show's cover art", hidden: true
+          params do
+            requires :blob_key, type: String
+            optional :zoom, type: Integer, values: 0..50, default: 0
+          end
+          post :select do
+            show = admin_show
+            validate_candidate_blob_key!(show, params[:blob_key])
+            job = AdminJob.create!(kind: "cover_art_select", show:)
+            Admin::SelectCoverArtJob.perform_async(
+              show.id, job.id, params[:blob_key], params[:zoom]
+            )
+            status 201
+            { job_id: job.id }
+          end
         end
       end
     end
@@ -77,10 +95,19 @@ class ApiV2::Admin::CoverArt < ApiV2::Admin::Base
     end
 
     def validate_source_blob_key!(show, key)
-      return if show.cover_art_candidates_attachments.includes(:blob)
-                    .any? { |attachment| attachment.blob.key == key }
+      return if candidate_blob_key?(show, key)
       return if show.cover_art.attached? && show.cover_art.blob.key == key
       error!({ message: "Unknown source image for #{show.date}" }, 422)
+    end
+
+    def validate_candidate_blob_key!(show, key)
+      return if candidate_blob_key?(show, key)
+      error!({ message: "Unknown candidate for #{show.date}" }, 422)
+    end
+
+    def candidate_blob_key?(show, key)
+      show.cover_art_candidates_attachments.includes(:blob)
+          .any? { |attachment| attachment.blob.key == key }
     end
   end
 end

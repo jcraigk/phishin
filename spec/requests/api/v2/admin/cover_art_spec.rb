@@ -259,6 +259,74 @@ RSpec.describe "API v2 Admin Cover Art" do
     end
   end
 
+  describe "POST /api/v2/admin/shows/:date/cover_art/select" do
+    let(:path) { "/api/v2/admin/shows/2025-08-01/cover_art/select" }
+    let(:candidate) { upload_image }
+    let(:body) { { blob_key: candidate.key, zoom: 0 }.to_json }
+
+    before { show.cover_art_candidates.attach(candidate) }
+
+    it "creates a select job" do
+      post path, params: body, headers: json_headers
+      expect(response).to have_http_status(:created)
+      expect(AdminJob.last).to have_attributes(kind: "cover_art_select", show_id: show.id)
+    end
+
+    it "enqueues the select job with the blob key and zoom" do
+      post path, params: { blob_key: candidate.key, zoom: 20 }.to_json, headers: json_headers
+      expect(Admin::SelectCoverArtJob.jobs.last["args"])
+        .to eq([ show.id, AdminJob.last.id, candidate.key, 20 ])
+    end
+
+    it "defaults zoom to zero" do
+      post path, params: { blob_key: candidate.key }.to_json, headers: json_headers
+      expect(Admin::SelectCoverArtJob.jobs.last["args"].last).to eq(0)
+    end
+
+    it "returns the job id" do
+      post path, params: body, headers: json_headers
+      expect(JSON.parse(response.body)["job_id"]).to eq(AdminJob.last.id)
+    end
+
+    it "422s on a blob this show does not hold as a candidate" do
+      post path, params: { blob_key: upload_image("elsewhere.png").key }.to_json,
+           headers: json_headers
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(Admin::SelectCoverArtJob.jobs).to be_empty
+    end
+
+    it "400s on a zoom outside 0..50" do
+      post path, params: { blob_key: candidate.key, zoom: 80 }.to_json, headers: json_headers
+      expect(response).to have_http_status(:bad_request)
+      expect(Admin::SelectCoverArtJob.jobs).to be_empty
+    end
+
+    it "returns 401 without a token" do
+      post path, params: body, headers: { "CONTENT_TYPE" => "application/json" }
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin user" do
+      post path, params: body, headers: json_headers("X-Auth-Token" => token_for(user))
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "creates no job and enqueues no selection when unauthorized" do
+      post path, params: body, headers: { "CONTENT_TYPE" => "application/json" }
+      post path, params: body, headers: json_headers("X-Auth-Token" => token_for(user))
+      expect(AdminJob.count).to eq(0)
+      expect(Admin::SelectCoverArtJob.jobs).to be_empty
+    end
+
+    it "changes no cover art when unauthorized" do
+      post path, params: body, headers: { "CONTENT_TYPE" => "application/json" }
+      post path, params: body, headers: json_headers("X-Auth-Token" => token_for(user))
+      show.reload
+      expect(show.cover_art).not_to be_attached
+      expect(show.cover_art_candidates.count).to eq(1)
+    end
+  end
+
   describe "cover art in the editor payload" do
     it "includes the prompt fields" do
       get "/api/v2/admin/shows/2025-08-01", headers: admin_headers
