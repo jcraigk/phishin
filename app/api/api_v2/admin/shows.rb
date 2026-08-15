@@ -110,6 +110,10 @@ class ApiV2::Admin::Shows < ApiV2::Admin::Base
         optional :admin_notes, type: String
         optional :performance_gap_value, type: Integer
         optional :matches_pnet, type: Boolean
+        optional :cover_art_prompt, type: String
+        optional :cover_art_hue, type: String
+        optional :cover_art_style, type: String
+        optional :cover_art_parent_show_id, type: Integer
       end
       patch ":date", requirements: { date: /\d{4}-\d{2}-\d{2}/ } do
         show = admin_show

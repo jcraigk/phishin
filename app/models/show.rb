@@ -23,6 +23,12 @@ class Show < ApplicationRecord
   end
   has_one_attached :album_zip
   has_many_attached :staged_audio
+  # Cover art the admin editor has produced or uploaded but not chosen yet. A
+  # candidate is only ever an attachment: the blob behind it may be shared with
+  # another show's cover art (parent-linked shows reuse the parent's blob), so
+  # dropping a candidate destroys the attachment and never purges the blob
+  # unless nothing else references it.
+  has_many_attached :cover_art_candidates
 
   extend FriendlyId
   friendly_id :date

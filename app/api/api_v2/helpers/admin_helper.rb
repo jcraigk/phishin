@@ -20,8 +20,30 @@ module ApiV2::Helpers::AdminHelper
     end
   end
 
+  # Candidates are served straight from their blob rather than through a variant:
+  # they are throwaway images the editor shows at review size, and building
+  # variant records for art that is about to be discarded would leave orphaned
+  # records behind.
+  def cover_art_payload(show)
+    {
+      prompt: show.cover_art_prompt,
+      hue: show.cover_art_hue,
+      style: show.cover_art_style,
+      parent_show_id: show.cover_art_parent_show_id,
+      current_url: show.cover_art.attached? ? show.cover_art_urls[:large] : nil,
+      album_cover_url: show.album_cover.attached? ? show.album_cover_url : nil,
+      candidates: show.cover_art_candidates_attachments.includes(:blob).map do |attachment|
+        {
+          blob_key: attachment.blob.key,
+          url: "#{App.base_url}/blob/#{attachment.blob.key}.png"
+        }
+      end
+    }
+  end
+
   def editor_payload(show)
     show_summary(show).merge(
+      cover_art: cover_art_payload(show),
       taper_notes: show.taper_notes,
       admin_notes: show.admin_notes,
       venue_id: show.venue_id,
