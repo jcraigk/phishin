@@ -14,17 +14,17 @@ namespace :tagin do
 
   desc "Sync data from remote spreadsheet"
   task sync: :environment do
-    TAGIN_TAGS.each do |tag_name|
-      puts "========================"
-      puts " Syncing Tag: #{tag_name}"
-      puts "========================"
-      range = "#{tag_name}!A1:G5000"
-      data = GoogleSpreadsheetFetcher.call(ENV["TAGIN_GSHEET_ID"], range, headers: true)
-      TrackTagSyncService.call(tag_name, data)
-    end
+    results = TaginSyncService.call(
+      progress: lambda do |tag_name, _index, _total|
+        puts "========================"
+        puts " Syncing Tag: #{tag_name}"
+        puts "========================"
+      end
+    )
 
-    puts "Clearing Rails cache..."
-    Rails.cache.clear
+    results.select { |result| result[:status] == "failed" }.each do |result|
+      puts "FAILED #{result[:tag]}: #{result[:error]}"
+    end
   end
 
   desc "Sync jam_starts_at_second data from spreadsheet"
