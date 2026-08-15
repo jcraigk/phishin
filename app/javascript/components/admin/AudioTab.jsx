@@ -3,6 +3,8 @@ import { EditorContext } from "./AdminShowEditor";
 import TrimPanel from "./TrimPanel";
 import SplitPanel, { isSegueTitle } from "./SplitPanel";
 import ReplacePanel from "./ReplacePanel";
+import CombinePanel from "./CombinePanel";
+import BoundaryPanel from "./BoundaryPanel";
 import BulkAudioDrop from "./BulkAudioDrop";
 import useJobRunner from "./useJobRunner";
 import { adminPost } from "./adminApi";
@@ -38,10 +40,14 @@ const GapBanner = () => {
   );
 };
 
-const TrackAudioRow = ({ track }) => {
+const TrackAudioRow = ({ track, previous, next }) => {
   const [tool, setTool] = useState(null);
   const hasAudio = track.audio_status !== "missing";
   const splittable = hasAudio && isSegueTitle(track.title);
+  // The first track of a show has nothing above it to merge into, and the last
+  // has nothing below it to share a boundary with.
+  const combinable = Boolean(previous);
+  const shiftable = Boolean(next) && hasAudio && next.audio_status !== "missing";
 
   const toggle = (name) => setTool((prev) => (prev === name ? null : name));
 
@@ -68,11 +74,19 @@ const TrackAudioRow = ({ track }) => {
           {toolButton("trim", "Trim", hasAudio)}
           {toolButton("split", "Split", splittable)}
           {toolButton("replace", "Replace", true)}
+          {toolButton("combine", "Combine Up", combinable)}
+          {toolButton("boundary", "Boundary", shiftable)}
         </span>
       </div>
       {tool === "trim" && <TrimPanel key={`trim-${track.id}`} track={track} />}
       {tool === "split" && <SplitPanel key={`split-${track.id}`} track={track} />}
       {tool === "replace" && <ReplacePanel key={`replace-${track.id}`} track={track} />}
+      {tool === "combine" && combinable && (
+        <CombinePanel key={`combine-${track.id}`} track={track} previous={previous} />
+      )}
+      {tool === "boundary" && shiftable && (
+        <BoundaryPanel key={`boundary-${track.id}`} track={track} next={next} />
+      )}
     </li>
   );
 };
@@ -88,8 +102,13 @@ const AudioTab = () => {
         <p>This show has no tracks yet.</p>
       ) : (
         <ul className="admin-audio-tracks">
-          {show.tracks.map((track) => (
-            <TrackAudioRow key={track.id} track={track} />
+          {show.tracks.map((track, index) => (
+            <TrackAudioRow
+              key={track.id}
+              track={track}
+              previous={show.tracks[index - 1] || null}
+              next={show.tracks[index + 1] || null}
+            />
           ))}
         </ul>
       )}
