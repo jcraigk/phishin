@@ -132,6 +132,58 @@ def wav_trim_command(src, out_path, start, end, fade_in, fade_out):
     ]
 
 
+def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs):
+    """Tail of the first track + head of the second, butt joined.
+
+    Rendered as one wav so the splice is heard exactly where it falls, with no
+    encoder padding between the halves to mask or invent a glitch."""
+    stamp = hashlib.sha1(
+        f"{first_url}|{second_url}|{first_duration_s:.2f}|{seconds:.2f}".encode()
+    ).hexdigest()[:16]
+    out_path = PREVIEW_DIR / f"{stamp}.wav"
+    if out_path.exists():
+        return out_path
+
+    tail_start = max(0.0, first_duration_s - seconds)
+    first_src = source_for(first_url, storage_dirs)
+    second_src = source_for(second_url, storage_dirs)
+    PREVIEW_DIR.mkdir(parents=True, exist_ok=True)
+
+    def seg_args(src, start, end):
+        reconnect = ([
+            "-reconnect", "1", "-reconnect_streamed", "1",
+            "-reconnect_delay_max", "5",
+        ] if str(src).startswith(("http://", "https://")) else [])
+        pre = ["-ss", f"{max(0.0, start - 1.0):.2f}"] if start > 0 else []
+        return reconnect + pre + ["-i", str(src)]
+
+    lead = max(0.0, tail_start - 1.0)
+    cmd = [
+        "ffmpeg", "-y", "-v", "error",
+        *seg_args(first_src, tail_start, first_duration_s),
+        *seg_args(second_src, 0.0, seconds),
+        "-filter_complex",
+        f"[0:a]atrim=start={tail_start - lead:.2f}:end={first_duration_s - lead:.2f},"
+        f"asetpts=PTS-STARTPTS,aresample=44100[a];"
+        f"[1:a]atrim=start=0:end={seconds:.2f},asetpts=PTS-STARTPTS,"
+        f"aresample=44100[b];"
+        f"[a][b]concat=n=2:v=0:a=1[out]",
+        "-map", "[out]", "-c:a", "pcm_s16le", str(out_path),
+    ]
+    with _render_sem:
+        try:
+            proc = subprocess.run(cmd, capture_output=True, timeout=RENDER_TIMEOUT_S)
+        except subprocess.TimeoutExpired:
+            out_path.unlink(missing_ok=True)
+            raise RuntimeError(
+                f"joint render timed out after {RENDER_TIMEOUT_S}s") from None
+    if proc.returncode != 0:
+        out_path.unlink(missing_ok=True)
+        raise RuntimeError(
+            f"ffmpeg failed: {proc.stderr.decode('utf-8', 'replace')[:300]}")
+    return out_path
+
+
 def render_preview(mp3_url, trim_start, trim_end, fade_in, fade_out, storage_dirs,
                    head_s=PREVIEW_HEAD_S, fmt="mp3"):
     # What is being judged is the splice at the start, so render only the first
@@ -209,6 +261,8 @@ class Handler(SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_POST(self):
+        if self.path.rstrip("/") == "/joint":
+            return self._joint()
         if self.path.rstrip("/") != "/preview":
             return self._json(404, {"error": "not found"})
         try:
@@ -241,6 +295,28 @@ class Handler(SimpleHTTPRequestHandler):
             "url": f"/_preview/{out_path.name}",
             "head_s": int(PREVIEW_HEAD_S) if truncated else None,
         })
+
+    def _joint(self):
+        """The seam between two tracks: the tail of one butted against the head
+        of the next, concatenated exactly as a merge would join them."""
+        try:
+            length = int(self.headers.get("Content-Length", 0))
+            req = json.loads(self.rfile.read(length) or b"{}")
+            first_url = req["first_mp3_url"]
+            second_url = req["second_mp3_url"]
+            first_duration = float(req["first_duration_s"])
+            seconds = float(req.get("seconds", 2.5))
+        except (KeyError, TypeError, ValueError, json.JSONDecodeError) as e:
+            return self._json(400, {"error": f"bad request: {e}"})
+        if seconds <= 0 or first_duration <= 0:
+            return self._json(400, {"error": "seconds and first_duration_s must be positive"})
+
+        try:
+            out_path = render_joint(first_url, second_url, first_duration,
+                                    seconds, self.storage_dirs)
+        except Exception as e:  # noqa: BLE001 - surfaced to the reviewer verbatim
+            return self._json(500, {"error": str(e)})
+        self._json(200, {"url": f"/_preview/{out_path.name}"})
 
     def translate_path(self, path):
         clean = path.split("?", 1)[0].split("#", 1)[0]
