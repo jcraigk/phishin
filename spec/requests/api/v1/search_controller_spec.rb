@@ -50,5 +50,20 @@ describe Api::V1::SearchController do
         expect(json[:data]).to eq(expected_json)
       end
     end
+
+    context 'with a term containing periods' do
+      let(:term) { 'Mr.%20P' }
+
+      before do
+        song = create(:song, title: 'Mr. P.C.')
+        show = create(:show, audio_status: 'complete')
+        create(:track, show:, songs: [ song ])
+      end
+
+      it 'returns matching songs' do
+        expect(response).to have_http_status(:ok)
+        expect(json[:data][:songs].map { |s| s[:title] }).to eq([ 'Mr. P.C.' ])
+      end
+    end
   end
 end

@@ -63,7 +63,7 @@ Rails.application.routes.draw do
       resources :tags,      only: %i[index show]
       resources :playlists, only: %i[show]
 
-      get "search/:term",              to: "search#index"
+      get "search/:term",              to: "search#index", constraints: { term: /.+/ }
       get "show-on-date/:date",        to: "shows#on_date"
       get "shows-on-day-of-year/:day", to: "shows#on_day_of_year"
       get "random-show",               to: "shows#random"

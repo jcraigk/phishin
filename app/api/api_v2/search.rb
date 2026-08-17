@@ -20,7 +20,7 @@ class ApiV2::Search < ApiV2::Base
                desc: "Specifies the area of the site to search"
     end
 
-    get ":term" do
+    get ":term", requirements: { term: /.+/ } do
       return error!({ message: "Term too short" }, 400) if params[:term].length < 3
       results = fetch_results(params[:term], params[:scope], params[:audio_status])
 

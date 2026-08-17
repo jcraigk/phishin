@@ -54,6 +54,15 @@ RSpec.describe "API v2 Search" do
         expect(json[:songs]).to include(a_hash_including(title: "Sample Song"))
       end
 
+      it "returns songs when the term contains periods" do
+        create(:song, title: "Mr. P.C.")
+        get_api_authed(user, "/search/Mr.%20P")
+        expect(response).to have_http_status(:ok)
+
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:songs]).to include(a_hash_including(title: "Mr. P.C."))
+      end
+
       it "returns empty arrays for no matches" do
         get_api_authed(user, "/search/NonExistent")
         expect(response).to have_http_status(:ok)
