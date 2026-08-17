@@ -226,6 +226,8 @@ class TrackSplitService < ApplicationService
          .each { it.update!(position: it.position + 1) }
   end
 
+  # Slug is parked for the same reason as rewrite_original: a stale or already
+  # suffixed sibling slug can collide before the show is settled.
   def build_second_track
     Track.create!(
       show: track.show,
@@ -233,7 +235,8 @@ class TrackSplitService < ApplicationService
       songs: [ songs[1] ],
       position: track.position + 1,
       set: track.set,
-      exclude_from_stats: track.exclude_from_stats
+      exclude_from_stats: track.exclude_from_stats,
+      slug: "tmp-#{track.id}-new-#{SecureRandom.hex(4)}"
     )
   end
 

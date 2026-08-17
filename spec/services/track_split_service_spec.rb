@@ -124,6 +124,49 @@ RSpec.describe TrackSplitService do
         end
       end
 
+      context "when a sibling holds a stale suffixed slug" do
+        before do
+          create(:track, show:, title: sibling_title, songs: [ song2 ],
+                         position: 8, set: "1")
+            .update_columns(slug: "i-am-hydrogen-2")
+        end
+
+        it "does not raise on the unique slug index" do
+          expect { result }.not_to raise_error
+        end
+
+        it "renumbers both instances in position order" do
+          result
+          slugs = show.tracks.reload.order(:position)
+                      .select { it.title == sibling_title }
+                      .map { [ it.position, it.slug ] }
+          expect(slugs).to eq([ [ 6, "i-am-hydrogen" ], [ 9, "i-am-hydrogen-2" ] ])
+        end
+      end
+
+      context "when the second part collides with an already suffixed slug" do
+        before do
+          create(:track, show:, title: sibling_title, songs: [ song2 ],
+                         position: 2, set: "1")
+          create(:track, show:, title: sibling_title, songs: [ song2 ],
+                         position: 8, set: "1")
+        end
+
+        it "does not raise on the unique slug index" do
+          expect { result }.not_to raise_error
+        end
+
+        it "renumbers every instance in position order" do
+          result
+          slugs = show.tracks.reload.order(:position)
+                      .select { it.title == sibling_title }
+                      .map { it.slug }
+          expect(slugs).to eq(
+            [ "i-am-hydrogen", "i-am-hydrogen-2", "i-am-hydrogen-3" ]
+          )
+        end
+      end
+
       context "when the first part duplicates an existing title" do
         before do
           create(:track, show:, title: "Mike's Song", songs: [ song1 ],
