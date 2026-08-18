@@ -4,6 +4,14 @@ require "googleauth/stores/file_token_store"
 require "csv"
 
 namespace :tagin do
+  desc "Run interactive Google OAuth with write scope and print new GOOGLE_SPREADSHEET_CREDS"
+  task authorize: :environment do
+    GoogleSheetsAuthorizer.call(
+      scope: Google::Apis::SheetsV4::AUTH_SPREADSHEETS,
+      force_interactive: true
+    )
+  end
+
   desc "Sync data from remote spreadsheet"
   task sync: :environment do
     TAGIN_TAGS.each do |tag_name|

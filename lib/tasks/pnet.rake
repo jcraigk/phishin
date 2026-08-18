@@ -33,6 +33,24 @@ namespace :pnet do
     puts "Missing tracks: #{missing_tracks.join(', ')}" if missing_tracks.any?
   end
 
+  desc "Find teases in Phish.net setlist notes missing from the Tagin' Tease sheet " \
+       "(APPLY=true to append; DATE/DATES/START_DATE/END_DATE/ALL to scope)"
+  task teases: :environment do
+    opts = {
+      date: ENV["DATE"],
+      dates: ENV["DATES"],
+      start_date: ENV["START_DATE"],
+      end_date: ENV["END_DATE"],
+      all: ENV["ALL"] == "true",
+      apply: ENV["APPLY"] == "true",
+      verbose: ENV["VERBOSE"] == "true"
+    }
+    opts[:model] = ENV["MODEL"] if ENV["MODEL"]
+    opts[:delay] = ENV["DELAY"].to_f if ENV["DELAY"]
+
+    TeaseSyncService.call(**opts)
+  end
+
   desc "Compare local setlists with Phish.net"
   task compare_setlists: :environment do
     shows = Show.published
