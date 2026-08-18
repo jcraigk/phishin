@@ -51,11 +51,13 @@ OUTER_SONGS = {
     "the man who stepped into yesterday": "TMWSIY",
     "cold as ice": "Cold as Ice",
     "alumni blues": "Alumni Blues",
+    "you enjoy myself": "YEM",
 }
 # Titles that already carry the abbreviation, so a scan sees both spellings.
 ALIASES = {
     "hyhu": "hold your head up",
     "tmwsiy": "the man who stepped into yesterday",
+    "yem": "you enjoy myself",
 }
 
 
@@ -256,7 +258,7 @@ def fetch_dates_for_outer_songs():
     """Every show date holding any of the outer songs, from the tracks API."""
     dates = set()
     for slug in ["hold-your-head-up", "the-man-who-stepped-into-yesterday",
-                 "cold-as-ice", "alumni-blues"]:
+                 "cold-as-ice", "alumni-blues", "you-enjoy-myself"]:
         page = 1
         while True:
             resp = requests.get(f"{API_BASE}/tracks",
