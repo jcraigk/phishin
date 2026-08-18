@@ -95,7 +95,7 @@ const TagBadges = ({ tags, parentId, highlight }) => {
 
 
   return (
-    <div className="tag-badges-container" onClick={handleClick}>
+    <div className="tag-badges-container">
       {Object.entries(groupedTags).map(([tagName, tagGroup]) => {
         const count = tagGroup.length;
         const title = `${tagName} ${count > 1 ? `(${count})` : ""}`;
@@ -105,6 +105,7 @@ const TagBadges = ({ tags, parentId, highlight }) => {
           <div
             key={tooltipId}
             className={`tag-badge ${isHighlighted(tagGroup) ? "hilite-badge" : ""}`}
+            onClick={handleClick}
             data-tooltip-id={tooltipId}
             data-tooltip-content={tooltipForTagStack(tagGroup)}
           >
