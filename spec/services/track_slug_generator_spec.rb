@@ -36,6 +36,22 @@ RSpec.describe TrackSlugGenerator do
     end
   end
 
+  context 'when title is You Enjoy Myself' do
+    let(:title) { 'You Enjoy Myself' }
+
+    it 'returns an abbreviated slug' do
+      expect(service.call).to eq('yem')
+    end
+  end
+
+  context 'when title is a YEM sandwich' do
+    let(:title) { 'You Enjoy Myself > Oye Como Va > You Enjoy Myself' }
+
+    it 'abbreviates every occurrence' do
+      expect(service.call).to eq('yem-oye-como-va-yem')
+    end
+  end
+
   context 'when title is She Caught the Katy and Left Me a Mule to Ride' do
     let(:title) { 'She Caught the Katy and Left Me a Mule to Ride' }
 
