@@ -44,14 +44,19 @@ JOINT_S = 2.5
 SEGUE_RE = re.compile(r"\s*-?>\s*")
 FETCH_WORKERS = 12
 
-# The outer songs that form these sandwiches, and the abbreviation to use in a
-# merged title. A song with no established abbreviation keeps its full name.
-OUTER_SONGS = {
+# Abbreviations used when a song appears inside a multi-song title. Any song can
+# be the bread of a sandwich; these are only the ones that get shortened.
+ABBREVIATIONS = {
     "hold your head up": "HYHU",
     "the man who stepped into yesterday": "TMWSIY",
-    "cold as ice": "Cold as Ice",
-    "alumni blues": "Alumni Blues",
     "you enjoy myself": "YEM",
+}
+# Spoken-word segments recur naturally through a show - a Gamehendge set runs
+# "Narration > The Lizards > Narration" as three real tracks - so a repeat
+# around them is not a split sandwich.
+NOT_BREAD = {
+    "narration", "banter", "interview", "(check) banter", "jam",
+    "intro", "outro", "soundcheck", "crowd", "tuning",
 }
 # Titles that already carry the abbreviation, so a scan sees both spellings.
 ALIASES = {
@@ -71,7 +76,7 @@ def parts_of(title):
 
 
 def abbreviate(title):
-    return OUTER_SONGS.get(norm(title), title.strip())
+    return ABBREVIATIONS.get(norm(title), title.strip())
 
 
 @dataclass
@@ -119,7 +124,11 @@ def merged_title_for(outer, first_title, second_title):
 
     The inner songs are whatever the two titles hold once the outer song is
     stripped from the ends, in playing order."""
-    outer_abbr = abbreviate(outer)
+    # outer is a normalized key; the display spelling comes from whichever title
+    # actually holds it, so a song with no abbreviation keeps its real casing.
+    spelled = next((p for p in parts_of(first_title) + parts_of(second_title)
+                    if norm(p) == norm(outer)), outer)
+    outer_abbr = abbreviate(spelled)
     inner = []
     for part in parts_of(first_title) + parts_of(second_title):
         if norm(part) == norm(outer):
@@ -144,7 +153,9 @@ def scan_show(date, ignore_urls):
 
     for i, t in enumerate(tracks):
         parts = [norm(p) for p in parts_of(t["title"])]
-        outer_here = [o for o in OUTER_SONGS if o in parts]
+        # Any song can be the bread; the shape is what identifies a sandwich,
+        # not a fixed list of songs.
+        outer_here = [p for p in parts if p not in NOT_BREAD]
         if not outer_here:
             continue
         # A track that already holds a whole sandwich needs nothing, whatever
@@ -181,7 +192,8 @@ def scan_show(date, ignore_urls):
                 candidates.append(SandwichCandidate(
                     label=label, date=date, set_name=t["set_name"],
                     outer=outer,
-                    merged_title=f"{abbreviate(outer)} > {inner} > {abbreviate(outer)}",
+                    merged_title=(f"{abbreviate(t['title'])} > {inner} > "
+                                  f"{abbreviate(t['title'])}"),
                     first_id=t["id"], first_title=t["title"],
                     first_position=t["position"], first_mp3_url=t["mp3_url"],
                     first_duration_s=round((t.get("duration") or 0) / 1000.0, 1),
@@ -255,25 +267,20 @@ def scan_show(date, ignore_urls):
 
 
 def fetch_dates_for_outer_songs():
-    """Every show date holding any of the outer songs, from the tracks API."""
-    dates = set()
-    for slug in ["hold-your-head-up", "the-man-who-stepped-into-yesterday",
-                 "cold-as-ice", "alumni-blues", "you-enjoy-myself"]:
-        page = 1
-        while True:
-            resp = requests.get(f"{API_BASE}/tracks",
-                                params={"song_slug": slug, "per_page": 1000,
-                                        "page": page},
-                                timeout=60)
-            resp.raise_for_status()
-            data = resp.json()
-            for t in data.get("tracks", []):
-                if t.get("show_date"):
-                    dates.add(t["show_date"])
-            if page >= data.get("total_pages", 1):
-                break
-            page += 1
-    return sorted(dates)
+    """Every show date with audio. The sandwich shape can involve any song, so
+    the whole catalog is swept rather than the shows of a few named songs."""
+    dates, page = [], 1
+    while True:
+        resp = requests.get(f"{API_BASE}/shows",
+                            params={"page": page, "per_page": 1000}, timeout=60)
+        resp.raise_for_status()
+        data = resp.json()
+        dates.extend(s["date"] for s in data.get("shows", [])
+                     if s.get("audio_status") != "missing")
+        if page >= data.get("total_pages", 1):
+            break
+        page += 1
+    return sorted(set(dates))
 
 
 def load_ignore_urls(path):
