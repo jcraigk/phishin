@@ -570,7 +570,11 @@ def write_review_html(html_path, candidates, multi, quiet=False):
 {"".join(rows)}
 {footnote}
 <script>
-const YEAR = {json.dumps(html_path.resolve().parent.name)};
+const YEAR = {json.dumps("" if html_path.resolve().parent.name == "split_scan"
+                          else html_path.resolve().parent.name)};
+// Serve hint differs for the combined page, which has no year argument.
+const SERVE_CMD = YEAR ? "rake split_scan:serve[" + YEAR + "]"
+                       : "rake split_scan:serve";
 // Seconds auditioned on each side of the cut. Matches the scanner's constants.
 const CLIP_BEFORE_S = {CLIP_BEFORE_S};
 const CLIP_AFTER_S = {CLIP_AFTER_S};
@@ -718,7 +722,7 @@ async function renderPreview(row) {{
     status.textContent =
       e.name === "AbortError" ? "render timed out \\u2014 retry, or check the server"
       : (e instanceof TypeError || location.protocol === "file:")
-        ? "no preview server \\u2014 run: rake split_scan:serve[" + (YEAR || "YYYY") + "]"
+        ? "no preview server \\u2014 run: " + SERVE_CMD
         : "preview failed: " + e.message;
     status.classList.remove("busy");
     status.classList.add("err");
@@ -890,7 +894,7 @@ if (location.protocol === "file:") {{
   const b = document.createElement("div");
   b.className = "offline";
   b.textContent = "Opened as a file \\u2014 previews need the server. "
-    + "Run: rake split_scan:serve[" + YEAR + "] and open the http:// URL. "
+    + "Run: " + SERVE_CMD + " and open the http:// URL. "
     + "Editing cut points still works and still exports.";
   document.body.prepend(b);
 }}
@@ -926,7 +930,7 @@ function updateLegend() {{
 // Progress survives a reload, keyed by share url so it follows the track even
 // if the page is rebuilt and the rows reorder. Approved rows also store their
 // chosen cut, so a reload does not throw away the timing work.
-const STORE_KEY = "splitscan:progress:" + YEAR;
+const STORE_KEY = "splitscan:progress:" + (YEAR || "all");
 function rowKey(row) {{
   const b = row.querySelector("input.approve");
   if (!b) return null;
@@ -1348,6 +1352,32 @@ def rebuild_dir(dir_path, ignore_urls):
     write_review_html(dir_path / "review.html", kept, multi)
 
 
+def combine_dir(root, ignore_urls):
+    """One review page for every year's candidates, written at the scan root.
+
+    Each year keeps its own report.json; this only merges them for review, so a
+    rescan of any single year still works unchanged."""
+    root = Path(root)
+    candidates, multi = [], []
+    years = sorted(d for d in root.glob("[0-9][0-9][0-9][0-9]") if d.is_dir())
+    for year_dir in years:
+        report = year_dir / "report.json"
+        if not report.exists():
+            continue
+        found, found_multi = load_report(report)
+        candidates.extend(found)
+        multi.extend(found_multi)
+    kept = [c for c in candidates if c.share_url.rstrip("/") not in ignore_urls]
+    kept.sort(key=lambda c: (c.date, c.position))
+    multi.sort(key=lambda m: m["label"])
+    print(f"combined {len(years)} year(s): {len(kept)} candidate(s), "
+          f"{len(multi)} multi-segue", file=sys.stderr)
+    # Written as index.html: it replaces the year listing as the entry point,
+    # so the served root is the review itself.
+    write_review_html(root / "index.html", kept, multi)
+    (root / "report.json").write_text(report_json(kept, multi))
+
+
 def main():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -1355,6 +1385,8 @@ def main():
                    help="Scan every show of a year (repeatable)")
     p.add_argument("--show", action="append", default=[], metavar="YYYY-MM-DD",
                    help="Scan one show (repeatable)")
+    p.add_argument("--combine", metavar="ROOT", type=Path,
+                   help="Merge every year's report.json into one review page")
     p.add_argument("--rebuild", action="append", default=[], type=Path, metavar="DIR",
                    help="Regenerate review.html from DIR/report.json (repeatable)")
     p.add_argument("--ignore-file", type=Path,
@@ -1368,6 +1400,10 @@ def main():
     if ignore_urls:
         print(f"Ignoring {len(ignore_urls)} track(s) from {args.ignore_file}",
               file=sys.stderr)
+
+    if args.combine:
+        combine_dir(args.combine, ignore_urls)
+        return
 
     if args.rebuild:
         for d in args.rebuild:

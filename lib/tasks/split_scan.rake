@@ -34,254 +34,17 @@ module SplitScan
     ok
   end
 
-  # Years already reviewed, one per line (ranges like "1983-1990" allowed, #
-  # comments ignored). They stay on disk and stay servable by direct url; the
-  # index just stops listing them so what is left is what still needs work.
-  def self.done_years
-    path = "#{SCAN_ROOT}/done.txt"
-    return Set.new unless File.exist?(path)
-    File.readlines(path, chomp: true).each_with_object(Set.new) do |line, set|
-      line = line.sub(/#.*/, "").strip
-      next if line.empty?
-      if (m = line.match(/\A(\d{4})\s*-\s*(\d{4})\z/))
-        (m[1].to_i..m[2].to_i).each { set << it.to_s }
-      else
-        set << line
-      end
+  # One review page for every year's candidates, written to the scan root as
+  # index.html. Replaces the old year-listing index now that few candidates
+  # remain; each year keeps its own report.json, so a single-year rescan still
+  # works and this just re-merges them.
+  def self.combine
+    unless system("which uv > /dev/null 2>&1")
+      abort "uv not found. Install it first: https://docs.astral.sh/uv/"
     end
-  end
-
-  FONT_DIR = "node_modules/@fontsource/open-sans-condensed/files".freeze
-
-  # Ruby-side twin of embedded_fonts() in audio_split_analysis.py: the index has
-  # to look like the review pages, and those inline the font so they work over
-  # file:// with no network. Yields nothing if node_modules is absent, in which
-  # case the stack falls back to system sans.
-  def self.embedded_fonts
-    [ 300, 700 ].filter_map do |weight|
-      path = "#{FONT_DIR}/open-sans-condensed-latin-#{weight}-normal.woff2"
-      next unless File.exist?(path)
-      b64 = Base64.strict_encode64(File.binread(path))
-      %(@font-face { font-family: "Open Sans Condensed"; font-style: normal; ) +
-        %(font-weight: #{weight}; font-display: swap; ) +
-        %(src: url(data:font/woff2;base64,#{b64}) format("woff2"); })
-    end.join("\n    ")
-  end
-
-  def self.write_index
-    done = done_years
-    year_dirs = Dir.glob("#{SCAN_ROOT}/[0-9][0-9][0-9][0-9]").sort
-                   .reject { done.include?(File.basename(it)) }
-    return puts("No year folders under #{SCAN_ROOT}; nothing to index") if year_dirs.empty?
-
-    totals = Hash.new(0)
-    rows = year_dirs.map do |dir|
-      year = File.basename(dir)
-      summary_path = File.join(dir, "summary.json")
-      unless File.exist?(summary_path)
-        next %(<tr><td>#{year}</td><td class="pending" colspan="3">no report yet (scan running or failed)</td></tr>)
-      end
-
-      summary = JSON.parse(File.read(summary_path))
-      candidates = summary.fetch("candidates", 0)
-      multi = summary.fetch("multi_segue", 0)
-      totals["candidates"] += candidates
-      totals["multi_segue"] += multi
-      %(<tr data-year="#{year}" data-total="#{candidates}">) +
-        %(<td><a href="#{year}/review.html">#{year}</a></td>) +
-        %(<td class="prog"><span><span class="bar">) +
-        %(<i class="fill-ok"></i><i class="fill-skip"></i></span>) +
-        %(<span class="pct"></span></span></td>) +
-        %(<td>#{candidates}</td><td>#{multi}</td></tr>)
-    end
-
-    File.write("#{SCAN_ROOT}/index.html", <<~HTML)
-      <!doctype html>
-      <meta charset="utf-8">
-      <title>Track split reports</title>
-      <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">✂️</text></svg>'>
-
-      <style>
-        #{embedded_fonts}
-        /* Same tokens as the review pages, so moving between them feels like
-           one app rather than two tools. */
-        :root {
-          --bg: #ffffff; --fg: #1c1c1e; --muted: #6b6b70;
-          --line: #e3e3e7; --card: #fafafa; --link: #2f6fd0;
-          --ok: #1a6b2f; --accent: #b8860b;
-        }
-        @media (prefers-color-scheme: dark) {
-          :root {
-            --bg: #14171d; --fg: #e6e9ef; --muted: #8b95a7;
-            --line: #262b35; --card: #1a1e26; --link: #7fb3f0;
-            --ok: #5fce85; --accent: #e0a92e;
-          }
-        }
-        * { box-sizing: border-box; }
-        body { font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-               margin: 2rem auto; max-width: 700px; padding: 0 1.5rem;
-               background: var(--bg); color: var(--fg);
-               -webkit-font-smoothing: antialiased; }
-        h1 { font-family: "Open Sans Condensed", -apple-system, sans-serif;
-             font-size: 30px; font-weight: 700; letter-spacing: .01em; margin: 0 0 1.2rem; }
-        a { color: var(--link);
-            text-decoration-color: color-mix(in srgb, var(--link) 45%, transparent);
-            text-underline-offset: 2px; }
-        a:hover { text-decoration-color: currentColor; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { text-align: left; padding: .5rem .8rem; border-bottom: 1px solid var(--line); }
-        th { font-family: "Open Sans Condensed", -apple-system, sans-serif;
-             font-size: 15px; font-weight: 700; color: var(--muted);
-             text-transform: uppercase; letter-spacing: .04em; }
-        td + td, th + th { text-align: right; font-variant-numeric: tabular-nums; }
-        tbody tr:hover { background: var(--card); }
-        tfoot td { font-weight: 700; border-bottom: none; }
-        .pending { color: var(--muted); text-align: left; font-style: italic; }
-        .meta { color: var(--muted); margin: -.6rem 0 1.4rem; }
-        td.prog, th.prog-h { text-align: left; width: 45%; }
-        td.prog > span { display: flex; align-items: center; gap: .6rem; }
-        .bar { height: 4px; border-radius: 2px; background: var(--line);
-               overflow: hidden; font-size: 0; flex: 1; min-width: 60px; }
-        .bar i { display: inline-block; height: 100%; vertical-align: top;
-                 width: 0; transition: width .2s ease; }
-        .bar .fill-ok { background: var(--ok); }
-        .bar .fill-skip { background: var(--accent); opacity: .55; }
-        .pct { font-variant-numeric: tabular-nums; font-size: 13px;
-               color: var(--muted); flex: 0 0 2.6rem; text-align: right; }
-        tr.done .pct { color: var(--ok); font-weight: 700; }
-        tr.done td:first-child::after { content: " \\2713"; color: var(--ok);
-                                        font-weight: 700; }
-      </style>
-      <h1>Track split reports</h1>
-      <p class="meta">Generated #{Time.now.strftime('%Y-%m-%d %H:%M')}</p>
-      <table>
-        <thead>
-          <tr><th>Year</th><th class="prog-h">Progress</th><th>Candidates</th><th>Multi-segue</th></tr>
-        </thead>
-        <tbody>#{rows.join("\n")}</tbody>
-        <tfoot>
-          <tr><td>Total</td><td class="prog"><span><span class="bar">
-            <i class="fill-ok"></i><i class="fill-skip"></i></span>
-            <span class="pct"></span></span></td>
-            <td>#{totals['candidates']}</td><td>#{totals['multi_segue']}</td></tr>
-        </tfoot>
-      </table>
-      <script>
-        (function () {
-          var totals = { approved: 0, skipped: 0, total: 0 };
-          document.querySelectorAll("tr[data-year]").forEach(function (row) {
-            var total = parseInt(row.dataset.total, 10) || 0;
-            var state = {};
-            try {
-              state = JSON.parse(
-                localStorage.getItem("splitscan:progress:" + row.dataset.year) || "{}"
-              ) || {};
-            } catch (e) { state = {}; }
-            var marks = Object.keys(state).map(function (k) {
-              return state[k] && state[k].mark;
-            });
-            var approved = Math.min(
-              marks.filter(function (m) { return m === "a"; }).length, total);
-            var skipped = Math.min(
-              marks.filter(function (m) { return m === "s"; }).length, total - approved);
-            totals.approved += approved;
-            totals.skipped += skipped;
-            totals.total += total;
-            paint(row, approved, skipped, total);
-          });
-          paint(document.querySelector("tfoot tr"),
-                totals.approved, totals.skipped, totals.total);
-
-          function paint(row, approved, skipped, total) {
-            if (!row) return;
-            var ok = row.querySelector(".fill-ok");
-            var sk = row.querySelector(".fill-skip");
-            var pct = row.querySelector(".pct");
-            if (!ok || !sk || !pct) return;
-            var a = Math.min(approved, total);
-            var s = Math.min(skipped, total - a);
-            ok.style.width = total ? (a / total) * 100 + "%" : "100%";
-            sk.style.width = total ? (s / total) * 100 + "%" : "0%";
-            var done = a + s;
-            pct.textContent = (total ? Math.round((done / total) * 100) : 100) + "%";
-            if (done >= total) row.classList.add("done");
-          }
-        })();
-      </script>
-    HTML
-    puts "Index written to #{SCAN_ROOT}/index.html"
-  end
-
-  # Approved entries name a track by the blob its audio was scanned from, the
-  # same handle lead_scan:apply uses: a slug can change, a blob key cannot.
-  def self.resolve_track(entry)
-    key = File.basename(URI.parse(entry["mp3_url"]).path, ".mp3")
-    blob = ActiveStorage::Blob.find_by(key:)
-    attachment = blob && ActiveStorage::Attachment.find_by(
-      blob_id: blob.id, record_type: "Track", name: "mp3_audio"
-    )
-    return [ nil, "blob #{key} not found (audio replaced since scan?)" ] unless attachment
-    [ attachment.record, nil ]
-  end
-
-  def self.prompt_for_song(part_title, label)
-    unless $stdin.tty?
-      puts "  no song matches #{part_title.inspect} (not a tty, skipping)"
-      return nil
-    end
-
-    puts "\n  No song matches #{part_title.inspect} in #{label}"
-    print "  Enter a song id, or press enter to skip: "
-
-    answer = $stdin.gets.to_s.strip
-    return nil if answer.empty?
-
-    song = Song.find_by(id: answer.to_i)
-    unless song
-      puts "  No song found for #{answer.inspect}, skipping"
-      return nil
-    end
-    puts "  Using #{song.title} (id=#{song.id})"
-    song.id
-  end
-
-  def self.split_with_prompts(track, cut_s, dry_run, label, tag_sides = {})
-    overrides = {}
-    asked = Set.new
-    begin
-      TrackSplitService.call(
-        track, cut_s:, dry_run:, song_overrides: overrides, tag_sides:
-      )
-    rescue TrackSplitService::SongNotFoundError => e
-      part = e.part_title
-      raise if part.nil? || asked.include?(part.downcase)
-      asked << part.downcase
-      song_id = prompt_for_song(part, label)
-      return nil if song_id.nil?
-      overrides[part] = song_id
-      retry
-    end
-  end
-
-  # Only the split songs can have moved, so every recompute is scoped to them:
-  # unscoped, each call would rework the whole set list, and update_previous
-  # would rewrite the entire performance history of every song in the show.
-  def self.refresh_gaps(show, songs)
-    song_ids = songs.map(&:id).uniq
-    next_shows = song_ids.filter_map do |song_id|
-      Track.joins(:show, :songs)
-           .where(songs: { id: song_id })
-           .where("tracks.set <> ?", "S")
-           .where.not(tracks: { exclude_from_stats: true })
-           .where("shows.performance_gap_value > 0")
-           .where("shows.date > ?", show.date)
-           .order("shows.date ASC, tracks.position ASC")
-           .first&.show
-    end.uniq
-
-    GapService.call(show, update_previous: true, song_ids:)
-    next_shows.each { GapService.call(it, song_ids:) }
-    next_shows
+    system("uv", "run", SCAN_SCRIPT, "--combine", SCAN_ROOT,
+           "--ignore-file", "#{SCAN_ROOT}/ignore.txt") ||
+      abort("Combine failed")
   end
 end
 
@@ -302,13 +65,13 @@ namespace :split_scan do
       out_dir,
       log_path: "#{SplitScan::SCAN_ROOT}/#{args[:year]}.log"
     )
-    SplitScan.write_index
+    SplitScan.combine
     exit 1 unless ok
   end
 
-  desc "Regenerate the index page linking all year reports (data/split_scan/index.html)"
+  desc "Rebuild the combined review page (data/split_scan/index.html)"
   task :index do
-    SplitScan.write_index
+    SplitScan.combine
   end
 
   desc "Regenerate review pages from existing reports (rake split_scan:rebuild or " \
@@ -325,7 +88,7 @@ namespace :split_scan do
     cmd = [ "uv", "run", SplitScan::SCAN_SCRIPT, *SplitScan::FLAGS ] +
           dirs.flat_map { [ "--rebuild", it ] }
     system(*cmd) || abort("Rebuild failed")
-    SplitScan.write_index
+    SplitScan.combine
   end
 
   desc "Serve review pages with live split previews (rake split_scan:serve for all " \
