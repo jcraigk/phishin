@@ -346,6 +346,15 @@ def write_review_html(html_path, candidates, multi, quiet=False):
   </div>
 </div>""")
 
+    # A simple sandwich ("A > B > A") is the sandwich scan's job, not this one:
+    # it is merged back into one track rather than cut. Listing it here would
+    # bury the entries that genuinely need more than one cut point.
+    def simple_sandwich(title):
+        parts = [p.strip() for p in SEGUE_RE.split(title) if p.strip()]
+        return len(parts) == 3 and parts[0].casefold() == parts[-1].casefold()
+
+    multi = [m for m in multi if not simple_sandwich(m["title"])]
+
     footnote = ""
     if multi:
         items = "".join(
