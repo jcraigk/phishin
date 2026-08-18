@@ -466,7 +466,7 @@ def write_review_html(html_path, candidates, footnotes, combined=None,
   }}
   * {{ box-sizing: border-box; }}
   body {{ font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-          margin: 0 auto 2rem; max-width: 1300px; padding: 4.8rem 1.5rem 0;
+          margin: 0 auto 2rem; max-width: 1300px; padding: 6.5rem 1.5rem 0;
           background: var(--bg); color: var(--fg);
           -webkit-font-smoothing: antialiased; }}
   h1, h2 {{ font-family: "Open Sans Condensed", -apple-system, sans-serif;
@@ -531,10 +531,10 @@ def write_review_html(html_path, candidates, footnotes, combined=None,
   .status.err {{ color: var(--err); }}
   .status.busy {{ color: var(--accent); font-weight: 600; }}
   .meta {{ color: var(--muted); }}
-  #tabs {{ display: flex; gap: .3rem; margin: 0 0 1rem; border-bottom: 1px solid var(--line); }}
-  .tab {{ font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+  #tabs {{ display: flex; gap: .3rem; max-width: 1300px; margin: .2rem auto 0; }}
+  .tab {{ font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
           background: none; border: none; border-bottom: 2px solid transparent;
-          color: var(--muted); padding: .5rem .9rem; margin-bottom: -1px; }}
+          color: var(--muted); padding: .25rem .7rem .3rem; }}
   .tab:hover {{ color: var(--fg); }}
   .tab.active {{ color: var(--fg); border-bottom-color: var(--link); }}
   .tab span {{ font-variant-numeric: tabular-nums; font-weight: 400;
@@ -596,13 +596,13 @@ def write_review_html(html_path, candidates, footnotes, combined=None,
     </div>
     <button id="export">Export JSON</button>
   </div>
+  <nav id="tabs">
+    <button class="tab active" data-panel="pending">To merge <span>{len(rows)}</span></button>
+    <button class="tab" data-panel="unpaired">Not paired <span>{len(footnotes)}</span></button>
+    <button class="tab" data-panel="combined">Already combined <span>{len(combined)}</span></button>
+  </nav>
   <div class="bar"><i class="fill-ok"></i><i class="fill-skip"></i></div>
 </header>
-<nav id="tabs">
-  <button class="tab active" data-panel="pending">To merge <span>{len(rows)}</span></button>
-  <button class="tab" data-panel="unpaired">Not paired <span>{len(footnotes)}</span></button>
-  <button class="tab" data-panel="combined">Already combined <span>{len(combined)}</span></button>
-</nav>
 <section class="panel active" id="panel-pending">{"".join(rows)}</section>
 <section class="panel" id="panel-unpaired">{foot_html}</section>
 <section class="panel" id="panel-combined">{combined_html}</section>
