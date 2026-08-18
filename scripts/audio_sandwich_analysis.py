@@ -29,6 +29,7 @@ import html as html_escape
 import json
 import re
 import sys
+from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -144,11 +145,11 @@ def merged_title_for(outer, first_title, second_title):
 
 
 def scan_show(date, ignore_urls):
-    """(candidates, footnotes) for one show."""
+    """(candidates, footnotes, combined) for one show."""
     resp = requests.get(f"{API_BASE}/shows/{date}", timeout=30)
     resp.raise_for_status()
     tracks = sorted(resp.json()["tracks"], key=lambda t: t["position"])
-    candidates, footnotes = [], []
+    candidates, footnotes, combined = [], [], []
     paired = set()
 
     for i, t in enumerate(tracks):
@@ -158,9 +159,17 @@ def scan_show(date, ignore_urls):
         outer_here = [p for p in parts if p not in NOT_BREAD]
         if not outer_here:
             continue
-        # A track that already holds a whole sandwich needs nothing, whatever
-        # the outer song is - the bread does not have to be one we merge on.
+        # A track that already holds a whole sandwich needs no merge, but it is
+        # the reference set for what a finished one looks like, so it is kept.
         if len(parts) >= 3 and parts[0] == parts[-1]:
+            if parts[0] not in NOT_BREAD:
+                combined.append({
+                    "date": date, "set_name": t["set_name"],
+                    "position": t["position"], "title": t["title"],
+                    "outer": parts[0],
+                    "duration_s": round((t.get("duration") or 0) / 1000.0, 1),
+                    "share_url": f"{SITE_BASE}/{date}/{t.get('slug', '')}",
+                })
             continue
         if t["position"] in paired:
             continue
@@ -263,7 +272,7 @@ def scan_show(date, ignore_urls):
                 "share_url": f"{SITE_BASE}/{date}/{t.get('slug', '')}",
                 "outer": next(iter(outer_here)),
             })
-    return candidates, footnotes
+    return candidates, footnotes, combined
 
 
 def fetch_dates_for_outer_songs():
@@ -308,7 +317,9 @@ def embedded_fonts():
     return "\n  ".join(faces)
 
 
-def write_review_html(html_path, candidates, footnotes, quiet=False):
+def write_review_html(html_path, candidates, footnotes, combined=None,
+                      quiet=False):
+    combined = combined or []
     esc = html_escape.escape
     rows = []
     for c in sorted(candidates, key=lambda c: (c.date, c.first_position)):
@@ -385,21 +396,44 @@ def write_review_html(html_path, candidates, footnotes, quiet=False):
   </div>
 </div>""")
 
-    foot_html = ""
-    if footnotes:
+    def listing(entries, blurb):
         items = "".join(
-            f'<div class="fn"><span class="fndate">{esc(f["date"])}</span>'
-            f'<span class="fnset">{esc(f["set_name"])} t{f["position"]:02d}</span>'
-            + (f'<a href="{esc(f["share_url"], quote=True)}" target="_blank">'
-               f'{esc(f["title"])}</a>' if f.get("share_url")
-               else esc(f["title"]))
+            f'<div class="fn"><span class="fndate">{esc(e["date"])}</span>'
+            f'<span class="fnset">{esc(e["set_name"])} t{e["position"]:02d}</span>'
+            + (f'<a href="{esc(e["share_url"], quote=True)}" target="_blank">'
+               f'{esc(e["title"])}</a>' if e.get("share_url")
+               else esc(e["title"]))
+            + (f'<span class="fndur">{fmt_ts(e["duration_s"])}</span>'
+               if e.get("duration_s") else '')
             + '</div>'
-            for f in sorted(footnotes, key=lambda f: (f["date"], f["position"])))
-        foot_html = (
-            f'<h2>Not paired ({len(footnotes)})</h2>'
-            f'<p class="meta">An outer song inside a multi-song title with no '
-            f'adjacent partner to merge with. Nothing to do here automatically '
-            f'&mdash; listed so each can be inspected by hand.</p>{items}')
+            for e in sorted(entries, key=lambda e: (e["date"], e["position"])))
+        return f'<p class="meta">{blurb}</p>{items}'
+
+    foot_html = listing(
+        footnotes,
+        "An outer song inside a multi-song title with no adjacent partner to "
+        "merge with. Nothing to do here automatically &mdash; listed so each "
+        "can be inspected by hand.") if footnotes else '<p class="meta">None.</p>'
+
+    combined_counts = Counter(c["outer"] for c in combined)
+    pending_counts = Counter(c.outer for c in candidates)
+    tally = "".join(
+        f'<tr><td>{esc(song.title())}</td>'
+        f'<td>{combined_counts.get(song, 0)}</td>'
+        f'<td>{pending_counts.get(song, 0)}</td></tr>'
+        for song in sorted(set(combined_counts) | set(pending_counts),
+                           key=lambda s: -(combined_counts.get(s, 0)
+                                           + pending_counts.get(s, 0))))
+    combined_html = (
+        f'<table class="tally"><thead><tr><th>Song</th><th>Combined</th>'
+        f'<th>Pending</th></tr></thead><tbody>{tally}</tbody>'
+        f'<tfoot><tr><td>Total</td><td>{len(combined)}</td>'
+        f'<td>{len(candidates)}</td></tr></tfoot></table>'
+        + listing(combined,
+                  "Sandwiches that already live in a single track. These are "
+                  "the reference set &mdash; nothing to do, shown for "
+                  "comparison against what is still pending.")
+    ) if combined else '<p class="meta">None.</p>'
 
     html_path.parent.mkdir(parents=True, exist_ok=True)
     html_path.write_text(f"""<!doctype html>
@@ -493,6 +527,29 @@ def write_review_html(html_path, candidates, footnotes, quiet=False):
   .status.err {{ color: var(--err); }}
   .status.busy {{ color: var(--accent); font-weight: 600; }}
   .meta {{ color: var(--muted); }}
+  #tabs {{ display: flex; gap: .3rem; margin: 0 0 1rem; border-bottom: 1px solid var(--line); }}
+  .tab {{ font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+          background: none; border: none; border-bottom: 2px solid transparent;
+          color: var(--muted); padding: .5rem .9rem; margin-bottom: -1px; }}
+  .tab:hover {{ color: var(--fg); }}
+  .tab.active {{ color: var(--fg); border-bottom-color: var(--link); }}
+  .tab span {{ font-variant-numeric: tabular-nums; font-weight: 400;
+               font-size: 12px; color: var(--muted); margin-left: .35rem;
+               background: var(--card); border: 1px solid var(--line);
+               border-radius: 999px; padding: .05rem .4rem; }}
+  .panel {{ display: none; }}
+  .panel.active {{ display: block; }}
+  .tally {{ border-collapse: collapse; margin: 0 0 1.4rem; min-width: 22rem; }}
+  .tally th, .tally td {{ text-align: left; padding: .3rem .9rem .3rem 0;
+                          border-bottom: 1px solid var(--line); }}
+  .tally th {{ font-family: "Open Sans Condensed", -apple-system, sans-serif;
+               font-size: 13px; color: var(--muted); text-transform: uppercase;
+               letter-spacing: .04em; }}
+  .tally td + td, .tally th + th {{ text-align: right;
+                                    font-variant-numeric: tabular-nums; }}
+  .tally tfoot td {{ font-weight: 700; border-bottom: none; }}
+  .fndur {{ color: var(--muted); font-variant-numeric: tabular-nums;
+            margin-left: auto; }}
   .fn {{ display: flex; gap: .6rem; align-items: baseline; padding: .16rem 0;
          border-bottom: 1px solid var(--line); font-size: 13px; }}
   .fndate {{ font-variant-numeric: tabular-nums; font-weight: 600; }}
@@ -537,8 +594,14 @@ def write_review_html(html_path, candidates, footnotes, quiet=False):
   </div>
   <div class="bar"><i class="fill-ok"></i><i class="fill-skip"></i></div>
 </header>
-{"".join(rows)}
-{foot_html}
+<nav id="tabs">
+  <button class="tab active" data-panel="pending">To merge <span>{len(rows)}</span></button>
+  <button class="tab" data-panel="unpaired">Not paired <span>{len(footnotes)}</span></button>
+  <button class="tab" data-panel="combined">Already combined <span>{len(combined)}</span></button>
+</nav>
+<section class="panel active" id="panel-pending">{"".join(rows)}</section>
+<section class="panel" id="panel-unpaired">{foot_html}</section>
+<section class="panel" id="panel-combined">{combined_html}</section>
 <script>
 const JOINT_S = {JOINT_S};
 
@@ -765,6 +828,16 @@ if (location.protocol === "file:") {{
   document.body.prepend(b);
 }}
 
+document.querySelectorAll("#tabs .tab").forEach(tab => {{
+  tab.addEventListener("click", () => {{
+    document.querySelectorAll("#tabs .tab").forEach(t => t.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+    tab.classList.add("active");
+    const panel = document.getElementById("panel-" + tab.dataset.panel);
+    if (panel) panel.classList.add("active");
+  }});
+}});
+
 restoreProgress();
 updateLegend();
 
@@ -801,15 +874,16 @@ document.getElementById("export").onclick = () => {{
         print(f"Review page written to {html_path}", file=sys.stderr)
 
 
-def report_json(candidates, footnotes):
+def report_json(candidates, footnotes, combined=None):
     return json.dumps({"candidates": [asdict(c) for c in candidates],
-                       "footnotes": footnotes}, indent=2)
+                       "footnotes": footnotes,
+                       "combined": combined or []}, indent=2)
 
 
 def load_report(path):
     data = json.loads(Path(path).read_text())
     candidates = [SandwichCandidate(**c) for c in data.get("candidates", [])]
-    return candidates, data.get("footnotes", [])
+    return candidates, data.get("footnotes", []), data.get("combined", [])
 
 
 def rebuild_dir(dir_path, ignore_urls):
@@ -817,14 +891,14 @@ def rebuild_dir(dir_path, ignore_urls):
     if not report_path.exists():
         print(f"  no report.json in {dir_path}", file=sys.stderr)
         return
-    candidates, footnotes = load_report(report_path)
+    candidates, footnotes, combined = load_report(report_path)
     kept = [c for c in candidates
             if c.first_share_url.rstrip("/") not in ignore_urls]
     if len(kept) != len(candidates):
         print(f"  dropping {len(candidates) - len(kept)} ignore-listed pair(s)",
               file=sys.stderr)
-    report_path.write_text(report_json(kept, footnotes))
-    write_review_html(Path(dir_path) / "review.html", kept, footnotes)
+    report_path.write_text(report_json(kept, footnotes, combined))
+    write_review_html(Path(dir_path) / "review.html", kept, footnotes, combined)
 
 
 def main():
@@ -850,10 +924,11 @@ def main():
     dates = args.show or fetch_dates_for_outer_songs()
     print(f"scanning {len(dates)} show(s)", file=sys.stderr)
 
-    candidates, footnotes = [], []
+    candidates, footnotes, combined = [], [], []
     with ThreadPoolExecutor(max_workers=FETCH_WORKERS) as pool:
         results = pool.map(lambda d: scan_show(d, ignore_urls), sorted(dates))
-        for date, (found, notes) in zip(sorted(dates), results):
+        for date, (found, notes, done) in zip(sorted(dates), results):
+            combined.extend(done)
             for c in found:
                 print(f"  {c.date} {c.set_name} -> {c.merged_title}",
                       file=sys.stderr)
@@ -862,14 +937,14 @@ def main():
 
     kept = [c for c in candidates
             if c.first_share_url.rstrip("/") not in ignore_urls]
-    print(f"\n{len(kept)} sandwich candidate(s), {len(footnotes)} unpaired",
-          file=sys.stderr)
+    print(f"\n{len(kept)} sandwich candidate(s), {len(footnotes)} unpaired, "
+          f"{len(combined)} already combined", file=sys.stderr)
     if args.json:
         args.json.parent.mkdir(parents=True, exist_ok=True)
-        args.json.write_text(report_json(kept, footnotes))
+        args.json.write_text(report_json(kept, footnotes, combined))
         print(f"Report written to {args.json}", file=sys.stderr)
     if args.html:
-        write_review_html(args.html, kept, footnotes)
+        write_review_html(args.html, kept, footnotes, combined)
 
 
 if __name__ == "__main__":
