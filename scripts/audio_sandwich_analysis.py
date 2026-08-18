@@ -148,7 +148,11 @@ def scan_show(date, ignore_urls):
     """(candidates, footnotes, combined) for one show."""
     resp = requests.get(f"{API_BASE}/shows/{date}", timeout=30)
     resp.raise_for_status()
-    tracks = sorted(resp.json()["tracks"], key=lambda t: t["position"])
+    # Soundchecks are rehearsal, not performance: a repeat there is the band
+    # running a part twice, not a sandwich.
+    tracks = sorted((t for t in resp.json()["tracks"]
+                     if t.get("set_name") != "Soundcheck"),
+                    key=lambda t: t["position"])
     candidates, footnotes, combined = [], [], []
     paired = set()
 
