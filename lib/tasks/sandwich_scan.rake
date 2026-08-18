@@ -86,10 +86,25 @@ namespace :sandwich_scan do
       second, error = SandwichScan.resolve_track(entry["second_id"], label)
       next failures << [ label, error ] if error
 
+      third = nil
+      if entry["third_id"].present?
+        third, error = SandwichScan.resolve_track(entry["third_id"], label)
+        next failures << [ label, error ] if error
+      end
+
       begin
+        # A three-track sandwich is two merges: fold the middle in first, then
+        # the tail. The service only ever joins an adjacent pair, and after the
+        # first merge the tail has shifted down into place.
         result = TrackMergeService.call(
           first, second:, title: entry["merged_title"], dry_run:
         )
+        if third && !dry_run
+          result = TrackMergeService.call(
+            first.reload, second: third.reload,
+            title: entry["merged_title"], dry_run:
+          )
+        end
         applied += 1
         status = result[:applied] ? "MERGED" : "RENDERED"
         puts "#{status} #{progress}  #{entry['date']}  #{result[:title]}"

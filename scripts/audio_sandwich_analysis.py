@@ -94,6 +94,15 @@ class SandwichCandidate:
     second_waveform_url: str
     second_share_url: str
     shape: str            # which arrangement was matched, for the report
+    # A sandwich can also be three whole tracks ("HYHU", "Jennifer Dances",
+    # "HYHU"); the third is absent for the two-track shapes.
+    third_id: int = 0
+    third_title: str = ""
+    third_position: int = 0
+    third_mp3_url: str = ""
+    third_duration_s: float = 0.0
+    third_waveform_url: str = ""
+    third_share_url: str = ""
 
 
 def fmt_ts(seconds):
@@ -143,6 +152,56 @@ def scan_show(date, ignore_urls):
         if t["position"] in paired:
             continue
         matched = False
+        # Three whole tracks: the outer song, something else, the outer song
+        # again ("HYHU", "Jennifer Dances", "HYHU"). Checked before the pair
+        # shapes because none of its titles carry a segue to match on.
+        if i + 2 < len(tracks):
+            mid, last = tracks[i + 1], tracks[i + 2]
+            mparts = [norm(p) for p in parts_of(mid["title"])]
+            lparts = [norm(p) for p in parts_of(last["title"])]
+            for outer in outer_here:
+                if not (len(parts) == 1 and parts[0] == outer
+                        and lparts[-1] == outer
+                        and outer not in mparts):
+                    continue
+                if not (t["set_name"] == mid["set_name"] == last["set_name"]):
+                    continue
+                if mid["position"] in paired or last["position"] in paired:
+                    continue
+                if not all(x.get("mp3_url") for x in (t, mid, last)):
+                    continue
+                inner = " > ".join(
+                    [mid["title"].strip()]
+                    + [p for p in parts_of(last["title"])
+                       if norm(p) != outer])
+                label = (f"{date} {t['set_name']} t{t['position']:02d} "
+                         f"{t['title']} + {mid['title']} + {last['title']}")
+                candidates.append(SandwichCandidate(
+                    label=label, date=date, set_name=t["set_name"],
+                    outer=outer,
+                    merged_title=f"{abbreviate(outer)} > {inner} > {abbreviate(outer)}",
+                    first_id=t["id"], first_title=t["title"],
+                    first_position=t["position"], first_mp3_url=t["mp3_url"],
+                    first_duration_s=round((t.get("duration") or 0) / 1000.0, 1),
+                    first_waveform_url=t.get("waveform_image_url") or "",
+                    first_share_url=f"{SITE_BASE}/{date}/{t.get('slug', '')}",
+                    second_id=mid["id"], second_title=mid["title"],
+                    second_position=mid["position"], second_mp3_url=mid["mp3_url"],
+                    second_duration_s=round((mid.get("duration") or 0) / 1000.0, 1),
+                    second_waveform_url=mid.get("waveform_image_url") or "",
+                    second_share_url=f"{SITE_BASE}/{date}/{mid.get('slug', '')}",
+                    shape="A | B | A",
+                    third_id=last["id"], third_title=last["title"],
+                    third_position=last["position"], third_mp3_url=last["mp3_url"],
+                    third_duration_s=round((last.get("duration") or 0) / 1000.0, 1),
+                    third_waveform_url=last.get("waveform_image_url") or "",
+                    third_share_url=f"{SITE_BASE}/{date}/{last.get('slug', '')}",
+                ))
+                matched = True
+                paired.update({t["position"], mid["position"], last["position"]})
+                break
+        if matched:
+            continue
         if i + 1 < len(tracks):
             nxt = tracks[i + 1]
             nparts = [norm(p) for p in parts_of(nxt["title"])]
@@ -255,6 +314,11 @@ def write_review_html(html_path, candidates, footnotes, quiet=False):
             "second_mp3_url": c.second_mp3_url,
             "second_duration_s": c.second_duration_s,
             "second_share_url": c.second_share_url,
+            "third_id": c.third_id, "third_title": c.third_title,
+            "third_position": c.third_position,
+            "third_mp3_url": c.third_mp3_url,
+            "third_duration_s": c.third_duration_s,
+            "third_share_url": c.third_share_url,
         }), quote=True)
         setlist = (f'<a class="pnet" target="_blank" title="setlist on phish.net"'
                    f' href="https://phish.net/setlists/?d={esc(c.date, quote=True)}"'
@@ -271,11 +335,19 @@ def write_review_html(html_path, candidates, footnotes, quiet=False):
                 f'<span class="dur">{fmt_ts(dur)}</span></div>'
                 f'<div class="wave">{img}</div></div>')
 
-        joint = (
-            f'<div class="joint">'
-            f'<button class="jplay" title="hear the joint (e)">&#9654; joint</button>'
-            f'<span class="jmeta">{JOINT_S}s each side of the split</span>'
-            f'<div class="audio"></div></div>')
+        def joint_row(idx, left_title, right_title):
+            return (
+                f'<div class="joint" data-joint="{idx}">'
+                f'<button class="jplay" title="hear this joint">&#9654; joint</button>'
+                f'<span class="jmeta">{esc(left_title)} &rarr; {esc(right_title)}'
+                f' &middot; {JOINT_S}s each side</span>'
+                f'<div class="audio"></div></div>')
+
+        if c.third_id:
+            joint = (joint_row(0, c.first_title, c.second_title)
+                     + joint_row(1, c.second_title, c.third_title))
+        else:
+            joint = joint_row(0, c.first_title, c.second_title)
 
         rows.append(f"""
 <div class="row" data-payload="{payload}">
@@ -296,6 +368,9 @@ def write_review_html(html_path, candidates, footnotes, quiet=False):
       <div class="seam" title="the split being removed"></div>
       {wave(c.second_waveform_url, c.second_title, c.second_share_url,
             c.second_position, c.second_duration_s, "second")}
+      {'<div class="seam" title="the split being removed"></div>' if c.third_id else ''}
+      {wave(c.third_waveform_url, c.third_title, c.third_share_url,
+            c.third_position, c.third_duration_s, "third") if c.third_id else ''}
     </div>
     {joint}
   </div>
@@ -463,11 +538,18 @@ function payloadOf(row) {{ return JSON.parse(row.dataset.payload); }}
 // The joint is one clip: the tail of the first track butted against the head of
 // the second, rendered by the server the same way a merge would concatenate
 // them. A glitch here is a glitch in the merge.
-async function renderJoint(row) {{
+async function renderJoint(row, idx) {{
   const p = payloadOf(row);
   const status = row.querySelector(".status");
-  const box = row.querySelector(".joint .audio");
-  if (row._loaded) return;
+  const joint = row.querySelector('.joint[data-joint="' + (idx || 0) + '"]');
+  if (!joint) return;
+  const box = joint.querySelector(".audio");
+  if (joint._loaded) return box.querySelector("audio");
+  // Joint 0 is first|second; joint 1 (three-track shapes only) is second|third.
+  const left = (idx === 1)
+    ? {{url: p.second_mp3_url, dur: p.second_duration_s}}
+    : {{url: p.first_mp3_url, dur: p.first_duration_s}};
+  const rightUrl = (idx === 1) ? p.third_mp3_url : p.second_mp3_url;
   status.textContent = "rendering...";
   status.classList.add("busy");
   status.classList.remove("err");
@@ -476,9 +558,9 @@ async function renderJoint(row) {{
       method: "POST",
       headers: {{"Content-Type": "application/json"}},
       body: JSON.stringify({{
-        first_mp3_url: p.first_mp3_url,
-        first_duration_s: p.first_duration_s,
-        second_mp3_url: p.second_mp3_url,
+        first_mp3_url: left.url,
+        first_duration_s: left.dur,
+        second_mp3_url: rightUrl,
         seconds: JOINT_S
       }})
     }});
@@ -491,7 +573,7 @@ async function renderJoint(row) {{
       box.append(audio);
     }}
     audio.src = data.url + "?t=" + Date.now();
-    row._loaded = true;
+    joint._loaded = true;
     status.textContent = "";
     status.classList.remove("busy");
     return audio;
@@ -504,8 +586,11 @@ async function renderJoint(row) {{
   }}
 }}
 
-async function playJoint(row) {{
-  const audio = (await renderJoint(row)) || row.querySelector(".joint audio");
+async function playJoint(row, idx) {{
+  idx = idx || 0;
+  const joint = row.querySelector('.joint[data-joint="' + idx + '"]');
+  const audio = (await renderJoint(row, idx))
+    || (joint && joint.querySelector("audio"));
   if (!audio) return;
   document.querySelectorAll(".joint audio").forEach(a => {{
     if (a !== audio && !a.paused) a.pause();
@@ -561,8 +646,11 @@ document.querySelectorAll(".row").forEach(row => {{
   settle(a, s);
   settle(s, a);
   row.addEventListener("mousedown", () => selectRow(row));
-  const btn = row.querySelector(".jplay");
-  if (btn) btn.addEventListener("click", () => playJoint(row));
+  row.querySelectorAll(".joint").forEach(j => {{
+    const btn = j.querySelector(".jplay");
+    if (btn) btn.addEventListener("click",
+      () => playJoint(row, Number(j.dataset.joint)));
+  }});
 }});
 
 document.addEventListener("keydown", e => {{
@@ -587,7 +675,12 @@ document.addEventListener("keydown", e => {{
     e.preventDefault();
     const playing = [...row.querySelectorAll(".joint audio")].find(x => !x.paused);
     if (playing) return playing.pause();
-    return playJoint(row);
+    // On a three-track row "e" walks the joints, so repeated presses audition
+    // each splice in turn rather than replaying only the first.
+    const joints = row.querySelectorAll(".joint");
+    const idx = (row._nextJoint || 0) % joints.length;
+    row._nextJoint = idx + 1;
+    return playJoint(row, idx);
   }}
   const answerKeys = {{w: "approve", x: "skip", k: "skip"}};
   const answer = answerKeys[key];
@@ -671,13 +764,19 @@ document.getElementById("export").onclick = () => {{
     .filter(r => r.querySelector("input.approve").checked)
     .map(r => {{
       const p = payloadOf(r);
-      return {{
+      const entry = {{
         label: p.label, date: p.date, merged_title: p.merged_title,
         first_id: p.first_id, first_title: p.first_title,
         first_share_url: p.first_share_url,
         second_id: p.second_id, second_title: p.second_title,
         second_share_url: p.second_share_url
       }};
+      if (p.third_id) {{
+        entry.third_id = p.third_id;
+        entry.third_title = p.third_title;
+        entry.third_share_url = p.third_share_url;
+      }}
+      return entry;
     }});
   const blob = new Blob([JSON.stringify(approved, null, 2)],
                         {{type: "application/json"}});
