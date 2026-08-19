@@ -175,8 +175,12 @@ class TeaseSyncService < ApplicationService
   end
 
   # The sheet is keyed by production URLs, so never write a local/ngrok host into it.
+  # Derive the slug rather than trusting track.slug: a local database dump can
+  # predate a slug-format change (e.g. you-enjoy-myself -> yem) and would then
+  # write URLs that do not resolve in production.
   def sheet_url(track)
-    "#{Rails.configuration.production_base_url}/#{track.show.date}/#{track.slug}"
+    slug = TrackSlugGenerator.call(track)
+    "#{Rails.configuration.production_base_url}/#{track.show.date}/#{slug}"
   end
 
   # Sheet URLs use the production host; Track#url uses the configured host.

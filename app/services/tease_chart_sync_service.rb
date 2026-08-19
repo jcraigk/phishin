@@ -205,8 +205,12 @@ class TeaseChartSyncService < ApplicationService
     nil
   end
 
+  # Derive the slug rather than trusting track.slug: a local database dump can
+  # predate a slug-format change (e.g. you-enjoy-myself -> yem) and would then
+  # write URLs that do not resolve in production.
   def sheet_url(track)
-    "#{Rails.configuration.production_base_url}/#{track.show.date}/#{track.slug}"
+    slug = TrackSlugGenerator.call(track)
+    "#{Rails.configuration.production_base_url}/#{track.show.date}/#{slug}"
   end
 
   def normalize(str)
