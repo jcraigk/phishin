@@ -102,6 +102,24 @@ RSpec.describe GuestTagSyncService do
     end
   end
 
+  describe "bare band-member mentions that are not instrument credits" do
+    {
+      "Steven Drebber on vocals, unknown trumpet player (possibly Fish)" =>
+        "Steven Drebber on vocals, unknown trumpet player (possibly Fish)",
+      "Carl Gerhard on trumpet, introduced by Trey" =>
+        "Carl Gerhard on trumpet, introduced by Trey"
+    }.each do |note, expected|
+      context "with #{note.inspect}" do
+        let(:footnote) { note }
+
+        it "does not truncate the sentence" do
+          service.call
+          expect(TrackTag.last.notes).to eq(expected)
+        end
+      end
+    end
+  end
+
   describe "clauses where a band member is the object" do
     [
       "Kenwood Dennard replaced Fish on drums",
@@ -131,6 +149,41 @@ RSpec.describe GuestTagSyncService do
           expect { service.call }.not_to change(TrackTag, :count)
         end
       end
+    end
+  end
+
+  describe "titles phish.in abbreviates" do
+    let(:song) { "Hold Your Head Up" }
+    let(:footnote) { "John Popper on harmonica" }
+
+    it "matches the abbreviated local title" do
+      create(:track, show:, title: "Suspicious Minds > HYHU", position: 40)
+
+      service.call
+
+      expect(TrackTag.last.track.title).to eq("Suspicious Minds > HYHU")
+    end
+  end
+
+  context "when two setlist entries map to one combined track" do
+    let(:show) { create(:show, date: "1996-10-29") }
+    let(:song) { "Suspicious Minds" }
+    let(:service) { described_class.new(date: "1996-10-29", dry_run: false) }
+
+    before do
+      body = {
+        "data" => [
+          { "song" => "Suspicious Minds", "footnote" => "Karl Perazzo on percussion", "artistid" => 1 },
+          { "song" => "Hold Your Head Up", "footnote" => "Karl Perazzo on percussion", "artistid" => 1 }
+        ]
+      }.to_json
+      allow(Typhoeus).to receive(:get).and_return(instance_double(Typhoeus::Response, success?: true, body:))
+      create(:track, show:, title: "Suspicious Minds > HYHU", position: 30)
+    end
+
+
+    it "creates only one tag" do
+      expect { service.call }.to change(TrackTag, :count).by(1)
     end
   end
 

@@ -10,8 +10,10 @@ class GuestTagSyncService < ApplicationService
   # A single clause can pair a guest with a band member's own rig change, e.g.
   # "Billy Strings on guitar and Page on keytar". Only the guest belongs in a
   # Guest tag (the rig change is Alt Rig, handled separately), so the clause is
-  # cut at the band member.
-  BAND_TAIL = /[,;]?\s+(?:and\s+|with\s+)?(?:#{BAND_NAMES})\b.*\z/i
+  # cut at the band member -- but ONLY when the member is being credited with an
+  # instrument. A bare mention ("possibly Fish", "squawks from Trey") must not
+  # truncate the sentence.
+  BAND_TAIL = /[,;]?\s+(?:and\s+|with\s+)?(?:#{BAND_NAMES})\b\s+(?:on|using|played?|playing)\b.*\z/i
 
   # ...unless the band member is the object of the sentence rather than a second
   # performer, as in "Kenwood Dennard replaced Fish on drums".
@@ -38,6 +40,14 @@ class GuestTagSyncService < ApplicationService
     /\btease|quote\b/i
   ].freeze
 
+  # Phish.net spells out titles that phish.in abbreviates or spells differently.
+  TITLE_ALIASES = {
+    "hold your head up" => "hyhu",
+    "the man who stepped into yesterday" => "tmwsiy",
+    "big black furry creature from mars" => "bbfcfm",
+    "sneakin' sally thru the alley" => "sneakin' sally through the alley"
+  }.freeze
+
   option :date, default: -> { nil }
   option :year, default: -> { nil }
   option :start_date, default: -> { nil }
@@ -54,6 +64,7 @@ class GuestTagSyncService < ApplicationService
     @created = []
     @existing = []
     @unmatched = []
+    @seen = Set.new
 
     shows = fetch_shows
     puts "Scanning #{shows.count} show(s)#{dry_run ? ' (DRY RUN)' : ''}..."
@@ -130,6 +141,12 @@ class GuestTagSyncService < ApplicationService
       return
     end
 
+    # Phish.net lists segued songs separately while phish.in stores one combined
+    # track, so the same note can arrive twice for a single track.
+    key = [ track.id, notes ]
+    return if @seen.include?(key)
+
+    @seen << key
     @created << "#{show.date} | #{track.title} | #{notes}"
     return if dry_run
 
@@ -139,9 +156,14 @@ class GuestTagSyncService < ApplicationService
   def find_track(show, song)
     return nil if song.blank?
 
-    show.tracks.find { |t| t.title.casecmp?(song) } ||
-      show.tracks.find { |t| t.title.downcase.include?(song.downcase) } ||
-      show.tracks.find { |t| song.downcase.include?(t.title.downcase) }
+    candidates = [ song, TITLE_ALIASES[song.downcase.strip] ].compact
+    candidates.each do |candidate|
+      match = show.tracks.find { |t| t.title.casecmp?(candidate) } ||
+              show.tracks.find { |t| t.title.downcase.include?(candidate.downcase) } ||
+              show.tracks.find { |t| candidate.downcase.include?(t.title.downcase) }
+      return match if match
+    end
+    nil
   end
 
   def fetch_setlist(show_date)
