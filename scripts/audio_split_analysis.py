@@ -78,7 +78,7 @@ class SplitCandidate:
     share_url: str
     waveform_image_url: str
     duration_s: float
-    cut_s: float  # default cut point; the reviewer moves it
+    cut_points: list  # default cut points; the reviewer moves them
     unmatched_parts: list = field(default_factory=list)
     tags: list = field(default_factory=list)
 
@@ -112,8 +112,8 @@ def segue_count(title):
 
 
 def split_title(title):
-    """The two halves of a single-segue title, stripped."""
-    return [p.strip() for p in SEGUE_RE.split(title, maxsplit=1)]
+    """Every song named in a segued title, in order."""
+    return [p.strip() for p in SEGUE_RE.split(title) if p.strip()]
 
 
 def unmatched_parts(part_titles, songs, catalog=None):
@@ -175,20 +175,18 @@ def fetch_show_candidates(date, ignore_urls, catalog=None):
             print(f"  skipping {display_label(label)} (in ignore list)", file=sys.stderr)
             continue
         duration_s = (t.get("duration") or 0) / 1000.0
-        if count > 1:
-            # Not reviewable here: one cut point cannot describe two segues.
-            # Footnoted so the size of the remaining problem stays visible.
-            multi.append({"label": label, "title": t["title"], "share_url": share,
-                          "segues": count})
-            continue
         if not t.get("mp3_url"):
             print(f"  skipping {display_label(label)} (no mp3_url)", file=sys.stderr)
             continue
-        if duration_s < 2 * MIN_PART_S:
+        parts = split_title(t["title"])
+        # A simple sandwich ("A > B > A") belongs to the sandwich scan, which
+        # merges it back into one track rather than cutting it apart.
+        if len(parts) == 3 and parts[0].casefold() == parts[-1].casefold():
+            continue
+        if duration_s < len(parts) * MIN_PART_S:
             print(f"  skipping {display_label(label)} "
                   f"(only {duration_s:.0f}s, too short to split)", file=sys.stderr)
             continue
-        parts = split_title(t["title"])
         songs = [s["title"] for s in t.get("songs", [])]
         candidates.append(SplitCandidate(
             label=label, date=date, set_name=t["set_name"], position=t["position"],
@@ -196,9 +194,10 @@ def fetch_show_candidates(date, ignore_urls, catalog=None):
             mp3_url=t["mp3_url"], share_url=share,
             waveform_image_url=t.get("waveform_image_url") or "",
             duration_s=round(duration_s, 1),
-            # The midpoint is a neutral starting point, not a guess at the segue;
-            # every row is expected to be moved by hand.
-            cut_s=round(duration_s / 2, 1),
+            # Evenly spaced starting points, not guesses at the segues; every
+            # row is expected to be moved by hand.
+            cut_points=[round(duration_s * i / len(parts), 1)
+                        for i in range(1, len(parts))],
             unmatched_parts=unmatched_parts(parts, songs, catalog),
             tags=untimestamped_tags(t.get("tags") or []),
         ))
@@ -280,7 +279,10 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
     `rake split_scan:apply`."""
     esc = html_escape.escape
     rows = []
-    for c in sorted(candidates, key=lambda c: c.label):
+    # Most-segued first: those are the tracks needing the most work, and
+    # burying them under a hundred two-song rows hides the real backlog.
+    for c in sorted(candidates,
+                    key=lambda c: (-len(c.part_titles), c.date, c.position)):
         shown = display_label(c.label)
         link = (f'<a href="{esc(c.share_url, quote=True)}" target="_blank">{esc(shown)}</a>'
                 if c.share_url else esc(shown))
@@ -288,7 +290,7 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
         payload = esc(json.dumps({
             "label": c.label, "mp3_url": c.mp3_url, "share_url": c.share_url,
             "duration_s": c.duration_s,
-            "cut_points": [c.cut_s],
+            "cut_points": list(c.cut_points),
             "part_titles": list(c.part_titles),
             "song_ids": [by_title.get(t.casefold()) for t in c.part_titles],
         }), quote=True)
@@ -339,14 +341,6 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
   </div>
 </div>""")
 
-    # A simple sandwich ("A > B > A") is the sandwich scan's job, not this one:
-    # it is merged back into one track rather than cut. Listing it here would
-    # bury the entries that genuinely need more than one cut point.
-    def simple_sandwich(title):
-        parts = [p.strip() for p in SEGUE_RE.split(title) if p.strip()]
-        return len(parts) == 3 and parts[0].casefold() == parts[-1].casefold()
-
-    multi = [m for m in multi if not simple_sandwich(m["title"])]
 
     footnote = ""
     if multi:
@@ -1548,7 +1542,7 @@ def combine_dir(root, ignore_urls):
         candidates.extend(found)
         multi.extend(found_multi)
     kept = [c for c in candidates if c.share_url.rstrip("/") not in ignore_urls]
-    kept.sort(key=lambda c: (c.date, c.position))
+    kept.sort(key=lambda c: (-len(c.part_titles), c.date, c.position))
     multi.sort(key=lambda m: m["label"])
     print(f"combined {len(years)} year(s): {len(kept)} candidate(s), "
           f"{len(multi)} multi-segue", file=sys.stderr)
