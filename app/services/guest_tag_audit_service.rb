@@ -28,8 +28,7 @@ class GuestTagAuditService < ApplicationService
 
     apply(flagged) unless dry_run
 
-    { scanned:, flagged:, deleted: flagged.count { |e| e[:action] == :delete },
-      corrected: flagged.count { |e| e[:action] == :correct } }
+    { scanned:, flagged:, deleted: dry_run ? 0 : flagged.size }
   end
 
   private
@@ -48,26 +47,8 @@ class GuestTagAuditService < ApplicationService
   end
 
   def entry_for(track_tag, notes)
-    base = {
-      id: track_tag.id,
-      date: track_tag.track.show.date.to_s,
-      title: track_tag.track.title,
-      notes:
-    }
-
-    # Some notes lost their guest half to an earlier bad edit; the Phish.net
-    # footnote still has it. Only substitute when we can name the guest.
-    replacement = GUEST_CORRECTIONS[track_tag.id]
-    return base.merge(action: :correct, replacement:) if replacement
-
-    base.merge(action: :delete)
+    { id: track_tag.id, date: track_tag.track.show.date.to_s, title: track_tag.track.title, notes: }
   end
-
-  # Reviewed by hand: the note dropped a named guest that the source footnote
-  # still records. Keyed by TrackTag id so an unrelated tag cannot be rewritten.
-  GUEST_CORRECTIONS = {
-    67672 => "Cosmic Country Horns"
-  }.freeze
 
   def apply(flagged)
     TrackTag.transaction do
@@ -75,7 +56,7 @@ class GuestTagAuditService < ApplicationService
         record = TrackTag.find_by(id: entry[:id])
         next if record.nil?
 
-        entry[:action] == :correct ? record.update!(notes: entry[:replacement]) : record.destroy!
+        record.destroy!
       end
     end
   end

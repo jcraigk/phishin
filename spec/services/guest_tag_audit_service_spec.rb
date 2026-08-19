@@ -52,6 +52,7 @@ RSpec.describe GuestTagAuditService do
     report = described_class.call
 
     expect(report[:flagged].map { |e| e[:id] }).to eq([ record.id ])
+    expect(report[:deleted]).to eq(0)
     expect(record.reload).to be_present
   end
 
