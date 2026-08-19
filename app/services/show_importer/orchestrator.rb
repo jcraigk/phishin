@@ -50,6 +50,7 @@ class ShowImporter::Orchestrator
     InteractiveCoverArtService.call(Show.where(id: show.id))
     DebutTagService.call(show)
     LoreSyncService.call(date: show.date.to_s)
+    sync_teases
     save_song_performance_data(show)
     create_announcement
     clear_rails_cache
@@ -97,6 +98,21 @@ class ShowImporter::Orchestrator
   end
 
   private
+
+  # Teases live in the Tagin' spreadsheet, so append any the setlist notes
+  # describe and then pull the sheet's Tease rows into the database. A failure
+  # here must not abort an otherwise successful import.
+  def sync_teases
+    puts "Scanning setlist notes for teases..."
+    service = TeaseSyncService.new(date: show.date.to_s, apply: true)
+    service.call
+    return if service.proposed_rows.none?
+
+    data = GoogleSpreadsheetFetcher.call(ENV.fetch("TAGIN_GSHEET_ID"), "Tease!A1:G5000", headers: true)
+    TrackTagSyncService.call("Tease", data.select { |row| row["URL"].to_s.include?("/#{show.date}/") })
+  rescue StandardError => e
+    puts "⚠️  Tease sync failed (#{e.class}: #{e.message}); continuing import."
+  end
 
   def save_song_performance_data(show)
     puts "Calculating song performance data and applying bustout tag..."
