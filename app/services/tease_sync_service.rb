@@ -9,6 +9,7 @@ class TeaseSyncService < ApplicationService
 
   option :date, default: -> { nil }
   option :dates, default: -> { nil }
+  option :year, default: -> { nil }
   option :start_date, default: -> { nil }
   option :end_date, default: -> { nil }
   option :all, default: -> { false }
@@ -51,8 +52,8 @@ class TeaseSyncService < ApplicationService
   private
 
   def validate_options!
-    return if date || dates || start_date || end_date || all
-    raise ArgumentError, "Must specify DATE, DATES, START_DATE, END_DATE, or ALL=true"
+    return if date || dates || year || start_date || end_date || all
+    raise ArgumentError, "Must specify DATE, DATES, YEAR, START_DATE, END_DATE, or ALL=true"
   end
 
   def fetch_shows
@@ -61,6 +62,8 @@ class TeaseSyncService < ApplicationService
         Show.where(date:)
       elsif dates
         Show.where(date: dates.split(",").map(&:strip))
+      elsif year
+        Show.where(date: Date.new(year.to_i).all_year)
       elsif start_date && end_date
         Show.where(date: start_date..end_date)
       elsif start_date

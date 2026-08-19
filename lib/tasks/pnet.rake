@@ -34,11 +34,12 @@ namespace :pnet do
   end
 
   desc "Find teases in Phish.net setlist notes missing from the Tagin' Tease sheet " \
-       "(APPLY=true to append; DATE/DATES/START_DATE/END_DATE/ALL to scope)"
+       "(APPLY=true to append; DATE/DATES/YEAR/START_DATE/END_DATE/ALL to scope)"
   task teases: :environment do
     opts = {
       date: ENV["DATE"],
       dates: ENV["DATES"],
+      year: ENV["YEAR"],
       start_date: ENV["START_DATE"],
       end_date: ENV["END_DATE"],
       all: ENV["ALL"] == "true",

@@ -267,9 +267,19 @@ RSpec.describe TeaseSyncService do
     end
   end
 
+  describe "YEAR scoping" do
+    it "selects every show in the given year" do
+      create(:show, date: "2025-06-01").tap { |sh| create(:track, show: sh, title: "Bathtub Gin") }
+      create(:show, date: "2024-06-01").tap { |sh| create(:track, show: sh, title: "Bathtub Gin") }
+
+      svc = described_class.new(year: "2025")
+      expect(svc.send(:fetch_shows).map { |sh| sh.date.year }.uniq).to eq([ 2025 ])
+    end
+  end
+
   describe "option validation" do
     it "requires a date scope" do
-      expect { described_class.call }.to raise_error(ArgumentError, /DATE/)
+      expect { described_class.call }.to raise_error(ArgumentError, /YEAR/)
     end
   end
 end
