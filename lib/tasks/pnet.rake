@@ -67,6 +67,22 @@ namespace :pnet do
     TeaseChartSyncService.call(**opts)
   end
 
+  desc "Apply Guest tags from Phish.net song footnotes " \
+       "(DRY_RUN=false to create; DATE/YEAR/START_DATE/END_DATE/ALL to scope)"
+  task guests: :environment do
+    opts = {
+      date: ENV["DATE"],
+      year: ENV["YEAR"],
+      start_date: ENV["START_DATE"],
+      end_date: ENV["END_DATE"],
+      all: ENV["ALL"] == "true",
+      dry_run: ENV["DRY_RUN"] != "false",
+      verbose: ENV["VERBOSE"] == "true"
+    }
+
+    GuestTagSyncService.call(**opts)
+  end
+
   desc "Compare local setlists with Phish.net"
   task compare_setlists: :environment do
     shows = Show.published
