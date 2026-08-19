@@ -1,6 +1,7 @@
 class TeaseSyncService < ApplicationService
   SHEET_RANGE = "Tease!A1:G5000".freeze
   APPEND_RANGE = "Tease!A:F".freeze
+  UNMATCHED_RANGE = "UNMATCHED TEASES!A:E".freeze
   DEV_NOTE = "Imported from Phish.net setlist notes".freeze
   SONG_ALIASES = {
     "2001" => "Also Sprach Zarathustra"
@@ -41,7 +42,10 @@ class TeaseSyncService < ApplicationService
     end
 
     print_summary
-    append_rows if apply && proposed_rows.any?
+    return unless apply
+
+    append_rows if proposed_rows.any?
+    append_unmatched if unmatched.any?
   end
 
   private
@@ -105,13 +109,19 @@ class TeaseSyncService < ApplicationService
     end
   end
 
+  SOUNDCHECK = /soundcheck/i
+
   def evaluate_tease(show, tease)
     title = tease["tease"].to_s.strip
     return if title.blank?
 
     song = tease["song"].to_s.strip
+    return if song.match?(SOUNDCHECK) || title.match?(SOUNDCHECK)
     track = find_track(show, SONG_ALIASES.fetch(song, song))
-    return @unmatched << "#{show.date}: #{song} (#{title})" if track.blank?
+    if track.blank?
+      @unmatched << { date: show.date.to_s, song:, tease: title, artist: tease["artist"].to_s }
+      return
+    end
 
     note = format_note(title, resolve_artist(title, tease["artist"]))
     return log("  skip (already tagged): #{track.title} - #{note}") if already_covered?(track, note)
@@ -261,6 +271,8 @@ class TeaseSyncService < ApplicationService
       A tease is a brief musical quotation of another song played within a performed song.
       Do NOT extract: full cover performances, jams merely "in the style of" something,
       signals, stage banter, gags, props, guest appearances, or debuts.
+      Do NOT extract teases that occurred during a soundcheck -- only teases from the
+      performed show count. Skip any sentence describing the soundcheck.
 
       Respond with strict JSON only, no prose and no code fence:
       {"teases": [{"song": "<performed song>", "tease": "<teased song title>", "artist": "<original artist or null>", "in_sheet": <true|false>}]}
@@ -308,13 +320,27 @@ class TeaseSyncService < ApplicationService
     puts "Appended #{proposed_rows.size} row(s). Run `bin/rails tagin:sync` to pull them into the database."
   end
 
+  # Teases whose song has no phish.in track go to a separate tab so the Tease tab
+  # only ever holds rows that tagin:sync can actually resolve to a track.
+  def append_unmatched
+    rows = unmatched.map do |e|
+      [ e[:date], e[:song], format_note(e[:tease], e[:artist]), "no phish.in track", DEV_NOTE ]
+    end
+    GoogleSpreadsheetAppender.call(sheet_id, UNMATCHED_RANGE, rows)
+    puts "Appended #{rows.size} row(s) to the UNMATCHED TEASES tab."
+  rescue Google::Apis::ClientError => e
+    raise unless e.message.to_s.match?(/unable to parse range|not found/i)
+    puts "\nCould not write unmatched rows: no 'UNMATCHED TEASES' tab found."
+    unmatched.each { |e| puts "  #{e[:date]} / #{e[:song]} / #{format_note(e[:tease], e[:artist])}" }
+  end
+
   def print_summary
     puts "\nProposed rows: #{proposed_rows.size}"
     proposed_rows.each { |row| puts "  #{row[0]} - #{row[3]}" }
 
     if unmatched.any?
       puts "\nUnmatched songs (no track found):"
-      unmatched.each { |entry| puts "  #{entry}" }
+      unmatched.each { |e| puts "  #{e[:date]}: #{e[:song]} (#{e[:tease]})" }
     end
 
     if unverified_artists.any?

@@ -88,13 +88,57 @@ RSpec.describe TeaseSyncService do
         service.call
 
         expect(service.proposed_rows).to be_empty
-        expect(service.unmatched.first).to include("Divided Sky")
+        expect(service.unmatched.first).to include(song: "Divided Sky", tease: "Norwegian Wood")
       end
 
       it "does not fall back to an unrelated track in the show" do
         service.call
         expect(service.proposed_rows.map(&:first)).not_to include("https://phish.in/2025-12-31/#{yem.slug}")
       end
+    end
+  end
+
+  describe "soundcheck teases" do
+    let(:setlist_notes) { "The soundcheck's jam included Come Together teases from Trey." }
+    let(:llm_teases) do
+      [ { "song" => "Soundcheck Jam", "tease" => "Come Together", "artist" => "The Beatles" } ]
+    end
+
+    it "ignores them entirely rather than reporting them as unmatched" do
+      service.call
+
+      expect(service.proposed_rows).to be_empty
+      expect(service.unmatched).to be_empty
+    end
+  end
+
+  describe "unmatched rows on the Unmatched tab" do
+    let(:llm_teases) do
+      [ { "song" => "Divided Sky", "tease" => "Norwegian Wood", "artist" => "The Beatles" } ]
+    end
+
+    it "appends them to the Unmatched tab when applying" do
+      described_class.call(date: "2025-12-31", apply: true)
+
+      expect(GoogleSpreadsheetAppender).to have_received(:call).with(
+        "sheet-id",
+        described_class::UNMATCHED_RANGE,
+        [ [ "2025-12-31", "Divided Sky", "Norwegian Wood by The Beatles", "no phish.in track",
+            described_class::DEV_NOTE ] ]
+      )
+    end
+
+    it "does not write them during a dry run" do
+      service.call
+      expect(GoogleSpreadsheetAppender).not_to have_received(:call)
+    end
+
+    it "falls back to printing the rows when the tab is missing" do
+      allow(GoogleSpreadsheetAppender).to receive(:call)
+        .and_raise(Google::Apis::ClientError.new("Unable to parse range: UNMATCHED TEASES!A:A"))
+
+      expect { described_class.call(date: "2025-12-31", apply: true) }
+        .to output(/no 'UNMATCHED TEASES' tab found/).to_stdout
     end
   end
 
