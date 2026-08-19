@@ -129,25 +129,31 @@ def unmatched_parts(part_titles, songs, catalog=None):
     return [p for p in part_titles if p.casefold() not in known]
 
 
-def fetch_song_titles():
-    """Every song title in the catalog, casefolded. Empty on failure, which
-    just restores the old track-only check rather than blocking a scan."""
-    titles, page = set(), 1
+def fetch_song_catalog():
+    """Every song as {"id", "title"}. Empty on failure, which just restores the
+    old track-only check rather than blocking a scan."""
+    songs, page = [], 1
     try:
         while True:
             resp = requests.get(f"{API_BASE}/songs",
                                 params={"page": page, "per_page": 500}, timeout=30)
             resp.raise_for_status()
             data = resp.json()
-            titles |= {s["title"].strip().casefold() for s in data.get("songs", [])}
+            songs.extend({"id": s["id"], "title": s["title"].strip()}
+                         for s in data.get("songs", []) if s.get("title"))
             if page >= data.get("total_pages", 1):
                 break
             page += 1
     except requests.RequestException as e:
         print(f"  song catalog fetch failed ({e}); "
               "falling back to track associations only", file=sys.stderr)
-        return set()
-    return titles
+        return []
+    return sorted(songs, key=lambda s: s["title"].casefold())
+
+
+def fetch_song_titles():
+    """Casefolded titles only, for the unmatched-part check."""
+    return {s["title"].casefold() for s in fetch_song_catalog()}
 
 
 def fetch_show_candidates(date, ignore_urls, catalog=None):
@@ -267,7 +273,8 @@ def tag_picker(c, esc):
             + "".join(rows) + '</div>')
 
 
-def write_review_html(html_path, candidates, multi, quiet=False):
+def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
+    catalog = catalog or []
     """Static review page: per row a cut time, nudges, an audition of each side
     of the cut, and the full-track waveform. Export writes approved.json for
     `rake split_scan:apply`."""
@@ -1333,15 +1340,16 @@ document.getElementById("export").onclick = () => {{
         print(f"Review page written to {html_path}", file=sys.stderr)
 
 
-def report_json(candidates, multi):
+def report_json(candidates, multi, catalog=None):
     return json.dumps({"candidates": [asdict(c) for c in candidates],
-                       "multi_segue": multi}, indent=2)
+                       "multi_segue": multi,
+                       "songs": catalog or []}, indent=2)
 
 
 def load_report(path):
     data = json.loads(path.read_text())
     candidates = [SplitCandidate(**c) for c in data.get("candidates", [])]
-    return candidates, data.get("multi_segue", [])
+    return candidates, data.get("multi_segue", []), data.get("songs", [])
 
 
 def rebuild_dir(dir_path, ignore_urls):
@@ -1350,15 +1358,15 @@ def rebuild_dir(dir_path, ignore_urls):
     if not report_path.exists():
         print(f"  no report.json in {dir_path}, skipping", file=sys.stderr)
         return
-    candidates, multi = load_report(report_path)
+    candidates, multi, catalog = load_report(report_path)
     # The ignore list is authoritative on every rebuild, so adding a url there
     # drops the row without needing a rescan.
     kept = [c for c in candidates if c.share_url.rstrip("/") not in ignore_urls]
     if len(kept) != len(candidates):
         print(f"  dropping {len(candidates) - len(kept)} ignore-listed track(s)",
               file=sys.stderr)
-    report_path.write_text(report_json(kept, multi))
-    write_review_html(dir_path / "review.html", kept, multi)
+    report_path.write_text(report_json(kept, multi, catalog))
+    write_review_html(dir_path / "review.html", kept, multi, catalog)
 
 
 def combine_dir(root, ignore_urls):
@@ -1367,13 +1375,14 @@ def combine_dir(root, ignore_urls):
     Each year keeps its own report.json; this only merges them for review, so a
     rescan of any single year still works unchanged."""
     root = Path(root)
-    candidates, multi = [], []
+    candidates, multi, catalog = [], [], []
     years = sorted(d for d in root.glob("[0-9][0-9][0-9][0-9]") if d.is_dir())
     for year_dir in years:
         report = year_dir / "report.json"
         if not report.exists():
             continue
-        found, found_multi = load_report(report)
+        found, found_multi, found_songs = load_report(report)
+        catalog = catalog or found_songs
         candidates.extend(found)
         multi.extend(found_multi)
     kept = [c for c in candidates if c.share_url.rstrip("/") not in ignore_urls]
@@ -1383,8 +1392,8 @@ def combine_dir(root, ignore_urls):
           f"{len(multi)} multi-segue", file=sys.stderr)
     # Written as index.html: it replaces the year listing as the entry point,
     # so the served root is the review itself.
-    write_review_html(root / "index.html", kept, multi)
-    (root / "report.json").write_text(report_json(kept, multi))
+    write_review_html(root / "index.html", kept, multi, catalog)
+    (root / "report.json").write_text(report_json(kept, multi, catalog))
 
 
 def main():
@@ -1425,14 +1434,15 @@ def main():
     if not dates:
         p.error("nothing to scan: pass --year, --show, or --rebuild")
 
-    catalog = fetch_song_titles()
-    print(f"song catalog: {len(catalog)} titles", file=sys.stderr)
+    catalog = fetch_song_catalog()
+    known_titles = {s["title"].casefold() for s in catalog}
+    print(f"song catalog: {len(catalog)} songs", file=sys.stderr)
 
     candidates, multi = [], []
     ordered = sorted(set(dates))
     with ThreadPoolExecutor(max_workers=FETCH_WORKERS) as pool:
         results = pool.map(
-            lambda d: fetch_show_candidates(d, ignore_urls, catalog), ordered)
+            lambda d: fetch_show_candidates(d, ignore_urls, known_titles), ordered)
         for i, (date, (found, found_multi)) in enumerate(zip(ordered, results), 1):
             print(f"[{i}/{len(ordered)}] {date}", file=sys.stderr)
             for c in found:
@@ -1447,10 +1457,10 @@ def main():
 
     if args.json:
         args.json.parent.mkdir(parents=True, exist_ok=True)
-        args.json.write_text(report_json(candidates, multi))
+        args.json.write_text(report_json(candidates, multi, catalog))
         print(f"Report written to {args.json}", file=sys.stderr)
     if args.html:
-        write_review_html(args.html, candidates, multi)
+        write_review_html(args.html, candidates, multi, catalog)
 
 
 if __name__ == "__main__":
