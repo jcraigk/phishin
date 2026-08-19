@@ -52,6 +52,21 @@ namespace :pnet do
     TeaseSyncService.call(**opts)
   end
 
+  desc "Import teases from the Phish.net Tease Chart into the Tagin' Tease sheet " \
+       "(APPLY=true to append; YEAR/START_DATE/END_DATE/ALL to scope)"
+  task tease_chart: :environment do
+    opts = {
+      year: ENV["YEAR"],
+      start_date: ENV["START_DATE"],
+      end_date: ENV["END_DATE"],
+      all: ENV["ALL"] == "true",
+      apply: ENV["APPLY"] == "true",
+      verbose: ENV["VERBOSE"] == "true"
+    }
+
+    TeaseChartSyncService.call(**opts)
+  end
+
   desc "Compare local setlists with Phish.net"
   task compare_setlists: :environment do
     shows = Show.published
