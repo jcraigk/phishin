@@ -284,10 +284,13 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
         shown = display_label(c.label)
         link = (f'<a href="{esc(c.share_url, quote=True)}" target="_blank">{esc(shown)}</a>'
                 if c.share_url else esc(shown))
+        by_title = {s["title"].casefold(): s["id"] for s in catalog}
         payload = esc(json.dumps({
             "label": c.label, "mp3_url": c.mp3_url, "share_url": c.share_url,
-            "cut_s": c.cut_s, "duration_s": c.duration_s,
-            "part_titles": c.part_titles,
+            "duration_s": c.duration_s,
+            "cut_points": [c.cut_s],
+            "part_titles": list(c.part_titles),
+            "song_ids": [by_title.get(t.casefold()) for t in c.part_titles],
         }), quote=True)
         # The setlist is what settles an ambiguous segue - which song the second
         # half actually is, and whether the show even ran the way the title says.
@@ -312,7 +315,7 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
                 f'</div>'
                 f'<div class="wave">'
                 f'<img src="{esc(c.waveform_image_url, quote=True)}" loading="lazy">'
-                f'<span class="cut"></span><span class="pos"></span></div></div>')
+                f'<span class="pos"></span></div></div>')
         rows.append(f"""
 <div class="row">
   <div class="head">
@@ -328,25 +331,8 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
   </div>
   <div class="body">
     <div class="controls">
-      <div class="tune">
-        <button class="replay" title="replay both audition clips (e)">&#x21ba;</button>
-        <input class="cut" type="text" value="{fmt_tenths(c.cut_s)}"
-          size="8" spellcheck="false" title="cut point">
-        <button class="nudge" data-step="-1" title="1 second earlier (a or ,)">&minus;1</button>
-        <button class="nudge" data-step="-0.1" title="0.1 seconds earlier (s or [)">&minus;.1</button>
-        <button class="nudge" data-step="0.1" title="0.1 seconds later (d or ])">+.1</button>
-        <button class="nudge" data-step="1" title="1 second later (f or .)">+1</button>
-      </div>
-      <div class="parts">
-        <div class="part" data-side="before">
-          <span class="plabel">end of <b>{esc(c.part_titles[0])}</b></span>
-          <div class="audio"></div>
-        </div>
-        <div class="part" data-side="after">
-          <span class="plabel">start of <b>{esc(c.part_titles[1])}</b></span>
-          <div class="audio"></div>
-        </div>
-      </div>
+      <div class="cuts"></div>
+      <button class="addcut" title="add a cut at the playhead (c)">+ add cut</button>
       {tag_picker(c, esc)}
     </div>
     {track_player}
@@ -473,7 +459,29 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
   #topbar .bar .fill-skip {{ background: var(--accent); opacity: .55; }}
   @media (max-width: 860px) {{ #legend .k {{ display: none; }} }}
   @media (max-width: 640px) {{ #legend .stat {{ display: none; }} }}
-  .tune {{ display: flex; gap: .35rem; align-items: center; margin: .4rem 0 .4rem 1.6rem; }}
+  .cutrow {{ padding: .1rem 0 .3rem; }}
+  .cutrow + .cutrow {{ border-top: 1px dashed var(--line); margin-top: .35rem; }}
+  .ptitle {{ display: flex; align-items: center; gap: .4rem; margin: .25rem 0 .1rem; }}
+  .ptitle .pnum {{ flex: 0 0 1.1rem; height: 1.1rem; line-height: 1.1rem;
+                   text-align: center; border-radius: 50%; font-size: 11px;
+                   background: var(--btn); color: var(--muted);
+                   border: 1px solid var(--btn-line); }}
+  .ptitle-in {{ font: inherit; font-size: 13px; padding: .12rem .35rem; flex: 1 1 auto;
+                min-width: 0; background: var(--bg); color: var(--fg);
+                border: 1px solid var(--btn-line); border-radius: 6px; }}
+  .psong {{ font: inherit; font-size: 12px; padding: .12rem .2rem; max-width: 11rem;
+            background: var(--bg); color: var(--fg);
+            border: 1px solid var(--btn-line); border-radius: 6px; }}
+  .ptitle-in:focus, .psong:focus {{ outline: none; border-color: var(--accent); }}
+  .delcut {{ font: inherit; font-size: 14px; line-height: 1; cursor: pointer;
+             padding: .05rem .35rem; background: var(--btn); color: var(--muted);
+             border: 1px solid var(--btn-line); border-radius: 6px; }}
+  .delcut:hover {{ color: var(--err); border-color: var(--err); }}
+  .addcut {{ font: inherit; font-size: 12px; cursor: pointer; margin: .3rem 0 .1rem;
+             padding: .2rem .6rem; background: var(--btn); color: var(--fg);
+             border: 1px solid var(--btn-line); border-radius: 7px; }}
+  .addcut:hover {{ background: var(--btn-hover); border-color: var(--muted); }}
+  .tune {{ display: flex; gap: .35rem; align-items: center; margin: .3rem 0 .35rem 1.5rem; }}
   .tune .nudge + .nudge {{ margin-left: -.28rem; }}
   .tune input {{ font: inherit; font-size: 17px; font-variant-numeric: tabular-nums;
                  padding: .18rem .3rem; width: 5.2rem; text-align: center;
@@ -499,7 +507,7 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
   .controls {{ flex: 0 0 22rem; min-width: 0; }}
   /* The two halves stack, each under its own song name: the pair reads as
      "what you hear last" above "what you hear first", in playing order. */
-  .parts {{ margin-left: 1.6rem; }}
+  .parts {{ margin-left: 1.5rem; }}
   .part + .part {{ margin-top: .35rem; }}
   .part .plabel {{ display: block; color: var(--muted); font-size: 12px;
                    text-transform: uppercase; letter-spacing: .04em;
@@ -591,6 +599,7 @@ const YEAR = {json.dumps("" if html_path.resolve().parent.name == "split_scan"
 // Serve hint differs for the combined page, which has no year argument.
 const SERVE_CMD = YEAR ? "rake split_scan:serve[" + YEAR + "]"
                        : "rake split_scan:serve";
+const SONGS = {json.dumps(catalog)};
 // Seconds auditioned on each side of the cut. Matches the scanner's constants.
 const CLIP_BEFORE_S = {CLIP_BEFORE_S};
 const CLIP_AFTER_S = {CLIP_AFTER_S};
@@ -643,11 +652,10 @@ function stopPreviewClips() {{
 // server (opened over file://) the field still edits the export.
 async function renderPreview(row) {{
   const cb = row.querySelector("input.approve");
-  const input = row.querySelector("input.cut");
   const status = row.querySelector(".status");
   const payload = JSON.parse(cb.dataset.payload);
-  const secs = parseTime(input.value);
-  if (secs === null) return;
+  const cutList = payload.cut_points || [];
+  if (!cutList.length) return;
 
   status.textContent = "rendering...";
   status.classList.remove("err");
@@ -660,12 +668,18 @@ async function renderPreview(row) {{
   row._inflight = ctl;
   row._pending = (row._pending || 0) + 1;
   const dur = payload.duration_s || 0;
-  // Two clips, one per side of the cut, clamped to the track.
-  const sides = [
-    {{side: "before", start: Math.max(0, secs - CLIP_BEFORE_S), end: secs}},
-    {{side: "after", start: secs,
-     end: dur ? Math.min(dur, secs + CLIP_AFTER_S) : secs + CLIP_AFTER_S}},
-  ];
+  // Two clips per cut, one per side, clamped to the neighbouring cuts so a
+  // short part never bleeds audio from the part beyond it.
+  const edges = [0].concat(cutList, [dur || Infinity]);
+  const sides = [];
+  cutList.forEach((secs, i) => {{
+    const prev = edges[i];
+    const next = edges[i + 2];
+    sides.push({{cut: i, side: "before",
+                start: Math.max(prev, secs - CLIP_BEFORE_S), end: secs}});
+    sides.push({{cut: i, side: "after", start: secs,
+                end: Math.min(next, secs + CLIP_AFTER_S)}});
+  }});
   try {{
     const timeout = setTimeout(() => ctl.abort(), 90000);
     let results;
@@ -688,7 +702,7 @@ async function renderPreview(row) {{
         }});
         const data = await resp.json();
         if (!resp.ok) throw new Error(data.error || resp.statusText);
-        return {{side: s.side, url: data.url}};
+        return {{cut: s.cut, side: s.side, url: data.url}};
       }}));
     }} finally {{
       clearTimeout(timeout);
@@ -702,7 +716,9 @@ async function renderPreview(row) {{
       return;
     }}
     results.forEach(r => {{
-      const box = row.querySelector('.part[data-side="' + r.side + '"] .audio');
+      const block = row.querySelector('.cutrow[data-part="' + (r.cut + 1) + '"]');
+      const box = block &&
+        block.querySelector('.part[data-side="' + r.side + '"] .audio');
       if (!box) return;
       let audio = box.querySelector("audio");
       if (!audio) {{
@@ -723,7 +739,9 @@ async function renderPreview(row) {{
     // Play the "after" side on arrival: what decides a cut is whether the
     // second song starts cleanly, so that is the clip worth hearing first.
     if (window._sel === row) {{
-      const second = row.querySelector('.part[data-side="after"] audio');
+      const i = Math.min(row._activeCut ?? 0, cutList.length - 1);
+      const block = row.querySelector('.cutrow[data-part="' + (i + 1) + '"]');
+      const second = block && block.querySelector('.part[data-side="after"] audio');
       if (second) second.play().catch(() => {{}});
     }}
     status.textContent = "";
@@ -962,8 +980,12 @@ function saveProgress() {{
     const s = row.querySelector("input.skip");
     if (a && a.checked) {{
       let cut = null;
-      try {{ cut = JSON.parse(a.dataset.payload).cut_s; }} catch (e) {{}}
-      state[key] = {{mark: "a", cut_s: cut}};
+      try {{
+        const p = JSON.parse(a.dataset.payload);
+        cut = {{cut_points: p.cut_points, part_titles: p.part_titles,
+               song_ids: p.song_ids}};
+      }} catch (e) {{}}
+      state[key] = Object.assign({{mark: "a"}}, cut || {{}});
     }} else if (s && s.checked) {{
       state[key] = {{mark: "s"}};
     }}
@@ -996,8 +1018,14 @@ function restoreProgress() {{
     const box = row.querySelector(saved.mark === "a" ? "input.approve" : "input.skip");
     if (!box) return;
     box.checked = true;
-    if (saved.mark === "a" && typeof saved.cut_s === "number" && row._setCut) {{
-      row._setCut(saved.cut_s);
+    if (saved.mark === "a" && Array.isArray(saved.cut_points)) {{
+      const box = row.querySelector("input.approve");
+      const p = JSON.parse(box.dataset.payload);
+      p.cut_points = saved.cut_points;
+      if (saved.part_titles) p.part_titles = saved.part_titles;
+      if (saved.song_ids) p.song_ids = saved.song_ids;
+      box.dataset.payload = JSON.stringify(p);
+      if (row._renderCuts) row._renderCuts();
     }}
     // Setting .checked in script fires no "change", so collapse by hand.
     if (row._syncDone) row._syncDone();
@@ -1006,10 +1034,13 @@ function restoreProgress() {{
 
 document.querySelectorAll(".row").forEach(row => {{
   const cb = row.querySelector("input.approve");
-  const input = row.querySelector("input.cut");
-  if (!cb || !input) return;
-  const original = JSON.parse(cb.dataset.payload).cut_s;
-  const duration = JSON.parse(cb.dataset.payload).duration_s || 0;
+  if (!cb) return;
+  const payload0 = JSON.parse(cb.dataset.payload);
+  const duration = payload0.duration_s || 0;
+  const cutsBox = row.querySelector(".cuts");
+
+  const state = () => JSON.parse(cb.dataset.payload);
+  const save = p => {{ cb.dataset.payload = JSON.stringify(p); }};
 
   let renderTimer = null;
   // Watchdog: the busy pill has several exit paths and any one going wrong
@@ -1029,6 +1060,7 @@ document.querySelectorAll(".row").forEach(row => {{
       row._pending = 0;
     }}, 8000);
   }};
+  row._armWatchdog = armWatchdog;
 
   const scheduleRender = () => {{
     clearTimeout(renderTimer);
@@ -1039,11 +1071,66 @@ document.querySelectorAll(".row").forEach(row => {{
     st.classList.add("busy");
     renderTimer = setTimeout(() => renderPreview(row), 450);
   }};
+  row._scheduleRender = scheduleRender;
 
-  const commit = () => {{
-    const secs = parseTime(input.value);
+  const songOptions = sel =>
+    '<option value=""></option>' + SONGS.map(s =>
+      '<option value="' + s.id + '"' + (s.id === sel ? " selected" : "") + '>' +
+      s.title.replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</option>").join("");
+
+  // One block per part: its title, its song, and (for every part after the
+  // first) the cut that opens it with its own nudge controls and audition pair.
+  const partBlock = (i, p) => {{
+    const isFirst = i === 0;
+    const cut = isFirst ? null : p.cut_points[i - 1];
+    return '<div class="cutrow" data-part="' + i + '">' +
+      '<div class="ptitle">' +
+        '<span class="pnum">' + (i + 1) + '</span>' +
+        '<input class="ptitle-in" type="text" spellcheck="false" ' +
+          'value="' + (p.part_titles[i] || "").replace(/"/g, "&quot;") + '" ' +
+          'title="track title for this part">' +
+        '<select class="psong" title="song for this part">' +
+          songOptions(p.song_ids[i]) + '</select>' +
+        (isFirst ? '' :
+          '<button class="delcut" title="remove this cut">&times;</button>') +
+      '</div>' +
+      (isFirst ? '' :
+        '<div class="tune">' +
+          '<button class="replay" title="replay this joint (e)">&#x21ba;</button>' +
+          '<input class="cut" type="text" size="8" spellcheck="false" ' +
+            'value="' + fmtTime(cut) + '" title="cut point">' +
+          '<button class="nudge" data-step="-1" title="1 second earlier (a or ,)">&minus;1</button>' +
+          '<button class="nudge" data-step="-0.1" title="0.1 seconds earlier (s or [)">&minus;.1</button>' +
+          '<button class="nudge" data-step="0.1" title="0.1 seconds later (d or ])">+.1</button>' +
+          '<button class="nudge" data-step="1" title="1 second later (f or .)">+1</button>' +
+        '</div>' +
+        '<div class="parts">' +
+          '<div class="part" data-side="before"><span class="plabel">end of <b>' +
+            escapeHtml(p.part_titles[i - 1] || "") + '</b></span><div class="audio"></div></div>' +
+          '<div class="part" data-side="after"><span class="plabel">start of <b>' +
+            escapeHtml(p.part_titles[i] || "") + '</b></span><div class="audio"></div></div>' +
+        '</div>') +
+      '</div>';
+  }};
+
+  function escapeHtml(s) {{
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }}
+
+  const renderCuts = () => {{
+    const p = state();
+    cutsBox.innerHTML = p.part_titles.map((_, i) => partBlock(i, p)).join("");
+    wireCuts();
+    if (row._markCuts) row._markCuts(p.cut_points);
+    if (row._syncDone) row._syncDone();
+  }};
+  row._renderCuts = renderCuts;
+
+  const commitCut = (index, el) => {{
+    const secs = parseTime(el.value);
     const st = row.querySelector(".status");
-    input.classList.toggle("invalid", secs === null);
+    el.classList.toggle("invalid", secs === null);
     if (secs === null) {{
       clearTimeout(renderTimer);
       st.textContent = "use m:ss.s (e.g. 1:03.2)";
@@ -1051,29 +1138,171 @@ document.querySelectorAll(".row").forEach(row => {{
       st.classList.add("err");
       return;
     }}
-    const payload = JSON.parse(cb.dataset.payload);
-    if (payload.cut_s === secs) {{
-      if (!row._pending) {{
-        clearTimeout(renderTimer);
-        if (!st.classList.contains("err")) {{
-          st.textContent = "";
-          st.classList.remove("busy");
-        }}
-      }}
-      return;
-    }}
-    payload.cut_s = secs;
-    cb.dataset.payload = JSON.stringify(payload);
-    row.classList.toggle("edited", Math.abs(secs - original) > 0.05);
-    if (row._markCut) row._markCut(secs);
+    const p = state();
+    if (p.cut_points[index] === secs) return;
+    p.cut_points[index] = secs;
+    p.cut_points.sort((a, b) => a - b);
+    save(p);
+    row.classList.add("edited");
+    if (row._markCuts) row._markCuts(p.cut_points);
     if (row._syncDone) row._syncDone();
     scheduleRender();
   }};
 
-  input.addEventListener("change", commit);
-  input.addEventListener("keydown", e => {{ if (e.key === "Enter") {{ e.preventDefault(); commit(); }} }});
-  // Used by restoreProgress to put a saved cut back in the field.
-  row._setCut = secs => {{ input.value = fmtTime(secs); commit(); }};
+  const wireCuts = () => {{
+    cutsBox.querySelectorAll(".cutrow").forEach(block => {{
+      const i = Number(block.dataset.part);
+      const titleIn = block.querySelector(".ptitle-in");
+      const songSel = block.querySelector(".psong");
+      titleIn.addEventListener("change", () => {{
+        const p = state();
+        p.part_titles[i] = titleIn.value.trim();
+        save(p);
+        // The neighbouring audition labels name this part, so redraw them.
+        renderCuts();
+        saveProgress();
+      }});
+      songSel.addEventListener("change", () => {{
+        const p = state();
+        p.song_ids[i] = songSel.value ? Number(songSel.value) : null;
+        save(p);
+        saveProgress();
+      }});
+      const cutIn = block.querySelector("input.cut");
+      if (!cutIn) return;
+      cutIn.addEventListener("change", () => commitCut(i - 1, cutIn));
+      cutIn.addEventListener("keydown", e => {{
+        if (e.key === "Enter") {{ e.preventDefault(); commitCut(i - 1, cutIn); }}
+      }});
+      cutIn.addEventListener("focus", () => {{ row._activeCut = i - 1; }});
+      block.querySelectorAll("button.nudge").forEach(btn => {{
+        btn.addEventListener("click", () => nudgeCut(i - 1, Number(btn.dataset.step)));
+      }});
+      block.querySelector(".delcut").addEventListener("click", () => removeCut(i - 1));
+      block.querySelector(".replay").addEventListener("click", () => playPair(i - 1));
+    }});
+  }};
+
+  const limitMsg = text => {{
+    const status = row.querySelector(".status");
+    if (!status) return;
+    status.textContent = text;
+    status.classList.add("err");
+    clearTimeout(row._limitMsg);
+    row._limitMsg = setTimeout(() => {{
+      if (status.classList.contains("err")) {{
+        status.textContent = "";
+        status.classList.remove("err");
+      }}
+    }}, 2500);
+  }};
+
+  // Every part must survive the cut, the same bound the apply step enforces.
+  const legal = list => {{
+    const edges = [0].concat(list, [duration || Infinity]);
+    for (let i = 1; i < edges.length; i++) {{
+      if (edges[i] - edges[i - 1] < {MIN_PART_S}) return false;
+    }}
+    return true;
+  }};
+
+  const addCut = at => {{
+    const p = state();
+    const secs = Math.round(at * 10) / 10;
+    const next = p.cut_points.concat([secs]).sort((a, b) => a - b);
+    if (!legal(next)) {{
+      limitMsg("every part must be at least {MIN_PART_S}s");
+      return;
+    }}
+    const idx = next.indexOf(secs);
+    p.cut_points = next;
+    // The new part inherits the name of the one it was carved out of, which
+    // the reviewer then corrects with the title field and song picker.
+    p.part_titles.splice(idx + 1, 0, p.part_titles[idx] || "");
+    p.song_ids.splice(idx + 1, 0, p.song_ids[idx] ?? null);
+    save(p);
+    row.classList.add("edited");
+    renderCuts();
+    scheduleRender();
+  }};
+  row._addCut = addCut;
+
+  const removeCut = index => {{
+    const p = state();
+    if (index < 0 || index >= p.cut_points.length) return;
+    p.cut_points.splice(index, 1);
+    p.part_titles.splice(index + 1, 1);
+    p.song_ids.splice(index + 1, 1);
+    save(p);
+    row.classList.add("edited");
+    renderCuts();
+    if (p.cut_points.length) scheduleRender();
+  }};
+
+  const nudgeCut = (index, amount) => {{
+    const p = state();
+    const base = p.cut_points[index];
+    if (base === undefined) return;
+    const next = Math.max(0, Math.round((base + amount) * 10) / 10);
+    const trial = p.cut_points.slice();
+    trial[index] = next;
+    trial.sort((a, b) => a - b);
+    if (!legal(trial)) {{
+      limitMsg("every part must be at least {MIN_PART_S}s");
+      return;
+    }}
+    p.cut_points = trial;
+    save(p);
+    row.classList.add("edited");
+    if (row._markCuts) row._markCuts(p.cut_points);
+    if (row._syncDone) row._syncDone();
+    renderCuts();
+    scheduleRender();
+  }};
+  // Keyboard nudges act on the cut last focused, or the only one there is.
+  row._nudge = amount => {{
+    const p = state();
+    if (!p.cut_points.length) return;
+    const i = Math.min(row._activeCut ?? 0, p.cut_points.length - 1);
+    nudgeCut(i, amount);
+  }};
+
+  // Play the pair around one cut, so a press auditions that joint the way the
+  // audio will run once the track is split.
+  const playPair = index => {{
+    const block = cutsBox.querySelector('.cutrow[data-part="' + (index + 1) + '"]');
+    if (!block) return;
+    const before = block.querySelector('.part[data-side="before"] audio');
+    const after = block.querySelector('.part[data-side="after"] audio');
+    if (!before || !before.src) {{
+      if (after && after.src) {{ after.currentTime = 0; after.play().catch(() => {{}}); }}
+      return;
+    }}
+    before.currentTime = 0;
+    if (after && after.src) {{
+      before.onended = () => {{
+        before.onended = null;
+        after.currentTime = 0;
+        after.play().catch(() => {{}});
+      }};
+    }}
+    before.play().catch(() => {{}});
+  }};
+  row._playPair = () => playPair(Math.min(row._activeCut ?? 0,
+                                          state().cut_points.length - 1));
+  // "r" replays only the second half: a cut is judged on whether the next song
+  // starts cleanly, so that is the clip worth hearing again on its own.
+  row._restart = () => {{
+    const i = Math.min(row._activeCut ?? 0, state().cut_points.length - 1);
+    const block = cutsBox.querySelector('.cutrow[data-part="' + (i + 1) + '"]');
+    if (!block) return;
+    const after = block.querySelector('.part[data-side="after"] audio');
+    if (!after || !after.src) return;
+    const before = block.querySelector('.part[data-side="before"] audio');
+    if (before) {{ before.onended = null; if (!before.paused) before.pause(); }}
+    after.currentTime = 0;
+    after.play().catch(() => {{}});
+  }};
 
   // Full-track player. Streams the original mp3 straight from phish.in and
   // scrubs on the waveform: this is how the segue gets found in the first place.
@@ -1081,34 +1310,30 @@ document.querySelectorAll(".row").forEach(row => {{
   if (track) {{
     const wave = track.querySelector(".wave");
     const posEl = track.querySelector(".pos");
-    const cutEl = track.querySelector(".cut");
     const label = track.querySelector(".tt");
     const playBtn = track.querySelector(".tplay");
     let full = null;
 
-    // The whole track is shown, unlike the lead report's opening window: a
-    // segue can land anywhere, so the waveform has to cover everywhere.
     const shown = duration || 1;
     const frac = secs => (shown > 0 ? Math.min(1, Math.max(0, secs / shown)) : 0);
 
-    const markCut = secs => {{
-      cutEl.style.left = (frac(secs) * 100) + "%";
+    // One marker per cut, drawn over the waveform.
+    const markCuts = list => {{
+      wave.querySelectorAll(".cut").forEach(el => el.remove());
+      list.forEach(secs => {{
+        const el = document.createElement("span");
+        el.className = "cut";
+        el.style.left = (frac(secs) * 100) + "%";
+        wave.appendChild(el);
+      }});
     }};
-    markCut(original);
-    row._markCut = markCut;
+    markCuts(payload0.cut_points);
+    row._markCuts = markCuts;
     let atSecs = 0;
 
-    // Clicking the readout adopts that position as the cut point.
+    // "c" and the readout add a cut at the playhead.
     const adopt = () => {{
-      const was = JSON.parse(cb.dataset.payload).cut_s;
-      input.value = fmtTime(Math.round(atSecs * 10) / 10);
-      input.classList.remove("invalid");
-      commit();
-      // Adopting is an explicit request to hear it, so render even when the
-      // value did not actually change (commit no-ops in that case).
-      if (JSON.parse(cb.dataset.payload).cut_s === was) scheduleRender();
-      // Stop the full track shortly after: the clips are what to listen to
-      // next, and letting the rest of the track run just has to be stopped.
+      addCut(atSecs);
       if (full && !full.paused) {{
         clearTimeout(row._adoptStop);
         const from = full.currentTime;
@@ -1133,7 +1358,6 @@ document.querySelectorAll(".row").forEach(row => {{
     }};
     row._paintBtn = paintBtn;
 
-    // Created on first use so a page of 100 rows opens no connections.
     const ensure = () => {{
       if (full) return full;
       full = new Audio(track.dataset.src);
@@ -1164,18 +1388,13 @@ document.querySelectorAll(".row").forEach(row => {{
     }};
 
     const start = a => {{
-      if (a.readyState < 3) setLoading(true);  // < HAVE_FUTURE_DATA
+      if (a.readyState < 3) setLoading(true);
       a.play().then(() => setLoading(false)).catch(() => setLoading(false));
     }};
 
     const togglePlay = () => {{
       const a = ensure();
-      if (a.paused) {{
-        start(a);
-      }} else {{
-        a.pause();
-        setLoading(false);
-      }}
+      if (a.paused) {{ start(a); }} else {{ a.pause(); setLoading(false); }}
     }};
     playBtn.addEventListener("click", togglePlay);
     row._toggle = togglePlay;
@@ -1205,7 +1424,11 @@ document.querySelectorAll(".row").forEach(row => {{
     const on = cb.checked || skipped;
     row.classList.toggle("done", on);
     row.classList.toggle("skipped", !!skipped);
-    if (chosen) chosen.textContent = (on && !skipped) ? input.value : "";
+    const p = state();
+    if (chosen) {{
+      chosen.textContent = (on && !skipped)
+        ? p.cut_points.map(fmtTime).join(", ") : "";
+    }}
     if (on) {{
       stopRowAudio(row);
       if (row._inflight) row._inflight.abort();
@@ -1234,73 +1457,10 @@ document.querySelectorAll(".row").forEach(row => {{
     radio.addEventListener("change", saveProgress);
   }});
 
-  // Play both clips back to back, so one press auditions the whole cut the way
-  // the audio will actually run once the track is split.
-  const playPair = () => {{
-    const before = row.querySelector('.part[data-side="before"] audio');
-    const after = row.querySelector('.part[data-side="after"] audio');
-    if (!before || !before.src) {{
-      if (after && after.src) {{ after.currentTime = 0; after.play().catch(() => {{}}); }}
-      return;
-    }}
-    before.currentTime = 0;
-    if (after && after.src) {{
-      before.onended = () => {{
-        before.onended = null;
-        after.currentTime = 0;
-        after.play().catch(() => {{}});
-      }};
-    }}
-    before.play().catch(() => {{}});
-  }};
-  row._playPair = playPair;
-  // "r" replays only the second half: a cut is judged on whether the next song
-  // starts cleanly, so that is the clip worth hearing again on its own.
-  row._restart = () => {{
-    const after = row.querySelector('.part[data-side="after"] audio');
-    if (!after || !after.src) return;
-    const before = row.querySelector('.part[data-side="before"] audio');
-    // Drop a pending hand-off from a pair playback, or the pair would restart
-    // the "after" clip a second time when the first half runs out.
-    if (before) {{ before.onended = null; if (!before.paused) before.pause(); }}
-    after.currentTime = 0;
-    after.play().catch(() => {{}});
-  }};
-  const replay = row.querySelector("button.replay");
-  if (replay) replay.addEventListener("click", playPair);
+  const addBtn = row.querySelector(".addcut");
+  if (addBtn) addBtn.addEventListener("click", () => row._adopt && row._adopt());
 
-  // Nudge from whatever is in the field so repeated clicks compound; an
-  // unparseable field falls back to the committed value rather than 0.
-  const nudgeBy = amount => {{
-    const base = parseTime(input.value) ?? JSON.parse(cb.dataset.payload).cut_s;
-    const next = Math.max(0, Math.round((base + amount) * 10) / 10);
-    // Both halves must survive the cut, the same bound the apply step enforces.
-    if (duration && (next < {MIN_PART_S} || next > duration - {MIN_PART_S})) {{
-      const status = row.querySelector(".status");
-      if (status) {{
-        status.textContent =
-          "cut must leave {MIN_PART_S}s on each side (max " +
-          fmtTime(Math.round((duration - {MIN_PART_S}) * 10) / 10) + ")";
-        status.classList.add("err");
-        clearTimeout(row._limitMsg);
-        row._limitMsg = setTimeout(() => {{
-          if (status.classList.contains("err")) {{
-            status.textContent = "";
-            status.classList.remove("err");
-          }}
-        }}, 2500);
-      }}
-      return;
-    }}
-    input.value = fmtTime(next);
-    input.classList.remove("invalid");
-    commit();
-  }};
-  row.querySelectorAll("button.nudge").forEach(btn => {{
-    btn.addEventListener("click", () => nudgeBy(Number(btn.dataset.step)));
-  }});
-  row._nudge = nudgeBy;
-  row._armWatchdog = armWatchdog;
+  renderCuts();
 }});
 
 restoreProgress();
@@ -1322,7 +1482,9 @@ document.getElementById("export").onclick = () => {{
       // The apply step needs the track, the cut, and a label to report; the
       // rest is review-page bookkeeping.
       const entry = {{label: p.label, mp3_url: p.mp3_url, share_url: p.share_url,
-               cut_s: p.cut_s}};
+               cut_points: p.cut_points,
+               part_titles: p.part_titles,
+               song_ids: p.song_ids}};
       const tags = tagChoices(cb.closest(".row"));
       if (Object.keys(tags).length) entry.tag_sides = tags;
       return entry;
