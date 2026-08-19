@@ -320,7 +320,6 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
   <div class="body">
     <div class="controls">
       <div class="cuts"></div>
-      <button class="addcut" title="add a cut at the playhead (c)">+ add cut</button>
       {tag_picker(c, esc)}
     </div>
     {track_player}
@@ -457,10 +456,6 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
              padding: .05rem .35rem; background: var(--btn); color: var(--muted);
              border: 1px solid var(--btn-line); border-radius: 6px; }}
   .delcut:hover {{ color: var(--err); border-color: var(--err); }}
-  .addcut {{ font: inherit; font-size: 12px; cursor: pointer; margin: .3rem 0 .1rem;
-             padding: .2rem .6rem; background: var(--btn); color: var(--fg);
-             border: 1px solid var(--btn-line); border-radius: 7px; }}
-  .addcut:hover {{ background: var(--btn-hover); border-color: var(--muted); }}
   .tune {{ display: flex; gap: .35rem; align-items: center; margin: .3rem 0 .35rem 1.5rem; }}
   .tune .nudge + .nudge {{ margin-left: -.28rem; }}
   .tune input {{ font: inherit; font-size: 17px; font-variant-numeric: tabular-nums;
@@ -495,7 +490,7 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
   .part .plabel b {{ color: var(--fg); font-weight: 700; }}
   .tags {{ margin: .5rem 0 0 1.6rem; }}
   .tags-h {{ display: block; color: var(--muted); font-size: 12px;
-             text-transform: uppercase; letter-spacing: .04em; margin-bottom: .15rem; }}
+             text-transform: uppercase; letter-spacing: .04em; margin-bottom: 0; }}
   .trow {{ display: flex; align-items: center; gap: .5rem; padding: .1rem 0; }}
   .tname {{ flex: 1 1 auto; min-width: 0; font-size: 13px;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
@@ -518,9 +513,9 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
   .tbox:hover span {{ color: var(--fg); }}
   .tbox input:focus-visible + span {{ outline: 2px solid var(--accent);
                                       outline-offset: 1px; }}
-  .thead-row {{ padding-bottom: 0; }}
+  .thead-row {{ padding: 0; margin-top: -.1rem; }}
   .thead {{ display: inline-block; min-width: 1.5rem; text-align: center;
-            font-size: 11px; color: var(--muted);
+            font-size: 11px; line-height: 1.2; color: var(--muted);
             font-variant-numeric: tabular-nums;
             padding: 0 .3rem; border: 1px solid transparent; }}
   .controls audio {{ width: 100%; height: 34px; }}
@@ -1522,9 +1517,6 @@ document.querySelectorAll(".row").forEach(row => {{
   settle(cb, skipBox);
   if (skipBox) settle(skipBox, cb);
   row._syncDone = syncDone;
-
-  const addBtn = row.querySelector(".addcut");
-  if (addBtn) addBtn.addEventListener("click", () => row._adopt && row._adopt());
 
   renderCuts();
 }});
