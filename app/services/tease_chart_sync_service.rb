@@ -6,6 +6,14 @@ class TeaseChartSyncService < ApplicationService
   APPEND_RANGE = "Tease!A:F".freeze
   UNMATCHED_RANGE = "UNMATCHED TEASES!A:E".freeze
   DEV_NOTE = "Imported from Phish.net Tease Chart".freeze
+  # The chart page has a few names whose accented bytes are already lost upstream
+  # (they arrive as U+FFFD), so they cannot be repaired by re-decoding.
+  LOST_CHARACTER_FIXES = {
+    "Beyonc\uFFFD" => "Beyonc\u00E9",
+    "Mel Torm\uFFFD and Bob Wells" => "Mel Torm\u00E9 and Bob Wells",
+    "Vin\uFFFDcius de Moraes and Ant\uFFFDnio Carlos Jobim" =>
+      "Vin\u00EDcius de Moraes and Ant\u00F4nio Carlos Jobim"
+  }.freeze
 
   option :year, default: -> { nil }
   option :start_date, default: -> { nil }
@@ -57,7 +65,10 @@ class TeaseChartSyncService < ApplicationService
     response = Typhoeus.get(CHART_URL, followlocation: true, timeout: 60, headers: { "User-Agent" => "phish.in tease sync" })
     raise "Tease chart fetch failed (HTTP #{response.code})" unless response.success?
 
-    Nokogiri::HTML(response.body).css("table tr").flat_map do |row|
+    # Typhoeus hands back ASCII-8BIT despite the charset=utf-8 header; without this
+    # Nokogiri assumes Latin-1 and double-encodes every accented character.
+    html = response.body.dup.force_encoding(Encoding::UTF_8)
+    Nokogiri::HTML(html).css("table tr").flat_map do |row|
       cells = row.css("td").map { |cell| cell.text.strip.squish }
       next [] if cells.size < 4
 
@@ -115,7 +126,18 @@ class TeaseChartSyncService < ApplicationService
   end
 
   def clean(str)
-    CGI.unescapeHTML(str.to_s).gsub(/[“”]/, '"').gsub(/[‘’]/, "'").squish
+    str = repair_encoding(CGI.unescapeHTML(str.to_s))
+    LOST_CHARACTER_FIXES.fetch(str, str).gsub(/[“”]/, '"').gsub(/[‘’]/, "'").squish
+  end
+
+  # Undo one round of UTF-8 bytes having been decoded as Latin-1.
+  def repair_encoding(str)
+    return str if str.ascii_only?
+
+    candidate = str.encode(Encoding::ISO_8859_1).force_encoding(Encoding::UTF_8)
+    candidate.valid_encoding? ? candidate : str
+  rescue Encoding::UndefinedConversionError, Encoding::InvalidByteSequenceError
+    str
   end
 
   def shows_by_date

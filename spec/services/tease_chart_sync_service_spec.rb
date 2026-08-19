@@ -131,7 +131,27 @@ RSpec.describe TeaseChartSyncService do
     end
   end
 
-  context "when the chart lists no song label" do
+context "when the chart page is served as raw bytes" do
+  let(:chart_rows) do
+    [ [ "Entrance of the Gladiators", "Julius Fu\u010D\u00EDk", "1", "2025-12-31 Hood" ] ]
+  end
+
+  it "decodes accented characters instead of double-encoding them" do
+    service.call
+    expect(service.proposed_rows.first[3]).to eq("Entrance of the Gladiators by Julius Fu\u010D\u00EDk")
+  end
+end
+
+context "when the chart has irrecoverably lost characters" do
+  let(:chart_rows) { [ [ "Single Ladies (Put a Ring on It)", "Beyonc\uFFFD", "1", "2025-12-31 Hood" ] ] }
+
+  it "substitutes the known correct spelling" do
+    service.call
+    expect(service.proposed_rows.first[3]).to eq("Single Ladies (Put a Ring on It) by Beyonc\u00E9")
+  end
+end
+
+context "when the chart lists no song label" do
     let(:chart_rows) { [ [ "Norwegian Wood", "The Beatles", "1", "2025-12-31" ] ] }
 
     it "records it as unmatched" do
