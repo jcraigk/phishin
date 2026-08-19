@@ -1193,6 +1193,7 @@ document.querySelectorAll(".row").forEach(row => {{
     p.cut_points.sort((a, b) => a - b);
     save(p);
     row.classList.add("edited");
+    row._activeCut = p.cut_points.indexOf(secs);
     if (row._markCuts) row._markCuts(p.cut_points);
     if (row._syncDone) row._syncDone();
     scheduleRender();
@@ -1281,6 +1282,7 @@ document.querySelectorAll(".row").forEach(row => {{
     p.tag_sides = shiftTagSides(p.tag_sides, idx + 1, 1);
     save(p);
     row.classList.add("edited");
+    row._activeCut = idx;
     renderCuts();
     scheduleRender();
   }};
@@ -1295,6 +1297,7 @@ document.querySelectorAll(".row").forEach(row => {{
     p.tag_sides = shiftTagSides(p.tag_sides, index + 1, -1);
     save(p);
     row.classList.add("edited");
+    row._activeCut = Math.max(0, Math.min(index, p.cut_points.length - 1));
     renderCuts();
     if (p.cut_points.length) scheduleRender();
   }};
@@ -1314,6 +1317,7 @@ document.querySelectorAll(".row").forEach(row => {{
     p.cut_points = trial;
     save(p);
     row.classList.add("edited");
+    row._activeCut = p.cut_points.indexOf(next);
     if (row._markCuts) row._markCuts(p.cut_points);
     if (row._syncDone) row._syncDone();
     renderCuts();
