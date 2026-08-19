@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe TrackSplitService do
-  subject(:result) { described_class.call(track, cut_s:, dry_run:) }
+  subject(:result) { described_class.call(track, cut_points: [ cut_s ], dry_run:) }
 
   let(:show) { create(:show, date: "1989-05-26") }
   let(:song1) { create(:song, title: "Mike's Song") }
@@ -38,11 +38,11 @@ RSpec.describe TrackSplitService do
 
   describe "dry run" do
     it "renders the first part up to the cut" do
-      expect(probe_duration(result[:part1_path])).to be_within(0.3).of(cut_s)
+      expect(probe_duration(result[:parts][0][:path])).to be_within(0.3).of(cut_s)
     end
 
     it "renders the second part from the cut to the end" do
-      expect(probe_duration(result[:part2_path])).to be_within(0.3).of(60 - cut_s)
+      expect(probe_duration(result[:parts][1][:path])).to be_within(0.3).of(60 - cut_s)
     end
 
     it "does not create a second track" do
@@ -189,7 +189,7 @@ RSpec.describe TrackSplitService do
       context "with no duplicate" do
         it "leaves the new track's slug unsuffixed" do
           result
-          expect(Track.find(result[:new_track_id]).slug).to eq("i-am-hydrogen")
+          expect(Track.find(result[:new_track_ids].first).slug).to eq("i-am-hydrogen")
         end
 
         it "reports no renames" do
@@ -219,19 +219,19 @@ RSpec.describe TrackSplitService do
 
     it "creates the second track after the original" do
       result
-      expect(Track.find(result[:new_track_id])).to have_attributes(
+      expect(Track.find(result[:new_track_ids].first)).to have_attributes(
         title: "I Am Hydrogen", position: 6, set: "1"
       )
     end
 
     it "associates the second track with only the second song" do
       result
-      expect(Track.find(result[:new_track_id]).songs).to eq([ song2 ])
+      expect(Track.find(result[:new_track_ids].first).songs).to eq([ song2 ])
     end
 
     it "gives the second track its own slug" do
       result
-      expect(Track.find(result[:new_track_id]).slug).to eq("i-am-hydrogen")
+      expect(Track.find(result[:new_track_ids].first).slug).to eq("i-am-hydrogen")
     end
 
     it "shifts later tracks down to make room" do
@@ -247,7 +247,7 @@ RSpec.describe TrackSplitService do
 
     it "sets the new track's duration to the second part" do
       result
-      expect(Track.find(result[:new_track_id]).duration)
+      expect(Track.find(result[:new_track_ids].first).duration)
         .to be_within(400).of((60 - cut_s) * 1000)
     end
 
@@ -259,7 +259,7 @@ RSpec.describe TrackSplitService do
 
     it "attaches audio to the new track" do
       result
-      expect(Track.find(result[:new_track_id]).mp3_audio).to be_attached
+      expect(Track.find(result[:new_track_ids].first).mp3_audio).to be_attached
     end
 
     it "writes a backup of the original audio" do
@@ -279,7 +279,7 @@ RSpec.describe TrackSplitService do
 
     it "duplicates every like onto the new track" do
       result
-      expect(Track.find(result[:new_track_id]).likes.count).to eq(2)
+      expect(Track.find(result[:new_track_ids].first).likes.count).to eq(2)
     end
 
     it "leaves the original track's likes in place" do
@@ -289,13 +289,13 @@ RSpec.describe TrackSplitService do
 
     it "keeps the counter cache correct on the new track" do
       result
-      expect(Track.find(result[:new_track_id]).likes_count).to eq(2)
+      expect(Track.find(result[:new_track_ids].first).likes_count).to eq(2)
     end
 
     it "preserves the like timestamps" do
       created = track.likes.order(:id).first.created_at
       result
-      expect(Track.find(result[:new_track_id]).likes.order(:id).first.created_at)
+      expect(Track.find(result[:new_track_ids].first).likes.order(:id).first.created_at)
         .to be_within(1.second).of(created)
     end
   end
@@ -309,7 +309,7 @@ RSpec.describe TrackSplitService do
 
       it "copies the tag onto the new track" do
         result
-        expect(Track.find(result[:new_track_id]).tags).to eq([ tag ])
+        expect(Track.find(result[:new_track_ids].first).tags).to eq([ tag ])
       end
 
       it "keeps the tag on the original track" do
@@ -320,7 +320,7 @@ RSpec.describe TrackSplitService do
 
     context "with a tag_sides choice" do
       subject(:result) do
-        described_class.call(track, cut_s:, dry_run:, tag_sides:)
+        described_class.call(track, cut_points: [ cut_s ], dry_run:, tag_sides:)
       end
 
       before { create(:track_tag, track:, tag:) }
@@ -335,7 +335,7 @@ RSpec.describe TrackSplitService do
 
         it "does not copy it to the new track" do
           result
-          expect(Track.find(result[:new_track_id]).tags).to be_empty
+          expect(Track.find(result[:new_track_ids].first).tags).to be_empty
         end
       end
 
@@ -344,7 +344,7 @@ RSpec.describe TrackSplitService do
 
         it "moves the tag to the new track" do
           result
-          expect(Track.find(result[:new_track_id]).tags).to eq([ tag ])
+          expect(Track.find(result[:new_track_ids].first).tags).to eq([ tag ])
         end
 
         it "removes it from the original track" do
@@ -359,7 +359,7 @@ RSpec.describe TrackSplitService do
         it "tags both tracks" do
           result
           expect(track.reload.tags).to eq([ tag ])
-          expect(Track.find(result[:new_track_id]).tags).to eq([ tag ])
+          expect(Track.find(result[:new_track_ids].first).tags).to eq([ tag ])
         end
       end
 
@@ -373,7 +373,7 @@ RSpec.describe TrackSplitService do
 
         it "does not tag the new track" do
           result
-          expect(Track.find(result[:new_track_id]).tags).to be_empty
+          expect(Track.find(result[:new_track_ids].first).tags).to be_empty
         end
 
         it "destroys the track_tag rather than orphaning it" do
@@ -387,7 +387,47 @@ RSpec.describe TrackSplitService do
         it "leaves the untimestamped default in place" do
           result
           expect(track.reload.tags).to eq([ tag ])
-          expect(Track.find(result[:new_track_id]).tags).to eq([ tag ])
+          expect(Track.find(result[:new_track_ids].first).tags).to eq([ tag ])
+        end
+      end
+
+      context "when set to a list of part indices" do
+        subject(:result) do
+          described_class.call(track, cut_points: [ 20.0, 40.0 ], dry_run:, tag_sides:)
+        end
+
+        let(:tag_sides) { { "SBD" => [ 0, 2 ] } }
+
+        it "tags only the named parts" do
+          result
+          second, third = result[:new_track_ids].map { Track.find(it) }
+          expect(track.reload.tags).to eq([ tag ])
+          expect(second.tags).to be_empty
+          expect(third.tags).to eq([ tag ])
+        end
+      end
+
+      context "when a list of part indices omits the first part" do
+        subject(:result) do
+          described_class.call(track, cut_points: [ 20.0, 40.0 ], dry_run:, tag_sides:)
+        end
+
+        let(:tag_sides) { { "SBD" => [ 1, 2 ] } }
+
+        it "moves the tag off the original onto the named parts" do
+          result
+          second, third = result[:new_track_ids].map { Track.find(it) }
+          expect(track.reload.tags).to be_empty
+          expect(second.tags).to eq([ tag ])
+          expect(third.tags).to eq([ tag ])
+        end
+      end
+
+      context "when set to an empty list" do
+        let(:tag_sides) { { "SBD" => [] } }
+
+        it "destroys the track_tag" do
+          expect { result }.to change(TrackTag, :count).by(-1)
         end
       end
 
@@ -402,7 +442,7 @@ RSpec.describe TrackSplitService do
         it "ignores the choice and follows the audio" do
           result
           expect(track.reload.track_tags.count).to eq(1)
-          expect(Track.find(result[:new_track_id]).track_tags).to be_empty
+          expect(Track.find(result[:new_track_ids].first).track_tags).to be_empty
         end
       end
     end
@@ -417,7 +457,7 @@ RSpec.describe TrackSplitService do
 
       it "does not tag the new track" do
         result
-        expect(Track.find(result[:new_track_id]).track_tags).to be_empty
+        expect(Track.find(result[:new_track_ids].first).track_tags).to be_empty
       end
     end
 
@@ -431,7 +471,7 @@ RSpec.describe TrackSplitService do
 
       it "rebases the timestamps onto the new track's clock" do
         result
-        expect(Track.find(result[:new_track_id]).track_tags.first)
+        expect(Track.find(result[:new_track_ids].first).track_tags.first)
           .to have_attributes(starts_at_second: 10, ends_at_second: 20)
       end
     end
@@ -446,12 +486,12 @@ RSpec.describe TrackSplitService do
 
       it "adds the remainder to the new track" do
         result
-        expect(Track.find(result[:new_track_id]).track_tags.first)
+        expect(Track.find(result[:new_track_ids].first).track_tags.first)
           .to have_attributes(starts_at_second: 0, ends_at_second: 10)
       end
 
       it "reports the split tag" do
-        expect(result[:notes].join).to include("spanned the cut")
+        expect(result[:notes].join).to include("spanned a cut")
       end
     end
   end
@@ -477,7 +517,7 @@ RSpec.describe TrackSplitService do
 
       it "moves to the new track rebased onto its clock" do
         result
-        expect(Track.find(result[:new_track_id]).jam_starts_at_second).to eq(15)
+        expect(Track.find(result[:new_track_ids].first).jam_starts_at_second).to eq(15)
       end
     end
   end
@@ -499,13 +539,13 @@ RSpec.describe TrackSplitService do
     # Entries for the split, in playlist order; the neighbour is not one.
     def split_entries
       playlist.playlist_tracks.order(:position)
-              .where(track_id: [ track.id, result[:new_track_id] ])
+              .where(track_id: [ track.id, result[:new_track_ids].first ])
     end
 
     context "with a full-track entry" do
       it "becomes two consecutive entries" do
         result
-        expect(split_entries.map(&:track_id)).to eq([ track.id, result[:new_track_id] ])
+        expect(split_entries.map(&:track_id)).to eq([ track.id, result[:new_track_ids].first ])
       end
 
       it "clamps the first entry to the cut" do
@@ -534,7 +574,7 @@ RSpec.describe TrackSplitService do
 
       it "repoints the entry at the new track" do
         result
-        expect(split_entries.map(&:track_id)).to eq([ result[:new_track_id] ])
+        expect(split_entries.map(&:track_id)).to eq([ result[:new_track_ids].first ])
       end
 
       it "rebases the excerpt onto the new track's clock" do
@@ -551,7 +591,112 @@ RSpec.describe TrackSplitService do
         result
         expect(split_entries.map do
           [ it.track_id, it.starts_at_second, it.ends_at_second ]
-        end).to eq([ [ track.id, 10, 20 ], [ result[:new_track_id], nil, 10 ] ])
+        end).to eq([ [ track.id, 10, 20 ], [ result[:new_track_ids].first, nil, 10 ] ])
+      end
+    end
+  end
+
+  describe "multiple cut points" do
+    subject(:result) do
+      described_class.call(track, cut_points: [ 20.0, 40.0 ], dry_run:)
+    end
+
+    let(:dry_run) { false }
+    let(:song3) { create(:song, title: "Weekapaug Groove") }
+    let(:track) do
+      create(:track, show:, title: "Mike's Song > I Am Hydrogen > Weekapaug Groove",
+                     songs: [ song1, song2, song3 ], position: 5, set: "1")
+    end
+
+
+    it "produces one track per part" do
+      expect { result }.to change { show.tracks.reload.count }.by(2)
+    end
+
+    it "titles each part from the segued title" do
+      result
+      titles = show.tracks.reload.order(:position).map(&:title)
+      expect(titles).to eq([ "Mike's Song", "I Am Hydrogen", "Weekapaug Groove" ])
+    end
+
+    it "keeps the parts in playing order at consecutive positions" do
+      result
+      expect(show.tracks.reload.order(:position).map(&:position)).to eq([ 5, 6, 7 ])
+    end
+
+    it "associates each part with its own song" do
+      result
+      tracks = show.tracks.reload.order(:position)
+      expect(tracks.map { it.songs.map(&:title) })
+        .to eq([ [ "Mike's Song" ], [ "I Am Hydrogen" ], [ "Weekapaug Groove" ] ])
+    end
+
+    it "renders each part to its own duration" do
+      result
+      durations = result[:parts].map { it[:duration_s] }
+      expect(durations).to eq([ 20.0, 20.0, 20.0 ])
+    end
+
+    it "reports a url per part" do
+      expect(result[:parts].map { it[:url] }).to all(be_present)
+    end
+
+    context "with explicit part titles" do
+      subject(:result) do
+        described_class.call(track, cut_points: [ 20.0, 40.0 ], dry_run:,
+                                    part_titles: [ "Mike's Song", "Hydrogen", "Weekapaug Groove" ])
+      end
+
+      it "uses the supplied titles" do
+        result
+        expect(show.tracks.reload.order(:position).map(&:title))
+          .to eq([ "Mike's Song", "Hydrogen", "Weekapaug Groove" ])
+      end
+    end
+
+    context "with explicit song ids" do
+      subject(:result) do
+        described_class.call(track, cut_points: [ 20.0, 40.0 ], dry_run:,
+                                    song_ids: [ song1.id, song3.id, song2.id ])
+      end
+
+      it "associates the songs given, in order" do
+        result
+        expect(show.tracks.reload.order(:position).map { it.songs.first })
+          .to eq([ song1, song3, song2 ])
+      end
+    end
+
+    context "with three cuts" do
+      subject(:result) do
+        described_class.call(track, cut_points: [ 15.0, 30.0, 45.0 ], dry_run:,
+                                    part_titles: [ "A", "B", "C", "D" ],
+                                    song_ids: [ song1.id, song2.id, song3.id, song1.id ])
+      end
+
+      it "produces four tracks" do
+        expect { result }.to change { show.tracks.reload.count }.by(3)
+      end
+    end
+
+    context "when cut points are out of order" do
+      subject(:result) do
+        described_class.call(track, cut_points: [ 40.0, 20.0 ], dry_run:)
+      end
+
+      it "sorts them rather than failing" do
+        result
+        expect(result[:parts].map { it[:duration_s] }).to eq([ 20.0, 20.0, 20.0 ])
+      end
+    end
+
+    context "when two cuts are too close together" do
+      subject(:result) do
+        described_class.call(track, cut_points: [ 20.0, 21.0 ], dry_run:)
+      end
+
+      it "refuses to split" do
+        expect { result }.to raise_error(described_class::CutOutOfRangeError)
       end
     end
   end
@@ -583,19 +728,39 @@ RSpec.describe TrackSplitService do
       end
     end
 
-    context "when the title has two segues" do
-      before { track.update!(title: "Alumni Blues > Letter to Jimmy Page > Alumni Blues") }
+    context "when the title has more songs than cuts" do
+      let(:song3) { create(:song, title: "Weekapaug Groove") }
 
-      it "refuses to split" do
-        expect { result }.to raise_error(described_class::TitleError, /exactly one/)
+      before do
+        song3
+        track.update!(title: "Mike's Song > I Am Hydrogen > Weekapaug Groove")
+      end
+
+      it "splits at the cut given and names the parts from the title" do
+        result
+        expect(result[:parts].map { it[:title] })
+          .to eq([ "Mike's Song", "I Am Hydrogen" ])
       end
     end
 
-    context "when the title has no segue" do
-      before { track.update!(title: "Mike's Song") }
+    context "when the title names fewer parts than there are cuts" do
+      subject(:result) do
+        described_class.call(track, cut_points: [ 20.0, 40.0 ], dry_run:)
+      end
+
+      before { track.update!(title: "Mike's Song > I Am Hydrogen") }
+
+      it "repeats the last name rather than leaving a part unnamed" do
+        expect(result[:parts].map { it[:title] })
+          .to eq([ "Mike's Song", "I Am Hydrogen", "I Am Hydrogen" ])
+      end
+    end
+
+    context "when no cut points are given" do
+      subject(:result) { described_class.call(track, cut_points: [], dry_run:) }
 
       it "refuses to split" do
-        expect { result }.to raise_error(described_class::TitleError)
+        expect { result }.to raise_error(described_class::CutOutOfRangeError)
       end
     end
 
@@ -625,7 +790,7 @@ RSpec.describe TrackSplitService do
 
     context "with a song override for an unmatched part" do
       subject(:result) do
-        described_class.call(track, cut_s:, dry_run:, song_overrides:)
+        described_class.call(track, cut_points: [ cut_s ], dry_run:, song_overrides:)
       end
 
       let(:replacement) { create(:song, title: "Icculus") }
@@ -641,12 +806,12 @@ RSpec.describe TrackSplitService do
         let(:dry_run) { false }
 
         it "assigns the overridden song to the new track" do
-          new_track = Track.find(result[:new_track_id])
+          new_track = Track.find(result[:new_track_ids].first)
           expect(new_track.songs).to eq([ replacement ])
         end
 
         it "keeps the part title from the track, not the song" do
-          new_track = Track.find(result[:new_track_id])
+          new_track = Track.find(result[:new_track_ids].first)
           expect(new_track.title).to eq("Nonexistent Song")
         end
       end
@@ -697,7 +862,7 @@ RSpec.describe TrackSplitService do
 
     it "splits on the arrow the same way" do
       result
-      expect([ track.reload.title, Track.find(result[:new_track_id]).title ])
+      expect([ track.reload.title, Track.find(result[:new_track_ids].first).title ])
         .to eq([ "Mike's Song", "I Am Hydrogen" ])
     end
   end

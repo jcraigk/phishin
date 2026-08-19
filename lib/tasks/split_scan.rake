@@ -46,6 +46,83 @@ module SplitScan
            "--ignore-file", "#{SCAN_ROOT}/ignore.txt") ||
       abort("Combine failed")
   end
+
+  def self.resolve_track(entry)
+    key = File.basename(URI.parse(entry["mp3_url"]).path, ".mp3")
+    blob = ActiveStorage::Blob.find_by(key:)
+    attachment = blob && ActiveStorage::Attachment.find_by(
+      blob_id: blob.id, record_type: "Track", name: "mp3_audio"
+    )
+    return [ nil, "blob #{key} not found (audio replaced since scan?)" ] unless attachment
+    [ attachment.record, nil ]
+  end
+
+  def self.prompt_for_song(part_title, label)
+    unless $stdin.tty?
+      puts "  no song matches #{part_title.inspect} (not a tty, skipping)"
+      return nil
+    end
+
+    puts "\n  No song matches #{part_title.inspect} in #{label}"
+    print "  Enter a song id, or press enter to skip: "
+
+    answer = $stdin.gets.to_s.strip
+    return nil if answer.empty?
+
+    song = Song.find_by(id: answer.to_i)
+    unless song
+      puts "  No song found for #{answer.inspect}, skipping"
+      return nil
+    end
+    puts "  Using #{song.title} (id=#{song.id})"
+    song.id
+  end
+
+  # An entry carries its own cut points, part titles and song ids; the reviewer
+  # set them all on the review page.
+  def self.split_with_prompts(track, entry, dry_run, label)
+    overrides = {}
+    asked = Set.new
+    cut_points = Array(entry["cut_points"]).map(&:to_f)
+    begin
+      TrackSplitService.call(
+        track, cut_points:, dry_run:,
+        song_overrides: overrides,
+        tag_sides: entry["tag_sides"] || {},
+        part_titles: entry["part_titles"],
+        song_ids: entry["song_ids"]
+      )
+    rescue TrackSplitService::SongNotFoundError => e
+      part = e.part_title
+      raise if part.nil? || asked.include?(part.downcase)
+      asked << part.downcase
+      song_id = prompt_for_song(part, label)
+      return nil if song_id.nil?
+      overrides[part] = song_id
+      retry
+    end
+  end
+
+  # Only the split songs can have moved, so every recompute is scoped to them:
+  # unscoped, each call would rework the whole set list, and update_previous
+  # would rewrite the entire performance history of every song in the show.
+  def self.refresh_gaps(show, songs)
+    song_ids = songs.map(&:id).uniq
+    next_shows = song_ids.filter_map do |song_id|
+      Track.joins(:show, :songs)
+           .where(songs: { id: song_id })
+           .where("tracks.set <> ?", "S")
+           .where.not(tracks: { exclude_from_stats: true })
+           .where("shows.performance_gap_value > 0")
+           .where("shows.date > ?", show.date)
+           .order("shows.date ASC, tracks.position ASC")
+           .first&.show
+    end.uniq
+
+    GapService.call(show, update_previous: true, song_ids:)
+    next_shows.each { GapService.call(it, song_ids:) }
+    next_shows
+  end
 end
 
 namespace :split_scan do
@@ -136,8 +213,8 @@ namespace :split_scan do
     entries.each_with_index do |entry, idx|
       label = entry["label"]
       progress = "[#{idx + 1}/#{entries.size}]"
-      if entry["cut_s"].blank?
-        failures << [ label, "no cut_s in the export" ]
+      if Array(entry["cut_points"]).empty?
+        failures << [ label, "no cut_points in the export" ]
         next
       end
 
@@ -148,22 +225,21 @@ namespace :split_scan do
       end
 
       begin
-        result = SplitScan.split_with_prompts(
-          track, entry["cut_s"].to_f, dry_run, label, entry["tag_sides"] || {}
-        )
+        result = SplitScan.split_with_prompts(track, entry, dry_run, label)
         next failures << [ label, "skipped: unmatched song" ] if result.nil?
         applied += 1
         status = result[:applied] ? "APPLIED" : "RENDERED"
         display = label.sub(/\A(\d{4}-\d{2}-\d{2} .*?) t\d+ /, '\1 ')
         puts "#{status} #{progress}  #{display}"
-        puts "  part 1:  #{result[:part1_title]} (#{result[:part1_duration_s]}s) " \
-             "-> #{result[:part1_path]}"
-        puts "  part 2:  #{result[:part2_title]} (#{result[:part2_duration_s]}s) " \
-             "-> #{result[:part2_path]}"
+        result[:parts].each_with_index do |part, i|
+          puts "  part #{i + 1}:  #{part[:title]} (#{part[:duration_s]}s) " \
+               "-> #{part[:path]}"
+        end
         puts "  backup:  #{result[:backup_path]}" if result[:backup_path]
         if result[:applied]
-          puts "  tracks:  #{result[:part1_url]}"
-          puts "           #{result[:part2_url]}"
+          result[:parts].each_with_index do |part, i|
+            puts "  #{i.zero? ? 'tracks: ' : '        '} #{part[:url]}"
+          end
           puts "  moved:   #{result[:likes_copied]} like(s), " \
                "#{result[:tags_copied]} tag(s), " \
                "#{result[:playlist_entries]} playlist entr(ies)"
@@ -171,7 +247,10 @@ namespace :split_scan do
             puts "  removed: #{result[:tags_removed]} tag(s) set to neither"
           end
           if entry["tag_sides"].present?
-            entry["tag_sides"].each { |name, side| puts "  tag:     #{name} -> #{side}" }
+            entry["tag_sides"].each do |name, side|
+              parts = side.is_a?(Array) ? side.map { it + 1 }.join(", ") : side
+              puts "  tag:     #{name} -> part #{parts}"
+            end
           end
           result[:reslugged].each do |r|
             puts "  reslug:  #{r[:from]} -> #{r[:to]} (track #{r[:track_id]})"
