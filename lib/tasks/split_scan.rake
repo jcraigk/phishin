@@ -213,8 +213,8 @@ namespace :split_scan do
     entries.each_with_index do |entry, idx|
       label = entry["label"]
       progress = "[#{idx + 1}/#{entries.size}]"
-      if entry["cut_s"].blank?
-        failures << [ label, "no cut_s in the export" ]
+      if Array(entry["cut_points"]).empty?
+        failures << [ label, "no cut_points in the export" ]
         next
       end
 
@@ -247,7 +247,10 @@ namespace :split_scan do
             puts "  removed: #{result[:tags_removed]} tag(s) set to neither"
           end
           if entry["tag_sides"].present?
-            entry["tag_sides"].each { |name, side| puts "  tag:     #{name} -> #{side}" }
+            entry["tag_sides"].each do |name, side|
+              parts = side.is_a?(Array) ? side.map { it + 1 }.join(", ") : side
+              puts "  tag:     #{name} -> part #{parts}"
+            end
           end
           result[:reslugged].each do |r|
             puts "  reslug:  #{r[:from]} -> #{r[:to]} (track #{r[:track_id]})"

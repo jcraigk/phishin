@@ -391,6 +391,46 @@ RSpec.describe TrackSplitService do
         end
       end
 
+      context "when set to a list of part indices" do
+        subject(:result) do
+          described_class.call(track, cut_points: [ 20.0, 40.0 ], dry_run:, tag_sides:)
+        end
+
+        let(:tag_sides) { { "SBD" => [ 0, 2 ] } }
+
+        it "tags only the named parts" do
+          result
+          second, third = result[:new_track_ids].map { Track.find(it) }
+          expect(track.reload.tags).to eq([ tag ])
+          expect(second.tags).to be_empty
+          expect(third.tags).to eq([ tag ])
+        end
+      end
+
+      context "when a list of part indices omits the first part" do
+        subject(:result) do
+          described_class.call(track, cut_points: [ 20.0, 40.0 ], dry_run:, tag_sides:)
+        end
+
+        let(:tag_sides) { { "SBD" => [ 1, 2 ] } }
+
+        it "moves the tag off the original onto the named parts" do
+          result
+          second, third = result[:new_track_ids].map { Track.find(it) }
+          expect(track.reload.tags).to be_empty
+          expect(second.tags).to eq([ tag ])
+          expect(third.tags).to eq([ tag ])
+        end
+      end
+
+      context "when set to an empty list" do
+        let(:tag_sides) { { "SBD" => [] } }
+
+        it "destroys the track_tag" do
+          expect { result }.to change(TrackTag, :count).by(-1)
+        end
+      end
+
       context "when a timestamped tag is named" do
         let(:tag_sides) { { "SBD" => "second" } }
 

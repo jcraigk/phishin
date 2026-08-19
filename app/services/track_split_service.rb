@@ -330,17 +330,7 @@ class TrackSplitService < ApplicationService
       starts = tag.starts_at_second
       ends = tag.ends_at_second
       if starts.nil? && ends.nil?
-        case tag_side_for(tag)
-        when "first"
-          nil
-        when "second"
-          move_tag(tag, @new_tracks.first, 0)
-        when "neither"
-          tag.destroy!
-          @tags_removed += 1
-        else
-          @new_tracks.each { copy_tag(tag, it) }
-        end
+        place_untimestamped_tag(tag)
         next
       end
 
@@ -384,9 +374,37 @@ class TrackSplitService < ApplicationService
     @tags_copied += 1
   end
 
-  def tag_side_for(track_tag)
+  # The reviewer assigns each untimestamped tag to whichever parts it belongs
+  # to. Part 0 is the original record, so keeping it there is a no-op and
+  # dropping it means moving the tag onto the first part that did keep it.
+  def place_untimestamped_tag(tag)
+    parts = tag_parts_for(tag)
+    if parts.empty?
+      tag.destroy!
+      @tags_removed += 1
+      return
+    end
+    if parts.include?(0)
+      parts.drop(1).each { copy_tag(tag, part_record(it)) }
+    else
+      move_tag(tag, part_record(parts.first), 0)
+      parts.drop(1).each { copy_tag(tag, part_record(it)) }
+    end
+  end
+
+  # Accepts a list of part indices, or the two-part vocabulary older exports
+  # used. Anything unrecognised means every part, which is the default.
+  def tag_parts_for(track_tag)
     name = track_tag.tag.name
-    tag_sides.find { |k, _| k.to_s.casecmp?(name) }&.last
+    side = tag_sides.find { |k, _| k.to_s.casecmp?(name) }&.last
+    all = (0...part_count).to_a
+    case side
+    when Array then side.map(&:to_i).select { all.include?(it) }.uniq.sort
+    when "first" then [ 0 ]
+    when "second" then [ 1 ]
+    when "neither", "none" then []
+    else all
+    end
   end
 
   def copy_tag(tag, target, **overrides)

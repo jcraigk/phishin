@@ -194,10 +194,10 @@ def fetch_show_candidates(date, ignore_urls, catalog=None):
             mp3_url=t["mp3_url"], share_url=share,
             waveform_image_url=t.get("waveform_image_url") or "",
             duration_s=round(duration_s, 1),
-            # Evenly spaced starting points, not guesses at the segues; every
-            # row is expected to be moved by hand.
-            cut_points=[round(duration_s * i / len(parts), 1)
-                        for i in range(1, len(parts))],
+            # No suggested cuts: a guess at a segue is worse than none, because
+            # it invites approving a cut nobody listened to. The reviewer adds
+            # each one from the waveform.
+            cut_points=[],
             unmatched_parts=unmatched_parts(parts, songs, catalog),
             tags=untimestamped_tags(t.get("tags") or []),
         ))
@@ -247,29 +247,9 @@ def embedded_fonts():
 
 
 def tag_picker(c, esc):
-    if not c.tags:
-        return ""
-    rows = []
-    for i, tag in enumerate(c.tags):
-        name = tag.get("name", "")
-        notes = tag.get("notes") or ""
-        color = tag.get("color") or ""
-        swatch = (f'<i class="swatch" style="background:{esc(color, quote=True)}"></i>'
-                  if color.startswith("#") else "")
-        title = f"{name}: {notes}" if notes else name
-        label = (f'<span class="tname{" has-notes" if notes else ""}" '
-                 f'title="{esc(title, quote=True)}">{swatch}{esc(name)}</span>')
-        choices = "".join(
-            f'<label class="tchoice"><input type="radio" '
-            f'name="tag-{esc(c.share_url, quote=True)}-{i}" value="{side}"'
-            f'{" checked" if side == "both" else ""}>'
-            f'<span>{text}</span></label>'
-            for side, text in (("both", "both"), ("first", "1st"),
-                               ("second", "2nd"), ("neither", "none")))
-        rows.append(f'<div class="trow" data-tag="{esc(name, quote=True)}">'
-                    f'{label}<span class="tchoices">{choices}</span></div>')
-    return ('<div class="tags"><span class="tags-h">tags</span>'
-            + "".join(rows) + '</div>')
+    """Mount point only. A tag is assigned per part, and the part count changes
+    as the reviewer adds cuts, so the checkboxes are rendered in JS."""
+    return '<div class="tags"></div>' if c.tags else ""
 
 
 def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
@@ -291,8 +271,14 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
             "label": c.label, "mp3_url": c.mp3_url, "share_url": c.share_url,
             "duration_s": c.duration_s,
             "cut_points": list(c.cut_points),
-            "part_titles": list(c.part_titles),
-            "song_ids": [by_title.get(t.casefold()) for t in c.part_titles],
+            # One part until a cut is made. The titles parsed out of the segued
+            # track name are a pool the reviewer draws from: each new cut takes
+            # the next unused one as its starting guess.
+            "part_titles": c.part_titles[:1],
+            "song_ids": [by_title.get(t.casefold()) for t in c.part_titles[:1]],
+            "title_pool": list(c.part_titles),
+            "song_pool": [by_title.get(t.casefold()) for t in c.part_titles],
+            "tags": list(c.tags),
         }), quote=True)
         # The setlist is what settles an ambiguous segue - which song the second
         # half actually is, and whether the show even ran the way the title says.
@@ -518,21 +504,25 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
   .tname.has-notes {{ text-decoration: underline dotted
                       color-mix(in srgb, var(--muted) 70%, transparent);
                       text-underline-offset: 3px; cursor: help; }}
-  .tchoices {{ display: flex; gap: .1rem; flex: 0 0 auto; }}
-  .tchoice {{ cursor: pointer; }}
-  .tchoice input {{ position: absolute; opacity: 0; pointer-events: none; }}
-  .tchoice span {{ display: inline-block; font-size: 12px; line-height: 1;
-                   padding: .22rem .45rem; border: 1px solid var(--btn-line);
-                   background: var(--btn); color: var(--muted);
-                   transition: background .12s ease, color .12s ease; }}
-  .tchoice:first-child span {{ border-radius: 6px 0 0 6px; }}
-  .tchoice:last-child span {{ border-radius: 0 6px 6px 0; }}
-  .tchoice + .tchoice span {{ border-left: none; }}
-  .tchoice input:checked + span {{ background: var(--link); color: #fff;
-                                   border-color: var(--link); }}
-  .tchoice:hover span {{ color: var(--fg); }}
-  .tchoice input:focus-visible + span {{ outline: 2px solid var(--accent);
-                                         outline-offset: 1px; }}
+  .tchoices {{ display: flex; gap: .15rem; flex: 0 0 auto; }}
+  .tbox {{ cursor: pointer; }}
+  .tbox input {{ position: absolute; opacity: 0; pointer-events: none; }}
+  .tbox span {{ display: inline-block; font-size: 12px; line-height: 1;
+                min-width: 1.5rem; text-align: center; border-radius: 6px;
+                font-variant-numeric: tabular-nums;
+                padding: .22rem .3rem; border: 1px solid var(--btn-line);
+                background: var(--btn); color: var(--muted);
+                transition: background .12s ease, color .12s ease; }}
+  .tbox input:checked + span {{ background: var(--link); color: #fff;
+                                border-color: var(--link); }}
+  .tbox:hover span {{ color: var(--fg); }}
+  .tbox input:focus-visible + span {{ outline: 2px solid var(--accent);
+                                      outline-offset: 1px; }}
+  .thead-row {{ padding-bottom: 0; }}
+  .thead {{ display: inline-block; min-width: 1.5rem; text-align: center;
+            font-size: 11px; color: var(--muted);
+            font-variant-numeric: tabular-nums;
+            padding: 0 .3rem; border: 1px solid transparent; }}
   .controls audio {{ width: 100%; height: 34px; }}
   @media (prefers-color-scheme: dark) {{
     .controls audio {{ color-scheme: dark; }}
@@ -972,21 +962,19 @@ function saveProgress() {{
     if (!key) return;
     const a = row.querySelector("input.approve");
     const s = row.querySelector("input.skip");
-    if (a && a.checked) {{
-      let cut = null;
-      try {{
-        const p = JSON.parse(a.dataset.payload);
+    const mark = (a && a.checked) ? "a" : ((s && s.checked) ? "s" : null);
+    let cut = null;
+    try {{
+      const p = JSON.parse(a.dataset.payload);
+      if (p.cut_points && p.cut_points.length) {{
         cut = {{cut_points: p.cut_points, part_titles: p.part_titles,
                song_ids: p.song_ids}};
-      }} catch (e) {{}}
-      state[key] = Object.assign({{mark: "a"}}, cut || {{}});
-    }} else if (s && s.checked) {{
-      state[key] = {{mark: "s"}};
-    }}
+      }}
+    }} catch (e) {{}}
+    if (!mark && !cut) return;
+    state[key] = Object.assign({{mark}}, cut || {{}});
     const tags = tagChoices(row);
-    if (Object.keys(tags).length) {{
-      state[key] = Object.assign(state[key] || {{mark: null}}, {{tag_sides: tags}});
-    }}
+    if (Object.keys(tags).length) state[key].tag_sides = tags;
   }});
   try {{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }}
   catch (e) {{ /* private mode or full quota: progress just stops persisting */ }}
@@ -999,28 +987,28 @@ function restoreProgress() {{
   document.querySelectorAll(".row").forEach(row => {{
     const saved = state[rowKey(row)];
     if (!saved) return;
-    if (saved.tag_sides) {{
-      Object.keys(saved.tag_sides).forEach(name => {{
-        const trow = [...row.querySelectorAll(".trow")]
-          .find(t => t.dataset.tag === name);
-        if (!trow) return;
-        const pick = trow.querySelector('input[value="' + saved.tag_sides[name] + '"]');
-        if (pick) pick.checked = true;
-      }});
+    const approve = row.querySelector("input.approve");
+    // The cuts are restored whether or not the row was marked: they are the
+    // expensive part of the work and a reload must not throw them away.
+    if (approve) {{
+      const p = JSON.parse(approve.dataset.payload);
+      let touched = false;
+      if (Array.isArray(saved.cut_points)) {{
+        p.cut_points = saved.cut_points;
+        if (saved.part_titles) p.part_titles = saved.part_titles;
+        if (saved.song_ids) p.song_ids = saved.song_ids;
+        touched = true;
+      }}
+      if (saved.tag_sides) {{ p.tag_sides = saved.tag_sides; touched = true; }}
+      if (touched) {{
+        approve.dataset.payload = JSON.stringify(p);
+        if (row._renderCuts) row._renderCuts();
+      }}
     }}
     if (!saved.mark) return;
     const box = row.querySelector(saved.mark === "a" ? "input.approve" : "input.skip");
     if (!box) return;
     box.checked = true;
-    if (saved.mark === "a" && Array.isArray(saved.cut_points)) {{
-      const box = row.querySelector("input.approve");
-      const p = JSON.parse(box.dataset.payload);
-      p.cut_points = saved.cut_points;
-      if (saved.part_titles) p.part_titles = saved.part_titles;
-      if (saved.song_ids) p.song_ids = saved.song_ids;
-      box.dataset.payload = JSON.stringify(p);
-      if (row._renderCuts) row._renderCuts();
-    }}
     // Setting .checked in script fires no "change", so collapse by hand.
     if (row._syncDone) row._syncDone();
   }});
@@ -1112,10 +1100,82 @@ document.querySelectorAll(".row").forEach(row => {{
                     .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }}
 
+  // Renumber the recorded part indices around an insert (delta 1) or a removal
+  // (delta -1) at `at`, so a tag stays on the audio it was assigned to.
+  function shiftTagSides(sides, at, delta) {{
+    if (!sides) return sides;
+    const out = {{}};
+    Object.keys(sides).forEach(name => {{
+      const list = sides[name];
+      if (!Array.isArray(list)) return;
+      const moved = [];
+      list.forEach(i => {{
+        if (i < at) moved.push(i);
+        else if (delta > 0) moved.push(i + delta);
+        else if (i > at) moved.push(i + delta);
+      }});
+      // Inserting after a part it covered means the new part came out of it.
+      if (delta > 0 && list.indexOf(at - 1) >= 0) moved.push(at);
+      out[name] = [...new Set(moved)].sort((a, b) => a - b);
+    }});
+    return out;
+  }}
+
+  // One checkbox per part, per tag. Untimestamped tags describe the recording
+  // rather than a moment in it, so which parts inherit one is a judgment call;
+  // the part count changes with every cut, so this is redrawn alongside them.
+  const tagsBox = row.querySelector(".tags");
+  const renderTags = () => {{
+    if (!tagsBox) return;
+    const p = state();
+    const tags = p.tags || [];
+    if (!tags.length) return;
+    const sides = p.tag_sides || {{}};
+    const heads = p.part_titles.map((t, i) =>
+      '<span class="thead" title="' + escapeHtml(t || "") + '">' + (i + 1) + '</span>')
+      .join("");
+    const rows = tags.map((tag, ti) => {{
+      const name = tag.name || "";
+      const notes = tag.notes || "";
+      const color = tag.color || "";
+      const on = sides[name];
+      const swatch = color.charAt(0) === "#"
+        ? '<i class="swatch" style="background:' + escapeHtml(color) + '"></i>' : "";
+      const boxes = p.part_titles.map((t, i) =>
+        '<label class="tbox" title="' + escapeHtml(t || "") + '">' +
+          '<input type="checkbox" data-part="' + i + '"' +
+          (!on || on.indexOf(i) >= 0 ? " checked" : "") + '>' +
+          '<span>' + (i + 1) + '</span></label>').join("");
+      return '<div class="trow" data-tag="' + escapeHtml(name) + '" ' +
+        'data-index="' + ti + '">' +
+        '<span class="tname' + (notes ? " has-notes" : "") + '" title="' +
+          escapeHtml(notes ? name + ": " + notes : name) + '">' +
+          swatch + escapeHtml(name) + '</span>' +
+        '<span class="tchoices">' + boxes + '</span></div>';
+    }}).join("");
+    tagsBox.innerHTML = '<span class="tags-h">tags</span>' +
+      '<div class="trow thead-row"><span class="tname"></span>' +
+      '<span class="tchoices">' + heads + '</span></div>' + rows;
+    tagsBox.querySelectorAll(".trow input[type=checkbox]").forEach(box => {{
+      box.addEventListener("change", () => {{
+        const q = state();
+        const trow = box.closest(".trow");
+        const picked = [...trow.querySelectorAll("input:checked")]
+          .map(b => Number(b.dataset.part));
+        q.tag_sides = Object.assign({{}}, q.tag_sides);
+        q.tag_sides[trow.dataset.tag] = picked;
+        save(q);
+        saveProgress();
+      }});
+    }});
+  }};
+  row._renderTags = renderTags;
+
   const renderCuts = () => {{
     const p = state();
     cutsBox.innerHTML = p.part_titles.map((_, i) => partBlock(i, p)).join("");
     wireCuts();
+    renderTags();
     if (row._markCuts) row._markCuts(p.cut_points);
     if (row._syncDone) row._syncDone();
   }};
@@ -1210,10 +1270,20 @@ document.querySelectorAll(".row").forEach(row => {{
     }}
     const idx = next.indexOf(secs);
     p.cut_points = next;
-    // The new part inherits the name of the one it was carved out of, which
-    // the reviewer then corrects with the title field and song picker.
-    p.part_titles.splice(idx + 1, 0, p.part_titles[idx] || "");
-    p.song_ids.splice(idx + 1, 0, p.song_ids[idx] ?? null);
+    // The new part takes its name from the song at the same position in the
+    // track's title, which is right whenever cuts are made in playing order;
+    // the title field and song picker correct it when they are not. Positional
+    // rather than by name, because a title can play the same song twice
+    // ("Tweezer > Heartbreaker > Tweezer").
+    const pool = p.title_pool || [];
+    const take = idx + 1;
+    p.part_titles.splice(take, 0,
+      (pool[take] !== undefined ? pool[take] : p.part_titles[idx]) || "");
+    p.song_ids.splice(take, 0,
+      (p.song_pool || [])[take] ?? p.song_ids[idx] ?? null);
+    // A part carved out of another inherits its tags, so every index at or past
+    // the new part shifts up and the new part joins whatever its parent had.
+    p.tag_sides = shiftTagSides(p.tag_sides, idx + 1, 1);
     save(p);
     row.classList.add("edited");
     renderCuts();
@@ -1227,6 +1297,7 @@ document.querySelectorAll(".row").forEach(row => {{
     p.cut_points.splice(index, 1);
     p.part_titles.splice(index + 1, 1);
     p.song_ids.splice(index + 1, 1);
+    p.tag_sides = shiftTagSides(p.tag_sides, index + 1, -1);
     save(p);
     row.classList.add("edited");
     renderCuts();
@@ -1437,6 +1508,11 @@ document.querySelectorAll(".row").forEach(row => {{
     updateLegend();
   }};
   const settle = (box, other) => box.addEventListener("change", () => {{
+    if (box === cb && box.checked && !state().cut_points.length) {{
+      box.checked = false;
+      limitMsg("add a cut first (c)");
+      return;
+    }}
     if (box.checked && other) other.checked = false;
     syncDone();
     if (box.checked) return moveSelection(1);
@@ -1446,10 +1522,6 @@ document.querySelectorAll(".row").forEach(row => {{
   settle(cb, skipBox);
   if (skipBox) settle(skipBox, cb);
   row._syncDone = syncDone;
-
-  row.querySelectorAll(".trow input[type=radio]").forEach(radio => {{
-    radio.addEventListener("change", saveProgress);
-  }});
 
   const addBtn = row.querySelector(".addcut");
   if (addBtn) addBtn.addEventListener("click", () => row._adopt && row._adopt());
@@ -1461,10 +1533,16 @@ restoreProgress();
 updateLegend();
 
 function tagChoices(row) {{
+  const cb = row.querySelector("input.approve");
+  if (!cb) return {{}};
+  let p;
+  try {{ p = JSON.parse(cb.dataset.payload); }} catch (e) {{ return {{}}; }}
+  const sides = p.tag_sides || {{}};
+  const all = p.part_titles.length;
   const out = {{}};
-  row.querySelectorAll(".trow").forEach(trow => {{
-    const picked = trow.querySelector("input:checked");
-    if (picked && picked.value !== "both") out[trow.dataset.tag] = picked.value;
+  Object.keys(sides).forEach(name => {{
+    const list = sides[name];
+    if (Array.isArray(list) && list.length !== all) out[name] = list;
   }});
   return out;
 }}
@@ -1505,6 +1583,9 @@ def report_json(candidates, multi, catalog=None):
 def load_report(path):
     data = json.loads(path.read_text())
     candidates = [SplitCandidate(**c) for c in data.get("candidates", [])]
+    # Reports written before cuts stopped being suggested still carry them.
+    for c in candidates:
+        c.cut_points = []
     return candidates, data.get("multi_segue", []), data.get("songs", [])
 
 
