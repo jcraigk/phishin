@@ -85,6 +85,55 @@ RSpec.describe GuestTagSyncService do
     end
   end
 
+  describe "clauses that mix a guest with a band member" do
+    {
+      "Billy Strings on guitar and Page on keytar" => "Billy Strings on guitar",
+      "Tony Markellis on bass and Mike on a second guitar" => "Tony Markellis on bass",
+      "Ella on vocals, Fish on drums" => "Ella on vocals"
+    }.each do |note, expected|
+      context "with #{note.inspect}" do
+        let(:footnote) { note }
+
+        it "tags only the guest portion" do
+          service.call
+          expect(TrackTag.last.notes).to eq(expected)
+        end
+      end
+    end
+  end
+
+  describe "clauses where a band member is the object" do
+    [
+      "Kenwood Dennard replaced Fish on drums",
+      "Kenwood Dennard replaced Fish on drums midsong"
+    ].each do |note|
+      context "with #{note.inspect}" do
+        let(:footnote) { note }
+
+        it "keeps the clause intact" do
+          service.call
+          expect(TrackTag.last.notes).to eq(note)
+        end
+      end
+    end
+  end
+
+  describe "band-only clauses that are not clause-initial" do
+    [
+      "With Trey on Marimba Lumina and Mike on keys",
+      "With Page on theremin",
+      "Began with Trey on acoustic guitar"
+    ].each do |note|
+      context "with #{note.inspect}" do
+        let(:footnote) { note }
+
+        it "creates no tag" do
+          expect { service.call }.not_to change(TrackTag, :count)
+        end
+      end
+    end
+  end
+
   context "when the song has no matching track" do
     let(:song) { "Divided Sky" }
 
@@ -97,12 +146,12 @@ RSpec.describe GuestTagSyncService do
   end
 
   context "when the footnote has HTML entities" do
-    let(:footnote) { "Jon Fishman &amp; Dude of Life on vocals" }
+    let(:footnote) { "Bela Fleck &amp; Dude of Life on vocals" }
 
     it "unescapes them" do
       service.call
 
-      expect(TrackTag.last.notes).to eq("Jon Fishman & Dude of Life on vocals")
+      expect(TrackTag.last.notes).to eq("Bela Fleck & Dude of Life on vocals")
     end
   end
 

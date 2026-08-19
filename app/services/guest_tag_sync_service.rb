@@ -1,9 +1,21 @@
 class GuestTagSyncService < ApplicationService
   BASE_URL = "https://api.phish.net/v5".freeze
 
+  BAND_NAMES = "trey|mike|page|fish(?:man)?|anastasio|gordon|mcconnell".freeze
+
   # Band members are named constantly in footnotes ("Fish on trombone") and are
   # never guests. A clause naming only these is skipped.
-  BAND = /\A(trey|mike|page|fish(man)?|anastasio|gordon|mcconnell|the band|everyone)\b/i
+  BAND = /\A(?:#{BAND_NAMES}|the band|everyone)\b/i
+
+  # A single clause can pair a guest with a band member's own rig change, e.g.
+  # "Billy Strings on guitar and Page on keytar". Only the guest belongs in a
+  # Guest tag (the rig change is Alt Rig, handled separately), so the clause is
+  # cut at the band member.
+  BAND_TAIL = /[,;]?\s+(?:and\s+|with\s+)?(?:#{BAND_NAMES})\b.*\z/i
+
+  # ...unless the band member is the object of the sentence rather than a second
+  # performer, as in "Kenwood Dennard replaced Fish on drums".
+  BAND_AS_OBJECT = /\b(?:replac(?:ed|ing)|subbed for|filled in for|sat in for|joined)\s+(?:#{BAND_NAMES})\b/i
 
   # Clauses that describe a guest. The footnote is already scoped to one song,
   # so the whole clause becomes the tag note, matching existing rows
@@ -94,10 +106,19 @@ class GuestTagSyncService < ApplicationService
       next if clause.blank?
       next if EXCLUSIONS.any? { |re| clause.match?(re) }
       next if clause.match?(BAND)
+
+      clause = trim_band_tail(clause)
+      next if clause.blank?
       next unless GUEST_PATTERNS.any? { |re| clause.match?(re) }
 
       clause
     end
+  end
+
+  def trim_band_tail(clause)
+    return clause if clause.match?(BAND_AS_OBJECT)
+
+    clause.sub(BAND_TAIL, "").strip.sub(/[,;]\z/, "").sub(/\s+(?:and|with)\z/i, "")
   end
 
   def apply(show, song, notes)
