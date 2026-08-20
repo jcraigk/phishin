@@ -34,6 +34,21 @@ class TrackMergeService < ApplicationService
   # Decoded from the end to reach the last millisecond; a whole file decode
   # would cost seconds per merge for the same answer.
   TAIL_PROBE_S = 0.5
+  # A burst is a run of spikes with brief dips between them. Walking back from
+  # its last spike, this many consecutive quiet samples means the burst has
+  # ended and the music behind it has started.
+  QUIET_RUN = 64
+  BURST_EDGE_LEVEL = 8_000
+  # A butt cut between two non-zero samples clicks. Most joints do not need
+  # help: the two sides already meet at a similar level. Where they do not, a
+  # fade this long removes the step - short enough that nobody hears a fade,
+  # long enough to reach zero smoothly.
+  FADE_S = 0.005
+  # How far apart the two sides have to be, as a ratio of their loudness over
+  # FADE_S, before a joint gets faded. Ordinary joints measure within ~5%.
+  FADE_RATIO = 1.25
+  # Below this there is no audible step to smooth, whatever the ratio says.
+  FADE_FLOOR = 500
   # Bursts are measured on interleaved stereo, so a window in seconds covers
   # this many samples per second of audio.
   CHANNELS = 2
@@ -150,9 +165,9 @@ class TrackMergeService < ApplicationService
       if @tail_trimmed
         first_end = [ trim_point(@first_file.path), 0.0 ].max
         "[0:a]atrim=start=0:end=#{format('%.4f', first_end)},asetpts=PTS-STARTPTS," \
-          "aresample=44100[a]"
+          "aresample=44100"
       else
-        "[0:a]aresample=44100[a]"
+        "[0:a]aresample=44100"
       end
     # The second track's own tail burst becomes the merged track's tail. On its
     # own that is inaudible - every player drops it as encoder padding - but the
@@ -166,15 +181,27 @@ class TrackMergeService < ApplicationService
       if second_start.positive? || second_end
         range = "start=#{format('%.4f', second_start)}"
         range += ":end=#{format('%.4f', second_end)}" if second_end
-        "[1:a]atrim=#{range},asetpts=PTS-STARTPTS,aresample=44100[b]"
+        "[1:a]atrim=#{range},asetpts=PTS-STARTPTS,aresample=44100"
       else
-        "[1:a]aresample=44100[b]"
+        "[1:a]aresample=44100"
       end
+    # A joint only gets a fade when the two sides actually meet at different
+    # levels; the end of the track only when it stops mid-waveform.
+    @joint_faded = level_step?(
+      tail_pcm(@first_file.path, first_end), head_pcm(@second_file.path, second_start)
+    )
+    @end_faded = loud_tail?(tail_pcm(@second_file.path, second_end))
+    first_chain += ",afade=t=out:st=#{format('%.4f', fade_start(first_end, @first_file.path))}:" \
+                   "d=#{FADE_S}" if @joint_faded
+    second_chain += ",afade=t=in:st=0:d=#{FADE_S}" if @joint_faded
+    second_chain += ",afade=t=out:st=#{format('%.4f', fade_start(second_end, @second_file.path, second_start))}:" \
+                    "d=#{FADE_S}" if @end_faded
+
     _out, err, status = Open3.capture3(
       "ffmpeg", "-y", "-v", "error",
       "-i", @first_file.path, "-i", @second_file.path,
       "-filter_complex",
-      "#{first_chain};#{second_chain};[a][b]concat=n=2:v=0:a=1[out]",
+      "#{first_chain}[a];#{second_chain}[b];[a][b]concat=n=2:v=0:a=1[out]",
       "-map", "[out]", "-map_metadata", "0", "-id3v2_version", "3",
       "-b:a", bitrate, output_path.to_s
     )
@@ -234,6 +261,64 @@ class TrackMergeService < ApplicationService
     samples.max { |a, b| a.abs <=> b.abs }.abs
   end
 
+  # Decoded audio for the last FADE_S of a segment, or the first FADE_S of one.
+  #
+  # The tail is taken by decoding from the end rather than seeking to an
+  # absolute position: an -ss seek lands on a frame boundary and can decode past
+  # the audio entirely, reporting silence where the music is.
+  def tail_pcm(path, finish = nil)
+    out, _err, status = Open3.capture3(
+      "ffmpeg", "-v", "error", "-sseof", format("-%.2f", TAIL_PROBE_S),
+      "-i", path.to_s, "-f", "s16le", "-acodec", "pcm_s16le", "-ar", "44100", "-"
+    )
+    return [] unless status.success?
+    samples = out.unpack("s<*")
+    # Ignore anything the trim is going to remove.
+    total = decoded_duration_s(path)
+    drop = finish ? ((total - finish) * 44_100).round * CHANNELS : 0
+    kept = drop.positive? ? samples.first([ samples.size - drop, 0 ].max) : samples
+    kept.last((FADE_S * 44_100).ceil * CHANNELS)
+  end
+
+  def head_pcm(path, start = 0.0)
+    pcm(path, start, FADE_S)
+  end
+
+  def pcm(path, start, duration)
+    out, _err, status = Open3.capture3(
+      "ffmpeg", "-v", "error", "-ss", format("%.4f", start),
+      "-t", format("%.4f", duration), "-i", path.to_s, "-f", "s16le",
+      "-acodec", "pcm_s16le", "-ar", "44100", "-"
+    )
+    status.success? ? out.unpack("s<*") : []
+  end
+
+  def rms(samples)
+    return 0.0 if samples.empty?
+    Math.sqrt(samples.sum { it.to_f * it } / samples.size)
+  end
+
+  # The two sides of a joint meeting at audibly different levels.
+  def level_step?(before, after)
+    a = rms(before)
+    b = rms(after)
+    return false if [ a, b ].max < FADE_FLOOR
+    ratio = [ a, b ].max / [ [ a, b ].min, 1.0 ].max
+    ratio >= FADE_RATIO
+  end
+
+  # Audio still playing where the track stops, which cuts off as a click.
+  def loud_tail?(samples)
+    rms(samples) >= FADE_FLOOR
+  end
+
+  # afade needs a start time within the trimmed segment, which atrim has already
+  # rebased to zero.
+  def fade_start(finish, path, start = 0.0)
+    finish ||= decoded_duration_s(path)
+    [ finish - start - FADE_S, 0.0 ].max
+  end
+
   # Where to cut so the burst goes with it. A burst sits at the very end of an
   # original file but ~16ms in on a re-encoded one, where the encoder appended
   # padding after it, so the cut follows the burst rather than a fixed offset.
@@ -248,11 +333,19 @@ class TrackMergeService < ApplicationService
     samples = out.unpack("s<*")
     window = (BURST_PROBE_S * 44_100).ceil * CHANNELS
     edge = samples.last(window)
-    start = edge.rindex { it.abs >= TAIL_BURST_LEVEL }
-    return total - TAIL_TRIM_S if start.nil?
-    # Everything from where the burst begins is dropped, plus the trim itself.
-    from_end = (edge.size - start) / CHANNELS / 44_100.0
-    total - from_end - TAIL_TRIM_S
+    last = edge.rindex { it.abs >= TAIL_BURST_LEVEL }
+    return total - TAIL_TRIM_S if last.nil?
+    # Walk back to where the burst starts. Cutting from the last loud sample
+    # would leave the rest of it in; cutting a fixed distance from the end of
+    # the file would take the music before it out.
+    first = last
+    quiet = 0
+    while first.positive? && quiet < QUIET_RUN
+      first -= 1
+      quiet = edge[first].abs >= BURST_EDGE_LEVEL ? 0 : quiet + 1
+    end
+    from_end = (edge.size - first) / CHANNELS / 44_100.0
+    total - from_end
   end
 
   # Length of the audio ffmpeg actually decodes, measured by decoding it.
@@ -441,6 +534,8 @@ class TrackMergeService < ApplicationService
       tail_trimmed: @tail_trimmed || false,
       head_trimmed: @head_trimmed || false,
       second_tail_trimmed: @second_tail_trimmed || false,
+      joint_faded: @joint_faded || false,
+      end_faded: @end_faded || false,
       applied: !dry_run
     }
   end

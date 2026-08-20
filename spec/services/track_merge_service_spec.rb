@@ -21,8 +21,11 @@ RSpec.describe TrackMergeService do
 
   before do
     FileUtils.mkdir_p(source_a.dirname)
+    # Keyed on fixed paths, not on source_a: a context that overrides source_a
+    # would otherwise have its own fixture overwritten with a plain tone here,
+    # depending on which example ran first.
     {
-      source_a => [ 440, 10 ],
+      Rails.root.join("tmp/spec/merge_a.mp3") => [ 440, 10 ],
       source_b => [ 660, 20 ]
     }.each do |path, (freq, secs)|
       next if File.exist?(path)
@@ -42,6 +45,20 @@ RSpec.describe TrackMergeService do
     allow(Id3TagService).to receive(:call)
   end
 
+  # A quiet tone ending in full-scale noise, the shape the affected files have.
+  # The burst is brief enough that the music behind it stays quiet, since
+  # detection compares the two.
+  def build_burst_fixture(path)
+    FileUtils.mkdir_p(path.dirname)
+    system(
+      "ffmpeg", "-y", "-v", "error",
+      "-f", "lavfi", "-i", "sine=frequency=440:duration=9.995:sample_rate=44100",
+      "-f", "lavfi", "-i", "anoisesrc=duration=0.005:amplitude=1:sample_rate=44100",
+      "-filter_complex", "[0:a]volume=0.05[a];[a][1:a]concat=n=2:v=0:a=1[out]",
+      "-map", "[out]", "-b:a", "320k", path.to_s, exception: true
+    )
+  end
+
   def probe_duration(path)
     `ffprobe -v error -show_entries format=duration -of csv=p=0 #{path}`.to_f
   end
@@ -56,22 +73,13 @@ RSpec.describe TrackMergeService do
     end
 
     context "when the first track ends in a full-scale burst" do
-      # Its own path, so the outer before block cannot leave a plain tone here.
-      let(:source_a) { Rails.root.join("tmp/spec/merge_burst_source.mp3") }
-
-      before do
-        # A quiet tone ending in full-scale noise, the shape the affected files
-        # have: the burst has to be brief enough that the music behind it stays
-        # quiet, since detection compares the two. Written every time, because
-        # the outer before block has already created this path.
-        FileUtils.mkdir_p(source_a.dirname)
-        system(
-          "ffmpeg", "-y", "-v", "error",
-          "-f", "lavfi", "-i", "sine=frequency=440:duration=9.995:sample_rate=44100",
-          "-f", "lavfi", "-i", "anoisesrc=duration=0.005:amplitude=1:sample_rate=44100",
-          "-filter_complex", "[0:a]volume=0.05[a];[a][1:a]concat=n=2:v=0:a=1[out]",
-          "-map", "[out]", "-b:a", "320k", source_a.to_s, exception: true
-        )
+      # Built in the let, not a before block: the outer before block attaches
+      # source_a, and RSpec runs outer before blocks first, so the file has to
+      # exist by the time the path is first asked for.
+      let(:source_a) do
+        path = Rails.root.join("tmp/spec/merge_burst_source.mp3")
+        build_burst_fixture(path)
+        path
       end
 
       it "detects the burst" do
