@@ -14,5 +14,11 @@ namespace :diag do
     %w[acrossfade afade=t=in trim_point burst?].each do |token|
       puts format("%-14s %s", "#{token}:", body.include?(token) ? "present" : "ABSENT")
     end
+    # The three-track merge runs as one ffmpeg pass; two passes tagged the
+    # intermediate on the way through and padded the joint. Asks the loaded
+    # class whether it accepts a third part at all.
+    accepts_third = TrackMergeService.dry_initializer.options.any? { it.source == :third }
+    puts format("%-14s %s", "third option:", accepts_third ? "present" : "ABSENT")
+    puts format("%-14s %s", "one-pass:", body.include?("trim_plan") ? "present" : "ABSENT")
   end
 end
