@@ -57,9 +57,25 @@ RENDER_TIMEOUT_S = 100
 # matches the applied merge.
 TAIL_TRIM_S = 0.003
 TAIL_BURST_LEVEL = 20000
-BURST_PROBE_S = 0.005
-# Decoded from the end to reach the last millisecond.
+# Wide enough to cover a re-encoded file, where the encoder appends padding
+# after the burst and leaves it ~16ms from the end rather than at it.
+BURST_PROBE_S = 0.030
+# Decoded from the end to reach the burst.
 TAIL_PROBE_S = 0.5
+# A burst is loud in absolute terms AND louder than the music leading up to it:
+# a track ending at full volume reaches the level with ordinary music.
+TAIL_BURST_RATIO = 1.5
+BURST_BODY_S = 0.5
+# Walking back from a burst's last spike, this many quiet samples means the
+# burst has ended and the music behind it has started.
+QUIET_RUN = 64
+BURST_EDGE_LEVEL = 8000
+CHANNELS = 2
+# A butt cut between two non-zero samples clicks. Only joints whose two sides
+# meet at different levels get a crossfade; see TrackMergeService::FADE_S.
+FADE_S = 0.005
+FADE_RATIO = 1.25
+FADE_FLOOR = 500
 
 
 def load_scan_module():
@@ -163,47 +179,95 @@ def probe_duration(src):
     return len(proc.stdout) / 2.0 / 44100
 
 
-def head_burst(src):
-    """True when the first millisecond reaches a level real music does not.
+def decode(src, args):
+    """Interleaved stereo samples, or an empty tuple if ffmpeg fails.
 
-    The mirror of tail_burst: the same encoder artifact can sit at the head of a
-    file, where it is inaudible on its own but a click once another track runs
-    into it. Mirrors TrackMergeService#head_burst?."""
-    cmd = [
-        "ffmpeg", "-v", "error", "-i", str(src), "-t", f"{BURST_PROBE_S:.4f}",
-        "-f", "s16le", "-acodec", "pcm_s16le", "-ac", "1", "-ar", "44100", "-",
-    ]
+    Stereo, not a mono downmix: a burst can sit in one channel, and averaging
+    the two pulls it under the threshold."""
+    cmd = ["ffmpeg", "-v", "error", *args, "-i", str(src), "-f", "s16le",
+           "-acodec", "pcm_s16le", "-ar", "44100", "-"]
     try:
         proc = subprocess.run(cmd, capture_output=True, timeout=RENDER_TIMEOUT_S)
     except subprocess.TimeoutExpired:
-        return False
+        return ()
     if proc.returncode != 0 or len(proc.stdout) < 2:
-        return False
+        return ()
     n = len(proc.stdout) // 2
-    head = struct.unpack("<%dh" % n, proc.stdout[:n * 2])
-    return bool(head) and max(abs(v) for v in head) >= TAIL_BURST_LEVEL
+    return struct.unpack("<%dh" % n, proc.stdout[:n * 2])
 
 
-def tail_burst(src, duration_s):
-    """True when the last millisecond reaches a level real music does not.
+def peak(samples):
+    return max((abs(v) for v in samples), default=0)
+
+
+def rms(samples):
+    if not samples:
+        return 0.0
+    return (sum(float(v) * v for v in samples) / len(samples)) ** 0.5
+
+
+def is_burst(samples, from_end):
+    """A burst at one edge: loud on its own, and loud against the music behind
+    it. Mirrors TrackMergeService#burst?."""
+    if not samples:
+        return False
+    edge_n = math.ceil(BURST_PROBE_S * 44100) * CHANNELS
+    edge = samples[-edge_n:] if from_end else samples[:edge_n]
+    rest_n = max(len(samples) - edge_n, 0)
+    rest = samples[:rest_n] if from_end else samples[len(samples) - rest_n:]
+    if not edge or not rest:
+        return False
+    body_n = math.ceil(BURST_BODY_S * 44100) * CHANNELS
+    body = rest[-body_n:] if from_end else rest[:body_n]
+    edge_peak = peak(edge)
+    return (edge_peak >= TAIL_BURST_LEVEL
+            and edge_peak >= peak(body) * TAIL_BURST_RATIO)
+
+
+def head_burst(src):
+    """The same encoder artifact at the head of a file, where it is inaudible on
+    its own but a click once another track runs into it.
+
+    Mirrors TrackMergeService#head_burst?."""
+    return is_burst(decode(src, ["-t", f"{BURST_BODY_S:.4f}"]), from_end=False)
+
+
+def tail_burst(src, duration_s=None):
+    """True when the end of the file holds an encoder flush burst.
 
     Seeks from the end: an -ss seek lands on a frame boundary and decodes past
-    the burst. Mirrors TrackMergeService#tail_burst?; see TAIL_BURST_LEVEL."""
-    cmd = [
-        "ffmpeg", "-v", "error", "-sseof", f"-{TAIL_PROBE_S:.2f}",
-        "-i", str(src), "-f", "s16le", "-acodec", "pcm_s16le",
-        "-ac", "1", "-ar", "44100", "-",
-    ]
-    try:
-        proc = subprocess.run(cmd, capture_output=True, timeout=RENDER_TIMEOUT_S)
-    except subprocess.TimeoutExpired:
-        return False
-    if proc.returncode != 0 or len(proc.stdout) < 2:
-        return False
-    n = len(proc.stdout) // 2
-    samples = struct.unpack("<%dh" % n, proc.stdout[:n * 2])
-    tail = samples[-math.ceil(BURST_PROBE_S * 44100):]
-    return bool(tail) and max(abs(v) for v in tail) >= TAIL_BURST_LEVEL
+    the burst. Mirrors TrackMergeService#tail_burst?."""
+    return is_burst(decode(src, ["-sseof", f"-{TAIL_PROBE_S:.2f}"]), from_end=True)
+
+
+def trim_point(src):
+    """Where to cut so the burst goes with it, and no more.
+
+    A burst sits at the very end of an original file but ~16ms in on a
+    re-encoded one, where the encoder appended padding after it, so the cut
+    follows the burst rather than a fixed offset from the end. Mirrors
+    TrackMergeService#trim_point."""
+    total = probe_duration(src)
+    if total is None:
+        return None
+    samples = decode(src, ["-sseof", f"-{TAIL_PROBE_S:.2f}"])
+    if not samples:
+        return total - TAIL_TRIM_S
+    edge = samples[-math.ceil(BURST_PROBE_S * 44100) * CHANNELS:]
+    last = None
+    for i in range(len(edge) - 1, -1, -1):
+        if abs(edge[i]) >= TAIL_BURST_LEVEL:
+            last = i
+            break
+    if last is None:
+        return total - TAIL_TRIM_S
+    # Walk back to where the burst starts; cutting from its last loud sample
+    # would leave the rest of it in.
+    first, quiet = last, 0
+    while first > 0 and quiet < QUIET_RUN:
+        first -= 1
+        quiet = 0 if abs(edge[first]) >= BURST_EDGE_LEVEL else quiet + 1
+    return total - (len(edge) - first) / CHANNELS / 44100
 
 
 def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs):
@@ -217,7 +281,7 @@ def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs)
     The cache key carries a version so previews rendered under earlier trim
     rules are not served for the current one."""
     stamp = hashlib.sha1(
-        f"v6|{first_url}|{second_url}|{first_duration_s:.2f}|{seconds:.2f}".encode()
+        f"v7|{first_url}|{second_url}|{first_duration_s:.2f}|{seconds:.2f}".encode()
     ).hexdigest()[:16]
     out_path = PREVIEW_DIR / f"{stamp}.wav"
     if out_path.exists():
@@ -239,20 +303,36 @@ def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs)
     lead = max(0.0, tail_start - 1.0)
     # Measured against the file itself, not the caller's rounded duration.
     exact = probe_duration(first_src)
-    first_end = exact if exact else first_duration_s
-    trim = TAIL_TRIM_S if tail_burst(first_src, first_end) else 0.0
+    total = exact if exact else first_duration_s
+    first_end = trim_point(first_src) if tail_burst(first_src) else total
+    if first_end is None:
+        first_end = total
     head = TAIL_TRIM_S if head_burst(second_src) else 0.0
+
+    # The joint is crossfaded on the same terms the merge uses, so what is
+    # auditioned here is what the merge produces.
+    before = decode(first_src, ["-sseof", f"-{TAIL_PROBE_S:.2f}"])
+    drop = round((total - first_end) * 44100) * CHANNELS
+    kept = before[:max(len(before) - drop, 0)] if drop > 0 else before
+    tail_pcm = kept[-math.ceil(FADE_S * 44100) * CHANNELS:]
+    head_pcm = decode(second_src, ["-ss", f"{head:.4f}", "-t", f"{FADE_S:.4f}"])
+    loud = max(rms(tail_pcm), rms(head_pcm))
+    quiet = max(min(rms(tail_pcm), rms(head_pcm)), 1.0)
+    faded = loud >= FADE_FLOOR and loud / quiet >= FADE_RATIO
+    joiner = (f"[a][b]acrossfade=d={FADE_S}:c1=tri:c2=tri[out]" if faded
+              else "[a][b]concat=n=2:v=0:a=1[out]")
+
     cmd = [
         "ffmpeg", "-y", "-v", "error",
         *seg_args(first_src, tail_start, first_duration_s),
         *seg_args(second_src, 0.0, seconds),
         "-filter_complex",
         f"[0:a]atrim=start={tail_start - lead:.2f}:"
-        f"end={first_end - lead - trim:.4f},"
+        f"end={first_end - lead:.4f},"
         f"asetpts=PTS-STARTPTS,aresample=44100[a];"
         f"[1:a]atrim=start={head:.4f}:end={seconds:.2f},asetpts=PTS-STARTPTS,"
         f"aresample=44100[b];"
-        f"[a][b]concat=n=2:v=0:a=1[out]",
+        f"{joiner}",
         "-map", "[out]", "-c:a", "pcm_s16le", str(out_path),
     ]
     with _render_sem:
