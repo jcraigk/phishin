@@ -121,6 +121,22 @@ def has_sandwich_song(part_titles):
     return any(t.strip().casefold() in SANDWICH_SONGS for t in part_titles)
 
 
+JAM_RE = re.compile(r"\bjam\b", re.IGNORECASE)
+
+
+def trailing_jam(part_titles):
+    """A song running into a jam ("YEM > Jam", "Simple > Midnight Rider Jam").
+
+    The jam is part of the same performance rather than a separate song, so the
+    track is left whole. Only the two-part shape: a jam named mid-title with
+    real songs after it ("The Mango Song > Jam > The Happy Whip and Dung Song")
+    is still a genuine split.
+    """
+    return (len(part_titles) == 2
+            and JAM_RE.search(part_titles[1])
+            and not JAM_RE.search(part_titles[0]))
+
+
 def segue_count(title):
     return title.count(">")
 
@@ -201,6 +217,10 @@ def fetch_show_candidates(date, ignore_urls, catalog=None):
         # tracks are the sandwich scan's to combine, not this one's to split.
         if has_sandwich_song(parts):
             print(f"  skipping {display_label(label)} (sandwich song)",
+                  file=sys.stderr)
+            continue
+        if trailing_jam(parts):
+            print(f"  skipping {display_label(label)} (jam, not a second song)",
                   file=sys.stderr)
             continue
         if duration_s < len(parts) * MIN_PART_S:
@@ -1660,8 +1680,10 @@ def load_report(path):
     # Reports written before cuts stopped being suggested still carry them.
     for c in candidates:
         c.cut_points = []
-    # Reports predating the sandwich-song rule still list those tracks.
-    candidates = [c for c in candidates if not has_sandwich_song(c.part_titles)]
+    # Reports predating the sandwich-song and trailing-jam rules still list them.
+    candidates = [c for c in candidates
+                  if not has_sandwich_song(c.part_titles)
+                  and not trailing_jam(c.part_titles)]
     return candidates, data.get("multi_segue", []), data.get("songs", [])
 
 
