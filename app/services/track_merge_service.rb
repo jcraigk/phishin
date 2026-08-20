@@ -1,17 +1,25 @@
-# Merges two adjacent tracks into one: concatenates their audio with ffmpeg,
-# backs up both sources, keeps the first track's record and removes the second,
-# and carries over every piece of derived data (likes, tags, jam start, playlist
-# entries) with the second track's timestamps rebased onto the merged clock.
+# Merges two or three adjacent tracks into one: concatenates their audio with
+# ffmpeg in a single pass, backs up every source, keeps the first track's record
+# and removes the rest, and carries over every piece of derived data (likes,
+# tags, jam start, playlist entries) with the absorbed tracks' timestamps
+# rebased onto the merged clock.
 #
-# The inverse of TrackSplitService. Written for sandwiches stored as two tracks
-# ("Hold Your Head Up" + "Terrapin > Hold Your Head Up"), which should be one
-# ("HYHU > Terrapin > HYHU").
+# The inverse of TrackSplitService. Written for sandwiches stored as separate
+# tracks - "Hold Your Head Up" + "Terrapin > Hold Your Head Up", or the
+# three-track "HYHU" + "Bike" + "HYHU" - which should be one track.
 #
 # Gaps are NOT recomputed here; lib/tasks/sandwich_scan.rake runs GapService once
 # per show after all of its merges are in, scoped to the songs involved.
 class TrackMergeService < ApplicationService
   param :track
   option :second
+  # A three-track sandwich ("HYHU > Bike > HYHU") is merged in one pass rather
+  # than by calling this service twice. Two calls render an intermediate mp3 and
+  # tag it on the way through, and Id3TagService rewrites through Mp3Info, which
+  # does not carry the Xing gapless header and appends ~45ms of decoder padding.
+  # Feeding that back in put the padding between the two joints as an audible
+  # dropout. One pass also means one encode instead of two for the first parts.
+  option :third, default: -> { nil }
   option :title
   option :dry_run, default: -> { false }
 
@@ -67,6 +75,7 @@ class TrackMergeService < ApplicationService
     validate!
     @first_title = track.title
     @second_title = second.title
+    @third_title = third&.title
     download_sources
     render_merged
 
@@ -77,32 +86,43 @@ class TrackMergeService < ApplicationService
     attach_audio
     result
   ensure
-    @first_file&.close!
-    @second_file&.close!
+    @files&.each { it&.close! }
   end
 
   private
 
+  # Every track being merged, in playing order.
+  def parts
+    @parts ||= [ track, second, third ].compact
+  end
+
+  # The ones folded into the first, which are removed once the merge applies.
+  def absorbed
+    @absorbed ||= parts.drop(1)
+  end
+
   def label
-    "#{track.show.date} #{track.title} + #{second.title}"
+    "#{track.show.date} #{parts.map(&:title).join(' + ')}"
   end
 
   def validate!
     raise TitleError, "#{label}: merged title is blank" if title.to_s.strip.empty?
 
-    unless track.show_id == second.show_id
-      raise NotAdjacentError, "#{label}: tracks are in different shows"
+    parts.each_cons(2) do |left, right|
+      unless left.show_id == right.show_id
+        raise NotAdjacentError, "#{label}: tracks are in different shows"
+      end
+      unless left.set == right.set
+        raise NotAdjacentError,
+              "#{label}: tracks are in different sets (#{left.set} and #{right.set})"
+      end
+      unless right.position == left.position + 1
+        raise NotAdjacentError,
+              "#{label}: tracks are not adjacent (positions #{left.position} " \
+              "and #{right.position})"
+      end
     end
-    unless track.set == second.set
-      raise NotAdjacentError,
-            "#{label}: tracks are in different sets (#{track.set} and #{second.set})"
-    end
-    unless second.position == track.position + 1
-      raise NotAdjacentError,
-            "#{label}: tracks are not adjacent (positions #{track.position} " \
-            "and #{second.position})"
-    end
-    [ track, second ].each do |t|
+    parts.each do |t|
       if t.missing_audio? || !t.mp3_audio.attached?
         raise MissingAudioError, "#{label}: #{t.title.inspect} has no audio attached"
       end
@@ -110,8 +130,8 @@ class TrackMergeService < ApplicationService
   end
 
   def download_sources
-    @first_file = download(track, "first")
-    @second_file = download(second, "second")
+    @files = parts.each_with_index.map { |t, i| download(t, "part#{i}") }
+    @first_file, @second_file, @third_file = @files
   end
 
   def download(record, which)
@@ -124,12 +144,20 @@ class TrackMergeService < ApplicationService
           "#{label}: blob #{record.mp3_audio.blob.key} is not in storage"
   end
 
+  def part_durations
+    @part_durations ||= @files.map { probe(it.path, "duration").to_f }
+  end
+
   def first_duration_s
-    @first_duration_s ||= probe(@first_file.path, "duration").to_f
+    part_durations[0]
   end
 
   def second_duration_s
-    @second_duration_s ||= probe(@second_file.path, "duration").to_f
+    part_durations[1]
+  end
+
+  def third_duration_s
+    part_durations[2]
   end
 
   def bitrate
@@ -162,59 +190,91 @@ class TrackMergeService < ApplicationService
   # not, the audio is joined untouched.
   def render_merged
     FileUtils.mkdir_p(OUTPUT_DIR)
-    @tail_trimmed = tail_burst?(@first_file.path)
-    @head_trimmed = head_burst?(@second_file.path)
-    first_chain =
-      if @tail_trimmed
-        first_end = [ trim_point(@first_file.path), 0.0 ].max
-        "[0:a]atrim=start=0:end=#{format('%.4f', first_end)},asetpts=PTS-STARTPTS," \
-          "aresample=44100"
-      else
-        "[0:a]aresample=44100"
-      end
-    # The second track's own tail burst becomes the merged track's tail. On its
-    # own that is inaudible - every player drops it as encoder padding - but the
-    # merged file is re-encoded, which turns the padding into ordinary audio and
-    # the burst into a click at the end of the track.
-    @second_tail_trimmed = tail_burst?(@second_file.path)
-    second_start = @head_trimmed ? TAIL_TRIM_S : 0.0
-    second_end =
-      ([ trim_point(@second_file.path), 0.0 ].max if @second_tail_trimmed)
-    second_chain =
-      if second_start.positive? || second_end
-        range = "start=#{format('%.4f', second_start)}"
-        range += ":end=#{format('%.4f', second_end)}" if second_end
-        "[1:a]atrim=#{range},asetpts=PTS-STARTPTS,aresample=44100"
-      else
-        "[1:a]aresample=44100"
-      end
-    # A joint only gets a fade when the two sides actually meet at different
-    # levels; the end of the track only when it stops mid-waveform.
-    @joint_faded = level_step?(
-      tail_pcm(@first_file.path, first_end), head_pcm(@second_file.path, second_start)
-    )
-    @end_faded = loud_tail?(tail_pcm(@second_file.path, second_end))
-    second_chain += ",afade=t=out:st=#{format('%.4f', fade_start(second_end, @second_file.path, second_start))}:" \
-                    "d=#{FADE_S}" if @end_faded
+    plan = trim_plan
+    chains = plan.each_with_index.map { |seg, i| segment_chain(seg, i) }
     # A crossfade, not a fade on each side. Two independent fades ramp both
     # sides to zero and leave a hole at the joint; a crossfade overlaps them, so
     # the level moves from one track to the other without ever dropping out.
-    joiner =
-      if @joint_faded
-        "[a][b]acrossfade=d=#{FADE_S}:c1=tri:c2=tri[out]"
-      else
-        "[a][b]concat=n=2:v=0:a=1[out]"
+    #
+    # Crossfades chain pairwise because acrossfade takes exactly two inputs;
+    # where no joint needs one, a single concat joins everything at once.
+    @joint_fades = joint_fades(plan)
+    graph = chains.each_with_index.map { |c, i| "#{c}[s#{i}]" }
+    if @joint_fades.any?
+      label_in = "s0"
+      @joint_fades.each_with_index do |faded, i|
+        out = i == @joint_fades.size - 1 ? "out" : "x#{i}"
+        graph << if faded
+                   "[#{label_in}][s#{i + 1}]acrossfade=d=#{FADE_S}:c1=tri:c2=tri[#{out}]"
+        else
+                   "[#{label_in}][s#{i + 1}]concat=n=2:v=0:a=1[#{out}]"
+        end
+        label_in = out
       end
+    else
+      inputs = (0...plan.size).map { "[s#{it}]" }.join
+      graph << "#{inputs}concat=n=#{plan.size}:v=0:a=1[out]"
+    end
 
     _out, err, status = Open3.capture3(
       "ffmpeg", "-y", "-v", "error",
-      "-i", @first_file.path, "-i", @second_file.path,
-      "-filter_complex",
-      "#{first_chain}[a];#{second_chain}[b];#{joiner}",
+      *@files.flat_map { [ "-i", it.path ] },
+      "-filter_complex", graph.join(";"),
       "-map", "[out]", "-map_metadata", "0", "-id3v2_version", "3",
       "-b:a", bitrate, output_path.to_s
     )
     raise Error, "ffmpeg failed for #{label}: #{err}" unless status.success?
+  end
+
+  # What to cut from each part before joining. A burst at a joint is trimmed off
+  # whichever side carries it; the head of the first part and the tail of the
+  # last are the edges of the merged track, so only the last part's tail burst
+  # matters there (re-encoding turns its padding into ordinary audio).
+  def trim_plan
+    @trim_plan ||= @files.each_with_index.map do |file, i|
+      first = i.zero?
+      last = i == @files.size - 1
+      tail_burst = tail_burst?(file.path)
+      head_burst = !first && head_burst?(file.path)
+      start = head_burst ? TAIL_TRIM_S : 0.0
+      finish = ([ trim_point(file.path), 0.0 ].max if tail_burst)
+      { file:, start:, finish:, tail_burst:, head_burst:, first:, last: }
+    end.tap do |plan|
+      @tail_trimmed = plan.first[:tail_burst]
+      @head_trimmed = plan[1] ? plan[1][:head_burst] : false
+      @second_tail_trimmed = plan[1] ? plan[1][:tail_burst] : false
+      @trimmed_parts = plan.count { it[:tail_burst] || it[:head_burst] }
+    end
+  end
+
+  def segment_chain(seg, index)
+    chain =
+      if seg[:start].positive? || seg[:finish]
+        range = "start=#{format('%.4f', seg[:start])}"
+        range += ":end=#{format('%.4f', seg[:finish])}" if seg[:finish]
+        "[#{index}:a]atrim=#{range},asetpts=PTS-STARTPTS,aresample=44100"
+      else
+        "[#{index}:a]aresample=44100"
+      end
+    # Only the final part's tail is the end of the merged track.
+    return chain unless seg[:last]
+    @end_faded = loud_tail?(tail_pcm(seg[:file].path, seg[:finish]))
+    return chain unless @end_faded
+    st = fade_start(seg[:finish], seg[:file].path, seg[:start])
+    "#{chain},afade=t=out:st=#{format('%.4f', st)}:d=#{FADE_S}"
+  end
+
+  # A joint only gets a fade when the two sides actually meet at different
+  # levels.
+  def joint_fades(plan)
+    fades = plan.each_cons(2).map do |left, right|
+      level_step?(
+        tail_pcm(left[:file].path, left[:finish]),
+        head_pcm(right[:file].path, right[:start])
+      )
+    end
+    @joint_faded = fades.any?
+    fades
   end
 
   # The mirror of tail_burst?: the same artifact can sit at the head of a file,
@@ -380,7 +440,7 @@ class TrackMergeService < ApplicationService
 
   def backup_sources
     FileUtils.mkdir_p(BACKUP_DIR)
-    @backup_paths = [ [ track, @first_file ], [ second, @second_file ] ].map do |t, file|
+    @backup_paths = parts.zip(@files).map do |t, file|
       path = BACKUP_DIR.join("#{t.show.date}_#{t.slug}_#{t.mp3_audio.blob.key}.mp3")
       FileUtils.cp(file.path, path)
       path.to_s
@@ -389,25 +449,41 @@ class TrackMergeService < ApplicationService
 
   def apply!
     ActiveRecord::Base.transaction do
-      @offset = first_duration_s
-      move_likes
-      move_tags
-      move_jam_start
-      move_playlist_entries
+      @likes_moved = 0
+      @tags_moved = 0
+      @playlist_entries = 0
+      @notes = []
+      # Each absorbed track starts where everything before it ends, so its
+      # timestamps rebase onto the running total rather than onto the first
+      # track's duration alone.
+      offset = first_duration_s
+      absorbed.each_with_index do |absorbee, i|
+        @offset = offset
+        move_likes(absorbee)
+        move_tags(absorbee)
+        move_jam_start(absorbee)
+        move_playlist_entries(absorbee)
+        offset += part_durations[i + 1]
+      end
       rewrite_first
       @removed_id = second.id
-      second.reload.destroy!
-      close_position_gap
+      @removed_track_ids = absorbed.map(&:id)
+      # Highest position first: each destroy is followed by closing the gap it
+      # left, and removing from the end keeps the lower positions stable.
+      absorbed.sort_by(&:position).reverse_each do |absorbee|
+        position = absorbee.position
+        absorbee.reload.destroy!
+        close_position_gap(position)
+      end
       reslug_duplicate_titles
     end
   end
 
   # A listener who liked either half liked the sandwich, but a user who liked
   # both must not end up with two likes on one track.
-  def move_likes
+  def move_likes(absorbee)
     existing = track.likes.pluck(:user_id).to_set
-    @likes_moved = 0
-    second.likes.find_each do |like|
+    absorbee.likes.find_each do |like|
       next if existing.include?(like.user_id)
       like.update!(likable: track)
       existing << like.user_id
@@ -415,15 +491,13 @@ class TrackMergeService < ApplicationService
     end
   end
 
-  # Timestamps on the second track are relative to its own start, which in the
-  # merged track begins where the first one ended.
-  def move_tags
-    @tags_moved = 0
-    @notes = []
+  # Timestamps on an absorbed track are relative to its own start, which in the
+  # merged track begins where everything before it ended.
+  def move_tags(absorbee)
     seen = track.track_tags.filter_map do |tt|
       tt.tag_id if tt.starts_at_second.nil? && tt.ends_at_second.nil?
     end.to_set
-    second.track_tags.find_each do |tt|
+    absorbee.track_tags.find_each do |tt|
       if tt.starts_at_second.nil? && tt.ends_at_second.nil?
         next tt.destroy! if seen.include?(tt.tag_id)
         seen << tt.tag_id
@@ -437,19 +511,18 @@ class TrackMergeService < ApplicationService
     end
   end
 
-  def move_jam_start
+  def move_jam_start(absorbee)
     return if track.jam_starts_at_second.present?
-    jam = second.jam_starts_at_second
+    jam = absorbee.jam_starts_at_second
     return if jam.nil?
     track.update!(jam_starts_at_second: (jam + @offset).round)
   end
 
-  # An entry for the second half now points at the merged track. Where a
-  # playlist held both halves back to back, the pair becomes one entry so the
+  # An entry for an absorbed part now points at the merged track. Where a
+  # playlist held the parts back to back, the pair becomes one entry so the
   # playlist plays the same audio without repeating it.
-  def move_playlist_entries
-    @playlist_entries = 0
-    second.playlist_tracks.includes(:playlist).find_each do |entry|
+  def move_playlist_entries(absorbee)
+    absorbee.playlist_tracks.includes(:playlist).find_each do |entry|
       prev = entry.playlist.playlist_tracks
                   .find_by(position: entry.position - 1, track_id: track.id)
       if prev && whole_track?(prev) && whole_track?(entry)
@@ -480,15 +553,15 @@ class TrackMergeService < ApplicationService
     track.save!
   end
 
-  # The union of both tracks' songs, in playing order. A sandwich carries the
+  # The union of every part's songs, in playing order. A sandwich carries the
   # outer song once, the same as one that was never split.
   def merged_songs
-    (track.songs.to_a + second.songs.to_a).uniq
+    parts.flat_map { it.songs.to_a }.uniq
   end
 
-  def close_position_gap
+  def close_position_gap(from)
     track.show.tracks.reload
-         .where(position: (second.position)..)
+         .where(position: from..)
          .order(position: :asc)
          .each { it.update!(position: it.position - 1) }
   end
@@ -527,16 +600,19 @@ class TrackMergeService < ApplicationService
     {
       track_id: track.id,
       removed_track_id: (@removed_id unless dry_run),
+      removed_track_ids: (@removed_track_ids || [] unless dry_run),
       label:,
       title: title.strip,
       first_title: @first_title,
       second_title: @second_title,
+      third_title: @third_title,
       first_duration_s: first_duration_s.round(1),
       second_duration_s: second_duration_s.round(1),
-      merged_duration_s: (first_duration_s + second_duration_s).round(1),
+      third_duration_s: third_duration_s&.round(1),
+      merged_duration_s: part_durations.sum.round(1),
       output_path: output_path.to_s,
       backup_paths: @backup_paths || [],
-      song_ids: (dry_run ? (track.songs + second.songs).uniq : track.songs).map(&:id),
+      song_ids: (dry_run ? merged_songs : track.songs).map(&:id),
       url: (track.url unless dry_run),
       likes_moved: @likes_moved.to_i,
       tags_moved: @tags_moved.to_i,

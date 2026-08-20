@@ -100,23 +100,21 @@ namespace :sandwich_scan do
       end
 
       begin
-        # A three-track sandwich is two merges: fold the middle in first, then
-        # the tail. The service only ever joins an adjacent pair, and after the
-        # first merge the tail has shifted down into place.
+        # One call, however many parts: merging a three-track sandwich as two
+        # calls rendered an intermediate mp3 and tagged it on the way through,
+        # which appended decoder padding that landed between the joints as an
+        # audible dropout.
         result = TrackMergeService.call(
-          first, second:, title: entry["merged_title"], dry_run:
+          first, second:, third:, title: entry["merged_title"], dry_run:
         )
-        if third && !dry_run
-          result = TrackMergeService.call(
-            first.reload, second: third.reload,
-            title: entry["merged_title"], dry_run:
-          )
-        end
         applied += 1
         status = result[:applied] ? "MERGED" : "RENDERED"
         puts "#{status} #{progress}  #{entry['date']}  #{result[:title]}"
-        puts "  parts:   #{result[:first_title]} (#{result[:first_duration_s]}s) + " \
-             "#{result[:second_title]} (#{result[:second_duration_s]}s)"
+        parts = "#{result[:first_title]} (#{result[:first_duration_s]}s) + " \
+                "#{result[:second_title]} (#{result[:second_duration_s]}s)"
+        parts += " + #{result[:third_title]} (#{result[:third_duration_s]}s)" \
+          if result[:third_title]
+        puts "  parts:   #{parts}"
         puts "  output:  #{result[:output_path]}"
         trim_ms = (TrackMergeService::TAIL_TRIM_S * 1000).round
         puts "  trimmed: #{trim_ms}ms of encoder flush off the end of " \

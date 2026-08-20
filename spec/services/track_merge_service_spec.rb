@@ -333,6 +333,85 @@ RSpec.describe TrackMergeService do
     end
   end
 
+  # A three-track sandwich used to be two calls, which rendered an intermediate
+  # mp3, tagged it (Id3TagService rewrites through Mp3Info, which does not carry
+  # the Xing gapless header and appends ~45ms of decoder padding), and then fed
+  # that padded file into the second merge. The padding landed between the two
+  # joints as an audible dropout. One pass, one encode, no intermediate.
+  describe "a three-track sandwich" do
+    subject(:result) do
+      described_class.call(first, second:, third:, title:, dry_run:)
+    end
+
+    let(:source_c) { Rails.root.join("tmp/spec/merge_c.mp3") }
+    let(:third) do
+      create(:track, show:, title: "Hold Your Head Up", songs: [ hyhu ],
+                     position: 15, set: "2")
+    end
+
+    before do
+      unless File.exist?(source_c)
+        system(
+          "ffmpeg", "-y", "-v", "error", "-f", "lavfi", "-i",
+          "sine=frequency=880:duration=5", "-b:a", "128k", source_c.to_s,
+          exception: true
+        )
+      end
+      third.mp3_audio.attach(
+        io: File.open(source_c), filename: "c.mp3", content_type: "audio/mpeg"
+      )
+    end
+
+    def interior_silence_ms(path)
+      pcm = `ffmpeg -v error -i #{path} -f s16le -ac 2 -ar 44100 -`
+      samples = pcm.unpack("s<*").each_slice(2).map { it.map(&:abs).max }
+      # Ignore the encoder padding every mp3 carries at each end.
+      edge = 4_410
+      runs = []
+      run = 0
+      samples.each_with_index do |amp, i|
+        if amp < 20
+          run += 1
+        else
+          runs << [ i - run, run ] if run.positive?
+          run = 0
+        end
+      end
+      runs.select { |start, len| start > edge && start + len < samples.size - edge }
+          .map { |_start, len| len / 44.1 }
+    end
+
+    it "renders all three parts into one file" do
+      expect(probe_duration(result[:output_path])).to be_within(0.6).of(35.0)
+    end
+
+    it "leaves no dropout at the joints" do
+      expect(interior_silence_ms(result[:output_path]).max.to_f).to be < 1.0
+    end
+
+    it "reports the third source duration" do
+      expect(result[:third_duration_s]).to be_within(0.6).of(5.0)
+    end
+
+    context "when applied" do
+      let(:dry_run) { false }
+
+      it "keeps the first track and removes the other two" do
+        result
+        expect(Track.exists?(first.id)).to be true
+        expect(Track.exists?(second.id)).to be false
+        expect(Track.exists?(third.id)).to be false
+      end
+
+      it "closes the position gap left by both removals" do
+        create(:track, show:, title: "Weekapaug Groove", position: 16, set: "2")
+        result
+        expect(show.tracks.reload.find_by(title: "Weekapaug Groove").position)
+          .to eq(14)
+      end
+    end
+  end
+
   describe "slug renumbering" do
     let(:dry_run) { false }
 
