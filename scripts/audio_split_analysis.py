@@ -521,7 +521,10 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
             font-size: 11px; line-height: 1.2; color: var(--muted);
             font-variant-numeric: tabular-nums;
             padding: 0 .3rem; border: 1px solid transparent; }}
-  .controls audio {{ width: 100%; height: 34px; }}
+  .controls audio {{ width: 100%; height: 34px; display: block; }}
+  /* The slot keeps its height while a clip is being replaced, so re-rendering
+     one cut cannot reflow the cuts above and below it. */
+  .part .audio {{ min-height: 34px; }}
   @media (prefers-color-scheme: dark) {{
     .controls audio {{ color-scheme: dark; }}
   }}
@@ -632,7 +635,7 @@ function stopPreviewClips() {{
 // Both clips around one cut, rendered by the same server and ffmpeg chain
 // the apply step uses - so what you hear is what gets written. Without the
 // server (opened over file://) the field still edits the export.
-async function renderPreview(row) {{
+async function renderPreview(row, only) {{
   const cb = row.querySelector("input.approve");
   const status = row.querySelector(".status");
   const payload = JSON.parse(cb.dataset.payload);
@@ -655,6 +658,9 @@ async function renderPreview(row) {{
   const edges = [0].concat(cutList, [dur || Infinity]);
   const sides = [];
   cutList.forEach((secs, i) => {{
+    // Moving one cut changes only its own clips and those of the cuts it
+    // neighbours, so the rest keep the audio they already have.
+    if (only && !only.has(i)) return;
     const prev = edges[i];
     const next = edges[i + 2];
     sides.push({{cut: i, side: "before",
@@ -662,6 +668,7 @@ async function renderPreview(row) {{
     sides.push({{cut: i, side: "after", start: secs,
                 end: Math.min(next, secs + CLIP_AFTER_S)}});
   }});
+  if (!sides.length) return;
   try {{
     const timeout = setTimeout(() => ctl.abort(), 90000);
     let results;
@@ -1045,16 +1052,34 @@ document.querySelectorAll(".row").forEach(row => {{
   }};
   row._armWatchdog = armWatchdog;
 
-  const scheduleRender = () => {{
+  // `only` limits the render to a set of cut indices; the union accumulates
+  // across a burst of nudges so the debounce cannot drop one of them.
+  let pendingOnly = null;
+  const scheduleRender = only => {{
+    if (only === undefined) pendingOnly = null;
+    else if (pendingOnly !== null) only.forEach(i => pendingOnly.add(i));
+    else if (!renderTimer) pendingOnly = new Set(only);
     clearTimeout(renderTimer);
     armWatchdog();
     const st = row.querySelector(".status");
     st.textContent = "waiting...";
     st.classList.remove("err");
     st.classList.add("busy");
-    renderTimer = setTimeout(() => renderPreview(row), 450);
+    renderTimer = setTimeout(() => {{
+      const scope = pendingOnly;
+      pendingOnly = null;
+      renderTimer = null;
+      renderPreview(row, scope);
+    }}, 450);
   }};
   row._scheduleRender = scheduleRender;
+
+  // A cut's clips are bounded by its neighbours, so moving one invalidates
+  // theirs too - but only the adjacent pair, not the whole row.
+  const nearby = index => {{
+    const n = state().cut_points.length;
+    return new Set([index - 1, index, index + 1].filter(i => i >= 0 && i < n));
+  }};
 
   const songOptions = sel =>
     '<option value=""></option>' + SONGS.map(s =>
@@ -1182,6 +1207,18 @@ document.querySelectorAll(".row").forEach(row => {{
   }};
   row._renderCuts = renderCuts;
 
+  const syncCutTimes = () => {{
+    const p = state();
+    cutsBox.querySelectorAll(".cutrow").forEach(block => {{
+      const i = Number(block.dataset.part);
+      const el = block.querySelector("input.cut");
+      if (!el || p.cut_points[i - 1] === undefined) return;
+      const text = fmtTime(p.cut_points[i - 1]);
+      if (el.value !== text && document.activeElement !== el) el.value = text;
+      el.classList.remove("invalid");
+    }});
+  }};
+
   const commitCut = (index, el) => {{
     const secs = parseTime(el.value);
     const st = row.querySelector(".status");
@@ -1202,7 +1239,8 @@ document.querySelectorAll(".row").forEach(row => {{
     row._activeCut = p.cut_points.indexOf(secs);
     if (row._markCuts) row._markCuts(p.cut_points);
     if (row._syncDone) row._syncDone();
-    scheduleRender();
+    syncCutTimes();
+    scheduleRender(nearby(row._activeCut));
   }};
 
   const wireCuts = () => {{
@@ -1326,8 +1364,8 @@ document.querySelectorAll(".row").forEach(row => {{
     row._activeCut = p.cut_points.indexOf(next);
     if (row._markCuts) row._markCuts(p.cut_points);
     if (row._syncDone) row._syncDone();
-    renderCuts();
-    scheduleRender();
+    syncCutTimes();
+    scheduleRender(nearby(row._activeCut));
   }};
   // Keyboard nudges act on the cut last focused, or the only one there is.
   row._nudge = amount => {{
