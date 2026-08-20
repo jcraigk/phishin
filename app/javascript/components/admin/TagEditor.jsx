@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import { adminDelete, adminPatch, adminPost } from "./adminApi";
+import { reasonText } from "./HistoryTab";
 
 // Blank number inputs mean "no timestamp" rather than zero, so they are sent as
 // null instead of being coerced.
@@ -48,8 +49,15 @@ const TrackTagRow = ({ track, trackTag, managed, onSaved, onError }) => {
 
   const saveSecond = (field, value, stored) => {
     if (value === String(stored ?? "")) return;
-    save({ [field]: secondsOrNull(value) });
+    // Editing a timestamp is the admin saying where the tag really points, so
+    // an orphaned tag resolves in the same request rather than needing a second
+    // click to clear a flag the edit already answered.
+    const body = { [field]: secondsOrNull(value) };
+    if (trackTag.orphaned_at) body.orphaned = false;
+    save(body);
   };
+
+  const clearOrphan = () => save({ orphaned: false });
 
   const remove = async () => {
     if (!window.confirm(`Remove the ${trackTag.tag_name} tag from ${track.title}?`)) return;
@@ -102,6 +110,19 @@ const TrackTagRow = ({ track, trackTag, managed, onSaved, onError }) => {
           Remove
         </button>
       </div>
+      {trackTag.orphaned_at && (
+        <div className="admin-tag-orphaned">
+          <p>{reasonText(trackTag.orphan_reason)}</p>
+          <p className="admin-audio-note">
+            The numbers above are where it pointed before the audio changed, not
+            where it points now. Correct them and clear the flag, or resolve it
+            from the dashboard review queue.
+          </p>
+          <button type="button" disabled={busy} onClick={clearOrphan}>
+            Clear Flag
+          </button>
+        </div>
+      )}
       <textarea
         className="admin-tag-transcript"
         rows={2}

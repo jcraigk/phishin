@@ -19,7 +19,7 @@ RSpec.describe "Admin route auth audit" do
       "#{method} #{concrete} => #{response.status}" unless [ 401, 403 ].include?(response.status)
     end
 
-    expect(routes.size).to be >= 46
+    expect(routes.size).to be >= 48
     expect(ungated).to eq([])
   end
 end

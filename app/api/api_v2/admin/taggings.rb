@@ -67,16 +67,27 @@ class ApiV2::Admin::Taggings < ApiV2::Admin::Base
     end
 
     resource :track_tags do
+      # `orphaned` is the one flag an admin can only ever turn OFF. An audio
+      # operation sets it; resolving the orphan means the admin has decided the
+      # tag points somewhere real again, either because they corrected the
+      # numbers in the same request or because the flag was wrong. Letting the
+      # UI set it back to true would let a hand edit fabricate a record of an
+      # audio operation that never happened, so false is the only accepted value
+      # and the reason is cleared with it.
       desc "Update a track tag", hidden: true
       params do
         optional :notes, type: String
         optional :starts_at_second, type: Integer
         optional :ends_at_second, type: Integer
         optional :transcript, type: String
+        optional :orphaned, type: Boolean, values: [ false ]
       end
       patch ":id" do
         track_tag = TrackTag.find(params[:id])
-        track_tag.update!(declared(params, include_missing: false).except(:id))
+        updates = declared(params, include_missing: false).except(:id).symbolize_keys
+        updates.delete(:orphaned)
+        updates.merge!(orphaned_at: nil, orphan_reason: nil) if params.key?(:orphaned)
+        track_tag.update!(updates)
         track_payload(track_tag.track.reload)
       end
 

@@ -1045,3 +1045,165 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.admin-history-tab {
+  margin-top: 1rem;
+}
+
+.admin-history-groups,
+.admin-history-edits,
+.admin-orphan-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-history-group {
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--border-gray);
+  border-radius: 4px;
+  background: var(--card-bg);
+
+  &.is-orphaned {
+    border-color: var(--highlight-orange);
+  }
+}
+
+.admin-history-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 0;
+  background: none;
+  gap: 0.75rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-history-heading {
+  font-weight: 600;
+}
+
+.admin-history-count {
+  color: var(--text-gray);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.admin-history-edit {
+  padding: 0.6rem 0.75rem;
+  border-top: 1px solid var(--track-divider);
+}
+
+.admin-history-edit-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.admin-history-operation {
+  font-weight: 600;
+}
+
+.admin-history-when,
+.admin-history-who {
+  color: var(--text-gray);
+  font-size: 0.85rem;
+}
+
+.admin-history-facts {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0.4rem 0 0;
+  gap: 1.25rem;
+
+  dt {
+    color: var(--text-gray);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+}
+
+.admin-history-moves {
+  margin-top: 0.5rem;
+
+  h5 {
+    margin: 0 0 0.2rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-gray);
+  }
+
+  ul {
+    list-style: disc;
+    margin: 0;
+    padding-left: 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+.admin-history-backup {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-gray);
+  overflow-wrap: anywhere;
+}
+
+.admin-orphan-queue {
+  margin-bottom: 1rem;
+}
+
+.admin-orphan-row {
+  margin-bottom: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--highlight-orange);
+  border-radius: 4px;
+  background: var(--card-bg);
+}
+
+.admin-orphan-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.admin-orphan-track {
+  color: var(--text-gray);
+  font-size: 0.9rem;
+}
+
+.admin-orphan-reason {
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
+}
+
+.admin-orphan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  margin-top: 0.5rem;
+  gap: 0.5rem;
+}
+
+.admin-tag-orphaned {
+  margin-top: 0.4rem;
+  padding: 0.5rem 0.6rem;
+  border-left: 3px solid var(--highlight-orange);
+  background: var(--list-item-bg);
+
+  p {
+    margin: 0 0 0.35rem;
+    font-size: 0.9rem;
+  }
+}

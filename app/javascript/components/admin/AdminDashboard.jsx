@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router";
 import { adminGet } from "./adminApi";
 import TaginPanel from "./TaginPanel";
+import OrphanQueue from "./OrphanQueue";
 
 const KIND_LABELS = {
   bulk_replace_audio: "bulk audio",
@@ -92,6 +93,8 @@ const AdminDashboard = () => {
           ))}
         </ul>
       )}
+      <h2>Tags Awaiting Review</h2>
+      <OrphanQueue />
       <h2>Tags</h2>
       <TaginPanel />
     </div>

@@ -78,7 +78,9 @@ module ApiV2::Helpers::AdminHelper
         notes: track_tag.notes,
         starts_at_second: track_tag.starts_at_second,
         ends_at_second: track_tag.ends_at_second,
-        transcript: track_tag.transcript
+        transcript: track_tag.transcript,
+        orphaned_at: track_tag.orphaned_at,
+        orphan_reason: track_tag.orphan_reason
       }
     end
   end

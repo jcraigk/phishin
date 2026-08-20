@@ -5,12 +5,13 @@ import TracksTab from "./TracksTab";
 import AudioTab from "./AudioTab";
 import ArtTab from "./ArtTab";
 import TagsTab from "./TagsTab";
+import HistoryTab from "./HistoryTab";
 import ShowPanel from "./ShowPanel";
 import PublishPanel from "./PublishPanel";
 
 export const EditorContext = createContext(null);
 
-const TABS = ["Tracks", "Audio", "Art", "Tags"];
+const TABS = ["Tracks", "Audio", "Art", "Tags", "History"];
 
 const AdminShowEditor = () => {
   const { date } = useParams();
@@ -98,6 +99,7 @@ const AdminShowEditor = () => {
         {tab === "Audio" && <AudioTab />}
         {tab === "Art" && <ArtTab />}
         {tab === "Tags" && <TagsTab />}
+        {tab === "History" && <HistoryTab />}
       </div>
     </EditorContext.Provider>
   );
