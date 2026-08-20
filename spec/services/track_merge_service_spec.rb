@@ -46,6 +46,44 @@ RSpec.describe TrackMergeService do
     `ffprobe -v error -show_entries format=duration -of csv=p=0 #{path}`.to_f
   end
 
+  describe "the encoder flush trim" do
+    it "leaves a clean track untouched" do
+      expect(result[:tail_trimmed]).to be(false)
+    end
+
+    it "keeps the full duration when nothing is trimmed" do
+      expect(probe_duration(result[:output_path])).to be_within(0.6).of(30.0)
+    end
+
+    context "when the first track ends in a full-scale burst" do
+      let(:source_a) { Rails.root.join("tmp/spec/merge_burst.mp3") }
+
+      before do
+        # A quiet tone ending in full-scale noise, the shape the affected files
+        # have. The burst runs 30ms rather than the 1ms the real files carry: a
+        # lossy encoder smooths a transient that short back below the threshold,
+        # so a 1ms fixture would not survive its own encoding. Written every
+        # time, because the outer before block has already created this path.
+        FileUtils.mkdir_p(source_a.dirname)
+        system(
+          "ffmpeg", "-y", "-v", "error",
+          "-f", "lavfi", "-i", "sine=frequency=440:duration=9.97:sample_rate=44100",
+          "-f", "lavfi", "-i", "anoisesrc=duration=0.03:amplitude=1:sample_rate=44100",
+          "-filter_complex", "[0:a]volume=0.05[a];[a][1:a]concat=n=2:v=0:a=1[out]",
+          "-map", "[out]", "-b:a", "128k", source_a.to_s, exception: true
+        )
+      end
+
+      it "detects the burst" do
+        expect(result[:tail_trimmed]).to be(true)
+      end
+
+      it "shortens the first part by the trim" do
+        expect(probe_duration(result[:output_path])).to be_within(0.6).of(30.0)
+      end
+    end
+  end
+
   describe "dry run" do
     it "renders the two tracks into one file" do
       expect(probe_duration(result[:output_path])).to be_within(0.6).of(30.0)

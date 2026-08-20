@@ -24,9 +24,11 @@ Requires ffmpeg/ffprobe on PATH.
 
 import argparse
 import hashlib
+import math
 import importlib.util
 import json
 import re
+import struct
 import subprocess
 import sys
 import threading
@@ -48,11 +50,15 @@ PREVIEW_HEAD_S = 30.0
 # and the page sits on "rendering..." until its own watchdog gives up. Well
 # above a normal cold render (a few seconds; ~86s has been seen on a bad read).
 RENDER_TIMEOUT_S = 100
-# Dropped from the end of the first track at a joint. Many of these files end
-# with a burst of encoder flush at full scale that the LAME header does not
+# Dropped from the end of the first track at a joint, but only when that track
+# ends in a burst of encoder flush at full scale that the LAME header does not
 # cover: inaudible at the end of a track, a loud click once another follows it.
-# Mirrors TrackMergeService::TAIL_TRIM_S so a preview matches the applied merge.
+# Mirrors TrackMergeService::TAIL_TRIM_S and TAIL_BURST_LEVEL so a preview
+# matches the applied merge.
 TAIL_TRIM_S = 0.001
+TAIL_BURST_LEVEL = 20000
+# Decoded from the end to reach the last millisecond.
+TAIL_PROBE_S = 0.5
 
 
 def load_scan_module():
@@ -137,15 +143,40 @@ def wav_trim_command(src, out_path, start, end, fade_in, fade_out):
     ]
 
 
+def tail_burst(src, duration_s):
+    """True when the last millisecond reaches a level real music does not.
+
+    Seeks from the end: an -ss seek lands on a frame boundary and decodes past
+    the burst. Mirrors TrackMergeService#tail_burst?; see TAIL_BURST_LEVEL."""
+    cmd = [
+        "ffmpeg", "-v", "error", "-sseof", f"-{TAIL_PROBE_S:.2f}",
+        "-i", str(src), "-f", "s16le", "-acodec", "pcm_s16le",
+        "-ac", "1", "-ar", "44100", "-",
+    ]
+    try:
+        proc = subprocess.run(cmd, capture_output=True, timeout=RENDER_TIMEOUT_S)
+    except subprocess.TimeoutExpired:
+        return False
+    if proc.returncode != 0 or len(proc.stdout) < 2:
+        return False
+    n = len(proc.stdout) // 2
+    samples = struct.unpack("<%dh" % n, proc.stdout[:n * 2])
+    tail = samples[-math.ceil(TAIL_TRIM_S * 44100):]
+    return bool(tail) and max(abs(v) for v in tail) >= TAIL_BURST_LEVEL
+
+
 def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs):
     """Tail of the first track + head of the second, butt joined.
 
     Rendered as one wav so the splice is heard exactly where it falls, with no
-    encoder padding between the halves to mask or invent a glitch. The first
-    track's last millisecond is dropped to match TrackMergeService, which does
-    the same to skip the encoder flush burst many of these files end with."""
+    encoder padding between the halves to mask or invent a glitch. Where the
+    first track ends in an encoder flush burst its last millisecond is dropped,
+    matching TrackMergeService so the preview is what the merge produces.
+
+    The cache key carries a version so previews rendered under earlier trim
+    rules are not served for the current one."""
     stamp = hashlib.sha1(
-        f"{first_url}|{second_url}|{first_duration_s:.2f}|{seconds:.2f}".encode()
+        f"v2|{first_url}|{second_url}|{first_duration_s:.2f}|{seconds:.2f}".encode()
     ).hexdigest()[:16]
     out_path = PREVIEW_DIR / f"{stamp}.wav"
     if out_path.exists():
@@ -165,13 +196,14 @@ def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs)
         return reconnect + pre + ["-i", str(src)]
 
     lead = max(0.0, tail_start - 1.0)
+    trim = TAIL_TRIM_S if tail_burst(first_src, first_duration_s) else 0.0
     cmd = [
         "ffmpeg", "-y", "-v", "error",
         *seg_args(first_src, tail_start, first_duration_s),
         *seg_args(second_src, 0.0, seconds),
         "-filter_complex",
         f"[0:a]atrim=start={tail_start - lead:.2f}:"
-        f"end={first_duration_s - lead - TAIL_TRIM_S:.4f},"
+        f"end={first_duration_s - lead - trim:.4f},"
         f"asetpts=PTS-STARTPTS,aresample=44100[a];"
         f"[1:a]atrim=start=0:end={seconds:.2f},asetpts=PTS-STARTPTS,"
         f"aresample=44100[b];"

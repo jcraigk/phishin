@@ -15,8 +15,16 @@ class TrackMergeService < ApplicationService
   option :title
   option :dry_run, default: -> { false }
 
-  # Dropped from the end of the first track; see render_merged.
+  # Dropped from the end of the first track when it ends in an encoder flush
+  # burst; see render_merged and tail_burst?.
   TAIL_TRIM_S = 0.001
+  # A sample magnitude the last millisecond of real music does not reach. In a
+  # sample of the catalog, clean tracks peaked at ~11k there while affected ones
+  # sat at 29k-32k, so this sits between with room on both sides.
+  TAIL_BURST_LEVEL = 20_000
+  # Decoded from the end to reach the last millisecond; a whole file decode
+  # would cost seconds per merge for the same answer.
+  TAIL_PROBE_S = 0.5
   OUTPUT_DIR = Rails.root.join("tmp/track_merges")
   BACKUP_DIR = Rails.root.join("tmp/track_merge_backups")
 
@@ -117,24 +125,48 @@ class TrackMergeService < ApplicationService
   # Butt joined, no crossfade: the two tracks are consecutive audio from one
   # recording, so anything else would invent a transition.
   #
-  # The first track's last millisecond is dropped. Many of these files end with
-  # a burst of encoder flush at full scale that the LAME header does not cover,
-  # inaudible at the end of a track but a loud click once another track follows
-  # it. A millisecond is far below what anyone can hear, and the alternative is
-  # a click in every merged file.
+  # Some files end with a burst of encoder flush at full scale that the LAME
+  # header does not cover. It is inaudible at the end of a track, but once
+  # another track follows it, it is a loud click. Where it is present the last
+  # millisecond is dropped, which is far below what anyone can hear; where it is
+  # not, the audio is joined untouched.
   def render_merged
     FileUtils.mkdir_p(OUTPUT_DIR)
-    first_end = [ probe_duration(@first_file.path) - TAIL_TRIM_S, 0.0 ].max
+    @tail_trimmed = tail_burst?(@first_file.path)
+    first_chain =
+      if @tail_trimmed
+        first_end = [ probe_duration(@first_file.path) - TAIL_TRIM_S, 0.0 ].max
+        "[0:a]atrim=start=0:end=#{format('%.4f', first_end)},asetpts=PTS-STARTPTS," \
+          "aresample=44100[a]"
+      else
+        "[0:a]aresample=44100[a]"
+      end
     _out, err, status = Open3.capture3(
       "ffmpeg", "-y", "-v", "error",
       "-i", @first_file.path, "-i", @second_file.path,
       "-filter_complex",
-      "[0:a]atrim=start=0:end=#{format('%.4f', first_end)},asetpts=PTS-STARTPTS," \
-      "aresample=44100[a];[1:a]aresample=44100[b];[a][b]concat=n=2:v=0:a=1[out]",
+      "#{first_chain};[1:a]aresample=44100[b];[a][b]concat=n=2:v=0:a=1[out]",
       "-map", "[out]", "-map_metadata", "0", "-id3v2_version", "3",
       "-b:a", bitrate, output_path.to_s
     )
     raise Error, "ffmpeg failed for #{label}: #{err}" unless status.success?
+  end
+
+  # True when the file's final millisecond reaches a level real music does not,
+  # which is the encoder flush burst rather than the performance.
+  #
+  # Seeks from the end rather than to an absolute position: an -ss seek lands on
+  # a frame boundary and decodes past the burst, reporting silence.
+  def tail_burst?(path)
+    out, _err, status = Open3.capture3(
+      "ffmpeg", "-v", "error", "-sseof", format("-%.2f", TAIL_PROBE_S),
+      "-i", path.to_s, "-f", "s16le", "-acodec", "pcm_s16le",
+      "-ac", "1", "-ar", "44100", "-"
+    )
+    return false unless status.success?
+    samples = out.unpack("s<*").last((TAIL_TRIM_S * 44_100).ceil)
+    return false if samples.blank?
+    samples.max { |a, b| a.abs <=> b.abs }.abs >= TAIL_BURST_LEVEL
   end
 
   def probe_duration(path)
@@ -311,6 +343,7 @@ class TrackMergeService < ApplicationService
       playlist_entries: @playlist_entries.to_i,
       reslugged: @reslugged || [],
       notes: @notes || [],
+      tail_trimmed: @tail_trimmed || false,
       applied: !dry_run
     }
   end

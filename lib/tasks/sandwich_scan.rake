@@ -111,6 +111,7 @@ namespace :sandwich_scan do
         puts "  parts:   #{result[:first_title]} (#{result[:first_duration_s]}s) + " \
              "#{result[:second_title]} (#{result[:second_duration_s]}s)"
         puts "  output:  #{result[:output_path]}"
+        puts "  trimmed: 1ms of encoder flush off #{result[:first_title]}" if result[:tail_trimmed]
         puts "  backups: #{result[:backup_paths].join(', ')}" if result[:backup_paths].any?
         if result[:applied]
           puts "  track:   #{result[:url]}"
