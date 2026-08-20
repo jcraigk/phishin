@@ -1115,7 +1115,7 @@ document.querySelectorAll(".row").forEach(row => {{
       '</div>' +
       (isFirst ? '' :
         '<div class="tune">' +
-          '<button class="replay" title="replay this joint (e)">&#x21ba;</button>' +
+          '<button class="replay" title="replay the start of this part (r)">&#x21ba;</button>' +
           '<input class="cut" type="text" size="8" spellcheck="false" ' +
             'value="' + fmtTime(cut) + '" title="cut point">' +
           '<button class="nudge" data-step="-1" title="1 second earlier (a or ,)">&minus;1</button>' +
@@ -1284,7 +1284,10 @@ document.querySelectorAll(".row").forEach(row => {{
         btn.addEventListener("click", () => nudgeCut(i - 1, Number(btn.dataset.step)));
       }});
       block.querySelector(".delcut").addEventListener("click", () => removeCut(i - 1));
-      block.querySelector(".replay").addEventListener("click", () => playPair(i - 1));
+      block.querySelector(".replay").addEventListener("click", () => {{
+        row._activeCut = i - 1;
+        if (row._playAfter) row._playAfter(i - 1);
+      }});
     }});
   }};
 
@@ -1409,11 +1412,10 @@ document.querySelectorAll(".row").forEach(row => {{
   }};
   row._playPair = () => playPair(Math.min(row._activeCut ?? 0,
                                           state().cut_points.length - 1));
-  // "r" replays only the part after the cut: a cut is judged on whether the next song
-  // starts cleanly, so that is the clip worth hearing again on its own.
-  row._restart = () => {{
-    const i = Math.min(row._activeCut ?? 0, state().cut_points.length - 1);
-    const block = cutsBox.querySelector('.cutrow[data-part="' + (i + 1) + '"]');
+  // Replays only the part after the cut: a cut is judged on whether the next
+  // song starts cleanly, so that is the clip worth hearing again on its own.
+  const playAfter = index => {{
+    const block = cutsBox.querySelector('.cutrow[data-part="' + (index + 1) + '"]');
     if (!block) return;
     const after = block.querySelector('.part[data-side="after"] audio');
     if (!after || !after.src) return;
@@ -1422,6 +1424,9 @@ document.querySelectorAll(".row").forEach(row => {{
     after.currentTime = 0;
     after.play().catch(() => {{}});
   }};
+  row._playAfter = playAfter;
+  row._restart = () => playAfter(Math.min(row._activeCut ?? 0,
+                                          state().cut_points.length - 1));
 
   // Full-track player. Streams the original mp3 straight from phish.in and
   // scrubs on the waveform: this is how the segue gets found in the first place.
