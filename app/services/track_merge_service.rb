@@ -16,8 +16,12 @@ class TrackMergeService < ApplicationService
   option :dry_run, default: -> { false }
 
   # Dropped from the end of the first track when it ends in an encoder flush
-  # burst; see render_merged and tail_burst?.
-  TAIL_TRIM_S = 0.001
+  # burst; see render_merged and tail_burst?. Measured bursts run 1.25-1.36ms,
+  # so 3ms clears them with room to spare and is still far below audibility.
+  TAIL_TRIM_S = 0.003
+  # The burst is detected within this much of the boundary. Wider than the trim
+  # so a burst is still found when it sits just inside the trimmed region.
+  BURST_PROBE_S = 0.005
   # A sample magnitude the last millisecond of real music does not reach. In a
   # sample of the catalog, clean tracks peaked at ~11k there while affected ones
   # sat at 29k-32k, so this sits between with room on both sides.
@@ -133,6 +137,7 @@ class TrackMergeService < ApplicationService
   def render_merged
     FileUtils.mkdir_p(OUTPUT_DIR)
     @tail_trimmed = tail_burst?(@first_file.path)
+    @head_trimmed = head_burst?(@second_file.path)
     first_chain =
       if @tail_trimmed
         first_end = [ probe_duration(@first_file.path) - TAIL_TRIM_S, 0.0 ].max
@@ -141,15 +146,36 @@ class TrackMergeService < ApplicationService
       else
         "[0:a]aresample=44100[a]"
       end
+    second_chain =
+      if @head_trimmed
+        "[1:a]atrim=start=#{format('%.4f', TAIL_TRIM_S)},asetpts=PTS-STARTPTS," \
+          "aresample=44100[b]"
+      else
+        "[1:a]aresample=44100[b]"
+      end
     _out, err, status = Open3.capture3(
       "ffmpeg", "-y", "-v", "error",
       "-i", @first_file.path, "-i", @second_file.path,
       "-filter_complex",
-      "#{first_chain};[1:a]aresample=44100[b];[a][b]concat=n=2:v=0:a=1[out]",
+      "#{first_chain};#{second_chain};[a][b]concat=n=2:v=0:a=1[out]",
       "-map", "[out]", "-map_metadata", "0", "-id3v2_version", "3",
       "-b:a", bitrate, output_path.to_s
     )
     raise Error, "ffmpeg failed for #{label}: #{err}" unless status.success?
+  end
+
+  # The mirror of tail_burst?: the same artifact can sit at the head of a file,
+  # where it is inaudible on its own but a click once another track runs into it.
+  def head_burst?(path)
+    out, _err, status = Open3.capture3(
+      "ffmpeg", "-v", "error", "-i", path.to_s,
+      "-t", format("%.4f", BURST_PROBE_S), "-f", "s16le", "-acodec", "pcm_s16le",
+      "-ac", "1", "-ar", "44100", "-"
+    )
+    return false unless status.success?
+    samples = out.unpack("s<*")
+    return false if samples.blank?
+    samples.max { |a, b| a.abs <=> b.abs }.abs >= TAIL_BURST_LEVEL
   end
 
   # True when the file's final millisecond reaches a level real music does not,
@@ -164,7 +190,7 @@ class TrackMergeService < ApplicationService
       "-ac", "1", "-ar", "44100", "-"
     )
     return false unless status.success?
-    samples = out.unpack("s<*").last((TAIL_TRIM_S * 44_100).ceil)
+    samples = out.unpack("s<*").last((BURST_PROBE_S * 44_100).ceil)
     return false if samples.blank?
     samples.max { |a, b| a.abs <=> b.abs }.abs >= TAIL_BURST_LEVEL
   end
@@ -344,6 +370,7 @@ class TrackMergeService < ApplicationService
       reslugged: @reslugged || [],
       notes: @notes || [],
       tail_trimmed: @tail_trimmed || false,
+      head_trimmed: @head_trimmed || false,
       applied: !dry_run
     }
   end

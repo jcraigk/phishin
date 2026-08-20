@@ -55,8 +55,9 @@ RENDER_TIMEOUT_S = 100
 # cover: inaudible at the end of a track, a loud click once another follows it.
 # Mirrors TrackMergeService::TAIL_TRIM_S and TAIL_BURST_LEVEL so a preview
 # matches the applied merge.
-TAIL_TRIM_S = 0.001
+TAIL_TRIM_S = 0.003
 TAIL_BURST_LEVEL = 20000
+BURST_PROBE_S = 0.005
 # Decoded from the end to reach the last millisecond.
 TAIL_PROBE_S = 0.5
 
@@ -143,6 +144,45 @@ def wav_trim_command(src, out_path, start, end, fade_in, fade_out):
     ]
 
 
+def probe_duration(src):
+    """Exact decoded duration. The report rounds to a tenth of a second, which
+    overshoots the real end by more than the trim removes, so a trim measured
+    against the rounded value lands past the end of the file and does nothing."""
+    cmd = ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+           "-of", "csv=p=0", str(src)]
+    try:
+        proc = subprocess.run(cmd, capture_output=True, timeout=RENDER_TIMEOUT_S)
+    except subprocess.TimeoutExpired:
+        return None
+    if proc.returncode != 0:
+        return None
+    try:
+        return float(proc.stdout.decode().strip())
+    except ValueError:
+        return None
+
+
+def head_burst(src):
+    """True when the first millisecond reaches a level real music does not.
+
+    The mirror of tail_burst: the same encoder artifact can sit at the head of a
+    file, where it is inaudible on its own but a click once another track runs
+    into it. Mirrors TrackMergeService#head_burst?."""
+    cmd = [
+        "ffmpeg", "-v", "error", "-i", str(src), "-t", f"{BURST_PROBE_S:.4f}",
+        "-f", "s16le", "-acodec", "pcm_s16le", "-ac", "1", "-ar", "44100", "-",
+    ]
+    try:
+        proc = subprocess.run(cmd, capture_output=True, timeout=RENDER_TIMEOUT_S)
+    except subprocess.TimeoutExpired:
+        return False
+    if proc.returncode != 0 or len(proc.stdout) < 2:
+        return False
+    n = len(proc.stdout) // 2
+    head = struct.unpack("<%dh" % n, proc.stdout[:n * 2])
+    return bool(head) and max(abs(v) for v in head) >= TAIL_BURST_LEVEL
+
+
 def tail_burst(src, duration_s):
     """True when the last millisecond reaches a level real music does not.
 
@@ -161,7 +201,7 @@ def tail_burst(src, duration_s):
         return False
     n = len(proc.stdout) // 2
     samples = struct.unpack("<%dh" % n, proc.stdout[:n * 2])
-    tail = samples[-math.ceil(TAIL_TRIM_S * 44100):]
+    tail = samples[-math.ceil(BURST_PROBE_S * 44100):]
     return bool(tail) and max(abs(v) for v in tail) >= TAIL_BURST_LEVEL
 
 
@@ -176,7 +216,7 @@ def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs)
     The cache key carries a version so previews rendered under earlier trim
     rules are not served for the current one."""
     stamp = hashlib.sha1(
-        f"v2|{first_url}|{second_url}|{first_duration_s:.2f}|{seconds:.2f}".encode()
+        f"v5|{first_url}|{second_url}|{first_duration_s:.2f}|{seconds:.2f}".encode()
     ).hexdigest()[:16]
     out_path = PREVIEW_DIR / f"{stamp}.wav"
     if out_path.exists():
@@ -196,16 +236,20 @@ def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs)
         return reconnect + pre + ["-i", str(src)]
 
     lead = max(0.0, tail_start - 1.0)
-    trim = TAIL_TRIM_S if tail_burst(first_src, first_duration_s) else 0.0
+    # Measured against the file itself, not the caller's rounded duration.
+    exact = probe_duration(first_src)
+    first_end = exact if exact else first_duration_s
+    trim = TAIL_TRIM_S if tail_burst(first_src, first_end) else 0.0
+    head = TAIL_TRIM_S if head_burst(second_src) else 0.0
     cmd = [
         "ffmpeg", "-y", "-v", "error",
         *seg_args(first_src, tail_start, first_duration_s),
         *seg_args(second_src, 0.0, seconds),
         "-filter_complex",
         f"[0:a]atrim=start={tail_start - lead:.2f}:"
-        f"end={first_duration_s - lead - trim:.4f},"
+        f"end={first_end - lead - trim:.4f},"
         f"asetpts=PTS-STARTPTS,aresample=44100[a];"
-        f"[1:a]atrim=start=0:end={seconds:.2f},asetpts=PTS-STARTPTS,"
+        f"[1:a]atrim=start={head:.4f}:end={seconds:.2f},asetpts=PTS-STARTPTS,"
         f"aresample=44100[b];"
         f"[a][b]concat=n=2:v=0:a=1[out]",
         "-map", "[out]", "-c:a", "pcm_s16le", str(out_path),
