@@ -109,6 +109,18 @@ def display_label(label):
     return label
 
 
+# Bread songs handled by the sandwich scan, which combines their tracks rather
+# than cutting them apart. Both spellings, since titles carry either.
+SANDWICH_SONGS = {
+    "hold your head up", "hyhu",
+    "the man who stepped into yesterday", "tmwsiy",
+}
+
+
+def has_sandwich_song(part_titles):
+    return any(t.strip().casefold() in SANDWICH_SONGS for t in part_titles)
+
+
 def segue_count(title):
     return title.count(">")
 
@@ -184,6 +196,12 @@ def fetch_show_candidates(date, ignore_urls, catalog=None):
         # A simple sandwich ("A > B > A") belongs to the sandwich scan, which
         # merges it back into one track rather than cutting it apart.
         if len(parts) == 3 and parts[0].casefold() == parts[-1].casefold():
+            continue
+        # HYHU and TMWSIY are sandwich bread wherever they appear, so their
+        # tracks are the sandwich scan's to combine, not this one's to split.
+        if has_sandwich_song(parts):
+            print(f"  skipping {display_label(label)} (sandwich song)",
+                  file=sys.stderr)
             continue
         if duration_s < len(parts) * MIN_PART_S:
             print(f"  skipping {display_label(label)} "
@@ -1642,6 +1660,8 @@ def load_report(path):
     # Reports written before cuts stopped being suggested still carry them.
     for c in candidates:
         c.cut_points = []
+    # Reports predating the sandwich-song rule still list those tracks.
+    candidates = [c for c in candidates if not has_sandwich_song(c.part_titles)]
     return candidates, data.get("multi_segue", []), data.get("songs", [])
 
 
