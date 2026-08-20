@@ -10,6 +10,13 @@ class TrackAudioReplacer < ApplicationService
 
   option :track
   option :blob
+  # Nil means "I am somebody else's primitive": shift the audio, touch no
+  # timestamp, write no record. Boundary shift and combine both attach through
+  # here with audio whose offsets they have already worked out themselves, and
+  # orphaning on their behalf would throw away a mapping they got right. The two
+  # replace jobs pass their own operation name and get the orphaning they need.
+  option :operation, default: -> { nil }
+  option :admin_job, default: -> { nil }
 
   def call
     backup_path = back_up_existing_audio
@@ -17,14 +24,38 @@ class TrackAudioReplacer < ApplicationService
     track.update!(audio_status: "complete")
     track.reload.process_mp3_audio
     track.show.update_audio_status_from_tracks!
+    record_replacement(backup_path) if operation
     backup_path
   end
 
   private
 
+  # A wholesale replacement admits NO delta. The new file is a different
+  # recording, or the same one from a different source, and nothing in it says
+  # where the old file's 66-second mark went - it may not exist at all. So every
+  # timestamp on the track is orphaned for review with its numbers intact, which
+  # is the one honest answer: a guess here would move a jam chart entry to a
+  # moment nobody checked.
+  def record_replacement(backup_path)
+    shift = TimestampShifter.call(
+      track: track.reload, delta_s: nil, new_duration_s: nil,
+      reason: "replace_audio"
+    )
+    TrackEdit.record!(
+      track:, operation:, admin_job:, shift:,
+      duration_before_s: @duration_before_s,
+      duration_after_s: track.reload.duration.to_i / 1000.0,
+      delta_s: nil,
+      backup_path:
+    )
+  end
+
   # Returns nil for a track that had no audio: that is the fill case a bulk
   # upsert hits on most tracks, not an error.
   def back_up_existing_audio
+    # Read before anything is attached: it is the only point where the row still
+    # reports the length of the audio being displaced.
+    @duration_before_s = track.duration.to_i / 1000.0
     return nil unless track.mp3_audio.attached?
 
     FileUtils.mkdir_p(BACKUP_DIR)

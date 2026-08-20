@@ -13,6 +13,9 @@ class AudioEdgeTrimService < ApplicationService
   option :fade_out, default: -> { 6.0 }
   option :min_cut, default: -> { MIN_CUT_S }
   option :dry_run, default: -> { false }
+  # Only so the TrackEdit can point back at the job an admin watched this run
+  # under. Nil for the rake tasks, which trim in bulk with no job behind them.
+  option :admin_job, default: -> { nil }
 
   MIN_CUT_S = 5.0
   OUTPUT_DIR = Rails.root.join("tmp/audio_trims")
@@ -47,6 +50,8 @@ class AudioEdgeTrimService < ApplicationService
     unless dry_run
       backup_original
       replace_audio
+      shift_timestamps
+      log_edit
     end
 
     result
@@ -85,7 +90,7 @@ class AudioEdgeTrimService < ApplicationService
   end
 
   def cut_s
-    duration_s - (kept_end - trim_start)
+    duration_s - kept_s
   end
 
   def ensure_meaningful_cut
@@ -128,6 +133,36 @@ class AudioEdgeTrimService < ApplicationService
     track.process_mp3_audio
   end
 
+  # Every timestamp on this track is measured from the head of the audio, and
+  # the head is exactly what trim_start cut off, so the whole track's clock moves
+  # back by that much. A tail-only trim has a delta of zero and still matters:
+  # kept_s is shorter than the track was, so a window past the new end no longer
+  # describes anything and orphans. The fades do not enter into it - they change
+  # what the first and last seconds sound like, not where any second is.
+  def shift_timestamps
+    @shift = TimestampShifter.call(
+      track: track.reload, delta_s: -trim_start, new_duration_s: kept_s,
+      reason: "trim"
+    )
+  end
+
+  def kept_s = kept_end - trim_start
+
+  # Written after the audio is in place, so a failed render leaves no record of
+  # an edit that never happened. A dry run writes nothing at all: it renders a
+  # file for review and changes neither the audio nor a single timestamp.
+  def log_edit
+    TrackEdit.record!(
+      track:, operation: "trim", admin_job:, shift: @shift,
+      duration_before_s: duration_s.round(1),
+      duration_after_s: kept_s.round(1),
+      delta_s: -trim_start,
+      trim_start_s: trim_start,
+      trim_end_s: kept_end.round(2),
+      backup_path: @backup_path&.to_s
+    )
+  end
+
   def result
     {
       track_id: track.id,
@@ -135,7 +170,7 @@ class AudioEdgeTrimService < ApplicationService
       output_path: output_path.to_s,
       backup_path: @backup_path&.to_s,
       old_duration_s: duration_s.round(1),
-      kept_s: (kept_end - trim_start).round(1),
+      kept_s: kept_s.round(1),
       cut_s: cut_s.round(1),
       applied: !dry_run
     }

@@ -19,7 +19,8 @@ class Admin::TrimJob
         fade_in: opts[:fade_in].to_f,
         fade_out: opts[:fade_out].to_f,
         min_cut: MIN_CUT_S,
-        dry_run: !apply
+        dry_run: !apply,
+        admin_job:
       )
       admin_job.payload["audio_paths"] =
         [ AdminJobAudio.store(admin_job, result[:output_path]) ]

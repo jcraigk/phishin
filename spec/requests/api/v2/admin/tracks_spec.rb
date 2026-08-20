@@ -199,94 +199,6 @@ RSpec.describe "API v2 Admin Tracks" do
     end
   end
 
-  describe "POST /api/v2/admin/tracks/:id/combine_preview and combine_apply" do
-    it "returns 401 without a token" do
-      post "/api/v2/admin/tracks/#{track2.id}/combine_preview"
-      expect(response).to have_http_status(:unauthorized)
-    end
-
-    it "returns 403 for a non-admin user" do
-      post "/api/v2/admin/tracks/#{track2.id}/combine_preview", headers: user_headers
-      expect(response).to have_http_status(:forbidden)
-    end
-
-    it "returns 401 without a token on apply" do
-      post "/api/v2/admin/tracks/#{track2.id}/combine_apply"
-      expect(response).to have_http_status(:unauthorized)
-    end
-
-    it "returns 403 for a non-admin user on apply" do
-      post "/api/v2/admin/tracks/#{track2.id}/combine_apply", headers: user_headers
-      expect(response).to have_http_status(:forbidden)
-    end
-
-    # Combine destroys a track row, so a rejected request has to leave the show
-    # exactly as it found it - anonymous and non-admin alike.
-    it "destroys no track when an unauthenticated apply is rejected" do
-      expect {
-        post "/api/v2/admin/tracks/#{track2.id}/combine_apply"
-      }.not_to change { [ show.tracks.reload.count, track1.reload.title, positions_for(show) ] }
-    end
-
-    it "destroys no track when a non-admin apply is rejected" do
-      expect {
-        post "/api/v2/admin/tracks/#{track2.id}/combine_apply", headers: user_headers
-      }.not_to change { [ show.tracks.reload.count, track1.reload.title, positions_for(show) ] }
-    end
-
-    it "does not enqueue a job for an unauthorized apply" do
-      expect {
-        post "/api/v2/admin/tracks/#{track2.id}/combine_apply", headers: user_headers
-      }.not_to change(Admin::CombineTracksJob.jobs, :size)
-    end
-
-    it "returns a job id for a preview" do
-      post "/api/v2/admin/tracks/#{track2.id}/combine_preview", headers: admin_headers
-      expect(response).to have_http_status(:created)
-      expect(json[:job_id]).to eq(AdminJob.last.id)
-    end
-
-    it "enqueues the preview without applying" do
-      post "/api/v2/admin/tracks/#{track2.id}/combine_preview", headers: admin_headers
-      expect(Admin::CombineTracksJob.jobs.last["args"])
-        .to eq([ track2.id, AdminJob.last.id, false ])
-    end
-
-    it "records the preview job kind" do
-      post "/api/v2/admin/tracks/#{track2.id}/combine_preview", headers: admin_headers
-      expect(AdminJob.last).to have_attributes(kind: "combine_preview", track_id: track2.id)
-    end
-
-    it "enqueues the apply with the apply flag set" do
-      post "/api/v2/admin/tracks/#{track2.id}/combine_apply", headers: admin_headers
-      expect(Admin::CombineTracksJob.jobs.last["args"])
-        .to eq([ track2.id, AdminJob.last.id, true ])
-    end
-
-    # The endpoint only enqueues, so the merge itself has to wait for the worker.
-    it "changes nothing in the request itself" do
-      expect {
-        post "/api/v2/admin/tracks/#{track2.id}/combine_apply", headers: admin_headers
-      }.not_to change { [ show.tracks.reload.count, track1.reload.title ] }
-    end
-
-    it "422s on the first track" do
-      post "/api/v2/admin/tracks/#{track1.id}/combine_preview", headers: admin_headers
-      expect(response).to have_http_status(:unprocessable_content)
-    end
-
-    it "enqueues nothing for the first track" do
-      expect {
-        post "/api/v2/admin/tracks/#{track1.id}/combine_apply", headers: admin_headers
-      }.not_to change(Admin::CombineTracksJob.jobs, :size)
-    end
-
-    it "404s for an unknown track" do
-      post "/api/v2/admin/tracks/0/combine_preview", headers: admin_headers
-      expect(response).to have_http_status(:not_found)
-    end
-  end
-
   describe "POST /api/v2/admin/tracks/:id/shift_boundary_preview and _apply" do
     def tone
       path = Rails.root.join("tmp/spec/boundary_request_tone.mp3")
@@ -374,7 +286,7 @@ RSpec.describe "API v2 Admin Tracks" do
       post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
            params: body, headers: admin_headers
       expect(Admin::ShiftBoundaryJob.jobs.last["args"])
-        .to eq([ track1.id, AdminJob.last.id, 2.0, false ])
+        .to eq([ track1.id, AdminJob.last.id, 2.0, false, nil ])
     end
 
     it "records the preview job kind" do
@@ -388,7 +300,7 @@ RSpec.describe "API v2 Admin Tracks" do
       post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
            params: body, headers: admin_headers
       expect(Admin::ShiftBoundaryJob.jobs.last["args"])
-        .to eq([ track1.id, AdminJob.last.id, 2.0, true ])
+        .to eq([ track1.id, AdminJob.last.id, 2.0, true, nil ])
     end
 
     it "passes a negative delta through unchanged" do
@@ -433,6 +345,136 @@ RSpec.describe "API v2 Admin Tracks" do
       post "/api/v2/admin/tracks/#{track3.id}/shift_boundary_preview",
            params: body, headers: admin_headers
       expect(response).to have_http_status(:unprocessable_content)
+    end
+
+    # Titles ride along on the shift so a rename and the boundary it belongs to
+    # are one edit. A side left out of the hash keeps the title it has.
+    it "passes both titles through to the job" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: { delta_s: 2.0, titles: { first: "Tweezer", second: "Mike's Song" } }.to_json,
+           headers: admin_headers
+      expect(Admin::ShiftBoundaryJob.jobs.last["args"].last)
+        .to eq({ "first" => "Tweezer", "second" => "Mike's Song" })
+    end
+
+    it "passes a single side through to the job" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: { delta_s: 2.0, titles: { second: "Tweezer" } }.to_json,
+           headers: admin_headers
+      expect(Admin::ShiftBoundaryJob.jobs.last["args"].last)
+        .to eq({ "second" => "Tweezer" })
+    end
+
+    it "trims whitespace off a title" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: { delta_s: 2.0, titles: { first: "  Tweezer  " } }.to_json,
+           headers: admin_headers
+      expect(Admin::ShiftBoundaryJob.jobs.last["args"].last).to eq({ "first" => "Tweezer" })
+    end
+
+    it "echoes the titles back so the panel can confirm what it sent" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: { delta_s: 2.0, titles: { first: "Tweezer" } }.to_json,
+           headers: admin_headers
+      expect(json[:titles]).to eq({ first: "Tweezer" })
+    end
+
+    # A preview takes titles so the panel can round-trip them, and writes none.
+    it "accepts titles on a preview without writing them" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_preview",
+           params: { delta_s: 2.0, titles: { first: "Tweezer" } }.to_json,
+           headers: admin_headers
+      expect(response).to have_http_status(:created)
+      expect(track1.reload.title).to eq("Ghost")
+    end
+
+    it "hands the job nil when no titles are given" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: body, headers: admin_headers
+      expect(Admin::ShiftBoundaryJob.jobs.last["args"].last).to be_nil
+    end
+
+    it "omits the titles key from the response when none were given" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: body, headers: admin_headers
+      expect(json).not_to have_key(:titles)
+    end
+
+    it "422s on a blank title" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: { delta_s: 2.0, titles: { first: "" } }.to_json,
+           headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json[:message]).to eq("Title for the first track cannot be blank")
+    end
+
+    it "422s on a whitespace-only title" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: { delta_s: 2.0, titles: { second: "   " } }.to_json,
+           headers: admin_headers
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(json[:message]).to eq("Title for the second track cannot be blank")
+    end
+
+    it "enqueues nothing for a blank title" do
+      expect {
+        post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+             params: { delta_s: 2.0, titles: { first: "" } }.to_json,
+             headers: admin_headers
+      }.not_to change(Admin::ShiftBoundaryJob.jobs, :size)
+    end
+
+    it "changes no title on a blank-title rejection" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: { delta_s: 2.0, titles: { first: "" } }.to_json,
+           headers: admin_headers
+      expect(track1.reload.title).to eq("Ghost")
+    end
+
+    # An out-of-range delta is screened before the titles are even read, so a
+    # rejected shift never enqueues the rename that came with it.
+    it "enqueues nothing when titles come with an out-of-range delta" do
+      expect {
+        post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+             params: { delta_s: 8.0, titles: { first: "Tweezer" } }.to_json,
+             headers: admin_headers
+      }.not_to change(Admin::ShiftBoundaryJob.jobs, :size)
+    end
+
+    it "returns 401 without a token when titles are sent" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: { delta_s: 2.0, titles: { first: "Tweezer" } }.to_json,
+           headers: { "CONTENT_TYPE" => "application/json" }
+      expect(response).to have_http_status(:unauthorized)
+    end
+
+    it "returns 403 for a non-admin when titles are sent" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: { delta_s: 2.0, titles: { first: "Tweezer" } }.to_json,
+           headers: user_headers
+      expect(response).to have_http_status(:forbidden)
+    end
+
+    it "changes no title when an unauthenticated apply with titles is rejected" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: { delta_s: 2.0, titles: { first: "Tweezer" } }.to_json,
+           headers: { "CONTENT_TYPE" => "application/json" }
+      expect(track1.reload.title).to eq("Ghost")
+    end
+
+    it "changes no title when a non-admin apply with titles is rejected" do
+      post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+           params: { delta_s: 2.0, titles: { first: "Tweezer" } }.to_json,
+           headers: user_headers
+      expect(track1.reload.title).to eq("Ghost")
+    end
+
+    it "does not enqueue a job for an unauthorized apply with titles" do
+      expect {
+        post "/api/v2/admin/tracks/#{track1.id}/shift_boundary_apply",
+             params: { delta_s: 2.0, titles: { first: "Tweezer" } }.to_json,
+             headers: user_headers
+      }.not_to change(Admin::ShiftBoundaryJob.jobs, :size)
     end
 
     it "422s when a side has no audio" do
@@ -655,142 +697,6 @@ RSpec.describe "API v2 Admin Tracks" do
     it "404s for an unknown track" do
       post "/api/v2/admin/tracks/0/trim_preview",
            params: { trim_end: 100.0 }.to_json, headers: admin_headers
-      expect(response).to have_http_status(:not_found)
-    end
-  end
-
-  describe "POST /api/v2/admin/tracks/:id/split_preview and split_apply" do
-    let!(:segue) do
-      create(
-        :track, show:, position: 4, title: "Ghost > Free", set: "1",
-                songs: [ song_a, song_b ]
-      ).tap do |track|
-        track.mp3_audio.attach(
-          io: StringIO.new("bytes"), filename: "a.mp3", content_type: "audio/mpeg"
-        )
-      end
-    end
-
-    it "returns 401 without a token" do
-      post "/api/v2/admin/tracks/#{segue.id}/split_preview",
-           params: { cut_s: 30.0 }.to_json,
-           headers: { "CONTENT_TYPE" => "application/json" }
-      expect(response).to have_http_status(:unauthorized)
-    end
-
-    it "returns 403 for a non-admin user" do
-      post "/api/v2/admin/tracks/#{segue.id}/split_preview",
-           params: { cut_s: 30.0 }.to_json, headers: user_headers
-      expect(response).to have_http_status(:forbidden)
-    end
-
-    it "returns 401 without a token on apply" do
-      post "/api/v2/admin/tracks/#{segue.id}/split_apply",
-           params: { cut_s: 30.0 }.to_json,
-           headers: { "CONTENT_TYPE" => "application/json" }
-      expect(response).to have_http_status(:unauthorized)
-    end
-
-    it "returns 403 for a non-admin user on apply" do
-      post "/api/v2/admin/tracks/#{segue.id}/split_apply",
-           params: { cut_s: 30.0 }.to_json, headers: user_headers
-      expect(response).to have_http_status(:forbidden)
-    end
-
-    it "does not touch the track when an unauthorized apply is rejected" do
-      expect {
-        post "/api/v2/admin/tracks/#{segue.id}/split_apply",
-             params: { cut_s: 30.0 }.to_json, headers: user_headers
-      }.not_to change { [ show.tracks.reload.count, segue.reload.title ] }
-    end
-
-    it "does not enqueue a job for an unauthorized apply" do
-      expect {
-        post "/api/v2/admin/tracks/#{segue.id}/split_apply",
-             params: { cut_s: 30.0 }.to_json, headers: user_headers
-      }.not_to change(Admin::SplitJob.jobs, :size)
-    end
-
-    it "enqueues a preview job" do
-      expect {
-        post "/api/v2/admin/tracks/#{segue.id}/split_preview",
-             params: { cut_s: 30.0 }.to_json, headers: admin_headers
-      }.to change(Admin::SplitJob.jobs, :size).by(1)
-      expect(response).to have_http_status(:created)
-      expect(AdminJob.last.kind).to eq("split_preview")
-      expect(json[:job_id]).to eq(AdminJob.last.id)
-    end
-
-    it "enqueues the preview as a dry run" do
-      post "/api/v2/admin/tracks/#{segue.id}/split_preview",
-           params: { cut_s: 30.0 }.to_json, headers: admin_headers
-      expect(Admin::SplitJob.jobs.last["args"]).to eq([ segue.id, AdminJob.last.id, 30.0, false ])
-    end
-
-    it "enqueues an apply job that commits" do
-      expect {
-        post "/api/v2/admin/tracks/#{segue.id}/split_apply",
-             params: { cut_s: 30.0 }.to_json, headers: admin_headers
-      }.to change(Admin::SplitJob.jobs, :size).by(1)
-      expect(response).to have_http_status(:created)
-      expect(AdminJob.last.kind).to eq("split_apply")
-      expect(Admin::SplitJob.jobs.last["args"].last).to be(true)
-    end
-
-    it "links the job to the track and its show" do
-      post "/api/v2/admin/tracks/#{segue.id}/split_preview",
-           params: { cut_s: 30.0 }.to_json, headers: admin_headers
-      expect(AdminJob.last).to have_attributes(track_id: segue.id, show_id: show.id)
-    end
-
-    it "422s for a title without a segue" do
-      segue.update!(title: "Ghost")
-      post "/api/v2/admin/tracks/#{segue.id}/split_preview",
-           params: { cut_s: 30.0 }.to_json, headers: admin_headers
-      expect(response).to have_http_status(:unprocessable_content)
-      expect(json[:message]).to include("exactly one")
-    end
-
-    it "does not enqueue a job for a title without a segue" do
-      segue.update!(title: "Ghost")
-      expect {
-        post "/api/v2/admin/tracks/#{segue.id}/split_preview",
-             params: { cut_s: 30.0 }.to_json, headers: admin_headers
-      }.not_to change(Admin::SplitJob.jobs, :size)
-    end
-
-    it "422s for a title with two segues" do
-      segue.update!(title: "Ghost > Free > Ghost")
-      post "/api/v2/admin/tracks/#{segue.id}/split_preview",
-           params: { cut_s: 30.0 }.to_json, headers: admin_headers
-      expect(response).to have_http_status(:unprocessable_content)
-    end
-
-    # The service splits on "->" as readily as ">", so the endpoint's guard must
-    # not turn away a title it would have accepted.
-    it "accepts the arrow form of a segue" do
-      segue.update!(title: "Ghost -> Free")
-      post "/api/v2/admin/tracks/#{segue.id}/split_preview",
-           params: { cut_s: 30.0 }.to_json, headers: admin_headers
-      expect(response).to have_http_status(:created)
-    end
-
-    it "422s without audio" do
-      no_audio = create(:track, show:, position: 5, title: "Ghost > Free", set: "1")
-      post "/api/v2/admin/tracks/#{no_audio.id}/split_preview",
-           params: { cut_s: 30.0 }.to_json, headers: admin_headers
-      expect(response).to have_http_status(:unprocessable_content)
-    end
-
-    it "400s without cut_s" do
-      post "/api/v2/admin/tracks/#{segue.id}/split_preview",
-           params: {}.to_json, headers: admin_headers
-      expect(response).to have_http_status(:bad_request)
-    end
-
-    it "404s for an unknown track" do
-      post "/api/v2/admin/tracks/0/split_preview",
-           params: { cut_s: 30.0 }.to_json, headers: admin_headers
       expect(response).to have_http_status(:not_found)
     end
   end

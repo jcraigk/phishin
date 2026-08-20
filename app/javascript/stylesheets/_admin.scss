@@ -524,6 +524,31 @@
   font-size: 0.85rem;
 }
 
+.admin-audio-warning {
+  color: var(--highlight-orange);
+  font-size: 0.8rem;
+}
+
+.admin-boundary-titles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.admin-boundary-title {
+  display: flex;
+  flex: 1 1 18rem;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.8rem;
+  color: var(--text-gray);
+
+  input {
+    width: 100%;
+  }
+}
+
 .admin-gap-banner {
   display: flex;
   align-items: center;

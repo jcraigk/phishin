@@ -34,7 +34,9 @@ class Admin::BulkReplaceAudioJob
     track = @show.tracks.find(assignment[:track_id])
     had_audio = track.mp3_audio.attached?
     blob = ActiveStorage::Blob.find_signed!(assignment[:signed_id])
-    backup_path = TrackAudioReplacer.call(track:, blob:)
+    backup_path = TrackAudioReplacer.call(
+      track:, blob:, operation: "bulk_replace_audio", admin_job: @admin_job
+    )
     record_success(track, had_audio, backup_path)
   rescue StandardError => e
     @results["failed"] << {

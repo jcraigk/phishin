@@ -196,10 +196,16 @@ RSpec.describe Admin::ShiftBoundaryJob do
       expect([ first.reload.likes.count, second.reload.likes.count ]).to eq([ 0, 1 ])
     end
 
-    it "keeps track tags where they were" do
+    # Not "left untouched" like the rest of this group: a tag is measured from
+    # the head of its track's audio, and this edit moves that head. Two seconds
+    # of the second track became the tail of the first, so a tag that was two
+    # seconds in now sits at the very start of what is left. Holding it at 2
+    # would silently repoint it at audio it never described - the defect this
+    # phase exists to fix.
+    it "moves a track tag with the audio it describes" do
       create(:track_tag, track: second, tag: create(:tag), starts_at_second: 2)
       described_class.new.perform(first.id, admin_job.id, 2.0, true)
-      expect(second.reload.track_tags.first.starts_at_second).to eq(2)
+      expect(second.reload.track_tags.first.starts_at_second).to eq(0)
     end
 
     it "keeps playlist entries pointed at the same track" do
@@ -215,6 +221,458 @@ RSpec.describe Admin::ShiftBoundaryJob do
       create(:track_tag, track: first, tag: create(:tag))
       expect { described_class.new.perform(first.id, admin_job.id, 2.0, true) }
         .not_to change { [ Like.count, TrackTag.count, PlaylistTrack.count, Track.count ] }
+    end
+  end
+
+  # The rename half of the operation. Titles ride along on the apply so a fixed
+  # boundary and the fixed titles that go with it are one edit, not two.
+  describe "renaming both sides" do
+    before do
+      attach(first, 10)
+      attach(second, 6)
+    end
+
+    def shift(titles, delta: 2.0, apply: true)
+      described_class.new.perform(first.id, admin_job.id, delta, apply, titles)
+    end
+
+    it "writes both new titles" do
+      shift({ "first" => "Tweezer", "second" => "Slave to the Traffic Light" })
+      expect([ first.reload.title, second.reload.title ])
+        .to eq([ "Tweezer", "Slave to the Traffic Light" ])
+    end
+
+    it "regenerates both slugs from the new titles" do
+      shift({ "first" => "Tweezer", "second" => "Slave to the Traffic Light" })
+      expect([ first.reload.slug, second.reload.slug ])
+        .to eq(%w[tweezer slave-to-the-traffic-light])
+    end
+
+    it "renames only the side it was given" do
+      shift({ "second" => "Tweezer" })
+      expect([ first.reload.title, second.reload.title ]).to eq([ "Ghost", "Tweezer" ])
+    end
+
+    it "leaves the untouched side's slug alone" do
+      shift({ "second" => "Tweezer" })
+      expect(first.reload.slug).to eq("ghost")
+    end
+
+    # The rename is metadata; the audio still has to land where the delta says.
+    it "still moves the boundary" do
+      shift({ "first" => "Tweezer", "second" => "Mike's Song" })
+      expect(first.reload.duration).to be_within(400).of(12_000)
+    end
+
+    it "still preserves the combined duration" do
+      shift({ "first" => "Tweezer", "second" => "Mike's Song" })
+      expect(durations.sum).to be_within(500).of(16_000)
+    end
+
+    it "reports the renames on the job" do
+      shift({ "first" => "Tweezer" })
+      expect(admin_job.reload.payload["titles_changed"])
+        .to eq([ { "track_id" => first.id, "from" => "Ghost", "to" => "Tweezer" } ])
+    end
+
+    it "reports the reslugs on the job" do
+      shift({ "first" => "Tweezer" })
+      expect(admin_job.reload.payload["reslugged"])
+        .to eq([ { "track_id" => first.id, "from" => "ghost", "to" => "tweezer" } ])
+    end
+
+    it "reports that the slugs were not frozen" do
+      shift({ "first" => "Tweezer" })
+      expect(admin_job.reload.payload["slug_frozen"]).to be(false)
+    end
+
+    it "carries the new title onto the attached audio filename" do
+      shift({ "first" => "Tweezer" })
+      expect(first.reload.mp3_audio.blob.filename.to_s)
+        .to eq("Phish 2024-07-19 01 Tweezer.mp3")
+    end
+
+    it "leaves the songs pointed where they were" do
+      shift({ "first" => "Tweezer" })
+      expect(first.reload.songs).to eq([ ghost ])
+    end
+
+    it "changes no positions" do
+      shift({ "first" => "Tweezer", "second" => "Mike's Song" })
+      expect(show.tracks.reload.order(:position).pluck(:position)).to eq([ 1, 2, 3 ])
+    end
+
+    it "accepts symbol keys from a direct caller" do
+      shift({ first: "Tweezer" })
+      expect(first.reload.title).to eq("Tweezer")
+    end
+
+    it "trims surrounding whitespace off a title" do
+      shift({ "first" => "  Tweezer  " })
+      expect(first.reload.title).to eq("Tweezer")
+    end
+
+    it "writes nothing on a preview" do
+      shift({ "first" => "Tweezer" }, apply: false)
+      expect([ first.reload.title, first.reload.slug ]).to eq([ "Ghost", "ghost" ])
+    end
+  end
+
+  # The case a naive implementation fails on. TrackSlugGenerator numbers dupe
+  # titles by position, so renaming into an existing title renumbers rows that
+  # were never named in the request, and the final slugs permute among them -
+  # assigning directly would collide with the unique (show_id, slug) index.
+  describe "renaming into a title another track already has" do
+    let!(:fourth) do
+      create(:track, show:, position: 4, title: "Tweezer", slug: "tweezer")
+    end
+
+    before do
+      attach(first, 10)
+      attach(second, 6)
+    end
+
+    def shift(titles)
+      described_class.new.perform(first.id, admin_job.id, 2.0, true, titles)
+    end
+
+    it "raises no unique violation" do
+      expect { shift({ "second" => "Tweezer" }) }.not_to raise_error
+    end
+
+    it "numbers the duplicate slugs by position" do
+      shift({ "second" => "Tweezer" })
+      expect(show.tracks.reload.order(:position).pluck(:title, :slug))
+        .to eq([ [ "Ghost", "ghost" ],
+                 [ "Tweezer", "tweezer" ],
+                 [ "Weekapaug Groove", "weekapaug-groove" ],
+                 [ "Tweezer", "tweezer-2" ] ])
+    end
+
+    # The renamed track lands ahead of the existing Tweezer, so the two slugs
+    # swap: the row nobody renamed has to move for the row that was renamed.
+    it "reslugs the sibling that was never named in the request" do
+      shift({ "second" => "Tweezer" })
+      expect(admin_job.reload.payload["reslugged"])
+        .to contain_exactly(
+          { "track_id" => second.id, "from" => "free", "to" => "tweezer" },
+          { "track_id" => fourth.id, "from" => "tweezer", "to" => "tweezer-2" }
+        )
+    end
+
+    it "keeps every slug distinct" do
+      shift({ "second" => "Tweezer" })
+      slugs = show.tracks.reload.pluck(:slug)
+      expect(slugs.uniq.size).to eq(slugs.size)
+    end
+
+    it "leaves no track parked on a temporary slug" do
+      shift({ "second" => "Tweezer" })
+      expect(show.tracks.reload.pluck(:slug).grep(/\Atmp-/)).to be_empty
+    end
+
+    # Renaming AWAY from a duplicated title renumbers the rows left behind, and
+    # those rows are not the ones the request named either.
+    it "renumbers the rows left behind when a duplicate title is vacated" do
+      second.update!(title: "Tweezer", slug: "tweezer-2")
+      fourth.update_columns(slug: "tweezer-3")
+      create(:track, show:, position: 5, title: "Tweezer", slug: "tweezer-4")
+      described_class.new.perform(first.id, admin_job.id, 2.0, true, { "first" => "Tweezer" })
+      expect(show.tracks.reload.order(:position).pluck(:title, :slug))
+        .to eq([ [ "Tweezer", "tweezer" ],
+                 [ "Tweezer", "tweezer-2" ],
+                 [ "Weekapaug Groove", "weekapaug-groove" ],
+                 [ "Tweezer", "tweezer-3" ],
+                 [ "Tweezer", "tweezer-4" ] ])
+    end
+  end
+
+  # The shape reproduced on dev show 1984-12-01: two adjacent tracks where the
+  # FIRST is renamed to the title the SECOND already has. Both then compute the
+  # same slug, so a direct assignment violates the unique (show_id, slug) index,
+  # and the untouched second track has to give up the bare slug it has held all
+  # along. Neither row can be reslugged on its own.
+  describe "renaming the first side onto the second side's title" do
+    before do
+      first.update!(title: "Wild Child")
+      first.update_columns(slug: "wild-child")
+      second.update!(title: "Bertha")
+      second.update_columns(slug: "bertha")
+      attach(first, 10)
+      attach(second, 6)
+    end
+
+    def shift
+      described_class.new.perform(first.id, admin_job.id, 2.0, true, { "first" => "Bertha" })
+    end
+
+    # Both sides genuinely compute "bertha" before anything is written; this is
+    # the precondition that makes the two-phase write necessary.
+    it "has both tracks computing the same slug beforehand" do
+      renamed = Track.find(first.id).tap { it.title = "Bertha" }
+      expect(TrackSlugGenerator.call(renamed)).to eq(TrackSlugGenerator.call(second))
+    end
+
+    it "raises no unique violation" do
+      expect { shift }.not_to raise_error
+    end
+
+    it "gives the renamed track the bare slug" do
+      shift
+      expect(first.reload.slug).to eq("bertha")
+    end
+
+    # The row nobody asked to change: it must move rather than keep a slug that
+    # is now wrong for its position.
+    it "renumbers the untouched sibling to bertha-2" do
+      shift
+      expect(second.reload.slug).to eq("bertha-2")
+    end
+
+    it "keeps every slug in the show distinct" do
+      shift
+      slugs = show.tracks.reload.pluck(:slug)
+      expect(slugs.uniq.size).to eq(slugs.size)
+    end
+
+    it "reports both slug moves, including the untouched sibling's" do
+      shift
+      expect(admin_job.reload.payload["reslugged"]).to contain_exactly(
+        { "track_id" => first.id, "from" => "wild-child", "to" => "bertha" },
+        { "track_id" => second.id, "from" => "bertha", "to" => "bertha-2" }
+      )
+    end
+
+    it "still moves the boundary" do
+      shift
+      expect(first.reload.duration).to be_within(400).of(12_000)
+    end
+  end
+
+  # The mirror of the case above. Slugs are numbered by position, so vacating a
+  # duplicated title has to let the rows behind it move UP a number, or a show
+  # ends up with a "-2" and no "-1".
+  describe "renaming away from a duplicated title" do
+    before do
+      show.tracks.order(:position).each_with_index do |track, i|
+        track.update_columns(slug: "setup-tmp-#{i}")
+      end
+      first.update!(title: "Bertha")
+      first.update_columns(slug: "bertha")
+      second.update!(title: "Bertha")
+      second.update_columns(slug: "bertha-2")
+      third.update_columns(slug: "weekapaug-groove")
+      attach(first, 10)
+      attach(second, 6)
+    end
+
+    def shift
+      described_class.new.perform(
+        first.id, admin_job.id, 2.0, true, { "first" => "Scarlet Begonias" }
+      )
+    end
+
+    it "lets the untouched sibling drop its suffix" do
+      shift
+      expect(second.reload.slug).to eq("bertha")
+    end
+
+    it "slugs the renamed track from its new title" do
+      shift
+      expect(first.reload.slug).to eq("scarlet-begonias")
+    end
+
+    it "leaves an unrelated track's slug alone" do
+      shift
+      expect(third.reload.slug).to eq("weekapaug-groove")
+    end
+
+    it "reports the sibling's move" do
+      shift
+      expect(admin_job.reload.payload["reslugged"]).to include(
+        { "track_id" => second.id, "from" => "bertha-2", "to" => "bertha" }
+      )
+    end
+
+    it "keeps every slug distinct" do
+      shift
+      slugs = show.tracks.reload.pluck(:slug)
+      expect(slugs.uniq.size).to eq(slugs.size)
+    end
+
+    # On a published show the numbering is deliberately left stale: a live URL
+    # outranks a tidy suffix.
+    it "keeps the stale suffix when the show is published" do
+      show.update!(published: true)
+      shift
+      expect([ first.reload.slug, second.reload.slug ]).to eq(%w[bertha bertha-2])
+    end
+  end
+
+  # Every live track URL, playlist link and shared permalink for a published show
+  # is built from the slug, so a rename there changes the title and nothing else.
+  describe "renaming on a published show" do
+    before do
+      show.update!(published: true)
+      attach(first, 10)
+      attach(second, 6)
+    end
+
+    def shift(titles)
+      described_class.new.perform(first.id, admin_job.id, 2.0, true, titles)
+    end
+
+    it "still writes the new titles" do
+      shift({ "first" => "Tweezer", "second" => "Mike's Song" })
+      expect([ first.reload.title, second.reload.title ])
+        .to eq([ "Tweezer", "Mike's Song" ])
+    end
+
+    it "keeps both slugs byte-identical" do
+      before_slugs = [ first.slug, second.slug ]
+      shift({ "first" => "Tweezer", "second" => "Mike's Song" })
+      expect([ first.reload.slug, second.reload.slug ]).to eq(before_slugs)
+    end
+
+    it "keeps every other slug in the show untouched" do
+      before_slugs = show.tracks.reload.order(:position).pluck(:slug)
+      shift({ "first" => "Tweezer", "second" => "Mike's Song" })
+      expect(show.tracks.reload.order(:position).pluck(:slug)).to eq(before_slugs)
+    end
+
+    it "reports that the slugs were frozen" do
+      shift({ "first" => "Tweezer" })
+      expect(admin_job.reload.payload["slug_frozen"]).to be(true)
+    end
+
+    it "reports no reslugs" do
+      shift({ "first" => "Tweezer" })
+      expect(admin_job.reload.payload["reslugged"]).to eq([])
+    end
+
+    it "still moves the boundary" do
+      shift({ "first" => "Tweezer" })
+      expect(first.reload.duration).to be_within(400).of(12_000)
+    end
+  end
+
+  describe "blank titles" do
+    before do
+      attach(first, 10)
+      attach(second, 6)
+    end
+
+    def shift(titles)
+      described_class.new.perform(first.id, admin_job.id, 2.0, true, titles)
+    end
+
+    it "refuses an empty title" do
+      expect { shift({ "first" => "" }) }
+        .to raise_error(described_class::BlankTitleError, /blank title for first/)
+    end
+
+    it "refuses a whitespace-only title" do
+      expect { shift({ "second" => "   " }) }
+        .to raise_error(described_class::BlankTitleError, /blank title for second/)
+    end
+
+    it "names both sides when both are blank" do
+      expect { shift({ "first" => "", "second" => "" }) }
+        .to raise_error(described_class::BlankTitleError, /first and second/)
+    end
+
+    it "changes no title" do
+      expect { shift({ "first" => "" }) }.to raise_error(described_class::BlankTitleError)
+      expect(first.reload.title).to eq("Ghost")
+    end
+
+    it "changes no audio" do
+      before_durations = durations
+      expect { shift({ "first" => "" }) }.to raise_error(described_class::BlankTitleError)
+      expect(durations).to eq(before_durations)
+    end
+
+    # The screen runs before the join, so a typo costs no ffmpeg time.
+    it "refuses before rendering anything" do
+      allow(TrackConcatService).to receive(:call)
+      expect { shift({ "first" => "" }) }.to raise_error(described_class::BlankTitleError)
+      expect(TrackConcatService).not_to have_received(:call)
+    end
+  end
+
+  # Every check and both renders finish before a single title is written, so a
+  # failure cannot leave a rename behind without the audio edit it belonged to.
+  describe "a failed render with a valid rename" do
+    before do
+      attach(first, 10)
+      attach(second, 6)
+      allow(Open3).to receive(:capture3).and_call_original
+      allow(Open3).to receive(:capture3)
+        .with("ffmpeg", *any_args)
+        .and_return([ "", "boom", instance_double(Process::Status, success?: false) ])
+    end
+
+    def shift_expecting_failure(titles)
+      expect {
+        described_class.new.perform(first.id, admin_job.id, 2.0, true, titles)
+      }.to raise_error(TrackConcatService::Error)
+    end
+
+    it "leaves both old titles in place" do
+      shift_expecting_failure({ "first" => "Tweezer", "second" => "Mike's Song" })
+      expect([ first.reload.title, second.reload.title ]).to eq([ "Ghost", "Free" ])
+    end
+
+    it "leaves both old slugs in place" do
+      shift_expecting_failure({ "first" => "Tweezer", "second" => "Mike's Song" })
+      expect([ first.reload.slug, second.reload.slug ]).to eq(%w[ghost free])
+    end
+
+    it "fails the admin job" do
+      shift_expecting_failure({ "first" => "Tweezer" })
+      expect(admin_job.reload.status).to eq("failed")
+    end
+
+    it "records no rename on the job" do
+      shift_expecting_failure({ "first" => "Tweezer" })
+      expect(admin_job.reload.payload).not_to have_key("titles_changed")
+    end
+  end
+
+  # The user chose to rename titles without repointing tracks.songs, so the job
+  # reports the mismatch and the panel warns. It never blocks: a segue title
+  # legitimately matches no single song.
+  describe "song drift" do
+    before do
+      attach(first, 10)
+      attach(second, 6)
+    end
+
+    def shift(titles)
+      described_class.new.perform(first.id, admin_job.id, 2.0, true, titles)
+    end
+
+    it "flags a renamed track whose title no longer matches any of its songs" do
+      shift({ "first" => "Tweezer" })
+      expect(admin_job.reload.payload["song_drift"])
+        .to eq([ { "track_id" => first.id, "title" => "Tweezer",
+                   "song_titles" => [ "Ghost" ] } ])
+    end
+
+    it "flags nothing when the new title still matches a song" do
+      first.songs = [ ghost, free ]
+      shift({ "first" => "Free" })
+      expect(admin_job.reload.payload["song_drift"]).to eq([])
+    end
+
+    it "applies the rename anyway" do
+      shift({ "first" => "Tweezer > Ghost" })
+      expect(first.reload.title).to eq("Tweezer > Ghost")
+    end
+
+    it "leaves the association alone" do
+      shift({ "first" => "Tweezer" })
+      expect(first.reload.songs).to eq([ ghost ])
     end
   end
 

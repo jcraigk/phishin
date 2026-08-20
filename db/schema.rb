@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_14_210900) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_18_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -251,15 +251,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_14_210900) do
     t.index ["starts_on"], name: "index_tours_on_starts_on", unique: true
   end
 
+  create_table "track_edits", force: :cascade do |t|
+    t.integer "admin_job_id"
+    t.datetime "created_at", null: false
+    t.string "operation", null: false
+    t.jsonb "payload", default: {}, null: false
+    t.integer "show_id", null: false
+    t.integer "track_id"
+    t.integer "user_id"
+    t.index ["show_id", "created_at"], name: "index_track_edits_on_show_id_and_created_at"
+    t.index ["track_id", "created_at"], name: "index_track_edits_on_track_id_and_created_at"
+  end
+
   create_table "track_tags", id: :serial, force: :cascade do |t|
     t.datetime "created_at", precision: nil
     t.integer "ends_at_second"
     t.text "notes"
+    t.string "orphan_reason"
+    t.datetime "orphaned_at"
     t.integer "starts_at_second"
     t.integer "tag_id"
     t.integer "track_id"
     t.text "transcript"
     t.index ["notes"], name: "index_track_tags_on_notes"
+    t.index ["orphaned_at"], name: "index_track_tags_on_orphaned_at", where: "(orphaned_at IS NOT NULL)"
     t.index ["tag_id"], name: "index_track_tags_on_tag_id"
     t.index ["track_id"], name: "index_track_tags_on_track_id"
   end
@@ -337,4 +352,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_14_210900) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "track_edits", "shows", on_delete: :cascade
+  add_foreign_key "track_edits", "tracks", on_delete: :nullify
+  add_foreign_key "track_edits", "users", on_delete: :nullify
 end

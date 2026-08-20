@@ -1,9 +1,7 @@
 import React, { useContext, useState } from "react";
 import { EditorContext } from "./AdminShowEditor";
 import TrimPanel from "./TrimPanel";
-import SplitPanel, { isSegueTitle } from "./SplitPanel";
 import ReplacePanel from "./ReplacePanel";
-import CombinePanel from "./CombinePanel";
 import BoundaryPanel from "./BoundaryPanel";
 import BulkAudioDrop from "./BulkAudioDrop";
 import useJobRunner from "./useJobRunner";
@@ -40,13 +38,12 @@ const GapBanner = () => {
   );
 };
 
-const TrackAudioRow = ({ track, previous, next }) => {
+const TrackAudioRow = ({ track, next }) => {
   const [tool, setTool] = useState(null);
   const hasAudio = track.audio_status !== "missing";
-  const splittable = hasAudio && isSegueTitle(track.title);
-  // The first track of a show has nothing above it to merge into, and the last
-  // has nothing below it to share a boundary with.
-  const combinable = Boolean(previous);
+  // Splitting and combining are CLI-only (lib/tasks/split_scan.rake). The admin
+  // UI moves an existing boundary but never creates or removes one, so the last
+  // track has nothing below it to share a boundary with.
   const shiftable = Boolean(next) && hasAudio && next.audio_status !== "missing";
 
   const toggle = (name) => setTool((prev) => (prev === name ? null : name));
@@ -72,18 +69,12 @@ const TrackAudioRow = ({ track, previous, next }) => {
         </span>
         <span className="admin-audio-tools">
           {toolButton("trim", "Trim", hasAudio)}
-          {toolButton("split", "Split", splittable)}
           {toolButton("replace", "Replace", true)}
-          {toolButton("combine", "Combine Up", combinable)}
           {toolButton("boundary", "Boundary", shiftable)}
         </span>
       </div>
       {tool === "trim" && <TrimPanel key={`trim-${track.id}`} track={track} />}
-      {tool === "split" && <SplitPanel key={`split-${track.id}`} track={track} />}
       {tool === "replace" && <ReplacePanel key={`replace-${track.id}`} track={track} />}
-      {tool === "combine" && combinable && (
-        <CombinePanel key={`combine-${track.id}`} track={track} previous={previous} />
-      )}
       {tool === "boundary" && shiftable && (
         <BoundaryPanel key={`boundary-${track.id}`} track={track} next={next} />
       )}
@@ -106,7 +97,6 @@ const AudioTab = () => {
             <TrackAudioRow
               key={track.id}
               track={track}
-              previous={show.tracks[index - 1] || null}
               next={show.tracks[index + 1] || null}
             />
           ))}

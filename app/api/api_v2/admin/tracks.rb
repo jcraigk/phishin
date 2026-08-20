@@ -40,25 +40,15 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
         track_payload(track.reload)
       end
 
-      desc "Render a combine preview without altering either track", hidden: true
-      post ":id/combine_preview" do
-        enqueue_combine("combine_preview", false)
-      end
-
-      desc "Merge a track into the previous track", hidden: true
-      post ":id/combine_apply" do
-        enqueue_combine("combine_apply", true)
-      end
-
       desc "Render both sides of a moved boundary without altering either track",
            hidden: true
-      params { requires :delta_s, type: Float }
+      params { use :shift_boundary_params }
       post ":id/shift_boundary_preview" do
         enqueue_shift_boundary("shift_boundary_preview", false)
       end
 
       desc "Move the boundary between this track and the next", hidden: true
-      params { requires :delta_s, type: Float }
+      params { use :shift_boundary_params }
       post ":id/shift_boundary_apply" do
         enqueue_shift_boundary("shift_boundary_apply", true)
       end
@@ -73,18 +63,6 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
       params { use :trim_params }
       post ":id/trim_apply" do
         enqueue_trim("trim_apply", true)
-      end
-
-      desc "Render a split preview without altering the track", hidden: true
-      params { requires :cut_s, type: Float }
-      post ":id/split_preview" do
-        enqueue_split("split_preview", false)
-      end
-
-      desc "Split the track into two at the cut point", hidden: true
-      params { requires :cut_s, type: Float }
-      post ":id/split_apply" do
-        enqueue_split("split_apply", true)
       end
 
       desc "Replace a track's audio file", hidden: true
@@ -124,43 +102,19 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
       { job_id: job.id }
     end
 
-    # Same shape as enqueue_trim: preview and apply differ only in the flag the job
-    # hands the service. The title check mirrors TrackSplitService's own so a segue
-    # the service would accept is never rejected here, and an obviously unsplittable
-    # title fails at the click rather than in a background job.
-    def enqueue_split(kind, apply)
-      track = Track.find(params[:id])
-      error!({ message: "Track has no audio" }, 422) unless track.mp3_audio.attached?
-      unless track.title.count(">") == 1
-        error!({ message: "Title needs exactly one '>' to split" }, 422)
-      end
-      job = AdminJob.create!(kind:, track:, show: track.show)
-      Admin::SplitJob.perform_async(track.id, job.id, params[:cut_s], apply)
-      status 201
-      { job_id: job.id }
-    end
-
-    # Combining replaced an inline endpoint that merged metadata in the request
-    # and threw the second track's audio away. Joining two files is an ffmpeg
-    # render, so it runs as a job on the preview-then-apply pattern trim and
-    # split use, and the preview lets an admin hear the seam before a track row
-    # is destroyed. The missing-previous check runs here so the first track in a
-    # show fails at the click rather than in a background job.
-    def enqueue_combine(kind, apply)
-      track = Track.find(params[:id])
-      previous = track.show.tracks.find_by(position: track.position - 1)
-      error!({ message: "No previous track to combine into" }, 422) if previous.nil?
-      job = AdminJob.create!(kind:, track:, show: track.show)
-      Admin::CombineTracksJob.perform_async(track.id, job.id, apply)
-      status 201
-      { job_id: job.id }
-    end
-
-    # The boundary shift is the same preview-then-apply job pair as trim and
-    # split. The range check runs here, off the stored durations, so a delta
+    # The boundary shift is the same preview-then-apply job pair as trim. It
+    # MOVES an existing boundary and never creates or removes one: splitting and
+    # combining are CLI-only (lib/tasks/split_scan.rake), deliberately kept out
+    # of the admin UI. The range check runs here, off the stored durations, so a delta
     # that would leave a zero-length side comes back as a 422 naming what is
     # allowed rather than as a failed background job. The job re-checks against
     # the probed audio, which is the authority.
+    #
+    # Optional titles ride along on the same request so a rename lands in the
+    # same transaction as the audio: renaming through PATCH first would leave a
+    # rename behind when the shift is abandoned or its render fails. A preview
+    # accepts them and echoes them back without writing anything, so the panel
+    # can show the slugs an apply would produce.
     def enqueue_shift_boundary(kind, apply)
       track = Track.find(params[:id])
       following = track.show.tracks.find_by(position: track.position + 1)
@@ -169,11 +123,28 @@ class ApiV2::Admin::Tracks < ApiV2::Admin::Base
         error!({ message: "Both tracks need audio to shift the boundary" }, 422)
       end
       ensure_delta_in_range!(track, following)
+      titles = boundary_titles
 
       job = AdminJob.create!(kind:, track:, show: track.show)
-      Admin::ShiftBoundaryJob.perform_async(track.id, job.id, params[:delta_s], apply)
+      Admin::ShiftBoundaryJob.perform_async(track.id, job.id, params[:delta_s], apply, titles)
       status 201
-      { job_id: job.id }
+      { job_id: job.id, titles: }.compact
+    end
+
+    # A key that is absent means "leave that side's title alone"; a key that is
+    # present but blank is a mistake, so it 422s here rather than reaching the
+    # job. Returns nil when nothing was asked for, which is the argument that
+    # keeps the job on its pre-rename path.
+    def boundary_titles
+      given = declared(params, include_missing: false)["titles"]
+      return nil if given.blank?
+      titles = given.to_h.transform_keys(&:to_s).slice("first", "second")
+                    .transform_values { it.is_a?(String) ? it.strip : it }
+      titles.each do |side, title|
+        next if title.present?
+        error!({ message: "Title for the #{side} track cannot be blank" }, 422)
+      end
+      titles.presence
     end
 
     def ensure_delta_in_range!(track, following)

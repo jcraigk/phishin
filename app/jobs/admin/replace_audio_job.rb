@@ -7,7 +7,9 @@ class Admin::ReplaceAudioJob
 
     admin_job.run! do
       blob = ActiveStorage::Blob.find_signed!(signed_id)
-      backup_path = TrackAudioReplacer.call(track:, blob:)
+      backup_path = TrackAudioReplacer.call(
+        track:, blob:, operation: "replace_audio", admin_job:
+      )
       admin_job.payload["backup_path"] = backup_path if backup_path
       admin_job.save!
     end

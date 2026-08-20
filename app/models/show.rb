@@ -9,6 +9,9 @@ class Show < ApplicationRecord
   has_many :likes, as: :likable, dependent: :destroy
   has_many :show_tags, dependent: :destroy
   has_many :tags, through: :show_tags
+  # No dependent option: TrackEdit is an append-only log that refuses to be
+  # destroyed. The database cascades these away with the show itself.
+  has_many :track_edits
 
   has_one_attached :cover_art do |attachable|
     attachable.variant :medium,

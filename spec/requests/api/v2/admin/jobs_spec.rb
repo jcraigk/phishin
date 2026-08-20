@@ -142,17 +142,15 @@ RSpec.describe "API v2 Admin Jobs" do
     end
   end
 
-  # A split renders two files, so both halves have to be auditionable through the
-  # one endpoint by index before an admin commits to the cut.
-  describe "streaming a completed split preview" do
+  # A boundary shift renders both sides, so each has to be auditionable through
+  # the one endpoint by index before an admin commits to the move.
+  describe "streaming a completed boundary preview" do
     let(:show) { create(:show, date: "2024-07-19") }
-    let(:mikes) { create(:song, title: "Mike's Song") }
-    let(:hydrogen) { create(:song, title: "I Am Hydrogen") }
     let(:track) do
-      create(
-        :track, show:, position: 1, title: "Mike's Song > I Am Hydrogen",
-                songs: [ mikes, hydrogen ], slug: "mikes-hydrogen"
-      )
+      create(:track, show:, position: 1, title: "Ghost", slug: "ghost")
+    end
+    let(:following) do
+      create(:track, show:, position: 2, title: "Free", slug: "free")
     end
     let(:source) { Rails.root.join("tmp/spec/audio_60s.mp3") }
 
@@ -165,14 +163,17 @@ RSpec.describe "API v2 Admin Jobs" do
           exception: true
         )
       end
-      track.mp3_audio.attach(
-        io: File.open(source), filename: "audio.mp3", content_type: "audio/mpeg"
-      )
+      [ track, following ].each do |record|
+        record.mp3_audio.attach(
+          io: File.open(source), filename: "audio.mp3", content_type: "audio/mpeg"
+        )
+        record.process_mp3_audio
+      end
     end
 
     it "streams each half by index" do
-      job = create(:admin_job, kind: "split_preview", track:, show:)
-      Admin::SplitJob.new.perform(track.id, job.id, 30.0, false)
+      job = create(:admin_job, kind: "shift_boundary_preview", track:, show:)
+      Admin::ShiftBoundaryJob.new.perform(track.id, job.id, 2.0, false)
       expect(job.reload.status).to eq("done")
 
       GC.start
@@ -189,8 +190,8 @@ RSpec.describe "API v2 Admin Jobs" do
     end
 
     it "serves different audio for each half" do
-      job = create(:admin_job, kind: "split_preview", track:, show:)
-      Admin::SplitJob.new.perform(track.id, job.id, 20.0, false)
+      job = create(:admin_job, kind: "shift_boundary_preview", track:, show:)
+      Admin::ShiftBoundaryJob.new.perform(track.id, job.id, -2.0, false)
 
       get "/api/v2/admin/jobs/#{job.id}/audio", params: { index: 0 }, headers: admin_headers
       first = response.body
