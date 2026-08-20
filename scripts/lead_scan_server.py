@@ -145,21 +145,22 @@ def wav_trim_command(src, out_path, start, end, fade_in, fade_out):
 
 
 def probe_duration(src):
-    """Exact decoded duration. The report rounds to a tenth of a second, which
-    overshoots the real end by more than the trim removes, so a trim measured
-    against the rounded value lands past the end of the file and does nothing."""
-    cmd = ["ffprobe", "-v", "error", "-show_entries", "format=duration",
-           "-of", "csv=p=0", str(src)]
+    """Length of the audio ffmpeg actually decodes, measured by decoding it.
+
+    Not ffprobe's reported duration, and not the report's rounded one: both can
+    overshoot the real end by more than the trim removes, leaving an atrim end
+    past the end of the stream that silently cuts nothing. Some ffprobe builds
+    report the untrimmed length of a LAME-gapless file while the decoder yields
+    the trimmed one. Mirrors TrackMergeService#decoded_duration_s."""
+    cmd = ["ffmpeg", "-v", "error", "-i", str(src), "-f", "s16le",
+           "-acodec", "pcm_s16le", "-ac", "1", "-ar", "44100", "-"]
     try:
         proc = subprocess.run(cmd, capture_output=True, timeout=RENDER_TIMEOUT_S)
     except subprocess.TimeoutExpired:
         return None
     if proc.returncode != 0:
         return None
-    try:
-        return float(proc.stdout.decode().strip())
-    except ValueError:
-        return None
+    return len(proc.stdout) / 2.0 / 44100
 
 
 def head_burst(src):
@@ -216,7 +217,7 @@ def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs)
     The cache key carries a version so previews rendered under earlier trim
     rules are not served for the current one."""
     stamp = hashlib.sha1(
-        f"v5|{first_url}|{second_url}|{first_duration_s:.2f}|{seconds:.2f}".encode()
+        f"v6|{first_url}|{second_url}|{first_duration_s:.2f}|{seconds:.2f}".encode()
     ).hexdigest()[:16]
     out_path = PREVIEW_DIR / f"{stamp}.wav"
     if out_path.exists():

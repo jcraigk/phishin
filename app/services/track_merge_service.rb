@@ -147,7 +147,7 @@ class TrackMergeService < ApplicationService
     @head_trimmed = head_burst?(@second_file.path)
     first_chain =
       if @tail_trimmed
-        first_end = [ probe_duration(@first_file.path) - TAIL_TRIM_S, 0.0 ].max
+        first_end = [ decoded_duration_s(@first_file.path) - TAIL_TRIM_S, 0.0 ].max
         "[0:a]atrim=start=0:end=#{format('%.4f', first_end)},asetpts=PTS-STARTPTS," \
           "aresample=44100[a]"
       else
@@ -224,13 +224,22 @@ class TrackMergeService < ApplicationService
     samples.max { |a, b| a.abs <=> b.abs }.abs
   end
 
-  def probe_duration(path)
-    out, _err, status = Open3.capture3(
-      "ffprobe", "-v", "error", "-show_entries", "format=duration",
-      "-of", "csv=p=0", path.to_s
+  # Length of the audio ffmpeg actually decodes, measured by decoding it.
+  #
+  # Not ffprobe's reported duration: for a file carrying LAME gapless headers,
+  # some ffprobe builds report the untrimmed length while the decoder yields the
+  # trimmed one (57ms apart on ffmpeg 7.1.4, identical on 8.1.1). An atrim end
+  # computed from the reported value then lands past the end of the stream and
+  # silently cuts nothing. This measures the same stream atrim will see, so the
+  # two cannot disagree.
+  def decoded_duration_s(path)
+    out, err, status = Open3.capture3(
+      "ffmpeg", "-v", "error", "-i", path.to_s, "-f", "s16le",
+      "-acodec", "pcm_s16le", "-ac", "1", "-ar", "44100", "-"
     )
-    raise Error, "ffprobe failed for #{label}" unless status.success?
-    out.to_f
+    raise Error, "#{label}: ffmpeg failed measuring #{path}: #{err[0, 200]}" \
+      unless status.success?
+    out.bytesize / 2.0 / 44_100
   end
 
   def backup_sources

@@ -7,7 +7,12 @@ namespace :diag do
     puts "ffmpeg: #{`ffmpeg -version 2>/dev/null`.lines.first.to_s.strip}"
     puts "file:   #{File.basename(file)}"
 
-    dur = `ffprobe -v error -show_entries format=duration -of csv=p=0 "#{file}"`.strip.to_f
+    reported = `ffprobe -v error -show_entries format=duration -of csv=p=0 "#{file}"`
+               .strip.to_f
+    dur = TrackMergeService.allocate.send(:decoded_duration_s, file)
+    puts "ffprobe reports:  #{reported}"
+    puts "decoder yields:   #{dur}"
+    puts "they differ by:   #{((reported - dur) * 1000).round(2)} ms"
     finish = dur - TrackMergeService::TAIL_TRIM_S
     out = "/tmp/atrim_out.wav"
     system("ffmpeg", "-y", "-v", "error", "-i", file, "-af",
@@ -15,7 +20,6 @@ namespace :diag do
            "aresample=44100", "-c:a", "pcm_s16le", out)
     got = `ffprobe -v error -show_entries format=duration -of csv=p=0 #{out}`.strip.to_f
 
-    puts "source duration:  #{dur}"
     puts "atrim end:        #{format('%.4f', finish)}"
     puts "result duration:  #{got}"
     puts "actually trimmed: #{((dur - got) * 1000).round(2)} ms " \
