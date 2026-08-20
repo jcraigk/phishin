@@ -46,6 +46,11 @@ namespace :sandwich_scan do
       next
     end
 
+    # The records and their positions move in one transaction; the audio is
+    # attached after it commits. ActiveStorage uploads the file in an
+    # after_commit hook, so anything reading the file inside the transaction
+    # finds no file on disk.
+    restored = [ merged ]
     ActiveRecord::Base.transaction do
       # Two phase: park the tail beyond every position this restore will use, so
       # neither the shift nor the new records collide on (show_id, position).
@@ -53,17 +58,9 @@ namespace :sandwich_scan do
       tail.each_with_index { |t, i| t.update!(position: parking + i) }
 
       merged.update!(title: titles.first, slug: "tmp-restore-#{merged.id}")
-      merged.mp3_audio.attach(
-        io: File.open(files.first), filename: File.basename(files.first),
-        content_type: "audio/mpeg"
-      )
-      merged.reload
       merged.songs = [ Song.find_by("LOWER(title) = ?", titles.first.downcase) ].compact
-      merged.update!(slug: TrackSlugGenerator.call(merged))
-      merged.process_mp3_audio
-      puts "restored: #{merged.title} (id #{merged.id}, position #{merged.position})"
 
-      files.drop(1).each_with_index do |path, i|
+      files.drop(1).each_with_index do |_path, i|
         title = titles[i + 1]
         track = Track.new(
           show:, title:, position: merged.position + i + 1,
@@ -71,19 +68,23 @@ namespace :sandwich_scan do
         )
         track.songs = [ Song.find_by("LOWER(title) = ?", title.downcase) ].compact
         track.save!
-        track.mp3_audio.attach(
-          io: File.open(path), filename: File.basename(path),
-          content_type: "audio/mpeg"
-        )
-        track.reload
-        track.update!(slug: TrackSlugGenerator.call(track))
-        track.process_mp3_audio
-        puts "restored: #{track.title} (id #{track.id}, position #{track.position})"
+        restored << track
       end
 
       tail.each_with_index do |t, i|
         t.update!(position: merged.position + files.size + i)
       end
+    end
+
+    restored.each_with_index do |track, i|
+      track.mp3_audio.attach(
+        io: File.open(files[i]), filename: File.basename(files[i]),
+        content_type: "audio/mpeg"
+      )
+      track.reload
+      track.update!(slug: TrackSlugGenerator.call(track))
+      track.process_mp3_audio
+      puts "restored: #{track.title} (id #{track.id}, position #{track.position})"
     end
 
     show.reload.save_duration
