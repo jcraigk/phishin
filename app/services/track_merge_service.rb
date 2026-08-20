@@ -22,13 +22,20 @@ class TrackMergeService < ApplicationService
   # The burst is detected within this much of the boundary. Wider than the trim
   # so a burst is still found when it sits just inside the trimmed region.
   BURST_PROBE_S = 0.005
-  # A sample magnitude the last millisecond of real music does not reach. In a
-  # sample of the catalog, clean tracks peaked at ~11k there while affected ones
-  # sat at 29k-32k, so this sits between with room on both sides.
+  # A burst is loud in absolute terms AND louder than the music leading up to
+  # it. The level alone is not enough: a track ending at full volume reaches it
+  # with ordinary music. Measured bursts run 2.8x the surrounding level and
+  # above, while the loudest clean endings sit below 0.7x.
   TAIL_BURST_LEVEL = 20_000
+  TAIL_BURST_RATIO = 1.5
+  # The stretch before the edge that a burst is compared against.
+  BURST_BODY_S = 0.5
   # Decoded from the end to reach the last millisecond; a whole file decode
   # would cost seconds per merge for the same answer.
   TAIL_PROBE_S = 0.5
+  # Bursts are measured on interleaved stereo, so a window in seconds covers
+  # this many samples per second of audio.
+  CHANNELS = 2
   OUTPUT_DIR = Rails.root.join("tmp/track_merges")
   BACKUP_DIR = Rails.root.join("tmp/track_merge_backups")
 
@@ -167,15 +174,14 @@ class TrackMergeService < ApplicationService
   # The mirror of tail_burst?: the same artifact can sit at the head of a file,
   # where it is inaudible on its own but a click once another track runs into it.
   def head_burst?(path)
-    out, _err, status = Open3.capture3(
+    out, err, status = Open3.capture3(
       "ffmpeg", "-v", "error", "-i", path.to_s,
-      "-t", format("%.4f", BURST_PROBE_S), "-f", "s16le", "-acodec", "pcm_s16le",
-      "-ac", "1", "-ar", "44100", "-"
+      "-t", format("%.4f", BURST_BODY_S), "-f", "s16le", "-acodec", "pcm_s16le",
+      "-ar", "44100", "-"
     )
-    return false unless status.success?
-    samples = out.unpack("s<*")
-    return false if samples.blank?
-    samples.max { |a, b| a.abs <=> b.abs }.abs >= TAIL_BURST_LEVEL
+    raise Error, "#{label}: ffmpeg failed reading the head of #{path}: #{err[0, 200]}" \
+      unless status.success?
+    burst?(out)
   end
 
   # True when the file's final millisecond reaches a level real music does not,
@@ -184,15 +190,38 @@ class TrackMergeService < ApplicationService
   # Seeks from the end rather than to an absolute position: an -ss seek lands on
   # a frame boundary and decodes past the burst, reporting silence.
   def tail_burst?(path)
-    out, _err, status = Open3.capture3(
+    out, err, status = Open3.capture3(
       "ffmpeg", "-v", "error", "-sseof", format("-%.2f", TAIL_PROBE_S),
       "-i", path.to_s, "-f", "s16le", "-acodec", "pcm_s16le",
-      "-ac", "1", "-ar", "44100", "-"
+      "-ar", "44100", "-"
     )
-    return false unless status.success?
-    samples = out.unpack("s<*").last((BURST_PROBE_S * 44_100).ceil)
-    return false if samples.blank?
-    samples.max { |a, b| a.abs <=> b.abs }.abs >= TAIL_BURST_LEVEL
+    raise Error, "#{label}: ffmpeg failed reading the tail of #{path}: #{err[0, 200]}" \
+      unless status.success?
+    burst?(out, from_end: true)
+  end
+
+  # A burst at the edge of `pcm`: loud on its own, and loud relative to the
+  # music behind it. Measured per channel rather than downmixed, because a burst
+  # can sit in one channel and averaging the two pulls it under the threshold.
+  def burst?(pcm, from_end: false)
+    samples = pcm.unpack("s<*")
+    raise Error, "#{label}: no audio decoded while looking for a burst" if samples.empty?
+    edge_n = (BURST_PROBE_S * 44_100).ceil * CHANNELS
+    edge = from_end ? samples.last(edge_n) : samples.first(edge_n)
+    # Whatever was decoded beyond the edge is the body. Sized from the decoded
+    # samples rather than BURST_BODY_S: -sseof returns a window of frames, not
+    # of seconds, so assuming a length here reaches back into the edge itself.
+    rest_n = [ samples.size - edge_n, 0 ].max
+    rest = from_end ? samples.first(rest_n) : samples.last(rest_n)
+    return false if edge.blank? || rest.blank?
+    body_n = (BURST_BODY_S * 44_100).ceil * CHANNELS
+    body = from_end ? rest.last(body_n) : rest.first(body_n)
+    peak = peak_of(edge)
+    peak >= TAIL_BURST_LEVEL && peak >= peak_of(body) * TAIL_BURST_RATIO
+  end
+
+  def peak_of(samples)
+    samples.max { |a, b| a.abs <=> b.abs }.abs
   end
 
   def probe_duration(path)

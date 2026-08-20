@@ -60,17 +60,16 @@ RSpec.describe TrackMergeService do
 
       before do
         # A quiet tone ending in full-scale noise, the shape the affected files
-        # have. The burst runs 30ms rather than the 1ms the real files carry: a
-        # lossy encoder smooths a transient that short back below the threshold,
-        # so a 1ms fixture would not survive its own encoding. Written every
-        # time, because the outer before block has already created this path.
+        # have: the burst has to be brief enough that the music behind it stays
+        # quiet, since detection compares the two. Written every time, because
+        # the outer before block has already created this path.
         FileUtils.mkdir_p(source_a.dirname)
         system(
           "ffmpeg", "-y", "-v", "error",
-          "-f", "lavfi", "-i", "sine=frequency=440:duration=9.97:sample_rate=44100",
-          "-f", "lavfi", "-i", "anoisesrc=duration=0.03:amplitude=1:sample_rate=44100",
+          "-f", "lavfi", "-i", "sine=frequency=440:duration=9.995:sample_rate=44100",
+          "-f", "lavfi", "-i", "anoisesrc=duration=0.005:amplitude=1:sample_rate=44100",
           "-filter_complex", "[0:a]volume=0.05[a];[a][1:a]concat=n=2:v=0:a=1[out]",
-          "-map", "[out]", "-b:a", "128k", source_a.to_s, exception: true
+          "-map", "[out]", "-b:a", "320k", source_a.to_s, exception: true
         )
       end
 
