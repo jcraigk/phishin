@@ -153,10 +153,21 @@ class TrackMergeService < ApplicationService
       else
         "[0:a]aresample=44100[a]"
       end
+    # The second track's own tail burst becomes the merged track's tail. On its
+    # own that is inaudible - every player drops it as encoder padding - but the
+    # merged file is re-encoded, which turns the padding into ordinary audio and
+    # the burst into a click at the end of the track.
+    @second_tail_trimmed = tail_burst?(@second_file.path)
+    second_start = @head_trimmed ? TAIL_TRIM_S : 0.0
+    second_end =
+      if @second_tail_trimmed
+        [ decoded_duration_s(@second_file.path) - TAIL_TRIM_S, 0.0 ].max
+      end
     second_chain =
-      if @head_trimmed
-        "[1:a]atrim=start=#{format('%.4f', TAIL_TRIM_S)},asetpts=PTS-STARTPTS," \
-          "aresample=44100[b]"
+      if second_start.positive? || second_end
+        range = "start=#{format('%.4f', second_start)}"
+        range += ":end=#{format('%.4f', second_end)}" if second_end
+        "[1:a]atrim=#{range},asetpts=PTS-STARTPTS,aresample=44100[b]"
       else
         "[1:a]aresample=44100[b]"
       end
@@ -409,6 +420,7 @@ class TrackMergeService < ApplicationService
       notes: @notes || [],
       tail_trimmed: @tail_trimmed || false,
       head_trimmed: @head_trimmed || false,
+      second_tail_trimmed: @second_tail_trimmed || false,
       applied: !dry_run
     }
   end

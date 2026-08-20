@@ -123,6 +123,8 @@ namespace :sandwich_scan do
              "#{result[:first_title]}" if result[:tail_trimmed]
         puts "  trimmed: #{trim_ms}ms of encoder flush off the start of " \
              "#{result[:second_title]}" if result[:head_trimmed]
+        puts "  trimmed: #{trim_ms}ms of encoder flush off the end of " \
+             "#{result[:second_title]}" if result[:second_tail_trimmed]
         puts "  backups: #{result[:backup_paths].join(', ')}" if result[:backup_paths].any?
         if result[:applied]
           puts "  track:   #{result[:url]}"

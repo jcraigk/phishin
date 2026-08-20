@@ -56,7 +56,8 @@ RSpec.describe TrackMergeService do
     end
 
     context "when the first track ends in a full-scale burst" do
-      let(:source_a) { Rails.root.join("tmp/spec/merge_burst.mp3") }
+      # Its own path, so the outer before block cannot leave a plain tone here.
+      let(:source_a) { Rails.root.join("tmp/spec/merge_burst_source.mp3") }
 
       before do
         # A quiet tone ending in full-scale noise, the shape the affected files
