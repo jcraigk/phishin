@@ -1,10 +1,11 @@
 require "base64"
 require "shellwords"
 
-# Finds tracks whose title holds two songs joined by a segue ("Mike's Song >
-# I Am Hydrogen") and splits them into two tracks after a human picks the cut
-# point. Same scan/review/apply shape as lead_scan.rake, with its own output
-# root and ignore list; the preview server is shared unchanged.
+# Finds tracks whose title holds several songs joined by segues ("Mike's Song >
+# I Am Hydrogen > Weekapaug Groove") and splits them into one track per song
+# after a human places each cut. Same scan/review/apply shape as lead_scan.rake,
+# with its own output root and ignore list; the preview server is shared
+# unchanged.
 module SplitScan
   SCAN_SCRIPT = "scripts/audio_split_analysis.py".freeze
   SCAN_ROOT = "data/split_scan".freeze
@@ -201,7 +202,7 @@ namespace :split_scan do
     abort "No matching entries" if entries.empty?
 
     dry_run = ENV["DRY_RUN"] == "1"
-    puts dry_run ? "DRY RUN: rendering both halves without changing anything\n\n"
+    puts dry_run ? "DRY RUN: rendering every part without changing anything\n\n"
                  : "Applying #{entries.size} split(s)\n\n"
     applied = 0
     failures = []

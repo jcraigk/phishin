@@ -5,12 +5,14 @@
 #   "requests",
 # ]
 # ///
-"""Find tracks that hold two songs joined by a segue, and review where to cut.
+"""Find tracks that hold several songs joined by segues, and review where to cut.
 
-A title like "Mike's Song > I Am Hydrogen" is one track that should be two, each
-with its own song association. This scans the phish.in API for those titles and
-writes a review page where a human picks the cut point, auditioning the audio on
-both sides of it, then exports approved.json for `rake split_scan:apply`.
+A title like "Mike's Song > I Am Hydrogen > Weekapaug Groove" is one track that
+should be three, each with its own song association. This scans the phish.in API
+for those titles and writes a review page where a human places each cut,
+auditioning the audio on both sides of it, then exports approved.json for
+`rake split_scan:apply`. Any number of cuts is allowed, so a title naming N
+songs becomes N tracks.
 
 No audio is analyzed or downloaded here - the scan is pure API, so a year takes
 seconds. The audition clips are rendered on demand by scripts/lead_scan_server.py
@@ -42,7 +44,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 # the cut is judged on, so it runs long enough to hear the new song settle in.
 CLIP_BEFORE_S = 5.0
 CLIP_AFTER_S = 20.0
-# Both halves must be at least this long for a cut to be plausible; mirrors
+# Every part must be at least this long for a cut to be plausible; mirrors
 # TrackSplitService::MIN_PART_S, which rejects anything shorter on apply.
 MIN_PART_S = 2.0
 # Splits "A > B" and "A -> B" alike. Both mark a segue; the arrow form means
@@ -72,7 +74,7 @@ class SplitCandidate:
     set_name: str
     position: int
     title: str
-    part_titles: list  # the two halves of the title, in order
+    part_titles: list  # the songs named in the title, in playing order
     songs: list  # song titles from the track's API payload
     mp3_url: str
     share_url: str
@@ -281,14 +283,14 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
             "tags": list(c.tags),
         }), quote=True)
         # The setlist is what settles an ambiguous segue - which song the second
-        # half actually is, and whether the show even ran the way the title says.
+        # part actually is, and whether the show even ran the way the title says.
         # Same url the app's show context menu uses.
         setlist = (f'<a class="pnet" target="_blank" title="setlist on phish.net"'
                    f' href="https://phish.net/setlists/?d={esc(c.date, quote=True)}"'
                    f'>&#x1F41F;</a>')
         warn = ""
         if c.unmatched_parts:
-            # Apply has to resolve each half to a Song; a part that matches no
+            # Apply has to resolve each part to a Song; a part that matches no
             # song on the track is the row most likely to fail there.
             warn = ('<span class="warn">&#9888;&#xFE0F; no song match: '
                     + esc(", ".join(c.unmatched_parts)) + '</span>')
@@ -480,8 +482,9 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
              padding: .6rem .8rem; margin-bottom: 1rem; border-radius: 4px; }}
   .body {{ display: flex; gap: .5rem; align-items: stretch; }}
   .controls {{ flex: 0 0 22rem; min-width: 0; }}
-  /* The two halves stack, each under its own song name: the pair reads as
-     "what you hear last" above "what you hear first", in playing order. */
+  /* The two clips around a cut stack, each under its own song name: the pair
+     reads as "what you hear last" above "what you hear first", in playing
+     order. */
   .parts {{ margin-left: 1.5rem; }}
   .part + .part {{ margin-top: .35rem; }}
   .part .plabel {{ display: block; color: var(--muted); font-size: 12px;
@@ -626,7 +629,7 @@ function stopPreviewClips() {{
   }});
 }}
 
-// Both halves of one cut, rendered by the same server and the same ffmpeg chain
+// Both clips around one cut, rendered by the same server and ffmpeg chain
 // the apply step uses - so what you hear is what gets written. Without the
 // server (opened over file://) the field still edits the export.
 async function renderPreview(row) {{
@@ -673,7 +676,7 @@ async function renderPreview(row) {{
           headers: {{"Content-Type": "application/json"}},
           body: JSON.stringify({{
             mp3_url: payload.mp3_url, trim_start: s.start, trim_end: s.end,
-            // Butt cut, no fades: the two halves come from one continuous
+            // Butt cut, no fades: the parts come from one continuous
             // recording, and the apply step joins nothing - it just cuts.
             fade_in: 0, fade_out: 0,
             fmt: "wav"
@@ -1354,7 +1357,7 @@ document.querySelectorAll(".row").forEach(row => {{
   }};
   row._playPair = () => playPair(Math.min(row._activeCut ?? 0,
                                           state().cut_points.length - 1));
-  // "r" replays only the second half: a cut is judged on whether the next song
+  // "r" replays only the part after the cut: a cut is judged on whether the next song
   // starts cleanly, so that is the clip worth hearing again on its own.
   row._restart = () => {{
     const i = Math.min(row._activeCut ?? 0, state().cut_points.length - 1);
