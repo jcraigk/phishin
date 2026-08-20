@@ -191,17 +191,23 @@ class TrackMergeService < ApplicationService
       tail_pcm(@first_file.path, first_end), head_pcm(@second_file.path, second_start)
     )
     @end_faded = loud_tail?(tail_pcm(@second_file.path, second_end))
-    first_chain += ",afade=t=out:st=#{format('%.4f', fade_start(first_end, @first_file.path))}:" \
-                   "d=#{FADE_S}" if @joint_faded
-    second_chain += ",afade=t=in:st=0:d=#{FADE_S}" if @joint_faded
     second_chain += ",afade=t=out:st=#{format('%.4f', fade_start(second_end, @second_file.path, second_start))}:" \
                     "d=#{FADE_S}" if @end_faded
+    # A crossfade, not a fade on each side. Two independent fades ramp both
+    # sides to zero and leave a hole at the joint; a crossfade overlaps them, so
+    # the level moves from one track to the other without ever dropping out.
+    joiner =
+      if @joint_faded
+        "[a][b]acrossfade=d=#{FADE_S}:c1=tri:c2=tri[out]"
+      else
+        "[a][b]concat=n=2:v=0:a=1[out]"
+      end
 
     _out, err, status = Open3.capture3(
       "ffmpeg", "-y", "-v", "error",
       "-i", @first_file.path, "-i", @second_file.path,
       "-filter_complex",
-      "#{first_chain}[a];#{second_chain}[b];[a][b]concat=n=2:v=0:a=1[out]",
+      "#{first_chain}[a];#{second_chain}[b];#{joiner}",
       "-map", "[out]", "-map_metadata", "0", "-id3v2_version", "3",
       "-b:a", bitrate, output_path.to_s
     )
