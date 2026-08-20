@@ -41,7 +41,7 @@ SITE_BASE = "https://phish.in"
 REPO_ROOT = Path(__file__).resolve().parent.parent
 # Seconds auditioned on each side of the joint. Short: the only question is
 # whether the two tracks butt together cleanly.
-JOINT_S = 2.5
+JOINT_S = 1.5
 SEGUE_RE = re.compile(r"\s*-?>\s*")
 FETCH_WORKERS = 12
 
@@ -386,7 +386,7 @@ def write_review_html(html_path, candidates, footnotes, combined=None,
                 f'<div class="joint" data-joint="{idx}">'
                 f'<button class="jplay" title="hear this joint">&#9654; joint</button>'
                 f'<span class="jmeta">{esc(left_title)} &rarr; {esc(right_title)}'
-                f' &middot; {JOINT_S}s each side</span>'
+                f'</span>'
                 f'<div class="audio"></div></div>')
 
         if c.third_id:
