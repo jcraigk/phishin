@@ -953,7 +953,9 @@ function rowKey(row) {{
   try {{ return JSON.parse(b.dataset.payload).share_url || null; }}
   catch (e) {{ return null; }}
 }}
+let restored = false;
 function saveProgress() {{
+  if (!restored) return;
   const state = {{}};
   document.querySelectorAll(".row").forEach(row => {{
     const key = rowKey(row);
@@ -980,8 +982,8 @@ function saveProgress() {{
 function restoreProgress() {{
   let state = null;
   try {{ state = JSON.parse(localStorage.getItem(STORE_KEY) || "null"); }}
-  catch (e) {{ return; }}
-  if (!state) return;
+  catch (e) {{ restored = true; return; }}
+  if (!state) {{ restored = true; return; }}
   document.querySelectorAll(".row").forEach(row => {{
     const saved = state[rowKey(row)];
     if (!saved) return;
@@ -1010,6 +1012,7 @@ function restoreProgress() {{
     // Setting .checked in script fires no "change", so collapse by hand.
     if (row._syncDone) row._syncDone();
   }});
+  restored = true;
 }}
 
 document.querySelectorAll(".row").forEach(row => {{
