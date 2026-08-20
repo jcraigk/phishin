@@ -321,12 +321,34 @@ def embedded_fonts():
     return "\n  ".join(faces)
 
 
+# Reviewed first because they are the bulk of the backlog and each is the same
+# judgment repeated, which is faster to work through in one run.
+PRIORITY_OUTER = [
+    "hold your head up",
+    "the man who stepped into yesterday",
+    "cold as ice",
+]
+
+
+def outer_rank(outer):
+    try:
+        return (0, PRIORITY_OUTER.index(outer))
+    except ValueError:
+        return (1, 0)
+
+
 def write_review_html(html_path, candidates, footnotes, combined=None,
                       quiet=False):
     combined = combined or []
     esc = html_escape.escape
     rows = []
-    for c in sorted(candidates, key=lambda c: (c.date, c.first_position)):
+    # Grouped by bread song, priority songs first, then chronological within a
+    # group; a heading marks where each group starts.
+    ordered = sorted(candidates,
+                     key=lambda c: (outer_rank(c.outer), c.outer,
+                                    c.date, c.first_position))
+    seen_outer = None
+    for c in ordered:
         payload = esc(json.dumps({
             "label": c.label, "date": c.date,
             "merged_title": c.merged_title,
@@ -373,6 +395,16 @@ def write_review_html(html_path, candidates, footnotes, combined=None,
         else:
             joint = joint_row(0, c.first_title, c.second_title)
 
+        if c.outer != seen_outer:
+            seen_outer = c.outer
+            count = sum(1 for x in ordered if x.outer == c.outer)
+            # The merged title opens with the bread song already spelled the way
+            # the track spells it; re-casing the normalized key would not be.
+            shown = parts_of(c.merged_title)[0]
+            rows.append(
+                f'<div class="setsep"><span class="setsep-name">'
+                f'{esc(shown)}</span>'
+                f'<span class="setsep-n">{count}</span></div>')
         rows.append(f"""
 <div class="row" data-payload="{payload}">
   <div class="head">
@@ -477,6 +509,16 @@ def write_review_html(html_path, candidates, footnotes, combined=None,
        text-decoration-color: color-mix(in srgb, var(--link) 45%, transparent);
        text-underline-offset: 2px; }}
   a:hover {{ text-decoration-color: currentColor; }}
+  .setsep {{ display: flex; align-items: center; gap: .6rem;
+             margin: 1.8rem 0 .3rem; padding: 0 1rem .35rem;
+             border-bottom: 2px solid var(--line); }}
+  .setsep:first-child {{ margin-top: .4rem; }}
+  .setsep-name {{ font-family: "Open Sans Condensed", -apple-system, sans-serif;
+                  font-size: 20px; font-weight: 700; letter-spacing: .01em; }}
+  .setsep-n {{ color: var(--muted); font-size: 12px;
+               font-variant-numeric: tabular-nums;
+               border: 1px solid var(--line); border-radius: 999px;
+               padding: .05rem .5rem; }}
   .row {{ border: 1px solid transparent; border-bottom-color: var(--line);
           border-radius: 10px; padding: .85rem 1rem; transition: background .12s ease; }}
   .row:hover {{ background: var(--card); }}
