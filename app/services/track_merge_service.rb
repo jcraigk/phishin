@@ -19,9 +19,10 @@ class TrackMergeService < ApplicationService
   # burst; see render_merged and tail_burst?. Measured bursts run 1.25-1.36ms,
   # so 3ms clears them with room to spare and is still far below audibility.
   TAIL_TRIM_S = 0.003
-  # The burst is detected within this much of the boundary. Wider than the trim
-  # so a burst is still found when it sits just inside the trimmed region.
-  BURST_PROBE_S = 0.005
+  # The burst is detected within this much of the boundary. Wider than the trim,
+  # and wide enough to cover a re-encoded file: an mp3 encoder appends padding
+  # after the burst, leaving it ~16ms from the end rather than at it.
+  BURST_PROBE_S = 0.030
   # A burst is loud in absolute terms AND louder than the music leading up to
   # it. The level alone is not enough: a track ending at full volume reaches it
   # with ordinary music. Measured bursts run 2.8x the surrounding level and
@@ -147,7 +148,7 @@ class TrackMergeService < ApplicationService
     @head_trimmed = head_burst?(@second_file.path)
     first_chain =
       if @tail_trimmed
-        first_end = [ decoded_duration_s(@first_file.path) - TAIL_TRIM_S, 0.0 ].max
+        first_end = [ trim_point(@first_file.path), 0.0 ].max
         "[0:a]atrim=start=0:end=#{format('%.4f', first_end)},asetpts=PTS-STARTPTS," \
           "aresample=44100[a]"
       else
@@ -160,9 +161,7 @@ class TrackMergeService < ApplicationService
     @second_tail_trimmed = tail_burst?(@second_file.path)
     second_start = @head_trimmed ? TAIL_TRIM_S : 0.0
     second_end =
-      if @second_tail_trimmed
-        [ decoded_duration_s(@second_file.path) - TAIL_TRIM_S, 0.0 ].max
-      end
+      ([ trim_point(@second_file.path), 0.0 ].max if @second_tail_trimmed)
     second_chain =
       if second_start.positive? || second_end
         range = "start=#{format('%.4f', second_start)}"
@@ -233,6 +232,27 @@ class TrackMergeService < ApplicationService
 
   def peak_of(samples)
     samples.max { |a, b| a.abs <=> b.abs }.abs
+  end
+
+  # Where to cut so the burst goes with it. A burst sits at the very end of an
+  # original file but ~16ms in on a re-encoded one, where the encoder appended
+  # padding after it, so the cut follows the burst rather than a fixed offset.
+  def trim_point(path)
+    out, _err, status = Open3.capture3(
+      "ffmpeg", "-v", "error", "-sseof", format("-%.2f", TAIL_PROBE_S),
+      "-i", path.to_s, "-f", "s16le", "-acodec", "pcm_s16le",
+      "-ar", "44100", "-"
+    )
+    total = decoded_duration_s(path)
+    return total - TAIL_TRIM_S unless status.success?
+    samples = out.unpack("s<*")
+    window = (BURST_PROBE_S * 44_100).ceil * CHANNELS
+    edge = samples.last(window)
+    start = edge.rindex { it.abs >= TAIL_BURST_LEVEL }
+    return total - TAIL_TRIM_S if start.nil?
+    # Everything from where the burst begins is dropped, plus the trim itself.
+    from_end = (edge.size - start) / CHANNELS / 44_100.0
+    total - from_end - TAIL_TRIM_S
   end
 
   # Length of the audio ffmpeg actually decodes, measured by decoding it.
