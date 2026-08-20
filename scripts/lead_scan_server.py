@@ -48,6 +48,11 @@ PREVIEW_HEAD_S = 30.0
 # and the page sits on "rendering..." until its own watchdog gives up. Well
 # above a normal cold render (a few seconds; ~86s has been seen on a bad read).
 RENDER_TIMEOUT_S = 100
+# Dropped from the end of the first track at a joint. Many of these files end
+# with a burst of encoder flush at full scale that the LAME header does not
+# cover: inaudible at the end of a track, a loud click once another follows it.
+# Mirrors TrackMergeService::TAIL_TRIM_S so a preview matches the applied merge.
+TAIL_TRIM_S = 0.001
 
 
 def load_scan_module():
@@ -136,7 +141,9 @@ def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs)
     """Tail of the first track + head of the second, butt joined.
 
     Rendered as one wav so the splice is heard exactly where it falls, with no
-    encoder padding between the halves to mask or invent a glitch."""
+    encoder padding between the halves to mask or invent a glitch. The first
+    track's last millisecond is dropped to match TrackMergeService, which does
+    the same to skip the encoder flush burst many of these files end with."""
     stamp = hashlib.sha1(
         f"{first_url}|{second_url}|{first_duration_s:.2f}|{seconds:.2f}".encode()
     ).hexdigest()[:16]
@@ -163,7 +170,8 @@ def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs)
         *seg_args(first_src, tail_start, first_duration_s),
         *seg_args(second_src, 0.0, seconds),
         "-filter_complex",
-        f"[0:a]atrim=start={tail_start - lead:.2f}:end={first_duration_s - lead:.2f},"
+        f"[0:a]atrim=start={tail_start - lead:.2f}:"
+        f"end={first_duration_s - lead - TAIL_TRIM_S:.4f},"
         f"asetpts=PTS-STARTPTS,aresample=44100[a];"
         f"[1:a]atrim=start=0:end={seconds:.2f},asetpts=PTS-STARTPTS,"
         f"aresample=44100[b];"

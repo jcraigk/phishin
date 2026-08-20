@@ -717,13 +717,43 @@ async function playJoint(row, idx) {{
   audio.play().catch(() => {{}});
 }}
 
+// Selecting a row auditions it end to end: joint 0 plays as soon as it is
+// ready while joint 1 renders alongside it, then joint 1 follows on. A
+// three-track sandwich is judged on both seams, so both should be heard
+// without asking for them.
+async function auditionRow(row) {{
+  const token = (row._audition = (row._audition || 0) + 1);
+  const stale = () => window._sel !== row || row._audition !== token;
+  const joints = [...row.querySelectorAll(".joint")]
+    .map(j => Number(j.dataset.joint)).sort((a, b) => a - b);
+  if (!joints.length) return;
+  // Both renders start together; the second is usually ready before the first
+  // clip has finished playing, so the pair runs back to back.
+  const pending = joints.map(i => renderJoint(row, i));
+  for (const i of joints) {{
+    const audio = await pending[i];
+    if (stale() || !audio) return;
+    await new Promise(done => {{
+      const finish = () => {{ audio.onended = null; done(); }};
+      audio.onended = finish;
+      document.querySelectorAll(".joint audio").forEach(a => {{
+        if (a !== audio && !a.paused) a.pause();
+      }});
+      audio.currentTime = 0;
+      audio.play().catch(() => finish());
+    }});
+    if (stale()) return;
+  }}
+}}
+
 function selectRow(row) {{
   if (window._sel === row) return;
   if (window._sel) window._sel.classList.remove("sel");
+  if (window._sel) window._sel._audition = (window._sel._audition || 0) + 1;
   window._sel = row;
   if (!row) return;
   row.classList.add("sel");
-  if (!row.classList.contains("done")) renderJoint(row);
+  if (!row.classList.contains("done")) auditionRow(row);
 }}
 
 function moveSelection(delta) {{

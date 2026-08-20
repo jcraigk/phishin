@@ -15,6 +15,8 @@ class TrackMergeService < ApplicationService
   option :title
   option :dry_run, default: -> { false }
 
+  # Dropped from the end of the first track; see render_merged.
+  TAIL_TRIM_S = 0.001
   OUTPUT_DIR = Rails.root.join("tmp/track_merges")
   BACKUP_DIR = Rails.root.join("tmp/track_merge_backups")
 
@@ -114,17 +116,34 @@ class TrackMergeService < ApplicationService
 
   # Butt joined, no crossfade: the two tracks are consecutive audio from one
   # recording, so anything else would invent a transition.
+  #
+  # The first track's last millisecond is dropped. Many of these files end with
+  # a burst of encoder flush at full scale that the LAME header does not cover,
+  # inaudible at the end of a track but a loud click once another track follows
+  # it. A millisecond is far below what anyone can hear, and the alternative is
+  # a click in every merged file.
   def render_merged
     FileUtils.mkdir_p(OUTPUT_DIR)
+    first_end = [ probe_duration(@first_file.path) - TAIL_TRIM_S, 0.0 ].max
     _out, err, status = Open3.capture3(
       "ffmpeg", "-y", "-v", "error",
       "-i", @first_file.path, "-i", @second_file.path,
       "-filter_complex",
-      "[0:a]aresample=44100[a];[1:a]aresample=44100[b];[a][b]concat=n=2:v=0:a=1[out]",
+      "[0:a]atrim=start=0:end=#{format('%.4f', first_end)},asetpts=PTS-STARTPTS," \
+      "aresample=44100[a];[1:a]aresample=44100[b];[a][b]concat=n=2:v=0:a=1[out]",
       "-map", "[out]", "-map_metadata", "0", "-id3v2_version", "3",
       "-b:a", bitrate, output_path.to_s
     )
     raise Error, "ffmpeg failed for #{label}: #{err}" unless status.success?
+  end
+
+  def probe_duration(path)
+    out, _err, status = Open3.capture3(
+      "ffprobe", "-v", "error", "-show_entries", "format=duration",
+      "-of", "csv=p=0", path.to_s
+    )
+    raise Error, "ffprobe failed for #{label}" unless status.success?
+    out.to_f
   end
 
   def backup_sources
