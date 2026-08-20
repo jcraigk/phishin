@@ -39,6 +39,9 @@ class TrackMergeService < ApplicationService
   # ended and the music behind it has started.
   QUIET_RUN = 64
   BURST_EDGE_LEVEL = 8_000
+  # Never drop more than this from a joint, however far back the burst appears
+  # to run. Beyond it the cut is removing audio, not an artifact.
+  MAX_TRIM_S = 0.004
   # A butt cut between two non-zero samples clicks. Most joints do not need
   # help: the two sides already meet at a similar level. Where they do not, a
   # fade this long removes the step - short enough that nobody hears a fade,
@@ -350,7 +353,10 @@ class TrackMergeService < ApplicationService
       first -= 1
       quiet = edge[first].abs >= BURST_EDGE_LEVEL ? 0 : quiet + 1
     end
-    from_end = (edge.size - first) / CHANNELS / 44_100.0
+    # Capped: a real burst is a millisecond or two. A longer walk-back means it
+    # ran into encoder padding (which some ffmpeg builds leave decodable) and
+    # then into the music behind it, and cutting all of that leaves a hole.
+    from_end = [ (edge.size - first) / CHANNELS / 44_100.0, MAX_TRIM_S ].min
     total - from_end
   end
 

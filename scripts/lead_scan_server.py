@@ -70,6 +70,9 @@ BURST_BODY_S = 0.5
 # burst has ended and the music behind it has started.
 QUIET_RUN = 64
 BURST_EDGE_LEVEL = 8000
+# Never drop more than this from a joint, however far back the burst appears to
+# run; beyond it the cut is removing audio, not an artifact.
+MAX_TRIM_S = 0.004
 CHANNELS = 2
 # A butt cut between two non-zero samples clicks. Only joints whose two sides
 # meet at different levels get a crossfade; see TrackMergeService::FADE_S.
@@ -267,7 +270,8 @@ def trim_point(src):
     while first > 0 and quiet < QUIET_RUN:
         first -= 1
         quiet = 0 if abs(edge[first]) >= BURST_EDGE_LEVEL else quiet + 1
-    return total - (len(edge) - first) / CHANNELS / 44100
+    # Capped: see TrackMergeService::MAX_TRIM_S.
+    return total - min((len(edge) - first) / CHANNELS / 44100, MAX_TRIM_S)
 
 
 def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs):
@@ -281,7 +285,7 @@ def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs)
     The cache key carries a version so previews rendered under earlier trim
     rules are not served for the current one."""
     stamp = hashlib.sha1(
-        f"v7|{first_url}|{second_url}|{first_duration_s:.2f}|{seconds:.2f}".encode()
+        f"v8|{first_url}|{second_url}|{first_duration_s:.2f}|{seconds:.2f}".encode()
     ).hexdigest()[:16]
     out_path = PREVIEW_DIR / f"{stamp}.wav"
     if out_path.exists():
