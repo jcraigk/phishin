@@ -64,11 +64,18 @@ namespace :sandwich_scan do
   end
 
   desc "Apply approved sandwich merges " \
-       "(rake sandwich_scan:apply[path/to/approved.json]); DRY_RUN=1 renders only"
+       "(rake sandwich_scan:apply[path/to/approved.json]); DRY_RUN=1 renders only, " \
+       "DATE=YYYY-MM-DD applies one show"
   task :apply, [ :json_path ] => :environment do |_t, args|
     abort "Usage: rake sandwich_scan:apply[path/to/approved.json]" unless args[:json_path]
     entries = JSON.parse(File.read(args[:json_path]))
     abort "No entries" if entries.empty?
+
+    if ENV["DATE"].present?
+      entries = entries.select { it["date"] == ENV["DATE"] }
+      abort "No entries for #{ENV['DATE']}" if entries.empty?
+      puts "Filtered to #{entries.size} entr(ies) for #{ENV['DATE']}\n\n"
+    end
 
     dry_run = ENV["DRY_RUN"] == "1"
     puts dry_run ? "DRY RUN: rendering merges without changing anything\n\n"
