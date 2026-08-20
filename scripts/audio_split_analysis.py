@@ -812,14 +812,25 @@ function moveSelection(delta) {{
 document.addEventListener("keydown", e => {{
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const t = e.target && e.target.tagName;
-  if (e.key === "ArrowDown" || e.key === "ArrowUp") {{
+  // A select uses the arrows to walk its own options, and a text field to move
+  // the caret; neither should jump the review to another row.
+  const editing = t === "SELECT" || t === "TEXTAREA"
+    || (t === "INPUT" && e.target.type === "text")
+    || (e.target && e.target.isContentEditable);
+  if ((e.key === "ArrowDown" || e.key === "ArrowUp") && !editing) {{
     e.preventDefault();
     if (e.target && e.target.blur) e.target.blur();
     return moveSelection(e.key === "ArrowDown" ? 1 : -1);
   }}
 
-  const typing = (t === "INPUT" && e.target.type === "text")
+  // Free text fields own every key: a title can hold a letter that is also a
+  // shortcut, and a select needs its own type-ahead. Only the cut time field
+  // keeps the shortcuts, because nothing but digits belongs in it.
+  const freeText = (e.target && e.target.classList
+    && e.target.classList.contains("ptitle-in")) || t === "SELECT"
     || t === "TEXTAREA" || (e.target && e.target.isContentEditable);
+  if (freeText) return;
+  const typing = t === "INPUT" && e.target.type === "text";
   const isTimeChar = e.key.length === 1 && /[0-9.:]/.test(e.key);
   const isShortcutChar = e.key.length === 1 && !isTimeChar;
   if (typing && !isShortcutChar) return;
