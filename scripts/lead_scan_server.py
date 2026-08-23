@@ -297,6 +297,45 @@ def trim_point(src):
     return total - min((len(edge) - first) / CHANNELS / 44100, MAX_TRIM_S)
 
 
+def render_tail_clip(mp3_url, seconds, storage_dirs, tail_cut=0.0):
+    """The end of one track, optionally with its trailing zeros removed.
+
+    Rendered so a fade-out can be checked against the trim: the cut only removes
+    samples that are exactly zero, so the two clips should differ in length and
+    in nothing else.
+    """
+    stamp = hashlib.sha1(
+        f"t1|{mp3_url}|{seconds:.2f}|{tail_cut:.4f}".encode()
+    ).hexdigest()[:16]
+    out_path = PREVIEW_DIR / f"{stamp}.wav"
+    if out_path.exists():
+        return out_path
+    PREVIEW_DIR.mkdir(parents=True, exist_ok=True)
+
+    src = source_for(mp3_url, storage_dirs)
+    total = probe_duration(src)
+    if not total:
+        raise RuntimeError("could not probe duration")
+    end = total - tail_cut
+    start = max(0.0, end - seconds)
+    remote = str(src).startswith(("http://", "https://"))
+    flags = ["-reconnect", "1", "-reconnect_streamed", "1",
+             "-reconnect_delay_max", "5"] if remote else []
+    cmd = [
+        "ffmpeg", "-y", "-v", "error", *flags, "-i", str(src),
+        "-filter_complex",
+        f"[0:a]atrim=start={start:.4f}:end={end:.4f},"
+        f"asetpts=PTS-STARTPTS,aresample=44100[out]",
+        "-map", "[out]", "-c:a", "pcm_s16le", str(out_path),
+    ]
+    with _render_sem:
+        proc = subprocess.run(cmd, capture_output=True, timeout=RENDER_TIMEOUT_S)
+    if proc.returncode != 0:
+        out_path.unlink(missing_ok=True)
+        raise RuntimeError(proc.stderr.decode()[:400] or "ffmpeg failed")
+    return out_path
+
+
 def render_gapless_joint(first_url, second_url, first_duration_s, seconds,
                          storage_dirs, tail_cut=0.0, head_cut=0.0):
     """The seam between two tracks, optionally with the encoder padding removed.
@@ -510,6 +549,8 @@ class Handler(SimpleHTTPRequestHandler):
             return self._joint()
         if self.path.rstrip("/") == "/gapless_joint":
             return self._gapless_joint()
+        if self.path.rstrip("/") == "/gapless_tail":
+            return self._gapless_tail()
         if self.path.rstrip("/") != "/preview":
             return self._json(404, {"error": "not found"})
         try:
@@ -541,6 +582,29 @@ class Handler(SimpleHTTPRequestHandler):
         self._json(200, {
             "url": f"/_preview/{out_path.name}",
             "head_s": int(PREVIEW_HEAD_S) if truncated else None,
+        })
+
+    def _gapless_tail(self):
+        """The end of a track, as it stands and with its trailing zeros gone."""
+        try:
+            length = int(self.headers.get("Content-Length", 0))
+            req = json.loads(self.rfile.read(length) or b"{}")
+            mp3_url = req["mp3_url"]
+            seconds = float(req.get("seconds", 4.0))
+            tail_cut = float(req.get("tail_cut_s", 0.0))
+        except (KeyError, TypeError, ValueError, json.JSONDecodeError) as e:
+            return self._json(400, {"error": f"bad request: {e}"})
+        if seconds <= 0:
+            return self._json(400, {"error": "seconds must be positive"})
+        try:
+            before = render_tail_clip(mp3_url, seconds, self.storage_dirs)
+            after = render_tail_clip(mp3_url, seconds, self.storage_dirs,
+                                     tail_cut=tail_cut)
+        except Exception as e:  # noqa: BLE001 - surfaced to the reviewer verbatim
+            return self._json(500, {"error": str(e)})
+        self._json(200, {
+            "before": f"/_preview/{before.name}",
+            "after": f"/_preview/{after.name}",
         })
 
     def _gapless_joint(self):

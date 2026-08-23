@@ -51,10 +51,11 @@ button { font:inherit; padding:.3rem .7rem; border-radius:7px;
 RENDER_JS = """
 async function renderJoint(el) {
   const body = JSON.parse(el.dataset.req);
+  const endpoint = el.dataset.endpoint || "/gapless_joint";
   const slot = el.querySelector(".pair");
   slot.innerHTML = '<span class="meta">rendering...</span>';
   try {
-    const r = await fetch("/gapless_joint", {
+    const r = await fetch(endpoint, {
       method: "POST", headers: {"Content-Type": "application/json"},
       body: JSON.stringify(body)
     });
@@ -135,12 +136,37 @@ def show_page(date, tracks, seconds):
             f'&middot; {" &middot; ".join(cuts)}</div>'
             f'<div class="pair"><span class="meta">scroll to render</span></div>'
             f"</div>")
+    # Trailing zeros are cut wherever they are, including a set's last track, so
+    # every one gets a clip: the fade should be identical and only the dead air
+    # after it gone.
+    tails = []
+    for t in tracks:
+        zeros = t.get("tail_zeros_s") or 0.0
+        if not zeros:
+            continue
+        req = json.dumps({
+            "mp3_url": t["mp3_url"], "seconds": 4.0,
+            "tail_cut_s": round(zeros, 4),
+        })
+        closer = "" if t.get("followed_in_set") else " &middot; set closer"
+        tails.append(
+            f'<div class="joint" data-endpoint="/gapless_tail" '
+            f'data-req=\'{html.escape(req, quote=True)}\'>'
+            f'<h3>t{t["position"]} &middot; {html.escape(t["title"])}</h3>'
+            f'<div class="cuts">end of track &middot; '
+            f'&minus;{zeros * 1000:.1f}ms of pure silence{closer}</div>'
+            f'<div class="pair"><span class="meta">scroll to render</span></div>'
+            f"</div>")
+
     body = (f'<h1>{html.escape(date)}</h1>'
             f'<div class="meta"><a href="index.html">&larr; all shows</a> '
-            f'&middot; {len(rows)} joint(s) &middot; '
-            f'<a href="https://phish.in/{html.escape(date)}" target="_blank">'
-            f"phish.in</a></div>" + ("".join(rows) or "<p>No joints to review.</p>"))
-    return page(f"{date} gapless joints", body, RENDER_JS)
+            f'&middot; {len(rows)} joint(s) &middot; {len(tails)} tail(s) '
+            f'&middot; <a href="https://phish.in/{html.escape(date)}" target="_blank">'
+            f"phish.in</a></div>"
+            + (f"<h2>Joints</h2>{''.join(rows)}" if rows else "")
+            + (f"<h2>Track endings</h2>{''.join(tails)}" if tails else "")
+            or "<p>Nothing to review.</p>")
+    return page(f"{date} gapless review", body, RENDER_JS)
 
 
 def build(report_path, out_dir, seconds):
@@ -155,25 +181,29 @@ def build(report_path, out_dir, seconds):
 
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    rows, total = [], 0
+    rows, total, tail_total = [], 0, 0
     for date in sorted(by_date):
         items = sorted(by_date[date], key=lambda t: t["position"])
         n = len(joints_for(items))
-        if not n:
+        tails = sum(1 for t in items if t.get("tail_zeros_s"))
+        if not n and not tails:
             continue
         total += n
+        tail_total += tails
         (out / f"{date}.html").write_text(show_page(date, items, seconds))
         rows.append(f"<tr><td><a href='{date}.html'>{date}</a></td>"
-                    f"<td>{n}</td><td>{len(items)}</td></tr>")
+                    f"<td>{n}</td><td>{tails}</td><td>{len(items)}</td></tr>")
 
-    index = (f"<h1>Gapless joint review</h1>"
-             f'<div class="meta">{len(rows)} show(s), {total} joint(s). '
-             f"Each joint plays before and after the padding cut.</div>"
-             f"<table><thead><tr><th>Date</th><th>Joints</th>"
+    index = (f"<h1>Gapless review</h1>"
+             f'<div class="meta">{len(rows)} show(s), {total} joint(s), '
+             f"{tail_total} track ending(s). Everything plays before and after "
+             f"the cut.</div>"
+             f"<table><thead><tr><th>Date</th><th>Joints</th><th>Endings</th>"
              f"<th>Flagged tracks</th></tr></thead><tbody>"
              f"{''.join(rows)}</tbody></table>")
-    (out / "index.html").write_text(page("Gapless joint review", index))
-    print(f"{len(rows)} show page(s), {total} joint(s) -> {out}/index.html")
+    (out / "index.html").write_text(page("Gapless review", index))
+    print(f"{len(rows)} show page(s), {total} joint(s), {tail_total} ending(s) "
+          f"-> {out}/index.html")
 
 
 def main():

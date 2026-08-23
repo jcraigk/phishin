@@ -43,6 +43,9 @@ module GaplessScan
   # silent run, a cliff holds a level a fade has already dropped below.
   CLIFF_WINDOW_S = 0.100
   CLIFF_LEVEL = 300
+  # Everything is decoded as interleaved stereo, so a sample count covers this
+  # many values per frame.
+  CHANNELS_PER_FRAME = 2
   # Written under Rails.root by default, which is fine locally but lives in the
   # container's ephemeral filesystem in production and is lost on the next
   # deploy. OUT=/content/import puts it on the persistent volume instead, where
@@ -61,7 +64,7 @@ module GaplessScan
   HEADERS = [
     "Date", "Set", "Pos", "Title", "Joint before", "Joint after",
     "Head silence (ms)", "Head cut (ms)", "Tail silence (ms)", "Tail shape",
-    "Action", "URL"
+    "Tail zeros (ms)", "Action", "URL"
   ].freeze
 
   # What to do with each track, scoped to the joints between tracks.
@@ -76,8 +79,9 @@ module GaplessScan
     # called out for a human rather than trimmed on a guess.
     has_head = row["head_silence_s"].to_f.positive? && row["preceded_in_set"]
     head = has_head && row["head_cut_s"].present?
-    tail = row["tail_silence_s"].to_f.positive? &&
-           row["tail_is_padding"] && row["followed_in_set"]
+    # Trailing zeros come off wherever they are, set edge or not: removing
+    # samples that are exactly zero cannot take any audio with them.
+    tail = row["tail_zeros_s"].to_f.positive?
     return "trim head + tail" if head && tail
     return "trim head" if head
     return "trim tail" if tail
@@ -99,6 +103,7 @@ module GaplessScan
         else
           ""
         end,
+        decode ? (row["tail_zeros_s"].to_f * 1000).round(1) : "",
         action_for(row, decode),
         row["url"]
       ]
@@ -120,11 +125,26 @@ module GaplessScan
     nil
   end
 
-  # Seconds of near-silence at each edge, whether the tail is a cliff, and where
-  # the head padding provably ends (nil when the thresholds disagree).
+  # Seconds of near-silence at each edge, whether the tail is a cliff, where the
+  # head padding provably ends, and how much of the tail is pure digital zero.
   def self.edges(path)
     tail, cliff = tail_silence(path)
-    [ head_silence(path), tail, cliff, head_plateau_s(path) ]
+    [ head_silence(path), tail, cliff, head_plateau_s(path), tail_zeros_s(path) ]
+  end
+
+  # Trailing samples that are exactly zero.
+  #
+  # Cutting these cannot remove audio: there is none there. Unlike the level
+  # tests this needs no judgment about fades or cliffs, so it applies to a set's
+  # last track as safely as to one in the middle - the padding sits after the
+  # fade has already reached silence.
+  def self.tail_zeros_s(path)
+    pcm = decode(path, [], pre: [ "-sseof", "-0.50" ])
+    return 0.0 if pcm.empty?
+    zeros = pcm.reverse.take_while(&:zero?).size / CHANNELS_PER_FRAME
+    seconds = zeros / 44_100.0
+    # A handful of zero samples is not worth a re-encode.
+    seconds < MIN_SILENCE_S ? 0.0 : seconds.round(4)
   end
 
   # Each edge is only in scope when there is a joint on that side of it.
@@ -265,7 +285,9 @@ namespace :gapless_scan do
         begin
           track.mp3_audio.blob.download { |chunk| file.write(chunk) }
           file.flush
-          head_s, tail_s, cliff, plateau = GaplessScan.edges(file.path)
+          head_s, tail_s, cliff, plateau, zeros = GaplessScan.edges(file.path)
+          # Trailing pure zeros: removable without touching any audio.
+          row["tail_zeros_s"] = zeros
           row["head_silence_s"] = head_s
           row["tail_silence_s"] = tail_s
           # Only a cliff tail is padding; a decay is the performance ending.
