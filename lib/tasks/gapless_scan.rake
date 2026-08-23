@@ -142,7 +142,7 @@ module GaplessScan
     pcm = decode(path, [], pre: [ "-sseof", "-0.50" ])
     return 0.0 if pcm.empty?
     zeros = pcm.reverse.take_while(&:zero?).size / CHANNELS_PER_FRAME
-    seconds = zeros / 44_100.0
+    seconds = zeros / sample_rate(path).to_f
     # A handful of zero samples is not worth a re-encode.
     seconds < MIN_SILENCE_S ? 0.0 : seconds.round(4)
   end
@@ -169,8 +169,8 @@ module GaplessScan
 
   def self.head_silence(path)
     pcm = decode(path, [ "-t", format("%.4f", MAX_SILENCE_S + 0.4) ])
-    quiet = pcm.take_while { it.abs < SILENCE_LEVEL }.size / 2
-    bounded(quiet / 44_100.0)
+    quiet = pcm.take_while { it.abs < SILENCE_LEVEL }.size / CHANNELS_PER_FRAME
+    bounded(quiet / sample_rate(path).to_f)
   end
 
   # Where the head padding ends, measured across PLATEAU_LADDER, or nil when the
@@ -180,7 +180,8 @@ module GaplessScan
   def self.head_plateau_s(path)
     pcm = decode(path, [ "-t", format("%.4f", MAX_SILENCE_S + 0.4) ])
     return nil if pcm.empty?
-    answers = PLATEAU_LADDER.map { first_at_or_above(pcm, it) }
+    rate = sample_rate(path)
+    answers = PLATEAU_LADDER.map { first_at_or_above(pcm, it, rate) }
     return nil if answers.any?(&:nil?)
     run = longest_agreeing_run(answers)
     return nil if run.size < PLATEAU_MIN_AGREE
@@ -189,10 +190,10 @@ module GaplessScan
     run.min.round(4)
   end
 
-  def self.first_at_or_above(pcm, level)
+  def self.first_at_or_above(pcm, level, rate)
     index = pcm.index { it.abs >= level }
     return nil if index.nil?
-    index / 2 / 44_100.0
+    index / CHANNELS_PER_FRAME / rate.to_f
   end
 
   def self.longest_agreeing_run(answers)
@@ -213,11 +214,12 @@ module GaplessScan
   def self.tail_silence(path)
     pcm = decode(path, [], pre: [ "-sseof", "-0.50" ])
     return [ 0.0, false ] if pcm.empty?
-    quiet = pcm.reverse.take_while { it.abs < SILENCE_LEVEL }.size / 2
-    seconds = bounded(quiet / 44_100.0)
+    rate = sample_rate(path)
+    quiet = pcm.reverse.take_while { it.abs < SILENCE_LEVEL }.size / CHANNELS_PER_FRAME
+    seconds = bounded(quiet / rate.to_f)
     return [ 0.0, false ] if seconds.zero?
-    window = (CLIFF_WINDOW_S * 44_100).ceil * 2
-    before = pcm.first([ pcm.size - quiet * 2, 0 ].max).last(window)
+    window = (CLIFF_WINDOW_S * rate).ceil * CHANNELS_PER_FRAME
+    before = pcm.first([ pcm.size - quiet * CHANNELS_PER_FRAME, 0 ].max).last(window)
     [ seconds, before.any? && before.max { |a, b| a.abs <=> b.abs }.abs >= CLIFF_LEVEL ]
   end
 
@@ -226,10 +228,30 @@ module GaplessScan
     seconds.round(4)
   end
 
+  # Decoded at the file's own sample rate.
+  #
+  # Resampling would defeat the measurement: it interpolates, so samples that
+  # were exactly zero come out non-zero and near-zero ones come out as zero.
+  # The cuts are applied by atrim on the original stream, so they have to be
+  # measured on that stream too.
+  # Cached per file: every edge measurement asks for it, and each track is
+  # probed and discarded before the next one starts.
+  def self.sample_rate(path)
+    @sample_rates ||= {}
+    @sample_rates[path.to_s] ||= begin
+      out, _err, status = Open3.capture3(
+        "ffprobe", "-v", "error", "-select_streams", "a:0",
+        "-show_entries", "stream=sample_rate", "-of", "default=nw=1:nk=1", path.to_s
+      )
+      rate = out.to_s.strip.to_i
+      status.success? && rate.positive? ? rate : 44_100
+    end
+  end
+
   def self.decode(path, post, pre: [])
     out, _err, status = Open3.capture3(
       "ffmpeg", "-v", "error", *pre, "-i", path.to_s, *post,
-      "-f", "s16le", "-acodec", "pcm_s16le", "-ar", "44100", "-"
+      "-f", "s16le", "-acodec", "pcm_s16le", "-ar", sample_rate(path).to_s, "-"
     )
     status.success? ? out.unpack("s<*") : []
   end
