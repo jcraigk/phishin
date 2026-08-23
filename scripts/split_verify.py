@@ -53,6 +53,12 @@ SEGUE_RE = re.compile(r"\s*-?>\s*")
 # the same master. A different transfer of the same show measures around 0.82.
 SAME_MASTER = 0.99
 LIKELY_SAME = 0.95
+# Below this the two files do not hold the same passage at all. Source files are
+# paired to a track by filename, and a show whose songs were split at different
+# points will pair "Mound" with a Mound that starts somewhere else - the length
+# difference then looks like restored audio when it is nothing of the kind, so
+# no length verdict is offered until the audio is known to match.
+SAME_PERFORMANCE = 0.5
 # Whole shows in some sources end every track on a two second pad. That is the
 # master's own convention rather than a split dropping audio, so it is reported
 # separately instead of filling the repair queue with 660 false leads.
@@ -295,7 +301,9 @@ def verdict(cmp):
         return "same", "same master - safe to rebuild"
     if c >= LIKELY_SAME:
         return "close", "close, but check by ear before replacing"
-    return "different", "different transfer - level and tone will not match"
+    if c >= SAME_PERFORMANCE:
+        return "different", "different transfer - level and tone will not match"
+    return "different", "not the same passage - wrong file, or split elsewhere"
 
 
 # The whole point of the repair is to put back audio a split dropped, so the
@@ -305,6 +313,8 @@ def verdict(cmp):
 def length_verdict(cmp):
     if cmp is None:
         return "unknown", "no measurement"
+    if cmp["correlation"] < SAME_PERFORMANCE:
+        return "unknown", "different passage - length says nothing"
     delta = cmp["rebuilt_s"] - cmp["existing_s"]
     if delta > 0.05:
         return "same", f"+{delta:.2f}s restored"
@@ -406,7 +416,7 @@ def build(report_path, sources_dir, out_dir, limit, include_pads=False):
     # bottom of a long page.
     def rank(entry):
         cmp = entry[0]
-        if cmp is None:
+        if cmp is None or cmp["correlation"] < SAME_PERFORMANCE:
             return (0, 0)
         delta = cmp["rebuilt_s"] - cmp["existing_s"]
         return (1 if delta > 0.05 else 0, cmp["correlation"])
