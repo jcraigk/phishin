@@ -49,15 +49,20 @@ module GaplessScan
   # Everything is decoded as interleaved stereo, so a sample count covers this
   # many values per frame.
   CHANNELS_PER_FRAME = 2
-  # Tail windows, tried widest-last: most tracks are answered by the first, and
-  # only the ones ending in a long stretch of digital black need more.
-  TAIL_WINDOWS_S = [ 0.5, 2.0, 8.0 ].freeze
-  # The last samples of an affected file are padding, so they measure its
-  # trailing noise floor directly. A few hundred is enough to characterise it
-  # without reaching back into whatever preceded it.
-  TAIL_TIP_SAMPLES = 256
-  TAIL_FLOOR_MULTIPLE = 4
-  TAIL_FLOOR_MIN = 4
+  # Trailing padding does not sit at a constant level: it decays out of the
+  # music, so walking back from the last sample and stopping at the first one
+  # above a floor halts partway down the ramp and leaves the louder part behind.
+  #
+  # Instead the tail is read in short windows and the cut is placed where the
+  # level jumps back up into the performance. That boundary is unmistakable -
+  # measured jumps run 50x to 300x in a single window.
+  TAIL_WINDOW_STEP_S = 0.002
+  TAIL_MUSIC_JUMP = 8
+  # A window has to be at least this loud to count as the music resuming, so a
+  # ripple between two near-silent windows cannot end the walk early.
+  TAIL_MUSIC_RMS = 50
+  # Past this the quiet belongs to the recording rather than the encoder.
+  TAIL_MAX_CUT_S = 0.150
   # Written under Rails.root by default, which is fine locally but lives in the
   # container's ephemeral filesystem in production and is lost on the next
   # deploy. OUT=/content/import puts it on the persistent volume instead, where
@@ -144,37 +149,52 @@ module GaplessScan
     [ head_silence(path), tail, cliff, head_plateau_s(path), tail_zeros_s(path) ]
   end
 
-  # Trailing samples that are exactly zero.
+  # How much encoder padding trails the audio.
   #
-  # Cutting these cannot remove audio: there is none there. Unlike the level
-  # tests this needs no judgment about fades or cliffs, so it applies to a set's
-  # last track as safely as to one in the middle - the padding sits after the
-  # fade has already reached silence.
+  # Read in short windows walking back from the end: the padding decays out of
+  # the performance rather than sitting at a fixed level, so the boundary is
+  # where the level jumps back up into music, not where it crosses a threshold.
+  # Where no such jump exists the track fades out deliberately, and the walk
+  # falls back to the trailing run below the music floor - still padding, just
+  # reached the long way.
   def self.tail_zeros_s(path)
-    rate = sample_rate(path).to_f
-    seconds = 0.0
-    # Widen the window while the silence fills it: a run that reaches the start
-    # of the window says only that the silence is at least that long, not how
-    # long it is. Some tracks end with most of a second of digital black.
-    TAIL_WINDOWS_S.each do |window|
-      pcm = decode(path, [], pre: [ "-sseof", format("-%.2f", window) ])
-      return 0.0 if pcm.empty?
-      # Not just exact zeros. The decoder reconstructs the encoder's trailing
-      # padding as a low hiss rather than silence, and leaving that hiss in
-      # front of the next track is the dropout this whole scan is chasing.
-      #
-      # The floor is the very last samples, which are padding on any affected
-      # file, so the walk back stops where the level rises clearly above them
-      # rather than at the first non-zero sample.
-      tip = pcm.last(TAIL_TIP_SAMPLES * CHANNELS_PER_FRAME)
-      floor = [ tip.max { |a, b| a.abs <=> b.abs }.to_i.abs * TAIL_FLOOR_MULTIPLE,
-                TAIL_FLOOR_MIN ].max
-      quiet = pcm.reverse.take_while { it.abs <= floor }.size
-      seconds = quiet / CHANNELS_PER_FRAME / rate
-      break if quiet < pcm.size
-    end
-    # A handful of samples is not worth a re-encode.
+    rate = sample_rate(path)
+    pcm = decode(path, [], pre: [ "-sseof", "-1.00" ])
+    return 0.0 if pcm.empty?
+    frames = pcm.each_slice(CHANNELS_PER_FRAME).map { it.map(&:abs).max }
+    seconds = music_resumes_at(frames, rate) || fade_padding_s(frames, rate)
+    return 0.0 if seconds.nil? || seconds > TAIL_MAX_CUT_S
     seconds < MIN_SILENCE_S ? 0.0 : seconds.round(4)
+  end
+
+  # Seconds from the end at which the level jumps back into the performance.
+  def self.music_resumes_at(frames, rate)
+    step = (TAIL_WINDOW_STEP_S * rate).round
+    limit = (TAIL_MAX_CUT_S * rate).round
+    previous = nil
+    (0...limit).step(step) do |offset|
+      window = frames[[ frames.size - offset - step, 0 ].max...(frames.size - offset)]
+      break if window.nil? || window.empty?
+      level = rms(window)
+      if previous && level > TAIL_MUSIC_RMS && level > previous * TAIL_MUSIC_JUMP
+        return offset / rate.to_f
+      end
+      previous = level
+    end
+    nil
+  end
+
+  # A deliberate fade has no jump to find, so the padding is whatever trails
+  # below the level at which the music is still audible.
+  def self.fade_padding_s(frames, rate)
+    index = frames.rindex { it > TAIL_MUSIC_RMS }
+    return nil if index.nil?
+    (frames.size - index - 1) / rate.to_f
+  end
+
+  def self.rms(values)
+    return 0.0 if values.empty?
+    Math.sqrt(values.sum { it.to_f * it } / values.size)
   end
 
   # Each edge is only in scope when there is a joint on that side of it.
