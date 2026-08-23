@@ -30,12 +30,34 @@ class GaplessTrimService < ApplicationService
   MIN_CUT_S = 0.004
   BYTES_PER_SAMPLE = 2
   OUTPUT_DIR = Rails.root.join("tmp/gapless_trims")
-  BACKUP_DIR = Rails.root.join("tmp/gapless_trim_backups")
+  # The renders are disposable - the attachment is the copy that matters - but
+  # the backups are the only untrimmed audio left once a track is replaced, so
+  # they go on the persistent volume rather than the container's own filesystem,
+  # which is wiped on every deploy. CONTENT_DIR is where that volume is mounted
+  # in production; falling back to tmp keeps development self contained.
+  BACKUP_DIR =
+    if Pathname.new("/content").directory?
+      Pathname.new("/content/gapless_trim_backups")
+    else
+      Rails.root.join("tmp/gapless_trim_backups")
+    end
+  # Backing up every flagged track costs about 76GB at the catalog's bitrate.
+  # This leaves room for that to grow without the backups being the reason the
+  # volume fills, since the audio itself shares it.
+  BACKUP_BUDGET_BYTES = 200 * 1024**3
 
   class Error < StandardError; end
   class MissingAudioError < Error; end
   class NothingToTrimError < Error; end
   class TrimTooLargeError < Error; end
+  class BackupBudgetError < Error; end
+
+  # Summed per call rather than tracked, so a backup removed by hand is noticed
+  # and the count cannot drift away from what is actually on disk.
+  def self.backup_bytes_used
+    return 0 unless BACKUP_DIR.directory?
+    BACKUP_DIR.glob("*.mp3").sum { it.size }
+  end
 
   def call
     raise MissingAudioError, "#{label} has no audio attached" if track.missing_audio?
@@ -157,12 +179,23 @@ class GaplessTrimService < ApplicationService
     ])
   end
 
+  # Raises before the attachment is touched, so a full budget leaves the track
+  # exactly as it was rather than trimmed with no way back.
   def backup_original
+    check_backup_budget!
     FileUtils.mkdir_p(BACKUP_DIR)
     @backup_path = BACKUP_DIR.join(
       "#{track.show.date}_#{track.slug}_#{track.mp3_audio.blob.key}.mp3"
     )
     FileUtils.cp(@original.path, @backup_path)
+  end
+
+  def check_backup_budget!
+    used = self.class.backup_bytes_used
+    return if used + File.size(@original.path) <= BACKUP_BUDGET_BYTES
+    raise BackupBudgetError,
+          "#{label}: backups hold #{(used / 1024.0**3).round(1)}GB of the " \
+          "#{BACKUP_BUDGET_BYTES / 1024**3}GB budget - prune #{BACKUP_DIR} to continue"
   end
 
   def replace_audio

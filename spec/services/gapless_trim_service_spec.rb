@@ -106,6 +106,39 @@ RSpec.describe GaplessTrimService do
     end
   end
 
+  # The backups are the only copy of the untrimmed audio, so the cap has to stop
+  # the trim rather than let it proceed with nothing to roll back to.
+  describe "the backup budget" do
+    let(:tail_cut) { 0.04 }
+    let(:dry_run) { false }
+
+    it "refuses to trim once the backups fill their budget" do
+      allow(described_class).to receive(:backup_bytes_used).and_return(
+        described_class::BACKUP_BUDGET_BYTES
+      )
+      expect { result }.to raise_error(described_class::BackupBudgetError)
+    end
+
+    it "leaves the audio alone when it refuses" do
+      allow(described_class).to receive(:backup_bytes_used).and_return(
+        described_class::BACKUP_BUDGET_BYTES
+      )
+      before_key = track.mp3_audio.blob.key
+      suppress(described_class::BackupBudgetError) { result }
+      expect(track.reload.mp3_audio.blob.key).to eq(before_key)
+    end
+
+    it "trims while there is room" do
+      allow(described_class).to receive(:backup_bytes_used).and_return(0)
+      expect(result[:applied]).to be true
+    end
+
+    it "writes the backup under the backup directory" do
+      allow(described_class).to receive(:backup_bytes_used).and_return(0)
+      expect(result[:backup_path]).to start_with(described_class::BACKUP_DIR.to_s)
+    end
+  end
+
   describe "a dry run" do
     let(:tail_cut) { 0.04 }
 
