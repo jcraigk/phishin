@@ -22,6 +22,18 @@ module GaplessScan
   # Measured ramps run 1-34 and the music above them starts in the thousands, so
   # anything in the low hundreds separates them; 20 lands inside the ramp.
   SILENCE_LEVEL = 50
+  # A single threshold cannot tell padding from a quiet intro: it measures where
+  # the audio first gets loud, which is padding PLUS however long the music takes
+  # to rise. Where padding ends at a hard boundary the answer is the same at
+  # every threshold, so the edge is measured across a ladder of them and only a
+  # stable answer is trusted. Where the answers keep climbing, the quiet is the
+  # performance and the track is left for review instead.
+  PLATEAU_LADDER = [ 100, 200, 400, 800, 1600 ].freeze
+  # Answers this close together are the same boundary; a sample at 44.1kHz is
+  # 0.023ms, so this is a couple of frames of slack, not a musical amount.
+  PLATEAU_TOLERANCE_S = 0.0015
+  # How many rungs must agree before the boundary counts as real.
+  PLATEAU_MIN_AGREE = 3
   # Shorter than this is not worth reporting; longer is a real fade, not padding.
   MIN_SILENCE_S = 0.004
   MAX_SILENCE_S = 0.150
@@ -34,7 +46,8 @@ module GaplessScan
   REPORT = Rails.root.join("data/gapless_scan/report.json")
   HEADERS = [
     "Date", "Set", "Pos", "Title", "Joint before", "Joint after",
-    "Head silence (ms)", "Tail silence (ms)", "Tail shape", "Action", "URL"
+    "Head silence (ms)", "Head cut (ms)", "Tail silence (ms)", "Tail shape",
+    "Action", "URL"
   ].freeze
 
   # What to do with each track, scoped to the joints between tracks.
@@ -44,12 +57,17 @@ module GaplessScan
   # The outer edges of a set are left alone whatever they measure.
   def self.action_for(row, decode)
     return "measure with DECODE=1" unless decode
-    head = row["head_silence_s"].to_f.positive? && row["preceded_in_set"]
+    # A head is only cut where the thresholds agree where the padding ends.
+    # Without that agreement the quiet belongs to the music, so the track is
+    # called out for a human rather than trimmed on a guess.
+    has_head = row["head_silence_s"].to_f.positive? && row["preceded_in_set"]
+    head = has_head && row["head_cut_s"].present?
     tail = row["tail_silence_s"].to_f.positive? &&
            row["tail_is_padding"] && row["followed_in_set"]
     return "trim head + tail" if head && tail
     return "trim head" if head
     return "trim tail" if tail
+    return "review head (no plateau)" if has_head
     "no trim needed"
   end
 
@@ -60,6 +78,7 @@ module GaplessScan
         row["preceded_in_set"] ? "yes" : "no",
         row["followed_in_set"] ? "yes" : "no",
         decode ? (row["head_silence_s"].to_f * 1000).round(1) : "",
+        decode && row["head_cut_s"] ? (row["head_cut_s"].to_f * 1000).round(1) : "",
         decode ? (row["tail_silence_s"].to_f * 1000).round(1) : "",
         if decode
           row["tail_silence_s"].to_f.positive? ? (row["tail_is_padding"] ? "cliff" : "fade") : ""
@@ -87,10 +106,11 @@ module GaplessScan
     nil
   end
 
-  # Seconds of near-silence at each edge, plus whether the tail is a cliff.
+  # Seconds of near-silence at each edge, whether the tail is a cliff, and where
+  # the head padding provably ends (nil when the thresholds disagree).
   def self.edges(path)
     tail, cliff = tail_silence(path)
-    [ head_silence(path), tail, cliff ]
+    [ head_silence(path), tail, cliff, head_plateau_s(path) ]
   end
 
   # Each edge is only in scope when there is a joint on that side of it.
@@ -114,9 +134,44 @@ module GaplessScan
   end
 
   def self.head_silence(path)
-    pcm = decode(path, [ "-t", format("%.4f", MAX_SILENCE_S + 0.1) ])
+    pcm = decode(path, [ "-t", format("%.4f", MAX_SILENCE_S + 0.4) ])
     quiet = pcm.take_while { it.abs < SILENCE_LEVEL }.size / 2
     bounded(quiet / 44_100.0)
+  end
+
+  # Where the head padding ends, measured across PLATEAU_LADDER, or nil when the
+  # thresholds disagree. Disagreement means the quiet at the head belongs to the
+  # music rather than the encoder, and cutting to any one threshold would take
+  # part of the performance with it.
+  def self.head_plateau_s(path)
+    pcm = decode(path, [ "-t", format("%.4f", MAX_SILENCE_S + 0.4) ])
+    return nil if pcm.empty?
+    answers = PLATEAU_LADDER.map { first_at_or_above(pcm, it) }
+    return nil if answers.any?(&:nil?)
+    run = longest_agreeing_run(answers)
+    return nil if run.size < PLATEAU_MIN_AGREE
+    # The earliest point the agreeing thresholds share: the boundary itself,
+    # never further into the audio than any one of them reported.
+    run.min.round(4)
+  end
+
+  def self.first_at_or_above(pcm, level)
+    index = pcm.index { it.abs >= level }
+    return nil if index.nil?
+    index / 2 / 44_100.0
+  end
+
+  def self.longest_agreeing_run(answers)
+    best = []
+    answers.each_index do |i|
+      run = [ answers[i] ]
+      answers[(i + 1)..].each do |value|
+        break if (value - run.first).abs > PLATEAU_TOLERANCE_S
+        run << value
+      end
+      best = run if run.size > best.size
+    end
+    best
   end
 
   # Trailing silence, and whether the audio before it ends in a cliff (encoder
@@ -192,11 +247,13 @@ namespace :gapless_scan do
         begin
           track.mp3_audio.blob.download { |chunk| file.write(chunk) }
           file.flush
-          head_s, tail_s, cliff = GaplessScan.edges(file.path)
+          head_s, tail_s, cliff, plateau = GaplessScan.edges(file.path)
           row["head_silence_s"] = head_s
           row["tail_silence_s"] = tail_s
           # Only a cliff tail is padding; a decay is the performance ending.
           row["tail_is_padding"] = cliff
+          # Present only when every threshold agrees where the padding ends.
+          row["head_cut_s"] = plateau
         ensure
           file.close!
         end
