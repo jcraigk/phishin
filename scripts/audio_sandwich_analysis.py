@@ -327,6 +327,7 @@ PRIORITY_OUTER = [
     "hold your head up",
     "the man who stepped into yesterday",
     "cold as ice",
+    "alumni blues",
 ]
 
 
