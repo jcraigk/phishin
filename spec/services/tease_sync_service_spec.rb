@@ -238,6 +238,17 @@ RSpec.describe TeaseSyncService do
       expect(Typhoeus).not_to have_received(:post)
       expect(service.proposed_rows).to be_empty
     end
+
+    context "when the notes describe a quote rather than a tease" do
+      let(:setlist_notes) { "Trey quoted Norwegian Wood in Harry Hood." }
+
+      it "calls the LLM and treats the quote as a tease" do
+        service.call
+
+        expect(Typhoeus).to have_received(:post)
+        expect(service.proposed_rows.first[3]).to eq("Norwegian Wood by The Beatles")
+      end
+    end
   end
 
   describe "applying to the sheet" do

@@ -88,7 +88,7 @@ class TeaseSyncService < ApplicationService
 
   def process_show(show)
     notes = fetch_setlist_notes(show.date)
-    return @skipped += 1 if notes.blank? || !notes.match?(/teas/i)
+    return @skipped += 1 if notes.blank? || !notes.match?(/teas|quot/i)
 
     teases = analyze_with_claude(notes, show)
     teases.reject { |tease| tease["in_sheet"] }.each { |tease| evaluate_tease(show, tease) }
@@ -276,6 +276,8 @@ class TeaseSyncService < ApplicationService
       You extract song teases from Phish.net setlist notes.
 
       A tease is a brief musical quotation of another song played within a performed song.
+      Phish.net notes also call these "quotes" ("Trey quoted Y in X", "a Y quote in X");
+      treat every quote exactly like a tease.
       Do NOT extract: full cover performances, jams merely "in the style of" something,
       signals, stage banter, gags, props, guest appearances, or debuts.
       Do NOT extract teases that occurred during a soundcheck -- only teases from the
@@ -295,7 +297,7 @@ class TeaseSyncService < ApplicationService
         suffix and punctuation differences) and false otherwise.
       - Handle phrasings such as: "X contained Y teases", "X contained Y and Z teases",
         "Trey teased Y in X, Z in W, and Q in V", "a Y tease in X", "X included a Y tease from Page",
-        "Y (Artist) tease".
+        "Y (Artist) tease", "X contained a Y quote", "Trey quoted Y in X".
       - Return {"teases": []} when the notes contain no teases.
     PROMPT
   end
