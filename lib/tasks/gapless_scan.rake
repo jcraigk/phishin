@@ -17,7 +17,8 @@ require "json"
 module GaplessScan
   # The Xing/Info frame and any LAME extension sit within the first frames of
   # the file, well inside this.
-  HEADER_BYTES = 256 * 1024
+  HEADER_BYTES = 512 * 1024
+  FRAME_PROBE_BYTES = 2_048
   # Below this level the samples are encoder padding rather than performance.
   # Measured ramps run 1-34 and the music above them starts in the thousands, so
   # anything in the low hundreds separates them; 20 lands inside the ramp.
@@ -130,7 +131,16 @@ module GaplessScan
   # True when the file declares a Xing header but no LAME extension to say how
   # much of it is padding.
   def self.undeclared_padding?(head)
-    head.include?("Xing") && !head.include?("LAME")
+    frame = head.byteslice(id3_length(head), FRAME_PROBE_BYTES).to_s
+    (frame.include?("Xing") || frame.include?("Info")) && !frame.include?("LAME")
+  end
+
+  def self.id3_length(head)
+    return 0 unless head.start_with?("ID3")
+    size = head.byteslice(6, 4).to_s.bytes
+    return 0 if size.size < 4
+    10 + ((size[0] & 0x7f) << 21 | (size[1] & 0x7f) << 14 |
+          (size[2] & 0x7f) << 7 | (size[3] & 0x7f))
   end
 
   def self.head_bytes(track)
