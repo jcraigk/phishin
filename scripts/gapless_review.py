@@ -103,9 +103,11 @@ def joints_for(tracks):
         nxt = by_pos.get((t["set"], t["position"] + 1))
         if not nxt:
             continue
-        tail_cut = t["tail_silence_s"] if (
-            t.get("tail_is_padding") and t.get("followed_in_set")) else 0.0
-        head_cut = nxt.get("head_cut_s") or 0.0
+        # The same cuts gapless_scan:apply makes, so what is auditioned here is
+        # what the repair produces: trailing pure zeros, and a head only where
+        # every threshold agreed where the padding ends.
+        tail_cut = t.get("tail_zeros_s") or 0.0
+        head_cut = (nxt.get("head_cut_s") or 0.0) if nxt.get("preceded_in_set") else 0.0
         if not tail_cut and not head_cut:
             continue
         out.append((t, nxt, tail_cut, head_cut))
@@ -136,13 +138,19 @@ def show_page(date, tracks, seconds):
             f'&middot; {" &middot; ".join(cuts)}</div>'
             f'<div class="pair"><span class="meta">scroll to render</span></div>'
             f"</div>")
-    # Trailing zeros are cut wherever they are, including a set's last track, so
-    # every one gets a clip: the fade should be identical and only the dead air
-    # after it gone.
+    # A tail already heard inside a joint is not worth a second clip; what is
+    # left are the tails with nothing after them, where the cut sits behind a
+    # deliberate fade-out and the point is to confirm the fade survives.
+    #
+    # A track can appear in both sections: one whose head is trimmed at a joint
+    # and whose tail closes a set is heard as the second half of that joint and
+    # again as an ending.
+    in_joint = {first["track_id"] for first, _s, tail_cut, _h in joints_for(tracks)
+                if tail_cut}
     tails = []
     for t in tracks:
         zeros = t.get("tail_zeros_s") or 0.0
-        if not zeros:
+        if not zeros or t["track_id"] in in_joint:
             continue
         req = json.dumps({
             "mp3_url": t["mp3_url"], "seconds": 4.0,
