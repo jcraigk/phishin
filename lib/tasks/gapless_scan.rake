@@ -33,20 +33,23 @@ module GaplessScan
   CLIFF_LEVEL = 300
   REPORT = Rails.root.join("data/gapless_scan/report.json")
   HEADERS = [
-    "Date", "Set", "Pos", "Title", "Mid-set", "Head silence (ms)",
-    "Tail silence (ms)", "Tail shape", "Action", "URL"
+    "Date", "Set", "Pos", "Title", "Joint before", "Joint after",
+    "Head silence (ms)", "Tail silence (ms)", "Tail shape", "Action", "URL"
   ].freeze
 
-  # What to do with each track. Only a mid-set tail that ends in a cliff is
-  # safe to cut: a set's last track fades on purpose, and a decay is the
-  # performance ending rather than encoder padding.
+  # What to do with each track, scoped to the joints between tracks.
+  #
+  # A head is only cut when a track precedes this one in the set, and a tail
+  # only when one follows AND the audio ends in a cliff rather than a decay.
+  # The outer edges of a set are left alone whatever they measure.
   def self.action_for(row, decode)
-    return "trim head (tail unmeasured)" unless decode
-    head = row["head_silence_s"].to_f.positive?
-    tail = row["tail_silence_s"].to_f.positive? && row["tail_is_padding"]
-    return "trim head + tail" if head && tail && row["mid_set"]
+    return "measure with DECODE=1" unless decode
+    head = row["head_silence_s"].to_f.positive? && row["preceded_in_set"]
+    tail = row["tail_silence_s"].to_f.positive? &&
+           row["tail_is_padding"] && row["followed_in_set"]
+    return "trim head + tail" if head && tail
     return "trim head" if head
-    return "trim tail" if tail && row["mid_set"]
+    return "trim tail" if tail
     "no trim needed"
   end
 
@@ -54,7 +57,8 @@ module GaplessScan
     found.map do |row|
       [
         row["date"], row["set"], row["position"], row["title"],
-        row["mid_set"] ? "yes" : "no",
+        row["preceded_in_set"] ? "yes" : "no",
+        row["followed_in_set"] ? "yes" : "no",
         decode ? (row["head_silence_s"].to_f * 1000).round(1) : "",
         decode ? (row["tail_silence_s"].to_f * 1000).round(1) : "",
         if decode
@@ -89,12 +93,23 @@ module GaplessScan
     [ head_silence(path), tail, cliff ]
   end
 
-  # True when another track follows this one in the same set, which is where a
-  # dropout is actually heard. A set's last track runs into applause or a break,
-  # so its tail matters far less.
-  def self.mid_set?(track)
+  # Each edge is only in scope when there is a joint on that side of it.
+  #
+  # A set's first track may open with a deliberate fade-in and its last may
+  # close with a real fade-out, so those outer edges are left alone: only the
+  # joints between tracks within a set are trimmed. Whether padding is present
+  # says nothing about whether cutting it is safe - position does.
+  def self.followed_in_set?(track)
+    neighbor?(track, 1)
+  end
+
+  def self.preceded_in_set?(track)
+    neighbor?(track, -1)
+  end
+
+  def self.neighbor?(track, offset)
     track.show.tracks.any? do |other|
-      other.set == track.set && other.position == track.position + 1
+      other.set == track.set && other.position == track.position + offset
     end
   end
 
@@ -170,7 +185,8 @@ namespace :gapless_scan do
         "url" => track.url
       }
       row["set"] = track.set
-      row["mid_set"] = GaplessScan.mid_set?(track)
+      row["preceded_in_set"] = GaplessScan.preceded_in_set?(track)
+      row["followed_in_set"] = GaplessScan.followed_in_set?(track)
       if decode
         file = Tempfile.new([ "gapless_#{track.id}", ".mp3" ], binmode: true)
         begin
@@ -192,7 +208,8 @@ namespace :gapless_scan do
             "tail #{(row['tail_silence_s'] * 1000).round}ms" \
             "#{row['tail_is_padding'] ? ' cliff' : ' fade'})"
         end
-      puts "  #{row['date']} t#{row['position']}#{' *' if row['mid_set']}  " \
+      joints = "#{row['preceded_in_set'] ? '<' : ' '}#{row['followed_in_set'] ? '>' : ' '}"
+      puts "  #{row['date']} t#{row['position']} #{joints}  " \
            "#{row['title']}#{detail}"
       $stdout.flush
       puts "  ...#{checked} checked, #{found.size} found" if (checked % 2_000).zero?
@@ -207,11 +224,15 @@ namespace :gapless_scan do
 
     puts "\n#{found.size} of #{checked} track(s) carry undeclared padding"
     puts "#{unreadable} track(s) could not be read" if unreadable.positive?
-    mid = found.count { it["mid_set"] }
-    puts "#{mid} are mid-set (another track follows) - where gapless is heard"
     if decode
-      cliffs = found.count { it["mid_set"] && it["tail_is_padding"] }
-      puts "#{cliffs} of those end in a cliff, so the tail is safe to trim"
+      heads = found.count { it["preceded_in_set"] && it["head_silence_s"].to_f.positive? }
+      tails = found.count do
+        it["followed_in_set"] && it["tail_is_padding"] &&
+          it["tail_silence_s"].to_f.positive?
+      end
+      puts "#{heads} head(s) and #{tails} tail(s) sit on a joint and are trimmable"
+      skipped = found.count { GaplessScan.action_for(it, decode) == "no trim needed" }
+      puts "#{skipped} track(s) are set edges or real fades, left alone"
     end
     by_year = found.group_by { it["date"][0, 4] }.transform_values(&:size)
     by_year.sort.each { |year, n| puts "  #{year}: #{n}" }
