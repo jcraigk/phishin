@@ -28,6 +28,7 @@ class GaplessTrimService < ApplicationService
   MAX_TAIL_CUT_S = 5.0
   # Below this the re-encode costs more than the cut is worth.
   MIN_CUT_S = 0.004
+  BYTES_PER_SAMPLE = 2
   OUTPUT_DIR = Rails.root.join("tmp/gapless_trims")
   BACKUP_DIR = Rails.root.join("tmp/gapless_trim_backups")
 
@@ -87,8 +88,29 @@ class GaplessTrimService < ApplicationService
     head_cut + tail_cut
   end
 
+  # What the decoder yields, not what the container claims. An mp3 written
+  # without a LAME header leaves ffprobe to estimate from the bitrate, and its
+  # answer runs about 4ms long. Trimming against it left that much of the
+  # padding in place on every track, which is a gap at the joint.
   def original_duration_s
-    @original_duration_s ||= probe("duration").to_f
+    @original_duration_s ||= decoded_duration_s
+  end
+
+  def decoded_duration_s
+    out, err, status = Open3.capture3(
+      "ffmpeg", "-v", "error", "-i", @original.path,
+      "-f", "s16le", "-acodec", "pcm_s16le", "-"
+    )
+    raise Error, "ffmpeg failed for #{label}: #{err}" unless status.success?
+    out.bytesize / (BYTES_PER_SAMPLE * channels) / sample_rate.to_f
+  end
+
+  def sample_rate
+    @sample_rate ||= stream_probe("sample_rate").to_i
+  end
+
+  def channels
+    @channels ||= stream_probe("channels").to_i
   end
 
   def kept_s
@@ -103,6 +125,15 @@ class GaplessTrimService < ApplicationService
     )
     raise Error, "ffprobe failed for #{label}: #{err}" unless status.success?
     out.strip
+  end
+
+  def stream_probe(entry)
+    out, err, status = Open3.capture3(
+      "ffprobe", "-v", "error", "-select_streams", "a:0",
+      "-show_entries", "stream=#{entry}", "-of", "csv=p=0", @original.path
+    )
+    raise Error, "ffprobe failed for #{label}: #{err}" unless status.success?
+    out.strip.split("\n").first.to_s.split(",").first.to_s
   end
 
   def download_original

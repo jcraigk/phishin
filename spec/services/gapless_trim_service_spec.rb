@@ -35,6 +35,15 @@ RSpec.describe GaplessTrimService do
     `ffprobe -v error -show_entries format=duration -of csv=p=0 #{path}`.to_f
   end
 
+  # What a decoder actually yields, which ffprobe's container duration overstates
+  # by the decoder delay it does not subtract.
+  def decoded_duration(path)
+    rate, channels = `ffprobe -v error -select_streams a:0 \
+      -show_entries stream=sample_rate,channels -of csv=p=0 #{path}`.strip.split(",")
+    bytes = `ffmpeg -v error -i #{path} -f s16le -acodec pcm_s16le - | wc -c`.to_i
+    bytes / (2 * channels.to_i) / rate.to_f
+  end
+
   describe "validation" do
     it "refuses a no-op" do
       expect { result }.to raise_error(described_class::NothingToTrimError)
@@ -64,6 +73,36 @@ RSpec.describe GaplessTrimService do
       it "allows it" do
         expect { result }.not_to raise_error
       end
+    end
+  end
+
+  # ffprobe reports the container duration, which runs a decoder delay longer
+  # than what comes out of the decoder - about 4ms for an mp3. Measuring the cut
+  # against it left that much of the padding behind on every track, which is
+  # audible as a gap at a joint, so the cut has to be taken from the decoded
+  # length instead.
+  describe "the length it cuts against" do
+    let(:tail_cut) { 0.04 }
+
+    it "cuts from the decoded length rather than the container's" do
+      expect(decoded_duration(result[:output_path]))
+        .to be_within(0.001).of(decoded_duration(source) - 0.04)
+    end
+
+    it "reports the decoded length as the original" do
+      expect(result[:original_duration_s])
+        .to be_within(0.001).of(decoded_duration(source))
+    end
+
+    # The catalog's own files are where the two disagree: ffprobe reads about
+    # 4ms more than the decoder yields. The fixture is encoded cleanly and does
+    # not diverge, so this pins the container duration out of the calculation
+    # rather than relying on the fixture to expose it.
+    it "does not read the length from the container" do
+      service = described_class.new(track, tail_cut:, dry_run: true)
+      allow(service).to receive(:probe).and_call_original
+      service.call
+      expect(service).not_to have_received(:probe).with("duration")
     end
   end
 
