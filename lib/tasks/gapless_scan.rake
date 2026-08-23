@@ -225,4 +225,33 @@ namespace :gapless_scan do
       puts "Appended #{rows.size - 1} row(s) to spreadsheet #{ENV.fetch('SHEET_ID')}"
     end
   end
+
+  desc "Summarize the last gapless scan report (rake gapless_scan:summary)"
+  task summary: :environment do
+    path = GaplessScan::REPORT
+    abort "No report at #{path} - run gapless_scan:run first" unless path.exist?
+    data = JSON.parse(path.read)
+    rows = data["tracks"]
+    decode = rows.any? { it.key?("head_silence_s") }
+    puts "scanned #{data['scanned']}, flagged #{data['found']}"
+    puts
+    actions = rows.group_by { GaplessScan.action_for(it, decode) }
+    actions.sort_by { |_k, v| -v.size }.each do |action, list|
+      puts format("%-28s %5d", action, list.size)
+    end
+    next unless decode
+    puts
+    heads = rows.map { it["head_silence_s"].to_f * 1000 }.reject(&:zero?)
+    tails = rows.select { it["tail_is_padding"] }
+                .map { it["tail_silence_s"].to_f * 1000 }.reject(&:zero?)
+    fades = rows.count { it["tail_silence_s"].to_f.positive? && !it["tail_is_padding"] }
+    pct = ->(a, q) { a.empty? ? 0 : a.sort[(a.size * q).clamp(0, a.size - 1)] }
+    puts "head silence  n=#{heads.size} min=#{heads.min&.round(1)} " \
+         "median=#{pct.call(heads, 0.5)&.round(1)} max=#{heads.max&.round(1)} ms"
+    puts "tail cliffs   n=#{tails.size} min=#{tails.min&.round(1)} " \
+         "median=#{pct.call(tails, 0.5)&.round(1)} max=#{tails.max&.round(1)} ms"
+    puts "tail fades    n=#{fades} (left alone)"
+    over = heads.count { it > 60 }
+    puts "heads over 60ms: #{over}#{' <- worth eyeballing' if over.positive?}"
+  end
 end
