@@ -90,9 +90,14 @@ class Track < ApplicationRecord
     show.save_duration
     apply_id3_tags
     generate_waveform_image
+    purge_stale_album_zip
   end
 
   private
+
+  def purge_stale_album_zip
+    show.album_zip.purge_later if show.album_zip.attached?
+  end
 
   def save_duration
     return if missing_audio?

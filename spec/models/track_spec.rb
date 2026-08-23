@@ -12,6 +12,33 @@ RSpec.describe Track do
   it { is_expected.to have_many(:tags).through(:track_tags) }
   it { is_expected.to have_many(:playlist_tracks).dependent(:destroy) }
 
+  describe "#process_mp3_audio" do
+    let(:show) { create(:show, date: "2024-05-05") }
+    let(:track) { create(:track, show:) }
+
+    before do
+      allow(WaveformImageService).to receive(:call)
+      allow(Id3TagService).to receive(:call)
+      track.mp3_audio.attach(
+        io: StringIO.new("x"), filename: "a.mp3", content_type: "audio/mpeg"
+      )
+      allow(track).to receive(:save_duration)
+      allow(show).to receive(:save_duration)
+    end
+
+    it "drops a cached album zip whose audio it just replaced" do
+      show.album_zip.attach(
+        io: StringIO.new("zip"), filename: "a.zip", content_type: "application/zip"
+      )
+      expect { track.process_mp3_audio }
+        .to change { show.reload.album_zip.attached? }.from(true).to(false)
+    end
+
+    it "does nothing when the show has no zip" do
+      expect { track.process_mp3_audio }.not_to raise_error
+    end
+  end
+
   describe ".by_url" do
     let!(:show) { create(:show, date: "2023-01-01") }
     let!(:track) { create(:track, show:, slug: "bathtub-gin") }
