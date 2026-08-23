@@ -44,6 +44,7 @@ module GaplessScan
   CLIFF_WINDOW_S = 0.100
   CLIFF_LEVEL = 300
   REPORT = Rails.root.join("data/gapless_scan/report.json")
+  REVIEW_DIR = Rails.root.join("data/gapless_review")
   HEADERS = [
     "Date", "Set", "Pos", "Title", "Joint before", "Joint after",
     "Head silence (ms)", "Head cut (ms)", "Tail silence (ms)", "Tail shape",
@@ -235,6 +236,10 @@ namespace :gapless_scan do
       next unless GaplessScan.undeclared_padding?(head)
 
       row = {
+        # mp3_url and duration are carried so the review page can render the
+        # joint without going back to the API for every track.
+        "mp3_url" => track.mp3_url,
+        "duration_s" => (track.duration.to_i / 1000.0).round(3),
         "track_id" => track.id, "date" => track.show.date.to_s,
         "position" => track.position, "title" => track.title,
         "url" => track.url
@@ -331,5 +336,26 @@ namespace :gapless_scan do
     puts "tail fades    n=#{fades} (left alone)"
     over = heads.count { it > 60 }
     puts "heads over 60ms: #{over}#{' <- worth eyeballing' if over.positive?}"
+  end
+
+  desc "Build the joint review site from the scan report " \
+       "(rake gapless_scan:review); SECONDS=n sets how much audio per side"
+  task review: :environment do
+    report = GaplessScan::REPORT
+    abort "No report at #{report} - run gapless_scan:run DECODE=1 first" unless report.exist?
+    cmd = [ "uv", "run", "scripts/gapless_review.py",
+            "--json", report.to_s, "--out", GaplessScan::REVIEW_DIR.to_s ]
+    cmd += [ "--seconds", ENV["SECONDS"] ] if ENV["SECONDS"].present?
+    system(*cmd) || abort("Review build failed")
+  end
+
+  desc "Serve the joint review site (rake gapless_scan:serve[port])"
+  task :serve, [ :port ] => :environment do |_t, args|
+    index = GaplessScan::REVIEW_DIR.join("index.html")
+    abort "No review site - run gapless_scan:review first" unless index.exist?
+    cmd = [ "uv", "run", "scripts/lead_scan_server.py",
+            "--dir", GaplessScan::REVIEW_DIR.to_s ]
+    cmd += [ "--port", args[:port] ] if args[:port]
+    system(*cmd)
   end
 end

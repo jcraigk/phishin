@@ -79,6 +79,13 @@ CHANNELS = 2
 FADE_S = 0.005
 FADE_RATIO = 1.25
 FADE_FLOOR = 500
+# Encoder padding at the head of a file with no gapless header to declare it.
+# It decodes as near-silence rather than a burst, so the burst rules never see
+# it, and it lands mid-merge as a dropout. Mirrors
+# TrackMergeService::HEAD_SILENCE_LEVEL and friends.
+HEAD_SILENCE_LEVEL = 20
+HEAD_SILENCE_MIN_S = 0.005
+HEAD_SILENCE_MAX_S = 0.100
 
 
 def load_scan_module():
@@ -235,6 +242,22 @@ def head_burst(src):
     return is_burst(decode(src, ["-t", f"{BURST_BODY_S:.4f}"]), from_end=False)
 
 
+def head_silence_s(src):
+    """How much near-silence a file opens with, or 0.0 when it opens on audio.
+
+    Mirrors TrackMergeService#head_silence_s."""
+    samples = decode(src, ["-t", f"{HEAD_SILENCE_MAX_S + 0.05:.4f}"])
+    quiet = 0
+    for v in samples:
+        if abs(v) >= HEAD_SILENCE_LEVEL:
+            break
+        quiet += 1
+    seconds = quiet / CHANNELS / 44100
+    if seconds < HEAD_SILENCE_MIN_S or seconds > HEAD_SILENCE_MAX_S:
+        return 0.0
+    return seconds
+
+
 def tail_burst(src, duration_s=None):
     """True when the end of the file holds an encoder flush burst.
 
@@ -274,6 +297,57 @@ def trim_point(src):
     return total - min((len(edge) - first) / CHANNELS / 44100, MAX_TRIM_S)
 
 
+def render_gapless_joint(first_url, second_url, first_duration_s, seconds,
+                         storage_dirs, tail_cut=0.0, head_cut=0.0):
+    """The seam between two tracks, optionally with the encoder padding removed.
+
+    Rendered twice by the review page - once with the cuts at zero and once with
+    them applied - so the fix can be heard against the problem. Unlike
+    render_joint this applies no burst trim or crossfade: the point is to hear
+    exactly what removing the padding does, with nothing else changed.
+    """
+    stamp = hashlib.sha1(
+        f"g1|{first_url}|{second_url}|{first_duration_s:.3f}|{seconds:.2f}"
+        f"|{tail_cut:.4f}|{head_cut:.4f}".encode()
+    ).hexdigest()[:16]
+    out_path = PREVIEW_DIR / f"{stamp}.wav"
+    if out_path.exists():
+        return out_path
+    PREVIEW_DIR.mkdir(parents=True, exist_ok=True)
+
+    first_src = source_for(first_url, storage_dirs)
+    second_src = source_for(second_url, storage_dirs)
+    # Measured from the file rather than trusting the caller's duration: an
+    # atrim end past the real end silently keeps everything.
+    exact = probe_duration(first_src) or first_duration_s
+    first_end = exact - tail_cut
+    tail_start = max(0.0, first_end - seconds)
+
+    def read(src):
+        remote = str(src).startswith(("http://", "https://"))
+        flags = [ "-reconnect", "1", "-reconnect_streamed", "1",
+                  "-reconnect_delay_max", "5" ] if remote else []
+        return flags + [ "-i", str(src) ]
+
+    cmd = [
+        "ffmpeg", "-y", "-v", "error",
+        *read(first_src), *read(second_src),
+        "-filter_complex",
+        f"[0:a]atrim=start={tail_start:.4f}:end={first_end:.4f},"
+        f"asetpts=PTS-STARTPTS,aresample=44100[a];"
+        f"[1:a]atrim=start={head_cut:.4f}:end={head_cut + seconds:.4f},"
+        f"asetpts=PTS-STARTPTS,aresample=44100[b];"
+        f"[a][b]concat=n=2:v=0:a=1[out]",
+        "-map", "[out]", "-c:a", "pcm_s16le", str(out_path),
+    ]
+    with _render_sem:
+        proc = subprocess.run(cmd, capture_output=True, timeout=RENDER_TIMEOUT_S)
+    if proc.returncode != 0:
+        out_path.unlink(missing_ok=True)
+        raise RuntimeError(proc.stderr.decode()[:400] or "ffmpeg failed")
+    return out_path
+
+
 def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs):
     """Tail of the first track + head of the second, butt joined.
 
@@ -285,7 +359,7 @@ def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs)
     The cache key carries a version so previews rendered under earlier trim
     rules are not served for the current one."""
     stamp = hashlib.sha1(
-        f"v8|{first_url}|{second_url}|{first_duration_s:.2f}|{seconds:.2f}".encode()
+        f"v9|{first_url}|{second_url}|{first_duration_s:.2f}|{seconds:.2f}".encode()
     ).hexdigest()[:16]
     out_path = PREVIEW_DIR / f"{stamp}.wav"
     if out_path.exists():
@@ -311,7 +385,9 @@ def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs)
     first_end = trim_point(first_src) if tail_burst(first_src) else total
     if first_end is None:
         first_end = total
-    head = TAIL_TRIM_S if head_burst(second_src) else 0.0
+    # A burst and silent padding are mutually exclusive: one is loud, the other
+    # quiet.
+    head = TAIL_TRIM_S if head_burst(second_src) else head_silence_s(second_src)
 
     # The joint is crossfaded on the same terms the merge uses, so what is
     # auditioned here is what the merge produces.
@@ -432,6 +508,8 @@ class Handler(SimpleHTTPRequestHandler):
     def do_POST(self):
         if self.path.rstrip("/") == "/joint":
             return self._joint()
+        if self.path.rstrip("/") == "/gapless_joint":
+            return self._gapless_joint()
         if self.path.rstrip("/") != "/preview":
             return self._json(404, {"error": "not found"})
         try:
@@ -463,6 +541,35 @@ class Handler(SimpleHTTPRequestHandler):
         self._json(200, {
             "url": f"/_preview/{out_path.name}",
             "head_s": int(PREVIEW_HEAD_S) if truncated else None,
+        })
+
+    def _gapless_joint(self):
+        """One seam rendered twice: as it stands, and with the padding removed."""
+        try:
+            length = int(self.headers.get("Content-Length", 0))
+            req = json.loads(self.rfile.read(length) or b"{}")
+            first_url = req["first_mp3_url"]
+            second_url = req["second_mp3_url"]
+            first_duration = float(req["first_duration_s"])
+            seconds = float(req.get("seconds", 1.5))
+            tail_cut = float(req.get("tail_cut_s", 0.0))
+            head_cut = float(req.get("head_cut_s", 0.0))
+        except (KeyError, TypeError, ValueError, json.JSONDecodeError) as e:
+            return self._json(400, {"error": f"bad request: {e}"})
+        if seconds <= 0 or first_duration <= 0:
+            return self._json(400, {"error": "seconds and first_duration_s must be positive"})
+
+        try:
+            before = render_gapless_joint(first_url, second_url, first_duration,
+                                          seconds, self.storage_dirs)
+            after = render_gapless_joint(first_url, second_url, first_duration,
+                                         seconds, self.storage_dirs,
+                                         tail_cut=tail_cut, head_cut=head_cut)
+        except Exception as e:  # noqa: BLE001 - surfaced to the reviewer verbatim
+            return self._json(500, {"error": str(e)})
+        self._json(200, {
+            "before": f"/_preview/{before.name}",
+            "after": f"/_preview/{after.name}",
         })
 
     def _joint(self):
@@ -567,8 +674,12 @@ def main():
     # there is no port to track per year.
     pages = sorted(args.dir.glob("*/review.html")) + \
         ([args.dir / "review.html"] if (args.dir / "review.html").exists() else [])
+    # The gapless review site is an index plus a page per date rather than a
+    # single review.html, so accept that shape too.
+    if not pages and (args.dir / "index.html").exists():
+        pages = [ args.dir / "index.html" ]
     if not pages:
-        sys.exit(f"No review.html under {args.dir}")
+        sys.exit(f"No review.html or index.html under {args.dir}")
 
     Handler.storage_dirs = args.storage_dir + aea.STORAGE_CANDIDATES
     handler = partial(Handler, directory=str(args.dir))
