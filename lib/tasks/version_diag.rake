@@ -21,4 +21,14 @@ namespace :diag do
     puts format("%-14s %s", "third option:", accepts_third ? "present" : "ABSENT")
     puts format("%-14s %s", "one-pass:", body.include?("trim_plan") ? "present" : "ABSENT")
   end
+
+  desc "Report whether Google Sheets credentials are usable (rake diag:sheets)"
+  task sheets: :environment do
+    creds = JSON.parse(ENV.fetch("GOOGLE_SPREADSHEET_CREDS", "{}"))
+    puts "creds present: #{creds.any?}"
+    puts "keys:          #{creds.keys.sort.join(', ')}" if creds.any?
+    puts "scope:         #{creds['scope'] || '(not recorded)'}"
+    puts "client_id set: #{creds['client_id'].present?}"
+    puts "refresh_token: #{creds['refresh_token'].present?}"
+  end
 end

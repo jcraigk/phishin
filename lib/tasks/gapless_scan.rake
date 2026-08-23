@@ -32,6 +32,41 @@ module GaplessScan
   CLIFF_WINDOW_S = 0.100
   CLIFF_LEVEL = 300
   REPORT = Rails.root.join("data/gapless_scan/report.json")
+  HEADERS = [
+    "Date", "Set", "Pos", "Title", "Mid-set", "Head silence (ms)",
+    "Tail silence (ms)", "Tail shape", "Action", "URL"
+  ].freeze
+
+  # What to do with each track. Only a mid-set tail that ends in a cliff is
+  # safe to cut: a set's last track fades on purpose, and a decay is the
+  # performance ending rather than encoder padding.
+  def self.action_for(row, decode)
+    return "trim head (tail unmeasured)" unless decode
+    head = row["head_silence_s"].to_f.positive?
+    tail = row["tail_silence_s"].to_f.positive? && row["tail_is_padding"]
+    return "trim head + tail" if head && tail && row["mid_set"]
+    return "trim head" if head
+    return "trim tail" if tail && row["mid_set"]
+    "no trim needed"
+  end
+
+  def self.sheet_rows(found, decode)
+    found.map do |row|
+      [
+        row["date"], row["set"], row["position"], row["title"],
+        row["mid_set"] ? "yes" : "no",
+        decode ? (row["head_silence_s"].to_f * 1000).round(1) : "",
+        decode ? (row["tail_silence_s"].to_f * 1000).round(1) : "",
+        if decode
+          row["tail_silence_s"].to_f.positive? ? (row["tail_is_padding"] ? "cliff" : "fade") : ""
+        else
+          ""
+        end,
+        action_for(row, decode),
+        row["url"]
+      ]
+    end
+  end
 
   # True when the file declares a Xing header but no LAME extension to say how
   # much of it is padding.
@@ -99,7 +134,8 @@ end
 namespace :gapless_scan do
   desc "Find tracks whose mp3 carries undeclared encoder padding " \
        "(rake gapless_scan:run); DECODE=1 also measures each edge, " \
-       "FROM/TO=YYYY-MM-DD scope by show date, LIMIT=n stops early"
+       "FROM/TO=YYYY-MM-DD scope by show date, LIMIT=n stops early, " \
+       "SHEET_ID=<id> appends the report to a Google Sheet"
   task run: :environment do
     decode = ENV["DECODE"] == "1"
     limit = ENV["LIMIT"].presence&.to_i
@@ -180,5 +216,13 @@ namespace :gapless_scan do
     by_year = found.group_by { it["date"][0, 4] }.transform_values(&:size)
     by_year.sort.each { |year, n| puts "  #{year}: #{n}" }
     puts "\nReport: #{GaplessScan::REPORT}"
+
+    if ENV["SHEET_ID"].present? && found.any?
+      rows = [ GaplessScan::HEADERS ] + GaplessScan.sheet_rows(found, decode)
+      GoogleSpreadsheetAppender.call(
+        ENV.fetch("SHEET_ID"), ENV.fetch("SHEET_RANGE", "Sheet1!A1"), rows
+      )
+      puts "Appended #{rows.size - 1} row(s) to spreadsheet #{ENV.fetch('SHEET_ID')}"
+    end
   end
 end
