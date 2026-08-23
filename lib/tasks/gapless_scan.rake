@@ -143,11 +143,22 @@ module GaplessScan
           (size[2] & 0x7f) << 7 | (size[3] & 0x7f))
   end
 
+  # The gapless header sits in the first audio frame, which is however far in
+  # the ID3 tag ends. Embedded art pushes that past any fixed guess - measured
+  # tags run to 600KB - so a first read establishes the tag length and a second
+  # fetches the frame when it fell outside.
   def self.head_bytes(track)
-    io = track.mp3_audio.blob.service.download_chunk(
-      track.mp3_audio.blob.key, 0...HEADER_BYTES
-    )
-    io.to_s.force_encoding(Encoding::BINARY)
+    key = track.mp3_audio.blob.key
+    service = track.mp3_audio.blob.service
+    head = read_chunk(service, key, HEADER_BYTES)
+    return nil if head.nil?
+    needed = id3_length(head) + FRAME_PROBE_BYTES
+    return head if needed <= head.bytesize
+    read_chunk(service, key, needed) || head
+  end
+
+  def self.read_chunk(service, key, bytes)
+    service.download_chunk(key, 0...bytes).to_s.force_encoding(Encoding::BINARY)
   rescue StandardError
     nil
   end
