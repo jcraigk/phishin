@@ -55,6 +55,11 @@ module GaplessScan
   # A window has to be at least this loud to count as the music resuming, so a
   # ripple between two near-silent windows cannot end the walk early.
   TAIL_MUSIC_RMS = 50
+  # An mp3 decoder rings for a few frames past the last real sample, at levels
+  # a fade would still be audible at. A cutoff edge has to clear that ceiling
+  # and tower over what follows it by this much.
+  TAIL_RINGING_CEILING = 300
+  TAIL_CUTOFF_RATIO = 8
   # Past this the quiet belongs to the recording rather than the encoder.
   TAIL_MAX_CUT_S = 0.150
   # Written under Rails.root by default, which is fine locally but lives in the
@@ -176,7 +181,9 @@ module GaplessScan
     pcm = decode(path, [], pre: [ "-sseof", "-1.00" ])
     return 0.0 if pcm.empty?
     frames = pcm.each_slice(CHANNELS_PER_FRAME).map { it.map(&:abs).max }
-    seconds = music_resumes_at(frames, rate) || fade_padding_s(frames, rate)
+    seconds = cutoff_edge_s(frames, rate) ||
+              music_resumes_at(frames, rate) ||
+              fade_padding_s(frames, rate)
     return 0.0 if seconds.nil? || seconds > TAIL_MAX_CUT_S
     seconds < MIN_SILENCE_S ? 0.0 : seconds.round(4)
   end
@@ -194,6 +201,27 @@ module GaplessScan
         return offset / rate.to_f
       end
       previous = level
+    end
+    nil
+  end
+
+  # Where a track was cut off rather than faded, the last frame of music towers
+  # over everything after it: the level collapses by more than an order of
+  # magnitude in a single frame, and what follows is the decoder's own ringing
+  # rather than audio. Landing on that frame matters, because the ringing sits
+  # well above the level a fade decays through - reading it as music leaves a
+  # few samples of near-silence at the cut, which is a click at a joint.
+  #
+  # A fade has no such frame, so this finds nothing and the gentler walks below
+  # take over.
+  def self.cutoff_edge_s(frames, rate)
+    limit = [ (TAIL_MAX_CUT_S * rate).round, frames.size - 1 ].min
+    after = 0
+    (frames.size - 1).downto(frames.size - limit) do |index|
+      level = frames[index]
+      return (frames.size - 1 - index) / rate.to_f if
+        level > TAIL_RINGING_CEILING && level > after * TAIL_CUTOFF_RATIO
+      after = [ after, level ].max
     end
     nil
   end
