@@ -138,31 +138,30 @@ def show_page(date, tracks, seconds):
             f'&middot; {" &middot; ".join(cuts)}</div>'
             f'<div class="pair"><span class="meta">scroll to render</span></div>'
             f"</div>")
-    # A tail already heard inside a joint is not worth a second clip; what is
-    # left are the tails with nothing after them, where the cut sits behind a
-    # deliberate fade-out and the point is to confirm the fade survives.
+    # Only the tails that close a set. Those are the ones ending in a
+    # deliberate fade, so the cut sits behind real audio and is worth hearing;
+    # every other tail either runs into a joint above or into a track whose own
+    # edges are already clean, where the trim changes nothing audible.
     #
     # A track can appear in both sections: one whose head is trimmed at a joint
     # and whose tail closes a set is heard as the second half of that joint and
     # again as an ending.
-    in_joint = {first["track_id"] for first, _s, tail_cut, _h in joints_for(tracks)
-                if tail_cut}
     tails = []
     for t in tracks:
         zeros = t.get("tail_zeros_s") or 0.0
-        if not zeros or t["track_id"] in in_joint:
+        if not zeros or t.get("followed_in_set"):
             continue
         req = json.dumps({
             "mp3_url": t["mp3_url"], "seconds": 4.0,
             "tail_cut_s": round(zeros, 4),
         })
-        closer = "" if t.get("followed_in_set") else " &middot; set closer"
         tails.append(
             f'<div class="joint" data-endpoint="/gapless_tail" '
             f'data-req=\'{html.escape(req, quote=True)}\'>'
-            f'<h3>t{t["position"]} &middot; {html.escape(t["title"])}</h3>'
-            f'<div class="cuts">end of track &middot; '
-            f'&minus;{zeros * 1000:.1f}ms of pure silence{closer}</div>'
+            f'<h3>t{t["position"]} &middot; {html.escape(t["title"])} '
+            f'<span class="meta">(closes set {html.escape(str(t["set"]))})</span></h3>'
+            f'<div class="cuts">'
+            f'&minus;{zeros * 1000:.1f}ms of pure silence after the fade</div>'
             f'<div class="pair"><span class="meta">scroll to render</span></div>'
             f"</div>")
 
@@ -172,7 +171,7 @@ def show_page(date, tracks, seconds):
             f'&middot; <a href="https://phish.in/{html.escape(date)}" target="_blank">'
             f"phish.in</a></div>"
             + (f"<h2>Joints</h2>{''.join(rows)}" if rows else "")
-            + (f"<h2>Track endings</h2>{''.join(tails)}" if tails else "")
+            + (f"<h2>Set-closing fades</h2>{''.join(tails)}" if tails else "")
             or "<p>Nothing to review.</p>")
     return page(f"{date} gapless review", body, RENDER_JS)
 
@@ -193,7 +192,8 @@ def build(report_path, out_dir, seconds):
     for date in sorted(by_date):
         items = sorted(by_date[date], key=lambda t: t["position"])
         n = len(joints_for(items))
-        tails = sum(1 for t in items if t.get("tail_zeros_s"))
+        tails = sum(1 for t in items
+                    if t.get("tail_zeros_s") and not t.get("followed_in_set"))
         if not n and not tails:
             continue
         total += n
