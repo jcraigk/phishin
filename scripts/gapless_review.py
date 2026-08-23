@@ -161,7 +161,7 @@ def show_page(date, tracks, seconds):
             f'<h3>t{t["position"]} &middot; {html.escape(t["title"])} '
             f'<span class="meta">(closes set {html.escape(str(t["set"]))})</span></h3>'
             f'<div class="cuts">'
-            f'&minus;{zeros * 1000:.1f}ms of pure silence after the fade</div>'
+            f'&minus;{zeros * 1000:.1f}ms of encoder padding after the fade</div>'
             f'<div class="pair"><span class="meta">scroll to render</span></div>'
             f"</div>")
 
