@@ -26,7 +26,7 @@ module GaplessScan
   # Thresholds the head edge is read at. Real padding ends at a hard edge, so
   # every level above the ramp reports the same instant; a level inside it does
   # not, which is how a ramp is told from a boundary.
-  HEAD_LADDER = [ 100, 200, 400, 800, 1600 ].freeze
+  HEAD_LADDER = [ 100, 200, 400, 800, 1600, 3200, 6400 ].freeze
   # Answers this close together are the same edge - a couple of frames of slack.
   HEAD_TOLERANCE_S = 0.0015
   # How many rungs must agree before the edge counts as real.
@@ -254,14 +254,13 @@ module GaplessScan
     pcm = decode(path, [ "-t", format("%.4f", MAX_SILENCE_S + 0.4) ])
     return nil if pcm.empty?
     rate = sample_rate(path)
-    answers = HEAD_LADDER.map { first_at_or_above(pcm, it, rate) }
-    return nil if answers.any?(&:nil?)
-    run = longest_agreeing_run(answers)
-    return nil if run.size < HEAD_MIN_AGREE
-    # The middle of the agreeing run, not its earliest: the lowest rung sits on
-    # the last of the ramp often enough to pull the cut short.
-    seconds = run.sort[run.size / 2]
-    seconds > MAX_SILENCE_S ? nil : seconds.round(4)
+    answers = HEAD_LADDER.filter_map { first_at_or_above(pcm, it, rate) }
+                         .select { it <= MAX_SILENCE_S }
+    cluster = largest_agreeing_cluster(answers)
+    return nil if cluster.size < HEAD_MIN_AGREE
+    # The middle of the cluster, not its earliest: the lowest rung sits on the
+    # last of the ramp often enough to pull the cut short.
+    cluster.sort[cluster.size / 2].round(4)
   end
 
   def self.first_at_or_above(pcm, level, rate)
@@ -270,17 +269,13 @@ module GaplessScan
     index / CHANNELS_PER_FRAME / rate.to_f
   end
 
-  def self.longest_agreeing_run(answers)
-    best = []
-    answers.each_index do |i|
-      run = [ answers[i] ]
-      answers[(i + 1)..].each do |value|
-        break if (value - run.first).abs > HEAD_TOLERANCE_S
-        run << value
-      end
-      best = run if run.size > best.size
-    end
-    best
+  # The biggest group of answers that land on the same instant, wherever they
+  # sit in the ladder. A contiguous run is not enough: a loud padding ramp
+  # pushes the low rungs progressively deeper into it, so the rungs that agree
+  # on the real edge are the high ones and the run is broken by the climb.
+  def self.largest_agreeing_cluster(answers)
+    answers.map { |a| answers.select { (it - a).abs <= HEAD_TOLERANCE_S } }
+           .max_by(&:size) || []
   end
 
   # Trailing silence, and whether the audio before it ends in a cliff (encoder
