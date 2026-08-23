@@ -510,4 +510,49 @@ namespace :gapless_scan do
     end
     exit 1 if failures.any?
   end
+
+  desc "Scan only the named shows (rake gapless_scan:shows DATES=a,b,c); " \
+       "always measures edges, OUT=<dir> sets where the report lands"
+  task shows: :environment do
+    dates = ENV.fetch("DATES").split(",").map(&:strip)
+    rows = []
+    dates.each do |date|
+      show = Show.find_by(date:)
+      next puts("no show on #{date}") unless show
+      show.tracks.includes(mp3_audio_attachment: :blob).order(:position).each do |track|
+        next if track.missing_audio?
+        head = GaplessScan.head_bytes(track)
+        next unless head && GaplessScan.undeclared_padding?(head)
+        file = Tempfile.new([ "gapless_#{track.id}", ".mp3" ], binmode: true)
+        begin
+          track.mp3_audio.blob.download { |chunk| file.write(chunk) }
+          file.flush
+          head_s, tail_s, cliff, plateau, zeros = GaplessScan.edges(file.path)
+          rows << {
+            "mp3_url" => track.mp3_url,
+            "duration_s" => (track.duration.to_i / 1000.0).round(3),
+            "track_id" => track.id, "date" => date, "position" => track.position,
+            "title" => track.title, "url" => track.url, "set" => track.set,
+            "preceded_in_set" => GaplessScan.preceded_in_set?(track),
+            "followed_in_set" => GaplessScan.followed_in_set?(track),
+            "head_silence_s" => head_s, "tail_silence_s" => tail_s,
+            "tail_is_padding" => cliff, "head_cut_s" => plateau,
+            "tail_zeros_s" => zeros
+          }
+          puts "  #{date} t#{track.position} #{track.title}: " \
+               "head=#{plateau ? (plateau * 1000).round(1) : '-'} " \
+               "tail=#{(zeros * 1000).round(1)}"
+          $stdout.flush
+        ensure
+          file.close!
+        end
+      end
+    end
+    path = GaplessScan.report_path
+    FileUtils.mkdir_p(path.dirname)
+    path.write(JSON.pretty_generate(
+      "scanned" => dates.size, "found" => rows.size, "tracks" => rows
+    ))
+    puts "\n#{rows.size} track(s) -> #{path}"
+  end
 end
