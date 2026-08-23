@@ -15,9 +15,15 @@ class GaplessTrimService < ApplicationService
   option :tail_cut, default: -> { 0.0 }
   option :dry_run, default: -> { false }
 
-  # Encoder padding runs to tens of milliseconds. Anything beyond this is not
-  # padding, and a caller asking for it has measured something else.
-  MAX_CUT_S = 0.25
+  # A head cut is inferred from where the padding appears to end, so a large one
+  # means the measurement drifted into the music. Encoder delay runs to tens of
+  # milliseconds; beyond this the caller measured something else.
+  MAX_HEAD_CUT_S = 0.25
+  # A tail cut is only ever a run of samples that are exactly zero, which cannot
+  # contain audio however long it runs. Some tracks end with the best part of a
+  # second of digital black, so this is bounded only to catch a caller passing
+  # something wild.
+  MAX_TAIL_CUT_S = 5.0
   # Below this the re-encode costs more than the cut is worth.
   MIN_CUT_S = 0.004
   OUTPUT_DIR = Rails.root.join("tmp/gapless_trims")
@@ -58,10 +64,15 @@ class GaplessTrimService < ApplicationService
       raise NothingToTrimError,
             "#{label}: #{(total_cut * 1000).round(1)}ms is below the #{(MIN_CUT_S * 1000).round}ms floor"
     end
-    return unless [ head_cut, tail_cut ].max > MAX_CUT_S
+    if head_cut > MAX_HEAD_CUT_S
+      raise TrimTooLargeError,
+            "#{label}: head cut of #{(head_cut * 1000).round}ms exceeds the " \
+            "#{(MAX_HEAD_CUT_S * 1000).round}ms limit - that is not encoder padding"
+    end
+    return unless tail_cut > MAX_TAIL_CUT_S
     raise TrimTooLargeError,
-          "#{label}: #{(([ head_cut, tail_cut ].max) * 1000).round}ms exceeds the " \
-          "#{(MAX_CUT_S * 1000).round}ms limit - that is not encoder padding"
+          "#{label}: tail cut of #{(tail_cut * 1000).round}ms exceeds the " \
+          "#{(MAX_TAIL_CUT_S * 1000).round}ms limit"
   end
 
   def validate_against_duration!

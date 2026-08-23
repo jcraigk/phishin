@@ -48,11 +48,21 @@ RSpec.describe GaplessTrimService do
       end
     end
 
-    context "when the cut exceeds what is safe" do
-      let(:tail_cut) { described_class::MAX_CUT_S + 0.01 }
+    context "when the head cut exceeds what is safe" do
+      let(:head_cut) { described_class::MAX_HEAD_CUT_S + 0.01 }
 
       it "refuses" do
         expect { result }.to raise_error(described_class::TrimTooLargeError)
+      end
+    end
+
+    # A tail cut is a run of exact zeros, so it is allowed to be far longer than
+    # a head cut: some tracks end with most of a second of digital black.
+    context "when the tail cut is long but still silence" do
+      let(:tail_cut) { 0.5 }
+
+      it "allows it" do
+        expect { result }.not_to raise_error
       end
     end
   end

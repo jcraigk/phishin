@@ -46,6 +46,9 @@ module GaplessScan
   # Everything is decoded as interleaved stereo, so a sample count covers this
   # many values per frame.
   CHANNELS_PER_FRAME = 2
+  # Tail windows, tried widest-last: most tracks are answered by the first, and
+  # only the ones ending in a long stretch of digital black need more.
+  TAIL_WINDOWS_S = [ 0.5, 2.0, 8.0 ].freeze
   # Written under Rails.root by default, which is fine locally but lives in the
   # container's ephemeral filesystem in production and is lost on the next
   # deploy. OUT=/content/import puts it on the persistent volume instead, where
@@ -139,10 +142,18 @@ module GaplessScan
   # last track as safely as to one in the middle - the padding sits after the
   # fade has already reached silence.
   def self.tail_zeros_s(path)
-    pcm = decode(path, [], pre: [ "-sseof", "-0.50" ])
-    return 0.0 if pcm.empty?
-    zeros = pcm.reverse.take_while(&:zero?).size / CHANNELS_PER_FRAME
-    seconds = zeros / sample_rate(path).to_f
+    rate = sample_rate(path).to_f
+    seconds = 0.0
+    # Widen the window while the zeros fill it: a run that reaches the start of
+    # the window says only that the silence is at least that long, not how long
+    # it is. Some tracks end with most of a second of digital black.
+    TAIL_WINDOWS_S.each do |window|
+      pcm = decode(path, [], pre: [ "-sseof", format("-%.2f", window) ])
+      return 0.0 if pcm.empty?
+      zeros = pcm.reverse.take_while(&:zero?).size
+      seconds = zeros / CHANNELS_PER_FRAME / rate
+      break if zeros < pcm.size
+    end
     # A handful of zero samples is not worth a re-encode.
     seconds < MIN_SILENCE_S ? 0.0 : seconds.round(4)
   end
