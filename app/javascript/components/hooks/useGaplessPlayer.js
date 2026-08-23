@@ -112,7 +112,7 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
       const effectiveEndTime = endTime || trackDuration;
 
       // Prevent scrubbing forward if we're near the end of the excerpt
-      if (seconds > 0 && currentPosition >= effectiveEndTime - PLAYER_CONSTANTS.SCRUB_SECONDS) return;
+      if (seconds > 0 && currentPosition >= effectiveEndTime - seconds) return;
 
       const newTime = currentPosition + seconds;
       const clampedTime = Math.max(startTime, Math.min(newTime, effectiveEndTime));

@@ -97,7 +97,7 @@ const Faq = () => {
       </p>
 
       <h3>Are there any keyboard shortcuts?</h3>
-      <p>Yes. To control audio playback, use Spacebar to toggle play/pause, left/right arrow keys to skip tracks, and hold shift and press left/right arrow keys to seek by 10 seconds.</p>
+      <p>Yes. To control audio playback, use Spacebar to toggle play/pause, left/right arrow keys to skip tracks, and hold shift and press left/right arrow keys to seek by 10 seconds, or hold alt (option on Mac) to seek by 1 second.</p>
 
       <h3>Can I share excerpts of tracks?</h3>
       <p>Yes, there are two ways to share excerpts of tracks.</p>

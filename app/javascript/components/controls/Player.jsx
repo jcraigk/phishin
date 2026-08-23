@@ -121,18 +121,24 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
       if (e.key === " " && !e.shiftKey) {
         e.preventDefault();
         handleTogglePlayPause();
-      } else if (e.key === "ArrowLeft" && !e.shiftKey) {
+      } else if (e.key === "ArrowLeft" && e.altKey) {
         e.preventDefault();
-        handleSkipToPrevious();
-      } else if (e.key === "ArrowRight" && !e.shiftKey) {
+        scrub(-PLAYER_CONSTANTS.FINE_SCRUB_SECONDS);
+      } else if (e.key === "ArrowRight" && e.altKey) {
         e.preventDefault();
-        handleSkipToNext();
+        scrub(PLAYER_CONSTANTS.FINE_SCRUB_SECONDS);
       } else if (e.key === "ArrowLeft" && e.shiftKey) {
         e.preventDefault();
         scrub(-PLAYER_CONSTANTS.SCRUB_SECONDS);
       } else if (e.key === "ArrowRight" && e.shiftKey) {
         e.preventDefault();
         scrub(PLAYER_CONSTANTS.SCRUB_SECONDS);
+      } else if (e.key === "ArrowLeft" && !e.shiftKey) {
+        e.preventDefault();
+        handleSkipToPrevious();
+      } else if (e.key === "ArrowRight" && !e.shiftKey) {
+        e.preventDefault();
+        handleSkipToNext();
       }
     };
 
