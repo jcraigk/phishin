@@ -43,8 +43,21 @@ module GaplessScan
   # silent run, a cliff holds a level a fade has already dropped below.
   CLIFF_WINDOW_S = 0.100
   CLIFF_LEVEL = 300
-  REPORT = Rails.root.join("data/gapless_scan/report.json")
-  REVIEW_DIR = Rails.root.join("data/gapless_review")
+  # Written under Rails.root by default, which is fine locally but lives in the
+  # container's ephemeral filesystem in production and is lost on the next
+  # deploy. OUT=/content/import puts it on the persistent volume instead, where
+  # it can be fetched over ftp.
+  def self.report_path
+    dir = ENV["OUT"].presence
+    return Pathname.new(dir).join("gapless_report.json") if dir
+    Rails.root.join("data/gapless_scan/report.json")
+  end
+
+  def self.review_dir
+    dir = ENV["OUT"].presence
+    return Pathname.new(dir).join("gapless_review") if dir
+    Rails.root.join("data/gapless_review")
+  end
   HEADERS = [
     "Date", "Set", "Pos", "Title", "Joint before", "Joint after",
     "Head silence (ms)", "Head cut (ms)", "Tail silence (ms)", "Tail shape",
@@ -279,8 +292,8 @@ namespace :gapless_scan do
 
     # find_each walks by id; the report reads better in playing order.
     found.sort_by! { [ it["date"], it["position"] ] }
-    FileUtils.mkdir_p(GaplessScan::REPORT.dirname)
-    GaplessScan::REPORT.write(JSON.pretty_generate(
+    FileUtils.mkdir_p(GaplessScan.report_path.dirname)
+    GaplessScan.report_path.write(JSON.pretty_generate(
       "scanned" => checked, "found" => found.size, "tracks" => found
     ))
 
@@ -298,7 +311,7 @@ namespace :gapless_scan do
     end
     by_year = found.group_by { it["date"][0, 4] }.transform_values(&:size)
     by_year.sort.each { |year, n| puts "  #{year}: #{n}" }
-    puts "\nReport: #{GaplessScan::REPORT}"
+    puts "\nReport: #{GaplessScan.report_path}"
 
     if ENV["SHEET_ID"].present? && found.any?
       rows = [ GaplessScan::HEADERS ] + GaplessScan.sheet_rows(found, decode)
@@ -311,7 +324,7 @@ namespace :gapless_scan do
 
   desc "Summarize the last gapless scan report (rake gapless_scan:summary)"
   task summary: :environment do
-    path = GaplessScan::REPORT
+    path = GaplessScan.report_path
     abort "No report at #{path} - run gapless_scan:run first" unless path.exist?
     data = JSON.parse(path.read)
     rows = data["tracks"]
@@ -341,20 +354,20 @@ namespace :gapless_scan do
   desc "Build the joint review site from the scan report " \
        "(rake gapless_scan:review); SECONDS=n sets how much audio per side"
   task review: :environment do
-    report = GaplessScan::REPORT
+    report = GaplessScan.report_path
     abort "No report at #{report} - run gapless_scan:run DECODE=1 first" unless report.exist?
     cmd = [ "uv", "run", "scripts/gapless_review.py",
-            "--json", report.to_s, "--out", GaplessScan::REVIEW_DIR.to_s ]
+            "--json", report.to_s, "--out", GaplessScan.review_dir.to_s ]
     cmd += [ "--seconds", ENV["SECONDS"] ] if ENV["SECONDS"].present?
     system(*cmd) || abort("Review build failed")
   end
 
   desc "Serve the joint review site (rake gapless_scan:serve[port])"
   task :serve, [ :port ] => :environment do |_t, args|
-    index = GaplessScan::REVIEW_DIR.join("index.html")
+    index = GaplessScan.review_dir.join("index.html")
     abort "No review site - run gapless_scan:review first" unless index.exist?
     cmd = [ "uv", "run", "scripts/lead_scan_server.py",
-            "--dir", GaplessScan::REVIEW_DIR.to_s ]
+            "--dir", GaplessScan.review_dir.to_s ]
     cmd += [ "--port", args[:port] ] if args[:port]
     system(*cmd)
   end
