@@ -31,4 +31,22 @@ namespace :diag do
     puts "client_id set: #{creds['client_id'].present?}"
     puts "refresh_token: #{creds['refresh_token'].present?}"
   end
+
+  desc "Measure one track's edges on this container (rake diag:edges TRACK=<id>)"
+  task edges: :environment do
+    load Rails.root.join("lib/tasks/gapless_scan.rake").to_s
+    track = Track.find(ENV.fetch("TRACK"))
+    file = Tempfile.new([ "diag", ".mp3" ], binmode: true)
+    track.mp3_audio.blob.download { |chunk| file.write(chunk) }
+    file.flush
+    puts "track:  #{track.show.date} t#{track.position} #{track.title}"
+    puts "rate:   #{GaplessScan.sample_rate(file.path)}"
+    puts "zeros:  #{(GaplessScan.tail_zeros_s(file.path) * 1000).round(2)} ms"
+    puts "head:   #{(GaplessScan.head_silence(file.path) * 1000).round(2)} ms"
+    cut = GaplessScan.head_plateau_s(file.path)
+    puts "cut:    #{cut ? "#{(cut * 1000).round(2)} ms" : 'NONE'}"
+    puts "ffmpeg: #{`ffmpeg -version 2>/dev/null`.lines.first.to_s.strip}"
+  ensure
+    file&.close!
+  end
 end
