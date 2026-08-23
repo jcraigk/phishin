@@ -17,6 +17,8 @@
 # a fadeless trim, which is what the review page auditions - see
 # spec/services/track_split_service_parity_spec.rb.
 class TrackSplitService < ApplicationService
+  include LameEncoding
+
   param :track
   option :cut_points
   option :dry_run, default: -> { false }
@@ -171,12 +173,6 @@ class TrackSplitService < ApplicationService
     @duration_s ||= probe(@original.path, "duration").to_f
   end
 
-  def bitrate
-    @bitrate ||= begin
-      raw = probe(@original.path, "bit_rate")
-      /\A\d+\z/.match?(raw) ? "#{(raw.to_i / 1000.0).round}k" : "192k"
-    end
-  end
 
   def probe(path, entry)
     out, err, status = Open3.capture3(
@@ -215,12 +211,7 @@ class TrackSplitService < ApplicationService
   end
 
   def render(filters, out_path)
-    _out, err, status = Open3.capture3(
-      "ffmpeg", "-y", "-v", "error", "-i", @original.path,
-      "-af", filters.join(","), "-map_metadata", "0", "-id3v2_version", "3",
-      "-b:a", bitrate, out_path.to_s
-    )
-    raise Error, "ffmpeg failed for #{label}: #{err}" unless status.success?
+    render_via_lame(out_path, [ "-i", @original.path, "-af", filters.join(",") ])
   end
 
   def backup_original

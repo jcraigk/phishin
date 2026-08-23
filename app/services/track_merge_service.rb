@@ -11,6 +11,8 @@
 # Gaps are NOT recomputed here; lib/tasks/sandwich_scan.rake runs GapService once
 # per show after all of its merges are in, scoped to the songs involved.
 class TrackMergeService < ApplicationService
+  include LameEncoding
+
   param :track
   option :second
   # A three-track sandwich ("HYHU > Bike > HYHU") is merged in one pass rather
@@ -50,6 +52,17 @@ class TrackMergeService < ApplicationService
   # Never drop more than this from a joint, however far back the burst appears
   # to run. Beyond it the cut is removing audio, not an artifact.
   MAX_TRIM_S = 0.004
+  # Encoder padding at the head of a file that carries no gapless header to
+  # declare it. It decodes as ordinary near-silence, so the burst rules never
+  # see it, and it lands mid-merge as an audible dropout. Anything under this
+  # level is padding rather than performance.
+  HEAD_SILENCE_LEVEL = 20
+  # Only a run this long is worth cutting; a handful of quiet samples at the
+  # start of a track is just how the music begins.
+  HEAD_SILENCE_MIN_S = 0.005
+  # Past this the quiet is the recording, not an encoder artifact - a track
+  # that genuinely fades in keeps its fade.
+  HEAD_SILENCE_MAX_S = 0.100
   # A butt cut between two non-zero samples clicks. Most joints do not need
   # help: the two sides already meet at a similar level. Where they do not, a
   # fade this long removes the step - short enough that nobody hears a fade,
@@ -160,12 +173,6 @@ class TrackMergeService < ApplicationService
     part_durations[2]
   end
 
-  def bitrate
-    @bitrate ||= begin
-      raw = probe(@first_file.path, "bit_rate")
-      /\A\d+\z/.match?(raw) ? "#{(raw.to_i / 1000.0).round}k" : "192k"
-    end
-  end
 
   def probe(path, entry)
     out, err, status = Open3.capture3(
@@ -216,14 +223,10 @@ class TrackMergeService < ApplicationService
       graph << "#{inputs}concat=n=#{plan.size}:v=0:a=1[out]"
     end
 
-    _out, err, status = Open3.capture3(
-      "ffmpeg", "-y", "-v", "error",
+    render_via_lame(output_path, [
       *@files.flat_map { [ "-i", it.path ] },
-      "-filter_complex", graph.join(";"),
-      "-map", "[out]", "-map_metadata", "0", "-id3v2_version", "3",
-      "-b:a", bitrate, output_path.to_s
-    )
-    raise Error, "ffmpeg failed for #{label}: #{err}" unless status.success?
+      "-filter_complex", graph.join(";"), "-map", "[out]"
+    ])
   end
 
   # What to cut from each part before joining. A burst at a joint is trimmed off
@@ -236,12 +239,18 @@ class TrackMergeService < ApplicationService
       last = i == @files.size - 1
       tail_burst = tail_burst?(file.path)
       head_burst = !first && head_burst?(file.path)
-      start = head_burst ? TAIL_TRIM_S : 0.0
+      # A burst and silent padding are mutually exclusive: one is loud, the
+      # other quiet. Only the head of a following part matters, since the first
+      # part's head is the start of the merged track.
+      head_silence = !first && !head_burst ? head_silence_s(file.path) : 0.0
+      start = head_burst ? TAIL_TRIM_S : head_silence
       finish = ([ trim_point(file.path), 0.0 ].max if tail_burst)
-      { file:, start:, finish:, tail_burst:, head_burst:, first:, last: }
+      { file:, start:, finish:, tail_burst:, head_burst:, head_silence:,
+        first:, last: }
     end.tap do |plan|
       @tail_trimmed = plan.first[:tail_burst]
       @head_trimmed = plan[1] ? plan[1][:head_burst] : false
+      @head_silence_trimmed = plan.drop(1).any? { it[:head_silence].positive? }
       @second_tail_trimmed = plan[1] ? plan[1][:tail_burst] : false
       @trimmed_parts = plan.count { it[:tail_burst] || it[:head_burst] }
     end
@@ -275,6 +284,26 @@ class TrackMergeService < ApplicationService
     end
     @joint_faded = fades.any?
     fades
+  end
+
+  # How much near-silence a file opens with, or 0.0 when it opens on audio.
+  #
+  # A file written without a Xing/Info header gives the decoder no way to know
+  # how much encoder padding to drop, so the padding comes out as quiet samples
+  # ahead of the music. On its own that is inaudible; between two tracks it is a
+  # hole. Bounded at both ends: too short to matter, or too long to be padding.
+  def head_silence_s(path)
+    out, _err, status = Open3.capture3(
+      "ffmpeg", "-v", "error", "-i", path.to_s, "-t",
+      format("%.4f", HEAD_SILENCE_MAX_S + 0.05), "-f", "s16le",
+      "-acodec", "pcm_s16le", "-ar", "44100", "-"
+    )
+    return 0.0 unless status.success?
+    samples = out.unpack("s<*")
+    quiet = samples.take_while { it.abs < HEAD_SILENCE_LEVEL }.size / CHANNELS
+    seconds = quiet / 44_100.0
+    return 0.0 if seconds < HEAD_SILENCE_MIN_S || seconds > HEAD_SILENCE_MAX_S
+    seconds
   end
 
   # The mirror of tail_burst?: the same artifact can sit at the head of a file,
@@ -621,6 +650,7 @@ class TrackMergeService < ApplicationService
       notes: @notes || [],
       tail_trimmed: @tail_trimmed || false,
       head_trimmed: @head_trimmed || false,
+      head_silence_trimmed: @head_silence_trimmed || false,
       second_tail_trimmed: @second_tail_trimmed || false,
       joint_faded: @joint_faded || false,
       end_faded: @end_faded || false,

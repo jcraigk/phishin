@@ -4,6 +4,8 @@
 # renders the file for review. The filter chain is kept in lockstep with
 # scripts/audio_edge_analysis.py by audio_edge_trim_service_parity_spec.rb.
 class AudioEdgeTrimService < ApplicationService
+  include LameEncoding
+
   param :track
   option :trim_end
   option :trim_start, default: -> { 0.0 }
@@ -68,10 +70,6 @@ class AudioEdgeTrimService < ApplicationService
     @duration_s ||= probe(@original.path, "duration").to_f
   end
 
-  def bitrate
-    raw = probe(@original.path, "bit_rate")
-    /\A\d+\z/.match?(raw) ? "#{(raw.to_i / 1000.0).round}k" : "192k"
-  end
 
   def probe(path, entry)
     out, err, status = Open3.capture3(
@@ -109,12 +107,7 @@ class AudioEdgeTrimService < ApplicationService
 
   def render_trimmed
     FileUtils.mkdir_p(OUTPUT_DIR)
-    _out, err, status = Open3.capture3(
-      "ffmpeg", "-y", "-v", "error", "-i", @original.path,
-      "-af", filters.join(","), "-map_metadata", "0", "-id3v2_version", "3",
-      "-b:a", bitrate, output_path.to_s
-    )
-    raise Error, "ffmpeg failed for #{label}: #{err}" unless status.success?
+    render_via_lame(output_path, [ "-i", @original.path, "-af", filters.join(",") ])
   end
 
   def backup_original

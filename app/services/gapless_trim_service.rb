@@ -10,6 +10,8 @@
 # remove, this only applies it. Both are optional, so a track can have its head
 # trimmed, its tail, or both.
 class GaplessTrimService < ApplicationService
+  include LameEncoding
+
   param :track
   option :head_cut, default: -> { 0.0 }
   option :tail_cut, default: -> { 0.0 }
@@ -93,12 +95,6 @@ class GaplessTrimService < ApplicationService
     original_duration_s - total_cut
   end
 
-  def bitrate
-    @bitrate ||= begin
-      raw = probe("bit_rate")
-      /\A\d+\z/.match?(raw) ? "#{(raw.to_i / 1000.0).round}k" : "192k"
-    end
-  end
 
   def probe(entry)
     out, err, status = Open3.capture3(
@@ -123,32 +119,11 @@ class GaplessTrimService < ApplicationService
 
   def render_trimmed
     FileUtils.mkdir_p(OUTPUT_DIR)
-    Tempfile.create([ "gapless_#{track.id}", ".wav" ]) do |wav|
-      cut_to_wav(wav.path)
-      encode_with_lame(wav.path)
-    end
-  end
-
-  def cut_to_wav(wav_path)
-    _out, err, status = Open3.capture3(
-      "ffmpeg", "-y", "-v", "error", "-i", @original.path,
+    render_via_lame(output_path, [
+      "-i", @original.path,
       "-af", "atrim=start=#{format('%.6f', head_cut)}:" \
-             "end=#{format('%.6f', original_duration_s - tail_cut)},asetpts=PTS-STARTPTS",
-      "-f", "wav", "-acodec", "pcm_s16le", wav_path
-    )
-    raise Error, "ffmpeg failed for #{label}: #{err}" unless status.success?
-  end
-
-  # Encoded by lame rather than ffmpeg's mp3 muxer, which writes a bare Info
-  # header with no LAME extension. Without that extension nothing declares the
-  # encoder's own delay and padding, so a re-encode silently puts back the
-  # milliseconds this service just removed.
-  def encode_with_lame(wav_path)
-    _out, err, status = Open3.capture3(
-      "lame", "--quiet", "-b", bitrate.delete_suffix("k"),
-      wav_path, output_path.to_s
-    )
-    raise Error, "lame failed for #{label}: #{err}" unless status.success?
+             "end=#{format('%.6f', original_duration_s - tail_cut)},asetpts=PTS-STARTPTS"
+    ])
   end
 
   def backup_original

@@ -63,6 +63,49 @@ RSpec.describe TrackMergeService do
     `ffprobe -v error -show_entries format=duration -of csv=p=0 #{path}`.to_f
   end
 
+  # Some files carry encoder padding at the head with no gapless header to
+  # declare it, so the padding decodes as ordinary near-silence and lands in the
+  # middle of a merge as a dropout. Unlike a head burst this is quiet, so the
+  # burst rules never fire on it.
+  describe "the silent head trim" do
+    # A tone preceded by a stretch of near-silence, the shape a file without a
+    # gapless header decodes to.
+    def build_silent_head_fixture(path, silence_s)
+      FileUtils.mkdir_p(path.dirname)
+      system(
+        "ffmpeg", "-y", "-v", "error",
+        "-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo:d=#{silence_s}",
+        "-f", "lavfi", "-i", "sine=frequency=660:duration=20:sample_rate=44100",
+        "-filter_complex", "[0:a][1:a]concat=n=2:v=0:a=1[out]",
+        "-map", "[out]", "-b:a", "192k", path.to_s, exception: true
+      )
+    end
+
+    it "leaves a track that starts on audio untouched" do
+      expect(result[:head_silence_trimmed]).to be(false)
+    end
+
+    context "when the second track starts with silent padding" do
+      let(:source_b) do
+        path = Rails.root.join("tmp/spec/merge_silent_head.mp3")
+        build_silent_head_fixture(path, 0.025)
+        path
+      end
+
+      it "detects the silent head" do
+        expect(result[:head_silence_trimmed]).to be(true)
+      end
+
+      it "leaves no dropout at the joint" do
+        pcm = `ffmpeg -v error -i #{result[:output_path]} -f s16le -ac 2 -ar 44100 -`
+        amps = pcm.unpack("s<*").each_slice(2).map { it.map(&:abs).max }
+        joint = (10.0 * 44_100).to_i
+        window = amps[(joint - 441)..(joint + 441)] || []
+        expect(window.count { it < 20 }).to be < 44
+      end
+    end
+  end
+
   describe "the encoder flush trim" do
     it "leaves a clean track untouched" do
       expect(result[:tail_trimmed]).to be(false)
