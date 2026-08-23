@@ -393,4 +393,64 @@ namespace :gapless_scan do
     cmd += [ "--port", args[:port] ] if args[:port]
     system(*cmd)
   end
+
+  desc "Apply the trims the scan found (rake gapless_scan:apply); " \
+       "DRY_RUN=1 renders only, DATE=YYYY-MM-DD or LIMIT=n scopes it, " \
+       "HEADS=0 or TAILS=0 skips one edge"
+  task apply: :environment do
+    report = GaplessScan.report_path
+    abort "No report at #{report} - run gapless_scan:run DECODE=1 first" unless report.exist?
+    rows = JSON.parse(report.read)["tracks"]
+    rows = rows.select { it["date"] == ENV["DATE"] } if ENV["DATE"].present?
+    heads = ENV["HEADS"] != "0"
+    tails = ENV["TAILS"] != "0"
+    dry_run = ENV["DRY_RUN"] == "1"
+
+    # Only what the scan proved safe: a head where every threshold agreed where
+    # the padding ends, a tail that is pure digital zero.
+    work = rows.filter_map do |row|
+      head = heads && row["preceded_in_set"] ? row["head_cut_s"].to_f : 0.0
+      tail = tails ? row["tail_zeros_s"].to_f : 0.0
+      next if head.zero? && tail.zero?
+      [ row, head, tail ]
+    end
+    work = work.first(ENV["LIMIT"].to_i) if ENV["LIMIT"].present?
+    abort "Nothing to trim" if work.empty?
+
+    puts dry_run ? "DRY RUN: rendering #{work.size} trim(s)\n\n"
+                 : "Trimming #{work.size} track(s)\n\n"
+    applied = 0
+    failures = []
+
+    work.each_with_index do |(row, head, tail), i|
+      track = Track.find_by(id: row["track_id"])
+      next failures << [ row["label"] || row["url"], "track not found" ] unless track
+      begin
+        result = GaplessTrimService.call(track, head_cut: head, tail_cut: tail, dry_run:)
+        applied += 1
+        puts "#{result[:applied] ? 'TRIMMED' : 'RENDERED'} [#{i + 1}/#{work.size}]  " \
+             "#{row['date']} t#{row['position']}  #{result[:title]}"
+        cuts = []
+        cuts << "head #{(head * 1000).round(1)}ms" if head.positive?
+        cuts << "tail #{(tail * 1000).round(1)}ms" if tail.positive?
+        puts "  cut:     #{cuts.join(', ')} " \
+             "(#{result[:original_duration_s]}s -> #{result[:trimmed_duration_s]}s)"
+        puts "  backup:  #{result[:backup_path]}" if result[:backup_path]
+        $stdout.flush
+      rescue GaplessTrimService::Error => e
+        failures << [ "#{row['date']} #{row['title']}", e.message ]
+      end
+    end
+
+    puts "\n#{applied} of #{work.size} #{dry_run ? 'rendered' : 'trimmed'}"
+    if failures.any?
+      puts "Failures:"
+      failures.each { |what, msg| puts "  #{what}: #{msg}" }
+    end
+    if !dry_run && applied.positive?
+      puts "Clearing Rails cache..."
+      Rails.cache.clear
+    end
+    exit 1 if failures.any?
+  end
 end
