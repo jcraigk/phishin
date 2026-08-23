@@ -23,21 +23,14 @@ module GaplessScan
   # Measured ramps run 1-34 and the music above them starts in the thousands, so
   # anything in the low hundreds separates them; 20 lands inside the ramp.
   SILENCE_LEVEL = 50
-  # Head padding is a FLAT noise floor, not a level: the decoder reconstructs
-  # the encoder's lead-in as a constant low hiss, and its height varies wildly
-  # between files (measured 1 to 219). A fixed threshold therefore cannot find
-  # it - on a loud floor it fires immediately, on a quiet one it waits until the
-  # music is well underway.
-  #
-  # So the floor is measured per file over its first few milliseconds, and the
-  # boundary is where the signal first departs from that floor by a clear
-  # multiple. That reads the same ~22ms encoder delay whether the track opens on
-  # a downbeat or fades in.
-  HEAD_FLOOR_PROBE_S = 0.010
-  HEAD_FLOOR_MULTIPLE = 4
-  # A silent floor measures 1-2, where a multiple of it is still noise. This
-  # keeps the comparison above the reconstruction's own jitter.
-  HEAD_FLOOR_MIN = 4
+  # Thresholds the head edge is read at. Real padding ends at a hard edge, so
+  # every level above the ramp reports the same instant; a level inside it does
+  # not, which is how a ramp is told from a boundary.
+  HEAD_LADDER = [ 100, 200, 400, 800, 1600 ].freeze
+  # Answers this close together are the same edge - a couple of frames of slack.
+  HEAD_TOLERANCE_S = 0.0015
+  # How many rungs must agree before the edge counts as real.
+  HEAD_MIN_AGREE = 3
   # Shorter than this is not worth reporting; longer is a real fade, not padding.
   MIN_SILENCE_S = 0.004
   MAX_SILENCE_S = 0.150
@@ -244,25 +237,50 @@ module GaplessScan
     bounded(quiet / sample_rate(path).to_f)
   end
 
-  # Where the head padding ends: the first sample that departs from the file's
-  # own noise floor by HEAD_FLOOR_MULTIPLE. nil when nothing does, which means
-  # the whole window is floor and there is no boundary to cut to.
+  # Where the head padding ends, or nil when no boundary can be established.
   #
-  # Measured against the file's own floor rather than a fixed level, because the
-  # floor's height varies by two orders of magnitude between files while the
-  # padding it represents is the same ~22ms of encoder delay either way.
+  # A single threshold cannot find it. The padding is a ramp rather than a flat
+  # floor, so a level picked to clear one file's ramp sits inside another's, and
+  # measuring against each file's own floor fails the same way: where the ramp
+  # rises early it inflates the floor and the boundary lands short, leaving
+  # milliseconds of ringing in. Measured that way on one show, three of seven
+  # tracks undershot the true 25ms boundary by 1.5-4.3ms.
+  #
+  # Real padding ends at a hard edge, so every threshold above the ramp finds
+  # the same instant. The edge is read at a ladder of levels and taken only
+  # where they agree; where they keep climbing the quiet is the performance and
+  # the track is left alone.
   def self.head_plateau_s(path)
     pcm = decode(path, [ "-t", format("%.4f", MAX_SILENCE_S + 0.4) ])
     return nil if pcm.empty?
     rate = sample_rate(path)
-    probe = (HEAD_FLOOR_PROBE_S * rate).round * CHANNELS_PER_FRAME
-    floor = [ pcm.first(probe).max { |a, b| a.abs <=> b.abs }.to_i.abs,
-              HEAD_FLOOR_MIN ].max
-    index = pcm.index { it.abs > floor * HEAD_FLOOR_MULTIPLE }
-    return nil if index.nil?
-    seconds = index / CHANNELS_PER_FRAME / rate.to_f
-    # Beyond this the quiet is the performance, not the encoder.
+    answers = HEAD_LADDER.map { first_at_or_above(pcm, it, rate) }
+    return nil if answers.any?(&:nil?)
+    run = longest_agreeing_run(answers)
+    return nil if run.size < HEAD_MIN_AGREE
+    # The middle of the agreeing run, not its earliest: the lowest rung sits on
+    # the last of the ramp often enough to pull the cut short.
+    seconds = run.sort[run.size / 2]
     seconds > MAX_SILENCE_S ? nil : seconds.round(4)
+  end
+
+  def self.first_at_or_above(pcm, level, rate)
+    index = pcm.index { it.abs >= level }
+    return nil if index.nil?
+    index / CHANNELS_PER_FRAME / rate.to_f
+  end
+
+  def self.longest_agreeing_run(answers)
+    best = []
+    answers.each_index do |i|
+      run = [ answers[i] ]
+      answers[(i + 1)..].each do |value|
+        break if (value - run.first).abs > HEAD_TOLERANCE_S
+        run << value
+      end
+      best = run if run.size > best.size
+    end
+    best
   end
 
   # Trailing silence, and whether the audio before it ends in a cliff (encoder
