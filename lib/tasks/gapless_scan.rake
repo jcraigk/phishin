@@ -22,18 +22,21 @@ module GaplessScan
   # Measured ramps run 1-34 and the music above them starts in the thousands, so
   # anything in the low hundreds separates them; 20 lands inside the ramp.
   SILENCE_LEVEL = 50
-  # A single threshold cannot tell padding from a quiet intro: it measures where
-  # the audio first gets loud, which is padding PLUS however long the music takes
-  # to rise. Where padding ends at a hard boundary the answer is the same at
-  # every threshold, so the edge is measured across a ladder of them and only a
-  # stable answer is trusted. Where the answers keep climbing, the quiet is the
-  # performance and the track is left for review instead.
-  PLATEAU_LADDER = [ 100, 200, 400, 800, 1600 ].freeze
-  # Answers this close together are the same boundary; a sample at 44.1kHz is
-  # 0.023ms, so this is a couple of frames of slack, not a musical amount.
-  PLATEAU_TOLERANCE_S = 0.0015
-  # How many rungs must agree before the boundary counts as real.
-  PLATEAU_MIN_AGREE = 3
+  # Head padding is a FLAT noise floor, not a level: the decoder reconstructs
+  # the encoder's lead-in as a constant low hiss, and its height varies wildly
+  # between files (measured 1 to 219). A fixed threshold therefore cannot find
+  # it - on a loud floor it fires immediately, on a quiet one it waits until the
+  # music is well underway.
+  #
+  # So the floor is measured per file over its first few milliseconds, and the
+  # boundary is where the signal first departs from that floor by a clear
+  # multiple. That reads the same ~22ms encoder delay whether the track opens on
+  # a downbeat or fades in.
+  HEAD_FLOOR_PROBE_S = 0.010
+  HEAD_FLOOR_MULTIPLE = 4
+  # A silent floor measures 1-2, where a multiple of it is still noise. This
+  # keeps the comparison above the reconstruction's own jitter.
+  HEAD_FLOOR_MIN = 4
   # Shorter than this is not worth reporting; longer is a real fade, not padding.
   MIN_SILENCE_S = 0.004
   MAX_SILENCE_S = 0.150
@@ -49,6 +52,12 @@ module GaplessScan
   # Tail windows, tried widest-last: most tracks are answered by the first, and
   # only the ones ending in a long stretch of digital black need more.
   TAIL_WINDOWS_S = [ 0.5, 2.0, 8.0 ].freeze
+  # The last samples of an affected file are padding, so they measure its
+  # trailing noise floor directly. A few hundred is enough to characterise it
+  # without reaching back into whatever preceded it.
+  TAIL_TIP_SAMPLES = 256
+  TAIL_FLOOR_MULTIPLE = 4
+  TAIL_FLOOR_MIN = 4
   # Written under Rails.root by default, which is fine locally but lives in the
   # container's ephemeral filesystem in production and is lost on the next
   # deploy. OUT=/content/import puts it on the persistent volume instead, where
@@ -144,17 +153,27 @@ module GaplessScan
   def self.tail_zeros_s(path)
     rate = sample_rate(path).to_f
     seconds = 0.0
-    # Widen the window while the zeros fill it: a run that reaches the start of
-    # the window says only that the silence is at least that long, not how long
-    # it is. Some tracks end with most of a second of digital black.
+    # Widen the window while the silence fills it: a run that reaches the start
+    # of the window says only that the silence is at least that long, not how
+    # long it is. Some tracks end with most of a second of digital black.
     TAIL_WINDOWS_S.each do |window|
       pcm = decode(path, [], pre: [ "-sseof", format("-%.2f", window) ])
       return 0.0 if pcm.empty?
-      zeros = pcm.reverse.take_while(&:zero?).size
-      seconds = zeros / CHANNELS_PER_FRAME / rate
-      break if zeros < pcm.size
+      # Not just exact zeros. The decoder reconstructs the encoder's trailing
+      # padding as a low hiss rather than silence, and leaving that hiss in
+      # front of the next track is the dropout this whole scan is chasing.
+      #
+      # The floor is the very last samples, which are padding on any affected
+      # file, so the walk back stops where the level rises clearly above them
+      # rather than at the first non-zero sample.
+      tip = pcm.last(TAIL_TIP_SAMPLES * CHANNELS_PER_FRAME)
+      floor = [ tip.max { |a, b| a.abs <=> b.abs }.to_i.abs * TAIL_FLOOR_MULTIPLE,
+                TAIL_FLOOR_MIN ].max
+      quiet = pcm.reverse.take_while { it.abs <= floor }.size
+      seconds = quiet / CHANNELS_PER_FRAME / rate
+      break if quiet < pcm.size
     end
-    # A handful of zero samples is not worth a re-encode.
+    # A handful of samples is not worth a re-encode.
     seconds < MIN_SILENCE_S ? 0.0 : seconds.round(4)
   end
 
@@ -184,40 +203,25 @@ module GaplessScan
     bounded(quiet / sample_rate(path).to_f)
   end
 
-  # Where the head padding ends, measured across PLATEAU_LADDER, or nil when the
-  # thresholds disagree. Disagreement means the quiet at the head belongs to the
-  # music rather than the encoder, and cutting to any one threshold would take
-  # part of the performance with it.
+  # Where the head padding ends: the first sample that departs from the file's
+  # own noise floor by HEAD_FLOOR_MULTIPLE. nil when nothing does, which means
+  # the whole window is floor and there is no boundary to cut to.
+  #
+  # Measured against the file's own floor rather than a fixed level, because the
+  # floor's height varies by two orders of magnitude between files while the
+  # padding it represents is the same ~22ms of encoder delay either way.
   def self.head_plateau_s(path)
     pcm = decode(path, [ "-t", format("%.4f", MAX_SILENCE_S + 0.4) ])
     return nil if pcm.empty?
     rate = sample_rate(path)
-    answers = PLATEAU_LADDER.map { first_at_or_above(pcm, it, rate) }
-    return nil if answers.any?(&:nil?)
-    run = longest_agreeing_run(answers)
-    return nil if run.size < PLATEAU_MIN_AGREE
-    # The earliest point the agreeing thresholds share: the boundary itself,
-    # never further into the audio than any one of them reported.
-    run.min.round(4)
-  end
-
-  def self.first_at_or_above(pcm, level, rate)
-    index = pcm.index { it.abs >= level }
+    probe = (HEAD_FLOOR_PROBE_S * rate).round * CHANNELS_PER_FRAME
+    floor = [ pcm.first(probe).max { |a, b| a.abs <=> b.abs }.to_i.abs,
+              HEAD_FLOOR_MIN ].max
+    index = pcm.index { it.abs > floor * HEAD_FLOOR_MULTIPLE }
     return nil if index.nil?
-    index / CHANNELS_PER_FRAME / rate.to_f
-  end
-
-  def self.longest_agreeing_run(answers)
-    best = []
-    answers.each_index do |i|
-      run = [ answers[i] ]
-      answers[(i + 1)..].each do |value|
-        break if (value - run.first).abs > PLATEAU_TOLERANCE_S
-        run << value
-      end
-      best = run if run.size > best.size
-    end
-    best
+    seconds = index / CHANNELS_PER_FRAME / rate.to_f
+    # Beyond this the quiet is the performance, not the encoder.
+    seconds > MAX_SILENCE_S ? nil : seconds.round(4)
   end
 
   # Trailing silence, and whether the audio before it ends in a cliff (encoder
