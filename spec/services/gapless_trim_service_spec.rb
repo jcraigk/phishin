@@ -129,6 +129,15 @@ RSpec.describe GaplessTrimService do
       expect([ head, tail ].max).to be < 0.005
     end
 
+    # Without this the encoder's own delay and padding go undeclared and the
+    # trim puts back what it removed.
+    it "declares its padding in a LAME header" do
+      data = File.binread(result[:output_path])
+      id3 = data.start_with?("ID3") ? 10 + data.byteslice(6, 4).bytes.each_with_index
+        .sum { |b, i| (b & 0x7f) << (7 * (3 - i)) } : 0
+      expect(data.byteslice(id3, 2048)).to include("LAME")
+    end
+
     it "keeps the audio between them" do
       expect(probe_duration(result[:output_path])).to be_within(0.05).of(10.0)
     end

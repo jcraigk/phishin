@@ -21,6 +21,7 @@ RUN apt-get update -qq && \
       libmagickwand-dev \
       libjpeg-dev \
       libyaml-dev \
+      lame \
     && apt-get clean
 
 # ffmpeg 8.1 rather than Debian's 7.x. The two differ in ways that change

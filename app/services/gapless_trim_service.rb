@@ -121,18 +121,34 @@ class GaplessTrimService < ApplicationService
     @output_path ||= OUTPUT_DIR.join("#{track.show.date}_#{track.slug}_gapless.mp3")
   end
 
-  # No fades: the samples being removed are silence or encoder ringing, so the
-  # audio on either side of the cut is already at the level it should be.
   def render_trimmed
     FileUtils.mkdir_p(OUTPUT_DIR)
+    Tempfile.create([ "gapless_#{track.id}", ".wav" ]) do |wav|
+      cut_to_wav(wav.path)
+      encode_with_lame(wav.path)
+    end
+  end
+
+  def cut_to_wav(wav_path)
     _out, err, status = Open3.capture3(
       "ffmpeg", "-y", "-v", "error", "-i", @original.path,
-      "-af", "atrim=start=#{format('%.4f', head_cut)}:" \
-             "end=#{format('%.4f', original_duration_s - tail_cut)},asetpts=PTS-STARTPTS",
-      "-map_metadata", "0", "-id3v2_version", "3",
-      "-b:a", bitrate, output_path.to_s
+      "-af", "atrim=start=#{format('%.6f', head_cut)}:" \
+             "end=#{format('%.6f', original_duration_s - tail_cut)},asetpts=PTS-STARTPTS",
+      "-f", "wav", "-acodec", "pcm_s16le", wav_path
     )
     raise Error, "ffmpeg failed for #{label}: #{err}" unless status.success?
+  end
+
+  # Encoded by lame rather than ffmpeg's mp3 muxer, which writes a bare Info
+  # header with no LAME extension. Without that extension nothing declares the
+  # encoder's own delay and padding, so a re-encode silently puts back the
+  # milliseconds this service just removed.
+  def encode_with_lame(wav_path)
+    _out, err, status = Open3.capture3(
+      "lame", "--quiet", "-b", bitrate.delete_suffix("k"),
+      wav_path, output_path.to_s
+    )
+    raise Error, "lame failed for #{label}: #{err}" unless status.success?
   end
 
   def backup_original
