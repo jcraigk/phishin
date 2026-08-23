@@ -111,9 +111,16 @@ def display_label(label):
 
 # Bread songs handled by the sandwich scan, which combines their tracks rather
 # than cutting them apart. Both spellings, since titles carry either.
+#
+# Only these. Almost any song can be the outside of a sandwich, but the rest
+# are ordinary segues worth reviewing here: a track like "YEM > Vibration of
+# Life > YEM" is a genuine split candidate even though it has the A > B > A
+# shape.
 SANDWICH_SONGS = {
     "hold your head up", "hyhu",
     "the man who stepped into yesterday", "tmwsiy",
+    "cold as ice",
+    "alumni blues",
 }
 
 
@@ -209,12 +216,8 @@ def fetch_show_candidates(date, ignore_urls, catalog=None):
             print(f"  skipping {display_label(label)} (no mp3_url)", file=sys.stderr)
             continue
         parts = split_title(t["title"])
-        # A simple sandwich ("A > B > A") belongs to the sandwich scan, which
-        # merges it back into one track rather than cutting it apart.
-        if len(parts) == 3 and parts[0].casefold() == parts[-1].casefold():
-            continue
-        # HYHU and TMWSIY are sandwich bread wherever they appear, so their
-        # tracks are the sandwich scan's to combine, not this one's to split.
+        # Every segued track is reviewable here whatever its shape, including
+        # "A > B > A": only the bread songs below belong to the sandwich scan.
         if has_sandwich_song(parts):
             print(f"  skipping {display_label(label)} (sandwich song)",
                   file=sys.stderr)
@@ -532,7 +535,8 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
   .tags {{ margin: .5rem 0 0 1.6rem; }}
   .tags-h {{ display: block; color: var(--muted); font-size: 12px;
              text-transform: uppercase; letter-spacing: .04em; margin-bottom: 0; }}
-  .trow {{ display: flex; align-items: center; gap: .5rem; padding: .1rem 0; }}
+  .trow {{ display: flex; align-items: center; gap: .5rem; padding: .1rem 0;
+           position: relative; }}
   .tname {{ flex: 1 1 auto; min-width: 0; font-size: 13px;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
   .tname .swatch {{ display: inline-block; width: .55rem; height: .55rem;
@@ -540,6 +544,14 @@ def write_review_html(html_path, candidates, multi, catalog=None, quiet=False):
   .tname.has-notes {{ text-decoration: underline dotted
                       color-mix(in srgb, var(--muted) 70%, transparent);
                       text-underline-offset: 3px; cursor: help; }}
+  .tname[data-tip]:hover::after {{ content: attr(data-tip);
+      position: absolute; left: 0; bottom: calc(100% + 4px); z-index: 40;
+      max-width: 32rem; width: max-content; padding: .35rem .5rem;
+      border-radius: 6px; border: 1px solid var(--btn-line);
+      background: var(--bg); color: var(--fg);
+      font-size: 12px; line-height: 1.35; white-space: normal;
+      text-decoration: none; text-align: left;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .35); pointer-events: none; }}
   .tchoices {{ display: flex; gap: .15rem; flex: 0 0 auto; }}
   .tbox {{ cursor: pointer; }}
   .tbox input {{ position: absolute; opacity: 0; pointer-events: none; }}
@@ -1221,10 +1233,13 @@ document.querySelectorAll(".row").forEach(row => {{
           '<input type="checkbox" data-part="' + i + '"' +
           (!on || on.indexOf(i) >= 0 ? " checked" : "") + '>' +
           '<span>' + (i + 1) + '</span></label>').join("");
+      // Notes go in data-tip, not title: the browser holds a native tooltip
+      // back about a second, and these are read while scanning down the list.
+      const tip = notes ? name + ": " + notes : name;
       return '<div class="trow" data-tag="' + escapeHtml(name) + '" ' +
         'data-index="' + ti + '">' +
-        '<span class="tname' + (notes ? " has-notes" : "") + '" title="' +
-          escapeHtml(notes ? name + ": " + notes : name) + '">' +
+        '<span class="tname' + (notes ? " has-notes" : "") + '" ' +
+          'data-tip="' + escapeHtml(tip) + '">' +
           swatch + escapeHtml(name) + '</span>' +
         '<span class="tchoices">' + boxes + '</span></div>';
     }}).join("");
