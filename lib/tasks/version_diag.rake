@@ -49,4 +49,27 @@ namespace :diag do
   ensure
     file&.close!
   end
+
+  desc "Check a proposed tail cut against the decoder (rake diag:verify_cut TRACK=<id> TAIL=<s>)"
+  task verify_cut: :environment do
+    load Rails.root.join("lib/tasks/gapless_scan.rake").to_s
+    track = Track.find(ENV.fetch("TRACK"))
+    tail = ENV.fetch("TAIL").to_f
+    file = Tempfile.new([ "vc", ".mp3" ], binmode: true)
+    track.mp3_audio.blob.download { |chunk| file.write(chunk) }
+    file.flush
+    rate = GaplessScan.sample_rate(file.path)
+    pcm = GaplessScan.decode(file.path, [], pre: [ "-sseof", "-1.00" ])
+    frames = pcm.each_slice(2).map { it.map(&:abs).max }
+    cut_frames = (tail * rate).round
+    kept = frames.first([ frames.size - cut_frames, 0 ].max)
+    puts "track:      #{track.show.date} t#{track.position} #{track.title}"
+    puts "rate:       #{rate}"
+    puts "proposed:   #{(tail * 1000).round(2)} ms"
+    puts "last 10 frames that would be REMOVED: #{frames.last(cut_frames).first(10).inspect}"
+    puts "max level in removed region: #{frames.last(cut_frames).max}"
+    puts "last 10 frames that would be KEPT:    #{kept.last(10).inspect}"
+  ensure
+    file&.close!
+  end
 end
