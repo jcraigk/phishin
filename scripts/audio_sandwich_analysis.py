@@ -59,6 +59,13 @@ NOT_BREAD = {
     "narration", "banter", "interview", "(check) banter", "jam",
     "intro", "outro", "soundcheck", "crowd", "tuning",
 }
+# Songs that are the filling rather than the bread. The usual shapes are found
+# by the outer song repeating around the middle, but these are short pieces the
+# band drops inside another song, so the surrounding tracks are what repeat and
+# the match is made on the filling instead.
+INNER_SONGS = {
+    "the vibration of life",
+}
 # Titles that already carry the abbreviation, so a scan sees both spellings.
 ALIASES = {
     "hyhu": "hold your head up",
@@ -112,6 +119,10 @@ class SandwichCandidate:
     third_waveform_url: str = ""
     third_share_url: str = ""
 
+    def positions(self):
+        return {p for p in (self.first_position, self.second_position,
+                            self.third_position) if p}
+
 
 def fmt_ts(seconds):
     seconds = int(round(float(seconds)))
@@ -144,6 +155,79 @@ def merged_title_for(outer, first_title, second_title):
     return " > ".join([outer_abbr, *deduped, outer_abbr])
 
 
+def track_fields(prefix, date, t):
+    """The per-track columns a SandwichCandidate carries, for one track."""
+    return {
+        f"{prefix}_id": t["id"],
+        f"{prefix}_title": t["title"],
+        f"{prefix}_position": t["position"],
+        f"{prefix}_mp3_url": t["mp3_url"],
+        f"{prefix}_duration_s": round((t.get("duration") or 0) / 1000.0, 1),
+        f"{prefix}_waveform_url": t.get("waveform_image_url") or "",
+        f"{prefix}_share_url": f"{SITE_BASE}/{date}/{t.get('slug', '')}",
+    }
+
+
+def inner_sandwich(tracks, i, paired):
+    """A sandwich found from its filling: the same song on both sides of it.
+
+    Three arrangements, all of which merge into one track:
+      A | Vibe | A     three whole tracks
+      A | Vibe > A     the filling runs into the closing bread
+      A > Vibe | A     the opening bread runs into the filling
+    """
+    t = tracks[i]
+    parts = [norm(p) for p in parts_of(t["title"])]
+    prev = tracks[i - 1] if i else None
+    nxt = tracks[i + 1] if i + 1 < len(tracks) else None
+
+    # "A > Vibe" opening a pair, closed by a bare "A".
+    if len(parts) > 1 and parts[-1] in INNER_SONGS and nxt:
+        outer = parts[0]
+        nparts = [norm(p) for p in parts_of(nxt["title"])]
+        if (outer not in NOT_BREAD and nparts == [outer]
+                and t["set_name"] == nxt["set_name"]
+                and nxt["position"] not in paired
+                and t.get("mp3_url") and nxt.get("mp3_url")):
+            return build_inner(t, nxt, None, outer, "A>B | A")
+
+    # A bare filling track: bread on both sides, either whole or segued.
+    if parts == [p for p in parts if p in INNER_SONGS] and prev and nxt:
+        if prev["position"] in paired or not (
+                t["set_name"] == prev["set_name"] == nxt["set_name"]):
+            return None
+        pparts = [norm(p) for p in parts_of(prev["title"])]
+        nparts = [norm(p) for p in parts_of(nxt["title"])]
+        outer = pparts[-1]
+        if (outer in NOT_BREAD or outer != nparts[0]
+                or nxt["position"] in paired
+                or not all(x.get("mp3_url") for x in (prev, t, nxt))):
+            return None
+        # Whole tracks on both sides, or a segue on one of them.
+        shape = ("A | B | A" if len(pparts) == 1 and len(nparts) == 1
+                 else "A | B | A+")
+        return build_inner(prev, t, nxt, outer, shape)
+    return None
+
+
+def build_inner(first, second, third, outer, shape):
+    date = first["show_date"]
+    titles = [first["title"], second["title"]] + ([third["title"]] if third else [])
+    inner = " > ".join(
+        p for title in titles for p in parts_of(title) if norm(p) != outer)
+    fields = track_fields("first", date, first)
+    fields.update(track_fields("second", date, second))
+    if third:
+        fields.update(track_fields("third", date, third))
+    return SandwichCandidate(
+        label=(f"{date} {first['set_name']} t{first['position']:02d} "
+               + " + ".join(titles)),
+        date=date, set_name=first["set_name"], outer=outer,
+        merged_title=(f"{abbreviate(first['title'])} > {inner} > "
+                      f"{abbreviate(first['title'])}"),
+        shape=shape, **fields)
+
+
 def scan_show(date, ignore_urls):
     """(candidates, footnotes, combined) for one show."""
     resp = requests.get(f"{API_BASE}/shows/{date}", timeout=30)
@@ -158,6 +242,17 @@ def scan_show(date, ignore_urls):
 
     for i, t in enumerate(tracks):
         parts = [norm(p) for p in parts_of(t["title"])]
+        # A filling song with the same song on both sides. Found here rather
+        # than by the outer-repeat rules below, because when the filling is its
+        # own track there is no repeated title within any one track to match.
+        if (t["position"] not in paired
+                and any(p in INNER_SONGS for p in parts)
+                and not (len(parts) >= 3 and parts[0] == parts[-1])):
+            match = inner_sandwich(tracks, i, paired)
+            if match:
+                candidates.append(match)
+                paired.update(match.positions())
+                continue
         # Any song can be the bread; the shape is what identifies a sandwich,
         # not a fixed list of songs.
         outer_here = [p for p in parts if p not in NOT_BREAD]
@@ -452,8 +547,18 @@ def write_review_html(html_path, candidates, footnotes, combined=None,
         "merge with. Nothing to do here automatically &mdash; listed so each "
         "can be inspected by hand.") if footnotes else '<p class="meta">None.</p>'
 
-    combined_counts = Counter(c["outer"] for c in combined)
-    pending_counts = Counter(c.outer for c in candidates)
+    # A filling song is counted under itself, not under whichever song happened
+    # to be the bread that night: "how many Vibration of Life sandwiches are
+    # combined vs still split" is the question being asked of these rows, and
+    # keying on the bread scatters the answer across a dozen songs.
+    def tally_key(title, outer):
+        inner = [p for p in (norm(x) for x in parts_of(title)) if p in INNER_SONGS]
+        return inner[0] if inner else outer
+
+    combined_counts = Counter(
+        tally_key(c["title"], c["outer"]) for c in combined)
+    pending_counts = Counter(
+        tally_key(c.merged_title, c.outer) for c in candidates)
     tally = "".join(
         f'<tr><td>{esc(song.title())}</td>'
         f'<td>{combined_counts.get(song, 0)}</td>'
