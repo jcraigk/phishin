@@ -93,6 +93,41 @@ RSpec.describe TeaseChartSyncService do
     end
   end
 
+  context "when the show has a Tweezer sandwich and a Tweezer Reprise" do
+    let(:chart_rows) { [ [ "I Feel the Earth Move", "Carole King", "1", "2025-12-31 Tweezer" ] ] }
+    let!(:reprise) { create(:track, show:, title: "Tweezer Reprise", position: 3) }
+    let!(:sandwich) { create(:track, show:, title: "Tweezer > Manteca > Tweezer", position: 4) }
+
+    it "places the tease on the sandwich" do
+      service.call
+
+      expect(service.proposed_rows.first.first).to include(sandwich.slug)
+      expect(service.proposed_rows.first.first).not_to include(reprise.slug)
+    end
+  end
+
+  context "when the show has two tracks with the teased song's title" do
+    let(:chart_rows) { [ [ "Buffalo Bill", "Phish", "1", "2025-12-31 Tweezer" ] ] }
+    let!(:tweezer) { create(:track, show:, title: "Tweezer", position: 3) }
+    let!(:tweezer2) { create(:track, show:, title: "Tweezer", position: 4) }
+
+    it "proposes the earlier one when neither is in the sheet" do
+      service.call
+      expect(service.proposed_rows.first.first).to include("/#{tweezer.slug}")
+    end
+
+    context "when the sheet already has the tease on the later one" do
+      let(:sheet_rows) { [ { "URL" => "https://phish.in/2025-12-31/#{tweezer2.slug}", "Notes" => "Buffalo Bill" } ] }
+
+      it "treats it as covered" do
+        service.call
+
+        expect(service.proposed_rows).to be_empty
+        expect(service.skipped_existing).to eq(1)
+      end
+    end
+  end
+
   context "when the chart lists the same tease twice for one show" do
     let(:chart_rows) do
       [ [ "Norwegian Wood", "The Beatles", "2", "2025-12-31 Hood, 2025-12-31 Hood" ] ]

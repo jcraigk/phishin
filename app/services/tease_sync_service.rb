@@ -120,14 +120,17 @@ class TeaseSyncService < ApplicationService
 
     song = tease["song"].to_s.strip
     return if song.match?(SOUNDCHECK) || title.match?(SOUNDCHECK)
-    track = find_track(show, SONG_ALIASES.fetch(song, song))
-    if track.blank?
+    tracks = find_tracks(show, SONG_ALIASES.fetch(song, song))
+    if tracks.empty?
       @unmatched << { date: show.date.to_s, song:, tease: title, artist: tease["artist"].to_s }
       return
     end
 
+    track = tracks.first
     note = format_note(title, resolve_artist(title, tease["artist"]))
-    return log("  skip (already tagged): #{track.title} - #{note}") if already_covered?(track, note)
+    if tracks.any? { |t| already_covered?(t, note) }
+      return log("  skip (already tagged): #{track.title} - #{note}")
+    end
 
     log("  propose: #{track.title} - #{note}")
     @proposed_rows << [ sheet_url(track), "", "", note, "", DEV_NOTE ]
@@ -202,10 +205,9 @@ class TeaseSyncService < ApplicationService
     normalize_quotes(str).to_s.downcase.gsub(/[[:punct:]]/, "").squish
   end
 
-  def find_track(show, song_title)
-    show.tracks.find { |t| t.title.casecmp?(song_title) } ||
-      show.tracks.find { |t| t.title.downcase.include?(song_title.downcase) } ||
-      show.tracks.find { |t| song_title.downcase.include?(t.title.downcase) }
+  def find_tracks(show, song_title)
+    return [] if song_title.blank?
+    TeaseTrackMatcher.call(show, [ song_title ])
   end
 
   def fetch_setlist_notes(show_date)

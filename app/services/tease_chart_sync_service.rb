@@ -88,11 +88,12 @@ class TeaseChartSyncService < ApplicationService
     show = shows_by_date[occ[:date]]
     return record_unmatched(occ, "no show on phish.in") if show.blank?
 
-    track = find_track(show, occ[:song])
-    return record_unmatched(occ, occ[:song].blank? ? "chart lists no song" : "no track matched") if track.blank?
+    tracks = find_tracks(show, occ[:song])
+    return record_unmatched(occ, occ[:song].blank? ? "chart lists no song" : "no track matched") if tracks.empty?
 
+    track = tracks.first
     note = format_note(occ[:tease], occ[:artist])
-    if already_covered?(track, note)
+    if tracks.any? { |t| already_covered?(t, note) }
       @skipped_existing += 1
       return log("  skip: #{occ[:date]} #{track.title} - #{note}")
     end
@@ -160,18 +161,10 @@ class TeaseChartSyncService < ApplicationService
     end
   end
 
-  def find_track(show, label)
-    return nil if label.blank?
-
-    candidates = [ song_titles[normalize(label)], label ].compact
-    candidates.each do |candidate|
-      key = normalize(candidate)
-      match = show.tracks.find { |t| normalize(t.title) == key } ||
-              show.tracks.find { |t| normalize(t.title).include?(key) } ||
-              show.tracks.find { |t| key.include?(normalize(t.title)) }
-      return match if match
-    end
-    nil
+  # Chart labels are abbreviations ("YEM", "SOAMelt"); try the catalog title first.
+  def find_tracks(show, label)
+    return [] if label.blank?
+    TeaseTrackMatcher.call(show, [ song_titles[normalize(label)], label ].compact)
   end
 
   def load_existing_rows
