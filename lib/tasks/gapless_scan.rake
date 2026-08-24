@@ -52,6 +52,13 @@ module GaplessScan
   # Shorter than this is not worth reporting; longer is a real fade, not padding.
   MIN_SILENCE_S = 0.004
   MAX_SILENCE_S = 0.150
+  # Cuts are carried as seconds but applied to whole samples, so they are kept
+  # to enough places that the sample they land on is not in doubt. Rounded to
+  # four places a cut moves by up to a couple of samples at 44.1kHz, which is
+  # enough to leave one sample of padding attached to the audio or take one
+  # sample of audio away - either way a tick at the joint rather than a gap,
+  # too short for any measurement here to see but plainly audible.
+  CUT_PRECISION = 7
   # Padding ends in a cliff: the music runs at full level right up to where the
   # silence starts. A track that fades out decays into it instead, and cutting
   # there would take the fade with it. Measured over this much audio before the
@@ -203,7 +210,7 @@ module GaplessScan
               music_resumes_at(frames, rate) ||
               fade_padding_s(frames, rate)
     return 0.0 if seconds.nil? || seconds > TAIL_MAX_CUT_S
-    seconds < MIN_SILENCE_S ? 0.0 : seconds.round(4)
+    seconds < MIN_SILENCE_S ? 0.0 : seconds.round(CUT_PRECISION)
   end
 
   # Seconds from the end at which the level jumps back into the performance.
@@ -305,7 +312,7 @@ module GaplessScan
     threshold = [ floor * HEAD_FLOOR_MULTIPLE, HEAD_FLOOR_MIN ].max
     edge = head_edge_index(frames, rate, floor, threshold)
     return nil if edge.nil?
-    (edge / rate.to_f).round(4)
+    (edge / rate.to_f).round(CUT_PRECISION)
   end
 
   def self.head_floor(frames, rate)
@@ -340,7 +347,7 @@ module GaplessScan
 
   def self.bounded(seconds)
     return 0.0 if seconds < MIN_SILENCE_S || seconds > MAX_SILENCE_S
-    seconds.round(4)
+    seconds.round(CUT_PRECISION)
   end
 
   # Decoded at the file's own sample rate.
