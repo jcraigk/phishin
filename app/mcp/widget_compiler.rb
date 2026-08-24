@@ -96,28 +96,22 @@ class WidgetCompiler
       "{{MCP_LOGO_SQUARE}}"
     end
 
-    def gapless5_script
-      path = Rails.root.join("node_modules", "@regosen", "gapless-5", "gapless5.js")
-      script = File.read(path)
-      # Remove iOS silent audio hack that triggers CSP violations - we handle user interaction ourselves
-      # This removes the silenceWavData, playAllowed, stubAudio declarations and the onPlayAllowed function
-      script
-        .gsub(
-          /const silenceWavData = .*?stubAudio\.load\(\);/m,
-          "// iOS silent audio hack removed for CSP compatibility"
-        )
-        .gsub(
-          /this\.onPlayAllowed = \(\) => \{.*?\n  \};/m,
-          "this.onPlayAllowed = () => {}; // no-op for CSP compatibility"
-        )
-        .gsub(
-          /const onLoadedHTML5Metadata = \(\) => \{\n\s*endpos = audio\.duration/,
-          "const onLoadedHTML5Metadata = () => {\n    if (!audio) return;\n    endpos = audio.duration"
-        )
-        .gsub(
-          /const onLoadedHTML5Audio = \(\) => \{\n\s*if \(state !== Gapless5State\.Loading\)/,
-          "const onLoadedHTML5Audio = () => {\n    if (!audio) return;\n    if (state !== Gapless5State.Loading)"
-        )
+    # The widgets are classic scripts, so the engine's ES modules are inlined
+    # in dependency order with their import and export statements stripped.
+    PLAYER_ENGINE_FILES = %w[
+      SessionKeeper.js
+      WebAudioBackend.js
+      GaplessEngine.js
+      Gapless5Facade.js
+    ].freeze
+
+    def player_engine_script
+      dir = Rails.root.join("app", "javascript", "components", "player")
+      PLAYER_ENGINE_FILES.map do |name|
+        File.read(dir.join(name))
+          .gsub(/^import .*;\n/, "")
+          .gsub(/^export /, "")
+      end.join("\n")
     end
 
     def mcp_apps_sdk_script
