@@ -53,20 +53,28 @@ export const useGaplessPlayer = (activePlaylist, activeTrack, setActiveTrack, se
     }
   };
 
-  useEffect(() => {
-    if (startTime !== null && startTime !== undefined) {
-      const trackDuration = activeTrack ? activeTrack.duration / 1000 : 0;
+  // The start time belongs to the track named in the URL, so it is applied once
+  // and only to that track. Playing a different track from the list swaps
+  // activeTrack without clearing startTime, and validating one track's time
+  // against another's duration reported a spurious "Invalid start time".
+  const urlStartTrackRef = useRef(null);
 
-      if (startTime === null || startTime < 0 || (trackDuration > 0 && startTime > trackDuration)) {
-        if (setAlert) {
-          setAlert('Invalid start time provided');
-        }
-        setPendingStartTime(null);
-      } else if (startTime > 0) {
-        setPendingStartTime(startTime);
-        if (setNotice) {
-          setNotice('Press the Play button to listen');
-        }
+  useEffect(() => {
+    if (startTime === null || startTime === undefined || !activeTrack) return;
+    if (urlStartTrackRef.current !== null && urlStartTrackRef.current !== activeTrack.id) return;
+    urlStartTrackRef.current = activeTrack.id;
+
+    const trackDuration = activeTrack.duration / 1000;
+
+    if (startTime < 0 || (trackDuration > 0 && startTime > trackDuration)) {
+      if (setAlert) {
+        setAlert('Invalid start time provided');
+      }
+      setPendingStartTime(null);
+    } else if (startTime > 0) {
+      setPendingStartTime(startTime);
+      if (setNotice) {
+        setNotice('Press the Play button to listen');
       }
     }
   }, [startTime, activeTrack, setNotice, setAlert]);
