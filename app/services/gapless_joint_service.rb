@@ -31,6 +31,27 @@ class GaplessJointService < ApplicationService
   # a millisecond of its neighbour. 5ms and 10ms were auditioned against it and
   # sounded no better, so the shortest that works is the one used.
   FADE_S = 0.002
+  # Trimming a second track's padding sometimes uncovers a hard waveform edge
+  # the short fade cannot span, and butting the two together then ticks. Such a
+  # joint gets a wider fade instead - auditioned against keeping the padding,
+  # which removes the tick but restores the very dropout the trim exists to
+  # remove.
+  WIDE_FADE_S = 0.02
+  # How far the step at a joint stands out from the music around it: the size
+  # of the jump over the local rms. Joints judged by ear separate at about
+  # 0.25 - those that ticked measured 0.26 to 0.44, those that sounded clean
+  # 0.17 to 0.20. The threshold sits below that because this is measured on the
+  # trimmed sources, which reads a little lower than the rendered files it is
+  # predicting: across the joints already surveyed, 0.22 widens every one that
+  # ticked and none that did not.
+  WIDE_FADE_RATIO = 0.22
+  # A quiet passage can read a high ratio off a jump too small to hear, so the
+  # step has to clear this as well before the fade is widened.
+  WIDE_FADE_MIN_JUMP = 300
+  # Samples either side of the seam the jump is measured across, and the window
+  # the surrounding loudness is taken from.
+  SEAM_SAMPLES = 40
+  CONTEXT_SAMPLES = 4_410
   # A cut is only worth a re-encode above this. Far below GaplessTrimService's
   # floor, because a run is rewritten for the sake of its joints even where the
   # individual cuts are tiny.
@@ -157,12 +178,54 @@ class GaplessJointService < ApplicationService
     (1...segments.size).each do |i|
       out = i == segments.size - 1 ? "out" : "x#{i}"
       graph << "[#{label_in}][s#{i}]acrossfade=" \
-               "d=#{FADE_S}:c1=tri:c2=tri[#{out}]"
+               "d=#{fades[i - 1]}:c1=tri:c2=tri[#{out}]"
       label_in = out
     end
     run_ffmpeg(@files.flat_map { [ "-i", it.path ] } +
                [ "-filter_complex", graph.join(";"), "-map", "[out]",
                  "-f", "wav", "-acodec", "pcm_s16le", run_path.to_s ])
+  end
+
+  # One fade per joint, chosen from the step the trimmed edges actually meet at.
+  # Measured here rather than taken from the scan because it is the trimmed
+  # edges that matter, and the trim is applied in this pass.
+  def fades
+    @fades ||= segments.each_cons(2).map do |left, right|
+      audible_step?(left, right) ? WIDE_FADE_S : FADE_S
+    end
+  end
+
+  def audible_step?(left, right)
+    tail = edge_samples(left, tail: true)
+    head = edge_samples(right, tail: false)
+    return false if tail.empty? || head.empty?
+    seam = tail.last(SEAM_SAMPLES) + head.first(SEAM_SAMPLES)
+    jump = seam.each_cons(2).map { (it[1] - it[0]).abs }.max.to_i
+    return false if jump < WIDE_FADE_MIN_JUMP
+    context = tail.last(CONTEXT_SAMPLES) + head.first(CONTEXT_SAMPLES)
+    rms = Math.sqrt(context.sum { it * it }.fdiv(context.size))
+    jump / [ rms, 1.0 ].max >= WIDE_FADE_RATIO
+  end
+
+  # The samples at one end of a segment, after its own cuts, as the crossfade
+  # will see them.
+  # atrim rather than -ss: seeking an mp3 lands on a frame boundary, which moves
+  # the edge by up to a frame and reads the step at the wrong place.
+  def edge_samples(seg, tail:)
+    span = (SEAM_SAMPLES + CONTEXT_SAMPLES).fdiv(RATE)
+    from, to =
+      if tail
+        [ [ seg[:finish] - span, seg[:start] ].max, seg[:finish] ]
+      else
+        [ seg[:start], [ seg[:start] + span, seg[:finish] ].min ]
+      end
+    out, _err, status = Open3.capture3(
+      "ffmpeg", "-v", "error", "-i", seg[:file].path,
+      "-af", "atrim=start=#{format('%.7f', from)}:end=#{format('%.7f', to)}",
+      "-f", "s16le", "-acodec", "pcm_s16le", "-ac", "1", "-ar", RATE.to_s, "-"
+    )
+    return [] unless status.success?
+    out.unpack("s<*")
   end
 
   def segment_chain(seg, index)
@@ -202,10 +265,14 @@ class GaplessJointService < ApplicationService
     @boundaries ||= begin
       marks = [ 0.0 ]
       running = 0.0
+      spent = 0.0
       segments.each_with_index do |seg, i|
         running += seg[:kept]
         next if i == segments.size - 1
-        marks << running - ((i + 1) * FADE_S) + (FADE_S / 2)
+        # Each overlap so far has pulled the stream earlier by its whole width;
+        # the boundary sits at the middle of the one being crossed now.
+        spent += fades[i]
+        marks << running - spent + (fades[i] / 2)
       end
       marks << nil
       marks
@@ -213,7 +280,7 @@ class GaplessJointService < ApplicationService
   end
 
   def total_seconds
-    @total_seconds ||= segments.sum { it[:kept] } - ((segments.size - 1) * FADE_S)
+    @total_seconds ||= segments.sum { it[:kept] } - fades.sum
   end
 
   def check_backup_budget!

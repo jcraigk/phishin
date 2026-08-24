@@ -139,6 +139,47 @@ RSpec.describe GaplessJointService do
     end
   end
 
+  describe "the fade at each joint" do
+    # The tick this widening exists for: trimming the second track's padding
+    # uncovers a hard edge, and the short fade cannot span it. Two tones that
+    # meet far apart in level stand in for that here.
+    it "widens the fade when the trimmed edges meet at an audible step" do
+      service = described_class.new(tracks, cuts:, dry_run: true)
+      loud = { file: instance_double(Tempfile, path: "l"), start: 0.0, finish: 1.0, kept: 1.0 }
+      quiet = { file: instance_double(Tempfile, path: "q"), start: 0.0, finish: 1.0, kept: 1.0 }
+      allow(service).to receive(:edge_samples).with(loud, tail: true)
+                                              .and_return([ 100 ] * 4_450)
+      allow(service).to receive(:edge_samples).with(quiet, tail: false)
+                                              .and_return([ 3_000 ] * 4_450)
+      expect(service.send(:audible_step?, loud, quiet)).to be(true)
+    end
+
+    it "leaves the fade alone when the step is small against the music" do
+      service = described_class.new(tracks, cuts:, dry_run: true)
+      left = { file: instance_double(Tempfile, path: "l"), start: 0.0, finish: 1.0, kept: 1.0 }
+      right = { file: instance_double(Tempfile, path: "r"), start: 0.0, finish: 1.0, kept: 1.0 }
+      # One continuous tone split across the seam, which is what a joint inside
+      # an unbroken performance looks like: loud, and with no step where the
+      # two files meet.
+      tone = Array.new(8_900) { (8_000 * Math.sin(it * 0.05)).round }
+      allow(service).to receive(:edge_samples).with(left, tail: true)
+                                              .and_return(tone.first(4_450))
+      allow(service).to receive(:edge_samples).with(right, tail: false)
+                                              .and_return(tone.last(4_450))
+      expect(service.send(:audible_step?, left, right)).to be(false)
+    end
+
+    # A quiet passage reads a high ratio off a step too small to hear.
+    it "leaves the fade alone when the step is tiny however quiet the passage" do
+      service = described_class.new(tracks, cuts:, dry_run: true)
+      left = { file: instance_double(Tempfile, path: "l"), start: 0.0, finish: 1.0, kept: 1.0 }
+      right = { file: instance_double(Tempfile, path: "r"), start: 0.0, finish: 1.0, kept: 1.0 }
+      allow(service).to receive(:edge_samples).with(left, tail: true).and_return([ 0 ] * 4_450)
+      allow(service).to receive(:edge_samples).with(right, tail: false).and_return([ 40 ] * 4_450)
+      expect(service.send(:audible_step?, left, right)).to be(false)
+    end
+  end
+
   describe "a longer run" do
     let(:tracks) { [ first, second, third ] }
     let(:cuts) do
