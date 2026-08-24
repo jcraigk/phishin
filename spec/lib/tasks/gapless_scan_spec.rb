@@ -63,4 +63,32 @@ RSpec.describe "gapless_scan" do # rubocop:disable RSpec/DescribeClass
       expect(GaplessScan.head_plateau_s(path)).to be_nil
     end
   end
+
+  describe ".partition_runs" do
+    def row(position, preceded:, followed:)
+      { "date" => "2001-05-23", "set" => "1", "position" => position,
+        "preceded_in_set" => preceded, "followed_in_set" => followed }
+    end
+
+    it "groups adjacent joined tracks into one run" do
+      rows = [ row(1, preceded: false, followed: true),
+               row(2, preceded: true, followed: true),
+               row(3, preceded: true, followed: false) ]
+      runs, solo = GaplessScan.partition_runs(rows)
+      expect(runs.map { |r| r.map { it["position"] } }).to eq([ [ 1, 2, 3 ] ])
+      expect(solo).to be_empty
+    end
+
+    # Why a held-back track is dropped whole rather than trimmed at the tail:
+    # once it is out of the list its neighbours are no longer adjacent, so they
+    # fall out to solo trims instead of being crossfaded across a gap where the
+    # missing track still sits untouched.
+    it "does not join tracks left non-adjacent by a held-back one" do
+      rows = [ row(1, preceded: false, followed: true),
+               row(3, preceded: true, followed: false) ]
+      runs, solo = GaplessScan.partition_runs(rows)
+      expect(runs).to be_empty
+      expect(solo.map { it["position"] }).to eq([ 1, 3 ])
+    end
+  end
 end

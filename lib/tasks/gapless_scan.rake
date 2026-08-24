@@ -566,24 +566,49 @@ namespace :gapless_scan do
   end
 
   desc "Apply the trims the scan found (rake gapless_scan:apply); " \
-       "DRY_RUN=1 renders only, DATE=YYYY-MM-DD or LIMIT=n scopes it, " \
-       "HEADS=0 or TAILS=0 skips one edge"
+       "DRY_RUN=1 renders only, DATE=YYYY-MM-DD, FROM/TO=YYYY-MM-DD or LIMIT=n " \
+       "scopes it, HEADS=0 or TAILS=0 skips one edge, " \
+       "MAX_HEAD_MS=n holds back head cuts above n milliseconds"
   task apply: :environment do
     report = GaplessScan.report_path
     abort "No report at #{report} - run gapless_scan:run DECODE=1 first" unless report.exist?
     rows = JSON.parse(report.read)["tracks"]
     rows = rows.select { it["date"] == ENV["DATE"] } if ENV["DATE"].present?
+    if ENV["FROM"].present? || ENV["TO"].present?
+      from = ENV["FROM"].presence || "1900-01-01"
+      to = ENV["TO"].presence || "2999-12-31"
+      rows = rows.select { it["date"] >= from && it["date"] <= to }
+    end
     heads = ENV["HEADS"] != "0"
     tails = ENV["TAILS"] != "0"
     dry_run = ENV["DRY_RUN"] == "1"
+    max_head = ENV["MAX_HEAD_MS"].presence&.to_f&.fdiv(1000)
 
     # Only what the scan proved safe: a head where every threshold agreed where
     # the padding ends, a tail that is pure digital zero.
+    # A head cut is inferred from where padding appears to end, so an unusually
+    # large one is more likely a mismeasurement that would eat the first note.
+    # Such a track is held back whole rather than trimmed at the tail alone: it
+    # may sit in a run, and rewriting its neighbours without it would leave the
+    # joint half-treated.
+    held = []
     work = rows.filter_map do |row|
       head = heads && row["preceded_in_set"] ? row["head_cut_s"].to_f : 0.0
       tail = tails ? row["tail_zeros_s"].to_f : 0.0
+      if max_head && head > max_head
+        held << row
+        next
+      end
       next if head.zero? && tail.zero?
       [ row, head, tail ]
+    end
+    if held.any?
+      puts "Holding back #{held.size} track(s) with a head cut over #{ENV['MAX_HEAD_MS']}ms:"
+      held.sort_by { -it["head_cut_s"].to_f }.each do |row|
+        puts "  #{(row['head_cut_s'].to_f * 1000).round(1)}ms  " \
+             "#{row['date']} t#{row['position']} #{row['title']}"
+      end
+      puts
     end
     work = work.first(ENV["LIMIT"].to_i) if ENV["LIMIT"].present?
     abort "Nothing to trim" if work.empty?
