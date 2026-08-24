@@ -345,6 +345,33 @@ module GaplessScan
     [ seconds, before.any? && before.max { |a, b| a.abs <=> b.abs }.abs >= CLIFF_LEVEL ]
   end
 
+  # Splits the rows into the runs that have to be rendered together and the
+  # tracks that can be trimmed on their own.
+  #
+  # A joint is two adjacent in-set tracks, and consecutive joints chain: a track
+  # in the middle of a segued sequence is crossfaded at both ends, so its file
+  # depends on both neighbours and the whole run is one unit of work. Everything
+  # else only needs its own edges cut.
+  def self.partition_runs(rows)
+    by_show = rows.group_by { [ it["date"], it["set"] ] }
+    runs = []
+    joined = Set.new
+    by_show.each_value do |group|
+      positions = group.index_by { it["position"] }
+      group.sort_by { it["position"] }.each do |row|
+        nxt = positions[row["position"] + 1]
+        next unless nxt && row["followed_in_set"] && nxt["preceded_in_set"]
+        if runs.last&.last&.equal?(row)
+          runs.last << nxt
+        else
+          runs << [ row, nxt ]
+        end
+        joined << row << nxt
+      end
+    end
+    [ runs, rows.reject { joined.include?(it) } ]
+  end
+
   def self.bounded(seconds)
     return 0.0 if seconds < MIN_SILENCE_S || seconds > MAX_SILENCE_S
     seconds.round(CUT_PRECISION)
@@ -561,18 +588,47 @@ namespace :gapless_scan do
     work = work.first(ENV["LIMIT"].to_i) if ENV["LIMIT"].present?
     abort "Nothing to trim" if work.empty?
 
-    puts dry_run ? "DRY RUN: rendering #{work.size} trim(s)\n\n"
-                 : "Trimming #{work.size} track(s)\n\n"
+    # Tracks that meet at a joint are rewritten together, because the crossfade
+    # that removes the tick between them belongs half to each file. The rest
+    # only need their own edges cut.
+    cuts_by_id = work.to_h { |row, head, tail| [ row["track_id"], { head:, tail: } ] }
+    runs, solo_rows = GaplessScan.partition_runs(work.map(&:first))
+    solo = solo_rows.map { |row| [ row, *cuts_by_id[row["track_id"]].values_at(:head, :tail) ] }
+    total = runs.size + solo.size
+
+    puts dry_run ? "DRY RUN: rendering #{runs.size} run(s) and #{solo.size} trim(s)\n\n"
+                 : "Rewriting #{runs.size} run(s) and #{solo.size} track(s)\n\n"
     applied = 0
     failures = []
+    step = 0
 
-    work.each_with_index do |(row, head, tail), i|
+    runs.each do |run|
+      step += 1
+      tracks = run.map { Track.find_by(id: it["track_id"]) }
+      if tracks.any?(&:nil?)
+        next failures << [ "#{run.first['date']} run", "track not found" ]
+      end
+      begin
+        cuts = tracks.to_h { [ it.id, cuts_by_id.fetch(it.id, { head: 0.0, tail: 0.0 }) ] }
+        result = GaplessJointService.call(tracks, cuts:, dry_run:)
+        applied += 1
+        puts "#{result[:applied] ? 'JOINED' : 'RENDERED'} [#{step}/#{total}]  " \
+             "#{run.first['date']} t#{run.first['position']}..t#{run.last['position']}"
+        result[:outputs].each { puts "  #{it[:title]} -> #{it[:seconds].round(3)}s" }
+        $stdout.flush
+      rescue GaplessJointService::Error => e
+        failures << [ "#{run.first['date']} joint", e.message ]
+      end
+    end
+
+    solo.each do |row, head, tail|
+      step += 1
       track = Track.find_by(id: row["track_id"])
       next failures << [ row["label"] || row["url"], "track not found" ] unless track
       begin
         result = GaplessTrimService.call(track, head_cut: head, tail_cut: tail, dry_run:)
         applied += 1
-        puts "#{result[:applied] ? 'TRIMMED' : 'RENDERED'} [#{i + 1}/#{work.size}]  " \
+        puts "#{result[:applied] ? 'TRIMMED' : 'RENDERED'} [#{step}/#{total}]  " \
              "#{row['date']} t#{row['position']}  #{result[:title]}"
         cuts = []
         cuts << "head #{(head * 1000).round(1)}ms" if head.positive?
@@ -586,7 +642,7 @@ namespace :gapless_scan do
       end
     end
 
-    puts "\n#{applied} of #{work.size} #{dry_run ? 'rendered' : 'trimmed'}"
+    puts "\n#{applied} of #{total} #{dry_run ? 'rendered' : 'rewritten'}"
     if failures.any?
       puts "Failures:"
       failures.each { |what, msg| puts "  #{what}: #{msg}" }
