@@ -102,6 +102,52 @@ RSpec.describe "gapless_scan" do # rubocop:disable RSpec/DescribeClass
     end
   end
 
+  describe "gapless_scan:restore" do
+    subject(:restore) { Rake::Task["gapless_scan:restore"].tap(&:reenable).invoke }
+
+    let(:show) { create(:show, date: "2001-05-23") }
+    let!(:track) { create(:track, show:, title: "Plasma", position: 1, set: "1") }
+    let(:dir) { GaplessTrimService::BACKUP_DIR }
+    let(:backup) { dir.join("2001-05-23_#{track.slug}_oldblobkey1234567890abcdef.mp3") }
+
+    before do
+      FileUtils.mkdir_p(dir)
+      path = Rails.root.join("tmp/spec/restore_src.mp3")
+      FileUtils.mkdir_p(path.dirname)
+      unless path.exist?
+        system("ffmpeg", "-y", "-v", "error", "-f", "lavfi",
+               "-i", "sine=frequency=440:duration=1:sample_rate=44100",
+               "-b:a", "192k", path.to_s, exception: true)
+      end
+      FileUtils.cp(path, backup)
+      ENV["DATE"] = "2001-05-23"
+      allow(WaveformImageService).to receive(:call)
+      allow(Id3TagService).to receive(:call)
+    end
+
+    after do
+      FileUtils.rm_f(backup)
+      ENV.delete("DATE")
+      ENV.delete("DRY_RUN")
+    end
+
+    it "puts the backup back on the track" do
+      expect { restore }.to change { track.reload.mp3_audio.attached? }.to(true)
+    end
+
+    # The backup is the only copy of the original, and a track that has been
+    # restored once may need restoring again.
+    it "leaves the backup file in place" do
+      restore
+      expect(backup).to exist
+    end
+
+    it "changes nothing on a dry run" do
+      ENV["DRY_RUN"] = "1"
+      expect { restore }.not_to change { track.reload.mp3_audio.attached? }
+    end
+  end
+
   describe ".at_joint?" do
     it "keeps a clean track that sits between two others" do
       track = instance_double(Track, set: "1", position: 2)

@@ -752,4 +752,53 @@ namespace :gapless_scan do
     ))
     puts "\n#{rows.size} track(s) -> #{path}"
   end
+
+  desc "Put back the audio a trim replaced (rake gapless_scan:restore DATE=YYYY-MM-DD); " \
+       "SLUGS=a,b limits it to named tracks, DRY_RUN=1 reports only"
+  task restore: :environment do
+    dir = GaplessTrimService::BACKUP_DIR
+    abort "No backups at #{dir}" unless dir.directory?
+    date = ENV["DATE"].presence || abort("DATE=YYYY-MM-DD is required")
+    dry_run = ENV["DRY_RUN"] == "1"
+    only = ENV["SLUGS"].presence&.split(",")&.map(&:strip)
+
+    show = Show.find_by(date:) || abort("No show on #{date}")
+    # The filename carries the blob key the track had when it was backed up,
+    # which is no longer its key - date and slug are what still identify it.
+    backups = Dir.glob(dir.join("#{date}_*.mp3")).to_h do |path|
+      [ File.basename(path).delete_prefix("#{date}_").sub(/_[0-9a-z]+\.mp3\z/, ""), path ]
+    end
+    abort "No backups for #{date}" if backups.empty?
+    backups = backups.slice(*only) if only
+
+    work = backups.filter_map do |slug, path|
+      track = show.tracks.find_by(slug:)
+      next puts("  no track for #{slug.inspect}, skipping") if track.nil?
+      [ track, path ]
+    end
+    abort "Nothing to restore" if work.empty?
+
+    puts "#{dry_run ? 'DRY RUN: would restore' : 'Restoring'} " \
+         "#{work.size} track(s) on #{date}\n\n"
+    work.each_with_index do |(track, path), i|
+      size = File.size(path)
+      puts "  [#{i + 1}/#{work.size}] t#{track.position} #{track.title} " \
+           "(#{(size / 1024.0**2).round(1)}MB)"
+      next if dry_run
+      track.mp3_audio.attach(
+        io: File.open(path), filename: track.friendly_filename,
+        content_type: "audio/mpeg"
+      )
+      track.reload
+      track.process_mp3_audio
+      PlaylistTrack.where(track_id: track.id).find_each(&:save!)
+    end
+
+    next if dry_run
+    # Once for the show rather than once per track: the per-track call sums an
+    # association that may still hold the durations from before the restore.
+    show.reload.save_duration
+    Rails.cache.clear
+    puts "\n#{work.size} track(s) restored"
+  end
 end
