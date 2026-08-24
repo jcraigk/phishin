@@ -38,6 +38,24 @@ module GaplessScan
   # candidate has to stay above the floor too.
   HEAD_SUSTAIN_S = 0.005
   HEAD_SUSTAIN_SHARE = 0.6
+  # The floor is only meaningful where there is padding to measure. On a track
+  # that opens straight into music the window fills with the performance, the
+  # threshold is scaled off that, and the edge lands somewhere inside the note.
+  # Real padding sits in the low single digits; the tracks this went wrong on
+  # measured 248 and up.
+  HEAD_FLOOR_MAX = 60
+  # An edge is only believed where it roughly agrees with the quiet run measured
+  # straight off the front at a fixed level. The two share no logic, so a cut
+  # running well past the quiet has found the performance rather than an edge.
+  #
+  # They disagree by up to about 10ms even when both are right, because the
+  # fixed level stops partway up a padding ramp that the floor reads through.
+  # The tracks this went wrong on ran 16ms past and up to 148ms. There is no
+  # gap in the population between those, so this sits between the two sets of
+  # examples rather than on a boundary the data draws by itself: it keeps every
+  # verified good edge and rejects every verified bad one, and errs towards
+  # leaving a track alone.
+  HEAD_AGREEMENT_S = 0.013
   # Shorter than this is not worth reporting; longer is a real fade, not padding.
   MIN_SILENCE_S = 0.004
   MAX_SILENCE_S = 0.150
@@ -290,10 +308,20 @@ module GaplessScan
     rate = sample_rate(path)
     frames = pcm.each_slice(CHANNELS_PER_FRAME).map { it.map(&:abs).max }
     floor = head_floor(frames, rate)
+    return nil if floor > HEAD_FLOOR_MAX
     threshold = [ floor * HEAD_FLOOR_MULTIPLE, HEAD_FLOOR_MIN ].max
     edge = head_edge_index(frames, rate, floor, threshold)
     return nil if edge.nil?
-    (edge / rate.to_f).round(4)
+    seconds = edge / rate.to_f
+    return nil unless agrees_with_head_silence?(pcm, rate, seconds)
+    seconds.round(4)
+  end
+
+  # Whether the floor's answer matches the quiet run measured independently off
+  # the front of the file. Cutting past that run is cutting audio.
+  def self.agrees_with_head_silence?(pcm, rate, seconds)
+    quiet = pcm.take_while { it.abs < SILENCE_LEVEL }.size / CHANNELS_PER_FRAME
+    seconds <= quiet / rate.to_f + HEAD_AGREEMENT_S
   end
 
   def self.head_floor(frames, rate)

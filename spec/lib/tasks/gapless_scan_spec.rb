@@ -47,5 +47,29 @@ RSpec.describe "gapless_scan" do # rubocop:disable RSpec/DescribeClass
                        pad_level: 6_000, music_level: 8_000, pad_s: 0.5)
       expect(GaplessScan.head_plateau_s(path)).to be_nil
     end
+
+    # A track that opens straight into a note has no flat floor to measure, so
+    # the window fills with the performance and the threshold scales off it.
+    # Read that way the edge lands inside the note, and the cut takes its
+    # attack with it - 980 tracks were measured that way before this guard.
+    it "refuses a track whose head is a rising note rather than padding" do
+      path = Rails.root.join("tmp/spec/head_attack.mp3")
+      FileUtils.mkdir_p(path.dirname)
+      system("ffmpeg", "-y", "-v", "error",
+             "-f", "lavfi",
+             "-i", "sine=frequency=440:duration=2:sample_rate=44100",
+             "-af", "afade=t=in:st=0:d=0.03,volume=0.5",
+             "-b:a", "192k", path.to_s, exception: true)
+      expect(GaplessScan.head_plateau_s(path)).to be_nil
+    end
+
+    it "refuses an edge that runs past the quiet measured off the front" do
+      path = build_mp3(Rails.root.join("tmp/spec/head_loud.mp3"),
+                       pad_level: 2, music_level: 8_000)
+      # Well past where the quiet actually ends, which is what a floor read off
+      # a track with no padding produces.
+      allow(GaplessScan).to receive(:head_edge_index).and_return(44_100 / 10)
+      expect(GaplessScan.head_plateau_s(path)).to be_nil
+    end
   end
 end
