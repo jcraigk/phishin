@@ -271,11 +271,13 @@ main.with-player {
       left: 0;
       height: 100%;
       width: 100%;
+      mask-image: linear-gradient(transparent, transparent);
       mask-size: 100% 100%;
       mask-position: 0 0;
       mask-repeat: no-repeat;
       mask-mode: alpha;
 
+      -webkit-mask-image: linear-gradient(transparent, transparent);
       -webkit-mask-size: 100% 100%;
       -webkit-mask-position: 0 0;
       -webkit-mask-repeat: no-repeat;
