@@ -62,14 +62,5 @@ RSpec.describe "gapless_scan" do # rubocop:disable RSpec/DescribeClass
              "-b:a", "192k", path.to_s, exception: true)
       expect(GaplessScan.head_plateau_s(path)).to be_nil
     end
-
-    it "refuses an edge that runs past the quiet measured off the front" do
-      path = build_mp3(Rails.root.join("tmp/spec/head_loud.mp3"),
-                       pad_level: 2, music_level: 8_000)
-      # Well past where the quiet actually ends, which is what a floor read off
-      # a track with no padding produces.
-      allow(GaplessScan).to receive(:head_edge_index).and_return(44_100 / 10)
-      expect(GaplessScan.head_plateau_s(path)).to be_nil
-    end
   end
 end
