@@ -284,6 +284,10 @@ module GaplessScan
     end
   end
 
+  def self.at_joint?(track)
+    preceded_in_set?(track) || followed_in_set?(track)
+  end
+
   def self.head_silence(path)
     pcm = decode(path, [ "-t", format("%.4f", MAX_SILENCE_S + 0.4) ])
     quiet = pcm.take_while { it.abs < SILENCE_LEVEL }.size / CHANNELS_PER_FRAME
@@ -437,7 +441,14 @@ namespace :gapless_scan do
         unreadable += 1
         next
       end
-      next unless GaplessScan.undeclared_padding?(head)
+      # A track whose header is already correct still belongs in the report when
+      # it sits at a joint. It has no padding of its own to cut, but its
+      # neighbour's tick is smoothed by a crossfade that both files must share,
+      # and a run can only include a track the report knows about. Carini into
+      # Sand on 2025-09-17 is the case: Sand was clean, so the joint went
+      # untreated and kept a 3041-count step.
+      padding = GaplessScan.undeclared_padding?(head)
+      next unless padding || GaplessScan.at_joint?(track)
 
       row = {
         # mp3_url and duration are carried so the review page can render the
@@ -591,6 +602,20 @@ namespace :gapless_scan do
     # Such a track is held back whole rather than trimmed at the tail alone: it
     # may sit in a run, and rewriting its neighbours without it would leave the
     # joint half-treated.
+    # A no-cut track is only worth rewriting if the track it joins is being
+    # rewritten anyway - otherwise every clean track inside a set would be
+    # re-encoded to no purpose.
+    cutting = rows.each_with_object(Set.new) do |row, set|
+      h = heads && row["preceded_in_set"] ? row["head_cut_s"].to_f : 0.0
+      t = tails ? row["tail_zeros_s"].to_f : 0.0
+      set << [ row["date"], row["set"], row["position"] ] if h.positive? || t.positive?
+    end
+    joint_candidate = lambda do |row|
+      key = [ row["date"], row["set"] ]
+      (row["preceded_in_set"] && cutting.include?(key + [ row["position"] - 1 ])) ||
+        (row["followed_in_set"] && cutting.include?(key + [ row["position"] + 1 ]))
+    end
+
     held = []
     work = rows.filter_map do |row|
       head = heads && row["preceded_in_set"] ? row["head_cut_s"].to_f : 0.0
@@ -599,7 +624,11 @@ namespace :gapless_scan do
         held << row
         next
       end
-      next if head.zero? && tail.zero?
+      # A track with nothing to cut is still kept when it sits at a joint: it
+      # earns its place in a run by taking half of the neighbouring crossfade,
+      # not by having padding of its own. Dropping it here would leave the
+      # joint untreated, which is how Sand kept its step.
+      next if head.zero? && tail.zero? && !joint_candidate.call(row)
       [ row, head, tail ]
     end
     if held.any?

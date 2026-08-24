@@ -90,5 +90,35 @@ RSpec.describe "gapless_scan" do # rubocop:disable RSpec/DescribeClass
       expect(runs).to be_empty
       expect(solo.map { it["position"] }).to eq([ 1, 3 ])
     end
+
+    # The Carini into Sand case: Sand's own header was already correct, so it
+    # carried no cut. It still has to join the run, because the crossfade that
+    # smooths the step belongs half to its file.
+    it "joins a track that has no cut of its own to its flagged neighbour" do
+      rows = [ row(1, preceded: false, followed: true).merge("head_cut_s" => 0.02),
+               row(2, preceded: true, followed: false) ]
+      runs, = GaplessScan.partition_runs(rows)
+      expect(runs.map { |r| r.map { it["position"] } }).to eq([ [ 1, 2 ] ])
+    end
+  end
+
+  describe ".at_joint?" do
+    it "keeps a clean track that sits between two others" do
+      track = instance_double(Track, set: "1", position: 2)
+      show = instance_double(Show, tracks: [
+        instance_double(Track, set: "1", position: 1),
+        track,
+        instance_double(Track, set: "1", position: 3)
+      ])
+      allow(track).to receive(:show).and_return(show)
+      expect(GaplessScan.at_joint?(track)).to be(true)
+    end
+
+    it "leaves a clean track alone when it is the only one in its set" do
+      track = instance_double(Track, set: "E", position: 1)
+      show = instance_double(Show, tracks: [ track ])
+      allow(track).to receive(:show).and_return(show)
+      expect(GaplessScan.at_joint?(track)).to be(false)
+    end
   end
 end
