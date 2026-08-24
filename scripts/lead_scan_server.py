@@ -30,6 +30,7 @@ import json
 import re
 import struct
 import subprocess
+import tempfile
 import sys
 import threading
 
@@ -344,9 +345,15 @@ def render_gapless_joint(first_url, second_url, first_duration_s, seconds,
     them applied - so the fix can be heard against the problem. Unlike
     render_joint this applies no burst trim or crossfade: the point is to hear
     exactly what removing the padding does, with nothing else changed.
+
+    Each side goes through the same trim-and-encode GaplessTrimService applies
+    and is decoded on its own afterwards, because that is what a player does
+    with two files. Joining the trimmed streams in one filter chain instead
+    skips the mp3 round trip, and it was hiding a residual gap: the chain
+    sounded clean while the site it was standing in for still clicked.
     """
     stamp = hashlib.sha1(
-        f"g1|{first_url}|{second_url}|{first_duration_s:.3f}|{seconds:.2f}"
+        f"g2|{first_url}|{second_url}|{first_duration_s:.3f}|{seconds:.2f}"
         f"|{tail_cut:.4f}|{head_cut:.4f}".encode()
     ).hexdigest()[:16]
     out_path = PREVIEW_DIR / f"{stamp}.wav"
@@ -360,31 +367,70 @@ def render_gapless_joint(first_url, second_url, first_duration_s, seconds,
     # atrim end past the real end silently keeps everything.
     exact = probe_duration(first_src) or first_duration_s
     first_end = exact - tail_cut
-    tail_start = max(0.0, first_end - seconds)
 
-    def read(src):
-        remote = str(src).startswith(("http://", "https://"))
-        flags = [ "-reconnect", "1", "-reconnect_streamed", "1",
-                  "-reconnect_delay_max", "5" ] if remote else []
-        return flags + [ "-i", str(src) ]
-
-    cmd = [
-        "ffmpeg", "-y", "-v", "error",
-        *read(first_src), *read(second_src),
-        "-filter_complex",
-        f"[0:a]atrim=start={tail_start:.4f}:end={first_end:.4f},"
-        f"asetpts=PTS-STARTPTS,aresample=44100[a];"
-        f"[1:a]atrim=start={head_cut:.4f}:end={head_cut + seconds:.4f},"
-        f"asetpts=PTS-STARTPTS,aresample=44100[b];"
-        f"[a][b]concat=n=2:v=0:a=1[out]",
-        "-map", "[out]", "-c:a", "pcm_s16le", str(out_path),
-    ]
-    with _render_sem:
+    with _render_sem, tempfile.TemporaryDirectory() as work:
+        work = Path(work)
+        first_mp3 = trim_through_lame(
+            first_src, work / "a.mp3", end=first_end)
+        second_mp3 = trim_through_lame(
+            second_src, work / "b.mp3", start=head_cut)
+        if first_mp3 is None or second_mp3 is None:
+            raise RuntimeError("could not re-encode one side of the joint")
+        # Decoded separately, then butted together: two <audio> elements played
+        # back to back, which is the thing being judged.
+        played = probe_duration(first_mp3) or first_end
+        cmd = [
+            "ffmpeg", "-y", "-v", "error",
+            "-i", str(first_mp3), "-i", str(second_mp3),
+            "-filter_complex",
+            f"[0:a]atrim=start={max(0.0, played - seconds):.4f},"
+            f"asetpts=PTS-STARTPTS,aresample=44100[a];"
+            f"[1:a]atrim=end={seconds:.4f},"
+            f"asetpts=PTS-STARTPTS,aresample=44100[b];"
+            f"[a][b]concat=n=2:v=0:a=1[out]",
+            "-map", "[out]", "-c:a", "pcm_s16le", str(out_path),
+        ]
         proc = subprocess.run(cmd, capture_output=True, timeout=RENDER_TIMEOUT_S)
     if proc.returncode != 0:
         out_path.unlink(missing_ok=True)
         raise RuntimeError(proc.stderr.decode()[:400] or "ffmpeg failed")
     return out_path
+
+
+# Mirrors LameEncoding: -V 0 for the catalog's ~250kbps, -q 0 for the slowest
+# and most accurate encode. Both scales run best to worst, so 0 is the top of
+# each.
+LAME_VBR_QUALITY = "0"
+LAME_ALGORITHM_QUALITY = "0"
+
+
+def trim_through_lame(src, out_path, start=0.0, end=None):
+    """One side of a joint, trimmed and re-encoded the way the service does.
+
+    ffmpeg's own mp3 muxer writes an Info header with no LAME extension, so the
+    padding it adds is undeclared and decodes as audio - the very fault being
+    repaired. lame writes the extension, and players strip what it declares.
+    """
+    remote = str(src).startswith(("http://", "https://"))
+    flags = [ "-reconnect", "1", "-reconnect_streamed", "1",
+              "-reconnect_delay_max", "5" ] if remote else []
+    trim = f"atrim=start={start:.6f}"
+    if end is not None:
+        trim += f":end={end:.6f}"
+    wav = out_path.with_suffix(".wav")
+    proc = subprocess.run(
+        [ "ffmpeg", "-y", "-v", "error", *flags, "-i", str(src),
+          "-af", f"{trim},asetpts=PTS-STARTPTS",
+          "-f", "wav", "-acodec", "pcm_s16le", str(wav) ],
+        capture_output=True, timeout=RENDER_TIMEOUT_S)
+    if proc.returncode != 0:
+        return None
+    proc = subprocess.run(
+        [ "lame", "--quiet", "-V", LAME_VBR_QUALITY,
+          "-q", LAME_ALGORITHM_QUALITY, str(wav), str(out_path) ],
+        capture_output=True, timeout=RENDER_TIMEOUT_S)
+    wav.unlink(missing_ok=True)
+    return out_path if proc.returncode == 0 else None
 
 
 def render_joint(first_url, second_url, first_duration_s, seconds, storage_dirs):
