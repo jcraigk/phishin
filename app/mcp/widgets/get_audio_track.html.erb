@@ -596,6 +596,21 @@
     }
 
 <%= partial("dark_mode_styles") %>
+
+    /* The player card sits on the blurred cover art in both themes, so the
+       subtitle keeps its light-card treatment even when the page is dark. */
+    [data-theme="dark"] .player-track-subtitle .location-link {
+      color: #3a3a3a;
+    }
+
+    [data-theme="dark"] .player-track-subtitle .location-link:hover {
+      color: #03BBF2;
+    }
+
+    [data-theme="dark"] .player-track-subtitle .tag-badge {
+      background-color: #6d6f71;
+      color: white;
+    }
   </style>
 </head>
 <body>
