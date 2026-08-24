@@ -1734,11 +1734,6 @@
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.29.tgz#5a40109a1ab5f84d6fd8fc928b19f367cbe7e7b1"
   integrity sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==
 
-"@regosen/gapless-5@^1.5.5":
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/@regosen/gapless-5/-/gapless-5-1.6.1.tgz#a6824588139fe0f8a193c0f7f3306f98b49caa36"
-  integrity sha512-1sHjGaxMPySKBK/ZBjQX9ncg5kL2OMc0d6duOOF0zbLRPFgPWEb/E8l9F2BKqNcDZbn4SHGS1UPof0UmWw0U7A==
-
 "@sinclair/typebox@^0.34.0":
   version "0.34.49"
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.34.49.tgz#4f1369234f2ecf693866476c3b2e1b54d2a9d68e"

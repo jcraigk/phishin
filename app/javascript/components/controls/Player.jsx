@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router";
 import { formatDate, parseTimeParam } from "../helpers/utils";
 import CoverArt from "../CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import { useGaplessPlayer } from "../hooks/useGaplessPlayer";
+import { usePlayer } from "../hooks/usePlayer";
 import { useMediaSession } from "../hooks/useMediaSession";
 import { PLAYER_CONSTANTS } from "../helpers/playerConstants";
 import PlayerControls from "./PlayerControls";
@@ -15,26 +15,15 @@ import { useFeedback } from "../contexts/FeedbackContext";
 const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, openAppModal, shouldAutoplay, setShouldAutoplay, onPlayingChange }) => {
   const location = useLocation();
   const [isPlayerCollapsed, setIsPlayerCollapsed] = useState(false);
-  const [hasPlayedInitially, setHasPlayedInitially] = useState(false);
-  const [isInitialUrlPlaySession, setIsInitialUrlPlaySession] = useState(false);
-  const [initialStartTime, setInitialStartTime] = useState(null);
   const { setNotice, setAlert } = useFeedback();
 
-  // Parse URL "t" param on initial load
-  useEffect(() => {
-    const urlStartTimeString = new URLSearchParams(location.search).get("t");
-
-    if (urlStartTimeString) {
-      setIsInitialUrlPlaySession(true);
-      const parsed = parseTimeParam(urlStartTimeString);
-      if (parsed !== null) setInitialStartTime(parsed);
-    } else if (activeTrack?.starts_at_second) {
-      setInitialStartTime(activeTrack.starts_at_second);
-    }
-  }, []);
+  // The URL "t" param names a start time for the track the page opened on.
+  const [urlStartTime] = useState(() => {
+    const param = new URLSearchParams(location.search).get("t");
+    return param ? parseTimeParam(param) : null;
+  });
 
   const {
-    gaplessPlayerRef,
     isPlaying,
     isLoading,
     currentTime,
@@ -47,7 +36,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     canSkipToNext,
     canScrubForward,
     handleScrubberClick,
-  } = useGaplessPlayer(activePlaylist, activeTrack, setActiveTrack, setNotice, setAlert, hasPlayedInitially ? null : initialStartTime, shouldAutoplay, setShouldAutoplay);
+  } = usePlayer(activePlaylist, activeTrack, setActiveTrack, setNotice, setAlert, urlStartTime, shouldAutoplay, setShouldAutoplay);
 
   useEffect(() => {
     if (onPlayingChange) onPlayingChange(isPlaying);
@@ -57,54 +46,15 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
     setIsPlayerCollapsed(!isPlayerCollapsed);
   };
 
-  const handleTogglePlayPause = () => {
-    if (!isPlaying && !hasPlayedInitially) {
-      setHasPlayedInitially(true);
-    }
-    togglePlayPause();
-  };
-
-  const handleSkipToNext = () => {
-    setIsInitialUrlPlaySession(false);
-    setInitialStartTime(null);
-    setHasPlayedInitially(true);
-    skipToNextTrack();
-  };
-
-  const handleSkipToPrevious = () => {
-    setIsInitialUrlPlaySession(false);
-    setInitialStartTime(null);
-    setHasPlayedInitially(true);
-    skipToPreviousTrack();
-  };
+  const handleTogglePlayPause = togglePlayPause;
+  const handleSkipToNext = skipToNextTrack;
+  const handleSkipToPrevious = skipToPreviousTrack;
 
   useEffect(() => {
-    if (activeTrack && gaplessPlayerRef.current && activePlaylist) {
-      if (typeof window !== "undefined") {
-        document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
-      }
-
-      const tracksWithAudio = activePlaylist.filter(track => track.mp3_url);
-      const trackIndex = tracksWithAudio.findIndex(track => track.id === activeTrack.id);
-
-      if (trackIndex >= 0 && trackIndex !== currentTrackIndex) {
-        gaplessPlayerRef.current.gotoTrack(trackIndex);
-
-        const startSecond = parseInt(activeTrack.starts_at_second) || 0;
-        if (startSecond > 0) {
-          setTimeout(() => {
-            if (gaplessPlayerRef.current) {
-              gaplessPlayerRef.current.setPosition(startSecond * 1000);
-            }
-          }, 100);
-        }
-
-        if (hasPlayedInitially) {
-          setIsInitialUrlPlaySession(false);
-        }
-      }
+    if (activeTrack && typeof window !== "undefined") {
+      document.title = `${activeTrack.title} - ${formatDate(activeTrack.show_date)} - Phish.in`;
     }
-  }, [activeTrack, gaplessPlayerRef, activePlaylist, currentTrackIndex]);
+  }, [activeTrack]);
 
   useMediaSession(activeTrack, {
     onPlayPause: handleTogglePlayPause,
