@@ -23,14 +23,21 @@ module GaplessScan
   # Measured ramps run 1-34 and the music above them starts in the thousands, so
   # anything in the low hundreds separates them; 20 lands inside the ramp.
   SILENCE_LEVEL = 50
-  # Thresholds the head edge is read at. Real padding ends at a hard edge, so
-  # every level above the ramp reports the same instant; a level inside it does
-  # not, which is how a ramp is told from a boundary.
-  HEAD_LADDER = [ 100, 200, 400, 800, 1600, 3200, 6400 ].freeze
-  # Answers this close together are the same edge - a couple of frames of slack.
-  HEAD_TOLERANCE_S = 0.0015
-  # How many rungs must agree before the edge counts as real.
-  HEAD_MIN_AGREE = 3
+  # The padding's own noise floor is read from this much of the head. It is flat
+  # and only a couple of counts high, so a short window measures it without
+  # reaching the performance even on the shortest padding seen.
+  HEAD_FLOOR_WINDOW_S = 0.008
+  # How far above that floor the level has to climb to be the performance.
+  # Anywhere from 4x to 32x picks the same instant to within a tenth of a
+  # millisecond, so the exact figure is not what the answer rests on.
+  HEAD_FLOOR_MULTIPLE = 8
+  # A floor of zero would make any sample at all the edge, so the threshold
+  # never drops below this.
+  HEAD_FLOOR_MIN = 8
+  # A lone spike is not the music starting. Most of this much audio after the
+  # candidate has to stay above the floor too.
+  HEAD_SUSTAIN_S = 0.005
+  HEAD_SUSTAIN_SHARE = 0.6
   # Shorter than this is not worth reporting; longer is a real fade, not padding.
   MIN_SILENCE_S = 0.004
   MAX_SILENCE_S = 0.150
@@ -267,43 +274,42 @@ module GaplessScan
 
   # Where the head padding ends, or nil when no boundary can be established.
   #
-  # A single threshold cannot find it. The padding is a ramp rather than a flat
-  # floor, so a level picked to clear one file's ramp sits inside another's, and
-  # measuring against each file's own floor fails the same way: where the ramp
-  # rises early it inflates the floor and the boundary lands short, leaving
-  # milliseconds of ringing in. Measured that way on one show, three of seven
-  # tracks undershot the true 25ms boundary by 1.5-4.3ms.
+  # Fixed thresholds cannot find it, at any number of levels. The level the
+  # performance starts at varies from track to track by more than the levels
+  # themselves: a track whose music comes in at 130 never reaches a rung above
+  # that, so only the lowest one sees the edge and nothing agrees with it. One
+  # joint in eight was left uncut for that reason.
   #
-  # Real padding ends at a hard edge, so every threshold above the ramp finds
-  # the same instant. The edge is read at a ladder of levels and taken only
-  # where they agree; where they keep climbing the quiet is the performance and
-  # the track is left alone.
+  # What is constant is the padding: a flat floor of a couple of counts of
+  # dither, whatever the music does afterwards. Measuring that floor and taking
+  # the edge where the level leaves it behind works at either extreme, because
+  # the threshold is derived from the track rather than assumed.
   def self.head_plateau_s(path)
     pcm = decode(path, [ "-t", format("%.4f", MAX_SILENCE_S + 0.4) ])
     return nil if pcm.empty?
     rate = sample_rate(path)
-    answers = HEAD_LADDER.filter_map { first_at_or_above(pcm, it, rate) }
-                         .select { it <= MAX_SILENCE_S }
-    cluster = largest_agreeing_cluster(answers)
-    return nil if cluster.size < HEAD_MIN_AGREE
-    # The middle of the cluster, not its earliest: the lowest rung sits on the
-    # last of the ramp often enough to pull the cut short.
-    cluster.sort[cluster.size / 2].round(4)
+    frames = pcm.each_slice(CHANNELS_PER_FRAME).map { it.map(&:abs).max }
+    floor = head_floor(frames, rate)
+    threshold = [ floor * HEAD_FLOOR_MULTIPLE, HEAD_FLOOR_MIN ].max
+    edge = head_edge_index(frames, rate, floor, threshold)
+    return nil if edge.nil?
+    (edge / rate.to_f).round(4)
   end
 
-  def self.first_at_or_above(pcm, level, rate)
-    index = pcm.index { it.abs >= level }
-    return nil if index.nil?
-    index / CHANNELS_PER_FRAME / rate.to_f
+  def self.head_floor(frames, rate)
+    window = frames.first((HEAD_FLOOR_WINDOW_S * rate).round)
+    window.empty? ? 0 : window.max
   end
 
-  # The biggest group of answers that land on the same instant, wherever they
-  # sit in the ladder. A contiguous run is not enough: a loud padding ramp
-  # pushes the low rungs progressively deeper into it, so the rungs that agree
-  # on the real edge are the high ones and the run is broken by the climb.
-  def self.largest_agreeing_cluster(answers)
-    answers.map { |a| answers.select { (it - a).abs <= HEAD_TOLERANCE_S } }
-           .max_by(&:size) || []
+  def self.head_edge_index(frames, rate, floor, threshold)
+    sustain = (HEAD_SUSTAIN_S * rate).round
+    limit = [ (MAX_SILENCE_S * rate).round, frames.size - sustain ].min
+    (0...limit).each do |index|
+      next if frames[index] < threshold
+      held = frames[index, sustain].count { it > floor * 2 }
+      return index if held > sustain * HEAD_SUSTAIN_SHARE
+    end
+    nil
   end
 
   # Trailing silence, and whether the audio before it ends in a cliff (encoder
