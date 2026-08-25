@@ -17,6 +17,40 @@ main.with-player {
     bottom: 0px;
   }
 
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0;
+    background: linear-gradient(
+      115deg,
+      transparent 0%,
+      transparent 44%,
+      color-mix(in srgb, var(--blue) 20%, transparent) 47%,
+      color-mix(in srgb, var(--blue) 45%, transparent) 50%,
+      color-mix(in srgb, var(--blue) 20%, transparent) 53%,
+      transparent 56%,
+      transparent 100%
+    );
+    background-size: 400% 100%;
+    background-position: 100% 0;
+    transition: opacity 0.6s ease;
+  }
+
+  &.playing::before {
+    opacity: 1;
+    animation: player-shimmer 4.6s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &.playing::before {
+      animation: none;
+      opacity: 0;
+    }
+  }
+
   .chevron-button {
     background-color: var(--control-gray);
     border-radius: 50%;
@@ -227,6 +261,12 @@ main.with-player {
 
   @keyframes spin {
     to { transform: rotate(360deg); }
+  }
+
+  @keyframes player-shimmer {
+    0% { background-position: 100% 0; }
+    65% { background-position: 0% 0; }
+    100% { background-position: 0% 0; }
   }
 
   .bottom-row {

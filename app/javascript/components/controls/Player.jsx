@@ -101,7 +101,7 @@ const Player = ({ activePlaylist, activeTrack, setActiveTrack, customPlaylist, o
   }, [handleTogglePlayPause, handleSkipToPrevious, handleSkipToNext, scrub]);
 
   return (
-    <div className={`audio-player ${activeTrack ? 'visible' : ''} ${isPlayerCollapsed ? 'collapsed' : ''}`}>
+    <div className={`audio-player ${activeTrack ? 'visible' : ''} ${isPlayerCollapsed ? 'collapsed' : ''} ${isPlaying && !isLoading ? 'playing' : ''}`}>
       <div
         className="chevron-button"
         onClick={togglePlayerPosition}
