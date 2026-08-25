@@ -1,180 +1,285 @@
-require "json"
+require "base64"
+require "shellwords"
 
-# Finds tracks that end in a long run of digital silence.
-#
-# When a split drops the audio at the end of a track and pads the length back
-# out, what is left is exact zeros - not the decaying near-silence an encoder
-# writes, but samples that are literally zero, for hundreds of milliseconds.
-# 2021-10-24 L.A. Woman is the case this was built from: 628ms of zeros
-# standing in for 0.55s of music the split lost.
-#
-# This is a different fault from the one gapless_scan looks for. Encoder
-# padding is inaudible material that should be trimmed; this is missing audio,
-# and trimming the silence would not bring it back. Repair needs the original
-# source, so this only reports.
-#
-# Only the tail matters, so the scan reads the last chunk of each file rather
-# than the whole thing - mp3 frames are self contained, so a byte range off the
-# end decodes on its own.
+# Finds tracks whose title holds two songs joined by a segue ("Mike's Song >
+# I Am Hydrogen") and splits them into two tracks after a human picks the cut
+# point. Same scan/review/apply shape as lead_scan.rake, with its own output
+# root and ignore list; the preview server is shared unchanged.
 module SplitScan
-  # Enough of the end to decode about a second of audio at any bitrate the
-  # catalog uses, and enough to hold a run far longer than anything reportable.
-  TAIL_BYTES = 64 * 1024
-  # An encoder writes at most a few tens of milliseconds of padding. Measured
-  # across the catalog, real tracks sit under 50ms and faults sit above 400ms,
-  # with nothing in between, so this threshold falls in an empty band rather
-  # than through a cluster.
-  SUSPECT_S = 0.150
-  CHANNELS_PER_FRAME = 2
-  BYTES_PER_SAMPLE = 2
+  SCAN_SCRIPT = "scripts/audio_split_analysis.py".freeze
+  SCAN_ROOT = "data/split_scan".freeze
 
-  def self.report_path
-    dir = ENV["OUT"].presence
-    return Pathname.new(dir).join("split_report.json") if dir
-    Rails.root.join("data/split_scan/report.json")
-  end
+  FLAGS = [ "--ignore-file", "#{SCAN_ROOT}/ignore.txt" ].freeze
 
-  # Seconds of exact digital zero at the end of the given mp3 bytes.
-  #
-  # Zero rather than "quiet": encoder padding decays through low values and
-  # would be caught by a threshold, while a split that lost its audio leaves
-  # samples that are exactly zero.
-  def self.trailing_zeros_s(bytes)
-    pcm, rate = decode(bytes)
-    return nil if pcm.nil? || pcm.empty?
-    frames = pcm.each_slice(CHANNELS_PER_FRAME).map { it.map(&:abs).max }
-    zeros = 0
-    frames.reverse_each do |level|
-      break unless level.zero?
-      zeros += 1
+  def self.run(selector, out_dir, log_path: nil)
+    unless system("which uv > /dev/null 2>&1")
+      abort "uv not found. Install it first: https://docs.astral.sh/uv/"
     end
-    # Every frame decoded was silent, so the run starts before what was read
-    # and this is a floor rather than a measurement. Reporting it would understate
-    # the fault, and the caller cannot tell the difference.
-    return nil if zeros == frames.size
-    (zeros / rate.to_f).round(4)
+
+    cmd = [
+      "uv", "run", SCAN_SCRIPT,
+      *selector,
+      *FLAGS,
+      "--json", "#{out_dir}/report.json",
+      "--html", "#{out_dir}/review.html"
+    ]
+    cmd.concat(Shellwords.split(ENV["EXTRA"])) if ENV["EXTRA"].present?
+
+    shell = Shellwords.join(cmd)
+    shell = "set -o pipefail; #{shell} 2>&1 | tee #{Shellwords.escape(log_path)}" if log_path
+
+    puts "Running: #{shell}"
+    ok = system(shell)
+    puts ok ? "Done. Review: #{out_dir}/review.html" : "FAILED (see output above)"
+    ok
   end
 
-  def self.suspect?(seconds)
-    seconds.present? && seconds >= SUSPECT_S
-  end
-
-  def self.decode(bytes)
-    Tempfile.create([ "split_tail", ".mp3" ], binmode: true) do |file|
-      file.write(bytes)
-      file.flush
-      rate = sample_rate(file.path)
-      out, _err, status = Open3.capture3(
-        "ffmpeg", "-v", "error", "-i", file.path,
-        "-f", "s16le", "-acodec", "pcm_s16le", "-"
-      )
-      return [ nil, nil ] unless status.success? && !out.empty?
-      [ out.unpack("s<*"), rate ]
+  # One review page for every year's candidates, written to the scan root as
+  # index.html. Replaces the old year-listing index now that few candidates
+  # remain; each year keeps its own report.json, so a single-year rescan still
+  # works and this just re-merges them.
+  def self.combine
+    unless system("which uv > /dev/null 2>&1")
+      abort "uv not found. Install it first: https://docs.astral.sh/uv/"
     end
+    system("uv", "run", SCAN_SCRIPT, "--combine", SCAN_ROOT,
+           "--ignore-file", "#{SCAN_ROOT}/ignore.txt") ||
+      abort("Combine failed")
   end
 
-  def self.sample_rate(path)
-    out, _err, status = Open3.capture3(
-      "ffprobe", "-v", "error", "-select_streams", "a:0",
-      "-show_entries", "stream=sample_rate", "-of", "default=nw=1:nk=1", path
+  def self.resolve_track(entry)
+    key = File.basename(URI.parse(entry["mp3_url"]).path, ".mp3")
+    blob = ActiveStorage::Blob.find_by(key:)
+    attachment = blob && ActiveStorage::Attachment.find_by(
+      blob_id: blob.id, record_type: "Track", name: "mp3_audio"
     )
-    rate = out.to_s.strip.to_i
-    status.success? && rate.positive? ? rate : 44_100
+    return [ nil, "blob #{key} not found (audio replaced since scan?)" ] unless attachment
+    [ attachment.record, nil ]
   end
 
-  def self.tail_bytes(track)
-    blob = track.mp3_audio.blob
-    size = blob.byte_size.to_i
-    return nil unless size.positive?
-    start = [ size - TAIL_BYTES, 0 ].max
-    blob.service.download_chunk(blob.key, start...size).to_s.force_encoding(Encoding::BINARY)
-  rescue StandardError
-    nil
-  end
-
-  # A run of silence closing a set is unremarkable - the recording just ends.
-  # Mid set it means the next track starts somewhere the audio does not reach.
-  def self.followed_in_set?(track)
-    track.show.tracks.any? do |other|
-      other.set == track.set && other.position == track.position + 1
+  def self.prompt_for_song(part_title, label)
+    unless $stdin.tty?
+      puts "  no song matches #{part_title.inspect} (not a tty, skipping)"
+      return nil
     end
+
+    puts "\n  No song matches #{part_title.inspect} in #{label}"
+    print "  Enter a song id, or press enter to skip: "
+
+    answer = $stdin.gets.to_s.strip
+    return nil if answer.empty?
+
+    song = Song.find_by(id: answer.to_i)
+    unless song
+      puts "  No song found for #{answer.inspect}, skipping"
+      return nil
+    end
+    puts "  Using #{song.title} (id=#{song.id})"
+    song.id
+  end
+
+  # An entry carries its own cut points, part titles and song ids; the reviewer
+  # set them all on the review page.
+  def self.split_with_prompts(track, entry, dry_run, label)
+    overrides = {}
+    asked = Set.new
+    cut_points = Array(entry["cut_points"]).map(&:to_f)
+    begin
+      TrackSplitService.call(
+        track, cut_points:, dry_run:,
+        song_overrides: overrides,
+        tag_sides: entry["tag_sides"] || {},
+        part_titles: entry["part_titles"],
+        song_ids: entry["song_ids"]
+      )
+    rescue TrackSplitService::SongNotFoundError => e
+      part = e.part_title
+      raise if part.nil? || asked.include?(part.downcase)
+      asked << part.downcase
+      song_id = prompt_for_song(part, label)
+      return nil if song_id.nil?
+      overrides[part] = song_id
+      retry
+    end
+  end
+
+  # Only the split songs can have moved, so every recompute is scoped to them:
+  # unscoped, each call would rework the whole set list, and update_previous
+  # would rewrite the entire performance history of every song in the show.
+  def self.refresh_gaps(show, songs)
+    song_ids = songs.map(&:id).uniq
+    next_shows = song_ids.filter_map do |song_id|
+      Track.joins(:show, :songs)
+           .where(songs: { id: song_id })
+           .where("tracks.set <> ?", "S")
+           .where.not(tracks: { exclude_from_stats: true })
+           .where("shows.performance_gap_value > 0")
+           .where("shows.date > ?", show.date)
+           .order("shows.date ASC, tracks.position ASC")
+           .first&.show
+    end.uniq
+
+    GapService.call(show, update_previous: true, song_ids:)
+    next_shows.each { GapService.call(it, song_ids:) }
+    next_shows
   end
 end
 
 namespace :split_scan do
-  desc "Find tracks ending in digital silence a split left behind " \
-       "(rake split_scan:run); FROM/TO=YYYY-MM-DD scope by show date, " \
-       "LIMIT=n stops early, OUT=<dir> writes the report elsewhere"
-  task run: :environment do
-    limit = ENV["LIMIT"].presence&.to_i
-    scope = Track.where.not(audio_status: "missing")
-                 .includes(:show, mp3_audio_attachment: :blob)
-    if ENV["FROM"].present? || ENV["TO"].present?
-      from = ENV["FROM"].presence || "1900-01-01"
-      to = ENV["TO"].presence || "2999-12-31"
-      scope = scope.joins(:show).where(shows: { date: from..to })
-      puts "Scoped to shows #{from}..#{to}"
-    end
-    total = limit || scope.count
-    puts "Scanning #{total} track(s) for split silence...\n\n"
-
-    found = []
-    checked = 0
-    unreadable = 0
-
-    scope.find_each.with_index do |track, i|
-      break if limit && i >= limit
-      checked += 1
-      bytes = SplitScan.tail_bytes(track)
-      if bytes.nil?
-        unreadable += 1
-        next
-      end
-      seconds = SplitScan.trailing_zeros_s(bytes)
-      next unless SplitScan.suspect?(seconds)
-
-      row = {
-        "track_id" => track.id, "date" => track.show.date.to_s,
-        "position" => track.position, "title" => track.title,
-        "set" => track.set, "url" => track.url,
-        "mp3_url" => track.mp3_url,
-        "duration_s" => (track.duration.to_i / 1000.0).round(3),
-        "trailing_zeros_s" => seconds,
-        "followed_in_set" => SplitScan.followed_in_set?(track)
-      }
-      found << row
-      puts format("%-11s t%-3d %-40s %8.1fms%s",
-                  row["date"], row["position"], row["title"].to_s.first(40),
-                  seconds * 1000, row["followed_in_set"] ? "  (mid set)" : "")
-      print "\r#{checked}/#{total} scanned..." if (checked % 250).zero?
-    end
-
-    path = SplitScan.report_path
-    FileUtils.mkdir_p(path.dirname)
-    path.write(JSON.pretty_generate(
-      "scanned" => checked, "found" => found.size, "tracks" => found
-    ))
-
-    mid_set = found.count { it["followed_in_set"] }
-    puts "\n\nScanned #{checked} track(s), #{unreadable} unreadable"
-    puts "Found #{found.size}, of which #{mid_set} sit mid set (lost audio)"
-    puts "Report: #{path}"
+  desc "Scan one show for segue tracks (rake split_scan:show[1989-05-26])"
+  task :show, [ :date ] => :environment do |_t, args|
+    abort "Usage: rake split_scan:show[YYYY-MM-DD]" unless args[:date]
+    out_dir = "#{SplitScan::SCAN_ROOT}/shows/#{args[:date]}"
+    exit 1 unless SplitScan.run([ "--show", args[:date] ], out_dir)
   end
 
-  desc "Summarize the last split scan report (rake split_scan:summary)"
-  task summary: :environment do
-    path = SplitScan.report_path
-    abort "No report at #{path} - run split_scan:run first" unless path.exist?
-    rows = JSON.parse(path.read)["tracks"]
-    mid = rows.select { it["followed_in_set"] }
-    puts "#{rows.size} track(s) end in silence, #{mid.size} of them mid set\n\n"
-    mid.group_by { it["date"] }.sort.each do |date, items|
-      puts "#{date}  #{items.size} track(s)"
-      items.sort_by { it["position"] }.each do |row|
-        puts format("   t%-3d %-42s %8.1fms",
-                    row["position"], row["title"].to_s.first(42),
-                    row["trailing_zeros_s"] * 1000)
+  desc "Scan one year of shows (rake split_scan:year[1989])"
+  task :year, [ :year ] => :environment do |_t, args|
+    abort "Usage: rake split_scan:year[YYYY]" unless args[:year]
+    out_dir = "#{SplitScan::SCAN_ROOT}/#{args[:year]}"
+    ok = SplitScan.run(
+      [ "--year", args[:year] ],
+      out_dir,
+      log_path: "#{SplitScan::SCAN_ROOT}/#{args[:year]}.log"
+    )
+    SplitScan.combine
+    exit 1 unless ok
+  end
+
+  desc "Rebuild the combined review page (data/split_scan/index.html)"
+  task :index do
+    SplitScan.combine
+  end
+
+  desc "Regenerate review pages from existing reports (rake split_scan:rebuild or " \
+       "split_scan:rebuild[1989]); no API calls"
+  task :rebuild, [ :year ] do |_t, args|
+    dirs =
+      if args[:year]
+        [ "#{SplitScan::SCAN_ROOT}/#{args[:year]}" ].select { File.exist?("#{it}/report.json") }
+      else
+        Dir.glob("#{SplitScan::SCAN_ROOT}/{[0-9][0-9][0-9][0-9],shows/*}")
+           .select { File.exist?("#{it}/report.json") }
+      end
+    abort "No reports found under #{SplitScan::SCAN_ROOT}" if dirs.empty?
+    cmd = [ "uv", "run", SplitScan::SCAN_SCRIPT, *SplitScan::FLAGS ] +
+          dirs.flat_map { [ "--rebuild", it ] }
+    system(*cmd) || abort("Rebuild failed")
+    SplitScan.combine
+  end
+
+  desc "Serve review pages with live split previews (rake split_scan:serve for all " \
+       "years, or split_scan:serve[1989] for one)"
+  task :serve, [ :year, :port ] => :environment do |_t, args|
+    dir = args[:year] ? "#{SplitScan::SCAN_ROOT}/#{args[:year]}" : SplitScan::SCAN_ROOT
+    if args[:year] && !File.exist?("#{dir}/review.html")
+      abort "No review page at #{dir}/review.html"
+    end
+    # The lead scan's server renders arbitrary {mp3_url, trim_start, trim_end}
+    # segments, which is exactly what the two audition clips need. Shared as is.
+    cmd = [ "uv", "run", "scripts/lead_scan_server.py", "--dir", dir ]
+    cmd += [ "--port", args[:port] ] if args[:port]
+    system(*cmd)
+  end
+
+  desc "Apply approved track splits (rake split_scan:apply[path/to/approved.json]); " \
+       "DRY_RUN=1 renders only, ONLY=<track url> filters"
+  task :apply, [ :json_path ] => :environment do |_t, args|
+    abort "Usage: rake split_scan:apply[path/to/approved.json]" unless args[:json_path]
+    entries = JSON.parse(File.read(args[:json_path]))
+
+    if ENV["ONLY"].present?
+      track = Track.by_url(ENV["ONLY"])
+      abort "No track found for #{ENV['ONLY']} (expected a track url like " \
+            "https://phish.in/1989-05-26/mikes-song-i-am-hydrogen)" unless track
+      position_token = format(" t%02d ", track.position)
+      entries = entries.select do |e|
+        e["label"].start_with?("#{track.show.date} ") && e["label"].include?(position_token)
       end
     end
+
+    abort "No matching entries" if entries.empty?
+
+    dry_run = ENV["DRY_RUN"] == "1"
+    puts dry_run ? "DRY RUN: rendering both halves without changing anything\n\n"
+                 : "Applying #{entries.size} split(s)\n\n"
+    applied = 0
+    failures = []
+    # Gaps are recomputed per show once all of its splits are in, not per split:
+    # a show with two splits would otherwise pay for the same recomputation
+    # twice and see the first pass work from a half-changed set list.
+    touched = Hash.new { |h, k| h[k] = [] }
+
+    entries.each_with_index do |entry, idx|
+      label = entry["label"]
+      progress = "[#{idx + 1}/#{entries.size}]"
+      if Array(entry["cut_points"]).empty?
+        failures << [ label, "no cut_points in the export" ]
+        next
+      end
+
+      track, error = SplitScan.resolve_track(entry)
+      if error
+        failures << [ label, error ]
+        next
+      end
+
+      begin
+        result = SplitScan.split_with_prompts(track, entry, dry_run, label)
+        next failures << [ label, "skipped: unmatched song" ] if result.nil?
+        applied += 1
+        status = result[:applied] ? "APPLIED" : "RENDERED"
+        display = label.sub(/\A(\d{4}-\d{2}-\d{2} .*?) t\d+ /, '\1 ')
+        puts "#{status} #{progress}  #{display}"
+        result[:parts].each_with_index do |part, i|
+          puts "  part #{i + 1}:  #{part[:title]} (#{part[:duration_s]}s) " \
+               "-> #{part[:path]}"
+        end
+        puts "  backup:  #{result[:backup_path]}" if result[:backup_path]
+        if result[:applied]
+          result[:parts].each_with_index do |part, i|
+            puts "  #{i.zero? ? 'tracks: ' : '        '} #{part[:url]}"
+          end
+          puts "  moved:   #{result[:likes_copied]} like(s), " \
+               "#{result[:tags_copied]} tag(s), " \
+               "#{result[:playlist_entries]} playlist entr(ies)"
+          if result[:tags_removed].to_i.positive?
+            puts "  removed: #{result[:tags_removed]} tag(s) set to neither"
+          end
+          if entry["tag_sides"].present?
+            entry["tag_sides"].each do |name, side|
+              parts = side.is_a?(Array) ? side.map { it + 1 }.join(", ") : side
+              puts "  tag:     #{name} -> part #{parts}"
+            end
+          end
+          result[:reslugged].each do |r|
+            puts "  reslug:  #{r[:from]} -> #{r[:to]} (track #{r[:track_id]})"
+          end
+          result[:notes].each { puts "  note:    #{it}" }
+          touched[track.show] |= result[:song_ids].map { Song.find(it) }
+        end
+      rescue TrackSplitService::Error => e
+        failures << [ label, e.message ]
+      end
+    end
+
+    touched.each do |show, songs|
+      puts "\nRecomputing gaps for #{show.date}..."
+      next_shows = SplitScan.refresh_gaps(show, songs)
+      puts "  also refreshed #{next_shows.size} later show(s)" if next_shows.any?
+    end
+
+    puts "\n#{applied} of #{entries.size} entries #{dry_run ? 'rendered' : 'applied'}"
+    if failures.any?
+      puts "Failures:"
+      failures.each { |label, msg| puts "  #{label}: #{msg}" }
+    end
+
+    if !dry_run && applied.positive?
+      puts "Clearing Rails cache..."
+      Rails.cache.clear
+    end
+
+    exit 1 if failures.any?
   end
 end
