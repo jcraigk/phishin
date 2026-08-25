@@ -32,6 +32,7 @@ const LayoutContent = ({ props, navigate }) => {
   const [sortOption, setSortOption] = useState("desc");
   const [shouldAutoplay, setShouldAutoplay] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { setNotice, setAlert } = useFeedback();
   const { isFilterLoading } = useAudioFilter();
 
@@ -158,7 +159,8 @@ const LayoutContent = ({ props, navigate }) => {
             setViewMode,
             sortOption,
             setSortOption,
-            isPlaying
+            isPlaying,
+            isLoading
           }}
         />
       </main>
@@ -171,6 +173,7 @@ const LayoutContent = ({ props, navigate }) => {
         shouldAutoplay={shouldAutoplay}
         setShouldAutoplay={setShouldAutoplay}
         onPlayingChange={setIsPlaying}
+        onLoadingChange={setIsLoading}
       />
       <AppModal
         isOpen={isAppModalOpen}

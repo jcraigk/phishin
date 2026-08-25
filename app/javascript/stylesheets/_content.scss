@@ -323,6 +323,19 @@ main {
   .track-eq-bar:nth-child(3) { animation-delay: -0.30s; }
   .track-eq-bar:nth-child(4) { animation-delay: -0.70s; }
 
+  .track-loading-spinner {
+    display: inline-block;
+    width: 0.9rem;
+    height: 0.9rem;
+    margin-right: 0.5rem;
+    border: 2px solid color-mix(in srgb, var(--blue) 35%, transparent);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    flex-shrink: 0;
+    pointer-events: none;
+    animation: track-loading-spin 0.6s linear infinite;
+  }
+
 
   .cover-art {
     display: inline-block;
@@ -346,7 +359,8 @@ main {
     width: 2rem;
     text-align: right;
 
-    .track-eq {
+    .track-eq,
+    .track-loading-spinner {
       margin-right: 0;
       vertical-align: middle;
     }
@@ -687,6 +701,10 @@ main {
       margin-top: -20px;
     }
   }
+}
+
+@keyframes track-loading-spin {
+  to { transform: rotate(360deg); }
 }
 
 @keyframes track-eq-bounce {

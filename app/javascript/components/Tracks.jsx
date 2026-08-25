@@ -10,8 +10,21 @@ import CoverArt from "./CoverArt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faScissors } from "@fortawesome/free-solid-svg-icons";
 
+const PlaybackIndicator = ({ isLoading }) => (
+  isLoading ? (
+    <span className="track-loading-spinner" aria-hidden="true" />
+  ) : (
+    <span className="track-eq" aria-hidden="true">
+      <span className="track-eq-bar" />
+      <span className="track-eq-bar" />
+      <span className="track-eq-bar" />
+      <span className="track-eq-bar" />
+    </span>
+  )
+);
+
 const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, highlight, trackRefs, trackSlug }) => {
-  const { playTrack, activeTrack, setCustomPlaylist, isPlaying } = useOutletContext();
+  const { playTrack, activeTrack, setCustomPlaylist, isPlaying, isLoading } = useOutletContext();
 
   const handleTrackClick = (track) => {
     if (track.audio_status === 'missing') return;
@@ -67,25 +80,15 @@ const Tracks = ({ tracks, viewStyle, numbering = false, omitSecondary = false, h
         <div className="main-row">
           {numbering ? (
             <span className="leftside-numbering">
-              {isActive && isPlaying ? (
-                <span className="track-eq" aria-hidden="true">
-                  <span className="track-eq-bar" />
-                  <span className="track-eq-bar" />
-                  <span className="track-eq-bar" />
-                  <span className="track-eq-bar" />
-                </span>
+              {isActive && (isLoading || isPlaying) ? (
+                <PlaybackIndicator isLoading={isLoading} />
               ) : (
                 `#${index + 1}`
               )}
             </span>
           ) : (
-            isActive && isPlaying && (
-              <span className="track-eq" aria-hidden="true">
-                <span className="track-eq-bar" />
-                <span className="track-eq-bar" />
-                <span className="track-eq-bar" />
-                <span className="track-eq-bar" />
-              </span>
+            isActive && (isLoading || isPlaying) && (
+              <PlaybackIndicator isLoading={isLoading} />
             )
           )}
           <span className="leftside-primary">
