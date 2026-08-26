@@ -123,15 +123,20 @@ def note_hits(taper_notes):
     return hits
 
 
-def notes_line_for(file_name, hits):
-    """The notes entry for a source file, by its track token (d1t09 -> d1t09, t09, 09)."""
+def notes_line_for(file_name, hits, all_names=()):
+    """The notes entry for a source file, by its track token (d1t09 -> d1t09, t09, 09).
+    A bare track number only counts when no other file in the item shares it,
+    else "t01" under Encore would label every disc's first file."""
     stem = Path(file_name).stem.lower()
-    m = re.search(r"(d\d+)?t(\d+)$", stem)
+    m = re.search(r"([ds]\d+)?t(\d+)$", stem)
     if not m:
         return next((h["line"] for h in hits if stem in h["line"].lower()), None)
     disc, num = m.group(1), int(m.group(2))
-    patterns = [rf"\b{disc}t0*{num}\b" if disc else None, rf"\bt0*{num}\b",
-                rf"^\W*0*{num}[\.\)\-\s:]"]
+    shared = sum(1 for n in all_names
+                 if re.search(rf"t0*{num}$", Path(n).stem.lower())) > 1
+    patterns = [rf"\b{disc}t0*{num}\b" if disc else None]
+    if not shared:
+        patterns += [rf"\bt0*{num}\b", rf"^\W*0*{num}[\.\)\-\s:]"]
     for pat in patterns:
         if not pat:
             continue
@@ -598,12 +603,19 @@ def analyze_show(date, out_dir):
     if re.search(r"\b(filler|bonus)\b", filler_text, re.I) and f2t:
         drop.update(range(max(f2t) + 1, len(files)))
     # A file named for another date is from another show, wherever it sits.
-    own = date.replace("-", "")
+    # The item's own date is whatever the matched files are named with (the
+    # taper's date, which can differ from phish.in's), not the show date.
+    def name_date(f):
+        m = re.search(r"(\d{2,4})-?(\d{2})-?(\d{2})", Path(f["name"]).name)
+        return m and "".join(m.groups())[-6:]
+    from collections import Counter
+    own_dates = Counter(d for d in (name_date(files[i]) for i in f2t) if d)
+    own = own_dates.most_common(1)[0][0] if own_dates else date.replace("-", "")[-6:]
     for i, f in enumerate(files):
         if i in f2t:
             continue
-        m = re.search(r"(\d{4})-?(\d{2})-?(\d{2})", Path(f["name"]).name)
-        if m and "".join(m.groups()) != own:
+        d = name_date(f)
+        if d and d != own:
             drop.add(i)
     if drop:
         report.filler_skipped = [files[i]["title"] for i in sorted(drop)]
@@ -675,10 +687,21 @@ def analyze_show(date, out_dir):
             members=[{"name": m["name"], "title": m["title"], "length": m["length"]}
                      for m in members],
         )
-        cand.notes_line = (notes_line_for(f["name"], hits)
+        cand.notes_line = (notes_line_for(f["name"], hits, [x["name"] for x in files])
                            or notes_line_by_neighbors(hits, after, before))
         if after is None or before is None:
-            if cand.status == "candidate":
+            # At a set edge the only place it could already be is just outside
+            # the anchor: the track before it, or the one after.
+            anchor = before or after
+            pos = anchor["position"] + (-1 if before else 1)
+            neighbor = next((t for t in tracks if t["position"] == pos), None)
+            if len(members) == 1 and neighbor and (
+                    same_title(neighbor["title"], f["title"])
+                    or abs(neighbor["duration"] / 1000.0 - (f["length"] or -1)) <= DURATION_TOL_S):
+                cand.status = "already_present"
+                cand.note = (f"{f['title']} is on phish.in as {neighbor['title']} "
+                             f"({neighbor['duration'] / 1000:.0f}s vs {f['length'] or 0:.0f}s in the source)")
+            elif cand.status == "candidate":
                 cand.status = "unanchored"
         elif before["position"] != after["position"] + 1:
             between = [t for t in tracks if after["position"] < t["position"] < before["position"]]
