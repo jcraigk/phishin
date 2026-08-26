@@ -716,7 +716,7 @@ def placement_text(c):
 
 def source_cell(c, md5=None):
     def player(name):
-        return f'<audio controls preload="none" src="clips/{esc(name)}"></audio>'
+        return f'<audio class="full" controls preload="none" src="clips/{esc(name)}"></audio>'
     if len(c.members) > 1:
         first, last = c.members[0], c.members[-1]
         middle = ", ".join(esc(m["title"]) for m in c.members[1:-1])
@@ -819,6 +819,8 @@ def write_review(out_dir, reports):
   tr.unanchored, tr.run {{ background: #f6f6f6; }}
   section.unresolved {{ background: #fdf5f5; padding: 0 1rem; }}
   audio {{ height: 28px; width: 220px; }}
+  audio.full {{ width: 100%; min-width: 520px; }}
+  td:first-child {{ min-width: 560px; }}
   code {{ font-size: 12px; }}
   #export {{ position: fixed; top: 1rem; right: 1rem; padding: .5rem 1rem; }}
   #toc {{ font-size: 12px; }}
