@@ -915,11 +915,11 @@ def set_options(c):
     default = seen[0] if seen else None
     if len(seen) == 2 and c.joints.get("in") and c.joints.get("out"):
         default = c.before_set if c.joints["out"]["score"] < c.joints["in"]["score"] else c.after_set
-    # Files ahead of the first song may be soundcheck material; always offer it.
-    if "Soundcheck" not in seen:
-        seen.append("Soundcheck")
+    # Every set is offered: a file at a set's end may open the encore, and files
+    # ahead of the first song may be the soundcheck.
+    names = list(SET_CODES) + [n for n in seen if n not in SET_CODES]
     return "".join(f'<option value="{SET_CODES.get(n, n)}"{" selected" if n == default else ""}>{esc(n)}</option>'
-                   for n in seen)
+                   for n in names)
 
 
 def placement_text(c):
