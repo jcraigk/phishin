@@ -137,7 +137,7 @@ RSpec.describe "API v2 Admin Jobs" do
 
       expect(response).to have_http_status(:ok)
       expect(response.media_type).to eq("audio/mpeg")
-      expect(response.body[0, 3]).to eq("ID3")
+      expect(mp3_frame_sync?(response.body)).to be(true)
       expect(response.body.bytesize).to eq(File.size(job.payload["audio_paths"].first))
     end
   end
@@ -183,7 +183,7 @@ RSpec.describe "API v2 Admin Jobs" do
 
         expect(response).to have_http_status(:ok)
         expect(response.media_type).to eq("audio/mpeg")
-        expect(response.body[0, 3]).to eq("ID3")
+        expect(mp3_frame_sync?(response.body)).to be(true)
         expect(response.body.bytesize)
           .to eq(File.size(job.payload["audio_paths"][index]))
       end

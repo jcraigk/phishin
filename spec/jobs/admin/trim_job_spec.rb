@@ -60,7 +60,7 @@ RSpec.describe Admin::TrimJob do
       GC.start
       expect(File.exist?(path)).to be(true)
       expect(File.size(path)).to be_positive
-      expect(File.binread(path)[0, 3]).to eq("ID3")
+      expect(mp3_frame_sync?(File.binread(path))).to be(true)
       expect(probe_duration(path)).to be_within(0.2).of(20.0)
     end
 
