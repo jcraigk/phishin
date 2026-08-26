@@ -147,9 +147,19 @@ def notes_line_for(file_name, hits, all_names=()):
 
 
 def same_title(a, b):
+    """Taper spellings drift (Suzie/Suzy, Your/You're, 'Timber HO!'), so this
+    is deliberately loose: containment, a shared long prefix, or close edit distance."""
+    import difflib
     norm = lambda t: re.sub(r"[^a-z0-9]+", " ", t.lower()).strip()
     a, b = norm(a), norm(b)
-    return bool(a) and bool(b) and (a == b or a in b.split(" > ") or a in b or b in a)
+    if not a or not b:
+        return False
+    if a == b or a in b or b in a:
+        return True
+    short = min(a, b, key=len)
+    if len(short) >= 6 and a[:6] == b[:6] and (a.split()[0] == b.split()[0]):
+        return True
+    return difflib.SequenceMatcher(None, a, b).ratio() >= 0.8
 
 
 def notes_line_by_neighbors(hits, after, before):
@@ -671,6 +681,37 @@ def analyze_show(date, out_dir):
         after = by_id[f2t[prev_idx][-1]] if prev_idx is not None else None
         before = by_id[f2t[next_idx][0]] if next_idx is not None else None
         members = files[first:last + 1]
+        dropped = []
+        if after and before and len(members) > 1:
+            # A run can mix files phish.in already has (at another length) with
+            # ones it lacks; keep the missing ones and anchor them on the
+            # neighbours phish.in does have.
+            between = [t for t in tracks if after["position"] < t["position"] < before["position"]]
+            present = {}
+            for mi, m in enumerate(members):
+                t = next((t for t in between if same_title(t["title"], m["title"])), None)
+                if t:
+                    present[mi] = t
+            keep = [mi for mi in range(len(members)) if mi not in present]
+            # Untitled files can't match by name; the same number of song-length
+            # files as phish.in has songs in that slot is the same songs.
+            if not present and len(between) == len(members) and all(
+                    (m["length"] or 0) >= 240 and not BANTER_RE.search(m["title"]) for m in members):
+                present = dict(enumerate(between))
+                keep = []
+            if present and keep:
+                lo, hi = keep[0], keep[-1]
+                prev_p = max((mi for mi in present if mi < lo), default=None)
+                next_p = min((mi for mi in present if mi > hi), default=None)
+                if prev_p is not None:
+                    after = present[prev_p]
+                if next_p is not None:
+                    before = present[next_p]
+                dropped = [members[mi]["title"] for mi in present]
+                members = [members[mi] for mi in keep]
+            elif present and not keep:
+                dropped = [m["title"] for m in members]
+                members = members[:1]
         f = members[0]
         key = f"{date}:{Path(f['name']).stem}"
         cand = Candidate(
@@ -689,6 +730,13 @@ def analyze_show(date, out_dir):
         )
         cand.notes_line = (notes_line_for(f["name"], hits, [x["name"] for x in files])
                            or notes_line_by_neighbors(hits, after, before))
+        if dropped and len(dropped) == len(files[first:last + 1]):
+            cand.status = "already_present"
+            cand.note = "already on phish.in: " + ", ".join(dropped)
+            report.candidates.append(cand)
+            continue
+        if dropped:
+            cand.note = "already on phish.in alongside: " + ", ".join(dropped)
         if after is None or before is None:
             # At a set edge the only place it could already be is just outside
             # the anchor: the track before it, or the one after.
