@@ -186,8 +186,9 @@ namespace :banter_scan do
           before_track = Track.find(result[:track_id]) if result[:applied] && members.size > 1
         rescue BanterInsertService::AlreadyInserted => e
           puts "SKIPPED #{progress}  #{e.message}"
-        rescue BanterInsertService::Error, RuntimeError => e
-          failures << [ label, e.message ]
+        rescue StandardError => e
+          # One bad entry must not take the rest of the batch down with it.
+          failures << [ label, "#{e.class}: #{e.message.lines.first&.strip}" ]
         end
       end
     end

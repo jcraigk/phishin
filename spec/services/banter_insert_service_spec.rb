@@ -169,6 +169,27 @@ RSpec.describe BanterInsertService do
     end
   end
 
+  context "when the earlier copy was retitled and trimmed" do
+    it "still counts as already inserted" do
+      first = described_class.call(after_track, source_path:, before_track:)
+      Track.find(first[:track_id]).update_columns(title: "Intro", duration: 1500)
+      expect { described_class.call(after_track, source_path:, before_track:) }
+        .to raise_error(described_class::AlreadyInserted)
+    end
+  end
+
+  context "when a same-title slug is already taken out of sequence" do
+    it "renumbers the existing slugs and inserts" do
+      create(:track, show:, title: "Banter", slug: "banter-2", position: 4, set: "2")
+      show.tracks.find_by!(title: "Harry Hood").update_column(:position, 3)
+      result
+      expect(show.tracks.order(:position).pluck(:position, :title, :slug)).to eq(
+        [ [ 1, "Magilla", "magilla" ], [ 2, "Cavern", "cavern" ], [ 3, "Banter", "banter" ],
+          [ 4, "Harry Hood", "harry-hood" ], [ 5, "Banter", "banter-2" ] ]
+      )
+    end
+  end
+
   context "with dry_run" do
     let(:dry_run) { true }
 

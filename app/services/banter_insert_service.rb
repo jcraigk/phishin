@@ -51,12 +51,16 @@ class BanterInsertService < ApplicationService
 
   # Re-running an export must not double up: the slot already holding a track
   # with this title and the source file's length is this file, inserted earlier.
+  # The earlier copy sits at the target slot, or - when only a before-track
+  # anchors it - just ahead of that track (the insert pushed it down by one).
+  # Matched on length alone, loosely: the reviewer may have retitled it or
+  # trimmed a couple of seconds since.
+  ALREADY_INSERTED_TOLERANCE_MS = 3000
+
   def check_already_inserted!
-    # The earlier copy sits at the target slot, or - when only a before-track
-    # anchors it - just ahead of that track (the insert pushed it down by one).
     slots = after_track ? [ position ] : [ position, position - 1 ]
-    existing = show.tracks.where(position: slots, title:).find do |t|
-      (t.duration - source_duration_ms).abs <= 500
+    existing = show.tracks.where(position: slots).find do |t|
+      (t.duration - source_duration_ms).abs <= ALREADY_INSERTED_TOLERANCE_MS
     end
     return unless existing
 
@@ -100,9 +104,31 @@ class BanterInsertService < ApplicationService
       song_id: song.id,
       set: set.presence || anchor.set
     ).call
+    # The generator numbers an unsaved track after every existing one, so
+    # after a renumber the new slug needs to be put back in position order.
+    renumber_same_title_slugs if @retried_slugs
+  rescue ActiveRecord::RecordNotUnique
+    # Slugs number same-title tracks by position, so a deleted or retitled
+    # track leaves the sequence with a hole the new one lands in. Renumber the
+    # survivors and try once more.
+    unshift_positions unless show.tracks.reload.exists?(position:)
+    raise if @retried_slugs
+
+    @retried_slugs = true
+    renumber_same_title_slugs
+    retry
   rescue StandardError
     unshift_positions unless show.tracks.reload.exists?(position:)
     raise
+  end
+
+  def renumber_same_title_slugs
+    group = show.tracks.reload.where(title:).order(:position).to_a
+    group.each_with_index { |t, i| t.update_column(:slug, "reslug-tmp-#{t.id}-#{i}") }
+    group.each do |t|
+      t.reload.generate_slug(force: true)
+      t.save!
+    end
   end
 
   def unshift_positions
