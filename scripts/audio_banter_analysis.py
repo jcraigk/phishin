@@ -778,17 +778,18 @@ def candidate_row(c):
               f'{joint_block("Direct", c.joints.get("direct"))}</div>')
     decide = ""
     payload = ""
-    if c.status == "candidate":
+    if c.status in ("candidate", "unanchored"):
         payload = ' data-payload="' + esc(json.dumps({
             "date": c.date, "key": c.key, "after_id": c.after_id, "after_title": c.after_title,
             "after_position": c.after_position, "before_id": c.before_id,
-            "before_title": c.before_title, "source_path": c.source_path,
-            "source_item": c.source_item, "source_file": c.source_file,
+            "before_title": c.before_title, "before_position": c.before_position,
+            "source_path": c.source_path, "source_item": c.source_item,
+            "source_file": c.source_file,
         })) + '"'
         decide = ('<div class="decide"><label><input type="checkbox" class="approve"> Approve</label>'
                   '<label class="field"><span>Title</span><input class="title" value="Banter"></label>'
                   '<label class="field"><span>Song</span><select class="song"></select></label></div>')
-    cls = "row " + ("cand" if c.status == "candidate" else c.status)
+    cls = "row " + ("cand" if c.status in ("candidate", "unanchored") else c.status)
     return (f'<div class="{cls}"{payload}>{head}{source_block(c)}'
             f'<div class="meta small">{" · ".join(meta)}</div>{joints}{decide}</div>')
 
@@ -851,7 +852,7 @@ def write_review(out_dir, reports):
                     f'{len(r.filler_skipped)} trailing filler files skipped</span>')
         src += "</div>"
         rows = [candidate_row(c) for c in r.candidates]
-        n_cand += sum(1 for c in r.candidates if c.status == "candidate")
+        n_cand += sum(1 for c in r.candidates if c.status in ("candidate", "unanchored"))
         body = "".join(rows) or '<p class="meta">Every source file matches a phish.in track.</p>'
         sections.append(f"<section>{head}</div>{src}{notes}{body}</section>")
 
@@ -934,7 +935,7 @@ def write_review(out_dir, reports):
   .row.approved {{ background: var(--sel); border-color: var(--sel-line);
                    box-shadow: inset 3px 0 0 var(--link); }}
   .row.already {{ opacity: .55; }}
-  .row.unanchored, .row.run {{ opacity: .85; }}
+  .row.run {{ opacity: .85; }}
   .head {{ display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; margin-bottom: .5rem; }}
   .head strong {{ font-family: "Open Sans Condensed", -apple-system, sans-serif; font-size: 21px;
                   font-weight: 700; }}

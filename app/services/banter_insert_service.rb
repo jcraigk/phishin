@@ -1,7 +1,9 @@
 # Inserts a banter track from a source recording file (usually a FLAC pulled
 # from the archive.org item the show was cut from): encodes it to the
 # catalog's LAME settings, inserts it after a given track via TrackInserter,
-# and tags it. With dry_run: true it only renders the MP3 for review.
+# and tags it. Either anchor may be absent: with only before_track the file
+# goes at the start of that track's set (its position), with only after_track
+# at the end. With dry_run: true it only renders the MP3 for review.
 # Fed by scripts/audio_banter_analysis.py through rake banter_scan:apply.
 class BanterInsertService < ApplicationService
   include LameEncoding
@@ -32,7 +34,8 @@ class BanterInsertService < ApplicationService
 
   def validate!
     raise Error, "No source file at #{source_path}" unless File.exist?(source_path.to_s)
-    return if before_track.nil?
+    raise Error, "Need a track on at least one side" if after_track.nil? && before_track.nil?
+    return if before_track.nil? || after_track.nil?
 
     unless before_track.show_id == after_track.show_id
       raise Error, "#{label}: before-track is from a different show"
@@ -55,14 +58,14 @@ class BanterInsertService < ApplicationService
       file: output_path.to_s,
       title:,
       song_id: song.id,
-      set: after_track.set
+      set: anchor.set
     ).call
   end
 
   def tag_track
     track.track_tags.create!(tag: Tag.find_by!(name: "Banter"), notes: notes.presence)
     sbd = Tag.find_by(name: "SBD")
-    return unless sbd && after_track.tags.include?(sbd)
+    return unless sbd && anchor.tags.include?(sbd)
 
     track.track_tags.create!(tag: sbd)
   end
@@ -71,12 +74,17 @@ class BanterInsertService < ApplicationService
     @track ||= show.tracks.reload.find_by!(position:)
   end
 
+  # The track whose set and tags the new one inherits.
+  def anchor
+    after_track || before_track
+  end
+
   def show
-    after_track.show
+    anchor.show
   end
 
   def position
-    after_track.position + 1
+    after_track ? after_track.position + 1 : before_track.position
   end
 
   def applied?
@@ -85,13 +93,13 @@ class BanterInsertService < ApplicationService
 
   def output_path
     @output_path ||= OUTPUT_DIR.join(
-      "#{show.date}_after_#{after_track.slug.presence || after_track.position}.mp3"
+      "#{show.date}_#{after_track ? 'after' : 'before'}_#{anchor.slug.presence || anchor.position}.mp3"
     )
   end
 
   # Named in LameEncoding's error messages.
   def label
-    "#{show.date} banter after #{after_track.title}"
+    "#{show.date} banter #{after_track ? 'after' : 'before'} #{anchor.title}"
   end
 
   def result
@@ -101,8 +109,9 @@ class BanterInsertService < ApplicationService
       title:,
       song: song.title,
       position:,
-      set: after_track.set,
-      after_title: after_track.title,
+      set: anchor.set,
+      after_title: after_track&.title,
+      before_title: before_track&.title,
       output_path: output_path.to_s,
       track_id: applied? ? track.id : nil,
       url: applied? ? track.url : nil

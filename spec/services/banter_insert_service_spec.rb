@@ -81,6 +81,36 @@ RSpec.describe BanterInsertService do
     end
   end
 
+  context "with only a before-track (start of set)" do
+    subject(:result) do
+      described_class.call(nil, source_path:, before_track: show.tracks.find_by!(title: "Magilla"))
+    end
+
+    it "inserts at that track's position and shifts the set down" do
+      result
+      titles = show.tracks.order(:position).pluck(:position, :title)
+      expect(titles).to eq(
+        [ [ 1, "Banter" ], [ 2, "Magilla" ], [ 3, "Cavern" ], [ 4, "Harry Hood" ] ]
+      )
+    end
+  end
+
+  context "with only an after-track (end of set)" do
+    subject(:result) { described_class.call(before_track, source_path:) }
+
+    it "appends after it" do
+      expect(show.tracks.find(result[:track_id]).position).to eq(4)
+    end
+  end
+
+  context "with neither anchor" do
+    subject(:result) { described_class.call(nil, source_path:) }
+
+    it "refuses" do
+      expect { result }.to raise_error(described_class::Error, /at least one side/)
+    end
+  end
+
   context "with dry_run" do
     let(:dry_run) { true }
 

@@ -61,12 +61,15 @@ namespace :banter_scan do
 
     # Later positions first, so an insert never shifts an anchor that a
     # following entry in the same show still refers to by position.
-    entries.sort_by { [ it["date"], -it["after_position"].to_i ] }.each_with_index do |entry, idx|
+    entries.sort_by { [ it["date"], -(it["after_position"] || it["before_position"]).to_i ] }.each_with_index do |entry, idx|
       progress = "[#{idx + 1}/#{entries.size}]"
-      label = "#{entry['date']} after #{entry['after_title']}"
-      after_track = Track.find_by(id: entry["after_id"])
-      next failures << [ label, "track #{entry['after_id']} not found" ] unless after_track
+      label = entry["after_id"] ? "#{entry['date']} after #{entry['after_title']}" \
+                                : "#{entry['date']} before #{entry['before_title']}"
+      after_track = entry["after_id"] && Track.find_by(id: entry["after_id"])
       before_track = entry["before_id"] && Track.find_by(id: entry["before_id"])
+      if (entry["after_id"] && after_track.nil?) || (entry["before_id"] && before_track.nil?)
+        next failures << [ label, "anchor track not found" ]
+      end
       source_path = entry["source_path"]
       if ENV["SOURCE_DIR"].present?
         source_path = File.join(ENV["SOURCE_DIR"], entry["date"], File.basename(source_path))
