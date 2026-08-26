@@ -876,14 +876,13 @@ def set_options(c):
 
 
 def placement_text(c):
+    arrow = ' <span class="k">&rarr;</span> '
     if c.after_id is None and c.before_id is not None:
-        return (f"Start of {esc(c.before_set)} <span class='k'>Before</span> "
-                f"{track_link(c.date, c.before_id, c.before_title)}")
+        return f"Start of {esc(c.before_set)}{arrow}{track_link(c.date, c.before_id, c.before_title)}"
     if c.before_id is None and c.after_id is not None:
-        return (f"End of {esc(c.after_set)} <span class='k'>After</span> "
-                f"{track_link(c.date, c.after_id, c.after_title)}")
-    return (f'<span class="k">After</span> {track_link(c.date, c.after_id, c.after_title)}'
-            f' <span class="k">Before</span> {track_link(c.date, c.before_id, c.before_title)}')
+        return f"{track_link(c.date, c.after_id, c.after_title)}{arrow}End of {esc(c.after_set)}"
+    return (f"{track_link(c.date, c.after_id, c.after_title)}{arrow}"
+            f"{track_link(c.date, c.before_id, c.before_title)}")
 
 
 def source_block(c):
@@ -1090,8 +1089,7 @@ def write_review(out_dir, reports):
   .chip.place {{ color: var(--fg); }}
   .chip.place a {{ color: var(--fg); text-decoration-color: color-mix(in srgb, var(--fg) 30%, transparent); }}
   .chip.place a:hover {{ color: var(--link); }}
-  .chip .k {{ color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em;
-              margin: 0 .15rem 0 .35rem; }}
+  .chip .k {{ color: var(--muted); font-size: 13px; margin: 0 .1rem; }}
   .chip .k:first-child {{ margin-left: 0; }}
   .chip.warn {{ color: var(--warn); border-color: color-mix(in srgb, var(--warn) 50%, transparent); }}
   .row {{ border: 1px solid transparent; border-bottom-color: var(--line); border-radius: 10px;
