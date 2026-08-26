@@ -26,6 +26,25 @@ module BanterScan
     puts ok ? "Done. Review: #{SCAN_ROOT}/review.html" : "FAILED (see output above)"
     ok
   end
+
+  # The review export names the archive.org item and file for every entry, so
+  # apply can pull the FLAC itself instead of needing it uploaded alongside.
+  def self.fetch_source(item, file, dest)
+    raise "no archive.org item in the export" if item.blank? || file.blank?
+    raise "local sources (#{item}) must be uploaded" if item.start_with?("local:")
+
+    url = "https://archive.org/download/#{item}/#{file}"
+    puts "  fetching #{url}"
+    FileUtils.mkdir_p(File.dirname(dest))
+    tmp = "#{dest}.part"
+    3.times do |attempt|
+      # archive.org mirrors throw intermittent 5xx; a retry lands elsewhere.
+      break if system("curl", "-sfL", "--retry", "2", "-o", tmp, url)
+      raise "download failed after 3 attempts" if attempt == 2
+    end
+    File.rename(tmp, dest)
+    dest
+  end
 end
 
 namespace :banter_scan do
@@ -70,29 +89,42 @@ namespace :banter_scan do
       if (entry["after_id"] && after_track.nil?) || (entry["before_id"] && before_track.nil?)
         next failures << [ label, "anchor track not found" ]
       end
-      source_path = entry["source_path"]
-      if ENV["SOURCE_DIR"].present?
-        source_path = File.join(ENV["SOURCE_DIR"], entry["date"], File.basename(source_path))
-      end
+      # A run exports several files; insert them last file first at the same
+      # slot so each push lands the previous one further down, in source order.
+      members = entry["members"].presence || [ entry ]
+      members.reverse.each do |member|
+        member_path = member["source_path"] || entry["source_path"]
+        if ENV["SOURCE_DIR"].present?
+          member_path = File.join(ENV["SOURCE_DIR"], entry["date"], File.basename(member_path))
+        end
+        unless File.exist?(member_path)
+          begin
+            BanterScan.fetch_source(entry["source_item"], member["source_file"], member_path)
+          rescue StandardError => e
+            next failures << [ label, "could not fetch #{member['source_file']}: #{e.message}" ]
+          end
+        end
+        song = member["song_id"] ? Song.find_by(id: member["song_id"]) : nil
+        next failures << [ label, "song #{member['song_id']} not found" ] if member["song_id"] && song.nil?
 
-      begin
-        song = entry["song_id"] ? Song.find_by(id: entry["song_id"]) : nil
-        next failures << [ label, "song #{entry['song_id']} not found" ] if entry["song_id"] && song.nil?
-        result = BanterInsertService.call(
-          after_track,
-          before_track:,
-          source_path:,
-          title: entry["title"].presence || "Banter",
-          **(song ? { song: } : {}),
-          set: entry["set"].presence,
-          dry_run:
-        )
-        status = result[:applied] ? "INSERTED" : "RENDERED"
-        puts "#{status} #{progress}  #{label}  as ##{result[:position]} #{result[:title]} (#{result[:song]})"
-        puts "  output: #{result[:output_path]}"
-        puts "  track:  #{result[:url]}" if result[:applied]
-      rescue BanterInsertService::Error, RuntimeError => e
-        failures << [ label, e.message ]
+        begin
+          result = BanterInsertService.call(
+            after_track,
+            before_track:,
+            source_path: member_path,
+            title: member["title"].presence || "Banter",
+            **(song ? { song: } : {}),
+            set: entry["set"].presence,
+            dry_run:
+          )
+          status = result[:applied] ? "INSERTED" : "RENDERED"
+          puts "#{status} #{progress}  #{label}  as ##{result[:position]} #{result[:title]} (#{result[:song]})"
+          puts "  output: #{result[:output_path]}"
+          puts "  track:  #{result[:url]}" if result[:applied]
+          before_track = Track.find(result[:track_id]) if result[:applied] && members.size > 1
+        rescue BanterInsertService::Error, RuntimeError => e
+          failures << [ label, e.message ]
+        end
       end
     end
 
