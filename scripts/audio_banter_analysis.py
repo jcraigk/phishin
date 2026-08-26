@@ -495,21 +495,20 @@ def download_source_file(identifier, name, dest_dir):
 class Edge:
     head: np.ndarray
     tail: np.ndarray
+    path: Path
+    duration: float
 
 
 def load_track_edges(mp3_url):
-    path = aja.download_audio(mp3_url)
-    duration = aja.probe_duration(path)
-    window = min(aja.EDGE_WINDOW_S, duration)
-    return Edge(head=aja.decode_segment(path, 0, window),
-                tail=aja.decode_segment(path, max(duration - window, 0), window))
+    return load_file_edges(aja.download_audio(mp3_url))
 
 
 def load_file_edges(path):
     duration = aja.probe_duration(path)
     window = min(aja.EDGE_WINDOW_S, duration)
     return Edge(head=aja.decode_segment(path, 0, window),
-                tail=aja.decode_segment(path, max(duration - window, 0), window))
+                tail=aja.decode_segment(path, max(duration - window, 0), window),
+                path=Path(path), duration=duration)
 
 
 def render_preview(src, out_path):
@@ -520,15 +519,17 @@ def render_preview(src, out_path):
 
 
 def joint(tail_edge, head_edge, clip_path):
+    """Score the splice on the 16kHz analysis audio, but render the listenable
+    clip from the original files so it sounds like the previews."""
     j = aja.score_junction(tail_edge.tail, head_edge.head)
-    n = int(JOINT_CLIP_S * aja.SAMPLE_RATE)
-    spliced = np.concatenate([tail_edge.tail[-n:], head_edge.head[:n]]).astype(np.float32)
-    import tempfile
-    with tempfile.NamedTemporaryFile(suffix=".f32") as tmp:
-        tmp.write(spliced.tobytes())
-        tmp.flush()
-        aja.run(["ffmpeg", "-v", "error", "-y", "-f", "f32le", "-ar", str(aja.SAMPLE_RATE),
-                 "-ac", "1", "-i", tmp.name, "-b:a", "128k", str(clip_path)])
+    start = max(tail_edge.duration - JOINT_CLIP_S, 0)
+    aja.run([
+        "ffmpeg", "-v", "error", "-y",
+        "-ss", f"{start:.3f}", "-t", f"{JOINT_CLIP_S:.3f}", "-i", str(tail_edge.path),
+        "-t", f"{JOINT_CLIP_S:.3f}", "-i", str(head_edge.path),
+        "-filter_complex", "[0:a][1:a]concat=n=2:v=0:a=1[a]", "-map", "[a]",
+        "-ar", "44100", "-b:a", "192k", str(clip_path),
+    ])
     return {"score": round(j.score, 2), "verdict": aja.classify(j.score),
             "detail": j.parts(), "clip": clip_path.name}
 
