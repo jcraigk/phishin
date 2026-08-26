@@ -1177,6 +1177,14 @@ document.querySelectorAll("select.song").forEach(sel => {{
   const hit = [...sel.options].find(o => o.textContent.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim() === want);
   if (hit) sel.value = hit.value;
 }});
+// Only a set the reviewer changed is remembered; untouched rows keep following
+// whatever default the current analysis computes.
+const chosenSet = r => {{
+  const sel = r.querySelector("select.set");
+  if (!sel) return undefined;
+  const dflt = sel.querySelector("option[selected]")?.value;
+  return sel.value !== dflt ? sel.value : undefined;
+}};
 const fieldsOf = r => [...r.querySelectorAll(".decide")].map(d => ({{
   title: d.querySelector("input.title")?.value, song_id: d.querySelector("select.song")?.value,
 }})).filter(f => f.title !== undefined);
@@ -1187,7 +1195,7 @@ function save() {{
   rows().forEach(r => {{
     state[payloadOf(r).key] = {{
       approved: isApproved(r), skipped: isSkipped(r), fields: fieldsOf(r),
-      set: r.querySelector("select.set")?.value,
+      set: chosenSet(r),
     }};
   }});
   try {{ localStorage.setItem(KEY, JSON.stringify(state)); }} catch (e) {{}}
