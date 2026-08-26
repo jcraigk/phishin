@@ -78,7 +78,6 @@ namespace :banter_scan do
           before_track:,
           source_path:,
           title: entry["title"].presence || "Banter",
-          notes: entry["notes"],
           dry_run:
         )
         status = result[:applied] ? "INSERTED" : "RENDERED"

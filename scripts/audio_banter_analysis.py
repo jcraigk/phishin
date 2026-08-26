@@ -34,6 +34,7 @@ Usage (normally via the rake tasks):
 """
 
 import argparse
+import base64
 import hashlib
 import html
 import importlib.util
@@ -693,17 +694,43 @@ def esc(s):
     return html.escape(str(s if s is not None else ""))
 
 
+def embedded_fonts():
+    font_dir = REPO_ROOT / "node_modules/@fontsource/open-sans-condensed/files"
+    faces = []
+    for weight in (300, 700):
+        path = font_dir / f"open-sans-condensed-latin-{weight}-normal.woff2"
+        if not path.exists():
+            continue
+        b64 = base64.b64encode(path.read_bytes()).decode()
+        faces.append(
+            '@font-face { font-family: "Open Sans Condensed"; font-style: normal; '
+            f'font-weight: {weight}; font-display: swap; '
+            f'src: url(data:font/woff2;base64,{b64}) format("woff2"); ' + "}")
+    return "\n  ".join(faces)
+
+
 def tried_summary(t):
     if t.get("error"):
         return t["error"]
     return f"{t['matched']}/{t['total']} tracks matched, {t['files']} files"
 
 
-def joint_cell(j):
+def fmt_len(seconds):
+    seconds = int(round(seconds or 0))
+    return f"{seconds // 60}:{seconds % 60:02d}"
+
+
+def player(name, cls="full"):
+    if not name:
+        return '<span class="noaudio">no audio</span>'
+    return f'<audio class="{cls}" controls preload="none" src="clips/{esc(name)}"></audio>'
+
+
+def joint_block(label, j):
     if not j:
-        return "<td></td>"
-    return (f'<td class="{j["verdict"].lower()}">'
-            f'<audio controls preload="none" src="clips/{esc(j["clip"])}"></audio></td>')
+        return f'<div class="joint none"><span class="jlabel">{label}</span></div>'
+    return (f'<div class="joint {j["verdict"].lower()}" title="{esc(j["detail"])}">'
+            f'<span class="jlabel">{label}</span>{player(j["clip"], "jaudio")}</div>')
 
 
 def placement_text(c):
@@ -711,138 +738,240 @@ def placement_text(c):
         return f"Start of {esc(c.before_set)}"
     if c.before_id is None and c.after_id is not None:
         return f"End of {esc(c.after_set)}"
-    return f"Before: {esc(c.after_title)}<br>After: {esc(c.before_title)}"
+    return (f'<span class="k">Before</span> {esc(c.after_title)}'
+            f' <span class="k">After</span> {esc(c.before_title)}')
 
 
-def source_cell(c, md5=None):
-    def player(name):
-        return f'<audio class="full" controls preload="none" src="clips/{esc(name)}"></audio>'
+def source_block(c):
     if len(c.members) > 1:
         first, last = c.members[0], c.members[-1]
         middle = ", ".join(esc(m["title"]) for m in c.members[1:-1])
-        body = (f"<b>{len(c.members)} consecutive files not on phish.in</b><br>"
-                f"{player(c.preview)}<br>{esc(first['title'])}"
-                f"{'<br><small>' + middle + '</small>' if middle else ''}"
-                f"<br>{player(last.get('preview'))}<br>{esc(last['title'])}")
-    else:
-        body = f"{player(c.preview) if c.preview else ''}<br>{esc(c.source_title)}"
-    small = [esc(c.source_file)]
-    if md5:
-        small.append(md5)
+        return (f'<div class="src"><div class="srcname">{esc(first["title"])}'
+                f' <span class="meta">{fmt_len(first["length"])}</span></div>{player(c.preview)}'
+                f'{"<div class=middle>" + middle + "</div>" if middle else ""}'
+                f'<div class="srcname">{esc(last["title"])}'
+                f' <span class="meta">{fmt_len(last["length"])}</span></div>'
+                f'{player(last.get("preview"))}</div>')
+    return f'<div class="src">{player(c.preview)}</div>'
+
+
+def candidate_row(c):
+    md5 = {True: "md5 ok", False: "MD5 MISMATCH", None: "no checksum"}[c.md5_verified]
+    title = (f"{len(c.members)} consecutive files not on phish.in" if len(c.members) > 1
+             else c.source_title)
+    chips = [f'<span class="chip place">{placement_text(c)}</span>']
     if c.notes_line:
-        small.append(f"notes: <code>{esc(c.notes_line)}</code>")
+        chips.append(f'<span class="chip notes" title="taper notes">{esc(c.notes_line)}</span>')
     if c.note:
-        small.append(esc(c.note))
-    return f"<td>{body}<br><small>{' - '.join(small)}</small></td>"
+        chips.append(f'<span class="chip warn">{esc(c.note)}</span>')
+    meta = [esc(c.source_file)]
+    if c.status in ("candidate", "unanchored", "run"):
+        meta.append(md5)
+    head = (f'<div class="head"><strong>{esc(title)}</strong>{"".join(chips)}'
+            f'<span class="dur">{fmt_len(c.length_s) if len(c.members) == 1 else ""}</span></div>')
+    if c.status == "already_present":
+        return (f'<div class="row already"><div class="head"><strong>{esc(title)}</strong>'
+                f'<span class="chip">already on phish.in</span>'
+                f'<span class="meta">{esc(c.note)}</span></div></div>')
+    joints = (f'<div class="joints">{joint_block("Joint in", c.joints.get("in"))}'
+              f'{joint_block("Joint out", c.joints.get("out"))}'
+              f'{joint_block("Direct", c.joints.get("direct"))}</div>')
+    decide = ""
+    payload = ""
+    if c.status == "candidate":
+        payload = ' data-payload="' + esc(json.dumps({
+            "date": c.date, "key": c.key, "after_id": c.after_id, "after_title": c.after_title,
+            "after_position": c.after_position, "before_id": c.before_id,
+            "before_title": c.before_title, "source_path": c.source_path,
+            "source_item": c.source_item, "source_file": c.source_file,
+        })) + '"'
+        decide = ('<div class="decide"><label><input type="checkbox" class="approve"> Approve</label>'
+                  '<input class="title" value="Banter" placeholder="title"></div>')
+    cls = "row " + ("cand" if c.status == "candidate" else c.status)
+    return (f'<div class="{cls}"{payload}>{head}{source_block(c)}'
+            f'<div class="meta small">{" · ".join(meta)}</div>{joints}{decide}</div>')
 
 
 def write_review(out_dir, reports):
+    reports = sorted(reports, key=lambda r: r.date)
     sections = []
     n_cand = 0
-    for r in sorted(reports, key=lambda r: r.date):
-        hits = "".join(
-            f"<li><code>{esc(h['line'])}</code> <small>(after <code>{esc(h['prev'])}</code>, "
-            f"before <code>{esc(h['next'])}</code>)</small></li>" for h in r.note_hits)
-        head = (f'<h2 id="{r.date}">{r.date} {esc(r.venue)} '
-                f'<a href="{r.url}" target="_blank">phish.in</a></h2>'
-                f"<p>Notes entries:</p><ul>{hits or '<li>none</li>'}</ul>")
+    for r in reports:
+        hits = "".join(f'<li><code>{esc(h["line"])}</code> <span class="meta">after '
+                       f'<code>{esc(h["prev"])}</code>, before <code>{esc(h["next"])}</code></span></li>'
+                       for h in r.note_hits)
+        notes = f'<details class="notes"><summary>Taper notes entries ({len(r.note_hits)})</summary><ul>{hits}</ul></details>' if r.note_hits else ""
+        head = (f'<div class="setsep" id="{r.date}"><span class="setsep-name">{r.date}</span>'
+                f'<span class="venue">{esc(r.venue)}</span>'
+                f'<a class="pnet" href="{r.url}" target="_blank" title="phish.in">&#127925;</a>')
         if r.error:
             tried = "".join(
                 f"<li><a href='{ARCHIVE}/details/{esc(t['identifier'])}' target='_blank'>"
-                f"{esc(t['identifier'])}</a>: {esc(tried_summary(t))}</li>"
-                for t in r.tried)
+                f"{esc(t['identifier'])}</a>: {esc(tried_summary(t))}</li>" for t in r.tried)
             sheet = ""
             if r.spreadsheet:
                 link = (f"<a href='{esc(r.spreadsheet['link'])}' target='_blank'>download</a>"
                         if r.spreadsheet.get("link") else "no download link")
                 sheet = (f"<p>Phish Spreadsheet: {link}; source <code>{esc(r.spreadsheet.get('source'))}"
-                         f"</code> {esc(r.spreadsheet.get('notes'))}. Download and extract it into "
-                         f"<code>data/banter_scan/{r.date}/source/</code>, then re-run "
+                         f"</code> {esc(r.spreadsheet.get('notes'))}. Extract it into "
+                         f"<code>data/banter_scan/{r.date}/source/</code> and re-run "
                          f"<code>rake banter_scan:run[{r.date}]</code>.</p>")
-            elif r.spreadsheet is None and not [t for t in r.tried if not t["identifier"].startswith("local:")]:
+            elif not [t for t in r.tried if not t["identifier"].startswith("local:")]:
                 sheet = f"<p>Not in the Phish Spreadsheet either (<a href='{SPREADSHEET_URL}'>sheet</a>).</p>"
-            sections.append(f'<section class="unresolved">{head}<p><b>Unresolved:</b> {esc(r.error)}.'
-                            f"</p><ul>{tried or '<li>no archive.org items for this date</li>'}</ul>{sheet}</section>")
+            sections.append(f'<section class="unresolved">{head}<span class="chip warn">unresolved</span></div>'
+                            f"{notes}<p class='meta'>{esc(r.error)}.</p>"
+                            f"<ul class='meta'>{tried}</ul>{sheet}</section>")
             continue
-        link = (esc(r.source_item) if r.source_item.startswith("local:") else
-                f"<a href='{ARCHIVE}/details/{esc(r.source_item)}' target='_blank'>{esc(r.source_item)}</a>")
-        src = f"<p>Source: {link} - {r.matched}/{r.total} phish.in tracks matched by duration."
+        src_link = (esc(r.source_item) if r.source_item.startswith("local:") else
+                    f"<a href='{ARCHIVE}/details/{esc(r.source_item)}' target='_blank'>{esc(r.source_item)}</a>")
+        src = (f'<div class="source">Source {src_link} '
+               f'<span class="chip">{r.matched}/{r.total} tracks matched</span>')
         if r.filler_skipped:
-            src += (f" Skipped {len(r.filler_skipped)} trailing filler file(s): "
-                    + ", ".join(esc(t) for t in r.filler_skipped) + ".")
-        src += "</p>"
-        rows = []
-        for c in r.candidates:
-            placement = placement_text(c)
-            if c.status == "already_present":
-                rows.append(f'<tr class="{c.status}">{source_cell(c)}<td>{placement}</td>'
-                            f'<td colspan="4">already on phish.in</td></tr>')
-                continue
-            if c.status in ("unanchored", "run"):
-                rows.append(f'<tr class="{c.status}">{source_cell(c)}<td>{placement}</td>'
-                            f"{joint_cell(c.joints.get('in'))}{joint_cell(c.joints.get('out'))}"
-                            f"{joint_cell(c.joints.get('direct'))}<td></td></tr>")
-                continue
-            n_cand += 1
-            md5 = {True: "md5 ok", False: "MD5 MISMATCH", None: "no checksum file"}[c.md5_verified]
-            payload = esc(json.dumps({
-                "date": c.date, "key": c.key, "after_id": c.after_id, "after_title": c.after_title,
-                "after_position": c.after_position, "before_id": c.before_id,
-                "before_title": c.before_title, "source_path": c.source_path,
-                "source_item": c.source_item, "source_file": c.source_file,
-            }))
-            rows.append(
-                f'<tr class="row" data-payload="{payload}">{source_cell(c, md5)}'
-                f"<td>{placement}</td>"
-                f"{joint_cell(c.joints.get('in'))}{joint_cell(c.joints.get('out'))}"
-                f"{joint_cell(c.joints.get('direct'))}"
-                f'<td><label><input type="checkbox" class="approve"> approve</label><br>'
-                f'<input class="title" value="Banter" size="14"><br>'
-                f'<textarea class="notes" rows="3" cols="22" placeholder="tag notes"></textarea></td></tr>')
-        table = ("<table><tr><th>Source file</th><th>Placement</th>"
-                 "<th>Joint in</th><th>Joint out</th><th>Direct</th><th>Decision</th></tr>"
-                 f"{''.join(rows)}</table>") if rows else "<p>Every source file matches a phish.in track; nothing is missing here.</p>"
-        sections.append(f"<section>{head}{src}{table}</section>")
+            src += (f' <span class="chip" title="{esc(", ".join(r.filler_skipped))}">'
+                    f'{len(r.filler_skipped)} trailing filler files skipped</span>')
+        src += "</div>"
+        rows = [candidate_row(c) for c in r.candidates]
+        n_cand += sum(1 for c in r.candidates if c.status == "candidate")
+        body = "".join(rows) or '<p class="meta">Every source file matches a phish.in track.</p>'
+        sections.append(f"<section>{head}</div>{src}{notes}{body}</section>")
 
-    toc = " | ".join(f'<a href="#{r.date}">{r.date}</a>' for r in sorted(reports, key=lambda r: r.date))
+    toc = "".join(f'<a href="#{r.date}" class="{"unres" if r.error else ""}">{r.date}</a>'
+                  for r in reports)
     (out_dir / "review.html").write_text(f"""<!doctype html>
 <meta charset="utf-8">
 <title>Banter placement review</title>
 <style>
-  body {{ font: 14px/1.5 -apple-system, sans-serif; margin: 2rem auto; max-width: 1400px; padding: 0 1rem; }}
-  table {{ border-collapse: collapse; width: 100%; margin-bottom: 1rem; }}
-  td, th {{ border: 1px solid #ccc; padding: 4px 8px; text-align: left; vertical-align: top; }}
-  td.continuous {{ background: #d4edda; }}
-  td.suspect {{ background: #fff3cd; }}
-  td.broken {{ background: #f8d7da; }}
-  tr.already_present {{ color: #777; }}
-  tr.unanchored, tr.run {{ background: #f6f6f6; }}
-  section.unresolved {{ background: #fdf5f5; padding: 0 1rem; }}
-  audio {{ height: 28px; width: 220px; }}
-  audio.full {{ width: 100%; min-width: 520px; }}
-  td:first-child {{ min-width: 560px; }}
+  {embedded_fonts()}
+  :root {{
+    --bg: #ffffff; --header: #f4f4f6; --fg: #1c1c1e; --muted: #6b6b70;
+    --line: #e3e3e7; --card: #fafafa; --sel: #eef2f8; --sel-line: #b9cbe6;
+    --accent: #b8860b; --ok: #1a6b2f; --warn: #b8860b; --err: #b00020;
+    --ok-bg: #e6f4ea; --warn-bg: #fdf3d9; --err-bg: #fbe4e6;
+    --btn: #f2f2f4; --btn-line: #d8d8dd; --link: #2f6fd0; --btn-hover: #e8e8ec;
+  }}
+  @media (prefers-color-scheme: dark) {{
+    :root {{
+      --bg: #1b1f27; --header: #12151b; --fg: #e6e9ef; --muted: #8b95a7;
+      --line: #2f3542; --card: #232833; --sel: #26313f; --sel-line: #3a5578;
+      --accent: #e0a92e; --ok: #5fce85; --warn: #e0a92e; --err: #ff6b81;
+      --ok-bg: #1f3a2a; --warn-bg: #3d3320; --err-bg: #452229;
+      --btn: #2e3644; --btn-line: #4a5568; --link: #7fb3f0; --btn-hover: #3a4354;
+    }}
+    audio {{ color-scheme: dark; }}
+  }}
+  * {{ box-sizing: border-box; }}
+  body {{ font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+          margin: 0 auto 3rem; max-width: 1300px; padding: 6.2rem 1.5rem 0;
+          background: var(--bg); color: var(--fg); -webkit-font-smoothing: antialiased; }}
+  h1 {{ font-family: "Open Sans Condensed", -apple-system, sans-serif; font-weight: 700;
+        letter-spacing: .01em; font-size: 21px; margin: 0; flex: 1 1 auto; }}
+  h1 .count {{ color: var(--muted); font-weight: 400; font-size: 15px; }}
+  a {{ color: var(--link); text-decoration-color: color-mix(in srgb, var(--link) 45%, transparent);
+       text-underline-offset: 2px; }}
+  a:hover {{ text-decoration-color: currentColor; }}
   code {{ font-size: 12px; }}
-  #export {{ position: fixed; top: 1rem; right: 1rem; padding: .5rem 1rem; }}
-  #toc {{ font-size: 12px; }}
+  .meta {{ color: var(--muted); }}
+  .small {{ font-size: 12px; }}
+  #topbar {{ position: fixed; top: 0; left: 0; right: 0; z-index: 10; background: var(--header);
+             border-bottom: 1px solid var(--line); padding: .55rem 1.5rem .35rem; }}
+  #topbar .row1 {{ display: flex; align-items: center; gap: 1rem; max-width: 1300px; margin: 0 auto; }}
+  #legend {{ display: flex; align-items: baseline; gap: .9rem; font-size: 13px;
+             font-variant-numeric: tabular-nums; }}
+  #legend .pct {{ font-size: 20px; font-weight: 700;
+                  font-family: "Open Sans Condensed", -apple-system, sans-serif; }}
+  #legend .k {{ color: var(--muted); margin-right: .3rem; }}
+  #legend .v {{ font-weight: 600; }}
+  #topbar .bar {{ height: 4px; border-radius: 2px; background: var(--line); margin: .45rem auto 0;
+                  max-width: 1300px; overflow: hidden; font-size: 0; }}
+  #topbar .bar i {{ display: inline-block; height: 100%; vertical-align: top; background: var(--ok); }}
+  #export {{ padding: .4rem 1rem; font: inherit; font-weight: 600; cursor: pointer; background: var(--btn);
+             color: var(--fg); border: 1px solid var(--btn-line); border-radius: 7px; }}
+  #export:hover {{ background: var(--btn-hover); border-color: var(--muted); }}
+  #toc {{ display: flex; flex-wrap: wrap; gap: .25rem .6rem; font-size: 12px;
+          font-variant-numeric: tabular-nums; margin-bottom: 1rem; }}
+  #toc a.unres {{ color: var(--muted); }}
+  .key {{ display: flex; gap: 1rem; font-size: 12px; color: var(--muted); margin-bottom: 1.5rem; }}
+  .key i {{ display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: .3rem;
+            vertical-align: -1px; }}
+  .setsep {{ display: flex; align-items: center; gap: .6rem; margin: 2.2rem 0 .3rem;
+             padding: 0 1rem .35rem; border-bottom: 2px solid var(--line); }}
+  .setsep-name {{ font-family: "Open Sans Condensed", -apple-system, sans-serif; font-size: 22px;
+                  font-weight: 700; letter-spacing: .01em; font-variant-numeric: tabular-nums; }}
+  .venue {{ color: var(--muted); font-size: 14px; }}
+  .pnet {{ text-decoration: none; font-size: 15px; line-height: 1; opacity: .75; }}
+  .pnet:hover {{ opacity: 1; }}
+  .source {{ color: var(--muted); font-size: 13px; padding: .35rem 1rem 0; }}
+  details.notes {{ padding: .2rem 1rem; font-size: 13px; color: var(--muted); }}
+  details.notes ul {{ margin: .3rem 0 .5rem; }}
+  section.unresolved p, section.unresolved ul {{ padding: 0 1rem; margin: .3rem 0; font-size: 13px; }}
+  .chip {{ color: var(--muted); font-size: 12px; border: 1px solid var(--line); border-radius: 999px;
+           padding: .05rem .55rem; white-space: nowrap; max-width: 34rem; overflow: hidden;
+           text-overflow: ellipsis; }}
+  .chip.place {{ color: var(--fg); }}
+  .chip .k {{ color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em;
+              margin: 0 .15rem 0 .35rem; }}
+  .chip .k:first-child {{ margin-left: 0; }}
+  .chip.warn {{ color: var(--warn); border-color: color-mix(in srgb, var(--warn) 50%, transparent); }}
+  .row {{ border: 1px solid transparent; border-bottom-color: var(--line); border-radius: 10px;
+          padding: .85rem 1rem; transition: background .12s ease; }}
+  .row:hover {{ background: var(--card); }}
+  .row.approved {{ background: var(--sel); border-color: var(--sel-line);
+                   box-shadow: inset 3px 0 0 var(--link); }}
+  .row.already {{ opacity: .55; }}
+  .row.unanchored, .row.run {{ opacity: .85; }}
+  .head {{ display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; margin-bottom: .5rem; }}
+  .head strong {{ font-family: "Open Sans Condensed", -apple-system, sans-serif; font-size: 21px;
+                  font-weight: 700; }}
+  .dur {{ color: var(--muted); font-variant-numeric: tabular-nums; font-size: 13px; margin-left: auto; }}
+  .src {{ margin: .2rem 0; }}
+  .srcname {{ font-size: 13px; margin-top: .4rem; }}
+  .middle {{ color: var(--muted); font-size: 12px; margin: .3rem 0; }}
+  audio.full {{ width: 100%; height: 32px; display: block; }}
+  .noaudio {{ color: var(--muted); font-size: 12px; }}
+  .joints {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; margin-top: .6rem; }}
+  .joint {{ border-radius: 8px; padding: .45rem .6rem .5rem; background: var(--card);
+            border-left: 4px solid var(--line); }}
+  .joint.continuous {{ background: var(--ok-bg); border-left-color: var(--ok); }}
+  .joint.suspect {{ background: var(--warn-bg); border-left-color: var(--warn); }}
+  .joint.broken {{ background: var(--err-bg); border-left-color: var(--err); }}
+  .joint.none {{ opacity: .5; }}
+  .jlabel {{ display: block; font-family: "Open Sans Condensed", -apple-system, sans-serif;
+             font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+             color: var(--muted); margin-bottom: .25rem; }}
+  .joint.continuous .jlabel {{ color: var(--ok); }}
+  .joint.suspect .jlabel {{ color: var(--warn); }}
+  .joint.broken .jlabel {{ color: var(--err); }}
+  audio.jaudio {{ width: 100%; height: 32px; display: block; }}
+  .decide {{ display: flex; align-items: center; gap: .8rem; margin-top: .7rem; font-size: 13px; }}
+  .decide label {{ display: flex; align-items: center; gap: .4rem; font-weight: 600; cursor: pointer; }}
+  input[type="checkbox"] {{ width: 1.15rem; height: 1.15rem; cursor: pointer; accent-color: var(--link); }}
+  .decide input[type="text"], .decide input:not([type]) {{ font: inherit; font-size: 13px; padding: .3rem .5rem;
+      background: var(--bg); color: var(--fg); border: 1px solid var(--btn-line); border-radius: 6px; }}
+  .decide .title {{ width: 11rem; }}
 </style>
-<button id="export">Export approved.json</button>
-<h1>Banter placement review</h1>
-<p>{len(reports)} shows, {n_cand} candidate files. Joint in: track before &gt; source file.
-Joint out: source file &gt; track after. Direct: the two tracks as phish.in has them now.
-Green/yellow/red is the continuity score. Approve, Export, then
-<code>rake "banter_scan:apply[path/to/approved.json]"</code>.</p>
-<p id="toc">{toc}</p>
+<div id="topbar"><div class="row1">
+  <h1>Banter placement review <span class="count">{len(reports)} shows · {n_cand} candidates</span></h1>
+  <div id="legend"><span class="pct">0%</span>
+    <span><span class="k">approved</span><span class="v" id="n-approved">0</span></span>
+    <span><span class="k">of</span><span class="v">{n_cand}</span></span></div>
+  <button id="export">Export approved.json</button>
+</div><div class="bar"><i id="fill" style="width:0"></i></div></div>
+<div id="toc">{toc}</div>
+<div class="key"><span><i style="background:var(--ok)"></i>continuous</span>
+  <span><i style="background:var(--warn)"></i>suspect</span>
+  <span><i style="background:var(--err)"></i>broken</span>
+  <span>Joint in: track before &gt; file. Joint out: file &gt; track after. Direct: what phish.in has now.</span></div>
 {''.join(sections)}
 <script>
 const KEY = "banter_scan_progress";
-function payloadOf(r) {{ return JSON.parse(r.dataset.payload); }}
+const rows = () => [...document.querySelectorAll(".row.cand")];
+const payloadOf = r => JSON.parse(r.dataset.payload);
 function save() {{
   const state = {{}};
-  document.querySelectorAll(".row").forEach(r => {{
+  rows().forEach(r => {{
     state[payloadOf(r).key] = {{
       approved: r.querySelector("input.approve").checked,
       title: r.querySelector("input.title").value,
-      notes: r.querySelector("textarea.notes").value,
     }};
   }});
   try {{ localStorage.setItem(KEY, JSON.stringify(state)); }} catch (e) {{}}
@@ -850,23 +979,31 @@ function save() {{
 function restore() {{
   let state = {{}};
   try {{ state = JSON.parse(localStorage.getItem(KEY) || "{{}}"); }} catch (e) {{}}
-  document.querySelectorAll(".row").forEach(r => {{
+  rows().forEach(r => {{
     const s = state[payloadOf(r).key];
     if (!s) return;
     r.querySelector("input.approve").checked = !!s.approved;
     if (s.title) r.querySelector("input.title").value = s.title;
-    if (s.notes) r.querySelector("textarea.notes").value = s.notes;
   }});
 }}
-document.addEventListener("change", save);
+function refresh() {{
+  const all = rows();
+  const approved = all.filter(r => r.querySelector("input.approve").checked);
+  all.forEach(r => r.classList.toggle("approved", r.querySelector("input.approve").checked));
+  document.getElementById("n-approved").textContent = approved.length;
+  const pct = all.length ? Math.round(approved.length / all.length * 100) : 0;
+  document.querySelector("#legend .pct").textContent = pct + "%";
+  document.getElementById("fill").style.width = pct + "%";
+}}
+document.addEventListener("change", () => {{ save(); refresh(); }});
 document.addEventListener("input", save);
 restore();
+refresh();
 document.getElementById("export").onclick = () => {{
-  const approved = [...document.querySelectorAll(".row")]
+  const approved = rows()
     .filter(r => r.querySelector("input.approve").checked)
     .map(r => Object.assign(payloadOf(r), {{
       title: r.querySelector("input.title").value || "Banter",
-      notes: r.querySelector("textarea.notes").value,
     }}));
   const blob = new Blob([JSON.stringify(approved, null, 2)], {{type: "application/json"}});
   const a = Object.assign(document.createElement("a"),
