@@ -859,15 +859,20 @@ SET_CODES = {"Soundcheck": "S", "Set 1": "1", "Set 2": "2", "Set 3": "3", "Set 4
 
 
 def set_options(c):
-    """Sets the file could belong to: the preceding track's (default) and, when
-    it differs, the following track's - an encore break sits on that boundary."""
+    """Sets the file could belong to. On a set boundary the default follows the
+    audio: whichever side splices more cleanly is the set the file was cut from
+    (a set-opening announcement runs straight into the first song, not out of
+    the previous set's closer)."""
     names = [n for n in (c.after_set, c.before_set) if n]
     seen = []
     for n in names:
         if n not in seen:
             seen.append(n)
-    return "".join(f'<option value="{SET_CODES.get(n, n)}"{" selected" if i == 0 else ""}>{esc(n)}</option>'
-                   for i, n in enumerate(seen))
+    default = seen[0] if seen else None
+    if len(seen) == 2 and c.joints.get("in") and c.joints.get("out"):
+        default = c.before_set if c.joints["out"]["score"] < c.joints["in"]["score"] else c.after_set
+    return "".join(f'<option value="{SET_CODES.get(n, n)}"{" selected" if n == default else ""}>{esc(n)}</option>'
+                   for n in seen)
 
 
 def placement_text(c):
